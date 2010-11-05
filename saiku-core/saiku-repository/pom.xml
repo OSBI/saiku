@@ -1,15 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>saiku-core</artifactId>
+    <groupId>org.saiku</groupId>
+    <version>2.0-SNAPSHOT</version>
+  </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.saiku</groupId>
-  <artifactId>saiku-core</artifactId>
-  <packaging>pom</packaging>
-  <name>Saiku-Core-Libraries</name>
+  <artifactId>saiku-repository</artifactId>
   <version>2.0-SNAPSHOT</version>
-  <modules>
-  	<module>saiku-repository</module>
-  	<module>saiku-olap</module>
-  	<module>saiku-datasources</module>
-  	<module>saiku-engine</module>
-  	<module>saiku-web</module>
-  </modules>
 </project>
