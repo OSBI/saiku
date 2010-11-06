@@ -22,6 +22,7 @@ public class CubeRestPojo{
     private String schema;
    
     
+    public CubeRestPojo(){}
    public CubeRestPojo(CubePojo cubePojo) {
        
         connectionName = cubePojo.getConnectionName();
