@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<bean id="saikuConnections" class="org.saiku.datasources.SaikuConnectionService">
+	    <property name="connections">
+	    	<bean class="org.saiku.datasources.SaikuOlapConnection">
+	    		<property name="properties">
+	    		<props>
+	    			<prop key="name">TestConnection1</prop>
+	    			<prop key="driver">org.olap4j.driver.xmla.XmlaOlap4jDriver</prop>
+	    			<prop key="location">jdbc:xmla:Server=http://localhost:8080/pentaho/Xmla?userid=joe&amp;password=password</prop>
+	    			<prop key="user">joe</prop>
+	    			<prop key="password">password</prop>
+	    		</props>
+	    		</property>
+	    	</bean>
+	    </property>
+	</bean>
+
+	<bean id="datasources" class="org.saiku.web.SaikuDatasources">
+		<property name="connectionService" ref="saikuConnections" />
+	</bean>
+	
+</beans>
