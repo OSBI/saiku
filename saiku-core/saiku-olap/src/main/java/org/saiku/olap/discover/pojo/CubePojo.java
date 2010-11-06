@@ -1,6 +1,6 @@
 package org.saiku.olap.discover.pojo;
 
-public class CubePojo {
+public class CubePojo implements ICubePojo{
 	
 	private String connectionName;
 	private String cubeName;

@@ -1,8 +1,12 @@
 package org.saiku.rest;
 
+import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+
+import org.saiku.rest.objects.CubeRestPojo;
 
 
 
@@ -19,5 +23,5 @@ public interface DataSourceInterface {
      */
     @GET
     @Produces({"application/xml","application/json" })
-    public DataSources getDataSources();
+    public List<CubeRestPojo> getDataSources();
 }

@@ -7,6 +7,7 @@ import java.util.Properties;
 import org.junit.Test;
 
 import org.saiku.datasources.connection.ISaikuConnection;
+import org.saiku.datasources.connection.SaikuConnectionFactory;
 import org.saiku.datasources.connection.SaikuOlapConnection;
 import org.saiku.rest.DataSourceInterface;
 import org.saiku.rest.DataSources;
@@ -45,10 +46,10 @@ public class DataSourceInterfaceImplTest extends JerseyTest{
         DataSources ds = mock(DataSources.class);
         
         //Create sample datasource.
-        ds.createDataSource(connectionName, schemaname, cubes);
+      //  ds.createDataSource(connectionName, schemaname, cubes);
         
         
-       DataSources datasources = dsi.getDataSources();
+   //    DataSources datasources = dsi.getDataSources();
     }
     
     @Test
