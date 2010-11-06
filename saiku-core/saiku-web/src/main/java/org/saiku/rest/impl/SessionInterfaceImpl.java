@@ -9,4 +9,9 @@ import org.saiku.rest.SessionInterface;
  */
 public class SessionInterfaceImpl implements SessionInterface {
 
+    public void createSession() {
+        // TODO Auto-generated method stub
+        
+    }
+
 }
