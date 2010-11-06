@@ -11,5 +11,6 @@
       <app srcDir="src/main/flex" name="bytype" mainMxmlFile="src/main/flex/net/java/apps/addressbook/bytype.mxml"/>
       <war flexAppDir="addressbook"/>
     </amf>-->
+	<docs docsDir="docs" title="Saiku-web"/>	
   </modules>
 </enunciate>
