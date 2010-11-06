@@ -23,5 +23,5 @@ public interface DataSourceInterface {
      */
     @GET
     @Produces({"application/xml","application/json" })
-    public List<CubeRestPojo> getDataSources();
+    public List<CubeRestPojo> getCubes();
 }

@@ -22,10 +22,15 @@ public class DataSourceInterfaceImpl implements DataSourceInterface {
     @XmlElement(name = "datasources", required = true)
     List<CubeRestPojo> cubeList = new ArrayList<CubeRestPojo>();
     
-    OlapDiscoverService ods = new OlapDiscoverService();
-    public List<CubeRestPojo> getDataSources() {
+    OlapDiscoverService olapDiscoverService;
+    
+    public void setOlapDiscoverService(OlapDiscoverService olapds) {
+    	olapDiscoverService = olapds;
+    }
+    
+    public List<CubeRestPojo> getCubes() {
         
-        for(CubePojo cube : ods.getAllCubes()){
+        for(CubePojo cube : olapDiscoverService.getAllCubes()){
             cubeList.add(new CubeRestPojo(cube));
         }
         

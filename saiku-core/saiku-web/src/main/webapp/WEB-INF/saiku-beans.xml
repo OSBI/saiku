@@ -34,4 +34,8 @@
 		<property name="datasourceService" ref="datasourceServiceBean" />
 	</bean>
 	
+	<bean id="datasourceInterfaceBean" class="org.saiku.rest.impl.DataSourceInterfaceImpl">
+		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
+	</bean>
+	
 </beans>

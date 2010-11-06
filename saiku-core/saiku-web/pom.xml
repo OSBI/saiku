@@ -11,6 +11,8 @@
 	<version>2.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<build>
+			<outputDirectory>target/WEB-INF/classes</outputDirectory>
+	
 		<plugins>
 	  <plugin>
         <groupId>org.codehaus.enunciate</groupId>
