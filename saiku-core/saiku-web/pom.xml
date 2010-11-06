@@ -79,6 +79,17 @@
             <artifactId>grizzly-servlet-webserver</artifactId>
             <version>1.9.18-i</version>
         </dependency>
+		<dependency>
+               <groupId>org.codehaus.enunciate</groupId>
+               <artifactId>enunciate-gwt-rt</artifactId>
+			         <version>1.20</version>
+            </dependency>
+            <dependency>
+               <groupId>org.codehaus.enunciate</groupId>
+               <artifactId>enunciate-jersey-rt</artifactId>
+			         <version>1.20</version>
+            </dependency>
+			
    	<dependency>
       <groupId>org.codehaus.enunciate</groupId>
       <artifactId>enunciate-amf</artifactId>
