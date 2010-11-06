@@ -3,6 +3,7 @@
 	<name>saiku-olap</name>
 	<comment></comment>
 	<projects>
+		<project>saiku-datasources</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -17,7 +18,7 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.maven.ide.eclipse.maven2Nature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
 </projectDescription>
