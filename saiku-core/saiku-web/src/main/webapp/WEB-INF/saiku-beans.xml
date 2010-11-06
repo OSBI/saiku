@@ -6,9 +6,9 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-	<bean id="saikuConnections" class="org.saiku.datasources.SaikuConnectionService">
+	<bean id="connectionFactoryBean" class="org.saiku.datasources.connection.SaikuConnectionFactory">
 	    <property name="connections">
-	    	<bean class="org.saiku.datasources.SaikuOlapConnection">
+	    	<bean class="org.saiku.datasources.connection.SaikuOlapConnection">
 	    		<property name="properties">
 	    		<props>
 	    			<prop key="name">TestConnection1</prop>
@@ -22,8 +22,12 @@
 	    </property>
 	</bean>
 
-	<bean id="datasources" class="org.saiku.web.SaikuDatasources">
-		<property name="connectionService" ref="saikuConnections" />
+	<bean id="datasourcesBean" class="org.saiku.datasources.SaikuDatasources">
+		<property name="connectionFactory" ref="connectionFactoryBean" />
+	</bean>
+	
+	<bean id="datasourceService" class="org.saiku.service.datasource.DatasourceService">
+		<property name="datasources" ref="datasourcesBean" />
 	</bean>
 	
 </beans>

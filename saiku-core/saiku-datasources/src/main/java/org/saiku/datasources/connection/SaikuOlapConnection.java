@@ -1,4 +1,4 @@
-package org.saiku.datasources;
+package org.saiku.datasources.connection;
 
 import java.sql.DriverManager;
 import java.util.Properties;
@@ -62,9 +62,6 @@ public class SaikuOlapConnection implements ISaikuConnection {
 		return olapConnection;
 	}
 
-	public Class getConnectionClass() {
-		return OlapConnection.class;
-	}
 
 	public String getName() {
 		return name;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.saiku.datasources;
+package org.saiku.datasources.connection;
 
 import java.util.Properties;
 
@@ -56,9 +56,7 @@ public interface ISaikuConnection {
 	  public String getDatasourceType();
 	  
 	  public Object getConnection();
-	  
-	  public Class getConnectionClass();
-	  
+	  	  
 	  public String getName();
 
 }
