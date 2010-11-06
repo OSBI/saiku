@@ -43,6 +43,12 @@
   
   
     <dependencies>
+    	    <dependency>
+      <groupId>org.codehaus.enunciate</groupId>
+      <artifactId>enunciate-amf</artifactId>
+      <version>1.20</version>
+    </dependency>
+  </dependencies>
     <dependency>
       <groupId>org.codehaus.enunciate</groupId>
       <artifactId>enunciate-rt</artifactId>
