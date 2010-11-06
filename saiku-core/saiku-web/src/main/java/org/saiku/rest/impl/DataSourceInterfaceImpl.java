@@ -9,4 +9,8 @@ import org.saiku.rest.DataSourceInterface;
  */
 public class DataSourceInterfaceImpl implements DataSourceInterface {
 
+    public void getDataSources() {
+        
+    }
+
 }
