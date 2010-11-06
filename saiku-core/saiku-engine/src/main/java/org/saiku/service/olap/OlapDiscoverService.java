@@ -2,6 +2,7 @@ package org.saiku.service.olap;
 
 import java.util.List;
 
+import org.olap4j.metadata.Cube;
 import org.saiku.olap.discover.OlapMetaExplorer;
 import org.saiku.olap.discover.pojo.ConnectionPojo;
 import org.saiku.olap.discover.pojo.CubePojo;
@@ -23,6 +24,10 @@ public class OlapDiscoverService {
 
 	public List<ConnectionPojo> getAllConnections() {
 		return metaExplorer.getAllConnectionPojos();
+	}
+	
+	public Cube getCube(CubePojo cube) {
+		return metaExplorer.getCube(cube);
 	}
 	
 }
