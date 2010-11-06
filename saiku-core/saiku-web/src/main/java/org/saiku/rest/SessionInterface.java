@@ -10,12 +10,15 @@ import javax.ws.rs.Produces;
  *
  */
 @Path("/session")
-public interface SessionInterface {
+public class SessionInterface {
 
     /**
      * Creates a session.
      */
     @GET
     @Produces({"application/xml","application/json" })
-    public void createSession();
+    public String createSession() {
+        // TODO Auto-generated method stub
+        return "HELLO";
+    }
 }

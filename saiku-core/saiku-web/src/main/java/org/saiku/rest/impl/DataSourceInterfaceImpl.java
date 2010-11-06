@@ -17,7 +17,7 @@ import org.saiku.service.olap.OlapDiscoverService;
  *
  */
 @SuppressWarnings("restriction")
-public class DataSourceInterfaceImpl implements DataSourceInterface {
+public class DataSourceInterfaceImpl/* implements DataSourceInterface */{
     
     @XmlElement(name = "datasources", required = true)
     List<CubeRestPojo> cubeList = new ArrayList<CubeRestPojo>();

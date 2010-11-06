@@ -9,15 +9,14 @@ import org.junit.Test;
 import org.saiku.datasources.connection.ISaikuConnection;
 import org.saiku.datasources.connection.SaikuConnectionFactory;
 import org.saiku.datasources.connection.SaikuOlapConnection;
-import org.saiku.rest.DataSourceInterface;
-import org.saiku.rest.DataSources;
+//import org.saiku.rest.DataSources;
 
 import static org.mockito.Mockito.*;
 import com.sun.jersey.test.framework.JerseyTest;
 
 public class DataSourceInterfaceImplTest extends JerseyTest{
 
-    DataSourceInterface dsi;
+ //   DataSourceInterface dsi;
     
     public DataSourceInterfaceImplTest() throws Exception {
         super("org.saiku.rest");
@@ -43,7 +42,7 @@ public class DataSourceInterfaceImplTest extends JerseyTest{
         
         SaikuConnectionFactory scf = mock(SaikuConnectionFactory.class);
         
-        DataSources ds = mock(DataSources.class);
+     //   DataSources ds = mock(DataSources.class);
         
         //Create sample datasource.
       //  ds.createDataSource(connectionName, schemaname, cubes);
