@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
-	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources"/>
-	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
-	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
-	<classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
+  <classpathentry kind="output" path="target/classes"/>
+  <classpathentry kind="var" path="M2_REPO/javacup/javacup/10k/javacup-10k.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/olap4j/olap4j/0.9.9-SNAPSHOT/olap4j-0.9.9-SNAPSHOT.jar" sourcepath="M2_REPO/org/olap4j/olap4j/0.9.9-SNAPSHOT/olap4j-0.9.9-SNAPSHOT-sources.jar"/>
+  <classpathentry kind="src" path="/saiku-datasources"/>
+  <classpathentry kind="var" path="M2_REPO/xerces/xercesImpl/2.6.0/xercesImpl-2.6.0.jar"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 </classpath>

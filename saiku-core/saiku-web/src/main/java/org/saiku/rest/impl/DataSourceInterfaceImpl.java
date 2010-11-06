@@ -1,6 +1,7 @@
 package org.saiku.rest.impl;
 
 import org.saiku.rest.DataSourceInterface;
+import org.saiku.rest.DataSources;
 
 /**
  * 
@@ -9,7 +10,8 @@ import org.saiku.rest.DataSourceInterface;
  */
 public class DataSourceInterfaceImpl implements DataSourceInterface {
 
-    public void getDataSources() {
+    public DataSources getDataSources() {
+        return null;
         
     }
 
