@@ -26,8 +26,12 @@
 		<property name="connectionFactory" ref="connectionFactoryBean" />
 	</bean>
 	
-	<bean id="datasourceService" class="org.saiku.service.datasource.DatasourceService">
+	<bean id="datasourceServiceBean" class="org.saiku.service.datasource.DatasourceService">
 		<property name="datasources" ref="datasourcesBean" />
+	</bean>
+
+	<bean id="olapDiscoverServiceBean" class="org.saiku.service.olap.OlapDiscoverService">
+		<property name="datasourceService" ref="datasourceServiceBean" />
 	</bean>
 	
 </beans>
