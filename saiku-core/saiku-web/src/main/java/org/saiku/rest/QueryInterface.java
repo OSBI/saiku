@@ -12,7 +12,7 @@ import javax.ws.rs.Produces;
  * @author tombarber
  *
  */
-@Path("/{username}/query")
+@Path("/query")
 public class QueryInterface {
 
     /*
