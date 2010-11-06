@@ -16,8 +16,14 @@ public class SaikuConnectionService {
 	
 	public void connect() {
 		for (ISaikuConnection con : connections) {
-			con.connect();
+			if (con.connect()) {
+				
+			}
 		}
+	}
+	
+	public List<ISaikuConnection> getConnections() {
+		return connections;
 	}
 
 }

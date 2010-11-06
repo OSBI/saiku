@@ -21,6 +21,8 @@ public interface ISaikuConnection {
     public static final String[] KEYS = new String[] { NAME_KEY, DRIVER_KEY, URL_KEY,
 	      USERNAME_KEY, PASSWORD_KEY };
 
+    public static final String[] DATASOURCES = new String[] { OLAP_DATASOURCE };
+
 	  /**
 	   * Sets the properties to be used when the connection is made. The standard 
 	   * keys for the properties are defined in this interface
@@ -52,5 +54,11 @@ public interface ISaikuConnection {
 	   * @return
 	   */
 	  public String getDatasourceType();
+	  
+	  public Object getConnection();
+	  
+	  public Class getConnectionClass();
+	  
+	  public String getName();
 
 }

@@ -1,18 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <artifactId>saiku-core</artifactId>
-    <groupId>org.saiku</groupId>
-    <version>2.0-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.saiku</groupId>
-  <artifactId>saiku-web</artifactId>
-  <version>2.0-SNAPSHOT</version>
-  
-  
-    <build>
-    <plugins>
-      <plugin>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>saiku-core</artifactId>
+		<groupId>org.saiku</groupId>
+		<version>2.0-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.saiku</groupId>
+	<artifactId>saiku-web</artifactId>
+	<version>2.0-SNAPSHOT</version>
+	<packaging>war</packaging>
+	<build>
+		<plugins>
+	  <plugin>
         <groupId>org.codehaus.enunciate</groupId>
         <artifactId>maven-enunciate-plugin</artifactId>
 
@@ -31,38 +31,138 @@
           <target>1.5</target>
         </configuration>
       </plugin>
-    </plugins>
-  </build>
-  
-  
-    <dependencies>
-    		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-json</artifactId>
-			<version>1.0.3</version>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+					<webResources>
+						<resource>
+							<directory>src/main/webapp/WEB-INF/</directory>
+							<targetPath>WEB-INF/</targetPath>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>7.2.0.v20101020</version>
+				<configuration>
+					<webAppConfig>
+						<contextPath>/</contextPath>
+						<defaultsDescriptor>src/main/servers/jetty/dev/webdefault.xml</defaultsDescriptor>
+					</webAppConfig>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.3</version>
+				<!-- set encoding to something not platform dependent -->
+				<configuration>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.saiku</groupId>
+			<artifactId>saiku-datasources</artifactId>
+			<version>2.0-SNAPSHOT</version>
+		</dependency>
+				<!-- Spring modules -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.jersey.contribs</groupId>
-			<artifactId>jersey-spring</artifactId>
-			<version>1.4</version>
-			<exclusions>
-        		<exclusion>
-          		<groupId>org.springframework</groupId>
-          		<artifactId>spring</artifactId>
-        		</exclusion>
-      		</exclusions>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+                <dependency>
+                        <groupId>com.sun.jersey</groupId>
+                        <artifactId>jersey-json</artifactId>
+                        <version>1.0.3</version>
+                </dependency>
+                <dependency>
+                        <groupId>com.sun.jersey.contribs</groupId>
+                        <artifactId>jersey-spring</artifactId>
+                        <version>1.4</version>
+                        <exclusions>
+                        <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring</artifactId>
+                        </exclusion>
+                </exclusions>
+                </dependency>
+                <dependency>
+                        <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-core</artifactId>
             <version>1.4</version>
-            </dependency>	
-		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>jsr311-api</artifactId>
-			<version>1.1.1</version>
-		</dependency>
-		<dependency>
+            </dependency>      
+                <dependency>
+                        <groupId>javax.ws.rs</groupId>
+                        <artifactId>jsr311-api</artifactId>
+                        <version>1.1.1</version>
+                </dependency>
+                <dependency>
             <groupId>com.sun.jersey.jersey-test-framework</groupId>
             <artifactId>jersey-test-framework-core</artifactId>
             <version>1.4</version>
@@ -74,23 +174,23 @@
             <version>1.4</version>
             <scope>test</scope>
         </dependency>
-		<dependency>
+                <dependency>
             <groupId>com.sun.grizzly</groupId>
             <artifactId>grizzly-servlet-webserver</artifactId>
             <version>1.9.18-i</version>
         </dependency>
-		<dependency>
+                <dependency>
                <groupId>org.codehaus.enunciate</groupId>
                <artifactId>enunciate-gwt-rt</artifactId>
-			         <version>1.20</version>
+                                 <version>1.20</version>
             </dependency>
             <dependency>
                <groupId>org.codehaus.enunciate</groupId>
                <artifactId>enunciate-jersey-rt</artifactId>
-			         <version>1.20</version>
+                                 <version>1.20</version>
             </dependency>
-			
-   	<dependency>
+
+        <dependency>
       <groupId>org.codehaus.enunciate</groupId>
       <artifactId>enunciate-amf</artifactId>
       <version>1.20</version>
@@ -106,5 +206,5 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
-  </dependencies>
+	</dependencies>
 </project>
