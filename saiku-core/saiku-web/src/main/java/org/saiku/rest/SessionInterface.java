@@ -9,7 +9,7 @@ import javax.ws.rs.Produces;
  * @author tombarber
  *
  */
-@Path("/{username}/datasources")
+@Path("/session")
 public interface SessionInterface {
 
     /**
