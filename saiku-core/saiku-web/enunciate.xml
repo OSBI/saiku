@@ -1,0 +1,15 @@
+<enunciate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+           xsi:noNamespaceSchemaLocation="http://enunciate.codehaus.org/schemas/enunciate-1.20.xsd">
+  <modules>
+ <!--   <gwt gwtHome="${gwt.home}" rpcModuleName="net.java.ws.addressbook.AddressBookGWT">
+      <app srcDir="src/main/gwt">
+        <module name="net.java.apps.addressbook.AddressBookApp" outputPath="addressbook"/>
+      </app>
+      <gwtCompileJVMArg value="-Xmx768m"/>
+    </gwt>
+    <amf flexHome="${flex.home}">
+      <app srcDir="src/main/flex" name="bytype" mainMxmlFile="src/main/flex/net/java/apps/addressbook/bytype.mxml"/>
+      <war flexAppDir="addressbook"/>
+    </amf>-->
+  </modules>
+</enunciate>
