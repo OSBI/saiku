@@ -7,6 +7,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.saiku.web.rest.objects.QueryRestPojo;
+
 /**
  * 
  * @author tombarber
@@ -40,13 +42,16 @@ public class QueryInterface {
 //    @Path("/{queryname}")
 //    public void deleteQuery();
 //    
-//    /**
-//     * Create Query.
-//     */
-//    @POST
-//    @Produces({"application/xml","application/json" })
-//    @Path("/{queryname}")
-//    public void createQuery();
+    /**
+     * Create Query.
+     */
+      @POST
+      @Produces({"application/xml","application/json" })
+      @Path("/{queryname}")
+      public QueryRestPojo createQuery(){
+          
+          return null;
+      }
 //    
 //    /*
 //     * Axis Methods.
