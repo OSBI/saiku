@@ -1,4 +1,4 @@
-package org.saiku.rest.objects;
+package org.saiku.web.rest.objects;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;

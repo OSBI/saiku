@@ -1,4 +1,4 @@
-package org.saiku.rest;
+package org.saiku.web.rest.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,8 @@ import javax.ws.rs.Produces;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.saiku.olap.discover.pojo.CubePojo;
-import org.saiku.rest.objects.CubeRestPojo;
 import org.saiku.service.olap.OlapDiscoverService;
+import org.saiku.web.rest.objects.CubeRestPojo;
 import org.springframework.context.annotation.Scope;
 
 

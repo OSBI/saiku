@@ -1,4 +1,4 @@
-package org.saiku.rest;
+package org.saiku.web.rest.service;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
