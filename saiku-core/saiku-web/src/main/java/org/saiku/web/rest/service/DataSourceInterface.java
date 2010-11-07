@@ -8,8 +8,6 @@ import org.saiku.olap.discover.pojo.CubesListRestPojo;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.springframework.context.annotation.Scope;
 
-import com.sun.jersey.spi.inject.Inject;
-
 
 
 /**
