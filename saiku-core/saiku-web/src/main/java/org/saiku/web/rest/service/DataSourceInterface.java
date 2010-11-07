@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Scope;
 public class DataSourceInterface {
 
    
-    CubeRestPojo cubeList = new CubeRestPojo();
+    
     
     OlapDiscoverService olapDiscoverService;
     
@@ -39,7 +39,7 @@ public class DataSourceInterface {
     @GET
     @Produces({"application/xml","application/json" })
      public CubeRestPojo getCubes() {
-        
+        CubeRestPojo cubeList = new CubeRestPojo();
         for(CubePojo cube : olapDiscoverService.getAllCubes()){
             cubeList.addCubeRestPojo(cube);
         }
