@@ -1,4 +1,4 @@
-package org.saiku.rest.impl;
+package org.saiku.web.rest.service.impl;
 
 import org.junit.Test;
 

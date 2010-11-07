@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Scope;
 @Path("/saiku/{username}/datasources")
 public class DataSourceInterface {
 
-   
     OlapDiscoverService olapDiscoverService;
     
     public void setOlapDiscoverService(OlapDiscoverService olapds) {
@@ -31,7 +30,11 @@ public class DataSourceInterface {
      */
     @GET
     @Produces({"application/xml","application/json" })
-     public CubesRestPojo getCubes() {
+     public CubeRestPojo getCubes() {
+        CubeRestPojo cubeList = new CubeRestPojo();
+        for(CubePojo cube : olapDiscoverService.getAllCubes()){
+            cubeList.addCubeRestPojo(cube);
+        }
         
         CubesRestPojo cubes = olapDiscoverService.getAllCubes();
         return cubes;
