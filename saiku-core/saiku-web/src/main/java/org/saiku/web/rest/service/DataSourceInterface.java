@@ -24,8 +24,8 @@ import org.springframework.context.annotation.Scope;
 @Path("/saiku/{username}/datasources")
 public class DataSourceInterface {
 
-    @XmlElement(name = "datasources", required = true)
-    List<CubeRestPojo> cubeList = new ArrayList<CubeRestPojo>();
+   
+    CubeRestPojo cubeList = new CubeRestPojo();
     
     OlapDiscoverService olapDiscoverService;
     
@@ -38,10 +38,10 @@ public class DataSourceInterface {
      */
     @GET
     @Produces({"application/xml","application/json" })
-     public List<CubeRestPojo> getCubes() {
+     public CubeRestPojo getCubes() {
         
         for(CubePojo cube : olapDiscoverService.getAllCubes()){
-            cubeList.add(new CubeRestPojo(cube));
+            cubeList.addCubeRestPojo(cube);
         }
         
         return cubeList;
