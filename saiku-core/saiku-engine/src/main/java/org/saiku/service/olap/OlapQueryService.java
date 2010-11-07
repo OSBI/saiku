@@ -10,7 +10,7 @@ import org.olap4j.metadata.Cube;
 import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
-import org.saiku.olap.discover.pojo.CubePojo;
+import org.saiku.olap.discover.pojo.ICubePojo;
 import org.saiku.olap.query.IAxis;
 import org.saiku.olap.query.OlapQuery;
 import org.saiku.olap.query.IAxis.Standard;
@@ -25,7 +25,7 @@ public class OlapQueryService {
 		olapDiscoverService = os;
 	}
 	
-	public boolean createNewOlapQuery(String queryName, CubePojo cube) {
+	public boolean createNewOlapQuery(String queryName, ICubePojo cube) {
 		try {
 			Cube cub = olapDiscoverService.getCube(cube);
 			if (cub != null) {
@@ -62,6 +62,22 @@ public class OlapQueryService {
 	}
 	
 	public List<String> getDimensions(String queryName, String axis) {
+		OlapQuery q = queries.get(queryName);
+		IAxis tmpAxis = IAxis.forName(axis);
+		List<String> dimensions = new ArrayList<String>();
+
+		if (tmpAxis != null) {
+			int ord = tmpAxis.axisOrdinal();
+			QueryAxis qa = q.getAxis(Axis.Factory.forOrdinal(ord));
+			for (QueryDimension dim : qa.getDimensions()) {
+				dimensions.add(dim.getName());
+			}
+		}
+		return dimensions;
+		
+	}
+	
+	public List<String> getDimension(String queryName, String axis) {
 		OlapQuery q = queries.get(queryName);
 		IAxis tmpAxis = IAxis.forName(axis);
 		List<String> dimensions = new ArrayList<String>();

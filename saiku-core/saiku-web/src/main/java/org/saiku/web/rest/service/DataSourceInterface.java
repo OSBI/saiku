@@ -1,16 +1,11 @@
 package org.saiku.web.rest.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.xml.bind.annotation.XmlElement;
 
-import org.saiku.olap.discover.pojo.CubePojo;
+import org.saiku.olap.discover.pojo.CubesRestPojo;
 import org.saiku.service.olap.OlapDiscoverService;
-import org.saiku.web.rest.objects.CubeRestPojo;
 import org.springframework.context.annotation.Scope;
 
 
@@ -25,8 +20,6 @@ import org.springframework.context.annotation.Scope;
 public class DataSourceInterface {
 
    
-    CubeRestPojo cubeList = new CubeRestPojo();
-    
     OlapDiscoverService olapDiscoverService;
     
     public void setOlapDiscoverService(OlapDiscoverService olapds) {
@@ -38,13 +31,10 @@ public class DataSourceInterface {
      */
     @GET
     @Produces({"application/xml","application/json" })
-     public CubeRestPojo getCubes() {
+     public CubesRestPojo getCubes() {
         
-        for(CubePojo cube : olapDiscoverService.getAllCubes()){
-            cubeList.addCubeRestPojo(cube);
-        }
-        
-        return cubeList;
+        CubesRestPojo cubes = olapDiscoverService.getAllCubes();
+        return cubes;
         
     }
 }
