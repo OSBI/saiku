@@ -13,6 +13,8 @@ import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.web.rest.objects.CubeRestPojo;
 import org.springframework.context.annotation.Scope;
 
+import com.sun.jersey.spi.inject.Inject;
+
 
 
 /**
@@ -26,13 +28,13 @@ public class DataSourceInterface {
 
    
     
-    
+    @Inject
     OlapDiscoverService olapDiscoverService;
     
-    public void setOlapDiscoverService(OlapDiscoverService olapds) {
+ /*   public void setOlapDiscoverService(OlapDiscoverService olapds) {
         olapDiscoverService = olapds;
     }
-    
+   */ 
     /**
      * Returns the datasources available.
      */
