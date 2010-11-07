@@ -30,12 +30,7 @@ public class DataSourceInterface {
      */
     @GET
     @Produces({"application/xml","application/json" })
-     public CubeRestPojo getCubes() {
-        CubeRestPojo cubeList = new CubeRestPojo();
-        for(CubePojo cube : olapDiscoverService.getAllCubes()){
-            cubeList.addCubeRestPojo(cube);
-        }
-        
+     public CubesRestPojo getCubes() {
         CubesRestPojo cubes = olapDiscoverService.getAllCubes();
         return cubes;
         
