@@ -63,6 +63,7 @@
 				<version>7.2.0.v20101020</version>
 				<configuration>
 					<webAppConfig>
+					<webApp>${basedir}/target/saiku-web-2.0-SNAPSHOT.war</webApp>
 						<contextPath>/</contextPath>
 						<defaultsDescriptor>src/main/servers/jetty/dev/webdefault.xml</defaultsDescriptor>
 					</webAppConfig>
@@ -175,6 +176,12 @@
 		<dependency>
 			<groupId>com.sun.jersey.jersey-test-framework</groupId>
 			<artifactId>jersey-test-framework-grizzly</artifactId>
+			<version>1.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey.jersey-test-framework</groupId>
+			<artifactId>jersey-test-framework-embedded-glassfish</artifactId>
 			<version>1.4</version>
 			<scope>test</scope>
 		</dependency>
