@@ -4,7 +4,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import org.saiku.olap.discover.pojo.CubesRestPojo;
+import org.saiku.olap.discover.pojo.CubesListRestPojo;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.springframework.context.annotation.Scope;
 
@@ -30,8 +30,8 @@ public class DataSourceInterface {
      */
     @GET
     @Produces({"application/xml","application/json" })
-     public CubesRestPojo getCubes() {
-        CubesRestPojo cubes = olapDiscoverService.getAllCubes();
+     public CubesListRestPojo getCubes() {
+        CubesListRestPojo cubes = olapDiscoverService.getAllCubes();
         return cubes;
         
     }

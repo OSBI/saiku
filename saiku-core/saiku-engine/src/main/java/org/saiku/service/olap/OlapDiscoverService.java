@@ -5,7 +5,7 @@ import java.util.List;
 import org.olap4j.metadata.Cube;
 import org.saiku.olap.discover.OlapMetaExplorer;
 import org.saiku.olap.discover.pojo.ConnectionPojo;
-import org.saiku.olap.discover.pojo.CubesRestPojo;
+import org.saiku.olap.discover.pojo.CubesListRestPojo;
 import org.saiku.olap.discover.pojo.ICubePojo;
 import org.saiku.service.datasource.DatasourceService;
 
@@ -19,7 +19,7 @@ public class OlapDiscoverService {
 		metaExplorer = new OlapMetaExplorer(datasourceService.getOlapDatasources());
 	}
 	
-	public CubesRestPojo getAllCubes() {
+	public CubesListRestPojo getAllCubes() {
 		return metaExplorer.getAllCubePojos();
 	}
 

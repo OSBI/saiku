@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="datasources")
-public class CubesRestPojo {
+public class CubesListRestPojo {
 
     /**
      * To String.
@@ -84,10 +84,10 @@ public class CubesRestPojo {
     @XmlElement(name = "datasource")
     private List<CubeRestPojo> cubeList = new ArrayList<CubeRestPojo>();
 
-    public CubesRestPojo() {
+    public CubesListRestPojo() {
     }
 
-    public void addCubeRestPojo(CubeRestPojo cubePojo) {
+    public void addCube(CubeRestPojo cubePojo) {
         cubeList.add(cubePojo);
     }
 

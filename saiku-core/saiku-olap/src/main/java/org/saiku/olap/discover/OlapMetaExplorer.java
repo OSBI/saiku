@@ -11,9 +11,9 @@ import org.olap4j.metadata.Catalog;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Schema;
 import org.saiku.olap.discover.pojo.ConnectionPojo;
-import org.saiku.olap.discover.pojo.CubesRestPojo;
+import org.saiku.olap.discover.pojo.CubesListRestPojo;
 import org.saiku.olap.discover.pojo.ICubePojo;
-import org.saiku.olap.discover.pojo.CubesRestPojo.CubeRestPojo;
+import org.saiku.olap.discover.pojo.CubesListRestPojo.CubeRestPojo;
 
 public class OlapMetaExplorer {
 
@@ -60,15 +60,15 @@ public class OlapMetaExplorer {
 	}
 
 
-	public CubesRestPojo getCubePojos(String connectionName) {
+	public CubesListRestPojo getCubePojos(String connectionName) {
 		OlapConnection olapcon = connections.get(connectionName);
-		CubesRestPojo cubes = new CubesRestPojo();
+		CubesListRestPojo cubes = new CubesListRestPojo();
 		if (olapcon != null) {
 			for (Catalog cat : olapcon.getCatalogs()) {
 				try {
 					for (Schema schem : cat.getSchemas()) {
 						for (Cube cub : schem.getCubes()) {
-							cubes.addCubeRestPojo(new CubeRestPojo(connectionName, cat.getName(), schem.getName(), cub.getName()));
+							cubes.addCube(new CubeRestPojo(connectionName, cat.getName(), schem.getName(), cub.getName()));
 						}
 					}
 				} catch (OlapException e) {
@@ -82,16 +82,16 @@ public class OlapMetaExplorer {
 
 	}
 
-	public CubesRestPojo getCubePojos(List<String> connectionNames) {
-		CubesRestPojo cubesList = new CubesRestPojo();
+	public CubesListRestPojo getCubePojos(List<String> connectionNames) {
+		CubesListRestPojo cubesList = new CubesListRestPojo();
 		for (String connectionName : connectionNames) {
 			cubesList.getCubeList().addAll(getCubePojos(connectionName).getCubeList());
 		}
 		return cubesList;
 	}
 
-	public CubesRestPojo getAllCubePojos() {
-		CubesRestPojo cubes = new CubesRestPojo();
+	public CubesListRestPojo getAllCubePojos() {
+		CubesListRestPojo cubes = new CubesListRestPojo();
 		for (String connectionName : connections.keySet()) {
 			cubes.getCubeList().addAll(getCubePojos(connectionName).getCubeList());
 		}
