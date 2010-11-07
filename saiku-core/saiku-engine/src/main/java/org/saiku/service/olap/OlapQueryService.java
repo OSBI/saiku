@@ -43,6 +43,10 @@ public class OlapQueryService {
 
 	}
 	
+	public void closeQuery(String queryName) {
+		queries.remove(queryName);
+	}
+	
 	public List<String> getQueries() {
 		List<String> queryList = new ArrayList<String>();
 		queryList.addAll(queries.keySet());
