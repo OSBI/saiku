@@ -30,6 +30,11 @@
 			<url>http://ibiblio.org/maven2/</url>
 			<snapshots><enabled>false</enabled></snapshots>
 		</repository>
+			<repository>
+			<id>java</id>
+			<url>http://download.java.net/maven/2/</url>
+			<snapshots><enabled>false</enabled></snapshots>
+		</repository>
 	</repositories>
 
 </project>

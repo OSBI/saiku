@@ -24,7 +24,7 @@
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 
-<servlet>
+<!--<servlet>
 		<servlet-name>Jersey Spring Servlet</servlet-name>
 		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
 			<init-param>
@@ -40,7 +40,9 @@
 	 <servlet-mapping>
 	<servlet-name>Jersey Spring Servlet</servlet-name>
 	<url-pattern>/rest/*</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping>-->
+	
+
 
 </web-app>
 

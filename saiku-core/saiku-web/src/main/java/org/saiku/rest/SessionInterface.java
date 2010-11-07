@@ -9,7 +9,7 @@ import javax.ws.rs.Produces;
  * @author tombarber
  *
  */
-@Path("/session")
+@Path("/saiku/session")
 public class SessionInterface {
 
     /**

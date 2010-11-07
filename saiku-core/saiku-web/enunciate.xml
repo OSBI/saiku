@@ -1,6 +1,13 @@
 <enunciate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
            xsi:noNamespaceSchemaLocation="http://enunciate.codehaus.org/schemas/enunciate-1.20.xsd">
+  
+  <webapp  mergeWebXML="src/main/webapp/WEB-INF/web.xml"/>
   <modules>
+  
+  <spring-app>
+  <war mergeWebXML="src/main/webapp/WEB-INF/web.xml"/>
+    <springImport file="war/WEB-INF/saiku-beans.xml"/>
+  </spring-app>
     <jersey useSubcontext="true" disableWildcardServletError="false" disabled="false"></jersey>
 	<docs docsDir="docs" title="Saiku-web"/>	
 	<jaxws-ri disabled="true"/>
@@ -10,7 +17,7 @@
       <c disabled="true"/>
       <csharp disabled="true"></csharp>
       <gwt disabled="true"></gwt>
-      <jaxws disabled="true"/>
+      <jaxws disabled="false"/>
       <jaxws-client disabled="true"></jaxws-client>
       <obj-c disabled="true"></obj-c>
       <rest disabled="true"></rest>
@@ -19,5 +26,8 @@
       <xfire disabled="true"/>
       <xfire-client disabled="true"></xfire-client>
       <xml disabled="true"></xml>
+      
+      
   </modules>
+  
 </enunciate>

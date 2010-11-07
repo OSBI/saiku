@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Scope;
  *
  */
 @Scope("request")
-@Path("/datasources")
+@Path("/saiku/{username}/datasources")
 public class DataSourceInterface {
 
     @XmlElement(name = "datasources", required = true)
