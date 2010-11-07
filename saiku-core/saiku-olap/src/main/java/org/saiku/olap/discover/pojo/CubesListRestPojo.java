@@ -1,4 +1,4 @@
-package org.saiku.web.rest.objects;
+package org.saiku.olap.discover.pojo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.saiku.olap.discover.pojo.CubePojo;
 
 /**
  * A Cube Pojo for the rest interface.
@@ -17,9 +16,8 @@ import org.saiku.olap.discover.pojo.CubePojo;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@SuppressWarnings("restriction")
 @XmlRootElement(name="datasources")
-public class CubeRestPojo {
+public class CubesListRestPojo {
 
     /**
      * To String.
@@ -31,12 +29,14 @@ public class CubeRestPojo {
 
     /**
      * Cubes Available To The Current User.
-     * @author tombarber
+     * @author tombarber, pstoellberger
      *
      */
-    public static class Cube {
-        public Cube(){}
-        public Cube(String _connectionName, String _cubeName, String _catalog, String _schema) {
+    public static class CubeRestPojo implements ICubePojo {
+        public CubeRestPojo(){
+        	throw new RuntimeException("Unsupported Constructor. Serialization only");
+        }
+        public CubeRestPojo(String _connectionName, String _cubeName, String _catalog, String _schema) {
             this.connectionName = _connectionName;
             this.cubeName = _cubeName;
             this.catalog = _catalog;
@@ -64,28 +64,38 @@ public class CubeRestPojo {
         /**
          * A Schema Name.
          */
-        @XmlAttribute(name = "schemaname", required = false)
+		@XmlAttribute(name = "schemaname", required = false)
         private String schema;
+
+		public String getCatalog() {
+			return catalog;
+		}
+		public String getConnectionName() {
+			return connectionName;
+		}
+		public String getCubeName() {
+			return cubeName;
+		}
+		public String getSchema() {
+			return schema;
+		}
     }
     
     @XmlElement(name = "datasource")
-    private List<Cube> cubeList = new ArrayList<Cube>();
+    private List<CubeRestPojo> cubeList = new ArrayList<CubeRestPojo>();
 
-    public CubeRestPojo() {
+    public CubesListRestPojo() {
     }
 
-    public void addCubeRestPojo(CubePojo cubePojo) {
-
-        Cube cube = new Cube(cubePojo.getConnectionName(), cubePojo.getCubeName(), cubePojo.getCatalog(), cubePojo.getSchema());
-        cubeList.add(cube);
-
+    public void addCube(CubeRestPojo cubePojo) {
+        cubeList.add(cubePojo);
     }
 
-    public void setCubeList(List<Cube> cubeList) {
+    public void setCubeList(List<CubeRestPojo> cubeList) {
         this.cubeList = cubeList;
     }
 
-    public List<Cube> getCubeList() {
+    public List<CubeRestPojo> getCubeList() {
         return cubeList;
     }
 

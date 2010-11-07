@@ -10,10 +10,10 @@ import org.olap4j.OlapException;
 import org.olap4j.metadata.Catalog;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Schema;
-import org.olap4j.query.Query;
 import org.saiku.olap.discover.pojo.ConnectionPojo;
-import org.saiku.olap.discover.pojo.CubePojo;
-import org.saiku.olap.query.OlapQuery;
+import org.saiku.olap.discover.pojo.CubesListRestPojo;
+import org.saiku.olap.discover.pojo.ICubePojo;
+import org.saiku.olap.discover.pojo.CubesListRestPojo.CubeRestPojo;
 
 public class OlapMetaExplorer {
 
@@ -60,15 +60,15 @@ public class OlapMetaExplorer {
 	}
 
 
-	public List<CubePojo> getCubePojos(String connectionName) {
+	public CubesListRestPojo getCubePojos(String connectionName) {
 		OlapConnection olapcon = connections.get(connectionName);
-		List<CubePojo> cubeList = new ArrayList<CubePojo>();
+		CubesListRestPojo cubes = new CubesListRestPojo();
 		if (olapcon != null) {
 			for (Catalog cat : olapcon.getCatalogs()) {
 				try {
 					for (Schema schem : cat.getSchemas()) {
 						for (Cube cub : schem.getCubes()) {
-							cubeList.add(new CubePojo(connectionName, cat.getName(), schem.getName(), cub.getName()));
+							cubes.addCube(new CubeRestPojo(connectionName, cat.getName(), schem.getName(), cub.getName()));
 						}
 					}
 				} catch (OlapException e) {
@@ -78,27 +78,27 @@ public class OlapMetaExplorer {
 			}
 
 		}
-		return cubeList;
+		return cubes;
 
 	}
 
-	public List<CubePojo> getCubePojos(List<String> connectionNames) {
-		List<CubePojo> cubesList = new ArrayList<CubePojo>();
+	public CubesListRestPojo getCubePojos(List<String> connectionNames) {
+		CubesListRestPojo cubesList = new CubesListRestPojo();
 		for (String connectionName : connectionNames) {
-			cubesList.addAll(getCubePojos(connectionName));
+			cubesList.getCubeList().addAll(getCubePojos(connectionName).getCubeList());
 		}
 		return cubesList;
 	}
 
-	public List<CubePojo> getAllCubePojos() {
-		List<CubePojo> cubesList = new ArrayList<CubePojo>();
+	public CubesListRestPojo getAllCubePojos() {
+		CubesListRestPojo cubes = new CubesListRestPojo();
 		for (String connectionName : connections.keySet()) {
-			cubesList.addAll(getCubePojos(connectionName));
+			cubes.getCubeList().addAll(getCubePojos(connectionName).getCubeList());
 		}
-		return cubesList;
+		return cubes;
 	}
 
-	public Cube getCube(CubePojo cube) {
+	public Cube getCube(ICubePojo cube) {
 		try {
 			OlapConnection con = connections.get(cube.getConnectionName());
 			if (con != null ) {
