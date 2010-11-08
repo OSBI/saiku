@@ -3,22 +3,26 @@ package org.saiku.web.rest.service.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import javax.ws.rs.core.MediaType;
-
 import org.junit.Test;
 import org.saiku.olap.discover.pojo.CubesListRestPojo;
 import org.saiku.service.olap.OlapDiscoverService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 
-import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.test.framework.AppDescriptor;
+import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
 
-public class DataSourceInterfaceImplTest extends AbstractTest {
-	OlapDiscoverService olapDiscoverService;
+public class DataSourceInterfaceImplTest extends JerseyTest {
 
+    @Autowired
+    protected OlapDiscoverService olapDiscoverService = null;
+    
+    protected static ApplicationContext applicationContext = null;
     protected AppDescriptor configure() {
     	initTest();
     	
@@ -33,12 +37,17 @@ public class DataSourceInterfaceImplTest extends AbstractTest {
         
         
 }
-    
+    private final String[] contextFiles = new String[] { 
+            "/saiku-web/src/main/webapp/WEB-INF/saiku-beans.xml" //$NON-NLS-1$
+        };
     
     private void initTest() {
-        initTestContext();
-        this.olapDiscoverService = (OlapDiscoverService)applicationContext.getBean("olapDiscoverServiceBean"); //$NON-NLS-1$
-
+        
+        applicationContext = new FileSystemXmlApplicationContext(
+                contextFiles);
+      System.out.println("applicationContext: "+ applicationContext);   
+    olapDiscoverService = (OlapDiscoverService)applicationContext.getBean("olapDiscoverServiceBean");
+       
 }
 
 
@@ -111,11 +120,7 @@ public class DataSourceInterfaceImplTest extends AbstractTest {
 
     }
 
-    private void validateResponse(int i, MediaType applicationJsonType,
-			ClientResponse response) {
-		
-		
-	}
+    
 	@Test
     public void testGetHtmlSucceeds()
     {
