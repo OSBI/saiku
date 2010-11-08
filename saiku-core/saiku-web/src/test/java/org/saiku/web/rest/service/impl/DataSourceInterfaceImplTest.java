@@ -38,7 +38,7 @@ public class DataSourceInterfaceImplTest extends JerseyTest {
         
 }
     private final String[] contextFiles = new String[] { 
-            "/saiku-web/src/main/webapp/WEB-INF/saiku-beans.xml" //$NON-NLS-1$
+            "/src/main/webapp/WEB-INF/saiku-beans.xml" //$NON-NLS-1$
         };
     
     private void initTest() {
