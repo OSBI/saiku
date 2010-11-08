@@ -1,4 +1,4 @@
-package org.saiku.web.rest.service.impl;
+package org.saiku.web.rest.service;
 
 import java.util.Properties;
 
