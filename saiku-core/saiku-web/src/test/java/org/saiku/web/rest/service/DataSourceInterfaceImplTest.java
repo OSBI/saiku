@@ -122,7 +122,6 @@ public class DataSourceInterfaceImplTest extends JerseyTest {
     public void testGetJsonSucceeds()
     {
         WebResource webResource = resource();
-        String responseMsg = webResource.path("saiku").path("admin").path("datasources").get(String.class);
         CubesListRestPojo users = webResource.path("saiku").path("admin").path("datasources").accept("application/json").get(CubesListRestPojo.class);
         assertTrue(users != null);
         //assertTrue(users.length() == 1);
