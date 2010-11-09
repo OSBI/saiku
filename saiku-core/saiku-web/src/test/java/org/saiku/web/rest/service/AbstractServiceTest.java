@@ -30,7 +30,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
 
 @ContextConfiguration(locations = { "saiku-beans.xml" })
-//@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 public class AbstractServiceTest extends JerseyTest {
 
 	@Autowired
