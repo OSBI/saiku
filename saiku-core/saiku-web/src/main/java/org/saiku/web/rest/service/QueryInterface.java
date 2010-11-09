@@ -1,13 +1,18 @@
 package org.saiku.web.rest.service;
 
-import javax.ws.rs.DELETE;
+import javax.servlet.ServletException;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.saiku.web.rest.objects.QueryRestPojo;
+import org.saiku.olap.discover.pojo.QueryListRestPojo;
+import org.saiku.olap.discover.pojo.CubesListRestPojo.CubeRestPojo;
+import org.saiku.olap.discover.pojo.QueryListRestPojo.QueryRestPojo;
+import org.saiku.service.olap.OlapQueryService;
+import org.springframework.context.annotation.Scope;
 
 /**
  * 
@@ -15,18 +20,31 @@ import org.saiku.web.rest.objects.QueryRestPojo;
  *
  */
 @Path("/query")
+@Scope("request")
 public class QueryInterface {
 
+    OlapQueryService olapQueryService;
+    
+    public void setolapQueryService(OlapQueryService olapQueryService) {
+    	this.olapQueryService = olapQueryService;
+     }
+    
     /*
      * Query methods
      */
     
-//    /**
-//     * Get a list of open queries.
-//     */
-//    @GET
-//    @Produces({"application/xml","application/json" })
-//    public void listQueries();
+    /**
+     * Get a list of open queries.
+     */
+    @GET
+    @Produces({"application/xml","application/json" })
+    public QueryListRestPojo listQueries() {
+    	QueryListRestPojo queryList = new QueryListRestPojo();
+    	for (String queryName : olapQueryService.getQueries()) {
+    		queryList.addQuery(new QueryRestPojo(queryName));
+    	}
+    	return queryList;
+    }
 //    
 //    /**
 //     * Save a query.
@@ -48,9 +66,11 @@ public class QueryInterface {
       @POST
       @Produces({"application/xml","application/json" })
       @Path("/{queryname}")
-      public QueryRestPojo createQuery(){
-          
-          return null;
+      public void createQuery(@FormParam("connection") String connectionName, @FormParam("cube") String cubeName,
+          @FormParam("catalog") String catalog, @PathParam("schema") String schema, @PathParam("queryname") String queryName)
+          throws ServletException {
+    	  CubeRestPojo cube = new CubeRestPojo(connectionName, cubeName, catalog, schema);
+          olapQueryService.createNewOlapQuery(queryName, cube);
       }
 //    
 //    /*

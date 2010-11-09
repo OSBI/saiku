@@ -46,25 +46,25 @@ public class CubesListRestPojo {
         /**
          * A Connection Name.
          */
-        @XmlAttribute(name = "connectionname", required = false)
+        @XmlAttribute(name = "connection", required = false)
         private String connectionName;
 
         /**
          * A Cube Name.
          */
-        @XmlAttribute(name = "cubename", required = false)
+        @XmlAttribute(name = "cube", required = false)
         private String cubeName;
 
         /**
          * A Catalog.
          */
-        @XmlAttribute(name = "catalogname", required = false)
+        @XmlAttribute(name = "catalog", required = false)
         private String catalog;
 
         /**
          * A Schema Name.
          */
-		@XmlAttribute(name = "schemaname", required = false)
+		@XmlAttribute(name = "schema", required = false)
         private String schema;
 
 		public String getCatalog() {
