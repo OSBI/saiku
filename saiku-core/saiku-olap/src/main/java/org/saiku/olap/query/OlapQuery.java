@@ -36,8 +36,37 @@ public class OlapQuery {
 		return this.query.getUnusedAxis();
 	}
 	
+	public void moveDimension(QueryDimension dimension, Axis axis) {
+		QueryAxis oldQueryAxis = findAxis(dimension);
+		QueryAxis newQueryAxis = query.getAxis(axis);
+		if (oldQueryAxis != null && newQueryAxis != oldQueryAxis) {
+			if (!newQueryAxis.getDimensions().contains(dimension)) {
+				newQueryAxis.addDimension(dimension);	
+			}
+			oldQueryAxis.removeDimension(dimension);
+		}
+	}
+
+	
 	public QueryDimension getDimension(String name) {
 		return this.query.getDimension(name);
 	}
+	
+	private QueryAxis findAxis(QueryDimension dimension) {
+		if (query.getUnusedAxis().getDimensions().contains(dimension)) {
+			return query.getUnusedAxis();
+		}
+		else {
+			Map<Axis,QueryAxis> axes = query.getAxes();
+			for (Axis axis : axes.keySet()) {
+				if (axes.get(axis).getDimensions().contains(dimension)) {
+					return axes.get(axis);
+				}
+			}
+		
+		}
+		return null;
+	}
+
 	
 }
