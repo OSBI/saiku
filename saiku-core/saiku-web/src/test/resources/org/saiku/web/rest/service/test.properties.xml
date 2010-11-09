@@ -1,0 +1,34 @@
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+
+        <!--
+                Defines what URL will be used to create a testing Olap4j connection.
+         -->
+        <entry key="mondrian.url">jdbc:mondrian:Datasource=pat-mondrian;Catalog=src\test\resources\org\pentaho\pat\server\services\impl\SampleData.mondrian.xml</entry>
+       
+        <!--
+                Defines which Olap4j driver to use. Better keep it as in-process...
+         -->
+        <entry key="olap4j.driver">mondrian.olap4j.MondrianOlap4jDriver</entry>
+       
+        <!--
+                Defines where to initialize the testing database. Has to be the same place as defined
+                in mondrian.url.
+         -->
+        <entry key="context.jndi">pat-mondrian</entry>
+        <entry key="context.driver">org.hsqldb.jdbcDriver</entry>
+        <entry key="context.database">jdbc:hsqldb:mem:pat_mondrian;default_schema=true;type=cached;write_delay=false</entry>
+        <entry key="context.username">sa</entry>
+        <entry key="context.password"></entry>
+ 
+ 
+ 
+  <entry key="pat.jndi">pat-app-services-tests</entry>
+  <entry key="pat.driver">org.hsqldb.jdbcDriver</entry>
+  <entry key="pat.database">jdbc:hsqldb:mem:pat_app_services;default_schema=true;type=cached;write_delay=false</entry>
+  <entry key="pat.username">sa</entry>
+  <entry key="pat.password"></entry>
+
+</properties>
+
