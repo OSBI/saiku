@@ -6,7 +6,11 @@ import javax.ws.rs.Produces;
 
 import org.saiku.olap.discover.pojo.CubesListRestPojo;
 import org.saiku.service.olap.OlapDiscoverService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.test.context.ContextConfiguration;
 
 
 
@@ -15,14 +19,17 @@ import org.springframework.context.annotation.Scope;
  * @author tombarber
  *
  */
-@Scope("request")
+@Component
+@Scope("singleton")
 @Path("/saiku/{username}/datasources")
+@ContextConfiguration(locations = { "saiku-beans.xml" })
 public class DataSourceInterface {
 
-    
+	@Autowired
+	@Qualifier("olapDiscoverService")
     OlapDiscoverService olapDiscoverService;
     
-   public void setOlapDiscoverService(OlapDiscoverService olapds) {
+    public void setOlapDiscoverService(OlapDiscoverService olapds) {
         olapDiscoverService = olapds;
     }
     

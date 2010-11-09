@@ -63,7 +63,7 @@
 				<version>7.2.0.v20101020</version>
 				<configuration>
 					<webAppConfig>
-					<webApp>${basedir}/target/saiku-web-2.0-SNAPSHOT.war</webApp>
+					<!-- <webApp>${basedir}/target/saiku-web-2.0-SNAPSHOT.war</webApp> -->
 						<contextPath>/</contextPath>
 						<defaultsDescriptor>src/main/servers/jetty/dev/webdefault.xml</defaultsDescriptor>
 					</webAppConfig>
@@ -236,6 +236,16 @@
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-spring-app-rt</artifactId>
 			<version>1.20</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jettison</groupId>
+			<artifactId>jettison</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>1.8.0.10</version>
 		</dependency>
 	</dependencies>
 	<reporting>
