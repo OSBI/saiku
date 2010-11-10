@@ -24,6 +24,13 @@
 		</plugins>
 	</build>
 	<dependencies>
+    <dependency>
+                        <groupId>javacup</groupId>
+                        <artifactId>javacup</artifactId>
+                        <version>10k</version>
+            <scope>compile</scope>
+        </dependency>
+
 		<dependency>
 			<groupId>org.olap4j</groupId>
 			<artifactId>olap4j</artifactId>

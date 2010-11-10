@@ -1,5 +1,8 @@
 package org.saiku.web.rest.service;
 
+import javax.servlet.ServletException;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -41,12 +44,18 @@ public class QueryInterface {
      * Query methods
      */
     
-//    /**
-//     * Get a list of open queries.
-//     */
-//    @GET
-//    @Produces({"application/xml","application/json" })
-//    public void listQueries();
+    /**
+     * Get a list of open queries.
+     */
+    @GET
+    @Produces({"application/xml","application/json" })
+    public QueryListRestPojo listQueries() {
+    	QueryListRestPojo queryList = new QueryListRestPojo();
+    	for (String queryName : olapQueryService.getQueries()) {
+    		queryList.addQuery(new QueryRestPojo(queryName));
+    	}
+    	return queryList;
+    }
 //    
 //    /**
 //     * Save a query.

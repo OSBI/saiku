@@ -89,14 +89,7 @@ public class OlapQueryService {
 		OlapQuery query = queries.get(queryName);
 		QueryDimension dimension = query.getDimension(dimensionName);
 		Axis newAxis = Axis.Standard.valueOf(axisName);
-		QueryAxis oldQueryAxis = findAxis(query, dimension);
-		QueryAxis newQueryAxis = query.getAxis(newAxis);
-		if (newQueryAxis != oldQueryAxis) {
-			if (!newQueryAxis.getDimensions().contains(dimension)) {
-				newQueryAxis.addDimension(dimension);	
-			}
-			oldQueryAxis.removeDimension(dimension);
-		}
+		query.moveDimension(dimension, newAxis);
 	}
 	
 	public void removeDimension(String queryName, String axisName, String dimensionName) {
@@ -179,23 +172,7 @@ public class OlapQueryService {
 		}
 		clearAllQuerySelections(query);
 	}
-		
-	private QueryAxis findAxis(OlapQuery query, QueryDimension dimension) {
-		if (query.getUnusedAxis().getDimensions().contains(dimension)) {
-			return query.getUnusedAxis();
-		}
-		else {
-			Map<Axis,QueryAxis> axes = query.getAxes();
-			for (Axis axis : axes.keySet()) {
-				if (axes.get(axis).getDimensions().contains(dimension)) {
-					return axes.get(axis);
-				}
-			}
-		
-		}
-		return null;
-	}
-	
+			
 	private void clearAllAxisSelections(QueryAxis axis) {
 		for (QueryDimension dim : axis.getDimensions()) {
 			dim.clearInclusions();
