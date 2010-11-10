@@ -53,7 +53,13 @@ public class DataSourceTest {
         
         assertNotNull(cubes);
         
-        cubes.get(0);
+        assertEquals("SampleData",cubes.get(0).getCubeName());
+        
+        assertEquals("Quadrant Analysis", cubes.get(0).getSchema());
+        
+        assertEquals("SampleData", cubes.get(0).getCatalog());
+        
+        assertEquals("TestConnection1", cubes.get(0).getConnectionName());
         
         
     }

@@ -5,17 +5,22 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.saiku.olap.discover.pojo.CubesListRestPojo;
+import org.saiku.service.olap.OlapDiscoverService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sun.jersey.api.client.WebResource;
 
 
 public class DataSourceInterfaceTest extends AbstractServiceTest {
-
+    @Autowired
+    protected OlapDiscoverService olapDiscoverService = null;
   
 
 	@Test
     public void testGetJsonSucceeds()
     {
+	    DataSourceInterface dsi = new DataSourceInterface();
+        dsi.setOlapDiscoverService(olapDiscoverService);
         WebResource webResource = resource();
         CubesListRestPojo users = webResource.path("saiku").path("admin").path("datasources").accept("application/json").get(CubesListRestPojo.class);
         assertTrue(users != null);
