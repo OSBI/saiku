@@ -1,22 +1,42 @@
 package org.saiku.web.rest.service;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
-import org.saiku.web.rest.objects.QueryRestPojo;
+import org.saiku.olap.discover.pojo.CubesListRestPojo;
+import org.saiku.olap.discover.pojo.CubesListRestPojo.CubeRestPojo;
+import org.saiku.olap.query.OlapQuery;
+import org.saiku.service.olap.OlapDiscoverService;
+import org.saiku.service.olap.OlapQueryService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 
  * @author tombarber
  *
  */
-@Path("/query")
+@Path("/rest/{username}/query")
 public class QueryInterface {
 
+    
+    OlapQueryService olapQueryService;
+    
+    @Autowired
+   public void setOlapDiscoverService(OlapQueryService olapqs) {
+        olapQueryService = olapqs;
+    }
+   
+   OlapDiscoverService olapDiscoverService;
+   
+   @Autowired
+   public void setOlapDiscoverService(OlapDiscoverService olapds) {
+        olapDiscoverService = olapds;
+    }
     /*
      * Query methods
      */
@@ -48,9 +68,25 @@ public class QueryInterface {
       @POST
       @Produces({"application/xml","application/json" })
       @Path("/{queryname}")
-      public QueryRestPojo createQuery(){
+      public OlapQuery createQuery(@PathParam("queryname") String queryName, @QueryParam("connectionName") String connectionName, 
+              @QueryParam("schemaName") String schemaName, @QueryParam("cubeName") String cubeName ){
+          CubeRestPojo cube = null;
+          CubesListRestPojo cubes = olapDiscoverService.getAllCubes();
+          for(CubeRestPojo cubePojo : cubes.getCubeList()){
+              if(cubePojo.getConnectionName().equals(connectionName) && cubePojo.getSchema().equals(schemaName) && cubePojo.getCubeName().equals(cubeName)){
+                  cube = cubePojo;
+                  break;
+              }
+          }
+          if(cube != null){
+          olapQueryService.createNewOlapQuery(queryName, cube);
+          return null; //query model
+          }
+          else{
+              throw new WebApplicationException(Response.Status.NOT_FOUND);
+          }
           
-          return null;
+          
       }
 //    
 //    /*

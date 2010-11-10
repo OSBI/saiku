@@ -63,7 +63,6 @@
 				<version>7.2.0.v20101020</version>
 				<configuration>
 					<webAppConfig>
-					<webApp>${basedir}/target/saiku-web-2.0-SNAPSHOT.war</webApp>
 						<contextPath>/</contextPath>
 						<defaultsDescriptor>src/main/servers/jetty/dev/webdefault.xml</defaultsDescriptor>
 					</webAppConfig>
