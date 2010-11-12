@@ -21,7 +21,7 @@ public class OlapMetaExplorer {
 		connections = con;
 	}
 
-	public List<SaikuConnection> getConnectionPojos(String connectionName) {
+	public List<SaikuConnection> getConnections(String connectionName) {
 		OlapConnection olapcon = connections.get(connectionName);
 		List<SaikuConnection> connectionList = new ArrayList<SaikuConnection>();
 		if (olapcon != null) {
@@ -41,18 +41,18 @@ public class OlapMetaExplorer {
 
 	}
 
-	public List<SaikuConnection> getConnectionPojos(List<String> connectionNames) {
+	public List<SaikuConnection> getConnections(List<String> connectionNames) {
 		List<SaikuConnection> connectionList = new ArrayList<SaikuConnection>();
 		for (String connectionName : connectionNames) {
-			connectionList.addAll(getConnectionPojos(connectionName));
+			connectionList.addAll(getConnections(connectionName));
 		}
 		return connectionList;
 	}
 
-	public List<SaikuConnection> getAllConnectionPojos() {
+	public List<SaikuConnection> getAllConnections() {
 		List<SaikuConnection> cubesList = new ArrayList<SaikuConnection>();
 		for (String connectionName : connections.keySet()) {
-			cubesList.addAll(getConnectionPojos(connectionName));
+			cubesList.addAll(getConnections(connectionName));
 		}
 		return cubesList;
 	}
@@ -88,7 +88,7 @@ public class OlapMetaExplorer {
 		return cubesList;
 	}
 
-	public List<SaikuCube> getAllCubePojos() {
+	public List<SaikuCube> getAllCubes() {
 		List<SaikuCube> cubes = new ArrayList<SaikuCube>();
 		for (String connectionName : connections.keySet()) {
 			cubes.addAll(getCubes(connectionName));
