@@ -39,4 +39,13 @@
 		<property name="olapDiscoverService" ref="olapDiscoverService" />
 	</bean>
 	
+	<bean id="queryInterfaceBean" class="org.saiku.web.rest.service.QueryInterface">
+		<property name="olapQueryService" ref="olapQueryBean" />
+	</bean>
+	
+	<bean id="olapQueryBean" class="org.saiku.service.olap.OlapQueryService">
+		<property name="olapDiscoverService" ref="olapDiscoverService" />
+	</bean>
+	
+	
 </beans>

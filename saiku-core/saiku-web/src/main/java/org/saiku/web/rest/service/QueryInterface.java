@@ -23,9 +23,10 @@ import org.springframework.context.annotation.Scope;
 @Scope("request")
 public class QueryInterface {
 
-    OlapQueryService olapQueryService;
+    private OlapQueryService olapQueryService;
     
-    public void setolapQueryService(OlapQueryService olapQueryService) {
+    public void setOlapQueryService(OlapQueryService olapQueryService) {
+    	System.out.println("set olap:" + olapQueryService);
     	this.olapQueryService = olapQueryService;
      }
     
@@ -43,6 +44,7 @@ public class QueryInterface {
     	for (String queryName : olapQueryService.getQueries()) {
     		queryList.addQuery(new QueryRestPojo(queryName));
     	}
+    	queryList.addQuery(new QueryRestPojo("hugo"));
     	return queryList;
     }
 //    

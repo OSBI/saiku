@@ -37,12 +37,12 @@
 	</bean>
 
 	<bean id="olapQueryBean" class="org.saiku.service.olap.OlapQueryService">
-		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
+		<property name="olapDiscoverService" ref="olapDiscoverService" />
 	</bean>
 
 	
 	<bean id="datasourceInterfaceBean" class="org.saiku.web.rest.service.DataSourceInterface">
-		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
+		<property name="olapDiscoverService" ref="olapDiscoverService" />
 	</bean>
 	
 	<bean id="queryInterfaceBean" class="org.saiku.web.rest.service.QueryInterface">
