@@ -1,15 +1,15 @@
-package org.saiku.olap.discover.pojo;
+package org.saiku.olap.dto;
 
-public class ConnectionPojo {
+public class SaikuConnection {
 	
 	private String name;
 	private String catalog;
 	private String schema;
 
-	public ConnectionPojo(String _name, String _catalog, String _schema) {
-		name = _name;
-		catalog = _catalog;
-		schema = _schema;
+	public SaikuConnection(String name, String catalog, String schema) {
+		this.name = name;
+		this.catalog = catalog;
+		this.schema = schema;
 	}
 	
 	public String getName() {
