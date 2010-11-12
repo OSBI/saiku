@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.saiku.olap.discover.pojo.CubesListRestPojo;
+import org.saiku.web.rest.objects.CubesListRestPojo;
 
 import com.sun.jersey.api.client.WebResource;
 

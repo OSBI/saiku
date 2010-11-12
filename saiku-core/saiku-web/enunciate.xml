@@ -1,32 +1,31 @@
-<enunciate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-           xsi:noNamespaceSchemaLocation="http://enunciate.codehaus.org/schemas/enunciate-1.20.xsd">
-  
- <webapp mergeWebXML="web.xml"/> 
-  <modules>
-  
-  <spring-app>
-    <springImport file="src/main/webapp/WEB-INF/saiku-beans.xml"/>
-  </spring-app>
-    <jersey useSubcontext="true" disableWildcardServletError="false" disabled="false"></jersey>
-	<docs docsDir="docs" title="Saiku-web"/>	
-	<jaxws-ri disabled="true"/>
-	 <cxf disabled="true"/>
-      
-      <amf disabled="true"></amf>
-      <c disabled="true"/>
-      <csharp disabled="true"></csharp>
-      <gwt disabled="true"></gwt>
-      <jaxws disabled="false"/>
-      <jaxws-client disabled="true"></jaxws-client>
-      <obj-c disabled="true"></obj-c>
-      <rest disabled="true"></rest>
-      <ruby disabled="true"></ruby>
-      <spring-app disabled="true"></spring-app>
-      <xfire disabled="true"/>
-      <xfire-client disabled="true"></xfire-client>
-      <xml disabled="true"></xml>
-      
-      
-  </modules>
-  
+<enunciate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://enunciate.codehaus.org/schemas/enunciate-1.20.xsd">
+
+	<webapp mergeWebXML="src/main/webapp/WEB-INF/web.xml" />
+	<modules>
+		<spring-app>
+			<springImport file="src/main/webapp/WEB-INF/saiku-beans.xml" />
+		</spring-app>
+		<jersey useSubcontext="true" disableWildcardServletError="false"
+			disabled="false"></jersey>
+		<jaxws disabled="false" />
+
+		<docs docsDir="docs" title="Saiku-web" />
+
+		<jaxws-ri disabled="true" />
+		<cxf disabled="true" />
+		<amf disabled="true"></amf>
+		<c disabled="true" />
+		<csharp disabled="true"></csharp>
+		<gwt disabled="true"></gwt>
+		<jaxws-client disabled="true"></jaxws-client>
+		<obj-c disabled="true"></obj-c>
+		<rest disabled="true"></rest>
+		<ruby disabled="true"></ruby>
+		<spring-app disabled="true"></spring-app>
+		<xfire disabled="true" />
+		<xfire-client disabled="true"></xfire-client>
+		<xml disabled="true"></xml>
+	</modules>
+
 </enunciate>

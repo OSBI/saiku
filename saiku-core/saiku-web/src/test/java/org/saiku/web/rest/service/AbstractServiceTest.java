@@ -15,14 +15,12 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import org.hsqldb.jdbc.jdbcDataSource;
-import org.junit.runner.RunWith;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
 import org.olap4j.OlapWrapper;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.test.framework.AppDescriptor;

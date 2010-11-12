@@ -1,4 +1,4 @@
-package org.saiku.web.rest.service;
+package org.saiku.web.rest.servlet;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -10,7 +10,7 @@ import javax.ws.rs.Produces;
  *
  */
 @Path("/saiku/session")
-public class SessionInterface {
+public class SessionServlet {
 
     /**
      * Creates a session.

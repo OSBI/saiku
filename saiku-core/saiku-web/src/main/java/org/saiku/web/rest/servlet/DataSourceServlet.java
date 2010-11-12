@@ -1,16 +1,13 @@
-package org.saiku.web.rest.service;
+package org.saiku.web.rest.servlet;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import org.saiku.olap.discover.pojo.CubesListRestPojo;
 import org.saiku.service.olap.OlapDiscoverService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.saiku.web.rest.objects.CubesListRestPojo;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.test.context.ContextConfiguration;
 
 
 
@@ -20,13 +17,10 @@ import org.springframework.test.context.ContextConfiguration;
  *
  */
 @Component
-@Scope("singleton")
 @Path("/saiku/{username}/datasources")
-@ContextConfiguration(locations = { "saiku-beans.xml" })
-public class DataSourceInterface {
+@Scope("request")
+public class DataSourceServlet {
 
-	@Autowired
-	@Qualifier("olapDiscoverService")
     OlapDiscoverService olapDiscoverService;
     
     public void setOlapDiscoverService(OlapDiscoverService olapds) {
@@ -39,7 +33,7 @@ public class DataSourceInterface {
     @GET
     @Produces({"application/xml","application/json" })
      public CubesListRestPojo getCubes() {
-        CubesListRestPojo cubes = olapDiscoverService.getAllCubes();
+        CubesListRestPojo cubes = new CubesListRestPojo(olapDiscoverService.getAllCubes());
         return cubes;
         
     }

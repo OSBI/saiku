@@ -1,7 +1,5 @@
 package org.saiku.web.rest.service.impl;
 
-import java.util.Properties;
-
 import org.saiku.service.olap.OlapDiscoverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
