@@ -6,9 +6,11 @@
 		<version>2.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
+	<name>saiku - datasources</name>
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-datasources</artifactId>
 	<version>2.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<build>
 		<plugins>
 			<plugin>
@@ -24,13 +26,6 @@
 		</plugins>
 	</build>
 	<dependencies>
-    <dependency>
-                        <groupId>javacup</groupId>
-                        <artifactId>javacup</artifactId>
-                        <version>10k</version>
-            <scope>compile</scope>
-        </dependency>
-
 		<dependency>
 			<groupId>org.olap4j</groupId>
 			<artifactId>olap4j</artifactId>
