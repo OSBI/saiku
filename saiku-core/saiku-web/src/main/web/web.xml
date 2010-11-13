@@ -10,6 +10,10 @@
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 
+<init-param>
+<param-name>com.sun.jersey.config.property.packages</param-name>
+<param-value>org.saiku.web</param-value>
+</init-param>
       <context-param>
 	                <param-name>contextConfigLocation</param-name>
 	                <param-value>
