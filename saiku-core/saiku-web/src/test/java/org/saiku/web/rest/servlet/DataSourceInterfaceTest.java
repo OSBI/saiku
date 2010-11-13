@@ -1,11 +1,11 @@
-package org.saiku.web.rest.service;
+package org.saiku.web.rest.servlet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.saiku.olap.discover.pojo.CubesListRestPojo;
 import org.saiku.service.olap.OlapDiscoverService;
+import org.saiku.web.rest.objects.CubesListRestPojo;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sun.jersey.api.client.WebResource;
@@ -19,7 +19,7 @@ public class DataSourceInterfaceTest extends AbstractServiceTest {
 	@Test
     public void testGetJsonSucceeds()
     {
-	    DataSourceInterface dsi = new DataSourceInterface();
+	    DataSourceServlet dsi = new DataSourceServlet();
         dsi.setOlapDiscoverService(olapDiscoverService);
         WebResource webResource = resource();
         CubesListRestPojo users = webResource.path("saiku").path("admin").path("datasources").accept("application/json").get(CubesListRestPojo.class);

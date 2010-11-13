@@ -1,4 +1,4 @@
-package org.saiku.web.rest.service;
+package org.saiku.web.rest.servlet;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -48,7 +48,7 @@ public class AbstractServiceTest extends JerseyTest {
 		// initTest();
 
 		WebAppDescriptor wd = new WebAppDescriptor.Builder(
-				"org.saiku.web.rest.service").contextPath("/")
+				"org.saiku.web.rest.servlet").contextPath("/")
 				.contextParam("", "").clientConfig(new DefaultClientConfig()).build();
 
 		return wd;

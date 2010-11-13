@@ -1,4 +1,4 @@
-package org.saiku.olap.discover.pojo;
+package org.saiku.web.rest.objects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +32,8 @@ public class QueryListRestPojo {
      * @author tombarber, pstoellberger
      *
      */
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlRootElement(name="query")
     public static class QueryRestPojo {
     	
         public QueryRestPojo() {
@@ -64,7 +66,7 @@ public class QueryListRestPojo {
 //		}
     }
     
-    @XmlElement(name = "query")
+    @XmlElement(name = "querylist")
     private List<QueryRestPojo> queryList = new ArrayList<QueryRestPojo>();
 
     public QueryListRestPojo() {

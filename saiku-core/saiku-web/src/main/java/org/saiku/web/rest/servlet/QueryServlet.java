@@ -1,4 +1,4 @@
-package org.saiku.web.rest.service;
+package org.saiku.web.rest.servlet;
 
 import javax.servlet.ServletException;
 import javax.ws.rs.FormParam;
@@ -11,23 +11,25 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import org.saiku.olap.discover.pojo.CubesListRestPojo;
-import org.saiku.olap.discover.pojo.CubesListRestPojo.CubeRestPojo;
-import org.saiku.olap.query.OlapQuery;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
+import org.saiku.web.rest.objects.QueryListRestPojo;
+import org.saiku.web.rest.objects.CubesListRestPojo.CubeRestPojo;
+import org.saiku.web.rest.objects.QueryListRestPojo.QueryRestPojo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+@Component
+@Path("/query")
+@Scope("request")
+public class QueryServlet {
 
-/**
- * 
- * @author tombarber
- *
- */
-@Path("/rest/{username}/query")
-public class QueryInterface {
-
+    private OlapQueryService olapQueryService;
     
-    OlapQueryService olapQueryService;
+    public void setOlapQueryService(OlapQueryService olapQueryService) {
+    	System.out.println("set olap:" + olapQueryService);
+    	this.olapQueryService = olapQueryService;
+     }
     
     @Autowired
    public void setOlapDiscoverService(OlapQueryService olapqs) {
@@ -54,6 +56,7 @@ public class QueryInterface {
     	for (String queryName : olapQueryService.getQueries()) {
     		queryList.addQuery(new QueryRestPojo(queryName));
     	}
+    	queryList.addQuery(new QueryRestPojo("hugo"));
     	return queryList;
     }
 //    
@@ -77,25 +80,12 @@ public class QueryInterface {
       @POST
       @Produces({"application/xml","application/json" })
       @Path("/{queryname}")
-      public OlapQuery createQuery(@PathParam("queryname") String queryName, @QueryParam("connectionName") String connectionName, 
-              @QueryParam("schemaName") String schemaName, @QueryParam("cubeName") String cubeName ){
-          CubeRestPojo cube = null;
-          CubesListRestPojo cubes = olapDiscoverService.getAllCubes();
-          for(CubeRestPojo cubePojo : cubes.getCubeList()){
-              if(cubePojo.getConnectionName().equals(connectionName) && cubePojo.getSchema().equals(schemaName) && cubePojo.getCubeName().equals(cubeName)){
-                  cube = cubePojo;
-                  break;
-              }
-          }
-          if(cube != null){
-          olapQueryService.createNewOlapQuery(queryName, cube);
-          return null; //query model
-          }
-          else{
-              throw new WebApplicationException(Response.Status.NOT_FOUND);
-          }
-          
-          
+
+      public void createQuery(@FormParam("connection") String connectionName, @FormParam("cube") String cubeName,
+          @FormParam("catalog") String catalog, @PathParam("schema") String schema, @PathParam("queryname") String queryName)
+          throws ServletException {
+    	  CubeRestPojo cube = new CubeRestPojo(connectionName, cubeName, catalog, schema);
+          olapQueryService.createNewOlapQuery(queryName, cube.toNativeObject());
       }
 //    
 //    /*

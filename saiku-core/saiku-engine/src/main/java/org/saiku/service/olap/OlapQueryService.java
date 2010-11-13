@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
+import org.olap4j.Axis.Standard;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
@@ -14,10 +15,8 @@ import org.olap4j.metadata.Member;
 import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
-import org.saiku.olap.discover.pojo.ICubePojo;
-import org.saiku.olap.query.IAxis;
+import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.query.OlapQuery;
-import org.saiku.olap.query.IAxis.Standard;
 
 public class OlapQueryService {
 	
@@ -29,7 +28,7 @@ public class OlapQueryService {
 		olapDiscoverService = os;
 	}
 	
-	public boolean createNewOlapQuery(String queryName, ICubePojo cube) {
+	public boolean createNewOlapQuery(String queryName, SaikuCube cube) {
 		try {
 			Cube cub = olapDiscoverService.getCube(cube);
 			if (cub != null) {
@@ -63,7 +62,7 @@ public class OlapQueryService {
 	
 	public List<String> getAxes() {
 		List<String> axes = new ArrayList<String>();
-		for (Standard axis : IAxis.Standard.values()) {
+		for (Standard axis : Axis.Standard.values()) {
 			axes.add(axis.toString());
 		}
 		return axes;
@@ -71,7 +70,7 @@ public class OlapQueryService {
 	
 	public List<String> getDimensions(String queryName, String axis) {
 		OlapQuery q = queries.get(queryName);
-		IAxis tmpAxis = IAxis.forName(axis);
+		Axis.Standard tmpAxis = Standard.valueOf(axis);
 		List<String> dimensions = new ArrayList<String>();
 
 		if (tmpAxis != null) {
@@ -101,7 +100,7 @@ public class OlapQueryService {
 	
 	public List<String> getDimension(String queryName, String axis) {
 		OlapQuery q = queries.get(queryName);
-		IAxis tmpAxis = IAxis.forName(axis);
+		Axis.Standard tmpAxis = Axis.Standard.valueOf(axis);
 		List<String> dimensions = new ArrayList<String>();
 
 		if (tmpAxis != null) {

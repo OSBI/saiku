@@ -1,4 +1,4 @@
-package org.saiku.olap.discover.pojo;
+package org.saiku.web.rest.objects;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.saiku.olap.dto.SaikuCube;
 
 
 /**
@@ -32,15 +34,15 @@ public class CubesListRestPojo {
      * @author tombarber, pstoellberger
      *
      */
-    public static class CubeRestPojo implements ICubePojo {
+    public static class CubeRestPojo {
         public CubeRestPojo(){
         	throw new RuntimeException("Unsupported Constructor. Serialization only");
         }
-        public CubeRestPojo(String _connectionName, String _cubeName, String _catalog, String _schema) {
-            this.connectionName = _connectionName;
-            this.cubeName = _cubeName;
-            this.catalog = _catalog;
-            this.schema = _schema;
+        public CubeRestPojo(String connectionName, String cubeName, String catalog, String schema) {
+            this.connectionName = connectionName;
+            this.cubeName = cubeName;
+            this.catalog = catalog;
+            this.schema = schema;
         }
 
         /**
@@ -79,6 +81,10 @@ public class CubesListRestPojo {
 		public String getSchema() {
 			return schema;
 		}
+		
+		public SaikuCube toNativeObject() {
+			return new SaikuCube(connectionName, cubeName, catalog, schema);
+		}
     }
     
     @XmlElement(name = "datasource")
@@ -87,6 +93,11 @@ public class CubesListRestPojo {
     public CubesListRestPojo() {
     }
 
+    public CubesListRestPojo(List<SaikuCube> cubes) {
+    	for (SaikuCube cube : cubes) {
+    		cubeList.add(new CubeRestPojo(cube.getConnectionName(), cube.getCubeName(), cube.getCatalog(), cube.getSchema()));
+    	}
+    }
     public void addCube(CubeRestPojo cubePojo) {
         cubeList.add(cubePojo);
     }

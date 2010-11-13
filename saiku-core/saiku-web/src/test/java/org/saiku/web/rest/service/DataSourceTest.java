@@ -11,8 +11,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.saiku.olap.discover.pojo.CubesListRestPojo.CubeRestPojo;
 import org.saiku.service.olap.OlapDiscoverService;
+import org.saiku.web.rest.objects.CubesListRestPojo.CubeRestPojo;
+import org.saiku.web.rest.servlet.DataSourceServlet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -47,7 +48,7 @@ public class DataSourceTest {
      */
     @Test
     public void testGetCubes() {
-        DataSourceInterface dsi = new DataSourceInterface();
+        DataSourceServlet dsi = new DataSourceServlet();
         dsi.setOlapDiscoverService(olapDiscoverService);
         List<CubeRestPojo> cubes = dsi.getCubes().getCubeList();
         

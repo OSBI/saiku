@@ -10,10 +10,8 @@ import org.olap4j.OlapException;
 import org.olap4j.metadata.Catalog;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Schema;
-import org.saiku.olap.discover.pojo.ConnectionPojo;
-import org.saiku.olap.discover.pojo.CubesListRestPojo;
-import org.saiku.olap.discover.pojo.ICubePojo;
-import org.saiku.olap.discover.pojo.CubesListRestPojo.CubeRestPojo;
+import org.saiku.olap.dto.SaikuConnection;
+import org.saiku.olap.dto.SaikuCube;
 
 public class OlapMetaExplorer {
 
@@ -23,14 +21,14 @@ public class OlapMetaExplorer {
 		connections = con;
 	}
 
-	public List<ConnectionPojo> getConnectionPojos(String connectionName) {
+	public List<SaikuConnection> getConnections(String connectionName) {
 		OlapConnection olapcon = connections.get(connectionName);
-		List<ConnectionPojo> connectionList = new ArrayList<ConnectionPojo>();
+		List<SaikuConnection> connectionList = new ArrayList<SaikuConnection>();
 		if (olapcon != null) {
 			for (Catalog cat : olapcon.getCatalogs()) {
 				try {
 					for (Schema schem : cat.getSchemas()) {
-						connectionList.add(new ConnectionPojo(connectionName, cat.getName(), schem.getName()));
+						connectionList.add(new SaikuConnection(connectionName, cat.getName(), schem.getName()));
 					}
 				} catch (OlapException e) {
 					// TODO Auto-generated catch block
@@ -43,32 +41,32 @@ public class OlapMetaExplorer {
 
 	}
 
-	public List<ConnectionPojo> getConnectionPojos(List<String> connectionNames) {
-		List<ConnectionPojo> connectionList = new ArrayList<ConnectionPojo>();
+	public List<SaikuConnection> getConnections(List<String> connectionNames) {
+		List<SaikuConnection> connectionList = new ArrayList<SaikuConnection>();
 		for (String connectionName : connectionNames) {
-			connectionList.addAll(getConnectionPojos(connectionName));
+			connectionList.addAll(getConnections(connectionName));
 		}
 		return connectionList;
 	}
 
-	public List<ConnectionPojo> getAllConnectionPojos() {
-		List<ConnectionPojo> cubesList = new ArrayList<ConnectionPojo>();
+	public List<SaikuConnection> getAllConnections() {
+		List<SaikuConnection> cubesList = new ArrayList<SaikuConnection>();
 		for (String connectionName : connections.keySet()) {
-			cubesList.addAll(getConnectionPojos(connectionName));
+			cubesList.addAll(getConnections(connectionName));
 		}
 		return cubesList;
 	}
 
 
-	public CubesListRestPojo getCubePojos(String connectionName) {
+	public List<SaikuCube> getCubes(String connectionName) {
 		OlapConnection olapcon = connections.get(connectionName);
-		CubesListRestPojo cubes = new CubesListRestPojo();
+		List<SaikuCube> cubes = new ArrayList<SaikuCube>();
 		if (olapcon != null) {
 			for (Catalog cat : olapcon.getCatalogs()) {
 				try {
 					for (Schema schem : cat.getSchemas()) {
 						for (Cube cub : schem.getCubes()) {
-							cubes.addCube(new CubeRestPojo(connectionName, cat.getName(), schem.getName(), cub.getName()));
+							cubes.add(new SaikuCube(connectionName, cat.getName(), schem.getName(), cub.getName()));
 						}
 					}
 				} catch (OlapException e) {
@@ -82,23 +80,23 @@ public class OlapMetaExplorer {
 
 	}
 
-	public CubesListRestPojo getCubePojos(List<String> connectionNames) {
-		CubesListRestPojo cubesList = new CubesListRestPojo();
+	public List<SaikuCube> getCubes(List<String> connectionNames) {
+		List<SaikuCube> cubesList = new ArrayList<SaikuCube>();
 		for (String connectionName : connectionNames) {
-			cubesList.getCubeList().addAll(getCubePojos(connectionName).getCubeList());
+			cubesList.addAll(getCubes(connectionName));
 		}
 		return cubesList;
 	}
 
-	public CubesListRestPojo getAllCubePojos() {
-		CubesListRestPojo cubes = new CubesListRestPojo();
+	public List<SaikuCube> getAllCubes() {
+		List<SaikuCube> cubes = new ArrayList<SaikuCube>();
 		for (String connectionName : connections.keySet()) {
-			cubes.getCubeList().addAll(getCubePojos(connectionName).getCubeList());
+			cubes.addAll(getCubes(connectionName));
 		}
 		return cubes;
 	}
 
-	public Cube getCube(ICubePojo cube) {
+	public Cube getCube(SaikuCube cube) {
 		try {
 			OlapConnection con = connections.get(cube.getConnectionName());
 			if (con != null ) {
