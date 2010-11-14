@@ -10,7 +10,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 
 
 
-public class AbstractTest extends JerseyTest {
+public abstract class AbstractTest extends JerseyTest {
 
     @Autowired
     protected OlapDiscoverService olapDiscoverService = null;
