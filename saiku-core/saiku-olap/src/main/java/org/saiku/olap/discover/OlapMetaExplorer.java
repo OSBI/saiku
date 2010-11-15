@@ -66,7 +66,7 @@ public class OlapMetaExplorer {
 				try {
 					for (Schema schem : cat.getSchemas()) {
 						for (Cube cub : schem.getCubes()) {
-							cubes.add(new SaikuCube(connectionName, cat.getName(), schem.getName(), cub.getName()));
+							cubes.add(new SaikuCube(connectionName, cub.getName(), cat.getName(), schem.getName()));
 						}
 					}
 				} catch (OlapException e) {

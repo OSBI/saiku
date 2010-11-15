@@ -53,8 +53,8 @@ public class DataSourceInterfaceTest extends AbstractServiceTest {
         CubeRestPojo cube = cubes.getCubeList().get(0);
         assertEquals(cube.getCatalog(), "SampleData");
         assertEquals(cube.getConnectionName(), "TestConnection1");
-        assertEquals(cube.getCubeName(), "SampleData");
-        assertEquals(cube.getSchema(), "Quadrant Analysis");
+        assertEquals(cube.getCubeName(),"Quadrant Analysis");
+        assertEquals(cube.getSchema(), "SampleData");
     }
     
     @Test
