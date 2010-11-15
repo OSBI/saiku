@@ -1,6 +1,7 @@
 package org.saiku.web.rest.servlet;
 
 import javax.servlet.ServletException;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -10,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
@@ -67,13 +69,22 @@ public class QueryServlet {
 //    @Path("/{queryname}")
 //    public void saveQuery();
 //    
-//    /**
-//     * Delete query.
-//     */
-//    @DELETE
-//    @Path("/{queryname}")
-//    public void deleteQuery();
-//    
+    /**
+     * Delete query.
+     * @return 
+     */
+    @DELETE
+    @Path("/{queryname}")
+    public Status deleteQuery(@PathParam("queryname") String queryName){
+    	try{
+    	olapQueryService.deleteQuery(queryName);
+    	return(Status.GONE);
+    	}
+    	catch(Exception e){
+    		return(Status.NOT_FOUND);
+    	}
+    }
+    
     /**
      * Create Query.
      */
