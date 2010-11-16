@@ -15,17 +15,16 @@
 		<jaxws-ri disabled="true" />
 		<cxf disabled="true" />
 		<amf disabled="true"></amf>
-		<c disabled="true" />
+		<c disabled="false" forceEnable="true"/>
 		<csharp disabled="true"></csharp>
-		<gwt disabled="true"></gwt>
+		<gwt disabled="false"></gwt>
 		<jaxws-client disabled="true"></jaxws-client>
-		<obj-c disabled="true"></obj-c>
+		<obj-c disabled="false" forceEnable="true"></obj-c>
 		<rest disabled="true"></rest>
-		<ruby disabled="true"></ruby>
-		<spring-app disabled="true"></spring-app>
+		<ruby disabled="false" forceEnable="true"></ruby>
 		<xfire disabled="true" />
 		<xfire-client disabled="true"></xfire-client>
-		<xml disabled="true"></xml>
+		<xml disabled="false" ></xml>
 	</modules>
 
 </enunciate>
