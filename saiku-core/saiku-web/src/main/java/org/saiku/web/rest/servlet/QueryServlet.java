@@ -8,22 +8,27 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
+import com.sun.jersey.core.hypermedia.HypermediaController.LinkType;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
-import org.saiku.web.rest.objects.QueryListRestPojo;
+import org.saiku.web.rest.objects.AxisListRestPojo;
 import org.saiku.web.rest.objects.CubesListRestPojo.CubeRestPojo;
+import org.saiku.web.rest.objects.QueryListRestPojo;
 import org.saiku.web.rest.objects.QueryListRestPojo.QueryRestPojo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import com.sun.jersey.core.hypermedia.HypermediaController;
+
 @Component
 @Path("/query")
 @Scope("request")
+@HypermediaController(
+    model=QueryListRestPojo.class,
+    linkType=LinkType.LINK_HEADERS
+    )
 public class QueryServlet {
 
     private OlapQueryService olapQueryService;
@@ -91,26 +96,29 @@ public class QueryServlet {
       @POST
       @Produces({"application/xml","application/json" })
       @Path("/{queryname}")
-
       public void createQuery(@FormParam("connection") String connectionName, @FormParam("cube") String cubeName,
           @FormParam("catalog") String catalog, @PathParam("schema") String schema, @PathParam("queryname") String queryName)
           throws ServletException {
     	  CubeRestPojo cube = new CubeRestPojo(connectionName, cubeName, catalog, schema);
           olapQueryService.createNewOlapQuery(queryName, cube.toNativeObject());
       }
-//    
-//    /*
-//     * Axis Methods.
-//     */
-//    
-//    /**
-//     * Get Axis Info.
-//     */
-//    @GET
-//    @Produces({"application/xml","application/json" })
-//    @Path("/{queryname}/{axis}")
-//    public void getAxisInfo();
-//    
+    
+    /*
+     * Axis Methods.
+     */
+    
+    /**
+     * Get Axis Info.
+     * @return 
+     */
+    @GET
+    @Produces({"application/xml","application/json" })
+    @Path("/{queryname}/{axis}")
+    public AxisListRestPojo getAxisInfo(){
+    	
+    	return new AxisListRestPojo(olapQueryService.getAxes());
+    }
+    
 //    /*
 //     * Dimension Methods
 //     */
