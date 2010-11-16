@@ -6,7 +6,6 @@ import javax.ws.rs.Produces;
 
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.web.rest.objects.CubesListRestPojo;
-import org.saiku.web.rest.objects.QueryListRestPojo;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

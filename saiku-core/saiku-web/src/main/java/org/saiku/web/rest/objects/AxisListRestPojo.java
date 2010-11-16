@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name="Axes")
+@XmlRootElement(name="axes")
 public class AxisListRestPojo {
 
 	  public static class AxisRestPojo {
@@ -26,7 +26,7 @@ public class AxisListRestPojo {
 	        /**
 	         * A Axis Name.
 	         */
-	        @XmlAttribute(name = "connection", required = false)
+	        @XmlAttribute(name = "axisname", required = false)
 	        private String axisName;
 
 			public String toNativeObject() {
@@ -34,7 +34,7 @@ public class AxisListRestPojo {
 			}
 	    }
 	  
-	    @XmlElement(name = "datasource")
+	    @XmlElement(name = "axis")
 	    private List<AxisRestPojo> axisList = new ArrayList<AxisRestPojo>();
 
 	    public AxisListRestPojo() {

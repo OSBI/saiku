@@ -100,15 +100,24 @@ public class OlapQueryService {
 	
 	public List<String> getDimension(String queryName, String axis) {
 		OlapQuery q = queries.get(queryName);
-		Axis.Standard tmpAxis = Axis.Standard.valueOf(axis);
+		Axis.Standard tmpAxis = null;
+		
+		if(!axis.equals("UNUSED"))
+		tmpAxis = Axis.Standard.valueOf(axis);
+		
 		List<String> dimensions = new ArrayList<String>();
 
 		if (tmpAxis != null) {
-			int ord = tmpAxis.axisOrdinal();
-			QueryAxis qa = q.getAxis(Axis.Factory.forOrdinal(ord));
+			QueryAxis qa = q.getAxis(Axis.Factory.forOrdinal(tmpAxis.axisOrdinal()));
 			for (QueryDimension dim : qa.getDimensions()) {
 				dimensions.add(dim.getName());
 			}
+		}
+		else if (axis.equals("UNUSED")){
+		    QueryAxis qa = q.getAxis(null);
+            for (QueryDimension dim : qa.getDimensions()) {
+                dimensions.add(dim.getName());
+            }
 		}
 		return dimensions;
 		

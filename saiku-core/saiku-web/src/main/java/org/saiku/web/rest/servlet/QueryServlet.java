@@ -13,6 +13,7 @@ import com.sun.jersey.core.hypermedia.HypermediaController.LinkType;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.web.rest.objects.AxisListRestPojo;
+import org.saiku.web.rest.objects.DimensionListRestPojo;
 import org.saiku.web.rest.objects.CubesListRestPojo.CubeRestPojo;
 import org.saiku.web.rest.objects.QueryListRestPojo;
 import org.saiku.web.rest.objects.QueryListRestPojo.QueryRestPojo;
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Component;
 import com.sun.jersey.core.hypermedia.HypermediaController;
 
 @Component
-@Path("/query")
+@Path("/saiku/{username}/query")
 @Scope("request")
 @HypermediaController(
     model=QueryListRestPojo.class,
@@ -97,7 +98,7 @@ public class QueryServlet {
       @Produces({"application/xml","application/json" })
       @Path("/{queryname}")
       public void createQuery(@FormParam("connection") String connectionName, @FormParam("cube") String cubeName,
-          @FormParam("catalog") String catalog, @PathParam("schema") String schema, @PathParam("queryname") String queryName)
+          @FormParam("catalog") String catalog, @FormParam("schema") String schema, @PathParam("queryname") String queryName)
           throws ServletException {
     	  CubeRestPojo cube = new CubeRestPojo(connectionName, cubeName, catalog, schema);
           olapQueryService.createNewOlapQuery(queryName, cube.toNativeObject());
@@ -114,9 +115,9 @@ public class QueryServlet {
     @GET
     @Produces({"application/xml","application/json" })
     @Path("/{queryname}/{axis}")
-    public AxisListRestPojo getAxisInfo(){
+    public DimensionListRestPojo getAxisInfo(@PathParam("queryname") String queryName, @PathParam("axis") String axisName){
     	
-    	return new AxisListRestPojo(olapQueryService.getAxes());
+    	return new DimensionListRestPojo(olapQueryService.getDimension(queryName, axisName));
     }
     
 //    /*
