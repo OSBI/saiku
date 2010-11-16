@@ -38,7 +38,7 @@
 			<repository>
 			<id>java</id>
 			<url>http://download.java.net/maven/2/</url>
-			<snapshots><enabled>false</enabled></snapshots>
+			<snapshots><enabled>true</enabled></snapshots>
 		</repository>
 	</repositories>
 	<build>
