@@ -114,7 +114,7 @@ public class OlapQueryService {
 			}
 		}
 		else if (axis.equals("UNUSED")){
-		    QueryAxis qa = q.getAxis(null);
+		    QueryAxis qa = q.getUnusedAxis();
             for (QueryDimension dim : qa.getDimensions()) {
                 dimensions.add(dim.getName());
             }
