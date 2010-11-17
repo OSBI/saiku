@@ -1,0 +1,46 @@
+package org.saiku.web.rest.objects;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
+
+/**
+ * A Query Pojo for the rest interface.
+ * @author pstoellberger
+ *
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement(name="queries")
+public  class QueryRestPojo extends AbstractRestObject {
+
+	public QueryRestPojo() {
+		throw new RuntimeException("Unsupported Constructor. Serialization only");
+	}
+
+	public QueryRestPojo(String name) {
+		// this.cube = cube;
+		this.queryName = name;
+	}
+
+	/**
+	 * A Connection Name.
+	 */
+	//        @XmlAttribute(name = "cube", required = false)
+	//        private CubeRestPojo cube;
+
+	/**
+	 * A Cube Name.
+	 */
+	@XmlAttribute(name = "name", required = false)
+	private String queryName;
+
+	public String getName() {
+		return queryName;
+	}
+
+	//		public CubeRestPojo getCube() {
+	//			return cube;
+	//		}
+}

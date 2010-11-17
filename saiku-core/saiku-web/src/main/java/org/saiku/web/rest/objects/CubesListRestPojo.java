@@ -34,7 +34,7 @@ public class CubesListRestPojo {
      * @author tombarber, pstoellberger
      *
      */
-    public static class CubeRestPojo {
+    public static class CubeRestPojo extends AbstractRestObject {
         public CubeRestPojo(){
         	throw new RuntimeException("Unsupported Constructor. Serialization only");
         }

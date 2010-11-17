@@ -1,11 +1,16 @@
 package org.saiku.web.rest.servlet;
 
+import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.saiku.olap.dto.SaikuCube;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.web.rest.objects.CubesListRestPojo;
+import org.saiku.web.rest.objects.RestList;
+import org.saiku.web.rest.objects.CubesListRestPojo.CubeRestPojo;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -38,8 +43,11 @@ public class DataSourceServlet {
      */
     @GET
     @Produces({"application/xml","application/json" })
-     public CubesListRestPojo getCubes() {
-        CubesListRestPojo cubes = new CubesListRestPojo(olapDiscoverService.getAllCubes());
+     public List<CubeRestPojo> getCubes() {
+    	List<CubeRestPojo> cubes = new RestList<CubeRestPojo>();
+    	for (SaikuCube cube : olapDiscoverService.getAllCubes()) {
+    		cubes.add(new CubeRestPojo(cube.getConnectionName(), cube.getCubeName(), cube.getCatalog(), cube.getSchema()));
+    	}
         return cubes;
         
     }

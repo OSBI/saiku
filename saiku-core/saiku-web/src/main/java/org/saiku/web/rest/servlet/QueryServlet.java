@@ -1,5 +1,8 @@
 package org.saiku.web.rest.servlet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -9,27 +12,25 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response.Status;
-import com.sun.jersey.core.hypermedia.HypermediaController.LinkType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
-import org.saiku.web.rest.objects.AxisListRestPojo;
 import org.saiku.web.rest.objects.DimensionListRestPojo;
+import org.saiku.web.rest.objects.QueryRestPojo;
+import org.saiku.web.rest.objects.RestList;
 import org.saiku.web.rest.objects.CubesListRestPojo.CubeRestPojo;
-import org.saiku.web.rest.objects.QueryListRestPojo;
-import org.saiku.web.rest.objects.QueryListRestPojo.QueryRestPojo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.sun.jersey.core.hypermedia.HypermediaController;
-
 @Component
 @Path("/saiku/{username}/query")
 @Scope("request")
-@HypermediaController(
-    model=QueryListRestPojo.class,
-    linkType=LinkType.LINK_HEADERS
-    )
+@XmlAccessorType(XmlAccessType.NONE)
 public class QueryServlet {
 
     private OlapQueryService olapQueryService;
@@ -59,12 +60,13 @@ public class QueryServlet {
      */
     @GET
     @Produces({"application/xml","application/json" })
-    public QueryListRestPojo listQueries() {
-    	QueryListRestPojo queryList = new QueryListRestPojo();
+    public List<QueryRestPojo> listQueries() {
+    	RestList<QueryRestPojo> queryList = new RestList<QueryRestPojo>();
     	for (String queryName : olapQueryService.getQueries()) {
-    		queryList.addQuery(new QueryRestPojo(queryName));
+    		queryList.add(new QueryRestPojo(queryName));
     	}
-    	queryList.addQuery(new QueryRestPojo("hugo"));
+    	queryList.add(new QueryRestPojo("hugo"));
+    	queryList.add(new QueryRestPojo("hugo2"));
     	return queryList;
     }
 //    
