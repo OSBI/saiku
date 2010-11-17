@@ -1,6 +1,5 @@
 package org.saiku.web.rest.servlet;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -14,15 +13,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
-import org.saiku.web.rest.objects.DimensionListRestPojo;
+import org.saiku.web.rest.objects.CubeRestPojo;
+import org.saiku.web.rest.objects.DimensionRestPojo;
 import org.saiku.web.rest.objects.QueryRestPojo;
 import org.saiku.web.rest.objects.RestList;
-import org.saiku.web.rest.objects.CubesListRestPojo.CubeRestPojo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -117,9 +114,12 @@ public class QueryServlet {
     @GET
     @Produces({"application/xml","application/json" })
     @Path("/{queryname}/{axis}")
-    public DimensionListRestPojo getAxisInfo(@PathParam("queryname") String queryName, @PathParam("axis") String axisName){
-    	
-    	return new DimensionListRestPojo(olapQueryService.getDimension(queryName, axisName));
+    public List<DimensionRestPojo> getAxisInfo(@PathParam("queryname") String queryName, @PathParam("axis") String axisName){
+    	List<DimensionRestPojo> dimensions = new RestList<DimensionRestPojo>();
+    	for (String dimension : olapQueryService.getDimensions(queryName, axisName)) {
+    		dimensions.add(new DimensionRestPojo(dimension));
+    	}
+    	return dimensions;
     }
     
 //    /*

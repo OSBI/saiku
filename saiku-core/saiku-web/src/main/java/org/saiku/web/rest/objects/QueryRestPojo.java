@@ -5,6 +5,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.saiku.olap.dto.SaikuQuery;
+
 
 /**
  * A Query Pojo for the rest interface.
@@ -14,6 +16,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="queries")
 public  class QueryRestPojo extends AbstractRestObject {
+
+	// TODO uncomment later
+	// private CubeRestPojo cube;
 
 	public QueryRestPojo() {
 		throw new RuntimeException("Unsupported Constructor. Serialization only");
@@ -40,7 +45,27 @@ public  class QueryRestPojo extends AbstractRestObject {
 		return queryName;
 	}
 
-	//		public CubeRestPojo getCube() {
-	//			return cube;
-	//		}
+	// TODO uncomment when changed
+	//	public CubeRestPojo getCube() {
+	//		return cube;
+	//	}
+
+
+	@Override
+	public String getCompareValue() {
+		return getName();
+	}
+
+	@Override
+	public SaikuQuery toNativeObject() {
+		// TODO uncomment when changed
+		// return new SaikuQuery(getName(), new SaikuCube(cube.getConnectionName(), cube.getCubeName(), cube.getCatalog(), cube.getSchema()));
+		throw new UnsupportedOperationException("Not Implemented");
+	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
+
 }

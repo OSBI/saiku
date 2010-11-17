@@ -3,28 +3,16 @@ package org.saiku.web.rest.servlet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.saiku.service.olap.OlapDiscoverService;
-import org.saiku.web.rest.objects.CubesListRestPojo;
-import org.saiku.web.rest.objects.CubesListRestPojo.CubeRestPojo;
+import org.saiku.web.rest.objects.CubeRestPojo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletConfig;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 //@RunWith(MockitoJUnitRunner.class)
 public class DataSourceInterfaceTest extends AbstractServiceTest {
@@ -49,12 +37,23 @@ public class DataSourceInterfaceTest extends AbstractServiceTest {
     {
 	    DataSourceServlet dsi = new DataSourceServlet();
         dsi.setOlapDiscoverService(olapDiscoverService);
-        CubesListRestPojo cubes = dsi.getCubes();
-        CubeRestPojo cube = cubes.getCubeList().get(0);
+        List<CubeRestPojo> cubes = dsi.getCubes();
+        assertEquals(cubes.size(),2);
+        Collections.sort(cubes);
+        CubeRestPojo cube = cubes.get(0);
+        System.out.println(cube);
         assertEquals(cube.getCatalog(), "SampleData");
         assertEquals(cube.getConnectionName(), "TestConnection1");
-        assertEquals(cube.getCubeName(),"Quadrant Analysis");
-        assertEquals(cube.getSchema(), "SampleData");
+        assertEquals(cube.getSchema(),"Quadrant Analysis");
+        assertEquals(cube.getCubeName(), "SampleData");
+
+        cube = cubes.get(1);
+        System.out.println(cube);
+        assertEquals(cube.getCatalog(), "SteelWheels");
+        assertEquals(cube.getConnectionName(), "TestConnection1");
+        assertEquals(cube.getCubeName(),"SteelWheels");
+        assertEquals(cube.getSchema(), "SteelWheelsSales");
+
     }
     
     @Test

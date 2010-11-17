@@ -10,13 +10,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
-import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.saiku.web.rest.objects.CubesListRestPojo.CubeRestPojo;
 
-
-@XmlRootElement
+@XmlRootElement(name = "items")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestList<T extends AbstractRestObject> implements List<T> {
 
@@ -25,10 +22,11 @@ public class RestList<T extends AbstractRestObject> implements List<T> {
 	 */
 	private static final long serialVersionUID = -733008764990264636L;
 
-	@XmlList
-	@XmlElements( value = {
-		@XmlElement(name="query",type=QueryRestPojo.class),
-		@XmlElement(name="datasource",type=CubeRestPojo.class),
+	@XmlElements(value = {
+            @XmlElement(name="datasource", type=CubeRestPojo.class),
+            @XmlElement(name="query", type=QueryRestPojo.class),
+            @XmlElement(name="dimension", type=DimensionRestPojo.class),
+            @XmlElement(name="axis", type=AxisRestPojo.class)
 	})
 	private List<T> internalList;
 

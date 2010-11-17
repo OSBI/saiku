@@ -8,14 +8,10 @@ import javax.ws.rs.Produces;
 
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.service.olap.OlapDiscoverService;
-import org.saiku.web.rest.objects.CubesListRestPojo;
+import org.saiku.web.rest.objects.CubeRestPojo;
 import org.saiku.web.rest.objects.RestList;
-import org.saiku.web.rest.objects.CubesListRestPojo.CubeRestPojo;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import com.sun.jersey.core.hypermedia.HypermediaController;
-import com.sun.jersey.core.hypermedia.HypermediaController.LinkType;
 
 
 /**
@@ -26,10 +22,6 @@ import com.sun.jersey.core.hypermedia.HypermediaController.LinkType;
 @Component
 @Path("/saiku/{username}/datasources")
 @Scope("request")
-@HypermediaController(
-    model=CubesListRestPojo.class,
-    linkType=LinkType.LINK_HEADERS
-    )
 public class DataSourceServlet {
 
     OlapDiscoverService olapDiscoverService;
