@@ -198,32 +198,32 @@
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-gwt-rt</artifactId>
-			<version>1.20</version>
+			<version>1.21-RC3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-jersey-rt</artifactId>
-			<version>1.20</version>
+			<version>1.21-RC3</version>
 		</dependency>
 		<!--
 			<dependency> <groupId>org.codehaus.enunciate</groupId>
-			<artifactId>enunciate-cxf-rt</artifactId> <version>1.20</version>
+			<artifactId>enunciate-cxf-rt</artifactId> <version>1.21-RC3</version>
 			</dependency>
 		-->
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-amf-rt</artifactId>
-			<version>1.20</version>
+			<version>1.21-RC3</version>
 		</dependency>
 		<dependency>
     		<groupId>org.codehaus.enunciate</groupId>
     		<artifactId>enunciate-obj-c</artifactId>
-    		<version>1.20</version>
+    		<version>1.21-RC3</version>
 		</dependency>
 		<dependency>
     		<groupId>org.codehaus.enunciate</groupId>
     		<artifactId>enunciate-c</artifactId>
-    		<version>1.20</version>
+    		<version>1.21-RC3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -234,7 +234,7 @@
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-rt</artifactId>
-			<version>1.20</version>
+			<version>1.21-RC3</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -250,7 +250,7 @@
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-spring-app-rt</artifactId>
-			<version>1.20</version>
+			<version>1.21-RC3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jettison</groupId>

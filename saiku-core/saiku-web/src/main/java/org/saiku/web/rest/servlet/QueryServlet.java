@@ -7,6 +7,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -18,6 +19,7 @@ import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.web.rest.objects.CubeRestPojo;
 import org.saiku.web.rest.objects.DimensionRestPojo;
+import org.saiku.web.rest.objects.HierarchyRestPojo;
 import org.saiku.web.rest.objects.QueryRestPojo;
 import org.saiku.web.rest.objects.RestList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,25 +124,42 @@ public class QueryServlet {
     	return dimensions;
     }
     
-//    /*
-//     * Dimension Methods
-//     */
-//    
-//    /**
-//     * Get Dimension Info.
-//     */
-//    @GET
-//    @Produces({"application/xml","application/json" })
-//    @Path("/{queryname}/{axis}/{dimension}")
-//    public void getDimensionInfo();
-//    
-//    /**
-//     * Update a dimension.
-//     */
-//    @PUT
-//    @Path("/{queryname}/{axis}/{dimension}")
-//    public void updateDimension();
-//    
+    /*
+     * Dimension Methods
+     */
+    
+    /**
+     * Get Dimension Info.
+     * @return 
+     */
+    @GET
+    @Produces({"application/xml","application/json" })
+    @Path("/{queryname}/{axis}/{dimension}")
+    public List<HierarchyRestPojo> getDimensionInfo(@PathParam("queryname") String queryName, @PathParam("axis") String axisName, @PathParam("dimension") String dimensionName){
+        List<HierarchyRestPojo> hierarchies = new RestList<HierarchyRestPojo>();
+        for (String hierarchy : olapQueryService.getHierarchies(queryName, dimensionName)) {
+            hierarchies.add(new HierarchyRestPojo(hierarchy));
+        }
+        return hierarchies;
+    }
+    
+    /**
+     * Update a dimension.
+     * @return 
+     */
+    @PUT
+    @Path("/{queryname}/{axis}/{dimension}")
+    public Status updateDimension(@PathParam("queryname") String queryName, @PathParam("axis") String axisName, @PathParam("dimension") String dimensionName){
+        try{
+        olapQueryService.moveDimension(queryName, axisName, dimensionName);
+        return Status.OK;
+        }catch(Exception e){
+            return Status.INTERNAL_SERVER_ERROR;
+        }
+        
+        
+    }
+    
 //    /**
 //     * Move a dimension.
 //     */
