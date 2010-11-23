@@ -1,0 +1,110 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.saiku</groupId>
+	<artifactId>saiku-server</artifactId>
+	<packaging>pom</packaging>
+	<version>2.0-SNAPSHOT</version>
+	<properties>
+		<tomcat.version>apache-tomcat-6.0.24</tomcat.version>
+		<tomcat.source>target/stage/tomcat/</tomcat.source>
+	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.saiku</groupId>
+									<artifactId>saiku-web</artifactId>
+									<version>${project.version}</version>
+									<type>war</type>
+									<outputDirectory>target/stage/</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<id>copy-package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<unzip dest="target/stage/webapp/">
+									<fileset dir="target/stage/">
+										<include name="saiku-web-${project.version}.war" />
+									</fileset>
+								</unzip>
+								<unzip dest="target/stage/webapp/">
+									<fileset dir="${basedir}/custom/foodmart/">
+										<include name="foodmart.zip" />
+									</fileset>
+								</unzip>
+								
+								<copy todir="target/stage/webapp/">
+									<fileset dir="${basedir}/custom/webapp/" />
+								</copy>
+								<unzip dest="target/stage/tomcat/">
+									<fileset dir="${basedir}/tomcat/">
+										<include name="${tomcat.version}.zip" />
+									</fileset>
+								</unzip>								
+								<copy todir="target/dist/saiku-server/">
+									<fileset dir="${basedir}/scripts/" />
+								</copy>
+								<copy todir="target/dist/saiku-server/tomcat">
+									<fileset dir="${tomcat.source}${tomcat.version}/" >
+									    <exclude name="webapps/docs/**" />
+          								<exclude name="webapps/examples/**" />
+          								<exclude name="webapps/host-manager/**" />
+          								<exclude name="webapps/manager/**" />
+          							    <exclude name="webapps/ROOT/**" />
+									</fileset>
+								</copy>
+								<copy todir="target/dist/saiku-server/tomcat/">
+									<fileset dir="${basedir}/custom/tomcat/" />
+								</copy>
+								<copy todir="target/dist/saiku-server/tomcat/webapps/saiku">
+									<fileset dir="target/stage/webapp" />
+								</copy>
+								
+								<chmod perm="a+x" dir="target/dist/saiku-server/" includes="**/*.sh" />
+								<zip destfile="target/saiku-server-${project.version}.zip">
+									<zipfileset dir="target/dist/" />
+								</zip>
+								<tar destfile="target/saiku-server-${project.version}.tar.gz"
+           							longfile="gnu" compression="gzip" >
+      									<tarfileset dir="target/dist/" mode="755">
+        									<include name="**/*.sh" />
+      									</tarfileset>
+      									<tarfileset dir="target/dist">
+        									<exclude name="**/*.sh" />
+      									</tarfileset>
+           							</tar>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>
