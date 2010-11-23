@@ -1,5 +1,6 @@
 package org.saiku.datasources.connection;
 
+import java.io.File;
 import java.sql.DriverManager;
 import java.util.Properties;
 
@@ -30,7 +31,8 @@ public class SaikuOlapConnection implements ISaikuConnection {
 		try {
 			Class.forName(driver);
 			OlapConnection connection;
-			connection = (OlapConnection) DriverManager.getConnection(url);
+			System.out.println("File:" + (new File("test")).getAbsolutePath());
+			connection = (OlapConnection) DriverManager.getConnection(url, properties);
 			final OlapWrapper wrapper = connection;
 			OlapConnection tmpolapConnection = (OlapConnection) wrapper.unwrap(OlapConnection.class);
 			System.out.println("name:" + name);

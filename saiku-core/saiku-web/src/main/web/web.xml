@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd"> -->
+	<!--
+		<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web
+		Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+	-->
 
 <web-app>
 
@@ -10,23 +13,13 @@
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 
-<init-param>
-<param-name>com.sun.jersey.config.property.packages</param-name>
-<param-value>org.saiku.web</param-value>
-</init-param>
-      <context-param>
-	                <param-name>contextConfigLocation</param-name>
-	                <param-value>
-	                        /WEB-INF/saiku-beans.xml
-	          </param-value>
-	        </context-param>
-	
-	
-	        <listener>
-	                <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	        </listener>
-	        <listener>
-	                <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
-	        </listener>
+	<init-param>
+		<param-name>com.sun.jersey.config.property.packages</param-name>
+		<param-value>org.saiku.web</param-value>
+	</init-param>
+
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
 </web-app>
 
