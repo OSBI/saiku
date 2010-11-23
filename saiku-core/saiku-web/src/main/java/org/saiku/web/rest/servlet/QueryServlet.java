@@ -18,12 +18,20 @@ import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.web.rest.objects.CubeRestPojo;
 import org.saiku.web.rest.objects.DimensionRestPojo;
+import org.saiku.web.rest.objects.HierarchyRestPojo;
+import org.saiku.web.rest.objects.LevelRestPojo;
+import org.saiku.web.rest.objects.MemberRestPojo;
 import org.saiku.web.rest.objects.QueryRestPojo;
 import org.saiku.web.rest.objects.RestList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+/**
+ * QueryServlet contains all the methods required when manipulating an OLAP Query.
+ * @author Tom Barber
+ *
+ */
 @Component
 @Path("/saiku/{username}/query")
 @Scope("request")
@@ -53,7 +61,7 @@ public class QueryServlet {
      */
     
     /**
-     * Get a list of open queries.
+     * Return a list of open queries.
      */
     @GET
     @Produces({"application/xml","application/json" })
@@ -75,8 +83,8 @@ public class QueryServlet {
 //    public void saveQuery();
 //    
     /**
-     * Delete query.
-     * @return 
+     * Delete query from the query pool.
+     * @return a HTTP 410(Works) or HTTP 404(Call failed).
      */
     @DELETE
     @Path("/{queryname}")
@@ -91,15 +99,24 @@ public class QueryServlet {
     }
     
     /**
-     * Create Query.
+     * Create a new Saiku Query.
+     * @param connectionName the name of the Saiku connection.
+     * @param cubeName the name of the cube.
+     * @param catalogName the catalog name.
+     * @param schemaName the name of the schema.
+     * @param queryName the name you want to assign to the query.
+     * 
+     * @return a query model.
+     * 
+     * @see 
      */
       @POST
       @Produces({"application/xml","application/json" })
       @Path("/{queryname}")
       public void createQuery(@FormParam("connection") String connectionName, @FormParam("cube") String cubeName,
-          @FormParam("catalog") String catalog, @FormParam("schema") String schema, @PathParam("queryname") String queryName)
+          @FormParam("catalog") String catalogName, @FormParam("schema") String schemaName, @PathParam("queryname") String queryName)
           throws ServletException {
-    	  CubeRestPojo cube = new CubeRestPojo(connectionName, cubeName, catalog, schema);
+    	  CubeRestPojo cube = new CubeRestPojo(connectionName, cubeName, catalogName, schemaName);
           olapQueryService.createNewOlapQuery(queryName, cube.toNativeObject());
       }
     
@@ -108,8 +125,11 @@ public class QueryServlet {
      */
     
     /**
-     * Get Axis Info.
-     * @return 
+     * Return a list of dimensions for an axis in a query.
+     * @param queryName the name of the query.
+     * @param axisName the name of the axis.
+     * @return a list of available dimensions.
+     * @see DimensionRestPojo
      */
     @GET
     @Produces({"application/xml","application/json" })
@@ -122,50 +142,97 @@ public class QueryServlet {
     	return dimensions;
     }
     
-//    /*
-//     * Dimension Methods
-//     */
-//    
-//    /**
-//     * Get Dimension Info.
-//     */
-//    @GET
-//    @Produces({"application/xml","application/json" })
-//    @Path("/{queryname}/{axis}/{dimension}")
-//    public void getDimensionInfo();
-//    
+    /*
+     * Dimension Methods
+     */
+    
+    /**
+     * Returns a list of hierarchies from a dimension.
+     * @param queryName the name of the query.
+     * @param axisName the name of the axis.
+     * @param dimensionName the name of the dimension.
+     * 
+     * @return a list of available hierarchies.
+     * 
+     * @see HierarchyRestPojo
+     */
+    @GET
+    @Produces({"application/xml","application/json" })
+    @Path("/{queryname}/{axis}/{dimension}")
+    public List<HierarchyRestPojo> getDimensionInfo(@PathParam("queryname") String queryName, @PathParam("axis") String axisName, @PathParam("dimension") String dimensionName){
+        List<HierarchyRestPojo> hierarchies = new RestList<HierarchyRestPojo>();
+        for (String hierarchy : olapQueryService.getHierarchies(queryName, dimensionName)) {
+            hierarchies.add(new HierarchyRestPojo(hierarchy));
+        }
+        return hierarchies;
+    }
+    
 //    /**
 //     * Update a dimension.
+//     * @return 
 //     */
 //    @PUT
 //    @Path("/{queryname}/{axis}/{dimension}")
-//    public void updateDimension();
+//    public Status updateDimension(@PathParam("queryname") String queryName, @PathParam("axis") String axisName, @PathParam("dimension") String dimensionName){
+//        return null;
+//        
+//        
+//    }
 //    
-//    /**
-//     * Move a dimension.
-//     */
-//    @POST
-//    @Path("/{queryname}/{axis}/{dimension}")
-//    public void moveDimension();
-//    
-//    /**
-//     * Delete a dimension.
-//     */
-//    @DELETE
-//    @Path("/{queryname}/{axis}/{dimension}")
-//    public void deleteDimension();
-//    
-//    /*
-//     * Hierarchy Methods
-//     */
-//    
-//    /**
-//     * Get hierarchy info.
-//     */
-//    @GET
-//    @Produces({"application/xml","application/json" })
-//    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}")
-//    public void getHierarchyInfo();
+    /**
+     * Move a dimension from one axis to another.
+     * @param queryName the name of the query.
+     * @param axisName the name of the axis.
+     * @param dimensionName the name of the dimension. 
+     * 
+     * @return HTTP 200 or HTTP 500.
+     * 
+     * @see Status
+     */
+    @POST
+    @Path("/{queryname}/{axis}/{dimension}")
+    public Status moveDimension(@PathParam("queryname") String queryName, @PathParam("axis") String axisName, @PathParam("dimension") String dimensionName){
+    try{
+        olapQueryService.moveDimension(queryName, axisName, dimensionName);
+        return Status.OK;
+        }catch(Exception e){
+            return Status.INTERNAL_SERVER_ERROR;
+        }
+}
+    
+    /**
+     * Delete a dimension.
+     * @return 
+     */
+    @DELETE
+    @Path("/{queryname}/{axis}/{dimension}")
+    public Status deleteDimension(@PathParam("queryname") String queryName, @PathParam("axis") String axisName, @PathParam("dimension") String dimensionName){
+        try{
+            olapQueryService.moveDimension(queryName, "UNUSED", dimensionName);
+            return Status.OK;
+            }catch(Exception e){
+                return Status.INTERNAL_SERVER_ERROR;
+            }
+    }
+    
+    /*
+     * Hierarchy Methods
+     */
+    
+    /**
+     * Get hierarchy info.
+     * @return 
+     */
+    @GET
+    @Produces({"application/xml","application/json" })
+    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}")
+    public List<LevelRestPojo> getHierarchyInfo(@PathParam("queryname") String queryName, @PathParam("axis") String axisName, @PathParam("dimension") String dimensionName, @PathParam("hierarchy") String hierarchyName){
+        List<LevelRestPojo> levels = new RestList<LevelRestPojo>();
+        for (String level : olapQueryService.getLevels(queryName, dimensionName, hierarchyName)) {
+            levels.add(new LevelRestPojo(level));
+        }
+        return levels;
+    }
 //    
 //    /**
 //     * Update a hierarchy.
@@ -174,31 +241,26 @@ public class QueryServlet {
 //    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}")
 //    public void updateHierarchy();
 //    
-//    /**
-//     * Move a hierarchy.
-//     */
-//    @POST
-//    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}")
-//    public void moveHierarchy();
-//    
-//    /**
-//     * Delete a hierarchy.
-//     */
-//    @DELETE
-//    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}/{level}")
-//    public void deleteHierarchy();
-//    
+    
 //    /*
 //     * Level Methods 
 //     */
 //    
-//    /**
-//     * Get level information.
-//     */
-//    @GET
-//    @Produces({"application/xml","application/json" })
-//    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}/{level}")
-//    public void getLevelInfo();
+    /**
+     * Get level information.
+     * @return 
+     */
+    @GET
+    @Produces({"application/xml","application/json" })
+    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}/{level}")
+    public List<MemberRestPojo> getLevelInfo(@PathParam("queryname") String queryName, @PathParam("axis") String axisName, @PathParam("dimension") String dimensionName, 
+            @PathParam("hierarchy") String hierarchyName, @PathParam("level") String levelName){
+        List<MemberRestPojo> members = new RestList<MemberRestPojo>();
+        for (String member : olapQueryService.getLevelMembers(queryName, dimensionName, hierarchyName, levelName)) {
+            members.add(new MemberRestPojo(member));
+        }
+        return members;
+    }
 //    
 //    /**
 //     * Update a level.
@@ -207,20 +269,7 @@ public class QueryServlet {
 //    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}/{level}")
 //    public void updateLevel();
 //    
-//    /**
-//     * Move a level.
-//     */
-//    @POST
-//    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}/{level}")
-//    public void moveLevel();
-//    
-//    /**
-//     * Delete a level.
-//     */
-//    @DELETE
-//    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}/{level}")
-//    public void deleteLevel();
-//    
+
 //    /*
 //     * Member Methods
 //     */
@@ -254,109 +303,4 @@ public class QueryServlet {
 //    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}/{level}/{member}")
 //    public void deleteMember();
 //    
-//    
-//    public void createQuery() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void deleteDimension() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void deleteQuery() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void getAxisInfo() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void getDimensionInfo() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void listQueries() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void moveDimension() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void saveQuery() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void updateDimension() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void deleteHierarchy() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void deleteLevel() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void deleteMember() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void getHierarchyInfo() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void getLevelInfo() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void getMemberInfo() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void moveHierarchy() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void moveLevel() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void moveMember() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void updateHierarchy() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void updateLevel() {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    public void updateMember() {
-//        // TODO Auto-generated method stub
-//        
-//    }
 }

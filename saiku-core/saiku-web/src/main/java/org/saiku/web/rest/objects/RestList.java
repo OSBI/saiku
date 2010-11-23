@@ -24,6 +24,7 @@ public class RestList<T extends AbstractRestObject> implements List<T> {
 
 	@XmlElements(value = {
             @XmlElement(name="datasource", type=CubeRestPojo.class),
+            @XmlElement(name="hierarchy", type=HierarchyRestPojo.class),
             @XmlElement(name="query", type=QueryRestPojo.class),
             @XmlElement(name="dimension", type=DimensionRestPojo.class),
             @XmlElement(name="axis", type=AxisRestPojo.class)

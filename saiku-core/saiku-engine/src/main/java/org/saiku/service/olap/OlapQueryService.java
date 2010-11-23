@@ -70,7 +70,12 @@ public class OlapQueryService {
 	
 	public List<String> getDimensions(String queryName, String axis) {
 		OlapQuery q = queries.get(queryName);
-		Axis.Standard tmpAxis = Standard.valueOf(axis);
+		Axis.Standard tmpAxis =null;
+		
+		if(!axis.equals("UNUSED"))
+		tmpAxis = Standard.valueOf(axis);
+		
+		
 		List<String> dimensions = new ArrayList<String>();
 
 		if (tmpAxis != null) {
@@ -80,6 +85,12 @@ public class OlapQueryService {
 				dimensions.add(dim.getName());
 			}
 		}
+		else if (axis.equals("UNUSED")){
+            QueryAxis qa = q.getUnusedAxis();
+            for (QueryDimension dim : qa.getDimensions()) {
+                dimensions.add(dim.getName());
+            }
+        }
 		return dimensions;
 		
 	}

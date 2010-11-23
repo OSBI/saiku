@@ -197,32 +197,32 @@
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-gwt-rt</artifactId>
-			<version>1.20</version>
+			<version>1.21-RC3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-jersey-rt</artifactId>
-			<version>1.20</version>
+			<version>1.21-RC3</version>
 		</dependency>
 		<!--
 			<dependency> <groupId>org.codehaus.enunciate</groupId>
-			<artifactId>enunciate-cxf-rt</artifactId> <version>1.20</version>
+			<artifactId>enunciate-cxf-rt</artifactId> <version>1.21-RC3</version>
 			</dependency>
 		-->
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-amf-rt</artifactId>
-			<version>1.20</version>
+			<version>1.21-RC3</version>
 		</dependency>
 		<dependency>
-			<groupId>org.codehaus.enunciate</groupId>
-			<artifactId>enunciate-obj-c</artifactId>
-			<version>1.20</version>
+    		<groupId>org.codehaus.enunciate</groupId>
+    		<artifactId>enunciate-obj-c</artifactId>
+    		<version>1.21-RC3</version>
 		</dependency>
 		<dependency>
-			<groupId>org.codehaus.enunciate</groupId>
-			<artifactId>enunciate-c</artifactId>
-			<version>1.20</version>
+    		<groupId>org.codehaus.enunciate</groupId>
+    		<artifactId>enunciate-c</artifactId>
+    		<version>1.21-RC3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -233,7 +233,7 @@
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-rt</artifactId>
-			<version>1.20</version>
+			<version>1.21-RC3</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -249,7 +249,7 @@
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-spring-app-rt</artifactId>
-			<version>1.20</version>
+			<version>1.21-RC3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jettison</groupId>
@@ -288,12 +288,19 @@
 		</dependency>
 	</dependencies>
 	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.4</version>
-			</plugin>
-		</plugins>
-	</reporting>
+    <plugins>
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.7</version>
+        <configuration>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.4</version>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
