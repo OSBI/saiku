@@ -5,9 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import mondrian.olap.Id.Segment;
+
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
 import org.olap4j.Axis.Standard;
+import org.olap4j.impl.IdentifierParser;
+import org.olap4j.mdx.IdentifierNode;
+import org.olap4j.mdx.IdentifierSegment;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
@@ -15,6 +20,7 @@ import org.olap4j.metadata.Member;
 import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
+import org.olap4j.query.Selection;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.query.OlapQuery;
 
@@ -95,6 +101,23 @@ public class OlapQueryService {
 		
 	}
 	
+	public boolean createSelection(String queryName, String dimensionName, String uniqueMemberName, String selection){
+	    OlapQuery query = queries.get(queryName);
+	    List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(uniqueMemberName).getSegmentList();
+        QueryDimension dimension = query.getDimension(dimensionName);
+        final Selection.Operator selectionMode = Selection.Operator.valueOf(selection);
+        
+        try {
+            dimension.include(selectionMode, memberList);
+            return true;
+        } catch (OlapException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
+	}
+	
+	
 	public void moveDimension(String queryName, String axisName, String dimensionName) {
 		OlapQuery query = queries.get(queryName);
 		QueryDimension dimension = query.getDimension(dimensionName);
@@ -168,7 +191,7 @@ public class OlapQueryService {
 			Level level =  hierarchy.getLevels().get(levelName);
 			try {
 				for (Member member : level.getMembers()) {
-					members.add(member.getName());
+					members.add(member.getUniqueName());
 				}
 			} catch (OlapException e) {
 				// TODO Auto-generated catch block

@@ -12,7 +12,7 @@
 
 		<docs docsDir="docs" title="Saiku-web" />
 
-		<jaxws-ri disabled="true" />
+		<jaxws-ri disabled="false" forceSpringEnabled="true" />
 		<cxf disabled="true" />
 		<amf disabled="true"></amf>
 		<c disabled="false" forceEnable="true"/>

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -289,12 +290,26 @@ public class QueryServlet {
 //    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}/{level}/{member}")
 //    public void updateMember();
 //    
-//    /**
-//     * Move a member.
-//     */
-//    @POST
-//    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}/{level}/{member}")
-//    public void moveMember();
+    /**
+     * Move a member.
+     * @return 
+     */
+    @POST
+    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}/{level}/{member}")
+    public Status moveMember(@FormParam("selection") @DefaultValue("MEMBER") String selectionType, @PathParam("queryname") String queryName, @PathParam("dimension") String dimensionName, @PathParam("member") String uniqueMemberName){
+        try{
+            
+        boolean ret = olapQueryService.createSelection(queryName, dimensionName, uniqueMemberName, selectionType);
+        if(ret == true){
+        return Status.CREATED;
+        }
+        else{
+            return Status.INTERNAL_SERVER_ERROR;
+        }
+        } catch (Exception e){
+            return Status.INTERNAL_SERVER_ERROR;
+        }
+    }
 //    
 //    /**
 //     * Delete a member.
