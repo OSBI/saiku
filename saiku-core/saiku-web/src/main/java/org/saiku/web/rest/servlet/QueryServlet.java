@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
+import org.saiku.web.rest.objects.AxisRestPojo;
 import org.saiku.web.rest.objects.CubeRestPojo;
 import org.saiku.web.rest.objects.DimensionRestPojo;
 import org.saiku.web.rest.objects.HierarchyRestPojo;
@@ -106,6 +107,7 @@ public class QueryServlet {
      * @param catalogName the catalog name.
      * @param schemaName the name of the schema.
      * @param queryName the name you want to assign to the query.
+     * @return 
      * 
      * @return a query model.
      * 
@@ -114,11 +116,31 @@ public class QueryServlet {
       @POST
       @Produces({"application/xml","application/json" })
       @Path("/{queryname}")
-      public void createQuery(@FormParam("connection") String connectionName, @FormParam("cube") String cubeName,
+      public AxisRestPojo createQuery(@FormParam("connection") String connectionName, @FormParam("cube") String cubeName,
           @FormParam("catalog") String catalogName, @FormParam("schema") String schemaName, @PathParam("queryname") String queryName)
           throws ServletException {
     	  CubeRestPojo cube = new CubeRestPojo(connectionName, cubeName, catalogName, schemaName);
           olapQueryService.createNewOlapQuery(queryName, cube.toNativeObject());
+          
+          AxisRestPojo axis = new AxisRestPojo("UNUSED");
+          
+          List<DimensionRestPojo> dimensions = getAxisInfo(queryName, "UNUSED");
+          
+          for (DimensionRestPojo dimension : dimensions){
+        	  
+        	  List<HierarchyRestPojo> hierarchies = getDimensionInfo(queryName, "UNUSED", dimension.getDimensionName());
+        	  
+        	  for(HierarchyRestPojo hierarchy: hierarchies){
+        		  List<LevelRestPojo> levels = getHierarchyInfo(queryName, "UNUSED", dimension.getDimensionName(), hierarchy.getHierarchyName());
+        		  
+        		  hierarchy.setLevels(levels);
+        		  
+        	  }
+        	  dimension.setHierarachies(hierarchies);
+          }
+          axis.setDimensions(dimensions);
+          
+          return axis;
       }
     
     /*

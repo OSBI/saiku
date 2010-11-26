@@ -1,5 +1,7 @@
 package org.saiku.web.rest.objects;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -14,6 +16,7 @@ public class AxisRestPojo extends AbstractRestObject {
 	 */
 	@XmlAttribute(name = "axisname", required = false)
 	private String axisName;
+	private List<DimensionRestPojo> dimensions;
 
 
 	public AxisRestPojo(){
@@ -43,5 +46,13 @@ public class AxisRestPojo extends AbstractRestObject {
 	@Override
 	public String toString() {
 		return getAxisName();
+	}
+
+	public void setDimensions(List<DimensionRestPojo> dimensions) {
+		this.dimensions= dimensions;
+	}
+	
+	public List<DimensionRestPojo> getDimensions(){
+		return dimensions;
 	}
 }

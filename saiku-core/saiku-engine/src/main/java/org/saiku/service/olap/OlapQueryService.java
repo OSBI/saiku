@@ -39,6 +39,7 @@ public class OlapQueryService {
 			Cube cub = olapDiscoverService.getCube(cube);
 			if (cub != null) {
 				queries.put(queryName, new OlapQuery(new Query(queryName, cub)));
+				
 				return true;
 			}
 		} catch (Exception e) {
@@ -47,6 +48,7 @@ public class OlapQueryService {
 		return false;
 
 	}
+	
 	
 	public void closeQuery(String queryName) {
 		queries.remove(queryName);
