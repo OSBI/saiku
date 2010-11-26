@@ -67,7 +67,7 @@ public class QueryServlet {
      */
     @GET
     @Produces({"application/xml","application/json" })
-    public List<QueryRestPojo> listQueries() {
+    public List<QueryRestPojo> getQueries() {
     	RestList<QueryRestPojo> queryList = new RestList<QueryRestPojo>();
     	for (String queryName : olapQueryService.getQueries()) {
     		queryList.add(new QueryRestPojo(queryName));
@@ -165,6 +165,17 @@ public class QueryServlet {
     	return dimensions;
     }
     
+    /**
+     * Remove all dimensions and selections on an axis
+     * @param queryName the name of the query.
+     * @param axisName the name of the axis.
+     */
+    @DELETE
+    @Produces({"application/xml","application/json" })
+    @Path("/{queryname}/{axis}")
+    public void deleteAxis(@PathParam("queryname") String queryName, @PathParam("axis") String axisName){
+    	olapQueryService.clearAxis(queryName, axisName);
+    }
     /*
      * Dimension Methods
      */
@@ -321,7 +332,7 @@ public class QueryServlet {
     public Status moveMember(@FormParam("selection") @DefaultValue("MEMBER") String selectionType, @PathParam("queryname") String queryName, @PathParam("dimension") String dimensionName, @PathParam("member") String uniqueMemberName){
         try{
             
-        boolean ret = olapQueryService.createSelection(queryName, dimensionName, uniqueMemberName, selectionType);
+        boolean ret = olapQueryService.includeMember(queryName, dimensionName, uniqueMemberName, selectionType);
         if(ret == true){
         return Status.CREATED;
         }

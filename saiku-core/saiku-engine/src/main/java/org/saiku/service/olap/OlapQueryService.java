@@ -5,12 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import mondrian.olap.Id.Segment;
-
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
 import org.olap4j.Axis.Standard;
-import org.olap4j.impl.IdentifierParser;
 import org.olap4j.mdx.IdentifierNode;
 import org.olap4j.mdx.IdentifierSegment;
 import org.olap4j.metadata.Cube;
@@ -103,11 +100,11 @@ public class OlapQueryService {
 		
 	}
 	
-	public boolean createSelection(String queryName, String dimensionName, String uniqueMemberName, String selection){
+	public boolean includeMember(String queryName, String dimensionName, String uniqueMemberName, String selectionType){
 	    OlapQuery query = queries.get(queryName);
 	    List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(uniqueMemberName).getSegmentList();
         QueryDimension dimension = query.getDimension(dimensionName);
-        final Selection.Operator selectionMode = Selection.Operator.valueOf(selection);
+        final Selection.Operator selectionMode = Selection.Operator.valueOf(selectionType);
         
         try {
             dimension.include(selectionMode, memberList);
@@ -212,12 +209,21 @@ public class OlapQueryService {
 		OlapQuery query = queries.get(queryName);
 		if (Axis.Standard.valueOf(axisName) != null) {
 			QueryAxis qAxis = query.getAxis(Axis.Standard.valueOf(axisName));
-			clearAllAxisSelections(qAxis);
+			resetAxisSelections(qAxis);
+			for (QueryDimension dim : qAxis.getDimensions()) {
+				qAxis.removeDimension(dim);
+			}
 		}
-		clearAllQuerySelections(query);
+	}
+	public void clearAxisSelections(String queryName, String axisName) {
+		OlapQuery query = queries.get(queryName);
+		if (Axis.Standard.valueOf(axisName) != null) {
+			QueryAxis qAxis = query.getAxis(Axis.Standard.valueOf(axisName));
+			resetAxisSelections(qAxis);
+		}
 	}
 			
-	private void clearAllAxisSelections(QueryAxis axis) {
+	private void resetAxisSelections(QueryAxis axis) {
 		for (QueryDimension dim : axis.getDimensions()) {
 			dim.clearInclusions();
 			dim.clearExclusions();
@@ -226,11 +232,12 @@ public class OlapQueryService {
 	}
 	
 	private void clearAllQuerySelections(OlapQuery query) {
-		clearAllAxisSelections(query.getUnusedAxis());
+		resetAxisSelections(query.getUnusedAxis());
 		Map<Axis,QueryAxis> axes = query.getAxes();
 		for (Axis axis : axes.keySet()) {
-			clearAllAxisSelections(axes.get(axis));
+			resetAxisSelections(axes.get(axis));
 		}
 	}
-
+	
+	
 }
