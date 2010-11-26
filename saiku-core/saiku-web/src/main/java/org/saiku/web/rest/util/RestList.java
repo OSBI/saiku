@@ -1,4 +1,4 @@
-package org.saiku.web.rest.objects;
+package org.saiku.web.rest.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +11,15 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.saiku.web.rest.objects.AbstractRestObject;
+import org.saiku.web.rest.objects.AxisRestPojo;
+import org.saiku.web.rest.objects.CubeRestPojo;
+import org.saiku.web.rest.objects.DimensionRestPojo;
+import org.saiku.web.rest.objects.HierarchyRestPojo;
+import org.saiku.web.rest.objects.LevelRestPojo;
+import org.saiku.web.rest.objects.MemberRestPojo;
+import org.saiku.web.rest.objects.QueryRestPojo;
 
 
 @XmlRootElement(name = "items")

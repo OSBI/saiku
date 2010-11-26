@@ -9,7 +9,7 @@ import javax.ws.rs.Produces;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.web.rest.objects.CubeRestPojo;
-import org.saiku.web.rest.objects.RestList;
+import org.saiku.web.rest.util.RestList;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

@@ -24,7 +24,7 @@ import org.saiku.web.rest.objects.HierarchyRestPojo;
 import org.saiku.web.rest.objects.LevelRestPojo;
 import org.saiku.web.rest.objects.MemberRestPojo;
 import org.saiku.web.rest.objects.QueryRestPojo;
-import org.saiku.web.rest.objects.RestList;
+import org.saiku.web.rest.util.RestList;
 import org.saiku.web.rest.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
