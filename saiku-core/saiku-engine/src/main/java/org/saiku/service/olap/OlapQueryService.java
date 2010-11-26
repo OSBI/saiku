@@ -19,7 +19,10 @@ import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
 import org.olap4j.query.Selection;
 import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SaikuDimension;
+import org.saiku.olap.dto.SaikuHierarchy;
 import org.saiku.olap.query.OlapQuery;
+import org.saiku.olap.util.ObjectUtil;
 
 public class OlapQueryService {
 	
@@ -73,28 +76,23 @@ public class OlapQueryService {
 		return axes;
 	}
 	
-	public List<String> getDimensions(String queryName, String axis) {
+	public List<SaikuDimension> getDimensions(String queryName, String axis) {
 		OlapQuery q = queries.get(queryName);
 		Axis.Standard tmpAxis =null;
+		List<SaikuDimension> dimensions = new ArrayList<SaikuDimension>();
 		
-		if(!axis.equals("UNUSED"))
-		tmpAxis = Standard.valueOf(axis);
-		
-		
-		List<String> dimensions = new ArrayList<String>();
-
+		if(!axis.equals("UNUSED")) {
+			tmpAxis = Standard.valueOf(axis);
+		}
 		if (tmpAxis != null) {
 			int ord = tmpAxis.axisOrdinal();
 			QueryAxis qa = q.getAxis(Axis.Factory.forOrdinal(ord));
-			for (QueryDimension dim : qa.getDimensions()) {
-				dimensions.add(dim.getName());
-			}
+			dimensions.addAll(ObjectUtil.convertDimensions(qa.getDimensions()));
+			
 		}
 		else if (axis.equals("UNUSED")){
             QueryAxis qa = q.getUnusedAxis();
-            for (QueryDimension dim : qa.getDimensions()) {
-                dimensions.add(dim.getName());
-            }
+            dimensions.addAll(ObjectUtil.convertDimensions(qa.getDimensions()));
         }
 		return dimensions;
 		
@@ -156,14 +154,12 @@ public class OlapQueryService {
 		
 	}
 	
-	public List<String> getHierarchies(String queryName, String dimensionName) {
+	public List<SaikuHierarchy> getHierarchies(String queryName, String dimensionName) {
 		OlapQuery q = queries.get(queryName);
-		List<String> hierarchies = new ArrayList<String>();
+		List<SaikuHierarchy> hierarchies = new ArrayList<SaikuHierarchy>();
 		QueryDimension dim = q.getDimension(dimensionName);
 		if (dim != null) {
-			for (Hierarchy hierarchy : dim.getDimension().getHierarchies()) {
-				hierarchies.add(hierarchy.getName());
-			}
+			hierarchies.addAll(ObjectUtil.convertHierarchies(dim.getDimension().getHierarchies()));
 		}
 		return hierarchies;
 	}

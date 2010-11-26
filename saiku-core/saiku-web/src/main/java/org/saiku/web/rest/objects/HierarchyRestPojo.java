@@ -7,41 +7,64 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.saiku.olap.dto.SaikuHierarchy;
+
 @XmlRootElement(name="hierarchies")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HierarchyRestPojo extends AbstractRestObject {
 
 	@XmlAttribute(name = "hierarchy", required = false)
-	private String hierarchyName;
+	private String name;
+	
+	@XmlAttribute(name = "uniqueName", required = false)
+	private String uniqueName;
+	
+	@XmlAttribute(name = "caption", required = false)
+	private String caption;
+	
+	@XmlAttribute(name = "dimension", required = false)
+	private String dimensionUniqueName;
+	
 	private List<LevelRestPojo> levels;
-
-
+	
 	public HierarchyRestPojo(){
 		throw new RuntimeException("Unsupported Constructor. Serialization only");
 	}
 
-	public HierarchyRestPojo(String hierarchyName) {
-		this.hierarchyName = hierarchyName;
-
+	public HierarchyRestPojo(String name, String uniqueName, String caption, String dimensionUniqueName) {
+		this.name = name;
+		this.uniqueName = uniqueName;
+		this.caption = caption;
+		this.dimensionUniqueName = dimensionUniqueName;
+	}
+	
+	public String getUniqueName() {
+		return uniqueName;
+	}
+	public String getCaption() {
+		return caption;
+	}
+	public String getDimensionUniqueName() {
+		return dimensionUniqueName;
 	}
 
-	public String getHierarchyName() {
-		return hierarchyName;
+	public String getName() {
+		return name;
 	}
 
 	@Override
-	public String toNativeObject() {
-		return new String(hierarchyName);
+	public SaikuHierarchy toNativeObject() {
+		return new SaikuHierarchy(name, uniqueName, caption, dimensionUniqueName);
 	}
 
 	@Override
 	public String getCompareValue() {
-		return getHierarchyName();
+		return getName();
 	}
 
 	@Override
 	public String toString() {
-		return getHierarchyName();
+		return getName();
 	}
 
 	public void setLevels(List<LevelRestPojo> levels) {

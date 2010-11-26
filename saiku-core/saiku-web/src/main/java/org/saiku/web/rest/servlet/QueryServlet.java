@@ -25,6 +25,7 @@ import org.saiku.web.rest.objects.LevelRestPojo;
 import org.saiku.web.rest.objects.MemberRestPojo;
 import org.saiku.web.rest.objects.QueryRestPojo;
 import org.saiku.web.rest.objects.RestList;
+import org.saiku.web.rest.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -128,10 +129,10 @@ public class QueryServlet {
           
           for (DimensionRestPojo dimension : dimensions){
         	  
-        	  List<HierarchyRestPojo> hierarchies = getDimensionInfo(queryName, "UNUSED", dimension.getDimensionName());
+        	  List<HierarchyRestPojo> hierarchies = getDimensionInfo(queryName, "UNUSED", dimension.getName());
         	  
         	  for(HierarchyRestPojo hierarchy: hierarchies){
-        		  List<LevelRestPojo> levels = getHierarchyInfo(queryName, "UNUSED", dimension.getDimensionName(), hierarchy.getHierarchyName());
+        		  List<LevelRestPojo> levels = getHierarchyInfo(queryName, "UNUSED", dimension.getName(), hierarchy.getName());
         		  
         		  hierarchy.setLevels(levels);
         		  
@@ -159,10 +160,7 @@ public class QueryServlet {
     @Path("/{queryname}/{axis}")
     public List<DimensionRestPojo> getAxisInfo(@PathParam("queryname") String queryName, @PathParam("axis") String axisName){
     	List<DimensionRestPojo> dimensions = new RestList<DimensionRestPojo>();
-    	for (String dimension : olapQueryService.getDimensions(queryName, axisName)) {
-    		dimensions.add(new DimensionRestPojo(dimension));
-    	}
-    	return dimensions;
+    	return RestUtil.convertDimensions(olapQueryService.getDimensions(queryName, axisName));
     }
     
     /**
@@ -194,11 +192,7 @@ public class QueryServlet {
     @Produces({"application/xml","application/json" })
     @Path("/{queryname}/{axis}/{dimension}")
     public List<HierarchyRestPojo> getDimensionInfo(@PathParam("queryname") String queryName, @PathParam("axis") String axisName, @PathParam("dimension") String dimensionName){
-        List<HierarchyRestPojo> hierarchies = new RestList<HierarchyRestPojo>();
-        for (String hierarchy : olapQueryService.getHierarchies(queryName, dimensionName)) {
-            hierarchies.add(new HierarchyRestPojo(hierarchy));
-        }
-        return hierarchies;
+        return RestUtil.convertHierarchies(olapQueryService.getHierarchies(queryName, dimensionName));
     }
     
 //    /**
