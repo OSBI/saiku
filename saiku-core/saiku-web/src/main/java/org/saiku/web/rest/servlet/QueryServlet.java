@@ -248,7 +248,7 @@ public class QueryServlet {
      */
     @GET
     @Produces({"application/xml","application/json" })
-    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}")
+    @Path("/{queryname}/{axis}/{dimension}/hierarchy/{hierarchy}")
     public List<LevelRestPojo> getHierarchyInfo(@PathParam("queryname") String queryName, @PathParam("axis") String axisName, @PathParam("dimension") String dimensionName, @PathParam("hierarchy") String hierarchyName){
         List<LevelRestPojo> levels = new RestList<LevelRestPojo>();
         for (String level : olapQueryService.getLevels(queryName, dimensionName, hierarchyName)) {
@@ -275,7 +275,7 @@ public class QueryServlet {
      */
     @GET
     @Produces({"application/xml","application/json" })
-    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}/{level}")
+    @Path("/{queryname}/{axis}/{dimension}/hierarchy/{hierarchy}/{level}")
     public List<MemberRestPojo> getLevelInfo(@PathParam("queryname") String queryName, @PathParam("axis") String axisName, @PathParam("dimension") String dimensionName, 
             @PathParam("hierarchy") String hierarchyName, @PathParam("level") String levelName){
         List<MemberRestPojo> members = new RestList<MemberRestPojo>();
@@ -317,7 +317,7 @@ public class QueryServlet {
      * @return 
      */
     @POST
-    @Path("/{queryname}/{axis}/{dimension}/{hierarchy}/{level}/{member}")
+    @Path("/{queryname}/{axis}/{dimension}/member/{member}")
     public Status moveMember(@FormParam("selection") @DefaultValue("MEMBER") String selectionType, @PathParam("queryname") String queryName, @PathParam("dimension") String dimensionName, @PathParam("member") String uniqueMemberName){
         try{
             
