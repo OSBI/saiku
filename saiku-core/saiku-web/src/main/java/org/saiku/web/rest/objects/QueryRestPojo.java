@@ -1,5 +1,7 @@
 package org.saiku.web.rest.objects;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -44,6 +46,16 @@ public  class QueryRestPojo extends AbstractRestObject {
 	public String getName() {
 		return queryName;
 	}
+
+	private List<AxisRestPojo> axes;
+	
+	public List<AxisRestPojo> getAxes() {
+        return axes;
+    }
+
+    public void setAxes(List<AxisRestPojo> axes) {
+        this.axes = axes;
+    }
 
 	// TODO uncomment when changed
 	//	public CubeRestPojo getCube() {

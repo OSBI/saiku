@@ -18,6 +18,7 @@ import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
 import org.olap4j.query.Selection;
+import org.olap4j.query.SortOrder;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimension;
 import org.saiku.olap.dto.SaikuHierarchy;
@@ -115,17 +116,22 @@ public class OlapQueryService {
 	}
 	
 	
-	public void moveDimension(String queryName, String axisName, String dimensionName) {
+	public void moveDimension(String queryName, String axisName, String dimensionName, int position) {
 		OlapQuery query = queries.get(queryName);
 		QueryDimension dimension = query.getDimension(dimensionName);
 		Axis newAxis = Axis.Standard.valueOf(axisName);
+		if(position==-1){
 		query.moveDimension(dimension, newAxis);
+		}
+		else{
+		    query.moveDimension(dimension, newAxis, position);
+		}
 	}
 	
 	public void removeDimension(String queryName, String axisName, String dimensionName) {
 		OlapQuery query = queries.get(queryName);
 		String unusedName = query.getUnusedAxis().getName();
-		moveDimension(queryName, unusedName , dimensionName);
+		moveDimension(queryName, unusedName , dimensionName, -1);
 	}
 	
 	
@@ -234,6 +240,47 @@ public class OlapQueryService {
 			resetAxisSelections(axes.get(axis));
 		}
 	}
+
+    public void pullup(String queryName, String axisName, String dimensionName, int position) {
+        OlapQuery query = queries.get(queryName);
+        QueryDimension dimension = query.getDimension(dimensionName);
+        QueryAxis newAxis = dimension.getAxis();
+        newAxis.pullUp(position);
+        
+    }
 	
-	
+    public void pushdown(String queryName, String axisName, String dimensionName, int position) {
+        OlapQuery query = queries.get(queryName);
+        QueryDimension dimension = query.getDimension(dimensionName);
+        QueryAxis newAxis = dimension.getAxis();
+        newAxis.pushDown(position);
+        
+    }
+
+    public void setNonEmpty(String queryName, String axisName, boolean bool) {
+        OlapQuery query = queries.get(queryName);
+        QueryAxis newAxis = query.getAxis(Axis.Standard.valueOf(axisName));
+        newAxis.setNonEmpty(bool);
+    }
+
+    public void sortAxis(String queryName, String axisName, String sortOrder) {
+        OlapQuery query = queries.get(queryName);
+        QueryAxis newAxis = query.getAxis(Axis.Standard.valueOf(axisName));
+        if(sortOrder.equals("CLEAR")){
+           newAxis.clearSort();
+        }else{
+        SortOrder sort = SortOrder.valueOf(sortOrder);
+        try {
+            newAxis.sort(sort);
+        } catch (OlapException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        }
+        
+    }
+
+    public String getMDXQuery(String queryName) {
+        return queries.get(queryName).getMDX();
+    }
 }
