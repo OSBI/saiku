@@ -25,17 +25,19 @@ public class HierarchyRestPojo extends AbstractRestObject {
 	@XmlAttribute(name = "dimension", required = false)
 	private String dimensionUniqueName;
 	
+	@XmlAttribute(name = "levels", required = false)
 	private List<LevelRestPojo> levels;
 	
 	public HierarchyRestPojo(){
 		throw new RuntimeException("Unsupported Constructor. Serialization only");
 	}
 
-	public HierarchyRestPojo(String name, String uniqueName, String caption, String dimensionUniqueName) {
+	public HierarchyRestPojo(String name, String uniqueName, String caption, String dimensionUniqueName, List<LevelRestPojo> levels) {
 		this.name = name;
 		this.uniqueName = uniqueName;
 		this.caption = caption;
 		this.dimensionUniqueName = dimensionUniqueName;
+		this.levels = levels;
 	}
 	
 	public String getUniqueName() {
@@ -67,8 +69,4 @@ public class HierarchyRestPojo extends AbstractRestObject {
 		return getName();
 	}
 
-	public void setLevels(List<LevelRestPojo> levels) {
-		this.levels = levels;
-		
-	}
 }

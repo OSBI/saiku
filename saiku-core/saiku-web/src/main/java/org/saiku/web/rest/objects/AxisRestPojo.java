@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.saiku.web.rest.util.RestList;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="axis")
 public class AxisRestPojo extends AbstractRestObject {
@@ -16,16 +18,18 @@ public class AxisRestPojo extends AbstractRestObject {
 	 */
 	@XmlAttribute(name = "axisname", required = false)
 	private String axisName;
-	private List<DimensionRestPojo> dimensions;
+	
+	@XmlAttribute(name = "dimensions", required = false)
+	private RestList<DimensionRestPojo> dimensions;
 
 
 	public AxisRestPojo(){
 		throw new RuntimeException("Unsupported Constructor. Serialization only");
 	}
 
-	public AxisRestPojo(String axisName) {
+	public AxisRestPojo(String axisName, RestList<DimensionRestPojo> dimensions) {
 		this.axisName = axisName;
-
+		this.dimensions = dimensions;
 	}
 
 
@@ -48,9 +52,6 @@ public class AxisRestPojo extends AbstractRestObject {
 		return getAxisName();
 	}
 
-	public void setDimensions(List<DimensionRestPojo> dimensions) {
-		this.dimensions= dimensions;
-	}
 	
 	public List<DimensionRestPojo> getDimensions(){
 		return dimensions;
