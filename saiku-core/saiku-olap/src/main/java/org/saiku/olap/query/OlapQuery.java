@@ -1,8 +1,12 @@
 package org.saiku.olap.query;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Map;
 
 import org.olap4j.Axis;
+import org.olap4j.mdx.ParseTreeWriter;
 import org.olap4j.metadata.Cube;
 import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
@@ -47,6 +51,16 @@ public class OlapQuery {
 		}
 	}
 
+	public void moveDimension(QueryDimension dimension, Axis axis, int position) {
+        QueryAxis oldQueryAxis = findAxis(dimension);
+        QueryAxis newQueryAxis = query.getAxis(axis);
+        if (oldQueryAxis != null && newQueryAxis != oldQueryAxis) {
+            if (!newQueryAxis.getDimensions().contains(dimension)) {
+                newQueryAxis.addDimension(position, dimension);   
+            }
+            oldQueryAxis.removeDimension(dimension);
+        }
+    }
 	
 	public QueryDimension getDimension(String name) {
 		return this.query.getDimension(name);
@@ -67,6 +81,14 @@ public class OlapQuery {
 		}
 		return null;
 	}
+
+    public String getMDX() {
+       
+        final Writer writer = new StringWriter();
+        this.query.getSelect().unparse(new ParseTreeWriter(new PrintWriter(writer)));
+        
+        return writer.toString();
+    }
 
 	
 }

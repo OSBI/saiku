@@ -53,7 +53,7 @@ public class DimensionRestPojo extends AbstractRestObject {
 
 	@Override
 	public SaikuDimension toNativeObject() {
-		return new SaikuDimension(name,uniqueName,caption);
+		return new SaikuDimension(name,uniqueName,caption, null);
 	}
 
 	@Override
