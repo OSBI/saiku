@@ -13,7 +13,6 @@ import org.olap4j.mdx.IdentifierSegment;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
-import org.olap4j.metadata.Member;
 import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
@@ -22,6 +21,8 @@ import org.olap4j.query.SortOrder;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimension;
 import org.saiku.olap.dto.SaikuHierarchy;
+import org.saiku.olap.dto.SaikuLevel;
+import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.query.OlapQuery;
 import org.saiku.olap.util.ObjectUtil;
 
@@ -170,30 +171,26 @@ public class OlapQueryService {
 		return hierarchies;
 	}
 	
-	public List<String> getLevels(String queryName, String dimensionName, String hierarchyName) {
+	public List<SaikuLevel> getLevels(String queryName, String dimensionName, String hierarchyName) {
 		OlapQuery q = queries.get(queryName);
-		List<String> levels = new ArrayList<String>();
+		List<SaikuLevel> levels = new ArrayList<SaikuLevel>();
 		QueryDimension dim = q.getDimension(dimensionName);
 		if (dim != null) {
 			Hierarchy hierarchy = dim.getDimension().getHierarchies().get(hierarchyName);
-			for (Level level : hierarchy.getLevels()) {
-				levels.add(level.getName());
-			}
+			levels = ObjectUtil.convertLevels(hierarchy.getLevels());
 		}
 		return levels;
 	}
 	
-	public List<String> getLevelMembers(String queryName, String dimensionName, String hierarchyName, String levelName) {
+	public List<SaikuMember> getLevelMembers(String queryName, String dimensionName, String hierarchyName, String levelName) {
 		OlapQuery q = queries.get(queryName);
-		List<String> members = new ArrayList<String>();
+		List<SaikuMember> members = new ArrayList<SaikuMember>();
 		QueryDimension dim = q.getDimension(dimensionName);
 		if (dim != null) {
 			Hierarchy hierarchy = dim.getDimension().getHierarchies().get(hierarchyName);
 			Level level =  hierarchy.getLevels().get(levelName);
 			try {
-				for (Member member : level.getMembers()) {
-					members.add(member.getUniqueName());
-				}
+				members = ObjectUtil.convertMembers(level.getMembers());
 			} catch (OlapException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

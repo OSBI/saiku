@@ -5,6 +5,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.saiku.olap.dto.SaikuDimension;
@@ -24,7 +25,7 @@ public class DimensionRestPojo extends AbstractRestObject {
 	@XmlAttribute(name = "caption", required = false)
 	private String caption;
 	
-	@XmlAttribute(name = "hierarchies", required = false)
+	@XmlElement(name = "hierarchies", required = false)
 	private RestList<HierarchyRestPojo> hierarchies;
 
 

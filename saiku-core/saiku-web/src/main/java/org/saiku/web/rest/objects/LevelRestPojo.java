@@ -28,8 +28,7 @@ public class LevelRestPojo extends AbstractRestObject {
 	@XmlAttribute(name = "hierarchy", required = false)
 	private String hierarchyUniqueName;
 	
-	@XmlAttribute(name = "members", required = false)
-	private RestList<MemberRestPojo> members;
+	private transient RestList<MemberRestPojo> members;
 	
 	public LevelRestPojo(String name, String uniqueName, String caption, String hierarchyUniqueName, RestList<MemberRestPojo> members) {
 		this.name = name;
@@ -60,15 +59,17 @@ public class LevelRestPojo extends AbstractRestObject {
 	}
 	@Override
 	public SaikuLevel toNativeObject() {
-		return new SaikuLevel(name, uniqueName, caption, hierarchyUniqueName, toSaikuMemberList());
+		return new SaikuLevel(name, uniqueName, caption, hierarchyUniqueName, getSaikuMemberList());
 	}
 
-	private List<SaikuMember> toSaikuMemberList() {
+	public List<SaikuMember> getSaikuMemberList() {
 		List<SaikuMember> memberList = new ArrayList<SaikuMember>();
 		for (MemberRestPojo member : members) {
 			memberList.add(member.toNativeObject());
 		}
+		return memberList;
 	}
+	
 	@Override
 	public String getCompareValue() {
 		return getName();
