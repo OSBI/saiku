@@ -1,10 +1,24 @@
 <enunciate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="http://enunciate.codehaus.org/schemas/enunciate-1.20.xsd">
+	xsi:noNamespaceSchemaLocation="http://enunciate.codehaus.org/schemas/enunciate-1.21.xsd">
 
 	<webapp mergeWebXML="src/main/web/web.xml" />
 	<modules>
-		<spring-app>
+		<spring-app enableSecurity="true">
 			<springImport file="src/main/webapp/WEB-INF/saiku-beans.xml" />
+
+      <security enableBasicHTTPAuth="false"
+                enableFormBasedLogin="true"
+                enableFormBasedLogout="true"
+                enableOAuth="true">
+
+        <onAuthenticationFailed redirectTo="/login.jsp"/>
+        
+        <formBasedLogin url="/login.do" loginPageFile="src/main/webapp/login.jsp"/>
+        <formBasedLogout url="/logout.do"/>
+
+        <!--we need our index.jsp and login.jsp secure, too-->
+        <url pattern="/*"/>
+      </security>
 		</spring-app>
 		<jersey useSubcontext="true" disableWildcardServletError="false"
 			disabled="false"></jersey>
