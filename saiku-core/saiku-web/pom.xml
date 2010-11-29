@@ -118,6 +118,11 @@
 			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
+    		<groupId>org.codehaus.spring-security-oauth</groupId>
+    		<artifactId>spring-security-oauth</artifactId>
+    		<version>3.19</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>${spring.version}</version>
@@ -286,6 +291,7 @@
 			<artifactId>commons-collections</artifactId>
 			<version>3.1</version>
 		</dependency>
+		
 	</dependencies>
 	<reporting>
     <plugins>
