@@ -11,14 +11,18 @@
                 enableFormBasedLogout="true"
                 enableOAuth="true">
 
+		
         <onAuthenticationFailed redirectTo="/login.jsp"/>
         
         <formBasedLogin url="/login.do" loginPageFile="src/main/webapp/login.jsp"/>
+		
         <formBasedLogout url="/logout.do"/>
-
-        <!--we need our index.jsp and login.jsp secure, too-->
+		
+		 <!--we need our index.jsp and login.jsp secure, too-->
         <url pattern="/*"/>
+        
       </security>
+      
 		</spring-app>
 		<jersey useSubcontext="true" disableWildcardServletError="false"
 			disabled="false"></jersey>
