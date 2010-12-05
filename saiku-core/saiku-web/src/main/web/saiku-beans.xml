@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
+
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -10,9 +11,31 @@
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
-  <context:annotation-config/>
+  <!--<context:annotation-config/>-->
 
-  <!--
+  <!--Basic application beans.-->
+ <!-- <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="prefix" value="/WEB-INF/jsp/"/>
+    <property name="suffix" value=".jsp"/>
+  </bean>
+
+  <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <property name="mappings">
+      <props>
+        <prop key="/rest/photos">photosController</prop>
+        <prop key="/json/photos">photosController</prop>
+        <prop key="/rest/jpg/photo/*">photoController</prop>
+        <prop key="/oauth/confirm_access">accessConfirmationController</prop>
+      </props>
+    </property>
+    <property name="alwaysUseFullPath" value="true"/>
+  </bean>
+
+   <bean id="accessConfirmationController" class="org.springframework.security.oauth.examples.sparklr.mvc.AccessConfirmationController">
+    <property name="clientDetailsService" ref="clientDetails"/>
+  </bean>-->
+  
+    <!--
     The sparklr users.
   -->
   <security:user-service>
@@ -26,7 +49,7 @@
     other information about the consumer included.)
   -->
   <oauth:consumer-details-service id="consumerDetails">
-    <oauth:consumer name="Tonr.com" key="tonr-consumer-key" secret="SHHHHH" resourceName="Your Photos" resourceDescription="Your photos that you have uploaded to sparklr.com."/>
+    <oauth:consumer name="Tonr.com" key="tonr-consumer-key" secret="SHHHHH!!!!!!!!!!" resourceName="Your Photos" resourceDescription="Your photos that you have uploaded to sparklr.com."/>
   </oauth:consumer-details-service>
 
   <!--
@@ -38,8 +61,6 @@
     The in-memory token services spawn a separate thread that cleans up expired tokens.
   -->
   <oauth:token-services id="tokenServices"/>
-
-  
   
 	<bean id="connectionFactoryBean" class="org.saiku.datasources.connection.SaikuConnectionFactory">
 		<property name="connections">

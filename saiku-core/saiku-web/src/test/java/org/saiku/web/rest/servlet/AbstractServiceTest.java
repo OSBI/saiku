@@ -20,7 +20,6 @@ import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
 import org.olap4j.OlapWrapper;
 import org.saiku.service.olap.OlapDiscoverService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -33,8 +32,6 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 @RunWith(SpringJUnit4ClassRunner.class)
 public abstract class AbstractServiceTest extends JerseyTest {
 
-	@Autowired
-	//protected OlapDiscoverService olapDiscoverService = null;
 
 	private static Properties testProps = new Properties();
 

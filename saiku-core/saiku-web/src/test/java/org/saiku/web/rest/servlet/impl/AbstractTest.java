@@ -17,6 +17,9 @@ public abstract class AbstractTest extends JerseyTest {
     
 	protected static ApplicationContext applicationContext = null;
 	
+	public AbstractTest(){
+	    super("org.saiku.web.rest.servlet.impl");
+	}
 	private final String[] contextFiles = new String[] { 
 	        "/src/test/resources/org/saiku/web/rest/service/impl/saiku-beans.xml" //$NON-NLS-1$
 	    };
