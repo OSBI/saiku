@@ -10,8 +10,10 @@ import org.olap4j.OlapException;
 import org.olap4j.metadata.Catalog;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Schema;
+import org.saiku.olap.dto.SaikuCatalog;
 import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SaikuSchema;
 
 public class OlapMetaExplorer {
 
@@ -21,30 +23,37 @@ public class OlapMetaExplorer {
 		connections = con;
 	}
 
-	public List<SaikuConnection> getConnections(String connectionName) {
+	public SaikuConnection getConnections(String connectionName) {
 		OlapConnection olapcon = connections.get(connectionName);
-		List<SaikuConnection> connectionList = new ArrayList<SaikuConnection>();
+		SaikuConnection connection = null;
 		if (olapcon != null) {
+			List<SaikuCatalog> catalogs = new ArrayList<SaikuCatalog>();
 			for (Catalog cat : olapcon.getCatalogs()) {
+				List<SaikuSchema> schemas = new ArrayList<SaikuSchema>();
 				try {
 					for (Schema schem : cat.getSchemas()) {
-						connectionList.add(new SaikuConnection(connectionName, cat.getName(), schem.getName()));
+						List<SaikuCube> cubes = new ArrayList<SaikuCube>();
+						for (Cube cub : schem.getCubes()) {
+							cubes.add(new SaikuCube(connectionName, cub.getName(), cat.getName(), schem.getName(), cub.getDescription()));
+						}
+						schemas.add(new SaikuSchema(schem.getName(),cubes));
 					}
 				} catch (OlapException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				catalogs.add(new SaikuCatalog(cat.getName(),schemas));
 			}
-
+			connection = new SaikuConnection(connectionName,catalogs);
 		}
-		return connectionList;
+		return connection;
 
 	}
 
 	public List<SaikuConnection> getConnections(List<String> connectionNames) {
 		List<SaikuConnection> connectionList = new ArrayList<SaikuConnection>();
 		for (String connectionName : connectionNames) {
-			connectionList.addAll(getConnections(connectionName));
+			connectionList.add(getConnections(connectionName));
 		}
 		return connectionList;
 	}
@@ -52,7 +61,7 @@ public class OlapMetaExplorer {
 	public List<SaikuConnection> getAllConnections() {
 		List<SaikuConnection> cubesList = new ArrayList<SaikuConnection>();
 		for (String connectionName : connections.keySet()) {
-			cubesList.addAll(getConnections(connectionName));
+			cubesList.add(getConnections(connectionName));
 		}
 		return cubesList;
 	}
@@ -66,7 +75,7 @@ public class OlapMetaExplorer {
 				try {
 					for (Schema schem : cat.getSchemas()) {
 						for (Cube cub : schem.getCubes()) {
-							cubes.add(new SaikuCube(connectionName, cub.getName(), cat.getName(), schem.getName()));
+							cubes.add(new SaikuCube(connectionName, cub.getName(), cat.getName(), schem.getName(), cub.getDescription()));
 						}
 					}
 				} catch (OlapException e) {
@@ -100,9 +109,9 @@ public class OlapMetaExplorer {
 		try {
 			OlapConnection con = connections.get(cube.getConnectionName());
 			if (con != null ) {
-				Catalog cat = con.getCatalogs().get(cube.getCatalog());
+				Catalog cat = con.getCatalogs().get(cube.getCatalogName());
 				if (cat != null) {
-					Schema schema = cat.getSchemas().get(cube.getSchema());
+					Schema schema = cat.getSchemas().get(cube.getSchemaName());
 					if (schema != null) {
 						Cube cub =  schema.getCubes().get(cube.getCubeName());
 						if (cub != null) {
@@ -117,6 +126,6 @@ public class OlapMetaExplorer {
 		}
 		return null;
 	}
-	
+
 
 }

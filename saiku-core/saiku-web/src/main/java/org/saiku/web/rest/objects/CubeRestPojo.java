@@ -64,7 +64,7 @@ public class CubeRestPojo extends AbstractRestObject {
 	}
 
 	public SaikuCube toNativeObject() {
-		return new SaikuCube(connectionName, cubeName, catalog, schema);
+		return new SaikuCube(connectionName, cubeName, catalog, schema,"");
 	}
 	
 	@Override

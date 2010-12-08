@@ -6,6 +6,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.web.rest.objects.CubeRestPojo;
@@ -35,12 +36,12 @@ public class DataSourceServlet {
      */
     @GET
     @Produces({"application/xml","application/json" })
-     public List<CubeRestPojo> getCubes() {
-    	List<CubeRestPojo> cubes = new RestList<CubeRestPojo>();
-    	for (SaikuCube cube : olapDiscoverService.getAllCubes()) {
-    		cubes.add(new CubeRestPojo(cube.getConnectionName(), cube.getCubeName(), cube.getCatalog(), cube.getSchema()));
-    	}
-        return cubes;
-        
+     public List<SaikuConnection> getConnections() {
+    	//List<CubeRestPojo> cubes = new RestList<CubeRestPojo>();
+    	//for (SaikuCube cube : olapDiscoverService.getAllCubes()) {
+    	//	cubes.add(new CubeRestPojo(cube.getConnectionName(), cube.getCubeName(), cube.getCatalog(), cube.getSchema()));
+    	//}
+        //return cubes;
+    	return olapDiscoverService.getAllConnections();
     }
 }

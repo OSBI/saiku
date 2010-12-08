@@ -1,28 +1,23 @@
 package org.saiku.olap.dto;
 
+import java.util.List;
+
 public class SaikuConnection {
 	
-	private String name;
-	private String catalog;
-	private String schema;
+	private String connectionName;
+	private List<SaikuCatalog> catalogs;
 
-	public SaikuConnection(String name, String catalog, String schema) {
-		this.name = name;
-		this.catalog = catalog;
-		this.schema = schema;
+	public SaikuConnection(String connectionName, List<SaikuCatalog> catalogs) {
+		this.connectionName = connectionName;
+		this.catalogs = catalogs;
 	}
 	
 	public String getName() {
-		return name;
+		return connectionName;
 	}
 
-	public String getCatalog() {
-		return catalog;
+	public List<SaikuCatalog> getCatalogs() {
+		return catalogs;
 	}
-
-	public String getSchema() {
-		return schema;
-	}
-
 
 }
