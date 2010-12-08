@@ -3,14 +3,18 @@ package org.saiku.olap.query;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Date;
 import java.util.Map;
 
 import org.olap4j.Axis;
+import org.olap4j.CellSet;
 import org.olap4j.mdx.ParseTreeWriter;
 import org.olap4j.metadata.Cube;
 import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
+import org.saiku.olap.dto.resultset.CellDataSet;
+import org.saiku.olap.util.OlapResultSetUtil;
 
 public class OlapQuery {
 
@@ -88,6 +92,23 @@ public class OlapQuery {
         this.query.getSelect().unparse(new ParseTreeWriter(new PrintWriter(writer)));
         
         return writer.toString();
+    }
+    
+    public CellDataSet execute() throws Exception {
+        final Query mdx = this.query;
+        mdx.validate();
+        final Writer writer = new StringWriter();
+        mdx.getSelect().unparse(new ParseTreeWriter(new PrintWriter(writer)));
+        Long start = (new Date()).getTime();
+        final CellSet cellSet = mdx.execute();
+        Long exec = (new Date()).getTime();
+
+        CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cellSet);
+        Long format = (new Date()).getTime();
+        System.out.println("Size: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
+                + "ms\tFormat:\t" + (format - exec) + "ms\t Total: " + (format - start) + "ms");
+        return result;
+
     }
 
 	

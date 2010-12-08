@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.saiku.olap.dto.SaikuLevel;
 import org.saiku.olap.dto.SaikuMember;
+import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.web.rest.objects.AxisRestPojo;
@@ -28,6 +29,7 @@ import org.saiku.web.rest.objects.HierarchyRestPojo;
 import org.saiku.web.rest.objects.LevelRestPojo;
 import org.saiku.web.rest.objects.MemberRestPojo;
 import org.saiku.web.rest.objects.QueryRestPojo;
+import org.saiku.web.rest.objects.resultset.Cell;
 import org.saiku.web.rest.util.RestList;
 import org.saiku.web.rest.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -155,6 +157,15 @@ public class QueryServlet {
         return olapQueryService.getMDXQuery(queryName);
           
       }
+      
+      @GET
+      @Path("/{queryname}/result")
+      public RestList<Cell[]> execute(@PathParam("queryname") String queryName){
+        CellDataSet cs = olapQueryService.execute(queryName);
+        return RestUtil.convert(cs);
+          
+      }
+
     /*
      * Axis Methods.
      */

@@ -2,15 +2,21 @@ package org.saiku.web.rest.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.saiku.olap.dto.SaikuDimension;
 import org.saiku.olap.dto.SaikuHierarchy;
 import org.saiku.olap.dto.SaikuLevel;
 import org.saiku.olap.dto.SaikuMember;
+import org.saiku.olap.dto.resultset.AbstractBaseCell;
+import org.saiku.olap.dto.resultset.CellDataSet;
+import org.saiku.olap.dto.resultset.DataCell;
+import org.saiku.olap.dto.resultset.MemberCell;
 import org.saiku.web.rest.objects.DimensionRestPojo;
 import org.saiku.web.rest.objects.HierarchyRestPojo;
 import org.saiku.web.rest.objects.LevelRestPojo;
 import org.saiku.web.rest.objects.MemberRestPojo;
+import org.saiku.web.rest.objects.resultset.Cell;
 
 public class RestUtil {
 
@@ -90,6 +96,72 @@ public class RestUtil {
 
 	public static SaikuMember convert(MemberRestPojo member) {
 		return new SaikuMember(member.getName(), member.getUniqueName(), member.getCaption(), member.getDimensionUniqueName());
+	}
+	
+	public static RestList<Cell[]> convert(CellDataSet cellSet) {
+		AbstractBaseCell[][] body = cellSet.getCellSetBody();
+		AbstractBaseCell[][] headers = cellSet.getCellSetHeaders();
+		
+		RestList<Cell[]> rows = new RestList<Cell[]>();
+		
+		for (AbstractBaseCell header[] : headers) {
+			rows.add(convert(header));
+		}
+		
+		for (AbstractBaseCell row[] : body) {
+			rows.add(convert(row));
+		}
+		return rows;
+		
+	}
+	
+	public static Cell[] convert(AbstractBaseCell[] acells) {
+		Cell[]  cells = new Cell[acells.length];
+		for (int i = 0; i < acells.length; i++) {
+			cells[i] = convert(acells[i]);
+		}
+		return cells;
+	}
+	
+	public static Cell convert(AbstractBaseCell acell) {
+		if (acell != null) {
+			if (acell instanceof DataCell) {
+				DataCell dcell = (DataCell) acell;
+				Properties metaprops = new Properties();
+				metaprops.put("color", "" + dcell.getColorValue());
+				RestList<Integer> coordinates = new RestList<Integer>();
+				for (Integer number : dcell.getCoordinates()) {
+					coordinates.add(number);
+				}
+				metaprops.put("coordinates", coordinates);
+				metaprops.put("formattedValue", "" + dcell.getFormattedValue());
+				metaprops.put("rawValue", "" + dcell.getRawValue());
+				metaprops.put("rawNumber", "" + dcell.getRawNumber());
+				
+				Properties props = new Properties();
+				props.putAll(dcell.getProperties());
+				
+				return new Cell(dcell.getFormattedValue(),metaprops,props, Cell.Type.DATA_CELL);
+			}
+			if (acell instanceof MemberCell) {
+				MemberCell mcell = (MemberCell) acell;
+				Properties metaprops = new Properties();
+				metaprops.put("children", "" + mcell.getChildMemberCount());
+				metaprops.put("uniqueName", "" + mcell.getUniqueName());
+				metaprops.put("formattedValue", "" +  mcell.getFormattedValue());
+				metaprops.put("rawValue", "" + mcell.getRawValue());
+				
+				Properties props = new Properties();
+				props.putAll(mcell.getProperties());
+
+				
+				return new Cell("" + mcell.getFormattedValue(),metaprops,props, Cell.Type.HEADER);
+			}
+
+		
+		}
+		throw new RuntimeException("Cannot convert Cell. Type Mismatch!");
+
 	}
 
 }

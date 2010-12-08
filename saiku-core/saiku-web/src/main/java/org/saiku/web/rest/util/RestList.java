@@ -20,11 +20,12 @@ import org.saiku.web.rest.objects.HierarchyRestPojo;
 import org.saiku.web.rest.objects.LevelRestPojo;
 import org.saiku.web.rest.objects.MemberRestPojo;
 import org.saiku.web.rest.objects.QueryRestPojo;
+import org.saiku.web.rest.objects.resultset.Cell;
 
 
 @XmlRootElement(name = "items")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestList<T extends AbstractRestObject> implements List<T> {
+public class RestList<T> implements List<T> {
 
 	/**
 	 * 
@@ -38,7 +39,8 @@ public class RestList<T extends AbstractRestObject> implements List<T> {
             @XmlElement(name="member", type=MemberRestPojo.class),
             @XmlElement(name="query", type=QueryRestPojo.class),
             @XmlElement(name="dimension", type=DimensionRestPojo.class),
-            @XmlElement(name="axis", type=AxisRestPojo.class)
+            @XmlElement(name="axis", type=AxisRestPojo.class),
+            @XmlElement(name="row", type=Cell.class)
 	})
 	private List<T> internalList;
 

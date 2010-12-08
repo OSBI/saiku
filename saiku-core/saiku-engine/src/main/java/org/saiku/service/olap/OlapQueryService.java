@@ -23,6 +23,7 @@ import org.saiku.olap.dto.SaikuDimension;
 import org.saiku.olap.dto.SaikuHierarchy;
 import org.saiku.olap.dto.SaikuLevel;
 import org.saiku.olap.dto.SaikuMember;
+import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query.OlapQuery;
 import org.saiku.olap.util.ObjectUtil;
 
@@ -40,7 +41,8 @@ public class OlapQueryService {
 		try {
 			Cube cub = olapDiscoverService.getCube(cube);
 			if (cub != null) {
-				queries.put(queryName, new OlapQuery(new Query(queryName, cub)));
+				OlapQuery q = new OlapQuery(new Query(queryName, cub));
+				queries.put(queryName, q);
 				
 				return true;
 			}
@@ -66,6 +68,16 @@ public class OlapQueryService {
 		queries.remove(queryName);
 	}
 	
+	public CellDataSet execute(String queryName) {
+		OlapQuery query = queries.get(queryName);
+		try {
+			return query.execute();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	public void pivot(String queryName) {
 		queries.get(queryName).pivot();
 	}
@@ -80,7 +92,7 @@ public class OlapQueryService {
 	
 	public List<SaikuDimension> getDimensions(String queryName, String axis) {
 		OlapQuery q = queries.get(queryName);
-		Axis.Standard tmpAxis =null;
+		Axis.Standard tmpAxis = null;
 		List<SaikuDimension> dimensions = new ArrayList<SaikuDimension>();
 		
 		if(!axis.equals("UNUSED")) {
@@ -122,10 +134,10 @@ public class OlapQueryService {
 		QueryDimension dimension = query.getDimension(dimensionName);
 		Axis newAxis = Axis.Standard.valueOf(axisName);
 		if(position==-1){
-		query.moveDimension(dimension, newAxis);
+			query.moveDimension(dimension, newAxis);
 		}
 		else{
-		    query.moveDimension(dimension, newAxis, position);
+			query.moveDimension(dimension, newAxis, position);
 		}
 	}
 	
@@ -140,8 +152,9 @@ public class OlapQueryService {
 		OlapQuery q = queries.get(queryName);
 		Axis.Standard tmpAxis = null;
 		
-		if(!axis.equals("UNUSED"))
-		tmpAxis = Axis.Standard.valueOf(axis);
+		if(!axis.equals("UNUSED")) {
+			tmpAxis = Axis.Standard.valueOf(axis);
+		}
 		
 		List<String> dimensions = new ArrayList<String>();
 
