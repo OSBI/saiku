@@ -9,11 +9,17 @@ import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
 import org.olap4j.metadata.Catalog;
 import org.olap4j.metadata.Cube;
+import org.olap4j.metadata.Dimension;
+import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Schema;
 import org.saiku.olap.dto.SaikuCatalog;
 import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SaikuDimension;
+import org.saiku.olap.dto.SaikuHierarchy;
+import org.saiku.olap.dto.SaikuLevel;
 import org.saiku.olap.dto.SaikuSchema;
+import org.saiku.olap.util.ObjectUtil;
 
 public class OlapMetaExplorer {
 
@@ -105,7 +111,7 @@ public class OlapMetaExplorer {
 		return cubes;
 	}
 
-	public Cube getCube(SaikuCube cube) {
+	public Cube getNativeCube(SaikuCube cube) {
 		try {
 			OlapConnection con = connections.get(cube.getConnectionName());
 			if (con != null ) {
@@ -127,5 +133,51 @@ public class OlapMetaExplorer {
 		return null;
 	}
 
+	public List<SaikuDimension> getAllDimensions(SaikuCube cube) {
+		Cube nativeCube = getNativeCube(cube);
+		List<SaikuDimension> dimensions = ObjectUtil.convertDimensions(nativeCube.getDimensions());
+		return dimensions;
+	}
+
+	public SaikuDimension getDimension(SaikuCube cube, String dimensionName) {
+		Cube nativeCube = getNativeCube(cube);
+		Dimension dim = nativeCube.getDimensions().get(dimensionName);
+		if (dim != null) {
+			SaikuDimension dimension = ObjectUtil.convert(dim);
+			return dimension;
+		}
+		return null;
+	}
+
+	public List<SaikuHierarchy> getAllHierarchies(SaikuCube cube) {
+		Cube nativeCube = getNativeCube(cube);
+		List<SaikuHierarchy> hierarchies = ObjectUtil.convertHierarchies(nativeCube.getHierarchies());
+		return hierarchies;
+	}
+
+	public SaikuHierarchy getHierarchy(SaikuCube cube, String hierarchyName) {
+		Cube nativeCube = getNativeCube(cube);
+		Hierarchy h = nativeCube.getHierarchies().get(hierarchyName);
+		if (h != null) {
+			SaikuHierarchy hierarchy = ObjectUtil.convert(h);
+			return hierarchy;
+		}
+		return null;
+	}
+	
+
+	public List<SaikuLevel> getAllLevels(SaikuCube cube, String dimension, String hierarchy) {
+		Cube nativeCube = getNativeCube(cube);
+		Dimension dim = nativeCube.getDimensions().get(dimension);
+		if (dim != null) {
+			Hierarchy h = dim.getHierarchies().get(hierarchy);
+			if (h!= null) {
+				List<SaikuLevel> levels = (ObjectUtil.convertLevels(h.getLevels()));
+				return levels;
+			}
+		}
+		return null;
+
+	}
 
 }

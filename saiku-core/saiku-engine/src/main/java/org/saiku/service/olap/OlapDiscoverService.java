@@ -26,8 +26,8 @@ public class OlapDiscoverService {
 		return metaExplorer.getAllConnections();
 	}
 	
-	public Cube getCube(SaikuCube cube) {
-		return metaExplorer.getCube(cube);
+	public Cube getNativeCube(SaikuCube cube) {
+		return metaExplorer.getNativeCube(cube);
 	}
 	
 }

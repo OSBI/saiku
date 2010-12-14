@@ -39,7 +39,7 @@ public class OlapQueryService {
 	
 	public boolean createNewOlapQuery(String queryName, SaikuCube cube) {
 		try {
-			Cube cub = olapDiscoverService.getCube(cube);
+			Cube cub = olapDiscoverService.getNativeCube(cube);
 			if (cub != null) {
 				OlapQuery q = new OlapQuery(new Query(queryName, cub));
 				queries.put(queryName, q);
@@ -101,12 +101,12 @@ public class OlapQueryService {
 		if (tmpAxis != null) {
 			int ord = tmpAxis.axisOrdinal();
 			QueryAxis qa = q.getAxis(Axis.Factory.forOrdinal(ord));
-			dimensions.addAll(ObjectUtil.convertDimensions(qa.getDimensions()));
+			dimensions.addAll(ObjectUtil.convertQueryDimensions(qa.getDimensions()));
 			
 		}
 		else if (axis.equals("UNUSED")){
             QueryAxis qa = q.getUnusedAxis();
-            dimensions.addAll(ObjectUtil.convertDimensions(qa.getDimensions()));
+            dimensions.addAll(ObjectUtil.convertQueryDimensions(qa.getDimensions()));
         }
 		return dimensions;
 		
@@ -119,6 +119,7 @@ public class OlapQueryService {
         final Selection.Operator selectionMode = Selection.Operator.valueOf(selectionType);
         
         try {
+        	System.out.println("include:" + selectionMode.toString() + " " + memberList.size());
             dimension.include(selectionMode, memberList);
             return true;
         } catch (OlapException e) {
@@ -133,6 +134,7 @@ public class OlapQueryService {
 		OlapQuery query = queries.get(queryName);
 		QueryDimension dimension = query.getDimension(dimensionName);
 		Axis newAxis = Axis.Standard.valueOf(axisName);
+		System.out.println("move dimension to axis:" + newAxis.toString() + " dimension" + dimension.getName().toString());
 		if(position==-1){
 			query.moveDimension(dimension, newAxis);
 		}

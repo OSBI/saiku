@@ -39,7 +39,7 @@ public class DataSourceInterfaceTest extends AbstractServiceTest {
         assertEquals(connections.size(),1);
         SaikuConnection con = connections.get(0);
         System.out.println(con);
-        assertEquals(con.getName(), "TestConnection1");
+        assertEquals(con.getConnectionName(), "TestConnection1");
         assertEquals(con.getCatalogs().size(), 2);
         
 //        List<CubeRestPojo> cubes = dsi.getCubes();

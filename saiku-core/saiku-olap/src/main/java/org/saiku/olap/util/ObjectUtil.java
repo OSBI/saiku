@@ -25,9 +25,17 @@ public class ObjectUtil {
 		return convert(dim.getDimension());
 	}
 
-	public static List<SaikuDimension> convertDimensions(List<QueryDimension> dims) {
+	public static List<SaikuDimension> convertQueryDimensions(List<QueryDimension> dims) {
 		List<SaikuDimension> dimList = new ArrayList<SaikuDimension>();
 		for (QueryDimension d : dims) {
+			dimList.add(convert(d));
+		}
+		return dimList;
+	}
+	
+	public static List<SaikuDimension> convertDimensions(List<Dimension> dims) {
+		List<SaikuDimension> dimList = new ArrayList<SaikuDimension>();
+		for (Dimension d : dims) {
 			dimList.add(convert(d));
 		}
 		return dimList;

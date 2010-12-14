@@ -12,7 +12,7 @@ public class SaikuConnection {
 		this.catalogs = catalogs;
 	}
 	
-	public String getName() {
+	public String getConnectionName() {
 		return connectionName;
 	}
 
