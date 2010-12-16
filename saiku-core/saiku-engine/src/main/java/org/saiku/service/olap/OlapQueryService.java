@@ -140,7 +140,9 @@ public class OlapQueryService {
         	System.out.println("include:" + selectionMode.toString() + " " + memberList.size());
         	Selection selection = dimension.createSelection(selectionMode, memberList);
             dimension.getInclusions().remove(selection);
-            
+            if (dimension.getInclusions().size() == 0) {
+            	moveDimension(queryName, "UNUSED", dimensionName, -1);
+            }
             return true;
         } catch (OlapException e) {
             // TODO Auto-generated catch block
@@ -190,6 +192,10 @@ public class OlapQueryService {
         						Selection inclusion = dimension.createSelection(selectionMode, member);
         						dimension.getInclusions().remove(inclusion);
         					}
+        		            if (dimension.getInclusions().size() == 0) {
+        		            	moveDimension(queryName, "UNUSED", dimensionName, -1);
+        		            }
+
         				}
         			}
         		}
