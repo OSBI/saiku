@@ -416,6 +416,7 @@ public class QueryServlet {
 				return Status.INTERNAL_SERVER_ERROR;
 			}
 		} catch (Exception e){
+			e.printStackTrace();
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
