@@ -10,6 +10,7 @@ import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.mdx.ParseTreeWriter;
 import org.olap4j.metadata.Cube;
+import org.olap4j.metadata.Level;
 import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
@@ -110,6 +111,4 @@ public class OlapQuery {
         return result;
 
     }
-
-	
 }
