@@ -128,20 +128,21 @@ public class RestUtil {
 			if (acell instanceof DataCell) {
 				DataCell dcell = (DataCell) acell;
 				Properties metaprops = new Properties();
-				metaprops.put("color", "" + dcell.getColorValue());
+				// metaprops.put("color", "" + dcell.getColorValue());
 				RestList<Integer> coordinates = new RestList<Integer>();
 				for (Integer number : dcell.getCoordinates()) {
 					coordinates.add(number);
 				}
 				metaprops.put("coordinates", coordinates);
 				metaprops.put("formattedValue", "" + dcell.getFormattedValue());
-				metaprops.put("rawValue", "" + dcell.getRawValue());
+				// metaprops.put("rawValue", "" + dcell.getRawValue());
 				metaprops.put("rawNumber", "" + dcell.getRawNumber());
 				
 				Properties props = new Properties();
 				props.putAll(dcell.getProperties());
 				
-				return new Cell(dcell.getFormattedValue(),metaprops,props, Cell.Type.DATA_CELL);
+				// TODO no properties  (NULL) for now - 
+				return new Cell(dcell.getFormattedValue(),metaprops, null, Cell.Type.DATA_CELL);
 			}
 			if (acell instanceof MemberCell) {
 				MemberCell mcell = (MemberCell) acell;
@@ -154,8 +155,8 @@ public class RestUtil {
 				Properties props = new Properties();
 				props.putAll(mcell.getProperties());
 
-				
-				return new Cell("" + mcell.getFormattedValue(),metaprops,props, headertype);
+				// TODO no properties  (NULL) for now - 
+				return new Cell("" + mcell.getFormattedValue(),metaprops, null , headertype);
 			}
 
 		
