@@ -406,8 +406,6 @@ public class QueryServlet {
 	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/member/{member}")
 	public Status removeMember(@FormParam("selection") @DefaultValue("MEMBER") String selectionType, @PathParam("queryname") String queryName,@PathParam("axis") String axisName, @PathParam("dimension") String dimensionName, @PathParam("member") String uniqueMemberName){
 		try{
-			olapQueryService.moveDimension(queryName, axisName, dimensionName, -1);
-
 			boolean ret = olapQueryService.removeMember(queryName, dimensionName, uniqueMemberName, selectionType);
 			if(ret == true){
 				return Status.OK;
