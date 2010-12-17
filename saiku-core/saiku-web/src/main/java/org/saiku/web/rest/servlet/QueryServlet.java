@@ -386,11 +386,11 @@ public class QueryServlet {
 	 */
 	@POST
 	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/member/{member}")
-	public Status includeMember(@FormParam("selection") @DefaultValue("MEMBER") String selectionType, @PathParam("queryname") String queryName,@PathParam("axis") String axisName, @PathParam("dimension") String dimensionName, @PathParam("member") String uniqueMemberName){
+	public Status includeMember(@FormParam("selection") @DefaultValue("MEMBER") String selectionType, @PathParam("queryname") String queryName,@PathParam("axis") String axisName, @PathParam("dimension") String dimensionName, @PathParam("member") String uniqueMemberName, @FormParam("position") @DefaultValue("-1") int position, @FormParam("memberposition") @DefaultValue("-1") int memberposition){
 		try{
-			olapQueryService.moveDimension(queryName, axisName, dimensionName, -1);
+			olapQueryService.moveDimension(queryName, axisName, dimensionName, position);
 
-			boolean ret = olapQueryService.includeMember(queryName, dimensionName, uniqueMemberName, selectionType);
+			boolean ret = olapQueryService.includeMember(queryName, dimensionName, uniqueMemberName, selectionType, memberposition);
 			if(ret == true){
 				return Status.CREATED;
 			}
@@ -422,9 +422,9 @@ public class QueryServlet {
 	
 	@POST
 	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/hierarchy/{hierarchy}/{level}")
-	public Status includeLevel(@PathParam("queryname") String queryName,@PathParam("axis") String axisName, @PathParam("dimension") String dimensionName, @PathParam("hierarchy") String uniqueHierarchyName, @PathParam("level") String uniqueLevelName){
+	public Status includeLevel(@PathParam("queryname") String queryName,@PathParam("axis") String axisName, @PathParam("dimension") String dimensionName, @PathParam("hierarchy") String uniqueHierarchyName, @PathParam("level") String uniqueLevelName, @FormParam("position") @DefaultValue("-1") int position){
 		try{
-			olapQueryService.moveDimension(queryName, axisName, dimensionName, -1);
+			olapQueryService.moveDimension(queryName, axisName, dimensionName, position);
 			boolean ret = olapQueryService.includeLevel(queryName, dimensionName, uniqueHierarchyName, uniqueLevelName);
 			if(ret == true){
 				return Status.CREATED;

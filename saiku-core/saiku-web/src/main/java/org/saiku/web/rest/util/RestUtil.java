@@ -105,25 +105,25 @@ public class RestUtil {
 		RestList<Cell[]> rows = new RestList<Cell[]>();
 		
 		for (AbstractBaseCell header[] : headers) {
-			rows.add(convert(header));
+			rows.add(convert(header, Cell.Type.COLUMN_HEADER));
 		}
 		
 		for (AbstractBaseCell row[] : body) {
-			rows.add(convert(row));
+			rows.add(convert(row, Cell.Type.ROW_HEADER));
 		}
 		return rows;
 		
 	}
 	
-	public static Cell[] convert(AbstractBaseCell[] acells) {
+	public static Cell[] convert(AbstractBaseCell[] acells, Cell.Type headertype) {
 		Cell[]  cells = new Cell[acells.length];
 		for (int i = 0; i < acells.length; i++) {
-			cells[i] = convert(acells[i]);
+			cells[i] = convert(acells[i], headertype);
 		}
 		return cells;
 	}
 	
-	public static Cell convert(AbstractBaseCell acell) {
+	public static Cell convert(AbstractBaseCell acell, Cell.Type headertype) {
 		if (acell != null) {
 			if (acell instanceof DataCell) {
 				DataCell dcell = (DataCell) acell;
@@ -155,7 +155,7 @@ public class RestUtil {
 				props.putAll(mcell.getProperties());
 
 				
-				return new Cell("" + mcell.getFormattedValue(),metaprops,props, Cell.Type.HEADER);
+				return new Cell("" + mcell.getFormattedValue(),metaprops,props, headertype);
 			}
 
 		

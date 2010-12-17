@@ -113,15 +113,21 @@ public class OlapQueryService {
 
 	}
 
-	public boolean includeMember(String queryName, String dimensionName, String uniqueMemberName, String selectionType){
+	public boolean includeMember(String queryName, String dimensionName, String uniqueMemberName, String selectionType, int memberposition){
 		OlapQuery query = queries.get(queryName);
 		List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(uniqueMemberName).getSegmentList();
 		QueryDimension dimension = query.getDimension(dimensionName);
 		final Selection.Operator selectionMode = Selection.Operator.valueOf(selectionType);
 
 		try {
-			System.out.println("include:" + selectionMode.toString() + " " + memberList.size());
-			dimension.include(selectionMode, memberList);
+			Selection sel = dimension.createSelection(selectionMode, memberList);
+			if (!dimension.getInclusions().contains(sel)) {
+				System.out.println("include:" + selectionMode.toString() + " size: " + memberList.size());
+				if (memberposition < 0) {
+					memberposition = dimension.getInclusions().size();
+				}
+				dimension.getInclusions().add(memberposition, sel);
+			}
 			return true;
 		} catch (OlapException e) {
 			// TODO Auto-generated catch block
@@ -162,8 +168,11 @@ public class OlapQueryService {
 					for (Level level : hierarchy.getLevels()) {
 						if (level.getUniqueName().equals(uniqueLevelName)) {
 							for (Member member : level.getMembers()) {
-								System.out.println("include:" + selectionMode.toString() + " " + member.getUniqueName());
-								dimension.include(selectionMode, member);
+								Selection sel = dimension.createSelection(selectionMode, member);
+								if (!dimension.getInclusions().contains(sel)) {
+									System.out.println("include:" + selectionMode.toString() + " " + member.getUniqueName());
+									dimension.include(selectionMode, member);
+								}
 							}
 						}
 					}

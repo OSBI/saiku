@@ -13,7 +13,8 @@ public class Cell extends AbstractRestObject {
 
 	
 	public enum Type {
-		HEADER,
+		ROW_HEADER,
+		COLUMN_HEADER,
 		DATA_CELL,
 		EMPTY,
 		UNKNOWN
