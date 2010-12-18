@@ -121,13 +121,14 @@ public class OlapQueryService {
 
 		try {
 			Selection sel = dimension.createSelection(selectionMode, memberList);
-			if (!dimension.getInclusions().contains(sel)) {
-				System.out.println("include:" + selectionMode.toString() + " size: " + memberList.size());
-				if (memberposition < 0) {
-					memberposition = dimension.getInclusions().size();
-				}
-				dimension.getInclusions().add(memberposition, sel);
+			if (dimension.getInclusions().contains(sel)) {
+				dimension.getInclusions().remove(sel);
 			}
+			System.out.println("include:" + selectionMode.toString() + " size: " + memberList.size());
+			if (memberposition < 0) {
+				memberposition = dimension.getInclusions().size();
+			}
+			dimension.getInclusions().add(memberposition, sel);
 			return true;
 		} catch (OlapException e) {
 			// TODO Auto-generated catch block

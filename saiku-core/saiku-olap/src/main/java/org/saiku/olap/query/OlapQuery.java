@@ -10,7 +10,6 @@ import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.mdx.ParseTreeWriter;
 import org.olap4j.metadata.Cube;
-import org.olap4j.metadata.Level;
 import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
@@ -49,10 +48,8 @@ public class OlapQuery {
 		QueryAxis oldQueryAxis = findAxis(dimension);
 		QueryAxis newQueryAxis = query.getAxis(axis);
 		if (oldQueryAxis != null && newQueryAxis != oldQueryAxis) {
-			if (!newQueryAxis.getDimensions().contains(dimension)) {
-				newQueryAxis.addDimension(dimension);	
-			}
-			oldQueryAxis.removeDimension(dimension);
+            oldQueryAxis.removeDimension(dimension);
+            newQueryAxis.addDimension(dimension);   
 		}
 	}
 
@@ -60,10 +57,8 @@ public class OlapQuery {
         QueryAxis oldQueryAxis = findAxis(dimension);
         QueryAxis newQueryAxis = query.getAxis(axis);
         if (oldQueryAxis != null && newQueryAxis != oldQueryAxis) {
-            if (!newQueryAxis.getDimensions().contains(dimension)) {
-                newQueryAxis.addDimension(position, dimension);   
-            }
             oldQueryAxis.removeDimension(dimension);
+            newQueryAxis.addDimension(position, dimension);   
         }
     }
 	
