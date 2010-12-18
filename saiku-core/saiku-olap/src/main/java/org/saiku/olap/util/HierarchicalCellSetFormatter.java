@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Thomas Barber
+ * Copyright (C) 2010 Paul Stoellberger
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by the Free 
