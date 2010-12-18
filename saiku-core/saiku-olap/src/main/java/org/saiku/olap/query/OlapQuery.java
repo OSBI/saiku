@@ -47,7 +47,7 @@ public class OlapQuery {
 	public void moveDimension(QueryDimension dimension, Axis axis) {
 		QueryAxis oldQueryAxis = findAxis(dimension);
 		QueryAxis newQueryAxis = query.getAxis(axis);
-		if (oldQueryAxis != null && newQueryAxis != oldQueryAxis) {
+		if (oldQueryAxis != null && newQueryAxis != null) {
             oldQueryAxis.removeDimension(dimension);
             newQueryAxis.addDimension(dimension);   
 		}
@@ -56,7 +56,7 @@ public class OlapQuery {
 	public void moveDimension(QueryDimension dimension, Axis axis, int position) {
         QueryAxis oldQueryAxis = findAxis(dimension);
         QueryAxis newQueryAxis = query.getAxis(axis);
-        if (oldQueryAxis != null && newQueryAxis != oldQueryAxis) {
+        if (oldQueryAxis != null && newQueryAxis != null) {
             oldQueryAxis.removeDimension(dimension);
             newQueryAxis.addDimension(position, dimension);   
         }
