@@ -9,29 +9,81 @@
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-web</artifactId>
 	<version>2.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
-	<name>saiku - web</name>
+	<name>saiku - webapp</name>
+	<packaging>war</packaging>
 	<build>
-	<plugins>
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-compiler-plugin</artifactId>
-			<version>2.0.2</version>
-			<configuration>
+		<outputDirectory>target/WEB-INF/classes</outputDirectory>
+
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.enunciate</groupId>
+				<artifactId>maven-enunciate-spring-plugin</artifactId>
+
+				<configuration>
+					<configFile>enunciate.xml</configFile>
+					<!--
+						<exports>
+						<jaxws.client.library.binaries>client.jar</jaxws.client.library.binaries>
+						</exports>
+					-->
+					<docsDir>${project.build.directory}/docs</docsDir>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>assemble</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<!--
+				<plugin> <groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId> <configuration>
+				<webXml>src/main/webapp/WEB-INF/web.xml</webXml> <webResources>
+				<resource> <directory>src/main/webapp/WEB-INF/</directory>
+				<targetPath>WEB-INF/</targetPath> </resource> </webResources>
+				</configuration> </plugin>
+			-->
+			<!--
+				<plugin> <groupId>org.codehaus.enunciate</groupId>
+				<artifactId>maven-enunciate-cxf-plugin</artifactId>
+				<version>1.20</version> <executions> <execution> <goals>
+				<goal>assemble</goal> </goals> </execution> </executions> </plugin>
+			-->
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>7.2.0.v20101020</version>
+				<configuration>
+					<webAppConfig>
+						<contextPath>/</contextPath>
+						<defaultsDescriptor>src/main/servers/jetty/dev/webdefault.xml</defaultsDescriptor>
+					</webAppConfig>
+				</configuration>
+			</plugin>
+
+			<!--
+				<plugin> <groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version> <configuration>
 				<source>${maven.compiler.source}</source>
-				<target>${maven.compiler.target}</target>
-				<encoding>UTF-8</encoding>
-			</configuration>
-		</plugin>
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-resources-plugin</artifactId>
-			<version>2.3</version>
-			<configuration>
-				<encoding>UTF-8</encoding>
-			</configuration>
-		</plugin>
-	</plugins>
+				<target>${maven.compiler.target}</target> <encoding>UTF-8</encoding>
+				</configuration> </plugin> <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.3</version> <configuration> <encoding>UTF-8</encoding>
+				</configuration> </plugin>
+			-->
+
+		</plugins>
 	</build>
 	<dependencies>
 		<dependency>
@@ -95,6 +147,16 @@
 			<artifactId>spring-tx</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		<!--
+			<dependency> <groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-json</artifactId> <version>1.0.3</version>
+			</dependency>
+		-->
+		<!--
+			<dependency> <groupId>com.sun.jersey.contribs</groupId>
+			<artifactId>jersey-spring</artifactId> <version>1.4</version>
+			</dependency>
+		-->
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-core</artifactId>
@@ -122,12 +184,46 @@
 			<version>1.5-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
+		<!--
+			<dependency> <groupId>com.sun.jersey.jersey-test-framework</groupId>
+			<artifactId>jersey-test-framework-embedded-glassfish</artifactId>
+			<version>1.4</version> <scope>test</scope> </dependency>
+		-->
 		<dependency>
 			<groupId>com.sun.grizzly</groupId>
 			<artifactId>grizzly-servlet-webserver</artifactId>
 			<version>1.9.18-i</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.codehaus.enunciate</groupId>
+			<artifactId>enunciate-gwt-rt</artifactId>
+			<version>1.21-RC3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.enunciate</groupId>
+			<artifactId>enunciate-jersey-rt</artifactId>
+			<version>1.21-RC3</version>
+		</dependency>
+		<!--
+			<dependency> <groupId>org.codehaus.enunciate</groupId>
+			<artifactId>enunciate-cxf-rt</artifactId> <version>1.21-RC3</version>
+			</dependency>
+		-->
+		<dependency>
+			<groupId>org.codehaus.enunciate</groupId>
+			<artifactId>enunciate-amf-rt</artifactId>
+			<version>1.21-RC3</version>
+		</dependency>
+		<dependency>
+    		<groupId>org.codehaus.enunciate</groupId>
+    		<artifactId>enunciate-obj-c</artifactId>
+    		<version>1.21-RC3</version>
+		</dependency>
+		<dependency>
+    		<groupId>org.codehaus.enunciate</groupId>
+    		<artifactId>enunciate-c</artifactId>
+    		<version>1.21-RC3</version>
+		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
