@@ -59,7 +59,7 @@
 									</fileset>
 								</unzip>
 								
-								<copy todir="target/stage/webapp/">
+								<copy todir="target/stage/webapp/" overwrite="true">
 									<fileset dir="${basedir}/custom/webapp/" />
 								</copy>
 								<unzip dest="target/stage/tomcat/">
