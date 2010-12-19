@@ -25,7 +25,7 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>org.saiku</groupId>
-									<artifactId>saiku-web</artifactId>
+									<artifactId>saiku-webapp</artifactId>
 									<version>${project.version}</version>
 									<type>war</type>
 									<outputDirectory>target/stage/</outputDirectory>
@@ -50,7 +50,7 @@
 							<tasks>
 								<unzip dest="target/stage/webapp/">
 									<fileset dir="target/stage/">
-										<include name="saiku-web-${project.version}.war" />
+										<include name="saiku-webapp-${project.version}.war" />
 									</fileset>
 								</unzip>
 								<unzip dest="target/stage/webapp/">
@@ -58,10 +58,11 @@
 										<include name="foodmart.zip" />
 									</fileset>
 								</unzip>
-								
-								<copy todir="target/stage/webapp/">
-									<fileset dir="${basedir}/custom/webapp/" />
+								<echo>test1</echo>
+								<copy todir="target/stage/webapp/" overwrite="true">
+									<fileset dir="${basedir}/custom/webapp/"/>
 								</copy>
+								<echo>test2\n ${basedir}/custom/webapp/ </echo>
 								<unzip dest="target/stage/tomcat/">
 									<fileset dir="${basedir}/tomcat/">
 										<include name="${tomcat.version}.zip" />
