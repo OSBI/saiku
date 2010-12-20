@@ -11,6 +11,17 @@
 	</properties>
 	<build>
 		<plugins>
+		<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-scm-plugin</artifactId>
+        <version>1.0</version>
+        <configuration>
+          <goals>package</goals>
+          <checkoutDirectory>${basedir}/target/dist/saiku-server/tomcat/webapps/ROOT/</checkoutDirectory>
+          <connectionUrl>scm:svn:http://pentahoanalysistool.googlecode.com/svn/trunk/pat-ui/</connectionUrl>
+        </configuration>
+      </plugin>
+		
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
