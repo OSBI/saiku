@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:security="http://www.springframework.org/schema/security"
-       xmlns:oauth="http://spring-security-oauth.codehaus.org/2.0"
-       xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.xsd
-                           http://spring-security-oauth.codehaus.org/2.0 http://spring-security-oauth.codehaus.org/schema/spring-security-oauth-2.0.xsd
-                           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
-                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
   <!--<context:annotation-config/>-->
 
   <!--Basic application beans.-->
- <!-- <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+  <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
     <property name="prefix" value="/WEB-INF/jsp/"/>
     <property name="suffix" value=".jsp"/>
   </bean>
@@ -22,45 +15,21 @@
   <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
     <property name="mappings">
       <props>
-        <prop key="/rest/photos">photosController</prop>
+      <!--  <prop key="/rest/photos">photosController</prop>
         <prop key="/json/photos">photosController</prop>
         <prop key="/rest/jpg/photo/*">photoController</prop>
-        <prop key="/oauth/confirm_access">accessConfirmationController</prop>
+        <prop key="/oauth/confirm_access">accessConfirmationController</prop>-->
       </props>
     </property>
     <property name="alwaysUseFullPath" value="true"/>
   </bean>
 
-   <bean id="accessConfirmationController" class="org.springframework.security.oauth.examples.sparklr.mvc.AccessConfirmationController">
+ <!--  <bean id="accessConfirmationController" class="org.springframework.security.oauth.examples.sparklr.mvc.AccessConfirmationController">
     <property name="clientDetailsService" ref="clientDetails"/>
-  </bean>-->
-  
-    <!--
-    The sparklr users.
+  </bean>
   -->
-  <security:user-service>
-    <security:user name="marissa" password="koala" authorities="ROLE_USER" />
-    <security:user name="paul" password="emu" authorities="ROLE_USER" />
-  </security:user-service>
 
-  <!--
-    Definition of a consumer details service for sparklr.  For now, we only have one registered consumer, tonr,
-    whose consumer key is "tonr-consumer-key" and whose shared secret is "SHHHHH!!!!!!!!!!".  (There is also some
-    other information about the consumer included.)
-  -->
-  <oauth:consumer-details-service id="consumerDetails">
-    <oauth:consumer name="Tonr.com" key="tonr-consumer-key" secret="SHHHHH!!!!!!!!!!" resourceName="Your Photos" resourceDescription="Your photos that you have uploaded to sparklr.com."/>
-  </oauth:consumer-details-service>
 
-  <!--
-    This is the definition for the token services that service the sparklr OAuth engine.  Since sparklr only
-    runs on a single app server, we can use an in-memory implementation of the token services.  If the
-    app were distributed among multiple app servers, you'd have to provide token services that make the tokens
-    visible to all app servers.
-
-    The in-memory token services spawn a separate thread that cleans up expired tokens.
-  -->
-  <oauth:token-services id="tokenServices"/>
   
 	<bean id="connectionFactoryBean" class="org.saiku.datasources.connection.SaikuConnectionFactory">
 		<property name="connections">

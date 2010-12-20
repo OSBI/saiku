@@ -1,300 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app PUBLIC
+  "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+  "http://java.sun.com/dtd/web-app_2_3.dtd">
 <web-app>
 
   <display-name>sparklr</display-name>
-
-    <context-param>
-      <param-name>contextConfigLocation</param-name>
-      <param-value>/WEB-INF/applicationContext.xml</param-value>
-    </context-param>
-
-  <filter>
-    <filter-name>http-request-context</filter-name>
-    <filter-class>org.codehaus.enunciate.webapp.HTTPRequestContextFilter</filter-class>
-  </filter>
-
-  <filter>
-    <filter-name>wsdl-filter</filter-name>
-    <filter-class>org.codehaus.enunciate.webapp.WSDLFilter</filter-class>
-    <init-param>
-      <param-name>assumed-base-address</param-name>
-      <param-value>http://localhost:8080/</param-value>
-    </init-param>
-  </filter>
-
-  <filter>
-    <filter-name>wadl-filter</filter-name>
-    <filter-class>org.codehaus.enunciate.webapp.WADLFilter</filter-class>
-    <init-param>
-      <param-name>assumed-base-address</param-name>
-      <param-value>http://localhost:8080/</param-value>
-    </init-param>
-  </filter>
-
-  <filter>
+ <filter>
     <filter-name>springSecurityFilterChain</filter-name>
     <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
   </filter>
 
-  <filter>
-    <filter-name>wsdl-redirect-filter-ns1</filter-name>
-    <filter-class>org.codehaus.enunciate.webapp.WSDLRedirectFilter</filter-class>
-    <init-param>
-      <param-name>wsdl-location</param-name>
-      <param-value>/docs/ns1.wsdl</param-value>
-    </init-param>
-  </filter>
-
-  <filter-mapping>
-    <filter-name>http-request-context</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>wsdl-filter</filter-name>
-    <url-pattern>/docs/ns1.wsdl</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>wadl-filter</filter-name>
-    <url-pattern>/docs/application.wadl</url-pattern>
-  </filter-mapping>
-
   <filter-mapping>
     <filter-name>springSecurityFilterChain</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/json/jpg/photo</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/json/jpg/photo/*</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/json/photos</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/json/photos/*</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/login.do</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/login.jsp</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/logout.do</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/oauth/access_confirmed</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/oauth/access_token</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/oauth/authorize</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/oauth/confirm_access</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/oauth/info.html</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/oauth/request_token</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/rest/jpg/photo</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/rest/jpg/photo/*</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/rest/photos</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/rest/photos/*</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/soap/PhotoServiceService</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/xml/jpg/photo</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/xml/jpg/photo/*</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/xml/photos</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <url-pattern>/xml/photos/*</url-pattern>
-  </filter-mapping>
-
-  <filter-mapping>
-    <filter-name>wsdl-redirect-filter-ns1</filter-name>
-    <url-pattern>/soap/PhotoServiceService</url-pattern>
-  </filter-mapping>
-
-  <listener>
+ <!-- <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
-
-  <listener>
-    <listener-class>org.codehaus.enunciate.modules.spring_app.SpringComponentPostProcessor</listener-class>
-  </listener>
-
+-->
   <servlet>
-    <servlet-name>jaxws-PhotoServiceService</servlet-name>
-    <servlet-class>org.codehaus.enunciate.modules.jaxws_ri.WSSpringServlet</servlet-class>
-  </servlet>
-
-  <servlet>
-    <servlet-name>rest</servlet-name>
-    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-  </servlet>
-
-  <servlet>
-    <servlet-name>security</servlet-name>
+    <servlet-name>spring</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>jaxws-PhotoServiceService</servlet-name>
-    <url-pattern>/soap/PhotoServiceService</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>rest</servlet-name>
-    <url-pattern>/json/jpg/photo</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>rest</servlet-name>
-    <url-pattern>/json/jpg/photo/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>rest</servlet-name>
-    <url-pattern>/json/photos</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>rest</servlet-name>
-    <url-pattern>/json/photos/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>rest</servlet-name>
-    <url-pattern>/rest/jpg/photo</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>rest</servlet-name>
-    <url-pattern>/rest/jpg/photo/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>rest</servlet-name>
+    <servlet-name>spring</servlet-name>
     <url-pattern>/rest/photos</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>rest</servlet-name>
-    <url-pattern>/rest/photos/*</url-pattern>
+    <servlet-name>spring</servlet-name>
+    <url-pattern>/json/photos</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>rest</servlet-name>
-    <url-pattern>/xml/jpg/photo</url-pattern>
+    <servlet-name>spring</servlet-name>
+    <url-pattern>/rest/jpg/photo/*</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>rest</servlet-name>
-    <url-pattern>/xml/jpg/photo/*</url-pattern>
+    <servlet-name>spring</servlet-name>
+    <url-pattern>/oauth/*</url-pattern>
   </servlet-mapping>
 
-  <servlet-mapping>
-    <servlet-name>rest</servlet-name>
-    <url-pattern>/xml/photos</url-pattern>
-  </servlet-mapping>
 
-  <servlet-mapping>
-    <servlet-name>rest</servlet-name>
-    <url-pattern>/xml/photos/*</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>security</servlet-name>
-    <url-pattern>/login.jsp</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>security</servlet-name>
-    <url-pattern>/oauth/access_confirmed</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>security</servlet-name>
-    <url-pattern>/oauth/confirm_access</url-pattern>
-  </servlet-mapping>
-
-  <servlet-mapping>
-    <servlet-name>security</servlet-name>
-    <url-pattern>/oauth/info.html</url-pattern>
-  </servlet-mapping>
-
-  <mime-mapping>
-    <extension>wsdl</extension>
-    <mime-type>text/xml</mime-type>
-  </mime-mapping>
-
-  <mime-mapping>
-    <extension>xsd</extension>
-    <mime-type>text/xml</mime-type>
-  </mime-mapping>
 </web-app>
