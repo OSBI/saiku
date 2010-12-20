@@ -90,9 +90,11 @@
           							    <exclude name="webapps/ROOT/**" />
 									</fileset>
 								</copy>
+								<!-- 
 								<copy todir="target/dist/saiku-server/tomcat/">
 									<fileset dir="${basedir}/custom/tomcat/" />
 								</copy>
+								 -->
 								<copy todir="target/dist/saiku-server/tomcat/webapps/saiku">
 									<fileset dir="target/stage/webapp" />
 								</copy>
