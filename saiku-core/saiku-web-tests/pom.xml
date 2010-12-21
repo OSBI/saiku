@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+	<parent>
+		<artifactId>saiku-core</artifactId>
+		<groupId>org.saiku</groupId>
+		<version>2.0-SNAPSHOT</version>
+	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-web-tests</artifactId>
@@ -39,6 +43,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.sun.jersey.jersey-test-framework</groupId>
+			<artifactId>jersey-test-framework-external</artifactId>
+			<version>1.5-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>1.8.0.10</version>
@@ -67,11 +77,7 @@
 		<spring.security.tiger.version>2.0.6.RELEASE</spring.security.tiger.version>
 	</properties>
 
- <!-- <modules>
-    <module>webapp</module>
-    <module>functional-tests</module>
-  </modules>
-   -->
+
 	<build>
 		<finalName>saiku-web-tests</finalName>
 		<pluginManagement>
