@@ -96,7 +96,7 @@ public class AuthTest extends AbstractServiceTest{
 //
     @Test
     public void testHappyDay() throws Exception {
-        int port = 9997;
+        int port = 9999;
         Client client = Client.create();
         client.setFollowRedirects(false);
 
@@ -105,8 +105,8 @@ public class AuthTest extends AbstractServiceTest{
         formData.add("client_id", "my-trusted-client");
         formData.add("username", "marissa");
         formData.add("password", "koala");
-        WebResource webResource = resource();
-        ClientResponse response = webResource.path("/oauth/authorize") // client.resource("http://localhost:" + port + "/sparklr/oauth/authorize")
+        WebResource webResource = client.resource("http://localhost:9999/");
+        ClientResponse response = webResource.path("/saiku/oauth/authorize")
           .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
           .post(ClientResponse.class, formData);
         assertEquals(200, response.getClientResponseStatus().getStatusCode());
