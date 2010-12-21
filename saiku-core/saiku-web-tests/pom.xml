@@ -67,6 +67,11 @@
 		<spring.security.tiger.version>2.0.6.RELEASE</spring.security.tiger.version>
 	</properties>
 
+ <!-- <modules>
+    <module>webapp</module>
+    <module>functional-tests</module>
+  </modules>
+   -->
 	<build>
 		<finalName>saiku-web-tests</finalName>
 		<pluginManagement>
@@ -86,7 +91,15 @@
 					<source>1.5</source>
 					<target>1.5</target>
 				</configuration>
-			</plugin>
+			 <version>2.3.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -99,9 +112,9 @@
 						recommendation is to create a separate module for functional tests
 						as is done in the cargo-archetype-webapp-functional-test-module
 					-->
-					<excludes>
+					<!-- <excludes>
 						<exclude>**/it/**</exclude>
-					</excludes>
+					</excludes> -->
 				</configuration>
 				<executions>
 					<execution>
@@ -118,12 +131,12 @@
 								module for functional tests as is done in the
 								cargo-archetype-webapp-functional-test-module
 							-->
-							<excludes>
+						<!-- 	<excludes>
 								<exclude>none</exclude>
 							</excludes>
 							<includes>
 								<include>**/it/**</include>
-							</includes>
+							</includes> -->
 						</configuration>
 					</execution>
 				</executions>
@@ -158,7 +171,6 @@
 						<phase>pre-integration-test</phase>
 						<goals>
 							<goal>start</goal>
-							<goal>deploy</goal>
 						</goals>
 					</execution>
 					<execution>
