@@ -118,11 +118,11 @@ public class AuthTest extends AbstractServiceTest{
         //now try and use the token to access a protected resource.
 
         //first make sure the resource is actually protected.
-        response = client.resource("http://localhost:" + port + "/sparklr/json/photos").get(ClientResponse.class);
+        response = client.resource("http://localhost:" + port + "/saiku/docs/index.html").get(ClientResponse.class);
         assertFalse(200 == response.getClientResponseStatus().getStatusCode());
 
         //now make sure an authorized request is valid.
-        response = client.resource("http://localhost:" + port + "/sparklr/json/photos")
+        response = client.resource("http://localhost:" + port + "/saiku/docs/index.html")
           .header("Authorization", String.format("OAuth %s", accessToken.getValue()))
           .get(ClientResponse.class);
         assertEquals(200, response.getClientResponseStatus().getStatusCode());

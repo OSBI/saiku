@@ -45,4 +45,5 @@
     <oauth:client clientId="tonr" authorizedGrantTypes="authorization_code"/>
   </oauth:client-details-service>
 
+
 </beans:beans>
