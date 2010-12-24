@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.saiku.service.olap.OlapDiscoverService;
+
+import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 
 
@@ -54,20 +56,27 @@ public class DataSourceInterfaceTest extends AbstractServiceTest {
     
     @Test
     public void testApplicationWadl() {
-/*        WebResource webResouce = resource();
-        String applicationWadl = webResouce.path("application.wadl").get(String.class);
+
+    	Client client = Client.create();
+        client.setFollowRedirects(false);
+
+        WebResource webResource = client.resource("http://localhost:9999/saiku");
+
+        String applicationWadl = webResource.path("application.wadl").get(String.class);
         System.out.println(applicationWadl);
         assertTrue("Something wrong. Returned wadl length is not > 0",
-                applicationWadl.length() > 0);*/
+                applicationWadl.length() > 0);
     }
     @Test
     public void testConvertDataSourcesToJson(){
-     
-        /*
-            WebResource webResource = resource();
-            String responseMsg = webResource.path("saiku").path("session").get(String.class);
-            assertEquals("HELLO", responseMsg);*/
-        
+    	Client client = Client.create();
+        client.setFollowRedirects(false);
+
+        WebResource webResource = client.resource("http://localhost:9999/saiku");
+        String applicationWadl = webResource.path("/rest/saiku/bugg/datasources").get(String.class);
+        System.out.println(applicationWadl);
+        assertTrue("Something wrong. Returned wadl length is not > 0",
+                applicationWadl.length() > 0);
     }
     
 

@@ -8,9 +8,11 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.NewCookie;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -27,6 +29,7 @@ import org.springframework.security.oauth.consumer.net.DefaultOAuthURLStreamHand
 import org.springframework.security.oauth.consumer.token.OAuthConsumerToken;
 import org.springframework.security.oauth2.common.DefaultOAuth2SerializationService;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
@@ -127,5 +130,39 @@ public class AuthTest extends AbstractServiceTest{
           .get(ClientResponse.class);
         assertEquals(200, response.getClientResponseStatus().getStatusCode());
       }
+
+    
+    /**
+     * tests that an error occurs if you attempt to use username/password creds for a non-password grant type.
+     */
+     @Test
+    public void testInvalidGrantType() throws Exception {
+      int port = 9999;
+      Client client = Client.create();
+      client.setFollowRedirects(false);
+
+      MultivaluedMap<String, String> formData = new MultivaluedMapImpl();
+      formData.add("grant_type", "authorization_code");
+      formData.add("client_id", "my-trusted-client");
+      formData.add("username", "marissa");
+      formData.add("password", "koala");
+      ClientResponse response = client.resource("http://localhost:" + port + "/saiku/oauth/authorize")
+        .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE)
+        .post(ClientResponse.class, formData);
+      assertEquals(400, response.getClientResponseStatus().getStatusCode());
+      List<NewCookie> newCookies = response.getCookies();
+      if (!newCookies.isEmpty()) {
+        fail("No cookies should be set. Found: " + newCookies.get(0).getName() + ".");
+      }
+      assertEquals("no-store", response.getHeaders().getFirst("Cache-Control"));
+
+      DefaultOAuth2SerializationService serializationService = new DefaultOAuth2SerializationService();
+      try {
+        throw serializationService.deserializeJsonError(response.getEntityInputStream());
+      }
+      catch (OAuth2Exception e) {
+        assertEquals("invalid_request", e.getOAuth2ErrorCode());
+      }
+    }
 
 }

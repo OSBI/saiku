@@ -4,7 +4,7 @@
   "http://java.sun.com/dtd/web-app_2_3.dtd">
 <web-app>
 
-  <display-name>sparklr</display-name>
+  <display-name>saiku</display-name>
  <filter>
     <filter-name>springSecurityFilterChain</filter-name>
     <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -44,5 +44,16 @@
     <url-pattern>/oauth/*</url-pattern>
   </servlet-mapping>
 
+<init-param>
+<param-name>com.sun.jersey.config.property.packages</param-name>
+<param-value>org.saiku.web</param-value>
+</init-param>
+
+<listener>
+
+<listener-class>
+org.springframework.web.context.request.RequestContextListener
+</listener-class>
+</listener>
 
 </web-app>
