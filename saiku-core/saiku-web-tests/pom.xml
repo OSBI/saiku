@@ -10,7 +10,7 @@
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-web-tests</artifactId>
 	<version>1.0-SNAPSHOT</version>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	<name>Maven Webapp</name>
 
 	<dependencies>
@@ -147,6 +147,7 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<plugin>
 				<groupId>org.codehaus.cargo</groupId>
 				<artifactId>cargo-maven2-plugin</artifactId>

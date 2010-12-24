@@ -42,7 +42,7 @@ public class AccessConfirmationController extends AbstractController {
       return authenticationCache;
     }
 
-    @Autowired
+//    @Autowired
     public void setAuthenticationCache(ClientAuthenticationCache authenticationCache) {
       this.authenticationCache = authenticationCache;
     }
