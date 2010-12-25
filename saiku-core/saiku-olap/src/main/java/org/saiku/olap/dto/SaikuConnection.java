@@ -7,6 +7,9 @@ public class SaikuConnection {
 	private String connectionName;
 	private List<SaikuCatalog> catalogs;
 
+	public SaikuConnection(){
+		throw new RuntimeException("Unsupported Constructor. Serialization only");
+	}
 	public SaikuConnection(String connectionName, List<SaikuCatalog> catalogs) {
 		this.connectionName = connectionName;
 		this.catalogs = catalogs;
