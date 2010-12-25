@@ -40,6 +40,12 @@
 			<url>http://download.java.net/maven/2/</url>
 			<snapshots><enabled>true</enabled></snapshots>
 		</repository>
+<repository>
+    <id>spring-snapshot</id>
+    <name>Spring Portfolio Snapshot Repository</name>
+    <url>http://s3.amazonaws.com/maven.springframework.org/snapshot</url>
+</repository>
+
 	</repositories>
 	<build>
 <plugins>
