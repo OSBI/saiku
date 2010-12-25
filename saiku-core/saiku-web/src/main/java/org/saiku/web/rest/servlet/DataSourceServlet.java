@@ -10,6 +10,7 @@ import javax.ws.rs.Produces;
 
 import org.codehaus.enunciate.rest.annotations.JSONP;
 import org.codehaus.enunciate.rest.annotations.RESTEndpoint;
+import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.web.rest.objects.CubeRestPojo;

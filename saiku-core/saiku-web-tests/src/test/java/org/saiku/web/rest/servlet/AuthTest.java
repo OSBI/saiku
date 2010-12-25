@@ -1,32 +1,16 @@
 package org.saiku.web.rest.servlet;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream; 
-import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.NewCookie;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import org.springframework.security.oauth.common.signature.HMAC_SHA1SignatureMethod;
-import org.springframework.security.oauth.common.signature.SharedConsumerSecret;
-import org.springframework.security.oauth.consumer.BaseProtectedResourceDetails;
-import org.springframework.security.oauth.consumer.CoreOAuthConsumerSupport;
-import org.springframework.security.oauth.consumer.InMemoryProtectedResourceDetailsService;
-import org.springframework.security.oauth.consumer.ProtectedResourceDetails;
-import org.springframework.security.oauth.consumer.net.DefaultOAuthURLStreamHandlerFactory;
-import org.springframework.security.oauth.consumer.token.OAuthConsumerToken;
 import org.springframework.security.oauth2.common.DefaultOAuth2SerializationService;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
