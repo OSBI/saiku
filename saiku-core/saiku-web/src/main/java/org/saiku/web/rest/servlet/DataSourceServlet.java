@@ -2,11 +2,14 @@ package org.saiku.web.rest.servlet;
 
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
+import javax.jws.WebService;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import org.saiku.olap.dto.SaikuConnection;
+import org.codehaus.enunciate.rest.annotations.JSONP;
+import org.codehaus.enunciate.rest.annotations.RESTEndpoint;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.web.rest.objects.CubeRestPojo;
@@ -20,6 +23,12 @@ import org.springframework.stereotype.Component;
  * @author tombarber
  *
  */
+@WebService
+@RESTEndpoint
+@JSONP
+@RolesAllowed (
+  "ROLE_USER"
+)
 @Component
 @Path("/saiku/{username}/datasources")
 @Scope("request")

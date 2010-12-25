@@ -8,8 +8,9 @@ import java.util.List;
 import org.junit.Test;
 import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.service.olap.OlapDiscoverService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 
+import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 
 //@RunWith(MockitoJUnitRunner.class)
@@ -18,7 +19,7 @@ public class DataSourceInterfaceTest extends AbstractServiceTest {
      * 
      */
     private static final long serialVersionUID = 1L;
-    @Autowired
+   // @Autowired
     protected OlapDiscoverService olapDiscoverService = null;
 
 
@@ -33,8 +34,9 @@ public class DataSourceInterfaceTest extends AbstractServiceTest {
 	@Test
     public void testCheckDefaultConnection()
     {
-	    DataSourceServlet dsi = new DataSourceServlet();
+	/*    DataSourceServlet dsi = new DataSourceServlet();
         dsi.setOlapDiscoverService(olapDiscoverService);
+<<<<<<< HEAD:saiku-core/saiku-web/src/test/java/org/saiku/web/rest/servlet/DataSourceInterfaceTest.java
         List<SaikuConnection> connections = dsi.getConnections();
         assertEquals(connections.size(),1);
         SaikuConnection con = connections.get(0);
@@ -59,26 +61,64 @@ public class DataSourceInterfaceTest extends AbstractServiceTest {
 //        assertEquals(cube.getCubeName(),"SteelWheels");
 //        assertEquals(cube.getSchema(), "SteelWheelsSales");
 
+=======
+        List<CubeRestPojo> cubes = dsi.getCubes();
+        assertEquals(cubes.size(),2);
+        Collections.sort(cubes);
+        CubeRestPojo cube = cubes.get(0);
+        System.out.println(cube);
+        assertEquals(cube.getCatalog(), "SampleData");
+        assertEquals(cube.getConnectionName(), "TestConnection1");
+        assertEquals(cube.getSchema(),"Quadrant Analysis");
+        assertEquals(cube.getCubeName(), "SampleData");
+
+        cube = cubes.get(1);
+        System.out.println(cube);
+        assertEquals(cube.getCatalog(), "SteelWheels");
+        assertEquals(cube.getConnectionName(), "TestConnection1");
+        assertEquals(cube.getCubeName(),"SteelWheels");
+        assertEquals(cube.getSchema(), "SteelWheelsSales");
+*/
     }
     
     @Test
     public void testApplicationWadl() {
-        WebResource webResouce = resource();
-        String applicationWadl = webResouce.path("application.wadl").get(String.class);
+/*
+    	Client client = Client.create();
+        client.setFollowRedirects(false);
+
+        WebResource webResource = client.resource("http://localhost:9999/saiku");
+
+        String applicationWadl = webResource.path("application.wadl").get(String.class);
         System.out.println(applicationWadl);
         assertTrue("Something wrong. Returned wadl length is not > 0",
-                applicationWadl.length() > 0);
+                applicationWadl.length() > 0);*/
     }
+    
     @Test
     public void testConvertDataSourcesToJson(){
-     
-        /*
-            WebResource webResource = resource();
-            String responseMsg = webResource.path("saiku").path("session").get(String.class);
-            assertEquals("HELLO", responseMsg);*/
+    	Client client = Client.create();
+        client.setFollowRedirects(false);
+
+        WebResource webResource = client.resource("http://localhost:9999/saiku");
+        String applicationWadl = webResource.path("/rest/saiku/bugg/datasources").accept("application/json").get(String.class);
+        System.out.println(applicationWadl);
+        assertEquals("[{\"connection\":\"TestConnection1\",\"cube\":\"Quadrant Analysis\",\"catalog\":\"SampleData\",\"schema\":\"SampleData\"},{\"connection\":\"TestConnection1\",\"cube\":\"SteelWheelsSales\",\"catalog\":\"SteelWheels\",\"schema\":\"SteelWheels\"}]", applicationWadl);
         
     }
     
+
+    @Test
+    public void testConvertDataSourcesToXML(){
+    	Client client = Client.create();
+        client.setFollowRedirects(false);
+
+        WebResource webResource = client.resource("http://localhost:9999/saiku");
+        String applicationWadl = webResource.path("/rest/saiku/bugg/datasources").accept("application/xml").get(String.class);
+        System.out.println(applicationWadl);
+        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><items><datasource connection=\"TestConnection1\" cube=\"Quadrant Analysis\" catalog=\"SampleData\" schema=\"SampleData\"/><datasource connection=\"TestConnection1\" cube=\"SteelWheelsSales\" catalog=\"SteelWheels\" schema=\"SteelWheels\"/></items>", applicationWadl);
+        
+    }
 
 
     

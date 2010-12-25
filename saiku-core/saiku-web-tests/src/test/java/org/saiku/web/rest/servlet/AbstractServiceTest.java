@@ -28,8 +28,6 @@ import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
 
-@ContextConfiguration(locations = { "saiku-beans.xml" })
-@RunWith(SpringJUnit4ClassRunner.class)
 public abstract class AbstractServiceTest extends JerseyTest {
 
 
