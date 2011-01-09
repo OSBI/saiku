@@ -38,7 +38,7 @@
 							<artifactItems>
 								<artifactItem>
 									<groupId>org.saiku</groupId>
-									<artifactId>saiku-web</artifactId>
+									<artifactId>saiku-webapp</artifactId>
 									<version>${project.version}</version>
 									<type>war</type>
 									<outputDirectory>target/stage/</outputDirectory>
@@ -63,7 +63,7 @@
 							<tasks>
 								<unzip dest="target/stage/webapp/">
 									<fileset dir="target/stage/">
-										<include name="saiku-web-${project.version}.war" />
+										<include name="saiku-webapp-${project.version}.war" />
 									</fileset>
 								</unzip>
 								<unzip dest="target/stage/webapp/">
