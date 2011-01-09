@@ -4,7 +4,7 @@
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-core</artifactId>
 	<packaging>pom</packaging>
-	<name>Saiku-Core-Libraries</name>
+	<name>saiku - core libraries</name>
 	<version>2.0-SNAPSHOT</version>
 	<properties>
 		<maven.compiler.source>1.5</maven.compiler.source>
@@ -16,7 +16,7 @@
 		<module>saiku-repository</module>
 		<module>saiku-olap</module>
 		<module>saiku-datasources</module>
-		<module>saiku-engine</module>
+		<module>saiku-service</module>
 		<module>saiku-web</module>
 	</modules>
 	<repositories>
