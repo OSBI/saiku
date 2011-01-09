@@ -10,14 +10,19 @@
 
 	
   <http auto-config='true' access-denied-page="/login.jsp">
-    <intercept-url pattern="/xml/photos" access="ROLE_USER" />
-    <intercept-url pattern="/json/photos" access="ROLE_USER" />
-    <intercept-url pattern="/photo/**" access="ROLE_USER" />
+    <intercept-url pattern="/rest/**" access="ROLE_USER" />
+  <!--  <intercept-url pattern="/json/photos" access="ROLE_USER" />
+    <intercept-url pattern="/photo/**" access="ROLE_USER" />-->
     <intercept-url pattern="/oauth/**" access="ROLE_USER" />
 	<intercept-url pattern="/docs/**" access="ROLE_USER" />
     <intercept-url pattern="/request_token_authorized.jsp" access="ROLE_USER" />
     <intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-
+	
+	<!-- HTTP BASIC Authentication, PASSWORDS ARE SENT OVER THE WIRE IN PLAIN TEXT-->
+ 	<http-basic/>
+	
+    <remember-me key="1294534413302"/>
+    <anonymous key="1294534413302" username="anonymous" granted-authority="ANONYMOUS"/>
     <form-login authentication-failure-url="/login.jsp" default-target-url="/index.jsp" login-page="/login.jsp" login-processing-url="/login.do"/>
     <logout logout-success-url="/index.jsp" logout-url="/logout.do"/>
   </http>

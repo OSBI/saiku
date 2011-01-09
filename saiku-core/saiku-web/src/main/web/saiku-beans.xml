@@ -13,9 +13,6 @@
   <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
     <property name="mappings">
       <props>
-      <!--  <prop key="/rest/photos">photosController</prop>
-        <prop key="/json/photos">photosController</prop>
-        <prop key="/rest/jpg/photo/*">photoController</prop>-->
         <prop key="/oauth/confirm_access">accessConfirmationController</prop>
       </props>
     </property>
