@@ -11,7 +11,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.saiku.olap.dto.SaikuHierarchy;
 import org.saiku.olap.dto.SaikuLevel;
-import org.saiku.olap.dto.SaikuMember;
 import org.saiku.web.rest.util.RestList;
 
 @XmlRootElement(name="hierarchies")

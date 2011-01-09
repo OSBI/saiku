@@ -12,7 +12,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.saiku.web.rest.objects.AbstractRestObject;
 import org.saiku.web.rest.objects.AxisRestPojo;
 import org.saiku.web.rest.objects.CubeRestPojo;
 import org.saiku.web.rest.objects.DimensionRestPojo;

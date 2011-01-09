@@ -1,14 +1,13 @@
 package org.saiku.olap.util;
-import java.io.*;
-import java.net.MalformedURLException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Enumeration;
-import java.util.Properties;
 
 import mondrian.olap.Util;
-
-import org.eigenbase.util.property.*;
 
 public class SaikuProperties {
 
