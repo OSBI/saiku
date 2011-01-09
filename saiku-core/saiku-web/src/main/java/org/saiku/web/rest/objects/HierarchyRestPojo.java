@@ -29,6 +29,9 @@ public class HierarchyRestPojo extends AbstractRestObject {
 	
 	@XmlAttribute(name = "dimension", required = false)
 	private String dimensionUniqueName;
+
+	@XmlElement(name = "levels", required = false)	
+        private RestList<LevelRestPojo> levels;
 	
 	public HierarchyRestPojo(){
 		throw new RuntimeException("Unsupported Constructor. Serialization only");

@@ -10,8 +10,8 @@
 
 	
   <http auto-config='true' access-denied-page="/login.jsp">
-    <intercept-url pattern="/rest/**" access="ROLE_USER" />
-  <!--  <intercept-url pattern="/json/photos" access="ROLE_USER" />
+  <!--  <intercept-url pattern="/rest/**" access="ROLE_USER" />
+    <intercept-url pattern="/json/photos" access="ROLE_USER" />
     <intercept-url pattern="/photo/**" access="ROLE_USER" />-->
     <intercept-url pattern="/oauth/**" access="ROLE_USER" />
 	<intercept-url pattern="/docs/**" access="ROLE_USER" />
