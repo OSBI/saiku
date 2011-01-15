@@ -11,7 +11,7 @@
 	<modules>
 
 		<docs>
-			<war docsDir="docs" />
+			<war docsDir="serverdocs" />
 		</docs>
 		<spring-app enableSecurity="false">
 			<springImport file="src/main/web/applicationContext.xml" />
