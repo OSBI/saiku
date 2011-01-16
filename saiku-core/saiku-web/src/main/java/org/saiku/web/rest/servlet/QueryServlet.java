@@ -46,15 +46,17 @@ import org.springframework.stereotype.Component;
 @Scope("request")
 @XmlAccessorType(XmlAccessType.NONE)
 public class QueryServlet {
-
+	
+	
 	private OlapQueryService olapQueryService;
 
-	public void setOlapQueryService(OlapQueryService olapQueryService) {
+	
+/*	public void setOlapQueryService(OlapQueryService olapQueryService) {
 		this.olapQueryService = olapQueryService;
-	}
+	}*/
 
 	@Autowired
-	public void setOlapDiscoverService(OlapQueryService olapqs) {
+	public void setOlapQueryService(OlapQueryService olapqs) {
 		olapQueryService = olapqs;
 	}
 

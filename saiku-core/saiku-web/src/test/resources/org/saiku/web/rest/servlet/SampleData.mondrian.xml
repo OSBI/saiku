@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<Schema name="SampleData">
+<!-- Shared dimensions -->
+
+  <Dimension name="Region">
+    <Hierarchy hasAll="true" allMemberName="All Regions">
+      <Table name="QUADRANT_ACTUALS"/>
+      <Level name="Region" column="REGION" uniqueMembers="true"/>
+    </Hierarchy>
+  </Dimension>
+  <Dimension name="Department">
+    <Hierarchy hasAll="true" allMemberName="All Departments">
+      <Table name="QUADRANT_ACTUALS"/>
+      <Level name="Department" column="DEPARTMENT" uniqueMembers="true"/>
+    </Hierarchy>
+  </Dimension>
+
+  <Dimension name="Positions">
+    <Hierarchy hasAll="true" allMemberName="All Positions">
+      <Table name="QUADRANT_ACTUALS"/>
+      <Level name="Positions" column="POSITIONTITLE" uniqueMembers="true"/>
+    </Hierarchy>
+  </Dimension>
+
+  <Cube name="Quadrant Analysis">
+    <Table name="QUADRANT_ACTUALS"/>
+    <DimensionUsage name="Region" source="Region"/>
+    <DimensionUsage name="Department" source="Department" />
+    <DimensionUsage name="Positions" source="Positions" />
+    <Measure name="Actual" column="ACTUAL" aggregator="sum" formatString="#,###.00"/>
+    <Measure name="Budget" column="BUDGET" aggregator="sum" formatString="#,###.00"/>
+    <Measure name="Variance" column="VARIANCE" aggregator="sum" formatString="#,###.00"/>
+<!--    <CalculatedMember name="Variance Percent" dimension="Measures" formula="([Measures].[Variance]/[Measures].[Budget])*100" /> -->
+  </Cube>
+
+</Schema>
+
