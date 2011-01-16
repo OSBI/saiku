@@ -4,31 +4,22 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
- 	<bean id="connectionFactoryBean" class="org.saiku.datasources.connection.SaikuConnectionFactory">
+<!-- 	<bean id="connectionFactoryBean" class="org.saiku.datasources.connection.SaikuConnectionFactory">
 		<property name="connections">
- 			<bean class="org.saiku.datasources.connection.SaikuOlapConnection">
+			<bean class="org.saiku.datasources.connection.SaikuOlapConnection">
 				<property name="properties">
 					<props>
 						<prop key="name">TestConnection1</prop>
-						<!-- <prop key="driver">mondrian.olap4j.MondrianOlap4jDriver</prop>
-						<prop key="location">jdbc:hsqldb:mem:pat_mondrian_servlet;default_schema=true;type=cached;write_delay=false</prop>
-						<prop key="JdbcDrivers">org.hsqldb.jdbcDriver</prop>
-						<prop key="user">sa</prop>
-						<prop key="password"></prop>
-						<prop key="name">FoodMart Connection</prop> -->
-                                                <prop key="driver">mondrian.olap4j.MondrianOlap4jDriver</prop>
-                                                <prop key="location">jdbc:mondrian:Jdbc=jdbc:hsqldb:file:src/test/resources/org/saiku/web/rest/servlet/foodmart/foodmart;Catalog=src/test/resources/org/saiku/web/rest/servlet/foodmart/FoodMart.xml;</prop>
-                        						<prop key="JdbcDrivers">org.hsqldb.jdbcDriver</prop>
-                                                <prop key="JdbcUser">sa</prop>
-                                                <prop key="JdbcPassword"></prop>
-						
-						
+						<prop key="driver">org.olap4j.driver.xmla.XmlaOlap4jDriver</prop>
+						<prop key="location">jdbc:xmla:Server=http://localhost:8080/pentaho/Xmla?userid=joe&amp;password=password</prop>
+						<prop key="user">joe</prop>
+						<prop key="password">password</prop>
 					</props>
 				</property>
 			</bean>
 		</property>
 	</bean>
-
+ -->
 	<bean id="datasourcesBean" class="org.saiku.datasources.SaikuDatasources">
 		<property name="connectionFactory" ref="connectionFactoryBean" />
 	</bean>

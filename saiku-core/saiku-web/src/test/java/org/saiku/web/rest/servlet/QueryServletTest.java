@@ -25,7 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "saiku-beans.xml" })
-public class QueryServletTest extends AbstractServiceTest{
+public class QueryServletTest {
 
 	   @Autowired
 	   private QueryServlet qs;
