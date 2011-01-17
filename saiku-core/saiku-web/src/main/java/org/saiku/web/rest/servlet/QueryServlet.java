@@ -132,21 +132,6 @@ public class QueryServlet {
 		QueryRestPojo qrp = new QueryRestPojo(queryName);
 		AxisRestPojo axis = new AxisRestPojo("UNUSED",getAxisInfo(queryName, "UNUSED"));
 
-		//          List<DimensionRestPojo> dimensions = getAxisInfo(queryName, "UNUSED");
-		//          
-		//          for (DimensionRestPojo dimension : dimensions){
-		//        	  
-		//        	  List<HierarchyRestPojo> hierarchies = getDimensionInfo(queryName, "UNUSED", dimension.getName());
-		//        	  
-		//        	  for(HierarchyRestPojo hierarchy: hierarchies){
-		//        		  List<LevelRestPojo> levels = getHierarchyInfo(queryName, "UNUSED", dimension.getName(), hierarchy.getName());
-		//        		  
-		//        		  hierarchy.setLevels(levels);
-		//        		  
-		//        	  }
-		//        	  dimension.setHierarachies(hierarchies);
-		//          }
-		//          axis.setDimensions(dimensions);
 		List<AxisRestPojo> axes = new ArrayList<AxisRestPojo>();
 		axes.add(axis);
 		qrp.setAxes(axes);
