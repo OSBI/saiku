@@ -33,11 +33,15 @@ public class SaikuOlapConnection implements ISaikuConnection {
 			connection = (OlapConnection) DriverManager.getConnection(url, properties);
 			final OlapWrapper wrapper = connection;
 			OlapConnection tmpolapConnection = (OlapConnection) wrapper.unwrap(OlapConnection.class);
+			System.out.println("name:" + name);
+			System.out.println("driver:" + driver);
+			System.out.println("url:" + url);
+			
 			if (tmpolapConnection == null) {
 				throw new Exception("Connection is null");
 			}
 			olapConnection = tmpolapConnection;
-			
+			System.out.println("Catalogs:" + olapConnection.getCatalogs().size());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
