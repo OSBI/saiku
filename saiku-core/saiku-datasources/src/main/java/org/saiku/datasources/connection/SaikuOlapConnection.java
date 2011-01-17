@@ -1,6 +1,5 @@
 package org.saiku.datasources.connection;
 
-import java.io.File;
 import java.sql.DriverManager;
 import java.util.Properties;
 
@@ -31,18 +30,13 @@ public class SaikuOlapConnection implements ISaikuConnection {
 		try {
 			Class.forName(driver);
 			OlapConnection connection;
-			System.out.println("File:" + (new File("test")).getAbsolutePath());
 			connection = (OlapConnection) DriverManager.getConnection(url, properties);
 			final OlapWrapper wrapper = connection;
 			OlapConnection tmpolapConnection = (OlapConnection) wrapper.unwrap(OlapConnection.class);
-			System.out.println("name:" + name);
-			System.out.println("driver:" + driver);
-			System.out.println("url:" + url);
 			if (tmpolapConnection == null) {
 				throw new Exception("Connection is null");
 			}
 			olapConnection = tmpolapConnection;
-			System.out.println("Catalogs:" + olapConnection.getCatalogs().size());
 			
 		} catch (Exception e) {
 			e.printStackTrace();

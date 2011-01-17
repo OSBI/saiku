@@ -34,9 +34,10 @@ public class OlapMetaExplorer {
 		SaikuConnection connection = null;
 		if (olapcon != null) {
 			List<SaikuCatalog> catalogs = new ArrayList<SaikuCatalog>();
-			for (Catalog cat : olapcon.getCatalogs()) {
-				List<SaikuSchema> schemas = new ArrayList<SaikuSchema>();
-				try {
+			try {
+				for (Catalog cat : olapcon.getMetaData().getOlapCatalogs()) {
+					List<SaikuSchema> schemas = new ArrayList<SaikuSchema>();
+
 					for (Schema schem : cat.getSchemas()) {
 						List<SaikuCube> cubes = new ArrayList<SaikuCube>();
 						for (Cube cub : schem.getCubes()) {
@@ -44,11 +45,12 @@ public class OlapMetaExplorer {
 						}
 						schemas.add(new SaikuSchema(schem.getName(),cubes));
 					}
-				} catch (OlapException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+
+					catalogs.add(new SaikuCatalog(cat.getName(),schemas));
 				}
-				catalogs.add(new SaikuCatalog(cat.getName(),schemas));
+			} catch (OlapException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			connection = new SaikuConnection(connectionName,catalogs);
 		}
@@ -77,19 +79,18 @@ public class OlapMetaExplorer {
 		OlapConnection olapcon = connections.get(connectionName);
 		List<SaikuCube> cubes = new ArrayList<SaikuCube>();
 		if (olapcon != null) {
-			for (Catalog cat : olapcon.getCatalogs()) {
-				try {
+			try {
+				for (Catalog cat : olapcon.getMetaData().getOlapCatalogs()) {
 					for (Schema schem : cat.getSchemas()) {
 						for (Cube cub : schem.getCubes()) {
 							cubes.add(new SaikuCube(connectionName, cub.getName(), cat.getName(), schem.getName(), cub.getDescription()));
 						}
 					}
-				} catch (OlapException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
+			} catch (OlapException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-
 		}
 		return cubes;
 
@@ -115,7 +116,7 @@ public class OlapMetaExplorer {
 		try {
 			OlapConnection con = connections.get(cube.getConnectionName());
 			if (con != null ) {
-				Catalog cat = con.getCatalogs().get(cube.getCatalogName());
+				Catalog cat = con.getMetaData().getOlapCatalogs().get(cube.getCatalogName());
 				if (cat != null) {
 					Schema schema = cat.getSchemas().get(cube.getSchemaName());
 					if (schema != null) {
@@ -164,7 +165,7 @@ public class OlapMetaExplorer {
 		}
 		return null;
 	}
-	
+
 
 	public List<SaikuLevel> getAllLevels(SaikuCube cube, String dimension, String hierarchy) {
 		Cube nativeCube = getNativeCube(cube);
