@@ -80,8 +80,6 @@ public class QueryServlet {
 		for (String queryName : olapQueryService.getQueries()) {
 			queryList.add(new QueryRestPojo(queryName));
 		}
-		queryList.add(new QueryRestPojo("hugo"));
-		queryList.add(new QueryRestPojo("hugo2"));
 		return queryList;
 	}
 	//    

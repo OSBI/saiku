@@ -4,21 +4,32 @@
 package org.saiku.web.rest.servlet;
 
 import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.saiku.olap.query.OlapQuery;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
+import org.saiku.web.rest.objects.AxisRestPojo;
+import org.saiku.web.rest.objects.HierarchyRestPojo;
 import org.saiku.web.rest.objects.QueryRestPojo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+
+import static org.mockito.Mockito.*;
 
 /**
  * @author bugg
@@ -81,7 +92,7 @@ public class QueryServletTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		assertNotNull(testQuery);
 		assertEquals("TestQuery1", testQuery.getName());
 		assertEquals("UNUSED", testQuery.getAxes().get(0).getAxisName());
 		
@@ -92,19 +103,73 @@ public class QueryServletTest {
 	 */
 	@Test
 	public final void testGetQueries() {
-		List<QueryRestPojo> queries = qs.getQueries();
-		assertFalse(queries.isEmpty());
+		try {
+			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
+			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery2");
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		List<QueryRestPojo> queryList = qs.getQueries();
+		assertNotNull(queryList);
+		assertEquals(queryList.size(), 2);
+		assertEquals("TestQuery1", queryList.get(0).getName());
+		assertEquals("TestQuery2", queryList.get(1).getName());		
+		
+		
 	}
 
 	/**
 	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#deleteQuery(String)}.
 	 */
 	@Test
-	@Ignore
 	public final void testDeleteQuery() {
-		fail("Not yet implemented"); // TODO
+		try {
+			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
+			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery2");
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		List<QueryRestPojo> queryList = qs.getQueries();
+		assertNotNull(queryList);
+		assertEquals(queryList.size(), 2);
+		
+		qs.deleteQuery("TestQuery1");
+		
+		assertEquals("TestQuery2", qs.getQueries().get(0).getName());
 	}
 
+	
+	/**
+	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#moveDimension(String, String, String, int)}.
+	 */
+	@Test
+	public final void testMoveDimension() {
+		QueryRestPojo testQuery = null;
+		try {
+			testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		assertNotNull(testQuery);
+		Status returnedStatus = qs.moveDimension("TestQuery1", "ROWS", "Store", -1);
+	
+		
+		assertEquals(Status.OK, returnedStatus);
+
+		List<HierarchyRestPojo> output = qs.getDimensionInfo("TestQuery1", "ROWS", "Store");
+		
+		assertEquals("Store", output.get(0).getName());
+	}
+
+	
+	
+	
 	/**
 	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#getMDXQuery(String)}.
 	 */
@@ -186,14 +251,6 @@ public class QueryServletTest {
 		fail("Not yet implemented"); // TODO
 	}
 
-	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#moveDimension(String, String, String, int)}.
-	 */
-	@Test
-	@Ignore
-	public final void testMoveDimension() {
-		fail("Not yet implemented"); // TODO
-	}
 
 	/**
 	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#deleteDimension(String, String, String)}.
