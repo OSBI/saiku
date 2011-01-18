@@ -3,12 +3,11 @@
  */
 package org.saiku.web.rest.servlet;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.ws.rs.core.Response.Status;
@@ -18,18 +17,13 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.saiku.olap.query.OlapQuery;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
-import org.saiku.web.rest.objects.AxisRestPojo;
 import org.saiku.web.rest.objects.HierarchyRestPojo;
 import org.saiku.web.rest.objects.QueryRestPojo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-
-import static org.mockito.Mockito.*;
 
 /**
  * @author bugg
@@ -85,6 +79,8 @@ public class QueryServletTest {
 	 */
 	@Test
 	public final void testCreateQuery() {
+		
+		//Create new query
 		QueryRestPojo testQuery = null;
 		try {
 			testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
@@ -92,6 +88,8 @@ public class QueryServletTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		//Check it is not null, has the same name and has an unused axis.
 		assertNotNull(testQuery);
 		assertEquals("TestQuery1", testQuery.getName());
 		assertEquals("UNUSED", testQuery.getAxes().get(0).getAxisName());
@@ -125,6 +123,8 @@ public class QueryServletTest {
 	 */
 	@Test
 	public final void testDeleteQuery() {
+		
+		//Create 2 Queries
 		try {
 			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
 			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery2");
@@ -133,12 +133,15 @@ public class QueryServletTest {
 			e.printStackTrace();
 		}
 		
+		//Check that the list contains 2 queries
 		List<QueryRestPojo> queryList = qs.getQueries();
 		assertNotNull(queryList);
 		assertEquals(queryList.size(), 2);
 		
+		//Delete a query
 		qs.deleteQuery("TestQuery1");
 		
+		//Make sure the query has been removed from the list.
 		assertEquals("TestQuery2", qs.getQueries().get(0).getName());
 	}
 
@@ -148,6 +151,8 @@ public class QueryServletTest {
 	 */
 	@Test
 	public final void testMoveDimension() {
+		
+		//Create a query.
 		QueryRestPojo testQuery = null;
 		try {
 			testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
@@ -156,14 +161,19 @@ public class QueryServletTest {
 			e.printStackTrace();
 		}
 		
+		//Check the query isn't null.
 		assertNotNull(testQuery);
+		
+		//Move a dimension
 		Status returnedStatus = qs.moveDimension("TestQuery1", "ROWS", "Store", -1);
 	
-		
+		//Make sure an OK status was returned.
 		assertEquals(Status.OK, returnedStatus);
 
+		//Get the dimension
 		List<HierarchyRestPojo> output = qs.getDimensionInfo("TestQuery1", "ROWS", "Store");
 		
+		//Make sure it has the correct name.
 		assertEquals("Store", output.get(0).getName());
 	}
 
