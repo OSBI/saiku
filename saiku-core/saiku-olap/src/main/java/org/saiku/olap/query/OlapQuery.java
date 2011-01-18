@@ -15,6 +15,7 @@ import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.util.OlapResultSetUtil;
+import org.saiku.olap.util.SaikuProperties;
 
 public class OlapQuery {
 
@@ -22,6 +23,7 @@ public class OlapQuery {
 	
 	public OlapQuery(Query query) {
 		this.query = query;
+		applyProperties();
 	}
 	
 	public void pivot() {
@@ -104,6 +106,14 @@ public class OlapQuery {
         System.out.println("Size: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
                 + "ms\tFormat:\t" + (format - exec) + "ms\t Total: " + (format - start) + "ms");
         return result;
-
     }
+    
+    private void applyProperties() {
+    	if (SaikuProperties.olapDefaultNonEmpty) {
+    		
+    		query.getAxis(Axis.ROWS).setNonEmpty(true);
+    		query.getAxis(Axis.COLUMNS).setNonEmpty(true);
+    	}
+    }
+
 }

@@ -4,230 +4,229 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Enumeration;
+import java.util.Properties;
 
 import mondrian.olap.Util;
 
-public class SaikuProperties {
+public class SaikuProperties extends Properties{
 
- private final PropertySource propertySource;
- private int populateCount;
 
- private static SaikuProperties instance;
- private static final String SAIKU_PROPERTIES = "saiku.properties";
+	private static final long serialVersionUID = 4835692048422342660L;
+	private final PropertySource propertySource;
+	private int populateCount;
 
- /**
-  * Returns the singleton.
-  *
-  * @return Singleton instance
-  */
- public static synchronized SaikuProperties instance() {
-     if (instance == null) {
-         instance = new SaikuProperties();
-//         instance.populate();
-     }
-     return instance;
- }
+	private static SaikuProperties instance = instance();
+	private static final String SAIKU_PROPERTIES = "saiku.properties";
 
- public SaikuProperties() {
-     this.propertySource =
-         new FilePropertySource(new File(SAIKU_PROPERTIES));
- }
+	/**
+	 * Returns the singleton.
+	 *
+	 * @return Singleton instance
+	 */
+	private static synchronized SaikuProperties instance() {
+		if (instance == null) {
+			instance = new SaikuProperties();
+			instance.populate();
+		}
+		return instance;
+	}
 
-// public boolean triggersAreEnabled() {
-//     return EnableTriggers.get();
-// }
+	public SaikuProperties() {
+		this.propertySource =
+			new FilePropertySource(new File(SAIKU_PROPERTIES));
+	}
 
- public interface PropertySource {
-     InputStream openStream();
-     boolean isStale();
-     String getDescription();
- }
+	public interface PropertySource {
+		InputStream openStream();
+		boolean isStale();
+		String getDescription();
+	}
 
- static class FilePropertySource implements PropertySource {
-     private final File file;
-     private long lastModified;
+	static class FilePropertySource implements PropertySource {
+		private final File file;
+		private long lastModified;
 
-     FilePropertySource(File file) {
-         this.file = file;
-         this.lastModified = 0;
-     }
+		FilePropertySource(File file) {
+			this.file = file;
+			this.lastModified = 0;
+		}
 
-     public InputStream openStream() {
-         try {
-             this.lastModified = file.lastModified();
-             return new FileInputStream(file);
-         } catch (FileNotFoundException e) {
-             throw new RuntimeException (
-                 "Error while opening properties file '" + file + "'",e);
-         }
-     }
+		public InputStream openStream() {
+			try {
+				this.lastModified = file.lastModified();
+				FileInputStream in = new FileInputStream(file);
+				System.out.println("Opening properties file'" + file + "'");
+				return in;
+			} catch (FileNotFoundException e) {
+				throw new RuntimeException (
+						"Error while opening properties file '" + file + "'",e);
+			}
+		}
 
-     public boolean isStale() {
-         return file.exists()
-             && file.lastModified() > this.lastModified;
-     }
+		public boolean isStale() {
+			return file.exists()
+			&& file.lastModified() > this.lastModified;
+		}
 
-     public String getDescription() {
-         return "file=" + file.getAbsolutePath()
-             + " (exists=" + file.exists() + ")";
-     }
- }
+		public String getDescription() {
+			return "file=" + file.getAbsolutePath()
+			+ " (exists=" + file.exists() + ")";
+		}
+	}
 
- /**
-  * Implementation of {@link PropertySource} which reads from a {@link URL}.
-  */
- static class UrlPropertySource implements PropertySource {
-     private final URL url;
-     private long lastModified;
+	/**
+	 * Implementation of {@link PropertySource} which reads from a {@link URL}.
+	 */
+	static class UrlPropertySource implements PropertySource {
+		private final URL url;
+		private long lastModified;
 
-     UrlPropertySource(URL url) {
-         this.url = url;
-     }
+		UrlPropertySource(URL url) {
+			this.url = url;
+		}
 
-     private URLConnection getConnection() {
-         try {
-             return url.openConnection();
-         } catch (IOException e) {
-             throw new RuntimeException ("Error while opening properties file '" + url + "'", e);
-         }
-     }
+		private URLConnection getConnection() {
+			try {
+				return url.openConnection();
+			} catch (IOException e) {
+				throw new RuntimeException ("Error while opening properties file '" + url + "'", e);
+			}
+		}
 
-     public InputStream openStream() {
-         try {
-             final URLConnection connection = getConnection();
-             this.lastModified = connection.getLastModified();
-             return connection.getInputStream();
-         } catch (IOException e) {
-             throw Util.newInternal(
-                     e,
-                     "Error while opening properties file '" + url + "'");
-         }
-     }
+		public InputStream openStream() {
+			try {
+				final URLConnection connection = getConnection();
+				this.lastModified = connection.getLastModified();
+				return connection.getInputStream();
+			} catch (IOException e) {
+				throw Util.newInternal(
+						e,
+						"Error while opening properties file '" + url + "'");
+			}
+		}
 
-     public boolean isStale() {
-         final long lastModified = getConnection().getLastModified();
-         return lastModified > this.lastModified;
-     }
+		public boolean isStale() {
+			final long lastModified = getConnection().getLastModified();
+			return lastModified > this.lastModified;
+		}
 
-     public String getDescription() {
-         return url.toExternalForm();
-     }
- }
+		public String getDescription() {
+			return url.toExternalForm();
+		}
+	}
 
- /**
-  * Loads this property set from: the file "$PWD/mondrian.properties" (if it
-  * exists); the "mondrian.properties" in the CLASSPATH; and from the system
-  * properties.
-  */
- 
- /*
- public void populate() {
-     // Read properties file "mondrian.properties", if it exists. If we have
-     // read the file before, only read it if it is newer.
-     loadIfStale(propertySource);
+	/**
+	 * Loads this property set from: the file "$PWD/mondrian.properties" (if it
+	 * exists); the "mondrian.properties" in the CLASSPATH; and from the system
+	 * properties.
+	 */
 
-     URL url = null;
-     File file = new File(SAIKU_PROPERTIES);
-     if (file.exists() && file.isFile()) {
-         // Read properties file "mondrian.properties" from PWD, if it
-         // exists.
-         try {
-             url = file.toURI().toURL();
-         } catch (MalformedURLException e) {
-        	 // TODO replace
-             System.out.println (
-                 "Mondrian: file '"
-                 + file.getAbsolutePath()
-                 + "' could not be loaded");
-             e.printStackTrace();
-         }
-     } else {
-         // Then try load it from classloader
-         url =
-             SaikuProperties.class.getClassLoader().getResource(
-                 SAIKU_PROPERTIES);
-     }
 
-     if (url != null) {
-         load(new UrlPropertySource(url));
-     } else {
-         System.out.println(
-             "mondrian.properties can't be found under '"
-             + new File(".").getAbsolutePath() + "' or classloader");
-     }
+	public void populate() {
+		// Read properties file "mondrian.properties", if it exists. If we have
+		// read the file before, only read it if it is newer.
+		loadIfStale(propertySource);
 
-     // copy in all system properties which start with "mondrian."
-     int count = 0;
-     for (Enumeration keys = System.getProperties().keys();
-          keys.hasMoreElements();)
-     {
-         String key = (String) keys.nextElement();
-         String value = System.getProperty(key);
-         if (key.startsWith("mondrian.")) {
-        	 // TODO remove
-             // NOTE: the super allows us to bybase calling triggers
-             // Is this the correct behavior?
-//             if (LOGGER.isDebugEnabled()) {
-                 System.out.println("populate: key=" + key + ", value=" + value);
-//             }
-             super.setProperty(key, value);
-             count++;
-         }
-     }
-     if (populateCount++ == 0) {
-         LOGGER.info(
-             "Mondrian: loaded " + count + " system properties");
-     }
- }
+		URL url = null;
+		File file = new File(SAIKU_PROPERTIES);
+		if (file.exists() && file.isFile()) {
+			// Read properties file "mondrian.properties" from PWD, if it
+			// exists.
+			try {
+				url = file.toURI().toURL();
+			} catch (MalformedURLException e) {
+				// TODO replace
+				System.out.println (
+						"Saiku: file '"
+						+ file.getAbsolutePath()
+						+ "' could not be loaded");
+				e.printStackTrace();
+			}
+		} else {
+			// Then try load it from classloader
+			url =
+				SaikuProperties.class.getClassLoader().getResource(
+						SAIKU_PROPERTIES);
+		}
 
- private void loadIfStale(PropertySource source) {
-     if (source.isStale()) {
-         if (LOGGER.isDebugEnabled()) {
-             LOGGER.debug("Mondrian: loading " + source.getDescription());
-         }
-         load(source);
-     }
- }
+		if (url != null) {
+			load(new UrlPropertySource(url));
+		} else {
+			System.out.println(
+					"saiku.properties can't be found under '"
+					+ new File(".").getAbsolutePath() + "' or classloader");
+		}
 
- private void load(final PropertySource source) {
-     try {
-         load(source.openStream());
-         if (populateCount == 0) {
-             LOGGER.info(
-                 "Mondrian: properties loaded from '"
-                 + source.getDescription()
-                 + "'");
-         }
-     } catch (IOException e) {
-         LOGGER.error(
-             "Mondrian: error while loading properties "
-             + "from '" + source.getDescription() + "' (" + e + ")");
-     }
- }
+		// copy in all system properties which start with "mondrian."
+		int count = 0;
+		for (Enumeration<Object> keys = System.getProperties().keys();
+		keys.hasMoreElements();)
+		{
+			String key = (String) keys.nextElement();
+			String value = System.getProperty(key);
+			if (key.startsWith("saiku.")) {
+				// TODO remove
+				// NOTE: the super allows us to bybase calling triggers
+				// Is this the correct behavior?
+				//             if (LOGGER.isDebugEnabled()) {
+				System.out.println("System property : populate: key=" + key + ", value=" + value);
+				//             }
+				instance.setProperty(key, value);
+				count++;
+			}
+		}
+		if (populateCount++ == 0) {
+			// TODO LOG INFO
+			System.out.println(
+					"Saiku: loaded " + count + " system properties");
+		}
+	}
 
- 
- public transient final IntegerProperty QueryLimit =
-     new IntegerProperty(
-         this, "mondrian.query.limit", 40);
+	private void loadIfStale(PropertySource source) {
+		if (source.isStale()) {
+			//         if (LOGGER.isDebugEnabled()) {
+			//             LOGGER.debug("Mondrian: loading " + source.getDescription());
+			//         }
+			load(source);
+		}
+	}
 
- 
- public transient final StringProperty JdbcDrivers =
-     new StringProperty(
-         this,
-         "mondrian.jdbcDrivers",
-         "sun.jdbc.odbc.JdbcOdbcDriver,"
-         + "org.hsqldb.jdbcDriver,"
-         + "oracle.jdbc.OracleDriver,"
-         + "com.mysql.jdbc.Driver");
+	private void load(final PropertySource source) {
+		try {
+			instance.load(source.openStream());
+//			if (populateCount == 0) {
+//				LOGGER.info(
+				System.out.println(
+						"Saiku: properties loaded from '"
+						+ source.getDescription()
+						+ "'");
+				instance.list(System.out);
+//			}
+		} catch (IOException e) {
+			//         LOGGER.error(
+			System.out.println(
+					"Saiku: error while loading properties "
+					+ "from '" + source.getDescription() + "' (" + e.getMessage() + ")");
+		}
+	}
 
- 
- public transient final IntegerProperty ResultLimit =
-     new IntegerProperty(
-         this, "mondrian.result.limit", 0);
 
- */
+	public static final Boolean olapDefaultNonEmpty = getPropBoolean("saiku.olap.nonempty","false"); 
+
+	private static Boolean getPropBoolean(String key, String defaultValue) {
+		Boolean ret;
+		if (instance.contains(key)) {
+			ret = Boolean.parseBoolean(instance().getProperty(key));
+			
+		}
+		ret = Boolean.parseBoolean(instance.getProperty(key));
+		System.out.println("Property: " + key + " value: " + ret );
+		return ret;
+	}
 }
 
 //End MondrianProperties.java
