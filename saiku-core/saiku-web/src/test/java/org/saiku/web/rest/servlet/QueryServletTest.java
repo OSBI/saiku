@@ -21,6 +21,8 @@ import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.web.rest.objects.HierarchyRestPojo;
 import org.saiku.web.rest.objects.QueryRestPojo;
+import org.saiku.web.rest.objects.resultset.Cell;
+import org.saiku.web.rest.util.RestList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -177,6 +179,39 @@ public class QueryServletTest {
 		assertEquals("Store", output.get(0).getName());
 	}
 
+
+	/**
+	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#execute(String)}.
+	 */
+	@Test
+	public final void testExecute() {
+		//Create a query.
+		QueryRestPojo testQuery = null;
+		try {
+			testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//Check the query isn't null.
+		assertNotNull(testQuery);
+		
+		//Move a dimension
+		qs.moveDimension("TestQuery1", "ROWS", "Store", -1);
+		qs.moveDimension("TestQuery1", "COLUMNS", "Time", -1);
+		
+		//Execute the query.
+		RestList<Cell[]> output = qs.execute("TestQuery1");
+		
+		//Make sure output is not null.
+		assertNotNull(output);
+		
+		//Check a cell value
+		Cell[] cellarray = output.get(0);
+		assertEquals("1997", cellarray[1].getValue());
+	}
+
 	
 	
 	
@@ -186,15 +221,6 @@ public class QueryServletTest {
 	@Test
 	@Ignore
 	public final void testGetMDXQuery() {
-		fail("Not yet implemented"); // TODO
-	}
-
-	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#execute(String)}.
-	 */
-	@Test
-	@Ignore
-	public final void testExecute() {
 		fail("Not yet implemented"); // TODO
 	}
 
