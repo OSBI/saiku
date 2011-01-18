@@ -51,7 +51,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<executions>
-					<execution>
+<!--					<execution>
 						<id>surefire-it</id>
 						<phase>integration-test</phase>
 						<goals>
@@ -60,7 +60,7 @@
 						<configuration>
 							<skip>false</skip>
 						</configuration>
-					</execution>
+					</execution>-->
 				</executions>
 			</plugin>
 
