@@ -10,6 +10,8 @@ public class SaikuDimension {
 	
 	private List<SaikuHierarchy> hierarchies;
 	
+	public SaikuDimension() {};
+	
 	public SaikuDimension(String name, String uniqueName, String caption, List<SaikuHierarchy> hierarchies) {
 		this.name = name;
 		this.uniqueName = uniqueName;
