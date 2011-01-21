@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Date;
 import java.util.Map;
+import java.util.Properties;
 
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
@@ -14,16 +15,19 @@ import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
 import org.saiku.olap.dto.resultset.CellDataSet;
+import org.saiku.olap.query.QueryProperties.QueryProperty;
+import org.saiku.olap.query.QueryProperties.QueryPropertyFactory;
 import org.saiku.olap.util.OlapResultSetUtil;
 import org.saiku.olap.util.SaikuProperties;
 
 public class OlapQuery {
 
-	Query query;
+	private Query query;
+	private Properties properties = new Properties();
 	
 	public OlapQuery(Query query) {
 		this.query = query;
-		applyProperties();
+		applyDefaultProperties();
 	}
 	
 	public void pivot() {
@@ -108,12 +112,26 @@ public class OlapQuery {
         return result;
     }
     
-    private void applyProperties() {
+    private void applyDefaultProperties() {
     	if (SaikuProperties.olapDefaultNonEmpty) {
-    		
     		query.getAxis(Axis.ROWS).setNonEmpty(true);
     		query.getAxis(Axis.COLUMNS).setNonEmpty(true);
     	}
+    }
+    
+    public void setProperties(Properties props) {
+    	this.properties = props;
+    	for (Object _key : props.keySet()) {
+    		String key = (String) _key;
+    		String value = props.getProperty((String) key);
+    		QueryProperty prop = QueryPropertyFactory.getProperty(key, value, this);
+    		prop.handle();
+    	}
+    }
+    
+    public Properties getProperties() {
+    	this.properties.putAll(QueryPropertyFactory.forQuery(this));
+    	return this.properties;
     }
 
 }

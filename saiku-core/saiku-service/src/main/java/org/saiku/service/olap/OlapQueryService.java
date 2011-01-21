@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
@@ -388,6 +389,18 @@ public class OlapQueryService {
 
 	}
 
+	public void setProperties(String queryName, Properties props) {
+		OlapQuery query = queries.get(queryName);
+		query.setProperties(props);
+	}	
+	
+	
+	public Properties getProperties(String queryName) {
+		OlapQuery query = queries.get(queryName);
+		return query.getProperties();
+	}
+	
+	
 	public String getMDXQuery(String queryName) {
 		return queries.get(queryName).getMDX();
 	}

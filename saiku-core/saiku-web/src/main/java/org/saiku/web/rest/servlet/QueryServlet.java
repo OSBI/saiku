@@ -2,6 +2,7 @@ package org.saiku.web.rest.servlet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.ws.rs.DELETE;
@@ -135,6 +136,14 @@ public class QueryServlet {
 		qrp.setAxes(axes);
 		return qrp;
 	}
+	
+	@GET
+	@Produces({"application/xml","application/json" })
+	@Path("/{queryname}/properties")
+	public Properties getProperties(@PathParam("queryname") String queryName) {
+		return olapQueryService.getProperties(queryName);
+	}
+
 
 	@GET
 	@Path("/{queryname}/mdx")
@@ -437,6 +446,8 @@ public class QueryServlet {
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
+	
+
 
 	//    
 	//    /**
