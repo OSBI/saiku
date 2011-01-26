@@ -24,6 +24,10 @@
                         <id>pentaho-third-party</id>
                         <url>http://repo.pentaho.org/artifactory/third-party/</url>
         </repository>
+	<repository>
+                        <id>codehaus</id>
+                        <url>http://repository.codehaus.org/</url>
+        </repository>
 		
 <repository>
 			<id>pentaho-repo</id>
