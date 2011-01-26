@@ -11,6 +11,8 @@ public class SaikuHierarchy {
 	private String dimensionUniqueName;
 	private List<SaikuLevel> levels;
 	
+	public SaikuHierarchy() {};
+	
 	public SaikuHierarchy(String name, String uniqueName, String caption, String dimensionUniqueName, List<SaikuLevel> levels) {
 		this.name = name;
 		this.uniqueName = uniqueName;
