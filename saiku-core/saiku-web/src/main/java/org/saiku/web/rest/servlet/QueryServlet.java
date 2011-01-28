@@ -1,5 +1,6 @@
 package org.saiku.web.rest.servlet;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -129,18 +130,24 @@ public class QueryServlet {
 	}
 
 
-	//	@POST
-	//	@Produces({"application/xml","application/json" })
-	//	@Path("/{queryname}/properties")
-	//	public Status setProperties(@PathParam("queryname") String queryName, @FormParam("properties") Properties props) {
-	//		try{
-	//			olapQueryService.setProperties(queryName, props);
-	//			return Status.OK;
-	//		}catch(Exception e){
-	//			return Status.INTERNAL_SERVER_ERROR;
-	//		}
-	//
-	//	}
+	@POST
+	@Produces({"application/xml","application/json" })
+	@Path("/{queryname}/properties")
+	public Status setProperties(
+			@PathParam("queryname") String queryName, 
+			@FormParam("properties") String properties) 
+	{
+		try {
+			Properties props = new Properties();
+			StringReader sr = new StringReader(properties);
+			props.load(sr);
+			olapQueryService.setProperties(queryName, props);
+			return Status.OK;
+		} catch(Exception e) {
+			return Status.INTERNAL_SERVER_ERROR;
+		}
+
+	}
 
 	@POST
 	@Produces({"application/xml","application/json" })

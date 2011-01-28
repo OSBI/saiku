@@ -2,19 +2,15 @@ package org.saiku.olap.dto;
 
 import java.util.List;
 
-public class SaikuSchema {
-	private String schemaName;
+public class SaikuSchema extends AbstractSaikuObject {
+
 	private List<SaikuCube> cubes;
 
 	public SaikuSchema(String name, List<SaikuCube> cubes) {
-		this.schemaName = name;
+		super(name,name);
 		this.cubes = cubes;
 	}
 	
-	public String getName() {
-		return schemaName;
-	}
-
 	public List<SaikuCube> getCubes() {
 		return cubes;
 	}

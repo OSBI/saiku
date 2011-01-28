@@ -120,7 +120,7 @@ public class OlapMetaExplorer {
 				if (cat != null) {
 					Schema schema = cat.getSchemas().get(cube.getSchemaName());
 					if (schema != null) {
-						Cube cub =  schema.getCubes().get(cube.getCubeName());
+						Cube cub =  schema.getCubes().get(cube.getName());
 						if (cub != null) {
 							return cub;
 						}

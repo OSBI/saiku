@@ -2,23 +2,19 @@ package org.saiku.olap.dto;
 
 import java.util.List;
 
-public class SaikuConnection {
+public class SaikuConnection extends AbstractSaikuObject {
 	
-	private String connectionName;
 	private List<SaikuCatalog> catalogs;
 
 	public SaikuConnection(){
+		super(null,null);
 		throw new RuntimeException("Unsupported Constructor. Serialization only");
 	}
 	public SaikuConnection(String connectionName, List<SaikuCatalog> catalogs) {
-		this.connectionName = connectionName;
+		super(connectionName,connectionName);
 		this.catalogs = catalogs;
 	}
 	
-	public String getConnectionName() {
-		return connectionName;
-	}
-
 	public List<SaikuCatalog> getCatalogs() {
 		return catalogs;
 	}

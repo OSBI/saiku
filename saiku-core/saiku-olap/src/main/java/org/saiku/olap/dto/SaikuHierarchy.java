@@ -3,32 +3,24 @@ package org.saiku.olap.dto;
 import java.util.List;
 
 
-public class SaikuHierarchy {
+public class SaikuHierarchy extends AbstractSaikuObject {
 	
-	private String name;
-	private String uniqueName;
 	private String caption;
 	private String dimensionUniqueName;
 	private List<SaikuLevel> levels;
 	
-	public SaikuHierarchy() {};
+	public SaikuHierarchy() {
+		super(null,null);
+		throw new RuntimeException("Unsupported Constructor. Serialization only");
+	};
 	
 	public SaikuHierarchy(String name, String uniqueName, String caption, String dimensionUniqueName, List<SaikuLevel> levels) {
-		this.name = name;
-		this.uniqueName = uniqueName;
+		super(uniqueName,name);
 		this.caption = caption;
 		this.dimensionUniqueName = dimensionUniqueName;
 		this.levels = levels;
 	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public String getUniqueName() {
-		return uniqueName;
-	}
-	
+
 	public String getCaption() {
 		return caption;
 	}

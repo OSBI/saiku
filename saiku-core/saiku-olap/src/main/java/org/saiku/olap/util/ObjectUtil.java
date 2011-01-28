@@ -66,7 +66,13 @@ public class ObjectUtil {
 	public static SaikuLevel convert(Level level) {
 		try {
 			List<SaikuMember> members = convertMembers(level.getMembers());
-			return new SaikuLevel(level.getName(), level.getUniqueName(), level.getCaption(), level.getHierarchy().getUniqueName(),members);
+			return new SaikuLevel(
+					level.getName(), 
+					level.getUniqueName(), 
+					level.getCaption(), 
+					level.getDimension().getUniqueName(), 
+					level.getHierarchy().getUniqueName(),
+					members);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -84,7 +90,12 @@ public class ObjectUtil {
 	}
 
 	public static SaikuMember convert(Member m) {
-		return new SaikuMember(m.getName(), m.getUniqueName(), m.getCaption(), m.getDimension().getUniqueName());
+		return new SaikuMember(
+				m.getName(), 
+				m.getUniqueName(), 
+				m.getCaption(), 
+				m.getDimension().getUniqueName(),
+				m.getLevel().getUniqueName());
 	}
 
 }
