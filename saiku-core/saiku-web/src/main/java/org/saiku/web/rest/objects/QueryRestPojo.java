@@ -4,10 +4,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.saiku.olap.dto.SaikuQuery;
 
 
 /**
@@ -17,7 +14,7 @@ import org.saiku.olap.dto.SaikuQuery;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="queries")
-public  class QueryRestPojo extends AbstractRestObject {
+public  class QueryRestPojo {
 
 	// TODO uncomment later
 	// private CubeRestPojo cube;
@@ -40,7 +37,6 @@ public  class QueryRestPojo extends AbstractRestObject {
 	/**
 	 * A Cube Name.
 	 */
-	@XmlAttribute(name = "name", required = false)
 	private String queryName;
 
 	public String getName() {
@@ -61,19 +57,6 @@ public  class QueryRestPojo extends AbstractRestObject {
 	//	public CubeRestPojo getCube() {
 	//		return cube;
 	//	}
-
-
-	@Override
-	public String getCompareValue() {
-		return getName();
-	}
-
-	@Override
-	public SaikuQuery toNativeObject() {
-		// TODO uncomment when changed
-		// return new SaikuQuery(getName(), new SaikuCube(cube.getConnectionName(), cube.getCubeName(), cube.getCatalog(), cube.getSchema()));
-		throw new UnsupportedOperationException("Not Implemented");
-	}
 
 	@Override
 	public String toString() {

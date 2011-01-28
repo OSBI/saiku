@@ -3,14 +3,7 @@
  */
 package org.saiku.web.rest.servlet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-
-import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.ws.rs.core.Response.Status;
 
 import org.junit.After;
 import org.junit.Before;
@@ -18,10 +11,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.saiku.service.olap.OlapQueryService;
-import org.saiku.web.rest.objects.HierarchyRestPojo;
-import org.saiku.web.rest.objects.QueryRestPojo;
-import org.saiku.web.rest.objects.resultset.Cell;
-import org.saiku.web.rest.util.RestList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -72,138 +61,138 @@ public class QueryServletTest {
 	/**
 	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#createQuery(String, String, String, String, String)}.
 	 */
-	@Test
-	public final void testCreateQuery() {
-		
-		//Create new query
-		QueryRestPojo testQuery = null;
-		try {
-			testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//Check it is not null, has the same name and has an unused axis.
-		assertNotNull(testQuery);
-		assertEquals("TestQuery1", testQuery.getName());
-		assertEquals("UNUSED", testQuery.getAxes().get(0).getAxisName());
-		
-	}
-
-	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#getQueries()}.
-	 */
-	@Test
-	public final void testGetQueries() {
-		try {
-			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
-			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery2");
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		List<QueryRestPojo> queryList = qs.getQueries();
-		assertNotNull(queryList);
-		assertEquals(queryList.size(), 2);
-		assertEquals("TestQuery1", queryList.get(0).getName());
-		assertEquals("TestQuery2", queryList.get(1).getName());		
-		
-		
-	}
-
-	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#deleteQuery(String)}.
-	 */
-	@Test
-	public final void testDeleteQuery() {
-		
-		//Create 2 Queries
-		try {
-			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
-			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery2");
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//Check that the list contains 2 queries
-		List<QueryRestPojo> queryList = qs.getQueries();
-		assertNotNull(queryList);
-		assertEquals(queryList.size(), 2);
-		
-		//Delete a query
-		qs.deleteQuery("TestQuery1");
-		
-		//Make sure the query has been removed from the list.
-		assertEquals("TestQuery2", qs.getQueries().get(0).getName());
-	}
-
-	
-	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#moveDimension(String, String, String, int)}.
-	 */
-	@Test
-	public final void testMoveDimension() {
-		
-		//Create a query.
-		QueryRestPojo testQuery = null;
-		try {
-			testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//Check the query isn't null.
-		assertNotNull(testQuery);
-		
-		//Move a dimension
-		Status returnedStatus = qs.moveDimension("TestQuery1", "ROWS", "Store", -1);
-	
-		//Make sure an OK status was returned.
-		assertEquals(Status.OK, returnedStatus);
-
-		//Get the dimension
-		List<HierarchyRestPojo> output = qs.getDimensionInfo("TestQuery1", "ROWS", "Store");
-		
-		//Make sure it has the correct name.
-		assertEquals("Store", output.get(0).getName());
-	}
-
-
-	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#execute(String)}.
-	 */
-	@Test
-	public final void testExecute() {
-		//Create a query.
-		QueryRestPojo testQuery = null;
-		try {
-			testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//Check the query isn't null.
-		assertNotNull(testQuery);
-		
-		//Move a dimension
-		qs.moveDimension("TestQuery1", "ROWS", "Store", -1);
-		qs.moveDimension("TestQuery1", "COLUMNS", "Time", -1);
-		
-		//Execute the query.
-		RestList<Cell[]> output = qs.execute("TestQuery1");
-		
-		//Make sure output is not null.
-		assertNotNull(output);
-		
-		//Check a cell value
-		Cell[] cellarray = output.get(0);
-		assertEquals("1997", cellarray[1].getValue());
-	}
+//	@Test
+//	public final void testCreateQuery() {
+//		
+//		//Create new query
+//		QueryRestPojo testQuery = null;
+//		try {
+//			testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
+//		} catch (ServletException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		//Check it is not null, has the same name and has an unused axis.
+//		assertNotNull(testQuery);
+//		assertEquals("TestQuery1", testQuery.getName());
+//		assertEquals("UNUSED", testQuery.getAxes().get(0).getAxisName());
+//		
+//	}
+//
+//	/**
+//	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#getQueries()}.
+//	 */
+//	@Test
+//	public final void testGetQueries() {
+//		try {
+//			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
+//			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery2");
+//		} catch (ServletException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		List<QueryRestPojo> queryList = qs.getQueries();
+//		assertNotNull(queryList);
+//		assertEquals(queryList.size(), 2);
+//		assertEquals("TestQuery1", queryList.get(0).getName());
+//		assertEquals("TestQuery2", queryList.get(1).getName());		
+//		
+//		
+//	}
+//
+//	/**
+//	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#deleteQuery(String)}.
+//	 */
+//	@Test
+//	public final void testDeleteQuery() {
+//		
+//		//Create 2 Queries
+//		try {
+//			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
+//			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery2");
+//		} catch (ServletException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		//Check that the list contains 2 queries
+//		List<QueryRestPojo> queryList = qs.getQueries();
+//		assertNotNull(queryList);
+//		assertEquals(queryList.size(), 2);
+//		
+//		//Delete a query
+//		qs.deleteQuery("TestQuery1");
+//		
+//		//Make sure the query has been removed from the list.
+//		assertEquals("TestQuery2", qs.getQueries().get(0).getName());
+//	}
+//
+//	
+//	/**
+//	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#moveDimension(String, String, String, int)}.
+//	 */
+//	@Test
+//	public final void testMoveDimension() {
+//		
+//		//Create a query.
+//		QueryRestPojo testQuery = null;
+//		try {
+//			testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
+//		} catch (ServletException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		//Check the query isn't null.
+//		assertNotNull(testQuery);
+//		
+//		//Move a dimension
+//		Status returnedStatus = qs.moveDimension("TestQuery1", "ROWS", "Store", -1);
+//	
+//		//Make sure an OK status was returned.
+//		assertEquals(Status.OK, returnedStatus);
+//
+//		//Get the dimension
+//		List<HierarchyRestPojo> output = qs.getDimensionInfo("TestQuery1", "ROWS", "Store");
+//		
+//		//Make sure it has the correct name.
+//		assertEquals("Store", output.get(0).getName());
+//	}
+//
+//
+//	/**
+//	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#execute(String)}.
+//	 */
+//	@Test
+//	public final void testExecute() {
+//		//Create a query.
+//		QueryRestPojo testQuery = null;
+//		try {
+//			testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
+//		} catch (ServletException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+//		//Check the query isn't null.
+//		assertNotNull(testQuery);
+//		
+//		//Move a dimension
+//		qs.moveDimension("TestQuery1", "ROWS", "Store", -1);
+//		qs.moveDimension("TestQuery1", "COLUMNS", "Time", -1);
+//		
+//		//Execute the query.
+//		RestList<Cell[]> output = qs.execute("TestQuery1");
+//		
+//		//Make sure output is not null.
+//		assertNotNull(output);
+//		
+//		//Check a cell value
+//		Cell[] cellarray = output.get(0);
+//		assertEquals("1997", cellarray[1].getValue());
+//	}
 
 	
 	

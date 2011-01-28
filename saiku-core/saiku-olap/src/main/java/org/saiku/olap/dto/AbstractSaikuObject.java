@@ -5,6 +5,8 @@ public  class AbstractSaikuObject implements ISaikuObject  {
 	private String uniqueName;
 	private String name;
 	
+	public AbstractSaikuObject() {	}
+	
 	public AbstractSaikuObject(String uniqueName, String name) {
 		this.uniqueName = uniqueName;
 	}

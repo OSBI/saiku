@@ -19,19 +19,16 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SaikuDimension;
+import org.saiku.olap.dto.SaikuHierarchy;
 import org.saiku.olap.dto.SaikuLevel;
 import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.web.rest.objects.AxisRestPojo;
-import org.saiku.web.rest.objects.CubeRestPojo;
-import org.saiku.web.rest.objects.DimensionRestPojo;
-import org.saiku.web.rest.objects.HierarchyRestPojo;
-import org.saiku.web.rest.objects.LevelRestPojo;
-import org.saiku.web.rest.objects.MemberRestPojo;
 import org.saiku.web.rest.objects.QueryRestPojo;
 import org.saiku.web.rest.objects.resultset.Cell;
-import org.saiku.web.rest.util.RestList;
 import org.saiku.web.rest.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -64,12 +61,8 @@ public class QueryServlet {
 	 */
 	@GET
 	@Produces({"application/xml","application/json" })
-	public List<QueryRestPojo> getQueries() {
-		RestList<QueryRestPojo> queryList = new RestList<QueryRestPojo>();
-		for (String queryName : olapQueryService.getQueries()) {
-			queryList.add(new QueryRestPojo(queryName));
-		}
-		return queryList;
+	public List<String> getQueries() {
+		return olapQueryService.getQueries();
 	}
 
 	/**
@@ -111,8 +104,8 @@ public class QueryServlet {
 			@FormParam("schema") String schemaName, 
 			@PathParam("queryname") String queryName) throws ServletException 
 	{
-		CubeRestPojo cube = new CubeRestPojo(connectionName, cubeName, catalogName, schemaName);
-		olapQueryService.createNewOlapQuery(queryName, cube.toNativeObject());
+		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName,"");
+		olapQueryService.createNewOlapQuery(queryName, cube);
 		QueryRestPojo qrp = new QueryRestPojo(queryName);
 		AxisRestPojo axis = new AxisRestPojo("UNUSED",getAxisInfo(queryName, "UNUSED"));
 
@@ -177,7 +170,7 @@ public class QueryServlet {
 
 	@GET
 	@Path("/{queryname}/result")
-	public RestList<Cell[]> execute(@PathParam("queryname") String queryName){
+	public List<Cell[]> execute(@PathParam("queryname") String queryName){
 		CellDataSet cs = olapQueryService.execute(queryName);
 		return RestUtil.convert(cs);
 
@@ -197,11 +190,11 @@ public class QueryServlet {
 	@GET
 	@Produces({"application/xml","application/json" })
 	@Path("/{queryname}/axis/{axis}")
-	public RestList<DimensionRestPojo> getAxisInfo(
+	public List<SaikuDimension> getAxisInfo(
 			@PathParam("queryname") String queryName, 
 			@PathParam("axis") String axisName)
 	{
-		return RestUtil.convertDimensions(olapQueryService.getDimensions(queryName, axisName));
+		return olapQueryService.getDimensions(queryName, axisName);
 	}
 
 	/**
@@ -261,13 +254,13 @@ public class QueryServlet {
 	@GET
 	@Produces({"application/xml","application/json" })
 	@Path("/{queryname}/axis/{axis}/dimension/{dimension}")
-	public List<HierarchyRestPojo> getDimensionInfo(
+	public List<SaikuHierarchy> getDimensionInfo(
 			@PathParam("queryname") String queryName, 
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName)
-			{
-		return RestUtil.convertHierarchies(olapQueryService.getHierarchies(queryName, dimensionName));
-			}
+	{
+		return olapQueryService.getHierarchies(queryName, dimensionName);
+	}
 
 	/**
 	 * Update a dimension.
@@ -365,15 +358,13 @@ public class QueryServlet {
 	@GET
 	@Produces({"application/xml","application/json" })
 	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/hierarchy/{hierarchy}")
-	public List<LevelRestPojo> getHierarchyInfo(
+	public List<SaikuLevel> getHierarchyInfo(
 			@PathParam("queryname") String queryName, 
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName, 
 			@PathParam("hierarchy") String hierarchyName)
 	{
-		List<SaikuLevel> saikuLevels =  olapQueryService.getLevels(queryName, dimensionName, hierarchyName);
-		List<LevelRestPojo> levels = RestUtil.convertLevels(saikuLevels);
-		return levels;
+		return  olapQueryService.getLevels(queryName, dimensionName, hierarchyName);
 	}
 
 	/**
@@ -383,16 +374,14 @@ public class QueryServlet {
 	@GET
 	@Produces({"application/xml","application/json" })
 	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/hierarchy/{hierarchy}/{level}")
-	public List<MemberRestPojo> getLevelInfo(
+	public List<SaikuMember> getLevelInfo(
 			@PathParam("queryname") String queryName, 
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName, 
 			@PathParam("hierarchy") String hierarchyName, 
 			@PathParam("level") String levelName)
 	{
-		List<SaikuMember> saikuMembers = olapQueryService.getLevelMembers(queryName, dimensionName, hierarchyName, levelName);
-		List<MemberRestPojo> members = RestUtil.convertMembers(saikuMembers);
-		return members;
+		return olapQueryService.getLevelMembers(queryName, dimensionName, hierarchyName, levelName);
 	}
    
 	/**

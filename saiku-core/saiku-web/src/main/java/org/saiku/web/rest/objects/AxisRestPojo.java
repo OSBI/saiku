@@ -2,33 +2,23 @@ package org.saiku.web.rest.objects;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.saiku.olap.dto.SaikuDimension;
 
-import org.saiku.web.rest.util.RestList;
-
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name="axis")
-public class AxisRestPojo extends AbstractRestObject {
+public class AxisRestPojo  {
 
 	/**
 	 * A Axis Name.
 	 */
-	@XmlAttribute(name = "axisname", required = false)
 	private String axisName;
 	
-	@XmlElement(name = "dimensions", required = false)
-	private RestList<DimensionRestPojo> dimensions;
+	private List<SaikuDimension> dimensions;
 
 
 	public AxisRestPojo(){
 		throw new RuntimeException("Unsupported Constructor. Serialization only");
 	}
 
-	public AxisRestPojo(String axisName, RestList<DimensionRestPojo> dimensions) {
+	public AxisRestPojo(String axisName, List<SaikuDimension> dimensions) {
 		this.axisName = axisName;
 		this.dimensions = dimensions;
 	}
@@ -38,23 +28,12 @@ public class AxisRestPojo extends AbstractRestObject {
 		return axisName;
 	}
 
-	@Override
-	public String toNativeObject() {
-		return new String(axisName);
-	}
-
-	@Override
-	public String getCompareValue() {
-		return getAxisName();
-	}
-
-	@Override
 	public String toString() {
 		return getAxisName();
 	}
 
 	
-	public List<DimensionRestPojo> getDimensions(){
+	public List<SaikuDimension> getDimensions(){
 		return dimensions;
 	}
 }

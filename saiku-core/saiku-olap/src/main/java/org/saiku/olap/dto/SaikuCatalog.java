@@ -6,6 +6,8 @@ public class SaikuCatalog extends AbstractSaikuObject {
 
 	private List<SaikuSchema> schemas;
 
+	public SaikuCatalog() {};
+	
 	public SaikuCatalog(String name, List<SaikuSchema> schemas) {
 		super(name,name);
 		this.schemas = schemas;

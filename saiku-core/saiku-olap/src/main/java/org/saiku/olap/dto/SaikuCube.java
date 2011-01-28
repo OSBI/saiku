@@ -26,6 +26,11 @@ public class SaikuCube extends AbstractSaikuObject {
 		return uniqueName;
 	}
 	
+	@Override
+	public String getName() {
+		return super.getName();
+	}
+	
 	public String getCatalogName() {
 		return catalogName;
 	}

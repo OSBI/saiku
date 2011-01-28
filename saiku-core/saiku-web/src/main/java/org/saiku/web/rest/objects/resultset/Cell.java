@@ -2,9 +2,7 @@ package org.saiku.web.rest.objects.resultset;
 
 import java.util.Properties;
 
-import org.saiku.web.rest.objects.AbstractRestObject;
-
-public class Cell extends AbstractRestObject {
+public class Cell  {
 
 	private String value;
 	private String type;
@@ -48,21 +46,6 @@ public class Cell extends AbstractRestObject {
 
 	public String getType() {
 		return type;
-	}
-
-	@Override
-	public String getCompareValue() {
-		return value;
-	}
-
-	@Override
-	public Object toNativeObject() {
-		return null;
-	}
-
-	@Override
-	public String toString() {
-		return value;
 	}
 
 	
