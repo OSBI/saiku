@@ -17,7 +17,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.web.rest.objects.HierarchyRestPojo;
 import org.saiku.web.rest.objects.QueryRestPojo;
@@ -40,11 +39,6 @@ public class QueryServletTest {
 
 	   @Autowired
 	   private OlapQueryService olapQueryService;
-
-	   @Autowired
-	
-	   OlapDiscoverService olapDiscoverService;
-
 	   
 	/**
 	 * @throws java.lang.Exception
@@ -52,7 +46,6 @@ public class QueryServletTest {
 	@Before
 	public void onetimesetUp() throws Exception {
 		qs = new QueryServlet();
-		qs.setOlapDiscoverService(olapDiscoverService);
 		qs.setOlapQueryService(olapQueryService);
 		
 	}

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.olap4j.Axis;
+import org.olap4j.Axis.Standard;
 import org.olap4j.CellSet;
 import org.olap4j.mdx.ParseTreeWriter;
 import org.olap4j.metadata.Cube;
@@ -40,6 +41,18 @@ public class OlapQuery {
 	
 	public QueryAxis getAxis(Axis axis) {
 		return this.query.getAxis(axis);
+	}
+	
+	public QueryAxis getAxis(String name) throws Exception {
+		if ("UNUSED".equals(name)) {
+			return getUnusedAxis();
+		}
+		Standard standardAxis = Standard.valueOf(name);
+		if (standardAxis == null)
+			throw new Exception("Axis ("+name+") not found for query ("+ query.getName() + ")");
+		
+		Axis queryAxis = Axis.Factory.forOrdinal(standardAxis.ordinal());
+		return query.getAxis(queryAxis);
 	}
 	
 	public Cube getCube() {

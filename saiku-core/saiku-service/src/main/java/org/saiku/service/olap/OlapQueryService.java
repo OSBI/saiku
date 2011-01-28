@@ -94,21 +94,14 @@ public class OlapQueryService {
 
 	public List<SaikuDimension> getDimensions(String queryName, String axis) {
 		OlapQuery q = queries.get(queryName);
-		Axis.Standard tmpAxis = null;
 		List<SaikuDimension> dimensions = new ArrayList<SaikuDimension>();
-
-		if(!axis.equals("UNUSED")) {
-			tmpAxis = Standard.valueOf(axis);
-		}
-		if (tmpAxis != null) {
-			int ord = tmpAxis.axisOrdinal();
-			QueryAxis qa = q.getAxis(Axis.Factory.forOrdinal(ord));
+		QueryAxis qa;
+		try {
+			qa = q.getAxis(axis);
 			dimensions.addAll(ObjectUtil.convertQueryDimensions(qa.getDimensions()));
-
-		}
-		else if (axis.equals("UNUSED")){
-			QueryAxis qa = q.getUnusedAxis();
-			dimensions.addAll(ObjectUtil.convertQueryDimensions(qa.getDimensions()));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return dimensions;
 
@@ -125,7 +118,7 @@ public class OlapQueryService {
 			if (dimension.getInclusions().contains(sel)) {
 				dimension.getInclusions().remove(sel);
 			}
-			System.out.println("include:" + selectionMode.toString() + " size: " + memberList.size());
+			//System.out.println("include:" + selectionMode.toString() + " size: " + memberList.size());
 			if (memberposition < 0) {
 				memberposition = dimension.getInclusions().size();
 			}
@@ -145,7 +138,7 @@ public class OlapQueryService {
 		final Selection.Operator selectionMode = Selection.Operator.valueOf(selectionType);
 
 		try {
-			System.out.println("include:" + selectionMode.toString() + " " + memberList.size());
+			//System.out.println("include:" + selectionMode.toString() + " " + memberList.size());
 			Selection selection = dimension.createSelection(selectionMode, memberList);
 			dimension.getInclusions().remove(selection);
 			if (dimension.getInclusions().size() == 0) {
@@ -248,26 +241,20 @@ public class OlapQueryService {
 
 
 	public List<String> getDimension(String queryName, String axis) {
-		OlapQuery q = queries.get(queryName);
-		Axis.Standard tmpAxis = null;
-
-		if(!axis.equals("UNUSED")) {
-			tmpAxis = Axis.Standard.valueOf(axis);
-		}
-
 		List<String> dimensions = new ArrayList<String>();
-
-		if (tmpAxis != null) {
-			QueryAxis qa = q.getAxis(Axis.Factory.forOrdinal(tmpAxis.axisOrdinal()));
-			for (QueryDimension dim : qa.getDimensions()) {
-				dimensions.add(dim.getName());
+		OlapQuery q = queries.get(queryName);
+		
+		QueryAxis qa;
+		try {
+			qa = q.getAxis(axis);
+			if (qa != null) {
+				for (QueryDimension dim : qa.getDimensions()) {
+					dimensions.add(dim.getName());
+				}
 			}
-		}
-		else if (axis.equals("UNUSED")){
-			QueryAxis qa = q.getUnusedAxis();
-			for (QueryDimension dim : qa.getDimensions()) {
-				dimensions.add(dim.getName());
-			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return dimensions;
 
