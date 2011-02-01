@@ -55,7 +55,7 @@ public class RestUtil {
 				props.putAll(dcell.getProperties());
 				
 				// TODO no properties  (NULL) for now - 
-				return new Cell(dcell.getFormattedValue(),metaprops, null, Cell.Type.DATA_CELL);
+				return new Cell(dcell.getFormattedValue(), Cell.Type.DATA_CELL);
 			}
 			if (acell instanceof MemberCell) {
 				MemberCell mcell = (MemberCell) acell;
@@ -69,7 +69,7 @@ public class RestUtil {
 				props.putAll(mcell.getProperties());
 
 				// TODO no properties  (NULL) for now - 
-				return new Cell("" + mcell.getFormattedValue(),metaprops, null , headertype);
+				return new Cell("" + mcell.getFormattedValue(), headertype);
 			}
 
 		

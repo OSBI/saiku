@@ -22,13 +22,18 @@ public class Cell  {
 	}
 	
 	public Cell(String value) {
-		this(value,new Properties(), new Properties(), Type.EMPTY);
+		this(value,Type.EMPTY);
 	}
 	
-	public Cell(String value, Properties metaproperties, Properties properties, Type type) {
+//	public Cell(String value, Properties metaproperties, Properties properties, Type type) {
+//		this.value = value;
+//		this.properties = properties;
+//		this.metaproperties = metaproperties;
+//		this.type = type.toString();
+//	}
+	
+	public Cell(String value, Type type) {
 		this.value = value;
-		this.properties = properties;
-		this.metaproperties = metaproperties;
 		this.type = type.toString();
 	}
 	

@@ -1,6 +1,5 @@
 package org.saiku.olap.dto;
 
-import java.util.List;
 
 
 public class SaikuLevel extends AbstractSaikuObject {
@@ -16,8 +15,7 @@ public class SaikuLevel extends AbstractSaikuObject {
 			String uniqueName, 
 			String caption, 
 			String dimensionUniqueName, 
-			String hierarchyUniqueName, 
-			List<SaikuMember> members) 
+			String hierarchyUniqueName) 
 	{
 		super(uniqueName,name);
 		this.caption = caption;
