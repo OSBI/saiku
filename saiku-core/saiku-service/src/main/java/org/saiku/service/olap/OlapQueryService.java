@@ -118,7 +118,6 @@ public class OlapQueryService {
 			if (dimension.getInclusions().contains(sel)) {
 				dimension.getInclusions().remove(sel);
 			}
-			//System.out.println("include:" + selectionMode.toString() + " size: " + memberList.size());
 			if (memberposition < 0) {
 				memberposition = dimension.getInclusions().size();
 			}
@@ -156,7 +155,6 @@ public class OlapQueryService {
 		OlapQuery query = queries.get(queryName);
 		QueryDimension dimension = query.getDimension(dimensionName);
 		final Selection.Operator selectionMode = Selection.Operator.MEMBER;
-		System.out.println("include hierarchy: " + uniqueHierarchyName + " level" + uniqueLevelName);
 		try {
 			for (Hierarchy hierarchy : dimension.getDimension().getHierarchies()) {
 				if (hierarchy.getUniqueName().equals(uniqueHierarchyName)) {
@@ -165,7 +163,6 @@ public class OlapQueryService {
 							for (Member member : level.getMembers()) {
 								Selection sel = dimension.createSelection(selectionMode, member);
 								if (!dimension.getInclusions().contains(sel)) {
-									System.out.println("include:" + selectionMode.toString() + " " + member.getUniqueName());
 									dimension.include(selectionMode, member);
 								}
 							}
@@ -185,20 +182,17 @@ public class OlapQueryService {
 		OlapQuery query = queries.get(queryName);
 		QueryDimension dimension = query.getDimension(dimensionName);
 		final Selection.Operator selectionMode = Selection.Operator.MEMBER;
-		System.out.println("delete hierarchy: " + uniqueHierarchyName + " level" + uniqueLevelName);
 		try {
 			for (Hierarchy hierarchy : dimension.getDimension().getHierarchies()) {		
 				if (hierarchy.getUniqueName().equals(uniqueHierarchyName)) {
 					for (Level level : hierarchy.getLevels()) {
 						if (level.getUniqueName().equals(uniqueLevelName)) {
 							for (Member member : level.getMembers()) {
-								System.out.println("delete:" + selectionMode.toString() + " " + member.getUniqueName());
 								Selection inclusion = dimension.createSelection(selectionMode, member);
 								dimension.getInclusions().remove(inclusion);
 							}
 							if (dimension.getInclusions().size() == 0) {
 								moveDimension(queryName, null , dimensionName, -1);
-								System.out.println("move dimension ok to unused");
 							}
 
 						}
