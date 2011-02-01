@@ -133,6 +133,7 @@ public class QueryProperties {
 			Properties props = new Properties();
 			props.putAll(getProperty(QueryProperty.KEY_NONEMPTY_ROWS, null, query).getProperties());
 			props.putAll(getProperty(QueryProperty.KEY_NONEMPTY_COLUMNS, null, query).getProperties());
+			props.putAll(getProperty(QueryProperty.KEY_NONEMPTY, null, query).getProperties());
 			return props;
 		}
 	}
