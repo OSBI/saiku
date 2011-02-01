@@ -8,7 +8,7 @@ public class SaikuLevel extends AbstractSaikuObject {
 	private String caption;
 	private String hierarchyUniqueName;
 	private String dimensionUniqueName;
-	private List<SaikuMember> members;
+//	private transient List<SaikuMember> members;
 	
 	
 	public SaikuLevel(
@@ -23,7 +23,7 @@ public class SaikuLevel extends AbstractSaikuObject {
 		this.caption = caption;
 		this.hierarchyUniqueName = hierarchyUniqueName;
 		this.dimensionUniqueName = dimensionUniqueName;
-		this.members = members;
+//		this.members = members;
 	}
 
 	public String getCaption() {
@@ -38,7 +38,7 @@ public class SaikuLevel extends AbstractSaikuObject {
 		return dimensionUniqueName;
 	}
 	
-	public List<SaikuMember> getMembers() {
-		return members;
-	}
+//	public List<SaikuMember> getMembers() {
+//		return members;
+//	}
 }
