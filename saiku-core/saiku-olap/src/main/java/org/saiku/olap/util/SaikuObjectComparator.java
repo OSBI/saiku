@@ -18,22 +18,27 @@
  *
  */
 
-package org.saiku.olap.dto;
+package org.saiku.olap.util;
 
-import java.util.List;
+import java.util.Comparator;
 
-public class SaikuSchema extends AbstractSaikuObject {
+import org.saiku.olap.dto.ISaikuObject;
 
-	private List<SaikuCube> cubes;
+public abstract class SaikuObjectComparator<T> implements Comparator<ISaikuObject> {
 
-	public SaikuSchema(String name, List<SaikuCube> cubes) {
-		super(name,name);
-		this.cubes = cubes;
+	public class SaikuNameComparator extends SaikuObjectComparator<ISaikuObject> {
+
+		public int compare(ISaikuObject o1, ISaikuObject o2) {
+			return o1.getName().compareTo(o2.getName());
+		}
 	}
 	
-	public List<SaikuCube> getCubes() {
-		return cubes;
-	}
+	public class SaikuUniqueNameComparator extends SaikuObjectComparator<ISaikuObject> {
 
+		public int compare(ISaikuObject o1, ISaikuObject o2) {
+			return o1.getUniqueName().compareTo(o2.getUniqueName());
+		}
+		
+	}
 
 }

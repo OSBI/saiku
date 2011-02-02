@@ -1,3 +1,23 @@
+/*
+ * Copyright (C) 2011 Paul Stoellberger
+ *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * 
+ * See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along 
+ * with this program; if not, write to the Free Software Foundation, Inc., 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ *
+ */
+
 package org.saiku.olap.query;
 
 import java.util.Properties;
@@ -6,16 +26,16 @@ import org.olap4j.Axis;
 
 public class QueryProperties {
 
+	public static final String KEY_NONEMPTY			= "saiku.olap.query.nonempty"; //$NON-NLS-1$
+	public static final String KEY_NONEMPTY_ROWS	= "saiku.olap.query.nonempty.rows"; //$NON-NLS-1$
+	public static final String KEY_NONEMPTY_COLUMNS = "saiku.olap.query.nonempty.columns"; //$NON-NLS-1$
+	public static final String[] KEYS = { KEY_NONEMPTY, KEY_NONEMPTY_ROWS, KEY_NONEMPTY_COLUMNS };
+
 	public abstract class QueryProperty {
 
 		protected String key;
 		protected String value;
 		protected OlapQuery query;
-
-		public static final String KEY_NONEMPTY			= "saiku.olap.query.nonempty"; //$NON-NLS-1$
-		public static final String KEY_NONEMPTY_ROWS	= "saiku.olap.query.nonempty.rows"; //$NON-NLS-1$
-		public static final String KEY_NONEMPTY_COLUMNS = "saiku.olap.query.nonempty.columns"; //$NON-NLS-1$
-		public final String[] KEYS = new String[] { KEY_NONEMPTY_ROWS, KEY_NONEMPTY_COLUMNS };
 
 		public QueryProperty(OlapQuery query, String key, String value) {
 			this.key = key;
@@ -116,14 +136,15 @@ public class QueryProperties {
 	
 	public static class QueryPropertyFactory {
 		private static QueryProperties q = new QueryProperties();
+		
 		public static QueryProperty getProperty(final String key, final String value, final OlapQuery query) {
-			if (QueryProperty.KEY_NONEMPTY_ROWS.equals(key)) {
+			if (KEY_NONEMPTY_ROWS.equals(key)) {
 				return q.new NonEmptyRowsProperty(query, key, value);
 			}
-			if (QueryProperty.KEY_NONEMPTY_COLUMNS.equals(key)) {
+			if (KEY_NONEMPTY_COLUMNS.equals(key)) {
 				return q.new NonEmptyColumnsProperty(query, key, value);
 			}
-			if (QueryProperty.KEY_NONEMPTY.equals(key)) {
+			if (KEY_NONEMPTY.equals(key)) {
 				return q.new NonEmptyProperty(query, key, value);
 			}
 			return q.new DummyProperty(query, key, value);
@@ -131,13 +152,11 @@ public class QueryProperties {
 		
 		public static Properties forQuery(OlapQuery query) {
 			Properties props = new Properties();
-			props.putAll(getProperty(QueryProperty.KEY_NONEMPTY_ROWS, null, query).getProperties());
-			props.putAll(getProperty(QueryProperty.KEY_NONEMPTY_COLUMNS, null, query).getProperties());
-			props.putAll(getProperty(QueryProperty.KEY_NONEMPTY, null, query).getProperties());
+			for (String key : KEYS) {
+				props.putAll(getProperty(key, null, query).getProperties()); 
+			}
 			return props;
 		}
 	}
-	
-
 	
 }

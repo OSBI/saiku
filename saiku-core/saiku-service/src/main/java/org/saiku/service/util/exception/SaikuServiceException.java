@@ -18,22 +18,38 @@
  *
  */
 
-package org.saiku.olap.dto;
+package org.saiku.service.util.exception;
 
-import java.util.List;
+public class SaikuServiceException extends Exception {
 
-public class SaikuSchema extends AbstractSaikuObject {
-
-	private List<SaikuCube> cubes;
-
-	public SaikuSchema(String name, List<SaikuCube> cubes) {
-		super(name,name);
-		this.cubes = cubes;
+	private static final long serialVersionUID = 6079334291828346380L;
+	
+	/**
+	 * @see java.lang.Exception#Exception()
+	 */
+	public SaikuServiceException() {
+		super();
 	}
 	
-	public List<SaikuCube> getCubes() {
-		return cubes;
+	/**
+	 * @see java.lang.Exception#Exception(String))
+	 */
+
+	public SaikuServiceException(String message) {
+		super(message);
 	}
 
-
+	/**
+	 * @see java.lang.Exception#Exception(Throwable)
+	 */
+	public SaikuServiceException(Throwable cause) {
+		super(cause);
+	}
+	
+	/**
+	 * @see java.lang.Exception#Exception(String, Throwable)
+	 */
+	public SaikuServiceException(String message, Throwable cause) {
+		super(message,cause);
+	}
 }

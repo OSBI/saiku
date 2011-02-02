@@ -1,3 +1,23 @@
+/*
+ * Copyright (C) 2011 Paul Stoellberger
+ *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * 
+ * See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along 
+ * with this program; if not, write to the Free Software Foundation, Inc., 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ *
+ */
+
 package org.saiku.web.rest.servlet;
 
 import java.io.StringReader;
@@ -30,6 +50,8 @@ import org.saiku.web.rest.objects.AxisRestPojo;
 import org.saiku.web.rest.objects.QueryRestPojo;
 import org.saiku.web.rest.objects.resultset.Cell;
 import org.saiku.web.rest.util.RestUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -44,9 +66,11 @@ import org.springframework.stereotype.Component;
 @Scope("request")
 @XmlAccessorType(XmlAccessType.NONE)
 public class QueryServlet {
-
-	private OlapQueryService olapQueryService;
 	
+    private static final Logger log = LoggerFactory.getLogger(QueryServlet.class);
+
+    private OlapQueryService olapQueryService;
+
 	@Autowired
 	public void setOlapQueryService(OlapQueryService olapqs) {
 		olapQueryService = olapqs;
@@ -77,6 +101,7 @@ public class QueryServlet {
 			return(Status.GONE);
 		}
 		catch(Exception e){
+			log.error("Cannot delete query (" + queryName + ")",e);
 			return(Status.NOT_FOUND);
 		}
 	}
@@ -132,11 +157,13 @@ public class QueryServlet {
 	{
 		try {
 			Properties props = new Properties();
+			System.out.print("PROPERTIES: " + properties);
 			StringReader sr = new StringReader(properties);
 			props.load(sr);
 			olapQueryService.setProperties(queryName, props);
 			return Status.OK;
 		} catch(Exception e) {
+			log.error("Cannot set properties for query (" + queryName + ")",e);
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 
@@ -156,6 +183,7 @@ public class QueryServlet {
 			olapQueryService.setProperties(queryName, props);
 			return Status.OK;
 		}catch(Exception e){
+			log.error("Cannot set property (" + propertyKey + " ) for query (" + queryName + ")",e);
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 
@@ -164,15 +192,27 @@ public class QueryServlet {
 	@GET
 	@Path("/{queryname}/mdx")
 	public String getMDXQuery(@PathParam("queryname") String queryName){
-		return olapQueryService.getMDXQuery(queryName);
-
+		try {
+			return olapQueryService.getMDXQuery(queryName);
+		}
+		catch (Exception e) {
+			log.error("Cannot get mdx for query (" + queryName + ")",e);
+			return "";
+		}
 	}
 
 	@GET
 	@Path("/{queryname}/result")
 	public List<Cell[]> execute(@PathParam("queryname") String queryName){
-		CellDataSet cs = olapQueryService.execute(queryName);
-		return RestUtil.convert(cs);
+		try {
+			CellDataSet cs = olapQueryService.execute(queryName);
+			return RestUtil.convert(cs);
+		}
+		catch (Exception e) {
+			log.error("Cannot execute query (" + queryName + ")",e);
+			return new ArrayList<Cell[]>();
+		}
+
 
 	}
 
@@ -278,6 +318,7 @@ public class QueryServlet {
 			olapQueryService.pullup(queryName, axisName, dimensionName, position);
 			return Status.OK;
 		} catch(Exception e) {
+			log.error("Cannot pullup dimension "+ dimensionName+ " for query (" + queryName + ")",e);
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
@@ -298,6 +339,7 @@ public class QueryServlet {
 			olapQueryService.pushdown(queryName, axisName, dimensionName, position);
 			return Status.OK;
 		} catch(Exception e) {
+			log.error("Cannot pushdown dimension "+ dimensionName+ " for query (" + queryName + ")",e);
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
@@ -324,6 +366,7 @@ public class QueryServlet {
 			olapQueryService.moveDimension(queryName, axisName, dimensionName, position);
 			return Status.OK;
 		} catch(Exception e) {
+			log.error("Cannot move dimension "+ dimensionName+ " for query (" + queryName + ")",e);
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
@@ -343,6 +386,7 @@ public class QueryServlet {
 			olapQueryService.removeDimension(queryName, axisName, dimensionName);
 			return Status.OK;
 		}catch(Exception e){
+			log.error("Cannot remove dimension "+ dimensionName+ " for query (" + queryName + ")",e);
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
@@ -407,9 +451,11 @@ public class QueryServlet {
 				return Status.CREATED;
 			}
 			else{
+				log.error("Cannot include member "+ dimensionName+ " for query (" + queryName + ")");
 				return Status.INTERNAL_SERVER_ERROR;
 			}
 		} catch (Exception e){
+			log.error("Cannot include member "+ dimensionName+ " for query (" + queryName + ")",e);
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
@@ -429,10 +475,11 @@ public class QueryServlet {
 				return Status.OK;
 			}
 			else{
+				log.error("Cannot remove member "+ dimensionName+ " for query (" + queryName + ")");
 				return Status.INTERNAL_SERVER_ERROR;
 			}
 		} catch (Exception e){
-			e.printStackTrace();
+			log.error("Cannot remove member "+ dimensionName+ " for query (" + queryName + ")",e);
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
@@ -455,9 +502,11 @@ public class QueryServlet {
 				return Status.CREATED;
 			}
 			else{
+				log.error("Cannot include level of hierarchy "+ uniqueHierarchyName+ " for query (" + queryName + ")");
 				return Status.INTERNAL_SERVER_ERROR;
 			}
 		} catch (Exception e){
+			log.error("Cannot include level of hierarchy "+ uniqueHierarchyName+ " for query (" + queryName + ")",e);
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
@@ -477,9 +526,11 @@ public class QueryServlet {
 				return Status.OK;
 			}
 			else{
+				log.error("Cannot remove level of hierarchy "+ uniqueHierarchyName+ " for query (" + queryName + ")");
 				return Status.INTERNAL_SERVER_ERROR;
 			}
 		} catch (Exception e){
+			log.error("Cannot include level of hierarchy "+ uniqueHierarchyName+ " for query (" + queryName + ")",e);
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}

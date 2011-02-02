@@ -1,3 +1,23 @@
+/*
+ * Copyright (C) 2011 Paul Stoellberger
+ *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * 
+ * See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along 
+ * with this program; if not, write to the Free Software Foundation, Inc., 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ *
+ */
+
 package org.saiku.olap.discover;
 
 import java.util.ArrayList;
@@ -20,6 +40,7 @@ import org.saiku.olap.dto.SaikuHierarchy;
 import org.saiku.olap.dto.SaikuLevel;
 import org.saiku.olap.dto.SaikuSchema;
 import org.saiku.olap.util.ObjectUtil;
+import org.saiku.olap.util.exception.SaikuOlapException;
 
 public class OlapMetaExplorer {
 
@@ -29,7 +50,7 @@ public class OlapMetaExplorer {
 		connections = con;
 	}
 
-	public SaikuConnection getConnections(String connectionName) {
+	public SaikuConnection getConnection(String connectionName) throws SaikuOlapException {
 		OlapConnection olapcon = connections.get(connectionName);
 		SaikuConnection connection = null;
 		if (olapcon != null) {
@@ -49,27 +70,26 @@ public class OlapMetaExplorer {
 					catalogs.add(new SaikuCatalog(cat.getName(),schemas));
 				}
 			} catch (OlapException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new SaikuOlapException("Error getting objects of connection (" + connectionName + ")" ,e);
 			}
 			connection = new SaikuConnection(connectionName,catalogs);
+			return connection;
 		}
-		return connection;
-
+		throw new SaikuOlapException("Cannot find connection: (" + connectionName + ")");
 	}
 
-	public List<SaikuConnection> getConnections(List<String> connectionNames) {
+	public List<SaikuConnection> getConnections(List<String> connectionNames) throws SaikuOlapException {
 		List<SaikuConnection> connectionList = new ArrayList<SaikuConnection>();
 		for (String connectionName : connectionNames) {
-			connectionList.add(getConnections(connectionName));
+			connectionList.add(getConnection(connectionName));
 		}
 		return connectionList;
 	}
 
-	public List<SaikuConnection> getAllConnections() {
+	public List<SaikuConnection> getAllConnections() throws SaikuOlapException {
 		List<SaikuConnection> cubesList = new ArrayList<SaikuConnection>();
 		for (String connectionName : connections.keySet()) {
-			cubesList.add(getConnections(connectionName));
+			cubesList.add(getConnection(connectionName));
 		}
 		return cubesList;
 	}
@@ -112,7 +132,7 @@ public class OlapMetaExplorer {
 		return cubes;
 	}
 
-	public Cube getNativeCube(SaikuCube cube) {
+	public Cube getNativeCube(SaikuCube cube) throws SaikuOlapException {
 		try {
 			OlapConnection con = connections.get(cube.getConnectionName());
 			if (con != null ) {
@@ -129,18 +149,18 @@ public class OlapMetaExplorer {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new SaikuOlapException("Cannot get native cube for ( " + cube+ " )",e);
 		}
 		return null;
 	}
 
-	public List<SaikuDimension> getAllDimensions(SaikuCube cube) {
+	public List<SaikuDimension> getAllDimensions(SaikuCube cube) throws SaikuOlapException {
 		Cube nativeCube = getNativeCube(cube);
 		List<SaikuDimension> dimensions = ObjectUtil.convertDimensions(nativeCube.getDimensions());
 		return dimensions;
 	}
 
-	public SaikuDimension getDimension(SaikuCube cube, String dimensionName) {
+	public SaikuDimension getDimension(SaikuCube cube, String dimensionName) throws SaikuOlapException {
 		Cube nativeCube = getNativeCube(cube);
 		Dimension dim = nativeCube.getDimensions().get(dimensionName);
 		if (dim != null) {
@@ -150,13 +170,13 @@ public class OlapMetaExplorer {
 		return null;
 	}
 
-	public List<SaikuHierarchy> getAllHierarchies(SaikuCube cube) {
+	public List<SaikuHierarchy> getAllHierarchies(SaikuCube cube) throws SaikuOlapException {
 		Cube nativeCube = getNativeCube(cube);
 		List<SaikuHierarchy> hierarchies = ObjectUtil.convertHierarchies(nativeCube.getHierarchies());
 		return hierarchies;
 	}
 
-	public SaikuHierarchy getHierarchy(SaikuCube cube, String hierarchyName) {
+	public SaikuHierarchy getHierarchy(SaikuCube cube, String hierarchyName) throws SaikuOlapException {
 		Cube nativeCube = getNativeCube(cube);
 		Hierarchy h = nativeCube.getHierarchies().get(hierarchyName);
 		if (h != null) {
@@ -167,7 +187,7 @@ public class OlapMetaExplorer {
 	}
 
 
-	public List<SaikuLevel> getAllLevels(SaikuCube cube, String dimension, String hierarchy) {
+	public List<SaikuLevel> getAllLevels(SaikuCube cube, String dimension, String hierarchy) throws SaikuOlapException {
 		Cube nativeCube = getNativeCube(cube);
 		Dimension dim = nativeCube.getDimensions().get(dimension);
 		if (dim != null) {

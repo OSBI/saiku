@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Thomas Barber
+ * Copyright (C) 2011 Paul Stoellberger
  *
  * This program is free software; you can redistribute it and/or modify it 
  * under the terms of the GNU General Public License as published by the Free 
@@ -376,13 +376,7 @@ public class HierarchicalCellSetFormatter {
 				expanded = false;
 				Boolean exit = false;
 				if (member != null) {
-
-					//                    System.out.println(" ");
-					//                    System.out.println(" ");
-					//                    System.out.println(" ");
-					//                    System.out.println("############################# Member: " + member.getUniqueName() + " ######################");
 					for (int z = i+1; z < axis.getPositionCount() && exit == false; z++) {
-						//                        System.out.println("------------------------------------POSITION " + z +" ------------------------------------");
 						List<Member> posMembers = axis.getPositions().get(z).getMembers();
 						for (int k = 0;k<posMembers.size();k++) {
 							Member possibleChild = posMembers.get(k);
@@ -415,9 +409,7 @@ public class HierarchicalCellSetFormatter {
 										break;
 									}
 								}
-							}
-
-							//                          
+							}                         
 						}
 					}
 				}

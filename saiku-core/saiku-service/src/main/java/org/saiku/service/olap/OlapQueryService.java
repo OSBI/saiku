@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2011 Paul Stoellberger
+ *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * 
+ * See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along 
+ * with this program; if not, write to the Free Software Foundation, Inc., 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ *
+ */
 package org.saiku.service.olap;
 
 import java.util.ArrayList;
@@ -7,8 +26,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.olap4j.Axis;
-import org.olap4j.OlapException;
 import org.olap4j.Axis.Standard;
+import org.olap4j.OlapException;
 import org.olap4j.mdx.IdentifierNode;
 import org.olap4j.mdx.IdentifierSegment;
 import org.olap4j.metadata.Cube;
@@ -28,9 +47,14 @@ import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query.OlapQuery;
 import org.saiku.olap.util.ObjectUtil;
+import org.saiku.service.util.exception.SaikuServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OlapQueryService {
 
+    private static final Logger log = LoggerFactory.getLogger(OlapQueryService.class);
+    
 	private OlapDiscoverService olapDiscoverService;
 
 	private Map<String,OlapQuery> queries = new HashMap<String,OlapQuery>();
@@ -130,14 +154,16 @@ public class OlapQueryService {
 		}
 	}
 
-	public boolean removeMember(String queryName, String dimensionName, String uniqueMemberName, String selectionType){
+	public boolean removeMember(String queryName, String dimensionName, String uniqueMemberName, String selectionType) throws SaikuServiceException{
 		OlapQuery query = queries.get(queryName);
 		List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(uniqueMemberName).getSegmentList();
 		QueryDimension dimension = query.getDimension(dimensionName);
 		final Selection.Operator selectionMode = Selection.Operator.valueOf(selectionType);
 
 		try {
-			//System.out.println("include:" + selectionMode.toString() + " " + memberList.size());
+			if (log.isDebugEnabled()) {
+				log.debug("query: "+queryName+" remove:" + selectionMode.toString() + " " + memberList.size());
+			}
 			Selection selection = dimension.createSelection(selectionMode, memberList);
 			dimension.getInclusions().remove(selection);
 			if (dimension.getInclusions().size() == 0) {
@@ -145,9 +171,7 @@ public class OlapQueryService {
 			}
 			return true;
 		} catch (OlapException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
+			throw new SaikuServiceException("Error removing member (" + uniqueMemberName + ") of dimension (" +dimensionName+")",e);
 		}
 	}
 
@@ -210,11 +234,12 @@ public class OlapQueryService {
 
 	public void moveDimension(String queryName, String axisName, String dimensionName, int position) {
 		try {
-			System.out.println("move query: " + queryName + " dimension " + dimensionName + " to axis " + axisName + "  position" + position);
+			if (log.isDebugEnabled()) {
+				log.debug("move query: " + queryName + " dimension " + dimensionName + " to axis " + axisName + "  position" + position);
+			}
 			OlapQuery query = queries.get(queryName);
 			QueryDimension dimension = query.getDimension(dimensionName);
 			Axis newAxis = axisName != null ? Axis.Standard.valueOf(axisName) : null;
-			System.out.println("move dimension to axis:" + (newAxis != null ? newAxis.toString() : "UNUSED AXIS") + " dimension" + dimension.getName().toString());
 			if(position==-1){
 				query.moveDimension(dimension, newAxis);
 			}
@@ -234,7 +259,7 @@ public class OlapQueryService {
 	}
 
 
-	public List<String> getDimension(String queryName, String axis) {
+	public List<String> getDimension(String queryName, String axis) throws SaikuServiceException {
 		List<String> dimensions = new ArrayList<String>();
 		OlapQuery q = queries.get(queryName);
 		
@@ -247,8 +272,7 @@ public class OlapQueryService {
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new SaikuServiceException("Error getting dimensions for query ("+queryName +") axis ( "+axis+ " )",e);
 		}
 		return dimensions;
 
@@ -383,6 +407,6 @@ public class OlapQueryService {
 	
 	
 	public String getMDXQuery(String queryName) {
-		return queries.get(queryName).getMDX();
+		return queries.get(queryName).getMdx();
 	}
 }

@@ -12,10 +12,14 @@ import org.saiku.web.rest.objects.resultset.Cell;
 public class RestUtil {
 	
 	public static ArrayList<Cell[]> convert(CellDataSet cellSet) {
+		ArrayList<Cell[]> rows = new ArrayList<Cell[]>();
+		if (cellSet == null || cellSet.getCellSetBody() == null || cellSet.getCellSetHeaders() == null) {
+			return rows;
+		}
 		AbstractBaseCell[][] body = cellSet.getCellSetBody();
 		AbstractBaseCell[][] headers = cellSet.getCellSetHeaders();
 		
-		ArrayList<Cell[]> rows = new ArrayList<Cell[]>();
+		
 		
 		for (AbstractBaseCell header[] : headers) {
 			rows.add(convert(header, Cell.Type.COLUMN_HEADER));

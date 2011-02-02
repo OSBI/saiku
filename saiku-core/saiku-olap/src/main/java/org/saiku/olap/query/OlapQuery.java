@@ -1,3 +1,23 @@
+/*
+ * Copyright (C) 2011 Paul Stoellberger
+ *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * 
+ * See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along 
+ * with this program; if not, write to the Free Software Foundation, Inc., 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ *
+ */
+
 package org.saiku.olap.query;
 
 import java.io.PrintWriter;
@@ -20,9 +40,14 @@ import org.saiku.olap.query.QueryProperties.QueryProperty;
 import org.saiku.olap.query.QueryProperties.QueryPropertyFactory;
 import org.saiku.olap.util.OlapResultSetUtil;
 import org.saiku.olap.util.SaikuProperties;
+import org.saiku.olap.util.exception.SaikuOlapException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OlapQuery {
 
+    private final Logger log = LoggerFactory.getLogger(OlapQuery.class);
+    
 	private Query query;
 	private Properties properties = new Properties();
 	
@@ -43,13 +68,13 @@ public class OlapQuery {
 		return this.query.getAxis(axis);
 	}
 	
-	public QueryAxis getAxis(String name) throws Exception {
+	public QueryAxis getAxis(String name) throws SaikuOlapException {
 		if ("UNUSED".equals(name)) {
 			return getUnusedAxis();
 		}
 		Standard standardAxis = Standard.valueOf(name);
 		if (standardAxis == null)
-			throw new Exception("Axis ("+name+") not found for query ("+ query.getName() + ")");
+			throw new SaikuOlapException("Axis ("+name+") not found for query ("+ query.getName() + ")");
 		
 		Axis queryAxis = Axis.Factory.forOrdinal(standardAxis.ordinal());
 		return query.getAxis(queryAxis);
@@ -101,11 +126,9 @@ public class OlapQuery {
 		return null;
 	}
 
-    public String getMDX() {
-       
+    public String getMdx() {
         final Writer writer = new StringWriter();
         this.query.getSelect().unparse(new ParseTreeWriter(new PrintWriter(writer)));
-        
         return writer.toString();
     }
     
@@ -120,7 +143,7 @@ public class OlapQuery {
 
         CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cellSet);
         Long format = (new Date()).getTime();
-        System.out.println("Size: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
+        log.info("Size: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
                 + "ms\tFormat:\t" + (format - exec) + "ms\t Total: " + (format - start) + "ms");
         return result;
     }

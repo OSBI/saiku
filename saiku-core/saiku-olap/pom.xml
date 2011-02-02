@@ -46,7 +46,7 @@
 			<artifactId>mondrian</artifactId>
 			<version>3.2-SNAPSHOT</version>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>eigenbase</groupId>
 			<artifactId>eigenbase-properties</artifactId>
 			<version>1.1.0.10924</version>
@@ -84,5 +84,26 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+				<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+				<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+		</dependency>
+		
 	</dependencies>
 </project>

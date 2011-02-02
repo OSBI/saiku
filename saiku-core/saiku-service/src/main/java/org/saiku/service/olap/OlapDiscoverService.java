@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2011 Paul Stoellberger
+ *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * 
+ * See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along 
+ * with this program; if not, write to the Free Software Foundation, Inc., 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ *
+ */
 package org.saiku.service.olap;
 
 import java.util.List;
@@ -9,7 +28,9 @@ import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimension;
 import org.saiku.olap.dto.SaikuHierarchy;
 import org.saiku.olap.dto.SaikuLevel;
+import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.service.datasource.DatasourceService;
+import org.saiku.service.util.exception.SaikuServiceException;
 
 public class OlapDiscoverService {
 	
@@ -25,29 +46,59 @@ public class OlapDiscoverService {
 		return metaExplorer.getAllCubes();
 	}
 
-	public List<SaikuConnection> getAllConnections() {
-		return metaExplorer.getAllConnections();
+	public List<SaikuConnection> getAllConnections() throws SaikuServiceException {
+		try {
+			return metaExplorer.getAllConnections();
+		} catch (SaikuOlapException e) {
+			throw new SaikuServiceException("Cannot retrieve all connections", e);
+		}
 	}
 	
-	public Cube getNativeCube(SaikuCube cube) {
-		return metaExplorer.getNativeCube(cube);
+	public Cube getNativeCube(SaikuCube cube) throws SaikuServiceException {
+		try {
+			return metaExplorer.getNativeCube(cube);
+		} catch (SaikuOlapException e) {
+			throw new SaikuServiceException("Cannot get native cube for cube ( " + cube + " )", e);
+		}
 	}
 	
-	public List<SaikuDimension> getAllDimensions(SaikuCube cube) {
-		return metaExplorer.getAllDimensions(cube);
+	public List<SaikuDimension> getAllDimensions(SaikuCube cube) throws SaikuServiceException {
+		try {
+			return metaExplorer.getAllDimensions(cube);
+		} catch (SaikuOlapException e) {
+			throw new SaikuServiceException("Cannot get all dimensions for cube ( " + cube + " )", e);
+		}
 	}
 	
-	public List<SaikuHierarchy> getAllHierarchies(SaikuCube cube) {
-		return metaExplorer.getAllHierarchies(cube);
+	public List<SaikuHierarchy> getAllHierarchies(SaikuCube cube) throws SaikuServiceException {
+		try {
+			return metaExplorer.getAllHierarchies(cube);
+		} catch (SaikuOlapException e) {
+			throw new SaikuServiceException("Cannot get all hierarchies for cube ( " + cube + " )", e);	
+		}
 	}
 	
-	public List<SaikuHierarchy> getAllHierarchies(SaikuCube cube, String dimensionName) {
-		SaikuDimension dim =  metaExplorer.getDimension(cube, dimensionName);
-		return dim.getHierarchies();
+	public List<SaikuHierarchy> getAllHierarchies(SaikuCube cube, String dimensionName) throws SaikuServiceException {
+		try {
+			SaikuDimension dim = metaExplorer.getDimension(cube, dimensionName);
+			if (dim == null) {
+				throw new SaikuServiceException("Cannot find dimension ( "+ dimensionName + ") for cube ( " + cube + " )");
+			}
+			return dim.getHierarchies();
+
+		} catch (SaikuOlapException e) {
+			throw new SaikuServiceException("Cannot get all hierarchies for cube ( " + cube + " ) dimension ( " + dimensionName + " )", e);
+		}
 	}
 
-	public List<SaikuLevel> getAllLevels(SaikuCube cube, String dimensionName, String hierarchyName) {
-		return  metaExplorer.getAllLevels(cube, dimensionName, hierarchyName);
+	public List<SaikuLevel> getAllLevels(SaikuCube cube, String dimensionName, String hierarchyName) throws SaikuServiceException {
+		try {
+			return  metaExplorer.getAllLevels(cube, dimensionName, hierarchyName);
+		} catch (SaikuOlapException e) {
+			throw new SaikuServiceException("Cannot get all levels for cube ( " + cube 
+					+ " ) dimension ( " + dimensionName + " ) hierarchy ( " + hierarchyName + " )", e);
+
+		}
 	}
 	
 }

@@ -1,3 +1,23 @@
+/*
+ * Copyright (C) 2011 Paul Stoellberger
+ *
+ * This program is free software; you can redistribute it and/or modify it 
+ * under the terms of the GNU General Public License as published by the Free 
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * 
+ * See the GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along 
+ * with this program; if not, write to the Free Software Foundation, Inc., 
+ * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+ *
+ */
+
 package org.saiku.olap.util;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,12 +30,17 @@ import java.net.URLConnection;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import mondrian.olap.Util;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SaikuProperties extends Properties{
 
 
 	private static final long serialVersionUID = 4835692048422342660L;
+	
+    private static final Logger log = LoggerFactory.getLogger(SaikuProperties.class);
+
+    
 	private final PropertySource propertySource;
 	private int populateCount;
 
@@ -59,11 +84,11 @@ public class SaikuProperties extends Properties{
 			try {
 				this.lastModified = file.lastModified();
 				FileInputStream in = new FileInputStream(file);
-				System.out.println("Opening properties file'" + file + "'");
+				log.info("Opening properties file: '" + file + "'");
 				return in;
 			} catch (FileNotFoundException e) {
 				throw new RuntimeException (
-						"Error while opening properties file '" + file + "'",e);
+						"Error while opening properties file: '" + file + "'",e);
 			}
 		}
 
@@ -103,9 +128,9 @@ public class SaikuProperties extends Properties{
 				this.lastModified = connection.getLastModified();
 				return connection.getInputStream();
 			} catch (IOException e) {
-				throw Util.newInternal(
-						e,
-						"Error while opening properties file '" + url + "'");
+				throw new RuntimeException(
+						"Error while opening properties file '" + url + "'",
+						e);
 			}
 		}
 
@@ -120,31 +145,24 @@ public class SaikuProperties extends Properties{
 	}
 
 	/**
-	 * Loads this property set from: the file "$PWD/mondrian.properties" (if it
-	 * exists); the "mondrian.properties" in the CLASSPATH; and from the system
-	 * properties.
+	 * Loads saiku.properties from: 1) the file "$PWD/" 2) CLASSPATH
+	 * 3) the system properties
 	 */
-
-
 	public void populate() {
-		// Read properties file "mondrian.properties", if it exists. If we have
-		// read the file before, only read it if it is newer.
 		loadIfStale(propertySource);
 
 		URL url = null;
 		File file = new File(SAIKU_PROPERTIES);
 		if (file.exists() && file.isFile()) {
-			// Read properties file "mondrian.properties" from PWD, if it
-			// exists.
+			// Read properties file "saiku.properties" from PWD, if it exists.
 			try {
 				url = file.toURI().toURL();
 			} catch (MalformedURLException e) {
-				// TODO replace
-				System.out.println (
+				log.warn(
 						"Saiku: file '"
 						+ file.getAbsolutePath()
-						+ "' could not be loaded");
-				e.printStackTrace();
+						+ "' could not be loaded",
+						e);
 			}
 		} else {
 			// Then try load it from classloader
@@ -156,12 +174,12 @@ public class SaikuProperties extends Properties{
 		if (url != null) {
 			load(new UrlPropertySource(url));
 		} else {
-			System.out.println(
+			log.warn(
 					"saiku.properties can't be found under '"
 					+ new File(".").getAbsolutePath() + "' or classloader");
 		}
 
-		// copy in all system properties which start with "mondrian."
+		// copy in all system properties which start with "saiku."
 		int count = 0;
 		for (Enumeration<Object> keys = System.getProperties().keys();
 		keys.hasMoreElements();)
@@ -169,28 +187,24 @@ public class SaikuProperties extends Properties{
 			String key = (String) keys.nextElement();
 			String value = System.getProperty(key);
 			if (key.startsWith("saiku.")) {
-				// TODO remove
-				// NOTE: the super allows us to bybase calling triggers
-				// Is this the correct behavior?
-				//             if (LOGGER.isDebugEnabled()) {
-				System.out.println("System property : populate: key=" + key + ", value=" + value);
-				//             }
+				if (log.isDebugEnabled()) {
+					log.debug("System property : populate: key=" + key + ", value=" + value);
+				}
 				instance.setProperty(key, value);
 				count++;
 			}
 		}
 		if (populateCount++ == 0) {
-			// TODO LOG INFO
-			System.out.println(
+			log.info(
 					"Saiku: loaded " + count + " system properties");
 		}
 	}
 
 	private void loadIfStale(PropertySource source) {
 		if (source.isStale()) {
-			//         if (LOGGER.isDebugEnabled()) {
-			//             LOGGER.debug("Mondrian: loading " + source.getDescription());
-			//         }
+			if (log.isDebugEnabled()) {
+				log.debug("Saiku: loading " + source.getDescription());
+			}
 			load(source);
 		}
 	}
@@ -198,17 +212,15 @@ public class SaikuProperties extends Properties{
 	private void load(final PropertySource source) {
 		try {
 			instance.load(source.openStream());
-//			if (populateCount == 0) {
-//				LOGGER.info(
-				System.out.println(
+			if (populateCount == 0) {
+				log.info(
 						"Saiku: properties loaded from '"
 						+ source.getDescription()
 						+ "'");
 				instance.list(System.out);
-//			}
+			}
 		} catch (IOException e) {
-			//         LOGGER.error(
-			System.out.println(
+			log.error(
 					"Saiku: error while loading properties "
 					+ "from '" + source.getDescription() + "' (" + e.getMessage() + ")");
 		}
@@ -224,9 +236,6 @@ public class SaikuProperties extends Properties{
 			
 		}
 		ret = Boolean.parseBoolean(instance.getProperty(key));
-		System.out.println("Property: " + key + " value: " + ret );
 		return ret;
 	}
 }
-
-//End MondrianProperties.java
