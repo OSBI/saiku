@@ -68,6 +68,4 @@
 		<property name="olapQueryService" ref="olapQueryBean" />
 	</bean>
 
-	<bean id="sessionBean" class="org.saiku.web.rest.servlet.SessionServlet" />
-
 </beans>
