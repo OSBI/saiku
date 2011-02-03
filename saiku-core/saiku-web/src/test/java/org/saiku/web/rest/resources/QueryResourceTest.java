@@ -50,13 +50,6 @@ public class QueryResourceTest {
 	@Autowired
 	private QueryResource qs;
 
-	/**
-	 * Test method for
-	 * {@link org.saiku.web.rest.servlet.QueryServlet#createQuery(String, String, String, String, String)}
-	 * .
-	 * 
-	 * @throws ServletException
-	 */
 	@Test
 	public final void testCreateQuery() throws ServletException {
 
@@ -72,11 +65,6 @@ public class QueryResourceTest {
 
 	}
 
-	/**
-	 * Test method for
-	 * {@link org.saiku.web.rest.servlet.QueryServlet#getQueries()}.
-	 * @throws ServletException 
-	 */
 	@Test
 	public final void testGetQueries() throws ServletException {
 		qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart",
@@ -92,11 +80,6 @@ public class QueryResourceTest {
 
 	}
 
-	/**
-	 * Test method for
-	 * {@link org.saiku.web.rest.servlet.QueryServlet#deleteQuery(String)}.
-	 * @throws ServletException 
-	 */
 	@Test
 	public final void testDeleteQuery() throws ServletException {
 
@@ -118,12 +101,6 @@ public class QueryResourceTest {
 		assertEquals("TestQuery2", qs.getQueries().get(0));
 	}
 
-	/**
-	 * Test method for
-	 * {@link org.saiku.web.rest.servlet.QueryServlet#moveDimension(String, String, String, int)}
-	 * .
-	 * @throws ServletException 
-	 */
 	@Test
 	public final void testMoveDimension() throws ServletException {
 
@@ -150,11 +127,6 @@ public class QueryResourceTest {
 		assertEquals("Store", output.get(0).getName());
 	}
 
-	/**
-	 * Test method for
-	 * {@link org.saiku.web.rest.servlet.QueryServlet#execute(String)}.
-	 * @throws ServletException 
-	 */
 	@Test
 	public final void testExecute() throws ServletException {
 		// Create a query.
