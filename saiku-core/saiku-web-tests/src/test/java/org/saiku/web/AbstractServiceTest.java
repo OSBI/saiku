@@ -1,4 +1,4 @@
-package org.saiku.web.rest.servlet;
+package org.saiku.web;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;

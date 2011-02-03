@@ -1,4 +1,4 @@
-package org.saiku.web.rest.servlet;
+package org.saiku.web;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
