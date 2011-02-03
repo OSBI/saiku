@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.saiku</groupId>
-			<artifactId>saiku-web</artifactId>
+			<artifactId>saiku-webapp</artifactId>
 			<version>2.0-SNAPSHOT</version>
 			<type>war</type>
 		</dependency>
@@ -163,7 +163,7 @@
 						<deployable>
 							<type>war</type>
 							<groupId>org.saiku</groupId>
-							<artifactId>saiku-web</artifactId>
+							<artifactId>saiku-webapp</artifactId>
 							<properties>
 								<context>saiku</context>
 							</properties>
@@ -221,7 +221,7 @@
 								<deployable>
 									<type>war</type>
 									<groupId>org.saiku</groupId>
-									<artifactId>saiku-web</artifactId>
+									<artifactId>saiku-webapp</artifactId>
 									<properties>
 										<context>saiku</context>
 									</properties>
