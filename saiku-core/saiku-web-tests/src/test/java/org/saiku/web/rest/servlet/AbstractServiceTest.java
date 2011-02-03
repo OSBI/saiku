@@ -40,7 +40,7 @@ public abstract class AbstractServiceTest extends JerseyTest {
 		// initTest();
 
 		WebAppDescriptor wd = new WebAppDescriptor.Builder(
-				"org.saiku.web.rest.servlet").contextPath("/")
+				"org.saiku.web.rest.resources").contextPath("/")
 				.contextParam("", "").clientConfig(new DefaultClientConfig()).build();
 
 		return wd;
