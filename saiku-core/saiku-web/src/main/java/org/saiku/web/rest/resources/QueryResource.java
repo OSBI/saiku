@@ -200,6 +200,18 @@ public class QueryResource {
 			return "";
 		}
 	}
+	
+	@GET
+	@Path("/{queryname}/xml")
+	public String getQueryXml(@PathParam("queryname") String queryName){
+		try {
+			return olapQueryService.getQueryXml(queryName);
+		}
+		catch (Exception e) {
+			log.error("Cannot get xml for query (" + queryName + ")",e);
+			return "";
+		}
+	}
 
 	@GET
 	@Path("/{queryname}/result")

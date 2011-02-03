@@ -33,7 +33,6 @@ import org.olap4j.mdx.IdentifierSegment;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
-import org.olap4j.metadata.Member;
 import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
@@ -67,7 +66,7 @@ public class OlapQueryService {
 		try {
 			Cube cub = olapDiscoverService.getNativeCube(cube);
 			if (cub != null) {
-				OlapQuery q = new OlapQuery(new Query(queryName, cub));
+				OlapQuery q = new OlapQuery(new Query(queryName, cub),cube);
 				queries.put(queryName, q);
 
 				return true;
@@ -178,43 +177,32 @@ public class OlapQueryService {
 	public boolean includeLevel(String queryName, String dimensionName, String uniqueHierarchyName, String uniqueLevelName) {
 		OlapQuery query = queries.get(queryName);
 		QueryDimension dimension = query.getDimension(dimensionName);
-		final Selection.Operator selectionMode = Selection.Operator.MEMBER;
-		try {
-			for (Hierarchy hierarchy : dimension.getDimension().getHierarchies()) {
-				if (hierarchy.getUniqueName().equals(uniqueHierarchyName)) {
-					for (Level level : hierarchy.getLevels()) {
-						if (level.getUniqueName().equals(uniqueLevelName)) {
-							for (Member member : level.getMembers()) {
-								Selection sel = dimension.createSelection(selectionMode, member);
-								if (!dimension.getInclusions().contains(sel)) {
-									dimension.include(selectionMode, member);
-								}
+		for (Hierarchy hierarchy : dimension.getDimension().getHierarchies()) {
+			if (hierarchy.getUniqueName().equals(uniqueHierarchyName)) {
+				for (Level level : hierarchy.getLevels()) {
+					if (level.getUniqueName().equals(uniqueLevelName)) {
+							Selection sel = dimension.createSelection(level);
+							if (!dimension.getInclusions().contains(sel)) {
+								dimension.include(level);
 							}
-						}
 					}
 				}
 			}
-			return true;
-		} catch (OlapException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return false;
 		}
+		return true;
 	}
 
 	public boolean removeLevel(String queryName, String dimensionName, String uniqueHierarchyName, String uniqueLevelName) {
 		OlapQuery query = queries.get(queryName);
 		QueryDimension dimension = query.getDimension(dimensionName);
-		final Selection.Operator selectionMode = Selection.Operator.MEMBER;
 		try {
 			for (Hierarchy hierarchy : dimension.getDimension().getHierarchies()) {		
 				if (hierarchy.getUniqueName().equals(uniqueHierarchyName)) {
 					for (Level level : hierarchy.getLevels()) {
 						if (level.getUniqueName().equals(uniqueLevelName)) {
-							for (Member member : level.getMembers()) {
-								Selection inclusion = dimension.createSelection(selectionMode, member);
-								dimension.getInclusions().remove(inclusion);
-							}
+							Selection inclusion = dimension.createSelection(level);
+							dimension.getInclusions().remove(inclusion);
+							
 							if (dimension.getInclusions().size() == 0) {
 								moveDimension(queryName, null , dimensionName, -1);
 							}
@@ -404,9 +392,13 @@ public class OlapQueryService {
 		OlapQuery query = queries.get(queryName);
 		return query.getProperties();
 	}
-	
-	
+
 	public String getMDXQuery(String queryName) {
 		return queries.get(queryName).getMdx();
+	}
+	
+	public String getQueryXml(String queryName) {
+		OlapQuery query = queries.get(queryName);
+		return query.toXml();
 	}
 }

@@ -35,6 +35,7 @@ import org.olap4j.metadata.Cube;
 import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
+import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query.QueryProperties.QueryProperty;
 import org.saiku.olap.query.QueryProperties.QueryPropertyFactory;
@@ -50,9 +51,12 @@ public class OlapQuery {
     
 	private Query query;
 	private Properties properties = new Properties();
+
+	private SaikuCube cube;
 	
-	public OlapQuery(Query query) {
+	public OlapQuery(Query query, SaikuCube cube) {
 		this.query = query;
+		this.cube = cube;
 		applyDefaultProperties();
 	}
 	
@@ -132,6 +136,14 @@ public class OlapQuery {
         return writer.toString();
     }
     
+    public SaikuCube getSaikuCube() {
+    	return cube;
+    }
+    
+    public String getName() {
+    	return query.getName();
+    }
+    
     public CellDataSet execute() throws Exception {
         final Query mdx = this.query;
         mdx.validate();
@@ -168,6 +180,11 @@ public class OlapQuery {
     public Properties getProperties() {
     	this.properties.putAll(QueryPropertyFactory.forQuery(this));
     	return this.properties;
+    }
+    
+    public String toXml() {
+    	QuerySerializer qs = new QuerySerializer(this);
+    	return qs.createXML();
     }
 
 }
