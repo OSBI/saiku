@@ -14,7 +14,7 @@
     <intercept-url pattern="/json/photos" access="ROLE_USER" />
     <intercept-url pattern="/photo/**" access="ROLE_USER" />-->
     <intercept-url pattern="/oauth/**" access="ROLE_USER" />
-	<intercept-url pattern="/docs/**" access="ROLE_USER" />
+	<intercept-url pattern="/serverdocs/**" access="ROLE_USER" />
     <intercept-url pattern="/request_token_authorized.jsp" access="ROLE_USER" />
     <intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 	

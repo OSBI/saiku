@@ -2,6 +2,7 @@ package org.saiku.web;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.saiku.service.olap.OlapDiscoverService;
 
@@ -50,6 +51,7 @@ public class DataSourceInterfaceTest extends AbstractServiceTest {
     }
     
 
+    @Ignore
     @Test
     public void testConvertDataSourcesToXML(){
     	Client client = Client.create();
