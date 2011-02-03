@@ -18,7 +18,7 @@
  *
  */
 
-package org.saiku.web.rest.servlet;
+package org.saiku.web.rest.resources;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -65,9 +65,9 @@ import org.springframework.stereotype.Component;
 @Path("/saiku/{username}/query")
 @Scope("request")
 @XmlAccessorType(XmlAccessType.NONE)
-public class QueryServlet {
+public class QueryResource {
 	
-    private static final Logger log = LoggerFactory.getLogger(QueryServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(QueryResource.class);
 
     private OlapQueryService olapQueryService;
 

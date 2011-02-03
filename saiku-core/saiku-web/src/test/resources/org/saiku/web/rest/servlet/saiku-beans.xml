@@ -46,11 +46,11 @@
 	</bean>
 
 
-	<bean id="datasourceInterfaceBean" class="org.saiku.web.rest.servlet.DataSourceServlet">
+	<bean id="datasourceInterfaceBean" class="org.saiku.web.rest.resources.DataSourceResource">
 		<property name="olapDiscoverService" ref="olapDiscoverService" />
 	</bean>
 
-	<bean id="queryInterfaceBean" class="org.saiku.web.rest.servlet.QueryServlet">
+	<bean id="queryInterfaceBean" class="org.saiku.web.rest.resources.QueryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />
 	</bean>
 

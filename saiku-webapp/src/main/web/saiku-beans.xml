@@ -19,7 +19,7 @@
     <property name="alwaysUseFullPath" value="true"/>
   </bean>
 
-   <bean id="accessConfirmationController" class="org.saiku.web.rest.servlet.AccessConfirmationController">
+   <bean id="accessConfirmationController" class="org.saiku.web.servlet.AccessConfirmationController">
     <property name="clientDetailsService" ref="clientDetails"/>
   </bean>
   
@@ -59,12 +59,12 @@
 	</bean>
 
 
-	<bean id="datasourceInterfaceBean" class="org.saiku.web.rest.servlet.DataSourceServlet">
+	<bean id="datasourceInterfaceBean" class="org.saiku.web.rest.resources.DataSourceResource">
 		<property name="olapDiscoverService" ref="olapDiscoverService" />
 	</bean>
 
 
-	<bean id="queryInterfaceBean" class="org.saiku.web.rest.servlet.QueryServlet">
+	<bean id="queryInterfaceBean" class="org.saiku.web.rest.resources.QueryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />
 	</bean>
 

@@ -28,203 +28,161 @@ import java.util.List;
 import javax.servlet.ServletException;
 import javax.ws.rs.core.Response.Status;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.saiku.olap.dto.SaikuHierarchy;
-import org.saiku.service.olap.OlapQueryService;
 import org.saiku.web.rest.objects.QueryRestPojo;
 import org.saiku.web.rest.objects.resultset.Cell;
+import org.saiku.web.rest.resources.QueryResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * @author bugg
- *
+ * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "saiku-beans.xml" })
 public class QueryServletTest {
 
-	   @Autowired
-	   private QueryServlet qs;
-
-	   @Autowired
-	   private OlapQueryService olapQueryService;
-	   
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void onetimesetUp() throws Exception {
-		qs = new QueryServlet();
-		qs.setOlapQueryService(olapQueryService);
-		
-	}
+	@Autowired
+	private QueryResource qs;
 
 	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void onetimetearDown() throws Exception {
-	}
-
-	//@Before
-	public void setUp() throws Exception {
-		
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	//@After
-	public void tearDown() throws Exception {
-	}
-
-	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#createQuery(String, String, String, String, String)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#createQuery(String, String, String, String, String)}
+	 * .
+	 * 
+	 * @throws ServletException
 	 */
 	@Test
-	public final void testCreateQuery() {
-		
-		//Create new query
+	public final void testCreateQuery() throws ServletException {
+
+		// Create new query
 		QueryRestPojo testQuery = null;
-		try {
-			testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//Check it is not null, has the same name and has an unused axis.
+		testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart",
+				"FoodMart", "TestQuery1");
+
+		// Check it is not null, has the same name and has an unused axis.
 		assertNotNull(testQuery);
 		assertEquals("TestQuery1", testQuery.getName());
 		assertEquals("UNUSED", testQuery.getAxes().get(0).getAxisName());
-		
+
 	}
 
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#getQueries()}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#getQueries()}.
+	 * @throws ServletException 
 	 */
 	@Test
-	public final void testGetQueries() {
-		try {
-			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
-			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery2");
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+	public final void testGetQueries() throws ServletException {
+		qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart",
+				"TestQuery1");
+		qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart",
+				"TestQuery2");
+
 		List<String> queryList = qs.getQueries();
 		assertNotNull(queryList);
 		assertEquals(queryList.size(), 2);
 		assertEquals("TestQuery1", queryList.get(0));
-		assertEquals("TestQuery2", queryList.get(1));		
-		
-		
+		assertEquals("TestQuery2", queryList.get(1));
+
 	}
 
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#deleteQuery(String)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#deleteQuery(String)}.
+	 * @throws ServletException 
 	 */
 	@Test
-	public final void testDeleteQuery() {
-		
-		//Create 2 Queries
-		try {
-			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
-			qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery2");
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//Check that the list contains 2 queries
+	public final void testDeleteQuery() throws ServletException {
+
+		// Create 2 Queries
+		qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart",
+				"TestQuery1");
+		qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart",
+				"TestQuery2");
+
+		// Check that the list contains 2 queries
 		List<String> queryList = qs.getQueries();
 		assertNotNull(queryList);
 		assertEquals(queryList.size(), 2);
-		
-		//Delete a query
+
+		// Delete a query
 		qs.deleteQuery("TestQuery1");
-		
-		//Make sure the query has been removed from the list.
+
+		// Make sure the query has been removed from the list.
 		assertEquals("TestQuery2", qs.getQueries().get(0));
 	}
 
-	
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#moveDimension(String, String, String, int)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#moveDimension(String, String, String, int)}
+	 * .
+	 * @throws ServletException 
 	 */
 	@Test
-	public final void testMoveDimension() {
-		
-		//Create a query.
+	public final void testMoveDimension() throws ServletException {
+
+		// Create a query.
 		QueryRestPojo testQuery = null;
-		try {
-			testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//Check the query isn't null.
+		testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart",
+				"FoodMart", "TestQuery1");
+
+		// Check the query isn't null.
 		assertNotNull(testQuery);
-		
-		//Move a dimension
-		Status returnedStatus = qs.moveDimension("TestQuery1", "ROWS", "Store", -1);
-	
-		//Make sure an OK status was returned.
+
+		// Move a dimension
+		Status returnedStatus = qs.moveDimension("TestQuery1", "ROWS", "Store",
+				-1);
+
+		// Make sure an OK status was returned.
 		assertEquals(Status.OK, returnedStatus);
 
-		//Get the dimension
-		List<SaikuHierarchy> output = qs.getDimensionInfo("TestQuery1", "ROWS", "Store");
-		
-		//Make sure it has the correct name.
+		// Get the dimension
+		List<SaikuHierarchy> output = qs.getDimensionInfo("TestQuery1", "ROWS",
+				"Store");
+
+		// Make sure it has the correct name.
 		assertEquals("Store", output.get(0).getName());
 	}
 
-
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#execute(String)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#execute(String)}.
+	 * @throws ServletException 
 	 */
 	@Test
-	public final void testExecute() {
-		//Create a query.
+	public final void testExecute() throws ServletException {
+		// Create a query.
 		QueryRestPojo testQuery = null;
-		try {
-			testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart", "TestQuery1");
-		} catch (ServletException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//Check the query isn't null.
+		testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart",
+				"FoodMart", "TestQuery1");
+
+		// Check the query isn't null.
 		assertNotNull(testQuery);
-		
-		//Move a dimension
+
+		// Move a dimension
 		qs.moveDimension("TestQuery1", "ROWS", "Store", -1);
 		qs.moveDimension("TestQuery1", "COLUMNS", "Time", -1);
-		
-		//Execute the query.
+
+		// Execute the query.
 		List<Cell[]> output = qs.execute("TestQuery1");
-		
-		//Make sure output is not null.
+
+		// Make sure output is not null.
 		assertNotNull(output);
-		
-		//Check a cell value
+
+		// Check a cell value
 		Cell[] cellarray = output.get(0);
 		assertEquals("1997", cellarray[1].getValue());
 	}
 
-	
-	
-	
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#getMDXQuery(String)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#getMDXQuery(String)}.
 	 */
 	@Test
 	@Ignore
@@ -233,7 +191,9 @@ public class QueryServletTest {
 	}
 
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#getAxisInfo(String, String)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#getAxisInfo(String, String)}
+	 * .
 	 */
 	@Test
 	@Ignore
@@ -242,7 +202,9 @@ public class QueryServletTest {
 	}
 
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#deleteAxis(String, String)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#deleteAxis(String, String)}
+	 * .
 	 */
 	@Test
 	@Ignore
@@ -251,7 +213,9 @@ public class QueryServletTest {
 	}
 
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#setNonEmpty(String, String, Boolean)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#setNonEmpty(String, String, Boolean)}
+	 * .
 	 */
 	@Test
 	@Ignore
@@ -260,7 +224,9 @@ public class QueryServletTest {
 	}
 
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#setSort(String, String, String)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#setSort(String, String, String)}
+	 * .
 	 */
 	@Test
 	@Ignore
@@ -269,7 +235,9 @@ public class QueryServletTest {
 	}
 
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#getDimensionInfo(String, String, String)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#getDimensionInfo(String, String, String)}
+	 * .
 	 */
 	@Test
 	@Ignore
@@ -278,7 +246,9 @@ public class QueryServletTest {
 	}
 
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#pullUpDimension(String, String, String, int)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#pullUpDimension(String, String, String, int)}
+	 * .
 	 */
 	@Test
 	@Ignore
@@ -287,7 +257,9 @@ public class QueryServletTest {
 	}
 
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#pushDownDimension(String, String, String, int)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#pushDownDimension(String, String, String, int)}
+	 * .
 	 */
 	@Test
 	@Ignore
@@ -295,9 +267,10 @@ public class QueryServletTest {
 		fail("Not yet implemented"); // TODO
 	}
 
-
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#deleteDimension(String, String, String)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#deleteDimension(String, String, String)}
+	 * .
 	 */
 	@Test
 	@Ignore
@@ -306,7 +279,9 @@ public class QueryServletTest {
 	}
 
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#getHierarchyInfo(String, String, String, String)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#getHierarchyInfo(String, String, String, String)}
+	 * .
 	 */
 	@Test
 	@Ignore
@@ -315,7 +290,9 @@ public class QueryServletTest {
 	}
 
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#getLevelInfo(String, String, String, String, String)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#getLevelInfo(String, String, String, String, String)}
+	 * .
 	 */
 	@Test
 	@Ignore
@@ -324,7 +301,9 @@ public class QueryServletTest {
 	}
 
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#includeMember(String, String, String, String, String, int, int)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#includeMember(String, String, String, String, String, int, int)}
+	 * .
 	 */
 	@Test
 	@Ignore
@@ -333,7 +312,9 @@ public class QueryServletTest {
 	}
 
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#removeMember(String, String, String, String, String)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#removeMember(String, String, String, String, String)}
+	 * .
 	 */
 	@Test
 	@Ignore
@@ -342,7 +323,9 @@ public class QueryServletTest {
 	}
 
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#includeLevel(String, String, String, String, String, int)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#includeLevel(String, String, String, String, String, int)}
+	 * .
 	 */
 	@Test
 	@Ignore
@@ -351,7 +334,9 @@ public class QueryServletTest {
 	}
 
 	/**
-	 * Test method for {@link org.saiku.web.rest.servlet.QueryServlet#removeLevel(String, String, String, String, String)}.
+	 * Test method for
+	 * {@link org.saiku.web.rest.servlet.QueryServlet#removeLevel(String, String, String, String, String)}
+	 * .
 	 */
 	@Test
 	@Ignore

@@ -1,4 +1,4 @@
-package org.saiku.web.rest.servlet;
+package org.saiku.web.servlet;
 
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.beans.factory.annotation.Autowired;

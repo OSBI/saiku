@@ -18,7 +18,7 @@
  *
  */
 
-package org.saiku.web.rest.servlet;
+package org.saiku.web.rest.resources;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,11 +52,11 @@ import org.springframework.stereotype.Component;
 @Component
 @Path("/saiku/{username}/datasources")
 @Scope("request")
-public class DataSourceServlet {
+public class DataSourceResource {
 
     OlapDiscoverService olapDiscoverService;
     
-    private static final Logger log = LoggerFactory.getLogger(DataSourceServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(DataSourceResource.class);
     
     public void setOlapDiscoverService(OlapDiscoverService olapds) {
         olapDiscoverService = olapds;
