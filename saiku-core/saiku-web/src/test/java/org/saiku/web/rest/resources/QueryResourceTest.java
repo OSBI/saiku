@@ -17,7 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
  */
-package org.saiku.web.rest.servlet;
+package org.saiku.web.rest.resources;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -45,7 +45,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "saiku-beans.xml" })
-public class QueryServletTest {
+public class QueryResourceTest {
 
 	@Autowired
 	private QueryResource qs;

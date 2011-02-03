@@ -17,7 +17,7 @@
 						<prop key="password"></prop>
 						<prop key="name">FoodMart Connection</prop> -->
                                                 <prop key="driver">mondrian.olap4j.MondrianOlap4jDriver</prop>
-                                                <prop key="location">jdbc:mondrian:Jdbc=jdbc:hsqldb:file:src/test/resources/org/saiku/web/rest/servlet/foodmart/foodmart;Catalog=src/test/resources/org/saiku/web/rest/servlet/foodmart/FoodMart.xml;</prop>
+                                                <prop key="location">jdbc:mondrian:Jdbc=jdbc:hsqldb:file:src/test/resources/org/saiku/web/rest/resources/foodmart/foodmart;Catalog=src/test/resources/org/saiku/web/rest/resources/foodmart/FoodMart.xml;</prop>
                         						<prop key="JdbcDrivers">org.hsqldb.jdbcDriver</prop>
                                                 <prop key="JdbcUser">sa</prop>
                                                 <prop key="JdbcPassword"></prop>
