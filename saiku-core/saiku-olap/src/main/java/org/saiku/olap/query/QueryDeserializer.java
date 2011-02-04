@@ -98,7 +98,7 @@ public class QueryDeserializer {
             if (!StringUtils.isNotBlank(cubeName)) {
                 throw new QueryParseException("Cube for query not defined");
             }
-
+            String connectionName = queryElement.getAttributeValue("connection");
             String catalogName = queryElement.getAttributeValue("catalog");
             String schemaName = queryElement.getAttributeValue("schema");
 
@@ -107,7 +107,7 @@ public class QueryDeserializer {
                 if (qmElement != null) {
                     qm = createEmptyQuery(queryName,catalogName, schemaName, cubeName);
                     manipulateQuery(qmElement);
-                    SaikuCube cube = new SaikuCube(null,cubeName,catalogName,schemaName,null);
+                    SaikuCube cube = new SaikuCube(connectionName,cubeName,catalogName,schemaName,null);
                     return new OlapQuery(qm,cube);
                 }
                 else

@@ -95,11 +95,6 @@
 			<version>${slf4j.version}</version>
 		</dependency>
 				<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-		</dependency>
-				<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
@@ -109,6 +104,10 @@
 			<artifactId>jdom</artifactId>
 			<version>1.1</version>
 		</dependency>
-		
+				<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.4</version>
+		</dependency>
 	</dependencies>
 </project>

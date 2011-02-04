@@ -47,5 +47,9 @@
 		<property name="olapQueryService" ref="olapQueryBean" />
 	</bean>
 
+	<bean id="repositoryBean" class="org.saiku.web.rest.resources.BasicRepositoryResource">
+		<property name="olapQueryService" ref="olapQueryBean" />
+		<property name="path" value="saiku-repository"/>
+	</bean>
 
 </beans>

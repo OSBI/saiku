@@ -83,7 +83,11 @@ public class QuerySerializer {
 
         // cube name is not yet supported for mdx queries 
         String cubeName = query.getCube().getName();
-        
+
+        if (StringUtils.isNotBlank(saikuCube.getConnectionName())) {
+            rootEle.setAttribute("connection", saikuCube.getConnectionName());
+        }
+
         if (StringUtils.isNotBlank(cubeName)) {
             rootEle.setAttribute("cube", cubeName);
         }
@@ -216,7 +220,7 @@ public class QuerySerializer {
             if (sel.getDimension() != null)
                 selection.setAttribute("dimension", sel.getDimension().getName());
             
-            selection.setAttribute("node", sel.getName());
+            selection.setAttribute("node", sel.getUniqueName());
             selection.setAttribute("operator", sel.getOperator().toString());
             
             if (sel.getSelectionContext() != null && sel.getSelectionContext().size() > 0) {
