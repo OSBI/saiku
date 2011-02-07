@@ -27,6 +27,7 @@ import java.util.Properties;
 
 import org.olap4j.Axis;
 import org.olap4j.Axis.Standard;
+import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
 import org.olap4j.mdx.IdentifierNode;
 import org.olap4j.mdx.IdentifierSegment;
@@ -45,6 +46,7 @@ import org.saiku.olap.dto.SaikuLevel;
 import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query.OlapQuery;
+import org.saiku.olap.query.QueryDeserializer;
 import org.saiku.olap.util.ObjectUtil;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.slf4j.Logger;
@@ -76,6 +78,27 @@ public class OlapQueryService {
 		}
 		return false;
 
+	}
+	public boolean createNewOlapQuery(String xml) {
+		return createNewOlapQuery(null, xml);
+	}
+	
+	public boolean createNewOlapQuery(String name, String xml) {
+		try {
+			SaikuCube scube = QueryDeserializer.getCube(xml);
+			OlapConnection con = olapDiscoverService.getNativeConnection(scube.getConnectionName());
+			OlapQuery query = QueryDeserializer.unparse(xml, con);
+			if (name == null) {
+				queries.put(query.getName(), query);
+			}
+			else {
+				queries.put(name, query);
+			}
+			return true;
+		} catch (Exception e) {
+			log.error("Error creating query from xml",e);
+		}
+		return false;
 	}
 
 

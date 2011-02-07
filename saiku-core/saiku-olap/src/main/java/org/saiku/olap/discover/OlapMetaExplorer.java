@@ -153,6 +153,18 @@ public class OlapMetaExplorer {
 		}
 		return null;
 	}
+	
+	public OlapConnection getNativeConnection(String name) throws SaikuOlapException {
+		try {
+			OlapConnection con = connections.get(name);
+			if (con != null ) {
+				return con;
+			}
+		} catch (Exception e) {
+			throw new SaikuOlapException("Cannot get native connection for ( " + name + " )",e);
+		}
+		return null;
+	}
 
 	public List<SaikuDimension> getAllDimensions(SaikuCube cube) throws SaikuOlapException {
 		Cube nativeCube = getNativeCube(cube);

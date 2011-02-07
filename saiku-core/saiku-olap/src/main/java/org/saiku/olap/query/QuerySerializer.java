@@ -30,6 +30,8 @@ import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.olap4j.Axis;
+import org.olap4j.metadata.Level;
+import org.olap4j.metadata.Member;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
 import org.olap4j.query.Selection;
@@ -82,7 +84,7 @@ public class QuerySerializer {
         }
 
         // cube name is not yet supported for mdx queries 
-        String cubeName = query.getCube().getName();
+        String cubeName = query.getCube().getUniqueName();
 
         if (StringUtils.isNotBlank(saikuCube.getConnectionName())) {
             rootEle.setAttribute("connection", saikuCube.getConnectionName());
@@ -219,7 +221,11 @@ public class QuerySerializer {
             Element selection = new Element("Selection");
             if (sel.getDimension() != null)
                 selection.setAttribute("dimension", sel.getDimension().getName());
-            
+            if (sel.getRootElement().getClass().equals(Level.class)) {
+            	selection.setAttribute("type", "level");
+            } else if (sel.getRootElement().getClass().equals(Member.class)) {
+            	selection.setAttribute("type", "member");
+            }
             selection.setAttribute("node", sel.getUniqueName());
             selection.setAttribute("operator", sel.getOperator().toString());
             

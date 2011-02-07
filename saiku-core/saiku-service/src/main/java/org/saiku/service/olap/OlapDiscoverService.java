@@ -21,6 +21,7 @@ package org.saiku.service.olap;
 
 import java.util.List;
 
+import org.olap4j.OlapConnection;
 import org.olap4j.metadata.Cube;
 import org.saiku.olap.discover.OlapMetaExplorer;
 import org.saiku.olap.dto.SaikuConnection;
@@ -61,7 +62,15 @@ public class OlapDiscoverService {
 			throw new SaikuServiceException("Cannot get native cube for cube ( " + cube + " )", e);
 		}
 	}
-	
+
+	public OlapConnection getNativeConnection(String name) throws SaikuServiceException {
+		try {
+			return metaExplorer.getNativeConnection(name);
+		} catch (SaikuOlapException e) {
+			throw new SaikuServiceException("Cannot get native connection for cube ( " + name + " )", e);
+		}
+	}
+
 	public List<SaikuDimension> getAllDimensions(SaikuCube cube) throws SaikuServiceException {
 		try {
 			return metaExplorer.getAllDimensions(cube);

@@ -31,9 +31,11 @@ import org.jdom.input.SAXBuilder;
 import org.olap4j.Axis;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
-import org.olap4j.impl.IdentifierParser;
+import org.olap4j.mdx.IdentifierNode;
 import org.olap4j.metadata.Catalog;
 import org.olap4j.metadata.Cube;
+import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Level;
 import org.olap4j.metadata.NamedList;
 import org.olap4j.metadata.Schema;
 import org.olap4j.query.Query;
@@ -65,14 +67,9 @@ public class QueryDeserializer {
     private static InputSource source;
 
     public static OlapQuery unparse(String xml, OlapConnection connection) throws Exception {
-
         QueryDeserializer.connection = connection;
         QueryDeserializer.xml = xml;
-
         SAXBuilder parser = new SAXBuilder();
-
-        //get the dom-document
-
         source = new InputSource((new ByteArrayInputStream(QueryDeserializer.xml.getBytes())));
         dom = parser.build(source);
         Element child =(Element) dom.getRootElement();
@@ -82,9 +79,29 @@ public class QueryDeserializer {
             returnQuery = createQmQuery();
             return returnQuery;
         }
-
         throw new Exception("Cant find <QueryModel> nor <MDX> Query");
+    }
+    
+    public static SaikuCube getCube(String xml) throws Exception {
+        QueryDeserializer.xml = xml;
+        SAXBuilder parser = new SAXBuilder();
+        source = new InputSource((new ByteArrayInputStream(QueryDeserializer.xml.getBytes())));
+        dom = parser.build(source);
 
+        Element queryElement = dom.getRootElement();
+        if (queryElement != null && queryElement.getName().equals("Query")) {
+
+        	String cubeName = queryElement.getAttributeValue("cube");
+
+        	if (!StringUtils.isNotBlank(cubeName)) {
+        		throw new QueryParseException("Cube for query not defined");
+        	}
+        	String connectionName = queryElement.getAttributeValue("connection");
+        	String catalogName = queryElement.getAttributeValue("catalog");
+        	String schemaName = queryElement.getAttributeValue("schema");
+        	return new SaikuCube(connectionName,cubeName,catalogName,schemaName,"");
+        }
+        throw new Exception("Cant find <QueryModel> nor <MDX> Query");
     }
 
     private static OlapQuery createQmQuery() throws QueryParseException {
@@ -204,11 +221,24 @@ public class QueryDeserializer {
                     Element selectionElement = (Element) inclusions.getChildren("Selection").get(z);
                     String name = selectionElement.getAttributeValue("node");
                     String operator = selectionElement.getAttributeValue("operator");
+                    String type = selectionElement.getAttributeValue("type");
+                    Selection sel = null;
+                    if ("level".equals(type)) {
+                    for (Hierarchy hierarchy : dim.getDimension().getHierarchies()) {
+            				for (Level level : hierarchy.getLevels()) {
+            					if (level.getUniqueName().equals(name)) {
+            							 sel = dim.createSelection(level);
+            					}
+            				}
+            			}
+                    } else if ("member".equals(type)) {
+                    	sel = dim.include(Selection.Operator.valueOf(operator), IdentifierNode.parseIdentifier(name).getSegmentList());	
+                    }
+
                     
-                    Selection sel = dim.include(Selection.Operator.valueOf(operator), IdentifierParser.parseIdentifier(name));
-                    
+
                     Element contextElement = selectionElement.getChild("Context");
-                    if (contextElement != null) {
+                    if (sel != null && contextElement != null) {
                         for(int h = 0; h < contextElement.getChildren("Selection").size(); h++) {
                             Element context = (Element) contextElement.getChildren("Selection").get(h);
                             String contextname = context.getAttributeValue("node");
@@ -216,7 +246,8 @@ public class QueryDeserializer {
                             String contextDimension = context.getAttributeValue("dimension");
                             QueryDimension contextDim = qm.getDimension(contextDimension);
                             if ( contextDim != null ) {
-                                Selection contextSelection = contextDim.createSelection(Selection.Operator.valueOf(contextoperator), IdentifierParser.parseIdentifier(contextname));
+                                Selection contextSelection = contextDim.createSelection(Selection.Operator.valueOf(contextoperator), 
+                                		IdentifierNode.parseIdentifier(contextname).getSegmentList());
                                 if (contextSelection != null ) {
                                     sel.addContext(contextSelection);
                                 }
@@ -238,7 +269,7 @@ public class QueryDeserializer {
                     Element selectionElement = (Element) exclusions.getChildren("Selection").get(z);
                     String name = selectionElement.getAttributeValue("node");
                     String operator = selectionElement.getAttributeValue("operator");
-                    dim.exclude(Selection.Operator.valueOf(operator), IdentifierParser.parseIdentifier(name));
+                    dim.exclude(Selection.Operator.valueOf(operator), IdentifierNode.parseIdentifier(name).getSegmentList());
                     // ADD CONTEXT ?
                 }
             }

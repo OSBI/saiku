@@ -20,20 +20,20 @@
 
 package org.saiku.web.rest.resources;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.StringReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-import javax.servlet.ServletException;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -41,19 +41,9 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import org.saiku.olap.dto.SaikuConnection;
-import org.saiku.olap.dto.SaikuCube;
-import org.saiku.olap.dto.SaikuDimension;
-import org.saiku.olap.dto.SaikuHierarchy;
-import org.saiku.olap.dto.SaikuLevel;
-import org.saiku.olap.dto.SaikuMember;
-import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.service.olap.OlapQueryService;
-import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.web.rest.objects.AxisRestPojo;
 import org.saiku.web.rest.objects.QueryRestPojo;
-import org.saiku.web.rest.objects.resultset.Cell;
-import org.saiku.web.rest.util.RestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,33 +65,149 @@ public class BasicRepositoryResource {
 
     private OlapQueryService olapQueryService;
     
+    private QueryResource queryResource;
+    
     private String path;
+    
+    private URL repoURL;
 
     public void setPath(String path) {
 		this.path = path;
+		repoURL = this.getClass().getClassLoader().getResource(path);
 	}
     
 	@Autowired
 	public void setOlapQueryService(OlapQueryService olapqs) {
 		olapQueryService = olapqs;
 	}
+	
+	@Autowired
+	public void setQueryResource(QueryResource qr) {
+		queryResource = qr;
+	}
 
     @GET
     @Produces({"application/json" })
      public String[] getSavedQueries() {
     	try {
-    		   URL dirURL = this.getClass().getClassLoader().getResource(path);
-    		   
-    		      if (dirURL != null) {
-    		    	  log.error("gefunden? : " + dirURL.toURI());
-    		    	  if ( dirURL.getProtocol().equals("file")) {
-    		    		  return new File(dirURL.toURI()).list();
+    		      if (repoURL != null) {
+    		    	  if ( repoURL.getProtocol().equals("file")) {
+    		    		  return new File(repoURL.toURI()).list();
     		    	  }
-    		      } 
+    		      }
+    		      else {
+    		    	  throw new Exception("repo URL is null");
+    		      }
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 		}
 		return new String[0];
     }
-
+    
+	@DELETE
+	@Path("/{queryname}")
+	public Status deleteQuery(@PathParam("queryname") String queryName){
+		try{
+			String uri = repoURL.toURI().toString();
+			if (uri != null) {
+				if (!uri.toString().endsWith(String.valueOf(File.separatorChar))) {
+					uri += String.valueOf(File.separatorChar);
+				}
+				uri += queryName;
+				File queryFile = new File(new URI(uri));
+				if (queryFile.delete()) {
+					return(Status.GONE);
+				}
+			}
+			throw new Exception("Cannot delete query file uri:" + uri);
+		}
+		catch(Exception e){
+			log.error("Cannot delete query (" + queryName + ")",e);
+			return(Status.NOT_FOUND);
+		}
+	}
+	
+	@POST
+	@Path("/{queryname}")
+	public Status saveQuery(
+			@PathParam("queryname") String queryName,
+			@FormParam("newname") String newName ){
+		try{
+			String xml = olapQueryService.getQueryXml(queryName);
+			if (newName != null) {
+				queryName = newName;
+			}
+			String uri = repoURL.toURI().toString();
+			if (uri != null && xml != null) {
+				if (!uri.toString().endsWith(String.valueOf(File.separatorChar))) {
+					uri += String.valueOf(File.separatorChar);
+				}
+				uri += queryName;
+				File queryFile = new File(new URI(uri));
+				if (queryFile.exists()) {
+					queryFile.delete();
+				}
+				else {
+					queryFile.createNewFile();
+				}
+				FileWriter fw = new FileWriter(queryFile);
+				fw.write(xml);
+				fw.close();
+				return(Status.GONE);
+			}
+			else {
+				throw new Exception("Cannot save query because uri or xml is null uri(" 
+						+ (uri == null) + ") xml(" + (xml == null) + " )" );
+			}
+		}
+		catch(Exception e){
+			log.error("Cannot save query (" + queryName + ")",e);
+			return(Status.NOT_FOUND);
+		}
+	}
+	
+	@GET
+	@Path("/{queryname}")
+	public QueryRestPojo loadQuery(@PathParam("queryname") String queryName){
+		try{
+			String uri = repoURL.toURI().toString();
+			if (uri != null) {
+				if (!uri.toString().endsWith(String.valueOf(File.separatorChar))) {
+					uri += String.valueOf(File.separatorChar);
+				}
+				uri += queryName;
+				File queryFile = new File(new URI(uri));
+				if (queryFile.exists()) {
+					FileReader fi = new FileReader(queryFile);
+					BufferedReader br = new BufferedReader(fi);
+					String chunk ="",xml ="";
+					while ((chunk = br.readLine()) != null) {
+						xml += chunk;
+					}
+					if (olapQueryService.createNewOlapQuery(queryName, xml)) {
+						QueryRestPojo qrp = new QueryRestPojo(queryName);
+						AxisRestPojo axis = new AxisRestPojo("UNUSED", queryResource.getAxisInfo(queryName, "UNUSED"));
+						AxisRestPojo axisCol = new AxisRestPojo("COLUMNS", queryResource.getAxisInfo(queryName, "COLUMNS"));
+						AxisRestPojo axisRow = new AxisRestPojo("ROWS", queryResource.getAxisInfo(queryName, "ROWS"));
+						List<AxisRestPojo> axes = new ArrayList<AxisRestPojo>();
+						axes.add(axis);
+						axes.add(axisRow);
+						axes.add(axisCol);
+						qrp.setAxes(axes);
+						return qrp;
+					}
+				}
+				else {
+					throw new Exception("File does not exist:" + uri);
+				}
+			}
+			else {
+				throw new Exception("Cannot save query because uriis null");
+			}
+		}
+		catch(Exception e){
+			log.error("Cannot load query (" + queryName + ")",e);
+		}
+		return null;
+	}
 }
