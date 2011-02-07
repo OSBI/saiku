@@ -153,7 +153,7 @@ public class BasicRepositoryResource {
 				FileWriter fw = new FileWriter(queryFile);
 				fw.write(xml);
 				fw.close();
-				return(Status.GONE);
+				return(Status.OK);
 			}
 			else {
 				throw new Exception("Cannot save query because uri or xml is null uri(" 

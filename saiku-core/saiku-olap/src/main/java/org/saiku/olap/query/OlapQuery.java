@@ -60,7 +60,7 @@ public class OlapQuery {
 		applyDefaultProperties();
 	}
 	
-	public void pivot() {
+	public void swapAxes() {
 		this.query.swapAxes();
 	}
 	
@@ -166,6 +166,22 @@ public class OlapQuery {
     		query.getAxis(Axis.COLUMNS).setNonEmpty(true);
     	}
     }
+    
+	public void resetAxisSelections(QueryAxis axis) {
+		for (QueryDimension dim : axis.getDimensions()) {
+			dim.clearInclusions();
+			dim.clearExclusions();
+			dim.clearSort();
+		}
+	}
+
+	public void clearAllQuerySelections() {
+		resetAxisSelections(getUnusedAxis());
+		Map<Axis,QueryAxis> axes = getAxes();
+		for (Axis axis : axes.keySet()) {
+			resetAxisSelections(axes.get(axis));
+		}
+	}
     
     public void setProperties(Properties props) {
     	this.properties = props;

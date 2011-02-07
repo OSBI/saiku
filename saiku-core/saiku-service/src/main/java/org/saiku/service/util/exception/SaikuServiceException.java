@@ -20,7 +20,7 @@
 
 package org.saiku.service.util.exception;
 
-public class SaikuServiceException extends Exception {
+public class SaikuServiceException extends RuntimeException {
 
 	private static final long serialVersionUID = 6079334291828346380L;
 	
