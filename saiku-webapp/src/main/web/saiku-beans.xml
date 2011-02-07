@@ -70,6 +70,7 @@
 	
 	<bean id="repositoryBean" class="org.saiku.web.rest.resources.BasicRepositoryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />
+		<property name="queryResource" ref="queryInterfaceBean" />
 		<property name="path" value="saiku-repository"/>
 	</bean>
 	
