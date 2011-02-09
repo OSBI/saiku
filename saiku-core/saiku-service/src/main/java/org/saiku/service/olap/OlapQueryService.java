@@ -47,7 +47,9 @@ import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query.OlapQuery;
 import org.saiku.olap.query.QueryDeserializer;
 import org.saiku.olap.util.ObjectUtil;
+import org.saiku.service.util.OlapUtil;
 import org.saiku.service.util.exception.SaikuServiceException;
+import org.saiku.service.util.export.ExcelExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,6 +103,7 @@ public class OlapQueryService {
 
 	public void closeQuery(String queryName) {
 		queries.remove(queryName);
+		OlapUtil.deleteCellSet(queryName);
 	}
 
 	public List<String> getQueries() {
@@ -116,7 +119,9 @@ public class OlapQueryService {
 	public CellDataSet execute(String queryName) {
 		OlapQuery query = getQuery(queryName);
 		try {
-			return query.execute();
+			CellDataSet result =  query.execute();
+			OlapUtil.storeCellSet(queryName, result);
+			return result;
 		} catch (Exception e) {
 			throw new SaikuServiceException("Can't execute query: " + queryName,e);
 		}
@@ -395,6 +400,11 @@ public class OlapQueryService {
 		return query.toXml();
 	}
 
+	public byte[] getExcelExport(String queryName) {
+		return ExcelExporter.exportExcel(queryName);
+	}
+
+	
 	private OlapQuery getQuery(String queryName) {
 		OlapQuery query = queries.get(queryName);
 		if (query == null) {

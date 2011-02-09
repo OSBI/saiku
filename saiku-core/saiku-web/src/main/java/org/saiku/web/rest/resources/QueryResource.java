@@ -35,6 +35,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -210,6 +212,23 @@ public class QueryResource {
 		catch (Exception e) {
 			log.error("Cannot get xml for query (" + queryName + ")",e);
 			return "";
+		}
+	}
+
+	@GET
+	@Produces({"application/vnd.ms-excel" })
+	@Path("/{queryname}/export/xls")
+	public Response getQueryExcelExport(@PathParam("queryname") String queryName){
+		try {
+		byte[] doc = olapQueryService.getExcelExport(queryName);
+		return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
+				"content-disposition",
+				"attachment; filename = saiku-export.xls").header(
+				"content-length",doc.length).build();
+		}
+		catch (Exception e) {
+			log.error("Cannot get xml for query (" + queryName + ")",e);
+			return Response.serverError().build();
 		}
 	}
 
