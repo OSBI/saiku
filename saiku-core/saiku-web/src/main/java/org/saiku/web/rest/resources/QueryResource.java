@@ -214,25 +214,63 @@ public class QueryResource {
 			return "";
 		}
 	}
-
+	
 	@GET
 	@Produces({"application/vnd.ms-excel" })
 	@Path("/{queryname}/export/xls")
 	public Response getQueryExcelExport(@PathParam("queryname") String queryName){
+		return getQueryExcelExport(queryName, "hierarchical");
+	}
+
+	@GET
+	@Produces({"application/vnd.ms-excel" })
+	@Path("/{queryname}/export/xls/{format}")
+	public Response getQueryExcelExport(
+			@PathParam("queryname") String queryName,
+			@PathParam("format") @DefaultValue("HIERARCHICAL") String format){
 		try {
-		byte[] doc = olapQueryService.getExcelExport(queryName);
+		byte[] doc = olapQueryService.getExport(queryName,"xls",format);
 		return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
 				"content-disposition",
 				"attachment; filename = saiku-export.xls").header(
 				"content-length",doc.length).build();
 		}
 		catch (Exception e) {
-			log.error("Cannot get xml for query (" + queryName + ")",e);
+			log.error("Cannot get excel for query (" + queryName + ")",e);
+			return Response.serverError().build();
+		}
+	}
+	
+	@GET
+	@Produces({"text/csv" })
+	@Path("/{queryname}/export/csv")
+	public Response getQueryCsvExport(@PathParam("queryname") String queryName){
+		return getQueryCsvExport(queryName, "flat");
+	}
+
+	@GET
+	@Produces({"text/csv" })
+	@Path("/{queryname}/export/csv/{format}")
+	public Response getQueryCsvExport(
+			@PathParam("queryname") String queryName,
+			@PathParam("format") String format){
+
+		try {
+			log.error("csv servlet");
+			byte[] doc = olapQueryService.getExport(queryName,"csv",format);
+			return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
+					"content-disposition",
+					"attachment; filename = saiku-export.csv").header(
+					"content-length",doc.length).build();
+		}
+		catch (Exception e) {
+			log.error("Cannot get csv for query (" + queryName + ")",e);
 			return Response.serverError().build();
 		}
 	}
 
 	@GET
+	@Produces({"application/json" })
 	@Path("/{queryname}/result")
 	public List<Cell[]> execute(@PathParam("queryname") String queryName){
 		try {
@@ -243,8 +281,22 @@ public class QueryResource {
 			log.error("Cannot execute query (" + queryName + ")",e);
 			return new ArrayList<Cell[]>();
 		}
-
-
+	}
+	
+	@GET
+	@Produces({"application/json" })
+	@Path("/{queryname}/result/{format}")
+	public List<Cell[]> execute(
+			@PathParam("queryname") String queryName,
+			@PathParam("format") String formatter){
+		try {
+			CellDataSet cs = olapQueryService.execute(queryName,formatter);
+			return RestUtil.convert(cs);
+		}
+		catch (Exception e) {
+			log.error("Cannot execute query (" + queryName + ")",e);
+			return new ArrayList<Cell[]>();
+		}
 	}
 
 	/*

@@ -23,7 +23,6 @@ package org.saiku.olap.query;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
@@ -36,19 +35,13 @@ import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
 import org.saiku.olap.dto.SaikuCube;
-import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query.QueryProperties.QueryProperty;
 import org.saiku.olap.query.QueryProperties.QueryPropertyFactory;
-import org.saiku.olap.util.OlapResultSetUtil;
 import org.saiku.olap.util.SaikuProperties;
 import org.saiku.olap.util.exception.SaikuOlapException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class OlapQuery {
 
-    private final Logger log = LoggerFactory.getLogger(OlapQuery.class);
-    
 	private Query query;
 	private Properties properties = new Properties();
 
@@ -144,20 +137,13 @@ public class OlapQuery {
     	return query.getName();
     }
     
-    public CellDataSet execute() throws Exception {
+    public CellSet execute() throws Exception {
         final Query mdx = this.query;
         mdx.validate();
         final Writer writer = new StringWriter();
         mdx.getSelect().unparse(new ParseTreeWriter(new PrintWriter(writer)));
-        Long start = (new Date()).getTime();
         final CellSet cellSet = mdx.execute();
-        Long exec = (new Date()).getTime();
-
-        CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cellSet);
-        Long format = (new Date()).getTime();
-        log.info("Size: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
-                + "ms\tFormat:\t" + (format - exec) + "ms\t Total: " + (format - start) + "ms");
-        return result;
+        return cellSet;
     }
     
     private void applyDefaultProperties() {

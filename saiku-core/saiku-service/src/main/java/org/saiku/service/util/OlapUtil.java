@@ -3,12 +3,12 @@ package org.saiku.service.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.saiku.olap.dto.resultset.CellDataSet;
+import org.olap4j.CellSet;
 
 public class OlapUtil {
 	
 	
-    private static Map<String, CellDataSet> cellSetMap = new HashMap<String, CellDataSet>();
+    private static Map<String, CellSet> cellSetMap = new HashMap<String, CellSet>();
 
     
     /**
@@ -18,14 +18,14 @@ public class OlapUtil {
      * @param queryId
      * 
      */
-    public static void storeCellSet(final String queryId, final CellDataSet cellSet) {
+    public static void storeCellSet(final String queryId, final CellSet cellSet) {
         if (cellSetMap.containsKey(queryId)) {
             cellSetMap.remove(queryId);
         }
         cellSetMap.put(queryId, cellSet);
     }
     
-    public static CellDataSet getCellSet(final String queryId) {
+    public static CellSet getCellSet(final String queryId) {
         return cellSetMap.get(queryId);
 
     }

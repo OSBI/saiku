@@ -20,12 +20,14 @@
 package org.saiku.service.olap;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.olap4j.Axis;
+import org.olap4j.CellSet;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
 import org.olap4j.mdx.IdentifierNode;
@@ -47,8 +49,13 @@ import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query.OlapQuery;
 import org.saiku.olap.query.QueryDeserializer;
 import org.saiku.olap.util.ObjectUtil;
+import org.saiku.olap.util.OlapResultSetUtil;
+import org.saiku.olap.util.formatter.CellSetFormatter;
+import org.saiku.olap.util.formatter.HierarchicalCellSetFormatter;
+import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.service.util.OlapUtil;
 import org.saiku.service.util.exception.SaikuServiceException;
+import org.saiku.service.util.export.CsvExporter;
 import org.saiku.service.util.export.ExcelExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,10 +124,32 @@ public class OlapQueryService {
 	}
 
 	public CellDataSet execute(String queryName) {
+		return execute(queryName,new HierarchicalCellSetFormatter());
+	}
+
+	public CellDataSet execute(String queryName, String formatter) {
+		formatter = formatter == null ? "" : formatter.toLowerCase(); 
+			if(formatter.equals("flat")) {
+				return execute(queryName, new CellSetFormatter());
+			}
+			else if (formatter.equals("hierarchical")) {
+				return execute(queryName, new HierarchicalCellSetFormatter());
+			}
+			return execute(queryName, new HierarchicalCellSetFormatter());
+	}
+	
+	public CellDataSet execute(String queryName, ICellSetFormatter formatter) {
 		OlapQuery query = getQuery(queryName);
 		try {
-			CellDataSet result =  query.execute();
-			OlapUtil.storeCellSet(queryName, result);
+			Long start = (new Date()).getTime();
+			CellSet cellSet =  query.execute();
+	        Long exec = (new Date()).getTime();
+	        CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cellSet,formatter);
+	        Long format = (new Date()).getTime();
+	        log.info("Size: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
+	                + "ms\tFormat:\t" + (format - exec) + "ms\t Total: " + (format - start) + "ms");
+
+			OlapUtil.storeCellSet(queryName, cellSet);
 			return result;
 		} catch (Exception e) {
 			throw new SaikuServiceException("Can't execute query: " + queryName,e);
@@ -400,10 +429,34 @@ public class OlapQueryService {
 		return query.toXml();
 	}
 
-	public byte[] getExcelExport(String queryName) {
-		return ExcelExporter.exportExcel(queryName);
+	public byte[] getExport(String queryName, String type) {
+		return getExport(queryName,type,new HierarchicalCellSetFormatter());
 	}
 
+	public byte[] getExport(String queryName, String type, String formatter) {
+		formatter = formatter == null ? "" : formatter.toLowerCase();
+			if (formatter.equals("flat")) {
+				return getExport(queryName, type, new CellSetFormatter());
+			} else if (formatter.equals("hierarchical")) {
+				return getExport(queryName, type, new HierarchicalCellSetFormatter());
+			}
+			
+			return getExport(queryName, type, new HierarchicalCellSetFormatter());
+	}
+	
+	public byte[] getExport(String queryName, String type, ICellSetFormatter formatter) {
+		if (type != null) {
+			CellSet rs = OlapUtil.getCellSet(queryName);
+			if (type.toLowerCase().equals("xls")) {
+				return ExcelExporter.exportExcel(rs,formatter);	
+			}
+			if (type.toLowerCase().equals("csv")) {
+				return CsvExporter.exportCsv(rs,";", formatter);	
+			}
+		}
+		return new byte[0];
+	}
+	
 	
 	private OlapQuery getQuery(String queryName) {
 		OlapQuery query = queries.get(queryName);

@@ -24,16 +24,21 @@ import org.olap4j.CellSet;
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.dto.resultset.Matrix;
+import org.saiku.olap.util.formatter.HierarchicalCellSetFormatter;
+import org.saiku.olap.util.formatter.ICellSetFormatter;
 
 public class OlapResultSetUtil {
 
-    public static CellDataSet cellSet2Matrix(final CellSet cellSet) {
+	public static CellDataSet cellSet2Matrix(final CellSet cellSet) {
+		final ICellSetFormatter formatter = new HierarchicalCellSetFormatter();
+		return cellSet2Matrix(cellSet,formatter);
+	}
+	
+    public static CellDataSet cellSet2Matrix(final CellSet cellSet, ICellSetFormatter formatter) {
         if (cellSet == null) {
             return new CellDataSet(0,0);
         }
-        final HierarchicalCellSetFormatter pcsf = new HierarchicalCellSetFormatter();
-
-        final Matrix matrix = pcsf.format(cellSet);
+        final Matrix matrix = formatter.format(cellSet);
         final CellDataSet cds = new CellDataSet(matrix.getMatrixWidth(), matrix.getMatrixHeight());
 
         int z = 0;

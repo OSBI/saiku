@@ -17,17 +17,29 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 
+import org.olap4j.CellSet;
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
-import org.saiku.service.util.OlapUtil;
+import org.saiku.olap.util.OlapResultSetUtil;
+import org.saiku.olap.util.formatter.HierarchicalCellSetFormatter;
+import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.service.util.exception.SaikuServiceException;
 
 public class ExcelExporter {
-	
-	public static byte[] exportExcel(String queryId) {
-		CellDataSet table = OlapUtil.getCellSet(queryId);
+
+
+	public static byte[] exportExcel(CellSet cellSet) {
+		return exportExcel(cellSet, new HierarchicalCellSetFormatter());
+	}
+
+	public static byte[] exportExcel(CellSet cellSet, ICellSetFormatter formatter) {
+		CellDataSet table = OlapResultSetUtil.cellSet2Matrix(cellSet, formatter);
+		return getExcel(table);
+	}
+
+	private static byte[] getExcel(CellDataSet table) {
 		if (table != null) {
-			
+
 			AbstractBaseCell[][] rowData = table.getCellSetBody();
 			AbstractBaseCell[][] rowHeader = table.getCellSetHeaders();
 

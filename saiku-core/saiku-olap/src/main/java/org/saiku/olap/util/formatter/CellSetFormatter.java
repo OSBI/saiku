@@ -17,7 +17,7 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
  */
-package org.saiku.olap.util;
+package org.saiku.olap.util.formatter;
 
 import java.text.DecimalFormat;
 import java.util.AbstractList;
@@ -40,7 +40,7 @@ import org.saiku.olap.dto.resultset.DataCell;
 import org.saiku.olap.dto.resultset.Matrix;
 import org.saiku.olap.dto.resultset.MemberCell;
 
-public class HierarchicalCellSetFormatter {
+public class CellSetFormatter implements ICellSetFormatter {
 	/**
 	 * Description of an axis.
 	 */
@@ -474,14 +474,8 @@ public class HierarchicalCellSetFormatter {
 						memberInfo.setParentDimension(member.getDimension().getName());
 					matrix.set(x, y, memberInfo);
 				} else {
-					if (same) {
-						memberInfo.setFormattedValue(null);
-						memberInfo.setRawValue(null);
-						memberInfo.setParentDimension(null);
-					}
 					memberInfo.setRight(false);
 					memberInfo.setSameAsPrev(false);
-
 					matrix.set(y, x, memberInfo);
 				}
 				prevMembers[y] = member;
