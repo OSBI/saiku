@@ -451,7 +451,7 @@ public class OlapQueryService {
 				return ExcelExporter.exportExcel(rs,formatter);	
 			}
 			if (type.toLowerCase().equals("csv")) {
-				return CsvExporter.exportCsv(rs,";", formatter);	
+				return CsvExporter.exportCsv(rs,",","\"", formatter);	
 			}
 		}
 		return new byte[0];

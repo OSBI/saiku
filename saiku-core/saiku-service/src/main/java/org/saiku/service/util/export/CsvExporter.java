@@ -14,19 +14,19 @@ import org.saiku.service.util.exception.SaikuServiceException;
 public class CsvExporter {
 	
 	public static byte[] exportCsv(CellSet cellSet) {
-		return exportCsv(cellSet,";");
+		return exportCsv(cellSet,",","\"");
 	}
 	
-	public static byte[] exportCsv(CellSet cellSet, String delimiter) {
-		return exportCsv(cellSet, delimiter, new CellSetFormatter());
+	public static byte[] exportCsv(CellSet cellSet, String delimiter, String enclosing) {
+		return exportCsv(cellSet, delimiter, enclosing, new CellSetFormatter());
 	}
 
-	public static byte[] exportCsv(CellSet cellSet, String delimiter, ICellSetFormatter formatter) {
+	public static byte[] exportCsv(CellSet cellSet, String delimiter, String enclosing, ICellSetFormatter formatter) {
 		CellDataSet table = OlapResultSetUtil.cellSet2Matrix(cellSet, formatter);
-		return getCsv(table, delimiter);
+		return getCsv(table, delimiter, enclosing);
 	}
 
-	private static byte[] getCsv(CellDataSet table, String delimiter) {
+	private static byte[] getCsv(CellDataSet table, String delimiter, String enclosing) {
 		if (table != null) {
 			AbstractBaseCell[][] rowData = table.getCellSetBody();
 			AbstractBaseCell[][] rowHeader = table.getCellSetHeaders();
@@ -35,7 +35,10 @@ public class CsvExporter {
 			for (int x = 0; x<rowHeader.length;x++) {
 				List<String> cols = new ArrayList<String>();
 				for(int y = 0; y < rowHeader[x].length;y++) {
-					cols.add(rowHeader[x][y].getFormattedValue()); 
+					String value = rowHeader[x][y].getFormattedValue();
+					if(value == null || value == "null")  //$NON-NLS-1$
+						value=""; //$NON-NLS-1$
+					cols.add(enclosing + value + enclosing); 
 				}
 				result[x]= cols.toArray(new String[cols.size()]);
 
@@ -44,7 +47,12 @@ public class CsvExporter {
 				int xTarget = rowHeader.length + x;
 				List<String> cols = new ArrayList<String>();
 				for(int y = 0; y < rowData[x].length;y++) {
-					cols.add(rowData[x][y].getFormattedValue()); 
+					String value = rowData[x][y].getFormattedValue();
+					if(value == null || value == "null")  {
+						value="";
+					}
+					value = enclosing + value + enclosing;
+					cols.add(value); 
 				}
 				result[xTarget]= cols.toArray(new String[cols.size()]);
 
@@ -62,8 +70,6 @@ public class CsvExporter {
 					String[] vs = resultSet[i];
 					for(int j = 0; j < vs.length ; j++){
 						String value = vs[j];
-						if(value == null || value == "null")  //$NON-NLS-1$
-							value=""; //$NON-NLS-1$
 						if ( j > 0) {
 							output += delimiter + value;
 						}

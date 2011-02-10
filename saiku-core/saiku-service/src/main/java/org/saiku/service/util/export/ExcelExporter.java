@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import jxl.CellView;
 import jxl.Workbook;
 import jxl.format.Alignment;
 import jxl.format.Border;
@@ -13,9 +14,11 @@ import jxl.write.Label;
 import jxl.write.Number;
 import jxl.write.NumberFormat;
 import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
+import jxl.write.WritableFont.FontName;
 
 import org.olap4j.CellSet;
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
@@ -76,34 +79,39 @@ public class ExcelExporter {
 			WritableSheet sheet = wb.createSheet("Sheet", 0); //$NON-NLS-1$
 
 			WritableCellFormat cf;
-
+			int[] columnwidth = new int[resultSet[0].length];
 			if(resultSet.length > 0){
-				boolean swapRows  = resultSet[0].length > 256 ? true : false;
-
 				for(int i =  0; i < resultSet.length; i++){
 					String[] vs = resultSet[i];
 					for(int j = 0; j < vs.length ; j++){
+
 						//cf = i == 0 ? hcs : j != 0 ? cs : (i % 2 != 0 ? hcs : rcs);
-						cf = (i % 2 != 0 ? getEvenFormat() : getOddFormat());
+						
 						String value = vs[j];
 						if(value == null || value == "null")  //$NON-NLS-1$
 							value=""; //$NON-NLS-1$
 
-						if(isDouble(value)){
-							WritableCellFormat vf = getNumberFormat();
-							vf.setBackground(cf.getBackgroundColour());
-							Number number = new Number(swapRows ? i : j,swapRows ? j : i,Double.parseDouble(value),vf);
-							sheet.addCell(number);
+						if (columnwidth[j] < value.length()) {
+							columnwidth[j] = value.length();
 						}
-						else{
-							Label label = new Label(swapRows ? i : j,swapRows ? j : i,value,cf);
-							sheet.addCell(label); 
+						if(resultSet[0][j] == null || resultSet[0][j] == ""){
+							cf = (i % 2 != 0 ? getEvenFormat(Alignment.LEFT) : getOddFormat(Alignment.LEFT));
+						}					
+						else {
+							cf = (i % 2 != 0 ? getEvenFormat(Alignment.RIGHT) : getOddFormat(Alignment.RIGHT));
 						}
+						Label label = new Label(j,i,value,cf);
+						sheet.addCell(label);
 					}
 				}
-
-
-
+				for(int k = 0;k<columnwidth.length;k++) {
+					sheet.setColumnView(k, (int) (columnwidth[k]*1.3));
+				}
+				sheet.insertColumn(0);
+				sheet.insertColumn(0);
+				sheet.insertRow(0);
+				sheet.insertRow(0);
+				
 				wb.write();
 				wb.close();
 				byte[] output =bout.toByteArray();
@@ -111,32 +119,38 @@ public class ExcelExporter {
 
 			}
 		} catch (Throwable e) {
-			throw new SaikuServiceException("Error creating excel export for query");
+			throw new SaikuServiceException("Error creating excel export for query",e);
 		}
 		return new byte[0];
 	}
 
-	private static WritableCellFormat getOddFormat() throws WriteException {
-		WritableCellFormat cs = new WritableCellFormat();
-		cs.setBorder(Border.ALL, BorderLineStyle.THIN);
+	private static WritableCellFormat getOddFormat(Alignment alignment) throws WriteException {
+		WritableCellFormat cs = getTextFormat(alignment);
 		cs.setBackground(Colour.PALE_BLUE);
 		return cs;
 	}
-	private static WritableCellFormat getEvenFormat() throws WriteException {
-		WritableCellFormat cs = new WritableCellFormat();
-		cs.setBorder(Border.ALL, BorderLineStyle.THIN);
 
-
+	private static WritableCellFormat getEvenFormat(Alignment alignment) throws WriteException {
+		WritableCellFormat cs = getTextFormat(alignment);
 		cs.setBackground(Colour.BLUE);
 		return cs;
 	}
+
 	private static WritableCellFormat getNumberFormat() throws WriteException {
 		WritableCellFormat cs = new WritableCellFormat(new NumberFormat("###,###,###.###")); //$NON-NLS-1$
 		cs.setBorder(Border.ALL, BorderLineStyle.THIN);
 		cs.setAlignment(Alignment.RIGHT);
+		cs.setIndentation(1);
 		return cs;
 	}
-
+	
+	private static WritableCellFormat getTextFormat(Alignment alignment) throws WriteException {
+		WritableCellFormat cs = new WritableCellFormat(new WritableFont(WritableFont.createFont("Verdana"),11)); //$NON-NLS-1$
+		cs.setBorder(Border.ALL, BorderLineStyle.THIN);
+		cs.setIndentation(1);
+		cs.setAlignment(alignment);
+		return cs;
+	}
 
 	public static boolean isDouble(String obj){
 		try{
