@@ -168,6 +168,18 @@ public class OlapQuery {
 			resetAxisSelections(axes.get(axis));
 		}
 	}
+	
+	public void resetQuery() {
+		resetAxisSelections(getUnusedAxis());
+		Map<Axis,QueryAxis> axes = getAxes();
+		for (Axis axis : axes.keySet()) {
+			resetAxisSelections(axes.get(axis));
+			if (axis != null) {
+				for (QueryDimension dim : getAxis(axis).getDimensions())
+				moveDimension(dim, getUnusedAxis().getLocation());
+			}
+		}
+	}
     
     public void setProperties(Properties props) {
     	this.properties = props;

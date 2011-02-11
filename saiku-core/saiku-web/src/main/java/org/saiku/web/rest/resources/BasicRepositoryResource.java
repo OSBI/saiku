@@ -26,8 +26,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -43,8 +41,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
-import org.saiku.web.rest.objects.AxisRestPojo;
-import org.saiku.web.rest.objects.QueryRestPojo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -177,7 +173,7 @@ public class BasicRepositoryResource {
 	
 	@GET
 	@Path("/{queryname}")
-	public QueryRestPojo loadQuery(@PathParam("queryname") String queryName){
+	public SaikuQuery loadQuery(@PathParam("queryname") String queryName){
 		try{
 			String uri = repoURL.toURI().toString();
 			if (uri != null) {
@@ -195,12 +191,7 @@ public class BasicRepositoryResource {
 					}
 					SaikuQuery squery = olapQueryService.createNewOlapQuery(queryName, xml);
 					if (squery != null) {
-						QueryRestPojo qrp = new QueryRestPojo(queryName);
-						AxisRestPojo axis = new AxisRestPojo("UNUSED", olapDiscoverService.getAllDimensions(squery.getCube()));
-						List<AxisRestPojo> axes = new ArrayList<AxisRestPojo>();
-						axes.add(axis);
-						qrp.setAxes(axes);
-						return qrp;
+						return squery;
 					}
 				}
 				else {

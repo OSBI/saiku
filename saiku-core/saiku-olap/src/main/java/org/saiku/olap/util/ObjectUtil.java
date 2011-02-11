@@ -23,15 +23,24 @@ package org.saiku.olap.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.olap4j.Axis;
 import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
+import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
+import org.olap4j.query.Selection;
+import org.saiku.olap.dto.SaikuAxis;
 import org.saiku.olap.dto.SaikuDimension;
+import org.saiku.olap.dto.SaikuDimensionSelection;
 import org.saiku.olap.dto.SaikuHierarchy;
 import org.saiku.olap.dto.SaikuLevel;
 import org.saiku.olap.dto.SaikuMember;
+import org.saiku.olap.dto.SaikuQuery;
+import org.saiku.olap.dto.SaikuSelection;
+import org.saiku.olap.dto.SaikuSelection.Type;
+import org.saiku.olap.query.OlapQuery;
 
 public class ObjectUtil {
 
@@ -107,6 +116,30 @@ public class ObjectUtil {
 		return memberList;
 
 	}
+	
+	public static List<SaikuSelection> convertSelections(List<Selection> selections) {
+		List<SaikuSelection> selectionList= new ArrayList<SaikuSelection>();
+		for (Selection sel : selections) {
+			selectionList.add(convert(sel));
+		}
+		return selectionList;
+	}
+
+	private static SaikuSelection convert(Selection sel) {
+		Type type;
+		if (sel.getRootElement().getClass().equals(Level.class)) {
+			type = SaikuSelection.Type.LEVEL;
+		} else {
+			type = SaikuSelection.Type.MEMBER;
+		}
+		return new SaikuSelection(
+				sel.getRootElement().getName(),
+				sel.getUniqueName(),
+				sel.getRootElement().getCaption(),
+				sel.getDimension().getName(),
+				type);
+
+	}
 
 	public static SaikuMember convert(Member m) {
 		return new SaikuMember(
@@ -115,6 +148,44 @@ public class ObjectUtil {
 				m.getCaption(), 
 				m.getDimension().getUniqueName(),
 				m.getLevel().getUniqueName());
+	}
+	
+	public static SaikuDimensionSelection converDimensionSelection(QueryDimension dim) {
+		List<SaikuSelection> selections = ObjectUtil.convertSelections(dim.getInclusions());
+		return new SaikuDimensionSelection(
+				dim.getName(),
+				dim.getDimension().getUniqueName(),
+				dim.getDimension().getCaption(),
+				selections);
+	}
+	
+	public static List<SaikuDimensionSelection> convertDimensionSelections(List<QueryDimension> dimensions) {
+		List<SaikuDimensionSelection> dims = new ArrayList<SaikuDimensionSelection>();
+		for (QueryDimension dim : dimensions) {
+			dims.add(converDimensionSelection(dim));
+		}
+		return dims;
+	}
+	
+	public static SaikuAxis convertQueryAxis(QueryAxis axis) {
+		List<SaikuDimensionSelection> dims = ObjectUtil.convertDimensionSelections(axis.getDimensions());
+		Axis location = axis.getLocation();
+		return new SaikuAxis(
+				location.name(),
+				location.axisOrdinal(),
+				axis.getName(),
+				dims);
+	}
+	
+	public static SaikuQuery convert(OlapQuery q) {
+		List<SaikuAxis> axes = new ArrayList<SaikuAxis>();
+		for (Axis axis : q.getAxes().keySet()) {
+			if (axis != null) {
+				axes.add(convertQueryAxis(q.getAxis(axis)));
+			}
+		}
+		return new SaikuQuery(q.getName(), q.getSaikuCube(), axes);
+		
 	}
 
 }

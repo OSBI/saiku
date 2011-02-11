@@ -31,6 +31,7 @@ import javax.ws.rs.core.Response.Status;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.web.rest.objects.QueryRestPojo;
 import org.saiku.web.rest.objects.resultset.Cell;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,14 +53,19 @@ public class QueryResourceTest {
 	public final void testCreateQuery() throws ServletException {
 
 		// Create new query
-		QueryRestPojo testQuery = null;
+		SaikuQuery testQuery = null;
 		testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart",
 				"FoodMart", "TestQuery1");
 
 		// Check it is not null, has the same name and has an unused axis.
 		assertNotNull(testQuery);
 		assertEquals("TestQuery1", testQuery.getName());
-		assertEquals("UNUSED", testQuery.getAxes().get(0).getAxisName());
+		assertEquals(testQuery.getSaikuAxes().size(), 3);
+		
+		// no selections on the axes
+		assertEquals(testQuery.getSaikuAxes().get(0).getDimensionSelections().size(), 0);
+
+		
 
 	}
 
@@ -103,12 +109,14 @@ public class QueryResourceTest {
 	public final void testMoveDimension() throws ServletException {
 
 		// Create a query.
-		QueryRestPojo testQuery = null;
+		SaikuQuery testQuery = null;
 		testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart",
 				"FoodMart", "TestQuery1");
 
 		// Check the query isn't null.
 		assertNotNull(testQuery);
+		
+		assertEquals(testQuery.getSaikuAxes().size(), 3);
 
 		// Move a dimension
 		Status returnedStatus = qs.moveDimension("TestQuery1", "ROWS", "Store",
@@ -122,7 +130,7 @@ public class QueryResourceTest {
 	@Test
 	public final void testExecute() throws ServletException {
 		// Create a query.
-		QueryRestPojo testQuery = null;
+		SaikuQuery testQuery = null;
 		testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart",
 				"FoodMart", "TestQuery1");
 

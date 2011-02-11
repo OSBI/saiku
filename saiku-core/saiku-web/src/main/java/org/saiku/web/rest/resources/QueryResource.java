@@ -42,11 +42,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SaikuDimensionSelection;
+import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
-import org.saiku.web.rest.objects.AxisRestPojo;
-import org.saiku.web.rest.objects.QueryRestPojo;
 import org.saiku.web.rest.objects.resultset.Cell;
 import org.saiku.web.rest.util.RestUtil;
 import org.slf4j.Logger;
@@ -90,9 +90,16 @@ public class QueryResource {
 	 * Return a list of open queries.
 	 */
 	@GET
-	@Produces({"application/xml","application/json" })
+	@Produces({"application/json" })
 	public List<String> getQueries() {
 		return olapQueryService.getQueries();
+	}
+	
+	@GET
+	@Produces({"application/json" })
+	@Path("/{queryname}")
+	public SaikuQuery getQuery(@PathParam("queryname") String queryName){
+		return olapQueryService.getQuery(queryName);
 	}
 
 	/**
@@ -126,9 +133,9 @@ public class QueryResource {
 	 * @see 
 	 */
 	@POST
-	@Produces({"application/xml","application/json" })
+	@Produces({"application/json" })
 	@Path("/{queryname}")
-	public QueryRestPojo createQuery(
+	public SaikuQuery createQuery(
 			@FormParam("connection") String connectionName, 
 			@FormParam("cube") String cubeName,
 			@FormParam("catalog") String catalogName, 
@@ -136,18 +143,11 @@ public class QueryResource {
 			@PathParam("queryname") String queryName) throws ServletException 
 	{
 		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
-		olapQueryService.createNewOlapQuery(queryName, cube);
-		QueryRestPojo qrp = new QueryRestPojo(queryName);
-		AxisRestPojo axis = new AxisRestPojo("UNUSED",olapDiscoverService.getAllDimensions(cube));
-
-		List<AxisRestPojo> axes = new ArrayList<AxisRestPojo>();
-		axes.add(axis);
-		qrp.setAxes(axes);
-		return qrp;
+		return olapQueryService.createNewOlapQuery(queryName, cube);
 	}
 
 	@GET
-	@Produces({"application/xml","application/json" })
+	@Produces({"application/json" })
 	@Path("/{queryname}/properties")
 	public Properties getProperties(@PathParam("queryname") String queryName) {
 		return olapQueryService.getProperties(queryName);
@@ -155,7 +155,7 @@ public class QueryResource {
 
 
 	@POST
-	@Produces({"application/xml","application/json" })
+	@Produces({"application/json" })
 	@Path("/{queryname}/properties")
 	public Status setProperties(
 			@PathParam("queryname") String queryName, 
@@ -176,7 +176,7 @@ public class QueryResource {
 	}
 
 	@POST
-	@Produces({"application/xml","application/json" })
+	@Produces({"application/json" })
 	@Path("/{queryname}/properties/{propertyKey}")
 	public Status setProperties(
 			@PathParam("queryname") String queryName, 
@@ -314,15 +314,15 @@ public class QueryResource {
 	 * @return a list of available dimensions.
 	 * @see DimensionRestPojo
 	 */
-//	@GET
-//	@Produces({"application/xml","application/json" })
-//	@Path("/{queryname}/axis/{axis}")
-//	public List<SaikuDimension> getAxisInfo(
-//			@PathParam("queryname") String queryName, 
-//			@PathParam("axis") String axisName)
-//	{
-//		return olapQueryService.getDimensions(queryName, axisName);
-//	}
+	@GET
+	@Produces({"application/json" })
+	@Path("/{queryname}/axis/{axis}")
+	public List<SaikuDimensionSelection> getAxisInfo(
+			@PathParam("queryname") String queryName, 
+			@PathParam("axis") String axisName)
+	{
+		return olapQueryService.getAxisSelection(queryName, axisName);
+	}
 
 	/**
 	 * Remove all dimensions and selections on an axis
@@ -330,7 +330,7 @@ public class QueryResource {
 	 * @param axisName the name of the axis.
 	 */
 	@DELETE
-	@Produces({"application/xml","application/json" })
+	@Produces({"application/json" })
 	@Path("/{queryname}/axis/{axis}")
 	public void deleteAxis(
 			@PathParam("queryname") String queryName, 
@@ -338,9 +338,17 @@ public class QueryResource {
 	{
 		olapQueryService.clearAxis(queryName, axisName);
 	}
+	
+	@DELETE
+	@Produces({"application/json" })
+	@Path("/{queryname}/axis/")
+	public void clearAllAxisSelections(@PathParam("queryname") String queryName)
+	{
+		olapQueryService.resetQuery(queryName);
+	}
 
 	@PUT
-	@Produces({"application/xml","application/json" })
+	@Produces({"application/json" })
 	@Path("/{queryname}/axis/{axis}/nonempty/{boolean}")
 	public void setNonEmpty(
 			@PathParam("queryname") String queryName, 
@@ -365,7 +373,7 @@ public class QueryResource {
 	 * @see HierarchyRestPojo
 	 */
 //	@GET
-//	@Produces({"application/xml","application/json" })
+//	@Produces({"application/json" })
 //	@Path("/{queryname}/axis/{axis}/dimension/{dimension}")
 //	public List<SaikuHierarchy> getDimensionInfo(
 //			@PathParam("queryname") String queryName, 

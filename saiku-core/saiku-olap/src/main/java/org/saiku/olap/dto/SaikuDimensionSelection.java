@@ -22,35 +22,33 @@ package org.saiku.olap.dto;
 
 import java.util.List;
 
-public class SaikuQuery extends AbstractSaikuObject {
-
-	private SaikuCube cube;
+public class SaikuDimensionSelection extends AbstractSaikuObject {
 	
-	private List<SaikuAxis> axes;
-
-	public SaikuQuery() {
+	private String caption;
+	
+	private List<SaikuSelection> selections;
+	
+	public SaikuDimensionSelection() {
 		super(null,null);
 		throw new RuntimeException("Unsupported Constructor. Serialization only");
+	};
+	
+	public SaikuDimensionSelection(String name, String uniqueName, String caption, List<SaikuSelection> selections) {
+		super(uniqueName,name);
+		this.caption = caption;
+		this.selections = selections;
 	}
 
-	public SaikuQuery(String name, SaikuCube cube, List<SaikuAxis> axes) {
-		super(name,name);
-		this.cube = cube;
-		this.axes = axes;
-	}
-
-	public List<SaikuAxis> getSaikuAxes() {
-		return axes;
-	}
-
-	@Override
-	public String getUniqueName() {
-		String uniqueName = cube.getUniqueName() + ".[" + getName() + "]";
-		return uniqueName;
+	public String getCaption() {
+		return caption;
 	}
 	
-	public SaikuCube getCube() {
-			return cube;
+	public List<SaikuSelection> getSelections() {
+		return selections;
 	}
-}
+	
+	
+	
+	
 
+}
