@@ -26,6 +26,11 @@ public class SaikuLevel extends AbstractSaikuObject {
 	private String dimensionUniqueName;
 //	private transient List<SaikuMember> members;
 	
+	public SaikuLevel() {
+		super(null,null);
+		throw new RuntimeException("Unsupported Constructor. Serialization only");
+	}
+
 	
 	public SaikuLevel(
 			String name, 

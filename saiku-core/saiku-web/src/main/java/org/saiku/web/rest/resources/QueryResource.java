@@ -42,11 +42,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.saiku.olap.dto.SaikuCube;
-import org.saiku.olap.dto.SaikuDimension;
-import org.saiku.olap.dto.SaikuHierarchy;
-import org.saiku.olap.dto.SaikuLevel;
-import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.resultset.CellDataSet;
+import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.web.rest.objects.AxisRestPojo;
 import org.saiku.web.rest.objects.QueryRestPojo;
@@ -72,10 +69,17 @@ public class QueryResource {
     private static final Logger log = LoggerFactory.getLogger(QueryResource.class);
 
     private OlapQueryService olapQueryService;
+    private OlapDiscoverService olapDiscoverService;
 
 	@Autowired
 	public void setOlapQueryService(OlapQueryService olapqs) {
 		olapQueryService = olapqs;
+	}
+
+
+	@Autowired
+	public void setOlapDiscoverService(OlapDiscoverService olapds) {
+		olapDiscoverService = olapds;
 	}
 
 	/*
@@ -131,10 +135,10 @@ public class QueryResource {
 			@FormParam("schema") String schemaName, 
 			@PathParam("queryname") String queryName) throws ServletException 
 	{
-		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName,"");
+		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
 		olapQueryService.createNewOlapQuery(queryName, cube);
 		QueryRestPojo qrp = new QueryRestPojo(queryName);
-		AxisRestPojo axis = new AxisRestPojo("UNUSED",getAxisInfo(queryName, "UNUSED"));
+		AxisRestPojo axis = new AxisRestPojo("UNUSED",olapDiscoverService.getAllDimensions(cube));
 
 		List<AxisRestPojo> axes = new ArrayList<AxisRestPojo>();
 		axes.add(axis);
@@ -310,15 +314,15 @@ public class QueryResource {
 	 * @return a list of available dimensions.
 	 * @see DimensionRestPojo
 	 */
-	@GET
-	@Produces({"application/xml","application/json" })
-	@Path("/{queryname}/axis/{axis}")
-	public List<SaikuDimension> getAxisInfo(
-			@PathParam("queryname") String queryName, 
-			@PathParam("axis") String axisName)
-	{
-		return olapQueryService.getDimensions(queryName, axisName);
-	}
+//	@GET
+//	@Produces({"application/xml","application/json" })
+//	@Path("/{queryname}/axis/{axis}")
+//	public List<SaikuDimension> getAxisInfo(
+//			@PathParam("queryname") String queryName, 
+//			@PathParam("axis") String axisName)
+//	{
+//		return olapQueryService.getDimensions(queryName, axisName);
+//	}
 
 	/**
 	 * Remove all dimensions and selections on an axis
@@ -346,20 +350,6 @@ public class QueryResource {
 		olapQueryService.setNonEmpty(queryName, axisName, bool);
 	}
 
-	/**
-	 * Sorts axis, in relation to the measures dimension. Valid sort values are ASC, DESC, BASC, DESC and CLEAR.
-	 * 
-	 * @param queryName
-	 * @param axisName
-	 * @param sortOrder
-	 */
-	@PUT
-	@Produces({"application/xml","application/json" })
-	@Path("/{queryname}/axis/{axis}/sort/{sortorder}")
-	public void setSort(@PathParam("queryname") String queryName, @PathParam("axis") String axisName, @PathParam("sortorder") String sortOrder){
-		olapQueryService.sortAxis(queryName, axisName, sortOrder);
-	}
-
 	/*
 	 * Dimension Methods
 	 */
@@ -374,58 +364,16 @@ public class QueryResource {
 	 * 
 	 * @see HierarchyRestPojo
 	 */
-	@GET
-	@Produces({"application/xml","application/json" })
-	@Path("/{queryname}/axis/{axis}/dimension/{dimension}")
-	public List<SaikuHierarchy> getDimensionInfo(
-			@PathParam("queryname") String queryName, 
-			@PathParam("axis") String axisName, 
-			@PathParam("dimension") String dimensionName)
-	{
-		return olapQueryService.getHierarchies(queryName, dimensionName);
-	}
-
-	/**
-	 * Update a dimension.
-	 * @return 
-	 */
-	@PUT
-	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/pullup")
-	public Status pullUpDimension(
-			@PathParam("queryname") String queryName, 
-			@PathParam("axis") String axisName, 
-			@PathParam("dimension") String dimensionName, 
-			@FormParam("position") int position)
-	{
-		try {
-			olapQueryService.pullup(queryName, axisName, dimensionName, position);
-			return Status.OK;
-		} catch(Exception e) {
-			log.error("Cannot pullup dimension "+ dimensionName+ " for query (" + queryName + ")",e);
-			return Status.INTERNAL_SERVER_ERROR;
-		}
-	}
-
-	/**
-	 * Update a dimension.
-	 * @return 
-	 */
-	@PUT
-	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/pushdown")
-	public Status pushDownDimension(
-			@PathParam("queryname") String queryName, 
-			@PathParam("axis") String axisName, 
-			@PathParam("dimension") String dimensionName, 
-			@FormParam("position") int position)
-	{
-		try {
-			olapQueryService.pushdown(queryName, axisName, dimensionName, position);
-			return Status.OK;
-		} catch(Exception e) {
-			log.error("Cannot pushdown dimension "+ dimensionName+ " for query (" + queryName + ")",e);
-			return Status.INTERNAL_SERVER_ERROR;
-		}
-	}
+//	@GET
+//	@Produces({"application/xml","application/json" })
+//	@Path("/{queryname}/axis/{axis}/dimension/{dimension}")
+//	public List<SaikuHierarchy> getDimensionInfo(
+//			@PathParam("queryname") String queryName, 
+//			@PathParam("axis") String axisName, 
+//			@PathParam("dimension") String dimensionName)
+//	{
+//		return olapQueryService.getHierarchies(queryName, dimensionName);
+//	}
 
 	/**
 	 * Move a dimension from one axis to another.
@@ -473,44 +421,6 @@ public class QueryResource {
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
-
-	/*
-	 * Hierarchy Methods
-	 */
-
-	/**
-	 * Get hierarchy info.
-	 * @return 
-	 */
-	@GET
-	@Produces({"application/xml","application/json" })
-	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/hierarchy/{hierarchy}")
-	public List<SaikuLevel> getHierarchyInfo(
-			@PathParam("queryname") String queryName, 
-			@PathParam("axis") String axisName, 
-			@PathParam("dimension") String dimensionName, 
-			@PathParam("hierarchy") String hierarchyName)
-	{
-		return  olapQueryService.getLevels(queryName, dimensionName, hierarchyName);
-	}
-
-	/**
-	 * Get level information.
-	 * @return 
-	 */
-	@GET
-	@Produces({"application/xml","application/json" })
-	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/hierarchy/{hierarchy}/{level}")
-	public List<SaikuMember> getLevelInfo(
-			@PathParam("queryname") String queryName, 
-			@PathParam("axis") String axisName, 
-			@PathParam("dimension") String dimensionName, 
-			@PathParam("hierarchy") String hierarchyName, 
-			@PathParam("level") String levelName)
-	{
-		return olapQueryService.getLevelMembers(queryName, dimensionName, hierarchyName, levelName);
-	}
-   
 	/**
 	 * Move a member.
 	 * @return 

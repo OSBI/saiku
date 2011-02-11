@@ -39,16 +39,11 @@ import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
 import org.olap4j.query.Selection;
-import org.olap4j.query.SortOrder;
 import org.saiku.olap.dto.SaikuCube;
-import org.saiku.olap.dto.SaikuDimension;
-import org.saiku.olap.dto.SaikuHierarchy;
-import org.saiku.olap.dto.SaikuLevel;
-import org.saiku.olap.dto.SaikuMember;
+import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query.OlapQuery;
 import org.saiku.olap.query.QueryDeserializer;
-import org.saiku.olap.util.ObjectUtil;
 import org.saiku.olap.util.OlapResultSetUtil;
 import org.saiku.olap.util.formatter.CellSetFormatter;
 import org.saiku.olap.util.formatter.HierarchicalCellSetFormatter;
@@ -72,25 +67,22 @@ public class OlapQueryService {
 		olapDiscoverService = os;
 	}
 
-	public boolean createNewOlapQuery(String queryName, SaikuCube cube) {
+	public SaikuQuery createNewOlapQuery(String queryName, SaikuCube cube) {
 		try {
 			Cube cub = olapDiscoverService.getNativeCube(cube);
 			if (cub != null) {
-				OlapQuery q = new OlapQuery(new Query(queryName, cub),cube);
-				queries.put(queryName, q);
-				return true;
+				OlapQuery query = new OlapQuery(new Query(queryName, cub),cube);
+				queries.put(queryName, query);
+				return new SaikuQuery(query.getName(),query.getSaikuCube());
 			}
 		} catch (Exception e) {
 			log.error("Cannot create new query for cube :" + cube,e);
 		}
-		return false;
+		return null;
 
 	}
-	public boolean createNewOlapQuery(String xml) {
-		return createNewOlapQuery(null, xml);
-	}
-	
-	public boolean createNewOlapQuery(String name, String xml) {
+
+	public SaikuQuery createNewOlapQuery(String name, String xml) {
 		try {
 			SaikuCube scube = QueryDeserializer.getCube(xml);
 			OlapConnection con = olapDiscoverService.getNativeConnection(scube.getConnectionName());
@@ -101,7 +93,7 @@ public class OlapQueryService {
 			else {
 				queries.put(name, query);
 			}
-			return true;
+			return new SaikuQuery(query.getName(),query.getSaikuCube());
 		} catch (Exception e) {
 			throw new SaikuServiceException("Error creating query from xml",e);
 		}
@@ -158,20 +150,6 @@ public class OlapQueryService {
 	
 	public void swapAxes(String queryName) {
 		getQuery(queryName).swapAxes();
-	}
-
-	public List<SaikuDimension> getDimensions(String queryName, String axis) {
-		OlapQuery q = getQuery(queryName);
-		List<SaikuDimension> dimensions = new ArrayList<SaikuDimension>();
-		QueryAxis qa;
-		try {
-			qa = q.getAxis(axis);
-			dimensions.addAll(ObjectUtil.convertQueryDimensions(qa.getDimensions()));
-		} catch (Exception e) {
-			throw new SaikuServiceException("Cannot get dimensions for query ("+queryName+") of axis :"+ axis);
-		}
-		return dimensions;
-
 	}
 
 	public boolean includeMember(String queryName, String dimensionName, String uniqueMemberName, String selectionType, int memberposition){
@@ -286,66 +264,6 @@ public class OlapQueryService {
 		moveDimension(queryName, unusedName , dimensionName, -1);
 	}
 
-
-	public List<String> getDimension(String queryName, String axis) throws SaikuServiceException {
-		List<String> dimensions = new ArrayList<String>();
-		OlapQuery q = getQuery(queryName);
-		
-		QueryAxis qa;
-		try {
-			qa = q.getAxis(axis);
-			if (qa != null) {
-				for (QueryDimension dim : qa.getDimensions()) {
-					dimensions.add(dim.getName());
-				}
-			}
-		} catch (Exception e) {
-			throw new SaikuServiceException("Error getting dimensions for query ("+queryName +") axis ( "+axis+ " )",e);
-		}
-		return dimensions;
-
-	}
-
-	public List<SaikuHierarchy> getHierarchies(String queryName, String dimensionName) {
-		OlapQuery q = getQuery(queryName);
-		List<SaikuHierarchy> hierarchies = new ArrayList<SaikuHierarchy>();
-		QueryDimension dim = q.getDimension(dimensionName);
-		if (dim != null) {
-			hierarchies.addAll(ObjectUtil.convertHierarchies(dim.getDimension().getHierarchies()));
-		}
-		return hierarchies;
-	}
-
-	public List<SaikuLevel> getLevels(String queryName, String dimensionName, String hierarchyName) {
-		OlapQuery q = getQuery(queryName);
-		List<SaikuLevel> levels = new ArrayList<SaikuLevel>();
-		QueryDimension dim = q.getDimension(dimensionName);
-		if (dim != null) {
-			Hierarchy hierarchy = dim.getDimension().getHierarchies().get(hierarchyName);
-			levels = ObjectUtil.convertLevels(hierarchy.getLevels());
-		}
-		return levels;
-	}
-
-	public List<SaikuMember> getLevelMembers(String queryName, String dimensionName, String hierarchyName, String levelName) {
-		OlapQuery q = getQuery(queryName);
-		List<SaikuMember> members = new ArrayList<SaikuMember>();
-		QueryDimension dim = q.getDimension(dimensionName);
-		if (dim != null) {
-			Hierarchy hierarchy = dim.getDimension().getHierarchies().get(hierarchyName);
-			Level level =  hierarchy.getLevels().get(levelName);
-				try {
-					members = ObjectUtil.convertMembers(level.getMembers());
-				} catch (OlapException e) {
-					throw new SaikuServiceException("Error getting members for level" + level.getUniqueName());
-				}
-		}
-		else {
-			throw new SaikuServiceException("Cannot find dimension" + dimensionName);
-		}
-		return members;
-	}
-
 	public void clearQuery(String queryName) {
 		OlapQuery query = getQuery(queryName);
 		query.clearAllQuerySelections();
@@ -370,43 +288,10 @@ public class OlapQueryService {
 		}
 	}
 
-	public void pullup(String queryName, String axisName, String dimensionName, int position) {
-		OlapQuery query = getQuery(queryName);
-		QueryDimension dimension = query.getDimension(dimensionName);
-		QueryAxis newAxis = dimension.getAxis();
-		newAxis.pullUp(position);
-
-	}
-
-	public void pushdown(String queryName, String axisName, String dimensionName, int position) {
-		OlapQuery query = getQuery(queryName);
-		QueryDimension dimension = query.getDimension(dimensionName);
-		QueryAxis newAxis = dimension.getAxis();
-		newAxis.pushDown(position);
-
-	}
-
 	public void setNonEmpty(String queryName, String axisName, boolean bool) {
 		OlapQuery query = getQuery(queryName);
 		QueryAxis newAxis = query.getAxis(Axis.Standard.valueOf(axisName));
 		newAxis.setNonEmpty(bool);
-	}
-
-	public void sortAxis(String queryName, String axisName, String sortOrder) {
-		OlapQuery query = getQuery(queryName);
-		QueryAxis newAxis = query.getAxis(Axis.Standard.valueOf(axisName));
-		if (newAxis != null) {
-			if (sortOrder.equals("CLEAR")){
-				newAxis.clearSort();
-			} else {
-				SortOrder sort = SortOrder.valueOf(sortOrder);
-				try {
-					newAxis.sort(sort);
-				} catch (OlapException e) {
-					throw new SaikuServiceException("Cannot sort axis" + newAxis + " with SortOrder" + sort.name());
-				}
-			}
-		}
 	}
 
 	public void setProperties(String queryName, Properties props) {

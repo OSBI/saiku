@@ -99,7 +99,7 @@ public class QueryDeserializer {
         	String connectionName = queryElement.getAttributeValue("connection");
         	String catalogName = queryElement.getAttributeValue("catalog");
         	String schemaName = queryElement.getAttributeValue("schema");
-        	return new SaikuCube(connectionName,cubeName,catalogName,schemaName,"");
+        	return new SaikuCube(connectionName,cubeName,catalogName,schemaName);
         }
         throw new Exception("Cant find <QueryModel> nor <MDX> Query");
     }
@@ -124,7 +124,7 @@ public class QueryDeserializer {
                 if (qmElement != null) {
                     qm = createEmptyQuery(queryName,catalogName, schemaName, cubeName);
                     manipulateQuery(qmElement);
-                    SaikuCube cube = new SaikuCube(connectionName,cubeName,catalogName,schemaName,null);
+                    SaikuCube cube = new SaikuCube(connectionName,cubeName,catalogName,schemaName);
                     return new OlapQuery(qm,cube);
                 }
                 else

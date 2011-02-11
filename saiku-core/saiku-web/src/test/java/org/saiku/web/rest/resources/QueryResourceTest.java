@@ -31,10 +31,8 @@ import javax.ws.rs.core.Response.Status;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.saiku.olap.dto.SaikuHierarchy;
 import org.saiku.web.rest.objects.QueryRestPojo;
 import org.saiku.web.rest.objects.resultset.Cell;
-import org.saiku.web.rest.resources.QueryResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -119,12 +117,6 @@ public class QueryResourceTest {
 		// Make sure an OK status was returned.
 		assertEquals(Status.OK, returnedStatus);
 
-		// Get the dimension
-		List<SaikuHierarchy> output = qs.getDimensionInfo("TestQuery1", "ROWS",
-				"Store");
-
-		// Make sure it has the correct name.
-		assertEquals("Store", output.get(0).getName());
 	}
 
 	@Test

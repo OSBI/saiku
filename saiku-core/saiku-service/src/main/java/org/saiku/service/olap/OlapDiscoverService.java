@@ -29,6 +29,7 @@ import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimension;
 import org.saiku.olap.dto.SaikuHierarchy;
 import org.saiku.olap.dto.SaikuLevel;
+import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.util.exception.SaikuServiceException;
@@ -87,7 +88,7 @@ public class OlapDiscoverService {
 		}
 	}
 	
-	public List<SaikuHierarchy> getAllHierarchies(SaikuCube cube, String dimensionName) throws SaikuServiceException {
+	public List<SaikuHierarchy> getAllDimensionHierarchies(SaikuCube cube, String dimensionName) {
 		try {
 			SaikuDimension dim = metaExplorer.getDimension(cube, dimensionName);
 			if (dim == null) {
@@ -100,13 +101,30 @@ public class OlapDiscoverService {
 		}
 	}
 
-	public List<SaikuLevel> getAllLevels(SaikuCube cube, String dimensionName, String hierarchyName) throws SaikuServiceException {
+	public List<SaikuLevel> getAllHierarchyLevels(SaikuCube cube, String dimensionName, String hierarchyName) {
 		try {
 			return  metaExplorer.getAllLevels(cube, dimensionName, hierarchyName);
 		} catch (SaikuOlapException e) {
 			throw new SaikuServiceException("Cannot get all levels for cube ( " + cube 
 					+ " ) dimension ( " + dimensionName + " ) hierarchy ( " + hierarchyName + " )", e);
 
+		}
+	}
+
+	public List<SaikuMember> getLevelMembers(SaikuCube cube, String dimensionName, String hierarchyName, String levelName) {
+		try {
+			return  metaExplorer.getAllMembers(cube, dimensionName, hierarchyName, levelName);
+		} catch (SaikuOlapException e) {
+			throw new SaikuServiceException("Cannot get all members for cube ( " + cube 
+					+ " ) dimension ( " + dimensionName + " ) hierarchy ( " + hierarchyName + " )", e);
+		}
+	}
+	
+	public List<SaikuMember> getMeasures(SaikuCube cube) {
+		try {
+			return  metaExplorer.getAllMeasures(cube);
+		} catch (SaikuOlapException e) {
+			throw new SaikuServiceException("Cannot get all measures for cube ( " + cube + " )", e);
 		}
 	}
 	

@@ -74,16 +74,12 @@ public class Matrix {
     /**
      * Sets the value at a particular coordinate
      * 
-     * @param x
-     *            X coordinate
-     * @param y
-     *            Y coordinate
-     * @param value
-     *            Value
-     * @param right
-     *            Whether value is right-justified
-     * @param sameAsPrev
-     *            Whether value is the same as the previous value. If true, some formats separators between cells
+     * @param x - X coordinate
+     * @param y - Y coordinate
+     * @param value - Value
+     * @param right - Whether value is right-justified
+     * @param sameAsPrev - Whether value is the same as the previous value. 
+     * 						If true, some formats separators between cells
      */
     public void set(final int x, final int y, final MemberCell value) {
         map.put(Arrays.asList(x, y), value);
@@ -132,20 +128,15 @@ public class Matrix {
     }
 
     /**
-     * 
      * Set the header/row data offset.
-     * 
      * @param offset
      */
     public void setOffset(final int offset) {
-        // TODO Auto-generated method stub
         this.offset = offset;
     }
 
     /**
-     * 
      * Return the header/row data offset.
-     * 
      * @return offset
      */
     public int getOffset() {

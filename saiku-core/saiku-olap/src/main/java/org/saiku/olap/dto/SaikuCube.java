@@ -25,18 +25,17 @@ public class SaikuCube extends AbstractSaikuObject {
 	private String connectionName;
 	private String catalogName;
 	private String schemaName;
-	private Object cubeDescription;
 
 	public SaikuCube() {
 		super(null,null);
 		throw new RuntimeException("Unsupported Constructor. Serialization only");
 	}
-	public SaikuCube(String connectionName, String cubeName, String catalog, String schema, String description) {
+
+	public SaikuCube(String connectionName, String cubeName, String catalog, String schema) {
 		super(cubeName,cubeName);
 		this.connectionName = connectionName;
 		this.catalogName = catalog;
 		this.schemaName = schema;
-		this.cubeDescription = description;
 	}
 
 	@Override
@@ -58,9 +57,6 @@ public class SaikuCube extends AbstractSaikuObject {
 		return connectionName;
 	}
 
-	public Object getCubeDescription() {
-		return cubeDescription;
-	}
 	public String getSchemaName() {
 		return schemaName;
 	}

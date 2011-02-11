@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -41,6 +40,8 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.saiku.olap.dto.SaikuQuery;
+import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.web.rest.objects.AxisRestPojo;
 import org.saiku.web.rest.objects.QueryRestPojo;
@@ -71,6 +72,8 @@ public class BasicRepositoryResource {
     
     private URL repoURL;
 
+	private OlapDiscoverService olapDiscoverService;
+
     public void setPath(String path) {
 		this.path = path;
 		repoURL = this.getClass().getClassLoader().getResource(path);
@@ -80,6 +83,12 @@ public class BasicRepositoryResource {
 	public void setOlapQueryService(OlapQueryService olapqs) {
 		olapQueryService = olapqs;
 	}
+	
+	@Autowired
+	public void setOlapDiscoverService(OlapDiscoverService olapds) {
+		olapDiscoverService = olapds;
+	}
+
 	
 	@Autowired
 	public void setQueryResource(QueryResource qr) {
@@ -184,15 +193,12 @@ public class BasicRepositoryResource {
 					while ((chunk = br.readLine()) != null) {
 						xml += chunk;
 					}
-					if (olapQueryService.createNewOlapQuery(queryName, xml)) {
+					SaikuQuery squery = olapQueryService.createNewOlapQuery(queryName, xml);
+					if (squery != null) {
 						QueryRestPojo qrp = new QueryRestPojo(queryName);
-						AxisRestPojo axis = new AxisRestPojo("UNUSED", queryResource.getAxisInfo(queryName, "UNUSED"));
-						AxisRestPojo axisCol = new AxisRestPojo("COLUMNS", queryResource.getAxisInfo(queryName, "COLUMNS"));
-						AxisRestPojo axisRow = new AxisRestPojo("ROWS", queryResource.getAxisInfo(queryName, "ROWS"));
+						AxisRestPojo axis = new AxisRestPojo("UNUSED", olapDiscoverService.getAllDimensions(squery.getCube()));
 						List<AxisRestPojo> axes = new ArrayList<AxisRestPojo>();
 						axes.add(axis);
-						axes.add(axisRow);
-						axes.add(axisCol);
 						qrp.setAxes(axes);
 						return qrp;
 					}

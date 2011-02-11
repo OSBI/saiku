@@ -4,21 +4,18 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import jxl.CellView;
 import jxl.Workbook;
 import jxl.format.Alignment;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
 import jxl.format.Colour;
 import jxl.write.Label;
-import jxl.write.Number;
 import jxl.write.NumberFormat;
 import jxl.write.WritableCellFormat;
 import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
-import jxl.write.WritableFont.FontName;
 
 import org.olap4j.CellSet;
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
@@ -84,9 +81,6 @@ public class ExcelExporter {
 				for(int i =  0; i < resultSet.length; i++){
 					String[] vs = resultSet[i];
 					for(int j = 0; j < vs.length ; j++){
-
-						//cf = i == 0 ? hcs : j != 0 ? cs : (i % 2 != 0 ? hcs : rcs);
-						
 						String value = vs[j];
 						if(value == null || value == "null")  //$NON-NLS-1$
 							value=""; //$NON-NLS-1$
@@ -105,11 +99,9 @@ public class ExcelExporter {
 					}
 				}
 				for(int k = 0;k<columnwidth.length;k++) {
-					sheet.setColumnView(k, (int) (columnwidth[k]*1.3));
+					sheet.setColumnView(k, (int) (columnwidth[k]*1.4));
 				}
 				sheet.insertColumn(0);
-				sheet.insertColumn(0);
-				sheet.insertRow(0);
 				sheet.insertRow(0);
 				
 				wb.write();
