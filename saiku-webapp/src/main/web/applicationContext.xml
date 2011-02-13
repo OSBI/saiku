@@ -2,27 +2,37 @@
 
 <beans:beans xmlns="http://www.springframework.org/schema/security"
   xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:context="http://www.springframework.org/schema/context"
   xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
-              http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd">
+              http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+			   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+  
+  <context:annotation-config/>
+  
+	<beans:bean id="propertyConfigurer"
+   class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+ <beans:property name="location" value="WEB-INF/test.properties">
+ </beans:property>
+</beans:bean>
 
-	
   <http auto-config='true' access-denied-page="/login.jsp">
-  <!--  <intercept-url pattern="/rest/**" access="ROLE_USER" />
-    <intercept-url pattern="/json/photos" access="ROLE_USER" />
-    <intercept-url pattern="/photo/**" access="ROLE_USER" />-->
     <intercept-url pattern="/oauth/**" access="ROLE_USER" />
 	<intercept-url pattern="/serverdocs/**" access="ROLE_USER" />
     <intercept-url pattern="/request_token_authorized.jsp" access="ROLE_USER" />
-    <intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+    <intercept-url pattern="/rest/**" access="ROLE_USER" />
+	<intercept-url pattern="/json/**" access="ROLE_USER" />
+	<intercept-url pattern="/xml/**" access="ROLE_USER" />
+	<intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 	
 	<!-- HTTP BASIC Authentication, PASSWORDS ARE SENT OVER THE WIRE IN PLAIN TEXT-->
  	<http-basic/>
 	
     <remember-me key="1294534413302"/>
     <anonymous key="1294534413302" username="anonymous" granted-authority="ANONYMOUS"/>
+	
     <form-login authentication-failure-url="/login.jsp" default-target-url="/index.jsp" login-page="/login.jsp" login-processing-url="/login.do"/>
     <logout logout-success-url="/index.jsp" logout-url="/logout.do"/>
   </http>
