@@ -86,7 +86,7 @@ ref="digestProcessingFilterEntryPoint" />
 
 <beans:bean id="digestProcessingFilter" 
     class="org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
-  <beans:property name="userDetailsService" ref="uds"/>
+  <beans:property name="userDetailsService" ref="userDetailsService"/>
   <beans:property name="authenticationEntryPoint" ref="digestProcessingFilterEntryPoint"/>
  <!-- <beans:property name="userCache" ref="userCache"/>-->
 </beans:bean>
@@ -98,7 +98,7 @@ ref="digestProcessingFilterEntryPoint" />
   <beans:property name="nonceValiditySeconds" value="10"/>
 </beans:bean>
   
-  <!--  <beans:bean id="userDetailsService"
+    <beans:bean id="userDetailsService"
     class="org.springframework.security.core.userdetails.memory.InMemoryDaoImpl">
     <beans:property name="userProperties">
       <beans:bean
@@ -109,15 +109,16 @@ ref="digestProcessingFilterEntryPoint" />
       </beans:bean>
 	  </beans:property>
 	  </beans:bean>
-	  -->
+	  
 	   <authentication-manager alias="authenticationManager">
 
 	  <authentication-provider>
-<user-service id="uds">
-<user name="jimi" password="jimi"
+<user-service id="uds" properties="/WEB-INF/users.properties">
+<!--<user name="jimi" password="jimi"
 authorities="ROLE_USER, ROLE_ADMIN" />
 <user name="bob" password="bob"
-authorities="ROLE_USER" />
+authorities="ROLE_USER" />-->
+
 </user-service>
 </authentication-provider>
   </authentication-manager>
