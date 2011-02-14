@@ -68,7 +68,7 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 				throw new Exception("repo URL is null");
 			}
 		} catch (Exception e) {
-			throw new SaikuServiceException(this.getClass().getName(),e);
+			throw new SaikuServiceException(e.getMessage(),e);
 		}		
 	}
 
