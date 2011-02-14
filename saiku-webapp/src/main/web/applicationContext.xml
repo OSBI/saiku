@@ -11,14 +11,21 @@
 			   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
   
   <context:annotation-config/>
+ 
+ <global-method-security secured-annotations="enabled">
+		<!-- AspectJ pointcut expression that locates our "post" method and applies security that way
+		<protect-pointcut expression="execution(* bigbank.*Service.post*(..))" access="ROLE_TELLER"/>
+		-->
+	</global-method-security>
   
-	<beans:bean id="propertyConfigurer"
+  
+<!--	<beans:bean id="propertyConfigurer"
    class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
  <beans:property name="location" value="WEB-INF/test.properties">
  </beans:property>
-</beans:bean>
+</beans:bean>-->
 
-  <http auto-config='true' access-denied-page="/login.jsp">
+ <!-- <http auto-config='false' access-denied-page="/login.jsp">
     <intercept-url pattern="/oauth/**" access="ROLE_USER" />
 	<intercept-url pattern="/serverdocs/**" access="ROLE_USER" />
     <intercept-url pattern="/request_token_authorized.jsp" access="ROLE_USER" />
@@ -27,24 +34,100 @@
 	<intercept-url pattern="/xml/**" access="ROLE_USER" />
 	<intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 	
-	<!-- HTTP BASIC Authentication, PASSWORDS ARE SENT OVER THE WIRE IN PLAIN TEXT-->
  	<http-basic/>
 	
-    <remember-me key="1294534413302"/>
-    <anonymous key="1294534413302" username="anonymous" granted-authority="ANONYMOUS"/>
+    <anonymous key="1297600520503" username="anonymous" granted-authority="ANONYMOUS"/>
 	
     <form-login authentication-failure-url="/login.jsp" default-target-url="/index.jsp" login-page="/login.jsp" login-processing-url="/login.do"/>
     <logout logout-success-url="/index.jsp" logout-url="/logout.do"/>
   </http>
+-->
+<beans:bean id="org.springframework.security.filterChainProxy"
+class="org.springframework.security.web.FilterChainProxy">
+<filter-chain-map path-type="ant">
+<filter-chain pattern="/**"
+filters="httpSessionContextIntegrationFilter,digestProcessingFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
+</filter-chain-map>
+</beans:bean>
 
-  <authentication-manager>
-    <authentication-provider>
+
+<beans:bean id="filterSecurityInterceptor"
+class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+<beans:property name="authenticationManager"
+ref="authenticationManager" />
+<beans:property name="accessDecisionManager"
+ref="accessDecisionManager" />
+<beans:property name="objectDefinitionSource">
+<filter-invocation-definition-source>
+<intercept-url pattern="/**"
+access="ROLE_USER" />
+</filter-invocation-definition-source>
+</beans:property>
+</beans:bean>
+
+<beans:bean id="accessDecisionManager"
+class="org.springframework.security.access.vote.AffirmativeBased">
+<beans:property name="allowIfAllAbstainDecisions" value="false" />
+<beans:property name="decisionVoters">
+<beans:list>
+<beans:bean
+class="org.springframework.security.access.vote.RoleVoter" />
+</beans:list>
+</beans:property>
+</beans:bean>
+
+<beans:bean id="httpSessionContextIntegrationFilter"
+class="org.springframework.security.web.context.HttpSessionContextIntegrationFilter" />
+<beans:bean id="exceptionTranslationFilter"
+class="org.springframework.security.web.access.ExceptionTranslationFilter">
+<beans:property name="authenticationEntryPoint"
+ref="digestProcessingFilterEntryPoint" />
+</beans:bean>
+
+<beans:bean id="digestProcessingFilter" 
+    class="org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
+  <beans:property name="userDetailsService" ref="uds"/>
+  <beans:property name="authenticationEntryPoint" ref="digestProcessingFilterEntryPoint"/>
+ <!-- <beans:property name="userCache" ref="userCache"/>-->
+</beans:bean>
+
+<beans:bean id="digestProcessingFilterEntryPoint"
+    class="org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
+  <beans:property name="realmName" value="Contacts Realm via Digest Authentication"/>
+  <beans:property name="key" value="acegi"/>
+  <beans:property name="nonceValiditySeconds" value="10"/>
+</beans:bean>
+  
+  <!--  <beans:bean id="userDetailsService"
+    class="org.springframework.security.core.userdetails.memory.InMemoryDaoImpl">
+    <beans:property name="userProperties">
+      <beans:bean
+        class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <beans:property name="location"
+          value="/WEB-INF/users.properties" />
+
+      </beans:bean>
+	  </beans:property>
+	  </beans:bean>
+	  -->
+	   <authentication-manager alias="authenticationManager">
+
+	  <authentication-provider>
+<user-service id="uds">
+<user name="jimi" password="jimi"
+authorities="ROLE_USER, ROLE_ADMIN" />
+<user name="bob" password="bob"
+authorities="ROLE_USER" />
+</user-service>
+</authentication-provider>
+  </authentication-manager>
+    <!--<authentication-provider>
       <user-service>
         <user name="marissa" password="koala" authorities="ROLE_USER" />
         <user name="paul" password="emu" authorities="ROLE_USER" />
       </user-service>
     </authentication-provider>
-  </authentication-manager>
+  </authentication-manager>-->
 
   <beans:bean id="tokenServices" class="org.springframework.security.oauth2.provider.token.InMemoryOAuth2ProviderTokenServices">
     <beans:property name="supportRefreshToken" value="true"/>
