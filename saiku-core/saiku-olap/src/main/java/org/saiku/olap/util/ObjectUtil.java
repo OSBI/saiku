@@ -127,6 +127,7 @@ public class ObjectUtil {
 
 	private static SaikuSelection convert(Selection sel) {
 		Type type;
+		System.out.println("is dimension or level: "+sel.getRootElement().getClass());
 		if (sel.getRootElement().getClass().equals(Level.class)) {
 			type = SaikuSelection.Type.LEVEL;
 		} else {

@@ -23,21 +23,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.olap4j.OlapConnection;
-import org.saiku.datasources.SaikuDatasources;
 import org.saiku.datasources.connection.ISaikuConnection;
+import org.saiku.datasources.connection.SaikuConnectionFactory;
+import org.saiku.datasources.datasource.SaikuDatasource;
 
 public class DatasourceService {
 	
-	private SaikuDatasources datasources;
+	private IDatasourceManager datasources;
 	
-	public void setDatasources(SaikuDatasources ds) {
+	private Map<String,ISaikuConnection> connections = new HashMap<String,ISaikuConnection>();
+	
+	public void setDatasourceManager(IDatasourceManager ds) {
 		datasources = ds;
+		init();
 	}
 	
-	public Map<String,OlapConnection> getOlapDatasources() {
+	private void init() {
+		for (SaikuDatasource sd : datasources.getDatasources().values()) {
+			ISaikuConnection con = SaikuConnectionFactory.getConnection(sd);
+			if (con.initialized()) {
+				connections.put(con.getName(), con);
+			}
+		}
+	}
+	
+	public Map<String,OlapConnection> getOlapConnections() {
 		Map<String, OlapConnection> resultDs = new HashMap<String,OlapConnection>();
-		Map<String, ISaikuConnection> storedDs =  datasources.getAllConnections();
-		for (ISaikuConnection con: storedDs.values()) {
+		for (ISaikuConnection con: connections.values()) {
 			if (con.getConnection() instanceof OlapConnection) {
 				resultDs.put(con.getName(), (OlapConnection)con.getConnection());
 			}
@@ -46,12 +58,37 @@ public class DatasourceService {
 		return resultDs;
 	}
 	
-	public OlapConnection getOlapDatasource(String name) {
-		Object o = datasources.get(name);
+	public OlapConnection getOlapConnection(String name) {
+		Object o = connections.get(name);
 		if (o != null && o instanceof OlapConnection) {
 			return (OlapConnection) o;
 		}
 		return null;
+	}
+	
+	public void reload() {
+		datasources.load();
+		init();
+	}
+	
+	public void addDatasource(SaikuDatasource datasource) {
+		datasources.addDatasource(datasource);
+	}
+	
+	public void setDatasource(SaikuDatasource datasource) {
+		datasources.setDatasource(datasource);
+	}
+	
+	public void removeDatasource(String datasourceName) {
+		datasources.removeDatasource(datasourceName);
+	}
+	
+	public SaikuDatasource getDatasource(String datasourceName) {
+		return datasources.getDatasource(datasourceName);
+	}
+	
+	public Map<String,SaikuDatasource> getDatasources() {
+		return datasources.getDatasources();
 	}
 
 }

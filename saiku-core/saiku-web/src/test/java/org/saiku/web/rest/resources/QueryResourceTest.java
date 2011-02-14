@@ -32,7 +32,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.saiku.olap.dto.SaikuQuery;
-import org.saiku.web.rest.objects.QueryRestPojo;
 import org.saiku.web.rest.objects.resultset.Cell;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;

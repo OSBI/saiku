@@ -41,7 +41,7 @@ public class OlapDiscoverService {
 	
 	public void setDatasourceService(DatasourceService ds) {
 		datasourceService = ds;
-		metaExplorer = new OlapMetaExplorer(datasourceService.getOlapDatasources());
+		metaExplorer = new OlapMetaExplorer(datasourceService.getOlapConnections());
 	}
 	
 	public List<SaikuCube> getAllCubes() {

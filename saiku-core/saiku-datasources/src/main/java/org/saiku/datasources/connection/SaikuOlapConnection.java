@@ -13,17 +13,22 @@ public class SaikuOlapConnection implements ISaikuConnection {
 	private Properties properties;
 	private OlapConnection olapConnection;
 
-	public void setProperties(Properties props) {
-		properties = props;
+	public SaikuOlapConnection(String name, Properties props) {
+		this.name = name;
+		this.properties = props;
+	}
+	public SaikuOlapConnection(Properties props) {
+		this.properties = props;
+		this.name = props.getProperty(ISaikuConnection.NAME_KEY);
 	}
 	
 	public boolean connect() {
 		return connect(properties);
 	}
 
+	
 	public boolean connect(Properties props) {
 		String driver = props.getProperty(ISaikuConnection.DRIVER_KEY);
-		name = props.getProperty(ISaikuConnection.NAME_KEY);
 		String url = props.getProperty(ISaikuConnection.URL_KEY);
 		properties = props;
 
@@ -40,8 +45,8 @@ public class SaikuOlapConnection implements ISaikuConnection {
 			if (tmpolapConnection == null) {
 				throw new Exception("Connection is null");
 			}
+			System.out.println("Catalogs:" + tmpolapConnection.getMetaData().getOlapCatalogs().size());
 			olapConnection = tmpolapConnection;
-			System.out.println("Catalogs:" + olapConnection.getCatalogs().size());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -61,7 +66,10 @@ public class SaikuOlapConnection implements ISaikuConnection {
 	public Object getConnection() {
 		return olapConnection;
 	}
-
+	
+	public void setProperties(Properties props) {
+		properties = props;
+	}
 
 	public String getName() {
 		return name;
