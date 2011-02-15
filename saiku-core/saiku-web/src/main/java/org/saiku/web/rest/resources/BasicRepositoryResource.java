@@ -115,9 +115,6 @@ public class BasicRepositoryResource {
 		try{
 			String uri = repoURL.toURI().toString();
 			if (uri != null) {
-				if (!uri.toString().endsWith(String.valueOf(File.separatorChar))) {
-					uri += String.valueOf(File.separatorChar);
-				}
 				uri += queryName;
 				File queryFile = new File(new URI(uri));
 				if (queryFile.delete()) {
@@ -144,9 +141,6 @@ public class BasicRepositoryResource {
 			}
 			String uri = repoURL.toURI().toString();
 			if (uri != null && xml != null) {
-				if (!uri.toString().endsWith(String.valueOf(File.separatorChar))) {
-					uri += String.valueOf(File.separatorChar);
-				}
 				uri += queryName;
 				File queryFile = new File(new URI(uri));
 				if (queryFile.exists()) {
@@ -177,9 +171,6 @@ public class BasicRepositoryResource {
 		try{
 			String uri = repoURL.toURI().toString();
 			if (uri != null) {
-				if (!uri.toString().endsWith(String.valueOf(File.separatorChar))) {
-					uri += String.valueOf(File.separatorChar);
-				}
 				uri += queryName;
 				File queryFile = new File(new URI(uri));
 				if (queryFile.exists()) {

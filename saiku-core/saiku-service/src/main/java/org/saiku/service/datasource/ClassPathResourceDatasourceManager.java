@@ -47,9 +47,6 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 
 					for (String file : files) {
 						String uri = repoURL.toURI().toString();
-						if (!uri.toString().endsWith(String.valueOf(File.separatorChar))) {
-							uri += String.valueOf(File.separatorChar);
-						}
 						uri += file;
 						File f = new File(new URI(uri));
 						Properties props = new Properties();
@@ -76,10 +73,7 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 		try { 
 			String uri = repoURL.toURI().toString();
 			if (uri != null && datasource != null) {
-				if (!uri.toString().endsWith(String.valueOf(File.separatorChar))) {
-					uri += String.valueOf(File.separatorChar);
-				}
-				uri += datasource.getName();
+				uri += datasource.getName().replace(" ", "_");
 				File dsFile = new File(new URI(uri));
 				if (dsFile.exists()) {
 					dsFile.delete();
@@ -120,9 +114,8 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 		try {
 			String uri = repoURL.toURI().toString();
 			if (uri != null) {
-				if (!uri.toString().endsWith(String.valueOf(File.separatorChar))) {
-					uri += String.valueOf(File.separatorChar);
-				}
+				// seems like we don't have to do this anymore
+				//uri.toString().endsWith(String.valueOf(File.separatorChar))) {
 				uri += datasourceName;
 				File dsFile = new File(new URI(uri));
 				if (dsFile.delete()) {
