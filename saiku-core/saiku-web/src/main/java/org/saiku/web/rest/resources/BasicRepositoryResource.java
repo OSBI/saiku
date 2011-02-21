@@ -26,6 +26,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.net.URI;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -41,6 +45,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
+import org.saiku.web.rest.objects.SavedQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +62,7 @@ import org.springframework.stereotype.Component;
 @Scope("request")
 @XmlAccessorType(XmlAccessType.NONE)
 public class BasicRepositoryResource {
-	
+
     private static final Logger log = LoggerFactory.getLogger(BasicRepositoryResource.class);
 
     private OlapQueryService olapQueryService;
@@ -93,11 +98,19 @@ public class BasicRepositoryResource {
 
     @GET
     @Produces({"application/json" })
-     public String[] getSavedQueries() {
+     public List<SavedQuery> getSavedQueries() {
+    	List<SavedQuery> queries = new ArrayList<SavedQuery>();
     	try {
     		      if (repoURL != null) {
     		    	  if ( repoURL.getProtocol().equals("file")) {
-    		    		  return new File(repoURL.toURI()).list();
+    		    		  File[] files = new File(repoURL.toURI()).listFiles();
+    		    		  for (File file : files) {
+    		    			  if (!file.isHidden()) {
+    		    				  SimpleDateFormat sf = new SimpleDateFormat("dd - MMM - yyyy HH:mm:ss");
+    		    				  SavedQuery sq = new SavedQuery(file.getName(), sf.format(new Date(file.lastModified())));
+    		    				  queries.add(sq);
+    		    			  }
+    		    		  }
     		    	  }
     		      }
     		      else {
@@ -106,7 +119,7 @@ public class BasicRepositoryResource {
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 		}
-		return new String[0];
+		return queries;
     }
     
 	@DELETE

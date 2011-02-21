@@ -23,11 +23,14 @@ package org.saiku.web.rest.resources;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response.Status;
 
 import org.saiku.datasources.datasource.SaikuDatasource;
@@ -78,5 +81,15 @@ public class DataSourceResource {
 	public SaikuDatasource getDatasource(@PathParam("datasource") String datasourceName){
     	return datasourceService.getDatasource(datasourceName);
     }
+
+//    @POST
+//    @Consumes({"application/json" })
+//	@Path("/{datasource}")
+//	public Status addDatasource(@PathParam("datasource") String datasourceName , @Context SaikuDatasource ds){
+//    	System.out.println("ds not null:" + (ds != null));
+//    	System.out.println("ds name:"+ds.getName());
+//    	datasourceService.addDatasource(ds);
+//    	return Status.OK;
+//    }
 
 }
