@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-  <!--Basic application beans.-->
-  <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-    <property name="prefix" value="/WEB-INF/jsp/"/>
-    <property name="suffix" value=".jsp"/>
-  </bean>
+	<!--Basic application beans.-->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
 
-  <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-    <property name="mappings">
-      <props>
-        <prop key="/oauth/confirm_access">accessConfirmationController</prop>
-      </props>
-    </property>
-    <property name="alwaysUseFullPath" value="true"/>
-  </bean>
+	<!-- <bean id="urlMapping"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/oauth/confirm_access">accessConfirmationController</prop>
+			</props>
+		</property>
+		<property name="alwaysUseFullPath" value="true" />
+	</bean>
+	<bean id="accessConfirmationController" class="org.saiku.web.servlet.AccessConfirmationController">
+		<property name="clientDetailsService" ref="clientDetails" />
+	</bean>
+ -->
 
-   <bean id="accessConfirmationController" class="org.saiku.web.servlet.AccessConfirmationController">
-    <property name="clientDetailsService" ref="clientDetails"/>
-  </bean>
-  
 
 
-  
+
 	<bean id="connectionFactoryBean" class="org.saiku.datasources.connection.SaikuConnectionFactory">
 		<property name="connections">
 			<bean class="org.saiku.datasources.connection.SaikuOlapConnection">
@@ -33,7 +35,8 @@
 					<props>
 						<prop key="name">TestConnection1</prop>
 						<prop key="driver">org.olap4j.driver.xmla.XmlaOlap4jDriver</prop>
-						<prop key="location">jdbc:xmla:Server=http://localhost:8080/pentaho/Xmla?userid=joe&amp;password=password</prop>
+						<prop key="location">jdbc:xmla:Server=http://localhost:8080/pentaho/Xmla?userid=joe&amp;password=password
+						</prop>
 						<prop key="user">joe</prop>
 						<prop key="password">password</prop>
 					</props>
@@ -68,11 +71,11 @@
 		<property name="olapQueryService" ref="olapQueryBean" />
 		<property name="olapDiscoverService" ref="olapDiscoverService" />
 	</bean>
-	
+
 	<bean id="repositoryBean" class="org.saiku.web.rest.resources.BasicRepositoryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />
 		<property name="queryResource" ref="queryInterfaceBean" />
-		<property name="path" value="saiku-repository"/>
+		<property name="path" value="saiku-repository" />
 		<property name="olapDiscoverService" ref="olapDiscoverService" />
 	</bean>
 </beans>
