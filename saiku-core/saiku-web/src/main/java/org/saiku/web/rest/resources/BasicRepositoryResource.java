@@ -123,6 +123,7 @@ public class BasicRepositoryResource {
     }
     
 	@DELETE
+    @Produces({"application/json" })
 	@Path("/{queryname}")
 	public Status deleteQuery(@PathParam("queryname") String queryName){
 		try{
@@ -143,6 +144,7 @@ public class BasicRepositoryResource {
 	}
 	
 	@POST
+    @Produces({"application/json" })
 	@Path("/{queryname}")
 	public Status saveQuery(
 			@PathParam("queryname") String queryName,
@@ -179,6 +181,7 @@ public class BasicRepositoryResource {
 	}
 	
 	@GET
+    @Produces({"application/json" })
 	@Path("/{queryname}")
 	public SaikuQuery loadQuery(@PathParam("queryname") String queryName){
 		try{

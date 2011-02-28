@@ -19,14 +19,22 @@
 			<springImport file="src/main/web/spring-servlet.xml" />
 			<security enableDigestHTTPAuth="true" enableBasicHTTPAuth="false"></security>
 		</spring-app>
-		<!-- <jersey useSubcontext="true" disableWildcardServletError="false" disabled="false"></jersey> 
-			<jaxws disabled="false" /> <docs docsDir="docs" title="Saiku-web" /> <jaxws-ri 
-			disabled="false" forceSpringEnabled="true" /> <cxf disabled="true" /> <amf 
-			disabled="true"></amf> <c disabled="false" forceEnable="true"/> <csharp disabled="true"></csharp> 
-			<gwt disabled="false"></gwt> <jaxws-client disabled="true"></jaxws-client> 
-			<obj-c disabled="false" forceEnable="true"></obj-c> <rest disabled="true"></rest> 
-			<ruby disabled="false" forceEnable="true"></ruby> <xfire disabled="true" 
-			/> <xfire-client disabled="true"></xfire-client> <xml disabled="false" ></xml> -->
+		<jersey useSubcontext="true" disableWildcardServletError="false"
+			disabled="false"></jersey>
+		<jaxws disabled="true" />
+		<jaxws-ri disabled="true" forceSpringEnabled="true" />
+		<cxf disabled="true" />
+		<amf disabled="true"></amf>
+		<c disabled="true" forceEnable="true" />
+		<csharp disabled="true"></csharp>
+		<gwt disabled="true"></gwt>
+		<jaxws-client disabled="true"></jaxws-client>
+		<obj-c disabled="true" forceEnable="true"></obj-c>
+		<rest disabled="false"></rest>
+		<ruby disabled="false" forceEnable="true"></ruby>
+		<xfire disabled="true" />
+		<xfire-client disabled="true"></xfire-client>
+		<xml disabled="true"></xml>
 	</modules>
 
 </enunciate>

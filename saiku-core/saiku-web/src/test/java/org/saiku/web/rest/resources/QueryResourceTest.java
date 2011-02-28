@@ -54,7 +54,7 @@ public class QueryResourceTest {
 		// Create new query
 		SaikuQuery testQuery = null;
 		testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart",
-				"FoodMart", "TestQuery1");
+				"FoodMart",null, "TestQuery1");
 
 		// Check it is not null, has the same name and has an unused axis.
 		assertNotNull(testQuery);
@@ -71,9 +71,9 @@ public class QueryResourceTest {
 	@Test
 	public final void testGetQueries() throws ServletException {
 		qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart",
-				"TestQuery1");
+				null,"TestQuery1");
 		qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart",
-				"TestQuery2");
+				null,"TestQuery2");
 
 		List<String> queryList = qs.getQueries();
 		assertNotNull(queryList);
@@ -88,9 +88,9 @@ public class QueryResourceTest {
 
 		// Create 2 Queries
 		qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart",
-				"TestQuery1");
+				null,"TestQuery1");
 		qs.createQuery("TestConnection1", "Sales", "FoodMart", "FoodMart",
-				"TestQuery2");
+				null,"TestQuery2");
 
 		// Check that the list contains 2 queries
 		List<String> queryList = qs.getQueries();
@@ -110,7 +110,7 @@ public class QueryResourceTest {
 		// Create a query.
 		SaikuQuery testQuery = null;
 		testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart",
-				"FoodMart", "TestQuery1");
+				"FoodMart", null, "TestQuery1");
 
 		// Check the query isn't null.
 		assertNotNull(testQuery);
@@ -131,7 +131,7 @@ public class QueryResourceTest {
 		// Create a query.
 		SaikuQuery testQuery = null;
 		testQuery = qs.createQuery("TestConnection1", "Sales", "FoodMart",
-				"FoodMart", "TestQuery1");
+				"FoodMart", null, "TestQuery1");
 
 		// Check the query isn't null.
 		assertNotNull(testQuery);
