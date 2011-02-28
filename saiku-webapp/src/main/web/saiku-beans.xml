@@ -1,29 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-  <!--Basic application beans.-->
-  <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-    <property name="prefix" value="/WEB-INF/jsp/"/>
-    <property name="suffix" value=".jsp"/>
-  </bean>
-
-  <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-    <property name="mappings">
-      <props>
-        <prop key="/oauth/confirm_access">accessConfirmationController</prop>
-      </props>
-    </property>
-    <property name="alwaysUseFullPath" value="true"/>
-  </bean>
-
-   <bean id="accessConfirmationController" class="org.saiku.web.servlet.AccessConfirmationController">
-    <property name="clientDetailsService" ref="clientDetails"/>
-  </bean>
- 
-	<bean id="classpathDsManager" class="org.saiku.service.datasource.ClassPathResourceDatasourceManager">
+<bean id="classpathDsManager" class="org.saiku.service.datasource.ClassPathResourceDatasourceManager">
 		<property name="path" value="saiku-datasources"/>
 	</bean>
 
@@ -60,4 +41,5 @@
 		<property name="path" value="saiku-repository"/>
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
+
 </beans>

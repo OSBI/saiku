@@ -1,54 +1,140 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<beans:beans xmlns="http://www.springframework.org/schema/security"
-  xmlns:beans="http://www.springframework.org/schema/beans"
-  xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+<beans xmlns="http://www.springframework.org/schema/beans" 
+     xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
               http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
-              http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd">
+              http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+			   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<context:annotation-config />
+
+	<security:global-method-security secured-annotations="enabled">
+	</security:global-method-security>
+  
+  
+  
+  <!-- BASIC AUTHENTICATION -->
+
+  <security:http auto-config='true' access-denied-page="/login.jsp">
+	<security:intercept-url pattern="/serverdocs/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+	<security:intercept-url pattern="/rest/**" access="ROLE_USER" />
+	<security:intercept-url pattern="/json/**" access="ROLE_USER" />
+    <security:intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />	
+    
+ 	<security:http-basic/>
+	
+    
+  <!--   <security:form-login authentication-failure-url="/login.jsp" default-target-url="/index.jsp" login-page="/login.jsp" login-processing-url="/login.do"/>
+    <security:logout logout-success-url="/index.jsp" logout-url="/logout.do"/>  -->
+  </security:http>
+  
+
+
+<!-- DIGEST AUTHENTICATION -->
+
+ <!--  
+	<bean id="org.springframework.security.filterChainProxy"
+		class="org.springframework.security.web.FilterChainProxy">
+		<security:filter-chain-map path-type="ant">
+			<security:filter-chain pattern="/**"
+				filters="httpSessionContextIntegrationFilter,logoutFilter,digestProcessingFilter,anonymousAuthFilter,anonymousAuthFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
+		</security:filter-chain-map>
+	</bean>
+
+
+	 <bean id="filterSecurityInterceptor"
+		class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+		<property name="authenticationManager" ref="authenticationManager" />
+		<property name="accessDecisionManager" ref="accessDecisionManager" />
+		<property name="objectDefinitionSource">
+			<security:filter-invocation-definition-source>
+      			<security:intercept-url pattern='/login.*' access='IS_AUTHENTICATED_ANONYMOUSLY,ROLE_ANONYMOUS,ROLE_USER'/> 
+				<security:intercept-url pattern="/**" access="ROLE_USER" />
+			</security:filter-invocation-definition-source>
+		</property>
+	</bean> 
+
+	<bean id="accessDecisionManager"
+		class="org.springframework.security.access.vote.AffirmativeBased">
+		<property name="allowIfAllAbstainDecisions"
+			value="false" />
+		<property name="decisionVoters">
+			<list>
+				<ref bean="authenticatedVoter"/>
+				<bean class="org.springframework.security.access.vote.RoleVoter" />
+			</list>
+		</property>
+	</bean>
+<bean id="authenticatedVoter" class="org.springframework.security.access.vote.AuthenticatedVoter"/>
+<bean id="anonymousAuthFilter"
+    class="org.springframework.security.web.authentication.AnonymousAuthenticationFilter">
+  <property name="key" value="foobar"/>
+  <property name="userAttribute" value="anonymousUser,ROLE_ANONYMOUS"/>
+</bean>
+
+<bean id="anonymousAuthenticationProvider"
+    class="org.springframework.security.authentication.AnonymousAuthenticationProvider">
+  <property name="key" value="foobar"/>
+</bean>
+
+	<bean id="httpSessionContextIntegrationFilter"
+		class="org.springframework.security.web.context.HttpSessionContextIntegrationFilter" />
+	<bean id="exceptionTranslationFilter"
+		class="org.springframework.security.web.access.ExceptionTranslationFilter">
+		<property name="authenticationEntryPoint" ref="digestProcessingFilterEntryPoint" />
+	</bean>
+        
+        <bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+                <constructor-arg value="/index.jsp" />
+                <constructor-arg>
+                        <list>                                <bean
+                                        class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+                        </list>
+                </constructor-arg>
+                <property name="filterProcessesUrl" value="/logout" />
+        </bean>
+	<bean id="digestProcessingFilter"
+		class="org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
+		<property name="userDetailsService" ref="userDetailsService" />
+		<property name="authenticationEntryPoint" ref="digestProcessingFilterEntryPoint" />
+	</bean>
+
+	<bean id="digestProcessingFilterEntryPoint"
+		class="org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
+		<property name="realmName"
+			value="Contacts Realm via Digest Authentication" />
+		<property name="key" value="acegi" />
+		<property name="nonceValiditySeconds" value="10" />
+	</bean>
+
+	<bean id="userDetailsService"
+		class="org.springframework.security.core.userdetails.memory.InMemoryDaoImpl">
+		<property name="userProperties">
+			<bean
+				class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+				<property name="location" value="/WEB-INF/users.properties" />
+
+			</bean>
+		</property>
+	</bean>
+	
+	-->
+	<!-- DIGEST AUTHENTICATION END -->
+	
+	
+  	<security:authentication-manager alias="authenticationManager">
+
+		<security:authentication-provider>
+			<security:user-service id="uds" properties="/WEB-INF/users.properties">
+
+			</security:user-service>
+		</security:authentication-provider>
+	</security:authentication-manager>
 
 	
-  <http auto-config='true' access-denied-page="/login.jsp">
-  <!--  <intercept-url pattern="/rest/**" access="ROLE_USER" />
-    <intercept-url pattern="/json/photos" access="ROLE_USER" />
-    <intercept-url pattern="/photo/**" access="ROLE_USER" />-->
-    <intercept-url pattern="/oauth/**" access="ROLE_USER" />
-	<intercept-url pattern="/serverdocs/**" access="ROLE_USER" />
-    <intercept-url pattern="/request_token_authorized.jsp" access="ROLE_USER" />
-    <intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-	
-	<!-- HTTP BASIC Authentication, PASSWORDS ARE SENT OVER THE WIRE IN PLAIN TEXT-->
- 	<http-basic/>
-	
-    <remember-me key="1294534413302"/>
-    <anonymous key="1294534413302" username="anonymous" granted-authority="ANONYMOUS"/>
-    <form-login authentication-failure-url="/login.jsp" default-target-url="/index.jsp" login-page="/login.jsp" login-processing-url="/login.do"/>
-    <logout logout-success-url="/index.jsp" logout-url="/logout.do"/>
-  </http>
-
-  <authentication-manager>
-    <authentication-provider>
-      <user-service>
-        <user name="marissa" password="koala" authorities="ROLE_USER" />
-        <user name="paul" password="emu" authorities="ROLE_USER" />
-      </user-service>
-    </authentication-provider>
-  </authentication-manager>
-
-  <beans:bean id="tokenServices" class="org.springframework.security.oauth2.provider.token.InMemoryOAuth2ProviderTokenServices">
-    <beans:property name="supportRefreshToken" value="true"/>
-  </beans:bean>
-
-  <oauth:provider client-details-service-ref="clientDetails" token-services-ref="tokenServices" >
-    <oauth:verification-code user-approval-page="/oauth/confirm_access"/>
-  </oauth:provider>
-
-  <oauth:client-details-service id="clientDetails">
-    <oauth:client clientId="my-trusted-client" authorizedGrantTypes="password,authorization_code,refresh_token"/>
-    <oauth:client clientId="my-less-trusted-client" authorizedGrantTypes="authorization_code"/>
-    <oauth:client clientId="tonr" authorizedGrantTypes="authorization_code"/>
-  </oauth:client-details-service>
-
-
-</beans:beans>
+</beans>
