@@ -35,6 +35,17 @@ public class SaikuOlapConnection implements ISaikuConnection {
 		String driver = props.getProperty(ISaikuConnection.DRIVER_KEY);
 		this.properties = props;
 		String url = props.getProperty(ISaikuConnection.URL_KEY);
+		if (url.length() > 0 && url.charAt(url.length()-1) != ';') {
+			url += ";";
+		}
+		if (driver.equals("mondrian.olap4j.MondrianOlap4jDriver")) {
+			if (username != null && username.length() > 0) {
+				url += "JdbcUser=" + username + ";";
+			}
+			if (password != null && password.length() > 0) {
+				url += "JdbcPassword=" + password + ";";
+			}
+		}
 
 		try {
 			Class.forName(driver);
@@ -45,7 +56,7 @@ public class SaikuOlapConnection implements ISaikuConnection {
 			System.out.println("name:" + name);
 			System.out.println("driver:" + driver);
 			System.out.println("url:" + url);
-			
+			System.out.flush();
 			if (tmpolapConnection == null) {
 				throw new Exception("Connection is null");
 			}
