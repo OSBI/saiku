@@ -96,6 +96,10 @@ public class BasicRepositoryResource {
 		queryResource = qr;
 	}
 
+	/**
+	 * Get Saved Queries.
+	 * @return A list of SavedQuery Objects.
+	 */
     @GET
     @Produces({"application/json" })
      public List<SavedQuery> getSavedQueries() {
@@ -126,6 +130,11 @@ public class BasicRepositoryResource {
 		return queries;
     }
     
+    /**
+     * Delete Query.
+     * @param queryName - The name of the query.
+     * @return A GONE Status if the query was deleted, otherwise it will return a NOT FOUND Status code.
+     */
 	@DELETE
     @Produces({"application/json" })
 	@Path("/{queryname}")
@@ -157,6 +166,12 @@ public class BasicRepositoryResource {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param queryName - The name of the query.
+	 * @param newName - The saved query name.
+	 * @return An OK Status, if the save was good, otherwise a NOT FOUND Status when not saved properly.
+	 */
 	@POST
     @Produces({"application/json" })
 	@Path("/{queryname}")
@@ -203,6 +218,11 @@ public class BasicRepositoryResource {
 		}
 	}
 	
+	/**
+	 * Load a query.
+	 * @param queryName - The name of the query to load.
+	 * @return A Saiku Query Object.
+	 */
 	@GET
     @Produces({"application/json" })
 	@Path("/{queryname}")
