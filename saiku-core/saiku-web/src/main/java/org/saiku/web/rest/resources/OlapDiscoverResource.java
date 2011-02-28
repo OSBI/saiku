@@ -87,7 +87,7 @@ public class OlapDiscoverResource {
     		 @PathParam("schema") String schemaName, 
     		 @PathParam("cube") String cubeName) 
     {
-		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getAllDimensions(cube);
 		} catch (SaikuServiceException e) {
@@ -104,7 +104,7 @@ public class OlapDiscoverResource {
     		 									@PathParam("schema") String schemaName, 
     		 									@PathParam("cube") String cubeName, 
     		 									@PathParam("dimension") String dimensionName) {
-		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getAllDimensionHierarchies(cube, dimensionName);
 		} catch (SaikuServiceException e) {
@@ -123,7 +123,7 @@ public class OlapDiscoverResource {
 				@PathParam("dimension") String dimensionName, 
 				@PathParam("hierarchy") String hierarchyName)
 	{
-		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getAllHierarchyLevels(cube, dimensionName, hierarchyName);
 		} catch (SaikuServiceException e) {
@@ -148,7 +148,7 @@ public class OlapDiscoverResource {
 			@PathParam("hierarchy") String hierarchyName,
 			@PathParam("level") String levelName)
 	{
-		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getLevelMembers(cube, dimensionName, hierarchyName, levelName);
 		} catch (SaikuServiceException e) {
@@ -171,7 +171,7 @@ public class OlapDiscoverResource {
 			@PathParam("cube") String cubeName, 
 			@PathParam("hierarchy") String hierarchyName)
 		{
-		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getHierarchyRootMembers(cube, hierarchyName);
 		} catch (SaikuServiceException e) {
@@ -188,7 +188,7 @@ public class OlapDiscoverResource {
     		 									@PathParam("catalog") String catalogName, 
     		 									@PathParam("schema") String schemaName, 
     		 									@PathParam("cube") String cubeName) {
-		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getAllHierarchies(cube);
 		} catch (SaikuServiceException e) {
@@ -204,7 +204,7 @@ public class OlapDiscoverResource {
     		 									@PathParam("catalog") String catalogName, 
     		 									@PathParam("schema") String schemaName, 
     		 									@PathParam("cube") String cubeName) {
-		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getMeasures(cube);
 		} catch (SaikuServiceException e) {
@@ -227,7 +227,7 @@ public class OlapDiscoverResource {
 			@PathParam("cube") String cubeName, 
 			@PathParam("member") String memberName)
 	{
-		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getMemberChildren(cube, memberName);
 		} catch (SaikuServiceException e) {
