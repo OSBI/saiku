@@ -140,9 +140,13 @@ public class QueryResource {
 			@FormParam("cube") String cubeName,
 			@FormParam("catalog") String catalogName, 
 			@FormParam("schema") String schemaName, 
+			@FormParam("xml") @DefaultValue("") String xml,
 			@PathParam("queryname") String queryName) throws ServletException 
 	{
 		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
+		if (xml != null && xml.length() > 0) {
+			return olapQueryService.createNewOlapQuery(queryName,xml);
+		}
 		return olapQueryService.createNewOlapQuery(queryName, cube);
 	}
 
