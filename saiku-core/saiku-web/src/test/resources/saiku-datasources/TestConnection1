@@ -3,4 +3,4 @@ name=TestConnection1
 driver=mondrian.olap4j.MondrianOlap4jDriver
 location=jdbc:mondrian:Jdbc=jdbc:hsqldb:file:src/test/resources/org/saiku/web/rest/resources/foodmart/foodmart;Catalog=src/test/resources/org/saiku/web/rest/resources/foodmart/FoodMart.xml;
 user=sa
-password=password
+password=
