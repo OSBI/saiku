@@ -12,6 +12,8 @@ public class SaikuOlapConnection implements ISaikuConnection {
 	private boolean initialized = false;
 	private Properties properties;
 	private OlapConnection olapConnection;
+	private String username;
+	private String password;
 
 	public SaikuOlapConnection(String name, Properties props) {
 		this.name = name;
@@ -28,14 +30,16 @@ public class SaikuOlapConnection implements ISaikuConnection {
 
 	
 	public boolean connect(Properties props) {
+		this.username = props.getProperty(ISaikuConnection.USERNAME_KEY);
+		this.password = props.getProperty(ISaikuConnection.PASSWORD_KEY);
 		String driver = props.getProperty(ISaikuConnection.DRIVER_KEY);
+		this.properties = props;
 		String url = props.getProperty(ISaikuConnection.URL_KEY);
-		properties = props;
 
 		try {
 			Class.forName(driver);
 			OlapConnection connection;
-			connection = (OlapConnection) DriverManager.getConnection(url, properties);
+			connection = (OlapConnection) DriverManager.getConnection(url, username,password);
 			final OlapWrapper wrapper = connection;
 			OlapConnection tmpolapConnection = (OlapConnection) wrapper.unwrap(OlapConnection.class);
 			System.out.println("name:" + name);

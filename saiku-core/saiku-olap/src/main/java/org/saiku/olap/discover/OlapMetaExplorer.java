@@ -27,12 +27,15 @@ import java.util.Map;
 
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
+import org.olap4j.mdx.IdentifierNode;
+import org.olap4j.mdx.IdentifierSegment;
 import org.olap4j.metadata.Catalog;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Measure;
+import org.olap4j.metadata.Member;
 import org.olap4j.metadata.Schema;
 import org.saiku.olap.dto.SaikuCatalog;
 import org.saiku.olap.dto.SaikuConnection;
@@ -200,6 +203,29 @@ public class OlapMetaExplorer {
 		}
 		return null;
 	}
+	
+	public List<SaikuMember> getHierarchyRootMembers(SaikuCube cube, String hierarchyName) throws SaikuOlapException {
+		Cube nativeCube = getNativeCube(cube);
+		List<SaikuMember> members = new ArrayList<SaikuMember>();
+		Hierarchy h = nativeCube.getHierarchies().get(hierarchyName);
+
+		if (h == null) {
+			for (Hierarchy hlist : nativeCube.getHierarchies()) {
+				if (hlist.getUniqueName().equals(hierarchyName) || hlist.getName().equals(hierarchyName)) {
+					h = hlist;
+				}
+			}
+		}
+		if (h!= null) {
+			try {
+				members = (ObjectUtil.convertMembers(h.getRootMembers()));
+			} catch (OlapException e) {
+				throw new SaikuOlapException("Cannot retrieve root members of hierarchy: " + hierarchyName,e);
+			}
+		}
+		
+		return members;
+	}
 
 
 	public List<SaikuLevel> getAllLevels(SaikuCube cube, String dimension, String hierarchy) throws SaikuOlapException {
@@ -207,6 +233,14 @@ public class OlapMetaExplorer {
 		Dimension dim = nativeCube.getDimensions().get(dimension);
 		if (dim != null) {
 			Hierarchy h = dim.getHierarchies().get(hierarchy);
+			if (h == null) {
+				for (Hierarchy hlist : dim.getHierarchies()) {
+					if (hlist.getUniqueName().equals(hierarchy) || hlist.getName().equals(hierarchy)) {
+						h = hlist;
+					}
+				}
+			}
+
 			if (h!= null) {
 				List<SaikuLevel> levels = (ObjectUtil.convertLevels(h.getLevels()));
 				return levels;
@@ -235,6 +269,25 @@ public class OlapMetaExplorer {
 
 		return new ArrayList<SaikuMember>();
 
+	}
+	
+	public List<SaikuMember> getMemberChildren(SaikuCube cube, String uniqueMemberName) throws SaikuOlapException {
+		List<SaikuMember> members = new ArrayList<SaikuMember>();
+		try {
+			Cube nativeCube = getNativeCube(cube);
+			List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(uniqueMemberName).getSegmentList();
+			Member m = nativeCube.lookupMember(memberList);
+			if (m != null) {
+				for (Member c :  m.getChildMembers()) {
+					SaikuMember sm = ObjectUtil.convert(c);
+					members.add(sm);
+				}
+			}
+		} catch (OlapException e) {
+			throw new SaikuOlapException("Cannot get child members of member:" + uniqueMemberName,e);
+		}
+
+		return members;
 	}
 	
 	public List<SaikuMember> getAllMeasures(SaikuCube cube) throws SaikuOlapException {

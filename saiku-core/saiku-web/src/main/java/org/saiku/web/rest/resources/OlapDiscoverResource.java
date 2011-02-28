@@ -115,7 +115,7 @@ public class OlapDiscoverResource {
 	
 	@GET
 	@Produces({"application/json" })
-	@Path("/{connection}/{catalog}/{schema}/{cube}/dimensions/{dimension}/hierarchies/{hierarchy}")
+	@Path("/{connection}/{catalog}/{schema}/{cube}/dimensions/{dimension}/hierarchies/{hierarchy}/levels")
 	public List<SaikuLevel> getHierarchy(@PathParam("connection") String connectionName, 
 				@PathParam("catalog") String catalogName, 
 				@PathParam("schema") String schemaName, 
@@ -138,7 +138,7 @@ public class OlapDiscoverResource {
 	 */
 	@GET
 	@Produces({"application/json" })
-	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/hierarchy/{hierarchy}/{level}")
+	@Path("/{connection}/{catalog}/{schema}/{cube}/dimensions/{dimension}/hierarchies/{hierarchy}/levels/{level}")
 	public List<SaikuMember> getLevelMembers(
 			@PathParam("connection") String connectionName, 
 			@PathParam("catalog") String catalogName, 
@@ -157,10 +157,33 @@ public class OlapDiscoverResource {
 		}
 	}
    
+	/**
+	 * Get root member of that hierarchy.
+	 * @return 
+	 */
+	@GET
+	@Produces({"application/json" })
+	@Path("/{connection}/{catalog}/{schema}/{cube}/hierarchies/{hierarchy}/rootmembers")
+	public List<SaikuMember> getRootMembers(
+			@PathParam("connection") String connectionName, 
+			@PathParam("catalog") String catalogName, 
+			@PathParam("schema") String schemaName, 
+			@PathParam("cube") String cubeName, 
+			@PathParam("hierarchy") String hierarchyName)
+		{
+		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
+		try {
+			return olapDiscoverService.getHierarchyRootMembers(cube, hierarchyName);
+		} catch (SaikuServiceException e) {
+			log.error(this.getClass().getName(),e);
+			return null;
+		}
+	}
 
+	
 	@GET
 	@Path("/{connection}/{catalog}/{schema}/{cube}/hierarchies/")
-    @Produces({"application/xml","application/json" })
+    @Produces({"application/json" })
      public List<SaikuHierarchy> getCubeHierarchies(@PathParam("connection") String connectionName, 
     		 									@PathParam("catalog") String catalogName, 
     		 									@PathParam("schema") String schemaName, 
@@ -176,7 +199,7 @@ public class OlapDiscoverResource {
 	
 	@GET
 	@Path("/{connection}/{catalog}/{schema}/{cube}/measures/")
-    @Produces({"application/xml","application/json" })
+    @Produces({"application/json" })
      public List<SaikuMember> getCubeMeasures(@PathParam("connection") String connectionName, 
     		 									@PathParam("catalog") String catalogName, 
     		 									@PathParam("schema") String schemaName, 
@@ -184,6 +207,29 @@ public class OlapDiscoverResource {
 		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getMeasures(cube);
+		} catch (SaikuServiceException e) {
+			log.error(this.getClass().getName(),e);
+			return new ArrayList<SaikuMember>();
+		}
+	}
+	
+	/**
+	 * Get child members of given member
+	 * @return 
+	 */
+	@GET
+	@Produces({"application/json" })
+	@Path("/{connection}/{catalog}/{schema}/{cube}/member/{member}/children")
+	public List<SaikuMember> getMemberChildren(
+			@PathParam("connection") String connectionName, 
+			@PathParam("catalog") String catalogName, 
+			@PathParam("schema") String schemaName, 
+			@PathParam("cube") String cubeName, 
+			@PathParam("member") String memberName)
+	{
+		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
+		try {
+			return olapDiscoverService.getMemberChildren(cube, memberName);
 		} catch (SaikuServiceException e) {
 			log.error(this.getClass().getName(),e);
 			return new ArrayList<SaikuMember>();

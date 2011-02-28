@@ -43,21 +43,19 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 		try {
 			if (repoURL != null) {
 				if ( repoURL.getProtocol().equals("file")) {
-					String[] files =  new File(repoURL.toURI()).list();
+					File[] files =  new File(repoURL.toURI()).listFiles();
 
-					for (String file : files) {
-						String uri = repoURL.toURI().toString();
-						uri += file;
-						File f = new File(new URI(uri));
-						Properties props = new Properties();
-						props.load(new FileInputStream(f));
-						String name = props.getProperty("name");
-						String type = props.getProperty("type");
-						props.list(System.out);
-						Type t = SaikuDatasource.Type.valueOf(type.toUpperCase());
-
-						SaikuDatasource ds = new SaikuDatasource(name,t,props);
-						datasources.put(name, ds);
+					for (File file : files) {
+						if (!file.isHidden()) {
+							Properties props = new Properties();
+							props.load(new FileInputStream(file));
+							String name = props.getProperty("name");
+							String type = props.getProperty("type");
+							props.list(System.out);
+							Type t = SaikuDatasource.Type.valueOf(type.toUpperCase());
+							SaikuDatasource ds = new SaikuDatasource(name,t,props);
+							datasources.put(name, ds);
+						}
 					}
 				}
 			}
