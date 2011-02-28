@@ -18,8 +18,8 @@
  *
  */
  
-var saikuHost = "demo.analytical-labs.com";
-var saikuPort = 80;
+var saikuHost = "localhost";
+var saikuPort = 8080;
 var saikuDemo = saikuHost + ":" + saikuPort;
 
 var sys = require('sys'),
@@ -119,7 +119,7 @@ function getTable(json) {
 }
 
 function getSelection(json) {
-    var body = "<form method=\"get\">' <select onChange=\"this.form.action=this.options[this.selectedIndex].value;\" class=\"cubes\">" + "<option>Select a query</option>";
+    var body = "<form method=\"get\">' <select onChange=\"this.form.action=this.options[this.selectedIndex].value; form.submit();\" class=\"cubes\">" + "<option>Select a query</option>";
     try {
         var rows = JSON.parse(json);
         var t = rows, length = t.length;
