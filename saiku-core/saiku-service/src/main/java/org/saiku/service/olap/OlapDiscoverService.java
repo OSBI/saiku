@@ -41,7 +41,7 @@ public class OlapDiscoverService {
 	
 	public void setDatasourceService(DatasourceService ds) {
 		datasourceService = ds;
-		metaExplorer = new OlapMetaExplorer(datasourceService.getOlapDatasources());
+		metaExplorer = new OlapMetaExplorer(datasourceService.getOlapConnections());
 	}
 	
 	public List<SaikuCube> getAllCubes() {
@@ -127,5 +127,20 @@ public class OlapDiscoverService {
 			throw new SaikuServiceException("Cannot get all measures for cube ( " + cube + " )", e);
 		}
 	}
+
+	public List<SaikuMember> getHierarchyRootMembers(SaikuCube cube, String hierarchyName) {
+		try {
+			return  metaExplorer.getHierarchyRootMembers(cube, hierarchyName);
+		} catch (SaikuOlapException e) {
+			throw new SaikuServiceException(e);
+		}	
+	}
 	
+	public List<SaikuMember> getMemberChildren(SaikuCube cube, String uniqueMemberName) {
+		try {
+			return  metaExplorer.getMemberChildren(cube, uniqueMemberName);
+		} catch (SaikuOlapException e) {
+			throw new SaikuServiceException(e);
+		}	
+	}	
 }

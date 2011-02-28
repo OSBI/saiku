@@ -21,47 +21,37 @@
 package org.saiku.web.rest.resources;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
-import javax.annotation.security.RolesAllowed;
-import javax.jws.WebService;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response.Status;
 
-import org.codehaus.enunciate.rest.annotations.JSONP;
-import org.codehaus.enunciate.rest.annotations.RESTEndpoint;
-import org.saiku.olap.dto.SaikuConnection;
-import org.saiku.olap.dto.SaikuCube;
-import org.saiku.olap.dto.SaikuDimension;
-import org.saiku.olap.dto.SaikuHierarchy;
-import org.saiku.olap.dto.SaikuLevel;
-import org.saiku.olap.dto.SaikuMember;
-import org.saiku.service.olap.OlapDiscoverService;
+import org.saiku.datasources.datasource.SaikuDatasource;
+import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@WebService
-@RESTEndpoint
-@JSONP
-@RolesAllowed (
-  "ROLE_USER"
-)
 @Component
 @Path("/saiku/{username}/datasources")
 @Scope("request")
 public class DataSourceResource {
 
-    OlapDiscoverService olapDiscoverService;
+    DatasourceService datasourceService;
     
     private static final Logger log = LoggerFactory.getLogger(DataSourceResource.class);
     
-    public void setOlapDiscoverService(OlapDiscoverService olapds) {
-        olapDiscoverService = olapds;
+    public void setDatasourceService(DatasourceService ds) {
+    	datasourceService = ds;
     }
     
     /**
@@ -69,125 +59,37 @@ public class DataSourceResource {
      */
     @GET
     @Produces({"application/json" })
-     public List<SaikuConnection> getConnections() {
+     public Collection<SaikuDatasource> getDatasources() {
     	try {
-			return olapDiscoverService.getAllConnections();
+			return datasourceService.getDatasources().values();
 		} catch (SaikuServiceException e) {
 			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuConnection>();
+			return new ArrayList<SaikuDatasource>();
 		}
     }
     
-	@GET
+    @DELETE
+	@Path("/{datasource}")
+	public Status deleteDatasource(@PathParam("datasource") String datasourceName){
+    	datasourceService.removeDatasource(datasourceName);
+		return(Status.GONE);
+    }
+    
+    @GET
     @Produces({"application/json" })
-	@Path("/{connection}/{catalog}/{schema}/{cube}/dimensions")
-     public List<SaikuDimension> getDimensions(
-    		 @PathParam("connection") String connectionName, 
-    		 @PathParam("catalog") String catalogName, 
-    		 @PathParam("schema") String schemaName, 
-    		 @PathParam("cube") String cubeName) 
-    {
-		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
-		try {
-			return olapDiscoverService.getAllDimensions(cube);
-		} catch (SaikuServiceException e) {
-			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuDimension>();
-		}
-	}
-	
-	@GET
-    @Produces({"application/json" })
-	@Path("/{connection}/{catalog}/{schema}/{cube}/dimensions/{dimension}/hierarchies")
-     public List<SaikuHierarchy> getDimensionHierarchies(@PathParam("connection") String connectionName, 
-    		 									@PathParam("catalog") String catalogName, 
-    		 									@PathParam("schema") String schemaName, 
-    		 									@PathParam("cube") String cubeName, 
-    		 									@PathParam("dimension") String dimensionName) {
-		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
-		try {
-			return olapDiscoverService.getAllDimensionHierarchies(cube, dimensionName);
-		} catch (SaikuServiceException e) {
-			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuHierarchy>();
-		}
-	}
-	
-	@GET
-	@Produces({"application/json" })
-	@Path("/{connection}/{catalog}/{schema}/{cube}/dimensions/{dimension}/hierarchies/{hierarchy}")
-	public List<SaikuLevel> getHierarchy(@PathParam("connection") String connectionName, 
-				@PathParam("catalog") String catalogName, 
-				@PathParam("schema") String schemaName, 
-				@PathParam("cube") String cubeName, 
-				@PathParam("dimension") String dimensionName, 
-				@PathParam("hierarchy") String hierarchyName)
-	{
-		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
-		try {
-			return olapDiscoverService.getAllHierarchyLevels(cube, dimensionName, hierarchyName);
-		} catch (SaikuServiceException e) {
-			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuLevel>();
-		}
-	}
+	@Path("/{datasource}")
+	public SaikuDatasource getDatasource(@PathParam("datasource") String datasourceName){
+    	return datasourceService.getDatasource(datasourceName);
+    }
 
-	/**
-	 * Get level information.
-	 * @return 
-	 */
-	@GET
-	@Produces({"application/json" })
-	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/hierarchy/{hierarchy}/{level}")
-	public List<SaikuMember> getLevelMembers(
-			@PathParam("connection") String connectionName, 
-			@PathParam("catalog") String catalogName, 
-			@PathParam("schema") String schemaName, 
-			@PathParam("cube") String cubeName, 
-			@PathParam("dimension") String dimensionName, 
-			@PathParam("hierarchy") String hierarchyName,
-			@PathParam("level") String levelName)
-	{
-		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
-		try {
-			return olapDiscoverService.getLevelMembers(cube, dimensionName, hierarchyName, levelName);
-		} catch (SaikuServiceException e) {
-			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuMember>();
-		}
-	}
-   
-
-	@GET
-	@Path("/{connection}/{catalog}/{schema}/{cube}/hierarchies/")
-    @Produces({"application/xml","application/json" })
-     public List<SaikuHierarchy> getCubeHierarchies(@PathParam("connection") String connectionName, 
-    		 									@PathParam("catalog") String catalogName, 
-    		 									@PathParam("schema") String schemaName, 
-    		 									@PathParam("cube") String cubeName) {
-		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
-		try {
-			return olapDiscoverService.getAllHierarchies(cube);
-		} catch (SaikuServiceException e) {
-			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuHierarchy>();
-		}
-	}
-	
-	@GET
-	@Path("/{connection}/{catalog}/{schema}/{cube}/measures/")
-    @Produces({"application/xml","application/json" })
-     public List<SaikuMember> getCubeMeasures(@PathParam("connection") String connectionName, 
-    		 									@PathParam("catalog") String catalogName, 
-    		 									@PathParam("schema") String schemaName, 
-    		 									@PathParam("cube") String cubeName) {
-		SaikuCube cube = new SaikuCube(connectionName, cubeName, catalogName, schemaName);
-		try {
-			return olapDiscoverService.getMeasures(cube);
-		} catch (SaikuServiceException e) {
-			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuMember>();
-		}
-	}
+//    @POST
+//    @Consumes({"application/json" })
+//	@Path("/{datasource}")
+//	public Status addDatasource(@PathParam("datasource") String datasourceName , @Context SaikuDatasource ds){
+//    	System.out.println("ds not null:" + (ds != null));
+//    	System.out.println("ds name:"+ds.getName());
+//    	datasourceService.addDatasource(ds);
+//    	return Status.OK;
+//    }
 
 }

@@ -1,33 +1,21 @@
 package org.saiku.datasources.connection;
 
-import java.util.List;
+import org.saiku.datasources.datasource.SaikuDatasource;
+
 
 
 public class SaikuConnectionFactory {
 
-	List<ISaikuConnection> connections;
 
-	public void setConnections(List<ISaikuConnection> _connections) {
-		connections = _connections;
-	}
-
-	public void connect() {
-		for (ISaikuConnection con : connections) {
+	public static ISaikuConnection getConnection(SaikuDatasource datasource) {
+		switch (datasource.getType()) {
+		case OLAP:
+			ISaikuConnection con = new SaikuOlapConnection(datasource.getName(),datasource.getProperties());
 			if (con.connect()) {
-
+				return con;
 			}
+			break;
 		}
+		return null;
 	}
-
-	public List<ISaikuConnection> getConnections() {
-		return connections;
-	}
-
-	public void insertConnection(ISaikuConnection connection) {
-		connections.add(connection);
-	}
-	public void clearConnections() {
-		connections.clear();
-	}
-
 }

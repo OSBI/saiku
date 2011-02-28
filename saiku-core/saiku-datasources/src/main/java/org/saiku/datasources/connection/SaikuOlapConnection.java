@@ -12,36 +12,56 @@ public class SaikuOlapConnection implements ISaikuConnection {
 	private boolean initialized = false;
 	private Properties properties;
 	private OlapConnection olapConnection;
+	private String username;
+	private String password;
 
-	public void setProperties(Properties props) {
-		properties = props;
+	public SaikuOlapConnection(String name, Properties props) {
+		this.name = name;
+		this.properties = props;
+	}
+	public SaikuOlapConnection(Properties props) {
+		this.properties = props;
+		this.name = props.getProperty(ISaikuConnection.NAME_KEY);
 	}
 	
 	public boolean connect() {
 		return connect(properties);
 	}
 
+	
 	public boolean connect(Properties props) {
+		this.username = props.getProperty(ISaikuConnection.USERNAME_KEY);
+		this.password = props.getProperty(ISaikuConnection.PASSWORD_KEY);
 		String driver = props.getProperty(ISaikuConnection.DRIVER_KEY);
-		name = props.getProperty(ISaikuConnection.NAME_KEY);
+		this.properties = props;
 		String url = props.getProperty(ISaikuConnection.URL_KEY);
-		properties = props;
+		if (url.length() > 0 && url.charAt(url.length()-1) != ';') {
+			url += ";";
+		}
+		if (driver.equals("mondrian.olap4j.MondrianOlap4jDriver")) {
+			if (username != null && username.length() > 0) {
+				url += "JdbcUser=" + username + ";";
+			}
+			if (password != null && password.length() > 0) {
+				url += "JdbcPassword=" + password + ";";
+			}
+		}
 
 		try {
 			Class.forName(driver);
 			OlapConnection connection;
-			connection = (OlapConnection) DriverManager.getConnection(url, properties);
+			connection = (OlapConnection) DriverManager.getConnection(url, username,password);
 			final OlapWrapper wrapper = connection;
 			OlapConnection tmpolapConnection = (OlapConnection) wrapper.unwrap(OlapConnection.class);
 			System.out.println("name:" + name);
 			System.out.println("driver:" + driver);
 			System.out.println("url:" + url);
-			
+			System.out.flush();
 			if (tmpolapConnection == null) {
 				throw new Exception("Connection is null");
 			}
+			System.out.println("Catalogs:" + tmpolapConnection.getMetaData().getOlapCatalogs().size());
 			olapConnection = tmpolapConnection;
-			System.out.println("Catalogs:" + olapConnection.getCatalogs().size());
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -61,7 +81,10 @@ public class SaikuOlapConnection implements ISaikuConnection {
 	public Object getConnection() {
 		return olapConnection;
 	}
-
+	
+	public void setProperties(Properties props) {
+		properties = props;
+	}
 
 	public String getName() {
 		return name;

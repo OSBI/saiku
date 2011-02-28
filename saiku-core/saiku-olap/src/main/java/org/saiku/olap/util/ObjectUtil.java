@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.olap4j.Axis;
+import org.olap4j.OlapException;
 import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
@@ -80,7 +81,11 @@ public class ObjectUtil {
 	}
 
 	public static SaikuHierarchy convert(Hierarchy hierarchy) {
-		return new SaikuHierarchy(hierarchy.getName(), hierarchy.getUniqueName(), hierarchy.getCaption(), hierarchy.getDimension().getUniqueName(), convertLevels(hierarchy.getLevels()));
+		try {
+			return new SaikuHierarchy(hierarchy.getName(), hierarchy.getUniqueName(), hierarchy.getCaption(), hierarchy.getDimension().getUniqueName(), convertLevels(hierarchy.getLevels()), convertMembers(hierarchy.getRootMembers()));
+		} catch (OlapException e) {
+			throw new RuntimeException("Cannot get root members",e);
+		}
 	}
 
 	public static List<SaikuLevel> convertLevels(List<Level> levels) {
@@ -127,7 +132,7 @@ public class ObjectUtil {
 
 	private static SaikuSelection convert(Selection sel) {
 		Type type;
-		if (sel.getRootElement().getClass().equals(Level.class)) {
+		if (Level.class.isAssignableFrom(sel.getRootElement().getClass())) {
 			type = SaikuSelection.Type.LEVEL;
 		} else {
 			type = SaikuSelection.Type.MEMBER;

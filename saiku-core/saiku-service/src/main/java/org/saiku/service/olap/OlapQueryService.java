@@ -253,7 +253,7 @@ public class OlapQueryService {
 			}
 			OlapQuery query = getOlapQuery(queryName);
 			QueryDimension dimension = query.getDimension(dimensionName);
-			Axis newAxis = axisName != null ? Axis.Standard.valueOf(axisName) : null;
+			Axis newAxis = axisName != null ? ( "UNUSED".equals(axisName) ? null : Axis.Standard.valueOf(axisName)) : null;
 			if(position==-1){
 				query.moveDimension(dimension, newAxis);
 			}

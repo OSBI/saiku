@@ -17,43 +17,41 @@
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
  *
  */
+package org.saiku.datasources.datasource;
 
-package org.saiku.web.rest.objects;
+import java.util.Properties;
 
-import java.util.List;
+public class SaikuDatasource {
 
-import org.saiku.olap.dto.SaikuDimension;
+	private String name;
+	private Type type;	
+	private Properties properties;
 
-public class AxisRestPojo  {
-
-	/**
-	 * A Axis Name.
-	 */
-	private String axisName;
+	public SaikuDatasource() {} 
 	
-	private List<SaikuDimension> dimensions;
-
-
-	public AxisRestPojo(){
-		throw new RuntimeException("Unsupported Constructor. Serialization only");
-	}
-
-	public AxisRestPojo(String axisName, List<SaikuDimension> dimensions) {
-		this.axisName = axisName;
-		this.dimensions = dimensions;
-	}
-
-
-	public String getAxisName() {
-		return axisName;
-	}
-
-	public String toString() {
-		return getAxisName();
+	public SaikuDatasource(String name, Type type, Properties properties) {
+		this.name = name;
+		this.type = type;
+		this.properties = properties;
 	}
 
 	
-	public List<SaikuDimension> getDimensions(){
-		return dimensions;
+	public enum Type {
+		OLAP
 	}
+	
+	public String getName() {
+		return name;
+	}
+
+
+	public Type getType() {
+		return type;
+	}
+
+
+	public Properties getProperties() {
+		return properties;
+	}
+
 }
