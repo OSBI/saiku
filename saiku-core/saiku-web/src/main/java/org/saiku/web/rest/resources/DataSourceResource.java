@@ -55,7 +55,8 @@ public class DataSourceResource {
     }
     
     /**
-     * Returns the datasources available.
+     * Get Data Sources.
+     * @return A Collection of SaikuDatasource's.
      */
     @GET
     @Produces({"application/json" })
@@ -68,6 +69,11 @@ public class DataSourceResource {
 		}
     }
     
+    /**
+     * Delete Data Source.
+     * @param datasourceName - The name of the data source.
+     * @return A GONE Status.
+     */
     @DELETE
 	@Path("/{datasource}")
 	public Status deleteDatasource(@PathParam("datasource") String datasourceName){
@@ -75,6 +81,11 @@ public class DataSourceResource {
 		return(Status.GONE);
     }
     
+    /**
+     * Get Data Source.
+     * @param datasourceName.
+     * @return A Saiku Datasource.
+     */
     @GET
     @Produces({"application/json" })
 	@Path("/{datasource}")
