@@ -4,30 +4,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-	<!--Basic application beans.-->
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/WEB-INF/jsp/" />
-		<property name="suffix" value=".jsp" />
-	</bean>
-
-	<!-- <bean id="urlMapping"
-		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-		<property name="mappings">
-			<props>
-				<prop key="/oauth/confirm_access">accessConfirmationController</prop>
-			</props>
-		</property>
-		<property name="alwaysUseFullPath" value="true" />
-	</bean>
-	<bean id="accessConfirmationController" class="org.saiku.web.servlet.AccessConfirmationController">
-		<property name="clientDetailsService" ref="clientDetails" />
-	</bean>
- -->
-
-
-
-
 	<bean id="connectionFactoryBean" class="org.saiku.datasources.connection.SaikuConnectionFactory">
 		<property name="connections">
 			<bean class="org.saiku.datasources.connection.SaikuOlapConnection">
