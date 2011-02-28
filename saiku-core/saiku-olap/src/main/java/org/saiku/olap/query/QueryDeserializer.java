@@ -124,7 +124,7 @@ public class QueryDeserializer {
                 if (qmElement != null) {
                     qm = createEmptyQuery(queryName,catalogName, schemaName, cubeName);
                     manipulateQuery(qmElement);
-                    SaikuCube cube = new SaikuCube(connectionName,cubeName,catalogName,schemaName);
+                    SaikuCube cube = new SaikuCube(connectionName,qm.getCube().getName(),catalogName,schemaName);
                     return new OlapQuery(qm,cube);
                 }
                 else
