@@ -82,7 +82,30 @@ public class QueryDeserializer {
         throw new Exception("Cant find <QueryModel> nor <MDX> Query");
     }
     
-    public static SaikuCube getCube(String xml) throws Exception {
+    public static SaikuCube getFakeCube(String xml) throws Exception {
+        QueryDeserializer.xml = xml;
+        SAXBuilder parser = new SAXBuilder();
+        source = new InputSource((new ByteArrayInputStream(QueryDeserializer.xml.getBytes())));
+        dom = parser.build(source);
+
+        Element queryElement = dom.getRootElement();
+        if (queryElement != null && queryElement.getName().equals("Query")) {
+
+        	String cubeName = queryElement.getAttributeValue("cube");
+
+        	if (!StringUtils.isNotBlank(cubeName)) {
+        		throw new QueryParseException("Cube for query not defined");
+        	}
+        	String connectionName = queryElement.getAttributeValue("connection");
+        	String catalogName = queryElement.getAttributeValue("catalog");
+        	String schemaName = queryElement.getAttributeValue("schema");
+        	return new SaikuCube(connectionName,cubeName,cubeName,catalogName,schemaName);
+        }
+        throw new Exception("Cant find <QueryModel> nor <MDX> Query");
+    }
+    
+    public static SaikuCube getCube(String xml, OlapConnection con) throws Exception {
+    	connection = con;
         QueryDeserializer.xml = xml;
         SAXBuilder parser = new SAXBuilder();
         source = new InputSource((new ByteArrayInputStream(QueryDeserializer.xml.getBytes())));

@@ -87,7 +87,7 @@ public class OlapQueryService {
 
 	public SaikuQuery createNewOlapQuery(String name, String xml) {
 		try {
-			SaikuCube scube = QueryDeserializer.getCube(xml);
+			SaikuCube scube = QueryDeserializer.getFakeCube(xml);
 			OlapConnection con = olapDiscoverService.getNativeConnection(scube.getConnectionName());
 			OlapQuery query = QueryDeserializer.unparse(xml, con);
 			if (name == null) {

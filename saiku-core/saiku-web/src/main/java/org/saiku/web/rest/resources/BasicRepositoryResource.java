@@ -24,7 +24,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -75,9 +75,9 @@ public class BasicRepositoryResource {
 
 	private OlapDiscoverService olapDiscoverService;
 
-    public void setPath(String path) {
-		this.path = path;
+    public void setPath(String path) throws URISyntaxException {
 		repoURL = this.getClass().getClassLoader().getResource(path);
+		this.path = (new File(repoURL.toURI())).getAbsolutePath();
 	}
     
 	@Autowired
@@ -107,7 +107,11 @@ public class BasicRepositoryResource {
     		    		  for (File file : files) {
     		    			  if (!file.isHidden()) {
     		    				  SimpleDateFormat sf = new SimpleDateFormat("dd - MMM - yyyy HH:mm:ss");
-    		    				  SavedQuery sq = new SavedQuery(file.getName(), sf.format(new Date(file.lastModified())));
+    		    				  String filename = file.getName();
+    		    				  if (filename.endsWith(".squery")) {
+    		    					  filename = filename.substring(0,filename.length() - ".squery".length());
+    		    				  }
+    		    				  SavedQuery sq = new SavedQuery(filename, sf.format(new Date(file.lastModified())));
     		    				  queries.add(sq);
     		    			  }
     		    		  }
@@ -129,8 +133,18 @@ public class BasicRepositoryResource {
 		try{
 			String uri = repoURL.toURI().toString();
 			if (uri != null) {
-				uri += queryName;
-				File queryFile = new File(new URI(uri));
+				if (!queryName.endsWith(".squery")) {
+					queryName += ".squery";
+				}
+
+				URL url = new URL(uri + queryName);
+				File queryFile = null;
+				try {
+					queryFile = new File(url.toURI());
+				} catch(URISyntaxException e) {
+					queryFile = new File(url.getPath());
+				}
+
 				if (queryFile.delete()) {
 					return(Status.GONE);
 				}
@@ -156,8 +170,17 @@ public class BasicRepositoryResource {
 			}
 			String uri = repoURL.toURI().toString();
 			if (uri != null && xml != null) {
-				uri += queryName;
-				File queryFile = new File(new URI(uri));
+				if (!queryName.endsWith(".squery")) {
+					queryName += ".squery";
+				}
+				URL url = new URL(uri + queryName);
+				File queryFile = null;
+				try {
+					queryFile = new File(url.toURI());
+				} catch(URISyntaxException e) {
+					queryFile = new File(url.getPath());
+				}
+
 				if (queryFile.exists()) {
 					queryFile.delete();
 				}
@@ -187,8 +210,16 @@ public class BasicRepositoryResource {
 		try{
 			String uri = repoURL.toURI().toString();
 			if (uri != null) {
-				uri += queryName;
-				File queryFile = new File(new URI(uri));
+				if (!queryName.endsWith(".squery")) {
+					queryName += ".squery";
+				}
+				URL url = new URL(uri + queryName);
+				File queryFile = null;
+				try {
+					queryFile = new File(url.toURI());
+				} catch(URISyntaxException e) {
+					queryFile = new File(url.getPath());
+				}
 				if (queryFile.exists()) {
 					FileReader fi = new FileReader(queryFile);
 					BufferedReader br = new BufferedReader(fi);
