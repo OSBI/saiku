@@ -226,14 +226,15 @@ public class BasicRepositoryResource {
 	@GET
     @Produces({"application/json" })
 	@Path("/{queryname}")
-	public SaikuQuery loadQuery(@PathParam("queryname") String queryName){
+	public String loadQuery(@PathParam("queryname") String queryName){
 		try{
 			String uri = repoURL.toURI().toString();
+			String filename = queryName;
 			if (uri != null) {
-				if (!queryName.endsWith(".squery")) {
-					queryName += ".squery";
+				if (!filename.endsWith(".squery")) {
+					filename += ".squery";
 				}
-				URL url = new URL(uri + queryName);
+				URL url = new URL(uri + filename);
 				File queryFile = null;
 				try {
 					queryFile = new File(url.toURI());
@@ -245,12 +246,9 @@ public class BasicRepositoryResource {
 					BufferedReader br = new BufferedReader(fi);
 					String chunk ="",xml ="";
 					while ((chunk = br.readLine()) != null) {
-						xml += chunk;
+						xml += chunk + "\n";
 					}
-					SaikuQuery squery = olapQueryService.createNewOlapQuery(queryName, xml);
-					if (squery != null) {
-						return squery;
-					}
+					return xml;
 				}
 				else {
 					throw new Exception("File does not exist:" + uri);
@@ -259,8 +257,7 @@ public class BasicRepositoryResource {
 			else {
 				throw new Exception("Cannot save query because uriis null");
 			}
-		}
-		catch(Exception e){
+		} catch(Exception e){
 			log.error("Cannot load query (" + queryName + ")",e);
 		}
 		return null;
