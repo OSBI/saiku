@@ -224,7 +224,7 @@ public class BasicRepositoryResource {
 	 * @return A Saiku Query Object.
 	 */
 	@GET
-    @Produces({"application/json" })
+    @Produces({"application/xml" })
 	@Path("/{queryname}")
 	public String loadQuery(@PathParam("queryname") String queryName){
 		try{
