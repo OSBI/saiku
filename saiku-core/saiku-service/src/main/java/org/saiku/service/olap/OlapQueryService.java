@@ -288,6 +288,27 @@ public class OlapQueryService {
 		}
 		return dimsel;
 	}
+	
+	public SaikuDimensionSelection getAxisDimensionSelections(String queryName, String axis, String dimension) {
+		OlapQuery query = getOlapQuery(queryName);
+		try {
+			QueryAxis qaxis = query.getAxis(axis);
+			if (qaxis != null) {
+				QueryDimension dim = query.getDimension(dimension);
+				if (dim != null) {
+					return ObjectUtil.converDimensionSelection(dim);
+				}
+				else
+				{
+					throw new SaikuOlapException("Cannot find dimension with name:" + dimension);
+				}
+				
+			}
+		} catch (SaikuOlapException e) {
+			throw new SaikuServiceException("Cannot get dimension selections",e);
+		}
+		return null;
+	}
 
 	public void clearQuery(String queryName) {
 		OlapQuery query = getOlapQuery(queryName);

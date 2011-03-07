@@ -366,26 +366,25 @@ public class QueryResource {
 	 * Dimension Methods
 	 */
 
+
 	/**
-	 * Returns a list of hierarchies from a dimension.
+	 * Return a dimension and its selections for an axis in a query.
 	 * @param queryName the name of the query.
-	 * @param axisName the name of the axis.
-	 * @param dimensionName the name of the dimension.
-	 * 
-	 * @return a list of available hierarchies.
-	 * 
-	 * @see HierarchyRestPojo
+	 * @param axis the name of the axis.
+	 * @param dimension the name of the axis.
+	 * @return a list of available dimensions.
+	 * @see DimensionRestPojo
 	 */
-//	@GET
-//	@Produces({"application/json" })
-//	@Path("/{queryname}/axis/{axis}/dimension/{dimension}")
-//	public List<SaikuHierarchy> getDimensionInfo(
-//			@PathParam("queryname") String queryName, 
-//			@PathParam("axis") String axisName, 
-//			@PathParam("dimension") String dimensionName)
-//	{
-//		return olapQueryService.getHierarchies(queryName, dimensionName);
-//	}
+	@GET
+	@Produces({"application/json" })
+	@Path("/{queryname}/axis/{axis}/dimension/{dimension}") 
+	public SaikuDimensionSelection getAxisDimensionInfo(
+			@PathParam("queryname") String queryName, 
+			@PathParam("axis") String axis,
+			@PathParam("dimension") String dimension)
+	{
+		return olapQueryService.getAxisDimensionSelections(queryName, axis, dimension);
+	}
 
 	/**
 	 * Move a dimension from one axis to another.
