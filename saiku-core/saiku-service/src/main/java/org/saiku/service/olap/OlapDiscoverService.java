@@ -80,6 +80,14 @@ public class OlapDiscoverService {
 		}
 	}
 	
+	public SaikuDimension getDimension(SaikuCube cube, String dimensionName) throws SaikuServiceException {
+		try {
+			return metaExplorer.getDimension(cube, dimensionName);
+		} catch (SaikuOlapException e) {
+			throw new SaikuServiceException("Cannot get dimension (" + dimensionName + " ) for cube ( " + cube + " )", e);
+		}
+	}
+	
 	public List<SaikuHierarchy> getAllHierarchies(SaikuCube cube) throws SaikuServiceException {
 		try {
 			return metaExplorer.getAllHierarchies(cube);

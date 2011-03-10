@@ -98,6 +98,25 @@ public class OlapDiscoverResource {
 	
 	@GET
     @Produces({"application/json" })
+	@Path("/{connection}/{catalog}/{schema}/{cube}/dimensions/{dimension}")
+     public SaikuDimension getDimension(
+    		 @PathParam("connection") String connectionName, 
+    		 @PathParam("catalog") String catalogName, 
+    		 @PathParam("schema") String schemaName, 
+    		 @PathParam("cube") String cubeName,
+    		 @PathParam("dimension") String dimensionName) 
+    {
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
+		try {
+			return olapDiscoverService.getDimension(cube, dimensionName);
+		} catch (SaikuServiceException e) {
+			log.error(this.getClass().getName(),e);
+			return null;
+		}
+	}
+	
+	@GET
+    @Produces({"application/json" })
 	@Path("/{connection}/{catalog}/{schema}/{cube}/dimensions/{dimension}/hierarchies")
      public List<SaikuHierarchy> getDimensionHierarchies(@PathParam("connection") String connectionName, 
     		 									@PathParam("catalog") String catalogName, 
