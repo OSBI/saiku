@@ -19,6 +19,8 @@
  */
 package org.saiku.service.olap;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +32,7 @@ import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
+import org.olap4j.OlapStatement;
 import org.olap4j.mdx.IdentifierNode;
 import org.olap4j.mdx.IdentifierSegment;
 import org.olap4j.metadata.Cube;
@@ -153,6 +156,23 @@ public class OlapQueryService {
 			return result;
 		} catch (Exception e) {
 			throw new SaikuServiceException("Can't execute query: " + queryName,e);
+		}
+	}
+	
+	public ResultSet drilldown(String queryName, int maxrows) {
+		try {
+			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnectionName()); 
+			final OlapStatement stmt = con.createStatement();
+			String mdx = getMDXQuery(queryName);
+			if (maxrows > 0) {
+				mdx = "DRILLTHROUGH MAXROWS " + maxrows + " " + mdx;
+			}
+			else {
+				mdx = "DRILLTHROUGH " + mdx;
+			}
+			return  stmt.executeQuery(mdx);
+		} catch (SQLException e) {
+			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
 		}
 	}
 	

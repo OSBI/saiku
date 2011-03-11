@@ -21,6 +21,7 @@
 package org.saiku.web.rest.resources;
 
 import java.io.StringReader;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -284,6 +285,23 @@ public class QueryResource {
 		try {
 			CellDataSet cs = olapQueryService.execute(queryName);
 			return RestUtil.convert(cs);
+		}
+		catch (Exception e) {
+			log.error("Cannot execute query (" + queryName + ")",e);
+			return new ArrayList<Cell[]>();
+		}
+	}
+	
+	@GET
+	@Produces({"application/json" })
+	@Path("/{queryname}/drillthrough:{maxrows}")
+	public List<Cell[]> execute(
+			@PathParam("queryname") String queryName, 
+			@PathParam("maxrows") @DefaultValue("100") Integer maxrows)
+	{
+		try {
+			ResultSet rs = olapQueryService.drilldown(queryName, maxrows);
+			return RestUtil.convert(rs);
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ")",e);
