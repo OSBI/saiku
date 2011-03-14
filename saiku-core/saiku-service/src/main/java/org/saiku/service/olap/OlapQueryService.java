@@ -288,8 +288,7 @@ public class OlapQueryService {
 
 	public void removeDimension(String queryName, String axisName, String dimensionName) {
 		OlapQuery query = getOlapQuery(queryName);
-		String unusedName = query.getUnusedAxis().getName();
-		moveDimension(queryName, unusedName , dimensionName, -1);
+		moveDimension(queryName, "UNUSED" , dimensionName, -1);
 	}
 	
 	public List<SaikuDimensionSelection> getAxisSelection(String queryName, String axis) {
