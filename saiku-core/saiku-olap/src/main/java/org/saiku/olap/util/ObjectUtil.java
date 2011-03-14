@@ -132,16 +132,20 @@ public class ObjectUtil {
 
 	private static SaikuSelection convert(Selection sel) {
 		Type type;
+		String hierarchyUniqueName;
 		if (Level.class.isAssignableFrom(sel.getRootElement().getClass())) {
 			type = SaikuSelection.Type.LEVEL;
+			hierarchyUniqueName = ((Level) sel.getRootElement()).getHierarchy().getUniqueName();
 		} else {
 			type = SaikuSelection.Type.MEMBER;
+			hierarchyUniqueName = ((Member) sel.getRootElement()).getHierarchy().getUniqueName();
 		}
 		return new SaikuSelection(
 				sel.getRootElement().getName(),
 				sel.getUniqueName(),
 				sel.getRootElement().getCaption(),
 				sel.getDimension().getName(),
+				hierarchyUniqueName,
 				type);
 
 	}

@@ -231,8 +231,8 @@ public class OlapQueryService {
 							Selection sel = dimension.createSelection(level);
 							if (!dimension.getInclusions().contains(sel)) {
 								dimension.include(level);
-								return true;
 							}
+							return true;
 					}
 				}
 			}
@@ -322,12 +322,13 @@ public class OlapQueryService {
 				{
 					throw new SaikuOlapException("Cannot find dimension with name:" + dimension);
 				}
-				
+			}
+			else {
+				throw new SaikuOlapException("Cannot find axis with name:" + axis);
 			}
 		} catch (SaikuOlapException e) {
 			throw new SaikuServiceException("Cannot get dimension selections",e);
 		}
-		return null;
 	}
 
 	public void clearQuery(String queryName) {

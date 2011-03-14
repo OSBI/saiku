@@ -73,7 +73,7 @@ public class OlapQuery {
 		if (standardAxis == null)
 			throw new SaikuOlapException("Axis ("+name+") not found for query ("+ query.getName() + ")");
 		
-		Axis queryAxis = Axis.Factory.forOrdinal(standardAxis.ordinal());
+		Axis queryAxis = Axis.Factory.forOrdinal(standardAxis.axisOrdinal());
 		return query.getAxis(queryAxis);
 	}
 	

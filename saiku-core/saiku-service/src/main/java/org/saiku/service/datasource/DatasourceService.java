@@ -26,6 +26,7 @@ import org.olap4j.OlapConnection;
 import org.saiku.datasources.connection.ISaikuConnection;
 import org.saiku.datasources.connection.SaikuConnectionFactory;
 import org.saiku.datasources.datasource.SaikuDatasource;
+import org.saiku.service.util.exception.SaikuServiceException;
 
 public class DatasourceService {
 	
@@ -37,13 +38,17 @@ public class DatasourceService {
 		datasources = ds;
 		init();
 	}
-	
+
 	private void init() {
-		for (SaikuDatasource sd : datasources.getDatasources().values()) {
-			ISaikuConnection con = SaikuConnectionFactory.getConnection(sd);
-			if (con.initialized()) {
-				connections.put(con.getName(), con);
+		try {
+			for (SaikuDatasource sd : datasources.getDatasources().values()) {
+				ISaikuConnection con = SaikuConnectionFactory.getConnection(sd);
+				if (con.initialized()) {
+					connections.put(con.getName(), con);
+				}
 			}
+		} catch (Throwable e) {
+			throw new SaikuServiceException("There was an error during datasource initialization ",e);
 		}
 	}
 	

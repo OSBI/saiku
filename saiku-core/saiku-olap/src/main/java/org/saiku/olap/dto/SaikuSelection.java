@@ -25,6 +25,7 @@ public class SaikuSelection extends AbstractSaikuObject {
 	
 	private String caption;
 	private String dimensionUniqueName;
+	private String hierarchyUniqueName;
 	
 	public static enum Type {
 		MEMBER,
@@ -38,11 +39,16 @@ public class SaikuSelection extends AbstractSaikuObject {
 		throw new RuntimeException("Unsupported Constructor. Serialization only");
 	}
 
-	public SaikuSelection(String name, String uniqueName, String caption, String dimensionUniqueName,Type type ) {
+	public SaikuSelection(String name, String uniqueName, String caption, String dimensionUniqueName, String hierarchyUniqueName, Type type ) {
 		super(uniqueName,name);
 		this.caption = caption;
 		this.dimensionUniqueName = dimensionUniqueName;
+		this.hierarchyUniqueName = hierarchyUniqueName;
 		this.type = type;
+	}
+
+	public String getHierarchyUniqueName() {
+		return hierarchyUniqueName;
 	}
 
 	public String getCaption() {
