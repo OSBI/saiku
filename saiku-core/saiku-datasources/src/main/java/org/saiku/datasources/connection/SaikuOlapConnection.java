@@ -60,7 +60,7 @@ public class SaikuOlapConnection implements ISaikuConnection {
 			if (tmpolapConnection == null) {
 				throw new Exception("Connection is null");
 			}
-			System.out.println("Catalogs:" + tmpolapConnection.getMetaData().getOlapCatalogs().size());
+			//System.out.println("Catalogs:" + tmpolapConnection.getMetaData().getOlapCatalogs().size());
 			olapConnection = tmpolapConnection;
 		} catch (Exception e) {
 			e.printStackTrace();
