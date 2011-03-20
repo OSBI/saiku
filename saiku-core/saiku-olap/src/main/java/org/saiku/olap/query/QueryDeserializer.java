@@ -129,7 +129,7 @@ public class QueryDeserializer {
         throw new Exception("Cant find <QueryModel> nor <MDX> Query");
     }
 
-    private static OlapQuery createQmQuery() throws QueryParseException {
+    private static OlapQuery createQmQuery() throws QueryParseException, SQLException {
 
         Element queryElement = dom.getRootElement();
         if (queryElement != null && queryElement.getName().equals("Query")) {
@@ -306,7 +306,7 @@ public class QueryDeserializer {
 
     }
 
-    private static Query createEmptyQuery(String queryName, String catalogName, String schemaName, String cubeName) throws OlapException {
+    private static Query createEmptyQuery(String queryName, String catalogName, String schemaName, String cubeName) throws SQLException {
         if (!StringUtils.isNotBlank(catalogName)) {
             try {
                 connection.setCatalog(catalogName);
@@ -316,7 +316,7 @@ public class QueryDeserializer {
         }
 
         Cube cube = null;
-        final NamedList<Catalog> catalogs = connection.getMetaData().getOlapCatalogs();
+        final NamedList<Catalog> catalogs = connection.getMetaData().getConnection().getOlapCatalogs();
         for (int k = 0; k < catalogs.size(); k++) {
         	final NamedList<Schema> schemas = catalogs.get(k).getSchemas();
         	Schema schema = schemas.get(schemaName);

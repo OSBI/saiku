@@ -19,6 +19,7 @@
  */
 package org.saiku.service.olap;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.olap4j.OlapConnection;
@@ -44,11 +45,11 @@ public class OlapDiscoverService {
 		metaExplorer = new OlapMetaExplorer(datasourceService.getOlapConnections());
 	}
 	
-	public List<SaikuCube> getAllCubes() {
+	public List<SaikuCube> getAllCubes() throws SQLException {
 		return metaExplorer.getAllCubes();
 	}
 
-	public List<SaikuConnection> getAllConnections() throws SaikuServiceException {
+	public List<SaikuConnection> getAllConnections() throws SaikuServiceException, SQLException {
 		try {
 			return metaExplorer.getAllConnections();
 		} catch (SaikuOlapException e) {
