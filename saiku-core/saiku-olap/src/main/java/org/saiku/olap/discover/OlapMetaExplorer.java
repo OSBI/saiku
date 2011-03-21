@@ -59,7 +59,7 @@ public class OlapMetaExplorer {
 		connections = con;
 	}
 
-	public SaikuConnection getConnection(String connectionName) throws SaikuOlapException {
+	public SaikuConnection getConnection(String connectionName) throws SaikuOlapException, SQLException {
 		OlapConnection olapcon = connections.get(connectionName);
 		SaikuConnection connection = null;
 		if (olapcon != null) {
@@ -104,7 +104,7 @@ public class OlapMetaExplorer {
 		throw new SaikuOlapException("Cannot find connection: (" + connectionName + ")");
 	}
 
-	public List<SaikuConnection> getConnections(List<String> connectionNames) throws SaikuOlapException {
+	public List<SaikuConnection> getConnections(List<String> connectionNames) throws SaikuOlapException, SQLException {
 		List<SaikuConnection> connectionList = new ArrayList<SaikuConnection>();
 		for (String connectionName : connectionNames) {
 			connectionList.add(getConnection(connectionName));
@@ -112,7 +112,7 @@ public class OlapMetaExplorer {
 		return connectionList;
 	}
 
-	public List<SaikuConnection> getAllConnections() throws SaikuOlapException {
+	public List<SaikuConnection> getAllConnections() throws SaikuOlapException, SQLException {
 		List<SaikuConnection> cubesList = new ArrayList<SaikuConnection>();
 		for (String connectionName : connections.keySet()) {
 			cubesList.add(getConnection(connectionName));
@@ -121,7 +121,7 @@ public class OlapMetaExplorer {
 	}
 
 
-	public List<SaikuCube> getCubes(String connectionName) {
+	public List<SaikuCube> getCubes(String connectionName) throws SQLException {
 		OlapConnection olapcon = connections.get(connectionName);
 		List<SaikuCube> cubes = new ArrayList<SaikuCube>();
 		if (olapcon != null) {
@@ -142,7 +142,7 @@ public class OlapMetaExplorer {
 
 	}
 
-	public List<SaikuCube> getCubes(List<String> connectionNames) {
+	public List<SaikuCube> getCubes(List<String> connectionNames) throws SQLException {
 		List<SaikuCube> cubesList = new ArrayList<SaikuCube>();
 		for (String connectionName : connectionNames) {
 			cubesList.addAll(getCubes(connectionName));
@@ -150,7 +150,7 @@ public class OlapMetaExplorer {
 		return cubesList;
 	}
 
-	public List<SaikuCube> getAllCubes() {
+	public List<SaikuCube> getAllCubes() throws SQLException {
 		List<SaikuCube> cubes = new ArrayList<SaikuCube>();
 		for (String connectionName : connections.keySet()) {
 			cubes.addAll(getCubes(connectionName));
