@@ -316,7 +316,7 @@ public class QueryDeserializer {
         }
 
         Cube cube = null;
-        final NamedList<Catalog> catalogs = connection.getMetaData().getOlapCatalogs();
+        final NamedList<Catalog> catalogs = connection.getOlapCatalogs();
         for (int k = 0; k < catalogs.size(); k++) {
         	final NamedList<Schema> schemas = catalogs.get(k).getSchemas();
         	Schema schema = schemas.get(schemaName);
