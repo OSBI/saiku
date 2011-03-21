@@ -5,7 +5,6 @@
 		<include pattern="org.saiku.web.rest.**" />
 	</api-classes>
 	<api-import pattern="org.saiku.web.rest.**" />
-
 	<webapp mergeWebXML="src/main/web/web.xml" />
 
 	<modules>
