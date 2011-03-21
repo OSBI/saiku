@@ -22,6 +22,7 @@ package org.saiku.olap.util.formatter;
 import java.text.DecimalFormat;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -79,15 +80,14 @@ public class CellSetFormatter implements ICellSetFormatter {
 	 * Description of a particular hierarchy mapped to an axis.
 	 */
 	private static class AxisOrdinalInfo {
-		private int minDepth = 1;
-
-		private int maxDepth = 0;
-
-		/**
-		 * Returns the number of matrix columns required to display this hierarchy.
-		 */
+		private List<Integer> depths = new ArrayList<Integer>();
+		
 		public int getWidth() {
-			return maxDepth - minDepth + 1;
+			return depths.size();
+		}
+		
+		public List<Integer> getDepths() {
+			return depths;
 		}
 	}
 
@@ -201,10 +201,10 @@ public class CellSetFormatter implements ICellSetFormatter {
 			for (final Member member : position.getMembers()) {
 				++k;
 				final AxisOrdinalInfo axisOrdinalInfo = axisInfo.ordinalInfos.get(k);
-				if (axisOrdinalInfo.minDepth > member.getDepth() || p == 0) {
-					axisOrdinalInfo.minDepth = member.getDepth();
+				if (!axisOrdinalInfo.getDepths().contains(member.getDepth())) {
+					axisOrdinalInfo.getDepths().add(member.getDepth());
+					Collections.sort(axisOrdinalInfo.depths);
 				}
-				axisOrdinalInfo.maxDepth = Math.max(axisOrdinalInfo.maxDepth, member.getDepth());
 			}
 		}
 		return axisInfo;
@@ -360,9 +360,9 @@ public class CellSetFormatter implements ICellSetFormatter {
 			for (int j = 0; j < memberList.size(); j++) {
 				Member member = memberList.get(j);
 				final AxisOrdinalInfo ordinalInfo = axisInfo.ordinalInfos.get(j);
-				if (member.getDepth() < ordinalInfo.minDepth)
+				if (ordinalInfo.getDepths().size() > 0 && member.getDepth() < ordinalInfo.getDepths().get(0))
 					break;
-				final int y = yOffset + member.getDepth() - ordinalInfo.minDepth;
+				final int y = yOffset + ordinalInfo.depths.indexOf(member.getDepth());
 				members[y] = member;
 				yOffset += ordinalInfo.getWidth();
 			}
