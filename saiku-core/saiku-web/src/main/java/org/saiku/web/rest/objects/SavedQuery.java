@@ -1,13 +1,13 @@
 package org.saiku.web.rest.objects;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class SavedQuery {
 	private String name;
 	private String lastModified;
 	
-	public SavedQuery() {};
+	public SavedQuery() {		
+		throw new RuntimeException("Unsupported Constructor. Serialization only");
+	}
 	
 	public SavedQuery(String name, String lastModified) {
 		this.name = name;

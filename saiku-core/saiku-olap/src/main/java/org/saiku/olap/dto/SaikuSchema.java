@@ -26,6 +26,11 @@ public class SaikuSchema extends AbstractSaikuObject {
 
 	private List<SaikuCube> cubes;
 
+	public SaikuSchema() {		
+		super(null,null);
+		throw new RuntimeException("Unsupported Constructor. Serialization only");
+	}
+	
 	public SaikuSchema(String name, List<SaikuCube> cubes) {
 		super(name,name);
 		this.cubes = cubes;

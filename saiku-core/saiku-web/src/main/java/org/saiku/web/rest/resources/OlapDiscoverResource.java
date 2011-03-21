@@ -20,7 +20,6 @@
 
 package org.saiku.web.rest.resources;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +70,7 @@ public class OlapDiscoverResource {
      */
     @GET
     @Produces({"application/json" })
-     public List<SaikuConnection> getConnections() throws SQLException {
+     public List<SaikuConnection> getConnections() {
     	try {
 			return olapDiscoverService.getAllConnections();
 		} catch (SaikuServiceException e) {

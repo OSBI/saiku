@@ -34,6 +34,7 @@ import org.olap4j.metadata.Cube;
 import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
+import org.olap4j.query.QueryDimension.HierarchizeMode;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.query.QueryProperties.QueryProperty;
 import org.saiku.olap.query.QueryProperties.QueryPropertyFactory;
@@ -86,6 +87,7 @@ public class OlapQuery {
 	}
 	
 	public void moveDimension(QueryDimension dimension, Axis axis) {
+		dimension.setHierarchizeMode(HierarchizeMode.PRE);
 		QueryAxis oldQueryAxis = findAxis(dimension);
 		QueryAxis newQueryAxis = query.getAxis(axis);
 		if (oldQueryAxis != null && newQueryAxis != null) {
@@ -95,6 +97,7 @@ public class OlapQuery {
 	}
 
 	public void moveDimension(QueryDimension dimension, Axis axis, int position) {
+		dimension.setHierarchizeMode(HierarchizeMode.PRE);
         QueryAxis oldQueryAxis = findAxis(dimension);
         QueryAxis newQueryAxis = query.getAxis(axis);
         if (oldQueryAxis != null && newQueryAxis != null) {

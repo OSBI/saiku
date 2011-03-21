@@ -198,12 +198,7 @@
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-core</artifactId>
-			<version>1.5-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.jersey.experimental.hypermedia-action</groupId>
-			<artifactId>hypermedia-action-server</artifactId>
-			<version>1.5-SNAPSHOT</version>
+			<version>1.6-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
@@ -213,7 +208,7 @@
 		<dependency>
 			<groupId>com.sun.jersey.jersey-test-framework</groupId>
 			<artifactId>jersey-test-framework-core</artifactId>
-			<version>1.5-SNAPSHOT</version>
+			<version>1.6-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 		<!--

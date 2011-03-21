@@ -1,6 +1,6 @@
 #!/bin/bash
 cd saiku-core
-mvn clean install
+mvn clean install 
 cd ..
 cd saiku-webapp
 mvn clean install

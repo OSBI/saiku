@@ -27,6 +27,11 @@ public class SaikuAxis extends AbstractSaikuObject {
 	private List<SaikuDimensionSelection> dimensionSelections;
 	private int ordinal;
 
+	public SaikuAxis() {		
+		super(null,null);
+		throw new RuntimeException("Unsupported Constructor. Serialization only");
+	}
+	
 	public SaikuAxis(String name, int ordinal, String uniqueName, List<SaikuDimensionSelection> dimsel) {
 		super(uniqueName,name);
 		this.dimensionSelections = dimsel;
