@@ -277,11 +277,26 @@ public class OlapMetaExplorer {
 			Dimension dim = nativeCube.getDimensions().get(dimension);
 			if (dim != null) {
 				Hierarchy h = dim.getHierarchies().get(hierarchy);
+				if (h == null) {
+					for (Hierarchy hlist : dim.getHierarchies()) {
+						if (hlist.getUniqueName().equals(hierarchy) || hlist.getName().equals(hierarchy)) {
+							h = hlist;
+						}
+					}
+				}
+
 				if (h!= null) {
 					Level l = h.getLevels().get(level);
-					List<SaikuMember> members;
-					members = (ObjectUtil.convertMembers(l.getMembers()));
-					return members;
+					if (l == null) {
+						for (Level lvl : h.getLevels()) {
+							if (lvl.getUniqueName().equals(level) || lvl.getName().equals(level)) {
+								return (ObjectUtil.convertMembers(lvl.getMembers()));
+							}
+						}
+					} else {
+						return (ObjectUtil.convertMembers(l.getMembers()));
+					}
+
 				}
 			}
 		} catch (OlapException e) {
