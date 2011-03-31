@@ -372,8 +372,8 @@ public class QueryResource {
 
 	@PUT
 	@Produces({"application/json" })
-	@Path("/{queryname}/axis/swapaxes")
-	public Status setNonEmpty(
+	@Path("/{queryname}/swapaxes")
+	public Status swapAxes(
 			@PathParam("queryname") String queryName)	{
 		olapQueryService.swapAxes(queryName);
 		return Status.OK;
