@@ -451,17 +451,32 @@ public class QueryResource {
 		}
 	}
 	
-	@POST
+	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/member/")
-	public Status includeMembers(
+	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/")
+	public Status updateSelections(
 			@PathParam("queryname") String queryName,
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName, 
-			SelectionRestObject[] members)
+			SelectionRestObject[] selections)
 	{
-		for (SelectionRestObject member : members) {
-			includeMember("MEMBER", queryName, axisName, dimensionName, member.getUniquename(), -1, -1);
+		for (SelectionRestObject selection : selections) {
+			if (selection.getType() != null && "member".equals(selection.getType().toLowerCase())) {
+				if (selection.getAction() != null && "add".equals(selection.getAction().toLowerCase())) {
+						includeMember("MEMBER", queryName, axisName, dimensionName, selection.getUniquename(), -1, -1);
+				}
+				if (selection.getAction() != null && "delete".equals(selection.getAction().toLowerCase())) {
+					removeMember("MEMBER", queryName, axisName, dimensionName, selection.getUniquename());
+				}
+			}
+			if (selection.getType() != null && "level".equals(selection.getType().toLowerCase())) {
+				if (selection.getAction() != null && "add".equals(selection.getAction().toLowerCase())) {
+						includeLevel(queryName, axisName, dimensionName, selection.getHierarchy(), selection.getUniquename(), -1);
+				}
+				if (selection.getAction() != null && "delete".equals(selection.getAction().toLowerCase())) {
+					removeLevel(queryName, axisName, dimensionName, selection.getHierarchy(), selection.getUniquename());
+				}
+			}
 		}
 		return Status.OK;
 		

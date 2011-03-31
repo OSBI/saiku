@@ -7,7 +7,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 public class SelectionRestObject {
 	
 	private String uniquename;
+	private String hierarchy;
 	private String type;
+	private String action;
+
 
 	public SelectionRestObject() {
 	}
@@ -18,6 +21,14 @@ public class SelectionRestObject {
 
 	public String getType() {
 		return type;
+	}
+
+	public String getHierarchy() {
+		return hierarchy;
+	}
+
+	public String getAction() {
+		return action;
 	}
 
 	
