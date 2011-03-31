@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
@@ -48,6 +49,7 @@ import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
+import org.saiku.web.rest.objects.SelectionRestObject;
 import org.saiku.web.rest.objects.resultset.Cell;
 import org.saiku.web.rest.util.RestUtil;
 import org.slf4j.Logger;
@@ -265,7 +267,6 @@ public class QueryResource {
 			@PathParam("format") String format){
 
 		try {
-			log.error("csv servlet");
 			byte[] doc = olapQueryService.getExport(queryName,"csv",format);
 			return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
 					"content-disposition",
@@ -371,13 +372,12 @@ public class QueryResource {
 
 	@PUT
 	@Produces({"application/json" })
-	@Path("/{queryname}/axis/{axis}/nonempty/{boolean}")
-	public void setNonEmpty(
-			@PathParam("queryname") String queryName, 
-			@PathParam("axis") String axisName, 
-			@PathParam("boolean") Boolean bool)
-	{
-		olapQueryService.setNonEmpty(queryName, axisName, bool);
+	@Path("/{queryname}/axis/swapaxes")
+	public Status setNonEmpty(
+			@PathParam("queryname") String queryName)	{
+		olapQueryService.swapAxes(queryName);
+		return Status.OK;
+		
 	}
 
 	/*
@@ -449,6 +449,38 @@ public class QueryResource {
 			log.error("Cannot remove dimension "+ dimensionName+ " for query (" + queryName + ")",e);
 			return Status.INTERNAL_SERVER_ERROR;
 		}
+	}
+	
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/member/")
+	public Status includeMembers(
+			@PathParam("queryname") String queryName,
+			@PathParam("axis") String axisName, 
+			@PathParam("dimension") String dimensionName, 
+			SelectionRestObject[] members)
+	{
+		for (SelectionRestObject member : members) {
+			includeMember("MEMBER", queryName, axisName, dimensionName, member.getUniquename(), -1, -1);
+		}
+		return Status.OK;
+		
+	}
+	
+	@DELETE
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/member/")
+	public Status removeMembers(
+			@PathParam("queryname") String queryName,
+			@PathParam("axis") String axisName, 
+			@PathParam("dimension") String dimensionName, 
+			SelectionRestObject[] members)
+	{
+		for (SelectionRestObject member : members) {
+			removeMember("MEMBER", queryName, axisName, dimensionName, member.getUniquename());
+		}
+		return Status.OK;
+		
 	}
 	/**
 	 * Move a member.
