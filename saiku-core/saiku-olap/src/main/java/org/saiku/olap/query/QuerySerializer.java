@@ -221,9 +221,9 @@ public class QuerySerializer {
             Element selection = new Element("Selection");
             if (sel.getDimension() != null)
                 selection.setAttribute("dimension", sel.getDimension().getName());
-            if (sel.getRootElement().getClass().equals(Level.class)) {
+            if ((sel.getRootElement() instanceof Level)) {
             	selection.setAttribute("type", "level");
-            } else if (sel.getRootElement().getClass().equals(Member.class)) {
+            } else if ((sel.getRootElement() instanceof Member)) {
             	selection.setAttribute("type", "member");
             }
             selection.setAttribute("node", sel.getUniqueName());

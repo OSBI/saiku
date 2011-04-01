@@ -252,7 +252,7 @@ public class QueryDeserializer {
                     for (Hierarchy hierarchy : dim.getDimension().getHierarchies()) {
             				for (Level level : hierarchy.getLevels()) {
             					if (level.getUniqueName().equals(name)) {
-            							 sel = dim.createSelection(level);
+            							 sel = dim.include(level);
             					}
             				}
             			}
