@@ -38,6 +38,7 @@ import org.olap4j.mdx.IdentifierSegment;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
+import org.olap4j.metadata.Member;
 import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
@@ -250,7 +251,17 @@ public class OlapQueryService {
 						if (level.getUniqueName().equals(uniqueLevelName)) {
 							Selection inclusion = dimension.createSelection(level);
 							dimension.getInclusions().remove(inclusion);
-							
+							ArrayList<Selection> removals = new ArrayList<Selection>();
+							for (Selection sel :dimension.getInclusions()) {
+								if ((sel.getRootElement() instanceof Member)) {
+					            	if (((Member) sel.getRootElement()).getLevel().equals(level)) {
+					            		if (dimension.getInclusions().contains(sel)) {
+					            			removals.add(sel);
+					            		}
+					            	}
+					            }
+							}
+							dimension.getInclusions().removeAll(removals);
 							if (dimension.getInclusions().size() == 0) {
 								moveDimension(queryName, null , dimensionName, -1);
 							}
