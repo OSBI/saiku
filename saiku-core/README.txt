@@ -10,14 +10,14 @@ security, and query saving and loading.
 
 New Features
 Nicer member selection.
-CRUD operations.
-OAuth security.
+CRUD query operations.
+OAuth security along with standard Spring Security features (LDAP, Simple, DB...).
 ....
 
 Hardware and software requirements
 CPU: 1GHz
 Ram: 512mb Min
-Java: JRE6
+Java 6
 
 Installation instructions, getting started tips, and documentation
 
@@ -30,7 +30,7 @@ Version history
 
 
 Pricing information
-Free as in speach, not as in beer.
+Free as in speech, not as in beer.
 Paypal(If you're feeling generous): http://bit.ly/fQhpQQ
 
 Contact information

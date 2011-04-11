@@ -29,12 +29,12 @@ public class QueryProperties {
 	public static final String KEY_NONEMPTY			= "saiku.olap.query.nonempty"; //$NON-NLS-1$
 	public static final String KEY_NONEMPTY_ROWS	= "saiku.olap.query.nonempty.rows"; //$NON-NLS-1$
 	public static final String KEY_NONEMPTY_COLUMNS = "saiku.olap.query.nonempty.columns"; //$NON-NLS-1$
-	public static final String KEY_SWAP_AXES = "saiku.olap.query.swap.axis"; //$NON-NLS-1$
+	public static final String KEY_IS_DRILLTHROUGH = "saiku.olap.query.drillthrough"; //$NON-NLS-1$
 	public static final String[] KEYS = { 
 								KEY_NONEMPTY, 
 								KEY_NONEMPTY_ROWS, 
 								KEY_NONEMPTY_COLUMNS, 
-								KEY_SWAP_AXES };
+								KEY_IS_DRILLTHROUGH };
 
 	public abstract class QueryProperty {
 
@@ -139,20 +139,22 @@ public class QueryProperties {
 
 	}
 	
-	public class SwapAxisProperty extends QueryProperty {
+	public class IsDrillthroughProperty extends QueryProperty {
 
-		public SwapAxisProperty(OlapQuery query, String key, String value) {
+		public IsDrillthroughProperty(OlapQuery query, String key, String value) {
 			super(query,key,value);
 		}
 
 		@Override
 		public void handle() {
-			query.swapAxes();
 		}
 		
 		@Override
 		public Properties getProperties() {
 			Properties props = new Properties();
+			String key = this.key;
+			String value = Boolean.toString(query.isDrillThroughEnabled());
+			props.put(key, value);
 			return props;
 		}
 
@@ -171,8 +173,8 @@ public class QueryProperties {
 			if (KEY_NONEMPTY.equals(key)) {
 				return q.new NonEmptyProperty(query, key, value);
 			}
-			if (KEY_SWAP_AXES.equals(key)) {
-				return q.new SwapAxisProperty(query, key, value);
+			if (KEY_IS_DRILLTHROUGH.equals(key)) {
+				return q.new IsDrillthroughProperty(query, key, value);
 			}
 			return q.new DummyProperty(query, key, value);
 		}

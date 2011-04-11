@@ -48,10 +48,16 @@ public class OlapQuery {
 
 	private SaikuCube cube;
 	
-	public OlapQuery(Query query, SaikuCube cube) {
+	public OlapQuery(Query query, SaikuCube cube, boolean applyDefaultProperties) {
 		this.query = query;
 		this.cube = cube;
-		applyDefaultProperties();
+		if (applyDefaultProperties) {
+			applyDefaultProperties();	
+		}
+	}
+
+	public OlapQuery(Query query, SaikuCube cube) {
+		this(query,cube,true);
 	}
 	
 	public void swapAxes() {
@@ -202,6 +208,10 @@ public class OlapQuery {
     public String toXml() {
     	QuerySerializer qs = new QuerySerializer(this);
     	return qs.createXML();
+    }
+    
+    public Boolean isDrillThroughEnabled() {
+    	return query.getCube().isDrillThroughEnabled();
     }
 
 }
