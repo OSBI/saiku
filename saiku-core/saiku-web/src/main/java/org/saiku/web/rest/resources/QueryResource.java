@@ -23,6 +23,7 @@ package org.saiku.web.rest.resources;
 import java.io.StringReader;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -102,6 +103,7 @@ public class QueryResource {
 	@Produces({"application/json" })
 	@Path("/{queryname}")
 	public SaikuQuery getQuery(@PathParam("queryname") String queryName){
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "\tGET");
 		return olapQueryService.getQuery(queryName);
 	}
 
@@ -112,6 +114,7 @@ public class QueryResource {
 	@DELETE
 	@Path("/{queryname}")
 	public Status deleteQuery(@PathParam("queryname") String queryName){
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "\tDELETE");
 		try{
 			olapQueryService.deleteQuery(queryName);
 			return(Status.GONE);
@@ -146,6 +149,7 @@ public class QueryResource {
 			@FormParam("xml") @DefaultValue("") String xml,
 			@PathParam("queryname") String queryName) throws ServletException 
 	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "\tPOST\txml:" + xml == null);
 		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
 		if (xml != null && xml.length() > 0) {
 			return olapQueryService.createNewOlapQuery(queryName,xml);
@@ -157,6 +161,7 @@ public class QueryResource {
 	@Produces({"application/json" })
 	@Path("/{queryname}/properties")
 	public Properties getProperties(@PathParam("queryname") String queryName) {
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/properties\tGET");
 		return olapQueryService.getProperties(queryName);
 	}
 
@@ -168,6 +173,7 @@ public class QueryResource {
 			@PathParam("queryname") String queryName, 
 			@FormParam("properties") String properties) 
 	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/properties\tPOST");
 		try {
 			Properties props = new Properties();
 			System.out.print("PROPERTIES: " + properties);
@@ -190,6 +196,7 @@ public class QueryResource {
 			@PathParam("propertyKey") String propertyKey, 
 			@FormParam("propertyValue") String propertyValue) 
 	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/properties/"+ propertyKey + "\tPOST");
 		try{
 			Properties props = new Properties();
 			props.put(propertyKey, propertyValue);
@@ -205,6 +212,7 @@ public class QueryResource {
 	@GET
 	@Path("/{queryname}/mdx")
 	public String getMDXQuery(@PathParam("queryname") String queryName){
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/mdx/\tGET");
 		try {
 			return olapQueryService.getMDXQuery(queryName);
 		}
@@ -217,6 +225,7 @@ public class QueryResource {
 	@GET
 	@Path("/{queryname}/xml")
 	public String getQueryXml(@PathParam("queryname") String queryName){
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/xml/\tGET");
 		try {
 			return olapQueryService.getQueryXml(queryName);
 		}
@@ -230,6 +239,7 @@ public class QueryResource {
 	@Produces({"application/vnd.ms-excel" })
 	@Path("/{queryname}/export/xls")
 	public Response getQueryExcelExport(@PathParam("queryname") String queryName){
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/export/xls/\tGET");
 		return getQueryExcelExport(queryName, "hierarchical");
 	}
 
@@ -239,6 +249,7 @@ public class QueryResource {
 	public Response getQueryExcelExport(
 			@PathParam("queryname") String queryName,
 			@PathParam("format") @DefaultValue("HIERARCHICAL") String format){
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/export/xls/"+format+"\tGET");
 		try {
 		byte[] doc = olapQueryService.getExport(queryName,"xls",format);
 		return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
@@ -256,6 +267,7 @@ public class QueryResource {
 	@Produces({"text/csv" })
 	@Path("/{queryname}/export/csv")
 	public Response getQueryCsvExport(@PathParam("queryname") String queryName){
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/export/csv\tGET");
 		return getQueryCsvExport(queryName, "flat");
 	}
 
@@ -265,7 +277,7 @@ public class QueryResource {
 	public Response getQueryCsvExport(
 			@PathParam("queryname") String queryName,
 			@PathParam("format") String format){
-
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/export/csv/"+format+"\tGET");
 		try {
 			byte[] doc = olapQueryService.getExport(queryName,"csv",format);
 			return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
@@ -283,6 +295,7 @@ public class QueryResource {
 	@Produces({"application/json" })
 	@Path("/{queryname}/result")
 	public List<Cell[]> execute(@PathParam("queryname") String queryName){
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/result\tGET");
 		try {
 			CellDataSet cs = olapQueryService.execute(queryName);
 			return RestUtil.convert(cs);
@@ -300,6 +313,7 @@ public class QueryResource {
 			@PathParam("queryname") String queryName, 
 			@PathParam("maxrows") @DefaultValue("100") Integer maxrows)
 	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/drillthrough\tGET");
 		try {
 			ResultSet rs = olapQueryService.drilldown(queryName, maxrows);
 			return RestUtil.convert(rs);
@@ -316,6 +330,7 @@ public class QueryResource {
 	public List<Cell[]> execute(
 			@PathParam("queryname") String queryName,
 			@PathParam("format") String formatter){
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/result"+formatter+"\tGET");
 		try {
 			CellDataSet cs = olapQueryService.execute(queryName,formatter);
 			return RestUtil.convert(cs);
@@ -344,6 +359,7 @@ public class QueryResource {
 			@PathParam("queryname") String queryName, 
 			@PathParam("axis") String axisName)
 	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/axis/"+axisName+"\tGET");
 		return olapQueryService.getAxisSelection(queryName, axisName);
 	}
 
@@ -359,6 +375,7 @@ public class QueryResource {
 			@PathParam("queryname") String queryName, 
 			@PathParam("axis") String axisName)
 	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/axis/"+axisName+"\tDELETE");
 		olapQueryService.clearAxis(queryName, axisName);
 	}
 	
@@ -367,6 +384,7 @@ public class QueryResource {
 	@Path("/{queryname}/axis/")
 	public void clearAllAxisSelections(@PathParam("queryname") String queryName)
 	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/axis\tDELETE");
 		olapQueryService.resetQuery(queryName);
 	}
 
@@ -375,6 +393,7 @@ public class QueryResource {
 	@Path("/{queryname}/swapaxes")
 	public Status swapAxes(
 			@PathParam("queryname") String queryName)	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/swapaxes\tPUT");
 		olapQueryService.swapAxes(queryName);
 		return Status.OK;
 		
@@ -401,6 +420,7 @@ public class QueryResource {
 			@PathParam("axis") String axis,
 			@PathParam("dimension") String dimension)
 	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/axis/"+axis+"/dimension/"+dimension+"\tGET");
 		return olapQueryService.getAxisDimensionSelections(queryName, axis, dimension);
 	}
 
@@ -422,6 +442,7 @@ public class QueryResource {
 			@PathParam("dimension") String dimensionName, 
 			@FormParam("position") @DefaultValue("-1")int position)
 	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"\tPOST");
 		try{
 			olapQueryService.moveDimension(queryName, axisName, dimensionName, position);
 			return Status.OK;
@@ -442,6 +463,7 @@ public class QueryResource {
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName)
 	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"\tDELETE");
 		try{
 			olapQueryService.removeDimension(queryName, axisName, dimensionName);
 			return Status.OK;
@@ -460,6 +482,7 @@ public class QueryResource {
 			@PathParam("dimension") String dimensionName, 
 			SelectionRestObject[] selections)
 	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"\tPUT");
 		for (SelectionRestObject selection : selections) {
 			if (selection.getType() != null && "member".equals(selection.getType().toLowerCase())) {
 				if (selection.getAction() != null && "add".equals(selection.getAction().toLowerCase())) {
@@ -491,6 +514,7 @@ public class QueryResource {
 			@PathParam("dimension") String dimensionName, 
 			SelectionRestObject[] members)
 	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/member\tDELETE");
 		for (SelectionRestObject member : members) {
 			removeMember("MEMBER", queryName, axisName, dimensionName, member.getUniquename());
 		}
@@ -512,6 +536,7 @@ public class QueryResource {
 			@FormParam("position") @DefaultValue("-1") int position, 
 			@FormParam("memberposition") @DefaultValue("-1") int memberposition)
 	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/member/"+uniqueMemberName+"\tPOST");
 		try{
 			olapQueryService.moveDimension(queryName, axisName, dimensionName, position);
 
@@ -538,6 +563,8 @@ public class QueryResource {
 			@PathParam("dimension") String dimensionName, 
 			@PathParam("member") String uniqueMemberName)
 	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/member/"+uniqueMemberName+"\tDELETE");
+
 		try{
 			boolean ret = olapQueryService.removeMember(queryName, dimensionName, uniqueMemberName, selectionType);
 			if(ret == true){
@@ -564,6 +591,8 @@ public class QueryResource {
 			@PathParam("level") String uniqueLevelName, 
 			@FormParam("position") @DefaultValue("-1") int position)
 	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/hierarchy/"+uniqueHierarchyName+"/"+uniqueLevelName+"\tPOST");
+
 		try{
 			olapQueryService.moveDimension(queryName, axisName, dimensionName, position);
 			boolean ret = olapQueryService.includeLevel(queryName, dimensionName, uniqueHierarchyName, uniqueLevelName);
@@ -589,6 +618,7 @@ public class QueryResource {
 			@PathParam("hierarchy") String uniqueHierarchyName, 
 			@PathParam("level") String uniqueLevelName)
 	{
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/hierarchy/"+uniqueHierarchyName+"/"+uniqueLevelName+"\tDELETE");
 		try{
 			boolean ret = olapQueryService.removeLevel(queryName, dimensionName, uniqueHierarchyName, uniqueLevelName);
 			if(ret == true){
