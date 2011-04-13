@@ -149,7 +149,7 @@ public class QueryResource {
 			@FormParam("xml") @DefaultValue("") String xml,
 			@PathParam("queryname") String queryName) throws ServletException 
 	{
-		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "\tPOST\txml:" + xml == null);
+		System.out.println("TRACK\t" + (new Date()).toString() + "\t/query/" + queryName + "\tPOST\t xml:" + (xml == null));
 		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
 		if (xml != null && xml.length() > 0) {
 			return olapQueryService.createNewOlapQuery(queryName,xml);
