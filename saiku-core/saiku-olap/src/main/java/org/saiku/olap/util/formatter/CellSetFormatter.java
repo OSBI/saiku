@@ -23,8 +23,10 @@ import java.text.DecimalFormat;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.olap4j.Cell;
 import org.olap4j.CellSet;
@@ -33,6 +35,7 @@ import org.olap4j.OlapException;
 import org.olap4j.Position;
 import org.olap4j.impl.CoordinateIterator;
 import org.olap4j.impl.Olap4jUtil;
+import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
 import org.olap4j.metadata.Property;
@@ -81,6 +84,7 @@ public class CellSetFormatter implements ICellSetFormatter {
 	 */
 	private static class AxisOrdinalInfo {
 		private List<Integer> depths = new ArrayList<Integer>();
+		private Map<Integer,Level> depthLevel = new HashMap<Integer,Level>();
 		
 		public int getWidth() {
 			return depths.size();
@@ -88,6 +92,14 @@ public class CellSetFormatter implements ICellSetFormatter {
 		
 		public List<Integer> getDepths() {
 			return depths;
+		}
+		
+		public Level getLevel(Integer depth) {
+			return depthLevel.get(depth);
+		}
+		
+		public void addLevel(Integer depth, Level level) {
+			depthLevel.put(depth, level);
 		}
 	}
 
@@ -203,6 +215,7 @@ public class CellSetFormatter implements ICellSetFormatter {
 				final AxisOrdinalInfo axisOrdinalInfo = axisInfo.ordinalInfos.get(k);
 				if (!axisOrdinalInfo.getDepths().contains(member.getDepth())) {
 					axisOrdinalInfo.getDepths().add(member.getDepth());
+					axisOrdinalInfo.addLevel(member.getDepth(), member.getLevel());
 					Collections.sort(axisOrdinalInfo.depths);
 				}
 			}
@@ -345,6 +358,7 @@ public class CellSetFormatter implements ICellSetFormatter {
 	 */
 	private void populateAxis(final Matrix matrix, final CellSetAxis axis, final AxisInfo axisInfo,
 			final boolean isColumns, final int offset) {
+
 		if (axis == null)
 			return;
 		final Member[] prevMembers = new Member[axisInfo.getWidth()];
@@ -477,6 +491,33 @@ public class CellSetFormatter implements ICellSetFormatter {
 					memberInfo.setRight(false);
 					memberInfo.setSameAsPrev(false);
 					matrix.set(y, x, memberInfo);
+				}
+				int x_parent = isColumns ? x : y-1;
+				int y_parent = isColumns ? y-1 : x;
+				int index = memberList.indexOf(member);
+				if (index >= 0) {
+					final AxisOrdinalInfo ordinalInfo = axisInfo.ordinalInfos.get(index);
+					int depth_i = ordinalInfo.getDepths().indexOf(member.getDepth());
+					while (depth_i > 0) {
+						depth_i--;
+						Level l = ordinalInfo.getLevel(depth_i);
+						Member parent = member.getParentMember();
+						while (l != null && parent != null && !parent.getLevel().getUniqueName().equals(l.getUniqueName())) {
+							parent = parent.getParentMember();
+						}
+						final MemberCell pInfo = new MemberCell();
+						pInfo.setRawValue(parent.getCaption());
+						pInfo.setFormattedValue(parent.getCaption()); // First try to get a formatted value
+						pInfo.setParentDimension(parent.getDimension().getName());
+						pInfo.setUniquename(parent.getUniqueName());
+						matrix.set(x_parent, y_parent, pInfo);
+						if (isColumns) {
+							y_parent--;
+						} else {
+							x_parent--;
+						}
+						
+					}
 				}
 				prevMembers[y] = member;
 				prevMemberInfo[y] = memberInfo;
