@@ -34,6 +34,7 @@ import org.olap4j.OlapException;
 import org.olap4j.mdx.IdentifierNode;
 import org.olap4j.metadata.Catalog;
 import org.olap4j.metadata.Cube;
+import org.olap4j.metadata.Database;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.NamedList;
@@ -316,19 +317,22 @@ public class QueryDeserializer {
         }
 
         Cube cube = null;
-        final NamedList<Catalog> catalogs = connection.getOlapCatalogs();
-        for (int k = 0; k < catalogs.size(); k++) {
-        	final NamedList<Schema> schemas = catalogs.get(k).getSchemas();
-        	Schema schema = schemas.get(schemaName);
-        	final NamedList<Cube> cubes = schema.getCubes();
-        	final Iterator<Cube> iter = cubes.iterator();
-        	while (iter.hasNext() && cube == null) {
-        		final Cube testCube = iter.next();
-        		if (testCube.getUniqueName().equals(cubeName)) {
-        			cube = testCube;
-        		}
-        	}
-        }
+        if (connection != null ) {
+			for (Database db : connection.getOlapDatabases()) {
+				Catalog cat = db.getCatalogs().get(catalogName);
+				if (cat != null) {
+					for (Schema schema : cat.getSchemas()) {
+						if (schema.getName().equals(schemaName)) {
+							for (Cube cub : schema.getCubes()) {
+								if (cub.getName().equals(cubeName) || cub.getUniqueName().equals(cubeName)) {
+									cube = cub;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
         if (cube != null) {
             try {
                 Query q = new Query(queryName,cube);
