@@ -34,6 +34,7 @@ import org.olap4j.mdx.IdentifierNode;
 import org.olap4j.mdx.IdentifierSegment;
 import org.olap4j.metadata.Catalog;
 import org.olap4j.metadata.Cube;
+import org.olap4j.metadata.Database;
 import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
@@ -65,35 +66,36 @@ public class OlapMetaExplorer {
 		if (olapcon != null) {
 			List<SaikuCatalog> catalogs = new ArrayList<SaikuCatalog>();
 			try {
-				for (Catalog cat : olapcon.getOlapCatalogs()) {
-					List<SaikuSchema> schemas = new ArrayList<SaikuSchema>();
-
-					for (Schema schem : cat.getSchemas()) {
-						List<SaikuCube> cubes = new ArrayList<SaikuCube>();
-						for (Cube cub : schem.getCubes()) {
-							cubes.add(new SaikuCube(connectionName, cub.getUniqueName(), cub.getName(), cat.getName(), schem.getName()));
-						}
-						schemas.add(new SaikuSchema(schem.getName(),cubes));
-					}
-					if (schemas.size() == 0) {
-						OlapDatabaseMetaData olapDbMeta = olapcon.getMetaData();
-						try {
-							ResultSet cubesResult = olapDbMeta.getCubes(cat.getName(), null, null);
+				for (Database db : olapcon.getOlapDatabases()) {
+					for (Catalog cat : olapcon.getOlapCatalogs()) {
+						List<SaikuSchema> schemas = new ArrayList<SaikuSchema>();
+						for (Schema schem : cat.getSchemas()) {
 							List<SaikuCube> cubes = new ArrayList<SaikuCube>();
-							while(cubesResult.next()) {
-
-								cubes.add(new SaikuCube(connectionName, cubesResult.getString("CUBE_NAME"),cubesResult.getString("CUBE_NAME"),cubesResult.getString("CATALOG_NAME"),
-										cubesResult.getString("SCHEMA_NAME")));
-
+							for (Cube cub : schem.getCubes()) {
+								cubes.add(new SaikuCube(connectionName, cub.getUniqueName(), cub.getName(), cat.getName(), schem.getName()));
 							}
-							schemas.add(new SaikuSchema("",cubes));
-						} catch (SQLException e) {
-							throw new OlapException(e.getMessage(),e);
+							schemas.add(new SaikuSchema(schem.getName(),cubes));
+						}
+						if (schemas.size() == 0) {
+							OlapDatabaseMetaData olapDbMeta = olapcon.getMetaData();
+							try {
+								ResultSet cubesResult = olapDbMeta.getCubes(cat.getName(), null, null);
+								List<SaikuCube> cubes = new ArrayList<SaikuCube>();
+								while(cubesResult.next()) {
+
+									cubes.add(new SaikuCube(connectionName, cubesResult.getString("CUBE_NAME"),cubesResult.getString("CUBE_NAME"),
+											cubesResult.getString("CATALOG_NAME"),cubesResult.getString("SCHEMA_NAME")));
+
+								}
+								schemas.add(new SaikuSchema("",cubes));
+							} catch (SQLException e) {
+								throw new OlapException(e.getMessage(),e);
+							}
+
 						}
 
+						catalogs.add(new SaikuCatalog(cat.getName(),schemas));
 					}
-
-					catalogs.add(new SaikuCatalog(cat.getName(),schemas));
 				}
 			} catch (OlapException e) {
 				throw new SaikuOlapException("Error getting objects of connection (" + connectionName + ")" ,e);
@@ -162,23 +164,25 @@ public class OlapMetaExplorer {
 		try {
 			OlapConnection con = connections.get(cube.getConnectionName());
 			if (con != null ) {
-				Catalog cat = con.getOlapCatalogs().get(cube.getCatalogName());
-				if (cat != null) {
-					for (Schema schema : cat.getSchemas()) {
-						if (schema.getName().equals(cube.getSchemaName())) {
-							Cube cub =  schema.getCubes().get(cube.getName());
-							if (cub != null) {
-								return cub;
+				for (Database db : con.getOlapDatabases()) {
+					Catalog cat = db.getCatalogs().get(cube.getCatalogName());
+					if (cat != null) {
+						for (Schema schema : cat.getSchemas()) {
+							if (schema.getName().equals(cube.getSchemaName())) {
+								for (Cube cub : schema.getCubes()) {
+									if (cub.getName().equals(cube.getName()) || cub.getUniqueName().equals(cube.getUniqueName())) {
+										return cub;
+									}
+								}
 							}
 						}
 					}
-
 				}
 			}
 		} catch (Exception e) {
 			throw new SaikuOlapException("Cannot get native cube for ( " + cube+ " )",e);
 		}
-		return null;
+		throw new SaikuOlapException("Cannot get native cube for ( " + cube+ " )");
 	}
 
 	public OlapConnection getNativeConnection(String name) throws SaikuOlapException {
