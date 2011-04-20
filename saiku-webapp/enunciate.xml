@@ -6,7 +6,7 @@
 	</api-classes>
 	<api-import pattern="org.saiku.web.rest.**" />
 	<webapp mergeWebXML="src/main/web/web.xml" />
-
+	
 	<modules>
 
 		<docs>
@@ -19,7 +19,10 @@
 			<security enableDigestHTTPAuth="true" enableBasicHTTPAuth="false"></security>
 		</spring-app>
 		<jersey useSubcontext="true" disableWildcardServletError="false"
-			disabled="false"></jersey>
+			disabled="false">
+		<init-param name="com.sun.jersey.config.property.packages" value="org.saiku.web" />
+		<init-param name="com.sun.jersey.spi.container.ContainerRequestFilters" value="com.sun.jersey.api.container.filter.PostReplaceFilter" />
+     </jersey>
 		<jaxws disabled="true" />
 		<jaxws-ri disabled="true" forceSpringEnabled="true" />
 		<cxf disabled="true" />

@@ -10,6 +10,7 @@
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 
+	
 	<filter-mapping>
 		<filter-name>org.springframework.security.filterChainProxy</filter-name>
 		<url-pattern>/*</url-pattern>
@@ -24,12 +25,7 @@
 		<url-pattern>/oauth/*</url-pattern>
 	</servlet-mapping>
 
-	<init-param>
-		<param-name>com.sun.jersey.config.property.packages</param-name>
-		<param-value>org.saiku.web</param-value>
-	</init-param>
-
-	<listener>
+ 	<listener>
 		<listener-class>
 			org.springframework.web.context.request.RequestContextListener
 </listener-class>
