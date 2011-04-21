@@ -73,6 +73,7 @@ public class SaikuContentGenerator extends SimpleContentGenerator {
         }
         if (repository.resourceExists(fullPath)) {
             String doc = repository.getResourceAsString(fullPath);
+            LOG.error("#### DOCUMENT: " + doc);
             
             if (doc == null) {
                 LOG.error("Error retrieving saiku document from solution repository"); 
@@ -81,7 +82,16 @@ public class SaikuContentGenerator extends SimpleContentGenerator {
             try {
                 IServiceManager serviceManager = (IServiceManager) PentahoSystem.get(IServiceManager.class, PentahoSessionHolder.getSession());
                 document = doc;
-                super.createContent();
+                IContentItem contentItem = outputHandler.getOutputContentItem("response", "content", "", instanceId, getMimeType()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+                if (contentItem == null) {
+                    LOG.error("content item is null"); //$NON-NLS-1$
+                    throw new NullPointerException("content item is null"); //$NON-NLS-1$
+                }
+
+                OutputStream out = contentItem.getOutputStream(null);
+                createContent(out);
+
             }
             catch (Exception e) {
                 LOG.error("Error loading solution file",e);

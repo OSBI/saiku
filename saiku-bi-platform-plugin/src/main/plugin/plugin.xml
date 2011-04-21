@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin title="saiku">
+<plugin title="saiku analytics">
 
 	<overlays>
 		<overlay id="startup.saikuAnalysis" resourcebundle="content/saiku/saikuplugin.properties">
@@ -28,7 +28,7 @@
 	<content-type type="saiku" mime-type="text/html">
 		<title>Saiku Analytics</title>
 		<description>Saiku Analytics query definition file</description>
-		<icon-url>content/saiku/ui/images/src/saiku_16x16.png</icon-url>
+		<icon-url>content/saiku-ui/images/src/saiku_16x16.png</icon-url>
 		<meta-provider>org.saiku.plugin.SaikuContentTypeMetaProvider</meta-provider>
 		<operations>
 			<operation>
@@ -46,7 +46,7 @@
 		</operations>
 	</content-type>
 
-	<content-generator id="saiku-content" title="Saiku Analytics" type="saiku" class="org.saiku.plugin.SaikuContentGenerator" />
+	<content-generator id="saiku" title="Saiku Analytics" type="saiku" class="org.saiku.plugin.SaikuContentGenerator" />
 	
 
 	<static-paths>
