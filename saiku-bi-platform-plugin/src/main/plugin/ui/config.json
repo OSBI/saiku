@@ -1,0 +1,7 @@
+{
+	"username": "admin",
+  	"password": "admin",
+    "saiku-webapp": "/saiku/",
+    "saiku-ui-base" : "/pentaho/content/saiku-ui/",
+    "plugin":"true"
+}
