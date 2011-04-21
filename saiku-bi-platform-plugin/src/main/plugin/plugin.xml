@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin title="saiku">
+
+	<overlays>
+		<overlay id="startup.saikuAnalysis" resourcebundle="content/saiku/saikuplugin.properties">
+			<overlay id="startup.saikuAnalysis">
+				<toolbar id="mainToolbar">
+					<toolbarbutton id="openSaiku" image="../content/saiku-ui/images/src/saiku_32x32.png"
+						onclick="mainToolbarHandler.openUrl('saiku','saiku','content/saiku-ui/index.html')"
+						tooltiptext="${saiku-plugin.tooltip}" insertafter="newAnalysisButton" />
+				</toolbar>
+			</overlay>
+		</overlay>
+		
+		<overlay id="launch" resourcebundle="content/saiku/saikuplugin.properties">
+		<button id="saikuButton" image="content/saiku-ui/images/src/saiku_32x32.png" 
+						command="openURL('saiku','saiku','content/saiku-ui/index.html')"
+						label="${saiku-plugin.tooltip}" />
+		</overlay>
+	</overlays>
+
+	<menu-items>
+		<menu-item id="new-saiku" anchor="file-new-submenu" label="New Saiku Analysis"
+			command="saiku-ui/index.html" type="MENU_ITEM" how="LAST_CHILD" />
+	</menu-items>
+	
+	<content-type type="saiku" mime-type="text/html">
+		<title>Saiku Analytics</title>
+		<description>Saiku Analytics query definition file</description>
+		<icon-url>content/saiku/ui/images/src/saiku_16x16.png</icon-url>
+		<meta-provider>org.saiku.plugin.SaikuContentTypeMetaProvider</meta-provider>
+		<operations>
+			<operation>
+				<id>RUN</id>
+				<command>content/saiku-ui/index.html?solution={solution}&amp;path={path}&amp;action={name}</command>
+			</operation>
+			<operation>
+				<id>EDIT</id>
+				<command>content/saiku-ui/index.html?solution={solution}&amp;path={path}&amp;action={name}&amp;mode=edit</command>
+			</operation>
+			<operation>
+        		<id>NEWWINDOW</id>
+        		<command>content/saiku-ui/index.html?solution={solution}&amp;path={path}</command>
+        	</operation>        		
+		</operations>
+	</content-type>
+
+	<content-generator id="saiku-content" title="Saiku Analytics" type="saiku" class="org.saiku.plugin.SaikuContentGenerator" />
+	
+
+	<static-paths>
+		<static-path url="/saiku-ui" localFolder="ui" />
+	</static-paths>
+
+</plugin>
