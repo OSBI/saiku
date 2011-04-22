@@ -33,15 +33,15 @@
 		<operations>
 			<operation>
 				<id>RUN</id>
-				<command>content/saiku-ui/index.html?solution={solution}&amp;path={path}&amp;action={name}</command>
+				<command>content/saiku/?solution={solution}&amp;path={path}&amp;action={name}</command>
 			</operation>
 			<operation>
 				<id>EDIT</id>
-				<command>content/saiku-ui/index.html?solution={solution}&amp;path={path}&amp;action={name}&amp;mode=edit</command>
+				<command>content/saiku/?solution={solution}&amp;path={path}&amp;action={name}&amp;mode=edit</command>
 			</operation>
 			<operation>
         		<id>NEWWINDOW</id>
-        		<command>content/saiku-ui/index.html?solution={solution}&amp;path={path}</command>
+        		<command>content/saiku/?solution={solution}&amp;path={path}</command>
         	</operation>        		
 		</operations>
 	</content-type>
@@ -51,6 +51,13 @@
 
 	<static-paths>
 		<static-path url="/saiku-ui" localFolder="ui" />
+  		<static-path url="/saiku/css" localFolder="ui/css" />
+  		<static-path url="/saiku/docs" localFolder="ui/docs" />
+  		<static-path url="/saiku/i18n" localFolder="ui/i18n" />
+  		<static-path url="/saiku/images" localFolder="ui/images" />
+  		<static-path url="/saiku/views" localFolder="ui/views" />
+  		<static-path url="/saiku/js" localFolder="ui/js" />
+  		<static-path url="/saiku/config" localFolder="ui/config" />
 	</static-paths>
 
 </plugin>

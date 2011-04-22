@@ -20,7 +20,7 @@
         <version>1.0</version>
         <configuration>
           <goals>package</goals>
-          <checkoutDirectory>${basedir}/target/saiku/ui/</checkoutDirectory>
+          <checkoutDirectory>${basedir}/target/dist/saiku/ui/</checkoutDirectory>
           <connectionUrl>scm:svn:http://pentahoanalysistool.googlecode.com/svn/trunk/pat-ui/</connectionUrl>
         </configuration>
       </plugin>
@@ -40,12 +40,12 @@
 							<tasks>
 								<copy
 									file="${basedir}/target/${project.artifactId}-${project.version}.jar"
-									todir="target/saiku/lib" />
-								<copy todir="target/saiku/" overwrite="true">
+									todir="target/dist/saiku/lib" />
+								<copy todir="target/dist/saiku/" overwrite="true">
 									<fileset dir="${basedir}/src/main/plugin/" />
 								</copy>
 								<zip destfile="target/saiku-plugin-${project.version}.zip">
-									<zipfileset dir="target/saiku/" />
+									<zipfileset dir="target/dist/" />
 								</zip>
 								
 							</tasks>
