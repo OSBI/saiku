@@ -3,8 +3,8 @@ cd saiku-core
 mvn clean install 
 cd ..
 cd saiku-webapp
-mvn clean install
+mvn clean scm:checkout install
 cd ..
 cd saiku-server
-mvn clean scm:checkout package
+mvn clean package
 
