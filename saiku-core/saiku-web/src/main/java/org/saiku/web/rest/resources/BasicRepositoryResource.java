@@ -112,8 +112,8 @@ public class BasicRepositoryResource {
     		    			  if (!file.isHidden()) {
     		    				  SimpleDateFormat sf = new SimpleDateFormat("dd - MMM - yyyy HH:mm:ss");
     		    				  String filename = file.getName();
-    		    				  if (filename.endsWith(".squery")) {
-    		    					  filename = filename.substring(0,filename.length() - ".squery".length());
+    		    				  if (filename.endsWith(".saiku")) {
+    		    					  filename = filename.substring(0,filename.length() - ".saiku".length());
     		    				  }
     		    				  SavedQuery sq = new SavedQuery(filename, sf.format(new Date(file.lastModified())));
     		    				  queries.add(sq);

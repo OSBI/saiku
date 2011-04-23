@@ -66,15 +66,7 @@
 										<include name="saiku-webapp-${project.version}.war" />
 									</fileset>
 								</unzip>
-								<unzip dest="target/stage/webapp/">
-									<fileset dir="${basedir}/custom/foodmart/">
-										<include name="foodmart.zip" />
-									</fileset>
-								</unzip>
 								
-								<copy todir="target/stage/webapp/" overwrite="true">
-									<fileset dir="${basedir}/custom/webapp/" />
-								</copy>
 								<unzip dest="target/stage/tomcat/">
 									<fileset dir="${basedir}/tomcat/">
 										<include name="${tomcat.version}.zip" />
@@ -92,11 +84,6 @@
           							    <exclude name="webapps/ROOT/**" />
 									</fileset>
 								</copy>
-								<!-- 
-								<copy todir="target/dist/saiku-server/tomcat/">
-									<fileset dir="${basedir}/custom/tomcat/" />
-								</copy>
-								 -->
 								<copy todir="target/dist/saiku-server/tomcat/webapps/saiku">
 									<fileset dir="target/stage/webapp" />
 								</copy>
@@ -113,7 +100,32 @@
       									<tarfileset dir="target/dist">
         									<exclude name="**/*.sh" />
       									</tarfileset>
-           							</tar>
+           						</tar>
+           						
+           						<unzip dest="target/dist/saiku-server/tomcat/webapps/saiku/">
+									<fileset dir="${basedir}/../util/">
+										<include name="foodmart.zip" />
+									</fileset>
+								</unzip>
+								<copy todir="target/dist/saiku-server/tomcat/webapps/saiku/WEB-INF/classes/saiku-datasources/" overwrite="true">
+									<fileset dir="${basedir}/../util/">
+										<include name="foodmart" />
+									</fileset>
+								</copy>
+								
+								<zip destfile="target/saiku-server-foodmart-${project.version}.zip">
+									<zipfileset dir="target/dist/" />
+								</zip>
+								<tar destfile="target/saiku-server-foodmart-${project.version}.tar.gz"
+           							longfile="gnu" compression="gzip" >
+      									<tarfileset dir="target/dist/" mode="755">
+        									<include name="**/*.sh" />
+      									</tarfileset>
+      									<tarfileset dir="target/dist">
+        									<exclude name="**/*.sh" />
+      									</tarfileset>
+           						</tar>
+           						
 							</tasks>
 						</configuration>
 					</execution>

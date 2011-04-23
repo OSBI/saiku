@@ -51,10 +51,12 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 							props.load(new FileInputStream(file));
 							String name = props.getProperty("name");
 							String type = props.getProperty("type");
-							props.list(System.out);
-							Type t = SaikuDatasource.Type.valueOf(type.toUpperCase());
-							SaikuDatasource ds = new SaikuDatasource(name,t,props);
-							datasources.put(name, ds);
+							if (name != null && type != null) {
+								props.list(System.out);
+								Type t = SaikuDatasource.Type.valueOf(type.toUpperCase());
+								SaikuDatasource ds = new SaikuDatasource(name,t,props);
+								datasources.put(name, ds);
+							}
 						}
 					}
 				}
