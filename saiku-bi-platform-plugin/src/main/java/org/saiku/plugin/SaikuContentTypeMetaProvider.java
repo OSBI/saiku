@@ -42,7 +42,6 @@ public class SaikuContentTypeMetaProvider extends SolutionFileMetaAdapter {
     public SaikuContentTypeMetaProvider() {};
     
     public IFileInfo getFileInfo(ISolutionFile solutionFile, InputStream in) {
-    	LOG.error("Solution file:" + solutionFile.getFileName());
         try {
             String title = solutionFile.getFileName();
             if (title != null && title.endsWith(".saiku")) {
