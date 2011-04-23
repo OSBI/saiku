@@ -152,7 +152,6 @@ public class SaikuContentGenerator extends SimpleContentGenerator {
             final PluginClassLoader pluginClassloader = (PluginClassLoader)pluginManager.getClassLoader(PluginConfig.PLUGIN_NAME);
             File pluginDir = pluginClassloader.getPluginDir();
             File indexFile = new File(pluginDir,"ui/index.html");
-            LOG.error("#### PATH: "+ indexFile.getAbsolutePath());
             FileReader fr = new FileReader(indexFile);
             BufferedReader br = new BufferedReader(fr);
             String inputLine;
