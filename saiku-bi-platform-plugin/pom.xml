@@ -14,17 +14,16 @@
 	</properties>
 	<build>
 		<plugins>
-        		<plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-scm-plugin</artifactId>
-        <version>1.0</version>
-        <configuration>
-          <goals>package</goals>
-          <checkoutDirectory>${basedir}/target/dist/saiku/ui/</checkoutDirectory>
-          <connectionUrl>scm:svn:http://pentahoanalysistool.googlecode.com/svn/trunk/pat-ui/</connectionUrl>
-        </configuration>
-      </plugin>
-		
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-scm-plugin</artifactId>
+				<version>1.0</version>
+				<configuration>
+					<goals>package</goals>
+					<checkoutDirectory>${basedir}/target/dist/saiku/ui/</checkoutDirectory>
+					<connectionUrl>scm:svn:http://pentahoanalysistool.googlecode.com/svn/trunk/pat-ui/</connectionUrl>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -44,17 +43,22 @@
 								<copy todir="target/dist/saiku/" overwrite="true">
 									<fileset dir="${basedir}/src/main/plugin/" />
 								</copy>
+								<copy todir="target/dist/saiku/ui/" overwrite="true">
+									<fileset dir="${basedir}/src/main/plugin/">
+										<include name="*.properties" />
+									</fileset>
+								</copy>
 								<zip destfile="target/saiku-plugin-${project.version}.zip">
 									<zipfileset dir="target/dist/" />
 								</zip>
-								
+
 							</tasks>
 						</configuration>
 					</execution>
 				</executions>
 
 			</plugin>
-            			<plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.0.2</version>
@@ -93,25 +97,29 @@
 		</plugins>
 	</build>
 	<repositories>
-    <repository>
+		<repository>
 			<id>pentaho-repo</id>
 			<name>pentaho repository</name>
 			<url>http://repository.pentaho.org/artifactory/pentaho</url>
 		</repository>
 		<repository>
-                        <id>pentaho-third-party</id>
-                        <url>http://repo.pentaho.org/artifactory/third-party/</url>
-        </repository>
+			<id>pentaho-third-party</id>
+			<url>http://repo.pentaho.org/artifactory/third-party/</url>
+		</repository>
 
-			<repository>
+		<repository>
 			<id>ibiblio</id>
 			<url>http://ibiblio.org/maven2/</url>
-			<snapshots><enabled>false</enabled></snapshots>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
-			<repository>
+		<repository>
 			<id>java</id>
 			<url>http://download.java.net/maven/2/</url>
-			<snapshots><enabled>true</enabled></snapshots>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 	<dependencies>
