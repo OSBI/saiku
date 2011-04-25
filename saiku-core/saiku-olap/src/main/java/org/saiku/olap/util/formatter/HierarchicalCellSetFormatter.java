@@ -242,12 +242,17 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
 
 		// Populate corner
 		for (int x = 0; x < xOffsset; x++) {
+            Position p = rowsAxis.getPositions().get(0);
+            String s = p.getMembers().get(x).getLevel().getName();
 			for (int y = 0; y < yOffset; y++) {
 				final MemberCell memberInfo = new MemberCell(false, x > 0);
+				if (y == yOffset-1) {
+					memberInfo.setRawValue(s);
+                    memberInfo.setFormattedValue(s);
+                }
 				matrix.set(x, y, memberInfo);
 			}
-		}
-		// Populate matrix with cells representing axes
+		}		// Populate matrix with cells representing axes
 		// noinspection SuspiciousNameCombination
 		populateAxis(matrix, columnsAxis, columnsAxisInfo, true, xOffsset);
 		populateAxis(matrix, rowsAxis, rowsAxisInfo, false, yOffset);
