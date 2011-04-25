@@ -142,8 +142,8 @@ public class BasicRepositoryResource {
 		try{
 			String uri = repoURL.toURI().toString();
 			if (uri != null) {
-				if (!queryName.endsWith(".squery")) {
-					queryName += ".squery";
+				if (!queryName.endsWith(".saiku")) {
+					queryName += ".saiku";
 				}
 
 				URL url = new URL(uri + queryName);
@@ -185,8 +185,8 @@ public class BasicRepositoryResource {
 			}
 			String uri = repoURL.toURI().toString();
 			if (uri != null && xml != null) {
-				if (!queryName.endsWith(".squery")) {
-					queryName += ".squery";
+				if (!queryName.endsWith(".saiku")) {
+					queryName += ".saiku";
 				}
 				URL url = new URL(uri + queryName);
 				File queryFile = null;
@@ -231,8 +231,8 @@ public class BasicRepositoryResource {
 			String uri = repoURL.toURI().toString();
 			String filename = queryName;
 			if (uri != null) {
-				if (!filename.endsWith(".squery")) {
-					filename += ".squery";
+				if (!filename.endsWith(".saiku")) {
+					filename += ".saiku";
 				}
 				URL url = new URL(uri + filename);
 				File queryFile = null;
