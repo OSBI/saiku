@@ -151,7 +151,30 @@ public class SaikuContentGenerator extends SimpleContentGenerator {
             final IPluginManager pluginManager = (IPluginManager) PentahoSystem.get(IPluginManager.class, PentahoSessionHolder.getSession());
             final PluginClassLoader pluginClassloader = (PluginClassLoader)pluginManager.getClassLoader(PluginConfig.PLUGIN_NAME);
             File pluginDir = pluginClassloader.getPluginDir();
-            File indexFile = new File(pluginDir,"ui/index.html");
+            
+            IParameterProvider requestParams = parameterProviders.get( IParameterProvider.SCOPE_REQUEST );
+            if( requestParams == null ) {
+                LOG.error("Parameter provider is null");
+                throw new NullPointerException("Parameter provider is null");
+            }
+            String run = requestParams.getStringParameter("run", ""); //$NON-NLS-1$
+            
+            File indexFile;
+            String extrasnippet = "";
+            if (run != null && run.equals("table")) {
+            	indexFile= new File(pluginDir,"ui/run.html");
+            } else if (run != null && run.equals("view")) {
+            	indexFile= new File(pluginDir,"ui/index.html");
+            	extrasnippet+= "PLUGIN_REMOVE_CONTENT = 'a[href=\"#save_query\"], a[href=\"#automatic_execution\"], a[href=\"#toggle_fields\"], a[href=\"#run_query\"]';\r\n";
+            	extrasnippet+= "ALLOW_PUC_SAVE = false;\r\n";
+            	extrasnippet+= "REDUCED = true;\r\n";
+
+            } else {
+            	indexFile= new File(pluginDir,"ui/index.html");
+            	extrasnippet+= "PLUGIN_REMOVE_CONTENT = 'a[href=\"#save_query\"]';\r\n";
+
+            }
+            
             FileReader fr = new FileReader(indexFile);
             BufferedReader br = new BufferedReader(fr);
             String inputLine;
@@ -164,10 +187,11 @@ public class SaikuContentGenerator extends SimpleContentGenerator {
             	int bodyend = html.indexOf("</body>");
             	document = document.replaceAll("\n", "").replaceAll("\r", "");
             	if (bodyend >= 0) {
-            		html.append("\n");
+            		html.append("\r\n");
             		String snippet ="";
             		snippet = "<script type=\"text/javascript\">\r\n";
             		snippet += "QUERY = '" + document + "';\r\n";
+            		snippet += extrasnippet;
             		snippet += "</script>\r\n";
             		html.insert(bodyend, snippet);
             	}

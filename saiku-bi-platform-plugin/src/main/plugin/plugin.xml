@@ -33,7 +33,7 @@
 		<operations>
 			<operation>
 				<id>RUN</id>
-				<command>content/saiku/?solution={solution}&amp;path={path}&amp;action={name}</command>
+				<command>content/saiku/?solution={solution}&amp;path={path}&amp;action={name}&amp;run=view</command>
 			</operation>
 			<operation>
 				<id>EDIT</id>
@@ -41,7 +41,7 @@
 			</operation>
 			<operation>
         		<id>NEWWINDOW</id>
-        		<command>content/saiku/?solution={solution}&amp;path={path}&amp;action={name}&amp;</command>
+        		<command>content/saiku/?solution={solution}&amp;path={path}&amp;action={name}&amp;&amp;run=view</command>
         	</operation>        		
 		</operations>
 	</content-type>
