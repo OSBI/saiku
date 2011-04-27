@@ -24,12 +24,12 @@ public class SaikuOlapConnection implements ISaikuConnection {
 		this.name = props.getProperty(ISaikuConnection.NAME_KEY);
 	}
 	
-	public boolean connect() {
+	public boolean connect() throws Exception {
 		return connect(properties);
 	}
 
 	
-	public boolean connect(Properties props) {
+	public boolean connect(Properties props) throws Exception {
 		this.username = props.getProperty(ISaikuConnection.USERNAME_KEY);
 		this.password = props.getProperty(ISaikuConnection.PASSWORD_KEY);
 		String driver = props.getProperty(ISaikuConnection.DRIVER_KEY);
@@ -47,7 +47,6 @@ public class SaikuOlapConnection implements ISaikuConnection {
 			}
 		}
 
-		try {
 			Class.forName(driver);
 			OlapConnection connection;
 			connection = (OlapConnection) DriverManager.getConnection(url, username,password);
@@ -62,10 +61,6 @@ public class SaikuOlapConnection implements ISaikuConnection {
 			}
 			System.out.println("Catalogs:" + tmpolapConnection.getOlapCatalogs().size());
 			olapConnection = tmpolapConnection;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
 		initialized = true;
 		return true;
 	}

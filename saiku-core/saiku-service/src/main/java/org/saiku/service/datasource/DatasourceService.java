@@ -47,7 +47,7 @@ public class DatasourceService {
 					connections.put(con.getName(), con);
 				}
 			}
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			throw new SaikuServiceException("There was an error during datasource initialization ",e);
 		}
 	}

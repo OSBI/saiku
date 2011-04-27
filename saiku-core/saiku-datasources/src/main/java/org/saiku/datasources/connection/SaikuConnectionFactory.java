@@ -7,7 +7,7 @@ import org.saiku.datasources.datasource.SaikuDatasource;
 public class SaikuConnectionFactory {
 
 
-	public static ISaikuConnection getConnection(SaikuDatasource datasource) {
+	public static ISaikuConnection getConnection(SaikuDatasource datasource) throws Exception {
 		switch (datasource.getType()) {
 		case OLAP:
 			ISaikuConnection con = new SaikuOlapConnection(datasource.getName(),datasource.getProperties());

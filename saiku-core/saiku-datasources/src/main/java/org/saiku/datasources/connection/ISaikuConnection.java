@@ -57,9 +57,9 @@ public interface ISaikuConnection {
 	   * @param props Datasource connection properties
 	   * @return true if the connection was successful
 	   */
-	  boolean connect(Properties props);
+	  boolean connect(Properties props) throws Exception;
 	  
-	  boolean connect();
+	  boolean connect() throws Exception;
 	  /**
 	   * @return true if the connection has been properly initialized.
 	   */
