@@ -1,0 +1,1 @@
+<%@ page import="java.util.Locale" contentType="text/plain" %><% 	out.print(request.getLocale()); %>
