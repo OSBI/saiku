@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+    "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Saiku - Next Generation Open Source Analytics</title>
+        <!-- Blueprint CSS -->
+        <link rel="stylesheet" href="css/blueprint/src/reset.css" type="text/css" media="screen, projection">
+        <link rel="stylesheet" href="css/blueprint/src/typography.css" type="text/css" media="screen, projection">
+        <link rel="stylesheet" href="css/blueprint/src/forms.css" type="text/css" media="screen, projection">
+        <!--[if lt IE 8]><link rel="stylesheet" href="css/blueprint/src/ie.css" type="text/css" media="screen, projection"><![endif]-->
+        <!-- Saiku CSS -->
+        <link rel="stylesheet" href="css/saiku/src/styles.css" type="text/css" media="screen, projection">
+        <link rel="shortcut icon" href="favicon.ico">
+        <!-- jQuery -->
+        <script src="js/jquery/src/jquery-1.4.4.min.js" type="text/javascript"></script>
+        <!-- jQuery Plugins -->
+        <script src="js/jquery/src/jquery-ui-1.8.9.custom.min.js" type="text/javascript"></script>
+        <script src="js/jquery/src/jquery.simplemodal.1.4.1.js" type="text/javascript"></script>
+        <script src="js/jquery/src/jquery.blockUI.2.3.7.js" type="text/javascript"></script>
+        <!-- Saiku -->
+
+    </head>
+    <body>
+        <div class="workspace_results">
+        </div>
+    
+    <script type="text/javascript">
+        REST_MOUNT_POINT = "rest/saiku/";    
+        $(document).ready(function() {
+		    $.getScript("js/saiku/src/run.js",function() {
+        		$.ajax({
+		            type: "GET",
+        		    cache: false,
+		            url: 'config/config.json',
+		            dataType: "json",
+        		    success: function (data, textStatus, XMLHttpRequest) {
+                		run.username = data['username'];
+		                run.password = data['password'];
+        		        TOMCAT_WEBAPP = data['saiku-webapp'];
+                		BASE_URL = data['saiku-ui-base'];
+		                PLUGIN = data['plugin'];
+        		        var q = run.generate_query_id();
+                		run.new_query(q,QUERY,function() {
+		                 	run.run_query(q);
+						});
+                 
+		            }
+        		});
+		    });
+		});
+	</script>
+
+    </body>
+</html>
