@@ -35,9 +35,6 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<copy todir="target/${project.artifactId}-${project.version}/" overwrite="true">
-									<fileset dir="target/ui-tmp/" />
-								</copy>
 								<zip destfile="target/${project.artifactId}-${project.version}.war">
 									<zipfileset dir="target/${project.artifactId}-${project.version}/" />
 								</zip>

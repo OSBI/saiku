@@ -14,16 +14,32 @@
 	</properties>
 	<build>
 		<plugins>
-			<plugin>
+  			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-scm-plugin</artifactId>
-				<version>1.0</version>
-				<configuration>
-					<goals>package</goals>
-					<checkoutDirectory>${basedir}/target/dist/saiku/ui/</checkoutDirectory>
-					<connectionUrl>scm:svn:http://pentahoanalysistool.googlecode.com/svn/trunk/pat-ui/</connectionUrl>
-				</configuration>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.saiku</groupId>
+									<artifactId>saiku-ui</artifactId>
+									<version>${project.version}</version>
+									<type>war</type>
+									<outputDirectory>target/stage/</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+							
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -37,6 +53,11 @@
 						</goals>
 						<configuration>
 							<tasks>
+                                <unzip dest="target/dist/saiku/ui/">
+									<fileset dir="target/stage/">
+										<include name="saiku-ui-${project.version}.war" />
+									</fileset>
+								</unzip>
 								<copy
 									file="${basedir}/target/${project.artifactId}-${project.version}.jar"
 									todir="target/dist/saiku/lib" />
