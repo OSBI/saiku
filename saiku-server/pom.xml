@@ -43,7 +43,15 @@
 									<type>war</type>
 									<outputDirectory>target/stage/</outputDirectory>
 								</artifactItem>
+								<artifactItem>
+									<groupId>org.saiku</groupId>
+									<artifactId>saiku-ui</artifactId>
+									<version>${project.version}</version>
+									<type>war</type>
+									<outputDirectory>target/stage/</outputDirectory>
+								</artifactItem>
 							</artifactItems>
+							
 						</configuration>
 					</execution>
 				</executions>
@@ -87,6 +95,12 @@
 								<copy todir="target/dist/saiku-server/tomcat/">
 									<fileset dir="${basedir}/custom/tomcat/" />
 								</copy>
+								
+								<unzip dest="target/dist/saiku-server/tomcat/webapps/ROOT">
+									<fileset dir="target/stage/">
+										<include name="saiku-ui-${project.version}.war" />
+									</fileset>
+								</unzip>
 								
 								<copy todir="target/dist/saiku-server/tomcat/webapps/saiku">
 									<fileset dir="target/stage/webapp" />
