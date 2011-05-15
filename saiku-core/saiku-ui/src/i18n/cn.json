@@ -1,0 +1,23 @@
+{
+	"New query": "新查询",
+	"Open query": "打开查询",
+	"Save query": "保存查询",
+	"Delete query": "删除查询",
+	"Logout": "注销",
+	"About": "关于/帮助信息",
+	"Run query": "查询",
+	"Toggle fields": "切换域",
+	"Automatic execution": "自动执行",
+	"Non-empty": "非空的字段",
+	"Swap axis": "交换数轴",
+	"Show MDX" : "显示多维表达式",
+	"Export XLS": "导出Microsoft Excel 文件",
+	"Export CSV": "导出逗号分隔的(CSV)文件 (export CSV)",
+	"Drill Through": "",
+	"Cubes": "多维数据",
+	"Dimensions": "维",
+	"Measures": "计量",
+	"Rows": "",
+	"Filter": "",
+	"Columns": ""
+}
