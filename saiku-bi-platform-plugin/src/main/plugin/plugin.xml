@@ -13,7 +13,7 @@
 			</overlay>
 		</overlay>
 		
-		<overlay id="launch" resourcebundle="content/saiku/saikuplugin.properties">
+		<overlay id="launch" resourcebundle="content/saikui/saikuplugin.properties">
 		<button id="saikuButton" image="content/saiku-ui/images/src/saiku_120.png" 
 						command="openURL('Saiku Analytics','Saiku Analytics','content/saiku-ui/index.html')"
 						label="${saiku-plugin.button}" />
@@ -33,31 +33,31 @@
 		<operations>
 			<operation>
 				<id>RUN</id>
-				<command>content/saiku/?solution={solution}&amp;path={path}&amp;action={name}&amp;run=view</command>
+				<command>content/saikui/?solution={solution}&amp;path={path}&amp;action={name}&amp;run=view</command>
 			</operation>
 			<operation>
 				<id>EDIT</id>
-				<command>content/saiku/?solution={solution}&amp;path={path}&amp;action={name}&amp;</command>
+				<command>content/saikui/?solution={solution}&amp;path={path}&amp;action={name}&amp;</command>
 			</operation>
 			<operation>
         		<id>NEWWINDOW</id>
-        		<command>content/saiku/?solution={solution}&amp;path={path}&amp;action={name}&amp;&amp;run=view</command>
+        		<command>content/saikui/?solution={solution}&amp;path={path}&amp;action={name}&amp;&amp;run=view</command>
         	</operation>        		
 		</operations>
 	</content-type>
 
-	<content-generator id="saiku" title="Saiku Analytics" type="saiku" class="org.saiku.plugin.SaikuContentGenerator" />
+	<content-generator id="saikui" title="Saiku Analytics" type="saiku" class="org.saiku.plugin.SaikuContentGenerator" />
 	
 
 	<static-paths>
 		<static-path url="/saiku-ui" localFolder="ui" />
-  		<static-path url="/saiku/css" localFolder="ui/css" />
-  		<static-path url="/saiku/docs" localFolder="ui/docs" />
-  		<static-path url="/saiku/i18n" localFolder="ui/i18n" />
-  		<static-path url="/saiku/images" localFolder="ui/images" />
-  		<static-path url="/saiku/views" localFolder="ui/views" />
-  		<static-path url="/saiku/js" localFolder="ui/js" />
-  		<static-path url="/saiku/config" localFolder="ui/config" />
+  		<static-path url="/saikui/css" localFolder="ui/css" />
+  		<static-path url="/saikui/docs" localFolder="ui/docs" />
+  		<static-path url="/saikui/i18n" localFolder="ui/i18n" />
+  		<static-path url="/saikui/images" localFolder="ui/images" />
+  		<static-path url="/saikui/views" localFolder="ui/views" />
+  		<static-path url="/saikui/js" localFolder="ui/js" />
+  		<static-path url="/saikui/config" localFolder="ui/config" />
 	</static-paths>
 
 </plugin>
