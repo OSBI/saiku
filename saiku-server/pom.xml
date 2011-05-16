@@ -81,9 +81,6 @@
           							    <exclude name="webapps/ROOT/**" />
 									</fileset>
 								</copy>
-								<copy todir="target/dist/saiku-server/tomcat/">
-									<fileset dir="${basedir}/custom/tomcat/" />
-								</copy>
 								
 								<unzip dest="target/dist/saiku-server/tomcat/webapps/ROOT">
 									<fileset dir="target/stage/">
