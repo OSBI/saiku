@@ -198,7 +198,7 @@
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-core</artifactId>
-			<version>1.6-SNAPSHOT</version>
+			<version>1.7</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
@@ -208,7 +208,7 @@
 		<dependency>
 			<groupId>com.sun.jersey.jersey-test-framework</groupId>
 			<artifactId>jersey-test-framework-core</artifactId>
-			<version>1.6-SNAPSHOT</version>
+			<version>1.7</version>
 			<scope>test</scope>
 		</dependency>
 		<!--

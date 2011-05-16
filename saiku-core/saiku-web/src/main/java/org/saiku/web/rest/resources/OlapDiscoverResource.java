@@ -96,8 +96,8 @@ public class OlapDiscoverResource {
 			return olapDiscoverService.getAllDimensions(cube);
 		} catch (SaikuServiceException e) {
 			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuDimension>();
 		}
+		return new ArrayList<SaikuDimension>();
 	}
 	
 	@GET
@@ -118,8 +118,8 @@ public class OlapDiscoverResource {
 			return olapDiscoverService.getDimension(cube, dimensionName);
 		} catch (SaikuServiceException e) {
 			log.error(this.getClass().getName(),e);
-			return null;
 		}
+		return null;
 	}
 	
 	@GET
@@ -138,8 +138,8 @@ public class OlapDiscoverResource {
 			return olapDiscoverService.getAllDimensionHierarchies(cube, dimensionName);
 		} catch (SaikuServiceException e) {
 			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuHierarchy>();
 		}
+		return new ArrayList<SaikuHierarchy>();
 	}
 	
 	@GET
@@ -160,8 +160,8 @@ public class OlapDiscoverResource {
 			return olapDiscoverService.getAllHierarchyLevels(cube, dimensionName, hierarchyName);
 		} catch (SaikuServiceException e) {
 			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuLevel>();
 		}
+		return new ArrayList<SaikuLevel>();
 	}
 
 	/**
@@ -188,8 +188,8 @@ public class OlapDiscoverResource {
 			return olapDiscoverService.getLevelMembers(cube, dimensionName, hierarchyName, levelName);
 		} catch (SaikuServiceException e) {
 			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuMember>();
 		}
+		return new ArrayList<SaikuMember>();
 	}
    
 	/**
@@ -214,8 +214,8 @@ public class OlapDiscoverResource {
 			return olapDiscoverService.getHierarchyRootMembers(cube, hierarchyName);
 		} catch (SaikuServiceException e) {
 			log.error(this.getClass().getName(),e);
-			return null;
 		}
+		return null;
 	}
 
 	
@@ -234,8 +234,8 @@ public class OlapDiscoverResource {
 			return olapDiscoverService.getAllHierarchies(cube);
 		} catch (SaikuServiceException e) {
 			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuHierarchy>();
 		}
+		return new ArrayList<SaikuHierarchy>();
 	}
 	
 	@GET
@@ -253,8 +253,8 @@ public class OlapDiscoverResource {
 			return olapDiscoverService.getMeasures(cube);
 		} catch (SaikuServiceException e) {
 			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuMember>();
 		}
+		return new ArrayList<SaikuMember>();
 	}
 	
 	/**
@@ -279,8 +279,8 @@ public class OlapDiscoverResource {
 			return olapDiscoverService.getMemberChildren(cube, memberName);
 		} catch (SaikuServiceException e) {
 			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuMember>();
 		}
+		return new ArrayList<SaikuMember>();
 	}
 
 }
