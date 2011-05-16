@@ -35,7 +35,7 @@ public class DataCell extends AbstractBaseCell implements Serializable {
     /** The color value. */
     private String colorValue = null; // Color held as hex String
 
-    private Number rawNumber = null;
+    private Double rawNumber = null;
 
     private MemberCell parentColMember = null;
 
@@ -89,7 +89,7 @@ public class DataCell extends AbstractBaseCell implements Serializable {
         return rawNumber;
     }
 
-    public void setRawNumber(final Number rawNumber) {
+    public void setRawNumber(final Double rawNumber) {
         this.rawNumber = rawNumber;
     }
 
