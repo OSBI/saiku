@@ -42,9 +42,14 @@ public class DatasourceService {
 	private void init() {
 		try {
 			for (SaikuDatasource sd : datasources.getDatasources().values()) {
-				ISaikuConnection con = SaikuConnectionFactory.getConnection(sd);
-				if (con.initialized()) {
-					connections.put(con.getName(), con);
+				try {
+					ISaikuConnection con = SaikuConnectionFactory.getConnection(sd);
+					if (con.initialized()) {
+						connections.put(con.getName(), con);
+					}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		} catch (Exception e) {

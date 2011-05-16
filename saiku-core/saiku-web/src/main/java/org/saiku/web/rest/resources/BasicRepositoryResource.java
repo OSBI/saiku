@@ -114,9 +114,9 @@ public class BasicRepositoryResource {
     		    				  String filename = file.getName();
     		    				  if (filename.endsWith(".saiku")) {
     		    					  filename = filename.substring(0,filename.length() - ".saiku".length());
+    		    					  SavedQuery sq = new SavedQuery(filename, sf.format(new Date(file.lastModified())));
+    		    					  queries.add(sq);
     		    				  }
-    		    				  SavedQuery sq = new SavedQuery(filename, sf.format(new Date(file.lastModified())));
-    		    				  queries.add(sq);
     		    			  }
     		    		  }
     		    	  }
