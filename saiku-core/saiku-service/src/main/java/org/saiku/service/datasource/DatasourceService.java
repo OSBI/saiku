@@ -34,6 +34,10 @@ public class DatasourceService {
 	
 	private Map<String,ISaikuConnection> connections = new HashMap<String,ISaikuConnection>();
 	
+	public void setConnections(Map<String,ISaikuConnection> connections) {
+		this.connections = connections;
+	}
+	
 	public void setDatasourceManager(IDatasourceManager ds) {
 		datasources = ds;
 		init();
