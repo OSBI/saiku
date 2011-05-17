@@ -36,6 +36,7 @@ import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.BaseContentGenerator;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginClassLoader;
+import org.saiku.plugin.util.PluginConfig;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -51,7 +52,7 @@ public class ServletAdapterContentGenerator extends BaseContentGenerator {
 
   private static ConfigurableApplicationContext appContext;
   
-  private static final String PLUGIN_ID = "j2ee";
+  private static final String PLUGIN_ID = PluginConfig.PLUGIN_NAME;
 
 //  private static JAXRSPluginServlet servlet;
   private static EnunciateJerseyServletContainer servlet;
