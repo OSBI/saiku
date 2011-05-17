@@ -15,7 +15,7 @@
 	</properties>
 	<build>
 		<plugins>
-  			<plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
@@ -32,10 +32,173 @@
 									<artifactId>saiku-ui</artifactId>
 									<version>${project.version}</version>
 									<type>war</type>
-									<outputDirectory>target/stage/</outputDirectory>
+									<outputDirectory>target/stage</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.saiku</groupId>
+									<artifactId>saiku-datasources</artifactId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.saiku</groupId>
+									<artifactId>saiku-olap</artifactId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.saiku</groupId>
+									<artifactId>saiku-service</artifactId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.saiku</groupId>
+									<artifactId>saiku-web</artifactId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>org.codehaus.enunciate</groupId>
+									<artifactId>enunciate-rt</artifactId>
+									<version>1.21</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.codehaus.enunciate</groupId>
+									<artifactId>enunciate-spring3-app-rt</artifactId>
+									<version>1.21</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.codehaus.enunciate</groupId>
+									<artifactId>enunciate-core-annotations</artifactId>
+									<version>1.21</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>asm</groupId>
+									<artifactId>asm</artifactId>
+									<version>3.1</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.codehaus.enunciate</groupId>
+									<artifactId>enunciate-jersey-rt</artifactId>
+									<version>1.21</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.sun.jersey</groupId>
+									<artifactId>jersey-core</artifactId>
+									<version>1.6</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.sun.jersey</groupId>
+									<artifactId>jersey-server</artifactId>
+									<version>1.6</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.sun.jersey.contribs</groupId>
+									<artifactId>jersey-spring</artifactId>
+									<version>1.6</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.sun.jersey</groupId>
+									<artifactId>jersey-client</artifactId>
+									<version>1.6</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.codehaus.jackson</groupId>
+									<artifactId>jackson-core-asl</artifactId>
+									<version>1.7.4</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.codehaus.jackson</groupId>
+									<artifactId>jackson-jaxrs</artifactId>
+									<version>1.7.4</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.codehaus.jackson</groupId>
+									<artifactId>jackson-mapper-asl</artifactId>
+									<version>1.7.4</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.codehaus.jackson</groupId>
+									<artifactId>jackson-xc</artifactId>
+									<version>1.7.4</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.sun.xml.bind</groupId>
+									<artifactId>jaxb-impl</artifactId>
+									<version>2.2.2</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>pentaho</groupId>
+									<artifactId>mondrian</artifactId>
+									<version>3.3-SNAPSHOT</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.olap4j</groupId>
+									<artifactId>olap4j-xmla</artifactId>
+									<version>1.0.0-SNAPSHOT</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.olap4j</groupId>
+									<artifactId>olap4j</artifactId>
+									<version>1.0.0-SNAPSHOT</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>eigenbase</groupId>
+									<artifactId>eigenbase-properties</artifactId>
+									<version>1.1.0.10924</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+
+								</artifactItem>
+								<artifactItem>
+									<groupId>eigenbase</groupId>
+									<artifactId>eigenbase-resgen</artifactId>
+									<version>1.3.0.11873</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+
+								</artifactItem>
+								<artifactItem>
+									<groupId>eigenbase</groupId>
+									<artifactId>eigenbase-xom</artifactId>
+									<version>1.3.0.11999</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>commons-lang</groupId>
+									<artifactId>commons-lang</artifactId>
+									<version>2.4</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.jdom</groupId>
+									<artifactId>jdom</artifactId>
+									<version>1.1</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 							</artifactItems>
-							
 						</configuration>
 					</execution>
 				</executions>
@@ -54,7 +217,7 @@
 						</goals>
 						<configuration>
 							<tasks>
-                                <unzip dest="target/dist/saiku/ui/">
+								<unzip dest="target/dist/saiku/ui/">
 									<fileset dir="target/stage/">
 										<include name="saiku-ui-${project.version}.war" />
 									</fileset>
@@ -150,12 +313,12 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>

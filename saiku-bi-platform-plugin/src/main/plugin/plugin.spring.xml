@@ -16,7 +16,7 @@
   
   <context:annotation-config />
 
-  <bean id="enunciatePluginServlet" class="org.pentaho.plugin.j2ee.EnunciateJerseyPluginServlet">
+  <bean id="enunciatePluginServlet" class="org.saiku.plugin.EnunciateJerseyPluginServlet">
     <property name="initParams">
       <map>
         <entry key="com.sun.jersey.config.property.resourceConfigClass" value="com.sun.jersey.api.core.PackagesResourceConfig" />
