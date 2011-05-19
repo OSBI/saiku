@@ -128,7 +128,9 @@ var TabContainer = function(tab_container, content_container) {
                 return controller.workspace_toolbar_click_handler($(this));
             });
             if (PLUGIN == "true") {
-                $new_tab_content.find(PLUGIN_REMOVE_CONTENT).remove();
+            	if (typeof PLUGIN_REMOVE_CONTENT != "undefined" ) {
+            		$new_tab_content.find(PLUGIN_REMOVE_CONTENT).remove();
+            	}
                 if (typeof REDUCED != "undefined" && REDUCED) { 
                     $new_tab_content.find('.sidebar_separator').hide();
                     $new_tab_content.find('.workspace_fields').hide();

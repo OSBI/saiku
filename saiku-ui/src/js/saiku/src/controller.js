@@ -28,6 +28,8 @@
  */
 
 // The name of the Saiku UI webapp in Tomcat
+PLUGIN = "false";
+
 BASE_URL = "/";
 	
 // The name of the Saiku server webapp in Tomcat
