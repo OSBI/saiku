@@ -81,11 +81,11 @@ public class PentahoConnectionRetriever  {
 		          LOG.debug("Original Document:" + originalDocument.asXML()); //$NON-NLS-1$
 		        }
 		        Document modifiedDocument = (Document) originalDocument.clone();
-		        List<Node> nodesToRemove = modifiedDocument.selectNodes("/DataSources/DataSource/Catalogs/Catalog[contains(DataSourceInfo, 'EnableXmla=False')]"); //$NON-NLS-1$
-		        
-		        for (Node node : nodesToRemove) {
-		          node.detach();
-		        }
+//		        List<Node> nodesToRemove = modifiedDocument.selectNodes("/DataSources/DataSource/Catalogs/Catalog[contains(DataSourceInfo, 'EnableXmla=False')]"); //$NON-NLS-1$
+//		        
+//		        for (Node node : nodesToRemove) {
+//		          node.detach();
+//		        }
 		        String modified = modifiedDocument.asXML();
 		        modified = modified.replaceAll("solution:", "file:" + PentahoSystem.getApplicationContext().getSolutionPath("") );
 		        LOG.debug("MODIFIED MY" + modified);
