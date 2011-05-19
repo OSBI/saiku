@@ -53,8 +53,25 @@ var model = {
             },
             dataType: "json"
         }, parameters);
+		var rewrite = true;
+		if (PLUGIN == "true"  ) {
 
-        if (PLUGIN == "true" && (settings.method == "put" ||Êsettings.method == "PUT" || settings.method == "DELETE" ||Êsettings.method == "DELETE")) {
+		if (settings.method == 'PUT') {
+			rewrite = true;
+		}
+
+		if (settings.method == 'put') {
+			rewrite = true;
+		}
+		if (settings.method == 'DELETE') {
+			rewrite = true;
+		}
+
+		if (settings.method == 'delete') {
+			rewrite = true;
+		}
+		}
+		if (rewrite == true) {
             $.ajax({
             type: "POST",
             cache: false,
