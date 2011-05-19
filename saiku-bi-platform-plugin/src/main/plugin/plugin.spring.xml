@@ -22,7 +22,7 @@
         <entry key="com.sun.jersey.config.property.resourceConfigClass" value="com.sun.jersey.api.core.PackagesResourceConfig" />
         <entry key="com.sun.jersey.config.property.packages" value="org.saiku.web" />
         <entry key="org.codehaus.enunciate.modules.jersey.config.ResourceProviderFactory" value="com.sun.jersey.spi.spring.container.SpringComponentProviderFactory" />
-        
+        <entry key="com.sun.jersey.spi.container.ContainerRequestFilters" value="com.sun.jersey.api.container.filter.PostReplaceFilter" />
       </map>
     </property>
   </bean>

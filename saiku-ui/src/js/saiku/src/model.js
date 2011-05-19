@@ -54,7 +54,27 @@ var model = {
             dataType: "json"
         }, parameters);
 
-        // Make ajax request
+        if (PLUGIN == "true" && (settings.method == "put" ||Êsettings.method == "PUT" || settings.method == "DELETE" ||Êsettings.method == "DELETE")) {
+            $.ajax({
+            type: "POST",
+            cache: false,
+            url: TOMCAT_WEBAPP + REST_MOUNT_POINT + encodeURI(parameters.url),
+            dataType: settings.dataType,
+            username: model.username,
+            password: model.password,
+            success: settings.success,
+            error: settings.error,
+            data: settings.data,
+            contentType: settings.contentType,
+            beforeSend: function(xhr)   
+            {
+                xhr.setRequestHeader("X-Http-Method-Override", settings.method);
+            }
+
+        });
+
+        }
+        else {
         $.ajax({
             type: settings.method,
             cache: false,
@@ -67,6 +87,8 @@ var model = {
             data: settings.data,
             contentType: settings.contentType
         });
+        
+        }
     },
 
     /**
