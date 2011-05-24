@@ -1,0 +1,23 @@
+{
+	"New query": "Nuova query",
+	"Open query": "Apri query",
+	"Save query": "Salva query",
+	"Delete query": "Cancella query",
+	"Logout": "Esci",
+	"About": "About",
+	"Run query": "Esegui query",  
+	"Toggle fields": "Attiva campi",
+	"Automatic execution": "Esecuzione automatica",
+	"Non-empty": "Elimina righe vuote",
+	"Swap axis": "Scambia assi",
+	"Show MDX" : "Visualizza MDX",
+	"Export XLS": "Esporta XLS",
+	"Export CSV": "Esporta CSV",
+	"Drill Through": "Drill Through",
+	"Cubes": "Cubi",
+	"Dimensions": "Dimensioni",
+	"Measures": "Misure",
+	"Rows": "Righe",
+	"Filter": "Filtri",
+	"Columns": "Colonne"
+}
