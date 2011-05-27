@@ -28,6 +28,8 @@
  */
 
 // The name of the Saiku UI webapp in Tomcat
+PLUGIN = "false";
+
 BASE_URL = "/";
 	
 // The name of the Saiku server webapp in Tomcat
@@ -117,6 +119,7 @@ $(document).ready(function() {
                 TOMCAT_WEBAPP = data['saiku-webapp'];
                 BASE_URL = data['saiku-ui-base'];
                 PLUGIN = data['plugin'];
+                REST_MOUNT_POINT = data['saiku-rest-mountpoint'];
                 $.getScript("js/saiku/src/i18n.js");
                 $.getScript("js/saiku/src/tabs.js", function() {
                     $.getScript("js/saiku/src/view.js");
