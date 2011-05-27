@@ -53,8 +53,45 @@ var model = {
             },
             dataType: "json"
         }, parameters);
+		var rewrite = true;
+		if (PLUGIN == "true"  ) {
 
-        // Make ajax request
+		if (settings.method == 'PUT') {
+			rewrite = true;
+		}
+
+		if (settings.method == 'put') {
+			rewrite = true;
+		}
+		if (settings.method == 'DELETE') {
+			rewrite = true;
+		}
+
+		if (settings.method == 'delete') {
+			rewrite = true;
+		}
+		}
+		if (rewrite == true) {
+            $.ajax({
+            type: "POST",
+            cache: false,
+            url: TOMCAT_WEBAPP + REST_MOUNT_POINT + encodeURI(parameters.url),
+            dataType: settings.dataType,
+            username: model.username,
+            password: model.password,
+            success: settings.success,
+            error: settings.error,
+            data: settings.data,
+            contentType: settings.contentType,
+            beforeSend: function(xhr)   
+            {
+                xhr.setRequestHeader("X-Http-Method-Override", settings.method);
+            }
+
+        });
+
+        }
+        else {
         $.ajax({
             type: settings.method,
             cache: false,
@@ -67,6 +104,8 @@ var model = {
             data: settings.data,
             contentType: settings.contentType
         });
+        
+        }
     },
 
     /**
