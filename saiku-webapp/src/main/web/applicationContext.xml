@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" 
+     xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+              http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
+              http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+			   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<context:annotation-config />
+
+	<security:global-method-security secured-annotations="enabled">
+	</security:global-method-security>
+  
+  <!-- 
+  Saiku currently ships with basic authentication working out of the box, below is also the code for Digest authentication, 
+  should you want digest authentication for you application comment out the basic authentication block and enable digest authentication.
+  We are also working on other authentication methods, namely OAuth and Remember me token based policies. 
+  
+  To add and remove users you currently have to edit WEB-INF/users.properties, this will be replaced with an admin console in due course and
+  you can also swap this out for JDBC backed security lists and (although untested) technically LDAP etc.
+  
+  If you modify these files in anyway it would be very useful if you sent us patches for any useful changes you make.
+   -->
+  
+  <!-- BASIC AUTHENTICATION -->
+
+  <security:http auto-config='true' access-denied-page="/login.jsp">
+	<security:intercept-url pattern="/serverdocs/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+	<security:intercept-url pattern="/rest/**" access="ROLE_USER" />
+	<security:intercept-url pattern="/json/**" access="ROLE_USER" />
+    <security:intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />	
+    
+ 	<security:http-basic/>
+	
+    
+  <!--   <security:form-login authentication-failure-url="/login.jsp" default-target-url="/index.jsp" login-page="/login.jsp" login-processing-url="/login.do"/>
+    <security:logout logout-success-url="/index.jsp" logout-url="/logout.do"/>  -->
+  </security:http>
+  
+<!--  END OF BASIC AUTHENTICATION -->
+
+<!-- DIGEST AUTHENTICATION -->
+
+ <!--  
+	<bean id="org.springframework.security.filterChainProxy"
+		class="org.springframework.security.web.FilterChainProxy">
+		<security:filter-chain-map path-type="ant">
+			<security:filter-chain pattern="/**"
+				filters="httpSessionContextIntegrationFilter,logoutFilter,digestProcessingFilter,anonymousAuthFilter,anonymousAuthFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
+		</security:filter-chain-map>
+	</bean>
+
+
+	 <bean id="filterSecurityInterceptor"
+		class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+		<property name="authenticationManager" ref="authenticationManager" />
+		<property name="accessDecisionManager" ref="accessDecisionManager" />
+		<property name="objectDefinitionSource">
+			<security:filter-invocation-definition-source>
+      			<security:intercept-url pattern='/login.*' access='IS_AUTHENTICATED_ANONYMOUSLY,ROLE_ANONYMOUS,ROLE_USER'/> 
+				<security:intercept-url pattern="/**" access="ROLE_USER" />
+			</security:filter-invocation-definition-source>
+		</property>
+	</bean> 
+
+	<bean id="accessDecisionManager"
+		class="org.springframework.security.access.vote.AffirmativeBased">
+		<property name="allowIfAllAbstainDecisions"
+			value="false" />
+		<property name="decisionVoters">
+			<list>
+				<ref bean="authenticatedVoter"/>
+				<bean class="org.springframework.security.access.vote.RoleVoter" />
+			</list>
+		</property>
+	</bean>
+<bean id="authenticatedVoter" class="org.springframework.security.access.vote.AuthenticatedVoter"/>
+<bean id="anonymousAuthFilter"
+    class="org.springframework.security.web.authentication.AnonymousAuthenticationFilter">
+  <property name="key" value="foobar"/>
+  <property name="userAttribute" value="anonymousUser,ROLE_ANONYMOUS"/>
+</bean>
+
+<bean id="anonymousAuthenticationProvider"
+    class="org.springframework.security.authentication.AnonymousAuthenticationProvider">
+  <property name="key" value="foobar"/>
+</bean>
+
+	<bean id="httpSessionContextIntegrationFilter"
+		class="org.springframework.security.web.context.HttpSessionContextIntegrationFilter" />
+	<bean id="exceptionTranslationFilter"
+		class="org.springframework.security.web.access.ExceptionTranslationFilter">
+		<property name="authenticationEntryPoint" ref="digestProcessingFilterEntryPoint" />
+	</bean>
+        
+        <bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+                <constructor-arg value="/index.jsp" />
+                <constructor-arg>
+                        <list>                                <bean
+                                        class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+                        </list>
+                </constructor-arg>
+                <property name="filterProcessesUrl" value="/logout" />
+        </bean>
+	<bean id="digestProcessingFilter"
+		class="org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
+		<property name="userDetailsService" ref="userDetailsService" />
+		<property name="authenticationEntryPoint" ref="digestProcessingFilterEntryPoint" />
+	</bean>
+
+	<bean id="digestProcessingFilterEntryPoint"
+		class="org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
+		<property name="realmName"
+			value="Contacts Realm via Digest Authentication" />
+		<property name="key" value="acegi" />
+		<property name="nonceValiditySeconds" value="10" />
+	</bean>
+
+	<bean id="userDetailsService"
+		class="org.springframework.security.core.userdetails.memory.InMemoryDaoImpl">
+		<property name="userProperties">
+			<bean
+				class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+				<property name="location" value="/WEB-INF/users.properties" />
+
+			</bean>
+		</property>
+	</bean>
+	
+	-->
+	<!-- DIGEST AUTHENTICATION END -->
+	
+	
+  	<security:authentication-manager alias="authenticationManager">
+
+		<security:authentication-provider>
+			<security:user-service id="uds" properties="/WEB-INF/users.properties">
+
+			</security:user-service>
+		</security:authentication-provider>
+	</security:authentication-manager>
+
+	
+</beans>

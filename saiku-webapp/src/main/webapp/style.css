@@ -1,0 +1,129 @@
+/* CSS Document */
+
+body {
+  font-family: 'Trebuchet MS', Helvetica, sans-serif;
+  font-size: 12px;
+  margin-top: -2px;
+  background: url( 'images/bg.gif' );
+}
+
+#container {
+  margin: 0 auto;
+  width: 736px;
+}
+
+#header {
+  background: url( 'images/header.jpg' );
+  height: 116px;
+  width: 736px;
+}
+
+#headertitle {
+  padding-top: 80px;
+  padding-left: 15px;
+  float: left;
+  font-size: 1.8em;
+  font-variant: small-caps;
+  color: white;
+}
+
+.boldtitle {
+  font-size: 1.6em;
+  font-weight: bold;
+  padding-left: 5px;
+}
+
+#links {
+  padding-top: 85px;
+  padding-left: 350px;
+  color: white;
+  font-weight: bold;
+  letter-spacing: .3px
+}
+
+a {
+  color: white;
+  text-decoration: none;
+  font-size: .8em;
+}
+
+a:hover {
+  color: red;
+  text-decoration: none;
+}
+
+#mainbody {
+  background: #3d3d3d;
+  width: 736px;
+  clear: both;
+  margin-top: 20px;
+}
+
+.header1 {
+  color: white;
+  font-size: 1.2em;
+  text-indent: 20px;
+  padding-top: 20px;
+  font-weight: bold;
+  letter-spacing: .3px;
+}
+
+.errorHeader {
+  color: red;
+  font-size: 1.2em;
+  text-indent: 20px;
+  padding-top: 20px;
+  font-weight: bold;
+  letter-spacing: .3px;
+}
+
+.bodytext {
+  color: white;
+  font-size: .9em;
+  text-indent: 20px;
+  letter-spacing: .2px;
+  padding: 12px 20px 10px 20px;
+}
+
+.formtext {
+  color: white;
+  font-size: .9em;
+  text-indent: 20px;
+  letter-spacing: .2px;
+  padding: 5px 5px 5px 5px;
+}
+
+.image1 {
+  padding: 0 5px 0 0;
+}
+
+.image2 {
+  padding: 0 0 0 5px;
+}
+
+.image3 {
+  padding: 0 0 0 5px;
+}
+
+.spantext {
+  margin-left: 10px;
+  padding-left: 60px;
+  padding-right: 60px;
+  width: 100%
+}
+
+#footer {
+  font-size: .8em
+}
+
+#footer a {
+  color: #333333;
+  font-weight: bold;
+  font-size: 1em
+}
+
+#footer a:hover {
+  color: red;
+  font-weight: bold;
+  font-size: 1em
+}
