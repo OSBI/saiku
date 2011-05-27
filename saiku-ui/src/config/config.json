@@ -1,7 +1,0 @@
-{
-	"username": "admin",
-  	"password": "admin",
-    "saiku-webapp": "/saiku/",
-    "saiku-ui-base" : "",
-    "saiku-rest-mountpoint" : "rest/saiku/"
-}
