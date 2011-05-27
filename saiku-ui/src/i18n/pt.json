@@ -1,0 +1,23 @@
+{
+    "New query": "Nova consulta",
+    "Open query": "Abrir consulta",
+    "Save query": "Salvar consulta",
+    "Delete query": "Excluir consulta",
+    "Logout": "Sair",
+    "About": "Sobre...",
+    "Run query": "Executar consulta",  
+    "Toggle fields": "Exibir/Esconder campos",
+    "Automatic execution": "Execu\u00E7\u00E3o autom\u00E1tica",
+    "Non-empty": "N\u00E3o-nulo",
+    "Swap axis": "Alternar linha/coluna",
+    "Show MDX" : "Mostrar MDX",
+    "Export XLS": "Exportar XLS",
+    "Export CSV": "Exportar CSV",
+    "Drill Through": "Drill Through",
+    "Cubes": "Cubos",
+    "Dimensions": "Dimens\u00F5es",
+    "Measures": "Medidas",
+	"Rows": "Linhas",
+	"Filter": "Filtros",
+	"Columns": "Colunas"
+}
