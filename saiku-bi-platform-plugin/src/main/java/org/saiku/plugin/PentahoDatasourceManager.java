@@ -9,7 +9,9 @@ import mondrian.olap.MondrianProperties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Attribute;
 import org.dom4j.Document;
+import org.dom4j.Element;
 import org.dom4j.Node;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
@@ -57,10 +59,20 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 		for (Node node : nodes) {
 			nr++;
 			String name = "PentahoDs" + nr;
+			Element e = (Element) node;
+		      List<Attribute> list = e.attributes();
+		      for (Attribute attribute : list)
+		      {
+		         String aname = attribute.getName();
+		         if ("name".equals(aname)) {
+		        	name = attribute.getStringValue();  
+		         }
+		      }
+
 			Node ds = node.selectSingleNode("DataSourceInfo");
 			Node cat = node.selectSingleNode("Definition");
 
-			System.out.println("NAME: " + name + " DSINFO: " + (ds != null ? ds.getStringValue() : "NULL")+ "  ###" +  (cat != null ? cat.getStringValue() : "NULL"));
+//			System.out.println("NAME: " + name + " DSINFO: " + (ds != null ? ds.getStringValue() : "NULL")+ "  ###" +  (cat != null ? cat.getStringValue() : "NULL"));
 			Properties props = new Properties();
 			props.put("driver", "mondrian.olap4j.MondrianOlap4jDriver");
 			props.put("location","jdbc:mondrian:" + ds.getStringValue() + ";Catalog=" + cat.getStringValue());

@@ -56,7 +56,7 @@ function save_to_solution( filename, solution, path, type, overwrite ) {
             success: function (query_data, textStatus, jqXHR) {
                 $.ajax({
                     type: "POST",
-                    url: "../saiku",
+                    url: "../saikui",
                     success: function (data, textStatus, jqXHR) { 
                         puc.refresh_repo();
                         view.show_dialog('File Saved','');
