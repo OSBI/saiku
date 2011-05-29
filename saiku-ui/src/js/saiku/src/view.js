@@ -334,6 +334,11 @@ var view = {
                 
                 return false;
             })
+           .dblclick(function() {
+                var $query = $(this).data('object');
+                model.open_query($query.name, view.tabs.add_tab());
+                return false;
+            })
             .appendTo($list_element);
         });
     },
