@@ -29,7 +29,6 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 	public PentahoDatasourceManager() {
 		load();
 		MondrianProperties.instance().DataSourceResolverClass.setString("org.saiku.plugin.PentahoDataSourceResolver");
-
 	}
 
 
@@ -45,43 +44,49 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 		try {
 			doc = XmlDom4JHelper.getDocFromFile(dataSources, loader);
 			String modified = doc.asXML();
-			modified = modified.replaceAll("solution:", "file:" + PentahoSystem.getApplicationContext().getSolutionPath("") );
+			modified = modified.replace("solution:", "file:" + PentahoSystem.getApplicationContext().getSolutionPath("") );
 			doc = XmlDom4JHelper.getDocFromString(modified, loader);
+
+			List<Node> nodes = doc.selectNodes("/DataSources/DataSource/Catalogs/Catalog"); //$NON-NLS-1$
+			int nr = 0;
+			for (Node node : nodes) {
+				nr++;
+				String name = "PentahoDs" + nr;
+				Element e = (Element) node;
+				List<Attribute> list = e.attributes();
+				for (Attribute attribute : list)
+				{
+					String aname = attribute.getName();
+					if ("name".equals(aname)) {
+						name = attribute.getStringValue();  
+					}
+				}
+
+				Node ds = node.selectSingleNode("DataSourceInfo");
+				Node cat = node.selectSingleNode("Definition");
+				LOG.debug("NAME: " + name + " DSINFO: " + (ds != null ? ds.getStringValue() : "NULL")+ "  ###CATALOG: " +  (cat != null ? cat.getStringValue() : "NULL"));
+				Properties props = new Properties();
+				props.put("driver", "mondrian.olap4j.MondrianOlap4jDriver");
+				props.put("location","jdbc:mondrian:" + ds.getStringValue() + ";Catalog=" + cat.getStringValue());
+				props.list(System.out);
+
+				SaikuDatasource sd = new SaikuDatasource(name, SaikuDatasource.Type.OLAP, props);
+				datasources.put(name, sd);
+
+			}
 		} catch(Exception e) {
+			e.printStackTrace();
 			LOG.error(e);
 		}
 		if (LOG.isDebugEnabled()) {
-			LOG.debug("Original Document:" + doc.asXML()); //$NON-NLS-1$
+			if (doc == null) {
+				LOG.debug("Original Document is null");
+			}
+			else {
+				LOG.debug("Original Document:" + doc.asXML()); //$NON-NLS-1$
+			}
 		}
 
-		List<Node> nodes = doc.selectNodes("/DataSources/DataSource/Catalogs/Catalog"); //$NON-NLS-1$
-		int nr = 0;
-		for (Node node : nodes) {
-			nr++;
-			String name = "PentahoDs" + nr;
-			Element e = (Element) node;
-		      List<Attribute> list = e.attributes();
-		      for (Attribute attribute : list)
-		      {
-		         String aname = attribute.getName();
-		         if ("name".equals(aname)) {
-		        	name = attribute.getStringValue();  
-		         }
-		      }
-
-			Node ds = node.selectSingleNode("DataSourceInfo");
-			Node cat = node.selectSingleNode("Definition");
-
-//			System.out.println("NAME: " + name + " DSINFO: " + (ds != null ? ds.getStringValue() : "NULL")+ "  ###" +  (cat != null ? cat.getStringValue() : "NULL"));
-			Properties props = new Properties();
-			props.put("driver", "mondrian.olap4j.MondrianOlap4jDriver");
-			props.put("location","jdbc:mondrian:" + ds.getStringValue() + ";Catalog=" + cat.getStringValue());
-			props.list(System.out);
-
-			SaikuDatasource sd = new SaikuDatasource(name, SaikuDatasource.Type.OLAP, props);
-			datasources.put(name, sd);
-
-		}
 
 
 	}
@@ -92,7 +97,7 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 			PentahoSystem
 			.getApplicationContext()
 			.getSolutionPath("system/olap/datasources.xml");  //$NON-NLS-1$
-		if (LOG.isDebugEnabled()) {
+		if (true) {
 			LOG.debug("Pentaho datasources.xml Path:" + path);
 		}
 		return path;
