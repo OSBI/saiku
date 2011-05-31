@@ -38,19 +38,21 @@
 								<zip destfile="target/${project.artifactId}-${project.version}.war">
 									<zipfileset dir="target/${project.artifactId}-${project.version}/" />
 								</zip>
-								
-								<unzip dest="target/${project.artifactId}-${project.version}/">
+								<copy todir="target/${project.artifactId}-foodmart-${project.version}">
+									<fileset dir="target/${project.artifactId}-${project.version}/" />
+								</copy>
+								<unzip dest="target/${project.artifactId}-foodmart-${project.version}">
 									<fileset dir="${basedir}/../util/">
 										<include name="foodmart.zip" />
 									</fileset>
 								</unzip>
-								<copy todir="target/${project.artifactId}-${project.version}/WEB-INF/classes/saiku-datasources/" overwrite="true">
+								<copy todir="target/${project.artifactId}-foodmart-${project.version}/WEB-INF/classes/saiku-datasources/" overwrite="true">
 									<fileset dir="${basedir}/../util/">
 										<include name="foodmart" />
 									</fileset>
 								</copy>
 								<zip destfile="target/${project.artifactId}-foodmart-${project.version}.war">
-									<zipfileset dir="target/${project.artifactId}-${project.version}/" />
+									<zipfileset dir="target/${project.artifactId}-foodmart-${project.version}/" />
 								</zip>
 							</tasks>
 						</configuration>
