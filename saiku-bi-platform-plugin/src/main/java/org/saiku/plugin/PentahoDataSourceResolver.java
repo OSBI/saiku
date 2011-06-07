@@ -1,16 +1,16 @@
 package org.saiku.plugin;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.sql.DataSource;
+
+import mondrian.spi.DataSourceResolver;
 
 import org.apache.log4j.Logger;
 import org.pentaho.platform.api.data.DatasourceServiceException;
 import org.pentaho.platform.api.data.IDatasourceService;
-import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.web.servlet.messages.Messages;
-
-import mondrian.spi.DataSourceResolver;
 
 /**
  * This class provides SPI functionality to Mondrian.
@@ -19,21 +19,26 @@ import mondrian.spi.DataSourceResolver;
  * @author Luc Boudreau
  */
 public class PentahoDataSourceResolver implements DataSourceResolver {
-  Logger logger = Logger.getLogger(PentahoDataSourceResolver.class);
-  public DataSource lookup(String dataSourceName) throws Exception {
-    try {
-      IDatasourceService datasourceSvc =
-        PentahoSystem.getObjectFactory().get(
-          IDatasourceService.class,
-          PentahoSessionHolder.getSession());
-      javax.sql.DataSource datasource =
-        datasourceSvc.getDataSource(
-          datasourceSvc.getDSUnboundName(dataSourceName));
-      return datasource;
-    } catch (ObjectFactoryException e) {
-      throw e;
-    } catch (DatasourceServiceException e) {
-      throw e;
-    }
-  }
+	Logger logger = Logger.getLogger(PentahoDataSourceResolver.class);
+	public DataSource lookup(String dataSourceName) throws Exception {
+		IDatasourceService datasourceSvc =
+			PentahoSystem.getObjectFactory().get(
+					IDatasourceService.class,
+					PentahoSessionHolder.getSession());
+		javax.sql.DataSource datasource;
+		try {
+			datasource =
+				datasourceSvc.getDataSource(
+						datasourceSvc.getDSUnboundName(dataSourceName));
+		}
+		catch (DatasourceServiceException e) {
+			Context initContext = new InitialContext();
+			if (dataSourceName != null && !dataSourceName.startsWith("java:/comp/env/")) {
+				dataSourceName = "java:/comp/env/" + dataSourceName;
+			}
+			datasource  = (DataSource)initContext.lookup(dataSourceName);
+		}
+		return datasource;
+
+	}
 }
