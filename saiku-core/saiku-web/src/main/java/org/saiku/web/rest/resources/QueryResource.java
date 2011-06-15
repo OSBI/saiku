@@ -365,19 +365,17 @@ public class QueryResource {
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/drillthrough\tGET");
 		}
+		ArrayList<Cell[]> rsc = new ArrayList<Cell[]>();
 		ResultSet rs = null;
 		try {
 			rs = olapQueryService.drilldown(queryName, maxrows);
-			ArrayList<Cell[]> rsc = RestUtil.convert(rs);
-			return rsc;
+			rsc = RestUtil.convert(rs);
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ")",e);
-			return new ArrayList<Cell[]>();
 		}
 		finally {
 			if (rs != null) {
-				System.out.println("CLOSE DRILLTHROUGH");
 	            try {
 	                Statement statement = rs.getStatement();
 	                statement.close();
@@ -389,6 +387,8 @@ public class QueryResource {
 	            }
 	        }
 		}
+		return rsc;
+
 	}
 	
 	@GET

@@ -5,7 +5,7 @@
 	<artifactId>saiku-core</artifactId>
 	<packaging>pom</packaging>
 	<name>saiku - core libraries</name>
-	<version>2.0</version>
+	<version>2.1-SNAPSHOT</version>
 	<properties>
 		<maven.compiler.source>1.5</maven.compiler.source>
 		<maven.compiler.target>1.5</maven.compiler.target>
@@ -94,39 +94,6 @@
 	</build>
     <reporting>
         <plugins>
-            <!-- FIXME: currently produces a NullPointerException
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-changes-plugin</artifactId>
-                <version>2.0</version>
-                <configuration>
-                    <component>12311070</component>
-                    <resolutionIds>1</resolutionIds>
-                    <statusIds>5,6</statusIds>
-                    <fixVersionIds>${jira.fix.version.ids}</fixVersionIds>
-                </configuration>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>jira-report</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin> -->
-            <!-- Produce JavaDoc -->
-            <!--<plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.7</version>
-                <configuration>
-                    <outputEncoding>UTF-8</outputEncoding>
-                    <charset>UTF-8</charset>
-                    <docencoding>UTF-8</docencoding>
-                    <encoding>UTF-8</encoding>
-                    <aggregate>true</aggregate>
-                    <source>1.5</source>
-                </configuration>
-            </plugin>-->
-            <!-- Produce Source cross references -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
