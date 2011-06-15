@@ -22,6 +22,8 @@ package org.saiku.web.rest.resources;
 
 import java.io.StringReader;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -49,6 +51,7 @@ import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
+import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.web.rest.objects.SelectionRestObject;
 import org.saiku.web.rest.objects.resultset.Cell;
 import org.saiku.web.rest.util.RestUtil;
@@ -331,6 +334,27 @@ public class QueryResource {
 		}
 	}
 	
+	@POST
+	@Produces({"application/json" })
+	@Path("/{queryname}/executemdx")
+	public List<Cell[]> executeMdx(
+			@PathParam("queryname") String queryName,
+			@FormParam("mdx") String mdx)
+		{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/executemdx\tPOST\t"+mdx);
+		}
+		try {
+			CellDataSet cs = olapQueryService.executeMdx(queryName,mdx);
+			return RestUtil.convert(cs);
+		}
+		catch (Exception e) {
+			log.error("Cannot execute query (" + queryName + ")",e);
+			return new ArrayList<Cell[]>();
+		}
+	}
+
+	
 	@GET
 	@Produces({"application/json" })
 	@Path("/{queryname}/drillthrough:{maxrows}")
@@ -341,13 +365,29 @@ public class QueryResource {
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/drillthrough\tGET");
 		}
+		ResultSet rs = null;
 		try {
-			ResultSet rs = olapQueryService.drilldown(queryName, maxrows);
-			return RestUtil.convert(rs);
+			rs = olapQueryService.drilldown(queryName, maxrows);
+			ArrayList<Cell[]> rsc = RestUtil.convert(rs);
+			return rsc;
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ")",e);
 			return new ArrayList<Cell[]>();
+		}
+		finally {
+			if (rs != null) {
+				System.out.println("CLOSE DRILLTHROUGH");
+	            try {
+	                Statement statement = rs.getStatement();
+	                statement.close();
+	                rs.close();
+	            } catch (SQLException e) {
+	                throw new SaikuServiceException(e);
+	            } finally {
+	                rs = null;
+	            }
+	        }
 		}
 	}
 	

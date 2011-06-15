@@ -160,6 +160,31 @@ public class OlapQueryService {
 		}
 	}
 	
+	public CellDataSet executeMdx(String queryName, String mdx) {
+		return executeMdx(queryName, mdx, new HierarchicalCellSetFormatter());
+	}
+
+	public CellDataSet executeMdx(String queryName, String mdx, ICellSetFormatter formatter) {
+		OlapQuery query = getOlapQuery(queryName);
+		try {
+			Long start = (new Date()).getTime();
+			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
+			con.setCatalog(query.getSaikuCube().getCatalogName());
+			OlapStatement stmt = con.createStatement();
+			CellSet cellSet = stmt.executeOlapQuery(mdx);
+	        Long exec = (new Date()).getTime();
+	        CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cellSet,formatter);
+	        Long format = (new Date()).getTime();
+	        log.info("Size: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
+	                + "ms\tFormat:\t" + (format - exec) + "ms\t Total: " + (format - start) + "ms");
+
+			OlapUtil.storeCellSet(queryName, cellSet);
+			return result;
+		} catch (Exception e) {
+			throw new SaikuServiceException("Can't execute query: " + queryName,e);
+		}
+	}
+	
 	public ResultSet drilldown(String queryName, int maxrows) {
 		try {
 			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnectionName()); 
