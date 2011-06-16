@@ -1100,6 +1100,8 @@ var view = {
             $tab.find('.workspace_results').html('');
             puc.allowSave(false);
         }
+        $tab.find('.workspace_toolbar li').find('a[href="#switch_to_mdx"]').removeClass('disabled_toolbar');
+
         model.load_properties(tab_index);
 
 

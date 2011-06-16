@@ -450,8 +450,25 @@ var model = {
 				method: "GET",
 				url: model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/result/",
 				success: function (data, textStatus, XMLHttpRequest) {
+                    model.render_result(data,$workspace_result);
 
-					if (data == "") {
+					// Resize the workspace
+					view.resize_height(tab_index);
+
+					// Clear the wait message
+					view.hide_processing(true, tab_index);
+				},
+
+				error: function () {
+					// Let the user know that their query was not successful
+					view.hide_processing(true, tab_index);
+					view.show_dialog("Result Set", "There was an error getting the result set for that query.", "info");
+				}
+			});
+		},
+        
+        render_result: function(data,$workspace_result) {
+        					if (data == "") {
 
 						// No results table
 						var table_vis = '<div style="text-align:center;">No results</div>';
@@ -555,21 +572,7 @@ var model = {
 							$(this).find('td, th.row, th.row_null').css('background', '');
 						});
 					}
-
-					// Resize the workspace
-					view.resize_height(tab_index);
-
-					// Clear the wait message
-					view.hide_processing(true, tab_index);
-				},
-
-				error: function () {
-					// Let the user know that their query was not successful
-					view.hide_processing(true, tab_index);
-					view.show_dialog("Result Set", "There was an error getting the result set for that query.", "info");
-				}
-			});
-		},
+        },
 
 		/**
 		 * Drillthrough the current query
@@ -864,7 +867,66 @@ var model = {
 			window.location = TOMCAT_WEBAPP + REST_MOUNT_POINT + model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/export/csv";
 
 		},
+		switch_to_mdx: function (tab_index) {
 
+			//view.show_processing('Swapping axis. Please wait...', true, tab_index);
+
+            model.request({
+				method: "GET",
+				dataType: 'html',
+				url: model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/mdx",
+				success: function (data, textStatus, XMLHttpRequest) {
+					modify_ui(data);
+				},
+				error: function (XMLHttpRequest, textStatus, errorThrown) {
+					modify_ui('');
+				}
+			});
+			// Swap the actual selections
+			modify_ui = function(mdx) {
+                var $ws = view.tabs.tabs[tab_index].content.find('.workspace_results');
+                var $wt = view.tabs.tabs[tab_index].content.find('.workspace_toolbar');
+                var $wf = view.tabs.tabs[tab_index].content.find('.workspace_fields');
+                $wf.empty();
+                $wt.find('.save, .auto, .non_empty, .swap_axis, .mdx, .switch_to_mdx, .drillthrough').remove();
+                $wt.find('.run').attr('href','run_mdx');
+                $ws.empty();
+                $('<textarea class="mdx_input" style="width:100%;height:100px;">' + mdx + '</textarea>').appendTo($wf);
+            }
+        },
+        run_mdx: function(tab_index) {
+            // Notify the user...
+			view.show_processing('Executing query. Please wait...', true, tab_index);
+
+			// Set up a pointer to the result area of the active tab.
+			var $workspace_result = view.tabs.tabs[tab_index].content.find('.workspace_results');
+
+			// Fetch the resultset from the server
+			model.request({
+				method: "POST",
+				url: model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/executemdx",
+				data: {
+					'mdx': view.tabs.tabs[tab_index].content.find('.mdx_input').val()
+				},
+				success: function (data, textStatus, XMLHttpRequest) {
+                    model.render_result(data,$workspace_result);
+
+					// Resize the workspace
+					view.resize_height(tab_index);
+
+					// Clear the wait message
+					view.hide_processing(true, tab_index);
+				},
+
+				error: function () {
+					// Let the user know that their query was not successful
+					view.hide_processing(true, tab_index);
+					view.show_dialog("Result Set", "There was an error getting the result set for that query.", "info");
+				}
+			});
+            
+
+        },
 		/**
 		 * Save the query
 		 * @param tab_index {Integer} The active tab index
