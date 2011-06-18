@@ -1104,6 +1104,7 @@ var view = {
         if($tab.find('.workspace_results td').length > 0) {
             $tab.find('.workspace_toolbar li')
             .find('a[href="#export_xls"], a[href="#export_csv"], a[href="#save_query"]').removeClass('disabled_toolbar');
+            puc.allowSave(true);
 
         }
         

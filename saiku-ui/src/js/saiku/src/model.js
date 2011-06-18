@@ -867,7 +867,7 @@ var model = {
 			window.location = TOMCAT_WEBAPP + REST_MOUNT_POINT + model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/export/csv";
 
 		},
-		switch_to_mdx: function (tab_index) {
+		switch_to_mdx: function (tab_index, callback) {
 
 			//view.show_processing('Swapping axis. Please wait...', true, tab_index);
 			
@@ -875,27 +875,21 @@ var model = {
 				method: "POST",
 				url: model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/qm2mdx",
 				success: function (data, textStatus, XMLHttpRequest) {
-
-		            model.request({
-						method: "GET",
-						dataType: 'html',
-						url: model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/mdx",
-						success: function (data, textStatus, XMLHttpRequest) {
-							modify_ui(data);
-						},
-						error: function (XMLHttpRequest, textStatus, errorThrown) {
-							modify_ui('');
-						}
-					});
+                            if (callback) {
+                                callback(data);
+                            }
+                            else {
+                                view.tabs.tabs[tab_index].data['mdx'] = data['mdx'];
+                                modify_ui(data['mdx']);
+                            }
 				},
 				error: function (XMLHttpRequest, textStatus, errorThrown) {
 					view.hide_processing(true, tab_index);
-					view.show_dialog("MDX QUery", "There was an error transforming the query into an mdx query.", "info");
+					view.show_dialog("MDX Query", "There was an error transforming the query into an mdx query.", "info");
 				}
 			});
 			// Swap the actual selections
 			modify_ui = function(mdx) {
-                var $ws = view.tabs.tabs[tab_index].content.find('.workspace_results');
                 var $wt = view.tabs.tabs[tab_index].content.find('.workspace_toolbar');
                 var $wf = view.tabs.tabs[tab_index].content.find('.workspace_fields');
                 $wf.empty();
@@ -903,14 +897,17 @@ var model = {
                 $wt.find('.run').attr('href','run_mdx');
                 $wt.find('.run, .save').removeClass('disabled_toolbar');
                 view.check_toolbar(tab_index);
-                $ws.empty();
                 $('<textarea class="mdx_input" style="width:100%;height:100px;">' + mdx + '</textarea>').appendTo($wf);
             }
         },
 
         run_mdx: function(tab_index) {
         	var mdx = view.tabs.tabs[tab_index].content.find('.mdx_input').val();
-        	if (mdx != "") {
+            if (typeof mdx == "undefined") {
+                mdx = view.tabs.tabs[tab_index].data['mdx'];
+            }
+            
+        	if (mdx != "" && typeof mdx != "undefined") {
             // Notify the user...
 			view.show_processing('Executing query. Please wait...', true, tab_index);
 
@@ -1124,7 +1121,13 @@ var model = {
 			}
 }
             else {
-                model.switch_to_mdx(tab_index);
+                var $ws = view.tabs.tabs[tab_index].content.find('.workspace_results');
+                $ws.empty();
+                model.switch_to_mdx(tab_index, function(data)Ê{
+                    view.tabs.tabs[tab_index].data['mdx'] = data['mdx'];
+                    modify_ui(data['mdx']);
+                    model.run_mdx(tab_index);
+                });
             }
 			view.check_toolbar(tab_index);
 

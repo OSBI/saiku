@@ -167,6 +167,7 @@ public class OlapQueryService {
 		q.setMdx(mdx);
 	}
 	public CellDataSet executeMdx(String queryName, String mdx) {
+		qm2mdx(queryName);
 		setMdx(queryName, mdx);
 		return execute(queryName, new HierarchicalCellSetFormatter());
 	}

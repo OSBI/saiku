@@ -63,7 +63,7 @@ public class MdxQuery implements IQuery {
 
 	public SaikuCube getSaikuCube() {
 		try {
-			if (connection != null ) {
+			if (connection != null && mdx != null && mdx.length() > 0) {
 				for (Database db : connection.getOlapDatabases()) {
 					Catalog cat = db.getCatalogs().get(cube.getCatalogName());
 					if (cat != null) {
@@ -80,7 +80,7 @@ public class MdxQuery implements IQuery {
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot get saiku cube for ( " + cube + " )",e);
 		}
-		throw new RuntimeException("Cannot get saiku cube for ( " + cube + " )");
+		return cube;
 	}
 
     public String getMdx() {
@@ -147,15 +147,35 @@ public class MdxQuery implements IQuery {
         MdxValidator mdxValidator =
             parserFactory.createMdxValidator(connection);
 
-        SelectNode select =
-            mdxParser.parseSelect(getMdx());
-        try {
-			select = mdxValidator.validateSelect(select);
-	        CubeType cubeType = (CubeType) select.getFrom().getType();
-	        return cubeType.getCube();
-		} catch (OlapException e) {
-			e.printStackTrace();
-		}
+        String mdx = getMdx();
+    	try {
+
+        if (mdx != null && mdx.length() > 0 && mdx.contains("from")) {
+        	SelectNode select =
+        		mdxParser.parseSelect(getMdx());
+        		select = mdxValidator.validateSelect(select);
+        		CubeType cubeType = (CubeType) select.getFrom().getType();
+        		return cubeType.getCube();
+        }
+        else {
+			if (connection != null && mdx != null && mdx.length() > 0) {
+				for (Database db : connection.getOlapDatabases()) {
+					Catalog cat = db.getCatalogs().get(cube.getCatalogName());
+					if (cat != null) {
+						for (Schema schema : cat.getSchemas()) {
+								for (Cube cub : schema.getCubes()) {
+									if (cub.getName().equals(cube.getName()) || cub.getUniqueName().equals(cube.getName())) {
+										return cub;
+									}
+								}
+							}
+						}
+					}
+				}
+        }
+    	} catch (OlapException e) {
+    		e.printStackTrace();
+    	}
 		return null;
 	}
 

@@ -192,7 +192,7 @@ public class SaikuContentGenerator extends SimpleContentGenerator {
 				snippet = "<script type=\"text/javascript\">\r\n";
 
 				if (document != null) {
-					document = document.replaceAll("\n", "").replaceAll("\r", "");
+					document = document.replaceAll("\n", " ").replaceAll("\r", " ").replaceAll("  ", " ");;
 					snippet += "QUERY = '" + document + "';\r\n";
 				}
 				snippet += extrasnippet;

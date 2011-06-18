@@ -345,6 +345,7 @@ public class QueryResource {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result\tPOST\t"+mdx);
 		}
 		try {
+			olapQueryService.qm2mdx(queryName);
 			CellDataSet cs = olapQueryService.executeMdx(queryName,mdx);
 			return RestUtil.convert(cs);
 		}
@@ -357,19 +358,19 @@ public class QueryResource {
 	@POST
 	@Produces({"application/json" })
 	@Path("/{queryname}/qm2mdx")
-	public Status transformQm2Mdx(@PathParam("queryname") String queryName)
+	public SaikuQuery transformQm2Mdx(@PathParam("queryname") String queryName)
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/qm2mdx\tPOST\t");
 		}
 		try {
 			olapQueryService.qm2mdx(queryName);
-			return Status.OK;
+			return olapQueryService.getQuery(queryName);
 		}
 		catch (Exception e) {
 			log.error("Cannot transform Qm2Mdx query (" + queryName + ")",e);
-			return Status.INTERNAL_SERVER_ERROR;
 		}
+		return null;
 	}
 	
 	@GET
