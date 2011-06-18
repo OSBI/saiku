@@ -870,16 +870,27 @@ var model = {
 		switch_to_mdx: function (tab_index) {
 
 			//view.show_processing('Swapping axis. Please wait...', true, tab_index);
-
+			
             model.request({
-				method: "GET",
-				dataType: 'html',
-				url: model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/mdx",
+				method: "POST",
+				url: model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/qm2mdx",
 				success: function (data, textStatus, XMLHttpRequest) {
-					modify_ui(data);
+
+		            model.request({
+						method: "GET",
+						dataType: 'html',
+						url: model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/mdx",
+						success: function (data, textStatus, XMLHttpRequest) {
+							modify_ui(data);
+						},
+						error: function (XMLHttpRequest, textStatus, errorThrown) {
+							modify_ui('');
+						}
+					});
 				},
 				error: function (XMLHttpRequest, textStatus, errorThrown) {
-					modify_ui('');
+					view.hide_processing(true, tab_index);
+					view.show_dialog("MDX QUery", "There was an error transforming the query into an mdx query.", "info");
 				}
 			});
 			// Swap the actual selections
@@ -888,13 +899,17 @@ var model = {
                 var $wt = view.tabs.tabs[tab_index].content.find('.workspace_toolbar');
                 var $wf = view.tabs.tabs[tab_index].content.find('.workspace_fields');
                 $wf.empty();
-                $wt.find('.save, .auto, .non_empty, .swap_axis, .mdx, .switch_to_mdx, .drillthrough').remove();
+                $wt.find('.auto, .non_empty, .swap_axis, .mdx, .switch_to_mdx, .drillthrough').remove();
                 $wt.find('.run').attr('href','run_mdx');
+                $wt.find('.run, .save').removeClass('disabled_toolbar');
                 $ws.empty();
                 $('<textarea class="mdx_input" style="width:100%;height:100px;">' + mdx + '</textarea>').appendTo($wf);
             }
         },
+
         run_mdx: function(tab_index) {
+        	var mdx = view.tabs.tabs[tab_index].content.find('.mdx_input').val();
+        	if (mdx != "") {
             // Notify the user...
 			view.show_processing('Executing query. Please wait...', true, tab_index);
 
@@ -904,9 +919,9 @@ var model = {
 			// Fetch the resultset from the server
 			model.request({
 				method: "POST",
-				url: model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/executemdx",
+				url: model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/result",
 				data: {
-					'mdx': view.tabs.tabs[tab_index].content.find('.mdx_input').val()
+					'mdx': mdx
 				},
 				success: function (data, textStatus, XMLHttpRequest) {
                     model.render_result(data,$workspace_result);
@@ -924,7 +939,11 @@ var model = {
 					view.show_dialog("Result Set", "There was an error getting the result set for that query.", "info");
 				}
 			});
-            
+        	}
+        	else {
+        		view.hide_processing(true, tab_index);
+				view.show_dialog("Error", "You cannot execute an empty MDX query", "info");
+        	}
 
         },
 		/**
@@ -1023,7 +1042,7 @@ var model = {
 			};
 
 			view.tabs.tabs[tab_index].data['connection'] = connection_data;
-
+            if (data['type'] != "MDX") {
 			// TODO - Move selections to axes
 			$.each(data.saikuAxes, function (axis_iterator, axis) {
 				var $axis = view.tabs.tabs[tab_index].content.find('.workspace_fields').find('.' + axis.name.toLowerCase() + ' ul');
@@ -1089,7 +1108,7 @@ var model = {
 					});
 				});
 			});
-
+            
 			var $tab = view.tabs.tabs[tab_index].content;
 			var $column_dropzone = $tab.find('.columns ul');
 			var $row_dropzone = $tab.find('.rows ul');
@@ -1101,8 +1120,12 @@ var model = {
 					model.run_query(tab_index);
 				}
 			}
-
+}
+            else {
+                model.switch_to_mdx(tab_index);
+            }
 			view.check_toolbar(tab_index);
+
 
 			// TODO - Retrieve properties for this query
 		},

@@ -41,7 +41,7 @@ import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.olap.dto.SaikuSelection;
 import org.saiku.olap.dto.SaikuSelection.Type;
-import org.saiku.olap.query.OlapQuery;
+import org.saiku.olap.query.IQuery;
 
 public class ObjectUtil {
 
@@ -190,14 +190,16 @@ public class ObjectUtil {
 				dims);
 	}
 	
-	public static SaikuQuery convert(OlapQuery q) {
+	public static SaikuQuery convert(IQuery q) {
 		List<SaikuAxis> axes = new ArrayList<SaikuAxis>();
-		for (Axis axis : q.getAxes().keySet()) {
-			if (axis != null) {
-				axes.add(convertQueryAxis(q.getAxis(axis)));
+		if (q.getType().equals(IQuery.QueryType.QM)) {
+			for (Axis axis : q.getAxes().keySet()) {
+				if (axis != null) {
+					axes.add(convertQueryAxis(q.getAxis(axis)));
+				}
 			}
 		}
-		return new SaikuQuery(q.getName(), q.getSaikuCube(), axes);
+		return new SaikuQuery(q.getName(), q.getSaikuCube(), axes, q.getMdx(), q.getType().toString());
 		
 	}
 

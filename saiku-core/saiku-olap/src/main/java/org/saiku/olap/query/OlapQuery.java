@@ -41,7 +41,7 @@ import org.saiku.olap.query.QueryProperties.QueryPropertyFactory;
 import org.saiku.olap.util.SaikuProperties;
 import org.saiku.olap.util.exception.SaikuOlapException;
 
-public class OlapQuery {
+public class OlapQuery implements IQuery {
 
 	private Query query;
 	private Properties properties = new Properties();
@@ -213,5 +213,13 @@ public class OlapQuery {
     public Boolean isDrillThroughEnabled() {
     	return query.getCube().isDrillThroughEnabled();
     }
+
+	public QueryType getType() {
+		return QueryType.QM;
+	}
+	
+	public void setMdx(String mdx) {
+		throw new UnsupportedOperationException();
+	}
 
 }

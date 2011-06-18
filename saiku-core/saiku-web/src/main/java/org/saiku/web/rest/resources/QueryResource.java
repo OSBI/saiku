@@ -336,13 +336,13 @@ public class QueryResource {
 	
 	@POST
 	@Produces({"application/json" })
-	@Path("/{queryname}/executemdx")
+	@Path("/{queryname}/result")
 	public List<Cell[]> executeMdx(
 			@PathParam("queryname") String queryName,
 			@FormParam("mdx") String mdx)
 		{
 		if (log.isDebugEnabled()) {
-			log.debug("TRACK\t"  + "\t/query/" + queryName + "/executemdx\tPOST\t"+mdx);
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result\tPOST\t"+mdx);
 		}
 		try {
 			CellDataSet cs = olapQueryService.executeMdx(queryName,mdx);
@@ -354,6 +354,23 @@ public class QueryResource {
 		}
 	}
 
+	@POST
+	@Produces({"application/json" })
+	@Path("/{queryname}/qm2mdx")
+	public Status transformQm2Mdx(@PathParam("queryname") String queryName)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/qm2mdx\tPOST\t");
+		}
+		try {
+			olapQueryService.qm2mdx(queryName);
+			return Status.OK;
+		}
+		catch (Exception e) {
+			log.error("Cannot transform Qm2Mdx query (" + queryName + ")",e);
+			return Status.INTERNAL_SERVER_ERROR;
+		}
+	}
 	
 	@GET
 	@Produces({"application/json" })

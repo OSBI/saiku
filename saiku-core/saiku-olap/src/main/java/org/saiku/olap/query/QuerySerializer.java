@@ -40,11 +40,11 @@ import org.saiku.olap.util.exception.QueryParseException;
 
 public class QuerySerializer {
     
-    private OlapQuery query;
+    private IQuery query;
     Document dom;
 	private SaikuCube saikuCube;
     
-    public QuerySerializer(OlapQuery query) {
+    public QuerySerializer(IQuery query) {
         this.query = query;
         this.saikuCube = query.getSaikuCube();
     }
@@ -82,8 +82,11 @@ public class QuerySerializer {
         if (StringUtils.isNotBlank(query.getName())) {
             rootEle.setAttribute("name", query.getName());
         }
+        
+        if (StringUtils.isNotBlank(query.getType().toString())) {
+            rootEle.setAttribute("type", query.getType().toString());
+        }
 
-        // cube name is not yet supported for mdx queries 
         String cubeName = query.getCube().getUniqueName();
 
         if (StringUtils.isNotBlank(saikuCube.getConnectionName())) {
@@ -101,7 +104,10 @@ public class QuerySerializer {
         if (StringUtils.isNotBlank(saikuCube.getSchemaName())) {
             rootEle.setAttribute("schema", saikuCube.getSchemaName());
         }
-        rootEle = appendQmQuery(rootEle);
+        if (IQuery.QueryType.QM.equals(query.getType())) {
+        	rootEle = appendQmQuery(rootEle);
+        }
+        rootEle = appendMdxQuery(rootEle);
         
         dom.setRootElement(rootEle);
 
@@ -115,7 +121,10 @@ public class QuerySerializer {
             qm = appendAxes(qm);
             rootElement.addContent(qm);
         }
-        
+        return rootElement;
+    }
+
+    private Element appendMdxQuery(Element rootElement) {
         Element mdx = new Element("MDX");
         if (StringUtils.isNotBlank(this.query.getMdx())) {
             mdx.setText(this.query.getMdx());
@@ -130,25 +139,25 @@ public class QuerySerializer {
         
         Element axes = new Element("Axes");
         
-        QueryAxis rows = this.query.getAxes().get(Axis.ROWS);
+        QueryAxis rows =  ((OlapQuery)query).getAxes().get(Axis.ROWS);
         if (rows != null) {
             Element rowsElement = createAxisElement(rows);
             axes.addContent(rowsElement);
         }
         
-        QueryAxis columns = this.query.getAxes().get(Axis.COLUMNS);
+        QueryAxis columns =  ((OlapQuery)query).getAxes().get(Axis.COLUMNS);
         if (columns != null) {
             Element columnsElement = createAxisElement(columns);
             axes.addContent(columnsElement);
         }
         
-        QueryAxis filters = this.query.getAxes().get(Axis.FILTER);
+        QueryAxis filters =  ((OlapQuery)query).getAxes().get(Axis.FILTER);
         if (filters != null) {
             Element filtersElement = createAxisElement(filters);
             axes.addContent(filtersElement);
         }
         
-        QueryAxis pages = this.query.getAxes().get(Axis.PAGES);
+        QueryAxis pages =  ((OlapQuery)query).getAxes().get(Axis.PAGES);
         if (pages != null) {
             Element pagesElement = createAxisElement(pages);
             axes.addContent(pagesElement);

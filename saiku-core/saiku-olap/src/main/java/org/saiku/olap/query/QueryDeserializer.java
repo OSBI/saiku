@@ -67,7 +67,7 @@ public class QueryDeserializer {
     private static OlapConnection connection;
     private static InputSource source;
 
-    public static OlapQuery unparse(String xml, OlapConnection connection) throws Exception {
+    public static IQuery unparse(String xml, OlapConnection connection) throws Exception {
         QueryDeserializer.connection = connection;
         QueryDeserializer.xml = xml;
         SAXBuilder parser = new SAXBuilder();
@@ -75,10 +75,16 @@ public class QueryDeserializer {
         dom = parser.build(source);
         Element child =(Element) dom.getRootElement();
         Element qmElement = child.getChild("QueryModel");
-        OlapQuery returnQuery = null;
+        Element mdxElement = child.getChild("MDX");
+
+        IQuery returnQuery = null;
         if (qmElement != null) {
             returnQuery = createQmQuery();
             return returnQuery;
+        }
+        else if (mdxElement != null) {
+        	returnQuery = createMdxQuery();
+        	return returnQuery;
         }
         throw new Exception("Cant find <QueryModel> nor <MDX> Query");
     }
@@ -94,9 +100,6 @@ public class QueryDeserializer {
 
         	String cubeName = queryElement.getAttributeValue("cube");
 
-        	if (!StringUtils.isNotBlank(cubeName)) {
-        		throw new QueryParseException("Cube for query not defined");
-        	}
         	String connectionName = queryElement.getAttributeValue("connection");
         	String catalogName = queryElement.getAttributeValue("catalog");
         	String schemaName = queryElement.getAttributeValue("schema");
@@ -130,7 +133,7 @@ public class QueryDeserializer {
         throw new Exception("Cant find <QueryModel> nor <MDX> Query");
     }
 
-    private static OlapQuery createQmQuery() throws QueryParseException, SQLException {
+    private static IQuery createQmQuery() throws QueryParseException, SQLException {
 
         Element queryElement = dom.getRootElement();
         if (queryElement != null && queryElement.getName().equals("Query")) {
@@ -165,8 +168,38 @@ public class QueryDeserializer {
         else {
             throw new QueryParseException("Cannot parse Query Model: Query node not found and/or more than 1 Query node found");
         }
+    }
+    
+    private static IQuery createMdxQuery() throws QueryParseException, SQLException {
+
+        Element queryElement = dom.getRootElement();
+        if (queryElement != null && queryElement.getName().equals("Query")) {
+
+            String queryName = queryElement.getAttributeValue("name");
+            String cubeName = queryElement.getAttributeValue("cube");
+
+            String connectionName = queryElement.getAttributeValue("connection");
+            String catalogName = queryElement.getAttributeValue("catalog");
+            String schemaName = queryElement.getAttributeValue("schema");
+
+            try {
+                Element mdxElement = queryElement.getChild("MDX");
+                if (mdxElement != null) {
+                    SaikuCube cube = new SaikuCube(connectionName,cubeName, cubeName,catalogName,schemaName);
+                    return new MdxQuery(connection,cube,queryName,mdxElement.getText());
+                }
+                else
+                    throw new OlapException("Can't find child <QueryModel>");
+
+            } catch (OlapException e) {
+                throw new QueryParseException(e.getMessage(),e);
+            }
 
 
+        }
+        else {
+            throw new QueryParseException("Cannot parse Query Model: Query node not found and/or more than 1 Query node found");
+        }
     }
 
     private static void manipulateQuery(Element qmElement) throws OlapException {

@@ -47,6 +47,8 @@ import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimensionSelection;
 import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.olap.dto.resultset.CellDataSet;
+import org.saiku.olap.query.IQuery;
+import org.saiku.olap.query.MdxQuery;
 import org.saiku.olap.query.OlapQuery;
 import org.saiku.olap.query.QueryDeserializer;
 import org.saiku.olap.util.ObjectUtil;
@@ -68,7 +70,7 @@ public class OlapQueryService {
     
 	private OlapDiscoverService olapDiscoverService;
 
-	private Map<String,OlapQuery> queries = new HashMap<String,OlapQuery>();
+	private Map<String,IQuery> queries = new HashMap<String,IQuery>();
 
 	public void setOlapDiscoverService(OlapDiscoverService os) {
 		olapDiscoverService = os;
@@ -78,7 +80,7 @@ public class OlapQueryService {
 		try {
 			Cube cub = olapDiscoverService.getNativeCube(cube);
 			if (cub != null) {
-				OlapQuery query = new OlapQuery(new Query(queryName, cub),cube);
+				IQuery query = new OlapQuery(new Query(queryName, cub),cube);
 				queries.put(queryName, query);
 				return ObjectUtil.convert(query);
 			}
@@ -93,7 +95,7 @@ public class OlapQueryService {
 		try {
 			SaikuCube scube = QueryDeserializer.getFakeCube(xml);
 			OlapConnection con = olapDiscoverService.getNativeConnection(scube.getConnectionName());
-			OlapQuery query = QueryDeserializer.unparse(xml, con);
+			IQuery query = QueryDeserializer.unparse(xml, con);
 			if (name == null) {
 				queries.put(query.getName(), query);
 			}
@@ -119,7 +121,7 @@ public class OlapQueryService {
 	}
 	
 	public SaikuQuery getQuery(String queryName) {
-		OlapQuery q = getOlapQuery(queryName);
+		IQuery q = getIQuery(queryName);
 		return ObjectUtil.convert(q);
 	}
 
@@ -143,7 +145,7 @@ public class OlapQueryService {
 	}
 	
 	public CellDataSet execute(String queryName, ICellSetFormatter formatter) {
-		OlapQuery query = getOlapQuery(queryName);
+		IQuery query = getIQuery(queryName);
 		try {
 			Long start = (new Date()).getTime();
 			CellSet cellSet =  query.execute();
@@ -160,31 +162,20 @@ public class OlapQueryService {
 		}
 	}
 	
+	public void setMdx(String queryName, String mdx) {
+		IQuery q = getIQuery(queryName);
+		q.setMdx(mdx);
+	}
 	public CellDataSet executeMdx(String queryName, String mdx) {
-		return executeMdx(queryName, mdx, new HierarchicalCellSetFormatter());
+		setMdx(queryName, mdx);
+		return execute(queryName, new HierarchicalCellSetFormatter());
 	}
 
 	public CellDataSet executeMdx(String queryName, String mdx, ICellSetFormatter formatter) {
-		OlapQuery query = getOlapQuery(queryName);
-		try {
-			Long start = (new Date()).getTime();
-			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
-			con.setCatalog(query.getSaikuCube().getCatalogName());
-			OlapStatement stmt = con.createStatement();
-			CellSet cellSet = stmt.executeOlapQuery(mdx);
-	        Long exec = (new Date()).getTime();
-	        CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cellSet,formatter);
-	        Long format = (new Date()).getTime();
-	        log.info("Size: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
-	                + "ms\tFormat:\t" + (format - exec) + "ms\t Total: " + (format - start) + "ms");
-
-			OlapUtil.storeCellSet(queryName, cellSet);
-			return result;
-		} catch (Exception e) {
-			throw new SaikuServiceException("Can't execute query: " + queryName,e);
-		}
+		setMdx(queryName, mdx);
+		return execute(queryName, formatter);
 	}
-	
+
 	public ResultSet drilldown(String queryName, int maxrows) {
 		try {
 			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnectionName()); 
@@ -203,11 +194,11 @@ public class OlapQueryService {
 	}
 	
 	public void swapAxes(String queryName) {
-		getOlapQuery(queryName).swapAxes();
+		getIQuery(queryName).swapAxes();
 	}
 
 	public boolean includeMember(String queryName, String dimensionName, String uniqueMemberName, String selectionType, int memberposition){
-		OlapQuery query = getOlapQuery(queryName);
+		IQuery query = getIQuery(queryName);
 		List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(uniqueMemberName).getSegmentList();
 		QueryDimension dimension = query.getDimension(dimensionName);
 		final Selection.Operator selectionMode = Selection.Operator.valueOf(selectionType);
@@ -228,7 +219,7 @@ public class OlapQueryService {
 	}
 
 	public boolean removeMember(String queryName, String dimensionName, String uniqueMemberName, String selectionType) throws SaikuServiceException{
-		OlapQuery query = getOlapQuery(queryName);
+		IQuery query = getIQuery(queryName);
 		List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(uniqueMemberName).getSegmentList();
 		QueryDimension dimension = query.getDimension(dimensionName);
 		final Selection.Operator selectionMode = Selection.Operator.valueOf(selectionType);
@@ -248,7 +239,7 @@ public class OlapQueryService {
 	}
 
 	public boolean includeLevel(String queryName, String dimensionName, String uniqueHierarchyName, String uniqueLevelName) {
-		OlapQuery query = getOlapQuery(queryName);
+		IQuery query = getIQuery(queryName);
 		QueryDimension dimension = query.getDimension(dimensionName);
 		for (Hierarchy hierarchy : dimension.getDimension().getHierarchies()) {
 			if (hierarchy.getUniqueName().equals(uniqueHierarchyName)) {
@@ -267,7 +258,7 @@ public class OlapQueryService {
 	}
 
 	public boolean removeLevel(String queryName, String dimensionName, String uniqueHierarchyName, String uniqueLevelName) {
-		OlapQuery query = getOlapQuery(queryName);
+		IQuery query = getIQuery(queryName);
 		QueryDimension dimension = query.getDimension(dimensionName);
 		try {
 			for (Hierarchy hierarchy : dimension.getDimension().getHierarchies()) {		
@@ -307,7 +298,7 @@ public class OlapQueryService {
 			if (log.isDebugEnabled()) {
 				log.debug("move query: " + queryName + " dimension " + dimensionName + " to axis " + axisName + "  position" + position);
 			}
-			OlapQuery query = getOlapQuery(queryName);
+			IQuery query = getIQuery(queryName);
 			QueryDimension dimension = query.getDimension(dimensionName);
 			Axis newAxis = axisName != null ? ( "UNUSED".equals(axisName) ? null : Axis.Standard.valueOf(axisName)) : null;
 			if(position==-1){
@@ -323,14 +314,14 @@ public class OlapQueryService {
 	}
 
 	public void removeDimension(String queryName, String axisName, String dimensionName) {
-		OlapQuery query = getOlapQuery(queryName);
+		IQuery query = getIQuery(queryName);
 		moveDimension(queryName, "UNUSED" , dimensionName, -1);
 		query.getDimension(dimensionName).getExclusions().clear();
 		query.getDimension(dimensionName).getInclusions().clear();
 	}
 	
 	public List<SaikuDimensionSelection> getAxisSelection(String queryName, String axis) {
-		OlapQuery query = getOlapQuery(queryName);
+		IQuery query = getIQuery(queryName);
 
 		List<SaikuDimensionSelection> dimsel = new ArrayList<SaikuDimensionSelection>();
 		try {
@@ -347,7 +338,7 @@ public class OlapQueryService {
 	}
 	
 	public SaikuDimensionSelection getAxisDimensionSelections(String queryName, String axis, String dimension) {
-		OlapQuery query = getOlapQuery(queryName);
+		IQuery query = getIQuery(queryName);
 		try {
 			QueryAxis qaxis = query.getAxis(axis);
 			if (qaxis != null) {
@@ -369,12 +360,12 @@ public class OlapQueryService {
 	}
 
 	public void clearQuery(String queryName) {
-		OlapQuery query = getOlapQuery(queryName);
+		IQuery query = getIQuery(queryName);
 		query.clearAllQuerySelections();
 	}
 
 	public void clearAxis(String queryName, String axisName) {
-		OlapQuery query = getOlapQuery(queryName);
+		IQuery query = getIQuery(queryName);
 		if (Axis.Standard.valueOf(axisName) != null) {
 			QueryAxis qAxis = query.getAxis(Axis.Standard.valueOf(axisName));
 			query.resetAxisSelections(qAxis);
@@ -385,7 +376,7 @@ public class OlapQueryService {
 	}
 
 	public void clearAxisSelections(String queryName, String axisName) {
-		OlapQuery query = getOlapQuery(queryName);
+		IQuery query = getIQuery(queryName);
 		if (Axis.Standard.valueOf(axisName) != null) {
 			QueryAxis qAxis = query.getAxis(Axis.Standard.valueOf(axisName));
 			query.resetAxisSelections(qAxis);
@@ -393,33 +384,33 @@ public class OlapQueryService {
 	}
 	
 	public void resetQuery(String queryName) {
-		OlapQuery query = getOlapQuery(queryName);
+		IQuery query = getIQuery(queryName);
 		query.resetQuery();
 	}
 
 	public void setNonEmpty(String queryName, String axisName, boolean bool) {
-		OlapQuery query = getOlapQuery(queryName);
+		IQuery query = getIQuery(queryName);
 		QueryAxis newAxis = query.getAxis(Axis.Standard.valueOf(axisName));
 		newAxis.setNonEmpty(bool);
 	}
 
 	public void setProperties(String queryName, Properties props) {
-		OlapQuery query = getOlapQuery(queryName);
+		IQuery query = getIQuery(queryName);
 		query.setProperties(props);
 	}	
 	
 	
 	public Properties getProperties(String queryName) {
-		OlapQuery query = getOlapQuery(queryName);
+		IQuery query = getIQuery(queryName);
 		return query.getProperties();
 	}
 
 	public String getMDXQuery(String queryName) {
-		return getOlapQuery(queryName).getMdx();
+		return getIQuery(queryName).getMdx();
 	}
 	
 	public String getQueryXml(String queryName) {
-		OlapQuery query = getOlapQuery(queryName);
+		IQuery query = getIQuery(queryName);
 		return query.toXml();
 	}
 
@@ -450,10 +441,17 @@ public class OlapQueryService {
 		}
 		return new byte[0];
 	}
+
+	public void qm2mdx(String queryName) {
+		IQuery query = queries.get(queryName);
+		OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
+		MdxQuery mdx = new MdxQuery(con, query.getSaikuCube(), query.getName(),getMDXQuery(queryName));
+		queries.put(queryName, mdx);
+		query = null;
+	}
 	
-	
-	private OlapQuery getOlapQuery(String queryName) {
-		OlapQuery query = queries.get(queryName);
+	private IQuery getIQuery(String queryName) {
+		IQuery query = queries.get(queryName);
 		if (query == null) {
 			throw new SaikuServiceException("No query with name ("+queryName+") found");
 		}

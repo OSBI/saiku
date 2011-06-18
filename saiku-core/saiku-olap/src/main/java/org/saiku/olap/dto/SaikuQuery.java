@@ -28,15 +28,21 @@ public class SaikuQuery extends AbstractSaikuObject {
 	
 	private List<SaikuAxis> axes;
 
+	private String mdx;
+	
+	private String type;
+
 	public SaikuQuery() {
 		super(null,null);
 		throw new RuntimeException("Unsupported Constructor. Serialization only");
 	}
 
-	public SaikuQuery(String name, SaikuCube cube, List<SaikuAxis> axes) {
+	public SaikuQuery(String name, SaikuCube cube, List<SaikuAxis> axes, String mdx, String type) {
 		super(name,name);
 		this.cube = cube;
 		this.axes = axes;
+		this.mdx = mdx;
+		this.type = type;
 	}
 
 	public List<SaikuAxis> getSaikuAxes() {
@@ -51,6 +57,14 @@ public class SaikuQuery extends AbstractSaikuObject {
 	
 	public SaikuCube getCube() {
 			return cube;
+	}
+	
+	public String getMdx() {
+		return mdx;
+	}
+	
+	public String getType() {
+		return type;
 	}
 }
 
