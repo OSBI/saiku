@@ -902,6 +902,7 @@ var model = {
                 $wt.find('.auto, .non_empty, .swap_axis, .mdx, .switch_to_mdx, .drillthrough').remove();
                 $wt.find('.run').attr('href','run_mdx');
                 $wt.find('.run, .save').removeClass('disabled_toolbar');
+                view.check_toolbar(tab_index);
                 $ws.empty();
                 $('<textarea class="mdx_input" style="width:100%;height:100px;">' + mdx + '</textarea>').appendTo($wf);
             }
@@ -931,6 +932,7 @@ var model = {
 
 					// Clear the wait message
 					view.hide_processing(true, tab_index);
+					view.check_toolbar(tab_index);
 				},
 
 				error: function () {

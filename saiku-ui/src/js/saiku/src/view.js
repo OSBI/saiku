@@ -1100,7 +1100,14 @@ var view = {
             $tab.find('.workspace_results').html('');
             puc.allowSave(false);
         }
-        $tab.find('.workspace_toolbar li').find('a[href="#switch_to_mdx"]').removeClass('disabled_toolbar');
+
+        if($tab.find('.workspace_results td').length > 0) {
+            $tab.find('.workspace_toolbar li')
+            .find('a[href="#export_xls"], a[href="#export_csv"], a[href="#save_query"]').removeClass('disabled_toolbar');
+
+        }
+        
+        $tab.find('.workspace_toolbar li').find('a[href="#switch_to_mdx"],a[href="run_mdx"]').removeClass('disabled_toolbar');
 
         model.load_properties(tab_index);
 
