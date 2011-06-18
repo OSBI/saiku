@@ -1123,7 +1123,7 @@ var model = {
             else {
                 var $ws = view.tabs.tabs[tab_index].content.find('.workspace_results');
                 $ws.empty();
-                model.switch_to_mdx(tab_index, function(data)Ê{
+                model.switch_to_mdx(tab_index, function(data){
                     view.tabs.tabs[tab_index].data['mdx'] = data['mdx'];
                     modify_ui(data['mdx']);
                     model.run_mdx(tab_index);
