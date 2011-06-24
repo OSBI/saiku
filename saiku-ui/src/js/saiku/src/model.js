@@ -895,15 +895,20 @@ var model = {
 				}
 			});
 			// Swap the actual selections
-			modify_ui = function(mdx) {
-                var $wt = view.tabs.tabs[tab_index].content.find('.workspace_toolbar');
-                var $wf = view.tabs.tabs[tab_index].content.find('.workspace_fields');
+            modify_ui = function(mdx) {
+                var $tab = view.tabs.tabs[tab_index].content;
+                var $wt = $tab.find('.workspace_toolbar');
+                var $wf = $tab.find('.workspace_fields');
                 $wf.empty();
                 $wt.find('.auto, .non_empty, .swap_axis, .mdx, .switch_to_mdx, .drillthrough').remove();
                 $wt.find('.run').attr('href','run_mdx');
                 $wt.find('.run, .save').removeClass('disabled_toolbar');
                 view.check_toolbar(tab_index);
                 $('<textarea class="mdx_input" style="width:100%;height:100px;">' + mdx + '</textarea>').appendTo($wf);
+                
+                var $both_trees = $tab.find('.measure_tree, .dimension_tree');
+                $both_trees.find('.used').removeClass('used');
+                
             }
         },
 
