@@ -23,6 +23,7 @@ package org.saiku.olap.discover;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,6 @@ public class OlapMetaExplorer {
 		if (olapcon != null) {
 			List<SaikuCatalog> catalogs = new ArrayList<SaikuCatalog>();
 			try {
-				for (Database db : olapcon.getOlapDatabases()) {
 					for (Catalog cat : olapcon.getOlapCatalogs()) {
 						List<SaikuSchema> schemas = new ArrayList<SaikuSchema>();
 						for (Schema schem : cat.getSchemas()) {
@@ -74,6 +74,7 @@ public class OlapMetaExplorer {
 							for (Cube cub : schem.getCubes()) {
 								cubes.add(new SaikuCube(connectionName, cub.getUniqueName(), cub.getName(), cat.getName(), schem.getName()));
 							}
+							Collections.sort(cubes);
 							schemas.add(new SaikuSchema(schem.getName(),cubes));
 						}
 						if (schemas.size() == 0) {
@@ -87,19 +88,20 @@ public class OlapMetaExplorer {
 											cubesResult.getString("CATALOG_NAME"),cubesResult.getString("SCHEMA_NAME")));
 
 								}
+								Collections.sort(cubes);
 								schemas.add(new SaikuSchema("",cubes));
 							} catch (SQLException e) {
 								throw new OlapException(e.getMessage(),e);
 							}
 
 						}
-
+						Collections.sort(schemas);
 						catalogs.add(new SaikuCatalog(cat.getName(),schemas));
 					}
-				}
 			} catch (OlapException e) {
 				throw new SaikuOlapException("Error getting objects of connection (" + connectionName + ")" ,e);
 			}
+			Collections.sort(catalogs);
 			connection = new SaikuConnection(connectionName,catalogs);
 			return connection;
 		}
@@ -119,6 +121,7 @@ public class OlapMetaExplorer {
 		for (String connectionName : connections.keySet()) {
 			cubesList.add(getConnection(connectionName));
 		}
+		Collections.sort(cubesList);
 		return cubesList;
 	}
 
@@ -140,6 +143,7 @@ public class OlapMetaExplorer {
 				e.printStackTrace();
 			}
 		}
+		Collections.sort(cubes);
 		return cubes;
 
 	}
@@ -149,6 +153,7 @@ public class OlapMetaExplorer {
 		for (String connectionName : connectionNames) {
 			cubesList.addAll(getCubes(connectionName));
 		}
+		Collections.sort(cubesList);
 		return cubesList;
 	}
 
@@ -157,6 +162,7 @@ public class OlapMetaExplorer {
 		for (String connectionName : connections.keySet()) {
 			cubes.addAll(getCubes(connectionName));
 		}
+		Collections.sort(cubes);
 		return cubes;
 	}
 
@@ -200,6 +206,7 @@ public class OlapMetaExplorer {
 	public List<SaikuDimension> getAllDimensions(SaikuCube cube) throws SaikuOlapException {
 		Cube nativeCube = getNativeCube(cube);
 		List<SaikuDimension> dimensions = ObjectUtil.convertDimensions(nativeCube.getDimensions());
+		Collections.sort(dimensions);
 		return dimensions;
 	}
 
@@ -346,6 +353,7 @@ public class OlapMetaExplorer {
 		} catch (OlapException e) {
 			throw new SaikuOlapException("Cannot get measures for cube:"+cube.getName(),e);
 		}
+		Collections.sort(measures);
 		return measures;
 	}
 

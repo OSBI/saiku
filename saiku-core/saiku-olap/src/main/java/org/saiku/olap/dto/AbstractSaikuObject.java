@@ -19,7 +19,7 @@
  */
 package org.saiku.olap.dto;
 
-public  class AbstractSaikuObject implements ISaikuObject  {
+public  class AbstractSaikuObject implements ISaikuObject,Comparable<ISaikuObject>  {
 
 	private String uniqueName;
 	private String name;
@@ -67,6 +67,9 @@ public  class AbstractSaikuObject implements ISaikuObject  {
 	public String toString() {
 		return this.uniqueName;
 	}
-	
+
+	public int compareTo(ISaikuObject o) {
+		return getUniqueName().compareTo(o.getUniqueName());
+	}
 
 }

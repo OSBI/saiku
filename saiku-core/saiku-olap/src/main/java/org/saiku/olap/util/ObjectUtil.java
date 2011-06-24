@@ -21,6 +21,7 @@
 package org.saiku.olap.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.olap4j.Axis;
@@ -118,6 +119,7 @@ public class ObjectUtil {
 		for (Member l : members) {
 			memberList.add(convert(l));
 		}
+		Collections.sort(memberList);
 		return memberList;
 
 	}
