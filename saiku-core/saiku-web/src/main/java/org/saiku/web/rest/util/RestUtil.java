@@ -112,6 +112,9 @@ public class RestUtil {
 				props.putAll(mcell.getProperties());
 
 				// TODO no properties  (NULL) for now - 
+				if ("row_header_header".equals(mcell.getProperty("__headertype"))) {
+					headertype = Cell.Type.ROW_HEADER_HEADER;
+				}
 				return new Cell("" + mcell.getFormattedValue(), headertype);
 			}
 

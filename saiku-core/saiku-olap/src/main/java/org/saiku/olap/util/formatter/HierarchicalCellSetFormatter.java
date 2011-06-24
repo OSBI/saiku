@@ -23,8 +23,10 @@ import java.text.DecimalFormat;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.olap4j.Cell;
 import org.olap4j.CellSet;
@@ -33,6 +35,7 @@ import org.olap4j.OlapException;
 import org.olap4j.Position;
 import org.olap4j.impl.CoordinateIterator;
 import org.olap4j.impl.Olap4jUtil;
+import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
 import org.olap4j.metadata.Property;
@@ -81,6 +84,7 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
 	 */
 	private static class AxisOrdinalInfo {
 		private List<Integer> depths = new ArrayList<Integer>();
+		private Map<Integer,Level> depthLevel = new HashMap<Integer,Level>();
 		
 		public int getWidth() {
 			return depths.size();
@@ -89,6 +93,15 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
 		public List<Integer> getDepths() {
 			return depths;
 		}
+		
+		public Level getLevel(Integer depth) {
+			return depthLevel.get(depth);
+		}
+		
+		public void addLevel(Integer depth, Level level) {
+			depthLevel.put(depth, level);
+		}
+
 	}
 
 	/**
@@ -203,6 +216,7 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
 				final AxisOrdinalInfo axisOrdinalInfo = axisInfo.ordinalInfos.get(k);
 				if (!axisOrdinalInfo.getDepths().contains(member.getDepth())) {
 					axisOrdinalInfo.getDepths().add(member.getDepth());
+					axisOrdinalInfo.addLevel(member.getDepth(), member.getLevel());
 					Collections.sort(axisOrdinalInfo.depths);
 				}
 			}
@@ -241,17 +255,27 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
 				yOffset + (rowsAxis == null ? 1 : rowsAxis.getPositions().size()));
 
 		// Populate corner
+		List<Level> levels = new ArrayList<Level>();
+		Position p = rowsAxis.getPositions().get(0);
+		for (int m = 0; m < p.getMembers().size(); m++) {
+			AxisOrdinalInfo a = rowsAxisInfo.ordinalInfos.get(m);
+			for (Integer depth : a.getDepths()) {
+				levels.add(a.getLevel(depth));
+			}
+		}
 		for (int x = 0; x < xOffsset; x++) {
-            Position p = rowsAxis.getPositions().get(0);
-            String s = p.getMembers().get(x).getLevel().getName();
+			Level xLevel = levels.get(x);
+			String s = xLevel.getCaption();
 			for (int y = 0; y < yOffset; y++) {
 				final MemberCell memberInfo = new MemberCell(false, x > 0);
 				if (y == yOffset-1) {
 					memberInfo.setRawValue(s);
-                    memberInfo.setFormattedValue(s);
-                }
+					memberInfo.setFormattedValue(s);
+					memberInfo.setProperty("__headertype", "row_header_header");
+				}
 				matrix.set(x, y, memberInfo);
 			}
+
 		}		// Populate matrix with cells representing axes
 		// noinspection SuspiciousNameCombination
 		populateAxis(matrix, columnsAxis, columnsAxisInfo, true, xOffsset);

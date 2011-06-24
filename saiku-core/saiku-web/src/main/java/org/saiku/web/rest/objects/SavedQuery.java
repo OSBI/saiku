@@ -1,7 +1,7 @@
 package org.saiku.web.rest.objects;
 
 
-public class SavedQuery {
+public class SavedQuery implements Comparable<SavedQuery> {
 	private String name;
 	private String lastModified;
 	
@@ -20,6 +20,10 @@ public class SavedQuery {
 	
 	public String getLastModified() {
 		return lastModified;
+	}
+
+	public int compareTo(SavedQuery o) {
+		return name.compareTo(o.getName());
 	}
 }
 

@@ -501,6 +501,9 @@ var model = {
 								} // If the cell is a row header and isn't null (last row header)
 								else if (header['type'] === "ROW_HEADER") {
 									table_vis = table_vis + '<th class="row"><div>' + header['value'] + '</div></th>';
+								}
+                                else if (header['type'] === "ROW_HEADER_HEADER") {
+									table_vis = table_vis + '<th class="row_header"><div>' + header['value'] + '</div></th>';
 								} // If the cell is a normal data cell
 								else if (header['type'] === "DATA_CELL") {
 									table_vis = table_vis + '<td class="data"><div>' + header['value'] + '</div></td>';

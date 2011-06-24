@@ -30,6 +30,7 @@ public class Cell  {
 	
 	public enum Type {
 		ROW_HEADER,
+		ROW_HEADER_HEADER,
 		COLUMN_HEADER,
 		DATA_CELL,
 		EMPTY,
