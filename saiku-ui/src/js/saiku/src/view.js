@@ -853,14 +853,14 @@ var view = {
             // If reuse of the item is true i.e. are we sorting between lists
             $dimension_tree.find('[rel=' + parent_id + ']').parent().addClass('used');
             /** Collapse the dimension parent if it is exapnded. */
-            if ($dimension_tree.find('[rel=' + parent_id + ']').parent().hasClass('expand')) {
-                /** Toggle the children of the dimension's parent. */
-                $dimension_tree.find('[rel=' + parent_id + ']').parent().parent().find('ul').toggle();
-                /** Style the parent dimension. */
-                $dimension_tree.find('[rel=' + parent_id + ']').parent()
-                .removeClass('expand').addClass('collapsed')
-                .find('a.folder_expand').removeClass('folder_expand').addClass('folder_collapsed');
-            }
+//            if ($dimension_tree.find('[rel=' + parent_id + ']').parent().hasClass('expand')) {
+//                /** Toggle the children of the dimension's parent. */
+//                $dimension_tree.find('[rel=' + parent_id + ']').parent().parent().find('ul').toggle();
+//                /** Style the parent dimension. */
+//                $dimension_tree.find('[rel=' + parent_id + ']').parent()
+//                .removeClass('expand').addClass('collapsed')
+//                .find('a.folder_expand').removeClass('folder_expand').addClass('folder_collapsed');
+//            }
             view.check_toolbar(tab_index);
         }
          

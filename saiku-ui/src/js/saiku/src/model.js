@@ -1493,8 +1493,10 @@ var model = {
 												// Hide the processing
 												view.hide_processing(true, tab_index);
 
-												// Execute the query
-												model.run_query(tab_index);
+												// If automatic query execution is enabled, rerun the query when this option is changed
+												if (view.tabs.tabs[tab_index].data['options']['automatic_execution']) {
+													model.run_query(tab_index);
+												}
 											},
 											error: function (data) {
 												// TODO - Notify the user
