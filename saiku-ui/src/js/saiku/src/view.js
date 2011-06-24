@@ -846,8 +846,7 @@ var view = {
             }
 
             /** Disable all of the dimension's siblings and highlight the dimension being used. */
-            $dimension_tree.find('[rel=' + id + ']').parent().addClass('used')
-            .parent().children().removeClass('ui-draggable').addClass('not-draggable');
+            $dimension_tree.find('[rel=' + id + ']').parent().addClass('used');
             /** removeClass('ui-draggable').addClass('not-draggable'); This will enable multiple level selections */
             
             /** Highlight the dimension's parent being used. */
