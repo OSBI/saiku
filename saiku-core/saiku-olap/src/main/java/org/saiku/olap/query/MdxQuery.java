@@ -70,7 +70,7 @@ public class MdxQuery implements IQuery {
 						for (Schema schema : cat.getSchemas()) {
 								for (Cube cub : schema.getCubes()) {
 									if (cub.getName().equals(cube.getName()) || cub.getUniqueName().equals(cube.getName())) {
-										return new SaikuCube(cube.getConnectionName(),getCube().getUniqueName(), getCube().getName(), cube.getCatalogName(), schema.getName());
+										cube = new SaikuCube(cube.getConnectionName(),getCube().getUniqueName(), getCube().getName(), cube.getCatalogName(), schema.getName());
 									}
 								}
 							}
@@ -78,7 +78,7 @@ public class MdxQuery implements IQuery {
 					}
 				}
 		} catch (Exception e) {
-			throw new RuntimeException("Cannot get saiku cube for ( " + cube + " )",e);
+			// we tried, but it just doesn't work, so let's return the last working cube
 		}
 		return cube;
 	}

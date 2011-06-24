@@ -94,6 +94,9 @@ public class OlapQuery implements IQuery {
 	
 	public void moveDimension(QueryDimension dimension, Axis axis) {
 		dimension.setHierarchizeMode(HierarchizeMode.PRE);
+		if (dimension.getName() != "Measures") {
+			dimension.setHierarchyConsistent(true);
+		}
 		QueryAxis oldQueryAxis = findAxis(dimension);
 		QueryAxis newQueryAxis = query.getAxis(axis);
 		if (oldQueryAxis != null && newQueryAxis != null) {
@@ -104,6 +107,9 @@ public class OlapQuery implements IQuery {
 
 	public void moveDimension(QueryDimension dimension, Axis axis, int position) {
 		dimension.setHierarchizeMode(HierarchizeMode.PRE);
+		if (dimension.getName() != "Measures") {
+			dimension.setHierarchyConsistent(true);
+		}
         QueryAxis oldQueryAxis = findAxis(dimension);
         QueryAxis newQueryAxis = query.getAxis(axis);
         if (oldQueryAxis != null && newQueryAxis != null) {
