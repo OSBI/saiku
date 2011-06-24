@@ -256,27 +256,30 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
 
 		// Populate corner
 		List<Level> levels = new ArrayList<Level>();
-		Position p = rowsAxis.getPositions().get(0);
-		for (int m = 0; m < p.getMembers().size(); m++) {
-			AxisOrdinalInfo a = rowsAxisInfo.ordinalInfos.get(m);
-			for (Integer depth : a.getDepths()) {
-				levels.add(a.getLevel(depth));
+		if (rowsAxis != null && rowsAxis.getPositions().size() > 0) {
+			Position p = rowsAxis.getPositions().get(0);
+			for (int m = 0; m < p.getMembers().size(); m++) {
+				AxisOrdinalInfo a = rowsAxisInfo.ordinalInfos.get(m);
+				for (Integer depth : a.getDepths()) {
+					levels.add(a.getLevel(depth));
+				}
+			}
+			for (int x = 0; x < xOffsset; x++) {
+				Level xLevel = levels.get(x);
+				String s = xLevel.getCaption();
+				for (int y = 0; y < yOffset; y++) {
+					final MemberCell memberInfo = new MemberCell(false, x > 0);
+					if (y == yOffset-1) {
+						memberInfo.setRawValue(s);
+						memberInfo.setFormattedValue(s);
+						memberInfo.setProperty("__headertype", "row_header_header");
+					}
+					matrix.set(x, y, memberInfo);
+				}
+
 			}
 		}
-		for (int x = 0; x < xOffsset; x++) {
-			Level xLevel = levels.get(x);
-			String s = xLevel.getCaption();
-			for (int y = 0; y < yOffset; y++) {
-				final MemberCell memberInfo = new MemberCell(false, x > 0);
-				if (y == yOffset-1) {
-					memberInfo.setRawValue(s);
-					memberInfo.setFormattedValue(s);
-					memberInfo.setProperty("__headertype", "row_header_header");
-				}
-				matrix.set(x, y, memberInfo);
-			}
-
-		}		// Populate matrix with cells representing axes
+		// Populate matrix with cells representing axes
 		// noinspection SuspiciousNameCombination
 		populateAxis(matrix, columnsAxis, columnsAxisInfo, true, xOffsset);
 		populateAxis(matrix, rowsAxis, rowsAxisInfo, false, yOffset);

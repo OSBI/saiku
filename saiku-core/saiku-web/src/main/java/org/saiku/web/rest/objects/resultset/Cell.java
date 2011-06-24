@@ -34,7 +34,8 @@ public class Cell  {
 		COLUMN_HEADER,
 		DATA_CELL,
 		EMPTY,
-		UNKNOWN
+		UNKNOWN,
+		ERROR
 	}
 	
 	public Cell() {

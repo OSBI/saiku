@@ -468,7 +468,7 @@ var model = {
 		},
         
         render_result: function(data,$workspace_result) {
-        					if (data == "") {
+                    if (data == "") {
 
 						// No results table
 						var table_vis = '<div style="text-align:center;">No results</div>';
@@ -476,7 +476,10 @@ var model = {
 						// Insert the table to the DOM
 						$workspace_result.html(table_vis);
 
-					} else {
+					} else if ( (data[0][0])['type'] == "ERROR") {
+                        var table_vis = '<div style="text-align:center;color:red;">' + (data[0][0])['value'] +'</div>';
+                        $workspace_result.html(table_vis);
+                    } else {
 						// Create a variable to store the table
 						var table_vis = '<table>';
 

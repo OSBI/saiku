@@ -45,6 +45,7 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimensionSelection;
 import org.saiku.olap.dto.SaikuQuery;
@@ -54,6 +55,7 @@ import org.saiku.service.olap.OlapQueryService;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.web.rest.objects.SelectionRestObject;
 import org.saiku.web.rest.objects.resultset.Cell;
+import org.saiku.web.rest.objects.resultset.Cell.Type;
 import org.saiku.web.rest.util.RestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -350,8 +352,13 @@ public class QueryResource {
 			return RestUtil.convert(cs);
 		}
 		catch (Exception e) {
-			log.error("Cannot execute query (" + queryName + ")",e);
-			return new ArrayList<Cell[]>();
+			log.error("Cannot execute query (" + queryName + ") using mdx:\n" + mdx,e);
+			Cell error  = new Cell(ExceptionUtils.getRootCauseMessage(e),Type.ERROR);
+			Cell[] errors = new Cell[1];
+			errors[0] = error;
+			ArrayList<Cell[]> cells = new ArrayList<Cell[]>();
+			cells.add(errors);
+			return cells;
 		}
 	}
 
