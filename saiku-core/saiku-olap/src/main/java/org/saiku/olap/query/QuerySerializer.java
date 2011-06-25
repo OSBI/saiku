@@ -210,6 +210,10 @@ public class QuerySerializer {
             dimension.setAttribute("hierarchizeMode", dim.getHierarchizeMode().toString());
         }
         
+        if (dim.getHierarchizeMode() != null) {
+            dimension.setAttribute("hierarchyConsistent", "" + dim.isHierarchyConsistent());
+        }
+        
         Element inclusionsElement = new Element("Inclusions");
         List<Selection> inclusions = dim.getInclusions();
         

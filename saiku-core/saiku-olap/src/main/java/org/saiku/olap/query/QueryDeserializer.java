@@ -22,7 +22,6 @@ package org.saiku.olap.query;
 
 import java.io.ByteArrayInputStream;
 import java.sql.SQLException;
-import java.util.Iterator;
 
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Document;
@@ -37,7 +36,6 @@ import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Database;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
-import org.olap4j.metadata.NamedList;
 import org.olap4j.metadata.Schema;
 import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
@@ -270,6 +268,11 @@ public class QueryDeserializer {
             String hierarchizeMode = dimension.getAttributeValue("hierarchizeMode");
             if (StringUtils.isNotBlank(hierarchizeMode)) {
                 dim.setHierarchizeMode(HierarchizeMode.valueOf(hierarchizeMode));
+            }
+            
+            String hierarchyConsistent = dimension.getAttributeValue("hierarchyConsistent");
+            if (StringUtils.isNotBlank(hierarchyConsistent)) {
+                dim.setHierarchyConsistent(Boolean.parseBoolean(hierarchyConsistent));
             }
 
             qm.getAxes().get(Axis.Standard.valueOf(location)).getDimensions().add(dim);
