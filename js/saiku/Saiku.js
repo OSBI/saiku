@@ -8,14 +8,14 @@ var Saiku = {
         TOMCAT_WEBAPP: "/saiku/",
         REST_MOUNT_POINT: "rest/saiku/"
     },
-    tabs: [],
-    add_tab: function() {
-        var controller = new Controller();
-        Saiku.tabs.push(controller);
-        return controller;
-    },
-    session: new Session(),
-    model: new SaikuServer()
+    tabs: new TabSet,
+    session: new Session
 };
 
-//Saiku.add_tab();
+/**
+ * Setting this option to true will fake PUT and DELETE requests 
+ * with a HTTP POST, and pass them under the _method parameter. 
+ * Setting this option will also set an X-HTTP-Method-Override header 
+ * with the true method. This is required for BI server integration
+ */
+Backbone.emulateHTTP = false;
