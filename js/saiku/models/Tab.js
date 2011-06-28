@@ -12,5 +12,9 @@ var Tab = Backbone.Model.extend({
  * Collection for tabs
  */
 var TabSet = Backbone.Collection.extend({
-    model: Tab
+    model: Tab,
+    
+    select: function(tab) {
+        
+    }
 });
