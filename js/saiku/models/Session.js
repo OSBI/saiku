@@ -5,11 +5,34 @@
  * @returns {Session}
  */
 var Session = Backbone.Model.extend({
-    username: username ? username : "",
-    password: password ? password : "",
+    username: "",
+    password: "",
+        
+    initialize: function() {
+        this.form = new LoginForm({
+            session: this
+        });
+        
+        var el = this.form.render().el;
+        $(document).ready(function() {
+            $(el).appendTo($('body'));
+        });
+    },
     
     login: function(username, password) {
-        // Create session
-        // Fetch connection information
+        this.username = username;
+        this.password = password;
+        
+        // Create session and fetch connection information
+        this.fetch();
+        
+        // Show UI
+        
+        // Add initial tab
+        Saiku.tabs.add([ new Tab ]);
+    },
+    
+    url: function() {
+        return Saiku.settings.BASE_URL + this.username + "/discover/";
     }
 });

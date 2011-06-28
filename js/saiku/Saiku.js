@@ -5,7 +5,7 @@ var Saiku = {
     settings: {
         PLUGIN: false,
         BASE_URL: "/",
-        TOMCAT_WEBAPP: "/saiku/",
+        TOMCAT_WEBAPP: "saiku/",
         REST_MOUNT_POINT: "rest/saiku/"
     },
     tabs: new TabSet,
@@ -19,3 +19,7 @@ var Saiku = {
  * with the true method. This is required for BI server integration
  */
 Backbone.emulateHTTP = false;
+
+Saiku.settings.REST_URL = Saiku.settings.BASE_URL
+    + Saiku.settings.TOMCAT_WEBAPP 
+    + Saiku.settings.REST_MOUNT_POINT;

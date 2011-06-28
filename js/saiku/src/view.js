@@ -1003,34 +1003,10 @@ var view = {
         });
     },
 
-    /**
-         * Loads a pop up dialog box for alerting.
-         * @param title {String} Title to be displayed in the dialog box.
-         * @param message {String} Message to be displayed in the dialog box.
-         */
-    show_dialog : function (title, message, type) {
 
-        // Check if there is already a dialog box
-        if($('#dialog').length > 0) {
-        // Do nothing
-        }else {
             if(type === 'mdx'){
                 var message = '<textarea readonly="yes" wrap="hard">' + message + '</textarea>';
-            }
-            // Append a dialog <div/> to the body.
-            $('<div id="dialog" class="dialog hide">').appendTo('body');
-            // Add the structure of the dialog.
-            $('#dialog').append('<div class="dialog_inner">' +
-                '<div class="dialog_header">' +
-                '<h3>' + title + '</h3>' +
-                '<a href="#" title="Close" class="close_dialog close">Close</a>' +
-                '<div class="clear"></div>' +
-                '</div>' +
-                '<div class="dialog_body_' + type + '">' + message + '</div>' +
-                '<div class="dialog_footer calign"><a href="#" class="close form_button">&nbsp;OK&nbsp;</a>' +
-                '</div>' +
-                '</div>').modal({
-                opacity : 100,
+
                 onClose : function (dialog) {
                     // Remove all simple modal objects.
                     dialog.data.remove();
@@ -1040,10 +1016,6 @@ var view = {
                     // Remove the #dialog which we appended to the body.
                     $('#dialog').remove();
                 }
-            });
-        }
-    },
-
 
     /**
          * Check if the toolbar can be enabled or disabled.
