@@ -8,7 +8,7 @@ module('Controller', {
 
 test('event handler', function() {
     var global_value = false;
-    controller.listen('zero', function() {
+    controller.bind('zero', function() {
         global_value = true;
     });
     
@@ -20,15 +20,15 @@ test('event handler', function() {
 test('multiple event handlers', function() {
     var global_value = 0;
     
-    controller.listen('multiple', function() {
+    controller.bind('multiple', function() {
         global_value+=1;
     });
     
-    controller.listen('multiple', function() {
+    controller.bind('multiple', function() {
         global_value+=1;
     });
     
-    controller.listen('multiple', function() {
+    controller.bind('multiple', function() {
         global_value+=1;
     });
     
@@ -37,20 +37,14 @@ test('multiple event handlers', function() {
     delete global_value;
 });
 
-test('trigger bad event handler', function() {
-    raises(function() {
-        controller.trigger('wonky_event_handler');
-    }, BadEventException);
-});
-
 test('getters and setters', function() {
     controller.set('foo', 2);
     equal(controller.get('foo'), 2);
 });
 
 test('data_validators', function() {
-    controller.listen('pre_set_foo', function(data) {
-        return data + 2;
+    controller.bind('pre_set_foo', function(args) {
+        args.data += 2;
     });
     
     controller.set('foo', 2);
