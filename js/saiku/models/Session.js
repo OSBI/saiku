@@ -15,7 +15,7 @@ var Session = Backbone.Model.extend({
         
         var el = this.form.render().el;
         $(document).ready(function() {
-            $(el).appendTo($('body'));
+            $(el).appendTo($('body')).show();
         });
     },
     
@@ -29,10 +29,12 @@ var Session = Backbone.Model.extend({
         // Show UI
         
         // Add initial tab
-        Saiku.tabs.add([ new Tab ]);
+        //Saiku.tabs.add([ new Tab ]);
+        
+        return false;
     },
     
     url: function() {
-        return Saiku.settings.BASE_URL + this.username + "/discover/";
+        return this.username + "/discover/";
     }
 });

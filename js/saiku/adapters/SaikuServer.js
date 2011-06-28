@@ -4,43 +4,54 @@
  * this is the class which you want to override.
  * @returns {SaikuServer}
  */
-Backbone.sync = function sync(method, model, success, error) {
-    // Overwrite defaults with incoming parameters
-    
-    methods = {
+Backbone.sync = function(method, model, success, error) {
+    methodMap = {
         'create': "POST",
         'read': "GET",
         'update': "PUT",
         'delete': "DELETE"
     };
     
-    settings = {
-        type: methods[method],
-        data: model,
-        contentType: 'application/x-www-form-urlencoded',
-        success: success,
-        error: error,
-        dataType: "json",
-        rewrite: false,
-        cache: false,
-        username: Saiku.session.username,
-        password: Saiku.session.password
+    var type = methodMap[method];
+    var modelJSON = (method === 'create' || method === 'update') ?
+                    JSON.stringify(model.toJSON()) : null;
+    var url = Saiku.settings.REST_URL
+        + (_.isFunction(model.url) ? model.url() : model.url);
+
+    // Default JSON-request options.
+    var params = {
+      url:          url,
+      username:     Saiku.session.username,
+      password:     Saiku.session.password,
+      type:         type,
+      cache:        false,
+      contentType:  'application/json',
+      data:         modelJSON,
+      dataType:     'json',
+      processData:  false,
+      success:      success,
+      error:        error
     };
-    
-    // Properly address url
-    settings.url = Saiku.settings.TOMCAT_WEBAPP 
-        + Saiku.settings.REST_MOUNT_POINT 
-        + encodeURI(model.url);
-    
-    // Method override for BI server
-    if (Saiku.settings.PLUGIN === true && Backbone.emulateHTTP === true
-            && (methods[method] == 'PUT' || methods[method] == 'DELETE')) {
-        settings.beforeSend = function(xhr) {
-            xhr.setRequestHeader("X-HTTP-Method-Override", settings.type);
-        };
-        settings.type = "POST";
+
+    // For older servers, emulate JSON by encoding the request into an HTML-form.
+    if (Backbone.emulateJSON) {
+      params.contentType = 'application/x-www-form-urlencoded';
+      params.processData = true;
+      params.data        = modelJSON ? {model : modelJSON} : {};
     }
-    
-    console.log("syncing server");
-    $.ajax(settings);
+
+    // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
+    // And an `X-HTTP-Method-Override` header.
+    if (Saiku.settings.PLUGIN && Backbone.emulateHTTP) {
+      if (type === 'PUT' || type === 'DELETE') {
+        if (Backbone.emulateJSON) params.data._method = type;
+        params.type = 'POST';
+        params.beforeSend = function(xhr) {
+          xhr.setRequestHeader("X-HTTP-Method-Override", type);
+        };
+      }
+    }
+
+    // Make the request.
+    $.ajax(params);
 };
