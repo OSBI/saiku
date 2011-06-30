@@ -64,7 +64,7 @@ var Toolbar = Backbone.View.extend({
      * Show the credits dialog
      */
     about: function() {
-        $((new AboutModal).el).appendTo($('body'));
+        (new AboutModal).render().open();
         return false;
     },
     
