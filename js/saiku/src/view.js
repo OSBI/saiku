@@ -1003,7 +1003,7 @@ var view = {
         });
     },
 
-
+/*
             if(type === 'mdx'){
                 var message = '<textarea readonly="yes" wrap="hard">' + message + '</textarea>';
 
@@ -1016,6 +1016,8 @@ var view = {
                     // Remove the #dialog which we appended to the body.
                     $('#dialog').remove();
                 }
+                
+                */
 
     /**
          * Check if the toolbar can be enabled or disabled.
