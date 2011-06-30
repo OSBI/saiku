@@ -40,13 +40,14 @@ var Toolbar = Backbone.View.extend({
      */
     add_tab: function() {
         Saiku.tabs.add([ new Tab ]);
+        return false;
     },
     
     /**
      * Open a query from the repository into a new tab
      */
     open_query: function() {
-        
+        return false;
     },
     
     /**
@@ -56,6 +57,7 @@ var Toolbar = Backbone.View.extend({
         // FIXME - This is a hack (inherited from old UI)
         $('body').hide();
         location.reload(true);
+        return false;
     },
     
     /**
@@ -63,6 +65,7 @@ var Toolbar = Backbone.View.extend({
      */
     about: function() {
         $((new AboutModal).el).appendTo($('body'));
+        return false;
     },
     
     /**
@@ -70,6 +73,7 @@ var Toolbar = Backbone.View.extend({
      */
     issue_tracker: function() {
         window.open('http://projects.analytical-labs.com/projects/saiku/issues');
+        return false;
     }
 });
 

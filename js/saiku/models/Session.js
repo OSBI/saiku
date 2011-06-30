@@ -27,7 +27,8 @@ var Session = Backbone.Model.extend({
         this.fetch();
         
         // Show UI
-        $(Saiku.toolbar.el).appendTo($("#header"));
+        $(Saiku.toolbar.el).prependTo($("#header"));
+        $("#header").show();
         
         // Add initial tab
         Saiku.tabs.add([ new Tab ]);
