@@ -9,14 +9,18 @@ var Session = Backbone.Model.extend({
     password: "",
         
     initialize: function() {
-        this.form = new LoginForm({
+        var form = this.form = new LoginForm({
             session: this
         });
         
-        var el = this.form.el;
+        
         $(document).ready(function() {
-            $(el).appendTo($('body')).show();
+            form.render().open();
         });
+    },
+    
+    error: function() {
+        $(this.form.el).dialog('open');
     },
     
     login: function(username, password) {
@@ -30,8 +34,9 @@ var Session = Backbone.Model.extend({
         $(Saiku.toolbar.el).prependTo($("#header"));
         $("#header").show();
         
-        // Add initial tab
+        // Add initial tab and delete login form
         Saiku.tabs.add([ new Tab ]);
+        $(this.form.el).dialog('destroy').remove();
         
         return false;
     },
