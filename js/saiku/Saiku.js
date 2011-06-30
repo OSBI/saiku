@@ -8,6 +8,7 @@ var Saiku = {
         TOMCAT_WEBAPP: "saiku/",
         REST_MOUNT_POINT: "rest/saiku/"
     },
+    toolbar: new Toolbar,
     tabs: new TabSet,
     session: new Session
 };

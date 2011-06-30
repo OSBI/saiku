@@ -29,43 +29,21 @@
 		<!-- Saiku Project -->
 		<script type="text/javascript" src="/js/saiku/views/Modal.js"></script>
 		<script type="text/javascript" src="/js/saiku/views/LoginForm.js"></script>
+		<script type="text/javascript" src="/js/saiku/views/AboutModal.js"></script>
 		<script type="text/javascript" src="/js/saiku/models/Session.js"></script>
 		<script type="text/javascript" src="/js/saiku/models/Tab.js"></script>
+		<script type="text/javascript" src="/js/saiku/models/Toolbar.js"></script>
 		<script type="text/javascript" src="/js/saiku/Saiku.js"></script>
 		<script type="text/javascript" src="/js/saiku/adapters/SaikuServer.js"></script>
     </head>
     <body>
-        <div id="header" class="hide">
-            <!-- toolbar -->
-            <div id="toolbar" class="hide">
-                <ul>
-                    <li><a id="add_tab" href="#add_tab" title="New query" class="new_tab i18n"></a></li>
-                    <li class="separator">&nbsp;</li>
-                    <li><a id="open_query" href="#open_query" title="Open query" class="open_query i18n"></a></li>
-                    <li class="separator">&nbsp;</li>
-                    <li><a id="logout" href="#logout" title="Logout" class="logout i18n"></a></li>
-                    <li><a id="about" href="#about" title="About" class="about i18n"></a></li>
-                    <li class="separator">&nbsp;</li>
-                    <li><a id="issue_tracker" href="#issue_tracker" title="Issue Tracker" class="bug i18n"></a></li>
-                    <!--
-                    <li>
-                    	<select id="language-selector">
-                    		<option value="en">English</option>
-                    		<option value="it">Italiano</option>
-                    		<option value="es">Español</option>
-                    		<option value="cn">Chinese (Mandarin)</option>
-                    	</select>
-                    </li> -->
-                </ul>
-                <h1 id="logo"><a href="http://www.analytical-labs.com/" title="Saiku - Next Generation Open Source Analytics">Saiku</a></h1>
-            </div>
-            <!-- eof toolbar -->
+        <div id="header">
             <!-- tabs -->
-            <div id="tabs" class="hide"></div>
+            <div id="tabs"></div>
         </div>
         <!-- eof tabs -->
         <!-- tab_panel -->
-        <div id="tab_panel" class="hide"></div>
+        <div id="tab_panel"></div>
         <!-- eof tab_panel -->
     </body>
 </html>

@@ -13,7 +13,7 @@ var Session = Backbone.Model.extend({
             session: this
         });
         
-        var el = this.form.render().el;
+        var el = this.form.el;
         $(document).ready(function() {
             $(el).appendTo($('body')).show();
         });
@@ -27,9 +27,10 @@ var Session = Backbone.Model.extend({
         this.fetch();
         
         // Show UI
+        $(Saiku.toolbar.el).appendTo($("#header"));
         
         // Add initial tab
-        //Saiku.tabs.add([ new Tab ]);
+        Saiku.tabs.add([ new Tab ]);
         
         return false;
     },

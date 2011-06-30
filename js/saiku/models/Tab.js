@@ -3,8 +3,10 @@
  * @param parent
  */
 var Tab = Backbone.Model.extend({
-    initialize: function() {
+    initialize: function(args) {
         _.extend(this, Backbone.Events);
+        
+        this._content = args.content ? args.content : new Workspace;
     }
 });
 
