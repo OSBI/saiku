@@ -19,8 +19,8 @@ var LoginForm = Modal.extend({
     },
     
     close: function() {
-        console.log(this);
         this.login();
+        return false;
     },
     
     login: function() {
