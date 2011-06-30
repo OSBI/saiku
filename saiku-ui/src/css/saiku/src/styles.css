@@ -768,11 +768,6 @@ html, body {
     border-top: 1px solid #d5d5d5;
     background: #f9f9f9;
 }
-.workspace_results table th.row_header {
-    border-top: 1px solid #d5d5d5;
-    border-bottom: 1px solid #d5d5d5;
-    background: #EEEEFF;
-}
 .workspace_results table th.row_null {
     background: #f9f9f9;
 }
@@ -929,6 +924,11 @@ html, body {
     background-position: center center;
 }
 
+.workspace_toolbar .switch_to_mdx {
+	background-image: url('../../../images/src/switch_to_mdx.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+}
 
 /** Selections 
 .selection_tree {

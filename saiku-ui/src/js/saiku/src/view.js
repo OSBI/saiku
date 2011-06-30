@@ -1,91 +1,91 @@
 /* Saiku UI -- a user interface for the Saiku Server
     Copyright (C) Paul Stoellberger, 2011.
- 
+
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
     License as published by the Free Software Foundation; either
     version 3 of the License, or (at your option) any later version.
- 
+
     This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
     Lesser General Public License for more details.
- 
+
     You should have received a copy of the GNU Lesser General
     Public License along with this library; if not, write to the
     Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-    Boston, MA 02110-1301 USA 
+    Boston, MA 02110-1301 USA
  */
 /**
  * @fileOverview    This represents the view for Saiku UI.
  * @description     This will handle the drawing of the UI.
  * @version         1.0.0
- */ 
+ */
 
 /**
  * View class.
  * @class
  */
 var view = {
-		/** Display the login form when the view is initialised. */
-		init : function() {
+    /** Display the login form when the view is initialised. */
+    init : function() {
 
-			if (PLUGIN == "true") {
-				view.show_processing('Loading Saiku User Interface. Please wait...');
-				// Create the session and log in.
-				model.get_session();
-			}
-			else {
-				// Append a dialog <div/> to the body.
-				$('<div id="dialog" class="dialog hide" />').appendTo('body');
+        if (PLUGIN == "true") {
+            view.show_processing('Loading Saiku User Interface. Please wait...');
+            // Create the session and log in.
+            model.get_session();
+        }
+        else {
+            // Append a dialog <div/> to the body.
+            $('<div id="dialog" class="dialog hide" />').appendTo('body');
 
-				// Load the view into the dialog <div/> and disable caching.
-				$.ajax({
-					url : BASE_URL + 'views/session/index.html',
-					cache : false,
-					dataType : "html",
-					success : function(data) {
-						$('#dialog').html(data).modal({
-							opacity : 100,
-							// onShow : function (dialog) {}
-							onClose : function (dialog) {
-								// Get the username and password from the form.
-								model.username = $('#username').val();
-								model.password = $('#password').val();
+            // Load the view into the dialog <div/> and disable caching.
+            $.ajax({
+                url : BASE_URL + 'views/session/index.html',
+                cache : false,
+                dataType : "html",
+                success : function(data) {
+                    $('#dialog').html(data).modal({
+                        opacity : 100,
+                        // onShow : function (dialog) {}
+                        onClose : function (dialog) {
+                            // Get the username and password from the form.
+                            model.username = $('#username').val();
+                            model.password = $('#password').val();
 
-								// Remove all simple modal objects.
-								dialog.data.remove();
-								dialog.container.remove();
-								dialog.overlay.remove();
-								$.modal.close();
+                            // Remove all simple modal objects.
+                            dialog.data.remove();
+                            dialog.container.remove();
+                            dialog.overlay.remove();
+                            $.modal.close();
 
-								// Remove the #dialog which we appended to the body.
-								$('#dialog').remove();
+                            // Remove the #dialog which we appended to the body.
+                            $('#dialog').remove();
 
-								// Show pre loading message
-								// $('<div class="dialog pre_waiting"><div class="dialog_inner"><div class="dialog_body_waiting">Loading Saiku. Please wait...</div></div></div>').appendTo('body');
+                            // Show pre loading message
+                            // $('<div class="dialog pre_waiting"><div class="dialog_inner"><div class="dialog_body_waiting">Loading Saiku. Please wait...</div></div></div>').appendTo('body');
 
-								view.show_processing('Loading Saiku User Interface. Please wait...');
+                            view.show_processing('Loading Saiku User Interface. Please wait...');
 
-								// Create the session and log in.
-								model.get_session();
-							}
-						});
-					}
-				});
-			}
+                            // Create the session and log in.
+                            model.get_session();
+                        }
+                    });
+                }
+            });
+        }
 
 
-		},
+    },
 
     /** Tabs container. */
     tabs : new TabContainer($("#tabs"), $('#tab_panel')),
-    
+
     /**
      * Resize layout to fit window height
      */
     resize_height: function(tab_index) {
-        
+
         // What tab is being viewed
         var $active_tab = view.tabs.tabs[tab_index].content;
         var window_height, workspace_header;
@@ -100,15 +100,15 @@ var view = {
 
         // Work out the header height and add 1px for the border-bottom on the
         // header.
-        var header_height = $('#header').outerHeight() + 1; 
-        
+        var header_height = $('#header').outerHeight() + 1;
+
         // Work out the sidebar height, which is the header minus the window
         // height.
         var sidebar_height = window_height - header_height;
 
         // Work out the height of the workspace toolbar.
         var workspace_toolbar = $active_tab.find('.workspace_toolbar').outerHeight(true);
-        
+
         // Work out the height of the fields area
         var workspace_fields = $active_tab.find('.workspace_fields').outerHeight(true);
 
@@ -120,7 +120,7 @@ var view = {
         }else{
             var workspace_header = workspace_toolbar;
         }
-        
+
         // Set sidebar heights
         $active_tab.find('.sidebar, .sidebar_separator, .workspace_inner')
         .css('height', sidebar_height);
@@ -130,17 +130,17 @@ var view = {
         .css('height', (sidebar_height - workspace_header) - 30);
 
     },
-    
-    /** 
-     * Toggle (hide/show) the sidebar. 
+
+    /**
+     * Toggle (hide/show) the sidebar.
      */
     toggle_sidebar: function($sidebar_separator) {
         // Find the tab
         var $tab = $sidebar_separator.closest('.tab');
-    	
+
         // Get the width of the sidebar.
         var sidebar_width = $tab.find('.sidebar').width();
-       
+
         if (sidebar_width == 260) {
             // If the sidebar is not hidden.
             $tab.find('.sidebar').css('width', 0);
@@ -172,7 +172,7 @@ var view = {
                 return false;
             });
         }
-        
+
 
         /** Bind resize_height() to the resize event. */
         $(window).bind('resize', function() {
@@ -203,9 +203,9 @@ var view = {
                 view.tabs.remove_tab(view.tabs.index_from_tab($(this).parent()), is_queries);
                 return false;
             }
-            
+
         });
-        
+
         // Activate language selector
         $("#language-selector").val(locale)
         .change(function() {
@@ -246,7 +246,7 @@ var view = {
         $.each(model.connections, function(i,connection){
             $.each(connection.catalogs, function(cat_i,catalog){
                 $.each(catalog.schemas, function(i,schema){
-                
+
                     $cubes.append('<optgroup label="'+schema['name']+'">');
                     $.each(schema.cubes, function(i,cube){
                         $("<option />")
@@ -331,10 +331,10 @@ var view = {
                     return false;
                 })
                 .appendTo($('.delete_query_tb'));
-                
+
                 return false;
             })
-           .dblclick(function() {
+            .dblclick(function() {
                 var $query = $(this).data('object');
                 model.open_query($query.name, view.tabs.add_tab());
                 return false;
@@ -372,7 +372,7 @@ var view = {
 
         });
     },*/
-        
+
     load_children : function($item, axis, $dimension_name, tab_index) {
         member = $item.find('a').attr('title');
         var tab_data = view.tabs.tabs[tab_index].data['connection'];
@@ -404,28 +404,28 @@ var view = {
                 .appendTo($li);
                 $($li).appendTo($second_level);
             // Create a parent-child relationship with the rel attribute.
-                            
-                            
-                        
+
+
+
             });
         });
-        
+
     },
     /**
-         * Populate the dimension tree for the selected tab.
-         * @param $tab {Object} Selected tab content.
-         * @param data {Object} Data object which contains the available dimension
-         *                      members.
-         */
+     * Populate the dimension tree for the selected tab.
+     * @param $tab {Object} Selected tab content.
+     * @param data {Object} Data object which contains the available dimension
+     *                      members.
+     */
     load_dimensions : function(tab_index, data) {
         // Remove any instances of a tree.
         var $tab = view.tabs.tabs[tab_index].content;
         $tab.find('.dimension_tree ul').remove();
-        
+
         // Add a new dimension tree.
         var $dimension_tree = $('<ul />').appendTo($tab.find('.dimension_tree'));
         $dimension_tree.hide();
-        
+
         // Populate the tree with first level dimensions.
         var dimension_id = 0;
         delete view.tabs.tabs[tab_index].data['dimensions'];
@@ -437,7 +437,7 @@ var view = {
                 .appendTo($dimension_tree);
                 var $second_level = $('<ul />').appendTo($first_level);
                 $.each(dimension.hierarchies, function(hierarchy_iterator, hierarchy) {
-                    
+
                     // Add the hierarchy name.
                     $('<li class="hierarchy" />').html('<a href="#">' + hierarchy.caption + '</a>').appendTo($second_level);
                     // Loop through each hierarchy.
@@ -476,11 +476,11 @@ var view = {
     },
 
     /**
-         * Populate the measure tree for the selected tab.
-         * @param $tab {Object} Selected tab content.
-         * @param data {Object} Data object which contains the available measure
-         *                      members.
-         */
+     * Populate the measure tree for the selected tab.
+     * @param $tab {Object} Selected tab content.
+     * @param data {Object} Data object which contains the available measure
+     *                      members.
+     */
     load_measures : function(tab_index, data, url) {
         /** We need to fetch the measures separetely. */
         var $tab = view.tabs.tabs[tab_index].content;
@@ -495,28 +495,28 @@ var view = {
         .appendTo($measure_tree);
         // Add a child list to the measures list.
         var $measures_ul = $('<ul />').appendTo($measures);
-        
+
         // Prep measures metadata
         var measure_id = 0;
         delete view.tabs.tabs[tab_index].data['measures'];
         view.tabs.tabs[tab_index].data['measures'] = new Array();
-        
+
         // Populate the tree with the children of MeasureLevel
         $.each(data, function(i, member) {
             measure_id++;
-        	
+
             $('<li title="' + measure_id + '"><a href="#" class="measure" rel="m0_' + i + '"  title="'+this['uniqueName']+'">'+this['caption']+'</a></li>')
             .mousedown(function() {
                 return false;
             }).appendTo($measures_ul);
-            
+
             view.tabs.tabs[tab_index].data['measures'][measure_id] = {
                 'measure': member.uniqueName // member.member
             };
         });
         /** Prepare the workspace. */
         view.prepare_workspace(tab_index);
-        
+
         // Add a new measure tree.
         var $measure_tree = $('<ul />').appendTo($tab.find('.measure_tree')).addClass('mtree');
         // Populate the tree with first level measures.
@@ -536,9 +536,9 @@ var view = {
     },
 
     /**
-         * Prepare the new query trees and workspace.
-         * @param $tab {Object} Selected tab content.
-         */
+     * Prepare the new query trees and workspace.
+     * @param $tab {Object} Selected tab content.
+     */
     prepare_workspace: function(tab_index) {
 
         /** Initisalise trees */
@@ -653,11 +653,11 @@ var view = {
                 var $tab = $(this).closest(".tab");
                 model.show_selections($(this), $tab);
             }
-            
+
             return false;
         });*/
 
-        /** Make the dropzones sortable. */
+        // Make the both the column and row dropzones 'droppable'
         $both_dropzones.sortable({
             connectWith: $tab.find('.connectable'),
             cursorAt: {
@@ -669,16 +669,18 @@ var view = {
             opacity: 0.60,
             placeholder: 'placeholder',
             tolerance: 'pointer',
-            
+
             start: function(event, ui) {
-                /** Replace the placeholder text. */
+                // Replace the placeholder text
                 ui.placeholder.text(ui.helper.text());
             },
 
             beforeStop: function(event, ui) {
-                /** Is the item being removed. */
+
+                // Make sure that the user is not trying to remove an item
                 if(!(ui.item.hasClass('dropped'))) {
-                    /** Determine the sorting to and from axis. */
+
+                    // Which axis is the user sorting from and to
                     if($(this).parent().hasClass('rows')) {
                         var sort_to = 'columns', sort_from = 'rows';
                         var is_measure = ui.item.hasClass('d_measure');
@@ -686,54 +688,318 @@ var view = {
                         var sort_to = 'rows', sort_from = 'columns';
                         var is_measure = ui.item.hasClass('d_measure');
                     }
-                    /** Set sorting between lists to false. */
+
+                    // Set between lists to false
                     var between_lists = false;
-                    /** Check if sorting a measure, does the axis accepting the sort have a measure already. */
+
+                    // If the user is sorting a measure make the axis the user is sorting to does not already have a measure
                     if ($('.'+sort_to).find('.d_measure').length == 1 && $('.'+sort_from).find('.d_measure').length > 0 && is_measure) {
-                        /** Move all measures from rows to columns. */
+                        // If the axis already has a measure than make sure they are grouped
                         $('.'+sort_to).find('.d_measure').last().after($('.'+sort_from).find('.d_measure'));
-                        /** Set sorting between lists to true. */
+                        // Set sorting between lists to true
                         between_lists = true;
                     }
-                    /** Sorting a dimension or measure. */
-                    var is_dimension = ui.item.find('a').hasClass('dimension');
-                    var is_measure = ui.item.find('a').hasClass('measure');
-                    /** What is on the left and right of the placeholder. */
-                    var left_item = $(this).find('.placeholder').prev().prev(), right_item = $(this).find('.placeholder').next();
-                    /** Sorting a dimension. */
-                    if (is_dimension){
-                        /** If the placeholder is in between measures. */
-                        if(left_item.hasClass('d_measure') && right_item.hasClass('d_measure')) {
-                            /** Find the last item and append it to the end of the list. */
-                            $(this).find('li').last().append().after(ui.item.css('display', '').addClass('d_dimension'));
-                        }else{
-                            /** Act as normal. */
-                            ui.item.css('display', '').addClass('d_dimension');
+
+                    // Is the user sorting a measure or a dimension?
+                    var is_dimension = ui.item.find('a').hasClass('dimension')
+                    , is_measure = ui.item.find('a').hasClass('measure');
+
+                    // What is on the right and the left of the placeholder (where the user will stop sorting)
+                    var left_item = $(this).find('.placeholder').prev().prev()
+                    , right_item = $(this).find('.placeholder').next();
+
+                    var left_item_dim
+                    , right_item_dim;
+
+                    // Is there a dimension on the left and/or on the right?
+                    if(left_item.length > 0) {
+                        // Work out the dimension group on the left
+                        left_item_dim = left_item.find('a').attr('rel').split('_')[0];
+                    }
+                    if(right_item.length > 0) {
+                        // Work out the dimension group on the right
+                        right_item_dim = right_item.find('a').attr('rel').split('_')[0];
+                    }
+					
+                    /*
+                     * Sorting a dimension and NOT between lists
+                     */
+                    if (is_dimension && !(between_lists)){
+						
+                        // Step 1.
+                        // Declare variables
+
+                        var user_dim_group, user_dim_group_order,
+                        user_dim_in_hierarchy = false,
+                        dropzone_dim_array = [],
+                        dropzone_dim_group,
+                        placement_order;
+						
+                        // Step 2.
+                        // Populate variables
+
+                        user_dim = ui.item.find('a').attr('rel');
+                        user_dim_group = ui.item.find('a').attr('rel').split('_')[0],
+                        user_dim_group_order = ui.item.find('a').attr('rel').split('_')[2];
+
+                        // Step 3.
+                        // Check if the dimension the user is sorting doesn't already have other
+                        // levels within the same hierarchy on both dropzones
+
+                        if($both_dropzones.find('a[rel^=' + user_dim_group + ']').length > 1) {
+                            user_dim_in_hierarchy = true;
                         }
-                        /** Continue adding the dimension. */
-                        add_dimension($tab, ui.item.find('a').attr('rel'));
-                    }else if (!(between_lists)) {
-                        /** If sorting a measure and is not between lists. */
-                        /** If this is the first measure. */
-                        if ($both_dropzones.find('.d_measure').length == 0) {
-                            /** Act as normal. */
-                            ui.item.css('display','').addClass('d_measure');
-                        }else{ /** Is there a measure on the left or right or ( measure on left and right ). */
-                            if ((left_item.hasClass('d_measure') || right_item.hasClass('d_measure') || (left_item.hasClass('d_measure') && right_item.hasClass('d_measure')))) {
-                                /** Act as normal. */
-                                ui.item.css('display','').addClass('d_measure');
+
+                        // Step 4.
+                        // Check if the user is moving a dimension from one axis to another axis
+                        // If the ui.item has the class d_dimension we know it is being sorted between
+                        // axis.
+
+                        if(ui.item.hasClass('d_dimension') && user_dim_in_hierarchy) {
+						
+                            // Step 4a
+							// Check if the user is sorting in between another group of dimensions
+							
+							// Step 4b
+							// Check if the user is sorting in between another group of measures
+							
+							// Step 4c
+							// Check if the user is sorting from one axis to another
+							
+							$both_dropzones.find('a[rel^=' + user_dim_group + ']').each(function(i, value) {
+									
+									if($(this).attr('rel') != user_dim) {
+										dropzone_dim_array.push({
+												order: $(this).attr('rel').split('_')[2] ,
+												rel: $(this).attr('rel')
+										});
+									}
+							});
+								
+							// Reverse the order of the array
+							if(user_dim_group_order == 0) {
+								dropzone_dim_array.sort().reverse();
+							}else{
+								dropzone_dim_array.sort();
+							}
+								
+							// Loop through and check where you need to add each dimension 
+							//(before or after the current dimension on the axis)
+							
+							$.each(dropzone_dim_array, function(index, value) {
+								
+							// Make sure the dimension being sorted isn't being references in the array.
+
+								// Is the dimension the user sorting lower than the dimension on the dropzone
+								// in the current hierarchy?
+								if(user_dim_group_order < dropzone_dim_array[index]['order']) {
+									
+									$both_dropzones.find('li a[rel='+user_dim+']')
+									.parent()
+									.append()
+									.after($both_dropzones.find('li a[rel=' + dropzone_dim_array[index]['rel'] + ']').parent());
+
+								}else {
+
+									$both_dropzones.find('li a[rel='+user_dim+']')
+									.parent()
+									.append()
+									.before($both_dropzones.find('li a[rel=' + dropzone_dim_array[index]['rel'] + ']').parent());
+
+								}
+
+							});
+								
+							// Sort the list using tsort! Great plugin!
+							$both_dropzones.find('a[rel^=' + user_dim_group + ']').parent().tsort('a[rel]',{attr:'rel',order:'asc'});
+
+                        }else if(user_dim_in_hierarchy && !(ui.item.hasClass('d_dimension'))) {
+							
+                            // Step 5a (If user_dim_in_hierarchy = true)
+                            // Decide where to place the user sorted dimension
+
+                            // Loop through all dimensions in the same hierarchy on the dropzones
+
+                            $both_dropzones.find('a[rel^=' + user_dim_group + ']').each(function(i, value) {
+
+                                // Add to an array, dropzone_dim_array
+
+                                dropzone_dim_array.push({
+                                    order: $(this).attr('rel').split('_')[2] ,
+                                    rel: $(this).attr('rel')
+                                    });
+
+                            });
+
+                            // Sort the array based on the dim being sorted
+
+                            if(user_dim_group_order == 0) {
+                                dropzone_dim_array.sort().reverse();
                             }else{
-                                /** If not then find all other measures insert them after the measure being sorted. */
-                                $both_dropzones.find('.d_measure').insertAfter($('.placeholder'));
+                                dropzone_dim_array.sort();
+                            }
+
+                            // Loop through the array and see where the user sorted dimension sits
+
+                            $.each(dropzone_dim_array, function(index, value) {
+
+                                // Make sure the dimension being sorted isn't being references in the array.
+                                if(user_dim != dropzone_dim_array[index]['rel']) {
+
+                                    // Is the dimension the user sorting lower than the dimension on the dropzone
+                                    // in the current hierarchy?
+                                    if(user_dim_group_order < dropzone_dim_array[index]['order'] && user_dim_group != dropzone_dim_array[index]['rel']) {
+
+                                        // Set a pointer up to know we have to add in the dimension
+                                        // before this item
+                                        dropzone_dim_group = dropzone_dim_array[index]['rel'];
+                                        placement_order = 'before';
+
+                                    }else {
+
+                                        // Set a pointer up to know we have to add in the dimension
+                                        // after this item
+                                        dropzone_dim_group = dropzone_dim_array[index]['rel'];
+                                        placement_order = 'after';
+
+                                    }
+
+                                }
+
+                            });
+
+                            // Where should the UI place the dimension? Before or After?
+                            if(placement_order === 'before') {
+
+                                $both_dropzones.find('li a[rel='+dropzone_dim_group+']')
+                                .parent()
+                                .append()
+                                .before(ui.item.css('display', '').addClass('d_dimension'));
+
+                            }else{
+
+                                $both_dropzones.find('li a[rel='+dropzone_dim_group+']')
+                                .parent()
+                                .append()
+                                .after(ui.item.css('display', '').addClass('d_dimension'));
+
+                            }
+
+                            // Let the server know to add the dimension
+                            add_dimension($tab, ui.item.find('a').attr('rel'));
+
+                        }else{
+
+                            // Step 5b (If user_dim_in_hierarchy = false)
+
+                            // Step 5bi
+                            // If the user has placed the dimension between two measures
+                            // then add to the end of the measures
+
+                            if(left_item.hasClass('d_measure') && right_item.hasClass('d_measure')) {
+
+                                $(this).find('li')
+                                .last()
+                                .append()
+                                .after(ui.item.css('display', '').addClass('d_dimension'));
+
+                                // Let the server know to add the dimension
+                                add_dimension($tab, ui.item.find('a').attr('rel'));
+							
+							// Check if there is a dimension on either side of the item being sorted
+							// from the same dimension group
+                            }else{
+								
+								// If there are dimensions on either side of the sorted dimension belonging to the same
+								// level then make sure you move it to the last dimension in the group.
+								
+								var dim_on_the_left, dim_on_the_right, lowest_dim, lowest_dim_order = 0;
+								if(ui.item.prev().children().length > 0 && ui.item.next().next().children().length > 0) {
+									
+									// Setup pointers to the left and right dimensions
+									dim_on_the_left = ui.item.prev().children().attr('rel').split('_')[0];
+									dim_on_the_right = ui.item.next().next().children().attr('rel').split('_')[0];
+									
+									// Loop through all dimensions in the level, which the user has sorted the solo dimension
+									// inbetween								
+									$both_dropzones.find('a[rel^=' + dim_on_the_left + ']').each(function(i, value) {
+										if(lowest_dim_order < $(this).attr('rel').split('_')[2]) {
+											lowest_dim_order = $(this).attr('rel').split('_')[2];
+											lowest_dim = $(this).attr('rel');
+										}
+										
+									});
+									
+									// Add it to the end of the lowest dimension in the group
+									$both_dropzones.find('a[rel=' + lowest_dim + ']').parent().append().after(ui.item.css('display', '').addClass('d_dimension'));
+									
+									// Let the server know to add the dimension
+									add_dimension($tab, ui.item.find('a').attr('rel'));
+								
+								
+								}else{
+														
+									// Step 5bii
+									// Add as normal
+									ui.item.css('display', '').addClass('d_dimension');
+
+									// Let the server know to add the dimension
+									add_dimension($tab, ui.item.find('a').attr('rel'));
+									
+								}
+
+                            }
+
+                        }
+
+                    }else if (!(between_lists)) {
+
+                        // If sorting a measure from the tree to a dropzone
+
+                        // If the measure is being dropped in between dimensions in a group
+						
+						if(left_item.length > 0 && right_item.length > 0 && left_item_dim === right_item_dim) {
+
+                            // Find any other measures and add it to end of them
+                            if($both_dropzones.find('.d_measure').length > 0) {
+
+                                $both_dropzones.find('.d_measure').append().after(ui.item.css('display','').addClass('d_measure'));
+
+                            }else{
+
+                                // Append to the end of the dimensions in the dropzone
+                                $both_dropzones.find('a[rel^=' + left_item_dim + ']')
+                                .last().parent().append().after(ui.item.css('display', '')
+                                    .addClass('d_measure'));
+                            }
+
+                        // If this is the first measure being sorted
+                        }else if ($both_dropzones.find('.d_measure').length == 0) {
+
+                            ui.item.css('display','').addClass('d_measure');
+
+                        }else{
+
+                            // Is there measures on the right or on the left of the measure then act as normal
+                            if ((left_item.hasClass('d_measure') || right_item.hasClass('d_measure') || (left_item.hasClass('d_measure') && right_item.hasClass('d_measure')))) {
+
                                 ui.item.css('display','').addClass('d_measure');
+
+                            }else{
+
+                                // If not, find all the other measures and add the user sorted measure to the end
+                                $both_dropzones.find('.d_measure').insertAfter($('.placeholder'));
+
+                                ui.item.css('display','').addClass('d_measure');
+
                             }
                         }
-                        /** Continue adding the measure. */
+
+                        // Let the server know to add the measure
                         add_measure($tab, ui.item.find('a').attr('rel'));
                     }
                 }
             },
-            
             stop: function(event, ui) {
                 /** Is the item being removed. */
                 if(!(ui.item.hasClass('dropped'))) {
@@ -745,7 +1011,7 @@ var view = {
                     }
                 }
             }
-            
+
         }).disableSelection();
 
         /** Make the measure and dimension tree draggable. */
@@ -775,10 +1041,10 @@ var view = {
                     /** Remove the dimension. */
                     remove_dimension($tab, ui.draggable.find('a').attr('rel'));
                 }
-                
+
                 // Remove item from query
                 model.removed_item(ui.draggable);
-                
+
                 /** Remove the draggable measure. */
                 ui.draggable.remove();
                 // Patch needed for IE to work.
@@ -786,7 +1052,7 @@ var view = {
                     /** Remove the draggable measure. */
                     ui.draggable.remove();
                 },1);
-                /** When dimension or measure is removed, set the selection. */
+            /** When dimension or measure is removed, set the selection. */
 
 
             /** Activate all items for selection.
@@ -799,13 +1065,13 @@ var view = {
 
                     return false;
                 });
-                 */
+             */
             }
         });
 
         /**
-             * Active dimension and measure trees.
-             */
+     * Active dimension and measure trees.
+     */
         function init_trees($tab) {
             /** Activate hide and show on trees. */
             $tab.find('.dimension_tree').find('ul li ul').hide();
@@ -829,10 +1095,10 @@ var view = {
         }
 
         /**
-             * Add a dimension.
-             * @param id {String} The rel attribute of the link being clicked which
-             * identifies the dimension.
-             */
+     * Add a dimension.
+     * @param id {String} The rel attribute of the link being clicked which
+     * identifies the dimension.
+     */
         function add_dimension($tab, id) {
 
             /* Make sure we are referencing the tab being used */
@@ -848,26 +1114,26 @@ var view = {
             /** Disable all of the dimension's siblings and highlight the dimension being used. */
             $dimension_tree.find('[rel=' + id + ']').parent().addClass('used');
             /** removeClass('ui-draggable').addClass('not-draggable'); This will enable multiple level selections */
-            
+
             /** Highlight the dimension's parent being used. */
             // If reuse of the item is true i.e. are we sorting between lists
             $dimension_tree.find('[rel=' + parent_id + ']').parent().addClass('used');
             /** Collapse the dimension parent if it is exapnded. */
-//            if ($dimension_tree.find('[rel=' + parent_id + ']').parent().hasClass('expand')) {
-//                /** Toggle the children of the dimension's parent. */
-//                $dimension_tree.find('[rel=' + parent_id + ']').parent().parent().find('ul').toggle();
-//                /** Style the parent dimension. */
-//                $dimension_tree.find('[rel=' + parent_id + ']').parent()
-//                .removeClass('expand').addClass('collapsed')
-//                .find('a.folder_expand').removeClass('folder_expand').addClass('folder_collapsed');
-//            }
+            //            if ($dimension_tree.find('[rel=' + parent_id + ']').parent().hasClass('expand')) {
+            //                /** Toggle the children of the dimension's parent. */
+            //                $dimension_tree.find('[rel=' + parent_id + ']').parent().parent().find('ul').toggle();
+            //                /** Style the parent dimension. */
+            //                $dimension_tree.find('[rel=' + parent_id + ']').parent()
+            //                .removeClass('expand').addClass('collapsed')
+            //                .find('a.folder_expand').removeClass('folder_expand').addClass('folder_collapsed');
+            //            }
             view.check_toolbar(tab_index);
         }
-         
+
         /**
-             * Remove a dimension.
-             * @param id {String} The rel attribute of the dimension being removed.
-             */
+     * Remove a dimension.
+     * @param id {String} The rel attribute of the dimension being removed.
+     */
         function remove_dimension($tab, id) {
 
             /* Make sure we are referencing the tab being used */
@@ -881,8 +1147,8 @@ var view = {
             if ($dimension_tree.find('[rel=' + parent_id + ']').parent().parent().find('li').hasClass('used') == false) {
                 $dimension_tree.find('[rel=' + parent_id + ']').parent().removeClass('used');
 
-//                .removeClass('expand').addClass('collapsed')
-//                .find('a.folder_expand').removeClass('folder_expand').addClass('folder_collapsed');
+            //                .removeClass('expand').addClass('collapsed')
+            //                .find('a.folder_expand').removeClass('folder_expand').addClass('folder_collapsed');
             }
             /** Remove the dimension's highlighted member. */
             /** Collapse the dimension parent if it is exapnded. */
@@ -890,10 +1156,10 @@ var view = {
         }
 
         /**
-             * Add a measure.
-             * @param id {String} The rel attribute of the link being clicked which
-             * identifies the measure.
-             */
+     * Add a measure.
+     * @param id {String} The rel attribute of the link being clicked which
+     * identifies the measure.
+     */
         function add_measure($tab, id) {
 
             /* Make sure we are referencing the tab being used */
@@ -907,10 +1173,10 @@ var view = {
         }
 
         /**
-             * Remove a measure.
-             * @param id {String} The rel attribute of the measure being removed.
-             * @param is_drop {Boolean} If the measure is being dropped.
-             */
+     * Remove a measure.
+     * @param id {String} The rel attribute of the measure being removed.
+     * @param is_drop {Boolean} If the measure is being dropped.
+     */
         function remove_measure($tab, id, is_drop) {
 
             /* Make sure we are referencing the tab being used */
@@ -930,11 +1196,11 @@ var view = {
     },
 
     /**
-         * Displays a waiting message and blocks the user from performing any actions.
-         * @param msg {String} Message to be displayed to the user.
-         * @param block_div {Boolean} If blocking a specific tab or the whole viewport.
-         * @param tab_index {Integer} Index of the active tab.
-         */
+ * Displays a waiting message and blocks the user from performing any actions.
+ * @param msg {String} Message to be displayed to the user.
+ * @param block_div {Boolean} If blocking a specific tab or the whole viewport.
+ * @param tab_index {Integer} Index of the active tab.
+ */
     show_processing : function (msg, block_div, tab_index) {
         if(block_div) {
             var $active_tab = view.tabs.tabs[tab_index].content;
@@ -960,10 +1226,10 @@ var view = {
     },
 
     /**
-         * Hides the waiting message.
-         * @param block_div {Boolean} If blocking a specific tab or the whole viewport.
-         * @param tab_index {Integer} Index of the active tab.
-         */
+ * Hides the waiting message.
+ * @param block_div {Boolean} If blocking a specific tab or the whole viewport.
+ * @param tab_index {Integer} Index of the active tab.
+ */
     hide_processing : function(block_div, tab_index) {
         if (block_div) {
             view.tabs.tabs[tab_index].content.unblock();
@@ -973,9 +1239,9 @@ var view = {
     },
 
     /**
-         * Load views into a dialog template
-         * @param url {String} The url where the view is located.
-         */
+ * Load views into a dialog template
+ * @param url {String} The url where the view is located.
+ */
     show_view : function(url, callback) {
         // Append a dialog <div/> to the body.
         $('<div id="dialog" class="selections dialog hide" />').appendTo('body');
@@ -997,7 +1263,7 @@ var view = {
                         $('#dialog').remove();
                     }
                 });
-                
+
                 if (callback)
                     callback();
             }
@@ -1005,10 +1271,10 @@ var view = {
     },
 
     /**
-         * Loads a pop up dialog box for alerting.
-         * @param title {String} Title to be displayed in the dialog box.
-         * @param message {String} Message to be displayed in the dialog box.
-         */
+ * Loads a pop up dialog box for alerting.
+ * @param title {String} Title to be displayed in the dialog box.
+ * @param message {String} Message to be displayed in the dialog box.
+ */
     show_dialog : function (title, message, type) {
 
         // Check if there is already a dialog box
@@ -1047,8 +1313,8 @@ var view = {
 
 
     /**
-         * Check if the toolbar can be enabled or disabled.
-         */
+ * Check if the toolbar can be enabled or disabled.
+ */
     check_toolbar: function(tab_index) {
 
         // Make sure we are referencing the tab being used.
@@ -1074,7 +1340,7 @@ var view = {
             // If there is a query name BUT no items on ROWS and/or COLUMNS.
             // Add the disabled_toolbar class to all icons.
             $tab.find('.workspace_toolbar li a').addClass('disabled_toolbar');
-            
+
             // This means users can setup specific query options i.e. Non Empty, Auto Exec.
             // by removing the disabled_toolbar class.s
             $tab.find('.workspace_toolbar li')
@@ -1103,13 +1369,10 @@ var view = {
             puc.allowSave(true);
 
         }
-        
+
         $tab.find('.workspace_toolbar li').find('a[href="#switch_to_mdx"],a[href="run_mdx"]').removeClass('disabled_toolbar');
 
         model.load_properties(tab_index);
-
-
-
     }
 
 };
