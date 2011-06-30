@@ -123,7 +123,7 @@ html, body {
 
 /** Tabs */
 
-#tabs {
+.tabs {
     background: #F5F5F5;
     border-bottom: 1px solid #CCC;
     height: 28px;
@@ -131,12 +131,12 @@ html, body {
     padding-top: 3px;
     text-align: left;
 }
-#tabs ul {
+.tabs ul {
     background: #F8F8F8;
     margin: 0;
     padding: 0 0 0 10px;
 }
-#tabs ul li {
+.tabs ul li {
     float: left;
     list-style: none;
     padding-right: 4px;
@@ -152,7 +152,7 @@ html, body {
     -moz-border-radius: 2px 2px 0 0;
     -webkit-border-radius: 2px 2px 0 0;
 }
-#tabs ul li.selected {
+.tabs ul li.selected {
     background: #F0F0F0;
     border-left: 1px solid #CCC;
     border-top: 1px solid #CCC;
@@ -162,25 +162,25 @@ html, body {
     border-bottom: 1px solid #F0F0F0 !important;
     font-weight: bold;
 }
-#tabs ul li:hover {
+.tabs ul li:hover {
     border-left: 1px solid #BBB;
     border-top: 1px solid #BBB;
     border-right: 1px solid #BBB;
 }
-#tabs ul li a {
+.tabs ul li a {
     color: #777;
     cursor: pointer;
     padding: 5px 2px 5px 10px;
     text-decoration: none;
     text-shadow: 1px 1px 0 #FFFFFF;
 }
-#tabs ul li.selected a {
+.tabs ul li.selected a {
     color: #222;
 }
-#tabs ul li a:hover{
+.tabs ul li a:hover{
     color: #222;
 }
-#tabs ul li span.close_tab {
+.tabs ul li span.close_tab {
     -moz-background-origin: 0px 2px;
     background: transparent url('../../../images/src/tabs_cross_off.png') 0px 1px no-repeat;
     display: inline-block;
@@ -189,7 +189,7 @@ html, body {
     width: 20px;
 
 }
-#tabs ul li span.close_tab:hover {
+.tabs ul li span.close_tab:hover {
     background: transparent url('../../../images/src/tabs_cross_on.png') 0px 1px no-repeat;
     cursor: pointer !important;
     display: inline-block;

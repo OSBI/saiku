@@ -33,6 +33,7 @@ var Session = Backbone.Model.extend({
         // Show UI
         $(Saiku.toolbar.el).prependTo($("#header"));
         $("#header").show();
+        Saiku.tabs.render();
         
         // Add initial tab and delete login form
         Saiku.tabs.add([ new Tab ]);
