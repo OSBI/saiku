@@ -43,34 +43,7 @@ REST_MOUNT_POINT = "rest/saiku/";
  * @class
  */
 var controller = {
-    
-    /**
-     * Handle all clicks events on the main toolbar.
-     * @param $button {Object} The clicked toolbar button object.
-     */
-    toolbar_click_handler : function($button) {
-        try {
-        	controller[$button.attr('href').replace('#', '')]();
-        } catch (e) {};
-    },
-    
-    /**
-     * Handle all click events on workspace toolbar
-     * @param $target {Object} button which was pressed
-     */
-    workspace_toolbar_click_handler: function($button) {
-        tab_index = view.tabs.index_from_content($button.closest('.tab'));
-        // Make sure button isn't disabled, and that a query is active
-        if (!($button.hasClass('disabled_toolbar')) && view.tabs.tabs[tab_index].data['query_name']) {
-            method_name = $button.attr('href').replace('#', '');
-            
-            try {
-            	model[method_name](tab_index);
-            } catch (e) {};
-        }
-        
-        return false;
-    },
+
 
     /** Handle click when the new query button is clicked. */
     add_tab : function () {

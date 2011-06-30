@@ -11,6 +11,7 @@ var Modal = Backbone.View.extend({
     
     initialize: function(args) {
         _.extend(this, args);
+        this.render();
     },
     
     template: function() {
