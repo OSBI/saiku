@@ -247,7 +247,7 @@ var view = {
             $.each(connection.catalogs, function(cat_i,catalog){
                 $.each(catalog.schemas, function(i,schema){
 
-                    $cubes.append('<optgroup label="'+schema['name']+'">');
+                    $cubes.append('<optgroup label="'+connection['name'] + ' - ' +catalog['name']+'">');
                     $.each(schema.cubes, function(i,cube){
                         $("<option />")
                         .attr({
@@ -712,11 +712,11 @@ var view = {
                     , right_item_dim;
 
                     // Is there a dimension on the left and/or on the right?
-                    if(left_item.length > 0) {
+                    if(left_item.length > 0 && is_dimension) {
                         // Work out the dimension group on the left
                         left_item_dim = left_item.find('a').attr('rel').split('_')[0];
                     }
-                    if(right_item.length > 0) {
+                    if(right_item.length > 0 && is_dimension) {
                         // Work out the dimension group on the right
                         right_item_dim = right_item.find('a').attr('rel').split('_')[0];
                     }
@@ -732,6 +732,7 @@ var view = {
                         var user_dim_group, user_dim_group_order,
                         user_dim_in_hierarchy = false,
                         dropzone_dim_array = [],
+						dropzone_dim_array_new = [],
                         dropzone_dim_group,
                         placement_order;
 						
@@ -753,68 +754,106 @@ var view = {
                         // Step 4.
                         // Check if the user is moving a dimension from one axis to another axis
                         // If the ui.item has the class d_dimension we know it is being sorted between
-                        // axis.
+                        // axis and has dimensions within the same level.
 
                         if(ui.item.hasClass('d_dimension') && user_dim_in_hierarchy) {
-						
-                            // Step 4a
-							// Check if the user is sorting in between another group of dimensions
 							
-							// Step 4b
-							// Check if the user is sorting in between another group of measures
-							
-							// Step 4c
-							// Check if the user is sorting from one axis to another
-							
+							// Loop through all dimensions belonging to the same level and store them in array
+							// including the new dimension just being sorted.
 							$both_dropzones.find('a[rel^=' + user_dim_group + ']').each(function(i, value) {
 									
 									if($(this).attr('rel') != user_dim) {
+									
 										dropzone_dim_array.push({
 												order: $(this).attr('rel').split('_')[2] ,
 												rel: $(this).attr('rel')
 										});
+										
 									}
-							});
-								
-							// Reverse the order of the array
-							if(user_dim_group_order == 0) {
-								dropzone_dim_array.sort().reverse();
-							}else{
-								dropzone_dim_array.sort();
-							}
-								
-							// Loop through and check where you need to add each dimension 
-							//(before or after the current dimension on the axis)
-							
-							$.each(dropzone_dim_array, function(index, value) {
-								
-							// Make sure the dimension being sorted isn't being references in the array.
-
-								// Is the dimension the user sorting lower than the dimension on the dropzone
-								// in the current hierarchy?
-								if(user_dim_group_order < dropzone_dim_array[index]['order']) {
 									
-									$both_dropzones.find('li a[rel='+user_dim+']')
-									.parent()
-									.append()
-									.after($both_dropzones.find('li a[rel=' + dropzone_dim_array[index]['rel'] + ']').parent());
-
-								}else {
-
-									$both_dropzones.find('li a[rel='+user_dim+']')
-									.parent()
-									.append()
-									.before($both_dropzones.find('li a[rel=' + dropzone_dim_array[index]['rel'] + ']').parent());
-
-								}
-
 							});
-								
-							// Sort the list using tsort! Great plugin!
-							$both_dropzones.find('a[rel^=' + user_dim_group + ']').parent().tsort('a[rel]',{attr:'rel',order:'asc'});
-
-                        }else if(user_dim_in_hierarchy && !(ui.item.hasClass('d_dimension'))) {
+															
+							// Is the dimension being sorted between two dimensions outside of the level?
+							// We will need to move this dimension and any levels attached to it to the
+							// end of the group.
 							
+							var dim_on_the_left = $both_dropzones.find('li a[rel='+user_dim+']').parent().prev().find('a').attr('rel')
+							dim_on_the_right = $both_dropzones.find('li a[rel='+user_dim+']').parent().next().next().find('a').attr('rel');
+							
+							/** HOW TO DETECT IF SORTING WITHIN A GROUP - SHOULD NOT BE ALLOWED **/
+							
+							// If there is something on both the right and left
+							if(	typeof dim_on_the_left != 'undefined' && typeof dim_on_the_right  != 'undefined'
+								&& dim_on_the_left.split('_')[0] != user_dim_group && dim_on_the_right.split('_')[0] != user_dim_group) {
+													
+								if(	dim_on_the_left.split('_')[0] === dim_on_the_right.split('_')[0]
+									&& user_dim_group != dim_on_the_left.split('_')[0]) {
+									
+									// Add the dimension to the end of the group on the right
+									$both_dropzones.find('li a[rel^='+dim_on_the_left.split('_')[0]+']').parent().last()
+									.append().after(ui.item.css('display', '').addClass('d_dimension'));
+									
+									// Find all other dimensions part of the same group and add them to the end
+									// of the above sorted dimension by looping through an array
+									
+									$.each(dropzone_dim_array, function(index, value) {
+										
+										$both_dropzones.find('a[rel=' + user_dim + ']').parent().append()
+										.after($both_dropzones.find('a[rel='+dropzone_dim_array[index]['rel']+']').parent());
+										
+									});
+									
+									
+								}
+							
+							// If there is something on the right only
+							}else if(	typeof dim_on_the_left === 'undefined' && typeof dim_on_the_right  != 'undefined'
+										&& dim_on_the_right.split('_')[0] != user_dim_group) {
+																	
+								$.each(dropzone_dim_array, function(index, value) {
+										
+										$both_dropzones.find('a[rel=' + user_dim + ']').parent().append()
+										.after($both_dropzones.find('a[rel='+dropzone_dim_array[index]['rel']+']').parent());
+										
+								});
+							
+							// If there is something on the left only
+							}else if(	typeof dim_on_the_right === 'undefined' && typeof dim_on_the_left != 'undefined'
+										&& dim_on_the_left.split('_')[0] != user_dim_group) {
+								
+								$.each(dropzone_dim_array, function(index, value) {
+										
+										$both_dropzones.find('a[rel=' + user_dim + ']').parent().append()
+										.after($both_dropzones.find('a[rel='+dropzone_dim_array[index]['rel']+']').parent());
+										
+								});
+							
+							// Else we can assume it is by itself on the axis
+							}else if(typeof dim_on_the_left === 'undefined' && typeof dim_on_the_right  === 'undefined'){
+															
+								$.each(dropzone_dim_array, function(index, value) {
+										
+										$both_dropzones.find('a[rel=' + user_dim + ']').parent().append()
+										.after($both_dropzones.find('a[rel='+dropzone_dim_array[index]['rel']+']').parent());
+										
+								});
+							
+							}else{
+									
+								$both_dropzones.find('a[rel^=' + user_dim_group + ']').parent().tsort('a[rel]',{
+									return: true, 
+									attr: 'rel',
+									order: 'asc'
+								});
+								
+							}
+							
+													
+							// Let the server know to add the dimension
+                            add_dimension($tab, ui.item.find('a').attr('rel'));
+														
+                        }else if(user_dim_in_hierarchy && !(ui.item.hasClass('d_dimension'))) {
+												
                             // Step 5a (If user_dim_in_hierarchy = true)
                             // Decide where to place the user sorted dimension
 
@@ -823,21 +862,14 @@ var view = {
                             $both_dropzones.find('a[rel^=' + user_dim_group + ']').each(function(i, value) {
 
                                 // Add to an array, dropzone_dim_array
-
-                                dropzone_dim_array.push({
-                                    order: $(this).attr('rel').split('_')[2] ,
-                                    rel: $(this).attr('rel')
-                                    });
+								if($(this).attr('rel') != user_dim) {
+									dropzone_dim_array.push({
+										order: $(this).attr('rel').split('_')[2] ,
+										rel: $(this).attr('rel')
+									});
+								}
 
                             });
-
-                            // Sort the array based on the dim being sorted
-
-                            if(user_dim_group_order == 0) {
-                                dropzone_dim_array.sort().reverse();
-                            }else{
-                                dropzone_dim_array.sort();
-                            }
 
                             // Loop through the array and see where the user sorted dimension sits
 
@@ -884,7 +916,7 @@ var view = {
                                 .after(ui.item.css('display', '').addClass('d_dimension'));
 
                             }
-
+							
                             // Let the server know to add the dimension
                             add_dimension($tab, ui.item.find('a').attr('rel'));
 
@@ -1016,7 +1048,7 @@ var view = {
 
         /** Make the measure and dimension tree draggable. */
         $both_tree_items.draggable({
-            cancel: '.not-draggable, .hierarchy',
+            cancel: '.not-draggable, .hierarchy, .used',
             connectToSortable: $connectable,
             helper: 'clone',
             opacity: 0.60,
