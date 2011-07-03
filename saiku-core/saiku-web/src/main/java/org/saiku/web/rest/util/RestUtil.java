@@ -102,20 +102,26 @@ public class RestUtil {
 			}
 			if (acell instanceof MemberCell) {
 				MemberCell mcell = (MemberCell) acell;
-				Properties metaprops = new Properties();
-				metaprops.put("children", "" + mcell.getChildMemberCount());
-				metaprops.put("uniqueName", "" + mcell.getUniqueName());
-				metaprops.put("formattedValue", "" +  mcell.getFormattedValue());
-				metaprops.put("rawValue", "" + mcell.getRawValue());
-				
+//				Properties metaprops = new Properties();
+//				metaprops.put("children", "" + mcell.getChildMemberCount());
+//				metaprops.put("uniqueName", "" + mcell.getUniqueName());
+//				metaprops.put("formattedValue", "" +  mcell.getFormattedValue());
+//				metaprops.put("rawValue", "" + mcell.getRawValue());
+
 				Properties props = new Properties();
-				props.putAll(mcell.getProperties());
+				if ( mcell != null && mcell.getProperty("levelindex") != null) {
+					props.put("levelindex", mcell.getProperty("levelindex"));
+					if (mcell.getParentDimension() != null) {
+						props.put("dimension", mcell.getParentDimension());
+					}
+				}
+//				props.putAll(mcell.getProperties());
 
 				// TODO no properties  (NULL) for now - 
 				if ("row_header_header".equals(mcell.getProperty("__headertype"))) {
 					headertype = Cell.Type.ROW_HEADER_HEADER;
 				}
-				return new Cell("" + mcell.getFormattedValue(), headertype);
+				return new Cell("" + mcell.getFormattedValue(), props, headertype);
 			}
 
 		

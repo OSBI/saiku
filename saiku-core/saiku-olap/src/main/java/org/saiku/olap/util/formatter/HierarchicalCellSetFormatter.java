@@ -35,6 +35,7 @@ import org.olap4j.OlapException;
 import org.olap4j.Position;
 import org.olap4j.impl.CoordinateIterator;
 import org.olap4j.impl.Olap4jUtil;
+import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
@@ -273,6 +274,8 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
 						memberInfo.setRawValue(s);
 						memberInfo.setFormattedValue(s);
 						memberInfo.setProperty("__headertype", "row_header_header");
+						memberInfo.setProperty("levelindex", "" + levels.indexOf(xLevel));
+
 					}
 					matrix.set(x, y, memberInfo);
 				}
@@ -392,10 +395,13 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
 			final Position position = axis.getPositions().get(i);
 			int yOffset = 0;
 			final List<Member> memberList = position.getMembers();
-
+			final Map<Dimension,List<Integer>> lvls = new HashMap<Dimension, List<Integer>>();
 			for (int j = 0; j < memberList.size(); j++) {
 				Member member = memberList.get(j);
 				final AxisOrdinalInfo ordinalInfo = axisInfo.ordinalInfos.get(j);
+				List<Integer> depths = ordinalInfo.depths;
+				Collections.sort(depths);
+				lvls.put(member.getDimension(), depths);
 				if (ordinalInfo.getDepths().size() > 0 && member.getDepth() < ordinalInfo.getDepths().get(0))
 					break;
 				final int y = yOffset + ordinalInfo.depths.indexOf(member.getDepth());
@@ -457,6 +463,9 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
 
 
 				if (member != null) {
+					if (lvls != null && lvls.get(member.getDimension()) != null) {
+						memberInfo.setProperty("levelindex", "" + lvls.get(member.getDimension()).indexOf(member.getLevel().getDepth()));
+					}
 					if (x - 1 == offset)
 						memberInfo.setLastRow(true);
 
