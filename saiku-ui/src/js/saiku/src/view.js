@@ -841,7 +841,7 @@ var view = {
 							}else{
 									
 								$both_dropzones.find('a[rel^=' + user_dim_group + ']').parent().tsort('a[rel]',{
-									return: true, 
+									returns: true, 
 									attr: 'rel',
 									order: 'asc'
 								});
