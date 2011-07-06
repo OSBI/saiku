@@ -620,7 +620,7 @@ html, body {
 .ui-dialog {
     background: #FFF;
     border: 3px solid #EEE;
-    width: 400px;
+    width: 400px !important;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     -moz-box-shadow: 0 0 10px #EEE;
@@ -683,17 +683,17 @@ html, body {
 }
 
 .dialog_body_info {
-    background: transparent url('../../../images/src/toolbar_info.png') 20px 10px no-repeat;
-    min-height: 40px;
-    overflow: auto;
-    padding: 10px 10px 20px 70px;
+    background: transparent url('../../../images/src/toolbar_info.png') 20px 10px no-repeat !important;
+    min-height: 40px !important;
+    overflow: auto !important;
+    padding: 10px 10px 20px 70px !important;
 }
 
 .dialog_body_mdx {
-    background: transparent url('../../../images/src/toolbar_message.png') 20px 10px no-repeat;
-    min-height: 40px;
-    overflow: auto;
-    padding: 5px 10px 20px 70px;
+    background: transparent url('../../../images/src/toolbar_message.png') 20px 10px no-repeat !important;
+    min-height: 40px !important;
+    overflow: auto !important;
+    padding: 5px 10px 20px 70px !important;
 }
 
 .dialog_body_mdx textarea {
@@ -710,28 +710,28 @@ html, body {
 }
 
 .dialog_body_error {
-    background: transparent url('../../../images/src/toolbar_error.png') 20px 10px no-repeat;
-    min-height: 40px;
-    overflow: auto;
-    padding: 10px 10px 20px 70px;
+    background: transparent url('../../../images/src/toolbar_error.png') 20px 10px no-repeat !important;
+    min-height: 40px !important;
+    overflow: auto !important;
+    padding: 10px 10px 20px 70px !important;
 }
 
 .dialog_body_delete {
-    background: transparent url('../../../images/src/toolbar_delete.png') 20px 10px no-repeat;
-    min-height: 40px;
-    overflow: auto;
-    padding: 10px 10px 20px 70px;
+    background: transparent url('../../../images/src/toolbar_delete.png') 20px 10px no-repeat !important;
+    min-height: 40px !important;
+    overflow: auto !important;
+    padding: 10px 10px 20px 70px !important;
 }
 
 .dialog_body_login {
-    background: transparent url('../../../images/src/dialog_login_red.png') 25px 15px no-repeat;
-    min-height: 40px;
-    padding: 10px 10px 20px 100px;
+    background: transparent url('../../../images/src/dialog_login_red.png') 25px 15px no-repeat !important;
+    min-height: 40px !important;
+    padding: 10px 10px 20px 100px !important;
 }
 
 .dialog_body_waiting {
-    background: transparent url('../../../images/src/waiting.gif') 10px 10px no-repeat;
-    padding: 10px 10px 10px 30px;
+    background: transparent url('../../../images/src/waiting.gif') 10px 10px no-repeat !important;
+    padding: 10px 10px 10px 30px !important;
 }
 
 .dialog_footer {
