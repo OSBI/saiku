@@ -1,8 +1,9 @@
 /**
- * Class which handles tab behavior
+ * Class which handles individual tabs
  */
 var Tab = Backbone.View.extend({
     tagName: 'li',
+    
     events: {
         'click a': 'select',
         'click span': 'remove'
@@ -16,6 +17,11 @@ var Tab = Backbone.View.extend({
             });
     },
     
+    /**
+     * Assign a unique ID and assign a Backbone view 
+     * to handle the tab's contents
+     * @param args
+     */
     initialize: function(args) {
         _.extend(this, Backbone.Events);
         
@@ -23,6 +29,10 @@ var Tab = Backbone.View.extend({
         this.id = _.uniqueId('tab_');
     },
     
+    /**
+     * Render the tab and its contents
+     * @returns {___anonymous78_1544}
+     */
     render: function() {
         // Render the content
         this.content.render();
@@ -33,6 +43,10 @@ var Tab = Backbone.View.extend({
         return this;
     },
     
+    /**
+     * Destroy any data associated with this tab and ensure proper
+     * garbage collection to avoid memory leaks
+     */
     destroy: function() {
         // delete data
     },
@@ -51,6 +65,10 @@ var Tab = Backbone.View.extend({
         return false;
     },
     
+    /**
+     * Remove a tab
+     * @returns {Boolean}
+     */
     remove: function() {
         // Remove the tab element
         $(this.el).remove();
@@ -66,12 +84,16 @@ var Tab = Backbone.View.extend({
 });
 
 /**
- * Class which controls the visual representation of the tabs
+ * Class which controls the tab collection
  */
 var TabSet = Backbone.View.extend({
     className: 'tabs',
     _tabs: [],
     
+    /**
+     * Render the tab containers
+     * @returns tab_container
+     */
     render: function() {
         $(this.el).html('<ul></ul>')
             .appendTo($('#header'));
@@ -80,7 +102,7 @@ var TabSet = Backbone.View.extend({
     },
     
     /**
-     * Add a tab
+     * Add a tab to the collection
      * @param tab
      */
     add: function(tab) {
@@ -93,6 +115,10 @@ var TabSet = Backbone.View.extend({
         $(tab.el).appendTo($(this.el).find('ul'));
     },
     
+    /**
+     * Select a tab, and move its contents to the tab panel
+     * @param tab
+     */
     select: function(tab) {
         // Clear selections
         $(this.el).find('li').removeClass('selected');
@@ -102,6 +128,10 @@ var TabSet = Backbone.View.extend({
         this.content.append(tab.content.el);
     },
     
+    /**
+     * Remove a tab from the collection
+     * @param tab
+     */
     remove: function(tab) {
         for (var i = 0; i < this._tabs.length; i++) {
             if (this._tabs[i] == tab) {
