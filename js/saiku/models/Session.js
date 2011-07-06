@@ -36,7 +36,7 @@ var Session = Backbone.Model.extend({
         Saiku.tabs.render();
         
         // Add initial tab and delete login form
-        Saiku.tabs.add([ new Tab ]);
+        Saiku.tabs.add(new Tab);
         $(this.form.el).dialog('destroy').remove();
         
         return false;
