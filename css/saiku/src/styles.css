@@ -656,7 +656,7 @@ html, body {
     text-shadow: 1px 1px 0 #FFFFFF;
     width: 200px;
 }
-.ui-dialog .ui-dialog-title {
+.ui-dialog .ui-dialog-titlebar-close {
     background: transparent url('../../../images/src/tabs_cross_off.png') 0px 1px no-repeat;
     display: inline-block;
     /*cursor: pointer;*/
@@ -665,8 +665,18 @@ html, body {
     text-indent: -9999px;
     width: 20px;
 }
-.ui-dialog .ui-dialog-title a.ui-icon-closethick:hover {
-    background: transparent url('../../../images/src/tabs_cross_on.png') 0px 1px no-repeat;
+
+.ui-dialog .ui-dialog-titlebar-close:hover {
+	padding: 1px;
+	background: transparent url('../../../images/src/tabs_cross_on.png') 0px 1px no-repeat;
+}
+
+.ui-icon {
+	background: none !important;
+}
+
+.ui-state-hover {
+	border: 0px !important;
 }
 .ui-dialog-content {
     padding: 10px;
