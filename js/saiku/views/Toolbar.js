@@ -39,7 +39,7 @@ var Toolbar = Backbone.View.extend({
      * Add a new tab to the interface
      */
     add_tab: function() {
-        Saiku.tabs.add([ new Tab ]);
+        Saiku.tabs.add(new Tab);
         return false;
     },
     
