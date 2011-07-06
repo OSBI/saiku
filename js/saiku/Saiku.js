@@ -8,9 +8,26 @@ var Saiku = {
         TOMCAT_WEBAPP: "saiku/",
         REST_MOUNT_POINT: "rest/saiku/"
     },
+    
+    /**
+     * View which manages toolbar interactions
+     */
     toolbar: new Toolbar,
+    
+    /**
+     * View which handles tabs
+     */
     tabs: new TabSet,
-    session: new Session
+    
+    /**
+     * Model which handles session and authentication
+     */
+    session: new Session,
+    
+    /**
+     * Class which handles template loading
+     */
+    template: new Template
 };
 
 /**
