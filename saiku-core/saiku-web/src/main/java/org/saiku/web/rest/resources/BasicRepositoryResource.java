@@ -24,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -43,6 +44,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.saiku.olap.dto.SaikuQuery;
+import org.saiku.service.datasource.ClassPathResourceDatasourceManager;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.web.rest.objects.SavedQuery;
@@ -77,9 +79,19 @@ public class BasicRepositoryResource {
 
 	private OlapDiscoverService olapDiscoverService;
 
-    public void setPath(String path) throws URISyntaxException {
-		repoURL = this.getClass().getClassLoader().getResource(path);
-		this.path = (new File(repoURL.toURI())).getAbsolutePath();
+	public void setPath(String path) throws Exception {
+		
+		if (path != null && path.startsWith("classpath:")) {
+			path = path.substring("classpath:".length(),path.length());
+			repoURL = this.getClass().getClassLoader().getResource(path);
+		} else {
+			repoURL = new URL(path);
+		}
+		if (repoURL == null) {
+			throw new Exception("Cannot load saiku repository from path: "+path);
+		} else {
+			this.path = (new File(repoURL.toURI())).getAbsolutePath();
+		}
 	}
     
 	@Autowired
@@ -108,7 +120,6 @@ public class BasicRepositoryResource {
     	List<SavedQuery> queries = new ArrayList<SavedQuery>();
     	try {
     		      if (repoURL != null) {
-    		    	  if ( repoURL.getProtocol().equals("file")) {
     		    		  File[] files = new File(repoURL.toURI()).listFiles();
     		    		  for (File file : files) {
     		    			  if (!file.isHidden()) {
@@ -121,7 +132,7 @@ public class BasicRepositoryResource {
     		    				  }
     		    			  }
     		    		  }
-    		    	  }
+
     		      }
     		      else {
     		    	  throw new Exception("repo URL is null");

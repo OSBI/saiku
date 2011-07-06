@@ -5,9 +5,10 @@
 	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<bean id="classpathDsManager" class="org.saiku.service.datasource.ClassPathResourceDatasourceManager">
-		<property name="path" value="saiku-datasources/"/>
+		<property name="path" value="classpath:saiku-datasources"/>
 	</bean>
-
+ <!--  <property name="path" value="file:///var/saiku/saiku-datasources"/> -->
+ 
 	<bean id="datasourceServiceBean" class="org.saiku.service.datasource.DatasourceService">
 		<property name="datasourceManager" ref="classpathDsManager" />
 	</bean>
@@ -38,7 +39,9 @@
 	<bean id="repositoryBean" class="org.saiku.web.rest.resources.BasicRepositoryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />
 		<property name="queryResource" ref="queryInterfaceBean" />
-		<property name="path" value="saiku-repository"/>
+		<property name="path" value="classpath:saiku-repository"/>
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
+	 <!--  <property name="path" value="file:///var/saiku/saiku-datasources"/> -->
+	
 </beans>

@@ -25,25 +25,34 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 	}
 
 		
-	public ClassPathResourceDatasourceManager(String path) {
-		repoURL = this.getClass().getClassLoader().getResource(path);
+	public ClassPathResourceDatasourceManager(String path) throws Exception {
+		try {
+			setPath(path);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void setPath(String path) throws Exception {
+		if (path != null && path.startsWith("classpath:")) {
+			path = path.substring("classpath:".length(),path.length());
+			repoURL = this.getClass().getClassLoader().getResource(path);
+		} else {
+			repoURL = new URL(path);
+		}
+
 		if (repoURL == null) {
-			throw new SaikuServiceException("Cannot load connection repository from path:"+path);
+			throw new Exception("Cannot load connection repository from path: "+path);
 		} else {
 			load();
 		}
 	}
 
-	public void setPath(String path) {
-		repoURL = this.getClass().getClassLoader().getResource(path);
-		load();
-	}
-
 	public void load() {
 		try {
 			if (repoURL != null) {
-				if ( repoURL.getProtocol().equals("file")) {
-					File[] files =  new File(repoURL.toURI()).listFiles();
+					File[] files =  new File(repoURL.getFile()).listFiles();
 
 					for (File file : files) {
 						if (!file.isHidden()) {
@@ -59,7 +68,6 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 							}
 						}
 					}
-				}
 			}
 			else {
 				throw new Exception("repo URL is null");
@@ -137,6 +145,4 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 	public SaikuDatasource getDatasource(String datasourceName) {
 		return datasources.get(datasourceName);
 	}
-
-
 }
