@@ -72,7 +72,7 @@ var Toolbar = Backbone.View.extend({
      * Go to the issue tracker
      */
     issue_tracker: function() {
-        window.open('http://projects.analytical-labs.com/projects/saiku/issues');
+        window.open('http://projects.analytical-labs.com/projects/saiku/issues/new');
         return false;
     }
 });
