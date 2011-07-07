@@ -46,40 +46,59 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<id>create-package</id>
+						<phase>test-compile</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<unzip dest="target/test/">
+									<fileset dir="${basedir}/../../util/">
+										<include name="foodmart.zip" />
+									</fileset>
+								</unzip>
+								<copy todir="target/test/foodmart/" overwrite="true">
+									<fileset dir="${basedir}/src/test/resources/foodmart/">
+										<include name="*" />
+									</fileset>
+								</copy>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<executions>
-<!--					<execution>
+					<execution>
 						<id>surefire-it</id>
-						<phase>integration-test</phase>
+						<phase>test</phase>
 						<goals>
 							<goal>test</goal>
 						</goals>
-						<configuration>
-							<skip>false</skip>
-						</configuration>
-					</execution>-->
+					</execution>
 				</executions>
 			</plugin>
 
-		
+
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>maven-jetty-plugin</artifactId>
-				<!--
-					<configuration> <contextPath>/</contextPath>
-					<scanIntervalSeconds>10</scanIntervalSeconds>
-					<stopKey>sparklr</stopKey> <stopPort>9999</stopPort>
-					</configuration> <executions> <execution> <id>start-jetty</id>
-					<phase>pre-integration-test</phase> <goals> <goal>run</goal>
-					</goals> <configuration>
-					<scanIntervalSeconds>0</scanIntervalSeconds> <daemon>true</daemon>
-					</configuration> </execution> <execution> <id>stop-jetty</id>
-					<phase>post-integration-test</phase> <goals> <goal>stop</goal>
-					</goals> </execution> </executions>
-				-->
+				<!-- <configuration> <contextPath>/</contextPath> <scanIntervalSeconds>10</scanIntervalSeconds> 
+					<stopKey>sparklr</stopKey> <stopPort>9999</stopPort> </configuration> <executions> 
+					<execution> <id>start-jetty</id> <phase>pre-integration-test</phase> <goals> 
+					<goal>run</goal> </goals> <configuration> <scanIntervalSeconds>0</scanIntervalSeconds> 
+					<daemon>true</daemon> </configuration> </execution> <execution> <id>stop-jetty</id> 
+					<phase>post-integration-test</phase> <goals> <goal>stop</goal> </goals> </execution> 
+					</executions> -->
 			</plugin>
 
 
@@ -101,12 +120,12 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
@@ -130,17 +149,14 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		<!--
-			<dependency> <groupId>org.springframework</groupId>
-			<artifactId>spring-dao</artifactId> <version>2.0.3</version>
-			</dependency>
-		-->
+		<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-dao</artifactId> 
+			<version>2.0.3</version> </dependency> -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core-tiger</artifactId>
 			<version>${spring.security.tiger.version}</version>
 			<exclusions>
-				<!--we'll depend on enunciate's version of these artifacts.-->
+				<!--we'll depend on enunciate's version of these artifacts. -->
 				<exclusion>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring-aop</artifactId>
@@ -149,10 +165,8 @@
 					<groupId>org.springframework</groupId>
 					<artifactId>spring-beans</artifactId>
 				</exclusion>
-				<!--
-					<exclusion> <groupId>org.springframework</groupId>
-					<artifactId>spring-dao</artifactId> </exclusion>
-				-->
+				<!-- <exclusion> <groupId>org.springframework</groupId> <artifactId>spring-dao</artifactId> 
+					</exclusion> -->
 				<exclusion>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring-context</artifactId>
@@ -166,27 +180,27 @@
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-gwt-rt</artifactId>
-			<version>1.21</version>
+			<version>${enunciate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-jersey-rt</artifactId>
-			<version>1.21</version>
+			<version>${enunciate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-amf-rt</artifactId>
-			<version>1.21</version>
+			<version>${enunciate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-obj-c</artifactId>
-			<version>1.21</version>
+			<version>${enunciate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-c</artifactId>
-			<version>1.21</version>
+			<version>${enunciate.version}</version>
 		</dependency>
 
 		<dependency>
@@ -198,7 +212,7 @@
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-core</artifactId>
-			<version>1.6</version>
+			<version>${jersey.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
@@ -208,14 +222,9 @@
 		<dependency>
 			<groupId>com.sun.jersey.jersey-test-framework</groupId>
 			<artifactId>jersey-test-framework-core</artifactId>
-			<version>1.6</version>
+			<version>${jersey.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<!--
-			<dependency> <groupId>com.sun.jersey.jersey-test-framework</groupId>
-			<artifactId>jersey-test-framework-grizzly</artifactId>
-			<version>1.5-SNAPSHOT</version> <scope>test</scope> </dependency>
-		-->
 		<dependency>
 			<groupId>com.sun.grizzly</groupId>
 			<artifactId>grizzly-servlet-webserver</artifactId>
@@ -231,9 +240,9 @@
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-rt</artifactId>
-			<version>1.21</version>
+			<version>${enunciate.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -298,18 +307,12 @@
 			<artifactId>spring-security-config</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		
-		<!--
-			<dependency> <groupId>org.springframework</groupId>
-			<artifactId>spring-tx</artifactId>
-			<version>${spring.version}</version> </dependency> <dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-			<version>${spring.version}</version> </dependency> <dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-			<version>${spring.version}</version> </dependency>
-		-->
+
+		<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-tx</artifactId> 
+			<version>${spring.version}</version> </dependency> <dependency> <groupId>org.springframework</groupId> 
+			<artifactId>spring-context-support</artifactId> <version>${spring.version}</version> 
+			</dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-jdbc</artifactId> 
+			<version>${spring.version}</version> </dependency> -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>

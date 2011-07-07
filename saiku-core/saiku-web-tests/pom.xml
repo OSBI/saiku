@@ -39,13 +39,13 @@
 		<dependency>
 			<groupId>com.sun.jersey.jersey-test-framework</groupId>
 			<artifactId>jersey-test-framework-core</artifactId>
-			<version>1.5-SNAPSHOT</version>
+			<version>{jersey.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey.jersey-test-framework</groupId>
 			<artifactId>jersey-test-framework-external</artifactId>
-			<version>1.5-SNAPSHOT</version>
+			<version>{jersey.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

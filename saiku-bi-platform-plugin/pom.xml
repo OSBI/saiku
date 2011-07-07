@@ -12,6 +12,8 @@
 		<maven.compiler.target>1.5</maven.compiler.target>
 		<pentaho.libs.version>3.7.0-stable</pentaho.libs.version>
 		<slf4j.version>1.6.1</slf4j.version>
+        <jersey.version>1.8</jersey.version>
+        <enunciate.version>1.23</enunciate.version>
 	</properties>
 	<build>
 		<plugins>
@@ -66,19 +68,19 @@
 								<artifactItem>
 									<groupId>org.codehaus.enunciate</groupId>
 									<artifactId>enunciate-rt</artifactId>
-									<version>1.21</version>
+									<version>${enunciate.version}</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.codehaus.enunciate</groupId>
 									<artifactId>enunciate-spring3-app-rt</artifactId>
-									<version>1.21</version>
+									<version>${enunciate.version}</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.codehaus.enunciate</groupId>
 									<artifactId>enunciate-core-annotations</artifactId>
-									<version>1.21</version>
+									<version>${enunciate.version}</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
@@ -90,31 +92,31 @@
 								<artifactItem>
 									<groupId>org.codehaus.enunciate</groupId>
 									<artifactId>enunciate-jersey-rt</artifactId>
-									<version>1.21</version>
+									<version>${enunciate.version}</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>com.sun.jersey</groupId>
 									<artifactId>jersey-core</artifactId>
-									<version>1.6</version>
+									<version>${jersey.version}</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>com.sun.jersey</groupId>
 									<artifactId>jersey-server</artifactId>
-									<version>1.6</version>
+									<version>${jersey.version}</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>com.sun.jersey.contribs</groupId>
 									<artifactId>jersey-spring</artifactId>
-									<version>1.6</version>
+									<version>${jersey.version}</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>com.sun.jersey</groupId>
 									<artifactId>jersey-client</artifactId>
-									<version>1.6</version>
+									<version>${jersey.version}</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
@@ -412,32 +414,32 @@
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-rt</artifactId>
-			<version>1.21</version>
+			<version>${enunciate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-jersey-rt</artifactId>
-			<version>1.21</version>
+			<version>${enunciate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-core</artifactId>
-			<version>1.6</version>
+			<version>${jersey.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-server</artifactId>
-			<version>1.6</version>
+			<version>${jersey.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey.contribs</groupId>
 			<artifactId>jersey-spring</artifactId>
-			<version>1.6</version>
+			<version>${jersey.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-client</artifactId>
-			<version>1.6</version>
+			<version>${jersey.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

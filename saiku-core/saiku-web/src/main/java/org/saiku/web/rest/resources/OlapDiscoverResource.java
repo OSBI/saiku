@@ -20,18 +20,16 @@
 
 package org.saiku.web.rest.resources;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
-import javax.jws.WebService;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.codehaus.enunciate.rest.annotations.JSONP;
-import org.codehaus.enunciate.rest.annotations.RESTEndpoint;
 import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimension;
@@ -45,9 +43,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@WebService
-@RESTEndpoint
-@JSONP
 @RolesAllowed (
   "ROLE_USER"
 )

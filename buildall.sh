@@ -9,4 +9,5 @@ cd saiku-ui
 mvn clean package install:install-file -Dfile=target/saiku-ui-2.1-SNAPSHOT.war  -DgroupId=org.saiku -DartifactId=saiku-ui -Dversion=2.1-SNAPSHOT -Dpackaging=war
 cd ../saiku-server
 mvn clean package
-
+cd ../saiku-bi-platform-plugin
+mvn clean package

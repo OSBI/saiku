@@ -1,5 +1,5 @@
 <enunciate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="http://enunciate.codehaus.org/schemas/enunciate-1.21.xsd">
+	xsi:noNamespaceSchemaLocation="http://enunciate.codehaus.org/schemas/enunciate-1.23.xsd">
 
 	<api-classes>
 		<include pattern="org.saiku.web.rest.**" />

@@ -16,6 +16,8 @@
 		<spring.version>3.0.3.RELEASE</spring.version>
 		<spring.security.version>3.0.3.RELEASE</spring.security.version>
 		<spring.security.tiger.version>2.0.6.RELEASE</spring.security.tiger.version>
+        <enunciate.version>1.23</enunciate.version>
+        <jersey.version>1.8</jersey.version>
 	</properties>
 
 	<build>
@@ -62,7 +64,7 @@
 			<plugin>
 				<groupId>org.codehaus.enunciate</groupId>
 				<artifactId>maven-enunciate-spring-plugin</artifactId>
-				<version>1.21</version>
+				<version>${enunciate.version}</version>
 				<configuration>
 					<configFile>enunciate.xml</configFile>
 				</configuration>
@@ -180,13 +182,19 @@
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-core</artifactId>
-			<version>1.5-SNAPSHOT</version>
+			<version>${jersey.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-server</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		
+ 		<!-- <dependency>
 			<groupId>com.sun.jersey.experimental.hypermedia-action</groupId>
 			<artifactId>hypermedia-action-server</artifactId>
-			<version>1.5-SNAPSHOT</version>
-		</dependency>
+			<version>${jersey.version}-SNAPSHOT</version>
+		</dependency> -->  
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>jsr311-api</artifactId>
@@ -195,7 +203,7 @@
 		<dependency>
 			<groupId>com.sun.jersey.jersey-test-framework</groupId>
 			<artifactId>jersey-test-framework-core</artifactId>
-			<version>1.5-SNAPSHOT</version>
+			<version>${jersey.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -207,27 +215,27 @@
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-gwt-rt</artifactId>
-			<version>1.21</version>
+			<version>${enunciate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-jersey-rt</artifactId>
-			<version>1.21</version>
+			<version>${enunciate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-amf-rt</artifactId>
-			<version>1.21</version>
+			<version>${enunciate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-obj-c</artifactId>
-			<version>1.21</version>
+			<version>${enunciate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-c</artifactId>
-			<version>1.21</version>
+			<version>${enunciate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -238,7 +246,7 @@
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-rt</artifactId>
-			<version>1.21</version>
+			<version>${enunciate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -254,7 +262,7 @@
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-spring3-app-rt</artifactId>
-			<version>1.21</version>
+			<version>${enunciate.version}</version>
 		</dependency>
 
 
