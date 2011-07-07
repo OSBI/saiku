@@ -29,9 +29,6 @@ var view = {
             return false;
         };
 
-        /** Show all UI elements. */
-        $('#header, #tab_panel').show();
-
         if (PLUGIN != "true") {
             $('#toolbar, #tabs').show();
             /** Add an event handler to all toolbar buttons. */
@@ -90,54 +87,6 @@ var view = {
                     }
                 }
             });
-        });
-    },
-
-    /** Destroy the user interface. */
-    destroy_ui : function () {
-        $('#header, #tab_panel').hide();
-    },
-
-    /**
-     * Populate a select box with available schemas and cubes.
-     * @param tab_index {Integer} Index of the selected tab.
-     */
-    load_cubes : function(tab_index) {
-        var $tab = view.tabs.tabs[tab_index].content;
-        var $cubes = $tab.find('.cubes');
-        $cubes.append('<option>Select a cube</option>');
-
-        view.tabs.tabs[tab_index].data['navigation'] = new Array();
-        var storage_id = 0;
-
-        /** Loop through available connections and populate the select box. */
-        $.each(model.connections, function(i,connection){
-            $.each(connection.catalogs, function(cat_i,catalog){
-                $.each(catalog.schemas, function(i,schema){
-                
-                    $cubes.append('<optgroup label="'+schema['name']+'">');
-                    $.each(schema.cubes, function(i,cube){
-                        $("<option />")
-                        .attr({
-                            'value': storage_id
-                        })
-                        .text(cube['name'])
-                        .appendTo($cubes);
-                        view.tabs.tabs[tab_index].data['navigation'][storage_id] = {
-                            'connectionName': connection['name'],
-                            'catalogName': catalog['name'],
-                            'schema': schema['name'],
-                            'cube': cube['name']
-                        };
-                        storage_id++;
-                    });
-                    $cubes.append('</optgroup>');
-                });
-            });
-        });
-
-        $cubes.change(function() {
-            model.new_query(tab_index);
         });
     },
 
