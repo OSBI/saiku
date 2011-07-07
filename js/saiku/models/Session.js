@@ -45,8 +45,6 @@ var Session = Backbone.Model.extend({
             connections: response
         });
         
-        console.log(this.cubes);
-        
         // Show UI
         $(Saiku.toolbar.el).prependTo($("#header"));
         $("#header").show();

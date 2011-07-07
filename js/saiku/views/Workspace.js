@@ -38,7 +38,8 @@ var Workspace = Backbone.View.extend({
     className: 'tab_container',
     
     events: {
-        'click .sidebar_separator': 'toggle_sidebar'
+        'click .sidebar_separator': 'toggle_sidebar',
+        'change .cubes': 'new_query'
     },
     
     template: function() {
@@ -81,5 +82,10 @@ var Workspace = Backbone.View.extend({
         var new_margin = $(this.el).find('.sidebar').hasClass('hide') ?
                 5 : 265;
         $(this.el).find('.workspace_inner').css({ 'margin-left': new_margin });
+    },
+    
+    new_query: function() {
+        var selected_cube = $(this.el).find('.cubes').val();
+        this.query = new Query({ cube: selected_cube });
     }
 });
