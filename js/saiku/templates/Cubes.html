@@ -5,7 +5,7 @@
             <% _.each(catalog.schemas, function(schema) { %>
                 <optgroup label="<%= schema.name %>">
                 <% _.each(schema.cubes, function(cube) { %>
-                    <option value=""><%= cube.name %></option>
+                    <option value="<%= connection.name %>/<%= catalog.name %>/<%= schema.name %>/<%= cube.name %>"><%= cube.name %></option>
                 <% }); %>
                 </optgroup>
             <% }); %>
