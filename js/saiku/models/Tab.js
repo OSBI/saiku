@@ -25,7 +25,8 @@ var Tab = Backbone.View.extend({
     initialize: function(args) {
         _.extend(this, Backbone.Events);
         
-        this.content = args && args.content ? args.content : new Workspace;
+        this.content = args && args.content ? 
+                args.content : new Workspace({ tab: this });
         this.id = _.uniqueId('tab_');
     },
     
@@ -61,6 +62,9 @@ var Tab = Backbone.View.extend({
         
         // Select the selected tab
         $(this.el).addClass('selected');
+        
+        // Trigger select event
+        this.trigger('tab:select');
         
         return false;
     },
