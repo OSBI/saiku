@@ -41,7 +41,7 @@
 								<copy todir="target/${project.artifactId}-foodmart-${project.version}">
 									<fileset dir="target/${project.artifactId}-${project.version}/" />
 								</copy>
-								<unzip dest="target/${project.artifactId}-foodmart-${project.version}">
+								<unzip dest="target/${project.artifactId}-foodmart-${project.version}/WEB-INF/classes/">
 									<fileset dir="${basedir}/../util/">
 										<include name="foodmart.zip" />
 									</fileset>

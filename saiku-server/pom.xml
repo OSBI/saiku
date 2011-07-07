@@ -106,7 +106,7 @@
       									</tarfileset>
            						</tar>
            						
-           						<unzip dest="target/dist/saiku-server/tomcat/webapps/saiku/">
+           						<unzip dest="target/dist/saiku-server/tomcat/webapps/saiku/WEB-INF/classes/">
 									<fileset dir="${basedir}/../util/">
 										<include name="foodmart.zip" />
 									</fileset>
