@@ -38,11 +38,13 @@ var Workspace = Backbone.View.extend({
     className: 'tab_container',
     
     events: {
-        'click .sidebar_separator': 'toggleSidebar'
+        'click .sidebar_separator': 'toggle_sidebar'
     },
     
     template: function() {
-        return Saiku.template.get('Workspace')();        
+        return Saiku.template.get('Workspace')({
+            cubes: Saiku.session.cubes
+        });        
     },
     
     render: function() {
@@ -62,7 +64,7 @@ var Workspace = Backbone.View.extend({
         this.tab = args.tab;
         
         // Adjust tab when selected
-        _.bindAll(this, "adjust", "toggleSidebar");
+        _.bindAll(this, "adjust", "toggle_sidebar");
         this.tab.bind('tab:select', this.adjust);
         $(window).resize(this.adjust);
     },
@@ -73,7 +75,7 @@ var Workspace = Backbone.View.extend({
         $separator.height($("body").height() - 87);
     },
     
-    toggleSidebar: function() {
+    toggle_sidebar: function() {
         // Toggle sidebar
         $(this.el).find('.sidebar').toggleClass('hide');
         var new_margin = $(this.el).find('.sidebar').hasClass('hide') ?
