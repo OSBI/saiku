@@ -13,6 +13,9 @@ var Session = Backbone.Model.extend({
             session: this
         });
         
+        // Attach a custom event bus to this model
+        _.extend(this, Backbone.Events);
+        _.bindAll(this, "process_login");
         
         $(document).ready(function() {
             form.render().open();
@@ -28,18 +31,32 @@ var Session = Backbone.Model.extend({
         this.password = password;
         
         // Create session and fetch connection information
-        this.fetch();
+        this.fetch({ success: this.process_login });
+        
+        // Delete login form
+        $(this.form.el).dialog('destroy').remove();
+        
+        return false;
+    },
+    
+    process_login: function(model, response) {
+        // Generate cube navigation for reuse
+        this.cubes = Saiku.template.get('Cubes')({
+            connections: response
+        });
+        
+        console.log(this.cubes);
         
         // Show UI
         $(Saiku.toolbar.el).prependTo($("#header"));
         $("#header").show();
         Saiku.tabs.render();
         
-        // Add initial tab and delete login form
+        // Add initial tab
         Saiku.tabs.add(new Tab);
-        $(this.form.el).dialog('destroy').remove();
         
-        return false;
+        // Notify the rest of the application that login was successful
+        this.trigger('login_successful');
     },
     
     url: function() {

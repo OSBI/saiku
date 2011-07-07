@@ -4,7 +4,7 @@
  * this is the class which you want to override.
  * @returns {SaikuServer}
  */
-Backbone.sync = function(method, model, success, error) {
+Backbone.sync = function(method, model, options) {
     methodMap = {
         'create': "POST",
         'read': "GET",
@@ -29,8 +29,9 @@ Backbone.sync = function(method, model, success, error) {
       data:         modelJSON,
       dataType:     'json',
       processData:  false,
-      success:      success,
-      error:        error
+      success:      options.success,
+      error:        options.error,
+      processData:  false
     };
 
     // For older servers, emulate JSON by encoding the request into an HTML-form.
