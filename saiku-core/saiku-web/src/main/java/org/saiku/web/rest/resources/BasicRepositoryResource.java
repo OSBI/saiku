@@ -85,6 +85,9 @@ public class BasicRepositoryResource {
 			path = path.substring("classpath:".length(),path.length());
 			repoURL = this.getClass().getClassLoader().getResource(path);
 		} else {
+			if (!path.endsWith("" + File.separatorChar)) {
+				path += File.separatorChar;
+			}
 			repoURL = new URL(path);
 		}
 		if (repoURL == null) {

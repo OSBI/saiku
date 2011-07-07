@@ -7,7 +7,7 @@
 	<bean id="classpathDsManager" class="org.saiku.service.datasource.ClassPathResourceDatasourceManager">
 		<property name="path" value="classpath:saiku-datasources"/>
 	</bean>
- <!--  <property name="path" value="file:///var/saiku/saiku-datasources"/> -->
+ <!--  <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
  
 	<bean id="datasourceServiceBean" class="org.saiku.service.datasource.DatasourceService">
 		<property name="datasourceManager" ref="classpathDsManager" />
@@ -42,6 +42,6 @@
 		<property name="path" value="classpath:saiku-repository"/>
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
-	 <!--  <property name="path" value="file:///var/saiku/saiku-datasources"/> -->
+	 <!--  <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
 	
 </beans>
