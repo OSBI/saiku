@@ -1,24 +1,5 @@
 var view = {
-    /** 
-     * Toggle (hide/show) the sidebar. 
-     */
-    toggle_sidebar: function($sidebar_separator) {
-        // Find the tab
-        var $tab = $sidebar_separator.closest('.tab');
-    	
-        // Get the width of the sidebar.
-        var sidebar_width = $tab.find('.sidebar').width();
-       
-        if (sidebar_width == 260) {
-            // If the sidebar is not hidden.
-            $tab.find('.sidebar').css('width', 0);
-            $tab.find('.workspace_inner').css('margin-left', 5);
-        } else {
-            // If the sidebar is hidden.
-            $tab.find('.sidebar').css('width', 260);
-            $tab.find('.workspace_inner').css('margin-left', 265);
-        }
-    },
+
 
     /** Initialise the user interface. */
     draw_ui : function () {
