@@ -11,6 +11,6 @@ var Query = Backbone.Model.extend({
     },
     
     url: function() {
-        return Saiku.session.username + "/query/" + this.id;
+        return Saiku.session.username + "/query/" + this.name;
     }
 });
