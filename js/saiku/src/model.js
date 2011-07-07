@@ -27,55 +27,6 @@
  * @class
  */
 var model = {
-
-
-    /**
-	 * Create a new session and unhide the UI.
-	 */
-    get_session: function () {
-        model.request({
-            method: "GET",
-            url: model.username + "/discover",
-            success: function (data, textStatus, XMLHttpRequest) {
-                model.connections = data;
-                view.draw_ui();
-                controller.add_tab();
-                view.hide_processing();
-                
-                if (typeof QUERY !== "undefined") {
-                    model.new_query(0, QUERY, model.load_cube );
-                }
-
-            }
-        });
-    },
-
-    /**
-	 * Delete a query
-	 * @param tab_index The tab containing the query
-	 */
-    delete_query: function (tab_index) {
-        if (view.tabs.tabs[tab_index].data['query_name'] !== undefined) {
-            model.request({
-                method: "DELETE",
-                url: model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/"
-            });
-        }
-    },
-
-    /**
-	 * Generate a new query_id
-	 * @param tab_index {Integer} Index of the selected tab.
-	 * @return A new unique query_id
-	 */
-    generate_query_id: function (tab_index) {
-        view.tabs.tabs[tab_index].data['query_name'] = 'xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0,
-            v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        }).toUpperCase();
-    },
-
     /**
 	 * Populate the dimension and measure tree and initialise draggable,
 	 * droppable and sortable items.

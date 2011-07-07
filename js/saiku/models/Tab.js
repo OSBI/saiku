@@ -32,7 +32,7 @@ var Tab = Backbone.View.extend({
     
     /**
      * Render the tab and its contents
-     * @returns {___anonymous78_1544}
+     * @returns tab
      */
     render: function() {
         // Render the content
@@ -49,7 +49,8 @@ var Tab = Backbone.View.extend({
      * garbage collection to avoid memory leaks
      */
     destroy: function() {
-        // delete data
+        // Delete data
+        this.content.query.destroy();
     },
     
     /**
