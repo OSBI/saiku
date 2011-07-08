@@ -55,7 +55,6 @@ var Workspace = Backbone.View.extend({
     new_query: function() {
         // Delete the existing query
         if (this.query) {
-            console.log('Deleting query');
             this.query.destroy();
         }
         
@@ -71,8 +70,7 @@ var Workspace = Backbone.View.extend({
         
         this.measure_list = new DimensionList({
             template: Saiku.session.cubes[selected_cube].measures.template
-        }).render(); 
-        console.log(this.measure_list);
+        }).render();
         $(this.el).find('.measure_tree').html('').append($(this.measure_list.el));
         
         // Clear workspace

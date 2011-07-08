@@ -30,6 +30,6 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     save_query: function() {
-        console.log('save');
+        // TODO - save query
     }
 });
