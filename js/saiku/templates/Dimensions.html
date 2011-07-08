@@ -1,0 +1,23 @@
+<ul>
+<% _.each(dimensions, function(dimension) { %>
+    <li>
+        <span class="root collapsed">
+            <a class="folder_collapsed" href="#"><%= dimension.name %></a>
+        </span>
+        <ul>
+        <% _.each(dimension.hierarchies, function(hierarchy) { %>
+            <% if (dimension.hierarchies.length > 1) { %>
+                <li class="hierarchy hide">
+                    <a class="dimension" href="#"><%= hierarchy.name %></a>
+                </li>
+            <% } %>
+            <% _.each(hierarchy.levels, function(level) { %>
+                <li class="hide"><a title="[<%= hierarchy.name %>].[<%= level.name %>]" 
+                    class="dimension" href="#"><%= level.name %></a>
+                </li>
+            <% }); %>
+        <% }); %>
+        </ul>
+<% }); %>
+</ul>
+                

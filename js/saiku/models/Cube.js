@@ -1,3 +1,25 @@
+var $target;
+var DimensionList = Backbone.View.extend({
+    events: {
+        'click a': 'select'
+    },
+    
+    initialize: function(args) {
+        $(this.el).html(args.template)
+            .find('.hide').hide().removeClass('hide');
+    },
+    
+    select: function(event) {
+        $target = $(event.target);
+        if ($target.parents('span').hasClass('root')) {
+            $target.toggleClass('folder_collapse').toggleClass('folder_expand');
+            $target.parents('span').toggleClass('collapse').toggleClass('expand');
+            $target.parents('li').find('ul').children('li').toggle();
+        }
+        return false;
+    }
+});
+
 var Dimension = Backbone.Model.extend({
     initialize: function(args) {
         this.url = Saiku.session.username + "/discover/" 
@@ -5,7 +27,7 @@ var Dimension = Backbone.Model.extend({
     },
     
     parse: function(response) {
-        this.template = _.template("")({
+        this.template = Saiku.template.get('Dimensions')({
             dimensions: response
         });
         
