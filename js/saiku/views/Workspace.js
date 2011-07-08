@@ -8,7 +8,7 @@ var Workspace = Backbone.View.extend({
     
     template: function() {
         return Saiku.template.get('Workspace')({
-            cubes: Saiku.session.cubes
+            cube_navigation: Saiku.session.cube_navigation
         });        
     },
     
