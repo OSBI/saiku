@@ -15,8 +15,6 @@ Backbone.sync = function(method, model, options) {
     var type = methodMap[method];
     var url = Saiku.settings.REST_URL
         + (_.isFunction(model.url) ? model.url() : model.url);
-    
-    console.log(model.attributes);
 
     // Default JSON-request options.
     var params = {

@@ -14,7 +14,6 @@ var Query = Backbone.Model.extend({
         this.parse_cube();
         
         // Create the query on the server workspace
-        console.log('saving');
         this.save();
     },
     

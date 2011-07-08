@@ -6,7 +6,8 @@ var Saiku = {
         PLUGIN: false,
         BASE_URL: "/",
         TOMCAT_WEBAPP: "saiku/",
-        REST_MOUNT_POINT: "rest/saiku/"
+        REST_MOUNT_POINT: "rest/saiku/",
+        DIMENSION_PREFETCH: true
     },
     
     /**
