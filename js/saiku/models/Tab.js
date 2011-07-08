@@ -6,6 +6,7 @@ var Tab = Backbone.View.extend({
     
     events: {
         'click a': 'select',
+        'mousedown a': 'remove',
         'click span': 'remove'
     },
     
@@ -60,7 +61,7 @@ var Tab = Backbone.View.extend({
      */
     destroy: function() {
         // Delete data
-        this.content.query.destroy();
+        this.content && this.content.query && this.content.query.destroy();
     },
     
     /**
@@ -84,15 +85,17 @@ var Tab = Backbone.View.extend({
      * Remove a tab
      * @returns {Boolean}
      */
-    remove: function() {
-        // Remove the tab element
-        $(this.el).remove();
-        
-        // Remove the tab
-        this.destroy();
-        
-        // Remote the tab object from the container
-        this.parent.remove(this);
+    remove: function(event) {
+        if (!event || event.which === 2) {
+            // Remove the tab element
+            $(this.el).remove();
+            
+            // Remove the tab
+            this.destroy();
+            
+            // Remote the tab object from the container
+            this.parent.remove(this);
+        }
         
         return false;
     }
