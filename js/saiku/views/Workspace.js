@@ -69,6 +69,12 @@ var Workspace = Backbone.View.extend({
         }).render();        
         $(this.el).find('.dimension_tree').html('').append($(this.dimension_list.el));
         
+        this.measure_list = new DimensionList({
+            template: Saiku.session.cubes[selected_cube].measures.template
+        }).render(); 
+        console.log(this.measure_list);
+        $(this.el).find('.measure_tree').html('').append($(this.measure_list.el));
+        
         // Clear workspace
         this.clear();
     }

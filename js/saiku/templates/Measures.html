@@ -1,0 +1,14 @@
+<ul>
+	<li>
+		<span class="root expand">
+		   <a href="#" title="Measures" class="folder_expand">Measures</a>
+		</span>
+		<ul>
+		<% _.each(measures, function(measure) { %>
+		    <li><a title="[Measures].[<%= measure.name %>]" 
+		        class="measure" href="#"><%= measure.name %></a>
+		    </li>
+		<% }); %>
+		</ul>
+    </li>
+</ul>

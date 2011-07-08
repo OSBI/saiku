@@ -12,8 +12,8 @@ var DimensionList = Backbone.View.extend({
     select: function(event) {
         $target = $(event.target);
         if ($target.parents('span').hasClass('root')) {
-            $target.toggleClass('folder_collapse').toggleClass('folder_expand');
-            $target.parents('span').toggleClass('collapse').toggleClass('expand');
+            $target.toggleClass('folder_collapsed').toggleClass('folder_expand');
+            $target.parents('span').toggleClass('collapsed').toggleClass('expand');
             $target.parents('li').find('ul').children('li').toggle();
         }
         return false;
@@ -42,8 +42,8 @@ var Measure = Backbone.Model.extend({
     },
     
     parse: function(response) {
-        this.template = _.template("")({
-            dimensions: response
+        this.template = Saiku.template.get('Measures')({
+            measures: response
         });
         
         return response;
