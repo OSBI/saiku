@@ -10,10 +10,20 @@ var Tab = Backbone.View.extend({
     },
     
     template: function() {
-        return _.template("<a href='#<%= id %>'>New Query</a>" +
+        // Generate caption
+        var caption = '';
+        if (this.content && this.content.query && this.content.query.name) {
+            caption = this.content.query.name;
+        } else {
+            caption = "Unsaved Query (" + this.parent.queryCount + ")";
+        }
+        
+        // Create tab
+        return _.template("<a href='#<%= id %>'><%= caption %></a>" +
                 "<span class='close_tab'>Close tab</span>")
             ({
-                id: this.id
+                id: this.id,
+                caption: caption
             });
     },
     
@@ -93,6 +103,8 @@ var Tab = Backbone.View.extend({
  */
 var TabSet = Backbone.View.extend({
     className: 'tabs',
+    queryCount: 0,
+    
     _tabs: [],
     
     /**
@@ -113,6 +125,7 @@ var TabSet = Backbone.View.extend({
     add: function(tab) {
         // Add it to the set
         this._tabs.push(tab);
+        this.queryCount++;
         tab.parent = this;
         
         // Render it in the background, then select it
