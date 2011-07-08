@@ -1,39 +1,51 @@
 var Dimension = Backbone.Model.extend({
     initialize: function(args) {
-        this.parent = args.parent;
+        this.key = args.key;
     },
     
     url: function() {
         return Saiku.session.username + "/discover/" 
-            + this.parent.key + "/dimensions";
+            + this.key + "/dimensions";
+    },
+    
+    parse: function(response) {
+        this.template = _.template("")({
+            dimensions: response
+        });
+        
+        return response;
     }
 });
 
 var Measure = Backbone.Model.extend({
     initialize: function(args) {
-        this.parent = args.parent;
+        this.key = args.key;
     },
     
     url: function() {
         return Saiku.session.username + "/discover/" 
-            + this.parent.key + "/measures";
+            + this.key + "/measures";
+    },
+    
+    parse: function(response) {
+        this.template = _.template("")({
+            dimensions: response
+        });
+        
+        return response;
     }
 });
 
 var Cube = Backbone.Model.extend({ 
     initialize: function(args) {
         this.key = args.key;
-        this.dimensions = new Dimension({ parent: this });
-        this.measures = new Measure({ parent: this });
-        
-        // Make sure fetch can still access children
-        _.bindAll(this, "fetch");
+        this.dimensions = new Dimension({ key: this.key });
+        this.measures = new Measure({ key: this.key });
     },
     
     fetch: function() {
-        console.log("I *would* be fetching the dimensions for " + this.key + " now...");
         this.fetched = true;
-        //this.dimensions.fetch();
-        //this.measures.fetch();
+        this.dimensions.fetch();
+        this.measures.fetch();
     }
 });

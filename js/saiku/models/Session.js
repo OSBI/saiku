@@ -75,12 +75,14 @@ var Session = Backbone.Model.extend({
     },
     
     prefetch_dimensions: _.throttle(function() {
-        _.detect(this.cubes, function(obj) {
+        var next_cube = _.detect(this.cubes, function(obj) {
             return ! obj.fetched;
-        }).fetch();
+        });
+        
+        next_cube && next_cube.fetch();
         
         this.prefetch_dimensions();
-    }, 500),
+    }, 200),
     
     url: function() {
         return this.username + "/discover/";
