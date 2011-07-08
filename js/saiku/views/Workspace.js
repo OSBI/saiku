@@ -53,9 +53,21 @@ var Workspace = Backbone.View.extend({
     },
     
     new_query: function() {
+        // Delete the existing query
+        if (this.query) {
+            console.log('Deleting query');
+            this.query.destroy();
+        }
+        
         // Initialize the new query
         var selected_cube = $(this.el).find('.cubes').val();
         this.query = new Query({ cube: selected_cube });
+        
+        // Create new DimensionList and MeasureList
+        this.dimension_list = new DimensionList({
+            template: Saiku.session.cubes[selected_cube].dimensions.template
+        }).render();        
+        $(this.el).find('.dimension_tree').html('').append($(this.dimension_list.el));
         
         // Clear workspace
         this.clear();

@@ -1,5 +1,5 @@
 var Template = function() {
-    this._catalog = ["WorkspaceToolbar", "Workspace", "Cubes"];
+    this._catalog = ["WorkspaceToolbar", "Workspace", "Cubes", "Dimensions"];
     this._templates = {};
     
     this.get = function(template) {
