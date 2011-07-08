@@ -13,10 +13,10 @@ Backbone.sync = function(method, model, options) {
     };
     
     var type = methodMap[method];
-    var modelJSON = (method === 'create' || method === 'update') ?
-                    JSON.stringify(model.toJSON()) : null;
     var url = Saiku.settings.REST_URL
         + (_.isFunction(model.url) ? model.url() : model.url);
+    
+    console.log(model.attributes);
 
     // Default JSON-request options.
     var params = {
@@ -25,21 +25,11 @@ Backbone.sync = function(method, model, options) {
       password:     Saiku.session.password,
       type:         type,
       cache:        false,
-      contentType:  'application/json',
-      data:         modelJSON,
+      data:         model.attributes,
       dataType:     'json',
-      processData:  false,
       success:      options.success,
-      error:        options.error,
-      processData:  false
+      error:        options.error
     };
-
-    // For older servers, emulate JSON by encoding the request into an HTML-form.
-    if (Backbone.emulateJSON) {
-      params.contentType = 'application/x-www-form-urlencoded';
-      params.processData = true;
-      params.data        = modelJSON ? {model : modelJSON} : {};
-    }
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
     // And an `X-HTTP-Method-Override` header.

@@ -38,6 +38,11 @@ var Saiku = {
  */
 Backbone.emulateHTTP = false;
 
+/**
+ * Send form data instead of serialized JSON
+ */
+Backbone.emulateJSON = true;
+
 Saiku.settings.REST_URL = Saiku.settings.BASE_URL
     + Saiku.settings.TOMCAT_WEBAPP 
     + Saiku.settings.REST_MOUNT_POINT;

@@ -59,6 +59,10 @@ var Workspace = Backbone.View.extend({
         return this; 
     },
     
+    clear: function() {
+        // TODO - prepare the workspace for a new query
+    },
+    
     initialize: function(args) {
         // Generate toolbar and append to workspace
         this.toolbar = new WorkspaceToolbar;
@@ -85,7 +89,11 @@ var Workspace = Backbone.View.extend({
     },
     
     new_query: function() {
+        // Initialize the new query
         var selected_cube = $(this.el).find('.cubes').val();
         this.query = new Query({ cube: selected_cube });
+        
+        // Clear workspace
+        this.clear();
     }
 });
