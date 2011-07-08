@@ -130,6 +130,7 @@ html, body {
     /*margin-bottom: 3px;*/
     padding-top: 3px;
     text-align: left;
+    overflow: hidden;
 }
 .tabs ul {
     background: #F8F8F8;
@@ -185,7 +186,7 @@ html, body {
     background: transparent url('../../../images/src/tabs_cross_off.png') 0px 1px no-repeat;
     display: inline-block;
     height: 18px;
-    text-indent: -999px;
+    text-indent: -9999px;
     width: 20px;
 
 }
