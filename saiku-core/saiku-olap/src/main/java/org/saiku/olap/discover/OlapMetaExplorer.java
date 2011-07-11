@@ -206,6 +206,13 @@ public class OlapMetaExplorer {
 	public List<SaikuDimension> getAllDimensions(SaikuCube cube) throws SaikuOlapException {
 		Cube nativeCube = getNativeCube(cube);
 		List<SaikuDimension> dimensions = ObjectUtil.convertDimensions(nativeCube.getDimensions());
+		for (int i=0; i < dimensions.size();i++) {
+			SaikuDimension dim = dimensions.get(i);
+			if (dim.getName().equals("Measures") || dim.getUniqueName().equals("[Measures]")) {
+				dimensions.remove(i);
+				break;
+			}
+		}
 		Collections.sort(dimensions);
 		return dimensions;
 	}
