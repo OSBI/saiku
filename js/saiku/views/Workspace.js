@@ -20,6 +20,10 @@ var Workspace = Backbone.View.extend({
         this.toolbar.render();
         $(this.el).find('.workspace_toolbar').append($(this.toolbar.el));
         
+        // Generate drop zones
+        this.drop_zones.render();
+        $(this.drop_zones.el).insertAfter($(this.el).find('.workspace_toolbar'));
+        
         return this; 
     },
     
@@ -32,10 +36,16 @@ var Workspace = Backbone.View.extend({
         this.toolbar = new WorkspaceToolbar;
         this.tab = args.tab;
         
+        // Create drop zones
+        this.drop_zones = new WorkspaceDropZone;
+        
         // Adjust tab when selected
-        _.bindAll(this, "adjust", "toggle_sidebar");
+        _.bindAll(this, "adjust", "toggle_sidebar", "flash_cube_navigation");
         this.tab.bind('tab:select', this.adjust);
         $(window).resize(this.adjust);
+        
+        // Flash cube navigation when rendered
+        this.tab.bind('tab_rendered', this.flash_cube_navigation);
     },
     
     adjust: function() {
@@ -50,6 +60,14 @@ var Workspace = Backbone.View.extend({
         var new_margin = $(this.el).find('.sidebar').hasClass('hide') ?
                 5 : 265;
         $(this.el).find('.workspace_inner').css({ 'margin-left': new_margin });
+    },
+    
+    flash_cube_navigation: function() {
+        // Draw user's attention to cube navigation
+        $(this.el).find('.cubes')
+            .parent()
+            .animate({ backgroundColor: '#AC1614' }, 'fast')
+            .animate({ backgroundColor: '#fff' }, 'fast');
     },
     
     new_query: function() {
