@@ -134,6 +134,9 @@ var TabSet = Backbone.View.extend({
         // Render it in the background, then select it
         tab.render().select();
         $(tab.el).appendTo($(this.el).find('ul'));
+        
+        // Trigger 'render' event
+        tab.trigger('tab_rendered');
     },
     
     /**
