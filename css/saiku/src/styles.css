@@ -838,7 +838,7 @@ html, body {
     background: #F9F9F9;
     border-bottom: 1px solid #CCC;
     font-weight: bold;
-    height: 24px;
+    height: 32px;
     margin: 0 0 10px 0;
     padding: 3px 10px 3px 5px;
     text-shadow: 1px 1px 0 #FFFFFF;
@@ -848,7 +848,7 @@ html, body {
 }
 .disabled_toolbar a.button:hover {
     border: none !important;
-    padding: 4px !important;
+    padding: 8px !important;
 }
 .workspace_toolbar ul {
     margin: 0;
@@ -866,19 +866,19 @@ html, body {
 .workspace_toolbar a.button {
     display: block;
     height: 16px;
-    padding: 4px;
+    padding: 8px;
     width: 16px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
 }
 .workspace_toolbar a.button:hover {
     border: 1px solid #CCC;
-    padding: 3px;
+    padding: 7px;
 }
 .workspace_toolbar a.on {
     border: 1px solid #CCC;
     background-color: #E0E0E0;
-    padding: 3px !important;
+    padding: 7px !important;
 }
 .workspace_toolbar .open {
     background-image: url('../../../images/src/folder.png');
