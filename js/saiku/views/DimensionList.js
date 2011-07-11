@@ -1,4 +1,8 @@
-var $target;
+/**
+ * Controls the appearance and behavior of the dimension list
+ * 
+ * This is where drag and drop lives
+ */
 var DimensionList = Backbone.View.extend({
     events: {
         'click a': 'select'
@@ -27,46 +31,12 @@ var DimensionList = Backbone.View.extend({
     },
     
     select: function(event) {
-        $target = $(event.target);
+        var $target = $(event.target);
         if ($target.parents('span').hasClass('root')) {
             $target.toggleClass('folder_collapsed').toggleClass('folder_expand');
             $target.parents('span').toggleClass('collapsed').toggleClass('expand');
             $target.parents('li').find('ul').children('li').toggle();
         }
         return false;
-    }
-});
-
-var Dimension = Backbone.Model.extend({
-    initialize: function(args) {
-        this.url = Saiku.session.username + "/discover/" 
-            + args.key + "/dimensions";
-    },
-    
-    parse: function(response) {
-        this.set({
-            template: Saiku.template.get('Dimensions')({
-                dimensions: response
-            })
-        });
-        
-        return response;
-    }
-});
-
-var Measure = Backbone.Model.extend({
-    initialize: function(args) {
-        this.url = Saiku.session.username + "/discover/" 
-            + args.key + "/measures";
-    },
-    
-    parse: function(response) {
-        this.set({ 
-            template: Saiku.template.get('Measures')({
-                measures: response
-            })
-        });
-        
-        return response;
     }
 });
