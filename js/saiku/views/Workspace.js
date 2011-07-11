@@ -64,11 +64,13 @@ var Workspace = Backbone.View.extend({
         
         // Create new DimensionList and MeasureList
         this.dimension_list = new DimensionList({
+            workspace: this,
             dimension: Saiku.session.dimensions[selected_cube]
         });        
         $(this.el).find('.dimension_tree').html('').append($(this.dimension_list.el));
         
         this.measure_list = new DimensionList({
+            workspace: this,
             dimension: Saiku.session.measures[selected_cube]
         });
         $(this.el).find('.measure_tree').html('').append($(this.measure_list.el));
