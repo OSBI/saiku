@@ -17,6 +17,10 @@ var Query = Backbone.Model.extend({
         this.save();
     },
     
+    parse: function() {
+        this.id = this.name;
+    },
+    
     parse_cube: function() {
         var parsed_cube = this.cube.split('/');
         this.attributes.connection = parsed_cube[0];
