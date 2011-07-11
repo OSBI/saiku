@@ -46,14 +46,18 @@ var Session = Backbone.Model.extend({
         });
         
         // Create cube objects
-        this.cubes = {};
+        this.dimensions = {};
+        this.measures = {};        
         _.each(response, function(connection) {
             _.each(connection.catalogs, function(catalog) {
                 _.each(catalog.schemas, function(schema) {
                     _.each(schema.cubes, function(cube) {
                         var key = connection.name + "/" + catalog.name + "/" 
                             + schema.name + "/" + cube.name;
-                        this.cubes[key] = new Cube({ key: key });
+                        this.dimensions[key] = new Dimension({ key: key });
+                        this.measures[key] = new Measure({ key: key });
+                        this.dimensions[key].fetch();
+                        this.measures[key].fetch();
                     }, this);
                 }, this);
             }, this);
@@ -62,27 +66,14 @@ var Session = Backbone.Model.extend({
         // Show UI
         $(Saiku.toolbar.el).prependTo($("#header"));
         $("#header").show();
-        Saiku.tabs.render();
         
         // Add initial tab
+        Saiku.tabs.render();
         Saiku.tabs.add(new Tab);
-        
-        // Prefetch dimensions
-        this.prefetch_dimensions();
         
         // Notify the rest of the application that login was successful
         this.trigger('login_successful');
     },
-    
-    prefetch_dimensions: _.throttle(function() {
-        var next_cube = _.detect(this.cubes, function(obj) {
-            return ! obj.fetched;
-        });
-        
-        next_cube && next_cube.fetch();
-        
-        this.prefetch_dimensions();
-    }, 200),
     
     url: function() {
         return this.username + "/discover/";

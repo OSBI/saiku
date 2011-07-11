@@ -1,5 +1,6 @@
 <ul>
 <% _.each(dimensions, function(dimension) { %>
+<% if (dimension.name != 'Measures') { %>
     <li>
         <span class="root collapsed">
             <a class="folder_collapsed" href="#"><%= dimension.name %></a>
@@ -18,6 +19,7 @@
             <% }); %>
         <% }); %>
         </ul>
+<% } %>
 <% }); %>
 </ul>
                 

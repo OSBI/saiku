@@ -5,7 +5,24 @@ var DimensionList = Backbone.View.extend({
     },
     
     initialize: function(args) {
-        $(this.el).html(args.template)
+        _.bindAll(this, "render");
+        
+        if (! args.dimension.has('template')) {
+            args.dimension.fetch({ 
+                success: function() {
+                    this.template = args.dimension.get('template');
+                    this.render(); 
+                }    
+            });
+        } else {
+            this.template = args.dimension.get('template');
+            this.render();
+        }
+        
+    },
+    
+    render: function() {
+        $(this.el).html(this.template)
             .find('.hide').hide().removeClass('hide');
     },
     
@@ -27,8 +44,10 @@ var Dimension = Backbone.Model.extend({
     },
     
     parse: function(response) {
-        this.template = Saiku.template.get('Dimensions')({
-            dimensions: response
+        this.set({
+            template: Saiku.template.get('Dimensions')({
+                dimensions: response
+            })
         });
         
         return response;
@@ -42,24 +61,12 @@ var Measure = Backbone.Model.extend({
     },
     
     parse: function(response) {
-        this.template = Saiku.template.get('Measures')({
-            measures: response
+        this.set({ 
+            template: Saiku.template.get('Measures')({
+                measures: response
+            })
         });
         
         return response;
-    }
-});
-
-var Cube = Backbone.Model.extend({ 
-    initialize: function(args) {
-        this.key = args.key;
-        this.dimensions = new Dimension({ key: this.key });
-        this.measures = new Measure({ key: this.key });
-    },
-    
-    fetch: function() {
-        this.fetched = true;
-        this.dimensions.fetch();
-        this.measures.fetch();
     }
 });
