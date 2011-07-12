@@ -13,7 +13,7 @@ Backbone.sync = function(method, model, options) {
     };
     
     var type = methodMap[method];
-    var url = Saiku.settings.REST_URL
+    var url = Settings.REST_URL
         + (_.isFunction(model.url) ? model.url() : model.url);
 
     // Default JSON-request options.
@@ -31,7 +31,7 @@ Backbone.sync = function(method, model, options) {
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
     // And an `X-HTTP-Method-Override` header.
-    if (Saiku.settings.PLUGIN && Backbone.emulateHTTP) {
+    if (Settings.PLUGIN && Backbone.emulateHTTP) {
       if (type === 'PUT' || type === 'DELETE') {
         if (Backbone.emulateJSON) params.data._method = type;
         params.type = 'POST';

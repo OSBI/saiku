@@ -9,17 +9,27 @@ var Session = Backbone.Model.extend({
     password: "",
         
     initialize: function() {
-        var form = this.form = new LoginForm({
-            session: this
-        });
-        
         // Attach a custom event bus to this model
         _.extend(this, Backbone.Events);
         _.bindAll(this, "process_login");
         
-        $(document).ready(function() {
+        // Check if credentials are already stored
+        if (sessionStorage) {
+            this.username = sessionStorage.getItem('username');
+            this.password = sessionStorage.getItem('password');
+        }
+    },
+    
+    get_credentials: function() {
+        if (! this.username && ! this.password && 1==2) {
+            // Open form and retrieve credentials
+            var form = this.form = new LoginForm({ session: this });
             form.render().open();
-        });
+        } else {
+            this.fetch({ success: this.process_login });
+        }
+        
+        return this;
     },
     
     error: function() {
@@ -28,7 +38,9 @@ var Session = Backbone.Model.extend({
     
     login: function(username, password) {
         this.username = username;
+        sessionStorage.setItem('username', username);
         this.password = password;
+        sessionStorage.setItem('password', password);
         
         // Create session and fetch connection information
         this.fetch({ success: this.process_login });
