@@ -2,14 +2,6 @@
  * Central object for handling global application state
  */
 var Saiku = {
-    settings: {
-        PLUGIN: false,
-        BASE_URL: "/",
-        TOMCAT_WEBAPP: "saiku/",
-        REST_MOUNT_POINT: "rest/saiku/",
-        DIMENSION_PREFETCH: true
-    },
-    
     /**
      * View which manages toolbar interactions
      */
@@ -23,7 +15,7 @@ var Saiku = {
     /**
      * Model which handles session and authentication
      */
-    session: new Session,
+    session: null,
     
     /**
      * Class which handles template loading
@@ -39,6 +31,10 @@ var Saiku = {
  */
 Backbone.emulateHTTP = false;
 
-Saiku.settings.REST_URL = Saiku.settings.BASE_URL
-    + Saiku.settings.TOMCAT_WEBAPP 
-    + Saiku.settings.REST_MOUNT_POINT;
+/**
+ * Up up and away!
+ */
+$(document).ready(function() {
+    Saiku.session = new Session;
+    Saiku.session.get_credentials();
+});
