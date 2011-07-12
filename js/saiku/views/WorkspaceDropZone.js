@@ -62,6 +62,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                     left: 35
                 }
             });
+        $cloned_li.data('original', ui.draggable);
         
         // Wrap with the appropriate parent element
         if ($cloned_el.hasClass('dimension')) {
@@ -89,6 +90,19 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
     
     remove_dimension: function(event, ui) {
+        // Reenable original element
+        ui.draggable.data('original')
+            .draggable('enable')
+            .css({ fontWeight: 'normal' });
+        
+        // Unhighlight the parent if applicable
+        if (ui.draggable.data('original').parents('.parent_dimension')
+                .children().children().children('.ui-state-disabled').length === 0) {
+            ui.draggable.data('original').parents('.parent_dimension')
+                .find('.root')
+                .css({fontWeight: "normal"});
+        }
+        
         // Remove dimension
         ui.draggable.remove();
         

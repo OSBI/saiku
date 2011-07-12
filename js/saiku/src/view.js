@@ -52,23 +52,6 @@ var view = {
             
         });
         
-        // Activate language selector
-        $("#language-selector").val(locale)
-        .change(function() {
-            locale = $("#language-selector").val();
-            $.ajax({
-                url: BASE_URL + '/i18n/' + locale + ".json",
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    if (data) {
-                        po_file = data;
-                        $('.i18n_translated').un_i18n();
-                        $('.i18n').i18n(po_file);
-                    }
-                }
-            });
-        });
     },
 
     /**
@@ -136,35 +119,6 @@ var view = {
         });
     },
 
-    /*load_selection_listbox : function($selection_listbox,axis, data, tab_index) {
-        $selection_listbox.find('select').remove();
-        $selection_listbox = $('<select size="10"/>').appendTo($selection_listbox);
-        $.each(data.selections, function(selection_iterator, selection) {
-            $item = $('<option value="' + selection.uniqueName + '" title="' + selection.uniqueName + '" class="' + selection.type +'">' + selection.uniqueName + '</otpion>')
-            .dblclick(function(e) {
-                e.preventDefault();
-                var url = "";
-                if (selection.type == "LEVEL") {
-                    url = model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/axis/" + axis + "/dimension/" + selection.dimensionUniqueName
-                    + "/hierarchy/" + selection.hierarchyUniqueName + "/" + selection.uniqueName;
-                }
-                if (selection.type == "MEMBER") {
-                    url = model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/axis/" + axis + "/dimension/" + selection.dimensionUniqueName
-                    + "/member/"  + selection.uniqueName;
-                }
-                model.request({
-                    method: "DELETE",
-                    url: url,
-                    success: function(data, textStatus, XMLHttpRequest) {
-                        $item.remove();
-                    }
-                });
-                return false;
-            });
-            $item.appendTo($selection_listbox);
-
-        });
-    },*/
         
     load_children : function($item, axis, $dimension_name, tab_index) {
         member = $item.find('a').attr('title');
@@ -204,129 +158,7 @@ var view = {
         });
         
     },
-    /**
-         * Populate the dimension tree for the selected tab.
-         * @param $tab {Object} Selected tab content.
-         * @param data {Object} Data object which contains the available dimension
-         *                      members.
-         */
-    load_dimensions : function(tab_index, data) {
-        // Remove any instances of a tree.
-        var $tab = view.tabs.tabs[tab_index].content;
-        $tab.find('.dimension_tree ul').remove();
-        
-        // Add a new dimension tree.
-        var $dimension_tree = $('<ul />').appendTo($tab.find('.dimension_tree'));
-        $dimension_tree.hide();
-        
-        // Populate the tree with first level dimensions.
-        var dimension_id = 0;
-        delete view.tabs.tabs[tab_index].data['dimensions'];
-        view.tabs.tabs[tab_index].data['dimensions'] = new Array();
-        $.each(data, function(dimension_iterator, dimension) {
-            if (this['name'] != 'Measures') {
-                // Make sure the first level has a unique rel attribute.
-                var $first_level = $('<li><span class="root collapsed"><a href="#" rel="d' + dimension_iterator + '" class="folder_collapsed">' + this['name'] + '</a></span></li>')
-                .appendTo($dimension_tree);
-                var $second_level = $('<ul />').appendTo($first_level);
-                $.each(dimension.hierarchies, function(hierarchy_iterator, hierarchy) {
-                    
-                    // Add the hierarchy name.
-                    $('<li class="hierarchy" />').html('<a href="#">' + hierarchy.caption + '</a>').appendTo($second_level);
-                    // Loop through each hierarchy.
-                    $.each(hierarchy.levels, function(level_iterator, level){
-                        dimension_id++;
-                        var $li = $('<li />').mousedown(function() {
-                            return false;
-                        })
-                        .attr('title', dimension_id)
-                        .appendTo($second_level);
-                        view.tabs.tabs[tab_index].data['dimensions'][dimension_id] = {
-                            'dimension': dimension.name,
-                            'hierarchy': hierarchy.uniqueName, //hierarchy.hierarchy
-                            'level': level.uniqueName, // level.level
-                            'dimensionuniquename' : dimension.uniqueName, // dimension.uniqueName
-                            'levelname' : level.name // level.name
-                        };
-                        // Check if the dimension level is (All) if so display the All dimension_name instead.
-                        if (level['caption'] === '(All)') {
-                            // Create a parent-child relationship with the rel attribute.
-                            var $second_level_link = $('<a href="#" class="dimension" rel="d' + dimension_iterator + '_' + hierarchy_iterator + '_' + level_iterator + '" title="' + level['uniqueName'] + '"> All ' + hierarchy.caption + '</a>')
-                            .appendTo($li);
-                        }else{
-                            // Create a parent-child relationship with the rel attribute.
-                            var $second_level_link = $('<a href="#" class="dimension" rel="d' + dimension_iterator + '_' + hierarchy_iterator + '_' + level_iterator + '" title="' + level['uniqueName'] + '">' + level['caption'] + '</a>')
-                            .appendTo($li);
-                        }
-                    });
-                });
-                /** After each loop of the dimension make sure that is more than one hierarchy, if not remove the hiearchy. */
-                if ($first_level.find('.hierarchy').length == 1) {
-                    $first_level.find('.hierarchy').remove();
-                }
-            }
-        });
-    },
 
-    /**
-         * Populate the measure tree for the selected tab.
-         * @param $tab {Object} Selected tab content.
-         * @param data {Object} Data object which contains the available measure
-         *                      members.
-         */
-    load_measures : function(tab_index, data, url) {
-        /** We need to fetch the measures separetely. */
-        var $tab = view.tabs.tabs[tab_index].content;
-
-        // Remove any instances of a tree.
-        $tab.find('.measure_tree ul').remove();
-        // Create a new measures tree.
-        var $measure_tree = $('<ul />').appendTo($tab.find('.measure_tree'));
-        $measure_tree.hide();
-        // Add the first static measures folder.
-        var $measures = $('<li><span class="root expand"><a href="#" title="Measures" rel="m0" class="folder_expand">Measures</a></span></li>')
-        .appendTo($measure_tree);
-        // Add a child list to the measures list.
-        var $measures_ul = $('<ul />').appendTo($measures);
-        
-        // Prep measures metadata
-        var measure_id = 0;
-        delete view.tabs.tabs[tab_index].data['measures'];
-        view.tabs.tabs[tab_index].data['measures'] = new Array();
-        
-        // Populate the tree with the children of MeasureLevel
-        $.each(data, function(i, member) {
-            measure_id++;
-        	
-            $('<li title="' + measure_id + '"><a href="#" class="measure" rel="m0_' + i + '"  title="'+this['uniqueName']+'">'+this['caption']+'</a></li>')
-            .mousedown(function() {
-                return false;
-            }).appendTo($measures_ul);
-            
-            view.tabs.tabs[tab_index].data['measures'][measure_id] = {
-                'measure': member.uniqueName // member.member
-            };
-        });
-        /** Prepare the workspace. */
-        view.prepare_workspace(tab_index);
-        
-        // Add a new measure tree.
-        var $measure_tree = $('<ul />').appendTo($tab.find('.measure_tree')).addClass('mtree');
-        // Populate the tree with first level measures.
-        $.each(data, function(i, dimension) {
-            if (this['name'] === 'Measures') {
-                var $measures = $('<li><span class="root expand"><a href="#" title="Measures" rel="m' + i + '" class="folder_expand">Measures</a></span></li>')
-                .appendTo($tab.find('.measure_tree ul'));
-                var $measures_ul = $('<ul />').appendTo($measures);
-                $.each(dimension.hierarchies[0].levels, function(j, level){
-                    $('<li><a href="#" class="measure" rel="m' + i + '_' + j + '"  title="'+this['level']+'">'+this['caption']+'</a></li>')
-                    .mousedown(function() {
-                        return false;
-                    }).appendTo($measures_ul);
-                });
-            }
-        });
-    },
 
     /**
          * Prepare the new query trees and workspace.
