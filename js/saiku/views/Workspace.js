@@ -22,25 +22,33 @@ var Workspace = Backbone.View.extend({
         
         // Generate drop zones
         this.drop_zones.render();
-        $(this.drop_zones.el).insertAfter($(this.el).find('.workspace_toolbar'));
+        $(this.drop_zones.el)
+            .insertAfter($(this.el).find('.workspace_toolbar'));
+        
+        // Add droppable behavior to sidebar
+        //$(this.el).find('.sidebar').droppable
         
         return this; 
     },
     
     clear: function() {
-        // TODO - prepare the workspace for a new query
+        // Prepare the workspace for a new query
+        $(this.el).find('.workspace_results,.connectable')
+            .html('');
     },
     
     initialize: function(args) {
+        // Maintain `this` in jQuery event handlers
+        _.bindAll(this, "adjust", "toggle_sidebar", "flash_cube_navigation");
+        
         // Generate toolbar and append to workspace
-        this.toolbar = new WorkspaceToolbar;
+        this.toolbar = new WorkspaceToolbar({ workspace: this });
         this.tab = args.tab;
         
         // Create drop zones
-        this.drop_zones = new WorkspaceDropZone;
+        this.drop_zones = new WorkspaceDropZone({ workspace: this });
         
         // Adjust tab when selected
-        _.bindAll(this, "adjust", "toggle_sidebar", "flash_cube_navigation");
         this.tab.bind('tab:select', this.adjust);
         $(window).resize(this.adjust);
         
