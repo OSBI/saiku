@@ -17,11 +17,12 @@ var Session = Backbone.Model.extend({
         if (sessionStorage) {
             this.username = sessionStorage.getItem('username');
             this.password = sessionStorage.getItem('password');
+            console.log(this.username);
         }
     },
     
     get_credentials: function() {
-        if (! this.username && ! this.password && 1==2) {
+        if (this.username === null || this.password === null) {
             // Open form and retrieve credentials
             var form = this.form = new LoginForm({ session: this });
             form.render().open();
