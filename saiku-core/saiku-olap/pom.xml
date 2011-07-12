@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>mondrian</artifactId>
-			<version>3.3-SNAPSHOT</version>
+			<version>3.3.0.14192</version>
 			<exclusions>
 				<exclusion>
 					<groupId>javax.servlet</groupId>
