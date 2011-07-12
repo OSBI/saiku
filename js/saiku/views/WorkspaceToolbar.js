@@ -4,6 +4,10 @@ var WorkspaceToolbar = Backbone.View.extend({
         'click a': 'call'
     },
     
+    initialize: function(args) {
+        this.workspace = args.workspace;
+    },
+    
     template: function() {
         return Saiku.template.get('WorkspaceToolbar')();
     },
