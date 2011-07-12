@@ -1,7 +1,7 @@
 <ul>
 <% _.each(dimensions, function(dimension) { %>
 <% if (dimension.name != 'Measures') { %>
-    <li>
+    <li class='parent_dimension'>
         <span class="root collapsed">
             <a class="folder_collapsed" href="#"><%= dimension.name %></a>
         </span>
