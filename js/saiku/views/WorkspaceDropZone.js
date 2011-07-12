@@ -5,7 +5,7 @@ var WorkspaceDropZone = Backbone.View.extend({
     
     events: {
         'drop': 'select_dimension',
-        'drag': 'move_dimension'
+        'click li': 'selections'
     },
     
     initialize: function(args) {
@@ -13,7 +13,8 @@ var WorkspaceDropZone = Backbone.View.extend({
         this.workspace = args.workspace;
         
         // Maintain `this` in jQuery event handlers
-        _.bindAll(this, "select_dimension", "move_dimension");
+        _.bindAll(this, "select_dimension", "move_dimension", 
+                "remove_dimension");
     },
     
     render: function() {
@@ -22,13 +23,21 @@ var WorkspaceDropZone = Backbone.View.extend({
         
         // Activate drop zones
         $(this.el).find('.connectable').droppable({
-            accept: '.ui-draggable'
+            accept: 'a.dimension, a.measure, .d_dimension, .d_measure'
         });
         
         return this; 
     },
     
     select_dimension: function(event, ui) {
+        if (ui.draggable.hasClass('d_measure') 
+                || ui.draggable.hasClass('d_dimension')) {
+            this.move_dimension(event, ui);
+            return;
+        }
+        
+        console.log('select dimension');
+        
         // Make the element and its parent bold
         ui.draggable
             .css({fontWeight: "bold"});
@@ -37,13 +46,15 @@ var WorkspaceDropZone = Backbone.View.extend({
             .css({fontWeight: "bold"});
         
         // Clone element and make draggable
-        var $cloned_el = ui.draggable.clone(true);
+        var $cloned_el = ui.draggable.clone()
+            .draggable('destroy');
         
         // Add the cloned element to the drop zone
         var $cloned_li = $("<li />").append($cloned_el)
             .appendTo($(event.target))
             .draggable({
-                cancel: '.not-draggable, .hierarchy',
+                helper: 'clone',
+                connectToSortable: '.connectable, .sidebar',
                 opacity: 0.60,
                 tolerance: 'pointer',
                 cursorAt: {
@@ -51,6 +62,8 @@ var WorkspaceDropZone = Backbone.View.extend({
                     left: 35
                 }
             });
+        
+        // Wrap with the appropriate parent element
         if ($cloned_el.hasClass('dimension')) {
             $cloned_li.addClass('d_dimension');
         } else {
@@ -59,9 +72,32 @@ var WorkspaceDropZone = Backbone.View.extend({
         
         // Disable dragging on original element
         ui.draggable.draggable('disable');
+        
+        // Prevent workspace from getting this event
+        event.stopPropagation();
     },
     
     move_dimension: function(event, ui) {
+        // Move the dimension
+        ui.draggable.detach()
+            .appendTo($(event.target));
         
+        // Prevent workspace from getting this event
+        event.stopPropagation();
+        
+        console.log('move dimension');
+    },
+    
+    remove_dimension: function(event, ui) {
+        // Remove dimension
+        ui.draggable.remove();
+        
+        console.log('remove dimension');
+    },
+    
+    selections: function() {
+        console.log('selections');
+        event.preventDefault();
+        return false;
     }
 });

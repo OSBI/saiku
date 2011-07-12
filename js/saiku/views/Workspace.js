@@ -3,7 +3,8 @@ var Workspace = Backbone.View.extend({
     
     events: {
         'click .sidebar_separator': 'toggle_sidebar',
-        'change .cubes': 'new_query'
+        'change .cubes': 'new_query',
+        'drop': 'remove_dimension'
     },
     
     template: function() {
@@ -25,8 +26,9 @@ var Workspace = Backbone.View.extend({
         $(this.drop_zones.el)
             .insertAfter($(this.el).find('.workspace_toolbar'));
         
-        // Add droppable behavior to sidebar
-        //$(this.el).find('.sidebar').droppable
+        // Activate sidebar for removing elements
+        $(this.el).find('.sidebar')
+            .droppable();
         
         return this; 
     },
@@ -103,5 +105,9 @@ var Workspace = Backbone.View.extend({
         
         // Clear workspace
         this.clear();
+    },
+    
+    remove_dimension: function(event, ui) {
+        this.drop_zones.remove_dimension(event, ui);
     }
 });
