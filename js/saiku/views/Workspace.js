@@ -41,7 +41,8 @@ var Workspace = Backbone.View.extend({
     
     initialize: function(args) {
         // Maintain `this` in jQuery event handlers
-        _.bindAll(this, "adjust", "toggle_sidebar", "flash_cube_navigation");
+        _.bindAll(this, "adjust", "toggle_sidebar", 
+                "flash_cube_navigation", "new_query");
         
         // Generate toolbar and append to workspace
         this.toolbar = new WorkspaceToolbar({ workspace: this });
