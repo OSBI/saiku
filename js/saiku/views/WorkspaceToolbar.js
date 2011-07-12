@@ -18,16 +18,16 @@ var WorkspaceToolbar = Backbone.View.extend({
         return this; 
     },
     
-    call: function(args) {
+    call: function(event) {
         // Determine callback
-        var callback = args.target.hash.replace('#', '');
+        var callback = event.target.hash.replace('#', '');
         
         // Attempt to call callback
         try {
-            this.enabled && this[callback](args);
+            ! $(event.target).hasClass('disabled_toolbar') && this[callback](args);
         } catch (e) {
             console && 
-                console.log('Workspace callback ' + callback + " does not exist");
+                console.log("Could not fire " + callback + ": " + e.message);
         }
         
         return false;
