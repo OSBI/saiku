@@ -10,8 +10,8 @@ var Properties = Backbone.Model.extend({
     },
     
     toggle: function(key) {
+        // Toggle property
         this.properties[key] = ! this.properties[key];
-        console.log(this.properties[key]);
         
         // FIXME - this really sucks
         // Why can't we just use the body?
