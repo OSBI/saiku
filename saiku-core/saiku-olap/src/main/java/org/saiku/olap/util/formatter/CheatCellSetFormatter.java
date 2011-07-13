@@ -307,6 +307,8 @@ public class CheatCellSetFormatter implements ICellSetFormatter {
 		// Populate cell values
 		int newyOffset = yOffset;
 		int newxOffset = xOffsset;
+		List<Integer> donex = new ArrayList<Integer>();
+		List<Integer> doney = new ArrayList<Integer>();
 		for (final Cell cell : cellIter(pageCoords, cellSet)) {
 			final List<Integer> coordList = cell.getCoordinateList();
 			int x = newxOffset;
@@ -316,12 +318,22 @@ public class CheatCellSetFormatter implements ICellSetFormatter {
 			if (coordList.size() > 1)
 				y += coordList.get(1);
 
+			boolean stop = false;
 			if (ignorex.contains(coordList.get(0))) {
-				newxOffset--;
-				continue;
+				if (!donex.contains(coordList.get(0))) {
+					newxOffset--;
+					donex.add(coordList.get(0));
+				}
+				stop = true;
 			}
 			if (ignorey.contains(coordList.get(1))) {
-				newyOffset--;
+				if (!doney.contains(coordList.get(1))) {
+					newyOffset--;
+					doney.add(coordList.get(1));
+				}
+				stop = true;
+			}
+			if (stop) {
 				continue;
 			}
 			final DataCell cellInfo = new DataCell(true, false, coordList);
