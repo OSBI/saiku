@@ -27,7 +27,8 @@ var WorkspaceToolbar = Backbone.View.extend({
         var callback = event.target.hash.replace('#', '');
         
         // Attempt to call callback
-        ! $(event.target).hasClass('disabled_toolbar') && this[callback](event);
+        ! $(event.target).hasClass('disabled_toolbar') 
+            && this[callback] && this[callback](event);
         
         return false;
     },
