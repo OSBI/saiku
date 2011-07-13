@@ -160,6 +160,9 @@ public class CheatCellSetFormatter implements ICellSetFormatter {
 	}
 
 	private Matrix matrix;
+	
+	private List<Integer> ignorex = new ArrayList<Integer>();
+	private List<Integer> ignorey = new ArrayList<Integer>();
 
 	public Matrix format(final CellSet cellSet) {
 		// Compute how many rows are required to display the columns axis.
@@ -288,38 +291,39 @@ public class CheatCellSetFormatter implements ICellSetFormatter {
 		
 		
 			int headerwidth = matrix.getMatrixWidth();
-			System.out.println("height:" + matrix.getMatrixHeight());
-			for(int yy=matrix.getMatrixHeight()-1; yy > matrix.getOffset() ; yy--) {
-				for(int xx=0; xx < headerwidth-1; xx++) {
-						int px = xx;
-						while (px < headerwidth) {
-							if (matrix.get(px,yy-1) != null && matrix.get(px,yy) != null && matrix.get(px,yy-1).getRawValue().equals(matrix.get(px, yy).getRawValue())) {
-								matrix.set(px, yy, new MemberCell());
+
+			for(int yy=matrix.getMatrixHeight(); yy > matrix.getOffset() ; yy--) {
+				for(int xx=0; xx < headerwidth-1;xx++) {
+							if (matrix.get(xx,yy-1) != null && matrix.get(xx,yy) != null && matrix.get(xx,yy-1).getRawValue().equals(matrix.get(xx, yy).getRawValue())) {
+								matrix.set(xx, yy, new MemberCell());
 							}
 							else {
 								break;
 							}
-							px++;
-						}
-						headerwidth = xx;
-						break;
 					}
 			}
 
 
 		// Populate cell values
+		int newyOffset = yOffset;
+		int newxOffset = xOffsset;
 		for (final Cell cell : cellIter(pageCoords, cellSet)) {
 			final List<Integer> coordList = cell.getCoordinateList();
-			int x = xOffsset;
+			int x = newxOffset;
 			if (coordList.size() > 0)
 				x += coordList.get(0);
-			int y = yOffset;
+			int y = newyOffset;
 			if (coordList.size() > 1)
 				y += coordList.get(1);
 
-			if (!matrix.containsX(x) || !matrix.containsY(y))
+			if (ignorex.contains(coordList.get(0))) {
+				newxOffset--;
 				continue;
-
+			}
+			if (ignorey.contains(coordList.get(1))) {
+				newyOffset--;
+				continue;
+			}
 			final DataCell cellInfo = new DataCell(true, false, coordList);
 
 			for (int z = 0; z < matrix.getMatrixHeight(); z++) {
@@ -430,6 +434,11 @@ public class CheatCellSetFormatter implements ICellSetFormatter {
 				lvls.put(member.getDimension(), depths);
 				if (member.getDepth() < Collections.max(depths)) {
 					stop = true;
+					if (isColumns) {
+						ignorex.add(i);
+					} else {
+						ignorey.add(i);
+					}
 					continue;
 				}
 				if (ordinalInfo.getDepths().size() > 0 && member.getDepth() < ordinalInfo.getDepths().get(0))
