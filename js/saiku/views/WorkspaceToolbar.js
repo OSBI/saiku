@@ -7,6 +7,9 @@ var WorkspaceToolbar = Backbone.View.extend({
     initialize: function(args) {
         // Keep track of parent workspace
         this.workspace = args.workspace;
+        
+        // Maintain `this` in callbacks
+        _.bindAll(this, "call");
     },
     
     template: function() {
@@ -24,11 +27,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         var callback = event.target.hash.replace('#', '');
         
         // Attempt to call callback
-        try {
-            ! $(event.target).hasClass('disabled_toolbar') && this[callback](event);
-        } catch (e) {
-            Log.log("Could not fire " + callback + ": " + e.message);
-        }
+        ! $(event.target).hasClass('disabled_toolbar') && this[callback](event);
         
         return false;
     },
@@ -39,12 +38,8 @@ var WorkspaceToolbar = Backbone.View.extend({
     
     automatic_execution: function(event) {
         // Change property
-        var new_value = ! this.workspace.query.properties
-            .get('saiku.olap.query.automatic_execution');
-        this.workspace.query.properties.set({
-            'saiku.olap.query.automatic_execution': new_value
-        });
-        console.log(this.workspace.query.properties);
+        this.workspace.query.properties
+            .toggle('saiku.olap.query.automatic_execution');
         
         // Toggle state of button
         $(event.target).toggleClass('on');
