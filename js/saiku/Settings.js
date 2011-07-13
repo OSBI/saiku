@@ -6,7 +6,10 @@ var Settings = {
     BASE_URL: "/",
     TOMCAT_WEBAPP: "saiku/",
     REST_MOUNT_POINT: "rest/saiku/",
-    DIMENSION_PREFETCH: true
+    DIMENSION_PREFETCH: true,
+    QUERY_PROPERTIES: {
+        'saiku.olap.query.automatic_execution': true
+    }
 };
 
 Settings.REST_URL = Settings.BASE_URL
