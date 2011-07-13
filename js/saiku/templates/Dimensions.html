@@ -13,8 +13,8 @@
                 </li>
             <% } %>
             <% _.each(hierarchy.levels, function(level) { %>
-                <li class="hide"><a title="[<%= hierarchy.name %>].[<%= level.name %>]" 
-                    class="dimension" href="#"><%= level.name %></a>
+                <li class="hide"><a title="<%= level.uniqueName %>" 
+                    class="dimension" href="#<%= dimension.name %>/hierarchy/<%= hierarchy.uniqueName %>/<%= level.uniqueName %>"><%= level.name %></a>
                 </li>
             <% }); %>
         <% }); %>

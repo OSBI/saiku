@@ -6,7 +6,7 @@
 		<ul>
 		<% _.each(measures, function(measure) { %>
 		    <li><a title="[Measures].[<%= measure.name %>]" 
-		        class="measure" href="#"><%= measure.name %></a>
+		        class="measure" href="#Measures/member/<%= measure.uniqueName %>"><%= measure.name %></a>
 		    </li>
 		<% }); %>
 		</ul>
