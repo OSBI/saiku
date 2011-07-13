@@ -15,8 +15,8 @@ var Session = Backbone.Model.extend({
         
         // Check if credentials are already stored
         if (sessionStorage) {
-            this.username = sessionStorage.getItem('username');
-            this.password = sessionStorage.getItem('password');
+            this.username = localStorage.getItem('username');
+            this.password = localStorage.getItem('password');
             console.log(this.username);
         }
     },
@@ -39,9 +39,9 @@ var Session = Backbone.Model.extend({
     
     login: function(username, password) {
         this.username = username;
-        sessionStorage.setItem('username', username);
+        localStorage.setItem('username', username);
         this.password = password;
-        sessionStorage.setItem('password', password);
+        localStorage.setItem('password', password);
         
         // Create session and fetch connection information
         this.fetch({ success: this.process_login });
