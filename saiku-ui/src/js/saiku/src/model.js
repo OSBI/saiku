@@ -448,7 +448,7 @@ var model = {
 			// Fetch the resultset from the server
 			model.request({
 				method: "GET",
-				url: model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/result/",
+				url: model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/result/cheat",
 				success: function (data, textStatus, XMLHttpRequest) {
                     model.render_result(data,$workspace_result);
 
