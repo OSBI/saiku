@@ -12,6 +12,7 @@ window.Log = new loggly({
 /**
  * Log errors to Loggly
  */
+var defaultHandler = window.error;
 window.onerror = function(errorMsg, url, lineNumber) {
     Log.log("\n" +
     		"Browser: " + Log.user_agent + "\n" +
@@ -19,6 +20,10 @@ window.onerror = function(errorMsg, url, lineNumber) {
     		"File: " + url + "\n" +
     	    "Line no: " + lineNumber
     );
+    
+    if (defaultHandler) {
+        return defaultHandler(errorMsg, url, lineNumber);
+    }
     
     return true;
 };

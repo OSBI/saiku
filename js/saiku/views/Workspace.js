@@ -90,6 +90,7 @@ var Workspace = Backbone.View.extend({
         // Initialize the new query
         var selected_cube = $(this.el).find('.cubes').val();
         this.query = new Query({ cube: selected_cube });
+        this.query.workspace = this;
         
         // Create new DimensionList and MeasureList
         this.dimension_list = new DimensionList({
@@ -109,7 +110,7 @@ var Workspace = Backbone.View.extend({
         
         // Make sure appropriate workspace buttons are enabled
         $(this.toolbar.el).find('.button').addClass('disabled_toolbar');
-        $(this.toolbar.el).find('.auto,.non_empty')
+        $(this.toolbar.el).find('.auto,.non_empty,.toggle_fields')
             .removeClass('disabled_toolbar');
     },
     

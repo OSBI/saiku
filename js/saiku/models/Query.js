@@ -1,6 +1,8 @@
 var Query = Backbone.Model.extend({
     initialize: function(args) {
+        // Save cube
         this.cube = args.cube;
+        this.unset('cube', { silent: true });
         
         // Generate a unique query id
         this.name = 'xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx'
@@ -25,7 +27,9 @@ var Query = Backbone.Model.extend({
         this.id = this.name;
         
         // Fetch initial properties from server
-        this.properties.fetch();
+        this.properties.fetch({
+            success: this.workspace.toolbar.reflect_properties
+        });
     },
     
     parse_cube: function() {
