@@ -1,0 +1,24 @@
+/**
+ * Initialize Loggly sensor
+ */
+window.Log = new loggly({ 
+    url: (("https:" == document.location.protocol) 
+            ? "https://logs.loggly.com" 
+            : "http://logs.loggly.com") 
+            + '/inputs/eea8d878-db25-43f4-b3b8-18053bb54004?rt=1', 
+    level: 'log'
+});
+
+/**
+ * Log errors to Loggly
+ */
+window.onerror = function(errorMsg, url, lineNumber) {
+    Log.log("\n" +
+    		"Browser: " + Log.user_agent + "\n" +
+    		"Message: " + errorMsg + "\n" +
+    		"File: " + url + "\n" +
+    	    "Line no: " + lineNumber
+    );
+    
+    return true;
+};
