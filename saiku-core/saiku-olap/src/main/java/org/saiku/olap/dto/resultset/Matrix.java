@@ -20,6 +20,7 @@
 
 package org.saiku.olap.dto.resultset;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,11 @@ public class Matrix {
 
     private int height = 0;
 
-    private int offset;
+    private int offset = 0;
+    
+    private List<Integer> xAxis = new ArrayList<Integer>();
+    private List<Integer> yAxis = new ArrayList<Integer>();
+    
 
     public Matrix() {
     }
@@ -67,6 +72,7 @@ public class Matrix {
      */
     public void set(final int x, final int y, final DataCell cell) {
         map.put(Arrays.asList(x, y), cell);
+        addCoordinates(x, y);
         assert x >= 0 && x < width : x;
         assert y >= 0 && y < height : y;
     }
@@ -83,6 +89,7 @@ public class Matrix {
      */
     public void set(final int x, final int y, final MemberCell value) {
         map.put(Arrays.asList(x, y), value);
+        addCoordinates(x, y);
         assert x >= 0 && x < width : x;
         assert y >= 0 && y < height : y;
     }
@@ -106,7 +113,8 @@ public class Matrix {
      * @return the width
      */
     public int getMatrixWidth() {
-        return width;
+//        return width;
+    	return xAxis.size();
     }
 
     /**
@@ -115,7 +123,8 @@ public class Matrix {
      * @return the height
      */
     public int getMatrixHeight() {
-        return height;
+//        return height;
+    	return yAxis.size();
     }
 
     /**
@@ -142,6 +151,23 @@ public class Matrix {
     public int getOffset() {
         return offset;
 
+    }
+    
+    private void addCoordinates(Integer x,Integer y) {
+    	if (!xAxis.contains(x)) {
+    		xAxis.add(x);
+    	}
+    	if (!yAxis.contains(y)) {
+    		yAxis.add(y);
+    	}
+    }
+    
+    public boolean containsY(Integer yCoordinate) {
+    	return yAxis.contains(yCoordinate);
+    }
+    
+    public boolean containsX(Integer xCoordinate) {
+    	return xAxis.contains(xCoordinate);
     }
 
 }

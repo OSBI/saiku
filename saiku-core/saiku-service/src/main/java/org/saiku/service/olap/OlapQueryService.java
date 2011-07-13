@@ -55,6 +55,7 @@ import org.saiku.olap.util.ObjectUtil;
 import org.saiku.olap.util.OlapResultSetUtil;
 import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.olap.util.formatter.CellSetFormatter;
+import org.saiku.olap.util.formatter.CheatCellSetFormatter;
 import org.saiku.olap.util.formatter.HierarchicalCellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.service.util.OlapUtil;
@@ -140,6 +141,9 @@ public class OlapQueryService {
 			}
 			else if (formatter.equals("hierarchical")) {
 				return execute(queryName, new HierarchicalCellSetFormatter());
+			}
+			else if (formatter.equals("cheat")) {
+				return execute(queryName, new CheatCellSetFormatter());
 			}
 			return execute(queryName, new HierarchicalCellSetFormatter());
 	}

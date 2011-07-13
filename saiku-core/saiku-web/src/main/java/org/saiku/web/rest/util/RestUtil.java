@@ -124,10 +124,8 @@ public class RestUtil {
 				return new Cell("" + mcell.getFormattedValue(), props, headertype);
 			}
 
-		
 		}
-		throw new RuntimeException("Cannot convert Cell. Type Mismatch!");
-
+		return null;
 	}
 
 }
