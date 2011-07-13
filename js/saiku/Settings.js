@@ -8,7 +8,10 @@ var Settings = {
     REST_MOUNT_POINT: "rest/saiku/",
     DIMENSION_PREFETCH: true,
     QUERY_PROPERTIES: {
-        'saiku.olap.query.automatic_execution': true
+        'saiku.olap.query.automatic_execution': 'true',
+        'saiku.olap.query.nonempty': 'true',
+        'saiku.olap.query.nonempty.rows': 'true',
+        'saiku.olap.query.nonempty.columns': 'true'
     }
 };
 

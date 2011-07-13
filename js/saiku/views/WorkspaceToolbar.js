@@ -9,7 +9,10 @@ var WorkspaceToolbar = Backbone.View.extend({
         this.workspace = args.workspace;
         
         // Maintain `this` in callbacks
-        _.bindAll(this, "call");
+        _.bindAll(this, "call", "reflect_properties");
+        
+        // Redraw the toolbar to reflect properties
+        this.bind('properties_loaded', this.reflect_properties);
     },
     
     template: function() {
@@ -33,15 +36,47 @@ var WorkspaceToolbar = Backbone.View.extend({
         return false;
     },
     
+    reflect_properties: function() {
+        var properties = this.workspace.query.properties.properties;
+        
+        // Set properties appropriately
+        if (properties['saiku.olap.query.nonempty'] === 'true') {
+            $(this.el).find('.non_empty').addClass('on');
+        }
+        if (properties['saiku.olap.query.automatic_execution'] === 'true') {
+            $(this.el).find('.auto').addClass('on');
+        }
+    },
+    
     save_query: function(event) {
         // TODO - save query
+    },
+    
+    run_query: function(event) {
+        // TODO - run query
     },
     
     automatic_execution: function(event) {
         // Change property
         this.workspace.query.properties
-            .toggle('saiku.olap.query.automatic_execution');
+            .toggle('saiku.olap.query.automatic_execution').update();
         
+        // Toggle state of button
+        $(event.target).toggleClass('on');
+    },
+    
+    toggle_fields: function(event) {
+        $(this.workspace.el).find('.workspace_fields').toggle();
+    },
+    
+    non_empty: function(event) {
+        // Change property
+        this.workspace.query.properties
+            .toggle('saiku.olap.query.nonempty')
+            .toggle('saiku.olap.query.nonempty.rows')
+            .toggle('saiku.olap.query.nonempty.columns')
+            .update();
+    
         // Toggle state of button
         $(event.target).toggleClass('on');
     }
