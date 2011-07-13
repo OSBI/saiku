@@ -36,8 +36,6 @@ var WorkspaceDropZone = Backbone.View.extend({
             return;
         }
         
-        console.log('select dimension');
-        
         // Make the element and its parent bold
         ui.draggable
             .css({fontWeight: "bold"});
@@ -85,8 +83,6 @@ var WorkspaceDropZone = Backbone.View.extend({
         
         // Prevent workspace from getting this event
         event.stopPropagation();
-        
-        console.log('move dimension');
     },
     
     remove_dimension: function(event, ui) {
@@ -105,12 +101,9 @@ var WorkspaceDropZone = Backbone.View.extend({
         
         // Remove dimension
         ui.draggable.remove();
-        
-        console.log('remove dimension');
     },
     
     selections: function() {
-        console.log('selections');
         event.preventDefault();
         return false;
     }

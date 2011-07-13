@@ -27,8 +27,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         try {
             ! $(event.target).hasClass('disabled_toolbar') && this[callback](event);
         } catch (e) {
-            console && 
-                console.log("Could not fire " + callback + ": " + e.message);
+            Log.log("Could not fire " + callback + ": " + e.message);
         }
         
         return false;

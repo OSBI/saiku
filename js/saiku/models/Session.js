@@ -17,7 +17,6 @@ var Session = Backbone.Model.extend({
         if (sessionStorage) {
             this.username = localStorage.getItem('username');
             this.password = localStorage.getItem('password');
-            console.log(this.username);
         }
     },
     
