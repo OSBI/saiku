@@ -601,55 +601,7 @@ var view = {
         }
     },
 
-    /**
-         * Load views into a dialog template
-         * @param url {String} The url where the view is located.
-         */
-    show_view : function(url, callback) {
-        // Append a dialog <div/> to the body.
-        $('<div id="dialog" class="selections dialog hide" />').appendTo('body');
-        // Load the view into the dialog <div/> and disable caching.
-        $.ajax({
-            url : BASE_URL + url,
-            cache : true,
-            dataType : "html",
-            success : function(data) {
-                $('#dialog').html(data).modal({
-                    opacity : 100,
-                    onClose : function (dialog) {
-                        // Remove all simple modal objects.
-                        dialog.data.remove();
-                        dialog.container.remove();
-                        dialog.overlay.remove();
-                        $.modal.close();
-                        // Remove the #dialog which we appended to the body.
-                        $('#dialog').remove();
-                    }
-                });
-                
-                if (callback)
-                    callback();
-            }
-        });
-    },
-
-/*
-            if(type === 'mdx'){
-                var message = '<textarea readonly="yes" wrap="hard">' + message + '</textarea>';
-
-                onClose : function (dialog) {
-                    // Remove all simple modal objects.
-                    dialog.data.remove();
-                    dialog.container.remove();
-                    dialog.overlay.remove();
-                    $.modal.close();
-                    // Remove the #dialog which we appended to the body.
-                    $('#dialog').remove();
-                }
-                
-                */
-
-    /**
+     /**
          * Check if the toolbar can be enabled or disabled.
          */
     check_toolbar: function(tab_index) {
