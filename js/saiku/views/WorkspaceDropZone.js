@@ -4,7 +4,7 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
     
     events: {
-        'sortbeforestop': 'select_dimension',
+        'sortstop': 'select_dimension',
         'click li': 'selections'
     },
     
@@ -63,7 +63,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         if (ui.item.find('a').hasClass('dimension')) {
             ui.item.addClass('d_dimension');
         } else {
-            ui.item.find('a').addClass('d_measure');
+            ui.item.addClass('d_measure');
         }
         
         // Notify the model of the change
@@ -112,7 +112,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         event.stopPropagation();
     },
     
-    selections: function() {
+    selections: function(event, ui) {
         event.preventDefault();
         return false;
     }
