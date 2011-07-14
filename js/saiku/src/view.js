@@ -202,85 +202,6 @@ var view = {
         /** Check the toolbar. */
         view.check_toolbar(tab_index);
 
-        //        /** Double click instead of drag and drop. */
-        //        $both_tree_items.dblclick(function(e){
-        //
-        //
-        //
-        //            // Prevent default browser action from occuring.
-        //            e.preventDefault();
-        //            /* Is the user double clicking on a dimension or measure. */
-        //            var is_dimension = $(this).find('a').hasClass('dimension'), is_measure = $(this).find('a').hasClass('measure');
-        //            /** Only continue if the item is active. */
-        //
-        //            if ($(this).hasClass('ui-draggable')) {
-        //                /** If a measure. */
-        //                if (is_measure) {
-        //                    /** If the first measure in the dropzone. */
-        //                    if ($both_dropzones.find('.d_measure').length == 0) {
-        //                        /** By default add the measure to the column dropzone. */
-        //                        $(this).clone().appendTo($column_dropzone).addClass('d_measure');
-        //                        /** Continue adding the measure. */
-        //                        add_measure($tab, $(this).find('a').attr('rel'));
-        //                    }else{
-        //                        /** Append the measure to the last measure available. */
-        //                        $(this).clone().insertAfter($both_dropzones.find('.d_measure').last()).addClass('d_measure');
-        //                        /** Continue adding the measure. */
-        //                        add_measure($tab, $(this).find('a').attr('rel'));
-        //                    }
-        //                    /** When stopped dropping or sorting set the selection. */
-        //                    model.dropped_item($(this), true);
-        //                }else if(is_dimension) {
-        //                    /** Add the dimension to the row dropzone manually. */
-        //                    $(this).clone().appendTo($row_dropzone).addClass('d_dimension');
-        //                    /** Continue adding the dimension. */
-        //                    add_dimension($tab, $(this).find('a').attr('rel'));
-        //                    /** When stopped dropping or sorting set the selection. */
-        //                    model.dropped_item($(this), true);
-        //                }
-        //                /** Refresh the sortables. */
-        //                $both_dropzones.sortable('refresh');
-        //
-        //            } else if ($(this).hasClass('not-draggable')) {
-        //                if (is_measure) {
-        //                    /** Remove the measure manually. */
-        //                    $both_dropzones.find('[rel=' + $(this).find('a').attr('rel') +']').parent().remove();
-        //                    /** Continue removing the measure. */
-        //                    remove_measure($tab, $(this).find('a').attr('rel'));
-        //                } else if(is_dimension) {
-        //                    /** Remove the dimension manually. */
-        //                    $both_dropzones.find('[rel=' + $(this).find('a').attr('rel') +']').parent().remove();
-        //                    /** Continue removing the measure. */
-        //                    remove_dimension($tab, $(this).find('a').attr('rel'));
-        //                }
-        //                /** Refresh the sortables. */
-        //                $both_dropzones.sortable('refresh');
-        //                /** When dimension or measure is removed, set the selection. */
-        //                model.removed_item($(this), true);
-        //
-        //                // If automatic query execution is enabled, rerun the query after making change
-        //                if (view.tabs.tabs[tab_index].data['options']['automatic_execution']) {
-        //                    if($row_dropzone.find('li.d_measure, li.d_dimension').length > 0 && $column_dropzone.find('li.d_measure, li.d_dimension').length > 0) {
-        //                        model.run_query(tab_index);
-        //                    }
-        //                }
-        //
-        //                view.check_toolbar(tab_index);
-        //
-        //            }
-        //        });
-
-
-        /** Activate all items for selection. */
-        // FIXME - this should be added when the item is dragged to avoid page fragments
-        /*$tab.find('.rows ul li a, .columns ul li a, .filter ul li a').live('dblclick', function() {
-            if ($(this).hasClass('dimension')) {
-                var $tab = $(this).closest(".tab");
-                model.show_selections($(this), $tab);
-            }
-            
-            return false;
-        });*/
 
         /** Make the dropzones sortable. */
         $both_dropzones.sortable({
@@ -412,46 +333,8 @@ var view = {
                     ui.draggable.remove();
                 },1);
                 /** When dimension or measure is removed, set the selection. */
-
-
-            /** Activate all items for selection.
-                // FIXME - this should be added when the item is dragged to avoid page fragments
-                $('.rows ul li a, .columns ul li a,  .filter ul li a').live('dblclick', function() {
-                    if ($(this).hasClass('dimension')) {
-                        var $tab = $(this).closest(".tab");
-                        model.show_selections($(this), $tab);
-                    }
-
-                    return false;
-                });
-                 */
             }
         });
-
-        /**
-             * Active dimension and measure trees.
-             */
-        function init_trees($tab) {
-            /** Activate hide and show on trees. */
-            $tab.find('.dimension_tree').find('ul li ul').hide();
-            /** When the root item is clicked show it's children. */
-            $tab.find('.root').click(function(e) {
-                e.preventDefault();
-                $(this).parent().find('ul').toggle();
-                if ($(this).hasClass('expand')) {
-                    $(this).removeClass('expand').addClass('collapsed')
-                    .find('a.folder_expand')
-                    .removeClass('folder_expand')
-                    .addClass('folder_collapsed');
-                }else{
-                    $(this).removeClass('collapsed').addClass('expand')
-                    .find('a.folder_collapsed')
-                    .removeClass('folder_collapsed')
-                    .addClass('folder_expand');
-                }
-                return false;
-            });
-        }
 
         /**
              * Add a dimension.
