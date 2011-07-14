@@ -5,6 +5,7 @@
  */
 var DimensionList = Backbone.View.extend({
     events: {
+        'click span': 'select',
         'click a': 'select'
     },
     
@@ -50,12 +51,14 @@ var DimensionList = Backbone.View.extend({
     },
     
     select: function(event) {
-        var $target = $(event.target);
-        if ($target.parents('span').hasClass('root')) {
-            $target.toggleClass('folder_collapsed').toggleClass('folder_expand');
-            $target.parents('span').toggleClass('collapsed').toggleClass('expand');
+        var $target = $(event.target).hasClass('root')
+            ? $(event.target) : $(event.target).parent();
+        if ($target.hasClass('root')) {
+            $target.find('a').toggleClass('folder_collapsed').toggleClass('folder_expand');
+            $target.toggleClass('collapsed').toggleClass('expand');
             $target.parents('li').find('ul').children('li').toggle();
         }
+        
         return false;
     }
 });
