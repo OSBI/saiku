@@ -24,6 +24,7 @@ var Session = Backbone.Model.extend({
         if (this.username === null || this.password === null) {
             // Open form and retrieve credentials
             var form = this.form = new LoginForm({ session: this });
+            Saiku.ui.unblock();
             form.render().open();
         } else {
             this.fetch({ success: this.process_login });
