@@ -75,14 +75,14 @@ public class DataCell extends AbstractBaseCell implements Serializable {
     public void setParentColMember(final MemberCell parentColMember) {
         this.parentColMember = parentColMember;
     }
+//
+//    public MemberCell getParentRowMember() {
+//        return parentRowMember;
+//    }
 
-    public MemberCell getParentRowMember() {
-        return parentRowMember;
-    }
-
-    public void setParentRowMember(final MemberCell parentRowMember) {
-        this.parentRowMember = parentRowMember;
-    }
+//    public void setParentRowMember(final MemberCell parentRowMember) {
+//        this.parentRowMember = parentRowMember;
+//    }
 
 
     public Number getRawNumber() {

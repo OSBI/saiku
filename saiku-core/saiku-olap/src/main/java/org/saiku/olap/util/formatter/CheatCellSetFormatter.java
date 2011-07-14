@@ -311,6 +311,10 @@ public class CheatCellSetFormatter implements ICellSetFormatter {
 		List<Integer> doney = new ArrayList<Integer>();
 		for (final Cell cell : cellIter(pageCoords, cellSet)) {
 			final List<Integer> coordList = cell.getCoordinateList();
+			if (coordList.get(0) == 0) {
+				newxOffset = xOffsset;
+				donex = new ArrayList<Integer>();
+			}
 			int x = newxOffset;
 			if (coordList.size() > 0)
 				x += coordList.get(0);
@@ -338,25 +342,25 @@ public class CheatCellSetFormatter implements ICellSetFormatter {
 			}
 			final DataCell cellInfo = new DataCell(true, false, coordList);
 
-			for (int z = 0; z < matrix.getMatrixHeight(); z++) {
-				final AbstractBaseCell headerCell = matrix.get(x, z);
-
-				if (headerCell instanceof MemberCell && ((MemberCell) headerCell).getUniqueName() != null) {
-				} else {
-					cellInfo.setParentColMember((MemberCell) matrix.get(x, z - 1));
-					break;
-				}
-			}
-
-			for (int z = 0; z < matrix.getMatrixWidth(); z++) {
-				final AbstractBaseCell headerCell = matrix.get(z, y);
-				if (headerCell instanceof MemberCell && ((MemberCell) headerCell).getUniqueName() != null) {
-
-				} else {
-					cellInfo.setParentRowMember((MemberCell) matrix.get(z - 1, y));
-					break;
-				}
-			}
+//			for (int z = 0; z < matrix.getMatrixHeight(); z++) {
+//				final AbstractBaseCell headerCell = matrix.get(x, z);
+//
+//				if (headerCell instanceof MemberCell && ((MemberCell) headerCell).getUniqueName() != null) {
+//				} else {
+//					cellInfo.setParentColMember((MemberCell) matrix.get(x, z - 1));
+//					break;
+//				}
+//			}
+//
+//			for (int z = 0; z < matrix.getMatrixWidth(); z++) {
+//				final AbstractBaseCell headerCell = matrix.get(z, y);
+//				if (headerCell instanceof MemberCell && ((MemberCell) headerCell).getUniqueName() != null) {
+//
+//				} else {
+//					cellInfo.setParentRowMember((MemberCell) matrix.get(z - 1, y));
+//					break;
+//				}
+//			}
 
 			//            NamedList<Property> proplist = null;
 			//            try {
@@ -585,7 +589,7 @@ public class CheatCellSetFormatter implements ICellSetFormatter {
 					int depth_i = ordinalInfo.getDepths().indexOf(member.getDepth());
 					while (depth_i > 0) {
 						depth_i--;
-						Level l = ordinalInfo.getLevel(depth_i);
+						Level l = ordinalInfo.getLevel(ordinalInfo.getDepths().get(depth_i));
 						Member parent = member.getParentMember();
 						while (l != null && parent != null && !parent.getLevel().getUniqueName().equals(l.getUniqueName())) {
 							parent = parent.getParentMember();

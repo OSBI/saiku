@@ -297,25 +297,25 @@ public class CellSetFormatter implements ICellSetFormatter {
 				y += coordList.get(1);
 			final DataCell cellInfo = new DataCell(true, false, coordList);
 
-			for (int z = 0; z < matrix.getMatrixHeight(); z++) {
-				final AbstractBaseCell headerCell = matrix.get(x, z);
+//			for (int z = 0; z < matrix.getMatrixHeight(); z++) {
+//				final AbstractBaseCell headerCell = matrix.get(x, z);
+//
+//				if (headerCell instanceof MemberCell && ((MemberCell) headerCell).getUniqueName() != null) {
+//				} else {
+//					cellInfo.setParentColMember((MemberCell) matrix.get(x, z - 1));
+//					break;
+//				}
+//			}
 
-				if (headerCell instanceof MemberCell && ((MemberCell) headerCell).getUniqueName() != null) {
-				} else {
-					cellInfo.setParentColMember((MemberCell) matrix.get(x, z - 1));
-					break;
-				}
-			}
-
-			for (int z = 0; z < matrix.getMatrixWidth(); z++) {
-				final AbstractBaseCell headerCell = matrix.get(z, y);
-				if (headerCell instanceof MemberCell && ((MemberCell) headerCell).getUniqueName() != null) {
-
-				} else {
-					cellInfo.setParentRowMember((MemberCell) matrix.get(z - 1, y));
-					break;
-				}
-			}
+//			for (int z = 0; z < matrix.getMatrixWidth(); z++) {
+//				final AbstractBaseCell headerCell = matrix.get(z, y);
+//				if (headerCell instanceof MemberCell && ((MemberCell) headerCell).getUniqueName() != null) {
+//
+//				} else {
+//					cellInfo.setParentRowMember((MemberCell) matrix.get(z - 1, y));
+//					break;
+//				}
+//			}
 
 			//            NamedList<Property> proplist = null;
 			//            try {
@@ -531,7 +531,7 @@ public class CellSetFormatter implements ICellSetFormatter {
 					int depth_i = ordinalInfo.getDepths().indexOf(member.getDepth());
 					while (depth_i > 0) {
 						depth_i--;
-						Level l = ordinalInfo.getLevel(depth_i);
+						Level l = ordinalInfo.getLevel(ordinalInfo.getDepths().get(depth_i));
 						Member parent = member.getParentMember();
 						while (l != null && parent != null && !parent.getLevel().getUniqueName().equals(l.getUniqueName())) {
 							parent = parent.getParentMember();

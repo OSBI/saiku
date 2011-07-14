@@ -298,25 +298,25 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
 				y += coordList.get(1);
 			final DataCell cellInfo = new DataCell(true, false, coordList);
 
-			for (int z = 0; z < matrix.getMatrixHeight(); z++) {
-				final AbstractBaseCell headerCell = matrix.get(x, z);
-
-				if (headerCell instanceof MemberCell && ((MemberCell) headerCell).getUniqueName() != null) {
-				} else {
-					cellInfo.setParentColMember((MemberCell) matrix.get(x, z - 1));
-					break;
-				}
-			}
-
-			for (int z = 0; z < matrix.getMatrixWidth(); z++) {
-				final AbstractBaseCell headerCell = matrix.get(z, y);
-				if (headerCell instanceof MemberCell && ((MemberCell) headerCell).getUniqueName() != null) {
-
-				} else {
-					cellInfo.setParentRowMember((MemberCell) matrix.get(z - 1, y));
-					break;
-				}
-			}
+//			for (int z = 0; z < matrix.getMatrixHeight(); z++) {
+//				final AbstractBaseCell headerCell = matrix.get(x, z);
+//
+//				if (headerCell instanceof MemberCell && ((MemberCell) headerCell).getUniqueName() != null) {
+//				} else {
+//					cellInfo.setParentColMember((MemberCell) matrix.get(x, z - 1));
+//					break;
+//				}
+//			}
+//
+//			for (int z = 0; z < matrix.getMatrixWidth(); z++) {
+//				final AbstractBaseCell headerCell = matrix.get(z, y);
+//				if (headerCell instanceof MemberCell && ((MemberCell) headerCell).getUniqueName() != null) {
+//
+//				} else {
+//					cellInfo.setParentRowMember((MemberCell) matrix.get(z - 1, y));
+//					break;
+//				}
+//			}
 
 			//            NamedList<Property> proplist = null;
 			//            try {
