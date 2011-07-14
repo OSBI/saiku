@@ -2,6 +2,7 @@
  * Change settings here
  */
 var Settings = {
+    VERSION: "Saiku Suite 2.2 SNAPSHOT",
     PLUGIN: false,
     BASE_URL: "/",
     TOMCAT_WEBAPP: "saiku/",

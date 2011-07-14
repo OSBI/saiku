@@ -14,7 +14,7 @@ var LoginForm = Modal.extend({
     
     initialize: function(args) {
         _.extend(this, args);
-        this.options.title = "Saiku Suite 2.1 SNAPSHOT";
+        this.options.title = Settings.VERSION;
         this.options.closeText = "Login";
     },
     
