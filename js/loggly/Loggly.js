@@ -13,17 +13,19 @@ window.Log = new loggly({
  * Log errors to Loggly
  */
 var defaultHandler = window.error;
-window.onerror = function(errorMsg, url, lineNumber) {
-    Log.log("\n" +
-    		"Browser: " + Log.user_agent + "\n" +
-    		"Message: " + errorMsg + "\n" +
-    		"File: " + url + "\n" +
-    	    "Line no: " + lineNumber
-    );
-    
-    if (defaultHandler) {
-        return defaultHandler(errorMsg, url, lineNumber);
-    }
-    
-    return true;
-};
+if (Settings.HIDE_ERRORS) {
+    window.onerror = function(errorMsg, url, lineNumber) {
+        Log.log("\n" +
+        		"Browser: " + Log.user_agent + "\n" +
+        		"Message: " + errorMsg + "\n" +
+        		"File: " + url + "\n" +
+        	    "Line no: " + lineNumber
+        );
+        
+        if (defaultHandler) {
+            return defaultHandler(errorMsg, url, lineNumber);
+        }
+        
+        return true;
+    };
+}
