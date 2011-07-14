@@ -32,7 +32,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             items: '> li',
             opacity: 0.60,
             placeholder: 'placeholder',
-            tolerance: 'pointer',
+            tolerance: 'pointer'
         });
         
         return this; 
@@ -69,7 +69,8 @@ var WorkspaceDropZone = Backbone.View.extend({
         // Notify the model of the change
         var dimension = ui.item.find('a').attr('href').replace('#', '');
         var index = ui.item.parent('.connectable').children().index(ui.item);
-        this.workspace.query.move_dimension(dimension, index);
+        this.workspace.query.move_dimension(dimension, 
+                $(event.target).parent(), index);
         
         // Prevent workspace from getting this event
         event.stopPropagation();
@@ -81,7 +82,8 @@ var WorkspaceDropZone = Backbone.View.extend({
         // Notify the model of the change
         var dimension = ui.item.find('a').attr('href').replace('#', '');
         var index = ui.item.parent('.connectable').children().index(ui.item);
-        this.workspace.query.move_dimension(dimension, index);
+        this.workspace.query.move_dimension(dimension, 
+                $(event.target).parent(), index);
         
         // Prevent workspace from getting this event
         event.stopPropagation();

@@ -20,6 +20,15 @@ var Query = Backbone.Model.extend({
         
         // Initialize properties object
         this.properties = new Properties({ query: this });
+        
+        // Initialize action handler
+        this.action = new QueryAction({ query: this });
+        
+        // Initialize result handler
+        this.result = new Result({ query: this });
+        
+        // Bind `this`
+        _.bindAll(this, "run_query", "move_dimension");
     },
     
     parse: function() {
@@ -42,8 +51,26 @@ var Query = Backbone.Model.extend({
         });
     },
     
-    move_dimension: function(dimension, index) {
-        console.log(dimension, index);
+    run_query: function() {
+        console.log('running query');
+        console.log(this);
+        this.result.fetch();
+    },
+    
+    move_dimension: function(dimension, $target_el, index) {
+        var target = '';
+        if ($target_el.hasClass('rows')) target = "ROWS";
+        if ($target_el.hasClass('columns')) target = "COLUMNS";
+        if ($target_el.hasClass('filter')) target = "FILTER";
+        
+        var url = "/axis/" + target + "/dimension/" + dimension;
+        
+        this.action.handle(url, function() {
+            if (this.query.properties
+                .properties['saiku.olap.query.automatic_execution'] === 'true') {
+                this.query.run_query();
+            }
+        });
     },
     
     url: function() {
