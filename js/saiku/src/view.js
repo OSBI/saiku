@@ -558,49 +558,6 @@ var view = {
 
     },
 
-    /**
-         * Displays a waiting message and blocks the user from performing any actions.
-         * @param msg {String} Message to be displayed to the user.
-         * @param block_div {Boolean} If blocking a specific tab or the whole viewport.
-         * @param tab_index {Integer} Index of the active tab.
-         */
-    show_processing : function (msg, block_div, tab_index) {
-        if(block_div) {
-            var $active_tab = view.tabs.tabs[tab_index].content;
-            $active_tab.unblock();
-            $active_tab.block({
-                message: '<div class="processing"><div class="processing_inner"><span class="processing_image">&nbsp;</span>' + msg + '</div></div>',
-                overlayCSS:  {
-                    backgroundColor: '#FFF',
-                    opacity:         0.5
-                },
-                baseZ: 100000
-            });
-        }else{
-            $.unblockUI();
-            $.blockUI({
-                message: '<div class="processing"><div class="processing_inner"><span class="processing_image">&nbsp;</span>' + msg + '</div></div>',
-                overlayCSS:  {
-                    backgroundColor: '#FFF',
-                    opacity:         0.5
-                }
-            });
-        }
-    },
-
-    /**
-         * Hides the waiting message.
-         * @param block_div {Boolean} If blocking a specific tab or the whole viewport.
-         * @param tab_index {Integer} Index of the active tab.
-         */
-    hide_processing : function(block_div, tab_index) {
-        if (block_div) {
-            view.tabs.tabs[tab_index].content.unblock();
-        }else{
-            $.unblockUI();
-        }
-    },
-
      /**
          * Check if the toolbar can be enabled or disabled.
          */
