@@ -16,7 +16,7 @@ var Tab = Backbone.View.extend({
         if (this.content && this.content.query && this.content.query.name) {
             caption = this.content.query.name;
         } else {
-            caption = "Unsaved Query (" + this.parent.queryCount + ")";
+            caption = "Unsaved query (" + this.parent.queryCount + ")";
         }
         
         // Create tab
