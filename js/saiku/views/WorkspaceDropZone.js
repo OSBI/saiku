@@ -53,7 +53,8 @@ var WorkspaceDropZone = Backbone.View.extend({
         var $original = $(this.workspace.el).find('.sidebar')
             .find('a[href="' + original_href + '"]').parent('li');
         $original
-            .css({fontWeight: "bold"});
+            .css({fontWeight: "bold"})
+            .draggable('disable');
         $original.parents('.parent_dimension')
             .find('.root')
             .css({fontWeight: "bold"});
@@ -98,7 +99,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         
         // Unhighlight the parent if applicable
         if ($original.parents('.parent_dimension')
-                .children().children().children('.ui-state-disabled').length === 0) {
+                .children().children('.ui-state-disabled').length === 0) {
             $original.parents('.parent_dimension')
                 .find('.root')
                 .css({fontWeight: "normal"});
