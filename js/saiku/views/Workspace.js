@@ -28,7 +28,9 @@ var Workspace = Backbone.View.extend({
         
         // Activate sidebar for removing elements
         $(this.el).find('.sidebar')
-            .droppable();
+            .droppable({
+                accept: '.d_measure, .d_dimension'
+            });
         
         return this; 
     },
