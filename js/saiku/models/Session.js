@@ -78,6 +78,7 @@ var Session = Backbone.Model.extend({
         // Show UI
         $(Saiku.toolbar.el).prependTo($("#header"));
         $("#header").show();
+        Saiku.ui.unblock();
         
         // Add initial tab
         Saiku.tabs.render();

@@ -20,7 +20,21 @@ var Saiku = {
     /**
      * Class which handles template loading
      */
-    template: new Template
+    template: new Template,
+    
+    /**
+     * Convenience functions for blocking the UI
+     */
+    ui: {
+        block: function(message) {
+            $('.processing,.processing_container').fadeIn();
+            $('.processing_message').text(message);
+        },
+        
+        unblock: function() {
+            $('.processing,.processing_container').fadeOut();
+        }
+    }
 };
 
 /**
