@@ -801,14 +801,15 @@ html, body {
 }
 
 /** blockUI */
-.blockOverlay, .blockMsg {
-    cursor: default !important;
-}
-.blockMsg {
-    background: #FFF !important;
-    border: none !important;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
+.processing_container {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #fff;
+	opacity: 0.5;
+	z-index: 1000;
 }
 .processing {
     border: 3px solid #EEE;
@@ -816,6 +817,12 @@ html, body {
     -webkit-border-radius: 3px;
     -moz-box-shadow: 0 0 10px #EEE;
     -webkit-box-shadow: 0 0 10px #EEE;
+    z-index: 1001;
+    background-color: #fff;
+    position: fixed;
+    width: 50%;
+    left: 25%;
+    top: 48%;
 }
 .processing_inner {
     border: 1px solid #CCC;
