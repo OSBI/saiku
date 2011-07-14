@@ -763,7 +763,7 @@ html, body {
 .workspace_results table th.col {
     border-top: 1px solid #d5d5d5;
     background: #f9f9f9;
-    text-align: left;
+    text-align: center;
 }
 .workspace_results table th.row {
     border-top: 1px solid #d5d5d5;
@@ -771,8 +771,8 @@ html, body {
 }
 .workspace_results table th.row_header {
     border-top: 1px solid #d5d5d5;
-    border-bottom: 1px solid #d5d5d5;
-    background: #EEEEFF;
+    /*border-bottom: 1px solid #d5d5d5;*/
+    background: #E5E5E5;
 }
 
 .workspace_results table th.row_null {
@@ -783,6 +783,9 @@ html, body {
     border-top: 1px solid #d5d5d5;
     text-align: right;
     white-space: nowrap;
+}
+.workspace_results table tr:hover {
+	background: #edf4fa !important;
 }
 
 /** Save Dialog */

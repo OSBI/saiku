@@ -571,12 +571,6 @@ var model = {
 						}).find('div').width(max);
 
 
-						// Enable highlighting on rows.
-						$workspace_result.find('table tr').hover(function () {
-							$(this).find('td, th.row, th.row_null').css('background', '#eff4fc');
-						}, function () {
-							$(this).find('td, th.row, th.row_null').css('background', '');
-						});
 					}
         },
 
