@@ -42,6 +42,10 @@ var Query = Backbone.Model.extend({
         });
     },
     
+    move_dimension: function(dimension, index) {
+        console.log(dimension, index);
+    },
+    
     url: function() {
         return Saiku.session.username + "/query/" + this.name;
     }

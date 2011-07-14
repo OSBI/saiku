@@ -4,7 +4,7 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
     
     events: {
-        'drop': 'select_dimension',
+        'sortbeforestop': 'select_dimension',
         'click li': 'selections'
     },
     
@@ -22,85 +22,93 @@ var WorkspaceDropZone = Backbone.View.extend({
         $(this.el).html(this.template());
         
         // Activate drop zones
-        $(this.el).find('.connectable').droppable({
-            accept: 'a.dimension, a.measure, .d_dimension, .d_measure'
+        $(this.el).find('.connectable').sortable({
+            connectWith: $(this.el).find('.connectable'),
+            cursorAt: {
+                top: 10,
+                left: 35
+            },
+            forcePlaceholderSize: true,
+            items: '> li',
+            opacity: 0.60,
+            placeholder: 'placeholder',
+            tolerance: 'pointer',
         });
         
         return this; 
     },
     
     select_dimension: function(event, ui) {
-        if (ui.draggable.hasClass('d_measure') 
-                || ui.draggable.hasClass('d_dimension')) {
+        // Short circuit if this is a move
+        if (ui.item.hasClass('d_measure') 
+                || ui.item.hasClass('d_dimension')) {
             this.move_dimension(event, ui);
             return;
         }
         
+        console.log('select');
+        
         // Make the element and its parent bold
-        ui.draggable
+        var original_href = ui.item.find('a').attr('href');
+        var $original = $(this.workspace.el).find('.sidebar')
+            .find('a[href="' + original_href + '"]').parent('li');
+        $original
             .css({fontWeight: "bold"});
-        ui.draggable.parents('.parent_dimension')
+        $original.parents('.parent_dimension')
             .find('.root')
             .css({fontWeight: "bold"});
         
-        // Clone element and make draggable
-        var $cloned_el = ui.draggable.clone()
-            .draggable('destroy');
-        
-        // Add the cloned element to the drop zone
-        var $cloned_li = $("<li />").append($cloned_el)
-            .appendTo($(event.target))
-            .draggable({
-                helper: 'clone',
-                connectToSortable: '.connectable, .sidebar',
-                opacity: 0.60,
-                tolerance: 'pointer',
-                cursorAt: {
-                    top: 10,
-                    left: 35
-                }
-            });
-        $cloned_li.data('original', ui.draggable);
-        
         // Wrap with the appropriate parent element
-        if ($cloned_el.hasClass('dimension')) {
-            $cloned_li.addClass('d_dimension');
+        if (ui.item.find('a').hasClass('dimension')) {
+            ui.item.addClass('d_dimension');
         } else {
-            $cloned_li.addClass('d_measure');
+            ui.item.find('a').addClass('d_measure');
         }
         
-        // Disable dragging on original element
-        ui.draggable.draggable('disable');
+        // Notify the model of the change
+        var dimension = ui.item.find('a').attr('href').replace('#', '');
+        var index = ui.item.parent('.connectable').children().index(ui.item);
+        this.workspace.query.move_dimension(dimension, index);
         
         // Prevent workspace from getting this event
         event.stopPropagation();
     },
     
     move_dimension: function(event, ui) {
-        // Move the dimension
-        ui.draggable.detach()
-            .appendTo($(event.target));
+        console.log('move');
+        
+        // Notify the model of the change
+        var dimension = ui.item.find('a').attr('href').replace('#', '');
+        var index = ui.item.parent('.connectable').children().index(ui.item);
+        this.workspace.query.move_dimension(dimension, index);
         
         // Prevent workspace from getting this event
         event.stopPropagation();
     },
     
     remove_dimension: function(event, ui) {
+        console.log('remove');
         // Reenable original element
-        ui.draggable.data('original')
+        var original_href = ui.draggable.find('a').attr('href');
+        var $original = $(this.workspace.el).find('.sidebar')
+            .find('a[href="' + original_href + '"]').parent('li');
+        $original
             .draggable('enable')
             .css({ fontWeight: 'normal' });
         
         // Unhighlight the parent if applicable
-        if (ui.draggable.data('original').parents('.parent_dimension')
+        if ($original.parents('.parent_dimension')
                 .children().children().children('.ui-state-disabled').length === 0) {
-            ui.draggable.data('original').parents('.parent_dimension')
+            $original.parents('.parent_dimension')
                 .find('.root')
                 .css({fontWeight: "normal"});
         }
         
-        // Remove dimension
+        // Remove element
         ui.draggable.remove();
+        
+        // Prevent workspace from getting this event
+        event.stopPropagation();
     },
     
     selections: function() {
