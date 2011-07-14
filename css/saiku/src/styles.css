@@ -203,8 +203,7 @@ html, body {
 
 .sidebar {
     float: left;
-    overflow: hidden;;
-
+    overflow: auto;
     width: 260px;
 }
 .sidebar h3 {
@@ -438,7 +437,7 @@ html, body {
 }
 .fields_list .fields_list_body {
     float: left;
-    padding:  2px 0 3px 0;
+    padding:  0;
     width: 87%;
 }
 .fields_list .fields_list_body a {
@@ -451,12 +450,12 @@ html, body {
 }
 .fields_list .fields_list_body ul {
     height: 22px;
-    display: inline;
+	display: inline;
     float: left;
     line-height: 22px;
     list-style: none;
     margin: 0 10px;
-    padding: 0;
+    padding: 3px;
     width: 100%;
 }
 .fields_list .fields_list_body ul li {
