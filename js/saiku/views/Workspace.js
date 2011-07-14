@@ -65,6 +65,7 @@ var Workspace = Backbone.View.extend({
         // Adjust the height of the separator
         $separator = $(this.el).find('.sidebar_separator');
         $separator.height($("body").height() - 87);
+        $(this.el).find('.sidebar').height($("body").height() - 87);
     },
     
     toggle_sidebar: function() {
