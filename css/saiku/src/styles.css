@@ -240,14 +240,6 @@ html, body {
 .sidebar .sidebar_inner ul {
     margin: 0;
 }
-.sidebar .dimension_tree {
-    height: 35%;
-    overflow: auto;
-}
-.sidebar .measure_tree {
-    height: 30%;
-    overflow: auto;
-}
 
 /** Sidebar Separator */
 
