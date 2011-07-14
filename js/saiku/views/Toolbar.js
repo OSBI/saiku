@@ -56,6 +56,7 @@ var Toolbar = Backbone.View.extend({
     logout: function() {
         // FIXME - This is a hack (inherited from old UI)
         $('body').hide();
+        localStorage.clear();
         location.reload(true);
         return false;
     },
