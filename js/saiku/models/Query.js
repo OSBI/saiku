@@ -26,7 +26,7 @@ var Query = Backbone.Model.extend({
         
         // Initialize result handler
         this.result = new Result({ query: this });
-        
+                
         // Bind `this`
         _.bindAll(this, "run_query", "move_dimension");
     },
@@ -52,8 +52,8 @@ var Query = Backbone.Model.extend({
     },
     
     run_query: function() {
-        console.log('running query');
-        console.log(this);
+        $(this.workspace.el).find('.workspace_results')
+            .text('Running query...');
         this.result.fetch();
     },
     

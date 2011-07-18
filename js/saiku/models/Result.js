@@ -6,8 +6,10 @@ var Result = Backbone.Model.extend({
     },
     
     parse: function(response) {
-        console.log('got a response');
-        $(this.query.workspace.el).find('.workspace_results').html(JSON.stringify(response));
+        this.query.workspace.trigger('query_result', {
+            workspace: this.query.workspace,
+            data: response
+        });
     },
     
     url: function() {

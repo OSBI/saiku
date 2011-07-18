@@ -46,8 +46,6 @@ var WorkspaceDropZone = Backbone.View.extend({
             return;
         }
         
-        console.log('select');
-        
         // Make the element and its parent bold
         var original_href = ui.item.find('a').attr('href');
         var $original = $(this.workspace.el).find('.sidebar')
