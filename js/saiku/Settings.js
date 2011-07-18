@@ -14,7 +14,10 @@ var Settings = {
         'saiku.olap.query.nonempty': 'true',
         'saiku.olap.query.nonempty.rows': 'true',
         'saiku.olap.query.nonempty.columns': 'true'
-    }
+    },
+    PLUGINS: [
+        "Chart"
+    ]
 };
 
 Settings.REST_URL = Settings.BASE_URL
