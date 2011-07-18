@@ -26,9 +26,6 @@ var Workspace = Backbone.View.extend({
         $(this.drop_zones.el)
             .insertAfter($(this.el).find('.workspace_toolbar'));
         
-        // Generate table
-        this.table = new Table({ workspace: this });
-        
         // Activate sidebar for removing elements
         $(this.el).find('.sidebar')
             .droppable({
@@ -56,12 +53,18 @@ var Workspace = Backbone.View.extend({
         // Create drop zones
         this.drop_zones = new WorkspaceDropZone({ workspace: this });
         
+        // Generate table
+        this.table = new Table({ workspace: this });
+        
         // Adjust tab when selected
         this.tab.bind('tab:select', this.adjust);
         $(window).resize(this.adjust);
         
         // Flash cube navigation when rendered
         this.tab.bind('tab_rendered', this.flash_cube_navigation);
+        
+        // Fire off new workspace event
+        Saiku.session.trigger('workspace:new', { workspace: this });
     },
     
     adjust: function() {
