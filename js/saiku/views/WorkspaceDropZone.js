@@ -74,9 +74,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         event.stopPropagation();
     },
     
-    move_dimension: function(event, ui) {
-        console.log('move');
-        
+    move_dimension: function(event, ui) {        
         // Notify the model of the change
         var dimension = ui.item.find('a').attr('href').replace('#', '');
         var index = ui.item.parent('.connectable').children().index(ui.item);
@@ -88,7 +86,6 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
     
     remove_dimension: function(event, ui) {
-        console.log('remove');
         // Reenable original element
         var original_href = ui.draggable.find('a').attr('href');
         var $original = $(this.workspace.el).find('.sidebar')
