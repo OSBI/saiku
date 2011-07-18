@@ -107,6 +107,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         
         // Prevent workspace from getting this event
         event.stopPropagation();
+        return false;
     },
     
     selections: function(event, ui) {
