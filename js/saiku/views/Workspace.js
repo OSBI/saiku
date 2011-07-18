@@ -26,6 +26,9 @@ var Workspace = Backbone.View.extend({
         $(this.drop_zones.el)
             .insertAfter($(this.el).find('.workspace_toolbar'));
         
+        // Generate table
+        this.table = new Table({ workspace: this });
+        
         // Activate sidebar for removing elements
         $(this.el).find('.sidebar')
             .droppable({
