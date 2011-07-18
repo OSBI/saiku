@@ -4,7 +4,7 @@ var Table = Backbone.View.extend({
         
         // Bind table rendering to query result event
         _.bindAll(this, "render", "process_data");
-        this.workspace.bind('query_result', this.render);
+        this.workspace.bind('query:result', this.render);
     },
     
     render: function(args) {

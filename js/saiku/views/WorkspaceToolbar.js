@@ -13,6 +13,11 @@ var WorkspaceToolbar = Backbone.View.extend({
         
         // Redraw the toolbar to reflect properties
         this.bind('properties_loaded', this.reflect_properties);
+        
+        // Fire off workspace event
+        this.workspace.trigger('workspace::toolbar', { 
+            workspace: this.workspace
+        });
     },
     
     template: function() {
