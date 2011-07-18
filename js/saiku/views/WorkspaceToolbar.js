@@ -9,7 +9,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         this.workspace = args.workspace;
         
         // Maintain `this` in callbacks
-        _.bindAll(this, "call", "reflect_properties");
+        _.bindAll(this, "call", "reflect_properties", "run_query");
         
         // Redraw the toolbar to reflect properties
         this.bind('properties_loaded', this.reflect_properties);
@@ -53,7 +53,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     run_query: function(event) {
-        // TODO - run query
+        this.workspace.query.run(true);
     },
     
     automatic_execution: function(event) {
@@ -79,5 +79,8 @@ var WorkspaceToolbar = Backbone.View.extend({
     
         // Toggle state of button
         $(event.target).toggleClass('on');
+        
+        // Run query
+        this.workspace.query.run();
     }
 });

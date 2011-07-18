@@ -28,7 +28,7 @@ var Query = Backbone.Model.extend({
         this.result = new Result({ query: this });
                 
         // Bind `this`
-        _.bindAll(this, "run_query", "move_dimension");
+        _.bindAll(this, "run", "move_dimension");
     },
     
     parse: function() {
@@ -51,13 +51,24 @@ var Query = Backbone.Model.extend({
         });
     },
     
-    run_query: function() {
+    run: function(force) {
+        // Check for automatic execution
+        if (! this.properties.properties['saiku.olap.query.automatic_execution']
+            && ! force) {
+            return;
+        }
+        
+        // TODO - Validate query
+        
+        // Run it
         $(this.workspace.el).find('.workspace_results')
             .text('Running query...');
         this.result.fetch();
     },
     
     move_dimension: function(dimension, $target_el, index) {
+        $(this.workspace.el).find('.run').removeClass('disabled_toolbar');
+        
         var target = '';
         if ($target_el.hasClass('rows')) target = "ROWS";
         if ($target_el.hasClass('columns')) target = "COLUMNS";
@@ -68,7 +79,7 @@ var Query = Backbone.Model.extend({
         this.action.handle(url, function() {
             if (this.query.properties
                 .properties['saiku.olap.query.automatic_execution'] === 'true') {
-                this.query.run_query();
+                this.query.run();
             }
         });
     },
