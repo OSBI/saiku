@@ -15,7 +15,8 @@ var url = process.ARGV[3] || 'demo.analytical-labs.com';
 var proxy = http.createClient(80, url);
 
 // Load static server
-app.use(express['static'](__dirname));
+var twoHours = 1000 * 60 * 60 * 2;
+app.use(express['static'](__dirname, { maxAge: twoHours }));
 
 app.all("/saiku/rest/*", function(request, response) {
     console.log(request.method, request.url);
