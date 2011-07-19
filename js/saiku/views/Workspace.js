@@ -65,7 +65,7 @@ var Workspace = Backbone.View.extend({
         $(window).resize(this.adjust);
         
         // Flash cube navigation when rendered
-        this.tab.bind('tab_rendered', this.flash_cube_navigation);
+        this.tab.bind('tab:rendered', this.flash_cube_navigation);
         
         // Fire off new workspace event
         Saiku.session.trigger('workspace:new', { workspace: this });

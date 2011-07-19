@@ -136,7 +136,7 @@ var TabSet = Backbone.View.extend({
         $(tab.el).appendTo($(this.el).find('ul'));
         
         // Trigger 'render' event
-        tab.trigger('tab_rendered');
+        tab.trigger('tab:rendered');
     },
     
     /**
