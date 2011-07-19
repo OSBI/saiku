@@ -10,8 +10,8 @@
 var http = require('http');
 var express = require('express');
 var app = express.createServer();
-var port = parseInt(process.ARGV[2]) || 8080;
-var url = process.env.C9_PORT || process.ARGV[3] || 'demo.analytical-labs.com';
+var port = process.env.C9_PORT || parseInt(process.ARGV[2], 10) || 8080;
+var url = process.ARGV[3] || 'demo.analytical-labs.com';
 var proxy = http.createClient(80, url);
 
 // Load static server
