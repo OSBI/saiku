@@ -16,7 +16,7 @@ var proxy = http.createClient(80, url);
 
 // Load static server
 var twoHours = 1000 * 60 * 60 * 2;
-app.use(express['static'](__dirname, { maxAge: twoHours }));
+app.use(express['static'](__dirname));
 
 app.all("/saiku/rest/*", function(request, response) {
     console.log(request.method, request.url);
