@@ -65,8 +65,8 @@ var Session = Backbone.Model.extend({
             _.each(connection.catalogs, function(catalog) {
                 _.each(catalog.schemas, function(schema) {
                     _.each(schema.cubes, function(cube) {
-                        var key = connection.name + "/" + catalog.name + "/" 
-                            + schema.name + "/" + cube.name;
+                        var key = connection.name + "/" + catalog.name + "/" +
+                            schema.name + "/" + cube.name;
                         this.dimensions[key] = new Dimension({ key: key });
                         this.measures[key] = new Measure({ key: key });
                         this.dimensions[key].fetch();
@@ -83,10 +83,10 @@ var Session = Backbone.Model.extend({
         
         // Add initial tab
         Saiku.tabs.render();
-        Saiku.tabs.add(new Tab);
+        Saiku.tabs.add(new Tab());
         
         // Load plugins
-        this.plugins = new Plugin;
+        this.plugins = new Plugin();
         
         // Notify the rest of the application that login was successful
         this.trigger('session:new', {
