@@ -136,7 +136,10 @@ var TabSet = Backbone.View.extend({
         $(tab.el).appendTo($(this.el).find('ul'));
         
         // Trigger 'render' event
-        tab.trigger('tab:rendered');
+        tab.trigger('tab:rendered', { tab: tab });
+        
+        // Trigger add event on session
+        Saiku.session.trigger('tab:add', { tab: tab });
     },
     
     /**
