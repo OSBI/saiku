@@ -9,6 +9,10 @@ var Chart = Backbone.View.extend({
     
     render: function() {
         $(this.el).html('This is my super fancy chart');
+    },
+    
+    process_data: function() {
+        
     }
 });
 
