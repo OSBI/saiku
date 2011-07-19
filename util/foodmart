@@ -1,6 +1,0 @@
-type=OLAP
-name=foodmart
-driver=mondrian.olap4j.MondrianOlap4jDriver
-location=jdbc:mondrian:Jdbc=jdbc:hsqldb:file:../webapps/saiku/foodmart/foodmart;Catalog=../webapps/saiku/foodmart/FoodMart.xml;
-username=sa
-password=
