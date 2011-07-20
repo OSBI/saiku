@@ -42,5 +42,6 @@ app.all("/saiku/rest/*", function(request, response) {
     proxy_request.end();
 });
 
-console.log("Proxy listening on ", port);
-app.listen(port);
+console.log("Proxy listening on", port);
+
+app.listen(port, '0.0.0.0');
