@@ -5,7 +5,7 @@ var WorkspaceDropZone = Backbone.View.extend({
     
     events: {
         'sortstop': 'select_dimension',
-        'click li': 'selections'
+        'click a': 'selections'
     },
     
     initialize: function(args) {
@@ -40,8 +40,8 @@ var WorkspaceDropZone = Backbone.View.extend({
     
     select_dimension: function(event, ui) {
         // Short circuit if this is a move
-        if (ui.item.hasClass('d_measure') 
-                || ui.item.hasClass('d_dimension')) {
+        if (ui.item.hasClass('d_measure') ||
+                ui.item.hasClass('d_dimension')) {
             this.move_dimension(event, ui);
             return;
         }
@@ -78,11 +78,14 @@ var WorkspaceDropZone = Backbone.View.extend({
         // Notify the model of the change
         var dimension = ui.item.find('a').attr('href').replace('#', '');
         var index = ui.item.parent('.connectable').children().index(ui.item);
-        this.workspace.query.move_dimension(dimension, 
+        if (! ui.item.hasClass('deleted')) {
+            this.workspace.query.move_dimension(dimension, 
                 $(event.target).parent(), index);
+        }
         
         // Prevent workspace from getting this event
         event.stopPropagation();
+        return false;
     },
     
     remove_dimension: function(event, ui) {
@@ -102,16 +105,30 @@ var WorkspaceDropZone = Backbone.View.extend({
                 .css({fontWeight: "normal"});
         }
         
+        // Notify server
+        var target = '';
+        var dimension = original_href.replace('#', '');
+        $target_el = ui.draggable.parent().parent('div.fields_list_body');
+        if ($target_el.hasClass('rows')) target = "ROWS";
+        if ($target_el.hasClass('columns')) target = "COLUMNS";
+        if ($target_el.hasClass('filter')) target = "FILTER";
+        
+        var url = "/axis/" + target + "/dimension/" + dimension;
+        this.workspace.query.action.del(url, this.workspace.query.run);
+        
         // Remove element
-        ui.draggable.remove();
+        ui.draggable.addClass('deleted').remove();
         
         // Prevent workspace from getting this event
         event.stopPropagation();
+        event.preventDefault();
         return false;
     },
     
     selections: function(event, ui) {
-        event.preventDefault();
+        try {
+            event.preventDefault();
+        } catch (e) { }
         return false;
     }
 });
