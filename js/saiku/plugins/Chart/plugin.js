@@ -24,13 +24,16 @@ var Chart = Backbone.View.extend({
     },
     
     show: function(event, ui) {
+        var $results = $(this.workspace.el).find('.workspace_results');
         if ($(event.target).hasClass('on')) {
-            $(this.workspace.el).find('.workspace_results').html('')
-                .append($(this.el));
+            // Show table again
+            $results.children().detach();
+            $results.append($(this.workspace.table.el));
             $(event.target).removeClass('on');
         } else {
-            $(this.workspace.el).find('.workspace_results').html('')
-                .append($(this.workspace.table.el).find('table'));
+            // Show chart
+            $results.children().detach();
+            $results.append($(this.el));
             $(event.target).addClass('on');
         }
     },
@@ -41,7 +44,7 @@ var Chart = Backbone.View.extend({
     },
     
     process_data: function(args) {
-        var chart = "";
+        var chart = "chart";
         
         $(this.el).html(chart);
     }
