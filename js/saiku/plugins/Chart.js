@@ -21,24 +21,11 @@ var Chart = Backbone.View.extend({
         args.workspace.chart = new Chart({ workspace: args.workspace });
     }
     
-    /**
-     * Bind events necessary for plugin to operate
-     */
-    function bind_events() {
-        // Attach chart to existing tabs
-        for (var i = 0; i < Saiku.tabs._tabs.length; i++) {
-            new_workspace({ workspace: Saiku.tabs._tabs[i].content });
-        }
-        
-        // Attach chart to future tabs
-        Saiku.session.bind("workspace:new", new_workspace);      
+    // Attach chart to existing tabs
+    for (var i = 0; i < Saiku.tabs._tabs.length; i++) {
+        new_workspace({ workspace: Saiku.tabs._tabs[i].content });
     }
     
-    /**
-     * Load YUI3 and initialize charts
-     */
-    $.getScript(
-        "https://ajax.googleapis.com/ajax/libs/yui/3.3.0/build/yui/yui-min.js", 
-        bind_events
-    );
+    // Attach chart to future tabs
+    Saiku.session.bind("workspace:new", new_workspace);
 }());
