@@ -122,9 +122,7 @@ var Workspace = Backbone.View.extend({
         this.clear();
         
         // Make sure appropriate workspace buttons are enabled
-        $(this.toolbar.el).find('.button').addClass('disabled_toolbar');
-        $(this.toolbar.el).find('.auto,.non_empty,.toggle_fields')
-            .removeClass('disabled_toolbar');
+        this.trigger('query:new', { workspace: this });
     },
     
     remove_dimension: function(event, ui) {

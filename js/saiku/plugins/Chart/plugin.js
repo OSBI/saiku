@@ -8,24 +8,30 @@ var Chart = Backbone.View.extend({
         
         // Add chart button
         this.add_button();
+        this.workspace.toolbar.chart = this.show;
+        this.workspace.bind('query:new', this.activate_button);
     },
     
     add_button: function() {
-        var $chart_button = $('<li class="seperator"><a href="#chart" class="button"></a></li>')
-            .click(this.show)
-            .css({ backgroundImage: "/js/saiku/plugins/Chart/chart.png" });
-        $(this.workspace.toolbar.el).find("ul").append($chart_button);
+        var $chart_button = $('<a href="#chart" class="chart button disabled_toolbar"></a>')
+            .css({ 'background': "url('/js/saiku/plugins/Chart/chart.png') 50% 50% no-repeat" });
+        var $chart_li = $('<li class="seperator"></li>').append($chart_button);
+        $(this.workspace.toolbar.el).find("ul").append($chart_li);
+    },
+    
+    activate_button: function(args) {
+        $(args.workspace.el).find('.chart').removeClass('disabled_toolbar');
     },
     
     show: function(event, ui) {
-        if (event.target.hasClass('on')) {
+        if ($(event.target).hasClass('on')) {
             $(this.workspace.el).find('.workspace_results').html('')
                 .append($(this.el));
-            event.target.removeClass('on');
+            $(event.target).removeClass('on');
         } else {
             $(this.workspace.el).find('.workspace_results').html('')
                 .append($(this.workspace.table.el).find('table'));
-            event.target.addClass('on');
+            $(event.target).addClass('on');
         }
     },
     
