@@ -16,6 +16,16 @@ var Chart = Backbone.View.extend({
     }
 });
 
-Saiku.session.bind("workspace:new", function(args) {
-    args.workspace.chart = new Chart({ workspace: args.workspace });
-});
+function bind_events() {
+    Saiku.session.bind("workspace:new", function(args) {
+        args.workspace.chart = new Chart({ workspace: args.workspace });
+    });
+}
+
+/**
+ * Load YUI3 and initialize charts
+ */
+$.getScript("https://ajax.googleapis.com/ajax/libs/yui/3.3.0/build/yui/yui-min.js", bind_events)
+    .error(function() {
+        $.getScript("/js/saiku/plugins/yui-min.js", bind_events);
+    });
