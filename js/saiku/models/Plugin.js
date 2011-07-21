@@ -4,7 +4,7 @@
 var Plugin = Backbone.Model.extend({
     initialize: function() {        
         for (var i = 0; i < Settings.PLUGINS.length; i++) {
-            $.getScript("/js/saiku/plugins/" + Settings.PLUGINS[i] + ".js");
+            $.getScript("/js/saiku/plugins/" + Settings.PLUGINS[i] + "/plugin.js");
         }
     }
 });
