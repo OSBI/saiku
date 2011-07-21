@@ -9,7 +9,11 @@ var Chart = Backbone.View.extend({
         // Add chart button
         this.add_button();
         this.workspace.toolbar.chart = this.show;
-        this.workspace.bind('query:new', this.activate_button);
+        if (! this.workspace.query) {
+            this.workspace.bind('query:new', this.activate_button);
+        } else {
+            this.activate_button();
+        }
     },
     
     add_button: function() {
