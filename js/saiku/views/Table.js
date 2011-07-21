@@ -19,7 +19,7 @@ var Table = Backbone.View.extend({
         }
         
         // Check for error
-        if (args.data[0][0]['type'] === "ERROR") {
+        if (args.data[0][0].type === "ERROR") {
             this.error(args);
         }
         
