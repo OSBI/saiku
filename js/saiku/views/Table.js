@@ -1,4 +1,5 @@
 var Table = Backbone.View.extend({
+    tagName: "table",
     initialize: function(args) {
         this.workspace = args.workspace;
         
@@ -22,10 +23,6 @@ var Table = Backbone.View.extend({
         if (args.data[0][0].type === "ERROR") {
             this.error(args);
         }
-        
-        // Create table for streaming result
-        $table = $('<table />');
-        $(this.el).append($table);
         
         // Render the table without blocking the UI thread
         _.delay(this.process_data, 0, args);
@@ -64,11 +61,11 @@ var Table = Backbone.View.extend({
         }
         
         // Append the table
-        $(this.el).find('table').html(contents);
+        $(this.el).html(contents);
         
         // Show in the workspace
         $(args.workspace.el).find('.workspace_results').html('')
-            .append($(this.el).find('table'));
+            .append($(this.el));
     },
     
     no_results: function(args) {
