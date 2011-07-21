@@ -15,9 +15,18 @@ var WorkspaceToolbar = Backbone.View.extend({
         this.bind('properties_loaded', this.reflect_properties);
         
         // Fire off workspace event
-        this.workspace.trigger('workspace::toolbar', { 
+        this.workspace.trigger('workspace:toolbar:render', { 
             workspace: this.workspace
         });
+        
+        // Activate buttons when a new query is created
+        this.workspace.bind('query:new', this.activate_buttons);
+    },
+    
+    activate_buttons: function(args) {
+        $(args.workspace.toolbar.el).find('.button').addClass('disabled_toolbar');
+        $(args.workspace.toolbar.el).find('.auto,.non_empty,.toggle_fields')
+            .removeClass('disabled_toolbar');
     },
     
     template: function() {
