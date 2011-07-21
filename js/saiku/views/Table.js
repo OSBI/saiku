@@ -11,7 +11,7 @@ var Table = Backbone.View.extend({
         // Clear the contents of the table
         $(this.el).html('');
         $(args.workspace.el).find('.workspace_results')
-            .text('Rendering ' + args.data.length + '...');
+            .text('Rendering ' + args.data.length + ' rows...');
         
         // Check to see if there is data
         if (args.data.length === 0) {
