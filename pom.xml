@@ -41,7 +41,7 @@
 							<mkdir dir="target/saiku-ui" />
 								<copy todir="target/saiku-ui">
 									<fileset dir="${basedir}/">
-                                        <exclude name="target" />
+                                        <exclude name="target/" />
                                         <exclude name="pom.xml" />
                                         <exclude name=".git/" />
                                         <exclude name=".gitignore" />
