@@ -1,0 +1,79 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.saiku</groupId>
+	<artifactId>saiku-ui</artifactId>
+	<packaging>pom</packaging>
+	<version>2.1-SNAPSHOT</version>
+	<build>
+		<plugins>
+         <plugin>
+        <groupId>nl.windgazer</groupId>
+        <artifactId>jsdoctk-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+            <srcDir>${basedir}/js/saiku/</srcDir>
+            <recurse>7</recurse><!-- This is the *level of recursion*, not a boolean -->
+        </configuration>
+        <executions>
+            <execution>
+                <id>copy-package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jsdoc</goal>
+						</goals>
+            </execution>
+        </executions>
+    </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<id>copy-package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+							<mkdir dir="target/saiku-ui" />
+								<copy todir="target/saiku-ui">
+									<fileset dir="${basedir}/">
+                                        <exclude name="target/" />
+                                        <exclude name="pom.xml" />
+                                        <exclude name=".git/" />
+                                        <exclude name=".gitignore" />
+                                    </fileset>
+								</copy>
+                                <copy todir="target/saiku-ui/doc/">
+									<fileset dir="${basedir}/target/jsdoc"/>
+								</copy>
+								<zip destfile="target/saiku-ui-${project.version}.zip">
+									<zipfileset dir="target/saiku-ui/" />
+								</zip>
+								<zip destfile="target/saiku-ui-${project.version}.war">
+									<zipfileset dir="target/saiku-ui/" />
+								</zip>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+     <repositories>
+        <repository>
+            <id>jsdoctk1</id>
+            <url>http://jsdoctk-plugin.googlecode.com/svn/repo</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jsdoctk2</id>
+            <url>http://jsdoctk-plugin.googlecode.com/svn/repo</url>
+        </pluginRepository>
+    </pluginRepositories>
+</project>

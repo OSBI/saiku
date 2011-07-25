@@ -776,6 +776,16 @@ html, body {
     border-top: 1px solid #d5d5d5;
     background: #f9f9f9;
 }
+<<<<<<< HEAD
+=======
+
+.workspace_results table th.row_header {
+      border-top: 1px solid #d5d5d5;
+      /*border-bottom: 1px solid #d5d5d5;*/
+      background: #E5E5E5;
+}
+
+>>>>>>> d1db19742a075d4172dc7a61b4a7caa0a32c7d91
 .workspace_results table th.row_null {
     background: #f9f9f9;
 }
@@ -785,6 +795,12 @@ html, body {
     text-align: right;
     white-space: nowrap;
 }
+<<<<<<< HEAD
+=======
+.workspace_results table tr:hover {
+  background: #edf4fa !important;
+}
+>>>>>>> d1db19742a075d4172dc7a61b4a7caa0a32c7d91
 
 /** Save Dialog */
 .error_msg {
@@ -938,6 +954,14 @@ html, body {
     background-repeat: no-repeat;
     background-position: center center;
 }
+<<<<<<< HEAD
+=======
+.workspace_toolbar .switch_to_mdx {
+  background-image: url('../../../images/src/switch_to_mdx.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+>>>>>>> d1db19742a075d4172dc7a61b4a7caa0a32c7d91
 
 
 /** Selections 
@@ -1023,4 +1047,8 @@ html, body {
     background: #FFFFFF;
     opacity: 0.5 !important;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> d1db19742a075d4172dc7a61b4a7caa0a32c7d91
