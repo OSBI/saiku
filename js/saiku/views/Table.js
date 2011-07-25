@@ -10,9 +10,7 @@ var Table = Backbone.View.extend({
     
     render: function(args) {
         // Clear the contents of the table
-        $(this.el).html('');
-        $(args.workspace.el).find('.workspace_results')
-            .text('Rendering ' + args.data.length + ' rows...');
+        $(this.el).html('<tr><td>Rendering ' + args.data.length + ' rows...</td></tr>');
         
         // Check to see if there is data
         if (args.data.length === 0) {
@@ -62,19 +60,15 @@ var Table = Backbone.View.extend({
         
         // Append the table
         $(this.el).html(contents);
-        
-        // Show in the workspace
-        $(args.workspace.el).find('.workspace_results').html('')
-            .append($(this.el));
     },
     
     no_results: function(args) {
-        $(args.workspace.el).find('.workspace_results')
-            .html('No results');
+        $(args.workspace.el).find('.workspace_results table')
+            .html('<tr><td>No results</td></tr>');
     },
     
     error: function(args) {
-        $(args.workspace.el).find('.workspace_results')
-            .html(args.data[0][0]['value']);
+        $(args.workspace.el).find('.workspace_results table')
+            .html('<tr><td>' + args.data[0][0].value + '</td></tr>');
     }
 });

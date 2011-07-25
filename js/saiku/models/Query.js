@@ -61,8 +61,8 @@ var Query = Backbone.Model.extend({
         // TODO - Validate query
         
         // Run it
-        $(this.workspace.el).find('.workspace_results')
-            .text('Running query...');
+        $(this.workspace.el).find('.workspace_results table')
+            .html('<tr><td>Running query...</td></tr>');
         this.result.fetch();
     },
     

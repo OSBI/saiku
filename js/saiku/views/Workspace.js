@@ -32,13 +32,20 @@ var Workspace = Backbone.View.extend({
                 accept: '.d_measure, .d_dimension'
             });
         
+        // Add results table
+        $(this.el).find('.workspace_results')
+            .append($(this.table.el));
+        
         return this; 
     },
     
     clear: function() {
         // Prepare the workspace for a new query
-        $(this.el).find('.workspace_results,.connectable')
+        $(this.el).find('.workspace_results table,.connectable')
             .html('');
+            
+        // Trigger clear event
+        this.trigger('workspace:clear');
     },
     
     initialize: function(args) {
@@ -76,6 +83,14 @@ var Workspace = Backbone.View.extend({
         $separator = $(this.el).find('.sidebar_separator');
         $separator.height($("body").height() - 87);
         $(this.el).find('.sidebar').height($("body").height() - 87);
+        
+        // Adjust the dimensions of the results window
+        $(this.el).find('.workspace_results').css({
+            width: $(this.el).width() - $(this.el).find('.sidebar').width() - 30,
+            height: $('.tab_container').height() - 
+                $(this.el).find('.workspace_toolbar').height() - 
+                $(this.el).find('.workspace_fields').height() - 30
+        });
     },
     
     toggle_sidebar: function() {
