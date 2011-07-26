@@ -21,12 +21,14 @@ var Chart = Backbone.View.extend({
         
         // Append chart to workspace
         $(this.workspace.el).find('.workspace_results')
-            .prepend($(this.el));
+            .prepend($(this.el).hide());
     },
     
     add_button: function() {
-        var $chart_button = $('<a href="#chart" class="chart button disabled_toolbar"></a>')
-            .css({ 'background': "url('/js/saiku/plugins/Chart/chart.png') 50% 50% no-repeat" });
+        var $chart_button = 
+            $('<a href="#chart" class="chart button disabled_toolbar"></a>')
+            .css({ 'background': 
+                "url('/js/saiku/plugins/Chart/chart.png') 50% 50% no-repeat" });
         var $chart_li = $('<li class="seperator"></li>').append($chart_button);
         $(this.workspace.toolbar.el).find("ul").append($chart_li);
     },
@@ -39,35 +41,31 @@ var Chart = Backbone.View.extend({
         $(this.workspace.el).find('.workspace_results table').toggle();
         $(this.el).toggle();
         $(event.target).toggleClass('on');
+        
+        if ($(event.target).hasClass('on')) {
+            this.render();
+        }
     },
     
     render: function() { 
-        $(this.el).css({
-            width: $(this.workspace.el).find('.workspace_results').width() - 50,
-            height: $(this.workspace.el).find('.workspace_results').height()
-        }).html('');
+        this.chart = new pvc.BarChart({
+            canvas: this.id,
+            width: $(this.workspace.el).find('.workspace_results').width() - 10,
+            height: $(this.workspace.el).find('.workspace_results').height() - 10,
+            orientation: 'vertical',
+            stacked: true,
+            animate: true,
+            legend: true,
+            legendPosition:"bottom",
+            colors: ["#A85A58", "#A88A58", "#3E536F", "#458449", "#D39E9C", "#D3BF9C", "#8B9DB7", "#8FC292"]
+        });
         
-        try {
-            this.chart = new pvc.BarChart({
-                canvas: this.id,
-                width: $(this.workspace.el).find('.workspace_results').width() - 50,
-                height: $(this.workspace.el).find('.workspace_results').height(),
-                orientation: 'horizontal',
-                stacked: true,
-                animate: false,
-                legend: true,
-                legendPosition:"bottom"
-            });
-            
-            this.chart.setData(this.data, {
-                crosstabMode: true,
-                seriesInRows: false
-            });
-            
-            this.chart.render();
-        } catch (e) {
-            console.log(e);
-        }
+        this.chart.setData(this.data, {
+            crosstabMode: true,
+            seriesInRows: false
+        });
+        
+        this.chart.render();
     },
     
     receive_data: function(args) {
@@ -79,28 +77,27 @@ var Chart = Backbone.View.extend({
         this.data.resultset = [];
         this.data.metadata = [];
         
-        for (var field = 1; field < args.data[0].length; field++) {
-            this.data.metadata[field - 1] = {
-                colIndex: field - 1,
-                colType: String,
-                colName: args.data[row][field].value
-            };
-        }
-        
         if (args.data.length > 0) {
+        
+            for (var field = 0; field < args.data[0].length; field++) {
+                this.data.metadata.push({
+                    colIndex: field,
+                    colType: isNaN(args.data[1][field].value.replace(/[^a-zA-Z 0-9.]+/g,'')) ? "String" : "Numeric",
+                    colName: args.data[0][field].value
+                });
+            }
+        
             for (var row = 1; row < args.data.length; row++) {
                 var record = [];
-                record.category = args.data[row][0].value;
-                for (var col = 1; col < args.data[row].length; col++) {
-                    record.push(parseFloat(args.data[row][col].value
-                        .replace(/[^a-zA-Z 0-9.]+/g,'')));
+                for (var col = 0; col < args.data[row].length; col++) {
+                    record.push(
+                        parseFloat(args.data[row][col].value.replace(/[^a-zA-Z 0-9.]+/g,'')) ?
+                        parseFloat(args.data[row][col].value.replace(/[^a-zA-Z 0-9.]+/g,'')) :
+                        args.data[row][col].value
+                    );
                 }
-                this.data.push(record);
+                this.data.resultset.push(record);
             }
-            
-            console.log(this.data);
-            
-            this.render();
         }
     }
 });
