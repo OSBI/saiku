@@ -1039,3 +1039,7 @@ html, body {
     opacity: 0.5 !important;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
 }
+
+@media print {
+    #header, .sidebar, .workspace_fields, .workspace_toolbar { display: none !important; }
+}
