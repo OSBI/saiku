@@ -10,7 +10,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         
         // Maintain `this` in callbacks
         _.bindAll(this, "call", "reflect_properties", "run_query",
-            "swap_axes_on_dropzones");
+            "swap_axes_on_dropzones", "display_drillthrough");
         
         // Redraw the toolbar to reflect properties
         this.bind('properties_loaded', this.reflect_properties);
@@ -112,6 +112,18 @@ var WorkspaceToolbar = Backbone.View.extend({
         this.workspace.query.action.put("/swapaxes", { 
             success: this.swap_axes_on_dropzones
         });
+    },
+    
+    drillthrough: function(event) {
+        Saiku.ui.block("We have to go deeper...");
+        this.workspace.query.action.get("/drillthrough:500", {
+            success: this.display_drillthrough
+        });
+    },
+    
+    display_drillthrough: function(model, response) {
+        this.workspace.table.render({ data: response });
+        Saiku.ui.unblock();
     },
     
     swap_axes_on_dropzones: function() {

@@ -49,6 +49,7 @@ var QueryAction = Backbone.Model.extend({
         } else if (method == "delete") {
             this.destroy(options);
         } else if (method == "fetch") {
+            this.parse = function() {};
             this.fetch(options);
         }
     }
