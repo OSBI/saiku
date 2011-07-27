@@ -75,6 +75,8 @@ var Chart = Backbone.View.extend({
                 xAxisLabel_textAlign: "right",
                 xAxisLabel_bottom: 10
             };
+            
+            options.xAxisSize = 100;
         }
         
         this.chart = new pvc.BarChart(options);
