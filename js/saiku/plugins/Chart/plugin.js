@@ -16,7 +16,7 @@ var Chart = Backbone.View.extend({
         if (! this.workspace.query) {
             this.workspace.bind('query:new', this.activate_button);
         } else {
-            this.activate_button({ workspace: this });
+            this.activate_button({ workspace: this.workspace });
         }
         
         // Append chart to workspace
@@ -34,7 +34,8 @@ var Chart = Backbone.View.extend({
     },
     
     activate_button: function(args) {
-        $(args.workspace.el).find('.chart').removeClass('disabled_toolbar');
+        console.log("args", args);
+        $(args.workspace.toolbar.el).find('.chart').removeClass('disabled_toolbar');
     },
     
     show: function(event, ui) {
@@ -48,17 +49,30 @@ var Chart = Backbone.View.extend({
     },
     
     render: function() { 
-        this.chart = new pvc.BarChart({
+        var options = {
             canvas: this.id,
             width: $(this.workspace.el).find('.workspace_results').width() - 10,
             height: $(this.workspace.el).find('.workspace_results').height() - 10,
             orientation: 'vertical',
             stacked: true,
-            animate: true,
+            animate: false,
+            showValues: false,
             legend: true,
-            legendPosition:"bottom",
-            colors: ["#A85A58", "#A88A58", "#3E536F", "#458449", "#D39E9C", "#D3BF9C", "#8B9DB7", "#8FC292"]
-        });
+            legendPosition:"top",
+            legendAlign: "right",
+            colors: ["#B40010", "#CCC8B4", "#DDB965", "#72839D", "#1D2D40"]
+        };
+        
+        console.log(this.data);
+        if (this.data.resultset.length > 5) {
+            options.extensionPoints = {
+                xAxisLabel_textAngle: -(Math.PI / 2),
+                xAxisLabel_textAlign: "right",
+                xAxisLabel_bottom: 10
+            };
+        }
+        
+        this.chart = new pvc.BarChart(options);
         
         this.chart.setData(this.data, {
             crosstabMode: true,
@@ -98,6 +112,12 @@ var Chart = Backbone.View.extend({
                 }
                 this.data.resultset.push(record);
             }
+            
+            if ($(this.workspace.toolbar.el).find('.chart').hasClass('on')) {
+                this.render();
+            }
+        } else {
+            $(this.el).text("No results");
         }
     }
 });
