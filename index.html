@@ -32,14 +32,16 @@
         
         <!--  jQuery, jQuery UI -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/jquery/jquery.min.js"><\/script>')</script>
+        <script>typeof(window.jQuery) !== "undefined" || document.write('<script src="js/jquery/jquery.min.js"><\/script>')</script>
         <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js" type="text/javascript"></script>
-        <script>window.jQuery.ui || document.write('<script src="js/jquery/jquery-ui.min.js"><\/script>')</script>
+        <script>typeof(window.jQuery.ui) !== "undefined" || document.write('<script src="js/jquery/jquery-ui.min.js"><\/script>')</script>
         
         <!-- Backbone.js and deps -->
-        <script type="text/javascript" src="js/backbone/underscore.js"></script>
+        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.1.7/underscore-min.js"></script>
+        <script>typeof(_) !== "undefined" || document.write('<script src="js/backbone/underscore.js"><\/script>')</script>
         <script type="text/javascript" src="js/backbone/json2.js"></script>
-        <script type="text/javascript" src="js/backbone/backbone.js"></script>
+        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/0.5.1/backbone-min.js"></script>
+        <script>typeof(Backbone) !== "undefined" || document.write('<script src="js/backbone/backbone.js"><\/script>')</script>
         
         <!-- Saiku Project -->
         <script type="text/javascript" src="js/saiku/Settings.js"></script>
@@ -66,8 +68,8 @@
         <script type="text/javascript" src="js/saiku/plugins/Chart/plugin.js" defer></script>
         
         <!-- Loggly error logging service -->
-        <script type="text/javascript" src="http://d3eyf2cx8mbems.cloudfront.net/js/loggly-0.1.0.js" defer></script>
-        <script>loggly || document.write('<script src="js/loggly/loggly-0.1.0.js" defer><\/script>')</script>
+        <script type="text/javascript" src="http://d3eyf2cx8mbems.cloudfront.net/js/loggly-0.1.0.js"></script>
+        <script>typeof(loggly) !== "undefined" || document.write('<script src="js/loggly/loggly-0.1.0.js"><\/script>')</script>
         <script type="text/javascript" src="js/loggly/Loggly.js" defer></script>
         
         <!-- Templates -->
