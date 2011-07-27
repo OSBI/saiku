@@ -17,12 +17,10 @@ var Workspace = Backbone.View.extend({
         // Load template
         $(this.el).html(this.template());
         
-        // Generate toolbar
-        this.toolbar.render();
+        // Show toolbar
         $(this.el).find('.workspace_toolbar').append($(this.toolbar.el));
         
-        // Generate drop zones
-        this.drop_zones.render();
+        // Show drop zones
         $(this.drop_zones.el)
             .insertAfter($(this.el).find('.workspace_toolbar'));
         
@@ -35,6 +33,9 @@ var Workspace = Backbone.View.extend({
         // Add results table
         $(this.el).find('.workspace_results')
             .append($(this.table.el));
+            
+        // Fire off new workspace event
+        Saiku.session.trigger('workspace:new', { workspace: this });
         
         return this; 
     },
@@ -59,10 +60,12 @@ var Workspace = Backbone.View.extend({
         
         // Generate toolbar and append to workspace
         this.toolbar = new WorkspaceToolbar({ workspace: this });
+        this.toolbar.render();
         this.tab = args.tab;
         
         // Create drop zones
         this.drop_zones = new WorkspaceDropZone({ workspace: this });
+        this.drop_zones.render();
         
         // Generate table
         this.table = new Table({ workspace: this });
@@ -73,9 +76,6 @@ var Workspace = Backbone.View.extend({
         
         // Flash cube navigation when rendered
         this.tab.bind('tab:rendered', this.flash_cube_navigation);
-        
-        // Fire off new workspace event
-        Saiku.session.trigger('workspace:new', { workspace: this });
     },
     
     adjust: function() {
