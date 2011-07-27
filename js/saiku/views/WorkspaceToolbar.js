@@ -9,7 +9,8 @@ var WorkspaceToolbar = Backbone.View.extend({
         this.workspace = args.workspace;
         
         // Maintain `this` in callbacks
-        _.bindAll(this, "call", "reflect_properties", "run_query");
+        _.bindAll(this, "call", "reflect_properties", "run_query",
+            "swap_axes_on_dropzones");
         
         // Redraw the toolbar to reflect properties
         this.bind('properties_loaded', this.reflect_properties);
@@ -103,6 +104,38 @@ var WorkspaceToolbar = Backbone.View.extend({
         
         // Run query
         this.workspace.query.run();
+    },
+    
+    swap_axis: function(event) {
+        // Swap axes
+        Saiku.ui.block("Swapping axes...");
+        this.workspace.query.action.put("/swapaxes", { 
+            success: this.swap_axes_on_dropzones
+        });
+    },
+    
+    swap_axes_on_dropzones: function() {
+        $columns = $(this.workspace.drop_zones.el).find('.columns')
+            .children()
+            .detach();
+        $rows = $(this.workspace.drop_zones.el).find('.rows')
+            .children()
+            .detach();
+            
+        $(this.workspace.drop_zones.el).find('.columns').append($rows);
+        $(this.workspace.drop_zones.el).find('.rows').append($columns);
+        
+        this.workspace.query.run();
+        Saiku.ui.unblock();
+    },
+    
+    show_mdx: function(event) {
+        // FIXME
+        this.workspace.query.action.get("/mdx", { 
+            error: function(model, response) {
+                (new MDXModal({ mdx: response.responseText })).render().open();
+            }
+        });
     },
     
     export_xls: function(event) {

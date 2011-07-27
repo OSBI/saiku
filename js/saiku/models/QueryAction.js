@@ -12,18 +12,28 @@ var QueryAction = Backbone.Model.extend({
         this.url = this.query.url;
     },
     
-    post: function(action, callback) {
-        this.handle("save", action, callback);
+    get: function(action, options) {
+        this.handle("fetch", action, options)
     },
     
-    del: function(action, callback) {
+    post: function(action, options) {
+        this.handle("save", action, options);
+    },
+    
+    put: function(action, options) {
         this.id = _.uniqueId('queryaction_');
-        this.handle("delete", action, callback);
+        this.handle("save", action, options);
+        delete this.id;
+    },
+    
+    del: function(action, options) {
+        this.id = _.uniqueId('queryaction_');
+        this.handle("delete", action, options);
         delete this.id;
     },
     
     // Call arbitrary actions against the query
-    handle: function(method, action, callback) {
+    handle: function(method, action, options) {
         // Set query action
         this.url = this.query.url() + escape(action);
         
@@ -33,11 +43,13 @@ var QueryAction = Backbone.Model.extend({
         // Initiate action
         if (method == "save") {
             // Handle response from server
-            this.parse = callback;
+            this.parse = options.success;
             
             this.save();
         } else if (method == "delete") {
-            this.destroy({ success: callback });
+            this.destroy(options);
+        } else if (method == "fetch") {
+            this.fetch(options);
         }
     }
 });

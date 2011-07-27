@@ -114,7 +114,9 @@ var WorkspaceDropZone = Backbone.View.extend({
         if ($target_el.hasClass('filter')) target = "FILTER";
         
         var url = "/axis/" + target + "/dimension/" + dimension;
-        this.workspace.query.action.del(url, this.workspace.query.run);
+        this.workspace.query.action.del(url, {
+            success: this.workspace.query.run
+        });
         
         // Remove element
         ui.draggable.addClass('deleted').remove();

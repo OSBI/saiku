@@ -76,10 +76,12 @@ var Query = Backbone.Model.extend({
         
         var url = "/axis/" + target + "/dimension/" + dimension;
         
-        this.action.post(url, function() {
-            if (this.query.properties
-                .properties['saiku.olap.query.automatic_execution'] === 'true') {
-                this.query.run();
+        this.action.post(url, {
+            success: function() {
+                if (this.query.properties
+                    .properties['saiku.olap.query.automatic_execution'] === 'true') {
+                    this.query.run();
+                }
             }
         });
     },
