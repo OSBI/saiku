@@ -13,11 +13,6 @@ var Chart = Backbone.View.extend({
         // Add chart button
         this.add_button();
         this.workspace.toolbar.chart = this.show;
-        if (! this.workspace.query) {
-            this.workspace.bind('query:new', this.activate_button);
-        } else {
-            this.activate_button({ workspace: this.workspace });
-        }
         
         // Append chart to workspace
         $(this.workspace.el).find('.workspace_results')
@@ -34,10 +29,6 @@ var Chart = Backbone.View.extend({
                 "url('js/saiku/plugins/Chart/chart.png') 50% 50% no-repeat" });
         var $chart_li = $('<li class="seperator"></li>').append($chart_button);
         $(this.workspace.toolbar.el).find("ul").append($chart_li);
-    },
-    
-    activate_button: function(args) {
-        $(args.workspace.toolbar.el).find('.chart').removeClass('disabled_toolbar');
     },
     
     show: function(event, ui) {

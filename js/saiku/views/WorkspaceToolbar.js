@@ -19,14 +19,21 @@ var WorkspaceToolbar = Backbone.View.extend({
             workspace: this.workspace
         });
         
-        // Activate buttons when a new query is created
+        // Activate buttons when a new query is created or run
         this.workspace.bind('query:new', this.activate_buttons);
+        this.workspace.bind('query:result', this.activate_buttons);
     },
     
     activate_buttons: function(args) {
-        $(args.workspace.toolbar.el).find('.button').addClass('disabled_toolbar');
-        $(args.workspace.toolbar.el).find('.auto,.non_empty,.toggle_fields')
-            .removeClass('disabled_toolbar');
+        if (args.data && args.data.length > 0) {
+            $(args.workspace.toolbar.el).find('.button')
+                .removeClass('disabled_toolbar');            
+        } else {
+            $(args.workspace.toolbar.el).find('.button')
+                .addClass('disabled_toolbar');
+            $(args.workspace.toolbar.el).find('.auto,.non_empty,.toggle_fields')
+                .removeClass('disabled_toolbar');
+        }
     },
     
     template: function() {
