@@ -34,7 +34,6 @@ var Chart = Backbone.View.extend({
     },
     
     activate_button: function(args) {
-        console.log("args", args);
         $(args.workspace.toolbar.el).find('.chart').removeClass('disabled_toolbar');
     },
     
@@ -63,7 +62,6 @@ var Chart = Backbone.View.extend({
             colors: ["#B40010", "#CCC8B4", "#DDB965", "#72839D", "#1D2D40"]
         };
         
-        console.log(this.data);
         if (this.data.resultset.length > 5) {
             options.extensionPoints = {
                 xAxisLabel_textAngle: -(Math.PI / 2),

@@ -43,7 +43,6 @@
         
         <!-- Saiku Project -->
         <script type="text/javascript" src="js/saiku/Settings.js"></script>
-        <script type="text/javascript" src="js/saiku/models/Template.js"></script>
         <script type="text/javascript" src="js/saiku/models/Dimension.js"></script>
         <script type="text/javascript" src="js/saiku/views/DimensionList.js"></script>
         <script type="text/javascript" src="js/saiku/views/Toolbar.js"></script>
@@ -70,5 +69,132 @@
         <script type="text/javascript" src="js/loggly/Loggly.js"></script>
         
         <!-- Templates -->
+        <script type="text/x-jquery-tmpl" id="template-cubes">
+        <select class="cubes">
+            <option>Select a cube</option>
+            <% _.each(connections, function(connection) { %>
+                <% _.each(connection.catalogs, function(catalog) { %>
+                    <% _.each(catalog.schemas, function(schema) { %>
+                        <optgroup label="<%= schema.name %>">
+                        <% _.each(schema.cubes, function(cube) { %>
+                            <option value="<%= connection.name %>/<%= catalog.name %>/<%= schema.name %>/<%= cube.name %>"><%= cube.name %></option>
+                        <% }); %>
+                        </optgroup>
+                    <% }); %>
+                <% }); %>
+            <% }); %>
+        </select>
+        </script>
+        
+        <script type="text/x-jquery-tmpl" id="template-dimensions">
+        <ul>
+        <% _.each(dimensions, function(dimension) { %>
+        <% if (dimension.name != 'Measures') { %>
+            <li class='parent_dimension'>
+                <span class="root collapsed">
+                    <a class="folder_collapsed" href="#"><%= dimension.name %></a>
+                </span>
+                <ul>
+                <% _.each(dimension.hierarchies, function(hierarchy) { %>
+                    <% if (dimension.hierarchies.length > 1) { %>
+                        <li class="hierarchy hide">
+                            <a class="dimension" href="#"><%= hierarchy.name %></a>
+                        </li>
+                    <% } %>
+                    <% _.each(hierarchy.levels, function(level) { %>
+                        <li class="hide"><a title="<%= level.uniqueName %>" 
+                            class="dimension" href="#<%= dimension.name %>/hierarchy/<%= hierarchy.uniqueName %>/<%= level.uniqueName %>"><%= level.name %></a>
+                        </li>
+                    <% }); %>
+                <% }); %>
+                </ul>
+        <% } %>
+        <% }); %>
+        </ul>
+        </script>
+        
+        <script type="text/x-jquery-tmpl" id="template-measures">
+        <ul>
+            <li>
+        		<span class="root expand">
+        		   <a href="#" title="Measures" class="folder_expand">Measures</a>
+        		</span>
+        		<ul>
+        		<% _.each(measures, function(measure) { %>
+        		    <li><a title="[Measures].[<%= measure.name %>]" 
+        		        class="measure" href="#Measures/member/<%= measure.uniqueName %>"><%= measure.name %></a>
+        		    </li>
+        		<% }); %>
+        		</ul>
+            </li>
+        </ul>
+        </script>
+        
+        <script type="text/x-jquery-tmpl" id="template-workspace">
+        <div class="workspace">
+            <div class="workspace_inner">
+                <div class="workspace_toolbar"></div>
+                <div class="workspace_results">
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <h3 class="top i18n">Cubes</h3>
+            <div class="sidebar_inner">
+                <%= cube_navigation %>
+            </div>
+            <h3 class="i18n">Dimensions</h3>
+            <div class="sidebar_inner dimension_tree"></div>
+            <h3 class="i18n">Measures</h3>
+            <div class="sidebar_inner measure_tree"></div>
+        </div>
+        
+        <div class="sidebar_separator"></div>
+        <div class="clear"></div>
+        </script>
+        
+        <script type="text/x-jquery-tmpl" id="template-workspace-dropzones">
+        <div class="workspace_fields">
+            <div class="fields_list" title="COLUMNS">
+                <div class="fields_list_header i18n">Columns</div>
+                <div class="fields_list_body columns">
+                    <ul class="connectable"></ul>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="fields_list" title="ROWS">
+                <div class="fields_list_header i18n">Rows</div>
+                <div class="fields_list_body rows">
+                    <ul class="connectable">
+                    </ul>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="fields_list" title="FILTER">
+                <div class="fields_list_header i18n">Filter</div>
+                <div class="fields_list_body filter">
+                    <ul class="connectable">
+                    </ul>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        </script>
+        
+        <script type="text/x-jquery-tmpl" id="template-workspace-toolbar">
+        <ul>
+            <li><a href="#save_query" class="i18n save button disabled_toolbar" title="Save query"></a></li>
+            <li class="seperator"><a href="#run_query" class="i18n run button disabled_toolbar" title="Run query"></a></li>
+            <li><a href="#automatic_execution" class="i18n auto button disabled_toolbar" title="Automatic execution"></a></li>
+            <li><a href="#toggle_fields" class="i18n toggle_fields button disabled_toolbar" title="Toggle fields"></a></li>
+            <li class="seperator"><a href="#non_empty" class="i18n non_empty button disabled_toolbar"  title="Non-empty"></a></li>
+            <li><a href="#swap_axis" class="i18n swap_axis button disabled_toolbar" title="Swap axis"></a></li>
+            <li><a href="#drillthrough" class="i18n drillthrough button disabled_toolbar" title="Drill Through current query"></a></li>
+            <li><a href="#show_mdx" class="i18n mdx button disabled_toolbar" title="Show MDX"></a></li>
+            <li class="seperator"><a href="#export_xls" class="i18n export_xls button disabled_toolbar" title="Export XLS"></a></li>
+            <li><a href="#export_csv" class="i18n export_csv button disabled_toolbar" title="Export CSV"></a></li>
+        </ul>
+        </script>
     </body>
 </html>

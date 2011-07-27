@@ -5,22 +5,17 @@ var Saiku = {
     /**
      * View which manages toolbar interactions
      */
-    toolbar: new Toolbar,
+    toolbar: new Toolbar(),
     
     /**
      * View which handles tabs
      */
-    tabs: new TabSet,
+    tabs: new TabSet(),
     
     /**
      * Model which handles session and authentication
      */
     session: null,
-    
-    /**
-     * Class which handles template loading
-     */
-    template: new Template,
     
     /**
      * Convenience functions for blocking the UI
@@ -49,6 +44,6 @@ Backbone.emulateHTTP = false;
  * Up up and away!
  */
 $(document).ready(function() {
-    Saiku.session = new Session;
+    Saiku.session = new Session();
     Saiku.session.get_credentials();
 });

@@ -1,6 +1,6 @@
 var WorkspaceDropZone = Backbone.View.extend({
     template: function() {
-        return Saiku.template.get('WorkspaceDropZones')();
+        return _.template($("#template-workspace-dropzones").text())();
     },
     
     events: {

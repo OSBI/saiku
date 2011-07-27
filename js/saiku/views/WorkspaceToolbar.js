@@ -30,7 +30,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     template: function() {
-        return Saiku.template.get('WorkspaceToolbar')();
+        return _.template($("#template-workspace-toolbar").text())();
     },
     
     render: function() {
