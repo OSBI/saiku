@@ -22,6 +22,9 @@ var Chart = Backbone.View.extend({
         // Append chart to workspace
         $(this.workspace.el).find('.workspace_results')
             .prepend($(this.el).hide());
+            
+        // Listen to adjust event and rerender chart
+        this.workspace.bind('workspace:adjust', this.render);
     },
     
     add_button: function() {
@@ -47,7 +50,11 @@ var Chart = Backbone.View.extend({
         }
     },
     
-    render: function() { 
+    render: function() {
+        if (! $(this.workspace.toolbar.el).find('.chart').hasClass('on')) {
+            return;
+        }
+        
         var options = {
             canvas: this.id,
             width: $(this.workspace.el).find('.workspace_results').width() - 10,
@@ -111,9 +118,7 @@ var Chart = Backbone.View.extend({
                 this.data.resultset.push(record);
             }
             
-            if ($(this.workspace.toolbar.el).find('.chart').hasClass('on')) {
-                this.render();
-            }
+            this.render();
         } else {
             $(this.el).text("No results");
         }
