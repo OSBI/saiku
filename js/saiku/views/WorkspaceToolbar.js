@@ -103,5 +103,17 @@ var WorkspaceToolbar = Backbone.View.extend({
         
         // Run query
         this.workspace.query.run();
+    },
+    
+    export_xls: function(event) {
+        window.location = Settings.TOMCAT_WEBAPP + Settings.REST_MOUNT_POINT + 
+            Saiku.session.username + "/query/" + 
+            this.workspace.query.name + "/export/xls";
+    },
+    
+    export_csv: function(event) {
+        window.location = Settings.TOMCAT_WEBAPP + Settings.REST_MOUNT_POINT + 
+            Saiku.session.username + "/query/" + 
+            this.workspace.query.name + "/export/csv";
     }
 });
