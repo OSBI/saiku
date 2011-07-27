@@ -85,9 +85,6 @@ var Session = Backbone.Model.extend({
         Saiku.tabs.render();
         Saiku.tabs.add(new Tab());
         
-        // Load plugins
-        this.plugins = new Plugin();
-        
         // Notify the rest of the application that login was successful
         this.trigger('session:new', {
             session: this

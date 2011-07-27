@@ -29,7 +29,6 @@ var Chart = Backbone.View.extend({
                 "url('js/saiku/plugins/Chart/chart.png') 50% 50% no-repeat" });
         var $chart_li = $('<li class="seperator"></li>').append($chart_button);
         $(this.workspace.toolbar.el).find("ul").append($chart_li);
-        console.log($(this.workspace.toolbar.el).children(), $chart_li);
     },
     
     show: function(event, ui) {
