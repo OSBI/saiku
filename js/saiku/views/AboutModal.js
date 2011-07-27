@@ -1,6 +1,8 @@
 var AboutModal = Modal.extend({
-    title: "About Saiku Suite 2.1 SNAPSHOT",
+    options: {
+        title: "About " + Settings.VERSION
+    },
     type: "info",
-    message: "Saiku Suite 2.1 SNAPSHOT<br>" + 
+    message: Settings.VERSION + "<br>" + 
         "<a href='http://www.analytical-labs.com'>http://www.analytical-labs.com/</a>"
 });
