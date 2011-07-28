@@ -7,7 +7,7 @@ var Tab = Backbone.View.extend({
     events: {
         'click a': 'select',
         'mousedown a': 'remove',
-        'click span': 'remove'
+        'click .close_tab': 'remove'
     },
     
     template: function() {
@@ -86,7 +86,7 @@ var Tab = Backbone.View.extend({
      * @returns {Boolean}
      */
     remove: function(event) {
-        if (!event || event.which === 2) {
+        if (!event || event.which === 2 || $(event.target).hasClass('close_tab')) {
             // Remove the tab element
             $(this.el).remove();
             
