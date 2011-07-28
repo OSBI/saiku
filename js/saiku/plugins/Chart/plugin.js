@@ -77,7 +77,11 @@ var Chart = Backbone.View.extend({
             seriesInRows: false
         });
         
-        this.chart.render();
+        try {
+            this.chart.render();
+        } catch (e) {
+            $(this.el).text("Could not render chart");
+        }
     },
     
     receive_data: function(args) {
