@@ -6,7 +6,7 @@ var Dimension = Backbone.Model.extend({
     
     parse: function(response) {
         this.set({
-            template: _.template($("#template-dimensions").text())({
+            template: _.template($("#template-dimensions").html())({
                 dimensions: response
             })
         });
@@ -23,7 +23,7 @@ var Measure = Backbone.Model.extend({
     
     parse: function(response) {
         this.set({ 
-            template: _.template($("#template-measures").text())({
+            template: _.template($("#template-measures").html())({
                 measures: response
             })
         });

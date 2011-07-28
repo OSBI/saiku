@@ -38,7 +38,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     template: function() {
-        return _.template($("#template-workspace-toolbar").text())();
+        return _.template($("#template-workspace-toolbar").html())();
     },
     
     render: function() {

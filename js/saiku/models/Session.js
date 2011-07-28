@@ -54,7 +54,7 @@ var Session = Backbone.Model.extend({
     
     process_login: function(model, response) {
         // Generate cube navigation for reuse
-        this.cube_navigation = _.template($("#template-cubes").text())({
+        this.cube_navigation = _.template($("#template-cubes").html())({
             connections: response
         });
         

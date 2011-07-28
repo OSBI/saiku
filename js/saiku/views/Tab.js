@@ -36,8 +36,7 @@ var Tab = Backbone.View.extend({
     initialize: function(args) {
         _.extend(this, Backbone.Events);
         
-        this.content = args && args.content ? 
-                args.content : new Workspace({ tab: this });
+        this.content = new Workspace({ tab: this });
         this.id = _.uniqueId('tab_');
     },
     
@@ -152,7 +151,7 @@ var TabSet = Backbone.View.extend({
         
         // Replace the contents of the tab panel with the new content
         this.content.children().detach();
-        this.content.append(tab.content.el);
+        this.content.append($(tab.content.el));
     },
     
     /**

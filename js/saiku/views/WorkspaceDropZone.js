@@ -1,6 +1,6 @@
 var WorkspaceDropZone = Backbone.View.extend({
     template: function() {
-        return _.template($("#template-workspace-dropzones").text())();
+        return _.template($("#template-workspace-dropzones").html())();
     },
     
     events: {
