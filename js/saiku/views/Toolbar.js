@@ -39,7 +39,7 @@ var Toolbar = Backbone.View.extend({
      * Add a new tab to the interface
      */
     add_tab: function() {
-        Saiku.tabs.add(new Tab());
+        Saiku.tabs.add(Workspace);
         return false;
     },
     
@@ -47,6 +47,8 @@ var Toolbar = Backbone.View.extend({
      * Open a query from the repository into a new tab
      */
     open_query: function() {
+        Saiku.tabs.add(OpenQuery);
+        
         return false;
     },
     

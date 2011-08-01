@@ -36,7 +36,8 @@ var Tab = Backbone.View.extend({
     initialize: function(args) {
         _.extend(this, Backbone.Events);
         
-        this.content = new Workspace({ tab: this });
+        _.extend(args.args, { tab: this });
+        this.content = new (args.contentType)(args.args);
         this.id = _.uniqueId('tab_');
     },
     
@@ -124,8 +125,12 @@ var TabSet = Backbone.View.extend({
      * Add a tab to the collection
      * @param tab
      */
-    add: function(tab) {
+    add: function(contentType, args) {
         // Add it to the set
+        if (! args) {
+            args = {};
+        }
+        var tab = new Tab({ contentType: contentType, args: args });
         this._tabs.push(tab);
         this.queryCount++;
         tab.parent = this;
