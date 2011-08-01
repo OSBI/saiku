@@ -1,8 +1,11 @@
 var Query = Backbone.Model.extend({
     initialize: function(args) {
         // Save cube
-        this.cube = args.cube;
-        this.unset('cube', { silent: true });
+        if (args.cube) {
+            this.cube = args.cube;
+            this.unset('cube', { silent: true });
+            this.parse_cube();
+        }
         
         // Generate a unique query id
         this.name = 'xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx'
@@ -11,9 +14,6 @@ var Query = Backbone.Model.extend({
             v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         }).toUpperCase();
-        
-        // Parse cube information
-        this.parse_cube();
         
         // Create the query on the server workspace
         this.save();

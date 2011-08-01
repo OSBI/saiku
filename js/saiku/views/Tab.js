@@ -13,7 +13,9 @@ var Tab = Backbone.View.extend({
     template: function() {
         // Generate caption
         var caption = '';
-        if (this.content && this.content.query && this.content.query.name) {
+        if (this.content && this.content.caption) {
+            caption = this.content.caption();
+        } else if (this.content && this.content.query && this.content.query.name) {
             caption = this.content.query.name;
         } else {
             caption = "Unsaved query (" + this.parent.queryCount + ")";
@@ -144,6 +146,8 @@ var TabSet = Backbone.View.extend({
         
         // Trigger add event on session
         Saiku.session.trigger('tab:add', { tab: tab });
+        
+        return tab;
     },
     
     /**
