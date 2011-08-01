@@ -24,7 +24,6 @@ Backbone.sync = function(method, model, options) {
       type:         type,
       cache:        false,
       data:         model.attributes,
-      dataType:     'json',
       success:      options.success,
       error:        options.error
     };
