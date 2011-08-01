@@ -94,26 +94,41 @@ var Chart = Backbone.View.extend({
         this.data.metadata = [];
         
         if (args.data.length > 0) {
+            
+            var lowest_level = 0;
         
-            for (var field = 0; field < args.data[0].length; field++) {
-                this.data.metadata.push({
-                    colIndex: field,
-                    colType: isNaN(args.data[1][field].value.replace(/[^a-zA-Z 0-9.]+/g,'')) ? "String" : "Numeric",
-                    colName: args.data[0][field].value
-                });
-            }
-        
-            for (var row = 1; row < args.data.length; row++) {
-                var record = [];
-                for (var col = 0; col < args.data[row].length; col++) {
-                    record.push(
-                        parseFloat(args.data[row][col].value.replace(/[^a-zA-Z 0-9.]+/g,'')) ?
-                        parseFloat(args.data[row][col].value.replace(/[^a-zA-Z 0-9.]+/g,'')) :
-                        args.data[row][col].value
-                    );
+            for (var row = 0; row < args.data.length; row++) {
+                if (args.data[row][0].type == "ROW_HEADER_HEADER") {
+                    this.data.metadata = [];
+                    for (var field = 0; field < args.data[row].length; field++) {
+                        if (args.data[row][field].type == "ROW_HEADER_HEADER") {
+                            this.data.metadata.shift();
+                            lowest_level = field;
+                        }
+                        
+                        this.data.metadata.push({
+                            colIndex: field,
+                            colType: isNaN(args.data[row + 1][field].value
+                                .replace(/[^a-zA-Z 0-9.]+/g,'')) ? "String" : "Numeric",
+                            colName: args.data[row][field].value
+                        });
+                    }
+                } else {
+                    var record = [];
+                    for (var col = lowest_level; col < args.data[row].length; col++) {
+                        record.push(
+                            parseFloat(args.data[row][col].value
+                                .replace(/[^a-zA-Z 0-9.]+/g,'')) ?
+                            parseFloat(args.data[row][col].value
+                                .replace(/[^a-zA-Z 0-9.]+/g,'')) :
+                            args.data[row][col].value
+                        );
+                    }
+                    this.data.resultset.push(record);
                 }
-                this.data.resultset.push(record);
             }
+            
+            console.log("Data: ", this.data);
             
             this.render();
         } else {
