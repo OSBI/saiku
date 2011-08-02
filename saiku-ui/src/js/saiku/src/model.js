@@ -1267,11 +1267,13 @@ var model = {
 					$('#dialog_selections select option').each(function(i, options) {
 						$(this).text($(this).val());
 					});
+					$('#dialog_selections select').css('width','auto');
 					visible = false;
 				}else{
 					$('#dialog_selections select option').each(function(i, options) {
 						$(this).text($(this).attr('lang'));
 					});
+					$('#dialog_selections select').css('width','200px');
 					visible = true;
 				}
 			});
@@ -1360,7 +1362,12 @@ var model = {
 													$available_selections.append('<option value="' + member['uniqueName'] + '" title="' + member['uniqueName'] + '" lang="' + member['caption'] + '">' + member['caption'] + '</option>');
 												}
 											});
-
+											
+											add_all_selections = function() {
+												$available_selections.find('option').appendTo($used_selections);
+												$available_selections.find('option').remove();
+											}
+											
 											add_selections = function () {
 												$available_selections.find('option:selected').appendTo($used_selections);
 												$available_selections.find('option:selected').remove();
@@ -1370,7 +1377,14 @@ var model = {
 											// Clicking on the > button will add all selected members.
 											$('#add_members').live('click', add_selections);
 											$available_selections.find('option').live('dblclick', add_selections);
-
+											
+											// Clicking on the >> button will add all members.
+											$('#add_all_members').live('click', add_all_selections);
+											remove_all_selections = function () {
+												$used_selections.find('option').appendTo($available_selections);
+												$used_selections.find('option').remove();
+											};
+											
 											remove_selections = function () {
 												$used_selections.find('option:selected').appendTo($available_selections);
 												$used_selections.find('option:selected').remove();
@@ -1380,6 +1394,9 @@ var model = {
 											// Clicking on the < button will remove all selected members.
 											$('#remove_members').live('click', remove_selections);
 											$used_selections.find('option').live('dblclick', remove_selections);
+											
+											// Clicking on the << button will remove all members.
+											$('#remove_all_members').live('click', remove_all_selections);
 
 										},
 										error: function (data) {}

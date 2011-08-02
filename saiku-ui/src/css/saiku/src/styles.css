@@ -965,29 +965,55 @@ html, body {
 #dialog_selections {
     min-width: 500px !important;
 }
+
+#dialog_selections .used_message {
+	float: right;
+	width: 200px
+}
+#dialog_selections .available_message {
+	float: left;
+}
+
 #dialog_selections .dialog_body {
     height: 300px;
 }
 #dialog_selections .dialog_body .available_selections {
-    padding-left: 5px;
     float: left;
+	overflow: auto;
+	width: 200px; 
+	height: 271px;
+	border: 1px #d5d5d5 solid;
+	overflow-x: auto;
+    overflow-y: hidden;
+	overflow: auto; 
+	overflow-y: hidden; 
+	-ms-overflow-y: hidden; 
 }
 #dialog_selections .dialog_body .selection_buttons {
     float: left;
     padding-left: 25px;
-    padding-top: 115px;
+    padding-top: 80px;
     text-align: center;
     vertical-align: middle;
 }
 #dialog_selections .dialog_body .used_selections {
-    padding-right: 5px;
     float: right;
+	overflow: auto;
+	width: 200px; 
+	height: 271px;
+	border: 1px #d5d5d5 solid;
+	overflow-x: auto;
+    overflow-y: hidden;
+	overflow: auto; 
+	overflow-y: hidden; 
+	-ms-overflow-y: hidden; 
 }
 #dialog_selections .dialog_body select {
-    height: 270px;
-    width: 200px;
-    font-size: 11px;
-    overflow-x: scroll;
+	border: none;
+	margin: 0;
+	width: 200px;
+	font-size: 11px;
+	height: 270px;
 }
 #dialog_selections .dialog_footer .options {
     float: left;
