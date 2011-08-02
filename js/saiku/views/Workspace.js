@@ -55,7 +55,7 @@ var Workspace = Backbone.View.extend({
     initialize: function(args) {
         // Maintain `this` in jQuery event handlers
         _.bindAll(this, "adjust", "toggle_sidebar", 
-                "flash_cube_navigation", "new_query");
+                "prepare", "new_query");
                 
         // Attach an event bus to the workspace
         _.extend(this, Backbone.Events);
@@ -75,6 +75,7 @@ var Workspace = Backbone.View.extend({
         // Pull query from args
         if (args.query) {
             this.query = args.query;
+            this.query.workspace = this;
         }
         
         // Adjust tab when selected
@@ -82,7 +83,7 @@ var Workspace = Backbone.View.extend({
         $(window).resize(this.adjust);
         
         // Flash cube navigation when rendered
-        this.tab.bind('tab:rendered', this.flash_cube_navigation);
+        this.tab.bind('tab:rendered', this.prepare);
     },
     
     adjust: function() {
@@ -111,7 +112,7 @@ var Workspace = Backbone.View.extend({
         $(this.el).find('.workspace_inner').css({ 'margin-left': new_margin });
     },
     
-    flash_cube_navigation: function() {
+    prepare: function() {
         // Draw user's attention to cube navigation
         $(this.el).find('.cubes')
             .parent()
@@ -131,6 +132,12 @@ var Workspace = Backbone.View.extend({
             cube: selected_cube,
             workspace: this
         });
+        
+        this.init_query();
+    },
+    
+    init_query: function() {
+        var selected_cube = $(this.el).find('.cubes').val();
         
         // Create new DimensionList and MeasureList
         this.dimension_list = new DimensionList({

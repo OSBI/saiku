@@ -10,6 +10,5 @@ var MDXModal = Modal.extend({
         this.options.title = "View MDX";
         this.options.closeText = "OK";
         this.message = _.template("<textarea><%= mdx %></textarea>")(args);
-        console.log(this.message);
     }
 });

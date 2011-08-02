@@ -128,8 +128,6 @@ var Chart = Backbone.View.extend({
                 }
             }
             
-            console.log("Data: ", this.data);
-            
             this.render();
         } else {
             $(this.el).text("No results");

@@ -7,8 +7,7 @@ var Query = Backbone.Model.extend({
         }
         
         // Generate a unique query id
-        this.name = options.name ? options.name : 
-            'xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, 
+        this.name = 'xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, 
             function (c) {
                 var r = Math.random() * 16 | 0,
                 v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -31,10 +30,37 @@ var Query = Backbone.Model.extend({
         _.bindAll(this, "run", "move_dimension");
     },
     
-    parse: function() {
+    parse: function(response) {
         // Assign id so Backbone knows to PUT instead of POST
         this.id = this.name;
         
+        try {
+        // Grab attributes
+        if (this.attributes.xml !== undefined && 
+            this.attributes.cube === undefined) {
+                console.log("got here");
+            
+            this.set({
+                connection: response.cube.connectionName,
+                catalog: response.cube.catalogName,
+                schema: response.cube.schemaName,
+                cube: response.cube.name
+            });
+            
+            this.cube = response.cube.connectionName + "/" + 
+                response.cube.catalogName + "/" +
+                response.cube.schemaName + "/" +
+                response.cube.name;
+            
+            console.log("cube", $(this.el).find('.cubes'));
+            $(this.el).find('.cubes')
+                .val(this.cube);
+            this.workspace.init_query();
+            
+
+        }
+        
+        } catch (e) { console.log(e); }
         // Fetch initial properties from server
         this.properties.fetch({
             success: this.workspace.toolbar.reflect_properties
