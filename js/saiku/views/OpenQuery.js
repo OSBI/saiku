@@ -46,7 +46,7 @@ var OpenQuery = Backbone.View.extend({
                 .attr({ href: "#" + query.name });
             $("<li />").append($link)
                 .appendTo($ul);
-        };
+        }
     },
     
     view_query: function(event) {
@@ -60,7 +60,7 @@ var OpenQuery = Backbone.View.extend({
         var $properties = $('<ul id="query_info" />').appendTo($results);
         
         // Iterate through properties and show a key=>value set in the information pane
-        for (property in query) {
+        for (var property in query) {
             if (query.hasOwnProperty(property) && property != "name") {
                 $properties.append($('<li />').html("<strong>" + 
                         property + "</strong> : " + query[property]));

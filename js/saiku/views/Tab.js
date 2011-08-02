@@ -15,9 +15,8 @@ var Tab = Backbone.View.extend({
         var caption = '';
         if (this.content && this.content.caption) {
             caption = this.content.caption();
-        } else if (this.content && this.content.query && this.content.query.name) {
-            caption = this.content.query.name;
-        } else {
+        } 
+        if (! caption) {
             caption = "Unsaved query (" + this.parent.queryCount + ")";
         }
         
@@ -63,7 +62,9 @@ var Tab = Backbone.View.extend({
      */
     destroy: function() {
         // Delete data
-        this.content && this.content.query && this.content.query.destroy();
+        if (this.content && this.content.query) {
+            this.content.query.destroy();
+        }
     },
     
     /**

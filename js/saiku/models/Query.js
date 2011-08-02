@@ -1,32 +1,32 @@
 var Query = Backbone.Model.extend({
-    initialize: function(args) {
-        // Save cube
-        if (args.cube) {
-            this.cube = args.cube;
-            this.unset('cube', { silent: true });
+    initialize: function(args, options) {
+        // Save cube and workspace
+        _.extend(this, options);
+        if (this.cube) {
             this.parse_cube();
         }
         
         // Generate a unique query id
-        this.name = 'xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx'
-        .replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0,
-            v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        }).toUpperCase();
+        this.name = options.name ? options.name : 
+            'xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, 
+            function (c) {
+                var r = Math.random() * 16 | 0,
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            }).toUpperCase();
         
         // Create the query on the server workspace
         this.save();
         
         // Initialize properties object
-        this.properties = new Properties({ query: this });
+        this.properties = new Properties({}, { query: this });
         
         // Initialize action handler
-        this.action = new QueryAction({ query: this });
+        this.action = new QueryAction({}, { query: this });
         
         // Initialize result handler
-        this.result = new Result({ query: this });
-                
+        this.result = new Result({}, { query: this });
+        
         // Bind `this`
         _.bindAll(this, "run", "move_dimension");
     },

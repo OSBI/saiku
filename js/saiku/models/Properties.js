@@ -1,8 +1,7 @@
 var Properties = Backbone.Model.extend({    
-    initialize: function(args) {
+    initialize: function(args, options) {
         // Keep track of parent query
-        this.query = args.query;
-        this.unset('query', { silent: true });
+        this.query = options.query;
         
         // Update properties with defaults from settings
         this.properties = {};
@@ -12,8 +11,8 @@ var Properties = Backbone.Model.extend({
     
     toggle: function(key) {
         // Toggle property
-        this.properties[key] = this.properties[key] === 'true' 
-            ? 'false' : 'true';
+        this.properties[key] = this.properties[key] === 'true' ? 
+            'false' : 'true';
         
         return this;
     },

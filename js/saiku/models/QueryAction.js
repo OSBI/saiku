@@ -3,17 +3,16 @@
  * Ex.: selections, swap axis, mdx
  */
 var QueryAction = Backbone.Model.extend({
-    initialize: function(args) {
+    initialize: function(args, options) {
         // Keep track of query
-        this.query = args.query;
-        this.unset('query', { silent: true });
+        this.query = options.query;
         
         // Set default url
         this.url = this.query.url;
     },
     
     get: function(action, options) {
-        this.handle("fetch", action, options)
+        this.handle("fetch", action, options);
     },
     
     post: function(action, options) {

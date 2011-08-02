@@ -47,7 +47,15 @@ var Toolbar = Backbone.View.extend({
      * Open a query from the repository into a new tab
      */
     open_query: function() {
-        Saiku.tabs.add(OpenQuery);
+        var dialog = _.detect(Saiku.tabs._tabs, function(tab) {
+            return tab.content instanceof OpenQuery;
+        });
+        
+        if (dialog) {
+            dialog.select();
+        } else {
+            Saiku.tabs.add(OpenQuery);
+        }
         
         return false;
     },

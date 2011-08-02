@@ -1,8 +1,7 @@
 var Result = Backbone.Model.extend({
-    initialize: function(args) {
+    initialize: function(args, options) {
         // Keep reference to query
-        this.query = args.query;
-        this.unset('query', { silent: true });
+        this.query = options.query;
     },
     
     parse: function(response) {

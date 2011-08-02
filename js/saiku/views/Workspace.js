@@ -13,6 +13,10 @@ var Workspace = Backbone.View.extend({
         });        
     },
     
+    caption: function() {
+        return this.query ? this.query.caption : null;
+    },
+    
     render: function() {
         // Load template
         $(this.el).html(this.template());
@@ -36,7 +40,6 @@ var Workspace = Backbone.View.extend({
             
         // Fire off new workspace event
         Saiku.session.trigger('workspace:new', { workspace: this });
-        
         return this; 
     },
     
@@ -57,7 +60,6 @@ var Workspace = Backbone.View.extend({
         // Attach an event bus to the workspace
         _.extend(this, Backbone.Events);
         
-        
         // Generate toolbar and append to workspace
         this.toolbar = new WorkspaceToolbar({ workspace: this });
         this.toolbar.render();
@@ -69,6 +71,11 @@ var Workspace = Backbone.View.extend({
         
         // Generate table
         this.table = new Table({ workspace: this });
+        
+        // Pull query from args
+        if (args.query) {
+            this.query = args.query;
+        }
         
         // Adjust tab when selected
         this.tab.bind('tab:select', this.adjust);
@@ -120,8 +127,10 @@ var Workspace = Backbone.View.extend({
         
         // Initialize the new query
         var selected_cube = $(this.el).find('.cubes').val();
-        this.query = new Query({ cube: selected_cube });
-        this.query.workspace = this;
+        this.query = new Query({}, {
+            cube: selected_cube,
+            workspace: this
+        });
         
         // Create new DimensionList and MeasureList
         this.dimension_list = new DimensionList({
