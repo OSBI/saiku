@@ -3,6 +3,7 @@ package org.saiku.service.datasource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashMap;
@@ -10,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystemManager;
+import org.apache.commons.vfs.VFS;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.datasources.datasource.SaikuDatasource.Type;
 import org.saiku.service.util.exception.SaikuServiceException;
@@ -21,11 +25,11 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 	private Map<String,SaikuDatasource> datasources = new HashMap<String,SaikuDatasource>();
 
 	public ClassPathResourceDatasourceManager() {
-		
+
 	}
 
-		
-	public ClassPathResourceDatasourceManager(String path) throws Exception {
+
+	public ClassPathResourceDatasourceManager(String path) {
 		try {
 			setPath(path);
 		}
@@ -34,43 +38,51 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 		}
 	}
 
-	public void setPath(String path) throws Exception {
-		if (path != null && path.startsWith("classpath:")) {
-			path = path.substring("classpath:".length(),path.length());
-			repoURL = this.getClass().getClassLoader().getResource(path);
-		} else {
-			if (!path.endsWith("" + File.separatorChar)) {
-				path += File.separatorChar;
+	public void setPath(String path) {
+
+		FileSystemManager fileSystemManager;
+		try {
+			fileSystemManager = VFS.getManager();
+
+			FileObject fileObject;
+			fileObject = fileSystemManager.resolveFile(path);
+			if (fileObject == null) {
+				throw new IOException("File cannot be resolved: " + path);
 			}
-			repoURL = new URL(path);
+			if(!fileObject.exists()) {
+				throw new IOException("File does not exist: " + path);
+			}
+			repoURL = fileObject.getURL();
+			if (repoURL == null) {
+				throw new Exception("Cannot load connection repository from path: "+path);
+			} else {
+				load();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
-		if (repoURL == null) {
-			throw new Exception("Cannot load connection repository from path: "+path);
-		} else {
-			load();
-		}
 	}
 
 	public void load() {
 		try {
 			if (repoURL != null) {
-					File[] files =  new File(repoURL.getFile()).listFiles();
+				File[] files =  new File(repoURL.getFile()).listFiles();
 
-					for (File file : files) {
-						if (!file.isHidden()) {
-							Properties props = new Properties();
-							props.load(new FileInputStream(file));
-							String name = props.getProperty("name");
-							String type = props.getProperty("type");
-							if (name != null && type != null) {
-								props.list(System.out);
-								Type t = SaikuDatasource.Type.valueOf(type.toUpperCase());
-								SaikuDatasource ds = new SaikuDatasource(name,t,props);
-								datasources.put(name, ds);
-							}
+				for (File file : files) {
+					if (!file.isHidden()) {
+						Properties props = new Properties();
+						props.load(new FileInputStream(file));
+						String name = props.getProperty("name");
+						String type = props.getProperty("type");
+						if (name != null && type != null) {
+							props.list(System.out);
+							Type t = SaikuDatasource.Type.valueOf(type.toUpperCase());
+							SaikuDatasource ds = new SaikuDatasource(name,t,props);
+							datasources.put(name, ds);
 						}
 					}
+				}
 			}
 			else {
 				throw new Exception("repo URL is null");
@@ -144,7 +156,7 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 	public Map<String,SaikuDatasource> getDatasources() {
 		return datasources;
 	}
-	
+
 	public SaikuDatasource getDatasource(String datasourceName) {
 		return datasources.get(datasourceName);
 	}

@@ -24,9 +24,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.io.IOException;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,8 +42,9 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import org.saiku.olap.dto.SaikuQuery;
-import org.saiku.service.datasource.ClassPathResourceDatasourceManager;
+import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystemManager;
+import org.apache.commons.vfs.VFS;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.web.rest.objects.SavedQuery;
@@ -67,122 +67,109 @@ import edu.emory.mathcs.backport.java.util.Collections;
 @XmlAccessorType(XmlAccessType.NONE)
 public class BasicRepositoryResource {
 
-    private static final Logger log = LoggerFactory.getLogger(BasicRepositoryResource.class);
+	private static final Logger log = LoggerFactory.getLogger(BasicRepositoryResource.class);
 
-    private OlapQueryService olapQueryService;
-    
-    private QueryResource queryResource;
-    
-    private String path;
-    
-    private URL repoURL;
+	private OlapQueryService olapQueryService;
+
+	private FileObject repo;
 
 	private OlapDiscoverService olapDiscoverService;
 
 	public void setPath(String path) throws Exception {
-		
-		if (path != null && path.startsWith("classpath:")) {
-			path = path.substring("classpath:".length(),path.length());
-			repoURL = this.getClass().getClassLoader().getResource(path);
-		} else {
-			if (!path.endsWith("" + File.separatorChar)) {
+
+		FileSystemManager fileSystemManager;
+		try {
+			 if (!path.endsWith("" + File.separatorChar)) {
 				path += File.separatorChar;
 			}
-			repoURL = new URL(path);
+			fileSystemManager = VFS.getManager();
+			FileObject fileObject;
+			fileObject = fileSystemManager.resolveFile(path);
+			if (fileObject == null) {
+				throw new IOException("File cannot be resolved: " + path);
+			}
+			if(!fileObject.exists()) {
+				throw new IOException("File does not exist: " + path);
+			}
+			repo = fileObject;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		if (repoURL == null) {
-			throw new Exception("Cannot load saiku repository from path: "+path);
-		} else {
-			this.path = (new File(repoURL.toURI())).getAbsolutePath();
-		}
+
 	}
-    
+
 	@Autowired
 	public void setOlapQueryService(OlapQueryService olapqs) {
 		olapQueryService = olapqs;
 	}
-	
+
 	@Autowired
 	public void setOlapDiscoverService(OlapDiscoverService olapds) {
 		olapDiscoverService = olapds;
-	}
-
-	
-	@Autowired
-	public void setQueryResource(QueryResource qr) {
-		queryResource = qr;
 	}
 
 	/**
 	 * Get Saved Queries.
 	 * @return A list of SavedQuery Objects.
 	 */
-    @GET
-    @Produces({"application/json" })
-     public List<SavedQuery> getSavedQueries() {
-    	List<SavedQuery> queries = new ArrayList<SavedQuery>();
-    	try {
-    		      if (repoURL != null) {
-    		    		  File[] files = new File(repoURL.toURI()).listFiles();
-    		    		  for (File file : files) {
-    		    			  if (!file.isHidden()) {
-    		    				  SimpleDateFormat sf = new SimpleDateFormat("dd - MMM - yyyy HH:mm:ss");
-    		    				  String filename = file.getName();
-    		    				  if (filename.endsWith(".saiku")) {
-    		    					  filename = filename.substring(0,filename.length() - ".saiku".length());
-    		    					  SavedQuery sq = new SavedQuery(filename, sf.format(new Date(file.lastModified())));
-    		    					  queries.add(sq);
-    		    				  }
-    		    			  }
-    		    		  }
+	@GET
+	@Produces({"application/json" })
+	public List<SavedQuery> getSavedQueries() {
+		List<SavedQuery> queries = new ArrayList<SavedQuery>();
+		try {
+			if (repo != null) {
+				File[] files = new File(repo.getName().getPath()).listFiles();
+				for (File file : files) {
+					if (!file.isHidden()) {
+						SimpleDateFormat sf = new SimpleDateFormat("dd - MMM - yyyy HH:mm:ss");
+						String filename = file.getName();
+						if (filename.endsWith(".saiku")) {
+							filename = filename.substring(0,filename.length() - ".saiku".length());
+							SavedQuery sq = new SavedQuery(filename, sf.format(new Date(file.lastModified())));
+							queries.add(sq);
+						}
+					}
+				}
 
-    		      }
-    		      else {
-    		    	  throw new Exception("repo URL is null");
-    		      }
+			}
+			else {
+				throw new Exception("repo URL is null");
+			}
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
+			e.printStackTrace();
 		}
 		Collections.sort(queries);
 		return queries;
-    }
-    
-    /**
-     * Delete Query.
-     * @param queryName - The name of the query.
-     * @return A GONE Status if the query was deleted, otherwise it will return a NOT FOUND Status code.
-     */
+	}
+
+	/**
+	 * Delete Query.
+	 * @param queryName - The name of the query.
+	 * @return A GONE Status if the query was deleted, otherwise it will return a NOT FOUND Status code.
+	 */
 	@DELETE
-    @Produces({"application/json" })
+	@Produces({"application/json" })
 	@Path("/{queryname}")
 	public Status deleteQuery(@PathParam("queryname") String queryName){
 		try{
-			String uri = repoURL.toURI().toString();
-			if (uri != null) {
+			if (repo != null) {
 				if (!queryName.endsWith(".saiku")) {
 					queryName += ".saiku";
 				}
-
-				URL url = new URL(uri + queryName);
-				File queryFile = null;
-				try {
-					queryFile = new File(url.toURI());
-				} catch(URISyntaxException e) {
-					queryFile = new File(url.getPath());
-				}
-
+				FileObject queryFile = repo.resolveFile(queryName);
 				if (queryFile.delete()) {
 					return(Status.GONE);
 				}
 			}
-			throw new Exception("Cannot delete query file uri:" + uri);
+			throw new Exception("Cannot delete query file:" + queryName);
 		}
 		catch(Exception e){
 			log.error("Cannot delete query (" + queryName + ")",e);
 			return(Status.NOT_FOUND);
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param queryName - The name of the query.
@@ -190,7 +177,7 @@ public class BasicRepositoryResource {
 	 * @return An OK Status, if the save was good, otherwise a NOT FOUND Status when not saved properly.
 	 */
 	@POST
-    @Produces({"application/json" })
+	@Produces({"application/json" })
 	@Path("/{queryname}")
 	public Status saveQuery(
 			@PathParam("queryname") String queryName,
@@ -200,21 +187,19 @@ public class BasicRepositoryResource {
 			if (newName != null) {
 				queryName = newName;
 			}
-			String uri = repoURL.toURI().toString();
-			if (uri != null && xml != null) {
+			
+			if (repo != null && xml != null) {
 				if (!queryName.endsWith(".saiku")) {
 					queryName += ".saiku";
 				}
-				URL url = new URL(uri + queryName);
-				File queryFile = null;
-				try {
-					queryFile = new File(url.toURI());
-				} catch(URISyntaxException e) {
-					queryFile = new File(url.getPath());
+				String uri = repo.getName().getPath();
+				if (!uri.endsWith("" + File.separatorChar)) {
+					uri += File.separatorChar;
 				}
-
+				
+				File queryFile = new File(uri+URLDecoder.decode(queryName, "UTF-8"));
 				if (queryFile.exists()) {
-					queryFile.delete();
+					return Status.CONFLICT;
 				}
 				else {
 					queryFile.createNewFile();
@@ -225,8 +210,8 @@ public class BasicRepositoryResource {
 				return(Status.OK);
 			}
 			else {
-				throw new Exception("Cannot save query because uri or xml is null uri(" 
-						+ (uri == null) + ") xml(" + (xml == null) + " )" );
+				throw new Exception("Cannot save query because repo or xml is null repo(" 
+						+ (repo == null) + ") xml(" + (xml == null) + " )" );
 			}
 		}
 		catch(Exception e){
@@ -234,30 +219,34 @@ public class BasicRepositoryResource {
 			return(Status.NOT_FOUND);
 		}
 	}
-	
+
 	/**
 	 * Load a query.
 	 * @param queryName - The name of the query to load.
 	 * @return A Saiku Query Object.
 	 */
 	@GET
-    @Produces({"application/xml" })
+	@Produces({"application/xml" })
 	@Path("/{queryname}")
 	public String loadQuery(@PathParam("queryname") String queryName){
 		try{
-			String uri = repoURL.toURI().toString();
+			String uri = repo.getName().getPath();
+			if (uri != null && !uri.endsWith("" + File.separatorChar)) {
+				uri += File.separatorChar;
+			}
+
 			String filename = queryName;
 			if (uri != null) {
 				if (!filename.endsWith(".saiku")) {
 					filename += ".saiku";
 				}
-				URL url = new URL(uri + filename);
-				File queryFile = null;
-				try {
-					queryFile = new File(url.toURI());
-				} catch(URISyntaxException e) {
-					queryFile = new File(url.getPath());
+				String filepath = repo.getName().getPath();
+				if (!filepath.endsWith("" + File.separatorChar)) {
+					filepath += File.separatorChar;
 				}
+				
+				File queryFile = new File(uri+filename);
+
 				if (queryFile.exists()) {
 					FileReader fi = new FileReader(queryFile);
 					BufferedReader br = new BufferedReader(fi);
