@@ -2,7 +2,7 @@ var Toolbar = Backbone.View.extend({
     tagName: "div",
     
     events: {
-        'click #add_tab': 'add_tab',
+        'click #new_query': 'new_query',
         'click #open_query': 'open_query',
         'click #logout': 'logout',
         'click #about': 'about',
@@ -11,7 +11,7 @@ var Toolbar = Backbone.View.extend({
     
     template: function() {
         return _.template("<ul>" + 
-                    "<li><a id='add_tab' href='#add_tab' " +
+                    "<li><a id='add_tab' href='#new_query' " +
                     "   title='New query' class='new_tab i18n'></a></li>" +
                     "<li class='separator'>&nbsp;</li>" +
                     "<li><a id='open_query' href='#open_query' title='Open query' class='open_query i18n'></a></li>" + 
@@ -38,8 +38,8 @@ var Toolbar = Backbone.View.extend({
     /**
      * Add a new tab to the interface
      */
-    add_tab: function() {
-        Saiku.tabs.add(Workspace);
+    new_query: function() {
+        Saiku.tabs.add(new Workspace());
         return false;
     },
     
@@ -54,7 +54,7 @@ var Toolbar = Backbone.View.extend({
         if (dialog) {
             dialog.select();
         } else {
-            Saiku.tabs.add(OpenQuery);
+            Saiku.tabs.add(new OpenQuery());
         }
         
         return false;

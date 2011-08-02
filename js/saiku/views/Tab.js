@@ -10,22 +10,13 @@ var Tab = Backbone.View.extend({
         'click .close_tab': 'remove'
     },
     
-    template: function() {
-        // Generate caption
-        var caption = '';
-        if (this.content && this.content.caption) {
-            caption = this.content.caption();
-        } 
-        if (! caption) {
-            caption = "Unsaved query (" + this.parent.queryCount + ")";
-        }
-        
+    template: function() {        
         // Create tab
         return _.template("<a href='#<%= id %>'><%= caption %></a>" +
                 "<span class='close_tab'>Close tab</span>")
             ({
                 id: this.id,
-                caption: caption
+                caption: this.content.caption()
             });
     },
     
@@ -36,9 +27,8 @@ var Tab = Backbone.View.extend({
      */
     initialize: function(args) {
         _.extend(this, Backbone.Events);
-        
-        _.extend(args.args, { tab: this });
-        this.content = new (args.contentType)(args.args);
+        _.extend(this, args);
+        this.content.tab = this;
         this.id = _.uniqueId('tab_');
     },
     
@@ -128,12 +118,9 @@ var TabSet = Backbone.View.extend({
      * Add a tab to the collection
      * @param tab
      */
-    add: function(contentType, args) {
+    add: function(content) {
         // Add it to the set
-        if (! args) {
-            args = {};
-        }
-        var tab = new Tab({ contentType: contentType, args: args });
+        var tab = new Tab({ content: content });
         this._tabs.push(tab);
         this.queryCount++;
         tab.parent = this;
@@ -141,9 +128,6 @@ var TabSet = Backbone.View.extend({
         // Render it in the background, then select it
         tab.render().select();
         $(tab.el).appendTo($(this.el).find('ul'));
-        
-        // Trigger 'render' event
-        tab.trigger('tab:rendered', { tab: tab });
         
         // Trigger add event on session
         Saiku.session.trigger('tab:add', { tab: tab });
@@ -169,15 +153,15 @@ var TabSet = Backbone.View.extend({
      * @param tab
      */
     remove: function(tab) {
+        // Add another tab if the last one has been deleted
+        if (this._tabs.length == 1) {
+            return;
+        }
+        
         for (var i = 0; i < this._tabs.length; i++) {
             if (this._tabs[i] == tab) {
                 // Remove the element
                 this._tabs.splice(i, 1);
-                
-                // Add another tab if the last one has been deleted
-                if (this._tabs.length == 0) {
-                    this.add(new Tab);
-                }
                 
                 // Select the previous, or first tab
                 var next = this._tabs[i] ? i : 0;

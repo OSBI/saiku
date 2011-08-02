@@ -20,20 +20,17 @@ var OpenQuery = Backbone.View.extend({
         $(this.el).html(this.template());
         this.adjust();
         
+        // Adjust tab when selected
+        this.tab.bind('tab:select', this.adjust);
+        $(window).resize(this.adjust);
+        
         return this; 
     },
     
     initialize: function(args) {
-        // Attach tab
-        this.tab = args.tab;
-        
         // Fetch queries
         this.repository = new Repository({}, { dialog: this });
         this.repository.fetch();
-        
-        // Adjust tab when selected
-        this.tab.bind('tab:select', this.adjust);
-        $(window).resize(this.adjust);
     },
     
     populate: function(response) {

@@ -81,7 +81,7 @@
         <!-- Templates -->
         <script type="text/x-jquery-tmpl" id="template-cubes">
         <select class="cubes">
-            <option>Select a cube</option>
+            <option value="">Select a cube</option>
             <% _.each(connections, function(connection) { %>
                 <% _.each(connection.catalogs, function(catalog) { %>
                     <% _.each(catalog.schemas, function(schema) { %>

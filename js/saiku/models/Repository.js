@@ -2,15 +2,13 @@ var SavedQuery = Backbone.Model.extend({
     parse: function(response, XHR) {
         $query = $(response).find('Query');
         
-        var tab = Saiku.tabs.add(Workspace);
         var query = new Query({ 
             xml: XHR.responseText
         }, {
-            caption: this.attributes.name,
-            workspace: tab.content
+            name: this.attributes.name
         });
-        tab.content.query = query;
-        tab.content.init_query();
+        
+        var tab = Saiku.tabs.add(new Workspace({ query: query }));
     },
     
     url: function() {

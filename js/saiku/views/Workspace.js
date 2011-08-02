@@ -7,14 +7,48 @@ var Workspace = Backbone.View.extend({
         'drop': 'remove_dimension'
     },
     
+    initialize: function(args) {
+        // Maintain `this` in jQuery event handlers
+        _.bindAll(this, "adjust", "toggle_sidebar", 
+                "prepare", "new_query", "init_query");
+                
+        // Attach an event bus to the workspace
+        _.extend(this, Backbone.Events);
+        
+        // Generate toolbar and append to workspace
+        this.toolbar = new WorkspaceToolbar({ workspace: this });
+        this.toolbar.render();
+        
+        // Create drop zones
+        this.drop_zones = new WorkspaceDropZone({ workspace: this });
+        this.drop_zones.render();
+        
+        // Generate table
+        this.table = new Table({ workspace: this });
+        
+        // Pull query from args
+        if (args && args.query) {
+            this.query = args.query;
+            this.query.workspace = this;
+            this.query.save({}, { success: this.init_query });            
+        }
+        
+        // Flash cube navigation when rendered
+        Saiku.session.bind('tab:add', this.prepare);
+    },
+    
+    caption: function() {
+        if (this.query && this.query.name) {
+            return this.query.name;
+        }
+        
+        return "Unsaved query (" + Saiku.tabs.queryCount + ")";
+    },
+    
     template: function() {
         return _.template($("#template-workspace").html())({
             cube_navigation: Saiku.session.cube_navigation
         });        
-    },
-    
-    caption: function() {
-        return this.query ? this.query.caption : null;
     },
     
     render: function() {
@@ -37,6 +71,10 @@ var Workspace = Backbone.View.extend({
         // Add results table
         $(this.el).find('.workspace_results')
             .append($(this.table.el));
+        
+        // Adjust tab when selected
+        this.tab.bind('tab:select', this.adjust);
+        $(window).resize(this.adjust);
             
         // Fire off new workspace event
         Saiku.session.trigger('workspace:new', { workspace: this });
@@ -50,40 +88,6 @@ var Workspace = Backbone.View.extend({
             
         // Trigger clear event
         this.trigger('workspace:clear');
-    },
-    
-    initialize: function(args) {
-        // Maintain `this` in jQuery event handlers
-        _.bindAll(this, "adjust", "toggle_sidebar", 
-                "prepare", "new_query");
-                
-        // Attach an event bus to the workspace
-        _.extend(this, Backbone.Events);
-        
-        // Generate toolbar and append to workspace
-        this.toolbar = new WorkspaceToolbar({ workspace: this });
-        this.toolbar.render();
-        this.tab = args.tab;
-        
-        // Create drop zones
-        this.drop_zones = new WorkspaceDropZone({ workspace: this });
-        this.drop_zones.render();
-        
-        // Generate table
-        this.table = new Table({ workspace: this });
-        
-        // Pull query from args
-        if (args.query) {
-            this.query = args.query;
-            this.query.workspace = this;
-        }
-        
-        // Adjust tab when selected
-        this.tab.bind('tab:select', this.adjust);
-        $(window).resize(this.adjust);
-        
-        // Flash cube navigation when rendered
-        this.tab.bind('tab:rendered', this.prepare);
     },
     
     adjust: function() {
@@ -128,16 +132,31 @@ var Workspace = Backbone.View.extend({
         
         // Initialize the new query
         var selected_cube = $(this.el).find('.cubes').val();
-        this.query = new Query({}, {
-            cube: selected_cube,
+        var parsed_cube = selected_cube.split('/');
+        this.query = new Query({
+            connection: parsed_cube[0],
+            catalog: parsed_cube[1],
+            schema: parsed_cube[2],
+            cube: parsed_cube[3]
+        }, {
             workspace: this
         });
         
+        // Save the query to the server and init the UI
+        this.query.save();
         this.init_query();
     },
     
     init_query: function() {
+        // Find the selected cube
         var selected_cube = $(this.el).find('.cubes').val();
+        if (selected_cube === "") {
+            selected_cube = this.query.get('connection') + "/" + 
+                this.query.get('catalog') + "/" + 
+                this.query.get('schema') + "/" + this.query.get('cube');
+            $(this.el).find('.cubes')
+                .val(selected_cube);
+        }
         
         // Create new DimensionList and MeasureList
         this.dimension_list = new DimensionList({
