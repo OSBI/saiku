@@ -3,6 +3,7 @@ var OpenQuery = Backbone.View.extend({
     
     events: {
         'click .sidebar a': 'view_query',
+        'dblclick .sidebar a': 'open_query',
         'click .workspace_toolbar a.open': 'open_query',
         'click .workspace_toolbar a.delete': 'delete_query'
     },
