@@ -1,7 +1,5 @@
 var SavedQuery = Backbone.Model.extend({
-    parse: function(response, XHR) {
-        $query = $(response).find('Query');
-        
+    parse: function(response, XHR) {        
         var query = new Query({ 
             xml: XHR.responseText
         }, {

@@ -19,9 +19,9 @@ var OpenQuery = Backbone.View.extend({
     render: function() {
         // Load template
         $(this.el).html(this.template());
-        this.adjust();
         
         // Adjust tab when selected
+        this.tab.bind('tab:select', this.fetch_queries);
         this.tab.bind('tab:select', this.adjust);
         $(window).resize(this.adjust);
         
@@ -29,8 +29,14 @@ var OpenQuery = Backbone.View.extend({
     },
     
     initialize: function(args) {
-        // Fetch queries
+        // Maintain `this`
+        _.bindAll(this, "adjust", "fetch_queries");
+        
+        // Initialize repository
         this.repository = new Repository({}, { dialog: this });
+    },
+    
+    fetch_queries: function() {
         this.repository.fetch();
     },
     
