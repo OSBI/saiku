@@ -1,30 +1,11 @@
-/* Saiku UI -- a user interface for the Saiku Server
-   Copyright (C) Paul Stoellberger, 2011.
-
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 3 of the License, or (at your option) any later version.
-
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General
-   Public License along with this library; if not, write to the
-   Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301 USA 
-*/
-/**
- * The PO file for the currently selected language
- */
-var po_file;
-
 /**
  * The user's current locale
  */
-var locale;
+Saiku.i18n = {
+    locale: (navigator.language || navigator.browserLanguage || 
+        navigator.systemLanguage || navigator.userLanguage).substring(0,2),
+    po_file: ""
+};
 
 (function( $ ){
 	/**
@@ -90,27 +71,18 @@ var locale;
 })( jQuery );
 
 /**
- * Automatically internationalize the UI based on the user's Accept-Language header
+ * Automatically internationalize the UI based on the user's locale
  */
 automatic_i18n = function() {
-	$.ajax({
-		url: BASE_URL + 'i18n/index.jsp',
-		type: 'GET',
-		dataType: 'text',
-		success: function(data) {
-			locale = data.substring(0,2);
-			
-			// Load language file if it isn't English
-			if (locale != "en") {
-    			$.ajax({
-    				url: BASE_URL + 'i18n/' + locale + ".json",
-    				type: 'GET',
-    				dataType: 'json',
-    				success: function(data) {
-    					po_file = data;
-    				}
-    			});
+	// Load language file if it isn't English
+	if (Saiku.locale != "en") {
+		$.ajax({
+			url: "js/saiku/plugins/I18n/po/" + locale + ".json",
+			type: 'GET',
+			dataType: 'json',
+			success: function(data) {
+				Saiku.i18n.po_file = data;
 			}
-		}
-	});
+		});
+	}
 }();
