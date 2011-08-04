@@ -199,7 +199,6 @@ var Workspace = Backbone.View.extend({
                         }
                             
                         if (levels.indexOf(name) === -1) {
-                            console.log(name);
                             var $dim = $(this.el).find('.' + type + '_tree')
                                 .find('a[title="' + name + '"]')
                                 .parent();

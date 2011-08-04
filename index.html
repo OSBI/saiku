@@ -31,7 +31,7 @@
                 <span class="processing_message">Loading...</span>
             </div>
         </div>
-	    
+        
         
         <!--  jQuery, jQuery UI -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
@@ -60,6 +60,7 @@
         <script type="text/javascript" src="js/saiku/views/Table.js"></script>
         <script type="text/javascript" src="js/saiku/views/Workspace.js"></script>
         <script type="text/javascript" src="js/saiku/views/OpenQuery.js"></script>
+        <script type="text/javascript" src="js/saiku/views/SaveQuery.js"></script>
         <script type="text/javascript" src="js/saiku/views/Tab.js"></script>
         <script type="text/javascript" src="js/saiku/models/Repository.js"></script>
         <script type="text/javascript" src="js/saiku/models/Properties.js"></script>
@@ -127,16 +128,16 @@
         <script type="text/x-jquery-tmpl" id="template-measures">
         <ul>
             <li>
-        		<span class="root expand">
-        		   <a href="#" title="Measures" class="folder_expand">Measures</a>
-        		</span>
-        		<ul>
-        		<% _.each(measures, function(measure) { %>
-        		    <li><a title="[Measures].[<%= measure.name %>]" 
-        		        class="measure" href="#Measures/member/<%= measure.uniqueName %>"><%= measure.name %></a>
-        		    </li>
-        		<% }); %>
-        		</ul>
+                <span class="root expand">
+                   <a href="#" title="Measures" class="folder_expand">Measures</a>
+                </span>
+                <ul>
+                <% _.each(measures, function(measure) { %>
+                    <li><a title="[Measures].[<%= measure.name %>]" 
+                        class="measure" href="#Measures/member/<%= measure.uniqueName %>"><%= measure.name %></a>
+                    </li>
+                <% }); %>
+                </ul>
             </li>
         </ul>
         </script>
@@ -233,6 +234,6 @@
         
         <div class="sidebar_separator"></div>
         <div class="clear"></div>
-	   </script>
+       </script>
     </body>
 </html>

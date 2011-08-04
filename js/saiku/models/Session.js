@@ -83,9 +83,7 @@ var Session = Backbone.Model.extend({
         
         // Add initial tab
         Saiku.tabs.render();
-        try {
         Saiku.tabs.add(new Workspace());
-        } catch (e) { console.log(e); }
         
         // Notify the rest of the application that login was successful
         this.trigger('session:new', {

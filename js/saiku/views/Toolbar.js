@@ -87,5 +87,3 @@ var Toolbar = Backbone.View.extend({
         return false;
     }
 });
-
-

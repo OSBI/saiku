@@ -52,8 +52,9 @@ var WorkspaceToolbar = Backbone.View.extend({
         var callback = event.target.hash.replace('#', '');
         
         // Attempt to call callback
-        ! $(event.target).hasClass('disabled_toolbar') 
-            && this[callback] && this[callback](event);
+        if (! $(event.target).hasClass('disabled_toolbar') && this[callback]) {
+            this[callback](event);
+        }
         
         return false;
     },
@@ -71,7 +72,9 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     save_query: function(event) {
-        // TODO - save query
+        if (this.workspace.query) {
+            (new SaveQuery({ query: this.workspace.query })).render().open();
+        }
     },
     
     run_query: function(event) {
