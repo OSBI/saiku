@@ -33,6 +33,10 @@ html, body {
 .used {
     font-weight: bold;
 }
+.sprite {
+	background-image: url(../../../../images/sprite.png);
+	background-repeat: no-repeat;
+}
 
 /** Header */
 #header {
@@ -81,39 +85,39 @@ html, body {
     -webkit-border-radius: 2px;
 }
 #toolbar ul li a.new_tab {
-    background: transparent url('../../../images/src/main_toolbar_doc_plus.png') 5px 5px no-repeat;
+    background-position: -1554px 5px;
 }
 #toolbar ul li a.open_query {
-    background: transparent url('../../../images/src/main_toolbar_folder.png') 5px 5px no-repeat;
+    background-position: -1628px 5px;
 }
 #toolbar ul li a.logout {
-    background: transparent url('../../../images/src/main_toolbar_on_off.png') 4px 5px no-repeat;
+    background-position: -1776px 5px;
 }
 #toolbar ul li a.about {
-    background: transparent url('../../../images/src/main_toolbar_info.png') 4px 4px no-repeat;
+    background-position: -1702px 5px;
 }
 #toolbar ul li a.bug {
-    background: transparent url('../../../images/src/main_toolbar_bug.png') 4px 4px no-repeat;
+    background-position: -1480px 5px;
 }
 #toolbar ul li a.new_tab:hover {
-    background: #F0F0F0 url('../../../images/src/main_toolbar_doc_plus.png') 5px 5px no-repeat;
+    background-color: #F0F0F0;
 }
 #toolbar ul li a.open_query:hover {
-    background: #F0F0F0 url('../../../images/src/main_toolbar_folder.png') 5px 5px no-repeat;
+    background-color: #F0F0F0;
 }
 #toolbar ul li a.logout:hover {
-    background: #F0F0F0 url('../../../images/src/main_toolbar_on_off.png') 4px 5px no-repeat;
+    background-color: #F0F0F0;
 }
 #toolbar ul li a.about:hover {
-    background: #F0F0F0 url('../../../images/src/main_toolbar_info.png')  4px 4px no-repeat;
+    background-color: #F0F0F0;
 }
 #toolbar ul li a.bug:hover {
-    background: #F0F0F0 url('../../../images/src/main_toolbar_bug.png') 4px 4px no-repeat;
+    background-color: #F0F0F0;
 }
 
 /** Logo */
 #logo a {
-    background: transparent url("../../../images/src/logo_red.png") 24px 1px no-repeat;
+    background-position: -1275px 1px;
     float: right;
     width: 166px;
     height: 28px;
@@ -183,7 +187,7 @@ html, body {
 }
 .tabs ul li span.close_tab {
     -moz-background-origin: 0px 2px;
-    background: transparent url('../../../images/src/tabs_cross_off.png') 0px 1px no-repeat;
+    background-position: -624px -96px;
     display: inline-block;
     height: 18px;
     text-indent: -9999px;
@@ -191,7 +195,7 @@ html, body {
 
 }
 .tabs ul li span.close_tab:hover {
-    background: transparent url('../../../images/src/tabs_cross_on.png') 0px 1px no-repeat;
+    background-position: -690px -96px;
     cursor: pointer !important;
     display: inline-block;
     height: 18px;

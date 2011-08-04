@@ -13,7 +13,7 @@ var Tab = Backbone.View.extend({
     template: function() {        
         // Create tab
         return _.template("<a href='#<%= id %>'><%= caption %></a>" +
-                "<span class='close_tab'>Close tab</span>")
+                "<span class='close_tab sprite'>Close tab</span>")
             ({
                 id: this.id,
                 caption: this.content.caption()
