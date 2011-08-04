@@ -174,6 +174,12 @@ var Workspace = Backbone.View.extend({
         // Clear workspace
         this.clear();
         
+        // Populate selections
+        var axes = this.query.get('axes');
+        if (axes) {
+            // TODO - populate axes
+        }
+        
         // Make sure appropriate workspace buttons are enabled
         this.trigger('query:new', { workspace: this });
     },
