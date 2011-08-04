@@ -174,10 +174,41 @@ var Workspace = Backbone.View.extend({
         // Clear workspace
         this.clear();
         
-        // Populate selections
-        var axes = this.query.get('axes');
+        // Populate selections - trust me, this is prettier than it was :-/
+        var axes = this.query ? this.query.get('axes') : false;
         if (axes) {
-            // TODO - populate axes
+            for (var axis_iter = 0; axis_iter < axes.length; axis_iter++) {
+                var axis = axes[axis_iter];
+                var $axis = $(this.el).find('.' + 
+                    axis.name.toLowerCase() + ' ul');
+                for (var dim_iter = 0; dim_iter < axis.dimensionSelections.length; dim_iter++) {
+                    var dimension = axis.dimensionSelections[dim_iter];
+                    var levels = [];
+                    for (var sel_iter = 0; sel_iter < dimension.selections.length; sel_iter++) {
+                        var selection = dimension.selections[sel_iter];
+                        if (selection.dimensionUniqueName != "Measures") {
+                            if (levels.indexOf(selection.levelUniqueName) === -1) {
+                                console.log(selection.levelUniqueName);
+                                var $dim = $(this.el).find('.dimension_tree')
+                                    .find('a[title="' + selection.levelUniqueName + '"]')
+                                    .parent();
+                                $dim.clone()
+                                    .addClass('d_dimension')
+                                    .appendTo($axis);
+                                $dim.css({fontWeight: "bold"})
+                                    .draggable('disable')                                    
+                                    .parents('.parent_dimension')
+                                    .find('.root')
+                                    .css({fontWeight: "bold"})
+                                    .draggable('disable'); 
+                                levels.push(selection.levelUniqueName);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            this.query.run();
         }
         
         // Make sure appropriate workspace buttons are enabled
