@@ -184,26 +184,38 @@ var Workspace = Backbone.View.extend({
                 for (var dim_iter = 0; dim_iter < axis.dimensionSelections.length; dim_iter++) {
                     var dimension = axis.dimensionSelections[dim_iter];
                     var levels = [];
+                    var members = {};
                     for (var sel_iter = 0; sel_iter < dimension.selections.length; sel_iter++) {
                         var selection = dimension.selections[sel_iter];
-                        if (selection.dimensionUniqueName != "Measures") {
-                            if (levels.indexOf(selection.levelUniqueName) === -1) {
-                                console.log(selection.levelUniqueName);
-                                var $dim = $(this.el).find('.dimension_tree')
-                                    .find('a[title="' + selection.levelUniqueName + '"]')
-                                    .parent();
-                                $dim.clone()
-                                    .addClass('d_dimension')
-                                    .appendTo($axis);
-                                $dim.css({fontWeight: "bold"})
-                                    .draggable('disable')                                    
-                                    .parents('.parent_dimension')
-                                    .find('.root')
-                                    .css({fontWeight: "bold"})
-                                    .draggable('disable'); 
-                                levels.push(selection.levelUniqueName);
-                            }
+                        
+                        // Drag over dimensions and measures
+                        var type, name;
+                        if (selection.dimensionUniqueName == "Measures") {
+                            type = "measure";
+                            name = selection.uniqueName;
+                        } else {
+                            type = "dimension";
+                            name = selection.levelUniqueName;
                         }
+                            
+                        if (levels.indexOf(name) === -1) {
+                            console.log(name);
+                            var $dim = $(this.el).find('.' + type + '_tree')
+                                .find('a[title="' + name + '"]')
+                                .parent();
+                            $dim.clone()
+                                .addClass('d_' + type)
+                                .appendTo($axis);
+                            $dim.css({fontWeight: "bold"})
+                                .draggable('disable')                                    
+                                .parents('.parent_dimension')
+                                .find('.root')
+                                .css({fontWeight: "bold"})
+                                .draggable('disable'); 
+                            levels.push(name);
+                        }
+                        
+                        // FIXME - something needs to be done about selections here
                     }
                 }
             }
