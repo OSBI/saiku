@@ -30,7 +30,8 @@ var OpenQuery = Backbone.View.extend({
     
     initialize: function(args) {
         // Maintain `this`
-        _.bindAll(this, "adjust", "fetch_queries", "move_query_to_workspace");
+        _.bindAll(this, "adjust", "fetch_queries", "move_query_to_workspace",
+                "clear_query");
         
         // Initialize repository
         this.repository = new Repository({}, { dialog: this });
@@ -93,9 +94,15 @@ var OpenQuery = Backbone.View.extend({
     },
     
     delete_query: function(event) {
-        this.selected_query.destroy();
-        
+        this.selected_query.id = _.uniqueId("query_");
+        $(this.el).find('.workspace_toolbar').addClass('hide');
+        $(this.el).find('.workspace_results').html('');
+        this.selected_query.destroy({ success: this.clear_query });
         return false;
+    },
+    
+    clear_query: function() {
+        this.fetch_queries();
     },
     
     adjust: function() {
