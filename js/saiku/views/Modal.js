@@ -31,7 +31,8 @@ var Modal = Backbone.View.extend({
     render: function() {
         $(this.el).html(this.template())
             .dialog(this.options)
-            .addClass("dialog_body_" + this.type);
+            .addClass("dialog_body_" + this.type)
+            .addClass('sprite');
         return this;
     },
     

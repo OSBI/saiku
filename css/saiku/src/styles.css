@@ -33,7 +33,7 @@ html, body {
 .used {
     font-weight: bold;
 }
-.sprite {
+.sprite, .ui-dialog-titlebar-close, .ui-dialog-titlebar-close:hover {
 	background-image: url(../../../../images/sprite.png);
 	background-repeat: no-repeat;
 }
@@ -548,9 +548,7 @@ html, body {
     -webkit-border-radius: 3px;
 }
 .d_dimension a {
-    background-image: url("../../../images/src/filter.png");
-    background-repeat: no-repeat;
-    background-position:  right center;
+    background-position: -946px 2px;
     color: #2a6085;
     padding-right: 15px;
     text-decoration: none;
@@ -656,9 +654,8 @@ html, body {
     width: 200px;
 }
 .ui-dialog .ui-dialog-titlebar-close {
-    background: transparent url('../../../images/src/tabs_cross_off.png') 0px 1px no-repeat;
+    background-position: -624px -97px;
     display: inline-block;
-    /*cursor: pointer;*/
     float: right;
     height: 18px;
     text-indent: -9999px;
@@ -667,7 +664,8 @@ html, body {
 
 .ui-dialog .ui-dialog-titlebar-close:hover {
 	padding: 1px;
-	background: transparent url('../../../images/src/tabs_cross_on.png') 0px 1px no-repeat;
+	background-position: -690px -97px;
+	background-color: transparent;
 }
 
 .ui-icon {
@@ -682,14 +680,14 @@ html, body {
 }
 
 .dialog_body_info {
-    background: transparent url('../../../images/src/toolbar_info.png') 20px 10px no-repeat !important;
+    background-position: -920px -97px;
     min-height: 40px !important;
     overflow: auto !important;
     padding: 10px 10px 20px 70px !important;
 }
 
 .dialog_body_mdx {
-    background: transparent url('../../../images/src/toolbar_message.png') 20px 10px no-repeat !important;
+    background-position: -1082px -97px;
     min-height: 40px !important;
     overflow: auto !important;
     padding: 5px 10px 20px 70px !important;
@@ -702,34 +700,34 @@ html, body {
 }
 
 .dialog_body_save {
-    background: transparent url('../../../images/src/toolbar_save.png') 20px 10px no-repeat;
+    background-position: -1324px -97px;
     min-height: 40px;
     overflow: auto;
     padding: 10px 10px 20px 70px;
 }
 
 .dialog_body_error {
-    background: transparent url('../../../images/src/toolbar_error.png') 20px 10px no-repeat !important;
+    background-position: -838px -97px;
     min-height: 40px !important;
     overflow: auto !important;
     padding: 10px 10px 20px 70px !important;
 }
 
 .dialog_body_delete {
-    background: transparent url('../../../images/src/toolbar_delete.png') 20px 10px no-repeat !important;
+    background-position: -756px -97px;
     min-height: 40px !important;
     overflow: auto !important;
     padding: 10px 10px 20px 70px !important;
 }
 
 .dialog_body_login {
-    background: transparent url('../../../images/src/dialog_login_red.png') 25px 15px no-repeat !important;
+    background-position: -691px 0;
     min-height: 40px !important;
     padding: 10px 10px 20px 100px !important;
 }
 
 .dialog_body_waiting {
-    background: transparent url('../../../images/src/waiting.gif') 10px 10px no-repeat !important;
+    background-position: -1802px -97px;
     padding: 10px 10px 10px 30px !important;
 }
 
@@ -840,8 +838,7 @@ html, body {
 }
 .processing_image {
     display: inline-block;
-    background-image: url('../../../images/src/waiting.gif');
-    background-repeat: no-repeat;
+    background-position: -1802px -97px;
     width: 16px;
     height: 16px;
     margin-right: 5px;
@@ -896,69 +893,43 @@ html, body {
     padding: 7px !important;
 }
 .workspace_toolbar .open {
-    background-image: url('../../../images/src/folder.png');
-    background-repeat: no-repeat;
-    background-position: center center;
+    background-position: -1040px 7px;
 }
 .workspace_toolbar .delete {
-    background-image: url('../../../images/src/delete.png');
-    background-repeat: no-repeat;
-    background-position: center center;
+     background-position: -521px 7px;
 }
 .workspace_toolbar .save {
-    background-image: url('../../../images/src/save.png');
-    background-repeat: no-repeat;
-    background-position: center center;
+    background-position: -485px -90px;
 }
 .workspace_toolbar .run {
-    background-image: url('../../../images/src/run.png');
-    background-repeat: no-repeat;
-    background-position: center center;
+    background-position: -123px -90px;
 }
 .workspace_toolbar .auto {
-    background-image: url('../../../images/src/auto.png');
-    background-repeat: no-repeat;
-    background-position: center center;
+    background-position: 7px 7px;
 }
 .workspace_toolbar .non_empty {
-    background-image: url('../../../images/src/non.png');
-    background-repeat: no-repeat;
-    background-position: center center;
+    background-position: -1914px 7px;
 }
 .workspace_toolbar .swap_axis {
-    background-image: url('../../../images/src/swap.png');
-    background-repeat: no-repeat;
-    background-position: center center;
+    background-position: -551px -90px;
 }
 .workspace_toolbar .mdx {
-    background-image: url('../../../images/src/mdx.png');
-    background-repeat: no-repeat;
-    background-position: center center;
+    background-position: -1848px 7px;
 }
 .workspace_toolbar .export_csv {
-    background-image: url('../../../images/src/csv.png');
-    background-repeat: no-repeat;
-    background-position: center center;
+    background-position: -455px 7px;
 }
 .workspace_toolbar .export_xls {
-    background-image: url('../../../images/src/excel.png');
-    background-repeat: no-repeat;
-    background-position: center center;
+    background-position: -847px 7px;
 }
 .workspace_toolbar .toggle_fields {
-    background-image: url('../../../images/src/fields.png');
-    background-repeat: no-repeat;
-    background-position: center center;
+    background-position: -913px 7px;
 }
 .workspace_toolbar .drillthrough {
-    background-image: url('../../../images/src/drillthrough.png');
-    background-repeat: no-repeat;
-    background-position: center center;
+    background-position: -781px 7px;
 }
 .workspace_toolbar .switch_to_mdx {
-  background-image: url('../../../images/src/switch_to_mdx.png');
-  background-repeat: no-repeat;
-  background-position: center center;
+  /* this isn't in the sprite */
 }
 
 

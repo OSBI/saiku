@@ -59,7 +59,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         
         // Wrap with the appropriate parent element
         if (ui.item.find('a').hasClass('dimension')) {
-            ui.item.addClass('d_dimension');
+            ui.item.addClass('d_dimension').find('a').addClass('sprite');
         } else {
             ui.item.addClass('d_measure');
         }
