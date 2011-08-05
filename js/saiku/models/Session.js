@@ -11,7 +11,7 @@ var Session = Backbone.Model.extend({
     initialize: function() {
         // Attach a custom event bus to this model
         _.extend(this, Backbone.Events);
-        _.bindAll(this, "process_login");
+        _.bindAll(this, "process_login", "prefetch_dimensions");
         
         // Check if credentials are already stored
         if (sessionStorage) {
@@ -60,21 +60,10 @@ var Session = Backbone.Model.extend({
         
         // Create cube objects
         this.dimensions = {};
-        this.measures = {};        
-        _.each(response, function(connection) {
-            _.each(connection.catalogs, function(catalog) {
-                _.each(catalog.schemas, function(schema) {
-                    _.each(schema.cubes, function(cube) {
-                        var key = connection.name + "/" + catalog.name + "/" +
-                            schema.name + "/" + cube.name;
-                        this.dimensions[key] = new Dimension({ key: key });
-                        this.measures[key] = new Measure({ key: key });
-                        this.dimensions[key].fetch();
-                        this.measures[key].fetch();
-                    }, this);
-                }, this);
-            }, this);
-        }, this);
+        this.measures = {};
+        this.connections = response;
+        //$(window).load();
+        _.delay(this.prefetch_dimensions, 200);
         
         // Show UI
         $(Saiku.toolbar.el).prependTo($("#header"));
@@ -89,6 +78,23 @@ var Session = Backbone.Model.extend({
         this.trigger('session:new', {
             session: this
         });
+    },
+    
+    prefetch_dimensions: function() {
+        _.each(this.connections, function(connection) {
+            _.each(connection.catalogs, function(catalog) {
+                _.each(catalog.schemas, function(schema) {
+                    _.each(schema.cubes, function(cube) {
+                        var key = connection.name + "/" + catalog.name + "/" +
+                            schema.name + "/" + cube.name;
+                        this.dimensions[key] = new Dimension({ key: key });
+                        this.measures[key] = new Measure({ key: key });
+                        this.dimensions[key].fetch();
+                        this.measures[key].fetch();
+                    }, this);
+                }, this);
+            }, this);
+        }, this);
     },
     
     url: function() {
