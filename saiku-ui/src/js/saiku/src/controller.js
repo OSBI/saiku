@@ -119,6 +119,7 @@ $(document).ready(function() {
                 TOMCAT_WEBAPP = data['saiku-webapp'];
                 BASE_URL = data['saiku-ui-base'];
                 PLUGIN = data['plugin'];
+                AUTH = data['authentication'];
                 REST_MOUNT_POINT = data['saiku-rest-mountpoint'];
                 $.getScript("js/saiku/src/i18n.js");
                 $.getScript("js/saiku/src/tabs.js", function() {

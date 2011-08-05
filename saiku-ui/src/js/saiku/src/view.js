@@ -30,7 +30,7 @@ var view = {
     /** Display the login form when the view is initialised. */
     init : function() {
 
-        if (PLUGIN == "true") {
+        if (PLUGIN == "true" || AUTH == "off" ) {
             view.show_processing('Loading Saiku User Interface. Please wait...');
             // Create the session and log in.
             model.get_session();
