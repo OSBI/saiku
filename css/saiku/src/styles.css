@@ -547,12 +547,13 @@ html, body {
     -webkit-box-shadow: 0 0 2px #DDD;
     -webkit-border-radius: 3px;
 }
-.d_dimension a.sprite {
-    background-position: -946px 2px;
+.d_dimension span.sprite {
+    background-position: -981px 2px;
+    padding: 0 8px;
+    cursor: pointer;
 }
 .d_dimension a {
     color: #2a6085;
-    padding-right: 15px;
     text-decoration: none;
 }
 .d_measure {

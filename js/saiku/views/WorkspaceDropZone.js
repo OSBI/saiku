@@ -5,7 +5,8 @@ var WorkspaceDropZone = Backbone.View.extend({
     
     events: {
         'sortstop': 'select_dimension',
-        'click a': 'selections'
+        'click a': 'selections',
+        'click span': 'selections'
     },
     
     initialize: function(args) {
@@ -59,7 +60,8 @@ var WorkspaceDropZone = Backbone.View.extend({
         
         // Wrap with the appropriate parent element
         if (ui.item.find('a').hasClass('dimension')) {
-            ui.item.addClass('d_dimension').find('a').addClass('sprite');
+            var $icon = $("<span />").addClass('sprite');
+            ui.item.addClass('d_dimension').append($icon);
         } else {
             ui.item.addClass('d_measure');
         }
@@ -128,6 +130,12 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
     
     selections: function(event, ui) {
+        var $target = $(event.target).hasClass('sprite') ?
+            $(event.target).parent().find('.dimension') :
+            $(event.target);
+        var key = $target.attr('href').replace('#', '');
+        
+        alert("Selections: " + key);
         try {
             event.preventDefault();
         } catch (e) { }
