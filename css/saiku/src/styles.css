@@ -34,7 +34,7 @@ html, body {
     font-weight: bold;
 }
 .sprite, .ui-dialog-titlebar-close, .ui-dialog-titlebar-close:hover {
-	background-image: url(../../../../images/sprite.png);
+	background-image: url(../../../images/sprite.png);
 	background-repeat: no-repeat;
 }
 
@@ -547,8 +547,10 @@ html, body {
     -webkit-box-shadow: 0 0 2px #DDD;
     -webkit-border-radius: 3px;
 }
-.d_dimension a {
+.d_dimension a.sprite {
     background-position: -946px 2px;
+}
+.d_dimension a {
     color: #2a6085;
     padding-right: 15px;
     text-decoration: none;
