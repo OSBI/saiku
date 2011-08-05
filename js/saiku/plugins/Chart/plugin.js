@@ -137,20 +137,25 @@ var Chart = Backbone.View.extend({
 
 (function() {
     // Initialize CCC
-    $.getScript("js/saiku/plugins/Chart/ccc.js", function() {
-        function new_workspace(args) {
-            // Add chart element
-            args.workspace.chart = new Chart({ workspace: args.workspace });
-        }
-        
-        // Attach chart to existing tabs
-        _.each(Saiku.tabs._tabs, function(tab) {
-            new_workspace({
-                workspace: tab.content
+    $.ajax({
+        url: "js/saiku/plugins/Chart/ccc.js",
+        dataType: "script",
+        cache: true,
+        success: function() {
+            function new_workspace(args) {
+                // Add chart element
+                args.workspace.chart = new Chart({ workspace: args.workspace });
+            }
+            
+            // Attach chart to existing tabs
+            _.each(Saiku.tabs._tabs, function(tab) {
+                new_workspace({
+                    workspace: tab.content
+                });
             });
-        });
-        
-        // Attach chart to future tabs
-        Saiku.session.bind("workspace:new", new_workspace);
+            
+            // Attach chart to future tabs
+            Saiku.session.bind("workspace:new", new_workspace);
+        }
     });
 }());

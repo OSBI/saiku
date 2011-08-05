@@ -11,23 +11,25 @@ var DimensionList = Backbone.View.extend({
     
     initialize: function(args) {
         // Don't lose this
-        _.bindAll(this, "render");
+        _.bindAll(this, "render", "load_dimension");
         
         // Bind parent element
         this.workspace = args.workspace;
+        this.dimension = args.dimension;
         
         // Fetch from the server if we haven't already
         if (! args.dimension.has('template')) {
-            args.dimension.fetch({ 
-                success: function() {
-                    this.template = args.dimension.get('template');
-                    this.render(); 
-                }    
-            });
+            console.log("Dimension not prefetched. Getting it now...");
+            $(this.el).html('Loading...');
+            args.dimension.fetch({ success: this.load_dimension });
         } else {
-            this.template = args.dimension.get('template');
-            this.render();
+            this.load_dimension();
         }
+    },
+    
+    load_dimension: function() {
+        this.template = this.dimension.get('template');
+        this.render(); 
     },
     
     render: function() {

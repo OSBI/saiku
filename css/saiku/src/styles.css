@@ -838,7 +838,8 @@ html, body {
 }
 .processing_image {
     display: inline-block;
-    background-position: -1802px -97px;
+    background-image: url('../../../images/src/waiting.gif');
+    background-repeat: no-repeat;
     width: 16px;
     height: 16px;
     margin-right: 5px;
@@ -1022,7 +1023,7 @@ html, body {
 .tipsy { pointer-events: none; padding: 5px; font-size: 10px; font-family: Arial,Helvetica,sans-serif; position: absolute; z-index: 100000; }
   .tipsy-inner { padding: 5px 8px 4px 8px; background-color: black; color: white; max-width: 200px; text-align: center; }
   .tipsy-inner { border-radius: 3px; -moz-border-radius:3px; -webkit-border-radius:3px; }
-  .tipsy-arrow { position: absolute; background: url(tipsy.gif) no-repeat top left; width: 9px; height: 5px; }
+  .tipsy-arrow { position: absolute; width: 9px; height: 5px; }
   .tipsy-n .tipsy-arrow { top: 0; left: 50%; margin-left: -4px; }
     .tipsy-nw .tipsy-arrow { top: 0; left: 10px; }
     .tipsy-ne .tipsy-arrow { top: 0; right: 10px; }

@@ -62,7 +62,6 @@ var Session = Backbone.Model.extend({
         this.dimensions = {};
         this.measures = {};
         this.connections = response;
-        //$(window).load();
         _.delay(this.prefetch_dimensions, 200);
         
         // Show UI
