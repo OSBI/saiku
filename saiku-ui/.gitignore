@@ -14,3 +14,4 @@ local.properties
 .classpath
 .settings/
 .loadpath
+.DS_Store

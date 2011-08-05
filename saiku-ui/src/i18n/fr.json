@@ -1,0 +1,23 @@
+{
+	"New query": "Nouvelle requ\u00eate",
+	"Open query": "Editer un requ\u00eate",
+	"Save query": "Enregistrer la requ\u00eate",
+	"Delete query": "D\u00e9truire la requ\u00eate",
+	"Logout": "Terminer la session",
+	"About": "A propos",
+	"Run query": "Ex\u00e9cuter la requ\u00eate",  
+	"Toggle fields": "Pivoter les champs",
+	"Automatic execution": "Ex\u00e9cution automatique",
+	"Non-empty": "Non vide",
+	"Swap axis": "Pivoter les axes",
+	"Show MDX" : "Voir MDX",
+	"Export XLS": "Exporter XLS",
+	"Export CSV": "Exporter CSV",
+	"Drill Through": "Forage",
+	"Cubes": "Cubes",
+	"Dimensions": "Dimensions",
+	"Measures": "Indicateurs",
+	"Rows": "Rang\u00e9es",
+	"Filter": "Filtre",
+	"Columns": "Colonnes"
+}

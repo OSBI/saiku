@@ -24,7 +24,8 @@ var po_file;
 /**
  * The user's current locale
  */
-var locale;
+var locale = (navigator.language || navigator.browserLanguage || 
+        navigator.systemLanguage || navigator.userLanguage).substring(0,2);
 
 (function( $ ){
 	/**
@@ -93,24 +94,15 @@ var locale;
  * Automatically internationalize the UI based on the user's Accept-Language header
  */
 automatic_i18n = function() {
-	$.ajax({
-		url: BASE_URL + 'i18n/index.jsp',
-		type: 'GET',
-		dataType: 'text',
-		success: function(data) {
-			locale = data.substring(0,2);
-			
-			// Load language file if it isn't English
-			if (locale != "en") {
-    			$.ajax({
-    				url: BASE_URL + 'i18n/' + locale + ".json",
-    				type: 'GET',
-    				dataType: 'json',
-    				success: function(data) {
-    					po_file = data;
-    				}
-    			});
+	// Load language file if it isn't English
+	if (locale != "en") {
+		$.ajax({
+			url: BASE_URL + 'i18n/' + locale + ".json",
+			type: 'GET',
+			dataType: 'json',
+			success: function(data) {
+				po_file = data;
 			}
-		}
-	});
+		});
+	}
 }();
