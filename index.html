@@ -103,9 +103,9 @@
         <% _.each(dimensions, function(dimension) { %>
         <% if (dimension.name != 'Measures') { %>
             <li class='parent_dimension'>
-                <span class="root collapsed">
-                    <a class="folder_collapsed" href="#"><%= dimension.name %></a>
-                </span>
+                <span class="root collapsed sprite"></span>
+                    <a class="folder_collapsed sprite" href="#"><%= dimension.name %></a>
+                
                 <ul>
                 <% _.each(dimension.hierarchies, function(hierarchy) { %>
                     <% if (dimension.hierarchies.length > 1) { %>
@@ -128,9 +128,9 @@
         <script type="text/x-jquery-tmpl" id="template-measures">
         <ul>
             <li>
-                <span class="root expand">
-                   <a href="#" title="Measures" class="folder_expand">Measures</a>
-                </span>
+                <span class="root expand sprite"></span>
+                   <a href="#" title="Measures" class="folder_expand sprite">Measures</a>
+                
                 <ul>
                 <% _.each(measures, function(measure) { %>
                     <li><a title="[Measures].[<%= measure.name %>]" 

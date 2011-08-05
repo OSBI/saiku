@@ -4,6 +4,8 @@ var OpenQuery = Backbone.View.extend({
     events: {
         'click .sidebar a': 'view_query',
         'dblclick .sidebar a': 'open_query',
+        'click .sidebar span': 'view_query',
+        'dblclick .sidebar span': 'open_query',
         'click .workspace_toolbar a.open': 'open_query',
         'click .workspace_toolbar a.delete': 'delete_query'
     },
@@ -59,13 +61,17 @@ var OpenQuery = Backbone.View.extend({
             this.queries[query.name] = query;
             var $link = $("<a />").text(query.name)
                 .attr({ href: "#" + query.name });
-            $("<li />").append($link)
+            var $icon = $("<span class='sprite'></span>");
+            $("<li />").append($icon)
+                .append($link)
                 .appendTo($ul);
         }
     },
     
     view_query: function(event) {
-        var name = $(event.target).attr('href').replace('#', '');
+        $target = $(event.target).hasClass('sprite') ? 
+            $(event.target).parent().find('a') : $(event.target);
+        var name = $target.attr('href').replace('#', '');
         var query = this.queries[name];
         
         $(this.el).find('.workspace_toolbar').removeClass('hide');

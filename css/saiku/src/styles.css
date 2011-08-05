@@ -269,13 +269,16 @@ html, body {
     padding: 0;
 }
 #queries li {
-    background: url("../../../images/src/mdx.png") no-repeat scroll 1px 0 transparent;
     cursor: pointer;
     line-height: 17px;
     list-style-type: none;
     margin: 0;
-    padding-left: 22px;
     padding-bottom: 5px;
+}
+#queries li span {
+	background-position: -1855px 0;
+	padding: 4px 8px;
+	margin-right: 4px;
 }
 #queries li a {
     color: #222;
@@ -304,29 +307,29 @@ html, body {
 }
 .dimension_tree ul li span.collapsed,
 .measure_tree ul li span.collapsed {
-    background: url('../../../images/src/tree_collapsed.png') 0px -2px no-repeat;
+    background-position: -1406px -95px;
     cursor: pointer;
-    padding-left: 20px;
+    padding: 5px 17px;
 }
 .dimension_tree ul li span.expand,
 .measure_tree ul li span.expand {
-    background: url('../../../images/src/tree_expand.png') 0px -2px no-repeat;
+    background-position: -1538px -95px;
     cursor: pointer;
-    padding-left: 20px;
+    padding: 5px 17px;
 }
 .dimension_tree ul li a,
 .measure_tree ul li a {
     color: #222;
-    padding-left: 20px;
+    padding: 5px;
     text-decoration: none;
 }
 .dimension_tree ul li a.folder_expand,
 .measure_tree ul li a.folder_expand {
-    background: url('../../../images/src/tree_folder_expand.png') 0px -2px no-repeat;
+    background: #fff;
 }
 .dimension_tree ul li a.folder_collapsed,
 .measure_tree ul li a.folder_collapsed {
-    background: url('../../../images/src/tree_folder_collapsed.png') 0px -2px no-repeat;
+    background: #fff;
 }
 .dimension_tree ul li ul,
 .measure_tree ul li ul {
