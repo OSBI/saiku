@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html<%= manifest %>>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>Saiku - Next Generation Open Source Analytics</title>
@@ -20,6 +20,7 @@
         <link rel="stylesheet" href="css/saiku/src/styles.css" type="text/css">
         <link rel="shortcut icon" href="favicon.ico">
         
+        <%= head =>
         </head>
     <body>
         <div id="header" class="hide"></div>
@@ -74,6 +75,7 @@
         <!-- Saiku plugins -->
         <script type="text/javascript" src="js/saiku/plugins/Chart/plugin.js" defer></script>
         <script type="text/javascript" src="js/saiku/plugins/Test/plugin.js" defer></script>
+        <%= plugins =>
         
         <!-- Loggly error logging service 
         <script type="text/javascript" src="http://d3eyf2cx8mbems.cloudfront.net/js/loggly-0.1.0.js"></script>
