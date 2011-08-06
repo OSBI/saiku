@@ -110,8 +110,8 @@ var run = {
 
             error: function () {
                 // Could not retrieve dimensions and measures from server
-                view.hide_processing();
-                view.show_dialog("Error", "Couldn't create a new query. Please try again.", "error");
+                run.hide_processing();
+                run.show_dialog("Error", "Couldn't create a new query. Please try again.", "error");
             }
         });
     },
@@ -129,69 +129,10 @@ var run = {
         // Fetch the resultset from the server
         run.request({
             method: "GET",
-            url: run.username + "/query/" + queryid + "/result/",
+            url: run.username + "/query/" + queryid + "/result/cheat",
             success: function (data, textStatus, XMLHttpRequest) {
-
-                if (data == "") {
-
-                    // No results table
-                    var table_vis = '<div style="text-align:center;">No results</div>';
-
-                    // Insert the table to the DOM
-                    $workspace_result.html(table_vis);
-
-                } else {
-                    // Create a variable to store the table
-                    var table_vis = '<table>';
-
-                    // Start looping through the result set
-                    $.each(data, function (i, cells) {
-
-                        // Add a new row.
-                        table_vis = table_vis + '<tr>';
-
-                        // Look through the contents of the row
-                        $.each(cells, function (j, header) {
-
-                            // If the cell is a column header and is null (top left of table)
-                            if (header['type'] === "COLUMN_HEADER" && header['value'] === "null") {
-                                table_vis = table_vis + '<th class="all_null"><div>&nbsp;</div></th>';
-                            } // If the cell is a column header and isn't null (column header of table)
-                            else if (header['type'] === "COLUMN_HEADER") {
-                                table_vis = table_vis + '<th class="col"><div>' + header['value'] + '</div></th>';
-                            } // If the cell is a row header and is null (grouped row header)
-                            else if (header['type'] === "ROW_HEADER" && header['value'] === "null") {
-                                table_vis = table_vis + '<th class="row_null"><div>&nbsp;</div></th>';
-                            } // If the cell is a row header and isn't null (last row header)
-                            else if (header['type'] === "ROW_HEADER") {
-                                table_vis = table_vis + '<th class="row"><div>' + header['value'] + '</div></th>';
-                            } // If the cell is a normal data cell
-                            else if (header['type'] === "DATA_CELL") {
-                                table_vis = table_vis + '<td class="data"><div>' + header['value'] + '</div></td>';
-                            }
-
-                        });
-
-                        // Close of the new row
-                        table_vis = table_vis + '</tr>';
-
-                    });
-
-                    // Close the table
-                    table_vis = table_vis + '</table>';
-
-                    // Insert the table to the DOM
-                    $workspace_result.html(table_vis);
-                    // Enable highlighting on rows.
-                    $workspace_result.find('table tr').hover(function () {
-                        $(this).children().css('background', '#eff4fc');
-                    }, function () {
-                        $(this).children().css('background', '');
-                    });
-                }
-
-                // Clear the wait message
-                run.hide_processing(true);
+                run.render_result(data,$workspace_result);
+				run.hide_processing(true);
             },
 
             error: function () {
@@ -201,7 +142,124 @@ var run = {
             }
         });
     },
-    
+    open_query: function (query_name) {
+			run.request({
+				url: run.username + "/repository/" + query_name,
+				dataType: 'xml',
+				success: function (data, textStatus, jqXHR) {
+                    var q = run.generate_query_id();
+					run.new_query(q,jqXHR.responseText,function() {
+                            run.run_query(q);
+                    });
+				}
+			});
+		},
+    render_result: function(data,$workspace_result) {
+                    if (data == "") {
+
+						// No results table
+						var table_vis = '<div style="text-align:center;">No results</div>';
+
+						// Insert the table to the DOM
+						$workspace_result.html(table_vis);
+
+					} else if ( (data[0][0])['type'] == "ERROR") {
+                        var table_vis = '<div style="text-align:center;color:red;">' + (data[0][0])['value'] +'</div>';
+                        $workspace_result.html(table_vis);
+                    } else {
+						// Create a variable to store the table
+						var table_vis = '<table>';
+
+						// Start looping through the result set
+						$.each(data, function (i, cells) {
+
+							// Add a new row.
+							table_vis = table_vis + '<tr>';
+
+							// Look through the contents of the row
+							$.each(cells, function (j, header) {
+
+								// If the cell is a column header and is null (top left of table)
+								if (header['type'] === "COLUMN_HEADER" && header['value'] === "null") {
+									table_vis = table_vis + '<th class="all_null"><div>&nbsp;</div></th>';
+								} // If the cell is a column header and isn't null (column header of table)
+								else if (header['type'] === "COLUMN_HEADER") {
+									table_vis = table_vis + '<th class="col"><div>' + header['value'] + '</div></th>';
+								} // If the cell is a row header and is null (grouped row header)
+								else if (header['type'] === "ROW_HEADER" && header['value'] === "null") {
+									table_vis = table_vis + '<th class="row_null"><div>&nbsp;</div></th>';
+								} // If the cell is a row header and isn't null (last row header)
+								else if (header['type'] === "ROW_HEADER") {
+									table_vis = table_vis + '<th class="row"><div>' + header['value'] + '</div></th>';
+								}
+                                else if (header['type'] === "ROW_HEADER_HEADER") {
+									table_vis = table_vis + '<th class="row_header"><div>' + header['value'] + '</div></th>';
+								} // If the cell is a normal data cell
+								else if (header['type'] === "DATA_CELL") {
+									table_vis = table_vis + '<td class="data"><div>' + header['value'] + '</div></td>';
+								}
+
+							});
+
+							// Close of the new row
+							table_vis = table_vis + '</tr>';
+
+						});
+
+						// Close the table
+						table_vis = table_vis + '</table>';
+
+						// Insert the table to the DOM
+						$workspace_result.html(table_vis);
+
+						// Group column headers
+						// TODO - Could be done in a plugin
+
+						var prev_cell_text,
+						j = 1,
+						prev_cells = [];
+
+						// Loop through all table headers with the class col
+						$workspace_result.find('table tr th.col').each(function(i) {
+
+							// If the previous cell text is the same as this cell text
+							if (prev_cell_text === $(this).text()) {
+								// Add the previous cell reference to an array
+								prev_cells.push($prev_cell);
+								// Increment the counter
+								j++;
+							} else {
+								// If the counter is more than one i.e. more than the same header
+								if (j > 1) {
+									// Loop through the array of previous cell references
+									$.each(prev_cells, function(index, value) {
+										// Physicaly remove the previous cell references
+										$(this).remove();
+									});
+									// With the last cell add the colspan attribute with the value
+									// of the counter
+									$prev_cell.attr('colspan', j);
+								}
+								// Reset the counter otherwise
+								j = 1;
+							}
+
+							// Store the previous cell text and
+							// previous cell reference into pointers
+							prev_cell_text = $(this).text();
+							$prev_cell = $(this);
+
+						});
+
+						// Equal widths on columns
+						var max = 0;
+						$workspace_result.find('table td').each(function() {
+							max = Math.max($(this).width(), max);
+						}).find('div').width(max);
+
+
+					}
+        },
      show_processing : function (msg) {
             $.unblockUI();
             $.blockUI({

@@ -29,6 +29,7 @@
 
 // The name of the Saiku UI webapp in Tomcat
 PLUGIN = "false";
+AUTH = "on";
 
 BASE_URL = "/";
 	

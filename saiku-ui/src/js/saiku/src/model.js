@@ -121,6 +121,10 @@ var model = {
 					controller.add_tab();
 					view.hide_processing();
 
+                    var queryParam = getURLParameter('query');
+                    if (typeof queryParam !== "undefined" && queryParam != "null") {
+                        model.open_query(queryParam,0);
+                    }
 					if (typeof QUERY !== "undefined") {
 						model.new_query(0, QUERY, model.load_cube );
 					}

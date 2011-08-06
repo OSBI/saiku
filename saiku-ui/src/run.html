@@ -41,10 +41,16 @@
         		        TOMCAT_WEBAPP = data['saiku-webapp'];
                 		BASE_URL = data['saiku-ui-base'];
 		                PLUGIN = data['plugin'];
-        		        var q = run.generate_query_id();
-                		run.new_query(q,QUERY,function() {
-		                 	run.run_query(q);
-						});
+                		getURLParameter = function(name) {
+                        return decodeURI(
+                        	(RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+                        	);
+                    	}
+				        var queryParam = getURLParameter('query');
+				        if (typeof queryParam !== "undefined" && queryParam != "null") {
+				        	run.open_query(queryParam);
+				        }
+
                  
 		            }
         		});

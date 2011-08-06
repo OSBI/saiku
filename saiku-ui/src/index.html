@@ -56,6 +56,20 @@
         <!-- tab_panel -->
         <div id="tab_panel" class="hide"></div>
         <!-- eof tab_panel -->
+	 <script type="text/javascript">
+        getURLParameter = function(name) {
+                        return decodeURI(
+                        (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
+                        );
+                    }
+        var queryParam = getURLParameter('query');
+        var reducedParam = getURLParameter('reduced');
+        if (typeof queryParam !== "undefined" && queryParam != "null" && typeof reducedParam !== "undefined" && reducedParam != "null") {
+            REDUCED = true;
+            PLUGIN_REMOVE_CONTENT = 'a[href="#save_query"], a[href="#automatic_execution"], a[href="#toggle_fields"], a[href="#run_query"]';
+            $('#toolbar, #tabs').remove();
+        }
+    </script>
 
 	 <script type="text/javascript">
   	var _gaq = _gaq || [];
