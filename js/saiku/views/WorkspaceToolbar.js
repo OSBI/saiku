@@ -154,14 +154,14 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     export_xls: function(event) {
-        window.location = Settings.TOMCAT_WEBAPP + Settings.REST_MOUNT_POINT + 
+        window.location = Settings.REST_URL +
             Saiku.session.username + "/query/" + 
-            this.workspace.query.name + "/export/xls";
+            this.workspace.query.id + "/export/xls";
     },
     
     export_csv: function(event) {
-        window.location = Settings.TOMCAT_WEBAPP + Settings.REST_MOUNT_POINT + 
+        window.location = Settings.REST_URL +
             Saiku.session.username + "/query/" + 
-            this.workspace.query.name + "/export/csv";
+            this.workspace.query.id + "/export/csv";
     }
 });
