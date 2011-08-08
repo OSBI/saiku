@@ -150,10 +150,9 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     show_mdx: function(event) {
-        // FIXME
         this.workspace.query.action.get("/mdx", { 
-            error: function(model, response) {
-                (new MDXModal({ mdx: response.responseText })).render().open();
+            success: function(model, response) {
+                (new MDXModal({ mdx: response })).render().open();
             }
         });
     },
