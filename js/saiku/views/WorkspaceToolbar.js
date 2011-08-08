@@ -32,7 +32,8 @@ var WorkspaceToolbar = Backbone.View.extend({
         } else {
             $(args.workspace.toolbar.el).find('.button')
                 .addClass('disabled_toolbar');
-            $(args.workspace.toolbar.el).find('.auto,.non_empty,.toggle_fields')
+            $(args.workspace.toolbar.el)
+                .find('.auto,.non_empty,.toggle_fields,.toggle_sidebar')
                 .removeClass('disabled_toolbar');
         }
     },
@@ -92,6 +93,10 @@ var WorkspaceToolbar = Backbone.View.extend({
     
     toggle_fields: function(event) {
         $(this.workspace.el).find('.workspace_fields').toggle();
+    },
+    
+    toggle_sidebar: function() {
+        this.workspace.toggle_sidebar();
     },
     
     non_empty: function(event) {

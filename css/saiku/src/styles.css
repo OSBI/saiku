@@ -929,6 +929,9 @@ html, body {
 .workspace_toolbar .toggle_fields {
     background-position: -913px 7px;
 }
+.workspace_toolbar .toggle_sidebar {
+	background-position: -1635px -90px;
+}
 .workspace_toolbar .drillthrough {
     background-position: -781px 7px;
 }
