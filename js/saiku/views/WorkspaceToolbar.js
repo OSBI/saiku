@@ -123,7 +123,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     drillthrough: function(event) {
-        Saiku.ui.block("We have to go deeper...");
+        Saiku.ui.block("Executing drillthrough...");
         this.workspace.query.action.get("/drillthrough:500", {
             success: this.display_drillthrough
         });
