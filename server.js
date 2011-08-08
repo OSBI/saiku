@@ -17,6 +17,10 @@ var port = process.env.C9_PORT || parseInt(process.ARGV[2], 10) || 8080;
 var url = process.ARGV[3] || 'demo.analytical-labs.com';
 var proxy = http.createClient(80, url);
 
+proxy.on('error', function() {
+    proxy = http.createClient(80, url);
+});
+
 // Load static server
 var twoHours = 1000 * 60 * 60 * 2;
 app.use(express['static'](__dirname));
