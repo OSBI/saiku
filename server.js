@@ -4,6 +4,9 @@
  * Requests will be proxied to demo.analytical-labs.com,
  * or a Saiku server installation of your choice.
  * 
+ * To play with the chaos monkey, set the CHAOS_MONKEY environment variable
+ * to anything (Preferably a nice name for your chaos monkey).
+ * 
  * To start the server, run `node server.js port [url]`
  */
 
@@ -18,9 +21,8 @@ var proxy = http.createClient(80, url);
 var twoHours = 1000 * 60 * 60 * 2;
 app.use(express['static'](__dirname));
 
-app.all("/saiku/rest/*", function(request, response) {
-    console.log(request.method, request.url);
-    request.headers.host = url;
+// Proxy request
+function get_from_proxy(request, response) {
     var proxy_request = proxy.request(request.method, request.url, request.headers);
     
     proxy_request.addListener('response', function (proxy_response) {
@@ -29,7 +31,13 @@ app.all("/saiku/rest/*", function(request, response) {
         });
         
         proxy_response.addListener('end', function() {
-            response.end();
+            if (process.env.CHAOS_MONKEY) {
+                setTimeout(function() {
+                    response.end();
+                }, Math.floor(Math.random() * 3000));
+            } else {
+                response.end();
+            }
         });
         
         response.writeHead(proxy_response.statusCode, proxy_response.headers);
@@ -40,6 +48,29 @@ app.all("/saiku/rest/*", function(request, response) {
     });
     
     proxy_request.end();
+}
+
+// Unleash the chaos monkey!
+function unleash_chaos_monkey(request, response) {
+    var monkey = "The chaos monkey strikes again!";
+    response.writeHead(500, {
+        "Content-Type": "text/plain",
+        "Content-Length": monkey.length
+    });
+    response.write(monkey);
+    response.end();
+}
+
+// Handle incoming requests
+app.all("/saiku/rest/*", function(request, response) {
+    console.log(request.method, request.url);
+    request.headers.host = url;
+
+    if (process.env.CHAOS_MONKEY && Math.random() < 0.25) {
+        unleash_chaos_monkey(request, response);
+    } else {
+        get_from_proxy(request, response);
+    }
 });
 
 console.log("Proxy listening on", port);
