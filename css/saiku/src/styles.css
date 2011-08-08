@@ -33,7 +33,7 @@ html, body {
 .used {
     font-weight: bold;
 }
-.sprite, .ui-dialog-titlebar-close, .ui-dialog-titlebar-close:hover {
+.sprite, .ui-dialog-titlebar-close, .ui-dialog-titlebar-close:hover, .dialog_icon {
 	background-image: url(../../../images/sprite.png);
 	background-repeat: no-repeat;
 }
@@ -616,7 +616,14 @@ html, body {
 }
 
 /** Dialog */
-
+.ui-widget {
+	font-family: inherit !important;
+	font-size: inherit !important;
+}
+.ui-widget-header {
+    border: 0 !important;
+    font-weight: normal !important;
+}
 .ui-dialog {
     background: #FFF;
     border: 3px solid #EEE;
@@ -636,16 +643,21 @@ html, body {
     -moz-border-radius: 1px;
     -webkit-border-radius: 1px;
 }
+.ui-dialog-content {
+	padding: 0 !important;
+}
 .ui-dialog-titlebar {
     background: #F9F9F9;
     background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#F0F0F0));
     background: -moz-linear-gradient(top, #FFFFFF 0%, #F0F0F0 100%);
     border-bottom: 1px solid #CCC;
     height: 18px;
-    padding: 5px 5px 6px 10px;
+    padding: 5px 5px 6px 10px !important;
+    border-radius: 0 !important;
     -moz-box-shadow:0 1px 3px #DDDDDD;
     -webkit-box-shadow:0 1px 3px #DDDDDD;
-}
+    font-family: inherit !important;
+}    
 .ui-dialog-titlebar .ui-dialog-title {
     float: left;
     /*font-size: 13px;*/
@@ -681,12 +693,16 @@ html, body {
 .ui-dialog-content {
     padding: 10px;
 }
-
-.dialog_body_info {
-    background-position: -920px -97px;
-    min-height: 40px !important;
-    overflow: auto !important;
-    padding: 10px 10px 20px 70px !important;
+.dialog_body {
+	padding: 5px;
+}
+.dialog_icon {
+	width: 100px;
+	height: 100px;
+	float: left;
+}
+.dialog_info .dialog_icon {
+    background-position: -885px -87px;
 }
 
 .dialog_body_mdx {
@@ -723,25 +739,18 @@ html, body {
     padding: 10px 10px 20px 70px !important;
 }
 
-.dialog_body_login {
-    background-position: -691px 0;
+.dialog_login .dialog_icon {
+    background-position: -666px 15px;
+}
+.dialog_login .dialog_body {
     min-height: 40px !important;
     padding: 10px 10px 20px 100px !important;
 }
 
-.dialog_body_waiting {
-    background-position: -1802px -97px;
-    padding: 10px 10px 10px 30px !important;
-}
-
 .dialog_footer {
     border-top: 1px solid #CCC;
-    /*margin-top: 10px;*/
     padding: 10px 10px;
-    text-align: right
-}
-
-.dialog_footer {
+    text-align: right;
     clear: both;
 }
 

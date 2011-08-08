@@ -2,7 +2,6 @@ var Modal = Backbone.View.extend({
     tagName: "div",
     className: "dialog",
     type: "modal",
-    closeText: "OK",
     message: "Put content here",
     
     options: {
@@ -14,26 +13,45 @@ var Modal = Backbone.View.extend({
     },
     
     events: {
-        'click .close': 'close'
+        'click a': 'call'
     },
     
+    buttons: [
+        { text: "OK", method: "close" }
+    ],
+    
     template: function() {
-        return _.template("<%= message %>" +
+        return _.template("<div class='dialog_icon'></div>" +
+                "<div class='dialog_body'><%= message %></div>" +
         		"<div class='dialog_footer'>" +
-            "<a class='close form_button' href='#'>&nbsp;<%= closeText %>&nbsp;</a>" +
+            "<% _.each(buttons, function(button) { %>" +
+                "<a class='form_button' href='#<%= button.method %>'>&nbsp;<%= button.text %>&nbsp;</a>" +
+            "<% }); %>" +
             "</div>")(this);
     },
     
     initialize: function(args) {
         _.extend(this, args);
+        _.bindAll(this, "call");
     },
     
     render: function() {
         $(this.el).html(this.template())
-            .dialog(this.options)
-            .addClass("dialog_body_" + this.type)
-            .addClass('sprite');
+            .addClass("dialog_" + this.type)
+            .dialog(this.options);
         return this;
+    },
+    
+    call: function(event) {
+        // Determine callback
+        var callback = event.target.hash.replace('#', '');
+        
+        // Attempt to call callback
+        if (! $(event.target).hasClass('disabled_toolbar') && this[callback]) {
+            this[callback](event);
+        }
+        
+        return false;
     },
     
     open: function() {

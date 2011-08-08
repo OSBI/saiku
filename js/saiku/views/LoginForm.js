@@ -6,20 +6,19 @@ var LoginForm = Modal.extend({
         "<label for='password'>Password</label><br />" +
         "<input type='password' id='password' name='password' value='admin' />" +
         "</form>",
-    
-    events: {
-        'submit #login_form': 'close',
-        'click .close': 'close'
-    },
+        
+    buttons: [
+        { text: "Login", method: "login" }
+    ],
     
     initialize: function(args) {
         _.extend(this, args);
         this.options.title = Settings.VERSION;
-        this.options.closeText = "Login";
-    },
-    
-    close: function() {
-        return this.login();
+        
+        // Add events specific to this dialog
+        _.extend(this.events, {
+            'submit #login_form': 'close',
+        });
     },
     
     login: function() {
