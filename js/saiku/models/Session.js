@@ -80,20 +80,24 @@ var Session = Backbone.Model.extend({
     },
     
     prefetch_dimensions: function() {
-        _.each(this.connections, function(connection) {
-            _.each(connection.catalogs, function(catalog) {
-                _.each(catalog.schemas, function(schema) {
-                    _.each(schema.cubes, function(cube) {
+        for(var i = 0; i < this.connections.length; i++) {
+            var connection = this.connections[i];
+            for(var j = 0; j < connection.catalogs.length; j++) {
+                var catalog = connection.catalogs[j];
+                for(var k = 0; k < catalog.schemas.length; k++) {
+                    var schema = catalog.schemas[k];
+                    for(var l = 0; l < schema.cubes.length; l++) {
+                        var cube = schema.cubes[l];
                         var key = connection.name + "/" + catalog.name + "/" +
                             schema.name + "/" + cube.name;
                         this.dimensions[key] = new Dimension({ key: key });
                         this.measures[key] = new Measure({ key: key });
                         this.dimensions[key].fetch();
                         this.measures[key].fetch();
-                    }, this);
-                }, this);
-            }, this);
-        }, this);
+                    }
+                }
+            }
+        }
     },
     
     url: function() {

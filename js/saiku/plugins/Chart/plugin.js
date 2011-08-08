@@ -148,11 +148,12 @@ var Chart = Backbone.View.extend({
             }
             
             // Attach chart to existing tabs
-            _.each(Saiku.tabs._tabs, function(tab) {
+            for(var i = 0; i < Saiku.tabs._tabs.length; i++) {
+                var tab = Saiku.tabs._tabs[i];
                 new_workspace({
                     workspace: tab.content
                 });
-            });
+            };
             
             // Attach chart to future tabs
             Saiku.session.bind("workspace:new", new_workspace);
