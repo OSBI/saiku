@@ -13,6 +13,11 @@ var Session = Backbone.Model.extend({
         _.extend(this, Backbone.Events);
         _.bindAll(this, "process_login", "prefetch_dimensions");
         
+        // Check expiration on localStorage
+        if (! (localStorage.getItem('expiration') > (new Date()).getTime())) {
+            localStorage.clear();
+        }
+        
         // Check if credentials are already stored
         if (sessionStorage) {
             this.username = localStorage.getItem('username');
@@ -42,6 +47,11 @@ var Session = Backbone.Model.extend({
         localStorage.setItem('username', username);
         this.password = password;
         localStorage.setItem('password', password);
+        
+        // Set expiration on localStorage to one day in the future
+        var expires = (new Date()).getTime() + 
+            Settings.LOCALSTORAGE_EXPIRATION;
+        localStorage.setItem('expiration', expires);
         
         // Create session and fetch connection information
         this.fetch({ success: this.process_login });

@@ -17,7 +17,8 @@ var Settings = {
     },
     PLUGINS: [
         "Chart"
-    ]
+    ],
+    LOCALSTORAGE_EXPIRATION: 10 * 60 * 60 * 1000 /* 10 hours, in ms */
 };
 
 Settings.REST_URL = Settings.BASE_URL
