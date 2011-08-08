@@ -19,7 +19,6 @@ var DimensionList = Backbone.View.extend({
         
         // Fetch from the server if we haven't already
         if (! args.dimension.has('template')) {
-            console.log("Dimension not prefetched. Getting it now...");
             $(this.el).html('Loading...');
             args.dimension.fetch({ success: this.load_dimension });
         } else {
