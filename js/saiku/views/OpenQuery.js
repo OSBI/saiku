@@ -94,6 +94,7 @@ var OpenQuery = Backbone.View.extend({
     },
     
     open_query: function(event) {
+        Saiku.ui.block("Opening query...");
         this.selected_query.fetch({ success: this.move_query_to_workspace });
         
         return false;
