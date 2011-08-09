@@ -39,7 +39,10 @@ Backbone.sync = function(method, model, options) {
     };
     
     var success = function(data, textStatus, jqXHR) {
-        Saiku.ui.unblock();
+        if (options.retries > 0) {
+            Saiku.ui.unblock();
+        }
+        
         options.success(data, textStatus, jqXHR);
     };
 

@@ -9,6 +9,9 @@ var Result = Backbone.Model.extend({
             workspace: this.query.workspace,
             data: response
         });
+        
+        // Show the UI if hidden
+        Saiku.ui.unblock();
     },
     
     url: function() {
