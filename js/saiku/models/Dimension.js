@@ -8,7 +8,9 @@ var Dimension = Backbone.Model.extend({
         this.set({
             template: _.template($("#template-dimensions").html())({
                 dimensions: response
-            })
+            }),
+            
+            data: response
         });
         
         return response;

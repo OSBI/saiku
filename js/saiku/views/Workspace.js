@@ -131,8 +131,8 @@ var Workspace = Backbone.View.extend({
         }
         
         // Initialize the new query
-        var selected_cube = $(this.el).find('.cubes').val();
-        var parsed_cube = selected_cube.split('/');
+        this.selected_cube = $(this.el).find('.cubes').val();
+        var parsed_cube = this.selected_cube.split('/');
         this.query = new Query({
             connection: parsed_cube[0],
             catalog: parsed_cube[1],
@@ -149,25 +149,24 @@ var Workspace = Backbone.View.extend({
     
     init_query: function() {
         // Find the selected cube
-        var selected_cube = $(this.el).find('.cubes').val();
-        if (selected_cube === "") {
-            selected_cube = this.query.get('connection') + "/" + 
+        if (this.selected_cube === undefined) {
+            this.selected_cube = this.query.get('connection') + "/" + 
                 this.query.get('catalog') + "/" + 
                 this.query.get('schema') + "/" + this.query.get('cube');
             $(this.el).find('.cubes')
-                .val(selected_cube);
+                .val(this.selected_cube);
         }
         
         // Create new DimensionList and MeasureList
         this.dimension_list = new DimensionList({
             workspace: this,
-            dimension: Saiku.session.dimensions[selected_cube]
+            dimension: Saiku.session.dimensions[this.selected_cube]
         });        
         $(this.el).find('.dimension_tree').html('').append($(this.dimension_list.el));
         
         this.measure_list = new DimensionList({
             workspace: this,
-            dimension: Saiku.session.measures[selected_cube]
+            dimension: Saiku.session.measures[this.selected_cube]
         });
         $(this.el).find('.measure_tree').html('').append($(this.measure_list.el));
         

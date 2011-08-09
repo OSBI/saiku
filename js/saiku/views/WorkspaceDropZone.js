@@ -140,7 +140,8 @@ var WorkspaceDropZone = Backbone.View.extend({
         (new SelectionsModal({
             target: $target,
             name: $target.text(),
-            key: key
+            key: key,
+            workspace: this.workspace
         })).render().open();
         
         // Prevent default action
