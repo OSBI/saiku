@@ -1,4 +1,50 @@
 /**
+ * Base 64 module
+ */
+;(function (window) {
+
+  var
+    characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
+    fromCharCode = String.fromCharCode,
+    INVALID_CHARACTER_ERR = (function () {
+      // fabricate a suitable error object
+      try { document.createElement('$'); }
+      catch (error) { return error; }}());
+
+  // encoder
+  window.Base64 || (
+  window.Base64 = { encode: function (string) {
+    var
+      a, b, b1, b2, b3, b4, c, i = 0,
+      len = string.length, max = Math.max, result = '';
+
+    while (i < len) {
+      a = string.charCodeAt(i++) || 0;
+      b = string.charCodeAt(i++) || 0;
+      c = string.charCodeAt(i++) || 0;
+
+      if (max(a, b, c) > 0xFF) {
+        throw INVALID_CHARACTER_ERR;
+      }
+
+      b1 = (a >> 2) & 0x3F;
+      b2 = ((a & 0x3) << 4) | ((b >> 4) & 0xF);
+      b3 = ((b & 0xF) << 2) | ((c >> 6) & 0x3);
+      b4 = c & 0x3F;
+
+      if (!b) {
+        b3 = b4 = 64;
+      } else if (!c) {
+        b4 = 64;
+      }
+      result += characters.charAt(b1) + characters.charAt(b2) + characters.charAt(b3) + characters.charAt(b4);
+    }
+    return result;
+  }});
+
+}(this));
+
+/**
  * Model which handles AJAX calls to the Saiku Server
  * If you want to hook the UI up to something besides the Saiku Server,
  * this is the class which you want to override.
@@ -49,13 +95,17 @@ Backbone.sync = function(method, model, options) {
     // Default JSON-request options.
     params = {
       url:          url,
-      username:     Saiku.session.username,
-      password:     Saiku.session.password,
       type:         type,
       cache:        false,
       data:         model.attributes,
       success:      success,
-      error:        failure
+      error:        failure,
+      beforeSend:   function(request) {
+          var auth = "Basic " + Base64.encode(
+              Saiku.session.username + ":" + Saiku.session.password
+          );
+          request.setRequestHeader('Authorization', auth);
+      }
     };
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
