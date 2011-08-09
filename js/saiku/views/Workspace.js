@@ -202,9 +202,15 @@ var Workspace = Backbone.View.extend({
                             var $dim = $(this.el).find('.' + type + '_tree')
                                 .find('a[title="' + name + '"]')
                                 .parent();
-                            $dim.clone()
+                            var $clone = $dim.clone()
                                 .addClass('d_' + type)
                                 .appendTo($axis);
+                            
+                            if (type == "dimension") {
+                                $("<span />").addClass('sprite')
+                                    .appendTo($clone);
+                            }
+                            
                             $dim.css({fontWeight: "bold"})
                                 .draggable('disable')                                    
                                 .parents('.parent_dimension')
