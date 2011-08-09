@@ -627,22 +627,20 @@ html, body {
 .ui-dialog {
     background: #FFF;
     border: 3px solid #EEE;
-    width: 400px !important;
+    min-width: 400px !important;
     min-height: auto !important;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     -moz-box-shadow: 0 0 10px #EEE;
     -webkit-box-shadow: 0 0 10px #EEE;
+    border: 1px solid #CCC;
+    -moz-border-radius: 1px;
+    -webkit-border-radius: 1px;
 }
 .ui-dialog input[type=text],
 .ui-dialog input[type=password] {
     padding: 4px;
     width: 277px;
-}
-.ui-dialog {
-    border: 1px solid #CCC;
-    -moz-border-radius: 1px;
-    -webkit-border-radius: 1px;
 }
 .ui-dialog-content {
 	padding: 0 !important;
@@ -730,12 +728,49 @@ html, body {
 .dialog_login .dialog_icon {
     background-position: -666px 15px;
 }
-
+.dialog_selections {
+	min-width: 500px !important;
+}
+.dialog_selections .dialog_icon {
+	display: none;
+}
+.dialog_selections .dialog_body {
+    height: 330px;
+}
+.dialog_selections .dialog_body .available_selections {
+    padding-left: 5px;
+    float: left;
+}
+.dialog_selections .dialog_body .selection_buttons {
+    float: left;
+    padding-left: 25px;
+    padding-top: 115px;
+    text-align: center;
+    vertical-align: middle;
+}
+.dialog_selections .dialog_body .used_selections {
+    padding-right: 5px;
+    float: right;
+}
+.dialog_selections .dialog_body select {
+    height: 270px;
+    width: 200px;
+    font-size: 11px;
+    overflow-x: scroll;
+}
+.dialog_selections .options {
+    float: left;
+    width: 150px;
+    text-align: left;
+}
 .dialog_footer {
     border-top: 1px solid #CCC;
     padding: 10px 10px;
     text-align: right;
     clear: both;
+}
+.dialog_footer .form_button {
+	padding-left: 5px;
 }
 
 /** Workspace Area */
@@ -930,66 +965,6 @@ html, body {
 }
 .workspace_toolbar .switch_to_mdx {
   /* this isn't in the sprite */
-}
-
-
-/** Selections 
-.selection_tree {
-    width: 60%;
-    min-height: 480px;
-    overflow: auto; 
-}
-
-.selection_listbox {
-    width: 35%;
-    float: right;
-}
-
-.selection_listbox select {
-	min-height: 480px;
-	width: 100%;
-	margin: 0;
-}
-
-.selections {
-	width: 80%;
-}**/
-
-#dialog_selections {
-    min-width: 500px !important;
-}
-#dialog_selections .dialog_body {
-    height: 300px;
-}
-#dialog_selections .dialog_body .available_selections {
-    padding-left: 5px;
-    float: left;
-}
-#dialog_selections .dialog_body .selection_buttons {
-    float: left;
-    padding-left: 25px;
-    padding-top: 115px;
-    text-align: center;
-    vertical-align: middle;
-}
-#dialog_selections .dialog_body .used_selections {
-    padding-right: 5px;
-    float: right;
-}
-#dialog_selections .dialog_body select {
-    height: 270px;
-    width: 200px;
-    font-size: 11px;
-    overflow-x: scroll;
-}
-#dialog_selections .dialog_footer .options {
-    float: left;
-    width: 150px;
-    text-align: left;
-}
-#dialog_selections .dialog_footer .footer_buttons {
-    float: right;
-    width: 200px;
 }
 
 .form_button {

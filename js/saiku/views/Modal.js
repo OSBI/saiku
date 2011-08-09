@@ -33,6 +33,7 @@ var Modal = Backbone.View.extend({
     initialize: function(args) {
         _.extend(this, args);
         _.bindAll(this, "call");
+        _.extend(this, Backbone.Events);
     },
     
     render: function() {
@@ -56,6 +57,7 @@ var Modal = Backbone.View.extend({
     
     open: function() {
         $(this.el).dialog('open');
+        this.trigger('open', { modal: this });
         return this;
     },
     

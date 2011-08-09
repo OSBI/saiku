@@ -130,12 +130,20 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
     
     selections: function(event, ui) {
+        // Determine dimension
         var $target = $(event.target).hasClass('sprite') ?
             $(event.target).parent().find('.dimension') :
             $(event.target);
         var key = $target.attr('href').replace('#', '');
         
-        alert("Selections: " + key);
+        // Launch selections dialog
+        (new SelectionsModal({
+            target: $target,
+            name: $target.text(),
+            key: key
+        })).render().open();
+        
+        // Prevent default action
         try {
             event.preventDefault();
         } catch (e) { }

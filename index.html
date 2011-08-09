@@ -52,6 +52,7 @@
         <script type="text/javascript" src="js/saiku/views/Toolbar.js"></script>
         <script type="text/javascript" src="js/saiku/views/Modal.js"></script>
         <script type="text/javascript" src="js/saiku/views/MDXModal.js"></script>
+        <script type="text/javascript" src="js/saiku/views/SelectionsModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/LoginForm.js"></script>
         <script type="text/javascript" src="js/saiku/views/AboutModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/WorkspaceToolbar.js"></script>
@@ -259,38 +260,22 @@
         </script>
 
         <script type="text/x-jquery-tmpl" id="template-selections">
-        <div class="dialog_inner">
-            <div class="dialog_header">
-                <h3>Selections</h3>
-                <a href="#" title="Close" class="close_dialog close">Close</a>
-                <div class="clear"></div>
+            <div class="available_selections">
+                Available members:<br/>
+                <select multiple>
+                </select>
             </div>
-            <div class="dialog_body">
-                <div class="available_selections">
-                    Available members:<br/>
-                    <select multiple>
-                    </select>
-                </div>
-                <div class="selection_buttons">
-                    <a href="#" id="add_members" class="form_button">&gt;</a><br/><br/>
-                    <a href="#" id="remove_members" class="form_button">&lt;</a>
-                </div>
-                <div class="used_selections">
-                    Used members:<br/>
-                    <select multiple></select>
-                </div>
+            <div class="selection_buttons">
+                <a href="#" id="add_members" class="form_button">&gt;</a><br/><br/>
+                <a href="#" id="remove_members" class="form_button">&lt;</a>
             </div>
-            <div class="dialog_footer">
-                <div class="options">
-                    <input id="show_unique" type="checkbox" /> Show Unique Names
-                </div>
-                <div class="footer_buttons">
-                    <a href="#" class="save_selections form_button">&nbsp;Save&nbsp;</a>
-                    <a href="#" class="close form_button">&nbsp;Cancel&nbsp;</a>
-                </div>
-                <div class="clear"></div>
+            <div class="used_selections">
+                Used members:<br/>
+                <select multiple></select>
             </div>
-        </div>
+            <div class="options">
+                <input id="show_unique" type="checkbox" /> Show Unique Names
+            </div>
         </script>
     </body>
 </html>
