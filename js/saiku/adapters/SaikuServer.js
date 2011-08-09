@@ -24,11 +24,10 @@ Backbone.sync = function(method, model, options) {
     var failure = function(jqXHR, textStatus, errorThrown) {
         options.retries++;
         
-        if (options.retries > 3) {
+        if (options.retries >= 10) {
+            Saiku.ui.block("Could not reach server. Please try again later...");
             if (options.error) {
                 options.error(jqXHR, textStatus, errorThrown);
-            } else {
-                Saiku.ui.block("Could not reach server. Please try again later...");
             }
         } else {
             var delay = Math.pow(options.retries, 2);
