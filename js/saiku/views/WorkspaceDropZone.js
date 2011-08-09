@@ -142,7 +142,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             name: $target.text(),
             key: key,
             workspace: this.workspace
-        })).render().open();
+        })).open();
         
         // Prevent default action
         try {
