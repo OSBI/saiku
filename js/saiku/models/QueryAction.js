@@ -37,7 +37,7 @@ var QueryAction = Backbone.Model.extend({
         this.url = this.query.url() + escape(action);
         
         // Clear out old attributes
-        this.attributes = {};
+        this.attributes = options.data? options.data : {};
         
         // Initiate action
         if (method == "save") {
