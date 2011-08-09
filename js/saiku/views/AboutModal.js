@@ -1,8 +1,12 @@
 var AboutModal = Modal.extend({
-    options: {
-        title: "About " + Settings.VERSION
+    initialize: function() {
+        _.extend(this.options, {
+            title: "About " + Settings.VERSION
+        });
     },
+    
     type: "info",
+    
     message: Settings.VERSION + "<br>" + 
         "<a href='http://www.analytical-labs.com'>http://www.analytical-labs.com/</a>"
 });

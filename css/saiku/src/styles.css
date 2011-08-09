@@ -628,6 +628,7 @@ html, body {
     background: #FFF;
     border: 3px solid #EEE;
     width: 400px !important;
+    min-height: auto !important;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     -moz-box-shadow: 0 0 10px #EEE;
@@ -695,6 +696,7 @@ html, body {
 }
 .dialog_body {
 	padding: 5px;
+	overflow: auto !important;
 }
 .dialog_icon {
 	width: 100px;
@@ -702,41 +704,27 @@ html, body {
 	float: left;
 }
 .dialog_info .dialog_icon {
-    background-position: -885px -87px;
+    background-position: -910px -87px;
+    width: 50px;
 }
-
-.dialog_body_mdx {
-    background-position: -1082px -97px;
-    min-height: 40px !important;
-    overflow: auto !important;
-    padding: 5px 10px 20px 70px !important;
+.dialog_info .dialog_body {
+	padding: 10px;
 }
-
-.dialog_body_mdx textarea {
-    width: 300px;
-    height: 100px;
+.dialog_mdx .dialog_icon {
+    background-position: -1075px -87px;
+    width: 40px;
+}
+.dialog_mdx .dialog_body textarea {
+    width: 335px;
+    height: 200px;
     font-size: 11px;
 }
-
-.dialog_body_save {
-    background-position: -1324px -97px;
-    min-height: 40px;
-    overflow: auto;
-    padding: 10px 10px 20px 70px;
+.dialog_save .dialog_icon {
+    background-position: -1315px -85px;
+    width: 50px;
 }
-
-.dialog_body_error {
-    background-position: -838px -97px;
-    min-height: 40px !important;
-    overflow: auto !important;
-    padding: 10px 10px 20px 70px !important;
-}
-
-.dialog_body_delete {
+.dialog_delete .dialog_icon {
     background-position: -756px -97px;
-    min-height: 40px !important;
-    overflow: auto !important;
-    padding: 10px 10px 20px 70px !important;
 }
 
 .dialog_login .dialog_icon {
