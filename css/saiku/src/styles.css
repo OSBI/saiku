@@ -772,7 +772,7 @@ html, body {
     clear: both;
 }
 .dialog_footer .form_button {
-	padding-left: 5px;
+	margin-left: 5px;
 }
 
 /** Workspace Area */
