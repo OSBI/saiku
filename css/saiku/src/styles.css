@@ -848,7 +848,7 @@ html, body {
 	height: 100%;
 	background-color: #fff;
 	opacity: 0.5;
-	z-index: 1000;
+	z-index: 9999;
 }
 .processing {
     border: 3px solid #EEE;
@@ -856,7 +856,7 @@ html, body {
     -webkit-border-radius: 3px;
     -moz-box-shadow: 0 0 10px #EEE;
     -webkit-box-shadow: 0 0 10px #EEE;
-    z-index: 1001;
+    z-index: 10001;
     background-color: #fff;
     position: fixed;
     width: 50%;
