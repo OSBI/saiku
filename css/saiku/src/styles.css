@@ -730,10 +730,6 @@ html, body {
 .dialog_login .dialog_icon {
     background-position: -666px 15px;
 }
-.dialog_login .dialog_body {
-    min-height: 40px !important;
-    padding: 10px 10px 20px 100px !important;
-}
 
 .dialog_footer {
     border-top: 1px solid #CCC;
