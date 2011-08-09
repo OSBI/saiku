@@ -11,14 +11,27 @@ var LoginForm = Modal.extend({
         { text: "Login", method: "login" }
     ],
     
+    events: {
+        'click a': 'call',
+        'keyup #login_form input': 'check'
+    },
+    
     initialize: function(args) {
         _.extend(this, args);
+        _.bindAll(this, "adjust");
         this.options.title = Settings.VERSION;
-        
-        // Add events specific to this dialog
-        _.extend(this.events, {
-            'submit #login_form': 'close',
-        });
+        this.bind('open', this.adjust);
+    },
+    
+    adjust: function() {
+        $(this.el).parent().find('.ui-dialog-titlebar-close').hide();
+        $(this.el).find("#username").select().focus();
+    },
+    
+    check: function(event) {
+        if(event.which === 13) {
+            this.login();
+        }
     },
     
     login: function() {
