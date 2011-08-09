@@ -549,7 +549,9 @@ html, body {
 }
 .d_dimension span.sprite {
     background-position: -981px 2px;
-    padding: 0 8px;
+    height: 16px;
+    width: 16px;
+    float: right;
     cursor: pointer;
 }
 .d_dimension a {

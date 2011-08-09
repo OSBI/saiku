@@ -208,7 +208,7 @@ var Workspace = Backbone.View.extend({
                             
                             if (type == "dimension") {
                                 $("<span />").addClass('sprite')
-                                    .appendTo($clone);
+                                    .prependTo($clone);
                             }
                             
                             $dim.css({fontWeight: "bold"})
