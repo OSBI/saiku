@@ -35,6 +35,8 @@ var Properties = Backbone.Model.extend({
         if (typeof response == "object") {
             _.extend(this.properties, response);
         }
+        
+        this.query.workspace.toolbar.reflect_properties();
     },
     
     url: function() {

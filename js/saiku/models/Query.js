@@ -18,7 +18,6 @@ var Query = Backbone.Model.extend({
             }).toUpperCase();
         
         // Initialize properties, action handler, and result handler
-        this.properties = new Properties({}, { query: this });
         this.action = new QueryAction({}, { query: this });
         this.result = new Result({}, { query: this });
     },
@@ -40,9 +39,13 @@ var Query = Backbone.Model.extend({
         }
 
         // Fetch initial properties from server
-        this.properties.fetch({
-            success: this.workspace.toolbar.reflect_properties
-        });
+        if (! this.properties) {
+            this.properties = new Properties({}, { query: this });
+        } else {
+            this.properties.fetch({
+                success: this.workspace.toolbar.reflect_properties
+            });
+        }
     },
     
     run: function(force) {
