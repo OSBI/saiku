@@ -11,8 +11,7 @@ var Toolbar = Backbone.View.extend({
     
     template: function() {
         return _.template("<ul>" + 
-                    "<li><a id='add_tab' href='#new_query' " +
-                    "   title='New query' class='new_tab i18n sprite'></a></li>" +
+                    "<li><a id='new_query' href='#new_query' title='New query' class='new_tab i18n sprite'></a></li>" +
                     "<li class='separator'>&nbsp;</li>" +
                     "<li><a id='open_query' href='#open_query' title='Open query' class='open_query i18n sprite'></a></li>" + 
                     "<li class='separator'>&nbsp;</li>" +
