@@ -4,9 +4,9 @@
 var Settings = {
     VERSION: "Saiku Suite 2.2 SNAPSHOT",
     PLUGIN: false,
-    BASE_URL: "/",
-    TOMCAT_WEBAPP: "saiku/",
-    REST_MOUNT_POINT: "rest/saiku/",
+    BASE_URL: "",
+    TOMCAT_WEBAPP: "/saiku",
+    REST_MOUNT_POINT: "/rest/saiku/",
     DIMENSION_PREFETCH: true,
     HIDE_ERRORS: false,
     QUERY_PROPERTIES: {
