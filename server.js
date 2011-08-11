@@ -66,7 +66,7 @@ function unleash_chaos_monkey(request, response) {
 }
 
 // Handle incoming requests
-app.all("/saiku/rest/*", function(request, response) {
+app.all("/saiku/*", function(request, response) {
     console.log(request.method, request.url);
     request.headers.host = url;
 
