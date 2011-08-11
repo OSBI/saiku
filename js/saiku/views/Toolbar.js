@@ -63,11 +63,7 @@ var Toolbar = Backbone.View.extend({
      * Clear the current session and show the login window
      */
     logout: function() {
-        // FIXME - This is a hack (inherited from old UI)
-        $('body').hide();
-        localStorage.clear();
-        location.reload(true);
-        return false;
+        Saiku.session.logout();
     },
     
     /**

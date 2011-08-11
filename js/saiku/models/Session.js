@@ -62,6 +62,14 @@ var Session = Backbone.Model.extend({
         return false;
     },
     
+    logout: function() {
+        // FIXME - This is a hack (inherited from old UI)
+        $('body').hide();
+        localStorage.clear();
+        location.reload(true);
+        return false;
+    },
+    
     process_login: function(model, response) {
         // Generate cube navigation for reuse
         this.cube_navigation = _.template($("#template-cubes").html())({
