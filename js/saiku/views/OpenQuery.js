@@ -101,14 +101,17 @@ var OpenQuery = Backbone.View.extend({
     },
     
     delete_query: function(event) {
-        this.selected_query.id = _.uniqueId("query_");
-        $(this.el).find('.workspace_toolbar').addClass('hide');
-        $(this.el).find('.workspace_results').html('');
-        this.selected_query.destroy({ success: this.clear_query });
+        (new DeleteQuery({
+            query: this.selected_query,
+            success: this.clear_query
+        })).render().open();
+        
         return false;
     },
     
     clear_query: function() {
+        $(this.el).find('.workspace_toolbar').addClass('hide');
+        $(this.el).find('.workspace_results').html('');
         this.fetch_queries();
     },
     

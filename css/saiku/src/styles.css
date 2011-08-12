@@ -724,9 +724,12 @@ html, body {
     width: 50px;
 }
 .dialog_delete .dialog_icon {
-    background-position: -756px -97px;
+    background-position: -741px -85px;
+    width: 60px;
 }
-
+.dialog_delete .dialog_body {
+	padding-top: 10px;
+}
 .dialog_login .dialog_icon {
     background-position: -666px 15px;
 }
