@@ -4,7 +4,26 @@
 Saiku.i18n = {
     locale: (navigator.language || navigator.browserLanguage || 
         navigator.systemLanguage || navigator.userLanguage).substring(0,2),
-    po_file: ""
+    po_file: {},
+    translate: function() {
+        $('.i18n').i18n(Saiku.i18n.po_file);
+    },
+    automatic_i18n: function() {
+        // Load language file if it isn't English
+        if (Saiku.i18n.locale != "en") {
+            $.ajax({
+                url: "js/saiku/plugins/I18n/po/" + Saiku.i18n.locale + ".json",
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    Saiku.i18n.po_file = data;
+                    Saiku.i18n.translate();
+                }
+            });
+        }
+        
+        return true;
+    }
 };
 
 (function( $ ){
@@ -33,8 +52,10 @@ Saiku.i18n = {
 			if (element.html()) {
 				translated_text = translate( element.html(), po_file );
 				if (translated_text) {
+				    console.log(element.html(), "=>", translated_text);
 					element.data('original', element.html());
 					element.html(translated_text);
+					element.removeClass('i18n');
 				}
 			}
 			
@@ -42,13 +63,17 @@ Saiku.i18n = {
 			if (element.attr('title')) {
 				translated_title = translate( element.attr('title'), po_file );
 				if (translated_title) {
+				    console.log(element.attr('title'), "=>", translated_title);
 					element.data('original', element.attr('title'));
 					element.attr({ 'title': translated_title });
+					element.removeClass('i18n');
 				}
 			}
 			
 			// Remove class so this element isn't repeatedly translated
-			element.removeClass('i18n');
+			if (element.hasClass('i18n')) {
+			    element.addClass('i18n_failed');
+			}
 			element.addClass('i18n_translated');
 		});
 	};
@@ -65,7 +90,8 @@ Saiku.i18n = {
 				element.attr({ 'title': element.data('original') });
 			
 			element.addClass('i18n');
-			element.removeClass('i18n_translated');
+			element.removeClass('i18n_translated')
+			    .removeClass('i18n_failed');
 		});
 	};
 })( jQuery );
@@ -73,16 +99,26 @@ Saiku.i18n = {
 /**
  * Automatically internationalize the UI based on the user's locale
  */
-automatic_i18n = function() {
-	// Load language file if it isn't English
-	if (Saiku.locale != "en") {
-		$.ajax({
-			url: "js/saiku/plugins/I18n/po/" + locale + ".json",
-			type: 'GET',
-			dataType: 'json',
-			success: function(data) {
-				Saiku.i18n.po_file = data;
-			}
-		});
-	}
-}();
+Saiku.i18n.automatic_i18n();
+
+/**
+ * Bind to new workspace
+ */
+Saiku.events.bind('session:new', function() {
+    // Translate elements already rendered
+    Saiku.i18n.translate();
+    
+    // Translate new workspaces
+    Saiku.session.bind('tab:add', Saiku.i18n.translate);
+});
+
+/**
+ * Initialize Loggly input for user-provided translations
+ */
+window.Translate = new loggly({ 
+    url: (("https:" == document.location.protocol) 
+            ? "https://logs.loggly.com" 
+            : "http://logs.loggly.com") 
+            + '/inputs/9cc35a94-a2a9-41eb-b9b2-e7f53bb5f989?rt=1', 
+    level: 'log'
+});

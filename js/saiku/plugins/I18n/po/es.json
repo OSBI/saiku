@@ -17,7 +17,11 @@
 	"Cubes": "Cubos",
 	"Dimensions": "Dimensiones",
 	"Measures": "Medidas",
-	"Rows": "Rows",
-	"Filter": "Filter",
-	"Columns": "Columns"
+	"Rows": "Filas",
+	"Filter": "Filtro",
+	"Columns": "Columnas",
+	"Issue Tracker": "Seguimiento de incidencias",
+	"Toggle Chart": "Alternar Gráfica",
+	"Toggle sidebar": "Alternar de navegación",
+	"Drill through current query": "Taladrar a través de consulta activa"
 }

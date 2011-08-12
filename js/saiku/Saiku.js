@@ -18,6 +18,11 @@ var Saiku = {
     session: null,
     
     /**
+     * Global event bus
+     */
+    events: _.extend({}, Backbone.Events),
+    
+    /**
      * Convenience functions for blocking the UI
      */
     ui: {
