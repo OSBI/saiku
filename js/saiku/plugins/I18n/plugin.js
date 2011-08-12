@@ -24,7 +24,11 @@ Saiku.i18n = {
         
         return true;
     },
-    elements: []
+    elements: [],
+    improve_translation: function() {
+        alert("I'm glad you're willing, but this feature hasn't been implemented yet");
+        return false;
+    }
 };
 
 (function( $ ){
@@ -114,7 +118,8 @@ Saiku.events.bind('toolbar:render', function(args) {
             href: "#translate",
             title: "Improve this translation"
         })
-        .addClass('sprite translate');
+        .click(Saiku.i18n.improve_translation)
+        .addClass('sprite translate i18n');
     var $li = $("<li />").append($link);
     $(args.toolbar.el).find('ul').append($li);
 });
