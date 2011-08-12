@@ -23,7 +23,8 @@ Saiku.i18n = {
         }
         
         return true;
-    }
+    },
+    elements: []
 };
 
 (function( $ ){
@@ -52,7 +53,9 @@ Saiku.i18n = {
 			if (element.html()) {
 				translated_text = translate( element.html(), po_file );
 				if (translated_text) {
-				    console.log(element.html(), "=>", translated_text);
+				    if (Saiku.i18n.elements.indexOf(element.html()) === -1) {
+				        Saiku.i18n.elements.push(element.html());
+				    }
 					element.data('original', element.html());
 					element.html(translated_text);
 					element.removeClass('i18n');
@@ -63,7 +66,9 @@ Saiku.i18n = {
 			if (element.attr('title')) {
 				translated_title = translate( element.attr('title'), po_file );
 				if (translated_title) {
-				    console.log(element.attr('title'), "=>", translated_title);
+				    if (Saiku.i18n.elements.indexOf(element.attr('title')) === -1) {
+                        Saiku.i18n.elements.push(element.attr('title'));
+                    }
 					element.data('original', element.attr('title'));
 					element.attr({ 'title': translated_title });
 					element.removeClass('i18n');
