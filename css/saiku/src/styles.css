@@ -99,6 +99,9 @@ html, body {
 #toolbar ul li a.bug {
     background-position: -1480px 5px;
 }
+#toolbar ul li a.translate {
+	background-position: -1848px -86px;
+}
 #toolbar ul li a.new_tab:hover {
     background-color: #F0F0F0;
 }

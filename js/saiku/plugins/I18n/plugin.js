@@ -106,10 +106,23 @@ Saiku.i18n = {
  */
 Saiku.i18n.automatic_i18n();
 
+/** 
+ * Add translate button
+ */
+Saiku.events.bind('toolbar:render', function(args) {
+    var $link = $("<a />").attr({ 
+            href: "#translate",
+            title: "Improve this translation"
+        })
+        .addClass('sprite translate');
+    var $li = $("<li />").append($link);
+    $(args.toolbar.el).find('ul').append($li);
+});
+
 /**
  * Bind to new workspace
  */
-Saiku.events.bind('session:new', function() {
+Saiku.events.bind('session:new', function() {    
     // Translate elements already rendered
     Saiku.i18n.translate();
     

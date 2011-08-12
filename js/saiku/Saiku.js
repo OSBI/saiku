@@ -5,7 +5,7 @@ var Saiku = {
     /**
      * View which manages toolbar interactions
      */
-    toolbar: new Toolbar(),
+    toolbar: {},
     
     /**
      * View which handles tabs
@@ -50,5 +50,6 @@ Backbone.emulateHTTP = false;
  */
 $(document).ready(function() {
     Saiku.session = new Session();
+    Saiku.toolbar = new Toolbar();
     Saiku.session.get_credentials();
 });
