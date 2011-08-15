@@ -23,5 +23,9 @@
 	"Issue Tracker": "Seguimiento de incidencias",
 	"Toggle Chart": "Alternar Gráfica",
 	"Toggle sidebar": "Alternar de navegación",
-	"Drill through current query": "Taladrar a través de consulta activa"
+	"Drill through current query": "Taladrar a través de consulta activa",
+	"stacked bar": "de barras apiladas",
+	"bar": "de barras",
+	"line": "de lineas",
+	"pie": "circular"
 }

@@ -131,6 +131,7 @@ var Chart = Backbone.View.extend({
         try {
             this.chart.render();
             $(this.el).prepend(this.nav);
+            Saiku.i18n.automatic_i18n();
         } catch (e) {
             $(this.el).text("Could not render chart");
         }
