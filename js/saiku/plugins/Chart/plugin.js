@@ -7,7 +7,8 @@ var Chart = Backbone.View.extend({
         $(this.el).attr({ id: this.id });
         
         // Bind table rendering to query result event
-        _.bindAll(this, "render", "receive_data", "process_data", "show");
+        _.bindAll(this, "render", "receive_data", "process_data", "show", 
+            "setOptions");
         this.workspace.bind('query:result', this.receive_data);
         
         // Add chart button
@@ -20,6 +21,22 @@ var Chart = Backbone.View.extend({
             
         // Listen to adjust event and rerender chart
         this.workspace.bind('workspace:adjust', this.render);
+        
+        // Create navigation
+        this.nav = $("<div class='chart-switcher'>" +
+        		"<a href='#stackedBar' class='i18n'>stacked bar</a>" +
+        		"<a href='#bar' class='i18n'>bar</a>" +
+        		"<a href='#line' class='i18n'>line</a>" +
+        		"<a href='#pie' class='i18n'>pie</a>" +
+        		"</div>")
+                .find('a').css({ 
+                    color: '#666', 
+                    'margin-right': '5px', 
+                    'text-decoration': 'none', 
+                    'border': '1px solid #ccc', 
+                    padding: '5px' 
+                })
+                .click(this.setOptions);
     },
     
     add_button: function() {
@@ -41,15 +58,48 @@ var Chart = Backbone.View.extend({
         }
     },
     
+    setOptions: function(event) {
+        var type = $(event.target).attr('href').replace('#', '');
+        try {
+            this[type]();
+        } catch (e) { }
+        
+        return false;
+    },
+    
+    stackedBar: function() {
+        this.options.stacked = true;
+        this.options.type = "BarChart";
+        this.render();
+    },
+    
+    bar: function() {
+        this.options.stacked = false;
+        this.options.type = "BarChart";
+        this.render();
+    },
+    
+    line: function() {
+        this.options.stacked = false;
+        this.options.type = "LineChart";
+        this.render();
+    },
+    
+    pie: function() {
+        this.options.stacked = false;
+        this.options.type = "PieChart";
+        this.render();
+    },
+    
     render: function() {
         if (! $(this.workspace.toolbar.el).find('.chart').hasClass('on')) {
             return;
         }
         
-        var options = {
+        var options = _.extend({
             canvas: this.id,
-            width: $(this.workspace.el).find('.workspace_results').width() - 10,
-            height: $(this.workspace.el).find('.workspace_results').height() - 10,
+            width: $(this.workspace.el).find('.workspace_results').width() - 20,
+            height: $(this.workspace.el).find('.workspace_results').height() - 40,
             orientation: 'vertical',
             stacked: true,
             animate: false,
@@ -57,8 +107,9 @@ var Chart = Backbone.View.extend({
             legend: true,
             legendPosition:"top",
             legendAlign: "right",
-            colors: ["#B40010", "#CCC8B4", "#DDB965", "#72839D", "#1D2D40"]
-        };
+            colors: ["#B40010", "#CCC8B4", "#DDB965", "#72839D", "#1D2D40"],
+            type: 'BarChart'
+        }, this.options);
         
         if (this.data.resultset.length > 5) {
             options.extensionPoints = {
@@ -70,7 +121,7 @@ var Chart = Backbone.View.extend({
             options.xAxisSize = 100;
         }
         
-        this.chart = new pvc.BarChart(options);
+        this.chart = new pvc[options.type](options);
         
         this.chart.setData(this.data, {
             crosstabMode: true,
@@ -79,6 +130,7 @@ var Chart = Backbone.View.extend({
         
         try {
             this.chart.render();
+            $(this.el).prepend(this.nav);
         } catch (e) {
             $(this.el).text("Could not render chart");
         }
