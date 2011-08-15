@@ -84,7 +84,14 @@ var Tab = Backbone.View.extend({
             $(this.el).remove();
             
             // Remove the tab
-            this.destroy();
+            try {
+                this.destroy();
+            } catch (e) {
+                Log.log(JSON.stringify({
+                    Message: "Tab could not be removed",
+                    Tab: JSON.stringify(this)
+                }));
+            }
             
             // Remote the tab object from the container
             this.parent.remove(this);
