@@ -40,6 +40,6 @@ var Properties = Backbone.Model.extend({
     },
     
     url: function() {
-        return this.query.url() + "/properties";
+        return encodeURI(this.query.url() + "/properties");
     }
 });

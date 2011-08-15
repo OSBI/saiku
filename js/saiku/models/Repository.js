@@ -4,7 +4,7 @@ var SavedQuery = Backbone.Model.extend({
     },
     
     url: function() {
-        return Saiku.session.username + "/repository/" + this.get('name');
+        return encodeURI(Saiku.session.username + "/repository/" + this.get('name'));
     }
 });
 
@@ -20,6 +20,6 @@ var Repository = Backbone.Collection.extend({
     },
     
     url: function() {
-        return Saiku.session.username + "/repository";
+        return encodeURI(Saiku.session.username + "/repository");
     }
 });

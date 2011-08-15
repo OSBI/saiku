@@ -8,9 +8,9 @@ var Member = Backbone.Model.extend({
     },
     
     url: function() {
-        var url = Saiku.session.username + "/discover/" + 
+        var url = encodeURI(Saiku.session.username + "/discover/" + 
             this.cube + "/dimensions/" + this.dimension +  
-            "/hierarchies/" + this.hierarchy + "/levels/" + this.level;
+            "/hierarchies/" + this.hierarchy + "/levels/" + this.level);
         
         return url;
     }

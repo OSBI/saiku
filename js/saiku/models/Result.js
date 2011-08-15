@@ -16,6 +16,6 @@ var Result = Backbone.Model.extend({
     
     url: function() {
         // http://www.homestarrunner.com/vcr_cheat.html ?
-        return this.query.url() + "/result/cheat";
+        return encodeURI(this.query.url() + "/result/cheat");
     }
 });

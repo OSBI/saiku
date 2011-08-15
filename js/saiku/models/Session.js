@@ -119,6 +119,6 @@ var Session = Backbone.Model.extend({
     },
     
     url: function() {
-        return this.username + "/discover/";
+        return encodeURI(this.username + "/discover/");
     }
 });
