@@ -101,6 +101,10 @@ html, body {
 }
 #toolbar ul li a.translate {
 	background-position: -1848px -86px;
+	color: #FFF;
+    text-align: right;
+    text-decoration: none;
+    text-shadow: 1px 1px 1px #000;
 }
 #toolbar ul li a.new_tab:hover {
     background-color: #F0F0F0;
