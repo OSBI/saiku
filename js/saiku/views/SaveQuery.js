@@ -8,7 +8,7 @@ var SaveQuery = Modal.extend({
     },
     
     initialize: function(args) {
-        var name = args.query.name ? args.query.name : args.query.uuid;
+        var name = args.query.name ? args.query.name : "";
         this.query = args.query;
         this.message = _.template("<form id='save_query_form'>" +
             "<label for='name'>To save a new query, " + 
@@ -19,13 +19,18 @@ var SaveQuery = Modal.extend({
             title: "Save query"
         });
         
+        // Focus on query name
+        $(this.el).find('input').select().focus();
+        
         // Maintain `this`
         _.bindAll(this, "copy_to_repository", "close");
     },
     
     save: function(event) {
         // Save the name for future reference
-        this.query.set({ name: $(this.el).find('input[name="name"]').val() });
+        var name = $(this.el).find('input[name="name"]').val();
+        this.query.set({ name: name });
+        this.query.trigger('query:save');
         $(this.el).find('form').html("Saving query...");
         
         // Fetch query XML and save to repository

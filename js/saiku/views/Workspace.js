@@ -10,7 +10,7 @@ var Workspace = Backbone.View.extend({
     initialize: function(args) {
         // Maintain `this` in jQuery event handlers
         _.bindAll(this, "adjust", "toggle_sidebar", 
-                "prepare", "new_query", "init_query");
+                "prepare", "new_query", "init_query", "update_caption");
                 
         // Attach an event bus to the workspace
         _.extend(this, Backbone.Events);
@@ -230,6 +230,14 @@ var Workspace = Backbone.View.extend({
         
         // Make sure appropriate workspace buttons are enabled
         this.trigger('query:new', { workspace: this });
+        
+        // Update caption when saved
+        this.query.bind('query:save', this.update_caption);
+    },
+    
+    update_caption: function() {
+        var caption = this.query.get('name');
+        $(this.tab.el).find('a').html(caption);
     },
     
     remove_dimension: function(event, ui) {
