@@ -98,6 +98,14 @@ var Session = Backbone.Model.extend({
     },
     
     prefetch_dimensions: function() {
+        if (! this.measures || ! this.dimensions) {
+            Log.log(JSON.stringify({
+                Message: "measures or dimensions not initialized",
+                Session: JSON.stringify(this)
+            }));
+            return;
+        }
+        
         for(var i = 0; i < this.connections.length; i++) {
             var connection = this.connections[i];
             for(var j = 0; j < connection.catalogs.length; j++) {
