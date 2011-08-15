@@ -16,7 +16,7 @@ var Tab = Backbone.View.extend({
                 "<span class='close_tab sprite'>Close tab</span>")
             ({
                 id: this.id,
-                caption: this.content.caption()
+                caption: this.caption
             });
     },
     
@@ -29,6 +29,7 @@ var Tab = Backbone.View.extend({
         _.extend(this, Backbone.Events);
         _.extend(this, args);
         this.content.tab = this;
+        this.caption = this.content.caption();
         this.id = _.uniqueId('tab_');
     },
     
@@ -102,11 +103,45 @@ var Tab = Backbone.View.extend({
 });
 
 /**
+ * Class which controls tab pager
+ */
+var TabPager = Backbone.View.extend({
+    className: 'pager_contents',
+    events: {
+        'click a': 'select'
+    },
+    
+    initialize: function(args) {
+        this.tabset = args.tabset;
+        $(this.el).hide().appendTo('body');
+    },
+    
+    render: function() {
+        var pager = "";
+        for (var i = 0; i < this.tabset._tabs.length; i++) {
+            pager += "<a href='#" + i + "'>" + 
+                this.tabset._tabs[i].caption + "</a><br />";
+        }
+        $(this.el).html(pager);
+    },
+    
+    select: function(event) {
+        var index = $(event.target).attr('href').replace('#', '');
+        this.tabset._tabs[index].select();
+        $(this.el).hide();
+        event.preventDefault();
+        return false;
+    }
+});
+
+/**
  * Class which controls the tab collection
  */
 var TabSet = Backbone.View.extend({
     className: 'tabs',
     queryCount: 0,
+    
+    events: { 'click a.pager': 'togglePager' },
     
     _tabs: [],
     
@@ -115,9 +150,10 @@ var TabSet = Backbone.View.extend({
      * @returns tab_container
      */
     render: function() {
-        $(this.el).html('<ul></ul>')
+        $(this.el).html('<a href="#pager" class="pager sprite"></a><ul></ul>')
             .appendTo($('#header'));
         this.content = $('<div id="tab_panel">').appendTo($('body'));
+        this.pager = new TabPager({ tabset: this });
         return this;
     },
     
@@ -138,6 +174,7 @@ var TabSet = Backbone.View.extend({
         
         // Trigger add event on session
         Saiku.session.trigger('tab:add', { tab: tab });
+        this.pager.render();
         
         return tab;
     },
@@ -169,11 +206,18 @@ var TabSet = Backbone.View.extend({
             if (this._tabs[i] == tab) {
                 // Remove the element
                 this._tabs.splice(i, 1);
+                Saiku.session.trigger('tab:remove', { tab: tab });
+                this.pager.render();
                 
                 // Select the previous, or first tab
                 var next = this._tabs[i] ? i : 0;
                 this._tabs[next].select();
             }
         }
+    },
+    
+    togglePager: function() {
+        $(this.pager.el).toggle();
+        return false;
     }
 });

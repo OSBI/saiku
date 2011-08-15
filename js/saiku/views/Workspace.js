@@ -42,7 +42,7 @@ var Workspace = Backbone.View.extend({
             return this.query.name;
         }
         
-        return "Unsaved query (" + Saiku.tabs.queryCount + ")";
+        return "Unsaved query (" + (Saiku.tabs.queryCount + 1) + ")";
     },
     
     template: function() {

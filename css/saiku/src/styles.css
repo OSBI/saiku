@@ -143,6 +143,31 @@ html, body {
     text-align: left;
     overflow: hidden;
 }
+.tabs a.pager {
+	background-position: -1919px -86px;
+    background-color: #DDD;
+    border: 1px solid #BBB;
+    float: right;
+    font-size: 120%;
+    margin-right: 5px;
+    width: 20px;
+    height: 20px;
+    text-decoration: none;
+}
+.pager_contents {
+	position: absolute;
+	top: 75px;
+	right: 5px;
+	width: 200px;
+	height: 300px;
+	overflow: auto;
+	background-color: #EEE;
+	border: 1px solid #BBB;
+}
+.pager_contents a {
+	color: #666;
+	text-decoration: none;
+}
 .tabs ul {
     background: #F8F8F8;
     margin: 0;
