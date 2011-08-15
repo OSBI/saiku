@@ -111,6 +111,7 @@ var Workspace = Backbone.View.extend({
     toggle_sidebar: function() {
         // Toggle sidebar
         $(this.el).find('.sidebar').toggleClass('hide');
+        $(this.toolbar.el).find('.toggle_sidebar').toggleClass('on');
         var new_margin = $(this.el).find('.sidebar').hasClass('hide') ?
                 5 : 265;
         $(this.el).find('.workspace_inner').css({ 'margin-left': new_margin });
