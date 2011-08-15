@@ -7,7 +7,7 @@ var Query = Backbone.Model.extend({
         _.extend(this, options);
         
         // Bind `this`
-        _.bindAll(this, "run", "move_dimension");
+        _.bindAll(this, "run", "move_dimension", "reflect_properties");
         
         // Generate a unique query id
         this.uuid = 'xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, 
@@ -43,9 +43,13 @@ var Query = Backbone.Model.extend({
             this.properties = new Properties({}, { query: this });
         } else {
             this.properties.fetch({
-                success: this.workspace.toolbar.reflect_properties
+                success: this.reflect_properties
             });
         }
+    },
+    
+    reflect_properties: function() {
+        this.workspace.trigger('properties:loaded');
     },
     
     run: function(force) {

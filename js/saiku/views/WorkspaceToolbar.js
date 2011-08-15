@@ -13,7 +13,7 @@ var WorkspaceToolbar = Backbone.View.extend({
             "swap_axes_on_dropzones", "display_drillthrough");
         
         // Redraw the toolbar to reflect properties
-        this.bind('properties_loaded', this.reflect_properties);
+        this.workspace.bind('properties:loaded', this.reflect_properties);
         
         // Fire off workspace event
         this.workspace.trigger('workspace:toolbar:render', { 
