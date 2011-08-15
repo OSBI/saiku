@@ -16,7 +16,7 @@ window.defaultHandler = window.error;
 window.onerror = function(errorMsg, url, lineNumber) {
     if (lineNumber !== 0) {
         Log.log("\n" +
-        		"Browser: " + Log.user_agent + "\n" +
+        		"Browser: " + navigator.userAgent + "\n" +
         		"Message: " + errorMsg + "\n" +
         		"File: " + url + "\n" +
         	    "Line no: " + lineNumber
