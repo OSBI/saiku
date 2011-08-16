@@ -34,5 +34,11 @@
 # username=joe
 # password=password
 
-
-
+# XML/A (Microsoft SSAS)
+# ----------------------------------------------
+# type=OLAP
+# name=xmla
+# driver=org.olap4j.driver.xmla.XmlaOlap4jDriver
+# location=jdbc:xmla:Server=http://192.168.0.1/olap/msmdpump.dll
+# username=joe
+# password=password
