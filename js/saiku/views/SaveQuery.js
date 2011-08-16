@@ -5,12 +5,16 @@ var SaveQuery = Modal.extend({
     type: "save",
     closeText: "Save",
     
-    events: {
-        'submit #save_query_form': 'save',
-        'click .close': 'save'
-    },
+    buttons: [
+        { text: "OK", method: "save" }
+    ],
     
     initialize: function(args) {
+        // Append events
+        this.events = _.extend(this.events, {
+            'submit #save_query_form': 'save'
+        });
+        
         var name = args.query.name ? args.query.name : "";
         this.query = args.query;
         this.message = _.template("<form id='save_query_form'>" +
