@@ -18,11 +18,13 @@ var DimensionList = Backbone.View.extend({
         this.dimension = args.dimension;
         
         // Fetch from the server if we haven't already
-        if (! args.dimension.has('template')) {
+        if (args.dimension && args.dimension.has('template')) {
+            this.load_dimension();
+        } else if (! args.dimension){
+            $(this.el).html('Could not load dimension. Please log out and log in again.');
+        } else {
             $(this.el).html('Loading...');
             args.dimension.fetch({ success: this.load_dimension });
-        } else {
-            this.load_dimension();
         }
     },
     
