@@ -18,7 +18,7 @@ var SelectionsModal = Modal.extend({
         // Initialize properties
         _.extend(this, args);
         this.options.title = "Selections for " + this.name;
-        this.message = _.template($("#template-selections").html())(this);
+        this.message = "Fetching members...";
         _.bindAll(this, "fetch_members", "populate");
         
         // Bind selection handlers
@@ -62,6 +62,10 @@ var SelectionsModal = Modal.extend({
     
     populate: function(model, response) {
         try {
+            // Load template
+            $(this.el).find('.dialog_body')
+                .html(_.template($("#template-selections").html())(this));
+            
             this.selected_members = _.detect(response, function(obj) {
                 return obj.name == this.member.dimension;
             }, this).selections;
