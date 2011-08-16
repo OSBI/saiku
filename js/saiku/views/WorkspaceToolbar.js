@@ -121,6 +121,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         // Swap axes
         $(this.workspace.el).find('.workspace_results table')
             .html('<tr><td>Swapping axes...</td></tr>');
+        Saiku.ui.block('Swapping axes...');
         this.workspace.query.action.put("/swapaxes", { 
             success: this.swap_axes_on_dropzones
         });
@@ -150,6 +151,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         $(this.workspace.drop_zones.el).find('.rows').append($columns);
         
         this.workspace.query.run();
+        Saiku.ui.unblock();
     },
     
     show_mdx: function(event) {
