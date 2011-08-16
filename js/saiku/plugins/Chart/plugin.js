@@ -18,10 +18,6 @@ var Chart = Backbone.View.extend({
         this.add_button();
         this.workspace.toolbar.chart = this.show;
         
-        // Append chart to workspace
-        $(this.workspace.el).find('.workspace_results')
-            .prepend($(this.el).hide());
-            
         // Listen to adjust event and rerender chart
         this.workspace.bind('workspace:adjust', this.render);
         
@@ -40,6 +36,11 @@ var Chart = Backbone.View.extend({
                     padding: '5px' 
                 })
                 .click(this.setOptions);
+    
+        // Append chart to workspace
+        $(this.workspace.el).find('.workspace_results')
+            .prepend($(this.el).hide())
+            .prepend(this.nav.hide());
     },
     
     add_button: function() {
@@ -54,6 +55,7 @@ var Chart = Backbone.View.extend({
     show: function(event, ui) {
         $(this.workspace.el).find('.workspace_results table').toggle();
         $(this.el).toggle();
+        $(this.nav).toggle();
         $(event.target).toggleClass('on');
         
         if ($(event.target).hasClass('on')) {
@@ -133,7 +135,6 @@ var Chart = Backbone.View.extend({
         
         try {
             this.chart.render();
-            $(this.el).prepend(this.nav);
             Saiku.i18n.automatic_i18n();
         } catch (e) {
             $(this.el).text("Could not render chart");
