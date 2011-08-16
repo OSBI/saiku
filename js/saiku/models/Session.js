@@ -32,7 +32,12 @@ var Session = Backbone.Model.extend({
             Saiku.ui.unblock();
             form.render().open();
         } else {
-            this.fetch({ success: this.process_login });
+            if (localStorage && localStorage.getItem('session') !== null) {
+                this.attributes = JSON.parse(localStorage.getItem('session'));
+                this.process_login(this, this.attributes);
+            } else {
+                this.fetch({ success: this.process_login });
+            }
         }
         
         return this;
@@ -71,6 +76,11 @@ var Session = Backbone.Model.extend({
     },
     
     process_login: function(model, response) {
+        // Save session in localStorage for other tabs to use
+        if (localStorage && localStorage.getItem('session') === null) {
+            localStorage.setItem('session', JSON.stringify(response));
+        }
+        
         // Generate cube navigation for reuse
         this.cube_navigation = _.template($("#template-cubes").html())({
             connections: response
