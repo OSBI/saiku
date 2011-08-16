@@ -19,6 +19,8 @@ var SelectionsModal = Modal.extend({
         _.extend(this, args);
         this.options.title = "Selections for " + this.name;
         this.message = "Fetching members...";
+        this.show_unique = false;
+        this.query = args.workspace.query;
         _.bindAll(this, "fetch_members", "populate");
         
         // Bind selection handlers
@@ -127,9 +129,53 @@ var SelectionsModal = Modal.extend({
             $(option).text($(option).val());
             $(option).val(text);
         });
+        this.show_unique = ! this.show_unique;
     },
     
     save: function() {
-        this.close();
+        // Notify user that updates are in progress
+        var $loading = $("<div>Saving...</div>");
+        $(this.el).find('.dialog_body').children().hide();
+        $(this.el).find('.dialog_body').prepend($loading);
+        
+        // Determine updates
+        var updates = [{
+            hierarchy: this.member.hierarchy,
+            uniquename: this.member.level,
+            type: 'level',
+            action: 'delete'
+        }];
+        
+        // If no selections are used, add level
+        if ($(this.el).find('.used_selections option').length === 0) {
+            updates.push({
+                hierarchy: this.member.hierarchy,
+                uniquename: this.member.level,
+                type: 'level',
+                action: 'add'
+            });
+        } else {
+            // Loop through selections
+            $(this.el).find('.used_selections option')
+                .each(function(i, selection) {
+                var value = this.show_unique ? 
+                    $(selection).text() : $(selection).val();
+                updates.push({
+                    uniquename: value,
+                    type: 'member',
+                    action: 'add'
+                });
+            });
+        }
+        
+        // Notify server
+        this.query.action.put('/axis/' + this.axis + '/dimension/' + this.name, { 
+            success: this.close,
+            data: {
+                selections: updates
+            }
+        });
+        
+        return false;
     }
 });
