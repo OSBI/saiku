@@ -168,7 +168,7 @@ public class SaikuContentGenerator extends SimpleContentGenerator {
 				indexFile= new File(pluginDir,"ui/run.html");
 			} else if (run != null && run.equals("view")) {
 				indexFile= new File(pluginDir,"ui/index.html");
-				extrasnippet+= "PLUGIN_REMOVE_CONTENT = 'a[href=\"#save_query\"], a[href=\"#automatic_execution\"], a[href=\"#toggle_fields\"], a[href=\"#run_query\"]';\r\n";
+				extrasnippet+= "PLUGIN_REMOVE_CONTENT = 'a[href=\"#save_query\"], a[href=\"#automatic_execution\"], a[href=\"#toggle_fields\"], a[href=\"#switch_to_mdx\"], a[href=\"#run_query\"]';\r\n";
 				extrasnippet+= "ALLOW_PUC_SAVE = false;\r\n";
 				extrasnippet+= "REDUCED = true;\r\n";
 

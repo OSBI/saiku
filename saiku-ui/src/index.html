@@ -61,7 +61,7 @@
                         return decodeURI(
                         (RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]
                         );
-                    }
+                    };
         var queryParam = getURLParameter('query');
         var reducedParam = getURLParameter('reduced');
         if (typeof queryParam !== "undefined" && queryParam != "null" && typeof reducedParam !== "undefined" && reducedParam != "null") {
