@@ -27,8 +27,10 @@ var Chart = Backbone.View.extend({
         		"<a href='#bar' class='i18n'>bar</a>" +
         		"<a href='#line' class='i18n'>line</a>" +
         		"<a href='#pie' class='i18n'>pie</a>" +
-        		"</div>")
-                .find('a').css({ 
+        		"</div>").css({
+        		    'padding-bottom': '10px'
+        		});
+        this.nav.find('a').css({ 
                     color: '#666', 
                     'margin-right': '5px', 
                     'text-decoration': 'none', 
