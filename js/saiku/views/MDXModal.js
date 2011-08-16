@@ -1,3 +1,6 @@
+/**
+ * The view MDX dialog
+ */
 var MDXModal = Modal.extend({
     type: "mdx",
     

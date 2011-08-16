@@ -1,3 +1,6 @@
+/**
+ * The global toolbar
+ */
 var Toolbar = Backbone.View.extend({
     tagName: "div",
     

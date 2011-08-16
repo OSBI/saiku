@@ -1,3 +1,6 @@
+/**
+ * Controls member selections
+ */
 var Member = Backbone.Model.extend({
     initialize: function(args, options) {
         this.cube = options.cube;

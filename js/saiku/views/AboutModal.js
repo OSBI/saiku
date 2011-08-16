@@ -1,3 +1,6 @@
+/**
+ * The "about us" dialog
+ */
 var AboutModal = Modal.extend({
     initialize: function() {
         _.extend(this.options, {

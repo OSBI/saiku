@@ -1,3 +1,6 @@
+/**
+ * The open query tab (Repository viewer)
+ */
 var OpenQuery = Backbone.View.extend({
     className: 'tab_container',
     

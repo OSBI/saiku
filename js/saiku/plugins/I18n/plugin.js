@@ -31,6 +31,9 @@ Saiku.i18n = {
     }
 };
 
+/**
+ * jQuery plugin for i18n
+ */
 (function( $ ){
 	/**
 	 * Internationalize selected elements with the provided PO file

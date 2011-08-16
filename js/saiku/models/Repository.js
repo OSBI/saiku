@@ -1,3 +1,6 @@
+/**
+ * Repository query
+ */
 var SavedQuery = Backbone.Model.extend({
     parse: function(response, XHR) {
         this.xml = XHR.responseText;
@@ -8,6 +11,9 @@ var SavedQuery = Backbone.Model.extend({
     }
 });
 
+/**
+ * Repository adapter
+ */
 var Repository = Backbone.Collection.extend({
     model: SavedQuery,
     

@@ -1,3 +1,6 @@
+/**
+ * Class which handles table rendering of resultsets
+ */
 var Table = Backbone.View.extend({
     tagName: "table",
     initialize: function(args) {

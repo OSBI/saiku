@@ -1,3 +1,6 @@
+/**
+ * Maintains query properties like non empty and automatic execution
+ */
 var Properties = Backbone.Model.extend({    
     initialize: function(args, options) {
         // Keep track of parent query

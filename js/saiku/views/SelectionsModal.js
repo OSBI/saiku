@@ -1,3 +1,6 @@
+/**
+ * Dialog for member selections
+ */
 var SelectionsModal = Modal.extend({
     type: "selections",
     

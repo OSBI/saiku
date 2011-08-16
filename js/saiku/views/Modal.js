@@ -1,3 +1,6 @@
+/**
+ * The base class for all modal dialogs
+ */
 var Modal = Backbone.View.extend({
     tagName: "div",
     className: "dialog",

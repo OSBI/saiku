@@ -1,3 +1,6 @@
+/**
+ * The save query dialog
+ */
 var SaveQuery = Modal.extend({
     type: "save",
     closeText: "Save",

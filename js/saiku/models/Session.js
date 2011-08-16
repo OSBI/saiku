@@ -1,5 +1,5 @@
 /**
- * Object which handles authentication
+ * Object which handles authentication and stores connections and cubes
  * @param username
  * @param password
  * @returns {Session}

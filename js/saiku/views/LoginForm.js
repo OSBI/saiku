@@ -1,3 +1,6 @@
+/**
+ * The login prompt on startup
+ */
 var LoginForm = Modal.extend({
     type: "login",
     message: "<form id='login_form'>" +

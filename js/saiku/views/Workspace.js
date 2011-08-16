@@ -1,3 +1,6 @@
+/**
+ * The analysis workspace
+ */
 var Workspace = Backbone.View.extend({
     className: 'tab_container',
     

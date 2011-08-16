@@ -1,3 +1,6 @@
+/**
+ * Sets up workspace drop zones for DnD and other interaction
+ */
 var WorkspaceDropZone = Backbone.View.extend({
     template: function() {
         return _.template($("#template-workspace-dropzones").html())();

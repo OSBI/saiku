@@ -1,3 +1,6 @@
+/**
+ * The workspace toolbar, and associated actions
+ */
 var WorkspaceToolbar = Backbone.View.extend({
     enabled: false,
     events: {

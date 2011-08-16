@@ -1,3 +1,6 @@
+/**
+ * Renders a chart for each workspace
+ */
 var Chart = Backbone.View.extend({
     initialize: function(args) {
         this.workspace = args.workspace;
@@ -188,6 +191,9 @@ var Chart = Backbone.View.extend({
     }
 });
 
+/**
+ * Loads CCC and initializes chart plugin
+ */
 (function() {
     // Initialize CCC
     $.ajax({

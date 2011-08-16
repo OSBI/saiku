@@ -1,3 +1,6 @@
+/**
+ * Model which fetches the dimensions for a cube
+ */
 var Dimension = Backbone.Model.extend({
     initialize: function(args) {
         this.url = Saiku.session.username + "/discover/" +
@@ -20,6 +23,9 @@ var Dimension = Backbone.Model.extend({
     }
 });
 
+/**
+ * Model which fetches the measures for a cube
+ */
 var Measure = Backbone.Model.extend({
     initialize: function(args) {
         this.url = Saiku.session.username + "/discover/" +

@@ -1,3 +1,6 @@
+/**
+ * The delete query confirmation dialog
+ */
 var DeleteQuery = Modal.extend({
     type: "delete",
     
