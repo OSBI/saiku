@@ -13,6 +13,9 @@ var Dimension = Backbone.Model.extend({
             data: response
         });
         
+        localStorage && localStorage.setItem("dimension." + this.get('key'),
+                JSON.stringify(this));
+        
         return response;
     }
 });
@@ -27,8 +30,13 @@ var Measure = Backbone.Model.extend({
         this.set({ 
             template: _.template($("#template-measures").html())({
                 measures: response
-            })
+            }),
+            
+            data: response
         });
+        
+        localStorage && localStorage.setItem("measure." + this.get('key'),
+                JSON.stringify(this));
         
         return response;
     }

@@ -116,10 +116,17 @@ var Session = Backbone.Model.extend({
                         var cube = schema.cubes[l];
                         var key = connection.name + "/" + catalog.name + "/" +
                             schema.name + "/" + cube.name;
-                        this.dimensions[key] = new Dimension({ key: key });
-                        this.measures[key] = new Measure({ key: key });
-                        this.dimensions[key].fetch();
-                        this.measures[key].fetch();
+                        if (localStorage && 
+                            localStorage.getItem("dimension." + key) !== null &&
+                            localStorage.getItem("measure." + key) !== null) {
+                            this.dimensions[key] = new Dimension(JSON.parse(localStorage.getItem("dimension." + key)));
+                            this.measures[key] = new Measure(JSON.parse(localStorage.getItem("measure." + key)));
+                        } else {
+                            this.dimensions[key] = new Dimension({ key: key });
+                            this.measures[key] = new Measure({ key: key });
+                            this.dimensions[key].fetch();
+                            this.measures[key].fetch();
+                        }
                     }
                 }
             }
