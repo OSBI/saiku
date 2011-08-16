@@ -53,6 +53,7 @@ import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.service.util.exception.SaikuServiceException;
+import org.saiku.web.rest.objects.SelectionListRestObject;
 import org.saiku.web.rest.objects.SelectionRestObject;
 import org.saiku.web.rest.objects.resultset.Cell;
 import org.saiku.web.rest.objects.resultset.Cell.Type;
@@ -588,12 +589,12 @@ public class QueryResource {
 			@PathParam("queryname") String queryName,
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName, 
-			SelectionRestObject[] selections)
+			SelectionListRestObject selections)
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"\tPUT");
 		}
-		for (SelectionRestObject selection : selections) {
+		for (SelectionRestObject selection : selections.getSelections()) {
 			if (selection.getType() != null && "member".equals(selection.getType().toLowerCase())) {
 				if (selection.getAction() != null && "add".equals(selection.getAction().toLowerCase())) {
 						includeMember("MEMBER", queryName, axisName, dimensionName, selection.getUniquename(), -1, -1);
@@ -622,12 +623,12 @@ public class QueryResource {
 			@PathParam("queryname") String queryName,
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName, 
-			SelectionRestObject[] members)
+			SelectionListRestObject members)
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/member\tDELETE");
 		}
-		for (SelectionRestObject member : members) {
+		for (SelectionRestObject member : members.getSelections()) {
 			removeMember("MEMBER", queryName, axisName, dimensionName, member.getUniquename());
 		}
 		return Status.OK;
