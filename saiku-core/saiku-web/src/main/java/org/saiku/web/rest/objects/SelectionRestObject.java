@@ -15,6 +15,7 @@ public class SelectionRestObject {
 	public SelectionRestObject() {
 	}
 	
+	
 	public String getUniquename() {
 		return uniquename;
 	}
@@ -29,6 +30,22 @@ public class SelectionRestObject {
 
 	public String getAction() {
 		return action;
+	}
+
+	public void setUniquename(String uniquename) {
+		this.uniquename = uniquename;
+	}
+
+	public void setHierarchy(String hierarchy) {
+		this.hierarchy = hierarchy;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
 	}
 
 	

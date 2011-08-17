@@ -35,6 +35,7 @@
 # password=password
 
 # XML/A (Microsoft SSAS)
+# for SSAS you need to install the msmdpump.dll : http://technet.microsoft.com/en-us/library/cc917711.aspx
 # ----------------------------------------------
 # type=OLAP
 # name=xmla

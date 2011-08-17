@@ -1433,7 +1433,7 @@ var model = {
 										 * If so remove all available members and add LEVEL
 										 */
 
-										var member_updates = "{ \"selections\" : [";
+										var member_updates = "[";
 										var member_iterator = 0;
 										// First remove all AVAILABLE members
 										// We don't have to do this by each member, removing the level removes all members as well
@@ -1481,17 +1481,17 @@ var model = {
 											});
 										}
 
-										member_updates += "]}";
+										member_updates += "]";
 
 										var url = model.username + "/query/" + query_name + "/axis/" + axis + "/dimension/" + member_data.dimension;
+
+                                        var post_data = { 'selections': member_updates};
 
 										// AJAX request to POST from the Saiku Server
 										model.request({
 											method: "PUT",
 											url: url,
-											data: member_updates,
-											dataType: "json",
-											contentType: 'application/json',
+											data: post_data,
 											success: function (data, textStatus, jqXHR) {
 
 												var selection_num = $('#dialog_selections .used_selections select option').length;

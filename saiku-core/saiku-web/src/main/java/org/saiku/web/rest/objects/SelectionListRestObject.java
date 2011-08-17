@@ -1,5 +1,6 @@
 package org.saiku.web.rest.objects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -8,11 +9,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SelectionListRestObject {
 	
-	private List<SelectionRestObject> selections;
+	private List<SelectionRestObject> selections = new ArrayList<SelectionRestObject>();
 
 	public SelectionListRestObject() {
 	}
-
+	
 	public SelectionListRestObject(List<SelectionRestObject> selections) {
 		this.selections = selections;
 	}

@@ -25,6 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
@@ -40,12 +41,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.type.TypeFactory;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimensionSelection;
 import org.saiku.olap.dto.SaikuQuery;
@@ -53,7 +57,6 @@ import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.service.util.exception.SaikuServiceException;
-import org.saiku.web.rest.objects.SelectionListRestObject;
 import org.saiku.web.rest.objects.SelectionRestObject;
 import org.saiku.web.rest.objects.resultset.Cell;
 import org.saiku.web.rest.objects.resultset.Cell.Type;
@@ -74,11 +77,11 @@ import org.springframework.stereotype.Component;
 @Scope("request")
 @XmlAccessorType(XmlAccessType.NONE)
 public class QueryResource {
-	
-    private static final Logger log = LoggerFactory.getLogger(QueryResource.class);
 
-    private OlapQueryService olapQueryService;
-    private OlapDiscoverService olapDiscoverService;
+	private static final Logger log = LoggerFactory.getLogger(QueryResource.class);
+
+	private OlapQueryService olapQueryService;
+	private OlapDiscoverService olapDiscoverService;
 
 	@Autowired
 	public void setOlapQueryService(OlapQueryService olapqs) {
@@ -103,7 +106,7 @@ public class QueryResource {
 	public List<String> getQueries() {
 		return olapQueryService.getQueries();
 	}
-	
+
 	@GET
 	@Produces({"application/json" })
 	@Path("/{queryname}")
@@ -157,7 +160,7 @@ public class QueryResource {
 			@FormParam("schema") String schemaName, 
 			@FormParam("xml") @DefaultValue("") String xml,
 			@PathParam("queryname") String queryName) throws ServletException 
-	{
+			{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "\tPOST\t xml:" + (xml == null));
 		}
@@ -166,7 +169,7 @@ public class QueryResource {
 			return olapQueryService.createNewOlapQuery(queryName,xml);
 		}
 		return olapQueryService.createNewOlapQuery(queryName, cube);
-	}
+			}
 
 	@GET
 	@Produces({"application/json" })
@@ -240,7 +243,7 @@ public class QueryResource {
 			return "";
 		}
 	}
-	
+
 	@GET
 	@Path("/{queryname}/xml")
 	public String getQueryXml(@PathParam("queryname") String queryName){
@@ -255,7 +258,7 @@ public class QueryResource {
 			return "";
 		}
 	}
-	
+
 	@GET
 	@Produces({"application/vnd.ms-excel" })
 	@Path("/{queryname}/export/xls")
@@ -276,18 +279,18 @@ public class QueryResource {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/export/xls/"+format+"\tGET");
 		}
 		try {
-		byte[] doc = olapQueryService.getExport(queryName,"xls",format);
-		return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
-				"content-disposition",
-				"attachment; filename = saiku-export.xls").header(
-				"content-length",doc.length).build();
+			byte[] doc = olapQueryService.getExport(queryName,"xls",format);
+			return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
+					"content-disposition",
+			"attachment; filename = saiku-export.xls").header(
+					"content-length",doc.length).build();
 		}
 		catch (Exception e) {
 			log.error("Cannot get excel for query (" + queryName + ")",e);
 			return Response.serverError().build();
 		}
 	}
-	
+
 	@GET
 	@Produces({"text/csv" })
 	@Path("/{queryname}/export/csv")
@@ -311,7 +314,7 @@ public class QueryResource {
 			byte[] doc = olapQueryService.getExport(queryName,"csv",format);
 			return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
 					"content-disposition",
-					"attachment; filename = saiku-export.csv").header(
+			"attachment; filename = saiku-export.csv").header(
 					"content-length",doc.length).build();
 		}
 		catch (Exception e) {
@@ -336,14 +339,14 @@ public class QueryResource {
 			return new ArrayList<Cell[]>();
 		}
 	}
-	
+
 	@POST
 	@Produces({"application/json" })
 	@Path("/{queryname}/result")
 	public List<Cell[]> executeMdx(
 			@PathParam("queryname") String queryName,
 			@FormParam("mdx") String mdx)
-		{
+			{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result\tPOST\t"+mdx);
 		}
@@ -361,7 +364,7 @@ public class QueryResource {
 			cells.add(errors);
 			return cells;
 		}
-	}
+			}
 
 	@POST
 	@Produces({"application/json" })
@@ -380,14 +383,14 @@ public class QueryResource {
 		}
 		return null;
 	}
-	
+
 	@GET
 	@Produces({"application/json" })
 	@Path("/{queryname}/drillthrough:{maxrows}")
 	public List<Cell[]> execute(
 			@PathParam("queryname") String queryName, 
 			@PathParam("maxrows") @DefaultValue("100") Integer maxrows)
-	{
+			{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/drillthrough\tGET");
 		}
@@ -402,21 +405,21 @@ public class QueryResource {
 		}
 		finally {
 			if (rs != null) {
-	            try {
-	                Statement statement = rs.getStatement();
-	                statement.close();
-	                rs.close();
-	            } catch (SQLException e) {
-	                throw new SaikuServiceException(e);
-	            } finally {
-	                rs = null;
-	            }
-	        }
+				try {
+					Statement statement = rs.getStatement();
+					statement.close();
+					rs.close();
+				} catch (SQLException e) {
+					throw new SaikuServiceException(e);
+				} finally {
+					rs = null;
+				}
+			}
 		}
 		return rsc;
 
-	}
-	
+			}
+
 	@GET
 	@Produces({"application/json" })
 	@Path("/{queryname}/result/{format}")
@@ -453,12 +456,12 @@ public class QueryResource {
 	public List<SaikuDimensionSelection> getAxisInfo(
 			@PathParam("queryname") String queryName, 
 			@PathParam("axis") String axisName)
-	{
+			{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"\tGET");
 		}
 		return olapQueryService.getAxisSelection(queryName, axisName);
-	}
+			}
 
 	/**
 	 * Remove all dimensions and selections on an axis
@@ -477,7 +480,7 @@ public class QueryResource {
 		}
 		olapQueryService.clearAxis(queryName, axisName);
 	}
-	
+
 	@DELETE
 	@Produces({"application/json" })
 	@Path("/{queryname}/axis/")
@@ -499,7 +502,7 @@ public class QueryResource {
 		}
 		olapQueryService.swapAxes(queryName);
 		return Status.OK;
-		
+
 	}
 
 	/*
@@ -581,58 +584,83 @@ public class QueryResource {
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
-	
+
 	@PUT
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes("application/x-www-form-urlencoded")
 	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/")
 	public Status updateSelections(
 			@PathParam("queryname") String queryName,
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName, 
-			SelectionListRestObject selections)
-	{
+			MultivaluedMap<String, String> formParams) {
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"\tPUT");
 		}
-		for (SelectionRestObject selection : selections.getSelections()) {
-			if (selection.getType() != null && "member".equals(selection.getType().toLowerCase())) {
-				if (selection.getAction() != null && "add".equals(selection.getAction().toLowerCase())) {
-						includeMember("MEMBER", queryName, axisName, dimensionName, selection.getUniquename(), -1, -1);
+		try{
+			if (formParams.containsKey("selections")) {
+				LinkedList<String> sels = (LinkedList<String>) formParams.get("selections");
+				String selectionJSON = (String) sels.getFirst();
+				ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
+				List<SelectionRestObject> selections = mapper.readValue(selectionJSON, TypeFactory.collectionType(ArrayList.class, SelectionRestObject.class));
+
+
+				for (SelectionRestObject selection : selections) {
+					if (selection.getType() != null && "member".equals(selection.getType().toLowerCase())) {
+						if (selection.getAction() != null && "add".equals(selection.getAction().toLowerCase())) {
+							includeMember("MEMBER", queryName, axisName, dimensionName, selection.getUniquename(), -1, -1);
+						}
+						if (selection.getAction() != null && "delete".equals(selection.getAction().toLowerCase())) {
+							removeMember("MEMBER", queryName, axisName, dimensionName, selection.getUniquename());
+						}
+					}
+					if (selection.getType() != null && "level".equals(selection.getType().toLowerCase())) {
+						if (selection.getAction() != null && "add".equals(selection.getAction().toLowerCase())) {
+							includeLevel(queryName, axisName, dimensionName, selection.getHierarchy(), selection.getUniquename(), -1);
+						}
+						if (selection.getAction() != null && "delete".equals(selection.getAction().toLowerCase())) {
+							removeLevel(queryName, axisName, dimensionName, selection.getHierarchy(), selection.getUniquename());
+						}
+					}
 				}
-				if (selection.getAction() != null && "delete".equals(selection.getAction().toLowerCase())) {
-					removeMember("MEMBER", queryName, axisName, dimensionName, selection.getUniquename());
-				}
+				return Status.OK;
 			}
-			if (selection.getType() != null && "level".equals(selection.getType().toLowerCase())) {
-				if (selection.getAction() != null && "add".equals(selection.getAction().toLowerCase())) {
-						includeLevel(queryName, axisName, dimensionName, selection.getHierarchy(), selection.getUniquename(), -1);
-				}
-				if (selection.getAction() != null && "delete".equals(selection.getAction().toLowerCase())) {
-					removeLevel(queryName, axisName, dimensionName, selection.getHierarchy(), selection.getUniquename());
-				}
-			}
+		} catch (Exception e){
+			log.error("Cannot updates selections for query (" + queryName + ")",e);
 		}
-		return Status.OK;
-		
+		return Status.INTERNAL_SERVER_ERROR;
+
+
+
 	}
-	
+
 	@DELETE
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Consumes("application/x-www-form-urlencoded")
 	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/member/")
 	public Status removeMembers(
 			@PathParam("queryname") String queryName,
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName, 
-			SelectionListRestObject members)
-	{
+			MultivaluedMap<String, String> formParams) {
 		if (log.isDebugEnabled()) {
-			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/member\tDELETE");
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"\tPUT");
 		}
-		for (SelectionRestObject member : members.getSelections()) {
-			removeMember("MEMBER", queryName, axisName, dimensionName, member.getUniquename());
+		try{
+			if (formParams.containsKey("selections")) {
+				LinkedList<String> sels = (LinkedList<String>) formParams.get("selections");
+				String selectionJSON = (String) sels.getFirst();
+				ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
+				List<SelectionRestObject> selections = mapper.readValue(selectionJSON, TypeFactory.collectionType(ArrayList.class, SelectionRestObject.class));
+				for (SelectionRestObject member : selections) {
+					removeMember("MEMBER", queryName, axisName, dimensionName, member.getUniquename());
+				}
+				return Status.OK;
+			}
+		} catch (Exception e){
+			log.error("Cannot updates selections for query (" + queryName + ")",e);
 		}
-		return Status.OK;
-		
+		return Status.INTERNAL_SERVER_ERROR;
+
+
 	}
 	/**
 	 * Move a member.
