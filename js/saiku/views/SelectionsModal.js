@@ -172,7 +172,7 @@ var SelectionsModal = Modal.extend({
         this.query.action.put('/axis/' + this.axis + '/dimension/' + this.name, { 
             success: this.close,
             data: {
-                selections: updates
+                selections: JSON.stringify(updates)
             }
         });
         
