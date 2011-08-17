@@ -59,10 +59,10 @@ Saiku.i18n = {
 			// Translate text
 			if (element.html()) {
 				translated_text = translate( element.html(), po_file );
+                if (Saiku.i18n.elements.indexOf(element.html()) === -1) {
+                    Saiku.i18n.elements.push(element.html());
+                }
 				if (translated_text) {
-				    if (Saiku.i18n.elements.indexOf(element.html()) === -1) {
-				        Saiku.i18n.elements.push(element.html());
-				    }
 					element.data('original', element.html());
 					element.html(translated_text);
 					element.removeClass('i18n');
@@ -72,10 +72,10 @@ Saiku.i18n = {
 			// Translate title
 			if (element.attr('title')) {
 				translated_title = translate( element.attr('title'), po_file );
+                if (Saiku.i18n.elements.indexOf(element.attr('title')) === -1) {
+                    Saiku.i18n.elements.push(element.attr('title'));
+                }
 				if (translated_title) {
-				    if (Saiku.i18n.elements.indexOf(element.attr('title')) === -1) {
-                        Saiku.i18n.elements.push(element.attr('title'));
-                    }
 					element.data('original', element.attr('title'));
 					element.attr({ 'title': translated_title });
 					element.removeClass('i18n');
@@ -114,7 +114,7 @@ Saiku.i18n = {
 var TranslationTab = Backbone.View.extend({
     className: 'workspace_area',
     caption: function() {
-        return "Improve " + Saiku.i18n.locale + " translation";
+        return "Improve translation for " + Saiku.i18n.locale;
     },
     events: {
         'submit form': 'submit',
