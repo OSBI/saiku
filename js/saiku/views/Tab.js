@@ -114,6 +114,13 @@ var TabPager = Backbone.View.extend({
     initialize: function(args) {
         this.tabset = args.tabset;
         $(this.el).hide().appendTo('body');
+        
+        // Hide when focus is lost
+        $(window).click(function(event) {
+            if (! $(event.target).hasClass('pager_contents')) {
+                $('.pager_contents').hide();
+            }
+        });
     },
     
     render: function() {
