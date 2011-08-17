@@ -79,13 +79,13 @@ var WorkspaceDropZone = Backbone.View.extend({
         event.stopPropagation();
     },
     
-    move_dimension: function(event, ui) {        
+    move_dimension: function(event, ui) {
         // Notify the model of the change
         var dimension = ui.item.find('a').attr('href').replace('#', '');
         var index = ui.item.parent('.connectable').children().index(ui.item);
         if (! ui.item.hasClass('deleted')) {
             this.workspace.query.move_dimension(dimension, 
-                $(event.target).parent(), index);
+                ui.item.parents('.fields_list_body'), index);
         }
         
         // Prevent workspace from getting this event
