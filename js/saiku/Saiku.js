@@ -48,8 +48,10 @@ Backbone.emulateHTTP = false;
 /**
  * Up up and away!
  */
-$(document).ready(function() {
-    Saiku.session = new Session();
-    Saiku.toolbar = new Toolbar();
-    Saiku.session.get_credentials();
-});
+if (! Settings.BIPLUGIN) {
+    $(document).ready(function() {
+        Saiku.session = new Session();
+        Saiku.toolbar = new Toolbar();
+        Saiku.session.get_credentials();
+    });
+}

@@ -48,22 +48,65 @@ var puc = {
 /**
  * Objects required for BI server integration
  */
-_.extend(window, {
-    WaqrProxy: function() {
-        this.wiz = new Wiz();
-        this.repositoryBrowserController = new RepositoryBrowserControllerProxy();
-    },
+var RepositoryBrowserControllerProxy = function() {
+    this.remoteSave = puc.save_to_solution;
+};
+
+var Wiz = function() {
+    this.currPgNum = 0;
+};
+
+var WaqrProxy = function() {
+    this.wiz = new Wiz();
+    this.repositoryBrowserController = new RepositoryBrowserControllerProxy();
+};
+
+var gCtrlr = new WaqrProxy();
+
+var savePg0 = function() {};
+
+/**
+ * Manually start session
+ */
+if (Settings.BIPLUGIN) {
+    Settings.PLUGIN = true;
+    Settings.REST_URL = "/pentaho/content/saiku/plugin/rest/saiku/";
     
-    gCtrlr: new WaqrProxy(),
     
-    Wiz: function() {
-        this.currPgNum = 0;
-    },
-    
-    savePg0: function() {},
-    
-    RepositoryBrowserControllerProxy: function() {
-        this.remoteSave = puc.save_to_solution;
+    $(document).ready(function() {
+        Saiku.session = new Session({}, {
+            username: "admin",
+            password: "admin"
+        });
+        Saiku.session.get_credentials();
+    });
+}
+
+/**
+ * If plugin active, customize chrome
+ */
+Saiku.events.bind('session:new', function() {
+    if (Settings.PLUGIN) {        
+        // Remove tabs and global toolbar
+        $('#header').remove();
+        
+        // Find workspace
+        var workspace = Saiku.tabs._tabs[0].content;
+        console.log("WORKSPACE", workspace, Settings.MODE);
+        
+        // If in view mode, remove sidebar and drop zones
+        if (Settings.MODE == "view") {
+            workspace.toggle_sidebar();
+            $(workspace.el).find('.sidebar_separator').remove();
+            $(workspace.el).find('.workspace_fields').remove();
+        }
+        
+        // Remove toolbar buttons
+        $(workspace.toolbar.el)
+            .find('.save').remove();
+        if (Settings.MODE == "view") {
+            $(workspace.toolbar.el)
+                .find(".run, .auto, .toggle_fields, .toggle_sidebar").remove();
+        }
     }
 });
-    

@@ -8,7 +8,7 @@ var Session = Backbone.Model.extend({
     username: "",
     password: "",
         
-    initialize: function() {
+    initialize: function(args, options) {
         // Attach a custom event bus to this model
         _.extend(this, Backbone.Events);
         _.bindAll(this, "process_login", "prefetch_dimensions");
@@ -22,6 +22,12 @@ var Session = Backbone.Model.extend({
         if (sessionStorage) {
             this.username = localStorage.getItem('username');
             this.password = localStorage.getItem('password');
+        }
+        
+        // Check if credentials are being injected into session
+        if (options && options.username && options.password) {
+            this.username = options.username;
+            this.password = options.password;
         }
     },
     
