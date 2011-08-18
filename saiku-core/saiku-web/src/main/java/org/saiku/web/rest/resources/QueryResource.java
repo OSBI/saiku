@@ -161,24 +161,16 @@ public class QueryResource {
 			@FormParam("schema") String schemaName, 
 			@FormParam("xml") @DefaultValue("") String xml,
 			@PathParam("queryname") String queryName) throws ServletException 
-			{
+	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "\tPOST\t xml:" + (xml == null));
 		}
 		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
 		if (xml != null && xml.length() > 0) {
-			ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
-			try {
-				SavedQuery query = mapper.readValue(xml, SavedQuery.class);
-				return olapQueryService.createNewOlapQuery(queryName,query.getXml());
-
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			return olapQueryService.createNewOlapQuery(queryName, xml);
 		}
 		return olapQueryService.createNewOlapQuery(queryName, cube);
-			}
+	}
 
 	@GET
 	@Produces({"application/json" })
@@ -268,7 +260,7 @@ public class QueryResource {
 			log.error("Cannot get xml for query (" + queryName + ")",e);
 			return null; 
 		}
-		
+
 	}
 
 	@GET
