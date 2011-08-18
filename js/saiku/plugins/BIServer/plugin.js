@@ -70,7 +70,7 @@ var savePg0 = function() {};
  */
 if (Settings.BIPLUGIN) {
     Settings.PLUGIN = true;
-    Settings.REST_URL = "/pentaho/content/saiku/plugin/rest/saiku/";
+    Settings.REST_URL = "/pentaho/content/saiku/";
     
     
     $(document).ready(function() {
