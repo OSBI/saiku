@@ -304,7 +304,7 @@ var view = {
                 var $properties = $('<ul id="query_info" />').appendTo($results);
                 // Iterate through properties and show a key=>value set in the information pane
                 for (property in $query) {
-                    if ($query.hasOwnProperty(property)) {
+                    if ($query.hasOwnProperty(property) && property != 'xml') {
                         $properties.append($('<li />').html("<strong>"+property + "</strong> : " + $query[property]));
                     }
                 }

@@ -57,6 +57,7 @@ import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.service.util.exception.SaikuServiceException;
+import org.saiku.web.rest.objects.SavedQuery;
 import org.saiku.web.rest.objects.SelectionRestObject;
 import org.saiku.web.rest.objects.resultset.Cell;
 import org.saiku.web.rest.objects.resultset.Cell.Type;
@@ -166,7 +167,15 @@ public class QueryResource {
 		}
 		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
 		if (xml != null && xml.length() > 0) {
-			return olapQueryService.createNewOlapQuery(queryName,xml);
+			ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
+			try {
+				SavedQuery query = mapper.readValue(xml, SavedQuery.class);
+				return olapQueryService.createNewOlapQuery(queryName,query.getXml());
+
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return olapQueryService.createNewOlapQuery(queryName, cube);
 			}
@@ -245,18 +254,21 @@ public class QueryResource {
 	}
 
 	@GET
+	@Produces({"application/json" })
 	@Path("/{queryname}/xml")
-	public String getQueryXml(@PathParam("queryname") String queryName){
+	public SavedQuery getQueryXml(@PathParam("queryname") String queryName){
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/xml/\tGET");
 		}
 		try {
-			return olapQueryService.getQueryXml(queryName);
+			String xml = olapQueryService.getQueryXml(queryName);
+			return new SavedQuery(queryName, null, xml);
 		}
 		catch (Exception e) {
 			log.error("Cannot get xml for query (" + queryName + ")",e);
-			return "";
+			return null; 
 		}
+		
 	}
 
 	@GET

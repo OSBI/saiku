@@ -181,7 +181,7 @@ var model = {
 			if (xml) {
 				// Open existing query
 				var post_data = {
-						'xml': xml
+						xml :  JSON.stringify(xml)
 				};
 
 				// FIXME - get connection data from opened query
@@ -1025,10 +1025,9 @@ var model = {
 			//TODO - request selections and adjust UI accordingly
 			model.request({
 				url: model.username + "/repository/" + query_name,
-				dataType: 'xml',
 				success: function (data, textStatus, jqXHR) {
 					// Create a new query in the workspace
-					model.new_query(tab_index, jqXHR.responseText, model.load_cube );
+					model.new_query(tab_index, data, model.load_cube );
 				}
 			});
 		},

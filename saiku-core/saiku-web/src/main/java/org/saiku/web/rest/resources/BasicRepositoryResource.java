@@ -125,7 +125,14 @@ public class BasicRepositoryResource {
 						String filename = file.getName();
 						if (filename.endsWith(".saiku")) {
 							filename = filename.substring(0,filename.length() - ".saiku".length());
-							SavedQuery sq = new SavedQuery(filename, sf.format(new Date(file.lastModified())));
+
+								FileReader fi = new FileReader(file);
+								BufferedReader br = new BufferedReader(fi);
+								String chunk ="",xml ="";
+								while ((chunk = br.readLine()) != null) {
+									xml += chunk + "\n";
+								}
+							SavedQuery sq = new SavedQuery(filename, sf.format(new Date(file.lastModified())),xml);
 							queries.add(sq);
 						}
 					}
@@ -226,9 +233,9 @@ public class BasicRepositoryResource {
 	 * @return A Saiku Query Object.
 	 */
 	@GET
-	@Produces({"application/xml" })
+	@Produces({"application/json" })
 	@Path("/{queryname}")
-	public String loadQuery(@PathParam("queryname") String queryName){
+	public SavedQuery loadQuery(@PathParam("queryname") String queryName){
 		try{
 			String uri = repo.getName().getPath();
 			if (uri != null && !uri.endsWith("" + File.separatorChar)) {
@@ -254,7 +261,9 @@ public class BasicRepositoryResource {
 					while ((chunk = br.readLine()) != null) {
 						xml += chunk + "\n";
 					}
-					return xml;
+					SimpleDateFormat sf = new SimpleDateFormat("dd - MMM - yyyy HH:mm:ss");
+					SavedQuery sq = new SavedQuery(filename, sf.format(new Date(queryFile.lastModified())),xml);
+					return sq;
 				}
 				else {
 					throw new Exception("File does not exist:" + uri);
