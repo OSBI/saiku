@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.web.rest.objects.resultset.Cell;
+import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -141,13 +142,13 @@ public class QueryResourceTest {
 		qs.moveDimension("TestQuery1", "COLUMNS", "Time", -1);
 
 		// Execute the query.
-		List<Cell[]> output = qs.execute("TestQuery1");
+		QueryResult output = qs.execute("TestQuery1");
 
 		// Make sure output is not null.
 		assertNotNull(output);
 
 		// Check a cell value
-		Cell[] cellarray = output.get(0);
+		Cell[] cellarray = output.getCellset().get(0);
 		assertEquals("1997", cellarray[1].getValue());
 	}
 

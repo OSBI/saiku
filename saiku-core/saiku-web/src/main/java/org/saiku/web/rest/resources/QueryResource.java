@@ -25,6 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -59,8 +60,7 @@ import org.saiku.service.olap.OlapQueryService;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.web.rest.objects.SavedQuery;
 import org.saiku.web.rest.objects.SelectionRestObject;
-import org.saiku.web.rest.objects.resultset.Cell;
-import org.saiku.web.rest.objects.resultset.Cell.Type;
+import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.util.RestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -330,24 +330,26 @@ public class QueryResource {
 	@GET
 	@Produces({"application/json" })
 	@Path("/{queryname}/result")
-	public List<Cell[]> execute(@PathParam("queryname") String queryName){
+	public QueryResult execute(@PathParam("queryname") String queryName){
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result\tGET");
 		}
 		try {
+			
 			CellDataSet cs = olapQueryService.execute(queryName);
 			return RestUtil.convert(cs);
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ")",e);
-			return new ArrayList<Cell[]>();
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return new QueryResult(error);
 		}
 	}
 
 	@POST
 	@Produces({"application/json" })
 	@Path("/{queryname}/result")
-	public List<Cell[]> executeMdx(
+	public QueryResult executeMdx(
 			@PathParam("queryname") String queryName,
 			@FormParam("mdx") String mdx)
 			{
@@ -361,12 +363,8 @@ public class QueryResource {
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ") using mdx:\n" + mdx,e);
-			Cell error  = new Cell(ExceptionUtils.getRootCauseMessage(e),Type.ERROR);
-			Cell[] errors = new Cell[1];
-			errors[0] = error;
-			ArrayList<Cell[]> cells = new ArrayList<Cell[]>();
-			cells.add(errors);
-			return cells;
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return new QueryResult(error);
 		}
 			}
 
@@ -391,21 +389,28 @@ public class QueryResource {
 	@GET
 	@Produces({"application/json" })
 	@Path("/{queryname}/drillthrough:{maxrows}")
-	public List<Cell[]> execute(
+	public QueryResult execute(
 			@PathParam("queryname") String queryName, 
 			@PathParam("maxrows") @DefaultValue("100") Integer maxrows)
-			{
+	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/drillthrough\tGET");
 		}
-		ArrayList<Cell[]> rsc = new ArrayList<Cell[]>();
+		QueryResult rsc;
 		ResultSet rs = null;
 		try {
+			Long start = (new Date()).getTime();
 			rs = olapQueryService.drilldown(queryName, maxrows);
 			rsc = RestUtil.convert(rs);
+			Long runtime = (new Date()).getTime()- start;
+			rsc.setRuntime(runtime.intValue());
+
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ")",e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			rsc =  new QueryResult(error);
+
 		}
 		finally {
 			if (rs != null) {
@@ -422,12 +427,12 @@ public class QueryResource {
 		}
 		return rsc;
 
-			}
+	}
 
 	@GET
 	@Produces({"application/json" })
 	@Path("/{queryname}/result/{format}")
-	public List<Cell[]> execute(
+	public QueryResult execute(
 			@PathParam("queryname") String queryName,
 			@PathParam("format") String formatter){
 		if (log.isDebugEnabled()) {
@@ -439,7 +444,8 @@ public class QueryResource {
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ")",e);
-			return new ArrayList<Cell[]>();
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return new QueryResult(error);
 		}
 	}
 

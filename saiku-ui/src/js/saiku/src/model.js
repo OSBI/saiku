@@ -454,13 +454,10 @@ var model = {
 				method: "GET",
 				url: model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/result/cheat",
 				success: function (data, textStatus, XMLHttpRequest) {
-                    model.render_result(data,$workspace_result);
-
-					// Resize the workspace
-					view.resize_height(tab_index);
-
-					// Clear the wait message
-					view.hide_processing(true, tab_index);
+                     model.render_result(data,$workspace_result);
+                    // Resize the workspace
+                    view.resize_height(tab_index);
+                    view.hide_processing(true, tab_index);
 				},
 
 				error: function () {
@@ -472,7 +469,7 @@ var model = {
 		},
         
         render_result: function(data,$workspace_result) {
-                    if (data == "") {
+                    if (data.cellset && data.cellset == "") {
 
 						// No results table
 						var table_vis = '<div style="text-align:center;">No results</div>';
@@ -480,15 +477,16 @@ var model = {
 						// Insert the table to the DOM
 						$workspace_result.html(table_vis);
 
-					} else if ( (data[0][0])['type'] == "ERROR") {
-                        var table_vis = '<div style="text-align:center;color:red;">' + (data[0][0])['value'] +'</div>';
+					} else if (data.error) {
+                        var table_vis = '<div style="text-align:center;color:red;">' + data.error +'</div>';
                         $workspace_result.html(table_vis);
                     } else {
 						// Create a variable to store the table
-						var table_vis = '<table>';
+                        var table_vis = '<div style="text-align:right;"> Size: '+data.width + '/' + data.height + ' Duration: ' + data.runtime + 'ms </div>';
+						table_vis += '<table>';
 
 						// Start looping through the result set
-						$.each(data, function (i, cells) {
+						$.each(data.cellset, function (i, cells) {
 
 							// Add a new row.
 							table_vis = table_vis + '<tr>';
@@ -568,11 +566,12 @@ var model = {
 
 						});
 
+                        // TODO: What's this? it really slows down table rendering
 						// Equal widths on columns
-						var max = 0;
-						$workspace_result.find('table td').each(function() {
-							max = Math.max($(this).width(), max);
-						}).find('div').width(max);
+						// var max = 0;
+						// $workspace_result.find('table td').each(function() {
+                        //    max = Math.max($(this).width(), max);
+                        // }).find('div').width(max);
 
 
 					}
@@ -622,62 +621,10 @@ var model = {
 					method: "GET",
 					url: model.username + "/query/" + view.tabs.tabs[tab_index].data['query_name'] + "/drillthrough:500",
 					success: function (data, textStatus, XMLHttpRequest) {
-
-						// Create a variable to store the table
-						var table_vis = '<table>';
-
-						// Start looping through the result set
-						$.each(data, function (i, cells) {
-
-							// Add a new row.
-							table_vis = table_vis + '<tr>';
-
-							// Look through the contents of the row
-							$.each(cells, function (j, header) {
-
-								// If the cell is a column header and is null (top left of table)
-								if (header['type'] === "COLUMN_HEADER" && header['value'] === "null") {
-									table_vis = table_vis + '<th class="all_null"><div>&nbsp;</div></th>';
-								} // If the cell is a column header and isn't null (column header of table)
-								else if (header['type'] === "COLUMN_HEADER") {
-									table_vis = table_vis + '<th class="col"><div>' + header['value'] + '</div></th>';
-								} // If the cell is a row header and is null (grouped row header)
-								else if (header['type'] === "ROW_HEADER" && header['value'] === "null") {
-									table_vis = table_vis + '<th class="row_null"><div>&nbsp;</div></th>';
-								} // If the cell is a row header and isn't null (last row header)
-								else if (header['type'] === "ROW_HEADER") {
-									table_vis = table_vis + '<th class="row"><div>' + header['value'] + '</div></th>';
-								} // If the cell is a normal data cell
-								else if (header['type'] === "DATA_CELL") {
-									table_vis = table_vis + '<td class="data"><div>' + header['value'] + '</div></td>';
-								}
-
-							});
-
-							// Close of the new row
-							table_vis = table_vis + '</tr>';
-
-						});
-
-						// Close the table
-						table_vis = table_vis + '</table>';
-
-						// Insert the table to the DOM
-						$workspace_result.html(table_vis);
-
-						// Enable highlighting on rows.
-						$workspace_result.find('table tr').hover(function () {
-							$(this).children().css('background', '#eff4fc');
-						}, function () {
-							$(this).children().css('background', '');
-						});
-
-
-						// Resize the workspace
-						view.resize_height(tab_index);
-
-						// Clear the wait message
-						view.hide_processing(true, tab_index);
+                        model.render_result(data,$workspace_result);
+                        // Resize the workspace
+                        view.resize_height(tab_index);
+                        view.hide_processing(true, tab_index);
 					},
 
 					error: function () {

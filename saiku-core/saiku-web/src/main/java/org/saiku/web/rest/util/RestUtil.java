@@ -11,14 +11,16 @@ import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.dto.resultset.DataCell;
 import org.saiku.olap.dto.resultset.MemberCell;
 import org.saiku.web.rest.objects.resultset.Cell;
+import org.saiku.web.rest.objects.resultset.QueryResult;
 
 public class RestUtil {
 	
-	public static ArrayList<Cell[]> convert(ResultSet rs) {
+	public static QueryResult convert(ResultSet rs) {
 		Integer width = 0;
         Integer height = 0;
         Cell[] header = null;
         ArrayList<Cell[]> rows = new ArrayList<Cell[]>();
+        
         // System.out.println("DATASET");
         try {
 			while (rs.next()) {
@@ -48,12 +50,13 @@ public class RestUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return rows;
+		
+		return new QueryResult(rows,0,width,height);
 	}
-	public static ArrayList<Cell[]> convert(CellDataSet cellSet) {
+	public static QueryResult convert(CellDataSet cellSet) {
 		ArrayList<Cell[]> rows = new ArrayList<Cell[]>();
 		if (cellSet == null || cellSet.getCellSetBody() == null || cellSet.getCellSetHeaders() == null) {
-			return rows;
+			return null;
 		}
 		AbstractBaseCell[][] body = cellSet.getCellSetBody();
 		AbstractBaseCell[][] headers = cellSet.getCellSetHeaders();
@@ -67,7 +70,8 @@ public class RestUtil {
 		for (AbstractBaseCell row[] : body) {
 			rows.add(convert(row, Cell.Type.ROW_HEADER));
 		}
-		return rows;
+		QueryResult qr = new QueryResult(rows, cellSet.getRuntime(), cellSet.getWidth(), cellSet.getHeight());
+		return qr;
 		
 	}
 	

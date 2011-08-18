@@ -158,7 +158,7 @@ public class OlapQueryService {
 	        Long format = (new Date()).getTime();
 	        log.info("Size: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
 	                + "ms\tFormat:\t" + (format - exec) + "ms\t Total: " + (format - start) + "ms");
-
+	        result.setRuntime(new Double(format - start).intValue());
 			OlapUtil.storeCellSet(queryName, cellSet);
 			return result;
 		} catch (Exception e) {

@@ -38,6 +38,8 @@ public class CellDataSet implements Serializable {
     private AbstractBaseCell[][] cellSetBody;
 
     private int offset;
+    
+    public int runtime;
 
     public CellDataSet() {
         super();
@@ -102,4 +104,12 @@ public class CellDataSet implements Serializable {
     public int getHeight() {
         return height;
     }
+
+	public int getRuntime() {
+		return runtime;
+	}
+
+	public void setRuntime(int runtime) {
+		this.runtime = runtime;
+	}
 }
