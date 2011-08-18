@@ -101,10 +101,12 @@ Backbone.sync = function(method, model, options) {
       success:      success,
       error:        failure,
       beforeSend:   function(request) {
+        if (!Settings.PLUGIN) {
           var auth = "Basic " + Base64.encode(
               Saiku.session.username + ":" + Saiku.session.password
           );
           request.setRequestHeader('Authorization', auth);
+          }
       }
     };
 
