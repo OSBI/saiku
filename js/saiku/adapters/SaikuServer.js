@@ -98,6 +98,7 @@ Backbone.sync = function(method, model, options) {
       type:         type,
       cache:        false,
       data:         model.attributes,
+      contentType:  'application/x-www-form-urlencoded',
       success:      success,
       error:        failure,
       beforeSend:   function(request) {
@@ -112,9 +113,9 @@ Backbone.sync = function(method, model, options) {
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
     // And an `X-HTTP-Method-Override` header.
-    if (Settings.PLUGIN && Backbone.emulateHTTP) {
+    if (Settings.BIPLUGIN || Backbone.emulateHTTP) {
       if (type === 'PUT' || type === 'DELETE') {
-        if (Backbone.emulateJSON) params.data._method = type;
+        if (Backbone.emulateHTTP) params.data._method = type;
         params.type = 'POST';
         params.beforeSend = function(xhr) {
           xhr.setRequestHeader("X-HTTP-Method-Override", type);
