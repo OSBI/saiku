@@ -39,7 +39,6 @@ var SelectionsModal = Modal.extend({
         if (args.target.parents('.fields_list_body').hasClass('filter')) { 
             this.axis = "FILTER";
         }
-        
         // Resize when rendered
         this.bind('open', this.post_render);
         this.render();
@@ -169,7 +168,7 @@ var SelectionsModal = Modal.extend({
         }
         
         // Notify server
-        this.query.action.put('/axis/' + this.axis + '/dimension/' + this.name, { 
+        this.query.action.put('/axis/' + this.axis + '/dimension/' + this.member.dimension, { 
             success: this.finished,
             data: {
                 selections: JSON.stringify(updates)
