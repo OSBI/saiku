@@ -53,7 +53,7 @@ var SaveQuery = Modal.extend({
         (new SavedQuery({
             name: this.query.uuid,
             newname: this.query.get('name'),
-            xml: response
+            xml: response.xml
         })).save({ success: this.close });
     }
 });

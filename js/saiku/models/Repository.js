@@ -3,7 +3,7 @@
  */
 var SavedQuery = Backbone.Model.extend({
     parse: function(response, XHR) {
-        this.xml = XHR.responseText;
+        this.xml = response.xml;
     },
     
     url: function() {

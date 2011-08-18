@@ -99,6 +99,7 @@ Backbone.sync = function(method, model, options) {
       cache:        false,
       data:         model.attributes,
       contentType:  'application/x-www-form-urlencoded',
+      dataType:     'json',
       success:      success,
       error:        failure,
       beforeSend:   function(request) {
