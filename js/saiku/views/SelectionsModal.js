@@ -21,7 +21,7 @@ var SelectionsModal = Modal.extend({
         this.message = "Fetching members...";
         this.show_unique = false;
         this.query = args.workspace.query;
-        _.bindAll(this, "fetch_members", "populate");
+        _.bindAll(this, "fetch_members", "populate", "finished");
         
         // Bind selection handlers
         _.extend(this.events, {
@@ -170,12 +170,17 @@ var SelectionsModal = Modal.extend({
         
         // Notify server
         this.query.action.put('/axis/' + this.axis + '/dimension/' + this.name, { 
-            success: this.close,
+            success: this.finished,
             data: {
                 selections: JSON.stringify(updates)
             }
         });
         
         return false;
+    },
+    
+    finished: function() {
+        $(this.el).dialog('destroy').remove();
+        this.query.run();
     }
 });
