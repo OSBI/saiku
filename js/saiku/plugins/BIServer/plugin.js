@@ -3,10 +3,9 @@
  */
 var puc = {
     allowSave: function(isAllowed) {
-        console.log(isAllowed);
         if(top.mantle_initialized !== undefined && top.mantle_initialized && 
             top.parent.enableAdhocSave ) {
-            if (ALLOW_PUC_SAVE === undefined || ALLOW_PUC_SAVE) {
+            if (window.ALLOW_PUC_SAVE === undefined || ALLOW_PUC_SAVE) {
                 top.parent.enableAdhocSave(isAllowed);
             }
         }
