@@ -24,7 +24,7 @@ var Table = Backbone.View.extend({
         }
         
         // Clear the contents of the table
-        $(this.el).html('<tr><td>Rendering ' + args.data.width + '/' + args.data.height + ' ...</td></tr>');
+        $(this.el).html('<tr><td>Rendering ' + args.data.width + ' columns and ' + args.data.height + ' rows...</td></tr>');
 
         // Render the table without blocking the UI thread
         _.delay(this.process_data, 0, args.data.cellset);
