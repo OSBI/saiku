@@ -71,36 +71,38 @@ if (Settings.BIPLUGIN) {
 /**
  * If plugin active, customize chrome
  */
-Saiku.events.bind('session:new', function() {
+Saiku.events.bind('session:new', function(args) {
     if (Settings.PLUGIN) {        
         // Remove tabs and global toolbar
         $('#header').remove();
         
-        // Find workspace
-        var workspace = Saiku.tabs._tabs[0].content;
+        // Bind to workspace
+        args.session.bind('workspace:new', function(args) {
+            var workspace = args.workspace;
         
-        // If in view mode, remove sidebar and drop zones
-        if (Settings.MODE == "view") {
-            workspace.toggle_sidebar();
-            $(workspace.el).find('.sidebar_separator').remove();
-            $(workspace.el).find('.workspace_fields').remove();
-        }
-        
-        // Remove toolbar buttons
-        $(workspace.toolbar.el)
-            .find('.save').parent().remove();
-        $(workspace.toolbar.el).find('.run').parent().removeClass('separator');
-        if (Settings.MODE == "view") {
+            // If in view mode, remove sidebar and drop zones
+            if (Settings.MODE == "view") {
+                workspace.toggle_sidebar();
+                $(workspace.el).find('.sidebar_separator').remove();
+                $(workspace.el).find('.workspace_fields').remove();
+            }
+            
+            // Remove toolbar buttons
             $(workspace.toolbar.el)
-                .find(".run, .auto, .toggle_fields, .toggle_sidebar")
-                .parent().remove();
-        }
-        
-        // Toggle save button
-        workspace.bind('query:result', function(args) {
-            var isAllowed = args.data.cellset !== null && 
-                args.data.cellset.length > 0;
-            puc.allowSave(isAllowed);
+                .find('.save').parent().remove();
+            $(workspace.toolbar.el).find('.run').parent().removeClass('separator');
+            if (Settings.MODE == "view") {
+                $(workspace.toolbar.el)
+                    .find(".run, .auto, .toggle_fields, .toggle_sidebar")
+                    .parent().remove();
+            }
+            
+            // Toggle save button
+            workspace.bind('query:result', function(args) {
+                var isAllowed = args.data.cellset !== null && 
+                    args.data.cellset.length > 0;
+                puc.allowSave(isAllowed);
+            });
         });
     }
 });

@@ -8,7 +8,7 @@ var QueryRouter = Backbone.Router.extend({
     
     open_query: function(query_name) {
         Settings.ACTION = "OPEN_QUERY";
-        var query = new SavedQuery({ name: query_name });
+        var query = new SavedQuery(_.extend({ name: query_name }, Settings.GET));
         query.fetch({ success: query.move_query_to_workspace });
     }
 });
