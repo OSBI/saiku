@@ -84,6 +84,8 @@ Saiku.events.bind('session:new', function(args) {
             if (Settings.MODE == "view") {
                 workspace.toggle_sidebar();
                 $(workspace.el).find('.sidebar_separator').remove();
+                $(workspace.el).find('.workspace_inner')
+                    .css({ 'margin-left': 0 });
                 $(workspace.el).find('.workspace_fields').remove();
             }
             
