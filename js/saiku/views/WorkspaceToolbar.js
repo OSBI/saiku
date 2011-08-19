@@ -29,7 +29,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     activate_buttons: function(args) {
-        if (args.data && args.data.length > 0) {
+        if (args.data && args.data.cellset && args.data.cellset.length > 0 ) {
             $(args.workspace.toolbar.el).find('.button')
                 .removeClass('disabled_toolbar');            
         } else {

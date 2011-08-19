@@ -152,35 +152,35 @@ var Chart = Backbone.View.extend({
         this.data.resultset = [];
         this.data.metadata = [];
         
-        if (args.data.length > 0) {
+        if (args.data.cellset && args.data.cellset.length > 0) {
             
             var lowest_level = 0;
         
-            for (var row = 0; row < args.data.length; row++) {
-                if (args.data[row][0].type == "ROW_HEADER_HEADER") {
+            for (var row = 0; row < args.data.cellset.length; row++) {
+                if (args.data.cellset[row][0].type == "ROW_HEADER_HEADER") {
                     this.data.metadata = [];
-                    for (var field = 0; field < args.data[row].length; field++) {
-                        if (args.data[row][field].type == "ROW_HEADER_HEADER") {
+                    for (var field = 0; field < args.data.cellset[row].length; field++) {
+                        if (args.data.cellset[row][field].type == "ROW_HEADER_HEADER") {
                             this.data.metadata.shift();
                             lowest_level = field;
                         }
                         
                         this.data.metadata.push({
                             colIndex: field,
-                            colType: isNaN(args.data[row + 1][field].value
+                            colType: isNaN(args.data.cellset[row + 1][field].value
                                 .replace(/[^a-zA-Z 0-9.]+/g,'')) ? "String" : "Numeric",
-                            colName: args.data[row][field].value
+                            colName: args.data.cellset[row][field].value
                         });
                     }
                 } else {
                     var record = [];
-                    for (var col = lowest_level; col < args.data[row].length; col++) {
+                    for (var col = lowest_level; col < args.data.cellset[row].length; col++) {
                         record.push(
-                            parseFloat(args.data[row][col].value
+                            parseFloat(args.data.cellset[row][col].value
                                 .replace(/[^a-zA-Z 0-9.]+/g,'')) ?
-                            parseFloat(args.data[row][col].value
+                            parseFloat(args.data.cellset[row][col].value
                                 .replace(/[^a-zA-Z 0-9.]+/g,'')) :
-                            args.data[row][col].value
+                            args.data.cellset[row][col].value
                         );
                     }
                     this.data.resultset.push(record);

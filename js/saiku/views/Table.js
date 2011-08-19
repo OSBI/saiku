@@ -12,29 +12,30 @@ var Table = Backbone.View.extend({
     },
     
     render: function(args) {
-        // Clear the contents of the table
-        $(this.el).html('<tr><td>Rendering ' + args.data.length + ' rows...</td></tr>');
+
+        if (args.data.error != null) {
+            return this.error(args);
+        }
+
         
         // Check to see if there is data
-        if (args.data.length === 0) {
+        if (args.data.cellset && args.data.cellset.length === 0) {
             return this.no_results(args);
         }
         
-        // Check for error
-        if (args.data[0][0].type === "ERROR") {
-            this.error(args);
-        }
-        
+        // Clear the contents of the table
+        $(this.el).html('<tr><td>Rendering ' + args.data.width + '/' + args.data.height + ' ...</td></tr>');
+
         // Render the table without blocking the UI thread
-        _.delay(this.process_data, 0, args);
+        _.delay(this.process_data, 0, args.data.cellset);
     },
     
-    process_data: function(args) {
+    process_data: function(data) {
         var contents = "";
-        for (var row = 0; row < args.data.length; row++) {
+        for (var row = 0; row < data.length; row++) {
             contents += "<tr>";
-            for (var col = 0; col < args.data[row].length; col++) {
-                var header = args.data[row][col];
+            for (var col = 0; col < data[row].length; col++) {
+                var header = data[row][col];
                 
                 // FIXME - this needs to be cleaned up
                 
@@ -72,6 +73,6 @@ var Table = Backbone.View.extend({
     
     error: function(args) {
         $(args.workspace.el).find('.workspace_results table')
-            .html('<tr><td>' + args.data[0][0].value + '</td></tr>');
+            .html('<tr><td>' + args.data.error + '</td></tr>');
     }
 });
