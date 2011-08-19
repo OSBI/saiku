@@ -103,9 +103,16 @@ var Session = Backbone.Model.extend({
         $("#header").show();
         Saiku.ui.unblock();
         
+        // Start routing
+        if (Backbone.history) {
+            Backbone.history.start();
+        }
+        
         // Add initial tab
         Saiku.tabs.render();
-        Saiku.tabs.add(new Workspace());
+        if (! Settings.ACTION) {
+            Saiku.tabs.add(new Workspace());
+        }
         
         // Notify the rest of the application that login was successful
         Saiku.events.trigger('session:new', {

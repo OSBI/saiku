@@ -23,6 +23,11 @@ var Saiku = {
     events: _.extend({}, Backbone.Events),
     
     /**
+     * Collection of routers for page fragments
+     */
+    routers: [],
+    
+    /**
      * Convenience functions for blocking the UI
      */
     ui: {

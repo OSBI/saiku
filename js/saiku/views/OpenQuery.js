@@ -35,7 +35,7 @@ var OpenQuery = Backbone.View.extend({
     
     initialize: function(args) {
         // Maintain `this`
-        _.bindAll(this, "adjust", "fetch_queries", "move_query_to_workspace",
+        _.bindAll(this, "adjust", "fetch_queries",
                 "clear_query");
         
         // Initialize repository
@@ -44,16 +44,6 @@ var OpenQuery = Backbone.View.extend({
     
     fetch_queries: function() {
         this.repository.fetch();
-    },
-    
-    move_query_to_workspace: function(model, response) {
-        var query = new Query({ 
-            xml: model.xml
-        }, {
-            name: model.get('name')
-        });
-        
-        var tab = Saiku.tabs.add(new Workspace({ query: query }));
     },
     
     populate: function(response) {
@@ -98,7 +88,9 @@ var OpenQuery = Backbone.View.extend({
     
     open_query: function(event) {
         Saiku.ui.block("Opening query...");
-        this.selected_query.fetch({ success: this.move_query_to_workspace });
+        this.selected_query.fetch({ 
+            success: this.selected_query.move_query_to_workspace 
+        });
         
         return false;
     },

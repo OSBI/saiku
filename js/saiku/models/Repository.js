@@ -8,6 +8,16 @@ var SavedQuery = Backbone.Model.extend({
     
     url: function() {
         return encodeURI(Saiku.session.username + "/repository/" + this.get('name'));
+    },
+    
+    move_query_to_workspace: function(model, response) {
+        var query = new Query({ 
+            xml: model.xml
+        }, {
+            name: model.get('name')
+        });
+        
+        var tab = Saiku.tabs.add(new Workspace({ query: query }));
     }
 });
 
