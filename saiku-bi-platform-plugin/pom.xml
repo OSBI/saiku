@@ -303,11 +303,6 @@
 		</repository>
 		<repository>
 			<id>java</id>
-			<url>http://download.java.net/maven/1/</url>
-		</repository>
-		
-		<repository>
-			<id>java</id>
 			<url>http://download.java.net/maven/2/</url>
 			<snapshots>
 				<enabled>true</enabled>
