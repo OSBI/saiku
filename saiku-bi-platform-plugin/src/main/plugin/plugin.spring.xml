@@ -59,6 +59,6 @@
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
 
-  
+  	<bean id="repositoryBean" class="org.saiku.plugin.resources.PentahoRepositoryResource" />
 
 </beans>

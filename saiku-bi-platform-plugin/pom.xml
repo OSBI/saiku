@@ -4,7 +4,7 @@
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-bi-platform-plugin</artifactId>
 	<packaging>jar</packaging>
-	<version>2.1</version>
+	<version>2.2-SNAPSHOT</version>
 	<name>saiku biserver plugin</name>
 
 	<properties>
@@ -303,6 +303,11 @@
 		</repository>
 		<repository>
 			<id>java</id>
+			<url>http://download.java.net/maven/1/</url>
+		</repository>
+		
+		<repository>
+			<id>java</id>
 			<url>http://download.java.net/maven/2/</url>
 			<snapshots>
 				<enabled>true</enabled>
@@ -445,6 +450,11 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
 			<version>2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>2.0.5.RELEASE</version>
 		</dependency>
 	</dependencies>
 </project>

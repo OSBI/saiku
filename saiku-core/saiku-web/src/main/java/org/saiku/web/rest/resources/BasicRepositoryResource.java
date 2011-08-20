@@ -58,7 +58,7 @@ import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * QueryServlet contains all the methods required when manipulating an OLAP Query.
- * @author Tom Barber
+ * @author Paul Stoellberger
  *
  */
 @Component
