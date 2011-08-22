@@ -69,6 +69,39 @@ if (Settings.BIPLUGIN) {
 }
 
 /**
+ * Bind callbacks to workspace
+ */
+var BIPlugin = {
+    bind_callbacks: function(workspace) {
+        // If in view mode, remove sidebar and drop zones
+        if (Settings.MODE == "view") {
+            workspace.toggle_sidebar();
+            $(workspace.el).find('.sidebar_separator').remove();
+            $(workspace.el).find('.workspace_inner')
+                .css({ 'margin-left': 0 });
+            $(workspace.el).find('.workspace_fields').remove();
+        }
+        
+        // Remove toolbar buttons
+        $(workspace.toolbar.el)
+            .find('.save').parent().remove();
+        $(workspace.toolbar.el).find('.run').parent().removeClass('seperator');
+        if (Settings.MODE == "view") {
+            $(workspace.toolbar.el)
+                .find(".run, .auto, .toggle_fields, .toggle_sidebar")
+                .parent().remove();
+        }
+        
+        // Toggle save button
+        workspace.bind('query:result', function(args) {
+            var isAllowed = args.data.cellset !== null && 
+                args.data.cellset.length > 0;
+            puc.allowSave(isAllowed);
+        });
+    }
+};
+
+/**
  * If plugin active, customize chrome
  */
 Saiku.events.bind('session:new', function(args) {
@@ -77,34 +110,9 @@ Saiku.events.bind('session:new', function(args) {
         $('#header').remove();
         
         // Bind to workspace
-        args.session.bind('workspace:new', function(args) {
-            var workspace = args.workspace;
-        
-            // If in view mode, remove sidebar and drop zones
-            if (Settings.MODE == "view") {
-                workspace.toggle_sidebar();
-                $(workspace.el).find('.sidebar_separator').remove();
-                $(workspace.el).find('.workspace_inner')
-                    .css({ 'margin-left': 0 });
-                $(workspace.el).find('.workspace_fields').remove();
-            }
-            
-            // Remove toolbar buttons
-            $(workspace.toolbar.el)
-                .find('.save').parent().remove();
-            $(workspace.toolbar.el).find('.run').parent().removeClass('separator');
-            if (Settings.MODE == "view") {
-                $(workspace.toolbar.el)
-                    .find(".run, .auto, .toggle_fields, .toggle_sidebar")
-                    .parent().remove();
-            }
-            
-            // Toggle save button
-            workspace.bind('query:result', function(args) {
-                var isAllowed = args.data.cellset !== null && 
-                    args.data.cellset.length > 0;
-                puc.allowSave(isAllowed);
-            });
+        BIPlugin.bind_callbacks(Saiku.tabs._tabs[0].content);
+        args.session.bind('tab:add', function(args) {
+            BIPlugin.bind_callbacks(args.tab.content);
         });
     }
 });
