@@ -12,8 +12,8 @@ var Workspace = Backbone.View.extend({
     
     initialize: function(args) {
         // Maintain `this` in jQuery event handlers
-        _.bindAll(this, "adjust", "toggle_sidebar", 
-                "prepare", "new_query", "init_query", "update_caption");
+        _.bindAll(this, "adjust", "toggle_sidebar", "prepare", "new_query", 
+                "init_query", "update_caption", "select_dimension");
                 
         // Attach an event bus to the workspace
         _.extend(this, Backbone.Events);
@@ -124,8 +124,9 @@ var Workspace = Backbone.View.extend({
         // Draw user's attention to cube navigation
         $(this.el).find('.cubes')
             .parent()
-            .animate({ backgroundColor: '#AC1614' }, 'fast')
-            .animate({ backgroundColor: '#fff' }, 'fast');
+            .css({ backgroundColor: '#AC1614' })
+            .delay(500)
+            .animate({ backgroundColor: '#fff' }, 'slow');
     },
     
     new_query: function() {
@@ -231,6 +232,10 @@ var Workspace = Backbone.View.extend({
             this.query.run();
         }
         
+        // Add click handlers
+        $(this.el).find('.sidebar a.dimension, .sidebar a.measure')
+            .click(this.select_dimension);
+        
         // Make sure appropriate workspace buttons are enabled
         this.trigger('query:new', { workspace: this });
         
@@ -241,6 +246,24 @@ var Workspace = Backbone.View.extend({
     update_caption: function() {
         var caption = this.query.get('name');
         $(this.tab.el).find('a').html(caption);
+    },
+    
+    select_dimension: function(event, ui) {
+        if ($(event.target).parent().hasClass('ui-state-disabled')) {
+            return;
+        }
+        
+        $axis = $(this.el).find(".columns ul li").length > 0 ?
+            $(this.el).find(".rows ul") :
+            $(this.el).find(".columns ul");
+        $target = $(event.target).parent().clone()
+            .appendTo($axis);
+        this.drop_zones.select_dimension({
+            target: $axis
+        }, {
+            item: $target
+        });
+        return false;
     },
     
     remove_dimension: function(event, ui) {
