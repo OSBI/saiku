@@ -17,14 +17,18 @@ var puc = {
         }
     },
     
-    save_to_solution: function( filename, solution, path, type, overwrite ) {
+    save_to_solution: function(filename, solution, path, type, overwrite) {
         var query = Saiku.tabs._tabs[0].content.query;
         query.action.get("/xml", {
             success: function(model, response) {
                 (new SavedQuery({
-                    name: query.uuid,
+                    name: filename,
                     newname: query.get('name'),
-                    xml: response.xml
+                    xml: response.xml,
+                    solution: solution,
+                    path: path,
+                    action: type,
+                    overwrite: overwrite
                 })).save();
             }
         });
