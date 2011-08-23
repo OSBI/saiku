@@ -76,7 +76,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                 $(event.target).parent(), index);
         
         // Prevent workspace from getting this event
-        event.stopPropagation();
+        return false;
     },
     
     move_dimension: function(event, ui) {
