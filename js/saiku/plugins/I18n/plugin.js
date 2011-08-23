@@ -114,7 +114,9 @@ Saiku.i18n = {
 var TranslationTab = Backbone.View.extend({
     className: 'workspace_area',
     caption: function() {
-        return "Improve translation for " + Saiku.i18n.locale;
+        return Saiku.i18n.po_file["Improve this translation"] ?
+            Saiku.i18n.po_file["Improve this translation"] :
+            "Improve this translation";
     },
     events: {
         'submit form': 'submit',
@@ -134,6 +136,8 @@ var TranslationTab = Backbone.View.extend({
             };
         }
         var table = _.template("<form class='workspace_results'>" +
+        	"Your name: <input type='text' name='translator_name' />" +
+            "<p>Please fill in the appropriate translation in the blanks provided:<p>" +
         	"<% _.each(translation_table, function(val, key) { %>" +
             "<div><b><%= key %></b><br />" +
             "<input type='text' value='<%= val.value %>' name='<%= val.name %>' />" +
