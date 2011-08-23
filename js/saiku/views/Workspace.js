@@ -49,7 +49,8 @@ var Workspace = Backbone.View.extend({
     },
     
     template: function() {
-        return _.template($("#template-workspace").html())({
+        var template = $("#template-workspace").html() || "";
+        return _.template(template)({
             cube_navigation: Saiku.session.cube_navigation
         });        
     },
