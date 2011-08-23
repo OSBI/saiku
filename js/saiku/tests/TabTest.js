@@ -37,13 +37,63 @@ test('multiple event handlers', function multiple_handlers() {
 test('tab render', function tab_render() {
     this.tab.render();
     notStrictEqual(-1, $(this.tab.el).html().indexOf('Unsaved query'));
-    strictEqual(-1, $(this.tab.el).html().indexOf('Unsaved Query'));
+    strictEqual(-1, $(this.tab.el).html().indexOf('Unsaved Query (1)'));
 });
 
 test('tab properties', function tab_properties() {
     notEqual(this.tab.caption, "");
     notStrictEqual(this.tab.id, undefined);
     equal(this.tab.id, this.tab.content.tab.id);
-    notStrictEqual(undefined, this.bind);
-    notStrictEqual(undefined, this.trigger);
+    notStrictEqual(undefined, this.tab.bind);
+    notStrictEqual(undefined, this.tab.trigger);
+});
+
+module('TabSet', {
+    setup: function() {
+        this.tabset = new TabSet();
+    },
+    
+    teardown: function() {
+        $("#tab_panel").remove();
+    }
+});
+
+test('initial conditions', function initial_conditions() {
+    equal(this.tabset.queryCount, 0);
+    equal(undefined, this.tabset.pager);
+    this.tabset.render();
+    ok(this.tabset.pager !== undefined);
+    ok(this.tabset.content !== undefined);
+    notEqual(-1, $(this.tabset.el).html().indexOf('#pager'));
+});
+
+test('tab lifecycle', function add_tab() {
+    // Add tab
+    this.tabset.render();
+    raises(this.tabset.add, TypeError, 
+        "Don't allow tab instantiation without Backbone view as parameter");
+    var tab = this.tabset.add(new Workspace());
+    ok(this.tabset === tab.parent, 
+        "Should set parent property when creating tab");
+    equal(1, this.tabset.queryCount,
+        "Query count should be incremented");
+    equal(this.tabset.queryCount, this.tabset._tabs.length,
+        "Because no tabs have been removed, query count and tab length should match");
+    var tab2 = this.tabset.add(new Workspace());
+    equal(2, this.tabset.queryCount,
+        "Query count should be incremented");
+    
+    // Select tab
+    this.tabset.select(tab);
+    this.tabset.select(tab2);
+    
+    // Remove tab
+    this.tabset.remove(tab);
+    equal(2, this.tabset.queryCount,
+        "Query count should not decrement");
+    notEqual(this.tabset.queryCount, this.tabset._tabs.length,
+        "Query count should not equal tab length");
+    this.tabset.remove(tab2);
+    equal(1, this.tabset._tabs.length,
+        "Tabset should add a tab when empty");
 });

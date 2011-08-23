@@ -81,11 +81,11 @@ var Tab = Backbone.View.extend({
      */
     remove: function(event) {
         if (!event || event.which === 2 || $(event.target).hasClass('close_tab')) {
-            // Remove the tab element
-            $(this.el).remove();
-            
-            // Remove the tab
             try {
+                // Remove the tab element
+                $(this.el).remove();
+                
+                // Remove the tab                
                 this.destroy();
             } catch (e) {
                 Log.log(JSON.stringify({
