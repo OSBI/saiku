@@ -81,6 +81,9 @@ var Tab = Backbone.View.extend({
      */
     remove: function(event) {
         if (!event || event.which === 2 || $(event.target).hasClass('close_tab')) {
+            // Remote the tab object from the container
+            this.parent.remove(this);
+
             try {
                 // Remove the tab element
                 $(this.el).remove();
@@ -93,11 +96,8 @@ var Tab = Backbone.View.extend({
                     Tab: JSON.stringify(this)
                 }));
             }
-            
-            // Remote the tab object from the container
-            this.parent.remove(this);
         }
-        
+   
         return false;
     }
 });
@@ -206,7 +206,7 @@ var TabSet = Backbone.View.extend({
     remove: function(tab) {
         // Add another tab if the last one has been deleted
         if (this._tabs.length == 1) {
-            return;
+            this.add(new Workspace());
         }
         
         for (var i = 0; i < this._tabs.length; i++) {
@@ -217,10 +217,12 @@ var TabSet = Backbone.View.extend({
                 this.pager.render();
                 
                 // Select the previous, or first tab
-                var next = this._tabs[i] ? i : 0;
+                var next = this._tabs[i] ? i : (this._tabs.length - 1);
                 this._tabs[next].select();
             }
         }
+        
+        return true;
     },
     
     togglePager: function() {
