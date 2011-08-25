@@ -59,7 +59,8 @@ Saiku.i18n = {
 			// Translate text
 			if (element.html()) {
 				translated_text = translate( element.html(), po_file );
-                if (Saiku.i18n.elements.indexOf(element.html()) === -1) {
+                if (Saiku.i18n.elements.indexOf &&
+                    Saiku.i18n.elements.indexOf(element.html()) === -1) {
                     Saiku.i18n.elements.push(element.html());
                 }
 				if (translated_text) {
@@ -72,7 +73,8 @@ Saiku.i18n = {
 			// Translate title
 			if (element.attr('title')) {
 				translated_title = translate( element.attr('title'), po_file );
-                if (Saiku.i18n.elements.indexOf(element.attr('title')) === -1) {
+                if (Saiku.i18n.elements.indexOf && 
+                    Saiku.i18n.elements.indexOf(element.attr('title')) === -1) {
                     Saiku.i18n.elements.push(element.attr('title'));
                 }
 				if (translated_title) {

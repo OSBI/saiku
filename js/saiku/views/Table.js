@@ -32,9 +32,10 @@ var Table = Backbone.View.extend({
     
     process_data: function(data) {
         var contents = "";
-        for (var row = 0; row < data.length; row++) {
+        var table = data ? data : [];
+        for (var row = 0; row < table.length; row++) {
             contents += "<tr>";
-            for (var col = 0; col < data[row].length; col++) {
+            for (var col = 0; col < table[row].length; col++) {
                 var header = data[row][col];
                 
                 // FIXME - this needs to be cleaned up
