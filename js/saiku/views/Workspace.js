@@ -163,21 +163,28 @@ var Workspace = Backbone.View.extend({
                 .val(this.selected_cube);
         }
         
-        // Create new DimensionList and MeasureList
-        this.dimension_list = new DimensionList({
-            workspace: this,
-            dimension: Saiku.session.dimensions[this.selected_cube]
-        });        
-        $(this.el).find('.dimension_tree').html('').append($(this.dimension_list.el));
-        
-        this.measure_list = new DimensionList({
-            workspace: this,
-            dimension: Saiku.session.measures[this.selected_cube]
-        });
-        $(this.el).find('.measure_tree').html('').append($(this.measure_list.el));
-        
         // Clear workspace
         this.clear();
+        
+        if (this.selected_cube) {
+            // Create new DimensionList and MeasureList
+            this.dimension_list = new DimensionList({
+                workspace: this,
+                dimension: Saiku.session.dimensions[this.selected_cube]
+            });        
+            $(this.el).find('.dimension_tree').html('').append($(this.dimension_list.el));
+            
+            this.measure_list = new DimensionList({
+                workspace: this,
+                dimension: Saiku.session.measures[this.selected_cube]
+            });
+            $(this.el).find('.measure_tree').html('').append($(this.measure_list.el));
+        } else {
+            // Someone literally selected "Select a cube"
+            $(this.el).find('.dimension_tree').html('');
+            $(this.el).find('.measure_tree').html('');
+            return;
+        }
         
         // Populate selections - trust me, this is prettier than it was :-/
         var axes = this.query ? this.query.get('axes') : false;
