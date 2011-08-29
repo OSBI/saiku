@@ -23,8 +23,8 @@ var Chart = Backbone.View.extend({
         
         // Create navigation
         this.nav = $("<div class='chart-switcher'>" +
-        		"<a href='#stackedBar' class='i18n'>stacked bar</a>" +
         		"<a href='#bar' class='i18n'>bar</a>" +
+                "<a href='#stackedBar' class='i18n'>stacked bar</a>" +
         		"<a href='#line' class='i18n'>line</a>" +
         		"<a href='#pie' class='i18n'>pie</a>" +
         		"</div>").css({
@@ -108,7 +108,7 @@ var Chart = Backbone.View.extend({
             width: $(this.workspace.el).find('.workspace_results').width() - 20,
             height: $(this.workspace.el).find('.workspace_results').height() - 40,
             orientation: 'vertical',
-            stacked: true,
+            stacked: false,
             animate: false,
             showValues: false,
             legend: true,
