@@ -26,6 +26,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -64,21 +65,21 @@ public class PentahoRepositoryResource {
 	 */
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/{queryname}")
+	@Path("/{name}")
 	public Status saveQuery(
-			@PathParam("queryname") String queryName,
-			@FormParam("newname") String newName,
+			@PathParam("name") String queryName,
 			@FormParam("xml") String xml,
 			@FormParam("solution") String solution,
 			@FormParam("path") String path,
 			@FormParam("action") String action)
 	{
 		try {
+
+			if (!action.endsWith(".saiku")) {
+				action += ".saiku";
+			}
 			System.out.println("solution:"+solution+" path:"+path + " action:" + action);
 
-			if (newName != null) {
-				queryName = newName;
-			}
 
 			String fullPath = ActionInfo.buildSolutionPath(solution, path, action);
 			IPentahoSession userSession = PentahoSessionHolder.getSession();
@@ -118,15 +119,19 @@ public class PentahoRepositoryResource {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@Path("/{queryname}")
+	@Path("/{name}")
 	public SavedQuery loadQuery(
-			@PathParam("queryname") String queryName,
-			@FormParam("solution") String solution,
-			@FormParam("path") String path,
-			@FormParam("action") String action)		
+			@PathParam("name") String name,
+			@QueryParam("SOLUTION") String solution,
+			@QueryParam("PATH") String path,
+			@QueryParam("ACTION") String action)		
 	{
 		try{
-			System.out.println("solution:"+solution+" path:"+path + " action:" + action);
+			if (!action.endsWith(".saiku")) {
+				action += ".saiku";
+			}
+			
+			System.out.println("load solution:"+solution+" path:"+path + " action:" + action);
 			String fullPath = ActionInfo.buildSolutionPath(solution, path, action);
 			IPentahoSession userSession = PentahoSessionHolder.getSession();
 			ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
@@ -139,12 +144,12 @@ public class PentahoRepositoryResource {
 					throw new NullPointerException("Error retrieving saiku document from solution repository"); 
 				}
 
-				SavedQuery sq = new SavedQuery(queryName, null, doc);
+				SavedQuery sq = new SavedQuery(name, null, doc);
 				return sq;
 			}
 
 		} catch(Exception e){
-			log.error("Cannot load query (" + queryName + ")",e);
+			log.error("Cannot load query (" + name + ")",e);
 		}
 		return null;
 	}

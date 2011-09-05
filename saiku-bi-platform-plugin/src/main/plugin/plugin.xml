@@ -33,15 +33,15 @@
 		<operations>
 			<operation>
 				<id>RUN</id>
-				<command>content/saiku-ui/?solution={solution}&amp;path={path}&amp;action={name}&amp;biplugin=true#query/open/{name}</command>
+				<command>content/saiku-ui/index.html?solution={solution}&amp;path={path}&amp;action={name}&amp;biplugin=true#query/open/{name}</command>
 			</operation>
 			<operation>
 				<id>EDIT</id>
-				<command>content/saiku-ui/?solution={solution}&amp;path={path}&amp;action={name}&amp;biplugin=true#query/open/{name}</command>
+				<command>content/saiku-ui/index.html?solution={solution}&amp;path={path}&amp;action={name}&amp;biplugin=true#query/open/{name}</command>
 			</operation>
 			<operation>
         		<id>NEWWINDOW</id>
-        		<command>content/saiku-ui/?solution={solution}&amp;path={path}&amp;action={name}&amp;biplugin=true#query/open/{name}</command>
+        		<command>content/saiku-ui/index.html?solution={solution}&amp;path={path}&amp;action={name}&amp;biplugin=true#query/open/{name}</command>
         	</operation>        		
 		</operations>
 	</content-type>
