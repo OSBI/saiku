@@ -122,9 +122,9 @@ public class PentahoRepositoryResource {
 	@Path("/{name}")
 	public SavedQuery loadQuery(
 			@PathParam("name") String name,
-			@QueryParam("SOLUTION") String solution,
-			@QueryParam("PATH") String path,
-			@QueryParam("ACTION") String action)		
+			@QueryParam("solution") String solution,
+			@QueryParam("path") String path,
+			@QueryParam("action") String action)		
 	{
 		try{
 			if (!action.endsWith(".saiku")) {
