@@ -29,7 +29,9 @@ var puc = {
                     path: path,
                     action: type,
                     overwrite: overwrite
-                })).save();
+                })).save({ success: function() {
+                    puc.refresh_repo();
+                }});
             }
         });
     }
