@@ -27,7 +27,7 @@ var puc = {
                     xml: response.xml,
                     solution: solution,
                     path: path,
-                    action: type,
+                    action: filename,
                     overwrite: overwrite
                 })).save({ success: function() {
                     puc.refresh_repo();
