@@ -88,7 +88,7 @@
     var inp = iframe.contentWindow.document.createElement("input");
     inp.setAttribute("type", "hidden");
     inp.setAttribute("name", "source");
-    inp.value = "castor " + data;
+    inp.value = data;
     form.appendChild(inp);
   };
   this.get_agent = function () {

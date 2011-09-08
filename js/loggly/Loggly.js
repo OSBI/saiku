@@ -2,10 +2,7 @@
  * Initialize Loggly sensor
  */
 window.Log = new loggly({ 
-    url: (("https:" == document.location.protocol) 
-            ? "https://logs.loggly.com" 
-            : "http://logs.loggly.com") 
-            + '/inputs/eea8d878-db25-43f4-b3b8-18053bb54004?rt=1', 
+    url: 'http://demo.analytical-labs.com:7000/input/errors',
     level: 'log'
 });
 

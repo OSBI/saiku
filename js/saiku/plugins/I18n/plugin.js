@@ -220,9 +220,6 @@ Saiku.events.bind('session:new', function() {
  * Initialize Loggly input for user-provided translations
  */
 window.Translate = new loggly({ 
-    url: (("https:" == document.location.protocol) 
-            ? "https://logs.loggly.com" 
-            : "http://logs.loggly.com") 
-            + '/inputs/9cc35a94-a2a9-41eb-b9b2-e7f53bb5f989?rt=1', 
+    url: 'http://demo.analytical-labs.com:7000/input/translations',
     level: 'log'
 });
