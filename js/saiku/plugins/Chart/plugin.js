@@ -167,7 +167,8 @@ var Chart = Backbone.View.extend({
                         
                         this.data.metadata.push({
                             colIndex: field,
-                            colType: isNaN(args.data.cellset[row + 1][field].value
+                            colType: typeof(args.data.cellset[row + 1][field].value) !== "numeric" &&
+                                isNaN(args.data.cellset[row + 1][field].value
                                 .replace(/[^a-zA-Z 0-9.]+/g,'')) ? "String" : "Numeric",
                             colName: args.data.cellset[row][field].value
                         });
@@ -176,6 +177,7 @@ var Chart = Backbone.View.extend({
                     var record = [];
                     for (var col = lowest_level; col < args.data.cellset[row].length; col++) {
                         record.push(
+                            typeof(args.data.cellset[row][col].value) !== "numeric" &&
                             parseFloat(args.data.cellset[row][col].value
                                 .replace(/[^a-zA-Z 0-9.]+/g,'')) ?
                             parseFloat(args.data.cellset[row][col].value
