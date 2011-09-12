@@ -169,7 +169,7 @@ var TranslationTab = Backbone.View.extend({
         $(this.el).find('.changed').each(function(element) {
             translation[decodeURI($(this).attr('name'))] = encodeURI($(this).val());
         });
-        Translate.log(JSON.stringify(translation));
+        Translate.log(translation);
         Saiku.ui.block('Thank you for improving our translation!');
         this.tab.remove();
         _.delay(function() {
@@ -219,7 +219,6 @@ Saiku.events.bind('session:new', function() {
 /**
  * Initialize Loggly input for user-provided translations
  */
-window.Translate = new loggly({ 
-    url: 'http://demo.analytical-labs.com:7000/input/translations',
-    level: 'log'
+window.Translate = new logger({ 
+    url: Settings.TELEMETRY_SERVER + '/input/translations'
 });
