@@ -64,7 +64,6 @@ if (Settings.BIPLUGIN) {
     Settings.PLUGIN = true;
     Settings.REST_URL = "/pentaho/content/saiku/";
     
-    
     $(document).ready(function() {
         Saiku.session = new Session({}, {
             username: "admin",
@@ -116,9 +115,12 @@ Saiku.events.bind('session:new', function(args) {
         $('#header').remove();
         
         // Bind to workspace
-        BIPlugin.bind_callbacks(Saiku.tabs._tabs[0].content);
-        args.session.bind('tab:add', function(args) {
-            BIPlugin.bind_callbacks(args.tab.content);
+        if (Saiku.tabs._tabs[0] && Saiku.tabs._tabs[0].content) {
+            BIPlugin.bind_callbacks(Saiku.tabs._tabs[0].content);
+        }
+        
+        args.session.bind('workspace:new', function(args) {
+            BIPlugin.bind_callbacks(args.workspace);
         });
     }
 });

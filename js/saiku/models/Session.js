@@ -103,11 +103,6 @@ var Session = Backbone.Model.extend({
         $("#header").show();
         Saiku.ui.unblock();
         
-        // Start routing
-        if (Backbone.history) {
-            Backbone.history.start();
-        }
-        
         // Add initial tab
         Saiku.tabs.render();
         if (! Settings.ACTION) {
@@ -122,10 +117,10 @@ var Session = Backbone.Model.extend({
     
     prefetch_dimensions: function() {
         if (! this.measures || ! this.dimensions) {
-            Log.log(JSON.stringify({
+            Log.log({
                 Message: "measures or dimensions not initialized",
                 Session: JSON.stringify(this)
-            }));
+            });
             return;
         }
         
@@ -147,12 +142,19 @@ var Session = Backbone.Model.extend({
                         } else {
                             this.dimensions[key] = new Dimension({ key: key });
                             this.measures[key] = new Measure({ key: key });
-                            this.dimensions[key].fetch();
-                            this.measures[key].fetch();
+                            if (Settings.DIMENSION_PREFETCH === true) {
+                                this.dimensions[key].fetch();
+                                this.measures[key].fetch();
+                            }
                         }
                     }
                 }
             }
+        }
+        
+        // Start routing
+        if (Backbone.history) {
+            Backbone.history.start();
         }
     },
     
