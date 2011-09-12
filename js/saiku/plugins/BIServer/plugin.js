@@ -99,7 +99,7 @@ var BIPlugin = {
         
         // Toggle save button
         workspace.bind('query:result', function(args) {
-            var isAllowed = args.data.cellset !== null && 
+            var isAllowed = args.data.cellset && 
                 args.data.cellset.length > 0;
             puc.allowSave(isAllowed);
         });
