@@ -66,7 +66,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     
     reflect_properties: function() {
         var properties = this.workspace.query.properties ?
-            this.workspace.query.properties.properties : {};
+            this.workspace.query.properties.properties : Settings.QUERY_PROPERTIES;
         
         // Set properties appropriately
         if (properties['saiku.olap.query.nonempty'] === 'true') {
