@@ -176,14 +176,17 @@ var Chart = Backbone.View.extend({
                 } else if (args.data.cellset[row][0].value !== "null") {
                     var record = [];
                     for (var col = lowest_level; col < args.data.cellset[row].length; col++) {
-                        record.push(
+                        var value = 
                             typeof(args.data.cellset[row][col].value) !== "number" &&
                             parseFloat(args.data.cellset[row][col].value
                                 .replace(/[^a-zA-Z 0-9.]+/g,'')) ?
                             parseFloat(args.data.cellset[row][col].value
                                 .replace(/[^a-zA-Z 0-9.]+/g,'')) :
-                            args.data.cellset[row][col].value
-                        );
+                            args.data.cellset[row][col].value;
+                        if (col == lowest_level) {
+                            value += " [" + row + "]";
+                        }
+                        record.push(value);
                     }
                     this.data.resultset.push(record);
                 }
