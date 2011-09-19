@@ -159,7 +159,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     show_mdx: function(event) {
         this.workspace.query.action.get("/mdx", { 
             success: function(model, response) {
-                (new MDXModal({ mdx: response })).render().open();
+                (new MDXModal({ mdx: response.mdx })).render().open();
             }
         });
     },
