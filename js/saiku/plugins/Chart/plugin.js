@@ -173,7 +173,7 @@ var Chart = Backbone.View.extend({
                             colName: args.data.cellset[row][field].value
                         });
                     }
-                } else {
+                } else if (args.data.cellset[row][0].value !== "null") {
                     var record = [];
                     for (var col = lowest_level; col < args.data.cellset[row].length; col++) {
                         record.push(
