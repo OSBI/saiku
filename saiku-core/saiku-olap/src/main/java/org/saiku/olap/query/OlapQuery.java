@@ -173,7 +173,6 @@ public class OlapQuery implements IQuery {
         StringWriter writer = new StringWriter();
         mdx.getSelect().unparse(new ParseTreeWriter(new PrintWriter(writer)));
         CellSet cellSet = mdx.execute();
-        
     	if (scenario != null && query.getDimension("Scenario") != null) {
     		QueryDimension dimension = query.getDimension("Scenario");
     		dimension.getInclusions().clear();
