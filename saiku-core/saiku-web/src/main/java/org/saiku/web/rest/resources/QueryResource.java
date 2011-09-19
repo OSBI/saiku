@@ -58,6 +58,7 @@ import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.service.util.exception.SaikuServiceException;
+import org.saiku.web.rest.objects.MdxQueryObject;
 import org.saiku.web.rest.objects.SavedQuery;
 import org.saiku.web.rest.objects.SelectionRestObject;
 import org.saiku.web.rest.objects.resultset.QueryResult;
@@ -232,16 +233,17 @@ public class QueryResource {
 
 	@GET
 	@Path("/{queryname}/mdx")
-	public String getMDXQuery(@PathParam("queryname") String queryName){
+	public MdxQueryObject getMDXQuery(@PathParam("queryname") String queryName){
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/mdx/\tGET");
 		}
 		try {
-			return olapQueryService.getMDXQuery(queryName);
+			String mdx = olapQueryService.getMDXQuery(queryName);
+			return new MdxQueryObject(mdx);
 		}
 		catch (Exception e) {
 			log.error("Cannot get mdx for query (" + queryName + ")",e);
-			return "";
+			return null;
 		}
 	}
 
@@ -634,7 +636,7 @@ public class QueryResource {
 			if (formParams.containsKey("selections")) {
 				LinkedList<String> sels = (LinkedList<String>) formParams.get("selections");
 				String selectionJSON = (String) sels.getFirst();
-				ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
+				ObjectMapper mapper = new ObjectMapper();
 				List<SelectionRestObject> selections = mapper.readValue(selectionJSON, TypeFactory.collectionType(ArrayList.class, SelectionRestObject.class));
 
 
