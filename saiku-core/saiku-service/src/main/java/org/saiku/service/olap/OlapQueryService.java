@@ -468,7 +468,12 @@ public class OlapQueryService {
 		Properties props = query.getProperties();
 		try {
 			con.createScenario();
-			props.put("org.saiku.connection.scenario", Boolean.toString(true));
+			if (query.getDimension("Scenario") != null) {
+				props.put("org.saiku.connection.scenario", Boolean.toString(true));
+			}
+			else {
+				props.put("org.saiku.connection.scenario", Boolean.toString(false));
+			}
 		} catch (Exception e) {
 			props.put("org.saiku.connection.scenario", Boolean.toString(false));
 		}
