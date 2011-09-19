@@ -28,11 +28,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.olap4j.AllocationPolicy;
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
 import org.olap4j.OlapStatement;
+import org.olap4j.Scenario;
 import org.olap4j.mdx.IdentifierNode;
 import org.olap4j.mdx.IdentifierSegment;
 import org.olap4j.metadata.Cube;
@@ -149,11 +151,24 @@ public class OlapQueryService {
 	}
 	
 	public CellDataSet execute(String queryName, ICellSetFormatter formatter) {
-		IQuery query = getIQuery(queryName);
 		try {
+			IQuery query = getIQuery(queryName);
+			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
+
 			Long start = (new Date()).getTime();
+			if (query.getScenario() != null) {
+				log.info("Query (" + queryName + ") Setting scenario:" + query.getScenario().getId());
+				con.setScenario(query.getScenario());
+			}
+			
 			CellSet cellSet =  query.execute();
 	        Long exec = (new Date()).getTime();
+	        
+	        if (query.getScenario() != null) {
+				log.info("Query (" + queryName + ") removing scenario:" + query.getScenario().getId());
+	        	con.setScenario(null);
+	        }
+	        
 	        CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cellSet,formatter);
 	        Long format = (new Date()).getTime();
 	        log.info("Size: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
@@ -198,6 +213,48 @@ public class OlapQueryService {
 		}
 	}
 	
+	public void setCellValue(String queryName, List<Integer> position, String value, String allocationPolicy) {
+		try {
+
+			IQuery query = getIQuery(queryName);
+			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
+			Scenario s = con.createScenario();
+			query.setScenario(s);
+			con.setScenario(s);
+
+
+			CellSet cs1 = query.execute();
+	        OlapUtil.storeCellSet(queryName, cs1);
+	        
+			Object v = null;
+			try {
+				v = Integer.parseInt(value);
+			} catch (Exception e) {
+				v = Double.parseDouble(value);
+			}
+			if (v == null) {
+				throw new SaikuServiceException("Error setting value of query " + queryName + " to:" + v);
+			}
+			
+			System.out.println("Created scenario:" + s + " : cell:" + position + " value" + value);
+			allocationPolicy = AllocationPolicy.EQUAL_ALLOCATION.toString();
+
+			AllocationPolicy ap = AllocationPolicy.valueOf(allocationPolicy);
+			CellSet cs = OlapUtil.getCellSet(queryName);
+			cs.getCell(position).setValue(v, ap);
+			
+			
+//			CellSet cs2 = query.execute();
+
+	        
+	        
+			con.setScenario(null);
+		} catch (Exception e) {
+			throw new SaikuServiceException("Error setting value: " + queryName,e);
+		}
+
+	}
+
 	public void swapAxes(String queryName) {
 		getIQuery(queryName).swapAxes();
 	}
@@ -407,7 +464,15 @@ public class OlapQueryService {
 	
 	public Properties getProperties(String queryName) {
 		IQuery query = getIQuery(queryName);
-		return query.getProperties();
+		OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
+		Properties props = query.getProperties();
+		try {
+			con.createScenario();
+			props.put("org.saiku.connection.scenario", Boolean.toString(true));
+		} catch (Exception e) {
+			props.put("org.saiku.connection.scenario", Boolean.toString(false));
+		}
+		return props;
 	}
 
 	public String getMDXQuery(String queryName) {

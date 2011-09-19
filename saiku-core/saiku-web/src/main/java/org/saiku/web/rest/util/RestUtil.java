@@ -89,20 +89,25 @@ public class RestUtil {
 				DataCell dcell = (DataCell) acell;
 				Properties metaprops = new Properties();
 				// metaprops.put("color", "" + dcell.getColorValue());
-				ArrayList<Integer> coordinates = new ArrayList<Integer>();
+				String position = null;
 				for (Integer number : dcell.getCoordinates()) {
-					coordinates.add(number);
+					if (position != null) {
+						position += ":" + number.toString();
+					}
+					else {
+						position = number.toString();
+					}
 				}
-				metaprops.put("coordinates", coordinates);
-				metaprops.put("formattedValue", "" + dcell.getFormattedValue());
+				metaprops.put("position", position);
+//				metaprops.put("formattedValue", "" + dcell.getFormattedValue());
 				// metaprops.put("rawValue", "" + dcell.getRawValue());
-				metaprops.put("rawNumber", "" + dcell.getRawNumber());
+				metaprops.put("raw", "" + dcell.getRawNumber());
 				
-				Properties props = new Properties();
-				props.putAll(dcell.getProperties());
+//				Properties props = new Properties();
+//				props.putAll(dcell.getProperties());
 				
 				// TODO no properties  (NULL) for now - 
-				return new Cell(dcell.getFormattedValue(), Cell.Type.DATA_CELL);
+				return new Cell(dcell.getFormattedValue(), metaprops, Cell.Type.DATA_CELL);
 			}
 			if (acell instanceof MemberCell) {
 				MemberCell mcell = (MemberCell) acell;

@@ -28,6 +28,7 @@ import org.olap4j.CellSet;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
 import org.olap4j.OlapStatement;
+import org.olap4j.Scenario;
 import org.olap4j.mdx.SelectNode;
 import org.olap4j.mdx.parser.MdxParser;
 import org.olap4j.mdx.parser.MdxParserFactory;
@@ -200,6 +201,14 @@ public class MdxQuery implements IQuery {
 	}
 
 	public void clearAllQuerySelections() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void setScenario(Scenario scenario) {
+		throw new UnsupportedOperationException();		
+	}
+
+	public Scenario getScenario() {
 		throw new UnsupportedOperationException();
 	}
 }

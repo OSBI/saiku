@@ -26,7 +26,7 @@ public class Cell  {
 
 	private String value;
 	private String type;
-	private Properties properties;
+	private Properties properties = new Properties();
 //	private Properties metaproperties;
 
 	
@@ -49,7 +49,7 @@ public class Cell  {
 	
 	public Cell(String value, Properties properties, Type type) {
 		this.value = value;
-		this.properties = properties;
+		this.properties.putAll(properties);
 		this.type = type.toString();
 	}
 	

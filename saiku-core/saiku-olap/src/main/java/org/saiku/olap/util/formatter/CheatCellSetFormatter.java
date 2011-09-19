@@ -341,7 +341,7 @@ public class CheatCellSetFormatter implements ICellSetFormatter {
 				continue;
 			}
 			final DataCell cellInfo = new DataCell(true, false, coordList);
-
+			cellInfo.setCoordinates(cell.getCoordinateList());
 //			for (int z = 0; z < matrix.getMatrixHeight(); z++) {
 //				final AbstractBaseCell headerCell = matrix.get(x, z);
 //

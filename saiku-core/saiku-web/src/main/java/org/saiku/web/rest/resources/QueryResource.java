@@ -505,8 +505,8 @@ public class QueryResource {
 	@PUT
 	@Produces({"application/json" })
 	@Path("/{queryname}/swapaxes")
-	public Status swapAxes(
-			@PathParam("queryname") String queryName)	{
+	public Status swapAxes(@PathParam("queryname") String queryName)	
+	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/swapaxes\tPUT");
 		}
@@ -514,6 +514,30 @@ public class QueryResource {
 		return Status.OK;
 
 	}
+	
+	@GET
+	@Produces({"application/json" })
+	@Path("/{queryname}/cell/{position}/{value}")
+	public Status setCell(@PathParam("queryname") String queryName,
+						  @PathParam("position") String position,
+						  @PathParam("value") String value)	
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/cell/" + position+ "/" + value + "\tGET");
+		}
+		String[] positions = position.split(":");
+		List<Integer> cellPosition = new ArrayList<Integer>();
+		
+		for (String p : positions) {
+			Integer pInt = Integer.parseInt(p);
+			cellPosition.add(pInt);
+		}
+		
+		olapQueryService.setCellValue(queryName, cellPosition, value, null);
+		return Status.OK;
+
+	}
+	
 
 	/*
 	 * Dimension Methods

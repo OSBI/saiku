@@ -29,12 +29,15 @@ import java.util.Properties;
 import org.olap4j.Axis;
 import org.olap4j.Axis.Standard;
 import org.olap4j.CellSet;
+import org.olap4j.Scenario;
+import org.olap4j.impl.IdentifierParser;
 import org.olap4j.mdx.ParseTreeWriter;
 import org.olap4j.metadata.Cube;
 import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
 import org.olap4j.query.QueryDimension.HierarchizeMode;
+import org.olap4j.query.Selection;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.query.QueryProperties.QueryProperty;
 import org.saiku.olap.query.QueryProperties.QueryPropertyFactory;
@@ -47,6 +50,8 @@ public class OlapQuery implements IQuery {
 	private Properties properties = new Properties();
 
 	private SaikuCube cube;
+	
+	private Scenario scenario;
 	
 	public OlapQuery(Query query, SaikuCube cube, boolean applyDefaultProperties) {
 		this.query = query;
@@ -153,11 +158,28 @@ public class OlapQuery implements IQuery {
     }
     
     public CellSet execute() throws Exception {
-        final Query mdx = this.query;
+
+    	if (scenario != null && query.getDimension("Scenario") != null) {
+    		QueryDimension dimension = query.getDimension("Scenario");
+    		moveDimension(dimension, Axis.FILTER);
+    		Selection sel = dimension.createSelection(IdentifierParser.parseIdentifier("[Scenario].[" + getScenario().getId() + "]"));
+    		if (!dimension.getInclusions().contains(sel)) {
+    			dimension.getInclusions().add(sel);
+    		}
+    	}
+    	
+        Query mdx = this.query;
         mdx.validate();
-        final Writer writer = new StringWriter();
+        StringWriter writer = new StringWriter();
         mdx.getSelect().unparse(new ParseTreeWriter(new PrintWriter(writer)));
-        final CellSet cellSet = mdx.execute();
+        CellSet cellSet = mdx.execute();
+        
+    	if (scenario != null && query.getDimension("Scenario") != null) {
+    		QueryDimension dimension = query.getDimension("Scenario");
+    		dimension.getInclusions().clear();
+    		moveDimension(dimension, null);
+    	}
+
         return cellSet;
     }
     
@@ -226,6 +248,14 @@ public class OlapQuery implements IQuery {
 	
 	public void setMdx(String mdx) {
 		throw new UnsupportedOperationException();
+	}
+	
+	public void setScenario(Scenario scenario) {
+		this.scenario = scenario;
+	}
+	
+	public Scenario getScenario() {
+		return scenario;
 	}
 
 }

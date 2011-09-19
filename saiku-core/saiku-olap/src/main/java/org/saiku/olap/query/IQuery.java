@@ -25,6 +25,7 @@ import java.util.Properties;
 
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
+import org.olap4j.Scenario;
 import org.olap4j.metadata.Cube;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
@@ -57,5 +58,7 @@ public interface IQuery {
 	public void resetAxisSelections(QueryAxis axis);
 	public void clearAllQuerySelections();
 	public void setMdx(String mdx);
+	public void setScenario(Scenario scenario);
+	public Scenario getScenario();
 
 }
