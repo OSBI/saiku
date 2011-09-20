@@ -57,7 +57,7 @@ var Table = Backbone.View.extend({
                     contents += '<th class="row_header"><div>' + header.value + '</div></th>';
                 } // If the cell is a normal data cell
                 else if (header.type === "DATA_CELL") {
-                    contents += '<td class="data"><div>' + header.value + '</div></td>';
+                    contents += '<td class="data"><div alt="' + header.properties.raw + '" rel="' + header.properties.position + '">' + header.value + '</div></td>';
                 }
             }
             contents += "</tr>";
