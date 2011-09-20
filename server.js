@@ -14,7 +14,7 @@ var http = require('http');
 var express = require('express');
 var app = express.createServer();
 var port = process.env.C9_PORT || parseInt(process.ARGV[2], 10) || 8080;
-var url = process.ARGV[3] || 'demo.analytical-labs.com';
+var url = process.ARGV[3] || 'dev.analytical-labs.com';
 var remote_port = process.ARGV[4] || 80;
 var proxy = http.createClient(remote_port, url);
 
