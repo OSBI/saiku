@@ -1,5 +1,5 @@
 /**
- * Initialize Loggly sensor
+ * Initialize logger
  */
 var logger = function(config) { 
     this.url = config.url;
@@ -20,7 +20,7 @@ window.Log = new logger({
 });
 
 /**
- * Log errors to Loggly
+ * Log errors
  */
 window.defaultHandler = window.error;
 window.onerror = function(errorMsg, url, lineNumber) {
@@ -29,7 +29,8 @@ window.onerror = function(errorMsg, url, lineNumber) {
         		browser: navigator.userAgent,
         		message: errorMsg,
         		file: url,
-        	    lineNumber: lineNumber
+        	    lineNumber: lineNumber,
+        	    timestamp: new Date()
         });
     }
     
