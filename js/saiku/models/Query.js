@@ -20,6 +20,7 @@ var Query = Backbone.Model.extend({
         // Initialize properties, action handler, and result handler
         this.action = new QueryAction({}, { query: this });
         this.result = new Result({}, { query: this });
+        this.scenario = new QueryScenario({}, { query: this });
     },
     
     parse: function(response) {
