@@ -390,7 +390,7 @@ public class QueryResource {
 
 	@GET
 	@Produces({"application/json" })
-	@Path("/{queryname}/drillthrough:{maxrows}")
+	@Path("/{queryname}/drillthrough/{maxrows}")
 	public QueryResult execute(
 			@PathParam("queryname") String queryName, 
 			@PathParam("maxrows") @DefaultValue("100") Integer maxrows)
