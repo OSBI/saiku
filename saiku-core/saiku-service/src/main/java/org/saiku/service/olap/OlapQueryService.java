@@ -456,9 +456,10 @@ public class OlapQueryService {
 		newAxis.setNonEmpty(bool);
 	}
 
-	public void setProperties(String queryName, Properties props) {
+	public Properties setProperties(String queryName, Properties props) {
 		IQuery query = getIQuery(queryName);
 		query.setProperties(props);
+		return getProperties(queryName);
 	}	
 	
 	

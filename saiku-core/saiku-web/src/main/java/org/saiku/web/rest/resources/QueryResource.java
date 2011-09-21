@@ -187,7 +187,7 @@ public class QueryResource {
 	@POST
 	@Produces({"application/json" })
 	@Path("/{queryname}/properties")
-	public Status setProperties(
+	public Properties setProperties(
 			@PathParam("queryname") String queryName, 
 			@FormParam("properties") String properties) 
 	{
@@ -196,14 +196,12 @@ public class QueryResource {
 		}
 		try {
 			Properties props = new Properties();
-			System.out.print("PROPERTIES: " + properties);
 			StringReader sr = new StringReader(properties);
 			props.load(sr);
-			olapQueryService.setProperties(queryName, props);
-			return Status.OK;
+			return olapQueryService.setProperties(queryName, props);
 		} catch(Exception e) {
 			log.error("Cannot set properties for query (" + queryName + ")",e);
-			return Status.INTERNAL_SERVER_ERROR;
+			return null;
 		}
 
 	}
@@ -211,7 +209,7 @@ public class QueryResource {
 	@POST
 	@Produces({"application/json" })
 	@Path("/{queryname}/properties/{propertyKey}")
-	public Status setProperties(
+	public Properties setProperties(
 			@PathParam("queryname") String queryName, 
 			@PathParam("propertyKey") String propertyKey, 
 			@FormParam("propertyValue") String propertyValue) 
@@ -222,11 +220,10 @@ public class QueryResource {
 		try{
 			Properties props = new Properties();
 			props.put(propertyKey, propertyValue);
-			olapQueryService.setProperties(queryName, props);
-			return Status.OK;
+			return olapQueryService.setProperties(queryName, props);
 		}catch(Exception e){
 			log.error("Cannot set property (" + propertyKey + " ) for query (" + queryName + ")",e);
-			return Status.INTERNAL_SERVER_ERROR;
+			return null;
 		}
 
 	}
