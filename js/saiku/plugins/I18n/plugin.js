@@ -219,6 +219,8 @@ Saiku.events.bind('session:new', function() {
 /**
  * Initialize Loggly input for user-provided translations
  */
-window.Translate = new logger({ 
-    url: Settings.TELEMETRY_SERVER + '/input/translations'
-});
+if (logger) {
+    window.Translate = new logger({ 
+        url: Settings.TELEMETRY_SERVER + '/input/translations'
+    });
+}
