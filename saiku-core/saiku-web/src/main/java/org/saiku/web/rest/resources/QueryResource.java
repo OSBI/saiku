@@ -628,14 +628,12 @@ public class QueryResource {
 			@PathParam("queryname") String queryName,
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName, 
-			MultivaluedMap<String, String> formParams) {
+			@FormParam("selections") String selectionJSON) {
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"\tPUT");
 		}
 		try{
-			if (formParams.containsKey("selections")) {
-				LinkedList<String> sels = (LinkedList<String>) formParams.get("selections");
-				String selectionJSON = (String) sels.getFirst();
+			if (selectionJSON != null) {
 				ObjectMapper mapper = new ObjectMapper();
 				List<SelectionRestObject> selections = mapper.readValue(selectionJSON, TypeFactory.collectionType(ArrayList.class, SelectionRestObject.class));
 
