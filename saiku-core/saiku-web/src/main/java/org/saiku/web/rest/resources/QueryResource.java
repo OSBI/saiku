@@ -517,7 +517,7 @@ public class QueryResource {
 
 	}
 	
-	@GET
+	@POST
 	@Produces({"application/json" })
 	@Path("/{queryname}/cell/{position}/{value}")
 	public Status setCell(@PathParam("queryname") String queryName,
