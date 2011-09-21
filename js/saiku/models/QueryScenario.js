@@ -1,46 +1,54 @@
 var QueryScenario = Backbone.Model.extend({
     initialize: function(args, options) {
+        // Maintain `this`
+        _.bindAll(this, "attach_listeners", "clicked_cell", "save_writeback", 
+            "cancel_writeback", "check_input");
+        
         this.query = options.query;
         this.query.workspace.bind('table:render', this.attach_listeners);
     },
     
-        
-    leaver: function() {
-        alert('test');
+    attach_listeners: function(args) {
+        $(args.workspace.el).find("td.data").click(this.clicked_cell);
     },
     
-    attach_listeners: function(args) {
-        $(args.workspace.el).find("td.data").click(function(event) {
-            $target = $(event.target).hasClass('data') ?
-                $(event.target).find('div') : $(event.target);
-            var value = $target.attr('alt');
-                        var pos = $target.attr('rel');
-                        
-            saving = function(e) {
-                 if (e.keyCode == 13) {
-                    this.value = value;
-                    this.position = pos;
-                    $target.text('');
-                    alert('enter');
-                 }
-                 if (e.keyCode == 27 || e.keyCode == 9) {
-                    $target..text('');
-                    alert('esc');
-                 }
-                 (this.leaver);
-                 
-                return (false);
-
-
-            };
-            
-            var $input = $("<input type='text' value='" + value + "' />")
-                .keyup(saving);
-            $target.html('').append($input);
-        });
+    clicked_cell: function(event) {
+        $target = $(event.target).hasClass('data') ?
+            $(event.target).find('div') : $(event.target);
+        var value = $target.attr('alt');
+                    var pos = $target.attr('rel');
+        
+        var $input = $("<input type='text' value='" + value + "' />")
+            .keyup(this.check_input)
+            .blur(this.cancel_writeback);
+        $target.html('').append($input);
+        $input.focus();
     },
     
     check_input: function(event) {
+        if (event.which == 13) {
+            this.save_writeback(event);
+        } else if (event.which == 27 || event.which == 9) {
+            this.cancel_writeback(event);
+        }
+         
+        return false;
+    },
+    
+    save_writeback: function(event) {
+        var $input = $(event.target).closest('input');
+        this.set({
+            value: $input.val(),
+            position: $input.parent().attr('rel')
+        });
+        this.save();
+        var value = $input.val();
+        $input.parent().text(value);
+    },
+    
+    cancel_writeback: function(event) {
+        var $input = $(event.target).closest('input');
+        $input.parent().text($input.parent().attr('alt'));
     },
     
     parse: function() {
@@ -48,6 +56,7 @@ var QueryScenario = Backbone.Model.extend({
     },
 
     url: function() {
-        return this.query.url() + "/cell/" + this.position + "/" + this.value; 
+        return this.query.url() + "/cell/" + this.get('position') + 
+            "/" + this.get('value'); 
     }
 });
