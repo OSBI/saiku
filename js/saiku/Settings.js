@@ -8,7 +8,7 @@ var Settings = {
     TOMCAT_WEBAPP: "/saiku",
     REST_MOUNT_POINT: "/rest/saiku/",
     DIMENSION_PREFETCH: true,
-    HIDE_ERRORS: false,
+    ERROR_LOGGING: true,
     QUERY_PROPERTIES: {
         'saiku.olap.query.automatic_execution': 'true',
         'saiku.olap.query.nonempty': 'true',

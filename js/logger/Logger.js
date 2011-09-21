@@ -15,28 +15,30 @@ var logger = function(config) {
     };
 };
 
-window.Log = new logger({
-    url: Settings.TELEMETRY_SERVER + '/input/errors'
-});
-
-/**
- * Log errors
- */
-window.defaultHandler = window.error;
-window.onerror = function(errorMsg, url, lineNumber) {
-    if (lineNumber !== 0) {
-        Log.log({
-        		browser: navigator.userAgent,
-        		message: errorMsg,
-        		file: url,
-        	    lineNumber: lineNumber,
-        	    timestamp: new Date()
-        });
-    }
+if (Settings.ERROR_LOGGING) {
+    window.Log = new logger({
+        url: Settings.TELEMETRY_SERVER + '/input/errors'
+    });
     
-    if (defaultHandler) {
-        return defaultHandler(errorMsg, url, lineNumber);
-    }
-    
-    return true;
-};
+    /**
+     * Log errors
+     */
+    window.defaultHandler = window.error;
+    window.onerror = function(errorMsg, url, lineNumber) {
+        if (lineNumber !== 0) {
+            Log.log({
+            		browser: navigator.userAgent,
+            		message: errorMsg,
+            		file: url,
+            	    lineNumber: lineNumber,
+            	    timestamp: new Date()
+            });
+        }
+        
+        if (defaultHandler) {
+            return defaultHandler(errorMsg, url, lineNumber);
+        }
+        
+        return true;
+    };
+}
