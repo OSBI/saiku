@@ -9,6 +9,8 @@ var QueryScenario = Backbone.Model.extend({
     },
     
     attach_listeners: function(args) {
+        if (args.workspace.query && args.workspace.query.properties &&
+            args.workspace.query.properties.properties['org.saiku.connection.scenario'] === "true")
         $(args.workspace.el).find("td.data").click(this.clicked_cell);
     },
     
