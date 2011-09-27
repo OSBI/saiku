@@ -50,6 +50,7 @@ public class MdxQuery implements IQuery {
 	private SaikuCube cube;
 	private OlapConnection connection;
 	private String name;
+	private Scenario scenario;
 	
 	public MdxQuery(OlapConnection con, SaikuCube cube, String name, String mdx) {
 		this.cube = cube;
@@ -205,10 +206,10 @@ public class MdxQuery implements IQuery {
 	}
 
 	public void setScenario(Scenario scenario) {
-		throw new UnsupportedOperationException();		
+		this.scenario = scenario;
 	}
-
+	
 	public Scenario getScenario() {
-		throw new UnsupportedOperationException();
+		return scenario;
 	}
 }

@@ -218,9 +218,19 @@ public class OlapQueryService {
 
 			IQuery query = getIQuery(queryName);
 			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
-			Scenario s = con.createScenario();
-			query.setScenario(s);
-			con.setScenario(s);
+			
+			Scenario s;
+			if (query.getScenario() == null) {
+				s = con.createScenario();
+				query.setScenario(s);
+				con.setScenario(s);
+				System.out.println("Created scenario:" + s + " : cell:" + position + " value" + value);
+			} else {
+				s = query.getScenario();
+				con.setScenario(s);
+				System.out.println("Using scenario:" + s + " : cell:" + position + " value" + value);
+
+			}
 
 
 			CellSet cs1 = query.execute();
@@ -236,7 +246,6 @@ public class OlapQueryService {
 				throw new SaikuServiceException("Error setting value of query " + queryName + " to:" + v);
 			}
 			
-			System.out.println("Created scenario:" + s + " : cell:" + position + " value" + value);
 			allocationPolicy = AllocationPolicy.EQUAL_ALLOCATION.toString();
 
 			AllocationPolicy ap = AllocationPolicy.valueOf(allocationPolicy);
@@ -252,6 +261,7 @@ public class OlapQueryService {
 		} catch (Exception e) {
 			throw new SaikuServiceException("Error setting value: " + queryName,e);
 		}
+		
 
 	}
 
