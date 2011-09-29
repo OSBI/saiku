@@ -77,8 +77,15 @@ var Query = Backbone.Model.extend({
         if ($target_el.hasClass('filter')) target = "FILTER";
         
         var url = "/axis/" + target + "/dimension/" + dimension;
+        var level = dimension.split('/')[3];
+        var index = $target_el.find('li.ui-draggable').index(
+                $target_el.find('a[title="' + level + '"]').parent() );
         
         this.action.post(url, {
+            data: {
+                position: index
+            },
+            
             success: function() {
                 if (this.query.properties
                     .properties['saiku.olap.query.automatic_execution'] === 'true') {
