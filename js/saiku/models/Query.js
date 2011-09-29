@@ -77,9 +77,8 @@ var Query = Backbone.Model.extend({
         if ($target_el.hasClass('filter')) target = "FILTER";
         
         var url = "/axis/" + target + "/dimension/" + dimension;
-        var level = dimension.split('/')[3];
         var index = $target_el.find('li.ui-draggable').index(
-                $target_el.find('a[title="' + level + '"]').parent() );
+                $target_el.find('a[href="#' + dimension + '"]').parent() );
         
         this.action.post(url, {
             data: {
