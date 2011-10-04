@@ -137,7 +137,7 @@
                 
                 <ul>
                 <% _.each(measures, function(measure) { %>
-                    <li><a title="[<%= measure.description ? measure.description : measure.uniqueName %>]"
+                    <li><a title="<%= measure.description ? measure.description : measure.uniqueName %>"
                         class="measure" href="#Measures/member/<%= measure.uniqueName %>"><%= measure.name %></a>
                     </li>
                 <% }); %>
