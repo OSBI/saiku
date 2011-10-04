@@ -69,7 +69,7 @@ function unleash_chaos_monkey(request, response) {
 // Handle incoming requests
 app.all("/saiku/*", function(request, response) {
     console.log(request.method, request.url);
-    request.headers.host = url;
+    request.headers.host = backend_host;
 
     if (process.env.CHAOS_MONKEY && Math.random() < 0.25) {
         unleash_chaos_monkey(request, response);
