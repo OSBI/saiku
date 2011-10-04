@@ -7,19 +7,19 @@
  * To play with the chaos monkey, set the CHAOS_MONKEY environment variable
  * to anything (Preferably a nice name for your chaos monkey).
  * 
- * To start the server, run `node server.js port [url]`
+ * To start the server, run `node server.js [port] [backend_host] [backend_port]`
  */
 
 var http = require('http');
 var express = require('express');
 var app = express.createServer();
 var port = process.env.C9_PORT || parseInt(process.ARGV[2], 10) || 8080;
-var url = process.ARGV[3] || 'dev.analytical-labs.com';
-var remote_port = process.ARGV[4] || 80;
-var proxy = http.createClient(remote_port, url);
+var backend_host = process.ARGV[3] || 'dev.analytical-labs.com';
+var backend_port = process.ARGV[4] || 80;
+var proxy = http.createClient(backend_port, backend_host);
 
 proxy.on('error', function() {
-    proxy = http.createClient(remote_port, url);
+    proxy = http.createClient(backend_port, backend_host);
 });
 
 // Load static server
