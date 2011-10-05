@@ -115,6 +115,12 @@
 										<include name="foodmart" />
 									</fileset>
 								</copy>
+                                <copy todir="target/dist/saiku-server/tomcat/webapps/saiku/WEB-INF/classes/foodmart/" overwrite="true">
+									<fileset dir="${basedir}/../util/">
+										<include name="FoodMart.xml" />
+									</fileset>
+								</copy>
+
 								
 								<zip destfile="target/saiku-server-foodmart-${project.version}.zip">
 									<zipfileset dir="target/dist/" />

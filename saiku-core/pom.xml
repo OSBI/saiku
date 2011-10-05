@@ -16,8 +16,6 @@
 	</properties>
 
 	<modules>
-		<module>saiku-olap</module>
-		<module>saiku-datasources</module>
 		<module>saiku-service</module>
 		<module>saiku-web</module>
 	</modules>

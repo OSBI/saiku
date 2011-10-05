@@ -46,7 +46,6 @@
   <classpathentry kind="var" path="M2_REPO/org/apache/hadoop/hive/hive-jdbc/0.5.0-pentaho-1.0.0/hive-jdbc-0.5.0-pentaho-1.0.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/hadoop/hive/hive-metastore/0.5.0-pentaho-1.0.0/hive-metastore-0.5.0-pentaho-1.0.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/hadoop/hive/hive-service/0.5.0-pentaho-1.0.0/hive-service-0.5.0-pentaho-1.0.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/httpcomponents/httpcore/4.0-beta3/httpcore-4.0-beta3.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/ibm/icu/icu4j/2.6.1/icu4j-2.6.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/codehaus/jackson/jackson-core-asl/1.7.4/jackson-core-asl-1.7.4.jar"/>
@@ -97,8 +96,6 @@
   <classpathentry kind="var" path="M2_REPO/com/sun/org/apache/xml/internal/resolver/20050927/resolver-20050927.jar"/>
   <classpathentry kind="var" path="M2_REPO/rome/rome/0.9/rome-0.9.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/sun/xml/messaging/saaj/saaj-impl/1.3.3/saaj-impl-1.3.3.jar"/>
-  <classpathentry kind="src" path="/saiku-datasources"/>
-  <classpathentry kind="src" path="/saiku-olap"/>
   <classpathentry kind="src" path="/saiku-service"/>
   <classpathentry kind="var" path="M2_REPO/salesforce/salesforce/1.0/salesforce-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/net/sf/saxon/saxon-dom/8.5.1/saxon-dom-8.5.1.jar"/>

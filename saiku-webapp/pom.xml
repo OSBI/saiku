@@ -48,6 +48,11 @@
 										<include name="foodmart.zip" />
 									</fileset>
 								</unzip>
+                                <copy todir="target/${project.artifactId}-foodmart-${project.version}/WEB-INF/classes/foodmart/" overwrite="true">
+									<fileset dir="${basedir}/../util/">
+										<include name="FoodMart.xml" />
+									</fileset>
+								</copy>
 								<copy todir="target/${project.artifactId}-foodmart-${project.version}/WEB-INF/classes/saiku-datasources/" overwrite="true">
 									<fileset dir="${basedir}/../util/">
 										<include name="foodmart" />
@@ -111,11 +116,6 @@
 		</plugins>
 	</build>
 	<dependencies>
-		<dependency>
-			<groupId>org.saiku</groupId>
-			<artifactId>saiku-datasources</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>org.saiku</groupId>
 			<artifactId>saiku-service</artifactId>

@@ -38,20 +38,6 @@
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.saiku</groupId>
-									<artifactId>saiku-datasources</artifactId>
-									<version>${project.version}</version>
-									<type>jar</type>
-									<outputDirectory>target/dist/saiku/lib</outputDirectory>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.saiku</groupId>
-									<artifactId>saiku-olap</artifactId>
-									<version>${project.version}</version>
-									<type>jar</type>
-									<outputDirectory>target/dist/saiku/lib</outputDirectory>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.saiku</groupId>
 									<artifactId>saiku-service</artifactId>
 									<version>${project.version}</version>
 									<type>jar</type>
@@ -310,16 +296,6 @@
 		</repository>
 	</repositories>
 	<dependencies>
-		<dependency>
-			<groupId>org.saiku</groupId>
-			<artifactId>saiku-datasources</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.saiku</groupId>
-			<artifactId>saiku-olap</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>org.saiku</groupId>
 			<artifactId>saiku-service</artifactId>
