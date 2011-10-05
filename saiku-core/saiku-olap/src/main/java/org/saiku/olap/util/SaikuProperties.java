@@ -227,15 +227,27 @@ public class SaikuProperties extends Properties{
 	}
 
 
-	public static final Boolean olapDefaultNonEmpty = getPropBoolean("saiku.olap.nonempty","false"); 
+	public static final Boolean olapDefaultNonEmpty = getPropBoolean("saiku.olap.nonempty","false");
+	public static final String webExportExcelName = getPropString("saiku.web.export.excel.name","saiku-export");
+	public static final String webExportCsvName = getPropString("saiku.web.export.csv.name","saiku-export");
 
 	private static Boolean getPropBoolean(String key, String defaultValue) {
 		Boolean ret;
-		if (instance.contains(key)) {
-			ret = Boolean.parseBoolean(instance().getProperty(key));
-			
+		if (instance.containsKey(key)) {
+			ret = Boolean.parseBoolean(instance.getProperty(key));
+		} else {
+			ret = Boolean.parseBoolean(defaultValue);
 		}
-		ret = Boolean.parseBoolean(instance.getProperty(key));
+		return ret;
+	}
+	
+	private static String getPropString(String key, String defaultValue) {
+		String ret;
+		if (instance.containsKey(key)) {
+			ret = instance.getProperty(key);
+		} else {
+			ret = defaultValue;
+		}
 		return ret;
 	}
 }

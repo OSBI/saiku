@@ -55,6 +55,7 @@ import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimensionSelection;
 import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.olap.dto.resultset.CellDataSet;
+import org.saiku.olap.util.SaikuProperties;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.service.util.exception.SaikuServiceException;
@@ -283,9 +284,10 @@ public class QueryResource {
 		}
 		try {
 			byte[] doc = olapQueryService.getExport(queryName,"xls",format);
+			String name = SaikuProperties.webExportExcelName;
 			return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
 					"content-disposition",
-			"attachment; filename = saiku-export.xls").header(
+			"attachment; filename = " + name + ".xls").header(
 					"content-length",doc.length).build();
 		}
 		catch (Exception e) {
@@ -315,9 +317,10 @@ public class QueryResource {
 		}
 		try {
 			byte[] doc = olapQueryService.getExport(queryName,"csv",format);
+			String name = SaikuProperties.webExportCsvName;
 			return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
 					"content-disposition",
-			"attachment; filename = saiku-export.csv").header(
+			"attachment; filename = " + name + ".csv").header(
 					"content-length",doc.length).build();
 		}
 		catch (Exception e) {

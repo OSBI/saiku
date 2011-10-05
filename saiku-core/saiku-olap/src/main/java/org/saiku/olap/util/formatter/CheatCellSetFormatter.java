@@ -532,23 +532,23 @@ public class CheatCellSetFormatter implements ICellSetFormatter {
 					memberInfo.setFormattedValue(member.getCaption()); // First try to get a formatted value
 					memberInfo.setParentDimension(member.getDimension().getName());
 					memberInfo.setUniquename(member.getUniqueName());
-					try {
-						memberInfo.setChildMemberCount(member.getChildMemberCount());
-					} catch (OlapException e) {
-						e.printStackTrace();
-						throw new RuntimeException(e);
-					}
-					NamedList<Property> values = member.getLevel().getProperties();
-					for(int j=0; j<values.size();j++){
-						String val;
-						try {
-							val = member.getPropertyFormattedValue(values.get(j));
-						} catch (OlapException e) {
-							e.printStackTrace();
-							throw new RuntimeException(e);
-						}
-						memberInfo.setProperty(values.get(j).getCaption(), val);
-					}
+//					try {
+//						memberInfo.setChildMemberCount(member.getChildMemberCount());
+//					} catch (OlapException e) {
+//						e.printStackTrace();
+//						throw new RuntimeException(e);
+//					}
+//					NamedList<Property> values = member.getLevel().getProperties();
+//					for(int j=0; j<values.size();j++){
+//						String val;
+//						try {
+//							val = member.getPropertyFormattedValue(values.get(j));
+//						} catch (OlapException e) {
+//							e.printStackTrace();
+//							throw new RuntimeException(e);
+//						}
+//						memberInfo.setProperty(values.get(j).getCaption(), val);
+//					}
 
 					if (y > 0) {
 						for (int previ = y-1; previ >= 0;previ--) {
