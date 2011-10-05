@@ -77,7 +77,7 @@ app.all("/saiku/*", function(request, response) {
         get_from_proxy(request, response);
     }
 });
-
+console.log("Connected to '", backend_host, ":", backend_port,"'");
 console.log("Proxy listening on", port);
 
 app.listen(port, '0.0.0.0');
