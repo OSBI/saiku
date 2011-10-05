@@ -33,10 +33,13 @@ eom
 function usageRun() {
 cat <<eom
 Usage: saiku run <package>
-	package can be:
-		server
-			Executes dist/saiku-server/start-saiku.sh
-		ui [port] [backend_host] [backend_port]
+
+package can be:
+
+	server <start|stop>
+            starts or stops the server, according to the argument
+
+	ui [port] [backend_host] [backend_port]
 			Executes node saiku-ui/server.js [port] [backend_host] [backend_port]
 			Default is:
 				node server.js 8080 dev.analytical-labs.com 80
@@ -70,10 +73,25 @@ case $1 in
 		fi
 		case $2 in
 			"server")
+			if ([[ "$3" == 'start' ]]); then
 				echo ""
 				echo "Running Server....."
 				cd saiku-server/target/dist/saiku-server/
 				sh start-saiku.sh
+			else
+				case $3 in
+					"stop")
+						echo ""
+						echo "Stopping Server....."
+						echo ""
+						cd saiku-server/target/dist/saiku-server/
+						sh stop-saiku.sh
+					;;
+					*)
+						usageRun
+					;;
+				esac
+			fi
 			;;
 			"ui")
 				cd saiku-ui
