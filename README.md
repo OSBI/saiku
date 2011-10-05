@@ -39,4 +39,4 @@ License
 Saiku and the Saiku UI are free software. The UI, contained in this repository,
 is available under the terms of the LGPL. A copy is attached for your convenience.
 
-.
+
