@@ -67,7 +67,7 @@ var Table = Backbone.View.extend({
         $(this.el).html(contents);
         
         // Fire table rendered event
-        this.workspace.trigger('table:render', {
+        this.workspace.query.trigger('table:render', {
             workspace: this.workspace,
             table: this
         });

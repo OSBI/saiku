@@ -5,7 +5,7 @@ var QueryScenario = Backbone.Model.extend({
             "cancel_writeback", "check_input");
         
         this.query = options.query;
-        this.query.workspace.bind('table:render', this.attach_listeners);
+        this.query.bind('table:render', this.attach_listeners);
     },
     
     attach_listeners: function(args) {
