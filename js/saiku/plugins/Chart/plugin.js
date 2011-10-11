@@ -173,12 +173,12 @@ var Chart = Backbone.View.extend({
                             colName: args.data.cellset[row][field].value
                         });
                     }
-                } else if (args.data.cellset[row][0].value !== "null") {
+                } else if (args.data.cellset[row][0].value !== "null" && args.data.cellset[row][0].value !== "") {
                     var record = [];
                     for (var col = lowest_level; col < args.data.cellset[row].length; col++) {
                         var value = args.data.cellset[row][col].value;
                         // check if the resultset contains the raw value, if not try to parse the given value
-                        if (args.data.cellset[row][col].properties.raw )
+                        if (args.data.cellset[row][col].properties.raw && args.data.cellset[row][col].properties.raw !== "null")
                         {
                             value = parseFloat(args.data.cellset[row][col].properties.raw);
                         } else if (typeof(args.data.cellset[row][col].value) !== "number" &&
