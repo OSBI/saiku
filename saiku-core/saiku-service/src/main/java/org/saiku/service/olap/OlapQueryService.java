@@ -400,7 +400,7 @@ public class OlapQueryService {
 			QueryAxis qaxis = query.getAxis(axis);
 			if (qaxis != null) {
 				for (QueryDimension dim : qaxis.getDimensions()) {
-					dimsel.add(ObjectUtil.converDimensionSelection(dim));
+					dimsel.add(ObjectUtil.convertDimensionSelection(dim));
 				}
 			}
 		} catch (SaikuOlapException e) {
@@ -416,7 +416,7 @@ public class OlapQueryService {
 			if (qaxis != null) {
 				QueryDimension dim = query.getDimension(dimension);
 				if (dim != null) {
-					return ObjectUtil.converDimensionSelection(dim);
+					return ObjectUtil.convertDimensionSelection(dim);
 				}
 				else
 				{
