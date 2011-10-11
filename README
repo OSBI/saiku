@@ -2,7 +2,7 @@ SAIKU
 
 saiku
 ---------------
-Usage: saiku build <all | project>
+Usage: ./saiku build <all | project>
 	Builds all or an individual saiku project
 
 	Example:
@@ -10,7 +10,7 @@ Usage: saiku build <all | project>
 
 	Others:
 	saiku build < all | ui | server | webapp | bi-platform-plugin >
-Usage: saiku run <package>
+Usage: ./saiku run <package>
 	package can be:
 
 		server <start|stop>
