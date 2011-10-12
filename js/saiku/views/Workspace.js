@@ -13,11 +13,13 @@ var Workspace = Backbone.View.extend({
     initialize: function(args) {
         // Maintain `this` in jQuery event handlers
         _.bindAll(this, "adjust", "toggle_sidebar", "prepare", "new_query", 
-                "init_query", "update_caption", "select_dimension");
+                "init_query", "update_caption", "select_dimension", "populate_selections");
                 
         // Attach an event bus to the workspace
         _.extend(this, Backbone.Events);
-        
+        this.loaded = false;
+        this.bind('dimensions:loaded',this.populate_selections);
+
         // Generate toolbar and append to workspace
         this.toolbar = new WorkspaceToolbar({ workspace: this });
         this.toolbar.render();
@@ -82,6 +84,7 @@ var Workspace = Backbone.View.extend({
             
         // Fire off new workspace event
         Saiku.session.trigger('workspace:new', { workspace: this });
+
         return this; 
     },
     
@@ -154,6 +157,11 @@ var Workspace = Backbone.View.extend({
     },
     
     init_query: function() {
+        if (Settings.MODE == "view" && this.query) {
+            this.query.run();
+            return;
+        }
+
         // Find the selected cube
         if (this.selected_cube === undefined) {
             this.selected_cube = this.query.get('connection') + "/" + 
@@ -185,7 +193,10 @@ var Workspace = Backbone.View.extend({
             $(this.el).find('.measure_tree').html('');
             return;
         }
-        
+
+    },
+    populate_selections: function() {
+        if (this.loaded) {
         // Populate selections - trust me, this is prettier than it was :-/
         var axes = this.query ? this.query.get('axes') : false;
         if (axes) {
@@ -249,6 +260,10 @@ var Workspace = Backbone.View.extend({
         
         // Update caption when saved
         this.query.bind('query:save', this.update_caption);
+        } else {
+            this.loaded = true;
+        }
+
     },
     
     update_caption: function() {
