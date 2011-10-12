@@ -62,7 +62,7 @@ case $1 in
 			;;
 			*)
 				cd saiku-$2
-				mvn clean package
+				mvn clean install
 			;;
 		esac
 	;;
