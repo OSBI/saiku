@@ -24,9 +24,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapDatabaseMetaData;
@@ -42,6 +40,7 @@ import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Measure;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.Schema;
+import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.olap.dto.SaikuCatalog;
 import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.olap.dto.SaikuCube;
@@ -55,14 +54,15 @@ import org.saiku.olap.util.exception.SaikuOlapException;
 
 public class OlapMetaExplorer {
 
-	Map<String,OlapConnection> connections = new HashMap<String,OlapConnection>();
 
-	public OlapMetaExplorer(Map<String,OlapConnection> con) {
-		connections = con;
+	private IConnectionManager connections;
+
+	public OlapMetaExplorer(IConnectionManager ic) {
+		connections = ic;
 	}
 
 	public SaikuConnection getConnection(String connectionName) throws SaikuOlapException {
-		OlapConnection olapcon = connections.get(connectionName);
+		OlapConnection olapcon = connections.getOlapConnection(connectionName);
 		SaikuConnection connection = null;
 		if (olapcon != null) {
 			List<SaikuCatalog> catalogs = new ArrayList<SaikuCatalog>();
@@ -118,7 +118,7 @@ public class OlapMetaExplorer {
 
 	public List<SaikuConnection> getAllConnections() throws SaikuOlapException {
 		List<SaikuConnection> cubesList = new ArrayList<SaikuConnection>();
-		for (String connectionName : connections.keySet()) {
+		for (String connectionName : connections.getAllOlapConnections().keySet()) {
 			cubesList.add(getConnection(connectionName));
 		}
 		Collections.sort(cubesList);
@@ -127,7 +127,7 @@ public class OlapMetaExplorer {
 
 
 	public List<SaikuCube> getCubes(String connectionName) {
-		OlapConnection olapcon = connections.get(connectionName);
+		OlapConnection olapcon = connections.getOlapConnection(connectionName);
 		List<SaikuCube> cubes = new ArrayList<SaikuCube>();
 		if (olapcon != null) {
 			try {
@@ -159,7 +159,7 @@ public class OlapMetaExplorer {
 
 	public List<SaikuCube> getAllCubes() {
 		List<SaikuCube> cubes = new ArrayList<SaikuCube>();
-		for (String connectionName : connections.keySet()) {
+		for (String connectionName : connections.getAllOlapConnections().keySet()) {
 			cubes.addAll(getCubes(connectionName));
 		}
 		Collections.sort(cubes);
@@ -168,7 +168,7 @@ public class OlapMetaExplorer {
 
 	public Cube getNativeCube(SaikuCube cube) throws SaikuOlapException {
 		try {
-			OlapConnection con = connections.get(cube.getConnectionName());
+			OlapConnection con = connections.getOlapConnection(cube.getConnectionName());
 			if (con != null ) {
 				for (Database db : con.getOlapDatabases()) {
 					Catalog cat = db.getCatalogs().get(cube.getCatalogName());
@@ -193,7 +193,7 @@ public class OlapMetaExplorer {
 
 	public OlapConnection getNativeConnection(String name) throws SaikuOlapException {
 		try {
-			OlapConnection con = connections.get(name);
+			OlapConnection con = connections.getOlapConnection(name);
 			if (con != null ) {
 				return con;
 			}

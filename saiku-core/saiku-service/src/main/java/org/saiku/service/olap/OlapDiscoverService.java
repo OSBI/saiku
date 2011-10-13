@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.olap4j.OlapConnection;
 import org.olap4j.metadata.Cube;
+import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.olap.discover.OlapMetaExplorer;
 import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.olap.dto.SaikuCube;
@@ -41,7 +42,7 @@ public class OlapDiscoverService {
 	
 	public void setDatasourceService(DatasourceService ds) {
 		datasourceService = ds;
-		metaExplorer = new OlapMetaExplorer(datasourceService.getOlapConnections());
+		metaExplorer = new OlapMetaExplorer(ds.getConnectionManager());
 	}
 	
 	public List<SaikuCube> getAllCubes() {

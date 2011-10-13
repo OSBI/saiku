@@ -19,70 +19,24 @@
  */
 package org.saiku.service.datasource;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.olap4j.OlapConnection;
-import org.saiku.datasources.connection.ISaikuConnection;
-import org.saiku.datasources.connection.SaikuConnectionFactory;
+import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.datasources.datasource.SaikuDatasource;
-import org.saiku.service.util.exception.SaikuServiceException;
 
 public class DatasourceService {
 	
 	private IDatasourceManager datasources;
 	
-	private Map<String,ISaikuConnection> connections = new HashMap<String,ISaikuConnection>();
+	private IConnectionManager connectionManager;
 	
-	public void setConnections(Map<String,ISaikuConnection> connections) {
-		this.connections = connections;
-	}
-	
-	public void setDatasourceManager(IDatasourceManager ds) {
-		datasources = ds;
-		init();
+	public void setConnectionManager(IConnectionManager ic) {
+		connectionManager = ic;
+		datasources = ic.getDataSourceManager();
 	}
 
-	private void init() {
-		try {
-			for (SaikuDatasource sd : datasources.getDatasources().values()) {
-				try {
-					ISaikuConnection con = SaikuConnectionFactory.getConnection(sd);
-					if (con.initialized()) {
-						connections.put(con.getName(), con);
-					}
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		} catch (Exception e) {
-			throw new SaikuServiceException("There was an error during datasource initialization ",e);
-		}
-	}
-	
-	public Map<String,OlapConnection> getOlapConnections() {
-		Map<String, OlapConnection> resultDs = new HashMap<String,OlapConnection>();
-		for (ISaikuConnection con: connections.values()) {
-			if (con.getConnection() instanceof OlapConnection) {
-				resultDs.put(con.getName(), (OlapConnection)con.getConnection());
-			}
-			
-		}
-		return resultDs;
-	}
-	
-	public OlapConnection getOlapConnection(String name) {
-		Object o = connections.get(name);
-		if (o != null && o instanceof OlapConnection) {
-			return (OlapConnection) o;
-		}
-		return null;
-	}
-	
-	public void reload() {
-		datasources.load();
-		init();
+	public IConnectionManager getConnectionManager() {
+		return connectionManager;
 	}
 	
 	public void addDatasource(SaikuDatasource datasource) {

@@ -9,9 +9,12 @@
 	</bean>
 	 <!--  <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
 	
+	<bean id="connectionManager" class="org.saiku.web.impl.SecurityAwareConnectionManager">
+		<property name="dataSourceManager" ref="classpathDsManager" />
+	</bean>
 
 	<bean id="datasourceServiceBean" class="org.saiku.service.datasource.DatasourceService">
-		<property name="datasourceManager" ref="classpathDsManager" />
+		<property name="connectionManager" ref="connectionManager" />
 	</bean>
 
 	<bean id="olapDiscoverServiceBean" class="org.saiku.service.olap.OlapDiscoverService">
