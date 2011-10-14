@@ -33,9 +33,17 @@ public interface ISaikuConnection {
     public static final String URL_KEY = "location"; //$NON-NLS-1$
     public static final String USERNAME_KEY = "username"; //$NON-NLS-1$
     public static final String PASSWORD_KEY = "password"; //$NON-NLS-1$
+    public static final String SECURITY_ENABLED_KEY = "security.enabled"; //$NON-NLS-1$
+    public static final String SECURITY_TYPE_KEY = "security.type"; //$NON-NLS-1$
+    public static final String SECURITY_TYPE_SPRING2MONDRIAN_VALUE = "one2one"; //$NON-NLS-1$
+    public static final String SECURITY_TYPE_SPRINGLOOKUPMONDRIAN_VALUE = "lookup"; //$NON-NLS-1$
+    public static final String SECURITY_TYPE_PASSTHROUGH_VALUE = "passthrough"; //$NON-NLS-1$
+    public static final String SECURITY_LOOKUP_KEY = "security.mapping"; //$NON-NLS-1$
+    
 
     public static final String[] KEYS = new String[] { NAME_KEY, DRIVER_KEY, URL_KEY,
-	      USERNAME_KEY, PASSWORD_KEY };
+	      USERNAME_KEY, PASSWORD_KEY, SECURITY_ENABLED_KEY, SECURITY_TYPE_KEY, SECURITY_TYPE_PASSTHROUGH_VALUE,
+	      SECURITY_TYPE_SPRING2MONDRIAN_VALUE, SECURITY_TYPE_SPRINGLOOKUPMONDRIAN_VALUE};
 
     public static final String[] DATASOURCES = new String[] { OLAP_DATASOURCE };
 

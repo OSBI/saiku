@@ -5,7 +5,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
+import org.olap4j.OlapConnection;
+import org.olap4j.OlapException;
 import org.saiku.datasources.connection.AbstractConnectionManager;
 import org.saiku.datasources.connection.ISaikuConnection;
 import org.saiku.datasources.connection.SaikuConnectionFactory;
@@ -27,20 +30,12 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager {
 	@Override
 	protected ISaikuConnection getInternalConnection(String name, SaikuDatasource datasource) {
 
-		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
-			Object cred = SecurityContextHolder.getContext().getAuthentication().getCredentials();
-			Object princ = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			System.out.println("Principal:" + princ + " Credential: " + cred);
-			Collection<GrantedAuthority> auths = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-			for (GrantedAuthority a : auths) {
-				System.out.println("Auhtority:" + a.getAuthority());
-			}
-		}
+		ISaikuConnection con;
+		// TODO implement passthrough security before connect
 		if (!connections.containsKey(name)) {
-			ISaikuConnection con =  connect(name, datasource);
+			con =  connect(name, datasource);
 			if (con != null) {
 				connections.put(con.getName(), con);
-				return con;
 			} else {
 				if (!errorConnections.contains(name)) {
 					errorConnections.add(name);
@@ -48,11 +43,141 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager {
 			}
 
 		} else {
-			return connections.get(name);
+			con = connections.get(name);
 		}
-		return null;
+		
+		con = applySecurity(con, datasource);
+		return con;
 	}
 	
+	private ISaikuConnection applySecurity(ISaikuConnection con, SaikuDatasource datasource) {
+		if (con == null) {
+			throw new IllegalArgumentException("Cannot apply Security to NULL connection object");
+		}
+		
+		if (isDatasourceSecurity(datasource, ISaikuConnection.SECURITY_TYPE_SPRING2MONDRIAN_VALUE)) {
+			List<String> springRoles = getSpringRoles();
+			List<String> conRoles = getConnectionRoles(con);
+			String roleName = null;
+			
+			for (String sprRole : springRoles) {
+				if (conRoles.contains(sprRole)) {
+					if (roleName == null) {
+						roleName = sprRole;
+					} else {
+						roleName += "," + sprRole;
+					}
+				}
+			}
+
+			if (setRole(con, roleName, datasource)) {
+				return con;
+			}
+					
+		} else if (isDatasourceSecurity(datasource, ISaikuConnection.SECURITY_TYPE_SPRINGLOOKUPMONDRIAN_VALUE)) {
+			Map<String, List<String>> mapping = getRoleMapping(datasource);
+			List<String> springRoles = getSpringRoles();
+			String roleName = null;
+			for (String sprRole : springRoles) {
+				if (mapping.containsKey(sprRole)) {
+					List<String> roles = mapping.get(sprRole);
+					for (String role : roles) {
+						if (roleName == null) {
+							roleName = role;
+						} else {
+							roleName += "," + role;
+						}
+
+					}
+				}
+			}
+			if (setRole(con, roleName, datasource)) {
+				return con;
+			}
+			
+		} else if (isDatasourceSecurity(datasource, ISaikuConnection.SECURITY_TYPE_PASSTHROUGH_VALUE)) {
+			// TODO implement
+		}
+		
+		return con;
+		
+	}
+	
+	private boolean setRole(ISaikuConnection con, String roleName, SaikuDatasource datasource) {
+			if (con.getConnection() instanceof OlapConnection) 
+			{
+				OlapConnection c = (OlapConnection) con.getConnection();
+				System.out.println("Setting role to datasource:" + datasource.getName() + " role:" + roleName);
+				try {
+					c.setRoleName(roleName);
+					return true;
+				} catch (OlapException e) {
+					e.printStackTrace();
+				}
+			}
+		return false;
+	}
+
+	private boolean isDatasourceSecurity(SaikuDatasource datasource, String value) {
+		Properties props = datasource.getProperties();
+		if (props != null && props.containsKey(ISaikuConnection.SECURITY_ENABLED_KEY)) {
+			String enabled = props.getProperty(ISaikuConnection.SECURITY_ENABLED_KEY, "false");
+			boolean isSecurity = Boolean.parseBoolean(enabled);
+			if (isSecurity) {
+				if (props.containsKey(ISaikuConnection.SECURITY_TYPE_KEY)) {
+					return props.getProperty(ISaikuConnection.SECURITY_TYPE_KEY).equals(value);
+				}
+			}
+		}
+		return false;
+	}
+	
+	private List<String> getSpringRoles() {
+		List<String> roles = new ArrayList<String>();
+		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
+			Collection<GrantedAuthority> auths = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+			for (GrantedAuthority a : auths) {
+				roles.add(a.getAuthority());
+			}
+		}
+		return roles;
+	}
+	
+	private List<String> getConnectionRoles(ISaikuConnection con) {
+		if (con.getDatasourceType().equals(ISaikuConnection.OLAP_DATASOURCE) 
+				&& con.getConnection() instanceof OlapConnection) 
+		{
+			OlapConnection c = (OlapConnection) con.getConnection();
+			try {
+				return c.getAvailableRoleNames();
+			} catch (OlapException e) {
+				e.printStackTrace();
+			}
+		}
+		return new ArrayList<String>();
+	}
+	
+	private Map<String,List<String>> getRoleMapping(SaikuDatasource datasource) {
+		Map<String,List<String>> result = new HashMap<String,List<String>>();
+		if (datasource.getProperties().containsKey(ISaikuConnection.SECURITY_LOOKUP_KEY)) {
+			String mappings = datasource.getProperties().getProperty(ISaikuConnection.SECURITY_LOOKUP_KEY);
+			if (mappings != null) {
+				String[] maps = mappings.split(";");
+				for (String map : maps) {
+					String[] m = map.split("=");
+					if (m.length == 2) {
+						if (!result.containsKey(m[0])) {
+							result.put(m[0], new ArrayList<String>());
+						}
+						result.get(m[0]).add(m[1]);
+					}
+				}
+			}
+		}
+		return result;
+	}
+	
+
 	private ISaikuConnection connect(String name, SaikuDatasource datasource) {
 		try {
 			ISaikuConnection con = SaikuConnectionFactory.getConnection(datasource);

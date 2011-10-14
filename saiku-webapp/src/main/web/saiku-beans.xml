@@ -9,7 +9,7 @@
 	</bean>
 	 <!--  <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
 	
-	<bean id="connectionManager" class="org.saiku.web.impl.SecurityAwareConnectionManager">
+	<bean id="connectionManager" class="org.saiku.web.impl.SecurityAwareConnectionManager" init-method="init">
 		<property name="dataSourceManager" ref="classpathDsManager" />
 	</bean>
 
