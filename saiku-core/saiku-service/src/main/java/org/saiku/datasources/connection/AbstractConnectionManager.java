@@ -60,10 +60,9 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
 			if (o != null && o instanceof OlapConnection) {
 				ocons.put(con.getName(), (OlapConnection) o);
 			}
-			return ocons;
 		}
 
-		return null;
+		return ocons;
 	}
 
 }

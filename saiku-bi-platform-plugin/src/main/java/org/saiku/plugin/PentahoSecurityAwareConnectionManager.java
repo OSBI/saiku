@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import mondrian.rolap.RolapConnectionProperties;
-
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
 import org.pentaho.platform.api.engine.IConnectionUserRoleMapper;
@@ -36,7 +34,7 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 	@Override
 	protected ISaikuConnection getInternalConnection(String name, SaikuDatasource datasource) {
 		ISaikuConnection con;
-		System.out.println("LOAD CONNECTION::::::::::::" + name);
+//		System.out.println("LOAD CONNECTION::::::::::::" + name);
 		if (!connections.containsKey(name)) {
 			con =  connect(name, datasource);
 			if (con != null) {
@@ -76,21 +74,21 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 				Properties props = new Properties();
 				props.load(sr);
 
-				String catalog = props.getProperty(RolapConnectionProperties.Catalog.name());
-				System.out.println("CatalogParse:" + catalog);
+//				String catalog = props.getProperty(RolapConnectionProperties.Catalog.name());
+				OlapConnection c = (OlapConnection) con.getConnection();
+//				System.out.println("CatalogParse:" + c.getCatalog());
 
-				String[] validMondrianRolesForUser = mondrianUserRoleMapper.mapConnectionRoles(PentahoSessionHolder.getSession(), catalog);
+				String[] validMondrianRolesForUser = mondrianUserRoleMapper.mapConnectionRoles(PentahoSessionHolder.getSession(), c.getCatalog());
 
-
-				for (String validRole : validMondrianRolesForUser) {
-					if (roleName == null) {
-						roleName = validRole;
-					} else {
-						roleName += "," + validRole;
+				if (validMondrianRolesForUser != null) {
+					for (String validRole : validMondrianRolesForUser) {
+						if (roleName == null) {
+							roleName = validRole;
+						} else {
+							roleName += "," + validRole;
+						}
 					}
-
 				}
-				
 				if (setRole(con, roleName, datasource)) {
 					return con;
 				}
@@ -113,9 +111,9 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 				e.printStackTrace();
 			}
 		}
-	return false;
-}
-	
+		return false;
+	}
+
 	private ISaikuConnection connect(String name, SaikuDatasource datasource) {
 		try {
 			ISaikuConnection con = SaikuConnectionFactory.getConnection(datasource);
