@@ -5,24 +5,13 @@
  * @returns {Session}
  */
 var Session = Backbone.Model.extend({
-    username: "",
-    password: "",
+    username: null,
+    password: null,
         
     initialize: function(args, options) {
         // Attach a custom event bus to this model
         _.extend(this, Backbone.Events);
-        _.bindAll(this, "process_login", "prefetch_dimensions");
-        
-        // Check expiration on localStorage
-        if (localStorage && ! (localStorage.getItem('expiration') > (new Date()).getTime())) {
-            localStorage.clear();
-        }
-        
-        // Check if credentials are already stored
-        if (localStorage) {
-            this.username = localStorage.getItem('username');
-            this.password = localStorage.getItem('password');
-        }
+        _.bindAll(this, "check_session", "process_session", "load_session","login","logout");
         
         // Check if credentials are being injected into session
         if (options && options.username && options.password) {
@@ -30,20 +19,32 @@ var Session = Backbone.Model.extend({
             this.password = options.password;
         }
     },
-    
-    get_credentials: function() {
-        if (this.username === null || this.password === null) {
+
+    check_session: function() {
+
+        if (this.sessionid === null || this.username === null || this.password === null) {
+            this.fetch({ success: this.process_session })
+        } else {
+            this.load_session();
+        }
+    },
+
+    load_session: function() {
+        this.sessionworkspace = new SessionWorkspace();
+    },
+
+    process_session: function(model, response) {
+        //alert(JSON.stringify(response));
+        if ((response === null || response.sessionid == null)) {
             // Open form and retrieve credentials
             var form = this.form = new LoginForm({ session: this });
             Saiku.ui.unblock();
             form.render().open();
         } else {
-            if (localStorage && localStorage.getItem('session') !== null) {
-                this.attributes = JSON.parse(localStorage.getItem('session'));
-                this.process_login(this, this.attributes);
-            } else {
-                this.fetch({ success: this.process_login });
-            }
+            this.sessionid = response.sessionid;
+            this.roles = response.roles;
+            this.username = response.username;
+            this.load_session();
         }
         
         return this;
@@ -54,111 +55,33 @@ var Session = Backbone.Model.extend({
     },
     
     login: function(username, password) {
-        this.username = username;
-        localStorage && localStorage.setItem('username', username);
-        this.password = password;
-        localStorage && localStorage.setItem('password', password);
+        //this.username = username;
+        //localStorage && localStorage.setItem('username', username);
+        //this.password = password;
+
+        //localStorage && localStorage.setItem('password', password);
         
         // Set expiration on localStorage to one day in the future
         var expires = (new Date()).getTime() + 
             Settings.LOCALSTORAGE_EXPIRATION;
         localStorage && localStorage.setItem('expiration', expires);
+
+        this.save({username:username, password:password},{success: this.check_session, error: this.check_session});
         
-        // Create session and fetch connection information
-        this.fetch({ success: this.process_login });
-        
-        // Delete login form
-        $(this.form.el).dialog('destroy').remove();
-        
-        return false;
     },
     
     logout: function() {
         // FIXME - This is a hack (inherited from old UI)
         $('body').hide();
         localStorage && localStorage.clear();
-        location.reload(true);
+        
+        this.destroy({},{success: this.check_session, error: this.check_session});
+
         return false;
     },
-    
-    process_login: function(model, response) {
-        // Save session in localStorage for other tabs to use
-        if (localStorage && localStorage.getItem('session') === null) {
-            localStorage.setItem('session', JSON.stringify(response));
-        }
-        
-        // Generate cube navigation for reuse
-        this.cube_navigation = _.template($("#template-cubes").html())({
-            connections: response
-        });
-        
-        // Create cube objects
-        this.dimensions = {};
-        this.measures = {};
-        this.connections = response;
-        _.delay(this.prefetch_dimensions, 200);
-        
-        // Show UI
-        $(Saiku.toolbar.el).prependTo($("#header"));
-        $("#header").show();
-        Saiku.ui.unblock();
-        
-        // Add initial tab
-        Saiku.tabs.render();
-        if (! Settings.ACTION) {
-            Saiku.tabs.add(new Workspace());
-        }
-        
-        // Notify the rest of the application that login was successful
-        Saiku.events.trigger('session:new', {
-            session: this
-        });
-    },
-    
-    prefetch_dimensions: function() {
-        if (! this.measures || ! this.dimensions) {
-            Log.log({
-                Message: "measures or dimensions not initialized",
-                Session: JSON.stringify(this)
-            });
-            return;
-        }
-        
-        for(var i = 0; i < this.connections.length; i++) {
-            var connection = this.connections[i];
-            for(var j = 0; j < connection.catalogs.length; j++) {
-                var catalog = connection.catalogs[j];
-                for(var k = 0; k < catalog.schemas.length; k++) {
-                    var schema = catalog.schemas[k];
-                    for(var l = 0; l < schema.cubes.length; l++) {
-                        var cube = schema.cubes[l];
-                        var key = connection.name + "/" + catalog.name + "/" +
-                            schema.name + "/" + cube.name;
-                        if (localStorage && 
-                            localStorage.getItem("dimension." + key) !== null &&
-                            localStorage.getItem("measure." + key) !== null) {
-                            this.dimensions[key] = new Dimension(JSON.parse(localStorage.getItem("dimension." + key)));
-                            this.measures[key] = new Measure(JSON.parse(localStorage.getItem("measure." + key)));
-                        } else {
-                            this.dimensions[key] = new Dimension({ key: key });
-                            this.measures[key] = new Measure({ key: key });
-                            if (Settings.DIMENSION_PREFETCH === true) {
-                                this.dimensions[key].fetch();
-                                this.measures[key].fetch();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        // Start routing
-        if (Backbone.history) {
-            Backbone.history.start();
-        }
-    },
-    
+
     url: function() {
-        return encodeURI(this.username + "/discover/");
+
+        return "../session";
     }
 });

@@ -67,23 +67,39 @@ Backbone.sync = function(method, model, options) {
     // Prepare for failure
     options.retries = 0;
     
+    var statuscode = {
+      401: function() {
+        Saiku.session = new Session();
+        Saiku.toolbar = new Toolbar();
+        Saiku.session.check_session();
+      },
+      403: function() {
+        Saiku.session = new Session();
+        Saiku.toolbar = new Toolbar();
+        Saiku.session.check_session();
+      }
+
+
+    };
+
     var failure = function(jqXHR, textStatus, errorThrown) {
+      if (jqXHR.status)
         options.retries++;
-        
         if (options.retries >= 10) {
             Saiku.ui.block("Could not reach server. Please try again later...");
             if (options.error) {
                 options.error(jqXHR, textStatus, errorThrown);
             }
-        } else {
+        } 
+        /* else {
             var delay = Math.pow(options.retries, 2);
             Saiku.ui.block("Having trouble reaching server. Trying again in " + delay + " seconds...");
             setTimeout(function() {
                 $.ajax(params);
             }, delay * 1000);
-        }
+        } */
     };
-    
+
     var success = function(data, textStatus, jqXHR) {
         if (options.retries > 0) {
             Saiku.ui.unblock();
@@ -101,6 +117,7 @@ Backbone.sync = function(method, model, options) {
       contentType:  'application/x-www-form-urlencoded',
       dataType:     'json',
       success:      success,
+      statusCode:   statuscode, 
       error:        failure,
       beforeSend:   function(request) {
         if (!Settings.PLUGIN) {
