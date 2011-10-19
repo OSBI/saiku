@@ -122,6 +122,7 @@ public class SessionResource  {
 	}
 
 	@GET
+	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Map<String,Object> getSession(@Context HttpServletRequest req) {
 		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {			

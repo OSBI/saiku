@@ -43,8 +43,12 @@ import org.saiku.olap.query.QueryProperties.QueryProperty;
 import org.saiku.olap.query.QueryProperties.QueryPropertyFactory;
 import org.saiku.olap.util.SaikuProperties;
 import org.saiku.olap.util.exception.SaikuOlapException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OlapQuery implements IQuery {
+
+    private static final Logger log = LoggerFactory.getLogger(OlapQuery.class);
 
 	private Query query;
 	private Properties properties = new Properties();
@@ -173,6 +177,7 @@ public class OlapQuery implements IQuery {
         StringWriter writer = new StringWriter();
         mdx.getSelect().unparse(new ParseTreeWriter(new PrintWriter(writer)));
         CellSet cellSet = mdx.execute();
+        log.debug("Executing query (" + this.getName() + ") :\n" + writer.toString());
     	if (scenario != null && query.getDimension("Scenario") != null) {
     		QueryDimension dimension = query.getDimension("Scenario");
     		dimension.getInclusions().clear();
