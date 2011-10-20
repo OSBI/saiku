@@ -20,12 +20,8 @@
 
 package org.saiku.plugin;
 
-import java.io.FileReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import mondrian.olap.MondrianProperties;
@@ -38,7 +34,6 @@ import mondrian.spi.impl.CatalogLocatorImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
-import org.dom4j.Node;
 import org.olap4j.OlapConnection;
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.api.repository.ISolutionRepository;

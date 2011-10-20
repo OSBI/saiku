@@ -56,10 +56,12 @@
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
 
-
-	<bean id="queryInterfaceBean" class="org.saiku.web.rest.resources.QueryResource">
+	<bean id="queryResource" class="org.saiku.web.rest.resources.QueryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
+	</bean>
+	
+    <bean id="sessionResource" class="org.saiku.web.rest.resources.SessionResource">
 	</bean>
 
   	<bean id="repositoryBean" class="org.saiku.plugin.resources.PentahoRepositoryResource" />
