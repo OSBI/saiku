@@ -37,7 +37,6 @@ var Workspace = Backbone.View.extend({
             this.query.workspace = this;
             this.query.save({}, { success: this.init_query });            
         }
-        
         // Flash cube navigation when rendered
         Saiku.session.bind('tab:add', this.prepare);
     },
@@ -53,7 +52,7 @@ var Workspace = Backbone.View.extend({
     template: function() {
         var template = $("#template-workspace").html() || "";
         return _.template(template)({
-            cube_navigation: Saiku.session.cube_navigation
+            cube_navigation: Saiku.session.sessionworkspace.cube_navigation
         });        
     },
     
@@ -105,7 +104,7 @@ var Workspace = Backbone.View.extend({
         
         // Adjust the dimensions of the results window
         $(this.el).find('.workspace_results').css({
-            width: $(document).width() - $(this.el).find('.sidebar').width() - 30,
+//            width: $(document).width() - $(this.el).find('.sidebar').width() - 30,
             height: $(document).height() - $("#header").height() -
                 $(this.el).find('.workspace_toolbar').height() - 
                 $(this.el).find('.workspace_fields').height() - 40
@@ -178,13 +177,13 @@ var Workspace = Backbone.View.extend({
             // Create new DimensionList and MeasureList
             this.dimension_list = new DimensionList({
                 workspace: this,
-                dimension: Saiku.session.dimensions[this.selected_cube]
+                dimension: Saiku.session.sessionworkspace.dimensions[this.selected_cube]
             });        
             $(this.el).find('.dimension_tree').html('').append($(this.dimension_list.el));
             
             this.measure_list = new DimensionList({
                 workspace: this,
-                dimension: Saiku.session.measures[this.selected_cube]
+                dimension: Saiku.session.sessionworkspace.measures[this.selected_cube]
             });
             $(this.el).find('.measure_tree').html('').append($(this.measure_list.el));
         } else {

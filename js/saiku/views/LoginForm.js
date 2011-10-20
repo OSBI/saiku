@@ -5,9 +5,9 @@ var LoginForm = Modal.extend({
     type: "login",
     message: "<form id='login_form'>" +
         "<label for='username'>Username</label><br />" +
-        "<input type='text' id='username' name='username' value='admin' /><br />" +
+        "<input type='text' id='username' name='username' value='' /><br />" +
         "<label for='password'>Password</label><br />" +
-        "<input type='password' id='password' name='password' value='admin' />" +
+        "<input type='password' id='password' name='password' value='' />" +
         "</form>",
         
     buttons: [
@@ -38,11 +38,12 @@ var LoginForm = Modal.extend({
     },
     
     login: function() {
-        var username = $("#username").val();
-        var password = $("#password").val();
-        $(this.el).dialog('close');
         
-        this.session.login(username, password);
-        return false;
+        var l_username = $(this.el).find("#username").val();
+        var l_password = $(this.el).find("#password").val();
+        $(this.el).dialog('close');
+        this.session.login(l_username, l_password);
+
+        return true;
     }
 });
