@@ -83,7 +83,10 @@ Backbone.sync = function(method, model, options) {
     };
 
     var failure = function(jqXHR, textStatus, errorThrown) {
-      if (jqXHR.status)
+      if (options.error) {
+                options.error(jqXHR, textStatus, errorThrown);
+      }
+/*      if (jqXHR.status)
         options.retries++;
         if (options.retries >= 10) {
             Saiku.ui.block("Could not reach server. Please try again later...");
@@ -91,7 +94,7 @@ Backbone.sync = function(method, model, options) {
                 options.error(jqXHR, textStatus, errorThrown);
             }
         } 
-        /* else {
+         else {
             var delay = Math.pow(options.retries, 2);
             Saiku.ui.block("Having trouble reaching server. Trying again in " + delay + " seconds...");
             setTimeout(function() {

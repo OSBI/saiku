@@ -55,12 +55,6 @@ var Session = Backbone.Model.extend({
     },
     
     login: function(username, password) {
-        //this.username = username;
-        //localStorage && localStorage.setItem('username', username);
-        //this.password = password;
-
-        //localStorage && localStorage.setItem('password', password);
-        
         // Set expiration on localStorage to one day in the future
         var expires = (new Date()).getTime() + 
             Settings.LOCALSTORAGE_EXPIRATION;
@@ -85,6 +79,6 @@ var Session = Backbone.Model.extend({
 
     url: function() {
 
-        return "../session";
+        return "session";
     }
 });
