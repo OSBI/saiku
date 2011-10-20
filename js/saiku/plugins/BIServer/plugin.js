@@ -67,9 +67,9 @@ if (Settings.BIPLUGIN) {
     $(document).ready(function() {
         Saiku.session = new Session({}, {
             username: "admin",
-            password: "admin"
+            password: ""
         });
-        Saiku.session.get_credentials();
+        Saiku.session.check_session();
     });
 }
 

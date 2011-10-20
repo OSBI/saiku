@@ -23,6 +23,7 @@ var Session = Backbone.Model.extend({
     check_session: function() {
 
         if (this.sessionid === null || this.username === null || this.password === null) {
+            this.clear();
             this.fetch({ success: this.process_session })
         } else {
             this.load_session();
@@ -34,12 +35,11 @@ var Session = Backbone.Model.extend({
     },
 
     process_session: function(model, response) {
-        //alert(JSON.stringify(response));
         if ((response === null || response.sessionid == null)) {
             // Open form and retrieve credentials
-            var form = this.form = new LoginForm({ session: this });
             Saiku.ui.unblock();
-            form.render().open();
+            this.form = new LoginForm({ session: this });
+            this.form.render().open();
         } else {
             this.sessionid = response.sessionid;
             this.roles = response.roles;
@@ -72,12 +72,15 @@ var Session = Backbone.Model.extend({
     
     logout: function() {
         // FIXME - This is a hack (inherited from old UI)
-        $('body').hide();
+        $('#header').empty().hide();
+        $('#tab_panel').remove();
+        Saiku.ui.unblock();
+        Saiku.toolbar = new Toolbar();
         localStorage && localStorage.clear();
-        
-        this.destroy({},{success: this.check_session, error: this.check_session});
+        this.id = _.uniqueId('queryaction_');
+        this.destroy({success:this.check_session, error:this.check_session});
+        delete this.id;
 
-        return false;
     },
 
     url: function() {

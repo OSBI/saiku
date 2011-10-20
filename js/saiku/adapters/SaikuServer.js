@@ -118,7 +118,8 @@ Backbone.sync = function(method, model, options) {
       dataType:     'json',
       success:      success,
       statusCode:   statuscode, 
-      error:        failure,
+      error:        failure 
+      /*
       beforeSend:   function(request) {
         if (!Settings.PLUGIN) {
           var auth = "Basic " + Base64.encode(
@@ -126,7 +127,7 @@ Backbone.sync = function(method, model, options) {
           );
           request.setRequestHeader('Authorization', auth);
           }
-      }
+      } */
     };
 
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`

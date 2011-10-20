@@ -37,7 +37,6 @@ var Workspace = Backbone.View.extend({
             this.query.workspace = this;
             this.query.save({}, { success: this.init_query });            
         }
-        
         // Flash cube navigation when rendered
         Saiku.session.bind('tab:add', this.prepare);
     },
@@ -178,13 +177,13 @@ var Workspace = Backbone.View.extend({
             // Create new DimensionList and MeasureList
             this.dimension_list = new DimensionList({
                 workspace: this,
-                dimension: Saiku.session.dimensions[this.selected_cube]
+                dimension: Saiku.session.sessionworkspace.dimensions[this.selected_cube]
             });        
             $(this.el).find('.dimension_tree').html('').append($(this.dimension_list.el));
             
             this.measure_list = new DimensionList({
                 workspace: this,
-                dimension: Saiku.session.measures[this.selected_cube]
+                dimension: Saiku.session.sessionworkspace.measures[this.selected_cube]
             });
             $(this.el).find('.measure_tree').html('').append($(this.measure_list.el));
         } else {
