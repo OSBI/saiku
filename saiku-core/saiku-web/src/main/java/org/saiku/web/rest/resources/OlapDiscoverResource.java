@@ -48,7 +48,6 @@ import org.springframework.stereotype.Component;
 )
 @Component
 @Path("/saiku/{username}/discover")
-@Scope("request")
 public class OlapDiscoverResource {
 
     OlapDiscoverService olapDiscoverService;

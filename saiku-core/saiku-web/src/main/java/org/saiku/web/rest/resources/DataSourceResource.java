@@ -23,14 +23,11 @@ package org.saiku.web.rest.resources;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response.Status;
 
 import org.saiku.datasources.datasource.SaikuDatasource;
@@ -38,12 +35,10 @@ import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
 @Path("/saiku/{username}/datasources")
-@Scope("request")
 public class DataSourceResource {
 
     DatasourceService datasourceService;

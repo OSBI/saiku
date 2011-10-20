@@ -31,8 +31,8 @@
 
   <security:http auto-config='true' access-denied-page="/login.jsp">
 	<security:intercept-url pattern="/serverdocs/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-  	<security:intercept-url pattern="/rest/session*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-      	<security:intercept-url pattern="/rest/session/" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+  	<security:intercept-url pattern="/rest/saiku/session*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+      	<security:intercept-url pattern="/rest/saiku/session/" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 	<security:intercept-url pattern="/rest/**" access="ROLE_USER" />
 	<security:intercept-url pattern="/json/**" access="ROLE_USER" />
     <security:intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />	

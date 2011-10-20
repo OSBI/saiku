@@ -51,7 +51,6 @@ import org.saiku.web.rest.objects.SavedQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import edu.emory.mathcs.backport.java.util.Collections;
@@ -63,7 +62,6 @@ import edu.emory.mathcs.backport.java.util.Collections;
  */
 @Component
 @Path("/saiku/{username}/repository")
-@Scope("request")
 @XmlAccessorType(XmlAccessType.NONE)
 public class BasicRepositoryResource {
 

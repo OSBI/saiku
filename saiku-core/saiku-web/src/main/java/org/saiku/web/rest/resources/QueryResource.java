@@ -67,7 +67,6 @@ import org.saiku.web.rest.util.RestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -77,7 +76,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Path("/saiku/{username}/query")
-@Scope("request")
 @XmlAccessorType(XmlAccessType.NONE)
 public class QueryResource {
 

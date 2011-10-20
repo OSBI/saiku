@@ -40,10 +40,14 @@
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
 	
-    <bean id="sessionResource" class="org.saiku.web.rest.resources.SessionResource">
-		<property name="authenticationManager" ref="authenticationManager" />
+    <bean id="sessionService" class="org.saiku.web.service.SessionService">
 	</bean>
 	
+	
+    <bean id="sessionResource" class="org.saiku.web.rest.resources.SessionResource">
+		<property name="sessionService" ref="sessionService" />
+	</bean>
+
     
 	<bean id="repositoryBean" class="org.saiku.web.rest.resources.BasicRepositoryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />
