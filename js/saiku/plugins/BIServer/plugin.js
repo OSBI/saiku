@@ -65,11 +65,7 @@ if (Settings.BIPLUGIN) {
     Settings.REST_URL = "/pentaho/content/saiku/";
     
     $(document).ready(function() {
-        Saiku.session = new Session({}, {
-            username: "admin",
-            password: ""
-        });
-        Saiku.session.check_session();
+        Saiku.session = new Session();
     });
 }
 

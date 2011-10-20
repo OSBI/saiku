@@ -55,8 +55,11 @@ Backbone.emulateHTTP = false;
  */
 if (! Settings.BIPLUGIN) {
     $(document).ready(function() {
-        Saiku.session = new Session();
+        Saiku.session = new Session({}, {
+            username: Settings.USERNAME,
+            password: Settings.PASSWORD
+        });
+
         Saiku.toolbar = new Toolbar();
-        Saiku.session.check_session();
     });
 }
