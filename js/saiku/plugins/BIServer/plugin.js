@@ -109,7 +109,7 @@ var BIPlugin = {
 /**
  * If plugin active, customize chrome
  */
-Saiku.events.bind('session:new', function(args) {
+Saiku.events.bind('session:new', function(session) {
     if (Settings.PLUGIN) {        
         // Remove tabs and global toolbar
         $('#header').remove();
@@ -119,7 +119,7 @@ Saiku.events.bind('session:new', function(args) {
             BIPlugin.bind_callbacks(Saiku.tabs._tabs[0].content);
         }
         
-        args.session.bind('workspace:new', function(args) {
+        Saiku.session.bind('workspace:new', function(args) {
             BIPlugin.bind_callbacks(args.workspace);
         });
     }

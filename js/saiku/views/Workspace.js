@@ -104,7 +104,7 @@ var Workspace = Backbone.View.extend({
         
         // Adjust the dimensions of the results window
         $(this.el).find('.workspace_results').css({
-            width: $(document).width() - $(this.el).find('.sidebar').width() - 30,
+//            width: $(document).width() - $(this.el).find('.sidebar').width() - 30,
             height: $(document).height() - $("#header").height() -
                 $(this.el).find('.workspace_toolbar').height() - 
                 $(this.el).find('.workspace_fields').height() - 40
