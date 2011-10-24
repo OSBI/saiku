@@ -75,7 +75,7 @@ public class SessionResource  {
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Map<String,Object> getSession(@Context HttpServletRequest req) {
-		return sessionService.getSession(req);
+		return sessionService.getSession();
 	}
 
 	@DELETE

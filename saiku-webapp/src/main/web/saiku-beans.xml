@@ -9,8 +9,14 @@
 	</bean>
 	 <!--  <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
 	
+	<bean id="sessionService" class="org.saiku.web.service.SessionService">
+		<property name="authenticationManager" ref="authenticationManager" />
+	</bean>
+	
 	<bean id="connectionManager" class="org.saiku.web.impl.SecurityAwareConnectionManager" init-method="init">
 		<property name="dataSourceManager" ref="classpathDsManager" />
+		<property name="sessionService" ref="sessionService" />
+		
 	</bean>
 
 	<bean id="datasourceServiceBean" class="org.saiku.service.datasource.DatasourceService">
@@ -39,11 +45,7 @@
 		<property name="olapQueryService" ref="olapQueryBean" />
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
-	
-	<bean id="sessionService" class="org.saiku.web.service.SessionService">
-		<property name="authenticationManager" ref="authenticationManager" />
-	</bean>
-	
+		
 	
     <bean id="sessionResource" class="org.saiku.web.rest.resources.SessionResource">
 		<property name="sessionService" ref="sessionService" />

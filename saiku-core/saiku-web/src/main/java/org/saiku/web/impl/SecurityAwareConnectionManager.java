@@ -13,14 +13,21 @@ import org.saiku.datasources.connection.AbstractConnectionManager;
 import org.saiku.datasources.connection.ISaikuConnection;
 import org.saiku.datasources.connection.SaikuConnectionFactory;
 import org.saiku.datasources.datasource.SaikuDatasource;
+import org.saiku.service.ISessionService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SecurityAwareConnectionManager extends AbstractConnectionManager {
 
 	private Map<String, ISaikuConnection> connections = new HashMap<String, ISaikuConnection>();
-	
+
 	private List<String> errorConnections = new ArrayList<String>();
+
+	private ISessionService sessionService;
+
+	public void setSessionService(ISessionService ss) {
+		this.sessionService = ss;
+	}
 
 	@Override
 	public void init() {
@@ -31,35 +38,72 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager {
 	protected ISaikuConnection getInternalConnection(String name, SaikuDatasource datasource) {
 
 		ISaikuConnection con;
-		// TODO implement passthrough security before connect
-		if (!connections.containsKey(name)) {
-			con =  connect(name, datasource);
-			if (con != null) {
-				connections.put(con.getName(), con);
-			} else {
-				if (!errorConnections.contains(name)) {
-					errorConnections.add(name);
+		if (isDatasourceSecurity(datasource, ISaikuConnection.SECURITY_TYPE_PASSTHROUGH_VALUE) && sessionService != null) {
+			con = handlePassThrough(name, datasource);
+		} else {
+			if (!connections.containsKey(name)) {
+				con =  connect(name, datasource);
+				if (con != null) {
+					connections.put(con.getName(), con);
+				} else {
+					if (!errorConnections.contains(name)) {
+						errorConnections.add(name);
+					}
 				}
+
+			} else {
+				con = connections.get(name);
 			}
 
-		} else {
-			con = connections.get(name);
+			con = applySecurity(con, datasource);
 		}
-		
-		con = applySecurity(con, datasource);
 		return con;
 	}
-	
+
+	private ISaikuConnection handlePassThrough(String name,
+			SaikuDatasource datasource) {
+
+		Map<String, Object> session = sessionService.getAllSessionObjects();
+		String username = (String) session.get("username");
+
+		if (username != null) {
+			String password = (String) session.get("password");
+			String newName = name + "-" + username;
+			datasource.getProperties().setProperty("username",username);
+			if (password != null) {
+				datasource.getProperties().setProperty("password",password);
+			}
+			ISaikuConnection con;
+
+			if (!connections.containsKey(newName)) {
+				con =  connect(name, datasource);
+				if (con != null) {
+					connections.put(newName, con);
+				} else {
+					if (!errorConnections.contains(newName)) {
+						errorConnections.add(newName);
+					}
+				}
+
+			} else {
+				con = connections.get(newName);
+			}
+			return con;
+		}
+
+		return null;
+	}
+
 	private ISaikuConnection applySecurity(ISaikuConnection con, SaikuDatasource datasource) {
 		if (con == null) {
 			throw new IllegalArgumentException("Cannot apply Security to NULL connection object");
 		}
-		
+
 		if (isDatasourceSecurity(datasource, ISaikuConnection.SECURITY_TYPE_SPRING2MONDRIAN_VALUE)) {
 			List<String> springRoles = getSpringRoles();
 			List<String> conRoles = getConnectionRoles(con);
 			String roleName = null;
-			
+
 			for (String sprRole : springRoles) {
 				if (conRoles.contains(sprRole)) {
 					if (roleName == null) {
@@ -73,7 +117,7 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager {
 			if (setRole(con, roleName, datasource)) {
 				return con;
 			}
-					
+
 		} else if (isDatasourceSecurity(datasource, ISaikuConnection.SECURITY_TYPE_SPRINGLOOKUPMONDRIAN_VALUE)) {
 			Map<String, List<String>> mapping = getRoleMapping(datasource);
 			List<String> springRoles = getSpringRoles();
@@ -94,27 +138,25 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager {
 			if (setRole(con, roleName, datasource)) {
 				return con;
 			}
-			
-		} else if (isDatasourceSecurity(datasource, ISaikuConnection.SECURITY_TYPE_PASSTHROUGH_VALUE)) {
-			// TODO implement
-		}
-		
+
+		} 
+
 		return con;
-		
+
 	}
-	
+
 	private boolean setRole(ISaikuConnection con, String roleName, SaikuDatasource datasource) {
-			if (con.getConnection() instanceof OlapConnection) 
-			{
-				OlapConnection c = (OlapConnection) con.getConnection();
-				System.out.println("Setting role to datasource:" + datasource.getName() + " role:" + roleName);
-				try {
-					c.setRoleName(roleName);
-					return true;
-				} catch (OlapException e) {
-					e.printStackTrace();
-				}
+		if (con.getConnection() instanceof OlapConnection) 
+		{
+			OlapConnection c = (OlapConnection) con.getConnection();
+			System.out.println("Setting role to datasource:" + datasource.getName() + " role:" + roleName);
+			try {
+				c.setRoleName(roleName);
+				return true;
+			} catch (OlapException e) {
+				e.printStackTrace();
 			}
+		}
 		return false;
 	}
 
@@ -131,7 +173,7 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager {
 		}
 		return false;
 	}
-	
+
 	private List<String> getSpringRoles() {
 		List<String> roles = new ArrayList<String>();
 		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
@@ -142,7 +184,7 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager {
 		}
 		return roles;
 	}
-	
+
 	private List<String> getConnectionRoles(ISaikuConnection con) {
 		if (con.getDatasourceType().equals(ISaikuConnection.OLAP_DATASOURCE) 
 				&& con.getConnection() instanceof OlapConnection) 
@@ -156,7 +198,7 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager {
 		}
 		return new ArrayList<String>();
 	}
-	
+
 	private Map<String,List<String>> getRoleMapping(SaikuDatasource datasource) {
 		Map<String,List<String>> result = new HashMap<String,List<String>>();
 		if (datasource.getProperties().containsKey(ISaikuConnection.SECURITY_LOOKUP_KEY)) {
@@ -176,7 +218,7 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager {
 		}
 		return result;
 	}
-	
+
 
 	private ISaikuConnection connect(String name, SaikuDatasource datasource) {
 		try {

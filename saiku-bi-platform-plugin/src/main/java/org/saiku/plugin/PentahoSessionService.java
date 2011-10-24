@@ -117,7 +117,7 @@ public class PentahoSessionService implements ISessionService {
 	/* (non-Javadoc)
 	 * @see org.saiku.web.service.ISessionService#getSession(javax.servlet.http.HttpServletRequest)
 	 */
-	public Map<String,Object> getSession(HttpServletRequest req) {
+	public Map<String,Object> getSession() {
 		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {			
 			Object p = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			if (!sessionHolder.containsKey(p)) {
@@ -129,10 +129,25 @@ public class PentahoSessionService implements ISessionService {
 				r.remove("password");
 			}
 			return r;
-
-
 		}
 		return new HashMap<String,Object>();
 	}
+	
+	public Map<String,Object> getAllSessionObjects() {
+		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {			
+			Object p = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			if (!sessionHolder.containsKey(p)) {
+				populateSession(p);
+			}
+			Map<String,Object> r = new HashMap<String,Object>();
+			r.putAll(sessionHolder.get(p));
+			if (r.containsKey("password")) {
+				r.remove("password");
+			}
+			return r;
+		}
+		return new HashMap<String,Object>();
+	}
+
 
 }

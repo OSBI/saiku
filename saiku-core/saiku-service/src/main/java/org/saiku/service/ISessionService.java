@@ -14,6 +14,8 @@ public interface ISessionService {
 	public void authenticate(HttpServletRequest req, String username,
 			String password);
 
-	public Map<String, Object> getSession(HttpServletRequest req);
+	public Map<String, Object> getSession();
+	
+	public Map<String,Object> getAllSessionObjects();
 
 }
