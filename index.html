@@ -109,18 +109,18 @@
         <% if (dimension.name != 'Measures') { %>
             <li class='parent_dimension'>
                 <span class="root collapsed sprite"></span>
-                <a class="folder_collapsed sprite" href="#" title="<%= dimension.description ? dimension.description : '' %>"><%= dimension.name %></a>
+                <a class="folder_collapsed sprite" href="#" title="<%= dimension.description ? dimension.description : '' %>"><%= dimension.caption %></a>
                 
                 <ul>
                 <% _.each(dimension.hierarchies, function(hierarchy) { %>
                     <% if (dimension.hierarchies.length > 1) { %>
                         <li class="hierarchy hide">
-                            <a class="dimension" href="#"><%= hierarchy.name %></a>
+                            <a class="dimension" href="#"><%= hierarchy.caption %></a>
                         </li>
                     <% } %>
                     <% _.each(hierarchy.levels, function(level) { %>
                         <li class="hide"><a title="<%= level.uniqueName %>" 
-                            class="dimension" href="#<%= dimension.name %>/hierarchy/<%= hierarchy.uniqueName %>/<%= level.uniqueName %>"><%= level.name %></a>
+                            class="dimension" href="#<%= dimension.name %>/hierarchy/<%= hierarchy.uniqueName %>/<%= level.uniqueName %>"><%= level.caption %></a>
                         </li>
                     <% }); %>
                 <% }); %>
@@ -139,7 +139,7 @@
                 <ul>
                 <% _.each(measures, function(measure) { %>
                     <li><a title="<%= measure.description ? measure.description : measure.uniqueName %>"
-                        class="measure" href="#Measures/member/<%= measure.uniqueName %>"><%= measure.name %></a>
+                        class="measure" href="#Measures/member/<%= measure.uniqueName %>"><%= measure.caption %></a>
                     </li>
                 <% }); %>
                 </ul>
