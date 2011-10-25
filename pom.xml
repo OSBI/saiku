@@ -25,6 +25,67 @@
             </execution>
         </executions>
     </plugin>
+    <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>yuicompressor-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compress</goal>
+            </goals>
+          </execution>
+        </executions>        
+        <configuration>
+          <nosuffix>true</nosuffix>
+          <sourceDirectory>${basedir}/js/saiku/</sourceDirectory>
+          <aggregations>
+            <aggregation>
+              <!-- remove files after aggregation (default: false)
+              <removeIncluded>true</removeIncluded>
+              -->
+              <!-- insert new line after each concatenation (default: false) -->
+              <insertNewLine>true</insertNewLine>
+              <output>${basedir}/all.js</output>
+              <!-- files to include, path relative to output's directory or absolute path-->
+              <!--inputDir>base directory for non absolute includes, default to parent dir of output</inputDir-->
+              <includes>
+
+                <include>target/classes/Settings.js</include>
+                <include>target/classes/models/Dimension.js</include>
+                <include>target/classes/views/DimensionList.js</include>
+                <include>target/classes/views/Toolbar.js</include>
+                <include>target/classes/views/Modal.js</include>
+                <include>target/classes/views/MDXModal.js</include>
+                <include>target/classes/views/SelectionsModal.js</include>
+                <include>target/classes/views/LoginForm.js</include>
+                <include>target/classes/views/AboutModal.js</include>
+                <include>target/classes/views/WorkspaceToolbar.js</include>
+                <include>target/classes/views/WorkspaceDropZone.js</include>
+                <include>target/classes/views/Table.js</include>
+                <include>target/classes/views/Workspace.js</include>
+                <include>target/classes/views/DeleteQuery.js</include>
+                <include>target/classes/views/OpenQuery.js</include>
+                <include>target/classes/views/SaveQuery.js</include>
+                <include>target/classes/views/Tab.js</include>
+                <include>target/classes/models/Repository.js</include>
+                <include>target/classes/models/Properties.js</include>
+                <include>target/classes/models/Result.js</include>
+                <include>target/classes/models/QueryAction.js</include>
+                <include>target/classes/models/QueryScenario.js</include>
+                <include>target/classes/models/Query.js</include>
+                <include>target/classes/models/Session.js</include>
+                <include>target/classes/models/SessionWorkspace.js</include>
+                <include>target/classes/models/Member.js</include>
+                <include>target/classes/Saiku.js</include>
+                <include>target/classes/adapters/SaikuServer.js</include>
+                <include>target/classes/routers/QueryRouter.js</include>
+
+              </includes>
+
+            </aggregation>
+          </aggregations>
+        </configuration>
+      </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -74,6 +135,11 @@
         <pluginRepository>
             <id>jsdoctk2</id>
             <url>http://jsdoctk-plugin.googlecode.com/svn/repo</url>
+        </pluginRepository>
+        <pluginRepository>
+            <name>oss.sonatype.org</name>
+            <id>oss.sonatype.org</id>
+            <url>http://oss.sonatype.org/content/groups/public</url>
         </pluginRepository>
     </pluginRepositories>
 </project>

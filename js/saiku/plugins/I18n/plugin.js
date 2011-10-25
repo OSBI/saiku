@@ -150,13 +150,13 @@ var TranslationTab = Backbone.View.extend({
                 translation_table: translation_table
             });
         $(this.el).html(table).find('div').css({
-            float: 'left',
-            padding: '20px'
+            'float': 'left',
+            'padding': '20px'
         }).find('input').css({
-            width: '300px'
+            'width': '300px'
         });
         $(this.el).find('.submit-translation').css({
-            padding: '20px'
+            'padding': '20px'
         });
     },
     
