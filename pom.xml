@@ -45,40 +45,40 @@
               -->
               <!-- insert new line after each concatenation (default: false) -->
               <insertNewLine>true</insertNewLine>
-              <output>${basedir}/all.js</output>
+              <output>${basedir}/target/all.js</output>
               <!-- files to include, path relative to output's directory or absolute path-->
               <!--inputDir>base directory for non absolute includes, default to parent dir of output</inputDir-->
               <includes>
 
-                <include>target/classes/Settings.js</include>
-                <include>target/classes/models/Dimension.js</include>
-                <include>target/classes/views/DimensionList.js</include>
-                <include>target/classes/views/Toolbar.js</include>
-                <include>target/classes/views/Modal.js</include>
-                <include>target/classes/views/MDXModal.js</include>
-                <include>target/classes/views/SelectionsModal.js</include>
-                <include>target/classes/views/LoginForm.js</include>
-                <include>target/classes/views/AboutModal.js</include>
-                <include>target/classes/views/WorkspaceToolbar.js</include>
-                <include>target/classes/views/WorkspaceDropZone.js</include>
-                <include>target/classes/views/Table.js</include>
-                <include>target/classes/views/Workspace.js</include>
-                <include>target/classes/views/DeleteQuery.js</include>
-                <include>target/classes/views/OpenQuery.js</include>
-                <include>target/classes/views/SaveQuery.js</include>
-                <include>target/classes/views/Tab.js</include>
-                <include>target/classes/models/Repository.js</include>
-                <include>target/classes/models/Properties.js</include>
-                <include>target/classes/models/Result.js</include>
-                <include>target/classes/models/QueryAction.js</include>
-                <include>target/classes/models/QueryScenario.js</include>
-                <include>target/classes/models/Query.js</include>
-                <include>target/classes/models/Session.js</include>
-                <include>target/classes/models/SessionWorkspace.js</include>
-                <include>target/classes/models/Member.js</include>
-                <include>target/classes/Saiku.js</include>
-                <include>target/classes/adapters/SaikuServer.js</include>
-                <include>target/classes/routers/QueryRouter.js</include>
+                <include>classes/Settings.js</include>
+                <include>classes/models/Dimension.js</include>
+                <include>classes/views/DimensionList.js</include>
+                <include>classes/views/Toolbar.js</include>
+                <include>classes/views/Modal.js</include>
+                <include>classes/views/MDXModal.js</include>
+                <include>classes/views/SelectionsModal.js</include>
+                <include>classes/views/LoginForm.js</include>
+                <include>classes/views/AboutModal.js</include>
+                <include>classes/views/WorkspaceToolbar.js</include>
+                <include>classes/views/WorkspaceDropZone.js</include>
+                <include>classes/views/Table.js</include>
+                <include>classes/views/Workspace.js</include>
+                <include>classes/views/DeleteQuery.js</include>
+                <include>classes/views/OpenQuery.js</include>
+                <include>classes/views/SaveQuery.js</include>
+                <include>classes/views/Tab.js</include>
+                <include>classes/models/Repository.js</include>
+                <include>classes/models/Properties.js</include>
+                <include>classes/models/Result.js</include>
+                <include>classes/models/QueryAction.js</include>
+                <include>classes/models/QueryScenario.js</include>
+                <include>classes/models/Query.js</include>
+                <include>classes/models/Session.js</include>
+                <include>classes/models/SessionWorkspace.js</include>
+                <include>classes/models/Member.js</include>
+                <include>classes/Saiku.js</include>
+                <include>classes/adapters/SaikuServer.js</include>
+                <include>classes/routers/QueryRouter.js</include>
 
               </includes>
 
