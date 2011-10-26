@@ -68,15 +68,14 @@ Backbone.sync = function(method, model, options) {
     options.retries = 0;
     
     var statuscode = {
+      0: function() {
+        Saiku.session.logout();
+      },
       401: function() {
-        Saiku.session = new Session();
-        Saiku.toolbar = new Toolbar();
-        Saiku.session.check_session();
+        Saiku.session.logout();
       },
       403: function() {
-        Saiku.session = new Session();
-        Saiku.toolbar = new Toolbar();
-        Saiku.session.check_session();
+        Saiku.session.logout();
       }
 
 
