@@ -12,11 +12,10 @@
 		<docs>
 			<war docsDir="serverdocs" />
 		</docs>
-		<spring-app enableSecurity="false">
+		<spring-app>
 			<springImport file="src/main/web/applicationContext.xml" />
 			<springImport file="src/main/web/saiku-beans.xml" />
 			<springImport file="src/main/web/spring-servlet.xml" />
-			<security enableDigestHTTPAuth="true" enableBasicHTTPAuth="false"></security>
 		</spring-app>
 		<jersey useSubcontext="true" disableWildcardServletError="false"
 			disabled="false">
