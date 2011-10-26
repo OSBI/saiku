@@ -6,6 +6,7 @@ import java.util.List;
 import org.olap4j.CellSet;
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
+import org.saiku.olap.dto.resultset.DataCell;
 import org.saiku.olap.util.OlapResultSetUtil;
 import org.saiku.olap.util.formatter.CellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
@@ -48,6 +49,10 @@ public class CsvExporter {
 				List<String> cols = new ArrayList<String>();
 				for(int y = 0; y < rowData[x].length;y++) {
 					String value = rowData[x][y].getFormattedValue();
+					if (rowData[x][y] instanceof DataCell && ((DataCell) rowData[x][y]).getRawNumber() != null ) {
+						value = ((DataCell) rowData[x][y]).getRawNumber().toString();
+					}
+
 					if(value == null || value == "null")  {
 						value="";
 					}

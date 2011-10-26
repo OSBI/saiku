@@ -20,6 +20,7 @@ import jxl.write.WriteException;
 import org.olap4j.CellSet;
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
+import org.saiku.olap.dto.resultset.DataCell;
 import org.saiku.olap.util.OlapResultSetUtil;
 import org.saiku.olap.util.formatter.HierarchicalCellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
@@ -56,7 +57,11 @@ public class ExcelExporter {
 				int xTarget = rowHeader.length + x;
 				List<String> cols = new ArrayList<String>();
 				for(int y = 0; y < rowData[x].length;y++) {
-					cols.add(rowData[x][y].getFormattedValue()); 
+					String value = rowData[x][y].getFormattedValue();
+					if (rowData[x][y] instanceof DataCell && ((DataCell) rowData[x][y]).getRawNumber() != null ) {
+						value = ((DataCell) rowData[x][y]).getRawNumber().toString();
+					}
+					cols.add(value);
 				}
 				result[xTarget]= cols.toArray(new String[cols.size()]);
 
