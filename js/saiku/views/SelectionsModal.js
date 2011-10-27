@@ -78,22 +78,22 @@ var SelectionsModal = Modal.extend({
                 var member = this.selected_members[j];
                 if (member.levelUniqueName == this.member.level &&
                     member.type == "MEMBER") {
-                    $("<option />").text(member.name)
+                    $("<option />").text(member.caption)
                         .val(member.uniqueName)
                         .appendTo($(this.el).find('.used_selections select'));
-                    used_members.push(member.name);
+                    used_members.push(member.caption);
                 }
             }
             
             // Filter out used members
             this.available_members = _.select(this.available_members, function(obj) {
-                return used_members.indexOf(obj.name) === -1;
+                return used_members.indexOf(obj.caption) === -1;
             });
             
             $(this.el).find('.available_selections select').removeAttr('disabled');
             for (var i = 0; i < this.available_members.length; i++) {
                 var member = this.available_members[i];
-                $("<option />").text(member.name)
+                $("<option />").text(member.caption)
                     .val(member.uniqueName)
                     .appendTo($(this.el).find('.available_selections select'));
             }

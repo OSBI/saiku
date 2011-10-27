@@ -12,7 +12,7 @@ var Modal = Backbone.View.extend({
         modal: true,
         title: "Modal dialog",
         resizable: false,
-        draggable: false
+        draggable: true
     },
     
     events: {
