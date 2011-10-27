@@ -75,7 +75,7 @@ if (Settings.BIPLUGIN) {
 var BIPlugin = {
     bind_callbacks: function(workspace) {
         // If in view mode, remove sidebar and drop zones
-        if (Settings.MODE == "view") {
+        if (Settings.MODE == "view" || Settings.MODE == "table") {
             workspace.toggle_sidebar();
             $(workspace.el).find('.sidebar_separator').remove();
             $(workspace.el).find('.workspace_inner')
@@ -87,10 +87,13 @@ var BIPlugin = {
         $(workspace.toolbar.el)
             .find('.save').parent().remove();
         $(workspace.toolbar.el).find('.run').parent().removeClass('seperator');
-        if (Settings.MODE == "view") {
+        if (Settings.MODE == "view" || Settings.MODE == "table") {
             $(workspace.toolbar.el)
                 .find(".run, .auto, .toggle_fields, .toggle_sidebar")
                 .parent().remove();
+        }
+        if (Settings.MODE == "table") {
+            $(workspace.toolbar.el).parent().remove();
         }
         
         // Toggle save button

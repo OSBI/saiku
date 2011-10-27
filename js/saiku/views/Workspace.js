@@ -156,7 +156,7 @@ var Workspace = Backbone.View.extend({
     },
     
     init_query: function() {
-        if (Settings.MODE == "view" && this.query) {
+        if ((Settings.MODE == "view" || Settings.MODE == "table") && this.query) {
             this.query.run();
             return;
         }
