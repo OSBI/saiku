@@ -74,15 +74,17 @@ var SelectionsModal = Modal.extend({
     
             // Populate both boxes
             $(this.el).find('.used_selections select').removeAttr('disabled');
+            var selected_members_opts = "";
             for (var j = 0; j < this.selected_members.length; j++) {
                 var member = this.selected_members[j];
                 if (member.levelUniqueName == this.member.level &&
                     member.type == "MEMBER") {
-                    $("<option />").text(member.caption)
-                        .val(member.uniqueName)
-                        .appendTo($(this.el).find('.used_selections select'));
+                    selected_members_opts += "<option value='" + member.uniqueName + "'>" + member.caption + "</option>";
                     used_members.push(member.caption);
                 }
+            }
+            if (used_members.length > 0) {
+                $(selected_members_opts).appendTo($(this.el).find('.used_selections select'));
             }
             
             // Filter out used members
@@ -91,11 +93,13 @@ var SelectionsModal = Modal.extend({
             });
             
             $(this.el).find('.available_selections select').removeAttr('disabled');
+            var available_members_opts = "";
             for (var i = 0; i < this.available_members.length; i++) {
                 var member = this.available_members[i];
-                $("<option />").text(member.caption)
-                    .val(member.uniqueName)
-                    .appendTo($(this.el).find('.available_selections select'));
+                available_members_opts += "<option value='" + member.uniqueName + "'>" + member.caption + "</option>";
+            }
+            if (this.available_members.length > 0) {
+                $(available_members_opts).appendTo($(this.el).find('.available_selections select'));
             }
         } catch (e) {
             $(this.el).html("Could not load selections");
