@@ -33,6 +33,7 @@
 
 	<bean id="connectionManager" class="org.saiku.plugin.PentahoSecurityAwareConnectionManager" init-method="init">
 		<property name="dataSourceManager" ref="pentahoDsManager" />
+		<property name="userAware" value="false" />
 	</bean>
 
 	<bean id="datasourceServiceBean" class="org.saiku.service.datasource.DatasourceService">
@@ -61,7 +62,12 @@
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
 	
+	<bean id="sessionService" class="org.saiku.plugin.PentahoSessionService">
+	</bean>
+	
+	
     <bean id="sessionResource" class="org.saiku.web.rest.resources.SessionResource">
+    		<property name="sessionService" ref="sessionService" />
 	</bean>
 
   	<bean id="repositoryBean" class="org.saiku.plugin.resources.PentahoRepositoryResource" />

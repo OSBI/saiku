@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
@@ -160,19 +159,6 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager {
 		return false;
 	}
 
-	private boolean isDatasourceSecurity(SaikuDatasource datasource, String value) {
-		Properties props = datasource.getProperties();
-		if (props != null && props.containsKey(ISaikuConnection.SECURITY_ENABLED_KEY)) {
-			String enabled = props.getProperty(ISaikuConnection.SECURITY_ENABLED_KEY, "false");
-			boolean isSecurity = Boolean.parseBoolean(enabled);
-			if (isSecurity) {
-				if (props.containsKey(ISaikuConnection.SECURITY_TYPE_KEY)) {
-					return props.getProperty(ISaikuConnection.SECURITY_TYPE_KEY).equals(value);
-				}
-			}
-		}
-		return false;
-	}
 
 	private List<String> getSpringRoles() {
 		List<String> roles = new ArrayList<String>();

@@ -2,6 +2,7 @@ package org.saiku.datasources.connection;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.olap4j.OlapConnection;
 import org.saiku.datasources.datasource.SaikuDatasource;
@@ -9,17 +10,17 @@ import org.saiku.service.datasource.IDatasourceManager;
 
 public abstract class AbstractConnectionManager implements IConnectionManager {
 
-	
+
 	private IDatasourceManager ds;
-	
+
 	public void setDataSourceManager(IDatasourceManager ds) {
 		this.ds = ds;
 	}
-	
+
 	public IDatasourceManager getDataSourceManager() {
 		return ds;
 	}
-	
+
 	public abstract void init();
 
 
@@ -27,7 +28,7 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
 		SaikuDatasource datasource = ds.getDatasource(name);
 		return getInternalConnection(name, datasource);
 	}
-	
+
 	protected abstract ISaikuConnection getInternalConnection(String name, SaikuDatasource datasource);
 
 	public Map<String, ISaikuConnection> getAllConnections() {
@@ -65,4 +66,23 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
 		return ocons;
 	}
 
+	public boolean isDatasourceSecurity(SaikuDatasource datasource, String value) {
+		Properties props = datasource.getProperties();
+		if (props != null && isDatasourceSecurityEnabled(datasource)) {
+			if (props.containsKey(ISaikuConnection.SECURITY_TYPE_KEY)) {
+				return props.getProperty(ISaikuConnection.SECURITY_TYPE_KEY).equals(value);
+			}
+		}
+		return false;
+	}
+
+	public boolean isDatasourceSecurityEnabled(SaikuDatasource datasource) {
+		Properties props = datasource.getProperties();
+		if (props != null && props.containsKey(ISaikuConnection.SECURITY_ENABLED_KEY)) {
+			String enabled = props.getProperty(ISaikuConnection.SECURITY_ENABLED_KEY, "false");
+			boolean isSecurity = Boolean.parseBoolean(enabled);
+			return isSecurity;
+		}
+		return false;
+	}
 }

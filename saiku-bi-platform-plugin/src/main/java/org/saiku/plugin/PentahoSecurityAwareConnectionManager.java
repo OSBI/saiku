@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import mondrian.olap4j.SaikuMondrianHelper;
+
 import org.olap4j.OlapConnection;
-import org.olap4j.OlapException;
 import org.pentaho.platform.api.engine.IConnectionUserRoleMapper;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
@@ -26,19 +27,28 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 
 	private List<String> errorConnections = new ArrayList<String>();
 
+	private Boolean userAware;
+
 	@Override
 	public void init() {
 		this.connections = getAllConnections();
+	}
+	
+	public void setUserAware(Boolean aware) {
+		this.userAware = aware;
 	}
 
 	@Override
 	protected ISaikuConnection getInternalConnection(String name, SaikuDatasource datasource) {
 		ISaikuConnection con;
-//		System.out.println("LOAD CONNECTION::::::::::::" + name);
+		//		System.out.println("LOAD CONNECTION::::::::::::" + name);
+		if (userAware && PentahoSessionHolder.getSession().getName() != null) {
+			name = name + "-" + PentahoSessionHolder.getSession().getName();
+		}
 		if (!connections.containsKey(name)) {
 			con =  connect(name, datasource);
 			if (con != null) {
-				connections.put(con.getName(), con);
+				connections.put(name, con);
 			} else {
 				if (!errorConnections.contains(name)) {
 					errorConnections.add(name);
@@ -67,29 +77,18 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 		if (PentahoSystem.getObjectFactory().objectDefined(MDXConnection.MDX_CONNECTION_MAPPER_KEY)) {
 			IConnectionUserRoleMapper mondrianUserRoleMapper = PentahoSystem.get(IConnectionUserRoleMapper.class, MDXConnection.MDX_CONNECTION_MAPPER_KEY, null);
 			if (mondrianUserRoleMapper != null) {
-				String roleName = null;
 				String url = datasource.getProperties().getProperty(ISaikuConnection.URL_KEY);
 				url = url.replaceAll(";","\n");
 				StringReader sr = new StringReader(url);
 				Properties props = new Properties();
 				props.load(sr);
 
-//				String catalog = props.getProperty(RolapConnectionProperties.Catalog.name());
+				//				String catalog = props.getProperty(RolapConnectionProperties.Catalog.name());
 				OlapConnection c = (OlapConnection) con.getConnection();
-//				System.out.println("CatalogParse:" + c.getCatalog());
+				//				System.out.println("CatalogParse:" + c.getCatalog());
 
 				String[] validMondrianRolesForUser = mondrianUserRoleMapper.mapConnectionRoles(PentahoSessionHolder.getSession(), c.getCatalog());
-
-				if (validMondrianRolesForUser != null) {
-					for (String validRole : validMondrianRolesForUser) {
-						if (roleName == null) {
-							roleName = validRole;
-						} else {
-							roleName += "," + validRole;
-						}
-					}
-				}
-				if (setRole(con, roleName, datasource)) {
+				if (setRole(con, validMondrianRolesForUser, datasource)) {
 					return con;
 				}
 			}
@@ -99,15 +98,15 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 
 	}
 
-	private boolean setRole(ISaikuConnection con, String roleName, SaikuDatasource datasource) {
+	private boolean setRole(ISaikuConnection con, String[] validMondrianRolesForUser, SaikuDatasource datasource) {
 		if (con.getConnection() instanceof OlapConnection) 
 		{
 			OlapConnection c = (OlapConnection) con.getConnection();
-			System.out.println("Setting role to datasource:" + datasource.getName() + " role:" + roleName);
+			System.out.println("Setting role to datasource:" + datasource.getName() + " role:" + validMondrianRolesForUser);
 			try {
-				c.setRoleName(roleName);
+				SaikuMondrianHelper.setRoles(c, validMondrianRolesForUser);
 				return true;
-			} catch (OlapException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
