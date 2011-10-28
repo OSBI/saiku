@@ -27,6 +27,7 @@ var Chart = Backbone.View.extend({
                 "<a href='#stackedBar' class='i18n'>stacked bar</a>" +
         		"<a href='#line' class='i18n'>line</a>" +
         		"<a href='#pie' class='i18n'>pie</a>" +
+                "<a href='#heatgrid' class='i18n'>heatgrid</a>" +
         		"</div>").css({
         		    'padding-bottom': '10px'
         		});
@@ -97,6 +98,12 @@ var Chart = Backbone.View.extend({
         this.options.type = "PieChart";
         this.render();
     },
+
+    heatgrid: function() {
+        this.options.stacked = false;
+        this.options.type = "HeatGridChart";
+        this.render();
+    },
     
     render: function() {
         if (! $(this.workspace.toolbar.el).find('.chart').hasClass('on')) {
@@ -118,7 +125,31 @@ var Chart = Backbone.View.extend({
             type: 'BarChart'
         }, this.options);
         
-        if (this.data.resultset.length > 5) {
+        if (options.type == "HeatGridChart") {
+            options = _.extend({
+                    canvas: this.id,
+                    width: $(this.workspace.el).find('.workspace_results').width() - 80,
+                    height: $(this.workspace.el).find('.workspace_results').height(),
+                    animate: false,
+                    clickable: false,
+                    orientation: "horizontal",
+                    showValues: false,
+                    showXScale: true,
+                    xAxisPosition: "bottom",
+                    showYScale: true,
+                    panelSizeRatio: 0.8,
+                    yAxisPosition: "left",
+                    yAxisSize: 70,
+                    minColor: "#FEDFE1",
+                    maxColor: "#F11929",
+                    extensionPoints: {
+                        xAxisLabel_textAngle: -(Math.PI / 2),
+                        xAxisLabel_textAlign: "right",
+                        xAxisLabel_bottom: 10
+                    }
+            }, this.options);
+        }
+        if (this.data.resultset.length > 5 ) {
             options.extensionPoints = {
                 xAxisLabel_textAngle: -(Math.PI / 2),
                 xAxisLabel_textAlign: "right",
@@ -151,6 +182,8 @@ var Chart = Backbone.View.extend({
         this.data = {};
         this.data.resultset = [];
         this.data.metadata = [];
+        this.data.height = 0;
+        this.data.width = 0;
         
         if (args.data.cellset && args.data.cellset.length > 0) {
             
@@ -175,6 +208,7 @@ var Chart = Backbone.View.extend({
                     }
                 } else if (args.data.cellset[row][0].value !== "null" && args.data.cellset[row][0].value !== "") {
                     var record = [];
+                    this.data.width = args.data.cellset[row].length;
                     for (var col = lowest_level; col < args.data.cellset[row].length; col++) {
                         var value = args.data.cellset[row][col].value;
                         // check if the resultset contains the raw value, if not try to parse the given value
@@ -194,7 +228,7 @@ var Chart = Backbone.View.extend({
                     this.data.resultset.push(record);
                 }
             }
-            
+            this.data.height = this.data.resultset.length;
             this.render();
         } else {
             $(this.el).text("No results");
