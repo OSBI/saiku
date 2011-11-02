@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import jxl.NumberCell;
 import jxl.Workbook;
 import jxl.format.Alignment;
 import jxl.format.Border;
@@ -98,6 +99,15 @@ public class ExcelExporter {
 						}					
 						else {
 							cf = (i % 2 != 0 ? getEvenFormat(Alignment.RIGHT) : getOddFormat(Alignment.RIGHT));
+
+							try {
+								Double v = Double.parseDouble(value); 
+								WritableCellFormat nf = getNumberFormat();
+								nf.setBackground(cf.getBackgroundColour());
+								jxl.write.Number n = new jxl.write.Number(j, i , v , nf);
+								sheet.addCell(n);
+								continue;
+							} catch (Exception e) {	}
 						}
 						Label label = new Label(j,i,value,cf);
 						sheet.addCell(label);
@@ -108,7 +118,7 @@ public class ExcelExporter {
 				}
 				sheet.insertColumn(0);
 				sheet.insertRow(0);
-				
+
 				wb.write();
 				wb.close();
 				byte[] output =bout.toByteArray();
@@ -134,13 +144,13 @@ public class ExcelExporter {
 	}
 
 	private static WritableCellFormat getNumberFormat() throws WriteException {
-		WritableCellFormat cs = new WritableCellFormat(new NumberFormat("###,###,###.###")); //$NON-NLS-1$
+		WritableCellFormat cs = new WritableCellFormat(new NumberFormat("###,###,###.0###")); //$NON-NLS-1$
 		cs.setBorder(Border.ALL, BorderLineStyle.THIN);
 		cs.setAlignment(Alignment.RIGHT);
 		cs.setIndentation(1);
 		return cs;
 	}
-	
+
 	private static WritableCellFormat getTextFormat(Alignment alignment) throws WriteException {
 		WritableCellFormat cs = new WritableCellFormat(new WritableFont(WritableFont.createFont("Verdana"),11)); //$NON-NLS-1$
 		cs.setBorder(Border.ALL, BorderLineStyle.THIN);
