@@ -144,7 +144,7 @@ public class ExcelExporter {
 	}
 
 	private static WritableCellFormat getNumberFormat() throws WriteException {
-		WritableCellFormat cs = new WritableCellFormat(new NumberFormat("###,###,###.0###")); //$NON-NLS-1$
+		WritableCellFormat cs = new WritableCellFormat(new NumberFormat("###,###,###.0#")); //$NON-NLS-1$
 		cs.setBorder(Border.ALL, BorderLineStyle.THIN);
 		cs.setAlignment(Alignment.RIGHT);
 		cs.setIndentation(1);
