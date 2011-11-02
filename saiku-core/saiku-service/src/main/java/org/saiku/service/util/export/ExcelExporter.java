@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import jxl.NumberCell;
 import jxl.Workbook;
 import jxl.format.Alignment;
 import jxl.format.Border;
@@ -28,7 +27,6 @@ import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.service.util.exception.SaikuServiceException;
 
 public class ExcelExporter {
-
 
 	public static byte[] exportExcel(CellSet cellSet) {
 		return exportExcel(cellSet, new HierarchicalCellSetFormatter());

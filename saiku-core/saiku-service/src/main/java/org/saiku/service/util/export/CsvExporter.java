@@ -1,5 +1,7 @@
 package org.saiku.service.util.export;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +27,55 @@ public class CsvExporter {
 	public static byte[] exportCsv(CellSet cellSet, String delimiter, String enclosing, ICellSetFormatter formatter) {
 		CellDataSet table = OlapResultSetUtil.cellSet2Matrix(cellSet, formatter);
 		return getCsv(table, delimiter, enclosing);
+	}
+	
+	public static byte[] exportCsv(ResultSet rs) { 
+		return getCsv(rs,",","\"");
+	}
+	
+	public static byte[] exportCsv(ResultSet rs, String delimiter, String enclosing) {
+		return getCsv(rs, delimiter, enclosing);
+	}
+
+	private static byte[] getCsv(ResultSet rs, String delimiter, String enclosing) {
+		Integer width = 0;
+        Integer height = 0;
+        StringBuilder sb = new StringBuilder();
+        try {
+			while (rs.next()) {
+			    if (height == 0) {
+			        width = rs.getMetaData().getColumnCount();
+			        String header = null;
+			        for (int s = 0; s < width; s++) {
+			            if (header == null) {
+			            	header = enclosing + rs.getMetaData().getColumnName(s + 1) + enclosing;
+			            } else {
+			            	header += delimiter + enclosing + rs.getMetaData().getColumnName(s + 1) + enclosing;
+			            }
+			        }
+			        if (header != null) {
+			        	header += "\r\n";
+			        	sb.append(header);
+			        }
+			    }
+			    for (int i = 0; i < width; i++) {
+			    	String content = rs.getString(i + 1);
+			        if (content == null)
+			            content = "";
+			        if (i > 0) {
+			        	sb.append(delimiter);
+			        }
+			        sb.append(enclosing + content + enclosing);
+			    }
+			    sb.append("\r\n");
+			    height++;
+			}
+			return sb.toString().getBytes("UTF8"); //$NON-NLS-1$
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+		return new byte[0];
 	}
 
 	private static byte[] getCsv(CellDataSet table, String delimiter, String enclosing) {

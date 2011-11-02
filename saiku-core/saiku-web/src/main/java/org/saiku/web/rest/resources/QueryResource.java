@@ -303,7 +303,7 @@ public class QueryResource {
 		}
 		return getQueryCsvExport(queryName, "flat");
 	}
-
+	
 	@GET
 	@Produces({"text/csv" })
 	@Path("/{queryname}/export/csv/{format}")
@@ -389,7 +389,7 @@ public class QueryResource {
 	@GET
 	@Produces({"application/json" })
 	@Path("/{queryname}/drillthrough/{maxrows}")
-	public QueryResult execute(
+	public QueryResult drillthrough(
 			@PathParam("queryname") String queryName, 
 			@PathParam("maxrows") @DefaultValue("100") Integer maxrows)
 	{
@@ -400,7 +400,7 @@ public class QueryResource {
 		ResultSet rs = null;
 		try {
 			Long start = (new Date()).getTime();
-			rs = olapQueryService.drilldown(queryName, maxrows);
+			rs = olapQueryService.drillthrough(queryName, maxrows);
 			rsc = RestUtil.convert(rs);
 			Long runtime = (new Date()).getTime()- start;
 			rsc.setRuntime(runtime.intValue());
@@ -427,6 +427,31 @@ public class QueryResource {
 		}
 		return rsc;
 
+	}
+	
+
+	@GET
+	@Produces({"text/csv" })
+	@Path("/{queryname}/drillthrough/{maxrows}/export/csv")
+	public Response getDrillthroughExport(			
+			@PathParam("queryname") String queryName, 
+			@PathParam("maxrows") @DefaultValue("100") Integer maxrows)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/drillthrough/" + maxrows + "/export/csv\tGET");
+		}
+		try {
+		byte[] doc = olapQueryService.exportDrillthroughCsv(queryName, maxrows);
+		String name = SaikuProperties.webExportCsvName;
+		return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
+				"content-disposition",
+		"attachment; filename = " + name + "-drillthrough.csv").header(
+				"content-length",doc.length).build();
+		} catch (Exception e) {
+			log.error("Cannot export drillthrough query (" + queryName + ")",e);
+			return Response.serverError().build();
+		}
+	
 	}
 
 	@GET

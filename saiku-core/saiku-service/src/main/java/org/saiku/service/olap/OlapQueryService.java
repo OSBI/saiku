@@ -196,7 +196,7 @@ public class OlapQueryService {
 		return execute(queryName, formatter);
 	}
 
-	public ResultSet drilldown(String queryName, int maxrows) {
+	public ResultSet drillthrough(String queryName, int maxrows) {
 		try {
 			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnectionName()); 
 			final OlapStatement stmt = con.createStatement();
@@ -208,6 +208,24 @@ public class OlapQueryService {
 				mdx = "DRILLTHROUGH " + mdx;
 			}
 			return  stmt.executeQuery(mdx);
+		} catch (SQLException e) {
+			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
+		}
+	}
+	
+	public byte[] exportDrillthroughCsv(String queryName, int maxrows) {
+		try {
+			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnectionName()); 
+			final OlapStatement stmt = con.createStatement();
+			String mdx = getMDXQuery(queryName);
+			if (maxrows > 0) {
+				mdx = "DRILLTHROUGH MAXROWS " + maxrows + " " + mdx;
+			}
+			else {
+				mdx = "DRILLTHROUGH " + mdx;
+			}
+			ResultSet rs = stmt.executeQuery(mdx);
+			return CsvExporter.exportCsv(rs);
 		} catch (SQLException e) {
 			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
 		}
