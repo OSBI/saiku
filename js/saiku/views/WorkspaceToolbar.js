@@ -140,6 +140,12 @@ var WorkspaceToolbar = Backbone.View.extend({
         this.workspace.table.render({ data: response });
         Saiku.ui.unblock();
     },
+
+    export_drillthrough: function(event) {
+        window.location = Settings.REST_URL +
+            Saiku.session.username + "/query/" + 
+            this.workspace.query.id + "/drillthrough/0/export/csv";
+    },
     
     swap_axes_on_dropzones: function() {
         $columns = $(this.workspace.drop_zones.el).find('.columns')
