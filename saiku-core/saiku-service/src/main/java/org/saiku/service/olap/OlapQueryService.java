@@ -30,6 +30,7 @@ import java.util.Properties;
 
 import org.olap4j.AllocationPolicy;
 import org.olap4j.Axis;
+import org.olap4j.Cell;
 import org.olap4j.CellSet;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
@@ -69,8 +70,8 @@ import org.slf4j.LoggerFactory;
 
 public class OlapQueryService {
 
-    private static final Logger log = LoggerFactory.getLogger(OlapQueryService.class);
-    
+	private static final Logger log = LoggerFactory.getLogger(OlapQueryService.class);
+
 	private OlapDiscoverService olapDiscoverService;
 
 	private Map<String,IQuery> queries = new HashMap<String,IQuery>();
@@ -122,7 +123,7 @@ public class OlapQueryService {
 		queryList.addAll(queries.keySet());
 		return queryList;
 	}
-	
+
 	public SaikuQuery getQuery(String queryName) {
 		IQuery q = getIQuery(queryName);
 		return ObjectUtil.convert(q);
@@ -138,18 +139,18 @@ public class OlapQueryService {
 
 	public CellDataSet execute(String queryName, String formatter) {
 		formatter = formatter == null ? "" : formatter.toLowerCase(); 
-			if(formatter.equals("flat")) {
-				return execute(queryName, new CellSetFormatter());
-			}
-			else if (formatter.equals("hierarchical")) {
-				return execute(queryName, new HierarchicalCellSetFormatter());
-			}
-			else if (formatter.equals("cheat")) {
-				return execute(queryName, new CheatCellSetFormatter());
-			}
+		if(formatter.equals("flat")) {
+			return execute(queryName, new CellSetFormatter());
+		}
+		else if (formatter.equals("hierarchical")) {
 			return execute(queryName, new HierarchicalCellSetFormatter());
+		}
+		else if (formatter.equals("cheat")) {
+			return execute(queryName, new CheatCellSetFormatter());
+		}
+		return execute(queryName, new HierarchicalCellSetFormatter());
 	}
-	
+
 	public CellDataSet execute(String queryName, ICellSetFormatter formatter) {
 		try {
 			IQuery query = getIQuery(queryName);
@@ -160,27 +161,27 @@ public class OlapQueryService {
 				log.info("Query (" + queryName + ") Setting scenario:" + query.getScenario().getId());
 				con.setScenario(query.getScenario());
 			}
-			
+
 			CellSet cellSet =  query.execute();
-	        Long exec = (new Date()).getTime();
-	        
-	        if (query.getScenario() != null) {
+			Long exec = (new Date()).getTime();
+
+			if (query.getScenario() != null) {
 				log.info("Query (" + queryName + ") removing scenario:" + query.getScenario().getId());
-	        	con.setScenario(null);
-	        }
-	        
-	        CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cellSet,formatter);
-	        Long format = (new Date()).getTime();
-	        log.info("Size: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
-	                + "ms\tFormat:\t" + (format - exec) + "ms\t Total: " + (format - start) + "ms");
-	        result.setRuntime(new Double(format - start).intValue());
+				con.setScenario(null);
+			}
+
+			CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cellSet,formatter);
+			Long format = (new Date()).getTime();
+			log.info("Size: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
+					+ "ms\tFormat:\t" + (format - exec) + "ms\t Total: " + (format - start) + "ms");
+			result.setRuntime(new Double(format - start).intValue());
 			OlapUtil.storeCellSet(queryName, cellSet);
 			return result;
 		} catch (Exception e) {
 			throw new SaikuServiceException("Can't execute query: " + queryName,e);
 		}
 	}
-	
+
 	public void setMdx(String queryName, String mdx) {
 		IQuery q = getIQuery(queryName);
 		q.setMdx(mdx);
@@ -212,7 +213,47 @@ public class OlapQueryService {
 			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
 		}
 	}
-	
+
+	public ResultSet drillthrough(String queryName, List<Integer> cellPosition, Integer maxrows) {
+		try {
+			CellSet cs = OlapUtil.getCellSet(queryName);
+			Cell c = cs.getCell(cellPosition);
+			SaikuCube cube = getQuery(queryName).getCube();
+			final OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnectionName()); 
+			final OlapStatement stmt = con.createStatement();
+
+			String select = "SELECT (";
+			for (int i = 0; i < cellPosition.size(); i++) {
+				List<Member> members = cs.getAxes().get(i).getPositions().get(cellPosition.get(i)).getMembers();
+				for (int k = 0; k < members.size(); k++) {
+					Member m = members.get(k);
+					if (k > 0 || i > 0) {
+						select += ", ";
+					}
+					select += m.getUniqueName();
+
+				}
+			}
+			select += ") ON COLUMNS \r\n";
+			select += "FROM " + cube.getCubeName();
+
+			if (maxrows > 0) {
+				select = "DRILLTHROUGH MAXROWS " + maxrows + " " + select + "\r\n";
+			}
+			else {
+				select = "DRILLTHROUGH " + select + "\r\n";
+			}
+
+			log.debug("Drill Through for query (" + queryName + ") : \r\n" + select);
+			return  stmt.executeQuery(select);
+
+
+		} catch (Exception e) {
+			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
+		}
+	}
+
+
 	public byte[] exportDrillthroughCsv(String queryName, int maxrows) {
 		try {
 			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnectionName()); 
@@ -230,13 +271,17 @@ public class OlapQueryService {
 			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
 		}
 	}
-	
+
+	public byte[] exportResultSetCsv(ResultSet rs) {
+		return CsvExporter.exportCsv(rs);
+	}
+
 	public void setCellValue(String queryName, List<Integer> position, String value, String allocationPolicy) {
 		try {
 
 			IQuery query = getIQuery(queryName);
 			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
-			
+
 			Scenario s;
 			if (query.getScenario() == null) {
 				s = con.createScenario();
@@ -252,8 +297,8 @@ public class OlapQueryService {
 
 
 			CellSet cs1 = query.execute();
-	        OlapUtil.storeCellSet(queryName, cs1);
-	        
+			OlapUtil.storeCellSet(queryName, cs1);
+
 			Object v = null;
 			try {
 				v = Integer.parseInt(value);
@@ -263,23 +308,17 @@ public class OlapQueryService {
 			if (v == null) {
 				throw new SaikuServiceException("Error setting value of query " + queryName + " to:" + v);
 			}
-			
+
 			allocationPolicy = AllocationPolicy.EQUAL_ALLOCATION.toString();
 
 			AllocationPolicy ap = AllocationPolicy.valueOf(allocationPolicy);
 			CellSet cs = OlapUtil.getCellSet(queryName);
 			cs.getCell(position).setValue(v, ap);
-			
-			
-//			CellSet cs2 = query.execute();
-
-	        
-	        
 			con.setScenario(null);
 		} catch (Exception e) {
 			throw new SaikuServiceException("Error setting value: " + queryName,e);
 		}
-		
+
 
 	}
 
@@ -335,11 +374,11 @@ public class OlapQueryService {
 			if (hierarchy.getUniqueName().equals(uniqueHierarchyName)) {
 				for (Level level : hierarchy.getLevels()) {
 					if (level.getUniqueName().equals(uniqueLevelName)) {
-							Selection sel = dimension.createSelection(level);
-							if (!dimension.getInclusions().contains(sel)) {
-								dimension.include(level);
-							}
-							return true;
+						Selection sel = dimension.createSelection(level);
+						if (!dimension.getInclusions().contains(sel)) {
+							dimension.include(level);
+						}
+						return true;
 					}
 				}
 			}
@@ -360,12 +399,12 @@ public class OlapQueryService {
 							ArrayList<Selection> removals = new ArrayList<Selection>();
 							for (Selection sel :dimension.getInclusions()) {
 								if ((sel.getRootElement() instanceof Member)) {
-					            	if (((Member) sel.getRootElement()).getLevel().equals(level)) {
-					            		if (dimension.getInclusions().contains(sel)) {
-					            			removals.add(sel);
-					            		}
-					            	}
-					            }
+									if (((Member) sel.getRootElement()).getLevel().equals(level)) {
+										if (dimension.getInclusions().contains(sel)) {
+											removals.add(sel);
+										}
+									}
+								}
 							}
 							dimension.getInclusions().removeAll(removals);
 							if (dimension.getInclusions().size() == 0) {
@@ -409,7 +448,7 @@ public class OlapQueryService {
 		query.getDimension(dimensionName).getExclusions().clear();
 		query.getDimension(dimensionName).getInclusions().clear();
 	}
-	
+
 	public List<SaikuDimensionSelection> getAxisSelection(String queryName, String axis) {
 		IQuery query = getIQuery(queryName);
 
@@ -426,7 +465,7 @@ public class OlapQueryService {
 		}
 		return dimsel;
 	}
-	
+
 	public SaikuDimensionSelection getAxisDimensionSelections(String queryName, String axis, String dimension) {
 		IQuery query = getIQuery(queryName);
 		try {
@@ -472,7 +511,7 @@ public class OlapQueryService {
 			query.resetAxisSelections(qAxis);
 		}
 	}
-	
+
 	public void resetQuery(String queryName) {
 		IQuery query = getIQuery(queryName);
 		query.resetQuery();
@@ -489,8 +528,8 @@ public class OlapQueryService {
 		query.setProperties(props);
 		return getProperties(queryName);
 	}	
-	
-	
+
+
 	public Properties getProperties(String queryName) {
 		IQuery query = getIQuery(queryName);
 		OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
@@ -512,7 +551,7 @@ public class OlapQueryService {
 	public String getMDXQuery(String queryName) {
 		return getIQuery(queryName).getMdx();
 	}
-	
+
 	public String getQueryXml(String queryName) {
 		IQuery query = getIQuery(queryName);
 		return query.toXml();
@@ -524,15 +563,15 @@ public class OlapQueryService {
 
 	public byte[] getExport(String queryName, String type, String formatter) {
 		formatter = formatter == null ? "" : formatter.toLowerCase();
-			if (formatter.equals("flat")) {
-				return getExport(queryName, type, new CellSetFormatter());
-			} else if (formatter.equals("hierarchical")) {
-				return getExport(queryName, type, new HierarchicalCellSetFormatter());
-			}
-			
+		if (formatter.equals("flat")) {
+			return getExport(queryName, type, new CellSetFormatter());
+		} else if (formatter.equals("hierarchical")) {
 			return getExport(queryName, type, new HierarchicalCellSetFormatter());
+		}
+
+		return getExport(queryName, type, new HierarchicalCellSetFormatter());
 	}
-	
+
 	public byte[] getExport(String queryName, String type, ICellSetFormatter formatter) {
 		if (type != null) {
 			CellSet rs = OlapUtil.getCellSet(queryName);
@@ -553,7 +592,7 @@ public class OlapQueryService {
 		queries.put(queryName, mdx);
 		query = null;
 	}
-	
+
 	private IQuery getIQuery(String queryName) {
 		IQuery query = queries.get(queryName);
 		if (query == null) {
@@ -561,4 +600,5 @@ public class OlapQueryService {
 		}
 		return query;
 	}
+
 }

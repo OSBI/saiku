@@ -44,6 +44,14 @@ public class SaikuCube extends AbstractSaikuObject {
 		return uniqueName;
 	}
 	
+	public String getCubeName() {
+		String name = super.getUniqueName();
+		if (name != null && !name.startsWith("[")) {
+			name = "[" + name + "]";
+		}
+		return name;
+	}
+
 	@Override
 	public String getName() {
 		return super.getName();

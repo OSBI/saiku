@@ -41,6 +41,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -161,7 +162,7 @@ public class QueryResource {
 			@FormParam("schema") String schemaName, 
 			@FormParam("xml") @DefaultValue("") String xml,
 			@PathParam("queryname") String queryName) throws ServletException 
-	{
+			{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "\tPOST\t xml:" + (xml == null));
 		}
@@ -170,7 +171,7 @@ public class QueryResource {
 			return olapQueryService.createNewOlapQuery(queryName, xml);
 		}
 		return olapQueryService.createNewOlapQuery(queryName, cube);
-	}
+			}
 
 	@GET
 	@Produces({"application/json" })
@@ -285,8 +286,8 @@ public class QueryResource {
 			String name = SaikuProperties.webExportExcelName;
 			return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
 					"content-disposition",
-			"attachment; filename = " + name + ".xls").header(
-					"content-length",doc.length).build();
+					"attachment; filename = " + name + ".xls").header(
+							"content-length",doc.length).build();
 		}
 		catch (Exception e) {
 			log.error("Cannot get excel for query (" + queryName + ")",e);
@@ -303,7 +304,7 @@ public class QueryResource {
 		}
 		return getQueryCsvExport(queryName, "flat");
 	}
-	
+
 	@GET
 	@Produces({"text/csv" })
 	@Path("/{queryname}/export/csv/{format}")
@@ -318,8 +319,8 @@ public class QueryResource {
 			String name = SaikuProperties.webExportCsvName;
 			return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
 					"content-disposition",
-			"attachment; filename = " + name + ".csv").header(
-					"content-length",doc.length).build();
+					"attachment; filename = " + name + ".csv").header(
+							"content-length",doc.length).build();
 		}
 		catch (Exception e) {
 			log.error("Cannot get csv for query (" + queryName + ")",e);
@@ -335,7 +336,7 @@ public class QueryResource {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result\tGET");
 		}
 		try {
-			
+
 			CellDataSet cs = olapQueryService.execute(queryName);
 			return RestUtil.convert(cs);
 		}
@@ -352,7 +353,7 @@ public class QueryResource {
 	public QueryResult executeMdx(
 			@PathParam("queryname") String queryName,
 			@FormParam("mdx") String mdx)
-			{
+	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result\tPOST\t"+mdx);
 		}
@@ -366,7 +367,7 @@ public class QueryResource {
 			String error = ExceptionUtils.getRootCauseMessage(e);
 			return new QueryResult(error);
 		}
-			}
+	}
 
 	@POST
 	@Produces({"application/json" })
@@ -388,10 +389,11 @@ public class QueryResource {
 
 	@GET
 	@Produces({"application/json" })
-	@Path("/{queryname}/drillthrough/{maxrows}")
+	@Path("/{queryname}/drillthrough")
 	public QueryResult drillthrough(
 			@PathParam("queryname") String queryName, 
-			@PathParam("maxrows") @DefaultValue("100") Integer maxrows)
+			@QueryParam("maxrows") @DefaultValue("100") Integer maxrows,
+			@QueryParam("position") String position)
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/drillthrough\tGET");
@@ -400,7 +402,19 @@ public class QueryResource {
 		ResultSet rs = null;
 		try {
 			Long start = (new Date()).getTime();
-			rs = olapQueryService.drillthrough(queryName, maxrows);
+			if (position == null) {
+				rs = olapQueryService.drillthrough(queryName, maxrows);
+			} else {
+				String[] positions = position.split(":");
+				List<Integer> cellPosition = new ArrayList<Integer>();
+
+				for (String p : positions) {
+					Integer pInt = Integer.parseInt(p);
+					cellPosition.add(pInt);
+				}
+
+				rs = olapQueryService.drillthrough(queryName, cellPosition, maxrows);
+			}
 			rsc = RestUtil.convert(rs);
 			Long runtime = (new Date()).getTime()- start;
 			rsc.setRuntime(runtime.intValue());
@@ -428,30 +442,62 @@ public class QueryResource {
 		return rsc;
 
 	}
-	
+
 
 	@GET
 	@Produces({"text/csv" })
-	@Path("/{queryname}/drillthrough/{maxrows}/export/csv")
+	@Path("/{queryname}/drillthrough/export/csv")
 	public Response getDrillthroughExport(			
 			@PathParam("queryname") String queryName, 
-			@PathParam("maxrows") @DefaultValue("100") Integer maxrows)
+			@QueryParam("maxrows") @DefaultValue("100") Integer maxrows,
+			@QueryParam("position") String position)
 	{
 		if (log.isDebugEnabled()) {
-			log.debug("TRACK\t"  + "\t/query/" + queryName + "/drillthrough/" + maxrows + "/export/csv\tGET");
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/drillthrough/export/csv (maxrows:" + maxrows + " position" + position + ")\tGET");
 		}
+		ResultSet rs = null;
+
 		try {
-		byte[] doc = olapQueryService.exportDrillthroughCsv(queryName, maxrows);
-		String name = SaikuProperties.webExportCsvName;
-		return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
-				"content-disposition",
-		"attachment; filename = " + name + "-drillthrough.csv").header(
-				"content-length",doc.length).build();
+			if (position == null) {
+				rs = olapQueryService.drillthrough(queryName, maxrows);
+			} else {
+				String[] positions = position.split(":");
+				List<Integer> cellPosition = new ArrayList<Integer>();
+
+				for (String p : positions) {
+					Integer pInt = Integer.parseInt(p);
+					cellPosition.add(pInt);
+				}
+
+				rs = olapQueryService.drillthrough(queryName, cellPosition, maxrows);
+			}
+			byte[] doc = olapQueryService.exportResultSetCsv(rs);
+			String name = SaikuProperties.webExportCsvName;
+			return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
+					"content-disposition",
+					"attachment; filename = " + name + "-drillthrough.csv").header(
+							"content-length",doc.length).build();
+
+
 		} catch (Exception e) {
 			log.error("Cannot export drillthrough query (" + queryName + ")",e);
 			return Response.serverError().build();
 		}
-	
+		finally {
+			if (rs != null) {
+				try {
+					Statement statement = rs.getStatement();
+					statement.close();
+					rs.close();
+				} catch (SQLException e) {
+					throw new SaikuServiceException(e);
+				} finally {
+					rs = null;
+				}
+			}
+		}
+
+
 	}
 
 	@GET
@@ -539,30 +585,30 @@ public class QueryResource {
 		return Status.OK;
 
 	}
-	
+
 	@POST
 	@Produces({"application/json" })
 	@Path("/{queryname}/cell/{position}/{value}")
 	public Status setCell(@PathParam("queryname") String queryName,
-						  @PathParam("position") String position,
-						  @PathParam("value") String value)	
+			@PathParam("position") String position,
+			@PathParam("value") String value)	
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/cell/" + position+ "/" + value + "\tGET");
 		}
 		String[] positions = position.split(":");
 		List<Integer> cellPosition = new ArrayList<Integer>();
-		
+
 		for (String p : positions) {
 			Integer pInt = Integer.parseInt(p);
 			cellPosition.add(pInt);
 		}
-		
+
 		olapQueryService.setCellValue(queryName, cellPosition, value, null);
 		return Status.OK;
 
 	}
-	
+
 
 	/*
 	 * Dimension Methods
