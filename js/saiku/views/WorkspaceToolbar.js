@@ -33,7 +33,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         
         // Maintain `this` in callbacks
         _.bindAll(this, "call", "reflect_properties", "run_query",
-            "swap_axes_on_dropzones", "display_drillthrough");
+            "swap_axes_on_dropzones", "display_drillthrough","clicked_cell_drillthrough_export", "clicked_cell_drillthrough");
         
         // Redraw the toolbar to reflect properties
         this.workspace.bind('properties:loaded', this.reflect_properties);
@@ -150,10 +150,8 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     drillthrough: function(event) {
-        Saiku.ui.block("Executing drillthrough...");
-        this.workspace.query.action.get("/drillthrough/500", {
-            success: this.display_drillthrough
-        });
+        $(event.target).toggleClass('on');
+        $(this.workspace.el).find("td.data").click(this.clicked_cell_drillthrough);
     },
     
     display_drillthrough: function(model, response) {
@@ -162,11 +160,42 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
 
     export_drillthrough: function(event) {
-        window.location = Settings.REST_URL +
-            Saiku.session.username + "/query/" + 
-            this.workspace.query.id + "/drillthrough/0/export/csv";
+        $(this.workspace.el).find("td.data").click(this.clicked_cell_drillthrough_export);
+
+        
     },
-    
+
+    clicked_cell_drillthrough_export: function(event) {
+        $target = $(event.target).hasClass('data') ?
+            $(event.target).find('div') : $(event.target);
+        var pos = $target.attr('rel');     
+        (new DrillthroughModal({
+            workspace: this.workspace,
+            maxrows: 10000,
+            title: "Drill-Through to CSV",
+            action: "export",
+            position: pos,
+            query: this.workspace.query
+        })).open();
+   
+    },
+
+    clicked_cell_drillthrough: function(event) {
+        $target = $(event.target).hasClass('data') ?
+            $(event.target).find('div') : $(event.target);
+        var pos = $target.attr('rel');
+        (new DrillthroughModal({
+            workspace: this.workspace,
+            maxrows: 200,
+            title: "Drill-Through",
+            action: "table",
+            success: this.display_drillthrough,
+            position: pos,
+            query: this.workspace.query
+        })).open();
+   
+    },
+
     swap_axes_on_dropzones: function() {
         $columns = $(this.workspace.drop_zones.el).find('.columns')
             .children()

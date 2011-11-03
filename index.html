@@ -53,6 +53,7 @@
         <script type="text/javascript" src="js/saiku/views/Modal.js"></script>
         <script type="text/javascript" src="js/saiku/views/MDXModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/SelectionsModal.js"></script>
+        <script type="text/javascript" src="js/saiku/views/DrillthroughModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/LoginForm.js"></script>
         <script type="text/javascript" src="js/saiku/views/AboutModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/WorkspaceToolbar.js"></script>
@@ -222,15 +223,18 @@
             <li><a href="#swap_axis" 
                 class="i18n swap_axis button disabled_toolbar sprite" 
                 title="Swap axis"></a></li>
+            <li><a href="#show_mdx" 
+                class="i18n mdx button disabled_toolbar sprite" 
+                title="Show MDX"></a></li>
+            <li><a href="#query_scenario" 
+                class="i18n query_scenario button disabled_toolbar sprite" 
+                title="Query Scenario"></a></li>
             <li><a href="#drillthrough" 
                 class="i18n drillthrough button disabled_toolbar sprite" 
                 title="Drill through current query"></a></li>
             <li><a href="#export_drillthrough" 
-                class="i18n drillthrough button disabled_toolbar sprite" 
+                class="i18n drillthrough_export button disabled_toolbar sprite" 
                 title="Export Drill-Through result of current query to CSV"></a></li>
-            <li><a href="#show_mdx" 
-                class="i18n mdx button disabled_toolbar sprite" 
-                title="Show MDX"></a></li>
             <li class="seperator"><a href="#export_xls" 
                 class="i18n export_xls button disabled_toolbar sprite" 
                 title="Export XLS"></a></li>
@@ -285,6 +289,14 @@
             </div>
             <div class="options">
                 <input name="show_unique" id="show_unique" type="checkbox" /><label for="show_unique">Show Unique Names</label>
+            </div>
+        </script>
+        <script type="text/x-jquery-tmpl" id="template-drillthrough">
+            <div class="row_limit">
+                <br />
+                Row Limit: (0 = none) <input id="maxrows" name="maxrows" class="maxrows" type="text" />
+                <br />
+                <b>CAUTION:</b> The number of rows can have a significant impact on the performance of the following action.
             </div>
         </script>
     </body>

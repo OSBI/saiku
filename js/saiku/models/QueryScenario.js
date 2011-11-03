@@ -21,13 +21,16 @@
 var QueryScenario = Backbone.Model.extend({
     initialize: function(args, options) {
         // Maintain `this`
-        _.bindAll(this, "attach_listeners", "clicked_cell", "save_writeback", 
+        _.bindAll(this, "attach_listeners", "activate", "clicked_cell", "save_writeback", 
             "cancel_writeback", "check_input");
         
         this.query = options.query;
-        this.query.bind('table:render', this.attach_listeners);
     },
     
+    activate: function() {
+        this.query.bind('table:render', this.attach_listeners);
+    },
+
     attach_listeners: function(args) {
         if (args.workspace.query && args.workspace.query.properties &&
             args.workspace.query.properties.properties['org.saiku.connection.scenario'] === "true")
@@ -38,7 +41,7 @@ var QueryScenario = Backbone.Model.extend({
         $target = $(event.target).hasClass('data') ?
             $(event.target).find('div') : $(event.target);
         var value = $target.attr('alt');
-                    var pos = $target.attr('rel');
+        var pos = $target.attr('rel');
         
         var $input = $("<input type='text' value='" + value + "' />")
             .keyup(this.check_input)

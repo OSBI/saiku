@@ -800,6 +800,19 @@ html, body {
     width: 150px;
     text-align: left;
 }
+
+.dialog_drillthrough .dialog_icon {
+    display: none;
+}
+
+.dialog_drillthrough .dialog_body .maxrows {
+    width: 60px;
+}
+
+.dialog_drillthrough .dialog_body .row_limit {
+    text-align: center;
+}
+
 .dialog_footer {
     border-top: 1px solid #CCC;
     padding: 10px 10px;
@@ -1000,6 +1013,13 @@ html, body {
 .workspace_toolbar .drillthrough {
     background-position: -781px 7px;
 }
+.workspace_toolbar .drillthrough_export {
+    background-position: -781px 7px;
+}
+.workspace_toolbar .query_scenario {
+    background-position: -781px 7px;
+}
+
 .workspace_toolbar .switch_to_mdx {
   /* this isn't in the sprite */
 }
