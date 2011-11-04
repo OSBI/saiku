@@ -46,12 +46,27 @@ var WorkspaceToolbar = Backbone.View.extend({
         // Activate buttons when a new query is created or run
         this.workspace.bind('query:new', this.activate_buttons);
         this.workspace.bind('query:result', this.activate_buttons);
+        
     },
     
     activate_buttons: function(args) {
         if (args.data && args.data.cellset && args.data.cellset.length > 0 ) {
             $(args.workspace.toolbar.el).find('.button')
                 .removeClass('disabled_toolbar');            
+
+            if (! $(args.workspace.toolbar.el).find('.query_scenario').hasClass('disabled_toolbar')) {
+                $(args.workspace.toolbar.el).find('.query_scenario').addClass('disabled_toolbar');
+            }
+            if (args.workspace.query && args.workspace.query.properties &&
+                args.workspace.query.properties.properties['org.saiku.connection.scenario'] === "true") {
+
+                $(args.workspace.toolbar.el).find('.query_scenario').removeClass('disabled_toolbar');
+            }
+
+            // $(args.workspace.toolbar.el).find('.table_mode').each(function(index,element) {});
+            $(args.workspace.el).find("td.data").removeClass('cellhighlight').unbind('click');
+            $(args.workspace.el).find(".table_mode").removeClass('on');
+
         } else {
             $(args.workspace.toolbar.el).find('.button')
                 .addClass('disabled_toolbar');
@@ -59,8 +74,9 @@ var WorkspaceToolbar = Backbone.View.extend({
                 .find('.auto,.non_empty,.toggle_fields,.toggle_sidebar')
                 .removeClass('disabled_toolbar');
         }
+
     },
-    
+
     template: function() {
         var template = $("#template-workspace-toolbar").html() || "";
         return _.template(template)();
@@ -149,9 +165,40 @@ var WorkspaceToolbar = Backbone.View.extend({
         });
     },
     
+
+    check_modes: function(source) {
+        if (typeof source === "undefined" || source == null || !$(source).hasClass('on'))
+            return;
+        if (!$(source).hasClass('on')) {
+            $(this.workspace.el).find("td.data").removeClass('cellhighlight').unbind('click');
+            $(this.workspace.el).find(".table_mode").removeClass('on');
+            this.workspace.query.run();
+        } else {
+            if ($(source).hasClass('drillthrough_export')) {
+                $(this.workspace.el).find("td.data").addClass('cellhighlight').unbind('click').click(this.clicked_cell_drillthrough_export);
+                $(this.workspace.el).find(".query_scenario, .drillthrough").removeClass('on');
+
+            } else if ($(source).hasClass('drillthrough')) {
+                $(this.workspace.el).find("td.data").addClass('cellhighlight').unbind('click').click(this.clicked_cell_drillthrough);
+                $(this.workspace.el).find(".query_scenario, .drillthrough_export").removeClass('on');
+
+            } else if ($(source).hasClass('query_scenario')) {
+                this.workspace.query.scenario.activate();
+                $(this.workspace.el).find(".drillthrough, .drillthrough_export").removeClass('on');
+            }
+        }
+
+                
+    },
+    query_scenario: function(event) {
+       $(event.target).toggleClass('on');
+        this.check_modes($(event.target));        
+
+    },
+
     drillthrough: function(event) {
-        $(event.target).toggleClass('on');
-        $(this.workspace.el).find("td.data").click(this.clicked_cell_drillthrough);
+       $(event.target).toggleClass('on');
+        this.check_modes($(event.target));        
     },
     
     display_drillthrough: function(model, response) {
@@ -160,9 +207,8 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
 
     export_drillthrough: function(event) {
-        $(this.workspace.el).find("td.data").click(this.clicked_cell_drillthrough_export);
-
-        
+        $(event.target).toggleClass('on');
+        this.check_modes($(event.target));        
     },
 
     clicked_cell_drillthrough_export: function(event) {

@@ -28,13 +28,15 @@ var QueryScenario = Backbone.Model.extend({
     },
     
     activate: function() {
-        this.query.bind('table:render', this.attach_listeners);
+        //this.query.bind('table:render', this.attach_listeners);
+        $(this.query.workspace.el).find("td.data").unbind('click').addClass('cellhighlight').click(this.clicked_cell);
     },
 
     attach_listeners: function(args) {
         if (args.workspace.query && args.workspace.query.properties &&
-            args.workspace.query.properties.properties['org.saiku.connection.scenario'] === "true")
-        $(args.workspace.el).find("td.data").click(this.clicked_cell);
+            args.workspace.query.properties.properties['org.saiku.connection.scenario'] === "true" &&
+            $(args.workspace.el).find('.query_scenario').hasClass('on'))
+        $(args.workspace.el).find("td.data").addClass('cellhighlight').click(this.clicked_cell);
     },
     
     clicked_cell: function(event) {

@@ -882,6 +882,14 @@ html, body {
   background: #edf4fa !important;
 }
 
+.workspace_results table td.cellhighlight:hover {
+  background: #c2d5e2 !important;
+}
+.workspace_results table td.cellhighlight {
+  cursor: pointer;
+}
+
+
 /** Save Dialog */
 .error_msg {
     color: #CC0000;
