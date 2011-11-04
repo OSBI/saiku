@@ -1,5 +1,6 @@
 /*
- * WorkspaceDropZone.js
+ * WorkspaceDropZone
+.js
  * 
  * Copyright (c) 2011, OSBI Ltd. All rights reserved.
  *
