@@ -36,7 +36,7 @@ var QueryScenario = Backbone.Model.extend({
         if (args.workspace.query && args.workspace.query.properties &&
             args.workspace.query.properties.properties['org.saiku.connection.scenario'] === "true" &&
             $(args.workspace.el).find('.query_scenario').hasClass('on'))
-        $(args.workspace.el).find("td.data").addClass('cellhighlight').click(this.clicked_cell);
+        $(args.workspace.el).find("td.data").click(this.clicked_cell);
     },
     
     clicked_cell: function(event) {

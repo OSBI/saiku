@@ -167,7 +167,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     
 
     check_modes: function(source) {
-        if (typeof source === "undefined" || source == null || !$(source).hasClass('on'))
+        if (typeof source === "undefined" || source == null)
             return;
         if (!$(source).hasClass('on')) {
             $(this.workspace.el).find("td.data").removeClass('cellhighlight').unbind('click');
