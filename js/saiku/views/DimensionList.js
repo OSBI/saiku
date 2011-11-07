@@ -52,7 +52,7 @@ var DimensionList = Backbone.View.extend({
     load_dimension: function() {
         this.template = this.dimension.get('template');
         this.render(); 
-        this.workspace.trigger('dimensions:loaded');
+        this.workspace.trigger('dimensions:loaded', $(this.el));
 
     },
     

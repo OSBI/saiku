@@ -214,8 +214,10 @@ var Workspace = Backbone.View.extend({
         }
 
     },
-    populate_selections: function() {
-        if (this.loaded) {
+
+    populate_selections: function(dimension_el) {
+
+        if (this.other_dimension) {
         // Populate selections - trust me, this is prettier than it was :-/
         var axes = this.query ? this.query.get('axes') : false;
         if (axes) {
@@ -241,9 +243,15 @@ var Workspace = Backbone.View.extend({
                         }
                             
                         if (levels.indexOf(name) === -1) {
-                            var $dim = $(this.el).find('.' + type + '_tree')
+                            var $dim = $(dimension_el)
                                 .find('a[title="' + name + '"]')
                                 .parent();
+                            
+                            if (!$dim.html() || $dim.html() == null) {
+                                $dim = $(this.other_dimension)
+                                .find('a[title="' + name + '"]')
+                                .parent();
+                            }
                             var $clone = $dim.clone()
                                 .addClass('d_' + type)
                                 .appendTo($axis);
@@ -280,7 +288,7 @@ var Workspace = Backbone.View.extend({
         // Update caption when saved
         this.query.bind('query:save', this.update_caption);
         } else {
-            this.loaded = true;
+            this.other_dimension = dimension_el;
         }
 
     },
