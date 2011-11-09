@@ -23,7 +23,7 @@
  */
 var SelectionsModal = Modal.extend({
     type: "selections",
-    
+
     buttons: [
         { text: "Save", method: "save" },
         { text: "Cancel", method: "close" }
@@ -31,18 +31,19 @@ var SelectionsModal = Modal.extend({
     
     events: {
         'click a': 'call',
-        'change #show_unique': 'show_unique'
+        'change #show_unique': 'show_unique_action'
     },
+
+    show_unique_option: false,
     
     initialize: function(args) {
         // Initialize properties
         _.extend(this, args);
         this.options.title = "Selections for " + this.name;
         this.message = "Fetching members...";
-        this.show_unique = false;
         this.query = args.workspace.query;
+
         _.bindAll(this, "fetch_members", "populate", "finished");
-        
         // Bind selection handlers
         _.extend(this.events, {
             'click div.selection_buttons a.form_button': 'move_selection'
@@ -146,13 +147,13 @@ var SelectionsModal = Modal.extend({
         $els.detach().appendTo($to);
     },
     
-    show_unique: function() {
+    show_unique_action: function() {
         $.each($(this.el).find('option'), function(i, option) {
             var text = $(option).text();
             $(option).text($(option).val());
             $(option).val(text);
         });
-        this.show_unique = ! this.show_unique;
+        this.show_unique_option= ! this.show_unique_option;
     },
     
     save: function() {
@@ -160,7 +161,8 @@ var SelectionsModal = Modal.extend({
         var $loading = $("<div>Saving...</div>");
         $(this.el).find('.dialog_body').children().hide();
         $(this.el).find('.dialog_body').prepend($loading);
-        
+        var show_u = this.show_unique_option;
+
         // Determine updates
         var updates = [{
             hierarchy: this.member.hierarchy,
@@ -181,7 +183,7 @@ var SelectionsModal = Modal.extend({
             // Loop through selections
             $(this.el).find('.used_selections option')
                 .each(function(i, selection) {
-                var value = this.show_unique ? 
+                var value = show_u ? 
                     $(selection).text() : $(selection).val();
                 updates.push({
                     uniquename: value,
