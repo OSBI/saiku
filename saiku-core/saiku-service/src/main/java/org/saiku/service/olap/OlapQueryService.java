@@ -39,6 +39,7 @@ import org.olap4j.Scenario;
 import org.olap4j.mdx.IdentifierNode;
 import org.olap4j.mdx.IdentifierSegment;
 import org.olap4j.metadata.Cube;
+import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
@@ -216,8 +217,8 @@ public class OlapQueryService {
 
 	public ResultSet drillthrough(String queryName, List<Integer> cellPosition, Integer maxrows) {
 		try {
+			IQuery q = getIQuery(queryName);
 			CellSet cs = OlapUtil.getCellSet(queryName);
-			Cell c = cs.getCell(cellPosition);
 			SaikuCube cube = getQuery(queryName).getCube();
 			final OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnectionName()); 
 			final OlapStatement stmt = con.createStatement();
@@ -232,6 +233,15 @@ public class OlapQueryService {
 					}
 					select += m.getUniqueName();
 
+				}
+			}
+			List<QueryDimension> dims = q.getAxes().get(Axis.FILTER).getDimensions();
+			for (QueryDimension dim : dims) {
+				for (Selection sel : dim.getInclusions()) {
+					if ((sel.getRootElement() instanceof Member)) {
+						select += ", " + sel.getUniqueName();
+					}
+					
 				}
 			}
 			select += ") ON COLUMNS \r\n";
