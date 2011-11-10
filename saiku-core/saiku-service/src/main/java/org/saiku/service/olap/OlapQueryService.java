@@ -19,6 +19,9 @@
  */
 package org.saiku.service.olap;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -28,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.olap4j.AllocationPolicy;
 import org.olap4j.Axis;
 import org.olap4j.Cell;
@@ -38,6 +42,12 @@ import org.olap4j.OlapStatement;
 import org.olap4j.Scenario;
 import org.olap4j.mdx.IdentifierNode;
 import org.olap4j.mdx.IdentifierSegment;
+import org.olap4j.mdx.ParseTreeWriter;
+import org.olap4j.mdx.SelectNode;
+import org.olap4j.mdx.parser.MdxParser;
+import org.olap4j.mdx.parser.MdxParserFactory;
+import org.olap4j.mdx.parser.impl.DefaultMdxParser;
+import org.olap4j.mdx.parser.impl.DefaultMdxParserImpl;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
@@ -235,18 +245,17 @@ public class OlapQueryService {
 
 				}
 			}
-			List<QueryDimension> dims = q.getAxes().get(Axis.FILTER).getDimensions();
-			for (QueryDimension dim : dims) {
-				for (Selection sel : dim.getInclusions()) {
-					if ((sel.getRootElement() instanceof Member)) {
-						select += ", " + sel.getUniqueName();
-					}
-					
-				}
-			}
+			
 			select += ") ON COLUMNS \r\n";
-			select += "FROM " + cube.getCubeName();
-
+			select += "FROM " + cube.getCubeName() + "\r\n";
+			
+			SelectNode sn = (new DefaultMdxParserImpl().parseSelect(getMDXQuery(queryName))); 
+			final Writer writer = new StringWriter();
+			sn.getFilterAxis().unparse(new ParseTreeWriter(new PrintWriter(writer)));
+			if (StringUtils.isNotBlank(writer.toString())) {
+				select += "WHERE " + writer.toString();
+			}
+			 
 			if (maxrows > 0) {
 				select = "DRILLTHROUGH MAXROWS " + maxrows + " " + select + "\r\n";
 			}
