@@ -203,7 +203,7 @@ public class BasicRepositoryResource {
 				
 				File queryFile = new File(uri+URLDecoder.decode(queryName, "UTF-8"));
 				if (queryFile.exists()) {
-					return Status.CONFLICT;
+					queryFile.delete();
 				}
 				else {
 					queryFile.createNewFile();
