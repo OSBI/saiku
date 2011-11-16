@@ -80,7 +80,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             .css({fontWeight: "bold"})
             .draggable('disable');
         $original.parents('.parent_dimension')
-            .find('.root')
+            .find('.folder_collapsed')
             .css({fontWeight: "bold"});
         
         // Wrap with the appropriate parent element
@@ -128,7 +128,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         if ($original.parents('.parent_dimension')
                 .children().children('.ui-state-disabled').length === 0) {
             $original.parents('.parent_dimension')
-                .find('.root')
+                .find('.folder_collapsed')
                 .css({fontWeight: "normal"});
         }
         

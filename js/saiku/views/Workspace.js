@@ -262,11 +262,10 @@ var Workspace = Backbone.View.extend({
                             }
                             
                             $dim.css({fontWeight: "bold"})
-                                .draggable('disable')                                    
+                                .draggable('disable')
                                 .parents('.parent_dimension')
-                                .find('.root')
-                                .css({fontWeight: "bold"})
-                                .draggable('disable'); 
+                                .find('.folder_collapsed')
+                                .css({fontWeight: "bold"}); 
                             levels.push(name);
                         }
                         
