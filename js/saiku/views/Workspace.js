@@ -119,12 +119,15 @@ var Workspace = Backbone.View.extend({
     adjust: function() {
         // Adjust the height of the separator
         $separator = $(this.el).find('.sidebar_separator');
-        $separator.height($("body").height() - 87);
-        $(this.el).find('.sidebar').height($("body").height() - 87);
+        var heightReduction = 87;
+        if (Settings.PLUGIN == true || Settings.BIPLUGIN == true) {
+            heightReduction = 2;
+        }
+        $separator.height($("body").height() - heightReduction);
+        $(this.el).find('.sidebar').height($("body").height() - heightReduction);
         
         // Adjust the dimensions of the results window
         $(this.el).find('.workspace_results').css({
-//            width: $(document).width() - $(this.el).find('.sidebar').width() - 30,
             height: $(document).height() - $("#header").height() -
                 $(this.el).find('.workspace_toolbar').height() - 
                 $(this.el).find('.workspace_fields').height() - 40
