@@ -37,8 +37,6 @@ var Session = Backbone.Model.extend({
         if (options && options.username && options.password) {
             this.username = options.username;
             this.password = options.password;
-            console.log("hat options");
-            console.log(options);
             this.save({username:this.username, password:this.password},{success: this.check_session, error: this.check_session});
 
         } else {
