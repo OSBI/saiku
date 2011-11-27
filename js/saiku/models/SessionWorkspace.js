@@ -31,13 +31,20 @@ var SessionWorkspace = Backbone.Model.extend({
         // Attach a custom event bus to this model
         _.extend(this, Backbone.Events);
         _.bindAll(this, "process_datasources", "prefetch_dimensions");
-        
+        this.initialized = false;
+
         // Check expiration on localStorage
         if (localStorage && ! (localStorage.getItem('expiration') > (new Date()).getTime())) {
             localStorage.clear();
         }
         this.fetch({success:this.process_datasources},{});
         
+    },
+
+    refresh: function() {
+        localStorage.clear();
+        this.clear();
+        this.fetch({success:this.process_datasources},{});
     },
         
     destroy: function() {
@@ -56,27 +63,36 @@ var SessionWorkspace = Backbone.Model.extend({
             connections: response
         });
         
+        
         // Create cube objects
         this.dimensions = {};
         this.measures = {};
         this.connections = response;
         _.delay(this.prefetch_dimensions, 200);
         
-        // Show UI
-        $(Saiku.toolbar.el).prependTo($("#header"));
-        $("#header").show();
-        Saiku.ui.unblock();
-        
-        // Add initial tab
-        Saiku.tabs.render();
-        if (! Settings.ACTION) {
-            Saiku.tabs.add(new Workspace());
+        if (!this.initialized) {
+            // Show UI
+            $(Saiku.toolbar.el).prependTo($("#header"));
+            $("#header").show();
+            Saiku.ui.unblock();
+            // Add initial tab
+            Saiku.tabs.render();
+            if (! Settings.ACTION) {
+                Saiku.tabs.add(new Workspace());
+            }
+            // Notify the rest of the application that login was successful
+            Saiku.events.trigger('session:new', {
+                session: this
+            });
+        } else {
+            if (! Settings.ACTION) {
+                Saiku.tabs.add(new Workspace());
+            }
+
         }
         
-        // Notify the rest of the application that login was successful
-        Saiku.events.trigger('session:new', {
-            session: this
-        });
+
+        this.initialized = true;
     },
     
     prefetch_dimensions: function() {
@@ -117,12 +133,17 @@ var SessionWorkspace = Backbone.Model.extend({
         }
         
         // Start routing
-        if (Backbone.history) {
+        if (!this.initialized && Backbone.history) {
             Backbone.history.start();
         }
     },
     
     url: function() {
-        return encodeURI(Saiku.session.username + "/discover/");
+        if (!this.initialized) {
+            return encodeURI(Saiku.session.username + "/discover/");
+        }
+        else {
+            return encodeURI(Saiku.session.username + "/discover/refresh");
+        }
     }
 });

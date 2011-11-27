@@ -27,13 +27,14 @@ var Workspace = Backbone.View.extend({
     events: {
         'click .sidebar_separator': 'toggle_sidebar',
         'change .cubes': 'new_query',
-        'drop': 'remove_dimension'
+        'drop': 'remove_dimension',
+        'click .refresh_cubes' : 'refresh'
     },
     
     initialize: function(args) {
         // Maintain `this` in jQuery event handlers
         _.bindAll(this, "adjust", "toggle_sidebar", "prepare", "new_query", 
-                "init_query", "update_caption", "select_dimension", "populate_selections");
+                "init_query", "update_caption", "select_dimension", "populate_selections","refresh");
                 
         // Attach an event bus to the workspace
         _.extend(this, Backbone.Events);
@@ -74,6 +75,10 @@ var Workspace = Backbone.View.extend({
         return _.template(template)({
             cube_navigation: Saiku.session.sessionworkspace.cube_navigation
         });        
+    },
+
+    refresh: function() {
+        Saiku.session.sessionworkspace.refresh();
     },
     
     render: function() {

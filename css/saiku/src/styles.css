@@ -44,6 +44,31 @@ html, body {
     border-bottom: 3px solid #F0F0F0;
 }
 
+.refresh_cubes {
+    background: url('../../../images/src/arrow_refresh.png') no-repeat;
+    border: 1px solid transparent;
+    display: block;
+    height: 26px;
+    padding: 4px;
+    width: 26px;
+}
+.refresh_cubes_nav {
+    float:right;
+    margin-top:-25px;
+    margin-right:8px;
+}
+.refresh_cubes_nav a.button {
+    display: block;
+    height: 12px;
+    padding: 3px;
+    width: 12px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+.refresh_cubes_nav a.button:hover {
+    border: 1px solid #CCC;
+}
+
 /** Toolbar */
 
 #toolbar {
