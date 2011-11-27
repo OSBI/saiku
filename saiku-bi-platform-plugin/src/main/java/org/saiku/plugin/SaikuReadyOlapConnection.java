@@ -21,6 +21,9 @@ package org.saiku.plugin;
 
 import java.util.Properties;
 
+import mondrian.olap4j.SaikuMondrianHelper;
+import mondrian.rolap.RolapConnection;
+
 import org.olap4j.OlapConnection;
 import org.saiku.datasources.connection.ISaikuConnection;
 
@@ -44,6 +47,20 @@ public class SaikuReadyOlapConnection implements ISaikuConnection {
 	public boolean connect(Properties props) throws Exception {
 		return true;
 	}
+	
+	public boolean refresh(Properties props) throws Exception {
+		if (SaikuMondrianHelper.isMondrianConnection(olapConnection)) {
+			RolapConnection rcon = SaikuMondrianHelper.getMondrianConnection(olapConnection);
+			rcon.getCacheControl(null).flushSchemaCache();
+		}
+		else {
+			connect(props);
+		}
+		return true;
+	}
+
+	
+	
 
 	public String getDatasourceType() {
 		return ISaikuConnection.OLAP_DATASOURCE;

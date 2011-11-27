@@ -73,9 +73,25 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager {
 				con = connections.get(name);
 			}
 
-			con = applySecurity(con, datasource);
+			if (con != null) {
+				con = applySecurity(con, datasource);
+			}
 		}
 		return con;
+	}
+
+	@Override
+	protected void refreshInternalConnection(String name, SaikuDatasource datasource) {
+		try {
+			ISaikuConnection con = connections.remove(name);
+			if (con != null && con.refresh(datasource.getProperties())) {
+				connections.put(name, con);
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	private ISaikuConnection handlePassThrough(String name,
@@ -238,5 +254,4 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager {
 
 		return null;
 	}
-
 }

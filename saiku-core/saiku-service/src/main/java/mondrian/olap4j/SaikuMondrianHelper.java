@@ -22,6 +22,7 @@ package mondrian.olap4j;
 import java.util.ArrayList;
 import java.util.List;
 
+import mondrian.olap.MondrianServer;
 import mondrian.olap.Role;
 import mondrian.olap.RoleImpl;
 import mondrian.olap.Schema;
@@ -44,6 +45,15 @@ public class SaikuMondrianHelper {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public static MondrianServer getMondrianServer(OlapConnection con) {
+		RolapConnection rcon = getMondrianConnection(con);
+		return rcon != null ? rcon.getServer() : null;
+	}
+	
+	public static boolean isMondrianConnection(OlapConnection con) {
+		return (con instanceof MondrianOlap4jConnection);
 	}
 
 	public static void setRoles(OlapConnection con, String[] roleNames) throws Exception {

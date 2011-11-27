@@ -43,3 +43,18 @@
 # location=jdbc:xmla:Server=http://192.168.0.1/olap/msmdpump.dll
 # username=joe
 # password=password
+
+# SECURITY CONFIGURATION
+# ----------------------------------------------------------------
+# some security configuration for roles, first enable it
+# security.enabled=true
+
+# there are 3 different types of security:
+# "one2one" (try and map spring user roles to mondrian roles), 
+# "mapping" (define the mapping of spring and mondrian roles manually) 
+# "passthrough" (will pass username + password of logged in user to connection, e.g. jdbc user + password)
+
+# security.type=one2one
+
+# security.type=mapping
+# security.mapping=springRole=mondrianRole1;springRole2=mondrianRole2

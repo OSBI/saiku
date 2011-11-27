@@ -49,6 +49,19 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
 	}
 
 	protected abstract ISaikuConnection getInternalConnection(String name, SaikuDatasource datasource);
+	
+	protected abstract void refreshInternalConnection(String name, SaikuDatasource datasource);
+
+	public void refreshAllConnections() {
+		ds.load();
+		for (String name : ds.getDatasources().keySet()) {
+			refreshConnection(name);
+		}
+	}
+
+	public void refreshConnection(String name) {
+		refreshInternalConnection(name, ds.getDatasource(name));
+	}
 
 	public Map<String, ISaikuConnection> getAllConnections() {
 		Map<String, ISaikuConnection> resultDs = new HashMap<String, ISaikuConnection>();
@@ -86,21 +99,25 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
 	}
 
 	public boolean isDatasourceSecurity(SaikuDatasource datasource, String value) {
-		Properties props = datasource.getProperties();
-		if (props != null && isDatasourceSecurityEnabled(datasource)) {
-			if (props.containsKey(ISaikuConnection.SECURITY_TYPE_KEY)) {
-				return props.getProperty(ISaikuConnection.SECURITY_TYPE_KEY).equals(value);
+		if (datasource != null && value != null) {
+			Properties props = datasource.getProperties();
+			if (props != null && isDatasourceSecurityEnabled(datasource)) {
+				if (props.containsKey(ISaikuConnection.SECURITY_TYPE_KEY)) {
+					return props.getProperty(ISaikuConnection.SECURITY_TYPE_KEY).equals(value);
+				}
 			}
 		}
 		return false;
 	}
 
 	public boolean isDatasourceSecurityEnabled(SaikuDatasource datasource) {
-		Properties props = datasource.getProperties();
-		if (props != null && props.containsKey(ISaikuConnection.SECURITY_ENABLED_KEY)) {
-			String enabled = props.getProperty(ISaikuConnection.SECURITY_ENABLED_KEY, "false");
-			boolean isSecurity = Boolean.parseBoolean(enabled);
-			return isSecurity;
+		if (datasource != null) {
+			Properties props = datasource.getProperties();
+			if (props != null && props.containsKey(ISaikuConnection.SECURITY_ENABLED_KEY)) {
+				String enabled = props.getProperty(ISaikuConnection.SECURITY_ENABLED_KEY, "false");
+				boolean isSecurity = Boolean.parseBoolean(enabled);
+				return isSecurity;
+			}
 		}
 		return false;
 	}

@@ -20,6 +20,7 @@
 package org.saiku.service.olap;
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.sql.ResultSet;
@@ -34,7 +35,6 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.AllocationPolicy;
 import org.olap4j.Axis;
-import org.olap4j.Cell;
 import org.olap4j.CellSet;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
@@ -44,12 +44,8 @@ import org.olap4j.mdx.IdentifierNode;
 import org.olap4j.mdx.IdentifierSegment;
 import org.olap4j.mdx.ParseTreeWriter;
 import org.olap4j.mdx.SelectNode;
-import org.olap4j.mdx.parser.MdxParser;
-import org.olap4j.mdx.parser.MdxParserFactory;
-import org.olap4j.mdx.parser.impl.DefaultMdxParser;
 import org.olap4j.mdx.parser.impl.DefaultMdxParserImpl;
 import org.olap4j.metadata.Cube;
-import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
@@ -79,7 +75,12 @@ import org.saiku.service.util.export.ExcelExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OlapQueryService {
+public class OlapQueryService implements Serializable {
+
+	/**
+	 * Unique serialization UID 
+	 */
+	private static final long serialVersionUID = -7615296596528274904L;
 
 	private static final Logger log = LoggerFactory.getLogger(OlapQueryService.class);
 

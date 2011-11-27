@@ -52,9 +52,9 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
 
 	public void load() {
+		datasources.clear();
 		String ds = makeDataSourcesUrl();
 		loadDatasourcesFromXml(ds);
-
 	}
 
 	private void loadDatasourcesFromXml(String dataSources) {
@@ -109,7 +109,6 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
 
 	}
-
 
 	private String makeDataSourcesUrl() {
 		final String path =

@@ -84,6 +84,7 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 	}
 
 	public void load() {
+		datasources.clear();
 		try {
 			if (repoURL != null) {
 				File[] files =  new File(repoURL.getFile()).listFiles();
@@ -95,7 +96,6 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 						String name = props.getProperty("name");
 						String type = props.getProperty("type");
 						if (name != null && type != null) {
-							props.list(System.out);
 							Type t = SaikuDatasource.Type.valueOf(type.toUpperCase());
 							SaikuDatasource ds = new SaikuDatasource(name,t,props);
 							datasources.put(name, ds);

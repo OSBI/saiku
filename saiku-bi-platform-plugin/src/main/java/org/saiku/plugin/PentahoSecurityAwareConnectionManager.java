@@ -87,6 +87,19 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 		return con;
 	}
 
+	@Override
+	protected void refreshInternalConnection(String name, SaikuDatasource datasource) {
+		try {
+			ISaikuConnection con = connections.remove(name);
+			if (con.refresh(datasource.getProperties())) {
+				connections.put(name, con);
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 
 	private ISaikuConnection applySecurity(ISaikuConnection con, SaikuDatasource datasource) throws Exception {
 		if (con == null) {
@@ -145,5 +158,6 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 
 		return null;
 	}
+
 
 }

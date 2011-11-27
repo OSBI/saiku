@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.olap4j.OlapConnection;
 import org.olap4j.metadata.Cube;
-import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.olap.discover.OlapMetaExplorer;
 import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.olap.dto.SaikuCube;
@@ -54,6 +53,22 @@ public class OlapDiscoverService {
 			return metaExplorer.getAllConnections();
 		} catch (SaikuOlapException e) {
 			throw new SaikuServiceException("Cannot retrieve all connections", e);
+		}
+	}
+	
+	public void refreshAllConnections() throws SaikuServiceException {
+		try {
+			datasourceService.getConnectionManager().refreshAllConnections();
+		} catch (Exception e) {
+			throw new SaikuServiceException("Cannot refresh all connections", e);
+		}
+	}
+	
+	public void refreshConnection(String name) throws SaikuServiceException {
+		try {
+			datasourceService.getConnectionManager().refreshConnection(name);
+		} catch (Exception e) {
+			throw new SaikuServiceException("Cannot refresh all connections", e);
 		}
 	}
 	

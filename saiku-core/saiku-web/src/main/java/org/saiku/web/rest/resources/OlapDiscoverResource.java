@@ -19,6 +19,7 @@
  */
 package org.saiku.web.rest.resources;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +43,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Path("/saiku/{username}/discover")
-public class OlapDiscoverResource {
+public class OlapDiscoverResource implements Serializable {
 
-    OlapDiscoverService olapDiscoverService;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	OlapDiscoverService olapDiscoverService;
     
     private static final Logger log = LoggerFactory.getLogger(OlapDiscoverResource.class);
     
@@ -60,6 +66,19 @@ public class OlapDiscoverResource {
     @Produces({"application/json" })
      public List<SaikuConnection> getConnections() {
     	try {
+			return olapDiscoverService.getAllConnections();
+		} catch (SaikuServiceException e) {
+			log.error(this.getClass().getName(),e);
+			return new ArrayList<SaikuConnection>();
+		}
+    }
+    
+    @GET
+    @Produces({"application/json" })
+  	@Path("/refresh")
+     public List<SaikuConnection> refreshConnections() {
+    	try {
+    		olapDiscoverService.refreshAllConnections();
 			return olapDiscoverService.getAllConnections();
 		} catch (SaikuServiceException e) {
 			log.error(this.getClass().getName(),e);
