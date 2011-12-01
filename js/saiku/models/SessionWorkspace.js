@@ -90,9 +90,6 @@ var SessionWorkspace = Backbone.Model.extend({
             }
 
         }
-        
-
-        this.initialized = true;
     },
     
     prefetch_dimensions: function() {
@@ -135,6 +132,7 @@ var SessionWorkspace = Backbone.Model.extend({
         // Start routing
         if (!this.initialized && Backbone.history) {
             Backbone.history.start();
+            this.initialized = true;
         }
     },
     
