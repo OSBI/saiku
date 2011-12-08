@@ -38,15 +38,12 @@ import org.olap4j.impl.Olap4jUtil;
 import org.olap4j.metadata.Dimension;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
-import org.olap4j.metadata.NamedList;
-import org.olap4j.metadata.Property;
-import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.DataCell;
 import org.saiku.olap.dto.resultset.Matrix;
 import org.saiku.olap.dto.resultset.MemberCell;
 
 
-public class CheatCellSetFormatter implements ICellSetFormatter {
+public class FlattenedCellSetFormatter implements ICellSetFormatter {
 	/**
 	 * Description of an axis.
 	 */
