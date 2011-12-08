@@ -86,20 +86,13 @@ var Table = Backbone.View.extend({
         // Append the table
         $(this.el).html(contents);
         
-        // Fire table rendered event
-        this.workspace.query.trigger('table:render', {
-            workspace: this.workspace,
-            table: this
-        });
     },
     
     no_results: function(args) {
-        $(args.workspace.el).find('.workspace_results table')
-            .html('<tr><td>No results</td></tr>');
+        $(this.el).html('<tr><td>No results</td></tr>');
     },
     
     error: function(args) {
-        $(args.workspace.el).find('.workspace_results table')
-            .html('<tr><td>' + args.data.error + '</td></tr>');
+        $(this.el).html('<tr><td>' + args.data.error + '</td></tr>');
     }
 });

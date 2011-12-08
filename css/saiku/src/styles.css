@@ -826,6 +826,14 @@ html, body {
     text-align: left;
 }
 
+.dialog_drillthroughview .dialog_icon {
+    display: none;
+}
+.dialog_drillthroughview .dialog_footer {
+    text-align: center;
+}
+
+
 .dialog_drillthrough .dialog_icon {
     display: none;
 }

@@ -33,7 +33,8 @@ var WorkspaceToolbar = Backbone.View.extend({
         
         // Maintain `this` in callbacks
         _.bindAll(this, "call", "reflect_properties", "run_query",
-            "swap_axes_on_dropzones", "display_drillthrough","clicked_cell_drillthrough_export", "clicked_cell_drillthrough");
+            "swap_axes_on_dropzones", "display_drillthrough","clicked_cell_drillthrough_export",
+            "clicked_cell_drillthrough","activate_buttons");
         
         // Redraw the toolbar to reflect properties
         this.workspace.bind('properties:loaded', this.reflect_properties);
@@ -53,27 +54,19 @@ var WorkspaceToolbar = Backbone.View.extend({
         if (args.data && args.data.cellset && args.data.cellset.length > 0 ) {
             $(args.workspace.toolbar.el).find('.button')
                 .removeClass('disabled_toolbar');            
-
-            if (! $(args.workspace.toolbar.el).find('.query_scenario').hasClass('disabled_toolbar')) {
-                $(args.workspace.toolbar.el).find('.query_scenario').addClass('disabled_toolbar');
-            }
-            if (args.workspace.query && args.workspace.query.properties &&
-                args.workspace.query.properties.properties['org.saiku.connection.scenario'] === "true") {
-
-                $(args.workspace.toolbar.el).find('.query_scenario').removeClass('disabled_toolbar');
-            }
-
-            // $(args.workspace.toolbar.el).find('.table_mode').each(function(index,element) {});
+            
             $(args.workspace.el).find("td.data").removeClass('cellhighlight').unbind('click');
             $(args.workspace.el).find(".table_mode").removeClass('on');
 
         } else {
             $(args.workspace.toolbar.el).find('.button')
-                .addClass('disabled_toolbar');
+                .addClass('disabled_toolbar').removeClass('on');
             $(args.workspace.toolbar.el)
                 .find('.auto,.non_empty,.toggle_fields,.toggle_sidebar')
                 .removeClass('disabled_toolbar');
         }
+        
+        this.reflect_properties();
 
     },
 
@@ -103,7 +96,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     reflect_properties: function() {
         var properties = this.workspace.query.properties ?
             this.workspace.query.properties.properties : Settings.QUERY_PROPERTIES;
-        
+
         // Set properties appropriately
         if (properties['saiku.olap.query.nonempty'] === 'true') {
             $(this.el).find('.non_empty').addClass('on');
@@ -111,6 +104,21 @@ var WorkspaceToolbar = Backbone.View.extend({
         if (properties['saiku.olap.query.automatic_execution'] === 'true') {
             $(this.el).find('.auto').addClass('on');
         }
+        
+        if (properties['saiku.olap.query.drillthrough'] !== 'true') {
+            $(this.el).find('.drillthrough, .drillthrough_export').addClass('disabled_toolbar');
+        } else {
+            $(this.el).find('.non_empty').removeClass('disabled_toolbar');
+        }
+
+        if (properties['org.saiku.connection.scenario'] !== 'true') {
+            $(this.el).find('.query_scenario').addClass('disabled_toolbar');
+        } else {
+            $(this.el).find('.query_scenario').removeClass('disabled_toolbar');
+            $(this.el).find('.drillthrough, .drillthrough_export').addClass('disabled_toolbar');
+        }
+        
+
     },
     
     save_query: function(event) {

@@ -13,7 +13,6 @@ var DrillthroughModal = Modal.extend({
         // Initialize properties
         _.extend(this, args);
         this.options.title = args.title;
-        // this.message = "Row Limit for Drill-Through";
         this.query = args.workspace.query;
         
         this.position = args.position;
@@ -64,11 +63,12 @@ var DrillthroughModal = Modal.extend({
 
     drilled: function(model, response) {
         Saiku.ui.unblock();
-         this.query.workspace.trigger('query:result', {
-            workspace: this.query.workspace,
+        (new DrillthroughViewModal({
+            workspace: this.workspace,
+            title: "Drill-Through Result",
+            query: this.workspace.query,
             data: response
-        });
-
+        })).open();
     },
     
     finished: function() {

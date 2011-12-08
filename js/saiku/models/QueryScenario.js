@@ -28,7 +28,6 @@ var QueryScenario = Backbone.Model.extend({
     },
     
     activate: function() {
-        //this.query.bind('table:render', this.attach_listeners);
         $(this.query.workspace.el).find("td.data").unbind('click').addClass('cellhighlight').click(this.clicked_cell);
     },
 
