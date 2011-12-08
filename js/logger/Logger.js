@@ -28,10 +28,14 @@ if (Settings.ERROR_LOGGING) {
         if (lineNumber !== 0) {
             Log.log({
             		browser: navigator.userAgent,
+                    browserName: navigator.appCodeName,
+                    browserVersion: navigator.appVersion,
             		message: errorMsg,
             		file: url,
             	    lineNumber: lineNumber,
-            	    timestamp: new Date()
+            	    timestamp: new Date(),
+                    version: Settings.VERSION,
+                    biplugin: Settings.BIPLUGIN
             });
         }
         
