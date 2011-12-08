@@ -23,7 +23,8 @@ if (Settings.ERROR_LOGGING) {
     /**
      * Log errors
      */
-    window.defaultHandler = window.error;
+     
+    window.defaultHandler = window.onerror;
     window.onerror = function(errorMsg, url, lineNumber) {
         if (lineNumber !== 0) {
             Log.log({
@@ -37,12 +38,22 @@ if (Settings.ERROR_LOGGING) {
                     version: Settings.VERSION,
                     biplugin: Settings.BIPLUGIN
             });
+
+            console.error({
+                    message: errorMsg,
+                    file: url,
+                    lineNumber: lineNumber,
+                    timestamp: new Date()
+            }); 
+            
+            if (defaultHandler) {
+                return defaultHandler(errorMsg, url, lineNumber);
+            }
+
         }
         
-        if (defaultHandler) {
-            return defaultHandler(errorMsg, url, lineNumber);
-        }
         
-        return true;
+        
     };
+    
 }
