@@ -81,7 +81,14 @@ var Query = Backbone.Model.extend({
         }
         
         // TODO - Validate query
-        
+        var rows = $(this.workspace.el).find('.rows ul li').size();
+        var columns = $(this.workspace.el).find('.columns ul li').size();
+
+        if (rows == 0 || columns == 0) {
+            $(this.workspace.el).find('.workspace_results table')
+                .html('<tr><td><span class="i18n">You need to put at least one level or measure on Columns and Rows for a valid query.</td></tr>');
+            return;
+        }
         // Run it
         $(this.workspace.el).find('.workspace_results table')
             .html('<tr><td>Running query...</td></tr>');
