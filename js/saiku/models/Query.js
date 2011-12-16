@@ -81,8 +81,27 @@ var Query = Backbone.Model.extend({
         }
         
         // TODO - Validate query
-        var rows = $(this.workspace.el).find('.rows ul li').size();
-        var columns = $(this.workspace.el).find('.columns ul li').size();
+        // maybe we should sync it with the backend query JSON?
+        // this definitely needs improvement
+        var rows = 0;
+        var columns = 0;
+        if (Settings.MODE == "view" || Settings.MODE == "table") {
+        var axes = this.get('axes');
+        if (axes) {
+            for (var axis_iter = 0; axis_iter < axes.length; axis_iter++) {
+                var axis = axes[axis_iter];
+                if (axis.name && axis.name == "ROWS") {
+                    rows = axis.dimensionSelections.length;
+                }
+                if (axis.name && axis.name == "COLUMNS") {
+                    columns = axis.dimensionSelections.length;
+                }
+            }
+        }
+        } else {
+            rows = $(this.workspace.el).find('.rows ul li').size();
+            columns = $(this.workspace.el).find('.columns ul li').size(); 
+        }
 
         if (rows == 0 || columns == 0) {
             $(this.workspace.el).find('.workspace_results table')
