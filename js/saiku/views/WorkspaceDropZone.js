@@ -58,7 +58,12 @@ var WorkspaceDropZone = Backbone.View.extend({
             items: '> li',
             opacity: 0.60,
             placeholder: 'placeholder',
-            tolerance: 'pointer'
+            tolerance: 'pointer',
+            
+            start: function(event, ui) {
+                ui.placeholder.text(ui.helper.text());
+            }
+
         });
         
         return this; 
@@ -90,7 +95,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         } else {
             ui.item.addClass('d_measure');
         }
-        
+
         // Notify the model of the change
         var dimension = ui.item.find('a').attr('href').replace('#', '');
         var index = ui.item.parent('.connectable').children().index(ui.item);
@@ -103,7 +108,8 @@ var WorkspaceDropZone = Backbone.View.extend({
     
     move_dimension: function(event, ui) {
         // Notify the model of the change
-        var dimension = ui.item.find('a').attr('href').replace('#', '');
+        var member = ui.item.find('a').attr('href').replace('#', '');
+        var dimension = member.split('/')[0];
         var index = ui.item.parent('.connectable').children().index(ui.item);
         if (! ui.item.hasClass('deleted')) {
             this.workspace.query.move_dimension(dimension, 
