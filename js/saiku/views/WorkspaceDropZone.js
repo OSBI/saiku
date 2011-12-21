@@ -40,7 +40,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         
         // Maintain `this` in jQuery event handlers
         _.bindAll(this, "select_dimension", "move_dimension", 
-                "remove_dimension");
+                "remove_dimension", "update_selections");
     },
     
     render: function() {
@@ -102,8 +102,10 @@ var WorkspaceDropZone = Backbone.View.extend({
         this.workspace.query.move_dimension(dimension, 
                 $(event.target).parent(), index);
         
+        this.update_selections(event,ui);
+
         // Prevent workspace from getting this event
-        return false;
+        return true;
     },
     
     move_dimension: function(event, ui) {
@@ -115,10 +117,54 @@ var WorkspaceDropZone = Backbone.View.extend({
             this.workspace.query.move_dimension(dimension, 
                 ui.item.parents('.fields_list_body'), index);
         }
+        this.update_selections(event,ui);
+       
+        
         
         // Prevent workspace from getting this event
         event.stopPropagation();
         return false;
+    },
+
+    update_selections: function(event, ui) {
+        var member = ui.item.find('a').attr('href');
+        var dimension = member.replace('#', '').split('/')[0];
+        var index = ui.item.parent('.connectable').children().index(ui.item);
+        var axis = ui.item.parents('.fields_list_body');
+        var allAxes = axis.parent().parent();
+        var target = '';
+        var source = '';
+        var myself = this;
+        var $originalItem =  $(myself.workspace.el).find('.sidebar')
+                                    .find('a[href="' + member + '"]').parent();
+        var insertElement = $(ui.item);
+
+        if (axis.hasClass('rows')) { target = "rows"; source = ".columns, .filter"; }
+        if (axis.hasClass('columns')) { target = "columns"; source = ".rows, .filter"; }
+        if (axis.hasClass('filter')) { target = "filter"; source = ".rows, .columns"; }
+        
+        allAxes.find(source).find('a').each( function(index, element) {
+            var p_member = $(element).attr('href').replace('#', '');
+            var p_dimension = p_member.split('/')[0];
+            if (p_dimension == dimension) {
+
+                var $original = $(myself.workspace.el).find('.sidebar')
+                                    .find('a[href="' + $(element).attr('href') + '"]').parent();
+
+                var other_index = $original.parent('ul').children().index($original);
+                var this_index = $original.parent('ul').children().index($originalItem);
+                if (this_index < other_index) {
+                    $(element).parent().insertAfter($(insertElement)); 
+                } else {
+                    $(element).parent().insertBefore($(insertElement)); 
+                }
+                
+            }
+        });
+
+
+        
+
     },
     
     remove_dimension: function(event, ui) {
