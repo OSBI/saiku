@@ -75,11 +75,13 @@ var Query = Backbone.Model.extend({
     
     run: function(force) {
         // Check for automatic execution
-        if (! this.properties.properties['saiku.olap.query.automatic_execution'] &&
-            ! force) {
+
+        
+        if ( (this.properties.properties['saiku.olap.query.automatic_execution'] == "false") &&
+            ! (force === true)) {
             return;
         }
-        
+
         // TODO - Validate query
         // maybe we should sync it with the backend query JSON?
         // this definitely needs improvement
@@ -114,17 +116,9 @@ var Query = Backbone.Model.extend({
         this.result.fetch();
     },
     
-    move_dimension: function(dimension, $target_el, index) {
+    move_dimension: function(dimension, target, index) {
         $(this.workspace.el).find('.run').removeClass('disabled_toolbar');
-        
-        var target = '';
-        if ($target_el.hasClass('rows')) target = "ROWS";
-        if ($target_el.hasClass('columns')) target = "COLUMNS";
-        if ($target_el.hasClass('filter')) target = "FILTER";
-        
         var url = "/axis/" + target + "/dimension/" + dimension;
-        var index = $target_el.find('li.ui-draggable').index(
-                $target_el.find('a[href="#' + dimension + '"]').parent() );
         
         this.action.post(url, {
             data: {
