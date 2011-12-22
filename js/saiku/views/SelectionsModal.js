@@ -83,7 +83,7 @@ var SelectionsModal = Modal.extend({
     },
     
     populate: function(model, response) {
-        try {
+
             // Load template
             $(this.el).find('.dialog_body')
                 .html(_.template($("#template-selections").html())(this));
@@ -122,10 +122,7 @@ var SelectionsModal = Modal.extend({
             if (this.available_members.length > 0) {
                 $(available_members_opts).appendTo($(this.el).find('.available_selections select'));
             }
-        } catch (e) {
-            $(this.el).html("Could not load selections");
-        }
-        
+
         // Show dialog
         Saiku.ui.unblock();
     },

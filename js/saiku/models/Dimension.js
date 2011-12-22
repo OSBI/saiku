@@ -25,6 +25,7 @@ var Dimension = Backbone.Model.extend({
     initialize: function(args) {
         this.url = Saiku.session.username + "/discover/" +
             args.key + "/dimensions";
+        this.clear();
     },
     
     parse: function(response) {
@@ -50,6 +51,7 @@ var Measure = Backbone.Model.extend({
     initialize: function(args) {
         this.url = Saiku.session.username + "/discover/" +
             args.key + "/measures";
+        this.clear();
     },
     
     parse: function(response) {
