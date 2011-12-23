@@ -30,8 +30,7 @@ var WorkspaceDropZone = Backbone.View.extend({
     
     events: {
         'sortbeforestop': 'select_dimension',
-        'click a': 'selections',
-        'click span': 'selections'
+        'click .d_dimension': 'selections'
     },
     
     initialize: function(args) {
@@ -97,6 +96,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             .find('.folder_collapsed')
             .css({fontWeight: "bold"});
         
+
         // Wrap with the appropriate parent element
         if (ui.item.find('a').hasClass('dimension')) {
             var $icon = $("<span />").addClass('sprite');
@@ -104,6 +104,8 @@ var WorkspaceDropZone = Backbone.View.extend({
         } else {
             ui.item.addClass('d_measure');
         }
+
+
 
         var member = ui.item.find('a').attr('href').replace('#', '');
         var dimension = member.split('/')[0];
@@ -209,6 +211,15 @@ var WorkspaceDropZone = Backbone.View.extend({
                                 .addClass(type)
                                 .insertAfter(insertElement);
         
+
+        axis.find('.d_dimension a').each( function(index, element) {
+            element = $(element);
+            if (!element.prev() || (element.prev() && element.prev().length == 0)) {
+                var $icon = $("<span />").addClass('sprite');
+                $icon.insertBefore(element);
+            }
+        });
+
         $(ui.item).remove();
 
     },
