@@ -1055,10 +1055,13 @@ html, body {
     background-position: -781px 7px;
 }
 .workspace_toolbar .drillthrough_export {
-    background-position: -781px 7px;
+    background-image: url('../../../images/src/export_drillthrough.png');
+    background-repeat:no-repeat;
+    background-position: 7px 7px;
 }
 .workspace_toolbar .query_scenario {
-    background-position: -781px 7px;
+    background-image: url('../../../images/src/query_scenario.png');
+    background-position: 7px 7px;
 }
 
 .workspace_toolbar .switch_to_mdx {

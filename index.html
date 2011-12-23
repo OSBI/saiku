@@ -113,7 +113,7 @@
         <% if (dimension.name != 'Measures') { %>
             <li class='parent_dimension'>
                 <span class="root collapsed sprite"></span>
-                <a class="folder_collapsed sprite" href="#" title="<%= dimension.description ? dimension.description : '' %>"><%= dimension.caption %></a>
+                <a class="folder_collapsed sprite" href="#" title="<%= dimension.description ? dimension.description : dimension.caption %>"><%= dimension.caption %></a>
                 
                 <ul>
                 <% _.each(dimension.hierarchies, function(hierarchy) { %>
@@ -236,10 +236,10 @@
             <li><a href="#show_mdx" 
                 class="i18n mdx button disabled_toolbar sprite" 
                 title="Show MDX"></a></li>
-            <li><a href="#query_scenario" 
+            <li class="seperator"><a href="#query_scenario" 
                 class="i18n table_mode query_scenario button disabled_toolbar sprite" 
                 title="Query Scenario"></a></li>
-            <li><a href="#drillthrough" 
+            <li class="seperator"><a href="#drillthrough" 
                 class="i18n table_mode drillthrough button disabled_toolbar sprite" 
                 title="Drill through current query"></a></li>
             <li><a href="#export_drillthrough" 
