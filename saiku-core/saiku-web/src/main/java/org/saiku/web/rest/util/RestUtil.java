@@ -143,6 +143,9 @@ public class RestUtil {
 					if (mcell.getParentDimension() != null) {
 						props.put("dimension", mcell.getParentDimension());
 					}
+					if (mcell.getUniqueName() != null) {
+						props.put("uniquename", mcell.getUniqueName());
+					}
 				}
 //				props.putAll(mcell.getProperties());
 
