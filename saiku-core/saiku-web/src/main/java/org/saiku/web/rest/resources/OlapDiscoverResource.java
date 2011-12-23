@@ -265,6 +265,32 @@ public class OlapDiscoverResource implements Serializable {
 	}
 	
 	/**
+	 * Get all info for given member
+	 * @return 
+	 */
+	@GET
+	@Produces({"application/json" })
+	@Path("/{connection}/{catalog}/{schema}/{cube}/member/{member}")
+	public SaikuMember getMember(
+			@PathParam("connection") String connectionName, 
+			@PathParam("catalog") String catalogName, 
+			@PathParam("schema") String schemaName, 
+			@PathParam("cube") String cubeName, 
+			@PathParam("member") String memberName)
+	{
+		if ("null".equals(schemaName)) {
+			schemaName = "";
+		}
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
+		try {
+			return olapDiscoverService.getMember(cube, memberName);
+		} catch (SaikuServiceException e) {
+			log.error(this.getClass().getName(),e);
+		}
+		return null;
+	}
+	
+	/**
 	 * Get child members of given member
 	 * @return 
 	 */

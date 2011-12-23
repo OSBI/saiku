@@ -161,6 +161,7 @@ public class ObjectUtil {
 				m.getCaption(), 
 				m.getDescription(),
 				m.getDimension().getUniqueName(),
+				m.getHierarchy().getUniqueName(),
 				m.getLevel().getUniqueName());
 	}
 	

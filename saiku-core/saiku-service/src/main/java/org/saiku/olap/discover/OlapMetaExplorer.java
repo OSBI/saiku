@@ -28,6 +28,7 @@ import java.util.List;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapDatabaseMetaData;
 import org.olap4j.OlapException;
+import org.olap4j.impl.IdentifierParser;
 import org.olap4j.mdx.IdentifierNode;
 import org.olap4j.mdx.IdentifierSegment;
 import org.olap4j.metadata.Catalog;
@@ -49,6 +50,7 @@ import org.saiku.olap.dto.SaikuLevel;
 import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.SaikuSchema;
 import org.saiku.olap.util.ObjectUtil;
+import org.saiku.olap.util.SaikuMemberCaptionComparator;
 import org.saiku.olap.util.exception.SaikuOlapException;
 
 public class OlapMetaExplorer {
@@ -359,7 +361,22 @@ public class OlapMetaExplorer {
 		} catch (OlapException e) {
 			throw new SaikuOlapException("Cannot get measures for cube:"+cube.getName(),e);
 		}
+		
+		Collections.sort(measures, new SaikuMemberCaptionComparator());
 		return measures;
+	}
+
+	public SaikuMember getMember(SaikuCube cube, String uniqueMemberName) throws SaikuOlapException {
+		try {
+			Cube nativeCube = getNativeCube(cube);
+			Member m = nativeCube.lookupMember(IdentifierNode.parseIdentifier(uniqueMemberName).getSegmentList());
+			if (m != null) {
+				return ObjectUtil.convert(m);
+			}
+			return null;
+		} catch (Exception e) {
+			throw new SaikuOlapException("Cannot find member: " + uniqueMemberName + " in cube:"+cube.getName(),e);
+		}
 	}
 
 }

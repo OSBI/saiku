@@ -146,7 +146,7 @@ public class OlapDiscoverService {
 	
 	public List<SaikuMember> getMeasures(SaikuCube cube) {
 		try {
-			return  metaExplorer.getAllMeasures(cube);
+			return metaExplorer.getAllMeasures(cube);
 		} catch (SaikuOlapException e) {
 			throw new SaikuServiceException("Cannot get all measures for cube ( " + cube + " )", e);
 		}
@@ -154,7 +154,7 @@ public class OlapDiscoverService {
 
 	public List<SaikuMember> getHierarchyRootMembers(SaikuCube cube, String hierarchyName) {
 		try {
-			return  metaExplorer.getHierarchyRootMembers(cube, hierarchyName);
+			return metaExplorer.getHierarchyRootMembers(cube, hierarchyName);
 		} catch (SaikuOlapException e) {
 			throw new SaikuServiceException(e);
 		}	
@@ -162,9 +162,17 @@ public class OlapDiscoverService {
 	
 	public List<SaikuMember> getMemberChildren(SaikuCube cube, String uniqueMemberName) {
 		try {
-			return  metaExplorer.getMemberChildren(cube, uniqueMemberName);
+			return metaExplorer.getMemberChildren(cube, uniqueMemberName);
 		} catch (SaikuOlapException e) {
 			throw new SaikuServiceException(e);
 		}	
-	}	
+	}
+
+	public SaikuMember getMember(SaikuCube cube, String uniqueMemberName) {
+		try {
+			return metaExplorer.getMember(cube, uniqueMemberName);
+		} catch (SaikuOlapException e) {
+			throw new SaikuServiceException(e);
+		}
+	}
 }
