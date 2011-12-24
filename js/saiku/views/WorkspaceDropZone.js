@@ -30,7 +30,8 @@ var WorkspaceDropZone = Backbone.View.extend({
     
     events: {
         'sortbeforestop': 'select_dimension',
-        'click .d_dimension': 'selections'
+        'click .d_dimension': 'selections',
+        'click .d_measure' : 'remove_dimension'
     },
     
     initialize: function(args) {
@@ -227,7 +228,8 @@ var WorkspaceDropZone = Backbone.View.extend({
 
     remove_dimension: function(event, ui) {
         // Reenable original element
-        var original_href = ui.draggable.find('a').attr('href');
+        var $source = ui ? ui.draggable : $(event.target).parent();
+        var original_href = $source.find('a').attr('href');
         var $original = $(this.workspace.el).find('.sidebar')
             .find('a[href="' + original_href + '"]').parent('li');
         $original
@@ -245,7 +247,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         // Notify server
         var target = '';
         var dimension = original_href.replace('#', '');
-        $target_el = ui.draggable.parent().parent('div.fields_list_body');
+        $target_el = $source.parent().parent('div.fields_list_body');
         if ($target_el.hasClass('rows')) target = "ROWS";
         if ($target_el.hasClass('columns')) target = "COLUMNS";
         if ($target_el.hasClass('filter')) target = "FILTER";
@@ -256,7 +258,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         });
         
         // Remove element
-        ui.draggable.addClass('deleted').remove();
+        $source.addClass('deleted').remove();
         
         // Prevent workspace from getting this event
         event.stopPropagation();

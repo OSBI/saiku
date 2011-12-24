@@ -27,12 +27,14 @@
 var DimensionList = Backbone.View.extend({
     events: {
         'click span': 'select',
-        'click a': 'select'
+        'click a': 'select',
+        'click .parent_dimension ul li a' : 'select_dimension',
+        'click .measure' : 'select_measure'
     },
     
     initialize: function(args) {
         // Don't lose this
-        _.bindAll(this, "render", "load_dimension");
+        _.bindAll(this, "render", "load_dimension","select_dimension");
         
         // Bind parent element
         this.workspace = args.workspace;
@@ -85,6 +87,49 @@ var DimensionList = Backbone.View.extend({
             $target.parents('li').find('ul').children('li').toggle();
         }
         
+        return false;
+    },
+
+     select_dimension: function(event, ui) {
+        if ($(event.target).parent().hasClass('ui-state-disabled')) {
+            return;
+        }
+        
+        $axis = $(this.workspace.el).find(".columns ul li").length > 0 ?
+            $(this.workspace.el).find(".rows ul") :
+            $(this.workspace.el).find(".columns ul");
+        $target = $(event.target).parent().clone()
+            .appendTo($axis);
+        this.workspace.drop_zones.select_dimension({
+            target: $axis
+        }, {
+            item: $target
+        });
+        return false;
+    },
+
+    select_measure: function(event, ui) {
+        if ($(event.target).parent().hasClass('ui-state-disabled')) {
+            return;
+        }
+        
+        var $axis;
+        if ($(this.workspace.el).find(".rows ul .d_measure").length > 0) $axis = $(this.workspace.el).find(".rows ul");
+        else if ($(this.workspace.el).find(".columns ul .d_measure").length > 0) $axis = $(this.workspace.el).find(".columns ul");
+        else if ($(this.workspace.el).find(".filter ul .d_measure").length > 0) $axis = $(this.workspace.el).find(".filter ul");
+        else $axis = $(this.workspace.el).find(".columns ul");
+
+        $target = $(event.target).parent().clone();
+        if ($axis.find(".d_measure").length != 0)
+            $target.insertAfter($axis.find(".d_measure:last"));
+        else {
+            $target.appendTo($axis);
+        }
+        this.workspace.drop_zones.select_dimension({
+            target: $axis
+        }, {
+            item: $target
+        });
         return false;
     }
 });

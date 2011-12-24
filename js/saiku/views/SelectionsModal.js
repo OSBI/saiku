@@ -31,7 +31,8 @@ var SelectionsModal = Modal.extend({
     
     events: {
         'click a': 'call',
-        'change #show_unique': 'show_unique_action'
+        'change #show_unique': 'show_unique_action',
+        'dblclick select option' : 'click_move_selection'
     },
 
     show_unique_option: false,
@@ -142,6 +143,11 @@ var SelectionsModal = Modal.extend({
         var $els = action.indexOf('all') !== -1 ? 
             $from.find('option') :$from.find('option:selected');
         $els.detach().appendTo($to);
+    },
+
+    click_move_selection: function(event, ui) {
+      var to = ($(event.target).parent().parent().hasClass('used_selections')) ? '.available_selections' : '.used_selections';
+      $(event.target).appendTo($(this.el).find(to +' select'));
     },
     
     show_unique_action: function() {
