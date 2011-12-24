@@ -25,10 +25,8 @@ var OpenQuery = Backbone.View.extend({
     className: 'tab_container',
     
     events: {
-        'click .sidebar a': 'view_query',
-        'dblclick .sidebar a': 'open_query',
-        'click .sidebar span': 'view_query',
-        'dblclick .sidebar span': 'open_query',
+        'click #queries li': 'view_query',
+        'dblclick #queries li': 'select_and_open_query',
         'click .workspace_toolbar a.open': 'open_query',
         'click .workspace_toolbar a.delete': 'delete_query'
     },
@@ -56,7 +54,7 @@ var OpenQuery = Backbone.View.extend({
     initialize: function(args) {
         // Maintain `this`
         _.bindAll(this, "adjust", "fetch_queries",
-                "clear_query");
+                "clear_query","select_and_open_query");
         
         // Initialize repository
         this.repository = new Repository({}, { dialog: this });
@@ -82,8 +80,7 @@ var OpenQuery = Backbone.View.extend({
     },
     
     view_query: function(event) {
-        $target = $(event.target).hasClass('sprite') ? 
-            $(event.target).parent().find('a') : $(event.target);
+        $target = $(event.currentTarget).find('a');
         var name = $target.attr('href').replace('#', '');
         var query = this.queries[name];
         
@@ -104,6 +101,13 @@ var OpenQuery = Backbone.View.extend({
         this.selected_query = new SavedQuery({ name: name });
         
         return false;
+    },
+
+    select_and_open_query: function(event) {
+        $target = $(event.currentTarget).find('a');
+        var name = $target.attr('href').replace('#', '');
+        this.selected_query = new SavedQuery({ name: name });
+        this.open_query();
     },
     
     open_query: function(event) {

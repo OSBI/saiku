@@ -341,7 +341,7 @@ html, body {
     color: #222;
     text-decoration: none;
 }
-#queries li a:hover {
+#queries li:hover {
     background: #f0f0f0;
 }
 #query_info {
