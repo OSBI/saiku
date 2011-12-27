@@ -22,7 +22,7 @@
  * Change settings here
  */
 var Settings = {
-    VERSION: "Saiku Suite 2.2 SNAPSHOT",
+    VERSION: "Saiku Suite 2.2 RC1",
     BIPLUGIN: false,
     BASE_URL: "",
     TOMCAT_WEBAPP: "/saiku",
@@ -94,4 +94,10 @@ if (!Array.prototype.indexOf)
     }
     return -1;
   };
+}
+
+if (window.location.hostname && (window.location.hostname == "localhost" || window.location.hostname == "demo.analytical-labs.com" )) {
+    Settings.USERNAME = "admin";
+    Settings.PASSWORD = "admin";
+
 }
