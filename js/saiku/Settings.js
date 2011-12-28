@@ -96,8 +96,7 @@ if (!Array.prototype.indexOf)
   };
 }
 
-if (window.location.hostname && (window.location.hostname == "localhost" || window.location.hostname == "demo.analytical-labs.com" )) {
+if (window.location.hostname && (window.location.hostname == "dev.analytical-labs.com" || window.location.hostname == "demo.analytical-labs.com" )) {
     Settings.USERNAME = "admin";
     Settings.PASSWORD = "admin";
-
 }
