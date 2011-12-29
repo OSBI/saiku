@@ -35,14 +35,14 @@ var Statistics = Backbone.View.extend({
             "setOptions");
         this.workspace.bind('query:result', this.receive_data);
         
-        // Add chart button
+        // Add stats button
         this.add_button();
         this.workspace.toolbar.stats = this.show;
         
-        // Listen to adjust event and rerender chart
+        // Listen to adjust event and rerender stats
         this.workspace.bind('workspace:adjust', this.render);
         
-        // Append chart to workspace
+        // Append stats to workspace
         $(this.workspace.el).find('.workspace_results')
             .prepend($(this.el).hide())
     },
@@ -92,13 +92,15 @@ var Statistics = Backbone.View.extend({
 
         var group = function(grid, el, cback){
             var elements = _.map(grid, function(it){return it[el]})
-            //return _.reduce(elements, cback, 0)
             return cback(elements)
         }
 
         var sum = function(elems){return _.reduce(elems, function(memo, num){ return memo + num; }, 0)}
         var mean = function(elems){return (sum(elems))/elems.length}
-        var stdx = function(elems){var m = mean(elems); return Math.sqrt(sum(_.map(elems, function(it){return Math.pow(m - it,2)}))/elems.length)}
+        var stdx = function(elems){
+            var m = mean(elems)
+            return Math.sqrt(sum(_.map(elems, function(it){return Math.pow(m - it,2)}))/elems.length)
+        }
         var min = function(elems){return _.min(elems)}
         var max = function(elems){return _.max(elems)}
         
@@ -203,7 +205,7 @@ var Statistics = Backbone.View.extend({
             });
         };
 
-        // Attach chart to future tabs
+        // Attach stats to future tabs
         Saiku.session.bind("workspace:new", new_workspace);
     });
 }());
