@@ -25,6 +25,9 @@ var Result = Backbone.Model.extend({
     initialize: function(args, options) {
         // Keep reference to query
         this.query = options.query;
+        // Set the chosen cellset formatter
+        this.formatter = Settings.CELLSET_FORMATTER;
+
     },
     
     parse: function(response) {
@@ -38,6 +41,6 @@ var Result = Backbone.Model.extend({
     },
     
     url: function() {
-        return encodeURI(this.query.url() + "/result/flattened");
+        return encodeURI(this.query.url() + "/result/" + this.formatter);
     }
 });
