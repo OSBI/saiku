@@ -21,22 +21,30 @@
 /**
  * Object which controls save to solution repository
  */
+/**
+ * Changelog:
+ *     2011.12.29 - RNP (rodrigonovo@gmail.com) - replaced the "top." 
+ *       reference by the "window.parent" reference. This was done to 
+ *       make saiku work in systems where Pentaho runs inside an iframe.
+ *
+**/
+
 var puc = {
     allowSave: function(isAllowed) {
-        if(top.mantle_initialized !== undefined && top.mantle_initialized && 
-            top.parent.enableAdhocSave ) {
+        if(window.parent.mantle_initialized !== undefined && window.parent.mantle_initialized && 
+            window.parent.enableAdhocSave ) {
             if (window.ALLOW_PUC_SAVE === undefined || ALLOW_PUC_SAVE) {
-                top.parent.enableAdhocSave(isAllowed);
+                window.parent.enableAdhocSave(isAllowed);
             }
         }
     },
-    
+
     refresh_repo: function() {
-        if(top.mantle_initialized !== undefined && top.mantle_initialized) {
-            top.mantle_refreshRepository();
+        if(window.parent.mantle_initialized !== undefined && window.parent.mantle_initialized) {
+            window.parent.mantle_refreshRepository();
         }
     },
-    
+
     save_to_solution: function(filename, solution, path, type, overwrite) {
         var query = Saiku.tabs._tabs[0].content.query;
         query.action.get("/xml", {
@@ -83,7 +91,7 @@ var savePg0 = function() {};
 if (Settings.BIPLUGIN) {
     Settings.PLUGIN = true;
     Settings.REST_URL = "/pentaho/content/saiku/";
-    
+
     $(document).ready(function() {
         Saiku.session = new Session();
     });
@@ -102,7 +110,7 @@ var BIPlugin = {
                 .css({ 'margin-left': 0 });
             $(workspace.el).find('.workspace_fields').remove();
         }
-        
+
         // Remove toolbar buttons
         $(workspace.toolbar.el)
             .find('.save').parent().remove();
@@ -115,7 +123,7 @@ var BIPlugin = {
         if (Settings.MODE == "table") {
             $(workspace.toolbar.el).parent().remove();
         }
-        
+
         // Toggle save button
         workspace.bind('query:result', function(args) {
             var isAllowed = args.data.cellset && 
@@ -132,12 +140,12 @@ Saiku.events.bind('session:new', function(session) {
     if (Settings.PLUGIN) {        
         // Remove tabs and global toolbar
         $('#header').remove();
-        
+
         // Bind to workspace
         if (Saiku.tabs._tabs[0] && Saiku.tabs._tabs[0].content) {
             BIPlugin.bind_callbacks(Saiku.tabs._tabs[0].content);
         }
-        
+
         Saiku.session.bind('workspace:new', function(args) {
             BIPlugin.bind_callbacks(args.workspace);
         });
