@@ -584,7 +584,9 @@ public class OlapQueryService implements Serializable {
 	public byte[] getExport(String queryName, String type, String formatter) {
 		formatter = formatter == null ? "" : formatter.toLowerCase();
 		if (formatter.equals("flat")) {
-			return getExport(queryName, type, new CellSetFormatter());
+			return getExport(queryName, type, new CellSetFormatter());			
+		}else if (formatter.equals("flattened")) {
+			return getExport(queryName, type, new FlattenedCellSetFormatter());
 		} else if (formatter.equals("hierarchical")) {
 			return getExport(queryName, type, new HierarchicalCellSetFormatter());
 		}

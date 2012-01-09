@@ -268,7 +268,7 @@ public class QueryResource {
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/export/xls/\tGET");
 		}
-		return getQueryExcelExport(queryName, "hierarchical");
+		return getQueryExcelExport(queryName, "flattened");
 	}
 
 	@GET
@@ -301,7 +301,7 @@ public class QueryResource {
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/export/csv\tGET");
 		}
-		return getQueryCsvExport(queryName, "flat");
+		return getQueryCsvExport(queryName, "flattened");
 	}
 
 	@GET
