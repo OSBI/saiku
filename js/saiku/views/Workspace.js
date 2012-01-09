@@ -172,7 +172,7 @@ var Workspace = Backbone.View.extend({
         this.query = new Query({
             connection: parsed_cube[0],
             catalog: parsed_cube[1],
-            schema: parsed_cube[2],
+            schema: (parsed_cube[2] == "null" ? "" : parsed_cube[2]) ,
             cube: parsed_cube[3]
         }, {
             workspace: this
@@ -191,9 +191,11 @@ var Workspace = Backbone.View.extend({
 
         // Find the selected cube
         if (this.selected_cube === undefined) {
+            var schema = this.query.get('schema');
             this.selected_cube = this.query.get('connection') + "/" + 
-                this.query.get('catalog') + "/" + 
-                this.query.get('schema') + "/" + this.query.get('cube');
+                this.query.get('catalog') + "/"
+                + ((schema == "" || schema == null) ? "null" : schema) 
+                + "/" + this.query.get('cube');
             $(this.el).find('.cubes')
                 .val(this.selected_cube);
         }
