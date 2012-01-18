@@ -96,7 +96,7 @@
                 <% _.each(connections, function(connection) { %>
                     <% _.each(connection.catalogs, function(catalog) { %>
                         <% _.each(catalog.schemas, function(schema) { %>
-                            <optgroup label="<%= schema.name +'  (' + connection.name + ')' %>">
+                            <optgroup label="<%= ( schema.name != "" ? schema.name : catalog.name) +'  (' + connection.name + ')' %>">
                             <% _.each(schema.cubes, function(cube) { %>
                                 <option value="<%= connection.name %>/<%= catalog.name %>/<%=  ((schema.name == '' || schema.name == null) ? 'null' : schema.name)  %>/<%= cube.name %>"><%= cube.name %></option>
                             <% }); %>
