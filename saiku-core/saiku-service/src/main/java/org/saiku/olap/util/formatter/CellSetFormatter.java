@@ -335,7 +335,7 @@ public class CellSetFormatter implements ICellSetFormatter {
 			if (cell.getValue() != null) {
 				try {
 					cellInfo.setRawNumber(cell.getDoubleValue());
-				} catch (OlapException e1) {
+				} catch (Exception e1) {
 				}
 			}
 			String cellValue = cell.getFormattedValue(); // First try to get a
