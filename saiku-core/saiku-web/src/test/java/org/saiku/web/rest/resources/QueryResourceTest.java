@@ -29,13 +29,21 @@ import java.util.List;
 import javax.servlet.ServletException;
 import javax.ws.rs.core.Response.Status;
 
+import junit.framework.TestCase;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.web.rest.objects.resultset.Cell;
 import org.saiku.web.rest.objects.resultset.QueryResult;
+import org.saiku.web.service.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -43,13 +51,24 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author bugg
  * 
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+
 @ContextConfiguration(locations = { "saiku-beans.xml" })
-public class QueryResourceTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+public class QueryResourceTest extends TestCase {
 
 	@Autowired
 	private QueryResource qs;
-
+	
+	@Autowired
+	private SessionService ss;
+	
+	@Before
+	public void setUp() throws Exception {
+		    Authentication auth =  new UsernamePasswordAuthenticationToken("testuser", null);
+		    SecurityContextHolder.getContext().setAuthentication(auth);
+		    ss.login(null, "testuser", null);
+	};
+	
 	@Test
 	public final void testCreateQuery() throws ServletException {
 

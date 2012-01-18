@@ -57,27 +57,32 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager {
 
 		ISaikuConnection con;
 		if (isDatasourceSecurity(datasource, ISaikuConnection.SECURITY_TYPE_PASSTHROUGH_VALUE) && sessionService != null) {
-			con = handlePassThrough(name, datasource);
-		} else {
-			if (!connections.containsKey(name)) {
+			datasource = handlePassThrough(datasource);
+		}
+		Map<String, Object> session = sessionService.getAllSessionObjects();
+		String username = (String) session.get("username");
+
+		if (username != null) {
+			String newName = name + "-" + username;
+			if (!connections.containsKey(newName)) {
 				con =  connect(name, datasource);
 				if (con != null) {
-					connections.put(con.getName(), con);
+					connections.put(newName, con);
 				} else {
-					if (!errorConnections.contains(name)) {
-						errorConnections.add(name);
+					if (!errorConnections.contains(newName)) {
+						errorConnections.add(newName);
 					}
 				}
 
 			} else {
-				con = connections.get(name);
+				con = connections.get(newName);
 			}
-
-			if (con != null) {
+			if (con != null && !isDatasourceSecurity(datasource, ISaikuConnection.SECURITY_TYPE_PASSTHROUGH_VALUE)) {
 				con = applySecurity(con, datasource);
 			}
-		}
 		return con;
+		}
+		return null;
 	}
 
 	@Override
@@ -94,35 +99,18 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager {
 
 	}
 
-	private ISaikuConnection handlePassThrough(String name,
-			SaikuDatasource datasource) {
+	private SaikuDatasource handlePassThrough(SaikuDatasource datasource) {
 
 		Map<String, Object> session = sessionService.getAllSessionObjects();
 		String username = (String) session.get("username");
 
 		if (username != null) {
 			String password = (String) session.get("password");
-			String newName = name + "-" + username;
 			datasource.getProperties().setProperty("username",username);
 			if (password != null) {
 				datasource.getProperties().setProperty("password",password);
 			}
-			ISaikuConnection con;
-
-			if (!connections.containsKey(newName)) {
-				con =  connect(name, datasource);
-				if (con != null) {
-					connections.put(newName, con);
-				} else {
-					if (!errorConnections.contains(newName)) {
-						errorConnections.add(newName);
-					}
-				}
-
-			} else {
-				con = connections.get(newName);
-			}
-			return con;
+			return datasource;
 		}
 
 		return null;
