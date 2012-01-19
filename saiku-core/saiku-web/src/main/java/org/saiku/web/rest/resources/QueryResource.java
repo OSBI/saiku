@@ -56,6 +56,10 @@ import org.saiku.olap.dto.SaikuDimensionSelection;
 import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.util.SaikuProperties;
+import org.saiku.olap.util.formatter.CellSetFormatter;
+import org.saiku.olap.util.formatter.FlattenedCellSetFormatter;
+import org.saiku.olap.util.formatter.HierarchicalCellSetFormatter;
+import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.service.util.exception.SaikuServiceException;
@@ -346,6 +350,43 @@ public class QueryResource {
 		}
 	}
 
+	@POST
+	@Produces({"application/json" })
+	@Path("/{queryname}/result/{format}")
+	public QueryResult executeMdx(
+			@PathParam("queryname") String queryName,
+			@PathParam("format") String formatter,
+			@FormParam("mdx") String mdx) 
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result"+formatter+"\tPOST");
+		}
+		try {
+			ICellSetFormatter icf;
+			formatter = formatter == null ? "" : formatter.toLowerCase(); 
+			if(formatter.equals("flat")) {
+				icf = new CellSetFormatter();
+			}
+			else if (formatter.equals("hierarchical")) {
+				icf = new HierarchicalCellSetFormatter();
+			}
+			else if (formatter.equals("flattened")) {
+				icf = new FlattenedCellSetFormatter();
+			} else {
+				icf = new FlattenedCellSetFormatter();
+			}
+
+			olapQueryService.qm2mdx(queryName);
+			CellDataSet cs = olapQueryService.executeMdx(queryName,mdx, icf);
+			return RestUtil.convert(cs);
+		}
+		catch (Exception e) {
+			log.error("Cannot execute query (" + queryName + ") using mdx:\n" + mdx,e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return new QueryResult(error);
+		}
+	}
+		
 	@POST
 	@Produces({"application/json" })
 	@Path("/{queryname}/result")
