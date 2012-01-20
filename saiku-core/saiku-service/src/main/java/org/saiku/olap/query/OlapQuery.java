@@ -107,7 +107,7 @@ public class OlapQuery implements IQuery {
 		}
 		QueryAxis oldQueryAxis = findAxis(dimension);
 		QueryAxis newQueryAxis = query.getAxis(axis);
-		if (oldQueryAxis != null && newQueryAxis != null) {
+		if (oldQueryAxis != null && newQueryAxis != null && !(oldQueryAxis.getName().equals(newQueryAxis.getName()))) {
             oldQueryAxis.removeDimension(dimension);
             newQueryAxis.addDimension(dimension);   
 		}
