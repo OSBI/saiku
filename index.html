@@ -123,7 +123,7 @@
                         </li>
                     <% } %>
                     <% _.each(hierarchy.levels, function(level) { %>
-                        <li class="hide"><a title="<%= level.uniqueName %>" 
+                        <li class="hide"><a title="<%= level.uniqueName %>" rel="<%= level.uniqueName %>" 
                             class="dimension" href="#<%= dimension.name %>/hierarchy/<%= hierarchy.uniqueName %>/<%= level.uniqueName %>"><%= level.caption %></a>
                         </li>
                     <% }); %>
@@ -143,6 +143,7 @@
                 <ul>
                 <% _.each(measures, function(measure) { %>
                     <li><a title="<%= measure.description ? measure.description : measure.uniqueName %>"
+                            rel="<%= measure.uniqueName %>"
                         class="measure" href="#Measures/member/<%= measure.uniqueName %>"><%= measure.caption %></a>
                     </li>
                 <% }); %>

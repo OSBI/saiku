@@ -254,12 +254,12 @@ var Workspace = Backbone.View.extend({
                             
                         if (levels.indexOf(name) === -1) {
                             var $dim = $(dimension_el)
-                                .find('a[title="' + name + '"]')
+                                .find('a[rel="' + name + '"]')
                                 .parent();
                             
                             if (!$dim.html() || $dim.html() == null) {
                                 $dim = $(this.other_dimension)
-                                .find('a[title="' + name + '"]')
+                                .find('a[rel="' + name + '"]')
                                 .parent();
                             }
                             var $clone = $dim.clone()
