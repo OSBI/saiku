@@ -91,16 +91,14 @@ var Statistics = Backbone.View.extend({
         }
 
         var group = function(grid, el, cback){
-            var decimal = Math.pow(10,3)
-            var elements = _.map(grid, function(it){return it[el]})
-            //return (Math.round(cback(elements)*decimal)/decimal)
+            var elements = _.filter(_.map(grid, function(it){return it[el]}), function(it){return it})
             return cback(elements).toFixed(3)
         }
 
-        var sum = function(elems){return _.reduce(elems, function(memo, num){ return memo + (num?num:0); }, 0)}
-        var mean = function(elems){return (sum(elems))/elems.length}
+        var sum = function(elems){return _.reduce(elems, function(memo, num){ return memo + num }, 0)}
+        var average = function(elems){return (sum(elems))/elems.length}
         var stdx = function(elems){
-            var m = mean(elems)
+            var m = average(elems)
             return Math.sqrt(sum(_.map(elems, function(it){return Math.pow(m - it,2)}))/elems.length)
         }
         var min = function(elems){return _.min(elems)}
@@ -119,7 +117,7 @@ var Statistics = Backbone.View.extend({
         $tbody.append(createRow(['Min'].concat(_.map(idxs, function(it){return group(rs, it, min)})), false))
         $tbody.append(createRow(['Max'].concat(_.map(idxs, function(it){return group(rs, it, max)})), false))
         $tbody.append(createRow(['Sum'].concat(_.map(idxs, function(it){return group(rs, it, sum)})), false))
-        $tbody.append(createRow(['Mean'].concat(_.map(idxs, function(it){return group(rs, it, mean)})), false))
+        $tbody.append(createRow(['Average'].concat(_.map(idxs, function(it){return group(rs, it, average)})), false))
         $tbody.append(createRow(['Std. Deviation'].concat(_.map(idxs, function(it){return group(rs, it, stdx)})), false))
 
         $(this.el).append($table)
