@@ -151,3 +151,65 @@ Saiku.events.bind('session:new', function(session) {
         });
     }
 });
+
+var Datasources = Backbone.Model.extend({
+    list: [],
+        
+    initialize: function(args, options) {
+        // Attach a custom event bus to this model
+        _.extend(this, Backbone.Events);
+    },
+
+    parse: function(response) {
+        this.set({ 
+            list: response
+        });
+                
+        return response;
+    },
+    url: function() {
+        return (Saiku.session.username + "/datasources");
+    }
+});
+
+
+if (Settings.PLUGIN) {
+    window.parent.getSaikuMdx = function() {
+            var myself = this;
+            var query = Saiku.tabs._tabs[0].content.query;
+            query.clear();
+            query.fetch({ 
+            success: function(model, response) {
+                    var ds = new Datasources();
+                    ds.fetch({
+                        success: function(dmodel, dresponse) {
+                            for (var i = 0; i < dresponse.length; i ++) {
+                                if (dresponse[i].name == response.cube.connectionName) {
+                                    var urlParts = dresponse[i].properties.location.split(';');
+                                    var jndi = "";
+                                    var catalog = "";
+                                    $.each(urlParts,function(index, value) { 
+                                        var prop = value.split('=');
+                                        if (prop[0] == "DataSource") {
+                                            jndi = prop[1];
+                                        }
+                                       if (prop[0] == "Catalog") {
+                                            catalog = prop[1];
+                                        } 
+                                    });
+                                    var saikuStub = {
+                                        connection: dresponse[i].name,
+                                        catalog: catalog,
+                                        jndi: jndi,
+                                        mdx: response.mdx
+                                    }
+                                    window.parent.saveSaiku(saikuStub);
+                                }        
+                            }
+                        }
+                    })
+                    
+                }
+            });
+    };
+}
