@@ -91,11 +91,13 @@ var Statistics = Backbone.View.extend({
         }
 
         var group = function(grid, el, cback){
+            var decimal = Math.pow(10,3)
             var elements = _.map(grid, function(it){return it[el]})
-            return cback(elements)
+            //return (Math.round(cback(elements)*decimal)/decimal)
+            return cback(elements).toFixed(3)
         }
 
-        var sum = function(elems){return _.reduce(elems, function(memo, num){ return memo + num; }, 0)}
+        var sum = function(elems){return _.reduce(elems, function(memo, num){ return memo + (num?num:0); }, 0)}
         var mean = function(elems){return (sum(elems))/elems.length}
         var stdx = function(elems){
             var m = mean(elems)
@@ -138,26 +140,35 @@ var Statistics = Backbone.View.extend({
         if (args.data.cellset && args.data.cellset.length > 0) {
             
             var lowest_level = 0;
-        
+            var isHead = true
+            var columnNames = new Array()
             for (var row = 0; row < args.data.cellset.length; row++) {
-                if (args.data.cellset[row][0].type == "ROW_HEADER_HEADER") {
+                if (isHead && (args.data.cellset[row][0].type == "ROW_HEADER_HEADER" || 
+                    args.data.cellset[row][0].value == "null")) {
                     this.data.metadata = [];
                     for (var field = 0; field < args.data.cellset[row].length; field++) {
                         if (args.data.cellset[row][field].type == "ROW_HEADER_HEADER") {
                             this.data.metadata.shift();
                             lowest_level = field;
                         }
-                        
-                        this.data.metadata.push({
-                            colIndex: field,
-                            colType: typeof(args.data.cellset[row + 1][field].value) !== "number" &&
-                                isNaN(args.data.cellset[row + 1][field].value
-                                .replace(/[^a-zA-Z 0-9.]+/g,'')) ? "String" : "Numeric",
-                            colName: args.data.cellset[row][field].value,
-                            isHeader: (args.data.cellset[row][field].type == "ROW_HEADER_HEADER")
-                        });
+                        if(columnNames[field]){
+                            columnNames[field].push(args.data.cellset[row][field].value)
+                        }else{
+                            columnNames[field] = [args.data.cellset[row][field].value]
+                        }
+                        if(args.data.cellset[row][0].type == "ROW_HEADER_HEADER"){
+                            this.data.metadata.push({
+                                colIndex: field,
+                                colType: typeof(args.data.cellset[row + 1][field].value) !== "number" &&
+                                    isNaN(args.data.cellset[row + 1][field].value
+                                    .replace(/[^a-zA-Z 0-9.]+/g,'')) ? "String" : "Numeric",
+                                colName: columnNames[field].join(' / '),
+                                isHeader: (args.data.cellset[row][field].type == "ROW_HEADER_HEADER")
+                            });    
+                        }
                     }
-                } else if (args.data.cellset[row][0].value !== "null" && args.data.cellset[row][0].value !== "") {
+                } else if (args.data.cellset[row][lowest_level].value !== "null" && args.data.cellset[row][lowest_level].value !== "") {
+                    isHead = false
                     var record = [];
                     this.data.width = args.data.cellset[row].length;
                     for (var col = lowest_level; col < args.data.cellset[row].length; col++) {
