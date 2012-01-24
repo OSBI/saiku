@@ -693,7 +693,7 @@ public class QueryResource {
 			@PathParam("queryname") String queryName, 
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName, 
-			@FormParam("position") @DefaultValue("-1")int position)
+			@FormParam("position") @DefaultValue("-1") int position)
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"\tPOST");
