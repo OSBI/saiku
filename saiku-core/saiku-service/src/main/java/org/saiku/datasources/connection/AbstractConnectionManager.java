@@ -51,6 +51,7 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
 	public ISaikuConnection getConnection(String name) {
 		SaikuDatasource datasource = ds.getDatasource(name);
 		if (datasource.getProperties().containsKey(ISaikuConnection.DATASOURCE_PROCESSORS)) {
+			datasource = datasource.clone();
 			String[] processors = datasource.getProperties().getProperty(ISaikuConnection.DATASOURCE_PROCESSORS).split(",");
 			for (String processor : processors) {
 				try {
