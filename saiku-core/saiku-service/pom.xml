@@ -12,6 +12,40 @@
 	<name>saiku - services</name>
 	<build>
 		<plugins>
+                        <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-antrun-plugin</artifactId>
+                                <version>1.2</version>
+                                <executions>
+                                        <execution>
+                                                <id>create-package</id>
+                                                <phase>test-compile</phase>
+                                                <goals>
+                                                        <goal>run</goal>
+                                                </goals>
+                                                <configuration>
+                                                        <tasks>
+                                                                <unzip dest="target/test/">
+                                                                        <fileset dir="${basedir}/../../util/">
+                                                                                <include name="foodmart.zip" />
+                                                                        </fileset>
+                                                                </unzip>
+                                i				<copy todir="target/test/foodmart/">
+                                                                        <fileset dir="${basedir}/../../util/">
+                                                                                <include name="FoodMart.xml" />
+                                                                        </fileset>
+                                                                </copy>
+
+                                                                <copy todir="target/test-classes/org/saiku/" overwrite="true">
+                                                                        <fileset dir="target/test/">
+                                                                                <include name="foodmart_hsql.script" />
+                                                                        </fileset>
+                                                                </copy>
+                                                        </tasks>
+                                                </configuration>
+                                        </execution>
+                                </executions>
+                        </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

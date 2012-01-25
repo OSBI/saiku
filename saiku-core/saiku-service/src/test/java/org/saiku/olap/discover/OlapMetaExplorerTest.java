@@ -2,12 +2,17 @@ package org.saiku.olap.discover;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystem;
+import org.apache.commons.vfs.FileUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.olap4j.OlapConnection;
@@ -331,11 +336,14 @@ public class OlapMetaExplorerTest {
     
     
     @BeforeClass
-public static void setup(){
+public static void setup() throws IOException{
     AbstractServiceUtils ast = new AbstractServiceUtils();
     ast.initTestContext();
     IConnectionManager ic = new TConnectionManager();
-    IDatasourceManager ds = new ClassPathResourceDatasourceManager("/tmp/files");
+    String returned = computeTestDataRoot(OlapMetaExplorerTest.class);
+    File f = new File(System.getProperty("java.io.tmpdir")+"/files/");
+    f.mkdir();
+    IDatasourceManager ds = new ClassPathResourceDatasourceManager(System.getProperty("java.io.tmpdir")+"/files/");
     InputStream inputStream= OlapMetaExplorerTest.class.getResourceAsStream("connection.properties");
     try {
         testProps.load(inputStream);
@@ -348,4 +356,17 @@ public static void setup(){
     olapMetaExplorer = new OlapMetaExplorer(ic);
 
 }
+    public static String computeTestDataRoot(Class anyTestClass) throws IOException {
+        
+        //create a temp file
+        File temp = File.createTempFile("temp-file-name", ".tmp"); 
+
+        System.out.println("Temp file : " + temp.getAbsolutePath());
+
+    //Get tempropary file path
+        String absolutePath = temp.getAbsolutePath();
+        String tempFilePath = absolutePath.
+            substring(0,absolutePath.lastIndexOf(File.separator));
+        return tempFilePath+"/";
+      }
 }
