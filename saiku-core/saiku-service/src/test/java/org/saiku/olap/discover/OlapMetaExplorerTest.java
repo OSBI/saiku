@@ -16,6 +16,9 @@ import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimension;
+import org.saiku.olap.dto.SaikuHierarchy;
+import org.saiku.olap.dto.SaikuLevel;
+import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.service.datasource.ClassPathResourceDatasourceManager;
 import org.saiku.service.datasource.IDatasourceManager;
@@ -175,34 +178,65 @@ public class OlapMetaExplorerTest {
     	assertEquals("Department", dim.getName());
     }
     
-    public final void testGetAllHierarchies(){
+    @Test
+    public final void testGetAllHierarchies() throws SaikuOlapException{
         
+    	List<SaikuHierarchy> hier = olapMetaExplorer.getAllHierarchies(olapMetaExplorer.getAllCubes().get(0));
+    	
+    	assertNotNull(hier);
+    	
+    	assertEquals(8, hier.size());
     }
     
-    public final void testGetHierarchyRootMembers(){
-        
+//    @Test
+    public final void testGetHierarchyRootMembers() throws SaikuOlapException{
+//    	olapMetaExplorer.getHierarchyRootMembers(olapMetaExplorer.getAllCubes().get(0), null);
     }
     
-    public final void testGetAllLevels(){
+    @Test
+    public final void testGetAllLevels() throws SaikuOlapException{
         
-        
+    	List<SaikuLevel> levels = olapMetaExplorer.getAllLevels(olapMetaExplorer.getAllCubes().get(0), "Department", "Department");
+    	
+    	assertNotNull(levels);
+    	
+    	assertEquals(2, levels.size());
     }
     
-    public final void testGetAllMembers(){
-        
+    @Test
+    public final void testGetAllMembers() throws SaikuOlapException{
+    	List<SaikuMember> members = olapMetaExplorer.getAllMembers(olapMetaExplorer.getAllCubes().get(0), "Department", "Department", "Department Description");
+    	
+    	assertNotNull(members);
+    	
+    	assertEquals(12, members.size());
     }
     
-    
-    public final void testGetMemeberChildren(){
-        
+    @Test
+    public final void testGetMemeberChildren() throws SaikuOlapException{
+
+    	List<SaikuMember> members = olapMetaExplorer.getMemberChildren(olapMetaExplorer.getAllCubes().get(0), "[Department].[All Departments]");
+    	
+    	assertNotNull(members);
+    	
+    	assertEquals(12, members.size());
     }
     
-    public final void testGetAllMeasures(){
-        
+    @Test
+    public final void testGetAllMeasures() throws SaikuOlapException{
+    	List<SaikuMember> members = olapMetaExplorer.getAllMeasures(olapMetaExplorer.getAllCubes().get(0));
+    	
+    	assertNotNull(members);
+    	
+    	assertEquals(4, members.size());
     }
     
-    public final void testGetMemeber(){
-        
+    @Test
+    public final void testGetMemeber() throws SaikuOlapException{
+    	SaikuMember member = olapMetaExplorer.getMember(olapMetaExplorer.getAllCubes().get(0), "[Department].[All Departments]");
+    	
+    	assertNotNull(member);
+    	assertEquals("[Department].[All Departments]", member.getUniqueName());
     }
     
     
