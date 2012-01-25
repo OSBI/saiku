@@ -244,7 +244,7 @@ public class OlapQueryService implements Serializable {
 					if (k > 0 || i > 0) {
 						buf.append(", ");
 					}
-					select += m.getUniqueName();
+					//select += m.getUniqueName();
 					buf.append(m.getUniqueName());
 				}
 			}

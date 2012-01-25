@@ -46,40 +46,6 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.2</version>
-				<executions>
-					<execution>
-						<id>create-package</id>
-						<phase>test-compile</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<unzip dest="target/test/">
-									<fileset dir="${basedir}/../../util/">
-										<include name="foodmart.zip" />
-									</fileset>
-								</unzip>
-                                <copy todir="target/test/foodmart/">
-									<fileset dir="${basedir}/../../util/">
-										<include name="FoodMart.xml" />
-									</fileset>
-								</copy>
-
-								<copy todir="target/test/foodmart/" overwrite="true">
-									<fileset dir="${basedir}/src/test/resources/foodmart/">
-										<include name="*" />
-									</fileset>
-								</copy>
-							</tasks>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			
 
 			<plugin>
