@@ -284,7 +284,7 @@ var Workspace = Backbone.View.extend({
                 }
             }
             
-            this.query.run();
+            this.query.run(true);
         }
         
         // Make sure appropriate workspace buttons are enabled
