@@ -15,6 +15,7 @@ import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SaikuDimension;
 import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.service.datasource.ClassPathResourceDatasourceManager;
 import org.saiku.service.datasource.IDatasourceManager;
@@ -35,6 +36,7 @@ public class OlapMetaExplorerTest {
 
        assertNotNull(output);
        
+       assertEquals(1, output.size());
        assertEquals("test", output.get(0).getName());
        
     }
@@ -85,33 +87,92 @@ public class OlapMetaExplorerTest {
     public final void testGetMultipleConnections(){
         
     }
-    
+    /**
+     * Make sure you can grab a cube from a specified connection.
+     */
     @Test
     public final void testGetCubesSingleConnection(){
         List<SaikuCube> output = olapMetaExplorer.getCubes("test");
-        
+
+        assertNotNull(output);
+
         assertEquals("HR", output.get(0).getName());
     }
     
     public final void testGetCubesMultipleConnectionsConnection(){
     }
     
+    /**
+     * Test to make sure you can retrieve all the cubes from a schema.
+     */
+    @Test
     public final void testGetAllCubes(){
+        List<SaikuCube> output = olapMetaExplorer.getAllCubes();
         
+        assertNotNull(output);
+        
+        assertEquals(8, output.size());
+        
+        for (int i = 0; i < output.size(); i++){
+        	assertEquals("FoodMart", output.get(i).getCatalogName());
+        	output.get(i).getName();
+        	assertEquals("test", output.get(i).getConnectionName());
+        	output.get(i).getCubeName();
+        	assertEquals("FoodMart", output.get(i).getSchemaName());
+        	output.get(i).getUniqueName();
+        }
         
     }
     
+    /**
+     * Test to make sure that the cubes are returned in the same order.
+     */
+    @Test
+    public final void testCubeReturnOrder(){
+    	 List<SaikuCube> output = olapMetaExplorer.getAllCubes();
+    	 
+         assertNotNull(output);
+
+         String[] names = { "HR","Sales 2","Sales Ragged","Sales Scenario","Sales","Store","Warehouse and Sales","Warehouse"};
+
+         for (int i = 0; i < output.size(); i++){
+         	assertEquals(names[i], output.get(i).getName());
+         	assertEquals("["+names[i]+"]",output.get(i).getCubeName());
+         }
+    }
     public final void testGetNativeCube(){
         
         
     }
     
-    public final void testGetAllDimensions(){
+    /**
+     * Test to make sure you can get all the dimensions in a cube.
+     * @throws SaikuOlapException
+     */
+    @Test
+    public final void testGetAllDimensions() throws SaikuOlapException{
+    	List<SaikuCube> cubes = olapMetaExplorer.getAllCubes();
+    	
+    	
+        List<SaikuDimension> dims = olapMetaExplorer.getAllDimensions(cubes.get(0));
         
+        assertNotNull(dims);
+        assertEquals(7, dims.size());
     }
     
-    public final void testGetDimension(){
-        
+    /**
+     * Test to make sure you can get a single dimension in a cube.
+     * @throws SaikuOlapException
+     */
+    @Test
+    public final void testGetDimension() throws SaikuOlapException{
+        List<SaikuCube> cubes = olapMetaExplorer.getAllCubes();
+    	
+    	SaikuDimension dim = olapMetaExplorer.getDimension(cubes.get(0), "Department");
+    	
+    	assertNotNull(dim);
+    	
+    	assertEquals("Department", dim.getName());
     }
     
     public final void testGetAllHierarchies(){
