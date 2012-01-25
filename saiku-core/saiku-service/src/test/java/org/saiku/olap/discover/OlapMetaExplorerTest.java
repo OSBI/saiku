@@ -125,6 +125,20 @@ public class OlapMetaExplorerTest {
         assertEquals("HR", output.get(0).getName());
     }
     
+    /**
+     * Make sure you can grab a cube from a specified connection.
+     */
+    @Test
+    public final void testGetCubesMultipleConnections(){
+        List<String> cubes = new ArrayList<String>();
+        cubes.add("test");
+        List<SaikuCube> output = olapMetaExplorer.getCubes(cubes);
+
+        assertNotNull(output);
+
+        assertEquals("HR", output.get(0).getName());
+    }
+    
     public final void testGetCubesMultipleConnectionsConnection(){
     }
     
@@ -246,6 +260,16 @@ public class OlapMetaExplorerTest {
     	assertNotNull(levels);
     	
     	assertEquals(2, levels.size());
+    }
+    
+    @Test
+    public final void testGetAllLevelsUniqueNameHierarchy() throws SaikuOlapException{
+        
+        List<SaikuLevel> levels = olapMetaExplorer.getAllLevels(olapMetaExplorer.getAllCubes().get(0), "Department", "[Department]");
+        
+        assertNotNull(levels);
+        
+        assertEquals(2, levels.size());
     }
     
     @Test
