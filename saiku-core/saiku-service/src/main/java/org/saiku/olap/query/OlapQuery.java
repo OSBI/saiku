@@ -49,6 +49,8 @@ public class OlapQuery implements IQuery {
 
     private static final Logger log = LoggerFactory.getLogger(OlapQuery.class);
 
+    private static final String SCENARIO = "Scenario";
+
 	private Query query;
 	private Properties properties = new Properties();
 
@@ -162,8 +164,8 @@ public class OlapQuery implements IQuery {
     
     public CellSet execute() throws Exception {
 
-    	if (scenario != null && query.getDimension("Scenario") != null) {
-    		QueryDimension dimension = query.getDimension("Scenario");
+    	if (scenario != null && query.getDimension(SCENARIO) != null) {
+    		QueryDimension dimension = query.getDimension(SCENARIO);
     		moveDimension(dimension, Axis.FILTER);
     		Selection sel = dimension.createSelection(IdentifierParser.parseIdentifier("[Scenario].[" + getScenario().getId() + "]"));
     		if (!dimension.getInclusions().contains(sel)) {
@@ -177,8 +179,8 @@ public class OlapQuery implements IQuery {
         mdx.getSelect().unparse(new ParseTreeWriter(new PrintWriter(writer)));
         log.debug("Executing query (" + this.getName() + ") :\n" + writer.toString());
         CellSet cellSet = mdx.execute();
-    	if (scenario != null && query.getDimension("Scenario") != null) {
-    		QueryDimension dimension = query.getDimension("Scenario");
+    	if (scenario != null && query.getDimension(SCENARIO) != null) {
+    		QueryDimension dimension = query.getDimension(SCENARIO);
     		dimension.getInclusions().clear();
     		moveDimension(dimension, null);
     	}

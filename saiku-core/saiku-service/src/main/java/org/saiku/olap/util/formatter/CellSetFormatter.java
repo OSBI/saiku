@@ -392,7 +392,6 @@ public class CellSetFormatter implements ICellSetFormatter {
 			for (int y = 0; y < members.length; y++) {
 				final MemberCell memberInfo = new MemberCell();
 				final Member member = members[y];
-				final List<String> memberPath = new ArrayList<String>();
 				expanded = false;
 				int index = memberList.indexOf(member);
 				if (index >= 0) {

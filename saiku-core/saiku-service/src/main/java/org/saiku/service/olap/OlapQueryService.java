@@ -228,7 +228,6 @@ public class OlapQueryService implements Serializable {
 
 	public ResultSet drillthrough(String queryName, List<Integer> cellPosition, Integer maxrows) {
 		try {
-			IQuery q = getIQuery(queryName);
 			CellSet cs = OlapUtil.getCellSet(queryName);
 			SaikuCube cube = getQuery(queryName).getCube();
 			final OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnectionName()); 
@@ -244,7 +243,6 @@ public class OlapQueryService implements Serializable {
 					if (k > 0 || i > 0) {
 						buf.append(", ");
 					}
-					//select += m.getUniqueName();
 					buf.append(m.getUniqueName());
 				}
 			}
