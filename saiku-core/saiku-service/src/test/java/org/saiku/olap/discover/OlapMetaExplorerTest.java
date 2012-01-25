@@ -239,6 +239,35 @@ public class OlapMetaExplorerTest {
     	assertEquals("[Department].[All Departments]", member.getUniqueName());
     }
     
+    @Test(expected = SaikuOlapException.class)
+    public final void testGetMemberChildrenException() throws SaikuOlapException{
+        olapMetaExplorer.getMemberChildren(null, "[Department].[No Departments]");
+    }
+    
+    @Test
+    public final void testGetAllMembersUniqueNameHierarchy() throws SaikuOlapException{
+        List<SaikuMember> members = olapMetaExplorer.getAllMembers(olapMetaExplorer.getAllCubes().get(0), "Department", "[Department]", "Department Description");
+        
+        assertNotNull(members);
+        
+        assertEquals(12, members.size());
+    }
+    
+    @Test
+    public final void testGetAllMembersUniqueNameLevel() throws SaikuOlapException{
+        List<SaikuMember> members = olapMetaExplorer.getAllMembers(olapMetaExplorer.getAllCubes().get(0), "Department", "Department", "[Department].[(All)]");
+        
+        assertNotNull(members);
+        
+        assertEquals(1, members.size());
+    }
+    
+    @Test(expected = SaikuOlapException.class)
+    public final void testGetAllMembersException() throws SaikuOlapException{
+       olapMetaExplorer.getAllMembers(null, "Department", "Department", null);
+
+    }
+    
     
     @BeforeClass
 public static void setup(){
