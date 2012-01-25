@@ -4,11 +4,13 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.olap4j.OlapConnection;
 import org.saiku.AbstractServiceUtils;
 import org.saiku.TConnectionManager;
 import org.saiku.datasources.connection.IConnectionManager;
@@ -71,9 +73,30 @@ public class OlapMetaExplorerTest {
             output = olapMetaExplorer.getConnection("noname");
         }
         catch (Exception e){
+            Exception outpu2t = e;
         }
         assertNull(output);
 
+    }
+    
+    
+    @Test
+    public final void testGetConnections() throws SaikuOlapException{
+        List<String> list = new ArrayList<String>();
+        list.add("test");
+        List<SaikuConnection> connections = olapMetaExplorer.getConnections(list);
+        
+        assertNotNull(connections);
+        
+        assertEquals("test", connections.get(0).getName());
+    }
+    
+    @Test
+    public final void testGetNativeConnection() throws SaikuOlapException{
+        OlapConnection output = olapMetaExplorer.getNativeConnection("test");
+        
+        assertNotNull(output);
+        
     }
     
     /**
@@ -178,6 +201,19 @@ public class OlapMetaExplorerTest {
     	assertEquals("Department", dim.getName());
     }
     
+    /**
+     * Test to make sure you can get a single dimension in a cube.
+     * @throws SaikuOlapException
+     */
+    @Test
+    public final void testGetDimensionNull() throws SaikuOlapException{
+        List<SaikuCube> cubes = olapMetaExplorer.getAllCubes();
+        
+        SaikuDimension dim = olapMetaExplorer.getDimension(cubes.get(0), "No dimension");
+        
+        assertNull(dim);
+        }
+    
     @Test
     public final void testGetAllHierarchies() throws SaikuOlapException{
         
@@ -188,6 +224,15 @@ public class OlapMetaExplorerTest {
     	assertEquals(8, hier.size());
     }
     
+    @Test
+    public final void testGetHierarchy() throws SaikuOlapException{
+        SaikuHierarchy hier = olapMetaExplorer.getHierarchy(olapMetaExplorer.getAllCubes().get(0), "Department");
+        
+        assertNotNull(hier);
+        
+        assertEquals("Department", hier.getName());
+    }
+
 //    @Test
     public final void testGetHierarchyRootMembers() throws SaikuOlapException{
 //    	olapMetaExplorer.getHierarchyRootMembers(olapMetaExplorer.getAllCubes().get(0), null);
@@ -239,11 +284,7 @@ public class OlapMetaExplorerTest {
     	assertEquals("[Department].[All Departments]", member.getUniqueName());
     }
     
-    @Test(expected = SaikuOlapException.class)
-    public final void testGetMemberChildrenException() throws SaikuOlapException{
-        olapMetaExplorer.getMemberChildren(null, "[Department].[No Departments]");
-    }
-    
+
     @Test
     public final void testGetAllMembersUniqueNameHierarchy() throws SaikuOlapException{
         List<SaikuMember> members = olapMetaExplorer.getAllMembers(olapMetaExplorer.getAllCubes().get(0), "Department", "[Department]", "Department Description");
@@ -262,18 +303,7 @@ public class OlapMetaExplorerTest {
         assertEquals(1, members.size());
     }
     
-    @Test
-    public final void testGetAllMembersException() throws SaikuOlapException{
-Exception eOutOfBounds = null;
-        try{
-       olapMetaExplorer.getAllMembers(null, "Department", "Department", null);
-        }
-        catch (SaikuOlapException e){
-            eOutOfBounds = e;
-        }
-        assertNotNull(eOutOfBounds);
 
-    }
     
     
     @BeforeClass
