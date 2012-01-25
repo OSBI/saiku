@@ -262,9 +262,16 @@ public class OlapMetaExplorerTest {
         assertEquals(1, members.size());
     }
     
-    @Test(expected = SaikuOlapException.class)
+    @Test
     public final void testGetAllMembersException() throws SaikuOlapException{
+Exception eOutOfBounds = null;
+        try{
        olapMetaExplorer.getAllMembers(null, "Department", "Department", null);
+        }
+        catch (SaikuOlapException e){
+            eOutOfBounds = e;
+        }
+        assertNotNull(eOutOfBounds);
 
     }
     
