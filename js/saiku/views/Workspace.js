@@ -169,11 +169,15 @@ var Workspace = Backbone.View.extend({
         // Initialize the new query
         this.selected_cube = $(this.el).find('.cubes').val();
         var parsed_cube = this.selected_cube.split('/');
+        var cube = parsed_cube[3];
+        for (var i = 4; i < parsed_cube.length; i++) {
+            cube += "/" + parsed_cube[i];
+        }
         this.query = new Query({
             connection: parsed_cube[0],
             catalog: parsed_cube[1],
             schema: (parsed_cube[2] == "null" ? "" : parsed_cube[2]) ,
-            cube: parsed_cube[3]
+            cube: decodeURIComponent(cube)
         }, {
             workspace: this
         });

@@ -98,7 +98,7 @@
                         <% _.each(catalog.schemas, function(schema) { %>
                             <optgroup label="<%= ( schema.name != "" ? schema.name : catalog.name) +'  (' + connection.name + ')' %>">
                             <% _.each(schema.cubes, function(cube) { %>
-                                <option value="<%= connection.name %>/<%= catalog.name %>/<%=  ((schema.name == '' || schema.name == null) ? 'null' : schema.name)  %>/<%= cube.name %>"><%= cube.name %></option>
+                                <option value="<%= connection.name %>/<%= catalog.name %>/<%=  ((schema.name == '' || schema.name == null) ? 'null' : schema.name)  %>/<%= encodeURIComponent(cube.name) %>"><%= cube.name %></option>
                             <% }); %>
                             </optgroup>
                         <% }); %>

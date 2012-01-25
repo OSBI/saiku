@@ -112,7 +112,7 @@ var SessionWorkspace = Backbone.Model.extend({
                         var cube = schema.cubes[l];
                         var key = connection.name + "/" + catalog.name + "/"
                             + ((schema.name == "" || schema.name == null) ? "null" : schema.name) 
-                            + "/" + cube.name;
+                            + "/" + encodeURIComponent(cube.name);
 
                         if (localStorage && 
                             localStorage.getItem("dimension." + key) !== null &&

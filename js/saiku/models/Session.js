@@ -49,6 +49,7 @@ var Session = Backbone.Model.extend({
             this.clear();
             this.fetch({ success: this.process_session })
         } else {
+            this.username = encodeURIComponent(options.username);
             this.load_session();
         }
     },
