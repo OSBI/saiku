@@ -198,12 +198,14 @@ var Statistics = Backbone.View.extend({
 
 /**
  * Start Plugin
- */
-(function() {
-    Saiku.events.bind('session:new', function(session) {
+ */ 
+ Saiku.events.bind('session:new', function(session) {
+
         function new_workspace(args) {
             // Add stats element
-            args.workspace.stats = new Statistics({ workspace: args.workspace });
+            if (typeof args.workspace.stats == "undefined") {
+                args.workspace.stats = new Statistics({ workspace: args.workspace });
+            }
         }
         
         // Attach stats to existing tabs
@@ -217,4 +219,4 @@ var Statistics = Backbone.View.extend({
         // Attach stats to future tabs
         Saiku.session.bind("workspace:new", new_workspace);
     });
-}());
+
