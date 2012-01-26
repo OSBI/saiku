@@ -192,7 +192,6 @@ var Workspace = Backbone.View.extend({
             this.query.run();
             return;
         }
-
         // Find the selected cube
         if (this.selected_cube === undefined) {
             var schema = this.query.get('schema');
@@ -202,8 +201,7 @@ var Workspace = Backbone.View.extend({
                 + "/" + this.query.get('cube');
             $(this.el).find('.cubes')
                 .val(this.selected_cube);
-        }
-        
+        }        
         // Clear workspace
         this.clear();
         

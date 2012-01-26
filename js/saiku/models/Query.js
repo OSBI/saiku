@@ -54,7 +54,7 @@ var Query = Backbone.Model.extend({
                 connection: response.cube.connectionName,
                 catalog: response.cube.catalogName,
                 schema: response.cube.schemaName,
-                cube: response.cube.name,
+                cube: encodeURIComponent(response.cube.name),
                 axes: response.saikuAxes
             });
         }
