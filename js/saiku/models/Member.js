@@ -31,8 +31,8 @@ var Member = Backbone.Model.extend({
     },
     
     url: function() {
-        var url = encodeURI(Saiku.session.username + "/discover/" + 
-            this.cube + "/dimensions/" + this.dimension +  
+        var url = encodeURI(Saiku.session.username + "/discover/") +
+            this.cube + encodeURI("/dimensions/" + this.dimension +  
             "/hierarchies/" + this.hierarchy + "/levels/" + this.level);
         
         return url;
