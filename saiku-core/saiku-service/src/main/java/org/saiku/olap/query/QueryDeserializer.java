@@ -362,7 +362,9 @@ public class QueryDeserializer {
 				Catalog cat = db.getCatalogs().get(catalogName);
 				if (cat != null) {
 					for (Schema schema : cat.getSchemas()) {
-						if (schema.getName().equals(schemaName)) {
+						if (schema.getName().equals(schemaName) 
+								|| (schema.getName().equals("") && schemaName == null))
+						{
 							for (Cube cub : schema.getCubes()) {
 								if (cub.getName().equals(cubeName) || cub.getUniqueName().equals(cubeName)) {
 									cube = cub;
