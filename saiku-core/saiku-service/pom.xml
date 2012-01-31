@@ -30,7 +30,7 @@
                                                                                 <include name="foodmart_hsql.script.zip" />
                                                                         </fileset>
                                                                 </unzip>
-                                i				<copy todir="target/test/foodmart/">
+                                				<copy todir="target/test/foodmart/">
                                                                         <fileset dir="${basedir}/../../util/">
                                                                                 <include name="FoodMart.xml" />
                                                                         </fileset>
@@ -71,7 +71,7 @@
 		<dependency>
 			<groupId>org.olap4j</groupId>
 			<artifactId>olap4j</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.1-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>asm</groupId>
@@ -120,7 +120,7 @@
   		<dependency>
 			<groupId>org.olap4j</groupId>
 			<artifactId>olap4j-xmla</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.1-SNAPSHOT</version>
         </dependency>
    		<dependency>
 			<groupId>org.jdom</groupId>
