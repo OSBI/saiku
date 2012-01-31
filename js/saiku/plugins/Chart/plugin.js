@@ -267,21 +267,30 @@ var Chart = Backbone.View.extend({
         dataType: "script",
         cache: true,
         success: function() {
-            function new_workspace(args) {
-                // Add chart element
-                args.workspace.chart = new Chart({ workspace: args.workspace });
-            }
-            
-            // Attach chart to existing tabs
-            for(var i = 0; i < Saiku.tabs._tabs.length; i++) {
-                var tab = Saiku.tabs._tabs[i];
-                new_workspace({
-                    workspace: tab.content
-                });
+
+            var initPlugin = function(session) {
+                function new_workspace(args) {
+                    // Add chart element
+                    args.workspace.chart = new Chart({ workspace: args.workspace });
+                }
+                
+                // Attach chart to existing tabs
+                for(var i = 0; i < Saiku.tabs._tabs.length; i++) {
+                    var tab = Saiku.tabs._tabs[i];
+                    new_workspace({
+                        workspace: tab.content
+                    });
+                };
+                
+                // Attach chart to future tabs
+                session.bind("workspace:new", new_workspace);
             };
-            
-            // Attach chart to future tabs
-            Saiku.session.bind("workspace:new", new_workspace);
+
+            if (typeof Saiku.session == "undefined") {
+                Saiku.events.bind('session:new', initPlugin);
+            } else {
+                initPlugin(Saiku.session);
+            }
         }
     });
 }());
