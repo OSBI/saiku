@@ -60,7 +60,7 @@ public class AbstractServiceUtils {
                 try {
                     Class.forName("org.hsqldb.jdbcDriver");
                 
-                Connection c = DriverManager.getConnection("jdbc:hsqldb:file:myunittests", "SA", "");
+                Connection c = DriverManager.getConnection("jdbc:hsqldb:file:target/test/myunittests", "SA", "");
 
                 // Create the mondrian schema
                 //Connection c = ds.getConnection();
