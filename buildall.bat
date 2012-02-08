@@ -9,7 +9,7 @@ call git submodule update
 cd saiku-ui
 call git checkout master
 call git pull
-call mvn clean package install:install-file -Dfile=target/saiku-ui-2.2-SNAPSHOT.war  -DgroupId=org.saiku -DartifactId=saiku-ui -Dversion=2.2-SNAPSHOT -Dpackaging=war
+call mvn clean package install:install-file -Dfile=target/saiku-ui-2.2.war  -DgroupId=org.saiku -DartifactId=saiku-ui -Dversion=2.2 -Dpackaging=war
 cd ../saiku-server
 call mvn clean package
 cd ../saiku-bi-platform-plugin
