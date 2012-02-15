@@ -22,7 +22,7 @@
  * Change settings here
  */
 var Settings = {
-    VERSION: "Saiku 2.2",
+    VERSION: "Saiku 2.3 SNAPSHOT",
     BIPLUGIN: false,
     BASE_URL: "",
     TOMCAT_WEBAPP: "/saiku",
