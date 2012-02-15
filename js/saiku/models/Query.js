@@ -55,7 +55,8 @@ var Query = Backbone.Model.extend({
                 catalog: response.cube.catalogName,
                 schema: response.cube.schemaName,
                 cube: encodeURIComponent(response.cube.name),
-                axes: response.saikuAxes
+                axes: response.saikuAxes,
+                type: response.type
             });
         }
 
@@ -81,35 +82,39 @@ var Query = Backbone.Model.extend({
             ! (force === true)) {
             return;
         }
+        Saiku.ui.unblock();
 
         // TODO - Validate query
         // maybe we should sync it with the backend query JSON?
         // this definitely needs improvement
         var rows = 0;
         var columns = 0;
-        if (Settings.MODE == "view" || Settings.MODE == "table") {
-            var axes = this.get('axes');
-            if (axes) {
-                for (var axis_iter = 0; axis_iter < axes.length; axis_iter++) {
-                    var axis = axes[axis_iter];
-                    if (axis.name && axis.name == "ROWS") {
-                        rows = axis.dimensionSelections.length;
-                    }
-                    if (axis.name && axis.name == "COLUMNS") {
-                        columns = axis.dimensionSelections.length;
+        if (this.get('type') != "MDX") {
+            if (Settings.MODE == "view" || Settings.MODE == "table") {
+                var axes = this.get('axes');
+                if (axes) {
+                    for (var axis_iter = 0; axis_iter < axes.length; axis_iter++) {
+                        var axis = axes[axis_iter];
+                        if (axis.name && axis.name == "ROWS") {
+                            rows = axis.dimensionSelections.length;
+                        }
+                        if (axis.name && axis.name == "COLUMNS") {
+                            columns = axis.dimensionSelections.length;
+                        }
                     }
                 }
+            } else {
+                rows = $(this.workspace.el).find('.rows ul li').size();
+                columns = $(this.workspace.el).find('.columns ul li').size(); 
             }
-        } else {
-            rows = $(this.workspace.el).find('.rows ul li').size();
-            columns = $(this.workspace.el).find('.columns ul li').size(); 
+
+            if (rows == 0 || columns == 0) {
+                $(this.workspace.el).find('.workspace_results table')
+                    .html('<tr><td><span class="i18n">You need to put at least one level or measure on Columns and Rows for a valid query.</td></tr>');
+                return;
+            }
         }
 
-        if (rows == 0 || columns == 0) {
-            $(this.workspace.el).find('.workspace_results table')
-                .html('<tr><td><span class="i18n">You need to put at least one level or measure on Columns and Rows for a valid query.</td></tr>');
-            return;
-        }
         // Run it
         $(this.workspace.el).find('.workspace_results table')
             .html('<tr><td>Running query...</td></tr>');

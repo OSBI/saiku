@@ -192,6 +192,14 @@ var Workspace = Backbone.View.extend({
             this.query.run();
             return;
         }
+
+        if (this.query.get('type') == "MDX") {
+            $(this.drop_zones.el).remove();
+            this.toolbar.toMdx();
+            if (! $(this.el).find('.sidebar').hasClass('hide')) {
+                this.toggle_sidebar();
+            }
+        }
         // Find the selected cube
         if (this.selected_cube === undefined) {
             var schema = this.query.get('schema');
