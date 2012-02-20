@@ -48,7 +48,7 @@
               <output>${basedir}/target/all.js</output>
               <!-- files to include, path relative to output's directory or absolute path-->
               <!--inputDir>base directory for non absolute includes, default to parent dir of output</inputDir-->
-              <includes>
+              <!-- includes>
 
                 <include>classes/Settings.js</include>
                 <include>classes/models/Dimension.js</include>
@@ -80,7 +80,7 @@
                 <include>classes/adapters/SaikuServer.js</include>
                 <include>classes/routers/QueryRouter.js</include>
 
-              </includes>
+              </includes -->
 
             </aggregation>
           </aggregations>
