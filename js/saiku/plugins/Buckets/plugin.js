@@ -28,6 +28,16 @@ var Buckets = Backbone.View.extend({
         'click a': 'click_tag',
     },
 
+    bucket_css: { 
+        'color': '#555', 
+        'margin-right': '5px', 
+        'text-decoration': 'none', 
+        'border': '1px solid #ccc', 
+        'padding': '5px',
+        '-moz-border-radius': '3px',
+        '-webkit-border-radius': '3px'
+    },
+
     initialize: function(args) {
         this.workspace = args.workspace;
         
@@ -51,7 +61,7 @@ var Buckets = Backbone.View.extend({
     
     add_button: function() {
         var $stats_button = 
-            $('<a href="#buckets" class="buckets button disabled_toolbar i18n" title="Buckets">Tag</a>')
+            $('<a href="#buckets" class="buckets button disabled_toolbar i18n" title="Tags">Tag</a>')
             .css({ 'background': 
                 "url('js/saiku/plugins/Buckets/xxx.png') 30% 30% no-repeat" });
         var $stats_li = $('<li class="seperator"></li>').append($stats_button);
@@ -59,7 +69,6 @@ var Buckets = Backbone.View.extend({
     },
     
     show: function(event, ui) {
-        // $(this.workspace.el).find('.workspace_results table').toggle();
         $(this.el).toggle();
         $(event.target).toggleClass('on');
         
@@ -93,13 +102,7 @@ var Buckets = Backbone.View.extend({
                 "</div>").css({
                     'padding-bottom': '10px'
                 });
-        $table.find('a').css({ 
-                    'color': '#666', 
-                    'margin-right': '5px', 
-                    'text-decoration': 'none', 
-                    'border': '1px solid #ccc', 
-                    padding: '5px' 
-                });
+        $table.find('a').css(this.bucket_css);
     
         $(this.el).append($table)
         
@@ -121,7 +124,8 @@ var Buckets = Backbone.View.extend({
                         if ($(event.target).hasClass('add_bucket')) {
                             var addBucketBtn = $(event.target);
                             var saveBucket = function(tagname) {
-                                  $("<a href='#" + tagname + "' class='bucket'>" + tagname + "</a>")
+                                  $tag = $("<a href='#" + tagname + "' class='bucket'>" + tagname + "</a>")
+                                    .css(self.bucket_css)
                                     .appendTo($(self.el).find('.buckets'));
 
                             };
