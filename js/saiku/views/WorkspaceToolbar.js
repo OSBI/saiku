@@ -93,6 +93,10 @@ var WorkspaceToolbar = Backbone.View.extend({
         return false;
     },
     
+    toMdx: function() {
+        $(this.el).find('.non_empty, .query_scenario, .mdx, .swap_axis').remove();
+    },
+
     reflect_properties: function() {
         var properties = this.workspace.query.properties ?
             this.workspace.query.properties.properties : Settings.QUERY_PROPERTIES;
