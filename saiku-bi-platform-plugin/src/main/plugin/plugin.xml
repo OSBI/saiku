@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin title="saiku analytics" loader="OVERRIDING">
+<plugin title="saiku" loader="OVERRIDING">
 
 	<overlays>
 		<overlay id="startup.saikuAnalysis" resourcebundle="../content/saiku-ui/saikuplugin.properties">
