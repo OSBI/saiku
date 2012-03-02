@@ -19,6 +19,7 @@
  */
 package org.saiku.olap.query;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -29,6 +30,7 @@ import org.olap4j.metadata.Cube;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
 import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.util.exception.SaikuOlapException;
 
 public interface IQuery {
@@ -59,5 +61,8 @@ public interface IQuery {
 	public void setMdx(String mdx);
 	public void setScenario(Scenario scenario);
 	public Scenario getScenario();
+	public void addTag(SaikuTag tag);
+	public List<SaikuTag> getTags();
+	public void removeTag(String tagname);
 
 }

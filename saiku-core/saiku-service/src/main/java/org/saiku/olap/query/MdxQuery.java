@@ -20,6 +20,7 @@
 
 package org.saiku.olap.query;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -41,6 +42,7 @@ import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
 import org.olap4j.type.CubeType;
 import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.util.exception.SaikuOlapException;
 
 public class MdxQuery implements IQuery {
@@ -213,5 +215,17 @@ public class MdxQuery implements IQuery {
 	
 	public Scenario getScenario() {
 		return scenario;
+	}
+
+	public void addTag(SaikuTag tag) {
+		throw new UnsupportedOperationException();
+	}
+
+	public List<SaikuTag> getTags() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void removeTag(String tagname) {
+		throw new UnsupportedOperationException();
 	}
 }

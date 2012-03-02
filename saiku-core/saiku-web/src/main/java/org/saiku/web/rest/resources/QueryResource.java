@@ -54,6 +54,7 @@ import org.codehaus.jackson.map.type.TypeFactory;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimensionSelection;
 import org.saiku.olap.dto.SaikuQuery;
+import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.util.SaikuProperties;
 import org.saiku.olap.util.formatter.CellSetFormatter;
@@ -621,6 +622,8 @@ public class QueryResource {
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/swapaxes\tPUT");
 		}
+		olapQueryService.clearSort(queryName, "ROWS");
+		olapQueryService.clearSort(queryName, "COLUMNS");
 		olapQueryService.swapAxes(queryName);
 		return Status.OK;
 
@@ -925,4 +928,123 @@ public class QueryResource {
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
+	
+	@GET
+	@Produces({"application/json" })
+	@Path("/{queryname}/tags")
+	public List<SaikuTag> getTags(
+			@PathParam("queryname") String queryName)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/tags\tPOST\t");
+		}
+		try {
+			return olapQueryService.getTags(queryName);
+		}
+		catch (Exception e) {
+			log.error("Cannot get tags query (" + queryName + ")",e);
+		}
+		return new ArrayList<SaikuTag>();
+	}
+	
+	@POST
+	@Produces({"application/json" })
+	@Path("/{queryname}/tags/{tagname}/{position}")
+	public SaikuTag addTag(
+			@PathParam("queryname") String queryName,
+			@PathParam("tagname") String tagName,
+			@PathParam("position") String position)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/tags\tGET");
+		}
+		try {
+			String[] positions = position.split(":");
+			List<Integer> cellPosition = new ArrayList<Integer>();
+
+			for (String p : positions) {
+				Integer pInt = Integer.parseInt(p);
+				cellPosition.add(pInt);
+			}
+
+			SaikuTag t = olapQueryService.addTag(queryName, tagName, cellPosition);
+			return t;
+		}
+		catch (Exception e) {
+			log.error("Cannot add tag " + tagName + " for query (" + queryName + ")",e);
+		}
+		return null;
+
+	}
+	
+	@PUT
+	@Produces({"application/json" })
+	@Path("/{queryname}/tags/{tagname}")
+	public Status activateTag(
+			@PathParam("queryname") String queryName,
+			@PathParam("tagname") String tagName)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/tags\tPUT");
+		}
+		try {
+			olapQueryService.enableTag(queryName, tagName);
+			return Status.OK;
+		}
+		catch (Exception e) {
+			log.error("Cannot add tag " + tagName + " for query (" + queryName + ")",e);
+		}
+		return Status.INTERNAL_SERVER_ERROR;
+
+	}
+	
+	@DELETE
+	@Produces({"application/json" })
+	@Path("/{queryname}/tags/{tagname}")
+	public Status deactivateTag(
+			@PathParam("queryname") String queryName,
+			@PathParam("tagname") String tagName)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/tags\tPUT");
+		}
+		try {
+			olapQueryService.disableTag(queryName, tagName);
+			return Status.OK;
+		}
+		catch (Exception e) {
+			log.error("Cannot remove tag " + tagName + " for query (" + queryName + ")",e);
+		}
+		return Status.INTERNAL_SERVER_ERROR;
+
+	}
+	
+	@POST
+	@Produces({"application/json" })
+	@Path("/{queryname}/axis/{axis}/sort/{sortorder}/{sortliteral}")
+	public void sortAxis(
+			@PathParam("queryname") String queryName, 
+			@PathParam("axis") String axisName,
+			@PathParam("sortorder") String sortOrder,
+			@PathParam("sortliteral") String sortLiteral)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/sort/" + sortOrder + "/" + sortLiteral +"\tPOST");
+		}
+		olapQueryService.sortAxis(queryName, axisName, sortLiteral, sortOrder);
+	}
+	
+	@DELETE
+	@Produces({"application/json" })
+	@Path("/{queryname}/axis/{axis}/sort")
+	public void clearSortAxis(
+			@PathParam("queryname") String queryName, 
+			@PathParam("axis") String axisName)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/sort/\tDELETE");
+		}
+		olapQueryService.clearSort(queryName, axisName);
+	}
+
 }

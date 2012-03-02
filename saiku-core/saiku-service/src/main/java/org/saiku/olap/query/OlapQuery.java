@@ -22,6 +22,9 @@ package org.saiku.olap.query;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -38,6 +41,7 @@ import org.olap4j.query.QueryDimension;
 import org.olap4j.query.QueryDimension.HierarchizeMode;
 import org.olap4j.query.Selection;
 import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.query.QueryProperties.QueryProperty;
 import org.saiku.olap.query.QueryProperties.QueryPropertyFactory;
 import org.saiku.olap.util.SaikuProperties;
@@ -57,6 +61,9 @@ public class OlapQuery implements IQuery {
 	private SaikuCube cube;
 	
 	private Scenario scenario;
+	
+	private Map<String,SaikuTag> tags = new HashMap<String,SaikuTag>();
+
 	
 	public OlapQuery(Query query, SaikuCube cube, boolean applyDefaultProperties) {
 		this.query = query;
@@ -104,11 +111,14 @@ public class OlapQuery implements IQuery {
 	
 	public void moveDimension(QueryDimension dimension, Axis axis) {
 		dimension.setHierarchizeMode(HierarchizeMode.PRE);
-		if (dimension.getName() != "Measures") {
-			dimension.setHierarchyConsistent(true);
-		}
 		QueryAxis oldQueryAxis = findAxis(dimension);
 		QueryAxis newQueryAxis = query.getAxis(axis);
+		if (dimension.getName() != "Measures") {
+			dimension.setHierarchyConsistent(true);
+		} else {
+			oldQueryAxis.clearSort();
+			newQueryAxis.clearSort();
+		}
 		if (oldQueryAxis != null && newQueryAxis != null && (oldQueryAxis.getLocation() != newQueryAxis.getLocation())) {
             oldQueryAxis.removeDimension(dimension);
             newQueryAxis.addDimension(dimension);   
@@ -117,11 +127,15 @@ public class OlapQuery implements IQuery {
 
 	public void moveDimension(QueryDimension dimension, Axis axis, int position) {
 		dimension.setHierarchizeMode(HierarchizeMode.PRE);
-		if (dimension.getName() != "Measures") {
-			dimension.setHierarchyConsistent(true);
-		}
         QueryAxis oldQueryAxis = findAxis(dimension);
         QueryAxis newQueryAxis = query.getAxis(axis);
+		if (dimension.getName() != "Measures") {
+			dimension.setHierarchyConsistent(true);
+		} else {
+			oldQueryAxis.clearSort();
+			newQueryAxis.clearSort();
+		}
+
         if (oldQueryAxis != null && newQueryAxis != null) {
             oldQueryAxis.removeDimension(dimension);
             newQueryAxis.addDimension(position, dimension);   
@@ -261,6 +275,20 @@ public class OlapQuery implements IQuery {
 	
 	public Scenario getScenario() {
 		return scenario;
+	}
+
+	public void addTag(SaikuTag tag) {
+		tags.put(tag.getName(), tag);
+	}
+
+	public List<SaikuTag> getTags() {
+		List<SaikuTag> t = new ArrayList<SaikuTag>();
+		t.addAll(tags.values());
+		return t;
+	}
+
+	public void removeTag(String tagname) {
+		tags.remove(tagname);		
 	}
 
 }
