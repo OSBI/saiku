@@ -183,6 +183,7 @@ var Workspace = Backbone.View.extend({
         });
         
         // Save the query to the server and init the UI
+        Saiku.session.trigger("workspace:clear", this);
         this.query.save();
         this.init_query();
     },

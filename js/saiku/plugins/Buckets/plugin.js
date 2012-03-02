@@ -38,6 +38,34 @@ var Buckets = Backbone.View.extend({
         '-webkit-border-radius': '3px'
     },
 
+    tags: [],
+
+
+     tags_template: function() {
+            var self = this;
+            var t = "<div class='buckets'>" +
+                "<a href='#' class='add_bucket i18n'> + </a>";
+            _.each(this.tags, function(tag) {
+              t += self.tag_template(tag);
+            });     
+            t += "</div>";
+            return t;
+    },
+
+    tag_template: function(tag) {
+          var title = tag.name + ": ";
+          var first = true;
+          _.each(tag.saikuMembers, function(member) {
+                    if (!first) {
+                        title += ",  ";
+                    }
+                    first = false;
+                    title += member.uniqueName;
+          });
+          return "<a href='#" + tag.name + "' title='" + title + "' class='bucket'>" + tag.name + "</a>";
+    },
+    
+
     initialize: function(args) {
         this.workspace = args.workspace;
         
@@ -46,7 +74,7 @@ var Buckets = Backbone.View.extend({
         $(this.el).attr({ id: this.id });
         
         // Bind table rendering to query result event
-        _.bindAll(this, "render",  "show",  "setOptions");
+        _.bindAll(this, "render",  "show",  "setOptions", "buildTemplate", "render");
         
         // Add buckets button
         this.add_button();
@@ -56,7 +84,9 @@ var Buckets = Backbone.View.extend({
         this.workspace.bind('workspace:adjust', this.render);
         
         $(this.workspace.el).find('.workspace_results')
-            .prepend($(this.el).hide())
+            .prepend($(this.el).hide());
+
+
     },
     
     add_button: function() {
@@ -73,8 +103,15 @@ var Buckets = Backbone.View.extend({
         $(event.target).toggleClass('on');
         
         if ($(event.target).hasClass('on')) {
-            this.render();
+            this.workspace.query.action.get("/tags/", { 
+                success: this.buildTemplate
+            });
         }
+    },
+
+    buildTemplate: function(model,response) {
+        this.tags = response;
+        this.render();
     },
     
     setOptions: function(event) {
@@ -94,14 +131,12 @@ var Buckets = Backbone.View.extend({
 
         $(this.el).empty();
 
-        var $table = $("<div class='buckets'>" +
-                "<a href='#' class='add_bucket i18n'> + </a>" +
-                "<a href='#Bad Customers' class='bucket i18n'>Bad Customers</a>" +
-                "<a href='#Good Customers' class='bucket i18n'>Good Customers</a>" +
-                "<a href='#I like Pies' class='bucket i18n'>I like Pies</a>" +
-                "</div>").css({
-                    'padding-bottom': '10px'
-                });
+        
+        var rendered = this.tags_template();
+        var $table = $(rendered)
+                        .css({
+                            'padding-bottom': '10px'
+                        });
         $table.find('a').css(this.bucket_css);
     
         $(this.el).append($table)
@@ -115,20 +150,30 @@ var Buckets = Backbone.View.extend({
                         $(event.target).removeClass('on').css({
                             'background' : 'white'
                         });
+                        var tagName = $(event.target).attr('href');
+                        tagName = tagName.replace('#','');
+                        self.workspace.query.action.del("/tags/" + tagName, { 
+                            success: self.workspace.query.run
+                        });
                     }
                     else {
 
                         $(event.target).addClass('on').css({
                             'background' : 'lightblue'
                         });
+                        var tagName = $(event.target).attr('href');
+                        tagName = tagName.replace('#','');
+                        
+
                         if ($(event.target).hasClass('add_bucket')) {
                             var addBucketBtn = $(event.target);
-                            var saveBucket = function(tagname) {
-                                  $tag = $("<a href='#" + tagname + "' class='bucket'>" + tagname + "</a>")
+                            var saveBucket = function(model, response) {
+                                  $tag = $(self.tag_template(model))
                                     .css(self.bucket_css)
                                     .appendTo($(self.el).find('.buckets'));
 
                             };
+
                             var clicked = function(event) {
                                 $target = $(event.target).hasClass('data') ?
                                 $(event.target).find('div') : $(event.target);
@@ -150,7 +195,11 @@ var Buckets = Backbone.View.extend({
                             };
                             $(self.workspace.el).find("td.data").addClass('cellhighlight').unbind('click').click(clicked);
                             $(self.workspace.el).find(".query_scenario, .drillthrough, .drillthrough_export").removeClass('on');
-                        } 
+                        } else {
+                            self.workspace.query.action.put("/tags/" + tagName, { 
+                                success: self.workspace.query.run
+                            });
+                        }
                     }
                         
     }
@@ -168,6 +217,12 @@ var Buckets = Backbone.View.extend({
                 args.workspace.buckets = new Buckets({ workspace: args.workspace });
             }
         }
+
+        function clear_workspace(args) {
+                    if (typeof args.buckets != "undefined") {
+                        $(args.buckets.el).hide();
+                    }
+        }
         
         // Attach stats to existing tabs
         for(var i = 0; i < Saiku.tabs._tabs.length; i++) {
@@ -179,6 +234,7 @@ var Buckets = Backbone.View.extend({
 
         // Attach stats to future tabs
         Saiku.session.bind("workspace:new", new_workspace);
+        Saiku.session.bind("workspace:clear", clear_workspace);
     });
 
  var BucketModal = Modal.extend({
@@ -230,12 +286,14 @@ var Buckets = Backbone.View.extend({
         var tagname = $(this.el).find('.tagname').val();
         var params = "?tagname=" + tagname;
         params = params + (typeof this.position !== "undefined" ? "&position=" + this.position : "" );
-        var location = Settings.REST_URL +
-        Saiku.session.username + "/query/" + 
-        this.query.id + "/tag/" + params;
+
+
+        this.query.action.post("/tags/" + tagname + "/" + this.position, { 
+                success: this.successCallback
+        });
         this.close();
         
-        this.successCallback(tagname);
+        
         //alert(this.successCallback);
         
         return false;
