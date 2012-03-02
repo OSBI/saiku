@@ -632,6 +632,38 @@ html, body {
     color: #983030;
     text-decoration: none;
 }
+.d_measure span.sort.BASC {
+background: url("../../../images/src/sort_up.png") no-repeat;
+    height: 16px;
+    width: 16px;
+    float: right;
+    cursor: pointer;
+}
+
+.d_measure span.sort.BDESC {
+background: url("../../../images/src/sort_down.png") no-repeat;
+    height: 16px;
+    width: 16px;
+    float: right;
+    cursor: pointer;
+}
+
+.d_measure span.sort.none {
+background: url("../../../images/src/sort_none.png") no-repeat;
+    height: 16px;
+    width: 16px;
+    float: right;
+    cursor: pointer;
+}
+.d_measure span.sort_none {
+    background: url("../../../images/sort_none.png") no-repeat scroll 0 0 transparent;
+    cursor: pointer;
+    float: right;
+    height: 16px;
+    width: 16px;
+}
+
+
 .empty_placeholder,
 .placeholder {
     border: 1px dashed #999;
