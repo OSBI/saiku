@@ -271,7 +271,17 @@ var Chart = Backbone.View.extend({
             var initPlugin = function(session) {
                 function new_workspace(args) {
                     // Add chart element
-                    args.workspace.chart = new Chart({ workspace: args.workspace });
+                    if (typeof args.workspace.chart == "undefined") {
+                        args.workspace.chart = new Chart({ workspace: args.workspace });
+                    } 
+                }
+
+                function clear_workspace(args) {
+                    if (typeof args.chart != "undefined") {
+                        $(args.chart.nav).hide();
+                        $(args.chart.el).hide();
+                        $(args.chart.el).parents().find('.workspace_results table').show();
+                    }
                 }
                 
                 // Attach chart to existing tabs
@@ -284,6 +294,7 @@ var Chart = Backbone.View.extend({
                 
                 // Attach chart to future tabs
                 session.bind("workspace:new", new_workspace);
+                session.bind("workspace:clear", clear_workspace);
             };
 
             if (typeof Saiku.session == "undefined") {
