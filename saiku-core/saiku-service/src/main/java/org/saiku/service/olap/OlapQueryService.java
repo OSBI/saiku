@@ -683,14 +683,16 @@ public class OlapQueryService implements Serializable {
 		query = null;
 	}
 
-	public SaikuTag addTag(String queryName, String tagName, List<Integer> cellPosition) {
+	public SaikuTag addTag(String queryName, String tagName, List<List<Integer>> cellPositions) {
 		try {
 			IQuery query = queries.get(queryName);
 			SaikuCube cube = getQuery(queryName).getCube();
 			CellSet cs = OlapUtil.getCellSet(queryName);
 			List<Member> members = new ArrayList<Member>();
-			for (int i = 0; i < cellPosition.size(); i++) {
-				members.addAll(cs.getAxes().get(i).getPositions().get(cellPosition.get(i)).getMembers());
+			for(List<Integer> cellPosition : cellPositions) {
+				for (int i = 0; i < cellPosition.size(); i++) {
+					members.addAll(cs.getAxes().get(i).getPositions().get(cellPosition.get(i)).getMembers());
+				}
 			}
 			List <SaikuMember> sm = ObjectUtil.convertMembers(members);
 			SaikuTag t = new SaikuTag(tagName, sm);

@@ -949,26 +949,30 @@ public class QueryResource {
 	
 	@POST
 	@Produces({"application/json" })
-	@Path("/{queryname}/tags/{tagname}/{position}")
+	@Path("/{queryname}/tags/{tagname}/")
 	public SaikuTag addTag(
 			@PathParam("queryname") String queryName,
 			@PathParam("tagname") String tagName,
-			@PathParam("position") String position)
+			@FormParam("positions") String positions)
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/tags\tGET");
 		}
 		try {
-			String[] positions = position.split(":");
-			List<Integer> cellPosition = new ArrayList<Integer>();
+			List<List<Integer>> cellPositions = new ArrayList<List<Integer>>();
+			for (String position : positions.split(",")) {
+				String[] ps = position.split(":");
+				List<Integer> cellPosition = new ArrayList<Integer>();
 
-			for (String p : positions) {
-				Integer pInt = Integer.parseInt(p);
-				cellPosition.add(pInt);
+				for (String p : ps) {
+					Integer pInt = Integer.parseInt(p);
+					cellPosition.add(pInt);
+				}
+				cellPositions.add(cellPosition);
 			}
-
-			SaikuTag t = olapQueryService.addTag(queryName, tagName, cellPosition);
+			SaikuTag t = olapQueryService.addTag(queryName, tagName, cellPositions);
 			return t;
+			
 		}
 		catch (Exception e) {
 			log.error("Cannot add tag " + tagName + " for query (" + queryName + ")",e);
