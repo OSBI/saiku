@@ -25,7 +25,9 @@
 var Buckets = Backbone.View.extend({
 
     events: {
-        'click a': 'click_tag',
+        'click .add_bucket': 'add_bucket',
+        'click  a.save' : 'save_bucket',
+        'click .bucket' : 'click_bucket'
     },
 
     bucket_css: { 
@@ -43,8 +45,8 @@ var Buckets = Backbone.View.extend({
 
      tags_template: function() {
             var self = this;
-            var t = "<div class='buckets'>" +
-                "<a href='#' class='add_bucket i18n'> + </a>";
+            var t = "<div class='buckets'><ul>" +
+                "<li><a href='#' class='add_bucket i18n button'> + </a></li>";
             _.each(this.tags, function(tag) {
               t += self.tag_template(tag);
             });     
@@ -62,7 +64,7 @@ var Buckets = Backbone.View.extend({
                     first = false;
                     title += member.uniqueName;
           });
-          return "<a href='#" + tag.name + "' title='" + title + "' class='bucket'>" + tag.name + "</a>";
+          return "<li class='seperator'><a href='#" + tag.name + "' title='" + title + "' class='bucket button'>" + tag.name + "</a></li>";
     },
     
 
@@ -74,7 +76,8 @@ var Buckets = Backbone.View.extend({
         $(this.el).attr({ id: this.id });
         
         // Bind table rendering to query result event
-        _.bindAll(this, "render",  "show",  "setOptions", "buildTemplate", "render");
+        _.bindAll(this, "render",  "show", "buildTemplate", "render", "deactivate_add_bucket", 
+            "add_bucket", "save_bucket", "click_bucket");
         
         // Add buckets button
         this.add_button();
@@ -114,16 +117,6 @@ var Buckets = Backbone.View.extend({
         this.render();
     },
     
-    setOptions: function(event) {
-        var type = $(event.target).attr('href').replace('#', '');
-        try {
-            alert("setOptions");
-            this[type]();
-        } catch (e) { }
-        
-        return false;
-    },
-    
     render: function() {
         if (! $(this.workspace.toolbar.el).find('.buckets').hasClass('on')) {
             return;
@@ -133,75 +126,98 @@ var Buckets = Backbone.View.extend({
 
         
         var rendered = this.tags_template();
-        var $table = $(rendered)
-                        .css({
-                            'padding-bottom': '10px'
-                        });
-        $table.find('a').css(this.bucket_css);
+        var $table = $(rendered);
     
         $(this.el).append($table)
         
     },
 
-        click_tag: function(event) {
-                    var self = this;
+    deactivate_add_bucket: function() {
+        var self = this;
+        var $addBtn = $(self.el).find('.add_bucket');
+        $addBtn.removeClass('on');
+        $(self.el).find('.new_bucket').parent().remove();
+        return;
+    },
 
-                    if ($(event.target).hasClass('on')) {
-                        $(event.target).removeClass('on').css({
-                            'background' : 'white'
-                        });
-                        var tagName = $(event.target).attr('href');
-                        tagName = tagName.replace('#','');
-                        self.workspace.query.action.del("/tags/" + tagName, { 
-                            success: self.workspace.query.run
-                        });
-                    }
-                    else {
+    add_bucket: function(event) {
+        var self = this;
+        var $addBtn = $(self.el).find('.add_bucket');
+        if ($addBtn.hasClass('on')) {
+            self.deactivate_add_bucket();
+            return;
+        }
+        $addBtn.addClass('on');
 
-                        $(event.target).addClass('on').css({
-                            'background' : 'lightblue'
-                        });
-                        var tagName = $(event.target).attr('href');
-                        tagName = tagName.replace('#','');
-                        
+        
+        $("<li><input id='new_bucket' type='text' class='new_bucket'/></li><li>" 
+            + "<a href='#save_bucket' class='i18n save sprite button new_bucket' title='Save Tag'></a></li>")
+                            .insertAfter($(self.el).find('.buckets .add_bucket').parent());
 
-                        if ($(event.target).hasClass('add_bucket')) {
-                            var addBucketBtn = $(event.target);
-                            var saveBucket = function(model, response) {
-                                  $tag = $(self.tag_template(model))
-                                    .css(self.bucket_css)
-                                    .appendTo($(self.el).find('.buckets'));
+        var clicked = function(event) {
+            $target = $(event.target).hasClass('data') ?
+                            $(event.target).find('div') : $(event.target);
 
-                            };
+            if ($target.parent().hasClass('selected')) {
+                $target.parent().removeClass('selected');
+            } else {
+                $target.parent().addClass('selected');
+            }
+        };
 
-                            var clicked = function(event) {
-                                $target = $(event.target).hasClass('data') ?
-                                $(event.target).find('div') : $(event.target);
-                                var pos = $target.attr('rel');
-                                (new BucketModal({
-                                    workspace: self.workspace,
-                                    maxrows: "tag...",
-                                    title: "New Tag",
-                                    position: pos,
-                                    successCallback: saveBucket,
-                                    query: self.workspace.query
-                                })).open();
+        $(self.workspace.el).find("td.data").addClass('cellhighlight').unbind('click').click(clicked);
+        $(self.workspace.el).find(".query_scenario, .drillthrough, .drillthrough_export").removeClass('on');
+    },
 
-                                $(addBucketBtn).removeClass('on').css({
-                                    'background' : 'white'
-                                });
-                                $(self.workspace.el).find("td.data").removeClass('cellhighlight').unbind('click');
+    save_bucket: function() {
+        var self = this;
+        var $cells = $(self.workspace.el).find("td.selected div");
+        if($cells.size() < 1) {
+            alert("You need to select at least 1 cell for tagging before you can save!");
+            return;
+        }
+        var positions = "";
+        $.each($cells, function(index,element) {
+            if (index > 0) {
+                positions += ",";
+            }
+            positions += $(element).attr('rel');
+            
+        });
 
-                            };
-                            $(self.workspace.el).find("td.data").addClass('cellhighlight').unbind('click').click(clicked);
-                            $(self.workspace.el).find(".query_scenario, .drillthrough, .drillthrough_export").removeClass('on');
-                        } else {
-                            self.workspace.query.action.put("/tags/" + tagName, { 
-                                success: self.workspace.query.run
-                            });
-                        }
-                    }
-                        
+        $(self.workspace.el).find("td.data").removeClass('cellhighlight').unbind('click');
+        $(self.workspace.el).find("td.selected").removeClass('selected');
+
+        var tagname = $(self.el).find('#new_bucket').val();
+        
+        var saveBucket = function(model, response) {
+            self.deactivate_add_bucket();
+                $tag = $(self.tag_template(model))
+                            .appendTo($(self.el).find('.buckets ul'));
+        };
+
+        this.workspace.query.action.post("/tags/" + tagname, { 
+                  success: saveBucket,
+                  data: { positions: positions }
+        });
+
+
+    },
+    click_bucket: function(event) {
+        var tagName = $(event.target).attr('href').replace('#','');
+
+        if ($(event.target).hasClass('on')) {
+            $(event.target).removeClass('on');
+            this.workspace.query.action.del("/tags/" + tagName, { 
+                            success: this.workspace.query.run
+            });
+        } else {
+            $(event.target).addClass('on');
+            this.workspace.query.action.put("/tags/" + tagName, { 
+                          success: this.workspace.query.run
+            });
+        }
+
     }
     
 });
@@ -215,6 +231,7 @@ var Buckets = Backbone.View.extend({
             // Add stats element
             if (typeof args.workspace.buckets == "undefined") {
                 args.workspace.buckets = new Buckets({ workspace: args.workspace });
+                args.workspace.bind('query:result', args.workspace.buckets.deactivate_add_bucket);
             }
         }
 
@@ -237,72 +254,4 @@ var Buckets = Backbone.View.extend({
         Saiku.session.bind("workspace:clear", clear_workspace);
     });
 
- var BucketModal = Modal.extend({
-    type: "drillthrough",
-    
-    buttons: [
-        { text: "Ok", method: "ok" },
-        { text: "Cancel", method: "close" }
-    ],
-
-    tag_template: '<div class="new_tag"><br />' +
-                'Tag Name: <input id="maxrows" name="tagname" class="tagname" type="text" /><br />' +
-               '</div>',
-    
-    initialize: function(args) {
-        // Initialize properties
-        _.extend(this, args);
-        this.options.title = args.title;
-        this.query = args.workspace.query;
-        
-        this.position = args.position;
-        this.successCallback = args.successCallback;
-        Saiku.ui.unblock();
-        _.bindAll(this, "ok");
-
-        // Resize when rendered
-        this.bind('open', this.post_render);
-        this.render();
-               // Load template
-       $(this.el).find('.dialog_body')
-          .html(_.template(this.tag_template)(this));
-        // Show dialog
-        $(this.el).find('.tagname').val(this.tagname);
-
-        
-    },
-    
-    
-    post_render: function(args) {
-        $(args.modal.el).parents('.ui-dialog').css({ width: "150px" });
-    },
-    
-    ok: function() {
-        // Notify user that updates are in progress
-        var $loading = $("<div>Saving tag...</div>");
-        $(this.el).find('.dialog_body').children().hide();
-        $(this.el).find('.dialog_body').prepend($loading);
-        
-        var tagname = $(this.el).find('.tagname').val();
-        var params = "?tagname=" + tagname;
-        params = params + (typeof this.position !== "undefined" ? "&position=" + this.position : "" );
-
-
-        this.query.action.post("/tags/" + tagname + "/" + this.position, { 
-                success: this.successCallback
-        });
-        this.close();
-        
-        
-        //alert(this.successCallback);
-        
-        return false;
-    },
-
-    
-    finished: function() {
-        $(this.el).dialog('destroy').remove();
-        this.query.run();
-    }
-});
-
+ 

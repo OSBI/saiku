@@ -953,7 +953,9 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 .workspace_results table td.cellhighlight {
   cursor: pointer;
 }
-
+.workspace_results table td.selected {
+  background: #c2d5e2 !important;
+}
 
 /** Save Dialog */
 .error_msg {
@@ -1125,6 +1127,54 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     opacity: 0.5 !important;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
 }
+
+.buckets {
+    background: #FCFCFC;
+    border: 1px solid #CCC;
+    height: 32px;
+    margin: 0 0 10px 0;
+    padding: 3px 10px 3px 5px;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
+
+.buckets ul {
+    margin: 0;
+    padding: 0;
+}
+.buckets ul li {
+    display: inline;
+    float: left;
+    padding-left: 5px;
+}
+.buckets ul li.seperator {
+    border-left: 1px solid #D5D5D5;
+    margin-left: 5px;
+}
+.buckets a.button {
+    text-decoration: none;
+    font-weight: bold;
+    color:black;
+    display: block;
+    height: 16px;
+    padding: 8px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+.buckets a.button:hover {
+    border: 1px solid #CCC;
+    padding: 7px;
+}
+.buckets a.on {
+    border: 1px solid #CCC;
+    background-color: #E0E0E0;
+    padding: 7px !important;
+}
+
+.buckets .save {
+    background-position: -485px -90px;
+    width: 16px;
+}
+
 
 /* CCC styles */
 .tipsy { pointer-events: none; padding: 5px; font-size: 10px; font-family: Arial,Helvetica,sans-serif; position: absolute; z-index: 100000; }
