@@ -434,7 +434,8 @@ public class QueryResource {
 	public QueryResult drillthrough(
 			@PathParam("queryname") String queryName, 
 			@QueryParam("maxrows") @DefaultValue("100") Integer maxrows,
-			@QueryParam("position") String position)
+			@QueryParam("position") String position,
+			@QueryParam("returns") String returns)
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/drillthrough\tGET");
@@ -444,7 +445,7 @@ public class QueryResource {
 		try {
 			Long start = (new Date()).getTime();
 			if (position == null) {
-				rs = olapQueryService.drillthrough(queryName, maxrows);
+				rs = olapQueryService.drillthrough(queryName, maxrows, returns);
 			} else {
 				String[] positions = position.split(":");
 				List<Integer> cellPosition = new ArrayList<Integer>();
@@ -454,7 +455,7 @@ public class QueryResource {
 					cellPosition.add(pInt);
 				}
 
-				rs = olapQueryService.drillthrough(queryName, cellPosition, maxrows);
+				rs = olapQueryService.drillthrough(queryName, cellPosition, maxrows, returns);
 			}
 			rsc = RestUtil.convert(rs);
 			Long runtime = (new Date()).getTime()- start;
@@ -491,7 +492,8 @@ public class QueryResource {
 	public Response getDrillthroughExport(			
 			@PathParam("queryname") String queryName, 
 			@QueryParam("maxrows") @DefaultValue("100") Integer maxrows,
-			@QueryParam("position") String position)
+			@QueryParam("position") String position,
+			@QueryParam("returns") String returns)
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/drillthrough/export/csv (maxrows:" + maxrows + " position" + position + ")\tGET");
@@ -500,7 +502,7 @@ public class QueryResource {
 
 		try {
 			if (position == null) {
-				rs = olapQueryService.drillthrough(queryName, maxrows);
+				rs = olapQueryService.drillthrough(queryName, maxrows, returns);
 			} else {
 				String[] positions = position.split(":");
 				List<Integer> cellPosition = new ArrayList<Integer>();
@@ -510,7 +512,7 @@ public class QueryResource {
 					cellPosition.add(pInt);
 				}
 
-				rs = olapQueryService.drillthrough(queryName, cellPosition, maxrows);
+				rs = olapQueryService.drillthrough(queryName, cellPosition, maxrows, returns);
 			}
 			byte[] doc = olapQueryService.exportResultSetCsv(rs);
 			String name = SaikuProperties.webExportCsvName;

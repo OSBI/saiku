@@ -261,7 +261,7 @@ public class OlapQueryService implements Serializable {
 		return execute(queryName, formatter);
 	}
 
-	public ResultSet drillthrough(String queryName, int maxrows) {
+	public ResultSet drillthrough(String queryName, int maxrows, String returns) {
 		try {
 			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnectionName()); 
 			final OlapStatement stmt = con.createStatement();
@@ -272,13 +272,16 @@ public class OlapQueryService implements Serializable {
 			else {
 				mdx = "DRILLTHROUGH " + mdx;
 			}
+			if (StringUtils.isNotBlank(returns)) {
+				mdx += "\r\n RETURN " + returns;
+			}
 			return  stmt.executeQuery(mdx);
 		} catch (SQLException e) {
 			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
 		}
 	}
 
-	public ResultSet drillthrough(String queryName, List<Integer> cellPosition, Integer maxrows) {
+	public ResultSet drillthrough(String queryName, List<Integer> cellPosition, Integer maxrows, String returns) {
 		try {
 			CellSet cs = OlapUtil.getCellSet(queryName);
 			SaikuCube cube = getQuery(queryName).getCube();
@@ -313,6 +316,9 @@ public class OlapQueryService implements Serializable {
 			}
 			else {
 				select = "DRILLTHROUGH " + select + "\r\n";
+			}
+			if (StringUtils.isNotBlank(returns)) {
+				select += "\r\n RETURN " + returns;
 			}
 
 			log.debug("Drill Through for query (" + queryName + ") : \r\n" + select);
