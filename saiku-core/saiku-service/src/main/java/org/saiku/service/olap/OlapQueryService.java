@@ -181,7 +181,7 @@ public class OlapQueryService implements Serializable {
 				con.setScenario(query.getScenario());
 			}
 
-			if (query.getTags().size() > 0) {
+			if (query instanceof OlapQuery && query.getTags().size() > 0) {
 				String xml = query.toXml();
 				List<SaikuMember> tagMembers = new ArrayList<SaikuMember>();
 				List<SaikuMember> doneMembers = new ArrayList<SaikuMember>();
