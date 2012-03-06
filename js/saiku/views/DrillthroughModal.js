@@ -8,6 +8,15 @@ var DrillthroughModal = Modal.extend({
         { text: "Ok", method: "ok" },
         { text: "Cancel", method: "close" }
     ],
+
+    events: {
+        'click .collapsed': 'select',
+        'click .folder_collapsed': 'select',
+        
+        'click .dialog_footer a:' : 'call',
+        'click .parent_dimension input' : 'select_dimension'
+    },
+
     
     initialize: function(args) {
         // Initialize properties
@@ -28,11 +37,40 @@ var DrillthroughModal = Modal.extend({
           .html(_.template($("#template-drillthrough").html())(this));
         // Show dialog
         $(this.el).find('.maxrows').val(this.maxrows);
+        var dimensions = Saiku.session.sessionworkspace.dimensions[args.workspace.selected_cube].get('data');
+        var measures = Saiku.session.sessionworkspace.measures[args.workspace.selected_cube].get('data');
 
+        var container = $("#template-drillthrough-list").html();
+        var templ_dim =_.template($("#template-drillthrough-dimensions").html())({dimensions: dimensions});
+        var templ_measure =_.template($("#template-drillthrough-measures").html())({measures: measures});
+
+        $(container).appendTo($(this.el).find('.dialog_body'));
+        $(this.el).find('.sidebar').height($("body").height() / 2 );
+        $(this.el).find('.sidebar').width(380);
+
+        $(this.el).find('.dimension_tree').html('').append($(templ_dim));
+        $(this.el).find('.measure_tree').html('').append($(templ_measure));
         
     },
     
-    
+    select: function(event) {
+        var $target = $(event.target).hasClass('root')
+            ? $(event.target) : $(event.target).parent().find('span');
+        if ($target.hasClass('root')) {
+            $target.find('a').toggleClass('folder_collapsed').toggleClass('folder_expand');
+            $target.toggleClass('collapsed').toggleClass('expand');
+            $target.parents('li').find('ul').children('li').toggle();
+        }
+        
+        return false;
+    },
+
+    select_dimension: function(event) {
+        var $target = $(event.target);
+        var checked = $target.is(':checked');
+        $target.parent().find('input').attr('checked', checked);
+    },
+
     post_render: function(args) {
         $(args.modal.el).parents('.ui-dialog').css({ width: "150px" });
     },
