@@ -11,10 +11,13 @@ var DrillthroughModal = Modal.extend({
 
     events: {
         'click .collapsed': 'select',
+        'click .expand': 'select',
         'click .folder_collapsed': 'select',
+        'click .folder_expanded': 'select',
         
         'click .dialog_footer a:' : 'call',
-        'click .parent_dimension input' : 'select_dimension'
+        'click .parent_dimension input' : 'select_dimension',
+        'click .measure_tree input' : 'select_measure'
     },
 
     
@@ -45,7 +48,7 @@ var DrillthroughModal = Modal.extend({
         var templ_measure =_.template($("#template-drillthrough-measures").html())({measures: measures});
 
         $(container).appendTo($(this.el).find('.dialog_body'));
-        $(this.el).find('.sidebar').height($("body").height() / 2 );
+        $(this.el).find('.sidebar').height(($("body").height() / 2) + ($("body").height() / 6) );
         $(this.el).find('.sidebar').width(380);
 
         $(this.el).find('.dimension_tree').html('').append($(templ_dim));
@@ -70,6 +73,15 @@ var DrillthroughModal = Modal.extend({
         var checked = $target.is(':checked');
         $target.parent().find('input').attr('checked', checked);
     },
+
+    select_measure: function(event) {
+        var $target = $(event.target);
+        var checked = $target.is(':checked');
+        if(checked) {
+            $target.parent().siblings().find('input').attr('checked', false);
+        }
+    },
+
 
     post_render: function(args) {
         $(args.modal.el).parents('.ui-dialog').css({ width: "150px" });
@@ -123,7 +135,7 @@ var DrillthroughModal = Modal.extend({
             'height'            :  ($("body").height() - 100),
             'width'             :  ($("body").width() - 100),
             'transitionIn'      : 'none',
-            'transitionOut'      : 'none'
+            'transitionOut'     : 'none'
             }
         ).resize();
 
