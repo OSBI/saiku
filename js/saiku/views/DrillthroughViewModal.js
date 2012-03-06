@@ -42,12 +42,41 @@ var DrillthroughViewModal = Modal.extend({
         
 
         
-        $(this.el).find('.workspace_results').css({
-            overflow: "auto",
-            height:  $(args.modal.el).parent().height() - 100
-        }).append($(this.table.el));
+//        $(this.el).find('.workspace_results').css({
+//            overflow: "auto",
+//            height:  $(args.modal.el).parent().height() - 100
+//        }).append($(this.table.el));
+
+/*        $("<div style='display:none'><a id='inline' href='#data'></a><div id='data'></div></div>")
+            .appendTo($(this.el).find('.workspace_results'));
+*/
+
+        $(this.el).dialog('destroy').remove();
 
         this.table.render(this.data);
+        var self = this;
+
+        $.fancybox(
+                '<div id="fancy_results" class="workspace_results" style="overflow:visible"><table>' + $(this.table.el).html() + '</table></div>',
+        {
+            'autoDimensions'    : false,
+            'autoScale'         : false,
+            'height'            :  ($("body").height() - 100),
+            'width'             :  ($("body").width() - 100)
+        }
+    );
+
+/*
+        $(this.table.el).appendTo($(this.el).find('#data'));
+
+        $(this.el).find('a#inline').fancybox({
+            'transitionIn'  :   'elastic',
+            'transitionOut' :   'elastic',
+            'speedIn'       :   600, 
+            'speedOut'      :   200, 
+            'overlayShow'   :   false
+        }).trigger('click');
+*/
         
     },
     

@@ -31,7 +31,7 @@ var Table = Backbone.View.extend({
         this.workspace.bind('query:result', this.render);
     },
     
-    render: function(args) {
+    render: function(args, block) {
 
         if (args.data.error != null) {
             return this.error(args);
@@ -47,7 +47,12 @@ var Table = Backbone.View.extend({
         $(this.el).html('<tr><td>Rendering ' + args.data.width + ' columns and ' + args.data.height + ' rows...</td></tr>');
 
         // Render the table without blocking the UI thread
-        _.delay(this.process_data, 0, args.data.cellset);
+        if (block === true) {
+            this.process_data(args.data.cellset);
+        } else {
+            _.delay(this.process_data, 0, args.data.cellset);
+        }
+
     },
     
     process_data: function(data) {

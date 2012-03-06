@@ -80,19 +80,27 @@ var DrillthroughModal = Modal.extend({
         var $loading = $("<div>Drilling through...</div>");
         $(this.el).find('.dialog_body').children().hide();
         $(this.el).find('.dialog_body').prepend($loading);
-        
+        var selections = ""
+        $(this.el).find('.check_level:checked').each( function(index) { 
+            if (index > 0) {
+                selections += ", ";
+            }
+            selections += $(this).val();
+        });
+
         var maxrows = $(this.el).find('.maxrows').val();
         var params = "?maxrows=" + maxrows;
         params = params + (typeof this.position !== "undefined" ? "&position=" + this.position : "" );
+        params += "&returns=" + selections;
         if (this.action == "export") {
-        var location = Settings.REST_URL +
-            Saiku.session.username + "/query/" + 
-            this.query.id + "/drillthrough/export/csv" + params;
+            var location = Settings.REST_URL +
+                Saiku.session.username + "/query/" + 
+                this.query.id + "/drillthrough/export/csv" + params;
             this.close();
             window.open(location);
         } else if (this.action == "table") {
             Saiku.ui.block("Executing drillthrough...");
-            this.query.action.get("/drillthrough", { data: { position: this.position, maxrows: maxrows }, success: this.drilled } );
+            this.query.action.get("/drillthrough", { data: { position: this.position, maxrows: maxrows , returns: selections}, success: this.drilled } );
             this.close();
         }
         
@@ -100,13 +108,25 @@ var DrillthroughModal = Modal.extend({
     },
 
     drilled: function(model, response) {
+        var table = new Table({ workspace: this.workspace });
+        table.render({ data: response }, true);
+
         Saiku.ui.unblock();
-        (new DrillthroughViewModal({
-            workspace: this.workspace,
-            title: "Drill-Through Result",
-            query: this.workspace.query,
-            data: response
-        })).open();
+        var html = '<div id="fancy_results" class="workspace_results" style="overflow:visible"><table>' + $(table.el).html() + '</table></div>';
+        this.remove();
+        table.remove();
+        $.fancybox(html
+            ,
+            {
+            'autoDimensions'    : false,
+            'autoScale'         : false,
+            'height'            :  ($("body").height() - 100),
+            'width'             :  ($("body").width() - 100),
+            'transitionIn'      : 'none',
+            'transitionOut'      : 'none'
+            }
+        ).resize();
+
     },
     
     finished: function() {
