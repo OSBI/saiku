@@ -89,10 +89,13 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 	@Override
 	protected void refreshInternalConnection(String name, SaikuDatasource datasource) {
 		try {
-			ISaikuConnection con = connections.remove(name);
-			if (con.refresh(datasource.getProperties())) {
-				connections.put(name, con);
+			String newname = name;
+			if (userAware && PentahoSessionHolder.getSession().getName() != null) {
+				newname = name + "-" + PentahoSessionHolder.getSession().getName();
 			}
+			ISaikuConnection con = connections.remove(newname);
+			con = null;
+			getInternalConnection(name, datasource);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

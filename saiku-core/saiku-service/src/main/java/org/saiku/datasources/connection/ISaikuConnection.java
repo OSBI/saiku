@@ -70,8 +70,6 @@ public interface ISaikuConnection {
 	  
 	  boolean connect() throws Exception;
 	  
-	  boolean refresh(Properties props) throws Exception;
-
 	  /**
 	   * @return true if the connection has been properly initialized.
 	   */
