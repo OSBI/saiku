@@ -40,8 +40,15 @@ var DrillthroughModal = Modal.extend({
           .html(_.template($("#template-drillthrough").html())(this));
         // Show dialog
         $(this.el).find('.maxrows').val(this.maxrows);
-        var dimensions = Saiku.session.sessionworkspace.dimensions[args.workspace.selected_cube].get('data');
-        var measures = Saiku.session.sessionworkspace.measures[args.workspace.selected_cube].get('data');
+                    
+        var schema = this.query.get('schema');
+        var key = this.query.get('connection') + "/" + 
+                this.query.get('catalog') + "/"
+                + ((schema == "" || schema == null) ? "null" : schema) 
+                + "/" + this.query.get('cube');
+
+        var dimensions = Saiku.session.sessionworkspace.dimensions[key].get('data');
+        var measures = Saiku.session.sessionworkspace.measures[key].get('data');
 
         var container = $("#template-drillthrough-list").html();
         var templ_dim =_.template($("#template-drillthrough-dimensions").html())({dimensions: dimensions});
