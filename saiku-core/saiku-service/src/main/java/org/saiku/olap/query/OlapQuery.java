@@ -110,19 +110,7 @@ public class OlapQuery implements IQuery {
 	}
 	
 	public void moveDimension(QueryDimension dimension, Axis axis) {
-		dimension.setHierarchizeMode(HierarchizeMode.PRE);
-		QueryAxis oldQueryAxis = findAxis(dimension);
-		QueryAxis newQueryAxis = query.getAxis(axis);
-		if (dimension.getName() != "Measures") {
-			dimension.setHierarchyConsistent(true);
-		} else {
-			oldQueryAxis.clearSort();
-			newQueryAxis.clearSort();
-		}
-		if (oldQueryAxis != null && newQueryAxis != null && (oldQueryAxis.getLocation() != newQueryAxis.getLocation())) {
-            oldQueryAxis.removeDimension(dimension);
-            newQueryAxis.addDimension(dimension);   
-		}
+		moveDimension(dimension, axis, -1);
 	}
 
 	public void moveDimension(QueryDimension dimension, Axis axis, int position) {
@@ -131,14 +119,27 @@ public class OlapQuery implements IQuery {
         QueryAxis newQueryAxis = query.getAxis(axis);
 		if (dimension.getName() != "Measures") {
 			dimension.setHierarchyConsistent(true);
-		} else {
-			oldQueryAxis.clearSort();
-			newQueryAxis.clearSort();
+		}
+		
+		if (oldQueryAxis != null && newQueryAxis != null && (oldQueryAxis.getLocation() != newQueryAxis.getLocation()) && oldQueryAxis.getLocation() != null) {
+			for (QueryAxis qAxis : query.getAxes().values()) {
+				if (qAxis.getSortOrder() != null && qAxis.getSortIdentifierNodeName() != null) {
+					String sortLiteral = qAxis.getSortIdentifierNodeName();
+					if (sortLiteral.startsWith(dimension.getDimension().getUniqueName()) || sortLiteral.startsWith("[" + dimension.getName())) {
+						qAxis.clearSort();
+						// System.out.println("Removed Sort: " + qAxis.getLocation() + " - "+ sortLiteral);
+					}
+				}
+			}
 		}
 
-        if (oldQueryAxis != null && newQueryAxis != null) {
+        if (oldQueryAxis != null && newQueryAxis != null && (position > -1 || (oldQueryAxis.getLocation() != newQueryAxis.getLocation()))) {
             oldQueryAxis.removeDimension(dimension);
-            newQueryAxis.addDimension(position, dimension);   
+            if (position > -1) {
+            	newQueryAxis.addDimension(position, dimension);
+            } else {
+            	newQueryAxis.addDimension(dimension);
+            }
         }
     }
 	
