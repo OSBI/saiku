@@ -1099,7 +1099,9 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 }
 
 .workspace_toolbar .switch_to_mdx {
-  /* this isn't in the sprite */
+  background-image: url('../../../images/src/switch_to_mdx.png');
+  background-position: 7px 7px;
+  background-repeat:no-repeat;
 }
 
 .form_button {

@@ -118,7 +118,8 @@ var Workspace = Backbone.View.extend({
             .html('');
             
         // Trigger clear event
-        this.trigger('workspace:clear');
+        Saiku.session.trigger('workspace:clear', { workspace: this });
+
     },
     
     adjust: function() {
@@ -183,7 +184,7 @@ var Workspace = Backbone.View.extend({
         });
         
         // Save the query to the server and init the UI
-        Saiku.session.trigger("workspace:clear", this);
+        Saiku.session.trigger('workspace:clear', { workspace: this });
         this.query.save();
         this.init_query();
     },
@@ -196,7 +197,7 @@ var Workspace = Backbone.View.extend({
 
         if (this.query.get('type') == "MDX") {
             $(this.drop_zones.el).remove();
-            this.toolbar.toMdx();
+            this.toolbar.switch_to_mdx();
             if (! $(this.el).find('.sidebar').hasClass('hide')) {
                 this.toggle_sidebar();
             }

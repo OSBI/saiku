@@ -74,7 +74,7 @@ var Query = Backbone.Model.extend({
         this.workspace.trigger('properties:loaded');
     },
     
-    run: function(force) {
+    run: function(force, mdx) {
         // Check for automatic execution
 
         
@@ -89,7 +89,7 @@ var Query = Backbone.Model.extend({
         // this definitely needs improvement
         var rows = 0;
         var columns = 0;
-        if (this.get('type') != "MDX") {
+        if (this.get('type') != "MDX" && typeof mdx == "undefined") {
             if (Settings.MODE == "view" || Settings.MODE == "table") {
                 var axes = this.get('axes');
                 if (axes) {
@@ -118,7 +118,11 @@ var Query = Backbone.Model.extend({
         // Run it
         $(this.workspace.el).find('.workspace_results table')
             .html('<tr><td>Running query...</td></tr>');
-        this.result.fetch();
+        if (typeof mdx != "undefined") {
+            this.result.save({ mdx: mdx });
+        } else {
+            this.result.fetch();
+        }
     },
     
     move_dimension: function(dimension, target, index) {

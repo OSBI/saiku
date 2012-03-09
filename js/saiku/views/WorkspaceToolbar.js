@@ -34,7 +34,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         // Maintain `this` in callbacks
         _.bindAll(this, "call", "reflect_properties", "run_query",
             "swap_axes_on_dropzones", "display_drillthrough","clicked_cell_drillthrough_export",
-            "clicked_cell_drillthrough","activate_buttons");
+            "clicked_cell_drillthrough","activate_buttons", "switch_to_mdx","post_mdx_transform");
         
         // Redraw the toolbar to reflect properties
         this.workspace.bind('properties:loaded', this.reflect_properties);
@@ -91,10 +91,6 @@ var WorkspaceToolbar = Backbone.View.extend({
         }
         
         return false;
-    },
-    
-    toMdx: function() {
-        $(this.el).find('.non_empty, .query_scenario, .mdx, .swap_axis').remove();
     },
 
     reflect_properties: function() {
@@ -287,5 +283,40 @@ var WorkspaceToolbar = Backbone.View.extend({
         window.location = Settings.REST_URL +
             Saiku.session.username + "/query/" + 
             this.workspace.query.id + "/export/csv";
+    },
+
+    switch_to_mdx: function(event) {
+        $(this.workspace.drop_zones.el).empty();
+        $(this.el).find('.auto, ,.toggle_fields, .query_scenario, .buckets, .non_empty, .swap_axis, .mdx, .switch_to_mdx').parent().remove();
+        $(this.el).find('.run').attr('href','#run_mdx');
+        $(this.el).find('.run, .save').removeClass('disabled_toolbar');
+
+        $('<textarea class="mdx_input" style="width:100%;height:100px;">' + "mdx" + '</textarea>').insertAfter($(this.el).parent());
+        $(this.workspace.dimension_list.el).find('.used').removeClass('used');
+        $(this.workspace.measure_list.el).find('.used').removeClass('used');
+        $(this.workspace.table.el).empty();
+        this.post_mdx_transform();
+
+    },
+
+    post_mdx_transform: function() {
+        var self = this;
+
+        var transformed = function() {
+        };
+
+        this.workspace.query.action.get("/mdx", { 
+            success: function(model, response) {
+                $(self.workspace.el).find(".mdx_input").val(response.mdx);
+                self.workspace.query.action.post("/qm2mdx", { success: transformed } );
+
+            }
+        });
+
+    },
+
+    run_mdx: function(event) {
+        var mdx = $(this.workspace.el).find(".mdx_input").val();
+        this.workspace.query.run(true, mdx);
     }
 });
