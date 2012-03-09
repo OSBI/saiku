@@ -292,6 +292,19 @@ var Workspace = Backbone.View.extend({
                             if (type == "dimension") {
                                 $("<span />").addClass('sprite')
                                     .prependTo($clone);
+                                $icon = $("<span />").addClass('sort');
+                                var sort = false;
+                                _.each(axes, function(i_axis) {
+                                    if (i_axis.sortLiteral && i_axis.sortLiteral != null && i_axis.sortLiteral.indexOf(selection.hierarchyUniqueName) != -1) {
+                                        $icon.addClass(i_axis.sortOrder);
+                                        sort = true;
+                                    }
+                                });
+                                if (!sort) {
+                                    $icon.addClass('none');
+                                }
+                                
+                                $icon.prependTo($clone);
                             }
 
                             if (type == "measure") {
