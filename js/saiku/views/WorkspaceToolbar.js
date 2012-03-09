@@ -295,7 +295,10 @@ var WorkspaceToolbar = Backbone.View.extend({
 
         if (Settings.MODE != "view" && Settings.MODE != "table") {
             $(this.workspace.el).find('.workspace_editor .mdx_input').removeClass('hide');
+            $(this.workspace.el).find('.mdx_input').width($(this.el).width()-20);
         }
+
+
 
         if (this.workspace.dimension_list && this.workspace.measure_list) {
             $(this.workspace.dimension_list.el).find('ul li a').css({fontWeight: "normal"});

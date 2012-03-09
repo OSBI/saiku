@@ -89,7 +89,7 @@ var Query = Backbone.Model.extend({
         // this definitely needs improvement
         var rows = 0;
         var columns = 0;
-        if (this.get('type') != "MDX" && typeof mdx == "undefined") {
+        if (this.get('type') != "MDX") {
             if (Settings.MODE == "view" || Settings.MODE == "table") {
                 var axes = this.get('axes');
                 if (axes) {
