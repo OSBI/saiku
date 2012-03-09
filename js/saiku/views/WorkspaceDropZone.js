@@ -30,9 +30,10 @@ var WorkspaceDropZone = Backbone.View.extend({
     
     events: {
         'sortbeforestop': 'select_dimension',
-        'click .d_dimension': 'selections',
+        'click .d_dimension span.selections': 'selections',
         'click .d_measure a' : 'remove_dimension',
-        'click .d_measure span.sort' : 'sort_measure'
+        'click .d_measure span.sort' : 'sort_measure',
+        'click .d_dimension span.sort' : 'sort_measure'
     },
     
     initialize: function(args) {
@@ -85,13 +86,24 @@ var WorkspaceDropZone = Backbone.View.extend({
         if ($(event.target).hasClass('BDESC')) sortOrder = "BDESC";
 
         var memberpath = $(event.target.parentElement).find('a').attr('href').replace('#', '').split('/');
-        var member = memberpath[memberpath.length -1];
+        var member = "-";
+        if ($(event.target).parent().hasClass('d_dimension')) {
+            member = memberpath[2] + ".CurrentMember.Caption";
+            $axis.find('.d_dimension .sort').removeClass('BASC').removeClass('BDESC').addClass('none');
+            $axis.parent().parent().find("." + target.toLowerCase() + " .d_measure .sort").removeClass('BASC').removeClass('BDESC').addClass('none');
+            target = source;
+        } else {
+            member = memberpath[memberpath.length -1];
+            $axis.find('.d_measure .sort').removeClass('BASC').removeClass('BDESC').addClass('none');
+            $axis.parent().parent().find("." + target.toLowerCase() + " .d_dimension .sort").removeClass('BASC').removeClass('BDESC').addClass('none');
+        }
 
         var futureSortOrder = "none";
         if (sortOrder == "none") futureSortOrder = "BASC";
         if (sortOrder == "BASC") futureSortOrder = "BDESC";
         if (sortOrder == "BDESC") futureSortOrder = "none";
-        $axis.find('.d_measure span').removeClass('BASC').removeClass('BDESC').addClass('none');
+        
+
 
         $(event.target).removeClass('none').addClass(futureSortOrder);
 
@@ -141,7 +153,10 @@ var WorkspaceDropZone = Backbone.View.extend({
         // Wrap with the appropriate parent element
         if (ui.item.find('a').hasClass('dimension')) {
             var $icon = $("<div />").addClass('sprite').addClass('selections');
+            var $icon2 = $("<span />").addClass('sprite').addClass('sort none');
+        
             ui.item.addClass('d_dimension').prepend($icon);
+            ui.item.addClass('d_dimension').prepend($icon2);
         } else {
             var $icon = $("<span />").addClass('sort none');
             ui.item.addClass('d_measure').prepend($icon);
@@ -264,10 +279,12 @@ var WorkspaceDropZone = Backbone.View.extend({
             if (!element.prev() || (element.prev() && element.prev().length == 0)) {
                 var $icon = $("<span />").addClass('sprite').addClass('selections');
                 $icon.insertBefore(element);
+                var $icon = $("<span />").addClass('sprite').addClass('sort none');
+                $icon.insertBefore(element);
             }
         });
 
-        axis.find('.d_measure a').each( function(index, element) {
+        axis.find('.d_measure a, .d_dimension a').each( function(index, element) {
             element = $(element);
             if (!element.prev() || (element.prev() && element.prev().length == 0)) {
                 if (sourceAxis != "FILTER") {
