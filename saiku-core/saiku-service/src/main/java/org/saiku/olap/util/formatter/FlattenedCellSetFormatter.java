@@ -307,34 +307,38 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
 		List<Integer> doney = new ArrayList<Integer>();
 		for (final Cell cell : cellIter(pageCoords, cellSet)) {
 			final List<Integer> coordList = cell.getCoordinateList();
-			if (coordList.get(0) == 0) {
-				newxOffset = xOffsset;
-				donex = new ArrayList<Integer>();
-			}
-			int x = newxOffset;
-			if (coordList.size() > 0)
-				x += coordList.get(0);
 			int y = newyOffset;
-			if (coordList.size() > 1)
-				y += coordList.get(1);
+			int x = newxOffset;
+			if (coordList.size() > 0) {
+				if (coordList.get(0) == 0) {
+					newxOffset = xOffsset;
+					donex = new ArrayList<Integer>();
+				}
+				x = newxOffset;
+				if (coordList.size() > 0)
+					x += coordList.get(0);
+				y = newyOffset;
+				if (coordList.size() > 1)
+					y += coordList.get(1);
 
-			boolean stop = false;
-			if (ignorex.contains(coordList.get(0))) {
-				if (!donex.contains(coordList.get(0))) {
-					newxOffset--;
-					donex.add(coordList.get(0));
+				boolean stop = false;
+				if (coordList.size() > 0 && ignorex.contains(coordList.get(0))) {
+					if (!donex.contains(coordList.get(0))) {
+						newxOffset--;
+						donex.add(coordList.get(0));
+					}
+					stop = true;
 				}
-				stop = true;
-			}
-			if (ignorey.contains(coordList.get(1))) {
-				if (!doney.contains(coordList.get(1))) {
-					newyOffset--;
-					doney.add(coordList.get(1));
+				if (coordList.size() > 1 && ignorey.contains(coordList.get(1))) {
+					if (!doney.contains(coordList.get(1))) {
+						newyOffset--;
+						doney.add(coordList.get(1));
+					}
+					stop = true;
 				}
-				stop = true;
-			}
-			if (stop) {
-				continue;
+				if (stop) {
+					continue;
+				}
 			}
 			final DataCell cellInfo = new DataCell(true, false, coordList);
 			cellInfo.setCoordinates(cell.getCoordinateList());

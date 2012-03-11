@@ -118,10 +118,15 @@ public class RestUtil {
 						position = number.toString();
 					}
 				}
-				metaprops.put("position", position);
+				if (position != null) {
+					metaprops.put("position", position);
+				}
+				
 //				metaprops.put("formattedValue", "" + dcell.getFormattedValue());
 				// metaprops.put("rawValue", "" + dcell.getRawValue());
-				metaprops.put("raw", "" + dcell.getRawNumber());
+				if (dcell != null && dcell.getRawNumber() != null) {
+					metaprops.put("raw", "" + dcell.getRawNumber());
+				}
 				
 //				Properties props = new Properties();
 //				props.putAll(dcell.getProperties());
