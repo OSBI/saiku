@@ -51,9 +51,5 @@ public class SaikuDimension extends AbstractSaikuObject {
 	public List<SaikuHierarchy> getHierarchies() {
 		return hierarchies;
 	}
-	
-	
-	
-	
 
 }

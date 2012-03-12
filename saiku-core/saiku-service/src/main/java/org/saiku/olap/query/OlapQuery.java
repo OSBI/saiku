@@ -189,7 +189,7 @@ public class OlapQuery implements IQuery {
     	}
     	
         Query mdx = this.query;
-        mdx.validate();
+//        mdx.validate();
         StringWriter writer = new StringWriter();
         mdx.getSelect().unparse(new ParseTreeWriter(new PrintWriter(writer)));
         log.debug("Executing query (" + this.getName() + ") :\n" + writer.toString());

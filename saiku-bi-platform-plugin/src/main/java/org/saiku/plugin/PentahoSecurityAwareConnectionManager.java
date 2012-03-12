@@ -94,6 +94,9 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 				newname = name + "-" + PentahoSessionHolder.getSession().getName();
 			}
 			ISaikuConnection con = connections.remove(newname);
+			if (con != null) {
+				con.clearCache();
+			}
 			con = null;
 			getInternalConnection(name, datasource);
 		}

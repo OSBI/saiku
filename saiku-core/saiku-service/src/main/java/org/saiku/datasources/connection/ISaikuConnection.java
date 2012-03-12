@@ -70,6 +70,9 @@ public interface ISaikuConnection {
 	  
 	  boolean connect() throws Exception;
 	  
+	  boolean clearCache() throws Exception;
+
+	  
 	  /**
 	   * @return true if the connection has been properly initialized.
 	   */

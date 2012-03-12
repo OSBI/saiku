@@ -112,6 +112,9 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 			}
 
 			ISaikuConnection con = connections.remove(newName);
+			if (con != null) {
+				con.clearCache();
+			}
 			con = null;
 			getInternalConnection(name, datasource);
 		}
