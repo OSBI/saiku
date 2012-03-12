@@ -277,10 +277,10 @@ var Chart = Backbone.View.extend({
                 }
 
                 function clear_workspace(args) {
-                    if (typeof args.chart != "undefined") {
-                        $(args.chart.nav).hide();
-                        $(args.chart.el).hide();
-                        $(args.chart.el).parents().find('.workspace_results table').show();
+                    if (typeof args.workspace.chart != "undefined") {
+                        $(args.workspace.chart.nav).hide();
+                        $(args.workspace.chart.el).hide();
+                        $(args.workspace.chart.el).parents().find('.workspace_results table').show();
                     }
                 }
                 

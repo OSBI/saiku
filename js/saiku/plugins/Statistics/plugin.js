@@ -207,6 +207,14 @@ var Statistics = Backbone.View.extend({
                 args.workspace.stats = new Statistics({ workspace: args.workspace });
             }
         }
+
+        function clear_workspace(args) {
+            if (typeof args.workspace.stats != "undefined") {
+                $(args.workspace.stats.el).parents().find('.workspace_results table').show();
+                $(args.workspace.stats.el).hide();
+            }
+        }
+
         
         // Attach stats to existing tabs
         for(var i = 0; i < Saiku.tabs._tabs.length; i++) {
@@ -218,5 +226,6 @@ var Statistics = Backbone.View.extend({
 
         // Attach stats to future tabs
         Saiku.session.bind("workspace:new", new_workspace);
+        Saiku.session.bind("workspace:clear", clear_workspace);
     });
 

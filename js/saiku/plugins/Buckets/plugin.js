@@ -223,6 +223,9 @@ var Buckets = Backbone.View.extend({
             });
         }
 
+        $(event.target).parent().siblings().find('.on').removeClass('on');
+
+
     }
     
 });
@@ -241,8 +244,9 @@ var Buckets = Backbone.View.extend({
         }
 
         function clear_workspace(args) {
-                    if (typeof args.buckets != "undefined") {
-                        $(args.buckets.el).hide();
+                    if (typeof args.workspace.buckets != "undefined") {
+                        $(args.workspace.buckets.el).hide();
+
                     }
         }
         
