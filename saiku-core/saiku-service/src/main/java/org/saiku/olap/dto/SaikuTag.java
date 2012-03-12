@@ -19,26 +19,47 @@
  */
 package org.saiku.olap.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SaikuTag extends AbstractSaikuObject {
 
-	private List<SaikuMember> members;
+	private SaikuCube cube;
+	private List<SaikuTuple> tuples;
 	private String name;
+	private List<SaikuTupleDimension> dimensions;
 
 	public SaikuTag() {		
 		super(null,null);
 		throw new RuntimeException("Unsupported Constructor. Serialization only");
 	}
 	
-	public SaikuTag(String name, List<SaikuMember> members) {
+	public SaikuTag(String name, SaikuCube cube, List<SaikuTupleDimension> dimensions, List<SaikuTuple> tuples) {
 		super(name,name);
-		this.members = members;
+		this.tuples = tuples;
+		this.cube = cube;
 		this.name = name;
+		this.dimensions = dimensions;
 	}
 	
-	public List<SaikuMember> getSaikuMembers() {
+	public List<SaikuMember> getSaikuMembers(String dimensionUniqueName) {
+		List<SaikuMember> members = new ArrayList<SaikuMember>();
+		for (SaikuTuple t : tuples) {
+			for (SaikuMember m : t.getSaikuMembers()) {
+				if (m.getDimensionUniqueName().equals(dimensionUniqueName)) {
+					members.add(m);
+				}
+			}
+		}
 		return members;
+	}
+		
+	public List<SaikuTuple> getSaikuTuples() {
+		return tuples;
+	}
+	
+	public List<SaikuTupleDimension> getSaikuTupleDimensions() {
+		return dimensions;
 	}
 	
 	public String getName() {
