@@ -56,14 +56,19 @@ var Buckets = Backbone.View.extend({
 
     tag_template: function(tag) {
           var title = tag.name + ": ";
-          var first = true;
-          _.each(tag.saikuMembers, function(member) {
+        _.each(tag.saikuTuples, function(tuple) {
+            var first = true;
+            title += " (";
+            _.each(tuple.saikuMembers, function(member) {
                     if (!first) {
                         title += ",  ";
                     }
                     first = false;
                     title += member.uniqueName;
-          });
+            });
+            title += ")";
+        });
+
           return "<li class='seperator'><a href='#" + tag.name + "' title='" + title + "' class='bucket button'>" + tag.name + "</a></li>";
     },
     
