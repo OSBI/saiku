@@ -24,27 +24,22 @@ import java.util.List;
 
 public class SaikuTag extends AbstractSaikuObject {
 
-	private SaikuCube cube;
-	private List<SaikuTuple> tuples;
+	private List<SaikuTuple> saikuTuples;
 	private String name;
-	private List<SaikuTupleDimension> dimensions;
-
-	public SaikuTag() {		
-		super(null,null);
-		throw new RuntimeException("Unsupported Constructor. Serialization only");
-	}
+	private List<SaikuTupleDimension> saikuTupleDimensions;
 	
-	public SaikuTag(String name, SaikuCube cube, List<SaikuTupleDimension> dimensions, List<SaikuTuple> tuples) {
+	public SaikuTag() {};
+	
+	public SaikuTag(String name, List<SaikuTupleDimension> saikuTupleDimensions, List<SaikuTuple> saikuTuples) {
 		super(name,name);
-		this.tuples = tuples;
-		this.cube = cube;
+		this.saikuTuples = saikuTuples;
 		this.name = name;
-		this.dimensions = dimensions;
+		this.saikuTupleDimensions = saikuTupleDimensions;
 	}
 	
 	public List<SaikuMember> getSaikuMembers(String dimensionUniqueName) {
 		List<SaikuMember> members = new ArrayList<SaikuMember>();
-		for (SaikuTuple t : tuples) {
+		for (SaikuTuple t : saikuTuples) {
 			for (SaikuMember m : t.getSaikuMembers()) {
 				if (m.getDimensionUniqueName().equals(dimensionUniqueName)) {
 					members.add(m);
@@ -55,15 +50,15 @@ public class SaikuTag extends AbstractSaikuObject {
 	}
 		
 	public List<SaikuTuple> getSaikuTuples() {
-		return tuples;
+		return saikuTuples;
 	}
 	
 	public List<SaikuTupleDimension> getSaikuTupleDimensions() {
-		return dimensions;
+		return saikuTupleDimensions;
 	}
 	
 	public String getName() {
 		return name;
 	}
-
+	
 }

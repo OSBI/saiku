@@ -24,18 +24,24 @@ import java.util.List;
 
 public class SaikuTuple {
 
-	private List<SaikuMember> members;
+	private List<SaikuMember> saikuMembers;
+	
+	public SaikuTuple() {}
 	
 	public SaikuTuple(List<SaikuMember> members) {
-		this.members = members;
+		this.saikuMembers = members;
 	}
 	
 	public List<SaikuMember> getSaikuMembers() {
-		return members;
+		return saikuMembers;
+	}
+	
+	public void setSaikuMembers(List<SaikuMember> members) {
+		this.saikuMembers = members;
 	}
 	
 	public SaikuMember getSaikuMember(String dimensionUniqueName) {
-		for (SaikuMember m : members) {
+		for (SaikuMember m : saikuMembers) {
 			if (m.getDimensionUniqueName().equals(dimensionUniqueName)) {
 				return m;
 			}
@@ -45,7 +51,7 @@ public class SaikuTuple {
 	
 	public List<SaikuMember> getOtherSaikuMembers(String dimensionUniqueName) {
 		List<SaikuMember> others = new ArrayList<SaikuMember>();
-		for (SaikuMember m : members) {
+		for (SaikuMember m : saikuMembers) {
 			if (!m.getDimensionUniqueName().equals(dimensionUniqueName)) {
 				others.add(m);
 			}

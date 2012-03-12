@@ -196,19 +196,22 @@ public class OlapQueryService implements Serializable {
 						dimensionMap.put(st.getUniqueName(), dim);
 						dim.clearExclusions();
 						dim.clearInclusions();
-						query.moveDimension(dim, Axis.COLUMNS);
+						query.moveDimension(dim, null);
 						doneDimension.add(st);
 					}
 				}
 				if (t.getSaikuTupleDimensions().size() > 0) {
 					SaikuTupleDimension rootDim = t.getSaikuTupleDimensions().get(0);
 					QueryDimension dim = query.getDimension(rootDim.getName());
+					query.moveDimension(dim, Axis.COLUMNS);
+
 					for (SaikuTuple tuple : t.getSaikuTuples()) {
 						SaikuMember m = tuple.getSaikuMember(rootDim.getUniqueName());
 						List<SaikuMember> others = tuple.getOtherSaikuMembers(rootDim.getUniqueName());
 						Selection sel = dim.createSelection(IdentifierParser.parseIdentifier(m.getUniqueName()));
 						for (SaikuMember context : others) {
 							QueryDimension otherDim = dimensionMap.get(context.getDimensionUniqueName());
+							query.moveDimension(otherDim, Axis.COLUMNS);
 							Selection ctxSel = otherDim.createSelection(IdentifierParser.parseIdentifier(context.getUniqueName()));
 							sel.addContext(ctxSel);
 						}
@@ -679,7 +682,7 @@ public class OlapQueryService implements Serializable {
 		query = null;
 	}
 
-	public SaikuTag addTag(String queryName, String tagName, List<List<Integer>> cellPositions) {
+	public SaikuTag createTag(String queryName, String tagName, List<List<Integer>> cellPositions) {
 		try {
 			IQuery query = queries.get(queryName);
 			SaikuCube cube = getQuery(queryName).getCube();
@@ -708,15 +711,7 @@ public class OlapQueryService implements Serializable {
 					}
 				}
 			}
-			SaikuTag t = new SaikuTag(tagName, cube, dimensions, tuples);
-			if (!tags.containsKey(cube)) {
-				Map<String, SaikuTag> ts = new HashMap<String, SaikuTag>();
-				ts.put(tagName, t);
-				tags.put(cube, ts);
-			} else {
-				Map<String, SaikuTag> ts = tags.get(cube);
-				ts.put(tagName, t);
-			}
+			SaikuTag t = new SaikuTag(tagName, dimensions, tuples);
 			return t;
 			
 		} catch (Exception e) {
@@ -724,32 +719,12 @@ public class OlapQueryService implements Serializable {
 		}
 	}
 	
-	public List<SaikuTag> getTags(String queryName) {
-		try {
-			SaikuCube cube = getQuery(queryName).getCube();
-			if (tags.containsKey(cube)) {
-				List<SaikuTag> t = new ArrayList<SaikuTag>();
-				t.addAll(tags.get(cube).values());
-				return t;
-			}
-			return new ArrayList<SaikuTag>();
-		} catch (Exception e) {
-			throw new SaikuServiceException("Error getting tags for query: " + queryName,e);
-		}
-	}
-	
-	
-	public void enableTag(String queryName, String tagName) {
+	public void setTag(String queryName, SaikuTag tag) {
 		IQuery query = queries.get(queryName);
-		SaikuCube cube = getQuery(queryName).getCube();
-		if (tags.containsKey(cube)) {
-			Map<String, SaikuTag> ts = tags.get(cube);
-			SaikuTag st = ts.get(tagName);
-			query.setTag(st);
-		}
+		query.setTag(tag);
 	}
 	
-	public void disableTag(String queryName, String tagName) {
+	public void disableTag(String queryName) {
 		IQuery query = queries.get(queryName);
 		query.removeTag();
 	}

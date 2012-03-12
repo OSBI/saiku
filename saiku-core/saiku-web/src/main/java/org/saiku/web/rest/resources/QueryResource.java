@@ -49,6 +49,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.saiku.olap.dto.SaikuCube;
@@ -752,6 +753,7 @@ public class QueryResource {
 				List<SelectionRestObject> selections = mapper.readValue(selectionJSON, TypeFactory.collectionType(ArrayList.class, SelectionRestObject.class));
 
 
+
 				for (SelectionRestObject selection : selections) {
 					if (selection.getType() != null && "member".equals(selection.getType().toLowerCase())) {
 						if (selection.getAction() != null && "add".equals(selection.getAction().toLowerCase())) {
@@ -931,74 +933,27 @@ public class QueryResource {
 		}
 	}
 	
-	@GET
-	@Produces({"application/json" })
-	@Path("/{queryname}/tags")
-	public List<SaikuTag> getTags(
-			@PathParam("queryname") String queryName)
-	{
-		if (log.isDebugEnabled()) {
-			log.debug("TRACK\t"  + "\t/query/" + queryName + "/tags\tPOST\t");
-		}
-		try {
-			return olapQueryService.getTags(queryName);
-		}
-		catch (Exception e) {
-			log.error("Cannot get tags query (" + queryName + ")",e);
-		}
-		return new ArrayList<SaikuTag>();
-	}
-	
-	@POST
-	@Produces({"application/json" })
-	@Path("/{queryname}/tags/{tagname}/")
-	public SaikuTag addTag(
-			@PathParam("queryname") String queryName,
-			@PathParam("tagname") String tagName,
-			@FormParam("positions") String positions)
-	{
-		if (log.isDebugEnabled()) {
-			log.debug("TRACK\t"  + "\t/query/" + queryName + "/tags\tGET");
-		}
-		try {
-			List<List<Integer>> cellPositions = new ArrayList<List<Integer>>();
-			for (String position : positions.split(",")) {
-				String[] ps = position.split(":");
-				List<Integer> cellPosition = new ArrayList<Integer>();
-
-				for (String p : ps) {
-					Integer pInt = Integer.parseInt(p);
-					cellPosition.add(pInt);
-				}
-				cellPositions.add(cellPosition);
-			}
-			SaikuTag t = olapQueryService.addTag(queryName, tagName, cellPositions);
-			return t;
-			
-		}
-		catch (Exception e) {
-			log.error("Cannot add tag " + tagName + " for query (" + queryName + ")",e);
-		}
-		return null;
-
-	}
 	
 	@PUT
 	@Produces({"application/json" })
-	@Path("/{queryname}/tags/{tagname}")
+	@Path("/{queryname}/tag")
 	public Status activateTag(
 			@PathParam("queryname") String queryName,
-			@PathParam("tagname") String tagName)
+			@FormParam("tag") String tagJSON)
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/tags\tPUT");
 		}
 		try {
-			olapQueryService.enableTag(queryName, tagName);
+			ObjectMapper mapper = new ObjectMapper();
+		    mapper.setVisibilityChecker(mapper.getVisibilityChecker().withFieldVisibility(Visibility.ANY));
+			SaikuTag tag = mapper.readValue(tagJSON, SaikuTag.class);
+			
+			olapQueryService.setTag(queryName, tag);
 			return Status.OK;
 		}
 		catch (Exception e) {
-			log.error("Cannot add tag " + tagName + " for query (" + queryName + ")",e);
+			log.error("Cannot add tag " + tagJSON + " for query (" + queryName + ")",e);
 		}
 		return Status.INTERNAL_SERVER_ERROR;
 
@@ -1006,7 +961,7 @@ public class QueryResource {
 	
 	@DELETE
 	@Produces({"application/json" })
-	@Path("/{queryname}/tags/{tagname}")
+	@Path("/{queryname}/tag")
 	public Status deactivateTag(
 			@PathParam("queryname") String queryName,
 			@PathParam("tagname") String tagName)
@@ -1015,7 +970,7 @@ public class QueryResource {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/tags\tPUT");
 		}
 		try {
-			olapQueryService.disableTag(queryName, tagName);
+			olapQueryService.disableTag(queryName);
 			return Status.OK;
 		}
 		catch (Exception e) {

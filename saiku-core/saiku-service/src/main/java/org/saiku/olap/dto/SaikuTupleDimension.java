@@ -24,10 +24,7 @@ public class SaikuTupleDimension extends AbstractSaikuObject {
 
 	private String caption;
 	
-	public SaikuTupleDimension() {
-		super(null,null);
-		throw new RuntimeException("Unsupported Constructor. Serialization only");
-	};
+	public SaikuTupleDimension() {	};
 	
 	public SaikuTupleDimension(String name, String uniqueName, String caption) {
 		super(uniqueName,name);
@@ -37,4 +34,5 @@ public class SaikuTupleDimension extends AbstractSaikuObject {
 	public String getCaption() {
 		return caption;
 	}
+
 }
