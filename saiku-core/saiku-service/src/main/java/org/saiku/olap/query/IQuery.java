@@ -61,8 +61,8 @@ public interface IQuery {
 	public void setMdx(String mdx);
 	public void setScenario(Scenario scenario);
 	public Scenario getScenario();
-	public void addTag(SaikuTag tag);
-	public List<SaikuTag> getTags();
-	public void removeTag(String tagname);
+	public void setTag(SaikuTag tag);
+	public SaikuTag getTag();
+	public void removeTag();
 
 }

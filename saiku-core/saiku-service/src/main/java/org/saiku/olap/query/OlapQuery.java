@@ -22,9 +22,6 @@ package org.saiku.olap.query;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -62,7 +59,7 @@ public class OlapQuery implements IQuery {
 	
 	private Scenario scenario;
 	
-	private Map<String,SaikuTag> tags = new HashMap<String,SaikuTag>();
+	private SaikuTag tag = null;
 
 	
 	public OlapQuery(Query query, SaikuCube cube, boolean applyDefaultProperties) {
@@ -278,18 +275,16 @@ public class OlapQuery implements IQuery {
 		return scenario;
 	}
 
-	public void addTag(SaikuTag tag) {
-		tags.put(tag.getName(), tag);
+	public void setTag(SaikuTag tag) {
+		this.tag = tag;
 	}
 
-	public List<SaikuTag> getTags() {
-		List<SaikuTag> t = new ArrayList<SaikuTag>();
-		t.addAll(tags.values());
-		return t;
+	public SaikuTag getTag() {
+		return this.tag;
 	}
 
-	public void removeTag(String tagname) {
-		tags.remove(tagname);		
+	public void removeTag() {
+		tag = null;		
 	}
 
 }

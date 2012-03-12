@@ -217,15 +217,15 @@ public class MdxQuery implements IQuery {
 		return scenario;
 	}
 
-	public void addTag(SaikuTag tag) {
-		throw new UnsupportedOperationException();
+	public void setTag(SaikuTag tag) {
+		throw new UnsupportedOperationException();		
 	}
 
-	public List<SaikuTag> getTags() {
-		throw new UnsupportedOperationException();
+	public SaikuTag getTag() {
+		return null;
 	}
 
-	public void removeTag(String tagname) {
-		throw new UnsupportedOperationException();
+	public void removeTag() {
 	}
+
 }
