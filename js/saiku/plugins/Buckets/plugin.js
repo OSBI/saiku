@@ -107,14 +107,23 @@ var Buckets = Backbone.View.extend({
     },
     
     show: function(event, ui) {
+        var self = this;
         $(this.el).toggle();
         $(event.target).toggleClass('on');
         
         if ($(event.target).hasClass('on')) {
-            this.workspace.query.action.get("/tags/", { 
-                success: this.buildTemplate
-            });
+            var schema = self.workspace.query.get('schema');
+            var cube = self.workspace.query.get('connection') + "-" + 
+                    self.workspace.query.get('catalog') + "-"
+                    + ((schema == "" || schema == null) ? "null" : schema) 
+                    + "-" + self.workspace.query.get('cube');
+
+
+            this.repo = new TagRepository({
+                cube: cube
+            }).fetch({success: this.buildTemplate});
         }
+        
     },
 
     buildTemplate: function(model,response) {
@@ -196,31 +205,50 @@ var Buckets = Backbone.View.extend({
         var tagname = $(self.el).find('#new_bucket').val();
         
         var saveBucket = function(model, response) {
+            self.tags.push(model);
             self.deactivate_add_bucket();
                 $tag = $(self.tag_template(model))
                             .appendTo($(self.el).find('.buckets ul'));
         };
 
-        this.workspace.query.action.post("/tags/" + tagname, { 
-                  success: saveBucket,
-                  data: { positions: positions }
-        });
+        var schema = self.workspace.query.get('schema');
+        var cube = self.workspace.query.get('connection') + "-" + 
+                self.workspace.query.get('catalog') + "-"
+                + ((schema == "" || schema == null) ? "null" : schema) 
+                + "-" + self.workspace.query.get('cube');
 
+
+                console.log(self.workspace.query.id);
+
+        (new SaikuTag({
+            positions: positions,
+            name: tagname,
+            cube: cube,
+            queryname: self.workspace.query.id
+        },{success: saveBucket})).save();
 
     },
     click_bucket: function(event) {
         var tagName = $(event.target).attr('href').replace('#','');
-
+        var self = this;
         if ($(event.target).hasClass('on')) {
             $(event.target).removeClass('on');
-            this.workspace.query.action.del("/tags/" + tagName, { 
+
+
+            this.workspace.query.action.del("/tag", { 
                             success: this.workspace.query.run
             });
         } else {
             $(event.target).addClass('on');
-            this.workspace.query.action.put("/tags/" + tagName, { 
-                          success: this.workspace.query.run
-            });
+
+            _.each(this.tags, function(tag) {
+                if (tag.name == tagName) {
+                    self.workspace.query.action.put("/tag", { 
+                          success: self.workspace.query.run, data: {tag:JSON.stringify(tag)}});
+                }
+            });     
+
+            
         }
 
         $(event.target).parent().siblings().find('.on').removeClass('on');
@@ -263,4 +291,34 @@ var Buckets = Backbone.View.extend({
         Saiku.session.bind("workspace:clear", clear_workspace);
     });
 
+
+var SaikuTag = Backbone.Model.extend({
+    initialize: function(args, options) {
+        _.extend(this.attributes, args);
+        if (options != null && options.success) {
+            this.parse = options.success;
+        }
+
+    },
+
+    url: function() {
+        return encodeURI(Saiku.session.username + "/repository/tags/" + this.get('cube') + "/" + this.get('name'));
+    }
+});
+
+/**
+ * Repository adapter
+ */
+var TagRepository = Backbone.Collection.extend({
+    model: SaikuTag,
+    
+    initialize: function(args, options) {
+        this.cube = args.cube;
+    },
+    
+    
+    url: function() {
+        return encodeURI(Saiku.session.username + "/repository/tags/" + this.cube);
+    }
+});
  
