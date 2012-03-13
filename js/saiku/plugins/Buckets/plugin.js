@@ -127,6 +127,10 @@ var Buckets = Backbone.View.extend({
             this.repo = new TagRepository({
                 cube: cube
             }).fetch({success: this.buildTemplate});
+        } else {
+            this.workspace.query.action.del("/tag", { 
+                            success: this.workspace.query.run
+            });
         }
         
     },
