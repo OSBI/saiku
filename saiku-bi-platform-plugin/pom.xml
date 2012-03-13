@@ -301,6 +301,11 @@
 			<artifactId>saiku-service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+				<dependency>
+			<groupId>org.saiku</groupId>
+			<artifactId>saiku-web</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>mondrian</artifactId>
