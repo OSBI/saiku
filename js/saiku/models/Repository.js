@@ -28,7 +28,7 @@ var SavedQuery = Backbone.Model.extend({
     
     url: function() {
         var segment = Settings.BIPLUGIN ? 
-                "/pentahorepository/" : "/repository/queries/";
+                "/pentahorepository/" : "/repository/";
         return encodeURI(Saiku.session.username + segment + this.get('name'));
     },
     
@@ -59,7 +59,7 @@ var Repository = Backbone.Collection.extend({
     
     url: function() {
         var segment = Settings.BIPLUGIN ? 
-            "/pentahorepository" : "/repository/queries";
+            "/pentahorepository" : "/repository/";
         return encodeURI(Saiku.session.username + segment);
     }
 });

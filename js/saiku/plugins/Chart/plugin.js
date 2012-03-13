@@ -70,8 +70,11 @@ var Chart = Backbone.View.extend({
     add_button: function() {
         var $chart_button = 
             $('<a href="#chart" class="chart button disabled_toolbar i18n" title="Toggle Chart"></a>')
-            .css({ 'background': 
-                "url('js/saiku/plugins/Chart/chart.png') 50% 50% no-repeat" });
+            .css({  'background-image': "url('js/saiku/plugins/Chart/chart.png')",
+                    'background-repeat':'no-repeat',
+                    'background-position':'50% 50%'
+                });
+
         var $chart_li = $('<li class="seperator"></li>').append($chart_button);
         $(this.workspace.toolbar.el).find("ul").append($chart_li);
     },

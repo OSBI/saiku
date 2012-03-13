@@ -50,8 +50,11 @@ var Statistics = Backbone.View.extend({
     add_button: function() {
         var $stats_button = 
             $('<a href="#stats" class="stats button disabled_toolbar i18n" title="Basic Statistics"></a>')
-            .css({ 'background': 
-                "url('js/saiku/plugins/Statistics/sigma.png') 50% 50% no-repeat" });
+            .css({  'background-image': "url('js/saiku/plugins/Statistics/sigma.png')",
+                    'background-repeat':'no-repeat',
+                    'background-position':'50% 50%'
+                });
+
         var $stats_li = $('<li class="seperator"></li>').append($stats_button);
         $(this.workspace.toolbar.el).find("ul").append($stats_li);
     },

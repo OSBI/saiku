@@ -27,7 +27,8 @@ var Buckets = Backbone.View.extend({
     events: {
         'click .add_bucket': 'add_bucket',
         'click  a.save' : 'save_bucket',
-        'click .bucket' : 'click_bucket'
+        'click .bucket' : 'click_bucket',
+        'click .delete' : 'delete_bucket'
     },
 
     bucket_css: { 
@@ -45,8 +46,8 @@ var Buckets = Backbone.View.extend({
 
      tags_template: function() {
             var self = this;
-            var t = "<div class='buckets'><ul>" +
-                "<li><a href='#' class='add_bucket i18n button'> + </a></li>";
+            var t = "<div class='bucket_items'><ul>" +
+                "<li><a href='#' class='add_bucket i18n button' title='Add new tag by selecting cells from your result!'> </a></li>";
             _.each(this.tags, function(tag) {
               t += self.tag_template(tag);
             });     
@@ -69,7 +70,8 @@ var Buckets = Backbone.View.extend({
             title += ")";
         });
 
-          return "<li class='seperator'><a href='#" + tag.name + "' title='" + title + "' class='bucket button'>" + tag.name + "</a></li>";
+          return "<li class='seperator'><a href='#" + tag.name + "' title='" + title + "' class='bucket button'>" + tag.name + "</a></li>" 
+          + "<li style='padding-left:0px'><a class='delete' href='#" + tag.name + "'>x</a></li>";
     },
     
 
@@ -99,9 +101,12 @@ var Buckets = Backbone.View.extend({
     
     add_button: function() {
         var $stats_button = 
-            $('<a href="#buckets" class="buckets button disabled_toolbar i18n" title="Tags">Tag</a>')
-            .css({ 'background': 
-                "url('js/saiku/plugins/Buckets/xxx.png') 30% 30% no-repeat" });
+            $('<a href="#buckets" class="buckets button disabled_toolbar i18n" title="Tags"></a>')
+            .css({  'background-image': "url('js/saiku/plugins/Buckets/tag_red.png')",
+                    'background-repeat':'no-repeat',
+                    'background-position':'50% 50%'
+                });
+
         var $stats_li = $('<li class="seperator"></li>').append($stats_button);
         $(this.workspace.toolbar.el).find("ul").append($stats_li);
     },
@@ -141,7 +146,6 @@ var Buckets = Backbone.View.extend({
         
         var rendered = this.tags_template();
         var $table = $(rendered);
-    
         $(this.el).append($table)
         
     },
@@ -166,7 +170,7 @@ var Buckets = Backbone.View.extend({
         
         $("<li><input id='new_bucket' type='text' class='new_bucket'/></li><li>" 
             + "<a href='#save_bucket' class='i18n save sprite button new_bucket' title='Save Tag'></a></li>")
-                            .insertAfter($(self.el).find('.buckets .add_bucket').parent());
+                            .insertAfter($(self.el).find('.bucket_items .add_bucket').parent());
 
         var clicked = function(event) {
             $target = $(event.target).hasClass('data') ?
@@ -208,7 +212,7 @@ var Buckets = Backbone.View.extend({
             self.tags.push(model);
             self.deactivate_add_bucket();
                 $tag = $(self.tag_template(model))
-                            .appendTo($(self.el).find('.buckets ul'));
+                            .appendTo($(self.el).find('.bucket_items ul'));
         };
 
         var schema = self.workspace.query.get('schema');
@@ -216,9 +220,6 @@ var Buckets = Backbone.View.extend({
                 self.workspace.query.get('catalog') + "-"
                 + ((schema == "" || schema == null) ? "null" : schema) 
                 + "-" + self.workspace.query.get('cube');
-
-
-                console.log(self.workspace.query.id);
 
         (new SaikuTag({
             positions: positions,
@@ -233,8 +234,6 @@ var Buckets = Backbone.View.extend({
         var self = this;
         if ($(event.target).hasClass('on')) {
             $(event.target).removeClass('on');
-
-
             this.workspace.query.action.del("/tag", { 
                             success: this.workspace.query.run
             });
@@ -247,15 +246,33 @@ var Buckets = Backbone.View.extend({
                           success: self.workspace.query.run, data: {tag:JSON.stringify(tag)}});
                 }
             });     
-
-            
         }
-
         $(event.target).parent().siblings().find('.on').removeClass('on');
+    },
+
+    delete_bucket: function(event) {
+        var tagname = $(event.target).attr('href').replace('#','');
+        var self = this;
+        var al= function() {
+            alert('y');
+        };
+
+        var schema = self.workspace.query.get('schema');
+        var cube = self.workspace.query.get('connection') + "-" + 
+                self.workspace.query.get('catalog') + "-"
+                + ((schema == "" || schema == null) ? "null" : schema) 
+                + "-" + self.workspace.query.get('cube');
 
 
+        (new SaikuTag({
+            name: tagname,
+            id: 'dummy',
+            cube: cube
+        },{})).destroy();
+
+        $(event.target).parent().prev().remove();
+        $(event.target).parent().remove();
     }
-    
 });
 
 /**
@@ -302,7 +319,7 @@ var SaikuTag = Backbone.Model.extend({
     },
 
     url: function() {
-        return encodeURI(Saiku.session.username + "/repository/tags/" + this.get('cube') + "/" + this.get('name'));
+        return encodeURI(Saiku.session.username + "/tags/" + this.get('cube') + "/" + this.get('name'));
     }
 });
 
@@ -318,7 +335,7 @@ var TagRepository = Backbone.Collection.extend({
     
     
     url: function() {
-        return encodeURI(Saiku.session.username + "/repository/tags/" + this.cube);
+        return encodeURI(Saiku.session.username + "/tags/" + this.cube);
     }
 });
  

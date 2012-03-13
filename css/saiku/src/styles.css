@@ -1126,7 +1126,7 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
 }
 
-.buckets {
+.bucket_items {
     background: #FCFCFC;
     border: 1px solid #CCC;
     height: 32px;
@@ -1135,20 +1135,20 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     text-shadow: 1px 1px 0 #FFFFFF;
 }
 
-.buckets ul {
+.bucket_items ul {
     margin: 0;
     padding: 0;
 }
-.buckets ul li {
+.bucket_items ul li {
     display: inline;
     float: left;
     padding-left: 5px;
 }
-.buckets ul li.seperator {
+.bucket_items ul li.seperator {
     border-left: 1px solid #D5D5D5;
     margin-left: 5px;
 }
-.buckets a.button {
+.bucket_items a.button {
     text-decoration: none;
     font-weight: bold;
     color:black;
@@ -1158,17 +1158,29 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
 }
-.buckets a.button:hover {
+.bucket_items a.add_bucket {
+        background-image: url('../../../js/saiku/plugins/Buckets/tag_blue_add.png');
+        background-repeat:no-repeat;
+        width: 16px;
+        background-position: 50% 50%;
+}
+
+.bucket_items a.button:hover {
     border: 1px solid #CCC;
     padding: 7px;
 }
-.buckets a.on {
+
+.bucket_items a.delete {
+    text-decoration:none;
+    color:black;
+}
+.bucket_items a.on {
     border: 1px solid #CCC;
     background-color: #E0E0E0;
     padding: 7px !important;
 }
 
-.buckets .save {
+.bucket_items .save {
     background-position: -485px -90px;
     width: 16px;
 }
