@@ -88,7 +88,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         var memberpath = $(event.target.parentElement).find('a').attr('href').replace('#', '').split('/');
         var member = "-";
         if ($(event.target).parent().hasClass('d_dimension')) {
-            member = memberpath[2] + ".CurrentMember.Caption";
+            member = memberpath[2] + ".CurrentMember.Name";
             $axis.find('.d_dimension .sort').removeClass('BASC').removeClass('BDESC').addClass('none');
             $axis.parent().parent().find("." + target.toLowerCase() + " .d_measure .sort").removeClass('BASC').removeClass('BDESC').addClass('none');
             target = source;
