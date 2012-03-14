@@ -20,39 +20,47 @@
 package org.saiku.web.rest.resources;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import org.apache.commons.vfs.FileName;
 import org.apache.commons.vfs.FileObject;
-import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileSystemManager;
-import org.apache.commons.vfs.FileSystemOptions;
 import org.apache.commons.vfs.VFS;
-import org.apache.commons.vfs.provider.FileReplicator;
-import org.apache.commons.vfs.provider.TemporaryFileStore;
-import org.apache.commons.vfs.provider.VfsComponentContext;
-import org.apache.commons.vfs.provider.res.ResourceFileProvider;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
+import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.SaikuTag;
+import org.saiku.olap.dto.SaikuTuple;
+import org.saiku.olap.util.SaikuProperties;
 import org.saiku.service.olap.OlapQueryService;
+import org.saiku.service.util.KeyValue;
+import org.saiku.service.util.exception.SaikuServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -280,6 +288,97 @@ public class BasicTagRepositoryResource {
 			log.error("Cannot get tag " + tagName + " for " + cubeIdentifier ,e);
 		}
 		return null;
+	}
+	
+	@GET
+	@Produces({"text/csv" })
+	@Path("/{cubeIdentifier}/{tagName}/export/csv")
+	public Response getDrillthroughExport(			
+			@PathParam("cubeIdentifier") String cubeIdentifier,
+			@PathParam("tagName") String tagName,
+			@QueryParam("maxrows") @DefaultValue("0") Integer maxrows,
+			@QueryParam("returns") String returns,
+			@QueryParam("connection") String connection,
+			@QueryParam("catalog") String catalog,
+			@QueryParam("schema") String schema,
+			@QueryParam("cube") String cube,
+			@QueryParam("additional") String additional
+			)
+	{
+		ResultSet rs = null;
+
+		try {
+            
+			List<Integer> cellPosition = new ArrayList<Integer>();
+			cellPosition.add(0);
+			List<KeyValue<String,String>> additionalColumns = new ArrayList<KeyValue<String,String>>();
+			if (additional != null) {
+				for (String kvs : additional.split(",")) {
+					String[] kv = kvs.split(":");
+					if (kv.length == 2) {
+						additionalColumns.add(new KeyValue<String, String>(kv[0], kv[1]));
+					}
+				}
+			}
+			
+			SaikuTag tag = getTag(cubeIdentifier, tagName);
+			if (tag != null) {
+				String queryName = UUID.randomUUID().toString();
+				SaikuCube saikuCube = new SaikuCube(connection, cube, cube,  catalog, schema);
+				olapQueryService.createNewOlapQuery(queryName, saikuCube);
+				if (!cube.startsWith("[")) {
+					cube = "[" + cube + "]";
+				}
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				boolean first = true;
+				for (SaikuTuple tuple : tag.getSaikuTuples()) {
+					String mdx = null;
+					for (SaikuMember member : tuple.getSaikuMembers()) {
+						if (mdx == null) {
+							mdx = "SELECT (" + member.getUniqueName();
+						} else {
+							mdx += ", " + member.getUniqueName();
+						}
+					}
+					mdx += ") ON COLUMNS from " + cube;
+					System.out.println("Executing... :" + mdx);
+					olapQueryService.executeMdx(queryName, mdx);
+					rs = olapQueryService.drillthrough(queryName, cellPosition, maxrows, returns);
+					byte[] doc = olapQueryService.exportResultSetCsv(rs,",","\"", first, additionalColumns);
+					System.out.println("Exported... :" + doc.length);
+					first = false;
+					outputStream.write(doc);
+				}
+
+
+				byte csv[] = outputStream.toByteArray();
+				
+				String name = SaikuProperties.webExportCsvName;
+				return Response.ok(csv, MediaType.APPLICATION_OCTET_STREAM).header(
+						"content-disposition",
+						"attachment; filename = " + name + "-drillthrough.csv").header(
+								"content-length",csv.length).build();
+			}
+
+		} catch (Exception e) {
+			log.error("Cannot export drillthrough tag (" + tagName + ")",e);
+			return Response.serverError().build();
+		}
+		
+		finally {
+			if (rs != null) {
+				try {
+					Statement statement = rs.getStatement();
+					statement.close();
+					rs.close();
+				} catch (SQLException e) {
+					throw new SaikuServiceException(e);
+				} finally {
+					rs = null;
+				}
+			}
+		}
+		return Response.serverError().build();
 	}
 
 	

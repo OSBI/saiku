@@ -74,6 +74,7 @@ import org.saiku.olap.util.formatter.CellSetFormatter;
 import org.saiku.olap.util.formatter.FlattenedCellSetFormatter;
 import org.saiku.olap.util.formatter.HierarchicalCellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
+import org.saiku.service.util.KeyValue;
 import org.saiku.service.util.OlapUtil;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.service.util.export.CsvExporter;
@@ -250,6 +251,7 @@ public class OlapQueryService implements Serializable {
 	}
 
 	public CellDataSet executeMdx(String queryName, String mdx, ICellSetFormatter formatter) {
+		qm2mdx(queryName);
 		setMdx(queryName, mdx);
 		return execute(queryName, formatter);
 	}
@@ -345,6 +347,10 @@ public class OlapQueryService implements Serializable {
 	public byte[] exportResultSetCsv(ResultSet rs) {
 		return CsvExporter.exportCsv(rs);
 	}
+	public byte[] exportResultSetCsv(ResultSet rs, String delimiter, String enclosing, boolean printHeader, List<KeyValue<String,String>> additionalColumns) {
+		return CsvExporter.exportCsv(rs, delimiter, enclosing, printHeader, additionalColumns);
+	}
+
 
 	public void setCellValue(String queryName, List<Integer> position, String value, String allocationPolicy) {
 		try {
