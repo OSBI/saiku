@@ -19,12 +19,12 @@
  */
 package org.saiku.olap.query;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
+import org.olap4j.OlapStatement;
 import org.olap4j.Scenario;
 import org.olap4j.metadata.Cube;
 import org.olap4j.query.QueryAxis;
@@ -64,5 +64,11 @@ public interface IQuery {
 	public void setTag(SaikuTag tag);
 	public SaikuTag getTag();
 	public void removeTag();
+	public void storeCellset(CellSet cs);
+	public CellSet getCellset();
+	public void setStatement(OlapStatement os);
+	public OlapStatement getStatement();
+	public void cancel() throws Exception;
+	
 
 }

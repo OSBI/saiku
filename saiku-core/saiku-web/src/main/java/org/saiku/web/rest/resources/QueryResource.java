@@ -333,6 +333,23 @@ public class QueryResource {
 		}
 	}
 
+	@DELETE
+	@Path("/{queryname}/result")
+	public Status cancel(@PathParam("queryname") String queryName){
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result\tDELETE");
+		}
+		try {
+
+			olapQueryService.cancel(queryName);
+			return Response.Status.OK;
+		}
+		catch (Exception e) {
+			log.error("Cannot execute query (" + queryName + ")",e);
+			return Response.Status.INTERNAL_SERVER_ERROR;
+		}
+	}
+	
 	@GET
 	@Produces({"application/json" })
 	@Path("/{queryname}/result")

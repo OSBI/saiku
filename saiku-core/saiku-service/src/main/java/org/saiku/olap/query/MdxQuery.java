@@ -20,7 +20,6 @@
 
 package org.saiku.olap.query;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -53,6 +52,8 @@ public class MdxQuery implements IQuery {
 	private OlapConnection connection;
 	private String name;
 	private Scenario scenario;
+	private CellSet cellset;
+	private OlapStatement statement;
 	
 	public MdxQuery(OlapConnection con, SaikuCube cube, String name, String mdx) {
 		this.cube = cube;
@@ -122,7 +123,10 @@ public class MdxQuery implements IQuery {
 		OlapConnection con = connection;
 		con.setCatalog(getSaikuCube().getCatalogName());
 		OlapStatement stmt = con.createStatement();
-		return stmt.executeOlapQuery(mdx);
+		this.statement = stmt;
+		CellSet cs = stmt.executeOlapQuery(mdx);
+		this.statement = null;
+		return cs;
 	}
 
 	public QueryType getType() {
@@ -228,4 +232,28 @@ public class MdxQuery implements IQuery {
 	public void removeTag() {
 	}
 
+	public void storeCellset(CellSet cs) {
+		this.cellset = cs;
+		
+	}
+
+	public CellSet getCellset() {
+		return cellset;
+	}
+
+	public void setStatement(OlapStatement os) {
+		this.statement = os;
+		
+	}
+
+	public OlapStatement getStatement() {
+		return this.statement;
+	}
+	
+	public void cancel() throws Exception {
+		if (this.statement != null && !this.statement.isClosed()) {
+			statement.close();
+		}
+		this.statement = null;
+	}
 }
