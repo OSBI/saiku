@@ -23,11 +23,16 @@
  */
 var Table = Backbone.View.extend({
     tagName: "table",
+
+    events: {
+        'click .cancel': 'cancel'
+    },
+
     initialize: function(args) {
         this.workspace = args.workspace;
         
         // Bind table rendering to query result event
-        _.bindAll(this, "render", "process_data");
+        _.bindAll(this, "render", "process_data", "cancelled", "cancel");
         this.workspace.bind('query:result', this.render);
     },
     
@@ -92,7 +97,14 @@ var Table = Backbone.View.extend({
         $(this.el).html(contents);
         
     },
+    cancel: function(event) {
+        this.workspace.query.action.del("/result", {success: this.cancelled } );
+    },
     
+    cancelled: function(args) {
+        $(this.el).html('<tr><td>No results</td></tr>');
+    },
+
     no_results: function(args) {
         $(this.el).html('<tr><td>No results</td></tr>');
     },

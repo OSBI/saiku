@@ -116,8 +116,9 @@ var Query = Backbone.Model.extend({
         }
 
         // Run it
-        $(this.workspace.el).find('.workspace_results table')
+        $(this.workspace.table.el)
             .html('<tr><td>Running query...</td></tr>');
+            // <a class="cancel" href="#cancel">x</a>
         if (this.get('type')  == "MDX" && mdx != null) {
             this.result.save({ mdx: mdx });
         } else {
