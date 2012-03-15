@@ -1185,6 +1185,13 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     width: 16px;
 }
 
+.bucket_items .export {
+    background-image: url('../../../images/src/export_drillthrough.png');
+    background-repeat:no-repeat;
+    background-position: 7px 7px;
+    width: 16px;
+}
+
 
 /* CCC styles */
 .tipsy { pointer-events: none; padding: 5px; font-size: 10px; font-family: Arial,Helvetica,sans-serif; position: absolute; z-index: 100000; }
