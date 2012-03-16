@@ -153,7 +153,7 @@ var SelectionsModal = Modal.extend({
     show_unique_action: function() {
         $.each($(this.el).find('option'), function(i, option) {
             var text = $(option).text();
-            $(option).text($(option).val());
+            $(option).text(unescape($(option).val()));
             $(option).val(text);
         });
         this.show_unique_option= ! this.show_unique_option;
