@@ -221,7 +221,7 @@ public class OlapQueryService implements Serializable {
 			log.info("Size: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
 					+ "ms\tFormat:\t" + (format - exec) + "ms\t Total: " + (format - start) + "ms");
 			result.setRuntime(new Double(format - start).intValue());
-			query.storeCellset(cellSet);
+			getIQuery(queryName).storeCellset(cellSet);
 			return result;
 		} catch (Exception e) {
 			throw new SaikuServiceException("Can't execute query: " + queryName,e);
@@ -279,13 +279,7 @@ public class OlapQueryService implements Serializable {
 				if (!dimsel.getName().equals("Measures")) {
 					QueryDimension filterDim = query.getDimension(dimsel.getName());
 					query.moveDimension(filterDim, Axis.FILTER);
-					List<Selection> removeSelections = new ArrayList<Selection>();
-					for (Selection potentialLevel : filterDim.getInclusions()) {
-						if (potentialLevel.getRootElement() instanceof Level) {
-							removeSelections.add(potentialLevel);
-						}
-					}
-					filterDim.getInclusions().removeAll(removeSelections);
+					filterDim.clearInclusions();
 					for (SaikuSelection ss : dimsel.getSelections()) {
 						if (ss.getType() == SaikuSelection.Type.MEMBER) {
 							Selection sel = filterDim.createSelection(IdentifierParser.parseIdentifier(ss.getUniqueName()));
@@ -294,7 +288,10 @@ public class OlapQueryService implements Serializable {
 							}
 						}
 					}
-
+					// TODO: Move it to columns since drilling through with 2 filter items of the same dimension doesn't work
+//					if (filterDim.getInclusions().size() > 1) {
+//						query.moveDimension(filterDim, Axis.COLUMNS);
+//					}
 				}
 			}
 		}

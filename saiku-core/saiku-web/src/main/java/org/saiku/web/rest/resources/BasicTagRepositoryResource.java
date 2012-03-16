@@ -61,8 +61,11 @@ import org.olap4j.mdx.ParseTreeWriter;
 import org.olap4j.mdx.SelectNode;
 import org.olap4j.mdx.parser.impl.DefaultMdxParserImpl;
 import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SaikuDimensionSelection;
 import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.SaikuQuery;
+import org.saiku.olap.dto.SaikuSelection;
+import org.saiku.olap.dto.SaikuSelection.Type;
 import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.dto.SaikuTuple;
 import org.saiku.olap.query.IQuery;
@@ -350,22 +353,46 @@ public class BasicTagRepositoryResource {
 							mdx += ", " + member.getUniqueName();
 						}
 					}
-					mdx += ") ON COLUMNS from " + cube;
-					
-					SelectNode sn = (new DefaultMdxParserImpl().parseSelect(q.getMdx())); 
-					final Writer writer = new StringWriter();
-					sn.getFilterAxis().unparse(new ParseTreeWriter(new PrintWriter(writer)));
-					if (StringUtils.isNotBlank(writer.toString())) {
-						mdx += "\r\nWHERE " + writer.toString();
+					boolean where = true;
+					if (tag.getSaikuDimensionSelections() != null) {
+						for (SaikuDimensionSelection sdim : tag.getSaikuDimensionSelections()) {
+							if (sdim.getSelections().size() > 1) {
+								where = false;
+							}
+						}
 					}
-					
-//					System.out.println("Executing... :" + mdx);
-					olapQueryService.executeMdx(queryName, mdx);
-					rs = olapQueryService.drillthrough(queryName, cellPosition, maxrows, returns);
-					byte[] doc = olapQueryService.exportResultSetCsv(rs,",","\"", first, additionalColumns);
-//					System.out.println("Exported... :" + doc.length);
-					first = false;
-					outputStream.write(doc);
+					if (where) {
+						mdx += ") ON COLUMNS from " + cube;
+						SelectNode sn = (new DefaultMdxParserImpl().parseSelect(q.getMdx())); 
+						final Writer writer = new StringWriter();
+						sn.getFilterAxis().unparse(new ParseTreeWriter(new PrintWriter(writer)));
+						if (StringUtils.isNotBlank(writer.toString())) {
+							mdx += "\r\nWHERE " + writer.toString();
+						}
+						System.out.println("Executing... :" + mdx);
+						olapQueryService.executeMdx(queryName, mdx);
+						rs = olapQueryService.drillthrough(queryName, cellPosition, maxrows, returns);
+						byte[] doc = olapQueryService.exportResultSetCsv(rs,",","\"", first, additionalColumns);
+						first = false;
+						outputStream.write(doc);
+					} else {
+						if (tag.getSaikuDimensionSelections() != null) {
+							for (SaikuDimensionSelection sdim : tag.getSaikuDimensionSelections()) {
+								for (SaikuSelection ss : sdim.getSelections()) {
+									if (ss.getType() == Type.MEMBER) {
+										String newmdx = mdx;
+										newmdx += "," + ss.getUniqueName() + ") ON COLUMNS from " + cube;
+										System.out.println("Executing... :" + newmdx);
+										olapQueryService.executeMdx(queryName, newmdx);
+										rs = olapQueryService.drillthrough(queryName, cellPosition, maxrows, returns);
+										byte[] doc = olapQueryService.exportResultSetCsv(rs,",","\"", first, additionalColumns);
+										first = false;
+										outputStream.write(doc);
+									}
+								}
+							}
+						}
+					}
 				}
 
 
