@@ -24,6 +24,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.net.URLDecoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,16 +50,22 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.VFS;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
+import org.olap4j.mdx.ParseTreeWriter;
+import org.olap4j.mdx.SelectNode;
+import org.olap4j.mdx.parser.impl.DefaultMdxParserImpl;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuMember;
+import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.dto.SaikuTuple;
+import org.saiku.olap.query.IQuery;
 import org.saiku.olap.util.SaikuProperties;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.service.util.KeyValue;
@@ -326,6 +335,7 @@ public class BasicTagRepositoryResource {
 				String queryName = UUID.randomUUID().toString();
 				SaikuCube saikuCube = new SaikuCube(connection, cube, cube,  catalog, schema);
 				olapQueryService.createNewOlapQuery(queryName, saikuCube);
+				SaikuQuery q = olapQueryService.simulateTag(queryName, tag);
 				if (!cube.startsWith("[")) {
 					cube = "[" + cube + "]";
 				}
@@ -341,11 +351,19 @@ public class BasicTagRepositoryResource {
 						}
 					}
 					mdx += ") ON COLUMNS from " + cube;
-					System.out.println("Executing... :" + mdx);
+					
+					SelectNode sn = (new DefaultMdxParserImpl().parseSelect(q.getMdx())); 
+					final Writer writer = new StringWriter();
+					sn.getFilterAxis().unparse(new ParseTreeWriter(new PrintWriter(writer)));
+					if (StringUtils.isNotBlank(writer.toString())) {
+						mdx += "\r\nWHERE " + writer.toString();
+					}
+					
+//					System.out.println("Executing... :" + mdx);
 					olapQueryService.executeMdx(queryName, mdx);
 					rs = olapQueryService.drillthrough(queryName, cellPosition, maxrows, returns);
 					byte[] doc = olapQueryService.exportResultSetCsv(rs,",","\"", first, additionalColumns);
-					System.out.println("Exported... :" + doc.length);
+//					System.out.println("Exported... :" + doc.length);
 					first = false;
 					outputStream.write(doc);
 				}

@@ -59,6 +59,7 @@ import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimensionSelection;
 import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.SaikuQuery;
+import org.saiku.olap.dto.SaikuSelection;
 import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.dto.SaikuTuple;
 import org.saiku.olap.dto.SaikuTupleDimension;
@@ -205,41 +206,7 @@ public class OlapQueryService implements Serializable {
 			}
 
 			if (query.getTag() != null) {
-				String xml = query.toXml();
-				SaikuTag t = query.getTag();
-				query = QueryDeserializer.unparse(xml, con);
-				
-				List<SaikuTupleDimension> doneDimension = new ArrayList<SaikuTupleDimension>();
-				Map<String,QueryDimension> dimensionMap = new HashMap<String,QueryDimension>();
-				
-				for (SaikuTupleDimension st : t.getSaikuTupleDimensions()) {
-					if (!doneDimension.contains(st)) {
-						QueryDimension dim = query.getDimension(st.getName());
-						dimensionMap.put(st.getUniqueName(), dim);
-						dim.clearExclusions();
-						dim.clearInclusions();
-						query.moveDimension(dim, null);
-						doneDimension.add(st);
-					}
-				}
-				if (t.getSaikuTupleDimensions().size() > 0) {
-					SaikuTupleDimension rootDim = t.getSaikuTupleDimensions().get(0);
-					QueryDimension dim = query.getDimension(rootDim.getName());
-					query.moveDimension(dim, Axis.COLUMNS);
-
-					for (SaikuTuple tuple : t.getSaikuTuples()) {
-						SaikuMember m = tuple.getSaikuMember(rootDim.getUniqueName());
-						List<SaikuMember> others = tuple.getOtherSaikuMembers(rootDim.getUniqueName());
-						Selection sel = dim.createSelection(IdentifierParser.parseIdentifier(m.getUniqueName()));
-						for (SaikuMember context : others) {
-							QueryDimension otherDim = dimensionMap.get(context.getDimensionUniqueName());
-							query.moveDimension(otherDim, Axis.COLUMNS);
-							Selection ctxSel = otherDim.createSelection(IdentifierParser.parseIdentifier(context.getUniqueName()));
-							sel.addContext(ctxSel);
-						}
-						dim.getInclusions().add(sel);
-					}
-				}
+				query = applyTag(query, con, query.getTag());
 			}
 			CellSet cellSet =  query.execute();
 			Long exec = (new Date()).getTime();
@@ -259,6 +226,80 @@ public class OlapQueryService implements Serializable {
 		} catch (Exception e) {
 			throw new SaikuServiceException("Can't execute query: " + queryName,e);
 		}
+	}
+	
+	public SaikuQuery simulateTag(String queryName, SaikuTag tag) {
+		try {
+			IQuery query = getIQuery(queryName);
+			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
+			return ObjectUtil.convert(applyTag(query, con, tag));
+		} catch (Exception e) {
+			throw new SaikuServiceException("Can't apply tag: " + tag + " to query "+ queryName,e);
+		}
+	}
+	
+	private IQuery applyTag(IQuery query, OlapConnection con, SaikuTag t) throws Exception {
+		String xml = query.toXml();
+		query = QueryDeserializer.unparse(xml, con);
+		
+		List<SaikuTupleDimension> doneDimension = new ArrayList<SaikuTupleDimension>();
+		Map<String,QueryDimension> dimensionMap = new HashMap<String,QueryDimension>();
+		if (t.getSaikuTupleDimensions() != null) {
+			for (SaikuTupleDimension st : t.getSaikuTupleDimensions()) {
+				if (!doneDimension.contains(st)) {
+					QueryDimension dim = query.getDimension(st.getName());
+					dimensionMap.put(st.getUniqueName(), dim);
+					dim.clearExclusions();
+					dim.clearInclusions();
+					query.moveDimension(dim, null);
+					doneDimension.add(st);
+				}
+			}
+			if (t.getSaikuTupleDimensions().size() > 0) {
+				SaikuTupleDimension rootDim = t.getSaikuTupleDimensions().get(0);
+				QueryDimension dim = query.getDimension(rootDim.getName());
+				query.moveDimension(dim, Axis.COLUMNS);
+
+				for (SaikuTuple tuple : t.getSaikuTuples()) {
+					SaikuMember m = tuple.getSaikuMember(rootDim.getUniqueName());
+					List<SaikuMember> others = tuple.getOtherSaikuMembers(rootDim.getUniqueName());
+					Selection sel = dim.createSelection(IdentifierParser.parseIdentifier(m.getUniqueName()));
+					for (SaikuMember context : others) {
+						QueryDimension otherDim = dimensionMap.get(context.getDimensionUniqueName());
+						query.moveDimension(otherDim, Axis.COLUMNS);
+						Selection ctxSel = otherDim.createSelection(IdentifierParser.parseIdentifier(context.getUniqueName()));
+						sel.addContext(ctxSel);
+					}
+					dim.getInclusions().add(sel);
+				}
+			}
+		}
+		if (t.getSaikuDimensionSelections() != null) {
+			for (SaikuDimensionSelection dimsel : t.getSaikuDimensionSelections()) {
+				if (!dimsel.getName().equals("Measures")) {
+					QueryDimension filterDim = query.getDimension(dimsel.getName());
+					query.moveDimension(filterDim, Axis.FILTER);
+					List<Selection> removeSelections = new ArrayList<Selection>();
+					for (Selection potentialLevel : filterDim.getInclusions()) {
+						if (potentialLevel.getRootElement() instanceof Level) {
+							removeSelections.add(potentialLevel);
+						}
+					}
+					filterDim.getInclusions().removeAll(removeSelections);
+					for (SaikuSelection ss : dimsel.getSelections()) {
+						if (ss.getType() == SaikuSelection.Type.MEMBER) {
+							Selection sel = filterDim.createSelection(IdentifierParser.parseIdentifier(ss.getUniqueName()));
+							if (!filterDim.getInclusions().contains(sel)) {
+								filterDim.getInclusions().add(sel);
+							}
+						}
+					}
+
+				}
+			}
+		}
+		
+		return query;
 	}
 
 	public void setMdx(String queryName, String mdx) {
@@ -740,7 +781,8 @@ public class OlapQueryService implements Serializable {
 					}
 				}
 			}
-			SaikuTag t = new SaikuTag(tagName, dimensions, tuples);
+			List<SaikuDimensionSelection> filterSelections = getAxisSelection(queryName, "FILTER");
+			SaikuTag t = new SaikuTag(tagName, dimensions, tuples, filterSelections);
 			return t;
 			
 		} catch (Exception e) {
