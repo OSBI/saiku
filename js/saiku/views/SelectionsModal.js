@@ -101,7 +101,7 @@ var SelectionsModal = Modal.extend({
                 var member = this.selected_members[j];
                 if (member.levelUniqueName == this.member.level &&
                     member.type == "MEMBER") {
-                    selected_members_opts += "<option value='" + member.uniqueName + "'>" + member.caption + "</option>";
+                    selected_members_opts += "<option value='" + escape(member.uniqueName) + "'>" + member.caption + "</option>";
                     used_members.push(member.caption);
                 }
             }
@@ -118,7 +118,7 @@ var SelectionsModal = Modal.extend({
             var available_members_opts = "";
             for (var i = 0; i < this.available_members.length; i++) {
                 var member = this.available_members[i];
-                available_members_opts += "<option value='" + member.uniqueName + "'>" + member.caption + "</option>";
+                available_members_opts += "<option value='" + escape(member.uniqueName) + "'>" + member.caption + "</option>";
             }
             if (this.available_members.length > 0) {
                 $(available_members_opts).appendTo($(this.el).find('.available_selections select'));
@@ -187,7 +187,7 @@ var SelectionsModal = Modal.extend({
             $(this.el).find('.used_selections option')
                 .each(function(i, selection) {
                 var value = show_u ? 
-                    $(selection).text() : $(selection).val();
+                    $(selection).text() : unescape($(selection).val());
                 updates.push({
                     uniquename: value,
                     type: 'member',
