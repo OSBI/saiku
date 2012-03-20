@@ -825,7 +825,7 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 	display: none;
 }
 .dialog_selections .dialog_body {
-    height: 330px;
+    height: 380px;
 }
 .dialog_selections .dialog_body .available_selections {
     padding-left: 5px;
@@ -840,18 +840,22 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 }
 .dialog_selections .dialog_body .used_selections {
     padding-right: 5px;
+    padding-top: 36px;
     float: right;
 }
 .dialog_selections .dialog_body select {
     height: 270px;
-    width: 200px;
+    width: 350px;
     font-size: 11px;
-    overflow-x: scroll;
+    overflow: scroll;
 }
 .dialog_selections .options {
     float: left;
-    width: 150px;
+    width: 250px;
     text-align: left;
+}
+.dialog_selections .available_selections input[type="text"] {
+    width: 200px;
 }
 
 .dialog_drillthroughview .dialog_icon {

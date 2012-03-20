@@ -32,8 +32,10 @@ var SelectionsModal = Modal.extend({
     events: {
         'click a': 'call',
         'change #show_unique': 'show_unique_action',
-        'dblclick select option' : 'click_move_selection'
-    },
+        'dblclick select option' : 'click_move_selection',
+        
+        'keyup .filterbox' : 'filter_selection'
+    },    
 
     show_unique_option: false,
     
@@ -129,7 +131,7 @@ var SelectionsModal = Modal.extend({
     },
     
     post_render: function(args) {
-        $(args.modal.el).parents('.ui-dialog').css({ width: "500px" });
+        $(args.modal.el).parents('.ui-dialog').css({ width: "800px", left: "inherit", margin:"0 auto" });
     },
     
     move_selection: function(event) {
@@ -150,6 +152,16 @@ var SelectionsModal = Modal.extend({
       $(event.target).appendTo($(this.el).find(to +' select'));
     },
     
+    filter_selection: function(event, ui) {
+        var filter = $(event.target).val();
+        if (filter == "") {
+            $(this.el).find(".available_selections select option").show();
+        } else {
+            $(this.el).find(".available_selections select option:not(:contains(" + filter + "))").hide();
+            $(this.el).find(".available_selections select option:contains(" + filter + ")").show();
+        }
+    }, 
+
     show_unique_action: function() {
         $.each($(this.el).find('option'), function(i, option) {
             var text = $(option).text();
