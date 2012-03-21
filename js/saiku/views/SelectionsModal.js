@@ -220,6 +220,7 @@ var SelectionsModal = Modal.extend({
     },
     
     finished: function() {
+        this.available_members = null;
         $(this.el).dialog('destroy').remove();
         this.query.run();
     }
