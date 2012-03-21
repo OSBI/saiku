@@ -32,9 +32,7 @@ var SelectionsModal = Modal.extend({
     events: {
         'click a': 'call',
         'change #show_unique': 'show_unique_action',
-        'dblclick select option' : 'click_move_selection',
-        
-        'keyup .filterbox' : 'filter_selection'
+        'dblclick select option' : 'click_move_selection'
     },    
 
     show_unique_option: false,
@@ -125,7 +123,36 @@ var SelectionsModal = Modal.extend({
             if (this.available_members.length > 0) {
                 $(available_members_opts).appendTo($(this.el).find('.available_selections select'));
             }
+            var self = this;
+            $('#filter_selections').autocomplete({
+                    minLength: 1,
+                    source: function(request, response ) {
+                        response( $.map( self.available_members, function( item ) {
+                                        if (item.caption.toLowerCase().indexOf(request.term.toLowerCase()) > -1) {
+                                            return {
+                                                label: item.caption ,
+                                                value: item.uniqueName
+                                            };
+                                        }
+                                }));
+                    },
+                    select:  function(event, ui) { 
+                        var value = self.show_unique_option == false? escape(ui.item.value) : ui.item.label;
+                        $(self.el).find('.available_selections select option[value="' + value + '"]')
+                            .appendTo($(self.el).find('.used_selections select'));
+                        $('#filter_selections').val('');
 
+                    }, close: function(event, ui) { 
+                        $('#filter_selections').val('');
+                    }
+
+
+                }).data( "autocomplete" )._renderItem = function( ul, item ) {
+                return $( "<li></li>" )
+                    .data( "item.autocomplete", item )
+                    .append( "<a class='label'>" + item.label + "</a><br><a class='description'>" + item.value + "</a>" )
+                    .appendTo( ul );
+                };
         // Show dialog
         Saiku.ui.unblock();
     },
@@ -151,22 +178,12 @@ var SelectionsModal = Modal.extend({
       var to = ($(event.target).parent().parent().hasClass('used_selections')) ? '.available_selections' : '.used_selections';
       $(event.target).appendTo($(this.el).find(to +' select'));
     },
-    
-    filter_selection: function(event, ui) {
-        var filter = $(event.target).val();
-        if (filter == "") {
-            $(this.el).find(".available_selections select option").show();
-        } else {
-            $(this.el).find(".available_selections select option:not(:contains(" + filter + "))").hide();
-            $(this.el).find(".available_selections select option:contains(" + filter + ")").show();
-        }
-    }, 
 
     show_unique_action: function() {
         $.each($(this.el).find('option'), function(i, option) {
             var text = $(option).text();
             $(option).text(unescape($(option).val()));
-            $(option).val(text);
+            $(option).val(escape(text));
         });
         this.show_unique_option= ! this.show_unique_option;
     },
@@ -220,6 +237,7 @@ var SelectionsModal = Modal.extend({
     },
     
     finished: function() {
+        $('#filter_selections').remove();
         this.available_members = null;
         $(this.el).dialog('destroy').remove();
         this.query.run();
