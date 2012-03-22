@@ -95,11 +95,7 @@ public class OlapQueryService implements Serializable {
 
 	private OlapDiscoverService olapDiscoverService;
 
-	private ObjectHolder objectHolder; 
-	
-	public void setObjectHolder(ObjectHolder objectHolder) {
-		this.objectHolder = objectHolder;
-	}
+	private Map<String, IQuery> queries = new HashMap<String, IQuery>(); 
 
 	public void setOlapDiscoverService(OlapDiscoverService os) {
 		olapDiscoverService = os;
@@ -802,20 +798,20 @@ public class OlapQueryService implements Serializable {
 	}
 
 	private void putIQuery(String queryName, IQuery query) {
-		objectHolder.putIQuery(queryName, query);
+		queries.put(queryName, query);
 	}
 	
 	private void removeIQuery(String queryName) {
-		objectHolder.removeIQuery(queryName);
+		queries.remove(queryName);
 	}
 	
 	
 	private IQuery getIQuery(String queryName) {
-		return  objectHolder.getIQuery(queryName);
+		return  queries.get(queryName);
 	}
 	
 	private Map<String, IQuery> getIQueryMap() {
-		return objectHolder.getIQueryMap();
+		return queries;
 	}
 
 }
