@@ -559,11 +559,17 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
 							parent = parent.getParentMember();
 						}
 						final MemberCell pInfo = new MemberCell();
-						pInfo.setRawValue(parent.getCaption());
-						pInfo.setFormattedValue(parent.getCaption()); // First try to get a formatted value
-						pInfo.setParentDimension(parent.getDimension().getName());
-						pInfo.setUniquename(parent.getUniqueName());
-						
+						if (parent != null) {
+							pInfo.setRawValue(parent.getCaption());
+							pInfo.setFormattedValue(parent.getCaption()); // First try to get a formatted value
+							pInfo.setParentDimension(parent.getDimension().getName());
+							pInfo.setUniquename(parent.getUniqueName());
+						} else {
+							pInfo.setRawValue("");
+							pInfo.setFormattedValue(""); // First try to get a formatted value
+							pInfo.setParentDimension(member.getDimension().getName());
+							pInfo.setUniquename("");
+						}
 						matrix.set(x_parent, y_parent, pInfo);
 						if (isColumns) {
 							y_parent--;
