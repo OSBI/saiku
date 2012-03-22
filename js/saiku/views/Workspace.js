@@ -201,10 +201,11 @@ var Workspace = Backbone.View.extend({
             if (! $(this.el).find('.sidebar').hasClass('hide')) {
                 this.toggle_sidebar();
             }
+
             $(this.el).find('.workspace_results').css({
-            height: $(document).height() - $("#header").height() -
-                $(this.el).find('.workspace_toolbar').height() - 
-                $(this.el).find('.mdx_input').height() - 40
+            height: $(document).height() - (typeof $("#header").height() !== "undefined" ? $("#header").height() : 0)  -
+                (typeof $(this.el).find('.workspace_toolbar').height() !== "undefined" ? $(this.el).find('.workspace_toolbar').height() : 0)  -
+                $(this.el).find('.mdx_input').height() - 80
             });
 
         } else {
