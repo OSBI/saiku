@@ -65,6 +65,7 @@ var SelectionsModal = Modal.extend({
         this.bind('open', this.post_render);
         this.render();
         
+        $(this.el).parent().find('.ui-dialog-titlebar-close').bind('click',this.finished);
         // Fetch available members
         this.member = new Member({}, {
             cube: args.workspace.selected_cube,
@@ -124,7 +125,7 @@ var SelectionsModal = Modal.extend({
                 $(available_members_opts).appendTo($(this.el).find('.available_selections select'));
             }
             var self = this;
-            $('#filter_selections').autocomplete({
+            $(this.el).find('.filterbox').autocomplete({
                     minLength: 1,
                     source: function(request, response ) {
                         response( $.map( self.available_members, function( item ) {
