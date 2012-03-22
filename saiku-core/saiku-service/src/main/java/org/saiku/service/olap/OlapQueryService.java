@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.AllocationPolicy;
@@ -76,6 +77,7 @@ import org.saiku.olap.util.formatter.FlattenedCellSetFormatter;
 import org.saiku.olap.util.formatter.HierarchicalCellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.service.util.KeyValue;
+import org.saiku.service.util.ObjectHolder;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.service.util.export.CsvExporter;
 import org.saiku.service.util.export.ExcelExporter;
@@ -93,9 +95,12 @@ public class OlapQueryService implements Serializable {
 
 	private OlapDiscoverService olapDiscoverService;
 
+	private ObjectHolder objectHolder; 
+	
+	public void setObjectHolder(ObjectHolder objectHolder) {
+		this.objectHolder = objectHolder;
+	}
 
-	HashMap<String, IQuery> queries = new HashMap<String, IQuery>();
-		
 	public void setOlapDiscoverService(OlapDiscoverService os) {
 		olapDiscoverService = os;
 	}
@@ -198,7 +203,6 @@ public class OlapQueryService implements Serializable {
 //			System.out.println("Execute: ID " + Thread.currentThread().getId() + " Name: " + Thread.currentThread().getName());
 			IQuery query = getIQuery(queryName);
 			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
-			Cube cub = olapDiscoverService.getNativeCube(query.getSaikuCube());
 			Long start = (new Date()).getTime();
 			if (query.getScenario() != null) {
 				log.info("Query (" + queryName + ") Setting scenario:" + query.getScenario().getId());
@@ -798,26 +802,20 @@ public class OlapQueryService implements Serializable {
 	}
 
 	private void putIQuery(String queryName, IQuery query) {
-		queries.put(queryName, query);
+		objectHolder.putIQuery(queryName, query);
 	}
 	
 	private void removeIQuery(String queryName) {
-		queries.remove(queryName);
+		objectHolder.removeIQuery(queryName);
 	}
 	
 	
 	private IQuery getIQuery(String queryName) {
-//		System.out.println("Get Query: ID " + Thread.currentThread().getId() + " Name: " + Thread.currentThread().getName());
-
-		IQuery query = queries.get(queryName);
-		if (query == null) {
-			throw new SaikuServiceException("No query with name ("+queryName+") found");
-		}
-		return query;
+		return  objectHolder.getIQuery(queryName);
 	}
 	
 	private Map<String, IQuery> getIQueryMap() {
-		return queries;
+		return objectHolder.getIQueryMap();
 	}
 
 }

@@ -27,8 +27,12 @@
 		<property name="datasourceService" ref="datasourceServiceBean" />
 	</bean>
 
-	<bean id="olapQueryBean" scope="session" class="org.saiku.service.olap.OlapQueryService">
+
+	<bean id="threadQueries" class="org.saiku.service.util.ObjectHolder" />
+	
+	<bean id="olapQueryBean"  class="org.saiku.service.olap.OlapQueryService">
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
+		<property name="objectHolder" ref="threadQueries" />
 	</bean>
 
 

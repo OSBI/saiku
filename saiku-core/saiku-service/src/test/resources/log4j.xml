@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<!-- ===================================================================== -->
+<!--                                                                       -->
+<!--  Log4j Configuration                                                  -->
+<!--                                                                       -->
+<!-- ===================================================================== -->
+
+<!--
+   | For more configuration information and examples see the Jakarta Log4j
+   | owebsite: http://jakarta.apache.org/log4j
+ -->
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+
+
+   <!-- ============================== -->
+   <!-- Append messages to the console -->
+   <!-- ============================== -->
+
+   <appender name="SAIKUCONSOLE" class="org.apache.log4j.ConsoleAppender">
+      <param name="Target" value="System.out"/>
+      <param name="Threshold" value="WARN"/>
+
+      <layout class="org.apache.log4j.PatternLayout">
+         <!-- The default pattern: Date Priority [Category] Message\n -->
+         <param name="ConversionPattern" value="%d{ABSOLUTE} %-5p [%c{1}] %m%n"/>
+      </layout>
+   </appender>
+
+   <!-- ================ -->
+   <!-- Limit categories -->
+   <!-- ================ -->
+
+   <category name="org.saiku">
+     <priority value="INFO"/>
+   </category>
+   
+   <!-- ======================= -->
+   <!-- Setup the Root category -->
+   <!-- ======================= -->
+
+   <root>
+      <priority value="INFO" />
+      <appender-ref ref="SAIKUCONSOLE"/>
+   </root>
+   
+   
+   <!--  optional logging info for the Mondrian OLAP Engine       -->
+   
+   
+   <!-- ========================================================= -->
+   <!-- Special Log File specifically for Mondrian                -->
+   <!-- ========================================================= -->
+
+   <!-- 
+   <appender name="MONDRIAN" class="org.apache.log4j.RollingFileAppender">
+     <param name="File" value="mondrian.log"/>
+     <param name="Append" value="false"/>
+     <param name="MaxFileSize" value="500KB"/>
+     <param name="MaxBackupIndex" value="1"/>
+
+     <layout class="org.apache.log4j.PatternLayout">
+       <param name="ConversionPattern" value="%d %-5p [%c] %m%n"/>
+     </layout>
+   </appender>
+   
+   <category name="mondrian">
+      <priority value="DEBUG"/>
+      <appender-ref ref="MONDRIAN"/>
+   </category> 
+   
+   -->
+
+   <!-- ========================================================= -->
+   <!-- Special Log File specifically for Mondrian MDX Statements -->
+   <!-- ========================================================= -->
+
+   <!-- 
+   <appender name="MDXLOG" class="org.apache.log4j.RollingFileAppender">
+     <param name="File" value="mondrian_mdx.log"/>
+     <param name="Append" value="false"/>
+     <param name="MaxFileSize" value="500KB"/>
+     <param name="MaxBackupIndex" value="1"/>
+     <layout class="org.apache.log4j.PatternLayout">
+       <param name="ConversionPattern" value="%d %-5p [%c] %m%n"/>
+     </layout>
+   </appender>
+
+   <category name="mondrian.mdx">
+      <priority value="DEBUG"/>
+      <appender-ref ref="MDXLOG"/>
+   </category>
+   -->
+
+   <!-- ========================================================= -->
+   <!-- Special Log File specifically for Mondrian SQL Statements -->
+   <!-- ========================================================= -->
+
+   <!-- 
+   <appender name="SQLLOG" class="org.apache.log4j.RollingFileAppender">
+     <param name="File" value="mondrian_sql.log"/>
+     <param name="Append" value="false"/>
+     <param name="MaxFileSize" value="500KB"/>
+     <param name="MaxBackupIndex" value="1"/>
+     <layout class="org.apache.log4j.PatternLayout">
+       <param name="ConversionPattern" value="%d %-5p [%c] %m%n"/>
+     </layout>
+   </appender>
+
+   <category name="mondrian.sql">
+      <priority value="DEBUG"/>
+      <appender-ref ref="SQLLOG"/>
+   </category>
+   -->
+   
+</log4j:configuration>

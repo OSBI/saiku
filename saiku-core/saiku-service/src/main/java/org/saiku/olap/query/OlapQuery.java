@@ -69,7 +69,6 @@ public class OlapQuery implements IQuery {
 	private OlapStatement statement = null;
 
 	private OlapConnection connection;
-
 	
 	public OlapQuery(Query query, OlapConnection connection, SaikuCube cube, boolean applyDefaultProperties) {
 		this.query = query;
@@ -322,6 +321,7 @@ public class OlapQuery implements IQuery {
 
 	public void cancel() throws Exception {
 		if (this.statement != null && !this.statement.isClosed()) {
+			statement.cancel();
 			statement.close();
 		}
 		this.statement = null;
