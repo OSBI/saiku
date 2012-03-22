@@ -201,6 +201,12 @@ var Workspace = Backbone.View.extend({
             if (! $(this.el).find('.sidebar').hasClass('hide')) {
                 this.toggle_sidebar();
             }
+            $(this.el).find('.workspace_results').css({
+            height: $(document).height() - $("#header").height() -
+                $(this.el).find('.workspace_toolbar').height() - 
+                $(this.el).find('.mdx_input').height() - 40
+            });
+
         } else {
             $(this.el).find('.workspace_fields').show();
             $(this.el).find('.workspace_editor .mdx_input').val('').addClass('hide');
