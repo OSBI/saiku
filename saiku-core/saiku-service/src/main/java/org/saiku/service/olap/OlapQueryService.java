@@ -494,9 +494,6 @@ public class OlapQueryService implements Serializable {
 			}
 			Selection selection = dimension.createSelection(selectionMode, memberList);
 			dimension.getInclusions().remove(selection);
-			if (dimension.getInclusions().size() == 0) {
-				moveDimension(queryName, null, dimensionName, -1);
-			}
 			return true;
 		} catch (OlapException e) {
 			throw new SaikuServiceException("Error removing member (" + uniqueMemberName + ") of dimension (" +dimensionName+")",e);

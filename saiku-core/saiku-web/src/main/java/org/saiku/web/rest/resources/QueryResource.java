@@ -771,23 +771,34 @@ public class QueryResource {
 
 
 
+				// remove stuff first, then add, removing removes all selections for that level first
+				for (SelectionRestObject selection : selections) {
+					if (selection.getType() != null && "member".equals(selection.getType().toLowerCase())) {
+						if (selection.getAction() != null && "delete".equals(selection.getAction().toLowerCase())) {
+							olapQueryService.removeMember(queryName, dimensionName, selection.getUniquename(), "MEMBER");
+						}
+					}
+					if (selection.getType() != null && "level".equals(selection.getType().toLowerCase())) {
+						if (selection.getAction() != null && "delete".equals(selection.getAction().toLowerCase())) {
+							olapQueryService.removeLevel(queryName, dimensionName, selection.getHierarchy(), selection.getUniquename());
+						}
+					}
+				}
 				for (SelectionRestObject selection : selections) {
 					if (selection.getType() != null && "member".equals(selection.getType().toLowerCase())) {
 						if (selection.getAction() != null && "add".equals(selection.getAction().toLowerCase())) {
-							includeMember("MEMBER", queryName, axisName, dimensionName, selection.getUniquename(), -1, -1);
-						}
-						if (selection.getAction() != null && "delete".equals(selection.getAction().toLowerCase())) {
-							removeMember("MEMBER", queryName, axisName, dimensionName, selection.getUniquename());
+							olapQueryService.includeMember(queryName, dimensionName, selection.getUniquename(), "MEMBER", -1);
 						}
 					}
 					if (selection.getType() != null && "level".equals(selection.getType().toLowerCase())) {
 						if (selection.getAction() != null && "add".equals(selection.getAction().toLowerCase())) {
-							includeLevel(queryName, axisName, dimensionName, selection.getHierarchy(), selection.getUniquename(), -1);
-						}
-						if (selection.getAction() != null && "delete".equals(selection.getAction().toLowerCase())) {
-							removeLevel(queryName, axisName, dimensionName, selection.getHierarchy(), selection.getUniquename());
+							olapQueryService.includeLevel(queryName, dimensionName, selection.getHierarchy(), selection.getUniquename());
 						}
 					}
+				}
+				SaikuDimensionSelection dimsels = getAxisDimensionInfo(queryName, axisName, dimensionName);
+				if (dimsels != null && dimsels.getSelections().size() == 0) {
+					moveDimension(queryName, "UNUSED", dimensionName, -1);
 				}
 				return Status.OK;
 			}
@@ -795,10 +806,9 @@ public class QueryResource {
 			log.error("Cannot updates selections for query (" + queryName + ")",e);
 		}
 		return Status.INTERNAL_SERVER_ERROR;
-
-
-
 	}
+	
+	
 
 	@DELETE
 	@Consumes("application/x-www-form-urlencoded")
@@ -880,6 +890,10 @@ public class QueryResource {
 		try{
 			boolean ret = olapQueryService.removeMember(queryName, dimensionName, uniqueMemberName, selectionType);
 			if(ret == true){
+				SaikuDimensionSelection dimsels = olapQueryService.getAxisDimensionSelections(queryName, axisName, dimensionName);
+				if (dimsels != null && dimsels.getSelections().size() == 0) {
+					olapQueryService.moveDimension(queryName, "UNUSED", dimensionName, -1);
+				}
 				return Status.OK;
 			}
 			else{
@@ -937,7 +951,12 @@ public class QueryResource {
 		}
 		try{
 			boolean ret = olapQueryService.removeLevel(queryName, dimensionName, uniqueHierarchyName, uniqueLevelName);
+			
 			if(ret == true){
+				SaikuDimensionSelection dimsels = olapQueryService.getAxisDimensionSelections(queryName, axisName, dimensionName);
+				if (dimsels != null && dimsels.getSelections().size() == 0) {
+					olapQueryService.moveDimension(queryName, "UNUSED", dimensionName, -1);
+				}
 				return Status.OK;
 			}
 			else{
