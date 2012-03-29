@@ -144,7 +144,7 @@ var DrillthroughModal = Modal.extend({
             'transitionIn'      : 'none',
             'transitionOut'     : 'none'
             }
-        ).resize();
+        );
 
     },
     
