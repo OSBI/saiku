@@ -225,6 +225,8 @@ public class OlapQueryService implements Serializable {
 			return result;
 		} catch (Exception e) {
 			throw new SaikuServiceException("Can't execute query: " + queryName,e);
+		} catch (Error e) {
+			throw new SaikuServiceException("Can't execute query: " + queryName,e);
 		}
 	}
 	
@@ -540,10 +542,6 @@ public class OlapQueryService implements Serializable {
 								}
 							}
 							dimension.getInclusions().removeAll(removals);
-							if (dimension.getInclusions().size() == 0) {
-								moveDimension(queryName, null , dimensionName, -1);
-							}
-
 						}
 					}
 				}
