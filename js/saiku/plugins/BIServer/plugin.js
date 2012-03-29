@@ -90,7 +90,7 @@ var savePg0 = function() {};
  */
 if (Settings.BIPLUGIN) {
     Settings.PLUGIN = true;
-    Settings.REST_URL = "/pentaho/content/saiku/";
+    Settings.REST_URL = "../saiku/";
 
     $(document).ready(function() {
         Saiku.session = new Session();
