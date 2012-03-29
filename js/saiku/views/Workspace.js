@@ -297,7 +297,7 @@ var Workspace = Backbone.View.extend({
                                 .appendTo($axis);
                             
                             if (type == "dimension") {
-                                $("<span />").addClass('sprite')
+                                $("<span />").addClass('sprite selections')
                                     .prependTo($clone);
                                 $icon = $("<span />").addClass('sort');
                                 var sort = false;
@@ -311,7 +311,7 @@ var Workspace = Backbone.View.extend({
                                     $icon.addClass('none');
                                 }
                                 
-                                $icon.prependTo($clone);
+                                $icon.insertBefore($clone.find('a'));
                             }
 
                             if (type == "measure") {
@@ -327,7 +327,7 @@ var Workspace = Backbone.View.extend({
                                     $icon.addClass('none');
                                 }
                                 
-                                $icon.prependTo($clone);
+                                $icon.insertBefore($clone.find('a'));
                             }
 
                             
