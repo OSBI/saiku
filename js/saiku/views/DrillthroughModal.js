@@ -45,7 +45,7 @@ var DrillthroughModal = Modal.extend({
         var key = this.query.get('connection') + "/" + 
                 this.query.get('catalog') + "/"
                 + ((schema == "" || schema == null) ? "null" : schema) 
-                + "/" + this.query.get('cube');
+                + "/" + encodeURIComponent(this.query.get('cube'));
 
         var dimensions = Saiku.session.sessionworkspace.dimensions[key].get('data');
         var measures = Saiku.session.sessionworkspace.measures[key].get('data');
