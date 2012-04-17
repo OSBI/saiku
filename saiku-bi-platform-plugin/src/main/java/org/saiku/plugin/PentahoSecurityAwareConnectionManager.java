@@ -128,7 +128,13 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 		if (con.getConnection() instanceof OlapConnection) 
 		{
 			OlapConnection c = (OlapConnection) con.getConnection();
-			System.out.println("Setting role to datasource:" + datasource.getName() + " role:" + validMondrianRolesForUser);
+			String roles = "";
+			if (validMondrianRolesForUser != null && validMondrianRolesForUser.length > 0) {
+				for (String r : validMondrianRolesForUser) {
+					roles += r +";";
+				}
+			}
+			System.out.println("Setting role to datasource:" + datasource.getName() + " role: " + roles);
 			try {
 				SaikuMondrianHelper.setRoles(c, validMondrianRolesForUser);
 				return true;
