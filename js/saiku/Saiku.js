@@ -54,6 +54,9 @@ var Saiku = {
         block: function(message) {
             $('.processing,.processing_container').fadeIn();
             $('.processing_message').text(message);
+			
+			$('.processing_message').removeClass("i18n_translated").addClass("i18n");
+			Saiku.i18n.translate();
         },
         
         unblock: function() {
