@@ -271,6 +271,8 @@ public class CellSetFormatter implements ICellSetFormatter {
 						memberInfo.setFormattedValue(s);
 						memberInfo.setProperty("__headertype", "row_header_header");
 						memberInfo.setProperty("levelindex", "" + levels.indexOf(xLevel));
+						memberInfo.setProperty("hierarchy", "" + xLevel.getHierarchy().getUniqueName());
+						memberInfo.setProperty("uniqueName", "" + xLevel.getUniqueName());
 					}
 					matrix.set(x, y, memberInfo);
 				}
