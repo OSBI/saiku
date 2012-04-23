@@ -127,15 +127,19 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 	private boolean setRole(ISaikuConnection con, String[] validMondrianRolesForUser, SaikuDatasource datasource) {
 		if (con.getConnection() instanceof OlapConnection) 
 		{
-			OlapConnection c = (OlapConnection) con.getConnection();
-			String roles = "";
-			if (validMondrianRolesForUser != null && validMondrianRolesForUser.length > 0) {
-				for (String r : validMondrianRolesForUser) {
-					roles += r +";";
-				}
-			}
-			System.out.println("Setting role to datasource:" + datasource.getName() + " role: " + roles);
 			try {
+				OlapConnection c = (OlapConnection) con.getConnection();
+				String roles = "";
+				if (validMondrianRolesForUser != null && validMondrianRolesForUser.length > 0) {
+					for (String r : validMondrianRolesForUser) {
+						// lets make sure the role is actually available, just to be safe
+						if (c.getAvailableRoleNames().contains(r)) {
+							roles += r +";";
+						}
+					}
+				}
+				System.out.println("Setting role to datasource:" + datasource.getName() + " role: " + roles);
+
 				SaikuMondrianHelper.setRoles(c, validMondrianRolesForUser);
 				return true;
 			} catch (Exception e) {
