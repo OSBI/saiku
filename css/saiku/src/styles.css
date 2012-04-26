@@ -981,6 +981,14 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 .workspace_results table td.cellhighlight {
   cursor: pointer;
 }
+
+.workspace_results .headerhighlight:hover {
+  background: #c2d5e2 !important;
+}
+.workspace_results .headerhighlight {
+  cursor: pointer;
+}
+
 .workspace_results table td.selected {
   background: #c2d5e2 !important;
 }

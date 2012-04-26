@@ -22,6 +22,7 @@
  * Workspace query
  */
 var Query = Backbone.Model.extend({
+
     initialize: function(args, options) {
         // Save cube
         _.extend(this, options);
@@ -41,24 +42,21 @@ var Query = Backbone.Model.extend({
         this.action = new QueryAction({}, { query: this });
         this.result = new Result({}, { query: this });
         this.scenario = new QueryScenario({}, { query: this });
+        this.set({type:'QM'});
     },
     
     parse: function(response) {
         // Assign id so Backbone knows to PUT instead of POST
         this.id = this.uuid;
 
-        // Grab attributes
-        if (this.attributes.xml !== undefined && 
-            this.attributes.cube === undefined) {            
-            this.set({
-                connection: response.cube.connectionName,
+        this.set({
+            connection: response.cube.connectionName,
                 catalog: response.cube.catalogName,
                 schema: response.cube.schemaName,
                 cube: encodeURIComponent(response.cube.name),
                 axes: response.saikuAxes,
                 type: response.type
-            });
-        }
+        })
 
         // Fetch initial properties from server
         if (! this.properties) {

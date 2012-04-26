@@ -129,7 +129,10 @@ Backbone.sync = function(method, model, options) {
         
         options.success(data, textStatus, jqXHR);
     };
-
+    var async = true
+    if (options.async === false) {
+      async = false;
+    }
     // Default JSON-request options.
     params = {
       url:          url,
@@ -140,7 +143,8 @@ Backbone.sync = function(method, model, options) {
       dataType:     'json',
       success:      success,
       statusCode:   statuscode, 
-      error:        failure 
+      error:        failure,
+      async:        async
       /*
       beforeSend:   function(request) {
         if (!Settings.PLUGIN) {
