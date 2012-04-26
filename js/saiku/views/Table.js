@@ -67,7 +67,7 @@ var Table = Backbone.View.extend({
             var cube = query.get('connection') + "/" + 
                 query.get('catalog') + "/"
                 + ((schema == "" || schema == null) ? "null" : schema) 
-                + "/" + encodeURI(query.get('cube'));
+                + "/" + query.get('cube');
 
             var d = cell.properties.dimension;
             var h = cell.properties.hierarchy;
@@ -166,7 +166,7 @@ var Table = Backbone.View.extend({
                             self.workspace.query.fetch({ success: function() {
                                 
                                 $(self.workspace.el).find('.fields_list_body ul').empty();
-                                self.workspace.populate_selections(self.workspace.dimension_list.el);
+                                self.workspace.populate_selections(self.workspace.measure_list.el);
                                 $(self.workspace.el).find('.fields_list_body ul li')
                                     .removeClass('ui-draggable-disabled ui-state-disabled')
                                     .css({ fontWeight: 'normal' });
