@@ -10,7 +10,7 @@
 	<properties>
 		<maven.compiler.source>1.5</maven.compiler.source>
 		<maven.compiler.target>1.5</maven.compiler.target>
-		<pentaho.libs.version>3.7.0-stable</pentaho.libs.version>
+		<pentaho.libs.version>3.10.0-stable</pentaho.libs.version>
 		<slf4j.version>1.6.1</slf4j.version>
         <jersey.version>1.8</jersey.version>
         <enunciate.version>1.23</enunciate.version>
