@@ -55,6 +55,7 @@ var Table = Backbone.View.extend({
     $.contextMenu({
         appendTo: $target,
         selector: '.row, .col', 
+        ignoreRightClick: true,
          build: function($trigger, e) {
             $target = $(e.currentTarget).find('div');
             var axis = $(e.currentTarget).hasClass('rows') ? "ROWS" : "COLUMNS"
