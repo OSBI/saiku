@@ -436,6 +436,8 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
 					memberInfo.setFormattedValue(member.getCaption()); // First try to get a formatted value
 					memberInfo.setParentDimension(member.getDimension().getName());
 					memberInfo.setUniquename(member.getUniqueName());
+					memberInfo.setHierarchy(member.getHierarchy().getName());
+					memberInfo.setLevel(member.getLevel().getUniqueName());
 //					try {
 //						memberInfo.setChildMemberCount(member.getChildMemberCount());
 //					} catch (OlapException e) {

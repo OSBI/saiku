@@ -275,7 +275,6 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
 						memberInfo.setRawValue(s);
 						memberInfo.setFormattedValue(s);
 						memberInfo.setProperty("__headertype", "row_header_header");
-						memberInfo.setProperty("levelindex", "" + levels.indexOf(xLevel));
 						memberInfo.setProperty("hierarchy", "" + xLevel.getHierarchy().getUniqueName());
 						memberInfo.setProperty("uniqueName", "" + xLevel.getUniqueName());
 					}
@@ -487,9 +486,6 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
 
 
 				if (member != null) {
-					if (lvls != null && lvls.get(member.getDimension()) != null) {
-						memberInfo.setProperty("levelindex", "" + lvls.get(member.getDimension()).indexOf(member.getLevel().getDepth()));
-					}
 					if (x - 1 == offset)
 						memberInfo.setLastRow(true);
 
@@ -498,6 +494,8 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
 					memberInfo.setFormattedValue(member.getCaption()); // First try to get a formatted value
 					memberInfo.setParentDimension(member.getDimension().getName());
 					memberInfo.setUniquename(member.getUniqueName());
+					memberInfo.setHierarchy(member.getHierarchy().getName());
+					memberInfo.setLevel(member.getLevel().getUniqueName());
 //					try {
 //						memberInfo.setChildMemberCount(member.getChildMemberCount());
 //					} catch (OlapException e) {
@@ -565,11 +563,15 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
 							pInfo.setRawValue(parent.getCaption());
 							pInfo.setFormattedValue(parent.getCaption()); // First try to get a formatted value
 							pInfo.setParentDimension(parent.getDimension().getName());
+							pInfo.setHierarchy(parent.getHierarchy().getName());
 							pInfo.setUniquename(parent.getUniqueName());
+							pInfo.setLevel(parent.getLevel().getUniqueName());
 						} else {
 							pInfo.setRawValue("");
 							pInfo.setFormattedValue(""); // First try to get a formatted value
 							pInfo.setParentDimension(member.getDimension().getName());
+							pInfo.setHierarchy(member.getHierarchy().getName());
+							pInfo.setLevel(member.getLevel().getUniqueName());
 							pInfo.setUniquename("");
 						}
 						matrix.set(x_parent, y_parent, pInfo);
