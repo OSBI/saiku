@@ -45,12 +45,33 @@ var DrillthroughModal = Modal.extend({
         var key = this.query.get('connection') + "/" + 
                 this.query.get('catalog') + "/"
                 + ((schema == "" || schema == null) ? "null" : schema) 
-                + "/" + encodeURIComponent(this.query.get('cube'));
+                + "/" + this.query.get('cube');
 
+        var container = $("#template-drillthrough-list").html();
         var dimensions = Saiku.session.sessionworkspace.dimensions[key].get('data');
         var measures = Saiku.session.sessionworkspace.measures[key].get('data');
 
-        var container = $("#template-drillthrough-list").html();
+        if (typeof dimensions == "undefined" || typeof measures == "undefined") {
+                        if (localStorage && 
+                            localStorage.getItem("dimension." + key) !== null &&
+                            localStorage.getItem("measure." + key) !== null) {
+                            Saiku.session.sessionworkspace.dimensions[key] = new Dimension(JSON.parse(localStorage.getItem("dimension." + key)));
+                            Saiku.session.sessionworkspace.measures[key] = new Measure(JSON.parse(localStorage.getItem("measure." + key)));
+                            console.log("fetch from localstorage");
+                        } else {
+                            Saiku.session.sessionworkspace.dimensions[key] = new Dimension({ key: key });
+                            Saiku.session.sessionworkspace.measures[key] = new Measure({ key: key });
+                            Saiku.session.sessionworkspace.dimensions[key].fetch({ async : false });
+                            Saiku.session.sessionworkspace.measures[key].fetch({ async : false });
+                            console.log("fetch from server");
+                        }
+                        dimensions = Saiku.session.sessionworkspace.dimensions[key].get('data');
+                        measures = Saiku.session.sessionworkspace.measures[key].get('data');
+        } else {
+            console.log("fetch got it");
+        }
+
+
         var templ_dim =_.template($("#template-drillthrough-dimensions").html())({dimensions: dimensions});
         var templ_measure =_.template($("#template-drillthrough-measures").html())({measures: measures});
 

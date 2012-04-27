@@ -34,7 +34,7 @@ var SessionWorkspace = Backbone.Model.extend({
         this.initialized = false;
         this.first = true;
         // Check expiration on localStorage
-        if (localStorage && ! (localStorage.getItem('expiration') > (new Date()).getTime())) {
+        if (localStorage && localStorage.getItem('expiration') && !(localStorage.getItem('expiration') > (new Date()).getTime())) {
             localStorage.clear();
         }
         Saiku.ui.block("Loading datasources....");
