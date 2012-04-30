@@ -18,7 +18,7 @@
     
     min-width: 120px;
     max-width: 400px;
-    min-width: 150px !important; */
+    min-width: 150px !important;
     display: inline-block;
     position: absolute;
     list-style-type: none;
@@ -42,6 +42,7 @@
     position: relative;
     -moz-user-select: -moz-none;
     padding-right: 20px;
+    white-space: nowrap;
 }
 
 .context-menu-separator {

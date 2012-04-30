@@ -96,7 +96,7 @@ var Table = Backbone.View.extend({
             var dimsel = {};
             var used_levels = [];
 
-            self.workspace.query.action.get("/axis/" + axis + "/dimension/" +d, { 
+            self.workspace.query.action.get("/axis/" + axis + "/dimension/" + d, { 
                         success: function(response, model) {
                             dimsel = model;
                         },
@@ -159,6 +159,26 @@ var Table = Backbone.View.extend({
             }
 
             var member = $target.html();
+
+            var citems = {
+                    "name" : {name: "<b>" + member + "</b>", disabled: true },
+                    "sep1": "---------",
+                    "keeponly": {name: "Keep Only", payload: keep_payload },
+            };
+            if (d != "Measures") {
+                citems["fold1key"] = {
+                        name: "Include Level",
+                        items: lvlitems("include-")
+                    };
+                citems["fold2key"] = {
+                        name: "Keep and Include Level",
+                        items: lvlitems("keep-")
+                    };
+                citems["fold3key"] = {
+                        name: "Remove Level",
+                        items: lvlitems("remove-")
+                    };
+            }
             return {
                 callback: function(key, options) {
                     self.workspace.query.action.put('/axis/' + axis + '/dimension/' + d, { 
@@ -167,10 +187,18 @@ var Table = Backbone.View.extend({
                             self.workspace.query.fetch({ success: function() {
                                 
                                 $(self.workspace.el).find('.fields_list_body ul').empty();
-                                self.workspace.populate_selections(self.workspace.measure_list.el);
-                                $(self.workspace.el).find('.fields_list_body ul li')
-                                    .removeClass('ui-draggable-disabled ui-state-disabled')
+                                $(self.workspace.dimension_list.el).find('.parent_dimension a.folder_collapsed').removeAttr('style');
+                                
+                                $(self.workspace.dimension_list.el).find('.parent_dimension ul li')
+                                    .draggable('enable')
                                     .css({ fontWeight: 'normal' });
+
+                                $(self.workspace.measure_list.el).find('a.measure').parent()
+                                    .draggable('enable')
+                                    .css({ fontWeight: 'normal' });
+
+                                self.workspace.populate_selections(self.workspace.measure_list.el);
+
                              }});
 
                         },
@@ -180,24 +208,7 @@ var Table = Backbone.View.extend({
                     });
                     
                 },
-                items: {
-                    "name" : {name: "<b>" + member + "</b>", disabled: true },
-                    "sep1": "---------",
-                    "keeponly": {name: "Keep Only", payload: keep_payload },
-                    "fold1key": {
-                        name: "Include Level",
-                        items: lvlitems("include-")
-                    },
-                    "fold2key": {
-                        name: "Keep and Include Level",
-                        items: lvlitems("keep-")
-                    },
-                    "fold3key": {
-                        name: "Remove Level",
-                        items: lvlitems("remove-")
-                    }
-
-                }
+                items: citems
             } 
         }
     });

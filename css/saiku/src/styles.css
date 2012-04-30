@@ -752,7 +752,6 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     line-height: 18px;
     margin: 0;
     text-shadow: 1px 1px 0 #FFFFFF;
-    width: 200px;
 }
 .ui-dialog .ui-dialog-titlebar-close {
     background-position: -624px -97px;
