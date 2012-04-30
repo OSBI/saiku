@@ -269,6 +269,37 @@ var Workspace = Backbone.View.extend({
                     var dimension = axis.dimensionSelections[dim_iter];
                     var levels = [];
                     var members = {};
+
+                    if (dimension.name != "Measures" && dimension.selections.length > 0) {
+                        var ds = Saiku.session.sessionworkspace.dimensions[this.selected_cube].get('data');
+                        var h = dimension.selections[0].hierarchyUniqueName;
+                        _.each(ds, function(d) {
+                            if (dimension.name == d.name) {
+                                _.each(d.hierarchies, function(hierarchy) {
+                                    if (hierarchy.uniqueName == h) {
+                                        var levels = [];
+                                        _.each(hierarchy.levels, function(level) {
+                                            levels.push(level.uniqueName);
+                                        });
+                                        dimension.selections = _.sortBy(dimension.selections, function(selection) {
+                                            return _.indexOf(levels, selection.levelUniqueName);
+                                        }); 
+                                    }
+                                });
+                            }
+                        });
+                    } else if (dimension.name == "Measures" && dimension.selections.length > 0) {
+                        var ms = Saiku.session.sessionworkspace.measures[this.selected_cube].get('data');
+                        var mlist = [];
+                        _.each(ms, function(m) {
+                            mlist.push(m.uniqueName);
+                        });
+                        dimension.selections = _.sortBy(dimension.selections, function(selection) {
+                            return _.indexOf(mlist, selection.uniqueName);
+                        }); 
+                    }
+
+
                     for (var sel_iter = 0; sel_iter < dimension.selections.length; sel_iter++) {
                         var selection = dimension.selections[sel_iter];
                         
