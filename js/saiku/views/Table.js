@@ -198,6 +198,9 @@ var Table = Backbone.View.extend({
                                     .css({ fontWeight: 'normal' });
 
                                 self.workspace.populate_selections(self.workspace.measure_list.el);
+                                $(self.workspace.el).find('.fields_list_body ul li')
+                                    .removeClass('ui-draggable-disabled ui-state-disabled')
+                                    .css({ fontWeight: 'normal' });
 
                              }});
 
