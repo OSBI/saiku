@@ -47,11 +47,16 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
 	private Map<String,SaikuDatasource> datasources = new HashMap<String,SaikuDatasource>();
 
-	public PentahoDatasourceManager() {
-		load();
-		MondrianProperties.instance().DataSourceResolverClass.setString("org.saiku.plugin.PentahoDataSourceResolver");
+	public void setDatasourceResolverClass(String datasourceResolverClass) {
+		MondrianProperties.instance().DataSourceResolverClass.setString(datasourceResolverClass);
 	}
-
+	
+	public PentahoDatasourceManager() {
+	}
+	
+	public void init() {
+		load();
+	}
 
 	public void load() {
 		datasources.clear();
