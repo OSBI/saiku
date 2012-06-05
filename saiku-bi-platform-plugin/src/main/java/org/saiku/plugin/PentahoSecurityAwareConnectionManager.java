@@ -137,18 +137,21 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 							roles += r +",";
 						}
 					}
-				}
-				System.out.println("Setting role to datasource:" + datasource.getName() + " role: " + roles);
-				
-				if (validMondrianRolesForUser != null && validMondrianRolesForUser.length == 0) {
-					return true;
-				}
-				else if (validMondrianRolesForUser != null && validMondrianRolesForUser.length == 1) {
-					c.setRoleName(validMondrianRolesForUser[0]);
+
+					System.out.println("Setting role to datasource:" + datasource.getName() + " role: " + roles);
+
+					if (validMondrianRolesForUser != null && validMondrianRolesForUser.length == 0) {
+						return true;
+					}
+					else if (validMondrianRolesForUser != null && validMondrianRolesForUser.length == 1) {
+						c.setRoleName(validMondrianRolesForUser[0]);
+					} else {
+						SaikuMondrianHelper.setRoles(c, validMondrianRolesForUser);
+					}
 				} else {
-					SaikuMondrianHelper.setRoles(c, validMondrianRolesForUser);
+					c.setRoleName(null);
 				}
-				
+
 
 				return true;
 			} catch (Exception e) {
