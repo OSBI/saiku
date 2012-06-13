@@ -28,6 +28,7 @@ import java.util.Map;
 
 import mondrian.olap4j.SaikuMondrianHelper;
 
+import org.apache.commons.lang.StringUtils;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
 import org.saiku.datasources.connection.AbstractConnectionManager;
@@ -198,9 +199,12 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 		if (con.getConnection() instanceof OlapConnection) 
 		{
 			OlapConnection c = (OlapConnection) con.getConnection();
+			if (c == null)
+				return false;
+			
 			System.out.println("Setting role to datasource:" + datasource.getName() + " role:" + roleName);
 			try {
-				if (SaikuMondrianHelper.isMondrianConnection(c) && roleName.split(",").length > 1) {
+				if (StringUtils.isNotBlank(roleName) && SaikuMondrianHelper.isMondrianConnection(c) && roleName.split(",").length > 1) {
 					SaikuMondrianHelper.setRoles(c, roleName.split(","));
 				} else {
 					c.setRoleName(roleName);

@@ -5,7 +5,7 @@
 # Use this on pentaho 4.5 (mondrian 3.4) onwards
 
 cp plugin.spring.xml plugin.spring.xml.bak
-sed  's/\(.*datasourceResolverClass.*\)/<!-- \1 -->/' plugin.spring.xml.bak > plugin.spring.xml
+sed  's/\(.*datasourceResolverClass.*\)/<!-- \1 -->/; s/\(.*saikuDatasourceProcessor.*\)/<!-- \1 -->/; s/PentahoSecurityAwareConnectionManager" init-method="init"/PentahoSecurityAwareConnectionManager"/; ' plugin.spring.xml.bak > plugin.spring.xml
 
 rm lib/mondrian* lib/olap4j* lib/eigenbase*
 
