@@ -4,7 +4,6 @@
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-ui</artifactId>
 	<packaging>pom</packaging>
-	ersion>2.2-SNAPSHOT</version>
 	<version>2.4-SNAPSHOT</version>
 	<build>
 		<plugins>
