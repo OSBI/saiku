@@ -31,6 +31,7 @@ var Result = Backbone.Model.extend({
     },
     
     parse: function(response) {
+        this.result = response;
         this.query.workspace.trigger('query:result', {
             workspace: this.query.workspace,
             data: response
@@ -38,6 +39,10 @@ var Result = Backbone.Model.extend({
         
         // Show the UI if hidden
         Saiku.ui.unblock();
+    },
+    
+    lastresult: function () {
+        return this.result;
     },
     
     url: function() {

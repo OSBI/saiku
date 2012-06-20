@@ -34,7 +34,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         // Maintain `this` in callbacks
         _.bindAll(this, "call", "reflect_properties", "run_query",
             "swap_axes_on_dropzones", "display_drillthrough","clicked_cell_drillthrough_export",
-            "clicked_cell_drillthrough","activate_buttons");
+            "clicked_cell_drillthrough","activate_buttons", "switch_to_mdx","post_mdx_transform");
         
         // Redraw the toolbar to reflect properties
         this.workspace.bind('properties:loaded', this.reflect_properties);
@@ -51,7 +51,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     activate_buttons: function(args) {
-        if (args.data && args.data.cellset && args.data.cellset.length > 0 ) {
+        if (args != null && args.data && args.data.cellset && args.data.cellset.length > 0 ) {
             $(args.workspace.toolbar.el).find('.button')
                 .removeClass('disabled_toolbar');            
             
@@ -62,7 +62,7 @@ var WorkspaceToolbar = Backbone.View.extend({
             $(args.workspace.toolbar.el).find('.button')
                 .addClass('disabled_toolbar').removeClass('on');
             $(args.workspace.toolbar.el)
-                .find('.auto,.non_empty,.toggle_fields,.toggle_sidebar')
+                .find('.run,.auto,.non_empty,.toggle_fields,.toggle_sidebar,.switch_to_mdx')
                 .removeClass('disabled_toolbar');
         }
         
@@ -92,7 +92,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         
         return false;
     },
-    
+
     reflect_properties: function() {
         var properties = this.workspace.query.properties ?
             this.workspace.query.properties.properties : Settings.QUERY_PROPERTIES;
@@ -283,5 +283,58 @@ var WorkspaceToolbar = Backbone.View.extend({
         window.location = Settings.REST_URL +
             Saiku.session.username + "/query/" + 
             this.workspace.query.id + "/export/csv";
+    },
+
+    switch_to_mdx: function(event) {
+        $(this.workspace.el).find('.workspace_fields').hide();
+        $(this.el).find('.auto, ,.toggle_fields, .query_scenario, .buckets, .non_empty, .swap_axis, .mdx, .switch_to_mdx').parent().hide();
+        
+
+        $(this.el).find('.run').attr('href','#run_mdx');
+        $(this.el).find('.run, .save').removeClass('disabled_toolbar');
+
+        if (Settings.MODE != "view" && Settings.MODE != "table") {
+            $(this.workspace.el).find('.workspace_editor .mdx_input').removeClass('hide');
+            $(this.workspace.el).find('.mdx_input').width($(this.el).width()-20);
+        }
+
+
+
+        if (this.workspace.dimension_list && this.workspace.measure_list) {
+            $(this.workspace.dimension_list.el).find('ul li a').css({fontWeight: "normal"});
+            $(this.workspace.measure_list.el).find('ul li a').css({fontWeight: "normal"});
+            $(this.workspace.dimension_list.el).find('.measure,.dimension').parent('li').draggable('enable');
+            $(this.workspace.measure_list.el).find('.measure,.dimension').parent('li').draggable('enable');
+        }
+        this.activate_buttons({ workspace: this.workspace });
+        $(this.workspace.toolbar.el)
+                .find('.run')
+                .removeClass('disabled_toolbar');
+
+        $(this.workspace.table.el).empty();
+        this.post_mdx_transform();
+
+    },
+
+    post_mdx_transform: function() {
+        var self = this;
+
+        var transformed = function() {
+            self.workspace.query.set({type:'MDX'});
+        };
+
+        this.workspace.query.action.get("/mdx", { 
+            success: function(model, response) {
+                $(self.workspace.el).find(".mdx_input").val(response.mdx);
+                self.workspace.query.action.post("/qm2mdx", { success: transformed } );
+
+            }
+        });
+
+    },
+
+    run_mdx: function(event) {
+        var mdx = $(this.workspace.el).find(".mdx_input").val();
+        this.workspace.query.run(true, mdx);
     }
 });

@@ -33,7 +33,7 @@ var SelectionsModal = Modal.extend({
         'click a': 'call',
         'change #show_unique': 'show_unique_action',
         'dblclick select option' : 'click_move_selection'
-    },
+    },    
 
     show_unique_option: false,
     
@@ -65,6 +65,7 @@ var SelectionsModal = Modal.extend({
         this.bind('open', this.post_render);
         this.render();
         
+        $(this.el).parent().find('.ui-dialog-titlebar-close').bind('click',this.finished);
         // Fetch available members
         this.member = new Member({}, {
             cube: args.workspace.selected_cube,
@@ -101,7 +102,7 @@ var SelectionsModal = Modal.extend({
                 var member = this.selected_members[j];
                 if (member.levelUniqueName == this.member.level &&
                     member.type == "MEMBER") {
-                    selected_members_opts += "<option value='" + member.uniqueName + "'>" + member.caption + "</option>";
+                    selected_members_opts += "<option value='" + escape(member.uniqueName) + "'>" + member.caption + "</option>";
                     used_members.push(member.caption);
                 }
             }
@@ -118,18 +119,47 @@ var SelectionsModal = Modal.extend({
             var available_members_opts = "";
             for (var i = 0; i < this.available_members.length; i++) {
                 var member = this.available_members[i];
-                available_members_opts += "<option value='" + member.uniqueName + "'>" + member.caption + "</option>";
+                available_members_opts += "<option value='" + escape(member.uniqueName) + "'>" + member.caption + "</option>";
             }
             if (this.available_members.length > 0) {
                 $(available_members_opts).appendTo($(this.el).find('.available_selections select'));
             }
+            var self = this;
+            $(this.el).find('.filterbox').autocomplete({
+                    minLength: 1,
+                    source: function(request, response ) {
+                        response( $.map( self.available_members, function( item ) {
+                                        if (item.caption.toLowerCase().indexOf(request.term.toLowerCase()) > -1) {
+                                            return {
+                                                label: item.caption ,
+                                                value: item.uniqueName
+                                            };
+                                        }
+                                }));
+                    },
+                    select:  function(event, ui) { 
+                        var value = self.show_unique_option == false? escape(ui.item.value) : ui.item.label;
+                        $(self.el).find('.available_selections select option[value="' + value + '"]')
+                            .appendTo($(self.el).find('.used_selections select'));
+                        $('#filter_selections').val('');
 
+                    }, close: function(event, ui) { 
+                        $('#filter_selections').val('');
+                    }
+
+
+                }).data( "autocomplete" )._renderItem = function( ul, item ) {
+                return $( "<li></li>" )
+                    .data( "item.autocomplete", item )
+                    .append( "<a class='label'>" + item.label + "</a><br><a class='description'>" + item.value + "</a>" )
+                    .appendTo( ul );
+                };
         // Show dialog
         Saiku.ui.unblock();
     },
     
     post_render: function(args) {
-        $(args.modal.el).parents('.ui-dialog').css({ width: "500px" });
+        $(args.modal.el).parents('.ui-dialog').css({ width: "800px", left: "inherit", margin:"0 auto" });
     },
     
     move_selection: function(event) {
@@ -149,12 +179,12 @@ var SelectionsModal = Modal.extend({
       var to = ($(event.target).parent().parent().hasClass('used_selections')) ? '.available_selections' : '.used_selections';
       $(event.target).appendTo($(this.el).find(to +' select'));
     },
-    
+
     show_unique_action: function() {
         $.each($(this.el).find('option'), function(i, option) {
             var text = $(option).text();
-            $(option).text($(option).val());
-            $(option).val(text);
+            $(option).text(unescape($(option).val()));
+            $(option).val(escape(text));
         });
         this.show_unique_option= ! this.show_unique_option;
     },
@@ -187,7 +217,7 @@ var SelectionsModal = Modal.extend({
             $(this.el).find('.used_selections option')
                 .each(function(i, selection) {
                 var value = show_u ? 
-                    $(selection).text() : $(selection).val();
+                    $(selection).text() : unescape($(selection).val());
                 updates.push({
                     uniquename: value,
                     type: 'member',
@@ -208,6 +238,8 @@ var SelectionsModal = Modal.extend({
     },
     
     finished: function() {
+        $('#filter_selections').remove();
+        this.available_members = null;
         $(this.el).dialog('destroy').remove();
         this.query.run();
     }

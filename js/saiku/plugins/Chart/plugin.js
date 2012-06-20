@@ -70,8 +70,11 @@ var Chart = Backbone.View.extend({
     add_button: function() {
         var $chart_button = 
             $('<a href="#chart" class="chart button disabled_toolbar i18n" title="Toggle Chart"></a>')
-            .css({ 'background': 
-                "url('js/saiku/plugins/Chart/chart.png') 50% 50% no-repeat" });
+            .css({  'background-image': "url('js/saiku/plugins/Chart/chart.png')",
+                    'background-repeat':'no-repeat',
+                    'background-position':'50% 50%'
+                });
+
         var $chart_li = $('<li class="seperator"></li>').append($chart_button);
         $(this.workspace.toolbar.el).find("ul").append($chart_li);
     },
@@ -267,21 +270,41 @@ var Chart = Backbone.View.extend({
         dataType: "script",
         cache: true,
         success: function() {
-            function new_workspace(args) {
-                // Add chart element
-                args.workspace.chart = new Chart({ workspace: args.workspace });
-            }
-            
-            // Attach chart to existing tabs
-            for(var i = 0; i < Saiku.tabs._tabs.length; i++) {
-                var tab = Saiku.tabs._tabs[i];
-                new_workspace({
-                    workspace: tab.content
-                });
+
+            var initPlugin = function(session) {
+                function new_workspace(args) {
+                    // Add chart element
+                    if (typeof args.workspace.chart == "undefined") {
+                        args.workspace.chart = new Chart({ workspace: args.workspace });
+                    } 
+                }
+
+                function clear_workspace(args) {
+                    if (typeof args.workspace.chart != "undefined") {
+                        $(args.workspace.chart.nav).hide();
+                        $(args.workspace.chart.el).hide();
+                        $(args.workspace.chart.el).parents().find('.workspace_results table').show();
+                    }
+                }
+                
+                // Attach chart to existing tabs
+                for(var i = 0; i < Saiku.tabs._tabs.length; i++) {
+                    var tab = Saiku.tabs._tabs[i];
+                    new_workspace({
+                        workspace: tab.content
+                    });
+                };
+                
+                // Attach chart to future tabs
+                session.bind("workspace:new", new_workspace);
+                session.bind("workspace:clear", clear_workspace);
             };
-            
-            // Attach chart to future tabs
-            Saiku.session.bind("workspace:new", new_workspace);
+
+            if (typeof Saiku.session == "undefined") {
+                Saiku.events.bind('session:new', initPlugin);
+            } else {
+                initPlugin(Saiku.session);
+            }
         }
     });
 }());

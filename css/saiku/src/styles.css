@@ -632,6 +632,34 @@ html, body {
     color: #983030;
     text-decoration: none;
 }
+.d_measure span.sort.BASC,
+.d_dimension span.sort.BASC {
+background: url("../../../images/src/sort_up.png") no-repeat;
+    height: 16px;
+    width: 16px;
+    float: right;
+    cursor: pointer;
+}
+
+.d_measure span.sort.BDESC,
+.d_dimension span.sort.BDESC {
+background: url("../../../images/src/sort_down.png") no-repeat;
+    height: 16px;
+    width: 16px;
+    float: right;
+    cursor: pointer;
+}
+
+.d_measure span.sort.none,
+.d_dimension span.sort.none {
+background: url("../../../images/src/sort_none.png") no-repeat;
+    height: 16px;
+    width: 16px;
+    float: right;
+    cursor: pointer;
+}
+
+
 .empty_placeholder,
 .placeholder {
     border: 1px dashed #999;
@@ -724,7 +752,6 @@ html, body {
     line-height: 18px;
     margin: 0;
     text-shadow: 1px 1px 0 #FFFFFF;
-    width: 200px;
 }
 .ui-dialog .ui-dialog-titlebar-close {
     background-position: -624px -97px;
@@ -797,7 +824,7 @@ html, body {
 	display: none;
 }
 .dialog_selections .dialog_body {
-    height: 330px;
+    height: 380px;
 }
 .dialog_selections .dialog_body .available_selections {
     padding-left: 5px;
@@ -812,19 +839,51 @@ html, body {
 }
 .dialog_selections .dialog_body .used_selections {
     padding-right: 5px;
+    padding-top: 36px;
     float: right;
 }
 .dialog_selections .dialog_body select {
     height: 270px;
-    width: 200px;
+    width: 350px;
     font-size: 11px;
-    overflow-x: scroll;
+    overflow: scroll;
 }
 .dialog_selections .options {
     float: left;
-    width: 150px;
+    width: 250px;
     text-align: left;
 }
+.dialog_selections .available_selections input[type="text"] {
+    width: 200px;
+}
+.ui-menu {
+    list-style:none;
+    padding: 2px;
+    margin: 0;
+    display:block;
+    float: left;
+}
+.ui-menu .ui-menu {
+    margin-top: -3px;
+}
+.ui-menu .ui-menu-item {
+    margin:0;
+    padding: 0px;
+    zoom: 1;
+    float: left;
+    clear: left;
+    width: 100%;
+}
+.ui-menu .ui-menu-item a {
+    text-decoration:none;
+}
+.ui-menu .ui-menu-item a.description {
+    font-size: 8px;
+    color: #999;
+    padding: 0;
+}
+
+
 
 .dialog_drillthroughview .dialog_icon {
     display: none;
@@ -923,6 +982,16 @@ html, body {
   cursor: pointer;
 }
 
+.workspace_results .headerhighlight:hover {
+  background: #c2d5e2 !important;
+}
+.workspace_results .headerhighlight {
+  cursor: pointer;
+}
+
+.workspace_results table td.selected {
+  background: #c2d5e2 !important;
+}
 
 /** Save Dialog */
 .error_msg {
@@ -1066,7 +1135,9 @@ html, body {
 }
 
 .workspace_toolbar .switch_to_mdx {
-  /* this isn't in the sprite */
+  background-image: url('../../../images/src/switch_to_mdx.png');
+  background-position: 7px 7px;
+  background-repeat:no-repeat;
 }
 
 .form_button {
@@ -1094,6 +1165,73 @@ html, body {
     opacity: 0.5 !important;
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
 }
+
+.bucket_items {
+    background: #FCFCFC;
+    border: 1px solid #CCC;
+    height: 32px;
+    margin: 0 0 10px 0;
+    padding: 3px 10px 3px 5px;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
+
+.bucket_items ul {
+    margin: 0;
+    padding: 0;
+}
+.bucket_items ul li {
+    display: inline;
+    float: left;
+    padding-left: 5px;
+}
+.bucket_items ul li.seperator {
+    border-left: 1px solid #D5D5D5;
+    margin-left: 5px;
+}
+.bucket_items a.button {
+    text-decoration: none;
+    font-weight: bold;
+    color:black;
+    display: block;
+    height: 16px;
+    padding: 8px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+.bucket_items a.add_bucket {
+        background-image: url('../../../js/saiku/plugins/Buckets/tag_blue_add.png');
+        background-repeat:no-repeat;
+        width: 16px;
+        background-position: 50% 50%;
+}
+
+.bucket_items a.button:hover {
+    border: 1px solid #CCC;
+    padding: 7px;
+}
+
+.bucket_items a.delete {
+    text-decoration:none;
+    color:black;
+}
+.bucket_items a.on {
+    border: 1px solid #CCC;
+    background-color: #E0E0E0;
+    padding: 7px !important;
+}
+
+.bucket_items .save {
+    background-position: -485px -90px;
+    width: 16px;
+}
+
+.bucket_items .export {
+    background-image: url('../../../images/src/export_drillthrough.png');
+    background-repeat:no-repeat;
+    background-position: 7px 7px;
+    width: 16px;
+}
+
 
 /* CCC styles */
 .tipsy { pointer-events: none; padding: 5px; font-size: 10px; font-family: Arial,Helvetica,sans-serif; position: absolute; z-index: 100000; }

@@ -59,7 +59,7 @@ var Repository = Backbone.Collection.extend({
     
     url: function() {
         var segment = Settings.BIPLUGIN ? 
-            "/pentahorepository" : "/repository";
+            "/pentahorepository" : "/repository/";
         return encodeURI(Saiku.session.username + segment);
     }
 });

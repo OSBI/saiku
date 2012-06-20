@@ -32,11 +32,12 @@ var SessionWorkspace = Backbone.Model.extend({
         _.extend(this, Backbone.Events);
         _.bindAll(this, "process_datasources", "prefetch_dimensions");
         this.initialized = false;
-
+        this.first = true;
         // Check expiration on localStorage
-        if (localStorage && ! (localStorage.getItem('expiration') > (new Date()).getTime())) {
+        if (localStorage && localStorage.getItem('expiration') && !(localStorage.getItem('expiration') > (new Date()).getTime())) {
             localStorage.clear();
         }
+        Saiku.ui.block("Loading datasources....");
         this.fetch({success:this.process_datasources},{});
         
     },
@@ -109,8 +110,10 @@ var SessionWorkspace = Backbone.Model.extend({
                     var schema = catalog.schemas[k];
                     for(var l = 0; l < schema.cubes.length; l++) {
                         var cube = schema.cubes[l];
-                        var key = connection.name + "/" + catalog.name + "/" +
-                            schema.name + "/" + cube.name;
+                        var key = connection.name + "/" + catalog.name + "/"
+                            + ((schema.name == "" || schema.name == null) ? "null" : schema.name) 
+                            + "/" + encodeURIComponent(cube.name);
+
                         if (localStorage && 
                             localStorage.getItem("dimension." + key) !== null &&
                             localStorage.getItem("measure." + key) !== null) {
@@ -137,7 +140,8 @@ var SessionWorkspace = Backbone.Model.extend({
     },
     
     url: function() {
-        if (!this.initialized) {
+        if (this.first) {
+            this.first = false;
             return encodeURI(Saiku.session.username + "/discover/");
         }
         else {

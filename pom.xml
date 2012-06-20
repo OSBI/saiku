@@ -4,7 +4,8 @@
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-ui</artifactId>
 	<packaging>pom</packaging>
-	<version>2.2-SNAPSHOT</version>
+	ersion>2.2-SNAPSHOT</version>
+	<version>2.4-SNAPSHOT</version>
 	<build>
 		<plugins>
          <plugin>
@@ -13,6 +14,9 @@
         <version>2.3.2</version>
         <configuration>
             <srcDir>${basedir}/js/saiku/</srcDir>
+            <exclude>
+                <param>ccc</param>
+            </exclude>
             <recurse>7</recurse><!-- This is the *level of recursion*, not a boolean -->
         </configuration>
         <executions>
@@ -25,6 +29,7 @@
             </execution>
         </executions>
     </plugin>
+    <!-- DISABLE YUI COMPRESSOR
     <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>yuicompressor-maven-plugin</artifactId>
@@ -40,15 +45,9 @@
           <sourceDirectory>${basedir}/js/saiku/</sourceDirectory>
           <aggregations>
             <aggregation>
-              <!-- remove files after aggregation (default: false)
-              <removeIncluded>true</removeIncluded>
-              -->
-              <!-- insert new line after each concatenation (default: false) -->
               <insertNewLine>true</insertNewLine>
               <output>${basedir}/target/all.js</output>
-              <!-- files to include, path relative to output's directory or absolute path-->
-              <!--inputDir>base directory for non absolute includes, default to parent dir of output</inputDir-->
-              <!-- includes>
+              <includes>
 
                 <include>classes/Settings.js</include>
                 <include>classes/models/Dimension.js</include>
@@ -79,13 +78,12 @@
                 <include>classes/Saiku.js</include>
                 <include>classes/adapters/SaikuServer.js</include>
                 <include>classes/routers/QueryRouter.js</include>
-
-              </includes -->
-
+              </includes>
             </aggregation>
           </aggregations>
         </configuration>
       </plugin>
+      -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
