@@ -33,6 +33,12 @@ var SavedQuery = Backbone.Model.extend({
     },
     
     move_query_to_workspace: function(model, response) {
+        for (var key in Settings) {
+            if (key.match("^PARAM")=="PARAM") {
+                var variable = key.substring("PARAM".length, key.length)
+                model.xml = model.xml.replace("${" + variable + "}", Settings[key]);
+            }
+        }
         var query = new Query({ 
             xml: model.xml
         }, {
