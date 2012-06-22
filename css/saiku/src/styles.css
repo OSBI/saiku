@@ -922,6 +922,10 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 }
 
 /** Workspace Results */
+.workspace_results_info {
+    color: #999999;
+    padding-right: 20px;
+}
 
 .workspace_results {
     margin-right: 10px;
