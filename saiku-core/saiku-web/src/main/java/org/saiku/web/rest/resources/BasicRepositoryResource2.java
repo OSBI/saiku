@@ -167,7 +167,7 @@ public class BasicRepositoryResource2 {
 	@POST
 	@Path("/resource")
 	public Status saveResource (
-			@QueryParam("file") String file, 
+			@FormParam("file") String file, 
 			@FormParam("content") String content)
 	{
 		try{
@@ -231,7 +231,7 @@ public class BasicRepositoryResource2 {
 					repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath));
 				}
 				if (file.getType().equals(FileType.FOLDER)) { 
-					repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, getRepositoryObjects(file, fileType)));
+					repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, getRepositoryObjects(file, fileType)));
 				}
 			}
 		}

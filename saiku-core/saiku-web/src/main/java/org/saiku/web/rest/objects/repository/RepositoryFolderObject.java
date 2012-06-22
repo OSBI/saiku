@@ -8,12 +8,14 @@ public class RepositoryFolderObject implements IRepositoryObject {
 	private Type type;
 	private String name;
 	private String id;
+	private String path;
 	private List<IRepositoryObject> repoObjects;
 
-	public RepositoryFolderObject(String name, String id, List<IRepositoryObject> repoObjects) {
+	public RepositoryFolderObject(String name, String id, String path,  List<IRepositoryObject> repoObjects) {
 		this.type = Type.FOLDER;
 		this.name = name;
 		this.id = id;
+		this.path = path;
 		this.repoObjects = repoObjects;
 		
 	}
@@ -28,6 +30,11 @@ public class RepositoryFolderObject implements IRepositoryObject {
 	public String getId() {
 		return id;
 	}
+	
+	public String getPath() {
+		return path;
+	}
+	
 	public List<IRepositoryObject> getRepoObjects() {
 		return repoObjects;
 	}
