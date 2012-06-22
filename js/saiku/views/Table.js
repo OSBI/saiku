@@ -250,12 +250,15 @@ var Table = Backbone.View.extend({
         var colSpan;
         var colValue;
         var isHeaderLowestLvl;
+        var isLastColumn;
+        var nextHeader;
 
         for (var row = 0; row < table.length; row++) {
             contents += "<tr>";
-            colSpan = 0;
+            colSpan = 1;
             colValue = "";
             isHeaderLowestLvl = false;
+            isLastColumn = false;
             for (var col = 0; col < table[row].length; col++) {
                 var header = data[row][col];
 
@@ -266,22 +269,25 @@ var Table = Backbone.View.extend({
                     contents += '<th class="all_null"><div>&nbsp;</div></th>';
                 } // If the cell is a column header and isn't null (column header of table)
                 else if (header.type === "COLUMN_HEADER") {
-                    if ((colValue == "") && (table[row].length == 1) || isHeaderLowestLvl) {
+                    if (table[row].length == col+1)
+                        isLastColumn = true;
+                    else
+                        nextHeader = data[row][col+1];
+
+                    if (isHeaderLowestLvl) {
+                        // Is a lowest level in the column header. It is always 1 cell wide
                         contents += '<th class="col"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
-                    } else if ((colValue == "") && (table[row].length > col+1)) {
-                        colValue = header.value;
-                        colSpan++;
+                    } else if (isLastColumn) {
+                        // Last column in a row....
+                        contents += '<th class="col" style="text-align: center;" colspan="' + colSpan+1 + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
                     } else {
-                        if (colValue != header.value) {
-                            contents += '<th class="col" style="text-align: center;" colspan="' + colSpan + '"><div rel="' + row + ":" + col +'">' + colValue + '</div></th>';
-                            colValue = header.value;
+                        // All the rest...
+                        if (header.value != nextHeader.value) {
+                            contents += '<th class="col" style="text-align: center;" colspan="' + (colSpan == 0 ? 1 : colSpan) + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
                             colSpan = 1;
                         } else {
                             colSpan++;
                         }
-
-                        if (table[row].length == col+1)
-                            contents += '<th class="col" style="text-align: center;" colspan="' + colSpan + '"><div rel="' + row + ":" + col +'">' + colValue + '</div></th>';
                     }
                 } // If the cell is a row header and is null (grouped row header)
                 else if (header.type === "ROW_HEADER" && header.value === "null") {
