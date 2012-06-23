@@ -35,6 +35,12 @@ var Settings = {
         'saiku.olap.query.nonempty.rows': 'true',
         'saiku.olap.query.nonempty.columns': 'true'
     },
+    /* Valid values for CELLSET_FORMATTER:
+     * 1) hierarchical
+     * 2) flattened
+     * 3) flat
+     */
+    CELLSET_FORMATTER: "flattened",
     PLUGINS: [
         "Chart"
     ],

@@ -77,9 +77,7 @@
                 <include>classes/Saiku.js</include>
                 <include>classes/adapters/SaikuServer.js</include>
                 <include>classes/routers/QueryRouter.js</include>
-
               </includes>
-
             </aggregation>
           </aggregations>
         </configuration>

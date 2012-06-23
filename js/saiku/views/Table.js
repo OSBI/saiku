@@ -247,23 +247,52 @@ var Table = Backbone.View.extend({
         }
 
     },
-    
+
     process_data: function(data) {
         var contents = "";
         var table = data ? data : [];
+        var colSpan;
+        var colValue;
+        var isHeaderLowestLvl;
+        var isLastColumn;
+        var nextHeader;
+
         for (var row = 0; row < table.length; row++) {
             contents += "<tr>";
+            colSpan = 1;
+            colValue = "";
+            isHeaderLowestLvl = false;
+            isLastColumn = false;
             for (var col = 0; col < table[row].length; col++) {
                 var header = data[row][col];
-                
+
                 // FIXME - this needs to be cleaned up
-                
+
                 // If the cell is a column header and is null (top left of table)
                 if (header.type === "COLUMN_HEADER" && header.value === "null") {
                     contents += '<th class="all_null"><div>&nbsp;</div></th>';
                 } // If the cell is a column header and isn't null (column header of table)
                 else if (header.type === "COLUMN_HEADER") {
-                    contents += '<th class="col"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
+                    if (table[row].length == col+1)
+                        isLastColumn = true;
+                    else
+                        nextHeader = data[row][col+1];
+
+                    if (isHeaderLowestLvl) {
+                        // Is a lowest level in the column header. It is always 1 cell wide
+                        contents += '<th class="col"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
+                    } else if (isLastColumn) {
+                        // Last column in a row....
+                        contents += '<th class="col" style="text-align: center;" colspan="' + colSpan+1 + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
+                    } else {
+                        // All the rest...
+                        if (header.value != nextHeader.value) {
+                            contents += '<th class="col" style="text-align: center;" colspan="' + (colSpan == 0 ? 1 : colSpan) + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
+                            colSpan = 1;
+                        } else {
+                            colSpan++;
+                        }
+                    }
                 } // If the cell is a row header and is null (grouped row header)
                 else if (header.type === "ROW_HEADER" && header.value === "null") {
                     contents += '<th class="row_null"><div>&nbsp;</div></th>';
@@ -273,6 +302,7 @@ var Table = Backbone.View.extend({
                 }
                 else if (header.type === "ROW_HEADER_HEADER") {
                     contents += '<th class="row_header"><div>' + header.value + '</div></th>';
+                    isHeaderLowestLvl = true;
                 } // If the cell is a normal data cell
                 else if (header.type === "DATA_CELL") {
                     contents += '<td class="data"><div alt="' + header.properties.raw + '" rel="' + header.properties.position + '">' + header.value + '</div></td>';
@@ -280,12 +310,11 @@ var Table = Backbone.View.extend({
             }
             contents += "</tr>";
         }
-        
+
         // Append the table
         $(this.el).html(contents);
         this.post_process();
-    },
-    post_process: function() {
+    },    post_process: function() {
         if (this.workspace.query.get('type') == 'QM' && Settings.MODE != "view") {
             $(this.el).find('th.row, th.col').addClass('headerhighlight');
         }
