@@ -954,6 +954,10 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     background: #f9f9f9;
     text-align: left;
 }
+.workspace_results table th.col_null {
+    background: #f9f9f9;
+    text-align: left;
+}
 .workspace_results table th.row {
     border-top: 1px solid #d5d5d5;
     background: #f9f9f9;
@@ -966,7 +970,6 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 }
 
 .workspace_results table th.row_null {
-    border-top: 1px solid #d5d5d5;
     background: #f9f9f9;
 }
 .workspace_results table td.data {

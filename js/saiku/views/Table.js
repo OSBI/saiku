@@ -254,8 +254,11 @@ var Table = Backbone.View.extend({
         var colSpan;
         var colValue;
         var isHeaderLowestLvl;
-        var isLastColumn;
+        var isLastColumn, isLastRow;
         var nextHeader;
+        var processedRowHeader = false;
+        var lowestRowLvl = 0;
+        var rowGroups = [];
 
         for (var row = 0; row < table.length; row++) {
             contents += "<tr>";
@@ -263,6 +266,8 @@ var Table = Backbone.View.extend({
             colValue = "";
             isHeaderLowestLvl = false;
             isLastColumn = false;
+            isLastRow = false;
+
             for (var col = 0; col < table[row].length; col++) {
                 var header = data[row][col];
 
@@ -270,7 +275,7 @@ var Table = Backbone.View.extend({
 
                 // If the cell is a column header and is null (top left of table)
                 if (header.type === "COLUMN_HEADER" && header.value === "null") {
-                    contents += '<th class="all_null"><div>&nbsp;</div></th>';
+                    contents += '<th class="' + (processedRowHeader ? "col" : "all" ) + '_null"><div>&nbsp;</div></th>';
                 } // If the cell is a column header and isn't null (column header of table)
                 else if (header.type === "COLUMN_HEADER") {
                     if (table[row].length == col+1)
@@ -298,11 +303,42 @@ var Table = Backbone.View.extend({
                     contents += '<th class="row_null"><div>&nbsp;</div></th>';
                 } // If the cell is a row header and isn't null (last row header)
                 else if (header.type === "ROW_HEADER") {
-                    contents += '<th class="row"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
+                    if (lowestRowLvl == col)
+                        isHeaderLowestLvl = true;
+                    else
+                        nextHeader = data[row][col+1];
+
+                    var previousRow = data[row - 1];
+
+                    var same = !isHeaderLowestLvl && (col == 0 || previousRow[col-1].value == data[row][col-1].value) && header.value === previousRow[col].value;
+                    var value = (same ? "<div>&nbsp;</div>" : '<div rel="' + row + ":" + col +'">' + header.value + '</div>');
+                    var cssclass = (same ? "row_null" : "row");
+                    var colspan = 0;
+
+                    if (!isHeaderLowestLvl && nextHeader.value === "null") {
+                        colspan = 1;
+                        var group = header.properties.dimension;
+                        var level = header.properties.level;
+                        var groupWidth = (group in rowGroups ? rowGroups[group].length - rowGroups[group].indexOf(level) : 1);
+                        for (var k = col + 1; colspan < groupWidth && data[row][k] !== "null"; k++) {
+                            colspan = k - col;
+                        }
+                        col = col + colspan -1;
+                    }
+                    contents += '<th class="' + cssclass + '" ' + (colspan > 0 ? ' colspan="' + colspan + '"' : "") + '>' + value + '</th>';   
                 }
                 else if (header.type === "ROW_HEADER_HEADER") {
                     contents += '<th class="row_header"><div>' + header.value + '</div></th>';
                     isHeaderLowestLvl = true;
+                    processedRowHeader = true;
+                    lowestRowLvl = col;
+                    if (header.properties.hasOwnProperty("dimension")) {
+                        var group = header.properties.dimension;
+                        if (!(group in rowGroups)) {
+                            rowGroups[group] = [];
+                        }
+                        rowGroups[group].push(header.properties.level);
+                    }
                 } // If the cell is a normal data cell
                 else if (header.type === "DATA_CELL") {
                     contents += '<td class="data"><div alt="' + header.properties.raw + '" rel="' + header.properties.position + '">' + header.value + '</div></td>';
@@ -314,7 +350,8 @@ var Table = Backbone.View.extend({
         // Append the table
         $(this.el).html(contents);
         this.post_process();
-    },    post_process: function() {
+    },    
+    post_process: function() {
         if (this.workspace.query.get('type') == 'QM' && Settings.MODE != "view") {
             $(this.el).find('th.row, th.col').addClass('headerhighlight');
         }

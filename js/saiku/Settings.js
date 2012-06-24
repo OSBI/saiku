@@ -40,7 +40,7 @@ var Settings = {
      * 2) flattened
      * 3) flat
      */
-    CELLSET_FORMATTER: "flattened",
+    CELLSET_FORMATTER: "flat",
     PLUGINS: [
         "Chart"
     ],
