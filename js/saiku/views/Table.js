@@ -254,6 +254,7 @@ var Table = Backbone.View.extend({
         var colSpan;
         var colValue;
         var isHeaderLowestLvl;
+        var firstColumn;
         var isLastColumn, isLastRow;
         var nextHeader;
         var processedRowHeader = false;
@@ -267,32 +268,39 @@ var Table = Backbone.View.extend({
             isHeaderLowestLvl = false;
             isLastColumn = false;
             isLastRow = false;
+            headerStarted = false;
 
             for (var col = 0; col < table[row].length; col++) {
                 var header = data[row][col];
 
-                // FIXME - this needs to be cleaned up
-
                 // If the cell is a column header and is null (top left of table)
-                if (header.type === "COLUMN_HEADER" && header.value === "null") {
-                    contents += '<th class="' + (processedRowHeader ? "col" : "all" ) + '_null"><div>&nbsp;</div></th>';
+                if (header.type === "COLUMN_HEADER" && header.value === "null" && (firstColumn == null || col < firstColumn)) {
+                    contents += '<th class="all_null"><div>&nbsp;</div></th>';
                 } // If the cell is a column header and isn't null (column header of table)
                 else if (header.type === "COLUMN_HEADER") {
+                    if (firstColumn == null) {
+                        firstColumn = col;
+                    }
                     if (table[row].length == col+1)
                         isLastColumn = true;
                     else
                         nextHeader = data[row][col+1];
 
-                    if (isHeaderLowestLvl) {
-                        // Is a lowest level in the column header. It is always 1 cell wide
-                        contents += '<th class="col"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
-                    } else if (isLastColumn) {
+
+                   if (isLastColumn) {
                         // Last column in a row....
-                        contents += '<th class="col" style="text-align: center;" colspan="' + colSpan+1 + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
+                        contents += '<th class="col" style="text-align: center;" colspan="' + colSpan + '" title="' + header.value + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
                     } else {
                         // All the rest...
-                        if (header.value != nextHeader.value) {
-                            contents += '<th class="col" style="text-align: center;" colspan="' + (colSpan == 0 ? 1 : colSpan) + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
+                        var groupChange = (col > 1 && row > 1 && !isHeaderLowestLvl && col > firstColumn) ? 
+                            data[row-1][col+1].value != data[row-1][col].value 
+                            : false;
+                        if (header.value != nextHeader.value || isHeaderLowestLvl || groupChange) {
+                            if (header.value == "null") {
+                                contents += '<th class="col_null" colspan="' + colSpan + '"><div>&nbsp;</div></th>';
+                            } else {
+                                contents += '<th class="col" style="text-align: center;" colspan="' + (colSpan == 0 ? 1 : colSpan) + '" title="' + header.value + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
+                            }
                             colSpan = 1;
                         } else {
                             colSpan++;

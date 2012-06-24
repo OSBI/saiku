@@ -956,7 +956,6 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 }
 .workspace_results table th.col_null {
     background: #f9f9f9;
-    text-align: left;
 }
 .workspace_results table th.row {
     border-top: 1px solid #d5d5d5;
