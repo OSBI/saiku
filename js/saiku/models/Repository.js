@@ -40,8 +40,9 @@ var SavedQuery = Backbone.Model.extend({
             }
         }
         var query = new Query({ 
-            xml: model.xml
-        }, {
+            xml: model.xml,
+            formatter: Settings.CELLSET_FORMATTER
+        },{
             name: model.get('name')
         });
         

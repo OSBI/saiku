@@ -117,6 +117,12 @@ var WorkspaceToolbar = Backbone.View.extend({
             $(this.el).find('.query_scenario').removeClass('disabled_toolbar');
             $(this.el).find('.drillthrough, .drillthrough_export').addClass('disabled_toolbar');
         }
+
+        if (this.workspace.query.get('formatter') !== "undefined" && this.workspace.query.get('formatter') == "flattened") {
+            if (! $(this.el).find('.group_parents').hasClass('on')) {
+                $(this.el).find('.group_parents').addClass('on');
+            }
+        }
         
 
     },
@@ -148,6 +154,16 @@ var WorkspaceToolbar = Backbone.View.extend({
         this.workspace.toggle_sidebar();
     },
     
+    group_parents: function(event) {
+        $(event.target).toggleClass('on');
+        if ($(event.target).hasClass('on')) {
+            this.workspace.query.set({formatter: "flattened"})
+        } else {
+            this.workspace.query.set({formatter: "flat"})
+        }
+        this.workspace.query.run();
+    },
+
     non_empty: function(event) {
         // Change property
         this.workspace.query.properties
@@ -320,7 +336,8 @@ var WorkspaceToolbar = Backbone.View.extend({
         var self = this;
 
         var transformed = function() {
-            self.workspace.query.set({type:'MDX'});
+            self.workspace.query.set({type:'MDX', formatter: "flat" });
+            $(self.el).find('.group_parents').removeClass('on');
         };
 
         this.workspace.query.action.get("/mdx", { 

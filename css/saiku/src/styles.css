@@ -1109,6 +1109,9 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 .workspace_toolbar .non_empty {
     background-position: -1914px 7px;
 }
+.workspace_toolbar .group_parents {
+    background-position: -1914px 7px;
+}
 .workspace_toolbar .swap_axis {
     background-position: -551px -90px;
 }

@@ -178,7 +178,8 @@ var Workspace = Backbone.View.extend({
             connection: parsed_cube[0],
             catalog: parsed_cube[1],
             schema: (parsed_cube[2] == "null" ? "" : parsed_cube[2]) ,
-            cube: decodeURIComponent(cube)
+            cube: decodeURIComponent(cube),
+            formatter: Settings.CELLSET_FORMATTER
         }, {
             workspace: this
         });
@@ -196,6 +197,8 @@ var Workspace = Backbone.View.extend({
         }
 
         if (this.query.get('type') == "MDX") {
+            this.query.set({ formatter : "flat"});
+            
             $(this.drop_zones.el).remove();
             this.toolbar.switch_to_mdx();
             if (! $(this.el).find('.sidebar').hasClass('hide')) {
