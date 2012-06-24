@@ -388,11 +388,6 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>pentaho</groupId>
-			<artifactId>pentaho-bi-platform-web-servlet</artifactId>
-			<version>${pentaho.libs.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-rt</artifactId>
 			<version>${enunciate.version}</version>
