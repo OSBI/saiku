@@ -45,23 +45,19 @@ var SavedQuery = Backbone.Model.extend({
     },
     
     move_query_to_workspace: function(model, response) {
+        var file = (Settings.BIPLUGIN ? response.xml :  response);
+        var filename = (Settings.BIPLUGIN ? model.get('name') : model.get('file')) ;
         for (var key in Settings) {
             if (key.match("^PARAM")=="PARAM") {
                 var variable = key.substring("PARAM".length, key.length)
-                model.xml = model.xml.replace("${" + variable + "}", Settings[key]);
+                file = file.replace("${" + variable + "}", Settings[key]);
             }
         }
         var query = new Query({ 
-<<<<<<< HEAD
-            xml: model.xml,
+            xml: file,
             formatter: Settings.CELLSET_FORMATTER
         },{
-            name: model.get('name')
-=======
-            xml: response
-        }, {
-            name: model.get('file')
->>>>>>> 8d445381339c8033ddc6dd9a82dfd6d7b86d4769
+            name: filename
         });
         
         var tab = Saiku.tabs.add(new Workspace({ query: query }));
