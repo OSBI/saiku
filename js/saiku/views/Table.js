@@ -254,6 +254,7 @@ var Table = Backbone.View.extend({
         var colSpan;
         var colValue;
         var isHeaderLowestLvl;
+        var isBody = false;
         var firstColumn;
         var isLastColumn, isLastRow;
         var nextHeader;
@@ -262,13 +263,17 @@ var Table = Backbone.View.extend({
         var rowGroups = [];
 
         for (var row = 0; row < table.length; row++) {
-            contents += "<tr>";
             colSpan = 1;
             colValue = "";
             isHeaderLowestLvl = false;
             isLastColumn = false;
             isLastRow = false;
             headerStarted = false;
+
+            if (row == 0) {
+                contents +="<thead>";
+            }
+            contents += "<tr>";
 
             for (var col = 0; col < table[row].length; col++) {
                 var header = data[row][col];
@@ -287,13 +292,13 @@ var Table = Backbone.View.extend({
                         nextHeader = data[row][col+1];
 
 
-                   if (isLastColumn) {
+                    if (isLastColumn) {
                         // Last column in a row....
                         contents += '<th class="col" style="text-align: center;" colspan="' + colSpan + '" title="' + header.value + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
                     } else {
                         // All the rest...
-                        var groupChange = (col > 1 && row > 1 && !isHeaderLowestLvl && col > firstColumn) ? 
-                            data[row-1][col+1].value != data[row-1][col].value 
+                        var groupChange = (col > 1 && row > 1 && !isHeaderLowestLvl && col > firstColumn) ?
+                            data[row-1][col+1].value != data[row-1][col].value
                             : false;
                         if (header.value != nextHeader.value || isHeaderLowestLvl || groupChange) {
                             if (header.value == "null") {
@@ -333,7 +338,7 @@ var Table = Backbone.View.extend({
                         }
                         col = col + colspan -1;
                     }
-                    contents += '<th class="' + cssclass + '" ' + (colspan > 0 ? ' colspan="' + colspan + '"' : "") + '>' + value + '</th>';   
+                    contents += '<th class="' + cssclass + '" ' + (colspan > 0 ? ' colspan="' + colspan + '"' : "") + '>' + value + '</th>';
                 }
                 else if (header.type === "ROW_HEADER_HEADER") {
                     contents += '<th class="row_header"><div>' + header.value + '</div></th>';
@@ -353,12 +358,17 @@ var Table = Backbone.View.extend({
                 }
             }
             contents += "</tr>";
+            if (!isBody && data[row+1][0].type === "ROW_HEADER") {
+                contents += "</thead><tbody>";
+                isBody = true;
+            }
         }
-
+        contents += "</tbody>"
         // Append the table
         $(this.el).html(contents);
         this.post_process();
-    },    
+    },
+
     post_process: function() {
         if (this.workspace.query.get('type') == 'QM' && Settings.MODE != "view") {
             $(this.el).find('th.row, th.col').addClass('headerhighlight');
