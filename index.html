@@ -31,7 +31,7 @@
         <div class="processing">
             <div class="processing_inner">
                 <span class="processing_image">&nbsp;</span>
-                <span class="processing_message">Loading...</span>
+                <span class="processing_message i18n">Loading...</span>
             </div>
         </div>
         
@@ -100,7 +100,7 @@
         <!-- Templates -->
         <script type="text/x-jquery-tmpl" id="template-cubes">
             <select class="cubes">
-                <option value="">Select a cube</option>
+                <option value="" class="i18n">Select a cube</option>
                 <% _.each(connections, function(connection) { %>
                     <% _.each(connection.catalogs, function(catalog) { %>
                         <% _.each(catalog.schemas, function(schema) { %>
@@ -146,7 +146,7 @@
         <ul>
             <li>
                 <span class="root expand sprite"></span>
-                   <a href="#" title="Measures" class="folder_expand sprite">Measures</a>
+                   <a href="#" title="Measures" class="folder_expand sprite i18n">Measures</a>
                 
                 <ul>
                 <% _.each(measures, function(measure) { %>
@@ -291,7 +291,7 @@
             <h3 class="top i18n">Queries</h3>
             <div class="sidebar_inner">
                 <ul id="queries">
-                    <li>Loading...</li>
+                    <li class="i18n">Loading...</li>
                 </ul>
             </div>
         </div>
@@ -302,8 +302,8 @@
 
         <script type="text/x-jquery-tmpl" id="template-selections">
             <div class="available_selections">
-            <label for="filter_selections">Search: &nbsp;</label><input name="'filter_selections" id="filter_selections" type="text" class="filterbox" /> <br />
-                Available members:<br/>
+            <label for="filter_selections" class="i18n">Search: &nbsp;</label><input name="'filter_selections" id="filter_selections" type="text" class="filterbox" /> <br />
+                <span class="i18n">Available members:</span><br/>
                 <select multiple disabled>
                 </select>
             </div>
@@ -314,19 +314,19 @@
                 <a class="form_button" href="#move_selection" id="remove_members">&nbsp;&lt;&nbsp;</a>
             </div>
             <div class="used_selections">
-                Used members:<br/>
+                <span class="i18n">Used members:</span><br/>
                 <select multiple disabled></select>
             </div>
             <div class="options">
-                <input name="show_unique" id="show_unique" type="checkbox" /><label for="show_unique">Show Unique Names</label>
+                <input name="show_unique" id="show_unique" type="checkbox" /><label for="show_unique" class="i18n">Show Unique Names</label>
             </div>
         </script>
         <script type="text/x-jquery-tmpl" id="template-drillthrough">
             <div class="row_limit">
                 <br />
-                Row Limit: (0 = none) <input id="maxrows" name="maxrows" class="maxrows" type="text" />
+                <span class="i18n">Row Limit: (0 = none)</span> <input id="maxrows" name="maxrows" class="maxrows" type="text" />
                 <br />
-                <b>CAUTION:</b> The number of rows can have a significant impact on the performance of the following action.
+                <span class="i18n"><b>CAUTION:</b> The number of rows can have a significant impact on the performance of the following action.</span>
             </div>
         </script>
         <script type="text/x-jquery-tmpl" id="template-drillthrough-list">

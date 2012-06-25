@@ -88,7 +88,10 @@ var Statistics = Backbone.View.extend({
             var ohcell = header?"<th class='row_header'>":"<th class='row'>"
             var odcell = header?"<th class='col'>":"<td class='data'>"
             var ccell = header?"</th>":"</td>"
-            _.each(cells, function(it, idx){row += ((idx==0)?ohcell:odcell) + "<div>" + it + "</div>" + ccell})
+            _.each(cells, function(it, idx){row += ((idx==0)?ohcell:odcell) 
+					+ "<div " + ((idx==0)?'class="i18n"':'') + ">"
+					+ it 
+					+ "</div>" + ccell})
             row += "</tr>"
             return row
         }
@@ -125,6 +128,7 @@ var Statistics = Backbone.View.extend({
 
         $(this.el).append($table)
         
+		Saiku.i18n.translate();
     },
     
     receive_data: function(args) {

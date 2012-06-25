@@ -154,6 +154,8 @@ var SelectionsModal = Modal.extend({
                     .append( "<a class='label'>" + item.label + "</a><br><a class='description'>" + item.value + "</a>" )
                     .appendTo( ul );
                 };
+		// Translate
+		Saiku.i18n.translate();
         // Show dialog
         Saiku.ui.unblock();
     },

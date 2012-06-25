@@ -77,6 +77,7 @@ var DrillthroughModal = Modal.extend({
         $(this.el).find('.dimension_tree').html('').append($(templ_dim));
         $(this.el).find('.measure_tree').html('').append($(templ_measure));
         
+		Saiku.i18n.translate();
     },
     
     select: function(event) {
