@@ -28,7 +28,7 @@ var Settings = {
     TOMCAT_WEBAPP: "/saiku",
     REST_MOUNT_POINT: "/rest/saiku/",
     DIMENSION_PREFETCH: true,
-    ERROR_LOGGING: true,
+    ERROR_LOGGING: false,
     QUERY_PROPERTIES: {
         'saiku.olap.query.automatic_execution': 'true',
         'saiku.olap.query.nonempty': 'true',
@@ -36,9 +36,8 @@ var Settings = {
         'saiku.olap.query.nonempty.columns': 'true'
     },
     /* Valid values for CELLSET_FORMATTER:
-     * 1) hierarchical
-     * 2) flattened
-     * 3) flat
+     * 1) flattened
+     * 2) flat
      */
     CELLSET_FORMATTER: "flattened",
     PLUGINS: [
