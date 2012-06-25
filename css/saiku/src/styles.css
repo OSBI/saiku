@@ -321,29 +321,6 @@ html, body {
 
 /** Tree */
 
-#queries {
-    margin: 0;
-    padding: 0;
-}
-#queries li {
-    cursor: pointer;
-    line-height: 17px;
-    list-style-type: none;
-    margin: 0;
-    padding-bottom: 5px;
-}
-#queries li span {
-	background-position: -1855px 0;
-	padding: 4px 8px;
-	margin-right: 4px;
-}
-#queries li a {
-    color: #222;
-    text-decoration: none;
-}
-#queries li:hover {
-    background: #f0f0f0;
-}
 #query_info {
     list-style-type: none;
     padding-left: 0;
@@ -1070,6 +1047,9 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     float: left;
     padding-left: 5px;
 }
+.workspace_toolbar ul li.hide {
+    display: none;
+}
 .workspace_toolbar ul li.seperator {
     border-left: 1px solid #D5D5D5;
     margin-left: 5px;
@@ -1094,6 +1074,13 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 .workspace_toolbar .open {
     background-position: -1040px 7px;
 }
+
+.workspace_toolbar .edit_folder {
+    background-image: url('../../../images/src/folder_edit.png');
+    background-repeat:no-repeat;
+    background-position: 7px 7px;
+}
+
 .workspace_toolbar .delete {
      background-position: -521px 7px;
 }
@@ -1265,7 +1252,92 @@ background: url("../../../images/src/sort_none.png") no-repeat;
   }
   #tooltip h3, #tooltip div { margin: 0; }
 
+
+/* OOCSS - reusable classes */
+
+.RepositoryObjects {
+    margin: 0;
+    padding: 0;
+}
+
+.RepositoryObjects li {
+    cursor: pointer;
+    line-height: 17px;
+    list-style-type: none;
+    margin: 0;
+    padding-bottom: 5px;
+}
+
+.RepositoryObjects li a {
+    color: #222;
+    text-decoration: none;
+}
+
+.RepositoryObjects li:hover {
+    background: #f0f0f0;
+}
+
+.RepositoryObjects ul.folder_content {
+    margin-top: 5px;
+}
+
+.RepositoryObjects li.selected.folder .folder_row {
+    background: #f0f0f0;
+}
+
+.RepositoryObjects li.selected.query {
+    background: #f0f0f0;
+}
+
+.RepositoryObjects li .sprite {
+	background-position: -1855px 0;
+	padding: 4px 8px;
+	margin-right: 4px;
+}
+
+.RepositoryObjects li .sprite.folder {
+    background-position: -1538px -95px;
+    cursor: pointer;
+    padding: 5px 17px;
+}
+
+.RepositoryObjects li .sprite.folder.collapsed {
+    background-position: -1406px -95px;
+    cursor: pointer;
+    padding: 5px 17px;
+}
+
+/* custom */
+
+#save_query_form .RepositoryObjects {
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #cccccc;
+    width: 411px;
+    height: 200px;
+    overflow: auto;
+}
+
+#save_query_form [name="name"] {
+    width: 423px;
+}
+
+.queries h3 {
+    position: relative;
+}
+
+.queries .add_folder {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: block;
+    height: 16px;
+    width: 16px;
+	background-image: url(../../../images/src/folder_add.png);
+}
+
 /* Print styles */
+
 @media print {
     #header, .sidebar, .workspace_fields, .workspace_toolbar { display: none !important; }
 }

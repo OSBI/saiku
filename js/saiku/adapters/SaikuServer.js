@@ -133,6 +133,10 @@ Backbone.sync = function(method, model, options) {
     if (options.async === false) {
       async = false;
     }
+    var dataType = 'json'
+    if (typeof options.dataType != "undefined") {
+      dataType = options.dataType;
+    }
     // Default JSON-request options.
     params = {
       url:          url,
@@ -140,7 +144,7 @@ Backbone.sync = function(method, model, options) {
       cache:        false,
       data:         model.attributes,
       contentType:  'application/x-www-form-urlencoded',
-      dataType:     'json',
+      dataType:     dataType,
       success:      success,
       statusCode:   statuscode, 
       error:        failure,

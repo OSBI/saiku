@@ -69,11 +69,12 @@
         <script type="text/javascript" src="js/saiku/views/DrillthroughModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/LoginForm.js"></script>
         <script type="text/javascript" src="js/saiku/views/AboutModal.js"></script>
+        <script type="text/javascript" src="js/saiku/views/AddFolderModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/WorkspaceToolbar.js"></script>
         <script type="text/javascript" src="js/saiku/views/WorkspaceDropZone.js"></script>
         <script type="text/javascript" src="js/saiku/views/Table.js"></script>
         <script type="text/javascript" src="js/saiku/views/Workspace.js"></script>
-        <script type="text/javascript" src="js/saiku/views/DeleteQuery.js"></script>
+        <script type="text/javascript" src="js/saiku/views/DeleteRepositoryObject.js"></script>
         <script type="text/javascript" src="js/saiku/views/OpenQuery.js"></script>
         <script type="text/javascript" src="js/saiku/views/SaveQuery.js"></script>
         <script type="text/javascript" src="js/saiku/views/Tab.js"></script>
@@ -274,30 +275,76 @@
         </script>
         
         <script type="text/x-jquery-tmpl" id="template-open-dialog">
-        <div class="workspace">
-            <div class="workspace_inner">
-                <div class="workspace_toolbar hide">
-                <ul>
-                    <li><a href="#open_query" class="open button sprite"></a></li>
-                    <li><a href="#delete_query" class="delete button sprite"></a></li>
-                </ul>
-                </div>
-                <div class="workspace_results">
+            <div class="workspace">
+                <div class="workspace_inner">
+                    <div class="workspace_toolbar hide">
+                    <ul>
+                        <li class='for_queries'><a href="#open_query" class="open button sprite"></a></li>
+                        <li class='for_queries'><a href="#delete_query" class="delete button sprite"></a></li>
+                        <!--
+                        <li class='for_folder'><a href="#edit_folder" class="edit_folder button"></a></li>
+                        -->
+                        <li class='for_folder'><a href="#delete_folder" class="delete button sprite"></a></li>
+                    </ul>
+                    </div>
+                    <div class="workspace_results">
+                    </div>
                 </div>
             </div>
-        </div>
 
+            <div class="sidebar queries">
+                <h3 class="top i18n">
+                    Queries
+                    <a href='#' class='add_folder'></a>
+                </h3>
+                <div class="sidebar_inner">
+                    <ul id="queries" class='RepositoryObjects'>
+                        <li>Loading...</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="sidebar_separator"></div>
+            <div class="clear"></div>
+        </script>
+
+        <script type="text/x-jquery-tmpl" id="template-repository-objects">
+            <% _.each( repoObjects, function( entry ) { %>
+                <% if( entry.type === 'FOLDER' ) { %>
+                   <%= _.template($("#template-repository-folder").html())({ entry: entry }) %>
+                <% } else { %>
+                    <%= _.template($("#template-repository-file").html())({ entry: entry }) %>
+                <% } %>
+            <% } ); %>
+        </script>
+        <script type="text/x-jquery-tmpl" id="template-repository-folder">
+            <li class='folder'>
+                <div class='folder_row'>
+                    <span class='sprite folder collapsed'></span>
+                    <a href='#<%= entry.path %>'><%= entry.name %></a>
+                </div>
+
+                <ul class='hide folder_content'>
+
+                    <%= _.template($("#template-repository-objects").html())( { repoObjects: entry.repoObjects }) %>
+
+<<<<<<< HEAD
         <div class="sidebar">
             <h3 class="top i18n">Queries</h3>
             <div class="sidebar_inner">
                 <ul id="queries">
                     <li class="i18n">Loading...</li>
+=======
+>>>>>>> 8d445381339c8033ddc6dd9a82dfd6d7b86d4769
                 </ul>
-            </div>
-        </div>
-        
-        <div class="sidebar_separator"></div>
-        <div class="clear"></div>
+            </li>
+        </script>
+
+        <script type="text/x-jquery-tmpl" id="template-repository-file">
+            <li class='query'>
+                <span class='sprite'></span>
+                <a href='#<%= entry.path %>'><%= entry.name %></a>
+            </li>
         </script>
 
         <script type="text/x-jquery-tmpl" id="template-selections">

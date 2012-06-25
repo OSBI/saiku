@@ -23,7 +23,8 @@
  */
 var QueryRouter = Backbone.Router.extend({
     routes: {
-        'query/open/:query_name': 'open_query'
+        'query/open/:query_name': 'open_query',
+        'query/open': 'open_query_repository'
     },
     
     open_query: function(query_name) {
@@ -37,6 +38,10 @@ var QueryRouter = Backbone.Router.extend({
         };
         var query = new SavedQuery(options);
         query.fetch({ success: query.move_query_to_workspace });
+    },
+
+    open_query_repository: function( ) {
+        Toolbar.prototype.open_query( );
     }
 });
 

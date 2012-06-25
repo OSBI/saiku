@@ -21,15 +21,27 @@
 /**
  * Repository query
  */
+
+var RepositoryObject = Backbone.Model.extend( {
+    url: function( ) {
+        var segment = Settings.BIPLUGIN ? 
+            "/pentahorepository" : "/repository2/resource";
+        return encodeURI(Saiku.session.username + segment);
+    }
+} );
+
 var SavedQuery = Backbone.Model.extend({
-    parse: function(response, XHR) {
-        this.xml = response.xml;
+
+    parse: function(response) {
+        //console.log("response: " + response);
+        //this.xml = response;
     },
     
     url: function() {
-        var segment = Settings.BIPLUGIN ? 
-                "/pentahorepository/" : "/repository/";
-        return encodeURI(Saiku.session.username + segment + this.get('name'));
+        var u = Settings.BIPLUGIN ? 
+                encodeURI(Saiku.session.username + "/pentahorepository/" + this.get('name'))  
+                    : encodeURI(Saiku.session.username + "/repository2/resource");
+        return u;
     },
     
     move_query_to_workspace: function(model, response) {
@@ -40,10 +52,16 @@ var SavedQuery = Backbone.Model.extend({
             }
         }
         var query = new Query({ 
+<<<<<<< HEAD
             xml: model.xml,
             formatter: Settings.CELLSET_FORMATTER
         },{
             name: model.get('name')
+=======
+            xml: response
+        }, {
+            name: model.get('file')
+>>>>>>> 8d445381339c8033ddc6dd9a82dfd6d7b86d4769
         });
         
         var tab = Saiku.tabs.add(new Workspace({ query: query }));
@@ -66,7 +84,7 @@ var Repository = Backbone.Collection.extend({
     
     url: function() {
         var segment = Settings.BIPLUGIN ? 
-            "/pentahorepository" : "/repository/";
+            "/pentahorepository" : "/repository2/?type=saiku";
         return encodeURI(Saiku.session.username + segment);
     }
 });
