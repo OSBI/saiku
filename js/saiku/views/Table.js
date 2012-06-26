@@ -163,7 +163,7 @@ var Table = Backbone.View.extend({
             var citems = {
                     "name" : {name: "<b>" + member + "</b>", disabled: true },
                     "sep1": "---------",
-                    "keeponly": {name: "Keep Only", payload: keep_payload },
+                    "keeponly": {name: "Keep Only", payload: keep_payload }
             };
             if (d != "Measures") {
                 citems["fold1key"] = {
