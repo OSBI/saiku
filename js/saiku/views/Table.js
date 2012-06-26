@@ -222,8 +222,10 @@ var Table = Backbone.View.extend({
 
 
     render: function(args, block) {
+
         $(this.workspace.el).find(".workspace_results_info").empty();
-        if (args.data.error != null) {
+
+        if (args.data != null && args.data.error != null) {
             return this.error(args);
         }
 
