@@ -31,6 +31,7 @@ var WorkspaceDropZone = Backbone.View.extend({
     events: {
         'sortbeforestop': 'select_dimension',
         'click .d_dimension span.selections': 'selections',
+        'click .d_dimension a': 'selections',
         'click .d_measure a' : 'remove_dimension',
         'click .d_measure span.sort' : 'sort_measure',
         'click .d_dimension span.sort' : 'sort_measure'
