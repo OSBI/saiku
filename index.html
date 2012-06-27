@@ -104,12 +104,14 @@
                 <option value="" class="i18n">Select a cube</option>
                 <% _.each(connections, function(connection) { %>
                     <% _.each(connection.catalogs, function(catalog) { %>
-                        <% _.each(catalog.schemas, function(schema) { %>
-                            <optgroup label="<%= ( schema.name != "" ? schema.name : catalog.name) +'  (' + connection.name + ')' %>">
-                            <% _.each(schema.cubes, function(cube) { %>
-                                <option value="<%= connection.name %>/<%= catalog.name %>/<%=  ((schema.name == '' || schema.name == null) ? 'null' : schema.name)  %>/<%= encodeURIComponent(cube.name) %>"><%= cube.name %></option>
-                            <% }); %>
-                            </optgroup>
+                        <% _.each(catalog.schemas, function(schema) { 
+                            if (schema.cubes.length > 0) { %>
+                                <optgroup label="<%= ( schema.name != "" ? schema.name : catalog.name) +'  (' + connection.name + ')' %>">
+                                <% _.each(schema.cubes, function(cube) { %>
+                                    <option value="<%= connection.name %>/<%= catalog.name %>/<%=  ((schema.name == '' || schema.name == null) ? 'null' : schema.name)  %>/<%= encodeURIComponent(cube.name) %>"><%= cube.name %></option>
+                                <% }); %>
+                                </optgroup>
+                            <% } %>
                         <% }); %>
                     <% }); %>
                 <% }); %>
