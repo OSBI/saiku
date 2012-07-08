@@ -356,7 +356,16 @@ var Table = Backbone.View.extend({
                     }
                 } // If the cell is a normal data cell
                 else if (header.type === "DATA_CELL") {
-                    contents += '<td class="data"><div alt="' + header.properties.raw + '" rel="' + header.properties.position + '">' + header.value + '</div></td>';
+                    var color = "";
+                    var val = header.value; 
+                    if (header.properties.hasOwnProperty('style')) {
+                        color = " style='background-color: " + header.properties.style + "' ";
+                    }
+                    if (header.properties.hasOwnProperty('link')) {
+                        val = "<a target='__blank' href='" + header.properties.link + "'>" + val + "</a>";
+                    }
+                    
+                    contents += '<td class="data" ' + color + '><div alt="' + header.properties.raw + '" rel="' + header.properties.position + '">' + val + '</div></td>';
                 }
             }
             contents += "</tr>";
