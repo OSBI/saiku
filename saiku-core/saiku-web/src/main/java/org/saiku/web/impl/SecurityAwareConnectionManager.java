@@ -103,7 +103,7 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 	}
 
 	@Override
-	protected void refreshInternalConnection(String name, SaikuDatasource datasource) {
+	protected ISaikuConnection refreshInternalConnection(String name, SaikuDatasource datasource) {
 		try {
 			String newName = name;
 			if (isDatasourceSecurityEnabled(datasource) && sessionService != null) {
@@ -119,12 +119,12 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 				con.clearCache();
 			}
 			con = null;
-			getInternalConnection(name, datasource);
+			return getInternalConnection(name, datasource);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		return null;
 	}
 
 	private SaikuDatasource handlePassThrough(SaikuDatasource datasource) {

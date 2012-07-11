@@ -67,16 +67,41 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
 		}
 		return datasource;
 	}
+	
+	private ISaikuConnection postProcess(SaikuDatasource datasource, ISaikuConnection con) {
+		if (datasource.getProperties().containsKey(ISaikuConnection.CONNECTION_PROCESSORS)) {
+			datasource = datasource.clone();
+			String[] processors = datasource.getProperties().getProperty(ISaikuConnection.CONNECTION_PROCESSORS).split(",");
+			for (String processor : processors) {
+				try {
+				@SuppressWarnings("unchecked")
+				final Class<IConnectionProcessor> clazz =
+					(Class<IConnectionProcessor>)
+					Class.forName(processor);
+				final Constructor<IConnectionProcessor> ctor =
+					clazz.getConstructor();
+				final IConnectionProcessor conProcessor = ctor.newInstance();
+				datasource = conProcessor.process(con);
+				}
+				catch (Exception e) {
+					throw new SaikuServiceException("Error applying ConnectionProcessor \"" + processor + "\"", e);
+				}
+			}
+		}
+		return con;
+	}
 
 	public ISaikuConnection getConnection(String name) {
 		SaikuDatasource datasource = ds.getDatasource(name);
 		datasource = preProcess(datasource);
-		return getInternalConnection(name, datasource);
+		ISaikuConnection con = getInternalConnection(name, datasource);
+		con = postProcess(datasource, con);
+		return con;
 	}
 
 	protected abstract ISaikuConnection getInternalConnection(String name, SaikuDatasource datasource);
 	
-	protected abstract void refreshInternalConnection(String name, SaikuDatasource datasource);
+	protected abstract ISaikuConnection refreshInternalConnection(String name, SaikuDatasource datasource);
 
 	public void refreshAllConnections() {
 		ds.load();
@@ -88,7 +113,8 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
 	public void refreshConnection(String name) {
 		SaikuDatasource datasource = ds.getDatasource(name);
 		datasource = preProcess(datasource);
-		refreshInternalConnection(name, datasource);
+		ISaikuConnection con = refreshInternalConnection(name, datasource);
+		con = postProcess(datasource, con);
 	}
 
 	public Map<String, ISaikuConnection> getAllConnections() {

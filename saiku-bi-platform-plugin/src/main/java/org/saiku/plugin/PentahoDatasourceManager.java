@@ -48,6 +48,8 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 	private Map<String,SaikuDatasource> datasources = new HashMap<String,SaikuDatasource>();
 
 	private String saikuDatasourceProcessor;
+	
+	private String saikuConnectionProcessor;
 
 	public void setDatasourceResolverClass(String datasourceResolverClass) {
 		MondrianProperties.instance().DataSourceResolverClass.setString(datasourceResolverClass);
@@ -55,6 +57,10 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 	
 	public void setSaikuDatasourceProcessor(String datasourceProcessor) {
 		this.saikuDatasourceProcessor = datasourceProcessor;
+	}
+	
+	public void setSaikuConnectionProcessor(String connectionProcessor) {
+		this.saikuConnectionProcessor = connectionProcessor;
 	}
 	
 	public PentahoDatasourceManager() {
@@ -101,6 +107,9 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 				props.put("location","jdbc:mondrian:" + ds.getStringValue() + ";Catalog=" + cat.getStringValue());
 				if (saikuDatasourceProcessor != null) {
 					props.put(ISaikuConnection.DATASOURCE_PROCESSORS, saikuDatasourceProcessor);
+				}
+				if (saikuConnectionProcessor != null) {
+					props.put(ISaikuConnection.CONNECTION_PROCESSORS, saikuConnectionProcessor);
 				}
 				props.list(System.out);
 

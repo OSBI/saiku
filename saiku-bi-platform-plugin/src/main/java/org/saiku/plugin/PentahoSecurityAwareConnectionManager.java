@@ -85,7 +85,7 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 	}
 
 	@Override
-	protected void refreshInternalConnection(String name, SaikuDatasource datasource) {
+	protected ISaikuConnection refreshInternalConnection(String name, SaikuDatasource datasource) {
 		try {
 			String newname = name;
 			if (userAware && PentahoSessionHolder.getSession().getName() != null) {
@@ -96,12 +96,12 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 				con.clearCache();
 			}
 			con = null;
-			getInternalConnection(name, datasource);
+			return getInternalConnection(name, datasource);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		return null;
 	}
 
 	private ISaikuConnection applySecurity(ISaikuConnection con, SaikuDatasource datasource) throws Exception {
