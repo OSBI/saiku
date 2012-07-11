@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.Executor;
 
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.AllocationPolicy;
@@ -77,7 +76,6 @@ import org.saiku.olap.util.formatter.FlattenedCellSetFormatter;
 import org.saiku.olap.util.formatter.HierarchicalCellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.service.util.KeyValue;
-import org.saiku.service.util.ObjectHolder;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.service.util.export.CsvExporter;
 import org.saiku.service.util.export.ExcelExporter;
@@ -542,7 +540,7 @@ public class OlapQueryService implements Serializable {
 								}
 							}
 							dimension.getInclusions().removeAll(removals);
-						}
+                        }
 					}
 				}
 			}
@@ -571,7 +569,7 @@ public class OlapQueryService implements Serializable {
 		catch (Exception e) {
 			throw new SaikuServiceException("Cannot move dimension:" + dimensionName + " to axis: "+axisName,e);
 		}
-	}
+    }
 
 	public void removeDimension(String queryName, String axisName, String dimensionName) {
 		IQuery query = getIQuery(queryName);
@@ -726,11 +724,13 @@ public class OlapQueryService implements Serializable {
 		if (type != null) {
 			IQuery query = getIQuery(queryName);
 			CellSet rs = query.getCellset();
+            List<SaikuDimensionSelection> filters = getAxisSelection(queryName, "FILTER");
+
 			if (type.toLowerCase().equals("xls")) {
-				return ExcelExporter.exportExcel(rs,formatter);	
+				return ExcelExporter.exportExcel(rs, formatter, filters);
 			}
 			if (type.toLowerCase().equals("csv")) {
-				return CsvExporter.exportCsv(rs,",","\"", formatter);	
+				return CsvExporter.exportCsv(rs,",","\"", formatter);
 			}
 		}
 		return new byte[0];
