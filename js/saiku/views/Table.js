@@ -366,7 +366,7 @@ var Table = Backbone.View.extend({
                         val = "<a target='__blank' href='" + header.properties.link + "'>" + val + "</a>";
                     }
                     if (header.properties.hasOwnProperty('arrow')) {
-                        arrow = "<img height='10' width='10' style=\"padding-left: 5px\" src=\"/saiku-ui/images/arrow-" + header.properties.arrow + ".gif\" border=\"0\">";
+                        arrow = "<img height='10' width='10' style='padding-left: 5px' src='/images/arrow-" + header.properties.arrow + ".gif' border='0'>";
                     }
 
                     contents += '<td class="data" ' + color + '><div alt="' + header.properties.raw + '" rel="' + header.properties.position + '">' + val + arrow + '</div></td>';
