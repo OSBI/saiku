@@ -163,7 +163,7 @@ var Table = Backbone.View.extend({
             var citems = {
                     "name" : {name: "<b>" + member + "</b>", disabled: true },
                     "sep1": "---------",
-                    "keeponly": {name: "Keep Only", payload: keep_payload },
+                    "keeponly": {name: "Keep Only", payload: keep_payload }
             };
             if (d != "Measures") {
                 citems["fold1key"] = {
@@ -222,8 +222,10 @@ var Table = Backbone.View.extend({
 
 
     render: function(args, block) {
+
         $(this.workspace.el).find(".workspace_results_info").empty();
-        if (args.data.error != null) {
+
+        if (args.data != null && args.data.error != null) {
             return this.error(args);
         }
 
@@ -254,6 +256,7 @@ var Table = Backbone.View.extend({
         var colSpan;
         var colValue;
         var isHeaderLowestLvl;
+        var isBody = false;
         var firstColumn;
         var isLastColumn, isLastRow;
         var nextHeader;
@@ -262,13 +265,17 @@ var Table = Backbone.View.extend({
         var rowGroups = [];
 
         for (var row = 0; row < table.length; row++) {
-            contents += "<tr>";
             colSpan = 1;
             colValue = "";
             isHeaderLowestLvl = false;
             isLastColumn = false;
             isLastRow = false;
             headerStarted = false;
+
+            if (row == 0) {
+                contents +="<thead>";
+            }
+            contents += "<tr>";
 
             for (var col = 0; col < table[row].length; col++) {
                 var header = data[row][col];
@@ -287,13 +294,13 @@ var Table = Backbone.View.extend({
                         nextHeader = data[row][col+1];
 
 
-                   if (isLastColumn) {
+                    if (isLastColumn) {
                         // Last column in a row....
                         contents += '<th class="col" style="text-align: center;" colspan="' + colSpan + '" title="' + header.value + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
                     } else {
                         // All the rest...
-                        var groupChange = (col > 1 && row > 1 && !isHeaderLowestLvl && col > firstColumn) ? 
-                            data[row-1][col+1].value != data[row-1][col].value 
+                        var groupChange = (col > 1 && row > 1 && !isHeaderLowestLvl && col > firstColumn) ?
+                            data[row-1][col+1].value != data[row-1][col].value
                             : false;
                         if (header.value != nextHeader.value || isHeaderLowestLvl || groupChange) {
                             if (header.value == "null") {
@@ -333,7 +340,7 @@ var Table = Backbone.View.extend({
                         }
                         col = col + colspan -1;
                     }
-                    contents += '<th class="' + cssclass + '" ' + (colspan > 0 ? ' colspan="' + colspan + '"' : "") + '>' + value + '</th>';   
+                    contents += '<th class="' + cssclass + '" ' + (colspan > 0 ? ' colspan="' + colspan + '"' : "") + '>' + value + '</th>';
                 }
                 else if (header.type === "ROW_HEADER_HEADER") {
                     contents += '<th class="row_header"><div>' + header.value + '</div></th>';
@@ -350,24 +357,33 @@ var Table = Backbone.View.extend({
                 } // If the cell is a normal data cell
                 else if (header.type === "DATA_CELL") {
                     var color = "";
-                    var val = header.value; 
+                    var val = header.value;
+                    var arrow = "";
                     if (header.properties.hasOwnProperty('style')) {
                         color = " style='background-color: " + header.properties.style + "' ";
                     }
                     if (header.properties.hasOwnProperty('link')) {
                         val = "<a target='__blank' href='" + header.properties.link + "'>" + val + "</a>";
                     }
-                    
-                    contents += '<td class="data" ' + color + '><div alt="' + header.properties.raw + '" rel="' + header.properties.position + '">' + val + '</div></td>';
+                    if (header.properties.hasOwnProperty('arrow')) {
+                        arrow = "<img height='10' width='10' style=\"padding-left: 5px\" src=\"/saiku-ui/images/arrow-" + header.properties.arrow + ".gif\" border=\"0\">";
+                    }
+
+                    contents += '<td class="data" ' + color + '><div alt="' + header.properties.raw + '" rel="' + header.properties.position + '">' + val + arrow + '</div></td>';
                 }
             }
             contents += "</tr>";
+            if (!isBody && data[row+1][0].type === "ROW_HEADER") {
+                contents += "</thead><tbody>";
+                isBody = true;
+            }
         }
-
+        contents += "</tbody>"
         // Append the table
         $(this.el).html(contents);
         this.post_process();
-    },    
+    },
+
     post_process: function() {
         if (this.workspace.query.get('type') == 'QM' && Settings.MODE != "view") {
             $(this.el).find('th.row, th.col').addClass('headerhighlight');
