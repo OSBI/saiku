@@ -19,10 +19,9 @@
  */
 package org.saiku.datasources.connection;
 
-import org.saiku.datasources.datasource.SaikuDatasource;
 
 public interface IConnectionProcessor {
 	
-	public SaikuDatasource process(ISaikuConnection con);
+	public ISaikuConnection process(ISaikuConnection con);
 
 }

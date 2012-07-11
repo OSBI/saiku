@@ -81,7 +81,7 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
 				final Constructor<IConnectionProcessor> ctor =
 					clazz.getConstructor();
 				final IConnectionProcessor conProcessor = ctor.newInstance();
-				datasource = conProcessor.process(con);
+				return conProcessor.process(con);
 				}
 				catch (Exception e) {
 					throw new SaikuServiceException("Error applying ConnectionProcessor \"" + processor + "\"", e);
