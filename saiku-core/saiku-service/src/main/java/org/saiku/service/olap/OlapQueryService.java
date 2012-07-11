@@ -65,6 +65,7 @@ import org.saiku.olap.dto.SaikuTuple;
 import org.saiku.olap.dto.SaikuTupleDimension;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query.IQuery;
+import org.saiku.olap.query.IQuery.QueryType;
 import org.saiku.olap.query.MdxQuery;
 import org.saiku.olap.query.OlapQuery;
 import org.saiku.olap.query.QueryDeserializer;
@@ -724,8 +725,11 @@ public class OlapQueryService implements Serializable {
 		if (type != null) {
 			IQuery query = getIQuery(queryName);
 			CellSet rs = query.getCellset();
-            List<SaikuDimensionSelection> filters = getAxisSelection(queryName, "FILTER");
-
+			List<SaikuDimensionSelection> filters = new ArrayList<SaikuDimensionSelection>();
+			
+			if (query.getType().equals(QueryType.QM)) {
+				filters = getAxisSelection(queryName, "FILTER");
+			}
 			if (type.toLowerCase().equals("xls")) {
 				return ExcelExporter.exportExcel(rs, formatter, filters);
 			}

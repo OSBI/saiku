@@ -32,7 +32,7 @@ public class ExcelWorksheetBuilder {
     private static final String BASIC_SHEET_FONT_FAMILY = "Arial";
     private static final short BASIC_SHEET_FONT_SIZE = 11;
     private static final String EMPTY_STRING = "";
-    private static final String CSS_COLORS_CODE_PROPERTIES = "/org/saiku/service/util/export/excel/resources/css-colors-codes.properties";
+    private static final String CSS_COLORS_CODE_PROPERTIES = "css-colors-codes.properties";
 
     private AbstractBaseCell[][] rowsetHeader;
     private AbstractBaseCell[][] rowsetBody;
