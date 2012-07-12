@@ -32,7 +32,8 @@ var OpenQuery = Backbone.View.extend({
         'click .workspace_toolbar a.open': 'open_query',
         'click .workspace_toolbar [href=#edit_folder]': 'edit_folder',
         'click .workspace_toolbar [href=#delete_folder]': 'delete_folder',
-        'click .workspace_toolbar [href=#delete_query]': 'delete_query'
+        'click .workspace_toolbar [href=#delete_query]': 'delete_query',
+        'click .queries' : 'click_canvas'
     },
     
     template: function() {
@@ -140,10 +141,35 @@ var OpenQuery = Backbone.View.extend({
     },
 
     add_folder: function( event ) {
+        $selected = $(this.el).find('.selected');
+        var path ="";
+        if (typeof $selected !== "undefined" && $selected) {
+            if ($selected.hasClass('folder')) {
+                path = $selected.find('.folder_row a').attr('href');
+                path = path.length > 1 ? path.substring(1,path.length) : path; 
+                path+= "/";
+
+            } else if ($selected.hasClass('query') && !$selected.parent().hasClass('RepositoryObjects')) {
+                var query = $selected.find('a');
+                path = query.attr('href');
+                var queryname = query.text();
+                path = path.substring(1, path.length - queryname.length );
+            }
+        }
+        
         (new AddFolderModal({ 
+            path: path,
             success: this.clear_query 
         })).render().open();
 
+        return false;
+    },
+
+    click_canvas: function(event) {
+        var $target = $( event.currentTarget );
+        if ($target.hasClass('sidebar')) {
+            $(this.el).find('.selected').removeClass('selected');
+        }
         return false;
     },
 
@@ -237,7 +263,7 @@ var OpenQuery = Backbone.View.extend({
     },
 
     unselect_current_selected: function( ) {
-        $( this.el ).find( 'li.selected' ).removeClass( 'selected' );
+        $( this.el ).find( '.selected' ).removeClass( 'selected' );
     }
 
 });

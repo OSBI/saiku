@@ -62,7 +62,6 @@ var SaveQuery = Modal.extend({
             if( height > 420 ) {
                 height = 420;
             }
-            console.info( height );
             $(this.el).find('.RepositoryObjects').height( height );
             $(this.el).dialog( 'option', 'position', 'center' );
             $(this.el).parents('.ui-dialog').css({ width: "500px" });

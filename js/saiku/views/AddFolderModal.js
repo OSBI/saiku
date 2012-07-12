@@ -38,6 +38,7 @@ var AddFolderModal = Modal.extend({
     initialize: function(args) {
         var self = this;
         this.success = args.success;
+        this.path = args.path;
         this.message = "<form id='add_folder'>" +
             "<label for='name'>To add a new forlder, " + 
             "please type a name in the text box below:</label><br />" +
@@ -56,7 +57,8 @@ var AddFolderModal = Modal.extend({
         var self = this;
         
         var name = $(this.el).find('input[name="name"]').val();
-        (new SavedQuery( { file: name , name: name} ) ).save( { 
+        var file = this.path + name;
+        (new SavedQuery( { file: file , name: name} ) ).save( { 
             success: self.success,
             dataType: "text",
             error: this.error
