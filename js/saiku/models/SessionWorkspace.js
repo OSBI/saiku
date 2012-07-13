@@ -34,7 +34,7 @@ var SessionWorkspace = Backbone.Model.extend({
         this.initialized = false;
         this.first = true;
         // Check expiration on localStorage
-        if (localStorage && localStorage.getItem('expiration') && !(localStorage.getItem('expiration') > (new Date()).getTime())) {
+        if (typeof localStorage !== "undefined" && localStorage && localStorage.getItem('expiration') && !(localStorage.getItem('expiration') > (new Date()).getTime())) {
             localStorage.clear();
         }
         Saiku.ui.block("Loading datasources....");
@@ -43,19 +43,19 @@ var SessionWorkspace = Backbone.Model.extend({
     },
 
     refresh: function() {
-        localStorage.clear();
+        typeof localStorage !== "undefined" && localStorage && localStorage.clear();
         this.clear();
         this.fetch({success:this.process_datasources},{});
     },
         
     destroy: function() {
-        localStorage && localStorage.clear();
+        typeof localStorage !== "undefined" && localStorage && localStorage.clear();
         return false;
     },
     
     process_datasources: function(model, response) {
         // Save session in localStorage for other tabs to use
-        if (localStorage && localStorage.getItem('session') === null) {
+        if (typeof localStorage !== "undefined" && localStorage && localStorage.getItem('session') === null) {
             localStorage.setItem('session', JSON.stringify(response));
         }
 
@@ -114,7 +114,7 @@ var SessionWorkspace = Backbone.Model.extend({
                             + ((schema.name == "" || schema.name == null) ? "null" : schema.name) 
                             + "/" + encodeURIComponent(cube.name);
 
-                        if (localStorage && 
+                        if (typeof localStorage !== "undefined" && localStorage && 
                             localStorage.getItem("dimension." + key) !== null &&
                             localStorage.getItem("measure." + key) !== null) {
                             this.dimensions[key] = new Dimension(JSON.parse(localStorage.getItem("dimension." + key)));

@@ -52,7 +52,7 @@ var DrillthroughModal = Modal.extend({
         var measures = Saiku.session.sessionworkspace.measures[key].get('data');
 
         if (typeof dimensions == "undefined" || typeof measures == "undefined") {
-                        if (localStorage && 
+                        if (typeof localStorage !== "undefined" && localStorage && 
                             localStorage.getItem("dimension." + key) !== null &&
                             localStorage.getItem("measure." + key) !== null) {
                             Saiku.session.sessionworkspace.dimensions[key] = new Dimension(JSON.parse(localStorage.getItem("dimension." + key)));

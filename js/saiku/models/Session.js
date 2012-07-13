@@ -82,7 +82,7 @@ var Session = Backbone.Model.extend({
         // Set expiration on localStorage to one day in the future
         var expires = (new Date()).getTime() + 
             Settings.LOCALSTORAGE_EXPIRATION;
-        localStorage && localStorage.setItem('expiration', expires);
+        typeof localStorage !== "undefined" && localStorage && localStorage.setItem('expiration', expires);
 
         this.save({username:username, password:password},{success: this.check_session, error: this.check_session});
         
@@ -95,7 +95,7 @@ var Session = Backbone.Model.extend({
         $('#tab_panel').remove();
 
         Saiku.toolbar = new Toolbar();
-        localStorage && localStorage.clear();
+        typeof localStorage !== "undefined" && localStorage && localStorage.clear();
         this.id = _.uniqueId('queryaction_');
         this.clear();
         this.sessionid = null;

@@ -272,9 +272,6 @@ var Table = Backbone.View.extend({
             isLastRow = false;
             headerStarted = false;
 
-            if (row == 0) {
-                contents +="<thead>";
-            }
             contents += "<tr>";
 
             for (var col = 0; col < table[row].length; col++) {
@@ -373,12 +370,9 @@ var Table = Backbone.View.extend({
                 }
             }
             contents += "</tr>";
-            if (!isBody && data[row+1][0].type === "ROW_HEADER") {
-                contents += "</thead><tbody>";
-                isBody = true;
-            }
+            
         }
-        contents += "</tbody>"
+
         // Append the table
         $(this.el).html(contents);
         this.post_process();
