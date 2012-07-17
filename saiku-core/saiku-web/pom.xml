@@ -15,7 +15,6 @@
 	<properties>
 		<spring.version>3.0.3.RELEASE</spring.version>
 		<spring.security.version>3.0.3.RELEASE</spring.security.version>
-		<spring.security.tiger.version>2.0.6.RELEASE</spring.security.tiger.version>
 	</properties>
 
 	<build>
@@ -85,6 +84,33 @@
 			<version>1.2.14</version>
 		</dependency>
 		<!-- Spring modules -->
+<dependency>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-core</artifactId>
+  <version>${spring.version}</version>
+</dependency>
+ 
+ <dependency>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-beans</artifactId>
+  <version>${spring.version}</version>
+</dependency>
+<dependency>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-aop</artifactId>
+  <version>${spring.version}</version>
+</dependency>
+<dependency>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-context</artifactId>
+  <version>${spring.version}</version>
+</dependency>
+ <dependency>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-context-support</artifactId>
+  <version>${spring.version}</version>
+</dependency>
+ 
 
 
 		<dependency>
@@ -109,64 +135,16 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-dao</artifactId> 
-			<version>2.0.3</version> </dependency> -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core-tiger</artifactId>
-			<version>${spring.security.tiger.version}</version>
-			<exclusions>
-				<!--we'll depend on enunciate's version of these artifacts. -->
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-aop</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-				<!-- <exclusion> <groupId>org.springframework</groupId> <artifactId>spring-dao</artifactId> 
-					</exclusion> -->
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-context</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.enunciate</groupId>
-			<artifactId>enunciate-gwt-rt</artifactId>
-			<version>${enunciate.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-jersey-rt</artifactId>
-			<version>${enunciate.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.enunciate</groupId>
-			<artifactId>enunciate-amf-rt</artifactId>
-			<version>${enunciate.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.enunciate</groupId>
-			<artifactId>enunciate-obj-c</artifactId>
-			<version>${enunciate.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.enunciate</groupId>
-			<artifactId>enunciate-c</artifactId>
 			<version>${enunciate.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>3.0.4.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
 
 		<dependency>
@@ -267,23 +245,11 @@
 			<artifactId>spring-security-config</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-
-		<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-tx</artifactId> 
-			<version>${spring.version}</version> </dependency> <dependency> <groupId>org.springframework</groupId> 
-			<artifactId>spring-context-support</artifactId> <version>${spring.version}</version> 
-			</dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-jdbc</artifactId> 
-			<version>${spring.version}</version> </dependency> -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.security.oauth</groupId>
-			<artifactId>spring-security-oauth</artifactId>
-			<version>1.0.0.BUILD-SNAPSHOT</version>
-		</dependency>
-
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-io</artifactId>

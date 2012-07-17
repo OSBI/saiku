@@ -15,9 +15,8 @@
 	<properties>
 		<spring.version>3.0.3.RELEASE</spring.version>
 		<spring.security.version>3.0.3.RELEASE</spring.security.version>
-		<spring.security.tiger.version>2.0.6.RELEASE</spring.security.tiger.version>
-        <enunciate.version>1.23</enunciate.version>
-        <jersey.version>1.8</jersey.version>
+		<enunciate.version>1.25</enunciate.version>
+		<jersey.version>1.11</jersey.version>
 	</properties>
 
 	<build>
@@ -43,23 +42,30 @@
 								<copy todir="target/${project.artifactId}-foodmart-${project.version}">
 									<fileset dir="target/${project.artifactId}-${project.version}/" />
 								</copy>
-								<unzip dest="target/${project.artifactId}-foodmart-${project.version}/WEB-INF/classes/">
+								<unzip
+									dest="target/${project.artifactId}-foodmart-${project.version}/WEB-INF/classes/">
 									<fileset dir="${basedir}/../util/">
 										<include name="foodmart.zip" />
 									</fileset>
 								</unzip>
-                                <copy todir="target/${project.artifactId}-foodmart-${project.version}/WEB-INF/classes/foodmart/" overwrite="true">
+								<copy
+									todir="target/${project.artifactId}-foodmart-${project.version}/WEB-INF/classes/foodmart/"
+									overwrite="true">
 									<fileset dir="${basedir}/../util/">
 										<include name="FoodMart.xml" />
 									</fileset>
 								</copy>
-								<copy todir="target/${project.artifactId}-foodmart-${project.version}/WEB-INF/classes/saiku-datasources/" overwrite="true">
+								<copy
+									todir="target/${project.artifactId}-foodmart-${project.version}/WEB-INF/classes/saiku-datasources/"
+									overwrite="true">
 									<fileset dir="${basedir}/../util/">
 										<include name="foodmart" />
 									</fileset>
 								</copy>
-								<zip destfile="target/${project.artifactId}-foodmart-${project.version}.war">
-									<zipfileset dir="target/${project.artifactId}-foodmart-${project.version}/" />
+								<zip
+									destfile="target/${project.artifactId}-foodmart-${project.version}.war">
+									<zipfileset
+										dir="target/${project.artifactId}-foodmart-${project.version}/" />
 								</zip>
 							</tasks>
 						</configuration>
@@ -128,8 +134,32 @@
 			<version>${project.version}</version>
 		</dependency>
 		<!-- Spring modules -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
 
-
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-taglibs</artifactId>
@@ -146,37 +176,11 @@
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-dao</artifactId> 
-			<version>2.0.3</version> </dependency> -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core-tiger</artifactId>
-			<version>${spring.security.tiger.version}</version>
-			<exclusions>
-				<!--we'll depend on enunciate's version of these artifacts. -->
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-aop</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-context</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>3.0.4.RELEASE</version>
+			<version>${spring.version}</version>
 		</dependency>
 
 		<dependency>
@@ -184,6 +188,34 @@
 			<artifactId>jersey-core</artifactId>
 			<version>${jersey.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey.contribs</groupId>
+			<artifactId>jersey-spring</artifactId>
+			<version>${jersey.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-web</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-server</artifactId>
@@ -208,28 +240,14 @@
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
-			<artifactId>enunciate-gwt-rt</artifactId>
-			<version>${enunciate.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-jersey-rt</artifactId>
 			<version>${enunciate.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.enunciate</groupId>
-			<artifactId>enunciate-amf-rt</artifactId>
-			<version>${enunciate.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.enunciate</groupId>
-			<artifactId>enunciate-obj-c</artifactId>
-			<version>${enunciate.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.enunciate</groupId>
-			<artifactId>enunciate-c</artifactId>
-			<version>${enunciate.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.sun.jersey</groupId>
+					<artifactId>jersey-server</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -321,12 +339,6 @@
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.security.oauth</groupId>
-			<artifactId>spring-security-oauth</artifactId>
-			<version>1.0.0.BUILD-SNAPSHOT</version>
-		</dependency>
-
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-io</artifactId>

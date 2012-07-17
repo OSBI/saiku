@@ -32,6 +32,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -68,7 +69,6 @@ import org.saiku.olap.dto.SaikuSelection;
 import org.saiku.olap.dto.SaikuSelection.Type;
 import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.dto.SaikuTuple;
-import org.saiku.olap.query.IQuery;
 import org.saiku.olap.util.SaikuProperties;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.service.util.KeyValue;
@@ -77,8 +77,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * QueryServlet contains all the methods required when manipulating an OLAP Query.

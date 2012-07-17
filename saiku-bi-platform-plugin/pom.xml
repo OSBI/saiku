@@ -12,8 +12,8 @@
 		<maven.compiler.target>1.5</maven.compiler.target>
 		<pentaho.libs.version>3.10.0-stable</pentaho.libs.version>
 		<slf4j.version>1.6.1</slf4j.version>
-        <jersey.version>1.8</jersey.version>
-        <enunciate.version>1.23</enunciate.version>
+	        <enunciate.version>1.25</enunciate.version>
+        	<jersey.version>1.11</jersey.version>
 	</properties>
 	<build>
 		<plugins>
@@ -90,6 +90,12 @@
 								<artifactItem>
 									<groupId>com.sun.jersey</groupId>
 									<artifactId>jersey-server</artifactId>
+									<version>${jersey.version}</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.sun.jersey</groupId>
+									<artifactId>jersey-servlet</artifactId>
 									<version>${jersey.version}</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
@@ -408,9 +414,36 @@
 			<version>${jersey.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-servlet</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.sun.jersey.contribs</groupId>
 			<artifactId>jersey-spring</artifactId>
 			<version>${jersey.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-aop</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-web</artifactId>
+				</exclusion>
+            </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
