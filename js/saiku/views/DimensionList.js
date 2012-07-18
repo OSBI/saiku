@@ -64,7 +64,7 @@ var DimensionList = Backbone.View.extend({
             .find('.hide').hide().removeClass('hide');
         
         // Add draggable behavior
-        $(this.el).find('.measure,.dimension').parent('li').draggable({
+        $(this.el).find('.measure,.level').parent('li').draggable({
             cancel: '.not-draggable, .hierarchy',
             connectToSortable: $(this.workspace.el)
                 .find('.columns > ul, .rows > ul, .filter > ul'),

@@ -130,12 +130,12 @@
                 <% _.each(dimension.hierarchies, function(hierarchy) { %>
                     <% if (dimension.hierarchies.length > 1) { %>
                         <li class="hierarchy hide">
-                            <a class="dimension" href="#"><%= hierarchy.caption %></a>
+                            <a class="dimension" title="<%= hierarchy.description ? hierarchy.description : hierarchy.caption %>" href="#"><%= hierarchy.caption %></a>
                         </li>
                     <% } %>
                     <% _.each(hierarchy.levels, function(level) { %>
                         <li class="hide"><a title="<%= level.uniqueName %>" rel="<%= level.uniqueName %>" 
-                            class="dimension" href="#<%= dimension.name %>/hierarchy/<%= hierarchy.uniqueName %>/<%= level.uniqueName %>"><%= level.caption %></a>
+                            class="level" href="#<%= dimension.name %>/hierarchy/<%= hierarchy.uniqueName %>/<%= level.uniqueName %>"><%= level.caption %></a>
                         </li>
                     <% }); %>
                 <% }); %>
@@ -393,7 +393,7 @@
                 <% _.each(dimension.hierarchies, function(hierarchy) { %>
                     <% if (dimension.hierarchies.length > 1) { %>
                         <li class="hierarchy hide">
-                            <a class="dimension" href="#"><%= hierarchy.caption %></a>
+                            <a class="dimension" title="<%= hierarchy.description ? hierarchy.description : hierarchy.caption %>" href="#"><%= hierarchy.caption %></a>
                         </li>
                     <% } %>
                     <% _.each(hierarchy.levels, function(level) { %>
