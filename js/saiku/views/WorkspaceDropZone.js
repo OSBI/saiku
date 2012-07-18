@@ -73,7 +73,7 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
 
     sort_measure: function(event, ui) {
-        $axis = $(event.target.parentElement).parents('.fields_list_body');
+        $axis = $(event.target).parent().parents('.fields_list_body');
         var source = "";
         var target = "ROWS";
         
@@ -86,7 +86,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         if ($(event.target).hasClass('BASC')) sortOrder = "BASC";
         if ($(event.target).hasClass('BDESC')) sortOrder = "BDESC";
 
-        var memberpath = $(event.target.parentElement).find('a').attr('href').replace('#', '').split('/');
+        var memberpath = $(event.target).parent().find('a').attr('href').replace('#', '').split('/');
         var member = "-";
         if ($(event.target).parent().hasClass('d_dimension')) {
             member = memberpath[2] + ".CurrentMember.Name";
