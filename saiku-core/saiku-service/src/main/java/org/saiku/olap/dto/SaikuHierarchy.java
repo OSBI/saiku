@@ -28,18 +28,20 @@ public class SaikuHierarchy extends AbstractSaikuObject {
 	private String dimensionUniqueName;
 	private List<SaikuLevel> levels;
 	private List<SaikuMember> rootmembers;
+	private String description;
 	
 	public SaikuHierarchy() {
 		super(null,null);
 		throw new RuntimeException("Unsupported Constructor. Serialization only");
 	};
 	
-	public SaikuHierarchy(String name, String uniqueName, String caption, String dimensionUniqueName, List<SaikuLevel> levels, List<SaikuMember> rootmembers) {
+	public SaikuHierarchy(String name, String uniqueName, String caption, String description, String dimensionUniqueName, List<SaikuLevel> levels, List<SaikuMember> rootmembers) {
 		super(uniqueName,name);
 		this.caption = caption;
 		this.dimensionUniqueName = dimensionUniqueName;
 		this.levels = levels;
 		this.rootmembers = rootmembers;
+		this.description = description;
 	}
 
 	public String getCaption() {
@@ -56,5 +58,12 @@ public class SaikuHierarchy extends AbstractSaikuObject {
 	
 	public List<SaikuMember> getRootMembers() {
 		return this.rootmembers;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
 	}	
 }
