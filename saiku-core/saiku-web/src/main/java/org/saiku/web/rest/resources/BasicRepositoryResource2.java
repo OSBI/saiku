@@ -103,6 +103,10 @@ public class BasicRepositoryResource2 {
 	{
 		List<IRepositoryObject> objects = new ArrayList<IRepositoryObject>();
 		try {
+			if (path != null && (path.startsWith("/") || path.startsWith("."))) {
+				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + path);
+			}
+
 			if (repo != null) {
 				FileObject folder = repo;
 				if(path != null) {
@@ -132,7 +136,11 @@ public class BasicRepositoryResource2 {
 	@Path("/resource")
 	public Response getResource (@QueryParam("file") String file)
 	{
-		try{
+		try {
+			if (file == null || file.startsWith("/") || file.startsWith(".")) {
+				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
+			}
+
 			FileObject repoFile = repo.resolveFile(file);
 			System.out.println("path:" + repo.getName().getRelativeName(repoFile.getName()));
 			if (repoFile.exists()) {
@@ -170,7 +178,11 @@ public class BasicRepositoryResource2 {
 			@FormParam("file") String file, 
 			@FormParam("content") String content)
 	{
-		try{
+		try {
+			if (file == null || file.startsWith("/") || file.startsWith(".")) {
+				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
+			}
+
 			FileObject repoFile = repo.resolveFile(file);
 			if (repoFile == null) throw new Exception("Repo File not found");
 
@@ -204,7 +216,11 @@ public class BasicRepositoryResource2 {
 	public Status deleteResource (
 			@QueryParam("file") String file)
 	{
-		try{
+		try {
+			if (file == null || file.startsWith("/") || file.startsWith(".")) {
+				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
+			}
+
 			FileObject repoFile = repo.resolveFile(file);
 			if (repoFile != null && repoFile.exists()) {
 				repoFile.delete();
