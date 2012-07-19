@@ -1,8 +1,7 @@
 <projectDescription>
-  <name>saiku-bi-platform-plugin</name>
+  <name>saiku-bi-platform-plugin-util</name>
   <comment>NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects>
-    <project>saiku-bi-platform-plugin-util</project>
     <project>saiku-service</project>
     <project>saiku-web</project>
   </projects>

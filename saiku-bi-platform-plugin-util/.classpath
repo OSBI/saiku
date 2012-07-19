@@ -118,7 +118,6 @@
   <classpathentry kind="var" path="M2_REPO/com/sun/org/apache/xml/internal/resolver/20050927/resolver-20050927.jar" sourcepath="M2_REPO/com/sun/org/apache/xml/internal/resolver/20050927/resolver-20050927-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/rome/rome/0.9/rome-0.9.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/sun/xml/messaging/saaj/saaj-impl/1.3.3/saaj-impl-1.3.3.jar" sourcepath="M2_REPO/com/sun/xml/messaging/saaj/saaj-impl/1.3.3/saaj-impl-1.3.3-sources.jar"/>
-  <classpathentry kind="src" path="/saiku-bi-platform-plugin-util"/>
   <classpathentry kind="src" path="/saiku-service"/>
   <classpathentry kind="src" path="/saiku-web"/>
   <classpathentry kind="var" path="M2_REPO/salesforce/salesforce/20.0/salesforce-20.0.jar"/>

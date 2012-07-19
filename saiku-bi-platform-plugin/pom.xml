@@ -50,6 +50,13 @@
 									<type>jar</type>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
+								<artifactItem>
+									<groupId>org.saiku</groupId>
+									<artifactId>saiku-bi-platform-plugin-util</artifactId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
 
 								<artifactItem>
 									<groupId>org.codehaus.enunciate</groupId>
@@ -307,11 +314,17 @@
 			<artifactId>saiku-service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>org.saiku</groupId>
 			<artifactId>saiku-web</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.saiku</groupId>
+			<artifactId>saiku-bi-platform-plugin-util</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>mondrian</artifactId>
