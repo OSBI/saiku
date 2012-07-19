@@ -25,7 +25,11 @@ import java.util.Map;
 import java.util.Properties;
 
 import mondrian.olap.MondrianProperties;
+import mondrian.olap.Util;
+import mondrian.olap.Util.PropertyList;
+import mondrian.rolap.RolapConnectionProperties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Attribute;
@@ -37,7 +41,6 @@ import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 import org.saiku.datasources.connection.ISaikuConnection;
 import org.saiku.datasources.datasource.SaikuDatasource;
-import org.saiku.plugin.util.PentahoDatasourceProcessor;
 import org.saiku.service.datasource.IDatasourceManager;
 import org.xml.sax.EntityResolver;
 
@@ -51,6 +54,8 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 	
 	private String saikuConnectionProcessor;
 
+	private String dynamicSchemaProcessor;
+
 	public void setDatasourceResolverClass(String datasourceResolverClass) {
 		MondrianProperties.instance().DataSourceResolverClass.setString(datasourceResolverClass);
 	}
@@ -61,6 +66,10 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 	
 	public void setSaikuConnectionProcessor(String connectionProcessor) {
 		this.saikuConnectionProcessor = connectionProcessor;
+	}
+	
+	public void setDynamicSchemaProcessor(String dynamicSchemaProcessor) {
+		this.dynamicSchemaProcessor = dynamicSchemaProcessor;
 	}
 	
 	public PentahoDatasourceManager() {
@@ -101,10 +110,19 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
 				Node ds = node.selectSingleNode("DataSourceInfo");
 				Node cat = node.selectSingleNode("Definition");
-				LOG.debug("NAME: " + name + " DSINFO: " + (ds != null ? ds.getStringValue() : "NULL")+ "  ###CATALOG: " +  (cat != null ? cat.getStringValue() : "NULL"));
+				String connectStr = ds.getStringValue();
+				PropertyList pl = Util.parseConnectString(connectStr);
+				String dynProcName = pl.get(
+		                RolapConnectionProperties.DynamicSchemaProcessor.name());
+				if (StringUtils.isNotBlank(dynamicSchemaProcessor) && StringUtils.isBlank(dynProcName)) {
+					connectStr += ";" 
+						+ RolapConnectionProperties.DynamicSchemaProcessor.name() + "="+ dynamicSchemaProcessor + ";";
+					
+				}
+				LOG.debug("NAME: " + name + " DSINFO: " + connectStr + "  ###CATALOG: " +  (cat != null ? cat.getStringValue() : "NULL"));
 				Properties props = new Properties();
 				props.put("driver", "mondrian.olap4j.MondrianOlap4jDriver");
-				props.put("location","jdbc:mondrian:" + ds.getStringValue() + ";Catalog=" + cat.getStringValue());
+				props.put("location","jdbc:mondrian:" + connectStr + ";Catalog=" + cat.getStringValue());
 				if (saikuDatasourceProcessor != null) {
 					props.put(ISaikuConnection.DATASOURCE_PROCESSORS, saikuDatasourceProcessor);
 				}

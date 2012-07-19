@@ -90,8 +90,9 @@ public class SaikuOlapConnection implements ISaikuConnection {
 	}
 	
 	public boolean clearCache() throws Exception {
-		if (SaikuMondrianHelper.isMondrianConnection(olapConnection)) {
-			RolapConnection rcon = SaikuMondrianHelper.getMondrianConnection(olapConnection);
+		if (olapConnection.isWrapperFor(RolapConnection.class)) {
+			System.out.println("Clearing cache");
+			RolapConnection rcon = olapConnection.unwrap(RolapConnection.class);
 			rcon.getCacheControl(null).flushSchemaCache();
 		}
 		return true;
