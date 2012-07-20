@@ -115,14 +115,13 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 				String dynProcName = pl.get(
 		                RolapConnectionProperties.DynamicSchemaProcessor.name());
 				if (StringUtils.isNotBlank(dynamicSchemaProcessor) && StringUtils.isBlank(dynProcName)) {
-					connectStr += ";" 
-						+ RolapConnectionProperties.DynamicSchemaProcessor.name() + "="+ dynamicSchemaProcessor + ";";
+					pl.put(RolapConnectionProperties.DynamicSchemaProcessor.name(), dynamicSchemaProcessor);
 					
 				}
-				LOG.debug("NAME: " + name + " DSINFO: " + connectStr + "  ###CATALOG: " +  (cat != null ? cat.getStringValue() : "NULL"));
+				LOG.debug("NAME: " + name + " DSINFO: " + pl.toString() + "  ###CATALOG: " +  (cat != null ? cat.getStringValue() : "NULL"));
 				Properties props = new Properties();
 				props.put("driver", "mondrian.olap4j.MondrianOlap4jDriver");
-				props.put("location","jdbc:mondrian:" + connectStr + ";Catalog=" + cat.getStringValue());
+				props.put("location","jdbc:mondrian:" + pl.toString() + ";Catalog=" + cat.getStringValue());
 				if (saikuDatasourceProcessor != null) {
 					props.put(ISaikuConnection.DATASOURCE_PROCESSORS, saikuDatasourceProcessor);
 				}
