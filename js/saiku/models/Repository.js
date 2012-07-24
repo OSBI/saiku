@@ -25,7 +25,7 @@
 var RepositoryObject = Backbone.Model.extend( {
     url: function( ) {
         var segment = Settings.BIPLUGIN ? 
-            "/pentahorepository" : "/repository2/resource";
+            "/pentahorepository2/resource" : "/repository2/resource";
         return encodeURI(Saiku.session.username + segment);
     }
 } );
@@ -39,14 +39,14 @@ var SavedQuery = Backbone.Model.extend({
     
     url: function() {
         var u = Settings.BIPLUGIN ? 
-                encodeURI(Saiku.session.username + "/pentahorepository/" + this.get('name'))  
+                encodeURI(Saiku.session.username + "/pentahorepository2/resource")  
                     : encodeURI(Saiku.session.username + "/repository2/resource");
         return u;
     },
     
     move_query_to_workspace: function(model, response) {
-        var file = (Settings.BIPLUGIN ? response.xml :  response);
-        var filename = (Settings.BIPLUGIN ? model.get('name') : model.get('file')) ;
+        var file = response;
+        var filename = model.get('file');
         for (var key in Settings) {
             if (key.match("^PARAM")=="PARAM") {
                 var variable = key.substring("PARAM".length, key.length)
@@ -80,7 +80,7 @@ var Repository = Backbone.Collection.extend({
     
     url: function() {
         var segment = Settings.BIPLUGIN ? 
-            "/pentahorepository" : "/repository2/?type=saiku";
+            "/pentahorepository2/?type=saiku" : "/repository2/?type=saiku";
         return encodeURI(Saiku.session.username + segment);
     }
 });

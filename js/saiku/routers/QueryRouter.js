@@ -30,20 +30,18 @@ var QueryRouter = Backbone.Router.extend({
     open_query: function(query_name) {
         Settings.ACTION = "OPEN_QUERY";
         var options = {};
-        var dataType = "json"
+        var dataType = "text";
         if (Settings.BIPLUGIN) {
+            var file = (Settings.GET.SOLUTION ? (Settings.GET.SOLUTION + "/") : "")
+                        + (Settings.GET.PATH ? (Settings.GET.PATH + "/") : "")
+                        + (Settings.GET.ACTION || "");
             options = {
-                name: query_name,
-                solution: Settings.GET.SOLUTION || "",
-                path: Settings.GET.PATH || "",
-                action: Settings.GET.ACTION || "",
-                biplugin: true
+                file: file
             };
         } else {
-            dataType = "text"
+            
             options = {
-                file: query_name,
-                dataType: "text"
+                file: query_name
             }
         }
         var query = new SavedQuery(options);

@@ -112,8 +112,6 @@ var BIPlugin = {
         }
 
         // Remove toolbar buttons
-        $(workspace.toolbar.el)
-            .find('.save').parent().remove();
         $(workspace.toolbar.el).find('.run').parent().removeClass('seperator');
         if (Settings.MODE == "view" || Settings.MODE == "table") {
             $(workspace.toolbar.el)
