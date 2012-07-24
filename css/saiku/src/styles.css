@@ -1273,7 +1273,7 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     text-decoration: none;
 }
 
-.RepositoryObjects li:hover {
+.RepositoryObjects li a:hover {
     background: #f0f0f0;
 }
 
@@ -1281,7 +1281,7 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     margin-top: 5px;
 }
 
-.RepositoryObjects li.selected.folder .folder_row {
+.RepositoryObjects .folder_row.selected {
     background: #f0f0f0;
 }
 

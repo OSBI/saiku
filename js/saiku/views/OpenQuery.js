@@ -144,7 +144,7 @@ var OpenQuery = Backbone.View.extend({
         $selected = $(this.el).find('.selected');
         var path ="";
         if (typeof $selected !== "undefined" && $selected) {
-            if ($selected.hasClass('folder')) {
+            if ($selected.hasClass('folder_row')) {
                 path = $selected.find('.folder_row a').attr('href');
                 path = path.length > 1 ? path.substring(1,path.length) : path; 
                 path+= "/";
@@ -176,14 +176,14 @@ var OpenQuery = Backbone.View.extend({
     toggle_folder: function( event ) {
         var $target = $( event.currentTarget );
         this.unselect_current_selected( );
-        $target.addClass( 'selected' );
-        var $queries = $target.find( 'ul' );
-        var isClosed = $queries.hasClass( 'hide' );
+        $target.children('.folder_row').addClass( 'selected' );
+        var $queries = $target.children( '.folder_content' );
+        var isClosed = $target.children( '.folder_row' ).find('.sprite').hasClass( 'collapsed' );
         if( isClosed ) {
-            $target.find( '.sprite' ).removeClass( 'collapsed' );
+            $target.children( '.folder_row' ).find('.sprite').removeClass( 'collapsed' );
             $queries.removeClass( 'hide' );
         } else {
-            $target.find( '.sprite' ).addClass( 'collapsed' );
+            $target.children( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
             $queries.addClass( 'hide' );
         }
 

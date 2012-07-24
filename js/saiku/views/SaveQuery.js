@@ -41,7 +41,10 @@ var SaveQuery = Modal.extend({
     initialize: function(args) {
         // Append events
         var self = this;
-        var name = args.query.name ? args.query.name : "";
+        var name = "";
+        if (args.query.name) {
+            name = args.query.name.split('/')[args.query.name.split('/').length -1];
+        }
         this.query = args.query;
         this.message = _.template("<form id='save_query_form'>" +
             "<label for='name'>To save a new query, " + 
@@ -90,14 +93,14 @@ var SaveQuery = Modal.extend({
     toggle_folder: function( event ) {
         var $target = $( event.currentTarget );
         this.unselect_current_selected_folder( );
-        $target.addClass( 'selected' );
-        var $queries = $target.find( 'ul' );
-        var isClosed = $queries.hasClass( 'hide' );
+        $target.children('.folder_row').addClass( 'selected' );
+        var $queries = $target.children( '.folder_content' );
+        var isClosed = $target.children( '.folder_row' ).find('.sprite').hasClass( 'collapsed' );
         if( isClosed ) {
-            $target.find( '.sprite' ).removeClass( 'collapsed' );
+            $target.children( '.folder_row' ).find('.sprite').removeClass( 'collapsed' );
             $queries.removeClass( 'hide' );
         } else {
-            $target.find( '.sprite' ).addClass( 'collapsed' );
+            $target.children( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
             $queries.addClass( 'hide' );
         }
         return false;
@@ -106,24 +109,25 @@ var SaveQuery = Modal.extend({
     select_name: function( event ) {
         var $currentTarget = $( event.currentTarget );
         this.unselect_current_selected_folder( );
-        $currentTarget.parent( ).parent( ).has( '.folder' ).addClass( 'selected' );
+        $currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').addClass( 'selected' );
         var name = $currentTarget.find( 'a' ).text();
         $(this.el).find('input[name="name"]').val( name );
         return false;
     },
 
     unselect_current_selected_folder: function( ) {
-        $( this.el ).find( 'li.folder.selected' ).removeClass( 'selected' );
+        $( this.el ).find( '.selected' ).removeClass( 'selected' );
     },
 
     save: function(event) {
         // Save the name for future reference
         var foldername = ''; /* XXX == root, should it be something different than ''? */
-        var $folder = $(this.el).find( 'li.folder.selected a' ).first( );
+        var $folder = $(this.el).find( '.folder_row.selected a' ).first( );
         if( $folder.length ) {
             foldername = $folder.attr( 'href' ).replace( '#', '' );
             foldername = (foldername != null && foldername.length > 0 ? foldername + "/" : "");
         }
+        
         var name = $(this.el).find('input[name="name"]').val();
         this.query.set({ name: name, folder: foldername });
         this.query.trigger('query:save');
