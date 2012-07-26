@@ -19,6 +19,7 @@
  */
 package org.saiku.web.rest.resources;
 
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -28,6 +29,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -44,12 +46,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.VFS;
 import org.saiku.web.rest.objects.repository.IRepositoryObject;
 import org.saiku.web.rest.objects.repository.RepositoryFileObject;
 import org.saiku.web.rest.objects.repository.RepositoryFolderObject;
+import org.saiku.web.service.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -67,8 +71,10 @@ public class BasicRepositoryResource2 {
 	private static final Logger log = LoggerFactory.getLogger(BasicRepositoryResource2.class);
 
 	private FileObject repo;
-
+	private SessionService sessionService;
+	
 	public void setPath(String path) throws Exception {
+		
 
 		FileSystemManager fileSystemManager;
 		try {
@@ -242,8 +248,8 @@ public class BasicRepositoryResource2 {
 					if (StringUtils.isNotEmpty(fileType) && !filename.endsWith(fileType)) {
 						continue;
 					}
+					
 					String extension = file.getName().getExtension();
-
 					repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath));
 				}
 				if (file.getType().equals(FileType.FOLDER)) { 
@@ -253,4 +259,9 @@ public class BasicRepositoryResource2 {
 		}
 		return repoObjects;
 	}
+	
+	public void setSessionService(SessionService sessionService){
+		this.sessionService = sessionService;
+	}
+	
 }
