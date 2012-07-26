@@ -18,6 +18,11 @@ public class Acl {
 	Map<String, AclResource> acl = new TreeMap<String, AclResource>();
 		
 	
+	//TODO : REMOVE !!!!
+	public void setAclResource(AclResource aclResource, String resource){
+		acl.put(resource, aclResource);
+	}
+	
 	AclResource getAcl(String resource, String parent){
 		AclResource aclResource = acl.get(resource);
 		if (aclResource == null ) {
@@ -68,14 +73,17 @@ public class Acl {
 		case PUBLIC:
 			return AclMethod.WRITE;
 		case ROLE:
-			if ( aclResource.canWrite(rolename) ) return AclMethod.WRITE;
-			if ( aclResource.canRead(rolename) ) return AclMethod.READ;
+			if ( aclResource.canWrite(null,rolename) ) return AclMethod.WRITE;
+			if ( aclResource.canRead(null,rolename) ) return AclMethod.READ;
+			break;
 		case USER:
-			if ( aclResource.canWrite(username) ) return AclMethod.WRITE;
-			if ( aclResource.canRead(username) ) return AclMethod.READ;
+			if ( aclResource.canWrite(username,rolename) ) return AclMethod.WRITE;
+			if ( aclResource.canRead(username,rolename) ) return AclMethod.READ;
+			break;
 		default:
 			return AclMethod.NONE;
 		}
+		return AclMethod.NONE;
 	}
 	/**
 	 * this method tells if the user/role has grant option in the current resource.
