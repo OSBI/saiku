@@ -77,4 +77,16 @@ public class Acl {
 			return AclMethod.NONE;
 		}
 	}
+	/**
+	 * this method tells if the user/role has grant option in the current resource.
+	 * @param username
+	 * @param rolename
+	 * @param resource
+	 * @param parent
+	 * @return
+	 */
+	public boolean canGrant(String username, String rolename, String resource, String parent ) {
+		return  getAcl(resource, parent).canGrant(username, rolename); 
+	}
+
 }

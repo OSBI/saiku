@@ -14,6 +14,10 @@ public class AclResource {
 	 */
 	private AclList write = null;
 	/**
+	 * the list of users/roles with grant option
+	 */
+	private AclList grant = null;
+	/**
 	 * the parent resource
 	 */
 	private AclResource parent = null;
@@ -90,6 +94,38 @@ public class AclResource {
 		return false; // parent cannot write : overrides 
 	}
 
+	/**
+	 * Checks if the user/role has grant options in the current 
+	 * resource
+	 * @param username
+	 * @param role
+	 * @return 
+	 */
+	public boolean canGrant(String username, String role) {
+		return userCanGrant(username) || roleCanGrant(role);
+	}
+	/**
+	 * checks if the role has grant option in the current resource.
+	 * If the rolename is null the answer is false
+	 * @param rolename
+	 * @return
+	 */
+	private boolean roleCanGrant(String rolename){
+		if ( rolename == null ) return false;
+		return grant.containsRole(rolename) && grant.getRoles().size() != 0;
+	}
+	/**
+	 * Checks if the user has grant option in the current resource.
+	 * If the username is null the answer is false 
+	 * @param username
+	 * @return
+	 */
+	private boolean userCanGrant(String username){
+		if ( username == null ) return false;
+		if ( isOwner(username) ) return true;
+		return grant.containsUser(username) && grant.getUsers().size() != 0;
+	}
+
 	public AclResource getParent() {
 		return parent;
 	}
@@ -115,18 +151,120 @@ public class AclResource {
 	 * @param owner
 	 */
 	public void setOwner(String owner){
+		if ( !this.owner.equals(AclType.PUBLIC.toString()) ){
+			// remove from grant
+			grant.getUsers().remove(this.owner);
+		}
 		if ( owner == null ) 
 			this.owner = AclType.PUBLIC.toString();
-		else 
+		else {
 			this.owner = owner;
+			grant.getUsers().add(this.owner);
+		}
 	}
-
+	/**
+	 * returns the acl type
+	 * @return
+	 */
 	public AclType getType() {
 		return type;
 	}
-
+	/**
+	 * sets the acl type. 
+	 * @param type
+	 * @throws InvalidAccessException if {@link AclType} is {@link AclType#GRANT}
+	 */
 	public void setType(AclType type) {
+		if ( type == AclType.GRANT ) throw new InvalidAccessException("GRANT is not supported for Acl resource type");
 		this.type = type;
 	}
+	
+	/**
+	 * adds a user to the read list
+	 * @param user
+	 */
+	public void grantUserRead(String user ) {
+		read.getUsers().add(user);
+	}
+	/**
+	 * adds a user to the write list
+	 * @param user
+	 */
+	public void grantUserWrite(String user ) {
+		write.getUsers().add(user);
+	}
+	/**
+	 * adds a role to the read list
+	 * @param role
+	 */
+	public void grantRoleRead(String role ) {
+		read.getRoles().add(role);
+	}
+	/**
+	 * adds a role to the write list
+	 * @param role
+	 */
+	public void grantRoleWrite(String role ) {
+		write.getRoles().add(role);
+	}
+	/**
+	 * gives a user grant permission
+	 * @param user
+	 */
+	public void grantUserGrant(String user ) {
+		grant.getRoles().add(user);
+	}
+	/**
+	 * gives a role grant permission
+	 * @param role
+	 */
+	public void grantRoleGrant(String role ) {
+		grant.getRoles().add(role);
+	}
+	
+	/**
+	 * revokes a user the read permission
+	 * @param user
+	 */
+	public void revokeUserRead(String user ) {
+		read.getUsers().remove(user);
+	}
+	
+	/**
+	 * revokes a user the write permission
+	 * @param user
+	 */
+	public void revokeUserWrite(String user ) {
+		write.getUsers().remove(user);
+	}
+	/**
+	 * revokes a role the read permission
+	 * @param role
+	 */
+	public void revokeRoleRead(String role ) {
+		read.getRoles().remove(role);
+	}
+	/**
+	 * revokes a role the write permission
+	 * @param role
+	 */	public void revokeRoleWrite(String role ) {
+		write.getRoles().remove(role);
+	}
+	
+	/**
+	 * revokes a user the grant permission
+	 * @param user
+	 */
+	public void revokeUserGrant(String user ) {
+		grant.getRoles().remove(user);
+	}
+	/**
+	 * revokes a role the grant permission
+	 * @param role
+	 */
+	public void revokeRoleGrant(String role ) {
+		grant.getRoles().remove(role);
+	}
+	
 }
 
