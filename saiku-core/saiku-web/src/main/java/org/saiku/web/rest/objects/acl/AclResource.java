@@ -17,6 +17,7 @@ public class AclResource {
 	 * the list of users/roles with grant option
 	 */
 	private AclList grant = null;
+	
 	/**
 	 * the parent resource
 	 */
@@ -35,7 +36,7 @@ public class AclResource {
 	 * resource is explicitly marked as readable;if it is not
 	 * then it checks the implicit setting .
 	 * 
-	 * @param name the user or role accessing the resource
+	 * @param username the user or role accessing the resource
 	 * @return true if the parent resource can be read and
 	 *  <ul> 
 	 *  <li> the owner is accessing the resource </li>
@@ -45,17 +46,21 @@ public class AclResource {
 	 * 	<li>the user/role accessing the resource has been granted access</li>
 	 * </ul>
 	 */
-	public boolean canRead(String name) {
+	public boolean canRead(String username, String rolename) {
 		boolean parentRead = true;
 		if (parent != null)
-			parentRead = parent.canRead(name);
+			parentRead = parent.canRead(username, rolename);
 		if (parentRead) {
-			if ( isOwner(name) ) return true; // owner wins ...
+			if ( isOwner(username) ) return true; // owner wins ...
 			switch (type) {
 			case ROLE:
-				return (read != null && read.getRoles().contains(name) ) || canWrite(name);
+				boolean canRead = read != null && read.getRoles().contains(rolename);
+				boolean canWrite = canWrite(null,rolename);
+				
+				//return (read != null && read.getRoles().contains(rolename) ) || canWrite(null,rolename);
+				return canRead || canWrite;
 			case USER:
-				return read != null && read.getUsers().contains(name) || canWrite(name);
+				return read != null && read.getUsers().contains(username) || canWrite(username,rolename);
 			default:
 				return true; // it's public access
 			}
@@ -76,15 +81,15 @@ public class AclResource {
 	 * 	<li>the user/role accessing the resource has been granted access</li>
 	 * </ul>
 	 */
-	public boolean canWrite(String name) {
+	public boolean canWrite(String name, String role) {
 		boolean parentRead = true;
 		if (parent != null)
-			parentRead = parent.canWrite(name);
+			parentRead = parent.canRead(name,role);
 		if (parentRead) {
 			if ( isOwner(name) ) return true; // owner wins ...
 			switch (type) {
 			case ROLE:
-				return write != null && write.containsRole(name);
+				return write != null && write.containsRole(role);
 			case USER:
 				return write != null && write.containsUser(name);
 			default:
@@ -159,7 +164,7 @@ public class AclResource {
 			this.owner = AclType.PUBLIC.toString();
 		else {
 			this.owner = owner;
-			grant.getUsers().add(this.owner);
+			grantUserGrant(this.owner);
 		}
 	}
 	/**
@@ -184,6 +189,7 @@ public class AclResource {
 	 * @param user
 	 */
 	public void grantUserRead(String user ) {
+		if ( read == null ) read = new AclList();
 		read.getUsers().add(user);
 	}
 	/**
@@ -191,6 +197,7 @@ public class AclResource {
 	 * @param user
 	 */
 	public void grantUserWrite(String user ) {
+		if ( write == null ) write = new AclList();
 		write.getUsers().add(user);
 	}
 	/**
@@ -198,6 +205,7 @@ public class AclResource {
 	 * @param role
 	 */
 	public void grantRoleRead(String role ) {
+		if ( read == null ) read = new AclList();
 		read.getRoles().add(role);
 	}
 	/**
@@ -205,6 +213,7 @@ public class AclResource {
 	 * @param role
 	 */
 	public void grantRoleWrite(String role ) {
+		if ( write == null ) write = new AclList();
 		write.getRoles().add(role);
 	}
 	/**
@@ -212,6 +221,7 @@ public class AclResource {
 	 * @param user
 	 */
 	public void grantUserGrant(String user ) {
+		if ( grant == null ) grant = new AclList();
 		grant.getRoles().add(user);
 	}
 	/**
@@ -219,6 +229,7 @@ public class AclResource {
 	 * @param role
 	 */
 	public void grantRoleGrant(String role ) {
+		if ( grant == null ) grant = new AclList();
 		grant.getRoles().add(role);
 	}
 	
