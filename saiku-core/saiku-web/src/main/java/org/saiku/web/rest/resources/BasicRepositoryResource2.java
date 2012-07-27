@@ -50,6 +50,8 @@ import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.VFS;
+import org.saiku.web.rest.objects.acl.Acl;
+import org.saiku.web.rest.objects.acl.enumeration.AclMethod;
 import org.saiku.web.rest.objects.repository.IRepositoryObject;
 import org.saiku.web.rest.objects.repository.RepositoryFileObject;
 import org.saiku.web.rest.objects.repository.RepositoryFolderObject;
@@ -73,6 +75,8 @@ public class BasicRepositoryResource2 {
 	private FileObject repo;
 	private SessionService sessionService;
 	
+	private Acl acl = new Acl();
+	private static final String SAIKU_ACL=".saikuaccess";
 	public void setPath(String path) throws Exception {
 		
 
@@ -91,6 +95,12 @@ public class BasicRepositoryResource2 {
 				throw new IOException("File does not exist: " + path);
 			}
 			repo = fileObject;
+			FileObject saikuAclConf = fileObject.getChild(SAIKU_ACL) ;
+			if ( saikuAclConf != null ) { 
+				acl.readAcl(saikuAclConf);
+			} else {
+				acl.setOpenAccess();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -227,11 +237,19 @@ public class BasicRepositoryResource2 {
 				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
 			}
 
-			FileObject repoFile = repo.resolveFile(file);
-			if (repoFile != null && repoFile.exists()) {
-				repoFile.delete();
+			
+			String username = sessionService.getAllSessionObjects().get("username").toString();
+			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
+			//TODO : missing parent ... could inherit !
+			if ( acl.canWrite(username, roles, file, null) ) {
+				FileObject repoFile = repo.resolveFile(file);
+				if (repoFile != null && repoFile.exists()) {
+					repoFile.delete();
+				}
+				return Status.OK;
+			} else {
+				return Status.UNAUTHORIZED;
 			}
-			return Status.OK;
 		} catch(Exception e){
 			log.error("Cannot save resource to (file: " + file + ")",e);
 		}
@@ -244,16 +262,22 @@ public class BasicRepositoryResource2 {
 			if (!file.isHidden()) {
 				String filename = file.getName().getBaseName();
 				String relativePath = repo.getName().getRelativeName(file.getName());
-				if (file.getType().equals(FileType.FILE)) {
-					if (StringUtils.isNotEmpty(fileType) && !filename.endsWith(fileType)) {
-						continue;
-					}
+
+				String username = sessionService.getAllSessionObjects().get("username").toString();
+				List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
+				//TODO : is this the right approach for keys ??? collisions ???
+				if ( acl.canRead(username, roles, file.getName().getBaseName(), file.getParent().getName().getBaseName()) ) {
 					
-					String extension = file.getName().getExtension();
-					repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath));
-				}
-				if (file.getType().equals(FileType.FOLDER)) { 
-					repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, getRepositoryObjects(file, fileType)));
+					if (file.getType().equals(FileType.FILE)) {
+						if (StringUtils.isNotEmpty(fileType) && !filename.endsWith(fileType)) {
+							continue;
+						}
+						String extension = file.getName().getExtension();
+						repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath));
+					}
+					if (file.getType().equals(FileType.FOLDER)) { 
+						repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, getRepositoryObjects(file, fileType)));
+					}
 				}
 			}
 		}
