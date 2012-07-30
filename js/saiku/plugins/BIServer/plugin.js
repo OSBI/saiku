@@ -49,14 +49,18 @@ var puc = {
         var query = Saiku.tabs._tabs[0].content.query;
         query.action.get("/xml", {
             success: function(model, response) {
-                (new SavedQuery({
-                    name: filename,
-                    newname: query.get('name'),
-                    xml: response.xml,
-                    solution: solution,
-                    path: path,
-                    action: filename,
-                    overwrite: overwrite
+                    filename = filename 
+                                && filename.length > ".saiku".length
+                                && filename.substring(filename.length - ".saiku".length,filename.length) == ".saiku" ? filename : filename + ".saiku";
+
+                    var file = (solution ? (solution + "/") : "")
+                        + (path ? (path + "/") : "")
+                        + (filename || "");
+
+                    (new SavedQuery({
+                        name: filename,
+                        file: file,
+                        content: response.xml
                 })).save({ success: function() {
                     puc.refresh_repo();
                 }});
