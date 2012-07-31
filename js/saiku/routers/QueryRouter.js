@@ -23,7 +23,7 @@
  */
 var QueryRouter = Backbone.Router.extend({
     routes: {
-        'query/open/:query_name': 'open_query',
+        'query/open/*query_name': 'open_query',
         'query/open': 'open_query_repository'
     },
     
