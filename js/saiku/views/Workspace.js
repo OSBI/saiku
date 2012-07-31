@@ -134,9 +134,10 @@ var Workspace = Backbone.View.extend({
         
         // Adjust the dimensions of the results window
         $(this.el).find('.workspace_results').css({
-            height: $(document).height() - $("#header").height() -
+            height: $("body").height() - heightReduction -
                 $(this.el).find('.workspace_toolbar').height() - 
-                $(this.el).find('.workspace_fields').height() - 40
+                $(this.el).find('.workspace_results_info').height() - 
+                $(this.el).find('.workspace_editor').height() - 45
         });
         
         // Fire off the adjust event
@@ -205,11 +206,6 @@ var Workspace = Backbone.View.extend({
                 this.toggle_sidebar();
             }
 
-            $(this.el).find('.workspace_results').css({
-            height: $(document).height() - (typeof $("#header").height() !== "undefined" ? $("#header").height() : 0)  -
-                (typeof $(this.el).find('.workspace_toolbar').height() !== "undefined" ? $(this.el).find('.workspace_toolbar').height() : 0)  -
-                $(this.el).find('.mdx_input').height() - 80
-            });
 
         } else {
             $(this.el).find('.workspace_fields').show();
@@ -217,7 +213,7 @@ var Workspace = Backbone.View.extend({
             $(this.toolbar.el).find('.auto, ,.toggle_fields, .query_scenario, .buckets, .non_empty, .swap_axis, .mdx, .switch_to_mdx').parent().show();
             $(this.el).find('.run').attr('href','#run_query');
         }
-
+        this.adjust();
         if ((Settings.MODE == "view") && this.query) {
             this.query.run();
             return;

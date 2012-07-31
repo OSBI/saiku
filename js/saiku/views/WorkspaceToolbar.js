@@ -328,6 +328,7 @@ var WorkspaceToolbar = Backbone.View.extend({
                 .removeClass('disabled_toolbar');
 
         $(this.workspace.table.el).empty();
+        this.workspace.adjust();
         this.post_mdx_transform();
 
     },
