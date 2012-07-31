@@ -61,6 +61,7 @@
  
      <bean id="repository2bean" scope="request" class="org.saiku.web.rest.resources.BasicRepositoryResource2">
 		<property name="path" value="res:saiku-repository"/>
+		<property name="sessionService" ref="sessionService"/>
 	</bean>
  
  	<bean id="tagRepositoryBean" scope="request" class="org.saiku.web.rest.resources.BasicTagRepositoryResource">
