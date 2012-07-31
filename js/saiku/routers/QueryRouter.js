@@ -33,7 +33,7 @@ var QueryRouter = Backbone.Router.extend({
         var dataType = "text";
         if (Settings.BIPLUGIN) {
             var file = (Settings.GET.SOLUTION ? (Settings.GET.SOLUTION + "/") : "")
-                        + (Settings.GET.PATH ? (Settings.GET.PATH + "/") : "")
+                        + (Settings.GET.PATH && Settings.GET.PATH != "/" ? (Settings.GET.PATH + "/") : "")
                         + (Settings.GET.ACTION || "");
             options = {
                 file: file
