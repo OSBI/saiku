@@ -119,20 +119,22 @@ public class BasicRepositoryResource2 {
 			if (path != null && (path.startsWith("/") || path.startsWith("."))) {
 				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + path);
 			}
-			String username = sessionService.getAllSessionObjects().get("username").toString();
-			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-			//TODO : missing parent ... could inherit !
-			//TODO : shall throw an exception ???
-			if ( acl.canRead(username, roles, path, null) ) {
-				return new ArrayList<IRepositoryObject>(); // empty  
-			}
 
 			if (repo != null) {
 				FileObject folder = repo;
 				if(path != null) {
 					folder = repo.resolveFile(path);
 				}
-				return getRepositoryObjects(folder, type);
+				
+				String username = sessionService.getAllSessionObjects().get("username").toString();
+				List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
+				//TODO : missing parent ... could inherit !
+				//TODO : shall throw an exception ???
+				if ( !acl.canRead(username, roles, folder.getName().getPath(), folder.getParent().getName().getPath()) ) {
+					return new ArrayList<IRepositoryObject>(); // empty  
+				} else {
+					return getRepositoryObjects(folder, type);
+				}
 			}
 			else {
 				throw new Exception("repo URL is null");
@@ -163,7 +165,7 @@ public class BasicRepositoryResource2 {
 			String username = sessionService.getAllSessionObjects().get("username").toString();
 			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
 			//TODO : missing parent ... could inherit !
-			if ( acl.canRead(username, roles, file, null) ) {
+			if ( !acl.canRead(username, roles, file, null) ) {
 				return Response.status(Status.UNAUTHORIZED).build();
 			}
 
@@ -207,7 +209,7 @@ public class BasicRepositoryResource2 {
 		String username = sessionService.getAllSessionObjects().get("username").toString();
 		List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
 		//TODO : missing parent ... could inherit !
-		if ( acl.canWrite(username, roles, file, null) ) {
+		if ( !acl.canWrite(username, roles, file, null) ) {
 			return Status.UNAUTHORIZED;
 		}
 		try {
@@ -252,20 +254,21 @@ public class BasicRepositoryResource2 {
 			if (file == null || file.startsWith("/") || file.startsWith(".")) {
 				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
 			}
-
+	
 			
 			String username = sessionService.getAllSessionObjects().get("username").toString();
 			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
 			//TODO : missing parent ... could inherit !
-			if ( acl.canWrite(username, roles, file, null) ) {
 				FileObject repoFile = repo.resolveFile(file);
-				if (repoFile != null && repoFile.exists()) {
-					repoFile.delete();
+
+				if (repoFile != null && repoFile.exists() ) {
+					if ( acl.canWrite(username, roles, repoFile.getName().getPath(), repoFile.getParent().getName().getPath() ) ){
+						repoFile.delete();
+						return Status.OK;
+					} else {
+						return Status.UNAUTHORIZED;
+					} 
 				}
-				return Status.OK;
-			} else {
-				return Status.UNAUTHORIZED;
-			}
 		} catch(Exception e){
 			log.error("Cannot save resource to (file: " + file + ")",e);
 		}

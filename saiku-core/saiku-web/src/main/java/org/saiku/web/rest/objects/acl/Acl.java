@@ -35,29 +35,36 @@ public class Acl {
 	public Map<String, AclResource> getAclMap(){
 		return acl;
 	}
-	AclResource getAcl(String resource, String parent){
+	
+	AclResource createNew(String resource, String parent){
+		AclResource acl = createNew(resource);
+		if ( parent != null ) acl.setParent(createNew(parent));
+		return acl;
+	}
+	
+	AclResource createNew(String resource){
+		AclResource acl = new AclResource();
+		this.acl.put(resource, acl);
+		return acl;
+	}
+
+	
+	AclResource getAcl(String resource) throws Exception {
+		if ( resource == null ) throw new Exception("resource is null");
 		AclResource aclResource = acl.get(resource);
-		if (aclResource == null ) {
-			AclResource parentResource = null;
-			/*
-			 * check the parent for inheritance
-			 */
-			if ( parent != null){
-				parentResource = acl.get(parent);
-			}
-			/*
-			 *  resource not present: create 
-			 *  a default acl where access is 
-			 *  public
-			 */
-			aclResource = new AclResource();
-			/*
-			 * if parent is present the resource
-			 * will inherit
-			 */
-			aclResource.setParent(parentResource); 
-			acl.put(resource, aclResource);
+		if ( aclResource == null ) aclResource = createNew(resource);
+		return aclResource;
+	}
+	
+	AclResource getAcl(String resource, String parent) throws Exception {
+		if ( resource == null ) throw new Exception("resource URL is null");
+		
+	
+		AclResource aclResource = getAcl(resource);
+		if ( aclResource.getParent() == null && parent != null ) {
+			aclResource.setParent(getAcl(parent));
 		}
+		
 		return aclResource;
 	}
 
@@ -134,23 +141,30 @@ public class Acl {
 		roles.add(rolename);
 		return getAccess(username, roles, resource, parent );
 	}
+	
 	public AclMethod getAccess(String username, List<String> roles, String resource, String parent ) {
-		AclResource aclResource = getAcl(resource, parent);
-		
-		switch (aclResource.getType()) {
-		case PUBLIC:
-			return AclMethod.WRITE;
-		case ROLE:
-			if ( aclResource.canWrite(null,roles) ) return AclMethod.WRITE;
-			if ( aclResource.canRead(null,roles) ) return AclMethod.READ;
-			break;
-		case USER:
-			if ( aclResource.canWrite(username,roles) ) return AclMethod.WRITE;
-			if ( aclResource.canRead(username,roles) ) return AclMethod.READ;
-			break;
-		default:
-			return AclMethod.NONE;
+		AclResource aclResource;
+		try {
+			aclResource = getAcl(resource, parent);
+			switch (aclResource.getType()) {
+			case PUBLIC:
+				return AclMethod.WRITE;
+			case ROLE:
+				if ( aclResource.canWrite(null,roles) ) return AclMethod.WRITE;
+				if ( aclResource.canRead(null,roles) ) return AclMethod.READ;
+				break;
+			case USER:
+				if ( aclResource.canWrite(username,roles) ) return AclMethod.WRITE;
+				if ( aclResource.canRead(username,roles) ) return AclMethod.READ;
+				break;
+			default:
+				return AclMethod.NONE;
+			}
+		} catch (Exception e) {
+			// TODO do some proper logging here ....
+			e.printStackTrace();
 		}
+		
 		return AclMethod.NONE;
 	}
 	
@@ -172,7 +186,13 @@ public class Acl {
 	 * @return
 	 */
 	public boolean canGrant(String username, String rolename, String resource, String parent ) {
-		return  getAcl(resource, parent).canGrant(username, rolename); 
+		try {
+			return  getAcl(resource, parent).canGrant(username, rolename);
+		} catch (Exception e) {
+			// TODO do some proper logging here 
+			e.printStackTrace();
+		} 
+		return false ; // paranoia setting : if error, don't grant 
 	}
 
 }
