@@ -73,7 +73,6 @@ public class BasicRepositoryResource2 {
 	private SessionService sessionService;
 	
 	private Acl acl = new Acl();
-	private static final String SAIKU_ACL=".saikuaccess";
 	public void setPath(String path) throws Exception {
 		
 
@@ -92,12 +91,7 @@ public class BasicRepositoryResource2 {
 				throw new IOException("File does not exist: " + path);
 			}
 			repo = fileObject;
-			FileObject saikuAclConf = fileObject.getChild(SAIKU_ACL) ;
-			if ( saikuAclConf != null ) { 
-				acl.readAcl(saikuAclConf);
-			} else {
-				acl.setOpenAccess();
-			}
+			acl.readAcl(repo);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -128,9 +122,8 @@ public class BasicRepositoryResource2 {
 				
 				String username = sessionService.getAllSessionObjects().get("username").toString();
 				List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-				//TODO : missing parent ... could inherit !
 				//TODO : shall throw an exception ???
-				if ( !acl.canRead(username, roles, folder.getName().getPath(), folder.getParent().getName().getPath()) ) {
+				if ( !acl.canRead(folder,username, roles) ) {
 					return new ArrayList<IRepositoryObject>(); // empty  
 				} else {
 					return getRepositoryObjects(folder, type);
@@ -164,12 +157,10 @@ public class BasicRepositoryResource2 {
 			}
 			String username = sessionService.getAllSessionObjects().get("username").toString();
 			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-			//TODO : missing parent ... could inherit !
-			if ( !acl.canRead(username, roles, file, null) ) {
+			FileObject repoFile = repo.resolveFile(file);
+			if ( !acl.canRead(repoFile, username, roles) ) {
 				return Response.status(Status.UNAUTHORIZED).build();
 			}
-
-			FileObject repoFile = repo.resolveFile(file);
 			System.out.println("path:" + repo.getName().getRelativeName(repoFile.getName()));
 			if (repoFile.exists()) {
 				InputStreamReader reader = new InputStreamReader(repoFile.getContent().getInputStream());
@@ -206,18 +197,19 @@ public class BasicRepositoryResource2 {
 			@FormParam("file") String file, 
 			@FormParam("content") String content)
 	{
-		String username = sessionService.getAllSessionObjects().get("username").toString();
-		List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-		//TODO : missing parent ... could inherit !
-		if ( !acl.canWrite(username, roles, file, null) ) {
-			return Status.UNAUTHORIZED;
-		}
 		try {
 			if (file == null || file.startsWith("/") || file.startsWith(".")) {
 				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
 			}
 
+			String username = sessionService.getAllSessionObjects().get("username").toString();
+			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
 			FileObject repoFile = repo.resolveFile(file);
+
+			if ( !acl.canWrite(repoFile,username, roles) ) {
+				return Status.UNAUTHORIZED;
+			}
+
 			if (repoFile == null) throw new Exception("Repo File not found");
 
 			if (repoFile.exists()) {
@@ -258,11 +250,10 @@ public class BasicRepositoryResource2 {
 			
 			String username = sessionService.getAllSessionObjects().get("username").toString();
 			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-			//TODO : missing parent ... could inherit !
 				FileObject repoFile = repo.resolveFile(file);
 
 				if (repoFile != null && repoFile.exists() ) {
-					if ( acl.canWrite(username, roles, repoFile.getName().getPath(), repoFile.getParent().getName().getPath() ) ){
+					if ( acl.canWrite(repoFile, username, roles) ){
 						repoFile.delete();
 						return Status.OK;
 					} else {
@@ -284,8 +275,7 @@ public class BasicRepositoryResource2 {
 
 				String username = sessionService.getAllSessionObjects().get("username").toString();
 				List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-				//TODO : is this the right approach for keys ??? collisions ???
-				if ( acl.canRead(username, roles, file.getName().getBaseName(), file.getParent().getName().getBaseName()) ) {
+				if ( acl.canRead(file,username, roles) ) {
 					
 					if (file.getType().equals(FileType.FILE)) {
 						if (StringUtils.isNotEmpty(fileType) && !filename.endsWith(fileType)) {
