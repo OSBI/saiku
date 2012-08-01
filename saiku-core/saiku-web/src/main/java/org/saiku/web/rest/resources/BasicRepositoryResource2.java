@@ -49,6 +49,7 @@ import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.VFS;
 import org.saiku.web.rest.objects.acl.Acl;
+import org.saiku.web.rest.objects.acl.AclEntry;
 import org.saiku.web.rest.objects.repository.IRepositoryObject;
 import org.saiku.web.rest.objects.repository.RepositoryFileObject;
 import org.saiku.web.rest.objects.repository.RepositoryFolderObject;
@@ -293,8 +294,41 @@ public class BasicRepositoryResource2 {
 		return repoObjects;
 	}
 	
+	/**
+	 * Sets the sessionService
+	 * @param sessionService
+	 */
 	public void setSessionService(SessionService sessionService){
 		this.sessionService = sessionService;
 	}
-	
+	/**
+	 * sets the Administrator roles
+	 * @param roles
+	 */
+	public void setAdminRoles(List<String> roles){
+		this.acl.setAdminRoles(roles);
+	}
+	/**
+	 * Sets the permission for the resource
+	 * @param resource the resource
+	 * @param entry the permissions
+	 */
+	public void setAcl(FileObject resource, AclEntry entry){
+		this.acl.addEntry(resource, entry);
+	}
+	/**
+	 * Returns the permission for the resource;
+	 * if the resource is not in the acl list 
+	 * an open access acl owned by {@link AclEntry#STATIC_OWNER}
+	 * is returned.
+	 * @param resource
+	 * @return
+	 */
+	public AclEntry getAcl(FileObject resource){
+		AclEntry entry = this.acl.getEntry(resource);
+		if ( entry == null ) entry = new AclEntry();
+		
+		return entry;
+	}
+
 }

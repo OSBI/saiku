@@ -29,6 +29,20 @@ public class AclEntry {
 	 */
 	private Map<String,List<AclMethod>> users;
 	/**
+	 * needed in case it is an upgraded instance with no acl
+	 */
+	private static final String STATIC_OWNER = "##upgraded_saiku_instance##";
+	
+	/**
+	 * Constructor needed for some time for upgraded versions ;
+	 * Creates an acl entry for a resource owned by saiku with 
+	 * public access
+	 */
+	@Deprecated
+	public AclEntry () {
+		this(STATIC_OWNER);
+	}
+	/**
 	 * Constructor. Creates an acl entry owned by <pre>owner</pre> with default
 	 * access type
 	 * @param owner

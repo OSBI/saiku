@@ -46,6 +46,13 @@ public class Acl {
 	private static final String SAIKUACCESS_FILE = ".saikuaccess";
 
 	/**
+	 * The list of the roles that can always manage a resource.
+	 */
+	private List<String> adminRoles;
+	
+
+	
+	/**
 	 * Returns the access method to the specified resource for the user or role
 	 * @param resource the resource to which you want to access
 	 * @param username the username of the user that's accessing
@@ -71,6 +78,7 @@ public class Acl {
 		}
 
 		if (entry != null) {
+			if ( isAdminRole(role) ) return AclMethod.GRANT;
 			switch (entry.getType()) {
 			case PRIVATE:
 				if (!entry.getOwner().equals(username))
@@ -105,7 +113,14 @@ public class Acl {
 
 		return method;
 	}
-
+	
+	/**
+	 * Returns the access method to the specified resource for the user or role
+	 * @param resource the resource to which you want to access
+	 * @param username the username of the user that's accessing
+	 * @param roles the role of the user that's accessing
+	 * @return {@link AclMethod}
+	 */
 	public AclMethod getMethod(FileObject resource, String username, List<String> roles) {
 		String name = resource.getName().getPath();
 		AclEntry entry = acl.get(name);
@@ -124,6 +139,7 @@ public class Acl {
 			logger.error("Error getting the parent",e);
 		}
 		if (entry != null) {
+			if ( isAdminRole(roles) ) return AclMethod.GRANT;
 			switch (entry.getType()) {
 			case PRIVATE:
 				if (!entry.getOwner().equals(username))
@@ -171,6 +187,10 @@ public class Acl {
 	 */
 	public void addEntry(FileObject resource, AclEntry entry) {
 		acl.put(resource.getName().getPath(), entry);
+	}
+
+	public AclEntry getEntry(FileObject resource ) {
+		return this.acl.get(resource.getName().getPath());
 	}
 	/**
 	 * Helper method to test if the resource is readable by the 
@@ -273,7 +293,7 @@ public class Acl {
 				jsonFile = resource.getParent().resolveFile(SAIKUACCESS_FILE, NameScope.FILE_SYSTEM);
 			}
 			if ( jsonFile != null && jsonFile.isWriteable() ) {
-				serialize(jsonFile, getAcl(resource));
+				serialize(jsonFile, getAcl(resource, false));
 			}
 		} catch ( FileSystemException e ) {
 			logger.error("Error getting hold of the file " + SAIKUACCESS_FILE, e );
@@ -363,15 +383,50 @@ public class Acl {
 		try {
 			if ( resource.getType().equals(FileType.FOLDER) ) {
 				for ( FileObject file :  resource.getChildren() ) {
-					acl.putAll(getAcl(file));
+					acl.putAll(getAcl(file,recurse));
 				}
 			}
 		} catch (FileSystemException e) {
 			logger.error("Error traversing the resource " + resource.getName().getPath() ,e );
 		}
 		AclEntry entry = this.acl.get(key);
+		if ( entry == null ) {
+			entry = new AclEntry();
+		}
 		if ( entry != null ) acl.put(resource.getName().getPath(), entry);
 		return acl;
 		
+	}
+	/**
+	 * Returns the list of the administrator roles
+	 * @return
+	 */
+	public List<String> getAdminRoles() {
+		return adminRoles;
+	}
+	/**
+	 * Sets the list of the administrator roles
+	 * @param adminRoles
+	 */
+	public void setAdminRoles(List<String> adminRoles) {
+		this.adminRoles = adminRoles;
+	}
+	/**
+	 * Checks if a specific role is in the list of the admin roles
+	 * @param role
+	 * @return
+	 */
+	private boolean isAdminRole(String role){
+		return adminRoles.contains(role);
+	}
+	/**
+	 * Checks if a list of roles contains an admin role
+	 * @param roles
+	 * @return
+	 */
+	private boolean isAdminRole(List<String> roles){
+		for (String role:roles)
+			if ( isAdminRole(role)) return true;
+		return false;
 	}
 }
