@@ -173,7 +173,7 @@ public class PluginResource {
 			"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
 			"<CDADescriptor>\n" +
 			"   <DataSources>\n" +
-			"        <Connection id=\"1\" type=\"olap4j\">\n" +
+			"        <Connection id=\"1\" type=\"olap4j.jdbc\">\n" +
 			"            <Driver>@@DRIVER@@</Driver>\n" +
 			"            <Url>@@URL@@</Url>\n" +
 			"        </Connection>\n" +
