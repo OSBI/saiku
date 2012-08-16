@@ -102,7 +102,7 @@ var DrillthroughModal = Modal.extend({
         var $target = $(event.target);
         var checked = $target.is(':checked');
         if(checked) {
-            $target.parent().siblings().find('input').attr('checked', false);
+            //$target.parent().siblings().find('input').attr('checked', false);
         }
     },
 
