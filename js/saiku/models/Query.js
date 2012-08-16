@@ -108,7 +108,7 @@ var Query = Backbone.Model.extend({
             }
 
             if (rows == 0 || columns == 0) {
-                $(this.workspace.el).find('.workspace_results table')
+                $(this.workspace.table.el)
                     .html('<tr><td><span class="i18n">You need to put at least one level or measure on Columns and Rows for a valid query.</td></tr>');
 				Saiku.i18n.translate();
                 return;
@@ -117,7 +117,7 @@ var Query = Backbone.Model.extend({
 
         // Run it
         $(this.workspace.table.el)
-            .html('<tr><td><span class="i18n">Running query...</span></td></tr>');
+            .html('<tr><td><psan class="i18n">Running query...</span></td></tr>');
 		Saiku.i18n.translate();
             // <a class="cancel" href="#cancel">x</a>
 
