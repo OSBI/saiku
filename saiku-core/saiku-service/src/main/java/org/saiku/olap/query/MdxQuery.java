@@ -68,20 +68,16 @@ public class MdxQuery implements IQuery {
 
 	public SaikuCube getSaikuCube() {
 		try {
-			if (connection != null && mdx != null && mdx.length() > 0) {
-				for (Database db : connection.getOlapDatabases()) {
-					Catalog cat = db.getCatalogs().get(cube.getCatalogName());
-					if (cat != null) {
-						for (Schema schema : cat.getSchemas()) {
-								for (Cube cub : schema.getCubes()) {
-									if (cub.getName().equals(cube.getName()) || cub.getUniqueName().equals(cube.getName())) {
-										cube = new SaikuCube(cube.getConnectionName(),getCube().getUniqueName(), getCube().getName(), cube.getCatalogName(), schema.getName());
-									}
-								}
-							}
-						}
-					}
-				}
+			Cube c = getCube();
+			SaikuCube sc= new SaikuCube(
+					cube.getConnectionName(),
+					c.getUniqueName(), 
+					c.getName(), 
+					cube.getCatalogName(), 
+					c.getSchema().getName());
+			if (sc != null) {
+				cube = sc;
+			}
 		} catch (Exception e) {
 			// we tried, but it just doesn't work, so let's return the last working cube
 		}
@@ -163,32 +159,37 @@ public class MdxQuery implements IQuery {
         String mdx = getMdx();
     	try {
 
-        if (mdx != null && mdx.length() > 0 && mdx.contains("from")) {
+        if (mdx != null && mdx.length() > 0 && mdx.toUpperCase().contains("FROM")) {
         	SelectNode select =
         		mdxParser.parseSelect(getMdx());
         		select = mdxValidator.validateSelect(select);
         		CubeType cubeType = (CubeType) select.getFrom().getType();
         		return cubeType.getCube();
         }
-        else {
-			if (connection != null && mdx != null && mdx.length() > 0) {
-				for (Database db : connection.getOlapDatabases()) {
-					Catalog cat = db.getCatalogs().get(cube.getCatalogName());
-					if (cat != null) {
-						for (Schema schema : cat.getSchemas()) {
-								for (Cube cub : schema.getCubes()) {
-									if (cub.getName().equals(cube.getName()) || cub.getUniqueName().equals(cube.getName())) {
-										return cub;
-									}
-								}
-							}
-						}
-					}
-				}
-        }
     	} catch (OlapException e) {
     		e.printStackTrace();
     	}
+    	try {
+		// ok seems like we failed to get the cube, lets try it differently
+    	if (connection != null && mdx != null && mdx.length() > 0) {
+    		for (Database db : connection.getOlapDatabases()) {
+    			Catalog cat = db.getCatalogs().get(cube.getCatalogName());
+    			if (cat != null) {
+    				for (Schema schema : cat.getSchemas()) {
+    					for (Cube cub : schema.getCubes()) {
+    						if (cub.getName().equals(cube.getName()) || cub.getUniqueName().equals(cube.getName())) {
+    							return cub;
+    						}
+    					}
+    				}
+    			}
+    		}
+    	}
+    	} catch (OlapException e) {
+    		e.printStackTrace();
+		}
+
+    	
 		return null;
 	}
 

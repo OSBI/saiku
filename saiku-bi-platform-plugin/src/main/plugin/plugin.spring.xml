@@ -37,6 +37,7 @@
 	<bean id="connectionManager" class="org.saiku.plugin.PentahoSecurityAwareConnectionManager" init-method="init">
 		<property name="dataSourceManager" ref="pentahoDsManager" />
 		<property name="userAware" value="false" />
+		<property name="connectionPooling" value="true" />
 	</bean>
 
 	<bean id="datasourceServiceBean" class="org.saiku.service.datasource.DatasourceService">
@@ -74,6 +75,8 @@
 	</bean>
 
   	<bean id="repositoryBean" class="org.saiku.plugin.resources.PentahoRepositoryResource" />
+  	
+  	<bean id="repositoryBean2" class="org.saiku.plugin.resources.PentahoRepositoryResource2" />
   	
   	 <bean id="tagRepositoryBean" class="org.saiku.plugin.resources.PentahoTagRepositoryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />

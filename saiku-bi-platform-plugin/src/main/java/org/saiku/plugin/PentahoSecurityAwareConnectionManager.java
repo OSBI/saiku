@@ -28,8 +28,10 @@ import mondrian.olap4j.PentahoSaikuMondrianHelper;
 
 import org.olap4j.OlapConnection;
 import org.pentaho.platform.api.engine.IConnectionUserRoleMapper;
+import org.pentaho.platform.api.repository.ISolutionRepository;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.platform.plugin.services.connections.mondrian.MDXConnection;
 import org.saiku.datasources.connection.AbstractConnectionManager;
 import org.saiku.datasources.connection.ISaikuConnection;
@@ -44,54 +46,71 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 
 	private List<String> errorConnections = new ArrayList<String>();
 
-	private Boolean userAware;
+	private boolean userAware = true;
+
+	private boolean connectionPooling = true;
 
 	@Override
 	public void init() {
 		this.connections = getAllConnections();
 	}
 	
-	public void setUserAware(Boolean aware) {
+	public void setUserAware(boolean aware) {
 		this.userAware = aware;
+	}
+	
+	public void setConnectionPooling(boolean pooling) {
+		this.connectionPooling = pooling;
 	}
 
 	@Override
 	protected ISaikuConnection getInternalConnection(String name, SaikuDatasource datasource) {
+		SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));
 		ISaikuConnection con;
-		if (userAware && PentahoSessionHolder.getSession().getName() != null) {
-			name = name + "-" + PentahoSessionHolder.getSession().getName();
-		}
-		if (!connections.containsKey(name)) {
-			con =  connect(name, datasource);
-			if (con != null) {
-				connections.put(name, con);
-			} else {
-				if (!errorConnections.contains(name)) {
-					errorConnections.add(name);
+		try {
+			if (connectionPooling) {
+				if (userAware && PentahoSessionHolder.getSession().getName() != null) {
+					name = name + "-" + PentahoSessionHolder.getSession().getName();
 				}
+				if (!connections.containsKey(name)) {
+					con =  connect(name, datasource);
+					if (con != null) {
+						connections.put(name, con);
+					} else {
+						if (!errorConnections.contains(name)) {
+							errorConnections.add(name);
+						}
+					}
+				} else {
+					con = connections.get(name);
+				}
+			} else {
+				con = connect(name, datasource);
 			}
 
-		} else {
-			con = connections.get(name);
-		}
-
-		try {
-			con = applySecurity(con, datasource);
+			if (con != null) {
+				con = applySecurity(con, datasource);
+				return con;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
 		}
-		return con;
+		return null;
 	}
 
 	@Override
 	protected ISaikuConnection refreshInternalConnection(String name, SaikuDatasource datasource) {
 		try {
-			String newname = name;
-			if (userAware && PentahoSessionHolder.getSession().getName() != null) {
-				newname = name + "-" + PentahoSessionHolder.getSession().getName();
+			ISaikuConnection con;
+			if (connectionPooling) {
+				String newname = name;
+				if (userAware && PentahoSessionHolder.getSession().getName() != null) {
+					newname = name + "-" + PentahoSessionHolder.getSession().getName();
+				}
+				con = connections.remove(newname);
+			} else {
+				con = getInternalConnection(name, datasource);
 			}
-			ISaikuConnection con = connections.remove(newname);
 			if (con != null) {
 				con.clearCache();
 			}
