@@ -40,7 +40,7 @@ var Query = Backbone.Model.extend({
         
         // Initialize properties, action handler, and result handler
         this.action = new QueryAction({}, { query: this });
-        this.result = new Result({}, { query: this });
+        this.result = new Result({ limit: Settings.RESULT_LIMIT }, { query: this });
         this.scenario = new QueryScenario({}, { query: this });
         this.set({type:'QM'});
     },
@@ -122,7 +122,7 @@ var Query = Backbone.Model.extend({
             // <a class="cancel" href="#cancel">x</a>
 
         if (this.get('type')  == "MDX" && mdx != null) {
-            this.result.save({ mdx: mdx });
+            this.result.save({ mdx: mdx});
         } else {
             this.result.fetch();
         }
