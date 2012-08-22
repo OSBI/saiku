@@ -360,7 +360,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         var self = this;
         var explained = function(model, args) {
 
-            var explainPlan = "<textarea style='width: " + ($("body").width() - 150) + "px;height:" + ($("body").height() - 150) + "px;'>";
+            var explainPlan = "<textarea style='width: " + ($("body").width() - 165) + "px;height:" + ($("body").height() - 175) + "px;'>";
             if (args != null && args.error != null) {
                 explainPlan += args.error;
             } else if (args.cellset && args.cellset.length === 0) {
