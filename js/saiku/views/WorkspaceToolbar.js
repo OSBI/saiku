@@ -354,5 +354,45 @@ var WorkspaceToolbar = Backbone.View.extend({
     run_mdx: function(event) {
         var mdx = $(this.workspace.el).find(".mdx_input").val();
         this.workspace.query.run(true, mdx);
+    },
+
+    explain_query: function(event) {
+        var self = this;
+        var explained = function(model, args) {
+
+            var explainPlan = "<textarea style='width: " + ($("body").width() - 150) + "px;height:" + ($("body").height() - 150) + "px;'>";
+            if (args != null && args.error != null) {
+                explainPlan += args.error;
+            } else if (args.cellset && args.cellset.length === 0) {
+                explainPlan += "Empty explain plan!";
+            } else {
+                explainPlan += args.cellset[1][0].value;
+            }
+            explainPlan += "</textarea>";
+
+            Saiku.ui.unblock();
+            var html =  explainPlan;
+            var html = '<div id="fancy_results" class="workspace_results" style="overflow:visible"><table>' 
+                    + "<tr><th clas='row_header'>Explain Plan</th></tr>"
+                    + "<tr><td>" + explainPlan + "</td></tr>"
+                    + '</table></div>';
+
+            $.fancybox(html
+                ,
+                {
+                'autoDimensions'    : false,
+                'autoScale'         : false,
+                'height'            :  ($("body").height() - 100),
+                'width'             :  ($("body").width() - 100),
+                'transitionIn'      : 'none',
+                'transitionOut'     : 'none'
+                }
+            );
+        };
+
+        self.workspace.query.action.get("/explain", { success: explained } );
+
+        return false;
+
     }
 });

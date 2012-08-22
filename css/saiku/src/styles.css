@@ -1105,6 +1105,13 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 .workspace_toolbar .mdx {
     background-position: -1848px 7px;
 }
+
+.workspace_toolbar .explain_query {
+    background-image: url('../../../images/src/information.png');
+    background-repeat:no-repeat;
+    background-position: 7px 7px;
+}
+
 .workspace_toolbar .export_csv {
     background-position: -455px 7px;
 }
