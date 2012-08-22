@@ -447,6 +447,35 @@ public class QueryResource {
 		}
 		return null;
 	}
+	
+	@GET
+	@Produces({"application/json" })
+	@Path("/{queryname}/explain")
+	public QueryResult getExplainPlan(@PathParam("queryname") String queryName)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/explain\tGET");
+		}
+		QueryResult rsc;
+		ResultSet rs = null;
+		try {
+			Long start = (new Date()).getTime();
+			rs = olapQueryService.explain(queryName);
+			rsc = RestUtil.convert(rs);
+			Long runtime = (new Date()).getTime()- start;
+			rsc.setRuntime(runtime.intValue());
+
+		}
+		catch (Exception e) {
+			log.error("Cannot get explain plan for query (" + queryName + ")",e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			rsc =  new QueryResult(error);
+
+		}
+		// no need to close resultset, its an EmptyResultset
+		return rsc;
+
+	}
 
 	@GET
 	@Produces({"application/json" })

@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import mondrian.rolap.RolapConnection;
+
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.AllocationPolicy;
 import org.olap4j.Axis;
@@ -315,6 +317,24 @@ public class OlapQueryService implements Serializable {
 		setMdx(queryName, mdx);
 		return execute(queryName, formatter);
 	}
+	
+	public ResultSet explain(String queryName) {
+		try {
+
+			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnectionName());
+			if (!con.isWrapperFor(RolapConnection.class))
+				throw new IllegalArgumentException("Cannot only get explain plan for Mondrian connections");
+
+			final OlapStatement stmt = con.createStatement();
+			String mdx = getMDXQuery(queryName);
+			mdx = "EXPLAIN PLAN FOR \n" + mdx;
+			return  stmt.executeQuery(mdx);
+
+		} catch (Exception e) {
+			throw new SaikuServiceException("Error EXPLAIN: " + queryName,e);
+		}	
+	}
+
 
 	public ResultSet drillthrough(String queryName, int maxrows, String returns) {
 		try {
