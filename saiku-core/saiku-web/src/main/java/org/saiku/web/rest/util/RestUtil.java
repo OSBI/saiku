@@ -36,14 +36,20 @@ import org.saiku.web.rest.objects.resultset.QueryResult;
 public class RestUtil {
 	
 	public static QueryResult convert(ResultSet rs) {
+		return convert(rs, 0);
+	}
+
+	public static QueryResult convert(ResultSet rs, int limit) {
+
 		Integer width = 0;
         Integer height = 0;
+        
         Cell[] header = null;
         ArrayList<Cell[]> rows = new ArrayList<Cell[]>();
         
         // System.out.println("DATASET");
         try {
-			while (rs.next()) {
+			while (rs.next() && (limit == 0 || height < limit)) {
 			    if (height == 0) {
 			        width = rs.getMetaData().getColumnCount();
 			        header = new Cell[width];
@@ -73,7 +79,12 @@ public class RestUtil {
 		
 		return new QueryResult(rows,0,width,height);
 	}
+	
 	public static QueryResult convert(CellDataSet cellSet) {
+		return convert(cellSet, 0);
+	}
+	
+	public static QueryResult convert(CellDataSet cellSet, int limit) {
 		ArrayList<Cell[]> rows = new ArrayList<Cell[]>();
 		if (cellSet == null || cellSet.getCellSetBody() == null || cellSet.getCellSetHeaders() == null) {
 			return null;
@@ -86,10 +97,11 @@ public class RestUtil {
 		for (AbstractBaseCell header[] : headers) {
 			rows.add(convert(header, Cell.Type.COLUMN_HEADER));
 		}
-		
-		for (AbstractBaseCell row[] : body) {
+		for (int i = 0; i < body.length && (limit == 0 || i < limit) ; i++) {
+			AbstractBaseCell[] row = body[i];
 			rows.add(convert(row, Cell.Type.ROW_HEADER));
 		}
+		
 		QueryResult qr = new QueryResult(rows, cellSet.getRuntime(), cellSet.getWidth(), cellSet.getHeight());
 		return qr;
 		

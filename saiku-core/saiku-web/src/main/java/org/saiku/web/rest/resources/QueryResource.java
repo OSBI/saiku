@@ -353,14 +353,14 @@ public class QueryResource {
 	@GET
 	@Produces({"application/json" })
 	@Path("/{queryname}/result")
-	public QueryResult execute(@PathParam("queryname") String queryName){
+	public QueryResult execute(@PathParam("queryname") String queryName, @QueryParam("limit") @DefaultValue("0") int limit){
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result\tGET");
 		}
 		try {
 
 			CellDataSet cs = olapQueryService.execute(queryName);
-			return RestUtil.convert(cs);
+			return RestUtil.convert(cs, limit);
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ")",e);
@@ -375,7 +375,8 @@ public class QueryResource {
 	public QueryResult executeMdx(
 			@PathParam("queryname") String queryName,
 			@PathParam("format") String formatter,
-			@FormParam("mdx") String mdx) 
+			@FormParam("mdx") String mdx, 
+			@FormParam("limit") @DefaultValue("0") int limit) 
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result"+formatter+"\tPOST");
@@ -397,7 +398,7 @@ public class QueryResource {
 
 			olapQueryService.qm2mdx(queryName);
 			CellDataSet cs = olapQueryService.executeMdx(queryName,mdx, icf);
-			return RestUtil.convert(cs);
+			return RestUtil.convert(cs, limit);
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ") using mdx:\n" + mdx,e);
@@ -411,7 +412,8 @@ public class QueryResource {
 	@Path("/{queryname}/result")
 	public QueryResult executeMdx(
 			@PathParam("queryname") String queryName,
-			@FormParam("mdx") String mdx)
+			@FormParam("mdx") String mdx,
+			@FormParam("limit") @DefaultValue("0") int limit)
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result\tPOST\t"+mdx);
@@ -419,7 +421,7 @@ public class QueryResource {
 		try {
 			olapQueryService.qm2mdx(queryName);
 			CellDataSet cs = olapQueryService.executeMdx(queryName,mdx);
-			return RestUtil.convert(cs);
+			return RestUtil.convert(cs, limit);
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ") using mdx:\n" + mdx,e);
@@ -566,13 +568,15 @@ public class QueryResource {
 	@Path("/{queryname}/result/{format}")
 	public QueryResult execute(
 			@PathParam("queryname") String queryName,
-			@PathParam("format") String formatter){
+			@PathParam("format") String formatter,
+			@QueryParam("limit") @DefaultValue("0") int limit)
+	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result"+formatter+"\tGET");
 		}
 		try {
 			CellDataSet cs = olapQueryService.execute(queryName,formatter);
-			return RestUtil.convert(cs);
+			return RestUtil.convert(cs, limit);
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ")",e);
