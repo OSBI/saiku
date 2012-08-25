@@ -85,17 +85,27 @@ Backbone.sync = function(method, model, options) {
         + (_.isFunction(model.url) ? model.url() : model.url);
     
     // Prepare for failure
-    options.retries = 0;
-    
+    if (typeof Settings.ERRORS == "undefined") {
+        Settings.ERRORS = 0;
+    }
+
+    var errorLogout = function() {
+        Settings.ERRORS++;
+        if (Settings.ERRORS < Settings.ERROR_TOLERANCE) {
+          Saiku.session.logout();
+        } else {
+          Saiku.ui.block("Communication problem with the server. Please reload the application...");
+        }
+    };
     var statuscode = {
       0: function() {
-        Saiku.session.logout();
+        errorLogout();
       },
       401: function() {
-        Saiku.session.logout();
+        errorLogout();
       },
       403: function() {
-        Saiku.session.logout();
+        errorLogout();
       }
 
 
@@ -103,31 +113,14 @@ Backbone.sync = function(method, model, options) {
 
     var failure = function(jqXHR, textStatus, errorThrown) {
       if (options.error) {
-                options.error(jqXHR, textStatus, errorThrown);
+        options.error(jqXHR, textStatus, errorThrown);
       }
-/*      if (jqXHR.status)
-        options.retries++;
-        if (options.retries >= 10) {
-            Saiku.ui.block("Could not reach server. Please try again later...");
-            if (options.error) {
-                options.error(jqXHR, textStatus, errorThrown);
-            }
-        } 
-         else {
-            var delay = Math.pow(options.retries, 2);
-            Saiku.ui.block("Having trouble reaching server. Trying again in " + delay + " seconds...");
-            setTimeout(function() {
-                $.ajax(params);
-            }, delay * 1000);
-        } */
     };
 
     var success = function(data, textStatus, jqXHR) {
-        if (options.retries > 0) {
-            Saiku.ui.unblock();
-        }
-        
-        options.success(data, textStatus, jqXHR);
+      Settings.ERRORS = 0;
+      Saiku.ui.unblock();  
+      options.success(data, textStatus, jqXHR);
     };
     var async = true
     if (options.async === false) {

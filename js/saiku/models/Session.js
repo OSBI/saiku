@@ -101,7 +101,7 @@ var Session = Backbone.Model.extend({
         this.sessionid = null;
         this.username = null;
         this.password = null;
-        this.destroy({success:this.check_session, error:this.check_session});
+        this.destroy({success:this.check_session});
         delete this.id;
 
     },

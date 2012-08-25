@@ -52,7 +52,7 @@ var Saiku = {
      */
     ui: {
         block: function(message) {
-            $('.processing,.processing_container').fadeIn();
+            $('.processing,.processing_container').show();
             $('.processing_message').text(message);
 			
 			$('.processing_message').removeClass("i18n_translated").addClass("i18n");

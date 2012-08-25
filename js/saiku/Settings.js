@@ -29,6 +29,7 @@ var Settings = {
     REST_MOUNT_POINT: "/rest/saiku/",
     DIMENSION_PREFETCH: true,
     ERROR_LOGGING: false,
+    ERROR_TOLERANCE: 3,
     QUERY_PROPERTIES: {
         'saiku.olap.query.automatic_execution': 'true',
         'saiku.olap.query.nonempty': 'true',
