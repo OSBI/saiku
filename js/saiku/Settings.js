@@ -29,6 +29,7 @@ var Settings = {
     REST_MOUNT_POINT: "/rest/saiku/",
     DIMENSION_PREFETCH: true,
     ERROR_LOGGING: false,
+    // number of erroneous ajax calls in a row before UI cant recover
     ERROR_TOLERANCE: 3,
     QUERY_PROPERTIES: {
         'saiku.olap.query.automatic_execution': 'true',
@@ -41,6 +42,8 @@ var Settings = {
      * 2) flat
      */
     CELLSET_FORMATTER: "flattened",
+    // limits the number of rows in the result
+    // 0 - no limit
     RESULT_LIMIT: 0,
     PLUGINS: [
         "Chart"
