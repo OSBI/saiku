@@ -25,7 +25,7 @@ var SelectionsModal = Modal.extend({
     type: "selections",
 
     buttons: [
-        { text: "Save", method: "save" },
+        { text: "OK", method: "save" },
         { text: "Cancel", method: "close" }
     ],
     
