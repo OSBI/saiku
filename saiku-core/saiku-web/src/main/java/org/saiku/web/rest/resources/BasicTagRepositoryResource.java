@@ -334,7 +334,7 @@ public class BasicTagRepositoryResource {
 			SaikuTag tag = getTag(cubeIdentifier, tagName);
 			if (tag != null) {
 				String queryName = UUID.randomUUID().toString();
-				SaikuCube saikuCube = new SaikuCube(connection, cube, cube,  catalog, schema);
+				SaikuCube saikuCube = new SaikuCube(connection, cube, cube, cube, catalog, schema);
 				olapQueryService.createNewOlapQuery(queryName, saikuCube);
 				SaikuQuery q = olapQueryService.simulateTag(queryName, tag);
 				if (!cube.startsWith("[")) {

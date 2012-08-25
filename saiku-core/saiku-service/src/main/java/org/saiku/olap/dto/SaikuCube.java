@@ -24,15 +24,17 @@ public class SaikuCube extends AbstractSaikuObject {
 	private String connectionName;
 	private String catalogName;
 	private String schemaName;
+	private String caption;
 
 	public SaikuCube() {
 	}
 
-	public SaikuCube(String connectionName, String uniqueCubeName, String name, String catalog, String schema) {
+	public SaikuCube(String connectionName, String uniqueCubeName, String name, String caption, String catalog, String schema) {
 		super(uniqueCubeName,name);
 		this.connectionName = connectionName;
 		this.catalogName = catalog;
 		this.schemaName = schema;
+		this.caption = caption;
 	}
 
 	@Override
@@ -53,6 +55,10 @@ public class SaikuCube extends AbstractSaikuObject {
 	@Override
 	public String getName() {
 		return super.getName();
+	}
+	
+	public String getCaption() {
+		return caption;
 	}
 	
 	public String getCatalogName() {
