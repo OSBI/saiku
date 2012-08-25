@@ -709,8 +709,12 @@ public class OlapQueryService implements Serializable {
 			else {
 				props.put("org.saiku.connection.scenario", Boolean.toString(false));
 			}
+			props.put("org.saiku.query.explain", Boolean.toString(con.isWrapperFor(RolapConnection.class)));
+
+			
 		} catch (Exception e) {
 			props.put("org.saiku.connection.scenario", Boolean.toString(false));
+			props.put("org.saiku.query.explain", Boolean.toString(false));
 		}
 		return props;
 	}
