@@ -171,7 +171,7 @@ public class QueryResource {
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "\tPOST\t xml:" + (xml == null));
 		}
-		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		if (xml != null && xml.length() > 0) {
 			return olapQueryService.createNewOlapQuery(queryName, xml);
 		}
@@ -353,14 +353,14 @@ public class QueryResource {
 	@GET
 	@Produces({"application/json" })
 	@Path("/{queryname}/result")
-	public QueryResult execute(@PathParam("queryname") String queryName){
+	public QueryResult execute(@PathParam("queryname") String queryName, @QueryParam("limit") @DefaultValue("0") int limit){
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result\tGET");
 		}
 		try {
 
 			CellDataSet cs = olapQueryService.execute(queryName);
-			return RestUtil.convert(cs);
+			return RestUtil.convert(cs, limit);
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ")",e);
@@ -375,7 +375,8 @@ public class QueryResource {
 	public QueryResult executeMdx(
 			@PathParam("queryname") String queryName,
 			@PathParam("format") String formatter,
-			@FormParam("mdx") String mdx) 
+			@FormParam("mdx") String mdx, 
+			@FormParam("limit") @DefaultValue("0") int limit) 
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result"+formatter+"\tPOST");
@@ -397,7 +398,7 @@ public class QueryResource {
 
 			olapQueryService.qm2mdx(queryName);
 			CellDataSet cs = olapQueryService.executeMdx(queryName,mdx, icf);
-			return RestUtil.convert(cs);
+			return RestUtil.convert(cs, limit);
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ") using mdx:\n" + mdx,e);
@@ -411,7 +412,8 @@ public class QueryResource {
 	@Path("/{queryname}/result")
 	public QueryResult executeMdx(
 			@PathParam("queryname") String queryName,
-			@FormParam("mdx") String mdx)
+			@FormParam("mdx") String mdx,
+			@FormParam("limit") @DefaultValue("0") int limit)
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result\tPOST\t"+mdx);
@@ -419,7 +421,7 @@ public class QueryResource {
 		try {
 			olapQueryService.qm2mdx(queryName);
 			CellDataSet cs = olapQueryService.executeMdx(queryName,mdx);
-			return RestUtil.convert(cs);
+			return RestUtil.convert(cs, limit);
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ") using mdx:\n" + mdx,e);
@@ -444,6 +446,35 @@ public class QueryResource {
 			log.error("Cannot transform Qm2Mdx query (" + queryName + ")",e);
 		}
 		return null;
+	}
+	
+	@GET
+	@Produces({"application/json" })
+	@Path("/{queryname}/explain")
+	public QueryResult getExplainPlan(@PathParam("queryname") String queryName)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/explain\tGET");
+		}
+		QueryResult rsc;
+		ResultSet rs = null;
+		try {
+			Long start = (new Date()).getTime();
+			rs = olapQueryService.explain(queryName);
+			rsc = RestUtil.convert(rs);
+			Long runtime = (new Date()).getTime()- start;
+			rsc.setRuntime(runtime.intValue());
+
+		}
+		catch (Exception e) {
+			log.error("Cannot get explain plan for query (" + queryName + ")",e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			rsc =  new QueryResult(error);
+
+		}
+		// no need to close resultset, its an EmptyResultset
+		return rsc;
+
 	}
 
 	@GET
@@ -566,13 +597,15 @@ public class QueryResource {
 	@Path("/{queryname}/result/{format}")
 	public QueryResult execute(
 			@PathParam("queryname") String queryName,
-			@PathParam("format") String formatter){
+			@PathParam("format") String formatter,
+			@QueryParam("limit") @DefaultValue("0") int limit)
+	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result"+formatter+"\tGET");
 		}
 		try {
 			CellDataSet cs = olapQueryService.execute(queryName,formatter);
-			return RestUtil.convert(cs);
+			return RestUtil.convert(cs, limit);
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ")",e);

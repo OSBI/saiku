@@ -127,7 +127,7 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
-		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getAllDimensions(cube);
 		} catch (Exception e) {
@@ -149,7 +149,7 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
-		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getDimension(cube, dimensionName);
 		} catch (Exception e) {
@@ -169,7 +169,7 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
-		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getAllDimensionHierarchies(cube, dimensionName);
 		} catch (Exception e) {
@@ -191,7 +191,7 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
-		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getAllHierarchyLevels(cube, dimensionName, hierarchyName);
 		} catch (Exception e) {
@@ -219,7 +219,7 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
-		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getLevelMembers(cube, dimensionName, hierarchyName, levelName);
 		} catch (Exception e) {
@@ -245,7 +245,7 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
-		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getHierarchyRootMembers(cube, hierarchyName);
 		} catch (Exception e) {
@@ -265,7 +265,7 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
-		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getAllHierarchies(cube);
 		} catch (Exception e) {
@@ -284,7 +284,7 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
-		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getMeasures(cube);
 		} catch (Exception e) {
@@ -310,7 +310,7 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
-		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getMember(cube, memberName);
 		} catch (Exception e) {
@@ -336,7 +336,7 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
-		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName, catalogName, schemaName);
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
 			return olapDiscoverService.getMemberChildren(cube, memberName);
 		} catch (Exception e) {

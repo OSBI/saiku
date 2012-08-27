@@ -73,6 +73,7 @@ public class MdxQuery implements IQuery {
 					cube.getConnectionName(),
 					c.getUniqueName(), 
 					c.getName(), 
+					c.getCaption(),
 					cube.getCatalogName(), 
 					c.getSchema().getName());
 			if (sc != null) {

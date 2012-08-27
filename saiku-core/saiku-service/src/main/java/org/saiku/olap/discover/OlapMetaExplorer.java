@@ -72,7 +72,7 @@ public class OlapMetaExplorer {
 						for (Schema schem : cat.getSchemas()) {
 							List<SaikuCube> cubes = new ArrayList<SaikuCube>();
 							for (Cube cub : schem.getCubes()) {
-								cubes.add(new SaikuCube(connectionName, cub.getUniqueName(), cub.getName(), cat.getName(), schem.getName()));
+								cubes.add(new SaikuCube(connectionName, cub.getUniqueName(), cub.getName(), cub.getCaption(), cat.getName(), schem.getName()));
 							}
 							Collections.sort(cubes);
 							schemas.add(new SaikuSchema(schem.getName(),cubes));
@@ -86,7 +86,7 @@ public class OlapMetaExplorer {
 								while(cubesResult.next()) {
 
 									cubes.add(new SaikuCube(connectionName, cubesResult.getString("CUBE_NAME"),cubesResult.getString("CUBE_NAME"),
-											cubesResult.getString("CATALOG_NAME"),cubesResult.getString("SCHEMA_NAME")));
+											cubesResult.getString("CUBE_NAME"), cubesResult.getString("CATALOG_NAME"),cubesResult.getString("SCHEMA_NAME")));
 
 								}
 								Collections.sort(cubes);
@@ -142,7 +142,7 @@ public class OlapMetaExplorer {
 				for (Catalog cat : olapcon.getOlapCatalogs()) {
 					for (Schema schem : cat.getSchemas()) {
 						for (Cube cub : schem.getCubes()) {
-							cubes.add(new SaikuCube(connectionName, cub.getUniqueName(), cub.getName(), cat.getName(), schem.getName()));
+							cubes.add(new SaikuCube(connectionName, cub.getUniqueName(), cub.getName(), cub.getCaption(), cat.getName(), schem.getName()));
 						}
 					}
 				}
