@@ -48,8 +48,13 @@ import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.VFS;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.type.TypeFactory;
+import org.saiku.service.util.exception.SaikuServiceException;
+import org.saiku.web.rest.objects.SelectionRestObject;
 import org.saiku.web.rest.objects.acl.Acl;
 import org.saiku.web.rest.objects.acl.AclEntry;
+import org.saiku.web.rest.objects.acl.enumeration.AclMethod;
 import org.saiku.web.rest.objects.repository.IRepositoryObject;
 import org.saiku.web.rest.objects.repository.RepositoryFileObject;
 import org.saiku.web.rest.objects.repository.RepositoryFolderObject;
@@ -73,7 +78,8 @@ public class BasicRepositoryResource2 {
 	private FileObject repo;
 	private SessionService sessionService;
 	
-	private Acl acl = new Acl();
+	private Acl acl;
+
 	public void setPath(String path) throws Exception {
 		
 
@@ -92,11 +98,27 @@ public class BasicRepositoryResource2 {
 				throw new IOException("File does not exist: " + path);
 			}
 			repo = fileObject;
+			acl = new Acl(repo);
 			acl.readAcl(repo);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
+	}
+	
+	/**
+	 * Sets the sessionService
+	 * @param sessionService
+	 */
+	public void setSessionService(SessionService sessionService){
+		this.sessionService = sessionService;
+	}
+	/**
+	 * sets the Administrator roles
+	 * @param roles
+	 */
+	public void setAdminRoles(List<String> roles){
+		this.acl.setAdminRoles(roles);
 	}
 	
 	/**
@@ -138,6 +160,51 @@ public class BasicRepositoryResource2 {
 			e.printStackTrace();
 		}
 		return objects;
+	}
+
+	@GET
+	@Produces({"application/json" })
+	@Path("/resource/acl")
+	public AclEntry getResourceAcl(@QueryParam("file") String file) {
+		try {
+			if (file == null || file.startsWith("/") || file.startsWith(".")) {
+				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
+			}
+			String username = sessionService.getAllSessionObjects().get("username").toString();
+			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
+			FileObject repoFile = repo.resolveFile(file);
+			if (repoFile.exists() && acl.canGrant(repoFile, username, roles) ) {
+				return getAcl(repoFile);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new SaikuServiceException("Error retrieving ACL for file: " + file, e);
+		}
+		throw new SaikuServiceException("Error retrieving ACL for file: " + file);
+	}
+	
+	
+	@POST
+	@Produces({"application/json" })
+	@Path("/resource/acl")
+	public Status setResourceAcl(@QueryParam("file") String file, @QueryParam("acl") String aclEntry) {
+		try {
+			if (file == null || file.startsWith("/") || file.startsWith(".")) {
+				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
+			}
+			ObjectMapper mapper = new ObjectMapper();
+			AclEntry ae = mapper.readValue(aclEntry, AclEntry.class);
+			String username = sessionService.getAllSessionObjects().get("username").toString();
+			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
+			FileObject repoFile = repo.resolveFile(file);
+			if (repoFile.exists() && acl.canGrant(repoFile, username, roles) ) {
+				setAcl(repoFile, ae);
+				return Status.OK;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Status.INTERNAL_SERVER_ERROR;
 	}
 
 
@@ -277,16 +344,17 @@ public class BasicRepositoryResource2 {
 				String username = sessionService.getAllSessionObjects().get("username").toString();
 				List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
 				if ( acl.canRead(file,username, roles) ) {
-					
+					List<AclMethod> acls = acl.getMethods(file, username, roles);
 					if (file.getType().equals(FileType.FILE)) {
 						if (StringUtils.isNotEmpty(fileType) && !filename.endsWith(fileType)) {
 							continue;
 						}
 						String extension = file.getName().getExtension();
-						repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath));
+
+						repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath, acls));
 					}
 					if (file.getType().equals(FileType.FOLDER)) { 
-						repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, getRepositoryObjects(file, fileType)));
+						repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepositoryObjects(file, fileType)));
 					}
 				}
 			}
@@ -294,26 +362,13 @@ public class BasicRepositoryResource2 {
 		return repoObjects;
 	}
 	
-	/**
-	 * Sets the sessionService
-	 * @param sessionService
-	 */
-	public void setSessionService(SessionService sessionService){
-		this.sessionService = sessionService;
-	}
-	/**
-	 * sets the Administrator roles
-	 * @param roles
-	 */
-	public void setAdminRoles(List<String> roles){
-		this.acl.setAdminRoles(roles);
-	}
+
 	/**
 	 * Sets the permission for the resource
 	 * @param resource the resource
 	 * @param entry the permissions
 	 */
-	public void setAcl(FileObject resource, AclEntry entry){
+	private void setAcl(FileObject resource, AclEntry entry){
 		this.acl.addEntry(resource, entry);
 	}
 	/**
@@ -324,7 +379,7 @@ public class BasicRepositoryResource2 {
 	 * @param resource
 	 * @return
 	 */
-	public AclEntry getAcl(FileObject resource){
+	private AclEntry getAcl(FileObject resource){
 		AclEntry entry = this.acl.getEntry(resource);
 		if ( entry == null ) entry = new AclEntry();
 		

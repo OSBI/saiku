@@ -50,68 +50,10 @@ public class Acl {
 	 */
 	private List<String> adminRoles;
 	
-
+	private FileObject repoRoot;
 	
-	/**
-	 * Returns the access method to the specified resource for the user or role
-	 * @param resource the resource to which you want to access
-	 * @param username the username of the user that's accessing
-	 * @param role the role of the user that's accessing
-	 * @return {@link AclMethod}
-	 */
-	public AclMethod getMethod(FileObject resource, String username, String role) {
-		String name = resource.getName().getPath();
-		AclEntry entry = acl.get(name);
-		AclMethod method = AclMethod.WRITE; // default if nothing in acl and
-											// parent == null
-		AclMethod parentMethod = null;
-
-		FileObject parent = null;
-		try {
-			parent = resource.getParent();
-			if (parent == null) // fs root
-				parentMethod = method;
-			// recursively go up to the root
-			parentMethod = getMethod(parent, username, role);
-		} catch (FileSystemException e) {
-			logger.error("Error getting the parent",e);
-		}
-
-		if (entry != null) {
-			if ( isAdminRole(role) ) return AclMethod.GRANT;
-			switch (entry.getType()) {
-			case PRIVATE:
-				if (!entry.getOwner().equals(username))
-					method = AclMethod.NONE;
-				break;
-			case SECURED:
-				// check user permission
-				List<AclMethod> userMethods = entry.getUsers().get(username);
-				if (userMethods == null) { // check the role
-					List<AclMethod> roleMethods = entry.getRoles().get(role);
-					if (roleMethods == null || roleMethods.size() == 0) {
-						// no role nor user acl
-						method = AclMethod.NONE;
-					} else {
-						// return the strongest role
-						method = AclMethod.max(roleMethods);
-					}
-				} else {
-					method = AclMethod.max(userMethods);
-				}
-
-				break;
-			default:
-				// PUBLIC ACCESS
-				method = AclMethod.WRITE;
-				break;
-			}
-		}
-		
-		// now, if parent is more restrictive return parent, else return child
-		method = AclMethod.min(method, parentMethod);
-
-		return method;
+	public Acl(FileObject repoRoot) {
+		this.repoRoot = repoRoot;
 	}
 	
 	/**
@@ -121,7 +63,7 @@ public class Acl {
 	 * @param roles the role of the user that's accessing
 	 * @return {@link AclMethod}
 	 */
-	public AclMethod getMethod(FileObject resource, String username, List<String> roles) {
+	public List<AclMethod> getMethods(FileObject resource, String username, List<String> roles) {
 		String name = resource.getName().getPath();
 		AclEntry entry = acl.get(name);
 		AclMethod method = AclMethod.WRITE; // default if nothing in acl and
@@ -131,15 +73,18 @@ public class Acl {
 		FileObject parent = null;
 		try {
 			parent = resource.getParent();
-			if (parent == null) // fs root
+			if (repoRoot.equals(parent) || parent == null) {
+				// fs root or repo root
 				parentMethod = method;
-			// recursively go up to the root
-			parentMethod = getMethod(parent, username, roles);
+			} else {
+				// recursively go up to the root
+				parentMethod = AclMethod.max(getMethods(parent, username, roles));
+			}
 		} catch (FileSystemException e) {
 			logger.error("Error getting the parent",e);
 		}
+		if ( isAdminRole(roles) ) return getAllAcls(AclMethod.GRANT);
 		if (entry != null) {
-			if ( isAdminRole(roles) ) return AclMethod.GRANT;
 			switch (entry.getType()) {
 			case PRIVATE:
 				if (!entry.getOwner().equals(username))
@@ -172,13 +117,24 @@ public class Acl {
 			}
 		}
 		
+		
 		// now, if parent is more restrictive return parent, else return child
 		method = AclMethod.min(method, parentMethod);
 
-		return method;
+		return getAllAcls(method);
 
 	}
 	
+	private List<AclMethod> getAllAcls(AclMethod maxMethod) {
+		List<AclMethod> methods = new ArrayList<AclMethod>();
+		for (AclMethod m : AclMethod.values()) {
+			if (m.ordinal() > 0 && m.ordinal() <= maxMethod.ordinal()) {
+				methods.add(m);
+			}
+		}
+		return methods;
+	}
+
 	/**
 	 * helper method to add an acl entry
 	 * @param resource resource for which we're setting the 
@@ -192,20 +148,6 @@ public class Acl {
 	public AclEntry getEntry(FileObject resource ) {
 		return this.acl.get(resource.getName().getPath());
 	}
-	/**
-	 * Helper method to test if the resource is readable by the 
-	 * user or role
-	 * @param resource the resource being tested
-	 * @param username the user name that wants to access 
-	 * @param role the role of the user that wants access
-	 * @return true if the resource is marked > {@link AclMethod#NONE} 
-	 */
-	public boolean canRead(FileObject resource, String username, String role) {
-		if ( resource == null ) return false;
-		// if > NONE then can read
-		return !AclMethod.max(AclMethod.NONE,
-				getMethod(resource, username, role)).equals(AclMethod.NONE); 
-	}
 	
 	/**
 	 * Helper method to test if the resource is readable by the 
@@ -217,22 +159,10 @@ public class Acl {
 	 */
 	public boolean canRead(FileObject resource, String username, List<String> roles) {
 		if ( resource == null ) return false;
-		// if > NONE then can read
-		return !AclMethod.max(AclMethod.NONE,
-				getMethod(resource, username, roles)).equals(AclMethod.NONE); 
+		List<AclMethod> acls = getMethods(resource, username, roles);
+		return acls.contains(AclMethod.READ); 
 	}
-	/**
-	 * Helper method to test if the resource is writeable by a user or role
-	 * @param resource the resource being tested
-	 * @param username the user name that wants to access 
-	 * @param role the role of the user that wants access
-	 * @return true if the resource is marked  {@link AclMethod#WRITE} or {@link AclMethod#GRANT} 
-	 */
-	public boolean canWrite(FileObject resource, String username, String role) {
-		if ( resource == null ) return false;
-		AclMethod method = getMethod(resource, username, role);
-		return method.equals(AclMethod.WRITE) || method.equals(AclMethod.GRANT);
-	}
+
 	/**
 	 * Helper method to test if the resource is writeable by a user or roles
 	 * @param resource the resource being tested
@@ -242,8 +172,8 @@ public class Acl {
 	 */
 	public boolean canWrite(FileObject resource, String username, List<String> roles) {
 		if ( resource == null ) return false;
-		AclMethod method = getMethod(resource, username, roles);
-		return method.equals(AclMethod.WRITE) || method.equals(AclMethod.GRANT);
+		List<AclMethod> acls = getMethods(resource, username, roles);
+		return acls.contains(AclMethod.WRITE);
 	}
 	/**
 	 * Helper method to test if the resource is grantable by a user or role
@@ -252,9 +182,9 @@ public class Acl {
 	 * @param role the role of the user that wants access
 	 * @return true if the resource is marked  {@link AclMethod#GRANT} 
 	 */
-	public boolean canGrant(FileObject resource, String username, String role) {
-		return !AclMethod.max(AclMethod.GRANT,
-				getMethod(resource, username, role)).equals(AclMethod.GRANT); 
+	public boolean canGrant(FileObject resource, String username, List<String> roles) {
+		List<AclMethod> acls = getMethods(resource, username, roles);
+		return acls.contains(AclMethod.GRANT);
 	}
 	/**
 	 * Searches the acl file for the resource in the resource's directory

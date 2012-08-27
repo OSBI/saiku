@@ -14,8 +14,7 @@
 		<property name="authenticationManager" ref="authenticationManager" />
 	</bean>
 
-	<bean id="connectionManager" class="org.saiku.web.impl.SecurityAwareConnectionManager"
-		init-method="init">
+	<bean id="connectionManager" class="org.saiku.web.impl.SecurityAwareConnectionManager" init-method="init">
 		<property name="dataSourceManager" ref="classpathDsManager" />
 		<property name="sessionService" ref="sessionService" />
 
@@ -71,8 +70,7 @@
 		<property name="sessionService" ref="sessionService" />
 		<property name="adminRoles">
 			<list>
-				<value>saiku-admin</value>
-				<value>saiku-superuser</value>
+				<value>ROLE_ADMIN</value>
 			</list>
 		</property>
 	</bean>
