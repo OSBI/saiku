@@ -24,7 +24,7 @@
  * 
  * This is where drag and drop lives
  */
-var DimensionList = Backbone.View.extend({
+var ChartEditor = Backbone.View.extend({
     events: {
         'change .chartlist': 'change_chart',
         'click .properties_table td' : 'click_property'
