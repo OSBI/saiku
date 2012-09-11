@@ -33,6 +33,7 @@ var OpenQuery = Backbone.View.extend({
         'click .workspace_toolbar [href=#edit_folder]': 'edit_folder',
         'click .workspace_toolbar [href=#delete_folder]': 'delete_folder',
         'click .workspace_toolbar [href=#delete_query]': 'delete_query',
+        'click .workspace_toolbar [href=#edit_permissions]': 'edit_permissions',
         'click .queries' : 'click_canvas'
     },
     
@@ -84,9 +85,8 @@ var OpenQuery = Backbone.View.extend({
         self.queries = {};
         function getQueries( entries ) {
             _.forEach( entries, function( entry ) {
-                if( entry.type === 'FILE' ) {
-                    self.queries[ entry.path ] = entry;
-                } else {
+                self.queries[ entry.path ] = entry;
+                if( entry.type === 'FOLDER' ) {
                     getQueries( entry.repoObjects );
                 }
             } );
@@ -103,10 +103,19 @@ var OpenQuery = Backbone.View.extend({
         var path = $target.attr('href').replace('#', '');
         var name = $target.text();
         var query = this.queries[path];
-        
-        $(this.el).find('.workspace_toolbar').removeClass( 'hide' );
+        $( this.el ).find( '.workspace_toolbar' ).removeClass( 'hide' );
+        $( this.el ).find( '.for_queries' ).addClass( 'hide' );
         $( this.el ).find( '.for_folder' ).addClass( 'hide' );
-        $( this.el ).find( '.for_queries' ).removeClass( 'hide' );
+
+        if (typeof query.acl != "undefined" && _.indexOf(query.acl, "READ") > -1) {
+            $( this.el ).find( '.for_queries .open' ).parent().removeClass( 'hide' );
+        }
+        if (typeof query.acl != "undefined" && _.indexOf(query.acl, "WRITE") > -1) {
+            $( this.el ).find( '.for_queries .delete' ).parent().removeClass( 'hide' );
+        }
+        if (typeof query.acl != "undefined" && _.indexOf(query.acl, "GRANT") > -1) {
+            $( this.el ).find( '.for_queries .edit_permissions' ).parent().removeClass( 'hide' );
+        }
         
         var $results = $(this.el).find('.workspace_results')
             .html('<h3><strong>' + query.name + '</strong></h3>');
@@ -126,12 +135,20 @@ var OpenQuery = Backbone.View.extend({
     },
 
     view_folder: function( event ) {
-        var $target = $( event.currentTarget ).find( 'a' );
-        var name = $target.attr( 'href' ).replace( '#', '' );
-
-        $( this.el ).find( '.workspace_toolbar' ).removeClass( 'hide' )
+        var $target = $( event.currentTarget ).children('div').children('a');
+        var path = $target.attr('href').replace('#', '');
+        var name = $target.text();
+        var folder = this.queries[path];
+        $( this.el ).find( '.workspace_toolbar' ).removeClass( 'hide' );
         $( this.el ).find( '.for_queries' ).addClass( 'hide' );
-        $( this.el ).find( '.for_folder' ).removeClass( 'hide' );
+        $( this.el ).find( '.for_folder' ).addClass( 'hide' );
+
+        if (typeof folder.acl != "undefined" && _.indexOf(folder.acl, "WRITE") > -1) {
+            $( this.el ).find( '.for_folder .delete' ).parent().removeClass( 'hide' );
+        }
+        if (typeof folder.acl != "undefined" && _.indexOf(folder.acl, "GRANT") > -1) {
+            $( this.el ).find( '.for_folder .edit_permissions' ).parent().removeClass( 'hide' );
+        }
 
         $( this.el ).find( '.workspace_results' )
             .html( '<h3><strong>' + name + '</strong></h3>' );
@@ -145,7 +162,7 @@ var OpenQuery = Backbone.View.extend({
         var path ="";
         if (typeof $selected !== "undefined" && $selected) {
             if ($selected.hasClass('folder_row')) {
-                path = $selected.find('.folder_row a').attr('href');
+                path = $selected.children('a').attr('href');
                 path = path.length > 1 ? path.substring(1,path.length) : path; 
                 path+= "/";
 
@@ -231,6 +248,14 @@ var OpenQuery = Backbone.View.extend({
             success: this.clear_query
         })).render().open();
         return false;
+    },
+
+    edit_permissions: function(event) {
+        (new PermissionsModal({
+            workspace: this.workspace,
+            title: "Permissions",
+            file: this.selected_query.get('file')
+        })).open();
     },
 
     clear_query: function() {

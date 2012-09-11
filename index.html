@@ -67,6 +67,7 @@
         <script type="text/javascript" src="js/saiku/views/MDXModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/SelectionsModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/DrillthroughModal.js"></script>
+        <script type="text/javascript" src="js/saiku/views/PermissionsModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/LoginForm.js"></script>
         <script type="text/javascript" src="js/saiku/views/AboutModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/AddFolderModal.js"></script>
@@ -92,7 +93,7 @@
         <script type="text/javascript" src="js/saiku/routers/QueryRouter.js"></script>
                 
         <!-- Saiku plugins -->
-        <!--
+      <!--  
             <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/Base.js"></script>
             <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/protovis-d3.3.js"></script>
             <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/protovis-msie.js"></script>
@@ -105,6 +106,7 @@
             <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/plugin.js" defer></script>
         -->
         <script type="text/javascript" src="js/saiku/plugins/Chart/plugin.js" defer></script>
+        
         <script type="text/javascript" src="js/saiku/plugins/Statistics/plugin.js" defer></script>
         <script type="text/javascript" src="js/saiku/plugins/I18n/plugin.js" defer></script>
         <script type="text/javascript" src="js/saiku/plugins/BIServer/plugin.js" defer></script>
@@ -296,12 +298,14 @@
                 <div class="workspace_inner">
                     <div class="workspace_toolbar hide">
                     <ul>
-                        <li class='for_queries'><a href="#open_query" class="open button sprite"></a></li>
-                        <li class='for_queries'><a href="#delete_query" class="delete button sprite"></a></li>
+                        <li class='for_queries hide'><a href="#open_query" class="open button sprite"></a></li>
+                        <li class='for_queries hide'><a href="#delete_query" class="delete button sprite"></a></li>
+                        <li class='for_queries hide'><a href="#edit_permissions" class="edit_permissions button sprite"></a></li>
                         <!--
-                        <li class='for_folder'><a href="#edit_folder" class="edit_folder button"></a></li>
+                        <li class='for_folder hide'><a href="#edit_folder" class="edit_folder button"></a></li>
                         -->
-                        <li class='for_folder'><a href="#delete_folder" class="delete button sprite"></a></li>
+                        <li class='for_folder hide'><a href="#delete_folder" class="delete button sprite"></a></li>
+                        <li class='for_folder hide'><a href="#edit_permissions" class="edit_permissions button sprite"></a></li>
                     </ul>
                     </div>
                     <div class="workspace_results">
@@ -376,6 +380,34 @@
                 <input name="show_unique" id="show_unique" type="checkbox" /><label for="show_unique" class="i18n">Show Unique Names</label>
             </div>
         </script>
+        <script type="text/x-jquery-tmpl" id="template-permissions">
+            <div class="permissions">
+
+                        <label for="filter_roles" class="i18n">Add role permission: &nbsp;</label>
+                        <br />
+                        <form>
+                            <input name="'filter_roles" id="filter_roles" type="text" class="filterbox" /> 
+                        </form>
+                        <input type="submit" value="Add" class="add_role" /><br />
+                        <input type="checkbox" class="acl" value="READ" />READ 
+                        <input type="checkbox" class="acl" value="WRITE" /> WRITE 
+                        <input type="checkbox" class="acl" value="GRANT" /> GRANT
+            
+                <br />
+                <span class="i18n">Roles:</span>
+                <div class="rolelist"></div>
+                <br />
+                <input type="submit" value="Remove permission" class="remove_acl" />
+            </div>
+        </script>
+        <script type="text/x-jquery-tmpl" id="template-permissions-rolelist">
+            <select class="select_roles" multiple size="4">
+                <% _.each(roles, function(role) { %> 
+                    <option value="<%=role %>"><%=role %></option>
+                <% }); %>
+            </select>
+        </script>
+
         <script type="text/x-jquery-tmpl" id="template-drillthrough">
             <div class="row_limit">
                 <br />

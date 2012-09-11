@@ -833,6 +833,37 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 .dialog_selections .available_selections input[type="text"] {
     width: 200px;
 }
+
+.dialog_permissions .dialog_body {
+    width: 370px;
+    height: 300px;
+}
+.dialog_permissions .dialog_icon {
+    display: none;
+}
+.dialog_permissions .dialog_icon {
+    display: none;
+}
+.dialog_permissions .select_roles {
+    width: 350px;
+    height: 130px;
+}
+
+
+
+
+.dialog_drillthrough .dialog_icon {
+    display: none;
+}
+
+.dialog_drillthrough .dialog_body .maxrows {
+    width: 60px;
+}
+
+.dialog_drillthrough .dialog_body .row_limit {
+    text-align: center;
+}
+
 .ui-menu {
     list-style:none;
     padding: 2px;
@@ -858,28 +889,6 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     font-size: 8px;
     color: #999;
     padding: 0;
-}
-
-
-
-.dialog_drillthroughview .dialog_icon {
-    display: none;
-}
-.dialog_drillthroughview .dialog_footer {
-    text-align: center;
-}
-
-
-.dialog_drillthrough .dialog_icon {
-    display: none;
-}
-
-.dialog_drillthrough .dialog_body .maxrows {
-    width: 60px;
-}
-
-.dialog_drillthrough .dialog_body .row_limit {
-    text-align: center;
 }
 
 .dialog_footer {
@@ -1077,6 +1086,11 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 
 .workspace_toolbar .edit_folder {
     background-image: url('../../../images/src/folder_edit.png');
+    background-repeat:no-repeat;
+    background-position: 7px 7px;
+}
+.workspace_toolbar .edit_permissions {
+    background-image: url('../../../images/src/group_edit.png');
     background-repeat:no-repeat;
     background-position: 7px 7px;
 }
