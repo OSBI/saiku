@@ -1,6 +1,7 @@
 package org.saiku.web.rest.objects.acl;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
@@ -11,10 +12,14 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.vfs.FileContent;
+import org.apache.commons.vfs.FileName;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
+import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.NameScope;
+import org.apache.commons.vfs.VFS;
+import org.aspectj.apache.bcel.generic.RET;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -49,13 +54,40 @@ public class Acl {
 	 * The list of the roles that can always manage a resource.
 	 */
 	private List<String> adminRoles;
-	
+
 	private FileObject repoRoot;
-	
-	public Acl(FileObject repoRoot) {
-		this.repoRoot = repoRoot;
+
+	public void setPath(String path) throws Exception {
+		FileSystemManager fileSystemManager;
+		try {
+			if (!path.endsWith("" + File.separatorChar)) {
+				path += File.separatorChar;
+			}
+			fileSystemManager = VFS.getManager();
+			FileObject fileObject;
+			fileObject = fileSystemManager.resolveFile(path);
+			if (fileObject == null) {
+				throw new IOException("File cannot be resolved: " + path);
+			}
+			if(!fileObject.exists()) {
+				throw new IOException("File does not exist: " + path);
+			}
+			repoRoot = fileObject;
+			readAcl(repoRoot, true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
+
+	/**
+	 * Sets the list of the administrator roles
+	 * @param adminRoles
+	 */
+	public void setAdminRoles(List<String> adminRoles) {
+		this.adminRoles = adminRoles;
+	}
+
+
 	/**
 	 * Returns the access method to the specified resource for the user or role
 	 * @param resource the resource to which you want to access
@@ -64,67 +96,84 @@ public class Acl {
 	 * @return {@link AclMethod}
 	 */
 	public List<AclMethod> getMethods(FileObject resource, String username, List<String> roles) {
-		String name = resource.getName().getPath();
-		AclEntry entry = acl.get(name);
-		AclMethod method = AclMethod.WRITE; // default if nothing in acl and
-											// parent == null
-		AclMethod parentMethod = null;
-
-		FileObject parent = null;
 		try {
-			parent = resource.getParent();
-			if (repoRoot.equals(parent) || parent == null) {
-				// fs root or repo root
-				parentMethod = method;
-			} else {
-				// recursively go up to the root
-				parentMethod = AclMethod.max(getMethods(parent, username, roles));
+			String name = repoRoot.getName().getRelativeName(resource.getName());
+			AclEntry entry = acl.get(name);
+			AclMethod method = AclMethod.WRITE; // default if nothing in acl and parent == null
+			AclMethod parentMethod = null;
+
+			FileObject parent = null;
+			try {
+				parent = resource.getParent();
+				if (resource.equals(repoRoot) || parent == null) {
+					// fs root or repo root
+					parentMethod = method;
+				} else {
+					// recursively go up to the root
+					parentMethod = AclMethod.max(getMethods(parent, username, roles));
+				}
+			} catch (FileSystemException e) {
+				logger.error("Error getting the parent",e);
 			}
-		} catch (FileSystemException e) {
-			logger.error("Error getting the parent",e);
-		}
-		if ( isAdminRole(roles) ) return getAllAcls(AclMethod.GRANT);
-		if (entry != null) {
-			switch (entry.getType()) {
-			case PRIVATE:
-				if (!entry.getOwner().equals(username))
-					method = AclMethod.NONE;
-				break;
-			case SECURED:
-				// check user permission
-				List<AclMethod> userMethods = entry.getUsers().get(username);
-				if (userMethods == null) { // check the role
-					List<AclMethod> roleMethods = new ArrayList<AclMethod>();
-					for ( String role:roles){
-						roleMethods.addAll(entry.getRoles().get(role));
-					}
-					if (roleMethods == null || roleMethods.size() == 0) {
-						// no role nor user acl
+			if ( isAdminRole(roles) ) return getAllAcls(AclMethod.GRANT);
+			if (entry != null) {
+				switch (entry.getType()) {
+				case PRIVATE:
+					if (!entry.getOwner().equals(username)) {
 						method = AclMethod.NONE;
 					} else {
-						// return the strongest role
-						method = AclMethod.max(roleMethods);
+						method = AclMethod.GRANT;
 					}
-				} else {
-					method = AclMethod.max(userMethods);
+					break;
+				case SECURED:
+					// check user permission
+					List<AclMethod> allMethods = new ArrayList<AclMethod>();
+
+					List<AclMethod> userMethods = 
+						entry.getUsers() != null && entry.getUsers().containsKey(username) ?
+								entry.getUsers().get(username) : new ArrayList<AclMethod>();
+
+								List<AclMethod> roleMethods = new ArrayList<AclMethod>();
+								for (String role:roles) {
+									List<AclMethod> r =
+										entry.getRoles() != null && entry.getRoles().containsKey(role) ?
+												entry.getRoles().get(role) : new ArrayList<AclMethod>();									
+												roleMethods.addAll(r);
+								}
+
+								allMethods.addAll(userMethods);
+								allMethods.addAll(roleMethods);
+
+								if (allMethods.size() == 0) {
+									// no role nor user acl
+									method = AclMethod.NONE;
+								} else {
+									// return the strongest role
+									method = AclMethod.max(allMethods);
+								}
+
+								break;
+				default:
+					// PUBLIC ACCESS
+					method = AclMethod.WRITE;
+					break;
 				}
+			} else
 
-				break;
-			default:
-				// PUBLIC ACCESS
-				method = AclMethod.WRITE;
-				break;
+			if (parentMethod != null) {
+				// now, if parent is more restrictive return parent, else return child
+				method = AclMethod.min(method, parentMethod);
 			}
+
+			return getAllAcls(method);
+		} catch (Exception e) {
+			logger.error("Cannot get methods for: " + resource, e);
 		}
-		
-		
-		// now, if parent is more restrictive return parent, else return child
-		method = AclMethod.min(method, parentMethod);
-
-		return getAllAcls(method);
-
+		List<AclMethod> noMethod = new ArrayList<AclMethod>();
+		noMethod.add(AclMethod.NONE);
+		return noMethod;
 	}
-	
+
 	private List<AclMethod> getAllAcls(AclMethod maxMethod) {
 		List<AclMethod> methods = new ArrayList<AclMethod>();
 		for (AclMethod m : AclMethod.values()) {
@@ -142,13 +191,24 @@ public class Acl {
 	 * @param entry
 	 */
 	public void addEntry(FileObject resource, AclEntry entry) {
-		acl.put(resource.getName().getPath(), entry);
+		try {
+			String key = repoRoot.getName().getRelativeName(resource.getName());
+			acl.put(key, entry);
+		} catch (FileSystemException e) {
+			logger.error("Cannot add entry for resource: " + resource, e);
+		}
 	}
 
 	public AclEntry getEntry(FileObject resource ) {
-		return this.acl.get(resource.getName().getPath());
+		try {
+			String key = repoRoot.getName().getRelativeName(resource.getName());
+			return acl.get(key);
+		} catch (FileSystemException e) {
+			logger.error("Cannot get entry for resource: " + resource, e);
+		}
+		return null;
 	}
-	
+
 	/**
 	 * Helper method to test if the resource is readable by the 
 	 * user or roles
@@ -186,24 +246,33 @@ public class Acl {
 		List<AclMethod> acls = getMethods(resource, username, roles);
 		return acls.contains(AclMethod.GRANT);
 	}
+
+
 	/**
 	 * Searches the acl file for the resource in the resource's directory
-	 * ( or inside teh resource's childre if the resource is a directory ), 
+	 * ( or inside the resource's children if the resource is a directory ), 
 	 * reads the file and adds all the acl entries to the global acl map
 	 * @param resource
 	 */
-	public void readAcl(FileObject resource) {
-		FileObject jsonFile = null;
+	public void readAcl(FileObject resource, boolean recursive) {
 		try {
-			if (resource.getType().equals(FileType.FOLDER)) {
-				jsonFile = resource.getChild(SAIKUACCESS_FILE);
-			} else {
-				jsonFile = resource.getParent().getChild(SAIKUACCESS_FILE);
+			FileObject folder = 
+				resource.getType().equals(FileType.FOLDER) ?
+						resource : resource.getParent();
+			FileObject jsonFile = folder.getChild(SAIKUACCESS_FILE);
+			Map<String, AclEntry> aclMap = deserialize(jsonFile);
+			acl.putAll(aclMap);
+
+			if (recursive) {
+				for ( FileObject file :  folder.getChildren()) {
+					if (file.getType().equals(FileType.FOLDER)) {
+						readAcl(file, recursive);
+					}
+				}
 			}
 		} catch (Exception e) {
-			logger.error("Error opening the " + SAIKUACCESS_FILE + "file",e);
+			logger.error("Error while reading ACL files (recursive: " + recursive + ")", e);
 		}
-		acl.putAll(deserialize(jsonFile));
 	}
 
 	/**
@@ -237,13 +306,21 @@ public class Acl {
 	 */
 	private void serialize(FileObject jsonFile, Map<String,AclEntry> acl) {
 		ObjectMapper mapper = new ObjectMapper();
-		try{
+		try {
+			Map<String,AclEntry> outputMap = new HashMap<String, AclEntry>();
+			for (String key : acl.keySet()) {
+				FileObject f = repoRoot.resolveFile(key);
+				if (f != null && f.exists()) {
+					String filename = jsonFile.getParent().getName().getRelativeName(f.getName());
+					if (!filename.equals(SAIKUACCESS_FILE)) {
+						outputMap.put(filename, acl.get(key));
+					}
+				}
+			}
 			jsonFile.delete();
 			OutputStreamWriter ow = new OutputStreamWriter(jsonFile.getContent().getOutputStream());
 			BufferedWriter bw = new BufferedWriter(ow);
-			mapper.writeValue(bw,acl);
-			
-			bw.flush();
+			mapper.writeValue(bw, outputMap);
 			bw.close();
 			ow.close();
 		} catch (JsonGenerationException e) {
@@ -263,17 +340,25 @@ public class Acl {
 	 */
 	private Map<String, AclEntry> deserialize(FileObject jsonFile) {
 		ObjectMapper mapper = new ObjectMapper();
-		FileContent fc;
+
 		InputStream is;
 		Map<String, AclEntry> acl = new TreeMap<String, AclEntry>();
 		if ( jsonFile != null ) {
 			try {
-				fc = jsonFile.getContent();
+				FileContent fc = jsonFile.getContent();
 				is = fc.getInputStream();
 				acl = (Map<String, AclEntry>) mapper.readValue(is, TypeFactory
 						.mapType(HashMap.class, String.class, AclEntry.class));
 				fc.close();
 				is.close();
+				Map<String, AclEntry> returnMap = new TreeMap<String, AclEntry>();
+				for (String key : acl.keySet()) {
+					AclEntry entry = acl.get(key);
+					FileName fn = jsonFile.getParent().resolveFile(key).getName();					
+					String path = repoRoot.getName().getRelativeName(fn); 
+					returnMap.put(path, entry);
+				}
+				return returnMap;
 			} catch (FileSystemException e) {
 				logger.error("Error opening the file ",e);
 			} catch (JsonParseException e) {
@@ -284,9 +369,9 @@ public class Acl {
 				logger.error("IO error reading the json file", e);
 			}
 		}
-		return acl;
+		return new HashMap<String, AclEntry>();
 	}
-	
+
 	/**
 	 * Returns the acl of the resource. If the resource is a directory
 	 * it returns the acl of the resource and of all the children. If 
@@ -309,23 +394,26 @@ public class Acl {
 	private Map<String, AclEntry> getAcl(FileObject resource, boolean recurse) {
 
 		Map<String, AclEntry> acl = new TreeMap<String, AclEntry>();
-		String key = resource.getName().getPath();
+
 		try {
+			String key = repoRoot.getName().getRelativeName(resource.getName());
 			if ( resource.getType().equals(FileType.FOLDER) ) {
 				for ( FileObject file :  resource.getChildren() ) {
 					acl.putAll(getAcl(file,recurse));
 				}
 			}
+
+			AclEntry entry = this.acl.get(key);
+			if ( entry == null ) {
+				entry = new AclEntry();
+			}
+			if ( entry != null ) acl.put(key, entry);
+
+
 		} catch (FileSystemException e) {
 			logger.error("Error traversing the resource " + resource.getName().getPath() ,e );
 		}
-		AclEntry entry = this.acl.get(key);
-		if ( entry == null ) {
-			entry = new AclEntry();
-		}
-		if ( entry != null ) acl.put(resource.getName().getPath(), entry);
-		return acl;
-		
+		return acl;		
 	}
 	/**
 	 * Returns the list of the administrator roles
@@ -333,13 +421,6 @@ public class Acl {
 	 */
 	public List<String> getAdminRoles() {
 		return adminRoles;
-	}
-	/**
-	 * Sets the list of the administrator roles
-	 * @param adminRoles
-	 */
-	public void setAdminRoles(List<String> adminRoles) {
-		this.adminRoles = adminRoles;
 	}
 	/**
 	 * Checks if a specific role is in the list of the admin roles

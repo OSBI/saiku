@@ -81,8 +81,6 @@ public class BasicRepositoryResource2 {
 	private Acl acl;
 
 	public void setPath(String path) throws Exception {
-		
-
 		FileSystemManager fileSystemManager;
 		try {
 			 if (!path.endsWith("" + File.separatorChar)) {
@@ -98,12 +96,13 @@ public class BasicRepositoryResource2 {
 				throw new IOException("File does not exist: " + path);
 			}
 			repo = fileObject;
-			acl = new Acl(repo);
-			acl.readAcl(repo);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+	}
+	
+	public void setAcl(Acl acl) {
+		this.acl = acl;
 	}
 	
 	/**
@@ -112,13 +111,6 @@ public class BasicRepositoryResource2 {
 	 */
 	public void setSessionService(SessionService sessionService){
 		this.sessionService = sessionService;
-	}
-	/**
-	 * sets the Administrator roles
-	 * @param roles
-	 */
-	public void setAdminRoles(List<String> roles){
-		this.acl.setAdminRoles(roles);
 	}
 	
 	/**
@@ -180,14 +172,14 @@ public class BasicRepositoryResource2 {
 			e.printStackTrace();
 			throw new SaikuServiceException("Error retrieving ACL for file: " + file, e);
 		}
-		throw new SaikuServiceException("Error retrieving ACL for file: " + file);
+		throw new SaikuServiceException("You dont have permission to retrieve ACL for file: " + file);
 	}
 	
 	
 	@POST
 	@Produces({"application/json" })
 	@Path("/resource/acl")
-	public Status setResourceAcl(@QueryParam("file") String file, @QueryParam("acl") String aclEntry) {
+	public Status setResourceAcl(@FormParam("file") String file, @FormParam("acl") String aclEntry) {
 		try {
 			if (file == null || file.startsWith("/") || file.startsWith(".")) {
 				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
@@ -370,6 +362,7 @@ public class BasicRepositoryResource2 {
 	 */
 	private void setAcl(FileObject resource, AclEntry entry){
 		this.acl.addEntry(resource, entry);
+		this.acl.writeAcl(resource);
 	}
 	/**
 	 * Returns the permission for the resource;
