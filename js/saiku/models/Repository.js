@@ -30,6 +30,19 @@ var RepositoryObject = Backbone.Model.extend( {
     }
 } );
 
+var RepositoryAclObject = Backbone.Model.extend( {
+    url: function( ) {
+        var segment = Settings.BIPLUGIN ? 
+            "/pentahorepository2/resource" : "/repository2/resource/acl";
+        return encodeURI(Saiku.session.username + segment);
+    },
+    parse: function(response) {
+        if (response != "OK") {
+            _.extend(this.attributes, response);
+        }
+    }
+} );
+
 var SavedQuery = Backbone.Model.extend({
 
     parse: function(response) {

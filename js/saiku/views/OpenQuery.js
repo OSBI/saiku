@@ -106,6 +106,7 @@ var OpenQuery = Backbone.View.extend({
         $( this.el ).find( '.workspace_toolbar' ).removeClass( 'hide' );
         $( this.el ).find( '.for_queries' ).addClass( 'hide' );
         $( this.el ).find( '.for_folder' ).addClass( 'hide' );
+        $( this.el ).find( '.add_folder' ).parent().addClass( 'hide' );
 
         if (typeof query.acl != "undefined" && _.indexOf(query.acl, "READ") > -1) {
             $( this.el ).find( '.for_queries .open' ).parent().removeClass( 'hide' );
@@ -140,11 +141,13 @@ var OpenQuery = Backbone.View.extend({
         var name = $target.text();
         var folder = this.queries[path];
         $( this.el ).find( '.workspace_toolbar' ).removeClass( 'hide' );
+        $( this.el ).find( '.add_folder' ).parent().addClass( 'hide' );
         $( this.el ).find( '.for_queries' ).addClass( 'hide' );
         $( this.el ).find( '.for_folder' ).addClass( 'hide' );
 
         if (typeof folder.acl != "undefined" && _.indexOf(folder.acl, "WRITE") > -1) {
             $( this.el ).find( '.for_folder .delete' ).parent().removeClass( 'hide' );
+            $( this.el ).find( '.add_folder' ).parent().removeClass( 'hide' );
         }
         if (typeof folder.acl != "undefined" && _.indexOf(folder.acl, "GRANT") > -1) {
             $( this.el ).find( '.for_folder .edit_permissions' ).parent().removeClass( 'hide' );
@@ -153,7 +156,7 @@ var OpenQuery = Backbone.View.extend({
         $( this.el ).find( '.workspace_results' )
             .html( '<h3><strong>' + name + '</strong></h3>' );
 
-        this.selected_query = new SavedQuery({ file: name , name: name });
+        this.selected_query = new SavedQuery({ file: path , name: name });
 
     },
 
@@ -187,6 +190,7 @@ var OpenQuery = Backbone.View.extend({
         if ($target.hasClass('sidebar')) {
             $(this.el).find('.selected').removeClass('selected');
         }
+        $( this.el ).find( '.add_folder' ).parent().removeClass( 'hide' );
         return false;
     },
 

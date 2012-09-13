@@ -316,7 +316,7 @@
             <div class="sidebar queries">
                 <h3 class="top i18n">
                     Queries
-                    <a href='#' class='add_folder'></a>
+                    <span class="add_folder_button"><a href='#' class='add_folder'></a></span>
                 </h3>
                 <div class="sidebar_inner">
                     <ul id="queries" class='RepositoryObjects'>
@@ -387,12 +387,12 @@
                         <br />
                         <form>
                             <input name="'filter_roles" id="filter_roles" type="text" class="filterbox" /> 
+                            <input type="submit" value="Add" class="add_role" />
                         </form>
-                        <input type="submit" value="Add" class="add_role" /><br />
                         <input type="checkbox" class="acl" value="READ" />READ 
                         <input type="checkbox" class="acl" value="WRITE" /> WRITE 
                         <input type="checkbox" class="acl" value="GRANT" /> GRANT
-            
+                <br />                        
                 <br />
                 <span class="i18n">Roles:</span>
                 <div class="rolelist"></div>
@@ -402,8 +402,13 @@
         </script>
         <script type="text/x-jquery-tmpl" id="template-permissions-rolelist">
             <select class="select_roles" multiple size="4">
-                <% _.each(roles, function(role) { %> 
-                    <option value="<%=role %>"><%=role %></option>
+                <% _.each(roles, function(grants, role) {
+                    var aclstring ="";
+                     _.each(grants, function(grant, index) { 
+                        aclstring += (index > 0 ? (", " + grant) : grant);
+                    });
+                %>
+                    <option value="<%=role %>"><%= role + " [" + aclstring + "]" %></option>
                 <% }); %>
             </select>
         </script>

@@ -45,7 +45,15 @@ var PermissionsModal = Modal.extend({
                     .append( "<a class='label'>" + item.label + "</a>" )
                     .appendTo( ul );
                 };
-        var templ_roles =_.template($("#template-permissions-rolelist").html())({roles: [] });
+
+        var acl = new RepositoryAclObject({ file : this.file });
+        acl.fetch({ async: false });
+
+        var definedRoles = (typeof acl.get('roles') == "undefined" || acl.get('roles') == null ? {} : acl.get('roles')); 
+        this.rolesacl = definedRoles;
+        var templ_roles =_.template($("#template-permissions-rolelist").html())({roles: definedRoles });
+
+
         $(this.el).find('.rolelist').html(templ_roles);
 		Saiku.i18n.translate();
     },
@@ -56,17 +64,23 @@ var PermissionsModal = Modal.extend({
         var role = $(this.el).find(".filterbox").val();
         var acls = [];
         var aclstring ="";
+        var rolecount = 0;
         if (role && role.length > 0) {
             $(this.el).find('.acl:checked').each( function(index) { 
                 if (index > 0) {
                     aclstring += ", ";
                 }
+                rolecount++;
                 aclstring += $(this).val();
                 acls.push($(this).val());
             });
-            self.rolesacl[role] = acls;
-            $("<option value='" + role + "'>" + role + " ["+aclstring+"]</option>").appendTo($(this.el).find(".select_roles"));
-            var role = $(this.el).find(".filterbox").val("");
+            if (rolecount > 0) {
+                self.rolesacl[role] = acls;
+                $("<option value='" + role + "'>" + role + " ["+aclstring+"]</option>").appendTo($(this.el).find(".select_roles"));
+                var role = $(this.el).find(".filterbox").val("");
+            } else {
+                alert("You need to chose at least one ACL method for this role.");
+            }
         }
         
 
@@ -83,9 +97,10 @@ var PermissionsModal = Modal.extend({
     },
 
     ok: function() {
+        var closer = this.close();
         var acl = { "type" : "SECURED", "roles" : this.rolesacl, "owner" : Saiku.session.username };
-        (new RepositoryAclObject({ file: this.file, acl: JSON.stringify(acl)})).save({ success: this.close });
-        //alert(JSON.stringify(acl));
+        (new RepositoryAclObject({ file: this.file, acl: JSON.stringify(acl)})).save({ success: closer });
 
+        return false;
     }
 });
