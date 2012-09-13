@@ -93,7 +93,8 @@ var Session = Backbone.Model.extend({
         Saiku.ui.unblock();
         $('#header').empty().hide();
         $('#tab_panel').remove();
-
+        Saiku.tabs = new TabSet();
+        Saiku.toolbar.remove();
         Saiku.toolbar = new Toolbar();
         typeof localStorage !== "undefined" && localStorage && localStorage.clear();
         this.id = _.uniqueId('queryaction_');
@@ -101,7 +102,7 @@ var Session = Backbone.Model.extend({
         this.sessionid = null;
         this.username = null;
         this.password = null;
-        this.destroy({success:this.check_session});
+        this.destroy({success: document.location.reload(false) });
         delete this.id;
 
     },
