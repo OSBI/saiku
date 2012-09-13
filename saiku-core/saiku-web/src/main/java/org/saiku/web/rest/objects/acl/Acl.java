@@ -99,22 +99,9 @@ public class Acl {
 		try {
 			String name = repoRoot.getName().getRelativeName(resource.getName());
 			AclEntry entry = acl.get(name);
-			AclMethod method = AclMethod.WRITE; // default if nothing in acl and parent == null
-			AclMethod parentMethod = null;
-
-			FileObject parent = null;
-			try {
-				parent = resource.getParent();
-				if (resource.equals(repoRoot) || parent == null) {
-					// fs root or repo root
-					parentMethod = method;
-				} else {
-					// recursively go up to the root
-					parentMethod = AclMethod.max(getMethods(parent, username, roles));
-				}
-			} catch (FileSystemException e) {
-				logger.error("Error getting the parent",e);
-			}
+			AclMethod method;
+			
+			if (name.startsWith("..") || resource.getParent() == null) return getAllAcls(AclMethod.NONE);
 			if ( isAdminRole(roles) ) return getAllAcls(AclMethod.GRANT);
 			if (entry != null) {
 				switch (entry.getType()) {
@@ -158,11 +145,14 @@ public class Acl {
 					method = AclMethod.WRITE;
 					break;
 				}
-			} else
-
-			if (parentMethod != null) {
-				// now, if parent is more restrictive return parent, else return child
-				method = AclMethod.min(method, parentMethod);
+			} else {
+				if (resource.equals(repoRoot)) {
+					return getAllAcls(AclMethod.WRITE);
+				} else {
+					FileObject parent = resource.getParent();
+					List<AclMethod> parentMethods = getMethods(parent, username, roles);
+					method = AclMethod.max(parentMethods);
+				}
 			}
 
 			return getAllAcls(method);

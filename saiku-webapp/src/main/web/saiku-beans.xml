@@ -64,15 +64,20 @@
 	</bean>
 	<!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
 
-	<bean id="repository2bean" scope="request"
-		class="org.saiku.web.rest.resources.BasicRepositoryResource2">
+	<bean id="acl" scope="session" class="org.saiku.web.rest.objects.acl.Acl">
 		<property name="path" value="res:saiku-repository" />
-		<property name="sessionService" ref="sessionService" />
 		<property name="adminRoles">
 			<list>
 				<value>ROLE_ADMIN</value>
 			</list>
 		</property>
+	</bean>
+
+	<bean id="repository2bean" scope="request"
+		class="org.saiku.web.rest.resources.BasicRepositoryResource2">
+		<property name="path" value="res:saiku-repository" />
+		<property name="sessionService" ref="sessionService" />
+		<property name="acl" ref="acl" />
 	</bean>
 
 	<bean id="tagRepositoryBean" scope="request"
