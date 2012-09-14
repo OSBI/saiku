@@ -1286,8 +1286,13 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     line-height: 17px;
     list-style-type: none;
     margin: 0;
-    padding-bottom: 5px;
+    padding-bottom: 1px;
+    padding-top: 1px;
 }
+.RepositoryObjects li.query {
+    margin-left: 3px;
+}
+
 
 .RepositoryObjects li a {
     color: #222;
@@ -1312,7 +1317,7 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 
 .RepositoryObjects li .sprite {
 	background-position: -1855px 0;
-	padding: 4px 8px;
+	padding: 1px 8px 4px;
 	margin-right: 4px;
 }
 
