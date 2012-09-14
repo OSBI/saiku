@@ -1315,9 +1315,9 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     background: #f0f0f0;
 }
 
-.RepositoryObjects li .sprite {
-	background-position: -1855px 0;
-	padding: 1px 8px 4px;
+.RepositoryObjects li.query .icon {
+    background-image: url('../../../images/src/saiku_16.png');
+	padding: 1px 8px 1px;
 	margin-right: 4px;
 }
 

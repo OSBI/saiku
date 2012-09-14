@@ -129,14 +129,16 @@ var SaveQuery = Modal.extend({
         }
         
         var name = $(this.el).find('input[name="name"]').val();
-        this.query.set({ name: name, folder: foldername });
-        this.query.trigger('query:save');
-        $(this.el).find('form').html("Saving query...");
-        
-        // Fetch query XML and save to repository
-        this.query.action.get("/xml", {
-            success: this.copy_to_repository
-        });
+        if (name != null && name.length > 0) {
+            this.query.set({ name: name, folder: foldername });
+            this.query.trigger('query:save');
+            $(this.el).find('form').html("Saving query...");
+            this.query.action.get("/xml", {
+                success: this.copy_to_repository
+            });
+        } else {
+            alert("You need to enter a name!");
+        }
         
         event.preventDefault();
         return false;
