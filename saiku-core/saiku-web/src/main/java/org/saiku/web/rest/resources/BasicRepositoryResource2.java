@@ -179,7 +179,7 @@ public class BasicRepositoryResource2 {
 	@POST
 	@Produces({"application/json" })
 	@Path("/resource/acl")
-	public Status setResourceAcl(@FormParam("file") String file, @FormParam("acl") String aclEntry) {
+	public Response setResourceAcl(@FormParam("file") String file, @FormParam("acl") String aclEntry) {
 		try {
 			if (file == null || file.startsWith("/") || file.startsWith(".")) {
 				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
@@ -191,12 +191,12 @@ public class BasicRepositoryResource2 {
 			FileObject repoFile = repo.resolveFile(file);
 			if (repoFile.exists() && acl.canGrant(file, username, roles) ) {
 				acl.addEntry(file, ae);
-				return Status.OK;
+				return Response.ok().build();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return Status.INTERNAL_SERVER_ERROR;
+		return Response.serverError().build();
 	}
 
 
@@ -219,7 +219,7 @@ public class BasicRepositoryResource2 {
 			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
 			FileObject repoFile = repo.resolveFile(file);
 			if ( !acl.canRead(file, username, roles) ) {
-				return Response.status(Status.UNAUTHORIZED).build();
+				return Response.serverError().status(Status.FORBIDDEN).build();
 			}
 //			System.out.println("path:" + repo.getName().getRelativeName(repoFile.getName()));
 			if (repoFile.exists()) {
@@ -253,7 +253,7 @@ public class BasicRepositoryResource2 {
 	 */
 	@POST
 	@Path("/resource")
-	public Status saveResource (
+	public Response saveResource (
 			@FormParam("file") String file, 
 			@FormParam("content") String content)
 	{
@@ -267,7 +267,9 @@ public class BasicRepositoryResource2 {
 			FileObject repoFile = repo.resolveFile(file);
 
 			if ( !acl.canWrite(file,username, roles) ) {
-				return Status.UNAUTHORIZED;
+				return Response.serverError().status(Status.FORBIDDEN)
+							.entity("You don't have permissions to save here!")
+								.type("text/plain").build();
 			}
 
 			if (repoFile == null) throw new Exception("Repo File not found");
@@ -284,11 +286,11 @@ public class BasicRepositoryResource2 {
 				bw.write(content);
 				bw.close();
 			}
-			return Status.OK;
+			return Response.ok().build();
 		} catch(Exception e){
 			log.error("Cannot save resource to ( file: " + file + ")",e);
 		}
-		return Status.INTERNAL_SERVER_ERROR;
+		return Response.serverError().entity("Cannot save resource to ( file: " + file + ")").type("text/plain").build();
 	}
 	
 	/**
@@ -299,7 +301,7 @@ public class BasicRepositoryResource2 {
 	 */
 	@DELETE
 	@Path("/resource")
-	public Status deleteResource (
+	public Response deleteResource (
 			@QueryParam("file") String file)
 	{
 		try {
@@ -315,15 +317,15 @@ public class BasicRepositoryResource2 {
 				if (repoFile != null && repoFile.exists() ) {
 					if ( acl.canWrite(file, username, roles) ){
 						repoFile.delete();
-						return Status.OK;
+						return Response.ok().build();
 					} else {
-						return Status.UNAUTHORIZED;
+						return Response.serverError().status(Status.FORBIDDEN).build();
 					} 
 				}
 		} catch(Exception e){
 			log.error("Cannot save resource to (file: " + file + ")",e);
 		}
-		return Status.INTERNAL_SERVER_ERROR;
+		return Response.serverError().build();
 	}
 	
 	private List<IRepositoryObject> getRepositoryObjects(FileObject root, String fileType) throws Exception {
