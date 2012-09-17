@@ -7,6 +7,7 @@
 	<version>2.4-SNAPSHOT</version>
 	<build>
 		<plugins>
+<!--
          <plugin>
         <groupId>nl.windgazer</groupId>
         <artifactId>jsdoctk-plugin</artifactId>
@@ -15,8 +16,10 @@
             <srcDir>${basedir}/js/saiku/</srcDir>
             <exclude>
                 <param>ccc</param>
+		<param>backbone</param>
+		<param>jquery</param>
             </exclude>
-            <recurse>7</recurse><!-- This is the *level of recursion*, not a boolean -->
+            <recurse>7</recurse>
         </configuration>
         <executions>
             <execution>
@@ -28,6 +31,7 @@
             </execution>
         </executions>
     </plugin>
+-->
     <!-- DISABLE YUI COMPRESSOR
     <plugin>
         <groupId>net.alchim31.maven</groupId>
@@ -105,9 +109,11 @@
                                         <exclude name=".gitignore" />
                                     </fileset>
 								</copy>
+<!--
                                 <copy todir="target/saiku-ui/doc/">
 									<fileset dir="${basedir}/target/jsdoc"/>
 								</copy>
+-->
 								<zip destfile="target/saiku-ui-${project.version}.zip">
 									<zipfileset dir="target/saiku-ui/" />
 								</zip>
