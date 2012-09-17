@@ -132,7 +132,6 @@ var SaveQuery = Modal.extend({
         if (name != null && name.length > 0) {
             this.query.set({ name: name, folder: foldername });
             this.query.trigger('query:save');
-            $(this.el).find('form').html("Saving query...");
             this.query.action.get("/xml", {
                 success: this.copy_to_repository
             });
@@ -145,13 +144,23 @@ var SaveQuery = Modal.extend({
     },
     
     copy_to_repository: function(model, response) {
+        var self = this;
         var folder = this.query.get('folder');
         var file = this.query.get('name').indexOf(".saiku") == this.query.get('name').length - 6 ? this.query.get('name') : this.query.get('name') + ".saiku";
         file = folder + file;
+        var error = function(data, textStatus, jqXHR) {
+                if (textStatus && textStatus.status == 403 && textStatus.responseText) {
+                    alert(textStatus.responseText);
+                } else {
+                    self.close();
+                }
+                return true;
+        };
+
         (new SavedQuery({
             name: this.query.get('name'),
             file: file,
             content: response.xml
-        })).save({ success: this.close });
+        })).save({},{ success:  this.close, error: error  });
     }
 });

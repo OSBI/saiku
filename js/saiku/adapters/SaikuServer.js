@@ -103,12 +103,7 @@ Backbone.sync = function(method, model, options) {
       },
       401: function() {
         errorLogout();
-      },
-      403: function() {
-        errorLogout();
       }
-
-
     };
 
     var failure = function(jqXHR, textStatus, errorThrown) {
