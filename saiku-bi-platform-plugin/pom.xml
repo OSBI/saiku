@@ -199,7 +199,7 @@
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
-									<groupId>webdetails</groupId>
+									<groupId>pentaho</groupId>
 									<artifactId>cda</artifactId>
 									<version>TRUNK-SNAPSHOT</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
@@ -371,7 +371,7 @@
 			<version>1.2.14</version>
 		</dependency>
 		<dependency>
-			<groupId>webdetails</groupId>
+			<groupId>pentaho</groupId>
 			<artifactId>cda</artifactId>
 			<version>TRUNK-SNAPSHOT</version>
 		</dependency>
