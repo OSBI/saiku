@@ -75,7 +75,7 @@ public class Acl {
 	public void setRootAcl(String rootAcl) {
 		try {
 			if (StringUtils.isNotBlank(rootAcl)) {
-				AclMethod.valueOf(rootAcl);
+				rootMethod = AclMethod.valueOf(rootAcl);
 			}
 		} catch (Exception e) {	}
 	}
