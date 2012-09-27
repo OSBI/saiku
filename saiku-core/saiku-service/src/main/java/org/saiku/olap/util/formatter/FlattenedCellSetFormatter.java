@@ -358,14 +358,19 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
 				// the raw value
 			}
 
-            // This property is relevant for Excel export
-            String formatString = (String) cell.getPropertyValue(Property.StandardCellProperty.FORMAT_STRING);
-            if (formatString != null && !formatString.startsWith("|")) {
-                cellInfo.setFormatString(formatString);
-            } else {
-                formatString = formatString.substring(1, formatString.length());
-                cellInfo.setFormatString(formatString.substring(0, formatString.indexOf("|")));
-            }
+            // Format string is relevant for Excel export
+			// xmla cells can throw an error on this
+			try {
+				String formatString = (String) cell.getPropertyValue(Property.StandardCellProperty.FORMAT_STRING);
+				if (formatString != null && !formatString.startsWith("|")) {
+					cellInfo.setFormatString(formatString);
+				} else {
+					formatString = formatString.substring(1, formatString.length());
+					cellInfo.setFormatString(formatString.substring(0, formatString.indexOf("|")));
+				}
+			} catch (Exception e) {
+				// we tried
+			}
 
             Map<String, String> cellProperties = new HashMap<String, String>();
 			String val = Olap4jUtil.parseFormattedCellValue(cellValue, cellProperties);
