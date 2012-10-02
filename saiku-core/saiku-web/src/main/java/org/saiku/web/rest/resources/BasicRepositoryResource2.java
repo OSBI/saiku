@@ -185,6 +185,7 @@ public class BasicRepositoryResource2 {
 				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
 			}
 			ObjectMapper mapper = new ObjectMapper();
+			log.debug("Set ACL to " + file + " : " + aclEntry);
 			AclEntry ae = mapper.readValue(aclEntry, AclEntry.class);
 			String username = sessionService.getAllSessionObjects().get("username").toString();
 			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
