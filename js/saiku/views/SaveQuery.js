@@ -73,6 +73,13 @@ var SaveQuery = Modal.extend({
 
         // Maintain `this`
         _.bindAll( this, "copy_to_repository", "close", "toggle_folder", "select_name", "populate" );
+        
+        // fix event listening in IE < 9
+        if($.browser.msie && $.browser.version < 9) {
+            $(this.el).find('form').on('submit', this.save);    
+        }
+
+    
     },
 
     populate: function( repository ) {

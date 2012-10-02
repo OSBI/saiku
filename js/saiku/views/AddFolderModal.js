@@ -48,6 +48,13 @@ var AddFolderModal = Modal.extend({
         _.extend(this.options, {
             title: "Add Folder"
         });
+
+        
+        // fix event listening in IE < 9
+        if($.browser.msie && $.browser.version < 9) {
+            $(this.el).find('form').on('submit', this.save);    
+        }
+
     },
     
     type: "save",
