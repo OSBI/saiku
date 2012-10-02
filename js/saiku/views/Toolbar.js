@@ -33,18 +33,7 @@ var Toolbar = Backbone.View.extend({
     },
     
     template: function() {
-        return _.template("<ul>" + 
-                    "<li><a id='new_query' href='#new_query' title='New query' class='new_tab i18n sprite'></a></li>" +
-                    "<li class='separator'>&nbsp;</li>" +
-                    "<li><a id='open_query' href='#open_query' title='Open query' class='open_query i18n sprite'></a></li>" + 
-                    "<li class='separator'>&nbsp;</li>" +
-                    "<li><a id='logout' href='#logout' title='Logout' class='logout i18n sprite'></a></li>" +
-                    "<li><a id='about' href='#about' title='About' class='about i18n sprite'></a></li>" +
-                    "<li class='separator'>&nbsp;</li>" +
-                    "<li><a id='issue_tracker' href='#issue_tracker' title='Issue Tracker' class='bug i18n sprite'></a></li>" +
-                "</ul>" +
-                "<h1 id='logo'><a href='http://www.analytical-labs.com/' title='Saiku - Next Generation Open Source Analytics' class='sprite'>Saiku</a></h1>"
-            )(this);
+        return _.template( $("#template-toolbar").html() )(this);
     },
     
     initialize: function() {
