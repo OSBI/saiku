@@ -1127,7 +1127,9 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     background-position: -1914px 7px;
 }
 .workspace_toolbar .group_parents {
-    background-position: -1914px 7px;
+    background-image: url('../../../images/src/hide_parents.png');
+    background-repeat:no-repeat;
+    background-position: 7px 7px;
 }
 .workspace_toolbar .swap_axis {
     background-position: -551px -90px;
