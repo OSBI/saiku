@@ -945,8 +945,9 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 .workspace_results table th {
     border-left: 1px solid #d5d5d5;
     margin-bottom: 0;
-    white-space: nowrap;
+    white-space: normal;
 }
+
 .workspace_results table th.all_null {
     text-align: center;
     border: none;
