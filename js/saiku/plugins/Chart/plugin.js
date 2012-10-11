@@ -129,10 +129,11 @@ var Chart = Backbone.View.extend({
             return;
         }
         
-        var options = _.extend({
+        var options = _.extend({        
             canvas: this.id,
-            width: $(this.workspace.el).find('.workspace_results').width() - 20,
+            width: $(this.workspace.el).find('.workspace_results').width() - 40,
             height: $(this.workspace.el).find('.workspace_results').height() - 40,
+            yAxisSize: 70,
             orientation: 'vertical',
             stacked: false,
             animate: false,
@@ -147,8 +148,8 @@ var Chart = Backbone.View.extend({
         if (options.type == "HeatGridChart") {
             options = _.extend({
                     canvas: this.id,
-                    width: $(this.workspace.el).find('.workspace_results').width() - 80,
-                    height: $(this.workspace.el).find('.workspace_results').height(),
+                    width: $(this.workspace.el).find('.workspace_results').width() - 40,
+                    height: $(this.workspace.el).find('.workspace_results').height() - 40,
                     animate: false,
                     clickable: false,
                     orientation: "horizontal",
@@ -158,7 +159,7 @@ var Chart = Backbone.View.extend({
                     showYScale: true,
                     panelSizeRatio: 0.8,
                     yAxisPosition: "left",
-                    yAxisSize: 70,
+                    yAxisSize: 150,
                     minColor: "#FEDFE1",
                     maxColor: "#F11929",
                     extensionPoints: {
