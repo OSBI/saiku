@@ -29,9 +29,13 @@ var SessionWorkspace = Backbone.Model.extend({
         this.initialized = false;
         this.first = true;
         // Check expiration on localStorage
-        if (typeof localStorage !== "undefined" && localStorage && localStorage.getItem('expiration') && !(localStorage.getItem('expiration') > (new Date()).getTime())) {
-            localStorage.clear();
-        }
+        if (typeof localStorage !== "undefined" && localStorage) {
+            if (localStorage.getItem('expiration') && !(localStorage.getItem('expiration') > (new Date()).getTime())) {
+                localStorage.clear();
+            } else if (!localStorage.getItem('saiku-version') || (localStorage.getItem('saiku-version') !== Settings.VERSION) ) {
+                localStorage.clear();
+            }
+        }        
         Saiku.ui.block("Loading datasources....");
         this.fetch({success:this.process_datasources},{});
         
@@ -40,6 +44,7 @@ var SessionWorkspace = Backbone.Model.extend({
     refresh: function() {
         typeof localStorage !== "undefined" && localStorage && localStorage.clear();
         this.clear();
+        localStorage.setItem('saiku-version', Settings.VERSION);
         this.fetch({success:this.process_datasources},{});
     },
         

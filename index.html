@@ -146,7 +146,9 @@
                             if (schema.cubes.length > 0) { %>
                                 <optgroup label="<%= ( schema.name != "" ? schema.name : catalog.name) +'  (' + connection.name + ')' %>">
                                 <% _.each(schema.cubes, function(cube) { %>
-                                    <option value="<%= connection.name %>/<%= catalog.name %>/<%=  ((schema.name == '' || schema.name == null) ? 'null' : schema.name)  %>/<%= encodeURIComponent(cube.name) %>"><%= ((cube.caption == '' || cube.caption == null) ? cube.name : cube.caption) %></option>
+                                    <% if (typeof cube["visible"] == "undefined" || cube["visible"]) { %>
+                                        <option value="<%= connection.name %>/<%= catalog.name %>/<%=  ((schema.name == '' || schema.name == null) ? 'null' : schema.name)  %>/<%= encodeURIComponent(cube.name) %>"><%= ((cube.caption == '' || cube.caption == null) ? cube.name : cube.caption) %></option>
+                                    <% } %>
                                 <% }); %>
                                 </optgroup>
                             <% } %>
@@ -159,23 +161,27 @@
         <script type="text/x-jquery-tmpl" id="template-dimensions">
         <ul>
         <% _.each(dimensions, function(dimension) { %>
-        <% if (dimension.name != 'Measures') { %>
+        <% if (dimension.name != 'Measures' && (typeof dimension["visible"] == "undefined" || dimension["visible"])) { %>
             <li class='parent_dimension'>
                 <span class="root collapsed sprite"></span>
                 <a class="folder_collapsed sprite" href="#" title="<%= dimension.description ? dimension.description : dimension.caption %>"><%= dimension.caption %></a>
                 
                 <ul>
                 <% _.each(dimension.hierarchies, function(hierarchy) { %>
-                    <% if (dimension.hierarchies.length > 1) { %>
-                        <li class="hierarchy hide">
-                            <a class="dimension" title="<%= hierarchy.description ? hierarchy.description : hierarchy.caption %>" href="#"><%= hierarchy.caption %></a>
-                        </li>
+                    <% if (typeof hierarchy["visible"] == "undefined" || hierarchy["visible"]) { %>
+                        <% if (dimension.hierarchies.length > 1) { %>
+                            <li class="hierarchy hide">
+                                <a class="dimension" title="<%= hierarchy.description ? hierarchy.description : hierarchy.caption %>" href="#"><%= hierarchy.caption %></a>
+                            </li>
+                        <% } %>
+                        <% _.each(hierarchy.levels, function(level) { %>
+                            <% if (typeof level["visible"] == "undefined" || level["visible"]) { %>
+                                <li class="hide"><a title="<%= level.uniqueName %>" rel="<%= level.uniqueName %>" 
+                                    class="level" href="#<%= dimension.name %>/hierarchy/<%= hierarchy.uniqueName %>/<%= level.uniqueName %>"><%= level.caption %></a>
+                                </li>
+                            <% } %>
+                        <% }); %>
                     <% } %>
-                    <% _.each(hierarchy.levels, function(level) { %>
-                        <li class="hide"><a title="<%= level.uniqueName %>" rel="<%= level.uniqueName %>" 
-                            class="level" href="#<%= dimension.name %>/hierarchy/<%= hierarchy.uniqueName %>/<%= level.uniqueName %>"><%= level.caption %></a>
-                        </li>
-                    <% }); %>
                 <% }); %>
                 </ul>
         <% } %>
