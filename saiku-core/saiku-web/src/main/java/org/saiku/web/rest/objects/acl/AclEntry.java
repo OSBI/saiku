@@ -47,7 +47,7 @@ public class AclEntry {
 	 * access type
 	 * @param owner
 	 */
-	public AclEntry (String owner) {
+	private AclEntry (String owner) {
 		if ( owner == null || owner.length() == 0) throw new IllegalArgumentException("Owner of the resource is mandatory");
 		this.owner = owner;
 	}
@@ -57,9 +57,11 @@ public class AclEntry {
 	 * @param owner
 	 * @param type
 	 */
-	public AclEntry (String owner, AclType type) {
+	public AclEntry (String owner, AclType type, Map<String,List<AclMethod>> roles, Map<String,List<AclMethod>> users) {
 		this(owner);
 		this.type = type;
+		this.users = users;
+		this.roles = roles;
 	}
 	/**
 	 * returns the owner of the resource
@@ -82,13 +84,7 @@ public class AclEntry {
 	public Map<String, List<AclMethod>> getRoles() {
 		return roles;
 	}
-	/**
-	 * sets the list of the roles and their grants
-	 * @param roles
-	 */
-	public void setRoles(Map<String, List<AclMethod>> roles) {
-		this.roles = roles;
-	}
+
 	/**
 	 * returns the list of the users and their grants
 	 * @return
@@ -96,14 +92,4 @@ public class AclEntry {
 	public Map<String, List<AclMethod>> getUsers() {
 		return users;
 	}
-	/**
-	 * sets the list of the users and their grants
-	 * @param users
-	 */
-	public void setUsers(Map<String, List<AclMethod>> users) {
-		this.users = users;
-	}
-
-	
-	
 }

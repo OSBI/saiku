@@ -1,8 +1,9 @@
 package org.saiku.web.rest.objects.acl;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +11,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.vfs.FileContent;
 import org.apache.commons.vfs.FileName;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemException;
@@ -21,6 +21,7 @@ import org.apache.commons.vfs.VFS;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.saiku.web.rest.objects.acl.enumeration.AclMethod;
+import org.saiku.web.rest.resources.BasicRepositoryResource2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,8 @@ public class Acl {
 	private List<String> adminRoles;
 	private AclMethod rootMethod = AclMethod.WRITE;
 	private FileObject repoRoot;
+	
+	private static final Logger log = LoggerFactory.getLogger(BasicRepositoryResource2.class);
 	
 
 	public void setPath(String path) throws Exception {
@@ -60,7 +63,7 @@ public class Acl {
 			String rootPath = getPath(repoRoot);
 			readAclTree(rootPath);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error setting path for acl: " + path, e);
 		}
 	}
 
@@ -262,8 +265,7 @@ public class Acl {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			accessFile.delete();
-			File outputFile = new File(accessFile.getURL().toURI());
-			mapper.writeValue(outputFile, map);
+			mapper.writeValue(accessFile.getContent().getOutputStream(), map);
 		} catch (Exception e) {
 			logger.error("Error writing data to file",e);
 		}
@@ -274,8 +276,9 @@ public class Acl {
 		Map<String, AclEntry> acl = new TreeMap<String, AclEntry>();
 		try {
 			if ( accessFile != null && accessFile.exists()) {
-				File inputFile = new File(accessFile.getURL().toURI());
-				acl = (Map<String, AclEntry>) mapper.readValue(inputFile, TypeFactory
+				InputStreamReader reader = new InputStreamReader(accessFile.getContent().getInputStream());
+				BufferedReader br = new BufferedReader(reader);
+				acl = (Map<String, AclEntry>) mapper.readValue(br, TypeFactory
 						.mapType(HashMap.class, String.class, AclEntry.class));
 			}
 		} catch (Exception e) {

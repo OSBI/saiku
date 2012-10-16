@@ -91,7 +91,7 @@ public class BasicRepositoryResource2 {
 			}
 			repo = fileObject;
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error setting path for repository: " + path, e);
 		}
 	}
 	
@@ -146,7 +146,6 @@ public class BasicRepositoryResource2 {
 			}
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
-			e.printStackTrace();
 		}
 		return objects;
 	}
@@ -165,8 +164,7 @@ public class BasicRepositoryResource2 {
 				return getAcl(file);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new SaikuServiceException("Error retrieving ACL for file: " + file, e);
+			log.error("Error retrieving ACL for file: " + file, e);
 		}
 		throw new SaikuServiceException("You dont have permission to retrieve ACL for file: " + file);
 	}
@@ -190,8 +188,9 @@ public class BasicRepositoryResource2 {
 				acl.addEntry(file, ae);
 				return Response.ok().build();
 			}
+			log.debug("Repo file does not exist or cannot grant access. repo file:" + repoFile + " - file: " + file);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("An error occured while setting permissions to file: " + file, e);
 		}
 		return Response.serverError().build();
 	}
