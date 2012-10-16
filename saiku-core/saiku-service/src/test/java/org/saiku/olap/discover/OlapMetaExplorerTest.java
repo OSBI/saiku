@@ -169,7 +169,7 @@ public class OlapMetaExplorerTest {
     	 
          assertNotNull(output);
 
-         String[] names = { "HR","Sales 2","Sales Ragged","Sales Scenario","Sales","Store","Warehouse and Sales","Warehouse"};
+         String[] names = { "HR","Sales", "Sales 2","Sales Ragged","Sales Scenario","Store","Warehouse","Warehouse and Sales"};
 
          for (int i = 0; i < output.size(); i++){
          	assertEquals(names[i], output.get(i).getName());
