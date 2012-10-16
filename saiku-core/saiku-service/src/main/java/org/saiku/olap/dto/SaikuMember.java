@@ -15,6 +15,7 @@
  */
 package org.saiku.olap.dto;
 
+
 public class SaikuMember extends AbstractSaikuObject {
 	
 	private String caption;
@@ -25,7 +26,15 @@ public class SaikuMember extends AbstractSaikuObject {
 	
 	public SaikuMember() {}
 
-	public SaikuMember(String name, String uniqueName, String caption, String description, String dimensionUniqueName, String hierarchyUniqueName, String levelUniqueName) {
+	public SaikuMember(
+			String name, 
+			String uniqueName, 
+			String caption, 
+			String description, 
+			String dimensionUniqueName, 
+			String hierarchyUniqueName, 
+			String levelUniqueName) 
+	{
 		super(uniqueName,name);
 		this.caption = caption;
 		this.description = description;
@@ -52,5 +61,5 @@ public class SaikuMember extends AbstractSaikuObject {
 
 	public String getHierarchyUniqueName() {
 		return hierarchyUniqueName;
-	}
+	}	
 }

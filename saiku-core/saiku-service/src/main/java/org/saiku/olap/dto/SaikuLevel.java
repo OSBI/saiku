@@ -21,6 +21,7 @@ public class SaikuLevel extends AbstractSaikuObject {
 	private String hierarchyUniqueName;
 	private String dimensionUniqueName;
 //	private transient List<SaikuMember> members;
+	private boolean visible;
 	
 	public SaikuLevel() {
 		super(null,null);
@@ -33,12 +34,14 @@ public class SaikuLevel extends AbstractSaikuObject {
 			String uniqueName, 
 			String caption, 
 			String dimensionUniqueName, 
-			String hierarchyUniqueName) 
+			String hierarchyUniqueName, 
+			boolean visible) 
 	{
 		super(uniqueName,name);
 		this.caption = caption;
 		this.hierarchyUniqueName = hierarchyUniqueName;
 		this.dimensionUniqueName = dimensionUniqueName;
+		this.visible = visible;
 //		this.members = members;
 	}
 
@@ -52,6 +55,10 @@ public class SaikuLevel extends AbstractSaikuObject {
 	
 	public String getDimensionUniqueName() {
 		return dimensionUniqueName;
+	}
+	
+	public boolean isVisible() {
+		return visible;
 	}
 	
 //	public List<SaikuMember> getMembers() {

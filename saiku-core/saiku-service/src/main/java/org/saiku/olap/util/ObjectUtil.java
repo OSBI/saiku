@@ -37,12 +37,19 @@ import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.olap.dto.SaikuSelection;
 import org.saiku.olap.dto.SaikuSelection.Type;
 import org.saiku.olap.query.IQuery;
+import org.saiku.service.util.exception.SaikuServiceException;
 
 public class ObjectUtil {
 
 
 	public static SaikuDimension convert(Dimension dim) {
-		SaikuDimension sDim = new SaikuDimension(dim.getName(), dim.getUniqueName(), dim.getCaption(), dim.getDescription(), convertHierarchies(dim.getHierarchies()));
+		SaikuDimension sDim = new SaikuDimension(
+				dim.getName(), 
+				dim.getUniqueName(), 
+				dim.getCaption(), 
+				dim.getDescription(), 
+				dim.isVisible(), 
+				convertHierarchies(dim.getHierarchies()));
 		return sDim;
 	}
 
@@ -77,9 +84,17 @@ public class ObjectUtil {
 
 	public static SaikuHierarchy convert(Hierarchy hierarchy) {
 		try {
-			return new SaikuHierarchy(hierarchy.getName(), hierarchy.getUniqueName(), hierarchy.getCaption(), hierarchy.getDescription(), hierarchy.getDimension().getUniqueName(), convertLevels(hierarchy.getLevels()), convertMembers(hierarchy.getRootMembers()));
+			return new SaikuHierarchy(
+					hierarchy.getName(), 
+					hierarchy.getUniqueName(), 
+					hierarchy.getCaption(), 
+					hierarchy.getDescription(), 
+					hierarchy.getDimension().getUniqueName(), 
+					hierarchy.isVisible(), 
+					convertLevels(hierarchy.getLevels()), 
+					convertMembers(hierarchy.getRootMembers()));
 		} catch (OlapException e) {
-			throw new RuntimeException("Cannot get root members",e);
+			throw new SaikuServiceException("Cannot get root members",e);
 		}
 	}
 
@@ -100,12 +115,12 @@ public class ObjectUtil {
 					level.getUniqueName(), 
 					level.getCaption(), 
 					level.getDimension().getUniqueName(), 
-					level.getHierarchy().getUniqueName());
+					level.getHierarchy().getUniqueName(),
+					level.isVisible());
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			throw new SaikuServiceException("Cannot convert level: " + level,e);
 		}
-		return null;
 	}
 
 	public static List<SaikuMember> convertMembers(List<Member> members) {
