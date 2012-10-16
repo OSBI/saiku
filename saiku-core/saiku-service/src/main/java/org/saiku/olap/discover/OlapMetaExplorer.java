@@ -45,6 +45,8 @@ import org.saiku.olap.dto.SaikuLevel;
 import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.SaikuSchema;
 import org.saiku.olap.util.ObjectUtil;
+import org.saiku.olap.util.SaikuCubeCaptionComparator;
+import org.saiku.olap.util.SaikuDimensionCaptionComparator;
 import org.saiku.olap.util.SaikuMemberCaptionComparator;
 import org.saiku.olap.util.exception.SaikuOlapException;
 
@@ -70,7 +72,7 @@ public class OlapMetaExplorer {
 							for (Cube cub : schem.getCubes()) {
 								cubes.add(new SaikuCube(connectionName, cub.getUniqueName(), cub.getName(), cub.getCaption(), cat.getName(), schem.getName()));
 							}
-							Collections.sort(cubes);
+							Collections.sort(cubes, new SaikuCubeCaptionComparator());
 							schemas.add(new SaikuSchema(schem.getName(),cubes));
 						}
 						if (schemas.size() == 0) {
@@ -85,7 +87,7 @@ public class OlapMetaExplorer {
 											cubesResult.getString("CUBE_NAME"), cubesResult.getString("CATALOG_NAME"),cubesResult.getString("SCHEMA_NAME")));
 
 								}
-								Collections.sort(cubes);
+								Collections.sort(cubes, new SaikuCubeCaptionComparator());
 								schemas.add(new SaikuSchema("",cubes));
 							} catch (SQLException e) {
 								throw new OlapException(e.getMessage(),e);
@@ -147,7 +149,7 @@ public class OlapMetaExplorer {
 				e.printStackTrace();
 			}
 		}
-		Collections.sort(cubes);
+		Collections.sort(cubes, new SaikuCubeCaptionComparator());
 		return cubes;
 
 	}
@@ -157,7 +159,7 @@ public class OlapMetaExplorer {
 		for (String connectionName : connectionNames) {
 			cubesList.addAll(getCubes(connectionName));
 		}
-		Collections.sort(cubesList);
+		Collections.sort(cubesList, new SaikuCubeCaptionComparator());
 		return cubesList;
 	}
 
@@ -166,7 +168,7 @@ public class OlapMetaExplorer {
 		for (String connectionName : connections.getAllOlapConnections().keySet()) {
 			cubes.addAll(getCubes(connectionName));
 		}
-		Collections.sort(cubes);
+		Collections.sort(cubes, new SaikuCubeCaptionComparator());
 		return cubes;
 	}
 
@@ -217,7 +219,7 @@ public class OlapMetaExplorer {
 				break;
 			}
 		}
-		Collections.sort(dimensions);
+		Collections.sort(dimensions, new SaikuDimensionCaptionComparator());
 		return dimensions;
 	}
 
