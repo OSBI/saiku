@@ -13,7 +13,7 @@ echo "Building saiku-ui"
 cd ..\saiku-ui
 call git checkout master
 call git pull
-call mvn clean package install:install-file -Dfile=target/saiku-ui-2.4.war  -DgroupId=org.saiku -DartifactId=saiku-ui -Dversion=2.4 -Dpackaging=war
+call mvn clean package install:install-file -Dfile=target/saiku-ui-2.5-SNAPSHOT.war  -DgroupId=org.saiku -DartifactId=saiku-ui -Dversion=2.5-SNAPSHOT -Dpackaging=war
 echo "Building saiku-server"
 cd ..\saiku\saiku-server
 call mvn clean package
