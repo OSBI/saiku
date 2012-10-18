@@ -58,7 +58,7 @@ var WorkspaceToolbar = Backbone.View.extend({
             $(args.workspace.toolbar.el).find('.button')
                 .addClass('disabled_toolbar').removeClass('on');
             $(args.workspace.toolbar.el)
-                .find('.run,.auto,.non_empty,.toggle_fields,.toggle_sidebar,.switch_to_mdx')
+                .find('.run,.auto,.non_empty,.toggle_fields,.toggle_sidebar,.switch_to_mdx, .mdx')
                 .removeClass('disabled_toolbar');
         }
         
@@ -103,8 +103,6 @@ var WorkspaceToolbar = Backbone.View.extend({
         
         if (properties['saiku.olap.query.drillthrough'] !== 'true') {
             $(this.el).find('.drillthrough, .drillthrough_export').addClass('disabled_toolbar');
-        } else {
-            $(this.el).find('.non_empty').removeClass('disabled_toolbar');
         }
 
         if (properties['org.saiku.query.explain'] !== 'true') {
