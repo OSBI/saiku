@@ -87,7 +87,7 @@ var SelectionsModal = Modal.extend({
                 .html(_.template($("#template-selections").html())(this));
             
             this.selected_members = _.detect(response, function(obj) {
-                return obj.name == this.member.dimension;
+                return obj.name == unescape(this.member.dimension);
             }, this).selections;
             var used_members = [];
     
