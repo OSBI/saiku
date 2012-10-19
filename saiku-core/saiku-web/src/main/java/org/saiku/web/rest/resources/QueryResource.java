@@ -25,6 +25,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import java.net.URLDecoder;
+
 import javax.servlet.ServletException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -723,10 +725,16 @@ public class QueryResource {
 			@PathParam("axis") String axis,
 			@PathParam("dimension") String dimension)
 	{
-		if (log.isDebugEnabled()) {
-			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axis+"/dimension/"+dimension+"\tGET");
-		}
-		return olapQueryService.getAxisDimensionSelections(queryName, axis, dimension);
+    try {
+		  if (log.isDebugEnabled()) {
+			  log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axis+"/dimension/"+URLDecoder.decode(dimension, "UTF-8")+"\tGET");
+		  }
+
+		  return olapQueryService.getAxisDimensionSelections(queryName, axis, URLDecoder.decode(dimension, "UTF-8"));
+    } catch (Exception e) {
+      log.error("Cannot decode dimension "+ dimension + " for query (" + queryName + ")", e);
+      return olapQueryService.getAxisDimensionSelections(queryName, axis, dimension);
+    }
 	}
 
 	/**
@@ -747,11 +755,12 @@ public class QueryResource {
 			@PathParam("dimension") String dimensionName, 
 			@FormParam("position") @DefaultValue("-1") int position)
 	{
-		if (log.isDebugEnabled()) {
-			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"\tPOST");
-		}
 		try{
-			olapQueryService.moveDimension(queryName, axisName, dimensionName, position);
+		  if (log.isDebugEnabled()) {
+			  log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+URLDecoder.decode(dimensionName)+"\tPOST");
+		  }
+
+			olapQueryService.moveDimension(queryName, axisName, URLDecoder.decode(dimensionName), position);
 			return Status.OK;
 		} catch(Exception e) {
 			log.error("Cannot move dimension "+ dimensionName+ " for query (" + queryName + ")",e);
@@ -770,11 +779,12 @@ public class QueryResource {
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName)
 	{
-		if (log.isDebugEnabled()) {
-			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"\tDELETE");
-		}
 		try{
-			olapQueryService.removeDimension(queryName, axisName, dimensionName);
+		  if (log.isDebugEnabled()) {
+			  log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+URLDecoder.decode(dimensionName)+"\tDELETE");
+		  }
+
+			olapQueryService.removeDimension(queryName, axisName, URLDecoder.decode(dimensionName));
 			return Status.OK;
 		}catch(Exception e){
 			log.error("Cannot remove dimension "+ dimensionName+ " for query (" + queryName + ")",e);
@@ -790,10 +800,11 @@ public class QueryResource {
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName, 
 			@FormParam("selections") String selectionJSON) {
-		if (log.isDebugEnabled()) {
-			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"\tPUT\t" + selectionJSON);
-		}
 		try{
+		  if (log.isDebugEnabled()) {
+			  log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+URLDecoder.decode(dimensionName, "UTF-8")+"\tPUT\t" + selectionJSON);
+		  }
+
 			if (selectionJSON != null) {
 				ObjectMapper mapper = new ObjectMapper();
 				List<SelectionRestObject> selections = mapper.readValue(selectionJSON, TypeFactory.collectionType(ArrayList.class, SelectionRestObject.class));
@@ -804,30 +815,30 @@ public class QueryResource {
 				for (SelectionRestObject selection : selections) {
 					if (selection.getType() != null && "member".equals(selection.getType().toLowerCase())) {
 						if (selection.getAction() != null && "delete".equals(selection.getAction().toLowerCase())) {
-							olapQueryService.removeMember(queryName, dimensionName, selection.getUniquename(), "MEMBER");
+							olapQueryService.removeMember(queryName, URLDecoder.decode(dimensionName, "UTF-8"), selection.getUniquename(), "MEMBER");
 						}
 					}
 					if (selection.getType() != null && "level".equals(selection.getType().toLowerCase())) {
 						if (selection.getAction() != null && "delete".equals(selection.getAction().toLowerCase())) {
-							olapQueryService.removeLevel(queryName, dimensionName, selection.getHierarchy(), selection.getUniquename());
+							olapQueryService.removeLevel(queryName, URLDecoder.decode(dimensionName, "UTF-8"), selection.getHierarchy(), selection.getUniquename());
 						}
 					}
 				}
 				for (SelectionRestObject selection : selections) {
 					if (selection.getType() != null && "member".equals(selection.getType().toLowerCase())) {
 						if (selection.getAction() != null && "add".equals(selection.getAction().toLowerCase())) {
-							olapQueryService.includeMember(queryName, dimensionName, selection.getUniquename(), "MEMBER", -1);
+							olapQueryService.includeMember(queryName, URLDecoder.decode(dimensionName, "UTF-8"), selection.getUniquename(), "MEMBER", -1);
 						}
 					}
 					if (selection.getType() != null && "level".equals(selection.getType().toLowerCase())) {
 						if (selection.getAction() != null && "add".equals(selection.getAction().toLowerCase())) {
-							olapQueryService.includeLevel(queryName, dimensionName, selection.getHierarchy(), selection.getUniquename());
+							olapQueryService.includeLevel(queryName, URLDecoder.decode(dimensionName, "UTF-8"), selection.getHierarchy(), selection.getUniquename());
 						}
 					}
 				}
-				SaikuDimensionSelection dimsels = getAxisDimensionInfo(queryName, axisName, dimensionName);
+				SaikuDimensionSelection dimsels = getAxisDimensionInfo(queryName, axisName, URLDecoder.decode(dimensionName, "UTF-8"));
 				if (dimsels != null && dimsels.getSelections().size() == 0) {
-					moveDimension(queryName, "UNUSED", dimensionName, -1);
+					moveDimension(queryName, "UNUSED", URLDecoder.decode(dimensionName, "UTF-8"), -1);
 				}
 				return Status.OK;
 			}
@@ -847,17 +858,18 @@ public class QueryResource {
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName, 
 			MultivaluedMap<String, String> formParams) {
-		if (log.isDebugEnabled()) {
-			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"\tPUT");
-		}
 		try{
+		  if (log.isDebugEnabled()) {
+			  log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+URLDecoder.decode(dimensionName, "UTF-8")+"\tPUT");
+		  }
+
 			if (formParams.containsKey("selections")) {
 				LinkedList<String> sels = (LinkedList<String>) formParams.get("selections");
 				String selectionJSON = (String) sels.getFirst();
 				ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
 				List<SelectionRestObject> selections = mapper.readValue(selectionJSON, TypeFactory.collectionType(ArrayList.class, SelectionRestObject.class));
 				for (SelectionRestObject member : selections) {
-					removeMember("MEMBER", queryName, axisName, dimensionName, member.getUniquename());
+					removeMember("MEMBER", queryName, axisName, URLDecoder.decode(dimensionName, "UTF-8"), member.getUniquename());
 				}
 				return Status.OK;
 			}
@@ -883,22 +895,23 @@ public class QueryResource {
 			@FormParam("position") @DefaultValue("-1") int position, 
 			@FormParam("memberposition") @DefaultValue("-1") int memberposition)
 	{
-		if (log.isDebugEnabled()) {
-			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/member/"+uniqueMemberName+"\tPOST");
-		}
 		try{
-			olapQueryService.moveDimension(queryName, axisName, dimensionName, position);
+		  if (log.isDebugEnabled()) {
+			  log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+URLDecoder.decode(dimensionName, "UTF-8")+"/member/"+URLDecoder.decode(uniqueMemberName, "UTF-8")+"\tPOST");
+		  }
 
-			boolean ret = olapQueryService.includeMember(queryName, dimensionName, uniqueMemberName, selectionType, memberposition);
+			olapQueryService.moveDimension(queryName, axisName, URLDecoder.decode(dimensionName, "UTF-8"), position);
+
+			boolean ret = olapQueryService.includeMember(queryName, URLDecoder.decode(dimensionName, "UTF-8"), URLDecoder.decode(uniqueMemberName, "UTF-8"), selectionType, memberposition);
 			if(ret == true){
 				return Status.CREATED;
 			}
 			else{
-				log.error("Cannot include member "+ dimensionName+ " for query (" + queryName + ")");
+				log.error("Cannot include member "+ URLDecoder.decode(dimensionName, "UTF-8")+ " for query (" + queryName + ")");
 				return Status.INTERNAL_SERVER_ERROR;
 			}
 		} catch (Exception e){
-			log.error("Cannot include member "+ dimensionName+ " for query (" + queryName + ")",e);
+			log.error("Cannot include member "+ dimensionName + " for query (" + queryName + ")",e);
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
@@ -912,25 +925,25 @@ public class QueryResource {
 			@PathParam("dimension") String dimensionName, 
 			@PathParam("member") String uniqueMemberName)
 	{
-		if (log.isDebugEnabled()) {
-			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/member/"+uniqueMemberName+"\tDELETE");
-		}
-
 		try{
-			boolean ret = olapQueryService.removeMember(queryName, dimensionName, uniqueMemberName, selectionType);
+		  if (log.isDebugEnabled()) {
+			  log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+URLDecoder.decode(dimensionName, "UTF-8")+"/member/"+URLDecoder.decode(uniqueMemberName, "UTF-8")+"\tDELETE");
+		  }
+
+			boolean ret = olapQueryService.removeMember(queryName, URLDecoder.decode(dimensionName, "UTF-8"), URLDecoder.decode(uniqueMemberName, "UTF-8"), selectionType);
 			if(ret == true){
-				SaikuDimensionSelection dimsels = olapQueryService.getAxisDimensionSelections(queryName, axisName, dimensionName);
+				SaikuDimensionSelection dimsels = olapQueryService.getAxisDimensionSelections(queryName, axisName, URLDecoder.decode(dimensionName, "UTF-8"));
 				if (dimsels != null && dimsels.getSelections().size() == 0) {
-					olapQueryService.moveDimension(queryName, "UNUSED", dimensionName, -1);
+					olapQueryService.moveDimension(queryName, "UNUSED", URLDecoder.decode(dimensionName, "UTF-8"), -1);
 				}
 				return Status.OK;
 			}
 			else{
-				log.error("Cannot remove member "+ dimensionName+ " for query (" + queryName + ")");
+				log.error("Cannot remove member "+ URLDecoder.decode(dimensionName, "UTF-8")+ " for query (" + queryName + ")");
 				return Status.INTERNAL_SERVER_ERROR;
 			}
 		} catch (Exception e){
-			log.error("Cannot remove member "+ dimensionName+ " for query (" + queryName + ")",e);
+			log.error("Cannot remove member "+ dimensionName + " for query (" + queryName + ")",e);
 			return Status.INTERNAL_SERVER_ERROR;
 		}
 	}
@@ -946,18 +959,19 @@ public class QueryResource {
 			@PathParam("level") String uniqueLevelName, 
 			@FormParam("position") @DefaultValue("-1") int position)
 	{
-		if (log.isDebugEnabled()) {
-			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/hierarchy/"+uniqueHierarchyName+"/"+uniqueLevelName+"\tPOST");
-		}
 
 		try{
-			olapQueryService.moveDimension(queryName, axisName, dimensionName, position);
-			boolean ret = olapQueryService.includeLevel(queryName, dimensionName, uniqueHierarchyName, uniqueLevelName);
+		  if (log.isDebugEnabled()) {
+			  log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+URLDecoder.decode(dimensionName, "UTF-8")+"/hierarchy/"+URLDecoder.decode(uniqueHierarchyName, "UTF-8")+"/"+URLDecoder.decode(uniqueLevelName, "UTF-8")+"\tPOST");
+		  }
+
+			olapQueryService.moveDimension(queryName, axisName, URLDecoder.decode(dimensionName, "UTF-8"), position);
+			boolean ret = olapQueryService.includeLevel(queryName, URLDecoder.decode(dimensionName, "UTF-8"), URLDecoder.decode(uniqueHierarchyName, "UTF-8"), URLDecoder.decode(uniqueLevelName, "UTF-8"));
 			if(ret == true){
 				return Status.CREATED;
 			}
 			else{
-				log.error("Cannot include level of hierarchy "+ uniqueHierarchyName+ " for query (" + queryName + ")");
+				log.error("Cannot include level of hierarchy "+ URLDecoder.decode(uniqueHierarchyName, "UTF-8")+ " for query (" + queryName + ")");
 				return Status.INTERNAL_SERVER_ERROR;
 			}
 		} catch (Exception e){
@@ -975,21 +989,22 @@ public class QueryResource {
 			@PathParam("hierarchy") String uniqueHierarchyName, 
 			@PathParam("level") String uniqueLevelName)
 	{
-		if (log.isDebugEnabled()) {
-			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/hierarchy/"+uniqueHierarchyName+"/"+uniqueLevelName+"\tDELETE");
-		}
 		try{
-			boolean ret = olapQueryService.removeLevel(queryName, dimensionName, uniqueHierarchyName, uniqueLevelName);
+		  if (log.isDebugEnabled()) {
+			  log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+URLDecoder.decode(dimensionName, "UTF-8")+"/hierarchy/"+URLDecoder.decode(uniqueHierarchyName, "UTF-8")+"/"+URLDecoder.decode(uniqueLevelName, "UTF-8")+"\tDELETE");
+		  }
+
+			boolean ret = olapQueryService.removeLevel(queryName, URLDecoder.decode(dimensionName, "UTF-8"), URLDecoder.decode(uniqueHierarchyName, "UTF-8"), URLDecoder.decode(uniqueLevelName, "UTF-8"));
 			
 			if(ret == true){
-				SaikuDimensionSelection dimsels = olapQueryService.getAxisDimensionSelections(queryName, axisName, dimensionName);
+				SaikuDimensionSelection dimsels = olapQueryService.getAxisDimensionSelections(queryName, axisName, URLDecoder.decode(dimensionName, "UTF-8"));
 				if (dimsels != null && dimsels.getSelections().size() == 0) {
-					olapQueryService.moveDimension(queryName, "UNUSED", dimensionName, -1);
+					olapQueryService.moveDimension(queryName, "UNUSED", URLDecoder.decode(dimensionName, "UTF-8"), -1);
 				}
 				return Status.OK;
 			}
 			else{
-				log.error("Cannot remove level of hierarchy "+ uniqueHierarchyName+ " for query (" + queryName + ")");
+				log.error("Cannot remove level of hierarchy "+ URLDecoder.decode(uniqueHierarchyName, "UTF-8")+ " for query (" + queryName + ")");
 				return Status.INTERNAL_SERVER_ERROR;
 			}
 		} catch (Exception e){
