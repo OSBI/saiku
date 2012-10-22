@@ -15,6 +15,8 @@
  */
 package org.saiku.web.rest.resources;
 
+import java.net.URLDecoder;
+
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -24,8 +26,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-
-import java.net.URLDecoder;
 
 import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.olap.dto.SaikuCube;
@@ -105,8 +105,8 @@ public class OlapDiscoverResource implements Serializable {
     @Path("/{connection}/refresh")
      public List<SaikuConnection> refreshConnection( @PathParam("connection") String connectionName) {
     	try {
-			olapDiscoverService.refreshConnection(URLDecoder.decode(connectionName, "UTF-8"));
-			return olapDiscoverService.getConnection(URLDecoder.decode(connectionName, "UTF-8"));
+			olapDiscoverService.refreshConnection(connectionName);
+			return olapDiscoverService.getConnection(connectionName);
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 			return new ArrayList<SaikuConnection>();
@@ -125,9 +125,8 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
-		SaikuCube cube = new SaikuCube(URLDecoder.decode(connectionName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8") , URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(catalogName, "UTF-8"), URLDecoder.decode(schemaName, "UTF-8"));
-
 			return olapDiscoverService.getAllDimensions(cube);
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
@@ -148,8 +147,8 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
-		SaikuCube cube = new SaikuCube(URLDecoder.decode(connectionName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8") , URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(catalogName, "UTF-8"), URLDecoder.decode(schemaName, "UTF-8"));
 			return olapDiscoverService.getDimension(cube, URLDecoder.decode(dimensionName, "UTF-8"));
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
@@ -168,9 +167,9 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
-		SaikuCube cube = new SaikuCube(URLDecoder.decode(connectionName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8") , URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(catalogName, "UTF-8"), URLDecoder.decode(schemaName, "UTF-8"));
-			return olapDiscoverService.getAllDimensionHierarchies(cube, URLDecoder.decode(dimensionName));
+			return olapDiscoverService.getAllDimensionHierarchies(cube, URLDecoder.decode(dimensionName, "UTF-8"));
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 		}
@@ -190,8 +189,8 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
-		SaikuCube cube = new SaikuCube(URLDecoder.decode(connectionName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8") , URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(catalogName, "UTF-8"), URLDecoder.decode(schemaName, "UTF-8"));
 			return olapDiscoverService.getAllHierarchyLevels(cube, URLDecoder.decode(dimensionName, "UTF-8"), URLDecoder.decode(hierarchyName, "UTF-8"));
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
@@ -218,9 +217,11 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
+
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
+
 		try {
-		SaikuCube cube = new SaikuCube(URLDecoder.decode(connectionName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8") , URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(catalogName, "UTF-8"), URLDecoder.decode(schemaName, "UTF-8"));
-			return olapDiscoverService.getLevelMembers(cube, URLDecoder.decode(dimensionName), URLDecoder.decode(hierarchyName), URLDecoder.decode(levelName));
+			return olapDiscoverService.getLevelMembers(cube, URLDecoder.decode(dimensionName, "UTF-8"), URLDecoder.decode(hierarchyName, "UTF-8"), URLDecoder.decode(levelName, "UTF-8"));
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 		}
@@ -244,8 +245,8 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
-		SaikuCube cube = new SaikuCube(URLDecoder.decode(connectionName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8") , URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(catalogName, "UTF-8"), URLDecoder.decode(schemaName, "UTF-8"));
 			return olapDiscoverService.getHierarchyRootMembers(cube, URLDecoder.decode(hierarchyName, "UTF-8"));
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
@@ -264,8 +265,8 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
-		SaikuCube cube = new SaikuCube(URLDecoder.decode(connectionName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8") , URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(catalogName, "UTF-8"), URLDecoder.decode(schemaName, "UTF-8"));
 			return olapDiscoverService.getAllHierarchies(cube);
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
@@ -283,8 +284,8 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
-		SaikuCube cube = new SaikuCube(URLDecoder.decode(connectionName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8") , URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(catalogName, "UTF-8"), URLDecoder.decode(schemaName, "UTF-8"));
 			return olapDiscoverService.getMeasures(cube);
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
@@ -309,8 +310,8 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
-		SaikuCube cube = new SaikuCube(URLDecoder.decode(connectionName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8") , URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(catalogName, "UTF-8"), URLDecoder.decode(schemaName, "UTF-8"));
 			return olapDiscoverService.getMember(cube, URLDecoder.decode(memberName, "UTF-8"));
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
@@ -335,8 +336,8 @@ public class OlapDiscoverResource implements Serializable {
 		if ("null".equals(schemaName)) {
 			schemaName = "";
 		}
+		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 		try {
-		SaikuCube cube = new SaikuCube(URLDecoder.decode(connectionName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(cubeName, "UTF-8") , URLDecoder.decode(cubeName, "UTF-8"), URLDecoder.decode(catalogName, "UTF-8"), URLDecoder.decode(schemaName, "UTF-8"));
 			return olapDiscoverService.getMemberChildren(cube, URLDecoder.decode(memberName, "UTF-8"));
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
