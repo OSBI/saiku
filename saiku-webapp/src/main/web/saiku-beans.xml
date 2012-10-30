@@ -64,7 +64,7 @@
 	</bean>
 	<!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
 
-	<bean id="acl" scope="session" class="org.saiku.web.rest.objects.acl.Acl">
+	<bean id="acl" scope="singleton" class="org.saiku.web.rest.objects.acl.Acl">
 		<property name="path" value="res:saiku-repository" />
 		<property name="adminRoles">
 			<list>
