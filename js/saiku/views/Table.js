@@ -111,7 +111,7 @@ var Table = Backbone.View.extend({
                         if (hierarchy.name == h) {
                             _.each(hierarchy.levels, function(level) {
                                 items[level.name] = {
-                                    name: level.name,
+                                    name: level.caption,
                                     payload: JSON.stringify({
                                         "hierarchy"     : "[" + h + "]",
                                         uniquename    : level.uniqueName,
@@ -122,7 +122,7 @@ var Table = Backbone.View.extend({
                                 if(_.indexOf(used_levels, level.uniqueName) > -1) {
                                     items[level.name].disabled = true;
                                     items["remove-" + level.name] = {
-                                        name: level.name,
+                                        name: level.caption,
                                         payload: JSON.stringify({
                                             "hierarchy"     : "[" + h + "]",
                                             uniquename    : level.uniqueName,
