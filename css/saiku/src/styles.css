@@ -1354,7 +1354,7 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 
 /* custom */
 
-#save_query_form .RepositoryObjects {
+.dialog_body .RepositoryObjects {
     padding: 10px;
     margin-top: 5px;
     border: 1px solid #cccccc;
