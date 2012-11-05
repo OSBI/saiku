@@ -302,14 +302,14 @@ public class PentahoRepositoryResource2 {
 							String t =  fileNode.valueOf("@localized-name");
 							String n = fileNode.valueOf("@name");
 							if (vis) {
-								children.add(new RepositoryFileObject(t, "#" + relativePath + "/" + n, fileType, relativePath, acls));
+								children.add(new RepositoryFileObject(t, "#" + relativePath + "/" + n, fileType, relativePath + "/" + n, acls));
 							}
 						}
 						children.addAll(processTree(node, parentPath + "/" + name, fileType));
 						repoObjects.add(new RepositoryFolderObject(localizedName, "#" + relativePath, relativePath, acls, children));
 					} else if (visible && !isDirectory) {
 						if (StringUtils.isBlank(fileType) || name.endsWith(fileType)) {
-							repoObjects.add(new RepositoryFileObject(localizedName, "#" + relativePath + "/" + name, fileType, relativePath, acls));
+							repoObjects.add(new RepositoryFileObject(localizedName, "#" + relativePath + "/" + name, fileType, relativePath + "/" + name, acls));
 						}
 					}
 
