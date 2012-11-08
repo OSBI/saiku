@@ -38,7 +38,7 @@ var OpenDialog = Modal.extend({
         // Append events
         var self = this;
         var name = "";
-        this.message = "<div class='RepositoryObjects'></div><div class='query_name'></div>"
+        this.message = "<div class='RepositoryObjects'>Loading....</div><div class='query_name'></div>"
         _.extend(this.options, {
             title: "Open"
         });

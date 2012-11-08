@@ -517,6 +517,7 @@ html, body {
     padding: 0 6px;
     min-width: 70px;
     text-align: center;
+    white-space:nowrap;
 }
 .fields_list .fields_list_body ul li ul {
     float: right;
