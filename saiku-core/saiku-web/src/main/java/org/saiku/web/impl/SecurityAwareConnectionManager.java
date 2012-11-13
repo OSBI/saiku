@@ -42,11 +42,11 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 	 */
 	private static final long serialVersionUID = -5912836681963684201L;
 
-	private Map<String, ISaikuConnection> connections = new HashMap<String, ISaikuConnection>();
+	private transient Map<String, ISaikuConnection> connections = new HashMap<String, ISaikuConnection>();
 
-	private List<String> errorConnections = new ArrayList<String>();
+	private transient List<String> errorConnections = new ArrayList<String>();
 
-	private ISessionService sessionService;
+	private transient ISessionService sessionService;
 
 	public void setSessionService(ISessionService ss) {
 		this.sessionService = ss;
