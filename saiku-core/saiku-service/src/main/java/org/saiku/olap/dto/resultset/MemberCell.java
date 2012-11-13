@@ -16,7 +16,6 @@
 package org.saiku.olap.dto.resultset;
 
 import java.io.Serializable;
-import java.util.List;
 
 
 public class MemberCell extends AbstractBaseCell implements Serializable {
@@ -28,18 +27,8 @@ public class MemberCell extends AbstractBaseCell implements Serializable {
 
     private String parentDimension = null;
 
-    private String parentMember = null;
-
-    private MemberCell rightOf = null;
-
     private String uniqueName;
 
-    private int childMemberCount;
-
-    private String rightOfDimension;
-
-    private List<String> memberPath;
-    
     private String hierarchy;
     
     private String level;
@@ -132,21 +121,6 @@ public class MemberCell extends AbstractBaseCell implements Serializable {
     }
 
     /**
-     *Set the Parent Member Variable.
-     * 
-     * @param parentMember
-     */
-    public void setParentMember(final String parentMember) {
-
-        this.parentMember = parentMember;
-
-    }
-
-    public String getParentMember() {
-        return parentMember;
-    }
-
-    /**
      * Set the cell's unique name. 
      * 
      * @param uniqueName
@@ -161,56 +135,6 @@ public class MemberCell extends AbstractBaseCell implements Serializable {
         return uniqueName;
     }
 
-    /**
-     * List the amount of children.
-     * 
-     * @param childMemberCount
-     */
-    public void setChildMemberCount(final int childMemberCount) {
-        this.childMemberCount = childMemberCount;
-    }
-
-    public int getChildMemberCount() {
-        return childMemberCount;
-    }
-
-    /**
-     *TODO JAVADOC
-     * 
-     * @param memberCell
-     */
-    public void setRightOf(final MemberCell memberCell) {
-        this.rightOf = memberCell;
-
-    }
-
-    public MemberCell getRightOf() {
-        return rightOf;
-    }
-
-    /**
-     *TODO JAVADOC
-     * 
-     * @param name
-     */
-    public void setRightOfDimension(String name) {
-
-        this.rightOfDimension = name;
-
-    }
-
-    public String getRightOfDimension() {
-        return this.rightOfDimension;
-    }
-
-    public void setMemberPath(List<String> memberPath) {
-        this.memberPath = memberPath;
-
-    }
-
-    public List<String> getMemberPath() {
-        return memberPath;
-    }
 
     /*public void setProperty(String name, String value){
         properties.put(name, value);

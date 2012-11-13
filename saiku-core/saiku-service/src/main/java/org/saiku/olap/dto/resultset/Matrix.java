@@ -15,11 +15,12 @@
  */
 package org.saiku.olap.dto.resultset;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Matrix {
 
@@ -31,8 +32,8 @@ public class Matrix {
 
     private int offset = 0;
     
-    private List<Integer> xAxis = new ArrayList<Integer>();
-    private List<Integer> yAxis = new ArrayList<Integer>();
+    private Set<Integer> xAxis = new HashSet<Integer>();
+    private Set<Integer> yAxis = new HashSet<Integer>();
     
 
     public Matrix() {
@@ -149,12 +150,8 @@ public class Matrix {
     }
     
     private void addCoordinates(Integer x,Integer y) {
-    	if (!xAxis.contains(x)) {
     		xAxis.add(x);
-    	}
-    	if (!yAxis.contains(y)) {
     		yAxis.add(y);
-    	}
     }
     
     public boolean containsY(Integer yCoordinate) {
