@@ -28,9 +28,9 @@ public class DatasourceService implements Serializable {
 	 */
 	private static final long serialVersionUID = -4407446633148181669L;
 
-	private IDatasourceManager datasources;
+	private transient IDatasourceManager datasources;
 	
-	private IConnectionManager connectionManager;
+	private transient IConnectionManager connectionManager;
 	
 	public void setConnectionManager(IConnectionManager ic) {
 		connectionManager = ic;

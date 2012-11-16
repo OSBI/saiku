@@ -39,8 +39,8 @@ public class OlapDiscoverService implements Serializable {
 	 */
 	private static final long serialVersionUID = 884682532600907574L;
 	
-	private DatasourceService datasourceService;
-	private OlapMetaExplorer metaExplorer;
+	private transient DatasourceService datasourceService;
+	private transient OlapMetaExplorer metaExplorer;
 	
 	public void setDatasourceService(DatasourceService ds) {
 		datasourceService = ds;
