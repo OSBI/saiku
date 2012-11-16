@@ -23,8 +23,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Enumeration;
+import java.util.Locale;
 import java.util.Properties;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -223,9 +225,27 @@ public class SaikuProperties extends Properties{
 
 
 	public static final Boolean olapDefaultNonEmpty = getPropBoolean("saiku.olap.nonempty","false");
-	public static final String webExportExcelName = getPropString("saiku.web.export.excel.name","saiku-export");
-	public static final String webExportCsvName = getPropString("saiku.web.export.csv.name","saiku-export");
+	public static final String  webExportCsvName = getPropString("saiku.web.export.csv.name","saiku-export");
+	public static final String  webExportExcelName = getPropString("saiku.web.export.excel.name","saiku-export");
+	public static final String  webExportExcelDefaultNumberFormat = getPropString("saiku.web.export.excel.numberformat","#,##0.00");	
+	public static final String  formatDefautNumberFormat = getPropString("saiku.format.numberformat","#,##0.00");
+	public static final Locale  locale = getLocale();
 
+	private static Locale getLocale() {
+		String locale = null;
+		try {
+			locale = getPropString("saiku.format.default.locale",null);
+			if (locale != null) {
+				return LocaleUtils.toLocale(locale);
+			}
+		} catch (Exception e) {
+			log.warn("Property: saiku.format.default.locale with value: " + locale 
+					+ ", cannot be used for a Locale, falling back to default locale: " + Locale.getDefault(), e);
+		}
+
+		return Locale.getDefault();
+	}
+	
 	private static Boolean getPropBoolean(String key, String defaultValue) {
 		Boolean ret;
 		if (instance.containsKey(key)) {
@@ -246,3 +266,4 @@ public class SaikuProperties extends Properties{
 		return ret;
 	}
 }
+

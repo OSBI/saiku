@@ -11,6 +11,7 @@ import org.saiku.olap.dto.SaikuSelection;
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.dto.resultset.DataCell;
+import org.saiku.olap.util.SaikuProperties;
 import org.saiku.service.util.exception.SaikuServiceException;
 
 import java.io.ByteArrayOutputStream;
@@ -96,7 +97,7 @@ public class ExcelWorksheetBuilder {
             and we like them as 121,212.346
         */ 
         DataFormat fmt = excelWorkbook.createDataFormat();
-        short dataFormat = fmt.getFormat("#,##0.000");
+        short dataFormat = fmt.getFormat(SaikuProperties.webExportExcelDefaultNumberFormat);
         numberCS.setDataFormat(dataFormat);
         
 
