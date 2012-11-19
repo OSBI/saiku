@@ -113,7 +113,8 @@ var Query = Backbone.Model.extend({
 
         // Run it
         $(this.workspace.table.el)
-            .html('<tr><td><psan class="i18n">Running query...</span></td></tr>');
+            .html('<tr><td><span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span> </td></tr>');
+
 		Saiku.i18n.translate();
             // <a class="cancel" href="#cancel">x</a>
 
