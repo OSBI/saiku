@@ -352,6 +352,12 @@ var Table = Backbone.View.extend({
                     var color = "";
                     var val = header.value;
                     var arrow = "";
+                    if (header.properties.hasOwnProperty('image')) {
+                        var img_height = header.properties.hasOwnProperty('image_height') ? " height='" + header.properties.image_height + "'" : "";
+                        var img_width = header.properties.hasOwnProperty('image_width') ? " width='" + header.properties.image_width + "'" : "";
+                        val = "<img " + img_height + " " + img_width + " style='padding-left: 5px' src='" + header.properties.image + "' border='0'>";
+                    }
+
                     if (header.properties.hasOwnProperty('style')) {
                         color = " style='background-color: " + header.properties.style + "' ";
                     }
