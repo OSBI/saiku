@@ -96,9 +96,9 @@ public class OlapQueryService implements Serializable {
 
 	private static final Logger log = LoggerFactory.getLogger(OlapQueryService.class);
 
-	private transient OlapDiscoverService olapDiscoverService;
+	private OlapDiscoverService olapDiscoverService;
 
-	private transient Map<String, IQuery> queries = new HashMap<String, IQuery>(); 
+	private Map<String, IQuery> queries = new HashMap<String, IQuery>(); 
 
 	public void setOlapDiscoverService(OlapDiscoverService os) {
 		olapDiscoverService = os;
