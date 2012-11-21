@@ -28,10 +28,13 @@ var SelectionsModal = Modal.extend({
     events: {
         'click a': 'call',
         'change #show_unique': 'show_unique_action',
+        'change #use_result': 'use_result_action',
         'dblclick select option' : 'click_move_selection'
     },    
 
     show_unique_option: false,
+
+    use_result_option: Settings.MEMBERS_FROM_RESULT,
     
     initialize: function(args) {
         // Initialize properties
@@ -40,7 +43,7 @@ var SelectionsModal = Modal.extend({
         this.message = "Fetching members...";
         this.query = args.workspace.query;
 
-        _.bindAll(this, "fetch_members", "populate", "finished");
+        _.bindAll(this, "fetch_members", "populate", "finished", "get_members", "use_result_action");
         // Bind selection handlers
         _.extend(this.events, {
             'click div.selection_buttons a.form_button': 'move_selection'
@@ -62,14 +65,28 @@ var SelectionsModal = Modal.extend({
         this.render();
         
         $(this.el).parent().find('.ui-dialog-titlebar-close').bind('click',this.finished);
+
         // Fetch available members
         this.member = new Member({}, {
             cube: args.workspace.selected_cube,
             dimension: args.key
         });
-        this.member.fetch({
-            success: this.fetch_members
-        });
+
+        this.get_members();
+    },
+
+    get_members: function() {
+            var path = "/result/metadata/dimensions/" + this.member.dimension + "/hierarchies/" + this.member.hierarchy + "/levels/" + this.member.level;
+            //console.log(path);
+            this.workspace.query.action.get(path, { success: this.fetch_members, data: {result: this.use_result_option}});
+            
+// OLD CODE
+/*
+            this.member.fetch({
+                success: this.fetch_members
+            });
+        }
+*/
     },
     
     fetch_members: function(model, response) {
@@ -86,6 +103,8 @@ var SelectionsModal = Modal.extend({
             $(this.el).find('.dialog_body')
                 .html(_.template($("#template-selections").html())(this));
             
+            $(this.el).find('#use_result').attr('checked', this.use_result_option);
+
             this.selected_members = _.detect(response, function(obj) {
                 return obj.name == this.member.dimension;
             }, this).selections;
@@ -150,6 +169,7 @@ var SelectionsModal = Modal.extend({
                     .append( "<a class='label'>" + item.label + "</a><br><a class='description'>" + item.value + "</a>" )
                     .appendTo( ul );
                 };
+
 		// Translate
 		Saiku.i18n.translate();
         // Show dialog
@@ -186,6 +206,13 @@ var SelectionsModal = Modal.extend({
         });
         this.show_unique_option= ! this.show_unique_option;
     },
+
+    use_result_action: function() {
+        this.use_result_option = !this.use_result_option;
+        //console.log(this.use_result_option);
+        this.get_members();
+    },
+
     
     save: function() {
         // Notify user that updates are in progress

@@ -41,6 +41,7 @@ var Settings = {
     // limits the number of rows in the result
     // 0 - no limit
     RESULT_LIMIT: 0,
+    MEMBERS_FROM_RESULT: true,
     PLUGINS: [
         "Chart"
     ],
