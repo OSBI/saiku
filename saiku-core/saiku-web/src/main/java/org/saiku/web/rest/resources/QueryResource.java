@@ -50,6 +50,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimensionSelection;
+import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.dto.resultset.CellDataSet;
@@ -423,6 +424,32 @@ public class QueryResource {
 			log.error("Cannot execute query (" + queryName + ") using mdx:\n" + mdx,e);
 			String error = ExceptionUtils.getRootCauseMessage(e);
 			return new QueryResult(error);
+		}
+	}
+	
+	@GET
+	@Produces({"application/json" })
+	@Path("/{queryname}/result/metadata/dimensions/{dimension}/hierarchies/{hierarchy}/levels/{level}")
+	public Response getLevelMembers(
+			@PathParam("queryname") String queryName, 
+			@PathParam("dimension") String dimensionName, 
+			@PathParam("hierarchy") String hierarchyName,
+			@PathParam("level") String levelName,
+			@QueryParam("result") @DefaultValue("true") boolean result)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t" 
+					+ "\t/query/" + queryName + "/result/metadata/dimensions/" + dimensionName 
+					+ "/hierarchies/" + hierarchyName + "/levels/" + levelName + "\tGET");
+		}
+		try {
+			List<SaikuMember> ms = olapQueryService.getResultMetadataMembers(queryName, result, dimensionName, hierarchyName, levelName);
+			return Response.ok(ms).build();
+		}
+		catch (Exception e) {
+			log.error("Cannot execute query (" + queryName + ")",e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return Response.serverError().entity(error).build();
 		}
 	}
 

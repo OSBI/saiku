@@ -22,11 +22,14 @@ import java.io.Writer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import mondrian.rolap.RolapConnection;
 
@@ -34,9 +37,11 @@ import org.apache.commons.lang.StringUtils;
 import org.olap4j.AllocationPolicy;
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
+import org.olap4j.CellSetAxis;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
 import org.olap4j.OlapStatement;
+import org.olap4j.Position;
 import org.olap4j.Scenario;
 import org.olap4j.impl.IdentifierParser;
 import org.olap4j.mdx.IdentifierNode;
@@ -69,6 +74,7 @@ import org.saiku.olap.query.OlapQuery;
 import org.saiku.olap.query.QueryDeserializer;
 import org.saiku.olap.util.ObjectUtil;
 import org.saiku.olap.util.OlapResultSetUtil;
+import org.saiku.olap.util.SaikuUniqueNameComparator;
 import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.olap.util.formatter.CellSetFormatter;
 import org.saiku.olap.util.formatter.FlattenedCellSetFormatter;
@@ -312,6 +318,41 @@ public class OlapQueryService implements Serializable {
 		qm2mdx(queryName);
 		setMdx(queryName, mdx);
 		return execute(queryName, formatter);
+	}
+	
+	public List<SaikuMember> getResultMetadataMembers(String queryName, boolean preferResult, String dimensionName, String hierarchyName, String levelName) {
+		IQuery query = getIQuery(queryName);
+		CellSet cs = query.getCellset();
+		List<SaikuMember> members = new ArrayList<SaikuMember>();
+		if (cs != null && preferResult) {
+			for (CellSetAxis axis : cs.getAxes()) {
+				int posIndex = 0;
+				for (Hierarchy h : axis.getAxisMetaData().getHierarchies()) {
+					if (h.getUniqueName().equals(hierarchyName)) {
+						log.debug("Found hierarchy in the result: " + hierarchyName);
+						Set<Member> mset = new HashSet<Member>();
+						for (Position pos : axis.getPositions()) {
+							Member m = pos.getMembers().get(posIndex);
+							if (m.getLevel().getUniqueName().equals(levelName)) {
+								mset.add(m);
+							}
+						}
+						
+						members = ObjectUtil.convertMembers(mset);
+						Collections.sort(members, new SaikuUniqueNameComparator());
+						
+						break;
+					}
+					posIndex++;
+				}
+			}
+			log.debug("Found members in the result: " + members.size());
+			
+		} else {
+			members = olapDiscoverService.getLevelMembers(query.getSaikuCube(), dimensionName, hierarchyName, levelName);
+		}
+		
+		return members;
 	}
 	
 	public ResultSet explain(String queryName) {
