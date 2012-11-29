@@ -115,6 +115,7 @@ public class ObjectUtil {
 					level.getName(), 
 					level.getUniqueName(), 
 					level.getCaption(), 
+					level.getDescription(),
 					level.getDimension().getUniqueName(), 
 					level.getHierarchy().getUniqueName(),
 					level.isVisible());
