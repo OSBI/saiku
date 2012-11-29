@@ -15,5 +15,5 @@ password=
 
 # security.type=one2one
 
-# security.type=mapping
+# security.type=lookup
 # security.mapping=springRole=mondrianRole1;springRole2=mondrianRole2
