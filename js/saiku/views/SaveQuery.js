@@ -149,7 +149,8 @@ var SaveQuery = Modal.extend({
     copy_to_repository: function(model, response) {
         var self = this;
         var folder = this.query.get('folder');
-        var file = this.query.get('name').indexOf(".saiku") == this.query.get('name').length - 6 ? this.query.get('name') : this.query.get('name') + ".saiku";
+        var file = this.query.get('name');
+        file = file.length > 6 && file.indexOf(".saiku") == file.length - 6 ? file : file + ".saiku";
         file = folder + file;
         var error = function(data, textStatus, jqXHR) {
                 if (textStatus && textStatus.status == 403 && textStatus.responseText) {

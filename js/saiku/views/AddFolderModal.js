@@ -61,7 +61,7 @@ var AddFolderModal = Modal.extend({
         
         var name = $(this.el).find('input[name="name"]').val();
         var file = this.path + name;
-        (new SavedQuery( { file: file , name: name} ) ).save( { 
+        (new SavedQuery( { file: file , name: name} ) ).save({}, { 
             success: self.success,
             dataType: "text",
             error: this.error
