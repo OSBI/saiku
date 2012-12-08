@@ -124,12 +124,12 @@ public class ThinUtil {
 		return ta;
 	}
 	
-	private static List<ThinHierarchy> convertHierarchies(List<QueryHierarchy> queryHierarchies) {
-		List<ThinHierarchy> hs = new ArrayList<ThinHierarchy>();
+	private static Map<String, ThinHierarchy> convertHierarchies(List<QueryHierarchy> queryHierarchies) {
+		Map<String, ThinHierarchy> hs = new HashMap<String, ThinHierarchy>();
 		if (queryHierarchies != null) {
 			for (QueryHierarchy qh : queryHierarchies) {
 				ThinHierarchy th = convertHierarchy(qh);
-				hs.add(th);
+				hs.put(qh.getName(), th);
 			}
 		}
 		return hs;
@@ -141,12 +141,12 @@ public class ThinUtil {
 		return th;
 	}
 
-	private static List<ThinLevel> convertLevels(List<QueryLevel> levels) {
-		List<ThinLevel> tl = new ArrayList<ThinLevel>();
+	private static Map<String, ThinLevel> convertLevels(List<QueryLevel> levels) {
+		Map<String, ThinLevel> tl = new HashMap<String, ThinLevel>();
 		if (levels != null) {
 			for (QueryLevel ql : levels) {
 				ThinLevel l = convertLevel(ql);
-				tl.add(l);
+				tl.put(ql.getName(), l);
 			}
 		}
 		return tl;

@@ -1,7 +1,7 @@
 package org.saiku.olap.query2;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
 import org.saiku.olap.query2.common.AbstractThinSortableQuerySet;
@@ -10,13 +10,13 @@ public class ThinAxis extends AbstractThinSortableQuerySet {
 
 	
 	private AxisLocation location;
-	private List<ThinHierarchy> hierarchies = new ArrayList<ThinHierarchy>();
+	private Map<String, ThinHierarchy> hierarchies = new HashMap<String, ThinHierarchy>();
 	private boolean nonEmpty;
 	
 	
 	public ThinAxis() {};
 	
-	public ThinAxis(AxisLocation location, List<ThinHierarchy> hierarchies, boolean nonEmpty) {
+	public ThinAxis(AxisLocation location, Map<String, ThinHierarchy> hierarchies, boolean nonEmpty) {
 		this.location = location;
 		if (hierarchies != null) {
 			this.hierarchies = hierarchies;
@@ -46,14 +46,14 @@ public class ThinAxis extends AbstractThinSortableQuerySet {
 	/**
 	 * @return the hierarchies
 	 */
-	public List<ThinHierarchy> getHierarchies() {
+	public Map<String, ThinHierarchy> getHierarchies() {
 		return hierarchies;
 	}
 
 	/**
 	 * @param hierarchies the hierarchies to set
 	 */
-	public void setHierarchies(List<ThinHierarchy> hierarchies) {
+	public void setHierarchies(Map<String, ThinHierarchy> hierarchies) {
 		this.hierarchies = hierarchies;
 	}
 

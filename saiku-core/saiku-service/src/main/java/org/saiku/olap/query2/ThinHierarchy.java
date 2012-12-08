@@ -1,7 +1,7 @@
 package org.saiku.olap.query2;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.saiku.olap.query2.common.AbstractThinSortableQuerySet;
 
@@ -11,11 +11,11 @@ public class ThinHierarchy extends AbstractThinSortableQuerySet {
 	private String uniqueName;
 	private String caption;
 	
-	private List<ThinLevel> levels = new ArrayList<ThinLevel>();
+	private Map<String, ThinLevel> levels = new HashMap<String, ThinLevel>();
 	
 	public ThinHierarchy() {};
 	
-	public ThinHierarchy(String name, String uniqueName, String caption, List<ThinLevel> levels) {
+	public ThinHierarchy(String name, String uniqueName, String caption,Map<String, ThinLevel> levels) {
 		this.name = name;
 		this.uniqueName = uniqueName;
 		this.caption = caption;
@@ -59,14 +59,14 @@ public class ThinHierarchy extends AbstractThinSortableQuerySet {
 	/**
 	 * @return the levels
 	 */
-	public List<ThinLevel> getLevels() {
+	public Map<String, ThinLevel> getLevels() {
 		return levels;
 	}
 
 	/**
 	 * @param levels the levels to set
 	 */
-	public void setLevels(List<ThinLevel> levels) {
+	public void setLevels(Map<String, ThinLevel> levels) {
 		this.levels = levels;
 	}
 
