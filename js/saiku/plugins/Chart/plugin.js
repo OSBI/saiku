@@ -253,10 +253,12 @@ var Chart = Backbone.View.extend({
                     var label = [];
                     for (var labelCol = lowest_level; labelCol >= 0; labelCol--) {
                         var lastKnownUpperLevelRow = row;
-                        while(args.data.cellset[lastKnownUpperLevelRow][labelCol].value === 'null') {
+                        while(args.data.cellset[lastKnownUpperLevelRow] && args.data.cellset[lastKnownUpperLevelRow][labelCol].value === 'null') {
                             --lastKnownUpperLevelRow;
                         }
-                        label.push(args.data.cellset[lastKnownUpperLevelRow][labelCol].value);
+                        if(args.data.cellset[lastKnownUpperLevelRow]) {
+                            label.push(args.data.cellset[lastKnownUpperLevelRow][labelCol].value);
+                        }
                     }
                     record.push(label.join('/'));
                     for (var col = lowest_level + 1; col < args.data.cellset[row].length; col++) {
