@@ -263,15 +263,14 @@ var Chart = Backbone.View.extend({
                     }
                     record.push(label.join('/'));
                     for (var col = lowest_level + 1; col < cellset[row].length; col++) {
-                        var value = cellset[row][col].value;
+                        var cell = cellset[row][col];
+                        var value = cell.value || 0;
                         // check if the resultset contains the raw value, if not try to parse the given value
-                        if (cellset[row][col].properties.raw && cellset[row][col].properties.raw !== "null")
-                        {
-                            value = parseFloat(cellset[row][col].properties.raw);
-                        } else if (typeof(cellset[row][col].value) !== "number" &&
-                            parseFloat(cellset[row][col].value.replace(/[^a-zA-Z 0-9.]+/g,'')))
-                        {
-                            value = parseFloat(cellset[row][col].value.replace(/[^a-zA-Z 0-9.]+/g,''));
+                        var raw = cell.properties.raw;
+                        if (raw && raw !== "null") {
+                            value = parseFloat(raw);
+                        } else if (typeof(cell.value) !== "number" && parseFloat(cell.value.replace(/[^a-zA-Z 0-9.]+/g,''))) {
+                            value = parseFloat(cell.value.replace(/[^a-zA-Z 0-9.]+/g,''));
                         }
                         record.push(value);
                     }
