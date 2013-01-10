@@ -204,7 +204,7 @@ var Chart = Backbone.View.extend({
         this.data.metadata = [];
         this.data.height = 0;
         this.data.width = 0;
-        
+
         if (args.data.cellset && args.data.cellset.length > 0) {
             
             var lowest_level = 0;
@@ -226,10 +226,19 @@ var Chart = Backbone.View.extend({
                             colName: args.data.cellset[row][field].value
                         });
                     }
-                } else if (args.data.cellset[row][0].value !== "null" && args.data.cellset[row][0].value !== "") {
+                } else if (args.data.cellset[row][0].value !== "") {
                     var record = [];
                     this.data.width = args.data.cellset[row].length;
-                    for (var col = lowest_level; col < args.data.cellset[row].length; col++) {
+                    var label = [];
+                    for (var labelCol = lowest_level; labelCol >= 0; labelCol--) {
+                        var lastKnownUpperLevelRow = row;
+                        while(args.data.cellset[lastKnownUpperLevelRow][labelCol].value === 'null') {
+                            --lastKnownUpperLevelRow;
+                        }
+                        label.push(args.data.cellset[lastKnownUpperLevelRow][labelCol].value);
+                    }
+                    record.push(label.join('/'));
+                    for (var col = lowest_level + 1; col < args.data.cellset[row].length; col++) {
                         var value = args.data.cellset[row][col].value;
                         // check if the resultset contains the raw value, if not try to parse the given value
                         if (args.data.cellset[row][col].properties.raw && args.data.cellset[row][col].properties.raw !== "null")
