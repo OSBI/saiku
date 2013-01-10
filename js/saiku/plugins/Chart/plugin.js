@@ -205,6 +205,27 @@ var Chart = Backbone.View.extend({
         this.data.height = 0;
         this.data.width = 0;
 
+        function makeSureUniqueLabels(resultset) {
+            function appendUniqueCounter() {
+                for(var i = 0; i < resultset.length; ++i) {
+                    var record = resultset[i];
+                    record[0] = record[0] + ' [' + (i + 1) + ']';
+                }
+            }
+
+            var labelsSet = {};
+            for(var i = 0; i < resultset.length; ++i) {
+                var record = resultset[i];
+                var label = record[0];
+                if(labelsSet[label]) {
+                    appendUniqueCounter();
+                    return;
+                } else {
+                    labelsSet[label] = true;
+                }
+            }
+        }
+
         if (args.data.cellset && args.data.cellset.length > 0) {
             
             var lowest_level = 0;
@@ -257,6 +278,7 @@ var Chart = Backbone.View.extend({
                     this.data.resultset.push(record);
                 }
             }
+            makeSureUniqueLabels(this.data.resultset);
             this.data.height = this.data.resultset.length;
             this.render();
         } else {
