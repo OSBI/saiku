@@ -226,51 +226,52 @@ var Chart = Backbone.View.extend({
             }
         }
 
-        if (args.data.cellset && args.data.cellset.length > 0) {
+        var cellset = args.data.cellset;
+        if (cellset && cellset.length > 0) {
             
             var lowest_level = 0;
         
-            for (var row = 0; row < args.data.cellset.length; row++) {
-                if (args.data.cellset[row][0].type == "ROW_HEADER_HEADER") {
+            for (var row = 0; row < cellset.length; row++) {
+                if (cellset[row][0].type == "ROW_HEADER_HEADER") {
                     this.data.metadata = [];
-                    for (var field = 0; field < args.data.cellset[row].length; field++) {
-                        if (args.data.cellset[row][field].type == "ROW_HEADER_HEADER") {
+                    for (var field = 0; field < cellset[row].length; field++) {
+                        if (cellset[row][field].type == "ROW_HEADER_HEADER") {
                             this.data.metadata.shift();
                             lowest_level = field;
                         }
                         
                         this.data.metadata.push({
                             colIndex: field,
-                            colType: typeof(args.data.cellset[row + 1][field].value) !== "number" &&
-                                isNaN(args.data.cellset[row + 1][field].value
+                            colType: typeof(cellset[row + 1][field].value) !== "number" &&
+                                isNaN(cellset[row + 1][field].value
                                 .replace(/[^a-zA-Z 0-9.]+/g,'')) ? "String" : "Numeric",
-                            colName: args.data.cellset[row][field].value
+                            colName: cellset[row][field].value
                         });
                     }
-                } else if (args.data.cellset[row][0].value !== "") {
+                } else if (cellset[row][0].value !== "") {
                     var record = [];
-                    this.data.width = args.data.cellset[row].length;
+                    this.data.width = cellset[row].length;
                     var label = [];
                     for (var labelCol = lowest_level; labelCol >= 0; labelCol--) {
                         var lastKnownUpperLevelRow = row;
-                        while(args.data.cellset[lastKnownUpperLevelRow] && args.data.cellset[lastKnownUpperLevelRow][labelCol].value === 'null') {
+                        while(cellset[lastKnownUpperLevelRow] && cellset[lastKnownUpperLevelRow][labelCol].value === 'null') {
                             --lastKnownUpperLevelRow;
                         }
-                        if(args.data.cellset[lastKnownUpperLevelRow]) {
-                            label.push(args.data.cellset[lastKnownUpperLevelRow][labelCol].value);
+                        if(cellset[lastKnownUpperLevelRow]) {
+                            label.push(cellset[lastKnownUpperLevelRow][labelCol].value);
                         }
                     }
                     record.push(label.join('/'));
-                    for (var col = lowest_level + 1; col < args.data.cellset[row].length; col++) {
-                        var value = args.data.cellset[row][col].value;
+                    for (var col = lowest_level + 1; col < cellset[row].length; col++) {
+                        var value = cellset[row][col].value;
                         // check if the resultset contains the raw value, if not try to parse the given value
-                        if (args.data.cellset[row][col].properties.raw && args.data.cellset[row][col].properties.raw !== "null")
+                        if (cellset[row][col].properties.raw && cellset[row][col].properties.raw !== "null")
                         {
-                            value = parseFloat(args.data.cellset[row][col].properties.raw);
-                        } else if (typeof(args.data.cellset[row][col].value) !== "number" &&
-                            parseFloat(args.data.cellset[row][col].value.replace(/[^a-zA-Z 0-9.]+/g,''))) 
+                            value = parseFloat(cellset[row][col].properties.raw);
+                        } else if (typeof(cellset[row][col].value) !== "number" &&
+                            parseFloat(cellset[row][col].value.replace(/[^a-zA-Z 0-9.]+/g,'')))
                         {
-                            value = parseFloat(args.data.cellset[row][col].value.replace(/[^a-zA-Z 0-9.]+/g,''));
+                            value = parseFloat(cellset[row][col].value.replace(/[^a-zA-Z 0-9.]+/g,''));
                         }
                         record.push(value);
                     }
