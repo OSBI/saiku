@@ -270,9 +270,6 @@ var Chart = Backbone.View.extend({
                         {
                             value = parseFloat(args.data.cellset[row][col].value.replace(/[^a-zA-Z 0-9.]+/g,''));
                         }
-                        if (col == lowest_level) {
-                            value += " [" + row + "]";
-                        }
                         record.push(value);
                     }
                     this.data.resultset.push(record);
