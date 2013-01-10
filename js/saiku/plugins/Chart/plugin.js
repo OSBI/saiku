@@ -47,15 +47,15 @@ var Chart = Backbone.View.extend({
         		"</div>").css({
         		    'padding-bottom': '10px'
         		});
-        this.nav.find('a').css({ 
-                    color: '#666', 
-                    'margin-right': '5px', 
-                    'text-decoration': 'none', 
-                    'border': '1px solid #ccc', 
-                    padding: '5px' 
+        this.nav.find('a').css({
+                    color: '#666',
+                    'margin-right': '5px',
+                    'text-decoration': 'none',
+                    'border': '1px solid #ccc',
+                    padding: '5px'
                 })
                 .click(this.setOptions);
-    
+
         // Append chart to workspace
         $(this.workspace.el).find('.workspace_results')
             .prepend($(this.el).hide())
@@ -141,7 +141,7 @@ var Chart = Backbone.View.extend({
             legend: true,
             legendPosition:"top",
             legendAlign: "right",
-            colors: ["#B40010", "#CCC8B4", "#DDB965", "#72839D", "#1D2D40"],
+            colors: ["#4bb2c5", "#c5b47f", "#EAA228", "#579575", "#839557", "#958c12", "#953579", "#4b5de4", "#d8b83f", "#ff5800", "#0085cc"],
             type: 'BarChart'
         }, this.options);
         
