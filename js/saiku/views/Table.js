@@ -384,6 +384,8 @@ var Table = Backbone.View.extend({
         if (this.workspace.query.get('type') == 'QM' && Settings.MODE != "view") {
             $(this.el).find('th.row, th.col').addClass('headerhighlight');
         }
+        Saiku.events.trigger('table:rendered', this);
+        
     },
     cancel: function(event) {
         this.workspace.query.action.del("/result", {success: this.cancelled } );
