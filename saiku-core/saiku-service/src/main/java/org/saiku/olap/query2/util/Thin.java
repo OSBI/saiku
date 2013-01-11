@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
@@ -35,7 +34,6 @@ import org.saiku.query.ISortableQuerySet;
 import org.saiku.query.Query;
 import org.saiku.query.QueryAxis;
 import org.saiku.query.QueryDetails;
-import org.saiku.query.QueryDetails.Location;
 import org.saiku.query.QueryHierarchy;
 import org.saiku.query.QueryLevel;
 import org.saiku.query.mdx.GenericFilter;
@@ -45,11 +43,11 @@ import org.saiku.query.mdx.NameFilter;
 import org.saiku.query.mdx.NameLikeFilter;
 import org.saiku.query.metadata.CalculatedMeasure;
 
-public class ThinUtil {
+public class Thin {
 	
 	public static ThinQuery convert(Query query, SaikuCube cube) {
 		ThinQueryModel tqm = convert(query);
-		return new ThinQuery(tqm, cube);
+		return new ThinQuery(query.getName(), cube, tqm);
 	}
 
 	private static ThinQueryModel convert(Query query) {
@@ -62,8 +60,6 @@ public class ThinUtil {
 		tqm.setVisualTotals(query.getDefaultVisualTotals());
 		tqm.setVisualTotalsPattern(query.getDefaultVisualTotalsPattern());
 
-		
-//		extendQuerySet(tqm, null);
 		return tqm;
 	}
 
@@ -71,14 +67,13 @@ public class ThinUtil {
 		List<ThinCalculatedMeasure> tcms = new ArrayList<ThinCalculatedMeasure>();
 		if (qcms != null && qcms.size() > 0) {
 			for (CalculatedMeasure qcm : qcms) {
-				Properties props = new Properties();
-				props.putAll(qcm.getPropertyValueMap());
 				ThinCalculatedMeasure tcm = new ThinCalculatedMeasure(
+						qcm.getHierarchy().getUniqueName(),
 						qcm.getName(), 
 						qcm.getUniqueName(), 
 						qcm.getCaption(), 
 						qcm.getFormula(),
-						props);
+						qcm.getFormatProperties());
 				tcms.add(tcm);
 			}
 		}
@@ -90,7 +85,6 @@ public class ThinUtil {
 		ThinDetails.Location location = ThinDetails.Location.valueOf(details.getLocation().toString());
 		AxisLocation axis = AxisLocation.valueOf(details.getAxis().toString());
 		List<ThinMeasure> measures = new ArrayList<ThinMeasure>();
-		if (details.getLocation().equals(Location.BOTTOM))
 		if (details != null && details.getMeasures().size() > 0) {
 			for (Measure m : details.getMeasures()) {
 				ThinMeasure.Type type = Type.EXACT;
@@ -203,12 +197,14 @@ public class ThinUtil {
 			if (f instanceof NameFilter) {
 				NameFilter nf = (NameFilter) f;
 				List<String> expressions = nf.getFilterExpression();
+				expressions.add(0, nf.getHierarchy().getUniqueName());
 				ThinFilter tf = new ThinFilter(FilterFlavour.Name, FilterOperator.EQUALS, FilterFunction.Filter, expressions);
 				tfs.add(tf);
 			}
 			if (f instanceof NameLikeFilter) {
 				NameLikeFilter nf = (NameLikeFilter) f;
 				List<String> expressions = nf.getFilterExpression();
+				expressions.add(0, nf.getHierarchy().getUniqueName());
 				ThinFilter tf = new ThinFilter(FilterFlavour.NameLike, FilterOperator.LIKE, FilterFunction.Filter, expressions);
 				tfs.add(tf);
 			}

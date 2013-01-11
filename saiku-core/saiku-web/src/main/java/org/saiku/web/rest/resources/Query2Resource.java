@@ -60,4 +60,14 @@ public class Query2Resource {
 		return thinQueryService.createEmpty(cube);
 		
 	}
+	
+	@GET
+	@Produces({"text/plain" })
+	@Path("/execute")
+	public String executeDummy() {
+		SaikuCube cube = new SaikuCube("foodmart", "Sales", "Sales", "Sales", "FoodMart", "FoodMart");
+		return thinQueryService.executeDummyQuery(cube);
+		
+	}
+	
 }

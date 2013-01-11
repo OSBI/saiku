@@ -16,14 +16,18 @@
 package org.saiku.service.olap;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.olap4j.Axis;
+import org.olap4j.CellSet;
+import org.olap4j.CellSetAxis;
 import org.olap4j.OlapConnection;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Measure;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.query2.ThinQuery;
-import org.saiku.olap.query2.util.ThinUtil;
+import org.saiku.olap.query2.util.Fat;
+import org.saiku.olap.query2.util.Thin;
 import org.saiku.query.Query;
 import org.saiku.query.QueryAxis;
 import org.saiku.query.QueryHierarchy;
@@ -52,7 +56,6 @@ public class ThinQueryService implements Serializable {
 	public ThinQuery createDummyQuery(SaikuCube cube) {
 		try {
 			Cube cub = olapDiscoverService.getNativeCube(cube);
-			OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnectionName());
 
 			Query query = new Query("dummy query", cub);
 			QueryAxis columns = query.getAxis(Axis.COLUMNS);
@@ -73,20 +76,20 @@ public class ThinQueryService implements Serializable {
 			gender.include("[Gender].[F]");
 			rows.addHierarchy(gender);
 			rows.sort(SortOrder.DESC);
-			
+
 			CalculatedMeasure cm =
 					query.createCalculatedMeasure(
 							"Double Profit", 
 							"( [Measures].[Store Sales] - [Measures].[Store Cost]) * 2",  
 							null);
 
-			
+
 			query.getDetails().add(cm);
 			Measure m = cub.getMeasures().get(0);
-			
+
 			query.getDetails().add(m);
-			
-			ThinQuery tq = ThinUtil.convert(query, cube);
+
+			ThinQuery tq = Thin.convert(query, cube);
 			return tq;
 
 		} catch (Exception e) {
@@ -103,8 +106,8 @@ public class ThinQueryService implements Serializable {
 			OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnectionName());
 
 			Query query = new Query("dummy query", cub);
-			
-			ThinQuery tq = ThinUtil.convert(query, cube);
+
+			ThinQuery tq = Thin.convert(query, cube);
 			return tq;
 
 		} catch (Exception e) {
@@ -112,6 +115,23 @@ public class ThinQueryService implements Serializable {
 		}
 		return null;
 
+	}
+
+	public String executeDummyQuery(SaikuCube cube) {
+		try {
+			Cube cub = olapDiscoverService.getNativeCube(cube);
+			ThinQuery tq = createDummyQuery(cube);
+			Query q = Fat.convert(tq, cub);
+			CellSet cs = q.execute();
+			String ret = "";
+			for (CellSetAxis ca : cs.getAxes()) {
+				ret += "[ " +  ca.getAxisOrdinal().name() + ": " + ca.getPositionCount() + " ]";
+			}
+			return ret;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
 	}
 
 }

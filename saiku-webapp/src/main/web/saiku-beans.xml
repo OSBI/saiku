@@ -50,6 +50,17 @@
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
 
+	<bean id="thinQueryBean" scope="session"
+		class="org.saiku.service.olap.ThinQueryService">
+		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
+	</bean>
+
+
+	<bean id="queryResource2" scope="request"
+		class="org.saiku.web.rest.resources.Query2Resource">
+		<property name="thinQueryService" ref="thinQueryBean" />
+	</bean>
+
 
 	<bean id="sessionResource" class="org.saiku.web.rest.resources.SessionResource">
 		<property name="sessionService" ref="sessionService" />

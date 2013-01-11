@@ -5,22 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.saiku.olap.query2.common.AbstractThinQuerySet;
+public class ThinQueryModel {
 
-public class ThinQueryModel extends AbstractThinQuerySet {
-
-	private String name;
 	private Map<AxisLocation, ThinAxis> axes = new HashMap<AxisLocation, ThinAxis>();
 	private boolean visualTotals = false;
 	private String visualTotalsPattern;
 	private ThinDetails details;
 	private List<ThinCalculatedMeasure> calculatedMeasures = new ArrayList<ThinCalculatedMeasure>();
 	
-	@Override
-	public String getName() {
-		return name;
-	}
-		
 	public enum AxisLocation {
 		ROWS,
 		COLUMNS,
@@ -68,13 +60,6 @@ public class ThinQueryModel extends AbstractThinQuerySet {
 	 */
 	public void setVisualTotalsPattern(String visualTotalsPattern) {
 		this.visualTotalsPattern = visualTotalsPattern;
-	}
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public List<ThinCalculatedMeasure> getCalculatedMeasures() {

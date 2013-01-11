@@ -1,6 +1,7 @@
 package org.saiku.olap.query2;
 
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class ThinCalculatedMeasure {
@@ -8,10 +9,12 @@ public class ThinCalculatedMeasure {
 	private String name;
 	private String uniqueName;
 	private String caption;
-	private Properties properties;
+	private Map<String, String> properties = new HashMap<String, String>();
 	private String formula;
+	private String hierarchyName;
 	
-	public ThinCalculatedMeasure(String name, String uniqueName, String caption, String formula, Properties properties) {
+	public ThinCalculatedMeasure(String hierarchyName, String name, String uniqueName, String caption, String formula, Map<String, String> properties) {
+		this.hierarchyName = hierarchyName;
 		this.uniqueName = uniqueName;
 		this.formula = formula;
 		this.name = name;
@@ -43,7 +46,7 @@ public class ThinCalculatedMeasure {
 	/**
 	 * @return the properties
 	 */
-	public Properties getProperties() {
+	public Map<String, String> getProperties() {
 		return properties;
 	}
 
@@ -52,6 +55,13 @@ public class ThinCalculatedMeasure {
 	 */
 	public String getFormula() {
 		return formula;
+	}
+
+	/**
+	 * @return the hierarchyUniqueName
+	 */
+	public String getHierarchyName() {
+		return hierarchyName;
 	}
 	
 	

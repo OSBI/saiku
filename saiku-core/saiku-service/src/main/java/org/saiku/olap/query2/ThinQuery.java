@@ -6,15 +6,26 @@ public class ThinQuery {
 	
 	private ThinQueryModel queryModel;
 	private SaikuCube cube;
+	private String mdx;
+	private String name;
 	
 	public ThinQuery() {};
 	
-	public ThinQuery(ThinQueryModel queryModel, SaikuCube cube) {
+	public ThinQuery(String name, SaikuCube cube, ThinQueryModel queryModel) {
 		super();
 		this.queryModel = queryModel;
 		this.cube = cube;
+		this.name = name;
 	}
 
+	public ThinQuery(String name, SaikuCube cube, String mdx) {
+		super();
+		this.mdx = mdx;
+		this.cube = cube;
+		this.name = name;
+	}
+
+	
 	/**
 	 * @return the queryModel
 	 */
@@ -41,5 +52,33 @@ public class ThinQuery {
 	 */
 	public void setCube(SaikuCube cube) {
 		this.cube = cube;
+	}
+
+	/**
+	 * @return the mdx
+	 */
+	public String getMdx() {
+		return mdx;
+	}
+
+	/**
+	 * @param mdx the mdx to set
+	 */
+	public void setMdx(String mdx) {
+		this.mdx = mdx;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 }
