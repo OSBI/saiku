@@ -39,15 +39,25 @@ var Chart = Backbone.View.extend({
         
         // Create navigation
         this.nav = $("<div class='chart-switcher'>" +
-        		"<a href='#bar' class='i18n'>bar</a>" +
-                "<a href='#stackedBar' class='i18n'>stacked bar</a>" +
-        		"<a href='#line' class='i18n'>line</a>" +
-        		"<a href='#pie' class='i18n'>pie</a>" +
-                "<a href='#heatgrid' class='i18n'>heatgrid</a>" +
+        		"<a class='type' href='#bar' class='i18n'>bar</a>" +
+                "<a class='type' href='#stackedBar' class='i18n'>stacked bar</a>" +
+        		"<a class='type' href='#line' class='i18n'>line</a>" +
+        		"<a class='type' href='#pie' class='i18n'>pie</a>" +
+                "<a class='type' href='#heatgrid' class='i18n'>heatgrid</a>" +
+                "Export to: " +
+                "<a class='export' href='#png' class='i18n'>PNG</a>, " +
+                "<a class='export' href='#pdf' class='i18n'>PDF</a>, " +
+                "<a class='export' href='#tiff' class='i18n'>TIFF</a>, " +
+                "<a class='export' href='#svg' class='i18n'>SVG</a>, " +
+                "<a class='export' href='#jpg' class='i18n'>JPG</a>" +
+                "<form id='svgChartPseudoForm' action='/svg' method='POST'>" +
+                "<input type='hidden' name='type' class='type'/>" +
+                "<input type='hidden' name='svg' class='svg'/>" +
+                "</form>" +
         		"</div>").css({
         		    'padding-bottom': '10px'
         		});
-        this.nav.find('a').css({
+        this.nav.find('a.type').css({
                     color: '#666',
                     'margin-right': '5px',
                     'text-decoration': 'none',
@@ -55,6 +65,7 @@ var Chart = Backbone.View.extend({
                     padding: '5px'
                 })
                 .click(this.setOptions);
+        this.nav.find('a.export').click(this.exportChart);
 
         // Append chart to workspace
         $(this.workspace.el).find('.workspace_results')
@@ -94,6 +105,16 @@ var Chart = Backbone.View.extend({
         return false;
     },
     
+    exportChart: function(event) {
+        var type = $(event.target).attr('href').replace('#', '');
+        var svgContent = new XMLSerializer().serializeToString($('svg')[0]);
+        var form = $('#svgChartPseudoForm');
+        form.find('.type').val(type);
+        form.find('.svg').val(svgContent);
+        form.submit();
+        return false;
+    },
+
     stackedBar: function() {
         this.options.stacked = true;
         this.options.type = "BarChart";
