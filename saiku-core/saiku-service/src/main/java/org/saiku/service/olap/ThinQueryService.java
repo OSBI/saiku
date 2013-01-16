@@ -63,7 +63,7 @@ public class ThinQueryService implements Serializable {
 			QueryHierarchy products = query.getHierarchy("Product");
 
 			products.includeLevel("Product Family");
-			products.exclude("[Product].[Non-Consumable]");
+			products.excludeMember("[Product].[Non-Consumable]");
 			NFilter top2filter = new NFilter(MdxFunctionType.TopCount, 2, "Measures.[Unit Sales]");
 			products.addFilter(top2filter);
 			columns.addHierarchy(products);
@@ -73,7 +73,7 @@ public class ThinQueryService implements Serializable {
 			columns.addHierarchy(edu);
 
 			QueryHierarchy gender = query.getHierarchy("Gender");
-			gender.include("[Gender].[F]");
+			gender.includeMember("[Gender].[F]");
 			rows.addHierarchy(gender);
 			rows.sort(SortOrder.DESC);
 

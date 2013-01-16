@@ -1,16 +1,8 @@
 package org.saiku.olap.discover;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.olap4j.OlapConnection;
-import org.saiku.AbstractServiceUtils;
-import org.saiku.TConnectionManager;
-import org.saiku.datasources.connection.IConnectionManager;
-import org.saiku.datasources.datasource.SaikuDatasource;
-import org.saiku.olap.dto.*;
-import org.saiku.olap.util.exception.SaikuOlapException;
-import org.saiku.service.datasource.ClassPathResourceDatasourceManager;
-import org.saiku.service.datasource.IDatasourceManager;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +11,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static org.junit.Assert.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.olap4j.OlapConnection;
+import org.saiku.datasources.connection.IConnectionManager;
+import org.saiku.datasources.datasource.SaikuDatasource;
+import org.saiku.olap.dto.SaikuConnection;
+import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SaikuDimension;
+import org.saiku.olap.dto.SaikuHierarchy;
+import org.saiku.olap.dto.SaikuLevel;
+import org.saiku.olap.dto.SaikuMember;
+import org.saiku.olap.util.exception.SaikuOlapException;
+import org.saiku.service.datasource.ClassPathResourceDatasourceManager;
+import org.saiku.service.datasource.IDatasourceManager;
 
 
 public class OlapMetaExplorerTest {
@@ -328,23 +333,21 @@ public class OlapMetaExplorerTest {
     
     @BeforeClass
 public static void setup() throws IOException{
-    AbstractServiceUtils ast = new AbstractServiceUtils();
-    ast.initTestContext();
-    IConnectionManager ic = new TConnectionManager();
-    String returned = computeTestDataRoot(OlapMetaExplorerTest.class);
-    File f = new File(System.getProperty("java.io.tmpdir")+"/files/");
-    f.mkdir();
-    IDatasourceManager ds = new ClassPathResourceDatasourceManager(System.getProperty("java.io.tmpdir")+"/files/");
-    InputStream inputStream= OlapMetaExplorerTest.class.getResourceAsStream("connection.properties");
-    try {
-        testProps.load(inputStream);
-    } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-    }
-    ds.setDatasource(new SaikuDatasource("test", SaikuDatasource.Type.OLAP, testProps));
-    ic.setDataSourceManager(ds);
-    olapMetaExplorer = new OlapMetaExplorer(ic);
+//    IConnectionManager ic = new TConnectionManager();
+//    String returned = computeTestDataRoot(OlapMetaExplorerTest.class);
+//    File f = new File(System.getProperty("java.io.tmpdir")+"/files/");
+//    f.mkdir();
+//    IDatasourceManager ds = new ClassPathResourceDatasourceManager(System.getProperty("java.io.tmpdir")+"/files/");
+//    InputStream inputStream= OlapMetaExplorerTest.class.getResourceAsStream("connection.properties");
+//    try {
+//        testProps.load(inputStream);
+//    } catch (IOException e) {
+//        // TODO Auto-generated catch block
+//        e.printStackTrace();
+//    }
+//    ds.setDatasource(new SaikuDatasource("test", SaikuDatasource.Type.OLAP, testProps));
+//    ic.setDataSourceManager(ds);
+//    olapMetaExplorer = new OlapMetaExplorer(ic);
 
 }
     public static String computeTestDataRoot(Class anyTestClass) throws IOException {

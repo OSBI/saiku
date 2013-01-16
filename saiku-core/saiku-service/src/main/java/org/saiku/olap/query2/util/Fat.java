@@ -119,10 +119,10 @@ public class Fat {
 		for (ThinLevel tl : th.getLevels().values()) {
 			QueryLevel ql = qh.includeLevel(tl.getName());
 			for (ThinMember tm : tl.getInclusions()) {
-				qh.include(tm.getUniqueName());
+				qh.includeMember(tm.getUniqueName());
 			}
 			for (ThinMember tm : tl.getExclusions()) {
-				qh.exclude(tm.getUniqueName());
+				qh.excludeMember(tm.getUniqueName());
 			}
 			extendQuerySet(qh.getQuery(), ql, tl);
 		}
