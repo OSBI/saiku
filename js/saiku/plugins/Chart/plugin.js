@@ -47,15 +47,15 @@ var Chart = Backbone.View.extend({
         		"</div>").css({
         		    'padding-bottom': '10px'
         		});
-        this.nav.find('a').css({ 
-                    color: '#666', 
-                    'margin-right': '5px', 
-                    'text-decoration': 'none', 
-                    'border': '1px solid #ccc', 
-                    padding: '5px' 
+        this.nav.find('a').css({
+                    color: '#666',
+                    'margin-right': '5px',
+                    'text-decoration': 'none',
+                    'border': '1px solid #ccc',
+                    padding: '5px'
                 })
                 .click(this.setOptions);
-    
+
         // Append chart to workspace
         $(this.workspace.el).find('.workspace_results')
             .prepend($(this.el).hide())
@@ -141,7 +141,7 @@ var Chart = Backbone.View.extend({
             legend: true,
             legendPosition:"top",
             legendAlign: "right",
-            colors: ["#B40010", "#CCC8B4", "#DDB965", "#72839D", "#1D2D40"],
+            colors: ["#4bb2c5", "#c5b47f", "#EAA228", "#579575", "#839557", "#958c12", "#953579", "#4b5de4", "#d8b83f", "#ff5800", "#0085cc"],
             type: 'BarChart'
         }, this.options);
         
@@ -204,50 +204,80 @@ var Chart = Backbone.View.extend({
         this.data.metadata = [];
         this.data.height = 0;
         this.data.width = 0;
-        
-        if (args.data.cellset && args.data.cellset.length > 0) {
+
+        function makeSureUniqueLabels(resultset) {
+            function appendUniqueCounter() {
+                for(var i = 0; i < resultset.length; ++i) {
+                    var record = resultset[i];
+                    record[0] = record[0] + ' [' + (i + 1) + ']';
+                }
+            }
+
+            var labelsSet = {};
+            for(var i = 0; i < resultset.length; ++i) {
+                var record = resultset[i];
+                var label = record[0];
+                if(labelsSet[label]) {
+                    appendUniqueCounter();
+                    return;
+                } else {
+                    labelsSet[label] = true;
+                }
+            }
+        }
+
+        var cellset = args.data.cellset;
+        if (cellset && cellset.length > 0) {
             
             var lowest_level = 0;
         
-            for (var row = 0; row < args.data.cellset.length; row++) {
-                if (args.data.cellset[row][0].type == "ROW_HEADER_HEADER") {
+            for (var row = 0; row < cellset.length; row++) {
+                if (cellset[row][0].type == "ROW_HEADER_HEADER") {
                     this.data.metadata = [];
-                    for (var field = 0; field < args.data.cellset[row].length; field++) {
-                        if (args.data.cellset[row][field].type == "ROW_HEADER_HEADER") {
+                    for (var field = 0; field < cellset[row].length; field++) {
+                        if (cellset[row][field].type == "ROW_HEADER_HEADER") {
                             this.data.metadata.shift();
                             lowest_level = field;
                         }
                         
                         this.data.metadata.push({
                             colIndex: field,
-                            colType: typeof(args.data.cellset[row + 1][field].value) !== "number" &&
-                                isNaN(args.data.cellset[row + 1][field].value
+                            colType: typeof(cellset[row + 1][field].value) !== "number" &&
+                                isNaN(cellset[row + 1][field].value
                                 .replace(/[^a-zA-Z 0-9.]+/g,'')) ? "String" : "Numeric",
-                            colName: args.data.cellset[row][field].value
+                            colName: cellset[row][field].value
                         });
                     }
-                } else if (args.data.cellset[row][0].value !== "null" && args.data.cellset[row][0].value !== "") {
+                } else if (cellset[row][0].value !== "") {
                     var record = [];
-                    this.data.width = args.data.cellset[row].length;
-                    for (var col = lowest_level; col < args.data.cellset[row].length; col++) {
-                        var value = args.data.cellset[row][col].value;
-                        // check if the resultset contains the raw value, if not try to parse the given value
-                        if (args.data.cellset[row][col].properties.raw && args.data.cellset[row][col].properties.raw !== "null")
-                        {
-                            value = parseFloat(args.data.cellset[row][col].properties.raw);
-                        } else if (typeof(args.data.cellset[row][col].value) !== "number" &&
-                            parseFloat(args.data.cellset[row][col].value.replace(/[^a-zA-Z 0-9.]+/g,''))) 
-                        {
-                            value = parseFloat(args.data.cellset[row][col].value.replace(/[^a-zA-Z 0-9.]+/g,''));
+                    this.data.width = cellset[row].length;
+                    var label = [];
+                    for (var labelCol = lowest_level; labelCol >= 0; labelCol--) {
+                        var lastKnownUpperLevelRow = row;
+                        while(cellset[lastKnownUpperLevelRow] && cellset[lastKnownUpperLevelRow][labelCol].value === 'null') {
+                            --lastKnownUpperLevelRow;
                         }
-                        if (col == lowest_level) {
-                            value += " [" + row + "]";
+                        if(cellset[lastKnownUpperLevelRow]) {
+                            label.push(cellset[lastKnownUpperLevelRow][labelCol].value);
+                        }
+                    }
+                    record.push(label.join('/'));
+                    for (var col = lowest_level + 1; col < cellset[row].length; col++) {
+                        var cell = cellset[row][col];
+                        var value = cell.value || 0;
+                        // check if the resultset contains the raw value, if not try to parse the given value
+                        var raw = cell.properties.raw;
+                        if (raw && raw !== "null") {
+                            value = parseFloat(raw);
+                        } else if (typeof(cell.value) !== "number" && parseFloat(cell.value.replace(/[^a-zA-Z 0-9.]+/g,''))) {
+                            value = parseFloat(cell.value.replace(/[^a-zA-Z 0-9.]+/g,''));
                         }
                         record.push(value);
                     }
                     this.data.resultset.push(record);
                 }
             }
+            makeSureUniqueLabels(this.data.resultset);
             this.data.height = this.data.resultset.length;
             this.render();
         } else {
