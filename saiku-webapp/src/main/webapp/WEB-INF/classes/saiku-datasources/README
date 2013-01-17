@@ -58,3 +58,19 @@
 
 # security.type=lookup
 # security.mapping=springRole=mondrianRole1;springRole2=mondrianRole2
+
+
+# Additionally there is the possibility to implement your own datasource processor that will give each user
+# a custom data source depending on the environment
+# there is an example for adding a Role parameter to the location property depending on the users roles
+# you can even define filter patterns for it (optional!)
+# to use it add this to your datasource configuration:
+
+# datasource.processors=org.saiku.web.impl.RoleDatasourceProcessor
+# security.enabled=true
+# role.filter=saiku,other
+
+# this filter will set only roles that contain "saiku" or "other"
+# ATTENTION: you will have to check for yourself if those roles make sense to add as this parameter
+# if you add invalid roles saiku won't be able to check this
+
