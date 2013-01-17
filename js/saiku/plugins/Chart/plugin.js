@@ -50,7 +50,7 @@ var Chart = Backbone.View.extend({
                 "<a class='export' href='#tiff' class='i18n'>TIFF</a>, " +
                 "<a class='export' href='#svg' class='i18n'>SVG</a>, " +
                 "<a class='export' href='#jpg' class='i18n'>JPG</a>" +
-                "<form id='svgChartPseudoForm' action='/svg' method='POST'>" +
+                "<form id='svgChartPseudoForm' action='/saiku/svg' method='POST'>" +
                 "<input type='hidden' name='type' class='type'/>" +
                 "<input type='hidden' name='svg' class='svg'/>" +
                 "</form>" +
