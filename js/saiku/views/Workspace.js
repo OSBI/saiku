@@ -211,6 +211,7 @@ var Workspace = Backbone.View.extend({
         }
         this.adjust();
         if ((Settings.MODE == "view") && this.query) {
+            $(this.toolbar.el).find('.switch_to_mdx').parent().hide();
             this.query.run();
             return;
         }
