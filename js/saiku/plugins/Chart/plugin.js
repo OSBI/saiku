@@ -36,15 +36,14 @@ var Chart = Backbone.View.extend({
         
         // Listen to adjust event and rerender chart
         this.workspace.bind('workspace:adjust', this.render);
-        
-        // Create navigation
-        this.nav = $("<div class='chart-switcher'>" +
-        		"<a class='type' href='#bar' class='i18n'>bar</a>" +
+        var chartoptions ="<div class='chart-switcher'>" +
+                "<a class='type' href='#bar' class='i18n'>bar</a>" +
                 "<a class='type' href='#stackedBar' class='i18n'>stacked bar</a>" +
-        		"<a class='type' href='#line' class='i18n'>line</a>" +
-        		"<a class='type' href='#pie' class='i18n'>pie</a>" +
-                "<a class='type' href='#heatgrid' class='i18n'>heatgrid</a>" +
-                "Export to: " +
+                "<a class='type' href='#line' class='i18n'>line</a>" +
+                "<a class='type' href='#pie' class='i18n'>pie</a>" +
+                "<a class='type' href='#heatgrid' class='i18n'>heatgrid</a>";
+
+        var exportoptions = "Export to: " +
                 "<a class='export' href='#png' class='i18n'>PNG</a>, " +
                 "<a class='export' href='#pdf' class='i18n'>PDF</a>, " +
                 "<a class='export' href='#tiff' class='i18n'>TIFF</a>, " +
@@ -53,8 +52,12 @@ var Chart = Backbone.View.extend({
                 "<form id='svgChartPseudoForm' action='/saiku/svg' method='POST'>" +
                 "<input type='hidden' name='type' class='type'/>" +
                 "<input type='hidden' name='svg' class='svg'/>" +
-                "</form>" +
-        		"</div>").css({
+                "</form>";
+
+        var chartnav = (Settings.PLUGIN) ? chartoptions + "<div>" : chartoptions + exportoptions + "</div>";
+        
+        // Create navigation
+        this.nav = $(chartnav).css({
         		    'padding-bottom': '10px'
         		});
         this.nav.find('a.type').css({
