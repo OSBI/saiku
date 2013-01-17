@@ -16,6 +16,7 @@
 package org.saiku.web.rest.resources;
 
 import java.io.StringReader;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -544,8 +545,10 @@ public class QueryResource {
 			if (rs != null) {
 				try {
 					Statement statement = rs.getStatement();
-					statement.close();
+					Connection con = rs.getStatement().getConnection();
 					rs.close();
+					statement.close();
+					con.close();
 				} catch (SQLException e) {
 					throw new SaikuServiceException(e);
 				} finally {
