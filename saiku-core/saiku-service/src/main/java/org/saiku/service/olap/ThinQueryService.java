@@ -16,12 +16,10 @@
 package org.saiku.service.olap;
 
 import java.io.Serializable;
-import java.util.List;
 
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
-import org.olap4j.OlapConnection;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Measure;
 import org.saiku.olap.dto.SaikuCube;
@@ -100,18 +98,15 @@ public class ThinQueryService implements Serializable {
 	}
 
 
-	public ThinQuery createEmpty(SaikuCube cube) {
+	public ThinQuery createEmpty(String name, SaikuCube cube) {
 		try {
 			Cube cub = olapDiscoverService.getNativeCube(cube);
-			OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnectionName());
-
-			Query query = new Query("dummy query", cub);
-
+			Query query = new Query(name, cub);
 			ThinQuery tq = Thin.convert(query, cube);
 			return tq;
 
 		} catch (Exception e) {
-			log.error("Cannot create new query for cube :" + cube,e);
+			log.error("Cannot create new query for cube :" + cube, e);
 		}
 		return null;
 

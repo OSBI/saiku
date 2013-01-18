@@ -201,6 +201,12 @@
   			<version>0.1</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+  			<artifactId>jackson-jaxrs</artifactId>
+  			<version>1.9.3</version>
+			<scope>test</scope>
+		</dependency>
         
         <dependency>
             <groupId>org.saiku</groupId>

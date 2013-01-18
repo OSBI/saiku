@@ -3,8 +3,12 @@ package org.saiku;
 import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.datasources.connection.impl.SimpleConnectionManager;
 import org.saiku.olap.discover.OlapMetaExplorer;
+import org.saiku.olap.dto.SaikuCube;
 import org.saiku.service.datasource.ClassPathResourceDatasourceManager;
+import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.datasource.IDatasourceManager;
+import org.saiku.service.olap.OlapDiscoverService;
+import org.saiku.service.olap.ThinQueryService;
 
 
 public class TestSaikuContext {
@@ -14,6 +18,9 @@ public class TestSaikuContext {
 	public IDatasourceManager datasourceManager;
 	public IConnectionManager connectionManager;
 	public OlapMetaExplorer olapMetaExplorer;
+	public OlapDiscoverService olapDiscoverService;
+	public DatasourceService datasourceService;
+	public ThinQueryService thinQueryService;
 
 	public TestSaikuContext() {
 		setup();
@@ -27,7 +34,12 @@ public class TestSaikuContext {
 		this.connectionManager.setDataSourceManager(datasourceManager);
 		this.connectionManager.init();
 		this.olapMetaExplorer = new OlapMetaExplorer(connectionManager);
-		
+		this.datasourceService = new DatasourceService();
+		this.datasourceService.setConnectionManager(connectionManager);
+		this.olapDiscoverService = new OlapDiscoverService();
+		this.olapDiscoverService.setDatasourceService(datasourceService);
+		this.thinQueryService = new ThinQueryService();
+		thinQueryService.setOlapDiscoverService(olapDiscoverService);
 	}
 	
 	
@@ -37,6 +49,11 @@ public class TestSaikuContext {
 			instance = new TestSaikuContext();
 		}
 		return instance;
+	}
+	
+	public static SaikuCube getSalesCube() {
+		SaikuCube cube = new SaikuCube("test", "Sales", "Sales", "Sales", "FoodMart", "FoodMart");
+		return cube;
 	}
 
 }

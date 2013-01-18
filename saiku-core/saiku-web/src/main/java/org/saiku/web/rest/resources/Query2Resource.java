@@ -57,7 +57,7 @@ public class Query2Resource {
 	@Path("/new")
 	public ThinQuery getEmpty() {
 		SaikuCube cube = new SaikuCube("foodmart", "Sales", "Sales", "Sales", "FoodMart", "FoodMart");
-		return thinQueryService.createEmpty(cube);
+		return thinQueryService.createEmpty("dummy", cube);
 		
 	}
 	

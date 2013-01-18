@@ -4,19 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.olap4j.OlapConnection;
 import org.saiku.TestSaikuContext;
-import org.saiku.datasources.connection.IConnectionManager;
-import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimension;
@@ -24,14 +19,11 @@ import org.saiku.olap.dto.SaikuHierarchy;
 import org.saiku.olap.dto.SaikuLevel;
 import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.util.exception.SaikuOlapException;
-import org.saiku.service.datasource.ClassPathResourceDatasourceManager;
-import org.saiku.service.datasource.IDatasourceManager;
 
 
 public class OlapMetaExplorerTest {
 
     private static OlapMetaExplorer olapMetaExplorer;
-    private static Properties testProps = new Properties();
     
     /**
      * Test that you can fetch all available connections.
@@ -75,7 +67,7 @@ public class OlapMetaExplorerTest {
             output = olapMetaExplorer.getConnection("noname");
         }
         catch (Exception e){
-            Exception outpu2t = e;
+            
         }
         assertNull(output);
 
