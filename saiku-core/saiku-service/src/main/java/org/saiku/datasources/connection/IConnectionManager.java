@@ -22,6 +22,8 @@ import org.saiku.service.datasource.IDatasourceManager;
 
 public interface IConnectionManager {
 	
+	public void init();
+	
 	public void setDataSourceManager(IDatasourceManager ds);
 	
 	public IDatasourceManager getDataSourceManager();

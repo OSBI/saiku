@@ -12,40 +12,63 @@
     <name>saiku - services</name>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.2</version>
-                <executions>
-                    <execution>
-                        <id>create-package</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <unzip dest="target/test/">
-                                    <fileset dir="${basedir}/../../util/">
-                                        <include name="foodmart_hsql.script.zip"/>
-                                    </fileset>
-                                </unzip>
-                                <copy todir="target/test/foodmart/">
-                                    <fileset dir="${basedir}/../../util/">
-                                        <include name="FoodMart.xml"/>
-                                    </fileset>
-                                </copy>
-
-                                <copy todir="target/test-classes/org/saiku/" overwrite="true">
-                                    <fileset dir="target/test/">
-                                        <include name="foodmart_hsql.script"/>
-                                    </fileset>
-                                </copy>
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+        			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+				<configuration>
+					<argLine> -Xmx512m</argLine>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>mondrian-data-foodmart-hsql</groupId>
+									<artifactId>mondrian-data-foodmart-hsql</artifactId>
+  									<version>0.1</version>
+									<type>jar</type>
+									<outputDirectory>target/</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<id>test</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<echo message="Prepare Test. Unzipping foodmart" />
+								<unzip dest="target/test-classes/">
+									<fileset dir="target/">
+										<include name="mondrian-data*.jar" />
+									</fileset>
+								</unzip>
+								<echo message="Unzipped!" />
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -160,11 +183,24 @@
             <artifactId>junit</artifactId>
             <version>4.10</version>
         </dependency>
-        <dependency>
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>1.8.0.10</version>
-        </dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.17</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>1.8.0.10</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>mondrian-data-foodmart-hsql</groupId>
+  			<artifactId>mondrian-data-foodmart-hsql</artifactId>
+  			<version>0.1</version>
+			<scope>test</scope>
+		</dependency>
         
         <dependency>
             <groupId>org.saiku</groupId>

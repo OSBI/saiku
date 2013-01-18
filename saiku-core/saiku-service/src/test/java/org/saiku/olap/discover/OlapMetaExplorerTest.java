@@ -14,6 +14,7 @@ import java.util.Properties;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.olap4j.OlapConnection;
+import org.saiku.TestSaikuContext;
 import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.olap.dto.SaikuConnection;
@@ -332,35 +333,8 @@ public class OlapMetaExplorerTest {
     
     
     @BeforeClass
-public static void setup() throws IOException{
-//    IConnectionManager ic = new TConnectionManager();
-//    String returned = computeTestDataRoot(OlapMetaExplorerTest.class);
-//    File f = new File(System.getProperty("java.io.tmpdir")+"/files/");
-//    f.mkdir();
-//    IDatasourceManager ds = new ClassPathResourceDatasourceManager(System.getProperty("java.io.tmpdir")+"/files/");
-//    InputStream inputStream= OlapMetaExplorerTest.class.getResourceAsStream("connection.properties");
-//    try {
-//        testProps.load(inputStream);
-//    } catch (IOException e) {
-//        // TODO Auto-generated catch block
-//        e.printStackTrace();
-//    }
-//    ds.setDatasource(new SaikuDatasource("test", SaikuDatasource.Type.OLAP, testProps));
-//    ic.setDataSourceManager(ds);
-//    olapMetaExplorer = new OlapMetaExplorer(ic);
+    public static void setup() throws IOException{
+    	olapMetaExplorer = TestSaikuContext.instance().olapMetaExplorer;
 
-}
-    public static String computeTestDataRoot(Class anyTestClass) throws IOException {
-        
-        //create a temp file
-        File temp = File.createTempFile("temp-file-name", ".tmp"); 
-
-        System.out.println("Temp file : " + temp.getAbsolutePath());
-
-    //Get tempropary file path
-        String absolutePath = temp.getAbsolutePath();
-        String tempFilePath = absolutePath.
-            substring(0,absolutePath.lastIndexOf(File.separator));
-        return tempFilePath+"/";
-      }
+    }
 }

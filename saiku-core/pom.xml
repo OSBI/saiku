@@ -34,18 +34,13 @@
 			<name>pentaho repository</name>
 			<url>http://repository.pentaho.org/artifactory/pentaho</url>
 		</repository>
-			<repository>
-			<id>ibiblio</id>
-			<url>http://ibiblio.org/maven2/</url>
-			<snapshots><enabled>false</enabled></snapshots>
-		</repository>
-			<repository>
-			<id>java</id>
-			<url>http://download.java.net/maven/2/</url>
-			<snapshots><enabled>true</enabled></snapshots>
+		<repository>
+			<id>Analytical Labs Repo</id>
+			<name>Analytical Labs Repo-releases</name>
+			<url>http://repo.analytical-labs.com/alabs-release-local</url>
 		</repository>
         <repository>
-            <id>Analytical Labs Repo</id>
+            <id>Analytical Labs Snapshots</id>
             <name>Analytical Labs Repo-releases</name>
             <url>http://repo.analytical-labs.com/alabs-snapshot-local</url>
         </repository>
