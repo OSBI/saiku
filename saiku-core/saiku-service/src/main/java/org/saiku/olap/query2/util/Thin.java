@@ -57,8 +57,8 @@ public class Thin {
 		tqm.setDetails(td);
 		List<ThinCalculatedMeasure> cms = convert(query.getCalculatedMeasures());
 		tqm.setCalculatedMeasures(cms);
-		tqm.setVisualTotals(query.getDefaultVisualTotals());
-		tqm.setVisualTotalsPattern(query.getDefaultVisualTotalsPattern());
+		tqm.setVisualTotals(query.isVisualTotals());
+		tqm.setVisualTotalsPattern(query.getVisualTotalsPattern());
 
 		return tqm;
 	}

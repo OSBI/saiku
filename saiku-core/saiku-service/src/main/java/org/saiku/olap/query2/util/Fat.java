@@ -46,10 +46,10 @@ public class Fat {
 		Query q = new Query(query.getName(), cube);
 		
 		convertAxes(q, query.getQueryModel().getAxes());
-		convertDetails(q, model.getDetails());
 		convertCalculatedMeasures(q, model.getCalculatedMeasures());
-		q.setDefaultVisualTotals(model.isVisualTotals());
-		q.setDefaultVisualTotalsPattern(model.getVisualTotalsPattern());
+		convertDetails(q, model.getDetails());
+		q.setVisualTotals(model.isVisualTotals());
+		q.setVisualTotalsPattern(model.getVisualTotalsPattern());
 		return q;
 	}
 

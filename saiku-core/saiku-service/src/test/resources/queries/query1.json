@@ -1,0 +1,156 @@
+{
+  "queryModel" : {
+    "axes" : {
+      "FILTER" : {
+        "mdx" : null,
+        "filters" : [ ],
+        "sortOrder" : null,
+        "sortEvaluationLiteral" : null,
+        "hierarchizeMode" : null,
+        "location" : "FILTER",
+        "hierarchies" : {
+        },
+        "nonEmpty" : false,
+        "name" : "FILTER"
+      },
+      "ROWS" : {
+        "mdx" : null,
+        "filters" : [ ],
+        "sortOrder" : "DESC",
+        "sortEvaluationLiteral" : null,
+        "hierarchizeMode" : null,
+        "location" : "ROWS",
+        "hierarchies" : {
+          "Gender" : {
+            "mdx" : null,
+            "filters" : [ ],
+            "sortOrder" : null,
+            "sortEvaluationLiteral" : null,
+            "hierarchizeMode" : null,
+            "name" : "Gender",
+            "uniqueName" : "[Gender]",
+            "caption" : "Gender",
+            "levels" : {
+              "Gender" : {
+                "mdx" : null,
+                "filters" : [ ],
+                "name" : "Gender",
+                "uniqueName" : "[Gender].[Gender]",
+                "caption" : "Gender",
+                "inclusions" : [ {
+                  "name" : "F",
+                  "uniqueName" : "[Gender].[F]",
+                  "caption" : "F"
+                } ],
+                "exclusions" : [ ]
+              }
+            }
+          }
+        },
+        "nonEmpty" : false,
+        "name" : "ROWS"
+      },
+      "COLUMNS" : {
+        "mdx" : null,
+        "filters" : [ ],
+        "sortOrder" : null,
+        "sortEvaluationLiteral" : null,
+        "hierarchizeMode" : null,
+        "location" : "COLUMNS",
+        "hierarchies" : {
+          "Product" : {
+            "mdx" : null,
+            "filters" : [ {
+              "flavour" : "N",
+              "operator" : null,
+              "function" : "TopCount",
+              "expressions" : [ "2", "Measures.[Unit Sales]" ]
+            } ],
+            "sortOrder" : null,
+            "sortEvaluationLiteral" : null,
+            "hierarchizeMode" : null,
+            "name" : "Product",
+            "uniqueName" : "[Product]",
+            "caption" : "Product",
+            "levels" : {
+              "Product Family" : {
+                "mdx" : null,
+                "filters" : [ ],
+                "name" : "Product Family",
+                "uniqueName" : "[Product].[Product Family]",
+                "caption" : "Product Family",
+                "inclusions" : [ ],
+                "exclusions" : [ {
+                  "name" : "Non-Consumable",
+                  "uniqueName" : "[Product].[Non-Consumable]",
+                  "caption" : "Non-Consumable"
+                } ]
+              }
+            }
+          },
+          "Education Level" : {
+            "mdx" : null,
+            "filters" : [ ],
+            "sortOrder" : null,
+            "sortEvaluationLiteral" : null,
+            "hierarchizeMode" : null,
+            "name" : "Education Level",
+            "uniqueName" : "[Education Level]",
+            "caption" : "Education Level",
+            "levels" : {
+              "Education Level" : {
+                "mdx" : null,
+                "filters" : [ ],
+                "name" : "Education Level",
+                "uniqueName" : "[Education Level].[Education Level]",
+                "caption" : "Education Level",
+                "inclusions" : [ ],
+                "exclusions" : [ ]
+              }
+            }
+          }
+        },
+        "nonEmpty" : false,
+        "name" : "COLUMNS"
+      }
+    },
+    "visualTotals" : false,
+    "visualTotalsPattern" : null,
+    "details" : {
+      "axis" : "COLUMNS",
+      "location" : "BOTTOM",
+      "measures" : [ {
+        "name" : "Double Profit",
+        "uniqueName" : "[Measures].[Double Profit]",
+        "caption" : "Double Profit",
+        "type" : "CALCULATED"
+      }, {
+        "name" : "Unit Sales",
+        "uniqueName" : "[Measures].[Unit Sales]",
+        "caption" : "Unit Sales",
+        "type" : "EXACT"
+      } ]
+    },
+    "calculatedMeasures" : [ {
+      "name" : "Double Profit",
+      "uniqueName" : "[Measures].[Double Profit]",
+      "caption" : "Double Profit",
+      "properties" : {
+      },
+      "formula" : "( [Measures].[Store Sales] - [Measures].[Store Cost]) * 2",
+      "hierarchyName" : "[Measures]"
+    } ]
+  },
+  "cube" : {
+    "uniqueName" : "[test].[FoodMart].[FoodMart].[Sales]",
+    "name" : "Sales",
+    "connectionName" : "test",
+    "catalogName" : "FoodMart",
+    "schemaName" : "FoodMart",
+    "caption" : "Sales",
+    "visible" : true,
+    "cubeName" : "[Sales]"
+  },
+  "mdx" : null,
+  "name" : "query1"
+}

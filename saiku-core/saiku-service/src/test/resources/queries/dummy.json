@@ -1,0 +1,62 @@
+{
+  "queryModel" : {
+    "axes" : {
+      "COLUMNS" : {
+        "mdx" : null,
+        "filters" : [ ],
+        "sortOrder" : null,
+        "sortEvaluationLiteral" : null,
+        "hierarchizeMode" : null,
+        "location" : "COLUMNS",
+        "hierarchies" : {
+        },
+        "nonEmpty" : false,
+        "name" : "COLUMNS"
+      },
+      "FILTER" : {
+        "mdx" : null,
+        "filters" : [ ],
+        "sortOrder" : null,
+        "sortEvaluationLiteral" : null,
+        "hierarchizeMode" : null,
+        "location" : "FILTER",
+        "hierarchies" : {
+        },
+        "nonEmpty" : false,
+        "name" : "FILTER"
+      },
+      "ROWS" : {
+        "mdx" : null,
+        "filters" : [ ],
+        "sortOrder" : null,
+        "sortEvaluationLiteral" : null,
+        "hierarchizeMode" : null,
+        "location" : "ROWS",
+        "hierarchies" : {
+        },
+        "nonEmpty" : false,
+        "name" : "ROWS"
+      }
+    },
+    "visualTotals" : false,
+    "visualTotalsPattern" : null,
+    "details" : {
+      "axis" : "COLUMNS",
+      "location" : "BOTTOM",
+      "measures" : [ ]
+    },
+    "calculatedMeasures" : [ ]
+  },
+  "cube" : {
+    "uniqueName" : "[test].[FoodMart].[FoodMart].[Sales]",
+    "name" : "Sales",
+    "connectionName" : "test",
+    "catalogName" : "FoodMart",
+    "schemaName" : "FoodMart",
+    "caption" : "Sales",
+    "visible" : true,
+    "cubeName" : "[Sales]"
+  },
+  "mdx" : null,
+  "name" : "dummy"
+}
