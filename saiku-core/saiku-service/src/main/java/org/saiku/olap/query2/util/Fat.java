@@ -2,8 +2,12 @@ package org.saiku.olap.query2.util;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
@@ -93,13 +97,25 @@ public class Fat {
 
 	private static void convertAxes(Query q, Map<AxisLocation, ThinAxis> axes) throws OlapException {
 		if (axes != null) {
-			for (AxisLocation axis : axes.keySet()) {
+			for (AxisLocation axis : sortAxes(axes.keySet())) {
 				if (axis != null) {
 					convertAxis(q, axes.get(axis));
 				}
 			}
 		}
 	}
+	
+	private static List<AxisLocation> sortAxes(Set<AxisLocation> axes) {
+		List<AxisLocation> ax = new ArrayList<AxisLocation>();
+		for (AxisLocation a : AxisLocation.values()) {
+			if (axes.contains(a)){
+				ax.add(a);
+			}
+		}
+		return ax;
+	}
+	
+	
 
 	private static void convertAxis(Query query, ThinAxis thinAxis) throws OlapException {
 		Axis loc = getLocation(thinAxis.getLocation());

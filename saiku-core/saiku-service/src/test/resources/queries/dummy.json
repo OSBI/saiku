@@ -1,18 +1,6 @@
 {
   "queryModel" : {
     "axes" : {
-      "COLUMNS" : {
-        "mdx" : null,
-        "filters" : [ ],
-        "sortOrder" : null,
-        "sortEvaluationLiteral" : null,
-        "hierarchizeMode" : null,
-        "location" : "COLUMNS",
-        "hierarchies" : {
-        },
-        "nonEmpty" : false,
-        "name" : "COLUMNS"
-      },
       "FILTER" : {
         "mdx" : null,
         "filters" : [ ],
@@ -24,6 +12,18 @@
         },
         "nonEmpty" : false,
         "name" : "FILTER"
+      },
+      "COLUMNS" : {
+        "mdx" : null,
+        "filters" : [ ],
+        "sortOrder" : null,
+        "sortEvaluationLiteral" : null,
+        "hierarchizeMode" : null,
+        "location" : "COLUMNS",
+        "hierarchies" : {
+        },
+        "nonEmpty" : false,
+        "name" : "COLUMNS"
       },
       "ROWS" : {
         "mdx" : null,
@@ -58,5 +58,6 @@
     "cubeName" : "[Sales]"
   },
   "mdx" : null,
-  "name" : "dummy"
+  "name" : "dummy",
+  "type" : "QUERYMODEL"
 }

@@ -13,48 +13,11 @@
         "nonEmpty" : false,
         "name" : "FILTER"
       },
-      "ROWS" : {
-        "mdx" : null,
-        "filters" : [ ],
-        "sortOrder" : "DESC",
-        "sortEvaluationLiteral" : null,
-        "hierarchizeMode" : null,
-        "location" : "ROWS",
-        "hierarchies" : {
-          "Gender" : {
-            "mdx" : null,
-            "filters" : [ ],
-            "sortOrder" : null,
-            "sortEvaluationLiteral" : null,
-            "hierarchizeMode" : null,
-            "name" : "Gender",
-            "uniqueName" : "[Gender]",
-            "caption" : "Gender",
-            "levels" : {
-              "Gender" : {
-                "mdx" : null,
-                "filters" : [ ],
-                "name" : "Gender",
-                "uniqueName" : "[Gender].[Gender]",
-                "caption" : "Gender",
-                "inclusions" : [ {
-                  "name" : "F",
-                  "uniqueName" : "[Gender].[F]",
-                  "caption" : "F"
-                } ],
-                "exclusions" : [ ]
-              }
-            }
-          }
-        },
-        "nonEmpty" : false,
-        "name" : "ROWS"
-      },
       "COLUMNS" : {
         "mdx" : null,
         "filters" : [ ],
-        "sortOrder" : null,
-        "sortEvaluationLiteral" : null,
+        "sortOrder" : "BDESC",
+        "sortEvaluationLiteral" : "[Measures].[Double Profit]",
         "hierarchizeMode" : null,
         "location" : "COLUMNS",
         "hierarchies" : {
@@ -112,6 +75,43 @@
         },
         "nonEmpty" : false,
         "name" : "COLUMNS"
+      },
+      "ROWS" : {
+        "mdx" : null,
+        "filters" : [ ],
+        "sortOrder" : null,
+        "sortEvaluationLiteral" : null,
+        "hierarchizeMode" : null,
+        "location" : "ROWS",
+        "hierarchies" : {
+          "Gender" : {
+            "mdx" : null,
+            "filters" : [ ],
+            "sortOrder" : null,
+            "sortEvaluationLiteral" : null,
+            "hierarchizeMode" : null,
+            "name" : "Gender",
+            "uniqueName" : "[Gender]",
+            "caption" : "Gender",
+            "levels" : {
+              "Gender" : {
+                "mdx" : null,
+                "filters" : [ ],
+                "name" : "Gender",
+                "uniqueName" : "[Gender].[Gender]",
+                "caption" : "Gender",
+                "inclusions" : [ {
+                  "name" : "F",
+                  "uniqueName" : "[Gender].[F]",
+                  "caption" : "F"
+                } ],
+                "exclusions" : [ ]
+              }
+            }
+          }
+        },
+        "nonEmpty" : false,
+        "name" : "ROWS"
       }
     },
     "visualTotals" : false,
@@ -152,5 +152,6 @@
     "cubeName" : "[Sales]"
   },
   "mdx" : null,
-  "name" : "query1"
+  "name" : "query1",
+  "type" : "QUERYMODEL"
 }

@@ -1,14 +1,7 @@
 package org.saiku.olap.discover;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 
 import junit.framework.TestCase;
@@ -20,6 +13,8 @@ import org.apache.commons.vfs.VFS;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
 import org.olap4j.Axis;
+import org.olap4j.CellSet;
+import org.olap4j.CellSetAxis;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Measure;
 import org.saiku.TestSaikuContext;
@@ -31,8 +26,8 @@ import org.saiku.query.Query;
 import org.saiku.query.QueryAxis;
 import org.saiku.query.QueryHierarchy;
 import org.saiku.query.SortOrder;
-import org.saiku.query.mdx.NFilter;
 import org.saiku.query.mdx.IFilterFunction.MdxFunctionType;
+import org.saiku.query.mdx.NFilter;
 import org.saiku.query.metadata.CalculatedMeasure;
 import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.olap.OlapDiscoverService;
@@ -96,7 +91,6 @@ public class ThinQueryServiceTest extends TestCase {
 		QueryHierarchy gender = query.getHierarchy("Gender");
 		gender.includeMember("[Gender].[F]");
 		rows.addHierarchy(gender);
-		rows.sort(SortOrder.DESC);
 
 		CalculatedMeasure cm =
 				query.createCalculatedMeasure(
@@ -105,6 +99,8 @@ public class ThinQueryServiceTest extends TestCase {
 						null);
 
 
+		columns.sort(SortOrder.BDESC, cm.getUniqueName());
+		
 		query.getDetails().add(cm);
 		Measure m = cub.getMeasures().get(0);
 
@@ -122,6 +118,51 @@ public class ThinQueryServiceTest extends TestCase {
 		
 		compareQuery(name, second);
 		
+		String mdx = q2.getSelect().toString();
+		
+		String expectedMdx = 
+                "WITH\n"
+                + "SET [AxisCOLUMNS] AS\n"
+                + "    Order(CrossJoin(TopCount(Except({[Product].[Product Family].Members}, {[Product].[Non-Consumable]}), 2, Measures.[Unit Sales]), {[Education Level].[Education Level].Members}), [Measures].[Double Profit], BDESC)\n"
+                + "MEMBER [Measures].[Double Profit] AS\n"
+                + "    (([Measures].[Store Sales] - [Measures].[Store Cost]) * 2)\n"
+                + "SET [AxisROWS] AS\n"
+                + "    {[Gender].[F]}\n"
+                + "SELECT\n"
+                + "CrossJoin([AxisCOLUMNS], {[Measures].[Double Profit], [Measures].[Unit Sales]}) ON COLUMNS,\n"
+                + "[AxisROWS] ON ROWS\n"
+                + "FROM [Sales]";
+
+		assertEquals(expectedMdx, mdx);
+
+		CellSet cs = this.tqs.executeQuery(tq2);
+		assertEquals("[ COLUMNS: 20 ][ ROWS: 1 ]", getResultInfo(cs));
+		
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		Assert.fail();
+    	}
+
+    	
+    }
+    
+    public void testMdxQuery1() {
+    	
+    	try {
+    	SaikuCube c = TestSaikuContext.getSalesCube();
+    	String name = "mdx1";
+    	String mdx = "SELECT Gender.Members on COLUMNS, Measures.Profit on ROWS from Sales";
+    	ThinQuery tq = new ThinQuery(name, c, mdx);
+    	ObjectMapper om = new ObjectMapper();
+		String first = om.defaultPrettyPrintingWriter().writeValueAsString(tq);
+		
+		compareQuery(name, first);
+		
+				
+		CellSet cs = this.tqs.executeQuery(tq);
+		assertEquals("[ COLUMNS: 3 ][ ROWS: 1 ]", getResultInfo(cs));
+
+		
 //		File f = new File("/tmp/" + name + ".json");
 //		FileWriter fw = new FileWriter(f);
 //		fw.write(second);
@@ -134,6 +175,14 @@ public class ThinQueryServiceTest extends TestCase {
     	}
 
     	
+    }
+    
+    private String getResultInfo(CellSet cs ) {
+    	String ret = "";
+		for (CellSetAxis ca : cs.getAxes()) {
+			ret += "[ " +  ca.getAxisOrdinal().name() + ": " + ca.getPositionCount() + " ]";
+		}
+		return ret;
     }
     
     private void compareQuery(String name, String actual) throws FileNotFoundException, IOException {

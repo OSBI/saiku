@@ -14,9 +14,9 @@ public class ThinQueryModel {
 	private List<ThinCalculatedMeasure> calculatedMeasures = new ArrayList<ThinCalculatedMeasure>();
 	
 	public enum AxisLocation {
-		ROWS,
-		COLUMNS,
 		FILTER,
+		COLUMNS,
+		ROWS,
 		PAGES
 	}
 

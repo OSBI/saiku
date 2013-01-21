@@ -16,10 +16,15 @@
 package org.saiku.service.olap;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 
+import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
+import org.olap4j.OlapConnection;
+import org.olap4j.OlapException;
+import org.olap4j.OlapStatement;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Measure;
 import org.saiku.olap.dto.SaikuCube;
@@ -51,6 +56,22 @@ public class ThinQueryService implements Serializable {
 		olapDiscoverService = os;
 	}
 
+	
+	public CellSet executeQuery(ThinQuery query) throws Exception {
+		OlapConnection con = olapDiscoverService.getNativeConnection(query.getCube().getConnectionName());
+		Cube cub = olapDiscoverService.getNativeCube(query.getCube());
+		
+		if (StringUtils.isNotBlank(query.getMdx())) {
+			con.setCatalog(query.getCube().getCatalogName());
+			OlapStatement stmt = con.createStatement();
+			CellSet cs = stmt.executeOlapQuery(query.getMdx());
+			return cs;
+		} else {
+			Query q = Fat.convert(query, cub);
+			return q.execute();
+		}
+	}
+	
 	public ThinQuery createDummyQuery(SaikuCube cube) {
 		try {
 			Cube cub = olapDiscoverService.getNativeCube(cube);

@@ -1,5 +1,6 @@
 package org.saiku.olap.query2;
 
+import org.apache.commons.lang.StringUtils;
 import org.saiku.olap.dto.SaikuCube;
 
 public class ThinQuery {
@@ -9,11 +10,19 @@ public class ThinQuery {
 	private String mdx;
 	private String name;
 	
+	private enum Type {
+		MDX,
+		QUERYMODEL
+	}
+	
+	private Type type;
+	
 	public ThinQuery() {};
 	
 	public ThinQuery(String name, SaikuCube cube, ThinQueryModel queryModel) {
 		super();
 		this.queryModel = queryModel;
+		this.type = Type.QUERYMODEL;
 		this.cube = cube;
 		this.name = name;
 	}
@@ -21,6 +30,7 @@ public class ThinQuery {
 	public ThinQuery(String name, SaikuCube cube, String mdx) {
 		super();
 		this.mdx = mdx;
+		this.type = Type.MDX;
 		this.cube = cube;
 		this.name = name;
 	}
@@ -38,6 +48,9 @@ public class ThinQuery {
 	 */
 	public void setQueryModel(ThinQueryModel queryModel) {
 		this.queryModel = queryModel;
+		if (queryModel != null) {
+			this.type = Type.QUERYMODEL;
+		}
 	}
 
 	/**
@@ -66,6 +79,9 @@ public class ThinQuery {
 	 */
 	public void setMdx(String mdx) {
 		this.mdx = mdx;
+		if (StringUtils.isNotBlank(mdx)) {
+			this.type = Type.MDX;
+		}
 	}
 
 	/**
@@ -80,5 +96,19 @@ public class ThinQuery {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return the type
+	 */
+	public Type getType() {
+		return type;
+	}
+
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(Type type) {
+		this.type = type;
 	}
 }

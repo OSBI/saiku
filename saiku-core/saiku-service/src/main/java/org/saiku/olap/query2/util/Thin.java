@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
@@ -99,9 +101,9 @@ public class Thin {
 	}
 
 	private static Map<AxisLocation, ThinAxis> convertAxes(Map<Axis, QueryAxis> axes) {
-		Map<ThinQueryModel.AxisLocation, ThinAxis> thinAxes = new HashMap<ThinQueryModel.AxisLocation, ThinAxis>();
+		Map<ThinQueryModel.AxisLocation, ThinAxis> thinAxes = new TreeMap<ThinQueryModel.AxisLocation, ThinAxis>();
 		if (axes != null) {
-			for (Axis axis : axes.keySet()) {
+			for (Axis axis : sortAxes(axes.keySet())) {
 				if (axis != null) {
 					ThinAxis ta = convertAxis(axes.get(axis));
 					thinAxes.put(ta.getLocation(), ta);
@@ -111,6 +113,16 @@ public class Thin {
 		return thinAxes;
 	}
 
+	private static List<Axis> sortAxes(Set<Axis> axes) {
+		List<Axis> ax = new ArrayList<Axis>();
+		for (Axis a : Axis.Standard.values()) {
+			if (axes.contains(a)){
+				ax.add(a);
+			}
+		}
+		return ax;
+	}
+	
 	private static ThinAxis convertAxis(QueryAxis queryAxis) {
 		AxisLocation loc = getLocation(queryAxis);
 		ThinAxis ta = new ThinAxis(loc, convertHierarchies(queryAxis.getQueryHierarchies()), queryAxis.isNonEmpty());
