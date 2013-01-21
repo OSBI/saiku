@@ -22,6 +22,8 @@ public class ThinFilter {
 		Filter, TopCount, TopPercent, TopSum, BottomCount, BottomPercent, BottomSum;
 	}
 
+	public ThinFilter() {};
+	
 	public ThinFilter(
 			FilterFlavour flavour, 
 			FilterOperator operator,

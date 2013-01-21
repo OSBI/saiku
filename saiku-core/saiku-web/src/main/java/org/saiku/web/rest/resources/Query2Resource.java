@@ -15,15 +15,22 @@
  */
 package org.saiku.web.rest.resources;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.query2.ThinQuery;
 import org.saiku.service.olap.ThinQueryService;
+import org.saiku.web.rest.objects.resultset.QueryResult;
+import org.saiku.web.rest.util.RestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,13 +51,6 @@ public class Query2Resource {
 	}
 
 
-	@GET
-	@Produces({"application/json" })
-	public ThinQuery getDummy() {
-		SaikuCube cube = new SaikuCube("foodmart", "Sales", "Sales", "Sales", "FoodMart", "FoodMart");
-		return thinQueryService.createDummyQuery(cube);
-		
-	}
 	
 	@GET
 	@Produces({"application/json" })
@@ -61,12 +61,19 @@ public class Query2Resource {
 		
 	}
 	
-	@GET
-	@Produces({"text/plain" })
+	@POST
+	@Consumes({"application/json" })
 	@Path("/execute")
-	public String executeDummy() {
-		SaikuCube cube = new SaikuCube("foodmart", "Sales", "Sales", "Sales", "FoodMart", "FoodMart");
-		return thinQueryService.executeDummyQuery(cube);
+	public Response execute(ThinQuery tq) {
+		try {
+			QueryResult qr = RestUtil.convert(thinQueryService.execute(tq));
+			return Response.ok(qr).type(MediaType.APPLICATION_JSON).build();
+		}
+		catch (Exception e) {
+			log.error("Cannot execute query (" + tq + ")",e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return Response.serverError().entity(error).type(MediaType.TEXT_PLAIN).build();
+		}
 		
 	}
 	

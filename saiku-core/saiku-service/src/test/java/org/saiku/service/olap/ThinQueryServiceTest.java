@@ -1,4 +1,4 @@
-package org.saiku.olap.discover;
+package org.saiku.service.olap;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -30,8 +30,6 @@ import org.saiku.query.mdx.IFilterFunction.MdxFunctionType;
 import org.saiku.query.mdx.NFilter;
 import org.saiku.query.metadata.CalculatedMeasure;
 import org.saiku.service.datasource.DatasourceService;
-import org.saiku.service.olap.OlapDiscoverService;
-import org.saiku.service.olap.ThinQueryService;
 
 
 public class ThinQueryServiceTest extends TestCase {
@@ -135,7 +133,7 @@ public class ThinQueryServiceTest extends TestCase {
 
 		assertEquals(expectedMdx, mdx);
 
-		CellSet cs = this.tqs.executeQuery(tq2);
+		CellSet cs = this.tqs.executeInternalQuery(tq2);
 		assertEquals("[ COLUMNS: 20 ][ ROWS: 1 ]", getResultInfo(cs));
 		
     	} catch (Exception e) {
@@ -159,7 +157,7 @@ public class ThinQueryServiceTest extends TestCase {
 		compareQuery(name, first);
 		
 				
-		CellSet cs = this.tqs.executeQuery(tq);
+		CellSet cs = this.tqs.executeInternalQuery(tq);
 		assertEquals("[ COLUMNS: 3 ][ ROWS: 1 ]", getResultInfo(cs));
 
 		

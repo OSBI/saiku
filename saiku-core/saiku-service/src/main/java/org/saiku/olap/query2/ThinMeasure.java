@@ -15,6 +15,8 @@ public class ThinMeasure {
 		EXACT
 	}
 	
+	public ThinMeasure(){};
+	
 	public ThinMeasure(String name, String uniqueName, String caption, Type type) {
 		this.name = name;
 		this.uniqueName = uniqueName;
