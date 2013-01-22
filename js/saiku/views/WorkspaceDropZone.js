@@ -29,7 +29,8 @@ var WorkspaceDropZone = Backbone.View.extend({
         'click .d_dimension a': 'selections',
         'click .d_measure a' : 'remove_dimension',
         'click .d_measure span.sort' : 'sort_measure',
-        'click .d_dimension span.sort' : 'sort_measure'
+        'click .d_dimension span.sort' : 'sort_measure',
+        'click .limit' : 'limit_axis'
     },
     
     initialize: function(args) {
@@ -38,7 +39,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         
         // Maintain `this` in jQuery event handlers
         _.bindAll(this, "select_dimension", "move_dimension", 
-                "remove_dimension", "update_selections","sort_measure");
+                "remove_dimension", "update_selections","sort_measure", "limit_axis");
     },
     
     render: function() {
@@ -65,6 +66,129 @@ var WorkspaceDropZone = Backbone.View.extend({
         });
         
         return this; 
+    },
+    limit_axis2: function(event, ui) {
+        $axis = $(event.target).parent().parents('.fields_list_body');
+        var source = "";
+        var target = "ROWS";
+        if ($axis.hasClass('rows')) { target = "ROWS";  }
+        if ($axis.hasClass('columns')) { target = "COLUMNS";  }
+
+        if ($(event.target).hasClass('on')) {
+            var url = "/axis/" + target + "/limit";
+            this.workspace.query.action.del(url, {
+                success: this.workspace.query.run
+            });
+        } else {
+            var url = "/axis/" + target + "/limit/TopCount";
+            this.workspace.query.action.post(url, {
+                success: this.workspace.query.run, data : { "n" : 10}
+            });
+        }
+        $(event.target).toggleClass('on');
+    },
+
+    limit_axis: function(event) {
+        var self = this;
+        
+        if (this.workspace.query.get('type') != 'QM' || Settings.MODE == "view") {
+            return false;
+        }
+        $axis = $(event.target).siblings('.fields_list_body');
+        var source = "";
+        var target = "ROWS";
+        if ($axis.hasClass('rows')) { target = "ROWS";  }
+        if ($axis.hasClass('columns')) { target = "COLUMNS";  }
+
+        $target =  $(event.target);
+        $body = $(document);
+        $body.off('.contextMenu .contextMenuAutoHide');
+        $('.context-menu-list').remove();
+        $.contextMenu('destroy');
+        $.contextMenu({
+            appendTo: $target,
+            selector: '.limit', 
+            ignoreRightClick: true,
+             build: function($trigger, e) {
+                var query = self.workspace.query;
+                var schema = query.get('schema');
+                var cube = query.get('connection') + "/" + 
+                    query.get('catalog') + "/"
+                    + ((schema == "" || schema == null) ? "null" : schema) 
+                    + "/" + query.get('cube');
+
+                var items = {};
+                var measures = Saiku.session.sessionworkspace.measures[cube].get('data');
+
+                _.each(measures, function(measure) {
+                    items[measure.uniqueName] = {
+                        name: measure.caption,
+                        payload: {
+                            "n"     : 10,
+                            "sortliteral"    : measure.uniqueName
+                        }
+                    };
+                });
+
+
+                var addFun = function(items, fun) {
+                    var ret = {};
+                    for (key in items) {
+                        ret[ (fun + '###SEPARATOR###'+ key) ] = items[key]
+                        ret[ (fun + '###SEPARATOR###' + key) ].fun = fun;
+                    }
+                    return ret;
+                }
+
+                var citems = {
+                        "name" : {name: "<b>Quick</b>", disabled: true },
+                        "sep1": "---------",
+                        "TopCount###SEPARATOR###10": {name: "Top 10" },
+                        "BottomCount###SEPARATOR###10": {name: "Bottom 10" }
+                };
+                citems["fold1key"] = {
+                        name: "Top 10 by...",
+                        items: addFun(items, "TopCount")
+                };
+                citems["fold2key"] = {
+                        name: "Bottom 10 by...",
+                        items: addFun(items, "BottomCount")
+                };
+
+                citems["sep2"] =  "---------";
+                citems["clear"] = {
+                        name: "Remove Limit"
+                };
+                items["10"] = {
+                   payload: { "n" : 10}
+                }
+
+                return {
+                    callback: function(key, options) {
+                            if (key == "clear") {
+                                $target.removeClass('on');
+                                var url = "/axis/" + target + "/limit";
+                                self.workspace.query.action.del(url, {
+                                    success: self.workspace.query.run
+                                });
+                            } else {
+                                $target.addClass('on');
+                                var fun = key.split('###SEPARATOR###')[0];
+                                var ikey = key.split('###SEPARATOR###')[1];
+                                var url = "/axis/" + target + "/limit/" + fun;
+                                self.workspace.query.action.post(url, {
+                                    success: self.workspace.query.run, data : items[ikey].payload
+                                });
+                            }
+
+                    },
+                    items: citems
+                } 
+            }
+        });
+    $target.contextMenu();
+
+
     },
 
     sort_measure: function(event, ui) {
