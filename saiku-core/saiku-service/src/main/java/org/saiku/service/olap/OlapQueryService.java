@@ -19,6 +19,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
+import org.olap4j.query.LimitFunction;
 import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
@@ -713,6 +715,24 @@ public class OlapQueryService implements Serializable {
 		if (Axis.Standard.valueOf(axisName) != null) {
 			QueryAxis qAxis = query.getAxis(Axis.Standard.valueOf(axisName));
 			qAxis.clearSort();
+		}
+	}
+	
+	public void limitAxis(String queryName, String axisName, String limitFunction, String n, String sortLiteral) {
+		IQuery query = getIQuery(queryName);
+		if (Axis.Standard.valueOf(axisName) != null) {
+			QueryAxis qAxis = query.getAxis(Axis.Standard.valueOf(axisName));
+			LimitFunction lf = LimitFunction.valueOf(limitFunction);
+			BigDecimal bn = new BigDecimal(n);
+			qAxis.limit(lf, bn, sortLiteral);
+		}
+	}
+	
+	public void clearLimit(String queryName, String axisName) {
+		IQuery query = getIQuery(queryName);
+		if (Axis.Standard.valueOf(axisName) != null) {
+			QueryAxis qAxis = query.getAxis(Axis.Standard.valueOf(axisName));
+			qAxis.clearLimitFunction();
 		}
 	}
 

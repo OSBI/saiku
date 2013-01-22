@@ -200,13 +200,22 @@ public class ObjectUtil {
 		List<SaikuDimensionSelection> dims = ObjectUtil.convertDimensionSelections(axis.getDimensions());
 		Axis location = axis.getLocation();
 		String so = axis.getSortOrder() == null? null : axis.getSortOrder().name();
-		return new SaikuAxis(
+		SaikuAxis sax = new SaikuAxis(
 				location.name(),
 				location.axisOrdinal(),
 				axis.getName(),
 				dims,
 				so,
 				axis.getSortIdentifierNodeName());
+		
+		try {
+			if (axis.getLimitFunction() != null) {
+				sax.setLimitFunction(axis.getLimitFunction().toString());
+				sax.setLimitFunctionN(axis.getLimitFunctionN().toPlainString());
+				sax.setLimitFunctionSortLiteral(axis.getLimitFunctionSortLiteral());
+			}
+		} catch (Error e) {}
+		return sax;
 	}
 	
 	public static SaikuQuery convert(IQuery q) {

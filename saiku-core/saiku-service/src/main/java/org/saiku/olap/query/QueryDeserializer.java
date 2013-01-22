@@ -16,6 +16,7 @@
 package org.saiku.olap.query;
 
 import java.io.ByteArrayInputStream;
+import java.math.BigDecimal;
 import java.nio.charset.CharsetEncoder;
 import java.sql.SQLException;
 
@@ -33,6 +34,7 @@ import org.olap4j.metadata.Database;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Schema;
+import org.olap4j.query.LimitFunction;
 import org.olap4j.query.Query;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
@@ -237,6 +239,19 @@ public class QueryDeserializer {
                         qAxis.sort(SortOrder.valueOf(sortOrder));
                     }
                 }
+                
+                String limitFunction = axisElement.getAttributeValue("limitFunction");
+                String limitFunctionN = axisElement.getAttributeValue("limitFunctionN");
+                String limitFunctionSortLiteral = axisElement.getAttributeValue("limitFunctionSortLiteral");
+
+                try {
+                	if (StringUtils.isNotBlank(limitFunction)) {
+                        LimitFunction func = LimitFunction.valueOf(limitFunction);
+                        BigDecimal n = new BigDecimal(limitFunctionN);
+                        qAxis.limit(func, n, limitFunctionSortLiteral);
+                    }
+                } catch (Error e) {};
+                
 
                 Element dimensions = axisElement.getChild("Dimensions");
                 if (dimensions != null) {

@@ -1102,5 +1102,34 @@ public class QueryResource {
 		}
 		olapQueryService.clearSort(queryName, axisName);
 	}
+	
+	@POST
+	@Produces({"application/json" })
+	@Path("/{queryname}/axis/{axis}/limit/{limitfunction}")
+	public void limitAxis(
+			@PathParam("queryname") String queryName, 
+			@PathParam("axis") String axisName,
+			@PathParam("limitfunction") String limitfunction,
+			@FormParam("n") String n,
+			@FormParam("sortliteral") String sortLiteral)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/limit/" + limitfunction+ "(" + n  + ", sort:"+ sortLiteral +"\tPOST");
+		}
+		olapQueryService.limitAxis(queryName, axisName, limitfunction, n, sortLiteral);
+	}
+	
+	@DELETE
+	@Produces({"application/json" })
+	@Path("/{queryname}/axis/{axis}/limit")
+	public void clearLimitAxis(
+			@PathParam("queryname") String queryName, 
+			@PathParam("axis") String axisName)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/limit/\tDELETE");
+		}
+		olapQueryService.clearLimit(queryName, axisName);
+	}
 
 }
