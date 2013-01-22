@@ -86,6 +86,7 @@ var Chart = Backbone.View.extend({
 
         var $chart_li = $('<li class="seperator"></li>').append($chart_button);
         $(this.workspace.toolbar.el).find("ul").append($chart_li);
+
     },
     
     show: function(event, ui) {
@@ -95,6 +96,7 @@ var Chart = Backbone.View.extend({
         $(event.target).toggleClass('on');
         
         if ($(event.target).hasClass('on')) {
+            this.process_data({ data: this.workspace.query.result.lastresult() });
             this.render();
         }
     },
@@ -219,6 +221,9 @@ var Chart = Backbone.View.extend({
     },
     
     receive_data: function(args) {
+        if (! $(this.workspace.toolbar.el).find('.chart').hasClass('on')) {
+            return;
+        }
         return _.delay(this.process_data, 0, args);
     },
     
