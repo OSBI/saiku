@@ -229,63 +229,77 @@ var Chart = Backbone.View.extend({
         this.data.height = 0;
         this.data.width = 0;
 
-        function makeSureUniqueLabels(resultset) {
-            function appendUniqueCounter() {
-                for(var i = 0; i < resultset.length; ++i) {
-                    var record = resultset[i];
-                    record[0] = record[0] + ' [' + (i + 1) + ']';
-                }
-            }
-
-            var labelsSet = {};
-            for(var i = 0; i < resultset.length; ++i) {
-                var record = resultset[i];
-                var label = record[0];
-                if(labelsSet[label]) {
-                    appendUniqueCounter();
-                    return;
-                } else {
-                    labelsSet[label] = true;
-                }
-            }
-        }
-
         var cellset = args.data.cellset;
         if (cellset && cellset.length > 0) {
             
             var lowest_level = 0;
-        
-            for (var row = 0; row < cellset.length; row++) {
-                if (cellset[row][0].type == "ROW_HEADER_HEADER") {
+            var data_start = 0;
+            for (var row = 0; data_start == 0 && row < cellset.length; row++) {
                     this.data.metadata = [];
                     for (var field = 0; field < cellset[row].length; field++) {
-                        if (cellset[row][field].type == "ROW_HEADER_HEADER") {
-                            this.data.metadata.shift();
-                            lowest_level = field;
+                        var firstHeader = [];
+
+                        while (cellset[row][field].type == "COLUMN_HEADER" && cellset[row][field].value == "null") {
+                            row++;
                         }
-                        
-                        this.data.metadata.push({
-                            colIndex: field,
-                            colType: typeof(cellset[row + 1][field].value) !== "number" &&
-                                isNaN(cellset[row + 1][field].value
-                                .replace(/[^a-zA-Z 0-9.]+/g,'')) ? "String" : "Numeric",
-                            colName: cellset[row][field].value
-                        });
+                        if (cellset[row][field].type == "ROW_HEADER_HEADER") {
+
+                            while(cellset[row][field].type == "ROW_HEADER_HEADER") {
+                                firstHeader.push(cellset[row][field].value);
+                                field++;
+                            }
+
+                            this.data.metadata.push({
+                                colIndex: 0,
+                                colType: "String",
+                                colName: firstHeader.join('/')
+                            });    
+                            lowest_level = field - 1;
+                        }
+                        if (cellset[row][field].type == "COLUMN_HEADER" && cellset[row][field].value != "null") {
+                            var lowest_col_header = 0;
+                            var colheader = [];
+                            while(lowest_col_header <= row) {
+                                colheader.push(cellset[lowest_col_header][field].value);
+                                lowest_col_header++;
+                            }
+                            this.data.metadata.push({
+                                colIndex: field - lowest_level + 1,
+                                colType: "Numeric",
+                                colName: colheader.join('/')
+                            });
+
+                            data_start = row+1;
+                        }
                     }
-                } else if (cellset[row][0].value !== "") {
+            }
+            var labelsSet = {};
+            for (var row = data_start; row < cellset.length; row++) {
+            if (cellset[row][0].value !== "") {
                     var record = [];
-                    this.data.width = cellset[row].length;
-                    var label = [];
+                    this.data.width = cellset[row].length - lowest_level + 1;
+                    var label = "";
                     for (var labelCol = lowest_level; labelCol >= 0; labelCol--) {
                         var lastKnownUpperLevelRow = row;
                         while(cellset[lastKnownUpperLevelRow] && cellset[lastKnownUpperLevelRow][labelCol].value === 'null') {
                             --lastKnownUpperLevelRow;
                         }
                         if(cellset[lastKnownUpperLevelRow]) {
-                            label.push(cellset[lastKnownUpperLevelRow][labelCol].value);
+                            if (label == "") {
+                                label = cellset[lastKnownUpperLevelRow][labelCol].value;
+                            } else {
+                                label = cellset[lastKnownUpperLevelRow][labelCol].value + " / " + label;
+                            }
                         }
                     }
-                    record.push(label.join('/'));
+                    if(label in labelsSet) {
+                        labelsSet[label] = labelsSet[label]+1;
+                        label = label + ' [' + (labelsSet[label] + 1) + ']';
+                    } else {
+                        labelsSet[label] = 0;
+                    }
+                    record.push(label);
+
                     for (var col = lowest_level + 1; col < cellset[row].length; col++) {
                         var cell = cellset[row][col];
                         var value = cell.value || 0;
@@ -301,7 +315,7 @@ var Chart = Backbone.View.extend({
                     this.data.resultset.push(record);
                 }
             }
-            makeSureUniqueLabels(this.data.resultset);
+            //makeSureUniqueLabels(this.data.resultset);
             this.data.height = this.data.resultset.length;
             this.render();
         } else {

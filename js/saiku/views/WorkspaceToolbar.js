@@ -30,7 +30,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         // Maintain `this` in callbacks
         _.bindAll(this, "call", "reflect_properties", "run_query",
             "swap_axes_on_dropzones", "display_drillthrough","clicked_cell_drillthrough_export",
-            "clicked_cell_drillthrough","activate_buttons", "switch_to_mdx","post_mdx_transform");
+            "clicked_cell_drillthrough","activate_buttons", "switch_to_mdx","post_mdx_transform", "spark_bar", "spark_line", "render_row_viz");
         
         // Redraw the toolbar to reflect properties
         this.workspace.bind('properties:loaded', this.reflect_properties);
@@ -121,6 +121,8 @@ var WorkspaceToolbar = Backbone.View.extend({
                 $(this.el).find('.group_parents').addClass('on');
             }
         }
+
+        $(this.el).find(".spark_bar, .spark_line").removeClass('on');
         
 
     },
@@ -359,6 +361,67 @@ var WorkspaceToolbar = Backbone.View.extend({
         this.workspace.query.run(true, mdx);
     },
 
+    spark_bar: function(event) {
+        $(event.target).toggleClass('on');
+        $(this.el).find('.spark_line').removeClass('on');
+
+        $(this.workspace.table.el).find('td.spark').remove();
+        if ($(this.el).find('.spark_bar').hasClass('on')) {
+            _.delay(this.render_row_viz, 10, "spark_bar");
+        }
+    },
+
+    spark_line: function(event) {
+        $(event.target).toggleClass('on');
+        $(this.el).find('.spark_bar').removeClass('on');
+
+        $(this.workspace.table.el).find('td.spark').remove();
+        if ($(this.el).find('.spark_line').hasClass('on')) {
+            _.delay(this.render_row_viz, 10, "spark_line");
+        }
+    },
+
+    render_row_viz: function(type) {
+        $(this.workspace.table.el).find('tr').each(function(index, element) {
+            var rowData = [];
+            $(element).find('td.data div').each(function(i,data) {
+                var val = $(data).attr('alt');
+                val = typeof val != "undefined" && val != "" && val != null ? parseFloat(val) : 0;
+                rowData.push(val);
+            });
+            
+            $("<td class='data spark'>&nbsp;<div id='chart" + index + "'></div></td>").appendTo($(element));
+
+            var width = rowData.length * 9;
+
+                if (rowData.length > 0) {
+                    var vis = new pv.Panel()
+                        .canvas('chart' + index)
+                        .height(12)
+                        .width(width)
+                        .margin(0);
+
+                    if (type == "spark_bar") {
+                        vis.add(pv.Bar)
+                            .data(rowData)
+                            .left(pv.Scale.linear(0, rowData.length).range(0, width).by(pv.index))
+                            .height(pv.Scale.linear(0,_.max(rowData)).range(0, 12))
+                            .width(6)
+                            .bottom(0);        
+                    } else if (type == "spark_line") {
+                        width = width / 2;
+                        vis.width(width);
+                        vis.add(pv.Line)
+                            .data(rowData)
+                            .left(pv.Scale.linear(0, rowData.length - 1).range(0, width).by(pv.index))
+                            .bottom(pv.Scale.linear(rowData).range(0, 12))
+                            .strokeStyle("#000")
+                            .lineWidth(1);        
+                    }
+                    vis.render();
+                }
+        });
+    },
     explain_query: function(event) {
         var self = this;
         var explained = function(model, args) {

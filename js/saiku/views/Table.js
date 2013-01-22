@@ -30,7 +30,7 @@ var Table = Backbone.View.extend({
         this.workspace = args.workspace;
         
         // Bind table rendering to query result event
-        _.bindAll(this, "render", "process_data", "cancelled", "cancel", "render_row_viz");
+        _.bindAll(this, "render", "process_data", "cancelled", "cancel");
         this.workspace.bind('query:result', this.render);
     },
     
@@ -385,49 +385,6 @@ var Table = Backbone.View.extend({
             $(this.el).find('th.row, th.col').addClass('headerhighlight');
         }
         Saiku.events.trigger('table:rendered', this);
-        _.delay(this.render_row_viz, 10);
-        
-    },
-
-      render_row_viz: function() {
-        $(this.el).find('tr').each(function(index, element) {
-            var rowData = [];
-            $(element).find('td.data div').each(function(i,data) {
-                var val = $(data).attr('alt');
-                val = typeof val != "undefined" && val != "" && val != null ? parseFloat(val) : 0;
-                rowData.push(val);
-            });
-            
-            $("<td class='data'>&nbsp;<div id='chart" + index + "'></div></td>").appendTo($(element));
-
-            var width = rowData.length * 9;
-
-                if (rowData.length > 0) {
-                    var vis = new pv.Panel()
-                        .canvas('chart' + index)
-                        .height(15)
-                        .width(width)
-                        .margin(2);
-
-                    if (rowData.length < 30) {
-                        vis.add(pv.Bar)
-                            .data(rowData)
-                            .left(pv.Scale.linear(0, rowData.length).range(0, width).by(pv.index))
-                            .height(pv.Scale.linear(0,_.max(rowData)).range(5, 15))
-                            .width(6)
-                            .bottom(0);        
-                    } else {
-                        width = width / 2;
-                        vis.add(pv.Line)
-                            .data(rowData)
-                            .left(pv.Scale.linear(0, rowData.length - 1).range(0, width).by(pv.index))
-                            .bottom(pv.Scale.linear(rowData).range(0, 15))
-                            .strokeStyle("#000")
-                            .lineWidth(1);        
-                    }
-                    vis.render();
-                }
-        });
     },
 
     cancel: function(event) {
