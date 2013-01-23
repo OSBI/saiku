@@ -894,7 +894,24 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     height: 130px;
 }
 
+.dialog_filter .dialog_icon {
+    display: none;
+}
+.dialog_filter .dialog_body {
+    margin: 15px;
+    line-height: 30px;
+}
+.dialog_filter .dialog_body .n {
+    width: 40px;
+}
 
+.dialog_filter td.col1 {
+    width: 240px;
+}
+.dialog_filter textarea.sortliteral {
+    width: 200px;
+    height: 40px;
+}
 
 
 .dialog_drillthrough .dialog_icon {

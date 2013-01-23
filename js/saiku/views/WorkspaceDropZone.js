@@ -67,30 +67,12 @@ var WorkspaceDropZone = Backbone.View.extend({
         
         return this; 
     },
-    limit_axis2: function(event, ui) {
-        $axis = $(event.target).parent().parents('.fields_list_body');
-        var source = "";
-        var target = "ROWS";
-        if ($axis.hasClass('rows')) { target = "ROWS";  }
-        if ($axis.hasClass('columns')) { target = "COLUMNS";  }
-
-        if ($(event.target).hasClass('on')) {
-            var url = "/axis/" + target + "/limit";
-            this.workspace.query.action.del(url, {
-                success: this.workspace.query.run
-            });
-        } else {
-            var url = "/axis/" + target + "/limit/TopCount";
-            this.workspace.query.action.post(url, {
-                success: this.workspace.query.run, data : { "n" : 10}
-            });
-        }
-        $(event.target).toggleClass('on');
-    },
-
     limit_axis: function(event) {
         var self = this;
         
+        if (typeof this.workspace.query == "undefined") {
+            return false;
+        }
         if (this.workspace.query.get('type') != 'QM' || Settings.MODE == "view") {
             return false;
         }
@@ -99,6 +81,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         var target = "ROWS";
         if ($axis.hasClass('rows')) { target = "ROWS";  }
         if ($axis.hasClass('columns')) { target = "COLUMNS";  }
+        if ($axis.hasClass('filter')) { target = "FILTER";  }
 
 
         $target =  $(event.target).hasClass('limit') ? $(event.target) : $(event.target).parent();
@@ -157,6 +140,10 @@ var WorkspaceDropZone = Backbone.View.extend({
                 };
 
                 citems["sep2"] =  "---------";
+                citems["custom"] = {
+                        name: "Custom..."
+                };
+                citems["sep3"] =  "---------";
                 citems["clear"] = {
                         name: "Remove Limit"
                 };
@@ -172,6 +159,20 @@ var WorkspaceDropZone = Backbone.View.extend({
                                 self.workspace.query.action.del(url, {
                                     success: self.workspace.query.run
                                 });
+                            } else if (key == "custom") {
+
+                                var save_custom = function(fun, n, sortliteral) {
+                                    var url = "/axis/" + target + "/limit/" + fun;
+                                    self.workspace.query.action.post(url, {
+                                        success: self.workspace.query.run, data : { n: n, sortliteral: sortliteral }
+                                    });    
+                                };
+
+                                 (new CustomFilterModal({ 
+                                    axis: target,
+                                    measures: measures,
+                                    success: save_custom
+                                })).render().open();
                             } else {
                                 $target.addClass('on');
                                 var fun = key.split('###SEPARATOR###')[0];
