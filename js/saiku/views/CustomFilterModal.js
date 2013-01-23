@@ -58,7 +58,12 @@ var CustomFilterModal = Modal.extend({
         var self = this;
         this.axis = args.axis;
         this.measures = args.measures;
+        this.query = args.query;
         this.success = args.success;
+        this.func = args.func;
+        this.n = args.n;
+        this.sortliteral = args.sortliteral;
+        this.isMdx = true;
         _.bindAll(this, "build_measures_list", "save");
 
         this.measure_list = this.build_measures_list();
@@ -66,6 +71,20 @@ var CustomFilterModal = Modal.extend({
         _.extend(this.options, {
             title: "Custom Filter for " + this.axis
         });
+
+        this.bind( 'open', function( ) {
+            if (self.func != null) {
+                $(self.el).find('.function').val(self.func);
+                self.switch_function({ target : $(self.el).find('.function')});
+                $(self.el).find('.n').val(self.n);
+                if (self.isMdx == true && self.sortliteral != null) {
+                    $(this.el).find('.type').val('custom');
+                    $(this.el).find('.sortingoption').html('').html("<textarea class='sortliteral'>" + self.sortliteral + "</textarea>");    
+                }
+            }
+
+        });
+        
 
         
         // fix event listening in IE < 9
@@ -76,11 +95,17 @@ var CustomFilterModal = Modal.extend({
     },
 
     build_measures_list: function() {
+        var self = this;
         if (this.measure_list != null)
             return "";
         var tmpl = "<select class='sortliteral'>";
         _.each(this.measures, function(measure) {
-            tmpl += "<option value='" + measure.uniqueName + "'>" + measure.caption + "</option>";
+            var selected = "";
+            if (measure.uniqueName == self.sortliteral) {
+                selected = " selected ";
+                self.isMdx = false;
+            }
+            tmpl += "<option " + selected + "value='" + measure.uniqueName + "'>" + measure.caption + "</option>";
         });
         tmpl += "</select>";
         return tmpl;
