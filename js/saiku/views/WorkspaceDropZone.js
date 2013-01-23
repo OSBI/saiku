@@ -100,7 +100,8 @@ var WorkspaceDropZone = Backbone.View.extend({
         if ($axis.hasClass('rows')) { target = "ROWS";  }
         if ($axis.hasClass('columns')) { target = "COLUMNS";  }
 
-        $target =  $(event.target);
+
+        $target =  $(event.target).hasClass('limit') ? $(event.target) : $(event.target).parent();
         $body = $(document);
         $body.off('.contextMenu .contextMenuAutoHide');
         $('.context-menu-list').remove();

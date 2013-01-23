@@ -50,13 +50,14 @@ var WorkspaceToolbar = Backbone.View.extend({
         if (args != null && args.data && args.data.cellset && args.data.cellset.length > 0 ) {
             $(args.workspace.toolbar.el).find('.button')
                 .removeClass('disabled_toolbar');            
-            
+
             $(args.workspace.el).find("td.data").removeClass('cellhighlight').unbind('click');
             $(args.workspace.el).find(".table_mode").removeClass('on');
 
         } else {
             $(args.workspace.toolbar.el).find('.button')
                 .addClass('disabled_toolbar').removeClass('on');
+            $(args.workspace.el).find('.fields_list .disabled_toolbar').removeClass('disabled_toolbar');
             $(args.workspace.toolbar.el)
                 .find('.open, .run,.auto,.non_empty,.toggle_fields,.toggle_sidebar,.switch_to_mdx, .mdx')
                 .removeClass('disabled_toolbar');

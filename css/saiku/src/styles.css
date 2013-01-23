@@ -485,21 +485,22 @@ html, body {
     width: 62px;
 }
 .fields_list .limit {
-    background: #F9F9F9;
-    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#F0F0F0));
-    background: -moz-linear-gradient(top, #FFFFFF 0%, #F0F0F0 100%);
-    border-right: 1px solid #CCC;
-    float: left;
-    font-weight: bold;
-    padding: 2px 5px 3px 5px;
-    line-height: 23px;
-    text-shadow: 1px 1px 0 #FFFFFF;
-    width: 42px;
     cursor: pointer;
 }
+
+.limit span {
+background: url("../../../images/src/context_down.png") no-repeat;
+    height: 16px;
+    width: 14px;
+    float: right;
+    cursor: pointer;
+}
+
+
 .fields_list .limit:hover {
     border: 1px solid #CCC;
-    /**background-color: #A0A0A0 ;**/
+    background: none;
+    background-color: #A0A0A0 ;
     padding: 1px 4px 2px 4px;
 }
 .fields_list .on {
