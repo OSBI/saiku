@@ -26,6 +26,7 @@ public class SaikuAxis extends AbstractSaikuObject {
 	private String limitFunction;
 	private String limitFunctionN;
 	private String limitFunctionSortLiteral;
+	private String filterCondition;
 
 	public SaikuAxis() {		
 		super(null,null);
@@ -96,6 +97,20 @@ public class SaikuAxis extends AbstractSaikuObject {
 	 */
 	public void setLimitFunctionSortLiteral(String limitFunctionSortLiteral) {
 		this.limitFunctionSortLiteral = limitFunctionSortLiteral;
+	}
+
+	/**
+	 * @return the filterCondition
+	 */
+	public String getFilterCondition() {
+		return filterCondition;
+	}
+
+	/**
+	 * @param filterCondition the filterCondition to set
+	 */
+	public void setFilterCondition(String filterCondition) {
+		this.filterCondition = filterCondition;
 	}
 
 

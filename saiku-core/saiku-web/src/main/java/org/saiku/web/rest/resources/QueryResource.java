@@ -1132,4 +1132,31 @@ public class QueryResource {
 		olapQueryService.clearLimit(queryName, axisName);
 	}
 
+	@POST
+	@Produces({"application/json" })
+	@Path("/{queryname}/axis/{axis}/filter")
+	public void filterAxis(
+			@PathParam("queryname") String queryName, 
+			@PathParam("axis") String axisName,
+			@FormParam("filterCondition") String filterCondition)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/filter/ (" + filterCondition +" )\tPOST");
+		}
+		olapQueryService.filterAxis(queryName, axisName, filterCondition);
+	}
+	
+	@DELETE
+	@Produces({"application/json" })
+	@Path("/{queryname}/axis/{axis}/filter")
+	public void ckearFilter(
+			@PathParam("queryname") String queryName, 
+			@PathParam("axis") String axisName)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/filter/\tDELETE");
+		}
+		olapQueryService.clearFilter(queryName, axisName);
+	}
+
 }

@@ -243,13 +243,16 @@ public class QueryDeserializer {
                 String limitFunction = axisElement.getAttributeValue("limitFunction");
                 String limitFunctionN = axisElement.getAttributeValue("limitFunctionN");
                 String limitFunctionSortLiteral = axisElement.getAttributeValue("limitFunctionSortLiteral");
-
+                String filterCondition = axisElement.getAttributeValue("filterCondition");
                 try {
                 	if (StringUtils.isNotBlank(limitFunction)) {
                         LimitFunction func = LimitFunction.valueOf(limitFunction);
                         BigDecimal n = new BigDecimal(limitFunctionN);
                         qAxis.limit(func, n, limitFunctionSortLiteral);
                     }
+                	if (StringUtils.isNotBlank(filterCondition)) {
+                		qAxis.filter(filterCondition);
+                	}
                 } catch (Error e) {};
                 
 

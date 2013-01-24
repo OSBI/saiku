@@ -735,6 +735,23 @@ public class OlapQueryService implements Serializable {
 			qAxis.clearLimitFunction();
 		}
 	}
+	
+	public void filterAxis(String queryName, String axisName, String filterCondition) {
+		IQuery query = getIQuery(queryName);
+		if (Axis.Standard.valueOf(axisName) != null) {
+			QueryAxis qAxis = query.getAxis(Axis.Standard.valueOf(axisName));
+			qAxis.filter(filterCondition);
+		}
+	}
+	
+	public void clearFilter(String queryName, String axisName) {
+		IQuery query = getIQuery(queryName);
+		if (Axis.Standard.valueOf(axisName) != null) {
+			QueryAxis qAxis = query.getAxis(Axis.Standard.valueOf(axisName));
+			qAxis.clearFilter();
+		}
+	}
+
 
 	public void resetQuery(String queryName) {
 		IQuery query = getIQuery(queryName);

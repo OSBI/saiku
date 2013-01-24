@@ -195,6 +195,10 @@ public class QuerySerializer {
                 axisElement.setAttribute("limitFunctionSortLiteral", axis.getLimitFunctionSortLiteral());
             }
             
+            if (StringUtils.isNotBlank(axis.getFilterCondition())) {
+            	axisElement.setAttribute("filterCondition", axis.getFilterCondition());
+            }
+            
         } catch (Error e) {};
         
         Element dimensions = new Element("Dimensions");

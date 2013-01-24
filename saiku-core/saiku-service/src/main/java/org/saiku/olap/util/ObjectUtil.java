@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
 import org.olap4j.metadata.Dimension;
@@ -214,7 +215,12 @@ public class ObjectUtil {
 				sax.setLimitFunctionN(axis.getLimitFunctionN().toPlainString());
 				sax.setLimitFunctionSortLiteral(axis.getLimitFunctionSortLiteral());
 			}
+			if (StringUtils.isNotBlank(axis.getFilterCondition())) {
+				sax.setFilterCondition(axis.getFilterCondition());
+			}
 		} catch (Error e) {}
+		
+		
 		return sax;
 	}
 	
