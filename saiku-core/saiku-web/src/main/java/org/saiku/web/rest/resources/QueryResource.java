@@ -543,15 +543,21 @@ public class QueryResource {
 		}
 		finally {
 			if (rs != null) {
+				Statement statement = null;
+				Connection con = null;
 				try {
-					Statement statement = rs.getStatement();
-					Connection con = rs.getStatement().getConnection();
-					rs.close();
-					statement.close();
-					con.close();
-				} catch (SQLException e) {
+					 statement = rs.getStatement();
+					 con = rs.getStatement().getConnection();
+				} catch (Exception e) {
 					throw new SaikuServiceException(e);
 				} finally {
+					try {
+						rs.close();
+						if (statement != null) {
+							statement.close();
+						}
+					} catch (Exception ee) {};
+
 					rs = null;
 				}
 			}
