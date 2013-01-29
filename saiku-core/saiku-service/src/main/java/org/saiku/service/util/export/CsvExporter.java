@@ -19,10 +19,12 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.olap4j.CellSet;
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.dto.resultset.DataCell;
+import org.saiku.olap.dto.resultset.MemberCell;
 import org.saiku.olap.util.OlapResultSetUtil;
 import org.saiku.olap.util.formatter.CellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
@@ -120,28 +122,46 @@ public class CsvExporter {
 			AbstractBaseCell[][] rowData = table.getCellSetBody();
 			AbstractBaseCell[][] rowHeader = table.getCellSetHeaders();
 
-			String[][] result = new String[rowHeader.length + rowData.length][];
-			for (int x = 0; x<rowHeader.length;x++) {
+			
+			boolean offset = rowHeader.length > 0;
+			String[][] result = new String[(offset ? 1 : 0) + rowData.length][];
+			if (offset) {
 				List<String> cols = new ArrayList<String>();
-				for(int y = 0; y < rowHeader[x].length;y++) {
-					String value = rowHeader[x][y].getFormattedValue();
-					if(value == null || value == "null")  //$NON-NLS-1$
-						value=""; //$NON-NLS-1$
-					cols.add(enclosing + value + enclosing); 
+				for(int x = 0; x < rowHeader[0].length;x++) {
+					String col = null;
+					for (int y = rowHeader.length - 1; y >= 0; y--) {
+						String value = rowHeader[y][x].getFormattedValue();
+						if (value == null || "null".equals(value))  //$NON-NLS-1$
+							value=""; //$NON-NLS-1$
+						if (col == null && StringUtils.isNotBlank(value)) {
+							col = value; 
+						} else if (col != null && StringUtils.isNotBlank(value)) {
+							col =  value + "/" + col;
+						}
+					}
+					cols.add(enclosing + col + enclosing);					
 				}
-				result[x]= cols.toArray(new String[cols.size()]);
-
+				result[0]= cols.toArray(new String[cols.size()]);
 			}
+			String[] lastKnownHeader = null;
 			for (int x = 0; x<rowData.length ;x++) {
-				int xTarget = rowHeader.length + x;
+				int xTarget = (offset ? 1 : 0 ) + x;
+				if (lastKnownHeader == null) {
+					lastKnownHeader = new String[rowData[x].length];
+				}
 				List<String> cols = new ArrayList<String>();
 				for(int y = 0; y < rowData[x].length;y++) {
 					String value = rowData[x][y].getFormattedValue();
 					if (rowData[x][y] instanceof DataCell && ((DataCell) rowData[x][y]).getRawNumber() != null ) {
 						value = ((DataCell) rowData[x][y]).getRawNumber().toString();
 					}
+					if (rowData[x][y] instanceof MemberCell && StringUtils.isNotBlank(value) && !"null".equals(value)) {
+						lastKnownHeader[y] = value;
+					} else if (rowData[x][y] instanceof MemberCell && (StringUtils.isBlank(value) || "null".equals(value))) {
+						value = (StringUtils.isNotBlank(lastKnownHeader[y]) ? lastKnownHeader[y] : null);
+					}
 
-					if(value == null || value == "null")  {
+					if(value == null || "null".equals(value))  {
 						value="";
 					}
 					value = enclosing + value + enclosing;
