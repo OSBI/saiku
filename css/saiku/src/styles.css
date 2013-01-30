@@ -912,6 +912,10 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     width: 200px;
     height: 40px;
 }
+.dialog_filter textarea.filter_expression {
+    width: 300px;
+    height: 60px;
+}
 
 
 .dialog_drillthrough .dialog_icon {

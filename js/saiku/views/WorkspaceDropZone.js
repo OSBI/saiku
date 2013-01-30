@@ -39,7 +39,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         
         // Maintain `this` in jQuery event handlers
         _.bindAll(this, "select_dimension", "move_dimension", 
-                "remove_dimension", "update_selections","sort_measure", "limit_axis", "set_query_axis");
+                "remove_dimension", "update_selections","sort_measure", "limit_axis", "set_query_axis", "set_query_axis_filter");
     },
     
     render: function() {
@@ -104,15 +104,17 @@ var WorkspaceDropZone = Backbone.View.extend({
                 var items = {};
                 var measures = Saiku.session.sessionworkspace.measures[cube].get('data');
 
-                var func, n, sortliteral;
-                var isCustom = false;
+                var func, n, sortliteral, filterCondition;
                 var quick = "";
+                var isFilter = false;
                 var axes = self.workspace.query.get('axes');
                 _.each(axes, function(a) {
                     if (a.name == target) {
                         func = a.limitFunction;
                         n = a.limitFunctionN;
                         sortliteral = a.limitFunctionSortLiteral;
+                        filterCondition = a.filterCondition;
+                        isFilter = (a.filterCondition != null);
                     }
                 });
 
@@ -148,8 +150,12 @@ var WorkspaceDropZone = Backbone.View.extend({
                 }
 
                 var citems = {
-                        "name" : {name: "<b>Limit</b>", disabled: true },
+                        "namefilter" : {name: "<b>Filter</b>", disabled: true },
+                        "customfilter": {name: "Custom..." },
+                        "clearfilter": {name: "Clear Filter" },
+                        "empty" : {name: "&nbsp; ", disabled: true },
                         "sep1": "---------",
+                        "namelimit" : {name: "<b>Limit</b>", disabled: true },
                         "TopCount###SEPARATOR###10": {name: "Top 10" },
                         "BottomCount###SEPARATOR###10": {name: "Bottom 10" }
                 };
@@ -162,13 +168,13 @@ var WorkspaceDropZone = Backbone.View.extend({
                         items: addFun(items, "BottomCount")
                 };
 
-                citems["sep2"] =  "---------";
+
                 citems["custom"] = {
                         name: "Custom..."
                 };
-                citems["sep3"] =  "---------";
+
                 citems["clear"] = {
-                        name: "Remove Limit"
+                        name: "Clear Limit"
                 };
                 items["10"] = {
                    payload: { "n" : 10 }
@@ -177,10 +183,36 @@ var WorkspaceDropZone = Backbone.View.extend({
                 if (quick in citems) {
                     citems[quick].name = "<b>" + citems[quick].name + "</b>";
                 }
+                if (isFilter) {
+                    citems["customfilter"].name = "<b>" + citems["customfilter"].name + "</b>";
+                }
 
                 return {
                     callback: function(key, options) {
-                            if (key == "clear") {
+                            if (key == "clearfilter") {
+                                $target.removeClass('on');
+                                var url = "/axis/" + target + "/filter";
+                                self.set_query_axis_filter(target, null);
+                                self.workspace.query.action.del(url, {
+                                    success: self.workspace.query.run
+                                });
+                            } else if (key == "customfilter") {
+                                var save_custom = function(filterCondition) {
+                                    self.set_query_axis_filter(target, filterCondition);
+                                    var url = "/axis/" + target + "/filter/" ;
+                                    self.workspace.query.action.post(url, {
+                                        success: self.workspace.query.run, data : { filterCondition: filterCondition }
+                                    });    
+                                };
+
+                                 (new FilterModal({ 
+                                    axis: target,
+                                    success: save_custom, 
+                                    query: self.workspace.query,
+                                    filterCondition: filterCondition
+                                })).render().open();
+
+                            } else if (key == "clear") {
                                 $target.removeClass('on');
                                 var url = "/axis/" + target + "/limit";
                                 self.set_query_axis(target, null, null, "");
@@ -226,15 +258,13 @@ var WorkspaceDropZone = Backbone.View.extend({
 
     },
 
-    set_query_axis: function(target, func, n, sortliteral) {
+    set_query_axis_filter: function(target, filterCondition) {
         var self = this;
         var axes = this.workspace.query.get('axes');
         _.each(axes, function(axis) {
             if (axis.name == target) {
-                axis.limitFunction = func;
-                axis.limitFunctionN = n;
-                axis.limitFunctionSortLiteral = sortliteral;
-                if (func && func !=  null) {
+                axis.filterCondition = filterCondition;
+                if (axis.limitFunction !=  null || axis.filterCondition != null) {
                     $(self.el).find('.fields_list[title="' + target + '"] .limit').addClass('on');
                 } else {
                     $(self.el).find('.fields_list[title="' + target + '"] .limit').removeClass('on');
@@ -244,6 +274,26 @@ var WorkspaceDropZone = Backbone.View.extend({
         });
         return false;
     },
+
+        set_query_axis: function(target, func, n, sortliteral) {
+        var self = this;
+        var axes = this.workspace.query.get('axes');
+        _.each(axes, function(axis) {
+            if (axis.name == target) {
+                axis.limitFunction = func;
+                axis.limitFunctionN = n;
+                axis.limitFunctionSortLiteral = sortliteral;
+                if (axis.limitFunction !=  null || axis.filterCondition != null) {
+                    $(self.el).find('.fields_list[title="' + target + '"] .limit').addClass('on');
+                } else {
+                    $(self.el).find('.fields_list[title="' + target + '"] .limit').removeClass('on');
+                }
+                return false;
+            }
+        });
+        return false;
+    },
+
 
     sort_measure: function(event, ui) {
         $axis = $(event.target).parent().parents('.fields_list_body');
