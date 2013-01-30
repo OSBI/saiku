@@ -186,8 +186,8 @@ var Chart = Backbone.View.extend({
                     panelSizeRatio: 0.8,
                     yAxisPosition: "left",
                     yAxisSize: 150,
-                    minColor: "#FEDFE1",
-                    maxColor: "#F11929",
+                    minColor: "#FFFFFF",
+                    maxColor: "green",
                     extensionPoints: {
                         xAxisLabel_textAngle: -(Math.PI / 2),
                         xAxisLabel_textAlign: "right",
