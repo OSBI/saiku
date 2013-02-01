@@ -32,17 +32,21 @@ var FilterModal = Modal.extend({
         { text: "Cancel", method: "close" }
     ],
 
-    message: "<form id='custom_filter'>"
-                     + "<table border='0px'>"
-                     + "<tr><td class='col1'>Filter MDX Expression:</td></tr>"
-                     + "<tr><td class='col1'><textarea class='filter_expression'></textarea></td></tr>"
-                     + "</table></form>",
+    message: "",
 
+    expression_text: function() {
+        var c = "<form id='custom_filter'><table border='0px'>";
+        if (this.expressionType == "Order") {
+            c += "<tr><td class='col1'>Sort Type: <select id='fun'><option>ASC</option><option>BASC</option><option>DESC</option><option>BDESC</option> </select></td></tr>" 
+        }
+        c += "<tr><td class='col1'>" + this.expressionType + " MDX Expression:</td></tr>"
+             + "<tr><td class='col1'><textarea class='filter_expression'></textarea></td></tr>"
+             + "</table></form>";
+        return c;
+    },
 
-    
-    
-    
-    filterCondition: "",
+    expression: " ",
+    expressonType: "",
     
 
     initialize: function(args) {
@@ -50,15 +54,18 @@ var FilterModal = Modal.extend({
         this.axis = args.axis;
         this.query = args.query;
         this.success = args.success;
-        this.filterCondition = args.filterCondition;
-        _.bindAll(this, "save");
+        this.expression = args.expression;
+        this.expressionType = args.expressionType;
+        _.bindAll(this, "save", "expression_text");
 
         _.extend(this.options, {
-            title: "Custom Filter for " + this.axis
+            title: "Custom " + this.expressionType + " for " + this.axis
         });
 
+        this.message = this.expression_text(this.expressionType);
+
         this.bind( 'open', function( ) {
-                    $(this.el).find('textarea').val('').val(self.filterCondition);    
+                    $(this.el).find('textarea').val('').val(self.expression);    
         });
         
 
@@ -74,14 +81,14 @@ var FilterModal = Modal.extend({
     save: function( event ) {
         event.preventDefault( );
         var self = this;
-        this.filterCondition = $(this.el).find('textarea').val();
+        this.expression = $(this.el).find('textarea').val();
 
         var alert_msg = "";
-        if (typeof this.filterCondition == "undefined" || !this.filterCondition || this.filterCondition == "") {
-            alert_msg += "You have to enter a MDX expression for the filter function! ";
+        if (typeof this.expression == "undefined" || !this.expression || this.expression == "") {
+            alert_msg += "You have to enter a MDX expression for the " + this.expressionType + " function! ";
             alert(alert_msg);
         } else {
-            self.success(this.filterCondition);
+            self.success(this.expression);
             this.close();    
         }
         

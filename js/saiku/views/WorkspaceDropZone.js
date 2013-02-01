@@ -104,9 +104,10 @@ var WorkspaceDropZone = Backbone.View.extend({
                 var items = {};
                 var measures = Saiku.session.sessionworkspace.measures[cube].get('data');
 
-                var func, n, sortliteral, filterCondition;
+                var func, n, sortliteral, filterCondition, sortOrder, sortOrderLiteral;
                 var quick = "";
                 var isFilter = false;
+                var isSort = false;
                 var axes = self.workspace.query.get('axes');
                 _.each(axes, function(a) {
                     if (a.name == target) {
@@ -115,6 +116,9 @@ var WorkspaceDropZone = Backbone.View.extend({
                         sortliteral = a.limitFunctionSortLiteral;
                         filterCondition = a.filterCondition;
                         isFilter = (a.filterCondition != null);
+                        isSort = (a.sortOrder != null);
+                        sortOrder = a.sortOrder;
+                        sortOrderLiteral = a.sortLiteral;
                     }
                 });
 
@@ -140,7 +144,8 @@ var WorkspaceDropZone = Backbone.View.extend({
                     for (key in items) {
                         ret[ (fun + '###SEPARATOR###'+ key) ] = _.clone(items[key]);
                         ret[ (fun + '###SEPARATOR###' + key) ].fun = fun;
-                        if (fun == func && sortliteral == key && items[key].payload["n"] == n) {
+                        if ((fun == func && sortliteral == key && items[key].payload["n"] == n)
+                            || (fun == sortOrder && sortOrderLiteral == key)) {
                             ret[ (fun + '###SEPARATOR###' + key) ].name =
                                     "<b>" + items[key].name + "</b>";
                             quick = fun + "Quick";
@@ -153,29 +158,24 @@ var WorkspaceDropZone = Backbone.View.extend({
                         "namefilter" : {name: "<b>Filter</b>", disabled: true },
                         "customfilter": {name: "Custom..." },
                         "clearfilter": {name: "Clear Filter" },
-                        "empty" : {name: "&nbsp; ", disabled: true },
                         "sep1": "---------",
                         "namelimit" : {name: "<b>Limit</b>", disabled: true },
                         "TopCount###SEPARATOR###10": {name: "Top 10" },
-                        "BottomCount###SEPARATOR###10": {name: "Bottom 10" }
-                };
-                citems["TopCountQuick"] = {
-                        name: "Top 10 by...",
-                        items: addFun(items, "TopCount")
-                };
-                citems["BottomCountQuick"] = {
-                        name: "Bottom 10 by...",
-                        items: addFun(items, "BottomCount")
+                        "BottomCount###SEPARATOR###10": {name: "Bottom 10" },
+                        "TopCountQuick" : { name: "Top 10 by...", items: addFun(items, "TopCount") },
+                        "BottomCountQuick" : { name: "Bottom 10 by...", items: addFun(items, "BottomCount") },
+                        "custom" : {name: "Custom Limit..." },
+                        "clear" : {name: "Clear Limit"},
+                        "sep3": "---------",
+                        "sortname" : {name: "<b>Sort</b>", disabled: true },
+                        "ASCQuick": {name: "Ascending" , items: addFun(items, "ASC") },
+                        "DESCQuick": {name: "Descending", items: addFun(items, "DESC")},
+                        "BASCQuick": {name: "Ascending (Breaking Hierarchy)", items: addFun(items, "BASC")},
+                        "BDESCQuick": {name: "Descending (Breaking Hierarchy)", items: addFun(items, "BDESC") },
+                        "customsort" : { name: "Custom..." },
+                        "clearsort" : {name: "Clear Sort" }
                 };
 
-
-                citems["custom"] = {
-                        name: "Custom..."
-                };
-
-                citems["clear"] = {
-                        name: "Clear Limit"
-                };
                 items["10"] = {
                    payload: { "n" : 10 }
                 }
@@ -209,7 +209,8 @@ var WorkspaceDropZone = Backbone.View.extend({
                                     axis: target,
                                     success: save_custom, 
                                     query: self.workspace.query,
-                                    filterCondition: filterCondition
+                                    expression: filterCondition,
+                                    expressionType: "Filter"
                                 })).render().open();
 
                             } else if (key == "clear") {
@@ -237,6 +238,23 @@ var WorkspaceDropZone = Backbone.View.extend({
                                     func: func,
                                     n: n,
                                     sortliteral: sortliteral
+                                })).render().open();
+                            } else if (key == "customsort") {
+
+                                var save_custom = function(sortO) {
+                                    //self.set_query_axis_filter(target, filterCondition);
+                                    var url = "/axis/" + target + "/sort/" + sortO ;
+                                    self.workspace.query.action.post(url, {
+                                        success: self.workspace.query.run, data : { sortLiteral: "" }
+                                    });    
+                                };
+
+                                 (new FilterModal({ 
+                                    axis: target,
+                                    success: save_custom, 
+                                    query: self.workspace.query,
+                                    expression: sortOrderLiteral,
+                                    expressionType: "Order"
                                 })).render().open();
                             } else {
                                 var fun = key.split('###SEPARATOR###')[0];
