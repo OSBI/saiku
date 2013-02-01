@@ -19,6 +19,8 @@
  */
 var Query = Backbone.Model.extend({
 
+    formatter: Settings.CELLSET_FORMATTER,
+
     initialize: function(args, options) {
         // Save cube
         _.extend(this, options);

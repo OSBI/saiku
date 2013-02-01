@@ -179,7 +179,9 @@ var Table = Backbone.View.extend({
                 callback: function(key, options) {
                     self.workspace.query.action.put('/axis/' + axis + '/dimension/' + d, { 
                         success: function() {
+                            var formatter = self.workspace.query.get('formatter');
                             self.workspace.query.clear();
+                            self.workspace.query.set({ 'formatter' : formatter });
                             self.workspace.query.fetch({ success: function() {
                                 
                                 $(self.workspace.el).find('.fields_list_body ul').empty();
