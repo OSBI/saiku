@@ -88,7 +88,12 @@ var FilterModal = Modal.extend({
             alert_msg += "You have to enter a MDX expression for the " + this.expressionType + " function! ";
             alert(alert_msg);
         } else {
-            self.success(this.expression);
+            if (self.expressionType == "Order") {
+                var sortOrder = $('#fun').val();
+                self.success(sortOrder, this.expression);
+            } else {
+                self.success(this.expression);
+            }
             this.close();    
         }
         

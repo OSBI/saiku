@@ -15,10 +15,8 @@
 .context-menu-list {
     margin:0; 
     padding:0;
-    
-    min-width: 120px;
     max-width: 400px;
-    min-width: 150px !important;
+    min-width: 130px !important;
     display: inline-block;
     position: absolute;
     list-style-type: none;
