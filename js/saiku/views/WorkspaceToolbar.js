@@ -390,7 +390,7 @@ var WorkspaceToolbar = Backbone.View.extend({
             var rowData = [];
             $(element).find('td.data div').each(function(i,data) {
                 var val = $(data).attr('alt');
-                val = typeof val != "undefined" && val != "" && val != null ? parseFloat(val) : 0;
+                val = (typeof val != "undefined" && val != "" && val != null && val  != "undefined") ? parseFloat(val) : 0;
                 rowData.push(val);
             });
             
