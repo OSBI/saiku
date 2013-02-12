@@ -261,7 +261,10 @@ var Workspace = Backbone.View.extend({
                 var axis = axes[axis_iter];
                 var $axis = $(this.el).find('.' + 
                     axis.name.toLowerCase() + ' ul');
-                if ((axis.filterCondition != null) || (axis.limitFunction && axis.limitFunction != null && axis.limitFunction != "")) {
+                if ((axis.filterCondition != null) 
+                        || (axis.limitFunction && axis.limitFunction != null && axis.limitFunction != "")
+                        || (axis.sortOrder != null)) 
+                {
                     $axis.parent().siblings('.fields_list_header').addClass('on');
                 }
                 for (var dim_iter = 0; dim_iter < axis.dimensionSelections.length; dim_iter++) {
