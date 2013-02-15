@@ -48,6 +48,7 @@ var Workspace = Backbone.View.extend({
         // Generate table
         this.table = new Table({ workspace: this });
         
+        this.chart = new Chart({ workspace: this });
         // Pull query from args
         if (args && args.query) {
             this.query = args.query;
