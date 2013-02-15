@@ -967,6 +967,7 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     overflow: auto;
 }
 .mdx_input {
+    height: 150px;
     border: 1px solid #CCCCCC;
 }
 

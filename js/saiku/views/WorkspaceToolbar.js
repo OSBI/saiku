@@ -311,6 +311,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
 
     switch_to_mdx: function(event) {
+        var self = this;
         $(this.workspace.el).find('.workspace_fields').hide();
         $(this.el).find('.auto, ,.toggle_fields, .query_scenario, .buckets, .non_empty, .swap_axis, .mdx, .switch_to_mdx').parent().hide();
         
@@ -319,9 +320,28 @@ var WorkspaceToolbar = Backbone.View.extend({
         $(this.el).find('.run, .save, .open').removeClass('disabled_toolbar');
 
         if (Settings.MODE != "view" && Settings.MODE != "table") {
-            $(this.workspace.el).find('.mdx_input').width($(this.el).width()-20);
+            $(this.workspace.el).find('.mdx_input').width($(this.el).width()-50);
             $(this.workspace.el).find('.workspace_editor .mdx_input').removeClass('hide');
             this.editor = ace.edit("mdx_editor");
+            this.editor.setShowPrintMargin(false);
+            this.editor.commands.addCommand({
+                name: 'runmdx',
+                bindKey: {win: 'Ctrl-Enter',  mac: 'Command-Enter'},
+                exec: function(editor) {
+                    self.run_mdx();
+                },
+                readOnly: true // false if this command should not apply in readOnly mode
+            });
+            $(self.workspace.el).find('.mdx_input').on('mouseenter', function(e) {
+                $(self.workspace.el).find('.mdx_input').height(400);
+                self.editor.resize();
+
+            });
+            $(self.workspace.el).find('.mdx_input').on('mouseleave', function(e) {
+                $(self.workspace.el).find('.mdx_input').height(150);
+                self.editor.resize();
+
+            });
             //this.editor.setTheme("ace/theme/crimson_editor");
             this.editor.getSession().setMode("ace/mode/text");
             
@@ -367,6 +387,8 @@ var WorkspaceToolbar = Backbone.View.extend({
 
     run_mdx: function(event) {
         //var mdx = $(this.workspace.el).find(".mdx_input").val();
+         $(this.workspace.el).find(".mdx_input").height(150);
+        this.editor.resize();
         var mdx = this.editor.getValue();
         this.workspace.query.run(true, mdx);
     },
