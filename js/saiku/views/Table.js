@@ -72,14 +72,14 @@ var Table = Backbone.View.extend({
 
             var keep_payload = JSON.stringify(
                 {
-                    "hierarchy"     : "[" + h + "]",
+                    "hierarchy"     :  h,
                     "uniquename"    : l,
                     "type"          : "level",
                     "action"        : "delete"
                 }) 
             + "," +JSON.stringify(
                 {
-                    "hierarchy"     : "[" + h + "]",
+                    "hierarchy"     :  h,
                     "uniquename"    : cell.properties.uniquename,
                     "type"          : "member",
                     "action"        : "add"
@@ -108,12 +108,12 @@ var Table = Backbone.View.extend({
             _.each(dimensions, function(dimension) {
                 if (dimension.name == d) {
                     _.each(dimension.hierarchies, function(hierarchy) {
-                        if (hierarchy.name == h) {
+                        if (hierarchy.uniqueName == h) {
                             _.each(hierarchy.levels, function(level) {
                                 items[level.name] = {
                                     name: level.caption,
                                     payload: JSON.stringify({
-                                        "hierarchy"     : "[" + h + "]",
+                                        "hierarchy"     : h,
                                         uniquename    : level.uniqueName,
                                         type          : "level",
                                         action        : "add"
@@ -124,7 +124,7 @@ var Table = Backbone.View.extend({
                                     items["remove-" + level.name] = {
                                         name: level.caption,
                                         payload: JSON.stringify({
-                                            "hierarchy"     : "[" + h + "]",
+                                            "hierarchy"     :  h,
                                             uniquename    : level.uniqueName,
                                             type          : "level",
                                             action        : "delete"
