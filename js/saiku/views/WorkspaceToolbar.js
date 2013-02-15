@@ -319,8 +319,12 @@ var WorkspaceToolbar = Backbone.View.extend({
         $(this.el).find('.run, .save, .open').removeClass('disabled_toolbar');
 
         if (Settings.MODE != "view" && Settings.MODE != "table") {
-            $(this.workspace.el).find('.workspace_editor .mdx_input').removeClass('hide');
             $(this.workspace.el).find('.mdx_input').width($(this.el).width()-20);
+            $(this.workspace.el).find('.workspace_editor .mdx_input').removeClass('hide');
+            this.editor = ace.edit("mdx_editor");
+            //this.editor.setTheme("ace/theme/crimson_editor");
+            this.editor.getSession().setMode("ace/mode/text");
+            
         }
 
 
@@ -352,7 +356,8 @@ var WorkspaceToolbar = Backbone.View.extend({
 
         this.workspace.query.action.get("/mdx", { 
             success: function(model, response) {
-                $(self.workspace.el).find(".mdx_input").val(response.mdx);
+                //$(self.workspace.el).find(".mdx_input").val(response.mdx);
+                self.editor.setValue(response.mdx,0);
                 self.workspace.query.action.post("/qm2mdx", { success: transformed } );
 
             }
@@ -361,7 +366,8 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
 
     run_mdx: function(event) {
-        var mdx = $(this.workspace.el).find(".mdx_input").val();
+        //var mdx = $(this.workspace.el).find(".mdx_input").val();
+        var mdx = this.editor.getValue();
         this.workspace.query.run(true, mdx);
     },
 
