@@ -277,7 +277,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                                     self.set_query_axis_sort(target, sortO, sortL);
                                     var url = "/axis/" + target + "/sort/" + sortO + "/" + sortL;
                                     self.workspace.query.action.post(url, {
-                                        success: self.workspace.query.run, data : { sortLiteral: sortLiteral }
+                                        success: self.workspace.query.run
                                     });    
                                 };
 
