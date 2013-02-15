@@ -71,6 +71,98 @@
   <order>
   <hop> <from>Get data from XML 2</from><to>Stream lookup</to><enabled>Y</enabled> </hop>  <hop> <from>Stream lookup</from><to>Dummy (do nothing)</to><enabled>Y</enabled> </hop>  <hop> <from>Dummy (do nothing)</from><to>Json output</to><enabled>Y</enabled> </hop>  <hop> <from>Get data from XML</from><to>Filter rows</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows</from><to>User Defined Java Expression</to><enabled>Y</enabled> </hop>  <hop> <from>User Defined Java Expression</from><to>Stream lookup</to><enabled>Y</enabled> </hop>  <hop> <from>Get data from XML 3</from><to>Filter rows 2</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows 2</from><to>User Defined Java Expression 2</to><enabled>Y</enabled> </hop>  <hop> <from>User Defined Java Expression 2</from><to>Json output 2</to><enabled>Y</enabled> </hop>  </order>
   <step>
+    <name>Dummy (do nothing)</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>592</xloc>
+      <yloc>148</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Filter rows</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+<send_true_to/>
+<send_false_to/>
+    <compare>
+<condition>
+ <negated>N</negated>
+ <conditions>
+  <condition>
+   <negated>N</negated>
+   <leftvalue>Property</leftvalue>
+   <function>&lt;&gt;</function>
+   <rightvalue/>
+   <value><name>constant</name><type>String</type><text>dataSource</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value>   </condition>
+  <condition>
+   <negated>N</negated>
+   <operator>AND</operator>
+   <leftvalue>Name</leftvalue>
+   <function>STARTS WITH</function>
+   <rightvalue/>
+   <value><name>constant</name><type>String</type><text>CCC</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value>   </condition>
+  </conditions>
+ </condition>
+    </compare>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>181</xloc>
+      <yloc>138</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Filter rows 2</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+<send_true_to/>
+<send_false_to/>
+    <compare>
+<condition>
+ <negated>N</negated>
+ <conditions>
+  <condition>
+   <negated>N</negated>
+   <operator>AND</operator>
+   <leftvalue>Name</leftvalue>
+   <function>STARTS WITH</function>
+   <rightvalue/>
+   <value><name>constant</name><type>String</type><text>CCC</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value>   </condition>
+  </conditions>
+ </condition>
+    </compare>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>162</xloc>
+      <yloc>236</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
     <name>Get data from XML</name>
     <type>getXMLData</type>
     <description/>
@@ -94,12 +186,12 @@
     <rownum_field/>
     <encoding>UTF-8</encoding>
     <file>
-      <name>https:&#47;&#47;raw.github.com&#47;webdetails&#47;cde&#47;master&#47;server&#47;plugin&#47;resource&#47;resources&#47;base&#47;components&#47;charts&#47;CCC.xml</name>
+      <name/>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
       <include_subfolders>N</include_subfolders>
-      <name/>
+      <name>https:&#47;&#47;raw.github.com&#47;webdetails&#47;cde&#47;master&#47;server&#47;plugin&#47;resource&#47;resources&#47;base&#47;components&#47;charts&#47;CCC.xml</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
@@ -399,236 +491,6 @@
     </step>
 
   <step>
-    <name>Dummy (do nothing)</name>
-    <type>Dummy</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>592</xloc>
-      <yloc>148</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Stream lookup</name>
-    <type>StreamLookup</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <from>Get data from XML 2</from>
-    <input_sorted>N</input_sorted>
-    <preserve_memory>Y</preserve_memory>
-    <sorted_list>N</sorted_list>
-    <integer_pair>N</integer_pair>
-    <lookup>
-      <key>
-        <name>Property</name>
-        <field>Name</field>
-      </key>
-      <value>
-        <name>DefaultValue</name>
-        <rename>DefaultValue</rename>
-        <default/>
-        <type>String</type>
-      </value>
-      <value>
-        <name>Description</name>
-        <rename>Description</rename>
-        <default/>
-        <type>String</type>
-      </value>
-      <value>
-        <name>Tooltip</name>
-        <rename>Tooltip</rename>
-        <default/>
-        <type>String</type>
-      </value>
-      <value>
-        <name>InputType</name>
-        <rename>InputType</rename>
-        <default/>
-        <type>String</type>
-      </value>
-      <value>
-        <name>OutputType</name>
-        <rename>OutputType</rename>
-        <default/>
-        <type>String</type>
-      </value>
-      <value>
-        <name>Order</name>
-        <rename>Order</rename>
-        <default/>
-        <type>Integer</type>
-      </value>
-    </lookup>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>426</xloc>
-      <yloc>153</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Json output</name>
-    <type>JsonOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <outputValue>outputValue</outputValue>
-    <jsonBloc>ChartProperties</jsonBloc>
-    <nrRowsInBloc>0</nrRowsInBloc>
-    <operation_type>writetofile</operation_type>
-    <compatibility_mode>N</compatibility_mode>
-    <encoding>UTF-8</encoding>
-    <addtoresult>N</addtoresult>
-    <file>
-      <name>${Internal.Transformation.Filename.Directory}&#47;cccProperties</name>
-      <extention>js</extention>
-      <append>N</append>
-      <split>N</split>
-      <haspartno>N</haspartno>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <create_parent_folder>N</create_parent_folder>
-      <DoNotOpenNewFileInit>N</DoNotOpenNewFileInit>
-      <servlet_output>N</servlet_output>
-      </file>
-    <fields>
-      <field>
-        <name>Name</name>
-        <element>ChartName</element>
-    </field>
-      <field>
-        <name>IName</name>
-        <element>ChartObject</element>
-    </field>
-      <field>
-        <name>PropertyValue</name>
-        <element>Name</element>
-    </field>
-      <field>
-        <name>DefaultValue</name>
-        <element>DefaultValue</element>
-    </field>
-      <field>
-        <name>Description_1</name>
-        <element>Description</element>
-    </field>
-      <field>
-        <name>Tooltip</name>
-        <element>Tooltip</element>
-    </field>
-      <field>
-        <name>InputType</name>
-        <element>InputType</element>
-    </field>
-      <field>
-        <name>OutputType</name>
-        <element>OutputType</element>
-    </field>
-      <field>
-        <name>Order</name>
-        <element>Order</element>
-    </field>
-    </fields>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>716</xloc>
-      <yloc>143</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Filter rows</name>
-    <type>FilterRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-<send_true_to/>
-<send_false_to/>
-    <compare>
-<condition>
- <negated>N</negated>
- <conditions>
-  <condition>
-   <negated>N</negated>
-   <leftvalue>Property</leftvalue>
-   <function>&lt;&gt;</function>
-   <rightvalue/>
-   <value><name>constant</name><type>String</type><text>dataSource</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value>   </condition>
-  <condition>
-   <negated>N</negated>
-   <operator>AND</operator>
-   <leftvalue>Name</leftvalue>
-   <function>STARTS WITH</function>
-   <rightvalue/>
-   <value><name>constant</name><type>String</type><text>CCC</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value>   </condition>
-  </conditions>
- </condition>
-    </compare>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>181</xloc>
-      <yloc>138</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>User Defined Java Expression</name>
-    <type>Janino</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-       <formula><field_name>Name</field_name>
-<formula_string>Name.replaceAll(&quot;CCC &quot;,&quot;&quot;).replaceAll(&quot; Chart&quot;,&quot;&quot;)</formula_string>
-<value_type>String</value_type>
-<value_length>-1</value_length>
-<value_precision>-1</value_precision>
-<replace_field>Name</replace_field>
-</formula>
-       <formula><field_name>IName</field_name>
-<formula_string>IName.replaceAll(&quot;ccc&quot;,&quot;pvc.&quot;)</formula_string>
-<value_type>String</value_type>
-<value_length>-1</value_length>
-<value_precision>-1</value_precision>
-<replace_field>IName</replace_field>
-</formula>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>306</xloc>
-      <yloc>144</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
     <name>Get data from XML 3</name>
     <type>getXMLData</type>
     <description/>
@@ -718,8 +580,8 @@
     </step>
 
   <step>
-    <name>User Defined Java Expression 2</name>
-    <type>Janino</type>
+    <name>Json output</name>
+    <type>JsonOutput</type>
     <description/>
     <distribute>Y</distribute>
     <copies>1</copies>
@@ -727,58 +589,67 @@
            <method>none</method>
            <schema_name/>
            </partitioning>
-       <formula><field_name>Name</field_name>
-<formula_string>Name.replaceAll(&quot;CCC &quot;,&quot;&quot;).replaceAll(&quot; Chart&quot;,&quot;&quot;)</formula_string>
-<value_type>String</value_type>
-<value_length>-1</value_length>
-<value_precision>-1</value_precision>
-<replace_field>Name</replace_field>
-</formula>
-       <formula><field_name>IName</field_name>
-<formula_string>IName.replaceAll(&quot;ccc&quot;,&quot;pvc.&quot;)</formula_string>
-<value_type>String</value_type>
-<value_length>-1</value_length>
-<value_precision>-1</value_precision>
-<replace_field>IName</replace_field>
-</formula>
+    <outputValue>outputValue</outputValue>
+    <jsonBloc>ChartProperties</jsonBloc>
+    <nrRowsInBloc>0</nrRowsInBloc>
+    <operation_type>writetofile</operation_type>
+    <compatibility_mode>N</compatibility_mode>
+    <encoding>UTF-8</encoding>
+    <addtoresult>N</addtoresult>
+    <file>
+      <name>${Internal.Transformation.Filename.Directory}&#47;cccProperties</name>
+      <extention>js</extention>
+      <append>N</append>
+      <split>N</split>
+      <haspartno>N</haspartno>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <create_parent_folder>N</create_parent_folder>
+      <DoNotOpenNewFileInit>N</DoNotOpenNewFileInit>
+      <servlet_output>N</servlet_output>
+      </file>
+    <fields>
+      <field>
+        <name>Name</name>
+        <element>ChartName</element>
+    </field>
+      <field>
+        <name>IName</name>
+        <element>ChartObject</element>
+    </field>
+      <field>
+        <name>PropertyValue</name>
+        <element>Name</element>
+    </field>
+      <field>
+        <name>DefaultValue</name>
+        <element>DefaultValue</element>
+    </field>
+      <field>
+        <name>Description_1</name>
+        <element>Description</element>
+    </field>
+      <field>
+        <name>Tooltip</name>
+        <element>Tooltip</element>
+    </field>
+      <field>
+        <name>InputType</name>
+        <element>InputType</element>
+    </field>
+      <field>
+        <name>OutputType</name>
+        <element>OutputType</element>
+    </field>
+      <field>
+        <name>Order</name>
+        <element>Order</element>
+    </field>
+    </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>283</xloc>
-      <yloc>245</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Filter rows 2</name>
-    <type>FilterRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-<send_true_to/>
-<send_false_to/>
-    <compare>
-<condition>
- <negated>N</negated>
- <conditions>
-  <condition>
-   <negated>N</negated>
-   <operator>AND</operator>
-   <leftvalue>Name</leftvalue>
-   <function>STARTS WITH</function>
-   <rightvalue/>
-   <value><name>constant</name><type>String</type><text>CCC</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value>   </condition>
-  </conditions>
- </condition>
-    </compare>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>162</xloc>
-      <yloc>236</yloc>
+      <xloc>910</xloc>
+      <yloc>143</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -830,10 +701,139 @@
       </GUI>
     </step>
 
+  <step>
+    <name>Stream lookup</name>
+    <type>StreamLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <from>Get data from XML 2</from>
+    <input_sorted>N</input_sorted>
+    <preserve_memory>Y</preserve_memory>
+    <sorted_list>N</sorted_list>
+    <integer_pair>N</integer_pair>
+    <lookup>
+      <key>
+        <name>Property</name>
+        <field>Name</field>
+      </key>
+      <value>
+        <name>DefaultValue</name>
+        <rename>DefaultValue</rename>
+        <default/>
+        <type>String</type>
+      </value>
+      <value>
+        <name>Description</name>
+        <rename>Description</rename>
+        <default/>
+        <type>String</type>
+      </value>
+      <value>
+        <name>Tooltip</name>
+        <rename>Tooltip</rename>
+        <default/>
+        <type>String</type>
+      </value>
+      <value>
+        <name>InputType</name>
+        <rename>InputType</rename>
+        <default/>
+        <type>String</type>
+      </value>
+      <value>
+        <name>OutputType</name>
+        <rename>OutputType</rename>
+        <default/>
+        <type>String</type>
+      </value>
+      <value>
+        <name>Order</name>
+        <rename>Order</rename>
+        <default/>
+        <type>Integer</type>
+      </value>
+    </lookup>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>426</xloc>
+      <yloc>153</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>User Defined Java Expression</name>
+    <type>Janino</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <formula><field_name>Name</field_name>
+<formula_string>Name.replaceAll(&quot;CCC &quot;,&quot;&quot;).replaceAll(&quot; Chart&quot;,&quot;&quot;)</formula_string>
+<value_type>String</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field>Name</replace_field>
+</formula>
+       <formula><field_name>IName</field_name>
+<formula_string>IName.replaceAll(&quot;ccc&quot;,&quot;pvc.&quot;)</formula_string>
+<value_type>String</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field>IName</replace_field>
+</formula>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>306</xloc>
+      <yloc>144</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>User Defined Java Expression 2</name>
+    <type>Janino</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <formula><field_name>Name</field_name>
+<formula_string>Name.replaceAll(&quot;CCC &quot;,&quot;&quot;).replaceAll(&quot; Chart&quot;,&quot;&quot;)</formula_string>
+<value_type>String</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field>Name</replace_field>
+</formula>
+       <formula><field_name>IName</field_name>
+<formula_string>IName.replaceAll(&quot;ccc&quot;,&quot;pvc.&quot;)</formula_string>
+<value_type>String</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field>IName</replace_field>
+</formula>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>283</xloc>
+      <yloc>245</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
   <step_error_handling>
       <error>
         <source_step>Get data from XML 2</source_step>
-        <target_step>Dummy (do nothing) 2</target_step>
+        <target_step/>
         <is_enabled>Y</is_enabled>
         <nr_valuename/>
         <descriptions_valuename/>

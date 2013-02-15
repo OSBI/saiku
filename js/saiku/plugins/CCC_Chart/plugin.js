@@ -221,7 +221,7 @@ var Chart = Backbone.View.extend({
                 session.bind("workspace:clear", clear_workspace);
             };
 
-            if (typeof Saiku.session == "undefined") {
+            if (typeof Saiku.session == "undefined" || Saiku.session == null) {
                 Saiku.events.bind('session:new', initPlugin);
             } else {
                 initPlugin(Saiku.session);
