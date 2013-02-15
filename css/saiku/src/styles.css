@@ -966,6 +966,9 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 .workspace_area {
     overflow: auto;
 }
+.mdx_input {
+    border: 1px solid #CCCCCC;
+}
 
 /** Workspace Results */
 .workspace_results_info {
