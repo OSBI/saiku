@@ -467,7 +467,7 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
 					memberInfo.setFormattedValue(member.getCaption()); // First try to get a formatted value
 					memberInfo.setParentDimension(member.getDimension().getName());
 					memberInfo.setUniquename(member.getUniqueName());
-					memberInfo.setHierarchy(member.getHierarchy().getName());
+					memberInfo.setHierarchy(member.getHierarchy().getUniqueName());
 					memberInfo.setLevel(member.getLevel().getUniqueName());
 //					try {
 //						memberInfo.setChildMemberCount(member.getChildMemberCount());
@@ -536,14 +536,14 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
 							pInfo.setRawValue(parent.getCaption());
 							pInfo.setFormattedValue(parent.getCaption()); // First try to get a formatted value
 							pInfo.setParentDimension(parent.getDimension().getName());
-							pInfo.setHierarchy(parent.getHierarchy().getName());
+							pInfo.setHierarchy(parent.getHierarchy().getUniqueName());
 							pInfo.setUniquename(parent.getUniqueName());
 							pInfo.setLevel(parent.getLevel().getUniqueName());
 						} else {
 							pInfo.setRawValue("");
 							pInfo.setFormattedValue(""); // First try to get a formatted value
 							pInfo.setParentDimension(member.getDimension().getName());
-							pInfo.setHierarchy(member.getHierarchy().getName());
+							pInfo.setHierarchy(member.getHierarchy().getUniqueName());
 							pInfo.setLevel(member.getLevel().getUniqueName());
 							pInfo.setUniquename("");
 						}

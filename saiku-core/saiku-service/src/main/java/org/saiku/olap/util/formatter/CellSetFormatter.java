@@ -408,7 +408,7 @@ public class CellSetFormatter implements ICellSetFormatter {
 					memberInfo.setRawValue(member.getCaption());
 					memberInfo.setFormattedValue(member.getCaption()); // First try to get a formatted value
 					memberInfo.setParentDimension(member.getDimension().getName());
-					memberInfo.setHierarchy(member.getHierarchy().getName());
+					memberInfo.setHierarchy(member.getHierarchy().getUniqueName());
 					memberInfo.setLevel(member.getLevel().getUniqueName());
 					memberInfo.setUniquename(member.getUniqueName());
 //					try {
@@ -476,7 +476,7 @@ public class CellSetFormatter implements ICellSetFormatter {
 						pInfo.setRawValue(parent.getCaption());
 						pInfo.setFormattedValue(parent.getCaption()); // First try to get a formatted value
 						pInfo.setParentDimension(parent.getDimension().getName());
-						pInfo.setHierarchy(parent.getHierarchy().getName());
+						pInfo.setHierarchy(parent.getHierarchy().getUniqueName());
 						pInfo.setLevel(parent.getLevel().getUniqueName());
 						pInfo.setUniquename(parent.getUniqueName());
 						matrix.set(x_parent, y_parent, pInfo);
