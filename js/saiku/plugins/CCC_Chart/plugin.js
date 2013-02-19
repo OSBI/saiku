@@ -148,7 +148,7 @@ var Chart = Backbone.View.extend({
 						"pie" : {name: "Pie Chart" },
 						"heatgrid" : {name: "Heat Grid" },
 						"sep1" : "-------",
-						"chart_editor" : {name: "Chart Editor..." },
+						//"chart_editor" : {name: "Chart Editor..." },
 						"show_table" : {name: "Show Table"}
                 };
 
