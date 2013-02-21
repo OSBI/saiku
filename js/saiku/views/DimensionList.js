@@ -91,9 +91,16 @@ var DimensionList = Backbone.View.extend({
             return;
         }
         
-        $axis = $(this.workspace.el).find(".columns ul li").length > 0 ?
-            $(this.workspace.el).find(".rows ul") :
-            $(this.workspace.el).find(".columns ul");
+        var isAlreadyOnAxis = false;
+        var href = $(event.target).attr('href');
+        var hierarchy = href.substring(0,_.lastIndexOf(href, "/"));
+        if ($(this.workspace.el).find(".workspace_fields ul li a[href^='" + hierarchy + "']:first").length > 0) {
+            $axis = $(this.workspace.el).find(".workspace_fields ul li a[href^='" + hierarchy + "']").parent().parent();
+        } else {
+            $axis = $(this.workspace.el).find(".columns ul li").length > 0 ?
+                $(this.workspace.el).find(".rows ul") :
+                $(this.workspace.el).find(".columns ul");
+        }
         $target = $(event.target).parent().clone()
             .appendTo($axis);
         this.workspace.drop_zones.select_dimension({

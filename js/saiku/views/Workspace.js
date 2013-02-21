@@ -94,6 +94,11 @@ var Workspace = Backbone.View.extend({
             .droppable({
                 accept: '.d_measure, .d_dimension'
             });
+
+        $(this.el).find('.workspace_results')
+            .droppable({
+                accept: '.d_measure, .d_dimension'
+            });
         
         // Add results table
         $(this.el).find('.workspace_results')
