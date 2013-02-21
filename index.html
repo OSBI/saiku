@@ -474,9 +474,9 @@
         </script>
         <script type="text/x-jquery-tmpl" id="template-drillthrough-list">
         <div class="sidebar" style="border:1px solid #CCCCCC">
-            <h3 class="i18n">Dimensions</h3>
+            <h3 class="i18n"><input type="checkbox" class="all_dimensions"/>Dimensions</h3>
             <div class="sidebar_inner dimension_tree"></div>
-            <h3 class="i18n">Measures</h3>
+            <h3 class="i18n"><input type="checkbox" class="all_measures"/>Measures</h3>
             <div class="sidebar_inner measure_tree"></div>
         </div>
         
@@ -521,9 +521,11 @@
                 
                 <ul>
                 <% _.each(measures, function(measure) { %>
-                    <li> &nbsp;&nbsp;&nbsp;&nbsp;
-                            <input type="checkbox" class="check_level" value="<%= measure.uniqueName %>"> <%= measure.caption %></input>
-                            </li>
+                    <% if(typeof measure.calculated != "undefined" && measure.calculated == false) { %>
+                        <li> &nbsp;&nbsp;&nbsp;&nbsp;
+                                <input type="checkbox" class="check_level" value="<%= measure.uniqueName %>"> <%= measure.caption %></input>
+                                </li>
+                    <% } %>
                 <% }); %>
                 </ul>
             </li>
