@@ -165,7 +165,10 @@ var TabSet = Backbone.View.extend({
     className: 'tabs',
     queryCount: 0,
     
-    events: { 'click a.pager': 'togglePager' },
+    events: { 
+        'click a.pager': 'togglePager' ,
+        'click a.new' : 'new_tab'
+    },
     
     _tabs: [],
     
@@ -174,7 +177,7 @@ var TabSet = Backbone.View.extend({
      * @returns tab_container
      */
     render: function() {
-        $(this.el).html('<a href="#pager" class="pager sprite"></a><ul></ul>')
+        $(this.el).html('<a href="#pager" class="pager sprite"></a><ul><li class="newtab"><a class="new">+&nbsp;&nbsp;</a></li></ul>')
             .appendTo($('#header'));
         this.content = $('<div id="tab_panel">').appendTo($('body'));
         this.pager = new TabPager({ tabset: this });
@@ -194,7 +197,7 @@ var TabSet = Backbone.View.extend({
         
         // Render it in the background, then select it
         tab.render().select();
-        $(tab.el).appendTo($(this.el).find('ul'));
+        $(tab.el).insertBefore($(this.el).find('ul li.newtab'));
         
         // Trigger add event on session
         Saiku.session.trigger('tab:add', { tab: tab });
@@ -244,6 +247,13 @@ var TabSet = Backbone.View.extend({
     
     togglePager: function() {
         $(this.pager.el).toggle();
+        return false;
+    },
+
+    new_tab: function() {
+        this.add(new Workspace());
+        var next = this._tabs.length - 1;
+        this._tabs[next].select();
         return false;
     }
 });
