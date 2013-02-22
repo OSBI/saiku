@@ -521,7 +521,7 @@
                 
                 <ul>
                 <% _.each(measures, function(measure) { %>
-                    <% if(typeof measure.calculated != "undefined" && measure.calculated == false) { %>
+                    <% if(typeof measure.calculated == "undefined" || measure.calculated == false) { %>
                         <li> &nbsp;&nbsp;&nbsp;&nbsp;
                                 <input type="checkbox" class="check_level" value="<%= measure.uniqueName %>"> <%= measure.caption %></input>
                                 </li>
