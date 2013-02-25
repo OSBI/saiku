@@ -353,7 +353,7 @@ public class OlapMetaExplorer {
 			Cube nativeCube = getNativeCube(cube);
 			for (Measure measure : nativeCube.getMeasures()) {
 				if(measure.isVisible()) {
-					measures.add(ObjectUtil.convert(measure));
+					measures.add(ObjectUtil.convertMeasure(measure));
 				}
 			}
 			if (measures.size() == 0) {
