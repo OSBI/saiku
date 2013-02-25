@@ -40,6 +40,9 @@ var Workspace = Backbone.View.extend({
         // Generate toolbar and append to workspace
         this.toolbar = new WorkspaceToolbar({ workspace: this });
         this.toolbar.render();
+
+        this.querytoolbar = new QueryToolbar({ workspace: this });
+        this.querytoolbar.render();
         
         // Create drop zones
         this.drop_zones = new WorkspaceDropZone({ workspace: this });
@@ -88,6 +91,7 @@ var Workspace = Backbone.View.extend({
         // Show drop zones
         $(this.el).find('.workspace_editor').append($(this.drop_zones.el));
 
+        $(this.el).find('.query_toolbar').append($(this.querytoolbar.el));
         
         // Activate sidebar for removing elements
         $(this.el).find('.sidebar')

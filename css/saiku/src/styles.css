@@ -167,11 +167,12 @@ html, body {
 #logo a {
     background-position: -1275px 1px;
     float: right;
-    width: 166px;
-    height: 28px;
+    width: 83px;
+    height: 14px;
     margin: -2px 10px 0 0;
     text-indent: -9999px;
 }
+
 
 /** Tabs */
 
@@ -1227,6 +1228,68 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     background-image:   url('../../../js/saiku/plugins/Chart/chart.png');
     background-repeat:  no-repeat;
     background-position: 7px 7px;
+}
+
+/** query toolbar */
+.query_toolbar {
+    background: #FEFEFE;
+    border-bottom: 1px solid #CCC;
+    font-weight: bold;
+    height: 32px;
+    margin: 0 0 3px 0;
+    padding: 3px 10px 3px 5px;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
+.workspace_toolbar span.logo {
+    background-image: url('../../../images/src/saiku_32x32.png');
+    background-repeat:  no-repeat;
+    float: right;
+    width: 32px;
+    height: 32px;
+    margin: -2px 10px 0 0;
+    text-indent: -9999px;
+}
+
+.query_toolbar ul {
+    margin: 0;
+    padding: 0;
+}
+.query_toolbar ul li {
+    display: inline;
+    float: left;
+    padding-left: 5px;
+}
+.query_toolbar ul li.hide {
+    display: none;
+}
+.query_toolbar ul li.seperator {
+    border-left: 1px solid #D5D5D5;
+    margin-left: 5px;
+}
+.query_toolbar a {
+    display: block;
+    height: 16px;
+    padding: 8px;
+    text-decoration: none;
+    color: black;
+    font-weight: normal;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+.query_toolbar a.button:hover {
+    border: 1px solid #CCC;
+    padding: 7px;
+}
+.query_toolbar a.on {
+    border: 1px solid #CCC;
+    background-color: #E0E0E0;
+    padding: 7px !important;
+}
+.query_toolbar .chart {
+    background-image:   url('../../../js/saiku/plugins/Chart/chart.png');
+    background-repeat:  no-repeat;
+    background-position: 7px 7px;
+    width: 16px;
 }
 
 .form_button {

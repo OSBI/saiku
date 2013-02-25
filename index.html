@@ -32,7 +32,7 @@
 
     </head>
     <body>
-        <div id="header" class="hide"></div>
+        <div id="header" class="hide" style="display:none"></div>
         
         <div class="processing_container"></div>
         <div class="processing">
@@ -80,6 +80,7 @@
         <script type="text/javascript" src="js/saiku/views/AddFolderModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/FilterModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/CustomFilterModal.js"></script>
+        <script type="text/javascript" src="js/saiku/views/QueryToolbar.js"></script>
         <script type="text/javascript" src="js/saiku/views/WorkspaceToolbar.js"></script>
         <script type="text/javascript" src="js/saiku/views/WorkspaceDropZone.js"></script>
         <script type="text/javascript" src="js/saiku/views/Table.js"></script>
@@ -219,9 +220,11 @@
         <div class="workspace">
             <div class="workspace_inner">
                 <div class="workspace_toolbar"></div>
+                <div class="query_toolbar"></div>
                 <div class="workspace_editor">
                     <div id='mdx_editor' class="hide mdx_input" />
                 </div>
+
                 <div class="workspace_results_info" align="right" />
                 <div class="workspace_results">
                 </div>
@@ -340,6 +343,30 @@
             <li><a href="#chart" 
                 class="i18n chart button disabled_toolbar" 
                 title="Toggle Chart"></a></li>
+        </ul>
+        <span class="logo"><a href='http://www.analytical-labs.com/' title='Saiku - Next Generation Open Source Analytics' class='logo'>Saiku</a></span>
+        </script>
+
+        <script type="text/x-jquery-tmpl" id="template-query-toolbar">
+        <ul>
+            <li><a class="none disabled_toolbar">Mode:</a></li>
+
+            <li><a href="#table on button" 
+                class="i18n table button disabled_toolbar">Table</a></li>
+            <li><a href="#chart" 
+                class="i18n chart button disabled_toolbar" 
+                title="Toggle Chart"></a></li>
+
+            <li class="seperator"><a href="#spark_bar" 
+                class="i18n spark_bar button disabled_toolbar" 
+                title="Spark Bars">Spark Lines</a></li>
+            <li><a href="#spark_line" 
+                class="i18n spark_line button disabled_toolbar" 
+                title="Spark Lines">Spark Bars</a></li>
+            <li><a href="#spark_line" 
+                class="i18n spark_line button disabled_toolbar" 
+                title="Spark Lines">Show Totals</a></li>
+
         </ul>
         </script>
         

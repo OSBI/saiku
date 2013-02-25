@@ -37,8 +37,8 @@ var Toolbar = Backbone.View.extend({
     },
     
     render: function() {
-        $(this.el).attr('id', 'toolbar')
-            .html(this.template());
+        //$(this.el).attr('id', 'toolbar')
+        //    .html(this.template());
         
         // Trigger render event on toolbar so plugins can register buttons
         Saiku.events.trigger('toolbar:render', { toolbar: this });
