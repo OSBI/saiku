@@ -209,6 +209,15 @@ var Chart = Backbone.View.extend({
         this.options.stacked = false;
         this.options.type = "BarChart";
         this.options.multiChartIndexes = null;
+        /*
+        this.options.multiChartIndexes = [1];
+        this.options.dataMeasuresInColumns = true;
+        this.options.orientation = 'horizontal';
+        this.options.smallTitlePosition = 'top';
+        this.options.multiChartColumnsMax = 5;
+        this.options.smallWidth = 100;
+        this.options.smallHeight = 300;
+		*/
         this.render_quick();
     },
     
