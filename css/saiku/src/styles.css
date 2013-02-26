@@ -1294,6 +1294,12 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     background-position: 7px 7px;
     width: 16px;
 }
+.query_toolbar .table {
+    background-image: url('../../../images/src/table2.png');
+    background-repeat:  no-repeat;
+    background-position: 7px 7px;
+    width: 16px;
+}
 
 .form_button {
     background: #F0F0F0;
