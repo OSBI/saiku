@@ -30,7 +30,7 @@ var QueryToolbar = Backbone.View.extend({
         this.workspace = args.workspace;
         
         // Maintain `this` in callbacks
-        _.bindAll(this, "call","activate_buttons");
+        _.bindAll(this, "call","activate_buttons", "spark_bar", "spark_line", "render_row_viz");
                 
         // Activate buttons when a new query is created or run
         this.workspace.bind('query:new', this.activate_buttons);
