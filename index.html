@@ -349,7 +349,7 @@
 
         <script type="text/x-jquery-tmpl" id="template-query-toolbar">
         <ul>
-            <li><a class="none disabled_toolbar">Mode:</a></li>
+            <li><a class="label disabled_toolbar">Mode:</a></li>
 
             <li><a href="#table on button" 
                 class="i18n table button disabled_toolbar">Table</a></li>
@@ -357,7 +357,9 @@
                 class="i18n chart button disabled_toolbar" 
                 title="Toggle Chart"></a></li>
 
-            <li class="seperator"><a href="#spark_bar" 
+            <li class="seperator"><a class="i18n label disabled_toolbar">Options:</a></li>
+
+            <li><a href="#spark_bar" 
                 class="i18n spark_bar button disabled_toolbar" 
                 title="Spark Bars">Spark Lines</a></li>
             <li><a href="#spark_line" 
@@ -367,6 +369,9 @@
                 class="i18n spark_line button disabled_toolbar" 
                 title="Spark Lines">Show Totals</a></li>
 
+        </ul>
+        <ul style="float:right;">
+        <li><a class="label">template-selections</a></li>
         </ul>
         </script>
         

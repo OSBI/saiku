@@ -1276,6 +1276,9 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
 }
+.query_toolbar a.label {
+    font-weight: bold;
+}
 .query_toolbar a.button:hover {
     border: 1px solid #CCC;
     padding: 7px;

@@ -22,7 +22,7 @@ var QueryToolbar = Backbone.View.extend({
     
 
     events: {
-        'click a': 'call'
+        'click a.button': 'call'
     },
     
     initialize: function(args) {
