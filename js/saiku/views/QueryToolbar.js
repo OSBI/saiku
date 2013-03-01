@@ -52,9 +52,27 @@ var QueryToolbar = Backbone.View.extend({
     
     render: function() {
         $(this.el).html(this.template());
+
+        $(this.el).find('render_table').addClass('on');
+        $(this.el).find('ul.table').show();
+
         return this; 
     },
     
+    switch_render: function(event) {
+        $target = $(event.target);
+        $target.siblings().removeClass('on');
+        $target.addClass('on');
+        if ($target.hasClass('render_chart')) {
+            $(this.el).find('ul.chart').show();
+            $(this.el).find('ul.table').hide();
+        } else {
+            $(this.el).find('ul.chart').hide();
+            $(this.el).find('ul.table').show();
+        }
+        return false;
+    },
+
     call: function(event) {
         // Determine callback
         var callback = event.target.hash.replace('#', '');

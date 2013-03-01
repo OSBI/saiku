@@ -219,8 +219,8 @@
         <script type="text/x-jquery-tmpl" id="template-workspace">
         <div class="workspace">
             <div class="workspace_inner">
+                    <div class="query_toolbar"></div>
                 <div class="workspace_toolbar"></div>
-                <div class="query_toolbar"></div>
                 <div class="workspace_editor">
                     <div id='mdx_editor' class="hide mdx_input" />
                 </div>
@@ -230,7 +230,6 @@
                 </div>
             </div>
         </div>
-
         <div class="sidebar">
             <div>
                 <h3 class="top i18n">Cubes</h3>
@@ -344,23 +343,24 @@
                 class="i18n chart button disabled_toolbar" 
                 title="Toggle Chart"></a></li>
         </ul>
-        <span class="logo"><a href='http://www.analytical-labs.com/' title='Saiku - Next Generation Open Source Analytics' class='logo'>Saiku</a></span>
+
         </script>
 
         <script type="text/x-jquery-tmpl" id="template-query-toolbar">
+        <div class="query_toolbar_vertical">
         <ul>
             <li><a class="label disabled_toolbar">Mode:</a></li>
 
-            <li><a href="#table button" 
-                class="i18n table button disabled_toolbar on"></a></li>
-            <li><a href="#chart" 
-                class="i18n chart button disabled_toolbar" 
+            <li><a href="#switch_render" 
+                class="i18n render_table button disabled_toolbar on"></a></li>
+            <li><a href="#switch_render" 
+                class="i18n render_chart button disabled_toolbar" 
                 title="Toggle Chart"></a></li>
-
-            <li class="seperator"><a class="i18n label disabled_toolbar">Options:</a></li>
-
+        </ul>
+        <ul class='table hide'>
+            <li class="seperator_vertical"><a class="i18n label disabled_toolbar">Options:</a></li>
             <li><a href="#spark_bar" 
-                class="i18n spark_bar button disabled_toolbar" 
+                class="i18n spark_bar tablebutton button disabled_toolbar" 
                 title="Spark Bars">Spark Lines</a></li>
             <li><a href="#spark_line" 
                 class="i18n spark_line button disabled_toolbar" 
@@ -370,9 +370,29 @@
                 title="Spark Lines">Show Totals</a></li>
 
         </ul>
-        <ul style="float:right;">
-        <li><a class="label">template-selections</a></li>
+        <ul class='chart hide'>
+            <li class="seperator_vertical"><a class="i18n label disabled_toolbar">Options:</a></li>
+            <li><a href="#spark_line" 
+                class="i18n spark_line button disabled_toolbar" 
+                title="Spark Lines">Bar</a></li>
+            <li><a href="#spark_line" 
+                class="i18n spark_line button disabled_toolbar" 
+                title="Spark Lines">Stacked Bar</a></li>
+            <li><a href="#spark_bar" 
+                class="i18n spark_bar tablebutton button disabled_toolbar" 
+                title="Spark Bars">Heatgrid</a></li>
+            <li><a href="#spark_line" 
+                class="i18n spark_line button disabled_toolbar" 
+                title="Spark Lines">Line</a></li>
+            <li><a href="#spark_line" 
+                class="i18n spark_line button disabled_toolbar" 
+                title="Spark Lines">Pie</a></li>
+            <li><a href="#spark_line" 
+                class="i18n spark_line button disabled_toolbar" 
+                title="Spark Lines">Custom</a></li>
+
         </ul>
+        </div>
         </script>
         
         <script type="text/x-jquery-tmpl" id="template-open-dialog">

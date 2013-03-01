@@ -137,6 +137,8 @@ var Workspace = Backbone.View.extend({
         }
         $separator.height($("body").height() - heightReduction);
         $(this.el).find('.sidebar').height($("body").height() - heightReduction);
+
+        $(this.querytoolbar.el).find('div').height($("body").height() - heightReduction - 8);
         
         // Adjust the dimensions of the results window
         $(this.el).find('.workspace_results').css({
