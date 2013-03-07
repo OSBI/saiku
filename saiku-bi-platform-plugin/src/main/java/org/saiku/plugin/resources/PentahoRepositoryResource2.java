@@ -49,6 +49,7 @@ import org.saiku.web.rest.objects.acl.enumeration.AclMethod;
 import org.saiku.web.rest.objects.repository.IRepositoryObject;
 import org.saiku.web.rest.objects.repository.RepositoryFileObject;
 import org.saiku.web.rest.objects.repository.RepositoryFolderObject;
+import org.saiku.web.rest.resources.ISaikuRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -61,7 +62,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Path("/saiku/{username}/pentahorepository2")
 @XmlAccessorType(XmlAccessType.NONE)
-public class PentahoRepositoryResource2 {
+public class PentahoRepositoryResource2 implements ISaikuRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(PentahoRepositoryResource2.class);
 
@@ -187,7 +188,7 @@ public class PentahoRepositoryResource2 {
 	 */
 	@POST
 	@Path("/resource")
-	public Status saveResource (
+	public Response saveResource (
 			@FormParam("file") String file, 
 			@FormParam("content") String content)
 	{
@@ -230,12 +231,12 @@ public class PentahoRepositoryResource2 {
 			} else {
 				throw new Exception("Error ocurred while saving query to solution repository");
 			}
-			return(Status.OK);
+			return Response.ok().build();
 		}
 		catch(Exception e){
 			log.error("Cannot save file (" + file + ")",e);
 		}
-		return Status.INTERNAL_SERVER_ERROR;
+		return Response.serverError().build();
 	}
 
 	/**
@@ -246,11 +247,10 @@ public class PentahoRepositoryResource2 {
 	 */
 	@DELETE
 	@Path("/resource")
-	public Status deleteResource (
+	public Response deleteResource (
 			@QueryParam("file") String file)
 	{
-
-		return Status.INTERNAL_SERVER_ERROR;
+		return Response.serverError().build();
 	}
 
 	private List<IRepositoryObject> processTree(final Node tree, final String parentPath, String fileType)

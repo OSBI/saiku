@@ -65,7 +65,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Path("/saiku/{username}/repository2")
 @XmlAccessorType(XmlAccessType.NONE)
-public class BasicRepositoryResource2 {
+public class BasicRepositoryResource2 implements ISaikuRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(BasicRepositoryResource2.class);
 
@@ -107,9 +107,8 @@ public class BasicRepositoryResource2 {
 		this.sessionService = sessionService;
 	}
 	
-	/**
-	 * Get Saved Queries.
-	 * @return A list of SavedQuery Objects.
+	/* (non-Javadoc)
+	 * @see org.saiku.web.rest.resources.ISaikuRepository#getRepository(java.lang.String, java.lang.String)
 	 */
 	@GET
 	@Produces({"application/json" })
@@ -196,11 +195,8 @@ public class BasicRepositoryResource2 {
 	}
 
 
-	/**
-	 * Load a resource.
-	 * @param file - The name of the repository file to load.
-	 * @param path - The path of the given file to load.
-	 * @return A Repository File Object.
+	/* (non-Javadoc)
+	 * @see org.saiku.web.rest.resources.ISaikuRepository#getResource(java.lang.String)
 	 */
 	@GET
 	@Produces({"text/plain" })
@@ -240,12 +236,8 @@ public class BasicRepositoryResource2 {
 		return Response.serverError().build();
 	}
 	
-	/**
-	 * Save a resource.
-	 * @param file - The name of the repository file to load.
-	 * @param path - The path of the given file to load.
-	 * @param content - The content to save.
-	 * @return Status
+	/* (non-Javadoc)
+	 * @see org.saiku.web.rest.resources.ISaikuRepository#saveResource(java.lang.String, java.lang.String)
 	 */
 	@POST
 	@Path("/resource")
@@ -289,11 +281,8 @@ public class BasicRepositoryResource2 {
 		return Response.serverError().entity("Cannot save resource to ( file: " + file + ")").type("text/plain").build();
 	}
 	
-	/**
-	 * Delete a resource.
-	 * @param file - The name of the repository file to load.
-	 * @param path - The path of the given file to load.
-	 * @return Status
+	/* (non-Javadoc)
+	 * @see org.saiku.web.rest.resources.ISaikuRepository#deleteResource(java.lang.String)
 	 */
 	@DELETE
 	@Path("/resource")
