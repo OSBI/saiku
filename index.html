@@ -124,7 +124,9 @@
             <link type="text/css" href="js/saiku/plugins/CCC_Chart/tipsy.css" rel="stylesheet"/>
             <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/cccProperties.js"></script>
             <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/cccCharts.js"></script>
+            <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/ChartEditor.js"></script>
             <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/plugin.js"></script>
+
             <!-- <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/plugin.js" defer></script> -->
 
         <script type="text/javascript" src="js/ace/ace.js" charset="utf-8"></script>
@@ -219,7 +221,7 @@
         <script type="text/x-jquery-tmpl" id="template-workspace">
         <div class="workspace">
             <div class="workspace_inner">
-                    <div class="query_toolbar"></div>
+                <div class="query_toolbar"></div>
                 <div class="workspace_toolbar"></div>
                 <div class="workspace_editor">
                     <div id='mdx_editor' class="hide mdx_input" />
@@ -348,7 +350,7 @@
 
         <script type="text/x-jquery-tmpl" id="template-query-toolbar">
         <div class="query_toolbar_vertical">
-        <ul>
+        <ul class="renderer">
             <li><a class="label disabled_toolbar">Mode:</a></li>
 
             <li><a href="#switch_render" 
@@ -357,39 +359,39 @@
                 class="i18n render_chart button disabled_toolbar" 
                 title="Toggle Chart"></a></li>
         </ul>
-        <ul class='table hide'>
+        <ul class='options table hide'>
             <li class="seperator_vertical"><a class="i18n label disabled_toolbar">Options:</a></li>
             <li><a href="#spark_bar" 
                 class="i18n spark_bar tablebutton button disabled_toolbar" 
-                title="Spark Bars">Spark Lines</a></li>
+                title="Spark Bar">Spark Bar</a></li>
             <li><a href="#spark_line" 
                 class="i18n spark_line button disabled_toolbar" 
-                title="Spark Lines">Spark Bars</a></li>
-            <li><a href="#spark_line" 
-                class="i18n spark_line button disabled_toolbar" 
+                title="Spark Line">Spark Line</a></li>
+            <li><a href="#asdf" 
+                class="i18n button disabled_toolbar" 
                 title="Spark Lines">Show Totals</a></li>
 
         </ul>
-        <ul class='chart hide'>
+        <ul class='options chart hide'>
             <li class="seperator_vertical"><a class="i18n label disabled_toolbar">Options:</a></li>
-            <li><a href="#spark_line" 
-                class="i18n spark_line button disabled_toolbar" 
-                title="Spark Lines">Bar</a></li>
-            <li><a href="#spark_line" 
-                class="i18n spark_line button disabled_toolbar" 
-                title="Spark Lines">Stacked Bar</a></li>
-            <li><a href="#spark_bar" 
-                class="i18n spark_bar tablebutton button disabled_toolbar" 
-                title="Spark Bars">Heatgrid</a></li>
-            <li><a href="#spark_line" 
-                class="i18n spark_line button disabled_toolbar" 
-                title="Spark Lines">Line</a></li>
-            <li><a href="#spark_line" 
-                class="i18n spark_line button disabled_toolbar" 
-                title="Spark Lines">Pie</a></li>
-            <li><a href="#spark_line" 
-                class="i18n spark_line button disabled_toolbar" 
-                title="Spark Lines">Custom</a></li>
+            <li><a href="#bar" 
+                class="i18n bar button on disabled_toolbar" 
+                title="Bar">Bar</a></li>
+            <li><a href="#stackedBar" 
+                class="i18n stackedBar button disabled_toolbar" 
+                title="Stacked Bar">Stacked Bar</a></li>
+            <li><a href="#heatgrid" 
+                class="i18n heatgrid tablebutton button disabled_toolbar" 
+                title="Heat Grid">Heat Grid</a></li>
+            <li><a href="#line" 
+                class="i18n line button disabled_toolbar" 
+                title="Line">Line</a></li>
+            <li><a href="#pie" 
+                class="i18n pie button disabled_toolbar" 
+                title="Pie">Pie</a></li>
+            <li><a href="#chart_editor" 
+                class="i18n custom_chart button disabled_toolbar" 
+                title="Custom">Custom</a></li>
 
         </ul>
         </div>

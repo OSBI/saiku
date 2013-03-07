@@ -19,7 +19,9 @@
  */
 var Chart = Backbone.View.extend({
 
-	options: {},
+	options: {
+        type: "BarChart"
+    },
 
     getChartProperties: function(chartName) { 
         var self = this; 
@@ -44,18 +46,16 @@ var Chart = Backbone.View.extend({
         this.data = null;
         
         // Bind table rendering to query result event
-        _.bindAll(this, "receive_data", "process_data", "show",  "getData", "render_view", "render_quick", "show_table");
+        _.bindAll(this, "receive_data", "process_data", "show",  "getData", "render_view", "render_quick");
         this.workspace.bind('query:result', this.receive_data);
         Saiku.session.bind('workspace:new', this.render_view);
         
-        // Add chart button
-        this.workspace.toolbar.chart = this.show;
         
         // Listen to adjust event and rerender chart
         this.workspace.bind('workspace:adjust', this.render);
         
         // Create navigation
-        var exportoptions = "<div><a id='inline' href='#chartpopup' class='hide charteditor i18n' />Export to: " +
+        var exportoptions = "<div><a href='#charteditor' id='acharteditor' class='editor i18n'>Advanced Properties</a>Export to: " +
                 "<a class='export' href='#png' class='i18n'>PNG</a>, " +
                 "<a class='export' href='#pdf' class='i18n'>PDF</a>, " +
                 "<a class='export' href='#tiff' class='i18n'>TIFF</a>, " +
@@ -81,6 +81,7 @@ var Chart = Backbone.View.extend({
                 });
 
         this.nav.find('a.export').click(this.exportChart);
+        
 
         this.nav.find('a').css({ 
                     color: '#666', 
@@ -89,7 +90,7 @@ var Chart = Backbone.View.extend({
                     'border': '1px solid #ccc', 
                     padding: '5px' 
                 });
-        $(this.el).append('<div style="display:none"><div id="chartpopup"></div></div>');
+        $(this.nav).append('<div style="display:none;"> <div id="charteditor" class="chart_editor"></div></div>');
         
         this.editor = new ChartEditor({  workspace : this.workspace, 
                                         ChartProperties : ChartProperties, 
@@ -97,7 +98,7 @@ var Chart = Backbone.View.extend({
                                         data : this.getData, 
                                         getChartProperties : this.getChartProperties});
 
-        $(this.el).find('#chartpopup').append($(this.editor.el));
+        $(this.nav).find('.chart_editor').append($(this.editor.el));
 
     },
 
@@ -125,77 +126,27 @@ var Chart = Backbone.View.extend({
 
     },
 
-    show: function(event, ui) {    	
-    	var self = this;
-        $target =  $(event.target);
-        $body = $(document);
-        if (!$(event.target).hasClass('on')) {
-            this.process_data({ data: this.workspace.query.result.lastresult() });
-        }
+    show: function(event, ui) {
+        $(this.el).show();
+        $(this.nav).show();
+        $('a#acharteditor').fancybox(
+                                   {
+                                   'autoDimensions'    : false,
+                                   'autoScale'         : false,
+                                   'height'            :  ($("body").height() - 100),
+                                   'width'             :  ($("body").width() - 100),
+                                   'transitionIn'      : 'none',
+                                   'transitionOut'     : 'none',
+                                   'type'              : 'inline'
+                                   }
+                               );
 
-        $body.off('.contextMenu .contextMenuAutoHide');
-        $('.context-menu-list').remove();
-        $.contextMenu('destroy');
-        $.contextMenu({
-            appendTo: $target,
-            selector: '.chart', 
-            ignoreRightClick: true,
-            build: function($trigger, e) {
-             	var citems = {
-                        "bar" : {name: "Bar Chart" },
-						"stackedBar" : {name: "Stacked Bar Chart" },
-						"line" : {name: "Line Chart" },
-						"pie" : {name: "Pie Chart" },
-						"heatgrid" : {name: "Heat Grid" },
-						"sep1" : "-------",
-						//"chart_editor" : {name: "Chart Editor..." },
-						"show_table" : {name: "Show Table"}
-                };
-
-            return {
-                    callback: function(key, options) {
-                    			$(self.workspace.toolbar.el).find('.chart').addClass('on');
-                    			$(self.workspace.el).find('.workspace_results table').hide();
-                    			$(self.nav).show();
-                    			$('a#inline').fancybox(
-						            {
-						            'autoDimensions'    : false,
-						            'autoScale'         : false,
-						            'height'            :  ($("body").height() - 100),
-						            'width'             :  ($("body").width() - 100),
-						            'transitionIn'      : 'none',
-						            'transitionOut'     : 'none',
-						            'type'              : 'inline'
-						            }
-						        );
-                                try {
-						            self[key]();
-						        } catch (e) { }
-						        return true;
-
-                    },
-                    items: citems
-                 }
-            }
-          }); 
-    	
-    	$target.contextMenu();
-
-
-    },
-
-    show_table: function() {
-    	$(this.workspace.toolbar.el).find('.chart').removeClass('on');
-    	$(this.workspace.el).find('.workspace_results table').show();
-        $(this.el).hide();
-        $(this.nav).hide();
-        return true;
+        this.process_data({ data: this.workspace.query.result.lastresult() });
     },
 
     chart_editor: function() {
-		$('a#inline').click();
+		$('a#acharteditor').click();
 		return true;
-
     },
 
     stackedBar: function() {
@@ -244,7 +195,7 @@ var Chart = Backbone.View.extend({
 
     
     render_quick: function() {
-        if (! $(this.workspace.toolbar.el).find('.chart').hasClass('on')) {
+        if (! $(this.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
             return;
         }
         
@@ -316,7 +267,7 @@ var Chart = Backbone.View.extend({
     },
             
     receive_data: function(args) {
-        if (! $(this.workspace.toolbar.el).find('.chart').hasClass('on')) {
+        if (! $(this.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
             return;
         }
         return _.delay(this.process_data, 0, args);
@@ -329,6 +280,9 @@ var Chart = Backbone.View.extend({
         this.data.metadata = [];
         this.data.height = 0;
         this.data.width = 0;
+
+        if (typeof args.data == "undefined")
+            return false;
 
         var cellset = args.data.cellset;
         if (cellset && cellset.length > 0) {
@@ -426,166 +380,3 @@ var Chart = Backbone.View.extend({
 });
 
 
-var ChartEditor = Backbone.View.extend({
-    events: {
-        'change .chartlist': 'change_chart',
-        'click  td' : 'click_property',
-        'click input.save_chart' : 'save_chart'
-    },
-
-    templateEditor :
-     '<div class="chartworkspace">' 
-    +'    <div class="sidebar">'
-    +'<span>'
-    +'        <div>'
-    +'            <h3 class="top i18n">Charts</h3>'
-    +'        </div>'
-    +'        <div class="sidebar_inner">'
-    +'            <%= chartList %>'
-    +'        </div>'
-    +'        <h3 class="i18n">Properties</h3>'
-    +'        <div class="sidebar_inner properties_table"></div>'
-    +'    </div>  '
-    +'    <div class="sidebar_separator"></div>'
-    +' </span></span>'
-    +' <input class="save_chart" type="submit" value="SAVE CHART" /> <br >'
-    +'        <div class="chartworkspace_inner">'
-    +'        </div></span>'
-    +'    </div>' ,
-    
-    chartDefinition: {},
-
-    initialize: function(args) {
-        // Don't lose this
-        _.bindAll(this, "change_chart", "render_chart_properties", "click_property", "save_property", "cancel_property", 
-                            "check_input", "get_chart_definition", "getData", "render_chart");
-        
-        // Bind parent element
-        this.workspace = args.workspace;
-        this.ChartProperties = args.ChartProperties;
-        this.ChartTypes = args.ChartTypes;
-        this.getData = args.data;
-        this.getChartProperties = args.getChartProperties;
-        this.chartDefinition = {};
-        var chartList = "<select class='chartlist'>";
-        _.each(this.ChartTypes, function(chart) {
-            chartList += "<option value='" + chart.ChartObject + "'>" + chart.ChartName + "</option>";
-        });
-        chartList += "</select>";
-
-        $(this.el).html(_.template(this.templateEditor)({chartList : chartList}));
-        $(this.el).find('.chartworkspace_inner').css({ 'margin-left': 400 });
-        $(this.el).find('.sidebar').css({ 'width': "400" });
-        this.chartId = _.uniqueId("chartobject_");
-        $(this.el).find('.chartworkspace_inner').html("<div id='"+ this.chartId + "'></div>")
-
-        this.change_chart();
-
-    },
-
-    getData: function() {},
-
-    change_chart: function() {
-        var chart = $(this.el).find('.chartlist').val();
-        this.render_chart_properties(chart);
-
-    },
-
-    render_chart_properties: function(chartName) {
-        var options = this.getChartProperties(chartName);
-        options = _.sortBy(options, function(property){ return property.Order; });
-
-        var table = "<table class='propertiesviewer' style='border: 1px solid grey'>";
-        _.each(options, function(property) {
-            table += "<tr>"
-            + "<td class='data property' title='" + property.Tooltip + "' href='#" + property.Name + "'>" + property.Description + "</td>"
-            + "<td class='data value' alt='" + property.DefaultValue + "'>" + property.DefaultValue + "</td></tr>";
-        });
-        table += "</table>";
-
-        $(this.el).find('.properties_table').html(table);
-        $(this.el).find('.properties_table td').css({ "border-bottom" : "1px solid grey"});
-    },
-
-    click_property: function(event) {
-        $target = $(event.target).hasClass('value') ?
-            $(event.target) : $(event.target).parent().find('.value');
-
-        var value = $target.text();
-        
-        
-        var $input = $("<input type='text' value='" + value + "' />").css({ "width" : $target.width() })
-            .keyup(this.check_input)
-            .blur(this.cancel_property);
-        $target.html('').append($input);
-        $input.focus();
-    },
-    
-    check_input: function(event) {
-        if (event.which == 13) {
-            this.save_property(event);
-        } else if (event.which == 27 || event.which == 9) {
-            this.cancel_property(event);
-        }
-         
-        return false;
-    },
-    
-    save_property: function(event) {
-        var $input = $(event.target).closest('input');
-        var value = $input.val();
-        $input.parent().text(value);
-        this.get_chart_definition();
-    },
-
-    get_chart_definition: function() {
-    this.chartDefinition = {};
-    var self = this;
-        $(this.el).find('.properties_table tr').each(function(index, element) {
-            var property = $(element).find('.property').attr('href').replace('#','');
-            var value = $(element).find('.value').text();
-            if (typeof value != "undefined" && value.length > 0) {
-                self.chartDefinition[property] = value;
-            }
-            
-        });
-    this.render_chart();
-    
-    },
-
-    render_chart: function() {
-
-        var chartName = $(this.el).find('.chartlist').val().replace('pvc.','');
-        
-        var options = this.chartDefinition;
-        options['canvas'] = this.chartId;
-        
-        this.chart = new pvc[chartName](options);
-        
-        this.chart.setData(this.getData(), {
-            crosstabMode: true,
-            seriesInRows: false
-        });
-        
-        try {
-            this.chart.render();
-            Saiku.i18n.automatic_i18n();
-        } catch (e) {
-            $(this.el).find('#' + this.chartId ).text("Could not render chart<br>" + e);
-        }
-    },
-
-    cancel_property: function(event) {
-        var $input = $(event.target).closest('input');
-        $input.parent().text($input.parent().attr('alt'));
-    },
-
-    save_chart: function(event) {
-    	//this.workspace.chart.chart = _.clone(this.chart);
-    	//this.workspace.chart.chart.options.canvas = this.workspace.chart.id;
-    	//this.workspace.chart.chart.render();
-    	return false;
-    }
-    
-
-});

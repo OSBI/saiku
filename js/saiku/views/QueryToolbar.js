@@ -22,19 +22,29 @@ var QueryToolbar = Backbone.View.extend({
     
 
     events: {
-        'click a.button': 'call'
+        'click .options a.button': 'call',
+        'click .renderer a.button' : 'switch_render'
     },
     
+    table: {
+        sparkType: null
+    },
+    chart: {},
+
+    render_mode: "table",
+
+
     initialize: function(args) {
         // Keep track of parent workspace
         this.workspace = args.workspace;
         
         // Maintain `this` in callbacks
-        _.bindAll(this, "call","activate_buttons", "spark_bar", "spark_line", "render_row_viz");
+        _.bindAll(this, "call","activate_buttons", "spark_bar", "spark_line", "render_row_viz", "run_row_viz");
                 
         // Activate buttons when a new query is created or run
         this.workspace.bind('query:new', this.activate_buttons);
         this.workspace.bind('query:result', this.activate_buttons);
+        Saiku.events.bind('table:rendered', this.run_row_viz);
         
     },
     
@@ -61,48 +71,77 @@ var QueryToolbar = Backbone.View.extend({
     
     switch_render: function(event) {
         $target = $(event.target);
-        $target.siblings().removeClass('on');
+        $target.parent().siblings().find('.on').removeClass('on');
         $target.addClass('on');
         if ($target.hasClass('render_chart')) {
             $(this.el).find('ul.chart').show();
             $(this.el).find('ul.table').hide();
+            this.render_mode = "chart";
+            $(this.workspace.el).find('.workspace_results table').hide();
+            this.workspace.chart.show(event);
         } else {
             $(this.el).find('ul.chart').hide();
             $(this.el).find('ul.table').show();
+
+            $(this.workspace.el).find('.workspace_results table').show();
+            $(this.workspace.chart.el).hide();
+            $(this.workspace.chart.nav).hide();
+            
+
+            this.render_mode = "table";
         }
         return false;
     },
 
     call: function(event) {
-        // Determine callback
-        var callback = event.target.hash.replace('#', '');
-        
-        // Attempt to call callback
-        if (! $(event.target).hasClass('disabled_toolbar') && this[callback]) {
-            this[callback](event);
+        if (! $(event.target).hasClass('disabled_toolbar')) {
+            // Determine callback
+            var callback = event.target.hash.replace('#', '');
+            
+            // Attempt to call callback
+            if (this.render_mode == "table" && this[callback]) {
+                this[callback](event);
+            } else if (this.render_mode == "chart" && this.workspace.chart[callback]) {
+                $target = $(event.target);
+                $target.parent().siblings().find('.on').removeClass('on');
+                $target.addClass('on');
+                this.workspace.chart[callback](event);
+            }
         }
-        
         return false;
     },
 
     spark_bar: function(event) {
         $(event.target).toggleClass('on');
-        $(this.el).find('.spark_line').removeClass('on');
+        $(this.el).find('ul.table .spark_line').removeClass('on');
 
         $(this.workspace.table.el).find('td.spark').remove();
-        if ($(this.el).find('.spark_bar').hasClass('on')) {
+        if ($(this.el).find('ul.table .spark_bar').hasClass('on')) {
+            this.table.sparkType = "spark_bar";
             _.delay(this.render_row_viz, 10, "spark_bar");
+        } else {
+            this.table.sparkType = null;
         }
     },
 
     spark_line: function(event) {
         $(event.target).toggleClass('on');
-        $(this.el).find('.spark_bar').removeClass('on');
+        $(this.el).find('ul.table .spark_bar').removeClass('on');
 
         $(this.workspace.table.el).find('td.spark').remove();
-        if ($(this.el).find('.spark_line').hasClass('on')) {
+        if ($(this.el).find('ul.table .spark_line').hasClass('on')) {
+            this.table.sparkType = "spark_line";
             _.delay(this.render_row_viz, 10, "spark_line");
+        } else {
+            this.table.sparkType = null;
         }
+    },
+
+    run_row_viz: function(args) {
+        if (this.render_mode == "table" && this.table.sparkType != null) {
+            this.render_row_viz(this.table.sparkType);
+        }
+
     },
 
     render_row_viz: function(type) {

@@ -1249,7 +1249,7 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     padding: 3px 10px 3px 5px;
     text-shadow: 1px 1px 0 #FFFFFF;
 }
-.query_toolbar_vertical ul li {
+.query_toolbar_vertical ul.options li {
     width: 100%;
 }
 
