@@ -42,7 +42,19 @@
 			<operation>
         		<id>NEWWINDOW</id>
         		<command>content/saiku-ui/index.html?solution={solution}&amp;path={path}&amp;action={name}&amp;dimension_prefetch=false&amp;mode=view&amp;biplugin=true#query/open/{name}</command>
-        	</operation>        		
+        	</operation>
+        	<operation>
+                <id>SCHEDULE_NEW</id>
+                <command>content/saiku?schedule=true&amp;solution={solution}&amp;path={path}&amp;action={name}&amp;</command>
+            </operation>
+            <operation>
+                <id>SCHEDULE_EDIT</id>
+                <command>content/saiku?schedule=true&amp;solution={solution}&amp;path={path}&amp;action={name}&amp;</command>
+			</operation>
+            <operation>
+                <id>BACKGROUND</id>
+                <command>content/saiku?schedule=true&amp;solution={solution}&amp;path={path}&amp;action={name}&amp;</command>
+            </operation>
 		</operations>
 	</content-type>
 
