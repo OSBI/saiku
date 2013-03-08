@@ -19,9 +19,12 @@
  */
 var Chart = Backbone.View.extend({
 
-	options: {
-        type: "BarChart"
+	cccOptions: {
+        type: "BarChart",
+        stacked: false
     },
+
+    data: null,
 
     getChartProperties: function(chartName) { 
         var self = this; 
@@ -42,11 +45,13 @@ var Chart = Backbone.View.extend({
         // Create a unique ID for use as the CSS selector
         this.id = _.uniqueId("chart_");
         $(this.el).attr({ id: this.id });
+        this.cccOptions.canvas = this.id;
+        this.cccOptions = this.getQuickOptions(this.cccOptions);
 
         this.data = null;
         
         // Bind table rendering to query result event
-        _.bindAll(this, "receive_data", "process_data", "show",  "getData", "render_view", "render_quick");
+        _.bindAll(this, "receive_data", "process_data", "show",  "getData", "render_view", "render_chart", "getQuickOptions");
         this.workspace.bind('query:result', this.receive_data);
         Saiku.session.bind('workspace:new', this.render_view);
         
@@ -55,7 +60,7 @@ var Chart = Backbone.View.extend({
         this.workspace.bind('workspace:adjust', this.render);
         
         // Create navigation
-        var exportoptions = "<div><a href='#charteditor' id='acharteditor' class='editor i18n'>Advanced Properties</a>Export to: " +
+        var exportoptions = "<div><a class='hide' href='#charteditor' id='acharteditor' /><a class='editor' href='#chart_editor'>Advanced Properties</a>Export to: " +
                 "<a class='export' href='#png' class='i18n'>PNG</a>, " +
                 "<a class='export' href='#pdf' class='i18n'>PDF</a>, " +
                 "<a class='export' href='#tiff' class='i18n'>TIFF</a>, " +
@@ -133,13 +138,20 @@ var Chart = Backbone.View.extend({
                                    {
                                    'autoDimensions'    : false,
                                    'autoScale'         : false,
-                                   'height'            :  ($("body").height() - 100),
+                                   'height'            :  ($("body").height() - 140),
                                    'width'             :  ($("body").width() - 100),
                                    'transitionIn'      : 'none',
                                    'transitionOut'     : 'none',
                                    'type'              : 'inline'
                                    }
                                );
+
+        if (this.cccOptions.width <= 0) {
+            this.cccOptions.width = $(this.workspace.el).find('.workspace_results').width() - 40;
+        }
+        if (this.cccOptions.height <= 0) {
+            this.cccOptions.height = $(this.workspace.el).find('.workspace_results').height() - 40;
+        }
 
         this.process_data({ data: this.workspace.query.result.lastresult() });
     },
@@ -150,55 +162,62 @@ var Chart = Backbone.View.extend({
     },
 
     stackedBar: function() {
-        this.options.stacked = true;
-        this.options.type = "BarChart";
-        this.options.multiChartIndexes = null;
-        this.render_quick();
+        var options = {
+                stacked: true,
+                type: "BarChart",
+        };
+        this.cccOptions = this.getQuickOptions(options);
+        this.render_chart();
     },
     
     bar: function() {
-        this.options.stacked = false;
-        this.options.type = "BarChart";
-        this.options.multiChartIndexes = null;
+        var options = {
+                stacked: false,
+                type: "BarChart",
+        };
+        this.cccOptions = this.getQuickOptions(options);
+        this.render_chart();
+        
         /*
-        this.options.multiChartIndexes = [1];
-        this.options.dataMeasuresInColumns = true;
-        this.options.orientation = 'horizontal';
-        this.options.smallTitlePosition = 'top';
-        this.options.multiChartColumnsMax = 5;
-        this.options.smallWidth = 100;
-        this.options.smallHeight = 300;
+        this.cccOptions.multiChartIndexes = [1];
+        this.cccOptions.dataMeasuresInColumns = true;
+        this.cccOptions.orientation = 'horizontal';
+        this.cccOptions.smallTitlePosition = 'top';
+        this.cccOptions.multiChartColumnsMax = 5;
+        this.cccOptions.smallWidth = 100;
+        this.cccOptions.smallHeight = 300;
 		*/
-        this.render_quick();
     },
     
     line: function() {
-        this.options.stacked = false;
-        this.options.type = "LineChart";
-        this.options.multiChartIndexes = null;
-        this.render_quick();
+        var options = {
+                stacked: false,
+                type: "LineChart",
+        };
+        this.cccOptions = this.getQuickOptions(options);
+        this.render_chart();
     },
     
     pie: function() {
-        this.options.stacked = false;
-        this.options.type = "PieChart";
-        this.options.multiChartIndexes = [1];
-        this.render_quick();
+        var options = {
+                stacked: false,
+                type: "PieChart",
+                multiChartIndexes: [1]
+        };
+        this.cccOptions = this.getQuickOptions(options);
+        this.render_chart();
     },
 
     heatgrid: function() {
-        this.options.stacked = false;
-        this.options.type = "HeatGridChart";
-        this.options.multiChartIndexes = null;
-        this.render_quick();
+        var options = {
+                stacked: false,
+                type: "HeatGridChart"
+        };
+        this.cccOptions = this.getQuickOptions(options);
+        this.render_chart();
     },
 
-    
-    render_quick: function() {
-        if (! $(this.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
-            return;
-        }
-        
+    getQuickOptions: function(baseOptions) {
         var options = _.extend({        
             canvas: this.id,
             width: $(this.workspace.el).find('.workspace_results').width() - 40,
@@ -213,7 +232,7 @@ var Chart = Backbone.View.extend({
             legendAlign: "right",
             colors: ["#4bb2c5", "#c5b47f", "#EAA228", "#579575", "#839557", "#958c12", "#953579", "#4b5de4", "#d8b83f", "#ff5800", "#0085cc"],
             type: 'BarChart'
-        }, this.options);
+        }, baseOptions);
         
         if (options.type == "HeatGridChart") {
             options = _.extend({
@@ -230,19 +249,18 @@ var Chart = Backbone.View.extend({
                     hoverable:      true,
                     valuesVisible:  false,
                     axisComposite: true,
-                    colors: ['red', 'yellow', 
-             'lightgreen', 'darkgreen'],
+                    colors: ['red', 'yellow', 'lightgreen', 'darkgreen'],
                     selectable: true,
                     xAxisSize: 130,
                     extensionPoints: {
-                        xAxisLabel_textAngle: -(Math.PI / 2),
+                        xAxisLabel_textAngle: - (Math.PI / 2),
                         xAxisLabel_textAlign: "right",
                         xAxisLabel_bottom: 10
                     }
-            }, this.options);
+            }, baseOptions);
         }
-        if (this.data.resultset.length > 5 ) {
-            options.extensionPoints = {
+        if (this.data != null && this.data.resultset.length > 5 ) {
+            options['extensionPoints'] = {
                 xAxisLabel_textAngle: -(Math.PI / 2),
                 xAxisLabel_textAlign: "right",
                 xAxisLabel_bottom: 10
@@ -250,8 +268,21 @@ var Chart = Backbone.View.extend({
             
             options.xAxisSize = 100;
         }
+
+        return options;
+    },
+    
+    render_chart: function() {
+        if (! $(this.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
+            return;
+        }
         
-        this.chart = new pvc[options.type](options);
+
+        this.editor.chartDefinition = _.clone(this.cccOptions);
+        this.editor.set_chart("pvc." + this.cccOptions.type);
+        this.editor.render_chart_properties("pvc." + this.cccOptions.type, this.editor.chartDefinition);
+
+        this.chart = new pvc[this.cccOptions.type](this.cccOptions);
         
         this.chart.setData(this.data, {
             crosstabMode: true,
@@ -372,7 +403,7 @@ var Chart = Backbone.View.extend({
             }
             //makeSureUniqueLabels(this.data.resultset);
             this.data.height = this.data.resultset.length;
-            this.render_quick();
+            this.render_chart();
         } else {
             $(this.el).text("No results");
         }

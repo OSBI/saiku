@@ -1528,3 +1528,79 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 @media print {
     #header, .sidebar, .workspace_fields, .workspace_toolbar { display: none !important; }
 }
+
+
+/* Chart toolbar */
+.chart_toolbar {
+    background: #F9F9F9;
+    border: 1px solid #CCC;
+    font-weight: bold;
+    height: 38px;
+    margin: 0 0 3px 0;
+    padding: 3px 10px 3px 5px;
+    text-shadow: 1px 1px 0 #FFFFFF;
+    overflow: hidden;
+    position: fixed;
+    left: 3px;
+    top: 3px;
+    width: 100%;
+}
+.chart_toolbar ul {
+    margin: 0;
+    padding: 0;
+}
+.chart_toolbar ul li {
+    display: inline;
+    float: left;
+    padding-left: 5px;
+}
+.chart_toolbar ul li.hide {
+    display: none;
+}
+.chart_toolbar ul li.seperator {
+    border-left: 1px solid #D5D5D5;
+    margin-left: 5px;
+}
+.chart_toolbar a.button {
+    display: block;
+    height: 16px;
+    padding: 8px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+.chart_toolbar a.button:hover {
+    border: 1px solid #CCC;
+    padding: 7px;
+}
+.chart_toolbar a.on {
+    border: 1px solid #CCC;
+    background-color: #E0E0E0;
+    padding: 7px !important;
+}
+
+.chart_toolbar span.logo a.saiku {
+    background-position: -1275px 1px;
+    float: right;
+    width: 166px;
+    height: 28px;
+    margin: -2px 10px 0 0;
+    text-indent: -9999px;
+}
+
+.chart_toolbar span.logo a.ccc {
+    background: url('../../../images/src/ccc3.png') no-repeat;
+    float: right;
+    width: 80px;
+    height: 28px;
+    margin: 0px 10px 0 0;
+    text-indent: -9999px;
+}
+
+.chartworkspace {
+    overflow: hidden;
+}
+
+.chartworkspace_inner {
+    overflow: auto;
+    margin-left: 400px;
+}
