@@ -121,13 +121,22 @@ Backbone.sync = function(method, model, options) {
     if (typeof options.dataType != "undefined") {
       dataType = options.dataType;
     }
+
+    var contentType = 'application/x-www-form-urlencoded'
+    if (typeof options.contentType != "undefined") {
+      contentType = options.contentType;
+    }
+    var data = model.attributes;
+    if (typeof options.data != "undefined") {
+      data = options.data;
+    }
     // Default JSON-request options.
     params = {
       url:          url,
       type:         type,
       cache:        false,
-      data:         model.attributes,
-      contentType:  'application/x-www-form-urlencoded',
+      data:         data,
+      contentType:  contentType,
       dataType:     dataType,
       success:      success,
       statusCode:   statuscode, 
