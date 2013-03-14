@@ -402,6 +402,7 @@ var Table = Backbone.View.extend({
     },
     
     error: function(args) {
-        $(this.el).html('<tr><td>' + args.data.error + '</td></tr>');
+        $()
+        $(this.el).html('<tr><td>' + safe_tags_replace(args.data.error) + '</td></tr>');
     }
 });
