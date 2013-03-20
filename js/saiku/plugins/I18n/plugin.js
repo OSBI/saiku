@@ -18,30 +18,34 @@
  * The user's current locale
  */
 Saiku.i18n = {
-    locale: (navigator.language || navigator.browserLanguage || 
-        navigator.systemLanguage || navigator.userLanguage).substring(0,2).toLowerCase(),
+    locale: (navigator.language || navigator.browserLanguage ||
+        navigator.systemLanguage || navigator.userLanguage).substring(0, 2).toLowerCase(),
     po_file: {},
-    translate: function() {
+    translate: function () {
         $('.i18n').i18n(Saiku.i18n.po_file);
     },
-    automatic_i18n: function() {
+    automatic_i18n: function () {
         // Load language file if it isn't English
+
+        //compatible 'zh-CN';
+        if (Saiku.i18n.locale == 'zh') locale = 'cn';
+
         if (Saiku.i18n.locale != "en") {
             $.ajax({
                 url: "js/saiku/plugins/I18n/po/" + Saiku.i18n.locale + ".json",
                 type: 'GET',
                 dataType: 'json',
-                success: function(data) {
+                success: function (data) {
                     Saiku.i18n.po_file = data;
                     Saiku.i18n.translate();
                 }
             });
         }
-        
+
         return true;
     },
     elements: [],
-    improve_translation: function() {
+    improve_translation: function () {
         Saiku.tabs.add(new TranslationTab());
         return false;
     }
