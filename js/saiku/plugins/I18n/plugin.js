@@ -27,8 +27,8 @@ Saiku.i18n = {
     automatic_i18n: function () {
         // Load language file if it isn't English
 
-        //compatible 'zh-CN';
-        if (Saiku.i18n.locale == 'zh-CN') Saiku.i18n.locale = 'cn';
+        //compatible 'zh-CN' -> 'zh';
+        if (Saiku.i18n.locale == 'zh') Saiku.i18n.locale = 'cn';
 
         if (Saiku.i18n.locale != "en") {
             $.ajax({
