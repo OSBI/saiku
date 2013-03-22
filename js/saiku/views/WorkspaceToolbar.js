@@ -310,6 +310,12 @@ var WorkspaceToolbar = Backbone.View.extend({
             this.workspace.query.id + "/export/csv";
     },
 
+    export_pdf: function(event) {
+        window.location = Settings.REST_URL +
+            Saiku.session.username + "/query/" + 
+            this.workspace.query.id + "/export/pdf/" + this.workspace.query.formatter;
+    },
+
     switch_to_mdx: function(event) {
         var self = this;
         $(this.workspace.el).find('.workspace_fields').hide();
