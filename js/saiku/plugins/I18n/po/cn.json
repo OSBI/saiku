@@ -12,12 +12,14 @@
 	"Swap axis": "交换数轴",
 	"Show MDX" : "显示多维表达式",
 	"Export XLS": "导出Microsoft Excel 文件",
-	"Export CSV": "导出逗号分隔的(CSV)文件 (export CSV)",
+	"Export CSV": "导出逗号分隔的(CSV)文件",
 	"Drill Through": "",
 	"Cubes": "多维数据",
+  "Refresh Cubes (Clear Cache)" : "刷新",
 	"Dimensions": "维",
+  "Select a cube" : "选择多维数据",
 	"Measures": "计量",
-	"Rows": "",
-	"Filter": "",
-	"Columns": ""
+	"Rows": "行",
+	"Filter": "过滤",
+	"Columns": "列"
 }
