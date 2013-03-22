@@ -1199,6 +1199,13 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 .workspace_toolbar .export_xls {
     background-position: -847px 7px;
 }
+
+.workspace_toolbar .export_pdf {
+    background-image: url('../../../images/src/button_pdf.png');
+    background-repeat:no-repeat;
+    background-position: 7px 7px;
+}
+
 .workspace_toolbar .toggle_fields {
     background-position: -913px 7px;
 }
