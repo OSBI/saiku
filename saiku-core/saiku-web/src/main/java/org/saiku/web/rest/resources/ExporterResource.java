@@ -16,9 +16,15 @@
 package org.saiku.web.rest.resources;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.UUID;
 
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -27,6 +33,8 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.apache.commons.lang.StringUtils;
+import org.saiku.web.svg.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -89,4 +97,68 @@ public class ExporterResource {
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	
+	@GET
+	@Produces({"application/json" })
+	@Path("/saiku/json")
+	public Response exportJson(@QueryParam("file") String file) {
+		try {
+			Response f = repository.getResource(file);
+			String fileContent = (String) f.getEntity();
+			String queryName = UUID.randomUUID().toString();
+			queryResource.createQuery(null,  null,  null, null, fileContent, queryName);
+			return Response.ok().entity(queryResource.execute(queryName, 0)).build();
+		} catch (Exception e) {
+			log.error("Error exporting CSV for file: " + file, e);
+			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	@POST
+	@Produces({"image/*" })
+	@Path("/saiku/chart")
+	public Response exportChart(
+			@FormParam("type") @DefaultValue("png")  String type,
+			@FormParam("svg") String svg,
+			@FormParam("size") Integer size) 
+	{
+		try {
+		       final String imageType = type.toUpperCase();
+		       Converter converter = Converter.byType(imageType);
+		       if (converter == null)
+		       {
+		           throw new Exception("Image convert is null");
+		       }
+
+		       
+//		       resp.setContentType(converter.getContentType());
+//		       resp.setHeader("Content-disposition", "attachment; filename=chart." + converter.getExtension());
+//		       final Integer size = req.getParameter("size") != null? Integer.parseInt(req.getParameter("size")) : null;
+//		       final String svgDocument = req.getParameter("svg");
+//		       if (svgDocument == null)
+//		       {
+//		           resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing 'svg' parameter");
+//		           return;
+//		       }
+		       if (StringUtils.isBlank(svg)) {
+		    	   throw new Exception("Missing 'svg' parameter");
+		       }
+		    	   final InputStream in = new ByteArrayInputStream(svg.getBytes("UTF-8"));
+		    	   final ByteArrayOutputStream out = new ByteArrayOutputStream();
+		    	   converter.convert(in, out, size);
+		    	   out.flush();
+		    	   byte[] doc = out.toByteArray();
+			       return Response.ok(doc).type(converter.getContentType()).header(
+							"content-disposition",
+							"attachment; filename = chart." + converter.getExtension()).header(
+									"content-length",doc.length).build();
+		} catch (Exception e) {
+			log.error("Error exporting Chart to  " + type, e);
+			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	
+	
+	
 }

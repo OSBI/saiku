@@ -15,7 +15,7 @@ import org.apache.fop.svg.*;
 public abstract class Converter
 {
 
-    abstract void convert(InputStream in, OutputStream out, Integer size) throws IOException, TranscoderException;
+    abstract public void convert(InputStream in, OutputStream out, Integer size) throws IOException, TranscoderException;
 
     private final String contentType;
     private final String extension;
@@ -55,7 +55,7 @@ class SvgConverter extends Converter
         super("image/svg+xml", "svg");
     }
 
-    void convert(InputStream in, OutputStream out, Integer size) throws IOException
+    public void convert(InputStream in, OutputStream out, Integer size) throws IOException
     {
         IOUtils.copy(in, out);
     }
@@ -75,7 +75,7 @@ abstract class BatikConverter extends Converter
         super(contentType, extension);
     }
 
-    void convert(InputStream in, OutputStream out, Integer size) throws TranscoderException
+    public void convert(InputStream in, OutputStream out, Integer size) throws TranscoderException
     {
         Transcoder t = createTranscoder();
         if (size != null)
