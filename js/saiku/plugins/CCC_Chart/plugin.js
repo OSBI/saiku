@@ -51,7 +51,7 @@ var Chart = Backbone.View.extend({
         this.data = null;
         
         // Bind table rendering to query result event
-        _.bindAll(this, "receive_data", "process_data", "show",  "getData", "render_view", "render_chart", "getQuickOptions");
+        _.bindAll(this, "receive_data", "process_data", "show",  "getData", "render_view", "render_chart", "getQuickOptions","exportChart");
         this.workspace.bind('query:result', this.receive_data);
         Saiku.session.bind('workspace:new', this.render_view);
         
@@ -63,15 +63,15 @@ var Chart = Backbone.View.extend({
         var exportoptions = "<div><a class='hide' href='#charteditor' id='acharteditor' /><a class='editor' href='#chart_editor'>Advanced Properties</a>Export to: " +
                 "<a class='export' href='#png' class='i18n'>PNG</a>, " +
                 "<a class='export' href='#pdf' class='i18n'>PDF</a>, " +
-                "<a class='export' href='#tiff' class='i18n'>TIFF</a>, " +
+                //"<a class='export' href='#tiff' class='i18n'>TIFF</a>, " +
                 "<a class='export' href='#svg' class='i18n'>SVG</a>, " +
                 "<a class='export' href='#jpg' class='i18n'>JPG</a>" +
-                "<form id='svgChartPseudoForm' action='/saiku/svg' method='POST'>" +
+                "<form id='svgChartPseudoForm' target='_blank' method='POST'>" +
                 "<input type='hidden' name='type' class='type'/>" +
                 "<input type='hidden' name='svg' class='svg'/>" +
                 "</form>";
 
-        var chartnav = (Settings.PLUGIN) ? "" : exportoptions + "</div>";
+        var chartnav = exportoptions + "</div>";
         
         // Create navigation
         this.nav = $(chartnav).css({
@@ -111,9 +111,15 @@ var Chart = Backbone.View.extend({
     exportChart: function(event) {
         var type = $(event.target).attr('href').replace('#', '');
         var svgContent = new XMLSerializer().serializeToString($('svg')[0]);
+        var rep = '<svg xmlns="http://www.w3.org/2000/svg" ';
+        if (svgContent.substr(0,rep.length) != rep) {
+            svgContent = svgContent.replace('<svg ', rep);    
+        }
+        
         var form = $('#svgChartPseudoForm');
         form.find('.type').val(type);
         form.find('.svg').val(svgContent);
+        form.attr('action', Settings.REST_URL + this.workspace.query.url() + escape("/../../export/saiku/chart"));
         form.submit();
         return false;
     },
