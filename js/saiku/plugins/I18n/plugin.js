@@ -189,7 +189,8 @@ var TranslationTab = Backbone.View.extend({
         $(this.el).find('.changed').each(function(element) {
             translation[decodeURI($(this).attr('name'))] = encodeURI($(this).val());
         });
-        Translate.log(translation);
+        window.location = "mailto:contact@analytical-labs.com?subject=Translation for " + Saiku.i18n.locale + '&body=' + JSON.stringify(translation);
+        //Translate.log(translation);
         Saiku.ui.block('Thank you for improving our translation!');
         this.tab.remove();
         _.delay(function() {
