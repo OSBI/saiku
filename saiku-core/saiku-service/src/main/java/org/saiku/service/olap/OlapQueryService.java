@@ -53,6 +53,7 @@ import org.olap4j.mdx.parser.impl.DefaultMdxParserImpl;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
+import org.olap4j.metadata.Level.Type;
 import org.olap4j.metadata.Member;
 import org.olap4j.query.LimitFunction;
 import org.olap4j.query.Query;
@@ -60,6 +61,7 @@ import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
 import org.olap4j.query.Selection;
 import org.olap4j.query.SortOrder;
+import org.olap4j.type.LevelType;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimensionSelection;
 import org.saiku.olap.dto.SaikuMember;
@@ -326,15 +328,23 @@ public class OlapQueryService implements Serializable {
 		IQuery query = getIQuery(queryName);
 		CellSet cs = query.getCellset();
 		List<SaikuMember> members = new ArrayList<SaikuMember>();
+		Set<Level> levels = new HashSet<Level>();
+		
 		if (cs != null && preferResult) {
 			for (CellSetAxis axis : cs.getAxes()) {
 				int posIndex = 0;
 				for (Hierarchy h : axis.getAxisMetaData().getHierarchies()) {
 					if (h.getUniqueName().equals(hierarchyName)) {
 						log.debug("Found hierarchy in the result: " + hierarchyName);
+						if (h.getLevels().size() == 1) {
+							break;
+						}
 						Set<Member> mset = new HashSet<Member>();
 						for (Position pos : axis.getPositions()) {
 							Member m = pos.getMembers().get(posIndex);
+							if (!m.getLevel().getLevelType().equals(Type.ALL)) {
+								levels.add(m.getLevel());
+							}
 							if (m.getLevel().getUniqueName().equals(levelName)) {
 								mset.add(m);
 							}
@@ -350,7 +360,8 @@ public class OlapQueryService implements Serializable {
 			}
 			log.debug("Found members in the result: " + members.size());
 			
-		} else {
+		}
+		if (cs == null || !preferResult || members.size() == 0 || levels.size() == 1) {
 			members = olapDiscoverService.getLevelMembers(query.getSaikuCube(), dimensionName, hierarchyName, levelName);
 		}
 		
