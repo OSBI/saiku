@@ -248,7 +248,7 @@ var info = '<b><span class="i18n">Info:</span></b> &nbsp;' + cdate
                 + "&nbsp; / &nbsp;" + runtime + "s";
         $(this.workspace.el).find(".workspace_results_info")
             .html(info);
-        Saiku.i18n.translate();
+        //Saiku.i18n.translate();
         $(this.el).html('<tr><td>Rendering ' + args.data.width + ' columns and ' + args.data.height + ' rows...</td></tr>');
 
         // Render the table without blocking the UI thread
