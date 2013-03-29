@@ -342,7 +342,7 @@ var info = '<b><span class="i18n">Info:</span></b> &nbsp;' + cdate
                         var group = header.properties.dimension;
                         var level = header.properties.level;
                         var groupWidth = (group in rowGroups ? rowGroups[group].length - rowGroups[group].indexOf(level) : 1);
-                        for (var k = col + 1; colspan < groupWidth && data[row][k] !== "null"; k++) {
+                        for (var k = col + 1; colspan < groupWidth && k <= (lowestRowLvl+1) && data[row][k] !== "null"; k++) {
                             colspan = k - col;
                         }
                         col = col + colspan -1;
