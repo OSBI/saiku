@@ -838,7 +838,7 @@ public class QueryResource {
 	 */
 	@POST
 	@Path("/{queryname}/axis/{axis}/dimension/{dimension}")
-	public Status moveDimension(
+	public Response moveDimension(
 			@PathParam("queryname") String queryName, 
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName, 
@@ -849,10 +849,10 @@ public class QueryResource {
 		}
 		try{
 			olapQueryService.moveDimension(queryName, axisName, dimensionName, position);
-			return Status.OK;
+			return Response.ok().build();
 		} catch(Exception e) {
 			log.error("Cannot move dimension "+ dimensionName+ " for query (" + queryName + ")",e);
-			return Status.INTERNAL_SERVER_ERROR;
+			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 
@@ -862,7 +862,7 @@ public class QueryResource {
 	 */
 	@DELETE
 	@Path("/{queryname}/axis/{axis}/dimension/{dimension}")
-	public Status deleteDimension(
+	public Response deleteDimension(
 			@PathParam("queryname") String queryName, 
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName)
@@ -872,17 +872,17 @@ public class QueryResource {
 		}
 		try{
 			olapQueryService.removeDimension(queryName, axisName, dimensionName);
-			return Status.OK;
+			return Response.ok().build();
 		}catch(Exception e){
 			log.error("Cannot remove dimension "+ dimensionName+ " for query (" + queryName + ")",e);
-			return Status.INTERNAL_SERVER_ERROR;
+			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 
 	@PUT
 	@Consumes("application/x-www-form-urlencoded")
 	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/")
-	public Status updateSelections(
+	public Response updateSelections(
 			@PathParam("queryname") String queryName,
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName, 
@@ -926,12 +926,14 @@ public class QueryResource {
 				if (dimsels != null && dimsels.getSelections().size() == 0) {
 					moveDimension(queryName, "UNUSED", dimensionName, -1);
 				}
-				return Status.OK;
+				return Response.ok().build();
 			}
+			throw new Exception("Form did not contain 'selections' parameter");
 		} catch (Exception e){
 			log.error("Cannot updates selections for query (" + queryName + ")",e);
+			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
-		return Status.INTERNAL_SERVER_ERROR;
+		
 	}
 	
 	
@@ -939,7 +941,7 @@ public class QueryResource {
 	@DELETE
 	@Consumes("application/x-www-form-urlencoded")
 	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/member/")
-	public Status removeMembers(
+	public Response removeMembers(
 			@PathParam("queryname") String queryName,
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName, 
@@ -956,14 +958,13 @@ public class QueryResource {
 				for (SelectionRestObject member : selections) {
 					removeMember("MEMBER", queryName, axisName, dimensionName, member.getUniquename());
 				}
-				return Status.OK;
+				return Response.ok().build();
 			}
+			throw new Exception("Form did not contain 'selections' parameter");
 		} catch (Exception e){
 			log.error("Cannot updates selections for query (" + queryName + ")",e);
+			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
-		return Status.INTERNAL_SERVER_ERROR;
-
-
 	}
 	/**
 	 * Move a member.
@@ -971,7 +972,7 @@ public class QueryResource {
 	 */
 	@POST
 	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/member/{member}")
-	public Status includeMember(
+	public Response includeMember(
 			@FormParam("selection") @DefaultValue("MEMBER") String selectionType, 
 			@PathParam("queryname") String queryName,
 			@PathParam("axis") String axisName, 
@@ -988,21 +989,21 @@ public class QueryResource {
 
 			boolean ret = olapQueryService.includeMember(queryName, dimensionName, uniqueMemberName, selectionType, memberposition);
 			if(ret == true){
-				return Status.CREATED;
+				return Response.ok().status(Status.CREATED).build();
 			}
 			else{
-				log.error("Cannot include member "+ dimensionName+ " for query (" + queryName + ")");
-				return Status.INTERNAL_SERVER_ERROR;
+				throw new Exception("Couldn't include member "+ dimensionName);
+				
 			}
 		} catch (Exception e){
 			log.error("Cannot include member "+ dimensionName+ " for query (" + queryName + ")",e);
-			return Status.INTERNAL_SERVER_ERROR;
+			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 
 	@DELETE
 	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/member/{member}")
-	public Status removeMember(
+	public Response removeMember(
 			@FormParam("selection") @DefaultValue("MEMBER") String selectionType, 
 			@PathParam("queryname") String queryName,
 			@PathParam("axis") String axisName, 
@@ -1020,22 +1021,21 @@ public class QueryResource {
 				if (dimsels != null && dimsels.getSelections().size() == 0) {
 					olapQueryService.moveDimension(queryName, "UNUSED", dimensionName, -1);
 				}
-				return Status.OK;
+				return Response.ok().build();
 			}
 			else{
-				log.error("Cannot remove member "+ dimensionName+ " for query (" + queryName + ")");
-				return Status.INTERNAL_SERVER_ERROR;
+				throw new Exception("Cannot remove member "+ dimensionName+ " for query (" + queryName + ")");
 			}
 		} catch (Exception e){
 			log.error("Cannot remove member "+ dimensionName+ " for query (" + queryName + ")",e);
-			return Status.INTERNAL_SERVER_ERROR;
+			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 
 
 	@POST
 	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/hierarchy/{hierarchy}/{level}")
-	public Status includeLevel(
+	public Response includeLevel(
 			@PathParam("queryname") String queryName,
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName, 
@@ -1051,21 +1051,20 @@ public class QueryResource {
 			olapQueryService.moveDimension(queryName, axisName, dimensionName, position);
 			boolean ret = olapQueryService.includeLevel(queryName, dimensionName, uniqueHierarchyName, uniqueLevelName);
 			if(ret == true){
-				return Status.CREATED;
+				return Response.ok().status(Status.CREATED).build();
 			}
 			else{
-				log.error("Cannot include level of hierarchy "+ uniqueHierarchyName+ " for query (" + queryName + ")");
-				return Status.INTERNAL_SERVER_ERROR;
+				throw new Exception("Something went wrong including level: " + uniqueLevelName);
 			}
 		} catch (Exception e){
 			log.error("Cannot include level of hierarchy "+ uniqueHierarchyName+ " for query (" + queryName + ")",e);
-			return Status.INTERNAL_SERVER_ERROR;
+			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 
 	@DELETE
 	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/hierarchy/{hierarchy}/{level}")
-	public Status removeLevel(
+	public Response removeLevel(
 			@PathParam("queryname") String queryName,
 			@PathParam("axis") String axisName, 
 			@PathParam("dimension") String dimensionName, 
@@ -1083,15 +1082,12 @@ public class QueryResource {
 				if (dimsels != null && dimsels.getSelections().size() == 0) {
 					olapQueryService.moveDimension(queryName, "UNUSED", dimensionName, -1);
 				}
-				return Status.OK;
+				return Response.ok().build();
 			}
-			else{
-				log.error("Cannot remove level of hierarchy "+ uniqueHierarchyName+ " for query (" + queryName + ")");
-				return Status.INTERNAL_SERVER_ERROR;
-			}
+			throw new Exception("Something went wrong removing level: " + uniqueLevelName + " from " + uniqueHierarchyName+ " for query (" + queryName + ")");
 		} catch (Exception e){
 			log.error("Cannot include level of hierarchy "+ uniqueHierarchyName+ " for query (" + queryName + ")",e);
-			return Status.INTERNAL_SERVER_ERROR;
+			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 	
@@ -1216,7 +1212,7 @@ public class QueryResource {
 	@DELETE
 	@Produces({"application/json" })
 	@Path("/{queryname}/axis/{axis}/filter")
-	public void ckearFilter(
+	public void clearFilter(
 			@PathParam("queryname") String queryName, 
 			@PathParam("axis") String axisName)
 	{
