@@ -333,7 +333,7 @@ var Workspace = Backbone.View.extend({
                                 .parent();
                             }
 
-                            if (typeof self.measure_list != "undefined" ) {
+                            if (typeof self.measure_list != "undefined" && (!$dim.html() || $dim.html() == null)) {
                                 $dim = $(self.measure_list.el)
                                 .find('a[rel="' + name + '"]')
                                 .parent();
