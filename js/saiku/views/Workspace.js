@@ -259,6 +259,7 @@ var Workspace = Backbone.View.extend({
     },
 
     populate_selections: function(dimension_el) {
+        var self = this;
 
         if (this.other_dimension) {
         // Populate selections - trust me, this is prettier than it was :-/
@@ -323,15 +324,28 @@ var Workspace = Backbone.View.extend({
                         }
                             
                         if (levels.indexOf(name) === -1) {
-                            var $dim = $(dimension_el)
-                                .find('a[rel="' + name + '"]')
-                                .parent();
-                            
-                            if (!$dim.html() || $dim.html() == null) {
-                                $dim = $(this.other_dimension)
+
+                            var $dim = $(''); 
+
+                            if (typeof dimension_el != "undefined" && (!$dim.html() || $dim.html() == null)) {
+                                $dim = $(dimension_el)
                                 .find('a[rel="' + name + '"]')
                                 .parent();
                             }
+
+                            if (typeof self.measure_list != "undefined" ) {
+                                $dim = $(self.measure_list.el)
+                                .find('a[rel="' + name + '"]')
+                                .parent();
+                            }
+                            
+                            if (typeof self.dimension_list != "undefined" && (!$dim.html() || $dim.html() == null)) {
+                                $dim = $(self.dimension_list.el)
+                                .find('a[rel="' + name + '"]')
+                                .parent();
+                            }
+
+
                             var $clone = $dim.clone()
                                 .addClass('d_' + type)
                                 .appendTo($axis);
