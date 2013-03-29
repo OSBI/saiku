@@ -234,7 +234,7 @@ var Table = Backbone.View.extend({
         }
         
         // Clear the contents of the table
-        var cdate = new Date().toLocaleFormat('%Y-%m-%d %H:%M');
+        var cdate = new Date().getHours() + ":" + new Date().getMinutes();
         var runtime = args.data.runtime != null ? (args.data.runtime / 1000).toFixed(2) : "";
         /*
         var info = '<b>Time:</b> ' + cdate 
