@@ -326,8 +326,9 @@ var WorkspaceToolbar = Backbone.View.extend({
         $(this.el).find('.run, .save, .open').removeClass('disabled_toolbar');
 
         if (Settings.MODE != "view" && Settings.MODE != "table") {
-            $(this.workspace.el).find('.mdx_input').width($(this.el).width()-50);
-            $(this.workspace.el).find('.workspace_editor .mdx_input').removeClass('hide');
+            $mdx_editor = $(this.workspace.el).find('.mdx_input');
+            $mdx_editor.width($(this.el).width()-50);
+            $(this.workspace.el).find('.workspace_editor .mdx_input, .workspace_editor .editor_info').removeClass('hide');
             this.editor = ace.edit("mdx_editor");
             this.editor.setShowPrintMargin(false);
             this.editor.commands.addCommand({
@@ -338,16 +339,37 @@ var WorkspaceToolbar = Backbone.View.extend({
                 },
                 readOnly: true // false if this command should not apply in readOnly mode
             });
-            $(self.workspace.el).find('.mdx_input').on('mouseenter', function(e) {
-                $(self.workspace.el).find('.mdx_input').height(400);
-                self.editor.resize();
 
-            });
-            $(self.workspace.el).find('.mdx_input').on('mouseleave', function(e) {
-                $(self.workspace.el).find('.mdx_input').height(150);
-                self.editor.resize();
+            var showPosition = function() {
+                var pos = self.editor.getCursorPosition();
+                $mdx_editor.parent().find('.editor_info').html("&nbsp; " + (pos.row +1) + ", " + pos.column);
+            }
+            this.editor.on('changeSelection', showPosition);
+            showPosition();
 
-            });
+             var heightUpdateFunction = function() {
+
+                // http://stackoverflow.com/questions/11584061/
+                var max_height = $(document).height() / 3;
+                var height = Math.floor(max_height / self.editor.renderer.lineHeight);
+                var screen_length = self.editor.getSession().getScreenLength() > height ? height : self.editor.getSession().getScreenLength();
+                var newHeight =
+                          screen_length
+                          * self.editor.renderer.lineHeight
+                          + self.editor.renderer.scrollBar.getWidth();
+
+                $mdx_editor.height(newHeight.toString() + "px");
+                self.editor.resize();
+                self.workspace.adjust();
+            };
+
+            heightUpdateFunction();
+
+            self.editor.focus();
+            self.editor.clearSelection();
+            self.editor.getSession().setValue("");
+            self.editor.getSession().on('change', heightUpdateFunction);
+
             //this.editor.setTheme("ace/theme/crimson_editor");
             this.editor.getSession().setMode("ace/mode/text");
             
@@ -384,6 +406,8 @@ var WorkspaceToolbar = Backbone.View.extend({
             success: function(model, response) {
                 //$(self.workspace.el).find(".mdx_input").val(response.mdx);
                 self.editor.setValue(response.mdx,0);
+                self.editor.focus();
+                self.editor.clearSelection();
                 self.workspace.query.action.post("/qm2mdx", { success: transformed } );
 
             }
