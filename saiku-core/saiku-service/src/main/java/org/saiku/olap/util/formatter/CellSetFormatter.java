@@ -467,9 +467,9 @@ public class CellSetFormatter implements ICellSetFormatter {
 					int depth_i = ordinalInfo.getDepths().indexOf(member.getDepth());
 					while (depth_i > 0) {
 						depth_i--;
-						Level l = ordinalInfo.getLevel(ordinalInfo.getDepths().get(depth_i));
+						int parentDepth = (ordinalInfo.getDepths().get(depth_i));
 						Member parent = member.getParentMember();
-						while (l != null && parent != null && !parent.getLevel().getUniqueName().equals(l.getUniqueName())) {
+						while (parent != null && parent.getDepth() > parentDepth) {
 							parent = parent.getParentMember();
 						}
 						final MemberCell pInfo = new MemberCell();
