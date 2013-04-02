@@ -237,7 +237,8 @@ var Chart = Backbone.View.extend({
     pie: function() {
         this.options.stacked = false;
         this.options.type = "PieChart";
-        this.options.multiChartIndexes = [1];
+        this.options.multiChartIndexes = [0];
+        this.options.multiChartMax = 30;
         this.render_quick();
     },
 
