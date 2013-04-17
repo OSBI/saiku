@@ -21,7 +21,7 @@ var Chart = Backbone.View.extend({
 
 	cccOptions: {
         type: "BarChart",
-        stacked: false
+        stacked: true
     },
 
     data: null,
@@ -170,7 +170,7 @@ var Chart = Backbone.View.extend({
     stackedBar: function() {
         var options = {
                 stacked: true,
-                type: "BarChart",
+                type: "BarChart"
         };
         this.cccOptions = this.getQuickOptions(options);
         this.render_chart();
@@ -179,7 +179,7 @@ var Chart = Backbone.View.extend({
     bar: function() {
         var options = {
                 stacked: false,
-                type: "BarChart",
+                type: "BarChart"
         };
         this.cccOptions = this.getQuickOptions(options);
         this.render_chart();
@@ -198,8 +198,9 @@ var Chart = Backbone.View.extend({
     line: function() {
         var options = {
                 stacked: false,
-                type: "LineChart",
+                type: "LineChart"
         };
+
         this.cccOptions = this.getQuickOptions(options);
         this.render_chart();
     },
@@ -208,7 +209,9 @@ var Chart = Backbone.View.extend({
         var options = {
                 stacked: false,
                 type: "PieChart",
-                multiChartIndexes: [1]
+                multiChartIndexes: [0],
+                multiChartColumnsMax: 5,
+                multiChartMax: 30
         };
         this.cccOptions = this.getQuickOptions(options);
         this.render_chart();
@@ -222,6 +225,38 @@ var Chart = Backbone.View.extend({
         this.cccOptions = this.getQuickOptions(options);
         this.render_chart();
     },
+
+    stackedBar100: function() {
+        var options = {
+                type: "NormalizedBarChart"
+        };
+        this.cccOptions = this.getQuickOptions(options);
+        this.render_chart();
+    },
+
+    area: function() {
+        var options = {
+                type: "StackedAreaChart"
+        };
+        this.cccOptions = this.getQuickOptions(options);
+        this.render_chart();
+    },
+    dot: function() {
+        var options = {
+                type: "DotChart"
+        };
+        this.cccOptions = this.getQuickOptions(options);
+        this.render_chart();
+    },
+    waterfall: function() {
+        var options = {
+                type: "WaterfallChart"
+        };
+        this.cccOptions = this.getQuickOptions(options);
+        this.render_chart();
+    },
+
+
 
     getQuickOptions: function(baseOptions) {
         var options = _.extend({        
@@ -272,8 +307,10 @@ var Chart = Backbone.View.extend({
                 xAxisLabel_bottom: 10
             };
             
-            options.xAxisSize = 100;
+            options.xAxisSize = 150;
+
         }
+        options.yAxisSize = 150;
 
         return options;
     },

@@ -977,6 +977,9 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     border: 1px solid #CCCCCC;
 }
 
+.workspace_editor .editor_info {
+    color: #999999;
+}
 /** Workspace Results */
 .workspace_results_info {
     color: #999999;

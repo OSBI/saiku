@@ -59,6 +59,7 @@ var SelectionsModal = Modal.extend({
         }
         if (args.target.parents('.fields_list_body').hasClass('filter')) { 
             this.axis = "FILTER";
+            this.use_result_option = false;
         }
         // Resize when rendered
         this.bind('open', this.post_render);

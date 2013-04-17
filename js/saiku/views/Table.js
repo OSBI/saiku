@@ -232,11 +232,27 @@ var Table = Backbone.View.extend({
         if (args.data.cellset && args.data.cellset.length === 0) {
             return this.no_results(args);
         }
+
+        if (!$(this.el).is(':visible')) {
+            return;
+        }
         
         // Clear the contents of the table
+        var cdate = new Date().getHours() + ":" + new Date().getMinutes();
         var runtime = args.data.runtime != null ? (args.data.runtime / 1000).toFixed(2) : "";
+        /*
+        var info = '<b>Time:</b> ' + cdate 
+                + " &emsp;<b>Rows:</b> " + args.data.height 
+                + " &emsp;<b>Columns:</b> " + args.data.width 
+                + " &emsp;<b>Duration:</b> " + runtime + "s";
+*/
+var info = '<b><span class="i18n">Info:</span></b> &nbsp;' + cdate 
+                + "&emsp;/ &nbsp;" + args.data.width 
+                + " x " + args.data.height 
+                + "&nbsp; / &nbsp;" + runtime + "s";
         $(this.workspace.el).find(".workspace_results_info")
-            .html('<b>Rows:</b> ' + args.data.height + " <b>Columns:</b> " + args.data.width + " <b>Duration:</b> " + runtime + "s");
+            .html(info);
+        //Saiku.i18n.translate();
         $(this.el).html('<tr><td>Rendering ' + args.data.width + ' columns and ' + args.data.height + ' rows...</td></tr>');
 
         // Render the table without blocking the UI thread
@@ -249,6 +265,7 @@ var Table = Backbone.View.extend({
     },
 
     process_data: function(data) {
+
         var contents = "";
         var table = data ? data : [];
         var colSpan;
@@ -325,12 +342,12 @@ var Table = Backbone.View.extend({
                     var cssclass = (same ? "row_null" : "row");
                     var colspan = 0;
 
-                    if (!isHeaderLowestLvl && nextHeader.value === "null") {
+                    if (!isHeaderLowestLvl && (typeof nextHeader == "undefined" || nextHeader.value === "null")) {
                         colspan = 1;
                         var group = header.properties.dimension;
                         var level = header.properties.level;
                         var groupWidth = (group in rowGroups ? rowGroups[group].length - rowGroups[group].indexOf(level) : 1);
-                        for (var k = col + 1; colspan < groupWidth && data[row][k] !== "null"; k++) {
+                        for (var k = col + 1; colspan < groupWidth && k <= (lowestRowLvl+1) && data[row][k] !== "null"; k++) {
                             colspan = k - col;
                         }
                         col = col + colspan -1;

@@ -224,7 +224,10 @@
                 <div class="query_toolbar"></div>
                 <div class="workspace_toolbar"></div>
                 <div class="workspace_editor">
-                    <div id='mdx_editor' class="hide mdx_input" />
+                    <div id='mdx_editor' class='mdx_input hide'>
+                    </div>
+                    <span class="editor_info hide"></span>
+                    
                 </div>
 
                 <div class="workspace_results_info" align="right" />
@@ -369,21 +372,33 @@
         <ul class='options chart hide'>
             <li class="seperator_vertical"><a class="i18n label disabled_toolbar">Options:</a></li>
             <li><a href="#bar" 
-                class="i18n bar button on disabled_toolbar" 
+                class="i18n bar button disabled_toolbar" 
                 title="Bar">Bar</a></li>
             <li><a href="#stackedBar" 
-                class="i18n stackedBar button disabled_toolbar" 
+                class="i18n stackedBar on button disabled_toolbar" 
                 title="Stacked Bar">Stacked Bar</a></li>
-            <li><a href="#heatgrid" 
-                class="i18n heatgrid tablebutton button disabled_toolbar" 
-                title="Heat Grid">Heat Grid</a></li>
+            <li><a href="#stackedBar100" 
+                class="i18n stackedBar100 button disabled_toolbar" 
+                title="Bar 100%">Bar 100%</a></li>
             <li><a href="#line" 
                 class="i18n line button disabled_toolbar" 
                 title="Line">Line</a></li>
+            <li><a href="#area" 
+                class="i18n area button disabled_toolbar" 
+                title="Area">Area</a></li>
+            <li><a href="#heatgrid" 
+                class="i18n heatgrid tablebutton button disabled_toolbar" 
+                title="Heat Grid">Heat Grid</a></li>
+            <li><a href="#dot" 
+                class="i18n dot button disabled_toolbar" 
+                title="Dot">Dot</a></li>
+            <li><a href="#waterfall" 
+                class="i18n waterfall button disabled_toolbar" 
+                title="Waterfall">Waterfall</a></li>
             <li><a href="#pie" 
                 class="i18n pie button disabled_toolbar" 
                 title="Pie">Pie</a></li>
-            <li><a href="#chart_editor" 
+           <li><a href="#chart_editor" 
                 class="i18n custom_chart button disabled_toolbar" 
                 title="Custom">Custom</a></li>
 

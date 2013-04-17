@@ -217,7 +217,8 @@ var Workspace = Backbone.View.extend({
 
         } else {
             $(this.el).find('.workspace_fields').show();
-            $(this.el).find('.workspace_editor .mdx_input').val('').addClass('hide');
+            $(this.el).find('.workspace_editor .mdx_input').addClass('hide');
+            $(this.el).find('.workspace_editor .editor_info').addClass('hide');
             $(this.toolbar.el).find('.auto, ,.toggle_fields, .query_scenario, .buckets, .non_empty, .swap_axis, .mdx, .switch_to_mdx').parent().show();
             $(this.el).find('.run').attr('href','#run_query');
         }
@@ -264,6 +265,7 @@ var Workspace = Backbone.View.extend({
     },
 
     populate_selections: function(dimension_el) {
+        var self = this;
 
         if (this.other_dimension) {
         // Populate selections - trust me, this is prettier than it was :-/
@@ -328,15 +330,28 @@ var Workspace = Backbone.View.extend({
                         }
                             
                         if (levels.indexOf(name) === -1) {
-                            var $dim = $(dimension_el)
-                                .find('a[rel="' + name + '"]')
-                                .parent();
-                            
-                            if (!$dim.html() || $dim.html() == null) {
-                                $dim = $(this.other_dimension)
+
+                            var $dim = $(''); 
+
+                            if (typeof dimension_el != "undefined" && (!$dim.html() || $dim.html() == null)) {
+                                $dim = $(dimension_el)
                                 .find('a[rel="' + name + '"]')
                                 .parent();
                             }
+
+                            if (typeof self.measure_list != "undefined" && (!$dim.html() || $dim.html() == null)) {
+                                $dim = $(self.measure_list.el)
+                                .find('a[rel="' + name + '"]')
+                                .parent();
+                            }
+                            
+                            if (typeof self.dimension_list != "undefined" && (!$dim.html() || $dim.html() == null)) {
+                                $dim = $(self.dimension_list.el)
+                                .find('a[rel="' + name + '"]')
+                                .parent();
+                            }
+
+
                             var $clone = $dim.clone()
                                 .addClass('d_' + type)
                                 .appendTo($axis);
