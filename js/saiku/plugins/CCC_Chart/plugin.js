@@ -129,12 +129,10 @@ var Chart = Backbone.View.extend({
         $(this.workspace.el).find('.workspace_results')
             .prepend($(this.el).hide())
             .prepend(this.nav.hide());
-
     },
     
     getData: function() {
         return this.data;
-
     },
 
     show: function(event, ui) {
@@ -169,8 +167,8 @@ var Chart = Backbone.View.extend({
 
     stackedBar: function() {
         var options = {
-                stacked: true,
-                type: "BarChart"
+            stacked: true,
+            type: "BarChart"
         };
         this.cccOptions = this.getQuickOptions(options);
         this.render_chart();
@@ -178,8 +176,7 @@ var Chart = Backbone.View.extend({
     
     bar: function() {
         var options = {
-                stacked: false,
-                type: "BarChart"
+            type: "BarChart"
         };
         this.cccOptions = this.getQuickOptions(options);
         this.render_chart();
@@ -197,8 +194,7 @@ var Chart = Backbone.View.extend({
     
     line: function() {
         var options = {
-                stacked: false,
-                type: "LineChart"
+            type: "LineChart"
         };
 
         this.cccOptions = this.getQuickOptions(options);
@@ -207,11 +203,8 @@ var Chart = Backbone.View.extend({
     
     pie: function() {
         var options = {
-                stacked: false,
-                type: "PieChart",
-                multiChartIndexes: [0],
-                multiChartColumnsMax: 5,
-                multiChartMax: 30
+            type: "PieChart",
+            multiChartIndexes: [0] // ideally this would be chosen by the user (count, which)
         };
         this.cccOptions = this.getQuickOptions(options);
         this.render_chart();
@@ -219,8 +212,7 @@ var Chart = Backbone.View.extend({
 
     heatgrid: function() {
         var options = {
-                stacked: false,
-                type: "HeatGridChart"
+            type: "HeatGridChart"
         };
         this.cccOptions = this.getQuickOptions(options);
         this.render_chart();
@@ -228,7 +220,7 @@ var Chart = Backbone.View.extend({
 
     stackedBar100: function() {
         var options = {
-                type: "NormalizedBarChart"
+            type: "NormalizedBarChart"
         };
         this.cccOptions = this.getQuickOptions(options);
         this.render_chart();
@@ -236,83 +228,108 @@ var Chart = Backbone.View.extend({
 
     area: function() {
         var options = {
-                type: "StackedAreaChart"
+            type: "StackedAreaChart"
         };
         this.cccOptions = this.getQuickOptions(options);
         this.render_chart();
     },
     dot: function() {
         var options = {
-                type: "DotChart"
+            type: "DotChart"
         };
         this.cccOptions = this.getQuickOptions(options);
         this.render_chart();
     },
     waterfall: function() {
         var options = {
-                type: "WaterfallChart",
-                orientation: "horizontal"
+            type: "WaterfallChart"
         };
         this.cccOptions = this.getQuickOptions(options);
         this.render_chart();
     },
 
-
-
-    getQuickOptions: function(baseOptions) {
-        var options = _.extend({        
-            canvas: this.id,
-            width: $(this.workspace.el).find('.workspace_results').width() - 40,
-            height: $(this.workspace.el).find('.workspace_results').height() - 40,
-            orientation: 'vertical',
-            stacked: false,
+    // Default static style-sheet
+    cccOptionsDefault: {
+        Base: {
             animate: false,
             selectable: true,
-            showValues: false,
-            legend: true,
-            legendPosition:"top",
+            valuesVisible: false,
+            legend:  true,
+            legendPosition: "top",
             legendAlign: "right",
-            colors: ["#4bb2c5", "#c5b47f", "#EAA228", "#579575", "#839557", "#958c12", "#953579", "#4b5de4", "#d8b83f", "#ff5800", "#0085cc"],
-            type: 'BarChart'
-        }, baseOptions);
+            legendSizeMax: "30%",
+            axisSizeMax: "40%",
+            colors: ["#4bb2c5", "#c5b47f", "#EAA228", "#579575", "#839557", "#958c12", "#953579", "#4b5de4", "#d8b83f", "#ff5800", "#0085cc"]
+        },
         
-        if (options.type == "HeatGridChart") {
-            options = _.extend({
-                    canvas: this.id,
-                    width: $(this.workspace.el).find('.workspace_results').width() - 40,
-                    height: $(this.workspace.el).find('.workspace_results').height() - 40,
-                    orientation: "horizontal",
-                    useShapes:     true,
-                    shape:         'circle',
-                    nullShape:     'cross',
-                    colorNormByCategory: false,
-                    sizeRole:      'value', 
-                    ctrlSelectMode: true,
-                    hoverable:      true,
-                    valuesVisible:  false,
-                    axisComposite: true,
-                    colors: ['red', 'yellow', 'lightgreen', 'darkgreen'],
-                    selectable: true,
-                    xAxisSize: 130,
-                    extensionPoints: {
-                        xAxisLabel_textAngle: - (Math.PI / 2),
+        HeatGridChart: {
+            orientation: "horizontal",
+            useShapes: true,
+            shape: "circle",
+            nullShape: "cross",
+            colorNormByCategory: false,
+            sizeRole: "value",
+            legend: false,
+            hoverable: true,
+            axisComposite: true,
+            colors: ["red", "yellow", "lightgreen", "darkgreen"],
+            xAxisSize: 130,
+            yAxisSize: 130
+        },
+        
+        WaterfallChart: {
+            orientation: "horizontal"
+        },
+        
+        PieChart: {
+            multiChartColumnsMax: 4,
+            multiChartMax: 30,
+            smallTitleFont: "bold 14px sans-serif",
+            valuesVisible: true
+        },
+        
+        LineChart: {
+            extensionPoints: {
+                area_interpolate: "monotone", // cardinal
+                line_interpolate: "monotone"
+            }
+        },
+        
+        StackedAreaChart: {
+            extensionPoints: {
+                area_interpolate: "monotone",
+                line_interpolate: "monotone"
+            }
+        }
+    },
+    
+    getQuickOptions: function(baseOptions) {
+        var chartType = (baseOptions && baseOptions.type) || "BarChart";
+        var workspaceResults = $(this.workspace.el).find(".workspace_results");
+        
+        var options = _.extend({
+                type:   chartType,
+                canvas: this.id,
+                width:  workspaceResults.width() - 40,
+                height: workspaceResults.height() - 40,
+            },
+            this.cccOptionsDefault.Base,
+            this.cccOptionsDefault[chartType], // may be undefined
+            baseOptions);
+        
+        if(this.data != null && this.data.resultset.length > 5) {
+            if(options.type === "HeatGridChart") {
+                options.xAxisSize = 150;
+            } else if(options.orientation !== "horizontal") {
+                options.extensionPoints = _.extend(Object.create(options.extensionPoints || {}),
+                    {
+                        xAxisLabel_textAngle: -Math.PI/2,
                         xAxisLabel_textAlign: "right",
-                        xAxisLabel_bottom: 10
-                    }
-            }, baseOptions);
+                        xAxisLabel_textBaseline:  "middle"
+                    });
+            }
         }
-        if (this.data != null && this.data.resultset.length > 5 ) {
-            options['extensionPoints'] = {
-                xAxisLabel_textAngle: -(Math.PI / 2),
-                xAxisLabel_textAlign: "right",
-                xAxisLabel_bottom: 10
-            };
-            
-            options.xAxisSize = 150;
-
-        }
-        options.yAxisSize = 150;
-
+        
         return options;
     },
     
