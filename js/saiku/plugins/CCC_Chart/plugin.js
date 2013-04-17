@@ -250,7 +250,8 @@ var Chart = Backbone.View.extend({
     },
     waterfall: function() {
         var options = {
-                type: "WaterfallChart"
+                type: "WaterfallChart",
+                orientation: "horizontal"
         };
         this.cccOptions = this.getQuickOptions(options);
         this.render_chart();

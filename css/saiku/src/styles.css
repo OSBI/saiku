@@ -1327,6 +1327,50 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     background-position: 7px 7px;
     width: 16px;
 }
+.query_toolbar a.bar {
+    background-image: url('../../../images/chart/bar.png');
+    background-repeat:  no-repeat;
+    background-position: 24px 7px;
+    height: 32px;
+}
+.query_toolbar a.pie {
+    background-image: url('../../../images/chart/pie.png');
+    background-repeat:  no-repeat;
+    background-position: 24px 7px;
+    height: 32px;
+}
+.query_toolbar a.line {
+    background-image: url('../../../images/chart/line.png');
+    background-repeat:  no-repeat;
+    background-position: 24px 7px;
+    height: 32px;
+}
+.query_toolbar a.waterfall {
+    background-image: url('../../../images/chart/waterfall.png');
+    background-repeat:  no-repeat;
+    background-position: 24px 7px;
+    height: 32px;
+}
+.query_toolbar a.dot {
+    background-image: url('../../../images/chart/dot.png');
+    background-repeat:  no-repeat;
+    background-position: 24px 7px;
+    height: 32px;
+}
+.query_toolbar a.heatgrid {
+    background-image: url('../../../images/chart/heat.png');
+    background-repeat:  no-repeat;
+    background-position: 24px 7px;
+    height: 32px;
+}
+.query_toolbar a.area {
+    background-image: url('../../../images/chart/area.png');
+    background-repeat:  no-repeat;
+    background-position: 24px 7px;
+    height: 32px;
+}
+
+
 
 .form_button {
     background: #F0F0F0;
