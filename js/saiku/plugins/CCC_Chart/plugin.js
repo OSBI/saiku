@@ -60,7 +60,7 @@ var Chart = Backbone.View.extend({
         this.workspace.bind('workspace:adjust', this.render);
         
         // Create navigation
-        var exportoptions = "<div><a class='hide' href='#charteditor' id='acharteditor' /><a class='editor' href='#chart_editor'>Advanced Properties</a>Export to: " +
+        var exportoptions = "<div><a class='hide' href='#charteditor' id='acharteditor' /><!--<a class='editor' href='#chart_editor'>Advanced Properties</a>-->Export to: " +
                 "<a class='export' href='#png' class='i18n'>PNG</a>, " +
                 "<a class='export' href='#pdf' class='i18n'>PDF</a>, " +
                 //"<a class='export' href='#tiff' class='i18n'>TIFF</a>, " +
