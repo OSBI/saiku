@@ -122,7 +122,10 @@ var Workspace = Backbone.View.extend({
         // Prepare the workspace for a new query
         $(this.el).find('.workspace_results table,.connectable')
             .html('');
-            
+        $(this.el).find('.workspace_results_info').empty();
+        $(this.chart.el).empty();
+        this.chart.render();
+        $(this.querytoolbar.el).find('ul.options a.on').removeClass('on');
         // Trigger clear event
         Saiku.session.trigger('workspace:clear', { workspace: this });
 

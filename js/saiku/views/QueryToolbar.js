@@ -77,11 +77,12 @@ var QueryToolbar = Backbone.View.extend({
             $(this.el).find('ul.chart').show();
             $(this.el).find('ul.table').hide();
             this.render_mode = "chart";
-            $(this.workspace.el).find('.workspace_results table').hide();
+            $(this.workspace.el).find('.workspace_results').children().hide();
             this.workspace.chart.show(event);
         } else {
             $(this.el).find('ul.chart').hide();
             $(this.el).find('ul.table').show();
+            $(this.el).find('ul.table .stats').removeClass('on');
 
             $(this.workspace.el).find('.workspace_results table').show();
             $(this.workspace.chart.el).hide();

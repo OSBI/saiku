@@ -223,6 +223,10 @@ var Table = Backbone.View.extend({
 
         $(this.workspace.el).find(".workspace_results_info").empty();
 
+        if (typeof args == "undefined" || typeof args.data == "undefined" || !$(this.el).is(':visible')) {
+            return;
+        }
+
         if (args.data != null && args.data.error != null) {
             return this.error(args);
         }
@@ -233,9 +237,6 @@ var Table = Backbone.View.extend({
             return this.no_results(args);
         }
 
-        if (!$(this.el).is(':visible')) {
-            return;
-        }
         
         // Clear the contents of the table
         var cdate = new Date().getHours() + ":" + new Date().getMinutes();
@@ -419,7 +420,6 @@ var info = '<b><span class="i18n">Info:</span></b> &nbsp;' + cdate
     },
     
     error: function(args) {
-        $()
         $(this.el).html('<tr><td>' + safe_tags_replace(args.data.error) + '</td></tr>');
     }
 });
