@@ -282,10 +282,15 @@ var Chart = Backbone.View.extend({
         },
         
         PieChart: {
-            multiChartColumnsMax: 4,
+            multiChartColumnsMax: 3,
             multiChartMax: 30,
             smallTitleFont: "bold 14px sans-serif",
-            valuesVisible: true
+            valuesVisible: true,
+            explodedSliceRadius: '5%',
+            extensionPoints: {
+                slice_innerRadiusEx: '40%'
+            }
+            //valuesLabelStyle: 'inside'
         },
         
         LineChart: {
