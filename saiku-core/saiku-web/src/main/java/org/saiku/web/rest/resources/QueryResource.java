@@ -1031,6 +1031,58 @@ public class QueryResource {
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	
+	@PUT
+	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/children")
+	public Response includeChildren(
+			@PathParam("queryname") String queryName,
+			@PathParam("axis") String axisName, 
+			@PathParam("dimension") String dimensionName, 
+			@FormParam("member") String uniqueMemberName)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/children/"+uniqueMemberName+"\tPOST");
+		}
+		try{
+			boolean ret = olapQueryService.includeChildren(queryName, dimensionName, uniqueMemberName);
+			if(ret == true){
+				return Response.ok().status(Status.CREATED).build();
+			}
+			else{
+				throw new Exception("Couldn't include children for "+ uniqueMemberName);
+				
+			}
+		} catch (Exception e){
+			log.error("Cannot include children for "+ dimensionName+ " for query (" + queryName + ")",e);
+			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	@DELETE
+	@Path("/{queryname}/axis/{axis}/dimension/{dimension}/children")
+	public Response removeChildren(
+			@PathParam("queryname") String queryName,
+			@PathParam("axis") String axisName, 
+			@PathParam("dimension") String dimensionName, 
+			@FormParam("member") String uniqueMemberName)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/children/"+uniqueMemberName+"\tDELETE");
+		}
+		try{
+			boolean ret = olapQueryService.includeChildren(queryName, dimensionName, uniqueMemberName);
+			if(ret == true){
+				return Response.ok().status(Status.CREATED).build();
+			}
+			else{
+				throw new Exception("Couldn't remove children for "+ uniqueMemberName);
+				
+			}
+		} catch (Exception e){
+			log.error("Cannot include children for "+ dimensionName+ " for query (" + queryName + ")",e);
+			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
 
 
 	@POST
@@ -1090,6 +1142,7 @@ public class QueryResource {
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	
 	
 	
 	@PUT
