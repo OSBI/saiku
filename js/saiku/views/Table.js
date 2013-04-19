@@ -86,6 +86,8 @@ var Table = Backbone.View.extend({
                 }       
             );
 
+            var children_payload = cell.properties.uniquename;
+
             var levels = [];
             var items = {};
             var dimensions = Saiku.session.sessionworkspace.dimensions[cube].get('data');
@@ -141,6 +143,7 @@ var Table = Backbone.View.extend({
                 }
             });
             items["keeponly"] = { payload: keep_payload }
+            items["getchildren"] = { payload: children_payload }
             
 
             
@@ -162,6 +165,7 @@ var Table = Backbone.View.extend({
                     "keeponly": {name: "Keep Only", payload: keep_payload }
             };
             if (d != "Measures") {
+                citems["getchildren"] = {name: "Show Children", payload: children_payload }
                 citems["fold1key"] = {
                         name: "Include Level",
                         items: lvlitems("include-")
@@ -177,9 +181,17 @@ var Table = Backbone.View.extend({
             }
             return {
                 callback: function(key, options) {
-                    self.workspace.query.action.put('/axis/' + axis + '/dimension/' + d, { 
+                    var url = '/axis/' + axis + '/dimension/' + d;
+                    var children = false;
+                    if (key.indexOf("children") > 0) {
+                        url = '/axis/' + axis + '/dimension/' + d + "/children";
+                        children = true;
+                    }
+                    self.workspace.query.action.put(url, { 
                         success: function() {
-                            var formatter = self.workspace.query.get('formatter');
+                            var formatter = children ?
+                                    "flat" :
+                                    self.workspace.query.get('formatter');
                             self.workspace.query.clear();
                             self.workspace.query.set({ 'formatter' : formatter });
                             self.workspace.query.fetch({ success: function() {
@@ -203,9 +215,14 @@ var Table = Backbone.View.extend({
                              }});
 
                         },
-                        data: {
-                            selections: "[" + items[key].payload + "]"
-                        }
+                        data: children ?
+                            {
+                                member: items[key].payload
+                            }
+                            :
+                            {
+                                selections: "[" + items[key].payload + "]"
+                            }
                     });
                     
                 },
