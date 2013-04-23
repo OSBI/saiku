@@ -10,7 +10,7 @@ password=
 
 # there are 3 different types of security:
 # "one2one" (try and map spring user roles to mondrian roles), 
-# "mapping" (define the mapping of spring and mondrian roles manually) 
+# "lookup" (define the mapping of spring and mondrian roles manually) 
 # "passthrough" (will pass username + password of logged in user to connection, e.g. jdbc user + password)
 
 # security.type=one2one
