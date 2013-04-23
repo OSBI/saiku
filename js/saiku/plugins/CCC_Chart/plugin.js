@@ -191,6 +191,22 @@ var Chart = Backbone.View.extend({
         this.cccOptions.smallHeight = 300;
 		*/
     },
+
+    multiplebar: function() {
+        var options = {
+            type: "BarChart",
+            multiChartIndexes: [1],
+            dataMeasuresInColumns: true,
+            orientation: "vertical",
+            smallTitlePosition: "top",
+            multiChartColumnsMax: Math.floor( this.cccOptions.width / 200),
+            smallWidth: 200,
+            smallHeight: 150
+
+        };
+        this.cccOptions = this.getQuickOptions(options);
+        this.render_chart();
+    },
     
     line: function() {
         var options = {
