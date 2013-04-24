@@ -50,7 +50,7 @@ var QueryAction = Backbone.Model.extend({
     // Call arbitrary actions against the query
     handle: function(method, action, options) {
         // Set query action
-        this.url = this.query.url() + escape(action);
+        this.url = this.query.url() + action;
         
         // Clear out old attributes
         this.attributes = options.data? options.data : {};
