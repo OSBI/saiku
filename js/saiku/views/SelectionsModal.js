@@ -107,7 +107,7 @@ var SelectionsModal = Modal.extend({
             $(this.el).find('#use_result').attr('checked', this.use_result_option);
 
             this.selected_members = _.detect(response, function(obj) {
-                return obj.name == this.member.dimension;
+                return encodeURIComponent(obj.name) == this.member.dimension;
             }, this).selections;
             var used_members = [];
     
@@ -116,9 +116,9 @@ var SelectionsModal = Modal.extend({
             var selected_members_opts = "";
             for (var j = 0; j < this.selected_members.length; j++) {
                 var member = this.selected_members[j];
-                if (member.levelUniqueName == this.member.level &&
+                if (encodeURIComponent(member.levelUniqueName) == this.member.level &&
                     member.type == "MEMBER") {
-                    selected_members_opts += "<option value='" + escape(member.uniqueName) + "'>" + member.caption + "</option>";
+                    selected_members_opts += "<option value='" + encodeURIComponent(member.uniqueName) + "'>" + member.caption + "</option>";
                     used_members.push(member.caption);
                 }
             }
@@ -135,7 +135,7 @@ var SelectionsModal = Modal.extend({
             var available_members_opts = "";
             for (var i = 0; i < this.available_members.length; i++) {
                 var member = this.available_members[i];
-                available_members_opts += "<option value='" + escape(member.uniqueName) + "'>" + member.caption + "</option>";
+                available_members_opts += "<option value='" + encodeURIComponent(member.uniqueName) + "'>" + member.caption + "</option>";
             }
             if (this.available_members.length > 0) {
                 $(available_members_opts).appendTo($(this.el).find('.available_selections select'));
@@ -154,7 +154,7 @@ var SelectionsModal = Modal.extend({
                                 }));
                     },
                     select:  function(event, ui) { 
-                        var value = self.show_unique_option == false? escape(ui.item.value) : ui.item.label;
+                        var value = self.show_unique_option == false? encodeURIComponent(ui.item.value) : ui.item.label;
                         $(self.el).find('.available_selections select option[value="' + value + '"]')
                             .appendTo($(self.el).find('.used_selections select'));
                         $('#filter_selections').val('');
@@ -202,8 +202,8 @@ var SelectionsModal = Modal.extend({
     show_unique_action: function() {
         $.each($(this.el).find('option'), function(i, option) {
             var text = $(option).text();
-            $(option).text(unescape($(option).val()));
-            $(option).val(escape(text));
+            $(option).text(decodeURIComponent($(option).val()));
+            $(option).val(encodeURIComponent(text));
         });
         this.show_unique_option= ! this.show_unique_option;
     },
@@ -243,7 +243,7 @@ var SelectionsModal = Modal.extend({
             $(this.el).find('.used_selections option')
                 .each(function(i, selection) {
                 var value = show_u ? 
-                    $(selection).text() : unescape($(selection).val());
+                    $(selection).text() : decodeURIComponent($(selection).val());
                 updates.push({
                     uniquename: value,
                     type: 'member',

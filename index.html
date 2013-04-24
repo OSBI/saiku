@@ -188,7 +188,7 @@
                         <% _.each(hierarchy.levels, function(level) { %>
                             <% if (typeof level["visible"] == "undefined" || level["visible"]) { %>
                                 <li class="hide"><a title="<%= level.description ? level.description : level.caption %>" rel="<%= level.uniqueName %>" 
-                                    class="level" href="#<%= dimension.name %>/hierarchy/<%= hierarchy.uniqueName %>/<%= level.uniqueName %>"><%= level.caption %></a>
+                                    class="level" href="#<%= encodeURIComponent(dimension.name) %>/hierarchy/<%= encodeURIComponent(hierarchy.uniqueName) %>/<%= encodeURIComponent(level.uniqueName) %>"><%= level.caption %></a>
                                 </li>
                             <% } %>
                         <% }); %>
