@@ -174,7 +174,14 @@ var DrillthroughModal = Modal.extend({
 
     drilled: function(model, response) {
         var table = new Table({ workspace: this.workspace });
-        table.render({ data: response }, true);
+        if (response != null && response.error != null) {
+            $(table.el).html('<tr><td>' + safe_tags_replace(args.data.error) + '</td></tr>');
+        } else {
+            table.process_data(response.cellset);
+        }
+
+        //table.render({ data: response }, true);
+
 
         Saiku.ui.unblock();
         var html = '<div id="fancy_results" class="workspace_results" style="overflow:visible"><table>' + $(table.el).html() + '</table></div>';
