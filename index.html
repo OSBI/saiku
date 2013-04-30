@@ -210,7 +210,7 @@
                 <% _.each(measures, function(measure) { %>
                     <li><a title="<%= measure.description ? measure.description : measure.uniqueName %>"
                             rel="<%= measure.uniqueName %>"
-                        class="measure" href="#Measures/member/<%= measure.uniqueName %>"><%= measure.caption %></a>
+                        class="measure" href="#Measures/member/<%= encodeURIComponent(measure.uniqueName) %>"><%= measure.caption %></a>
                     </li>
                 <% }); %>
                 </ul>
