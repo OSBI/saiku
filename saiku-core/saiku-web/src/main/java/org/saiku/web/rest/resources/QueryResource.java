@@ -15,9 +15,8 @@
  */
 package org.saiku.web.rest.resources;
 
-import java.net.URLDecoder;
-
 import java.io.StringReader;
+import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -250,6 +249,21 @@ public class QueryResource {
 			return null;
 		}
 	}
+	
+	@POST
+	@Consumes("application/x-www-form-urlencoded")
+	@Path("/{queryname}/mdx")
+	public void setMDXQuery(@PathParam("queryname") String queryName, @FormParam("mdx") String mdx){
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/mdx/\tPOST");
+		}
+		try {
+			olapQueryService.setMdx(queryName, mdx);
+		}
+		catch (Exception e) {
+			log.error("Cannot set mdx for query (" + queryName + ")",e);
+		}
+	}
 
 	@GET
 	@Produces({"application/json" })
@@ -284,7 +298,7 @@ public class QueryResource {
 	@Path("/{queryname}/export/xls/{format}")
 	public Response getQueryExcelExport(
 			@PathParam("queryname") String queryName,
-			@PathParam("format") @DefaultValue("HIERARCHICAL") String format){
+			@PathParam("format") @DefaultValue("flattened") String format){
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/export/xls/"+format+"\tGET");
 		}

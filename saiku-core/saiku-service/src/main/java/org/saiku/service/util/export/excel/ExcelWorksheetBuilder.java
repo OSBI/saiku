@@ -468,7 +468,7 @@ public class ExcelWorksheetBuilder {
 
         int width = 0;
         int x = 0;
-        boolean exit = (rowsetHeader[0][0].getRawValue() != null);
+        boolean exit = (rowsetHeader.length < 1 || rowsetHeader[0][0].getRawValue() != null);
         String cellValue = null;
 
         for (x = 0; (!exit && rowsetHeader[0].length > x); x++) {
@@ -491,7 +491,7 @@ public class ExcelWorksheetBuilder {
      */
     private int findTopLeftCornerHeight() {
 
-        int height = rowsetHeader.length - 1;
+        int height = rowsetHeader.length > 0 ? rowsetHeader.length - 1 : 0;
         return height;
     }
 

@@ -141,12 +141,12 @@ public class ServletAdapterContentGenerator extends BaseContentGenerator {
 					Response r = null;
 
 					if (exportType == null || "XLS".equals(exportType.toUpperCase())) {
-						r = ex.exportExcel(file);
+						r = ex.exportExcel(file, null, null);
 						mimeType = "application/vnd.ms-excel";
 						filename += ".xls";
 						
 					} else if ("CSV".equals(exportType.toUpperCase())) {
-						r = ex.exportCsv(file);
+						r = ex.exportCsv(file, null, null);
 						mimeType = "application/csv";
 						filename += ".csv";
 					}

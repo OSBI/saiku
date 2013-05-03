@@ -44,7 +44,6 @@
   <classpathentry kind="var" path="M2_REPO/org/jdom/jdom/1.1/jdom-1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/net/sourceforge/jexcelapi/jxl/2.6.10/jxl-2.6.10.jar"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/4.10/junit-4.10.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar"/>
@@ -110,6 +109,15 @@
   <classpathentry kind="var" path="M2_REPO/org/apache/xmlgraphics/batik-script/1.7/batik-script-1.7.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/xmlgraphics/batik-svggen/1.7/batik-svggen-1.7.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/xmlgraphics/batik-codec/1.7/batik-codec-1.7.jar"/>
+  <classpathentry kind="var" path="M2_REPO/avalon-framework/avalon-framework/4.1.5/avalon-framework-4.1.5.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/xmlgraphics/xmlgraphics-commons/1.2/xmlgraphics-commons-1.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/com/lowagie/itext/4.2.0/itext-4.2.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/bouncycastle/bctsp-jdk14/1.38/bctsp-jdk14-1.38.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcprov-jdk14/1.38/bcprov-jdk14-1.38.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/bouncycastle/bcmail-jdk14/1.38/bcmail-jdk14-1.38.jar"/>
+  <classpathentry kind="var" path="M2_REPO/jfree/jfreechart/1.0.12/jfreechart-1.0.12.jar"/>
+  <classpathentry kind="var" path="M2_REPO/jfree/jcommon/1.0.15/jcommon-1.0.15.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/swinglabs/pdf-renderer/1.0.5/pdf-renderer-1.0.5.jar"/>
   <classpathentry kind="src" path="/saiku-bi-platform-plugin-util"/>
   <classpathentry kind="var" path="M2_REPO/pentaho/pentaho-bi-platform-api/3.10.0-stable/pentaho-bi-platform-api-3.10.0-stable.jar"/>
   <classpathentry kind="var" path="M2_REPO/pentaho/pentaho-connections/2.2.3/pentaho-connections-2.2.3.jar"/>

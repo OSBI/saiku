@@ -198,7 +198,7 @@ public class OlapQueryService implements Serializable {
 		else if (formatter.equals("flattened")) {
 			return execute(queryName, new FlattenedCellSetFormatter());
 		}
-		return execute(queryName, new HierarchicalCellSetFormatter());
+		return execute(queryName, new FlattenedCellSetFormatter());
 	}
 
 	public CellDataSet execute(String queryName, ICellSetFormatter formatter) {
@@ -868,7 +868,7 @@ public class OlapQueryService implements Serializable {
 	}
 
 	public byte[] getExport(String queryName, String type) {
-		return getExport(queryName,type,new HierarchicalCellSetFormatter());
+		return getExport(queryName,type,new FlattenedCellSetFormatter());
 	}
 
 	public byte[] getExport(String queryName, String type, String formatter) {
@@ -881,7 +881,7 @@ public class OlapQueryService implements Serializable {
 			return getExport(queryName, type, new HierarchicalCellSetFormatter());
 		}
 
-		return getExport(queryName, type, new HierarchicalCellSetFormatter());
+		return getExport(queryName, type, new FlattenedCellSetFormatter());
 	}
 
 	public byte[] getExport(String queryName, String type, ICellSetFormatter formatter) {
