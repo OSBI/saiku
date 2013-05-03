@@ -106,9 +106,14 @@ var SelectionsModal = Modal.extend({
             
             $(this.el).find('#use_result').attr('checked', this.use_result_option);
 
-            this.selected_members = _.detect(response, function(obj) {
-                return encodeURIComponent(obj.name) == this.member.dimension;
-            }, this).selections;
+            this.selected_members = [];
+
+            var this_dim_sel = _.detect(response, function(obj) {
+                return (obj.name == this.member.dimension || encodeURIComponent(obj.name) == this.member.dimension);
+            }, this);
+            if (typeof this_dim_sel != "undefined" && typeof this_dim_sel.selections != "undefined") {
+                this.selected_members = this_dim_sel.selections;
+            }
             var used_members = [];
     
             // Populate both boxes
