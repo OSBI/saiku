@@ -59,7 +59,7 @@ var WorkspaceToolbar = Backbone.View.extend({
                 .addClass('disabled_toolbar').removeClass('on');
             $(args.workspace.el).find('.fields_list .disabled_toolbar').removeClass('disabled_toolbar');
             $(args.workspace.toolbar.el)
-                .find('.open, .run,.auto,.non_empty,.toggle_fields,.toggle_sidebar,.switch_to_mdx, .mdx')
+                .find('.open, .save, .run,.auto,.non_empty,.toggle_fields,.toggle_sidebar,.switch_to_mdx, .mdx')
                 .removeClass('disabled_toolbar');
         }
         
@@ -132,8 +132,18 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     save_query: function(event) {
+        var self = this;
         if (this.workspace.query) {
-            (new SaveQuery({ query: this.workspace.query })).render().open();
+            if (typeof this.editor != "undefined") {
+                var mdx = this.editor.getValue();
+                this.workspace.query.action.post("/mdx", { 
+                    success: function(model, response) {
+                        (new SaveQuery({ query: self.workspace.query })).render().open();
+                    }, data: {mdx:mdx}
+                });
+            } else {
+                (new SaveQuery({ query: this.workspace.query })).render().open();
+            }
         }
     },
 
