@@ -10,7 +10,7 @@
 		<maven.compiler.source>1.5</maven.compiler.source>
 		<maven.compiler.target>1.5</maven.compiler.target>
     	<spring.version>3.0.0.RELEASE</spring.version>
-        <slf4j.version>1.6.1</slf4j.version>
+        <slf4j.version>1.6.4</slf4j.version>
         <enunciate.version>1.25</enunciate.version>
         <jersey.version>1.11</jersey.version>
 	</properties>
