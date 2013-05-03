@@ -58,8 +58,12 @@ var SavedQuery = Backbone.Model.extend({
         var filename = model.get('file');
         for (var key in Settings) {
             if (key.match("^PARAM")=="PARAM") {
-                var variable = key.substring("PARAM".length, key.length)
-                file = file.replace("${" + variable + "}", Settings[key]);
+                var variable = key.substring("PARAM".length, key.length);
+                var Re = new RegExp("\\$\\{" + variable + "\\}","g");
+                var Re2 = new RegExp("\\$\\{" + variable.toLowerCase() + "\\}","g");
+                file = file.replace(Re,Settings[key]);
+                file = file.replace(Re2,Settings[key]);
+                
             }
         }
         var query = new Query({ 
