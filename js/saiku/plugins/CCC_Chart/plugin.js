@@ -275,6 +275,8 @@ var Chart = Backbone.View.extend({
             legendAlign: "right",
             legendSizeMax: "30%",
             axisSizeMax: "40%",
+            plotFrameVisible : false,
+            orthoAxisMinorTicks : false,
             colors: ["#4bb2c5", "#c5b47f", "#EAA228", "#579575", "#839557", "#958c12", "#953579", "#4b5de4", "#d8b83f", "#ff5800", "#0085cc"]
         },
         
