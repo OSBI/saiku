@@ -82,5 +82,7 @@
    "Pie":"Koláčový",
    "EXPERIMENTAL: Export PDF":"Experimentální: Export do PDF",
    "ChartType:  ":"Typ grafu",
-   "Properties":"Vlastnosti"
+   "Properties":"Vlastnosti",
+   "Mode:":"Mód",
+   "Multiple Bar Chart":"Násobný sloupcový"
 }
