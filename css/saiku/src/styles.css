@@ -1312,7 +1312,7 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 }
 .query_toolbar a.on {
     border: 1px solid #CCC;
-    background-color: #E0E0E0;
+    background-color: #E0E0E0 !important;
     padding: 7px !important;
 }
 .query_toolbar a.render_chart {
@@ -1333,7 +1333,8 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     height: 32px;
 }
 
-.query_toolbar a.spark_line:hover {
+.query_toolbar a.spark_line:hover,
+.query_toolbar a.spark_line.on {
     background: url('../../../images/chart/trendline.png') no-repeat 30px 7px;
     height: 32px;
 }
@@ -1342,7 +1343,8 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     height: 32px;
 }
 
-.query_toolbar a.spark_bar:hover {
+.query_toolbar a.spark_bar:hover,
+.query_toolbar a.spark_bar.on {
     background: url('../../../images/chart/trendbars.png') no-repeat 30px 7px;
     height: 32px;
 }
@@ -1388,43 +1390,53 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     background: url('../../../images/chart/gray/area.png') no-repeat 30px 7px;
     height: 32px;
 }
-.query_toolbar a.bar:hover {
+.query_toolbar a.bar:hover,
+.query_toolbar a.bar.on {
     background: url('../../../images/chart/bar.png') no-repeat 30px 7px;
     height: 32px;
 }
-.query_toolbar a.stackedBar100:hover {
+.query_toolbar a.stackedBar100:hover,
+.query_toolbar a.stackedBar100.on {
     background: url('../../../images/chart/100bar.png') no-repeat 30px 7px;
     height: 32px;
 }
-.query_toolbar a.stackedBar:hover {
+.query_toolbar a.stackedBar:hover,
+.query_toolbar a.stackedBar.on {
     background: url('../../../images/chart/stackedbar.png') no-repeat 30px 7px;
     height: 32px;
 }
-.query_toolbar a.multiple:hover {
+.query_toolbar a.multiple:hover,
+.query_toolbar a.multiple.on {
     background: url('../../../images/chart/multiple.png') no-repeat 30px 7px;
     height: 32px;
 }
-.query_toolbar a.pie:hover {
+.query_toolbar a.pie:hover,
+.query_toolbar a.pie.on {
     background: url('../../../images/chart/pie.png') no-repeat 30px 7px;
     height: 32px;
 }
-.query_toolbar a.line:hover {
+.query_toolbar a.line:hover,
+.query_toolbar a.line.on {
     background: url('../../../images/chart/line.png') no-repeat 30px 7px;
     height: 32px;
 }
-.query_toolbar a.waterfall:hover {
+.query_toolbar a.waterfall:hover,
+.query_toolbar a.waterfall.on {
     background: url('../../../images/chart/waterfall.png') no-repeat 30px 7px;
     height: 32px;
 }
-.query_toolbar a.dot:hover {
+.query_toolbar a.dot:hover,
+.query_toolbar a.dot.on {
     background: url('../../../images/chart/dot.png') no-repeat 30px 7px;
     height: 32px;
 }
-.query_toolbar a.heatgrid:hover {
+.query_toolbar a.heatgrid:hover,
+.query_toolbar a.heatgrid.on {
     background: url('../../../images/chart/area2.png') no-repeat 30px 7px;
     height: 32px;
 }
-.query_toolbar a.area:hover {
+.query_toolbar a.area:hover,
+.query_toolbar a.area.on {
     background: url('../../../images/chart/area.png') no-repeat 30px 7px;
     height: 32px;
 }
