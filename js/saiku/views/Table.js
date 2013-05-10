@@ -250,7 +250,7 @@ var Table = Backbone.View.extend({
 
         
         // Check to see if there is data
-        if (args.data.cellset && args.data.cellset.length === 0) {
+        if (args.data == null || (args.data.cellset && args.data.cellset.length === 0)) {
             return this.no_results(args);
         }
 

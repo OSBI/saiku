@@ -80,7 +80,8 @@ var Query = Backbone.Model.extend({
         }
         Saiku.ui.unblock();
         $(this.workspace.el).find(".workspace_results_info").empty();
-
+        this.workspace.trigger('query:run');
+        this.result.result = null;
         // TODO - Validate query
         // maybe we should sync it with the backend query JSON?
         // this definitely needs improvement
@@ -116,10 +117,9 @@ var Query = Backbone.Model.extend({
         // Run it
         $(this.workspace.table.el)
             .html('<tr><td><span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span> </td></tr>');
-
+        this.workspace.trigger('query:fetch');
 		Saiku.i18n.translate();
             // <a class="cancel" href="#cancel">x</a>
-
         if (this.get('type')  == "MDX" && mdx != null) {
             this.result.save({ mdx: mdx});
         } else {

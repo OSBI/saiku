@@ -63,6 +63,8 @@ var Statistics = Backbone.View.extend({
         
         if ($(event.target).hasClass('on')) {
             this.render();
+        } else {
+            this.workspace.table.render({ data: this.workspace.query.result.lastresult() });
         }
     },
     

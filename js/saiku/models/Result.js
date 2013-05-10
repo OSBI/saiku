@@ -18,6 +18,9 @@
  * Holds the resultset for a query, and notifies plugins when resultset updated
  */
 var Result = Backbone.Model.extend({
+
+    result: null,
+    
     initialize: function(args, options) {
         // Keep reference to query
         this.query = options.query;
