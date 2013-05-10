@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.ws.rs.DELETE;
@@ -335,6 +337,18 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 					if (file.getType().equals(FileType.FOLDER)) { 
 						repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepositoryObjects(file, fileType)));
 					}
+					Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
+
+						public int compare(IRepositoryObject o1, IRepositoryObject o2) {
+							if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(IRepositoryObject.Type.FILE))
+								return -1;
+							if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
+								return 1;
+							return o1.getName().compareTo(o2.getName());
+							
+						}
+						
+					});
 				}
 			}
 		}
