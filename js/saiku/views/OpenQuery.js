@@ -144,7 +144,7 @@ var OpenQuery = Backbone.View.extend({
                 $( this.el ).find( '.add_folder' ).parent().removeClass( 'hide' );
             }
         } catch(e) {
-            console.log(e);
+            //console.log(e);
         }
 
         
