@@ -102,7 +102,7 @@ var OpenQuery = Backbone.View.extend({
         } else {
             
             $(this.el).find('li.query').show();
-            $(this.el).find('li.query a').not('[href*="' + filter + '"]').parent().hide();
+            $(this.el).find('li.query a').not(':contains("' + filter + '")').parent().hide();
             $(this.el).find( 'li.folder .folder_row' ).find('.sprite').removeClass( 'collapsed' );
             $(this.el).find( 'li.folder .folder_content' ).removeClass('hide');
         }
