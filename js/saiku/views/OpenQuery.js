@@ -121,7 +121,7 @@ var OpenQuery = Backbone.View.extend({
         $( this.el ).find( '.workspace_toolbar' ).removeClass( 'hide' );
         $( this.el ).find( '.for_queries' ).addClass( 'hide' );
         $( this.el ).find( '.for_folder' ).addClass( 'hide' );
-        //$( this.el ).find( '.add_folder' ).parent().addClass( 'hide' );
+        $( this.el ).find( '.add_folder' ).parent().addClass( 'hide' );
 
         if (typeof query.acl != "undefined" && _.indexOf(query.acl, "READ") > -1) {
             $( this.el ).find( '.for_queries .open' ).parent().removeClass( 'hide' );
@@ -132,6 +132,21 @@ var OpenQuery = Backbone.View.extend({
         if (typeof query.acl != "undefined" && _.indexOf(query.acl, "GRANT") > -1) {
             $( this.el ).find( '.for_queries .edit_permissions' ).parent().removeClass( 'hide' );
         }
+        try {
+            var query_path = path.split("/");
+            if (query_path.length > 1) {
+                    var folder_path = query_path.splice(0,query_path.length - 1).join("/");
+                    var folder = this.queries[folder_path];
+                    if (typeof folder.acl != "undefined" && _.indexOf(folder.acl, "WRITE") > -1) {
+                        $( this.el ).find( '.add_folder' ).parent().removeClass( 'hide' );   
+                    }
+            } else if (query_path.length == 1) {
+                $( this.el ).find( '.add_folder' ).parent().removeClass( 'hide' );
+            }
+        } catch(e) {
+            console.log(e);
+        }
+
         
         var $results = $(this.el).find('.workspace_results')
             .html('<h3><strong>' + query.name + '</strong></h3>');
