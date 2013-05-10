@@ -49,7 +49,7 @@ var SaveQuery = Modal.extend({
             name = path[path.length -1];
             this.file_name = name;
             if (path.length > 1) {
-                this.folder_name = path.splice(path.length - 1, 1).join("/");
+                this.folder_name = path.splice(0,path.length - 1).join("/");
             }
         }
         this.query = args.query;
