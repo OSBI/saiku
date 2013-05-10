@@ -30,7 +30,8 @@ var OpenQuery = Backbone.View.extend({
         'click .workspace_toolbar [href=#delete_folder]': 'delete_folder',
         'click .workspace_toolbar [href=#delete_query]': 'delete_query',
         'click .workspace_toolbar [href=#edit_permissions]': 'edit_permissions',
-        'click .queries' : 'click_canvas'
+        'click .queries' : 'click_canvas',
+        'keyup .search_file' : 'search_file'
     },
     
     template: function() {
@@ -89,6 +90,24 @@ var OpenQuery = Backbone.View.extend({
         }
         getQueries( repository );
     },
+
+    search_file: function(event) {
+        var filter = $(this.el).find('.search_file').val();
+        var isEmpty = (typeof filter == "undefined" || filter == "" || filter == null);
+        if (isEmpty || event.which == 27 || event.which == 9) {
+            $(this.el).find('li.query').show();
+            $(this.el).find( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
+            $(this.el).find( 'li.folder .folder_content' ).addClass('hide');
+            $(this.el).find('.search_file').val('');
+        } else {
+            
+            $(this.el).find('li.query').show();
+            $(this.el).find('li.query a').not('[href*="' + filter + '"]').parent().hide();
+            $(this.el).find( 'li.folder .folder_row' ).find('.sprite').removeClass( 'collapsed' );
+            $(this.el).find( 'li.folder .folder_content' ).removeClass('hide');
+        }
+        return false;
+    },
     
     view_query: function(event) {
         event.preventDefault( );
@@ -102,7 +121,7 @@ var OpenQuery = Backbone.View.extend({
         $( this.el ).find( '.workspace_toolbar' ).removeClass( 'hide' );
         $( this.el ).find( '.for_queries' ).addClass( 'hide' );
         $( this.el ).find( '.for_folder' ).addClass( 'hide' );
-        $( this.el ).find( '.add_folder' ).parent().addClass( 'hide' );
+        //$( this.el ).find( '.add_folder' ).parent().addClass( 'hide' );
 
         if (typeof query.acl != "undefined" && _.indexOf(query.acl, "READ") > -1) {
             $( this.el ).find( '.for_queries .open' ).parent().removeClass( 'hide' );

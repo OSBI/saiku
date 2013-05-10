@@ -34,12 +34,23 @@ var SaveQuery = Modal.extend({
         { text: "Cancel", method: "close" }
     ],
 
+    folder_name: null,
+    file_name: null,
+
     initialize: function(args) {
         // Append events
         var self = this;
         var name = "";
+        var full_path = "";
         if (args.query.name) {
-            name = args.query.name.split('/')[args.query.name.split('/').length -1];
+            var full_path = args.query.name;
+            var path = args.query.name.split('/');
+
+            name = path[path.length -1];
+            this.file_name = name;
+            if (path.length > 1) {
+                this.folder_name = path.splice(path.length - 1, 1).join("/");
+            }
         }
         this.query = args.query;
         this.message = _.template("<form id='save_query_form'>" +
@@ -47,7 +58,7 @@ var SaveQuery = Modal.extend({
             "please select a folder and type a name in the text box below:</label><br />" +
             "<div class='RepositoryObjects'></div>" +
             "<input type='text' name='name' value='<%= name %>' />" +
-            "</form>")({ name: name });
+            "</form>")({ name: full_path });
 
         _.extend(this.options, {
             title: "Save query"
@@ -68,7 +79,7 @@ var SaveQuery = Modal.extend({
         } );
 
         // Maintain `this`
-        _.bindAll( this, "copy_to_repository", "close", "toggle_folder", "select_name", "populate" );
+        _.bindAll( this, "copy_to_repository", "close", "toggle_folder", "select_name", "populate", "set_name" );
         
         // fix event listening in IE < 9
         if($.browser.msie && $.browser.version < 9) {
@@ -97,6 +108,10 @@ var SaveQuery = Modal.extend({
         var $target = $( event.currentTarget );
         this.unselect_current_selected_folder( );
         $target.children('.folder_row').addClass( 'selected' );
+        var f_name = $target.find( 'a' ).attr('href').replace('#', '');
+        this.set_name(f_name, null);
+
+
         var $queries = $target.children( '.folder_content' );
         var isClosed = $target.children( '.folder_row' ).find('.sprite').hasClass( 'collapsed' );
         if( isClosed ) {
@@ -109,12 +124,24 @@ var SaveQuery = Modal.extend({
         return false;
     },
 
+    set_name: function(folder, file) {
+        if (folder != null) {
+            this.folder_name = folder;
+            var name = (this.folder_name != null ? this.folder_name + "/" : "") + (this.file_name != null ? this.file_name : "")
+            $(this.el).find('input[name="name"]').val( name );
+        }
+        if (file != null) {
+            $(this.el).find('input[name="name"]').val( file );
+        }
+
+    },
+
     select_name: function( event ) {
         var $currentTarget = $( event.currentTarget );
         this.unselect_current_selected_folder( );
         $currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').addClass( 'selected' );
-        var name = $currentTarget.find( 'a' ).text();
-        $(this.el).find('input[name="name"]').val( name );
+        var name = $currentTarget.find( 'a' ).attr('href').replace('#','');
+        this.set_name(null, name);
         return false;
     },
 
@@ -125,11 +152,13 @@ var SaveQuery = Modal.extend({
     save: function(event) {
         // Save the name for future reference
         var foldername = ''; /* XXX == root, should it be something different than ''? */
+        /*
         var $folder = $(this.el).find( '.folder_row.selected a' ).first( );
         if( $folder.length ) {
             foldername = $folder.attr( 'href' ).replace( '#', '' );
             foldername = (foldername != null && foldername.length > 0 ? foldername + "/" : "");
         }
+        */
         
         var name = $(this.el).find('input[name="name"]').val();
         if (name != null && name.length > 0) {

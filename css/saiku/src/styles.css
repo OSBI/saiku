@@ -1548,6 +1548,12 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 
 /* OOCSS - reusable classes */
 
+.queries input.search_file {
+    width:130px;
+    margin-left:10px;
+    height: 18px;
+}
+
 .RepositoryObjects {
     margin: 0;
     padding: 0;
@@ -1562,7 +1568,7 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     padding-top: 1px;
 }
 .RepositoryObjects li.query {
-    margin-left: 3px;
+    margin-left: 16px;
 }
 
 
