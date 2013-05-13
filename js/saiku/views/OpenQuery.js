@@ -92,17 +92,24 @@ var OpenQuery = Backbone.View.extend({
     },
 
     search_file: function(event) {
-        var filter = $(this.el).find('.search_file').val();
+        var filter = $(this.el).find('.search_file').val().toLowerCase();
         var isEmpty = (typeof filter == "undefined" || filter == "" || filter == null);
         if (isEmpty || event.which == 27 || event.which == 9) {
-            $(this.el).find('li.query').show();
+            $(this.el).find('li.query, li.folder').removeClass('hide');
             $(this.el).find( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
             $(this.el).find( 'li.folder .folder_content' ).addClass('hide');
             $(this.el).find('.search_file').val('');
         } else {
             
-            $(this.el).find('li.query').show();
-            $(this.el).find('li.query a').not(':contains("' + filter + '")').parent().hide();
+            $(this.el).find('li.query').removeClass('hide')
+            $(this.el).find('li.query a').filter(function (index) { 
+                return this.text.toLowerCase().indexOf(filter) == -1; 
+            }).parent().addClass('hide');
+            $(this.el).find('li.folder').addClass('hide');
+            $(this.el).find('li.query').not('.hide').parents('li.folder').removeClass('hide');
+            //$(this.el).find( 'li.folder .folder_content').not(':has(.query:visible)').parent().addClass('hide');
+
+            //not(':contains("' + filter + '")').parent().hide();
             $(this.el).find( 'li.folder .folder_row' ).find('.sprite').removeClass( 'collapsed' );
             $(this.el).find( 'li.folder .folder_content' ).removeClass('hide');
         }
