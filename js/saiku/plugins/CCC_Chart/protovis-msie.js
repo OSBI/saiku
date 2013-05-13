@@ -847,23 +847,28 @@ pv.VmlScene.removeSiblings = function(e) {
   }
 };
 
-pv.VmlScene.removeFillStyleDefinitions = function(/*scenes*/){};
-
 pv.VmlScene.addFillStyleDefinition = function(/*scenes, fill*/){};
 
-//Not supported - exists for svg custom attributes
-pv.VmlScene.setAttributes = function(/*e, attributes*/){};
+// Done differently
+pv.VmlScene.setAttributes = function(/*e, attributes*/) {};
 
-pv.VmlScene.setStyle = function(e, style){
+pv.VmlScene.setStyle = function(e, style) {
+    var prevStyle = e.__style__;
+    if(prevStyle === style) { prevStyle = null; }
+    
     var eStyle = e.style;
     for (var name in style) {
         var value = style[name];
-        if (value == null) {
-            eStyle.removeAttribute(name);   // cssText 
-        } else { 
-            eStyle[name] = value;
+        if(!prevStyle || (value !== prevStyle[name])) {
+            if (value == null) {
+                eStyle.removeAttribute(name);   // cssText 
+            } else { 
+                eStyle[name] = value;
+            }
         }
     }
+    
+    e.__style__ = style;
 };
 
 pv.VmlScene.append = function(e, scenes, index) {

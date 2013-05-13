@@ -1,6 +1,13 @@
-//VERSION TRUNK-20130215
+/*!
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
+//VERSION TRUNK-20130513
 
-var def = (function(){
+var def = (function() {
+
+
 /** @private */
 var arraySlice = Array.prototype.slice;
 
@@ -181,7 +188,7 @@ var def = /** @lends def */{
         
         return o;
     },
-        
+    
     /** 
      * Creates a property getter function,
      * for a specified property name.
@@ -192,7 +199,7 @@ var def = /** @lends def */{
      * if the property would be accessed on null or undefined.
      * @type function
      */
-    propGet: function(p, dv){
+    propGet: function(p, dv) {
         p = '' + p;
         
         /**
@@ -216,9 +223,7 @@ var def = /** @lends def */{
          * 
          * @private
          */
-        return function(o){ 
-            return o != null ? o[p] : dv;
-        };
+        return function(o) { return o ? o[p] : dv; };
     },
     
     // TODO: propSet ?
@@ -471,6 +476,11 @@ var def = /** @lends def */{
         return scopeFun.call(ctx);
     },
     
+    // Bit -------------
+    bit: {
+        set: function(bits, set, on){ return (on || on == null) ? (bits | set) : (bits & ~set); }
+    },
+    
     // Special functions ----------------
     
     /**
@@ -489,21 +499,15 @@ var def = /** @lends def */{
         //return (a < b) ? -1 : ((a > b) ? 1 : 0);
     },
     
-    compareReverse: function(a, b){
+    compareReverse: function(a, b) {
         return (a === b) ? 0 : ((a > b) ? -1 : 1);
     },
     
-    methodCaller: function(p, context){
-        if(context){
-            return function(){
-                return context[p].apply(context, arguments); 
-            };
-        }
+    methodCaller: function(p, x) {
+        if(x) { return function() { return x[p].apply(x, arguments); }; }
         
         /* floating method */
-        return function(){
-            return this[p].apply(this, arguments); 
-        };
+        return function() { return this[p].apply(this, arguments); };
     },
     
     /**
@@ -560,10 +564,11 @@ var def = /** @lends def */{
             return (v instanceof Array);
         },
         
-        isLike: function(v){
+        // TODO: def.array.like.is
+        isLike: function(v) {
             return v && (v.length != null) && (typeof v !== 'string');
         },
-        
+
         // TODO: this should work as other 'as' methods...
         /**
          * Converts something to an array if it is not one already,
@@ -664,6 +669,14 @@ var def = /** @lends def */{
             }
         
             return args.join(sep);
+        },
+        
+        padRight: function(s, n, p) {
+            if(!s) { s = ''; }
+            if(p == null) { p = ' '; }
+            
+            var k = ~~((n - s.length) / p.length);
+            return k > 0 ? (s + new Array(k + 1).join(p)) : s;
         }
     },
     
@@ -736,7 +749,7 @@ var def = /** @lends def */{
     // -----------------
     
     /* Ensures the first letter is upper case */
-    firstUpperCase: function(s){
+    firstUpperCase: function(s) {
         if(s) {
             var c  = s.charAt(0),
                 cU = c.toUpperCase();
@@ -747,7 +760,7 @@ var def = /** @lends def */{
         return s;
     },
     
-    firstLowerCase: function(s){
+    firstLowerCase: function(s) {
         if(s) {
             var c  = s.charAt(0),
                 cL = c.toLowerCase();
@@ -782,27 +795,21 @@ var def = /** @lends def */{
      * 
      * @returns {string} The formatted string.
      */
-    format: function(mask, scope, ctx){
-        if(mask == null || mask === '') {
-            return "";
-        }
+    format: function(mask, scope, ctx) {
+        if(mask == null || mask === '') { return ""; }
         
         var isScopeFun = scope && def.fun.is(scope);
         
-        return mask.replace(/(^|[^{])\{([^{}]+)\}/g, function($0, before, prop){
-            var value;
-            if(scope){
-                if(isScopeFun){
-                    value = scope.call(ctx, prop);
-                } else {
-                    value = scope[prop];
-                }
-            } else {
-                value = null;
-            }
+        return mask.replace(/(^|[^{])\{([^{}]+)\}/g, function($0, before, prop) {
+            var value = !scope     ? null : 
+                        isScopeFun ? scope.call(ctx, prop) : 
+                        scope[prop];
             
             // NOTE: calls .toString() of value as a side effect of the + operator
-            return before + (value == null ? "" : value);
+            // NOTE2: when value is an object, that contains a valueOf method,
+            // valueOf is called instead, and toString is called on that result only.
+            // Using String(value) ensures toString() is called on the object itself.
+            return before + (value == null ? "" : String(value));
         });
     },
     
@@ -811,7 +818,7 @@ var def = /** @lends def */{
     /**
      * Binds a list of types with the specified values, by position.
      * <p>
-     * A null value is bound to any type.
+     * A null value is bindable to any type.
      * <p>
      * <p>
      * When a value is of a different type than the type desired at a given position
@@ -821,25 +828,25 @@ var def = /** @lends def */{
      * 
      * @returns {any[]} An array representing the binding, with the values bound to each type.
      */
-    destructuringTypeBind: function(types, values){
+    destructuringTypeBind: function(types, values) {
         var T = types.length;
         var result = new Array(T);
-        if(T && values){
+        if(T && values) {
             var V = values.length;
-            if(V){
+            if(V) {
                 var v = 0;
                 var t = 0;
-                do{
+                do {
                     var value = values[v];
                     
                     // any type matches null
-                    if(value == null || typeof value === types[t]){
+                    if(value == null || typeof value === types[t]) {
                         // bind value to type
                         result[t] = value;
                         v++;
                     }
                     t++;
-                }while(t < T && v < V);
+                } while(t < T && v < V);
             }
         }
         
@@ -860,6 +867,16 @@ var def = /** @lends def */{
         throw def.error.assertionFailed(msg, scope);
     }
 };
+
+
+var AL = def.array.like = def.copyOwn(
+    function(v){ return AL.is(v) ? v : [v]; }, {
+        
+    is: function(v) { return v && (v.length != null) && (typeof v !== 'string'); },
+    
+    as: function(v){ return AL.is(v) ? v : null; }
+});
+AL.to = AL;
 
 def.lazy = def.object.lazy;
 
@@ -1146,23 +1163,21 @@ function createRecursive(instance){
 }
     
 // Creates an object whose prototype is the specified object.
-def.create = function(/* [deep, ] baseProto, mixin1, mixin2, ...*/){
+def.create = function(/*[deep,] baseProto, mixin1, mixin2, ...*/){
     var mixins = arraySlice.call(arguments),
         deep = true,
         baseProto = mixins.shift();
 
-    if(typeof(baseProto) === 'boolean'){
+    if(typeof(baseProto) === 'boolean') {
         deep = baseProto;
         baseProto = mixins.shift();
     }
 
     var instance = baseProto ? Object.create(baseProto) : {};
-    if(deep){
-        createRecursive(instance);
-    }
+    if(deep) { createRecursive(instance); }
 
     // NOTE:
-    if(mixins.length > 0){
+    if(mixins.length > 0) {
         mixins.unshift(instance);
         def.mixin.apply(def, mixins);
     }
@@ -1431,8 +1446,7 @@ def.scope(function(){
     
     // -----------------
     
-    function rootType(){
-    }
+    function rootType(){ }
     
     var rootProto = rootType.prototype;
     // Unfortunately, creates an enumerable property in every instance
@@ -1634,6 +1648,16 @@ def.scope(function(){
     def.type   = type;
     def.method = method;
 });
+
+def.makeEnum = function(a) {
+    var i = 1;
+    var e = {};
+    a.forEach(function(p) {
+        e[p] = i;
+        i = i << 1;
+    });
+    return e;
+};
 
 // ----------------------
 
@@ -2335,7 +2359,7 @@ def.type('Query')
     
     uniqueIndex: function(keyFun, ctx){
         var keyIndex = {};
-        
+
         this.each(function(item){
             var key = keyFun ? keyFun.call(ctx, item) : item;
             if(key != null && !def.hasOwn(keyIndex, key)) {
@@ -2350,51 +2374,37 @@ def.type('Query')
     // Query -> Query
     
     // deferred map
-    select: function(fun, ctx){
-        return new def.SelectQuery(this, fun, ctx);
+    select: function(fun, ctx) { return new def.SelectQuery(this, fun, ctx); },
+    
+    prop: function(p) {
+        return new def.SelectQuery(this, function(item) { if(item) { return item[p]; }});
     },
 
-    selectMany: function(fun, ctx){
-        return new def.SelectManyQuery(this, fun, ctx);
-    },
+    selectMany: function(fun, ctx) { return new def.SelectManyQuery(this, fun, ctx); },
     
-    union: function(/*others*/){
+    union: function(/*others*/) {
         var queries = def.array.append([this], arguments);
         return new def.SelectManyQuery(new def.ArrayLikeQuery(queries));
     },
 
     // deferred filter
-    where: function(fun, ctx){
-        return new def.WhereQuery(this, fun, ctx);
-    },
+    where: function(fun, ctx) { return new def.WhereQuery(this, fun, ctx); },
 
-    distinct: function(fun, ctx){
-        return new def.DistinctQuery(this, fun, ctx);
-    },
+    distinct: function(fun, ctx) { return new def.DistinctQuery(this, fun, ctx); },
 
-    skip: function(n){
-        return new def.SkipQuery(this, n);
-    },
+    skip: function(n) { return new def.SkipQuery(this, n); },
     
-    take: function(n){
-        if(n <= 0){
-            return new def.NullQuery();
-        }
+    take: function(n) {
+        if(n <= 0) { return new def.NullQuery(); }
         
-        if(!isFinite(n)){
-            return this; // all
-        }
+        if(!isFinite(n)) { return this; } // all
         
         return new def.TakeQuery(this, n);
     },
     
-    whayl: function(pred, ctx){
-        return new def.WhileQuery(this, pred, ctx);
-    },
+    whayl: function(pred, ctx) { return new def.WhileQuery(this, pred, ctx); },
     
-    reverse: function(){
-        return new def.ReverseQuery(this);
-    }
+    reverse: function() { return new def.ReverseQuery(this); }
 });
 
 def.type('NullQuery', def.Query)
@@ -2545,7 +2555,7 @@ def.type('SelectQuery', def.Query)
 });
 
 def.type('SelectManyQuery', def.Query)
-.init(function(source, selectMany, ctx){
+.init(function(source, selectMany, ctx) {
     this.base();
     this._selectMany = selectMany;
     this._ctx    = ctx;
@@ -2553,11 +2563,11 @@ def.type('SelectManyQuery', def.Query)
     this._manySource = null;
 })
 .add({
-    _next: function(nextIndex){
-        while(true){
+    _next: function(nextIndex) {
+        while(true) {
             // Consume all of existing manySource
-            if(this._manySource){
-                if(this._manySource.next()){
+            if(this._manySource) {
+                if(this._manySource.next()) {
                     this.item = this._manySource.item;
                     return 1;
                 }
@@ -2565,19 +2575,17 @@ def.type('SelectManyQuery', def.Query)
                 this._manySource = null;
             }
 
-            if(!query_nextMany.call(this)){
-                break;
-            }
+            if(!query_nextMany.call(this)) { break; }
         }
     }
 });
 
-function query_nextMany(){
-    while(this._source.next()){
+function query_nextMany() {
+    while(this._source.next()) {
         var manySource = this._selectMany ?
                             this._selectMany.call(this._ctx, this._source.item, this._source.index) :
                             this._source.item;
-        if(manySource != null){
+        if(manySource != null) {
             this._manySource = def.query(manySource);
             return 1;
         }
@@ -2685,25 +2693,14 @@ def.type('ReverseQuery', def.Query)
 
 // -------------------
 
-def.query = function(q){
-    if(q === undefined) {
-        return new def.NullQuery();
-    }
-    
-    if(q instanceof def.Query){
-        return q;
-    }
-    
-    if(def.fun.is(q)){
-        return new def.AdhocQuery(q);
-    }
-
+def.query = function(q) {
+    if(q === undefined)        { return new def.NullQuery(); }
+    if(q instanceof def.Query) { return q; }
+    if(def.fun.is(q))          { return new def.AdhocQuery(q); }
     return new def.ArrayLikeQuery(q);
 };
 
-def.range = function(start, count, step){
-    return new def.RangeQuery(start, count, step);
-};
+def.range = function(start, count, step) { return new def.RangeQuery(start, count, step); };
 
 // Reset namespace to global, instead of 'def'
 currentNamespace = def.global;    
