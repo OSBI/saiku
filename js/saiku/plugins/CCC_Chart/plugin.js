@@ -516,6 +516,7 @@ var Chart = Backbone.View.extend({
             }
             //makeSureUniqueLabels(this.data.resultset);
             this.data.height = this.data.resultset.length;
+            this.cccOptions = this.getQuickOptions(this.cccOptions);
             this.render_chart();
         } else {
             $(this.el).text("No results");
