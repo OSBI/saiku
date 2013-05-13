@@ -221,6 +221,7 @@ var Chart = Backbone.View.extend({
             dataMeasuresInColumns: true,
             orientation: "vertical",
             smallTitlePosition: "top",
+            multiChartMax: 30,
             multiChartColumnsMax: Math.floor( this.cccOptions.width / 200),
             smallWidth: 200,
             smallHeight: 150
