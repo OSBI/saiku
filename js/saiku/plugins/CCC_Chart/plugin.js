@@ -110,6 +110,7 @@ var Chart = Backbone.View.extend({
                     'border': '1px solid #ccc', 
                     padding: '5px' 
                 });
+        /* XXX - enable again later
         $(this.nav).append('<div style="display:none;"> <div id="charteditor" class="chart_editor"></div></div>');
         
         this.editor = new ChartEditor({  workspace : this.workspace, 
@@ -119,6 +120,7 @@ var Chart = Backbone.View.extend({
                                         getChartProperties : this.getChartProperties});
 
         $(this.nav).find('.chart_editor').append($(this.editor.el));
+        */
 
     },
 
@@ -381,9 +383,12 @@ var Chart = Backbone.View.extend({
             return;
         }
 
+        /* XXX - enable later
+        var start = new Date().getTime();
         this.editor.chartDefinition = _.clone(this.cccOptions);
         this.editor.set_chart("pvc." + this.cccOptions.type);
         this.editor.render_chart_properties("pvc." + this.cccOptions.type, this.editor.chartDefinition);
+        */
 
         this.chart = new pvc[this.cccOptions.type](this.cccOptions);
         
@@ -399,6 +404,9 @@ var Chart = Backbone.View.extend({
             $(this.el).text("Could not render chart");
         }
         Saiku.ui.unblock();
+        //var end = new Date().getTime();
+        //console.log("Duration: " + (end - start));
+
     },
             
     receive_data: function(args) {
