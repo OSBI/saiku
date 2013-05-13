@@ -373,12 +373,32 @@ var WorkspaceToolbar = Backbone.View.extend({
                 self.workspace.adjust();
             };
 
+            var resizeFunction = function() {
+                var session = self.editor.session;
+                $mdx_editor.width($(self.el).width()-50);
+                self.editor.resize();
+                session.setUseWrapMode(true);
+                if(session.getUseWrapMode()) {
+                    var characterWidth = self.editor.renderer.characterWidth;
+                    var contentWidth = self.editor.renderer.scroller.clientWidth;
+
+                    if(contentWidth > 0) {
+                        session.setWrapLimitRange(null, parseInt(contentWidth / characterWidth, 10));
+                    }
+                }
+            };
+
+            resizeFunction();
+
             heightUpdateFunction();
 
             self.editor.focus();
             self.editor.clearSelection();
             self.editor.getSession().setValue("");
             self.editor.getSession().on('change', heightUpdateFunction);
+            $(window).resize(resizeFunction);
+            self.editor.getSession().on('resize', resizeFunction);
+            
 
             //this.editor.setTheme("ace/theme/crimson_editor");
             this.editor.getSession().setMode("ace/mode/text");
