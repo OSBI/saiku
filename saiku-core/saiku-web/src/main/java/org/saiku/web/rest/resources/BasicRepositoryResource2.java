@@ -344,7 +344,7 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 								return -1;
 							if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
 								return 1;
-							return o1.getName().compareTo(o2.getName());
+							return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
 							
 						}
 						
