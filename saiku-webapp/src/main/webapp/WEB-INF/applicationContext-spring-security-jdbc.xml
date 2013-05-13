@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springsource.org/dtd/spring-beans.dtd">
-
 <!--+
-	| Application context containing JDBC AuthenticationProvider 
+	| Application context containing JDBC AuthenticationProvider
 	| implementation.
 	+-->
 
-<beans>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+     xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+              http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
+              http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd
+			   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<security:authentication-manager alias="authenticationManager">
+		<security:authentication-provider ref="daoAuthenticationProvider" />
+ 	</security:authentication-manager>
 
 	<bean id="daoAuthenticationProvider"
 		class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
