@@ -83,5 +83,8 @@
    "Pie":"Kör",
    "EXPERIMENTAL: Export PDF":"Béta: Export PDF",
    "ChartType:  ":"Diagram típus",
-   "Properties":"Tulajdonságok"
+   "Properties":"Tulajdonságok",
+   "Mode:":"Mód",
+   "Multiple Bar Chart":"Többoszlopos",
+   "Chart Type:  ":"Diagram típus"
 }
