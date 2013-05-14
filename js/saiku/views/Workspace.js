@@ -203,6 +203,13 @@ var Workspace = Backbone.View.extend({
     },
     
     init_query: function() {
+        if (('RENDER' in Settings) && this.query) {
+            this.querytoolbar.switch_render(Settings.RENDER);
+            if ("CHART_TYPE" in Settings && typeof Settings.CHART_TYPE in this.chart) {
+                this.chart[Settings.CHART_TYPE]();
+            }
+        }
+
         if ((Settings.MODE == "table") && this.query) {
             this.query.run();
             return;

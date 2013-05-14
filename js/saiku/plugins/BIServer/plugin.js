@@ -123,6 +123,7 @@ var BIPlugin = {
         }
         if (Settings.MODE == "table") {
             $(workspace.toolbar.el).parent().remove();
+            $(workspace.querytoolbar.el).parent().remove();
         }
 
         // Toggle save button

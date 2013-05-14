@@ -215,7 +215,7 @@ var Statistics = Backbone.View.extend({
         }
 
         function clear_workspace(args) {
-            if (typeof args.workspace.stats != "undefined") {
+            if (typeof args.workspace.stats != "undefined" && $(args.workspace.stats.el).is(':visible')) {
                 $(args.workspace.stats.el).parents().find('.workspace_results table').show();
                 $(args.workspace.stats.el).hide();
             }

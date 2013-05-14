@@ -20,6 +20,7 @@
 var Query = Backbone.Model.extend({
 
     formatter: Settings.CELLSET_FORMATTER,
+    properties: null,
 
     initialize: function(args, options) {
         // Save cube
@@ -40,6 +41,7 @@ var Query = Backbone.Model.extend({
         this.action = new QueryAction({}, { query: this });
         this.result = new Result({ limit: Settings.RESULT_LIMIT }, { query: this });
         this.scenario = new QueryScenario({}, { query: this });
+
         this.set({type:'QM'});
     },
     
@@ -61,7 +63,8 @@ var Query = Backbone.Model.extend({
             this.properties = new Properties({}, { query: this });
         } else {
             this.properties.fetch({
-                success: this.reflect_properties
+                success: this.reflect_properties,
+                async: false
             });
         }
     },
@@ -137,7 +140,7 @@ var Query = Backbone.Model.extend({
             },
             
             success: function() {
-                if (this.query.properties
+                if (typeof this.query.properties != "undefined" && this.query.properties 
                     .properties['saiku.olap.query.automatic_execution'] === 'true') {
                     this.query.run();
                 }

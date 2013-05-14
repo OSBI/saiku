@@ -179,7 +179,6 @@ var Chart = Backbone.View.extend({
         if (this.cccOptions.height <= 0) {
             this.cccOptions.height = $(this.workspace.el).find('.workspace_results').height() - 40;
         }
-        this.block_ui();
         this.process_data({ data: this.workspace.query.result.lastresult() });
     },
 

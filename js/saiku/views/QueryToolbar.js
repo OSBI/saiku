@@ -23,7 +23,7 @@ var QueryToolbar = Backbone.View.extend({
 
     events: {
         'click .options a.button': 'call',
-        'click .renderer a.button' : 'switch_render'
+        'click .renderer a.button' : 'switch_render_button'
     },
     
     table: {
@@ -39,7 +39,7 @@ var QueryToolbar = Backbone.View.extend({
         this.workspace = args.workspace;
         
         // Maintain `this` in callbacks
-        _.bindAll(this, "call","activate_buttons", "spark_bar", "spark_line", "render_row_viz", "run_row_viz");
+        _.bindAll(this, "call","activate_buttons", "spark_bar", "spark_line", "render_row_viz", "run_row_viz", "switch_render_button");
                 
         // Activate buttons when a new query is created or run
         this.workspace.bind('query:new', this.activate_buttons);
@@ -69,27 +69,35 @@ var QueryToolbar = Backbone.View.extend({
         return this; 
     },
     
-    switch_render: function(event) {
+    switch_render_button: function(event) {
         $target = $(event.target);
         $target.parent().siblings().find('.on').removeClass('on');
-        $target.addClass('on');
         if ($target.hasClass('render_chart')) {
+            this.switch_render('chart');
+        } else {
+            this.switch_render('table');
+        }
+
+
+    },
+    switch_render: function(render_type) {
+        render_type = (typeof render_type != "undefined" ? render_type.toLowerCase() : "table");
+        $(this.el).find('ul.renderer a.on').removeClass('on');
+        $(this.el).find('ul.renderer a.render_' + render_type).addClass('on');
+        if ("chart" == render_type) {
             $(this.el).find('ul.chart').show();
             $(this.el).find('ul.table').hide();
             this.render_mode = "chart";
             $(this.workspace.el).find('.workspace_results').children().hide();
-            this.workspace.chart.show(event);
+            this.workspace.chart.show();
         } else {
             $(this.el).find('ul.chart').hide();
             $(this.el).find('ul.table').show();
             $(this.el).find('ul.table .stats').removeClass('on');
-
             $(this.workspace.el).find('.workspace_results table').show();
             $(this.workspace.chart.el).hide();
             $(this.workspace.chart.nav).hide();
             this.workspace.table.render({ data: this.workspace.query.result.lastresult() });
-            
-
             this.render_mode = "table";
         }
         return false;
