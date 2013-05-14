@@ -105,7 +105,8 @@ if (Settings.BIPLUGIN) {
  */
 var BIPlugin = {
     bind_callbacks: function(workspace) {
-        // If in view mode, remove sidebar and drop zones
+        // If in view mode, remove sidebar and drop zone
+        // XXX - TODO: this needs to be refactored properly into Workspace.js
         if (Settings.MODE == "view" || Settings.MODE == "table") {
             workspace.toggle_sidebar();
             $(workspace.el).find('.sidebar_separator').remove();
