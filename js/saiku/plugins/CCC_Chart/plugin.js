@@ -160,7 +160,11 @@ var Chart = Backbone.View.extend({
 
     show: function(event, ui) {
         $(this.el).show();
-        $(this.nav).show();
+        if ('MODE' in Settings && Settings.MODE == 'table') {
+            $(this.nav).hide();    
+        } else {
+            $(this.nav).show();
+        }
         $('a#acharteditor').fancybox(
                                    {
                                    'autoDimensions'    : false,

@@ -142,9 +142,9 @@ var Query = Backbone.Model.extend({
             },
             
             success: function() {
-                if (typeof this.query.properties != "undefined" && this.query.properties 
-                    .properties['saiku.olap.query.automatic_execution'] === 'true') {
-                    this.query.run();
+                if (('MODE' in Settings && (Settings.MODE == 'view' || Settings.MODE == 'table')) || (typeof this.query.properties != "undefined" && this.query.properties 
+                    .properties['saiku.olap.query.automatic_execution'] === 'true')) {
+                    this.query.run(true);
                 }
             }
         });

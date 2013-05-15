@@ -210,7 +210,7 @@ var Workspace = Backbone.View.extend({
             var renderMode =  ('RENDER_MODE' in Settings) ? Settings.RENDER_MODE
                                     : ('saiku.ui.render.mode' in properties) ? properties['saiku.ui.render.mode'] 
                                     : null;
-            var renderType =  ('RENDER_TYPE' in Settings) ? Settings.RENDER_MODE
+            var renderType =  ('RENDER_TYPE' in Settings) ? Settings.RENDER_TYPE
                                     : ('saiku.ui.render.type' in properties) ? properties['saiku.ui.render.type'] 
                                     : null;
             
@@ -237,7 +237,7 @@ var Workspace = Backbone.View.extend({
         }
 
         if ((Settings.MODE == "table") && this.query) {
-            this.query.run();
+            this.query.run(true);
             return;
         }
 
@@ -261,7 +261,7 @@ var Workspace = Backbone.View.extend({
         this.adjust();
         if ((Settings.MODE == "view") && this.query) {
             $(this.toolbar.el).find('.switch_to_mdx').parent().hide();
-            this.query.run();
+            this.query.run(true);
             return;
         }
 
