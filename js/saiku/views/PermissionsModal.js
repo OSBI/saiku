@@ -30,10 +30,12 @@ var PermissionsModal = Modal.extend({
         'click .remove_acl' : 'remove_acl',
         'submit form': 'add_role',
         'click a': 'call',
+        'click input.private' : 'keep_private'
 
     },
 
     rolesacl : {},
+    acltype: "SECURED",
 
     
     initialize: function(args) {
@@ -71,12 +73,22 @@ var PermissionsModal = Modal.extend({
 
 
         $(this.el).find('.rolelist').html(templ_roles);
+
+        var owner = (typeof acl.get('owner') == "undefined" || acl.get('owner') == null ? "" : acl.get('owner')); 
+        var atype = (typeof acl.get('type') == "undefined" || acl.get('type') == null ? null : acl.get('type')); 
+        if (atype != null && atype == "PRIVATE") {
+            $(this.el).find('.private_owner .owner').text(owner);
+            $(this.el).find('.private_owner').show();
+        }
 		Saiku.i18n.translate();
     },
     
     add_role: function(event) {
         var self = this;
         event.preventDefault();
+        if (this.acltype == "PRIVATE") {
+            return false;
+        }
         var role = $(this.el).find(".filterbox").val();
         var acls = [];
         var aclstring ="";
@@ -103,8 +115,25 @@ var PermissionsModal = Modal.extend({
         return false;
     },
 
+    keep_private: function(event) {
+        var isPrivate = $(this.el).find('input.private').is(':checked')
+        if (isPrivate) {
+            $(this.el).find('.permissions').addClass('disabled_toolbar');
+            $("input.acl, input.filterbox, input.add_role, input.remove_acl").prop('disabled', true);
+            this.acltype = "PRIVATE";
+        } else {
+            $(this.el).find('.permissions').removeClass('disabled_toolbar');
+            $("input.acl, input.filterbox, input.add_role, input.remove_acl").prop('disabled', false);
+            this.acltype = "SECURED";
+        }
+    },
+
     remove_acl: function(event) {
         var self = this;
+        if (this.acltype == "PRIVATE") {
+            return false;
+        }
+
         $(this.el).find(".select_roles option:selected").each( function(index) { 
             delete self.rolesacl[$(this).val()];
         });
@@ -114,7 +143,12 @@ var PermissionsModal = Modal.extend({
 
     ok: function() {
         var closer = this.close();
-        var acl = { "type" : "SECURED", "roles" : this.rolesacl, "owner" : Saiku.session.username };
+        var acl = {};
+        if (this.acltype == "PRIVATE") {
+            acl = { "type" : "PRIVATE", "owner" : Saiku.session.username };
+        } else {
+            acl = { "type" : "SECURED", "roles" : this.rolesacl, "owner" : Saiku.session.username };
+        }
         (new RepositoryAclObject({ file: this.file, acl: JSON.stringify(acl)})).save({ success: closer });
 
         return false;

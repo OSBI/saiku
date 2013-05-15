@@ -887,7 +887,7 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 
 .dialog_permissions .dialog_body {
     width: 370px;
-    height: 300px;
+    height: 380px;
 }
 .dialog_permissions .dialog_icon {
     display: none;
