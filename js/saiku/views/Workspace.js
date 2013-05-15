@@ -220,8 +220,8 @@ var Workspace = Backbone.View.extend({
 
             if ('chart' == renderMode && renderType in this.chart ) {
                 this.chart[renderType]();
-                $(this.querytoolbar.el).find('ul.chart .' + renderType).parent().siblings().find('.on').removeClass('on');
-                $(this.querytoolbar.el).find('ul.chart .' + renderType).addClass('on');
+                $(this.querytoolbar.el).find('ul.chart [href="#' + renderType+ '"]').parent().siblings().find('.on').removeClass('on');
+                $(this.querytoolbar.el).find('ul.chart [href="#' + renderType+ '"]').addClass('on');
 
 
             } else if ('table' == renderMode && renderType in this.querytoolbar ) {
