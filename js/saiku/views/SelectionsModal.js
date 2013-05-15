@@ -29,7 +29,10 @@ var SelectionsModal = Modal.extend({
         'click a': 'call',
         'change #show_unique': 'show_unique_action',
         'change #use_result': 'use_result_action',
-        'dblclick select option' : 'click_move_selection'
+        'dblclick select option' : 'click_move_selection',
+        'click div.selection_buttons a.form_button': 'move_selection',
+        'click div.updown_buttons a.form_button': 'updown_selection',
+
     },    
 
     show_unique_option: false,
@@ -44,10 +47,6 @@ var SelectionsModal = Modal.extend({
         this.query = args.workspace.query;
 
         _.bindAll(this, "fetch_members", "populate", "finished", "get_members", "use_result_action");
-        // Bind selection handlers
-        _.extend(this.events, {
-            'click div.selection_buttons a.form_button': 'move_selection'
-        });
         
         // Determine axis
         this.axis = "undefined"; 
@@ -187,6 +186,7 @@ var SelectionsModal = Modal.extend({
     },
     
     move_selection: function(event) {
+        event.preventDefault();
         var action = $(event.target).attr('id');
         var $to = action.indexOf('add') !== -1 ? 
             $(this.el).find('.used_selections select') :
@@ -197,6 +197,19 @@ var SelectionsModal = Modal.extend({
         var $els = action.indexOf('all') !== -1 ? 
             $from.find('option') :$from.find('option:selected');
         $els.detach().appendTo($to);
+    },
+
+    updown_selection: function(event) {
+        event.preventDefault();
+        var action = $(event.target).attr('href').replace('#','');
+        if (typeof action != "undefined") {
+            if ("up" == action) {
+                $(this.el).find('.used_selections option:selected').insertBefore( $('.used_selections option:selected:first').prev());
+            } else if ("down" == action) {
+                $(this.el).find('.used_selections option:selected').insertAfter( $('.used_selections option:selected:last').next());
+            }
+
+        }
     },
 
     click_move_selection: function(event, ui) {
