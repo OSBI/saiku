@@ -25,6 +25,7 @@ var OpenQuery = Backbone.View.extend({
         'dblclick .query': 'select_and_open_query',
         'click .add_folder' : 'add_folder',
         'click li.folder': 'toggle_folder',
+        'click .workspace_toolbar a.button' : 'prevent_default',
         'click .workspace_toolbar a.open': 'open_query',
         'click .workspace_toolbar [href=#edit_folder]': 'edit_folder',
         'click .workspace_toolbar [href=#delete_folder]': 'delete_folder',
@@ -54,12 +55,13 @@ var OpenQuery = Backbone.View.extend({
     render: function() {
         // Load template
         $(this.el).html(this.template());
-        
+
         // Adjust tab when selected
         this.tab.bind('tab:select', this.fetch_queries);
         this.tab.bind('tab:select', this.adjust);
         $(window).resize(this.adjust);
         
+
         return this; 
     },
     
@@ -197,6 +199,11 @@ var OpenQuery = Backbone.View.extend({
 
     },
 
+    prevent_default: function(event) {
+        event.preventDefault();
+        return false;
+    },
+
     add_folder: function( event ) {
         $selected = $(this.el).find('.selected');
         var path ="";
@@ -309,8 +316,10 @@ var OpenQuery = Backbone.View.extend({
         // Adjust the height of the separator
         $separator = $(this.el).find('.sidebar_separator');
         $separator.height($("body").height() - 87);
-        $(this.el).find('.sidebar').height($("body").height() - 87);
-        
+        $(this.el).find('.sidebar').css( { 'width' : 300,
+                                            'height' : $("body").height() - 87 });
+        $(this.el).find('.workspace_inner').css({ 'margin-left' : 305});
+        $(this.el).find('.workspace').css({ 'margin-left' : -305});
         // Adjust the dimensions of the results window
         $(this.el).find('.workspace_results').css({
             width: $(document).width() - $(this.el).find('.sidebar').width() - 30,
