@@ -80,6 +80,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     
     call: function(event) {
         // Determine callback
+        event.preventDefault();
         var callback = event.target.hash.replace('#', '');
         
         // Attempt to call callback
