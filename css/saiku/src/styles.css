@@ -857,7 +857,6 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 .dialog_selections .dialog_body .used_selections {
     padding-left: 25px;
     padding-top: 36px;
-    float: right;
     float: left;
 }
 .dialog_selections .dialog_body .updown_buttons {
