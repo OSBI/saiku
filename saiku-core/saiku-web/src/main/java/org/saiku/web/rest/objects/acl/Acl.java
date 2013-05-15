@@ -111,6 +111,10 @@ public class Acl {
 					// check user permission
 					List<AclMethod> allMethods = new ArrayList<AclMethod>();
 
+					if (StringUtils.isNotBlank(entry.getOwner()) && entry.getOwner().equals(username)) {
+						allMethods.add(AclMethod.GRANT);
+						
+					}
 					List<AclMethod> userMethods = 
 						entry.getUsers() != null && entry.getUsers().containsKey(username) ?
 								entry.getUsers().get(username) : new ArrayList<AclMethod>();
