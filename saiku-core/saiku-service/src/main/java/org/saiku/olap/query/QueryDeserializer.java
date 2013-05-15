@@ -16,7 +16,6 @@
 package org.saiku.olap.query;
 
 import java.io.ByteArrayInputStream;
-import java.io.StringReader;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -215,10 +214,13 @@ public class QueryDeserializer {
 			
 			Element propertiesElement = queryElement.getChild("Properties");
 			if (propertiesElement != null) {
-				String p = propertiesElement.getText();
-				StringReader sr = new StringReader(p);
-				props = new Properties();
-				props.load(sr);
+				for(int i = 0; i < propertiesElement.getChildren("Property").size(); i++) {
+					Element p = (Element) propertiesElement.getChildren("Property").get(i);
+					String k = p.getAttributeValue("name");
+					String v = p.getAttributeValue("value");
+					props.put(k, v);
+				}
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

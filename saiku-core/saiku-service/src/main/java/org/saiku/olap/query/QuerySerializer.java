@@ -15,7 +15,6 @@
  */
 package org.saiku.olap.query;
 
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Properties;
@@ -139,10 +138,14 @@ public class QuerySerializer {
     	Element props = new Element("Properties");
     	Properties p = this.query.getProperties();
     	if (p != null && !p.isEmpty()) {
-    		 StringWriter writer = new StringWriter();
-    		 p.list(new PrintWriter(writer));
-    		 String pString = writer.getBuffer().toString();
-    		 props.setText(pString);
+    		for (Object key : p.keySet()) {
+    			Element pe = new Element("Property");
+    			String k = key.toString();
+    			String v = p.getProperty(k);
+    			pe.setAttribute("name", k);
+    			pe.setAttribute("value", v);
+    			props.addContent(pe);
+    		}
     	}
     	rootElement.addContent(props);
     	return rootElement;
