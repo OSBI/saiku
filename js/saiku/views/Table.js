@@ -421,7 +421,7 @@ var info = '<b><span class="i18n">Info:</span></b> &nbsp;' + cdate
         if (this.workspace.query.get('type') == 'QM' && Settings.MODE != "view") {
             $(this.el).find('th.row, th.col').addClass('headerhighlight');
         }
-        Saiku.events.trigger('table:rendered', this);
+        this.workspace.trigger('table:rendered', this);
     },
 
     cancel: function(event) {

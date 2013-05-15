@@ -188,6 +188,7 @@ var Chart = Backbone.View.extend({
     },
 
     stackedBar: function() {
+        this.workspace.query.setProperty('saiku.ui.render.type', 'stackedBar');
         var options = {
             stacked: true,
             type: "BarChart"
@@ -197,6 +198,7 @@ var Chart = Backbone.View.extend({
     },
     
     bar: function() {
+        this.workspace.query.setProperty('saiku.ui.render.type', 'bar');
         var options = {
             type: "BarChart"
         };
@@ -214,6 +216,7 @@ var Chart = Backbone.View.extend({
     },
 
     multiplebar: function() {
+        this.workspace.query.setProperty('saiku.ui.render.type', 'multiplebar');
         var options = {
             type: "BarChart",
             multiChartIndexes: [1],
@@ -231,6 +234,7 @@ var Chart = Backbone.View.extend({
     },
     
     line: function() {
+        this.workspace.query.setProperty('saiku.ui.render.type', 'line');
         var options = {
             type: "LineChart"
         };
@@ -240,6 +244,7 @@ var Chart = Backbone.View.extend({
     },
     
     pie: function() {
+        this.workspace.query.setProperty('saiku.ui.render.type', 'pie');
         var options = {
             type: "PieChart",
             multiChartIndexes: [0] // ideally this would be chosen by the user (count, which)
@@ -249,6 +254,7 @@ var Chart = Backbone.View.extend({
     },
 
     heatgrid: function() {
+        this.workspace.query.setProperty('saiku.ui.render.type', 'heatgrid');
         var options = {
             type: "HeatGridChart"
         };
@@ -257,6 +263,7 @@ var Chart = Backbone.View.extend({
     },
 
     stackedBar100: function() {
+        this.workspace.query.setProperty('saiku.ui.render.type', 'stackedBar100');
         var options = {
             type: "NormalizedBarChart"
         };
@@ -265,6 +272,7 @@ var Chart = Backbone.View.extend({
     },
 
     area: function() {
+        this.workspace.query.setProperty('saiku.ui.render.type', 'area');
         var options = {
             type: "StackedAreaChart"
         };
@@ -272,6 +280,7 @@ var Chart = Backbone.View.extend({
         this.render_chart();
     },
     dot: function() {
+        this.workspace.query.setProperty('saiku.ui.render.type', 'dot');
         var options = {
             type: "DotChart"
         };
@@ -279,6 +288,7 @@ var Chart = Backbone.View.extend({
         this.render_chart();
     },
     waterfall: function() {
+        this.workspace.query.setProperty('saiku.ui.render.type', 'waterfall');
         var options = {
             type: "WaterfallChart"
         };
