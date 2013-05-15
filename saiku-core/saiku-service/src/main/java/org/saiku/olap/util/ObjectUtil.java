@@ -249,7 +249,7 @@ public class ObjectUtil {
 				}
 			}
 		}
-		return new SaikuQuery(q.getName(), q.getSaikuCube(), axes, q.getMdx(), q.getType().toString());
+		return new SaikuQuery(q.getName(), q.getSaikuCube(), axes, q.getMdx(), q.getType().toString(), q.getProperties());
 		
 	}
 

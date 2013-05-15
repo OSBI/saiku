@@ -247,15 +247,17 @@ public class OlapQuery implements IQuery {
 		}
 	}
     
-    public void setProperties(Properties props) {
-    	this.properties = props;
-    	for (Object _key : props.keySet()) {
-    		String key = (String) _key;
-    		String value = props.getProperty((String) key);
-    		QueryProperty prop = QueryPropertyFactory.getProperty(key, value, this);
-    		prop.handle();
-    	}
-    }
+	public void setProperties(Properties props) {
+		if (props != null) {
+			this.properties.putAll(props);
+			for (Object _key : props.keySet()) {
+				String key = (String) _key;
+				String value = props.getProperty((String) key);
+				QueryProperty prop = QueryPropertyFactory.getProperty(key, value, this);
+				prop.handle();
+			}
+		}
+	}
     
     public Properties getProperties() {
     	this.properties.putAll(QueryPropertyFactory.forQuery(this));

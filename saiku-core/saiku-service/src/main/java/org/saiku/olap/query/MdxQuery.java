@@ -19,7 +19,6 @@ package org.saiku.olap.query;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.OlapConnection;
@@ -40,7 +39,6 @@ import org.olap4j.type.CubeType;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.util.exception.SaikuOlapException;
-import org.saiku.service.olap.OlapQueryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +98,7 @@ public class MdxQuery implements IQuery {
 	}
     
     public void setProperties(Properties props) {
-    	this.properties = props;
+    	this.properties.putAll(props);
     }
     
     public Properties getProperties() {

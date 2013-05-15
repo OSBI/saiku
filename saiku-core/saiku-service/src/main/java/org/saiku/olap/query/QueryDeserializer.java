@@ -16,9 +16,10 @@
 package org.saiku.olap.query;
 
 import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.math.BigDecimal;
-import java.nio.charset.CharsetEncoder;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Document;
@@ -62,17 +63,17 @@ public class QueryDeserializer {
     private static final String CATALOG = "catalog";
     private static final String SCHEMA = "schema";
     private static final String SELECTION = "Selection";
-    private static Document dom;
-    private static Query qm;
-    private static String xml;
-    private static OlapConnection connection;
-    private static InputSource source;
+    private Document dom;
+    private Query qm;
+    private String xml;
+    private OlapConnection connection;
+    private InputSource source;
 
-    public static IQuery unparse(String xml, OlapConnection connection) throws Exception {
-        QueryDeserializer.connection = connection;
-        QueryDeserializer.xml = xml;
+    public IQuery unparse(String xml, OlapConnection connection) throws Exception {
+        this.connection = connection;
+        this.xml = xml;
         SAXBuilder parser = new SAXBuilder();
-        source = new InputSource((new ByteArrayInputStream(QueryDeserializer.xml.getBytes("UTF8"))));
+        source = new InputSource((new ByteArrayInputStream(xml.getBytes("UTF8"))));
         dom = parser.build(source);
         Element child =(Element) dom.getRootElement();
         Element qmElement = child.getChild("QueryModel");
@@ -90,11 +91,10 @@ public class QueryDeserializer {
         throw new Exception("Cant find <QueryModel> nor <MDX> Query");
     }
     
-    public static SaikuCube getFakeCube(String xml) throws Exception {
-        QueryDeserializer.xml = xml;
+    public SaikuCube getFakeCube(String xml) throws Exception {
         SAXBuilder parser = new SAXBuilder();
-        source = new InputSource((new ByteArrayInputStream(QueryDeserializer.xml.getBytes())));
-        dom = parser.build(source);
+        InputSource source = new InputSource((new ByteArrayInputStream(xml.getBytes())));
+        Document dom = parser.build(source);
 
         Element queryElement = dom.getRootElement();
         if (queryElement != null && queryElement.getName().equals(QUERY)) {
@@ -109,11 +109,11 @@ public class QueryDeserializer {
         throw new Exception("Cant find <QueryModel> nor <MDX> Query");
     }
     
-    public static SaikuCube getCube(String xml, OlapConnection con) throws Exception {
-    	connection = con;
-        QueryDeserializer.xml = xml;
+    public SaikuCube getCube(String xml, OlapConnection con) throws Exception {
+    	this.connection = con;
+        this.xml = xml;
         SAXBuilder parser = new SAXBuilder();
-        source = new InputSource((new ByteArrayInputStream(QueryDeserializer.xml.getBytes())));
+        source = new InputSource((new ByteArrayInputStream(xml.getBytes())));
         dom = parser.build(source);
 
         Element queryElement = dom.getRootElement();
@@ -134,7 +134,7 @@ public class QueryDeserializer {
         throw new Exception("Cant find <QueryModel> nor <MDX> Query");
     }
 
-    private static IQuery createQmQuery() throws QueryParseException, SQLException {
+    private IQuery createQmQuery() throws QueryParseException, SQLException {
 
         Element queryElement = dom.getRootElement();
         if (queryElement != null && queryElement.getName().equals(QUERY)) {
@@ -155,7 +155,11 @@ public class QueryDeserializer {
                     qm = createEmptyQuery(queryName,catalogName, schemaName, cubeName);
                     manipulateQuery(qmElement);
                     SaikuCube cube = new SaikuCube(connectionName,cubeName, qm.getCube().getName(),qm.getCube().getCaption(),catalogName,schemaName);
-                    return new OlapQuery(qm,connection, cube,false);
+                    IQuery q = new OlapQuery(qm,connection, cube,false);
+                    
+                    Properties p = getProperties(queryElement);
+                    q.setProperties(p);
+                    return q;
                 }
                 else
                     throw new OlapException("Can't find child <QueryModel>");
@@ -171,7 +175,7 @@ public class QueryDeserializer {
         }
     }
     
-    private static IQuery createMdxQuery() throws QueryParseException, SQLException {
+    private IQuery createMdxQuery() throws QueryParseException, SQLException {
 
         Element queryElement = dom.getRootElement();
         if (queryElement != null && queryElement.getName().equals(QUERY)) {
@@ -182,15 +186,17 @@ public class QueryDeserializer {
             String connectionName = queryElement.getAttributeValue(CONNECTION);
             String catalogName = queryElement.getAttributeValue(CATALOG);
             String schemaName = queryElement.getAttributeValue(SCHEMA);
-
+            Properties props = getProperties(queryElement);
             try {
                 Element mdxElement = queryElement.getChild("MDX");
                 if (mdxElement != null) {
                     SaikuCube cube = new SaikuCube(connectionName,cubeName, cubeName, cubeName, catalogName,schemaName);
-                    return new MdxQuery(connection,cube,queryName,mdxElement.getText());
+                    IQuery q = new MdxQuery(connection,cube,queryName,mdxElement.getText());
+                    q.setProperties(props);
+                    return q;
                 }
                 else
-                    throw new OlapException("Can't find child <QueryModel>");
+                    throw new OlapException("Can't find child <MDX>");
 
             } catch (OlapException e) {
                 throw new QueryParseException(e.getMessage(),e);
@@ -203,13 +209,30 @@ public class QueryDeserializer {
         }
     }
 
-    private static void manipulateQuery(Element qmElement) throws OlapException {
+	private Properties getProperties(Element queryElement) {
+		Properties props = new Properties();
+		try {
+			
+			Element propertiesElement = queryElement.getChild("Properties");
+			if (propertiesElement != null) {
+				String p = propertiesElement.getText();
+				StringReader sr = new StringReader(p);
+				props = new Properties();
+				props.load(sr);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return props;
+	}
+
+    private void manipulateQuery(Element qmElement) throws OlapException {
         moveDims2Axis(qmElement);
 
 
     }
 
-    private static void moveDims2Axis(Element qmElement) throws OlapException {
+    private void moveDims2Axis(Element qmElement) throws OlapException {
         Element axesElement = qmElement.getChild("Axes");
         if (axesElement != null) {
 
@@ -269,7 +292,7 @@ public class QueryDeserializer {
 
     }
 
-    private static void processDimension(Element dimension, String location) throws OlapException {
+    private void processDimension(Element dimension, String location) throws OlapException {
 
         String dimName = dimension.getAttributeValue("name");
         if (StringUtils.isNotBlank(dimName)) {
@@ -362,7 +385,7 @@ public class QueryDeserializer {
 
     }
 
-    private static Query createEmptyQuery(String queryName, String catalogName, String schemaName, String cubeName) throws SQLException {
+    private Query createEmptyQuery(String queryName, String catalogName, String schemaName, String cubeName) throws SQLException {
         if (!StringUtils.isNotBlank(catalogName)) {
             try {
                 connection.setCatalog(catalogName);
@@ -403,7 +426,7 @@ public class QueryDeserializer {
 
     }
 
-    public static Axis.Standard getAxisName(String location) {
+    public Axis.Standard getAxisName(String location) {
         if(location != null) {
             return org.olap4j.Axis.Standard.valueOf(location);
         }

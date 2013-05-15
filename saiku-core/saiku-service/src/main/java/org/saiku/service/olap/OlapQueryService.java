@@ -131,9 +131,10 @@ public class OlapQueryService implements Serializable {
 
 	public SaikuQuery createNewOlapQuery(String name, String xml) {
 		try {
-			SaikuCube scube = QueryDeserializer.getFakeCube(xml);
+			QueryDeserializer qd = new QueryDeserializer();
+			SaikuCube scube = qd.getFakeCube(xml);
 			OlapConnection con = olapDiscoverService.getNativeConnection(scube.getConnectionName());
-			IQuery query = QueryDeserializer.unparse(xml, con);
+			IQuery query = qd.unparse(xml, con);
 			if (name == null) {
 				putIQuery(query.getName(), query);
 			}
@@ -249,7 +250,8 @@ public class OlapQueryService implements Serializable {
 	
 	private IQuery applyTag(IQuery query, OlapConnection con, SaikuTag t) throws Exception {
 		String xml = query.toXml();
-		query = QueryDeserializer.unparse(xml, con);
+		QueryDeserializer qd = new QueryDeserializer();
+		query = qd.unparse(xml, con);
 		
 		List<SaikuTupleDimension> doneDimension = new ArrayList<SaikuTupleDimension>();
 		Map<String,QueryDimension> dimensionMap = new HashMap<String,QueryDimension>();
