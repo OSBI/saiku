@@ -175,6 +175,7 @@ var Workspace = Backbone.View.extend({
     
     new_query: function() {
         // Delete the existing query
+        this.clear();
         if (this.query) {
             this.query.destroy();
         }
@@ -203,11 +204,36 @@ var Workspace = Backbone.View.extend({
     },
     
     init_query: function() {
-        if (('RENDER' in Settings) && this.query) {
-            this.querytoolbar.switch_render(Settings.RENDER);
-            if ("CHART_TYPE" in Settings && typeof Settings.CHART_TYPE in this.chart) {
-                this.chart[Settings.CHART_TYPE]();
+        try 
+        {
+            var properties = this.query.properties ? this.query.properties.properties : {} ;
+            var renderMode =  ('RENDER_MODE' in Settings) ? Settings.RENDER_MODE
+                                    : ('saiku.ui.render.mode' in properties) ? properties['saiku.ui.render.mode'] 
+                                    : null;
+            var renderType =  ('RENDER_TYPE' in Settings) ? Settings.RENDER_MODE
+                                    : ('saiku.ui.render.type' in properties) ? properties['saiku.ui.render.type'] 
+                                    : null;
+            
+            if (typeof renderMode != "undefined" && renderMode != null) {
+                this.querytoolbar.switch_render(renderMode);
             }
+
+            if ('chart' == renderMode && renderType in this.chart ) {
+                this.chart[renderType]();
+                $(this.querytoolbar.el).find('ul.chart .' + renderType).parent().siblings().find('.on').removeClass('on');
+                $(this.querytoolbar.el).find('ul.chart .' + renderType).addClass('on');
+
+
+            } else if ('table' == renderMode && renderType in this.querytoolbar ) {
+                this.querytoolbar.render_mode = "table";
+                this.querytoolbar.table.sparkType = renderType;
+                $(this.querytoolbar.el).find('ul.table .' + renderType).addClass('on');
+            }
+
+        } catch (e) {
+                if (typeof console != "undefined") {
+                    console.log(e);
+                }
         }
 
         if ((Settings.MODE == "table") && this.query) {
@@ -250,7 +276,7 @@ var Workspace = Backbone.View.extend({
                 .val(this.selected_cube);
         }        
         // Clear workspace
-        this.clear();
+        //this.clear();
         
         if (this.selected_cube) {
             // Create new DimensionList and MeasureList

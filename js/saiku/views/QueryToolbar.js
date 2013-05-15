@@ -44,7 +44,7 @@ var QueryToolbar = Backbone.View.extend({
         // Activate buttons when a new query is created or run
         this.workspace.bind('query:new', this.activate_buttons);
         this.workspace.bind('query:result', this.activate_buttons);
-        Saiku.events.bind('table:rendered', this.run_row_viz);
+        this.workspace.bind('table:rendered', this.run_row_viz);
         
     },
     
@@ -74,8 +74,18 @@ var QueryToolbar = Backbone.View.extend({
         $target.parent().siblings().find('.on').removeClass('on');
         if ($target.hasClass('render_chart')) {
             this.switch_render('chart');
+            this.workspace.query.setProperty('saiku.ui.render.mode', 'chart');
+            var c = $(this.el).find('ul.chart li a.on:first').size() > 0 ?
+                        $(this.el).find('ul.chart li a.on:first').attr('href').replace('#', '')
+                        : null;
+            if (c != null) {
+                this.workspace.query.setProperty('saiku.ui.render.type', c);
+            }
         } else {
             this.switch_render('table');
+            this.workspace.query.setProperty('saiku.ui.render.mode', 'table');
+            this.workspace.query.setProperty('saiku.ui.render.type', this.table.sparkType);
+
         }
 
 
@@ -121,26 +131,28 @@ var QueryToolbar = Backbone.View.extend({
         return false;
     },
 
-    spark_bar: function(event) {
-        $(event.target).toggleClass('on');
+    spark_bar: function() {
+        $(this.el).find('ul.table .spark_bar').toggleClass('on');
         $(this.el).find('ul.table .spark_line').removeClass('on');
 
         $(this.workspace.table.el).find('td.spark').remove();
         if ($(this.el).find('ul.table .spark_bar').hasClass('on')) {
             this.table.sparkType = "spark_bar";
+            this.workspace.query.setProperty('saiku.ui.render.type', 'spark_bar');
             _.delay(this.render_row_viz, 10, "spark_bar");
         } else {
             this.table.sparkType = null;
         }
     },
 
-    spark_line: function(event) {
-        $(event.target).toggleClass('on');
+    spark_line: function() {
+        $(this.el).find('ul.table .spark_line').toggleClass('on');
         $(this.el).find('ul.table .spark_bar').removeClass('on');
 
         $(this.workspace.table.el).find('td.spark').remove();
         if ($(this.el).find('ul.table .spark_line').hasClass('on')) {
             this.table.sparkType = "spark_line";
+            this.workspace.query.setProperty('saiku.ui.render.type', 'spark_line');
             _.delay(this.render_row_viz, 10, "spark_line");
         } else {
             this.table.sparkType = null;

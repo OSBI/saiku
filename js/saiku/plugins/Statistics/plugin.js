@@ -18,6 +18,12 @@
  * Renders a stats for each workspace
  */
 var Statistics = Backbone.View.extend({
+
+    data: {
+        resultset: [],
+        metadata: []
+    },
+
     initialize: function(args) {
         this.workspace = args.workspace;
         

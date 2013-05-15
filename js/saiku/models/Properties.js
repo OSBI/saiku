@@ -25,7 +25,9 @@ var Properties = Backbone.Model.extend({
         // Update properties with defaults from settings
         this.properties = {};
         _.extend(this.properties, Settings.QUERY_PROPERTIES);
-        this.update();
+        if (typeof args != "undefined" && args) {
+            _.extend(this.properties, args);
+        }
     },
     
     toggle: function(key) {
@@ -36,7 +38,7 @@ var Properties = Backbone.Model.extend({
         return this;
     },
     
-    update: function() {
+    update: function(async) {
         // FIXME - this really sucks
         // Why can't we just use the body?
         this.attributes = {
@@ -46,7 +48,7 @@ var Properties = Backbone.Model.extend({
                     "<% }); %>"
                     )({ properties: this.properties })
         };
-        this.save();
+        this.save({ async: async });
     },
     
     parse: function(response) {

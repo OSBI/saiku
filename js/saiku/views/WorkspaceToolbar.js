@@ -134,6 +134,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     save_query: function(event) {
         var self = this;
         if (this.workspace.query) {
+            this.workspace.query.properties.update(false);
             if (typeof this.editor != "undefined") {
                 var mdx = this.editor.getValue();
                 this.workspace.query.action.post("/mdx", { 
@@ -176,9 +177,11 @@ var WorkspaceToolbar = Backbone.View.extend({
     group_parents: function(event) {
         $(event.target).toggleClass('on');
         if ($(event.target).hasClass('on')) {
-            this.workspace.query.set({formatter: "flattened"})
+            this.workspace.query.set({formatter: "flattened"});
+            this.workspace.query.setProperty('saiku.ui.formatter', 'flattened');
         } else {
-            this.workspace.query.set({formatter: "flat"})
+            this.workspace.query.set({formatter: "flat"});
+            this.workspace.query.setProperty('saiku.ui.formatter', 'flat');
         }
         this.workspace.query.run();
     },
