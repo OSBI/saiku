@@ -58,5 +58,10 @@
    "Used members:":"Ausgewählte Elemente:",
    "Show Unique Names":"Vollständige Namen anzeigen",
    "Use Result":"Letztes Resultat",
-   "Selections for":"Auswahl für:"
+   "Selections for":"Auswahl für:",
+   "File:":"Datei:",
+   "Please select a file.....":"Bitte eine Datei auswählen....",
+   "Permissions":"Berechtigungen",
+   "Keep this file private to me":"Dieses File darf nur ich sehen",
+   "Currently private to:":"Derzeitiger Eigentümer:"
 }

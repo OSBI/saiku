@@ -301,7 +301,7 @@ var OpenQuery = Backbone.View.extend({
     edit_permissions: function(event) {
         (new PermissionsModal({
             workspace: this.workspace,
-            title: "Permissions",
+            title: "<span class='i18n'>Permissions</span>",
             file: this.selected_query.get('file')
         })).open();
     },

@@ -59,6 +59,8 @@ var Modal = Backbone.View.extend({
         $(this.el).html(this.template())
             .addClass("dialog_" + this.type)
             .dialog(this.options);
+
+        Saiku.i18n.translate();
         return this;
     },
     
