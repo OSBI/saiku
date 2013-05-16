@@ -1296,6 +1296,10 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 .query_toolbar ul li.hide {
     display: none;
 }
+.query_toolbar ul li.label {
+    width: 99%;
+}
+
 .query_toolbar ul li.seperator {
     border-left: 1px solid #D5D5D5;
     margin-left: 5px;
