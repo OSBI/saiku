@@ -21,6 +21,8 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.Properties;
 
+import mondrian.rolap.RolapConnection;
+
 import org.olap4j.Axis;
 import org.olap4j.Axis.Standard;
 import org.olap4j.CellSet;
@@ -261,6 +263,20 @@ public class OlapQuery implements IQuery {
     
     public Properties getProperties() {
     	this.properties.putAll(QueryPropertyFactory.forQuery(this));
+		try {
+			
+			connection.createScenario();
+			if (query.getDimension("Scenario") != null) {
+				this.properties.put("org.saiku.connection.scenario", Boolean.toString(true));
+			}
+			else {
+				this.properties.put("org.saiku.connection.scenario", Boolean.toString(false));
+			}
+			this.properties.put("org.saiku.query.explain", Boolean.toString(connection.isWrapperFor(RolapConnection.class)));
+		} catch (Exception e) {
+			this.properties.put("org.saiku.connection.scenario", Boolean.toString(false));
+			this.properties.put("org.saiku.query.explain", Boolean.toString(false));
+		}
     	return this.properties;
     }
     

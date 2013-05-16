@@ -840,23 +840,7 @@ public class OlapQueryService implements Serializable {
 
 	public Properties getProperties(String queryName) {
 		IQuery query = getIQuery(queryName);
-		OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
 		Properties props = query.getProperties();
-		try {
-			con.createScenario();
-			if (query.getDimension("Scenario") != null) {
-				props.put("org.saiku.connection.scenario", Boolean.toString(true));
-			}
-			else {
-				props.put("org.saiku.connection.scenario", Boolean.toString(false));
-			}
-			props.put("org.saiku.query.explain", Boolean.toString(con.isWrapperFor(RolapConnection.class)));
-
-			
-		} catch (Exception e) {
-			props.put("org.saiku.connection.scenario", Boolean.toString(false));
-			props.put("org.saiku.query.explain", Boolean.toString(false));
-		}
 		return props;
 	}
 

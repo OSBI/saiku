@@ -19,6 +19,8 @@ package org.saiku.olap.query;
 import java.util.Map;
 import java.util.Properties;
 
+import mondrian.rolap.RolapConnection;
+
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.OlapConnection;
@@ -103,8 +105,14 @@ public class MdxQuery implements IQuery {
     
     public Properties getProperties() {
     	Properties props = new Properties(this.properties);
-		props.put(QueryProperties.KEY_IS_DRILLTHROUGH, "true");
-		return props;
+    	props.put(QueryProperties.KEY_IS_DRILLTHROUGH, isDrillThroughEnabled().toString());
+    	props.put("org.saiku.connection.scenario", Boolean.toString(false));
+    	try {
+    		props.put("org.saiku.query.explain", Boolean.toString(connection.isWrapperFor(RolapConnection.class)));
+    	} catch (Exception e) {
+    		props.put("org.saiku.query.explain", Boolean.toString(false));
+    	}
+    	return props;
     }
     
     public String toXml() {
@@ -113,7 +121,13 @@ public class MdxQuery implements IQuery {
     }
     
     public Boolean isDrillThroughEnabled() {
-    	return true;
+    	try {
+    		Cube cube = getCube();
+    		return (cube != null && cube.isDrillThroughEnabled());
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	};
+    	return false;
     }
 
 	public CellSet execute() throws Exception {
