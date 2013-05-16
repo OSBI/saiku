@@ -225,12 +225,10 @@ var Workspace = Backbone.View.extend({
 
 
             } else if ('table' == renderMode && renderType in this.querytoolbar) {
-                console.log('ul.table a.' + renderType);
                 this.querytoolbar.render_mode = "table";
                 this.querytoolbar.table.sparkType = renderType;
                 $(this.querytoolbar.el).find('ul.table a.' + renderType).addClass('on');
             }
-
         } catch (e) {
                 if (typeof console != "undefined") {
                     console.log(e);
