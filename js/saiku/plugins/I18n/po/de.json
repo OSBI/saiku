@@ -63,5 +63,7 @@
    "Please select a file.....":"Bitte eine Datei auswählen....",
    "Permissions":"Berechtigungen",
    "Keep this file private to me":"Dieses File darf nur ich sehen",
-   "Currently private to:":"Derzeitiger Eigentümer:"
+   "Currently private to:":"Derzeitiger Eigentümer:",
+   "Row Limit: (0 = none)":"Zeilen Limit: (0 = kein Limit)",
+   "<b>CAUTION:</b> The number of rows can have a significant impact on the performance of the following action.":"<b>Achtung:</b> Die Anzahl der Zeilen kann eine signifikante Auswirkung auf die Performance der folgenden Aktion haben."
 }

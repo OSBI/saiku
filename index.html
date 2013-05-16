@@ -553,9 +553,9 @@
         </script>
         <script type="text/x-jquery-tmpl" id="template-drillthrough-list">
         <div class="sidebar" style="border:1px solid #CCCCCC">
-            <h3 class="i18n"><input type="checkbox" class="all_dimensions"/>Dimensions</h3>
+            <h3><input type="checkbox" class="all_dimensions"/> &nbsp;<span class="i18n">Dimensions</span></h3>
             <div class="sidebar_inner dimension_tree"></div>
-            <h3 class="i18n"><input type="checkbox" class="all_measures"/>Measures</h3>
+            <h3><input type="checkbox" class="all_measures"/> &nbsp;<span class="i18n">Measures</span></h3>
             <div class="sidebar_inner measure_tree"></div>
         </div>
         
@@ -596,7 +596,7 @@
         <ul>
             <li>
                 <span class="root expand sprite"></span>
-                   <a href="#" title="Measures" class="folder_expand sprite">Measures</a>
+                   <a href="#" title="Measures" class="folder_expand i18n sprite">Measures</a>
                 
                 <ul>
                 <% _.each(measures, function(measure) { %>

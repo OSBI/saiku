@@ -84,5 +84,15 @@
    "ChartType:  ":"Typ grafu",
    "Properties":"Vlastnosti",
    "Mode:":"Mód",
-   "Multiple Bar Chart":"Násobný sloupcový"
+   "Multiple Bar Chart":"Násobný sloupcový",
+   "Search:":"Hledat:",
+   "Permissions":"Oprávnění",
+   "Add role permission:":"Přidat oprávnění roli:",
+   "Roles:":"Role:",
+   "Keep this file private to me":"Nechat tento soubor jako soukromý",
+   "Currently private to:":"Aktuálně soukromé pro:",
+   "Please select a file.....":"Prosím vyber soubor...",
+   "Info:":"Informace:",
+   "File:":"Soubor:","Updating chart data....":"Aktualizuji data v grafu...",
+   "Add new tag by selecting cells from your result!":"Pro přidání tagu musíš nejdříve vybrat alespoň jednu buňku z výsledku!"
 }
