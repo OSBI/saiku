@@ -332,7 +332,7 @@ var WorkspaceToolbar = Backbone.View.extend({
 
     switch_to_mdx: function(event) {
         var self = this;
-        $(this.workspace.el).find('.workspace_fields').hide();
+        $(this.workspace.el).find('.workspace_fields').addClass('hide');
         $(this.el).find('.auto, ,.toggle_fields, .query_scenario, .buckets, .non_empty, .swap_axis, .mdx, .switch_to_mdx').parent().hide();
         
 
@@ -431,19 +431,15 @@ var WorkspaceToolbar = Backbone.View.extend({
     post_mdx_transform: function() {
         var self = this;
 
-        var transformed = function() {
-            self.workspace.query.set({type:'MDX', formatter: "flat" });
-            $(self.el).find('.group_parents').removeClass('on');
-        };
-
-        this.workspace.query.action.get("/mdx", { 
+        this.workspace.query.action.post("/qm2mdx", { 
             success: function(model, response) {
                 //$(self.workspace.el).find(".mdx_input").val(response.mdx);
-                self.editor.setValue(response.mdx,0);
+                self.editor.setValue(model.mdx,0);
                 self.editor.focus();
                 self.editor.clearSelection();
-                self.workspace.query.action.post("/qm2mdx", { success: transformed } );
-
+                self.workspace.query.parse(model);
+                self.workspace.query.set({type:'MDX', formatter: "flat" });
+                $(self.el).find('.group_parents').removeClass('on');
             }
         });
 

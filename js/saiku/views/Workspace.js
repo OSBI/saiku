@@ -199,11 +199,11 @@ var Workspace = Backbone.View.extend({
         
         // Save the query to the server and init the UI
         Saiku.session.trigger('workspace:clear', { workspace: this });
-        this.query.save();
+        this.query.save({},{ async: false });
         this.init_query();
     },
     
-    init_query: function() {
+    init_query: function(isNew) {
         try 
         {
             var properties = this.query.properties ? this.query.properties.properties : {} ;
@@ -224,10 +224,11 @@ var Workspace = Backbone.View.extend({
                 $(this.querytoolbar.el).find('ul.chart [href="#' + renderType+ '"]').addClass('on');
 
 
-            } else if ('table' == renderMode && renderType in this.querytoolbar ) {
+            } else if ('table' == renderMode && renderType in this.querytoolbar) {
+                console.log('ul.table a.' + renderType);
                 this.querytoolbar.render_mode = "table";
                 this.querytoolbar.table.sparkType = renderType;
-                $(this.querytoolbar.el).find('ul.table .' + renderType).addClass('on');
+                $(this.querytoolbar.el).find('ul.table a.' + renderType).addClass('on');
             }
 
         } catch (e) {
@@ -252,7 +253,7 @@ var Workspace = Backbone.View.extend({
 
 
         } else {
-            $(this.el).find('.workspace_fields').show();
+            $(this.el).find('.workspace_fields').removeClass('hide');
             $(this.el).find('.workspace_editor .mdx_input').addClass('hide');
             $(this.el).find('.workspace_editor .editor_info').addClass('hide');
             $(this.toolbar.el).find('.auto, ,.toggle_fields, .query_scenario, .buckets, .non_empty, .swap_axis, .mdx, .switch_to_mdx').parent().show();
@@ -297,6 +298,12 @@ var Workspace = Backbone.View.extend({
             $(this.el).find('.measure_tree').html('');
             return;
         }
+
+        // is this a new query?
+        if (typeof isNew != "undefined") {
+            this.query.run(true);
+        }
+
 
     },
 
@@ -440,8 +447,6 @@ var Workspace = Backbone.View.extend({
                     }
                 }
             }
-            
-            this.query.run(true);
         }
         
         // Make sure appropriate workspace buttons are enabled

@@ -108,8 +108,12 @@ var QueryToolbar = Backbone.View.extend({
             $(this.workspace.el).find('.workspace_results table').show();
             $(this.workspace.chart.el).hide();
             $(this.workspace.chart.nav).hide();
-            this.workspace.table.render({ data: this.workspace.query.result.lastresult() });
             this.render_mode = "table";
+            var hasRun = this.workspace.query.result.hasRun();
+            if (hasRun) {
+                this.workspace.table.render({ data: this.workspace.query.result.lastresult() });
+            }
+            
         }
         return false;
     },
