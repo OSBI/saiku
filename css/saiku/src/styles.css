@@ -1127,10 +1127,14 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     text-shadow: 1px 1px 0 #FFFFFF;
     overflow: hidden;
 }
-.disabled_toolbar {
+a.disabled_toolbar {
+    
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    filter: alpha(opacity = 50);
     opacity: 0.3 !important;
+    width: 100%;
 }
-.disabled_toolbar a.button:hover {
+a.disabled_toolbar:hover {
     border: none !important;
     padding: 8px !important;
 }
@@ -1650,7 +1654,7 @@ background: url("../../../images/src/sort_none.png") no-repeat;
 }
 
 #save_query_form [name="name"] {
-    width: 423px;
+    width: 390px;
 }
 
 .queries h3 {

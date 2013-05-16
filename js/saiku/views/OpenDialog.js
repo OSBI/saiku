@@ -55,7 +55,7 @@ var OpenDialog = Modal.extend({
             }
             $(this.el).find('.RepositoryObjects').height( height );
             $(this.el).dialog( 'option', 'position', 'center' );
-            $(this.el).parents('.ui-dialog').css({ width: "500px" });
+            $(this.el).parents('.ui-dialog').css({ width: "550px" });
             $(this.el).find('.dialog_footer').find('a[href="#open_query"]').hide();
 
             self.repository.fetch( );
