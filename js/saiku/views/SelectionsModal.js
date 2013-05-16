@@ -42,7 +42,7 @@ var SelectionsModal = Modal.extend({
     initialize: function(args) {
         // Initialize properties
         _.extend(this, args);
-        this.options.title = "Selections for " + this.name;
+        this.options.title = "<span class='i18n'>Selections for</span> " + this.name;
         this.message = "Fetching members...";
         this.query = args.workspace.query;
 
