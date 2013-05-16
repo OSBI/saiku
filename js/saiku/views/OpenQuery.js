@@ -105,7 +105,7 @@ var OpenQuery = Backbone.View.extend({
             
             $(this.el).find('li.query').removeClass('hide')
             $(this.el).find('li.query a').filter(function (index) { 
-                return this.text.toLowerCase().indexOf(filter) == -1; 
+                return $(this).text().toLowerCase().indexOf(filter) == -1; 
             }).parent().addClass('hide');
             $(this.el).find('li.folder').addClass('hide');
             $(this.el).find('li.query').not('.hide').parents('li.folder').removeClass('hide');
