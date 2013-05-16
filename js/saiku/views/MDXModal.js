@@ -21,7 +21,11 @@ var MDXModal = Modal.extend({
     type: "mdx",
     
     initialize: function(args) {
-        this.options.title = "View MDX";
+        this.options.title = "MDX";
         this.message = _.template("<textarea><%= mdx %></textarea>")(args);
+        this.bind( 'open', function( ) {
+       	var self = this;
+        	$(self.el).parents('.ui-dialog').css({ width: "550px" });
+        });
     }
 });

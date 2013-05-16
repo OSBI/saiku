@@ -175,7 +175,7 @@ var DrillthroughModal = Modal.extend({
     drilled: function(model, response) {
         var table = new Table({ workspace: this.workspace });
         if (response != null && response.error != null) {
-            $(table.el).html('<tr><td>' + safe_tags_replace(args.data.error) + '</td></tr>');
+            $(table.el).html('<tr><td>' + safe_tags_replace(response.error) + '</td></tr>');
         } else {
             table.process_data(response.cellset);
         }

@@ -816,8 +816,8 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     width: 40px;
 }
 .dialog_mdx .dialog_body textarea {
-    width: 335px;
-    height: 200px;
+    width: 450px;
+    height: 400px;
     font-size: 11px;
 }
 .dialog_save .dialog_icon {
