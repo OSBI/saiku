@@ -39,7 +39,8 @@ var OpenDialog = Modal.extend({
         // Append events
         var self = this;
         var name = "";
-        this.message = "<div class='RepositoryObjects'>Loading....</div><div class='query_name'></div>"
+        this.message = '<b><span class="i18n">Search:</span></b> &nbsp;<input type="text" class="search_file"></input><br />'
+                    + "<div class='RepositoryObjects'>Loading....</div><br><b><div class='query_name'><span class='i18n'>Please select a file.....</span></div></b>"
         _.extend(this.options, {
             title: "Open"
         });
@@ -73,8 +74,6 @@ var OpenDialog = Modal.extend({
                 repoObjects: repository
             } ) 
         );
-
-        $('<b><span class="i18n">Search:</span></b> &nbsp;<input type="text" class="search_file"></input><br />').insertBefore('.RepositoryObjects');
     },
 
     select_root_folder: function( event ) {
@@ -115,6 +114,7 @@ var OpenDialog = Modal.extend({
         $( this.el ).find( '.selected' ).removeClass( 'selected' );
     },
 
+    // XXX - duplicaten from OpenQuery
     search_file: function(event) {
         var filter = $(this.el).find('.search_file').val().toLowerCase();
         var isEmpty = (typeof filter == "undefined" || filter == "" || filter == null);

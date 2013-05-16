@@ -26,7 +26,8 @@ var SaveQuery = Modal.extend({
         'click .dialog_footer a:' : 'call',
         'submit form': 'save',
         'click .query': 'select_name',
-        'click li.folder': 'toggle_folder'
+        'click li.folder': 'toggle_folder',
+        'keyup .search_file' : 'search_file'
     },
     
     buttons: [
@@ -53,10 +54,10 @@ var SaveQuery = Modal.extend({
             }
         }
         this.query = args.query;
-        this.message = _.template("<form id='save_query_form'>" +
-            "<label for='name'>To save a new query, " + 
-            "please select a folder and type a name in the text box below:</label><br />" +
+        this.message = _.template('<b><span class="i18n">Search:</span></b> &nbsp;<input type="text" class="search_file"></input><br />' +
+            "<form id='save_query_form'>" +
             "<div class='RepositoryObjects'></div>" +
+            "<br /><label for='name' class='i18n'>File:</label>&nbsp; " +
             "<input type='text' name='name' value='<%= name %>' />" +
             "</form>")({ name: full_path });
 
@@ -135,6 +136,34 @@ var SaveQuery = Modal.extend({
         }
 
     },
+
+    // XXX - duplicaten from OpenQuery
+    search_file: function(event) {
+        var filter = $(this.el).find('.search_file').val().toLowerCase();
+        var isEmpty = (typeof filter == "undefined" || filter == "" || filter == null);
+        if (isEmpty || event.which == 27 || event.which == 9) {
+            $(this.el).find('li.query, li.folder').removeClass('hide');
+            $(this.el).find( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
+            $(this.el).find( 'li.folder .folder_content' ).addClass('hide');
+            $(this.el).find('.search_file').val('');
+        } else {
+            
+            $(this.el).find('li.query').removeClass('hide')
+            $(this.el).find('li.query a').filter(function (index) { 
+                return this.text.toLowerCase().indexOf(filter) == -1; 
+            }).parent().addClass('hide');
+            $(this.el).find('li.folder').addClass('hide');
+            $(this.el).find('li.query').not('.hide').parents('li.folder').removeClass('hide');
+            //$(this.el).find( 'li.folder .folder_content').not(':has(.query:visible)').parent().addClass('hide');
+
+            //not(':contains("' + filter + '")').parent().hide();
+            $(this.el).find( 'li.folder .folder_row' ).find('.sprite').removeClass( 'collapsed' );
+            $(this.el).find( 'li.folder .folder_content' ).removeClass('hide');
+        }
+        return false;
+    },
+
+
 
     select_name: function( event ) {
         var $currentTarget = $( event.currentTarget );
