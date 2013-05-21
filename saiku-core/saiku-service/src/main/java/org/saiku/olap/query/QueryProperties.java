@@ -175,7 +175,7 @@ public class QueryProperties {
 			String key = this.key;
 			String value = Boolean.FALSE.toString();
 			try {
-				query.getAxis(Axis.COLUMNS).clearLimitFunction();
+				query.getAxis(Axis.COLUMNS).getLimitFunction();
 				value = Boolean.TRUE.toString();
 			} catch (Error e) {
 				
