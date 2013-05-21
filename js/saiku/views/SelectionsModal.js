@@ -92,7 +92,7 @@ var SelectionsModal = Modal.extend({
     fetch_members: function(model, response) {
         this.available_members = response;
 
-        this.workspace.query.action.get("/axis/" + this.axis + "/", { 
+        this.workspace.query.action.get("/axis/" + this.axis + "/dimension/" + this.member.dimension, { 
             success: this.populate 
         });
     },
@@ -107,9 +107,13 @@ var SelectionsModal = Modal.extend({
 
             this.selected_members = [];
 
-            var this_dim_sel = _.detect(response, function(obj) {
+            var this_dim_sel = response;
+
+            /*
+            _.detect(response, function(obj) {
                 return (obj.name == this.member.dimension || encodeURIComponent(obj.name) == this.member.dimension);
             }, this);
+            */
             if (typeof this_dim_sel != "undefined" && typeof this_dim_sel.selections != "undefined") {
                 this.selected_members = this_dim_sel.selections;
             }
