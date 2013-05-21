@@ -30,7 +30,7 @@ var Workspace = Backbone.View.extend({
     initialize: function(args) {
         // Maintain `this` in jQuery event handlers
         _.bindAll(this, "adjust", "toggle_sidebar", "prepare", "new_query", 
-                "init_query", "update_caption", "populate_selections","refresh");
+                "init_query", "update_caption", "populate_selections","refresh", "sync_query");
                 
         // Attach an event bus to the workspace
         _.extend(this, Backbone.Events);
@@ -56,7 +56,7 @@ var Workspace = Backbone.View.extend({
         if (args && args.query) {
             this.query = args.query;
             this.query.workspace = this;
-            this.query.save({}, { success: this.init_query });            
+            this.query.save({}, { success: this.init_query });
         }
         // Flash cube navigation when rendered
         Saiku.session.bind('tab:add', this.prepare);
@@ -126,6 +126,9 @@ var Workspace = Backbone.View.extend({
         $(this.chart.el).empty();
         this.chart.render();
         $(this.querytoolbar.el).find('ul.options a.on').removeClass('on');
+        $(this.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
+        $(this.el).find('.fields_list[title="COLUMNS"] .limit').removeClass('on');
+
         // Trigger clear event
         Saiku.session.trigger('workspace:clear', { workspace: this });
 
@@ -303,6 +306,43 @@ var Workspace = Backbone.View.extend({
         }
 
 
+    },
+
+    sync_query: function(needFetch) {
+        var self = this;
+        var sync_ui = function() {
+                
+                $(self.el).find('.fields_list_body ul').empty();
+                $(self.dimension_list.el).find('.parent_dimension a.folder_collapsed').removeAttr('style');
+                
+                $(self.dimension_list.el).find('.parent_dimension ul li')
+                    .draggable('enable')
+                    .css({ fontWeight: 'normal' });
+
+                $(self.measure_list.el).find('a.measure').parent()
+                    .draggable('enable')
+                    .css({ fontWeight: 'normal' });
+
+                $(self.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
+                $(self.el).find('.fields_list[title="COLUMNS"] .limit').removeClass('on');
+
+
+                self.populate_selections(self.measure_list.el);
+                $(self.el).find('.fields_list_body ul li')
+                    .removeClass('ui-draggable-disabled ui-state-disabled')
+                    .css({ fontWeight: 'normal' });
+
+                self.query.run();
+
+        };
+        if (typeof needFetch == "undefined") {
+            sync_ui();
+        } else {
+            var formatter = self.query.get('formatter');
+            self.query.clear();
+            self.query.set({ 'formatter' : formatter });
+            self.query.fetch({ success: sync_ui });
+        }
     },
 
     populate_selections: function(dimension_el) {

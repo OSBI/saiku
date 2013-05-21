@@ -187,34 +187,10 @@ var Table = Backbone.View.extend({
                         url = '/axis/' + axis + '/dimension/' + d + "/children";
                         children = true;
                     }
-                    self.workspace.query.action.put(url, { 
-                        success: function() {
-                            var formatter = children ?
-                                    "flat" :
-                                    self.workspace.query.get('formatter');
-                            self.workspace.query.clear();
-                            self.workspace.query.set({ 'formatter' : formatter });
-                            self.workspace.query.fetch({ success: function() {
-                                
-                                $(self.workspace.el).find('.fields_list_body ul').empty();
-                                $(self.workspace.dimension_list.el).find('.parent_dimension a.folder_collapsed').removeAttr('style');
-                                
-                                $(self.workspace.dimension_list.el).find('.parent_dimension ul li')
-                                    .draggable('enable')
-                                    .css({ fontWeight: 'normal' });
-
-                                $(self.workspace.measure_list.el).find('a.measure').parent()
-                                    .draggable('enable')
-                                    .css({ fontWeight: 'normal' });
-
-                                self.workspace.populate_selections(self.workspace.measure_list.el);
-                                $(self.workspace.el).find('.fields_list_body ul li')
-                                    .removeClass('ui-draggable-disabled ui-state-disabled')
-                                    .css({ fontWeight: 'normal' });
-
-                             }});
-
-                        },
+                    if (children) {
+                        self.workspace.query.set({ 'formatter' : 'flat' });
+                    }
+                    self.workspace.query.action.put(url, { success: self.workspace.sync_query,
                         data: children ?
                             {
                                 member: items[key].payload

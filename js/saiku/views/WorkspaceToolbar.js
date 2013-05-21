@@ -208,7 +208,8 @@ var WorkspaceToolbar = Backbone.View.extend({
             .html('<tr><td>Swapping axes...</td></tr>');
         Saiku.ui.block('Swapping axes...');
         this.workspace.query.action.put("/swapaxes", { 
-            success: this.swap_axes_on_dropzones
+            success: this.swap_axes_on_dropzones,
+            error: Saiku.ui.unblock
         });
     },
     
@@ -289,7 +290,9 @@ var WorkspaceToolbar = Backbone.View.extend({
    
     },
 
-    swap_axes_on_dropzones: function() {
+    swap_axes_on_dropzones: function(response, model) {
+        this.workspace.query.parse(response);
+        /*
         $columns = $(this.workspace.drop_zones.el).find('.columns')
             .children()
             .detach();
@@ -299,8 +302,18 @@ var WorkspaceToolbar = Backbone.View.extend({
             
         $(this.workspace.drop_zones.el).find('.columns').append($rows);
         $(this.workspace.drop_zones.el).find('.rows').append($columns);
-        
-        this.workspace.query.run();
+        var rowLimit = $(this.workspace).find('fields_list.ROWS .limit').hasClass('on') | false;
+        var colLimit = $(this.workspace).find('fields_list.COLUMNS .limit').hasClass('on') | false;
+        $(this.workspace).find('fields_list.ROWS .limit').removeClass('on');
+        $(this.workspace).find('fields_list.COLUMNS .limit').removeClass('on');
+        if (rowLimit) {
+            $(this.workspace).find('fields_list.COLUMNS .limit').addClass('on');
+        }
+        if (colLimit) {
+            $(this.workspace).find('fields_list.ROWS .limit').addClass('on');
+        }
+        */
+        this.workspace.sync_query();
         Saiku.ui.unblock();
     },
     
