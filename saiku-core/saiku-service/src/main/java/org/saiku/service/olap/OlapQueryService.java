@@ -531,8 +531,12 @@ public class OlapQueryService implements Serializable {
 
 	}
 
-	public void swapAxes(String queryName) {
-		getIQuery(queryName).swapAxes();
+	public IQuery swapAxes(String queryName) {
+		IQuery query = getIQuery(queryName);
+		if (QueryType.QM.equals(query.getType())) {
+			query.swapAxes();
+		}		
+		return query;
 	}
 	
 	public boolean includeChildren(String queryName, String dimensionName, String uniqueMemberName) {

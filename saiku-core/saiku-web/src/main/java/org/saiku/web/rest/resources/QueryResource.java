@@ -57,6 +57,8 @@ import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.dto.resultset.CellDataSet;
+import org.saiku.olap.query.IQuery;
+import org.saiku.olap.util.ObjectUtil;
 import org.saiku.olap.util.SaikuProperties;
 import org.saiku.olap.util.formatter.CellSetFormatter;
 import org.saiku.olap.util.formatter.FlattenedCellSetFormatter;
@@ -779,16 +781,13 @@ public class QueryResource {
 	@PUT
 	@Produces({"application/json" })
 	@Path("/{queryname}/swapaxes")
-	public Status swapAxes(@PathParam("queryname") String queryName)	
+	public SaikuQuery swapAxes(@PathParam("queryname") String queryName)	
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/swapaxes\tPUT");
 		}
-		olapQueryService.clearSort(queryName, "ROWS");
-		olapQueryService.clearSort(queryName, "COLUMNS");
-		olapQueryService.swapAxes(queryName);
-		return Status.OK;
-
+		IQuery query = olapQueryService.swapAxes(queryName);
+		return ObjectUtil.convert(query);
 	}
 
 	@POST
