@@ -120,12 +120,16 @@ public class OlapQuery implements IQuery {
 	public void moveDimension(QueryDimension dimension, Axis axis, int position) {
         QueryAxis oldQueryAxis = findAxis(dimension);
         QueryAxis newQueryAxis = query.getAxis(axis);
-		if (dimension.getName() != "Measures") {
+		if (dimension.getName() != "Measures" && !Axis.FILTER.equals(axis)) {
 			dimension.setHierarchyConsistent(true);
 			dimension.setHierarchizeMode(HierarchizeMode.PRE);
+		} else {
+			dimension.setHierarchyConsistent(false);
+			dimension.clearHierarchizeMode();
 		}
 		
-		if (oldQueryAxis != null && newQueryAxis != null && (oldQueryAxis.getLocation() != newQueryAxis.getLocation()) && oldQueryAxis.getLocation() != null) {
+		if (oldQueryAxis != null && newQueryAxis != null && (oldQueryAxis.getLocation() != newQueryAxis.getLocation()) && oldQueryAxis.getLocation() != null) 
+		{
 			for (QueryAxis qAxis : query.getAxes().values()) {
 				if (qAxis.getSortOrder() != null && qAxis.getSortIdentifierNodeName() != null) {
 					String sortLiteral = qAxis.getSortIdentifierNodeName();
