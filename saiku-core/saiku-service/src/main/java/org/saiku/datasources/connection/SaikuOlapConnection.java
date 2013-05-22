@@ -72,7 +72,7 @@ public class SaikuOlapConnection implements ISaikuConnection {
 		OlapConnection tmpolapConnection = (OlapConnection) wrapper.unwrap(OlapConnection.class);
 		System.out.println("name:" + name);
 		System.out.println("driver:" + driver);
-		//System.out.println("url:" + url);
+		System.out.println("url:" + url);
 		System.out.flush();
 
 		if (tmpolapConnection == null) {
