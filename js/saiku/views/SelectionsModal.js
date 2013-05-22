@@ -31,8 +31,7 @@ var SelectionsModal = Modal.extend({
         'change #use_result': 'use_result_action',
         'dblclick select option' : 'click_move_selection',
         'click div.selection_buttons a.form_button': 'move_selection',
-        'click div.updown_buttons a.form_button': 'updown_selection',
-
+        'click div.updown_buttons a.form_button': 'updown_selection'
     },    
 
     show_unique_option: false,

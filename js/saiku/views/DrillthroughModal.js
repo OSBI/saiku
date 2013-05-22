@@ -34,7 +34,7 @@ var DrillthroughModal = Modal.extend({
         'click .parent_dimension input' : 'select_dimension',
         'click .measure_tree input' : 'select_measure',
         'click input.all_measures' : 'select_all_measures',
-        'click input.all_dimensions' : 'select_all_dimensions',
+        'click input.all_dimensions' : 'select_all_dimensions'
     },
 
     

@@ -24,7 +24,7 @@ var FilterModal = Modal.extend({
 
     events: {
         'submit form': 'save',
-        'click .dialog_footer a:' : 'call',
+        'click .dialog_footer a:' : 'call'
     },
 
     buttons: [
