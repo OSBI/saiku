@@ -87,7 +87,9 @@ var Chart = Backbone.View.extend({
                 "</form>";
 
         var chartnav = exportoptions + "</div>";
-        
+        if (typeof isIE !== "undefined") {
+            chartnav = "<div></div>";
+        }
         // Create navigation
         this.nav = $(chartnav).css({
         		    'padding-bottom': '10px'
@@ -370,7 +372,7 @@ var Chart = Backbone.View.extend({
                 type:   chartType,
                 canvas: this.id,
                 width:  workspaceResults.width() - 40,
-                height: workspaceResults.height() - 40,
+                height: workspaceResults.height() - 40
             },
             this.cccOptionsDefault.Base,
             this.cccOptionsDefault[chartType], // may be undefined
