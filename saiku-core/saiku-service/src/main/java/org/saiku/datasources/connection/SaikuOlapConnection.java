@@ -53,6 +53,11 @@ public class SaikuOlapConnection implements ISaikuConnection {
 		String driver = props.getProperty(ISaikuConnection.DRIVER_KEY);
 		this.properties = props;
 		String url = props.getProperty(ISaikuConnection.URL_KEY);
+		System.out.println("name:" + name);
+		System.out.println("driver:" + driver);
+		System.out.println("url:" + url);
+		System.out.flush();
+		
 		if (url.length() > 0 && url.charAt(url.length()-1) != ';') {
 			url += ";";
 		}
@@ -70,10 +75,8 @@ public class SaikuOlapConnection implements ISaikuConnection {
 		connection = (OlapConnection) DriverManager.getConnection(url, username,password);
 		final OlapWrapper wrapper = connection;
 		OlapConnection tmpolapConnection = (OlapConnection) wrapper.unwrap(OlapConnection.class);
-		System.out.println("name:" + name);
-		System.out.println("driver:" + driver);
-		System.out.println("url:" + url);
-		System.out.flush();
+		
+		
 
 		if (tmpolapConnection == null) {
 			throw new Exception("Connection is null");
