@@ -312,26 +312,28 @@ var Workspace = Backbone.View.extend({
         var self = this;
         var sync_ui = function() {
                 
-                $(self.el).find('.fields_list_body ul').empty();
-                $(self.dimension_list.el).find('.parent_dimension a.folder_collapsed').removeAttr('style');
-                
-                $(self.dimension_list.el).find('.parent_dimension ul li')
-                    .draggable('enable')
-                    .css({ fontWeight: 'normal' });
+                if ('MODE' in Settings && Settings.MODE != "table" && Settings.MODE != "view") {
+                    $(self.el).find('.fields_list_body ul').empty();
 
-                $(self.measure_list.el).find('a.measure').parent()
-                    .draggable('enable')
-                    .css({ fontWeight: 'normal' });
+                    $(self.dimension_list.el).find('.parent_dimension a.folder_collapsed').removeAttr('style');
+                    
+                    $(self.dimension_list.el).find('.parent_dimension ul li')
+                        .draggable('enable')
+                        .css({ fontWeight: 'normal' });
 
-                $(self.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
-                $(self.el).find('.fields_list[title="COLUMNS"] .limit').removeClass('on');
+                    $(self.measure_list.el).find('a.measure').parent()
+                        .draggable('enable')
+                        .css({ fontWeight: 'normal' });
+
+                    $(self.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
+                    $(self.el).find('.fields_list[title="COLUMNS"] .limit').removeClass('on');
 
 
-                self.populate_selections(self.measure_list.el);
-                $(self.el).find('.fields_list_body ul li')
-                    .removeClass('ui-draggable-disabled ui-state-disabled')
-                    .css({ fontWeight: 'normal' });
-
+                    self.populate_selections(self.measure_list.el);
+                    $(self.el).find('.fields_list_body ul li')
+                        .removeClass('ui-draggable-disabled ui-state-disabled')
+                        .css({ fontWeight: 'normal' });
+                }
                 self.query.run();
 
         };
