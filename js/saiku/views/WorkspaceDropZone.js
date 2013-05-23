@@ -276,7 +276,7 @@ var WorkspaceDropZone = Backbone.View.extend({
 
                                 var save_customsort = function(sortO, sortL) {
                                     self.set_query_axis_sort(target, sortO, sortL);
-                                    var url = "/axis/" + target + "/sort/" + sortO + "/" + sortL;
+                                    var url = "/axis/" + target + "/sort/" + sortO + "/" + encodeURIComponent(sortL);
                                     self.workspace.query.action.post(url, {
                                         success: self.workspace.query.run
                                     });    
@@ -305,7 +305,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                                 if (_.indexOf(["ASC", "BASC", "DESC", "BDESC"], fun) > -1) {
                                     method = "sort";
                                     self.set_query_axis_sort(target, fun, items[ikey].payload["sortliteral"]);
-                                    fun += "/" +  items[ikey].payload["sortliteral"];
+                                    fun += "/" +  encodeURIComponent(items[ikey].payload["sortliteral"]);
                                 } else {
                                     method = "limit";
                                     self.set_query_axis(target, fun, items[ikey].payload.n , items[ikey].payload["sortliteral"]);
