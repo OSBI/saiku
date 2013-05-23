@@ -1272,6 +1272,7 @@ a.disabled_toolbar:hover {
     margin: 0 0 3px 0;
     padding: 3px 10px 3px 5px;
     text-shadow: 1px 1px 0 #FFFFFF;
+    overflow: auto;
 }
 .query_toolbar_vertical ul.options li {
     width: 100%;
