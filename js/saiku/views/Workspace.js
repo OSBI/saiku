@@ -312,7 +312,7 @@ var Workspace = Backbone.View.extend({
         var self = this;
         var sync_ui = function() {
                 
-                if ('MODE' in Settings && Settings.MODE != "table" && Settings.MODE != "view") {
+                if (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view")) {
                     $(self.el).find('.fields_list_body ul').empty();
 
                     $(self.dimension_list.el).find('.parent_dimension a.folder_collapsed').removeAttr('style');
