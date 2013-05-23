@@ -37,7 +37,7 @@ var Table = Backbone.View.extend({
     clicked_cell: function(event) {
         var self = this;
         
-        if (this.workspace.query.get('type') != 'QM' || Settings.MODE == "view") {
+        if (this.workspace.query.get('type') != 'QM' || Settings.MODE == "table") {
             return false;
         }
 
@@ -91,6 +91,10 @@ var Table = Backbone.View.extend({
             var levels = [];
             var items = {};
             var dimensions = Saiku.session.sessionworkspace.dimensions[cube].get('data');
+            if (typeof dimensions == "undefined") {
+                Saiku.session.sessionworkspace.dimensions[cube].fetch({async : false});
+                dimensions = Saiku.session.sessionworkspace.dimensions[cube].get('data');
+            }
             var dimsel = {};
             var used_levels = [];
 
