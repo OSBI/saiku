@@ -1,4 +1,4 @@
-// 43830c0ef6e42ddded3931c4525ed32816d781c2
+// d2ea725afb0e27edf2a8ad3f361548a744ecd867
 /**
  * @class The built-in Array class.
  * @name Array
@@ -111,6 +111,14 @@ if (!Array.prototype.reduce) Array.prototype.reduce = function(f, v) {
   }
   return v;
 };
+
+if (!Array.prototype.indexOf) Array.prototype.indexOf = function (s, from) {
+  var n = this.length >>> 0,
+      i = (!isFinite(from) || from < 0) ? 0 : (from > this.length) ? this.length : from;
+  for (; i < n; i++) { if (this[i] === s) { return i; } }
+  return -1;
+};
+
 /**
  * The top-level Protovis namespace. All public methods and fields should be
  * registered on this object. Note that core Protovis source is surrounded by an
@@ -206,6 +214,7 @@ pv.parent = function() { return this.parent.index; };
  * @type Event
  * @name pv.event
  */
+(function() {
 /**
  * @private Returns a prototype object suitable for extending the given class
  * <tt>f</tt>. Rather than constructing a new instance of <tt>f</tt> to serve as
@@ -292,20 +301,6 @@ pv.extendType = function(g, f) {
     s += js.substring(i);
     return s;
   };
-//}
-
-/**
- * @private Computes the value of the specified CSS property <tt>p</tt> on the
- * specified element <tt>e</tt>.
- *
- * @param {string} p the name of the CSS property.
- * @param e the element on which to compute the CSS property.
- */
-pv.css = function(e, p) {
-  return window.getComputedStyle
-      ? window.getComputedStyle(e, null).getPropertyValue(p)
-      : e.currentStyle[p];
-};
 
 /**
  * @private Reports the specified error to the JavaScript console. Mozilla only
@@ -422,6 +417,45 @@ pv.getWindow = function(elem) {
         elem.nodeType === 9 ?
             elem.defaultView || elem.parentWindow :
             false;
+};
+
+var _reHiphenSep = /\-([a-z])/g;
+
+pv.hiphen2camel = function(prop) {
+    if (_reHiphenSep.test(prop)) {
+        return prop.replace(_reHiphenSep, function($0, $1) {
+            return $1.toUpperCase();
+        });
+    }
+    return prop;
+};
+
+// Capture the "most" native possible version, not some poly-fill
+var _getCompStyle = window.getComputedStyle;
+
+/**
+ * @private Computes the value of the specified CSS property <tt>p</tt> on the
+ * specified element <tt>e</tt>.
+ *
+ * @param {string} p the name of the CSS property.
+ * @param e the element on which to compute the CSS property.
+ */
+pv.css = function(e, p) {
+  // Assuming element is of the same window as this script.
+  return _getCompStyle ?
+         _getCompStyle.call(window, e, null).getPropertyValue(p) : 
+         e.currentStyle[p === 'float' ? 'styleFloat' : pv.hiphen2camel(p)];
+};
+
+pv.cssStyle = function(e) {
+    var style; 
+    if(_getCompStyle) {
+        style = _getCompStyle.call(window, e, null); 
+        return function(p) { return style.getPropertyValue(p); };
+    }
+    
+    style = e.currentStyle;
+    return function(p) { return style[p === 'float' ? 'styleFloat' : pv.hiphen2camel(p)]; };
 };
 
 pv._getElementsByClass = function(searchClass, node) {
@@ -553,7 +587,8 @@ pv.get = function(o, p, dv){
     var v;
     return o && (v = o[p]) != null ? v : dv;
 };
-/*
+
+}());/*
  * Parses the Protovis specifications on load, allowing the use of JavaScript
  * 1.8 function expressions on browsers that only support JavaScript 1.6.
  * This should only happen for browser environments, so we exclude batik.
@@ -12126,14 +12161,9 @@ pv.Mark.prototype.mouse = function() {
       // Compute xy-coordinates relative to the panel.
       var offset = pv.elementOffset(n);
       if(offset){
-          x -= offset.left;
-          y -= offset.top;
-
-          var computed = pv.getWindow(n.ownerDocument).getComputedStyle(n, null);
-          if(computed){
-              x -= parseFloat(computed.paddingLeft || 0);
-              y -= parseFloat(computed.paddingTop  || 0);
-          }
+          var getStyle = pv.cssStyle(n);
+          x -= offset.left + parseFloat(getStyle('paddingLeft') || 0);
+          y -= offset.top  + parseFloat(getStyle('paddingTop')  || 0);
       }
       
       /* Compute the inverse transform of all enclosing panels. */
@@ -14174,15 +14204,18 @@ pv.Panel.prototype.buildImplied = function(s) {
       }
 
       /* If width and height weren't specified, inspect the container. */
-      var w, h;
+      var w, h, cssStyle;
       if (s.width == null) {
-        w = parseFloat(pv.css(c, "width"));
+        cssStyle = pv.cssStyle(c);
+        w = parseFloat(cssStyle("width") || 0);
         s.width = w - s.left - s.right;
       }
       if (s.height == null) {
-        h = parseFloat(pv.css(c, "height"));
+        cssStyle || (cssStyle = pv.cssStyle(c));
+        h = parseFloat(pv.cssStyle("height") || 0);
         s.height = h - s.top - s.bottom;
       }
+      cssStyle = null;
     } else {
       var cache = this.$canvas || (this.$canvas = []);
       if (!(c = cache[this.index])) {

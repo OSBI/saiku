@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-//VERSION TRUNK-20130513
+//VERSION TRUNK-20130523
 
 var pvc=function(f,u){function Qa(){if(i.debug&&typeof console!=="undefined")["log","info",["trace","debug"],"error","warn",["group","groupCollapsed"],"groupEnd"].forEach(function(a){a=a instanceof Array?a:[a,a];ua(i,a[0],a[1],"[pvChart]")});else{if(i.debug>1)i.debug=1;["log","info","trace","warn","group","groupEnd"].forEach(function(a){i[a]=f.noop});i.error=function(a){if(a&&typeof a==="object"&&a.message)a=a.message;a=""+f.nullyTo(a,"");if(a.indexOf("[pvChart ERROR]: ")<0)a="[pvChart ERROR]: "+
 a;throw new Error(a);}}i.logError=i.error;u.error=i.error}function Ra(){var a=u.Behavior.tipsy;if(a&&a.setDebug){a.setDebug(i.debug);a.log=i.log}}function ua(a,b,c,d){c||(c=b);var e=console,g=e[c]||e.log,h;if(g){var j=d+": %s";if(f.fun.is(g))h=g.bind(e,j);else{var k=Function.prototype.apply;h=function(){k.call(g,e,f.array.append([j],arguments))}}}a[b]=h}function Sa(a,b){if(a){if(f.object.is(a))return a.abs;return b?b+f.firstUpperCase(a):a}return b}function va(a){a=u.color(a);var b=a.r,c=a.g;a=a.b;
