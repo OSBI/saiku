@@ -383,7 +383,8 @@ var WorkspaceToolbar = Backbone.View.extend({
                 var newHeight =
                           screen_length
                           * self.editor.renderer.lineHeight
-                          + self.editor.renderer.scrollBar.getWidth();
+                          + self.editor.renderer.scrollBar.getWidth()
+                          + self.editor.renderer.lineHeight;
 
                 $mdx_editor.height(newHeight.toString() + "px");
                 self.editor.resize();
