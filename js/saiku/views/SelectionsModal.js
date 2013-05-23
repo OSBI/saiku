@@ -125,7 +125,7 @@ var SelectionsModal = Modal.extend({
                 var member = this.selected_members[j];
                 if (encodeURIComponent(member.levelUniqueName) == this.member.level &&
                     member.type == "MEMBER") {
-                    selected_members_opts += "<option value='" + encodeURIComponent(member.uniqueName) + "'>" + member.caption + "</option>";
+                    selected_members_opts += '<option value="' + encodeURIComponent(member.uniqueName) + '">' + member.caption + "</option>";
                     used_members.push(member.caption);
                 }
             }
@@ -142,7 +142,7 @@ var SelectionsModal = Modal.extend({
             var available_members_opts = "";
             for (var i = 0; i < this.available_members.length; i++) {
                 var member = this.available_members[i];
-                available_members_opts += "<option value='" + encodeURIComponent(member.uniqueName) + "'>" + member.caption + "</option>";
+                available_members_opts += '<option value="' + encodeURIComponent(member.uniqueName) + '">' + member.caption + "</option>";
             }
             if (this.available_members.length > 0) {
                 $(available_members_opts).appendTo($(this.el).find('.available_selections select'));
