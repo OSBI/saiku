@@ -473,12 +473,21 @@ public class CellSetFormatter implements ICellSetFormatter {
 							parent = parent.getParentMember();
 						}
 						final MemberCell pInfo = new MemberCell();
-						pInfo.setRawValue(parent.getCaption());
-						pInfo.setFormattedValue(parent.getCaption()); // First try to get a formatted value
-						pInfo.setParentDimension(parent.getDimension().getName());
-						pInfo.setHierarchy(parent.getHierarchy().getUniqueName());
-						pInfo.setLevel(parent.getLevel().getUniqueName());
-						pInfo.setUniquename(parent.getUniqueName());
+						if (parent != null) {
+							pInfo.setRawValue(parent.getCaption());
+							pInfo.setFormattedValue(parent.getCaption()); // First try to get a formatted value
+							pInfo.setParentDimension(parent.getDimension().getName());
+							pInfo.setHierarchy(parent.getHierarchy().getUniqueName());
+							pInfo.setUniquename(parent.getUniqueName());
+							pInfo.setLevel(parent.getLevel().getUniqueName());
+						} else {
+							pInfo.setRawValue("");
+							pInfo.setFormattedValue(""); // First try to get a formatted value
+							pInfo.setParentDimension(member.getDimension().getName());
+							pInfo.setHierarchy(member.getHierarchy().getUniqueName());
+							pInfo.setLevel(member.getLevel().getUniqueName());
+							pInfo.setUniquename("");
+						}
 						matrix.set(x_parent, y_parent, pInfo);
 						if (isColumns) {
 							y_parent--;
