@@ -185,9 +185,16 @@ var Workspace = Backbone.View.extend({
         if (this.query) {
             this.query.destroy();
         }
-        
+        Saiku.session.trigger('workspace:clear', { workspace: this });
+
         // Initialize the new query
         this.selected_cube = $(this.el).find('.cubes').val();
+        if (!this.selected_cube) {
+            // Someone literally selected "Select a cube"
+            $(this.el).find('.dimension_tree').html('');
+            $(this.el).find('.measure_tree').html('');
+            return;
+        }
         var parsed_cube = this.selected_cube.split('/');
         var cube = parsed_cube[3];
         for (var i = 4; i < parsed_cube.length; i++) {
@@ -204,7 +211,6 @@ var Workspace = Backbone.View.extend({
         });
         
         // Save the query to the server and init the UI
-        Saiku.session.trigger('workspace:clear', { workspace: this });
         this.query.save({},{ async: false });
         this.init_query();
     },
