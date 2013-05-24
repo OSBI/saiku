@@ -51,6 +51,9 @@ var QueryToolbar = Backbone.View.extend({
     activate_buttons: function(args) {
         if (typeof args != "undefined" && args != null ) {
             $(this.el).find('a').removeClass('disabled_toolbar');
+            if (!args.data) {
+                $(this.el).find('a.export_button, a.stats').addClass('disabled_toolbar');
+            }
         }      
 
     },
@@ -65,6 +68,23 @@ var QueryToolbar = Backbone.View.extend({
 
         $(this.el).find('render_table').addClass('on');
         $(this.el).find('ul.table').show();
+        var self = this;
+         $.contextMenu({
+                selector: '.export_button',
+                trigger: 'left',
+                ignoreRightClick: true,
+                callback: function(key, options) {
+                    var m = "clicked: " + key;
+                    window.console && console.log(m) || alert(m); 
+                    self.workspace.chart.exportChart(key);
+                },
+                items: {
+                    "png": {name: "PNG"},
+                    "pdf": {name: "PDF"},
+                    "jpg": {name: "JPEG"},
+                    "svg": {name: "SVG"}
+                }
+            });
 
         return this; 
     },
@@ -123,17 +143,16 @@ var QueryToolbar = Backbone.View.extend({
 
     call: function(event) {
         event.preventDefault();
-        if (! $(event.target).hasClass('disabled_toolbar')) {
+        $target = $(event.target).hasClass('button') ? $(event.target) : $(event.target).parent();
+        if (! $target.hasClass('disabled_toolbar')) {
             // Determine callback
-            var callback = event.target.hash.replace('#', '');
+            var callback = $target.attr('href').replace('#', '');
             
             // Attempt to call callback
             if (this.render_mode == "table" && this[callback]) {
                 this[callback](event);
             } else if (this.render_mode == "chart" && this.workspace.chart[callback]) {
-                $target = $(event.target);
-                $target.parent().siblings().find('.on').removeClass('on');
-                $target.addClass('on');
+                this.workspace.chart.button(event);
                 this.workspace.chart[callback](event);
             }
         }

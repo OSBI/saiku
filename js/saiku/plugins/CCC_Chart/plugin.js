@@ -73,7 +73,16 @@ var Chart = Backbone.View.extend({
         
         // Listen to adjust event and rerender chart
         this.workspace.bind('workspace:adjust', this.render);
-        
+         var pseudoForm = "<div style='display:none'><form id='svgChartPseudoForm' target='_blank' method='POST'>" +
+                "<input type='hidden' name='type' class='type'/>" +
+                "<input type='hidden' name='svg' class='svg'/>" +
+                "</form></div>";
+        if (typeof isIE !== "undefined") {
+            pseudoForm = "<div></div>";
+        }
+        this.nav =$(pseudoForm);
+
+        /*
         // Create navigation
         var exportoptions = "<div><a class='hide' href='#charteditor' id='acharteditor' /><!--<a class='editor' href='#chart_editor'>Advanced Properties</a>-->Export to: " +
                 "<a class='export' href='#png' class='i18n'>PNG</a>, " +
@@ -112,6 +121,7 @@ var Chart = Backbone.View.extend({
                     'border': '1px solid #ccc', 
                     padding: '5px' 
                 });
+        */
         /* XXX - enable again later
         $(this.nav).append('<div style="display:none;"> <div id="charteditor" class="chart_editor"></div></div>');
         
@@ -133,8 +143,7 @@ var Chart = Backbone.View.extend({
         Saiku.ui.block("Updating chart data....");
     },
 
-    exportChart: function(event) {
-        var type = $(event.target).attr('href').replace('#', '');
+    exportChart: function(type) {
         var svgContent = new XMLSerializer().serializeToString($('svg')[0]);
         var rep = '<svg xmlns="http://www.w3.org/2000/svg" ';
         if (svgContent.substr(0,rep.length) != rep) {
@@ -162,11 +171,13 @@ var Chart = Backbone.View.extend({
 
     show: function(event, ui) {
         $(this.el).show();
+        /*
         if ('MODE' in Settings && Settings.MODE == 'table') {
             $(this.nav).hide();    
         } else {
             $(this.nav).show();
         }
+        */
         $('a#acharteditor').fancybox(
                                    {
                                    'autoDimensions'    : false,
@@ -191,6 +202,21 @@ var Chart = Backbone.View.extend({
     chart_editor: function() {
 		$('a#acharteditor').click();
 		return true;
+    },
+
+    export_button: function(event) {
+        var self = this;
+        $target = $(event.target).hasClass('button') ? $(event.target) : $(event.target).parent();
+        $target.contextMenu();
+    },
+
+    button: function(event) {
+        $target = $(event.target).hasClass('button') ? $(event.target) : $(event.target).parent();
+        if ($target.hasClass('chartoption')) {
+            $target.parent().siblings().find('.chartoption.on').removeClass('on');
+            $target.addClass('on');
+        }
+        return false;
     },
 
     stackedBar: function() {
@@ -399,6 +425,11 @@ var Chart = Backbone.View.extend({
             return;
         }
 
+        var workspaceResults = $(this.workspace.el).find(".workspace_results");
+        this.cccOptions = _.extend(this.cccOptions, {
+                width:  workspaceResults.width() - 40,
+                height: workspaceResults.height() - 40
+        });
         /* XXX - enable later
         var start = new Date().getTime();
         this.editor.chartDefinition = _.clone(this.cccOptions);
