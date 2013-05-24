@@ -56,8 +56,13 @@ var DimensionList = Backbone.View.extend({
     
     render: function() {
         // Pull the HTML from cache and hide all dimensions
-        $(this.el).html(this.template)
-            .find('.hide').hide().removeClass('hide');
+        var self = this;
+        $(this.el).hide().html(this.template);
+        if (isIE && isIE <= 8) {
+            $(this.el).show();
+        } else {
+            $(this.el).fadeTo(1200,1);
+        }
         
         // Add draggable behavior
         $(this.el).find('.measure,.level').parent('li').draggable({
