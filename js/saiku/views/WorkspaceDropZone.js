@@ -49,10 +49,6 @@ var WorkspaceDropZone = Backbone.View.extend({
         // Activate drop zones
         $(this.el).find('.connectable').sortable({
             connectWith: $(this.el).find('.connectable'),
-            cursorAt: {
-                top: 10,
-                left: 35
-            },
             forcePlaceholderSize: true,
             items: '> li',
             opacity: 0.60,
