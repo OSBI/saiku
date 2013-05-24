@@ -171,7 +171,7 @@ var SaveQuery = Modal.extend({
         $(this.el).find('li.query, li.folder').removeClass('hide');
         $(this.el).find( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
         $(this.el).find( 'li.folder .folder_content' ).addClass('hide');
-        $(this.el).find('.search_file').val('');
+        $(this.el).find('.search_file').val('').focus();
         $(this.el).find('.cancel_search').hide();
 
     },

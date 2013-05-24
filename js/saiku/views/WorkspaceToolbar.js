@@ -427,10 +427,8 @@ var WorkspaceToolbar = Backbone.View.extend({
 
 
         if (this.workspace.dimension_list && this.workspace.measure_list) {
-            $(this.workspace.dimension_list.el).find('ul li a').css({fontWeight: "normal"});
-            $(this.workspace.measure_list.el).find('ul li a').css({fontWeight: "normal"});
-            $(this.workspace.dimension_list.el).find('.measure,.dimension').parent('li').draggable('enable');
-            $(this.workspace.measure_list.el).find('.measure,.dimension').parent('li').draggable('enable');
+            $(this.workspace.el).find('.sidebar_inner ul li a')
+                .css({fontWeight: "normal"}).parent('li').removeClass('ui-draggable ui-draggable-disabled ui-state-disabled');
         }
         this.activate_buttons({ workspace: this.workspace });
         $(this.workspace.toolbar.el)
