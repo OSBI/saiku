@@ -61,7 +61,7 @@ var DimensionList = Backbone.View.extend({
         if (isIE && isIE <= 8) {
             $(this.el).show();
         } else {
-            $(this.el).fadeTo(1200,1);
+            $(this.el).fadeTo(500,1);
         }
         
         // Add draggable behavior
