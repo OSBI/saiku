@@ -1114,7 +1114,6 @@ a.disabled_toolbar {
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
     filter: alpha(opacity = 50);
     opacity: 0.3 !important;
-    width: 100%;
 }
 .disabled {
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
@@ -1124,7 +1123,7 @@ a.disabled_toolbar {
 }
 a.disabled_toolbar:hover {
     border: none !important;
-    padding: 8px !important;
+    padding: 9px 8px !important;
 }
 .workspace_toolbar ul {
     margin: 0;
