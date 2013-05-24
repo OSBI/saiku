@@ -392,12 +392,10 @@ html, body {
     padding-left: 18px;
 }
 .dimension_tree ul li ul li a {
-    /* cursor: move; */
     padding-left: 20px;
     background: url('../../../images/src/bullet_blue.png') 0px -2px no-repeat;
 }
 .measure_tree ul li ul li a {
-    /* cursor: move; */
     padding-left: 20px;
     background: url('../../../images/src/bullet_red.png') 0px -2px no-repeat;
 }
@@ -415,12 +413,10 @@ html, body {
     padding: 5px 10px 6px;
 }
 .dimension_tree ul li ul li a {
-    /* cursor: move; */
     padding-left: 20px;
     background: url('../../../images/src/bullet_blue.png') 0px -1px no-repeat;
 }
 .measure_tree ul li ul li a {
-    /* cursor: move; */
     padding-left: 20px;
     background: url('../../../images/src/bullet_red.png') 0px -1px no-repeat;
 }
@@ -483,7 +479,7 @@ html, body {
     cursor: pointer;
 }
 
-.limit span.dropdown {
+span.dropdown {
 background: url("../../../images/src/context_down.png") no-repeat;
     height: 16px;
     width: 14px;
@@ -494,6 +490,8 @@ background: url("../../../images/src/context_down.png") no-repeat;
 
 .fields_list .limit:hover {
     background-color: #DDD ;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#efefef));
+    background: -moz-linear-gradient(top, #ddd 0%, #efefef 100%);
     
 }
 .fields_list .on {
@@ -505,9 +503,6 @@ background: url("../../../images/src/context_down.png") no-repeat;
     float: left;
     padding:  0;
     width: 87%;
-}
-.fields_list .fields_list_body a {
-    /* cursor: move; */
 }
 .fields_list .fields_list_body .all_measures span {
     margin: 0 5px 0 0;
@@ -528,7 +523,7 @@ background: url("../../../images/src/context_down.png") no-repeat;
     float: left;
     line-height: 17px;
     list-style-type: none;
-    height: 17px;
+    height: 19px;
     display: inline;
     padding: 1px 8px;
     min-width: 70px;
@@ -564,9 +559,6 @@ background: url("../../../images/src/context_down.png") no-repeat;
     min-width: 70px;
     text-align: center;
 }
-.ui-sortable-helper a {
-    cursor: move !important;
-}
 .ui-draggable-dragging {
     display: inline !important;
     height: 18px !important;
@@ -583,7 +575,6 @@ background: url("../../../images/src/context_down.png") no-repeat;
 }
 .ui-draggable-dragging a {
     background-image: none !important;
-    cursor: move !important;
     padding: 0 !important;
 }
 .dimension_tree ul .ui-draggable-dragging {
@@ -1310,6 +1301,7 @@ a.disabled_toolbar:hover {
 .query_toolbar ul li.seperator_vertical {
     border-top: 1px solid #D5D5D5;
     margin-top: 5px;
+    padding-top: 5px;
 }
 .query_toolbar a {
     display: block;
@@ -1318,15 +1310,20 @@ a.disabled_toolbar:hover {
     text-decoration: none;
     color: black;
     font-weight: normal;
+    border-radius: 3px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
 }
 .query_toolbar a.label {
     font-weight: bold;
 }
+.query_toolbar a.button {
+    text-align: center;
+}
 .query_toolbar a.button:hover {
     border: 1px solid #CCC;
     padding: 7px;
+    cursor: pointer;
 }
 .query_toolbar a.on {
     border: 1px solid #CCC;
