@@ -368,9 +368,15 @@ var Chart = Backbone.View.extend({
             multiChartMax: 30,
             smallTitleFont: "bold 14px sans-serif",
             valuesVisible: true,
-            explodedSliceRadius: '5%',
             extensionPoints: {
                 slice_innerRadiusEx: '40%'
+            },
+            clickable: true,
+            clickAction: function(scene) {
+                console.log(scene);
+                this.chart.root.options.explodedSliceIndex = this.index;
+                this.chart.root.options.explodedSliceRadius = '10%';
+                this.chart.root.render(true, true, false);
             }
             //valuesLabelStyle: 'inside'
         },
