@@ -78,6 +78,7 @@ html, body {
     height: 12px;
     padding: 3px;
     width: 12px;
+    border-radius: 3px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
 }
@@ -122,6 +123,7 @@ html, body {
 #toolbar ul li a:hover {
     border: 1px solid #CCC;
     padding: 4px;
+    border-radius: 2px;
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
 }
@@ -228,6 +230,7 @@ html, body {
     margin:1px 1px -1px 0;
     padding: 4px 0px 4px 0px;
     text-decoration: none;
+    border-radius: 2px 2px 0 0;
     -moz-border-radius: 2px 2px 0 0;
     -webkit-border-radius: 2px 2px 0 0;
 }
@@ -393,40 +396,24 @@ html, body {
 }
 .dimension_tree ul li ul li a {
     padding-left: 20px;
-    background: url('../../../images/src/bullet_blue.png') 0px -2px no-repeat;
+    background: url('../../../images/src/bullet_blue.png') 0px 4px no-repeat;
 }
 .measure_tree ul li ul li a {
     padding-left: 20px;
-    background: url('../../../images/src/bullet_red.png') 0px -2px no-repeat;
+    background: url('../../../images/src/bullet_red.png') 0px 4px no-repeat;
 }
 .dimension_tree .hierarchy {
     padding-left: 1px;
 }
 .dimension_tree .hierarchy a {
     cursor: default;
-    background: url('../../../images/src/bullet_green.png') 0px -2px no-repeat;
+    background: url('../../../images/src/bullet_green.png') 0px 4px no-repeat;
 }
 
 .sidebar h3 {
     line-height: 1.5em;
     margin: 0;
     padding: 5px 10px 6px;
-}
-.dimension_tree ul li ul li a {
-    padding-left: 20px;
-    background: url('../../../images/src/bullet_blue.png') 0px -1px no-repeat;
-}
-.measure_tree ul li ul li a {
-    padding-left: 20px;
-    background: url('../../../images/src/bullet_red.png') 0px -1px no-repeat;
-}
-.dimension_tree .hierarchy {
-    padding-left: 1px;
-}
-.dimension_tree .hierarchy a {
-    cursor: default;
-    background: url('../../../images/src/bullet_green.png') 0px -1px no-repeat;
-}
 }
 
 /** Tab Panel */
@@ -463,9 +450,9 @@ html, body {
     border-radius: 5px;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    -moz-box-shadow: 0 2px 4px #DDD;
-    -webkit-box-shadow: 0 2px 4px #DDD;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
+    -moz-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
+    -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
     position: relative;
 
 }
@@ -475,7 +462,7 @@ html, body {
     float: left;
     font-weight: bold;
     padding: 3px 5px 3px 10px;
-    line-height: 23px;
+    line-height: 26px;
     width: 70px;
     border-radius: 5px 0px 0px 5px;
 }
@@ -557,6 +544,7 @@ span.clear_axis {
     -moz-border-radius: 3px;
     -webkit-box-shadow: 0 0 2px #DDD;
     -webkit-border-radius: 3px;
+    margin: 2px 5px;
 
 }
 .fields_list .fields_list_body ul li ul {
@@ -630,7 +618,6 @@ span.clear_axis {
     border: 1px solid #2a6085;
     color: #2a6085;
     display: inline !important;
-    margin-left: 10px;
     box-shadow: 0 0 2px #DDD;
 }
 
@@ -653,7 +640,6 @@ span.clear_axis {
     border: 1px solid #ed9393;
     color: #983030;
     display: inline !important;
-    margin-left: 10px;
 }
 .d_measure a {
     color: #983030;
@@ -744,7 +730,7 @@ span.clear_axis {
     box-shadow: 0 0 10px #EEE;
     border: 1px solid #CCC;
 }
-.ui-dialog input[type=password] {
+#password, #username {
     padding: 4px;
     width: 277px;
 }
@@ -1133,6 +1119,9 @@ span.clear_axis {
     padding: 3px 10px 3px 5px;
     text-shadow: 1px 1px 0 #FFFFFF;
     overflow: hidden;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
+    -moz-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
+    -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
 }
 a.disabled_toolbar {
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
