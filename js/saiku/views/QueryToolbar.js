@@ -74,8 +74,6 @@ var QueryToolbar = Backbone.View.extend({
                 trigger: 'left',
                 ignoreRightClick: true,
                 callback: function(key, options) {
-                    var m = "clicked: " + key;
-                    window.console && console.log(m) || alert(m); 
                     self.workspace.chart.exportChart(key);
                 },
                 items: {
