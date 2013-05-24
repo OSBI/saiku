@@ -89,10 +89,10 @@ var Statistics = Backbone.View.extend({
         }
 
         var createRow = function(cells, header){
-            var row = "<tr>"
-            var ohcell = header?"<th class='row_header'>":"<th class='row'>"
-            var odcell = header?"<th class='col'>":"<td class='data'>"
-            var ccell = header?"</th>":"</td>"
+            var row = "<tr>";
+            var ohcell = header?"<th class='row_header'>":"<th class='row'>";
+            var odcell = header?"<th class='col'>":"<td class='data'>";
+            var ccell = header?"</th>":"</td>";
             _.each(cells, function(it, idx){row += ((idx==0)?ohcell:odcell) 
 					+ "<div " + ((idx==0)?'class="i18n"':'') + ">"
 					+ it 
@@ -102,36 +102,36 @@ var Statistics = Backbone.View.extend({
         }
 
         var group = function(grid, el, cback){
-            var elements = _.filter(_.map(grid, function(it){return it[el]}), function(it){return it})
-            return cback(elements).toFixed(3)
+            var elements = _.filter(_.map(grid, function(it){return it[el]}), function(it){return it});
+            return cback(elements).toFixed(3);
         }
 
-        var sum = function(elems){return _.reduce(elems, function(memo, num){ return memo + num }, 0)}
-        var average = function(elems){return (sum(elems))/elems.length}
+        var sum = function(elems){return _.reduce(elems, function(memo, num){ return memo + num }, 0)};
+        var average = function(elems){return (sum(elems))/elems.length};
         var stdx = function(elems){
             var m = average(elems)
-            return Math.sqrt(sum(_.map(elems, function(it){return Math.pow(m - it,2)}))/elems.length)
+            return Math.sqrt(sum(_.map(elems, function(it){return Math.pow(m - it,2)}))/elems.length);
         }
-        var min = function(elems){return _.min(elems)}
-        var max = function(elems){return _.max(elems)}
+        var min = function(elems){return _.min(elems)};
+        var max = function(elems){return _.max(elems)};
         
-        $(this.el).empty()
-        var grid = this.data.metadata
-        var rs = this.data.resultset
-        var aux = _.filter(grid, function(it){return !it.isHeader && it.colType == 'Numeric'})
-        var columns = _.map(aux, function(it){return it.colName})
-        var idxs =_.map(columns, function(el){return _.indexOf(_.map(grid, function(it){return it.colName}), el)})
+        $(this.el).empty();
+        var grid = this.data.metadata;
+        var rs = this.data.resultset;
+        var aux = _.filter(grid, function(it){return !it.isHeader && it.colType == 'Numeric'});
+        var columns = _.map(aux, function(it){return it.colName});
+        var idxs =_.map(columns, function(el){return _.indexOf(_.map(grid, function(it){return it.colName}), el)});
         
-        var $table = $("<table style='display: table; '>")
-        var $tbody = $("<tbody>").appendTo($table)
-        $tbody.append(createRow(['Statistics'].concat(columns), true))
-        $tbody.append(createRow(['Min'].concat(_.map(idxs, function(it){return group(rs, it, min)})), false))
-        $tbody.append(createRow(['Max'].concat(_.map(idxs, function(it){return group(rs, it, max)})), false))
-        $tbody.append(createRow(['Sum'].concat(_.map(idxs, function(it){return group(rs, it, sum)})), false))
-        $tbody.append(createRow(['Average'].concat(_.map(idxs, function(it){return group(rs, it, average)})), false))
-        $tbody.append(createRow(['Std. Deviation'].concat(_.map(idxs, function(it){return group(rs, it, stdx)})), false))
+        var $table = $("<table style='display: table; '>");
+        var $tbody = $("<tbody>").appendTo($table);
+        $tbody.append(createRow(['Statistics'].concat(columns), true));
+        $tbody.append(createRow(['Min'].concat(_.map(idxs, function(it){return group(rs, it, min)})), false));
+        $tbody.append(createRow(['Max'].concat(_.map(idxs, function(it){return group(rs, it, max)})), false));
+        $tbody.append(createRow(['Sum'].concat(_.map(idxs, function(it){return group(rs, it, sum)})), false));
+        $tbody.append(createRow(['Average'].concat(_.map(idxs, function(it){return group(rs, it, average)})), false));
+        $tbody.append(createRow(['Std. Deviation'].concat(_.map(idxs, function(it){return group(rs, it, stdx)})), false));
 
-        $(this.el).append($table)
+        $(this.el).append($table);
         
 		Saiku.i18n.translate();
     },
@@ -224,6 +224,13 @@ var Statistics = Backbone.View.extend({
             if (typeof args.workspace.stats != "undefined" && $(args.workspace.stats.el).is(':visible')) {
                 $(args.workspace.stats.el).parents().find('.workspace_results table').show();
                 $(args.workspace.stats.el).hide();
+                
+                args.workspace.stats.data = {};
+                args.workspace.stats.data.resultset = [];
+                args.workspace.stats.data.metadata = [];
+                args.workspace.stats.data.height = 0;
+                args.workspace.stats.data.width = 0;
+
             }
         }
 
