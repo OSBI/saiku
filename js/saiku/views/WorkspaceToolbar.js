@@ -169,6 +169,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     
     toggle_fields: function(event) {
         $(this.workspace.el).find('.workspace_fields').toggle();
+        this.workspace.adjust();
     },
     
     toggle_sidebar: function() {
@@ -354,10 +355,11 @@ var WorkspaceToolbar = Backbone.View.extend({
 
         if (Settings.MODE != "view" && Settings.MODE != "table") {
             $mdx_editor = $(this.workspace.el).find('.mdx_input');
-            $mdx_editor.width($(this.el).width()-50);
+            //$mdx_editor.width($(this.el).width()-5);
             $(this.workspace.el).find('.workspace_editor .mdx_input, .workspace_editor .editor_info').removeClass('hide');
             this.editor = ace.edit("mdx_editor");
             this.editor.setShowPrintMargin(false);
+            this.editor.setFontSize(11);
             this.editor.commands.addCommand({
                 name: 'runmdx',
                 bindKey: {win: 'Ctrl-Enter',  mac: 'Command-Enter'},
@@ -383,8 +385,7 @@ var WorkspaceToolbar = Backbone.View.extend({
                 var newHeight =
                           screen_length
                           * self.editor.renderer.lineHeight
-                          + self.editor.renderer.scrollBar.getWidth()
-                          + self.editor.renderer.lineHeight;
+                          + self.editor.renderer.scrollBar.getWidth();
 
                 $mdx_editor.height(newHeight.toString() + "px");
                 self.editor.resize();
@@ -393,7 +394,7 @@ var WorkspaceToolbar = Backbone.View.extend({
 
             var resizeFunction = function() {
                 var session = self.editor.session;
-                $mdx_editor.width($(self.el).width()-50);
+                //$mdx_editor.width($(self.el).width()-5);
                 self.editor.resize();
                 session.setUseWrapMode(true);
                 if(session.getUseWrapMode()) {
@@ -448,9 +449,11 @@ var WorkspaceToolbar = Backbone.View.extend({
         this.workspace.query.action.post("/qm2mdx", { 
             success: function(model, response) {
                 //$(self.workspace.el).find(".mdx_input").val(response.mdx);
-                self.editor.setValue(model.mdx,0);
-                self.editor.focus();
-                self.editor.clearSelection();
+                if (self.editor) {
+                    self.editor.setValue(model.mdx,0);
+                    self.editor.focus();
+                    self.editor.clearSelection();
+                }
                 self.workspace.query.parse(model);
                 self.workspace.query.set({type:'MDX', formatter: "flat" });
                 $(self.el).find('.group_parents').removeClass('on');

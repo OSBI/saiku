@@ -72,6 +72,9 @@ var QueryToolbar = Backbone.View.extend({
     switch_render_button: function(event) {
         $target = $(event.target);
         event.preventDefault();
+        if ($(event.target).hasClass('disabled_toolbar')) {
+            return false;
+        }
         $target.parent().siblings().find('.on').removeClass('on');
         if ($target.hasClass('render_chart')) {
             this.switch_render('chart');

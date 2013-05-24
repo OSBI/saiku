@@ -140,6 +140,9 @@ var Workspace = Backbone.View.extend({
         var heightReduction = 87;
         if (Settings.PLUGIN == true || Settings.BIPLUGIN == true) {
             heightReduction = 2;
+            if (Settings.MODE == 'table') {
+                heightReduction = -5;
+            }
         }
         $separator.height($("body").height() - heightReduction);
         $(this.el).find('.sidebar').height($("body").height() - heightReduction);
@@ -151,7 +154,7 @@ var Workspace = Backbone.View.extend({
             height: $("body").height() - heightReduction -
                 $(this.el).find('.workspace_toolbar').height() - 
                 $(this.el).find('.workspace_results_info').height() - 
-                $(this.el).find('.workspace_editor').height() - 45
+                $(this.el).find('.workspace_editor').height() - 35
         });
         
         // Fire off the adjust event
@@ -172,7 +175,7 @@ var Workspace = Backbone.View.extend({
         $(this.el).find('.cubes')
             .parent()
             .css({ backgroundColor: '#AC1614' })
-            .delay(500)
+            .delay(300)
             .animate({ backgroundColor: '#fff' }, 'slow');
     },
     
@@ -245,16 +248,17 @@ var Workspace = Backbone.View.extend({
 
         if (this.query.get('type') == "MDX") {
             this.query.set({ formatter : "flat"});
-            
-            $(this.drop_zones.el).remove();
-            this.toolbar.switch_to_mdx();
             if (! $(this.el).find('.sidebar').hasClass('hide')) {
                 this.toggle_sidebar();
-            }
+            }            
+            $(this.drop_zones.el).remove();
+            this.toolbar.switch_to_mdx();
+
 
 
         } else {
             $(this.el).find('.workspace_fields').removeClass('hide');
+            $(this.el).find('.workspace_fields').removeClass('disabled');
             $(this.el).find('.workspace_editor .mdx_input').addClass('hide');
             $(this.el).find('.workspace_editor .editor_info').addClass('hide');
             $(this.toolbar.el).find('.auto, ,.toggle_fields, .query_scenario, .buckets, .non_empty, .swap_axis, .mdx, .switch_to_mdx').parent().show();

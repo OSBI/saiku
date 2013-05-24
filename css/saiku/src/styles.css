@@ -1127,7 +1127,12 @@ background: url("../../../images/src/sort_none.png") no-repeat;
     overflow: hidden;
 }
 a.disabled_toolbar {
-    
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    filter: alpha(opacity = 50);
+    opacity: 0.3 !important;
+    width: 100%;
+}
+.disabled {
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
     filter: alpha(opacity = 50);
     opacity: 0.3 !important;
