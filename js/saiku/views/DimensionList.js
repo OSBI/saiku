@@ -65,6 +65,9 @@ var DimensionList = Backbone.View.extend({
         }
         
         // Add draggable behavior
+        $(this.el).find('.measure,.level').parent('li').mousedown(function() {
+            $(self.workspace.el).find('.workspace_fields').delay(0).slideDown({ queue: false});
+        });
         $(this.el).find('.measure,.level').parent('li').draggable({
             cancel: '.not-draggable, .hierarchy',
             connectToSortable: $(this.workspace.el)
@@ -72,6 +75,9 @@ var DimensionList = Backbone.View.extend({
             helper: 'clone',
             opacity: 0.60,
             tolerance: 'pointer',
+            stop: function() {
+                $(self.workspace.el).find('.workspace_fields').slideUp( {queue: false });
+            },
             cursorAt: {
                 top: 10,
                 left: 35
