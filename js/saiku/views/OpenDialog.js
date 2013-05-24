@@ -27,7 +27,8 @@ var OpenDialog = Modal.extend({
         'click .query': 'select_name',
         'dblclick .query': 'open_query',
         'click li.folder': 'toggle_folder',
-        'keyup .search_file' : 'search_file'
+        'keyup .search_file' : 'search_file',
+        'click .cancel_search' : 'cancel_search'
     },
     
     buttons: [
@@ -39,8 +40,9 @@ var OpenDialog = Modal.extend({
         // Append events
         var self = this;
         var name = "";
-        this.message = '<b><span class="i18n">Search:</span></b> &nbsp;<input type="text" class="search_file"></input><br />'
-                    + "<div class='RepositoryObjects'>Loading....</div><br><b><div class='query_name'><span class='i18n'>Please select a file.....</span></div></b>"
+        this.message = '<div style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;'
+                + ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>'
+                + "<div class='RepositoryObjects'>Loading....</div><br><b><div class='query_name'><span class='i18n'>Please select a file.....</span></div></b>"
         _.extend(this.options, {
             title: "Open"
         });
@@ -63,7 +65,7 @@ var OpenDialog = Modal.extend({
 
 
         // Maintain `this`
-        _.bindAll( this, "close", "toggle_folder", "select_name", "populate" )
+        _.bindAll( this, "close", "toggle_folder", "select_name", "populate" , "cancel_search")
 
     
     },
@@ -119,12 +121,13 @@ var OpenDialog = Modal.extend({
         var filter = $(this.el).find('.search_file').val().toLowerCase();
         var isEmpty = (typeof filter == "undefined" || filter == "" || filter == null);
         if (isEmpty || event.which == 27 || event.which == 9) {
-            $(this.el).find('li.query, li.folder').removeClass('hide');
-            $(this.el).find( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
-            $(this.el).find( 'li.folder .folder_content' ).addClass('hide');
-            $(this.el).find('.search_file').val('');
+            this.cancel_search();
         } else {
-            
+            if ($(this.el).find('.search_file').val()) {
+                $(this.el).find('.cancel_search').show();
+            } else {
+                $(this.el).find('.cancel_search').hide();
+            }
             $(this.el).find('li.query').removeClass('hide')
             $(this.el).find('li.query a').filter(function (index) { 
                 return $(this).text().toLowerCase().indexOf(filter) == -1; 
@@ -138,6 +141,16 @@ var OpenDialog = Modal.extend({
             $(this.el).find( 'li.folder .folder_content' ).removeClass('hide');
         }
         return false;
+    },
+    cancel_search: function(event) {
+        $(this.el).find('input.search_file').val('');
+        $(this.el).find('.cancel_search').hide();
+        $(this.el).find('li.query, li.folder').removeClass('hide');
+        $(this.el).find( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
+        $(this.el).find( 'li.folder .folder_content' ).addClass('hide');
+        $(this.el).find('.search_file').val('');
+        $(this.el).find('.cancel_search').hide();
+
     },
 
     open_query: function(event) {

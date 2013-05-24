@@ -32,7 +32,8 @@ var OpenQuery = Backbone.View.extend({
         'click .workspace_toolbar [href=#delete_query]': 'delete_query',
         'click .workspace_toolbar [href=#edit_permissions]': 'edit_permissions',
         'click .queries' : 'click_canvas',
-        'keyup .search_file' : 'search_file'
+        'keyup .search_file' : 'search_file',
+        'click .cancel_search' : 'cancel_search'
     },
     
     template: function() {
@@ -68,7 +69,7 @@ var OpenQuery = Backbone.View.extend({
     initialize: function(args) {
         // Maintain `this`
         _.bindAll(this, "adjust", "fetch_queries",
-                "clear_query","select_and_open_query");
+                "clear_query","select_and_open_query", "cancel_search");
         
         // Initialize repository
         this.repository = new Repository({}, { dialog: this });
@@ -97,12 +98,13 @@ var OpenQuery = Backbone.View.extend({
         var filter = $(this.el).find('.search_file').val().toLowerCase();
         var isEmpty = (typeof filter == "undefined" || filter == "" || filter == null);
         if (isEmpty || event.which == 27 || event.which == 9) {
-            $(this.el).find('li.query, li.folder').removeClass('hide');
-            $(this.el).find( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
-            $(this.el).find( 'li.folder .folder_content' ).addClass('hide');
-            $(this.el).find('.search_file').val('');
+            this.cancel_search();
         } else {
-            
+            if ($(this.el).find('.search_file').val()) {
+                $(this.el).find('.cancel_search').show();
+            } else {
+                $(this.el).find('.cancel_search').hide();
+            }
             $(this.el).find('li.query').removeClass('hide')
             $(this.el).find('li.query a').filter(function (index) { 
                 return $(this).text().toLowerCase().indexOf(filter) == -1; 
@@ -117,7 +119,16 @@ var OpenQuery = Backbone.View.extend({
         }
         return false;
     },
-    
+    cancel_search: function(event) {
+        $(this.el).find('input.search_file').val('');
+        $(this.el).find('.cancel_search').hide();
+        $(this.el).find('li.query, li.folder').removeClass('hide');
+        $(this.el).find( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
+        $(this.el).find( 'li.folder .folder_content' ).addClass('hide');
+        $(this.el).find('.search_file').val('');
+        $(this.el).find('.cancel_search').hide();
+
+    },
     view_query: function(event) {
         event.preventDefault( );
         var $currentTarget = $( event.currentTarget );

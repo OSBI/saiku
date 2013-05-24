@@ -460,10 +460,14 @@ html, body {
 .fields_list {
     border: 1px solid #CCC;
     margin-bottom: 10px;
+    border-radius: 5px;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    border-radius: 5px;
+    -moz-box-shadow: 0 2px 4px #DDD;
+    -webkit-box-shadow: 0 2px 4px #DDD;
+    position: relative;
+
 }
 .fields_list .fields_list_header {
     background: #F9F9F9;
@@ -485,6 +489,24 @@ background: url("../../../images/src/context_down.png") no-repeat;
     width: 14px;
     float: right;
     cursor: pointer;
+}
+span.clear_axis {
+  background: url("../../../images/src/cancel3.png") no-repeat scroll 0 0 transparent;
+  cursor: pointer;
+  height: 26px;
+  opacity: 0.1;
+  position: absolute;
+  right: 5px;
+  margin-top: 5px;
+  width: 30px;
+  z-index: 1;
+  box-shadow: 0 0 10px #EEE;
+  -moz-box-shadow: 0 0 2px #EEE;
+  -webkit-box-shadow: 0 0 10px #EEE;
+
+}
+.fields_list:hover span.clear_axis {
+  opacity: 0.8;
 }
 
 
@@ -568,6 +590,8 @@ background: url("../../../images/src/context_down.png") no-repeat;
     min-width: 70px;
     padding: 1px 8px !important;
     text-align: center;
+    border-radius: 3px;
+    box-shadow: 0 0 2px #DDD;
     -moz-box-shadow: 0 0 2px #DDD;
     -moz-border-radius: 3px;
     -webkit-box-shadow: 0 0 2px #DDD;
@@ -720,7 +744,6 @@ background: url("../../../images/src/context_down.png") no-repeat;
     box-shadow: 0 0 10px #EEE;
     border: 1px solid #CCC;
 }
-.ui-dialog input[type=text],
 .ui-dialog input[type=password] {
     padding: 4px;
     width: 277px;
@@ -1073,6 +1096,7 @@ background: url("../../../images/src/context_down.png") no-repeat;
     border-radius: 3px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
+    box-shadow: 0 0 10px #EEE;
     -moz-box-shadow: 0 0 10px #EEE;
     -webkit-box-shadow: 0 0 10px #EEE;
     z-index: 10001;
@@ -1574,10 +1598,43 @@ a.disabled_toolbar:hover {
 
 /* OOCSS - reusable classes */
 
-.queries input.search_file {
-    width:130px;
+span.search {
+    position: relative;
+    top: -16px;
+}
+input.search_file {
+    width:170px;
     margin-left:10px;
     height: 18px;
+    border-radius: 9px;
+    -moz-border-radius: 9px;
+    -webkit-border-radius: 9px;
+    padding: 1px 7px;
+    position: absolute;
+    left: 0px;
+    z-index: 0;
+    top: 8px;
+}
+span.cancel_search {
+  background: url("../../../images/src/cancel3.png") no-repeat scroll 0 0 transparent;
+  box-shadow: 0 0 10px #EEEEEE;
+  -moz-box-shadow: 0 0 2px #EEE;
+  -webkit-box-shadow: 0 0 10px #EEE;
+  cursor: pointer;
+  float: right;
+  height: 26px;
+  left: 175px;
+  margin-top: 5px;
+  position: absolute;
+  top: 13px;
+  width: 25px;
+  z-index: 1;
+  opacity: 0.7;
+  display: none;
+}
+
+span.cancel_search:hover {
+  opacity: 1;
 }
 
 .RepositoryObjects {
@@ -1653,7 +1710,9 @@ a.disabled_toolbar:hover {
 }
 
 .queries h3 {
-    position: relative;
+  position: relative;
+  height: 33px;
+  line-height: 33px;
 }
 
 .queries .add_folder {

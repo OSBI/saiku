@@ -27,7 +27,8 @@ var SaveQuery = Modal.extend({
         'submit form': 'save',
         'click .query': 'select_name',
         'click li.folder': 'toggle_folder',
-        'keyup .search_file' : 'search_file'
+        'keyup .search_file' : 'search_file',
+        'click .cancel_search' : 'cancel_search'
     },
     
     buttons: [
@@ -54,7 +55,8 @@ var SaveQuery = Modal.extend({
             }
         }
         this.query = args.query;
-        this.message = _.template('<b><span class="i18n">Search:</span></b> &nbsp;<input type="text" class="search_file"></input><br />' +
+        this.message = _.template('<div style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
+                ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>' +
             "<form id='save_query_form'>" +
             "<div class='RepositoryObjects'></div>" +
             "<br /><label for='name' class='i18n'>File:</label>&nbsp; " +
@@ -80,7 +82,7 @@ var SaveQuery = Modal.extend({
         } );
 
         // Maintain `this`
-        _.bindAll( this, "copy_to_repository", "close", "toggle_folder", "select_name", "populate", "set_name" );
+        _.bindAll( this, "copy_to_repository", "close", "toggle_folder", "select_name", "populate", "set_name", "cancel_search" );
         
         // fix event listening in IE < 9
         if($.browser.msie && $.browser.version < 9) {
@@ -138,19 +140,20 @@ var SaveQuery = Modal.extend({
     },
 
     // XXX - duplicaten from OpenQuery
-    search_file: function(event) {
+        search_file: function(event) {
         var filter = $(this.el).find('.search_file').val().toLowerCase();
         var isEmpty = (typeof filter == "undefined" || filter == "" || filter == null);
         if (isEmpty || event.which == 27 || event.which == 9) {
-            $(this.el).find('li.query, li.folder').removeClass('hide');
-            $(this.el).find( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
-            $(this.el).find( 'li.folder .folder_content' ).addClass('hide');
-            $(this.el).find('.search_file').val('');
+            this.cancel_search();
         } else {
-            
+            if ($(this.el).find('.search_file').val()) {
+                $(this.el).find('.cancel_search').show();
+            } else {
+                $(this.el).find('.cancel_search').hide();
+            }
             $(this.el).find('li.query').removeClass('hide')
             $(this.el).find('li.query a').filter(function (index) { 
-                return $(this).text().toLowerCase().indexOf(filter) == -1;
+                return $(this).text().toLowerCase().indexOf(filter) == -1; 
             }).parent().addClass('hide');
             $(this.el).find('li.folder').addClass('hide');
             $(this.el).find('li.query').not('.hide').parents('li.folder').removeClass('hide');
@@ -162,6 +165,17 @@ var SaveQuery = Modal.extend({
         }
         return false;
     },
+    cancel_search: function(event) {
+        $(this.el).find('input.search_file').val('');
+        $(this.el).find('.cancel_search').hide();
+        $(this.el).find('li.query, li.folder').removeClass('hide');
+        $(this.el).find( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
+        $(this.el).find( 'li.folder .folder_content' ).addClass('hide');
+        $(this.el).find('.search_file').val('');
+        $(this.el).find('.cancel_search').hide();
+
+    },
+
 
 
 
