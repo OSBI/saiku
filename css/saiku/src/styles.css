@@ -453,12 +453,12 @@ html, body {
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
     -moz-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
     -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
-    position: relative;
-
 }
 .fields_list .fields_list_header {
     background-color: #E6E6E6;
-    background-image: linear-gradient(to bottom, #FFFFFF, #E6E6E6); 
+    background: linear-gradient(to bottom, #FFFFFF, #E6E6E6); 
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#E6E6E6));
+    background: -moz-linear-gradient(top, #FFFFFF 0%, #E6E6E6 100%);
     border-right: 1px solid #CCC;
     float: left;
     font-weight: bold;
@@ -471,14 +471,14 @@ html, body {
     cursor: pointer;
 }
 .fields_list .limit:hover {
-    background-color: #DDD ;
-    background: -webkit-gradient(linear, top, bottom, from(#ddd), to(#efefef));
-    background: -moz-linear-gradient(bottom, #ddd 0%, #efefef 100%);
-    background: linear-gradient(to bottom, #ddd, #efefef); ;
+    background: linear-gradient(to bottom, #ddd, #efefef);
+    background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#efefef));
+    background: -moz-linear-gradient(top, #ddd 0%, #efefef 100%);
+    
 }
 
 span.dropdown {
-background: url("../../../images/src/context_down.png") no-repeat;
+background: url("../../../images/src/context_down.png") no-repeat scroll center center transparent;
     height: 16px;
     width: 14px;
     float: right;
@@ -491,22 +491,20 @@ span.save {
 }
 
 span.clear_axis {
-  background: url("../../../images/src/cancel3.png") no-repeat scroll 0 0 transparent;
+  background: url("../../../images/src/cancel3.png") no-repeat scroll center center transparent;
   cursor: pointer;
-  height: 26px;
+  height: 32px;
   opacity: 0.1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
+  filter: alpha(opacity = 10);
   position: absolute;
-  right: 5px;
-  margin-top: 5px;
   width: 30px;
   z-index: 1;
-  box-shadow: 0 0 10px #EEE;
-  -moz-box-shadow: 0 0 2px #EEE;
-  -webkit-box-shadow: 0 0 10px #EEE;
-
 }
 .fields_list:hover span.clear_axis {
   opacity: 0.8;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  filter: alpha(opacity = 80);
 }
 
 .fields_list .on {
@@ -1131,14 +1129,13 @@ span.clear_axis {
 }
 a.disabled_toolbar {
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-    filter: alpha(opacity = 50);
+    filter: alpha(opacity = 30);
     opacity: 0.3 !important;
 }
 .disabled {
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
-    filter: alpha(opacity = 50);
+    filter: alpha(opacity = 30);
     opacity: 0.3 !important;
-    width: 100%;
 }
 a.disabled_toolbar:hover {
     border: none !important;

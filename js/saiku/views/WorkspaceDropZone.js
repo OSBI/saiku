@@ -30,7 +30,8 @@ var WorkspaceDropZone = Backbone.View.extend({
         'click .d_measure a' : 'remove_dimension',
         'click .d_measure span.sort' : 'sort_measure',
         'click .d_dimension span.sort' : 'sort_measure',
-        'click .limit' : 'limit_axis'
+        'click .limit' : 'limit_axis',
+        'click .clear_axis' : 'clear_axis'
     },
     
     initialize: function(args) {
@@ -50,10 +51,11 @@ var WorkspaceDropZone = Backbone.View.extend({
         $(this.el).find('.connectable').sortable({
             connectWith: $(this.el).find('.connectable'),
             forcePlaceholderSize: true,
+            forceHelperSize: true,
             items: '> li',
             opacity: 0.60,
             placeholder: 'placeholder',
-            tolerance: 'pointer',
+            tolerance: 'touch',
             
             start: function(event, ui) {
                 ui.placeholder.text(ui.helper.text());
@@ -356,7 +358,8 @@ var WorkspaceDropZone = Backbone.View.extend({
         });
         return false;
     },
-        set_query_axis: function(target, func, n, sortliteral) {
+    
+    set_query_axis: function(target, func, n, sortliteral) {
         var self = this;
         var axes = this.workspace.query.get('axes');
         _.each(axes, function(axis) {
@@ -375,6 +378,34 @@ var WorkspaceDropZone = Backbone.View.extend({
         return false;
     },
 
+    clear_axis: function(event) {
+            var self = this;
+            
+            if (typeof this.workspace.query == "undefined") {
+                return false;
+            }
+            if (this.workspace.query.get('type') != 'QM' || Settings.MODE == "view") {
+                return false;
+            }
+            $target =  $(event.target);
+            $axis = $target.siblings('.fields_list_body');
+            var source = "";
+            var target = "";
+            if ($axis.hasClass('rows')) { target = "ROWS";  }
+            if ($axis.hasClass('columns')) { target = "COLUMNS";  }
+            if ($axis.hasClass('filter')) { target = "FILTER";  }
+
+            var url = "/axis/" + target;
+            self.workspace.query.action.del(url, {
+                success: function(model, response) {
+                    $axis.find('.connectable').empty();
+                    self.workspace.query.parse(response);
+                    self.workspace.sync_query();
+                }
+            });
+            event.preventDefault();
+            return false;
+    },
 
     sort_measure: function(event, ui) {
         $axis = $(event.target).parent().parents('.fields_list_body');
@@ -607,6 +638,14 @@ var WorkspaceDropZone = Backbone.View.extend({
 
         $(ui.item).remove();
 
+        $(this.workspace.el).find('.fields_list_body').each(function(index, element) {
+            $axis = $(element);
+            if ($axis.find('li').length == 0) {
+                $axis.siblings('.clear_axis').addClass('hide');
+            } else {
+                $axis.siblings('.clear_axis').removeClass('hide');
+            }
+        });
     },
 
 
@@ -643,6 +682,9 @@ var WorkspaceDropZone = Backbone.View.extend({
         
         // Remove element
         $source.addClass('deleted').remove();
+        if ($target_el.find('li.d_dimension, li.d_measure, li.ui-draggable').length == 0) {
+            $target_el.siblings('.clear_axis').addClass('hide');
+        }
         
         // Prevent workspace from getting this event
         event.stopPropagation();

@@ -351,6 +351,15 @@ var Workspace = Backbone.View.extend({
                     $(self.el).find('.fields_list_body ul li')
                         .removeClass('ui-draggable-disabled ui-state-disabled')
                         .css({ fontWeight: 'normal' });
+
+                    $(self.el).find('.fields_list_body').each(function(index, element) {
+                            $axis = $(element);
+                            if ($axis.find('li').length == 0) {
+                                $axis.siblings('.clear_axis').addClass('hide');
+                            } else {
+                                $axis.siblings('.clear_axis').removeClass('hide');
+                            }
+                    });
                 }
                 self.query.run();
 
