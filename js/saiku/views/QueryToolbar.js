@@ -69,7 +69,11 @@ var QueryToolbar = Backbone.View.extend({
         $(this.el).find('render_table').addClass('on');
         $(this.el).find('ul.table').show();
         var self = this;
-         $.contextMenu({
+        $body = $(document);
+        $body.off('.contextMenu .contextMenuAutoHide');
+        $('.context-menu-list').remove();
+        $.contextMenu('destroy');
+        $.contextMenu({
                 selector: '.export_button',
                 trigger: 'left',
                 ignoreRightClick: true,

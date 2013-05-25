@@ -457,17 +457,24 @@ html, body {
 
 }
 .fields_list .fields_list_header {
-    background: #F9F9F9;
+    background-color: #E6E6E6;
+    background-image: linear-gradient(to bottom, #FFFFFF, #E6E6E6); 
     border-right: 1px solid #CCC;
     float: left;
     font-weight: bold;
     padding: 3px 5px 3px 10px;
-    line-height: 26px;
+    line-height: 28px;
     width: 70px;
     border-radius: 5px 0px 0px 5px;
 }
 .fields_list .limit {
     cursor: pointer;
+}
+.fields_list .limit:hover {
+    background-color: #DDD ;
+    background: -webkit-gradient(linear, top, bottom, from(#ddd), to(#efefef));
+    background: -moz-linear-gradient(bottom, #ddd 0%, #efefef 100%);
+    background: linear-gradient(to bottom, #ddd, #efefef); ;
 }
 
 span.dropdown {
@@ -496,13 +503,6 @@ span.clear_axis {
   opacity: 0.8;
 }
 
-
-.fields_list .limit:hover {
-    background-color: #DDD ;
-    background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#efefef));
-    background: -moz-linear-gradient(top, #ddd 0%, #efefef 100%);
-    
-}
 .fields_list .on {
     background-color: #CCC ;    
 }
