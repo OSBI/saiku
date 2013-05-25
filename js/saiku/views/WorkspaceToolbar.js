@@ -59,7 +59,7 @@ var WorkspaceToolbar = Backbone.View.extend({
                 .addClass('disabled_toolbar').removeClass('on');
             $(args.workspace.el).find('.fields_list .disabled_toolbar').removeClass('disabled_toolbar');
             $(args.workspace.toolbar.el)
-                .find('.open, .save, .run,.auto,.non_empty,.toggle_fields,.toggle_sidebar,.switch_to_mdx, .mdx')
+                .find('.new, .open, .save, .run,.auto,.non_empty,.toggle_fields,.toggle_sidebar,.switch_to_mdx, .mdx')
                 .removeClass('disabled_toolbar');
         }
         
@@ -132,6 +132,11 @@ var WorkspaceToolbar = Backbone.View.extend({
 
     },
     
+    new_query: function(event) {
+        this.workspace.new_query();
+        return false;
+    },
+
     save_query: function(event) {
         var self = this;
         if (this.workspace.query) {
@@ -351,7 +356,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         
 
         $(this.el).find('.run').attr('href','#run_mdx');
-        $(this.el).find('.run, .save, .open').removeClass('disabled_toolbar');
+        $(this.el).find('.run, .save, .open, .new').removeClass('disabled_toolbar');
 
         if (Settings.MODE != "view" && Settings.MODE != "table") {
             $mdx_editor = $(this.workspace.el).find('.mdx_input');

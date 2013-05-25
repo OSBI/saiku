@@ -544,7 +544,7 @@ span.clear_axis {
     -moz-border-radius: 3px;
     -webkit-box-shadow: 0 0 2px #DDD;
     -webkit-border-radius: 3px;
-    margin: 2px 5px;
+    margin: 2px 3px;
 
 }
 .fields_list .fields_list_body ul li ul {
@@ -1119,7 +1119,7 @@ span.clear_axis {
     padding: 3px 10px 3px 5px;
     text-shadow: 1px 1px 0 #FFFFFF;
     overflow: hidden;
-    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
+    box-shadow: 2px 1px 3px rgba(0, 0, 0, 0.1)
     -moz-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
     -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
 }
@@ -1192,6 +1192,11 @@ a.disabled_toolbar:hover {
 }
 .workspace_toolbar .save {
     background-position: -485px -90px;
+}
+.workspace_toolbar .new {
+    background-image: url('../../../images/src/page_white.png');
+    background-repeat:no-repeat;
+    background-position: 7px 7px;
 }
 .workspace_toolbar .run {
     background-position: -123px -90px;

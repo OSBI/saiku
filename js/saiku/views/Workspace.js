@@ -258,13 +258,13 @@ var Workspace = Backbone.View.extend({
             if (! $(this.el).find('.sidebar').hasClass('hide')) {
                 this.toggle_sidebar();
             }            
-            $(this.drop_zones.el).remove();
+            $(this.el).find('.workspace_fields').addClass('hide')
             this.toolbar.switch_to_mdx();
 
 
 
         } else {
-            $(this.el).find('.workspace_fields').removeClass('hide');
+            $(this.el).find('.workspace_fields').removeClass('hide').show();
             $(this.el).find('.workspace_fields').removeClass('disabled');
             $(this.el).find('.workspace_editor .mdx_input').addClass('hide');
             $(this.el).find('.workspace_editor .editor_info').addClass('hide');
@@ -273,11 +273,14 @@ var Workspace = Backbone.View.extend({
         }
         this.adjust();
         if ((Settings.MODE == "view") && this.query) {
-            $(this.toolbar.el).find('.switch_to_mdx').parent().hide();
+            $(this.toolbar.el).find('.switch_to_mdx, .new').parent().hide();
             this.query.run(true);
             return;
         }
 
+        if (this.query.get('type') == "QM" && $(this.el).find('.sidebar').hasClass('hide') && (Settings.MODE != "table" || Settings.MODE != "view")) {
+                this.toggle_sidebar();
+        }
         // Find the selected cube
         if (this.selected_cube === undefined) {
             var schema = this.query.get('schema');
