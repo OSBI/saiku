@@ -30,7 +30,7 @@ var Workspace = Backbone.View.extend({
     
     initialize: function(args) {
         // Maintain `this` in jQuery event handlers
-        _.bindAll(this, "adjust", "toggle_sidebar", "prepare", "new_query", 
+        _.bindAll(this, "caption", "adjust", "toggle_sidebar", "prepare", "new_query", 
                 "init_query", "update_caption", "populate_selections","refresh", "sync_query");
                 
         // Attach an event bus to the workspace
@@ -66,9 +66,11 @@ var Workspace = Backbone.View.extend({
     caption: function() {
         if (this.query && this.query.name) {
             return this.query.name;
+        } else if (this.query && this.query.get('name')) {
+            return this.query.get('name');
         }
         
-        return "Unsaved query (" + (Saiku.tabs.queryCount + 1) + ")";
+        return "<span class='i18n'>Unsaved query</span> (" + (Saiku.tabs.queryCount + 1) + ")";
     },
     
     template: function() {
@@ -129,7 +131,7 @@ var Workspace = Backbone.View.extend({
         $(this.querytoolbar.el).find('ul.options a.on').removeClass('on');
         $(this.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
         $(this.el).find('.fields_list[title="COLUMNS"] .limit').removeClass('on');
-
+        this.update_caption();
         // Trigger clear event
         Saiku.session.trigger('workspace:clear', { workspace: this });
 
@@ -182,10 +184,12 @@ var Workspace = Backbone.View.extend({
     
     new_query: function() {
         // Delete the existing query
-        this.clear();
         if (this.query) {
             this.query.destroy();
+            this.query.clear();
+            this.query.name = undefined;
         }
+        this.clear();
         Saiku.session.trigger('workspace:clear', { workspace: this });
 
         // Initialize the new query
@@ -515,7 +519,7 @@ var Workspace = Backbone.View.extend({
     },
     
     update_caption: function() {
-        var caption = this.query.get('name');
+        var caption = this.caption();
         $(this.tab.el).find('a').html(caption);
     },
     
