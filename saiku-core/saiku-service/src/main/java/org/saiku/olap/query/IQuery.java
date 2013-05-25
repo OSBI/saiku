@@ -65,6 +65,7 @@ public interface IQuery {
 	public void setStatement(OlapStatement os);
 	public OlapStatement getStatement();
 	public void cancel() throws Exception;
+	public void clearAxis(String axisName) throws SaikuOlapException;
 	
 
 }

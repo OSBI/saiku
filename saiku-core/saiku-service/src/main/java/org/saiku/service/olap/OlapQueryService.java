@@ -753,14 +753,13 @@ public class OlapQueryService implements Serializable {
 		query.clearAllQuerySelections();
 	}
 
-	public void clearAxis(String queryName, String axisName) {
-		IQuery query = getIQuery(queryName);
-		if (Axis.Standard.valueOf(axisName) != null) {
-			QueryAxis qAxis = query.getAxis(Axis.Standard.valueOf(axisName));
-			query.resetAxisSelections(qAxis);
-			for (QueryDimension dim : qAxis.getDimensions()) {
-				qAxis.removeDimension(dim);
-			}
+	public IQuery clearAxis(String queryName, String axisName) {
+		try {
+			IQuery query = getIQuery(queryName);
+			query.clearAxis(axisName);
+			return query;
+		} catch (SaikuOlapException e) {
+			throw new SaikuServiceException("Cannot clear for query: " + queryName + " axis: " + axisName,e);
 		}
 	}
 

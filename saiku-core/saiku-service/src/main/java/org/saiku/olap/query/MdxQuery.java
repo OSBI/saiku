@@ -231,6 +231,10 @@ public class MdxQuery implements IQuery {
 	public void clearAllQuerySelections() {
 		throw new UnsupportedOperationException();
 	}
+	
+	public void clearAxis(String axisName) throws SaikuOlapException {
+		throw new UnsupportedOperationException();
+	}
 
 	public void setScenario(Scenario scenario) {
 		this.scenario = scenario;

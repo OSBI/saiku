@@ -279,6 +279,12 @@ public class OlapQuery implements IQuery {
 			dim.clearExclusions();
 			dim.clearSort();
 		}
+		try {
+			axis.clearFilter();
+			axis.clearLimitFunction();
+			axis.clearSort();
+		} catch (NoSuchMethodError e) {}
+			
 	}
 
 	public void clearAllQuerySelections() {
@@ -290,13 +296,24 @@ public class OlapQuery implements IQuery {
 	}
 	
 	public void resetQuery() {
-		resetAxisSelections(getUnusedAxis());
+		clearAllQuerySelections();
 		Map<Axis,QueryAxis> axes = getAxes();
 		for (Axis axis : axes.keySet()) {
-			resetAxisSelections(axes.get(axis));
-			if (axis != null) {
-				for (QueryDimension dim : getAxis(axis).getDimensions())
-				moveDimension(dim, getUnusedAxis().getLocation());
+			QueryAxis qAxis = axes.get(axis);
+			for (int i = 0; i < qAxis.getDimensions().size(); i++ ) {
+				QueryDimension qDim = qAxis.getDimensions().get(0);
+				moveDimension(qDim, null);
+			}
+		}
+	}
+	
+	public void clearAxis(String axisName) throws SaikuOlapException {
+		if (StringUtils.isNotBlank(axisName)) {
+			QueryAxis qAxis = getAxis(axisName);
+			resetAxisSelections(qAxis);
+			for (int i = 0; i < qAxis.getDimensions().size(); i++ ) {
+				QueryDimension qDim = qAxis.getDimensions().get(0);
+				moveDimension(qDim, null);
 			}
 		}
 	}

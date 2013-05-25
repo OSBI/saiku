@@ -180,5 +180,9 @@ public class MockQuery implements IQuery {
 		// TODO Auto-generated method stub
 
 	}
+	public void clearAxis(String axisName) throws SaikuOlapException {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
