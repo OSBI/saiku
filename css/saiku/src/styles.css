@@ -484,6 +484,12 @@ background: url("../../../images/src/context_down.png") no-repeat;
     float: right;
     cursor: pointer;
 }
+span.save {
+    background-position: -485px -90px;
+    height: 16px;
+    padding: 9px 26px 10px 8px;
+}
+
 span.clear_axis {
   background: url("../../../images/src/cancel3.png") no-repeat scroll 0 0 transparent;
   cursor: pointer;
@@ -1702,6 +1708,7 @@ span.cancel_search:hover {
 #save_query_form [name="name"] {
     width: 390px;
 }
+
 
 .queries h3 {
   position: relative;
