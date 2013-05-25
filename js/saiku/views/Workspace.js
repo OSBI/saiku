@@ -23,7 +23,8 @@ var Workspace = Backbone.View.extend({
     events: {
         'click .sidebar_separator': 'toggle_sidebar',
         'change .cubes': 'new_query',
-        'drop': 'remove_dimension',
+        'drop .sidebar': 'remove_dimension',
+        'drop .workspace_results': 'remove_dimension',
         'click .refresh_cubes' : 'refresh'
     },
     
@@ -518,6 +519,8 @@ var Workspace = Backbone.View.extend({
    
     
     remove_dimension: function(event, ui) {
-        this.drop_zones.remove_dimension(event, ui);
+        if (this.query.get('type') == "QM") {
+            this.drop_zones.remove_dimension(event, ui);
+        }
     }
 });

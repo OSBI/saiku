@@ -71,7 +71,7 @@ var DimensionList = Backbone.View.extend({
                 .find('.columns > ul, .rows > ul, .filter > ul'),
             helper: 'clone',
             opacity: 0.60,
-            tolerance: 'pointer',
+            tolerance: 'touch',
             cursorAt: {
                 top: 10,
                 left: 35
