@@ -176,18 +176,18 @@ var WorkspaceToolbar = Backbone.View.extend({
         var self = this;
         $(this.el).find('.toggle_fields').toggleClass('on');
         // avoid scrollbar on the right
-        var wf = $('.workspace_fields').height();
+        var wf = $('.workspace_editor').height();
         if (!$(this.el).find('.toggle_fields').hasClass('on')) {
             var wr = $('.workspace_results').height();
             $('.workspace_results').height(wr - wf);
         }
-        $(this.workspace.el).find('.workspace_fields').slideToggle({
+        $(this.workspace.el).find('.workspace_editor').slideToggle({
             queue: false,
             complete: function() {
                 if (!$(self.el).find('.toggle_fields').hasClass('on')) {
-                    $('.workspace_fields').css('height','');
+                    $('.workspace_editor').css('height','');
                 } else {
-                    $('.workspace_fields').hide().height(wf);
+                    $('.workspace_editor').hide().height(wf);
                 }
                 
                 self.workspace.adjust();
@@ -372,7 +372,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     switch_to_mdx: function(event) {
         var self = this;
         $(this.workspace.el).find('.workspace_fields').addClass('hide');
-        $(this.el).find('.auto, ,.toggle_fields, .query_scenario, .buckets, .non_empty, .swap_axis, .mdx, .switch_to_mdx').parent().hide();
+        $(this.el).find('.auto, , .query_scenario, .buckets, .non_empty, .swap_axis, .mdx, .switch_to_mdx').parent().hide();
         
 
         $(this.el).find('.run').attr('href','#run_mdx');
