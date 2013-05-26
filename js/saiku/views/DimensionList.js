@@ -107,7 +107,11 @@ var DimensionList = Backbone.View.extend({
     },
 
      select_dimension: function(event, ui) {
+        if (this.workspace.query.get('type') != "QM") {
+            return;
+        }
         if ($(event.target).parent().hasClass('ui-state-disabled')) {
+            event.preventDefault();
             return;
         }
         
