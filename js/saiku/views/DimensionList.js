@@ -66,7 +66,11 @@ var DimensionList = Backbone.View.extend({
         
         // Add draggable behavior
         $(this.el).find('.measure,.level').parent('li').mousedown(function() {
-            $(self.workspace.el).find('.workspace_fields').delay(0).slideDown({ queue: false});
+            if (self.workspace.query.get('type') == "QM") {
+                if ( $(self.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
+                    $(self.workspace.el).find('.workspace_fields').delay(0).slideDown({ queue: false});
+                }
+            }
         });
         $(this.el).find('.measure,.level').parent('li').draggable({
             cancel: '.not-draggable, .hierarchy',
@@ -77,7 +81,11 @@ var DimensionList = Backbone.View.extend({
             tolerance: 'touch',
             tolerance: 'pointer',
             stop: function() {
-                $(self.workspace.el).find('.workspace_fields').slideUp( {queue: false });
+                if (self.workspace.query.get('type') == "QM") {
+                    if ( $(self.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
+                        $(self.workspace.el).find('.workspace_fields').slideUp( {queue: false });
+                    }
+                }
             },
             cursorAt: {
                 top: 10,
