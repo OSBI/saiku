@@ -90,10 +90,10 @@ var Query = Backbone.Model.extend({
         // TODO - Validate query
         // maybe we should sync it with the backend query JSON?
         // this definitely needs improvement
-        var rows = 0;
-        var columns = 0;
         if (this.get('type') != "MDX") {
-            if (Settings.MODE == "view" || Settings.MODE == "table") {
+            var rows = $(this.workspace.el).find('.rows ul li').size();
+            var columns = $(this.workspace.el).find('.columns ul li').size(); 
+            if ((rows == 0 && columns == 0) && !this.workspace.other_dimension) {
                 var axes = this.get('axes');
                 if (axes) {
                     for (var axis_iter = 0; axis_iter < axes.length; axis_iter++) {
@@ -106,18 +106,16 @@ var Query = Backbone.Model.extend({
                         }
                     }
                 }
-            } else {
-                rows = $(this.workspace.el).find('.rows ul li').size();
-                columns = $(this.workspace.el).find('.columns ul li').size(); 
             }
-
             if (rows == 0 || columns == 0) {
                 $(this.workspace.table.el)
-                    .html('<tr><td><span class="i18n">You need to put at least one level or measure on Columns and Rows for a valid query.</td></tr>');
-				Saiku.i18n.translate();
+                    .html('<tr><td><span class="i18n">You need to put at least one level or measure on Columns and Rows for a valid query.</span></td></tr>');
+                $(this.workspace.chart.processing).hide();
+                Saiku.i18n.translate();
                 return;
             }
         }
+
 
         // Run it
         $(this.workspace.table.el)
