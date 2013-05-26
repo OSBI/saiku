@@ -24,7 +24,7 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
     
     events: {
-        'sortbeforestop': 'select_dimension',
+        'sortbeforestop .fields_list_body': 'select_dimension',
         'click .d_dimension span.selections': 'selections',
         'click .d_dimension a': 'selections',
         'click .d_measure a' : 'remove_dimension',
@@ -459,6 +459,27 @@ var WorkspaceDropZone = Backbone.View.extend({
     
     select_dimension: function(event, ui) {
 
+/*
+        $('.workspace_fields').css('height','');
+        var wh = $('.workspace_fields').height();
+        $('.workspace_fields').css('height', wh);
+
+        if ($axis.length == 0) {
+            $axis = $('.workspace_fields .placeholder').parents('.fields_list_body');
+        }
+
+        // total width - fieldslist header + padding 15 - clear icon width
+        var bodyWidth = ww - $axis.siblings('.fields_list_header').width() - 15 - $axis.siblings('.clear_axis').width();
+        $axis.width(bodyWidth);
+
+        var axisHeight = $axis.height() ? $axis.height() : 0;
+        if (axisHeight > 40) {
+            $axis.siblings('.fields_list_header').height($axis.height() - 6);
+        } else {
+            $axis.siblings('.fields_list_header').css('height','');
+        }
+        */
+        
         $axis = ui.item.parents('.fields_list_body');
         var target = "";
         

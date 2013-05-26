@@ -69,7 +69,7 @@ var SessionWorkspace = Backbone.Model.extend({
         this.dimensions = {};
         this.measures = {};
         this.connections = response;
-        _.delay(this.prefetch_dimensions, 200);
+        _.delay(this.prefetch_dimensions, 20);
         
         if (!this.initialized) {
             // Show UI

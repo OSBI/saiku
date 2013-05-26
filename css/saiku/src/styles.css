@@ -445,6 +445,7 @@ html, body {
     padding: 10px 10px 0 10px;
 }
 .fields_list {
+    min-width: 655px;
     border: 1px solid #CCC;
     margin-bottom: 10px;
     border-radius: 5px;
@@ -453,6 +454,7 @@ html, body {
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
     -moz-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
     -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
+
 }
 .fields_list .fields_list_header {
     background-color: #E6E6E6;
@@ -497,7 +499,7 @@ span.clear_axis {
   opacity: 0.1;
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
   filter: alpha(opacity = 10);
-  position: absolute;
+  float: right;
   width: 30px;
   z-index: 1;
 }
@@ -515,7 +517,7 @@ span.clear_axis {
 .fields_list .fields_list_body {
     float: left;
     padding:  0;
-    width: 87%;
+    width: 85%;
 }
 .fields_list .fields_list_body .all_measures span {
     margin: 0 5px 0 0;
@@ -592,6 +594,7 @@ span.clear_axis {
 .ui-draggable-dragging a {
     background-image: none !important;
     padding: 0 !important;
+    white-space: nowrap;
 }
 .dimension_tree ul .ui-draggable-dragging {
     background: #e5f6ff !important;
@@ -683,7 +686,8 @@ span.clear_axis {
 .placeholder {
     border: 1px dashed #999;
     color: #999;
-    margin-left: 5px;
+    margin: 2px 3px;
+    padding: 1px 22px !important;
 }
 .not-draggable a {
     /*cursor: not-allowed !important;*/

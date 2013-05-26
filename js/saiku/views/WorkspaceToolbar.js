@@ -173,8 +173,28 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     toggle_fields: function(event) {
-        $(this.workspace.el).find('.workspace_fields').toggle();
-        this.workspace.adjust();
+        var self = this;
+        $(this.el).find('.toggle_fields').toggleClass('on');
+        // avoid scrollbar on the right
+        var wf = $('.workspace_fields').height();
+        if (!$(this.el).find('.toggle_fields').hasClass('on')) {
+            var wr = $('.workspace_results').height();
+            $('.workspace_results').height(wr - wf);
+        }
+        $(this.workspace.el).find('.workspace_fields').slideToggle({
+            queue: false,
+            complete: function() {
+                if (!$(self.el).find('.toggle_fields').hasClass('on')) {
+                    $('.workspace_fields').css('height','');
+                } else {
+                    $('.workspace_fields').hide().height(wf);
+                }
+                
+                self.workspace.adjust();
+            }
+        });
+
+
     },
     
     toggle_sidebar: function() {
