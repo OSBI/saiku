@@ -77,6 +77,13 @@ Settings.REST_URL = Settings.BASE_URL
     + Settings.TOMCAT_WEBAPP 
     + Settings.REST_MOUNT_POINT;
 
+// lets assume we dont need a min width/height for table mode
+if (Settings.MODE == "table") {
+    $('body, html').css('min-height',0);
+    $('body, html').css('min-width',0);
+
+}
+
 
 /**
  * < IE9 doesn't support Array.indexOf
