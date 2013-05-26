@@ -48,11 +48,11 @@ var Saiku = {
      */
     ui: {
         block: function(message) {
-            $('.processing,.processing_container').show();
             $('.processing_message').text(message);
-			
-			$('.processing_message').removeClass("i18n_translated").addClass("i18n");
-			Saiku.i18n.translate();
+            $('.processing_message').removeClass("i18n_translated").addClass("i18n");
+            Saiku.i18n.translate();
+
+            $('.processing,.processing_container').show();  
         },
         
         unblock: function() {
