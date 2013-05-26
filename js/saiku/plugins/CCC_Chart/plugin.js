@@ -46,7 +46,9 @@ var Chart = Backbone.View.extend({
         // Create a unique ID for use as the CSS selector
         this.id = _.uniqueId("chart_");
         $(this.el).attr({ id: this.id });
-        this.cccOptions.canvas = this.id;
+        $('<div id="canvas_' + this.id + '"></div>').appendTo($(this.el));
+        this.processing = $('<div id="processing_' + this.id + '"><span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span></div>');
+        this.cccOptions.canvas = 'canvas_' + this.id;
         this.cccOptions = this.getQuickOptions(this.cccOptions);
 
         this.data = null;
@@ -61,7 +63,8 @@ var Chart = Backbone.View.extend({
             self.data = {};
             self.data.resultset = [];
             self.data.metadata = [];
-            self.render_chart();
+            $(self.el).hide();
+            self.processing.show();
             return false;
         });
 
@@ -140,7 +143,7 @@ var Chart = Backbone.View.extend({
         if (! $(this.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
             return;
         }
-        Saiku.ui.block("Updating chart data....");
+        //Saiku.ui.block("Updating chart data....");
     },
 
     exportChart: function(type) {
@@ -162,7 +165,8 @@ var Chart = Backbone.View.extend({
     	// Append chart to workspace
         $(this.workspace.el).find('.workspace_results')
             .prepend($(this.el).hide())
-            .prepend(this.nav.hide());
+            .prepend(this.nav.hide())
+            .prepend(this.processing.hide());
     },
     
     getData: function() {
@@ -170,14 +174,13 @@ var Chart = Backbone.View.extend({
     },
 
     show: function(event, ui) {
-        $(this.el).show();
         /*
         if ('MODE' in Settings && Settings.MODE == 'table') {
             $(this.nav).hide();    
         } else {
             $(this.nav).show();
         }
-        */
+        
         $('a#acharteditor').fancybox(
                                    {
                                    'autoDimensions'    : false,
@@ -189,7 +192,7 @@ var Chart = Backbone.View.extend({
                                    'type'              : 'inline'
                                    }
                                );
-
+        */
         if (this.cccOptions.width <= 0) {
             this.cccOptions.width = $(this.workspace.el).find('.workspace_results').width() - 40;
         }
@@ -215,6 +218,11 @@ var Chart = Backbone.View.extend({
         if ($target.hasClass('chartoption')) {
             $target.parent().siblings().find('.chartoption.on').removeClass('on');
             $target.addClass('on');
+            if ($(this.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
+                $(this.el).hide();
+            }
+
+
         }
         return false;
     },
@@ -373,7 +381,6 @@ var Chart = Backbone.View.extend({
             },
             clickable: true,
             clickAction: function(scene) {
-                console.log(scene);
                 this.chart.root.options.explodedSliceIndex = this.index;
                 this.chart.root.options.explodedSliceRadius = '10%';
                 this.chart.root.render(true, true, false);
@@ -402,7 +409,7 @@ var Chart = Backbone.View.extend({
         
         var options = _.extend({
                 type:   chartType,
-                canvas: this.id,
+                canvas: 'canvas_' + this.id,
                 width:  workspaceResults.width() - 40,
                 height: workspaceResults.height() - 40
             },
@@ -430,7 +437,6 @@ var Chart = Backbone.View.extend({
         if (! $(this.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
             return;
         }
-
         var workspaceResults = $(this.workspace.el).find(".workspace_results");
         this.cccOptions = _.extend(this.cccOptions, {
                 width:  workspaceResults.width() - 40,
@@ -449,14 +455,17 @@ var Chart = Backbone.View.extend({
             crosstabMode: true,
             seriesInRows: false
         });
-        
+
         try {
             this.chart.render();
-            Saiku.i18n.automatic_i18n();
         } catch (e) {
             $(this.el).text("Could not render chart");
         }
-        Saiku.ui.unblock();
+        this.processing.hide();
+        $(this.el).fadeIn(1000);
+        Saiku.i18n.translate();
+
+        
         //var end = new Date().getTime();
         //console.log("Duration: " + (end - start));
 
@@ -478,7 +487,6 @@ var Chart = Backbone.View.extend({
         this.data.width = 0;
 
         if (typeof args.data == "undefined" || args.data == null || args.data.cellset == null ) {
-            Saiku.ui.unblock();
             return false;
         }
         var cellset = args.data.cellset;
@@ -573,8 +581,8 @@ var Chart = Backbone.View.extend({
             this.render_chart();
         } else {
             $(this.el).text("No results");
+            this.processing.hide();
         }
-        Saiku.ui.unblock();
     }
 });
 

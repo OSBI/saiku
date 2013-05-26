@@ -126,7 +126,7 @@ var Workspace = Backbone.View.extend({
         $(this.el).find('.workspace_results table,.connectable')
             .html('');
         $(this.el).find('.workspace_results_info').empty();
-        $(this.chart.el).empty();
+        $(this.chart.el).find('div').empty();
         this.chart.render();
         $(this.querytoolbar.el).find('ul.options a.on').removeClass('on');
         $(this.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
@@ -315,7 +315,6 @@ var Workspace = Backbone.View.extend({
             // Someone literally selected "Select a cube"
             $(this.el).find('.dimension_tree').html('');
             $(this.el).find('.measure_tree').html('');
-            return;
         }
 
         // is this a new query?
