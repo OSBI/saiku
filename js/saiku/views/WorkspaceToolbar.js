@@ -487,7 +487,9 @@ var WorkspaceToolbar = Backbone.View.extend({
 
     run_mdx: function(event) {
         //var mdx = $(this.workspace.el).find(".mdx_input").val();
-         $(this.workspace.el).find(".mdx_input").height(150);
+        if ($(this.workspace.el).find(".mdx_input").height() > 100) {
+            $(this.workspace.el).find(".mdx_input").height(100);
+        }
         this.editor.resize();
         var mdx = this.editor.getValue();
         this.workspace.query.run(true, mdx);
