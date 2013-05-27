@@ -473,6 +473,7 @@ html, body {
     cursor: pointer;
 }
 .fields_list .limit:hover {
+    background: #efefef;
     background: linear-gradient(to bottom, #ddd, #efefef);
     background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#efefef));
     background: -moz-linear-gradient(top, #ddd 0%, #efefef 100%);
@@ -630,7 +631,9 @@ span.clear_axis {
     display: inline !important;
     box-shadow: 0 0 2px #DDD;
 }
-
+.d_dimension:hover {
+    background: #C2DAEF;
+}
 .d_dimension span.selections {
     background-position: -981px 2px;
     height: 16px;
@@ -650,6 +653,9 @@ span.clear_axis {
     border: 1px solid #ed9393;
     color: #983030;
     display: inline !important;
+}
+.d_measure:hover {
+    background: #fad9d9;
 }
 .d_measure a {
     color: #983030;
