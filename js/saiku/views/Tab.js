@@ -67,10 +67,8 @@ var Tab = Backbone.View.extend({
         $.contextMenu({
                 selector: '.saikutab',
                 callback: function(key, options) {
-                    console.log(self.caption);
                     var selected = options.$trigger.attr('href').replace('#','');
                     var tab = Saiku.tabs.find(selected);
-
                     if (key == "closethis") {
                         tab.remove();
                         self.select();
