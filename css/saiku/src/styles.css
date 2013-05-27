@@ -497,16 +497,14 @@ span.clear_axis {
   cursor: pointer;
   height: 32px;
   opacity: 0.1;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=10)";
-  filter: alpha(opacity = 10);
   float: right;
   width: 30px;
   z-index: 1;
 }
 .fields_list:hover span.clear_axis {
   opacity: 0.8;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
-  filter: alpha(opacity = 80);
+  -ms-filter: none;
+  filter: none;
 }
 
 .fields_list .on {
