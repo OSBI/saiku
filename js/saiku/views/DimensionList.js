@@ -65,9 +65,13 @@ var DimensionList = Backbone.View.extend({
         }
         
         // Add draggable behavior
-        $(this.el).find('.measure,.level').parent('li').mousedown(function() {
+        $(this.el).find('.measure,.level').parent('li').mousedown(function(event, ui) {
+            event.preventDefault();
+            if ($(event.target).parent().hasClass('ui-state-disabled')) {
+                return;
+            }
             if (self.workspace.query.get('type') == "QM") {
-                if ( $(self.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
+                if ( $(self.workspace.toolbar.el).find('.toggle_fields').hasClass('on') && $(self.workspace.el).find('.workspace_editor').is(':hidden')) {
                     self.workspace.toolbar.toggle_fields();
                 }
             }
@@ -112,6 +116,7 @@ var DimensionList = Backbone.View.extend({
         }
         if ($(event.target).parent().hasClass('ui-state-disabled')) {
             event.preventDefault();
+            event.stopPropagation();
             return;
         }
         
@@ -132,6 +137,11 @@ var DimensionList = Backbone.View.extend({
         }, {
             item: $target
         });
+
+        if ( $(this.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
+            $(this.workspace.el).find('.workspace_editor').delay(2000).slideUp({ complete: this.workspace.adjust });
+        }
+        event.preventDefault();
         return false;
     },
 
@@ -157,6 +167,11 @@ var DimensionList = Backbone.View.extend({
         }, {
             item: $target
         });
+
+        if ( $(this.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
+            $(this.workspace.el).find('.workspace_editor').delay(2000).slideUp({ complete: this.workspace.adjust });
+        }
+        e.preventDefault();
         return false;
     }
 });

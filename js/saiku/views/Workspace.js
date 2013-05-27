@@ -154,11 +154,13 @@ var Workspace = Backbone.View.extend({
         $(this.querytoolbar.el).find('div').height($("body").height() - heightReduction - 10);
         
         // Adjust the dimensions of the results window
+        var editorHeight = $(this.el).find('.workspace_editor').is(':hidden') ? 0 : $(this.el).find('.workspace_editor').height();
+        
         $(this.el).find('.workspace_results').css({
             height: $("body").height() - heightReduction -
                 $(this.el).find('.workspace_toolbar').height() - 
                 $(this.el).find('.workspace_results_info').height() - 
-                $(this.el).find('.workspace_editor').height() - 35
+                editorHeight - 35
         });
         
         // Fire off the adjust event
@@ -273,7 +275,7 @@ var Workspace = Backbone.View.extend({
 
 
         } else {
-            $(this.el).find('.workspace_fields').removeClass('hide').show();
+            $(this.el).find('.workspace_editor').removeClass('hide').show();
             $(this.el).find('.workspace_fields').removeClass('disabled');
             $(this.el).find('.workspace_editor .mdx_input').addClass('hide');
             $(this.el).find('.workspace_editor .editor_info').addClass('hide');
