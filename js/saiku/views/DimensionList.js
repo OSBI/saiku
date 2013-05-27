@@ -68,7 +68,7 @@ var DimensionList = Backbone.View.extend({
         $(this.el).find('.measure,.level').parent('li').mousedown(function() {
             if (self.workspace.query.get('type') == "QM") {
                 if ( $(self.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
-                    $(self.workspace.el).find('.workspace_fields').delay(0).slideDown({ queue: false});
+                    self.workspace.toolbar.toggle_fields();
                 }
             }
         });
@@ -83,7 +83,7 @@ var DimensionList = Backbone.View.extend({
             stop: function() {
                 if (self.workspace.query.get('type') == "QM") {
                     if ( $(self.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
-                        $(self.workspace.el).find('.workspace_fields').slideUp( {queue: false });
+                        self.workspace.toolbar.toggle_fields();
                     }
                 }
             },

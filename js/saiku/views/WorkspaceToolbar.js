@@ -174,7 +174,9 @@ var WorkspaceToolbar = Backbone.View.extend({
     
     toggle_fields: function(event) {
         var self = this;
-        $(this.el).find('.toggle_fields').toggleClass('on');
+        if (event) {
+            $(this.el).find('.toggle_fields').toggleClass('on');
+        }
         // avoid scrollbar on the right
         var wf = $('.workspace_editor').height();
         if (!$(this.el).find('.toggle_fields').hasClass('on')) {
@@ -184,10 +186,10 @@ var WorkspaceToolbar = Backbone.View.extend({
         $(this.workspace.el).find('.workspace_editor').slideToggle({
             queue: false,
             complete: function() {
-                if (!$(self.el).find('.toggle_fields').hasClass('on')) {
-                    $('.workspace_editor').css('height','');
+                if ($('.workspace_editor').is(':hidden')) {
+                    $('.workspace_editor').height(wf);
                 } else {
-                    $('.workspace_editor').hide().height(wf);
+                    $('.workspace_editor').css('height','');                    
                 }
                 
                 self.workspace.adjust();
