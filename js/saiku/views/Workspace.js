@@ -63,14 +63,16 @@ var Workspace = Backbone.View.extend({
         Saiku.session.bind('tab:add', this.prepare);
     },
     
-    caption: function() {
+    caption: function(increment) {
         if (this.query && this.query.name) {
             return this.query.name;
         } else if (this.query && this.query.get('name')) {
             return this.query.get('name');
         }
-        
-        return "<span class='i18n'>Unsaved query</span> (" + (Saiku.tabs.queryCount + 1) + ")";
+        if (increment) {
+            Saiku.tabs.queryCount++;
+        }
+        return "<span class='i18n'>Unsaved query</span> (" + (Saiku.tabs.queryCount) + ")";
     },
     
     template: function() {
@@ -131,7 +133,6 @@ var Workspace = Backbone.View.extend({
         $(this.querytoolbar.el).find('ul.options a.on').removeClass('on');
         $(this.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
         $(this.el).find('.fields_list[title="COLUMNS"] .limit').removeClass('on');
-        this.update_caption();
         // Trigger clear event
         Saiku.session.trigger('workspace:clear', { workspace: this });
 
@@ -187,6 +188,10 @@ var Workspace = Backbone.View.extend({
         if (this.query) {
             this.query.destroy();
             this.query.clear();
+            if (this.query.name) {
+                this.query.name = undefined;
+                this.update_caption(true);
+            }
             this.query.name = undefined;
         }
         this.clear();
@@ -526,9 +531,9 @@ var Workspace = Backbone.View.extend({
 
     },
     
-    update_caption: function() {
-        var caption = this.caption();
-        $(this.tab.el).find('a').html(caption);
+    update_caption: function(increment) {
+        var caption = this.caption(increment);
+        this.tab.set_caption(caption);
     },
     
    

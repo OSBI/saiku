@@ -68,26 +68,6 @@ var QueryToolbar = Backbone.View.extend({
 
         $(this.el).find('render_table').addClass('on');
         $(this.el).find('ul.table').show();
-        var self = this;
-        $body = $(document);
-        $body.off('.contextMenu .contextMenuAutoHide');
-        $('.context-menu-list').remove();
-        $.contextMenu('destroy');
-        $.contextMenu({
-                selector: '.export_button',
-                trigger: 'left',
-                ignoreRightClick: true,
-                callback: function(key, options) {
-                    self.workspace.chart.exportChart(key);
-                },
-                items: {
-                    "png": {name: "PNG"},
-                    "pdf": {name: "PDF"},
-                    "jpg": {name: "JPEG"},
-                    "svg": {name: "SVG"}
-                }
-            });
-
         return this; 
     },
     

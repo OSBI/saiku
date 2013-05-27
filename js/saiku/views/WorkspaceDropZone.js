@@ -85,9 +85,9 @@ var WorkspaceDropZone = Backbone.View.extend({
 
         
         $body = $(document);
-        $body.off('.contextMenu .contextMenuAutoHide');
-        $('.context-menu-list').remove();
-        $.contextMenu('destroy');
+        //$body.off('.contextMenu .contextMenuAutoHide');
+        //$('.context-menu-list').remove();
+        $.contextMenu('destroy', '.limit');
         $.contextMenu({
             appendTo: $target,
             selector: '.limit', 

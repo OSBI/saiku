@@ -210,6 +210,26 @@ var Chart = Backbone.View.extend({
     export_button: function(event) {
         var self = this;
         $target = $(event.target).hasClass('button') ? $(event.target) : $(event.target).parent();
+        
+        var self = this;
+        $body = $(document);
+        //$body.off('.contextMenu .contextMenuAutoHide');
+        //$('.context-menu-list').remove();
+        $.contextMenu('destroy', '.export_button');
+        $.contextMenu({
+                selector: '.export_button',
+                trigger: 'left',
+                ignoreRightClick: true,
+                callback: function(key, options) {
+                    self.workspace.chart.exportChart(key);
+                },
+                items: {
+                    "png": {name: "PNG"},
+                    "pdf": {name: "PDF"},
+                    "jpg": {name: "JPEG"},
+                    "svg": {name: "SVG"}
+                }
+        });
         $target.contextMenu();
     },
 

@@ -45,9 +45,9 @@ var Table = Backbone.View.extend({
             $(event.target).find('div') : $(event.target);
         
     $body = $(document);
-    $body.off('.contextMenu .contextMenuAutoHide');
-    $('.context-menu-list').remove();
-    $.contextMenu('destroy');
+    //$body.off('.contextMenu .contextMenuAutoHide');
+    //$('.context-menu-list').remove();
+    $.contextMenu('destroy', '.row, .col');
     $.contextMenu({
         appendTo: $target,
         selector: '.row, .col', 
