@@ -445,7 +445,7 @@ html, body {
     padding: 10px 10px 0 10px;
 }
 .fields_list {
-    min-width: 655px;
+    min-width: 820px;
     border: 1px solid #CCC;
     margin-bottom: 10px;
     border-radius: 5px;
@@ -499,6 +499,7 @@ span.clear_axis {
   opacity: 0.1;
   float: right;
   width: 30px;
+  margin-left: -35px;
   z-index: 1;
 }
 .fields_list:hover span.clear_axis {
@@ -515,6 +516,7 @@ span.clear_axis {
 .fields_list .fields_list_body {
     float: left;
     padding:  0;
+    margin-right: 37px;
     width: 85%;
 }
 .fields_list .fields_list_body .all_measures span {
