@@ -383,7 +383,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         if (Settings.MODE != "view" && Settings.MODE != "table") {
             $mdx_editor = $(this.workspace.el).find('.mdx_input');
             //$mdx_editor.width($(this.el).width()-5);
-            $(this.workspace.el).find('.workspace_editor .mdx_input, .workspace_editor .editor_info').removeClass('hide');
+            $(this.workspace.el).find('.workspace_editor .mdx_input, .workspace_editor .editor_info, .workspace_editor').removeClass('hide').show();
             this.editor = ace.edit("mdx_editor");
             this.editor.setShowPrintMargin(false);
             this.editor.setFontSize(11);
