@@ -485,7 +485,7 @@ var Workspace = Backbone.View.extend({
                                     $icon.addClass('none');
                                 }
                                 
-                                $icon.insertBefore($clone.find('a'));
+                                $icon.insertBefore($clone.find('span'));
                             }
 
                             if (type == "measure") {

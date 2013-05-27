@@ -540,7 +540,7 @@ span.clear_axis {
     list-style-type: none;
     height: 19px;
     display: inline;
-    padding: 1px 8px;
+    padding: 1px 8px 1px 0px;
     min-width: 70px;
     text-align: center;
     white-space:nowrap;
@@ -552,6 +552,9 @@ span.clear_axis {
     -webkit-border-radius: 3px;
     margin: 2px 3px;
 
+}
+.fields_list .fields_list_body ul li a {
+    padding: 8px 0px 8px 10px;
 }
 .fields_list .fields_list_body ul li ul {
     float: right;
@@ -628,7 +631,7 @@ span.clear_axis {
     box-shadow: 0 0 2px #DDD;
 }
 
-.d_dimension span.sprite {
+.d_dimension span.selections {
     background-position: -981px 2px;
     height: 16px;
     width: 16px;
@@ -657,8 +660,7 @@ span.clear_axis {
 .d_dimension span.sort {
         height: 16px;
         width: 16px;
-        margin-top: 2px;
-        pading-left: 2px;
+        padding: 2px 3px;
         float: right;
         cursor: pointer;
 }
@@ -666,19 +668,20 @@ span.clear_axis {
 .d_measure span.sort.ASC,
 .d_dimension span.sort.BASC,
 .d_dimension span.sort.ASC {
-    background: url("../../../images/src/sort_up.png") no-repeat;
+    background: url("../../../images/src/sort_up.png") no-repeat center transparent;
+
 }
 
 .d_measure span.sort.BDESC,
 .d_measure span.sort.DESC,
 .d_dimension span.sort.BDESC,
 .d_dimension span.sort.DESC {
-    background: url("../../../images/src/sort_down.png") no-repeat;
+    background: url("../../../images/src/sort_down.png") no-repeat center transparent;
 }
 
 .d_measure span.sort.none,
 .d_dimension span.sort.none {
-    background: url("../../../images/src/sort_none.png") no-repeat;
+    background: url("../../../images/src/sort_none.png") no-repeat center transparent;
 }
 
 

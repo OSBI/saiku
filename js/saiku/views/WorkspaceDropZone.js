@@ -509,11 +509,10 @@ var WorkspaceDropZone = Backbone.View.extend({
 
         // Wrap with the appropriate parent element
         if (ui.item.find('a').hasClass('level')) {
-            var $icon = $("<div />").addClass('sprite').addClass('selections');
-            var $icon2 = $("<span />").addClass('sprite').addClass('sort none');
-        
+            var $icon = $("<span />").addClass('sprite selections');
+            var $icon2 = $("<span />").addClass('sprite sort none');
             ui.item.addClass('d_dimension').prepend($icon);
-            ui.item.addClass('d_dimension').prepend($icon2);
+            $icon2.insertBefore($icon);
         } else {
             var $icon = $("<span />").addClass('sort none');
             ui.item.addClass('d_measure').prepend($icon);
@@ -639,10 +638,11 @@ var WorkspaceDropZone = Backbone.View.extend({
         axis.find('.d_dimension a').each( function(index, element) {
             element = $(element);
             if (!element.prev() || (element.prev() && element.prev().length == 0)) {
-                var $icon = $("<span />").addClass('sprite').addClass('selections');
+                var $icon = $("<span />").addClass('sprite sort none');
                 $icon.insertBefore(element);
-                var $icon = $("<span />").addClass('sprite').addClass('sort none');
+                var $icon = $("<span />").addClass('sprite selections');
                 $icon.insertBefore(element);
+
             }
         });
 
