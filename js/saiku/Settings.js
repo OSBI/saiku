@@ -79,6 +79,7 @@ Settings.REST_URL = Settings.BASE_URL
 
 // lets assume we dont need a min width/height for table mode
 if (Settings.MODE == "table") {
+    Settings.DIMENSION_PREFETCH = false;
     $('body, html').css('min-height',0);
     $('body, html').css('min-width',0);
 
