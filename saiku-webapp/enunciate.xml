@@ -18,7 +18,7 @@
 			<springImport file="src/main/web/spring-servlet.xml" />
 		</spring-app>
 		<jersey useSubcontext="true" disableWildcardServletError="false"
-			disabled="false">
+			disabled="true">
 		<init-param name="com.sun.jersey.config.property.packages" value="org.saiku.web" />
 		<init-param name="com.sun.jersey.spi.container.ContainerRequestFilters" value="com.sun.jersey.api.container.filter.PostReplaceFilter" />
      </jersey>

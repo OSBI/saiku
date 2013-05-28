@@ -5,6 +5,16 @@
 <web-app>
 
 	<display-name>saiku</display-name>
+
+	<context-param>
+		<param-name>encoding</param-name>
+		<param-value>UTF-8</param-value>
+	</context-param>
+	
+	<session-config>
+		<session-timeout>60</session-timeout>
+	</session-config>
+	
 	<filter>
 		<filter-name>org.springframework.security.filterChainProxy</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -20,15 +30,40 @@
 		<servlet-name>spring</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
 	</servlet>
-	<servlet-mapping>
-		<servlet-name>spring</servlet-name>
-		<url-pattern>/oauth/*</url-pattern>
-	</servlet-mapping>
 
  	<listener>
 		<listener-class>
 			org.springframework.web.context.request.RequestContextListener
-</listener-class>
+		</listener-class>
 	</listener>
+	
+	<servlet>
+    	<servlet-name>jersey2</servlet-name>
+    	<servlet-class>org.codehaus.enunciate.modules.jersey.EnunciateJerseyServletContainer</servlet-class>
+    	<init-param>
+      		<param-name>com.sun.jersey.config.property.packages</param-name>
+      		<param-value>org.saiku.web</param-value>
+    	</init-param>
+    	<init-param>
+      		<param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+      		<param-value>com.sun.jersey.api.container.filter.PostReplaceFilter</param-value>
+    	</init-param>
+    	<init-param>
+      		<param-name>org.codehaus.enunciate.modules.jersey.config.ServletPath</param-name>
+      		<param-value>/rest</param-value>
+    	</init-param>
+    	<load-on-startup>1</load-on-startup>
+  	</servlet>
+
+	  <servlet-mapping>
+	    <servlet-name>jersey2</servlet-name>
+	    <url-pattern>/rest/saiku/*</url-pattern>
+	  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>jersey2</servlet-name>
+    <url-pattern>/rest/saiku/session</url-pattern>
+  </servlet-mapping>
+
 
 </web-app>
