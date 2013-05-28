@@ -119,7 +119,7 @@ var Query = Backbone.Model.extend({
 
         // Run it
         $(this.workspace.table.el)
-            .html('<tr><td><span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span> </td></tr>');
+            .html('<tr><td><span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span> [&nbsp;<a class="cancel i18n" href="#cancel">Cancel</a>&nbsp;]</td></tr>');
         this.workspace.trigger('query:fetch');
 		Saiku.i18n.translate();
             // <a class="cancel" href="#cancel">x</a>

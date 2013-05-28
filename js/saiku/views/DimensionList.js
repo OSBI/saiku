@@ -83,7 +83,6 @@ var DimensionList = Backbone.View.extend({
             helper: 'clone',
             opacity: 0.60,
             tolerance: 'touch',
-            tolerance: 'pointer',
             stop: function() {
                 if (self.workspace.query.get('type') == "QM") {
                     if ( $(self.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
