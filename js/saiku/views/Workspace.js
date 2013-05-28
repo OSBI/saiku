@@ -148,6 +148,9 @@ var Workspace = Backbone.View.extend({
                 heightReduction = -5;
             }
         }
+        if ($('#header').length == 0 || $('#header').is('hidden')) {
+            heightReduction = 2;
+        }
         $separator.height($("body").height() - heightReduction);
         $(this.el).find('.sidebar').height($("body").height() - heightReduction);
 
