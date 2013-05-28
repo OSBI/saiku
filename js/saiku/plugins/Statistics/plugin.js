@@ -41,7 +41,7 @@ var Statistics = Backbone.View.extend({
         this.workspace.querytoolbar.stats = this.show;
         
         // Listen to adjust event and rerender stats
-        this.workspace.bind('workspace:adjust', this.render);
+        //this.workspace.bind('workspace:adjust', this.render);
         
         // Append stats to workspace
         $(this.workspace.el).find('.workspace_results')
@@ -68,7 +68,7 @@ var Statistics = Backbone.View.extend({
         $(event.target).toggleClass('on');
         
         if ($(event.target).hasClass('on')) {
-            this.render();
+            this.process_data({ data: this.workspace.query.result.lastresult() });
         } else {
             this.workspace.table.render({ data: this.workspace.query.result.lastresult() });
         }
@@ -84,7 +84,7 @@ var Statistics = Backbone.View.extend({
     },
     
     render: function() {
-        if (! $(this.workspace.querytoolbar.el).find('.stats').hasClass('on')) {
+        if (! $(this.workspace.querytoolbar.el).find('.stats').hasClass('on') || !$(this.el).is(':visible')) {
             return;
         }
 
@@ -137,6 +137,8 @@ var Statistics = Backbone.View.extend({
     },
     
     receive_data: function(args) {
+
+
         return _.delay(this.process_data, 0, args);
     },
     
@@ -147,7 +149,20 @@ var Statistics = Backbone.View.extend({
         this.data.height = 0;
         this.data.width = 0;
 
-        if (args.data.cellset && args.data.cellset.length > 0) {
+        if (typeof args == "undefined" || typeof args.data == "undefined" || !$(this.el).is(':visible')) {
+            return;
+        }
+        if (args.data != null && args.data.error != null) {
+            return this.error(args);
+        }
+
+        
+        // Check to see if there is data
+        if (args.data == null || (args.data.cellset && args.data.cellset.length === 0)) {
+            return this.no_results(args);
+        }
+
+        if (args.data && args.data.cellset && args.data.cellset.length > 0) {
             
             var lowest_level = 0;
             var isHead = true
@@ -203,8 +218,16 @@ var Statistics = Backbone.View.extend({
             this.data.height = this.data.resultset.length;
             this.render();
         } else {
-            $(this.el).text("No results");
+            this.no_results();
         }
+    },
+
+    no_results: function(args) {
+        $(this.el).text("No results");
+    },
+    
+    error: function(args) {
+        $(this.el).text(safe_tags_replace(args.data.error));
     }
 });
 
