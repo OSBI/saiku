@@ -59,6 +59,7 @@ var Workspace = Backbone.View.extend({
             this.query.workspace = this;
             this.query.save({}, { success: this.init_query });
         }
+
         // Flash cube navigation when rendered
         Saiku.session.bind('tab:add', this.prepare);
     },
@@ -113,6 +114,7 @@ var Workspace = Backbone.View.extend({
         $(this.el).find('.workspace_results')
             .append($(this.table.el));
         
+        this.chart.render_view();
         // Adjust tab when selected
         this.tab.bind('tab:select', this.adjust);
         $(window).resize(this.adjust);
@@ -246,7 +248,7 @@ var Workspace = Backbone.View.extend({
 
             if ('chart' == renderMode && renderType in this.chart ) {
                 this.chart[renderType]();
-                $(this.chart.el).hide();
+                $(this.chart.el).find('div').hide();
                 $(this.querytoolbar.el).find('ul.chart [href="#' + renderType+ '"]').parent().siblings().find('.on').removeClass('on');
                 $(this.querytoolbar.el).find('ul.chart [href="#' + renderType+ '"]').addClass('on');
 
