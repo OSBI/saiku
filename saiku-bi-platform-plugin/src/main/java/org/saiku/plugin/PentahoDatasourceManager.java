@@ -15,6 +15,7 @@
  */
 package org.saiku.plugin;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
 	private static final Log LOG = LogFactory.getLog(PentahoDatasourceManager.class);
 
-	private Map<String,SaikuDatasource> datasources = new HashMap<String,SaikuDatasource>();
+	private Map<String,SaikuDatasource> datasources = Collections.synchronizedMap(new HashMap<String,SaikuDatasource>());
 
 	private String saikuDatasourceProcessor;
 	
