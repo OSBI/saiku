@@ -410,11 +410,10 @@ var info = '<b><span class="i18n">Info:</span></b> &nbsp;' + cdate
     },
     
     cancelled: function(args) {
-        $(this.el).html('<tr><td>No results</td></tr>');
+        $(this.el).html('<tr><td><span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Canceling Query...</span> </td></tr>');
     },
 
     no_results: function(args) {
-        $(this.el).html('<tr><td>No results</td></tr>');
     },
     
     error: function(args) {
