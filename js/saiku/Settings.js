@@ -139,5 +139,5 @@ var isIE = (function(){
         div.getElementsByTagName('i')[0]
     );
 
-    return v> 4 ? v : undef;
+    return v> 4 ? v : false;
 }());
