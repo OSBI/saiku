@@ -25,6 +25,7 @@ var Chart = Backbone.View.extend({
     },
 
     data: null,
+    hasProcessed: null,
 
     getChartProperties: function(chartName) { 
         var self = this; 
@@ -54,7 +55,7 @@ var Chart = Backbone.View.extend({
         this.data = null;
         
         // Bind table rendering to query result event
-        _.bindAll(this, "receive_data", "process_data", "show",  "getData", "render_view", "render_chart", "getQuickOptions","exportChart","block_ui");
+        _.bindAll(this, "receive_data", "process_data", "show",  "getData", "render_view", "render_chart", "render_chart_delayed", "getQuickOptions","exportChart","block_ui");
         var self = this;
         this.workspace.bind('query:run',  function() {
             if (! $(self.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
@@ -199,7 +200,12 @@ var Chart = Backbone.View.extend({
         if (this.cccOptions.height <= 0) {
             this.cccOptions.height = $(this.workspace.el).find('.workspace_results').height() - 40;
         }
-        this.process_data({ data: this.workspace.query.result.lastresult() });
+        
+        var hasRun = this.workspace.query.result.hasRun();
+        if (hasRun) {
+            this.process_data({ data: this.workspace.query.result.lastresult() });
+        }
+
     },
 
     chart_editor: function() {
@@ -452,9 +458,15 @@ var Chart = Backbone.View.extend({
         
         return options;
     },
-    
+
     render_chart: function() {
-        if (! $(this.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
+
+        _.delay(this.render_chart_delayed, 0, this);
+        return false; 
+    },
+    
+    render_chart_delayed: function(self) {
+        if (!$(self.workspace.querytoolbar.el).find('.render_chart').hasClass('on') || !this.hasProcessed) {
             return;
         }
         var workspaceResults = $(this.workspace.el).find(".workspace_results");
@@ -596,6 +608,7 @@ var Chart = Backbone.View.extend({
                 }
             }
             //makeSureUniqueLabels(this.data.resultset);
+            this.hasProcessed = true;
             this.data.height = this.data.resultset.length;
             this.cccOptions = this.getQuickOptions(this.cccOptions);
             this.render_chart();

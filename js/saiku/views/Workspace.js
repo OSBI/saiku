@@ -129,7 +129,6 @@ var Workspace = Backbone.View.extend({
             .html('');
         $(this.el).find('.workspace_results_info').empty();
         $(this.chart.el).find('div').empty();
-        this.chart.render();
         $(this.querytoolbar.el).find('ul.options a.on').removeClass('on');
         $(this.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
         $(this.el).find('.fields_list[title="COLUMNS"] .limit').removeClass('on');
@@ -247,6 +246,7 @@ var Workspace = Backbone.View.extend({
 
             if ('chart' == renderMode && renderType in this.chart ) {
                 this.chart[renderType]();
+                $(this.chart.el).hide();
                 $(this.querytoolbar.el).find('ul.chart [href="#' + renderType+ '"]').parent().siblings().find('.on').removeClass('on');
                 $(this.querytoolbar.el).find('ul.chart [href="#' + renderType+ '"]').addClass('on');
 
