@@ -170,7 +170,7 @@ var DimensionList = Backbone.View.extend({
         if ( $(this.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
             $(this.workspace.el).find('.workspace_editor').delay(2000).slideUp({ complete: this.workspace.adjust });
         }
-        e.preventDefault();
+        event.preventDefault();
         return false;
     }
 });
