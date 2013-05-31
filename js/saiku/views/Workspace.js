@@ -130,7 +130,7 @@ var Workspace = Backbone.View.extend({
         $(this.el).find('.workspace_results table,.connectable')
             .html('');
         $(this.el).find('.workspace_results_info').empty();
-        $(this.chart.el).find('div').empty();
+        $(this.chart.el).find('div.canvas').empty();
         $(this.querytoolbar.el).find('ul.options a.on').removeClass('on');
         $(this.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
         $(this.el).find('.fields_list[title="COLUMNS"] .limit').removeClass('on');

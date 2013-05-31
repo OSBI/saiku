@@ -47,7 +47,7 @@ var Chart = Backbone.View.extend({
         // Create a unique ID for use as the CSS selector
         this.id = _.uniqueId("chart_");
         $(this.el).attr({ id: this.id });
-        $('<div id="canvas_' + this.id + '"></div>').appendTo($(this.el));
+        $('<div class="canvas" id="canvas_' + this.id + '"></div>').appendTo($(this.el));
         this.processing = $('<div id="processing_' + this.id + '"><span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span></div>');
         this.cccOptions.canvas = 'canvas_' + this.id;
         this.cccOptions = this.getQuickOptions(this.cccOptions);
@@ -73,7 +73,7 @@ var Chart = Backbone.View.extend({
         
         this.workspace.bind('query:result', this.receive_data);
 
-         var pseudoForm = "<div style='display:none'><form id='svgChartPseudoForm' target='_blank' method='POST'>" +
+         var pseudoForm = "<div class='pseudoForm' style='display:none'><form id='svgChartPseudoForm' target='_blank' method='POST'>" +
                 "<input type='hidden' name='type' class='type'/>" +
                 "<input type='hidden' name='svg' class='svg'/>" +
                 "</form></div>";
@@ -413,12 +413,9 @@ var Chart = Backbone.View.extend({
             explodedSliceRadius: "10%",
             extensionPoints: {
                 slice_innerRadiusEx: '40%',
-                
                  slice_offsetRadius: function(scene) {
-                    console.log("offset: " + scene);
                        return scene.isSelected() ? '10%' : 0;
                 }
-
             },
             clickable: true,
             //valuesLabelStyle: 'inside'
