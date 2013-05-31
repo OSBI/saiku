@@ -747,7 +747,7 @@ span.clear_axis {
     box-shadow: 0 0 10px #EEE;
     border: 1px solid #CCC;
 }
-#password, #username, input {
+#password, #username, input.newfolder {
     padding: 4px;
     width: 240px;
 }
