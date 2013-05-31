@@ -410,15 +410,17 @@ var Chart = Backbone.View.extend({
             smallTitleFont: "bold 14px sans-serif",
             valuesVisible: true,
             valuesMask: "{value.percent}",
+            explodedSliceRadius: "10%",
             extensionPoints: {
-                slice_innerRadiusEx: '40%'
+                slice_innerRadiusEx: '40%',
+                
+                 slice_offsetRadius: function(scene) {
+                    console.log("offset: " + scene);
+                       return scene.isSelected() ? '10%' : 0;
+                }
+
             },
             clickable: true,
-            clickAction: function(scene) {
-                this.chart.root.options.explodedSliceIndex = this.index;
-                this.chart.root.options.explodedSliceRadius = '10%';
-                this.chart.root.render(true, true, false);
-            }
             //valuesLabelStyle: 'inside'
         },
         
