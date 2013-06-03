@@ -414,6 +414,7 @@ var info = '<b><span class="i18n">Info:</span></b> &nbsp;' + cdate
     },
 
     no_results: function(args) {
+        $(this.el).html('<tr><td><span class="i18n">No Results</span> </td></tr>');
     },
     
     error: function(args) {
