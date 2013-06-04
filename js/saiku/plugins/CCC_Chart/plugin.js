@@ -19,6 +19,10 @@
  */
 var Chart = Backbone.View.extend({
 
+    events: {
+        'click .keep' : 'keepVisible'
+    },
+
 	cccOptions: {
         type: "BarChart",
         stacked: true
@@ -47,8 +51,11 @@ var Chart = Backbone.View.extend({
         // Create a unique ID for use as the CSS selector
         this.id = _.uniqueId("chart_");
         $(this.el).attr({ id: this.id });
-        $('<div class="canvas" id="canvas_' + this.id + '"></div>').appendTo($(this.el));
-        this.processing = $('<div id="processing_' + this.id + '"><span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span></div>');
+        //$('<div id="nav_' + this.id + '">' + "<input type='submit' class='keep' value='keep only selected' />" + '</div>').appendTo($(this.el));
+        $('<div class="canvas_wrapper" style="display:none;"><div id="canvas_' + this.id + '"></div></div>').appendTo($(this.el));
+        
+
+        this.processing = $('<div id="processing_' + this.id + '" class="processing_chart"><span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span></div>');
         this.cccOptions.canvas = 'canvas_' + this.id;
         this.cccOptions = this.getQuickOptions(this.cccOptions);
 
@@ -64,7 +71,7 @@ var Chart = Backbone.View.extend({
             self.data = {};
             self.data.resultset = [];
             self.data.metadata = [];
-            $(self.el).hide();
+            $(self.el).find('.canvas_wrapper').hide();
             self.processing.show();
             return false;
         });
@@ -73,14 +80,17 @@ var Chart = Backbone.View.extend({
         
         this.workspace.bind('query:result', this.receive_data);
 
-         var pseudoForm = "<div class='pseudoForm' style='display:none'><form id='svgChartPseudoForm' target='_blank' method='POST'>" +
+         var pseudoForm = "<div id='nav" + this.id + "' style='display:none' class='nav'><form id='svgChartPseudoForm' target='_blank' method='POST'>" +
                 "<input type='hidden' name='type' class='type'/>" +
                 "<input type='hidden' name='svg' class='svg'/>" +
                 "</form></div>";
-        if (typeof isIE !== "undefined") {
+        if (isIE) {
             pseudoForm = "<div></div>";
         }
         this.nav =$(pseudoForm);
+
+        $(this.el).append(this.nav);
+        $(this.el).append(this.processing);
 
         /*
         // Create navigation
@@ -161,9 +171,7 @@ var Chart = Backbone.View.extend({
     render_view: function() {
     	// Append chart to workspace
         $(this.workspace.el).find('.workspace_results')
-            .prepend($(this.el).hide())
-            .prepend(this.nav.hide())
-            .prepend(this.processing.hide());
+            .prepend($(this.el).hide());
     },
     
     getData: function() {
@@ -197,6 +205,8 @@ var Chart = Backbone.View.extend({
             this.cccOptions.height = $(this.workspace.el).find('.workspace_results').height() - 40;
         }
         
+        $(this.el).show();
+
         var hasRun = this.workspace.query.result.hasRun();
         if (hasRun) {
             this.process_data({ data: this.workspace.query.result.lastresult() });
@@ -227,8 +237,8 @@ var Chart = Backbone.View.extend({
                 },
                 items: {
                     "png": {name: "PNG"},
-                    "pdf": {name: "PDF"},
                     "jpg": {name: "JPEG"},
+                    "pdf": {name: "PDF"},
                     "svg": {name: "SVG"}
                 }
         });
@@ -241,7 +251,7 @@ var Chart = Backbone.View.extend({
             $target.parent().siblings().find('.chartoption.on').removeClass('on');
             $target.addClass('on');
             if ($(this.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
-                $(this.el).hide();
+                $(this.el).find('.canvas_wrapper').hide();
             }
 
 
@@ -356,6 +366,25 @@ var Chart = Backbone.View.extend({
         };
         this.cccOptions = this.getQuickOptions(options);
         this.render_chart();
+    },
+
+    keepVisible: function(event) {
+
+
+        var chart = this.chart.root;
+        var data = chart.data;
+         
+        data
+        .datums(null, {selected: false})
+        .each(function(datum) {
+            datum.setVisible(false);
+        });
+         
+        data.clearSelected();
+         
+        chart.render(true, true, false);
+
+
     },
 
     // Default static style-sheet
@@ -520,7 +549,7 @@ $(this.el).prepend(" pvc (" + (this.med3 - this.med) + ")" );
 
         try {
             if (animate) {
-                $(this.el).show();
+                $(this.el).find('.canvas_wrapper').show();
             }
             this.chart.render();
 /* DEBUGGING
@@ -534,10 +563,11 @@ $(this.el).prepend(" pvc (" + (this.med3 - this.med) + ")" );
         if (animate) {
             return false;
         }
+        $('#nav_' + this.id).show();
         if (isIE || isBig) {
-            $(this.el).show();
+            $(this.el).find('.canvas_wrapper').show();
         } else {
-            $(this.el).fadeIn(600);
+            $(this.el).find('.canvas_wrapper').fadeIn(600);
         }
         return false;
     },
@@ -656,7 +686,7 @@ $(this.el).prepend(" | chart process");
             this.cccOptions = this.getQuickOptions(this.cccOptions);
             this.render_chart();
         } else {
-            $(this.el).text("No results");
+            $(this.el).find('.canvas_wrapper').text("No results").show();
             this.processing.hide();
         }
     }
