@@ -185,7 +185,7 @@ var SelectionsModal = Modal.extend({
     },
     
     post_render: function(args) {
-        $(args.modal.el).parents('.ui-dialog').css({ width: "800px", left: "inherit", margin:"0 auto" });
+        $(args.modal.el).parents('.ui-dialog').css({ width: 1000, left: "inherit", margin:"0 auto" });
     },
     
     move_selection: function(event) {
