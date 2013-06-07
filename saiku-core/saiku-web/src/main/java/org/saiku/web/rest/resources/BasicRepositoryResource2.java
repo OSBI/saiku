@@ -315,6 +315,57 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 		return Response.serverError().build();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.saiku.web.rest.resources.ISaikuRepository#saveResource(java.lang.String, java.lang.String)
+	 */
+	@POST
+	@Path("/resource/move")
+	public Response moveResource(@FormParam("source") String source, @FormParam("target") String target)
+	{
+		try {
+			if (source == null || source.startsWith("/") || source.startsWith(".")) {
+				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + source);
+			}
+			if (target == null || target.startsWith("/") || target.startsWith(".")) {
+				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + target);
+			}
+			
+			String username = sessionService.getAllSessionObjects().get("username").toString();
+			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
+			FileObject targetFile = repo.resolveFile(target);
+
+			if ( !acl.canWrite(target,username, roles) ) {
+				return Response.serverError().status(Status.FORBIDDEN)
+							.entity("You don't have permissions to save here!")
+								.type("text/plain").build();
+			}
+
+			if (targetFile == null) throw new Exception("Repo File not found");
+
+			if (targetFile.exists()) {
+				throw new Exception("Target file exists already. Cannot write: " + target);
+			}
+			
+			FileObject sourceFile = repo.resolveFile(source);
+			if ( !acl.canRead(source, username, roles) ) {
+				return Response.serverError().status(Status.FORBIDDEN).entity("You don't have permissions to read the source file: " + source).build();
+			}
+
+			if (!sourceFile.exists()) {
+				throw new Exception("Source file does not exist: " + source);
+			}
+			if (!sourceFile.canRenameTo(targetFile)) {
+				throw new Exception("Cannot rename " + source + " to " + target);
+			}
+			sourceFile.moveTo(targetFile);
+			return Response.ok().build();
+		} catch(Exception e){
+			log.error("Cannot move resource from " + source + " to " + target ,e);
+			return Response.serverError().entity("Cannot move resource from " + source + " to " + target + " ( " + e.getMessage() + ")").type("text/plain").build();
+		}
+		
+	}
+	
 	private List<IRepositoryObject> getRepositoryObjects(FileObject root, String fileType) throws Exception {
 		List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
 		for (FileObject file : root.getChildren()) {
