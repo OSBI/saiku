@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.UUID;
 
 import mondrian.rolap.RolapConnection;
 
@@ -135,8 +136,10 @@ public class OlapQueryService implements Serializable {
 			SaikuCube scube = qd.getFakeCube(xml);
 			OlapConnection con = olapDiscoverService.getNativeConnection(scube.getConnectionName());
 			IQuery query = qd.unparse(xml, con);
+			// TODO - this is not good! could lead to duplicate queries
 			if (name == null) {
-				putIQuery(query.getName(), query);
+				name = UUID.randomUUID().toString();
+				putIQuery(name, query);
 			}
 			else {
 				putIQuery(name, query);
