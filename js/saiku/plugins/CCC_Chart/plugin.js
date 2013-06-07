@@ -567,7 +567,7 @@ $(this.el).prepend(" pvc (" + (this.med3 - this.med) + ")" );
         if (isIE || isBig) {
             $(this.el).find('.canvas_wrapper').show();
         } else {
-            $(this.el).find('.canvas_wrapper').fadeIn(600);
+            $(this.el).find('.canvas_wrapper').fadeIn(400);
         }
         return false;
     },
