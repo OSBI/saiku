@@ -202,7 +202,7 @@ public class QueryProperties {
 			String key = this.key;
 			String value = Boolean.FALSE.toString();
 			try {
-				query.getAxis(Axis.COLUMNS).clearFilter();
+				query.getAxis(Axis.COLUMNS).getFilterCondition();
 				value = Boolean.TRUE.toString();
 			} catch (Error e) {
 				
