@@ -54,8 +54,6 @@ var Chart = Backbone.View.extend({
         //$('<div id="nav_' + this.id + '">' + "<input type='submit' class='keep' value='keep only selected' />" + '</div>').appendTo($(this.el));
         $('<div class="canvas_wrapper" style="display:none;"><div id="canvas_' + this.id + '"></div></div>').appendTo($(this.el));
         
-
-        this.processing = $('<div id="processing_' + this.id + '" class="processing_chart"><span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span></div>');
         this.cccOptions.canvas = 'canvas_' + this.id;
         this.cccOptions = this.getQuickOptions(this.cccOptions);
 
@@ -72,7 +70,6 @@ var Chart = Backbone.View.extend({
             self.data.resultset = [];
             self.data.metadata = [];
             $(self.el).find('.canvas_wrapper').hide();
-            self.processing.show();
             return false;
         });
 
@@ -90,7 +87,6 @@ var Chart = Backbone.View.extend({
         this.nav =$(pseudoForm);
 
         $(this.el).append(this.nav);
-        $(this.el).append(this.processing);
 
         /*
         // Create navigation
@@ -145,6 +141,7 @@ var Chart = Backbone.View.extend({
         */
 
     },
+
 
     block_ui: function() {
         if (! $(this.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
@@ -559,7 +556,8 @@ $(this.el).prepend(" pvc (" + (this.med3 - this.med) + ")" );
         } catch (e) {
             $(this.el).text("Could not render chart");
         }
-        this.processing.hide();
+        this.workspace.processing.hide();
+        this.workspace.adjust();
         if (animate) {
             return false;
         }
@@ -587,9 +585,18 @@ $(this.el).prepend(" pvc (" + (this.med3 - this.med) + ")" );
         this.data.height = 0;
         this.data.width = 0;
 
-        if (typeof args.data == "undefined" || args.data == null || args.data.cellset == null ) {
-            return false;
+        if (typeof args == "undefined" || typeof args.data == "undefined" || !$(this.el).is(':visible')) {
+            return;
         }
+
+        if (args.data != null && args.data.error != null) {
+            return this.workspace.error(args);
+        }        
+        // Check to see if there is data
+        if (args.data == null || (args.data.cellset && args.data.cellset.length === 0)) {
+            return this.workspace.no_results(args);
+        }
+
         var cellset = args.data.cellset;
         if (cellset && cellset.length > 0) {
 /* DEBUGGING
@@ -687,7 +694,8 @@ $(this.el).prepend(" | chart process");
             this.render_chart();
         } else {
             $(this.el).find('.canvas_wrapper').text("No results").show();
-            this.processing.hide();
+            this.workspace.processing.hide();
+            this.workspace.adjust();
         }
     }
 });

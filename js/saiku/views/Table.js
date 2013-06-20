@@ -21,7 +21,6 @@ var Table = Backbone.View.extend({
     tagName: "table",
 
     events: {
-        'click .cancel': 'cancel',
         'click th.row' : 'clicked_cell',
         'click th.col' : 'clicked_cell'
     },
@@ -30,7 +29,7 @@ var Table = Backbone.View.extend({
         this.workspace = args.workspace;
         
         // Bind table rendering to query result event
-        _.bindAll(this, "render", "process_data", "cancelled", "cancel");
+        _.bindAll(this, "render", "process_data");
         this.workspace.bind('query:result', this.render);
     },
     
@@ -218,40 +217,18 @@ var Table = Backbone.View.extend({
 
     render: function(args, block) {
 
-        $(this.workspace.el).find(".workspace_results_info").empty();
-
         if (typeof args == "undefined" || typeof args.data == "undefined" || !$(this.el).is(':visible')) {
             return;
         }
 
         if (args.data != null && args.data.error != null) {
-            return this.error(args);
-        }
-
-        
+            return;
+        }        
         // Check to see if there is data
         if (args.data == null || (args.data.cellset && args.data.cellset.length === 0)) {
-            return this.no_results(args);
+            return;
         }
 
-        
-        // Clear the contents of the table
-        var cdate = new Date().getHours() + ":" + new Date().getMinutes();
-        var runtime = args.data.runtime != null ? (args.data.runtime / 1000).toFixed(2) : "";
-        /*
-        var info = '<b>Time:</b> ' + cdate 
-                + " &emsp;<b>Rows:</b> " + args.data.height 
-                + " &emsp;<b>Columns:</b> " + args.data.width 
-                + " &emsp;<b>Duration:</b> " + runtime + "s";
-*/
-var info = '<b><span class="i18n">Info:</span></b> &nbsp;' + cdate 
-                + "&emsp;/ &nbsp;" + args.data.width 
-                + " x " + args.data.height 
-                + "&nbsp; / &nbsp;" + runtime + "s";
-        $(this.workspace.el).find(".workspace_results_info")
-            .html(info);
-        this.workspace.adjust();
-        //Saiku.i18n.translate();
         $(this.el).html('<tr><td>Rendering ' + args.data.width + ' columns and ' + args.data.height + ' rows...</td></tr>');
 
         // Render the table without blocking the UI thread
@@ -392,7 +369,8 @@ var info = '<b><span class="i18n">Info:</span></b> &nbsp;' + cdate
             contents += "</tr>";
             
         }
-
+        this.workspace.processing.hide();
+        this.workspace.adjust();
         // Append the table
         $(this.el).html(contents);
         this.post_process();
@@ -403,21 +381,5 @@ var info = '<b><span class="i18n">Info:</span></b> &nbsp;' + cdate
             $(this.el).find('th.row, th.col').addClass('headerhighlight');
         }
         this.workspace.trigger('table:rendered', this);
-    },
-
-    cancel: function(event) {
-        this.workspace.query.action.del("/result", {success: this.cancelled } );
-    },
-    
-    cancelled: function(args) {
-        $(this.el).html('<tr><td><span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Canceling Query...</span> </td></tr>');
-    },
-
-    no_results: function(args) {
-        $(this.el).html('<tr><td><span class="i18n">No Results</span> </td></tr>');
-    },
-    
-    error: function(args) {
-        $(this.el).html('<tr><td>' + safe_tags_replace(args.data.error) + '</td></tr>');
     }
 });

@@ -25,7 +25,8 @@ var Workspace = Backbone.View.extend({
         'change .cubes': 'new_query',
         'drop .sidebar': 'remove_dimension',
         'drop .workspace_results': 'remove_dimension',
-        'click .refresh_cubes' : 'refresh'
+        'click .refresh_cubes' : 'refresh',
+        'click .cancel' : 'cancel'
     },
     
     initialize: function(args) {
@@ -37,6 +38,7 @@ var Workspace = Backbone.View.extend({
         _.extend(this, Backbone.Events);
         this.loaded = false;
         this.bind('dimensions:loaded',this.populate_selections);
+        this.bind('query:result',this.render_result);
 
         // Generate toolbar and append to workspace
         this.toolbar = new WorkspaceToolbar({ workspace: this });
@@ -91,6 +93,7 @@ var Workspace = Backbone.View.extend({
         // Load template
         $(this.el).html(this.template());
         
+        this.processing = $(this.el).find('.query_processing');
         // Show toolbar
         $(this.el).find('.workspace_toolbar').append($(this.toolbar.el));
         
@@ -159,12 +162,13 @@ var Workspace = Backbone.View.extend({
         
         // Adjust the dimensions of the results window
         var editorHeight = $(this.el).find('.workspace_editor').is(':hidden') ? 0 : $(this.el).find('.workspace_editor').height();
+        var processingHeight = $(this.el).find('.query_processing').is(':hidden') ? 0 : $(this.el).find('.query_processing').height() + 62;
 
         $(this.el).find('.workspace_results').css({
             height: $("body").height() - heightReduction -
                 $(this.el).find('.workspace_toolbar').height() - 
                 $(this.el).find('.workspace_results_info').height() - 
-                editorHeight - 20
+                editorHeight - processingHeight - 20
         });
         
         // Fire off the adjust event
@@ -201,6 +205,7 @@ var Workspace = Backbone.View.extend({
             this.query.name = undefined;
         }
         this.clear();
+        this.processing.hide();
         Saiku.session.trigger('workspace:clear', { workspace: this });
 
         // Initialize the new query
@@ -549,5 +554,51 @@ var Workspace = Backbone.View.extend({
         if (this.query.get('type') == "QM") {
             this.drop_zones.remove_dimension(event, ui);
         }
+    },
+
+    render_result: function(args) {
+
+        $(this.el).find(".workspace_results_info").empty();
+
+        if (args.data != null && args.data.error != null) {
+            return this.error(args);
+        }        
+        // Check to see if there is data
+        if (args.data == null || (args.data.cellset && args.data.cellset.length === 0)) {
+            return this.no_results(args);
+        }
+
+        var cdate = new Date().getHours() + ":" + new Date().getMinutes();
+        var runtime = args.data.runtime != null ? (args.data.runtime / 1000).toFixed(2) : "";
+        /*
+        var info = '<b>Time:</b> ' + cdate 
+                + " &emsp;<b>Rows:</b> " + args.data.height 
+                + " &emsp;<b>Columns:</b> " + args.data.width 
+                + " &emsp;<b>Duration:</b> " + runtime + "s";
+        */
+        var info = '<b><span class="i18n">Info:</span></b> &nbsp;' + cdate 
+                + "&emsp;/ &nbsp;" + args.data.width 
+                + " x " + args.data.height 
+                + "&nbsp; / &nbsp;" + runtime + "s";
+
+        $(this.el).find(".workspace_results_info").html(info);
+        this.adjust();
+        return;
+    },
+
+    cancel: function(event) {
+        this.query.action.del("/result", {success: this.cancelled } );
+    },
+    
+    cancelled: function(args) {
+        this.processing.html('<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Canceling Query...</span>').show();
+    },
+
+    no_results: function(args) {
+        this.processing.html('<span class="i18n">No Results</span>').show();
+    },
+    
+    error: function(args) {
+        this.processing.html(safe_tags_replace(args.data.error)).show();
     }
 });

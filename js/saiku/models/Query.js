@@ -108,9 +108,9 @@ var Query = Backbone.Model.extend({
                 }
             }
             if (rows == 0 || columns == 0) {
-                $(this.workspace.table.el)
-                    .html('<tr><td><span class="i18n">You need to put at least one level or measure on Columns and Rows for a valid query.</span></td></tr>');
-                $(this.workspace.chart.processing).hide();
+                $(this.workspace.table.el).html('');
+                $(this.workspace.processing).html('<span class="i18n">You need to put at least one level or measure on Columns and Rows for a valid query.</span>').show();
+                this.workspace.adjust();
                 Saiku.i18n.translate();
                 return;
             }
@@ -119,7 +119,9 @@ var Query = Backbone.Model.extend({
 
         // Run it
         $(this.workspace.table.el)
-            .html('<tr><td><span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span> [&nbsp;<a class="cancel i18n" href="#cancel">Cancel</a>&nbsp;]</td></tr>');
+            .html('');
+        $(this.workspace.processing).html('<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span> [&nbsp;<a class="cancel i18n" href="#cancel">Cancel</a>&nbsp;]').show();
+        this.workspace.adjust();
         this.workspace.trigger('query:fetch');
 		Saiku.i18n.translate();
             // <a class="cancel" href="#cancel">x</a>

@@ -153,13 +153,13 @@ var Statistics = Backbone.View.extend({
             return;
         }
         if (args.data != null && args.data.error != null) {
-            return this.error(args);
+            $(this.el).empty();
         }
 
         
         // Check to see if there is data
         if (args.data == null || (args.data.cellset && args.data.cellset.length === 0)) {
-            return this.no_results(args);
+            $(this.el).empty();
         }
 
         if (args.data && args.data.cellset && args.data.cellset.length > 0) {
@@ -216,8 +216,10 @@ var Statistics = Backbone.View.extend({
                 }
             }
             this.data.height = this.data.resultset.length;
+            this.workspace.processing.hide();
             this.render();
         } else {
+            $(this.el).empty();
             this.no_results();
         }
     },

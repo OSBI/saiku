@@ -998,6 +998,12 @@ span.clear_axis {
 .workspace_editor .editor_info {
     color: #999999;
 }
+.query_processing {
+  border: 1px dashed #CCC;
+  margin: 15px;
+  overflow: hidden;
+  padding: 15px;
+}
 /** Workspace Results */
 .workspace_results_info {
     color: #999999;
