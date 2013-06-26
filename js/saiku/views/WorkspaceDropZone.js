@@ -74,8 +74,8 @@ var WorkspaceDropZone = Backbone.View.extend({
         if (this.workspace.query.get('type') != 'QM' || Settings.MODE == "view") {
             return false;
         }
-        $target =  $(event.target).hasClass('limit') ? $(event.target) : $(event.target).parent();
-        $axis = $target.siblings('.fields_list_body');
+        var $target =  $(event.target).hasClass('limit') ? $(event.target) : $(event.target).parent();
+        var $axis = $target.siblings('.fields_list_body');
         var source = "";
         var target = "ROWS";
         if ($axis.hasClass('rows')) { target = "ROWS";  }
@@ -387,8 +387,8 @@ var WorkspaceDropZone = Backbone.View.extend({
             if (this.workspace.query.get('type') != 'QM' || Settings.MODE == "view") {
                 return false;
             }
-            $target =  $(event.target);
-            $axis = $target.siblings('.fields_list_body');
+            var $target =  $(event.target);
+            var $axis = $target.siblings('.fields_list_body');
             var source = "";
             var target = "";
             if ($axis.hasClass('rows')) { target = "ROWS";  }
@@ -408,7 +408,7 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
 
     sort_measure: function(event, ui) {
-        $axis = $(event.target).parent().parents('.fields_list_body');
+        var $axis = $(event.target).parent().parents('.fields_list_body');
         var source = "";
         var target = "ROWS";
         
@@ -480,7 +480,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         }
         */
         
-        $axis = ui.item.parents('.fields_list_body');
+        var $axis = ui.item.parents('.fields_list_body');
         var target = "";
         
         if ($axis.hasClass('rows')) target = "ROWS";
@@ -552,7 +552,7 @@ var WorkspaceDropZone = Backbone.View.extend({
     
     move_dimension: function(event, ui, target) {
         if (! ui.item.hasClass('deleted')) {
-            $axis = ui.item.parents('.fields_list_body');
+            var $axis = ui.item.parents('.fields_list_body');
 
             // Notify the model of the change
             var dimension = ui.item.find('a').attr('href').replace('#', '').split('/')[0];
@@ -659,14 +659,15 @@ var WorkspaceDropZone = Backbone.View.extend({
 
         $(ui.item).remove();
 
-        $(this.workspace.el).find('.fields_list_body').each(function(index, element) {
-            $axis = $(element);
+        $(this.workspace.el).find('.fields_list_body').each(function(idx, ael) {
+            var $axis = $(ael);
             if ($axis.find('li').length == 0) {
                 $axis.siblings('.clear_axis').addClass('hide');
             } else {
                 $axis.siblings('.clear_axis').removeClass('hide');
             }
         });
+        return false;
     },
 
 
