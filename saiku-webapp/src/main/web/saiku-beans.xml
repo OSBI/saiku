@@ -94,4 +94,6 @@
 	</bean>
 
 
+	<bean id="statsBean" scope="singleton" class="org.saiku.web.rest.resources.StatisticsResource" />
+	
 </beans>
