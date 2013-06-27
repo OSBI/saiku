@@ -264,7 +264,7 @@ var SelectionsModal = Modal.extend({
             $(this.el).find('.used_selections option')
                 .each(function(i, selection) {
                 var value = show_u ? 
-                    $(selection).text() : decodeURIComponent($(selection).val());
+                    encodeURIComponent($(selection).text()) : $(selection).val();
                 updates.push({
                     uniquename: value,
                     type: 'member',

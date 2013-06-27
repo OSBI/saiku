@@ -71,21 +71,21 @@ var Table = Backbone.View.extend({
 
             var keep_payload = JSON.stringify(
                 {
-                    "hierarchy"     :  h,
-                    "uniquename"    : l,
+                    "hierarchy"     :  encodeURIComponent(h),
+                    "uniquename"    : encodeURIComponent(l),
                     "type"          : "level",
                     "action"        : "delete"
                 }) 
             + "," +JSON.stringify(
                 {
-                    "hierarchy"     :  h,
-                    "uniquename"    : cell.properties.uniquename,
+                    "hierarchy"     :  encodeURIComponent(h),
+                    "uniquename"    : encodeURIComponent(cell.properties.uniquename),
                     "type"          : "member",
                     "action"        : "add"
                 }       
             );
 
-            var children_payload = cell.properties.uniquename;
+            var children_payload = encodeURIComponent(cell.properties.uniquename);
 
             var levels = [];
             var items = {};
@@ -118,8 +118,8 @@ var Table = Backbone.View.extend({
                                 items[level.name] = {
                                     name: level.caption,
                                     payload: JSON.stringify({
-                                        "hierarchy"     : h,
-                                        uniquename    : level.uniqueName,
+                                        "hierarchy"     : encodeURIComponent(h),
+                                        uniquename    : encodeURIComponent(level.uniqueName),
                                         type          : "level",
                                         action        : "add"
                                     })
@@ -129,8 +129,8 @@ var Table = Backbone.View.extend({
                                     items["remove-" + level.name] = {
                                         name: level.caption,
                                         payload: JSON.stringify({
-                                            "hierarchy"     :  h,
-                                            uniquename    : level.uniqueName,
+                                            "hierarchy"     :  encodeURIComponent(h),
+                                            uniquename    : encodeURIComponent(level.uniqueName),
                                             type          : "level",
                                             action        : "delete"
                                         })
