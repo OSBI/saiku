@@ -16,6 +16,7 @@
 package org.saiku.web.rest.resources;
 
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -1072,10 +1073,14 @@ public class QueryResource {
 			@PathParam("dimension") String dimensionName, 
 			@FormParam("member") String uniqueMemberName)
 	{
-		if (log.isDebugEnabled()) {
-			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/children/"+uniqueMemberName+"\tPOST");
-		}
+		
 		try{
+			dimensionName = URLDecoder.decode(dimensionName, "UTF-8");
+			uniqueMemberName = URLDecoder.decode(uniqueMemberName, "UTF-8");
+			if (log.isDebugEnabled()) {
+				log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/children/"+uniqueMemberName+"\tPOST");
+			}
+
 			boolean ret = olapQueryService.includeChildren(queryName, dimensionName, uniqueMemberName);
 			if(ret == true){
 				return Response.ok().status(Status.CREATED).build();
@@ -1102,6 +1107,9 @@ public class QueryResource {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/children/"+uniqueMemberName+"\tDELETE");
 		}
 		try{
+			dimensionName = URLDecoder.decode(dimensionName, "UTF-8");
+			uniqueMemberName = URLDecoder.decode(uniqueMemberName, "UTF-8");
+			
 			boolean ret = olapQueryService.includeChildren(queryName, dimensionName, uniqueMemberName);
 			if(ret == true){
 				return Response.ok().status(Status.CREATED).build();

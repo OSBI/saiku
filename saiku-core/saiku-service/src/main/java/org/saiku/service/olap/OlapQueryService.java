@@ -32,10 +32,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
 import mondrian.rolap.RolapConnection;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.olap4j.AllocationPolicy;
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
@@ -105,6 +107,8 @@ public class OlapQueryService implements Serializable {
 
 	private Map<String, IQuery> queries = new HashMap<String, IQuery>(); 
 
+	private static final AtomicLong ID_GENERATOR = new AtomicLong();
+	
 	public void setOlapDiscoverService(OlapDiscoverService os) {
 		olapDiscoverService = os;
 	}
@@ -206,19 +210,26 @@ public class OlapQueryService implements Serializable {
 	}
 
 	public CellDataSet execute(String queryName, ICellSetFormatter formatter) {
+		String runId = "runId:" + ID_GENERATOR.getAndIncrement();
 		try {
 //			System.out.println("Execute: ID " + Thread.currentThread().getId() + " Name: " + Thread.currentThread().getName());
 			IQuery query = getIQuery(queryName);
 			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
+			
+			
 			Long start = (new Date()).getTime();
 			if (query.getScenario() != null) {
-				log.info("Query (" + queryName + ") Setting scenario:" + query.getScenario().getId());
+				log.info(runId + "\tQuery: " + query.getName() + " Setting scenario:" + query.getScenario().getId());
 				con.setScenario(query.getScenario());
 			}
 
 			if (query.getTag() != null) {
 				query = applyTag(query, con, query.getTag());
 			}
+			
+			String mdx = query.getMdx();
+	        log.info(runId + "\tType:" + query.getType() + ":\n" + mdx);
+			
 			CellSet cellSet =  query.execute();
 			Long exec = (new Date()).getTime();
 
@@ -229,15 +240,23 @@ public class OlapQueryService implements Serializable {
 
 			CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cellSet,formatter);
 			Long format = (new Date()).getTime();
-			log.info("Size: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
+			log.info(runId + "\tSize: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
 					+ "ms\tFormat:\t" + (format - exec) + "ms\t Total: " + (format - start) + "ms");
 			result.setRuntime(new Double(format - start).intValue());
 			getIQuery(queryName).storeCellset(cellSet);
 			return result;
 		} catch (Exception e) {
-			throw new SaikuServiceException("Can't execute query: " + queryName,e);
+			if (log.isInfoEnabled()) {
+				String error = ExceptionUtils.getRootCauseMessage(e);
+				log.info(runId + "\tException: " + error); 
+			}
+			throw new SaikuServiceException(runId + "\tCan't execute query: " + queryName,e);
 		} catch (Error e) {
-			throw new SaikuServiceException("Can't execute query: " + queryName,e);
+			if (log.isInfoEnabled()) {
+				String error = ExceptionUtils.getRootCauseMessage(e);
+				log.info(runId + "\tError: " + error); 
+			}
+			throw new SaikuServiceException(runId + "\tCan't execute query: " + queryName,e);
 		}
 	}
 	

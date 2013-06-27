@@ -246,7 +246,7 @@ public class OlapQuery implements IQuery {
     	
         String mdx = getMdx();
         
-        log.debug("Executing query (" + this.getName() + ") :\n" + mdx);
+        log.trace("Executing query (" + this.getName() + ") :\n" + mdx);
         
         final Catalog catalog = query.getCube().getSchema().getCatalog();
         this.connection.setCatalog(catalog.getName());
