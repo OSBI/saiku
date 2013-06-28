@@ -123,7 +123,7 @@ var SelectionsModal = Modal.extend({
             var selected_members_opts = "";
             for (var j = 0; j < this.selected_members.length; j++) {
                 var member = this.selected_members[j];
-                if (encodeURIComponent(member.levelUniqueName) == this.member.level &&
+                if (member.levelUniqueName == decodeURIComponent(this.member.level) && 
                     member.type == "MEMBER") {
                     selected_members_opts += '<option value="' + encodeURIComponent(member.uniqueName) + '">' + member.caption + "</option>";
                     used_members.push(member.caption);
@@ -245,8 +245,8 @@ var SelectionsModal = Modal.extend({
 
         // Determine updates
         var updates = [{
-            hierarchy: this.member.hierarchy,
-            uniquename: this.member.level,
+            hierarchy: decodeURIComponent(this.member.hierarchy),
+            uniquename: decodeURIComponent(this.member.level),
             type: 'level',
             action: 'delete'
         }];
@@ -254,8 +254,8 @@ var SelectionsModal = Modal.extend({
         // If no selections are used, add level
         if ($(this.el).find('.used_selections option').length === 0) {
             updates.push({
-                hierarchy: this.member.hierarchy,
-                uniquename: this.member.level,
+                hierarchy: decodeURIComponent(this.member.hierarchy),
+                uniquename: decodeURIComponent(this.member.level),
                 type: 'level',
                 action: 'add'
             });
@@ -266,7 +266,7 @@ var SelectionsModal = Modal.extend({
                 var value = show_u ? 
                     encodeURIComponent($(selection).text()) : $(selection).val();
                 updates.push({
-                    uniquename: value,
+                    uniquename: decodeURIComponent(value),
                     type: 'member',
                     action: 'add'
                 });
