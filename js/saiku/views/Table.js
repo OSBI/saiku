@@ -97,7 +97,7 @@ var Table = Backbone.View.extend({
             var dimsel = {};
             var used_levels = [];
 
-            self.workspace.query.action.get("/axis/" + axis + "/dimension/" + d, { 
+            self.workspace.query.action.get("/axis/" + axis + "/dimension/" + encodeURIComponent(d), { 
                         success: function(response, model) {
                             dimsel = model;
                         },
@@ -184,10 +184,10 @@ var Table = Backbone.View.extend({
             }
             return {
                 callback: function(key, options) {
-                    var url = '/axis/' + axis + '/dimension/' + d;
+                    var url = '/axis/' + axis + '/dimension/' + encodeURIComponent(d);
                     var children = false;
                     if (key.indexOf("children") > 0) {
-                        url = '/axis/' + axis + '/dimension/' + d + "/children";
+                        url = '/axis/' + axis + '/dimension/' + encodeURIComponent(d) + "/children";
                         children = true;
                     }
                     if (children) {
