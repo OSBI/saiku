@@ -364,7 +364,7 @@ public class OlapMetaExplorer {
 			throw new SaikuOlapException("Cannot get measures for cube:"+cube.getName(),e);
 		}
 		
-		Collections.sort(measures, new SaikuMemberCaptionComparator());
+//		Collections.sort(measures, new SaikuMemberCaptionComparator());
 		return measures;
 	}
 
