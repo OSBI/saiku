@@ -305,10 +305,10 @@ public class QueryResource {
 		}
 		try {
 			byte[] doc = olapQueryService.getExport(queryName,"xls",format);
-			String name = SaikuProperties.webExportExcelName;
+			String name = SaikuProperties.webExportExcelName + "." + SaikuProperties.webExportExcelFormat;
 			return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
 					"content-disposition",
-					"attachment; filename = " + name + ".xls").header(
+					"attachment; filename = " + name).header(
 							"content-length",doc.length).build();
 		}
 		catch (Exception e) {
