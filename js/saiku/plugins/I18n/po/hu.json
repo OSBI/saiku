@@ -86,5 +86,11 @@
    "Properties":"Tulajdonságok",
    "Mode:":"Mód",
    "Multiple Bar Chart":"Többoszlopos",
-   "Chart Type:  ":"Diagram típus"
+   "Chart Type:  ":"Diagram típus",
+   "Unsaved query":"Nem mentett lekérdezés",
+   "Export":"Export",
+   "Clear Axis":"Tengelyek törlése",
+   "New":"Új",
+   "Close This":"Aktuális bezárása",
+   "Close Others":"Többi bezárása"
 }
