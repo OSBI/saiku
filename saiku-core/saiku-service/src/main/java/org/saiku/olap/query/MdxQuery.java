@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 public class MdxQuery implements IQuery {
 
 	private static final Logger log = LoggerFactory.getLogger(MdxQuery.class);
-	
+
 	private Properties properties = new Properties();
 	private String mdx;
 	private SaikuCube cube;
@@ -56,14 +56,14 @@ public class MdxQuery implements IQuery {
 	private Scenario scenario;
 	private CellSet cellset;
 	private OlapStatement statement;
-	
+
 	public MdxQuery(OlapConnection con, SaikuCube cube, String name, String mdx) {
 		this.cube = cube;
 		this.connection = con;
 		this.name = name;
 		this.mdx = mdx;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -87,60 +87,69 @@ public class MdxQuery implements IQuery {
 		return cube;
 	}
 
-    public String getMdx() {
-        return mdx;
-    }
-    
-    public void setMdx(String mdx) {
-    	this.mdx = mdx;
-    }
+	public String getMdx() {
+		return mdx;
+	}
+
+	public void setMdx(String mdx) {
+		this.mdx = mdx;
+	}
 
 	public void resetQuery() {
 		this.mdx = "";
 	}
-    
-    public void setProperties(Properties props) {
-    	this.properties.putAll(props);
-    }
-    
-    public Properties getProperties() {
-    	Properties props = new Properties(this.properties);
-    	props.put(QueryProperties.KEY_IS_DRILLTHROUGH, isDrillThroughEnabled().toString());
-    	props.put("org.saiku.connection.scenario", Boolean.toString(false));
-    	try {
-    		props.put("org.saiku.query.explain", Boolean.toString(connection.isWrapperFor(RolapConnection.class)));
-    	} catch (Exception e) {
-    		props.put("org.saiku.query.explain", Boolean.toString(false));
-    	}
-    	return props;
-    }
-    
-    public String toXml() {
-    	QuerySerializer qs = new QuerySerializer(this);
-    	return qs.createXML();
-    }
-    
-    public Boolean isDrillThroughEnabled() {
-    	try {
-    		Cube cube = getCube();
-    		return (cube != null && cube.isDrillThroughEnabled());
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	};
-    	return false;
-    }
+
+	public void setProperties(Properties props) {
+		this.properties.putAll(props);
+	}
+
+	public Properties getProperties() {
+		Properties props = new Properties(this.properties);
+		props.put(QueryProperties.KEY_IS_DRILLTHROUGH, isDrillThroughEnabled().toString());
+		props.put("org.saiku.connection.scenario", Boolean.toString(false));
+		try {
+			props.put("org.saiku.query.explain", Boolean.toString(connection.isWrapperFor(RolapConnection.class)));
+		} catch (Exception e) {
+			props.put("org.saiku.query.explain", Boolean.toString(false));
+		}
+		return props;
+	}
+
+	public String toXml() {
+		QuerySerializer qs = new QuerySerializer(this);
+		return qs.createXML();
+	}
+
+	public Boolean isDrillThroughEnabled() {
+		try {
+			Cube cube = getCube();
+			return (cube != null && cube.isDrillThroughEnabled());
+		} catch (Exception e) {
+			e.printStackTrace();
+		};
+		return false;
+	}
 
 	public CellSet execute() throws Exception {
-		OlapConnection con = connection;
-		con.setCatalog(getSaikuCube().getCatalogName());
-		OlapStatement stmt = con.createStatement();
-		this.statement = stmt;
-		CellSet cs = stmt.executeOlapQuery(mdx);
-		if (statement != null) {
-			statement.close();
+		try {
+			if (statement != null) {
+				statement.close();
+				statement = null;
+			}
+
+			OlapConnection con = connection;
+			con.setCatalog(getSaikuCube().getCatalogName());
+			OlapStatement stmt = con.createStatement();
+			this.statement = stmt;
+			CellSet cs = stmt.executeOlapQuery(mdx);
+			
+			return cs;
+		} finally {
+			if (statement != null) {
+				statement.close();
+				statement = null;
+			}
 		}
-		this.statement = null;
-		return cs;
 	}
 
 	public QueryType getType() {
@@ -164,47 +173,49 @@ public class MdxQuery implements IQuery {
 	}
 
 	public Cube getCube() {
-        final MdxParserFactory parserFactory =
-            connection.getParserFactory();
-        MdxParser mdxParser =
-            parserFactory.createMdxParser(connection);
-        MdxValidator mdxValidator =
-            parserFactory.createMdxValidator(connection);
+		final MdxParserFactory parserFactory =
+				connection.getParserFactory();
+		MdxParser mdxParser =
+				parserFactory.createMdxParser(connection);
+		MdxValidator mdxValidator =
+				parserFactory.createMdxValidator(connection);
 
-        String mdx = getMdx();
-    	try {
+		String mdx = getMdx();
+		try {
 
-        if (mdx != null && mdx.length() > 0 && mdx.toUpperCase().contains("FROM")) {
-        	SelectNode select =
-        		mdxParser.parseSelect(getMdx());
-        		select = mdxValidator.validateSelect(select);
-        		CubeType cubeType = (CubeType) select.getFrom().getType();
-        		return cubeType.getCube();
-        }
-    	} catch (Exception e) {
-    		log.debug("Parsing MDX to get the Cube failed. Using fallback scenario.", e);
-    	}
-    	try {
-		// ok seems like we failed to get the cube, lets try it differently
-    	if (connection != null && mdx != null && mdx.length() > 0) {
-    		for (Database db : connection.getOlapDatabases()) {
-    			Catalog cat = db.getCatalogs().get(cube.getCatalogName());
-    			if (cat != null) {
-    				for (Schema schema : cat.getSchemas()) {
-    					for (Cube cub : schema.getCubes()) {
-    						if (cub.getName().equals(cube.getName()) || cub.getUniqueName().equals(cube.getName())) {
-    							return cub;
-    						}
-    					}
-    				}
-    			}
-    		}
-    	}
-    	} catch (OlapException e) {
-    		e.printStackTrace();
+			if (mdx != null && mdx.length() > 0 && mdx.toUpperCase().contains("FROM")) {
+				SelectNode select =
+						mdxParser.parseSelect(getMdx());
+				select = mdxValidator.validateSelect(select);
+				CubeType cubeType = (CubeType) select.getFrom().getType();
+				return cubeType.getCube();
+			}
+		} catch (Exception e) {
+			log.debug("Parsing MDX to get the Cube failed. Using fallback scenario.", e);
+		} finally {
+			mdxValidator = null;
+		}
+		try {
+			// ok seems like we failed to get the cube, lets try it differently
+			if (connection != null && mdx != null && mdx.length() > 0) {
+				for (Database db : connection.getOlapDatabases()) {
+					Catalog cat = db.getCatalogs().get(cube.getCatalogName());
+					if (cat != null) {
+						for (Schema schema : cat.getSchemas()) {
+							for (Cube cub : schema.getCubes()) {
+								if (cub.getName().equals(cube.getName()) || cub.getUniqueName().equals(cube.getName())) {
+									return cub;
+								}
+							}
+						}
+					}
+				}
+			}
+		} catch (OlapException e) {
+			e.printStackTrace();
 		}
 
-    	
+
 		return null;
 	}
 
@@ -231,7 +242,7 @@ public class MdxQuery implements IQuery {
 	public void clearAllQuerySelections() {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	public void clearAxis(String axisName) throws SaikuOlapException {
 		throw new UnsupportedOperationException();
 	}
@@ -239,7 +250,7 @@ public class MdxQuery implements IQuery {
 	public void setScenario(Scenario scenario) {
 		this.scenario = scenario;
 	}
-	
+
 	public Scenario getScenario() {
 		return scenario;
 	}
@@ -257,7 +268,7 @@ public class MdxQuery implements IQuery {
 
 	public void storeCellset(CellSet cs) {
 		this.cellset = cs;
-		
+
 	}
 
 	public CellSet getCellset() {
@@ -266,13 +277,13 @@ public class MdxQuery implements IQuery {
 
 	public void setStatement(OlapStatement os) {
 		this.statement = os;
-		
+
 	}
 
 	public OlapStatement getStatement() {
 		return this.statement;
 	}
-	
+
 	public void cancel() throws Exception {
 		if (this.statement != null && !this.statement.isClosed()) {
 			statement.close();
