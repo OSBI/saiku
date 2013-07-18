@@ -18,6 +18,7 @@ package org.saiku.olap.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
@@ -27,6 +28,7 @@ import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Measure;
 import org.olap4j.metadata.Member;
+import org.olap4j.metadata.MetadataElement;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
 import org.olap4j.query.Selection;
@@ -40,6 +42,7 @@ import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.olap.dto.SaikuSelection;
 import org.saiku.olap.dto.SaikuSelection.Type;
+import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.query.IQuery;
 import org.saiku.service.util.exception.SaikuServiceException;
 
@@ -251,6 +254,16 @@ public class ObjectUtil {
 		}
 		return new SaikuQuery(q.getName(), q.getSaikuCube(), axes, q.getMdx(), q.getType().toString(), q.getProperties());
 		
+	}
+
+	public static List<SimpleCubeElement> convert2Simple(Set<MetadataElement> mset) {
+		List<SimpleCubeElement> elements = new ArrayList<SimpleCubeElement>();
+		if (mset != null && mset.size() > 0) {
+			for (MetadataElement e : mset) {
+				elements.add(new SimpleCubeElement(e.getName(), e.getUniqueName(), e.getCaption()));
+			}
+		}
+		return elements;
 	}
 
 }

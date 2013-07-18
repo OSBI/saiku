@@ -86,6 +86,13 @@
 		<property name="path" value="res:saiku-repository" />
 	</bean>
 
+	<bean id="filterRepositoryBean" scope="session"
+		class="org.saiku.web.rest.resources.FilterRepositoryResource">
+		<property name="olapQueryService" ref="olapQueryBean" />
+		<property name="path" value="res:saiku-repository" />
+	</bean>
+
+
 
 	<bean id="exporterBean" scope="request"
 		class="org.saiku.web.rest.resources.ExporterResource">
