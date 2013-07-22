@@ -952,7 +952,6 @@ public class OlapQueryService implements Serializable {
 	public SaikuTag createTag(String queryName, String tagName, List<List<Integer>> cellPositions) {
 		try {
 			IQuery query = getIQuery(queryName);
-			SaikuCube cube = getQuery(queryName).getCube();
 			CellSet cs = query.getCellset();
 			List<SaikuTuple> tuples = new ArrayList<SaikuTuple>();
 			List<SimpleCubeElement> dimensions = new ArrayList<SimpleCubeElement>();
@@ -1039,6 +1038,9 @@ public class OlapQueryService implements Serializable {
 		Cube c = query.getCube();
 		Map<String, SaikuFilter> filteredMap = new HashMap<String, SaikuFilter>(); 
 		for (SaikuFilter sf : allFilters.values()) {
+			if (StringUtils.isBlank(sf.getName()) || sf.getDimension() == null)
+					continue;
+
 			String dimensionName = sf.getDimension().getName();
 			String hierarchyName = sf.getHierarchy().getName();
 			boolean hasDimension = c.getDimensions().indexOfName(dimensionName) >= 0;
@@ -1049,6 +1051,39 @@ public class OlapQueryService implements Serializable {
 		}
 		return filteredMap;
 	}
+	
+	public SaikuQuery applyFilter(String queryname, SaikuFilter filter) throws Exception {
+		IQuery query = getIQuery(queryname);
+		if (filter != null && filter.getName() != null && filter.getDimension() != null && filter.getMembers() != null) {
+			query.setFilter(filter);
+			QueryDimension qDim = query.getDimension(filter.getDimension().getName());
+
+			if (qDim != null) {
+				qDim.clearInclusions();
+				query.moveDimension(qDim, Axis.FILTER);
+				for (SimpleCubeElement member : filter.getMembers()) {
+					List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(member.getUniqueName()).getSegmentList();
+					qDim.include(memberList);
+				}
+			}
+		}
+		return ObjectUtil.convert(query);
+	}
+
+	public SaikuQuery removeFilter(String queryname) {
+		IQuery query = getIQuery(queryname);
+		if (query != null && query.getFilter() != null) {
+			SaikuFilter filter = query.getFilter();
+			QueryDimension qDim = query.getDimension(filter.getDimension().getName());
+			if (qDim != null) {
+				qDim.clearInclusions();
+				query.moveDimension(qDim, null);
+			}
+			query.removeFilter();
+		}
+		return ObjectUtil.convert(query);
+	}
+
 	
 	public void setTag(String queryName, SaikuTag tag) {
 		IQuery query = getIQuery(queryName);

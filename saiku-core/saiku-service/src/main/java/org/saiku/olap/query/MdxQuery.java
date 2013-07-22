@@ -40,6 +40,7 @@ import org.olap4j.query.QueryDimension;
 import org.olap4j.type.CubeType;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuTag;
+import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.olap.util.exception.SaikuOlapException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -289,5 +290,16 @@ public class MdxQuery implements IQuery {
 			statement.close();
 		}
 		this.statement = null;
+	}
+
+	public void setFilter(SaikuFilter filter) {
+		throw new UnsupportedOperationException();		
+	}
+
+	public SaikuFilter getFilter() {
+		return null;
+	}
+
+	public void removeFilter() {
 	}
 }

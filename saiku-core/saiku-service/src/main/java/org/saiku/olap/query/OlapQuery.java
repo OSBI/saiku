@@ -44,6 +44,7 @@ import org.olap4j.query.Selection;
 import org.olap4j.query.SortOrder;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuTag;
+import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.olap.query.QueryProperties.QueryProperty;
 import org.saiku.olap.query.QueryProperties.QueryPropertyFactory;
 import org.saiku.olap.util.SaikuProperties;
@@ -65,6 +66,8 @@ public class OlapQuery implements IQuery {
 	private Scenario scenario;
 
 	private SaikuTag tag = null;
+
+	private SaikuFilter filter;
 
 	private CellSet cellset = null;
 
@@ -391,6 +394,18 @@ public class OlapQuery implements IQuery {
 
 	public void removeTag() {
 		tag = null;		
+	}
+
+	public void setFilter(SaikuFilter filter) {
+		this.filter = filter;
+	}
+
+	public SaikuFilter getFilter() {
+		return this.filter;
+	}
+
+	public void removeFilter() {
+		this.filter = null;
 	}
 
 	public void storeCellset(CellSet cs) {

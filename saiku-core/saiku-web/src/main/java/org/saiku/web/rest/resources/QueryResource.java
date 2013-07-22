@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -55,6 +56,7 @@ import org.saiku.olap.dto.SaikuDimensionSelection;
 import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.olap.dto.SaikuTag;
+import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query.IQuery;
 import org.saiku.olap.util.ObjectUtil;
@@ -1225,6 +1227,75 @@ public class QueryResource {
 
 	}
 	
+
+	@GET
+	@Produces({"application/json" })
+	@Path("/{queryname}/filter")
+	public Response getFilter(
+			@PathParam("queryname") String queryName,			
+			@QueryParam("dimension") String dimension,
+			@QueryParam("hierarchy") String hierarchy,
+			@QueryParam("level") String level)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/filter\tGET");
+		}
+		try {
+			SaikuFilter t = olapQueryService.getFilter(queryName, "new", dimension, hierarchy, level);
+			return Response.ok(t).build();
+		}
+		catch (Exception e) {
+			log.error("Cannot get filter for query (" + queryName + ")",e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return Response.serverError().entity(error).build();
+		}
+	}
+
+	
+	@PUT
+	@Produces({"application/json" })
+	@Path("/{queryname}/filter")
+	public Response activateFilter(
+			@PathParam("queryname") String queryName,
+			@FormParam("filter") String filterJSON)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/tags\tPUT");
+		}
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+		    mapper.setVisibilityChecker(mapper.getVisibilityChecker().withFieldVisibility(Visibility.ANY));
+			SaikuFilter filter = mapper.readValue(filterJSON, SaikuFilter.class);
+			SaikuQuery sq = olapQueryService.applyFilter(queryName, filter);
+			return Response.ok(sq).build();
+		}
+		catch (Exception e) {
+			log.error("Cannot activate filter for query (" + queryName + "), json:" +  filterJSON, e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return Response.serverError().entity(error).build();
+		}
+
+	}
+	
+	@DELETE
+	@Produces({"application/json" })
+	@Path("/{queryname}/filter")
+	public Response deactivateFilter(@PathParam("queryname") String queryName)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/tags\tPUT");
+		}
+		try {
+			SaikuQuery sq = olapQueryService.removeFilter(queryName);
+			return Response.ok(sq).build();
+		}
+		catch (Exception e) {
+			log.error("Cannot remove filter for query (" + queryName + ")", e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return Response.serverError().entity(error).build();
+		}
+	}
+		
 	@POST
 	@Produces({"application/json" })
 	@Path("/{queryname}/axis/{axis}/sort/{sortorder}/{sortliteral}")

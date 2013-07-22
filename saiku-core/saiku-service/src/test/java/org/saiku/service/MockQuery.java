@@ -12,6 +12,7 @@ import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuTag;
+import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.olap.query.IQuery;
 import org.saiku.olap.util.exception.SaikuOlapException;
 
@@ -181,6 +182,18 @@ public class MockQuery implements IQuery {
 
 	}
 	public void clearAxis(String axisName) throws SaikuOlapException {
+		// TODO Auto-generated method stub
+		
+	}
+	public void setFilter(SaikuFilter filter) {
+		// TODO Auto-generated method stub
+		
+	}
+	public SaikuFilter getFilter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public void removeFilter() {
 		// TODO Auto-generated method stub
 		
 	}

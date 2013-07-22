@@ -27,6 +27,7 @@ import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuTag;
+import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.olap.util.exception.SaikuOlapException;
 
 public interface IQuery {
@@ -60,6 +61,9 @@ public interface IQuery {
 	public void setTag(SaikuTag tag);
 	public SaikuTag getTag();
 	public void removeTag();
+	public void setFilter(SaikuFilter filter);
+	public SaikuFilter getFilter();
+	public void removeFilter();
 	public void storeCellset(CellSet cs);
 	public CellSet getCellset();
 	public void setStatement(OlapStatement os);

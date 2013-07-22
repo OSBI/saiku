@@ -28,7 +28,9 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -48,6 +50,7 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.saiku.olap.dto.SaikuQuery;
+import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.service.olap.OlapQueryService;
 import org.slf4j.Logger;
@@ -141,6 +144,7 @@ public class FilterRepositoryResource {
 
 	@GET
 	@Produces({"application/json" })
+	@Path("/names/")
 	public Response getSavedFilterNames(@QueryParam("queryname") String queryName) 
 	{
 		try {
@@ -160,11 +164,24 @@ public class FilterRepositoryResource {
 
 	@GET
 	@Produces({"application/json" })
-	@Path("/details/")
-	public Response getSavedFilters(@QueryParam("queryname") String queryName) 
+	public Response getSavedFilters(
+			@QueryParam("query") String queryName,
+			@QueryParam("filtername") String filterName) 
 	{
 		try {
-			Map<String, SaikuFilter> allFilters = getFiltersInternal(queryName);
+			Map<String, SaikuFilter> allFilters = new HashMap<String, SaikuFilter>();
+			if (StringUtils.isNotBlank(queryName)) {
+				allFilters = getFiltersInternal(queryName);
+			} else if (StringUtils.isNotBlank(filterName)) {
+				allFilters = getFiltersInternal();
+				Map<String, SaikuFilter> singleFilter = new HashMap<String, SaikuFilter>();
+				if (allFilters.containsKey(filterName)) {
+					singleFilter.put(filterName, allFilters.get(filterName));
+					allFilters = singleFilter;
+				}
+			} else {
+				allFilters = getFiltersInternal();
+			}
 			return Response.ok(allFilters).build();
 		} catch(Exception e){
 			log.error("Cannot get filter details",e);
@@ -173,11 +190,34 @@ public class FilterRepositoryResource {
 		}
 	}
 	
+	@POST
+	@Produces({"application/json" })
+	@Path("/{filtername}")
+	public Response saveFilter(
+			@FormParam ("filter") String filterJSON)
+	{
+		try {
+			
+			ObjectMapper mapper = new ObjectMapper();
+		    mapper.setVisibilityChecker(mapper.getVisibilityChecker().withFieldVisibility(Visibility.ANY));
+			SaikuFilter filter = mapper.readValue(filterJSON, SaikuFilter.class);
+
+			Map<String, SaikuFilter> filters = getFiltersInternal();
+			filters.put(filter.getName(), filter);
+			serialize(filterFo, filters);
+			return Response.ok(filter).build();
+		}
+		catch (Exception e) {
+			log.error("Cannot save filter (" + filterJSON + ")",e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return Response.serverError().entity(error).build();
+		}
+	}
 
 
 	@DELETE
 	@Produces({"application/json" })
-	@Path("/name/{filtername}")
+	@Path("/{filtername}")
 	public Response deleteFilter(@PathParam("filtername") String filterName)
 	{
 		try{
@@ -187,37 +227,13 @@ public class FilterRepositoryResource {
 					filters.remove(filterName);
 				}
 				serialize(filterFo, filters);
-				return Response.ok(filters).status(Status.GONE).build();
+				return Response.ok(filters).status(Status.OK).build();
 
 			}
 			throw new Exception("Cannot delete filter :" + filterName );
 		}
 		catch(Exception e){
 			log.error("Cannot delete filter (" + filterName + ")",e);
-			String error = ExceptionUtils.getRootCauseMessage(e);
-			return Response.serverError().entity(error).build();
-		}
-	}
-
-	@GET
-	@Produces({"application/json" })
-	@Path("/name/{filter}")
-	public Response saveFilter(
-			@PathParam("filter") String filtername,
-			@QueryParam("queryname") String queryName,
-			@QueryParam("dimension") String dimension,
-			@QueryParam("hierarchy") String hierarchy,
-			@QueryParam("level") String level)
-	{
-		try {
-			SaikuFilter t = olapQueryService.getFilter(queryName, filtername, dimension, hierarchy, level);
-			Map<String, SaikuFilter> filters = getFiltersInternal();
-			filters.put(filtername, t);
-			serialize(filterFo, filters);
-			return Response.ok(t).build();
-		}
-		catch (Exception e) {
-			log.error("Cannot set filter (" + filtername + ")",e);
 			String error = ExceptionUtils.getRootCauseMessage(e);
 			return Response.serverError().entity(error).build();
 		}
