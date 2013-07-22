@@ -1588,6 +1588,86 @@ a.disabled_toolbar:hover {
 }
 
 
+/* Synchronized Filter Stuff */
+.filter_items {
+    background: #FCFCFC;
+    border: 1px solid #CCC;
+    height: 32px;
+    margin: 0 0 10px 0;
+    padding: 3px 10px 3px 5px;
+    text-shadow: 1px 1px 0 #FFFFFF;
+}
+
+.filter_items ul {
+    margin: 0;
+    padding: 0;
+}
+.filter_items ul li {
+    display: inline;
+    float: left;
+    padding-left: 5px;
+}
+.filter_items ul li.seperator {
+    border-left: 1px solid #D5D5D5;
+    margin-left: 5px;
+}
+.filter_items a.button {
+    text-decoration: none;
+    font-weight: bold;
+    color:black;
+    display: block;
+    height: 16px;
+    padding: 8px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+.filter_items a.add_filter {
+        background-image: url('../../../js/saiku/plugins/filters/tag_blue_add.png');
+        background-repeat:no-repeat;
+        width: 16px;
+        background-position: 50% 50%;
+}
+
+.filter_items a.edit_filter {
+        background-image: url('../../../js/saiku/plugins/filters/tag_blue_edit.png');
+        background-repeat:no-repeat;
+        width: 16px;
+        background-position: 50% 50%;
+}
+
+.filter_items a.refresh_filters {
+        background: url('../../../images/src/arrow_refresh.png') no-repeat;
+        width: 16px;
+        background-position: 50% 50%;
+        
+}
+.filter_items a.button:hover {
+    border: 1px solid #CCC;
+    padding: 7px;
+}
+
+.filter_items a.delete {
+    text-decoration:none;
+    color:black;
+}
+.filter_items a.on {
+    border: 1px solid #CCC;
+    background-color: #E0E0E0;
+    padding: 7px !important;
+}
+
+.filter_items .save {
+    background-position: -485px -90px;
+    width: 16px;
+}
+
+.filter_items .export {
+    background-image: url('../../../images/src/export_drillthrough.png');
+    background-repeat:no-repeat;
+    background-position: 7px 7px;
+    width: 16px;
+}
+
 /* CCC styles */
 .tipsy { pointer-events: none; padding: 5px; font-size: 10px; font-family: Arial,Helvetica,sans-serif; position: absolute; z-index: 100000; }
   .tipsy-inner { padding: 5px 8px 4px 8px; background-color: black; color: white; max-width: 200px; text-align: center; }
