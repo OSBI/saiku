@@ -21,6 +21,7 @@ var Filters = Backbone.View.extend({
 
     events: {
         'click .add_filter': 'add_filter',
+        'click .edit_filter': 'add_filter',
         'click  a.save' : 'save_filter',
         'click a.refresh_filters' : 'render_menu',
         'click .filter' : 'click_filter',
@@ -151,30 +152,33 @@ var Filters = Backbone.View.extend({
         var rendered = this.filters_template();
         var $table = $(rendered);
         $(this.el).append($table)
-
+        this.currentFilter = null;
+/*
         if (this.currentFilter != null && this.filters.hasOwnProperty(this.currentFilter.name)) {
             //$(this.el).find('a.filter[href="#' + this.currentFilter.name + '"]').addClass('on');
             $(this.el).find('a.filter[href="#' + this.currentFilter.name + '"]').click();
         } else {
             this.currentFilter = null;
         }
-
+*/
 
 
     },
 
-    deactivate_add_filter: function() {
+    deactivate_add_filter: function(other) {
         var self = this;
-        var $addBtn = $(self.el).find('.add_filter');
-        $addBtn.removeClass('on');
-        $(self.el).find('.new_filter').parent().remove();
-        return;
+        $(self.el).find('a.add_filter, a.edit_filter').removeClass('on');
+        $(self.el).find('.new_filter_input, .edit_filter_input, .new_filter').parent().remove();
+        return false;
     },
 
     add_filter: function(event) {
         var self = this;
         var filterAction = $(event.target).attr('href').replace('#','');
+        var other = filterAction == "add" ? "edit" : "add";
 
+        this.deactivate_add_filter(other);
+        
         var $addBtn = $(event.target);
         if ($addBtn.hasClass('on')) {
             self.deactivate_add_filter();
@@ -200,12 +204,28 @@ var Filters = Backbone.View.extend({
                             async: false
         });
         if (queryFilter != null) {
-            this.currentFilter = queryFilter;
-            $("<li><input id='new_filter' type='text' class='new_filter'/>(" + queryFilter.members.length + ") </li>"
-                + "<li><a href='#save_filter' class='i18n save sprite button new_filter' title='Save Filter'></a></li>")
-                                .insertAfter($(self.el).find('.filter_items .add_filter').parent());
+            var selectedName = (this.currentFilter != null) ? this.currentFilter.name : null;
 
+            this.currentFilter = queryFilter;
+
+            if (filterAction == "add") {
+                    $("<li><input id='new_filter' type='text' class='new_filter_input'/> &nbsp; (" + queryFilter.members.length + ") &nbsp; </li>"
+                        + "<li><a href='#save_filter' class='i18n save sprite button new_filter' title='Save Filter'></a></li>")
+                                        .insertAfter($(self.el).find('.filter_items .add_filter').parent());
+
+            } else {
+                var edit = "<li><select id='new_filter' class='edit_filter_input'>";
+                _.each(self.filters, function (filter) {
+                    edit += "<option value='" + safe_tags_replace(filter.name) + "'>" + safe_tags_replace(filter.name) + "</option>";
+                });
+                edit += "</select> &nbsp; (" + queryFilter.members.length + ") &nbsp; </li>";
+                $(edit + "<li><a href='#save_filter' class='i18n save sprite button new_filter' title='Save Filter'></a></li>")
+                    .insertAfter($(self.el).find('.filter_items .edit_filter').parent());
+
+                $('#new_filter').val(selectedName);
+            }
         }
+
 
         $(self.workspace.el).find(".query_scenario, .drillthrough, .drillthrough_export").removeClass('on');
     },
@@ -218,8 +238,7 @@ var Filters = Backbone.View.extend({
         var savefilter = function(response, model) {
             self.filters[filtername] = model;
             self.deactivate_add_filter();
-                $filter = $(self.filter_template(model))
-                            .appendTo($(self.el).find('.filter_items ul'));
+            self.render();
         };
 
 // FILTER STUFF
@@ -269,7 +288,7 @@ var Filters = Backbone.View.extend({
 
         (new SaikuFilter({
             filtername: filtername,
-            id: 'dummy'
+            id: _.uniqueId("filter_");
         },{})).destroy({
             data: {filtername : filtername}
         });
@@ -325,7 +344,7 @@ var SaikuFilter = Backbone.Model.extend({
     },
 
     url: function() {
-        return encodeURI(Saiku.session.username + "/filters/" + encodeURIComponent(this.get('filtername')));
+        return encodeURI(Saiku.session.username + "/filters/" + this.get('filtername'));
     }
 });
 
