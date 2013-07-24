@@ -992,6 +992,7 @@ public class OlapQueryService implements Serializable {
 		List<SimpleCubeElement> members = new ArrayList<SimpleCubeElement>();
 		SimpleCubeElement dimension = null;
 		SimpleCubeElement hierarchy = null;
+		Set<MetadataElement> mset = new HashSet<MetadataElement>();
 		
 		if (cs != null) {
 			List<CellSetAxis> axes = new ArrayList<CellSetAxis>();
@@ -1009,24 +1010,35 @@ public class OlapQueryService implements Serializable {
 						if (h.getLevels().size() == 1) {
 							break;
 						}
-						Set<MetadataElement> mset = new HashSet<MetadataElement>();
+
 						for (Position pos : axis.getPositions()) {
 							Member m = pos.getMembers().get(posIndex);
 							if (m.getLevel().getName().equals(levelName)) {
 								mset.add(m);
 							}
 						}
-						
-						members = ObjectUtil.convert2Simple(mset);
-						Collections.sort(members, new SaikuUniqueNameComparator());
 						break;
 					}
 					posIndex++;
 				}
 			}
-			if (members.size() == 0) {
-				
+			if (mset.size() == 0) {
+				QueryDimension qd = query.getDimension(dimensionName);
+				if (qd != null && qd.getAxis().getLocation() != null) {
+					for (Selection sel : qd.getInclusions()) {
+						if ((sel.getRootElement() instanceof Member)) {
+							Member m = ((Member) sel.getRootElement());
+							if (m.getLevel().getName().equals(levelName)) {
+								mset.add(m);
+							}
+						}
+					}
+					members = ObjectUtil.convert2Simple(mset);
+					Collections.sort(members, new SaikuUniqueNameComparator());
+				}
 			}
+			members = ObjectUtil.convert2Simple(mset);
+			Collections.sort(members, new SaikuUniqueNameComparator());
 			log.debug("Create Filters: Found members in the result: " + members.size());
 			
 		}
