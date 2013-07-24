@@ -288,7 +288,7 @@ var Filters = Backbone.View.extend({
 
         (new SaikuFilter({
             filtername: filtername,
-            id: _.uniqueId("filter_");
+            id: _.uniqueId("filter_")
         },{})).destroy({
             data: {filtername : filtername}
         });
