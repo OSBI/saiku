@@ -82,6 +82,11 @@
 		<property name="olapQueryService" ref="olapQueryBean" />
 		<property name="path" value="saiku-repository"/>
 	</bean>
+
+  	 <bean id="filterRepositoryBean" class="org.saiku.plugin.resources.PentahoFilterRepositoryResource">
+		<property name="olapQueryService" ref="olapQueryBean" />
+		<property name="path" value="saiku-repository"/>
+	</bean>
 	
 	<bean id="pluginResource" class="org.saiku.plugin.resources.PluginResource" />
 	
