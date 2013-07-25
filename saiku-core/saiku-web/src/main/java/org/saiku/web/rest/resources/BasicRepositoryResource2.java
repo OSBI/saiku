@@ -18,6 +18,7 @@ package org.saiku.web.rest.resources;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -42,6 +45,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.FileType;
@@ -364,6 +368,47 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 			return Response.serverError().entity("Cannot move resource from " + source + " to " + target + " ( " + e.getMessage() + ")").type("text/plain").build();
 		}
 		
+	}
+	
+	@GET
+	@Path("/zip")
+	public Response getResourcesAsZip (
+			@QueryParam("directory") String directory,
+			@QueryParam("files") String files) 
+	{
+		try {
+			if (StringUtils.isBlank(directory))
+				return Response.ok().build();
+			
+			String[] fileArray = files.split(",");
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ZipOutputStream zos = new ZipOutputStream(bos);
+			for (String f : fileArray) {
+				String resource = directory + "/" + f;
+				Response r = getResource(resource);
+				if (Status.OK.equals(Status.fromStatusCode(r.getStatus()))) {
+					byte[] doc = (byte[]) r.getEntity();
+					ZipEntry ze = new ZipEntry(f);
+					zos.putNextEntry(ze);
+					zos.write(doc);
+				}
+			}
+			zos.closeEntry();
+			zos.close();
+			byte[] zipDoc = bos.toByteArray();
+			
+			return Response.ok(zipDoc, MediaType.APPLICATION_OCTET_STREAM).header(
+					"content-disposition",
+					"attachment; filename = saiku-reports.zip").header(
+							"content-length",zipDoc.length).build();
+			
+			
+		} catch(Exception e){
+			log.error("Cannot zip resources " + files ,e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return Response.serverError().entity(error).build();
+		}
+
 	}
 	
 	private List<IRepositoryObject> getRepositoryObjects(FileObject root, String fileType) throws Exception {

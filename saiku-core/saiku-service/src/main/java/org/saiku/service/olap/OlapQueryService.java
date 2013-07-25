@@ -1033,13 +1033,11 @@ public class OlapQueryService implements Serializable {
 							}
 						}
 					}
-					members = ObjectUtil.convert2Simple(mset);
-					Collections.sort(members, new SaikuUniqueNameComparator());
 				}
 			}
 			members = ObjectUtil.convert2Simple(mset);
 			Collections.sort(members, new SaikuUniqueNameComparator());
-			log.debug("Create Filters: Found members in the result: " + members.size());
+			log.debug("Create Filters: Found members in the result or query: " + members.size());
 			
 		}
 		return new SaikuFilter(filtername, null, dimension, hierarchy, members);
