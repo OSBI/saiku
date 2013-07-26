@@ -39,6 +39,14 @@ var RepositoryAclObject = Backbone.Model.extend( {
     }
 } );
 
+var RepositoryZipExport = Backbone.Model.extend( {
+    url: function( ) {
+        var segment = Settings.BIPLUGIN ? 
+            "/pentahorepository2/zip" : "/repository2/zip";
+        return encodeURI(Saiku.session.username) + segment;
+    }
+} );
+
 var SavedQuery = Backbone.Model.extend({
 
     parse: function(response) {

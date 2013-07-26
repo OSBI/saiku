@@ -1790,6 +1790,12 @@ span.cancel_search:hover {
     padding: 5px 17px;
 }
 
+.RepositoryObjects li .export {
+    background-image: url('../../../images/src/page_white_compressed.png');
+    padding: 1px 8px 1px;
+    margin-right: 4px;
+    margin-left: 20px;
+}
 /* custom */
 
 .dialog_body .RepositoryObjects {

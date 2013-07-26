@@ -28,7 +28,8 @@ var OpenDialog = Modal.extend({
         'dblclick .query': 'open_query',
         'click li.folder': 'toggle_folder',
         'keyup .search_file' : 'search_file',
-        'click .cancel_search' : 'cancel_search'
+        'click .cancel_search' : 'cancel_search',
+        'click .export' : 'export_zip'
     },
     
     buttons: [
@@ -89,6 +90,7 @@ var OpenDialog = Modal.extend({
         var $target = $( event.currentTarget );
         this.unselect_current_selected_folder( );
         $target.children('.folder_row').addClass( 'selected' );
+        $target.children('.folder_row').append("<span class='export'></span>");
         var $queries = $target.children( '.folder_content' );
         var isClosed = $target.children( '.folder_row' ).find('.sprite').hasClass( 'collapsed' );
         if( isClosed ) {
@@ -114,6 +116,7 @@ var OpenDialog = Modal.extend({
 
     unselect_current_selected_folder: function( ) {
         $( this.el ).find( '.selected' ).removeClass( 'selected' );
+        $( this.el ).find( '.export' ).remove();
     },
 
     // XXX - duplicaten from OpenQuery
@@ -151,6 +154,14 @@ var OpenDialog = Modal.extend({
         $(this.el).find('.search_file').val('').focus();
         $(this.el).find('.cancel_search').hide();
 
+    },
+
+    export_zip: function(event) {
+        var file = $( this.el ).find( '.selected a' ).attr('href').replace('#','');
+        if (typeof file != "undefined" && file != "") {
+            var url = Settings.REST_URL + (new RepositoryZipExport({ directory : file })).url();
+            window.open(url + "?directory=" + file);
+        }
     },
 
     open_query: function(event) {
