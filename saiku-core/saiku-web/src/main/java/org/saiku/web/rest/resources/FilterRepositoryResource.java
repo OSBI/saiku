@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -35,6 +36,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -49,10 +51,10 @@ import org.apache.commons.vfs.VFS;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
-import org.saiku.olap.dto.SaikuQuery;
-import org.saiku.olap.dto.SaikuTag;
+import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.service.olap.OlapQueryService;
+import org.saiku.service.util.exception.SaikuServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,6 +141,34 @@ public class FilterRepositoryResource {
 			throw new Exception("filter file URL is null");
 		}
 		return MapUtils.orderedMap(allFilters);
+	}
+	
+	@GET
+	@Produces({"text/csv" })
+	@Path("/csv")
+	public Response getAllFiltersCsv(
+			@QueryParam("delimiter") @DefaultValue(",") String delimiter,
+			@QueryParam("memberdelimiter") @DefaultValue("|") String memberdelimiter) 
+	{
+		try {
+			Map<String, SaikuFilter> allFilters = getFiltersInternal();
+			if (allFilters != null) {
+				byte[] doc = getCsv(allFilters, delimiter, memberdelimiter);
+				return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
+						"content-disposition",
+						"attachment; filename = filters.csv").header(
+								"content-length",doc.length).build();
+
+			} else {
+				return Response.ok().build();
+			}
+		} catch(Exception e){
+			log.error("Cannot get filter csv",e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return Response.serverError().entity(error).build();
+		}
+
+
 	}
 
 
@@ -238,6 +268,31 @@ public class FilterRepositoryResource {
 			return Response.serverError().entity(error).build();
 		}
 	}
+	
+	private byte[] getCsv(Map<String, SaikuFilter> filters, String delimiter, String memberdelimiter) {
+		try {
+
+			StringBuffer sb = new StringBuffer();
+			sb.append("FilterName" + delimiter + "Dimension" + delimiter + "Hierarchy" + delimiter + "Members");
+			sb.append("\r\n");
+			for (SaikuFilter sf : filters.values()) {
+				String row = sf.getName() + delimiter + sf.getDimension().getName() + delimiter + sf.getHierarchy().getName() + delimiter;
+				String members = "";
+				boolean first = true;
+				for (SimpleCubeElement e : sf.getMembers()) {
+					if (!first)
+						members += memberdelimiter;
+					else
+						first = false;
+					members += e.getName();
+				}
+				sb.append(row +  members + "\r\n");
+			}
+			return sb.toString().getBytes("UTF-8");
+		} catch (Throwable e) {
+			throw new SaikuServiceException("Error creating csv export for filters"); //$NON-NLS-1$
+		}
+	}
 
 	private Map<String, SaikuFilter> deserialize(FileObject filterFile) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
@@ -261,6 +316,8 @@ public class FilterRepositoryResource {
 		mapper.writeValue(filterFile.getContent().getOutputStream(), map);
 	}
 
+	
+	
 
 
 

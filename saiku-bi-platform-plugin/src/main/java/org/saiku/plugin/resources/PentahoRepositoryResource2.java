@@ -15,8 +15,11 @@
  */
 package org.saiku.plugin.resources;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -33,6 +36,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileType;
+import org.apache.commons.vfs.FileUtil;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.io.DOMReader;
@@ -251,6 +258,67 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 			@QueryParam("file") String file)
 	{
 		return Response.serverError().build();
+	}
+	
+	
+	@GET
+	@Path("/zip")
+	public Response getResourcesAsZip (
+			@QueryParam("directory") String directory,
+			@QueryParam("files") String files) 
+	{
+		try {
+			if (StringUtils.isBlank(directory))
+				return Response.ok().build();
+
+			IPentahoSession userSession = PentahoSessionHolder.getSession();
+			ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ZipOutputStream zos = new ZipOutputStream(bos);
+
+			String[] fileArray = null;
+			if (StringUtils.isBlank(files)) {
+				ISolutionFile dir = repository.getSolutionFile(directory);
+				for (ISolutionFile fo : dir.listFiles()) {
+					if (!fo.isDirectory()) {
+						String entry = fo.getFileName();
+						if (".saiku".equals(fo.getExtension())) {
+							byte[] doc = fo.getData();
+							ZipEntry ze = new ZipEntry(entry);
+							zos.putNextEntry(ze);
+							zos.write(doc);
+						}
+					}
+				}
+			} else {
+				fileArray = files.split(",");
+				for (String f : fileArray) {
+					String resource = directory + "/" + f;
+					Response r = getResource(resource);
+					if (Status.OK.equals(Status.fromStatusCode(r.getStatus()))) {
+						byte[] doc = (byte[]) r.getEntity();
+						ZipEntry ze = new ZipEntry(f);
+						zos.putNextEntry(ze);
+						zos.write(doc);
+					}
+				}
+			}
+			zos.closeEntry();
+			zos.close();
+			byte[] zipDoc = bos.toByteArray();
+			
+			return Response.ok(zipDoc, MediaType.APPLICATION_OCTET_STREAM).header(
+					"content-disposition",
+					"attachment; filename = " + directory + ".zip").header(
+							"content-length",zipDoc.length).build();
+			
+			
+		} catch(Exception e){
+			log.error("Cannot zip resources " + files ,e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return Response.serverError().entity(error).build();
+		}
+
 	}
 
 	private List<IRepositoryObject> processTree(final Node tree, final String parentPath, String fileType)
