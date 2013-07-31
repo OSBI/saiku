@@ -217,7 +217,8 @@ var Table = Backbone.View.extend({
 
     render: function(args, block) {
 
-        if (typeof args == "undefined" || typeof args.data == "undefined" || !$(this.el).is(':visible')) {
+        if (typeof args == "undefined" || typeof args.data == "undefined" || 
+            ($(this.workspace.el).is(':visible') && !$(this.el).is(':visible'))) {
             return;
         }
 

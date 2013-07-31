@@ -561,7 +561,7 @@ $(this.el).prepend(" pvc (" + (this.med3 - this.med) + ")" );
         if (animate) {
             return false;
         }
-        $('#nav_' + this.id).show();
+        // $('#nav_' + this.id).show();
         if (isIE || isBig) {
             $(this.el).find('.canvas_wrapper').show();
         } else {
@@ -585,7 +585,8 @@ $(this.el).prepend(" pvc (" + (this.med3 - this.med) + ")" );
         this.data.height = 0;
         this.data.width = 0;
 
-        if (typeof args == "undefined" || typeof args.data == "undefined" || !$(this.el).is(':visible')) {
+        if (typeof args == "undefined" || typeof args.data == "undefined" || 
+             ($(this.workspace.el).is(':visible') && !$(this.el).is(':visible'))) {
             return;
         }
 
