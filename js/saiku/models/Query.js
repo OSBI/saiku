@@ -83,6 +83,7 @@ var Query = Backbone.Model.extend({
             ! (force === true)) {
             return;
         }
+        this.workspace.unblock();
 
         $(this.workspace.el).find(".workspace_results_info").empty();
         this.workspace.trigger('query:run');
@@ -125,6 +126,11 @@ var Query = Backbone.Model.extend({
         this.workspace.trigger('query:fetch');
 		Saiku.i18n.translate();
             // <a class="cancel" href="#cancel">x</a>
+        
+        var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span> [&nbsp;<a class="cancel i18n" href="#cancel">Cancel</a>&nbsp;]';
+        this.workspace.block(message);
+
+        
         if (this.get('type')  == "MDX" && mdx != null) {
             this.result.save({ mdx: mdx});
         } else {

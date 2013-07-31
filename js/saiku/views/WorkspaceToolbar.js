@@ -234,10 +234,10 @@ var WorkspaceToolbar = Backbone.View.extend({
         // Swap axes
         $(this.workspace.el).find('.workspace_results table').html('');
         $(this.workspace.processing).html('<span class="i18n">Swapping axes...</span>');
-        Saiku.ui.block('Swapping axes...');
+        this.workspace.block('Swapping axes...');
         this.workspace.query.action.put("/swapaxes", { 
             success: this.swap_axes_on_dropzones,
-            error: Saiku.ui.unblock
+            error: this.workspace.unblock
         });
     },
     
@@ -341,6 +341,7 @@ var WorkspaceToolbar = Backbone.View.extend({
             $(this.workspace).find('fields_list.ROWS .limit').addClass('on');
         }
         */
+        this.workspace.unblock();
         this.workspace.sync_query();
         Saiku.ui.unblock();
     },

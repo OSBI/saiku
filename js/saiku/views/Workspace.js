@@ -586,6 +586,17 @@ var Workspace = Backbone.View.extend({
         return;
     },
 
+    block: function(message) {
+        $(this.el).block({ 
+            message: '<span class="saiku_logo" style="float:left">&nbsp;&nbsp;</span> ' + message
+        });
+        Saiku.i18n.translate();
+    },
+
+    unblock: function() {
+        $(this.el).unblock();
+    },
+
     cancel: function(event) {
         var self = this;
         this.query.action.del("/result", {

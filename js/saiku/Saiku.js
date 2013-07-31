@@ -56,7 +56,7 @@ var Saiku = {
         },
         
         unblock: function() {
-            $('.processing,.processing_container').hide();
+            $('.processing,.processing_container, .blockOverlay').hide();
         }
     }
 };
