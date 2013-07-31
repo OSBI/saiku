@@ -291,7 +291,8 @@ var Table = Backbone.View.extend({
                         var groupChange = (col > 1 && row > 1 && !isHeaderLowestLvl && col > firstColumn) ?
                             data[row-1][col+1].value != data[row-1][col].value
                             : false;
-                        if (header.value != nextHeader.value || isHeaderLowestLvl || groupChange) {
+                        var maxColspan = colSpan > 999 ? true : false;
+                        if (header.value != nextHeader.value || isHeaderLowestLvl || groupChange || maxColspan) {
                             if (header.value == "null") {
                                 contents += '<th class="col_null" colspan="' + colSpan + '"><div>&nbsp;</div></th>';
                             } else {
