@@ -278,7 +278,6 @@ var Filters = Backbone.View.extend({
         var query = response.hasOwnProperty('uniqueName') ? response : model;
         this.workspace.query.parse(query);
         this.workspace.sync_query();
-        this.workspace.query.run();
     },
 
     delete_filter: function(event) {
