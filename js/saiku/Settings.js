@@ -126,6 +126,16 @@ function safe_tags_replace(str) {
     return str.replace(/[&<>]/g, replaceTag);
 }
 
+if ($.blockUI) {
+    $.blockUI.defaults.css = {};
+    $.blockUI.defaults.overlayCSS = {};
+    $.blockUI.defaults.blockMsgClass = 'processing';
+    $.blockUI.defaults.fadeOut = 0;
+    $.blockUI.defaults.fadeIn = 0;
+    $.blockUI.defaults.ignoreIfBlocked = false;
+
+}
+
 if (window.location.hostname && (window.location.hostname == "dev.analytical-labs.com" || window.location.hostname == "demo.analytical-labs.com" )) {
     Settings.USERNAME = "admin";
     Settings.PASSWORD = "admin";

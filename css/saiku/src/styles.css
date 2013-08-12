@@ -1090,7 +1090,7 @@ span.clear_axis {
 }
 
 /** blockUI */
-.processing_container {
+.processing_container, .blockOverlay {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -1099,28 +1099,28 @@ span.clear_axis {
 	background-color: #fff;
 	opacity: 0.5;
 	z-index: 9999;
+    padding: 20px;
 }
-.processing {
-    border: 3px solid #EEE;
+.processing_content {
+    padding: 5px;
+    display: inline;
+}
+.processing, .blockElement {
     border-radius: 3px;
+    border: 1px solid #CCC;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
-    box-shadow: 0 0 10px #EEE;
-    -moz-box-shadow: 0 0 10px #EEE;
-    -webkit-box-shadow: 0 0 10px #EEE;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
+    -moz-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
+    -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
     z-index: 10001;
     background-color: #fff;
     position: fixed;
-    width: 50%;
-    left: 25%;
-    top: 48%;
-}
-.processing_inner {
-    border: 1px solid #CCC;
-    border-radius: 1px;
-    -moz-border-radius: 1px;
-    -webkit-border-radius: 1px;
-    padding: 10px 5px 10px 10px;
+    width: 20%;
+    min-width: 200px;
+    left: 40%;
+    top: 45%;
+    padding: 20px;
 }
 .processing_image {
     display: inline-block;
@@ -1130,6 +1130,18 @@ span.clear_axis {
     height: 16px;
     margin-right: 5px;
 }
+
+.saiku_logo {
+    display: inline-block;
+    background-image: url('../../../images/src/saiku_32x32.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 32px;
+    height: 32px;
+    padding: 5px;
+    margin-right: 20px;
+}
+
 
 /** Workspace toolbar. */
 

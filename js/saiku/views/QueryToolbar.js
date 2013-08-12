@@ -25,13 +25,11 @@ var QueryToolbar = Backbone.View.extend({
         'click .options a.button': 'call',
         'click .renderer a.button' : 'switch_render_button'
     },
-    
-    table: {
-        sparkType: null
-    },
+
     chart: {},
 
     render_mode: "table",
+    spark_mode: null,
 
 
     initialize: function(args) {
@@ -40,8 +38,9 @@ var QueryToolbar = Backbone.View.extend({
         
         // Maintain `this` in callbacks
         _.bindAll(this, "call","activate_buttons", "spark_bar", "spark_line", "render_row_viz", "run_row_viz", "switch_render_button");
-        this.table.sparkType = null;
-        this.table.render_mode = "table";
+        
+        this.render_mode = "table";
+        this.spark_mode = null;
 
         // Activate buttons when a new query is created or run
         this.workspace.bind('query:new', this.activate_buttons);
@@ -95,7 +94,7 @@ var QueryToolbar = Backbone.View.extend({
         } else {
             this.switch_render('table');
             this.workspace.query.setProperty('saiku.ui.render.mode', 'table');
-            this.workspace.query.setProperty('saiku.ui.render.type', this.table.sparkType);
+            this.workspace.query.setProperty('saiku.ui.render.type', this.spark_mode);
 
         }
 
@@ -152,11 +151,11 @@ var QueryToolbar = Backbone.View.extend({
 
         $(this.workspace.table.el).find('td.spark').remove();
         if ($(this.el).find('ul.table .spark_bar').hasClass('on')) {
-            this.table.sparkType = "spark_bar";
+            this.spark_mode = "spark_bar";
             this.workspace.query.setProperty('saiku.ui.render.type', 'spark_bar');
             _.delay(this.render_row_viz, 10, "spark_bar");
         } else {
-            this.table.sparkType = null;
+            this.spark_mode = null;
         }
     },
 
@@ -166,17 +165,17 @@ var QueryToolbar = Backbone.View.extend({
 
         $(this.workspace.table.el).find('td.spark').remove();
         if ($(this.el).find('ul.table .spark_line').hasClass('on')) {
-            this.table.sparkType = "spark_line";
+            this.spark_mode = "spark_line";
             this.workspace.query.setProperty('saiku.ui.render.type', 'spark_line');
             _.delay(this.render_row_viz, 10, "spark_line");
         } else {
-            this.table.sparkType = null;
+            this.spark_mode = null;
         }
     },
 
     run_row_viz: function(args) {
-        if (this.render_mode == "table" && this.table.sparkType != null) {
-            this.render_row_viz(this.table.sparkType);
+        if (this.render_mode == "table" && this.spark_mode != null) {
+            this.render_row_viz(this.spark_mode);
         }
 
     },

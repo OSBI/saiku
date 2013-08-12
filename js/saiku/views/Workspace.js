@@ -260,7 +260,7 @@ var Workspace = Backbone.View.extend({
 
             } else if ('table' == renderMode && renderType in this.querytoolbar) {
                 this.querytoolbar.render_mode = "table";
-                this.querytoolbar.table.sparkType = renderType;
+                this.querytoolbar.spark_mode = renderType;
                 $(this.querytoolbar.el).find('ul.table a.' + renderType).addClass('on');
             }
         } catch (e) {
@@ -286,7 +286,7 @@ var Workspace = Backbone.View.extend({
 
         } else {
             $(this.el).find('.workspace_editor').removeClass('hide').show();
-            $(this.el).find('.workspace_fields').removeClass('disabled');
+            $(this.el).find('.workspace_fields').removeClass('disabled').removeClass('hide');
             $(this.el).find('.workspace_editor .mdx_input').addClass('hide');
             $(this.el).find('.workspace_editor .editor_info').addClass('hide');
             $(this.toolbar.el).find('.auto, ,.toggle_fields, .query_scenario, .buckets, .non_empty, .swap_axis, .mdx, .switch_to_mdx').parent().show();
@@ -584,6 +584,17 @@ var Workspace = Backbone.View.extend({
         $(this.el).find(".workspace_results_info").html(info);
         this.adjust();
         return;
+    },
+
+    block: function(message) {
+        $(this.el).block({ 
+            message: '<span class="saiku_logo" style="float:left">&nbsp;&nbsp;</span> ' + message
+        });
+        Saiku.i18n.translate();
+    },
+
+    unblock: function() {
+        $(this.el).unblock();
     },
 
     cancel: function(event) {
