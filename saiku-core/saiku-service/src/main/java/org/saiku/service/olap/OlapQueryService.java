@@ -393,27 +393,34 @@ public class OlapQueryService implements Serializable {
 	}
 	
 	public ResultSet explain(String queryName) {
+		OlapStatement stmt = null;
 		try {
 
 			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnectionName());
 			if (!con.isWrapperFor(RolapConnection.class))
 				throw new IllegalArgumentException("Cannot only get explain plan for Mondrian connections");
 
-			final OlapStatement stmt = con.createStatement();
+			stmt = con.createStatement();
 			String mdx = getMDXQuery(queryName);
 			mdx = "EXPLAIN PLAN FOR \n" + mdx;
-			return  stmt.executeQuery(mdx);
+			ResultSet rs = stmt.executeQuery(mdx);
+			return rs;
 
 		} catch (Exception e) {
 			throw new SaikuServiceException("Error EXPLAIN: " + queryName,e);
-		}	
+		} finally {
+			try {
+				if (stmt != null)  stmt.close();
+			} catch (Exception e) {}
+		}
 	}
 
 
 	public ResultSet drillthrough(String queryName, int maxrows, String returns) {
+		OlapStatement stmt = null;
 		try {
 			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnectionName()); 
-			final OlapStatement stmt = con.createStatement();
+			stmt = con.createStatement();
 			String mdx = getMDXQuery(queryName);
 			if (maxrows > 0) {
 				mdx = "DRILLTHROUGH MAXROWS " + maxrows + " " + mdx;
@@ -424,19 +431,25 @@ public class OlapQueryService implements Serializable {
 			if (StringUtils.isNotBlank(returns)) {
 				mdx += "\r\n RETURN " + returns;
 			}
-			return  stmt.executeQuery(mdx);
+			ResultSet rs = stmt.executeQuery(mdx);
+			return rs;
 		} catch (SQLException e) {
 			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
+		} finally {
+			try {
+				if (stmt != null)  stmt.close();
+			} catch (Exception e) {}
 		}
 	}
 
 	public ResultSet drillthrough(String queryName, List<Integer> cellPosition, Integer maxrows, String returns) {
+		OlapStatement stmt = null;
 		try {
 			IQuery query = getIQuery(queryName);
 			CellSet cs = query.getCellset();
 			SaikuCube cube = getQuery(queryName).getCube();
 			final OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnectionName()); 
-			final OlapStatement stmt = con.createStatement();
+			stmt = con.createStatement();
 
 			String select = null;
 			StringBuffer buf = new StringBuffer();
@@ -472,19 +485,24 @@ public class OlapQueryService implements Serializable {
 			}
 
 			log.debug("Drill Through for query (" + queryName + ") : \r\n" + select);
-			return  stmt.executeQuery(select);
-
-
+			ResultSet rs = stmt.executeQuery(select);
+			return rs;
 		} catch (Exception e) {
 			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
+		} finally {
+			try {
+				if (stmt != null)  stmt.close();
+			} catch (Exception e) {}
 		}
+
 	}
 
 
 	public byte[] exportDrillthroughCsv(String queryName, int maxrows) {
+		OlapStatement stmt = null;
 		try {
 			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnectionName()); 
-			final OlapStatement stmt = con.createStatement();
+			stmt = con.createStatement();
 			String mdx = getMDXQuery(queryName);
 			if (maxrows > 0) {
 				mdx = "DRILLTHROUGH MAXROWS " + maxrows + " " + mdx;
@@ -492,11 +510,17 @@ public class OlapQueryService implements Serializable {
 			else {
 				mdx = "DRILLTHROUGH " + mdx;
 			}
+			
 			ResultSet rs = stmt.executeQuery(mdx);
 			return CsvExporter.exportCsv(rs);
 		} catch (SQLException e) {
 			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
+		} finally {
+			try {
+				if (stmt != null)  stmt.close();
+			} catch (Exception e) {}
 		}
+
 	}
 
 	public byte[] exportResultSetCsv(ResultSet rs) {
@@ -975,12 +999,20 @@ public class OlapQueryService implements Serializable {
 	}
 	
 	private void removeIQuery(String queryName) {
-		queries.remove(queryName);
+		if (queries.containsKey(queryName)) {
+			IQuery q = queries.remove(queryName);
+			try {
+				q.cancel();
+			} catch (Exception e) {}
+			q = null;
+		}
 	}
-	
-	
+
 	private IQuery getIQuery(String queryName) {
-		return  queries.get(queryName);
+		if (queries.containsKey(queryName)) {
+			return  queries.get(queryName);
+		}
+		throw new SaikuServiceException("No query found using name: " + queryName);
 	}
 	
 	private Map<String, IQuery> getIQueryMap() {

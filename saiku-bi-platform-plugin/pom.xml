@@ -297,7 +297,11 @@
 			<id>pentaho-third-party</id>
 			<url>http://repo.pentaho.org/artifactory/third-party/</url>
 		</repository>
-
+                <repository>
+			<id>alabs-repo</id>
+			<name>alabs repository</name>
+			<url>http://repo.analytical-labs.com/repo/</url>
+		</repository>
 		<repository>
 			<id>ibiblio</id>
 			<url>http://ibiblio.org/maven2/</url>
