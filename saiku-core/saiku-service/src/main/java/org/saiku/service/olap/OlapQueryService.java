@@ -999,12 +999,20 @@ public class OlapQueryService implements Serializable {
 	}
 	
 	private void removeIQuery(String queryName) {
-		queries.remove(queryName);
+		if (queries.containsKey(queryName)) {
+			IQuery q = queries.remove(queryName);
+			try {
+				q.cancel();
+			} catch (Exception e) {}
+			q = null;
+		}
 	}
-	
-	
+
 	private IQuery getIQuery(String queryName) {
-		return  queries.get(queryName);
+		if (queries.containsKey(queryName)) {
+			return  queries.get(queryName);
+		}
+		throw new SaikuServiceException("No query found using name: " + queryName);
 	}
 	
 	private Map<String, IQuery> getIQueryMap() {
