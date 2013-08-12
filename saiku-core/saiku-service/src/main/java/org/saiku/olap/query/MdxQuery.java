@@ -105,7 +105,7 @@ public class MdxQuery implements IQuery {
 	}
 
 	public Properties getProperties() {
-		Properties props = new Properties(this.properties);
+		Properties props = this.properties;
 		props.put(QueryProperties.KEY_IS_DRILLTHROUGH, isDrillThroughEnabled().toString());
 		props.put("org.saiku.connection.scenario", Boolean.toString(false));
 		try {
