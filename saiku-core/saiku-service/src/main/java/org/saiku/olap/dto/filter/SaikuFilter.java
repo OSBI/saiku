@@ -14,15 +14,23 @@ public class SaikuFilter {
 
 	private SimpleCubeElement hierarchy;
 	private List<SimpleCubeElement> members = new ArrayList<SimpleCubeElement>();
+	private String owner;
 	
 	public SaikuFilter() {};
 	
-	public SaikuFilter(String name, String description, SimpleCubeElement dimension, SimpleCubeElement hierarchy, List<SimpleCubeElement> members) {
+	public SaikuFilter(String name, String description, SimpleCubeElement dimension, SimpleCubeElement hierarchy, List<SimpleCubeElement> members)
+	{
+		this(name, description, dimension, hierarchy, members, null);
+	}
+
+	public SaikuFilter(String name, String description, SimpleCubeElement dimension, SimpleCubeElement hierarchy, List<SimpleCubeElement> members, String owner) 
+	{
 		this.name = name;
 		this.description = description;
 		this.dimension = dimension;
 		this.hierarchy = hierarchy;
 		this.members = members;
+		this.owner = owner;
 	}
 	
 	/**
@@ -58,6 +66,17 @@ public class SaikuFilter {
 	 */
 	public List<SimpleCubeElement> getMembers() {
 		return members;
+	}
+	
+	/**
+	 * @return the owner
+	 */
+	public String getOwner() {
+		return owner;
+	}
+	
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 }

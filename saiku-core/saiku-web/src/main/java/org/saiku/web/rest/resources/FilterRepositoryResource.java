@@ -46,15 +46,19 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileSystemManager;
+import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.VFS;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.dto.filter.SaikuFilter;
+import org.saiku.service.ISessionService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.service.util.exception.SaikuServiceException;
+import org.saiku.web.service.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,9 +80,10 @@ public class FilterRepositoryResource {
 	private static final String FILTER_FILENAME = "saiku.filters";
 
 	private OlapQueryService olapQueryService;
+	private ISessionService sessionService;
 
 	private FileObject repo;
-	private FileObject filterFo;
+	
 
 	private Properties settings = new Properties();
 
@@ -99,9 +104,9 @@ public class FilterRepositoryResource {
 				throw new IOException("File does not exist: " + path);
 			}
 			repo = fileObject;
-			FileObject file = repo.resolveFile(FILTER_FILENAME);
-			filterFo = file;
-
+			//FileObject file = repo.resolveFile(FILTER_FILENAME);
+			//filterFile = file;
+			
 			//			if (repo != null) {
 			//				FileObject settings = repo.getChild(SETTINGS_FILE);
 			//				if (settings != null && settings.exists() && settings.isReadable()) {
@@ -122,6 +127,12 @@ public class FilterRepositoryResource {
 	public void setOlapQueryService(OlapQueryService olapqs) {
 		olapQueryService = olapqs;
 	}
+	
+	@Autowired
+	public void setSessionService(ISessionService ss) {
+		sessionService = ss;
+	}
+	
 
 	private Map<String, SaikuFilter> getFiltersInternal() throws Exception {
 		return getFiltersInternal(null);
@@ -129,19 +140,26 @@ public class FilterRepositoryResource {
 	
 	private Map<String, SaikuFilter> getFiltersInternal(String query) throws Exception {
 		Map<String, SaikuFilter> allFilters = new HashMap<String, SaikuFilter>();
-		if (filterFo != null) {
-			Map<String, SaikuFilter> filters = deserialize(filterFo);
-			allFilters.putAll(filters);
-			if (StringUtils.isNotBlank(query)) {
-				allFilters = olapQueryService.getValidFilters(query, allFilters);
-			}
-
+		Map<String, SaikuFilter> filters = deserialize(getUserFile());
+		allFilters.putAll(filters);
+		if (StringUtils.isNotBlank(query)) {
+			allFilters = olapQueryService.getValidFilters(query, allFilters);
 		}
-		else {
-			throw new Exception("filter file URL is null");
+
+		return MapUtils.orderedMap(allFilters);
+	}
+	
+	private Map<String, SaikuFilter> getAllFiltersForExportInternal() throws Exception {
+		Map<String, SaikuFilter> allFilters = new HashMap<String, SaikuFilter>();
+		for (FileObject f : repo.getChildren()) {
+			if (f.getType().equals(FileType.FILE) && f.getName().getBaseName().endsWith(FILTER_FILENAME)) {
+				Map<String, SaikuFilter> filters = deserialize(f);
+				allFilters.putAll(filters);
+			}
 		}
 		return MapUtils.orderedMap(allFilters);
 	}
+
 	
 	@GET
 	@Produces({"text/csv" })
@@ -151,7 +169,7 @@ public class FilterRepositoryResource {
 			@QueryParam("memberdelimiter") @DefaultValue("|") String memberdelimiter) 
 	{
 		try {
-			Map<String, SaikuFilter> allFilters = getFiltersInternal();
+			Map<String, SaikuFilter> allFilters = getAllFiltersForExportInternal();
 			if (allFilters != null) {
 				byte[] doc = getCsv(allFilters, delimiter, memberdelimiter);
 				return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
@@ -231,10 +249,11 @@ public class FilterRepositoryResource {
 			ObjectMapper mapper = new ObjectMapper();
 		    mapper.setVisibilityChecker(mapper.getVisibilityChecker().withFieldVisibility(Visibility.ANY));
 			SaikuFilter filter = mapper.readValue(filterJSON, SaikuFilter.class);
-
+			String username = sessionService.getAllSessionObjects().get("username").toString();
+			filter.setOwner(username);
 			Map<String, SaikuFilter> filters = getFiltersInternal();
 			filters.put(filter.getName(), filter);
-			serialize(filterFo, filters);
+			serialize(getUserFile(), filters);
 			return Response.ok(filter).build();
 		}
 		catch (Exception e) {
@@ -256,7 +275,7 @@ public class FilterRepositoryResource {
 				if (filters.containsKey(filterName)) {
 					filters.remove(filterName);
 				}
-				serialize(filterFo, filters);
+				serialize(getUserFile(), filters);
 				return Response.ok(filters).status(Status.OK).build();
 
 			}
@@ -273,10 +292,10 @@ public class FilterRepositoryResource {
 		try {
 
 			StringBuffer sb = new StringBuffer();
-			sb.append("FilterName" + delimiter + "Dimension" + delimiter + "Hierarchy" + delimiter + "Members");
+			sb.append("User" + delimiter + "FilterName" + delimiter + "Dimension" + delimiter + "Hierarchy" + delimiter + "Members");
 			sb.append("\r\n");
 			for (SaikuFilter sf : filters.values()) {
-				String row = sf.getName() + delimiter + sf.getDimension().getName() + delimiter + sf.getHierarchy().getName() + delimiter;
+				String row = sf.getOwner() + delimiter + sf.getName() + delimiter + sf.getDimension().getName() + delimiter + sf.getHierarchy().getName() + delimiter;
 				String members = "";
 				boolean first = true;
 				for (SimpleCubeElement e : sf.getMembers()) {
@@ -307,6 +326,18 @@ public class FilterRepositoryResource {
 		}
 		return filters;
 	}
+
+	private FileObject getUserFile() throws FileSystemException {
+		if (sessionService.getAllSessionObjects().containsKey("username")) {
+			String username = sessionService.getAllSessionObjects().get("username").toString();
+			username = username.replaceAll("/", "-");
+			FileObject fo = repo.resolveFile(username + "-" + FILTER_FILENAME);
+			return fo;
+		}
+		return null;
+		
+	}
+
 
 	private void serialize(FileObject filterFile, Map<String, SaikuFilter> map) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
