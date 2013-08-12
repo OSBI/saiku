@@ -32,7 +32,7 @@ var Workspace = Backbone.View.extend({
     initialize: function(args) {
         // Maintain `this` in jQuery event handlers
         _.bindAll(this, "caption", "adjust", "toggle_sidebar", "prepare", "new_query", 
-                "init_query", "update_caption", "populate_selections","refresh", "sync_query");
+                "init_query", "update_caption", "populate_selections","refresh", "sync_query", "cancel", "cancelled", "no_results", "error");
                 
         // Attach an event bus to the workspace
         _.extend(this, Backbone.Events);
@@ -587,7 +587,12 @@ var Workspace = Backbone.View.extend({
     },
 
     cancel: function(event) {
-        this.query.action.del("/result", {success: this.cancelled } );
+        var self = this;
+        this.query.action.del("/result", {
+            success: function() {
+                self.cancelled();
+            }
+        });
     },
     
     cancelled: function(args) {
