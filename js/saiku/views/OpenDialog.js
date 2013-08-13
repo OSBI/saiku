@@ -29,7 +29,8 @@ var OpenDialog = Modal.extend({
         'click li.folder': 'toggle_folder',
         'keyup .search_file' : 'search_file',
         'click .cancel_search' : 'cancel_search',
-        'click .export' : 'export_zip'
+        'click .export' : 'export_zip',
+        'click .import' : 'import_zip'
     },
     
     buttons: [
@@ -44,6 +45,11 @@ var OpenDialog = Modal.extend({
         this.message = '<div style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;'
                 + ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>'
                 + "<div class='RepositoryObjects'>Loading....</div><br><b><div class='query_name'><span class='i18n'>Please select a file.....</span></div></b>"
+                + "<br><form id='importForm' target='_blank' method='POST' enctype='multipart/form-data'>" 
+                + "<input type='hidden' name='directory' class='directory'/>" 
+                + "<input type='file' name='file' class='file'/>"
+                + "<input type='submit' value='import' />"
+                + "</form>";
         _.extend(this.options, {
             title: "Open"
         });
@@ -66,7 +72,7 @@ var OpenDialog = Modal.extend({
 
 
         // Maintain `this`
-        _.bindAll( this, "close", "toggle_folder", "select_name", "populate" , "cancel_search")
+        _.bindAll( this, "close", "toggle_folder", "select_name", "populate" , "cancel_search", "import_zip");
 
     
     },
@@ -90,7 +96,7 @@ var OpenDialog = Modal.extend({
         var $target = $( event.currentTarget );
         this.unselect_current_selected_folder( );
         $target.children('.folder_row').addClass( 'selected' );
-        $target.children('.folder_row').append("<span class='export'></span>");
+        $target.children('.folder_row').append("<span class='export'></span><span class='import'>imp</span>");
         var $queries = $target.children( '.folder_content' );
         var isClosed = $target.children( '.folder_row' ).find('.sprite').hasClass( 'collapsed' );
         if( isClosed ) {
@@ -100,6 +106,8 @@ var OpenDialog = Modal.extend({
             $target.children( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
             $queries.addClass( 'hide' );
         }
+
+        this.import_zip();
         return false;
     },
 
@@ -117,6 +125,7 @@ var OpenDialog = Modal.extend({
     unselect_current_selected_folder: function( ) {
         $( this.el ).find( '.selected' ).removeClass( 'selected' );
         $( this.el ).find( '.export' ).remove();
+        $( this.el ).find( '.import' ).remove();
     },
 
     // XXX - duplicaten from OpenQuery
@@ -162,6 +171,20 @@ var OpenDialog = Modal.extend({
             var url = Settings.REST_URL + (new RepositoryZipExport({ directory : file })).url();
             window.open(url + "?directory=" + file);
         }
+    },
+
+    import_zip: function(event) {
+        var file = $( this.el ).find( '.selected a' ).attr('href').replace('#','');
+        var form = $('#importForm');
+        form.find('.directory').val(file);        
+        
+        
+        if (typeof file != "undefined" && file != "") {
+            var url = Settings.REST_URL + (new RepositoryZipExport({ directory : file })).url() + "upload";
+            form.attr('action', url);
+        }
+
+
     },
 
     open_query: function(event) {
