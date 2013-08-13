@@ -443,7 +443,7 @@ var Chart = Backbone.View.extend({
                        return scene.isSelected() ? '10%' : 0;
                 }
             },
-            clickable: true,
+            clickable: true
             //valuesLabelStyle: 'inside'
         },
         
