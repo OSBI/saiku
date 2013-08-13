@@ -587,14 +587,24 @@ var Workspace = Backbone.View.extend({
     },
 
     block: function(message) {
-        $(this.el).block({ 
-            message: '<span class="saiku_logo" style="float:left">&nbsp;&nbsp;</span> ' + message
-        });
-        Saiku.i18n.translate();
+        if (isIE) {
+            var $msg = $("<span>" + message + "</span>");
+            $msg.find('.processing_image').removeClass('processing_image');
+            Saiku.ui.block($msg.html());
+        } else {
+            $(this.el).block({ 
+                message: '<span class="saiku_logo" style="float:left">&nbsp;&nbsp;</span> ' + message
+            });
+            Saiku.i18n.translate();
+        }
     },
 
     unblock: function() {
-        $(this.el).unblock();
+        if (isIE) {
+            Saiku.ui.unblock();
+        } else {
+            $(this.el).unblock();
+        }
     },
 
     cancel: function(event) {
