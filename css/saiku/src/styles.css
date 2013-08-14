@@ -1802,14 +1802,17 @@ span.cancel_search:hover {
     padding: 5px 17px;
 }
 
-.RepositoryObjects li .export {
+/* custom */
+.export_zip {
     background-image: url('../../../images/src/page_white_compressed.png');
     padding: 1px 8px 1px;
     margin-right: 4px;
-    margin-left: 20px;
 }
-/* custom */
 
+.export_btn, .import_btn {
+    float: right;
+    margin-right: 80px;
+}
 .dialog_body .RepositoryObjects {
     padding: 10px;
     margin-top: 5px;
