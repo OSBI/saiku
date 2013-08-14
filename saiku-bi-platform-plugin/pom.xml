@@ -119,6 +119,18 @@
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
+									<groupId>com.sun.jersey.contribs</groupId>
+									<artifactId>jersey-multipart</artifactId>
+									<version>${jersey.version}</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.jvnet</groupId>
+  									<artifactId>mimepull</artifactId>
+  									<version>1.6</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
 									<groupId>org.codehaus.jackson</groupId>
 									<artifactId>jackson-core-asl</artifactId>
 									<version>1.7.4</version>
@@ -446,6 +458,16 @@
 			<artifactId>jersey-server</artifactId>
 			<version>${jersey.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey.contribs</groupId>
+			<artifactId>jersey-multipart</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jvnet</groupId>
+  			<artifactId>mimepull</artifactId>
+  			<version>1.6</version>
+  		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-servlet</artifactId>

@@ -37,5 +37,11 @@
 		<xfire-client disabled="true"></xfire-client>
 		<xml disabled="true"></xml>
 	</modules>
+	
+	<services>
+		<rest>
+			<custom-resource-parameter-annotation qualifiedName="com.sun.jersey.multipart.FormDataParam" />
+		</rest>
+	</services>
 
 </enunciate>

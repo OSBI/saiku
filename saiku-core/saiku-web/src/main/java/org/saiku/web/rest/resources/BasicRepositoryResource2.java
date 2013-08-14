@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -29,8 +30,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -44,6 +47,8 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.vfs.FileObject;
@@ -63,6 +68,9 @@ import org.saiku.web.service.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataParam;
 
 /**
  * QueryServlet contains all the methods required when manipulating an OLAP Query.
@@ -427,6 +435,71 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 			return Response.serverError().entity(error).build();
 		}
 
+	}
+	
+	@POST
+	@Path("/zipupload")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response uploadArchiveZip(
+			@QueryParam("test") String test,
+			@FormDataParam("file") InputStream uploadedInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail, 
+			@FormDataParam("directory") String directory) 
+	{
+		String zipFile = fileDetail.getFileName();
+		try {
+			ZipInputStream zis = new ZipInputStream(uploadedInputStream);
+		    ZipEntry ze = zis.getNextEntry();
+
+			while (ze != null) {
+				 
+		    	   String fileName = ze.getName();
+		    	   String fullPath = directory + "/" + fileName;
+		    	   System.out.println("file unzip : "+ fullPath);
+		    	   byte[] file = IOUtils.toByteArray(zis);
+		    	   String content = new String(file);
+		    	   
+		    	   Response r = saveResource(fullPath, content);
+		    	   System.out.println("file unzip OK");
+		    	   
+		    	   if (Status.OK.getStatusCode() != r.getStatus()) {
+		    		   throw new Exception(r.getEntity().toString());
+		    	   }
+		    	   
+//		           File newFile = new File(outputFolder + File.separator + fileName);
+//		           System.out.println("file unzip : "+ newFile.getAbsoluteFile());
+
+		    	   
+		            //create all non exists folders
+		            //else you will hit FileNotFoundException for compressed folder
+//		            new File(newFile.getParent()).mkdirs();
+		 
+		    	   
+//		            FileOutputStream fos = new FileOutputStream(newFile);             
+		 
+//		            byte[] buffer = new byte[1024];
+//
+//		            int len;
+//		            while ((len = zis.read(buffer)) > 0) {
+//		            	fos.write(buffer, 0, len);
+//		            }
+//		 
+//		            fos.close();   
+		            ze = zis.getNextEntry();
+		    	}
+		 
+		        zis.closeEntry();
+		    	zis.close();
+			
+		    	return Response.ok().build();
+		    	
+		} catch(Exception e){
+			log.error("Cannot unzip resources " + zipFile ,e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return Response.serverError().entity(error).build();
+		}	
+		
+		
 	}
 	
 	private List<IRepositoryObject> getRepositoryObjects(FileObject root, String fileType) throws Exception {
