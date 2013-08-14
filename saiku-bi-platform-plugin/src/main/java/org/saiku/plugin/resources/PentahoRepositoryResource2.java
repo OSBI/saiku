@@ -333,45 +333,65 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 	@Path("/zipupload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response uploadArchiveZip(
+			@QueryParam("test") String test,
 			@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail, 
 			@FormDataParam("directory") String directory) 
 	{
 		String zipFile = fileDetail.getFileName();
+		String output = "";
 		try {
+			if (StringUtils.isBlank(zipFile))
+				throw new Exception("You must specify a zip file to upload");
+			
+			output = "Uploding file: " + zipFile + " ...\r\n";
 			ZipInputStream zis = new ZipInputStream(uploadedInputStream);
 		    ZipEntry ze = zis.getNextEntry();
-
-			while (ze != null) {
-				 
-		    	   String fileName = ze.getName();
-		    	   String fullPath = directory + "/" + fileName;
-		    	   System.out.println("file unzip : "+ fullPath);
-		    	   byte[] file = IOUtils.toByteArray(zis);
-		    	   String content = new String(file);
+		    byte[] doc = null;
+		    boolean isFile = false;
+		    if (ze == null) {
+		    	doc = IOUtils.toByteArray(uploadedInputStream);
+		    	isFile = true;
+		    }
+			while (ze != null || doc != null) {
+					String fileName = null; 
+				   if (!isFile) {
+					   fileName = ze.getName();
+					   doc = IOUtils.toByteArray(zis);
+				   } else {
+					   fileName = zipFile;
+				   }
 		    	   
+		    	   output += "Saving " + fileName + "... ";
+		    	   String fullPath = (StringUtils.isNotBlank(directory)) ? directory + "/" + fileName : fileName;		    	   
+		    	   
+		    	   String content = new String(doc);
 		    	   Response r = saveResource(fullPath, content);
-		    	   System.out.println("file unzip OK");
+		    	   doc = null;
 		    	   
 		    	   if (Status.OK.getStatusCode() != r.getStatus()) {
-		    		   throw new Exception(r.getEntity().toString());
+		    		   output += " ERROR: " + r.getEntity().toString() + "\r\n";
+		    	   } else {
+		    		   output += " OK\r\n";
 		    	   }
-		    	   
-		            ze = zis.getNextEntry();
+		    	   if (!isFile)
+		    		   ze = zis.getNextEntry();
 		    	}
-		 
-		        zis.closeEntry();
-		    	zis.close();
-			
-		    	return Response.ok().build();
+
+				if (!isFile) {
+					zis.closeEntry();
+					zis.close();
+				}
+				uploadedInputStream.close();
+	    		
+		    	output += " SUCCESSFUL!\r\n";
+		    	return Response.ok(output).build();
 		    	
 		} catch(Exception e){
 			log.error("Cannot unzip resources " + zipFile ,e);
 			String error = ExceptionUtils.getRootCauseMessage(e);
-			return Response.serverError().entity(error).build();
+			return Response.serverError().entity(output + "\r\n" + error).build();
 		}	
-		
-		
 	}
 
 	private List<IRepositoryObject> processTree(final Node tree, final String parentPath, String fileType)
