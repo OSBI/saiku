@@ -372,9 +372,6 @@ var Table = Backbone.View.extend({
             
         }
         this.workspace.processing.hide();
-        if (typeof this.workspace.stats != "undefined") {
-            $(this.workspace.stats.el).hide();
-        }
         this.workspace.adjust();
         // Append the table
         $(this.el).html(contents);
