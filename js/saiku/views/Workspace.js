@@ -568,7 +568,13 @@ var Workspace = Backbone.View.extend({
             return this.no_results(args);
         }
 
-        var cdate = new Date().getHours() + ":" + new Date().getMinutes();
+        var chour = new Date().getHours();
+        if (chour < 10) chour = "0" + chour;
+
+        var cminutes = new Date().getMinutes();
+        if (cminutes < 10) cminutes = "0" + cminute;
+        
+        var cdate = chour + ":" + cminutes;
         var runtime = args.data.runtime != null ? (args.data.runtime / 1000).toFixed(2) : "";
         /*
         var info = '<b>Time:</b> ' + cdate 
