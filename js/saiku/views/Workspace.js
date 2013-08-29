@@ -572,7 +572,7 @@ var Workspace = Backbone.View.extend({
         if (chour < 10) chour = "0" + chour;
 
         var cminutes = new Date().getMinutes();
-        if (cminutes < 10) cminutes = "0" + cminute;
+        if (cminutes < 10) cminutes = "0" + cminutes;
         
         var cdate = chour + ":" + cminutes;
         var runtime = args.data.runtime != null ? (args.data.runtime / 1000).toFixed(2) : "";
