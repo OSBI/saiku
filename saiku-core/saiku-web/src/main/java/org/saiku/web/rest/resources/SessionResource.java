@@ -30,6 +30,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang.StringUtils;
 import org.saiku.service.ISessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,7 @@ public class SessionResource  {
 	{
 		try {
 			sessionService.login(req, username, password);
+			
 			return Response.ok().build();
 		}
 		catch (Exception e) {
@@ -70,7 +72,17 @@ public class SessionResource  {
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Map<String,Object> getSession(@Context HttpServletRequest req) {
-		return sessionService.getSession();
+		
+		Map<String, Object> sess = sessionService.getSession();
+		try {
+			String acceptLanguage = req.getLocale().getLanguage();
+			if (StringUtils.isNotBlank(acceptLanguage)) {
+				sess.put("language", acceptLanguage);
+			}
+		} catch (Exception e) {
+			log.debug("Cannot get language!", e);
+		}
+		return sess;
 	}
 
 	@DELETE

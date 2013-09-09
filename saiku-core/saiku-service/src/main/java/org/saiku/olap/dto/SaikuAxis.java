@@ -23,6 +23,10 @@ public class SaikuAxis extends AbstractSaikuObject {
 	private int ordinal;
 	private String sortOrder;
 	private String sortLiteral;
+	private String limitFunction;
+	private String limitFunctionN;
+	private String limitFunctionSortLiteral;
+	private String filterCondition;
 
 	public SaikuAxis() {		
 		super(null,null);
@@ -51,6 +55,62 @@ public class SaikuAxis extends AbstractSaikuObject {
 
 	public String getSortLiteral() {
 		return sortLiteral;
+	}
+
+	/**
+	 * @return the limitFunction
+	 */
+	public String getLimitFunction() {
+		return limitFunction;
+	}
+
+	/**
+	 * @param limitFunction the limitFunction to set
+	 */
+	public void setLimitFunction(String limitFunction) {
+		this.limitFunction = limitFunction;
+	}
+
+	/**
+	 * @return the limitFunctionN
+	 */
+	public String getLimitFunctionN() {
+		return limitFunctionN;
+	}
+
+	/**
+	 * @param limitFunctionN the limitFunctionN to set
+	 */
+	public void setLimitFunctionN(String limitFunctionN) {
+		this.limitFunctionN = limitFunctionN;
+	}
+
+	/**
+	 * @return the limitFunctionSortLiteral
+	 */
+	public String getLimitFunctionSortLiteral() {
+		return limitFunctionSortLiteral;
+	}
+
+	/**
+	 * @param limitFunctionSortLiteral the limitFunctionSortLiteral to set
+	 */
+	public void setLimitFunctionSortLiteral(String limitFunctionSortLiteral) {
+		this.limitFunctionSortLiteral = limitFunctionSortLiteral;
+	}
+
+	/**
+	 * @return the filterCondition
+	 */
+	public String getFilterCondition() {
+		return filterCondition;
+	}
+
+	/**
+	 * @param filterCondition the filterCondition to set
+	 */
+	public void setFilterCondition(String filterCondition) {
+		this.filterCondition = filterCondition;
 	}
 
 

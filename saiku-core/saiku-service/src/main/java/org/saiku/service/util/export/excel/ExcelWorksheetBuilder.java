@@ -11,17 +11,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.saiku.olap.dto.SaikuDimensionSelection;
 import org.saiku.olap.dto.SaikuSelection;
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
@@ -49,21 +53,22 @@ public class ExcelWorksheetBuilder {
 
     private AbstractBaseCell[][] rowsetHeader;
     private AbstractBaseCell[][] rowsetBody;
-    private HSSFWorkbook excelWorkbook;
+    private Workbook excelWorkbook;
     private Sheet workbookSheet;
     private String sheetName;
     private int topLeftCornerWidth;
     private int topLeftCornerHeight;
-    private HSSFCellStyle basicCS;
-    private HSSFCellStyle numberCS;
-    private HSSFCellStyle lighterHeaderCellCS;
-    private HSSFCellStyle darkerHeaderCellCS;
+    private CellStyle basicCS;
+    private CellStyle numberCS;
+    private CellStyle lighterHeaderCellCS;
+    private CellStyle darkerHeaderCellCS;
     private List<SaikuDimensionSelection> queryFilters;
     private Map<String, Integer> colorCodesMap;
 
-    HSSFPalette customColorsPalette;
-    int nextAvailableColorCode = 41;
-    Properties cssColorCodesProperties;
+    private int nextAvailableColorCode = 41;
+    private Properties cssColorCodesProperties;
+    
+    private HSSFPalette customColorsPalette;
     
     private static final Logger log = LoggerFactory.getLogger(ExcelWorksheetBuilder.class);
 
@@ -75,8 +80,20 @@ public class ExcelWorksheetBuilder {
     protected void init(CellDataSet table, List<SaikuDimensionSelection> filters, String sheetName) {
 
         queryFilters = filters;
-        excelWorkbook = new HSSFWorkbook();
-        customColorsPalette = excelWorkbook.getCustomPalette();
+        if ("xls".equals(SaikuProperties.webExportExcelFormat)) {
+        	HSSFWorkbook wb = new HSSFWorkbook();
+        	customColorsPalette = wb.getCustomPalette();
+        	excelWorkbook = wb;
+        } else if ("xlsx".equals(SaikuProperties.webExportExcelFormat)) {
+        	excelWorkbook = new XSSFWorkbook();
+        } else {
+        	excelWorkbook = new XSSFWorkbook();
+        }
+        
+
+        
+        CreationHelper createHelper = excelWorkbook.getCreationHelper();
+
         colorCodesMap = new HashMap<String, Integer>();
         this.sheetName = sheetName;
         rowsetHeader = table.getCellSetHeaders();
@@ -123,29 +140,29 @@ public class ExcelWorksheetBuilder {
         lighterHeaderCellCS = excelWorkbook.createCellStyle();
         lighterHeaderCellCS.setFont(headerFont);
         lighterHeaderCellCS.setAlignment(CellStyle.ALIGN_CENTER);
-        lighterHeaderCellCS.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
-        lighterHeaderCellCS.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        lighterHeaderCellCS.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        lighterHeaderCellCS.setFillPattern(CellStyle.SOLID_FOREGROUND);
         setCellBordersColor(lighterHeaderCellCS);
 
         darkerHeaderCellCS = excelWorkbook.createCellStyle();
         darkerHeaderCellCS.setFont(headerFont);
         darkerHeaderCellCS.setAlignment(CellStyle.ALIGN_CENTER);
-        darkerHeaderCellCS.setFillForegroundColor(HSSFColor.GREY_40_PERCENT.index);
-        darkerHeaderCellCS.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+        darkerHeaderCellCS.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
+        darkerHeaderCellCS.setFillPattern(CellStyle.SOLID_FOREGROUND);
         setCellBordersColor(darkerHeaderCellCS);
 
     }
 
-    protected void setCellBordersColor(HSSFCellStyle style) {
+    protected void setCellBordersColor(CellStyle style) {
 
         style.setBorderBottom(CellStyle.BORDER_THIN);
-        style.setBottomBorderColor(HSSFColor.GREY_80_PERCENT.index);
+        style.setBottomBorderColor(IndexedColors.GREY_80_PERCENT.getIndex());
         style.setBorderTop(CellStyle.BORDER_THIN);
-        style.setTopBorderColor(HSSFColor.GREY_80_PERCENT.index);
+        style.setTopBorderColor(IndexedColors.GREY_80_PERCENT.getIndex());
         style.setBorderLeft(CellStyle.BORDER_THIN);
-        style.setLeftBorderColor(HSSFColor.GREY_80_PERCENT.index);
+        style.setLeftBorderColor(IndexedColors.GREY_80_PERCENT.getIndex());
         style.setBorderRight(CellStyle.BORDER_THIN);
-        style.setRightBorderColor(HSSFColor.GREY_80_PERCENT.index);
+        style.setRightBorderColor(IndexedColors.GREY_80_PERCENT.getIndex());
     }
 
 
@@ -287,10 +304,22 @@ public class ExcelWorksheetBuilder {
             // Check for cell background
             Map<String, String> properties = ((DataCell) rowsetBody[x][y]).getProperties();
             if (properties.containsKey("style")) {
-                short colorCodeIndex = getColorFromCustomPalette(properties.get("style"));
+            	String colorCode = properties.get("style");
+                short colorCodeIndex = getColorFromCustomPalette(colorCode);
                 if (colorCodeIndex != -1) {
                     numberCSClone.setFillForegroundColor(colorCodeIndex);
-                    numberCSClone.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+                    numberCSClone.setFillPattern(CellStyle.SOLID_FOREGROUND);
+                } else if (customColorsPalette == null) {
+                    numberCSClone.setFillPattern(CellStyle.SOLID_FOREGROUND);
+                    try {
+                    	int redCode = Integer.parseInt(colorCode.substring(1, 3), 16);
+                    	int greenCode = Integer.parseInt(colorCode.substring(3, 5), 16);
+                    	int blueCode = Integer.parseInt(colorCode.substring(5, 7), 16);
+                    	((XSSFCellStyle) numberCSClone).setFillForegroundColor(new XSSFColor(new java.awt.Color(redCode, greenCode, blueCode)));
+                    } catch (Exception e) {
+                    	// we tried to set the color, no luck, lets continue without
+                    }
+                    
                 }
             }
             cell.setCellStyle(numberCSClone);
@@ -320,13 +349,22 @@ public class ExcelWorksheetBuilder {
 
                 String colorCode = cssColorCodesProperties.getProperty(style);
                 if (colorCode != null) {
-                    int redCode = Integer.parseInt(colorCode.substring(1, 3), 16);
-                    int greenCode = Integer.parseInt(colorCode.substring(3, 5), 16);
-                    int blueCode = Integer.parseInt(colorCode.substring(5, 7), 16);
-                    customColorsPalette.setColorAtIndex(new Byte((byte) nextAvailableColorCode), new Byte((byte) redCode), new Byte((byte) greenCode), new Byte((byte) blueCode));
-                    returnedColorIndex = customColorsPalette.getColor(nextAvailableColorCode).getIndex();
-                    colorCodesMap.put(style, new Integer(returnedColorIndex));
-                    nextAvailableColorCode++;
+                	try {
+                		int redCode = Integer.parseInt(colorCode.substring(1, 3), 16);
+                		int greenCode = Integer.parseInt(colorCode.substring(3, 5), 16);
+                		int blueCode = Integer.parseInt(colorCode.substring(5, 7), 16);
+                		if (customColorsPalette != null) {
+                        	customColorsPalette.setColorAtIndex(new Byte((byte) nextAvailableColorCode), new Byte((byte) redCode), new Byte((byte) greenCode), new Byte((byte) blueCode));
+                        	returnedColorIndex = customColorsPalette.getColor(nextAvailableColorCode).getIndex();
+                        	colorCodesMap.put(style, new Integer(returnedColorIndex));
+                        } else {
+                        	return -1;
+                        }
+                        nextAvailableColorCode++;
+                	} catch (Exception e) {
+                    	// we tried to set the color, no luck, lets continue without
+                		return -1;
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -468,7 +506,7 @@ public class ExcelWorksheetBuilder {
 
         int width = 0;
         int x = 0;
-        boolean exit = (rowsetHeader[0][0].getRawValue() != null);
+        boolean exit = (rowsetHeader.length < 1 || rowsetHeader[0][0].getRawValue() != null);
         String cellValue = null;
 
         for (x = 0; (!exit && rowsetHeader[0].length > x); x++) {
@@ -491,7 +529,7 @@ public class ExcelWorksheetBuilder {
      */
     private int findTopLeftCornerHeight() {
 
-        int height = rowsetHeader.length - 1;
+        int height = rowsetHeader.length > 0 ? rowsetHeader.length - 1 : 0;
         return height;
     }
 

@@ -6,7 +6,7 @@
   <classpathentry kind="var" path="M2_REPO/javax/servlet/jsp-api/2.0/jsp-api-2.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
-  <classpathentry kind="var" path="M2_REPO/pentaho/mondrian/TRUNK-SNAPSHOT/mondrian-TRUNK-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/pentaho/mondrian/3.5.7/mondrian-3.5.7.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/3.2/commons-collections-3.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-dbcp/commons-dbcp/1.2.1/commons-dbcp-1.2.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-pool/commons-pool/1.2/commons-pool-1.2.jar"/>
@@ -29,8 +29,8 @@
   <classpathentry kind="var" path="M2_REPO/sun/jlfgr/1.0/jlfgr-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar"/>
   <classpathentry kind="var" path="M2_REPO/xalan/xalan/2.4.1/xalan-2.4.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/olap4j/olap4j-xmla/1.0.1-SNAPSHOT/olap4j-xmla-1.0.1-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/olap4j/olap4j/1.0.1-SNAPSHOT/olap4j-1.0.1-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/olap4j/olap4j/1.2.0-SNAPSHOT/olap4j-1.2.0-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/olap4j/olap4j-xmla/1.2.0-SNAPSHOT/olap4j-xmla-1.2.0-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/pentaho/pentaho-bi-platform-api/3.10.0-stable/pentaho-bi-platform-api-3.10.0-stable.jar"/>

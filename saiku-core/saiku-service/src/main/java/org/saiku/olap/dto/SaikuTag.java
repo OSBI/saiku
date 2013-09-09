@@ -22,12 +22,12 @@ public class SaikuTag extends AbstractSaikuObject {
 
 	private List<SaikuTuple> saikuTuples;
 	private String name;
-	private List<SaikuTupleDimension> saikuTupleDimensions;
+	private List<SimpleCubeElement> saikuTupleDimensions;
 	private List<SaikuDimensionSelection> saikuDimensionSelections;
 	
 	public SaikuTag() {};
 	
-	public SaikuTag(String name, List<SaikuTupleDimension> saikuTupleDimensions, List<SaikuTuple> saikuTuples, List<SaikuDimensionSelection> filterSelections) {
+	public SaikuTag(String name, List<SimpleCubeElement> saikuTupleDimensions, List<SaikuTuple> saikuTuples, List<SaikuDimensionSelection> filterSelections) {
 		super(name,name);
 		this.saikuTuples = saikuTuples;
 		this.name = name;
@@ -51,7 +51,7 @@ public class SaikuTag extends AbstractSaikuObject {
 		return saikuTuples;
 	}
 	
-	public List<SaikuTupleDimension> getSaikuTupleDimensions() {
+	public List<SimpleCubeElement> getSaikuTupleDimensions() {
 		return saikuTupleDimensions;
 	}
 	

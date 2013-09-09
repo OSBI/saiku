@@ -16,6 +16,7 @@
 package org.saiku.olap.dto;
 
 import java.util.List;
+import java.util.Properties;
 
 public class SaikuQuery extends AbstractSaikuObject {
 
@@ -27,17 +28,20 @@ public class SaikuQuery extends AbstractSaikuObject {
 	
 	private String type;
 
+	private Properties properties;
+	
 	public SaikuQuery() {
 		super(null,null);
 		throw new RuntimeException("Unsupported Constructor. Serialization only");
 	}
 
-	public SaikuQuery(String name, SaikuCube cube, List<SaikuAxis> axes, String mdx, String type) {
+	public SaikuQuery(String name, SaikuCube cube, List<SaikuAxis> axes, String mdx, String type, Properties props) {
 		super(name,name);
 		this.cube = cube;
 		this.axes = axes;
 		this.mdx = mdx;
 		this.type = type;
+		this.properties = props;
 	}
 
 	public List<SaikuAxis> getSaikuAxes() {
@@ -60,6 +64,10 @@ public class SaikuQuery extends AbstractSaikuObject {
 	
 	public String getType() {
 		return type;
+	}
+	
+	public Properties getProperties() {
+		return properties;
 	}
 }
 

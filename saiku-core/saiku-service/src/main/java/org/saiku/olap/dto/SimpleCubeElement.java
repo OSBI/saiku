@@ -16,13 +16,13 @@
 package org.saiku.olap.dto;
 
 
-public class SaikuTupleDimension extends AbstractSaikuObject {
+public class SimpleCubeElement extends AbstractSaikuObject {
 
 	private String caption;
 	
-	public SaikuTupleDimension() {	};
+	public SimpleCubeElement() {	};
 	
-	public SaikuTupleDimension(String name, String uniqueName, String caption) {
+	public SimpleCubeElement(String name, String uniqueName, String caption) {
 		super(uniqueName,name);
 		this.caption = caption;
 	}

@@ -15,9 +15,15 @@
  */
 package org.saiku.plugin.resources;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -32,7 +38,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileType;
+import org.apache.commons.vfs.FileUtil;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.io.DOMReader;
@@ -49,9 +60,14 @@ import org.saiku.web.rest.objects.acl.enumeration.AclMethod;
 import org.saiku.web.rest.objects.repository.IRepositoryObject;
 import org.saiku.web.rest.objects.repository.RepositoryFileObject;
 import org.saiku.web.rest.objects.repository.RepositoryFolderObject;
+import org.saiku.web.rest.resources.ISaikuRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataMultiPart;
+import com.sun.jersey.multipart.FormDataParam;
 
 /**
  * QueryServlet contains all the methods required when manipulating an OLAP Query.
@@ -61,7 +77,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Path("/saiku/{username}/pentahorepository2")
 @XmlAccessorType(XmlAccessType.NONE)
-public class PentahoRepositoryResource2 {
+public class PentahoRepositoryResource2 implements ISaikuRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(PentahoRepositoryResource2.class);
 
@@ -187,7 +203,7 @@ public class PentahoRepositoryResource2 {
 	 */
 	@POST
 	@Path("/resource")
-	public Status saveResource (
+	public Response saveResource (
 			@FormParam("file") String file, 
 			@FormParam("content") String content)
 	{
@@ -230,12 +246,12 @@ public class PentahoRepositoryResource2 {
 			} else {
 				throw new Exception("Error ocurred while saving query to solution repository");
 			}
-			return(Status.OK);
+			return Response.ok().build();
 		}
 		catch(Exception e){
 			log.error("Cannot save file (" + file + ")",e);
 		}
-		return Status.INTERNAL_SERVER_ERROR;
+		return Response.serverError().build();
 	}
 
 	/**
@@ -246,11 +262,136 @@ public class PentahoRepositoryResource2 {
 	 */
 	@DELETE
 	@Path("/resource")
-	public Status deleteResource (
+	public Response deleteResource (
 			@QueryParam("file") String file)
 	{
+		return Response.serverError().build();
+	}
+	
+	
+	@GET
+	@Path("/zip")
+	public Response getResourcesAsZip (
+			@QueryParam("directory") String directory,
+			@QueryParam("files") String files) 
+	{
+		try {
+			if (StringUtils.isBlank(directory))
+				return Response.ok().build();
 
-		return Status.INTERNAL_SERVER_ERROR;
+			IPentahoSession userSession = PentahoSessionHolder.getSession();
+			ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ZipOutputStream zos = new ZipOutputStream(bos);
+
+			String[] fileArray = null;
+			if (StringUtils.isBlank(files)) {
+				ISolutionFile dir = repository.getSolutionFile(directory);
+				for (ISolutionFile fo : dir.listFiles()) {
+					if (!fo.isDirectory()) {
+						String entry = fo.getFileName();
+						if (".saiku".equals(fo.getExtension())) {
+							byte[] doc = fo.getData();
+							ZipEntry ze = new ZipEntry(entry);
+							zos.putNextEntry(ze);
+							zos.write(doc);
+						}
+					}
+				}
+			} else {
+				fileArray = files.split(",");
+				for (String f : fileArray) {
+					String resource = directory + "/" + f;
+					Response r = getResource(resource);
+					if (Status.OK.equals(Status.fromStatusCode(r.getStatus()))) {
+						byte[] doc = (byte[]) r.getEntity();
+						ZipEntry ze = new ZipEntry(f);
+						zos.putNextEntry(ze);
+						zos.write(doc);
+					}
+				}
+			}
+			zos.closeEntry();
+			zos.close();
+			byte[] zipDoc = bos.toByteArray();
+			
+			return Response.ok(zipDoc, MediaType.APPLICATION_OCTET_STREAM).header(
+					"content-disposition",
+					"attachment; filename = " + directory + ".zip").header(
+							"content-length",zipDoc.length).build();
+			
+			
+		} catch(Exception e){
+			log.error("Cannot zip resources " + files ,e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return Response.serverError().entity(error).build();
+		}
+
+	}
+	
+	@POST
+	@Path("/zipupload")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response uploadArchiveZip(
+			@QueryParam("test") String test,
+			@FormDataParam("file") InputStream uploadedInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail, 
+			@FormDataParam("directory") String directory) 
+	{
+		String zipFile = fileDetail.getFileName();
+		String output = "";
+		try {
+			if (StringUtils.isBlank(zipFile))
+				throw new Exception("You must specify a zip file to upload");
+			
+			output = "Uploding file: " + zipFile + " ...\r\n";
+			ZipInputStream zis = new ZipInputStream(uploadedInputStream);
+		    ZipEntry ze = zis.getNextEntry();
+		    byte[] doc = null;
+		    boolean isFile = false;
+		    if (ze == null) {
+		    	doc = IOUtils.toByteArray(uploadedInputStream);
+		    	isFile = true;
+		    }
+			while (ze != null || doc != null) {
+					String fileName = null; 
+				   if (!isFile) {
+					   fileName = ze.getName();
+					   doc = IOUtils.toByteArray(zis);
+				   } else {
+					   fileName = zipFile;
+				   }
+		    	   
+		    	   output += "Saving " + fileName + "... ";
+		    	   String fullPath = (StringUtils.isNotBlank(directory)) ? directory + "/" + fileName : fileName;		    	   
+		    	   
+		    	   String content = new String(doc);
+		    	   Response r = saveResource(fullPath, content);
+		    	   doc = null;
+		    	   
+		    	   if (Status.OK.getStatusCode() != r.getStatus()) {
+		    		   output += " ERROR: " + r.getEntity().toString() + "\r\n";
+		    	   } else {
+		    		   output += " OK\r\n";
+		    	   }
+		    	   if (!isFile)
+		    		   ze = zis.getNextEntry();
+		    	}
+
+				if (!isFile) {
+					zis.closeEntry();
+					zis.close();
+				}
+				uploadedInputStream.close();
+	    		
+		    	output += " SUCCESSFUL!\r\n";
+		    	return Response.ok(output).build();
+		    	
+		} catch(Exception e){
+			log.error("Cannot unzip resources " + zipFile ,e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return Response.serverError().entity(output + "\r\n" + error).build();
+		}	
 	}
 
 	private List<IRepositoryObject> processTree(final Node tree, final String parentPath, String fileType)

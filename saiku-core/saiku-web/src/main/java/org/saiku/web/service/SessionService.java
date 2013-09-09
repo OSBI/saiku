@@ -25,15 +25,18 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.saiku.service.ISessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 
@@ -44,6 +47,12 @@ public class SessionService implements ISessionService {
 	private AuthenticationManager authenticationManager;
 
 	Map<Object,Map<String,Object>> sessionHolder = new HashMap<Object,Map<String,Object>>();
+
+	private Boolean anonymous = false;
+	
+	public void setAllowAnonymous(Boolean allow) {
+		this.anonymous  = allow;
+	}
 
 
 	/* (non-Javadoc)
@@ -61,21 +70,59 @@ public class SessionService implements ISessionService {
 			authenticate(req, username, password);
 		}
 		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {			
-			Object p = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-			if (!sessionHolder.containsKey(p)) {
-				sessionHolder.put(p, new HashMap<String,Object>());
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			Object p = auth.getPrincipal();
+			createSession(auth, username, password);
+			return sessionHolder.get(p);
+		}
+		return new HashMap<String, Object>();
+	}
+
+	private void createSession(Authentication auth, String username, String password) {
+
+		if (auth ==  null || !auth.isAuthenticated()) {
+			return;
+		}
+		
+		boolean isAnonymousUser = (auth instanceof AnonymousAuthenticationToken);		
+		Object p = auth.getPrincipal();
+		String authUser = getUsername(p);
+		boolean isAnonymous = (isAnonymousUser || StringUtils.equals("anonymousUser", authUser));
+		boolean isAnonOk = (!isAnonymous || (isAnonymous && anonymous));
+			
+		if (isAnonOk && auth.isAuthenticated() && p != null && !sessionHolder.containsKey(p)) {
+			Map<String, Object> session = new HashMap<String, Object>();
+			
+			if (isAnonymous) {
+				log.debug("Creating Session for Anonymous User");
 			}
-			sessionHolder.get(p).put("username", username);
-			sessionHolder.get(p).put("password", password);
-			sessionHolder.get(p).put("sessionid", UUID.randomUUID().toString());
+			
+			if (StringUtils.isNotBlank(username)) {
+				session.put("username", username);
+			} else {
+				session.put("username", authUser);
+			}
+			if (StringUtils.isNotBlank(password)) {
+				session.put("password", password);		
+			}
+			session.put("sessionid", UUID.randomUUID().toString());
+			
 			List<String> roles = new ArrayList<String>();
 			for (GrantedAuthority ga : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
 				roles.add(ga.getAuthority());
 			}
-			sessionHolder.get(p).put("roles", roles);
-			return sessionHolder.get(p);
+			session.put("roles", roles);
+			
+			sessionHolder.put(p, session);
 		}
-		return new HashMap<String, Object>();
+	}
+
+	private String getUsername(Object p) {
+		
+		if (p instanceof UserDetails) {
+			  return ((UserDetails)p).getUsername();
+		} 
+		return p.toString();
 	}
 
 	/* (non-Javadoc)
@@ -88,9 +135,12 @@ public class SessionService implements ISessionService {
 				sessionHolder.remove(p);
 			}
 		}
+		SecurityContextHolder.getContext().setAuthentication(null);
 		SecurityContextHolder.clearContext(); 
-		HttpSession session= req.getSession(true); 
-		session.invalidate();
+		HttpSession session = req.getSession(false);
+		if (session != null) {
+			session.invalidate();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -115,7 +165,9 @@ public class SessionService implements ISessionService {
 	 */
 	public Map<String,Object> getSession() {
 		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {			
-			Object p = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			Object p = auth.getPrincipal();
+			createSession(auth, null, null);
 			if (sessionHolder.containsKey(p)) {
 				Map<String,Object> r = new HashMap<String,Object>();
 				r.putAll(sessionHolder.get(p)); 
@@ -129,7 +181,9 @@ public class SessionService implements ISessionService {
 	
 	public Map<String,Object> getAllSessionObjects() {
 		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {			
-			Object p = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			Object p = auth.getPrincipal();
+			createSession(auth, null, null);
 			if (sessionHolder.containsKey(p)) {
 				Map<String,Object> r = new HashMap<String,Object>();
 				r.putAll(sessionHolder.get(p)); 

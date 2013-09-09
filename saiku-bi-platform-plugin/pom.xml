@@ -119,6 +119,18 @@
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
+									<groupId>com.sun.jersey.contribs</groupId>
+									<artifactId>jersey-multipart</artifactId>
+									<version>${jersey.version}</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.jvnet</groupId>
+  									<artifactId>mimepull</artifactId>
+  									<version>1.6</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
 									<groupId>org.codehaus.jackson</groupId>
 									<artifactId>jackson-core-asl</artifactId>
 									<version>1.7.4</version>
@@ -152,19 +164,19 @@
 								<artifactItem>
 									<groupId>pentaho</groupId>
 									<artifactId>mondrian</artifactId>
-									<version>TRUNK-SNAPSHOT</version>
+									<version>3.5.7</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.olap4j</groupId>
 									<artifactId>olap4j-xmla</artifactId>
-									<version>1.0.1-SNAPSHOT</version>
+									<version>1.2.0-SNAPSHOT</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.olap4j</groupId>
 									<artifactId>olap4j</artifactId>
-									<version>1.0.1-SNAPSHOT</version>
+									<version>1.2.0-SNAPSHOT</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
@@ -297,7 +309,11 @@
 			<id>pentaho-third-party</id>
 			<url>http://repo.pentaho.org/artifactory/third-party/</url>
 		</repository>
-
+                <repository>
+			<id>alabs-repo</id>
+			<name>alabs repository</name>
+			<url>http://repo.analytical-labs.com/repo/</url>
+		</repository>
 		<repository>
 			<id>ibiblio</id>
 			<url>http://ibiblio.org/maven2/</url>
@@ -333,7 +349,7 @@
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>mondrian</artifactId>
-			<version>TRUNK-SNAPSHOT</version>
+			<version>3.5.7</version>
 		</dependency>
 		<dependency>
 			<groupId>eigenbase</groupId>
@@ -353,7 +369,7 @@
 		<dependency>
 			<groupId>org.olap4j</groupId>
 			<artifactId>olap4j-xmla</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
+			<version>1.2.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -442,6 +458,16 @@
 			<artifactId>jersey-server</artifactId>
 			<version>${jersey.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey.contribs</groupId>
+			<artifactId>jersey-multipart</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jvnet</groupId>
+  			<artifactId>mimepull</artifactId>
+  			<version>1.6</version>
+  		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-servlet</artifactId>

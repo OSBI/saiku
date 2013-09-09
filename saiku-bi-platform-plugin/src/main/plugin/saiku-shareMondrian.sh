@@ -3,6 +3,43 @@
 # This script makes saiku use the same mondrian as pentaho. Useful to share cache and resources (including CDC) on pentaho >= 4.8
 #
 
+usage (){
+
+echo
+echo "Usage: saiku-shareMondrian.sh -w pentahoWebapPath]"
+echo
+echo "-w    Pentaho webapp server path"
+echo "-h    This help screen"
+echo
+exit 1
+}
+
+[ $# -gt 1 ] || usage
+
+WEBAPP_PATH='PATH'
+
+ORIGINAL_CMDS=$@
+
+while [ $# -gt 0 ]
+do
+    case "$1" in
+    --)	shift; break;;
+    -w)	WEBAPP_PATH="$2"; shift;;
+    --)	break;;
+    -*|-h)	usage ;;
+    esac
+    shift
+done
+
+[ $WEBAPP_PATH = 'PATH' ] && usage
+
+if [[ ! -d $WEBAPP_PATH/WEB-INF/lib ]]
+then
+
+    echo "ERROR: Supplied webapp path doesn't look like a valid web application - missing WEB-INF/lib"
+    exit 1
+fi
+
 # Step 1: Change plugin.spring.xml
 
 echo -n "Changing saiku configuration.... "
@@ -17,6 +54,13 @@ echo Done
 
 echo -n "Deleting Saiku version of mondrian.jar and related dependencies.... "
 rm -f lib/mondrian* lib/olap4j* lib/eigenbase*
+
+
+# Step 3: Copy jar to WEB-INF
+
+echo -n "Copying plugin-util.jar to WEB-INF/lib .... "
+cp lib/saiku*plugin-util* $WEBAPP_PATH/WEB-INF/lib/
+
 
 echo Done
 

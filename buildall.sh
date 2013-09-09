@@ -1,11 +1,10 @@
 #!/bin/bash
 cd saiku-core
-mvn clean install  -DskipTests=true 
+mvn clean install   
 cd ..
 cd saiku-webapp
 mvn clean install
 cd ..
-rm -rf saiku-ui
 git submodule init
 git submodule update
 cd saiku-ui

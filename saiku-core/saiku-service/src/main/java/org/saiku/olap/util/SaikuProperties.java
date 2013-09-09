@@ -42,6 +42,7 @@ public class SaikuProperties extends Properties{
 	private int populateCount;
 
 	private static SaikuProperties instance = instance();
+
 	private static final String SAIKU_PROPERTIES = "saiku.properties";
 
 	/**
@@ -227,6 +228,7 @@ public class SaikuProperties extends Properties{
 	public static final Boolean olapDefaultNonEmpty = getPropBoolean("saiku.olap.nonempty","false");
 	public static final String  webExportCsvName = getPropString("saiku.web.export.csv.name","saiku-export");
 	public static final String  webExportExcelName = getPropString("saiku.web.export.excel.name","saiku-export");
+	public static final String  webExportExcelFormat = getPropString("saiku.web.export.excel.format","xlsx");
 	public static final String  webExportExcelDefaultNumberFormat = getPropString("saiku.web.export.excel.numberformat","#,##0.00");	
 	public static final String  formatDefautNumberFormat = getPropString("saiku.format.numberformat","#,##0.00");
 	public static final Locale  locale = getLocale();

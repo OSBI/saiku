@@ -353,7 +353,7 @@ public class OlapMetaExplorer {
 			Cube nativeCube = getNativeCube(cube);
 			for (Measure measure : nativeCube.getMeasures()) {
 				if(measure.isVisible()) {
-					measures.add(ObjectUtil.convert(measure));
+					measures.add(ObjectUtil.convertMeasure(measure));
 				}
 			}
 			if (measures.size() == 0) {
@@ -364,7 +364,7 @@ public class OlapMetaExplorer {
 			throw new SaikuOlapException("Cannot get measures for cube:"+cube.getName(),e);
 		}
 		
-		Collections.sort(measures, new SaikuMemberCaptionComparator());
+//		Collections.sort(measures, new SaikuMemberCaptionComparator());
 		return measures;
 	}
 

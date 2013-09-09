@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Query name="85BABAE2-54D3-6658-95E1-AB59738E9E62" type="MDX" connection="foodmart" cube="[Sales 2]" catalog="FoodMart" schema="FoodMart">
+  <MDX>SELECT
+NON EMPTY {Hierarchize({[Product].[Product Category].Members})} ON COLUMNS
+FROM [Sales 2]</MDX>
+  <Properties>
+    <Property name="org.saiku.query.explain" value="true" />
+    <Property name="org.saiku.connection.scenario" value="false" />
+    <Property name="saiku.olap.query.drillthrough" value="true" />
+  </Properties>
+</Query>
+
