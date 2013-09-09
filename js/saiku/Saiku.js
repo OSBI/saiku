@@ -57,6 +57,9 @@ var Saiku = {
         
         unblock: function() {
             $('.processing,.processing_container, .blockOverlay').hide();
+
+            // Fix For Internet Explorer 10 UIBlock issue
+            $('.blockUI').fadeOut('slow');
         }
     }
 };
