@@ -593,16 +593,17 @@ var Workspace = Backbone.View.extend({
     },
 
     block: function(message) {
+        /* Most probably not needed anymore. Seems ok now with fix #192
         if (isIE) {
             var $msg = $("<span>" + message + "</span>");
             $msg.find('.processing_image').removeClass('processing_image');
             Saiku.ui.block($msg.html());
-        } else {
+        }
+        */
             $(this.el).block({ 
                 message: '<span class="saiku_logo" style="float:left">&nbsp;&nbsp;</span> ' + message
             });
             Saiku.i18n.translate();
-        }
     },
 
     unblock: function() {
