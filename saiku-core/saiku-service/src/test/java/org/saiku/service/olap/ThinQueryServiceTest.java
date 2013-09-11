@@ -120,15 +120,15 @@ public class ThinQueryServiceTest extends TestCase {
 		
 		String expectedMdx = 
                 "WITH\n"
-                + "SET [AxisCOLUMNS] AS\n"
+                + "SET [~COLUMNS] AS\n"
                 + "    Order(CrossJoin(TopCount(Except({[Product].[Product Family].Members}, {[Product].[Non-Consumable]}), 2, Measures.[Unit Sales]), {[Education Level].[Education Level].Members}), [Measures].[Double Profit], BDESC)\n"
                 + "MEMBER [Measures].[Double Profit] AS\n"
                 + "    (([Measures].[Store Sales] - [Measures].[Store Cost]) * 2)\n"
-                + "SET [AxisROWS] AS\n"
+                + "SET [~ROWS] AS\n"
                 + "    {[Gender].[F]}\n"
                 + "SELECT\n"
-                + "CrossJoin([AxisCOLUMNS], {[Measures].[Double Profit], [Measures].[Unit Sales]}) ON COLUMNS,\n"
-                + "[AxisROWS] ON ROWS\n"
+                + "CrossJoin([~COLUMNS], {[Measures].[Double Profit], [Measures].[Unit Sales]}) ON COLUMNS,\n"
+                + "[~ROWS] ON ROWS\n"
                 + "FROM [Sales]";
 
 		assertEquals(expectedMdx, mdx);
