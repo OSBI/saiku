@@ -13,12 +13,16 @@ public class ThinLevel extends AbstractThinQuerySet {
 	
 	private List<ThinMember> inclusions = new ArrayList<ThinMember>();
 	private List<ThinMember> exclusions = new ArrayList<ThinMember>();
+	private ThinMember rangeStart;
+	private ThinMember rangeEnd;
 	
 	public ThinLevel() {};
-	public ThinLevel(String name, String uniqueName, String caption, List<ThinMember> inclusions, List<ThinMember> exclusions) {
+	public ThinLevel(String name, String uniqueName, String caption, List<ThinMember> inclusions, List<ThinMember> exclusions, ThinMember rangeStart, ThinMember rangeEnd) {
 		this.name = name;
 		this.uniqueName = uniqueName;
 		this.caption = caption;
+		this.rangeStart = rangeStart;
+		this.rangeEnd = rangeEnd;
 		if (inclusions != null) {
 			this.inclusions = inclusions;	
 		}
@@ -84,6 +88,30 @@ public class ThinLevel extends AbstractThinQuerySet {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+	/**
+	 * @return the rangeStart
+	 */
+	public ThinMember getRangeStart() {
+		return rangeStart;
+	}
+	/**
+	 * @param rangeStart the rangeStart to set
+	 */
+	public void setRangeStart(ThinMember rangeStart) {
+		this.rangeStart = rangeStart;
+	}
+	/**
+	 * @return the rangeEnd
+	 */
+	public ThinMember getRangeEnd() {
+		return rangeEnd;
+	}
+	/**
+	 * @param rangeEnd the rangeEnd to set
+	 */
+	public void setRangeEnd(ThinMember rangeEnd) {
+		this.rangeEnd = rangeEnd;
 	}
 
 }

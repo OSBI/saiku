@@ -2,12 +2,9 @@ package org.saiku.olap.query2.util;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
@@ -139,6 +136,10 @@ public class Fat {
 			}
 			for (ThinMember tm : tl.getExclusions()) {
 				qh.excludeMember(tm.getUniqueName());
+			}
+			if (tl.getRangeStart() !=  null && tl.getRangeEnd() != null) {
+				qh.includeRange(tl.getRangeStart().getUniqueName(), tl.getRangeEnd().getUniqueName());
+				
 			}
 			extendQuerySet(qh.getQuery(), ql, tl);
 		}

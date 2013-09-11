@@ -161,7 +161,9 @@ public class Thin {
 	private static ThinLevel convertLevel(QueryLevel ql) {
 		List<ThinMember> inclusions = convertMembers(ql.getInclusions());
 		List<ThinMember> exclusions = convertMembers(ql.getExclusions());
-		ThinLevel l = new ThinLevel(ql.getName(), ql.getUniqueName(), ql.getCaption(), inclusions, exclusions);
+		ThinMember rangeStart = convertMember(ql.getRangeStart());
+		ThinMember rangeEnd = convertMember(ql.getRangeEnd());
+		ThinLevel l = new ThinLevel(ql.getName(), ql.getUniqueName(), ql.getCaption(), inclusions, exclusions, rangeStart, rangeEnd);
 		extendQuerySet(l, ql);
 		return l;
 	}
@@ -170,11 +172,17 @@ public class Thin {
 		List<ThinMember> ms = new ArrayList<ThinMember>();
 		if (members != null) {
 			for (Member m : members) {
-				ThinMember tm = new ThinMember(m.getName(), m.getUniqueName(), m.getCaption());
-				ms.add(tm);
+				ms.add(convertMember(m));
 			}
 		}
 		return ms;
+	}
+	
+	private static ThinMember convertMember(Member m) {
+		if (m != null) {
+			return new ThinMember(m.getName(), m.getUniqueName(), m.getCaption());
+		}
+		return null;
 	}
 
 	private static AxisLocation getLocation(QueryAxis axis) {

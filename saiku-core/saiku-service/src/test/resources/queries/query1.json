@@ -47,7 +47,9 @@
                   "name" : "Non-Consumable",
                   "uniqueName" : "[Product].[Non-Consumable]",
                   "caption" : "Non-Consumable"
-                } ]
+                } ],
+                "rangeStart" : null,
+                "rangeEnd" : null
               }
             }
           },
@@ -68,7 +70,9 @@
                 "uniqueName" : "[Education Level].[Education Level]",
                 "caption" : "Education Level",
                 "inclusions" : [ ],
-                "exclusions" : [ ]
+                "exclusions" : [ ],
+                "rangeStart" : null,
+                "rangeEnd" : null
               }
             }
           }
@@ -105,7 +109,9 @@
                   "uniqueName" : "[Gender].[F]",
                   "caption" : "F"
                 } ],
-                "exclusions" : [ ]
+                "exclusions" : [ ],
+                "rangeStart" : null,
+                "rangeEnd" : null
               }
             }
           }
@@ -116,6 +122,7 @@
     },
     "visualTotals" : false,
     "visualTotalsPattern" : null,
+    "lowestLevelsOnly" : false,
     "details" : {
       "axis" : "COLUMNS",
       "location" : "BOTTOM",

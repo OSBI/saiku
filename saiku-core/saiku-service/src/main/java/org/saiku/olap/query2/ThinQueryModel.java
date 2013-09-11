@@ -10,6 +10,7 @@ public class ThinQueryModel {
 	private Map<AxisLocation, ThinAxis> axes = new HashMap<AxisLocation, ThinAxis>();
 	private boolean visualTotals = false;
 	private String visualTotalsPattern;
+	private boolean lowestLevelsOnly = false;
 	private ThinDetails details;
 	private List<ThinCalculatedMeasure> calculatedMeasures = new ArrayList<ThinCalculatedMeasure>();
 	
@@ -60,6 +61,20 @@ public class ThinQueryModel {
 	 */
 	public void setVisualTotalsPattern(String visualTotalsPattern) {
 		this.visualTotalsPattern = visualTotalsPattern;
+	}
+	
+	/**
+	 * @return the lowestLevelsOnly
+	 */
+	public boolean isLowestLevelsOnly() {
+		return lowestLevelsOnly;
+	}
+
+	/**
+	 * @param visualTotals the visualTotals to set
+	 */
+	public void setLowestLevelsOnly(boolean lowest) {
+		this.lowestLevelsOnly = lowest;
 	}
 
 	public List<ThinCalculatedMeasure> getCalculatedMeasures() {
