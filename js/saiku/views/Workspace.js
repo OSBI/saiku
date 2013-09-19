@@ -611,6 +611,7 @@ var Workspace = Backbone.View.extend({
             Saiku.ui.unblock();
         } else {
             $(this.el).unblock();
+            Saiku.ui.unblock();
         }
     },
 
