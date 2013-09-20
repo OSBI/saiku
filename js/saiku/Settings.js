@@ -43,6 +43,7 @@ var Settings = {
     // 0 - no limit
     RESULT_LIMIT: 0,
     MEMBERS_FROM_RESULT: true,
+    ALLOW_IMPORT_EXPORT: false,
     PLUGINS: [
         "Chart"
     ],

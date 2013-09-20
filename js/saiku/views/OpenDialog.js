@@ -45,14 +45,16 @@ var OpenDialog = Modal.extend({
         this.message = '<div style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;'
                 + ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>'
                 + "<div class='RepositoryObjects'>Loading....</div><br><b><div class='query_name'><span class='i18n'>Please select a file.....</span></div></b>"
-                + "<br><br>"
-                + "<span class='export_zip'> </span> <b><span class='i18n'>Import or Export Files for Folder</span>: </b> <span class='i18n zip_folder'>< Select Folder... ></span>"
+                + "<br><br>";
+        if (Settings.ALLOW_IMPORT_EXPORT) {
+            this.message += "<span class='export_zip'> </span> <b><span class='i18n'>Import or Export Files for Folder</span>: </b> <span class='i18n zip_folder'>< Select Folder... ></span>"
                 + " &nbsp; <input type='submit' value='Export' class='export_btn' disabled /><br/><br />"
                 + "<br /><form id='importForm' target='_blank' method='POST' enctype='multipart/form-data'>" 
                 + "<input type='hidden' name='directory' class='directory'/>" 
                 + "<input type='file' name='file' class='file'/>"
                 + "<input type='submit' value='Import' class='import_btn' disabled />"
                 + "</form>";
+        }
         _.extend(this.options, {
             title: "Open"
         });
