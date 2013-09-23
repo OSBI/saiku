@@ -123,6 +123,10 @@
                     <groupId>javax.servlet</groupId>
                     <artifactId>jsp-api</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.olap4j</groupId>
+                    <artifactId>xmlaserver</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
