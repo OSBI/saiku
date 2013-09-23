@@ -40,14 +40,14 @@
                 "filters" : [ ],
                 "name" : "Product Family",
                 "caption" : "Product Family",
-                "inclusions" : [ ],
-                "exclusions" : [ {
-                  "name" : "Non-Consumable",
-                  "uniqueName" : "[Product].[Non-Consumable]",
-                  "caption" : "Non-Consumable"
-                } ],
-                "rangeStart" : null,
-                "rangeEnd" : null
+                "selections" : {
+                  "type" : "EXCLUSION",
+                  "members" : [ {
+                    "name" : "Non-Consumable",
+                    "uniqueName" : "[Product].[Non-Consumable]",
+                    "caption" : "Non-Consumable"
+                  } ]
+                }
               }
             }
           },
@@ -65,10 +65,7 @@
                 "filters" : [ ],
                 "name" : "Education Level",
                 "caption" : "Education Level",
-                "inclusions" : [ ],
-                "exclusions" : [ ],
-                "rangeStart" : null,
-                "rangeEnd" : null
+                "selections" : null
               }
             }
           }
@@ -98,14 +95,14 @@
                 "filters" : [ ],
                 "name" : "Gender",
                 "caption" : "Gender",
-                "inclusions" : [ {
-                  "name" : "F",
-                  "uniqueName" : "[Gender].[F]",
-                  "caption" : "F"
-                } ],
-                "exclusions" : [ ],
-                "rangeStart" : null,
-                "rangeEnd" : null
+                "selections" : {
+                  "type" : "INCLUSION",
+                  "members" : [ {
+                    "name" : "F",
+                    "uniqueName" : "[Gender].[F]",
+                    "caption" : "F"
+                  } ]
+                }
               }
             }
           }

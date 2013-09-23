@@ -23,6 +23,7 @@ import org.saiku.olap.query2.ThinMember;
 import org.saiku.olap.query2.ThinQuery;
 import org.saiku.olap.query2.ThinQueryModel;
 import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
+import org.saiku.olap.query2.ThinSelection;
 import org.saiku.olap.query2.common.ThinQuerySet;
 import org.saiku.olap.query2.common.ThinSortableQuerySet;
 import org.saiku.olap.query2.common.ThinSortableQuerySet.HierarchizeMode;
@@ -163,7 +164,20 @@ public class Thin {
 		List<ThinMember> exclusions = convertMembers(ql.getExclusions());
 		ThinMember rangeStart = convertMember(ql.getRangeStart());
 		ThinMember rangeEnd = convertMember(ql.getRangeEnd());
-		ThinLevel l = new ThinLevel(ql.getName(), ql.getCaption(), inclusions, exclusions, rangeStart, rangeEnd);
+		ThinSelection ts = null;
+		
+		if (inclusions.size() > 0) {
+			ts = new ThinSelection(ThinSelection.Type.INCLUSION, inclusions);
+		} else if (exclusions.size() > 0) {
+			ts = new ThinSelection(ThinSelection.Type.EXCLUSION, exclusions);
+		} else if (rangeStart != null && rangeEnd != null){
+			List<ThinMember> range = new ArrayList<ThinMember>();
+			range.add(rangeStart);
+			range.add(rangeEnd);
+			ts = new ThinSelection(ThinSelection.Type.RANGE, range);
+		}
+		
+		ThinLevel l = new ThinLevel(ql.getName(), ql.getCaption(), ts);
 		extendQuerySet(l, ql);
 		return l;
 	}

@@ -131,16 +131,37 @@ public class Fat {
 	private static void convertHierarchy(QueryHierarchy qh, ThinHierarchy th) throws OlapException {
 		for (ThinLevel tl : th.getLevels().values()) {
 			QueryLevel ql = qh.includeLevel(tl.getName());
-			for (ThinMember tm : tl.getInclusions()) {
-				qh.includeMember(tm.getUniqueName());
+			
+			if (tl.getSelections() != null) {
+				switch(tl.getSelections().getType()) {
+				case INCLUSION:
+					for (ThinMember tm : tl.getSelections().getMembers()) {
+						qh.includeMember(tm.getUniqueName());
+					}
+					break;
+
+				case EXCLUSION:
+					for (ThinMember tm : tl.getSelections().getMembers()) {
+						qh.excludeMember(tm.getUniqueName());
+					}
+					break;
+				case RANGE:
+					int size = tl.getSelections().getMembers().size();
+					int iterations = tl.getSelections().getMembers().size() / 2;
+					if (size > 2 && size % 2 == 0) {
+						for (int i = 0; i < iterations; i++) {
+							ThinMember start = tl.getSelections().getMembers().get(iterations * 2 + i);
+							ThinMember end = tl.getSelections().getMembers().get(iterations * 2 + i + 1);
+							qh.includeRange(start.getUniqueName(), end.getUniqueName());
+						}
+					}
+					break;
+				default:
+					break;
+
+				}
 			}
-			for (ThinMember tm : tl.getExclusions()) {
-				qh.excludeMember(tm.getUniqueName());
-			}
-			if (tl.getRangeStart() !=  null && tl.getRangeEnd() != null) {
-				qh.includeRange(tl.getRangeStart().getUniqueName(), tl.getRangeEnd().getUniqueName());
-				
-			}
+			
 			extendQuerySet(qh.getQuery(), ql, tl);
 		}
 		extendSortableQuerySet(qh.getQuery(), qh, th);
