@@ -142,7 +142,7 @@ public class Thin {
 	}
 
 	private static ThinHierarchy convertHierarchy(QueryHierarchy qh) {
-		ThinHierarchy th = new ThinHierarchy(qh.getName(), qh.getUniqueName(), qh.getCaption(), convertLevels(qh.getActiveQueryLevels()));
+		ThinHierarchy th = new ThinHierarchy(qh.getName(), qh.getCaption(), convertLevels(qh.getActiveQueryLevels()));
 		extendSortableQuerySet(th, qh);
 		return th;
 	}
@@ -163,7 +163,7 @@ public class Thin {
 		List<ThinMember> exclusions = convertMembers(ql.getExclusions());
 		ThinMember rangeStart = convertMember(ql.getRangeStart());
 		ThinMember rangeEnd = convertMember(ql.getRangeEnd());
-		ThinLevel l = new ThinLevel(ql.getName(), ql.getUniqueName(), ql.getCaption(), inclusions, exclusions, rangeStart, rangeEnd);
+		ThinLevel l = new ThinLevel(ql.getName(), ql.getCaption(), inclusions, exclusions, rangeStart, rangeEnd);
 		extendQuerySet(l, ql);
 		return l;
 	}

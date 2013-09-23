@@ -8,7 +8,6 @@ import org.saiku.olap.query2.common.AbstractThinQuerySet;
 public class ThinLevel extends AbstractThinQuerySet {
 
 	private String name;
-	private String uniqueName;
 	private String caption;
 	
 	private List<ThinMember> inclusions = new ArrayList<ThinMember>();
@@ -17,9 +16,8 @@ public class ThinLevel extends AbstractThinQuerySet {
 	private ThinMember rangeEnd;
 	
 	public ThinLevel() {};
-	public ThinLevel(String name, String uniqueName, String caption, List<ThinMember> inclusions, List<ThinMember> exclusions, ThinMember rangeStart, ThinMember rangeEnd) {
+	public ThinLevel(String name, String caption, List<ThinMember> inclusions, List<ThinMember> exclusions, ThinMember rangeStart, ThinMember rangeEnd) {
 		this.name = name;
-		this.uniqueName = uniqueName;
 		this.caption = caption;
 		this.rangeStart = rangeStart;
 		this.rangeEnd = rangeEnd;
@@ -34,18 +32,6 @@ public class ThinLevel extends AbstractThinQuerySet {
 	@Override
 	public String getName() {
 		return name;
-	}
-	/**
-	 * @return the uniqueName
-	 */
-	public String getUniqueName() {
-		return uniqueName;
-	}
-	/**
-	 * @param uniqueName the uniqueName to set
-	 */
-	public void setUniqueName(String uniqueName) {
-		this.uniqueName = uniqueName;
 	}
 	/**
 	 * @return the caption

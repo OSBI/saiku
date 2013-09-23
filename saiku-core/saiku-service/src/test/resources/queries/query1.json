@@ -33,14 +33,12 @@
             "sortEvaluationLiteral" : null,
             "hierarchizeMode" : null,
             "name" : "Product",
-            "uniqueName" : "[Product]",
             "caption" : "Product",
             "levels" : {
               "Product Family" : {
                 "mdx" : null,
                 "filters" : [ ],
                 "name" : "Product Family",
-                "uniqueName" : "[Product].[Product Family]",
                 "caption" : "Product Family",
                 "inclusions" : [ ],
                 "exclusions" : [ {
@@ -60,14 +58,12 @@
             "sortEvaluationLiteral" : null,
             "hierarchizeMode" : null,
             "name" : "Education Level",
-            "uniqueName" : "[Education Level]",
             "caption" : "Education Level",
             "levels" : {
               "Education Level" : {
                 "mdx" : null,
                 "filters" : [ ],
                 "name" : "Education Level",
-                "uniqueName" : "[Education Level].[Education Level]",
                 "caption" : "Education Level",
                 "inclusions" : [ ],
                 "exclusions" : [ ],
@@ -95,14 +91,12 @@
             "sortEvaluationLiteral" : null,
             "hierarchizeMode" : null,
             "name" : "Gender",
-            "uniqueName" : "[Gender]",
             "caption" : "Gender",
             "levels" : {
               "Gender" : {
                 "mdx" : null,
                 "filters" : [ ],
                 "name" : "Gender",
-                "uniqueName" : "[Gender].[Gender]",
                 "caption" : "Gender",
                 "inclusions" : [ {
                   "name" : "F",

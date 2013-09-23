@@ -8,16 +8,14 @@ import org.saiku.olap.query2.common.AbstractThinSortableQuerySet;
 public class ThinHierarchy extends AbstractThinSortableQuerySet {
 
 	private String name;
-	private String uniqueName;
 	private String caption;
 	
 	private Map<String, ThinLevel> levels = new HashMap<String, ThinLevel>();
 	
 	public ThinHierarchy() {};
 	
-	public ThinHierarchy(String name, String uniqueName, String caption,Map<String, ThinLevel> levels) {
+	public ThinHierarchy(String name, String caption,Map<String, ThinLevel> levels) {
 		this.name = name;
-		this.uniqueName = uniqueName;
 		this.caption = caption;
 		if (levels != null) {
 			this.levels = levels;
@@ -26,20 +24,6 @@ public class ThinHierarchy extends AbstractThinSortableQuerySet {
 	@Override
 	public String getName() {
 		return name;
-	}
-
-	/**
-	 * @return the uniqueName
-	 */
-	public String getUniqueName() {
-		return uniqueName;
-	}
-
-	/**
-	 * @param uniqueName the uniqueName to set
-	 */
-	public void setUniqueName(String uniqueName) {
-		this.uniqueName = uniqueName;
 	}
 
 	/**

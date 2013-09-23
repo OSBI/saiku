@@ -178,8 +178,8 @@ public class Fat {
 				case Name:
 					List<String> exp = f.getExpressions();
 					if (exp != null && exp.size() > 1) {
-						String hierarchyUniqueName = exp.remove(0);
-						QueryHierarchy qh = q.getHierarchy(hierarchyUniqueName);
+						String hierarchyName = exp.remove(0);
+						QueryHierarchy qh = q.getHierarchy(hierarchyName);
 						NameFilter nf = new NameFilter(qh.getHierarchy(), exp);
 						qfs.add(nf);
 					}
@@ -187,8 +187,8 @@ public class Fat {
 				case NameLike:
 					List<String> exp2 = f.getExpressions();
 					if (exp2 != null && exp2.size() > 1) {
-						String hierarchyUniqueName = exp2.remove(0);
-						QueryHierarchy qh = q.getHierarchy(hierarchyUniqueName);
+						String hierarchyName = exp2.remove(0);
+						QueryHierarchy qh = q.getHierarchy(hierarchyName);
 						NameLikeFilter nf = new NameLikeFilter(qh.getHierarchy(), exp2);
 						qfs.add(nf);
 					}
