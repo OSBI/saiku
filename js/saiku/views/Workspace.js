@@ -568,7 +568,13 @@ var Workspace = Backbone.View.extend({
             return this.no_results(args);
         }
 
-        var cdate = new Date().getHours() + ":" + new Date().getMinutes();
+        var chour = new Date().getHours();
+        if (chour < 10) chour = "0" + chour;
+
+        var cminutes = new Date().getMinutes();
+        if (cminutes < 10) cminutes = "0" + cminutes;
+        
+        var cdate = chour + ":" + cminutes;
         var runtime = args.data.runtime != null ? (args.data.runtime / 1000).toFixed(2) : "";
         /*
         var info = '<b>Time:</b> ' + cdate 
@@ -587,16 +593,17 @@ var Workspace = Backbone.View.extend({
     },
 
     block: function(message) {
+        /* Most probably not needed anymore. Seems ok now with fix #192
         if (isIE) {
             var $msg = $("<span>" + message + "</span>");
             $msg.find('.processing_image').removeClass('processing_image');
             Saiku.ui.block($msg.html());
-        } else {
+        }
+        */
             $(this.el).block({ 
                 message: '<span class="saiku_logo" style="float:left">&nbsp;&nbsp;</span> ' + message
             });
             Saiku.i18n.translate();
-        }
     },
 
     unblock: function() {
@@ -604,6 +611,7 @@ var Workspace = Backbone.View.extend({
             Saiku.ui.unblock();
         } else {
             $(this.el).unblock();
+            Saiku.ui.unblock();
         }
     },
 

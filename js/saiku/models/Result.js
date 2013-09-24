@@ -29,8 +29,7 @@ var Result = Backbone.Model.extend({
     
     parse: function(response) {
         // Show the UI if hidden
-        $(this.workspace).unblock();
-        Saiku.ui.unblock();
+        this.query.workspace.unblock();
         this.result = response;
         this.firstRun = true;
         this.query.workspace.trigger('query:result', {
