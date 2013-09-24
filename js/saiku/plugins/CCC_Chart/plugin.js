@@ -20,7 +20,8 @@
 var Chart = Backbone.View.extend({
 
     events: {
-        'click .keep' : 'keepVisible'
+        'click .zoomin' : 'zoomin',
+        'click .rerender' : 'render_chart'
     },
 
 	cccOptions: {
@@ -52,7 +53,9 @@ var Chart = Backbone.View.extend({
         this.id = _.uniqueId("chart_");
         $(this.el).attr({ id: this.id });
         //$('<div id="nav_' + this.id + '">' + "<input type='submit' class='keep' value='keep only selected' />" + '</div>').appendTo($(this.el));
-        $('<div class="canvas_wrapper" style="display:none;"><div id="canvas_' + this.id + '"></div></div>').appendTo($(this.el));
+
+        var btns = "<span style='float:left;'><a href='#' class='button zoomin'></a>" + "<a href='#' class='button rerender'></a></span>";
+        $('<div class="canvas_wrapper" style="display:none;">' +  btns + '<div id="canvas_' + this.id + '"></div></div>').appendTo($(this.el));
         
         this.cccOptions.canvas = 'canvas_' + this.id;
         this.cccOptions = this.getQuickOptions(this.cccOptions);
@@ -60,7 +63,7 @@ var Chart = Backbone.View.extend({
         this.data = null;
         
         // Bind table rendering to query result event
-        _.bindAll(this, "receive_data", "process_data", "show",  "getData", "render_view", "render_chart", "render_chart_delayed", "getQuickOptions","exportChart","block_ui");
+        _.bindAll(this, "receive_data", "process_data", "show",  "getData", "render_view", "render_chart", "render_chart_delayed", "getQuickOptions","exportChart","block_ui", "zoomin");
         var self = this;
         this.workspace.bind('query:run',  function() {
             if (! $(self.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
@@ -365,7 +368,7 @@ var Chart = Backbone.View.extend({
         this.render_chart();
     },
 
-    keepVisible: function(event) {
+    zoomin: function(event) {
 
 
         var chart = this.chart.root;
@@ -500,6 +503,7 @@ var Chart = Backbone.View.extend({
         if (!$(this.workspace.querytoolbar.el).find('.render_chart').hasClass('on') || !this.hasProcessed) {
             return;
         }
+        var self = this;
 /* DEBUGGING
 this.med = new Date().getTime();
 $(this.el).prepend(" | chart render (" + (this.med - this.call_time) + ")" );
@@ -524,6 +528,7 @@ this.call_time = undefined;
                 height: workspaceResults.height() - 40,
                 hoverable: hoverable,
                 animate: animate
+                //selectionChangedAction: function() {} //self.zoomin(); },
         });
 
         /* XXX - enable later

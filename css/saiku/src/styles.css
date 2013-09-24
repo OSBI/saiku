@@ -1920,6 +1920,31 @@ span.cancel_search:hover {
     overflow: hidden;
 }
 
+.canvas_wrapper a.button {
+    display: block;
+    height: 16px;
+    padding: 8px;
+    width: 16px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+
+.canvas_wrapper a.button:hover {
+    border: 1px solid #CCC;
+    padding: 7px;
+}
+.canvas_wrapper .zoomin {
+    background: url('../../../images/src/arrow_in.png') no-repeat;
+    background-repeat:  no-repeat;
+    background-position: 7px 7px;
+}
+.canvas_wrapper .rerender {
+    background: url('../../../images/src/arrow_refresh_bnw.png') no-repeat;
+    background-repeat:  no-repeat;
+    background-position: 7px 7px;
+}
+
 .chartworkspace_inner {
     overflow: auto;
     margin-left: 400px;
