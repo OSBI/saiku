@@ -52,9 +52,11 @@ var Chart = Backbone.View.extend({
         // Create a unique ID for use as the CSS selector
         this.id = _.uniqueId("chart_");
         $(this.el).attr({ id: this.id });
-        //$('<div id="nav_' + this.id + '">' + "<input type='submit' class='keep' value='keep only selected' />" + '</div>').appendTo($(this.el));
 
-        var btns = "<span style='float:left;'><a href='#' class='button zoomin'></a>" + "<a href='#' class='button rerender'></a></span>";
+        // zoom in button
+        // <a href='#' class='button zoomin' title='Zoom into chart selection'></a>
+
+        var btns = "<span style='float:left;'><a href='#' class='button rerender' title='Re-render chart'></a></span>";
         $('<div class="canvas_wrapper" style="display:none;">' +  btns + '<div id="canvas_' + this.id + '"></div></div>').appendTo($(this.el));
         
         this.cccOptions.canvas = 'canvas_' + this.id;
@@ -527,8 +529,76 @@ this.call_time = undefined;
                 width:  workspaceResults.width() - 40,
                 height: workspaceResults.height() - 40,
                 hoverable: hoverable,
-                animate: animate
-                //selectionChangedAction: function() {} //self.zoomin(); },
+                animate: animate,
+                legend: {
+                    scenes: {
+                        item: {
+                            execute: function(test) {
+                                var keptVisibleDatumSet = this.chart().keptVisibleDatumSet || [];
+                                var zoomedIn = this.chart().keptVisibleDatumSet !=  null;
+
+                                if (zoomedIn) {
+                                    _.intersect(this.datums().array(), keptVisibleDatumSet).forEach(function(datum) {
+                                        datum.toggleVisible();
+                                    });
+
+                                } else {
+                                    pvc.data.Data.toggleVisible(this.datums());
+                                }
+                                this.chart().render(true, true, false);
+
+                            }
+                        }
+                    }
+                },
+                userSelectionAction: function(selectingDatums) {
+                    var chart = self.chart.root;
+                    var data = chart.data;
+                    var selfChart = this.chart;
+                    
+                    if (data.datums().count() > 1500) {
+                        /*
+                        var start = new Date().getTime();
+                        pvc.data.Data.setVisible(data.datums(), false);
+                        var t1 = new Date().getTime();
+                        $(self.el).find('.canvas_wrapper').prepend("<br/>too big in t1: " + ( t1 - start));
+                        pvc.data.Data.setVisible(selectingDatums, true);
+                        var t2 = new Date().getTime();
+                        $(self.el).find('.canvas_wrapper').prepend("<br/>too big t2: " + ( t2 - t1));
+                        */
+                        pvc.data.Data.setSelected(selectingDatums, true);
+                    } else if (data.datums(null, {visible: true}).count() == data.datums().count()) {
+                        var start = new Date().getTime();
+                        pvc.data.Data.setVisible(data.datums(), false);
+                        var t1 = new Date().getTime();
+                        //$(self.el).find('.canvas_wrapper').prepend("<br/>not zoomed in t1: " + ( t1 - start));
+                        pvc.data.Data.setVisible(selectingDatums, true);
+                        var t2 = new Date().getTime();
+                        //$(self.el).find('.canvas_wrapper').prepend("<br/>t2: " + ( t2 - t1));
+                        selfChart.keptVisibleDatumSet = selectingDatums;
+
+                    } else {
+                        var start = new Date().getTime();
+                        pvc.data.Data.setVisible(data.datums(), false);
+                        var visibleOnes = selfChart.keptVisibleDatumSet;
+
+                        var t1 = new Date().getTime();
+                        //$(self.el).find('.canvas_wrapper').prepend("<br/>else t1: " + ( t1 - start));
+                        selfChart.keptVisibleDatumSet = [];
+                        _.intersect(visibleOnes, selectingDatums).forEach(function(datum) {
+                                datum.setVisible(true);
+                                selfChart.keptVisibleDatumSet.push(datum);
+                            });
+                        var t2 = new Date().getTime();
+                        //$(self.el).find('.canvas_wrapper').prepend("<br/>else t2: " + ( t2 - t1));
+
+                    }
+                    
+                
+                chart.render(true, true, false);
+                return [];
+
+                }
         });
 
         /* XXX - enable later
