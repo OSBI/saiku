@@ -599,6 +599,7 @@ this.call_time = undefined;
                     } else if (data.datums(null, {visible: true}).count() == data.datums().count()) {
                         $(self.el).find('.zoomout').show();
 
+                        // TODO find difference and only hide those, setVisible is expensive!
                         pvc.data.Data.setVisible(data.datums(), false);
                         pvc.data.Data.setVisible(selectingDatums, true);
 
@@ -610,6 +611,7 @@ this.call_time = undefined;
                     } else {
                         $(self.el).find('.zoomout').show();
                         var start = new Date().getTime();
+                        // TODO find difference and only hide those, setVisible is expensive!
                         pvc.data.Data.setVisible(data.datums(null, { visible: true }), false);
                         var visibleOnes = selfChart.keptVisibleDatumSet[0];
 
