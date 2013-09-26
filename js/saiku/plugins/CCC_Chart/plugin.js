@@ -410,7 +410,7 @@ var Chart = Backbone.View.extend({
             chart.keptVisibleDatumSet.splice(kData.length - 1, 1);
             var nonVisible = data.datums(null, { visible : false}).array();
             var back = chart.keptVisibleDatumSet[kData.length - 1];
-            _.intersect(back, nonVisible).forEach(function(datum) {
+            _.intersection(back, nonVisible).forEach(function(datum) {
                     datum.setVisible(true);
             });
             
@@ -576,7 +576,7 @@ this.call_time = undefined;
                                 var zoomedIn = this.chart().keptVisibleDatumSet[0] !=  null;
 
                                 if (zoomedIn) {
-                                    _.intersect(this.datums().array(), keptVisibleDatumSet[0]).forEach(function(datum) {
+                                    _.intersection(this.datums().array(), keptVisibleDatumSet[0]).forEach(function(datum) {
                                         datum.toggleVisible();
                                     });
 
@@ -616,7 +616,7 @@ this.call_time = undefined;
                         var t1 = new Date().getTime();
                         //$(self.el).find('.canvas_wrapper').prepend("<br/>else t1: " + ( t1 - start));
                         var newSelection = [];
-                        _.intersect(visibleOnes, selectingDatums).forEach(function(datum) {
+                        _.intersection(visibleOnes, selectingDatums).forEach(function(datum) {
                                 datum.setVisible(true);
                                 newSelection.push(datum);
                                 
