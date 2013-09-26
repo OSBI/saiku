@@ -746,6 +746,7 @@ span.clear_axis {
     -webkit-box-shadow: 0 0 10px #EEE;
     box-shadow: 0 0 10px #EEE;
     border: 1px solid #CCC;
+    z-index: 100;
 }
 #password, #username, input.newfolder {
     padding: 4px;
@@ -776,6 +777,8 @@ span.clear_axis {
     text-shadow: 1px 1px 0 #FFFFFF;
 }
 .ui-dialog .ui-dialog-titlebar-close {
+    background-color: : none;
+    border: none;
     background-position: -624px -97px;
     display: inline-block;
     float: right;
@@ -788,6 +791,7 @@ span.clear_axis {
 	padding: 1px;
 	background-position: -690px -97px;
 	background-color: transparent;
+    cursor: pointer;
 }
 
 .ui-icon {

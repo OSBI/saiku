@@ -194,6 +194,7 @@ var Table = Backbone.View.extend({
                         self.workspace.query.set({ 'formatter' : 'flat' });
                     }
                     self.workspace.query.action.put(url, { success: self.workspace.sync_query,
+                        dataType: "text",
                         data: children ?
                             {
                                 member: items[key].payload

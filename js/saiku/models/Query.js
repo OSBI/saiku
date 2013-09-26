@@ -139,6 +139,7 @@ var Query = Backbone.Model.extend({
     },
     
     move_dimension: function(dimension, target, index) {
+        var self = this;
         $(this.workspace.el).find('.run').removeClass('disabled_toolbar');
         var url = "/axis/" + target + "/dimension/" + dimension;
         
@@ -146,11 +147,12 @@ var Query = Backbone.Model.extend({
             data: {
                 position: index
             },
-            
+            dataType: "text",
             success: function() {
-                if (('MODE' in Settings && (Settings.MODE == 'view' || Settings.MODE == 'table')) || (typeof this.query.properties != "undefined" && this.query.properties 
-                    .properties['saiku.olap.query.automatic_execution'] === 'true')) {
-                    this.query.run(true);
+                if (('MODE' in Settings && (Settings.MODE == 'view' || Settings.MODE == 'table')) 
+                        || (typeof self.properties != "undefined" 
+                                && self.properties .properties['saiku.olap.query.automatic_execution'] === 'true')) {
+                    self.run(true);
                 }
             }
         });

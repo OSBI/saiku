@@ -58,9 +58,9 @@ var QueryAction = Backbone.Model.extend({
         // Initiate action
         if (method == "save") {
             // Handle response from server
-            this.parse = options.success;
+            //this.parse = options.success;
             
-            this.save();
+            this.save({}, options);
         } else if (method == "delete") {
             this.destroy(options);
         } else if (method == "fetch") {
