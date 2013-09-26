@@ -21,6 +21,7 @@ var Chart = Backbone.View.extend({
 
     events: {
         'click .zoomin' : 'zoomin',
+        'click .zoomout' : 'zoomout',
         'click .rerender' : 'render_chart'
     },
 
@@ -56,7 +57,7 @@ var Chart = Backbone.View.extend({
         // zoom in button
         // <a href='#' class='button zoomin' title='Zoom into chart selection'></a>
 
-        var btns = "<span style='float:left;'><a href='#' class='button rerender' title='Re-render chart'></a></span>";
+        var btns = "<span style='float:left;'><a href='#' class='button rerender' title='Re-render chart'></a><a href='#' class='button zoomout' style='display:none;' title='Zoom back out'></a></span>";
         $('<div class="canvas_wrapper" style="display:none;">' +  btns + '<div id="canvas_' + this.id + '"></div></div>').appendTo($(this.el));
         
         this.cccOptions.canvas = 'canvas_' + this.id;
@@ -389,6 +390,43 @@ var Chart = Backbone.View.extend({
 
     },
 
+    zoomout: function(event) {
+
+
+        var chart = this.chart.root;
+        var data = chart.data;
+
+        var kData = chart.keptVisibleDatumSet;
+
+        if (kData == null || kData.length == 0) {
+            $(this.el).find('.zoomout').hide();
+        }
+        else if (kData.length == 1) {
+            $(this.el).find('.zoomout').hide();
+            chart.keptVisibleDatumSet = [];
+            pvc.data.Data.setVisible(data.datums(null, { visible : false}), true);
+
+        } else if (kData.length > 1) {
+            chart.keptVisibleDatumSet.splice(kData.length - 1, 1);
+            var nonVisible = data.datums(null, { visible : false}).array();
+            var back = chart.keptVisibleDatumSet[kData.length - 1];
+            _.intersect(back, nonVisible).forEach(function(datum) {
+                    datum.setVisible(true);
+            });
+            
+            
+        }
+
+
+        
+         
+        
+         
+        chart.render(true, true, false);
+
+
+    },
+
     // Default static style-sheet
     cccOptionsDefault: {
         Base: {
@@ -534,11 +572,11 @@ this.call_time = undefined;
                     scenes: {
                         item: {
                             execute: function(test) {
-                                var keptVisibleDatumSet = this.chart().keptVisibleDatumSet || [];
-                                var zoomedIn = this.chart().keptVisibleDatumSet !=  null;
+                                var keptVisibleDatumSet = this.chart().keptVisibleDatumSet[0] || [];
+                                var zoomedIn = this.chart().keptVisibleDatumSet[0] !=  null;
 
                                 if (zoomedIn) {
-                                    _.intersect(this.datums().array(), keptVisibleDatumSet).forEach(function(datum) {
+                                    _.intersect(this.datums().array(), keptVisibleDatumSet[0]).forEach(function(datum) {
                                         datum.toggleVisible();
                                     });
 
@@ -557,38 +595,33 @@ this.call_time = undefined;
                     var selfChart = this.chart;
                     
                     if (data.datums().count() > 1500) {
-                        /*
-                        var start = new Date().getTime();
-                        pvc.data.Data.setVisible(data.datums(), false);
-                        var t1 = new Date().getTime();
-                        $(self.el).find('.canvas_wrapper').prepend("<br/>too big in t1: " + ( t1 - start));
-                        pvc.data.Data.setVisible(selectingDatums, true);
-                        var t2 = new Date().getTime();
-                        $(self.el).find('.canvas_wrapper').prepend("<br/>too big t2: " + ( t2 - t1));
-                        */
                         pvc.data.Data.setSelected(selectingDatums, true);
                     } else if (data.datums(null, {visible: true}).count() == data.datums().count()) {
-                        var start = new Date().getTime();
+                        $(self.el).find('.zoomout').show();
+
                         pvc.data.Data.setVisible(data.datums(), false);
-                        var t1 = new Date().getTime();
-                        //$(self.el).find('.canvas_wrapper').prepend("<br/>not zoomed in t1: " + ( t1 - start));
                         pvc.data.Data.setVisible(selectingDatums, true);
-                        var t2 = new Date().getTime();
-                        //$(self.el).find('.canvas_wrapper').prepend("<br/>t2: " + ( t2 - t1));
-                        selfChart.keptVisibleDatumSet = selectingDatums;
+
+                        if (!selfChart.hasOwnProperty('keptVisibleDatumSet')) {
+                            selfChart.keptVisibleDatumSet = [];
+                        }
+                        selfChart.keptVisibleDatumSet.push(selectingDatums);
 
                     } else {
+                        $(self.el).find('.zoomout').show();
                         var start = new Date().getTime();
-                        pvc.data.Data.setVisible(data.datums(), false);
-                        var visibleOnes = selfChart.keptVisibleDatumSet;
+                        pvc.data.Data.setVisible(data.datums(null, { visible: true }), false);
+                        var visibleOnes = selfChart.keptVisibleDatumSet[0];
 
                         var t1 = new Date().getTime();
                         //$(self.el).find('.canvas_wrapper').prepend("<br/>else t1: " + ( t1 - start));
-                        selfChart.keptVisibleDatumSet = [];
+                        var newSelection = [];
                         _.intersect(visibleOnes, selectingDatums).forEach(function(datum) {
                                 datum.setVisible(true);
-                                selfChart.keptVisibleDatumSet.push(datum);
+                                newSelection.push(datum);
+                                
                             });
+                        selfChart.keptVisibleDatumSet.push(newSelection);
                         var t2 = new Date().getTime();
                         //$(self.el).find('.canvas_wrapper').prepend("<br/>else t2: " + ( t2 - t1));
 
