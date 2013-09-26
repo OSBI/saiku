@@ -26,7 +26,7 @@ var CustomFilterModal = Modal.extend({
         'submit form': 'save',
         'change .function' : 'switch_function',
         'change .type' : 'switch_type',
-        'click .dialog_footer a:' : 'call'
+        'click .dialog_footer a' : 'call'
     },
 
     buttons: [

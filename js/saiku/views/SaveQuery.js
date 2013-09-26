@@ -23,7 +23,7 @@ var SaveQuery = Modal.extend({
 
     events: {
         'click': 'select_root_folder', /* select root folder */
-        'click .dialog_footer a:' : 'call',
+        'click .dialog_footer a' : 'call',
         'submit form': 'save',
         'click .query': 'select_name',
         'click li.folder': 'toggle_folder',

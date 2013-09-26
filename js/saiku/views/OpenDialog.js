@@ -23,7 +23,7 @@ var OpenDialog = Modal.extend({
 
     events: {
         'click': 'select_root_folder', /* select root folder */
-        'click .dialog_footer a:' : 'call',
+        'click .dialog_footer a' : 'call',
         'click .query': 'select_name',
         'dblclick .query': 'open_query',
         'click li.folder': 'toggle_folder',

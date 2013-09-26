@@ -30,7 +30,7 @@ var DrillthroughModal = Modal.extend({
         'click .expand': 'select',
         'click .folder_collapsed': 'select',
         'click .folder_expanded': 'select',
-        'click .dialog_footer a:' : 'call',
+        'click .dialog_footer a' : 'call',
         'click .parent_dimension input' : 'select_dimension',
         'click .measure_tree input' : 'select_measure',
         'click input.all_measures' : 'select_all_measures',
