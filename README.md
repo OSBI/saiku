@@ -1,7 +1,7 @@
 saiku UI
 ==============================
 A user interface for the analytical tool saiku <br />
-For more information, see [saiku](http://saikuanalytics.com)
+For more information, see [saiku](http://www.meteorite.bi/saiku)
 
 You can put the UI on a separate server (apache httpd or simply a webapp in tomcat/webapps e.g)
 

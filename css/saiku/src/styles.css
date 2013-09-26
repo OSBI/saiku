@@ -1939,6 +1939,11 @@ span.cancel_search:hover {
     background-repeat:  no-repeat;
     background-position: 7px 7px;
 }
+.canvas_wrapper .zoomout {
+    background: url('../../../images/src/arrow_up_bnw.png') no-repeat;
+    background-repeat:  no-repeat;
+    background-position: 7px 7px;
+}
 .canvas_wrapper .rerender {
     background: url('../../../images/src/arrow_refresh_bnw.png') no-repeat;
     background-repeat:  no-repeat;
