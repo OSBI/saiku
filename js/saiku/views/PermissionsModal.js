@@ -48,7 +48,7 @@ var PermissionsModal = Modal.extend({
         _.bindAll(this, "ok", "add_role", "remove_acl");
 
         // Resize when rendered
-        //this.bind('open', this.post_render);
+        this.bind('open', Saiku.i18n.translate());
         this.render();
                // Load template
        $(this.el).find('.dialog_body')
@@ -57,13 +57,14 @@ var PermissionsModal = Modal.extend({
         $(this.el).find('.filterbox').autocomplete({
                     minLength: 1,
                     source: Saiku.session.roles
-                }).data( "autocomplete" )._renderItem = function( ul, item ) {
+                }).data( "autocomplete" );
+        /*._renderItem = function( ul, item ) {
                 return $( "<li></li>" )
                     .data( "item.autocomplete", item )
                     .append( "<a class='label'>" + item.label + "</a>" )
                     .appendTo( ul );
                 };
-
+*/
         var acl = new RepositoryAclObject({ file : this.file });
         acl.fetch({ async: false });
 
@@ -80,7 +81,7 @@ var PermissionsModal = Modal.extend({
             $(this.el).find('.private_owner .owner').text(owner);
             $(this.el).find('.private_owner').show();
         }
-		Saiku.i18n.translate();
+		
     },
     
     add_role: function(event) {

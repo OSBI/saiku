@@ -49,7 +49,7 @@ html, body {
 .used {
     font-weight: bold;
 }
-.sprite, .ui-dialog-titlebar-close, .ui-dialog-titlebar-close:hover, .dialog_icon {
+.sprite, .ui-dialog-titlebar-close,.ui-dialog-titlebar-close button, .ui-dialog-titlebar-close:hover, .dialog_icon {
 	background-image: url(../../../images/sprite.png);
 	background-repeat: no-repeat;
 }
@@ -756,7 +756,7 @@ span.clear_axis {
 	padding: 0 !important;
 }
 .ui-dialog-titlebar {
-    background: #F9F9F9;
+    background: #F0F0F0;
     background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#F0F0F0));
     background: -moz-linear-gradient(top, #FFFFFF 0%, #F0F0F0 100%);
     border-bottom: 1px solid #CCC;
