@@ -66,8 +66,8 @@ var Chart = Backbone.View.extend({
         this.data = null;
         
         // Bind table rendering to query result event
-        _.bindAll(this, "receive_data", "process_data", "show",  "getData", "render_view", "render_chart", 
-                        "render_chart_delayed", "getQuickOptions","exportChart","block_ui", "zoomin", "rerender");
+        _.bindAll(this, "receive_data", "process_data", "show",  "getData", "render_view", "render_chart", "render_chart_element",
+                        "render_chart_delayed", "getQuickOptions","exportChart","block_ui", "zoomin", "rerender", "process_data_tree");
         var self = this;
         this.workspace.bind('query:run',  function() {
             if (! $(self.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
@@ -372,6 +372,90 @@ var Chart = Backbone.View.extend({
         this.render_chart();
     },
 
+    treemap: function() {
+        $(this.el).find('.canvas_wrapper').show();
+        var data = this.process_data_tree({ data: this.workspace.query.result.lastresult() });
+        var options = this.getQuickOptions({});
+
+        function title(d) {
+          return d.parentNode ? (title(d.parentNode) + "." + d.nodeName) : d.nodeName;
+        }
+
+        var re = "",
+            nodes = pv.dom(data).nodes(); // .root("flare").nodes();
+
+        var tipOptions = {
+          delayIn: 200,
+          delayOut:80,
+          offset:  2,
+          html:    true,
+          gravity: "nw",
+          fade:    false,
+          followMouse: true,
+          corners: true,
+          arrow:   false,
+          opacity: 1
+        };
+        var color = pv.colors(options.colors).by(function(d) d.parentNode && d.parentNode.nodeName);
+
+        var vis = new pv.Panel()
+            .width(options.width)
+            .height(options.height)
+            .canvas(options.canvas);
+
+var partition = vis.add(pv.Layout.Partition.Fill)
+    .nodes(nodes)
+    .size(function(d) d.nodeValue)
+    .order("descending")
+    .orient("radial");
+
+partition.node.add(pv.Wedge)
+    .fillStyle( pv.colors(options.colors).by(function(d) d.parentNode && d.parentNode.nodeName))
+    .strokeStyle("#fff")
+    .lineWidth(0.5)
+    .text(function(d) {  return (d.nodeName + " : " + d.nodeValue); } )
+            .cursor('pointer')
+            .events("all")
+            .event('mousemove', pv.Behavior.tipsy(tipOptions) );
+
+partition.label.add(pv.Label)
+    .visible(function(d) d.angle * d.outerRadius >= 6);
+
+    vis.render();
+
+/*
+        var treemap = vis.add(pv.Layout.Treemap)
+            .nodes(nodes)
+            .round(true);
+
+        treemap.leaf.add(pv.Panel)
+            .fillStyle(function(d) color(d).alpha(title(d).match(re) ? 1 : .2))
+            .strokeStyle("#fff")
+            .lineWidth(1.5)
+            .text(function(d) { 
+                var x = d.parentNode;
+                var t = null;
+                while(x.depth > 0) {
+                    t = x.nodeName + (t == null ? "" :  " / " + t);
+                    x = x.parentNode;
+                }
+                return (t + "<br> " + d.nodeName + " : " + d.nodeValue); } )
+            .antialias(false)
+            .cursor('pointer')
+            .events("all")
+            .event('mousemove', pv.Behavior.tipsy(tipOptions) );
+
+        treemap.label.add(pv.Label)
+            .textStyle(function(d) pv.rgb(0, 0, 0, title(d).match(re) ? 1 : .2));
+
+            this.chart = vis;
+            vis.render();
+            //this.render_chart_element(true);
+
+            */
+
+    },
+
     rerender: function(event) {
         this.render_chart();
         event.preventDefault();
@@ -668,7 +752,10 @@ $(this.el).prepend(" pvc (" + (this.med3 - this.med) + ")" );
             crosstabMode: true,
             seriesInRows: false
         });
+        this.render_chart_element(animate);
+    },
 
+    render_chart_element: function(animate) {
         try {
             if (animate) {
                 $(this.el).find('.canvas_wrapper').show();
@@ -818,6 +905,109 @@ $(this.el).prepend(" | chart process");
             this.data.height = this.data.resultset.length;
             this.cccOptions = this.getQuickOptions(this.cccOptions);
             this.render_chart();
+        } else {
+            $(this.el).find('.canvas_wrapper').text("No results").show();
+            this.workspace.processing.hide();
+            this.workspace.adjust();
+        }
+    },
+
+    process_data_tree: function(args) {
+        var tree =  {
+            data: {}
+        };
+        var data = {};
+        var currentDataPos = data.data;
+        if (typeof args == "undefined" || typeof args.data == "undefined" || 
+             ($(this.workspace.el).is(':visible') && !$(this.el).is(':visible'))) {
+            return;
+        }
+
+        if (args.data != null && args.data.error != null) {
+            return this.workspace.error(args);
+        }        
+        // Check to see if there is data
+        if (args.data == null || (args.data.cellset && args.data.cellset.length === 0)) {
+            return this.workspace.no_results(args);
+        }
+
+        var cellset = args.data.cellset;
+        if (cellset && cellset.length > 0) {
+            var lowest_level = 0;
+            var data_start = 0;
+            for (var row = 0; data_start == 0 && row < cellset.length; row++) {
+                    this.data.metadata = [];
+                    for (var field = 0; field < cellset[row].length; field++) {
+                        var firstHeader = [];
+
+                        while (cellset[row][field].type == "COLUMN_HEADER" && cellset[row][field].value == "null") {
+                            row++;
+                        }
+                        if (cellset[row][field].type == "ROW_HEADER_HEADER") {
+                            while(cellset[row][field].type == "ROW_HEADER_HEADER") {
+                                field++;
+                            }
+                            lowest_level = field - 1;
+                        }
+                        if (cellset[row][field].type == "COLUMN_HEADER" && cellset[row][field].value != "null") {
+                            var lowest_col_header = 0;
+                            var colheader = [];
+                            while(lowest_col_header <= row) {
+                                lowest_col_header++;
+                            }
+                            data_start = row+1;
+                        }
+                    }
+            }
+            var labelsSet = {};
+            var nextDataPos = data;
+            for (var row = data_start; row < cellset.length; row++) {
+            if (cellset[row][0].value !== "") {
+                    var record = [];
+                    var parent = null;
+                    var rv = null;                        
+
+                    for (var labelCol = 0; labelCol <= lowest_level; labelCol++) {
+                        var lastKnownUpperLevelRow = row;
+                        if (row < (cellset.length - 1 ) && labelCol < lowest_level && cellset[row+1][labelCol].value !== 'null') {
+                            if (labelCol == 0) {
+                                nextDataPos = data;
+                            } else {
+                                nextDataPos = currentDataPos;
+                            }
+                        }
+                        if (cellset[row] && cellset[row][labelCol].value !== 'null') {
+                            if (labelCol == 0) {
+                                currentDataPos = data;
+                            }
+                            rv = cellset[row][labelCol].value;
+                                if (!currentDataPos.hasOwnProperty(rv)) {
+                                    currentDataPos[rv] = {};
+                                }
+                                parent = currentDataPos;
+                                currentDataPos = currentDataPos[rv];
+                        }
+                    }
+
+                    for (var col = lowest_level + 1; col < cellset[row].length; col++) {
+                        var cell = cellset[row][col];
+                        var value = cell.value || 0;
+                        // check if the resultset contains the raw value, if not try to parse the given value
+                        var raw = cell.properties.raw;
+                        if (raw && raw !== "null") {
+                            value = parseFloat(raw);
+                        } else if (typeof(cell.value) !== "number" && parseFloat(cell.value.replace(/[^a-zA-Z 0-9.]+/g,''))) {
+                            value = parseFloat(cell.value.replace(/[^a-zA-Z 0-9.]+/g,''));
+                        }
+                        record.push(value);
+                    }
+                    var sum = _.reduce(record, function(memo, num){ return memo + num; }, 0);
+                    parent[rv] = sum;
+                }
+                currentDataPos = nextDataPos;
+            }
+            console.log(data);
+            return data;
         } else {
             $(this.el).find('.canvas_wrapper').text("No results").show();
             this.workspace.processing.hide();
