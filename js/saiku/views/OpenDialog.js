@@ -179,7 +179,8 @@ var OpenDialog = Modal.extend({
     },
 
     select_folder: function() {
-        var file = $( this.el ).find( '.selected a' ).attr('href').replace('#','');
+        var foldersSelected = $( this.el ).find( '.selected' );
+        var file = foldersSelected.length > 0 ? foldersSelected.children('a').attr('href').replace('#','') : null;
         if (typeof file != "undefined" && file != null && file != "") {
             var form = $('#importForm');
             form.find('.directory').val(file);

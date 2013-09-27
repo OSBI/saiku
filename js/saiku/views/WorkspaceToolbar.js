@@ -318,7 +318,7 @@ var WorkspaceToolbar = Backbone.View.extend({
    
     },
 
-    swap_axes_on_dropzones: function(response, model) {
+    swap_axes_on_dropzones: function(model, response) {
         this.workspace.query.parse(response);
         /*
         $columns = $(this.workspace.drop_zones.el).find('.columns')
@@ -375,7 +375,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     switch_to_mdx: function(event) {
         var self = this;
         $(this.workspace.el).find('.workspace_fields').addClass('hide');
-        $(this.el).find('.auto, , .query_scenario, .buckets, .non_empty, .swap_axis, .mdx, .switch_to_mdx').parent().hide();
+        $(this.el).find('.auto, .query_scenario, .buckets, .non_empty, .swap_axis, .mdx, .switch_to_mdx').parent().hide();
         
 
         $(this.el).find('.run').attr('href','#run_mdx');
@@ -473,7 +473,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         var self = this;
 
         this.workspace.query.action.post("/qm2mdx", { 
-            success: function(model, response) {
+            success: function(response, model) {
                 //$(self.workspace.el).find(".mdx_input").val(response.mdx);
                 if (self.editor) {
                     self.editor.setValue(model.mdx,0);

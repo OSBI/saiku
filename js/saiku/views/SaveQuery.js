@@ -85,7 +85,7 @@ var SaveQuery = Modal.extend({
         _.bindAll( this, "copy_to_repository", "close", "toggle_folder", "select_name", "populate", "set_name", "cancel_search" );
         
         // fix event listening in IE < 9
-        if($.browser.msie && $.browser.version < 9) {
+        if(isIE && isIE < 9) {
             $(this.el).find('form').on('submit', this.save);    
         }
 

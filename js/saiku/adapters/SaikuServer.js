@@ -103,6 +103,11 @@ Backbone.sync = function(method, model, options) {
     };
 
     var failure = function(jqXHR, textStatus, errorThrown) {
+      if (typeof console != "undefined" && console) {
+        console.error(textStatus);
+        console.error(jqXHR);
+        console.error(errorThrown);
+      }
       if (options.error) {
         options.error(jqXHR, textStatus, errorThrown);
       }
