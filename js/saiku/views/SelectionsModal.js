@@ -171,12 +171,7 @@ var SelectionsModal = Modal.extend({
                     }
 
 
-                }).data( "autocomplete" )._renderItem = function( ul, item ) {
-                return $( "<li></li>" )
-                    .data( "item.autocomplete", item )
-                    .append( "<a class='label'>" + item.label + "</a><br><a class='description'>" + item.value + "</a>" )
-                    .appendTo( ul );
-                };
+                });
 
 		// Translate
 		Saiku.i18n.translate();
@@ -276,6 +271,7 @@ var SelectionsModal = Modal.extend({
         // Notify server
         this.query.action.put('/axis/' + this.axis + '/dimension/' + this.member.dimension, { 
             success: this.finished,
+            dataType: "text",
             data: {
                 selections: JSON.stringify(updates)
             }
