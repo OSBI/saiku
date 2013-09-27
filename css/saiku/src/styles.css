@@ -121,6 +121,7 @@ html, body {
     width: 26px;
 }
 #toolbar ul li a:hover {
+    background-color: #F0F0F0;
     border: 1px solid #CCC;
     padding: 4px;
     border-radius: 2px;
@@ -149,21 +150,6 @@ html, body {
     text-decoration: none;
     text-shadow: 1px 1px 1px #000;
 }
-#toolbar ul li a.new_tab:hover {
-    background-color: #F0F0F0;
-}
-#toolbar ul li a.open_query:hover {
-    background-color: #F0F0F0;
-}
-#toolbar ul li a.logout:hover {
-    background-color: #F0F0F0;
-}
-#toolbar ul li a.about:hover {
-    background-color: #F0F0F0;
-}
-#toolbar ul li a.bug:hover {
-    background-color: #F0F0F0;
-}
 
 /** Logo */
 #logo a {
@@ -174,7 +160,6 @@ html, body {
     margin: -2px 10px 0 0;
     text-indent: -9999px;
 }
-
 
 /** Tabs */
 
