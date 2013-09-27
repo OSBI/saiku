@@ -22,7 +22,7 @@ var Chart = Backbone.View.extend({
     events: {
         'click .zoomin' : 'zoomin',
         'click .zoomout' : 'zoomout',
-        'click .rerender' : 'render_chart'
+        'click .rerender' : 'rerender'
     },
 
 	cccOptions: {
@@ -66,7 +66,8 @@ var Chart = Backbone.View.extend({
         this.data = null;
         
         // Bind table rendering to query result event
-        _.bindAll(this, "receive_data", "process_data", "show",  "getData", "render_view", "render_chart", "render_chart_delayed", "getQuickOptions","exportChart","block_ui", "zoomin");
+        _.bindAll(this, "receive_data", "process_data", "show",  "getData", "render_view", "render_chart", 
+                        "render_chart_delayed", "getQuickOptions","exportChart","block_ui", "zoomin", "rerender");
         var self = this;
         this.workspace.bind('query:run',  function() {
             if (! $(self.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
@@ -371,31 +372,28 @@ var Chart = Backbone.View.extend({
         this.render_chart();
     },
 
+    rerender: function(event) {
+        this.render_chart();
+        event.preventDefault();
+        return false;
+    },
+
     zoomin: function(event) {
-
-
         var chart = this.chart.root;
-        var data = chart.data;
-         
+        var data = chart.data;         
         data
         .datums(null, {selected: false})
         .each(function(datum) {
             datum.setVisible(false);
         });
-         
-        data.clearSelected();
-         
+        data.clearSelected();         
         chart.render(true, true, false);
-
-
+        event.preventDefault();
     },
 
     zoomout: function(event) {
-
-
         var chart = this.chart.root;
         var data = chart.data;
-
         var kData = chart.keptVisibleDatumSet;
 
         if (kData == null || kData.length == 0) {
@@ -413,18 +411,9 @@ var Chart = Backbone.View.extend({
             _.intersection(back, nonVisible).forEach(function(datum) {
                     datum.setVisible(true);
             });
-            
-            
         }
-
-
-        
-         
-        
-         
         chart.render(true, true, false);
-
-
+        event.preventDefault();
     },
 
     // Default static style-sheet
@@ -571,12 +560,21 @@ this.call_time = undefined;
                 legend: {
                     scenes: {
                         item: {
-                            execute: function(test) {
-                                var keptVisibleDatumSet = this.chart().keptVisibleDatumSet[0] || [];
-                                var zoomedIn = this.chart().keptVisibleDatumSet[0] !=  null;
+                            execute: function() {
+
+                                var chart = this.chart();
+
+                                if (!chart.hasOwnProperty('keptVisibleDatumSet')) {
+                                    chart.keptVisibleDatumSet = [];
+                                }
+
+                                var keptSet = chart.keptVisibleDatumSet.length > 0
+                                                            ? chart.keptVisibleDatumSet[chart.keptVisibleDatumSet.length - 1] 
+                                                            : [];
+                                var zoomedIn = keptSet.length > 0;
 
                                 if (zoomedIn) {
-                                    _.intersection(this.datums().array(), keptVisibleDatumSet[0]).forEach(function(datum) {
+                                    _.intersection(this.datums().array(), keptSet).forEach(function(datum) {
                                         datum.toggleVisible();
                                     });
 
@@ -590,41 +588,60 @@ this.call_time = undefined;
                     }
                 },
                 userSelectionAction: function(selectingDatums) {
+                    if (selectingDatums.length == 0) {
+                        return [];
+                    }
+
                     var chart = self.chart.root;
                     var data = chart.data;
                     var selfChart = this.chart;
-                    
+
+                    if (!selfChart.hasOwnProperty('keptVisibleDatumSet')) {
+                        selfChart.keptVisibleDatumSet = [];
+                    }
+
+                    // we have too many datums to process setVisible = false initially
                     if (data.datums().count() > 1500) {
                         pvc.data.Data.setSelected(selectingDatums, true);
                     } else if (data.datums(null, {visible: true}).count() == data.datums().count()) {
                         $(self.el).find('.zoomout').show();
 
-                        pvc.data.Data.setVisible(data.datums(), false);
-                        pvc.data.Data.setVisible(selectingDatums, true);
+                        var all = data.datums().array();
 
-                        if (!selfChart.hasOwnProperty('keptVisibleDatumSet')) {
-                            selfChart.keptVisibleDatumSet = [];
-                        }
+                        _.each( _.difference(all, selectingDatums), function(datum) {
+                            datum.setVisible(false);
+                        });
+
+                        selfChart.keptVisibleDatumSet = [];
                         selfChart.keptVisibleDatumSet.push(selectingDatums);
 
                     } else {
                         $(self.el).find('.zoomout').show();
-                        var start = new Date().getTime();
-                        pvc.data.Data.setVisible(data.datums(null, { visible: true }), false);
-                        var visibleOnes = selfChart.keptVisibleDatumSet[0];
+                        
 
-                        var t1 = new Date().getTime();
-                        //$(self.el).find('.canvas_wrapper').prepend("<br/>else t1: " + ( t1 - start));
+                        var kept = selfChart.keptVisibleDatumSet.length > 0 
+                            ? selfChart.keptVisibleDatumSet[selfChart.keptVisibleDatumSet.length - 1] : [];
+
+                        
+                        var visibleOnes = data.datums(null, { visible: true }).array();
+
+                        var baseSet = kept;
+                        if (visibleOnes.length < kept.length) {
+                            baseSet = visibleOnes;
+                            selfChart.keptVisibleDatumSet.push(visibleOnes);
+                        }
+
                         var newSelection = [];
-                        _.intersection(visibleOnes, selectingDatums).forEach(function(datum) {
-                                datum.setVisible(true);
-                                newSelection.push(datum);
-                                
-                            });
-                        selfChart.keptVisibleDatumSet.push(newSelection);
-                        var t2 = new Date().getTime();
-                        //$(self.el).find('.canvas_wrapper').prepend("<br/>else t2: " + ( t2 - t1));
+                        _.each( _.difference(visibleOnes, selectingDatums), function(datum) {
+                            datum.setVisible(false);
+                        });
+                        _.each( _.intersection(visibleOnes, selectingDatums), function(datum) {
+                            newSelection.push(datum);
+                        });
 
+                        if (newSelection.length > 0) {
+                            selfChart.keptVisibleDatumSet.push(newSelection);
+                        }
                     }
                     
                 
