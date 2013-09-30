@@ -1,4 +1,4 @@
-// 2fdb46e8b162967f09d64a40655084644b1ab08c
+// b5a46722ee7f324e2c1a80ce5e2e889dbc89d761
 /**
  * @class The built-in Array class.
  * @name Array
@@ -13,7 +13,7 @@
  * @see <a
  * href="https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Objects/Array/Map">map</a>
  * documentation.
- * @param {function} f function that produces an element of the new Array from
+ * @param {Function} f function that produces an element of the new Array from
  * an element of the current one.
  * @param [o] object to use as <tt>this</tt> when executing <tt>f</tt>.
  */
@@ -37,7 +37,7 @@ if (!Array.prototype.map) Array.prototype.map = function(f, o) {
  * @see <a
  * href="https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Objects/Array/filter">filter</a>
  * documentation.
- * @param {function} f function to test each element of the array.
+ * @param {Function} f function to test each element of the array.
  * @param [o] object to use as <tt>this</tt> when executing <tt>f</tt>.
  */
 if (!Array.prototype.filter) Array.prototype.filter = function(f, o) {
@@ -61,7 +61,7 @@ if (!Array.prototype.filter) Array.prototype.filter = function(f, o) {
  * @see <a
  * href="https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Objects/Array/ForEach">forEach</a>
  * documentation.
- * @param {function} f function to execute for each element.
+ * @param {Function} f function to execute for each element.
  * @param [o] object to use as <tt>this</tt> when executing <tt>f</tt>.
  */
 if (!Array.prototype.forEach) Array.prototype.forEach = function(f, o) {
@@ -81,7 +81,7 @@ if (!Array.prototype.forEach) Array.prototype.forEach = function(f, o) {
  * @see <a
  * href="https://developer.mozilla.org/En/Core_JavaScript_1.5_Reference/Objects/Array/Reduce">reduce</a>
  * documentation.
- * @param {function} f function to execute on each value in the array.
+ * @param {Function} f function to execute on each value in the array.
  * @param [v] object to use as the first argument to the first call of
  * <tt>t</tt>.
  */
@@ -228,79 +228,86 @@ pv.parent = function() { return this.parent.index; };
  *
  * For more details, see Douglas Crockford's essay on prototypal inheritance.
  *
- * @param {function} f a constructor.
+ * @param {Function} f a constructor.
  * @returns a suitable prototype object.
  * @see Douglas Crockford's essay on <a
  * href="http://javascript.crockford.com/prototypal.html">prototypal
  * inheritance</a>.
  */
 pv.extend = Object.create ?
-    function(f){
-      return Object.create(f.prototype || f);
-    } :
-    function(f) {
-      function g() {}
-      g.prototype = f.prototype || f;
-      return new g();
-    };
+  function(f) {
+    return Object.create(f.prototype || f);
+  } :
+  function(f) {
+    function g() {}
+    g.prototype = f.prototype || f;
+    return new g();
+  };
 
 pv.extendType = function(g, f) {
-    var sub = g.prototype = pv.extend(f);
+  var sub = g.prototype = pv.extend(f);
 
-    // Fix the constructor
-    sub.constructor = g;
+  // Fix the constructor
+  // Note this may make the constructor property to be enumerable.
+  sub.constructor = g;
 
-    return g;
+  return g;
 };
 
-// Is there any browser (still) supporting this syntax?
+// TODO: Is there any browser (still) supporting this syntax?
 // Commented cause this messes up with the debugger's break on exceptions.
-
 //try {
 //  eval("pv.parse = function(x) x;"); // native support
 //} catch (e) {
 
 /**
- * @private Parses a Protovis specification, which may use JavaScript 1.8
+ * @private
+
+ * Parses a Protovis specification, which may use JavaScript 1.8
  * function expresses, replacing those function expressions with proper
- * functions such that the code can be run by a JavaScript 1.6 interpreter. This
- * hack only supports function expressions (using clumsy regular expressions, no
- * less), and not other JavaScript 1.8 features such as let expressions.
+ * functions such that the code can be run by a JavaScript 1.6 interpreter.
+ * This hack only supports function expressions (using clumsy regular expressions,
+ * no less), and not other JavaScript 1.8 features such as let expressions.
  *
  * @param {string} s a Protovis specification (i.e., a string of JavaScript 1.8
  * source code).
  * @returns {string} a conformant JavaScript 1.6 source code.
  */
  pv.parse = function(js) { // hacky regex support
-    var re = new RegExp("function\\s*(\\b\\w+)?\\s*\\([^)]*\\)\\s*", "mg"), m, d, i = 0, s = "";
-    while (m = re.exec(js)) {
-      var j = m.index + m[0].length;
-      if (js.charAt(j) != '{') {
-        s += js.substring(i, j) + "{return ";
-        i = j;
-        for (var p = 0; p >= 0 && j < js.length; j++) {
-          var c = js.charAt(j);
-          switch (c) {
-            case '"': case '\'': {
-              while (++j < js.length && (d = js.charAt(j)) != c) {
-                if (d == '\\') j++;
-              }
-              break;
+  var re = new RegExp("function\\s*(\\b\\w+)?\\s*\\([^)]*\\)\\s*", "mg");
+  var i  = 0;
+  var s  = "";
+  var m, d;
+
+  while((m = re.exec(js))) {
+    var j = m.index + m[0].length;
+    if(js.charAt(j) != '{') {
+      s += js.substring(i, j) + "{return ";
+      i = j;
+      for(var p = 0; p >= 0 && j < js.length; j++) {
+        var c = js.charAt(j);
+        switch(c) {
+          case '"':
+          case '\'': {
+            while(++j < js.length && (d = js.charAt(j)) != c) {
+              if(d == '\\') { j++; }
             }
-            case '[': case '(': p++; break;
-            case ']': case ')': p--; break;
-            case ';':
-            case ',': if (p == 0) p--; break;
+            break;
           }
+          case '[': case '(': p++; break;
+          case ']': case ')': p--; break;
+          case ';':
+          case ',': if(p == 0) p--; break;
         }
-        s += pv.parse(js.substring(i, --j)) + ";}";
-        i = j;
       }
-      re.lastIndex = j;
+      s += pv.parse(js.substring(i, --j)) + ";}";
+      i = j;
     }
-    s += js.substring(i);
-    return s;
-  };
+    re.lastIndex = j;
+  }
+  s += js.substring(i);
+  return s;
+};
 
 /**
  * @private Reports the specified error to the JavaScript console. Mozilla only
@@ -320,21 +327,19 @@ pv.error = function(e) {
  *
  * @param target a DOM element.
  * @param {string} type the type of event, such as "click".
- * @param {function} the event handler callback.
+ * @param {Function} the event handler callback.
  */
 pv.listen = function(target, type, listener) {
   listener = pv.listener(listener);
 
-  if (type === 'load' || type === 'onload'){
+  if(type === 'load' || type === 'onload') {
       return pv.listenForPageLoad(listener);
   }
 
-  if(target.addEventListener){
+  if(target.addEventListener) {
     target.addEventListener(type, listener, false);
   } else {
-      if (target === window) {
-        target = document.documentElement;
-      }
+      if(target === window) { target = document.documentElement; }
 
       target.attachEvent('on' + type, listener);
   }
@@ -348,16 +353,35 @@ pv.listen = function(target, type, listener) {
  *
  * @param target a DOM element.
  * @param {string} type the type of event, such as "click".
- * @param {function} the event handler callback or the result of {@link pv.listen}.
+ * @param {Function} the event handler callback or the result of {@link pv.listen}.
  */
-pv.unlisten = function(target, type, listener){
-    if(listener.$listener){
-        listener = listener.$listener;
-    }
+pv.unlisten = function(target, type, listener) {
+    if(listener.$listener) { listener = listener.$listener; }
 
-    target.removeEventListener
-        ? target.removeEventListener(type, listener, false)
-        : target.detachEvent('on' + type, listener);
+    target.removeEventListener ?
+      target.removeEventListener(type, listener, false) :
+      target.detachEvent('on' + type, listener);
+};
+
+/**
+ * Binds to the page ready event in a browser-agnostic
+ * fashion (i.e. that works under IE!)
+ */
+pv.listenForPageLoad = function(listener) {
+  // Catch cases where $(document).ready() is called after the
+  // browser event has already occurred.
+  if(document.readyState === "complete") {
+    listener(null); // <-- no event object to give
+    return;
+  }
+
+  if(document.addEventListener) {
+    // Mozilla, Opera and webkit nightlies currently support this event
+    window.addEventListener("load", listener, false);
+  } else if(document.attachEvent) {
+    // IE event model
+    window.attachEvent("onload", listener);
+  }
 };
 
 /**
@@ -366,8 +390,8 @@ pv.unlisten = function(target, type, listener){
  * wrapper is cached on the returned function, such that duplicate registrations
  * of the wrapped event handler are ignored.
  *
- * @param {function} f an event handler.
- * @returns {function} the wrapped event handler.
+ * @param {Function} f an event handler.
+ * @returns {Function} the wrapped event handler.
  */
 pv.listener = function(f) {
   return f.$listener || (f.$listener = function(ev) {
@@ -376,7 +400,7 @@ pv.listener = function(f) {
         pv.event = ev = ev && pv.fixEvent(ev);
 
         return f.call(this, ev);
-      } catch (ex) {
+      } catch(ex) {
           // swallow top level error
           pv.error(ex);
       } finally {
@@ -385,17 +409,16 @@ pv.listener = function(f) {
   });
 };
 
-pv.fixEvent = function(ev){
-    // Fix event (adapted from jQuery)
+// Fix event - adapted from jQuery
+pv.fixEvent = function(ev) {
     if(ev.pageX == null && ev.clientX != null) {
         var eventDoc = (ev.target && ev.target.ownerDocument) || document;
         var doc  = eventDoc.documentElement;
         var body = eventDoc.body;
 
-        ev.pageX = (ev.clientX * 1) + ( doc && doc.scrollLeft || body && body.scrollLeft || 0 ) - ( doc && doc.clientLeft || body && body.clientLeft || 0 );
-        ev.pageY = (ev.clientY * 1) + ( doc && doc.scrollTop  || body && body.scrollTop  || 0 ) - ( doc && doc.clientTop  || body && body.clientTop  || 0 );
+        ev.pageX = (ev.clientX * 1) + (doc && doc.scrollLeft || body && body.scrollLeft || 0) - (doc && doc.clientLeft || body && body.clientLeft || 0);
+        ev.pageY = (ev.clientY * 1) + (doc && doc.scrollTop  || body && body.scrollTop  || 0) - (doc && doc.clientTop  || body && body.clientTop  || 0);
     }
-
     return ev;
 };
 
@@ -405,25 +428,27 @@ pv.fixEvent = function(ev){
  * target element.
  */
 pv.ancestor = function(a, e) {
-  while (e) {
-    if (e == a) return true;
+  while(e) {
+    if(e === a) { return true; }
     e = e.parentNode;
   }
   return false;
 };
 
+pv.removeChildren = function(p) {
+  while(p.lastChild) { p.removeChild(p.lastChild); }
+};
+
 pv.getWindow = function(elem) {
-    return (elem != null && elem == elem.window) ?
-        elem :
-        elem.nodeType === 9 ?
-            elem.defaultView || elem.parentWindow :
-            false;
+    return (elem != null && elem == elem.window) ? elem :
+           elem.nodeType === 9                   ? (elem.defaultView || elem.parentWindow) :
+           false;
 };
 
 var _reHiphenSep = /\-([a-z])/g;
 
 pv.hiphen2camel = function(prop) {
-    if (_reHiphenSep.test(prop)) {
+    if(_reHiphenSep.test(prop)) {
         return prop.replace(_reHiphenSep, function($0, $1) {
             return $1.toUpperCase();
         });
@@ -449,26 +474,26 @@ pv.css = function(e, p) {
 };
 
 pv.cssStyle = function(e) {
-    var style;
-    if(_getCompStyle) {
-        style = _getCompStyle.call(window, e, null);
-        return function(p) { return style.getPropertyValue(p); };
-    }
+  var style;
+  if(_getCompStyle) {
+      style = _getCompStyle.call(window, e, null);
+      return function(p) { return style.getPropertyValue(p); };
+  }
 
-    style = e.currentStyle;
-    return function(p) { return style[p === 'float' ? 'styleFloat' : pv.hiphen2camel(p)]; };
+  style = e.currentStyle;
+  return function(p) { return style[p === 'float' ? 'styleFloat' : pv.hiphen2camel(p)]; };
 };
 
 pv._getElementsByClass = function(searchClass, node) {
   if(node == null) { node = document; }
 
-  var classElements = [],
-      els = node.getElementsByTagName("*"),
-      L = els.length,
-      pattern = new RegExp("(^|\\s)" + searchClass + "(\\s|$)"), i, j;
+  var classElements = [];
+  var els = node.getElementsByTagName("*");
+  var L = els.length;
+  var pattern = new RegExp("(^|\\s)" + searchClass + "(\\s|$)");
 
-  for (i = 0, j = 0 ; i < L ; i++) {
-    if (pattern.test(els[i].className)) {
+  for(var i = 0, j = 0 ; i < L ; i++) {
+    if(pattern.test(els[i].className)) {
       classElements[j] = els[i];
       j++;
     }
@@ -478,98 +503,61 @@ pv._getElementsByClass = function(searchClass, node) {
 };
 
 pv.getElementsByClassName = function(node, classname) {
-  // use native implementation if available
+  // Use native implementation if available
   return node.getElementsByClassName ?
          node.getElementsByClassName(classname) :
          pv._getElementsByClass(classname, node);
 };
 
-/* Adapted from jQuery.offset()
- */
+/* Adapted from jQuery.offset() */
 pv.elementOffset = function(elem) {
-    var docElem, body, win, clientTop, clientLeft, scrollTop, scrollLeft,
-        box = { top: 0, left: 0 },
-        doc = elem && elem.ownerDocument;
+  var doc = elem && elem.ownerDocument;
+  if(!doc) { return; }
 
-    if (!doc) {
-        return;
-    }
+  var body = doc.body;
+  if(body === elem) { return; } // not supported
 
-    body = doc.body;
-    if(body === elem)  {
-        return; // not supported
-    }
+  var box;
+  if(typeof elem.getBoundingClientRect !== "undefined") {
+    box = elem.getBoundingClientRect();
+  } else {
+    box = {top: 0, left: 0};
+  }
 
-    docElem = doc.documentElement;
+  var win = pv.getWindow(doc);
+  var docElem = doc.documentElement;
 
-    if ( typeof elem.getBoundingClientRect !== "undefined" ) {
-        box = elem.getBoundingClientRect();
-    }
-
-    win = pv.getWindow(doc);
-
-    clientTop  = docElem.clientTop  || body.clientTop  || 0;
-    clientLeft = docElem.clientLeft || body.clientLeft || 0;
-    scrollTop  = win.pageYOffset || docElem.scrollTop;
-    scrollLeft = win.pageXOffset || docElem.scrollLeft;
-    return {
-        top:  box.top  + scrollTop  - clientTop,
-        left: box.left + scrollLeft - clientLeft
-    };
-};
-
-/**
- * Binds to the page ready event in a browser-agnostic
- * fashion (i.e. that works under IE!)
- */
-pv.listenForPageLoad = function(listener) {
-
-    // Catch cases where $(document).ready() is called after the
-    // browser event has already occurred.
-    if ( document.readyState === "complete" ) {
-        listener(null); // <-- no event object to give
-    }
-
-    if (pv.renderer() === "svgweb") {
-        // SVG web adds addEventListener to IE.
-        window.addEventListener("SVGLoad", listener, false);
-    } else {
-        // Mozilla, Opera and webkit nightlies currently support this event
-        if ( document.addEventListener ) {
-            window.addEventListener("load", listener, false);
-
-        // If IE event model is used
-        } else if ( document.attachEvent ) {
-            window.attachEvent("onload", listener);
-        }
-    }
+  var clientTop  = docElem.clientTop  || body.clientTop  || 0;
+  var clientLeft = docElem.clientLeft || body.clientLeft || 0;
+  var scrollTop  = win.pageYOffset || docElem.scrollTop;
+  var scrollLeft = win.pageXOffset || docElem.scrollLeft;
+  return {
+    top:  box.top  + scrollTop  - clientTop,
+    left: box.left + scrollLeft - clientLeft
+  };
 };
 
 /**
  * @public Returns the name of the renderer we're using -
- *
  * 'nativesvg' is the default - the native svg of the browser.
- * 'svgweb' is if we identify svgweb is there.
  */
+pv.renderer = function() {
+    var renderer = document.svgImplementation || "nativesvg";
 
-pv.renderer = function(){
-    var renderer = (typeof document.svgImplementation !== "undefined") ?
-                   document.svgImplementation :
-                   (typeof window.svgweb === "undefined") ? "nativesvg" : "svgweb";
-
-    pv.renderer = function(){ return renderer; };
+    pv.renderer = function() { return renderer; };
 
     return renderer;
 };
 
+/** @private */
+var _id = 1;
+
 /** @private Returns a locally-unique positive id. */
-pv.id = function() {
-  var id = 1; return function() { return id++; };
-}();
+pv.id = function() { return _id++; };
 
 /** @private Returns a function wrapping the specified constant. */
 pv.functor = function(v) {
-  return typeof v == "function" ? v : function() { return v; };
+  return typeof v === "function" ? v : function() { return v; };
 };
 
 /**
@@ -589,35 +577,38 @@ pv.get = function(o, p, dv){
     return o && (v = o[p]) != null ? v : dv;
 };
 
-}());/*
+var hasOwn = Object.prototype.hasOwnProperty;
+pv.lazyArrayOwn = function(o, p) {
+    var v;
+    return o && hasOwn.call(o, p) && (v = o[p]) ? v : (o[p] = []);
+};
+
+}());/**
  * Parses the Protovis specifications on load, allowing the use of JavaScript
  * 1.8 function expressions on browsers that only support JavaScript 1.6.
- * This should only happen for browser environments, so we exclude batik.
  * @see pv.parse
  */
-if (pv.renderer() !== "batik") {
-  pv.listen(window, "load", function() {
-     /*
-      * Note: in Firefox any variables declared here are visible to the eval'd
-      * script below. Even worse, any global variables declared by the script
-      * could overwrite local variables here (such as the index, `i`)!  To protect
-      * against this, all variables are explicitly scoped on a pv.$ object.
-      */
-     pv.$ = {i:0, x:document.getElementsByTagName("script")};
-      pv.$.xlen = pv.$.x.length;
-      for (; pv.$.i < pv.$.xlen; pv.$.i++) {
-        pv.$.s = pv.$.x[pv.$.i];
-        if (pv.$.s.type == "text/javascript+protovis") {
-          try {
-            window.eval(pv.parse(pv.$.s.text));
-          } catch (e) {
-            pv.error(e);
-          }
-        }
+pv.listen(window, "load", function() {
+  /*
+   * Note: in Firefox any variables declared here are visible to the eval'd
+   * script below. Even worse, any global variables declared by the script
+   * could overwrite local variables here (such as the index, `i`)!  To protect
+   * against this, all variables are explicitly scoped on a pv.$ object.
+   */
+  pv.$ = {i: 0, x: document.getElementsByTagName("script")};
+  pv.$.xlen = pv.$.x.length;
+  for(; pv.$.i < pv.$.xlen; pv.$.i++) {
+    pv.$.s = pv.$.x[pv.$.i];
+    if(pv.$.s.type == "text/javascript+protovis") {
+      try {
+        window.eval(pv.parse(pv.$.s.text));
+      } catch(e) {
+        pv.error(e);
       }
-      delete pv.$;
-    });
-}
+    }
+  }
+  delete pv.$;
+});
 /**
  * Abstract; see an implementing class.
  *
@@ -1308,69 +1299,66 @@ pv.Format.number = function() {
 
   return format;
 };
-(function(){
+(function() {
     
     var _cache;
     
     pv.Text = {};
     
-    pv.Text.createCache = function(){
+    pv.Text.createCache = function() {
         return new FontSizeCache();
     };
     
     pv.Text.usingCache = function(cache, fun, ctx){
-        if(!(cache instanceof FontSizeCache)){
+        if(!(cache instanceof FontSizeCache)) {
             throw new Error("Not a valid cache.");
         }
         
         var prevCache = _cache;
         
         _cache = cache;
-        try{
+        try {
             return fun.call(ctx);
         } finally {
             _cache = prevCache;
         }
     };
     
-    pv.Text.measure = function(text, font){
-        if(text == null){
-            text = "";
-        } else {
-            text = "" + text;
-        }
+    pv.Text.measure = function(text, font) {
+        text = text == null ? "" : String(text);
         
         var bbox = _cache && _cache.get(font, text);
-        if(!bbox){
-            if(!text){
+        if(!bbox) {
+            if(!text) {
                 bbox = {width: 0, height: 0};
             } else {
                 bbox = this.measureCore(text, font);
             }
-            
-            if(_cache){
-                _cache.put(font, text, bbox);
-            }
+            if(_cache) { _cache.put(font, text, bbox); }
         }
         
         return bbox;
     };
+
+    pv.Text.measureWidth = function(text, font) {
+        return pv.Text.measure(text, font).width;
+    };
     
-    pv.Text.fontHeight = function(font){
+    pv.Text.fontHeight = function(font) {
         return pv.Text.measure('M', font).height;
     };
     
     // Replace with another custom implementation if necessary
-    pv.Text.measureCore = (function(){
+    pv.Text.measureCore = (function() {
         
         // SVG implementation
         var _svgText, _lastFont = '10px sans-serif';
         
-        function getTextSizeElement(){
+        function getTextSizeElement() {
             return _svgText || (_svgText = createTextSizeElement());
         }
         
-        function createTextSizeElement(){
+        function createTextSizeElement() {
             var div =  document.createElement('div');
             div.id = 'pvSVGText_' + new Date().getTime();
             
@@ -1382,23 +1370,21 @@ pv.Format.number = function() {
             style.left = 0;
             style.top  = 0;
             
+            // Reset text-size affecting attributes
+            style.lineHeight    = 1;
+            style.textTransform = 'none';
+            style.letterSpacing = 'normal'; // 0
+            style.whiteSpace    = 'nowrap'; // support very long lines
+
             var svgElem = pv.SvgScene.create('svg');
             svgElem.setAttribute('font-size',   '10px');
             svgElem.setAttribute('font-family', 'sans-serif');
             div.appendChild(svgElem);
             
-            
             var svgText = pv.SvgScene.create('text');
             svgElem.appendChild(svgText);
             
-            var textNode;
-            if (pv.renderer() === "svgweb") { 
-                // SVGWeb needs an extra 'true' to create SVG text nodes properly in IE.
-                textNode = document.createTextNode('', true);
-            } else {
-                textNode = document.createTextNode('');
-            }
-            svgText.appendChild(textNode);
+            svgText.appendChild(document.createTextNode(''));
             
             document.body.appendChild(div);
             
@@ -1409,18 +1395,18 @@ pv.Format.number = function() {
             if(!font){ font = null; }
             
             var svgText = getTextSizeElement();
-            if(_lastFont !== font){
+            if(_lastFont !== font) {
                 _lastFont = font;
                 pv.SvgScene.setStyle(svgText, {'font': font});
             }
             
-            svgText.firstChild.nodeValue = '' + text;
+            svgText.firstChild.nodeValue = String(text);
             
             var box;
-            try{
+            try {
                 box = svgText.getBBox();
-            } catch(ex){
-                if(typeof console.error === 'function'){
+            } catch(ex) {
+                if(typeof console.error === 'function') {
                     console.error("GetBBox failed: ", ex);
                 }
                 
@@ -1430,7 +1416,7 @@ pv.Format.number = function() {
             return {width: box.width, height: box.height};
         };
     }());
-    
+
     // --------
     
     var FontSizeCache = function(){
@@ -1458,7 +1444,6 @@ pv.Format.number = function() {
     FontSizeCache.prototype.put = function(font, text, size){
         return this._getFont(font)[text||''] = size;
     };
-        
 }());/**
  * @private A private variant of Array.prototype.map that supports the index
  * property.
@@ -1486,7 +1471,7 @@ pv.repeat = function(array, n) {
 /**
  * Creates an array of the specified length,
  * and, optionally, initializes it with the specified default value.
- * 
+ *
  * @param {number} [len] the length of the array; defaults to 0.
  * @param {number} [dv] the default value with which to initialize each position; defaults to undefined.
  * @returns {array} an array as specified.
@@ -1498,7 +1483,7 @@ pv.array = function(len, dv){
             a[i] = dv;
         }
     }
-    
+
     return a;
 };
 
@@ -1538,7 +1523,7 @@ pv.cross = function(a, b) {
  *
  * </ul>return [1, 2, 3, "a", "b", "c"].
  *
- * @param {array[]} arrays an array of arrays.
+ * @param {Array.<Array>} arrays an array of arrays.
  * @returns {array} an array containing all the elements of each array in
  * <tt>arrays</tt>.
  */
@@ -1554,8 +1539,8 @@ pv.blend = function(arrays) {
  * after this method returns. This method transposes the elements of the array
  * in place, mutating the array, and returning a reference to the array.
  *
- * @param {array[]} arrays an array of arrays.
- * @returns {array[]} the passed-in array, after transposing the elements.
+ * @param {Array.<Array>} arrays an array of arrays.
+ * @returns {Array.<Array>} the passed-in array, after transposing the elements.
  */
 pv.transpose = function(arrays) {
   var n = arrays.length, m = pv.max(arrays, function(d) { return d.length; });
@@ -1607,8 +1592,8 @@ pv.transpose = function(arrays) {
  * <tt>this.index</tt>.
  *
  * @param {array} array an array of objects, or numbers.
- * @param {function} [f] an optional accessor function.
- * @returns {number[]} an array of numbers that sums to one.
+ * @param {Function} [f] an optional accessor function.
+ * @returns {Array.<number>} an array of numbers that sums to one.
  */
 pv.normalize = function(array, f) {
   var norm = pv.map(array, f), sum = pv.sum(norm);
@@ -1630,8 +1615,8 @@ pv.normalize = function(array, f) {
  * can refer to <tt>this.index</tt>.
  *
  * @param {array} array an array.
- * @param {number[]} indexes an array of indexes into <tt>array</tt>.
- * @param {function} [f] an optional accessor function.
+ * @param {Array.<number>} indexes an array of indexes into <tt>array</tt>.
+ * @param {Function} [f] an optional accessor function.
  * @returns {array} an array of elements from <tt>array</tt>; a permutation.
  */
 pv.permute = function(array, indexes, f) {
@@ -1654,7 +1639,7 @@ pv.permute = function(array, indexes, f) {
  * element. Accessor functions can refer to <tt>this.index</tt>.
  *
  * @param {array} keys an array, usually of string keys.
- * @param {function} [f] an optional key function.
+ * @param {Function} [f] an optional key function.
  * @returns a map from key to index.
  */
 pv.numerate = function(keys, f) {
@@ -1673,7 +1658,7 @@ pv.numerate = function(keys, f) {
  * can refer to <tt>this.index</tt>.
  *
  * @param {array} array an array, usually of string keys.
- * @param {function} [f] an optional key function.
+ * @param {Function} [f] an optional key function.
  * @returns {array} the unique values.
  */
 pv.uniq = function(array, f) {
@@ -1733,11 +1718,11 @@ pv.reverseOrder = function(b, a) {
  * than the specified value. Note that this guarantees that the return value
  * will be nonnegative if and only if the value is found.
  *
- * @param {number[]} array the array to be searched.
+ * @param {Array.<number>} array the array to be searched.
  * @param {number} value the value to be searched for.
  * @returns the index of the search value, if it is contained in the array;
  * otherwise, (-(<i>insertion point</i>) - 1).
- * @param {function} [f] an optional key function.
+ * @param {Function} [f] an optional key function.
  */
 pv.search = function(array, value, f) {
   if (!f) f = pv.identity;
@@ -1769,7 +1754,7 @@ pv.search.index = function(array, value, f) {
  * @param {number} [start] the start value.
  * @param {number} stop the stop value.
  * @param {number} [step] the step value.
- * @returns {number[]} an array of numbers.
+ * @returns {Array.<number>} an array of numbers.
  */
 pv.range = function(start, stop, step) {
   if (arguments.length == 1) {
@@ -1822,7 +1807,7 @@ pv.random = function(start, stop, step) {
  * Accessor functions can refer to <tt>this.index</tt>.
  *
  * @param {array} array an array of objects, or numbers.
- * @param {function} [f] an optional accessor function.
+ * @param {Function} [f] an optional accessor function.
  * @returns {number} the sum of the specified array.
  */
 pv.sum = function(array, f) {
@@ -1839,7 +1824,7 @@ pv.sum = function(array, f) {
  * example. Accessor functions can refer to <tt>this.index</tt>.
  *
  * @param {array} array an array of objects, or numbers.
- * @param {function} [f] an optional accessor function.
+ * @param {Function} [f] an optional accessor function.
  * @returns {number} the maximum value of the specified array.
  */
 pv.max = function(array, f) {
@@ -1855,7 +1840,7 @@ pv.max = function(array, f) {
  * <tt>this.index</tt>.
  *
  * @param {array} array an array of objects, or numbers.
- * @param {function} [f] an optional accessor function.
+ * @param {Function} [f] an optional accessor function.
  * @returns {number} the index of the maximum value of the specified array.
  */
 pv.max.index = function(array, f) {
@@ -1881,7 +1866,7 @@ pv.max.index = function(array, f) {
  * an example. Accessor functions can refer to <tt>this.index</tt>.
  *
  * @param {array} array an array of objects, or numbers.
- * @param {function} [f] an optional accessor function.
+ * @param {Function} [f] an optional accessor function.
  * @returns {number} the minimum value of the specified array.
  */
 pv.min = function(array, f) {
@@ -1897,7 +1882,7 @@ pv.min = function(array, f) {
  * <tt>this.index</tt>.
  *
  * @param {array} array an array of objects, or numbers.
- * @param {function} [f] an optional accessor function.
+ * @param {Function} [f] an optional accessor function.
  * @returns {number} the index of the minimum value of the specified array.
  */
 pv.min.index = function(array, f) {
@@ -1924,7 +1909,7 @@ pv.min.index = function(array, f) {
  * <tt>this.index</tt>.
  *
  * @param {array} array an array of objects, or numbers.
- * @param {function} [f] an optional accessor function.
+ * @param {Function} [f] an optional accessor function.
  * @returns {number} the mean of the specified array.
  */
 pv.mean = function(array, f) {
@@ -1938,7 +1923,7 @@ pv.mean = function(array, f) {
  * Accessor functions can refer to <tt>this.index</tt>.
  *
  * @param {array} array an array of objects, or numbers.
- * @param {function} [f] an optional accessor function.
+ * @param {Function} [f] an optional accessor function.
  * @returns {number} the median of the specified array.
  */
 pv.median = function(array, f) {
@@ -1956,7 +1941,7 @@ pv.median = function(array, f) {
  * an example. Accessor functions can refer to <tt>this.index</tt>.
  *
  * @param {array} array an array of objects, or numbers.
- * @param {function} [f] an optional accessor function.
+ * @param {Function} [f] an optional accessor function.
  * @returns {number} the variance of the specified array.
  */
 pv.variance = function(array, f) {
@@ -1980,7 +1965,7 @@ pv.variance = function(array, f) {
  * functions can refer to <tt>this.index</tt>.
  *
  * @param {array} array an array of objects, or numbers.
- * @param {function} [f] an optional accessor function.
+ * @param {Function} [f] an optional accessor function.
  * @returns {number} the standard deviation of the specified array.
  */
 pv.deviation = function(array, f) {
@@ -2059,21 +2044,21 @@ pv.logCeil = function(x, b) {
 };
 
 (function() {
-  var radians = Math.PI / 180,
-      degrees = 180 / Math.PI;
+  var _radians = Math.PI / 180,
+      _degrees = 180 / Math.PI;
 
   /** Returns the number of radians corresponding to the specified degrees. */
-  pv.radians = function(degrees) { return radians * degrees; };
+  pv.radians = function(degrees) { return _radians * degrees; };
 
   /** Returns the number of degrees corresponding to the specified radians. */
-  pv.degrees = function(radians) { return degrees * radians; };
+  pv.degrees = function(radians) { return _degrees * radians; };
 })();
 /**
  * Returns all of the property names (keys) of the specified object (a map). The
  * order of the returned array is not defined.
  *
  * @param map an object.
- * @returns {string[]} an array of strings corresponding to the keys.
+ * @returns {Array.<string>} an array of strings corresponding to the keys.
  * @see #entries
  */
 pv.keys = function(map) {
@@ -2132,7 +2117,7 @@ pv.values = function(map) {
  * functions can refer to <tt>this.index</tt>.
  *
  * @param {array} keys an array.
- * @param {function} f a value function.
+ * @param {Function} f a value function.
  * @returns a map from keys to values.
  */
 pv.dict = function(keys, f) {
@@ -2212,7 +2197,7 @@ pv.Dom.prototype.$leaf = function(n) {
  * By default, objects are considered internal nodes, and primitives (such as
  * numbers and strings) are considered leaves.
  *
- * @param {function} f the new leaf function.
+ * @param {Function} f the new leaf function.
  * @returns the current leaf function, or <tt>this</tt>.
  */
 pv.Dom.prototype.leaf = function(f) {
@@ -2264,11 +2249,7 @@ pv.Dom.prototype.nodes = function() {
  * @class Represents a <tt>Node</tt> in the W3C Document Object Model.
  */
 pv.Dom.Node = function(value) {
-  if(value !== undefined){
-    this.nodeValue = value;
-  }
-  
-  this.childNodes = [];
+  if(value !== undefined) { this.nodeValue = value; }
 };
 
 /**
@@ -2295,6 +2276,7 @@ pv.Dom.Node.prototype.nodeValue = undefined;
  * @type array
  * @field pv.Dom.Node.prototype.childNodes
  */
+ pv.Dom.Node.prototype.childNodes = [];
 
 /**
  * The parent node, which is null for root nodes.
@@ -2332,13 +2314,39 @@ pv.Dom.Node.prototype.previousSibling = null;
 pv.Dom.Node.prototype.nextSibling = null;
 
 /**
- * The index of the first child 
+ * The index of the first child
  * whose {@link #_childIndex} is dirty.
- * 
+ *
+ * @private
+ * @type number
+ */
+pv.Dom.Node.prototype._firstDirtyChildIndex = Infinity;
+
+/**
+ * The child index.
+ * May be dirty.
+ *
  * @private
  * @type number | null
  */
-pv.Dom.Node.prototype._firstDirtyChildIndex = Infinity;
+pv.Dom.Node.prototype._childIndex = -1;
+
+/**
+ * Obtains the index of a given child.
+ * Throws if the child is null or isn't a child of this node.
+ */
+pv.Dom.Node.prototype.findChildIndex = function(n) {
+  if (!n) throw new Error("Argument 'n' required");
+  if(n.parentNode === this) {
+    var i = n.childIndex(/*noRebuild*/true);
+    if(i > -1) { return i; }
+  }
+
+  throw new Error("child not found");
+};
+
+pv.Dom.Node.prototype._childRemoved = function(n, i) { /*NOOP*/ };
+pv.Dom.Node.prototype._childAdded   = function(n, i) { /*NOOP*/ };
 
 /**
  * Removes the specified child node from this node.
@@ -2347,9 +2355,7 @@ pv.Dom.Node.prototype._firstDirtyChildIndex = Infinity;
  * @returns {pv.Dom.Node} the removed child.
  */
 pv.Dom.Node.prototype.removeChild = function(n) {
-  var i = this.childNodes.indexOf(n);
-  if (i === -1) throw new Error("child not found");
-  
+  var i = this.findChildIndex(n);
   return this.removeAt(i);
 };
 
@@ -2360,27 +2366,27 @@ pv.Dom.Node.prototype.removeChild = function(n) {
  *
  * @returns {pv.Dom.Node} the appended child.
  */
-pv.Dom.Node.prototype.appendChild = function(n){
+pv.Dom.Node.prototype.appendChild = function(n) {
   var pn = n.parentNode;
-  if (pn) pn.removeChild(n);
-  
+  if(pn) { pn.removeChild(n); }
+
   var lc = this.lastChild;
   n.parentNode = this;
   n.previousSibling = lc;
-  if (lc) {
+  if(lc) {
       lc.nextSibling = n;
       n._childIndex  = lc._childIndex + 1;
   } else {
       this.firstChild = n;
       n._childIndex   = 0;
   }
-  
+
   this.lastChild = n;
-  this.childNodes.push(n);
-  
+  var L = pv.lazyArrayOwn(this, 'childNodes').push(n);
+  this._childAdded(n, L - 1);
   return n;
 };
-  
+
 /**
  * Inserts the specified child <i>n</i> before the given reference child
  * <i>r</i> of this node. If <i>r</i> is null, this method is equivalent to
@@ -2390,21 +2396,17 @@ pv.Dom.Node.prototype.appendChild = function(n){
  * @throws Error if <i>r</i> is non-null and not a child of this node.
  * @returns {pv.Dom.Node} the inserted child.
  */
-pv.Dom.Node.prototype.insertBefore = function(n, r){
-  if (!r) return this.appendChild(n);
-  
-  var ns = this.childNodes;
-  var i = ns.indexOf(r);
-  if (i === -1) throw new Error("child not found");
-  
+pv.Dom.Node.prototype.insertBefore = function(n, r) {
+  if(!r) { return this.appendChild(n); }
+  var i = this.findChildIndex(r);
   return this.insertAt(n, i);
 };
 
 /**
- * Inserts the specified child <i>n</i> at the given index. 
- * Any child from the given index onwards will be moved one position to the end. 
+ * Inserts the specified child <i>n</i> at the given index.
+ * Any child from the given index onwards will be moved one position to the end.
  * If <i>i</i> is null, this method is equivalent to
- * {@link #appendChild}. 
+ * {@link #appendChild}.
  * If <i>n</i> is already part of the DOM, it is first
  * removed before being inserted.
  *
@@ -2412,48 +2414,41 @@ pv.Dom.Node.prototype.insertBefore = function(n, r){
  * @returns {pv.Dom.Node} the inserted child.
  */
 pv.Dom.Node.prototype.insertAt = function(n, i) {
-    if (i == null){
-        return this.appendChild(n);
-    }
-    
-    var ns = this.childNodes;
-    var L  = ns.length;
-    if (i === L){
-        return this.appendChild(n);
-    }
-    
-    if(i > L){
-        throw new Error("Index out of range.");
-    }
 
+    if(i == null) { return this.appendChild(n); }
+
+    var ns = this.childNodes; // may be the inherited array!
+    var L  = ns.length;
+    if(i === L) { return this.appendChild(n); }
+
+    if(i < 0 || i > L) { throw new Error("Index out of range."); }
+
+    // At this time, if L were 0, any i would throw an error at the previous line.
+    // So we conclude that ns must be the local array.
+
+    // may be that: pn === this, but should i be corrected in case n is below i?
     var pn = n.parentNode;
-    if (pn) { // may be that: pn === this, but should i be corrected in case n is below i?
-        pn.removeChild(n);
-    }
-    
+    if(pn) { pn.removeChild(n); }
+
     var ni = i + 1;
-    var firstDirtyIndex = this._firstDirtyChildIndex;
-    if(ni < firstDirtyIndex){
-        this._firstDirtyChildIndex = ni;
-    }
-    
+    if(ni < this._firstDirtyChildIndex) { this._firstDirtyChildIndex = ni; }
+
     var r = ns[i];
     n.parentNode  = this;
     n.nextSibling = r;
     n._childIndex = i;
-    
+
     var psib = n.previousSibling = r.previousSibling;
     r.previousSibling = n;
-    if (psib) {
+    if(psib) {
         psib.nextSibling = n;
     } else {
-        if (r === this.lastChild) {
-            this.lastChild = n;
-        }
+        if(r === this.lastChild) { this.lastChild = n; }
         this.firstChild = n;
     }
-    
-    this.childNodes.splice(i, 0, n);
+
+    ns.splice(i, 0, n);
+    this._childAdded(n, i);
     return n;
 };
 
@@ -2462,36 +2457,26 @@ pv.Dom.Node.prototype.insertAt = function(n, i) {
  */
 pv.Dom.Node.prototype.removeAt = function(i) {
   var ns = this.childNodes;
+  var L = ns.length;
+  if(i < 0 || i >= L) { return /*undefined*/; }
+
+  // ns must be the local array
   var n = ns[i];
-  if(n){
-      ns.splice(i, 1);
-      
-      if(i < ns.length){
-          var firstDirtyIndex = this._firstDirtyChildIndex;
-          if(i < firstDirtyIndex){
-              this._firstDirtyChildIndex = i;
-          }
-      }
-      
-      var psib = n.previousSibling;
-      var nsib = n.nextSibling;
-      if (psib) { 
-          psib.nextSibling = nsib;
-      } else {
-          this.firstChild = nsib;
-      }
-      
-      if (nsib) {
-          nsib.previousSibling = psib;
-      } else {
-          this.lastChild = psib;
-      }
-      
-      n.nextSibling = null;
-      n.previousSibling = null;
-      n.parentNode = null;
-  }
-  
+  ns.splice(i, 1);
+
+  if(i < L - 1 && i < this._firstDirtyChildIndex) { this._firstDirtyChildIndex = i; }
+
+  var psib = n.previousSibling;
+  var nsib = n.nextSibling;
+  if (psib) { psib.nextSibling     = nsib; }
+  else      { this.firstChild      = nsib; }
+  if (nsib) { nsib.previousSibling = psib; }
+  else      { this.lastChild       = psib; }
+
+  n.nextSibling = n.previousSibling = n.parentNode = null;
+
+  this._childRemoved(n, i);
+
   return n;
 };
 
@@ -2502,27 +2487,29 @@ pv.Dom.Node.prototype.removeAt = function(i) {
  * @throws Error if <i>r</i> is not a child of this node.
  */
 pv.Dom.Node.prototype.replaceChild = function(n, r) {
-  var ns = this.childNodes;
-  var i = ns.indexOf(r);
-  if (i === -1) throw new Error("child not found");
-  
+  // Also validates that r is a child of `this`.
+  var i = this.findChildIndex(r);
+
   var pn = n.parentNode;
-  if (pn) pn.removeChild(n);
-  
+  if(pn) { pn.removeChild(n); }
+
   n.parentNode  = this;
   n.nextSibling = r.nextSibling;
   n._childIndex = r._childIndex;
-  
+
   var psib = n.previousSibling = r.previousSibling;
-  if (psib) psib.nextSibling = n;
-  else this.firstChild = n;
-  
+  if(psib) { psib.nextSibling = n; }
+  else     { this.firstChild  = n; }
+
   var nsib = r.nextSibling;
-  if (nsib) nsib.previousSibling = n;
-  else this.lastChild = n;
-  
-  ns[i] = n;
-  
+  if(nsib) { nsib.previousSibling = n; }
+  else     { this.lastChild       = n; }
+
+  // Must be the local array, otherwise r could not be a child of `this`
+  this.childNodes[i] = n;
+
+  this._childRemoved(r, i);
+  this._childAdded(n, i);
   return r;
 };
 
@@ -2530,27 +2517,29 @@ pv.Dom.Node.prototype.replaceChild = function(n, r) {
 /**
  * Obtains the child index of this node.
  * Returns -1, if the node has no parent.
- * 
+ *
  * @type number
  */
-pv.Dom.Node.prototype.childIndex = function(){
+pv.Dom.Node.prototype.childIndex = function(noRebuild) {
   var p = this.parentNode;
-  if(p){
-      var i = p._firstDirtyChildIndex;
-      if(i < Infinity){
+  if(p) {
+      var di = p._firstDirtyChildIndex;
+      if(di < Infinity) {
           var ns = p.childNodes;
-          if(i < ns.length){
-              for(var c = ns[i] ; c ; c = c.nextSibling){
-                  c._childIndex = i++;
-              }
+          if(!noRebuild) { return ns.indexOf(this); }
+
+          var L = ns.length;
+          while(di < L) {
+            ns[di]._childIndex = di;
+            di++;
           }
-          
+
           p._firstDirtyChildIndex = Infinity;
       }
-      
+
       return this._childIndex;
   }
-  
+
   return -1;
 };
 
@@ -2561,13 +2550,13 @@ pv.Dom.Node.prototype.childIndex = function(){
  * <li>The current node.
  * <li>The current depth, starting at 0 for the root node.</ol>
  *
- * @param {function} f a function to apply to each node.
+ * @param {Function} f a function to apply to each node.
  */
 pv.Dom.Node.prototype.visitBefore = function(f) {
-  function visit(n, i) {
-    f(n, i);
+  function visit(n, d) {
+    f(n, d);
     for (var c = n.firstChild; c; c = c.nextSibling) {
-      visit(c, i + 1);
+      visit(c, d + 1);
     }
   }
   visit(this, 0);
@@ -2580,14 +2569,14 @@ pv.Dom.Node.prototype.visitBefore = function(f) {
  * <li>The current node.
  * <li>The current depth, starting at 0 for the root node.</ol>
  *
- * @param {function} f a function to apply to each node.
+ * @param {Function} f a function to apply to each node.
  */
 pv.Dom.Node.prototype.visitAfter = function(f) {
-  function visit(n, i) {
+  function visit(n, d) {
     for (var c = n.firstChild; c; c = c.nextSibling) {
-      visit(c, i + 1);
+      visit(c, d + 1);
     }
-    f(n, i);
+    f(n, d);
   }
   visit(this, 0);
 };
@@ -2602,33 +2591,37 @@ pv.Dom.Node.prototype.visitAfter = function(f) {
  * <tt>nextSibling</tt> for the nodes being compared are not defined during the
  * sort operation.
  *
- * @param {function} f a comparator function.
+ * @param {Function} f a comparator function.
  * @returns this.
  */
 pv.Dom.Node.prototype.sort = function(f) {
   if (this.firstChild) {
     this._firstDirtyChildIndex = Infinity;
+
+    // this.firstChild => local childNodes
+    var cs = this.childNodes;
+    cs.sort(f);
+
+    var p = (this.firstChild = cs[0]);
+    var c;
     
-    this.childNodes.sort(f);
-    
-    var p = this.firstChild = this.childNodes[0], c;
     delete p.previousSibling;
     p._childIndex = 0;
-    
-    for (var i = 1; i < this.childNodes.length; i++) {
+
+    for (var i = 1, L = cs.length; i < L; i++) {
       p.sort(f);
-      c = this.childNodes[i];
+      c = cs[i];
       c._childIndex = i;
       c.previousSibling = p;
       p = p.nextSibling = c;
     }
-    
+
     this.lastChild = p;
     delete p.nextSibling;
-    
+
     p.sort(f);
   }
-  
+
   return this;
 };
 
@@ -2641,9 +2634,17 @@ pv.Dom.Node.prototype.reverse = function() {
   var childNodes = [];
   this.visitAfter(function(n) {
       this._firstDirtyChildIndex = Infinity;
-      
-      while (n.lastChild) childNodes.push(n.removeChild(n.lastChild));
-      for (var c; c = childNodes.pop();) n.insertBefore(c, n.firstChild);
+
+      var c;
+      while ((c = n.lastChild)) {
+        childNodes.push(n.removeChild(c));
+      }
+
+      if(childNodes.length) {
+        while((c = childNodes.pop())) {
+          n.insertBefore(c, n.firstChild);
+        }
+      }
     });
   return this;
 };
@@ -2651,14 +2652,7 @@ pv.Dom.Node.prototype.reverse = function() {
 /** Returns all descendants of this node in preorder traversal. */
 pv.Dom.Node.prototype.nodes = function() {
   var array = [];
-
-  /** @private */
-  function flatten(node) {
-    array.push(node);
-    node.childNodes.forEach(flatten);
-  }
-
-  flatten(this, array);
+  this.visitBefore(function(n) { array.push(n); });
   return array;
 };
 
@@ -2673,16 +2667,21 @@ pv.Dom.Node.prototype.nodes = function() {
  * @param {boolean} [recursive] whether the toggle should apply to descendants.
  */
 pv.Dom.Node.prototype.toggle = function(recursive) {
-  if (recursive) return this.toggled
-      ? this.visitBefore(function(n) { if (n.toggled) n.toggle(); })
-      : this.visitAfter(function(n) { if (!n.toggled) n.toggle(); });
+  if (recursive) {
+    return this.toggled
+      ? this.visitBefore(function(n) { if( n.toggled) n.toggle(); })
+      : this.visitAfter (function(n) { if(!n.toggled) n.toggle(); });
+  }
+
+  var c;
   var n = this;
-  if (n.toggled) {
-    for (var c; c = n.toggled.pop();) n.appendChild(c);
+  if(n.toggled) {
+    while((c = n.toggled.pop())) { n.appendChild(c); }
     delete n.toggled;
-  } else if (n.lastChild) {
+  } else if((c = n.lastChild)) {
     n.toggled = [];
-    while (n.lastChild) n.toggled.push(n.removeChild(n.lastChild));
+    do { n.toggled.push(n.removeChild(c)); }
+    while((c = n.lastChild));
   }
 };
 
@@ -2695,7 +2694,7 @@ pv.Dom.Node.prototype.toggle = function(recursive) {
  */
 pv.nodes = function(values) {
   var root = new pv.Dom.Node();
-  for (var i = 0; i < values.length; i++) {
+  for (var i = 0, V = values.length; i < V; i++) {
     root.appendChild(new pv.Dom.Node(values[i]));
   }
   return root.nodes();
@@ -2784,7 +2783,7 @@ pv.Tree = function(array) {
  * returned keys should be unique for each element in the array; otherwise, the
  * behavior of this operator is undefined.
  *
- * @param {function} k the keys function.
+ * @param {Function} k the keys function.
  * @returns {pv.Tree} this.
  */
 pv.Tree.prototype.keys = function(k) {
@@ -2798,7 +2797,7 @@ pv.Tree.prototype.keys = function(k) {
  * before it is inserted into the map. If no value function is specified, it is
  * equivalent to using the identity function.
  *
- * @param {function} k the value function.
+ * @param {Function} k the value function.
  * @returns {pv.Tree} this.
  */
 pv.Tree.prototype.value = function(v) {
@@ -2896,7 +2895,7 @@ pv.Nest = function(array) {
  * Nests using the specified key function. Multiple keys may be added to the
  * nest; the array elements will be nested in the order keys are specified.
  *
- * @param {function} key a key function; must return a string or suitable map
+ * @param {Function} key a key function; must return a string or suitable map
  * key.
  * @returns {pv.Nest} this.
  */
@@ -2925,7 +2924,7 @@ pv.Nest.prototype.key = function(key) {
  * returns an array of key-values pairs. If the nest is used to construct a
  * {@link #map} instead, keys are unsorted.
  *
- * @param {function} [order] an optional comparator function.
+ * @param {Function} [order] an optional comparator function.
  * @returns {pv.Nest} this.
  */
 pv.Nest.prototype.sortKeys = function(order) {
@@ -2952,7 +2951,7 @@ pv.Nest.prototype.sortKeys = function(order) {
  * <p>Value sort order, unlike keys, applies to both {@link #entries} and
  * {@link #map}. It has no effect on {@link #rollup}.
  *
- * @param {function} [order] an optional comparator function.
+ * @param {Function} [order] an optional comparator function.
  * @returns {pv.Nest} this.
  */
 pv.Nest.prototype.sortValues = function(order) {
@@ -3061,7 +3060,7 @@ pv.Nest.prototype.entries = function() {
  * yield for the given site.
  *
  * @see #map
- * @param {function} f a rollup function.
+ * @param {Function} f a rollup function.
  * @returns a hierarchical map, with the leaf values computed by <tt>f</tt>.
  */
 pv.Nest.prototype.rollup = function(f) {
@@ -3153,7 +3152,7 @@ pv.Flatten = function(map) {
  * can easily sort it.
  *
  * @param {string} key the key name.
- * @param {function} [f] an optional value map function.
+ * @param {Function} [f] an optional value map function.
  * @returns {pv.Nest} this.
  */
 pv.Flatten.prototype.key = function(key, f) {
@@ -3169,7 +3168,7 @@ pv.Flatten.prototype.key = function(key, f) {
  * will be stored in the entries <tt>keys</tt> attribute. The leaf function must
  * return true for leaves, and false for internal nodes.
  *
- * @param {function} f a leaf function.
+ * @param {Function} f a leaf function.
  * @returns {pv.Nest} this.
  */
 pv.Flatten.prototype.leaf = function(f) {
@@ -3384,7 +3383,7 @@ pv.Scale.interpolator = function(start, end) {
   }
 
   /* For now, assume color. */
-  
+
   // Gradients are not supported in animations
   // Just show the first one if < 0.5 and the other if >= 0.5
   var startGradient = (start.type && start.type !== 'solid');
@@ -3396,18 +3395,17 @@ pv.Scale.interpolator = function(start, end) {
           return t < 0.5 ? start : end;
       };
   }
-  
+
   start = pv.color(start).rgb();
   end   = pv.color(end  ).rgb();
   return function(t) {
     var a = start.a * (1 - t) + end.a * t;
-    if (a < 1e-5) a = 0; // avoid scientific notation
-    return (start.a == 0) ? pv.rgb(end.r, end.g, end.b, a)
-        : ((end.a == 0) ? pv.rgb(start.r, start.g, start.b, a)
-        : pv.rgb(
-            Math.round(start.r * (1 - t) + end.r * t),
-            Math.round(start.g * (1 - t) + end.g * t),
-            Math.round(start.b * (1 - t) + end.b * t), a));
+    if(a < 1e-5) { a = 0; } // avoid scientific notation
+    return (start.a == 0) ? pv.rgb(end.r,   end.g,   end.b,   a) : 
+           (end.a   == 0) ? pv.rgb(start.r, start.g, start.b, a) : 
+           pv.rgb(Math.round(start.r * (1 - t) + end.r * t),
+                  Math.round(start.g * (1 - t) + end.g * t),
+                  Math.round(start.b * (1 - t) + end.b * t), a);
   };
 };
 
@@ -3432,7 +3430,7 @@ pv.Scale.interpolator = function(start, end) {
  *
  * @function
  * @name pv.Scale.prototype.by
- * @param {function} f an accessor function.
+ * @param {Function} f an accessor function.
  * @returns {pv.Scale} a view of this scale by the specified accessor function.
  */
 
@@ -3443,20 +3441,20 @@ pv.Scale.common = {
       for (var method in scale) by[method] = scale[method];
       return by;
     },
-      
+
     by1: function(f) {
       var scale = this;
       function by1(x) { return scale(f.call(this, x)); }
       for (var method in scale) by1[method] = scale[method];
       return by1;
     },
-    
+
     transform: function(t){
       var scale = this;
       function transfScale(){
-        return t.call(this, scale.apply(scale, arguments)); 
+        return t.call(this, scale.apply(scale, arguments));
       }
-        
+
       for (var method in scale) transfScale[method] = scale[method];
 
       return transfScale;
@@ -3701,7 +3699,7 @@ pv.Scale.quantitative = function() {
    * @param {boolean} [options.roundInside=true] should the ticks be ensured to be strictly inside the scale domain, or to strictly outside the scale domain.
    * @param {boolean} [options.numberExponentMin=-Inifinity] minimum value for the step exponent.
    * @param {boolean} [options.numberExponentMax=+Inifinity] maximum value for the step exponent.
-   * @returns {number[]} an array input domain values to use as ticks.
+   * @returns {Array.<number>} an array input domain values to use as ticks.
    */
   scale.ticks = function(m, options) {
     var start = d[0],
@@ -3732,8 +3730,7 @@ pv.Scale.quantitative = function() {
         }
       }
 
-      var nn = 5;
-
+      var nn = m == null ? 5 : m;
       var precision, format, increment, step = 1;
       if (span >= nn * 31536e6) {
         precision = 31536e6;
@@ -3771,9 +3768,9 @@ pv.Scale.quantitative = function() {
 
       precision = dateTickPrecision ? dateTickPrecision : precision;
       format = dateTickFormat ? dateTickFormat : format;
-      
+
       usedDateTickPrecision = precision;
-      
+
       tickFormat = pv.Format.date(format);
 
       var date = new Date(min), dates = [];
@@ -3857,7 +3854,7 @@ pv.Scale.quantitative = function() {
         step = 1;
         increment = function(d) { d.setSeconds(d.getSeconds() + step*dateTickPrecision/1000);};
       }
-      
+
 
       while (true) {
         increment(date);
@@ -3871,11 +3868,11 @@ pv.Scale.quantitative = function() {
     if (m == null) {
         m = 10;
     }
-    
+
     var roundInside = pv.get(options, 'roundInside', true);
     var exponentMin = pv.get(options, 'numberExponentMin', -Infinity);
     var exponentMax = pv.get(options, 'numberExponentMax', +Infinity);
-    
+
     //var step = pv.logFloor(span / m, 10);
     var exponent = Math.floor(pv.log(span / m, 10));
     var overflow = false;
@@ -3886,41 +3883,41 @@ pv.Scale.quantitative = function() {
         exponent = exponentMin;
         overflow = true;
     }
-    
+
     step = Math.pow(10, exponent);
     var mObtained = (span / step);
-    
+
     var err = m / mObtained;
-    if (err <= .15 && exponent < exponentMax - 1) { 
+    if (err <= .15 && exponent < exponentMax - 1) {
         step *= 10;
     } else if (err <= .35) {
         step *= 5;
     } else if (err <= .75) {
         step *= 2;
     }
-    
+
     // Account for floating point precision errors
     exponent = Math.floor(pv.log(step, 10) + 1e-10);
-        
+
     start = step * Math[roundInside ? 'ceil'  : 'floor'](min / step);
     end   = step * Math[roundInside ? 'floor' : 'ceil' ](max / step);
-    
+
     usedNumberExponent = Math.max(0, -exponent);
-    
+
     tickFormat = pv.Format.number().fractionDigits(usedNumberExponent);
-    
+
     var ticks = pv.range(start, end + step, step);
     if(reverse){
         ticks.reverse();
     }
-    
+
     ticks.roundInside = roundInside;
     ticks.step        = step;
     ticks.exponent    = exponent;
     ticks.exponentOverflow = overflow;
     ticks.exponentMin = exponentMin;
     ticks.exponentMax = exponentMax;
-    
+
     return ticks;
   };
 
@@ -3950,30 +3947,30 @@ pv.Scale.quantitative = function() {
       dateTickPrecision = arguments[0];
       return this;
     }
-    return dateTickPrecision;  
+    return dateTickPrecision;
   };
 
 
     /**
      * Gets or sets a custom tick formatter function.
-     * 
+     *
      * @function
      * @name pv.Scale.quantitative.prototype.tickFormatter
-     * @param {function} [f] The function that formats number or date ticks.
-     * When ticks are dates, the second argument of the function is the 
+     * @param {?(function((number|Date)):string)=} f The function that formats number or date ticks.
+     * When ticks are dates, the second argument of the function is the
      * desired tick precision.
-     * 
-     * @returns {pv.Scale|function} a custom formatter function or this instance.
+     *
+     * @returns {pv.Scale|function((number|Date)):string} a custom formatter function or this instance.
      */
     scale.tickFormatter = function (f) {
       if (arguments.length) {
         tickFormatter = f;
         return this;
       }
-      
+
       return tickFormatter;
    };
-    
+
   /**
    * Formats the specified tick value using the appropriate precision, based on
    * the step interval between tick marks. If {@link #ticks} has not been called,
@@ -3981,7 +3978,7 @@ pv.Scale.quantitative = function() {
    *
    * @function
    * @name pv.Scale.quantitative.prototype.tickFormat
-   * @param {number} t a tick value.
+   * @param {number|Date} t a tick value.
    * @returns {string} a formatted tick value.
    */
   scale.tickFormat = function (t) {
@@ -3989,9 +3986,9 @@ pv.Scale.quantitative = function() {
       if(tickFormatter){
           text = tickFormatter(t, type !== Number ? usedDateTickPrecision : usedNumberExponent);
       } else {
-          text = tickFormat(t); 
+          text = tickFormat(t);
       }
-      
+
       // Make sure it is a string
       return text == null ? '' : ('' + text);
   };
@@ -4049,11 +4046,11 @@ pv.Scale.quantitative = function() {
    *
    * @function
    * @name pv.Scale.quantitative.prototype.by
-   * @param {function} f an accessor function.
+   * @param {Function} f an accessor function.
    * @returns {pv.Scale.quantitative} a view of this scale by the specified
    * accessor function.
    */
-  
+
   pv.copyOwn(scale, pv.Scale.common);
 
   scale.domain.apply(scale, arguments);
@@ -4179,7 +4176,7 @@ pv.Scale.log = function() {
    *
    * @function
    * @name pv.Scale.log.prototype.ticks
-   * @returns {number[]} an array input domain values to use as ticks.
+   * @returns {Array.<number>} an array input domain values to use as ticks.
    */
   scale.ticks = function() {
     // TODO support non-uniform domains
@@ -4374,7 +4371,7 @@ pv.Scale.ordinal = function() {
     if (!(x in i)) i[x] = d.push(x) - 1;
     return r[i[x] % r.length];
   }
-  
+
   /**
    * Sets or gets the input domain. This method can be invoked several ways:
    *
@@ -4475,7 +4472,7 @@ pv.Scale.ordinal = function() {
    * The computed step width can be retrieved from the range as
    * <tt>scale.range().step</tt>.
    * </p>
-   * 
+   *
    * @function
    * @name pv.Scale.ordinal.prototype.split
    * @param {number} min minimum value of the output range.
@@ -4591,10 +4588,10 @@ pv.Scale.ordinal = function() {
         B = (R * band) / N;
         M = N > 1 ? ((R - N * B) / (N - 1)) : 0;
         S = M + B;
-        
+
         r = pv.range(min + B / 2, max, S);
     }
-    
+
     r.step   = S;
     r.band   = B;
     r.margin = M;
@@ -4619,9 +4616,9 @@ pv.Scale.ordinal = function() {
    * @see #split
    */
   scale.splitFlush = function(min, max) {
-    var n = this.domain().length, 
+    var n = this.domain().length,
         step = (max - min) / (n - 1);
-    
+
     r = (n == 1) ? [(min + max) / 2]
         : pv.range(min, max + step / 2, step);
     r.min = min;
@@ -4691,16 +4688,16 @@ pv.Scale.ordinal = function() {
     r.max = max;
     return this;
   };
-  
+
   /**
-   * Inverts the specified value in the output range, 
+   * Inverts the specified value in the output range,
    * returning the index of the closest corresponding value in the input domain.
-   * This is frequently used to convert the mouse location (see {@link pv.Mark#mouse}) 
-   * to a value in the input domain. 
-   * 
+   * This is frequently used to convert the mouse location (see {@link pv.Mark#mouse})
+   * to a value in the input domain.
+   *
    * The number of input domain values is returned
    * if the specified point is closest to the end margin of the last input domain value.
-   * 
+   *
    * @function
    * @name pv.Scale.quantitative.prototype.invertIndex
    * @param {number} y a value in the output range (a pixel location).
@@ -4712,26 +4709,26 @@ pv.Scale.ordinal = function() {
     if(N === 0){
         return -1;
     }
-    
+
     var r = this.range();
     var R = r.max - r.min;
     if(R === 0){
         return 0;
     }
-    
+
     var S = R/N;
     if(y >= r.max){
         return N;
     }
-    
+
     if(y < r.min){
         return 0;
     }
-    
+
     var i = (y - r.min) / S;
     return noRound ? i : Math.round(i);
   };
-  
+
   /**
    * Returns a view of this scale by the specified accessor function <tt>f</tt>.
    * Given a scale <tt>y</tt>, <tt>y.by(function(d) d.foo)</tt> is equivalent to
@@ -4741,13 +4738,13 @@ pv.Scale.ordinal = function() {
    *
    * @function
    * @name pv.Scale.ordinal.prototype.by
-   * @param {function} f an accessor function.
+   * @param {Function} f an accessor function.
    * @returns {pv.Scale.ordinal} a view of this scale by the specified accessor
    * function.
    */
-  
+
   pv.copyOwn(scale, pv.Scale.common);
-    
+
   scale.domain.apply(scale, arguments);
   return scale;
 };
@@ -4918,13 +4915,13 @@ pv.Scale.quantile = function() {
    *
    * @function
    * @name pv.Scale.quantile.prototype.by
-   * @param {function} f an accessor function.
+   * @param {Function} f an accessor function.
    * @returns {pv.Scale.quantile} a view of this scale by the specified
    * accessor function.
    */
-  
+
   pv.copyOwn(scale, pv.Scale.common);
-  
+
   scale.domain.apply(scale, arguments);
   return scale;
 };
@@ -4936,7 +4933,7 @@ pv.Scale.quantile = function() {
  * @class Represents a histogram operator.
  *
  * @param {array} data an array of numbers or objects.
- * @param {function} [f] an optional accessor function.
+ * @param {Function} [f] an optional accessor function.
  */
 pv.histogram = function(data, f) {
   var frequency = true;
@@ -6308,11 +6305,11 @@ pv.histogram = function(data, f) {
     var colorsByFormat = {}; // TODO: unbounded cache 
     
     pv.color = function(format) {
-      if (format.rgb) { return format.rgb(); }
+      if(format.rgb) { return format.rgb(); }
       
       /* Named colors. */
       var color = pv.Color.names[format];
-      if (!color) {
+      if(!color) {
           color = colorsByFormat[format] ||
                   (colorsByFormat[format] = createColor(format));
       }
@@ -7187,15 +7184,11 @@ pv.Colors.category19 = function() {
                 if (m[1]) {
                     // (top|bottom)(?:\s+(left|right))?
                     keyAngle = m[2];
-                    if(m[3]){
-                        keyAngle += ' ' + m[3];
-                    }
+                    if(m[3]) { keyAngle += ' ' + m[3]; }
                 } else { // m[4]
                     // (left|right)(?:\\s+(top|bottom))?
                     keyAngle = m[5];
-                    if(m[6]){
-                        keyAngle = m[6] + ' ' + keyAngle;
-                    }
+                    if(m[6]) { keyAngle = m[6] + ' ' + keyAngle; }
                 }
                 
                 angle = pv.radians(keyAnglesDeg[keyAngle]);
@@ -7258,12 +7251,12 @@ pv.Colors.category19 = function() {
         return new pv.FillStyle.RadialGradient(50, 50, stops, text);
     }
 
-    function parseText(text){
+    function parseText(text) {
         var colorFuns  = {};
         var colorFunId = 0;
         
         text = text.replace(/\b\w+?\(.*?\)/g, function($0){
-            var id = '__color' + (colorFunId++); 
+            var id = '__color' + (colorFunId++);
             colorFuns[id] = $0;
             return id;
         });
@@ -7601,7 +7594,7 @@ pv.Colors.category19 = function() {
     pv.extendType(RadialGradient, Gradient);
     
     RadialGradient.prototype._cloneWithStops = function(stops) {
-        return new RadialGradient(this.cx, this.cy);
+        return new RadialGradient(this.cx, this.cy, stops);
     };
     
     RadialGradient.prototype._initClone = function(o) {
@@ -7650,7 +7643,8 @@ pv.Scene = pv.SvgScene = {
     "mouseout",
     "mousemove",
     "click",
-    "dblclick"
+    "dblclick",
+    "contextmenu"
   ],
 
   /** Implicit values for SVG and CSS properties. */
@@ -7772,52 +7766,30 @@ pv.SvgScene.setStyle = function(e, style) {
   var prevStyle = e.__style__;
   if(prevStyle === style) { prevStyle = null; }
   
-  switch(pv.renderer()) {
-      case 'batik':
-          for (var name in style) {
-              var value = style[name];
-              if(!prevStyle || (value !== prevStyle[name])) {
-                  if (value == null || value == implicitCss[name]) {
-                    e.removeAttribute(name);
-                  } else {
-                    e.style.setProperty(name,value);
-                  }
-              }
-          }
-          break;
-          
-      case 'svgweb':
-          for (var name in style) {
-              // svgweb doesn't support removeproperty TODO SVGWEB
-              var value = style[name];
-              if (value == null || value == implicitCss[name]) {
-                  continue;
-              }
-              e.style[name] = value;
-          }
-          break;
-          
-     default:
-         for (var name in style) {
-             var value = style[name];
-             if(!prevStyle || (value !== prevStyle[name])) {
-                 if (value == null || value == implicitCss[name]){
-                     e.style.removeProperty(name);
-                 } else {
-                     e.style[name] = value;
-                 }
-             }
-         }
-  }
+  for (var name in style) {
+    var value = style[name];
+    if(!prevStyle || (value !== prevStyle[name])) {
+      if (value == null || value == implicitCss[name]){
+        e.style.removeProperty(name);
+      } else {
+        e.style[name] = value;
+      }
+    }
+ }
   
   e.__style__ = style;
 };
 
-/** TODO */
+/** TODO - ??<<--what is to be done?? */
 pv.SvgScene.append = function(e, scenes, index) {
   e.$scene = {scenes: scenes, index: index};
+  
+  // May wrap passed in e
   e = this.title(e, scenes[index]);
-  if (!e.parentNode) scenes.$g.appendChild(e);
+
+  // scenes.$g is the default parent of appended elements.
+  if(!e.parentNode) { scenes.$g.appendChild(e); }
+
   return e.nextSibling;
 };
 
@@ -7850,29 +7822,22 @@ pv.SvgScene.title = function(e, s) {
 
     // for SVG renderers that follow the recommended approach
     var t = null;
-    for (var c = e.firstChild; c != null; c = c.nextSibling) {
-      if (c.nodeName == "title") {
-        t = c;
-        break;
-      }
+    for(var c = e.firstChild; c != null; c = c.nextSibling) {
+      if(c.nodeName == "title") { t = c; break; }
     }
     
-    if (!t) {
+    if(!t) {
       t = this.create("title");
       e.appendChild(t);
     } else {
       t.removeChild(t.firstChild); // empty out the text
     }
 
-    if (pv.renderer() == "svgweb") { // SVGWeb needs an extra 'true' to create SVG text nodes properly in IE.
-      t.appendChild(document.createTextNode(s.title, true));
-    } else {
-      t.appendChild(document.createTextNode(s.title));
-    }
+    t.appendChild(document.createTextNode(s.title));
 
     return a;
   }
-  if (a) a.parentNode.replaceChild(e, a);
+  if(a) a.parentNode.replaceChild(e, a);
   return e;
 };
 
@@ -8028,7 +7993,8 @@ pv.SvgScene.undefined = function() {};
     if(!instId) {
         instId = fillStyleMap[k] = '__pvGradient' + (next_gradient_id++);
         var elem = createGradientDef.call(this, scenes, fill, instId);
-        rootMark.scene.$g.$defs.appendChild(elem);
+
+        rootMark.scene.$defs.appendChild(elem);
     }
     
     fill.color = 'url(#' + instId + ')';
@@ -9158,94 +9124,158 @@ pv.SvgScene.bar = function(scenes) {
 pv.SvgScene.dot = function(scenes) {
   var e = scenes.$g.firstChild;
   
-  for (var i = 0; i < scenes.length; i++) {
+  for(var i = 0, L = scenes.length ; i < L ; i++) {
     var s = scenes[i];
 
     /* visible */
-    if (!s.visible) continue;
-    var fill = s.fillStyle, stroke = s.strokeStyle;
-    if (!fill.opacity && !stroke.opacity) continue;
+    if(!s.visible) continue;
 
-    this.addFillStyleDefinition(scenes, fill);
+    var fill     = s.fillStyle, 
+        fillOp   = fill.opacity,
+        stroke   = s.strokeStyle,
+        strokeOp = stroke.opacity;
+
+    if(!fillOp && !strokeOp) continue;
+
+    this.addFillStyleDefinition(scenes, fill  );
     this.addFillStyleDefinition(scenes, stroke);
-    
-    /* points */
-    var radius = s.shapeRadius, path = null;
-    switch (s.shape) {
-      case "cross": {
-        path = "M" + -radius + "," + -radius
-            + "L" + radius + "," + radius
-            + "M" + radius + "," + -radius
-            + "L" + -radius + "," + radius;
-        break;
-      }
-      case "triangle": {
-        var h = radius, w = radius * 1.1547; // 2 / Math.sqrt(3)
-        path = "M0," + h
-            + "L" + w +"," + -h
-            + " " + -w + "," + -h
-            + "Z";
-        break;
-      }
-      case "diamond": {
-        radius *= Math.SQRT2;
-        path = "M0," + -radius
-            + "L" + radius + ",0"
-            + " 0," + radius
-            + " " + -radius + ",0"
-            + "Z";
-        break;
-      }
-      case "square": {
-        path = "M" + -radius + "," + -radius
-            + "L" + radius + "," + -radius
-            + " " + radius + "," + radius
-            + " " + -radius + "," + radius
-            + "Z";
-        break;
-      }
-      case "tick": {
-        path = "M0,0L0," + -s.shapeSize;
-        break;
-      }
-      case "bar": {
-        path = "M0," + (s.shapeSize / 2) + "L0," + -(s.shapeSize / 2);
-        break;
-      }
-    }
 
-    /* Use <circle> for circles, <path> for everything else. */
     var svg = {
-      "shape-rendering": s.antialias ? null : "crispEdges",
-      "pointer-events": s.events,
-      "cursor": s.cursor,
-      "fill": fill.color,
-      "fill-opacity": fill.opacity || null,
-      "stroke": stroke.color,
-      "stroke-opacity": stroke.opacity || null,
-      "stroke-width": stroke.opacity ? s.lineWidth / this.scale : null,
-      "stroke-linecap": s.lineCap,
-      "stroke-dasharray":  stroke.opacity ? this.parseDasharray(s) : null
+      "shape-rendering":  s.antialias ? null : "crispEdges",
+      "pointer-events":   s.events,
+      "cursor":           s.cursor,
+      "fill":             fill.color,
+      "fill-opacity":     fillOp   || null,
+      "stroke":           stroke.color,
+      "stroke-opacity":   strokeOp || null,
+      "stroke-width":     strokeOp ? (s.lineWidth / this.scale) : null,
+      "stroke-linecap":   s.lineCap,
+      "stroke-dasharray": strokeOp ? this.parseDasharray(s) : null
     };
-    if (path) {
-      svg.transform = "translate(" + s.left + "," + s.top + ")";
-      if (s.shapeAngle) svg.transform += " rotate(" + 180 * s.shapeAngle / Math.PI + ")";
-      svg.d = path;
-      e = this.expect(e, "path", scenes, i, svg);
+
+    // Use <circle> for circles, <path> for everything else.
+    var shape = s.shape || 'circle';
+    var ar = s.aspectRatio;
+    var sa = s.shapeAngle;
+    var t;
+    if(shape === 'circle') {
+      if(ar === 1) {
+        svg.cx = s.left;
+        svg.cy = s.top;
+        svg.r  = s.shapeRadius;
+      } else {
+        shape = 'ellipse';
+
+        svg.cx = svg.cy = 0;
+        
+        t = 'translate(' + s.left + ',' + s.top + ') ';
+        if(sa) { t += 'rotate(' + pv.degrees(sa) + ') '; }
+
+        svg.rx = s._width  / 2;
+        svg.ry = s._height / 2;
+      }
     } else {
-      svg.cx = s.left;
-      svg.cy = s.top;
-      svg.r = radius;
-      e = this.expect(e, "circle", scenes, i, svg);
+      svg.d = this.renderSymbol(shape, s);
+      shape = 'path';
+
+      t = 'translate(' + s.left + ',' + s.top + ') ';
+
+      if(sa) { t += 'rotate(' + pv.degrees(sa) + ') '; }
+
+      if(ar !== 1) {
+        var sy =  1 / Math.sqrt(ar);
+        var sx = ar * sy;
+
+        t += 'scale(' + sx + ',' + sy + ')';
+      }
     }
 
-    if(s.svg) this.setAttributes(e, s.svg);
-    if(s.css) this.setStyle(e, s.css);
+    if(t) { svg.transform = t; }
+
+    e = this.expect(e, shape, scenes, i, svg);
+
+    if(s.svg) { this.setAttributes(e, s.svg); }
+    if(s.css) { this.setStyle     (e, s.css); }
 
     e = this.append(e, scenes, i);
   }
+
   return e;
 };
+
+(function(S) {
+  var _renderersBySymName = {};
+
+  // NOTE: circle has special render treatment
+  // Only path-generating shapes are registered this way
+
+  S.registerSymbol = function(symName, funRenderer) {
+    _renderersBySymName[symName] = funRenderer;
+    return S;
+  };
+
+  S.renderSymbol = function(symName, instance) {
+    return _renderersBySymName[symName].call(S, instance, symName);
+  };
+
+  S.hasSymbol = function(symName) {
+    return _renderersBySymName.hasOwnProperty(symName);
+  };
+
+  S.symbols = function() {
+    return pv.keys(_renderersBySymName);
+  };
+
+  var C1 = 2 / Math.sqrt(3);
+
+  S
+  .registerSymbol('circle', function(s) {
+    throw new Error("Not implemented as a symbol");
+  })
+  .registerSymbol('cross', function(s) {
+    var rp = s.shapeRadius,
+        rn = -rp;
+
+    return "M" + rn + "," + rn + "L" + rp + "," + rp + 
+           "M" + rp + "," + rn + "L" + rn + "," + rp;
+  })
+  .registerSymbol('triangle', function(s) {
+    var hp = s.shapeRadius,
+        wp = hp * C1,
+        hn = -hp,
+        wn = -wp;
+
+    return "M0," + hp + "L" + wp + "," + hn + " " + wn + "," + hn + "Z";
+  })
+  .registerSymbol('diamond', function(s) {
+    var rp = s.shapeRadius * Math.SQRT2,
+        rn = -rp;
+
+    return "M0,"      + rn   + 
+           "L" + rp   + ",0" + 
+           " " + "0," + rp   + 
+           " " + rn   + ",0" + 
+           "Z";
+  })
+  .registerSymbol('square', function(s) {
+    var rp = s.shapeRadius,
+        rn = -rp;
+
+    return "M" + rn + "," + rn + 
+           "L" + rp + "," + rn +
+           " " + rp + "," + rp +
+           " " + rn + "," + rp +
+           "Z";
+  })
+  .registerSymbol('tick', function(s) {
+    return "M0,0L0," + -s.shapeSize;
+  })
+  .registerSymbol('bar', function(s) {
+    var z2 = s.shapeSize / 2;
+    return "M0," + z2 + "L0," + -z2;
+  });
+
+}(pv.SvgScene));
 pv.SvgScene.image = function(scenes) {
   var e = scenes.$g.firstChild;
   for (var i = 0; i < scenes.length; i++) {
@@ -9309,33 +9339,23 @@ pv.SvgScene.label = function(scenes) {
 
     /* text-baseline, text-align */
     var x = 0, y = 0, dy = 0, anchor = "start";
-    switch (s.textBaseline) {
-      case "middle":
-          if (pv.renderer() == 'svgweb')
-              y = 3; // flex doesn't seem to use dy, so this moves it to be 'about right'
-          else
-              dy = ".35em";
-          break;
-      case "top":
-          if (pv.renderer() == 'svgweb') {
-              y = 9 + s.textMargin; // flex doesn't seem to use dy, so this moves it to be 'about right'
-          } else {
-              dy = ".71em"; y = s.textMargin;
-          }
-        break;
-      case "bottom": y = "-" + s.textMargin; break;
+    switch(s.textBaseline) {
+      case "middle": dy = ".35em"; break;
+      case "top":    dy = ".71em"; y = s.textMargin; break;
+      case "bottom":  y = "-" + s.textMargin; break;
     }
-    switch (s.textAlign) {
-      case "right": anchor = "end"; x = "-" + s.textMargin; break;
+
+    switch(s.textAlign) {
+      case "right":  anchor = "end"; x = "-" + s.textMargin; break;
       case "center": anchor = "middle"; break;
-      case "left": x = s.textMargin; break;
+      case "left":   x = s.textMargin; break;
     }
 
     e = this.expect(e, "text", scenes, i, {
         "pointer-events": s.events,
         "cursor": s.cursor,
-        "x": x,
-        "y": y,
+        "x":  x,
+        "y":  y,
         "dy": dy,
         "transform": "translate(" + s.left + "," + s.top + ")"
             + (s.textAngle ? " rotate(" + 180 * s.textAngle / Math.PI + ")" : "")
@@ -9352,13 +9372,10 @@ pv.SvgScene.label = function(scenes) {
     if(s.svg) this.setAttributes(e, s.svg);
     if(s.css) this.setStyle(e, s.css);
 
-    if (e.firstChild) e.firstChild.nodeValue = s.text;
-    else {
-        if (pv.renderer() == "svgweb") { // SVGWeb needs an extra 'true' to create SVG text nodes properly in IE.
-            e.appendChild(document.createTextNode(s.text, true));
-        } else {
-            e.appendChild(document.createTextNode(s.text));
-        }
+    if(e.firstChild) { 
+      e.firstChild.nodeValue = s.text; 
+    } else { 
+      e.appendChild(document.createTextNode(s.text));
     }
 
     e = this.append(e, scenes, i);
@@ -10101,240 +10118,318 @@ pv.SvgScene.equalSceneKeys = function(ka, kb){
   }
   return true;
 };
+/* The following applies generally only to non-root panels.
+* See below for more info on root panels.
+ *
+ * With clipping:
+ * <g> scenes.$g -> g
+ *     group for panel content
+ *
+ *     instance 0
+ *     <g clip-path="url(#123)"> -> c -> g -> scenes.$g
+ *        <clipPath id="123"> -> e
+ *            <rect x="s.left" y="s.top" width="s.width" height="s.height" />
+ *        </clipPath>
+ *        <rect fill="" /> -> e
+ *        <g>child 0 - childScenes $g</g>
+ *        <g>child 1 - childScenes.$g</g>
+ *        ...
+ *        <rect stroke="" /> -> e
+ *
+ *        restore initial group
+ *        scenes.$g <- g <- c.parentNode,
+ *     </g>
+ *
+ *     instance 1
+ *     
+ * </g>
+ *
+ * Without clipping:
+ * <g> -> g
+ *     group for panel content
+ *
+ *     instance 0
+ *     <rect fill="" /> -> e
+ *     <g>child 0</g>
+ *     <g>child 1</g>
+ *     ...
+ *     <rect stroke="" /> -> e
+ *     
+ *     instance 1
+ *     <rect fill="" />
+ *     ...
+ * </g>
+ */
 pv.SvgScene.panel = function(scenes) {
-  /* With clipping:
-   * <g> scenes.$g -> g
-   *     group for panel content
-   *
-   *     instance 0
-   *     <g clip-path="url(#123)"> -> c -> g -> scenes.$g
-   *        <clipPath id="123"> -> e
-   *            <rect x="s.left" y="s.top" width="s.width" height="s.height" />
-   *        </clipPath>
-   *        <rect fill="" /> -> e
-   *        <g>child 0 - childScenes $g</g>
-   *        <g>child 1 - childScenes.$g</g>
-   *        ...
-   *        <rect stroke="" /> -> e
-   *
-   *        restore initial group
-   *        scenes.$g <- g <- c.parentNode,
-   *     </g>
-   *
-   *     instance 1
-   *     
-   * </g>
-   *
-   * Without clipping:
-   * <g> -> g
-   *     group for panel content
-   *
-   *     instance 0
-   *     <rect fill="" /> -> e
-   *     <g>child 0</g>
-   *     <g>child 1</g>
-   *     ...
-   *     <rect stroke="" /> -> e
-   *     
-   *     instance 1
-   *     <rect fill="" />
-   *     ...
-   * </g>
-   */
-  var g = scenes.$g,
-      e = g && g.firstChild;
-  
-  var complete = false;
-  for (var i = 0; i < scenes.length; i++) {
+  // scenes.$g is the default parent of elements appended in the context of
+  // this `scenes` instance (see pv.SvgScene.append).
+  // 
+  // When clipping is used, a different clipping container is used per panel instance, 
+  //  and scenes.$g will have one child "g" element per panel instance, 
+  //  that itself is a container for child marks' rendered content.
+  // When clipping is not used, there's no real need to separate content from 
+  //  different panel instances (although explicit zOrder may result quite differently...),
+  //  and so, scenes.$g will be the parent of every instance's content.
+  // 
+  // On the first render, scenes.$g is undefined.
+  // Otherwise, holds the default parent left there from the previous render.
+  // 
+  // On ROOT PANELS, it is quite more elaborate...
+  // 
+  // Each root panel instance has an associated canvas element (usually shared by all).
+  // The canvas is generally not an svg namespaced element.
+  // It is the intended container for the root svg:svg element of 
+  //  each root panel instance.
+  // 
+  // Sharing canvases, results in:
+  //   <div>           = scenes[0,2,3].canvas
+  //      <svg ... />  = g <-> scenes[0]
+  //      <svg ... />  = g <-> scenes[2]
+  //      <svg ... />  = g <-> scenes[3]
+  //   </div>
+  // 
+  // and in some other div:
+  //   <div>           = scenes[1,4].canvas
+  //      <svg ... />  = g <-> scenes[1]
+  //      <svg ... />  = g <-> scenes[4]
+  //   </div>
+  //   
+  // Unspecified canvases (auto/ created):
+  //   <span>         = scenes[0].canvas
+  //     <svg ... />  = g <-> scenes[0]
+  //   </span>
+  //   <span>         = scenes[1].canvas
+  //     <svg ... />  = g <-> scenes[1]
+  //   </span>
+  //   <span>         = scenes[2].canvas
+  //     <svg ... />  = g <-> scenes[2]
+  //   </span>
+  //
+  var g = scenes.$g;
+  var e = g && g.firstChild; // !g => !e
+  var pendingAppendRootElems;
+  for(var i = 0, L = scenes.length ; i < L ; i++) {
     var s = scenes[i];
     
-    /* visible */
-    if (!s.visible) continue;
-    
-    /* svg */
-    if (!scenes.parent) {
-      if(pv.renderer() !== "batik") { s.canvas.style.display = "inline-block"; }
-      
-      if (g && (g.parentNode != s.canvas)) {
-        g = s.canvas.firstChild;
-        e = g && g.firstChild;
+    if(!s.visible) { continue; }
+
+    // Root panel
+    if(!scenes.parent) {
+      // s.canvas != null cause pv.Panel#buildImplied creates one when undefined.
+      var canvas = s.canvas;
+
+      // TODO: Any way to do this only once per render and canvas element?
+      this.applyCanvasStyle(canvas);
+
+      // First render and First visible instance
+      // => !g => !e and **not enter this if**
+      // ----
+      // !First render => g
+      //  * i is the first visible instance _and_ g is the previous' render last scenes.$g set.
+      //    if only one instance, g will probably be ok, 
+      //    otherwise...we just pick the probable old g.
+      //    OR
+      //  * g is previous instance's _refreshed_ svg element,
+      //    and this instance might have a different canvas.
+      // ----
+
+      // Active canvas changed?
+      if(g && (g.parentNode !== canvas)) { // TODO: batik may not work with ===
+        g = canvas.firstChild; // can be null
+        e = g && g.firstChild; // !g ==> !e
       }
+      // TODO: Can't understand how g is not always set to the corresponding instance's svg...
+      // How this is being done, this seems to work on the first render, but not for non-first instances of later renders.
       
-      if (!g) {
-        g = this.create(pv.renderer() !== "batik" ? "svg":"g");
-        g.setAttribute("font-size", "10px");
-        g.setAttribute("font-family", "sans-serif");
-        g.setAttribute("fill", "none");
-        g.setAttribute("stroke", "none");
-        g.setAttribute("stroke-width", 1.5);
+      if(!g) { // => !e
+        g = this.createRootPanelElement(); // factory of svg/whatever element
+        e = null; // J.I.C.?
+
+        this.initRootPanelElement(g, scenes.mark);
+        if(!pendingAppendRootElems) { pendingAppendRootElems = []; }
+        pendingAppendRootElems.push([canvas, g]);
+
+        //canvas.appendChild(g);
+        // canvas.firstChild === g ? Not necessarily!
+        // g.parentNode === canvas ? Yes sure!
+
+        // Create the global defs element (whether or not it is actually used).
+        scenes.$defs = g.appendChild(this.create("defs"));
+
+        // Set g as the current default parent.
+        // TODO: Shouldn't this be done every time that g changes during the loop?
+        scenes.$g = g;
+
+        // <div>    -> scenes[i].canvas
+        //   .. ? ..   (other instances <svg /> elements may already exist here)
+        //   <svg>  -> g, scenes.$g <-> scenes[i] 
+        //     <defs/>
         
-        // Prevent selecting VML elements when dragging
-        
-        // Supported by IE10 SVG
-        g.setAttribute("style", "-webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;");
-        
-        if (typeof g.onselectstart !== 'undefined') {
-            // IE9 SVG
-            g.setAttribute('unselectable', 'on');
-            g.onselectstart = function() { return false; };
-        }
-        
-        if (pv.renderer() === "svgweb") { // SVGWeb requires a separate mechanism for setting event listeners.
-            // width/height can't be set on the fragment
-            g.setAttribute("width", s.width + s.left + s.right);
-            g.setAttribute("height", s.height + s.top + s.bottom);
-
-            var frag = document.createDocumentFragment(true);
-
-            g.addEventListener('SVGLoad', function() {
-                /**
-                 * This hack was based off a suggestion by Idearat <scott.shattuck@gmail.com>
-                 * on the protovis mailing list to work around the SVGWeb
-                 * SVGLoad event being called prior to the scene graph being
-                 * completed, and causing errors when listeners executed. As
-                 * described by him:
-                 *
-                        So I've been running into a consistent issue with protovis + svgweb
-                        integration where I get an empty (white screen) as many folks have
-                        previously reported.
-
-                        The section of that code with the if (pv.renderer() == "svgweb") block
-                        follows the advice for SVGWeb integration which says to a)
-                        addEventListener('SVGLoad', ...) and to use svgweb.appendChild(). The
-                        problem is that the svgweb.appendChild call immediately turns around
-                        and invokes any event listeners on the newly appended nodes...and the
-                        "frag" can still be empty at that point. This can be confirmed in a
-                        debugger's stack trace.
-
-                        This new version effectively says run the (now embedded in func)
-                        handler logic immediately if complete, otherwise try again shortly
-                        via setTimeout every 100ms until we've completed the scene graph.
-
-                        I've run this through a number of graphs within a complex application
-                        with PHP, JQuery, YUI and other libs in the mix and it consistently
-                        draws the graphs with no more white/blank display.
-
-                * Until a better solution comes along, lets use this.
-                */
-                var me = this;
-                (function () {
-                    if (complete) {
-                        complete = false;
-                        me.appendChild(frag);
-                        for (var j = 0; j < pv.Scene.events.length; j++) {
-                          me.addEventListener(pv.Scene.events[j], pv.SvgScene.dispatch, false);
-                        }
-                        scenes.$g = me;
-                        scenes.$g.__ready = true;
-                    } else {
-                        setTimeout(arguments.callee, 10);
-                    }
-                })();
-
-            }, false);
-
-            svgweb.appendChild(g, s.canvas);
-            g = frag;
-        } else {
-            for (var j = 0; j < this.events.length; j++) {
-              g.addEventListener(this.events[j], this.dispatch, false);
-            }
-            g = s.canvas.appendChild(g);
-            g.__ready = true;
-        }
-        
-        // Create the global defs element
-        g.$defs = g.appendChild(this.create("defs"));
-        
-        e = null;
+      } else if(e && e.tagName === 'defs') {
+        e = e.nextSibling;
       }
-      
-      if(e && e.tagName === 'defs') { e = e.nextSibling; }
-      
-      scenes.$g = g;
-      if (g.__ready) {
-        g.setAttribute("width",  s.width + s.left + s.right );
-        g.setAttribute("height", s.height + s.top + s.bottom);
-      }
+
+      g.setAttribute("width",  s.width  + s.left + s.right );
+      g.setAttribute("height", s.height + s.top  + s.bottom);
     }
 
-    /* clip (nest children) */
-    if (s.overflow === "hidden") {
-      var id = pv.id().toString(36),
-          c = this.expect(e, "g", scenes, i, {"clip-path": "url(#" + id + ")"});
-      if (!c.parentNode) g.appendChild(c);
-      scenes.$g = g = c;
-      e = c.firstChild;
+    // clip (nest children)
+    var clip_g = null;
+    if(s.overflow === "hidden") {
+      var clipResult = this.addPanelClipPath(g, e, scenes, i, s);
+      clip_g = clipResult.g;
 
-      e = this.expect(e, "clipPath", scenes, i, {"id": id});
-      var r = e.firstChild || e.appendChild(this.create("rect"));
-      r.setAttribute("x", s.left);
-      r.setAttribute("y", s.top);
-      r.setAttribute("width", s.width);
-      r.setAttribute("height", s.height);
-      if (!e.parentNode) g.appendChild(e);
-      e = e.nextSibling;
+      // clip_g.parentNode holds the initial g at scenes.$g.
+      // And so we have a way to recover it later!
+      // Make clip_g the current default parent of appended nodes.
+      scenes.$g = g = clip_g;
+      e = clipResult.next;
     }
     
-    /* fill */
+    // fill rect
     e = this.fill(e, scenes, i);
 
-    /* transform (push) */
+    // transform (push)
     var k = this.scale,
         t = s.transform,
         x = s.left + t.x,
         y = s.top  + t.y;
     this.scale *= t.k;
 
-    /* children */
-    if(s.children.length){
+    // children
+    if(s.children.length) {
         var attrs = {
             "transform": "translate(" + x + "," + y + ")" +
                          (t.k != 1 ? " scale(" + t.k + ")" : "")
         };
         
-        this.eachChild(scenes, i, function(childScenes){
+        this.eachChild(scenes, i, function(childScenes) {
             childScenes.$g = e = this.expect(e, "g", scenes, i, attrs);
 
             this.updateAll(childScenes);
-            if (!e.parentNode) g.appendChild(e);
+            if(!e.parentNode) { g.appendChild(e) };
             e = e.nextSibling;
         });
     }
 
-    /* transform (pop) */
+    // transform (pop)
     this.scale = k;
 
-    /* stroke */
+    // stroke rect
     e = this.stroke(e, scenes, i);
     
-    /* clip (restore group) */
-    if (s.overflow === "hidden") {
-      scenes.$g = g = c.parentNode;
-      e = c.nextSibling;
+    // clip (restore group)
+    if(clip_g) {
+      // restore initial g, from clip_g
+      scenes.$g = g = clip_g.parentNode; // g != null !
+      e = clip_g.nextSibling;
     }
   } // end for panel instance
   
-  complete = true;
+  // Defer appending to canvas when fully built.
+  if(pendingAppendRootElems) {
+    pendingAppendRootElems.forEach(function(cg) {
+      cg[0].appendChild(cg[1]);
+    })
+  }
+
   return e;
 };
 
+pv.SvgScene.applyCanvasStyle = function(canvas) {
+  // TODO: Is "inline-block" because a canvas can be placed inline with text?
+  canvas.style.display = "inline-block";
+};
+
+pv.SvgScene.createRootPanelElement = function() {
+  return this.create("svg");
+};
+
+pv.SvgScene.initRootPanelElement = function(g, panel) {
+  // Only runs when the panel is created by createRootPanelElement.
+  // Default values for attributes, inherited by descendant svg:* elements.
+  g.setAttribute("font-size",    "10px");
+  g.setAttribute("font-family",  "sans-serif");
+  g.setAttribute("fill",         "none");
+  g.setAttribute("stroke",       "none");
+  g.setAttribute("stroke-width", 1.5);
+  
+  this.disableElementSelection(g);
+
+  this.listenRootPanelElement(g, panel);
+};
+
+pv.SvgScene.listenRootPanelElement = function(g, panel) {
+  for(var j = 0, evs = this.events, J = evs.length ; j < J ; j++) {
+    g.addEventListener(evs[j], this.dispatch, false);
+
+    panel._registerBoundEvent(g, evs[j], this.dispatch, false);
+  }
+};
+
+pv.SvgScene.disableElementSelection = function(g) {
+  // Prevent selecting elements when dragging
+  
+  // TODO: last time I tested, not working for IE10 or IE9...
+
+  // Supported by IE10 SVG
+  g.setAttribute("style", "-webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;");
+
+  if(typeof g.onselectstart !== 'undefined') { // TODO: really strange test...
+      // IE9 SVG
+      g.setAttribute('unselectable', 'on');
+      g.onselectstart = function() { return false; };
+  }
+};
+
+pv.SvgScene.addPanelClipPath = function(g, e, scenes, i, s) {
+  // <g clip-path="url(#ID)">  // clip-g
+  //    <clipPath id="ID">     // e
+  //        <rect x="s.left" y="s.top" width="s.width" height="s.height" />  // r
+  //    </clipPath>
+  //    e <= next insertion/replace point
+  // </g>
+
+  // An ID for the clipping path element
+  var id = pv.id().toString(36);
+
+  // The clipping group
+  var clip_g = this.expect(e, "g", scenes, i, {"clip-path": "url(#" + id + ")"});
+  
+  // The clipping path
+  var clip_p = this.expect(clip_g.firstChild, "clipPath", scenes, i, {"id": id});
+  
+  // The clipping rect
+  var r = clip_p.firstChild || clip_p.appendChild(this.create("rect"));
+  r.setAttribute("x",      s.left);
+  r.setAttribute("y",      s.top);
+  r.setAttribute("width",  s.width);
+  r.setAttribute("height", s.height);
+
+  // Ensure connected
+  if(!clip_p.parentNode) { clip_g.appendChild(clip_p); }
+  if(!clip_g.parentNode) { g.appendChild(clip_g); }
+  
+  return {g: clip_g, next: clip_p.nextSibling};
+};
+
 pv.SvgScene.eachChild = function(scenes, i, fun, ctx){
-    if(scenes.mark.zOrderChildCount){
-        var sorted = scenes[i].children.slice(0);
-        sorted.sort(function(scenes1, scenes2){ // sort ascending
-            var compare = scenes1.mark._zOrder - scenes2.mark._zOrder;
-            if(compare === 0){
-                // Preserve original order for same zOrder childs
-                compare = scenes1.childIndex - scenes2.childIndex;
-            }
-            return compare;
-        });
-        
-        sorted.forEach(fun, ctx || this);
-    } else {
-        scenes[i].children.forEach(fun, ctx || this);
-    }
+  var children = scenes[i].children;
+  if(scenes.mark._zOrderChildCount){
+    children = children.slice(0);
+    children.sort(function(scenes1, scenes2){ // sort ascending
+      var compare = scenes1.mark._zOrder - scenes2.mark._zOrder;
+      if(compare === 0){
+          // Preserve original order for same zOrder childs
+          compare = scenes1.childIndex - scenes2.childIndex;
+      }
+      return compare;
+    });
+  }
+
+  for(var j = 0, L = children.length ; j < L; j++) {
+    fun.call(ctx || this, children[j], j);
+  }
 };
 
 pv.SvgScene.fill = function(e, scenes, i) {
@@ -10633,11 +10728,13 @@ pv.Mark.prototype.properties = {};
 pv.Mark.cast = {};
 
 /**
- * @private Defines and registers a property method for the property with the
- * given name.  This method should be called on a mark class prototype to define
- * each exposed property. (Note this refers to the JavaScript
- * <tt>prototype</tt>, not the Protovis mark prototype, which is the {@link
- * #proto} field.)
+ * @private Defines a property with the given name.
+ * Registers a method in the mark class, that gets or sets the property value
+ * for the current mark instance.
+
+ * <p>Call this method <i>on a mark class' prototype</i> object 
+ * (Note that this refers to the JavaScript <tt>prototype</tt>, 
+ *  and not to the Protovis mark's prototype -- the {@link #proto} field.</p>
  *
  * <p>The created property method supports several modes of invocation: <ol>
  *
@@ -10677,14 +10774,15 @@ pv.Mark.cast = {};
  * </ol><p>Property names should follow standard JavaScript method naming
  * conventions, using lowerCamel-style capitalization.
  *
- * <p>In addition to creating the property method, every property is registered
- * in the {@link #properties} map on the <tt>prototype</tt>. Although this is an
- * instance field, it is considered immutable and shared by all instances of a
- * given mark type. The <tt>properties</tt> map can be queried to see if a mark
+ * <p>In addition to creating the property method, 
+ * every property is registered in the {@link #properties} map of the mark class' <tt>prototype</tt>.
+ * This way the property is accessible to every mark instance.
+ * Yet, it is considered immutable and shared by all instances of a given mark type.
+ * The <tt>properties</tt> map can be queried to see if a mark
  * type defines a particular property, such as width or height.
  *
  * @param {string} name the property name.
- * @param {function} [cast] the cast function for this property.
+ * @param {Function} [cast] the cast function for this property.
  */
 pv.Mark.prototype.property = function(name, cast) {
   if (!this.hasOwnProperty("properties")) {
@@ -10711,19 +10809,17 @@ pv.Mark.prototype.property = function(name, cast) {
  * which is necessary since properties are inherited!
  *
  * @param {string} name the property name.
- * @param {function} [cast] the cast function for this property.
+ * @param {Function} [cast] the cast function for this property.
  */
 pv.Mark.prototype.localProperty = function(name, cast) {
   if (!this.hasOwnProperty("properties")) {
     this.properties = pv.extend(this.properties);
   }
   this.properties[name] = true;
-  
+
   var currCast = pv.Mark.cast[name];
-  if(cast){
-      pv.Mark.cast[name] = currCast = cast;
-  }
-  
+  if(cast) { pv.Mark.cast[name] = currCast = cast; }
+
   // NOTE: propertyMethod is called on the Mark instance and not on the prototype
   this.propertyMethod(name, /*def*/false, /*cast*/currCast);
   return this;
@@ -10744,7 +10840,7 @@ pv.Mark.prototype.localProperty = function(name, cast) {
  * visualization specification as with defs.
  *
  * @param {string} name the name of the local variable.
- * @param {function} [v] an optional initializer; may be a constant or a
+ * @param {Function} [v] an optional initializer; may be a constant or a
  * function.
  */
 pv.Mark.prototype.def = function(name, v) {
@@ -10763,67 +10859,71 @@ pv.Mark.prototype.def = function(name, v) {
  *
  * @param {string} name the property name.
  * @param {boolean} [isDef] whether is a property or a def.
- * @param {function} [cast] the cast function for this property.
+ * @param {Function} [cast] the cast function for this property.
  */
 pv.Mark.prototype.propertyMethod = function(name, isDef, cast) {
-  if (!cast) cast = pv.Mark.cast[name];
-  
+  if(!cast) cast = pv.Mark.cast[name];
+
   this[name] = function(v, tag) {
-      
-      if(isDef && this.scene) {
-          // def being changed during render
-          var defs = this.scene.defs;
-          
-          if (arguments.length) {
-            defs[name] = {
-              id:    (v == null) ? 0 : pv.id(),
-              value: ((v != null) && cast) ? cast(v) : v
-            };
-            
-            return this;
-          }
-          
-          var def = defs[name];
-          return def ? def.value : null;
-      }
-      
-      if (arguments.length) {
-        this.setPropertyValue(name, v, isDef, cast, /* chain */false, tag);
+
+    // A def. being read/written during render?
+    if(isDef && this.scene) {
+      var defs = this.scene.defs;
+
+      if(arguments.length) {
+        defs[name] = {
+          id:    (v == null) ? 0 : pv.id(),
+          value: ((v != null) && cast) ? cast(v) : v
+        };
+
         return this;
       }
-      
-      // Listening to function property dependencies?
-      var propEval = pv.propertyEval;
-      if(propEval) {
-          var binds = this.binds;
-          var propRead = binds.properties[name];
-          if(propRead) {
-              var net = binds.net;
-              var readNetIndex = net[name];
-              if(readNetIndex == null) { readNetIndex = net[name] = 0; }
-              
-              (propRead.dependents || (propRead.dependents = {}))[propEval.name] = true;
-              
-              (pv.propertyEvalDependencies || (pv.propertyEvalDependencies = {}))[name] = true;
-              
-              // evalNetIndex must be at least one higher than readNetIndex
-              if(readNetIndex >= pv.propertyEvalNetIndex) { pv.propertyEvalNetIndex = readNetIndex + 1; }
-          }
+
+      var def = defs[name];
+      return def ? def.value : null;
+    }
+
+    if(arguments.length) {
+      this.setPropertyValue(name, v, isDef, cast, /* chain */false, tag);
+      return this;
+    }
+
+    // Listening to function property dependencies?
+    var propEval = pv.propertyEval;
+    if(propEval && propEval.name !== name) { // When you call another marks method of same name...
+      var binds = this.binds;
+      var propRead = binds.properties[name];
+      if(propRead) {
+        var net = binds.net;
+        var readNetIndex = net[name];
+        if(readNetIndex == null) { readNetIndex = net[name] = 0; }
+
+        (propRead.dependents || (propRead.dependents = {}))[propEval.name] = true;
+
+        (pv.propertyEvalDependencies || (pv.propertyEvalDependencies = {}))[name] = true;
+
+        // evalNetIndex must be at least one higher than readNetIndex
+        if(readNetIndex >= pv.propertyEvalNetIndex) { pv.propertyEvalNetIndex = readNetIndex + 1; }
       }
-      
-      return this.instance()[name];
+    }
+
+    return this.instance()[name];
   };
 };
 
-/** @private Creates and returns a wrapper function to call a property function and a property cast. */
-pv.Mark.funPropertyCaller = function(fun, cast){
+/** @private Creates and returns a wrapper function to 
+ *  call a property function and a property cast. 
+ */
+pv.Mark.funPropertyCaller = function(fun, cast) {
     // Avoiding the use of arguments object to try to speed things up
     var stack = pv.Mark.stack;
 
-    return function(){
-            var value = fun.apply(this, stack);
-            return value != null ? cast(value) : value; // some things depend on the null/undefined distinction
-        };
+    function mark_callFunProperty() {
+        var value = fun.apply(this, stack);
+        return value != null ? cast(value) : value; // some things depend on the null/undefined distinction
+    }
+
+    return mark_callFunProperty;
 };
 
 /** @private Sets the value of the property <i>name</i> to <i>v</i>. */
@@ -10835,100 +10935,100 @@ pv.Mark.prototype.setPropertyValue = function(name, v, isDef, cast, chain, tag){
      * 01 - 1 - def  - function
      * 10 - 2 - prop - value
      * 11 - 3 - prop - function
-     * 
+     *
      * x << 1 <=> floor(x) * 2
-     * 
+     *
      * true  << 1 -> 2 - 10
      * false << 1 -> 0 - 00
      */
     var type = !isDef << 1 | (typeof v === "function");
     // A function and cast?
-    if(type & 1  && cast) { 
-        v = pv.Mark.funPropertyCaller(v, cast); 
-    } else if(v != null && cast) { 
-        v = cast(v); 
+    if((type & 1) && cast) {
+      v = pv.Mark.funPropertyCaller(v, cast);
+    } else if(v != null && cast) {
+      v = cast(v);
     }
-    
+
     // ------
-    
+
     var propertiesMap = this.$propertiesMap;
     var properties = this.$properties;
-    
+
     var p = {
         name:  name,
-        id:    pv.id(), 
+        id:    pv.id(),
         value: v,
         type:  type,
         tag:   tag
     };
-  
+
     var specified = propertiesMap[name];
-  
+
     propertiesMap[name] = p;
-  
+
     if(specified) {
-        // Find it and remove it
-        for (var i = 0; i < properties.length; i++) {
-            if (properties[i] === specified) {
-                properties.splice(i, 1);
-                break;
-            }
+      // Find it and remove it
+      for(var i = 0, P = properties.length; i < P; i++) {
+        if(properties[i] === specified) {
+          properties.splice(i, 1);
+          break;
         }
+      }
     }
-    
+
     properties.push(p);
-    
+
     if(chain && specified && type === 3) { // is a prop fun
-        p.proto = specified;
-        p.root  = specified.root || specified;
+      p.proto = specified;
+      p.root  = specified.root || specified;
     }
-    
+
     return p;
 };
 
 pv.Mark.prototype.intercept = function(name, v, keyArgs) {
     this.setPropertyValue(
-            name, 
-            v, 
-            /* isDef */ false,
-            pv.get(keyArgs, 'noCast') ? null : pv.Mark.cast[name],
-            /* chain*/ true,
-            pv.get(keyArgs, 'tag'));
-    
+        name,
+        v,
+        /* isDef */ false,
+        pv.get(keyArgs, 'noCast') ? null : pv.Mark.cast[name],
+        /* chain*/ true,
+        pv.get(keyArgs, 'tag'));
+
     return this;
 };
 
 /**
  * Gets the static value of a property, without evaluation.
  * @param {string} name the property name.
- * @type any
+ * @return {*} the property value.
  */
 pv.Mark.prototype.propertyValue = function(name, inherit) {
     var p = this.$propertiesMap[name];
     if(p){
         return p.value;
     }
-    
+
     // This mimics the way #bind works
     if(inherit){
         if(this.proto){
-            var value = this.proto.propertyValueRecursive(name);
+            var value = this.proto._propertyValueRecursive(name);
             if(value !== undefined){
                 return value;
             }
         }
-        
-        return this.defaults.propertyValueRecursive(name);
+
+        return this.defaults._propertyValueRecursive(name);
     }
-    
+
     //return undefined;
 };
 
 /** @private */
-pv.Mark.prototype.propertyValueRecursive = function(name) {
+pv.Mark.prototype._propertyValueRecursive = function(name) {
     var p = this.$propertiesMap[name];
     if(p         ) { return p.value; }
-    if(this.proto) { return this.proto.propertyValueRecursive(name); }
+    if(this.proto) { return this.proto._propertyValueRecursive(name); }
     //return undefined;
 };
 
@@ -11029,7 +11129,7 @@ pv.Mark.prototype.scale = 1;
  * Affects the drawing order amongst sibling marks.
  * Evaluation order is not affected.
  * A higher Z order value is drawn on top of a lower Z order value.
- * 
+ *
  * @type number
  * @private
  */
@@ -11205,7 +11305,7 @@ pv.Mark.prototype.defaults = new pv.Mark()
  * @see #add
  */
 pv.Mark.prototype.extend = function(proto) {
-  this.proto = proto;
+  this.proto  = proto;
   this.target = proto.target;
   return this;
 };
@@ -11214,7 +11314,7 @@ pv.Mark.prototype.extend = function(proto) {
  * Adds a new mark of the specified type to the enclosing parent panel, whilst
  * simultaneously setting the prototype of the new mark to be this mark.
  *
- * @param {function} type the type of mark to add; a constructor, such as
+ * @param {Function} type the type of mark to add; a constructor, such as
  * <tt>pv.Bar</tt>.
  * @returns {pv.Mark} the new mark.
  * @see #extend
@@ -11226,27 +11326,24 @@ pv.Mark.prototype.add = function(type) {
 /**
  * Affects the drawing order amongst sibling marks.
  * Evaluation order is not affected.
- * A higher Z order value is drawn on top of a lower Z order value. 
- * 
- * @param {number} zOrder the Z order of the mark. 
- * @type number
+ * A higher Z order value is drawn on top of a lower Z order value.
+ *
+ * @param {number} zOrder the Z order of the mark.
+ * @return {number|pv.Mark} the zOrder or this.
  */
 pv.Mark.prototype.zOrder = function(zOrder){
-    if(!arguments.length) { return this._zOrder; }
-    
-    zOrder = (+zOrder) || 0; // NaN -> 0
-    
-    if(this._zOrder !== zOrder) {
-        var p = this.parent;
-        
-        if(p && this._zOrder !== 0) { p.zOrderChildCount--; }
-        
-        this._zOrder = zOrder;
-        
-        if(p && this._zOrder !== 0) { p.zOrderChildCount++; }
-    }
-    
-    return this;
+  if(!arguments.length) { return this._zOrder; }
+
+  zOrder = (+zOrder) || 0; // NaN -> 0
+
+  if(this._zOrder !== zOrder) {
+    var p = this.parent;
+    if(p && this._zOrder !== 0) { p._zOrderChildCount--; }
+    this._zOrder = zOrder;
+    if(p && this._zOrder !== 0) { p._zOrderChildCount++; }
+  }
+
+  return this;
 };
 
 /**
@@ -11276,64 +11373,57 @@ pv.Mark.prototype.zOrder = function(zOrder){
  * @returns {pv.Anchor} the new anchor.
  */
 pv.Mark.prototype.anchor = function(name) {
-  if (!name) name = "center"; // default anchor name
   return new pv.Anchor(this)
-    .name(name)
-    .data(function() {
-        return this.scene.target.map(function(s) { return s.data; });
-      })
-    .visible(function() {
-        return this.scene.target[this.index].visible;
-      })
-    .id(function() {
-        return this.scene.target[this.index].id;
-      })
+    .name   (name || "center") // default anchor name
+    .data   (function() { return this.scene.target.map(function(s) { return s.data; }); })
+    .visible(function() { return this.scene.target[this.index].visible; })
+    .id     (function() { return this.scene.target[this.index].id; })
     .left(function() {
         var s = this.scene.target[this.index], w = s.width || 0;
-        switch (this.name()) {
+        switch(this.name()) {
           case "bottom":
           case "top":
           case "center": return s.left + w / 2;
-          case "left": return null;
+          case "left":   return null;
         }
         return s.left + w;
-      })
+    })
     .top(function() {
         var s = this.scene.target[this.index], h = s.height || 0;
-        switch (this.name()) {
+        switch(this.name()) {
           case "left":
           case "right":
           case "center": return s.top + h / 2;
-          case "top": return null;
+          case "top":    return null;
         }
         return s.top + h;
-      })
+    })
     .right(function() {
         var s = this.scene.target[this.index];
         return this.name() == "left" ? s.right + (s.width || 0) : null;
-      })
+    })
     .bottom(function() {
         var s = this.scene.target[this.index];
         return this.name() == "top" ? s.bottom + (s.height || 0) : null;
-      })
+    })
     .textAlign(function() {
-        switch (this.name()) {
+        switch(this.name()) {
           case "bottom":
           case "top":
           case "center": return "center";
-          case "right": return "right";
+          case "right":  return "right";
         }
         return "left";
-      })
+    })
     .textBaseline(function() {
-        switch (this.name()) {
+        switch(this.name()) {
           case "right":
           case "left":
           case "center": return "middle";
-          case "top": return "top";
+          case "top":    return "top";
         }
         return "bottom";
-      });
+    });
 };
 
 /** @deprecated Replaced by {@link #target}. */
@@ -11366,8 +11456,8 @@ pv.Mark.prototype.margin = function(n) {
  */
 pv.Mark.prototype.instance = function(defaultIndex) {
   var scene = this.scene || this.parent.instance(-1).children[this.childIndex],
-      index = (defaultIndex == null) || this.hasOwnProperty("index") ? 
-              this.index : 
+      index = (defaultIndex == null) || this.hasOwnProperty("index") ?
+              this.index :
               defaultIndex;
   return scene[index < 0 ? scene.length - 1 : index];
 };
@@ -11381,14 +11471,20 @@ pv.Mark.prototype.instances = function(source) {
   var mark = this, index = [], scene;
 
   /* Mirrored descent. */
-  while (!(scene = mark.scene)) {
+  while(!(scene = mark.scene)) {
+    index.push({
+      index:      source.parentIndex,
+      childIndex: mark.childIndex
+    });
+    
     source = source.parent;
-    index.push({index: source.index, childIndex: mark.childIndex});
-    mark = mark.parent;
+    mark   = mark.parent;
   }
-  while (index.length) {
-    var i = index.pop();
-    scene = scene[i.index].children[i.childIndex];
+
+  var j = index.length;
+  while(j--) {
+    var info = index[j];
+    scene = scene[info.index].children[info.childIndex];
   }
 
   /*
@@ -11451,6 +11547,23 @@ pv.Mark.prototype.cousin = function() {
 };
 
 /**
+ * The id of the last render that occurred for the associated given mark tree.
+ * Only the root panel updates this field.
+ * @see #renderId
+ * @type number
+ * @private
+ */
+pv.Mark.prototype._renderId = 0;
+
+/**
+ * The id of the last render that occurred for the associated given mark tree.
+ * @type number
+ */
+pv.Mark.prototype.renderId = function() { 
+  return this.root._renderId; 
+};
+
+/**
  * Renders this mark, including recursively rendering all child marks if this is
  * a panel. This method finds all instances of this mark and renders them. This
  * method descends recursively to the level of the mark to be rendered, finding
@@ -11464,13 +11577,17 @@ pv.Mark.prototype.cousin = function() {
  * will be rendered.
  */
 pv.Mark.prototype.render = function() {
-    /* For the first render, take it from the top. */
-    if (this.parent && !this.root.scene) {
-      this.root.render();
-      return;
-    }
-    
-    this.renderCore();
+  // For the first render, take it from the top.
+  var root = this.root;
+  if(this.parent && !root.scene) {
+    root.render();
+    return;
+  }
+
+  // Increment the (root) render id.
+  root._renderId++;
+
+  this.renderCore();
 };
 
 pv.Mark.prototype.renderCore = function() {
@@ -11478,9 +11595,9 @@ pv.Mark.prototype.renderCore = function() {
         stack = pv.Mark.stack,
         S = stack.length;
 
-    /* Record the path to this mark. */
+    // Record the path to this mark.
     var indexes = []; // [root excluded], ..., this.parent.childIndex, this.childIndex
-    for (var mark = this; mark.parent; mark = mark.parent) { indexes.unshift(mark.childIndex); }
+    for(var mark = this; mark.parent; mark = mark.parent) { indexes.unshift(mark.childIndex); }
 
     var L = indexes.length;
 
@@ -11492,45 +11609,45 @@ pv.Mark.prototype.renderCore = function() {
      * The stack will already be filled up to the context scene/index.
      */
     function render(mark, depth, scale) {
-        mark.scale = scale;
-        if (depth < L) {
-            // At least one more child index to traverse, for getting to the initial mark
-            
-            // If addStack, then we've reached a level not covered by #context.
-            // TODO: Can't think of a situation in which addStack and index is an own property.  
-            var addStack = (depth >= stack.length);
-            if(addStack) { stack.unshift(null); }
-                if (mark.hasOwnProperty("index")) {
-                    // Render only instances of the outer "this" mark
-                    // that are found along along this branch.
-                    renderCurrentInstance(mark, depth, scale, addStack);
-                } else {
-                    // Traverse every branch that leads to
-                    // instances of the outer "this" mark.
-                    for (var i = 0, n = mark.scene.length; i < n; i++) {
-                        mark.index = i;
-                        renderCurrentInstance(mark, depth, scale, addStack);
-                    }
-                    delete mark.index;
-                }
-            if(addStack) { stack.shift(); }
-        } else {
-            // Got to a "scenes" node of mark = outer "this".
-            // Build and UpdateAll
-            mark.build();
+      mark.scale = scale;
+      if(depth < L) {
+        // At least one more child index to traverse, for getting to the initial mark
 
-            /*
-             * In the update phase, the scene is rendered by creating and updating
-             * elements and attributes in the SVG image. No properties are evaluated
-             * during the update phase; instead the values computed previously in the
-             * build phase are simply translated into SVG. The update phase is
-             * decoupled (see pv.Scene) to allow different rendering engines.
-             */
-            pv.Scene.scale = scale;
-            pv.Scene.updateAll(mark.scene);
+        // If addStack, then we've reached a level not covered by #context.
+        // TODO: Can't think of a situation in which addStack and index is an own property.
+        var addStack = (depth >= stack.length);
+        if(addStack) { stack.unshift(null); }
+        if(mark.hasOwnProperty("index")) {
+          // Render only instances of the outer "this" mark
+          // that are found along along this branch.
+          renderCurrentInstance(mark, depth, scale, addStack);
+        } else {
+          // Traverse every branch that leads to
+          // instances of the outer "this" mark.
+          for(var i = 0, n = mark.scene.length; i < n; i++) {
+            mark.index = i;
+            renderCurrentInstance(mark, depth, scale, addStack);
+          }
+          delete mark.index;
         }
-      
-        delete mark.scale;
+        if(addStack) { stack.shift(); }
+      } else {
+        // Got to a "scenes" node of mark = outer "this".
+        // Build and UpdateAll
+        mark.build();
+
+        /*
+         * In the update phase, the scene is rendered by creating and updating
+         * elements and attributes in the SVG image. No properties are evaluated
+         * during the update phase; instead the values computed previously in the
+         * build phase are simply translated into SVG. The update phase is
+         * decoupled (see pv.Scene) to allow different rendering engines.
+         */
+        pv.Scene.scale = scale;
+        pv.Scene.updateAll(mark.scene);
+      }
+
+      delete mark.scale;
     }
 
     /**
@@ -11546,79 +11663,79 @@ pv.Mark.prototype.renderCore = function() {
      * consistent with first-pass rendering.
      */
     function renderCurrentInstance(mark, depth, scale, fillStack) {
-        var s = mark.scene[mark.index], i;
-        if (s.visible) {
-            var childMarks  = mark.children;
-            var childScenez = s.children;
-            var childIndex  = indexes[depth];
-            var childMark   = childMarks[childIndex];
-    
-            /* If current child's scene is not set, include it in the loops below. */
-            if(!childMark.scene) { childIndex++; }
-    
-            /* Set preceding (and possibly self) child marks' scenes. */
-            for (i = 0; i < childIndex; i++) { childMarks[i].scene = childScenez[i]; }
-    
-            if(fillStack) { stack[0] = s.data; }
-    
-            render(childMark, depth + 1, scale * s.transform.k);
-    
-            /* Clear preceding (and possibly self) child mark's scenes. 
-             * It's cheaper to set to null than to delete. */
-            for (i = 0; i < childIndex; i++) { childMarks[i].scene = undefined; }
-        }
+      var s = mark.scene[mark.index], i;
+      if(s.visible) {
+        var childMarks  = mark.children;
+        var childScenez = s.children;
+        var childIndex  = indexes[depth];
+        var childMark   = childMarks[childIndex];
+
+        // If current child's scene is not set, include it in the loops below.
+        if(!childMark.scene) { childIndex++; }
+
+        // Set preceding (and possibly self) child marks' scenes.
+        for(i = 0; i < childIndex; i++) { childMarks[i].scene = childScenez[i]; }
+
+        if(fillStack) { stack[0] = s.data; }
+
+        render(childMark, depth + 1, scale * s.transform.k);
+
+        // Clear preceding (and possibly self) child mark's scenes.
+        // It's cheaper to set to null than to delete.
+        for(i = 0; i < childIndex; i++) { childMarks[i].scene = undefined; }
+      }
     }
 
-    /* Bind this mark's property definitions. */
+    // Bind this mark's property definitions.
     this.bind();
 
-    /* The render context is the first ancestor with an explicit index. */
-    while (parent && !parent.hasOwnProperty("index")) { parent = parent.parent; }
-    
-    /* Recursively render all instances of this mark. */
+    // The render context is the first ancestor with an explicit index.
+    while(parent && !parent.hasOwnProperty("index")) { parent = parent.parent; }
+
+    // Recursively render all instances of this mark.
     try {
-        this.context(
-            parent ? parent.scene : undefined,
-            parent ? parent.index : -1,
+      this.context(
+        parent ? parent.scene : undefined,
+        parent ? parent.index : -1,
         function() {
-                // pv.Mark.stack contains the data until parent.scene, parent.index
-                // parent and all its ascendants have scene, index and scale set.
-                // Direct children of parent have scene and scale set.
-                render(this.root, 0, 1);
+          // pv.Mark.stack contains the data until parent.scene, parent.index
+          // parent and all its ascendants have scene, index and scale set.
+          // Direct children of parent have scene and scale set.
+          render(this.root, 0, 1);
         });
     } catch(e) {
-        if(stack.length > S) { stack.length = S; }
+      if(stack.length > S) { stack.length = S; }
     }
 };
 
 /**
  * @private In the bind phase, inherited property definitions are cached so they
  * do not need to be queried during build.
- * 
+ *
  * NOTE: pv.Panel#bind binds locally and then calls #bind on all of its children.
  *
  * EVALUATION order (not precedence order for choosing props/defs)
  * 0) DEF and PROP _values_ are always already "evaluated".
  *    * Defined PROPs for which a value/fun was not specified
  *      get the value null.
- * 
+ *
  * 1) DEF _functions_
  *    * once per parent instance
  *    * with parent instance's stack
- *    
+ *
  *    1.1) Defaulted
  *        * from farthest proto mark to closest
  *            * on each level the first defined is the first evaluated
- *    
+ *
  *    1.2) Explicit
  *        * idem
- *    
+ *
  * 2) Data PROP _value_ or _function_
  *    * once per all child instances
  *    * with parent instance's stack
- * 
+ *
  * ONCE PER INSTANCE
- * 
+ *
  * 3) Required kind PROP _functions_ (id, datum, visible)
  *    2.1) Defaulted
  *        * idem
@@ -11634,43 +11751,28 @@ pv.Mark.prototype.renderCore = function() {
  * 4) Implied PROPs (when instance.visible=true)
  */
 pv.Mark.prototype.bind = function() {
-  var seen = {},
-      data,
-      
-      /* Required props (no defs) */
-      required = [],    
-      
-      /* 
-       * Optional props/defs by type
-       * 0 - def/value, 
-       * 1 - def/fun, 
-       * 2 - prop/value, 
-       * 3 - prop/fun 
-       */
-      types = [[], [], [], []],
-      
-      bindPropStrategy = {
-          'data':    function(p) { data = p;         },
-          'visible': function(p) { required.push(p); }
-      },
-      
-      defBindPropStrategy = function(p) {
-          types[p.type].push(p);
-      };
-  
-  bindPropStrategy.id = bindPropStrategy.visible;
-  
-  var types0 = types[0], 
-      types1 = types[1], 
-      types2 = types[2],
-      types3 = types[3];
-  /** 
+    var seen = {},
+        data,
+
+        // Required props (no defs)
+        required = [],
+
+        /*
+         * Optional props/defs by type.
+         * 0 - def/value,
+         * 1 - def/fun,
+         * 2 - prop/value,
+         * 3 - prop/fun
+         */
+        types = [[], [], [], []];
+
+  /**
    * Scans the proto chain for the specified mark.
    *
    * On each mark properties are traversed in reverse
    * so that, below, when reverse() is called
    * function props/defs recover their original defining order.
-   * 
+   *
    * M1 -> P1_0, P1_1, P1_2, P1_3
    * ^
    * |
@@ -11678,9 +11780,9 @@ pv.Mark.prototype.bind = function() {
    * ^
    * |
    * M3 -> P3_0, P3_1
-   * 
+   *
    * List     -> P3_1, P3_0, P2_1, P2_0, P1_3, P1_2, P1_1, P1_0
-   * 
+   *
    * Reversed -> P1_0, P1_1, P1_2, P1_3, P2_0, P2_1, P3_0, P3_1
    */
   function bind(mark) {
@@ -11691,53 +11793,58 @@ pv.Mark.prototype.bind = function() {
         var p = properties[i];
         var name = p.name;
         var pLeaf = seen[name];
-        if (!pLeaf) {
-          
+        if(!pLeaf) {
           seen[name] = p;
-          (bindPropStrategy[name] || defBindPropStrategy)(p); // hope no props like 'toString'...
-          
+          switch(name) {
+            case 'data': data = p; break;
+            case 'visible': case 'id': required.push(p); break;
+            default: types[p.type].push(p); break;
+          }
         } else if(pLeaf.type === 3) { // prop/fun
-            // Chain properties
-            //
-            // seen[name]-> (leaf).proto-> (B).proto-> (C).proto-> (root)
-            //                    .root-------------------------------^
-            var pRoot  = pLeaf.root;
-            pLeaf.root = p;
-            if(!pRoot)            { pLeaf.proto = p; }
-            else if(!pRoot.proto) { pRoot.proto = p; }
+          // Chain properties
+          //
+          // seen[name]-> (leaf).proto-> (B).proto-> (C).proto-> (root)
+          //                    .root-------------------------------^
+          var pRoot  = pLeaf.root;
+          pLeaf.root = p;
+          if(!pRoot)            { pLeaf.proto = p; }
+          else if(!pRoot.proto) { pRoot.proto = p; }
         }
       }
-    } while ((mark = mark.proto));
+    } while((mark = mark.proto));
   }
 
   /* Scan the proto chain for all defined properties. */
   bind(this);
   bind(this.defaults);
-  types1.reverse();
-  types3.reverse();
+
+  var types0 = types[0];
+  var types1 = types[1].reverse();
+  var types2 = types[2];
+
+  types[3].reverse();
 
   /* Any undefined properties are null. */
   var mark  = this;
-  var props = mark.properties;
   do {
-    for (var name in props) {
-        if (!(name in seen)) {
-            types2.push(seen[name] = {name: name, type: 2, value: null});
-        }
+    for(var name in mark.properties) {
+      if(!(name in seen)) {
+        types2.push((seen[name] = {name: name, type: 2, value: null}));
+      }
     }
-  } while ((mark = mark.proto));
+  } while((mark = mark.proto));
 
   /* Define setter-getter for inherited defs. */
   var defs;
   if(types0.length || types1.length) {
-      defs =  types0.concat(types1);
-      for (var i = 0, D = defs.length ; i < D ; i++) {
-        this.propertyMethod(defs[i].name, true);
-      }
+    defs = types0.concat(types1);
+    for(var i = 0, D = defs.length ; i < D ; i++) {
+      this.propertyMethod(defs[i].name, true);
+    }
   } else {
-      defs = [];
+    defs = [];
   }
-  
+
   /* Setup binds to evaluate constants before functions. */
   this.binds = {
     properties: seen,
@@ -11745,7 +11852,7 @@ pv.Mark.prototype.bind = function() {
     data:       data,
     defs:       defs,
     required:   required,
-    
+
     // NOTE: although defs are included in the optional properties
     // they are evaluated once per parent instance, before other non-def properties.
     // Yet, for each instance, the already evaluated's def values
@@ -11759,9 +11866,9 @@ pv.Mark.prototype.updateNet = function(pDependent, netIndex){
     var binds = this.binds;
     var props = binds.properties;
     var net   = binds.net;
-    
+
     propagateRecursive(pDependent, netIndex);
-    
+
     function propagateRecursive(p, minNetIndex){
         if(minNetIndex > (net[p.name] || 0)){
             net[p.name] = minNetIndex;
@@ -11816,69 +11923,108 @@ pv.Mark.prototype.updateNet = function(pDependent, netIndex){
  * @param parent the instance of the parent panel from the scene graph.
  */
 pv.Mark.prototype.build = function() {
-  var scene = this.scene, stack = pv.Mark.stack;
-  if (!scene) {
-    // Create _scenes_
+  var stack = pv.Mark.stack;
+  var scene = this.scene;
+  if(!scene) {
+    // Create scene
     scene = this.scene = [];
     scene.mark = this;
     scene.type = this.type;
     scene.childIndex = this.childIndex;
-    if (this.parent) {
-      scene.parent = this.parent.scene;
-      scene.parentIndex = this.parent.index;
+    var parent = this.parent;
+    if(parent) {
+      scene.parent = parent.scene;
+      scene.parentIndex = parent.index;
     }
   }
 
-  /* Resolve anchor target. */
-  if (this.target) scene.target = this.target.instances(scene);
+  // Resolve anchor target.
+  if(this.target) { scene.target = this.target.instances(scene); }
 
-  /* Evaluate defs. */
+  // Evaluate defs. 
+  // Defs are evaluated once per `scene`, 
+  // and their values' are thus shared by every instance.
   var bdefs = this.binds.defs;
-  if (bdefs.length) {
+  if(bdefs.length) {
     var defs = scene.defs || (scene.defs = {});
-    for (var i = 0, B = bdefs.length ; i < B ; i++) {
-      var p = bdefs[i], 
-          d = defs[p.name];
-      if (!d || (p.id > d.id)) {
-        var fval = p.value;
+    for(var i = 0, B = bdefs.length ; i < B ; i++) {
+      var p = bdefs[i];
+      var d = defs[p.name];
+      if(!d || (p.id > d.id)) {
         defs[p.name] = {
           id: 0, // this def will be re-evaluated on next build
+          // The same that's said below about the data property, applies here.
           value: (p.type & 1) ? p.value.apply(this, stack) : p.value
         };
       }
     }
   }
 
-  /* Evaluate special data property.
-   * With the stack of the parent!!
-   * this.index is -1
-   */
-  var data = this.evalProperty(this.binds.data);
+  // Evaluate special data property.
+  // With the stack of the parent!!
+  // this.index is -1
+  var datas = this.evalProperty(this.binds.data);
+  var L = datas.length;
 
-  /* Create, update and delete scene nodes. */
+  // Create, update and delete scene nodes.
   var markProto = pv.Mark.prototype;
+
+  // Adjust scene length to data length.
+  scene.length = L;
+
+  // Create stack position to receive each datas[i]
   stack.unshift(null);
   try {
-      /* Adjust scene length to data length. */
-      var L = scene.length = data.length;
-      for (var i = 0 ; i < L ; i++) {
-        markProto.index = this.index = i;
-        
-        // Create scene instance
-        var instance = scene[i] || (scene[i] = {});
-        
-        /* Fill special data property and update the stack. */
-        instance.data = stack[0] = data[i];
-        
-        this.buildInstance(instance);
+    for(var i = 0 ; i < L ; i++) {
+      markProto.index = this.index = i;
+
+      // Create scene instance
+      var instance = scene[i];
+      if(!instance) {
+        instance = scene[i] = {};
+      } else if(instance._state) {
+        // Reset any per-render/build state
+        delete instance._state;
       }
+
+      // Fill special data property and update the stack.
+      instance.data = stack[0] = datas[i];
+
+      this.preBuildInstance(instance);
+
+      this.buildInstance(instance);
+    }
   } finally {
-      markProto.index = -1;
-      delete this.index;
-      stack.shift();
+    markProto.index = -1;
+    delete this.index;
+    stack.shift();
   }
-  
+
   return this;
+};
+
+/**
+ * Obtains an instance's state object, 
+ * creating one if not already created.
+ * <p>
+ * Use this to store per-instance and per-render
+ * state and avoid name collision with the marks properties.
+ * </p>
+ * @param object [s] the instance from which the state is desired.
+ * @return object the instance state or <tt>null</tt> when there is no current instance.
+ */
+pv.Mark.prototype.instanceState = function(s) { 
+  if(!s) { s = this.instance(); }
+  return s ? (s._state || (s._state = {})) : null;
+};
+
+/**
+ * Allows performing any per scene instance initialization 
+ * without requiring to override method {@link #buildInstance},
+ * a solution that incurs in stack depth cost.
+ */
+pv.Mark.prototype.preBuildInstance = function(s) {
+  // NOOP
 };
 
 /**
@@ -11888,75 +12034,82 @@ pv.Mark.prototype.build = function() {
  * @param s a node in the scene graph; the instance of the mark to build.
  * @param properties an array of properties.
  */
-
 pv.Mark.prototype.buildProperties = function(s, properties) {
-    var stack = pv.Mark.stack;
-    var oldProtoProp = pv.propertyProto;
-    try {
-      for (var i = 0, n = properties.length; i < n; i++) {
-        var p = properties[i];
-        s[p.name] = _buildByPropType[p.type].call(this, p, stack);
+  var stack = pv.Mark.stack;
+  var oldProtoProp = pv.propertyProto;
+  try {
+    for(var i = 0, n = properties.length; i < n; i++) {
+      var p = properties[i];
+      var v;
+
+      // Most heavy, then most frequent
+      switch(p.type) {
+        // prop/fun
+        case 3:
+          pv.propertyProto = p.proto;
+          v = p.value.apply(this, stack);
+          break;
+
+        // prop/value
+        case 2: v = p.value; break;
+
+        // def/value,fun
+        // case 0: case 1: 
+        default: v = this.scene.defs[p.name].value; break;
       }
-    } finally {
-      pv.propertyProto = oldProtoProp;
+      
+      s[p.name] = v;
     }
+  } finally {
+    pv.propertyProto = oldProtoProp;
+  }
 };
 
-/** @private */
-var _buildByPropType = [
-    function(p) { return this.scene.defs[p.name].value; },
-    null,
-    function(p) { return p.value; }, // 2
-    function(p, stack) { // 3
+pv.Mark.prototype.evalProperty = function(p) {
+  // Most heavy, then most frequent
+  switch(p.type) {
+    // prop/fun
+    case 3:
+      var oldProtoProp = pv.propertyProto;
+      try {
         pv.propertyProto = p.proto;
-        return p.value.apply(this, stack);
-    }
-];
+        return p.value.apply(this, pv.Mark.stack);
+      } finally {
+        pv.propertyProto = oldProtoProp;
+      }
+      break;
 
-_buildByPropType[1] = _buildByPropType[0];
+    // prop/value
+    case 2: return p.value;
+  }
+
+  // def/value,fun
+  // case 0: case 1:
+  return this.scene.defs[p.name].value;
+};
 
 pv.Mark.prototype.delegate = function(dv, tag){
-    var protoProp = pv.propertyProto;
-    if(protoProp && (!tag || protoProp.tag === tag)){ 
-        var value = this.evalProperty(protoProp);
-        if(value !== undefined){
-            return value;
-        }
-    }
-    
-    return dv;
+  var protoProp = pv.propertyProto;
+  if(protoProp && (!tag || protoProp.tag === tag)){
+    var value = this.evalProperty(protoProp);
+    if(value !== undefined) { return value; }
+  }
+
+  return dv;
 };
 
 pv.Mark.prototype.hasDelegate = function(tag) {
-    var protoProp = pv.propertyProto;
-    return !!protoProp && (!tag || protoProp.tag === tag);
-};
-
-
-var _buildByPropTypeSingle = _buildByPropType.slice();
-
-_buildByPropTypeSingle[3] = function(p) {
-    var oldProtoProp = pv.propertyProto;
-    try {
-        pv.propertyProto = p.proto;
-                return p.value.apply(this, pv.Mark.stack);
-    } finally {
-        pv.propertyProto = oldProtoProp;
-    }
-}; 
-    
-
-pv.Mark.prototype.evalProperty = function(p) {
-    return _buildByPropTypeSingle[p.type].call(this, p);
+  var protoProp = pv.propertyProto;
+  return !!protoProp && (!tag || protoProp.tag === tag);
 };
 
 pv.Mark.prototype.buildPropertiesWithDepTracking = function(s, properties) {
     // Current bindings
     var net = this.binds.net;
-    var netIndex, newNetIndex, netDirtyProps, prevNetDirtyProps, 
+    var netIndex, newNetIndex, netDirtyProps, prevNetDirtyProps,
         propertyIndexes, evaluatedProps;
     var stack = pv.Mark.stack;
-    
+
     var n = properties.length;
     try {
         while(true) {
@@ -11968,7 +12121,7 @@ pv.Mark.prototype.buildPropertiesWithDepTracking = function(s, properties) {
                     var p = properties[i];
                     var name = p.name;
                     evaluatedProps[name] = true;
-                    
+
                     // Only re-evaluate properties marked dirty on the previous iteration
                     if(!prevNetDirtyProps || prevNetDirtyProps[name]) {
                         var v;
@@ -11977,10 +12130,10 @@ pv.Mark.prototype.buildPropertiesWithDepTracking = function(s, properties) {
                                 pv.propertyEval = p;
                                 pv.propertyEvalNetIndex = netIndex = (net[name] || 0);
                                 pv.propertyEvalDependencies = null;
-                                
+
                                 pv.propertyProto = p.proto;
                                 v = p.value.apply(this,  stack);
-                                
+
                                 newNetIndex = pv.propertyEvalNetIndex;
                                 if(newNetIndex > netIndex) {
                                     var evalDeps = pv.propertyEvalDependencies;
@@ -11993,37 +12146,37 @@ pv.Mark.prototype.buildPropertiesWithDepTracking = function(s, properties) {
                                             netDirtyProps[depName] = true;
                                         }
                                     }
-                                    
+
                                     this.updateNet(p, newNetIndex);
                                 }
                                 break;
-                            
+
                             case 2:
                                 v = p.value;
                                 break;
-                                
+
                             // copy already evaluated def value to each instance's scene
                             case 0:
                             case 1:
                                 v = this.scene.defs[name].value;
                                 break;
                         }
-                         
+
                         s[name] = v;
                     } // if
                 } // for
             } finally {
                 pv.propertyProto = oldProtoProp;
             }
-            
+
             if(!netDirtyProps) { break; }
-            
+
             prevNetDirtyProps = netDirtyProps;
-            
+
             // Sort properties on net index and repeat...
-            
+
             propertyIndexes = pv.numerate(properties, function(p) { return p.name; });
-            
+
             properties.sort(function(pa, pb) {
                 var comp = pv.naturalOrder(net[pa.name] || 0, net[pb.name] || 0);
                 if(!comp) {
@@ -12032,7 +12185,7 @@ pv.Mark.prototype.buildPropertiesWithDepTracking = function(s, properties) {
                 }
                 return comp;
             });
-            
+
             propertyIndexes = null;
         }
     } finally {
@@ -12041,7 +12194,7 @@ pv.Mark.prototype.buildPropertiesWithDepTracking = function(s, properties) {
         pv.propertyEvalDependencies = null;
     }
 };
-  
+
 /**
  * @private Evaluates all of the properties for this mark for the specified
  * instance <tt>s</tt> in the scene graph. The set of properties to evaluate is
@@ -12058,13 +12211,13 @@ pv.Mark.prototype.buildPropertiesWithDepTracking = function(s, properties) {
  */
 pv.Mark.prototype.buildInstance = function(s) {
   this.buildProperties(s, this.binds.required);
-  if (s.visible) {
-    if(this.index === 0){
-        this.buildPropertiesWithDepTracking(s, this.binds.optional);
+  if(s.visible) {
+    if(!this.index) {
+      this.buildPropertiesWithDepTracking(s, this.binds.optional);
     } else {
-        this.buildProperties(s, this.binds.optional);
+      this.buildProperties(s, this.binds.optional);
     }
-    
+
     this.buildImplied(s);
   }
 };
@@ -12087,63 +12240,61 @@ pv.Mark.prototype.buildImplied = function(s) {
 
   /* Assume width and height are zero if not supported by this mark type. */
   var p = this.properties;
-  var w = p.width ? s.width : 0;
+  var w = p.width  ? s.width  : 0;
   var h = p.height ? s.height : 0;
 
   /* Compute implied width, right and left. */
-  var instance;
-  var checked;
-  
-  if(w == null || r == null || l == null){
-      instance = this.parent ? this.parent.instance() : null;
-      checked = true;
-      var width = instance ? instance.width : (w + l + r);
-      if (w == null) {
-        w = width - (r = r || 0) - (l = l || 0);
-      } else if (r == null) {
-        if (l == null) {
-          l = r = (width - w) / 2;
-        } else {
-          r = width - w - l;
-        }
+  var parent_s, checked;
+
+  if(w == null || r == null || l == null) {
+    parent_s = this.parent && this.parent.instance();
+    checked  = true;
+
+    var width = parent_s ? parent_s.width : (w + l + r);
+    if(w == null) {
+      w = width - (r = r || 0) - (l = l || 0);
+    } else if(r == null) {
+      if(l == null) {
+        l = r = (width - w) / 2;
       } else {
-        l = width - w - r;
+        r = width - w - l;
       }
+    } else {  // => l == null
+      l = width - w - r;
+    }
   }
-  
+
   /* Compute implied height, bottom and top. */
-  if (h == null || b == null || t == null) {
-      if(!checked){
-          instance = this.parent ? this.parent.instance() : null;
-      }
-      
-      var height = instance ? instance.height : (h + t + b);
-      if (h == null) {
-        h = height - (t = t || 0) - (b = b || 0);
-      } else if (b == null) {
-        if (t == null) {
-          b = t = (height - h) / 2;
-        } else {
-          b = height - h - t;
-        }
+  if(h == null || b == null || t == null) {
+    if(!checked) { parent_s = this.parent && this.parent.instance(); }
+
+    var height = parent_s ? parent_s.height : (h + t + b);
+    if(h == null) {
+      h = height - (t = t || 0) - (b = b || 0);
+    } else if(b == null) {
+      if(t == null) {
+        b = t = (height - h) / 2;
       } else {
-        t = height - h - b;
+        b = height - h - t;
       }
+    } else { // => t == null
+      t = height - h - b;
+    }
   }
-  
-  s.left = l;
-  s.right = r;
-  s.top = t;
+
+  s.left   = l;
+  s.right  = r;
+  s.top    = t;
   s.bottom = b;
 
   /* Only set width and height if they are supported by this mark type. */
-  if (p.width ) s.width  = w;
-  if (p.height) s.height = h;
+  if(p.width ) { s.width  = w; }
+  if(p.height) { s.height = h; }
 
   /* Set any null colors to pv.FillStyle.transparent. */
-  if (p.textStyle   && !s.textStyle  ) s.textStyle   = pv.FillStyle.transparent;
-  if (p.fillStyle   && !s.fillStyle  ) s.fillStyle   = pv.FillStyle.transparent;
-  if (p.strokeStyle && !s.strokeStyle) s.strokeStyle = pv.FillStyle.transparent;
+  if(p.textStyle   && !s.textStyle  ) { s.textStyle   = pv.FillStyle.transparent; }
+  if(p.fillStyle   && !s.fillStyle  ) { s.fillStyle   = pv.FillStyle.transparent; }
+  if(p.strokeStyle && !s.strokeStyle) { s.strokeStyle = pv.FillStyle.transparent; }
 };
 
 /**
@@ -12154,36 +12305,37 @@ pv.Mark.prototype.buildImplied = function(s) {
  * @returns {pv.Vector} the mouse location.
  */
 pv.Mark.prototype.mouse = function() {
-    var n = this.root.canvas(),
-        ev = pv.event,
-        x = ev.pageX,
-        y = ev.pageY;
-    
-      // Compute xy-coordinates relative to the panel.
-      var offset = pv.elementOffset(n);
-      if(offset){
-          var getStyle = pv.cssStyle(n);
-          x -= offset.left + parseFloat(getStyle('paddingLeft') || 0);
-          y -= offset.top  + parseFloat(getStyle('paddingTop')  || 0);
-      }
-      
-      /* Compute the inverse transform of all enclosing panels. */
-      var t = pv.Transform.identity,
-          p = this.properties.transform ? this : this.parent,
-          pz = [];
-      
-      do { 
-          pz.push(p); 
-      } while ((p = p.parent));
-      
-      while ((p = pz.pop())) {
-          var pinst = p.instance();
-          t = t.translate(pinst.left, pinst.top)
-               .times(pinst.transform);
-      }
-      
-      t = t.invert();
-      return pv.vector(x * t.k + t.x, y * t.k + t.y);
+  var n = this.root.canvas();
+
+  // Calling #mouse from outside a mouse event (like during load, to follow mouse position)
+  // may result in there being no pv.event  or the event not having pageX/Y defined.
+  var ev = pv.event;
+  var x  = (ev && ev.pageX) || 0;
+  var y  = (ev && ev.pageY) || 0;
+
+  // Compute x/y-coordinates relative to the panel.
+  var offset = pv.elementOffset(n);
+  if(offset) {
+    var getStyle = pv.cssStyle(n);
+    x -= offset.left + parseFloat(getStyle('paddingLeft') || 0);
+    y -= offset.top  + parseFloat(getStyle('paddingTop')  || 0);
+  }
+
+  // Compute the inverse transform of all enclosing panels.
+  var t = pv.Transform.identity;
+  var p = this.properties.transform ? this : this.parent;
+  var pz = [];
+
+  do { pz.push(p); } while((p = p.parent));
+
+  while((p = pz.pop())) {
+    var pinst = p.instance();
+    t = t.translate(pinst.left, pinst.top)
+         .times(pinst.transform);
+  }
+
+  t = t.invert();
+  return pv.vector(x * t.k + t.x, y * t.k + t.y);
 };
 
 /**
@@ -12224,30 +12376,30 @@ pv.Mark.prototype.mouse = function() {
  * interactive visualization, such as selection.
  *
  * <p>TODO In the current implementation, event handlers are not inherited from
- * prototype marks. They must be defined explicitly on each interactive mark. 
+ * prototype marks. They must be defined explicitly on each interactive mark.
  * More than one event handler for a given event type <i>can</i> be defined.
- * The return values of each handler, if any and are marks, 
+ * The return values of each handler, if any and are marks,
  * are rendered at the end of every handler having been called.
  *
  * @see <a href="http://www.w3.org/TR/SVGTiny12/interact.html#SVGEvents">SVG events</a>
  * @param {string} type the event type.
- * @param {function} handler the event handler.
+ * @param {Function} handler the event handler.
  * @returns {pv.Mark} this.
  */
 pv.Mark.prototype.event = function(type, handler) {
   handler = pv.functor(handler);
-  
-  var handlers = this.$handlers[type];
-  if(!handlers) {
-      handlers = handler; 
-  } else if(handlers instanceof Array) {
-      handlers.push(handler);
+
+  var hs = this.$handlers[type];
+  if(!hs) {
+    hs = handler;
+  } else if(hs instanceof Array) {
+    hs.push(handler);
   } else {
-      handlers = [handlers, handler];
+    hs = [hs, handler];
   }
-  
+
   this.$hasHandlers = true;
-  this.$handlers[type] = handlers;
+  this.$handlers[type] = hs;
   return this;
 };
 
@@ -12266,19 +12418,18 @@ pv.Mark.prototype.context = function(scene, index, f) {
   function apply(scene, index) {
     pv.Mark.scene = scene;
     proto.index = index;
-    if (!scene) {
-        return;
-    }
-    
-    var that = scene.mark,
-        mark = that,
-        ancestors = []; // that, that.parent, ..., root
+    if(!scene) { return; }
+
+    var i;
+    var that = scene.mark;
+    var mark = that;
+    var ancestors = []; // that, that.parent, ..., root
 
     /* Set scene and index in ancestors and self; populate data stack. */
     do {
       ancestors.push(mark);
       stack.push(scene[index].data);
-      
+
       mark.index = index;
       mark.scene = scene;
 
@@ -12290,8 +12441,9 @@ pv.Mark.prototype.context = function(scene, index, f) {
 
     /* Set ancestors' scale, excluding "that"; requires top-down. */
     var k = 1; // root's scale is 1
-    for (var i = ancestors.length - 1; i > 0; i--) {
-      mark = ancestors[i];
+    i = ancestors.length - 1;
+    while(i) { // i = 1 is the last one in
+      mark = ancestors[i--];
       mark.scale = k; // accumulated scale on mark
 
       // children's scale
@@ -12302,13 +12454,14 @@ pv.Mark.prototype.context = function(scene, index, f) {
 
     /* Set direct children of "that"'s scene and scale. */
     var children = that.children, n;
-    if (children && (n = children.length) > 0){
+    if(children && (n = children.length) > 0) {
       // "that" is a panel, has a transform.
       var thatInst = that.scene[that.index];
       k *= thatInst.transform.k;
-      
+
       var childScenez = thatInst.children;
-      for (var i = 0 ; i < n; i++) {
+      i = n;
+      while(i--) {
         mark = children[i];
         mark.scene = childScenez[i];
         mark.scale = k;
@@ -12319,29 +12472,31 @@ pv.Mark.prototype.context = function(scene, index, f) {
   /** @private Clears the context. */
   function clear(scene/*, index*/) {
     if (!scene) return;
-    var that = scene.mark,
-        mark;
+
+    var that = scene.mark;
+    var mark;
 
     /* Reset children. */
     var children = that.children;
-    if (children){
-      for (var i = 0, n = children.length ; i < n; i++) {
+    if(children) {
+      var i = children.length;
+      while(i--) {
         mark = children[i];
         // It's generally faster to set to something, than to delete
         mark.scene = undefined;
         mark.scale = 1;
       }
     }
-    
+
     /* Reset ancestors. */
     mark = that;
     var parent;
-    do{
+    do {
       stack.pop();
       delete mark.index; // must be deleted!
-      
-      if ((parent = mark.parent)) {
-        // It's generally faster to set to something, than to delete
+
+      if((parent = mark.parent)) {
+        // Idem.
         mark.scene = undefined;
         mark.scale = 1;
       }
@@ -12349,11 +12504,11 @@ pv.Mark.prototype.context = function(scene, index, f) {
   }
 
   /* Context switch, invoke the function, then switch back. */
-  if(scene && scene === oscene && index === oindex){
+  if(scene && scene === oscene && index === oindex) {
       // already there
-      try{
+      try {
           f.apply(this, stack);
-      } catch (ex) {
+      } catch(ex) {
           pv.error(ex);
           throw ex;
       } finally {
@@ -12362,18 +12517,18 @@ pv.Mark.prototype.context = function(scene, index, f) {
           proto.index = oindex;
       }
   } else {
-      clear(oscene, oindex);
-      apply(scene,   index);
-      try {
-        f.apply(this, stack);
-      } catch (ex) {
-          pv.error(ex);
-          throw ex;
-      } finally {
-        clear(scene,   index);
-        apply(oscene, oindex);
-      }
+    clear(oscene, oindex);
+    apply(scene,   index);
+    try {
+      f.apply(this, stack);
+    } catch(ex) {
+        pv.error(ex);
+        throw ex;
+    } finally {
+      clear(scene,   index);
+      apply(oscene, oindex);
     }
+  }
 };
 
 pv.Mark.getEventHandler = function(type, scenes, index, event){
@@ -12381,7 +12536,7 @@ pv.Mark.getEventHandler = function(type, scenes, index, event){
   if(handler){
     return [handler, type, scenes, index, event];
   }
-   
+
   var parentScenes = scenes.parent;
   if(parentScenes){
     return this.getEventHandler(type, parentScenes, scenes.parentIndex, event);
@@ -12390,9 +12545,12 @@ pv.Mark.getEventHandler = function(type, scenes, index, event){
 
 /** @private Execute the event listener, then re-render the returned mark. */
 pv.Mark.dispatch = function(type, scenes, index, event) {
-  
+
   var root = scenes.mark.root;
-  if(root.animatingCount) { return true; }
+  
+  // While animating, ignore any UI event notifications
+  if(root.$transition) { return true; }
+
   var handlerInfo;
   var interceptors = root.$interceptors && root.$interceptors[type];
   if(interceptors) {
@@ -12414,130 +12572,120 @@ pv.Mark.dispatch = function(type, scenes, index, event) {
 
 pv.Mark.handle = function(handler, type, scenes, index, event){
     var m = scenes.mark;
-    
-    m.context(scenes, index, function(){
+
+    m.context(scenes, index, function() {
       var stack = pv.Mark.stack.concat(event);
+      var i, L, mi;
       if(handler instanceof Array) {
-          var ms;
-        handler.forEach(function(hi) {
-            var mi = hi.apply(m, stack);
-            if(mi && mi.render) {
-                (ms || (ms = [])).push(mi);
+        var ms;
+        for(i = 0, L = handler.length; i < L; i++) {
+          mi = handler[i].apply(m, stack);
+          if(mi && mi.render) {
+              (ms || (ms = [])).push(mi);
           }
-          });
-          
-          if(ms) {
-              ms.forEach(function(mi){
-                mi.render();
-        });
-          }
-        } else {
-        m = handler.apply(m, stack);
-        if (m && m.render) {
-            m.render();
         }
+
+        if(ms) { for(i = 0, L = ms.length; i < L; i++) { ms[i].render(); } }
+      } else {
+        mi = handler.apply(m, stack);
+        if(mi && mi.render) { mi.render(); }
       }
   });
-  
+
   return true;
 };
 
 /**
  * Registers an event interceptor function.
- * 
+ *
  * @param {string} type the event type
- * @param {function} handler the interceptor function
+ * @param {Function} handler the interceptor function
  * @param {boolean} [before=false] indicates that the interceptor should be applied <i>before</i> "after" interceptors
  */
 pv.Mark.prototype.addEventInterceptor = function(type, handler, before){
-    var root = this.root;
-    if(root){
-        var interceptors = root.$interceptors || (root.$interceptors = {});
-        var list = interceptors[type] || (interceptors[type] = []);
-        if(before){
-            list.unshift(handler);
-        } else {
-            list.push(handler);
-        }
-    }
+  var root = this.root;
+  if(root) {
+    var ints = root.$interceptors || (root.$interceptors = {});
+    var list = ints[type] || (ints[type] = []);
+
+    if(before) { list.unshift(handler); } 
+    else       { list.push(handler);    }
+  }
 };
 
 /**
  * Iterates through all visible instances that
  * this mark has rendered.
  */
-pv.Mark.prototype.eachInstance = function(fun, ctx){
-    var mark = this,
-        indexes = [];
+pv.Mark.prototype.eachInstance = function(fun, ctx) {
+  var mark = this;
+  var indexes = [];
 
-    /* Go up to the root and register our way back.
-     * The root mark never "looses" its scene.
-     */
-    while(mark.parent){
-        indexes.unshift(mark.childIndex);
-        mark = mark.parent;
-    }
+  /* Go up to the root and register our way back.
+   * The root mark never "looses" its scene.
+   */
+  while(mark.parent) {
+    indexes.unshift(mark.childIndex);
+    mark = mark.parent;
+  }
 
-    // mark != null
+  // mark != null
 
-    // root scene exists if rendered at least once
-    var rootScene = mark.scene;
-    if(!rootScene){
-        return;
-    }
-    
-    var L = indexes.length;
+  // root scene exists if rendered at least once
+  var rootScene = mark.scene;
+  if(!rootScene) { return; }
 
-    function mapRecursive(scene, level, toScreen){
-        var D = scene.length;
-        if(D > 0){
-            var isLastLevel = level === L,
-                childIndex;
+  var L = indexes.length;
 
-            if(!isLastLevel) {
-                childIndex = indexes[level];
+  function mapRecursive(scene, level, toScreen){
+    var D = scene.length;
+    if(D > 0) {
+      var childIndex;
+      var isLastLevel = (level === L);
+
+      if(!isLastLevel) { childIndex = indexes[level]; }
+
+      for(var index = 0 ; index < D ; index++) {
+        var instance = scene[index];
+        if(instance.visible) {
+          if(level === L) {
+            fun.call(ctx, scene, index, toScreen);
+          } else {
+            // Some nodes might have not been rendered???
+            var childScene = instance.children[childIndex];
+            if(childScene) {
+              var childToScreen = toScreen
+                  .times(instance.transform)
+                  .translate(instance.left, instance.top);
+
+              mapRecursive(childScene, level + 1, childToScreen);
             }
-
-            for(var index = 0 ; index < D ; index++){
-                var instance = scene[index];
-                if(instance.visible){
-                    if(level === L){
-                        fun.call(ctx, scene, index, toScreen);
-                    } else {
-                        var childScene = instance.children[childIndex];
-                        if(childScene){ // Some nodes might have not been rendered???
-                        var childToScreen = toScreen
-                                            .times(instance.transform)
-                                            .translate(instance.left, instance.top);
-
-                            mapRecursive(childScene, level + 1, childToScreen);
-                        }
-                    }
-                }
-            }
+          }
         }
+      }
     }
+  }
 
-    mapRecursive(rootScene, 0, pv.Transform.identity);
+  mapRecursive(rootScene, 0, pv.Transform.identity);
 };
 
 pv.Mark.prototype.toScreenTransform = function(){
-    var t = pv.Transform.identity;
-    
-    if(this instanceof pv.Panel) {
-        t = t.translate(this.left(), this.top())
-             .times(this.transform());
-    }
+  var t = pv.Transform.identity;
 
-    var parent = this.parent; // TODO : this.properties.transform ? this : this.parent
-    if(parent){
-        do {
-            t = t.translate(parent.left(), parent.top())
-                 .times(parent.transform());
-        } while((parent = parent.parent));
-    }
-    
-    return t;
+  if(this instanceof pv.Panel) {
+    t = t.translate(this.left(), this.top())
+         .times(this.transform());
+  }
+
+  var parent = this.parent; // TODO : this.properties.transform ? this : this.parent
+  if(parent){
+    do {
+      t = t.translate(parent.left(), parent.top())
+           .times(parent.transform());
+    } while((parent = parent.parent));
+  }
+
+  return t;
 };
 
 pv.Mark.prototype.transition = function() {
@@ -12559,7 +12707,7 @@ pv.Mark.prototype.getShape = function(scenes, index, inset){
     if(inset == null){
         inset = 0;
     }
-    
+
     var key = '_shape_inset_' + inset;
     return s[key] || (s[key] = this.getShapeCore(scenes, index, inset));
 };
@@ -12578,7 +12726,7 @@ pv.Mark.prototype.getShapeCore = function(scenes, index, inset){
         w -= dw*2;
         h -= dh*2;
     }
-    
+
     return new pv.Shape.Rect(l, t, w, h);
 };
 /**
@@ -12620,7 +12768,7 @@ pv.Mark.prototype.getShapeCore = function(scenes, index, inset){
 pv.Anchor = function(target) {
   pv.Mark.call(this);
   this.target = target;
-  this.parent = target.parent;
+  this.parent = target.parent; // same parent as target, but not added as child...
 };
 
 pv.Anchor.prototype = pv.extend(pv.Mark)
@@ -12952,17 +13100,10 @@ pv.Area.prototype.buildInstance = function(s) {
  * @returns {pv.Anchor}
  */
 pv.Area.prototype.anchor = function(name) {
-  var scene;
   return pv.Mark.prototype.anchor.call(this, name)
-    .interpolate(function() {
-       return this.scene.target[this.index].interpolate;
-      })
-    .eccentricity(function() {
-       return this.scene.target[this.index].eccentricity;
-      })
-    .tension(function() {
-        return this.scene.target[this.index].tension;
-      });
+    .interpolate (function() { return this.scene.target[this.index].interpolate;  })
+    .eccentricity(function() { return this.scene.target[this.index].eccentricity; })
+    .tension     (function() { return this.scene.target[this.index].tension;      });
 };
 
 
@@ -13112,6 +13253,7 @@ pv.Dot.prototype = pv.extend(pv.Mark)
     .property("shapeAngle", Number)
     .property("shapeRadius", Number)
     .property("shapeSize", Number)
+    .property("aspectRatio", Number)
     .property("lineWidth", Number)
     .property("strokeStyle", pv.fillStyle)
     .property("lineCap",   String)
@@ -13129,6 +13271,25 @@ pv.Dot.prototype.type = "dot";
  * @see #shapeRadius
  * @type number
  * @name pv.Dot.prototype.shapeSize
+ */
+
+ /**
+ * The aspect ratio of the shape. 
+ * A positive number that is equal to the ratio of the shape's width and height.
+ * 
+ * <p>When equal to 1 the shape has equal with and height (both equal to twice the <i>shapeRadius</i>).</p>
+ * <p>When less that 1, the shape has a width smaller than its height.
+ *    The actual value of each is calculated such that the 
+ *    original area is maintained:
+ *    <ul>
+ *      <li>area = width * height = 4 * shapeRadius^2</li>
+ *      <li>height = 2 * shapeRadius / sqrt(aspectRatio)</li>
+ *      <li>width  = aspectRatio * height</li>
+ *    </ul>
+ * </p>
+ *
+ * @type number
+ * @name pv.Dot.prototype.aspectRatio
  */
 
 /**
@@ -13210,6 +13371,7 @@ pv.Dot.prototype.type = "dot";
 pv.Dot.prototype.defaults = new pv.Dot()
     .extend(pv.Mark.prototype.defaults)
     .shape("circle")
+    .aspectRatio(1)
     .lineWidth(1.5)
     .strokeStyle(pv.Colors.category10().by(pv.parent))
     .lineCap("butt")
@@ -13246,13 +13408,13 @@ pv.Dot.prototype.anchor = function(name) {
           case "bottom":
           case "top":
           case "center": return s.left;
-          case "left": return null;
+          case "left":   return null;
         }
-        return s.left + s.shapeRadius;
+        return s.left + s._width/2;
       })
     .right(function() {
         var s = this.scene.target[this.index];
-        return this.name() == "left" ? s.right + s.shapeRadius : null;
+        return this.name() == "left" ? (s.right + s._width/2) : null;
       })
     .top(function() {
         var s = this.scene.target[this.index];
@@ -13260,13 +13422,13 @@ pv.Dot.prototype.anchor = function(name) {
           case "left":
           case "right":
           case "center": return s.top;
-          case "top": return null;
+          case "top":    return null;
         }
-        return s.top + s.shapeRadius;
+        return s.top + s._height/2;
       })
     .bottom(function() {
         var s = this.scene.target[this.index];
-        return this.name() == "top" ? s.bottom + s.shapeRadius : null;
+        return this.name() == "top" ? (s.bottom + s._height/2) : null;
       })
     .textAlign(function() {
         switch (this.name()) {
@@ -13290,42 +13452,69 @@ pv.Dot.prototype.anchor = function(name) {
 
 /** @private Sets radius based on size or vice versa. */
 pv.Dot.prototype.buildImplied = function(s) {
-  var r = s.shapeRadius, z = s.shapeSize;
-  if (r == null) {
-    if (z == null) {
-      s.shapeSize = 20.25;
-      s.shapeRadius = 4.5;
+  var r = s.shapeRadius, 
+      z = s.shapeSize,
+      a = s.aspectRatio || 1;
+  
+  if(r == null) {
+    if(z == null) {
+      z = s.shapeSize = 20.25;
+      r = s.shapeRadius = 4.5;
     } else {
-      s.shapeRadius = Math.sqrt(z);
+      r = s.shapeRadius = Math.sqrt(z);
     }
-  } else if (z == null) {
-    s.shapeSize = r * r;
+  } else if(z == null) {
+    z = s.shapeSize = r * r;
   }
+
+  var h, w;
+  if(a === 1 || a < 0) {
+    h = w = 2 * r;
+  } else {
+    h = 2 * r / Math.sqrt(a);
+    w = a * h;
+  }
+  
+  // Not using normal width/height properties
+  // Because some code uses the existence of these to detect stuff...
+  s._height = h;
+  s._width  = w;
+  
   pv.Mark.prototype.buildImplied.call(this, s);
 };
 
-pv.Dot.prototype.getShapeCore = function(scenes, index){
+pv.Dot.prototype.width = function() {
+  return this.instance()._width;
+};
+
+pv.Dot.prototype.height = function() {
+  return this.instance()._height;
+};
+
+pv.Dot.prototype.getShapeCore = function(scenes, index) {
     var s = scenes[index];
     
-    var radius = s.shapeRadius,
+    var h  = s._width,
+        w  = s._height,
         cx = s.left,
         cy = s.top;
 
-    // TODO: square and diamond break when angle is used
-    
-    switch(s.shape){
+    switch(s.shape) {
         case 'diamond':
-            radius *= Math.SQRT2;
+            h *= Math.SQRT2;
+            w *= Math.SQRT2;
             // the following comment is for jshint
             /* falls through */
         case 'square':
         case 'cross':
-            return new pv.Shape.Rect(cx - radius, cy - radius, 2*radius, 2*radius);
+            // TODO: this breaks when angle is used...
+            return new pv.Shape.Rect(cx - w/2, cy - h/2, w, h);
     }
     
     // 'circle' included
     
-    return new pv.Shape.Circle(cx, cy, radius);
+    // TODO: Need an Ellipse shape...
+    return new pv.Shape.Circle(cx, cy, s.shapeRadius);
 };
 /**
  * Constructs a new label mark with default properties. Labels are not typically
@@ -13988,10 +14177,9 @@ pv.Panel.prototype = pv.extend(pv.Bar)
     .property("transform")
     .property("overflow", String)
     .property("canvas", function(c) {
-        return (typeof c == "string")
-            ? document.getElementById(c)
-            : c; // assume that c is the passed-in element
-      });
+        // If not a string, assume that c is the passed-in element, or unspecified (when nully).
+        return (typeof c === "string") ? document.getElementById(c) : c;
+    });
 
 pv.Panel.prototype.type = "panel";
 
@@ -14032,20 +14220,11 @@ pv.Panel.prototype.type = "panel";
  */
 
 /**
- * The number of descendant marks that are animating.
- * Only the root panel has this property set.
- * 
- * @type number
- */
-pv.Panel.prototype.animatingCount = 0;
-
-
-/**
  * The number of children that have a non-zero {@link pv.Mark#_zOrder}.
- * 
+ *
  *  @type number
  */
-pv.Panel.prototype.zOrderChildCount = 0;
+pv.Panel.prototype._zOrderChildCount = 0;
 
 /**
  * Default properties for panels. By default, the margins are zero, the fill
@@ -14080,7 +14259,7 @@ pv.Panel.prototype.anchor = function(name) {
  * it is always possible to change this behavior by calling {@link Mark#extend}
  * explicitly.
  *
- * @param {function} Type the type of the new mark to add.
+ * @param {Function} Type the type of the new mark to add.
  * @returns {pv.Mark} the new mark.
  */
 pv.Panel.prototype.add = function(Type) {
@@ -14089,15 +14268,20 @@ pv.Panel.prototype.add = function(Type) {
   child.root = this.root;
   child.childIndex = this.children.length;
   this.children.push(child);
+  
+  // Process possibly set zOrder
+  var zOrder = (+child._zOrder) || 0; // NaN -> 0
+  if(zOrder !== 0) { this._zOrderChildCount++; }
+
   return child;
 };
 
 /** @private Bind this panel, then any child marks recursively. */
 pv.Panel.prototype.bind = function() {
   pv.Mark.prototype.bind.call(this);
-  
+
   var children = this.children;
-  for (var i = 0, n = children.length ; i < n ; i++) {
+  for(var i = 0, n = children.length ; i < n ; i++) {
     children[i].bind();
   }
 };
@@ -14111,10 +14295,11 @@ pv.Panel.prototype.bind = function() {
  * @see Mark#scene
  */
 pv.Panel.prototype.buildInstance = function(s) {
+  // calls buildProperties and then buildImplied
   pv.Bar.prototype.buildInstance.call(this, s);
-  
-  if (!s.visible) return;
-  
+
+  if(!s.visible) { return; }
+
   /*
    * Multiply the current scale factor by this panel's transform. Also clear the
    * default index as we recurse into child marks; it will be reset to the
@@ -14132,11 +14317,14 @@ pv.Panel.prototype.buildInstance = function(s) {
   var child;
   var children = this.children;
   var childScenes = s.children || (s.children = []);
-  for (var i = 0, n = children.length; i < n; i++) {
+  for(var i = 0, n = children.length; i < n; i++) {
     child = children[i];
     child.scene = childScenes[i]; // possibly undefined
     child.scale = scale;
     child.build();
+    // Leave scene in children, because these might me used
+    // during build of siblings; 
+    // calling a sibling mark's property method (instance() evaluates to same index).
   }
 
   /*
@@ -14184,61 +14372,160 @@ pv.Panel.prototype.buildInstance = function(s) {
  * @param s a node in the scene graph; the instance of the panel to build.
  */
 pv.Panel.prototype.buildImplied = function(s) {
-  if (!this.parent) {
-    var c = s.canvas;
-    if (pv.renderer() === "batik") {
-      if (c) {
-        if (c.$panel != this) {
-          pv.Panel.updateCreateId(c);
-          c.$panel = this;
-          while (c.lastChild) c.removeChild(c.lastChild);
-        }
-      } else {
-        c = document.lastChild;
-      }
-    } else if (c) {
-      /* Clear the container if it's not associated with this panel. */
-      if (c.$panel != this) {
-        pv.Panel.updateCreateId(c);
-        c.$panel = this;
-        while (c.lastChild) c.removeChild(c.lastChild);
-      }
-
-      /* If width and height weren't specified, inspect the container. */
-      var w, h, cssStyle;
-      if (s.width == null) {
-        cssStyle = pv.cssStyle(c);
-        w = parseFloat(cssStyle("width") || 0);
-        s.width = w - s.left - s.right;
-      }
-      if (s.height == null) {
-        cssStyle || (cssStyle = pv.cssStyle(c));
-        h = parseFloat(pv.cssStyle("height") || 0);
-        s.height = h - s.top - s.bottom;
-      }
-      cssStyle = null;
-    } else {
-      var cache = this.$canvas || (this.$canvas = []);
-      if (!(c = cache[this.index])) {
-        c = cache[this.index] =  document.createElement(pv.renderer() == "svgweb" ? "div" : "span"); // SVGWeb requires a div, not a span
-        if (this.$dom) { // script element for text/javascript+protovis
-          this.$dom.parentNode.insertBefore(c, this.$dom);
-        } else { // find the last element in the body
-          var n = document.body;
-          while (n.lastChild && n.lastChild.tagName) n = n.lastChild;
-          if (n != document.body) n = n.parentNode;
-          n.appendChild(c);
-        }
-      }
-    }
-    s.canvas = c;
+  if(!this.parent && !this._buildRootInstanceImplied(s)) {
+    // Canvas was stolen by other root panel.
+    // Set the root scene instance as invisible, 
+    //  to prevent rendering on the stolen canvas.
+    s.visible = false;
+    return;
   }
-  if (!s.transform) s.transform = pv.Transform.identity;
+
+  if(!s.transform) { s.transform = pv.Transform.identity; }
+
   pv.Mark.prototype.buildImplied.call(this, s);
 };
 
-pv.Panel.updateCreateId = function(c){
-    c.$pvCreateId = (c.$pvCreateId || 0) + 1;
+pv.Panel.prototype._buildRootInstanceImplied = function(s) {
+  // Was a canvas specified for *this* instance?
+  var c = s.canvas;
+  if(!c) {
+    // For every instance that doesn't specify a canvas, 
+    //  a new canvas element (a span) is created for it.
+    // This is a typical case of a viz having multiple canvas.
+    s.canvas = this._rootInstanceGetInlineCanvas(s);
+  } else {
+    if(!this._rootInstanceStealCanvas(s, c)) { return false; }
+
+    this._rootInstanceInitCanvas(s, c);
+  }
+
+  return true;
+};
+
+pv.Panel.prototype._rootInstanceStealCanvas = function(s, c) {
+  // Clear the container if it's not associated with this panel.
+  // This may happen if concurrent viz's are using the same canvas
+  //  and start stealing the canvas to one another...
+  // TODO: There's no provision here to deal with the same canvas being used
+  //  by different instances of the same root panel?
+  // If this is the first render of this root panel, 
+  //  then we're allowed to steal it from another panel.
+  // If this is not our first render, 
+  //  then just accept that the canvas has been stolen.
+  var cPanel = c.$panel;
+  if(cPanel !== this) {
+    if(cPanel) {
+      if(this.$lastCreateId) {
+        // Let the current canvas panel win the fight.
+        return false;
+      }
+
+      // We win the fight, 
+      // dispose the other root panel.
+      cPanel._disposeRootPanel();
+      
+      this._updateCreateId(c);  
+    }
+    
+    c.$panel = this;
+    pv.removeChildren(c);
+  } else {
+    // Update createId
+    this._updateCreateId(c);
+  }
+  return true;
+};
+
+pv.Panel.prototype._registerBoundEvent = function(source, name, listener, capturePhase) {
+  if(source.removeEventListener) {
+    var boundEvents = this._boundEvents || (this._boundEvents = []);
+    boundEvents.push([source, name, listener, capturePhase]);
+  }
+};
+
+pv.Panel.prototype._disposeRootPanel = function() {
+  // Clear running transitions.
+  // If we don't do this,
+  //  a running animation's setTimeouts will
+  //  continue rendering, over a canvas that 
+  //  might already b being used by other panel,
+  //  resulting in "concurrent" updates to 
+  //  the same dom elements -- a big mess.
+  var t = this.$transition;
+  t && t.stop();
+
+  var boundEvents = this._boundEvents;
+  if(boundEvents) {
+    this._boundEvents = null;
+
+    for(var i = 0, L = boundEvents.length; i < L ; i++) {
+      var be = boundEvents[i];
+      be[0].removeEventListener(be[1], be[2], be[3]);
+    }
+  }
+};
+
+pv.Panel.prototype._rootInstanceInitCanvas = function(s, c) {
+  // If width and height weren't specified, inspect the container.
+  var w, h, cssStyle;
+  if(s.width == null) {
+    cssStyle = pv.cssStyle(c);
+    w = parseFloat(cssStyle("width") || 0);
+    s.width = w - s.left - s.right;
+  }
+
+  if(s.height == null) {
+    cssStyle || (cssStyle = pv.cssStyle(c));
+    h = parseFloat(cssStyle("height") || 0);
+    s.height = h - s.top - s.bottom;
+  }
+
+  cssStyle = null;
+};
+
+pv.Panel.prototype._rootInstanceGetInlineCanvas = function(s) {
+  // When no container is specified, 
+  //  the vis is added inline, as a span.
+  // The spans are created on first render only, 
+  //  and cached for later renders.
+  // If the visualization was created using a 
+  //  script element with language "text/javascript+protovis",
+  //  the span of each instance is added right before the script tag.
+  // Otherwise, the canvas is added as a sibling of 
+  //  the last (leaf) element of the page.
+  var cache = this.$canvas || (this.$canvas = []);
+  var c;
+  if(!(c = cache[this.index])) {
+    c = cache[this.index] =  document.createElement("span");
+    if(this.$dom) {
+      // Script element for text/javascript+protovis
+      this.$dom.parentNode.insertBefore(c, this.$dom);
+    } else {
+      // Find the last (leaf) element in the body.
+      var n = document.body;
+      while(n.lastChild && n.lastChild.tagName) { n = n.lastChild; }
+
+      // Take its parent.
+      if(n != document.body) { n = n.parentNode; }
+      
+      // Add canvas as last child.
+      n.appendChild(c);
+    }
+  }
+  return c;
+};
+
+/** 
+ * Updates the protovis create counter in the specified canvas.
+ * This allows external entities to detect that a previous
+ * panel attached to this canvas has been disposed of, 
+ * or is no longer in control of this panel.
+ * Also, by storing the latest counter on which this panel updated
+ *  the canvas we're able to detect when we lost the canvas,
+ *  and should not keep stealing it.
+ */
+pv.Panel.prototype._updateCreateId = function(c) {
+    this.$lastCreateId = c.$pvCreateId = (c.$pvCreateId || 0) + 1;
 };
 /**
  * Constructs a new image with default properties. Images are not typically
@@ -14332,7 +14619,7 @@ pv.Image.prototype.defaults = new pv.Image()
  * and <tt>a</tt> attributes. A {@link pv.Color} or string can also be returned,
  * though this typically results in slower performance.
  *
- * @param {function} f the new sizing function.
+ * @param {Function} f the new sizing function.
  * @returns {pv.Layout.Pack} this.
  */
 pv.Image.prototype.image = function(f) {
@@ -14806,7 +15093,8 @@ pv.Transition = function(mark) {
       ease = pv.ease("cubic-in-out"),
       duration = 250,
       timer,
-      onEndCallback;
+      onEndCallback,
+      cleanedup;
 
   var interpolated = {
     top: 1,
@@ -14818,6 +15106,8 @@ pv.Transition = function(mark) {
     innerRadius: 1,
     outerRadius: 1,
     radius: 1,
+    shapeRadius: 1,
+    shapeSize: 1,
     startAngle: 1,
     endAngle: 1,
     angle: 1,
@@ -14901,7 +15191,7 @@ pv.Transition = function(mark) {
 
         /*
          * After the transition finishes, we need to do a little cleanup to
-         * insure that the final state of the scenegraph is consistent with the
+         * ensure that the final state of the scenegraph is consistent with the
          * "after" render. For instances that were removed, we need to remove
          * them from the scenegraph; for instances that became invisible, we
          * need to mark them invisible. See the cleanup method for details.
@@ -14969,15 +15259,19 @@ pv.Transition = function(mark) {
 
   /** @private */
   function cleanup(scene) {
-    for (var i = 0, j = 0; i < scene.length; i++) {
-      var s = scene[i];
-      if (s.transition != 1) {
-        scene[j++] = s;
-        if (s.transition == 2) s.visible = false;
-        if (s.children) s.children.forEach(cleanup);
+    if(!cleanedup) {
+      cleanedup = true;
+
+      for(var i = 0, j = 0; i < scene.length; i++) {
+        var s = scene[i];
+        if(s.transition != 1) {
+          scene[j++] = s;
+          if(s.transition == 2) s.visible = false;
+          if(s.children) s.children.forEach(cleanup);
+        }
       }
+      scene.length = j;
     }
-    scene.length = j;
   }
 
   that.ease = function(x) {
@@ -14992,62 +15286,47 @@ pv.Transition = function(mark) {
         : duration;
   };
 
-  function doEnd(){
-      mark.root.animatingCount--;
-      
-      if(onEndCallback){
-          var cb = onEndCallback;
-          onEndCallback = null;
-          cb();
-      }
-  }
-
   that.start = function(onEnd) {
-    onEndCallback = onEnd;
-    
-    mark.root.animatingCount++;
-    
     // TODO allow partial rendering
-    if (mark.parent) {
-        doEnd();
-        throw new Error("Animated partial rendering is not supported.");
+    if(mark.parent) { throw new Error("Animated partial rendering is not supported."); }
+    
+    onEndCallback = onEnd;
+
+    var root = mark.root;
+
+    // TODO allow parallel and sequenced transitions
+    if(root.$transition) {
+      try { root.$transition.stop(); } catch(ex) { return doEnd(false); }
     }
-    
+
+    // ---------------
+
+    var list, start;
+    root.$transition = that;
+
+    // TODO clearing the scene like this forces total re-build
+    var before = mark.scene;
+    mark.scene = null;
+    var i0 = pv.Mark.prototype.index;
     try {
-        // TODO allow parallel and sequenced transitions
-        if (mark.$transition) { mark.$transition.stop(); }
-        
-        mark.$transition = that;
-    
-        // TODO clearing the scene like this forces total re-build
-        var i = pv.Mark.prototype.index,
-            before = mark.scene,
-            after;
-        
-        mark.scene = null;
         mark.bind();
         mark.build();
         
-        after = mark.scene;
+        var after = mark.scene;
         mark.scene = before;
-        
-        pv.Mark.prototype.index = i;
+        pv.Mark.prototype.index = i0;
     
-        var start = Date.now(),
-            list = {};
-        
+        start = Date.now();
+        list = {};
         interpolate(list, before, after);
     } catch(ex) {
-        doEnd();
-        throw ex;
+        pv.Mark.prototype.index = i0; // JIC
+        return doEnd(false);
     }
     
-    if(!list.head) {
-        doEnd();
-        return;
-    }
+    if(!list.head) { return doEnd(true); }
     
-    timer = setInterval(function() {
+    var advance = function() {
       var t = Math.max(0, Math.min(1, (Date.now() - start) / duration)),
           e = ease(t);
       
@@ -15055,20 +15334,42 @@ pv.Transition = function(mark) {
       var i = list.head;
       do { i(e); } while((i = i.next));
       
-      if (t === 1) {
+      if(t === 1) {
         cleanup(mark.scene);
         pv.Scene.updateAll(before);
-        that.stop();
+        doEnd(true);
       } else {
-          pv.Scene.updateAll(before);
+        pv.Scene.updateAll(before);
       }
-    }, 24);
-  };
+    };
 
-  that.stop = function() {
-    clearInterval(timer);
-    doEnd();
-  };
+    timer = setInterval(function() {
+      try { advance(); } catch(ex) { doEnd(false); }
+    }, 24);
+  }; // end that.start
+
+  that.stop = function() { doEnd(true); };
+
+  function doEnd(success) {
+    var started = (mark.root.$transition === that);
+    if(started) { mark.root.$transition = null; }
+    
+    if(timer != null) {
+      clearInterval(timer);
+      timer = null;
+    }
+
+    if(started) { cleanup(mark.scene); }
+
+    if(onEndCallback) {
+      var cb = onEndCallback;
+      onEndCallback = null;
+      cb(success);
+    }
+
+    // Only useful when it fails synchronous in #start.
+    return success;
+  }
 };
 pv.Transient = function(mark) {
   pv.Mark.call(this);
@@ -15954,7 +16255,7 @@ pv.Constraint = {};
  * particles in the simulation.
  *
  * @see pv.Constraint
- * @param {function} radius the radius function.
+ * @param {Function} radius the radius function.
  */
 pv.Constraint.collision = function(radius) {
   var n = 1, // number of times to repeat the constraint
@@ -16074,7 +16375,7 @@ pv.Constraint.collision = function(radius) {
  * In addition, the alpha parameter can be decayed over time, relaxing the
  * position constraint, which helps to stabilize on an optimal solution.
  *
- * @param {function} [f] the position function.
+ * @param {Function} [f] the position function.
  */
 pv.Constraint.position = function(f) {
   var a = 1, // default alpha
@@ -16243,7 +16544,7 @@ pv.Layout.prototype = pv.extend(pv.Panel);
  * global, which is necessary since properties are inherited!
  *
  * @param {string} name the property name.
- * @param {function} [cast] the cast function for this property.
+ * @param {Function} [cast] the cast function for this property.
  */
 pv.Layout.prototype.property = pv.Mark.prototype.localProperty;
 /**
@@ -16327,7 +16628,7 @@ pv.Layout.Network = function() {
   pv.Layout.call(this);
   var that = this;
 
-  /* @private Version tracking to cache layout state, improving performance. */
+  /** @private Version tracking to cache layout state, improving performance. */
   this.$id = pv.id();
 
   /**
@@ -17204,7 +17505,7 @@ pv.Layout.Stack.prototype.$x
  * This typically corresponds to the independent variable. For example, with the
  * default "bottom-left" orientation, this function defines the "left" property.
  *
- * @param {function} f the x function.
+ * @param {Function} f the x function.
  * @returns {pv.Layout.Stack} this.
  */
 pv.Layout.Stack.prototype.x = function(f) {
@@ -17218,7 +17519,7 @@ pv.Layout.Stack.prototype.x = function(f) {
  * with the default "bottom-left" orientation, this function defines the
  * "height" property.
  *
- * @param {function} f the y function.
+ * @param {Function} f the y function.
  * @returns {pv.Layout.Stack} this.
  */
 pv.Layout.Stack.prototype.y = function(f) {
@@ -17234,7 +17535,7 @@ pv.Layout.Stack.prototype.$values = pv.identity;
  * value is the identity function, which assumes that the layers property is
  * specified as a two-dimensional (i.e., nested) array.
  *
- * @param {function} f the values function.
+ * @param {Function} f the values function.
  * @returns {pv.Layout.Stack} this.
  */
 pv.Layout.Stack.prototype.values = function(f) {
@@ -17314,11 +17615,11 @@ pv.Layout.Stack.prototype.values = function(f) {
  *
  * @class Implements a layout for banded visualizations; it is
  * mainly used for grouped bar charts.
- * 
+ *
  * @extends pv.Layout
  */
 pv.Layout.Band = function() {
-    
+
     pv.Layout.call(this);
 
     var that = this,
@@ -17348,7 +17649,7 @@ pv.Layout.Band = function() {
             return itemProps[name](this.index, this.parent.index);
         };
     }
-    
+
     /**
      * Compute the layout.
      * @private
@@ -17368,16 +17669,16 @@ pv.Layout.Band = function() {
                 bh = this.parent[horizontal ? "height" : "width"](),
                 bands = this._readData(data, values, s),
                 B = bands.length;
-            
+
             /* Band order */
             if(s.bandOrder === "reverse") {
                 bands.reverse();
             }
-            
+
             /* Layer order */
             if(s.order === "reverse") {
                 values.reverse();
-                
+
                 for (var b = 0; b < B; b++) {
                     bands[b].items.reverse();
                 }
@@ -17453,7 +17754,7 @@ pv.Layout.Band = function() {
          * Half the specified margin is discounted
          * from each of the items own height.
          * </p>
-         * 
+         *
          * <p>
          * Evaluated once per band
          * (on the corresponding band's item of the first series).
@@ -17470,7 +17771,7 @@ pv.Layout.Band = function() {
 
     var bandAccessor = this.band = {
         end: this,
-        
+
         /**
          * The band width pseudo-property;
          * determines the width of a band
@@ -17492,7 +17793,7 @@ pv.Layout.Band = function() {
          * The band x pseudo-property;
          * determines the x center position of a band
          * in a layer panel.
-         * 
+         *
          * <p>
          * Evaluated once per band
          * (on the corresponding band's item of the first series).
@@ -17565,7 +17866,7 @@ pv.Layout.Band.prototype.defaults = new pv.Layout.Band()
 
 /** @private */ pv.Layout.Band.prototype.$bx =
 /** @private */ pv.Layout.Band.prototype.$bw =
-/** @private */ pv.Layout.Band.prototype.$bDiffControl = 
+/** @private */ pv.Layout.Band.prototype.$bDiffControl =
 /** @private */ pv.Layout.Band.prototype.$iw =
 /** @private */ pv.Layout.Band.prototype.$ih =
 /** @private */ pv.Layout.Band.prototype.$ivertiMargin = pv.functor(0);
@@ -17581,7 +17882,7 @@ pv.Layout.Band.prototype.$values = pv.identity;
  * which assumes that the bands property is specified as
  * a two-dimensional (i.e., nested) array.
  *
- * @param {function} f the values function.
+ * @param {Function} f the values function.
  * @returns {pv.Layout.Band} this.
  */
 pv.Layout.Band.prototype.values = function(f) {
@@ -17624,7 +17925,7 @@ pv.Layout.prototype._readData = function(data, layersValues, scene){
         stack[0] = data[l];
 
         /* Eval per-layer properties */
-        
+
         var layerValues = layersValues[l] = this.$values.apply(o.parent, stack);
         if(!l){
             B = layerValues.length;
@@ -17676,7 +17977,7 @@ pv.Layout.Band.prototype._calcGrouped = function(bands, L, scene){
 
         /* Total items width */
         for (var l = 0 ; l < L ; l++) { wItems += items[l].w; }
-        
+
         if(L === 1) {
             /*
              * Horizontal ratio does not apply
@@ -17686,11 +17987,11 @@ pv.Layout.Band.prototype._calcGrouped = function(bands, L, scene){
         } else if(!(horizRatio > 0 && horizRatio <= 1)) {
             horizRatio = 1;
         }
-        
+
         if(w == null){
             /* Expand band width to contain all items plus ratio */
             w = band.w = wItems / horizRatio;
-            
+
         } else if(scene.horizontalMode === 'expand'){
             /* Scale items width to fit in band's width */
 
@@ -17793,7 +18094,7 @@ pv.Layout.Band.prototype._calcStacked = function(bands, L, bh, scene){
             vertiMargin = Math.max(0, band.vertiMargin);
 
         items = band.items;
-        
+
         // diffControl
         var resultPos = this._layoutItemsOfDir(+1, positiveGoesDown, items, vertiMargin, bx, yOffset),
             resultNeg = null; // reset on each iteration
@@ -17822,12 +18123,12 @@ pv.Layout.Band.prototype._layoutItemsOfDir = function(stackDir, positiveGoesDown
         vertiMargin2 = vertiMargin / 2,
         efDir = (positiveGoesDown ? -stackDir : stackDir),
         reverseLayers = positiveGoesDown;
-    
+
     for (var l = 0, L = items.length ; l < L ; l+=1) {
         var item = items[reverseLayers ? (L -l -1) : l];
         if(item.dir === stackDir){
             var h = item.h || 0; // null -> 0
-            
+
             if(efDir > 0) {
                 item.y = yOffset + vertiMargin2;
                 yOffset += h;
@@ -17835,7 +18136,7 @@ pv.Layout.Band.prototype._layoutItemsOfDir = function(stackDir, positiveGoesDown
                 item.y = yOffset - (h - vertiMargin2);
                 yOffset -= h;
             }
-            
+
             var h2 = h - vertiMargin;
             item.h = h2 > 0 ? h2 : 0;
             item.x = bx - item.w / 2;
@@ -18028,10 +18329,10 @@ pv.Layout.Treemap.prototype.defaults = new pv.Layout.Treemap()
 /** @private The default size function. */
 pv.Layout.Treemap.prototype.$size = function(d) { return Number(d.nodeValue); };
 
-pv.Layout.Treemap.prototype.$padLeft   = 
-pv.Layout.Treemap.prototype.$padRight  = 
-pv.Layout.Treemap.prototype.$padBottom = 
-pv.Layout.Treemap.prototype.$padTop    = 
+pv.Layout.Treemap.prototype.$padLeft   =
+pv.Layout.Treemap.prototype.$padRight  =
+pv.Layout.Treemap.prototype.$padBottom =
+pv.Layout.Treemap.prototype.$padTop    =
     /** @private The default padding function. */
     function() { return 0; };
 
@@ -18048,7 +18349,7 @@ pv.Layout.Treemap.prototype.$padTop    =
  *
  * <pre>    .size(function(d) d.bytes)</pre>
  *
- * @param {function} f the new sizing function.
+ * @param {Function} f the new sizing function.
  * @returns {pv.Layout.Treemap} this.
  */
 pv.Layout.Treemap.prototype.size = function(f) {
@@ -18067,76 +18368,77 @@ pv.Layout.Treemap.prototype.size = function(f) {
  * @returns {pv.Layout.Treemap} this.
  */
 pv.Layout.Treemap.prototype.padding = function(n) {
+    n = pv.functor(n);
     return this.paddingLeft(n).paddingRight(n).paddingTop(n).paddingBottom(n);
 };
 
 /**
  * Specifies the paddingLeft function. By default, it is 0.
  *
- * <p>The paddingLeft function is invoked for each parent node in the tree. 
- * 
- * @param {function} f the new paddingLeft function.
+ * <p>The paddingLeft function is invoked for each parent node in the tree.
+ *
+ * @param {Function} f the new paddingLeft function.
  * @returns {pv.Layout.Treemap} this.
  */
 pv.Layout.Treemap.prototype.paddingLeft = function(f) {
-    if(arguments.length) { this.$padLeft = f; }
+    if(arguments.length) { this.$padLeft = pv.functor(f); return this; }
     return this.$padLeft;
 };
 
 /**
  * Specifies the paddingRight function. By default, it is 0.
  *
- * <p>The paddingRight function is invoked for each parent node in the tree. 
- * 
- * @param {function} f the new paddingRight function.
+ * <p>The paddingRight function is invoked for each parent node in the tree.
+ *
+ * @param {Function} f the new paddingRight function.
  * @returns {pv.Layout.Treemap} this.
  */
 pv.Layout.Treemap.prototype.paddingRight = function(f) {
-    if(arguments.length) { this.$padRight = f; }
+    if(arguments.length) { this.$padRight = pv.functor(f); return this; }
     return this.$padRight;
 };
 
 /**
  * Specifies the paddingBottom function. By default, it is 0.
  *
- * <p>The paddingBottom function is invoked for each parent node in the tree. 
- * 
- * @param {function} f the new paddingBottom function.
+ * <p>The paddingBottom function is invoked for each parent node in the tree.
+ *
+ * @param {Function} f the new paddingBottom function.
  * @returns {pv.Layout.Treemap} this.
  */
 pv.Layout.Treemap.prototype.paddingBottom = function(f) {
-    if(arguments.length) { this.$padBottom = f; }
+    if(arguments.length) { this.$padBottom = pv.functor(f); return this; }
     return this.$padBottom;
 };
 
 /**
  * Specifies the paddingTop function. By default, it is 0.
  *
- * <p>The paddingTop function is invoked for each parent node in the tree. 
- * 
- * @param {function} f the new paddingTop function.
+ * <p>The paddingTop function is invoked for each parent node in the tree.
+ *
+ * @param {Function} f the new paddingTop function.
  * @returns {pv.Layout.Treemap} this.
  */
 pv.Layout.Treemap.prototype.paddingTop = function(f) {
-    if(arguments.length) { this.$padTop = f; }
+    if(arguments.length) { this.$padTop = pv.functor(f); return this; }
     return this.$padTop;
 };
 
 /** @private */
 pv.Layout.Treemap.prototype.buildImplied = function(s) {
-  pv.Layout.Hierarchy.prototype.buildImplied.call(this, s);
+  if (pv.Layout.Hierarchy.prototype.buildImplied.call(this, s)) return;
 
   var that = this,
       nodes = s.nodes,
       root = nodes[0],
       stack = pv.Mark.stack,
-      left = s.paddingLeft,
-      right = s.paddingRight,
-      top = s.paddingTop,
-      bottom = s.paddingBottom,
+      left   = 0,
+      right  = 0,
+      top    = 0,
+      bottom = 0,
       /** @ignore */ size = function(n) { return n.size; },
       round = s.round ? Math.round : Number,
-      mode = s.mode;
+      mode  = s.mode;
 
   /** @private */
   function slice(row, sum, horizontal, x, y, w, h) {
@@ -18184,24 +18486,24 @@ pv.Layout.Treemap.prototype.buildImplied = function(s) {
         y = n.y,
         w = n.dx,
         h = n.dy;
-    
+
     if(p) {
         x += p.paddingLeft;
         y += p.paddingTop;
         w += -p.paddingLeft -p.paddingRight,
         h += -p.paddingTop  -p.paddingBottom;
     }
-    
+
     /* Assume squarify by default. */
     if (mode != "squarify") {
       slice(
-        n.childNodes, 
+        n.childNodes,
         n.size,
         mode == "slice" ? true  :
-        mode == "dice"  ? false : i & 1, 
-        x, 
-        y, 
-        w, 
+        mode == "dice"  ? false : i & 1,
+        x,
+        y,
+        w,
         h);
       return;
     }
@@ -18269,9 +18571,9 @@ pv.Layout.Treemap.prototype.buildImplied = function(s) {
       root.visitAfter(function(n, i) {
           n.depth = i;
           n.x = n.y = n.dx = n.dy = 0;
-          
+
           stack[0] = n;
-          
+
           var f;
           if(n.firstChild) {
               n.size = pv.sum(n.childNodes, size);
@@ -18283,10 +18585,10 @@ pv.Layout.Treemap.prototype.buildImplied = function(s) {
               n.size = that.$size.apply(that, stack);
           }
       });
-  } finally { 
+  } finally {
       stack.shift();
   }
-  
+
   /* Sort. */
   switch (s.order) {
     case "ascending":  root.sort(function(a, b) { return a.size - b.size; }); break;
@@ -18775,7 +19077,7 @@ pv.Layout.Pack.prototype.$radius = function() { return 1; };
  * As with other properties, a size function may specify additional arguments to
  * access the data associated with the layout and any enclosing panels.
  *
- * @param {function} f the new sizing function.
+ * @param {Function} f the new sizing function.
  * @returns {pv.Layout.Pack} this.
  */
 pv.Layout.Pack.prototype.size = function(f) {
@@ -19617,7 +19919,7 @@ pv.Layout.Partition.prototype.$size = function() { return 1; };
  * As with other properties, a size function may specify additional arguments to
  * access the data associated with the layout and any enclosing panels.
  *
- * @param {function} f the new sizing function.
+ * @param {Function} f the new sizing function.
  * @returns {pv.Layout.Partition} this.
  */
 pv.Layout.Partition.prototype.size = function(f) {
@@ -19654,20 +19956,20 @@ pv.Layout.Partition.prototype.buildImplied = function(s) {
   root.minBreadth = 0;
   root.breadth    = .5;
   root.maxBreadth = 1;
-  
+
   root.visitBefore(function(n) {
-    var b = n.minBreadth, 
+    var b = n.minBreadth,
         s = n.maxBreadth - b; // span
-      
+
       for (var c = n.firstChild; c; c = c.nextSibling) {
         c.minBreadth = b;
         b += (c.size / n.size) * s;
         c.maxBreadth = b;
-        
+
         c.breadth = (b + c.minBreadth) / 2;
       }
     });
-  
+
   root.visitAfter(function(n, depth) {
       n.minDepth = (depth - 1) / maxDepth;
       n.maxDepth = (n.depth = depth / maxDepth);
@@ -19798,7 +20100,7 @@ pv.Layout.Arc.prototype.defaults = new pv.Layout.Arc()
  * find good node orders that emphasize clusters, such as spectral layout and
  * simulated annealing.
  *
- * @param {function} f comparator function for nodes.
+ * @param {Function} f comparator function for nodes.
  * @returns {pv.Layout.Arc} this.
  */
 pv.Layout.Arc.prototype.sort = function(f) {
@@ -20154,7 +20456,7 @@ pv.Layout.Rollup.prototype = pv.extend(pv.Layout.Network)
  * function. Typically the function is specified as an ordinal scale. For
  * single-dimension rollups, a constant value can be specified.
  *
- * @param {function} f the <i>x</i>-position function.
+ * @param {Function} f the <i>x</i>-position function.
  * @returns {pv.Layout.Rollup} this.
  * @see pv.Scale.ordinal
  */
@@ -20169,7 +20471,7 @@ pv.Layout.Rollup.prototype.x = function(f) {
  * function. Typically the function is specified as an ordinal scale. For
  * single-dimension rollups, a constant value can be specified.
  *
- * @param {function} f the <i>y</i>-position function.
+ * @param {Function} f the <i>y</i>-position function.
  * @returns {pv.Layout.Rollup} this.
  * @see pv.Scale.ordinal
  */
@@ -20370,7 +20672,7 @@ pv.Layout.Matrix.prototype = pv.extend(pv.Layout.Network)
  * to find good node orders that emphasize clusters, such as spectral layout and
  * simulated annealing.
  *
- * @param {function} f comparator function for nodes.
+ * @param {Function} f comparator function for nodes.
  * @returns {pv.Layout.Matrix} this.
  */
 pv.Layout.Matrix.prototype.sort = function(f) {
@@ -20536,7 +20838,8 @@ pv.Layout.Bullet.prototype = pv.extend(pv.Layout)
     .property("ranges")
     .property("markers")
     .property("measures")
-    .property("maximum", Number);
+    .property("minimum")
+    .property("maximum");
 
 /**
  * Default properties for bullet layouts.
@@ -20585,12 +20888,58 @@ pv.Layout.Bullet.prototype.defaults = new pv.Layout.Bullet()
  * @name pv.Layout.Bullet.prototype.maximum
  */
 
+pv.Layout.Bullet.prototype._originIsZero = true;
+
+pv.Layout.Bullet.prototype.originIsZero = function(value) {
+    if(arguments.length) {
+        return this._originIsZero = !!value;
+    }
+    return this._originIsZero;
+};
+
 /** @private */
 pv.Layout.Bullet.prototype.buildImplied = function(s) {
   pv.Layout.prototype.buildImplied.call(this, s);
+  
   var size = this.parent[/^left|right$/.test(s.orient) ? "width" : "height"]();
-  s.maximum = s.maximum || pv.max([].concat(s.ranges, s.markers, s.measures));
-  this.x.domain(0, s.maximum).range(0, size);
+  
+  var allValues, 
+      max   = s.maximum,
+      min   = s.minimum,
+      delta = 1e-10;
+  
+  if(max == null) {
+      allValues = [].concat(s.ranges, s.markers, s.measures);
+      max = pv.max(allValues);
+  } else {
+      max = +max;
+  }
+  
+  if(min == null) {
+      if(!allValues) { allValues = [].concat(s.ranges, s.markers, s.measures); }
+      min = pv.min(allValues);
+      // It would be really strange that a range would end at the start of the scale. 
+      min = 0.95 * min;
+  } else {
+      min = +min;
+  }
+  
+  if(min > max || max - min < delta) {
+      min = Math.abs(max) < delta ? -0.1 : (0.99 * max);
+  }
+  
+  if(this._originIsZero && (min * max) > 0) {
+      if(min > 0) {
+          min = 0;
+      } else {
+          max = 0;
+      }
+  }
+
+  s.minimum = min;
+  s.maximum = max;
+  
+  this.x.domain(min, max).range(0, size);
 };
 /**
  * Abstract; see an implementing class for details.
@@ -20630,13 +20979,13 @@ pv.Behavior = {};
         cancelClick,
         inited,
         drag;
-    
+
     shared.autoRender = true;
     shared.positionConstraint = null;
     shared.bound = function(v, a_p) {
         return Math.max(drag.min[a_p], Math.min(drag.max[a_p], v));
     };
-    
+
     /** @private protovis mark event handler */
     function mousedown(d) {
         // Initialize
@@ -20644,40 +20993,40 @@ pv.Behavior = {};
             inited = true;
             this.addEventInterceptor('click', eventInterceptor, /*before*/true);
         }
-        
+
         // Add event handlers to follow the drag.
         // These are unregistered on mouse up.
         if(!events){
             var root = this.root.scene.$g;
             events = [
                 // Attaching events to the canvas (instead of only to the document)
-                // allows canceling the bubbling of the events before they 
+                // allows canceling the bubbling of the events before they
                 // reach the handlers of ascendant elements (of canvas).
                 [root,     'mousemove', pv.listen(root, 'mousemove', mousemove)],
                 [root,     'mouseup',   pv.listen(root, 'mouseup',   mouseup  )],
-              
+
                 // It is still necessary to receive events
                 // that are sourced outside the canvas
                 [document, 'mousemove', pv.listen(document, 'mousemove', mousemove)],
                 [document, 'mouseup',   pv.listen(document, 'mouseup',   mouseup  )]
             ];
         }
-        
+
         var ev = arguments[arguments.length - 1]; // last argument
         downElem = ev.target;
         cancelClick = false;
-        
-        // Prevent the event from bubbling off the canvas 
+
+        // Prevent the event from bubbling off the canvas
         // (if being handled by the root)
         ev.stopPropagation();
-        
+
         // --------------
-        
+
         var m1    = this.mouse();
         var scene = this.scene;
         var index = this.index;
-        
-        drag = 
+
+        drag =
         scene[index].drag = {
             phase: 'start',
             m:     m1,    // current relevant mouse position
@@ -20691,41 +21040,41 @@ pv.Behavior = {};
         ev = wrapEvent(ev, drag);
 
         shared.dragstart.call(this, ev);
-        
+
         var m = drag.m;
         if(m !== m1){
             m1.x = m.x;
             m1.y = m.y;
         }
     }
-    
+
     /** @private DOM event handler */
     function mousemove(ev) {
         if (!drag) { return; }
-        
+
         drag.phase = 'move';
-        
-        // Prevent the event from bubbling off the canvas 
+
+        // Prevent the event from bubbling off the canvas
         // (if being handled by the root)
         ev.stopPropagation();
-        
+
         ev = wrapEvent(ev, drag);
-        
+
         // In the context of the mousedown scene
         var scene = drag.scene;
         scene.mark.context(scene, drag.index, function() {
             // this === scene.mark
             var mprev = drag.m2 || drag.m1;
-            
+
             var m2 = this.mouse();
             if(mprev && m2.distance2(mprev).dist2 <= 2){
                 return;
             }
-            
+
             drag.m = drag.m2 = m2;
-            
+
             shared.drag.call(this, ev);
-            
+
             // m2 may have changed
             var m = drag.m;
             if(m !== m2){
@@ -20738,11 +21087,11 @@ pv.Behavior = {};
     /** @private DOM event handler */
     function mouseup(ev) {
         if (!drag) { return; }
-        
+
         drag.phase = 'end';
-        
+
         var m2 = drag.m2;
-        
+
         // A click event is generated whenever
         // the element where the mouse goes down
         // is the same element of where the mouse goes up.
@@ -20750,18 +21099,18 @@ pv.Behavior = {};
         // when some selection has occurred.
         var isDrag = m2 && drag.m1.distance2(m2).dist2 > 0.1;
         drag.canceled = !isDrag;
-        
+
         cancelClick = isDrag && (downElem === ev.target);
         if(!cancelClick){
             downElem = null;
         }
-        
-        // Prevent the event from bubbling off the canvas 
+
+        // Prevent the event from bubbling off the canvas
         // (if being handled by the root)
         ev.stopPropagation();
-        
+
         ev = wrapEvent(ev, drag);
-        
+
         // Unregister events
         if(events){
             events.forEach(function(registration){
@@ -20769,7 +21118,7 @@ pv.Behavior = {};
             });
             events = null;
         }
-        
+
         var scene = drag.scene;
         var index = drag.index;
         try{
@@ -20796,7 +21145,7 @@ pv.Behavior = {};
             var v = ev[p];
             ev2[p] = typeof v !== 'function' ? v : bindEventFun(v, ev);
         }
-        
+
         ev2._sourceEvent = ev;
 
         return ev2;
@@ -20807,15 +21156,15 @@ pv.Behavior = {};
     }
 
     /**
-     * Intercepts click events and, 
+     * Intercepts click events and,
      * if they were consequence
      * of a mouse down and up of a selection,
      * cancels them.
-     * 
-     * @returns {boolean|array} 
+     *
+     * @returns {boolean|array}
      * <tt>false</tt> to indicate that the event is handled,
      * otherwise, an event handler info array: [handler, type, scenes, index, ev].
-     * 
+     *
      * @private
      */
     function eventInterceptor(type, ev){
@@ -20825,14 +21174,14 @@ pv.Behavior = {};
             downElem = null;
             return false;
         }
-        
+
         // Let event be handled normally
     }
-    
+
 
     /**
      * Whether to automatically render the mark when appropriate.
-     * 
+     *
      * @function
      * @returns {pv.Behavior.dragBase | boolean} this, or the current autoRender parameter.
      * @name pv.Behavior.dragBase.prototype.autoRender
@@ -20843,34 +21192,34 @@ pv.Behavior = {};
             shared.autoRender = !!_;
             return mousedown;
         }
-        
+
         return shared.autoRender;
     };
-    
+
     /**
      * Gets or sets the positionConstraint parameter.
-     * 
+     *
      * A function that given a drag object
-     * can change its property <tt>m</tt>, 
+     * can change its property <tt>m</tt>,
      * containing a vector with the desired mouse position.
-     *  
+     *
      * @function
-     * @returns {pv.Behavior.dragBase | function} this, or the current positionConstraint parameter.
      * @name pv.Behavior.dragBase.prototype.positionConstraint
-     * @param {function} [_] the new positionConstraint parameter
+     * @param {Function} [_] the new positionConstraint parameter
+     * @return {pv.Behavior.dragBase | Function} this, or the current positionConstraint parameter.
      */
     mousedown.positionConstraint = function(_) {
         if (arguments.length) {
             shared.positionConstraint = _;
             return mousedown;
         }
-        
+
         return shared.positionConstraint;
     };
-    
+
     return mousedown;
 };
-  
+
 /**
  * Returns a new drag behavior to be registered on mousedown events.
  *
@@ -22278,13 +22627,13 @@ pv.Geo.scale = function(p) {
    *
    * @function
    * @name pv.Geo.scale.prototype.by
-   * @param {function} f an accessor function.
+   * @param {Function} f an accessor function.
    * @returns {pv.Geo.scale} a view of this scale by the specified accessor
    * function.
    */
-  
+
   pv.copyOwn(scale, pv.Scale.common);
-  
+
 
   if (arguments.length) scale.projection(p);
   return scale;

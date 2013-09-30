@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-//VERSION TRUNK-20130531
+//VERSION TRUNK-20130930
 
 var def = (function() {
 
@@ -1321,11 +1321,10 @@ def.scope(function(){
             
             for(var p in mixin){
                 if(p !== 'prototype'){
-                    var v1 = def.getOwn(this, p);
-                    
                     var v2 = mixin[p];
                     var o2 = def.object.as(v2);
                     if(o2){
+                        var v1 = def.getOwn(this, p);
                         var v1Local = (v1 !== undefined);
                         if(!v1Local){
                             v1 = getStatic(state.base, p);
@@ -1981,22 +1980,18 @@ def.type('OrderedMap')
     },
     
     get: function(key){
-        var bucket = def.getOwn(this._map, key);
-        if(bucket) { 
-            return bucket.value;
-        }
+        var map = this._map;
+        return objectHasOwn.call(map, key) ? map[key].value : undefined;
     },
     
     at: function(index){
         var bucket = this._list[index];
-        if(bucket){
-            return bucket.value;
-        }
+        return bucket ? bucket.value : undefined;
     },
     
     add: function(key, v, index){
         var map = this._map;
-        var bucket = def.getOwn(map, key);
+        var bucket = objectHasOwn.call(map, key) && map[key];
         if(!bucket){
             bucket = map[key] = {
                 key:   key,
@@ -2016,7 +2011,8 @@ def.type('OrderedMap')
     },
     
     rem: function(key){
-        var bucket = def.getOwn(this._map, key);
+        var map = this._map;
+        var bucket = objectHasOwn.call(map, key) && map[key];
         if(bucket){
             // Find it
             var index = this._list.indexOf(bucket);
@@ -2064,26 +2060,23 @@ def.html = {
 // --------------------
 
 def.type('Query')
-.init(function(){
-    this.index = -1;
-    this.item = undefined;
-})
 .add({
-    next: function(){
-        var index = this.index;
+    index: -1,
+    item: undefined,
+    next: function() {
+        var me = this;
+        var index = me.index;
+        
         // already was finished
-        if(index === -2){
-            return false;
-        }
+        if(index === -2) { return false; }
         
         index++;
-        if(!this._next(index)){
-            this.index = -2;
-            this.item  = undefined;
+        if(!me._next(index)) {
+            me._finish();
             return false;
         }
         
-        this.index = index;
+        me.index = index;
         return true;
     },
     
@@ -2096,41 +2089,39 @@ def.type('Query')
      */
     _next: def.method({isAbstract: true}),
     
-    _finish: function(){
-        this.index = -2;
-        this.item  = undefined;
+    _finish: function() {
+        var me = this;
+        if(me.index > -2) {
+            me.next  = def.retFalse;
+            me.index = -2;
+            delete me.item;
+        }
     },
     
     // ------------
     
-    each: function(fun, ctx){
-        while(this.next()){
-            if(fun.call(ctx, this.item, this.index) === false) {
-                return true;
-            }
+    each: function(f, x) {
+        var me = this;
+        while(me.next()) {
+            if(f.call(x, me.item, me.index) === false) { return true; }
         }
         
         return false;
     },
     
-    array: function(){
+    array: function() {
         var array = [];
-        while(this.next()){
-            array.push(this.item);
-        }
+        var me = this;
+        while(me.next()) { array.push(me.item); }
         return array;
     },
     
     sort: function(compare, by){
-        if(!compare){
-            compare = def.compare;
-        }
+        if(!compare) { compare = def.compare; }
         
-        if(by){
+        if(by) {
             var keyCompare = compare;
-            compare = function(a, b){
-                return keyCompare(by(a), by(b));
-            };
+            compare = function(a, b) { return keyCompare(by(a), by(b)); };
         }
         
         var sorted = this.array().sort(compare);
@@ -2204,11 +2195,9 @@ def.type('Query')
      * 
      * @type number
      */
-    count: function(){
+    count: function() {
         var count = 0;
-        
-        while(this.next()){ count++; }
-        
+        while(this.next()) { count++; }
         return count;
     },
     
@@ -2224,8 +2213,8 @@ def.type('Query')
      * 
      * @type any
      */
-    first: function(pred, ctx, dv){
-        while(this.next()){
+    first: function(pred, ctx, dv) {
+        while(this.next()) {
             if(!pred || pred.call(ctx, this.item, this.index)) {
                 var item = this.item;
                 this._finish();
@@ -2248,9 +2237,9 @@ def.type('Query')
      * 
      * @type any
      */
-    last: function(pred, ctx, dv){
+    last: function(pred, ctx, dv) {
         var theItem = dv;
-        while(this.next()){
+        while(this.next()) {
             if(!pred || pred.call(ctx, this.item, this.index)) {
                 theItem = this.item;
             }
@@ -2270,8 +2259,8 @@ def.type('Query')
      * 
      * @type boolean
      */
-    any: function(pred, ctx){
-        while(this.next()){
+    any: function(pred, ctx) {
+        while(this.next()) {
             if(!pred || pred.call(ctx, this.item, this.index)) {
                 this._finish();
                 return true; 
@@ -2288,64 +2277,58 @@ def.type('Query')
      * 
      * @type boolean
      */
-    all: function(pred, ctx){
-        while(this.next()){
+    all: function(pred, ctx) {
+        while(this.next()) {
             if(!pred.call(ctx, this.item, this.index)) {
                 this._finish();
-                return false; 
+                return false;
             }
         }
         
         return true;
     },
     
-    min: function(){
+    min: function() {
         var min = null;
-        while(this.next()){
+        while(this.next()) {
             if(min === null || this.item < min) {
                 min = this.item;
             }
-        }
-        
+        }        
         return min;
     },
     
-    max: function(){
+    max: function() {
         var max = null;
-        while(this.next()){
+        while(this.next()) {
             if(max === null || this.item > max) {
                 max = this.item;
             }
         }
-        
         return max;
     },
     
-    range: function(){
-        var min = null,
-            max = null;
+    range: function() {
+        var min = null;
+        var max = null;
         
-        while(this.next()){
+        while(this.next()) {
             var item = this.item;
             if(min === null) {
                 min = max = item;
             } else {
-                if(item < min) {
-                    min = item;
-                }
-                if(item > max) {
-                    max = item;
-                }
+                if(item < min) { min = item; }
+                if(item > max) { max = item; }
             }
         }
         
         return min != null ? {min: min, max: max} : null;
     },
     
-    multipleIndex: function(keyFun, ctx){
+    multipleIndex: function(keyFun, ctx) {
         var keyIndex = {};
         
-        this.each(function(item){
+        this.each(function(item) {
             var key = keyFun ? keyFun.call(ctx, item) : item;
             if(key != null) {
                 var sameKeyItems = def.getOwn(keyIndex, key) || (keyIndex[key] = []);
@@ -2357,12 +2340,12 @@ def.type('Query')
         return keyIndex;
     },
     
-    uniqueIndex: function(keyFun, ctx){
+    uniqueIndex: function(keyFun, ctx) {
         var keyIndex = {};
 
-        this.each(function(item){
+        this.each(function(item) {
             var key = keyFun ? keyFun.call(ctx, item) : item;
-            if(key != null && !def.hasOwn(keyIndex, key)) {
+            if(key != null && !objectHasOwn.call(keyIndex, key)) {
                 keyIndex[key] = item;
             }
         });
@@ -2408,41 +2391,40 @@ def.type('Query')
 });
 
 def.type('NullQuery', def.Query)
-.add({
-    _next: function(/*nextIndex*/){}
-});
+.add({ next: def.retFalse });
 
 def.type('AdhocQuery', def.Query)
 .init(function(next){
-    this.base();
     this._next = next;
 });
 
 def.type('ArrayLikeQuery', def.Query)
-.init(function(list){
-    this.base();
-    this._list  = def.array.isLike(list) ? list : [list];
-    this._count = this._list.length;
+.init(function(list) {
+    var me = this;
+
+    if(!def.array.isLike(list)) { list = [list] };
+
+    me._list  = list;
+    me._count = list.length;
+
+    var i  = -1;
+    var I  = list.length;
+    me.next = arraLike_next;
+
+    function arraLike_next() {
+        while(++i < I) {
+            if(objectHasOwn.call(list, i)) {
+                me.index = i;
+                me.item  = list[i];
+                return true;
+            }
+        }
+
+        me._finish();
+        return false;
+    }
 })
 .add({
-    _next: function(nextIndex){
-        var count = this._count;
-        if(nextIndex < count){
-            var list = this._list;
-            
-            while(!objectHasOwn.call(list, nextIndex)){
-                nextIndex++;
-                if(nextIndex >= count){
-                    return 0;
-                }
-                this._count--;
-            }
-            
-            this.item = list[nextIndex];
-            return 1;
-        }
-    },
-    
     /**
      * Obtains the number of items of a query.
      * 
@@ -2452,7 +2434,7 @@ def.type('ArrayLikeQuery', def.Query)
     count: function(){
         // Count counts remaining items
         var remaining = this._count;
-        if(this.index >= 0){
+        if(this.index >= 0) {
             remaining -= (this.index + 1);
         }
         
@@ -2464,8 +2446,7 @@ def.type('ArrayLikeQuery', def.Query)
 });
 
 def.type('RangeQuery', def.Query)
-.init(function(start, count, step){
-    this.base();
+.init(function(start, count, step) {
     this._index = start;
     this._count = count; // may be infinte
     this._step  = step == null ? 1 : step;
@@ -2475,7 +2456,7 @@ def.type('RangeQuery', def.Query)
         if(nextIndex < this._count){
             this.item = this._index;
             this._index += this._step;
-            return 1;
+            return true;
         }
     },
     
@@ -2499,64 +2480,67 @@ def.type('RangeQuery', def.Query)
 });
 
 def.type('WhereQuery', def.Query)
-.init(function(source, where, ctx){
-    this.base();
-    this._where  = where;
-    this._ctx    = ctx;
-    this._source = source;
-})
-.add({
-    _next: function(nextIndex){
-        var source = this._source;
-        while(source.next()){
-            var nextItem = source.item;
-            if(this._where.call(this._ctx, nextItem, source.index)){
-                this.item = nextItem;
-                return 1;
+.init(function(source, p, x){
+    var me = this;
+    var i  = -1;
+
+    me.next = where_next;
+
+    function where_next() {
+        while(source.next()) {
+            var e = source.item;
+            if(p.call(x, e, source.index)) {
+                me.item  = e;
+                me.index = ++i;
+                return true;
             }
         }
+        me._finish();
+        return false;
     }
 });
 
 def.type('WhileQuery', def.Query)
-.init(function(source, pred, ctx){
-    this.base();
-    this._pred  = pred;
-    this._ctx    = ctx;
-    this._source = source;
-})
-.add({
-    _next: function(nextIndex){
-        while(this._source.next()){
-            var nextItem = this._source.item;
-            if(this._pred.call(this._ctx, nextItem, this._source.index)){
-                this.item = nextItem;
-                return 1;
+.init(function(s, p, x) {
+    var me = this;
+    var i  = -1;
+
+    me.next = while_next;
+
+    function while_next() {
+        if(s.next()) {
+            var e = s.item;
+            if(p.call(x, e, s.index)) {
+                me.item  = e;
+                me.index = ++i;
+                return true;   
             }
-            return 0;
         }
+        me._finish();
+        return false;
     }
 });
 
 def.type('SelectQuery', def.Query)
-.init(function(source, select, ctx){
-    this.base();
-    this._select = select;
-    this._ctx    = ctx;
-    this._source = source;
-})
-.add({
-    _next: function(nextIndex){
-        if(this._source.next()){
-            this.item = this._select.call(this._ctx, this._source.item, this._source.index);
-            return 1;
+.init(function(s, f, x){
+    var me = this;
+    var i  = -1;
+
+    me.next = select_next;
+
+    function select_next() {
+        if(s.next()) {
+            me.item  = f.call(x, s.item, s.index);
+            me.index = ++i;
+            return true;
         }
+        me._finish();
+        return false;
     }
 });
 
 def.type('SelectManyQuery', def.Query)
 .init(function(source, selectMany, ctx) {
-    this.base();
     this._selectMany = selectMany;
     this._ctx    = ctx;
     this._source = source;
@@ -2569,7 +2553,7 @@ def.type('SelectManyQuery', def.Query)
             if(this._manySource) {
                 if(this._manySource.next()) {
                     this.item = this._manySource.item;
-                    return 1;
+                    return true;
                 }
                 
                 this._manySource = null;
@@ -2587,79 +2571,74 @@ function query_nextMany() {
                             this._source.item;
         if(manySource != null) {
             this._manySource = def.query(manySource);
-            return 1;
+            return true;
         }
     }
 }
 
 def.type('DistinctQuery', def.Query)
-.init(function(source, key, ctx){
-    this.base();
-    this._key    = key;
-    this._ctx    = ctx;
-    this._source = source;
-    this._keys   = {};
-})
-.add({
-    _next: function(nextIndex){
-        while(this._source.next()){
-            var nextItem = this._source.item,
-                keyValue = this._key ?
-                           this._key.call(this._ctx, nextItem, this._source.index) :
-                           nextItem;
+.init(function(s, k, x) {
+    var me = this;
+    var i  = -1;
+    var ks = {};
 
-            // items with null keys are ignored!
-            if(keyValue != null && !def.hasOwn(this._keys, keyValue)){
-                this._keys[keyValue] = true;
-                this.item = nextItem;
-                return 1;
+    me.next = distinct_next;
+
+    function distinct_next() {
+        while(s.next()) {
+            // null key items are ignored!
+            var e = s.item;
+            var v = k ? k.call(x, e, s.index) : e;
+            if(v != null && !objectHasOwn.call(ks, v)) {
+                me.item  = e;
+                me.index = ++i;
+                return (ks[v] = true);
             }
         }
+        me._finish();
+        return false;
     }
 });
 
 def.type('SkipQuery', def.Query)
 .init(function(source, skip){
-    this.base();
     this._source = source;
     this._skip = skip;
 })
 .add({
-    _next: function(nextIndex){
-        while(this._source.next()){
-            if(this._skip > 0){
+    _next: function(nextIndex) {
+        while(this._source.next()) {
+            if(this._skip > 0) {
                 this._skip--;
             } else {
                 this.item = this._source.item;
-                return 1;
+                return true;
             }
         }
     }
 });
 
 def.type('TakeQuery', def.Query)
-.init(function(source, take){
-    this.base();
+.init(function(source, take) {
     this._source = source;
     this._take = take;
 })
 .add({
-    _next: function(nextIndex){
-        if(this._take > 0 && this._source.next()){
+    _next: function(nextIndex) {
+        if(this._take > 0 && this._source.next()) {
             this._take--;
             this.item = this._source.item;
-            return 1;
+            return true;
         }
     }
 });
 
 def.type('ReverseQuery', def.Query)
-.init(function(source){
-    this.base();
+.init(function(source) {
     this._source = source;
 })
 .add({
-    _next: function(nextIndex){
+    _next: function(nextIndex) {
         if(!nextIndex) {
             if(this._source instanceof def.Query) {
                 if(this._source instanceof def.ArrayLikeQuery){
@@ -2673,19 +2652,17 @@ def.type('ReverseQuery', def.Query)
         }
         
         var count = this._count;
-        if(nextIndex < count){
+        if(nextIndex < count) {
             var index = count - nextIndex - 1;
             var source = this._source;
             
-            while(!objectHasOwn.call(source, index)){
-                if(--index < 0){
-                    return 0;
-                }
+            while(!objectHasOwn.call(source, index)) {
+                if(--index < 0) { return false; }
                 this._count--;
             }
             
             this.item = source[index];
-            return 1;
+            return true;
         }
     }
 });
