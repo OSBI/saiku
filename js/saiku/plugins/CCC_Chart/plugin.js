@@ -30,6 +30,19 @@ var Chart = Backbone.View.extend({
         stacked: true
     },
 
+    tipOptions: {
+          delayIn: 200,
+          delayOut:80,
+          offset:  2,
+          html:    true,
+          gravity: "nw",
+          fade:    false,
+          followMouse: true,
+          corners: true,
+          arrow:   false,
+          opacity: 1
+    },
+
     data: null,
     hasProcessed: null,
 
@@ -372,8 +385,8 @@ var Chart = Backbone.View.extend({
         this.render_chart();
     },
 
-    treemap: function() {
-        $(this.el).find('.canvas_wrapper').show();
+    sunburst: function() {
+        this.workspace.query.setProperty('saiku.ui.render.type', 'sunburst');
         var data = this.process_data_tree({ data: this.workspace.query.result.lastresult() });
         var options = this.getQuickOptions({});
 
@@ -384,19 +397,9 @@ var Chart = Backbone.View.extend({
         var re = "",
             nodes = pv.dom(data).nodes(); // .root("flare").nodes();
 
-        var tipOptions = {
-          delayIn: 200,
-          delayOut:80,
-          offset:  2,
-          html:    true,
-          gravity: "nw",
-          fade:    false,
-          followMouse: true,
-          corners: true,
-          arrow:   false,
-          opacity: 1
-        };
-        var color = pv.colors(options.colors).by(function(d) d.parentNode && d.parentNode.nodeName);
+
+
+        var color = pv.colors(options.colors).by(function(d) { return d.parentNode && d.parentNode.nodeName; });
 
         var vis = new pv.Panel()
             .width(options.width)
@@ -405,23 +408,23 @@ var Chart = Backbone.View.extend({
 
 var partition = vis.add(pv.Layout.Partition.Fill)
     .nodes(nodes)
-    .size(function(d) d.nodeValue)
+    .size(function(d) { return d.nodeValue; })
     .order("descending")
     .orient("radial");
 
 partition.node.add(pv.Wedge)
-    .fillStyle( pv.colors(options.colors).by(function(d) d.parentNode && d.parentNode.nodeName))
+    .fillStyle( pv.colors(options.colors).by(function(d) { return d.parentNode && d.parentNode.nodeName }))
     .strokeStyle("#fff")
     .lineWidth(0.5)
     .text(function(d) {  return (d.nodeName + " : " + d.nodeValue); } )
             .cursor('pointer')
             .events("all")
-            .event('mousemove', pv.Behavior.tipsy(tipOptions) );
+            .event('mousemove', pv.Behavior.tipsy(this.tipOptions) );
 
 partition.label.add(pv.Label)
-    .visible(function(d) d.angle * d.outerRadius >= 6);
+    .visible(function(d) { return d.angle * d.outerRadius >= 6; });
 
-    vis.render();
+    
 
 /*
         var treemap = vis.add(pv.Layout.Treemap)
@@ -443,7 +446,7 @@ partition.label.add(pv.Label)
             .antialias(false)
             .cursor('pointer')
             .events("all")
-            .event('mousemove', pv.Behavior.tipsy(tipOptions) );
+            .event('mousemove', pv.Behavior.tipsy(this.tipOptions) );
 
         treemap.label.add(pv.Label)
             .textStyle(function(d) pv.rgb(0, 0, 0, title(d).match(re) ? 1 : .2));
@@ -452,8 +455,20 @@ partition.label.add(pv.Label)
             vis.render();
             //this.render_chart_element(true);
 
-            */
 
+        */
+        this.chart = vis;
+        vis.render();
+        this.render_chart_element(false);
+    },
+
+    treemap: function() {
+        this.workspace.query.setProperty('saiku.ui.render.type', 'treemap');
+        var options = {
+            type: "TreemapChart"
+        };
+        this.cccOptions = this.getQuickOptions(options);
+        this.render_chart();
     },
 
     rerender: function(event) {
@@ -534,12 +549,16 @@ partition.label.add(pv.Label)
             nullShape: "cross",
             colorNormByCategory: false,
             sizeRole: "value",
-            legend: false,
+            legendPosition: "right",
+            legend: true,
             hoverable: true,
             axisComposite: true,
             colors: ["red", "yellow", "lightgreen", "darkgreen"],
-            xAxisSize: 130,
-            yAxisSize: 130
+//            xAxisSize: 130,
+            yAxisSize: "30%",
+            extensionPoints: {
+                //yAxisLabel_textAlign: "right"
+            }
         },
         
         WaterfallChart: {
@@ -575,6 +594,15 @@ partition.label.add(pv.Label)
                 area_interpolate: "monotone",
                 line_interpolate: "monotone"
             }
+        },
+        TreemapChart: {
+            legendPosition: "right",
+             multiChartIndexes: 0,
+            extensionPoints: {
+                leaf_lineWidth : 2
+            },
+            layoutMode: "slice-and-dice",
+            valuesVisible: true
         }
     },
     
@@ -748,14 +776,26 @@ this.med3 = new Date().getTime();
 $(this.el).prepend(" pvc (" + (this.med3 - this.med) + ")" );
 */
 
-        this.chart.setData(this.data, {
-            crosstabMode: true,
-            seriesInRows: false
-        });
+        if (true || runtimeChartDefinition.type == "TreemapChart") {
+            this.chart.setData( this.process_data_tree({ data: this.workspace.query.result.lastresult() }, true), {
+                crosstabMode: true,
+                seriesInRows: false
+            });
+
+        } else {
+            this.chart.setData(this.data, {
+                crosstabMode: true,
+                seriesInRows: false
+            });
+        }
         this.render_chart_element(animate);
     },
 
     render_chart_element: function(animate) {
+        var isSmall = (this.data != null && this.data.height < 80 && this.data.width < 80);
+        var isMedium = (this.data != null && this.data.height < 300 && this.data.width < 300);
+        var isBig = (!isSmall && !isMedium);
+
         try {
             if (animate) {
                 $(this.el).find('.canvas_wrapper').show();
@@ -770,7 +810,7 @@ $(this.el).prepend(" pvc (" + (this.med3 - this.med) + ")" );
         }
         this.workspace.processing.hide();
         this.workspace.adjust();
-        if (animate) {
+        if (this.chart.options && this.chart.options.animate) {
             return false;
         }
         // $('#nav_' + this.id).show();
@@ -912,12 +952,16 @@ $(this.el).prepend(" | chart process");
         }
     },
 
-    process_data_tree: function(args) {
-        var tree =  {
-            data: {}
-        };
+    process_data_tree: function(args, flat) {
         var data = {};
-        var currentDataPos = data.data;
+        if (flat) {
+            data.resultset = [];
+            data.metadata = [];
+            data.height = 0;
+            data.width = 0;
+        }
+
+        var currentDataPos = data;
         if (typeof args == "undefined" || typeof args.data == "undefined" || 
              ($(this.workspace.el).is(':visible') && !$(this.el).is(':visible'))) {
             return;
@@ -936,7 +980,6 @@ $(this.el).prepend(" | chart process");
             var lowest_level = 0;
             var data_start = 0;
             for (var row = 0; data_start == 0 && row < cellset.length; row++) {
-                    this.data.metadata = [];
                     for (var field = 0; field < cellset[row].length; field++) {
                         var firstHeader = [];
 
@@ -945,6 +988,13 @@ $(this.el).prepend(" | chart process");
                         }
                         if (cellset[row][field].type == "ROW_HEADER_HEADER") {
                             while(cellset[row][field].type == "ROW_HEADER_HEADER") {
+                                if (flat) {
+                                    data.metadata.push({
+                                        colIndex: field,
+                                        colType: "String",
+                                        colName: cellset[row][field].value
+                                    });
+                                }
                                 field++;
                             }
                             lowest_level = field - 1;
@@ -953,42 +1003,55 @@ $(this.el).prepend(" | chart process");
                             var lowest_col_header = 0;
                             var colheader = [];
                             while(lowest_col_header <= row) {
+                                colheader.push(cellset[lowest_col_header][field].value);
                                 lowest_col_header++;
+                            }
+                            if (flat) {
+                                data.metadata.push({
+                                    colIndex: field,
+                                    colType: "Numeric",
+                                    colName: colheader.join('/')
+                                });
                             }
                             data_start = row+1;
                         }
                     }
             }
             var labelsSet = {};
-            var nextDataPos = data;
+            var rowlabels = [];
+            for (var labelCol = 0; labelCol <= lowest_level; labelCol++) {
+                rowlabels.push("-");
+            }
             for (var row = data_start; row < cellset.length; row++) {
             if (cellset[row][0].value !== "") {
                     var record = [];
+                    var flatrecord = [];
                     var parent = null;
                     var rv = null;                        
-
+                    
                     for (var labelCol = 0; labelCol <= lowest_level; labelCol++) {
-                        var lastKnownUpperLevelRow = row;
-                        if (row < (cellset.length - 1 ) && labelCol < lowest_level && cellset[row+1][labelCol].value !== 'null') {
-                            if (labelCol == 0) {
-                                nextDataPos = data;
-                            } else {
-                                nextDataPos = currentDataPos;
+                        if (cellset[row] && cellset[row][labelCol].value === 'null') {
+                            currentDataPos = data;
+                            var prevLabel = 0;
+                            for (; prevLabel < lowest_level && cellset[row][prevLabel].value === 'null'; prevLabel++) {
+                                currentDataPos = currentDataPos[ rowlabels[prevLabel] ];
                             }
+                            if (prevLabel > labelCol) {
+                                labelCol = prevLabel;
+                            }
+
                         }
                         if (cellset[row] && cellset[row][labelCol].value !== 'null') {
-                            if (labelCol == 0) {
-                                currentDataPos = data;
-                            }
                             rv = cellset[row][labelCol].value;
-                                if (!currentDataPos.hasOwnProperty(rv)) {
-                                    currentDataPos[rv] = {};
-                                }
-                                parent = currentDataPos;
-                                currentDataPos = currentDataPos[rv];
+                            rowlabels[labelCol] = rv;
+                            if (!currentDataPos.hasOwnProperty(rv)) {
+                                currentDataPos[rv] = {};
+                            }
+                            parent = currentDataPos;
+                            currentDataPos = currentDataPos[rv];
                         }
                     }
-
+                    flatrecord = _.clone(rowlabels);
                     for (var col = lowest_level + 1; col < cellset[row].length; col++) {
                         var cell = cellset[row][col];
                         var value = cell.value || 0;
@@ -1000,11 +1063,13 @@ $(this.el).prepend(" | chart process");
                             value = parseFloat(cell.value.replace(/[^a-zA-Z 0-9.]+/g,''));
                         }
                         record.push(value);
+                        flatrecord.push(value);
                     }
+                    if (flat) data.resultset.push(flatrecord);
                     var sum = _.reduce(record, function(memo, num){ return memo + num; }, 0);
                     parent[rv] = sum;
+                    currentDataPos = data;
                 }
-                currentDataPos = nextDataPos;
             }
             console.log(data);
             return data;
