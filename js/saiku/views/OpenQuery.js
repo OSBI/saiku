@@ -106,9 +106,11 @@ var OpenQuery = Backbone.View.extend({
                 $(this.el).find('.cancel_search').hide();
             }
             $(this.el).find('li.query').removeClass('hide')
-            $(this.el).find('li.query a').filter(function (index) { 
-                return $(this).text().toLowerCase().indexOf(filter) == -1; 
-            }).parent().addClass('hide');
+            $(this.el).find('li.query a').each(function (index) { 
+                if($(this).text().toLowerCase().indexOf(filter) == -1) {
+                    $(this).parent('li.query').addClass('hide');
+                } 
+            });
             $(this.el).find('li.folder').addClass('hide');
             $(this.el).find('li.query').not('.hide').parents('li.folder').removeClass('hide');
             //$(this.el).find( 'li.folder .folder_content').not(':has(.query:visible)').parent().addClass('hide');
