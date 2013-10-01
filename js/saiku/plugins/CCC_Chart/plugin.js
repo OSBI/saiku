@@ -1042,8 +1042,18 @@ $(this.el).prepend(" | chart process");
 
                         }
                         if (cellset[row] && cellset[row][labelCol].value !== 'null') {
+                            if (labelCol == 0) {
+                                for (var xx = 0; xx <= lowest_level; xx++) {
+                                    rowlabels[xx] = "-";
+                                }
+                            }
+                            if (typeof currentDataPos == "number") {
+                                parent[rv] = {};
+                                currentDataPos = parent[rv];
+                            }
                             rv = cellset[row][labelCol].value;
                             rowlabels[labelCol] = rv;
+
                             if (!currentDataPos.hasOwnProperty(rv)) {
                                 currentDataPos[rv] = {};
                             }
@@ -1071,7 +1081,7 @@ $(this.el).prepend(" | chart process");
                     currentDataPos = data;
                 }
             }
-            console.log(data);
+            //console.log(data);
             return data;
         } else {
             $(this.el).find('.canvas_wrapper').text("No results").show();
