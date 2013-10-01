@@ -63,17 +63,28 @@ public class ThinQueryService implements Serializable {
 
 	
 	protected CellSet executeInternalQuery(ThinQuery query) throws Exception {
-		OlapConnection con = olapDiscoverService.getNativeConnection(query.getCube().getConnectionName());
-		Cube cub = olapDiscoverService.getNativeCube(query.getCube());
 		
-		if (StringUtils.isNotBlank(query.getMdx())) {
-			con.setCatalog(query.getCube().getCatalogName());
-			OlapStatement stmt = con.createStatement();
-			CellSet cs = stmt.executeOlapQuery(query.getMdx());
-			return cs;
-		} else {
+		OlapConnection con = olapDiscoverService.getNativeConnection(query.getCube().getConnectionName());
+		con.setCatalog(query.getCube().getCatalogName());
+		OlapStatement stmt = con.createStatement();
+		
+		String mdx = null;
+		if (ThinQuery.Type.MDX.equals(query.getType())) {
+			mdx = query.getMdx();
+		} else if (ThinQuery.Type.QUERYMODEL.equals(query.getType())) {
+			Cube cub = olapDiscoverService.getNativeCube(query.getCube());
 			Query q = Fat.convert(query, cub);
-			return q.execute();
+			mdx = q.getMdx();
+		} else {
+			throw new Exception("Cannot get mdx for query " + query.getName() + " - no querymodel or mdx present!");
+		}
+		
+		try {	
+			CellSet cs = stmt.executeOlapQuery(mdx);
+			stmt.close();
+			return cs;
+		} finally {
+			stmt.close();
 		}
 	}
 	

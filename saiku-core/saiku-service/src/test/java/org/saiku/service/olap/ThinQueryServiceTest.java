@@ -19,13 +19,17 @@ import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Measure;
 import org.saiku.TestSaikuContext;
 import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.query2.ThinLevel;
 import org.saiku.olap.query2.ThinQuery;
+import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
 import org.saiku.olap.query2.util.Fat;
 import org.saiku.olap.query2.util.Thin;
 import org.saiku.query.Query;
 import org.saiku.query.QueryAxis;
 import org.saiku.query.QueryHierarchy;
 import org.saiku.query.SortOrder;
+import org.saiku.query.TestContext;
+import org.saiku.query.TestUtil;
 import org.saiku.query.mdx.IFilterFunction.MdxFunctionType;
 import org.saiku.query.mdx.NFilter;
 import org.saiku.query.metadata.CalculatedMeasure;
@@ -113,7 +117,6 @@ public class ThinQueryServiceTest extends TestCase {
 		ThinQuery tq2 = Thin.convert(q2, c);
 		String second = om.defaultPrettyPrintingWriter().writeValueAsString(tq2);
 		assertEquals(first, second);
-		
 		compareQuery(name, second);
 		
 		String mdx = q2.getSelect().toString();
@@ -148,6 +151,111 @@ public class ThinQueryServiceTest extends TestCase {
     	
     }
     
+    public void testBasicParameter1() {
+    	
+    	try {
+    	SaikuCube c = TestSaikuContext.getSalesCube();
+		Cube cub = ods.getNativeCube(c);
+		String name = "parameter1";
+		Query query = new Query(name, cub);
+		QueryAxis columns = query.getAxis(Axis.COLUMNS);
+		QueryAxis rows = query.getAxis(Axis.ROWS);
+		QueryHierarchy products = query.getHierarchy("Product");
+		products.includeLevel("Product Family");
+		products.excludeMember("[Product].[Non-Consumable]");
+		rows.addHierarchy(products);
+		
+		QueryHierarchy edu = query.getHierarchy("Education Level");
+		edu.includeLevel("Education Level");
+		columns.addHierarchy(edu);
+
+		ThinQuery tq = Thin.convert(query, c);
+		ThinLevel tl = tq.getQueryModel().getAxis(AxisLocation.ROWS).getHierarchy("Product").getLevel("Product Family");
+		tl.getSelection().setParameterName("productFamilyList");
+		tq.setParameter("productFamilyList", "[Product].[Food]");
+		
+		
+		
+		ObjectMapper om = new ObjectMapper();
+		String first = om.defaultPrettyPrintingWriter().writeValueAsString(tq);
+		
+
+		compareQuery(name, first);
+		
+		Query q2 = Fat.convert(tq, cub);
+		
+		String mdx = q2.getSelect().toString();
+		
+		String expectedMdx = 
+				"WITH\n"
+		                + "SET [~COLUMNS] AS\n"
+		                + "    {[Education Level].[Education Level].Members}\n"
+		                + "SET [~ROWS] AS\n"
+		                + "    Except({[Product].[Product Family].Members}, {[Product].[Food]})\n"
+		                + "SELECT\n"
+		                + "[~COLUMNS] ON COLUMNS,\n"
+		                + "[~ROWS] ON ROWS\n"
+		                + "FROM [Sales]";
+
+		
+		assertEquals(expectedMdx, mdx);
+
+		CellSet cs = tqs.executeInternalQuery(tq);
+//		String s = TestUtil.toString(cs);
+////			        System.out.println(TestUtil.toJavaString(s));
+//		TestUtil.assertEqualsVerbose(
+//				"Axis #0:\n"
+//		                + "{}\n"
+//		                + "Axis #1:\n"
+//		                + "{[Education Level].[Bachelors Degree]}\n"
+//		                + "{[Education Level].[Graduate Degree]}\n"
+//		                + "{[Education Level].[High School Degree]}\n"
+//		                + "{[Education Level].[Partial College]}\n"
+//		                + "{[Education Level].[Partial High School]}\n"
+//		                + "Axis #2:\n"
+//		                + "{[Product].[Drink]}\n"
+//		                + "{[Product].[Non-Consumable]}\n"
+//		                + "Row #0: 6,423\n"
+//		                + "Row #0: 1,325\n"
+//		                + "Row #0: 7,226\n"
+//		                + "Row #0: 2,164\n"
+//		                + "Row #0: 7,459\n"
+//		                + "Row #1: 13,051\n"
+//		                + "Row #1: 2,990\n"
+//		                + "Row #1: 14,929\n"
+//		                + "Row #1: 4,522\n"
+//		                + "Row #1: 14,744\n",
+//						s);
+		assertEquals("[ COLUMNS: 5 ][ ROWS: 2 ]", getResultInfo(cs));
+		
+		tq.setParameter("productFamilyList", "[Product].[Food],[Product].[Drink]");
+		q2 = Fat.convert(tq, cub);
+		mdx = q2.getSelect().toString();
+
+		expectedMdx =
+				"WITH\n"
+		                + "SET [~COLUMNS] AS\n"
+		                + "    {[Education Level].[Education Level].Members}\n"
+		                + "SET [~ROWS] AS\n"
+		                + "    Except({[Product].[Product Family].Members}, {[Product].[Food], [Product].[Drink]})\n"
+		                + "SELECT\n"
+		                + "[~COLUMNS] ON COLUMNS,\n"
+		                + "[~ROWS] ON ROWS\n"
+		                + "FROM [Sales]";
+		
+		assertEquals(expectedMdx, mdx);
+		
+		cs = tqs.executeInternalQuery(tq);
+		assertEquals("[ COLUMNS: 5 ][ ROWS: 1 ]", getResultInfo(cs));
+		
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		Assert.fail();
+    	}
+
+    	
+    }
+    
     public void testMdxQuery1() {
     	
     	try {
@@ -159,11 +267,12 @@ public class ThinQueryServiceTest extends TestCase {
 		String first = om.defaultPrettyPrintingWriter().writeValueAsString(tq);
 		
 		compareQuery(name, first);
-		
 				
 		CellSet cs = this.tqs.executeInternalQuery(tq);
 		assertEquals("[ COLUMNS: 3 ][ ROWS: 1 ]", getResultInfo(cs));
 
+		Cube cube = ods.getNativeCube(c);
+		Query q = Fat.convert(tq, cube);
 		
 //		File f = new File("/tmp/" + name + ".json");
 //		FileWriter fw = new FileWriter(f);

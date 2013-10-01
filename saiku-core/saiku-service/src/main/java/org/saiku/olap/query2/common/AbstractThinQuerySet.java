@@ -11,9 +11,8 @@ public abstract class AbstractThinQuerySet implements ThinQuerySet {
 	private String mdx;
 	
 	private List<ThinFilter> filters = new ArrayList<ThinFilter>();
-
-	public abstract String getName();
 	
+	public abstract String getName();
 	
 	public void setMdx(String mdx) {
 		this.mdx = mdx;
@@ -39,5 +38,4 @@ public abstract class AbstractThinQuerySet implements ThinQuerySet {
 	public void clearFilters() {
 		filters.clear();
 	}
-
 }

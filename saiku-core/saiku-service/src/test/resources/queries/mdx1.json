@@ -12,5 +12,7 @@
   },
   "mdx" : "SELECT Gender.Members on COLUMNS, Measures.Profit on ROWS from Sales",
   "name" : "mdx1",
+  "parameters" : {
+  },
   "type" : "MDX"
 }

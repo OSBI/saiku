@@ -60,5 +60,7 @@
   },
   "mdx" : null,
   "name" : "dummy",
+  "parameters" : {
+  },
   "type" : "QUERYMODEL"
 }

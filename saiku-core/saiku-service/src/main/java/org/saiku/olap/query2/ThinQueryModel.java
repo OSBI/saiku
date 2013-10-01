@@ -27,6 +27,10 @@ public class ThinQueryModel {
 	public Map<AxisLocation, ThinAxis> getAxes() {
 		return axes;
 	}
+	
+	public ThinAxis getAxis(AxisLocation axis) {
+		return axes.get(axis);
+	}
 
 	/**
 	 * @param axes the axes to set

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
 import org.olap4j.metadata.Cube;
@@ -24,6 +25,7 @@ import org.saiku.olap.query2.ThinQueryModel;
 import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
 import org.saiku.olap.query2.common.ThinQuerySet;
 import org.saiku.olap.query2.common.ThinSortableQuerySet;
+import org.saiku.olap.query2.common.TqUtil;
 import org.saiku.olap.query2.filter.ThinFilter;
 import org.saiku.query.IQuerySet;
 import org.saiku.query.ISortableQuerySet;
@@ -42,11 +44,14 @@ import org.saiku.query.metadata.CalculatedMeasure;
 
 public class Fat {
 	
-	public static Query convert(ThinQuery query, Cube cube) throws SQLException {
-		ThinQueryModel model = query.getQueryModel();
-		Query q = new Query(query.getName(), cube);
+	public static Query convert(ThinQuery tq, Cube cube) throws SQLException {
 		
-		convertAxes(q, query.getQueryModel().getAxes());
+		Query q = new Query(tq.getName(), cube);
+		if (tq.getQueryModel() == null)
+			return q;
+
+		ThinQueryModel model = tq.getQueryModel();
+		convertAxes(q, tq.getQueryModel().getAxes(), tq);
 		convertCalculatedMeasures(q, model.getCalculatedMeasures());
 		convertDetails(q, model.getDetails());
 		q.setVisualTotals(model.isVisualTotals());
@@ -92,11 +97,11 @@ public class Fat {
 		}
 	}
 
-	private static void convertAxes(Query q, Map<AxisLocation, ThinAxis> axes) throws OlapException {
+	private static void convertAxes(Query q, Map<AxisLocation, ThinAxis> axes, ThinQuery tq) throws OlapException {
 		if (axes != null) {
 			for (AxisLocation axis : sortAxes(axes.keySet())) {
 				if (axis != null) {
-					convertAxis(q, axes.get(axis));
+					convertAxis(q, axes.get(axis), tq);
 				}
 			}
 		}
@@ -114,13 +119,13 @@ public class Fat {
 	
 	
 
-	private static void convertAxis(Query query, ThinAxis thinAxis) throws OlapException {
+	private static void convertAxis(Query query, ThinAxis thinAxis, ThinQuery tq) throws OlapException {
 		Axis loc = getLocation(thinAxis.getLocation());
 		QueryAxis qaxis = query.getAxis(loc);
 		for (ThinHierarchy hierarchy : thinAxis.getHierarchies().values()) {
 			QueryHierarchy qh = query.getHierarchy(hierarchy.getName());
 			if (qh != null) {
-				convertHierarchy(qh, hierarchy);
+				convertHierarchy(qh, hierarchy, tq);
 				qaxis.addHierarchy(qh);
 			}
 		}
@@ -128,30 +133,50 @@ public class Fat {
 		extendSortableQuerySet(query, qaxis, thinAxis);
 	}
 	
-	private static void convertHierarchy(QueryHierarchy qh, ThinHierarchy th) throws OlapException {
+	private static void convertHierarchy(QueryHierarchy qh, ThinHierarchy th, ThinQuery tq) throws OlapException {
 		for (ThinLevel tl : th.getLevels().values()) {
 			QueryLevel ql = qh.includeLevel(tl.getName());
 			
-			if (tl.getSelections() != null) {
-				switch(tl.getSelections().getType()) {
+			if (tl.getSelection() != null) {
+				String parameter = tl.getSelection().getParameterName();
+				List<String> parameterValues = null;
+				if (StringUtils.isNotBlank(parameter)) {
+					String value = tq.getParameter(parameter);
+					parameterValues = TqUtil.splitParameterValues(value);
+				}
+				switch(tl.getSelection().getType()) {
 				case INCLUSION:
-					for (ThinMember tm : tl.getSelections().getMembers()) {
-						qh.includeMember(tm.getUniqueName());
+					if (parameterValues != null) {
+						for (String m : parameterValues) {
+							qh.includeMember(m);
+						}
+
+					} else {
+						for (ThinMember tm : tl.getSelection().getMembers()) {
+							qh.includeMember(tm.getUniqueName());
+						}
 					}
 					break;
 
 				case EXCLUSION:
-					for (ThinMember tm : tl.getSelections().getMembers()) {
-						qh.excludeMember(tm.getUniqueName());
+					if (parameterValues != null) {
+						for (String m : parameterValues) {
+							qh.excludeMember(m);
+						}
+
+					} else {
+						for (ThinMember tm : tl.getSelection().getMembers()) {
+							qh.excludeMember(tm.getUniqueName());
+						}
 					}
 					break;
 				case RANGE:
-					int size = tl.getSelections().getMembers().size();
-					int iterations = tl.getSelections().getMembers().size() / 2;
+					int size = tl.getSelection().getMembers().size();
+					int iterations = tl.getSelection().getMembers().size() / 2;
 					if (size > 2 && size % 2 == 0) {
 						for (int i = 0; i < iterations; i++) {
-							ThinMember start = tl.getSelections().getMembers().get(iterations * 2 + i);
-							ThinMember end = tl.getSelections().getMembers().get(iterations * 2 + i + 1);
+							ThinMember start = tl.getSelection().getMembers().get(iterations * 2 + i);
+							ThinMember end = tl.getSelection().getMembers().get(iterations * 2 + i + 1);
 							qh.includeRange(start.getUniqueName(), end.getUniqueName());
 						}
 					}

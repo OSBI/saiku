@@ -1,5 +1,8 @@
 package org.saiku.olap.query2;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.saiku.olap.dto.SaikuCube;
 
@@ -9,8 +12,9 @@ public class ThinQuery {
 	private SaikuCube cube;
 	private String mdx;
 	private String name;
+	private Map<String, String> parameters = new HashMap<String, String>();
 	
-	private enum Type {
+	public enum Type {
 		MDX,
 		QUERYMODEL
 	}
@@ -110,5 +114,30 @@ public class ThinQuery {
 	 */
 	public void setType(Type type) {
 		this.type = type;
+	}
+
+	/**
+	 * @return the parameters
+	 */
+	public Map<String, String> getParameters() {
+		return parameters;
+	}
+
+	/**
+	 * @param parameters the parameters to set
+	 */
+	public void setParameters(Map<String, String> parameters) {
+		this.parameters = parameters;
+	}
+	
+	public void setParameter(String name, String value) {
+		this.parameters.put(name, value);
+	}
+
+	public String getParameter(String parameter) {
+		if (parameters.containsKey(parameter)) {
+			return parameters.get(parameter);
+		}
+		return null;
 	}
 }

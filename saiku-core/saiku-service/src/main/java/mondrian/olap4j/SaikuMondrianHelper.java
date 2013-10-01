@@ -17,6 +17,7 @@ package mondrian.olap4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import mondrian.olap.MondrianServer;
 import mondrian.olap.Role;
@@ -27,6 +28,7 @@ import mondrian.rolap.RolapConnection;
 
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
+import org.olap4j.metadata.MetadataElement;
 
 public class SaikuMondrianHelper {
 

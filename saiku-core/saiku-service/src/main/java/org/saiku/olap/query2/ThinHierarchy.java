@@ -46,6 +46,14 @@ public class ThinHierarchy extends AbstractThinSortableQuerySet {
 	public Map<String, ThinLevel> getLevels() {
 		return levels;
 	}
+	
+	public ThinLevel getLevel(String name) {
+		if (levels.containsKey(name)) {
+			return levels.get(name);
+		}
+		return null;
+
+	}
 
 	/**
 	 * @param levels the levels to set

@@ -7,13 +7,13 @@ public class ThinLevel extends AbstractThinQuerySet {
 	private String name;
 	private String caption;
 	
-	private ThinSelection selections;
+	private ThinSelection selection;
 	
 	public ThinLevel() {};
 	public ThinLevel(String name, String caption, ThinSelection selections) {
 		this.name = name;
 		this.caption = caption;
-		this.selections = selections;
+		this.selection = selections;
 		
 	}
 	@Override
@@ -29,8 +29,8 @@ public class ThinLevel extends AbstractThinQuerySet {
 	/**
 	 * @return the selections
 	 */
-	public ThinSelection getSelections() {
-		return selections;
+	public ThinSelection getSelection() {
+		return selection;
 	}
 
 

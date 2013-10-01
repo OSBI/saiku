@@ -49,6 +49,13 @@ public class ThinAxis extends AbstractThinSortableQuerySet {
 	public Map<String, ThinHierarchy> getHierarchies() {
 		return hierarchies;
 	}
+	
+	public ThinHierarchy getHierarchy(String name) {
+		if (hierarchies.containsKey(name)) {
+			return hierarchies.get(name);
+		}
+		return null;
+	}
 
 	/**
 	 * @param hierarchies the hierarchies to set

@@ -15,6 +15,7 @@ public class ThinSelection {
 	
 	private Type type = Type.INCLUSION;
 	private List<ThinMember> members = new ArrayList<ThinMember>();
+	private String parameter = null;
 	
 	public ThinSelection() {};
 	public ThinSelection(Type type, List<ThinMember> members) {
@@ -48,4 +49,11 @@ public class ThinSelection {
 		this.members = members;
 	}
 	
+	public String getParameterName() {
+		return parameter;
+	}
+	public void setParameterName(String name) {
+		this.parameter = name;
+		
+	}
 }
