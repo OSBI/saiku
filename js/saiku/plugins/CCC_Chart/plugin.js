@@ -226,7 +226,7 @@ var Chart = Backbone.View.extend({
 
         var hasRun = this.workspace.query.result.hasRun();
         if (hasRun) {
-            this.process_data({ data: this.workspace.query.result.lastresult() });
+            this.process_data_tree({ data: this.workspace.query.result.lastresult() }, true, true);
         }
 
     },
@@ -416,7 +416,13 @@ partition.node.add(pv.Wedge)
     .fillStyle( pv.colors(options.colors).by(function(d) { return d.parentNode && d.parentNode.nodeName }))
     .strokeStyle("#fff")
     .lineWidth(0.5)
-    .text(function(d) {  return (d.nodeName + " : " + d.nodeValue); } )
+    .text(function(d) {  
+        var v = "";
+        if (typeof d.nodeValue != "undefined") {
+            v = " : " + d.nodeValue;
+        }
+        return (d.nodeName + v); 
+    } )
             .cursor('pointer')
             .events("all")
             .event('mousemove', pv.Behavior.tipsy(this.tipOptions) );
@@ -775,19 +781,11 @@ this.call_time = undefined;
 this.med3 = new Date().getTime();
 $(this.el).prepend(" pvc (" + (this.med3 - this.med) + ")" );
 */
-
-        if (true || runtimeChartDefinition.type == "TreemapChart") {
-            this.chart.setData( this.process_data_tree({ data: this.workspace.query.result.lastresult() }, true), {
-                crosstabMode: true,
-                seriesInRows: false
-            });
-
-        } else {
             this.chart.setData(this.data, {
                 crosstabMode: true,
                 seriesInRows: false
             });
-        }
+
         this.render_chart_element(animate);
     },
 
@@ -826,7 +824,8 @@ $(this.el).prepend(" pvc (" + (this.med3 - this.med) + ")" );
         if (! $(this.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
             return;
         }
-        return _.delay(this.process_data, 0, args);
+        _.delay(this.process_data_tree, 0, args, true, true);
+
 
     },
     
@@ -859,14 +858,18 @@ $(this.el).prepend(" | chart process");
 */
             var lowest_level = 0;
             var data_start = 0;
+            var hasStart = false;
             for (var row = 0; data_start == 0 && row < cellset.length; row++) {
                     this.data.metadata = [];
                     for (var field = 0; field < cellset[row].length; field++) {
                         var firstHeader = [];
-
-                        while (cellset[row][field].type == "COLUMN_HEADER" && cellset[row][field].value == "null") {
-                            row++;
+                        if (!hasStart) {
+                            while (cellset[row][field].type == "COLUMN_HEADER" && cellset[row][field].value == "null") {
+                                row++;
+                            }
                         }
+                        hasStart = true;
+                        
                         if (cellset[row][field].type == "ROW_HEADER_HEADER") {
 
                             while(cellset[row][field].type == "ROW_HEADER_HEADER") {
@@ -877,21 +880,23 @@ $(this.el).prepend(" | chart process");
                             this.data.metadata.push({
                                 colIndex: 0,
                                 colType: "String",
-                                colName: firstHeader.join('/')
+                                colName: firstHeader.join(' ~ ')
                             });    
                             lowest_level = field - 1;
                         }
-                        if (cellset[row][field].type == "COLUMN_HEADER" && cellset[row][field].value != "null") {
+                        if (cellset[row][field].type == "COLUMN_HEADER") {
                             var lowest_col_header = 0;
                             var colheader = [];
                             while(lowest_col_header <= row) {
-                                colheader.push(cellset[lowest_col_header][field].value);
+                                if (cellset[lowest_col_header][field].value !== "null") {
+                                    colheader.push(cellset[lowest_col_header][field].value);
+                                }
                                 lowest_col_header++;
                             }
                             this.data.metadata.push({
                                 colIndex: field - lowest_level + 1,
                                 colType: "Numeric",
-                                colName: colheader.join('/')
+                                colName: colheader.join(' ~ ')
                             });
 
                             data_start = row+1;
@@ -913,7 +918,7 @@ $(this.el).prepend(" | chart process");
                             if (label == "") {
                                 label = cellset[lastKnownUpperLevelRow][labelCol].value;
                             } else {
-                                label = cellset[lastKnownUpperLevelRow][labelCol].value + " / " + label;
+                                label = cellset[lastKnownUpperLevelRow][labelCol].value + " ~ " + label;
                             }
                         }
                     }
@@ -952,7 +957,7 @@ $(this.el).prepend(" | chart process");
         }
     },
 
-    process_data_tree: function(args, flat) {
+    process_data_tree: function(args, flat, setdata) {
         var data = {};
         if (flat) {
             data.resultset = [];
@@ -979,13 +984,15 @@ $(this.el).prepend(" | chart process");
         if (cellset && cellset.length > 0) {
             var lowest_level = 0;
             var data_start = 0;
+            var hasStart = false;
             for (var row = 0; data_start == 0 && row < cellset.length; row++) {
                     for (var field = 0; field < cellset[row].length; field++) {
-                        var firstHeader = [];
-
-                        while (cellset[row][field].type == "COLUMN_HEADER" && cellset[row][field].value == "null") {
-                            row++;
+                        if (!hasStart) {
+                            while (cellset[row][field].type == "COLUMN_HEADER" && cellset[row][field].value == "null") {
+                                row++;
+                            }
                         }
+                        hasStart = true;
                         if (cellset[row][field].type == "ROW_HEADER_HEADER") {
                             while(cellset[row][field].type == "ROW_HEADER_HEADER") {
                                 if (flat) {
@@ -999,18 +1006,20 @@ $(this.el).prepend(" | chart process");
                             }
                             lowest_level = field - 1;
                         }
-                        if (cellset[row][field].type == "COLUMN_HEADER" && cellset[row][field].value != "null") {
+                        if (cellset[row][field].type == "COLUMN_HEADER") {
                             var lowest_col_header = 0;
                             var colheader = [];
                             while(lowest_col_header <= row) {
-                                colheader.push(cellset[lowest_col_header][field].value);
+                                if (cellset[lowest_col_header][field].value !== "null") {
+                                    colheader.push(cellset[lowest_col_header][field].value);
+                                }
                                 lowest_col_header++;
                             }
                             if (flat) {
                                 data.metadata.push({
                                     colIndex: field,
                                     colType: "Numeric",
-                                    colName: colheader.join('/')
+                                    colName: colheader.join(' ~ ')
                                 });
                             }
                             data_start = row+1;
@@ -1020,7 +1029,7 @@ $(this.el).prepend(" | chart process");
             var labelsSet = {};
             var rowlabels = [];
             for (var labelCol = 0; labelCol <= lowest_level; labelCol++) {
-                rowlabels.push("-");
+                rowlabels.push(null);
             }
             for (var row = data_start; row < cellset.length; row++) {
             if (cellset[row][0].value !== "") {
@@ -1044,7 +1053,7 @@ $(this.el).prepend(" | chart process");
                         if (cellset[row] && cellset[row][labelCol].value !== 'null') {
                             if (labelCol == 0) {
                                 for (var xx = 0; xx <= lowest_level; xx++) {
-                                    rowlabels[xx] = "-";
+                                    rowlabels[xx] = null;
                                 }
                             }
                             if (typeof currentDataPos == "number") {
@@ -1082,6 +1091,13 @@ $(this.el).prepend(" | chart process");
                 }
             }
             //console.log(data);
+            if (setdata) {
+                this.data = data;
+                this.hasProcessed = true;
+                this.data.height = this.data.resultset.length;
+                this.cccOptions = this.getQuickOptions(this.cccOptions);
+                this.render_chart();
+            }
             return data;
         } else {
             $(this.el).find('.canvas_wrapper').text("No results").show();
