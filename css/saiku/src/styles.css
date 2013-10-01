@@ -293,7 +293,6 @@ html, body {
 }
 .sidebar .sidebar_inner {
     padding: 10px;
-
 }
 .sidebar .sidebar_inner select {
     border: 1px solid #CCC;
@@ -1737,6 +1736,7 @@ span.cancel_search:hover {
 .RepositoryObjects {
     margin: 0;
     padding: 0;
+    -webkit-transform: scale3d(1,1,1);
 }
 
 .RepositoryObjects li {
