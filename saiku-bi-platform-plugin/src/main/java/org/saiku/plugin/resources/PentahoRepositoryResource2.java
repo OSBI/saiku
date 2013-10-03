@@ -41,9 +41,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.commons.vfs.FileObject;
-import org.apache.commons.vfs.FileType;
-import org.apache.commons.vfs.FileUtil;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.io.DOMReader;
@@ -66,7 +63,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataMultiPart;
 import com.sun.jersey.multipart.FormDataParam;
 
 /**
