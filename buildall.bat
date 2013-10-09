@@ -23,3 +23,6 @@ call mvn clean install
 echo "Building saiku-bi-platform-plugin"
 cd ..\saiku-bi-platform-plugin
 call mvn clean package
+echo "Building saiku-bi-platform-plugin-p5"
+cd ..\saiku-bi-platform-plugin-p5
+call mvn clean package

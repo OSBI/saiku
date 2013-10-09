@@ -166,7 +166,7 @@
 										<include name="*.properties" />
 									</fileset>
 								</copy>
-								<zip destfile="target/saiku-plugin-${project.version}.zip">
+								<zip destfile="target/saiku-plugin-p5-${project.version}.zip">
 									<zipfileset dir="target/dist/" />
 								</zip>
 

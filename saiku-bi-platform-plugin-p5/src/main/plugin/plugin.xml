@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<plugin title="saiku" name="saiku" loader="DEFAULT">
+<plugin title="saiku" name="saiku" loader="OVERRIDING">
 
  <overlays>
     <overlay id="startup.saikuAnalytics"  resourcebundle="content/saiku-ui/saikuplugin.properties" priority="1">
   		<menubar id="newmenu">
-  			<menuitem id="new-saiku-analytics" label="Saiku Analytics" command="mantleXulHandler.openUrl('Saiku Analytics','Saiku Analytics','content/saiku-ui/index.html?biplugin=true')" />				
+  			<menuitem id="new-saiku-analytics" label="Saiku Analytics" command="mantleXulHandler.openUrl('Saiku Analytics','Saiku Analytics','content/saiku-ui/index.html?biplugin5=true')" />
   		</menubar>				
     </overlay>
   </overlays>
@@ -34,16 +34,16 @@
 			<operation>
 				<id>RUN</id>
 				<perspective>editor</perspective>
-				<command>content/saiku-ui/index.html?solution={solution}&amp;path={path}&amp;action={name}&amp;dimension_prefetch=false&amp;mode=view&amp;biplugin=true#query/open/{name}</command>
+				<command>content/saiku-ui/index.html?solution={solution}&amp;path={path}&amp;action={name}&amp;dimension_prefetch=false&amp;mode=view&amp;biplugin5=true#query/open/{name}</command>
 			</operation>
 			<operation>
 				<id>EDIT</id>
 				<perspective>editor</perspective>
-				<command>content/saiku-ui/index.html?solution={solution}&amp;path={path}&amp;action={name}&amp;dimension_prefetch=false&amp;biplugin=true#query/open/{name}</command>
+				<command>content/saiku-ui/index.html?solution={solution}&amp;path={path}&amp;action={name}&amp;dimension_prefetch=false&amp;biplugin5=true#query/open/{name}</command>
 			</operation>
 			<operation>
         		<id>NEWWINDOW</id>
-        		<command>content/saiku-ui/index.html?solution={solution}&amp;path={path}&amp;action={name}&amp;dimension_prefetch=false&amp;mode=view&amp;biplugin=true#query/open/{name}</command>
+        		<command>content/saiku-ui/index.html?solution={solution}&amp;path={path}&amp;action={name}&amp;dimension_prefetch=false&amp;mode=view&amp;biplugin5=true#query/open/{name}</command>
         	</operation>
         	<operation>
                 <id>SCHEDULE_NEW</id>
