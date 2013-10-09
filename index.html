@@ -216,10 +216,12 @@
                 
                 <ul>
                 <% _.each(measures, function(measure) { %>
-                    <li><a title="<%= measure.description ? measure.description : measure.uniqueName %>"
-                            rel="<%= measure.uniqueName %>"
-                        class="measure" href="#Measures/member/<%= encodeURIComponent(measure.uniqueName) %>"><%= measure.caption %></a>
-                    </li>
+                    <% if (typeof measure["visible"] == "undefined" || measure["visible"]) { %>
+                        <li><a title="<%= measure.description ? measure.description : measure.uniqueName %>"
+                                rel="<%= measure.uniqueName %>"
+                            class="measure" href="#Measures/member/<%= encodeURIComponent(measure.uniqueName) %>"><%= measure.caption %></a>
+                        </li>
+                    <% } %>
                 <% }); %>
                 </ul>
             </li>
@@ -582,7 +584,7 @@
         <script type="text/x-jquery-tmpl" id="template-drillthrough-dimensions">
         <ul>
         <% _.each(dimensions, function(dimension) { %>
-        <% if (dimension.name != 'Measures') { %>
+        <% if (dimension.name != 'Measures'  && (typeof dimension["visible"] == "undefined" || dimension["visible"])) { %>
             <li class='parent_dimension'>
                 <span class="root collapsed sprite"></span>
                 <input type="checkbox" class="check_dimension" />
@@ -590,16 +592,20 @@
                 
                 <ul>
                 <% _.each(dimension.hierarchies, function(hierarchy) { %>
-                    <% if (dimension.hierarchies.length > 1) { %>
-                        <li class="hierarchy hide">
-                            <a class="dimension" title="<%= hierarchy.description ? hierarchy.description : hierarchy.caption %>" href="#"><%= hierarchy.caption %></a>
-                        </li>
+                    <% if (typeof hierarchy["visible"] == "undefined" || hierarchy["visible"]) { %>
+                        <% if (dimension.hierarchies.length > 1) { %>
+                            <li class="hierarchy hide">
+                                <a class="dimension" title="<%= hierarchy.description ? hierarchy.description : hierarchy.caption %>" href="#"><%= hierarchy.caption %></a>
+                            </li>
+                        <% } %>
                     <% } %>
                     <% _.each(hierarchy.levels, function(level) { %>
-                        <% if (level.caption != "(All)") { %>
-                            <li class="hide"> &nbsp;&nbsp;&nbsp;&nbsp;
-                            <input type="checkbox" class="check_level" value="<%= level.uniqueName %>"> <%= level.caption %></input>
-                            </li>
+                        <% if (typeof level["visible"] == "undefined" || level["visible"]) { %>
+                            <% if (level.caption != "(All)") { %>
+                                <li class="hide"> &nbsp;&nbsp;&nbsp;&nbsp;
+                                <input type="checkbox" class="check_level" value="<%= level.uniqueName %>"> <%= level.caption %></input>
+                                </li>
+                            <% } %>
                         <% } %>
                     <% }); %>
                 <% }); %>
@@ -617,10 +623,12 @@
                 
                 <ul>
                 <% _.each(measures, function(measure) { %>
-                    <% if(typeof measure.calculated == "undefined" || measure.calculated == false) { %>
-                        <li> &nbsp;&nbsp;&nbsp;&nbsp;
-                                <input type="checkbox" class="check_level" value="<%= measure.uniqueName %>"> <%= measure.caption %></input>
-                                </li>
+                    <% if (typeof measure["visible"] == "undefined" || measure["visible"]) { %>
+                        <% if(typeof measure.calculated == "undefined" || measure.calculated == false) { %>
+                            <li> &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input type="checkbox" class="check_level" value="<%= measure.uniqueName %>"> <%= measure.caption %></input>
+                                    </li>
+                        <% } %>
                     <% } %>
                 <% }); %>
                 </ul>
