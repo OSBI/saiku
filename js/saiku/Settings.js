@@ -20,6 +20,7 @@
 var Settings = {
     VERSION: "Saiku 2.6-SNAPSHOT",
     BIPLUGIN: false,
+    BIPLUGIN5: false,
     BASE_URL: "",
     TOMCAT_WEBAPP: "/saiku",
     REST_MOUNT_POINT: "/rest/saiku/",
@@ -84,6 +85,9 @@ if (Settings.MODE == "table") {
     $('body, html').css('min-height',0);
     $('body, html').css('min-width',0);
 
+}
+if (Settings.BIPLUGIN5) {
+    Settings.BIPLUGIN = true;
 }
 
 

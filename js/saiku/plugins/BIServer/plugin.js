@@ -91,6 +91,10 @@ var savePg0 = function() {};
 if (Settings.BIPLUGIN) {
     Settings.PLUGIN = true;
     Settings.REST_URL = "../saiku/";
+    if (Settings.BIPLUGIN5) {
+        Settings.REST_URL = "../../plugin/saiku/api/";
+    }
+    
 
 
     $(document).ready(function() {
