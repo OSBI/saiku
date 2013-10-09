@@ -20,7 +20,7 @@
 
   <bean id="api" class="org.saiku.plugin.resources.ExtendedJAXRSPluginServlet"/>
 
-  
+<bean id="contentAccessFactory" scope="prototype" class="pt.webdetails.cpf.PentahoPluginEnvironment" />  
 
 	<bean id="pentahoDsManager" class="org.saiku.plugin.PentahoDatasourceManager" init-method="init">
 		<property name="datasourceResolverClass" value="org.saiku.plugin.PentahoDataSourceResolver" />
@@ -67,9 +67,9 @@
     <bean id="sessionResource" class="org.saiku.plugin.resources.PentahoSessionResource">
     		<property name="sessionService" ref="sessionService" />
 	</bean>
-  	<!-- 
+
   	<bean id="repositoryBean2" class="org.saiku.plugin.resources.PentahoRepositoryResource2" />
-  	 -->
+
   	 <bean id="tagRepositoryBean" class="org.saiku.plugin.resources.PentahoTagRepositoryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />
 		<property name="path" value="saiku-repository"/>
