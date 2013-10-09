@@ -142,7 +142,7 @@ var SessionWorkspace = Backbone.Model.extend({
     url: function() {
         if (this.first) {
             this.first = false;
-            return encodeURI(Saiku.session.username + "/discover/");
+            return encodeURI(Saiku.session.username + "/discover");
         }
         else {
             return encodeURI(Saiku.session.username + "/discover/refresh");
