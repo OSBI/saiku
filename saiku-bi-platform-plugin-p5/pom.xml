@@ -119,6 +119,18 @@
 									<version>TRUNK-SNAPSHOT</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
+								<artifactItem>
+									<groupId>pt.webdetails</groupId>
+									<artifactId>cpf-core</artifactId>
+									<version>REFACTOR-SNAPSHOT</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>pt.webdetails</groupId>
+									<artifactId>cpf-pentaho5</artifactId>
+									<version>REFACTOR-SNAPSHOT</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
 							</artifactItems>
 						</configuration>
 					</execution>
@@ -251,6 +263,11 @@
 		<dependency>
 			<groupId>pt.webdetails</groupId>
 			<artifactId>cpf-core</artifactId>
+			<version>REFACTOR-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>pt.webdetails</groupId>
+			<artifactId>cpf-pentaho5</artifactId>
 			<version>REFACTOR-SNAPSHOT</version>
 		</dependency>
 		<dependency>
