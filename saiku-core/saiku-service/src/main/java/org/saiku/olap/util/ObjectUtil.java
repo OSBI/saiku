@@ -193,6 +193,7 @@ public class ObjectUtil {
 				m.getDimension().getUniqueName(),
 				m.getHierarchy().getUniqueName(),
 				m.getLevel().getUniqueName(),
+				m.isVisible(),
 				m.isCalculated() | m.isCalculatedInQuery());
 
 	}
