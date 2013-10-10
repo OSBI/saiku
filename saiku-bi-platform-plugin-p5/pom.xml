@@ -259,6 +259,46 @@
 			<groupId>org.saiku</groupId>
 			<artifactId>saiku-bi-platform-plugin-util</artifactId>
 			<version>${project.version}</version>
+								<exclusions>
+				<exclusion>
+					<artifactId>
+						pentaho-bi-platform-plugin-actions
+					</artifactId>
+					<groupId>pentaho</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>
+						pentaho-bi-platform-plugin-services
+					</artifactId>
+					<groupId>pentaho</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>pentaho-bi-platform-util</artifactId>
+					<groupId>pentaho</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>
+						pentaho-bi-platform-engine-services
+					</artifactId>
+					<groupId>pentaho</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>pentaho-bi-platform-api</artifactId>
+					<groupId>pentaho</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>
+						pentaho-bi-platform-engine-core
+					</artifactId>
+					<groupId>pentaho</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>
+						pentaho-bi-platform-web-servlet
+					</artifactId>
+					<groupId>pentaho</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>pt.webdetails</groupId>
@@ -426,16 +466,6 @@
 					<groupId>secondstring</groupId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.enunciate</groupId>
-			<artifactId>enunciate-rt</artifactId>
-			<version>${enunciate.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.enunciate</groupId>
-			<artifactId>enunciate-jersey-rt</artifactId>
-			<version>${enunciate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>

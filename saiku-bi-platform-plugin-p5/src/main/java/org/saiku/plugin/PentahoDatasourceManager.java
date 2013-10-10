@@ -56,8 +56,10 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
 	private IMondrianCatalogService catalogService;
 
+	private String datasourceResolver;
+
 	public void setDatasourceResolverClass(String datasourceResolverClass) {
-		MondrianProperties.instance().DataSourceResolverClass.setString(datasourceResolverClass);
+		this.datasourceResolver = datasourceResolverClass;
 	}
 	
 	public void setSaikuDatasourceProcessor(String datasourceProcessor) {
@@ -81,18 +83,24 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
 	public void load() {
 		datasources.clear();
-		this.session = PentahoSessionHolder.getSession();
-		this.catalogService = PentahoSystem.get(IMondrianCatalogService.class,
-				session);
 		loadDatasources();
 	}
 
 	private Map<String, SaikuDatasource> loadDatasources() {
 		try {
-			System.out.println(session);
+			this.session = PentahoSessionHolder.getSession();
+			
+			ClassLoader cl = this.getClass().getClassLoader();
+			ClassLoader cl2 = this.getClass().getClassLoader().getParent();
+			
+			Thread.currentThread().setContextClassLoader(cl2);
+			this.catalogService = PentahoSystem.get(IMondrianCatalogService.class,
+					session);
 			
 			List<MondrianCatalog> catalogs = catalogService.listCatalogs(session, true);
-		
+			Thread.currentThread().setContextClassLoader(cl);
+			MondrianProperties.instance().DataSourceResolverClass.setString(this.datasourceResolver);
+			
 			for (MondrianCatalog catalog : catalogs) {
 				String name = catalog.getName();
 				Util.PropertyList parsedProperties = Util.parseConnectString(catalog

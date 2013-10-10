@@ -60,7 +60,7 @@
 		</operations>
 	</content-type>
 	
-<!--	<lifecycle-listener class="org.saiku.plugin.SaikuPluginLifecycleListener" /> -->
+	<lifecycle-listener class="org.saiku.plugin.SaikuPluginLifecycleListener" />
 	
 
 	<static-paths>

@@ -22,12 +22,12 @@
 
 <bean id="contentAccessFactory" scope="prototype" class="pt.webdetails.cpf.PentahoPluginEnvironment" />  
 
-	<bean id="pentahoDsManager" class="org.saiku.plugin.PentahoDatasourceManager" init-method="init">
+	<bean id="pentahoDsManager" class="org.saiku.plugin.PentahoDatasourceManager">
 		<property name="datasourceResolverClass" value="org.saiku.plugin.PentahoDataSourceResolver" />
 		<!-- <property name="dynamicSchemaProcessor" value="mondrian.i18n.LocalizingDynamicSchemaProcessor" /> -->
 	</bean>
 
-	<bean id="connectionManager" class="org.saiku.plugin.PentahoSecurityAwareConnectionManager" init-method="init">
+	<bean id="connectionManager" class="org.saiku.plugin.PentahoSecurityAwareConnectionManager">
 		<property name="dataSourceManager" ref="pentahoDsManager" />
 		<property name="userAware" value="false" />
 		<property name="connectionPooling" value="true" />
