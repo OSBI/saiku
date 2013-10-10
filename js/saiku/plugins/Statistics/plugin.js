@@ -84,8 +84,9 @@ var Statistics = Backbone.View.extend({
     },
     
     render: function() {
-        if (! $(this.workspace.querytoolbar.el).find('.stats').hasClass('on') || 
-             ($(this.workspace.el).is(':visible') && !$(this.el).is(':visible'))) {
+        if (! $(this.workspace.querytoolbar.el).find('.stats').hasClass('on') ||
+                ($(this.workspace.el).is(':visible') && !$(this.el).is(':visible'))) 
+        {
             return;
         }
 
@@ -138,8 +139,6 @@ var Statistics = Backbone.View.extend({
     },
     
     receive_data: function(args) {
-
-
         return _.delay(this.process_data, 0, args);
     },
     

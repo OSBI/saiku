@@ -152,7 +152,7 @@ var Workspace = Backbone.View.extend({
                 heightReduction = -5;
             }
         }
-        if ($('#header').length == 0 || $('#header').is('hidden')) {
+        if ($('#header').length == 0 || $('#header').is('hidden')) {
             heightReduction = 2;
         }
         $separator.height($("body").height() - heightReduction);
@@ -214,7 +214,7 @@ var Workspace = Backbone.View.extend({
             // Someone literally selected "Select a cube"
             $(this.el).find('.dimension_tree').html('');
             $(this.el).find('.measure_tree').html('');
-            return;
+            return false;
         }
         var parsed_cube = this.selected_cube.split('/');
         var cube = parsed_cube[3];
@@ -274,16 +274,13 @@ var Workspace = Backbone.View.extend({
             return;
         }
 
-        if (this.query.get('type') == "MDX") {
-            this.query.set({ formatter : "flat"});
+        if (this.query.get('type') == "MDX") {
+                this.query.set({ formatter : "flat"});
             if (! $(this.el).find('.sidebar').hasClass('hide')) {
                 this.toggle_sidebar();
             }            
             $(this.el).find('.workspace_fields').addClass('hide')
             this.toolbar.switch_to_mdx();
-
-
-
         } else {
             $(this.el).find('.workspace_editor').removeClass('hide').show();
             $(this.el).find('.workspace_fields').removeClass('disabled').removeClass('hide');
@@ -346,7 +343,7 @@ var Workspace = Backbone.View.extend({
         var self = this;
         var sync_ui = function() {
                 
-                if (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view")) {
+                if (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view")) {
                     $(self.el).find('.fields_list_body ul').empty();
 
                     $(self.dimension_list.el).find('.parent_dimension a.folder_collapsed').removeAttr('style');
@@ -551,7 +548,7 @@ var Workspace = Backbone.View.extend({
    
     
     remove_dimension: function(event, ui) {
-        if (this.query.get('type') == "QM") {
+        if (this.query.get('type') == "QM") {
             this.drop_zones.remove_dimension(event, ui);
         }
     },

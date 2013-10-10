@@ -112,7 +112,7 @@ var ChartEditor = Backbone.View.extend({
         var table = "<table class='propertiesviewer' style='border: 1px solid grey'>";
         _.each(options, function(property) {
             var value = property.DefaultValue
-            if (typeof properties !== "undefined") {
+            if (typeof properties !== "undefined") {
                 value = (self.chartDefinition[property.Name] ? self.chartDefinition[property.Name] : "");
             }
             

@@ -219,7 +219,7 @@ var OpenDialog = Modal.extend({
         Saiku.ui.block("Opening query...");
         selected_query.fetch({ 
             success: selected_query.move_query_to_workspace,
-            error: function() { Saiku.ui.unblock(); },
+            error: function() { Saiku.ui.unblock(); return; },
             dataType: "text"
         });
 

@@ -280,7 +280,7 @@ var OpenQuery = Backbone.View.extend({
         Saiku.ui.block("Opening query...");
         this.selected_query.fetch({ 
             success: this.selected_query.move_query_to_workspace,
-            error: function() { Saiku.ui.unblock(); },
+            error: function() { Saiku.ui.unblock(); return; },
             dataType: "text"
         });
         
