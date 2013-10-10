@@ -15,6 +15,7 @@
  */
 package org.saiku.plugin;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +58,23 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 		this.connectionPooling = pooling;
 	}
 
+	@Override
+	public void destroy() {
+		if (connections != null && !connections.isEmpty()) {
+			for (ISaikuConnection con : connections.values()) {
+				try {
+					Connection c = con.getConnection();
+						if (!c.isClosed()) {
+							c.close();
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			connections.clear();
+	}
+	
 	@Override
 	protected ISaikuConnection getInternalConnection(String name, SaikuDatasource datasource) {
 		//SolutionReposHelper.setSolutionRepositoryThreadVariable(PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession()));

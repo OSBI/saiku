@@ -5,6 +5,7 @@ import java.util.Properties;
 
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
+import org.olap4j.OlapConnection;
 import org.olap4j.OlapStatement;
 import org.olap4j.Scenario;
 import org.olap4j.metadata.Cube;
@@ -196,6 +197,10 @@ public class MockQuery implements IQuery {
 	public void removeFilter() {
 		// TODO Auto-generated method stub
 		
+	}
+	public OlapConnection getConnection() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

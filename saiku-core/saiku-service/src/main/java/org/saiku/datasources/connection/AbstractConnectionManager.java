@@ -40,6 +40,23 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
 	}
 
 	public abstract void init();
+	
+	public void destroy() {
+		Map<String, OlapConnection> connections = getAllOlapConnections();
+		if (connections != null && !connections.isEmpty()) {
+			for (OlapConnection con : connections.values()) {
+				try {
+						if (!con.isClosed()) {
+							con.close();
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			connections.clear();
+			System.out.println("Do we still have connections? : " + getAllOlapConnections().size());
+	}
 
 	private SaikuDatasource preProcess(SaikuDatasource datasource) {
 		if (datasource.getProperties().containsKey(ISaikuConnection.DATASOURCE_PROCESSORS)) {
@@ -170,5 +187,5 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
 			}
 		}
 		return false;
-	}
+	}	
 }

@@ -302,4 +302,8 @@ public class MdxQuery implements IQuery {
 
 	public void removeFilter() {
 	}
+
+	public OlapConnection getConnection() {
+		return this.connection;
+	}
 }

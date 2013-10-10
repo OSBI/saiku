@@ -438,5 +438,10 @@ public class OlapQuery implements IQuery {
 		}
 		this.statement = null;
 	}
+	
+	public OlapConnection getConnection() {
+		return this.connection;
+	}
+
 
 }

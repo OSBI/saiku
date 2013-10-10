@@ -16,6 +16,7 @@
 package org.saiku.web.impl;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -42,7 +43,7 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 	 */
 	private static final long serialVersionUID = -5912836681963684201L;
 
-	private Map<String, ISaikuConnection> connections = new HashMap<String, ISaikuConnection>();
+	private transient Map<String, ISaikuConnection> connections = new HashMap<String, ISaikuConnection>();
 
 	private List<String> errorConnections = new ArrayList<String>();
 
@@ -56,7 +57,25 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 	public void init() {
 		this.connections = getAllConnections();
 	}
-
+	
+	@Override
+	public void destroy() {
+		if (connections != null && !connections.isEmpty()) {
+			for (ISaikuConnection con : connections.values()) {
+				try {
+					Connection c = con.getConnection();
+						if (!c.isClosed()) {
+							c.close();
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			connections.clear();
+	}
+	
+	
 	@Override
 	protected ISaikuConnection getInternalConnection(String name, SaikuDatasource datasource) {
 

@@ -116,10 +116,14 @@ public class OlapQueryService implements Serializable {
 		olapDiscoverService = os;
 	}
 
-	public OlapQueryService() {
-//		System.out.println("Constructor: ID " + Thread.currentThread().getId() + " Name: " + Thread.currentThread().getName());
-
+	public OlapQueryService() {	}
+	
+	public void destroy() {
+		for (Object  q : queries.keySet().toArray()) {
+			closeQuery(q.toString());
+		}
 	}
+
 	public SaikuQuery createNewOlapQuery(String queryName, SaikuCube cube) {
 		try {
 			Cube cub = olapDiscoverService.getNativeCube(cube);

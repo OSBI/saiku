@@ -15,10 +15,10 @@
  */
 package org.saiku.datasources.connection;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
 
-import mondrian.olap4j.SaikuMondrianHelper;
 import mondrian.rolap.RolapConnection;
 
 import org.olap4j.OlapConnection;
@@ -107,7 +107,7 @@ public class SaikuOlapConnection implements ISaikuConnection {
 		return initialized;
 	}
 
-	public Object getConnection() {
+	public Connection getConnection() {
 		return olapConnection;
 	}
 
