@@ -679,7 +679,7 @@ $(this.el).prepend(" pvc (" + (this.med3 - this.med) + ")" );
             $(this.el).prepend(" done (" + (med2 - this.med) + ")" );
 */
         } catch (e) {
-            $(this.el).text("Could not render chart");
+            $(this.el).find('.canvas_wrapper').text("Could not render chart");
         }
         this.workspace.processing.hide();
         this.workspace.adjust();
