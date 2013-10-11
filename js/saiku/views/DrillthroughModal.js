@@ -50,7 +50,7 @@ var DrillthroughModal = Modal.extend({
         _.bindAll(this, "ok", "drilled");
 
         // Resize when rendered
-        this.bind('open', this.post_render);
+        
         this.render();
                // Load template
        $(this.el).find('.dialog_body')
@@ -136,9 +136,6 @@ var DrillthroughModal = Modal.extend({
     },
 
 
-    post_render: function(args) {
-        $(args.modal.el).parents('.ui-dialog').css({ width: "150px" });
-    },
     
     ok: function() {
         // Notify user that updates are in progress
