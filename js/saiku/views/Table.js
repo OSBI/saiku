@@ -186,7 +186,7 @@ var Table = Backbone.View.extend({
                 callback: function(key, options) {
                     var url = '/axis/' + axis + '/dimension/' + encodeURIComponent(d);
                     var children = false;
-                    if (key.indexOf("children") > 0) {
+                    if (key.indexOf("children") > 0) {
                         url = '/axis/' + axis + '/dimension/' + encodeURIComponent(d) + "/children";
                         children = true;
                     }
@@ -316,7 +316,7 @@ var Table = Backbone.View.extend({
 
                     var previousRow = data[row - 1];
 
-                    var same = !isHeaderLowestLvl && (col == 0 || previousRow[col-1].value == data[row][col-1].value) && header.value === previousRow[col].value;
+                    var same = !isHeaderLowestLvl && (col == 0 || previousRow[col-1].value == data[row][col-1].value) && header.value === previousRow[col].value;
                     var value = (same ? "<div>&nbsp;</div>" : '<div rel="' + row + ":" + col +'">' + header.value + '</div>');
                     var cssclass = (same ? "row_null" : "row");
                     var colspan = 0;

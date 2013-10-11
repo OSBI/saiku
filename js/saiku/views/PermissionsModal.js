@@ -68,15 +68,15 @@ var PermissionsModal = Modal.extend({
         var acl = new RepositoryAclObject({ file : this.file });
         acl.fetch({ async: false });
 
-        var definedRoles = (typeof acl.get('roles') == "undefined" || acl.get('roles') == null ? {} : acl.get('roles')); 
+        var definedRoles = (typeof acl.get('roles') == "undefined" || acl.get('roles') == null ? {} : acl.get('roles')); 
         this.rolesacl = definedRoles;
         var templ_roles =_.template($("#template-permissions-rolelist").html())({roles: definedRoles });
 
 
         $(this.el).find('.rolelist').html(templ_roles);
 
-        var owner = (typeof acl.get('owner') == "undefined" || acl.get('owner') == null ? "" : acl.get('owner')); 
-        var atype = (typeof acl.get('type') == "undefined" || acl.get('type') == null ? null : acl.get('type')); 
+        var owner = (typeof acl.get('owner') == "undefined" || acl.get('owner') == null ? "" : acl.get('owner')); 
+        var atype = (typeof acl.get('type') == "undefined" || acl.get('type') == null ? null : acl.get('type')); 
         if (atype != null && atype == "PRIVATE") {
             $(this.el).find('.private_owner .owner').text(owner);
             $(this.el).find('.private_owner').show();

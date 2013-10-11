@@ -149,7 +149,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                     for (key in items) {
                         ret[ (fun + '###SEPARATOR###'+ key) ] = _.clone(items[key]);
                         ret[ (fun + '###SEPARATOR###' + key) ].fun = fun;
-                        if (fun == func && sortliteral == key && items[key].payload["n"] == n) {
+                        if (fun == func && sortliteral == key && items[key].payload["n"] == n) {
                             topHl = fun + "Quick";
                             ret[ (fun + '###SEPARATOR###' + key) ].name =
                                     "<b>" + items[key].name + "</b>";

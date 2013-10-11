@@ -32,7 +32,7 @@
         </executions>
     </plugin>
 -->
-    <!-- DISABLE YUI COMPRESSOR
+<!-- YUI compressor
     <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>yuicompressor-maven-plugin</artifactId>
@@ -45,48 +45,63 @@
         </executions>        
         <configuration>
           <nosuffix>true</nosuffix>
+          <gzip>true</gzip>
+          <nomunge>false</nomunge>
           <sourceDirectory>${basedir}/js/saiku/</sourceDirectory>
           <aggregations>
             <aggregation>
-              <insertNewLine>true</insertNewLine>
-              <output>${basedir}/target/all.js</output>
+              <insertNewLine>false</insertNewLine>
+              <output>${basedir}/target/Saiku.min.js</output>
               <includes>
 
-                <include>classes/Settings.js</include>
-                <include>classes/models/Dimension.js</include>
-                <include>classes/views/DimensionList.js</include>
-                <include>classes/views/Toolbar.js</include>
-                <include>classes/views/Modal.js</include>
-                <include>classes/views/MDXModal.js</include>
-                <include>classes/views/SelectionsModal.js</include>
-                <include>classes/views/LoginForm.js</include>
-                <include>classes/views/AboutModal.js</include>
-                <include>classes/views/WorkspaceToolbar.js</include>
-                <include>classes/views/WorkspaceDropZone.js</include>
-                <include>classes/views/Table.js</include>
-                <include>classes/views/Workspace.js</include>
-                <include>classes/views/DeleteQuery.js</include>
-                <include>classes/views/OpenQuery.js</include>
-                <include>classes/views/SaveQuery.js</include>
-                <include>classes/views/Tab.js</include>
-                <include>classes/models/Repository.js</include>
-                <include>classes/models/Properties.js</include>
-                <include>classes/models/Result.js</include>
-                <include>classes/models/QueryAction.js</include>
-                <include>classes/models/QueryScenario.js</include>
-                <include>classes/models/Query.js</include>
-                <include>classes/models/Session.js</include>
-                <include>classes/models/SessionWorkspace.js</include>
-                <include>classes/models/Member.js</include>
-                <include>classes/Saiku.js</include>
-                <include>classes/adapters/SaikuServer.js</include>
-                <include>classes/routers/QueryRouter.js</include>
+                  <include>classes/Settings.js</include>
+                  <include>classes/views/Tab.js</include>
+                  <include>classes/models/Dimension.js</include>
+                  <include>classes/views/DimensionList.js</include>
+                  <include>classes/views/Toolbar.js</include>
+                  <include>classes/views/Modal.js</include>
+                  <include>classes/views/MDXModal.js</include>
+                  <include>classes/views/SelectionsModal.js</include>
+                  <include>classes/views/DrillthroughModal.js</include>
+                  <include>classes/views/PermissionsModal.js</include>
+                  <include>classes/views/LoginForm.js</include>
+                  <include>classes/views/AboutModal.js</include>
+                  <include>classes/views/AddFolderModal.js</include>
+                  <include>classes/views/FilterModal.js</include>
+                  <include>classes/views/CustomFilterModal.js</include>
+                  <include>classes/views/QueryToolbar.js</include>
+                  <include>classes/views/WorkspaceToolbar.js</include>
+                  <include>classes/views/WorkspaceDropZone.js</include>
+                  <include>classes/views/Table.js</include>
+                  <include>classes/views/Workspace.js</include>
+                  <include>classes/views/DeleteRepositoryObject.js</include>
+                  <include>classes/views/OpenQuery.js</include>
+                  <include>classes/views/SaveQuery.js</include>
+                  <include>classes/views/OpenDialog.js</include>
+
+                  <include>classes/models/Repository.js</include>
+                  <include>classes/models/Properties.js</include>
+                  <include>classes/models/Result.js</include>
+                  <include>classes/models/QueryAction.js</include>
+                  <include>classes/models/QueryScenario.js</include>
+                  <include>classes/models/Query.js</include>
+                  <include>classes/models/Session.js</include>
+                  <include>classes/models/SessionWorkspace.js</include>
+                  <include>classes/models/Member.js</include>
+                  <include>classes/Saiku.js</include>
+                  <include>classes/adapters/SaikuServer.js</include>
+                  <include>classes/routers/QueryRouter.js</include>
+                  <include>classes/plugins/Statistics/plugin.js</include>
+                  <include>classes/plugins/I18n/plugin.js</include>
+                  <include>classes/plugins/BIServer/plugin.js</include>
+                  <include>classes/plugins/Buckets/plugin.js</include>
+                  <include>classes/plugins/CCC_Chart/plugin.js</include>
               </includes>
             </aggregation>
           </aggregations>
         </configuration>
       </plugin>
-      -->
+-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>

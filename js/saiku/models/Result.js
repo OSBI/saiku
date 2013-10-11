@@ -43,8 +43,8 @@ var Result = Backbone.Model.extend({
         return this.firstRun;
     },
     
-    lastresult: function () {
-        return this.result;
+    lastresult: function() {
+            return this.result;
     },
     
     url: function() {
