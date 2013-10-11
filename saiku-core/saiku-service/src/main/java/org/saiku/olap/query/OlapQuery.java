@@ -95,22 +95,29 @@ public class OlapQuery implements IQuery {
 		QueryAxis rows = query.getAxis(Axis.ROWS);
 		QueryAxis cols = query.getAxis(Axis.COLUMNS);
 
+		SortOrder colSort = cols.getSortOrder();
+		String colSortIdentifier = cols.getSortIdentifierNodeName();
+		cols.clearSort();
+		if (rows.getSortOrder() != null) {
+			cols.sort(rows.getSortOrder(), rows.getSortIdentifierNodeName());
+		}
+		rows.clearSort();
+		if (colSort != null) {
+			rows.sort(colSort, colSortIdentifier);
+		}
+
+		try {
+		
 		// 3-way swap
 		String colFilter = cols.getFilterCondition();
 		LimitFunction colLimit = cols.getLimitFunction();
 		BigDecimal colN = cols.getLimitFunctionN();
 		String colLimitSort = cols.getLimitFunctionSortLiteral();
-		SortOrder colSort = cols.getSortOrder();
-		String colSortIdentifier = cols.getSortIdentifierNodeName();
-
 		cols.clearFilter();
 		cols.clearLimitFunction();
-		cols.clearSort();
+
 
 		// columns
-		if (rows.getSortOrder() != null) {
-			cols.sort(rows.getSortOrder(), rows.getSortIdentifierNodeName());
-		}
 		if (rows.getLimitFunction() != null) {
 			cols.limit(rows.getLimitFunction(), rows.getLimitFunctionN(), rows.getLimitFunctionSortLiteral());
 		}
@@ -120,19 +127,17 @@ public class OlapQuery implements IQuery {
 
 		rows.clearFilter();
 		rows.clearLimitFunction();
-		rows.clearSort();
+
 
 		// rows
-		if (colSort != null) {
-			rows.sort(colSort, colSortIdentifier);
-		}
 		if (colLimit != null) {
 			rows.limit(colLimit, colN, colLimitSort);
 		}
 		if (StringUtils.isNotBlank(colFilter)) {
 			rows.filter(colFilter);
 		}
-
+		
+		} catch (NoSuchMethodError e) {}
 
 	}
 
@@ -433,5 +438,10 @@ public class OlapQuery implements IQuery {
 		}
 		this.statement = null;
 	}
+	
+	public OlapConnection getConnection() {
+		return this.connection;
+	}
+
 
 }

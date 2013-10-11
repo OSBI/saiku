@@ -15,6 +15,7 @@
  */
 package org.saiku.datasources.connection;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
 
@@ -106,7 +107,7 @@ public class SaikuOlapConnection implements ISaikuConnection {
 		return initialized;
 	}
 
-	public Object getConnection() {
+	public Connection getConnection() {
 		return olapConnection;
 	}
 

@@ -14,7 +14,7 @@
 		<property name="authenticationManager" ref="authenticationManager" />
 	</bean>
 
-	<bean id="connectionManager" class="org.saiku.web.impl.SecurityAwareConnectionManager" init-method="init">
+	<bean id="connectionManager" class="org.saiku.web.impl.SecurityAwareConnectionManager" init-method="init" destroy-method="destroy">
 		<property name="dataSourceManager" ref="classpathDsManager" />
 		<property name="sessionService" ref="sessionService" />
 
@@ -28,8 +28,7 @@
 		<property name="datasourceService" ref="datasourceServiceBean" />
 	</bean>
 
-	<bean id="olapQueryBean" scope="session"
-		class="org.saiku.service.olap.OlapQueryService">
+	<bean id="olapQueryBean" scope="session" class="org.saiku.service.olap.OlapQueryService" destroy-method="destroy">
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
 

@@ -34,7 +34,7 @@
 		<!-- <property name="dynamicSchemaProcessor" value="mondrian.i18n.LocalizingDynamicSchemaProcessor" /> -->
 	</bean>
 
-	<bean id="connectionManager" class="org.saiku.plugin.PentahoSecurityAwareConnectionManager" init-method="init">
+	<bean id="connectionManager" class="org.saiku.plugin.PentahoSecurityAwareConnectionManager" init-method="init"  destroy-method="destroy">
 		<property name="dataSourceManager" ref="pentahoDsManager" />
 		<property name="userAware" value="false" />
 		<property name="connectionPooling" value="true" />
@@ -48,7 +48,7 @@
 		<property name="datasourceService" ref="datasourceServiceBean" />
 	</bean>
 
-	<bean id="olapQueryBean" class="org.saiku.service.olap.OlapQueryService">
+	<bean id="olapQueryBean" class="org.saiku.service.olap.OlapQueryService"  destroy-method="destroy">
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
 

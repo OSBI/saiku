@@ -103,7 +103,7 @@ public class ExporterResource {
 	{
 		try {
 			Response f = repository.getResource(file);
-			String fileContent = (String) f.getEntity();
+			String fileContent = new String( (byte[]) f.getEntity());
 			fileContent = replaceParameters(fileContent, getParameters(servletRequest));
 			String queryName = UUID.randomUUID().toString();
 			queryResource.createQuery(null,  null,  null, null, fileContent, queryName);
@@ -124,7 +124,7 @@ public class ExporterResource {
 	{
 		try {
 			Response f = repository.getResource(file);
-			String fileContent = (String) f.getEntity();
+			String fileContent = new String( (byte[]) f.getEntity());
 			fileContent = replaceParameters(fileContent, getParameters(servletRequest));
 			String queryName = UUID.randomUUID().toString();
 			queryResource.createQuery(null,  null,  null, null, fileContent, queryName);

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapDatabaseMetaData;
 import org.olap4j.OlapException;
@@ -47,7 +48,6 @@ import org.saiku.olap.dto.SaikuSchema;
 import org.saiku.olap.util.ObjectUtil;
 import org.saiku.olap.util.SaikuCubeCaptionComparator;
 import org.saiku.olap.util.SaikuDimensionCaptionComparator;
-import org.saiku.olap.util.SaikuMemberCaptionComparator;
 import org.saiku.olap.util.exception.SaikuOlapException;
 
 public class OlapMetaExplorer {
@@ -180,7 +180,7 @@ public class OlapMetaExplorer {
 					Catalog cat = db.getCatalogs().get(cube.getCatalogName());
 					if (cat != null) {
 						for (Schema schema : cat.getSchemas()) {
-							if (schema.getName().equals(cube.getSchemaName())) {
+							if ((StringUtils.isBlank(cube.getSchemaName()) && StringUtils.isBlank(schema.getName())) || schema.getName().equals(cube.getSchemaName())) {
 								for (Cube cub : schema.getCubes()) {
 									if (cub.getName().equals(cube.getName()) || cub.getUniqueName().equals(cube.getUniqueName())) {
 										return cub;
