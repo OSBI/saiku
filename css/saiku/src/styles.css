@@ -465,6 +465,10 @@ html, body {
     
 }
 
+.context-menu-item {
+    line-height: 16.5px;
+}
+
 span.dropdown {
 background: url("../../../images/src/context_down.png") no-repeat scroll center center transparent;
     height: 16px;
