@@ -759,7 +759,11 @@ span.clear_axis {
     border: 1px solid #CCC;
     z-index: 100;
 }
+#login_form label, #add_folder label {
+    display: block;
+}
 #password, #username, input.newfolder {
+    display: block;
     padding: 4px;
     width: 240px;
 }
