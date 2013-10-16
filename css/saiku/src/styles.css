@@ -1043,6 +1043,7 @@ span.clear_axis {
     border-left: 1px solid #d5d5d5;
     margin-bottom: 0;
     white-space: normal;
+    font-weight: 500;
 }
 
 .workspace_results table th.all_null {
