@@ -55,7 +55,6 @@
         <script src="js/jquery/jquery-mobile-touch.js"></script>
         <script type="text/javascript" src="js/jquery/jquery.blockUI.js"></script>
 
-    
         <script type="text/javascript" src="js/fancybox/jquery.fancybox.pack.js"></script>
         
 
@@ -153,7 +152,9 @@
                     <li class='separator'>&nbsp;</li>
                     <li><a id='issue_tracker' href='#issue_tracker' title='Issue Tracker' class='bug i18n sprite'></a></li>
             </ul>
-                <h1 id='logo'><a href='http://www.analytical-labs.com/' title='Saiku - Next Generation Open Source Analytics' class='sprite'>Saiku</a></h1>
+                <h1 id='logo'>
+                    <a href='http://www.analytical-labs.com/' title='Saiku - Next Generation Open Source Analytics' target="_blank" class='sprite'>Saiku</a>
+                </h1>
         </script>
 
         <script type="text/x-jquery-tmpl" id="template-cubes">
@@ -363,13 +364,12 @@
         <script type="text/x-jquery-tmpl" id="template-query-toolbar">
         <div class="query_toolbar_vertical">
         <ul class="renderer">
-            <li class="label"><a class="label disabled_toolbar i18n">Mode:</a></li>
-
             <li><a href="#switch_render_button" 
-                class="i18n render_table button disabled_toolbar on"></a></li>
+                class="i18n render_table button disabled_toolbar on"
+                title="Table Mode"></a></li>
             <li><a href="#switch_render_button" 
                 class="i18n render_chart button disabled_toolbar" 
-                title="Toggle Chart"></a></li>
+                title="Chart Mode"></a></li>
         </ul>
         <ul class='options table hide'>
                         <!--<li class="seperator_vertical label"><a class="i18n label disabled_toolbar">Options:</a></li> -->

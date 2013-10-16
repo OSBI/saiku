@@ -1345,6 +1345,10 @@ a.disabled_toolbar:hover {
     text-shadow: 1px 1px 0 #FFFFFF;
 }
 
+.query_toolbar ul.renderer {
+    padding-top: 8px;
+}
+
 .query_toolbar ul {
     margin: 0;
     padding: 0;
