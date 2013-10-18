@@ -758,7 +758,11 @@ span.clear_axis {
     border: 1px solid #CCC;
     z-index: 100;
 }
+#login_form label, #add_folder label {
+    display: block;
+}
 #password, #username, input.newfolder {
+    display: block;
     padding: 4px;
     width: 240px;
 }
@@ -1042,6 +1046,7 @@ span.clear_axis {
     border-left: 1px solid #d5d5d5;
     margin-bottom: 0;
     white-space: normal;
+    font-weight: 500;
 }
 
 .workspace_results table th.all_null {
@@ -1341,6 +1346,10 @@ a.disabled_toolbar:hover {
     margin: 0 0 3px 0;
     padding: 3px 10px 3px 5px;
     text-shadow: 1px 1px 0 #FFFFFF;
+}
+
+.query_toolbar ul.renderer {
+    padding-top: 8px;
 }
 
 .query_toolbar ul {
