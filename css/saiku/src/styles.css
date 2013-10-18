@@ -1316,7 +1316,7 @@ a.disabled_toolbar:hover {
   background-repeat:no-repeat;
 }
 .workspace_toolbar .chart {
-    background-image:   url('../../../js/saiku/plugins/Chart/chart.png');
+    background-image:   url('../../../js/saiku/plugins/CCC_Chart/chart.png');
     background-repeat:  no-repeat;
     background-position: 7px 7px;
 }
@@ -1405,7 +1405,7 @@ a.disabled_toolbar:hover {
     padding: 7px !important;
 }
 .query_toolbar a.render_chart {
-    background-image:   url('../../../js/saiku/plugins/Chart/chart.png');
+    background-image:   url('../../../js/saiku/plugins/CCC_Chart/chart.png');
     background-repeat:  no-repeat;
     background-position: 7px 7px;
     width: 16px;

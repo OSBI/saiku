@@ -30,8 +30,10 @@ var Result = Backbone.Model.extend({
     parse: function(response) {
         // Show the UI if hidden
         this.query.workspace.unblock();
+        this.query.workspace.processing.hide();
         this.result = response;
         this.firstRun = true;
+
         this.query.workspace.trigger('query:result', {
             workspace: this.query.workspace,
             data: response

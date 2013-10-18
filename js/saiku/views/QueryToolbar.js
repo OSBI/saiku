@@ -76,7 +76,7 @@ var QueryToolbar = Backbone.View.extend({
     },
     
     switch_render_button: function(event) {
-        $target = $(event.target);
+        var $target = $(event.target);
         event.preventDefault();
         if ($(event.target).hasClass('disabled_toolbar')) {
             return false;
@@ -129,8 +129,7 @@ var QueryToolbar = Backbone.View.extend({
     },
 
     call: function(event) {
-        event.preventDefault();
-        $target = $(event.target).hasClass('button') ? $(event.target) : $(event.target).parent();
+        var $target = $(event.target).hasClass('button') ? $(event.target) : $(event.target).parent();
         if (! $target.hasClass('disabled_toolbar')) {
             // Determine callback
             var callback = $target.attr('href').replace('#', '');
@@ -138,11 +137,21 @@ var QueryToolbar = Backbone.View.extend({
             // Attempt to call callback
             if (this.render_mode == "table" && this[callback]) {
                 this[callback](event);
-            } else if (this.render_mode == "chart" && this.workspace.chart[callback]) {
-                this.workspace.chart.button(event);
-                this.workspace.chart[callback](event);
+            } else if (this.render_mode == "chart" && (this.workspace.chart[callback] || this.workspace.chart.renderer[callback])) {
+                alert("warum caused das solche troubles????");
+                console.error("fix this!!");
+                //this.workspace.chart.button(event);
+                if (callback == "export_button") {
+                    this.workspace.chart[callback](event);
+                } else {
+                    this.workspace.chart.renderer[callback](event);
+                    this.workspace.chart.renderer.render();
+                }
+
+                this.workspace.query.setProperty('saiku.ui.render.type', callback);
             }
         }
+        event.preventDefault();
         return false;
     },
 

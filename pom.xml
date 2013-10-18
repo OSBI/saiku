@@ -32,7 +32,7 @@
         </executions>
     </plugin>
 -->
-<!-- YUI compressor
+<!--
     <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>yuicompressor-maven-plugin</artifactId>
@@ -55,6 +55,9 @@
               <includes>
 
                   <include>classes/Settings.js</include>
+                  <include>classes/render/SaikuRenderer.js</include>
+                  <include>classes/render/SaikuTableRenderer.js</include>
+                  <include>classes/render/SaikuChartRenderer.js</include>
                   <include>classes/views/Tab.js</include>
                   <include>classes/models/Dimension.js</include>
                   <include>classes/views/DimensionList.js</include>

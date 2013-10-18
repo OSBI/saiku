@@ -144,7 +144,7 @@ var Workspace = Backbone.View.extend({
     
     adjust: function() {
         // Adjust the height of the separator
-        $separator = $(this.el).find('.sidebar_separator');
+        var $separator = $(this.el).find('.sidebar_separator');
         var heightReduction = 87;
         if (Settings.PLUGIN == true || Settings.BIPLUGIN == true) {
             heightReduction = 2;
@@ -251,8 +251,8 @@ var Workspace = Backbone.View.extend({
                 this.querytoolbar.switch_render(renderMode);
             }
 
-            if ('chart' == renderMode && renderType in this.chart ) {
-                this.chart[renderType]();
+            if ('chart' == renderMode && renderType in this.chart.renderer ) {
+                this.chart.renderer[renderType]();
                 $(this.chart.el).find('div').hide();
                 $(this.querytoolbar.el).find('ul.chart [href="#' + renderType+ '"]').parent().siblings().find('.on').removeClass('on');
                 $(this.querytoolbar.el).find('ul.chart [href="#' + renderType+ '"]').addClass('on');
@@ -366,7 +366,7 @@ var Workspace = Backbone.View.extend({
                         .css({ fontWeight: 'normal' });
 
                     $(self.el).find('.fields_list_body').each(function(index, element) {
-                            $axis = $(element);
+                            var $axis = $(element);
                             if ($axis.find('li').length == 0) {
                                 $axis.siblings('.clear_axis').addClass('hide');
                             } else {

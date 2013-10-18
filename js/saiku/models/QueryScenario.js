@@ -35,7 +35,7 @@ var QueryScenario = Backbone.Model.extend({
     },
     
     clicked_cell: function(event) {
-        $target = $(event.target).hasClass('data') ?
+        var $target = $(event.target).hasClass('data') ?
             $(event.target).find('div') : $(event.target);
         var value = $target.attr('alt');
         var pos = $target.attr('rel');
