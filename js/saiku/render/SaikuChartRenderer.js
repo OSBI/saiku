@@ -152,7 +152,7 @@ SaikuChartRenderer.prototype.switch_chart = function(key) {
 
 
     if (key == "sunburst") {
-        $(this.el).find('.zoombuttons').hide();
+        $(this.el).find('.zoombuttons').show();
         this.type = key;
         this.sunburst();
         if (this.hasProcessed) {
