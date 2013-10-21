@@ -488,7 +488,6 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
 };
 
 SaikuChartRenderer.prototype.render_chart_element = function(context) {
-    console.log("render chart element");
         var self = context || this;
         var isSmall = (self.data != null && self.data.height < 80 && self.data.width < 80);
         var isMedium = (self.data != null && self.data.height < 300 && self.data.width < 300);
@@ -511,7 +510,6 @@ SaikuChartRenderer.prototype.render_chart_element = function(context) {
             $(self.el).find('.canvas_wrapper').text("Could not render chart" + e);
         }
         if (self.chart.options && self.chart.options.animate) {
-            console.log("i rendered " + self.chart.options.type);
             return false;
         }
         if (isIE || isBig) {
@@ -524,7 +522,6 @@ SaikuChartRenderer.prototype.render_chart_element = function(context) {
             
     
 SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
-    console.log("Process " + this.type + " flat:" + flat);
     var self = this;
         var data = {};
         if (flat) {
@@ -657,7 +654,6 @@ SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
                     currentDataPos = data;
                 }
             }
-            //console.log(data);
             if (setdata) {
                 self.rawdata = args.data;
                 self.data = data;
