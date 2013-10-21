@@ -39,12 +39,14 @@ var SaikuChartRenderer = function(data, options) {
     this.adjustSizeTo = null;
     if (options.adjustSizeTo) {
         this.adjustSizeTo = options.adjustSizeTo;
+    } else {
+        this.adjustSizeTo = options.htmlObject;
     }
 
-    if (this.type == "sunburst") {
-
-    } else {
-        if (this.rawdata) {
+    if (this.rawdata) {
+        if (this.type == "sunburst") {
+            this.process_data_tree( { data : this.rawdata });
+        } else {    
             this.process_data_tree( { data : this.rawdata }, true, true);
         }
     }
