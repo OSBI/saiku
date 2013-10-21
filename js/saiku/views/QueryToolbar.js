@@ -109,7 +109,7 @@ var QueryToolbar = Backbone.View.extend({
             $(this.el).find('ul.table').hide();
             this.render_mode = "chart";
             $(this.workspace.el).find('.workspace_results').children().hide();
-            $(this.workspace.chart.el).children().hide();
+            $(this.workspace.chart.el).find('.canvas_wrapper').hide();
             this.workspace.chart.show();
         } else {
             $(this.el).find('ul.chart').hide();
@@ -130,25 +130,27 @@ var QueryToolbar = Backbone.View.extend({
 
     call: function(event) {
         var $target = $(event.target).hasClass('button') ? $(event.target) : $(event.target).parent();
-        if (! $target.hasClass('disabled_toolbar')) {
+        if (!$target.hasClass('disabled_toolbar')) {
             // Determine callback
             var callback = $target.attr('href').replace('#', '');
             
             // Attempt to call callback
             if (this.render_mode == "table" && this[callback]) {
                 this[callback](event);
-            } else if (this.render_mode == "chart" && (this.workspace.chart[callback] || this.workspace.chart.renderer[callback])) {
-                alert("warum caused das solche troubles????");
-                console.error("fix this!!");
-                //this.workspace.chart.button(event);
+            } else if (this.render_mode == "chart") {
+
+                if ($target.hasClass('chartoption')) {
+                    $target.parent().siblings().find('.chartoption.on').removeClass('on');
+                    $target.addClass('on');
+                }
                 if (callback == "export_button") {
                     this.workspace.chart[callback](event);
                 } else {
-                    this.workspace.chart.renderer[callback](event);
-                    this.workspace.chart.renderer.render();
+                    this.workspace.chart.renderer.switch_chart(callback);
+                    this.workspace.query.setProperty('saiku.ui.render.type', callback);
                 }
 
-                this.workspace.query.setProperty('saiku.ui.render.type', callback);
+                
             }
         }
         event.preventDefault();

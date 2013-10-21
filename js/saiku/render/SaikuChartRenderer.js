@@ -14,12 +14,31 @@ var SaikuChartRenderer = function(data, options) {
     this.id = _.uniqueId("chart_");
     $('<div class="canvas_wrapper" style="display:none;"><div id="canvas_' + this.id + '"></div></div>').appendTo($(this.el));
 
+    if (options.zoom) {
+        var self = this;
+        var btns = "<span style='float:left;'><a href='#' class='button rerender' title='Re-render chart'></a><a href='#' class='button zoomout' style='display:none;' title='Zoom back out'></a></span>";
+        $( btns).prependTo($(this.el).find('.canvas_wrapper'));
+        $(this.el).find('.zoomout').on('click', function(event) {
+            event.preventDefault();
+            self.zoomout();
+        });
+        $(this.el).find('.zoomin').on('click', function(event) {
+            event.preventDefault();
+            self.zoomin();
+        });
+        $(this.el).find('.rerender').on('click', function(event) {
+            event.preventDefault();
+            self.define_chart();
+            self.render();
+        });
+    }
+
     this.cccOptions.canvas = 'canvas_' + this.id;
     this.cccOptions = this.getQuickOptions(this.cccOptions);
     this.data = null;
 
-    if (options.mode && options.mode in this) {
-        this[options.mode]();
+    if (options.mode) {
+        this.switch_chart(options.mode);
     }
 
     if (this.type == "sunburst") {
@@ -71,107 +90,75 @@ SaikuChartRenderer.prototype.render = function() {
     console.log(this.chart.options.type + " on " + this.chart.options.canvas);
     _.delay(this.render_chart_element, 0, this);
 };
-    
 
-SaikuChartRenderer.prototype.stackedBar = function() {
-    this.type = 'stackedBar';
-    var options = {
-        stacked: true,
-        type: "BarChart"
-    };
-    this.cccOptions = this.getQuickOptions(options);
-    this.define_chart();
-};
-    
-SaikuChartRenderer.prototype.bar = function() {
-    this.type = 'bar';
-    var options = {
-        type: "BarChart"
-    };
-    this.cccOptions = this.getQuickOptions(options);
-    this.define_chart();
-};
+SaikuChartRenderer.prototype.switch_chart = function(key) {
 
-SaikuChartRenderer.prototype.multiplebar = function() {
-    this.type = "multiplebar";
-    var options = {
-        type: "BarChart",
-        multiChartIndexes: [1],
-        dataMeasuresInColumns: true,
-        orientation: "vertical",
-        smallTitlePosition: "top",
-        multiChartMax: 30,
-        multiChartColumnsMax: Math.floor( this.cccOptions.width / 200),
-        smallWidth: 200,
-        smallHeight: 150
+    var keyOptions =
+    {
+                "stackedBar" : {
+                    type: "BarChart",
+                    stacked: true
+                },
+                "bar" : {
+                    type: "BarChart"
+                },
+                "multiplebar" : {
+                    type: "BarChart",
+                    multiChartIndexes: [1],
+                    dataMeasuresInColumns: true,
+                    orientation: "vertical",
+                    smallTitlePosition: "top",
+                    multiChartMax: 30,
+                    multiChartColumnsMax: Math.floor( this.cccOptions.width / 200),
+                    smallWidth: 200,
+                    smallHeight: 150
+                },
+                "line" : {
+                    type: "LineChart"
+                }, 
+                "pie" : {
+                    type: "PieChart",
+                    multiChartIndexes: [0] // ideally this would be chosen by the user (count, which)
+                },
+                "heatgrid" : {
+                    type: "HeatGridChart"
+                },
+                "stackedBar100" : {
+                    type: "NormalizedBarChart"
+                },
+                "area" : {
+                    type: "StackedAreaChart"
+                },
+                "dot" : {
+                    type: "DotChart"
+                },
+                "waterfall" : {
+                    type: "WaterfallChart"
+                },
+                "treemap" : {
+                    type: "TreemapChart"
+                }
+    };
 
-    };
-    this.cccOptions = this.getQuickOptions(options);
-    this.define_chart();
-};
-    
-SaikuChartRenderer.prototype.line = function() {
-    this.type = "line";
-    var options = {
-        type: "LineChart"
-    };
-    this.cccOptions = this.getQuickOptions(options);
-    this.define_chart();
-};
-    
-SaikuChartRenderer.prototype.pie = function() {
-    this.type = "pie";
-    var options = {
-        type: "PieChart",
-        multiChartIndexes: [0] // ideally this would be chosen by the user (count, which)
-    };
-    this.cccOptions = this.getQuickOptions(options);
-    this.define_chart();
-};
 
-SaikuChartRenderer.prototype.heatgrid = function() {
-    this.type = "heatgrid";
-    var options = {
-        type: "HeatGridChart"
-    };
-    this.cccOptions = this.getQuickOptions(options);
-    this.define_chart();
-};
+    if (key == "sunburst") {
+        this.type = key;
+        this.sunburst();
+        if (this.hasProcessed) {
+            this.render();
+        }
+    } else if (keyOptions.hasOwnProperty(key)) {
+        this.type = key;
+        var o = keyOptions[key];
+        this.cccOptions = this.getQuickOptions(o);
+        this.define_chart();
+        if (this.hasProcessed) {
+            this.render();
+        }
+    } else {
+        alert("Do not support chart type: '" + key + "'");
+    }
 
-SaikuChartRenderer.prototype.stackedBar100 = function() {
-    this.type = "stackedBar100";
-    var options = {
-        type: "NormalizedBarChart"
-    };
-    this.cccOptions = this.getQuickOptions(options);
-    this.define_chart();
-};
-
-SaikuChartRenderer.prototype.area = function() {
-    this.type = "area";
-    var options = {
-        type: "StackedAreaChart"
-    };
-    this.cccOptions = this.getQuickOptions(options);
-    this.define_chart();
-};
-
-SaikuChartRenderer.prototype.dot = function() {
-    this.type = "dot";
-    var options = {
-        type: "DotChart"
-    };
-    this.cccOptions = this.getQuickOptions(options);
-    this.define_chart();
-};
-
-SaikuChartRenderer.prototype.waterfall = function() {
-    this.type = "waterfall";
-    var options = {
-        type: "WaterfallChart"
-    };
-    this.cccOptions = this.getQuickOptions(options);
-    this.define_chart();
 };
 
 SaikuChartRenderer.prototype.sunburst = function() {
@@ -233,15 +220,6 @@ SaikuChartRenderer.prototype.sunburst = function() {
 
     
         this.chart = vis;
-};
-
-SaikuChartRenderer.prototype.treemap = function() {
-    this.type = "treemap";
-    var options = {
-        type: "TreemapChart"
-    };
-    this.cccOptions = this.getQuickOptions(options);
-    this.define_chart();
 };
 
 
@@ -327,9 +305,7 @@ SaikuChartRenderer.prototype.getQuickOptions = function(baseOptions) {
         var workspaceResults = $(this.el);
         var options = _.extend({
                 type:   chartType,
-                canvas: 'canvas_' + this.id,
-                width:  workspaceResults.width() - 40,
-                height: workspaceResults.height() - 40
+                canvas: 'canvas_' + this.id
             },
             this.cccOptionsDefault.Base,
             this.cccOptionsDefault[chartType], // may be undefined
@@ -364,8 +340,8 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
         var animate = false;
         var hoverable =  isSmall;
 
-        var runtimeWidth = (workspaceResults.width() - 20);
-        var runtimeHeight = workspaceResults.height() - 20;
+        var runtimeWidth = workspaceResults.width();
+        var runtimeHeight = workspaceResults.height();
 
         var runtimeChartDefinition = _.clone(this.cccOptions);
 
@@ -492,13 +468,15 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
 
 SaikuChartRenderer.prototype.render_chart_element = function(context) {
         var self = context || this;
-
         var isSmall = (self.data != null && self.data.height < 80 && self.data.width < 80);
         var isMedium = (self.data != null && self.data.height < 300 && self.data.width < 300);
         var isBig = (!isSmall && !isMedium);
         var animate = false;
         if (self.chart.options && self.chart.options.animate) {
             animate = true;
+        }
+        if (!animate || $(self.el).find('.canvas_wrapper').is(':visible')) {
+            $(self.el).find('.canvas_wrapper').hide();
         }
 
         try {
@@ -507,11 +485,11 @@ SaikuChartRenderer.prototype.render_chart_element = function(context) {
             }
 
             self.chart.render();
-            console.log("i rendered " + self.chart.options.type);
         } catch (e) {
             $(self.el).find('.canvas_wrapper').text("Could not render chart" + e);
         }
         if (self.chart.options && self.chart.options.animate) {
+            console.log("i rendered " + self.chart.options.type);
             return false;
         }
         if (isIE || isBig) {

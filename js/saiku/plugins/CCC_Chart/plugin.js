@@ -19,12 +19,6 @@
  */
 var Chart = Backbone.View.extend({
 
-    events: {
-        'click .zoomin' : 'zoomin',
-        'click .zoomout' : 'zoomout',
-        'click .rerender' : 'rerender'
-    },
-
     initialize: function(args) {
         
         this.workspace = args.workspace;
@@ -32,14 +26,11 @@ var Chart = Backbone.View.extend({
         // Create a unique ID for use as the CSS selector
         this.id = _.uniqueId("chart_");
         $(this.el).attr({ id: this.id });
-        
-        var btns = "<span style='float:left;'><a href='#' class='button rerender' title='Re-render chart'></a><a href='#' class='button zoomout' style='display:none;' title='Zoom back out'></a></span>";
-        $( btns).appendTo($(this.el));
 
-        this.renderer = new SaikuChartRenderer(null, { htmlObject: $(this.el), mode: "bar" });
+        this.renderer = new SaikuChartRenderer(null, { htmlObject: $(this.el), zoom: true});
 
         // Bind table rendering to query result event
-        _.bindAll(this, "receive_data", "show", "render_view", "rerender", "zoomin", "zoomout", "exportChart");
+        _.bindAll(this, "receive_data", "show", "render_view", "exportChart");
         var self = this;
         this.workspace.bind('query:run',  function() {
             if (! $(self.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
@@ -68,22 +59,6 @@ var Chart = Backbone.View.extend({
 
     },
 
-    rerender: function(event) {
-        this.renderer.render();
-        event.preventDefault();
-        return false;
-    },
-
-    zoomin: function(event) {
-            this.renderer.zoomout();
-            event.preventDefault();
-    },
-
-    zoomout: function(event) {
-            this.renderer.zoomout();
-            event.preventDefault();
-    },
-
     exportChart: function(type) {
         var svgContent = new XMLSerializer().serializeToString($('svg')[0]);
         var rep = '<svg xmlns="http://www.w3.org/2000/svg" ';
@@ -106,20 +81,15 @@ var Chart = Backbone.View.extend({
     },
     
     show: function(event, ui) {
-
-        if (this.renderer.cccOptions.width <= 0) {
-            this.renderer.cccOptions.width = $(this.workspace.el).find('.workspace_results').width() - 20;
-        }
-        if (this.renderer.cccOptions.height <= 0) {
-            this.renderer.cccOptions.height = $(this.workspace.el).find('.workspace_results').height() - 20;
-        }
+        this.workspace.adjust();
+        this.renderer.cccOptions.width = $(this.workspace.el).find('.workspace_results').width();
+        this.renderer.cccOptions.height = $(this.workspace.el).find('.workspace_results').height();
         
         $(this.el).show();
 
         var hasRun = this.workspace.query.result.hasRun();
         if (hasRun) {
             this.renderer.process_data_tree({ data: this.workspace.query.result.lastresult() }, true, true);
-            this.workspace.adjust();
             this.renderer.render();
         }
 
@@ -153,18 +123,7 @@ var Chart = Backbone.View.extend({
         });
         $target.contextMenu();
     },
-
-    button: function(event) {
-        var btn = $(event.target).hasClass('button') ? $(event.target) : $(event.target).parent();
-        if (btn.hasClass('chartoption')) {
-            btn.parent().siblings().find('.chartoption.on').removeClass('on');
-            btn.addClass('on');
-            if ($(this.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
-                $(this.el).find('.canvas_wrapper').hide();
-            }
-        }
-    },
-            
+    
     receive_data: function(args) {
         if (! $(this.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
             return;

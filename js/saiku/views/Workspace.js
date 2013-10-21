@@ -251,9 +251,9 @@ var Workspace = Backbone.View.extend({
                 this.querytoolbar.switch_render(renderMode);
             }
 
-            if ('chart' == renderMode && renderType in this.chart.renderer ) {
-                this.chart.renderer[renderType]();
-                $(this.chart.el).find('div').hide();
+            if ('chart' == renderMode) {
+                $(this.chart.el).find('.canvas_wrapper').hide();
+                this.chart.renderer.switch_chart(renderType);
                 $(this.querytoolbar.el).find('ul.chart [href="#' + renderType+ '"]').parent().siblings().find('.on').removeClass('on');
                 $(this.querytoolbar.el).find('ul.chart [href="#' + renderType+ '"]').addClass('on');
 
