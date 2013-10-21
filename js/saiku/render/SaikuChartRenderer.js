@@ -16,7 +16,7 @@ var SaikuChartRenderer = function(data, options) {
 
     if (options.zoom) {
         var self = this;
-        var btns = "<span style='float:left;'><a href='#' class='button rerender' title='Re-render chart'></a><a href='#' class='button zoomout' style='display:none;' title='Zoom back out'></a></span>";
+        var btns = "<span style='float:left;' class='zoombuttons'><a href='#' class='button rerender' title='Re-render chart'></a><a href='#' class='button zoomout' style='display:none;' title='Zoom back out'></a></span>";
         $( btns).prependTo($(this.el).find('.canvas_wrapper'));
         $(this.el).find('.zoomout').on('click', function(event) {
             event.preventDefault();
@@ -28,14 +28,19 @@ var SaikuChartRenderer = function(data, options) {
         });
         $(this.el).find('.rerender').on('click', function(event) {
             event.preventDefault();
-            self.define_chart();
-            self.render();
+            $(self.el).find('.zoomout').hide();
+            self.switch_chart(self.type);
         });
     }
 
     this.cccOptions.canvas = 'canvas_' + this.id;
     this.cccOptions = this.getQuickOptions(this.cccOptions);
     this.data = null;
+
+    this.adjustSizeTo = null;
+    if (options.adjustSizeTo) {
+        this.adjustSizeTo = options.adjustSizeTo;
+    }
 
     if (options.mode) {
         this.switch_chart(options.mode);
@@ -87,7 +92,6 @@ SaikuChartRenderer.prototype.zoomout = function() {
 };
 
 SaikuChartRenderer.prototype.render = function() {
-    console.log(this.chart.options.type + " on " + this.chart.options.canvas);
     _.delay(this.render_chart_element, 0, this);
 };
 
@@ -142,12 +146,15 @@ SaikuChartRenderer.prototype.switch_chart = function(key) {
 
 
     if (key == "sunburst") {
+        $(this.el).find('.zoombuttons').hide();
         this.type = key;
         this.sunburst();
         if (this.hasProcessed) {
             this.render();
         }
+        
     } else if (keyOptions.hasOwnProperty(key)) {
+        $(this.el).find('.zoombuttons').show();
         this.type = key;
         var o = keyOptions[key];
         this.cccOptions = this.getQuickOptions(o);
@@ -155,6 +162,7 @@ SaikuChartRenderer.prototype.switch_chart = function(key) {
         if (this.hasProcessed) {
             this.render();
         }
+
     } else {
         alert("Do not support chart type: '" + key + "'");
     }
@@ -302,7 +310,6 @@ SaikuChartRenderer.prototype.cccOptionsDefault = {
     
 SaikuChartRenderer.prototype.getQuickOptions = function(baseOptions) {
         var chartType = (baseOptions && baseOptions.type) || "BarChart";
-        var workspaceResults = $(this.el);
         var options = _.extend({
                 type:   chartType,
                 canvas: 'canvas_' + this.id
@@ -310,6 +317,20 @@ SaikuChartRenderer.prototype.getQuickOptions = function(baseOptions) {
             this.cccOptionsDefault.Base,
             this.cccOptionsDefault[chartType], // may be undefined
             baseOptions);
+
+        if (this.adjustSizeTo) {
+            var al = $(this.adjustSizeTo);
+            if (al && al.length > 0) {
+                var runtimeWidth = al.width() - 40;
+                var runtimeHeight = al.height() - 40;
+                if (runtimeWidth > 0) {
+                    options.width = runtimeWidth;
+                }
+                if (runtimeHeight > 0) {
+                    options.height = runtimeHeight;
+                }   
+            }
+        }
         
         if(this.data != null && this.data.resultset.length > 5) {
             if(options.type === "HeatGridChart") {
@@ -333,15 +354,15 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
             this.process_data_tree( { data : this.rawdata }, true, true);
         }
         var self = this;
-        var workspaceResults = $(this.el);
+        var workspaceResults = (this.adjustSizeTo ? $(this.adjustSizeTo) : $(this.el));
         var isSmall = (this.data != null && this.data.height < 80 && this.data.width < 80);
         var isMedium = (this.data != null && this.data.height < 300 && this.data.width < 300);
         var isBig = (!isSmall && !isMedium);
         var animate = false;
         var hoverable =  isSmall;
 
-        var runtimeWidth = workspaceResults.width();
-        var runtimeHeight = workspaceResults.height();
+        var runtimeWidth = workspaceResults.width() - 40;
+        var runtimeHeight = workspaceResults.height() - 40;
 
         var runtimeChartDefinition = _.clone(this.cccOptions);
 
@@ -467,6 +488,7 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
 };
 
 SaikuChartRenderer.prototype.render_chart_element = function(context) {
+    console.log("render chart element");
         var self = context || this;
         var isSmall = (self.data != null && self.data.height < 80 && self.data.width < 80);
         var isMedium = (self.data != null && self.data.height < 300 && self.data.width < 300);
@@ -502,6 +524,7 @@ SaikuChartRenderer.prototype.render_chart_element = function(context) {
             
     
 SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
+    console.log("Process " + this.type + " flat:" + flat);
     var self = this;
         var data = {};
         if (flat) {
@@ -636,11 +659,10 @@ SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
             }
             //console.log(data);
             if (setdata) {
+                self.rawdata = args.data;
                 self.data = data;
                 self.hasProcessed = true;
                 self.data.height = self.data.resultset.length;
-                self.cccOptions = self.getQuickOptions(self.cccOptions);
-                self.define_chart();
             }
             return data;
         } else {

@@ -27,7 +27,7 @@ var Chart = Backbone.View.extend({
         this.id = _.uniqueId("chart_");
         $(this.el).attr({ id: this.id });
 
-        this.renderer = new SaikuChartRenderer(null, { htmlObject: $(this.el), zoom: true});
+        this.renderer = new SaikuChartRenderer(null, { htmlObject: $(this.el), zoom: true, adjustSizeTo: ".workspace_results" });
 
         // Bind table rendering to query result event
         _.bindAll(this, "receive_data", "show", "render_view", "exportChart");
@@ -82,15 +82,15 @@ var Chart = Backbone.View.extend({
     
     show: function(event, ui) {
         this.workspace.adjust();
-        this.renderer.cccOptions.width = $(this.workspace.el).find('.workspace_results').width();
-        this.renderer.cccOptions.height = $(this.workspace.el).find('.workspace_results').height();
+        this.renderer.cccOptions.width = $(this.workspace.el).find('.workspace_results').width() - 40;
+        this.renderer.cccOptions.height = $(this.workspace.el).find('.workspace_results').height() - 40;
         
         $(this.el).show();
 
         var hasRun = this.workspace.query.result.hasRun();
         if (hasRun) {
             this.renderer.process_data_tree({ data: this.workspace.query.result.lastresult() }, true, true);
-            this.renderer.render();
+            this.renderer.switch_chart(this.renderer.type);
         }
 
 
@@ -128,9 +128,9 @@ var Chart = Backbone.View.extend({
         if (! $(this.workspace.querytoolbar.el).find('.render_chart').hasClass('on')) {
             return;
         }
-        this.renderer.process_data_tree(args, true, true);
         this.workspace.adjust();
-        this.renderer.render();
+        this.renderer.process_data_tree(args, true, true);
+        this.renderer.switch_chart(this.renderer.type);
         //_.delay(this.renderer.process_data_tree, 0, args, true, true);
 
 
