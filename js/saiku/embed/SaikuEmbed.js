@@ -69,7 +69,7 @@ var SaikuConfig = {
 var SaikuCall = {
   file: null,
   render: 'table', // table | chart
-  type: 'null', // table: sparkline, sparkbar - chart: line, bar, treemap, ...
+  mode: 'null', // table: sparkline, sparkbar - chart: line, bar, treemap, ...
   formatter: 'flattened', // should be left unless you want an hierarchical resultset
   htmlObject: "saiku",
   params: {
@@ -78,6 +78,8 @@ var SaikuCall = {
 
 }
 var SaikuRenderer = {
+  "table" : SaikuTableRenderer,
+  "chart" : SaikuChartRenderer
 };
 
 var SaikuClient = function(config) {

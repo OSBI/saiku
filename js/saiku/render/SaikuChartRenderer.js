@@ -2,7 +2,6 @@
 var SaikuChartRenderer = function(data, options) {
     this.rawdata = data;
     this.cccOptions = {};
-    this.type = 'stackedBar';
 
     this.data = null,
     this.hasProcessed = false;
@@ -34,24 +33,29 @@ var SaikuChartRenderer = function(data, options) {
     }
 
     this.cccOptions.canvas = 'canvas_' + this.id;
-    this.cccOptions = this.getQuickOptions(this.cccOptions);
     this.data = null;
+
 
     this.adjustSizeTo = null;
     if (options.adjustSizeTo) {
         this.adjustSizeTo = options.adjustSizeTo;
     }
 
-    if (options.mode) {
-        this.switch_chart(options.mode);
-    }
-
     if (this.type == "sunburst") {
 
     } else {
-        this.process_data_tree( { data : this.rawdata }, true, true);
-        this.define_chart();
+        if (this.rawdata) {
+            this.process_data_tree( { data : this.rawdata }, true, true);
+        }
     }
+
+    if (options.mode) {
+        this.switch_chart(options.mode);
+    } else {
+        // default
+        this.switch_chart("stackedBar");
+    }
+
 
 };
 
