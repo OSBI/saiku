@@ -62,6 +62,7 @@ var SaikuChartRenderer = function(data, options) {
 };
 
 SaikuChartRenderer.prototype.zoomin = function() {
+        $(this.el).find('.canvas_wrapper').hide();
         var chart = this.chart.root;
         var data = chart.data;         
         data
@@ -71,6 +72,7 @@ SaikuChartRenderer.prototype.zoomin = function() {
         });
         data.clearSelected();         
         chart.render(true, true, false);
+        this.render_chart_element();
     },
 
 SaikuChartRenderer.prototype.zoomout = function() {
@@ -152,7 +154,7 @@ SaikuChartRenderer.prototype.switch_chart = function(key) {
 
 
     if (key == "sunburst") {
-        $(this.el).find('.zoombuttons').show();
+        $(this.el).find('.zoombuttons a').hide();
         this.type = key;
         this.sunburst();
         if (this.hasProcessed) {
@@ -160,7 +162,7 @@ SaikuChartRenderer.prototype.switch_chart = function(key) {
         }
         
     } else if (keyOptions.hasOwnProperty(key)) {
-        $(this.el).find('.zoombuttons').show();
+        $(this.el).find('.zoombuttons a').hide();
         this.type = key;
         var o = keyOptions[key];
         this.cccOptions = this.getQuickOptions(o);
@@ -180,7 +182,6 @@ SaikuChartRenderer.prototype.sunburst = function() {
 
     var data = this.process_data_tree({ data: this.rawdata });
     var options = this.getQuickOptions({});
-
     function title(d) {
       return d.parentNode ? (title(d.parentNode) + "." + d.nodeName) : d.nodeName;
     }
@@ -216,7 +217,8 @@ SaikuChartRenderer.prototype.sunburst = function() {
 
     partition.node.add(pv.Wedge)
         .fillStyle( pv.colors(options.colors).by(function(d) { return d.parentNode && d.parentNode.nodeName }))
-        .strokeStyle("#fff")
+        .visible(function(d) { return d.depth > 0; })
+        .strokeStyle("#000")
         .lineWidth(0.5)
         .text(function(d) {  
             var v = "";
@@ -265,8 +267,8 @@ SaikuChartRenderer.prototype.cccOptionsDefault = {
             hoverable: true,
             axisComposite: true,
             colors: ["red", "yellow", "lightgreen", "darkgreen"],
-//            xAxisSize: 130,
-            yAxisSize: "30%"
+            yAxisSize: "20%"
+
         },
         
         WaterfallChart: {
@@ -340,7 +342,7 @@ SaikuChartRenderer.prototype.getQuickOptions = function(baseOptions) {
         
         if(this.data != null && this.data.resultset.length > 5) {
             if(options.type === "HeatGridChart") {
-                options.xAxisSize = 150;
+//                options.xAxisSize = 200;
             } else if(options.orientation !== "horizontal") {
                 options.extensionPoints = _.extend(Object.create(options.extensionPoints || {}),
                     {
@@ -442,7 +444,7 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
                     if (data.datums().count() > 1500) {
                         pvc.data.Data.setSelected(selectingDatums, true);
                     } else if (data.datums(null, {visible: true}).count() == data.datums().count()) {
-                        $(self.el).find('.zoomout').show();
+                        $(self.el).find('.zoomout, .rerender').show();
 
                         var all = data.datums().array();
 
