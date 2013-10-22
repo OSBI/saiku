@@ -170,20 +170,20 @@ var DrillthroughModal = Modal.extend({
     },
 
     drilled: function(model, response) {
-        var table = new Table({ workspace: this.workspace });
+        var html = "";
         if (response != null && response.error != null) {
-            $(table.el).html('<tr><td>' + safe_tags_replace(response.error) + '</td></tr>');
+            html = safe_tags_replace(response.error);
         } else {
-            table.process_data(response.cellset);
+            var tr = new SaikuTableRenderer();
+            html = tr.render(response);
         }
 
         //table.render({ data: response }, true);
 
 
         Saiku.ui.unblock();
-        var html = '<div id="fancy_results" class="workspace_results" style="overflow:visible"><table>' + $(table.el).html() + '</table></div>';
+        var html = '<div id="fancy_results" class="workspace_results" style="overflow:visible">' + html + '</div>';
         this.remove();
-        table.remove();
         $.fancybox(html
             ,
             {
