@@ -175,7 +175,7 @@ var vml = {
 
     "g": {
       rewrite: 'span',
-      attr: function (attr, style, elm, scenes, i) {
+      attr: function (attr, style, elm, scene, i) {
         var d = vml.get_dim(attr);
         elm.style.cssText = "position:absolute;zoom:1;" + 
                     "left:" + (d.tx + d.x) + "px;" + 
@@ -185,7 +185,7 @@ var vml = {
 
     "line": {
       rewrite: 'shape',
-      attr: function (attr, style, elm, scenes, i) {
+      attr: function (attr, style, elm, scene, i) {
         var x1 = parseFloat(attr.x1 || 0),
             y1 = parseFloat(attr.y1 || 0),
             x2 = parseFloat(attr.x2 || 0),
@@ -194,14 +194,14 @@ var vml = {
         elm.coordorigin = "0,0";
         elm.coordsize = "21600,21600";
         vml.path(elm).v = 'M '+ r(x1) + ' ' + r(y1) + ' L ' + r(x2) + ' ' + r(y2) + ' E';
-        vml.stroke(elm, attr, scenes, i);
+        vml.stroke(elm, attr, scene, i);
       },
       css: "top:0px;left:0px;width:1000px;height:1000px"
     },
 
     "rect": {
       rewrite: 'shape',
-      attr: function (attr, style, elm, scenes, i) {
+      attr: function (attr, style, elm, scene, i) {
         var d = vml.get_dim(attr),
             p = vml.path(elm),
             r = vml.round;
@@ -216,15 +216,15 @@ var vml = {
              ' L ' + (x + w) + ' ' + (y + h) + 
              ' L ' + x       + ' ' + (y + h) + 
              ' x';
-        vml.stroke(elm, attr, scenes, i);
-        vml.fill  (elm, attr, scenes, i);
+        vml.stroke(elm, attr, scene, i);
+        vml.fill  (elm, attr, scene, i);
       },
       css: "top:0px;left:0px;width:1000px;height:1000px"
     },
 
     "path": {
       rewrite: 'shape',
-      attr: function (attr, style, elm, scenes, i) {
+      attr: function (attr, style, elm, scene, i) {
         var d  = vml.get_dim(attr),
             es = elm.style;
         
@@ -245,8 +245,8 @@ var vml = {
             skew.origin = "-0.5,-0.5";
         }
         
-        vml.fill  (elm, attr, scenes, i);
-        vml.stroke(elm, attr, scenes, i);
+        vml.fill  (elm, attr, scene, i);
+        vml.stroke(elm, attr, scene, i);
         
         es.visibility = "visible";
       },
@@ -255,7 +255,7 @@ var vml = {
 
     "ellipse": {
       rewrite: 'oval',
-      attr: function (attr, style, elm, scenes, i) {
+      attr: function (attr, style, elm, scene, i) {
         var d  = vml.get_dim(attr),
             rx = attr.rx,// + 0.5, // ??
             ry = attr.ry,// + 0.5,
@@ -271,8 +271,8 @@ var vml = {
             skew.origin = "0,0";
         }
 
-        vml.fill  (elm, attr, scenes, i);
-        vml.stroke(elm, attr, scenes, i);
+        vml.fill  (elm, attr, scene, i);
+        vml.stroke(elm, attr, scene, i);
       }
     },
 
@@ -296,7 +296,7 @@ var vml = {
       css: "top:0px;left:0px;width:1000px;height:1000px"
       */
       rewrite: 'oval',
-      attr: function (attr, style, elm, scenes, i) {
+      attr: function (attr, style, elm, scene, i) {
         var d  = vml.get_dim(attr),
             r  = parseFloat(attr.r  || 0) + 0.5,
             cx = parseFloat(attr.cx || 0) + 0.7,
@@ -307,14 +307,14 @@ var vml = {
         es.width  = 
         es.height = (2 * r) + "px";
 
-        vml.fill  (elm, attr, scenes, i);
-        vml.stroke(elm, attr, scenes, i);
+        vml.fill  (elm, attr, scene, i);
+        vml.stroke(elm, attr, scene, i);
       }
     },
 
     "text": {
       rewrite: 'shape',
-      attr: function (attr, style, elm, scenes, i) {
+      attr: function (attr, style, elm, scene, i) {
         var es = elm.style;
         
 //        es.left = (d.tx + d.x) + "px";
@@ -325,7 +325,7 @@ var vml = {
         
         // Set stroke off,
         elm.stroked = "False";
-        //vml.stroke(elm, attr, scenes, i);
+        //vml.stroke(elm, attr, scene, i);
         
         elm.path = "m0,0 l1,0 e";
         
@@ -350,9 +350,9 @@ var vml = {
         
         vml.rotateAndScale(elm, attr.rotation && -attr.rotation);
         
-        var s = scenes[i];
+        var s = scene[i];
         s.fillStyle = vml.solidFillStyle;
-        vml.fill(elm, attr, scenes, i);
+        vml.fill(elm, attr, scene, i);
         s.fillStyle = null;
       },
       css: "position:absolute;top:0px;left:0px;width:1px;height:1px;"
@@ -413,11 +413,11 @@ var vml = {
     return result || value;
   },
 
-  fill: function (elm, attr, scenes, i) {
+  fill: function (elm, attr, scene, i) {
     var fill = elm.getElementsByTagName('fill')[0] ||
                (fill = elm.appendChild(vml.createElement('vml:fill')));
     
-    var fillStyle = scenes[i].fillStyle;
+    var fillStyle = scene[i].fillStyle;
     var fillType  = fillStyle && fillStyle.type;
     if(!fillType) { fillType = 'solid'; }
 
@@ -468,7 +468,7 @@ var vml = {
     }
   },
   
-  stroke: function (elm, attr, scenes, i) {
+  stroke: function (elm, attr, scene, i) {
     var stroke = elm.getElementsByTagName('stroke')[0] ||
                  (stroke = elm.appendChild(vml.createElement('vml:stroke')));
     
@@ -798,6 +798,10 @@ pv.VmlScene = {
     "contextmenu"
   ],
 
+  mousePositionEventSet: pv.Scene.mousePositionEventSet,
+  eventsToNumber: pv.Scene.eventsToNumber,
+  numberToEvents: pv.Scene.numberToEvents,
+
   // implicit values are not used for VML, assigned render faster and we have
   // no desire to keep the DOM clean here - only to make it work!
   implicit: {css: {}},
@@ -825,7 +829,7 @@ pv.renderer = function() { return 'vml'; };
     pv.VmlScene.minBarLineWidth  = is64bit ? 1.2 : 1.0;
 }(vml.is64Bit));
 
-pv.VmlScene.expect = function(e, type, scenes, i, attr, style) {
+pv.VmlScene.expect = function(e, type, scene, i, attr, style) {
   style = style || {};
   
   var helper = vml.elm_defaults[type] || {}, 
@@ -843,7 +847,7 @@ pv.VmlScene.expect = function(e, type, scenes, i, attr, style) {
   
   if(attr) {
       if ('attr' in helper) {
-        helper.attr(attr, style, e, scenes, i);
+        helper.attr(attr, style, e, scene, i);
       }
       
       if (attr.cursor in vml.cursorstyles) {
@@ -867,7 +871,7 @@ pv.VmlScene.removeSiblings = function(e) {
   }
 };
 
-pv.VmlScene.addFillStyleDefinition = function(/*scenes, fill*/){};
+pv.VmlScene.addFillStyleDefinition = function(/*scene, fill*/){};
 
 // Done differently
 pv.VmlScene.setAttributes = function(/*e, attributes*/) {};
@@ -891,15 +895,15 @@ pv.VmlScene.setStyle = function(e, style) {
     e.__style__ = style;
 };
 
-pv.VmlScene.append = function(e, scenes, index) {
+pv.VmlScene.append = function(e, scene, index) {
   // FIXME: hooks the scene onto the element --- this is probably hemorrhaging memory in MSIE
   // it is only ever used by the envent dispatcher so it should probably be stored in a cache
-  e.$scene = {scenes: scenes, index: index};
+  e.$scene = {scenes: scene, index: index};
   
   // attach a title to element
-  e = this.title(e, scenes[index]);
+  e = this.title(e, scene[index]);
   if (!e.parentNode || e.parentNode.nodeType === 11) {  // 11 == documentFragment
-    scenes.$g.appendChild(e);
+    scene.$g.appendChild(e);
   }
   
   return e.nextSibling;
@@ -911,20 +915,20 @@ pv.VmlScene.title = function(e, s) {
 };
 
 // mostly the same code as pv.SvgScene.panel, but with less MSIE crashing...
-pv.VmlScene.panel = function(scenes){
-  var g = scenes.$g, 
+pv.VmlScene.panel = function(scene){
+  var g = scene.$g, 
       e = g && g.firstChild;
   
   var inited = false;
   var style;
-  for(var i = 0, L = scenes.length; i < L; i++) {
-    var s = scenes[i];
+  for(var i = 0, L = scene.length; i < L; i++) {
+    var s = scene[i];
 
     /* visible */
     if(!s.visible) continue;
 
     /* top level element */
-    if(!scenes.parent) {
+    if(!scene.parent) {
       var canvas = s.canvas;
       style = canvas.style;
       style.display = "inline-block";
@@ -956,7 +960,7 @@ pv.VmlScene.panel = function(scenes){
         e = g.firstChild;
       }
       
-      scenes.$g = g;
+      scene.$g = g;
       
       var w = (s.width  + s.left + s.right ),
           h = (s.height + s.top  + s.bottom);
@@ -970,7 +974,7 @@ pv.VmlScene.panel = function(scenes){
     /* clip (nest children) */
     var c;
     if(s.overflow === "hidden") {
-      c = this.expect(e, "g", scenes, i);
+      c = this.expect(e, "g", scene, i);
       c.style.position = "absolute";
       c.style.clip = "rect(" + 
                   s.top.toFixed(2) + "px " + 
@@ -982,12 +986,12 @@ pv.VmlScene.panel = function(scenes){
           g.appendChild(c); 
       }
       
-      scenes.$g = g = c;
+      scene.$g = g = c;
       e = c.firstChild;
     }
     
     /* fill */
-    e = this.fill(e, scenes, i);
+    e = this.fill(e, scene, i);
     
     /* transform (push) */
     var k = this.scale,
@@ -1004,33 +1008,36 @@ pv.VmlScene.panel = function(scenes){
                          (t.k != 1 ? " scale(" + t.k + ")" : "")
         };
         
-        this.eachChild(scenes, i, function(child) {
-          child.$g = e = this.expect(e, "g", scenes, i, attrs);
+        var childScenes = this.getSortedChildScenes(scene, i);
+        for(var j = 0, C = childScenes.length ; j < C; j++) {
+          var childScene = childScenes[j];
           
-          this.updateAll(child);
-        
+          childScene.$g = e = this.expect(e, "g", scene, i, attrs);
+
+          this.updateAll(childScene);
+          
           var parentNode = e.parentNode;
           if (!parentNode || parentNode.nodeType === 11) {
             g.appendChild(e);
             var helper = vml.elm_defaults[e.svgtype];
             if (helper && typeof helper.onappend === 'function') {
-              helper.onappend(e, scenes[i]);
+              helper.onappend(e, scene[i]);
             }
           }
             
           e = e.nextSibling;
-        }); // end eachChild
+        }
     }
     
     /* transform (pop) */
     this.scale = k;
     
     /* stroke */
-    e = this.stroke(e, scenes, i);
+    e = this.stroke(e, scene, i);
     
     /* clip (restore group) */
     if (c) {
-      scenes.$g = g = c.parentNode;
+      scene.$g = g = c.parentNode;
       e = c.nextSibling;
     }
   } // end for panel instance
@@ -1252,16 +1259,16 @@ pv.VmlScene.dispatch = pv.listener(function(e){
   }
 });
 
-pv.VmlScene.image = function(scenes) {
-  var e = scenes.$g.firstChild;
-  for (var i = 0; i < scenes.length; i++) {
-    var s = scenes[i];
+pv.VmlScene.image = function(scene) {
+  var e = scene.$g.firstChild;
+  for (var i = 0; i < scene.length; i++) {
+    var s = scene[i];
 
     /* visible */
     if (!s.visible) continue;
 
     /* fill */
-    e = this.fill(e, scenes, i);
+    e = this.fill(e, scene, i);
 
     /* image */
     if (s.image) {
@@ -1279,17 +1286,17 @@ pv.VmlScene.image = function(scenes) {
       st.msInterpolationMode = 'bicubic';
     }
     
-    e = this.append(e, scenes, i);
-    e = this.stroke(e, scenes, i);
+    e = this.append(e, scene, i);
+    e = this.stroke(e, scene, i);
   }
 
   return e;
 };
 
-pv.VmlScene.label = function(scenes) {
-  var e = scenes.$g.firstChild;
-  for(var i = 0, L = scenes.length ; i < L ; i++) {
-    var s = scenes[i];
+pv.VmlScene.label = function(scene) {
+  var e = scene.$g.firstChild;
+  for(var i = 0, L = scene.length ; i < L ; i++) {
+    var s = scene[i];
 
     // visible
     if (!s.visible) continue;
@@ -1360,7 +1367,7 @@ pv.VmlScene.label = function(scenes) {
     attr.font = font;
     attr.textDecoration = s.textDecoration;
     
-    e = this.expect(e, "text", scenes, i, attr, {    
+    e = this.expect(e, "text", scene, i, attr, {    
       'display':    'block',
       'lineHeight': 1,
       'whiteSpace': 'nowrap',
@@ -1371,18 +1378,18 @@ pv.VmlScene.label = function(scenes) {
       'left':       left + 'px'
     });
 
-    e = this.append(e, scenes, i);
+    e = this.append(e, scene, i);
   }
 
   return e;
 };
 
-pv.VmlScene.wedge = function(scenes) {
-  var e = scenes.$g.firstChild,
+pv.VmlScene.wedge = function(scene) {
+  var e = scene.$g.firstChild,
       round = vml.round;
 
-  for(var i = 0, L = scenes.length ; i < L ; i++) {
-    var s = scenes[i];
+  for(var i = 0, L = scene.length ; i < L ; i++) {
+    var s = scene[i];
 
     // visible
     if(!s.visible) continue;
@@ -1392,7 +1399,7 @@ pv.VmlScene.wedge = function(scenes) {
     if(!fill.opacity && !stroke.opacity) continue;
 
     // create element sans path
-    e = this.expect(e, "path", scenes, i, {
+    e = this.expect(e, "path", scene, i, {
       "pointer-events": s.events,
       "cursor": s.cursor,
       "transform": "translate(" + s.left + "," + s.top + ")",
@@ -1442,7 +1449,7 @@ pv.VmlScene.wedge = function(scenes) {
     }
     p.v = d;
 
-    e = this.append(e, scenes, i);
+    e = this.append(e, scene, i);
   }
   
   return e;

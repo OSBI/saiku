@@ -3,7 +3,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
-//VERSION TRUNK-20130930
+//VERSION TRUNK-20131022
 
 var def = (function() {
 
@@ -137,12 +137,12 @@ var def = /** @lends def */{
      * @see def.getOwn
      * @see def.nully
      */
-    get: function(o, p, dv){
+    get: function(o, p, dv) {
         var v;
         return o && (v = o[p]) != null ? v : dv;
     },
     
-    gets: function(o, props){
+    gets: function(o, props) {
         return props.map(function(p){ return o[p]; });
     },
     
@@ -244,82 +244,63 @@ var def = /** @lends def */{
      * @see def.hasOwn
      * @see def.nully
      */
-    getOwn: function(o, p, dv){
+    getOwn: function(o, p, dv) {
         var v;
         return o && objectHasOwn.call(o, p) && (v = o[p]) != null ? v : dv;
     },
     
-    hasOwn: function(o, p){
+    hasOwn: function(o, p) {
         return !!o && objectHasOwn.call(o, p);
     },
     
     hasOwnProp: objectHasOwn,
     
-    set: function(o){
-        if(!o) {
-            o = {};
-        }
-        
-        var a = arguments;
+    set: function(o) {
+        // Not assigning to arguments variable allows optimizations.
+        var oo = o || {};
+        var a  = arguments;
         for(var i = 1, A = a.length - 1 ; i < A ; i += 2) {
-            o[a[i]] = a[i+1];
+            oo[a[i]] = a[i+1];
         }
-        
-        return o;
+        return oo;
     },
 
     setDefaults: function(o, o2){
-        if(!o) {
-            o = {};
-        }
-
+        // Not assigning to arguments variable allows optimizations.
+        var oo = o || {};
         var a = arguments;
         var A = a.length;
         var p;
         if(A === 2 && def.object.is(o2)){
-            for(p in o2){
-                if(o[p] == null){
-                    o[p] = o2[p];
-                }
-            }
+            for(p in o2) { if(oo[p] == null) { oo[p] = o2[p]; } }
         } else {
             A--;
             for(var i = 1 ; i < A ; i += 2) {
                 p = a[i];
-                if(o[p] == null){
-                    o[p] = a[i+1];
-                }
+                if(oo[p] == null) { oo[p] = a[i+1]; }
             }
         }
         
-        return o;
+        return oo;
     },
 
-    setUDefaults: function(o, o2){
-        if(!o) {
-            o = {};
-        }
-
+    setUDefaults: function(o, o2) {
+        // Not assigning to arguments variable allows optimizations.
+        var oo = o || {};
         var a = arguments;
         var A = a.length;
         var p;
-        if(A === 2 && def.object.is(o2)){
-            for(p in o2){
-                if(o[p] === undefined){
-                    o[p] = o2[p];
-                }
-            }
+        if(A === 2 && def.object.is(o2)) {
+            for(p in o2) { if(oo[p] === undefined) { oo[p] = o2[p]; } }
         } else {
             A--;
             for(var i = 1 ; i < A ; i += 2) {
                 p = a[i];
-                if(o[p] === undefined){
-                    o[p] = a[i+1];
-                }
+                if(oo[p] === undefined) { oo[p] = a[i+1]; }
             }
         }
         
-        return o;
+        return oo;
     },
     
     /**
@@ -337,12 +318,10 @@ var def = /** @lends def */{
      * 
      * @type undefined
      */
-    eachOwn: function(o, fun, ctx){
-        if(o){
-            for(var p in o){
-                if(objectHasOwn.call(o, p)){
-                    fun.call(ctx, o[p], p, o);
-                }
+    eachOwn: function(o, fun, ctx) {
+        if(o) {
+            for(var p in o) {
+                if(objectHasOwn.call(o, p)) { fun.call(ctx, o[p], p, o); }
             }
         }
     },
@@ -362,12 +341,8 @@ var def = /** @lends def */{
      * 
      * @type undefined
      */
-    each: function(o, fun, ctx){
-        if(o){
-            for(var p in o){
-                fun.call(ctx, o[p], p, o);
-            }
-        }
+    each: function(o, fun, ctx) {
+        if(o) { for(var p in o) { fun.call(ctx, o[p], p, o); } }
     },
     
     copyOwn: function(a, b){
@@ -380,18 +355,16 @@ var def = /** @lends def */{
             from = a;
         }
         
-        if(from){
-            for(var p in from){
-                if(objectHasOwn.call(from, p)){
-                    to[p] = from[p];
-                }
+        if(from) {
+            for(var p in from) {
+                if(objectHasOwn.call(from, p)) { to[p] = from[p]; }
             }
         }
 
         return to;
     },
     
-    copy: function(a, b){
+    copy: function(a, b) {
         var to, from;
         if(arguments.length >= 2) {
             to = a || {};
@@ -401,11 +374,7 @@ var def = /** @lends def */{
             from = a;
         }
         
-        if(from) {
-            for(var p in from) { 
-                to[p] = from[p];
-            }
-        }
+        if(from) { for(var p in from) { to[p] = from[p]; } }
         
         return to;
     },
@@ -1729,6 +1698,20 @@ def.copyOwn(def.array, /** @lends def.array */{
         return array;
     },
     
+    removeIf: function(array, p, x) {
+        var i = 0;
+        var L = array.length;
+        while(i < L) {
+            if(p.call(x, array[i], i)) {
+                L--;
+                array.splice(i, 1);
+            } else {
+                i++;
+            }
+        }
+        return array;
+    },
+
     binarySearch: function(array, item, comparer, key){
         if(!comparer) { comparer = def.compare; }
         
