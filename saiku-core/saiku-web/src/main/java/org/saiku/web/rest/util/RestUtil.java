@@ -19,7 +19,6 @@ package org.saiku.web.rest.util;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import org.saiku.olap.dto.resultset.AbstractBaseCell;

@@ -16,6 +16,7 @@ import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.olap.query.IQuery;
 import org.saiku.olap.util.exception.SaikuOlapException;
+import org.saiku.olap.util.formatter.ICellSetFormatter;
 
 public class MockQuery implements IQuery {
 
@@ -199,6 +200,14 @@ public class MockQuery implements IQuery {
 		
 	}
 	public OlapConnection getConnection() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	public void storeFormatter(ICellSetFormatter formatter) {
+		// TODO Auto-generated method stub
+		
+	}
+	public ICellSetFormatter getFormatter() {
 		// TODO Auto-generated method stub
 		return null;
 	}

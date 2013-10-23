@@ -49,6 +49,7 @@ import org.saiku.olap.query.QueryProperties.QueryProperty;
 import org.saiku.olap.query.QueryProperties.QueryPropertyFactory;
 import org.saiku.olap.util.SaikuProperties;
 import org.saiku.olap.util.exception.SaikuOlapException;
+import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,6 +75,8 @@ public class OlapQuery implements IQuery {
 	private OlapStatement statement = null;
 
 	private OlapConnection connection;
+
+	private ICellSetFormatter formatter;
 
 	public OlapQuery(Query query, OlapConnection connection, SaikuCube cube, boolean applyDefaultProperties) {
 		this.query = query;
@@ -441,6 +444,15 @@ public class OlapQuery implements IQuery {
 	
 	public OlapConnection getConnection() {
 		return this.connection;
+	}
+
+	public void storeFormatter(ICellSetFormatter formatter) {
+		this.formatter = formatter;
+		
+	}
+
+	public ICellSetFormatter getFormatter() {
+		return formatter;
 	}
 
 

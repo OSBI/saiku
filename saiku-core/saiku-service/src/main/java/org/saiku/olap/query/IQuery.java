@@ -30,6 +30,7 @@ import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.olap.util.exception.SaikuOlapException;
+import org.saiku.olap.util.formatter.ICellSetFormatter;
 
 public interface IQuery {
 
@@ -72,6 +73,8 @@ public interface IQuery {
 	public void cancel() throws Exception;
 	public void clearAxis(String axisName) throws SaikuOlapException;
 	public OlapConnection getConnection();
+	public void storeFormatter(ICellSetFormatter formatter);
+	public ICellSetFormatter getFormatter();
 	
 
 }

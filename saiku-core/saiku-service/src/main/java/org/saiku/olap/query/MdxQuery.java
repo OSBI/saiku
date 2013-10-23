@@ -42,6 +42,7 @@ import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.olap.util.exception.SaikuOlapException;
+import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +58,8 @@ public class MdxQuery implements IQuery {
 	private Scenario scenario;
 	private CellSet cellset;
 	private OlapStatement statement;
+
+	private ICellSetFormatter formatter;
 
 	public MdxQuery(OlapConnection con, SaikuCube cube, String name, String mdx) {
 		this.cube = cube;
@@ -306,4 +309,14 @@ public class MdxQuery implements IQuery {
 	public OlapConnection getConnection() {
 		return this.connection;
 	}
+
+	public void storeFormatter(ICellSetFormatter formatter) {
+		this.formatter = formatter;
+		
+	}
+
+	public ICellSetFormatter getFormatter() {
+		return formatter;
+	}
+
 }
