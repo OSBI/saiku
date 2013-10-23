@@ -85,7 +85,7 @@ var Session = Backbone.Model.extend({
             Settings.LOCALSTORAGE_EXPIRATION;
         typeof localStorage !== "undefined" && localStorage && localStorage.setItem('expiration', expires);
 
-        this.save({username:username, password:password},{success: this.check_session, error: this.check_session});
+        this.save({username:username, password:password},{dataType: "text", success: this.check_session, error: this.check_session});
         
     },
     
