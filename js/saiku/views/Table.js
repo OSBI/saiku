@@ -40,6 +40,9 @@ var Table = Backbone.View.extend({
         if (this.workspace.query.get('type') != 'QM' || Settings.MODE == "table") {
             return false;
         }
+        if ($(this.workspace.el).find( ".workspace_results.ui-selectable" ).length > 0) {
+            $(this.workspace.el).find( ".workspace_results" ).selectable( "destroy" );
+        }
 
         var $target = ($(event.target).hasClass('row') || $(event.target).hasClass('col') ) ?
             $(event.target).find('div') : $(event.target);

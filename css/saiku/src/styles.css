@@ -561,6 +561,15 @@ span.clear_axis {
 }
 
 /** Draggables, Sortables and Droppables */
+.ui-selectable-helper{
+  position:absolute;
+  z-index:100;
+  border:2px solid #86fe00;
+  
+
+  background-color: rgba(203, 239, 163, 0.6);
+} 
+
 .ui-dialog.ui-draggable {
     margin: 0px !important;
 }
@@ -1142,6 +1151,7 @@ a.disabled_toolbar:hover {
     border-radius: 3px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
+    background-repeat:no-repeat;
 }
 .workspace_toolbar a.button:hover {
     border: 1px solid #CCC;
@@ -1158,12 +1168,10 @@ a.disabled_toolbar:hover {
 
 .workspace_toolbar .edit_folder {
     background-image: url('../../../images/src/folder_edit.png');
-    background-repeat:no-repeat;
     background-position: 7px 7px;
 }
 .workspace_toolbar .edit_permissions {
     background-image: url('../../../images/src/group_edit.png');
-    background-repeat:no-repeat;
     background-position: 7px 7px;
 }
 
@@ -1175,7 +1183,6 @@ a.disabled_toolbar:hover {
 }
 .workspace_toolbar .new {
     background-image: url('../../../images/src/page_white.png');
-    background-repeat:no-repeat;
     background-position: 7px 7px;
 }
 .workspace_toolbar .run {
@@ -1189,7 +1196,6 @@ a.disabled_toolbar:hover {
 }
 .workspace_toolbar .group_parents {
     background-image: url('../../../images/src/hide_parents.png');
-    background-repeat:no-repeat;
     background-position: 7px 7px;
 }
 .workspace_toolbar .swap_axis {
@@ -1201,7 +1207,6 @@ a.disabled_toolbar:hover {
 
 .workspace_toolbar .explain_query {
     background-image: url('../../../images/src/information.png');
-    background-repeat:no-repeat;
     background-position: 7px 7px;
 }
 
@@ -1214,7 +1219,6 @@ a.disabled_toolbar:hover {
 
 .workspace_toolbar .export_pdf {
     background-image: url('../../../images/src/button_pdf.png');
-    background-repeat:no-repeat;
     background-position: 7px 7px;
 }
 
@@ -1229,22 +1233,24 @@ a.disabled_toolbar:hover {
 }
 .workspace_toolbar .drillthrough_export {
     background-image: url('../../../images/src/export_drillthrough.png');
-    background-repeat:no-repeat;
     background-position: 7px 7px;
 }
 .workspace_toolbar .query_scenario {
     background-image: url('../../../images/src/query_scenario.png');
+    background-repeat:no-repeat;
+    background-position: 7px 7px;
+}
+.workspace_toolbar .zoom_mode {
+    background-image: url('../../../images/src/zoom.png');
     background-position: 7px 7px;
 }
 
 .workspace_toolbar .switch_to_mdx {
   background-image: url('../../../images/src/switch_to_mdx.png');
   background-position: 7px 7px;
-  background-repeat:no-repeat;
 }
 .workspace_toolbar .chart {
     background-image:   url('../../../js/saiku/plugins/CCC_Chart/chart.png');
-    background-repeat:  no-repeat;
     background-position: 7px 7px;
 }
 

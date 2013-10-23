@@ -112,6 +112,11 @@ var Buckets = Backbone.View.extend({
         $(event.target).toggleClass('on');
         
         if ($(event.target).hasClass('on')) {
+            if ($(self.workspace.toolbar.el).find(".zoom_mode.on").length > 0) {
+                $(self.workspace.toolbar.el).find(".zoom_mode.on").click();
+            }
+
+            
             var schema = self.workspace.query.get('schema');
             var cube = self.workspace.query.get('connection') + "-" + 
                     self.workspace.query.get('catalog') + "-"

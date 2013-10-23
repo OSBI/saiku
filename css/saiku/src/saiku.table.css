@@ -68,6 +68,7 @@
   cursor: pointer;
 }
 
-.workspace_results table td.selected {
+.workspace_results table td.selected,.workspace_results table td.ui-selected,.workspace_results table td.ui-selecting {
   background: #c2d5e2 !important;
 }
+
