@@ -488,6 +488,28 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
                 }
         });
 
+        if (runtimeChartDefinition.type == "TreemapChart") {
+            runtimeChartDefinition.legend.scenes.item.labelText = function() {
+                 var indent = "";
+                    var group  = this.group;
+                    if(group) {
+                        console.log(group.depth);
+                        var depth = group.depth;
+                        // 0 ""
+                        // 1 "text"
+                        // 2 "└ text"
+                        // 3 "  └ text"
+                        switch(depth) {
+                            case 0: return "";
+                            case 1: break;
+                            case 2: indent = " └ "; break;
+                            default:
+                                indent = new Array(2*(depth-2) + 1).join(" ") + " └ ";
+                        }
+                    }
+                    return indent + this.base();
+            };
+        }
         this.chart = new pvc[runtimeChartDefinition.type](runtimeChartDefinition);
         this.chart.setData(this.data, {
             crosstabMode: true,
