@@ -32,6 +32,9 @@ var SaikuChartRenderer = function(data, options) {
         });
     }
 
+    if (options.chartDefinition) {
+        this.chartDefinition = options.chartDefinition;
+    }
     this.cccOptions.canvas = 'canvas_' + this.id;
     this.data = null;
 
@@ -486,7 +489,7 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
                 return [];
 
                 }
-        });
+        }, this.chartDefinition);
 
         if (runtimeChartDefinition.type == "TreemapChart") {
             runtimeChartDefinition.legend.scenes.item.labelText = function() {

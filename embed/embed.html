@@ -65,10 +65,17 @@ myClient.execute({
 
 });
 myClient.execute({
-    file: "chart.saiku",
+    file: "y.saiku",
     htmlObject: "#saiku2",
     render: "chart",
     mode: "heatgrid",
+    chartDefinition: {
+        colors: ['grey','red','blue'],
+        extensionPoints: {
+            xAxisLabel_textAngle: - Math.PI/3,
+            panel_fillStyle: "yellow"
+        }
+    },
     zoom: true
 
 });
