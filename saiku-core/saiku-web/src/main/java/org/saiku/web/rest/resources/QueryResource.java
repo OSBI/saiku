@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -39,6 +38,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -908,6 +908,43 @@ public class QueryResource {
 		} catch(Exception e){
 			log.error("Cannot remove dimension "+ dimensionName+ " for query (" + queryName + ")",e);
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+	
+	@PUT
+	@Consumes("application/x-www-form-urlencoded")
+	@Path("/{queryname}/zoomin")
+	public SaikuQuery zoomIn(
+			@PathParam("queryname") String queryName,
+			@FormParam("selections") String positionListString) {
+		try {
+
+			if (log.isDebugEnabled()) {
+				log.debug("TRACK\t"  + "\t/query/" + queryName + "/zoomIn\tPUT");
+			}
+			List<List<Integer>> realPositions = new ArrayList<List<Integer>>();
+			if (StringUtils.isNotBlank(positionListString)) {
+				ObjectMapper mapper = new ObjectMapper();
+				String[] positions = mapper.readValue(positionListString, TypeFactory.arrayType(String.class));
+				if (positions != null && positions.length > 0) {
+					for (String position : positions) {
+						String[] rPos = position.split(":");
+						List<Integer> cellPosition = new ArrayList<Integer>();
+	
+						for (String p : rPos) {
+							Integer pInt = Integer.parseInt(p);
+							cellPosition.add(pInt);
+						}
+						realPositions.add(cellPosition);
+					}
+				}
+			}
+			IQuery query = olapQueryService.zoomIn(queryName, realPositions);
+			return ObjectUtil.convert(query);
+			
+		} catch (Exception e){
+			log.error("Cannot updates selections for query (" + queryName + ")",e);
+			throw new WebApplicationException(e);
 		}
 	}
 

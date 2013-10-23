@@ -993,6 +993,49 @@ public class OlapQueryService implements Serializable {
 			throw new SaikuServiceException("Error addTag:" + tagName + " for query: " + queryName,e);
 		}
 	}
+	
+
+	public IQuery zoomIn(String queryName, List<List<Integer>> realPositions) {
+		try {
+			IQuery query = getIQuery(queryName);
+			CellSet cs = query.getCellset();
+			if (cs == null) {
+				throw new SaikuServiceException("Cannot zoom in if last cellset is null");
+			}
+			if (realPositions == null || realPositions.size() == 0) {
+				throw new SaikuServiceException("Cannot zoom in if zoom in position is empty");
+			}
+			
+			Map<Dimension, Set<Member>> memberSelection = new HashMap<Dimension, Set<Member>>();
+			for (List<Integer> position : realPositions) {
+				for (int k = 0; k < position.size(); k++) {
+					Position p = cs.getAxes().get(k).getPositions().get(position.get(k));
+					List<Member> members = p.getMembers();
+					for (Member m : members) {
+						Dimension d = m.getDimension();
+						if (!memberSelection.containsKey(d)) {
+							Set<Member> mset = new HashSet<Member>();
+							memberSelection.put(d, mset);
+						}
+						memberSelection.get(d).add(m);
+					}
+				}
+			}
+			
+			for(Dimension d : memberSelection.keySet()) {
+				QueryDimension a = query.getDimension(d.getName());
+				a.clearInclusions();
+				for (Member m : memberSelection.get(d)) {
+					a.include(m);
+				}
+			}
+			
+			return query;
+		} catch (Exception e) {
+			throw new SaikuServiceException("Error zoom in on query: " + queryName,e);
+		}
+		
+	}
 
 	public SaikuFilter getFilter(String queryName, String filtername, String dimensionName, String hierarchyName, String levelName) {
 		try {
