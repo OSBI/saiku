@@ -757,6 +757,7 @@ span.clear_axis {
     box-shadow: 0 0 10px #EEE;
     border: 1px solid #CCC;
     z-index: 100;
+    position: absolute;
 }
 #login_form label, #add_folder label {
     display: block;
