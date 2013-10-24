@@ -45,7 +45,7 @@ public class ExtendedJAXRSPluginServlet extends JAXRSPluginServlet {
 	protected void initiate(ResourceConfig rc, WebApplication wa) {
 
 		rc.getClasses().add(JacksonJaxbJsonProvider.class);
-	    rc.getContainerResponseFilters().add(new GZIPContentEncodingFilter());
+//	    rc.getContainerResponseFilters().add(new GZIPContentEncodingFilter());
 		super.initiate(rc, wa);
 	}
 
