@@ -125,7 +125,7 @@
 
 </div>
 
-<div class="panel panel-default left" style="width: 600px; float:left;">
+<div class="panel panel-default left" style="width: 800px; float:left;">
   <div class="panel-heading">
     <h3 class="panel-title">Product Family per State</h3>
   </div>
@@ -147,25 +147,28 @@ var myClient = new SaikuClient({
 });
 
 myClient.execute({
-    file: "chart.saiku",
+    file: "Examples/ConditionalFormattingExample2.saiku",
     htmlObject: "#saiku3",
     render: "table"
 });
 
 myClient.execute({
-    file: "table.saiku",
+    file: "Examples/Heatgrid.saiku",
     htmlObject: "#saiku2",
     render: "chart",
-    mode: "sunburst",
-    zoom: true
+    mode: "stackedBar",
+    zoom: true,
+    chartDefinition: {
+    	colors: ["red", "blue", "green", "yellow"]
+    }
 
 });
 
 myClient.execute({
-    file: "table.saiku",
+    file: "Examples/pie.saiku",
     htmlObject: "#saiku",
     render: "chart",
-    mode: "pie",
+    mode: "heatgrid",
     zoom: true
 
 });
