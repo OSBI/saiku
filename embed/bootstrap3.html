@@ -116,20 +116,20 @@
 
 <div class="panel panel-default" style="width: 500px; float:left;">
   <div class="panel-heading">
-    <h3 class="panel-title">Gender / Marital Status</h3>
+    <h3 class="panel-title">Product Unit Sales / Marital Status</h3>
   </div>
-  <div id="saiku" class="panel-body workspace_results" style="height: 300px;">
+  <div id="saiku" class="panel-body workspace_results" style="height: 450px;">
   </div>
-  <div id="saiku3" class="panel-body workspace_results" style="height: 250px;">
+  <div id="saiku3" class="panel-body workspace_results" style="height: 450px;">
   </div>
 
 </div>
 
 <div class="panel panel-default left" style="width: 800px; float:left;">
   <div class="panel-heading">
-    <h3 class="panel-title">Product Family per State</h3>
+    <h3 class="panel-title">Product Family per Quarter</h3>
   </div>
-  <div id="saiku2" class="panel-body workspace_results" style="height: 550px;">
+  <div id="saiku2" class="panel-body workspace_results" style="height: 900px;">
   </div>
 </div>
 
@@ -141,7 +141,7 @@
 <script type="text/javascript">
 
 var myClient = new SaikuClient({
-    server: "http://localhost:9999/saiku",
+    server: "/saiku",
     user: "admin",
     password: "admin"
 });
@@ -156,20 +156,22 @@ myClient.execute({
     file: "Examples/Heatgrid.saiku",
     htmlObject: "#saiku2",
     render: "chart",
-    mode: "stackedBar",
-    zoom: true,
-    chartDefinition: {
-    	colors: ["red", "blue", "green", "yellow"]
-    }
-
+    mode: "heatgrid",
+    zoom: true
 });
 
 myClient.execute({
     file: "Examples/pie.saiku",
     htmlObject: "#saiku",
     render: "chart",
-    mode: "heatgrid",
-    zoom: true
+    mode: "stackedBar",
+    zoom: true,
+    chartDefinition: {
+    	height: 400,
+    	colors: ["red", "blue", "green", "yellow"],
+    	baseAxisSize: "300px",
+    	baseAxisSizeMax : "200"
+    }
 
 });
 

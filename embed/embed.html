@@ -53,7 +53,7 @@
 <script type="text/javascript">
 
 var myClient = new SaikuClient({
-    server: "http://localhost:9999/saiku",
+    server: "/saiku",
     user: "admin",
     password: "admin"
 });
@@ -73,7 +73,7 @@ myClient.execute({
         colors: ['grey','red','blue'],
         extensionPoints: {
             xAxisLabel_textAngle: - Math.PI/3,
-            panel_fillStyle: "yellow"
+            panel_fillStyle: "#EAEAEA"
         }
     },
     zoom: true
