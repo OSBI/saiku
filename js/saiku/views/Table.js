@@ -70,6 +70,7 @@ var Table = Backbone.View.extend({
             var d = cell.properties.dimension;
             var h = cell.properties.hierarchy;
             var l = cell.properties.level;
+            var l_caption = "";
 
             var keep_payload = JSON.stringify(
                 {
@@ -139,6 +140,10 @@ var Table = Backbone.View.extend({
                                     };
                                     
                                 }
+                                if (level.uniqueName == l) {
+                                    l_caption = level.caption;
+                                    l_name = level.name;
+                                }
                                 items["keep-" + level.name] = items[level.name];
                                 items["include-" + level.name] = JSON.parse(JSON.stringify(items[level.name]));
                                 items["keep-" + level.name].payload = keep_payload + "," + items[level.name].payload;
@@ -147,8 +152,9 @@ var Table = Backbone.View.extend({
                     });
                 }
             });
-            items["keeponly"] = { payload: keep_payload }
-            items["getchildren"] = { payload: children_payload }
+            items["keeponly"] = { payload: keep_payload };
+            items["getchildren"] = { payload: children_payload };
+            items["showall"] = { payload: items["remove-" + l_name].payload + ", " + items["include-" + l_name].payload};
             
 
             
@@ -183,12 +189,28 @@ var Table = Backbone.View.extend({
                         name: "Remove Level",
                         items: lvlitems("remove-")
                     };
+                citems["filterlevel"] = {
+                    name: "Filter Level"
+                };
+                citems["showall"]  =  { name: "Remove Filters"};
             }
             return {
                 callback: function(key, options) {
+
                     var url = '/axis/' + axis + '/dimension/' + encodeURIComponent(d);
                     var children = false;
-                    if (key.indexOf("children") > 0) {
+                    if (key.indexOf("filterlevel") >= 0) {
+                        var key = encodeURIComponent(d) + "/hierarchy/" + encodeURIComponent(h) + "/" + encodeURIComponent(l);
+                        (new SelectionsModal({
+                            target: null,
+                            axis: axis,
+                            name: l_caption,
+                            key: key,
+                            workspace: self.workspace
+                        })).open();
+                        return;
+                    }
+                    if (key.indexOf("children") >= 0) {
                         url = '/axis/' + axis + '/dimension/' + encodeURIComponent(d) + "/children";
                         children = true;
                     }

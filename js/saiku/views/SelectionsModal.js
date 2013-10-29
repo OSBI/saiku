@@ -49,15 +49,22 @@ var SelectionsModal = Modal.extend({
         
         // Determine axis
         this.axis = "undefined"; 
-        if (args.target.parents('.fields_list_body').hasClass('rows')) { 
-            this.axis = "ROWS";
-        }
-        if (args.target.parents('.fields_list_body').hasClass('columns')) { 
-            this.axis = "COLUMNS";
-        }
-        if (args.target.parents('.fields_list_body').hasClass('filter')) { 
-            this.axis = "FILTER";
-            this.use_result_option = false;
+        if (args.axis) {
+            this.axis = args.axis;
+            if (args.axis == "FILTER") {
+                this.use_result_option = false;
+            }
+        } else {
+            if (args.target.parents('.fields_list_body').hasClass('rows')) { 
+                this.axis = "ROWS";
+            }
+            if (args.target.parents('.fields_list_body').hasClass('columns')) { 
+                this.axis = "COLUMNS";
+            }
+            if (args.target.parents('.fields_list_body').hasClass('filter')) { 
+                this.axis = "FILTER";
+                this.use_result_option = false;
+            }
         }
         // Resize when rendered
         this.bind('open', this.post_render);
