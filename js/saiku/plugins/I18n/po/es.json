@@ -64,5 +64,21 @@
    "Toggle sidebar":"Minimizar panel de navegación",
    "Unsaved query":"Consulta sin guardar",
    "Waterfall":"Cascada",
-   "You need to put at least one level or measure on Columns and Rows for a valid query.":"Debe al menos introducir un nivel o medida en Columnas y Filas para una consulta válida"
+   "You need to put at least one level or measure on Columns and Rows for a valid query.":"Debe al menos introducir un nivel o medida en Columnas y Filas para una consulta válida",
+   "Swapping axes...":"Intercambiar ejes ...",
+   "Selections for":"Selecciones para",
+   "Search:":"Buscar:",
+   "Available members:":"Miembros disponibles:",
+   "Used members:":"Miembros usados:",
+   "Show Unique Names":"Mostrar nombres únicos",
+   "Use Result":"Usar resultado",
+   "File:":"Archivo:",
+   "Please select a file.....":"Por favor, seleccione un archivo...",
+   "Opening query...":"Abriendo consulta...",
+   "Statistics":"Estadisticas",
+   "Min":"Mínimo",
+   "Max":"Máximo",
+   "Sum":"Suma",
+   "Average":"Promedio",
+   "Std. Deviation":"Desviación Estandard"
 }

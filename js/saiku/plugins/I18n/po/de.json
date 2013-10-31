@@ -65,5 +65,21 @@
    "Keep this file private to me":"Dieses File darf nur ich sehen",
    "Currently private to:":"Derzeitiger Eigentümer:",
    "Row Limit: (0 = none)":"Zeilen Limit: (0 = kein Limit)",
-   "<b>CAUTION:</b> The number of rows can have a significant impact on the performance of the following action.":"<b>Achtung:</b> Die Anzahl der Zeilen kann eine signifikante Auswirkung auf die Performance der folgenden Aktion haben."
+   "<b>CAUTION:</b> The number of rows can have a significant impact on the performance of the following action.":"<b>Achtung:</b> Die Anzahl der Zeilen kann eine signifikante Auswirkung auf die Performance der folgenden Aktion haben.",
+   "Unsaved query":"nicht gespeicherte Abfrage",
+   "Export":"Exportieren",
+   "Area":"Bereich",
+   "Clear Axis":"Achse zurücksetzen",
+   "Cancel":"Abbrechen",
+   "New":"Neu",
+   "Close This":"Schließen",
+   "Close Others":"Andere schießen",
+   "Tags":"Tags",
+   "Info:":"Info",
+   "Statistics":"Statistik",
+   "Min":"Min",
+   "Max":"Max",
+   "Sum":"Summe",
+   "Average":"Durchschnitt",
+   "Std. Deviation":"Standardabweichung"
 }

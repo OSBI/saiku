@@ -71,5 +71,10 @@
    "Max":"Max",
    "Sum":"Somme",
    "Average":"Moyenne",
-   "Std.Deviation":"Ecart Type"
+   "Std.Deviation":"Ecart Type",
+   "Spark Bar":"Mini Barre",
+   "Spark Line":"Mini Ligne",
+   "Export":"Export",
+   "Stacked Bar":"Barre empilées",
+   "Bar 100%":"Barre 100%"
 }

@@ -93,6 +93,13 @@
    "Currently private to:":"Aktuálně soukromé pro:",
    "Please select a file.....":"Prosím vyber soubor...",
    "Info:":"Informace:",
-   "File:":"Soubor:","Updating chart data....":"Aktualizuji data v grafu...",
-   "Add new tag by selecting cells from your result!":"Pro přidání tagu musíš nejdříve vybrat alespoň jednu buňku z výsledku!"
+   "File:":"Soubor:",
+   "Updating chart data....":"Aktualizuji data v grafu...",
+   "Add new tag by selecting cells from your result!":"Pro přidání tagu musíš nejdříve vybrat alespoň jednu buňku z výsledku!",
+   "Unsaved query":"Neuložený dotaz",
+   "Export":"Export",
+   "Clear Axis":"Smazat osy",
+   "New":"Nový",
+   "Close This":"Zavřít",
+   "Close Others":"Zavřít ostatní"
 }
