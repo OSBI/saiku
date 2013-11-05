@@ -771,7 +771,7 @@ span.clear_axis {
 #login_form label, #add_folder label {
     display: block;
 }
-#password, #username, input.newfolder {
+#password, #username, #email, input.newfolder {
     display: block;
     padding: 4px;
     width: 240px;

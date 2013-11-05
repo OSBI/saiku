@@ -48,6 +48,7 @@ var Settings = {
     PLUGINS: [
         "Chart"
     ],
+    DEMO: false,
     TELEMETRY_SERVER: 'http://telemetry.analytical-labs.com:7000',
     LOCALSTORAGE_EXPIRATION: 10 * 60 * 60 * 1000 /* 10 hours, in ms */
 };
@@ -144,6 +145,11 @@ if ($.blockUI) {
 if (window.location.hostname && (window.location.hostname == "dev.analytical-labs.com" || window.location.hostname == "demo.analytical-labs.com" )) {
     Settings.USERNAME = "admin";
     Settings.PASSWORD = "admin";
+    Settings.DEMO = true;
+            $("<script/>", {
+               type: "text/javascript",
+               src: "https://static.intercomcdn.com/intercom.v1.js"
+            }).appendTo("head");
 }
 
 var isIE = (function(){
