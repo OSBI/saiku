@@ -65,8 +65,10 @@ var DemoLoginForm = Modal.extend({
           }
         );
 
-        $(this.el).dialog('close');
-        this.session.login(l_username, l_password);
+        if (email) {
+            $(this.el).dialog('close');
+            this.session.login(l_username, l_password);
+        }
 
         return true;
     }
