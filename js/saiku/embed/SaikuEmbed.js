@@ -101,7 +101,9 @@ SaikuClient.prototype.execute = function(usercall) {
     SaikuCall,
     usercall
   );
-  console.log(call);
+  if (typeof console != "undefined" && console) {
+    console.log(call);
+  }
   var client = this.config;
   call.params = _.extend(
     call.params,
