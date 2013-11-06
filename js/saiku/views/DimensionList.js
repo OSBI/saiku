@@ -24,7 +24,7 @@ var DimensionList = Backbone.View.extend({
     events: {
         'click span': 'select',
         'click a': 'select',
-        'click .parent_dimension ul li a' : 'select_dimension',
+        'click .parent_dimension ul li a.level' : 'select_dimension',
         'click .measure' : 'select_measure'
     },
     
