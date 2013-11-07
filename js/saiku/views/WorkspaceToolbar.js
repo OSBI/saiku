@@ -447,7 +447,7 @@ var WorkspaceToolbar = Backbone.View.extend({
                 var height = Math.floor(max_height / self.editor.renderer.lineHeight);
                 var screen_length = self.editor.getSession().getScreenLength() > height ? height : self.editor.getSession().getScreenLength();
                 var newHeight =
-                          screen_length
+                          (screen_length + 1)
                           * self.editor.renderer.lineHeight
                           + self.editor.renderer.scrollBar.getWidth();
 
