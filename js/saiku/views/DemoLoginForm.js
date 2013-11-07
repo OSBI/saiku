@@ -30,7 +30,7 @@ var DemoLoginForm = Modal.extend({
     
     events: {
         'click a': 'call',
-        'keyup #demo_form input': 'check'
+        'submit form ' : 'login'
     },
     
     initialize: function(args) {
@@ -45,13 +45,7 @@ var DemoLoginForm = Modal.extend({
         $(this.el).find("#email").select().focus();
     },
     
-    check: function(event) {
-        if(event.which === 13) {
-            this.login();
-        }
-    },
-    
-    login: function() {
+    login: function(e) {
         
         var l_username = Settings.USERNAME;
         var l_password = Settings.PASSWORD;
@@ -69,6 +63,10 @@ var DemoLoginForm = Modal.extend({
             this.session.login(l_username, l_password);
         }
 
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         return true;
     }
 });
