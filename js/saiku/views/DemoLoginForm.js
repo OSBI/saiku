@@ -30,7 +30,7 @@ var DemoLoginForm = Modal.extend({
     
     events: {
         'click a': 'call',
-        'keyup #login_form input': 'check'
+        'keyup #demo_form input': 'check'
     },
     
     initialize: function(args) {
@@ -57,15 +57,14 @@ var DemoLoginForm = Modal.extend({
         var l_password = Settings.PASSWORD;
         var email = $(this.el).find("#email").val();
 
-        window.Intercom('boot', {
-                    email: email,
-                    created_at:  Math.round((new Date()).getTime() / 1000),
-                    app_id: "597eb390acd63f51158efafc191ef490defb8bdd",
-                    widget: {activator: '#IntercomDefaultWidget'}
-          }
-        );
-
         if (email) {
+            window.Intercom('boot', {
+                        email: email,
+                        created_at:  Math.round((new Date()).getTime() / 1000),
+                        app_id: "597eb390acd63f51158efafc191ef490defb8bdd",
+                        widget: {activator: '#IntercomDefaultWidget'}
+              }
+            );
             $(this.el).dialog('close');
             this.session.login(l_username, l_password);
         }
