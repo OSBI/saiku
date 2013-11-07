@@ -5,6 +5,7 @@ var SaikuChartRenderer = function(data, options) {
 
     this.data = null,
     this.hasProcessed = false;
+    this.hasRendered = false;
 
     if (!options && !options.hasOwnProperty('htmlObject')) {
         throw("You need to supply a html object in the options for the SaikuChartRenderer!");
@@ -61,7 +62,22 @@ var SaikuChartRenderer = function(data, options) {
         this.switch_chart("stackedBar");
     }
 
+    this.adjust();
 
+};
+
+SaikuChartRenderer.prototype.adjust = function () {
+    var self = this;
+    var calculateLayout = function() {
+        if (self.hasRendered && $(self.el).is(':visible')) {
+            self.switch_chart(self.type);
+        }
+    }
+    var lazyLayout = _.debounce(calculateLayout, 300);
+    $(window).resize(function() {
+        $(self.el).find('.canvas_wrapper').fadeOut(150);
+        lazyLayout();
+    });
 };
 
 SaikuChartRenderer.prototype.zoomin = function() {
@@ -539,6 +555,7 @@ SaikuChartRenderer.prototype.render_chart_element = function(context) {
             }
 
             self.chart.render();
+            self.hasRendered = true;
         } catch (e) {
             $(self.el).find('.canvas_wrapper').text("Could not render chart" + e);
         }
