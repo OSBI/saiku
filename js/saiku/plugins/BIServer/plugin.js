@@ -109,28 +109,8 @@ if (Settings.BIPLUGIN) {
  */
 var BIPlugin = {
     bind_callbacks: function(workspace) {
-        // If in view mode, remove sidebar and drop zone
-        // XXX - TODO: this needs to be refactored properly into Workspace.js
-        if (Settings.MODE == "view" || Settings.MODE == "table") {
-            workspace.toggle_sidebar();
-            $(workspace.el).find('.sidebar_separator').remove();
-            $(workspace.el).find('.workspace_inner')
-                .css({ 'margin-left': 0 });
-            $(workspace.el).find('.workspace_fields').remove();
-        }
-
-        // Remove toolbar buttons
         $(workspace.toolbar.el).find('.run').parent().removeClass('seperator');
-        if (Settings.MODE == "view" || Settings.MODE == "table") {
-            $(workspace.toolbar.el)
-                .find(".run, .auto, .toggle_fields, .toggle_sidebar")
-                .parent().remove();
-        }
-        if (Settings.MODE == "table") {
-            $(workspace.toolbar.el).parent().remove();
-            $(workspace.querytoolbar.el).parent().remove();
-        }
-
+        
         // Toggle save button
         workspace.bind('query:result', function(args) {
             var isAllowed = args.data.cellset && 
@@ -147,7 +127,6 @@ Saiku.events.bind('session:new', function(session) {
     if (Settings.PLUGIN) {        
         // Remove tabs and global toolbar
         $('#header').remove();
-
         // Bind to workspace
         if (Saiku.tabs._tabs[0] && Saiku.tabs._tabs[0].content) {
             BIPlugin.bind_callbacks(Saiku.tabs._tabs[0].content);

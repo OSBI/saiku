@@ -56,7 +56,16 @@ var Workspace = Backbone.View.extend({
         
         this.chart = new Chart({ workspace: this });
         // Pull query from args
+        this.item = {};
+        this.isReadOnly = false;
+        if (args && args.item) {
+            this.item = args.item;
+            if (this.item && this.item.hasOwnProperty('acl') && _.indexOf(this.item.acl, "WRITE") <  0) {
+                this.isReadOnly = true;
+            }
+        }
         if (args && args.query) {
+
             this.query = args.query;
             this.query.workspace = this;
             this.query.save({}, { success: this.init_query });
@@ -94,24 +103,45 @@ var Workspace = Backbone.View.extend({
         $(this.el).html(this.template());
         
         this.processing = $(this.el).find('.query_processing');
-        // Show toolbar
-        $(this.el).find('.workspace_toolbar').append($(this.toolbar.el));
-        
-        // Show drop zones
-        $(this.el).find('.workspace_editor').append($(this.drop_zones.el));
+        if (this.isReadOnly || Settings.MODE && (Settings.MODE == "view" || Settings.MODE == "table")) {
+            $(this.el).find('.workspace_editor').remove();
+            this.toggle_sidebar();
+            $(this.el).find('.sidebar_separator').remove();
+            $(this.el).find('.workspace_inner')
+                .css({ 'margin-left': 0 });
+            $(this.el).find('.workspace_fields').remove();
 
-        $(this.el).find('.query_toolbar').append($(this.querytoolbar.el));
-        
-        // Activate sidebar for removing elements
-        $(this.el).find('.sidebar')
-            .droppable({
-                accept: '.d_measure, .d_dimension'
-            });
+            $(this.toolbar.el)
+                .find(".run, .auto, .toggle_fields, .toggle_sidebar,.switch_to_mdx, .new")
+                .parent().remove();
 
-        $(this.el).find('.workspace_results')
-            .droppable({
-                accept: '.d_measure, .d_dimension'
-            });
+        } else {
+
+            // Show drop zones
+            $(this.el).find('.workspace_editor').append($(this.drop_zones.el));    
+            // Activate sidebar for removing elements
+            $(this.el).find('.sidebar')
+                .droppable({
+                    accept: '.d_measure, .d_dimension'
+                });
+
+            $(this.el).find('.workspace_results')
+                .droppable({
+                    accept: '.d_measure, .d_dimension'
+                });
+        }
+
+        if (Settings.MODE && Settings.MODE == "table") {
+            $(this.el).find('.workspace_toolbar').remove();
+            $(this.el).find('.query_toolbar').remove();
+        } else {
+            // Show toolbar
+            $(this.el).find('.workspace_toolbar').append($(this.toolbar.el));
+            $(this.el).find('.query_toolbar').append($(this.querytoolbar.el));
+        
+        }
+
+        
         
         // Add results table
         $(this.el).find('.workspace_results')
@@ -121,6 +151,7 @@ var Workspace = Backbone.View.extend({
         // Adjust tab when selected
         this.tab.bind('tab:select', this.adjust);
         $(window).resize(this.adjust);
+
             
         // Fire off new workspace event
         Saiku.session.trigger('workspace:new', { workspace: this });
@@ -291,15 +322,18 @@ var Workspace = Backbone.View.extend({
             $(this.el).find('.run').attr('href','#run_query');
         }
         this.adjust();
-        if ((Settings.MODE == "view") && this.query) {
-            $(this.toolbar.el).find('.switch_to_mdx, .new').parent().hide();
+        if ((Settings.MODE == "view") && this.query || this.isReadOnly) {
             this.query.run(true);
             return;
         }
 
         if (this.query.get('type') == "QM" && $(this.el).find('.sidebar').hasClass('hide') && (Settings.MODE != "table" || Settings.MODE != "view")) {
                 this.toggle_sidebar();
+        } else if (!$(this.el).find('.sidebar').hasClass('hide') && (this.isReadOnly)) {
+            this.toggle_sidebar();
         }
+
+
         // Find the selected cube
         if (this.selected_cube === undefined) {
             var schema = this.query.get('schema');
@@ -355,7 +389,7 @@ var Workspace = Backbone.View.extend({
         var self = this;
         var sync_ui = function() {
                 
-                if (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view")) {
+                if (!self.isReadOnly && (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view"))) {
                     $(self.el).find('.fields_list_body ul').empty();
 
                     $(self.dimension_list.el).find('.parent_dimension a.folder_collapsed').removeAttr('style');

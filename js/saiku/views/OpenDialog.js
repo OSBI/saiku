@@ -85,11 +85,23 @@ var OpenDialog = Modal.extend({
     },
 
     populate: function( repository ) {
+        var self = this;
         $( this.el ).find( '.RepositoryObjects' ).html(
             _.template( $( '#template-repository-objects' ).html( ) )( {
                 repoObjects: repository
             } ) 
         );
+
+        self.queries = {};
+        function getQueries( entries ) {
+            _.forEach( entries, function( entry ) {
+                self.queries[ entry.path ] = entry;
+                if( entry.type === 'FOLDER' ) {
+                    getQueries( entry.repoObjects );
+                }
+            } );
+        }
+        getQueries( repository );
     },
 
     select_root_folder: function( event ) {
@@ -217,12 +229,14 @@ var OpenDialog = Modal.extend({
         var selected_query = new SavedQuery({ file: file });
         this.close();
         Saiku.ui.block("Opening query...");
-        selected_query.fetch({ 
-            success: selected_query.move_query_to_workspace,
-            error: function() { Saiku.ui.unblock(); return; },
-            dataType: "text"
+        var item = this.queries[file];
+        var query = new Query({ 
+            file: file,
+            formatter: Settings.CELLSET_FORMATTER
+        },{
+            name: file
         });
-
+        var tab = Saiku.tabs.add(new Workspace({ query: query, item: item }));
 
         event.preventDefault();
         return false;

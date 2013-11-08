@@ -76,8 +76,8 @@ var OpenQuery = Backbone.View.extend({
                         if (typeof item.acl != "undefined" && _.indexOf(item.acl, "WRITE") <  0) {
                             opt.commands['delete'].disabled = true;
                             opt.items['delete'].disabled = true;
-                            opt.commands.rename.disabled = true;
-                            opt.items.rename.disabled = true;
+                            //opt.commands.rename.disabled = true;
+                            //opt.items.rename.disabled = true;
                         }
 
                         if ($(this).hasClass('folder_row')) {
@@ -330,12 +330,14 @@ var OpenQuery = Backbone.View.extend({
     
     open_query: function(event) {
         Saiku.ui.block("Opening query...");
-        this.selected_query.fetch({ 
-            success: this.selected_query.move_query_to_workspace,
-            error: function() { Saiku.ui.unblock(); return; },
-            dataType: "text"
+        var item = this.queries[this.selected_query.get('file')];
+        var query = new Query({ 
+            file: this.selected_query.get('file'),
+            formatter: Settings.CELLSET_FORMATTER
+        },{
+            name: this.selected_query.get('name')
         });
-        
+        var tab = Saiku.tabs.add(new Workspace({ query: query, item: item }));
         return false;
     },
 
