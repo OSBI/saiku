@@ -28,8 +28,8 @@ var OpenQuery = Backbone.View.extend({
         'click .workspace_toolbar a.button' : 'prevent_default',
         'click .workspace_toolbar a.open': 'open_query',
         'click .workspace_toolbar [href=#edit_folder]': 'edit_folder',
-        'click .workspace_toolbar [href=#delete_folder]': 'delete_folder',
-        'click .workspace_toolbar [href=#delete_query]': 'delete_query',
+        'click .workspace_toolbar [href=#delete_folder]': 'delete_repoObject',
+        'click .workspace_toolbar [href=#delete_query]': 'delete_repoObject',
         'click .workspace_toolbar [href=#edit_permissions]': 'edit_permissions',
         'click .queries' : 'click_canvas',
         'keyup .search_file' : 'search_file',
@@ -62,14 +62,64 @@ var OpenQuery = Backbone.View.extend({
         this.tab.bind('tab:select', this.adjust);
         $(window).resize(this.adjust);
         
+        var self = this;
+        $.contextMenu('destroy', 'li.query, div.folder_row');
+        $.contextMenu({
+                selector: 'li.query, div.folder_row',
+                events: {
+                    show: function(opt) {
+                        $( self.el ).find( '.selected' ).removeClass( 'selected' );
+                        $(this).addClass('selected');
+                        var path = $(this).find('a').attr('href').replace('#', '');
+                        var item = self.queries[path];
 
-        return this; 
+                        if (typeof item.acl != "undefined" && _.indexOf(item.acl, "WRITE") <  0) {
+                            opt.commands.delete.disabled = true;
+                            opt.items.delete.disabled = true;
+                            opt.commands.rename.disabled = true;
+                            opt.items.rename.disabled = true;
+                        }
+
+                        if ($(this).hasClass('folder_row')) {
+                            opt.commands.open.disabled = true;
+                            opt.items.open.disabled = true;
+                        } else {
+                            opt.commands.open.disabled = false;
+                            opt.items.open.disabled = false;
+                        }
+                    }
+
+                },
+                callback: function(key, options) {
+                    var path = $(this).find('a').attr('href').replace('#', '');
+                    var item = self.queries[path];
+                    self.selected_query = new SavedQuery({ file: path, name: item.name, type: item.type });
+                    if (key == "open" && $(this).hasClass('query')) {
+                        self.open_query();
+                    } else if (key == "new") {
+                        self.add_folder();
+                    } else if (key == "delete") {
+                        self.delete_repoObject();
+                    }
+
+
+                },
+                items: {
+                    "open": {name: "<span class='i18n'>Open</span>" },
+//                    "rename": {name: "<span class='i18n'>Rename</span>" },
+                    "delete": {name: "<span class='i18n'>Delete</span>" },
+                    "sep1": "---------",
+                    "new": {name: "<span class='i18n'>New Folder</span>"}
+                }
+            });
+
+        return this;
     },
     
     initialize: function(args) {
         // Maintain `this`
         _.bindAll(this, "adjust", "fetch_queries",
-                "clear_query","select_and_open_query", "cancel_search");
+                "clear_query","select_and_open_query", "cancel_search", "add_folder");
         
         // Initialize repository
         this.repository = new Repository({}, { dialog: this });
@@ -182,7 +232,7 @@ var OpenQuery = Backbone.View.extend({
             }
         }
         
-        this.selected_query = new SavedQuery({ file: path, name: name });
+        this.selected_query = new SavedQuery({ file: path, name: name, type: query.type });
         
         return false;
     },
@@ -208,7 +258,7 @@ var OpenQuery = Backbone.View.extend({
         $( this.el ).find( '.workspace_results' )
             .html( '<h3><strong>' + name + '</strong></h3>' );
 
-        this.selected_query = new SavedQuery({ file: path , name: name });
+        this.selected_query = new SavedQuery({ file: path , name: name, type: folder.type });
 
     },
 
@@ -289,7 +339,7 @@ var OpenQuery = Backbone.View.extend({
         return false;
     },
 
-    delete_query: function(event) {
+    delete_repoObject: function(event) {
         (new DeleteRepositoryObject({
             query: this.selected_query,
             success: this.clear_query
@@ -303,14 +353,6 @@ var OpenQuery = Backbone.View.extend({
         return false;
     },
     
-    delete_folder: function( event ) {
-        (new DeleteRepositoryObject({
-            query: this.selected_query,
-            success: this.clear_query
-        })).render().open();
-        return false;
-    },
-
     edit_permissions: function(event) {
         (new PermissionsModal({
             workspace: this.workspace,
