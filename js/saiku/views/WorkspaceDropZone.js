@@ -101,7 +101,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                     + "/" + query.get('cube');
 
                 var items = {};
-                var measures = Saiku.session.sessionworkspace.measures[cube].get('data');
+                var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
 
                 var func, n, sortliteral, filterCondition, sortOrder, sortOrderLiteral;
                 var sortHl, topHl, filterHl;

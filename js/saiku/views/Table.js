@@ -92,10 +92,11 @@ var Table = Backbone.View.extend({
 
             var levels = [];
             var items = {};
-            var dimensions = Saiku.session.sessionworkspace.dimensions[cube].get('data');
-            if (typeof dimensions == "undefined") {
-                Saiku.session.sessionworkspace.dimensions[cube].fetch({async : false});
-                dimensions = Saiku.session.sessionworkspace.dimensions[cube].get('data');
+            var cubeModel = Saiku.session.sessionworkspace.cube[cube];
+            var dimensions = (cubeModel && cubeModel.has('data')) ? cubeModel.get('data').dimensions : null;
+            if (!dimensions) {
+                Saiku.session.sessionworkspace.cube[cube].fetch({async : false});
+                dimensions = Saiku.session.sessionworkspace.cube[cube].get('data').dimensions;
             }
             var dimsel = {};
             var used_levels = [];

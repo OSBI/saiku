@@ -65,23 +65,25 @@ var DrillthroughModal = Modal.extend({
                 + "/" + this.query.get('cube');
 
         var container = $("#template-drillthrough-list").html();
-        var dimensions = Saiku.session.sessionworkspace.dimensions[key].get('data');
-        var measures = Saiku.session.sessionworkspace.measures[key].get('data');
 
-        if (typeof dimensions == "undefined" || typeof measures == "undefined") {
-                        if (typeof localStorage !== "undefined" && localStorage && 
-                            localStorage.getItem("dimension." + key) !== null &&
-                            localStorage.getItem("measure." + key) !== null) {
-                            Saiku.session.sessionworkspace.dimensions[key] = new Dimension(JSON.parse(localStorage.getItem("dimension." + key)));
-                            Saiku.session.sessionworkspace.measures[key] = new Measure(JSON.parse(localStorage.getItem("measure." + key)));
+        var cubeModel = Saiku.session.sessionworkspace.cube[key];
+        var dimensions = null;
+        var measures = null; 
+
+        if (cubeModel && cubeModel.has('data')) {
+            dimensions = cubeModel.get('data').dimensions;
+            measures = cubeModel.get('data').measures;
+        }
+
+        if (!cubeModel || !dimensions || !measures) {
+                        if (typeof localStorage !== "undefined" && localStorage && localStorage.getItem("cube." + key) !== null) {
+                            Saiku.session.sessionworkspace.cube[key] = new Cube(JSON.parse(localStorage.getItem("cube." + key)));
                         } else {
-                            Saiku.session.sessionworkspace.dimensions[key] = new Dimension({ key: key });
-                            Saiku.session.sessionworkspace.measures[key] = new Measure({ key: key });
-                            Saiku.session.sessionworkspace.dimensions[key].fetch({ async : false });
-                            Saiku.session.sessionworkspace.measures[key].fetch({ async : false });
+                            Saiku.session.sessionworkspace.cube[key] = new Cube({ key: key });
+                            Saiku.session.sessionworkspace.cube[key].fetch({ async : false });
                         }
-                        dimensions = Saiku.session.sessionworkspace.dimensions[key].get('data');
-                        measures = Saiku.session.sessionworkspace.measures[key].get('data');
+                        dimensions = Saiku.session.sessionworkspace.cube[key].get('data').dimensions;
+                        measures = Saiku.session.sessionworkspace.cube[key].get('data').measures;
         } 
 
         var templ_dim =_.template($("#template-drillthrough-dimensions").html())({dimensions: dimensions});

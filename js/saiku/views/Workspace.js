@@ -237,6 +237,7 @@ var Workspace = Backbone.View.extend({
     },
     
     init_query: function(isNew) {
+        var self = this;
         try 
         {
             var properties = this.query.properties ? this.query.properties.properties : {} ;
@@ -314,17 +315,28 @@ var Workspace = Backbone.View.extend({
         
         if (this.selected_cube) {
             // Create new DimensionList and MeasureList
+            var cubeModel = Saiku.session.sessionworkspace.cube[this.selected_cube];
+
             this.dimension_list = new DimensionList({
                 workspace: this,
-                dimension: Saiku.session.sessionworkspace.dimensions[this.selected_cube]
+                dimension: cubeModel,
+                type: "dimensions"
             });        
             $(this.el).find('.dimension_tree').html('').append($(this.dimension_list.el));
             
             this.measure_list = new DimensionList({
                 workspace: this,
-                dimension: Saiku.session.sessionworkspace.measures[this.selected_cube]
+                dimension: cubeModel,
+                type: "measures"
             });
             $(this.el).find('.measure_tree').html('').append($(this.measure_list.el));
+
+            if (!cubeModel.has('data')) {
+                cubeModel.fetch({ success: function() {
+                    self.trigger('cube:loaded')
+                }});
+            }
+
         } else {
             // Someone literally selected "Select a cube"
             $(this.el).find('.dimension_tree').html('');
@@ -410,7 +422,7 @@ var Workspace = Backbone.View.extend({
                     var members = {};
 
                     if (dimension.name != "Measures" && dimension.selections.length > 0) {
-                        var ds = Saiku.session.sessionworkspace.dimensions[this.selected_cube].get('data');
+                        var ds = Saiku.session.sessionworkspace.cube[this.selected_cube].get('data').dimensions;
                         var h = dimension.selections[0].hierarchyUniqueName;
                         _.each(ds, function(d) {
                             if (dimension.name == d.name) {
@@ -428,7 +440,7 @@ var Workspace = Backbone.View.extend({
                             }
                         });
                     } else if (dimension.name == "Measures" && dimension.selections.length > 0) {
-                        var ms = Saiku.session.sessionworkspace.measures[this.selected_cube].get('data');
+                        var ms = Saiku.session.sessionworkspace.cube[this.selected_cube].get('data').measures;
                         var mlist = [];
                         _.each(ms, function(m) {
                             mlist.push(m.uniqueName);

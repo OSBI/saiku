@@ -66,8 +66,7 @@ var SessionWorkspace = Backbone.Model.extend({
         
         
         // Create cube objects
-        this.dimensions = {};
-        this.measures = {};
+        this.cube = {};
         this.connections = response;
         _.delay(this.prefetch_dimensions, 20);
         
@@ -93,15 +92,7 @@ var SessionWorkspace = Backbone.Model.extend({
         }
     },
     
-    prefetch_dimensions: function() {
-        if (! this.measures || ! this.dimensions) {
-            Log.log({
-                Message: "measures or dimensions not initialized",
-                Session: JSON.stringify(this)
-            });
-            return;
-        }
-        
+    prefetch_dimensions: function() {        
         for(var i = 0; i < this.connections.length; i++) {
             var connection = this.connections[i];
             for(var j = 0; j < connection.catalogs.length; j++) {
@@ -115,16 +106,12 @@ var SessionWorkspace = Backbone.Model.extend({
                             + "/" + encodeURIComponent(cube.name);
 
                         if (typeof localStorage !== "undefined" && localStorage && 
-                            localStorage.getItem("dimension." + key) !== null &&
-                            localStorage.getItem("measure." + key) !== null) {
-                            this.dimensions[key] = new Dimension(JSON.parse(localStorage.getItem("dimension." + key)));
-                            this.measures[key] = new Measure(JSON.parse(localStorage.getItem("measure." + key)));
+                            localStorage.getItem("cube." + key) !== null) {
+                            this.cube[key] = new Cube(JSON.parse(localStorage.getItem("cube." + key)));
                         } else {
-                            this.dimensions[key] = new Dimension({ key: key });
-                            this.measures[key] = new Measure({ key: key });
+                            this.cube[key] = new Cube({ key: key });
                             if (Settings.DIMENSION_PREFETCH === true) {
-                                this.dimensions[key].fetch();
-                                this.measures[key].fetch();
+                                this.cube[key].fetch();
                             }
                         }
                     }

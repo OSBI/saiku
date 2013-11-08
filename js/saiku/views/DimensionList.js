@@ -35,20 +35,21 @@ var DimensionList = Backbone.View.extend({
         // Bind parent element
         this.workspace = args.workspace;
         this.dimension = args.dimension;
+        this.type = args.type;
         
         // Fetch from the server if we haven't already
-        if (args.dimension && args.dimension.has('template')) {
+        if (args.dimension && args.dimension.has('template_' + args.type)) {
             this.load_dimension();
         } else if (! args.dimension){
             $(this.el).html('Could not load dimension. Please log out and log in again.');
         } else {
             $(this.el).html('Loading...');
-            args.dimension.fetch({ success: this.load_dimension });
+            this.workspace.bind('cube:loaded',  this.load_dimension);
         }
     },
     
     load_dimension: function() {
-        this.template = this.dimension.get('template');
+        this.template = this.dimension.get('template_' + this.type);
         this.render(); 
         this.workspace.trigger('dimensions:loaded', $(this.el));
 

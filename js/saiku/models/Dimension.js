@@ -13,51 +13,29 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
-/**
- * Model which fetches the dimensions for a cube
- */
-var Dimension = Backbone.Model.extend({
-    initialize: function(args) {
-        this.url = Saiku.session.username + "/discover/" +
-            args.key + "/dimensions";
-    },
-    
-    parse: function(response) {
-        this.set({
-            template: _.template($("#template-dimensions").html())({
-                dimensions: response
-            }),
-            
-            data: response
-        });
-        
-        typeof localStorage !== "undefined" && localStorage && localStorage.setItem("dimension." + this.get('key'),
-                JSON.stringify(this));
-        
-        return response;
-    }
-});
 
 /**
- * Model which fetches the measures for a cube
+ * Model which fetches the dimensions and measures of a cube
  */
-var Measure = Backbone.Model.extend({
+var Cube = Backbone.Model.extend({
     initialize: function(args) {
         this.url = Saiku.session.username + "/discover/" +
-            args.key + "/measures";
+            args.key + "/metadata";
     },
     
     parse: function(response) {
         this.set({ 
-            template: _.template($("#template-measures").html())({
-                measures: response
+            template_measures: _.template($("#template-measures").html())({
+                measures: response.measures
+            }),
+            template_dimensions: _.template($("#template-dimensions").html())({
+                dimensions: response.dimensions
             }),
             
             data: response
         });
         
-        typeof localStorage !== "undefined" && localStorage && localStorage.setItem("measure." + this.get('key'),
+        typeof localStorage !== "undefined" && localStorage && localStorage.setItem("cube." + this.get('key'),
                 JSON.stringify(this));
         
         return response;
