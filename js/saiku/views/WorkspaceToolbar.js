@@ -480,8 +480,18 @@ var WorkspaceToolbar = Backbone.View.extend({
             self.editor.getSession().setValue("");
             self.editor.getSession().on('change', heightUpdateFunction);
             $(window).resize(resizeFunction);
-            self.editor.getSession().on('resize', resizeFunction);
             
+            self.editor.on('changeSelection', heightUpdateFunction);
+            self.editor.on('focus', function(e) { heightUpdateFunction(); return true; });
+            self.editor.on('blur', function(e) {
+                    if ($(self.workspace.el).find(".mdx_input").height() > 100) {
+                                $(self.workspace.el).find(".mdx_input").height(100);
+                            }
+                            self.editor.resize();
+                            self.workspace.adjust();
+             return true; });
+
+            //this.editor.on('focusout', function(e) { alert('blur');  });
 
             //this.editor.setTheme("ace/theme/crimson_editor");
             this.editor.getSession().setMode("ace/mode/text");
