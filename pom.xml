@@ -32,7 +32,7 @@
         </executions>
     </plugin>
 -->
-<!--
+
     <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>yuicompressor-maven-plugin</artifactId>
@@ -68,6 +68,7 @@
                   <include>classes/views/DrillthroughModal.js</include>
                   <include>classes/views/PermissionsModal.js</include>
                   <include>classes/views/LoginForm.js</include>
+                  <include>classes/views/DemoLoginForm.js</include>
                   <include>classes/views/AboutModal.js</include>
                   <include>classes/views/AddFolderModal.js</include>
                   <include>classes/views/FilterModal.js</include>
@@ -81,7 +82,6 @@
                   <include>classes/views/OpenQuery.js</include>
                   <include>classes/views/SaveQuery.js</include>
                   <include>classes/views/OpenDialog.js</include>
-
                   <include>classes/models/Repository.js</include>
                   <include>classes/models/Properties.js</include>
                   <include>classes/models/Result.js</include>
@@ -104,7 +104,7 @@
           </aggregations>
         </configuration>
       </plugin>
--->
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>

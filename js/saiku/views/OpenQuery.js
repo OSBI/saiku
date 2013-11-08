@@ -74,8 +74,8 @@ var OpenQuery = Backbone.View.extend({
                         var item = self.queries[path];
 
                         if (typeof item.acl != "undefined" && _.indexOf(item.acl, "WRITE") <  0) {
-                            opt.commands.delete.disabled = true;
-                            opt.items.delete.disabled = true;
+                            opt.commands['delete'].disabled = true;
+                            opt.items['delete'].disabled = true;
                             opt.commands.rename.disabled = true;
                             opt.items.rename.disabled = true;
                         }
