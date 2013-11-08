@@ -51,9 +51,8 @@
           <aggregations>
             <aggregation>
               <insertNewLine>false</insertNewLine>
-              <output>${basedir}/target/Saiku.min.js</output>
+              <output>${basedir}/target/saiku.min.js</output>
               <includes>
-
                   <include>classes/Settings.js</include>
                   <include>classes/render/SaikuRenderer.js</include>
                   <include>classes/render/SaikuTableRenderer.js</include>
@@ -101,6 +100,16 @@
                   <include>classes/plugins/CCC_Chart/plugin.js</include>
               </includes>
             </aggregation>
+              <aggregation>
+                  <insertNewLine>false</insertNewLine>
+                  <output>${basedir}/target/saiku.embed.min.js</output>
+                  <includes>
+                      <include>classes/render/SaikuRenderer.js</include>
+                      <include>classes/render/SaikuTableRenderer.js</include>
+                      <include>classes/render/SaikuChartRenderer.js</include>
+                      <include>classes/embed/SaikuEmbed.js</include>
+                  </includes>
+              </aggregation>
           </aggregations>
         </configuration>
       </plugin>
@@ -127,8 +136,8 @@
                                         <exclude name=".gitignore" />
                                     </fileset>
 								</copy>
-                                <copy file="target/Saiku.min.js" tofile="target/saiku-ui/Saiku.min.js"/>
-                                <copy file="target/Saiku.min.js.gz" tofile="target/saiku-ui/Saiku.min.js.gz"/>
+                                <copy file="target/Saiku.min.js" tofile="target/saiku-ui/saiku.min.js"/>
+                                <copy file="target/Saiku.min.js.gz" tofile="target/saiku-ui/saiku.min.js.gz"/>
 <!--
                                 <copy todir="target/saiku-ui/doc/">
 									<fileset dir="${basedir}/target/jsdoc"/>
