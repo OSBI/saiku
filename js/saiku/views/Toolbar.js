@@ -21,11 +21,7 @@ var Toolbar = Backbone.View.extend({
     tagName: "div",
     
     events: {
-        'click #new_query': 'new_query',
-        'click #open_query': 'open_query',
-        'click #logout': 'logout',
-        'click #about': 'about',
-        'click #issue_tracker': 'issue_tracker'
+        'click a' : 'call'
     },
     
     template: function() {
@@ -46,6 +42,14 @@ var Toolbar = Backbone.View.extend({
         return this;
     },
     
+    call: function(e) {
+        var target = $(e.target);
+        var callback = target.attr('href').replace('#', '');
+        if(this[callback]) {
+            this[callback](e);
+        }
+        e.preventDefault();
+    },
     /**
      * Add a new tab to the interface
      */
