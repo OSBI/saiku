@@ -22,10 +22,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -199,11 +197,7 @@ public class QueryResource {
 			}
 			SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 			if (StringUtils.isNotBlank(xml)) {
-				Map<String, String> hMap = new HashMap<String, String>();
-				if (formParams != null) {
-					hMap.putAll(hMap);
-				}
-				String query = ServletUtil.replaceParameters(xml, hMap);
+				String query = ServletUtil.replaceParameters(formParams, xml);
 				return olapQueryService.createNewOlapQuery(queryName, query);
 			}
 			return olapQueryService.createNewOlapQuery(queryName, cube);

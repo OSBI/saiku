@@ -56,8 +56,6 @@ public class ExporterResource {
 
 	private static final Logger log = LoggerFactory.getLogger(ExporterResource.class);
 
-	private static final String PREFIX_PARAMETER = "param";
-
 	private ISaikuRepository repository;
 
 	private QueryResource queryResource;
@@ -82,7 +80,7 @@ public class ExporterResource {
 			Response f = repository.getResource(file);
 			String fileContent = new String( (byte[]) f.getEntity());
 			String queryName = UUID.randomUUID().toString();
-			fileContent = ServletUtil.replaceParameters(fileContent, ServletUtil.getParameters(servletRequest, PREFIX_PARAMETER));
+			fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
 			queryResource.createQuery(null,  null,  null, null, fileContent, queryName, null);
 			queryResource.execute(queryName, formatter, 0);
 			return queryResource.getQueryExcelExport(queryName, formatter);
@@ -102,7 +100,7 @@ public class ExporterResource {
 		try {
 			Response f = repository.getResource(file);
 			String fileContent = new String( (byte[]) f.getEntity());
-			fileContent = ServletUtil.replaceParameters(fileContent, ServletUtil.getParameters(servletRequest, PREFIX_PARAMETER));
+			fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
 			String queryName = UUID.randomUUID().toString();
 			queryResource.createQuery(null,  null,  null, null, fileContent, queryName, null);
 			queryResource.execute(queryName,formatter, 0);
@@ -123,7 +121,7 @@ public class ExporterResource {
 		try {
 			Response f = repository.getResource(file);
 			String fileContent = new String( (byte[]) f.getEntity());
-			fileContent = ServletUtil.replaceParameters(fileContent, ServletUtil.getParameters(servletRequest, PREFIX_PARAMETER));
+			fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
 			String queryName = UUID.randomUUID().toString();
 			queryResource.createQuery(null,  null,  null, null, fileContent, queryName, null);
 			QueryResult qr = queryResource.execute(queryName, formatter, 0);
