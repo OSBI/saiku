@@ -76,6 +76,16 @@ Settings.GET = function () {
 }();
 _.extend(Settings, Settings.GET);
 
+Settings.PARAMS = (function() {
+    var p = {};
+    for (var key in Settings) {
+        if (key.match("^PARAM")=="PARAM") {
+            p[key] = Settings[key];
+        }
+    }
+    return p;
+}());
+
 Settings.REST_URL = Settings.BASE_URL
     + Settings.TOMCAT_WEBAPP 
     + Settings.REST_MOUNT_POINT;

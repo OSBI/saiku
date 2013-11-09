@@ -105,8 +105,14 @@ SaikuClient.prototype.execute = function(usercall) {
     console.log(call);
   }
   var client = this.config;
-  call.params = _.extend(
-    call.params,
+  var parameters = {};
+  if (call.params) {
+    for (key in call.params) {
+      parameters['param' + key] = call.params[key];
+    }
+  }
+  parameters = _.extend(
+    parameters,
     { "formatter" : call.formatter },
     { "file" : call.file }
 );
@@ -117,7 +123,7 @@ SaikuClient.prototype.execute = function(usercall) {
       url:          client.server + "/rest/saiku/embed/export/saiku/json",
       type:         'GET',
       cache:        false,
-      data:         call.params,
+      data:         parameters,
       contentType:  'application/x-www-form-urlencoded',
       dataType:     "json",
       success:      function(data, textStatus, jqXHR) {

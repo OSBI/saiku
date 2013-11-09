@@ -61,7 +61,11 @@ var myClient = new SaikuClient({
 myClient.execute({
     file: "table.saiku",
     htmlObject: "#saiku",
-    render: "table"
+    render: "table",
+    params: {
+        family: "testparameter"
+    }
+
 
 });
 myClient.execute({
