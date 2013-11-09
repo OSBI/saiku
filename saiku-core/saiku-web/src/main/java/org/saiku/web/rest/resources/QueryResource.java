@@ -1164,16 +1164,16 @@ public class QueryResource {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/children/"+uniqueMemberName+"\tDELETE");
 		}
 		try{
-			boolean ret = olapQueryService.includeChildren(queryName, dimensionName, uniqueMemberName);
+			boolean ret = olapQueryService.removeChildren(queryName, dimensionName, uniqueMemberName);
 			if(ret == true){
-				return Response.ok().status(Status.CREATED).build();
+				return Response.ok().status(Status.GONE).build();
 			}
 			else{
 				throw new Exception("Couldn't remove children for "+ uniqueMemberName);
 				
 			}
 		} catch (Exception e){
-			log.error("Cannot include children for "+ dimensionName+ " for query (" + queryName + ")",e);
+			log.error("Cannot remove children for "+ dimensionName+ " for query (" + queryName + ")",e);
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
