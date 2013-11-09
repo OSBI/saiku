@@ -10,7 +10,10 @@
     margin-bottom: 0;
     table-layout: fixed;
     width: auto;
+    border-collapse: separate; 
+    border-spacing: 0; 
 }
+.workspace_results th, .workspace_results td { padding: 4px 10px 4px 5px; }
 .workspace_results table th {
     border-left: 1px solid #d5d5d5;
     margin-bottom: 0;
