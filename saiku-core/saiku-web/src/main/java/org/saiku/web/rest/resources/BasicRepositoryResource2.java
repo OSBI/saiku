@@ -506,7 +506,15 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	
 	private List<IRepositoryObject> getRepositoryObjects(FileObject root, String fileType) throws Exception {
 		List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
-		for (FileObject file : root.getChildren()) {
+		FileObject[] objects = new FileObject[0];
+		if (root.getType().equals(FileType.FOLDER)) {
+			objects = root.getChildren();
+		} else { 
+			objects = new FileObject[]{ root };
+		}
+		
+		
+		for (FileObject file : objects) {
 			if (!file.isHidden()) {
 				String filename = file.getName().getBaseName();
 				String relativePath = repo.getName().getRelativeName(file.getName());
