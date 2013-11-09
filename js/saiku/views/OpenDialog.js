@@ -230,12 +230,12 @@ var OpenDialog = Modal.extend({
         this.close();
         Saiku.ui.block("Opening query...");
         var item = this.queries[file];
-        var query = new Query({ 
-            file: file,
-            formatter: Settings.CELLSET_FORMATTER
-        },{
-            name: file
-        });
+                var params = _.extend({ 
+                        file: this.selected_query.get('file'),
+                        formatter: Settings.CELLSET_FORMATTER
+                    }, Settings.PARAMS);
+
+        var query = new Query(params,{ name: file  });
         var tab = Saiku.tabs.add(new Workspace({ query: query, item: item }));
 
         event.preventDefault();

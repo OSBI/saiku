@@ -331,12 +331,12 @@ var OpenQuery = Backbone.View.extend({
     open_query: function(event) {
         Saiku.ui.block("Opening query...");
         var item = this.queries[this.selected_query.get('file')];
-        var query = new Query({ 
-            file: this.selected_query.get('file'),
-            formatter: Settings.CELLSET_FORMATTER
-        },{
-            name: this.selected_query.get('name')
-        });
+        var params = _.extend({ 
+                        file: this.selected_query.get('file'),
+                        formatter: Settings.CELLSET_FORMATTER
+                    }, Settings.PARAMS);
+
+        var query = new Query(params,{ name: this.selected_query.get('name') });
         var tab = Saiku.tabs.add(new Workspace({ query: query, item: item }));
         return false;
     },

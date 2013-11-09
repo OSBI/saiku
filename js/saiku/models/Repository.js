@@ -92,11 +92,15 @@ var Repository = Backbone.Collection.extend({
     model: SavedQuery,
     
     initialize: function(args, options) {
-        this.dialog = options.dialog;
+        if (options && options.dialog) {
+            this.dialog = options.dialog;
+        }
     },
     
     parse: function(response) {
-        this.dialog.populate(response);
+        if (this.dialog) {
+            this.dialog.populate(response);
+        }
     },
     
     url: function() {

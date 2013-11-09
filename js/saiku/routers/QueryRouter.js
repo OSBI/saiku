@@ -35,13 +35,33 @@ var QueryRouter = Backbone.Router.extend({
                 file: file
             };
         } else {
-            
             options = {
                 file: query_name
             }
         }
-        var query = new SavedQuery(options);
-        query.fetch({ success: query.move_query_to_workspace, dataType: dataType});
+
+        var params = _.extend({ 
+                file: options.file
+            }, Settings.PARAMS);
+
+        var dialog = {
+            populate: function(repository) {
+                if (repository && repository.length > 0) {
+                    var f = repository[0];
+                    var query = new Query(params,{ name: options.file });
+                    Saiku.tabs.add(new Workspace({ query: query, item: repository[0] }));
+
+                }
+            }
+        };
+
+        var repositoryFile = new Repository({}, { dialog: dialog }).fetch({ async: false, data: { path: options.file }});
+
+        
+
+
+        
+
     },
 
     open_query_repository: function( ) {
