@@ -51,6 +51,8 @@ var QueryRouter = Backbone.Router.extend({
                     var query = new Query(params,{ name: options.file });
                     Saiku.tabs.add(new Workspace({ query: query, item: repository[0] }));
 
+                } else {
+                    Saiku.tabs.add(new Workspace());
                 }
             }
         };

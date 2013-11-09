@@ -77,7 +77,7 @@ var SessionWorkspace = Backbone.Model.extend({
             Saiku.ui.unblock();
             // Add initial tab
             Saiku.tabs.render();
-            if (! Settings.ACTION) {
+            if (! Settings.ACTION  && !Settings.INITIAL_QUERY) {
                 Saiku.tabs.add(new Workspace());
             }
             // Notify the rest of the application that login was successful
@@ -85,7 +85,7 @@ var SessionWorkspace = Backbone.Model.extend({
                 session: this
             });
         } else {
-            if (! Settings.ACTION) {
+            if (! Settings.ACTION && !Settings.INITIAL_QUERY) {
                 Saiku.tabs.add(new Workspace());
             }
 

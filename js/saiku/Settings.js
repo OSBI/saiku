@@ -101,6 +101,14 @@ if (Settings.BIPLUGIN5) {
     Settings.BIPLUGIN = true;
 }
 
+Settings.INITIAL_QUERY = false;
+if (document.location.hash) {
+    var hash = document.location.hash;
+    if (hash.length > 11 && hash.substring(1, 11) == "query/open") {
+        Settings.INITIAL_QUERY = true;
+    }
+}
+
 
 /**
  * < IE9 doesn't support Array.indexOf
