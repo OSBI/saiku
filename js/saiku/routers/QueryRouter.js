@@ -54,6 +54,7 @@ var QueryRouter = Backbone.Router.extend({
                 } else {
                     Saiku.tabs.add(new Workspace());
                 }
+                Settings.INITIAL_QUERY = false;
             }
         };
 

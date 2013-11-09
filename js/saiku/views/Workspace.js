@@ -94,7 +94,8 @@ var Workspace = Backbone.View.extend({
         });        
     },
 
-    refresh: function() {
+    refresh: function(e) {
+        if (e) { e.preventDefault(); };
         Saiku.session.sessionworkspace.refresh();
     },
     
