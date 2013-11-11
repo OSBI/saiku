@@ -45,6 +45,7 @@ import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.io.DOMReader;
 import org.pentaho.platform.api.engine.ICacheManager;
+import org.pentaho.platform.api.engine.IPentahoAclEntry;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.api.repository.ISolutionRepository;
@@ -52,6 +53,7 @@ import org.pentaho.platform.api.repository.ISolutionRepositoryService;
 import org.pentaho.platform.engine.core.solution.ActionInfo;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.engine.security.SecurityHelper;
 import org.saiku.plugin.util.PluginConfig;
 import org.saiku.web.rest.objects.acl.enumeration.AclMethod;
 import org.saiku.web.rest.objects.repository.IRepositoryObject;
@@ -83,9 +85,14 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 
 	boolean cachingAvailable;
 
+	private ISolutionRepository repository;
+
 	public PentahoRepositoryResource2() {
+		
 		cacheManager = PentahoSystem.getCacheManager(userSession);
 		cachingAvailable = cacheManager != null && cacheManager.cacheEnabled();
+		userSession = PentahoSessionHolder.getSession();
+		repository = PentahoSystem.get(ISolutionRepository.class, userSession);
 
 	}
 
@@ -125,9 +132,28 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 			if (path != null && (path.startsWith("/") || path.startsWith("."))) {
 				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + path);
 			}
+			userSession = PentahoSessionHolder.getSession();
+			repository = PentahoSystem.get(ISolutionRepository.class, userSession);
+			
+			if (StringUtils.isNotBlank(path)) {
+				ISolutionFile sf = repository.getSolutionFile(path, ISolutionRepository.ACTION_EXECUTE);
+				if (sf != null && !sf.isDirectory() && (StringUtils.isBlank(type) || sf.getExtension().endsWith(type.toLowerCase())))  {
+					List<AclMethod> acls = getAcl(path, false);
+	                String localizedName = repository.getLocalizedFileProperty(sf, "title", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+					objects.add(new RepositoryFileObject(localizedName, "#" + path, type, path, acls));
+				}
+				return objects;
+			}
 			Document navDoc = getRepositoryDocument(PentahoSessionHolder.getSession());
-			final Node tree = navDoc.getRootElement();
-			String context = StringUtils.isNotBlank(path) ? "/" + path : "/";
+			Node tree = navDoc.getRootElement();
+			
+			String context = null;
+			if (StringUtils.isNotBlank(path) && !path.startsWith("/")) {
+				path = "/" + path;
+				context = path;
+			} else {
+				context = "/";
+			}
 			return processTree(tree, context, type);
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
@@ -394,13 +420,15 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 	{
 		final String xPathDir = "./file[@isDirectory='true']"; //$NON-NLS-1$
 		List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
-		List<AclMethod> acls = new ArrayList<AclMethod>();
-		acls.add(AclMethod.READ);
-		acls.add(AclMethod.WRITE);
+		List<AclMethod> defaultAcls = new ArrayList<AclMethod>();
+		defaultAcls.add(AclMethod.READ);
+
 		
+		List<IPentahoAclEntry> adminAcl = new ArrayList<IPentahoAclEntry>();
+	      
 		try
 		{
-			final List nodes = tree.selectNodes(xPathDir); //$NON-NLS-1$
+			List nodes = tree.selectNodes(xPathDir);
 			final String[] parentPathArray = parentPath.split("/");
 			final String solutionName = parentPathArray.length > 2 ? parentPathArray[2] : "";
 			final String solutionPath = parentPathArray.length > 3 ? parentPath.substring(parentPath.indexOf(solutionName) + solutionName.length() + 1, parentPath.length()) + "/" : "";
@@ -439,13 +467,16 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 							String t =  fileNode.valueOf("@localized-name");
 							String n = fileNode.valueOf("@name");
 							if (vis) {
+								List<AclMethod> acls = getAcl(relativePath + "/" + name, false);
 								children.add(new RepositoryFileObject(t, "#" + relativePath + "/" + n, fileType, relativePath + "/" + n, acls));
 							}
 						}
 						children.addAll(processTree(node, parentPath + "/" + name, fileType));
+						List<AclMethod> acls = getAcl(relativePath, true);
 						repoObjects.add(new RepositoryFolderObject(localizedName, "#" + relativePath, relativePath, acls, children));
 					} else if (visible && !isDirectory) {
 						if (StringUtils.isBlank(fileType) || name.endsWith(fileType)) {
+							List<AclMethod> acls = getAcl(relativePath + "/" + name, false);
 							repoObjects.add(new RepositoryFileObject(localizedName, "#" + relativePath + "/" + name, fileType, relativePath + "/" + name, acls));
 						}
 					}
@@ -464,6 +495,24 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 		}
 
 		return repoObjects;
+	}
+	
+	private List<AclMethod> getAcl(String file, boolean folder) {
+		boolean isAdministrator = SecurityHelper.isPentahoAdministrator(PentahoSessionHolder.getSession());
+		ISolutionFile solutionFile = repository.getSolutionFile(file, ISolutionRepository.ACTION_EXECUTE);
+		List<AclMethod> acls = new ArrayList<AclMethod>();
+		acls.add(AclMethod.READ);
+		
+		if (isAdministrator 
+	    		|| repository.hasAccess(solutionFile, IPentahoAclEntry.PERM_UPDATE)
+	    		|| (folder && repository.hasAccess(solutionFile, IPentahoAclEntry.PERM_CREATE))) {
+			acls.add(AclMethod.WRITE);
+		}
+		if (isAdministrator || repository.hasAccess(solutionFile, IPentahoAclEntry.PERM_ADMINISTRATION)) {
+			acls.add(AclMethod.GRANT);
+		}
+		return acls;
+		
 	}
 
 
