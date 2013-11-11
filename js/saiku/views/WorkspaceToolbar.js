@@ -233,6 +233,9 @@ var WorkspaceToolbar = Backbone.View.extend({
         }
         $(this.workspace.el).find('.workspace_editor').slideToggle({
             queue: false,
+            progress: function() {
+                self.workspace.adjust();
+            },
             complete: function() {
                 if ($('.workspace_editor').is(':hidden')) {
                     $('.workspace_editor').height(wf);

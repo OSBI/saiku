@@ -65,7 +65,7 @@ var Workspace = Backbone.View.extend({
                 this.isReadOnly = true;
             }
         }
-        if (!args || !args.query || !args.viewState) {
+        if (!args || !args.query || !args.viewState) {
             this.viewState = 'edit';
         }
         if (args && args.query) {
@@ -114,6 +114,7 @@ var Workspace = Backbone.View.extend({
             $(this.el).find('.workspace_inner')
                 .css({ 'margin-left': 0 });
             $(this.el).find('.workspace_fields').remove();
+            $(this.el).find('.sidebar').hide();
 
             $(this.toolbar.el)
                 .find(".run, .auto, .toggle_fields, .toggle_sidebar,.switch_to_mdx, .new")
@@ -329,14 +330,14 @@ var Workspace = Backbone.View.extend({
             $(this.el).find('.run').attr('href','#run_query');
         }
         this.adjust();
-        if ((Settings.MODE == "view") && this.query || this.isReadOnly) {
-            this.query.run(true);
-            return;
-        }
         this.switch_view_state(this.viewState, true);
 
         if (!$(this.el).find('.sidebar').hasClass('hide') && (Settings.MODE == "table" || Settings.MODE == "view" || this.isReadOnly)) {
                 this.toggle_sidebar();
+        }
+        if ((Settings.MODE == "view") && this.query || this.isReadOnly) {
+            this.query.run(true);
+            return;
         }
 
 
@@ -642,7 +643,7 @@ var Workspace = Backbone.View.extend({
     },
 
     switch_view_state: function(mode, dontAnimate) {
-        var target = mode || 'edit';
+        var target = mode || 'edit';
 
         if (target == 'edit') {
                 //$(this.el).find('.workspace_editor').show();
