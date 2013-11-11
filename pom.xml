@@ -136,8 +136,8 @@
                                         <exclude name=".gitignore" />
                                     </fileset>
 								</copy>
-                                <copy file="target/Saiku.min.js" tofile="target/saiku-ui/saiku.min.js"/>
-                                <copy file="target/Saiku.min.js.gz" tofile="target/saiku-ui/saiku.min.js.gz"/>
+                                <copy file="target/saiku.min.js" tofile="target/saiku-ui/saiku.min.js"/>
+                                <copy file="target/saiku.min.js.gz" tofile="target/saiku-ui/saiku.min.js.gz"/>
 <!--
                                 <copy todir="target/saiku-ui/doc/">
 									<fileset dir="${basedir}/target/jsdoc"/>
