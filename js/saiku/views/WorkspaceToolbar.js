@@ -30,7 +30,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         // Maintain `this` in callbacks
         _.bindAll(this, "call", "reflect_properties", "run_query",
             "swap_axes_on_dropzones", "display_drillthrough","clicked_cell_drillthrough_export",
-            "clicked_cell_drillthrough","activate_buttons", "switch_to_mdx","post_mdx_transform");
+            "clicked_cell_drillthrough","activate_buttons", "switch_to_mdx","post_mdx_transform", "toggle_fields_action");
         
         // Redraw the toolbar to reflect properties
         this.workspace.bind('properties:loaded', this.reflect_properties);
@@ -49,7 +49,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     activate_buttons: function(args) {
         if (args != null && args.data && args.data.cellset && args.data.cellset.length > 0 ) {
             $(args.workspace.toolbar.el).find('.button')
-                .removeClass('disabled_toolbar');            
+                .removeClass('disabled_toolbar');       
 
             $(args.workspace.el).find("td.data").removeClass('cellhighlight').unbind('click');
             $(args.workspace.el).find(".table_mode").removeClass('on');
@@ -131,13 +131,33 @@ var WorkspaceToolbar = Backbone.View.extend({
         }
 
         $(this.el).find(".spark_bar, .spark_line").removeClass('on');
-        
 
+        if (Settings.MODE == 'VIEW' || this.workspace.isReadOnly) {
+            $(this.el).find('a.edit').hide();
+        } else {
+            if (this.workspace.viewState == 'view') {
+                $(this.el).find('a.edit').removeClass('on')
+            } else {
+                $(this.el).find('a.edit').addClass('on')
+            }
+            $(this.el).find('a.edit').show();
+        }
     },
     
     new_query: function(event) {
         this.workspace.new_query();
+        this.workspace.switch_view_state('edit');
         return false;
+    },
+
+    edit_query: function(event) {
+        $(event.target).toggleClass('on');
+
+        if ($(event.target).hasClass('on')) {
+            this.workspace.switch_view_state('edit');
+        } else {
+            this.workspace.switch_view_state('view');
+        }
     },
 
     save_query: function(event) {
@@ -180,9 +200,33 @@ var WorkspaceToolbar = Backbone.View.extend({
         if (event) {
             $(this.el).find('.toggle_fields').toggleClass('on');
         }
+        if (!$(this.el).find('.toggle_fields').hasClass('on')) {
+            this.toggle_fields_action('hide');
+        } else {
+            this.toggle_fields_action('show');
+        }
+        
+    },
+
+    toggle_fields_action: function(action, dontAnimate) {
+        var self = this;
+        if ( action == 'show' && $('.workspace_editor').is(':visible')) {
+            return;
+        } else if ( action == 'hide' && $('.workspace_editor').is(':hidden')) {
+            return;
+        }
+        if (dontAnimate) {
+            $('.workspace_editor').css('height','');
+            if ($('.workspace_editor').is(':hidden')) {
+                $('.workspace_editor').show();
+            } else {
+                $('.workspace_editor').hide();
+            }
+            return; 
+        }
         // avoid scrollbar on the right
         var wf = $('.workspace_editor').height();
-        if (!$(this.el).find('.toggle_fields').hasClass('on')) {
+        if ( action == 'hide') {
             var wr = $('.workspace_results').height();
             $('.workspace_results').height(wr - wf);
         }
@@ -198,9 +242,9 @@ var WorkspaceToolbar = Backbone.View.extend({
                 self.workspace.adjust();
             }
         });
-
-
     },
+
+
     
     toggle_sidebar: function() {
         this.workspace.toggle_sidebar();
@@ -415,7 +459,7 @@ var WorkspaceToolbar = Backbone.View.extend({
 
 
         $(this.el).find('.run').attr('href','#run_mdx');
-        $(this.el).find('.run, .save, .open, .new').removeClass('disabled_toolbar');
+        $(this.el).find('.run, .save, .open, .new, .edit').removeClass('disabled_toolbar');
 
         if (Settings.MODE != "view" && Settings.MODE != "table" && !this.workspace.isReadOnly) {
             $mdx_editor = $(this.workspace.el).find('.mdx_input');

@@ -1201,6 +1201,11 @@ a.disabled_toolbar:hover {
     background-position: 7px 7px;
 }
 
+.workspace_toolbar .edit {
+    background-image: url('../../../images/src/pencil.png');
+    background-position: 7px 7px;
+}
+
 .workspace_toolbar .delete {
      background-position: -521px 7px;
 }

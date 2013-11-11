@@ -32,7 +32,7 @@ var Workspace = Backbone.View.extend({
     initialize: function(args) {
         // Maintain `this` in jQuery event handlers
         _.bindAll(this, "caption", "adjust", "toggle_sidebar", "prepare", "new_query", 
-                "init_query", "update_caption", "populate_selections","refresh", "sync_query", "cancel", "cancelled", "no_results", "error");
+                "init_query", "update_caption", "populate_selections","refresh", "sync_query", "cancel", "cancelled", "no_results", "error", "switch_view_state");
                 
         // Attach an event bus to the workspace
         _.extend(this, Backbone.Events);
@@ -57,7 +57,8 @@ var Workspace = Backbone.View.extend({
         this.chart = new Chart({ workspace: this });
         // Pull query from args
         this.item = {};
-        this.isReadOnly = false;
+        this.viewState = (args && args.viewState) ? args.viewState : 'edit' // view / edit
+        this.isReadOnly = (Settings.MODE == 'view' || false);
         if (args && args.item) {
             this.item = args.item;
             if (this.item && this.item.hasOwnProperty('acl') && _.indexOf(this.item.acl, "WRITE") <  0) {
@@ -102,8 +103,8 @@ var Workspace = Backbone.View.extend({
     render: function() {
         // Load template
         $(this.el).html(this.template());
-        
         this.processing = $(this.el).find('.query_processing');
+
         if (this.isReadOnly || Settings.MODE && (Settings.MODE == "view" || Settings.MODE == "table")) {
             $(this.el).find('.workspace_editor').remove();
             this.toggle_sidebar();
@@ -302,6 +303,7 @@ var Workspace = Backbone.View.extend({
                 }
         }
 
+
         if ((Settings.MODE == "table") && this.query) {
             this.query.run(true);
             return;
@@ -327,11 +329,10 @@ var Workspace = Backbone.View.extend({
             this.query.run(true);
             return;
         }
+        this.switch_view_state(this.viewState, true);
 
-        if (this.query.get('type') == "QM" && $(this.el).find('.sidebar').hasClass('hide') && (Settings.MODE != "table" || Settings.MODE != "view")) {
+        if (!$(this.el).find('.sidebar').hasClass('hide') && (Settings.MODE == "table" || Settings.MODE == "view" || this.isReadOnly)) {
                 this.toggle_sidebar();
-        } else if (!$(this.el).find('.sidebar').hasClass('hide') && (this.isReadOnly)) {
-            this.toggle_sidebar();
         }
 
 
@@ -634,6 +635,35 @@ var Workspace = Backbone.View.extend({
         $(this.el).find(".workspace_results_info").html(info);
         this.adjust();
         return;
+    },
+
+    switch_view_state: function(mode, dontAnimate) {
+        var target = mode || 'edit';
+
+        if (target == 'edit') {
+                //$(this.el).find('.workspace_editor').show();
+                this.toolbar.toggle_fields_action('show', dontAnimate);
+                if (this.query.get('type') == "MDX") {
+                    this.toolbar.editor.gotoLine(0);
+                }
+                if ($(this.el).find('.sidebar').hasClass('hide')) {
+                    this.toggle_sidebar();
+                }            
+                //$(this.el).find('.sidebar_separator').show();
+                //$(this.el).find('.workspace_inner').removeAttr('style');
+                $(this.toolbar.el).find(".auto, .toggle_fields, .toggle_sidebar,.switch_to_mdx, .new").parent().show();
+        } else if (target == 'view') {
+                //$(this.el).find('.workspace_editor').hide();
+                this.toolbar.toggle_fields_action('hide', dontAnimate);
+                if (!$(this.el).find('.sidebar').hasClass('hide')) {
+                    this.toggle_sidebar();
+                }            
+                //$(this.el).find('.sidebar_separator').hide();
+                //$(this.el).find('.workspace_inner').css({ 'margin-left': 0 });
+
+                $(this.toolbar.el).find(".auto, .toggle_fields, .toggle_sidebar,.switch_to_mdx").parent().hide();
+        }
+        this.viewState = target;
     },
 
     block: function(message) {

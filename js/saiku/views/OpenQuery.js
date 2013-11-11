@@ -27,6 +27,7 @@ var OpenQuery = Backbone.View.extend({
         'click li.folder': 'toggle_folder',
         'click .workspace_toolbar a.button' : 'prevent_default',
         'click .workspace_toolbar a.open': 'open_query',
+        'click .workspace_toolbar a.edit': 'edit_query',
         'click .workspace_toolbar [href=#edit_folder]': 'edit_folder',
         'click .workspace_toolbar [href=#delete_folder]': 'delete_repoObject',
         'click .workspace_toolbar [href=#delete_query]': 'delete_repoObject',
@@ -76,8 +77,13 @@ var OpenQuery = Backbone.View.extend({
                         if (typeof item.acl != "undefined" && _.indexOf(item.acl, "WRITE") <  0) {
                             opt.commands['delete'].disabled = true;
                             opt.items['delete'].disabled = true;
-                            //opt.commands.rename.disabled = true;
-                            //opt.items.rename.disabled = true;
+                            opt.commands['edit'].disabled = true;
+                            opt.items['edit'].disabled = true;
+                        } else {
+                            opt.commands['delete'].disabled = false;
+                            opt.items['delete'].disabled = false;
+                            opt.commands['edit'].disabled = false;
+                            opt.items['edit'].disabled = false;
                         }
 
                         if ($(this).hasClass('folder_row')) {
@@ -96,6 +102,8 @@ var OpenQuery = Backbone.View.extend({
                     self.selected_query = new SavedQuery({ file: path, name: item.name, type: item.type });
                     if (key == "open" && $(this).hasClass('query')) {
                         self.open_query();
+                    } if (key == "edit" && $(this).hasClass('query')) {
+                        self.edit_query();
                     } else if (key == "new") {
                         self.add_folder();
                     } else if (key == "delete") {
@@ -106,6 +114,7 @@ var OpenQuery = Backbone.View.extend({
                 },
                 items: {
                     "open": {name: "<span class='i18n'>Open</span>" },
+                    "edit": {name: "<span class='i18n'>Edit</span>" },
 //                    "rename": {name: "<span class='i18n'>Rename</span>" },
                     "delete": {name: "<span class='i18n'>Delete</span>" },
                     "sep1": "---------",
@@ -328,7 +337,7 @@ var OpenQuery = Backbone.View.extend({
         this.open_query();
     },
     
-    open_query: function(event) {
+    open_query: function(viewstate) {
         Saiku.ui.block("Opening query...");
         var item = this.queries[this.selected_query.get('file')];
         var params = _.extend({ 
@@ -337,8 +346,13 @@ var OpenQuery = Backbone.View.extend({
                     }, Settings.PARAMS);
 
         var query = new Query(params,{ name: this.selected_query.get('name') });
-        var tab = Saiku.tabs.add(new Workspace({ query: query, item: item }));
+        var state = viewstate || 'view';
+        var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state }));
         return false;
+    },
+
+    edit_query: function() {
+        this.open_query('edit');
     },
 
     delete_repoObject: function(event) {
