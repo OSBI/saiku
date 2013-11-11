@@ -63,9 +63,10 @@ var Workspace = Backbone.View.extend({
             this.item = args.item;
             if (this.item && this.item.hasOwnProperty('acl') && _.indexOf(this.item.acl, "WRITE") <  0) {
                 this.isReadOnly = true;
+                this.viewState = 'view';
             }
         }
-        if (!args || !args.query || !args.viewState) {
+        if (!args || (!args.query && !args.viewState)) {
             this.viewState = 'edit';
         }
         if (args && args.query) {
