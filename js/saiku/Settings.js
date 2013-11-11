@@ -48,6 +48,7 @@ var Settings = {
     PLUGINS: [
         "Chart"
     ],
+    DEFAULT_VIEW_STATE: 'view', // could be 'edit' as well
     DEMO: false,
     TELEMETRY_SERVER: 'http://telemetry.analytical-labs.com:7000',
     LOCALSTORAGE_EXPIRATION: 10 * 60 * 60 * 1000 /* 10 hours, in ms */

@@ -346,7 +346,7 @@ var OpenQuery = Backbone.View.extend({
                     }, Settings.PARAMS);
 
         var query = new Query(params,{ name: this.selected_query.get('name') });
-        var state = viewstate || 'view';
+        var state = viewstate;
         var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state }));
         return false;
     },

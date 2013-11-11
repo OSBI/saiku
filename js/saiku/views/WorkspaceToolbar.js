@@ -140,13 +140,14 @@ var WorkspaceToolbar = Backbone.View.extend({
             } else {
                 $(this.el).find('a.edit').addClass('on')
             }
-            $(this.el).find('a.edit').show();
+            $(this.el).find('a.edit').show('normal');
         }
     },
     
     new_query: function(event) {
-        this.workspace.new_query();
         this.workspace.switch_view_state('edit');
+        this.workspace.new_query();
+        
         return false;
     },
 

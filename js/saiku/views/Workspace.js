@@ -57,7 +57,7 @@ var Workspace = Backbone.View.extend({
         this.chart = new Chart({ workspace: this });
         // Pull query from args
         this.item = {};
-        this.viewState = (args && args.viewState) ? args.viewState : 'edit' // view / edit
+        this.viewState = (args && args.viewState) ? args.viewState : Settings.DEFAULT_VIEW_STATE; // view / edit
         this.isReadOnly = (Settings.MODE == 'view' || false);
         if (args && args.item) {
             this.item = args.item;
@@ -65,8 +65,10 @@ var Workspace = Backbone.View.extend({
                 this.isReadOnly = true;
             }
         }
+        if (!args || !args.query || !args.viewState) {
+            this.viewState = 'edit';
+        }
         if (args && args.query) {
-
             this.query = args.query;
             this.query.workspace = this;
             this.query.save({}, { success: this.init_query });
@@ -142,6 +144,8 @@ var Workspace = Backbone.View.extend({
             $(this.el).find('.query_toolbar').append($(this.querytoolbar.el));
         
         }
+
+        this.switch_view_state(this.viewState, true);
 
         
         
@@ -643,7 +647,7 @@ var Workspace = Backbone.View.extend({
         if (target == 'edit') {
                 //$(this.el).find('.workspace_editor').show();
                 this.toolbar.toggle_fields_action('show', dontAnimate);
-                if (this.query.get('type') == "MDX") {
+                if (this.query && this.query.get('type') == "MDX") {
                     this.toolbar.editor.gotoLine(0);
                 }
                 if ($(this.el).find('.sidebar').hasClass('hide')) {
@@ -651,7 +655,7 @@ var Workspace = Backbone.View.extend({
                 }            
                 //$(this.el).find('.sidebar_separator').show();
                 //$(this.el).find('.workspace_inner').removeAttr('style');
-                $(this.toolbar.el).find(".auto, .toggle_fields, .toggle_sidebar,.switch_to_mdx, .new").parent().show();
+                $(this.toolbar.el).find(".auto, .toggle_fields, .toggle_sidebar,.switch_to_mdx, .new").parent().css({ "display" : "block" });
         } else if (target == 'view') {
                 //$(this.el).find('.workspace_editor').hide();
                 this.toolbar.toggle_fields_action('hide', dontAnimate);

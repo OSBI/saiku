@@ -231,7 +231,7 @@ var OpenDialog = Modal.extend({
         Saiku.ui.block("Opening query...");
         var item = this.queries[file];
                 var params = _.extend({ 
-                        file: this.selected_query.get('file'),
+                        file: file,
                         formatter: Settings.CELLSET_FORMATTER
                     }, Settings.PARAMS);
 
