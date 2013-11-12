@@ -148,11 +148,10 @@ public class OlapMetaExplorerTest {
         assertEquals(8, output.size());
         
         for (int i = 0; i < output.size(); i++){
-        	assertEquals("FoodMart", output.get(i).getCatalogName());
+        	assertEquals("FoodMart", output.get(i).getCatalog());
         	output.get(i).getName();
-        	assertEquals("test", output.get(i).getConnectionName());
-        	output.get(i).getCubeName();
-        	assertEquals("FoodMart", output.get(i).getSchemaName());
+        	assertEquals("test", output.get(i).getConnection());
+        	assertEquals("FoodMart", output.get(i).getSchema());
         	output.get(i).getUniqueName();
         }
         
@@ -171,7 +170,6 @@ public class OlapMetaExplorerTest {
 
          for (int i = 0; i < output.size(); i++){
          	assertEquals(names[i], output.get(i).getName());
-         	assertEquals("["+names[i]+"]",output.get(i).getCubeName());
          }
     }
     public final void testGetNativeCube(){

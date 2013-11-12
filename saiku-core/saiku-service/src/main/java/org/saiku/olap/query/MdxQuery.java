@@ -76,11 +76,11 @@ public class MdxQuery implements IQuery {
 		try {
 			Cube c = getCube();
 			SaikuCube sc= new SaikuCube(
-					cube.getConnectionName(),
+					cube.getConnection(),
 					c.getUniqueName(), 
 					c.getName(), 
 					c.getCaption(),
-					cube.getCatalogName(), 
+					cube.getCatalog(), 
 					c.getSchema().getName());
 			if (sc != null) {
 				cube = sc;
@@ -142,7 +142,7 @@ public class MdxQuery implements IQuery {
 			}
 
 			OlapConnection con = connection;
-			con.setCatalog(getSaikuCube().getCatalogName());
+			con.setCatalog(getSaikuCube().getCatalog());
 			OlapStatement stmt = con.createStatement();
 			this.statement = stmt;
 			CellSet cs = stmt.executeOlapQuery(mdx);
@@ -203,7 +203,7 @@ public class MdxQuery implements IQuery {
 			// ok seems like we failed to get the cube, lets try it differently
 			if (connection != null && mdx != null && mdx.length() > 0) {
 				for (Database db : connection.getOlapDatabases()) {
-					Catalog cat = db.getCatalogs().get(cube.getCatalogName());
+					Catalog cat = db.getCatalogs().get(cube.getCatalog());
 					if (cat != null) {
 						for (Schema schema : cat.getSchemas()) {
 							for (Cube cub : schema.getCubes()) {

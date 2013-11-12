@@ -8,8 +8,7 @@
         "sortEvaluationLiteral" : null,
         "hierarchizeMode" : null,
         "location" : "FILTER",
-        "hierarchies" : {
-        },
+        "hierarchies" : [ ],
         "nonEmpty" : false,
         "name" : "FILTER"
       },
@@ -20,57 +19,54 @@
         "sortEvaluationLiteral" : "[Measures].[Double Profit]",
         "hierarchizeMode" : null,
         "location" : "COLUMNS",
-        "hierarchies" : {
-          "Product" : {
-            "mdx" : null,
-            "filters" : [ {
-              "flavour" : "N",
-              "operator" : null,
-              "function" : "TopCount",
-              "expressions" : [ "2", "Measures.[Unit Sales]" ]
-            } ],
-            "sortOrder" : null,
-            "sortEvaluationLiteral" : null,
-            "hierarchizeMode" : null,
-            "name" : "Product",
-            "caption" : "Product",
-            "levels" : {
-              "Product Family" : {
-                "mdx" : null,
-                "filters" : [ ],
-                "name" : "Product Family",
-                "caption" : "Product Family",
-                "selection" : {
-                  "type" : "EXCLUSION",
-                  "members" : [ {
-                    "name" : "Non-Consumable",
-                    "uniqueName" : "[Product].[Non-Consumable]",
-                    "caption" : "Non-Consumable"
-                  } ],
-                  "parameterName" : null
-                }
-              }
-            }
-          },
-          "Education Level" : {
-            "mdx" : null,
-            "filters" : [ ],
-            "sortOrder" : null,
-            "sortEvaluationLiteral" : null,
-            "hierarchizeMode" : null,
-            "name" : "Education Level",
-            "caption" : "Education Level",
-            "levels" : {
-              "Education Level" : {
-                "mdx" : null,
-                "filters" : [ ],
-                "name" : "Education Level",
-                "caption" : "Education Level",
-                "selection" : null
+        "hierarchies" : [ {
+          "mdx" : null,
+          "filters" : [ {
+            "flavour" : "N",
+            "operator" : null,
+            "function" : "TopCount",
+            "expressions" : [ "2", "Measures.[Unit Sales]" ]
+          } ],
+          "sortOrder" : null,
+          "sortEvaluationLiteral" : null,
+          "hierarchizeMode" : null,
+          "name" : "Product",
+          "caption" : "Product",
+          "levels" : {
+            "Product Family" : {
+              "mdx" : null,
+              "filters" : [ ],
+              "name" : "Product Family",
+              "caption" : "Product Family",
+              "selection" : {
+                "type" : "EXCLUSION",
+                "members" : [ {
+                  "name" : "Non-Consumable",
+                  "uniqueName" : "[Product].[Non-Consumable]",
+                  "caption" : "Non-Consumable"
+                } ],
+                "parameterName" : null
               }
             }
           }
-        },
+        }, {
+          "mdx" : null,
+          "filters" : [ ],
+          "sortOrder" : null,
+          "sortEvaluationLiteral" : null,
+          "hierarchizeMode" : null,
+          "name" : "Education Level",
+          "caption" : "Education Level",
+          "levels" : {
+            "Education Level" : {
+              "mdx" : null,
+              "filters" : [ ],
+              "name" : "Education Level",
+              "caption" : "Education Level",
+              "selection" : null
+            }
+          }
+        } ],
         "nonEmpty" : false,
         "name" : "COLUMNS"
       },
@@ -81,34 +77,32 @@
         "sortEvaluationLiteral" : null,
         "hierarchizeMode" : null,
         "location" : "ROWS",
-        "hierarchies" : {
-          "Gender" : {
-            "mdx" : null,
-            "filters" : [ ],
-            "sortOrder" : null,
-            "sortEvaluationLiteral" : null,
-            "hierarchizeMode" : null,
-            "name" : "Gender",
-            "caption" : "Gender",
-            "levels" : {
-              "Gender" : {
-                "mdx" : null,
-                "filters" : [ ],
-                "name" : "Gender",
-                "caption" : "Gender",
-                "selection" : {
-                  "type" : "INCLUSION",
-                  "members" : [ {
-                    "name" : "F",
-                    "uniqueName" : "[Gender].[F]",
-                    "caption" : "F"
-                  } ],
-                  "parameterName" : null
-                }
+        "hierarchies" : [ {
+          "mdx" : null,
+          "filters" : [ ],
+          "sortOrder" : null,
+          "sortEvaluationLiteral" : null,
+          "hierarchizeMode" : null,
+          "name" : "Gender",
+          "caption" : "Gender",
+          "levels" : {
+            "Gender" : {
+              "mdx" : null,
+              "filters" : [ ],
+              "name" : "Gender",
+              "caption" : "Gender",
+              "selection" : {
+                "type" : "INCLUSION",
+                "members" : [ {
+                  "name" : "F",
+                  "uniqueName" : "[Gender].[F]",
+                  "caption" : "F"
+                } ],
+                "parameterName" : null
               }
             }
           }
-        },
+        } ],
         "nonEmpty" : false,
         "name" : "ROWS"
       }
@@ -144,16 +138,22 @@
   "cube" : {
     "uniqueName" : "[test].[FoodMart].[FoodMart].[Sales]",
     "name" : "Sales",
-    "connectionName" : "test",
-    "catalogName" : "FoodMart",
-    "schemaName" : "FoodMart",
+    "connection" : "test",
+    "catalog" : "FoodMart",
+    "schema" : "FoodMart",
     "caption" : "Sales",
-    "visible" : true,
-    "cubeName" : "[Sales]"
+    "visible" : true
   },
   "mdx" : null,
   "name" : "query1",
   "parameters" : {
   },
+  "plugins" : {
+  },
+  "properties" : {
+  },
+  "metadata" : {
+  },
+  "queryType" : "OLAP",
   "type" : "QUERYMODEL"
 }

@@ -174,13 +174,13 @@ public class OlapMetaExplorer {
 
 	public Cube getNativeCube(SaikuCube cube) throws SaikuOlapException {
 		try {
-			OlapConnection con = connections.getOlapConnection(cube.getConnectionName());
+			OlapConnection con = connections.getOlapConnection(cube.getConnection());
 			if (con != null ) {
 				for (Database db : con.getOlapDatabases()) {
-					Catalog cat = db.getCatalogs().get(cube.getCatalogName());
+					Catalog cat = db.getCatalogs().get(cube.getCatalog());
 					if (cat != null) {
 						for (Schema schema : cat.getSchemas()) {
-							if ((StringUtils.isBlank(cube.getSchemaName()) && StringUtils.isBlank(schema.getName())) || schema.getName().equals(cube.getSchemaName())) {
+							if ((StringUtils.isBlank(cube.getSchema()) && StringUtils.isBlank(schema.getName())) || schema.getName().equals(cube.getSchema())) {
 								for (Cube cub : schema.getCubes()) {
 									if (cub.getName().equals(cube.getName()) || cub.getUniqueName().equals(cube.getUniqueName())) {
 										return cub;

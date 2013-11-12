@@ -16,32 +16,30 @@
 package org.saiku.service.olap;
 
 import java.io.Serializable;
+import java.sql.Statement;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
-import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapStatement;
 import org.olap4j.metadata.Cube;
-import org.olap4j.metadata.Measure;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query2.ThinQuery;
 import org.saiku.olap.query2.util.Fat;
 import org.saiku.olap.query2.util.Thin;
 import org.saiku.olap.util.OlapResultSetUtil;
-import org.saiku.olap.util.formatter.CellSetFormatter;
-import org.saiku.olap.util.formatter.FlattenedCellSetFormatter;
+import org.saiku.olap.util.formatter.CellSetFormatterFactory;
 import org.saiku.olap.util.formatter.HierarchicalCellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.query.Query;
-import org.saiku.query.QueryAxis;
-import org.saiku.query.QueryHierarchy;
-import org.saiku.query.SortOrder;
-import org.saiku.query.mdx.IFilterFunction.MdxFunctionType;
-import org.saiku.query.mdx.NFilter;
-import org.saiku.query.metadata.CalculatedMeasure;
+import org.saiku.service.util.QueryContext;
+import org.saiku.service.util.QueryContext.ObjectKey;
+import org.saiku.service.util.QueryContext.Type;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,17 +54,75 @@ public class ThinQueryService implements Serializable {
 	private static final Logger log = LoggerFactory.getLogger(ThinQueryService.class);
 
 	private OlapDiscoverService olapDiscoverService;
+	
+	private CellSetFormatterFactory cff = new CellSetFormatterFactory();
+	
+	private Map<String, QueryContext> context = new HashMap<String, QueryContext>();
 
 	public void setOlapDiscoverService(OlapDiscoverService os) {
-		olapDiscoverService = os;
+		this.olapDiscoverService = os;
 	}
+	
+	public void setCellSetFormatterFactory(CellSetFormatterFactory cff) {
+		this.cff = cff;
+	}
+ 
+
+
+	public ThinQuery storeQuery(ThinQuery tq) throws Exception {
+		if (StringUtils.isBlank(tq.getName())) {
+			tq.setName(UUID.randomUUID().toString());
+		}
+		if (!context.containsKey(tq.getName())) {
+//			Cube cub = olapDiscoverService.getNativeCube(tq.getCube());
+//			Query query = new Query(tq.getName(), cub);
+//			tq = Thin.convert(query, tq.getCube());
+			QueryContext qt = new QueryContext(Type.OLAP, tq);
+			this.context.put(tq.getName(), qt);
+		}
+		
+		return tq;
+	}
+
+	@Deprecated
+	public ThinQuery createEmpty(String name, SaikuCube cube) {
+		try {
+			Cube cub = olapDiscoverService.getNativeCube(cube);
+			Query query = new Query(name, cub);
+			ThinQuery tq = Thin.convert(query, cube);
+			return tq;
+
+		} catch (Exception e) {
+			log.error("Cannot create new query for cube :" + cube, e);
+		}
+		return null;
+
+	}
+
 
 	
 	protected CellSet executeInternalQuery(ThinQuery query) throws Exception {
+		QueryContext queryContext = context.get(query.getName());
+		if (queryContext == null) {
+			queryContext = new QueryContext(Type.OLAP, query);
+			this.context.put(query.getName(), queryContext);
+		}
+				
+		OlapConnection con = olapDiscoverService.getNativeConnection(query.getCube().getConnection());
+		if (StringUtils.isNotBlank(query.getCube().getCatalog())) {
+			con.setCatalog(query.getCube().getCatalog());
+		}
 		
-		OlapConnection con = olapDiscoverService.getNativeConnection(query.getCube().getConnectionName());
-		con.setCatalog(query.getCube().getCatalogName());
+		if (queryContext.contains(ObjectKey.STATEMENT)) {
+			Statement s = queryContext.getStatement();
+			s.cancel();
+			s.close();
+			s = null;
+			queryContext.remove(ObjectKey.STATEMENT);
+		}
+		
 		OlapStatement stmt = con.createStatement();
+		queryContext.store(ObjectKey.STATEMENT, stmt);
 		
 		String mdx = null;
 		if (ThinQuery.Type.MDX.equals(query.getType())) {
@@ -79,12 +135,14 @@ public class ThinQueryService implements Serializable {
 			throw new Exception("Cannot get mdx for query " + query.getName() + " - no querymodel or mdx present!");
 		}
 		
-		try {	
+		try {
+			query.setMdx(mdx);
 			CellSet cs = stmt.executeOlapQuery(mdx);
-			stmt.close();
+			queryContext.store(ObjectKey.RESULT, cs);
 			return cs;
 		} finally {
 			stmt.close();
+			queryContext.remove(ObjectKey.STATEMENT);
 		}
 	}
 	
@@ -93,17 +151,9 @@ public class ThinQueryService implements Serializable {
 	}
 
 	public CellDataSet execute(ThinQuery tq, String formatter) {
-		formatter = formatter == null ? "" : formatter.toLowerCase(); 
-		if(formatter.equals("flat")) {
-			return execute(tq, new CellSetFormatter());
-		}
-		else if (formatter.equals("hierarchical")) {
-			return execute(tq, new HierarchicalCellSetFormatter());
-		}
-		else if (formatter.equals("flattened")) {
-			return execute(tq, new FlattenedCellSetFormatter());
-		}
-		return execute(tq, new HierarchicalCellSetFormatter());
+		String formatterName = formatter == null ? "" : formatter.toLowerCase();
+		ICellSetFormatter cf = cff.forName(formatterName);
+		return execute(tq, cf);
 	}
 
 	public CellDataSet execute(ThinQuery tq, ICellSetFormatter formatter) {
@@ -125,20 +175,16 @@ public class ThinQueryService implements Serializable {
 		}
 	}
 
-	public ThinQuery createEmpty(String name, SaikuCube cube) {
+
+	public void deleteQuery(String queryName) {
 		try {
-			Cube cub = olapDiscoverService.getNativeCube(cube);
-			Query query = new Query(name, cub);
-			ThinQuery tq = Thin.convert(query, cube);
-			return tq;
-
+			if (context.containsKey(queryName)) {
+				QueryContext qc = context.remove(queryName);
+				qc.destroy();
+			}
 		} catch (Exception e) {
-			log.error("Cannot create new query for cube :" + cube, e);
+			throw new SaikuServiceException(e);
 		}
-		return null;
-
+		
 	}
-
-	
-
 }

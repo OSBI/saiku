@@ -3,9 +3,10 @@ package org.saiku.olap.query2;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.olap4j.impl.Named;
 import org.saiku.olap.query2.common.AbstractThinSortableQuerySet;
 
-public class ThinHierarchy extends AbstractThinSortableQuerySet {
+public class ThinHierarchy extends AbstractThinSortableQuerySet implements Named {
 
 	private String name;
 	private String caption;

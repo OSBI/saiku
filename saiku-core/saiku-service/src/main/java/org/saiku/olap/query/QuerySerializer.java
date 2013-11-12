@@ -86,20 +86,20 @@ public class QuerySerializer {
 
         String cubeName = query.getCube().getUniqueName();
 
-        if (StringUtils.isNotBlank(saikuCube.getConnectionName())) {
-            rootEle.setAttribute("connection", saikuCube.getConnectionName());
+        if (StringUtils.isNotBlank(saikuCube.getConnection())) {
+            rootEle.setAttribute("connection", saikuCube.getConnection());
         }
 
         if (StringUtils.isNotBlank(cubeName)) {
             rootEle.setAttribute("cube", cubeName);
         }
         
-        if (StringUtils.isNotBlank(saikuCube.getCatalogName())) {
-            rootEle.setAttribute("catalog", saikuCube.getCatalogName());
+        if (StringUtils.isNotBlank(saikuCube.getCatalog())) {
+            rootEle.setAttribute("catalog", saikuCube.getCatalog());
         }
         
-        if (StringUtils.isNotBlank(saikuCube.getSchemaName())) {
-            rootEle.setAttribute("schema", saikuCube.getSchemaName());
+        if (StringUtils.isNotBlank(saikuCube.getSchema())) {
+            rootEle.setAttribute("schema", saikuCube.getSchema());
         }
         if (IQuery.QueryType.QM.equals(query.getType())) {
         	rootEle = appendQmQuery(rootEle);

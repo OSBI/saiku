@@ -8,8 +8,7 @@
         "sortEvaluationLiteral" : null,
         "hierarchizeMode" : null,
         "location" : "FILTER",
-        "hierarchies" : {
-        },
+        "hierarchies" : [ ],
         "nonEmpty" : false,
         "name" : "FILTER"
       },
@@ -20,8 +19,7 @@
         "sortEvaluationLiteral" : null,
         "hierarchizeMode" : null,
         "location" : "COLUMNS",
-        "hierarchies" : {
-        },
+        "hierarchies" : [ ],
         "nonEmpty" : false,
         "name" : "COLUMNS"
       },
@@ -32,8 +30,7 @@
         "sortEvaluationLiteral" : null,
         "hierarchizeMode" : null,
         "location" : "ROWS",
-        "hierarchies" : {
-        },
+        "hierarchies" : [ ],
         "nonEmpty" : false,
         "name" : "ROWS"
       }
@@ -51,16 +48,22 @@
   "cube" : {
     "uniqueName" : "[test].[FoodMart].[FoodMart].[Sales]",
     "name" : "Sales",
-    "connectionName" : "test",
-    "catalogName" : "FoodMart",
-    "schemaName" : "FoodMart",
+    "connection" : "test",
+    "catalog" : "FoodMart",
+    "schema" : "FoodMart",
     "caption" : "Sales",
-    "visible" : true,
-    "cubeName" : "[Sales]"
+    "visible" : true
   },
   "mdx" : null,
   "name" : "dummy",
   "parameters" : {
   },
+  "plugins" : {
+  },
+  "properties" : {
+  },
+  "metadata" : {
+  },
+  "queryType" : "OLAP",
   "type" : "QUERYMODEL"
 }

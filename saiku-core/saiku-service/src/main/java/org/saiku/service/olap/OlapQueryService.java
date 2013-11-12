@@ -130,7 +130,7 @@ public class OlapQueryService implements Serializable {
 	public SaikuQuery createNewOlapQuery(String queryName, SaikuCube cube) {
 		try {
 			Cube cub = olapDiscoverService.getNativeCube(cube);
-			OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnectionName());
+			OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnection());
 
 			if (cub != null) {
 				IQuery query = new OlapQuery(new Query(queryName, cub), con,cube);
@@ -148,7 +148,7 @@ public class OlapQueryService implements Serializable {
 		try {
 			QueryDeserializer qd = new QueryDeserializer();
 			SaikuCube scube = qd.getFakeCube(xml);
-			OlapConnection con = olapDiscoverService.getNativeConnection(scube.getConnectionName());
+			OlapConnection con = olapDiscoverService.getNativeConnection(scube.getConnection());
 			IQuery query = qd.unparse(xml, con);
 			// TODO - this is not good! could lead to duplicate queries
 			if (name == null) {
@@ -224,7 +224,7 @@ public class OlapQueryService implements Serializable {
 		try {
 			//			System.out.println("Execute: ID " + Thread.currentThread().getId() + " Name: " + Thread.currentThread().getName());
 			IQuery query = getIQuery(queryName);
-			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
+			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnection());
 
 
 			Long start = (new Date()).getTime();
@@ -274,7 +274,7 @@ public class OlapQueryService implements Serializable {
 	public SaikuQuery simulateTag(String queryName, SaikuTag tag) {
 		try {
 			IQuery query = getIQuery(queryName);
-			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
+			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnection());
 			return ObjectUtil.convert(applyTag(query, con, tag));
 		} catch (Exception e) {
 			throw new SaikuServiceException("Can't apply tag: " + tag + " to query "+ queryName,e);
@@ -407,7 +407,7 @@ public class OlapQueryService implements Serializable {
 		OlapStatement stmt = null;
 		try {
 
-			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnectionName());
+			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnection());
 			if (!con.isWrapperFor(RolapConnection.class))
 				throw new IllegalArgumentException("Cannot only get explain plan for Mondrian connections");
 
@@ -430,7 +430,7 @@ public class OlapQueryService implements Serializable {
 	public ResultSet drillthrough(String queryName, int maxrows, String returns) {
 		OlapStatement stmt = null;
 		try {
-			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnectionName()); 
+			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnection()); 
 			stmt = con.createStatement();
 			String mdx = getMDXQuery(queryName);
 			if (maxrows > 0) {
@@ -459,7 +459,7 @@ public class OlapQueryService implements Serializable {
 			IQuery query = getIQuery(queryName);
 			CellSet cs = query.getCellset();
 			SaikuCube cube = getQuery(queryName).getCube();
-			final OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnectionName()); 
+			final OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnection()); 
 			stmt = con.createStatement();
 
 			String select = null;
@@ -476,7 +476,7 @@ public class OlapQueryService implements Serializable {
 				}
 			}
 			buf.append(") ON COLUMNS \r\n");
-			buf.append("FROM " + cube.getCubeName() + "\r\n");
+			buf.append("FROM [" + cube.getName() + "]\r\n");
 
 			SelectNode sn = (new DefaultMdxParserImpl().parseSelect(getMDXQuery(queryName))); 
 			final Writer writer = new StringWriter();
@@ -512,7 +512,7 @@ public class OlapQueryService implements Serializable {
 	public byte[] exportDrillthroughCsv(String queryName, int maxrows) {
 		OlapStatement stmt = null;
 		try {
-			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnectionName()); 
+			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnection()); 
 			stmt = con.createStatement();
 			String mdx = getMDXQuery(queryName);
 			if (maxrows > 0) {
@@ -546,7 +546,7 @@ public class OlapQueryService implements Serializable {
 		try {
 
 			IQuery query = getIQuery(queryName);
-			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
+			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnection());
 
 			Scenario s;
 			if (query.getScenario() == null) {
@@ -951,7 +951,7 @@ public class OlapQueryService implements Serializable {
 
 	public void qm2mdx(String queryName) {
 		IQuery query = getIQuery(queryName);
-		OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
+		OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnection());
 		MdxQuery mdx = new MdxQuery(con, query.getSaikuCube(), query.getName(),getMDXQuery(queryName));
 		putIQuery(queryName, mdx);
 		query = null;

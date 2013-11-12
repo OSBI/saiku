@@ -66,14 +66,6 @@
 	</bean>
 
 
-
-	<bean id="repositoryBean" scope="request"
-		class="org.saiku.web.rest.resources.BasicRepositoryResource">
-		<property name="olapQueryService" ref="olapQueryBean" />
-		<property name="path" value="res:saiku-repository" />
-	</bean>
-	<!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
-
 	<bean id="acl" scope="singleton" class="org.saiku.web.rest.objects.acl.Acl">
 		<property name="path" value="res:saiku-repository" />
 		<property name="adminRoles">
@@ -89,7 +81,8 @@
 		<property name="sessionService" ref="sessionService" />
 		<property name="acl" ref="acl" />
 	</bean>
-
+	<!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
+	
 	<bean id="tagRepositoryBean" scope="request"
 		class="org.saiku.web.rest.resources.BasicTagRepositoryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />

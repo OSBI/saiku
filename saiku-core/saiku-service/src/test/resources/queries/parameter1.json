@@ -8,8 +8,7 @@
         "sortEvaluationLiteral" : null,
         "hierarchizeMode" : null,
         "location" : "FILTER",
-        "hierarchies" : {
-        },
+        "hierarchies" : [ ],
         "nonEmpty" : false,
         "name" : "FILTER"
       },
@@ -20,26 +19,24 @@
         "sortEvaluationLiteral" : null,
         "hierarchizeMode" : null,
         "location" : "COLUMNS",
-        "hierarchies" : {
-          "Education Level" : {
-            "mdx" : null,
-            "filters" : [ ],
-            "sortOrder" : null,
-            "sortEvaluationLiteral" : null,
-            "hierarchizeMode" : null,
-            "name" : "Education Level",
-            "caption" : "Education Level",
-            "levels" : {
-              "Education Level" : {
-                "mdx" : null,
-                "filters" : [ ],
-                "name" : "Education Level",
-                "caption" : "Education Level",
-                "selection" : null
-              }
+        "hierarchies" : [ {
+          "mdx" : null,
+          "filters" : [ ],
+          "sortOrder" : null,
+          "sortEvaluationLiteral" : null,
+          "hierarchizeMode" : null,
+          "name" : "Education Level",
+          "caption" : "Education Level",
+          "levels" : {
+            "Education Level" : {
+              "mdx" : null,
+              "filters" : [ ],
+              "name" : "Education Level",
+              "caption" : "Education Level",
+              "selection" : null
             }
           }
-        },
+        } ],
         "nonEmpty" : false,
         "name" : "COLUMNS"
       },
@@ -50,34 +47,32 @@
         "sortEvaluationLiteral" : null,
         "hierarchizeMode" : null,
         "location" : "ROWS",
-        "hierarchies" : {
-          "Product" : {
-            "mdx" : null,
-            "filters" : [ ],
-            "sortOrder" : null,
-            "sortEvaluationLiteral" : null,
-            "hierarchizeMode" : null,
-            "name" : "Product",
-            "caption" : "Product",
-            "levels" : {
-              "Product Family" : {
-                "mdx" : null,
-                "filters" : [ ],
-                "name" : "Product Family",
-                "caption" : "Product Family",
-                "selection" : {
-                  "type" : "EXCLUSION",
-                  "members" : [ {
-                    "name" : "Non-Consumable",
-                    "uniqueName" : "[Product].[Non-Consumable]",
-                    "caption" : "Non-Consumable"
-                  } ],
-                  "parameterName" : "productFamilyList"
-                }
+        "hierarchies" : [ {
+          "mdx" : null,
+          "filters" : [ ],
+          "sortOrder" : null,
+          "sortEvaluationLiteral" : null,
+          "hierarchizeMode" : null,
+          "name" : "Product",
+          "caption" : "Product",
+          "levels" : {
+            "Product Family" : {
+              "mdx" : null,
+              "filters" : [ ],
+              "name" : "Product Family",
+              "caption" : "Product Family",
+              "selection" : {
+                "type" : "EXCLUSION",
+                "members" : [ {
+                  "name" : "Non-Consumable",
+                  "uniqueName" : "[Product].[Non-Consumable]",
+                  "caption" : "Non-Consumable"
+                } ],
+                "parameterName" : "productFamilyList"
               }
             }
           }
-        },
+        } ],
         "nonEmpty" : false,
         "name" : "ROWS"
       }
@@ -95,17 +90,23 @@
   "cube" : {
     "uniqueName" : "[test].[FoodMart].[FoodMart].[Sales]",
     "name" : "Sales",
-    "connectionName" : "test",
-    "catalogName" : "FoodMart",
-    "schemaName" : "FoodMart",
+    "connection" : "test",
+    "catalog" : "FoodMart",
+    "schema" : "FoodMart",
     "caption" : "Sales",
-    "visible" : true,
-    "cubeName" : "[Sales]"
+    "visible" : true
   },
   "mdx" : null,
   "name" : "parameter1",
   "parameters" : {
     "productFamilyList" : "[Product].[Food]"
   },
+  "plugins" : {
+  },
+  "properties" : {
+  },
+  "metadata" : {
+  },
+  "queryType" : "OLAP",
   "type" : "QUERYMODEL"
 }

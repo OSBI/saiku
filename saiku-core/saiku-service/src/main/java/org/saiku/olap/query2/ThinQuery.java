@@ -5,14 +5,19 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.saiku.olap.dto.SaikuCube;
+import org.saiku.service.util.ISaikuQuery;
 
-public class ThinQuery {
+public class ThinQuery implements ISaikuQuery {
 	
 	private ThinQueryModel queryModel;
 	private SaikuCube cube;
 	private String mdx;
 	private String name;
 	private Map<String, String> parameters = new HashMap<String, String>();
+	private Map<String, String> plugins = new HashMap<String, String>();
+	private Map<String, String> properties = new HashMap<String, String>();
+	private Map<String, String> metadata = new HashMap<String, String>();
+	private String queryType = "OLAP";
 	
 	public enum Type {
 		MDX,
@@ -83,9 +88,6 @@ public class ThinQuery {
 	 */
 	public void setMdx(String mdx) {
 		this.mdx = mdx;
-		if (StringUtils.isNotBlank(mdx)) {
-			this.type = Type.MDX;
-		}
 	}
 
 	/**
@@ -139,5 +141,61 @@ public class ThinQuery {
 			return parameters.get(parameter);
 		}
 		return null;
+	}
+
+	/**
+	 * @return the plugins
+	 */
+	public Map<String, String> getPlugins() {
+		return plugins;
+	}
+
+	/**
+	 * @param plugins the plugins to set
+	 */
+	public void setPlugins(Map<String, String> plugins) {
+		this.plugins = plugins;
+	}
+
+	/**
+	 * @return the properties
+	 */
+	public Map<String, String> getProperties() {
+		return properties;
+	}
+
+	/**
+	 * @param properties the properties to set
+	 */
+	public void setProperties(Map<String, String> properties) {
+		this.properties = properties;
+	}
+
+	/**
+	 * @return the metadata
+	 */
+	public Map<String, String> getMetadata() {
+		return metadata;
+	}
+
+	/**
+	 * @param metadata the metadata to set
+	 */
+	public void setMetadata(Map<String, String> metadata) {
+		this.metadata = metadata;
+	}
+
+	/**
+	 * @return the queryType
+	 */
+	public String getQueryType() {
+		return queryType;
+	}
+
+	/**
+	 * @param queryType the queryType to set
+	 */
+	public void setQueryType(String queryType) {
+		this.queryType = queryType;
 	}
 }

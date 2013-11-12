@@ -1,22 +1,24 @@
 package org.saiku.olap.query2;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.olap4j.impl.NamedListImpl;
+import org.olap4j.metadata.NamedList;
 import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
 import org.saiku.olap.query2.common.AbstractThinSortableQuerySet;
 
+@JsonIgnoreProperties
 public class ThinAxis extends AbstractThinSortableQuerySet {
 
-	
 	private AxisLocation location;
-	private Map<String, ThinHierarchy> hierarchies = new HashMap<String, ThinHierarchy>();
+	private List<ThinHierarchy> hierarchies = new NamedListImpl<ThinHierarchy>();
 	private boolean nonEmpty;
 	
 	
 	public ThinAxis() {};
 	
-	public ThinAxis(AxisLocation location, Map<String, ThinHierarchy> hierarchies, boolean nonEmpty) {
+	public ThinAxis(AxisLocation location, NamedList<ThinHierarchy> hierarchies, boolean nonEmpty) {
 		this.location = location;
 		if (hierarchies != null) {
 			this.hierarchies = hierarchies;
@@ -46,22 +48,12 @@ public class ThinAxis extends AbstractThinSortableQuerySet {
 	/**
 	 * @return the hierarchies
 	 */
-	public Map<String, ThinHierarchy> getHierarchies() {
+	public List<ThinHierarchy> getHierarchies() {
 		return hierarchies;
 	}
 	
 	public ThinHierarchy getHierarchy(String name) {
-		if (hierarchies.containsKey(name)) {
-			return hierarchies.get(name);
-		}
-		return null;
-	}
-
-	/**
-	 * @param hierarchies the hierarchies to set
-	 */
-	public void setHierarchies(Map<String, ThinHierarchy> hierarchies) {
-		this.hierarchies = hierarchies;
+		return ((NamedListImpl<ThinHierarchy>) hierarchies).get(name);
 	}
 
 	/**

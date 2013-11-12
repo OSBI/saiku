@@ -9,8 +9,10 @@ import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
+import org.olap4j.impl.NamedListImpl;
 import org.olap4j.metadata.Measure;
 import org.olap4j.metadata.Member;
+import org.olap4j.metadata.NamedList;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.query2.ThinAxis;
 import org.saiku.olap.query2.ThinCalculatedMeasure;
@@ -131,12 +133,12 @@ public class Thin {
 		return ta;
 	}
 	
-	private static Map<String, ThinHierarchy> convertHierarchies(List<QueryHierarchy> queryHierarchies) {
-		Map<String, ThinHierarchy> hs = new HashMap<String, ThinHierarchy>();
+	private static NamedList<ThinHierarchy> convertHierarchies(List<QueryHierarchy> queryHierarchies) {
+		NamedListImpl<ThinHierarchy> hs = new NamedListImpl<ThinHierarchy>();
 		if (queryHierarchies != null) {
 			for (QueryHierarchy qh : queryHierarchies) {
 				ThinHierarchy th = convertHierarchy(qh);
-				hs.put(qh.getName(), th);
+				hs.add(th);
 			}
 		}
 		return hs;

@@ -32,6 +32,4 @@ public class ThinLevel extends AbstractThinQuerySet {
 	public ThinSelection getSelection() {
 		return selection;
 	}
-
-
 }

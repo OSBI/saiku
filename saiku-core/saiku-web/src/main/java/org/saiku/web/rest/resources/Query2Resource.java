@@ -15,19 +15,28 @@
  */
 package org.saiku.web.rest.resources;
 
+import javax.servlet.ServletException;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.query2.ThinQuery;
+import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.ThinQueryService;
 import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.util.RestUtil;
@@ -37,7 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-@Path("/saiku/{username}/query2")
+@Path("/saiku/api/query")
 @XmlAccessorType(XmlAccessType.NONE)
 public class Query2Resource {
 
@@ -50,7 +59,91 @@ public class Query2Resource {
 		thinQueryService = tqs;
 	}
 
+	private OlapDiscoverService olapDiscoverService;
+	private ISaikuRepository repository;
+	
+	@Autowired
+	public void setRepository(ISaikuRepository repository){
+		this.repository = repository;
+	}
 
+
+
+	@Autowired
+	public void setOlapDiscoverService(OlapDiscoverService olapds) {
+		olapDiscoverService = olapds;
+	}
+
+	/**
+	 * Delete query from the query pool.
+	 * @return a HTTP 410(Works) or HTTP 404(Call failed).
+	 */
+	@DELETE
+	@Path("/{queryname}")
+	public Status deleteQuery(@PathParam("queryname") String queryName){
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "\tDELETE");
+		}
+		try{
+			thinQueryService.deleteQuery(queryName);
+			return(Status.GONE);
+		}
+		catch(Exception e){
+			log.error("Cannot delete query (" + queryName + ")",e);
+			throw new WebApplicationException(e);
+		}
+	}
+
+	/**
+	 * Create a new Saiku Query.
+	 * @param connectionName the name of the Saiku connection.
+	 * @param cubeName the name of the cube.
+	 * @param catalogName the catalog name.
+	 * @param schemaName the name of the schema.
+	 * @param queryName the name you want to assign to the query.
+	 * @return 
+	 * 
+	 * @return a query model.
+	 * 
+	 * @see 
+	 */
+	@POST
+	@Produces({"application/json" })
+	@Path("/{queryname}")
+	public ThinQuery createQuery(@PathParam("queryname") String queryName, MultivaluedMap<String, String> formParams) throws ServletException {
+		try {
+			ThinQuery tq = null;
+			String file = null, 
+					json = null;
+			if (formParams != null) {
+				json = formParams.containsKey("json") ? formParams.getFirst("json") : null;
+				file = formParams.containsKey("file") ? formParams.getFirst("file") : null;
+				if (StringUtils.isNotBlank(json)) {
+					ObjectMapper om = new ObjectMapper();
+					tq = om.readValue(json, ThinQuery.class);
+					
+				} else if (StringUtils.isNotBlank(file)) {
+					Response f = repository.getResource(file);
+					String tqJson = new String( (byte[]) f.getEntity());
+					ObjectMapper om = new ObjectMapper();
+					tq = om.readValue(tqJson, ThinQuery.class);
+					
+				}
+			}
+			if (log.isDebugEnabled()) {
+				log.debug("TRACK\t"  + "\t/query/" + queryName + "\tPOST\t tq:" + (tq == null) + " file:" + (file));
+			}
+			SaikuCube cube = tq.getCube();
+//			if (StringUtils.isNotBlank(xml)) {
+//				String query = ServletUtil.replaceParameters(formParams, xml);
+//				return thinQueryService.createNewOlapQuery(queryName, query);
+//			}
+			return thinQueryService.storeQuery(tq);
+		} catch (Exception e) {
+			throw new WebApplicationException(e);
+		}
+	}
+	
 	
 	@GET
 	@Produces({"application/json" })
@@ -58,7 +151,14 @@ public class Query2Resource {
 	public ThinQuery getEmpty() {
 		SaikuCube cube = new SaikuCube("foodmart", "Sales", "Sales", "Sales", "FoodMart", "FoodMart");
 		return thinQueryService.createEmpty("dummy", cube);
-		
+	}
+	
+	@GET
+	@Produces({"application/json" })
+	@Path("/dummy")
+	public ThinQuery getDummy() {
+		SaikuCube cube = new SaikuCube("foodmart", "Sales", "Sales", "Sales", "FoodMart", "FoodMart");
+		return thinQueryService.createEmpty("dummy", cube);
 	}
 	
 	@POST

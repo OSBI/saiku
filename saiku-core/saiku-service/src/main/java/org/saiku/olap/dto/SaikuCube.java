@@ -17,9 +17,9 @@ package org.saiku.olap.dto;
 
 public class SaikuCube extends AbstractSaikuObject {
 
-	private String connectionName;
-	private String catalogName;
-	private String schemaName;
+	private String connection;
+	private String catalog;
+	private String schema;
 	private String caption;
 	private boolean visible;
 
@@ -32,9 +32,9 @@ public class SaikuCube extends AbstractSaikuObject {
 	
 	public SaikuCube(String connectionName, String uniqueCubeName, String name, String caption, String catalog, String schema, boolean visible) {
 		super(uniqueCubeName,name);		
-		this.connectionName = connectionName;
-		this.catalogName = catalog;
-		this.schemaName = schema;
+		this.connection = connectionName;
+		this.catalog = catalog;
+		this.schema = schema;
 		this.caption = caption;
 		this.visible = visible;
 	}
@@ -45,17 +45,9 @@ public class SaikuCube extends AbstractSaikuObject {
 
 	@Override
 	public String getUniqueName() {
-		String uniqueName = "[" + connectionName + "].[" + catalogName + "]";
-		uniqueName += ".[" + schemaName + "].[" + getName() + "]";
+		String uniqueName = "[" + connection + "].[" + catalog + "]";
+		uniqueName += ".[" + schema + "].[" + getName() + "]";
 		return uniqueName;
-	}
-	
-	public String getCubeName() {
-		String name = super.getUniqueName();
-		if (name != null && !name.startsWith("[")) {
-			name = "[" + name + "]";
-		}
-		return name;
 	}
 
 	@Override
@@ -67,15 +59,15 @@ public class SaikuCube extends AbstractSaikuObject {
 		return caption;
 	}
 	
-	public String getCatalogName() {
-		return catalogName;
+	public String getCatalog() {
+		return catalog;
 	}
-	public String getConnectionName() {
-		return connectionName;
+	public String getConnection() {
+		return connection;
 	}
 
-	public String getSchemaName() {
-		return schemaName;
+	public String getSchema() {
+		return schema;
 	}
 }
 

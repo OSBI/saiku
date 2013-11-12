@@ -28,8 +28,6 @@ import org.saiku.query.Query;
 import org.saiku.query.QueryAxis;
 import org.saiku.query.QueryHierarchy;
 import org.saiku.query.SortOrder;
-import org.saiku.query.TestContext;
-import org.saiku.query.TestUtil;
 import org.saiku.query.mdx.IFilterFunction.MdxFunctionType;
 import org.saiku.query.mdx.NFilter;
 import org.saiku.query.metadata.CalculatedMeasure;
@@ -43,7 +41,6 @@ public class ThinQueryServiceTest extends TestCase {
     private OlapDiscoverService ods;
     private DatasourceService ds;
     private ThinQueryService tqs;
-    
     
     @Override
     protected void setUp() throws Exception {
