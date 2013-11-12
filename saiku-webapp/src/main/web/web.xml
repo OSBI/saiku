@@ -48,6 +48,10 @@
       		<param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
       		<param-value>com.sun.jersey.api.container.filter.PostReplaceFilter</param-value>
     	</init-param>
+<!-- 		<init-param>
+		    <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
+		    <param-value>com.sun.jersey.api.container.filter.GZIPContentEncodingFilter</param-value>
+		</init-param>  -->
     	<init-param>
       		<param-name>org.codehaus.enunciate.modules.jersey.config.ServletPath</param-name>
       		<param-value>/rest</param-value>

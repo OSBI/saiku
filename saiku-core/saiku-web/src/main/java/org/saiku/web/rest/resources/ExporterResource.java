@@ -19,9 +19,6 @@ package org.saiku.web.rest.resources;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +37,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.apache.commons.lang.StringUtils;
 import org.saiku.web.rest.objects.resultset.QueryResult;
+import org.saiku.web.rest.util.ServletUtil;
 import org.saiku.web.svg.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,8 +55,6 @@ import org.springframework.stereotype.Component;
 public class ExporterResource {
 
 	private static final Logger log = LoggerFactory.getLogger(ExporterResource.class);
-
-	private static final String PREFIX_PARAMETER = "param";
 
 	private ISaikuRepository repository;
 
@@ -84,8 +80,8 @@ public class ExporterResource {
 			Response f = repository.getResource(file);
 			String fileContent = new String( (byte[]) f.getEntity());
 			String queryName = UUID.randomUUID().toString();
-			fileContent = replaceParameters(fileContent, getParameters(servletRequest));
-			queryResource.createQuery(null,  null,  null, null, fileContent, queryName);
+			fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
+			queryResource.createQuery(null,  null,  null, null, fileContent, queryName, null);
 			queryResource.execute(queryName, formatter, 0);
 			return queryResource.getQueryExcelExport(queryName, formatter);
 		} catch (Exception e) {
@@ -104,9 +100,9 @@ public class ExporterResource {
 		try {
 			Response f = repository.getResource(file);
 			String fileContent = new String( (byte[]) f.getEntity());
-			fileContent = replaceParameters(fileContent, getParameters(servletRequest));
+			fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
 			String queryName = UUID.randomUUID().toString();
-			queryResource.createQuery(null,  null,  null, null, fileContent, queryName);
+			queryResource.createQuery(null,  null,  null, null, fileContent, queryName, null);
 			queryResource.execute(queryName,formatter, 0);
 			return queryResource.getQueryCsvExport(queryName);
 		} catch (Exception e) {
@@ -125,9 +121,9 @@ public class ExporterResource {
 		try {
 			Response f = repository.getResource(file);
 			String fileContent = new String( (byte[]) f.getEntity());
-			fileContent = replaceParameters(fileContent, getParameters(servletRequest));
+			fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
 			String queryName = UUID.randomUUID().toString();
-			queryResource.createQuery(null,  null,  null, null, fileContent, queryName);
+			queryResource.createQuery(null,  null,  null, null, fileContent, queryName, null);
 			QueryResult qr = queryResource.execute(queryName, formatter, 0);
 			return Response.ok().entity(qr).build();
 		} catch (Exception e) {
@@ -179,38 +175,4 @@ public class ExporterResource {
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-
-
-	private Map<String, String> getParameters(HttpServletRequest req) {
-
-		Map<String, String> queryParams = new HashMap<String, String>();
-		if (req != null) {
-			// ... and the query parameters
-			// We identify any pathParams starting with "param" as query parameters 
-
-			// FIXME we should probably be able to have array params as well
-			Enumeration<String> enumeration = req.getParameterNames();
-			while (enumeration.hasMoreElements()) {
-				String param = (String) enumeration.nextElement();
-				String value = req.getParameter(param);
-				if (param.toLowerCase().startsWith(PREFIX_PARAMETER))
-				{
-					param = param.substring(PREFIX_PARAMETER.length());
-					queryParams.put(param, value);
-				}
-			}
-		}
-		return queryParams;
-	}
-
-	private String replaceParameters(String query, Map<String,String> parameters) {
-		for (String parameter : parameters.keySet()) {
-			String value = parameters.get(parameter);
-			query = query.replaceAll("\\$\\{" + parameter + "\\}", value);
-		}
-
-		return query;
-	}
-
-
 }

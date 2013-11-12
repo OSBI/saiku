@@ -23,6 +23,7 @@
         <entry key="com.sun.jersey.config.property.packages" value="org.saiku.web" />
         <entry key="org.codehaus.enunciate.modules.jersey.config.ResourceProviderFactory" value="com.sun.jersey.spi.spring.container.SpringComponentProviderFactory" />
         <entry key="com.sun.jersey.spi.container.ContainerRequestFilters" value="com.sun.jersey.api.container.filter.PostReplaceFilter" />
+<!--        <entry key="com.sun.jersey.spi.container.ContainerResponseFilters" value="com.sun.jersey.api.container.filter.GZIPContentEncodingFilter" /> -->
       </map>
     </property>
   </bean>

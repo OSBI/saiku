@@ -29,6 +29,8 @@ import org.pentaho.platform.web.servlet.JAXRSPluginServlet;
 import org.saiku.plugin.util.PluginConfig;
 
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
+
+import com.sun.jersey.api.container.filter.GZIPContentEncodingFilter;
 import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.spi.container.WebApplication;
 
@@ -43,6 +45,7 @@ public class ExtendedJAXRSPluginServlet extends JAXRSPluginServlet {
 	protected void initiate(ResourceConfig rc, WebApplication wa) {
 
 		rc.getClasses().add(JacksonJaxbJsonProvider.class);
+//	    rc.getContainerResponseFilters().add(new GZIPContentEncodingFilter());
 		super.initiate(rc, wa);
 	}
 

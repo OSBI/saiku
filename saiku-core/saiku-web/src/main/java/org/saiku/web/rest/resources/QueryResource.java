@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -39,6 +38,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -73,6 +73,7 @@ import org.saiku.web.rest.objects.SavedQuery;
 import org.saiku.web.rest.objects.SelectionRestObject;
 import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.util.RestUtil;
+import org.saiku.web.rest.util.ServletUtil;
 import org.saiku.web.svg.PdfReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,11 +94,18 @@ public class QueryResource {
 
 	private OlapQueryService olapQueryService;
 	private OlapDiscoverService olapDiscoverService;
-
+	private ISaikuRepository repository;
+	
 	@Autowired
 	public void setOlapQueryService(OlapQueryService olapqs) {
 		olapQueryService = olapqs;
 	}
+
+	@Autowired
+	public void setRepository(ISaikuRepository repository){
+		this.repository = repository;
+	}
+
 
 
 	@Autowired
@@ -168,19 +176,35 @@ public class QueryResource {
 			@FormParam("connection") String connectionName, 
 			@FormParam("cube") String cubeName,
 			@FormParam("catalog") String catalogName, 
-			@FormParam("schema") String schemaName, 
-			@FormParam("xml") @DefaultValue("") String xml,
-			@PathParam("queryname") String queryName) throws ServletException 
-			{
-		if (log.isDebugEnabled()) {
-			log.debug("TRACK\t"  + "\t/query/" + queryName + "\tPOST\t xml:" + (xml == null));
-		}
-		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
-		if (xml != null && xml.length() > 0) {
-			return olapQueryService.createNewOlapQuery(queryName, xml);
-		}
-		return olapQueryService.createNewOlapQuery(queryName, cube);
+			@FormParam("schema") String schemaName,
+			@FormParam("xml") String xmlOld, 
+			@PathParam("queryname") String queryName,
+			MultivaluedMap<String, String> formParams) throws ServletException {
+		try {
+			String file = null, xml = null;
+			if (formParams != null) {
+				xml = formParams.containsKey("xml") ? formParams.getFirst("xml") : xmlOld;
+				file = formParams.containsKey("file") ? formParams.getFirst("file") : null;
+				if (StringUtils.isNotBlank(file)) {
+					Response f = repository.getResource(file);
+					xml = new String( (byte[]) f.getEntity());
+				}
+			} else {
+				xml = xmlOld;
 			}
+			if (log.isDebugEnabled()) {
+				log.debug("TRACK\t"  + "\t/query/" + queryName + "\tPOST\t xml:" + (xml == null) + " file:" + (file));
+			}
+			SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
+			if (StringUtils.isNotBlank(xml)) {
+				String query = ServletUtil.replaceParameters(formParams, xml);
+				return olapQueryService.createNewOlapQuery(queryName, query);
+			}
+			return olapQueryService.createNewOlapQuery(queryName, cube);
+		} catch (Exception e) {
+			throw new WebApplicationException(e);
+		}
+	}
 
 	@GET
 	@Produces({"application/json" })
@@ -910,6 +934,43 @@ public class QueryResource {
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+	
+	@PUT
+	@Consumes("application/x-www-form-urlencoded")
+	@Path("/{queryname}/zoomin")
+	public SaikuQuery zoomIn(
+			@PathParam("queryname") String queryName,
+			@FormParam("selections") String positionListString) {
+		try {
+
+			if (log.isDebugEnabled()) {
+				log.debug("TRACK\t"  + "\t/query/" + queryName + "/zoomIn\tPUT");
+			}
+			List<List<Integer>> realPositions = new ArrayList<List<Integer>>();
+			if (StringUtils.isNotBlank(positionListString)) {
+				ObjectMapper mapper = new ObjectMapper();
+				String[] positions = mapper.readValue(positionListString, TypeFactory.arrayType(String.class));
+				if (positions != null && positions.length > 0) {
+					for (String position : positions) {
+						String[] rPos = position.split(":");
+						List<Integer> cellPosition = new ArrayList<Integer>();
+	
+						for (String p : rPos) {
+							Integer pInt = Integer.parseInt(p);
+							cellPosition.add(pInt);
+						}
+						realPositions.add(cellPosition);
+					}
+				}
+			}
+			IQuery query = olapQueryService.zoomIn(queryName, realPositions);
+			return ObjectUtil.convert(query);
+			
+		} catch (Exception e){
+			log.error("Cannot updates selections for query (" + queryName + ")",e);
+			throw new WebApplicationException(e);
+		}
+	}
 
 	@PUT
 	@Consumes("application/x-www-form-urlencoded")
@@ -1103,16 +1164,16 @@ public class QueryResource {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+dimensionName+"/children/"+uniqueMemberName+"\tDELETE");
 		}
 		try{
-			boolean ret = olapQueryService.includeChildren(queryName, dimensionName, uniqueMemberName);
+			boolean ret = olapQueryService.removeChildren(queryName, dimensionName, uniqueMemberName);
 			if(ret == true){
-				return Response.ok().status(Status.CREATED).build();
+				return Response.ok().status(Status.GONE).build();
 			}
 			else{
 				throw new Exception("Couldn't remove children for "+ uniqueMemberName);
 				
 			}
 		} catch (Exception e){
-			log.error("Cannot include children for "+ dimensionName+ " for query (" + queryName + ")",e);
+			log.error("Cannot remove children for "+ dimensionName+ " for query (" + queryName + ")",e);
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}

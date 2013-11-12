@@ -76,7 +76,10 @@ import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.dto.SaikuTuple;
 import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.dto.filter.SaikuFilter;
+import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
+import org.saiku.olap.dto.resultset.DataCell;
+import org.saiku.olap.dto.resultset.MemberCell;
 import org.saiku.olap.query.IQuery;
 import org.saiku.olap.query.IQuery.QueryType;
 import org.saiku.olap.query.MdxQuery;
@@ -111,13 +114,13 @@ public class OlapQueryService implements Serializable {
 	private Map<String, IQuery> queries = new HashMap<String, IQuery>(); 
 
 	private static final AtomicLong ID_GENERATOR = new AtomicLong();
-	
+
 	public void setOlapDiscoverService(OlapDiscoverService os) {
 		olapDiscoverService = os;
 	}
 
 	public OlapQueryService() {	}
-	
+
 	public void destroy() {
 		for (Object  q : queries.keySet().toArray()) {
 			closeQuery(q.toString());
@@ -186,17 +189,17 @@ public class OlapQueryService implements Serializable {
 	public void deleteQuery(String queryName) {
 		removeIQuery(queryName);
 	}
-	
+
 	public void cancel(String queryName) {
 		try {
-//			System.out.println("Cancel: ID " + Thread.currentThread().getId() + " Name: " + Thread.currentThread().getName());
+			//			System.out.println("Cancel: ID " + Thread.currentThread().getId() + " Name: " + Thread.currentThread().getName());
 			IQuery q = getIQuery(queryName);
 			q.cancel();
 		} catch (Exception e) {
 			throw new SaikuServiceException("Error cancelling query: " + queryName,e);
 		}
 	}
-	
+
 
 	public CellDataSet execute(String queryName) {
 		return execute(queryName,new HierarchicalCellSetFormatter());
@@ -219,11 +222,11 @@ public class OlapQueryService implements Serializable {
 	public CellDataSet execute(String queryName, ICellSetFormatter formatter) {
 		String runId = "runId:" + ID_GENERATOR.getAndIncrement();
 		try {
-//			System.out.println("Execute: ID " + Thread.currentThread().getId() + " Name: " + Thread.currentThread().getName());
+			//			System.out.println("Execute: ID " + Thread.currentThread().getId() + " Name: " + Thread.currentThread().getName());
 			IQuery query = getIQuery(queryName);
 			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnectionName());
-			
-			
+
+
 			Long start = (new Date()).getTime();
 			if (query.getScenario() != null) {
 				log.info(runId + "\tQuery: " + query.getName() + " Setting scenario:" + query.getScenario().getId());
@@ -233,10 +236,10 @@ public class OlapQueryService implements Serializable {
 			if (query.getTag() != null) {
 				query = applyTag(query, con, query.getTag());
 			}
-			
+
 			String mdx = query.getMdx();
-	        log.info(runId + "\tType:" + query.getType() + ":\n" + mdx);
-			
+			log.info(runId + "\tType:" + query.getType() + ":\n" + mdx);
+
 			CellSet cellSet =  query.execute();
 			Long exec = (new Date()).getTime();
 
@@ -251,6 +254,7 @@ public class OlapQueryService implements Serializable {
 					+ "ms\tFormat:\t" + (format - exec) + "ms\t Total: " + (format - start) + "ms");
 			result.setRuntime(new Double(format - start).intValue());
 			getIQuery(queryName).storeCellset(cellSet);
+			getIQuery(queryName).storeFormatter(formatter);
 			return result;
 		} catch (Exception e) {
 			if (log.isInfoEnabled()) {
@@ -266,7 +270,7 @@ public class OlapQueryService implements Serializable {
 			throw new SaikuServiceException(runId + "\tCan't execute query: " + queryName,e);
 		}
 	}
-	
+
 	public SaikuQuery simulateTag(String queryName, SaikuTag tag) {
 		try {
 			IQuery query = getIQuery(queryName);
@@ -276,12 +280,12 @@ public class OlapQueryService implements Serializable {
 			throw new SaikuServiceException("Can't apply tag: " + tag + " to query "+ queryName,e);
 		}
 	}
-	
+
 	private IQuery applyTag(IQuery query, OlapConnection con, SaikuTag t) throws Exception {
 		String xml = query.toXml();
 		QueryDeserializer qd = new QueryDeserializer();
 		query = qd.unparse(xml, con);
-		
+
 		List<SimpleCubeElement> doneDimension = new ArrayList<SimpleCubeElement>();
 		Map<String,QueryDimension> dimensionMap = new HashMap<String,QueryDimension>();
 		if (t.getSaikuTupleDimensions() != null) {
@@ -329,13 +333,13 @@ public class OlapQueryService implements Serializable {
 						}
 					}
 					// TODO: Move it to columns since drilling through with 2 filter items of the same dimension doesn't work
-//					if (filterDim.getInclusions().size() > 1) {
-//						query.moveDimension(filterDim, Axis.COLUMNS);
-//					}
+					//					if (filterDim.getInclusions().size() > 1) {
+					//						query.moveDimension(filterDim, Axis.COLUMNS);
+					//					}
 				}
 			}
 		}
-		
+
 		return query;
 	}
 
@@ -354,13 +358,13 @@ public class OlapQueryService implements Serializable {
 		setMdx(queryName, mdx);
 		return execute(queryName, formatter);
 	}
-	
+
 	public List<SaikuMember> getResultMetadataMembers(String queryName, boolean preferResult, String dimensionName, String hierarchyName, String levelName) {
 		IQuery query = getIQuery(queryName);
 		CellSet cs = query.getCellset();
 		List<SaikuMember> members = new ArrayList<SaikuMember>();
 		Set<Level> levels = new HashSet<Level>();
-		
+
 		if (cs != null && preferResult) {
 			for (CellSetAxis axis : cs.getAxes()) {
 				int posIndex = 0;
@@ -380,25 +384,25 @@ public class OlapQueryService implements Serializable {
 								mset.add(m);
 							}
 						}
-						
+
 						members = ObjectUtil.convertMembers(mset);
 						Collections.sort(members, new SaikuUniqueNameComparator());
-						
+
 						break;
 					}
 					posIndex++;
 				}
 			}
 			log.debug("Found members in the result: " + members.size());
-			
+
 		}
 		if (cs == null || !preferResult || members.size() == 0 || levels.size() == 1) {
 			members = olapDiscoverService.getLevelMembers(query.getSaikuCube(), dimensionName, hierarchyName, levelName);
 		}
-		
+
 		return members;
 	}
-	
+
 	public ResultSet explain(String queryName) {
 		OlapStatement stmt = null;
 		try {
@@ -473,7 +477,7 @@ public class OlapQueryService implements Serializable {
 			}
 			buf.append(") ON COLUMNS \r\n");
 			buf.append("FROM " + cube.getCubeName() + "\r\n");
-			
+
 			SelectNode sn = (new DefaultMdxParserImpl().parseSelect(getMDXQuery(queryName))); 
 			final Writer writer = new StringWriter();
 			sn.getFilterAxis().unparse(new ParseTreeWriter(new PrintWriter(writer)));
@@ -517,7 +521,7 @@ public class OlapQueryService implements Serializable {
 			else {
 				mdx = "DRILLTHROUGH " + mdx;
 			}
-			
+
 			ResultSet rs = stmt.executeQuery(mdx);
 			return CsvExporter.exportCsv(rs);
 		} catch (SQLException e) {
@@ -591,7 +595,7 @@ public class OlapQueryService implements Serializable {
 		}		
 		return query;
 	}
-	
+
 	public boolean includeChildren(String queryName, String dimensionName, String uniqueMemberName) {
 		IQuery query = getIQuery(queryName);
 		List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(uniqueMemberName).getSegmentList();
@@ -605,7 +609,7 @@ public class OlapQueryService implements Serializable {
 					uniqueMemberName +")" ,e);
 		}
 	}
-	
+
 	public boolean removeChildren(String queryName, String dimensionName, String uniqueMemberName) {
 		IQuery query = getIQuery(queryName);
 		List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(uniqueMemberName).getSegmentList();
@@ -621,7 +625,7 @@ public class OlapQueryService implements Serializable {
 					uniqueMemberName +")" ,e);
 		}
 	}
-	
+
 	public boolean removeAllChildren(String queryName, String dimensionName) {
 		IQuery query = getIQuery(queryName);
 		QueryDimension dimension = query.getDimension(dimensionName);
@@ -643,7 +647,7 @@ public class OlapQueryService implements Serializable {
 	public boolean includeMember(String queryName, String dimensionName, String uniqueMemberName, String selectionType, int memberposition){
 		IQuery query = getIQuery(queryName);
 
-		
+
 		List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(uniqueMemberName).getSegmentList();
 		QueryDimension dimension = query.getDimension(dimensionName);
 		final Selection.Operator selectionMode = Selection.Operator.valueOf(selectionType);
@@ -724,7 +728,7 @@ public class OlapQueryService implements Serializable {
 								}
 							}
 							dimension.getInclusions().removeAll(removals);
-                        }
+						}
 					}
 				}
 			}
@@ -753,7 +757,7 @@ public class OlapQueryService implements Serializable {
 		catch (Exception e) {
 			throw new SaikuServiceException("Cannot move dimension:" + dimensionName + " to axis: "+axisName,e);
 		}
-    }
+	}
 
 	public void removeDimension(String queryName, String axisName, String dimensionName) {
 		IQuery query = getIQuery(queryName);
@@ -823,7 +827,7 @@ public class OlapQueryService implements Serializable {
 			query.resetAxisSelections(qAxis);
 		}
 	}
-	
+
 	public void sortAxis(String queryName, String axisName, String sortLiteral, String sortOrder) {
 		IQuery query = getIQuery(queryName);
 		if (Axis.Standard.valueOf(axisName) != null) {
@@ -832,7 +836,7 @@ public class OlapQueryService implements Serializable {
 			qAxis.sort(so, sortLiteral);
 		}
 	}
-	
+
 	public void clearSort(String queryName, String axisName) {
 		IQuery query = getIQuery(queryName);
 		if (Axis.Standard.valueOf(axisName) != null) {
@@ -840,7 +844,7 @@ public class OlapQueryService implements Serializable {
 			qAxis.clearSort();
 		}
 	}
-	
+
 	public void limitAxis(String queryName, String axisName, String limitFunction, String n, String sortLiteral) {
 		IQuery query = getIQuery(queryName);
 		if (Axis.Standard.valueOf(axisName) != null) {
@@ -850,7 +854,7 @@ public class OlapQueryService implements Serializable {
 			qAxis.limit(lf, bn, sortLiteral);
 		}
 	}
-	
+
 	public void clearLimit(String queryName, String axisName) {
 		IQuery query = getIQuery(queryName);
 		if (Axis.Standard.valueOf(axisName) != null) {
@@ -858,7 +862,7 @@ public class OlapQueryService implements Serializable {
 			qAxis.clearLimitFunction();
 		}
 	}
-	
+
 	public void filterAxis(String queryName, String axisName, String filterCondition) {
 		IQuery query = getIQuery(queryName);
 		if (Axis.Standard.valueOf(axisName) != null) {
@@ -866,7 +870,7 @@ public class OlapQueryService implements Serializable {
 			qAxis.filter(filterCondition);
 		}
 	}
-	
+
 	public void clearFilter(String queryName, String axisName) {
 		IQuery query = getIQuery(queryName);
 		if (Axis.Standard.valueOf(axisName) != null) {
@@ -931,7 +935,7 @@ public class OlapQueryService implements Serializable {
 			IQuery query = getIQuery(queryName);
 			CellSet rs = query.getCellset();
 			List<SaikuDimensionSelection> filters = new ArrayList<SaikuDimensionSelection>();
-			
+
 			if (query.getType().equals(QueryType.QM)) {
 				filters = getAxisSelection(queryName, "FILTER");
 			}
@@ -967,14 +971,14 @@ public class OlapQueryService implements Serializable {
 				List <SaikuMember> sm = ObjectUtil.convertMembers(members);
 				SaikuTuple tuple = new SaikuTuple(sm);
 				tuples.add(tuple);
-				
+
 				if (dimensions.size() == 0) {
 					for (Member m : members) {
 						SimpleCubeElement sd = 
-							new SimpleCubeElement(
-								m.getDimension().getName(),
-								m.getDimension().getUniqueName(),
-								m.getDimension().getCaption());
+								new SimpleCubeElement(
+										m.getDimension().getName(),
+										m.getDimension().getUniqueName(),
+										m.getDimension().getCaption());
 						if (!dimensions.contains(sd)) {
 							dimensions.add(sd);
 						}
@@ -984,67 +988,193 @@ public class OlapQueryService implements Serializable {
 			List<SaikuDimensionSelection> filterSelections = getAxisSelection(queryName, "FILTER");
 			SaikuTag t = new SaikuTag(tagName, dimensions, tuples, filterSelections);
 			return t;
-			
+
 		} catch (Exception e) {
 			throw new SaikuServiceException("Error addTag:" + tagName + " for query: " + queryName,e);
 		}
 	}
 	
-	public SaikuFilter getFilter(String queryName, String filtername, String dimensionName, String hierarchyName, String levelName) {
-		IQuery query = getIQuery(queryName);
-		CellSet cs = query.getCellset();
-		List<SimpleCubeElement> members = new ArrayList<SimpleCubeElement>();
-		SimpleCubeElement dimension = null;
-		SimpleCubeElement hierarchy = null;
-		Set<MetadataElement> mset = new HashSet<MetadataElement>();
-		
-		if (cs != null) {
-			List<CellSetAxis> axes = new ArrayList<CellSetAxis>();
-			axes.addAll(cs.getAxes());
-			axes.add(cs.getFilterAxis());
-			for (CellSetAxis axis : axes) {
-				int posIndex = 0;
-				for (Hierarchy h : axis.getAxisMetaData().getHierarchies()) {
-					if (h.getName().equals(hierarchyName)) {
-						if (hierarchy == null) {
-							hierarchy = new SimpleCubeElement(h.getName(),  h.getUniqueName(),  h.getCaption());
-							Dimension d = h.getDimension();
-							dimension = new SimpleCubeElement(d.getName(), d.getUniqueName(), d.getCaption());
-						}
-						if (h.getLevels().size() == 1) {
-							break;
-						}
 
-						for (Position pos : axis.getPositions()) {
-							Member m = pos.getMembers().get(posIndex);
-							if (m.getLevel().getName().equals(levelName)) {
+	public IQuery zoomIn(String queryName, List<List<Integer>> realPositions) {
+		try {
+			IQuery query = getIQuery(queryName);
+			CellSet cs = query.getCellset();
+			if (cs == null) {
+				throw new SaikuServiceException("Cannot zoom in if last cellset is null");
+			}
+			if (realPositions == null || realPositions.size() == 0) {
+				throw new SaikuServiceException("Cannot zoom in if zoom in position is empty");
+			}
+			
+			Map<Dimension, Set<Member>> memberSelection = new HashMap<Dimension, Set<Member>>();
+			for (List<Integer> position : realPositions) {
+				for (int k = 0; k < position.size(); k++) {
+					Position p = cs.getAxes().get(k).getPositions().get(position.get(k));
+					List<Member> members = p.getMembers();
+					for (Member m : members) {
+						Dimension d = m.getDimension();
+						if (!memberSelection.containsKey(d)) {
+							Set<Member> mset = new HashSet<Member>();
+							memberSelection.put(d, mset);
+						}
+						memberSelection.get(d).add(m);
+					}
+				}
+			}
+			
+			for(Dimension d : memberSelection.keySet()) {
+				QueryDimension a = query.getDimension(d.getName());
+				a.clearInclusions();
+				for (Member m : memberSelection.get(d)) {
+					a.include(m);
+				}
+			}
+			
+			return query;
+		} catch (Exception e) {
+			throw new SaikuServiceException("Error zoom in on query: " + queryName,e);
+		}
+		
+	}
+
+	public SaikuFilter getFilter(String queryName, String filtername, String dimensionName, String hierarchyName, String levelName) {
+		try {
+
+
+			IQuery query = getIQuery(queryName);
+			CellSet cs = query.getCellset();
+			if (cs == null) {
+				throw new SaikuServiceException("Cannot get filter of result if last cellset is null");
+			}
+
+			CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cs, query.getFormatter());
+
+			List<SimpleCubeElement> members = new ArrayList<SimpleCubeElement>();
+			Set<MetadataElement> mset = new HashSet<MetadataElement>();
+
+			Cube cube = query.getCube();
+			Hierarchy h = cube.getHierarchies().get(hierarchyName);
+			if (h == null) {
+				throw new Exception("Cannot find hierarchy in cube " + cube.getName() + " with name " + hierarchyName);
+			}
+			Dimension d = h.getDimension();
+			Level l = h.getLevels().get(levelName);
+			if (l == null) {
+				throw new Exception("Cannot find level in hierarchy " + h.getName() + " with name " + levelName);
+			}
+			SimpleCubeElement hierarchy = new SimpleCubeElement(h.getName(),  h.getUniqueName(),  h.getCaption());
+			SimpleCubeElement dimension = new SimpleCubeElement(d.getName(), d.getUniqueName(), d.getCaption());
+
+			Long start = (new Date()).getTime();
+
+			// try headers first
+			AbstractBaseCell[][] headers = result.getCellSetHeaders();
+			if (headers != null && headers.length > 0 && headers[0].length > 0) {
+				for (int i=0; i < headers.length; i++) {
+					for (int k = 0; k < headers[0].length; k++) {
+						if (headers[i][k] == null) {
+							continue;
+						}
+						MemberCell mc = (MemberCell) headers[i][k];
+						if (mc.getUniqueName() != null) {
+							if (mc.getHierarchy().equals(hierarchy.getUniqueName()) && mc.getLevel().equals(l.getUniqueName())) {
+								String mu = mc.getUniqueName();
+								List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(mu).getSegmentList();
+								Member m = cube.lookupMember(memberList);
 								mset.add(m);
 							}
 						}
-						break;
 					}
-					posIndex++;
 				}
 			}
+			Long header = (new Date()).getTime();
+			
 			if (mset.size() == 0) {
-				QueryDimension qd = query.getDimension(dimensionName);
-				if (qd != null && qd.getAxis().getLocation() != null) {
-					for (Selection sel : qd.getInclusions()) {
-						if ((sel.getRootElement() instanceof Member)) {
-							Member m = ((Member) sel.getRootElement());
-							if (m.getLevel().getName().equals(levelName)) {
-								mset.add(m);
+				// try body next
+				AbstractBaseCell[][] body = result.getCellSetBody();
+				if (body != null && body.length > 0 && body[0].length > 0) {
+					for (int i=0; i < body.length; i++) {
+						for (int k = 0; k < body[0].length; k++) {
+							if (body[i][k] == null) {
+								continue;
+							}
+							AbstractBaseCell ac = body[i][k];
+							if (ac instanceof DataCell) {
+								break;
+							}
+							if (ac instanceof MemberCell) {
+								MemberCell mc = (MemberCell) body[i][k];
+								if (mc.getUniqueName() != null) {
+									if (mc.getHierarchy().equals(hierarchy.getUniqueName()) && mc.getLevel().equals(l.getUniqueName())) {
+										String mu = mc.getUniqueName();
+										List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(mu).getSegmentList();
+										Member m = cube.lookupMember(memberList);
+										mset.add(m);
+									}
+								}
 							}
 						}
 					}
 				}
 			}
+			Long body = (new Date()).getTime();
+
+
+			// fallback - check inclusions (probably they are only on filter)
+			if (mset.size() == 0) {
+//				List<CellSetAxis> axes = new ArrayList<CellSetAxis>();
+//				axes.addAll(cs.getAxes());
+//				axes.add(cs.getFilterAxis());
+//				for (CellSetAxis axis : axes) {
+//					int posIndex = 0;
+//					for (Hierarchy he : axis.getAxisMetaData().getHierarchies()) {
+//						if (he.getName().equals(hierarchyName)) {
+//							if (hierarchy == null) {
+//								hierarchy = new SimpleCubeElement(he.getName(),  he.getUniqueName(),  he.getCaption());
+//								dimension = new SimpleCubeElement(d.getName(), d.getUniqueName(), d.getCaption());
+//							}
+//							if (he.getLevels().size() == 1) {
+//								break;
+//							}
+//
+//							for (Position pos : axis.getPositions()) {
+//								Member m = pos.getMembers().get(posIndex);
+//								if (m.getLevel().getName().equals(levelName)) {
+//									mset.add(m);
+//								}
+//							}
+//							break;
+//						}
+//						posIndex++;
+//					}
+//				}
+				if (mset.size() == 0) {
+					QueryDimension qd = query.getDimension(dimensionName);
+					if (qd != null && qd.getAxis().getLocation() != null) {
+						for (Selection sel : qd.getInclusions()) {
+							if ((sel.getRootElement() instanceof Member)) {
+								Member m = ((Member) sel.getRootElement());
+								if (m.getLevel().getName().equals(levelName)) {
+									mset.add(m);
+								}
+							}
+						}
+					}
+				}
+			}
+			Long end = (new Date()).getTime();
+			
+//			System.out.println("Header Time: " + new Double(header - start).intValue());
+//			System.out.println("Body   Time: " + new Double(body - header).intValue());
+//			System.out.println("Rest   Time: " + new Double(end- body).intValue());
 			members = ObjectUtil.convert2Simple(mset);
 			Collections.sort(members, new SaikuUniqueNameComparator());
 			log.debug("Create Filters: Found members in the result or query: " + members.size());
-			
+
+			return new SaikuFilter(filtername, null, dimension, hierarchy, members);
+		} catch (Exception e) {
+			throw new SaikuServiceException("Error getFilter:" + filtername + " for query: " + queryName,e);
 		}
-		return new SaikuFilter(filtername, null, dimension, hierarchy, members);
 	}
 
 	public Map<String, SaikuFilter> getValidFilters(String queryName, Map<String, SaikuFilter> allFilters) {
@@ -1053,7 +1183,7 @@ public class OlapQueryService implements Serializable {
 		Map<String, SaikuFilter> filteredMap = new HashMap<String, SaikuFilter>(); 
 		for (SaikuFilter sf : allFilters.values()) {
 			if (StringUtils.isBlank(sf.getName()) || sf.getDimension() == null)
-					continue;
+				continue;
 
 			String dimensionName = sf.getDimension().getName();
 			String hierarchyName = sf.getHierarchy().getName();
@@ -1065,7 +1195,7 @@ public class OlapQueryService implements Serializable {
 		}
 		return filteredMap;
 	}
-	
+
 	public SaikuQuery applyFilter(String queryname, SaikuFilter filter) throws Exception {
 		IQuery query = getIQuery(queryname);
 		if (filter != null && filter.getName() != null && filter.getDimension() != null && filter.getMembers() != null) {
@@ -1098,12 +1228,12 @@ public class OlapQueryService implements Serializable {
 		return ObjectUtil.convert(query);
 	}
 
-	
+
 	public void setTag(String queryName, SaikuTag tag) {
 		IQuery query = getIQuery(queryName);
 		query.setTag(tag);
 	}
-	
+
 	public void disableTag(String queryName) {
 		IQuery query = getIQuery(queryName);
 		query.removeTag();
@@ -1112,7 +1242,7 @@ public class OlapQueryService implements Serializable {
 	private void putIQuery(String queryName, IQuery query) {
 		queries.put(queryName, query);
 	}
-	
+
 	private void removeIQuery(String queryName) {
 		if (queries.containsKey(queryName)) {
 			IQuery q = queries.remove(queryName);
@@ -1129,7 +1259,7 @@ public class OlapQueryService implements Serializable {
 		}
 		throw new SaikuServiceException("No query found using name: " + queryName);
 	}
-	
+
 	private Map<String, IQuery> getIQueryMap() {
 		return queries;
 	}
