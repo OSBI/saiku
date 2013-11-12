@@ -66,6 +66,7 @@
 
         <!-- Saiku Project -->
         <script type="text/javascript" src="js/saiku/Settings.js"></script>
+        <script type="text/javascript" src="js/saiku/models/SaikuOlapQuery.js"></script>
         <script type="text/javascript" src="js/saiku/render/SaikuRenderer.js"></script>
         <script type="text/javascript" src="js/saiku/render/SaikuTableRenderer.js"></script>
         <script type="text/javascript" src="js/saiku/render/SaikuChartRenderer.js"></script>
@@ -94,7 +95,6 @@
         <script type="text/javascript" src="js/saiku/views/OpenDialog.js"></script>
         <script type="text/javascript" src="js/saiku/views/Tab.js"></script>
         <script type="text/javascript" src="js/saiku/models/Repository.js"></script>
-        <script type="text/javascript" src="js/saiku/models/Properties.js"></script>
         <script type="text/javascript" src="js/saiku/models/Result.js"></script>
         <script type="text/javascript" src="js/saiku/models/QueryAction.js"></script>
         <script type="text/javascript" src="js/saiku/models/QueryScenario.js"></script>
@@ -270,7 +270,15 @@
 
         <script type="text/x-jquery-tmpl" id="template-workspace-dropzones">
         <div class="workspace_fields disabled">
-            <div class="fields_list" title="COLUMNS">
+            <div class="fields_list details_fields" title="DETAILS">
+                <div class="fields_list_header disabled_toolbar"><span class="i18n">Measures</span><span class="dropdown"></span></div>
+                <div class="fields_list_body details">
+                    <ul class="connectable"></ul>
+                </div>
+                <span class="clear_axis i18n hide" title="Clear Axis"></span>
+                <div class="clear"></div>
+            </div>
+            <div class="fields_list columns_fields" title="COLUMNS">
                 <div class="fields_list_header disabled_toolbar"><span class="i18n">Columns</span><span class="dropdown"></span></div>
                 <div class="fields_list_body columns">
                     <ul class="connectable"></ul>
@@ -278,7 +286,7 @@
                 <span class="clear_axis i18n hide" title="Clear Axis"></span>
                 <div class="clear"></div>
             </div>
-            <div class="fields_list" title="ROWS">
+            <div class="fields_list rows_fields" title="ROWS">
                 <div class="fields_list_header disabled_toolbar"><span class="i18n">Rows</span><span class="dropdown"></span></div>
                 <div class="fields_list_body rows">
                     <ul class="connectable"></ul>
@@ -286,7 +294,7 @@
                 <span class="clear_axis i18n hide" title="Clear Axis"></span>
                 <div class="clear"></div>
             </div>
-            <div class="fields_list" title="FILTER">
+            <div class="fields_list filter_fields" title="FILTER">
                 <div class="fields_list_header disabled_toolbar"><span class="i18n">Filter</span><span class="dropdown"></span></div>
                 <div class="fields_list_body filter">
                     <ul class="connectable"></ul>

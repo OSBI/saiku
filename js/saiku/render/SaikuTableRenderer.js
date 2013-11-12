@@ -1,6 +1,5 @@
 
 var SaikuTableRenderer = _.extend(SaikuRenderer, {
-
     key: "table",
 });
 

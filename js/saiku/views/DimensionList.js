@@ -111,7 +111,7 @@ var DimensionList = Backbone.View.extend({
     },
 
      select_dimension: function(event, ui) {
-        if (this.workspace.query.get('type') != "QM") {
+        if (this.workspace.query.model.type != "QUERYMODEL") {
             return;
         }
         if ($(event.target).parent().hasClass('ui-state-disabled')) {
@@ -150,11 +150,7 @@ var DimensionList = Backbone.View.extend({
             return;
         }
         
-        var $axis;
-        if ($(this.workspace.el).find(".rows ul .d_measure").length > 0) $axis = $(this.workspace.el).find(".rows ul");
-        else if ($(this.workspace.el).find(".columns ul .d_measure").length > 0) $axis = $(this.workspace.el).find(".columns ul");
-        else if ($(this.workspace.el).find(".filter ul .d_measure").length > 0) $axis = $(this.workspace.el).find(".filter ul");
-        else $axis = $(this.workspace.el).find(".columns ul");
+        var $axis = $(this.workspace.el).find(".details ul");
 
         $target = $(event.target).parent().clone();
         if ($axis.find(".d_measure").length != 0)

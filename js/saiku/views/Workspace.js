@@ -80,8 +80,8 @@ var Workspace = Backbone.View.extend({
     },
     
     caption: function(increment) {
-        if (this.query && this.query.name) {
-            return this.query.name;
+        if (this.query && this.query.model.name) {
+            return this.query.model.name;
         } else if (this.query && this.query.get('name')) {
             return this.query.get('name');
         }
@@ -261,17 +261,18 @@ var Workspace = Backbone.View.extend({
             cube += "/" + parsed_cube[i];
         }
         this.query = new Query({
-            connection: parsed_cube[0],
-            catalog: parsed_cube[1],
-            schema: (parsed_cube[2] == "null" ? "" : parsed_cube[2]) ,
-            cube: decodeURIComponent(cube),
-            formatter: Settings.CELLSET_FORMATTER
+            cube: {
+                connection: parsed_cube[0],
+                catalog: parsed_cube[1],
+                schema: (parsed_cube[2] == "null" ? "" : parsed_cube[2]) ,
+                name: decodeURIComponent(cube)
+            }
         }, {
-            workspace: this
+                workspace: this
         });
         
         // Save the query to the server and init the UI
-        this.query.save({},{ async: false });
+        this.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });
         this.init_query();
     },
     
@@ -279,7 +280,12 @@ var Workspace = Backbone.View.extend({
         var self = this;
         try 
         {
-            var properties = this.query.properties ? this.query.properties.properties : {} ;
+
+            // TODO: This should be refactored, the workspace should have a renderer set and always use that
+            // probably extend the Table.js with TableRenderer and make it an advanced one
+
+            var properties = this.query.model.properties ? this.query.model.properties : {} ;
+
             var renderMode =  ('RENDER_MODE' in Settings) ? Settings.RENDER_MODE
                                     : ('saiku.ui.render.mode' in properties) ? properties['saiku.ui.render.mode'] 
                                     : null;
@@ -304,9 +310,7 @@ var Workspace = Backbone.View.extend({
                 $(this.querytoolbar.el).find('ul.table a.' + renderType).addClass('on');
             }
         } catch (e) {
-                if (typeof console != "undefined") {
-                    console.log(e);
-                }
+                Saiku.error(this.cid, e);
         }
 
 
@@ -315,8 +319,8 @@ var Workspace = Backbone.View.extend({
             return;
         }
 
-        if (this.query.get('type') == "MDX") {
-                this.query.set({ formatter : "flat"});
+        if (this.query.model.type == "MDX") {
+                this.query.setProperty("formatter", "flat");
             if (! $(this.el).find('.sidebar').hasClass('hide')) {
                 this.toggle_sidebar();
             }            
@@ -351,9 +355,7 @@ var Workspace = Backbone.View.extend({
                 + "/" + this.query.get('cube');
             $(this.el).find('.cubes')
                 .val(this.selected_cube);
-        }        
-        // Clear workspace
-        //this.clear();
+        }
         
         if (this.selected_cube) {
             // Create new DimensionList and MeasureList
@@ -434,9 +436,9 @@ var Workspace = Backbone.View.extend({
         if (typeof needFetch == "undefined") {
             sync_ui();
         } else {
-            var formatter = self.query.get('formatter');
+            var formatter = this.query.getProperty("formatter");
             self.query.clear();
-            self.query.set({ 'formatter' : formatter });
+            self.query.setProperty('formatter', formatter);
             self.query.fetch({ success: sync_ui });
         }
     },

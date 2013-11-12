@@ -117,7 +117,7 @@ var WorkspaceToolbar = Backbone.View.extend({
             $(this.el).find('.query_scenario').removeClass('disabled_toolbar');
             $(this.el).find('.drillthrough, .drillthrough_export').addClass('disabled_toolbar');
         }
-        if (properties['saiku.olap.query.limit'] == 'true' || properties['saiku.olap.query.filter'] == 'true') {
+        if (properties['saiku.olap.query.limit'] == 'true' || properties['saiku.olap.query.filter'] == true) {
             $(this.workspace.el).find('.fields_list_header').addClass('limit');
         }
 
