@@ -76,8 +76,13 @@ SaikuTableRenderer.prototype.internalRender = function(data, options) {
 
 
                 if (isLastColumn) {
-                    // Last column in a row....
-                    contents += '<th class="col" style="text-align: center;" colspan="' + colSpan + '" title="' + header.value + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
+                    // Last column in a row...
+                    if (header.value == "null") {
+                        contents += '<th class="col_null"><div>&nbsp;</div></th>';
+                    } else {
+                        contents += '<th class="col" style="text-align: center;" colspan="' + colSpan + '" title="' + header.value + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';    
+                    }
+                    
                 } else {
                     // All the rest...
                     var groupChange = (col > 1 && row > 1 && !isHeaderLowestLvl && col > firstColumn) ?
