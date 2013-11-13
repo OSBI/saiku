@@ -46,7 +46,8 @@ function get_from_proxy(request, response) {
         hostname: backend_host,
         port: backend_port,
         path: request.url,
-        method: request.method
+        method: request.method,
+	headers: request.headers
     };
     
     var proxy_request = http.request(options);
