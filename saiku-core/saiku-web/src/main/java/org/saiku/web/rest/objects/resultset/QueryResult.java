@@ -17,6 +17,9 @@ package org.saiku.web.rest.objects.resultset;
 
 import java.util.List;
 
+import org.saiku.olap.query2.ThinQuery;
+import org.saiku.service.util.ISaikuQuery;
+
 public class QueryResult {
 	
 	private List<Cell[]> cellset;
@@ -24,7 +27,7 @@ public class QueryResult {
 	private String error;
 	private Integer height;
 	private Integer width;
-	
+	private ISaikuQuery query;
 
 	public QueryResult(List<Cell[]> cellset, int runtime, int width, int height) {
 		this.cellset = cellset;
@@ -69,6 +72,12 @@ public class QueryResult {
 		this.width = width;
 	}
 
+	public void setQuery(ThinQuery query) {
+		this.query = query;
+		
+	}
 
-
+	public ISaikuQuery getQuery() {
+		return query;
+	}
 }

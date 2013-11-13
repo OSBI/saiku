@@ -2,6 +2,7 @@ package org.saiku.olap.query2;
 
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.olap4j.impl.NamedListImpl;
 import org.olap4j.metadata.NamedList;
@@ -26,6 +27,7 @@ public class ThinAxis extends AbstractThinSortableQuerySet {
 		this.nonEmpty = nonEmpty;
 	}
 
+	@JsonIgnore
 	@Override
 	public String getName() {
 		return location.toString();

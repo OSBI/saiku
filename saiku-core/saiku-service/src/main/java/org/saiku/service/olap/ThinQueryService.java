@@ -80,8 +80,11 @@ public class ThinQueryService implements Serializable {
 			QueryContext qt = new QueryContext(Type.OLAP, tq);
 			this.context.put(tq.getName(), qt);
 		}
-		
 		return tq;
+	}
+	
+	public QueryContext getContext(String name) {
+		return this.context.get(name);
 	}
 
 	@Deprecated
@@ -103,6 +106,7 @@ public class ThinQueryService implements Serializable {
 	
 	protected CellSet executeInternalQuery(ThinQuery query) throws Exception {
 		QueryContext queryContext = context.get(query.getName());
+		ThinQuery tqAfter = null;
 		if (queryContext == null) {
 			queryContext = new QueryContext(Type.OLAP, query);
 			this.context.put(query.getName(), queryContext);
@@ -131,6 +135,9 @@ public class ThinQueryService implements Serializable {
 			Cube cub = olapDiscoverService.getNativeCube(query.getCube());
 			Query q = Fat.convert(query, cub);
 			mdx = q.getMdx();
+			tqAfter = Thin.convert(q, query.getCube());
+			query.setQueryModel(tqAfter.getQueryModel());
+			
 		} else {
 			throw new Exception("Cannot get mdx for query " + query.getName() + " - no querymodel or mdx present!");
 		}
@@ -139,6 +146,9 @@ public class ThinQueryService implements Serializable {
 			query.setMdx(mdx);
 			CellSet cs = stmt.executeOlapQuery(mdx);
 			queryContext.store(ObjectKey.RESULT, cs);
+			if (query != null) {
+				queryContext.store(ObjectKey.QUERY, query);
+			}
 			return cs;
 		} finally {
 			stmt.close();
@@ -147,6 +157,9 @@ public class ThinQueryService implements Serializable {
 	}
 	
 	public CellDataSet execute(ThinQuery tq) {
+		if (tq.getProperties().containsKey("saiku.olap.result.formatter")) {
+			return execute(tq, tq.getProperties().get("saiku.olap.result.formatter"));
+		}
 		return execute(tq,new HierarchicalCellSetFormatter());
 	}
 

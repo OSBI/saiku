@@ -145,28 +145,14 @@ public class Query2Resource {
 	}
 	
 	
-	@GET
-	@Produces({"application/json" })
-	@Path("/new")
-	public ThinQuery getEmpty() {
-		SaikuCube cube = new SaikuCube("foodmart", "Sales", "Sales", "Sales", "FoodMart", "FoodMart");
-		return thinQueryService.createEmpty("dummy", cube);
-	}
-	
-	@GET
-	@Produces({"application/json" })
-	@Path("/dummy")
-	public ThinQuery getDummy() {
-		SaikuCube cube = new SaikuCube("foodmart", "Sales", "Sales", "Sales", "FoodMart", "FoodMart");
-		return thinQueryService.createEmpty("dummy", cube);
-	}
-	
 	@POST
 	@Consumes({"application/json" })
 	@Path("/execute")
 	public Response execute(ThinQuery tq) {
 		try {
 			QueryResult qr = RestUtil.convert(thinQueryService.execute(tq));
+			ThinQuery tqAfter = thinQueryService.getContext(tq.getName()).getOlapQuery();
+			qr.setQuery(tqAfter);
 			return Response.ok(qr).type(MediaType.APPLICATION_JSON).build();
 		}
 		catch (Exception e) {

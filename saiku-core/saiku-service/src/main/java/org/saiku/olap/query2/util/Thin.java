@@ -52,7 +52,11 @@ public class Thin {
 	
 	public static ThinQuery convert(Query query, SaikuCube cube) {
 		ThinQueryModel tqm = convert(query);
-		return new ThinQuery(query.getName(), cube, tqm);
+		ThinQuery tq = new ThinQuery(query.getName(), cube, tqm);
+		if (query.getParameters() != null) {
+			tq.setParameters(tq.getParameters());
+		}
+		return tq;
 	}
 
 	private static ThinQueryModel convert(Query query) {
@@ -177,6 +181,10 @@ public class Thin {
 			range.add(rangeStart);
 			range.add(rangeEnd);
 			ts = new ThinSelection(ThinSelection.Type.RANGE, range);
+		}
+		
+		if (ql.hasParameter()) {
+			ts.setParameterName(ql.getParameterName());
 		}
 		
 		ThinLevel l = new ThinLevel(ql.getName(), ql.getCaption(), ts);

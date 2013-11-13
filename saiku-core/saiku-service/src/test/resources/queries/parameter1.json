@@ -9,8 +9,7 @@
         "hierarchizeMode" : null,
         "location" : "FILTER",
         "hierarchies" : [ ],
-        "nonEmpty" : false,
-        "name" : "FILTER"
+        "nonEmpty" : false
       },
       "COLUMNS" : {
         "mdx" : null,
@@ -37,8 +36,7 @@
             }
           }
         } ],
-        "nonEmpty" : false,
-        "name" : "COLUMNS"
+        "nonEmpty" : false
       },
       "ROWS" : {
         "mdx" : null,
@@ -73,8 +71,7 @@
             }
           }
         } ],
-        "nonEmpty" : false,
-        "name" : "ROWS"
+        "nonEmpty" : false
       }
     },
     "visualTotals" : false,
