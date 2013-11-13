@@ -34,7 +34,8 @@ var Settings = {
         'saiku.olap.query.nonempty.rows': true,
         'saiku.olap.query.nonempty.columns': true,
         'saiku.ui.render.mode' : 'table',
-        'saiku.olap.query.filter' : true
+        'saiku.olap.query.filter' : true,
+        'saiku.olap.result.formatter' : "flattened"
     },
     /* Valid values for CELLSET_FORMATTER:
      * 1) flattened

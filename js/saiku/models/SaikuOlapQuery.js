@@ -19,7 +19,7 @@ var SaikuOlapQueryTemplate = {
         "hierarchizeMode": null,
         "location": "COLUMNS",
         "hierarchies": [],
-        "nonEmpty": false,
+        "nonEmpty": true,
       },
       "ROWS": {
         "mdx": null,
@@ -29,7 +29,7 @@ var SaikuOlapQueryTemplate = {
         "hierarchizeMode": null,
         "location": "ROWS",
         "hierarchies": [],
-        "nonEmpty": false,
+        "nonEmpty": true,
       }
     },
     "visualTotals": false,

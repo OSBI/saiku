@@ -284,12 +284,13 @@ var WorkspaceToolbar = Backbone.View.extend({
     swap_axis: function(event) {
         // Swap axes
         $(this.workspace.el).find('.workspace_results table').html('');
-        $(this.workspace.processing).html('<span class="i18n">Swapping axes...</span>');
-        this.workspace.block('Swapping axes...');
-        this.workspace.query.action.put("/swapaxes", { 
-            success: this.swap_axes_on_dropzones,
-            error: this.workspace.unblock
-        });
+        var axes = this.workspace.query.model.queryModel.axes;
+        var tmpAxis = axes['ROWS'];
+        tmpAxis.location = 'COLUMNS';
+        axes['ROWS'] = axes['COLUMNS'];
+        axes['ROWS'].location = 'ROWS';
+        axes['COLUMNS'] = tmpAxis;
+        this.workspace.query.run();
     },
     
 
@@ -427,11 +428,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     show_mdx: function(event) {
-        this.workspace.query.action.get("/mdx", { 
-            success: function(model, response) {
-                (new MDXModal({ mdx: response.mdx })).render().open();
-            }
-        });
+        (new MDXModal({ mdx: this.workspace.query.model.mdx })).render().open();
     },
     
     export_xls: function(event) {

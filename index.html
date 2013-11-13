@@ -24,6 +24,7 @@
         <!-- Saiku CSS -->
         <link rel="stylesheet" href="css/saiku/src/styles.css" type="text/css">
         <link rel="stylesheet" href="css/saiku/src/saiku.table.css" type="text/css">
+        <link rel="stylesheet" href="css/saiku/src/saiku.dropzone.css" type="text/css">
         <link rel="shortcut icon" href="favicon.ico">
 
     </head>
@@ -190,13 +191,13 @@
                     <% if (typeof hierarchy["visible"] == "undefined" || hierarchy["visible"]) { %>
                         <% if (dimension.hierarchies.length > 1) { %>
                             <li class="hierarchy hide">
-                                <a class="dimension" title="<%= hierarchy.description ? hierarchy.description : hierarchy.caption %>" href="#"><%= hierarchy.caption %></a>
+                                <a class="dimension" title="<%= hierarchy.description ? hierarchy.description : hierarchy.caption %>" href="#"  hierarchy="<%= hierarchy.name %>"><%= hierarchy.caption %></a>
                             </li>
                         <% } %>
                         <% _.each(hierarchy.levels, function(level) { %>
                             <% if (typeof level["visible"] == "undefined" || level["visible"]) { %>
-                                <li class="hide"><a title="<%= level.description ? level.description : level.caption %>" rel="<%= level.uniqueName %>" 
-                                    class="level" href="#<%= encodeURIComponent(dimension.name) %>/hierarchy/<%= encodeURIComponent(hierarchy.uniqueName) %>/<%= encodeURIComponent(level.uniqueName) %>"><%= level.caption %></a>
+                                <li class="hide"><a title="<%= level.description ? level.description : level.caption %>" level="<%= level.name %>" hierarchy="<%= hierarchy.name %>"
+                                    class="level" href="#<%= encodeURIComponent(hierarchy.uniqueName) %>/<%= encodeURIComponent(level.uniqueName) %>"><%= level.caption %></a>
                                 </li>
                             <% } %>
                         <% }); %>
@@ -218,7 +219,7 @@
                 <% _.each(measures, function(measure) { %>
                     <% if (typeof measure["visible"] == "undefined" || measure["visible"]) { %>
                         <li><a title="<%= measure.description ? measure.description : measure.uniqueName %>"
-                                rel="<%= measure.uniqueName %>"
+                                measure="<%= measure.name %>" type="EXACT"
                             class="measure" href="#Measures/member/<%= encodeURIComponent(measure.uniqueName) %>"><%= measure.caption %></a>
                         </li>
                     <% } %>

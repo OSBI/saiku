@@ -32,6 +32,7 @@ var Result = Backbone.Model.extend({
         this.query.workspace.unblock();
         this.query.workspace.processing.hide();
         this.result = response;
+        this.query.model = _.extend({}, response.query, this.query.model);
         this.firstRun = true;
 
         this.query.workspace.trigger('query:result', {
@@ -50,6 +51,7 @@ var Result = Backbone.Model.extend({
     },
     
     url: function() {
-        return encodeURI(this.query.url() + "/result/" + this.query.get('formatter'));
+        //return encodeURI(this.query.url() + "/result/" + this.query.getProperty('formatter'));
+        return encodeURI(this.query.url() + "/../execute" );
     }
 });

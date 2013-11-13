@@ -120,16 +120,38 @@ var DimensionList = Backbone.View.extend({
             return;
         }
         
-        var isAlreadyOnAxis = false;
-        var href = $(event.target).attr('href');
-        var hierarchy = href.substring(0,_.lastIndexOf(href, "/"));
-        if ($(this.workspace.el).find(".workspace_fields ul li a[href^='" + hierarchy + "']:first").length > 0) {
-            $axis = $(this.workspace.el).find(".workspace_fields ul li a[href^='" + hierarchy + "']").parent().parent();
+
+        var hierarchy = $(event.target).attr('hierarchy');
+        var level = $(event.target).attr('level');
+
+        if ($(this.workspace.el).find(".workspace_fields ul.hierarchy[hierarchy='" + hierarchy + "']").length > 0) {
+            var $level = $(this.workspace.el).find(".workspace_fields ul[hierarchy='" + hierarchy + "'] a[level='" + level + "']").parent().show();
+            var axisName = $level.parents('.fields_list_body').hasClass('rows') ? "ROWS" : "COLUMNS";
+            var foundHierarchy = _.find(this.workspace.query.model.queryModel.axes[axisName].hierarchies, function(he) { 
+                return he.name == hierarchy 
+            });
+            if (foundHierarchy) {
+                foundHierarchy.levels[level] = { name: level };
+            }
+
         } else {
-            $axis = $(this.workspace.el).find(".columns ul li").length > 0 ?
-                $(this.workspace.el).find(".rows ul") :
-                $(this.workspace.el).find(".columns ul");
+            var $axis = $(this.workspace.el).find(".workspace_fields .fields_list[title='ROWS'] ul.hierarchy").length > 0 ?
+                $(this.workspace.el).find(".workspace_fields .fields_list[title='COLUMNS'] ul.connectable") :
+                $(this.workspace.el).find(".workspace_fields .fields_list[title='ROWS'] ul.connectable") ;
+
+            var axisName = $axis.parents('.fields_list').attr('title');
+            var levels = $(event.target).parent().parent().find('li a[hierarchy="' + hierarchy + '"]').parent().clone().hide().addClass('d_level');
+            levels.find('a[level="' + level + '"]').parent().show();
+            var dropHierarchy = $('<ul />').attr('hierarchy', hierarchy).addClass('hierarchy').append(levels).appendTo($axis);
+
+                var h = { "name" : hierarchy, "levels": { }};
+                h.levels[level] = { name: level };
+                this.workspace.query.model.queryModel.axes[axisName].hierarchies.push(h);
+
+
         }
+        this.workspace.query.run();
+        /*
         $target = $(event.target).parent().clone()
             .appendTo($axis);
         this.workspace.drop_zones.select_dimension({
@@ -141,6 +163,7 @@ var DimensionList = Backbone.View.extend({
         if ( $(this.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
             $(this.workspace.el).find('.workspace_editor').delay(2000).slideUp({ complete: this.workspace.adjust });
         }
+        */
         event.preventDefault();
         return false;
     },
@@ -150,14 +173,23 @@ var DimensionList = Backbone.View.extend({
             return;
         }
         
-        var $axis = $(this.workspace.el).find(".details ul");
+        var $axis = $(this.workspace.el).find(".workspace_fields .fields_list_body.details ul.connectable");
 
-        $target = $(event.target).parent().clone();
+        var $target = $(event.target).parent().clone().addClass('d_measure');
         if ($axis.find(".d_measure").length != 0)
             $target.insertAfter($axis.find(".d_measure:last"));
         else {
             $target.appendTo($axis);
         }
+        var measure = {
+            "name": $target.find('a').attr('measure'),
+            "type": $target.find('a').attr('type')
+        };
+        if (measure)
+        this.workspace.query.model.queryModel.details.measures.push(measure);
+        this.workspace.query.run();
+        
+/*
         this.workspace.drop_zones.select_dimension({
             target: $axis
         }, {
@@ -167,6 +199,7 @@ var DimensionList = Backbone.View.extend({
         if ( $(this.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
             $(this.workspace.el).find('.workspace_editor').delay(2000).slideUp({ complete: this.workspace.adjust });
         }
+*/        
         event.preventDefault();
         return false;
     }

@@ -111,7 +111,10 @@ var Query = Backbone.Model.extend({
         var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span> [&nbsp;<a class="cancel i18n" href="#cancel">Cancel</a>&nbsp;]';
         this.workspace.block(message);
 
-        this.result.save({ query: this.model.data() });
+        delete this.model.queryModel.axes['ROWS'].name;
+        delete this.model.queryModel.axes['COLUMNS'].name;
+        delete this.model.queryModel.axes['FILTER'].name;
+        this.result.save({},{ contentType: "application/json", data: JSON.stringify(this.model) });
     },
     
     url: function() {
