@@ -31,15 +31,10 @@ var argv = process.ARGV || process.argv;
 
 var http = require('http');
 var express = require('express');
-var app = express.createServer();
+var app = express();
 var port = process.env.C9_PORT || parseInt(argv[2], 10) || 8080;
 var backend_host = argv[3] || 'dev.analytical-labs.com';
 var backend_port = argv[4] || 80;
-var proxy = http.createClient(backend_port, backend_host);
-
-proxy.on('error', function() {
-    proxy = http.createClient(backend_port, backend_host);
-});
 
 // Load static server
 var twoHours = 1000 * 60 * 60 * 2;
@@ -47,7 +42,14 @@ app.use(express['static'](__dirname));
 
 // Proxy request
 function get_from_proxy(request, response) {
-    var proxy_request = proxy.request(request.method, request.url, request.headers);
+    var options = {
+        hostname: backend_host,
+        port: backend_port,
+        path: request.url,
+        method: request.method
+    };
+    
+    var proxy_request = http.request(options);
     
     proxy_request.addListener('response', function (proxy_response) {
         proxy_response.addListener('data', function(chunk) {
