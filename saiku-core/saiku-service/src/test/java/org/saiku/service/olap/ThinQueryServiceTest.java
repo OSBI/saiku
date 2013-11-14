@@ -4,14 +4,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import junit.framework.TestCase;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.VFS;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.junit.Assert;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
@@ -34,16 +34,16 @@ import org.saiku.query.metadata.CalculatedMeasure;
 import org.saiku.service.datasource.DatasourceService;
 
 
-public class ThinQueryServiceTest extends TestCase {
+public class ThinQueryServiceTest {
 
 	private TestSaikuContext context;
 	private OlapDiscoverService ods;
 	private DatasourceService ds;
 	private ThinQueryService tqs;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	
+	@Before
+	public void setUp() throws Exception {
 		context = TestSaikuContext.instance();
 		ods = context.olapDiscoverService;
 		ds = context.datasourceService;
@@ -51,6 +51,7 @@ public class ThinQueryServiceTest extends TestCase {
 	}
 
 
+	@Test
 	public void testNewQuery() {
 		try {
 			SaikuCube c = TestSaikuContext.getSalesCube();
@@ -61,11 +62,12 @@ public class ThinQueryServiceTest extends TestCase {
 			compareQuery(name, query);
 		} catch (Exception e) {
 			e.printStackTrace();
-			Assert.fail();
+			fail();
 		}
 
 	}
 
+	@Test
 	public void testQuery1() {
 
 		try  {
@@ -142,12 +144,13 @@ public class ThinQueryServiceTest extends TestCase {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			Assert.fail();
+			fail();
 		}
 
 
 	}
 
+	@Test
 	public void testBasicParameter1() {
 
 		try {
@@ -243,16 +246,17 @@ public class ThinQueryServiceTest extends TestCase {
 			assertEquals(expectedMdx, mdx);
 
 			cs = tqs.executeInternalQuery(tq);
-			assertEquals("[ COLUMNS: 5 ][ ROWS: 1 ]", getResultInfo(cs));
+			assertEquals("[ COLUMNS: 5 ][ ROWS: 2 ]", getResultInfo(cs));
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			Assert.fail();
+			fail();
 		}
 
 
 	}
 
+	@Test
 	public void testMdxQuery1() {
 
 		try {
@@ -279,7 +283,7 @@ public class ThinQueryServiceTest extends TestCase {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			Assert.fail();
+			fail();
 		}
 
 
