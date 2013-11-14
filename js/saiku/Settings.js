@@ -167,10 +167,6 @@ if (window.location.hostname && (window.location.hostname == "dev.analytical-lab
     Settings.USERNAME = "admin";
     Settings.PASSWORD = "admin";
     Settings.DEMO = true;
-            $("<script/>", {
-               type: "text/javascript",
-               src: "https://static.intercomcdn.com/intercom.v1.js"
-            }).appendTo("head");
 }
 
 var isIE = (function(){
