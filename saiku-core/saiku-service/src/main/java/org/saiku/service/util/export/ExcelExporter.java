@@ -15,30 +15,30 @@
  */
 package org.saiku.service.util.export;
 
+import java.util.List;
+
 import org.olap4j.CellSet;
-import org.saiku.olap.dto.SaikuDimensionSelection;
 import org.saiku.olap.dto.resultset.CellDataSet;
+import org.saiku.olap.query2.ThinHierarchy;
 import org.saiku.olap.util.OlapResultSetUtil;
 import org.saiku.olap.util.formatter.HierarchicalCellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.service.util.export.excel.ExcelWorksheetBuilder;
 
-import java.util.List;
-
 public class ExcelExporter {
 
-	public static byte[] exportExcel(CellSet cellSet, List<SaikuDimensionSelection> filters) {
+	public static byte[] exportExcel(CellSet cellSet, List<ThinHierarchy> filters) {
 		return exportExcel(cellSet, new HierarchicalCellSetFormatter(), filters);
 	}
 
 	public static byte[] exportExcel(CellSet cellSet,
                                      ICellSetFormatter formatter,
-                                     List<SaikuDimensionSelection> filters) {
+                                     List<ThinHierarchy> filters) {
 		CellDataSet table = OlapResultSetUtil.cellSet2Matrix(cellSet, formatter);
 		return getExcel(table, filters);
 	}
 
-	private static byte[] getExcel(CellDataSet table, List<SaikuDimensionSelection> filters) {
+	private static byte[] getExcel(CellDataSet table, List<ThinHierarchy> filters) {
         // TBD Sheet name is parametric. Useful for future ideas or improvements
         ExcelWorksheetBuilder worksheetBuilder = new ExcelWorksheetBuilder(table, filters, "Sheet 1");
         return worksheetBuilder.build();

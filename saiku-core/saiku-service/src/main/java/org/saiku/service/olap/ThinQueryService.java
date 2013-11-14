@@ -18,8 +18,10 @@ package org.saiku.service.olap;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,18 +31,28 @@ import org.olap4j.OlapConnection;
 import org.olap4j.OlapStatement;
 import org.olap4j.metadata.Cube;
 import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SaikuDimensionSelection;
 import org.saiku.olap.dto.resultset.CellDataSet;
+import org.saiku.olap.query.IQuery;
+import org.saiku.olap.query.IQuery.QueryType;
+import org.saiku.olap.query2.ThinHierarchy;
 import org.saiku.olap.query2.ThinQuery;
+import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
 import org.saiku.olap.query2.util.Fat;
 import org.saiku.olap.query2.util.Thin;
 import org.saiku.olap.util.OlapResultSetUtil;
+import org.saiku.olap.util.formatter.CellSetFormatter;
 import org.saiku.olap.util.formatter.CellSetFormatterFactory;
+import org.saiku.olap.util.formatter.FlattenedCellSetFormatter;
+import org.saiku.olap.util.formatter.HierarchicalCellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.query.Query;
 import org.saiku.service.util.QueryContext;
 import org.saiku.service.util.QueryContext.ObjectKey;
 import org.saiku.service.util.QueryContext.Type;
 import org.saiku.service.util.exception.SaikuServiceException;
+import org.saiku.service.util.export.CsvExporter;
+import org.saiku.service.util.export.ExcelExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -217,6 +229,33 @@ public class ThinQueryService implements Serializable {
 		} catch (Exception e) {
 			throw new SaikuServiceException(e);
 		}
-		
+	}
+	
+	public byte[] getExport(String queryName, String type) {
+		return getExport(queryName,type,new FlattenedCellSetFormatter());
+	}
+
+	public byte[] getExport(String queryName, String type, String formatter) {
+		String formatterName = formatter == null ? "" : formatter.toLowerCase();
+		ICellSetFormatter cf = cff.forName(formatterName);
+		return getExport(queryName, type, cf);
+	}
+
+	public byte[] getExport(String queryName, String type, ICellSetFormatter formatter) {
+		if (StringUtils.isNotBlank(type) && context.containsKey(queryName)) {
+			CellSet rs = context.get(queryName).getOlapResult();
+			ThinQuery tq = context.get(queryName).getOlapQuery();
+			List<ThinHierarchy> filterHierarchies = null;
+			if (ThinQuery.Type.QUERYMODEL.equals(tq.getType())) {
+				filterHierarchies = tq.getQueryModel().getAxes().get(AxisLocation.FILTER).getHierarchies();
+			}
+			if (type.toLowerCase().equals("xls")) {
+				return ExcelExporter.exportExcel(rs, formatter, filterHierarchies);
+			}
+			if (type.toLowerCase().equals("csv")) {
+				return CsvExporter.exportCsv(rs,",","\"", formatter);
+			}
+		}
+		return new byte[0];
 	}
 }

@@ -18,11 +18,14 @@ package org.saiku.web.rest.resources;
 import javax.servlet.ServletException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -34,6 +37,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.query2.ThinQuery;
+import org.saiku.olap.util.SaikuProperties;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.ThinQueryService;
 import org.saiku.web.rest.objects.resultset.QueryResult;
@@ -172,7 +176,8 @@ public class Query2Resource {
 		}
 		catch(Exception e){
 			log.error("Cannot cancel query (" + queryName + ")",e);
-			throw new WebApplicationException(e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			throw new WebApplicationException(Response.serverError().entity(error).build());
 		}
 	}
 	
@@ -186,9 +191,92 @@ public class Query2Resource {
 		}
 		catch (Exception e) {
 			log.error("Cannot enrich query (" + tq + ")",e);
-			throw new WebApplicationException(e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			throw new WebApplicationException(Response.serverError().entity(error).build());
 		}		
 	}
+	
+	
+	
+	@GET
+	@Produces({"application/vnd.ms-excel" })
+	@Path("/{queryname}/export/xls")
+	public Response getQueryExcelExport(@PathParam("queryname") String queryName){
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/export/xls/\tGET");
+		}
+		return getQueryExcelExport(queryName, "flattened");
+	}
+
+	@GET
+	@Produces({"application/vnd.ms-excel" })
+	@Path("/{queryname}/export/xls/{format}")
+	public Response getQueryExcelExport(
+			@PathParam("queryname") String queryName,
+			@PathParam("format") @DefaultValue("flattened") String format){
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/export/xls/"+format+"\tGET");
+		}
+		try {
+			byte[] doc = thinQueryService.getExport(queryName,"xls",format);
+			String name = SaikuProperties.webExportExcelName + "." + SaikuProperties.webExportExcelFormat;
+			return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
+					"content-disposition",
+					"attachment; filename = " + name).header(
+							"content-length",doc.length).build();
+		}
+		catch (Exception e) {
+			log.error("Cannot get excel for query (" + queryName + ")",e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			throw new WebApplicationException(Response.serverError().entity(error).build());
+		}
+	}
+
+	@GET
+	@Produces({"text/csv" })
+	@Path("/{queryname}/export/csv")
+	public Response getQueryCsvExport(@PathParam("queryname") String queryName) {
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/export/csv\tGET");
+		}
+		return getQueryCsvExport(queryName, "flattened");
+	}
+
+	@GET
+	@Produces({"text/csv" })
+	@Path("/{queryname}/export/csv/{format}")
+	public Response getQueryCsvExport(
+			@PathParam("queryname") String queryName,
+			@PathParam("format") String format){
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/export/csv/"+format+"\tGET");
+		}
+		try {
+			byte[] doc = thinQueryService.getExport(queryName,"csv",format);
+			String name = SaikuProperties.webExportCsvName;
+			return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
+					"content-disposition",
+					"attachment; filename = " + name + ".csv").header(
+							"content-length",doc.length).build();
+		}
+		catch (Exception e) {
+			log.error("Cannot get csv for query (" + queryName + ")",e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			throw new WebApplicationException(Response.serverError().entity(error).build());
+		}
+	}
+	
+	@Deprecated
+	@GET
+	@Produces({"application/pdf" })
+	@Path("/{queryname}/export/pdf")
+	public Response exportPdf(@PathParam("queryname")  String queryName)
+	{
+		return Response.serverError().entity("We should rebuild this using iText").build();
+	}
+
+	
+
 	
 	
 }

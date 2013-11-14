@@ -26,11 +26,12 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.saiku.olap.dto.SaikuDimensionSelection;
-import org.saiku.olap.dto.SaikuSelection;
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.dto.resultset.DataCell;
+import org.saiku.olap.query2.ThinHierarchy;
+import org.saiku.olap.query2.ThinLevel;
+import org.saiku.olap.query2.ThinMember;
 import org.saiku.olap.util.SaikuProperties;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.slf4j.Logger;
@@ -62,7 +63,7 @@ public class ExcelWorksheetBuilder {
     private CellStyle numberCS;
     private CellStyle lighterHeaderCellCS;
     private CellStyle darkerHeaderCellCS;
-    private List<SaikuDimensionSelection> queryFilters;
+    private List<ThinHierarchy> queryFilters;
     private Map<String, Integer> colorCodesMap;
 
     private int nextAvailableColorCode = 41;
@@ -72,12 +73,12 @@ public class ExcelWorksheetBuilder {
     
     private static final Logger log = LoggerFactory.getLogger(ExcelWorksheetBuilder.class);
 
-    public ExcelWorksheetBuilder(CellDataSet table, List<SaikuDimensionSelection> filters, String sheetName) {
+    public ExcelWorksheetBuilder(CellDataSet table, List<ThinHierarchy> filters, String sheetName) {
 
         init(table, filters, sheetName);
     }
 
-    protected void init(CellDataSet table, List<SaikuDimensionSelection> filters, String sheetName) {
+    protected void init(CellDataSet table, List<ThinHierarchy> filters, String sheetName) {
 
         queryFilters = filters;
         if ("xls".equals(SaikuProperties.webExportExcelFormat)) {
@@ -230,16 +231,18 @@ public class ExcelWorksheetBuilder {
         cell.setCellValue("Filter Applied");
         row++;
 
-        for (SaikuDimensionSelection item : queryFilters) {
-            for (SaikuSelection s : item.getSelections()) {
-                sheetRow = summarySheet.createRow((short) row);
-                cell = sheetRow.createCell(0);
-                cell.setCellValue(s.getDimensionUniqueName());
-                cell = sheetRow.createCell(1);
-                cell.setCellValue(s.getLevelUniqueName());
-                cell = sheetRow.createCell(2);
-                cell.setCellValue(s.getCaption());
-                row++;
+        for (ThinHierarchy item : queryFilters) {
+            for (ThinLevel s : item.getLevels().values()) {
+            	for (ThinMember i : s.getSelection().getMembers()) {
+	                sheetRow = summarySheet.createRow((short) row);
+	                cell = sheetRow.createCell(0);
+	                cell.setCellValue(item.getCaption());
+	                cell = sheetRow.createCell(1);
+	                cell.setCellValue(s.getCaption());
+	                cell = sheetRow.createCell(2);
+	                cell.setCellValue(i.getCaption());
+	                row++;
+	            }
             }
         }
 
