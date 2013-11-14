@@ -279,7 +279,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         // Swap axes
         $(this.workspace.el).find('.workspace_results table').html('');
         this.workspace.query.helper.swapAxes();
-        this.workspace.query.run();
+        this.workspace.query.run(true);
     },
     
 
@@ -424,14 +424,12 @@ var WorkspaceToolbar = Backbone.View.extend({
     
     export_xls: function(event) {
         window.location = Settings.REST_URL +
-            Saiku.session.username + "/query/" + 
-            this.workspace.query.id + "/export/xls";
+            this.workspace.query.url() + "/export/xls";
     },
     
     export_csv: function(event) {
         window.location = Settings.REST_URL +
-            Saiku.session.username + "/query/" + 
-            this.workspace.query.id + "/export/csv";
+            this.workspace.query.url() + "/export/csv";
     },
 
     export_pdf: function(event) {

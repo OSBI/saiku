@@ -235,6 +235,6 @@ var SaveQuery = Modal.extend({
             name: this.query.get('name'),
             file: file,
             content: JSON.stringify(this.query.model)
-        })).save({},{ success:  this.close, error: error  });
+        })).save({},{ success:  this.close, error: error, dataType: 'text'  });
     }
 });
