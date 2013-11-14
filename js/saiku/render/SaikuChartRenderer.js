@@ -512,7 +512,6 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
                  var indent = "";
                     var group  = this.group;
                     if(group) {
-                        console.log(group.depth);
                         var depth = group.depth;
                         // 0 ""
                         // 1 "text"

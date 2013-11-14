@@ -92,26 +92,26 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
 
     reflect_properties: function() {
-        var properties = this.workspace.query.properties ?
-            this.workspace.query.properties.properties : Settings.QUERY_PROPERTIES;
+        var properties = this.workspace.query.model.properties ?
+            this.workspace.query.model.properties : Settings.QUERY_PROPERTIES;
 
         // Set properties appropriately
-        if (properties['saiku.olap.query.nonempty'] === 'true') {
+        if (properties['saiku.olap.query.nonempty'] === true) {
             $(this.el).find('.non_empty').addClass('on');
         }
-        if (properties['saiku.olap.query.automatic_execution'] === 'true') {
+        if (properties['saiku.olap.query.automatic_execution'] === true) {
             $(this.el).find('.auto').addClass('on');
         }
         
-        if (properties['saiku.olap.query.drillthrough'] !== 'true') {
+        if (properties['saiku.olap.query.drillthrough'] !== true) {
             $(this.el).find('.drillthrough, .drillthrough_export').addClass('disabled_toolbar');
         }
 
-        if (properties['org.saiku.query.explain'] !== 'true') {
+        if (properties['org.saiku.query.explain'] !== true) {
             $(this.el).find('.explain_query').addClass('disabled_toolbar');
         }
 
-        if (properties['org.saiku.connection.scenario'] !== 'true') {
+        if (properties['org.saiku.connection.scenario'] !== true) {
             $(this.el).find('.query_scenario').addClass('disabled_toolbar');
         } else {
             $(this.el).find('.query_scenario').removeClass('disabled_toolbar');
@@ -121,7 +121,7 @@ var WorkspaceToolbar = Backbone.View.extend({
             $(this.workspace.el).find('.fields_list_header').addClass('limit');
         }
 
-        if (this.workspace.query.get('formatter') !== "undefined" && this.workspace.query.get('formatter') == "flattened") {
+        if (this.workspace.query.getProperty('saiku.olap.result.formatter') !== "undefined" && this.workspace.query.getProperty('saiku.olap.result.formatter') == "flattened") {
             if (! $(this.el).find('.group_parents').hasClass('on')) {
                 $(this.el).find('.group_parents').addClass('on');
             }
@@ -164,17 +164,11 @@ var WorkspaceToolbar = Backbone.View.extend({
     save_query: function(event) {
         var self = this;
         if (this.workspace.query) {
-            this.workspace.query.properties.update(false);
             if (typeof this.editor != "undefined") {
                 var mdx = this.editor.getValue();
-                this.workspace.query.action.post("/mdx", { 
-                    success: function(model, response) {
-                        (new SaveQuery({ query: self.workspace.query })).render().open();
-                    }, data: {mdx:mdx}
-                });
-            } else {
-                (new SaveQuery({ query: this.workspace.query })).render().open();
+                this.workspace.query.model.mdx = mdx;
             }
+            (new SaveQuery({ query: this.workspace.query })).render().open();
         }
     },
 
@@ -189,11 +183,14 @@ var WorkspaceToolbar = Backbone.View.extend({
     
     automatic_execution: function(event) {
         // Change property
-        this.workspace.query.properties
-            .toggle('saiku.olap.query.automatic_execution').update();
-        
-        // Toggle state of button
-        $(event.target).toggleClass('on');
+        var newState = !this.workspace.query.getProperty('saiku.olap.query.automatic_execution');
+        this.workspace.query.setProperty('saiku.olap.query.automatic_execution', newState);
+
+        if (newState) {
+            $(event.target).addClass('on');    
+        } else {
+            $(event.target).removeClass('on');    
+        }
     },
     
     toggle_fields: function(event) {
@@ -257,22 +254,19 @@ var WorkspaceToolbar = Backbone.View.extend({
     group_parents: function(event) {
         $(event.target).toggleClass('on');
         if ($(event.target).hasClass('on')) {
-            this.workspace.query.set({formatter: "flattened"});
-            this.workspace.query.setProperty('saiku.ui.formatter', 'flattened');
+            this.workspace.query.setProperty('saiku.olap.result.formatter', 'flattened');
         } else {
-            this.workspace.query.set({formatter: "flat"});
-            this.workspace.query.setProperty('saiku.ui.formatter', 'flat');
+            this.workspace.query.setProperty('saiku.olap.result.formatter', 'flat');
         }
         this.workspace.query.run();
     },
 
     non_empty: function(event) {
         // Change property
-        this.workspace.query.properties
-            .toggle('saiku.olap.query.nonempty')
-            .toggle('saiku.olap.query.nonempty.rows')
-            .toggle('saiku.olap.query.nonempty.columns')
-            .update();
+        var nonEmpty = !this.workspace.query.getProperty('saiku.olap.query.nonempty');
+        this.workspace.query.helper.nonEmpty(nonEmpty);
+
+        this.workspace.query.setProperty('saiku.olap.query.nonempty', nonEmpty);
     
         // Toggle state of button
         $(event.target).toggleClass('on');
@@ -284,12 +278,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     swap_axis: function(event) {
         // Swap axes
         $(this.workspace.el).find('.workspace_results table').html('');
-        var axes = this.workspace.query.model.queryModel.axes;
-        var tmpAxis = axes['ROWS'];
-        tmpAxis.location = 'COLUMNS';
-        axes['ROWS'] = axes['COLUMNS'];
-        axes['ROWS'].location = 'ROWS';
-        axes['COLUMNS'] = tmpAxis;
+        this.workspace.query.helper.swapAxes();
         this.workspace.query.run();
     },
     
@@ -428,6 +417,8 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     show_mdx: function(event) {
+        this.workspace.query.enrich();
+
         (new MDXModal({ mdx: this.workspace.query.model.mdx })).render().open();
     },
     
@@ -446,7 +437,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     export_pdf: function(event) {
         window.location = Settings.REST_URL +
             Saiku.session.username + "/query/" + 
-            this.workspace.query.id + "/export/pdf/" + this.workspace.query.formatter;
+            this.workspace.query.id + "/export/pdf/" + this.workspace.query.getProperty('saiku.olap.result.formatter');
     },
 
     switch_to_mdx: function(event) {
@@ -563,19 +554,19 @@ var WorkspaceToolbar = Backbone.View.extend({
     post_mdx_transform: function() {
         var self = this;
 
-        this.workspace.query.action.post("/qm2mdx", { 
-            success: function(response, model) {
-                //$(self.workspace.el).find(".mdx_input").val(response.mdx);
-                if (self.editor) {
-                    self.editor.setValue(model.mdx,0);
-                    self.editor.focus();
-                    self.editor.clearSelection();
-                }
-                self.workspace.query.parse(model);
-                self.workspace.query.set({type:'MDX', formatter: "flat" });
-                $(self.el).find('.group_parents').removeClass('on');
-            }
-        });
+        this.workspace.query.enrich();
+        this.workspace.query.model.queryModel = {};
+        this.workspace.query.model.type = "MDX";
+        this.workspace.query.setProperty('saiku.olap.result.formatter', 'flat');
+
+        var mdx = this.workspace.query.model.mdx;
+
+        if (self.editor) {
+            self.editor.setValue(mdx,0);
+            self.editor.clearSelection();
+            self.editor.focus();
+        }
+        $(self.el).find('.group_parents').removeClass('on');
 
     },
 
@@ -586,7 +577,8 @@ var WorkspaceToolbar = Backbone.View.extend({
         }
         this.editor.resize();
         var mdx = this.editor.getValue();
-        this.workspace.query.run(true, mdx);
+        this.workspace.query.model.mdx = mdx;
+        this.workspace.query.run(true);
     },
 
     explain_query: function(event) {

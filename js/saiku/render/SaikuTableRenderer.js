@@ -53,7 +53,6 @@ SaikuTableRenderer.prototype.internalRender = function(data, options) {
         isHeaderLowestLvl = false;
         isLastColumn = false;
         isLastRow = false;
-        headerStarted = false;
 
         contents += "<tr>";
 

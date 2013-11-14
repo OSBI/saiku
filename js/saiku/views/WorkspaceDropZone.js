@@ -24,13 +24,9 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
     
     events: {
-        'sortbeforestop .fields_list_body': 'select_dimension',
-        'click .d_dimension span.selections': 'selections',
-        'click .d_dimension a': 'selections',
-        'click .d_measure a' : 'remove_dimension',
-        'click .d_measure span.sort' : 'sort_measure',
-        'click .d_dimension span.sort' : 'sort_measure',
-        'click .limit' : 'limit_axis',
+        'sortbeforestop .fields_list_body.details': 'select_measure',
+        'click .d_measure a' : 'remove_measure',
+//        'click .d_measure span.sort' : 'sort_measure',
         'click .clear_axis' : 'clear_axis'
     },
     
@@ -39,8 +35,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         this.workspace = args.workspace;
         
         // Maintain `this` in jQuery event handlers
-        _.bindAll(this, "select_dimension", "move_dimension", 
-                "remove_dimension", "update_selections","sort_measure", "limit_axis", "set_query_axis", "set_query_axis_filter", "set_query_axis_sort");
+        _.bindAll(this, "clear_axis");
     },
     
     render: function() {
@@ -48,6 +43,19 @@ var WorkspaceDropZone = Backbone.View.extend({
         $(this.el).html(this.template());
         
         // Activate drop zones
+
+        $(this.el).find('.fields_list_body.details ul.connectable').sortable({
+            forcePlaceholderSize: true,
+            forceHelperSize: true,
+            items: '> li',
+            opacity: 0.60,
+            placeholder: 'placeholder',
+            tolerance: 'touch',
+            start: function(event, ui) {
+                ui.placeholder.text(ui.helper.text());
+            }
+        });
+        /*
         $(this.el).find('.connectable').sortable({
             connectWith: $(this.el).find('.connectable'),
             forcePlaceholderSize: true,
@@ -62,322 +70,10 @@ var WorkspaceDropZone = Backbone.View.extend({
             }
 
         });
-        
+        */
         return this; 
     },
-    limit_axis: function(event) {
-        var self = this;
-        
-        if (typeof this.workspace.query == "undefined") {
-            return false;
-        }
-        if (this.workspace.query.get('type') != 'QM' || Settings.MODE == "view") {
-            return false;
-        }
-        var $target =  $(event.target).hasClass('limit') ? $(event.target) : $(event.target).parent();
-        var $axis = $target.siblings('.fields_list_body');
-        var source = "";
-        var target = "ROWS";
-        if ($axis.hasClass('rows')) { target = "ROWS";  }
-        if ($axis.hasClass('columns')) { target = "COLUMNS";  }
-        if ($axis.hasClass('filter')) { target = "FILTER";  }
-
-
-        
-        $body = $(document);
-        //$body.off('.contextMenu .contextMenuAutoHide');
-        //$('.context-menu-list').remove();
-        $.contextMenu('destroy', '.limit');
-        $.contextMenu({
-            appendTo: $target,
-            selector: '.limit', 
-            ignoreRightClick: true,
-             build: function($trigger, e) {
-                var query = self.workspace.query;
-                var schema = query.get('schema');
-                var cube = query.get('connection') + "/" + 
-                    query.get('catalog') + "/"
-                    + ((schema == "" || schema == null) ? "null" : schema) 
-                    + "/" + query.get('cube');
-
-                var items = {};
-                var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
-
-                var func, n, sortliteral, filterCondition, sortOrder, sortOrderLiteral;
-                var sortHl, topHl, filterHl;
-                var isFilter = false;
-                var isSort = false;
-                var isTop = false;
-                var axes = self.workspace.query.get('axes');
-                _.each(axes, function(a) {
-                    if (a.name == target) {
-                        func = a.limitFunction;
-                        n = a.limitFunctionN;
-                        sortliteral = a.limitFunctionSortLiteral;
-                        filterCondition = a.filterCondition;
-                        isTop = (a.limitFunction != null);
-                        isFilter = (a.filterCondition != null);
-                        isSort = (a.sortOrder != null);
-                        sortOrder = a.sortOrder;
-                        sortOrderLiteral = a.sortOrderLiteral;
-                    }
-                });
-
-                if (func != null && sortliteral == null) {
-                    topHl = func + "###SEPARATOR###" + n;
-                } else if (func != null && sortliteral != null && n != null) {
-                    topHl = "custom";
-                }
-
-                if (isSort && sortOrder != null) {
-                    sortHl = "customsort";
-                }
-
-                _.each(measures, function(measure) {
-                    items[measure.uniqueName] = {
-                        name: measure.caption,
-                        payload: {
-                            "n"     : 10,
-                            "sortliteral"    : measure.uniqueName
-                        }
-                    };
-                });
-
-
-                var addFun = function(items, fun) {
-                    var ret = {};
-                    for (key in items) {
-                        ret[ (fun + '###SEPARATOR###'+ key) ] = _.clone(items[key]);
-                        ret[ (fun + '###SEPARATOR###' + key) ].fun = fun;
-                        if (fun == func && sortliteral == key && items[key].payload["n"] == n) {
-                            topHl = fun + "Quick";
-                            ret[ (fun + '###SEPARATOR###' + key) ].name =
-                                    "<b>" + items[key].name + "</b>";
-                        }
-                        if (fun == sortOrder && sortOrderLiteral == key) {
-                            sortHl = fun + "Quick";
-                            ret[ (fun + '###SEPARATOR###' + key) ].name =
-                                    "<b>" + items[key].name + "</b>";
-                        }
-                    }
-                    return ret;
-                };
-
-                var citems = {
-                        "filter" : {name: "Filter", items: 
-                         { 
-                                "customfilter": {name: "Custom..." },
-                                "clearfilter": {name: "Clear Filter" }
-                         }},
-                        "limit" : {name: "Limit", items: 
-                        {
-                                "TopCount###SEPARATOR###10": {name: "Top 10" },
-                                "BottomCount###SEPARATOR###10": {name: "Bottom 10" },
-                                "TopCountQuick" : { name: "Top 10 by...", items: addFun(items, "TopCount") },
-                                "BottomCountQuick" : { name: "Bottom 10 by...", items: addFun(items, "BottomCount") },
-                                "customtop" : {name: "Custom Limit..." },
-                                "clearlimit" : {name: "Clear Limit"}
-                         }},
-                        "sort" : {name: "Sort", items:
-                        {
-                            "ASCQuick": {name: "Ascending" , items: addFun(items, "ASC") },
-                            "DESCQuick": {name: "Descending", items: addFun(items, "DESC")},
-                            "BASCQuick": {name: "Ascending (Breaking Hierarchy)", items: addFun(items, "BASC")},
-                            "BDESCQuick": {name: "Descending (Breaking Hierarchy)", items: addFun(items, "BDESC") },
-                            "customsort" : { name: "Custom..." },
-                            "clearsort" : {name: "Clear Sort" }
-                        }}
-                };
-
-                items["10"] = {
-                   payload: { "n" : 10 }
-                }
-                
-                if (isFilter) {
-                    var f = citems["filter"];
-                    f.name = "<b>" + f.name + "</b>";
-                    f.items["customfilter"].name = "<b>" + f.items["customfilter"].name + "</b>";
-                }
-                if (isSort) {
-                    var s = citems["sort"].items;
-                    citems["sort"].name = "<b>" + citems["sort"].name + "</b>";
-                    if (sortHl in s) {
-                        s[sortHl].name = "<b>" + s[sortHl].name + "</b>";    
-                    }
-                }
-                if (isTop) {
-                    var t = citems["limit"].items;
-                    citems["limit"].name = "<b>" + citems["limit"].name + "</b>";
-                    if (topHl in t) {
-                        t[topHl].name = "<b>" + t[topHl].name + "</b>";    
-                    }   
-                }
-                /**
-                if (quick in citems) {
-                    citems[quick].name = "<b>" + citems[quick].name + "</b>";
-                }
-                */
-
-                return {
-                    callback: function(key, options) {
-                            if (key == "clearfilter") {
-                                $target.removeClass('on');
-                                var url = "/axis/" + target + "/filter";
-                                self.set_query_axis_filter(target, null);
-                                self.workspace.query.action.del(url, {
-                                    success: self.workspace.query.run
-                                });
-                            } else if (key == "customfilter") {
-                                var save_custom = function(filterCondition) {
-                                    self.set_query_axis_filter(target, filterCondition);
-                                    var url = "/axis/" + target + "/filter/" ;
-                                    self.workspace.query.action.post(url, {
-                                        success: self.workspace.query.run, data : { filterCondition: filterCondition }
-                                    });    
-                                };
-
-                                 (new FilterModal({ 
-                                    axis: target,
-                                    success: save_custom, 
-                                    query: self.workspace.query,
-                                    expression: filterCondition,
-                                    expressionType: "Filter"
-                                })).render().open();
-
-                            } else if (key == "clearlimit") {
-                                $target.removeClass('on');
-                                var url = "/axis/" + target + "/limit";
-                                self.set_query_axis(target, null, null, "");
-                                self.workspace.query.action.del(url, {
-                                    success: self.workspace.query.run
-                                });
-                            } else if (key == "customtop") {
-
-                                var save_custom = function(fun, n, sortliteral) {
-                                    self.set_query_axis(target, fun, n, sortliteral);
-                                    var url = "/axis/" + target + "/limit/" + fun;
-                                    self.workspace.query.action.post(url, {
-                                        success: self.workspace.query.run, data : { n: n, sortliteral: sortliteral }
-                                    });    
-                                };
-
-                                 (new CustomFilterModal({ 
-                                    axis: target,
-                                    measures: measures,
-                                    success: save_custom, 
-                                    query: self.workspace.query,
-                                    func: func,
-                                    n: n,
-                                    sortliteral: sortliteral
-                                })).render().open();
-                            } else if (key == "customsort") {
-
-                                var save_customsort = function(sortO, sortL) {
-                                    self.set_query_axis_sort(target, sortO, sortL);
-                                    var url = "/axis/" + target + "/sort/" + sortO + "/" + encodeURIComponent(sortL);
-                                    self.workspace.query.action.post(url, {
-                                        success: self.workspace.query.run
-                                    });    
-                                };
-
-                                 (new FilterModal({ 
-                                    axis: target,
-                                    success: save_customsort, 
-                                    query: self.workspace.query,
-                                    expression: sortOrderLiteral,
-                                    expressionType: "Order"
-                                })).render().open();
-                            } else if (key == "clearsort") {
-                                $target.removeClass('on');
-                                var url = "/axis/" + target + "/sort";
-                                self.set_query_axis_sort(target, null, null);
-                                self.workspace.query.action.del(url, {
-                                    success: self.workspace.query.run
-                                });
-                            } else {
-
-                                var fun = key.split('###SEPARATOR###')[0];
-                                var ikey = key.split('###SEPARATOR###')[1];
-                                var method = "";
-                                var data = {};
-                                if (_.indexOf(["ASC", "BASC", "DESC", "BDESC"], fun) > -1) {
-                                    method = "sort";
-                                    self.set_query_axis_sort(target, fun, items[ikey].payload["sortliteral"]);
-                                    fun += "/" +  encodeURIComponent(items[ikey].payload["sortliteral"]);
-                                } else {
-                                    method = "limit";
-                                    self.set_query_axis(target, fun, items[ikey].payload.n , items[ikey].payload["sortliteral"]);
-                                    data = items[ikey].payload;
-                                }
-                                var url = "/axis/" + target + "/" + method + "/" + fun;
-                                self.workspace.query.action.post(url, {
-                                    success: self.workspace.query.run, data : data
-                                });
-                            }
-
-                    },
-                    items: citems
-                } 
-            }
-        });
-    $target.contextMenu();
-
-
-    },
-
-    set_query_axis_filter: function(target, filterCondition) {
-        var self = this;
-        var axes = this.workspace.query.get('axes');
-        _.each(axes, function(axis) {
-            if (axis.name == target) {
-                axis.filterCondition = filterCondition;
-                if (axis.limitFunction !=  null || axis.filterCondition != null || axis.sortOrder != null) {
-                    $(self.el).find('.fields_list[title="' + target + '"] .limit').addClass('on');
-                } else {
-                    $(self.el).find('.fields_list[title="' + target + '"] .limit').removeClass('on');
-                }
-                return false;
-            }
-        });
-        return false;
-    },
-    set_query_axis_sort: function(target, sortOrder, sortLiteral ) {
-        var self = this;
-        var axes = this.workspace.query.get('axes');
-        _.each(axes, function(axis) {
-            if (axis.name == target) {
-                axis.sortOrder = sortOrder;
-                axis.sortOrderLiteral = sortLiteral;
-                if (axis.limitFunction !=  null || axis.filterCondition != null || axis.sortOrder != null) {
-                    $(self.el).find('.fields_list[title="' + target + '"] .limit').addClass('on');
-                } else {
-                    $(self.el).find('.fields_list[title="' + target + '"] .limit').removeClass('on');
-                }
-                return false;
-            }
-        });
-        return false;
-    },
     
-    set_query_axis: function(target, func, n, sortliteral) {
-        var self = this;
-        var axes = this.workspace.query.get('axes');
-        _.each(axes, function(axis) {
-            if (axis.name == target) {
-                axis.limitFunction = func;
-                axis.limitFunctionN = n;
-                axis.limitFunctionSortLiteral = sortliteral;
-                if (axis.limitFunction !=  null || axis.filterCondition != null || axis.sortOrder != null) {
-                    $(self.el).find('.fields_list[title="' + target + '"] .limit').addClass('on');
-                } else {
-                    $(self.el).find('.fields_list[title="' + target + '"] .limit').removeClass('on');
-                }
-                return false;
-            }
-        });
-        return false;
-    },
-
     clear_axis: function(event) {
             var self = this;
             

@@ -37,7 +37,11 @@ var Query = Backbone.Model.extend({
                 return v.toString(16);
             }).toUpperCase();
         
-        this.model = _.extend({ name: this.uuid }, SaikuOlapQueryTemplate, args)
+        this.model = _.extend({ name: this.uuid }, SaikuOlapQueryTemplate);
+        if (args.cube) {
+            this.model.cube = args.cube;
+        }
+        this.helper = new SaikuOlapQueryHelper(this);
 
         // Initialize properties, action handler, and result handler
         this.action = new QueryAction({}, { query: this });
@@ -49,7 +53,8 @@ var Query = Backbone.Model.extend({
         // Assign id so Backbone knows to PUT instead of POST
         this.id = this.uuid;
         this.model = _.extend(this.model, response);
-        this.model.properties = _.extend(this.model.properties, Settings.QUERY_PROPERTIES)
+        this.model.properties = _.extend(this.model.properties, Settings.QUERY_PROPERTIES);
+
     },
     
     setProperty: function(key, value) {
@@ -110,11 +115,23 @@ var Query = Backbone.Model.extend({
 		Saiku.i18n.translate();
         var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span> [&nbsp;<a class="cancel i18n" href="#cancel">Cancel</a>&nbsp;]';
         this.workspace.block(message);
-
-        delete this.model.queryModel.axes['ROWS'].name;
-        delete this.model.queryModel.axes['COLUMNS'].name;
+/*
+        TODO: i wonder if we should clean up the model (name and captions etc.)
         delete this.model.queryModel.axes['FILTER'].name;
+*/        
         this.result.save({},{ contentType: "application/json", data: JSON.stringify(this.model) });
+    },
+
+    enrich: function() {
+        var self = this;
+        this.workspace.query.action.post("/../enrich", { 
+            contentType: "application/json",
+            data: JSON.stringify(self.model),
+            async: false,
+            success: function(response, model) {
+                self.model = model;
+            }
+        });
     },
     
     url: function() {

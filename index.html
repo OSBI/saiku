@@ -196,7 +196,7 @@
                         <% } %>
                         <% _.each(hierarchy.levels, function(level) { %>
                             <% if (typeof level["visible"] == "undefined" || level["visible"]) { %>
-                                <li class="hide"><a title="<%= level.description ? level.description : level.caption %>" level="<%= level.name %>" hierarchy="<%= hierarchy.name %>"
+                                <li class="hide d_level"><a title="<%= level.description ? level.description : level.caption %>" level="<%= level.name %>" hierarchy="<%= hierarchy.name %>"
                                     class="level" href="#<%= encodeURIComponent(hierarchy.uniqueName) %>/<%= encodeURIComponent(level.uniqueName) %>"><%= level.caption %></a>
                                 </li>
                             <% } %>
@@ -218,7 +218,7 @@
                 <ul>
                 <% _.each(measures, function(measure) { %>
                     <% if (typeof measure["visible"] == "undefined" || measure["visible"]) { %>
-                        <li><a title="<%= measure.description ? measure.description : measure.uniqueName %>"
+                        <li class="d_measure"><a title="<%= measure.description ? measure.description : measure.uniqueName %>"
                                 measure="<%= measure.name %>" type="EXACT"
                             class="measure" href="#Measures/member/<%= encodeURIComponent(measure.uniqueName) %>"><%= measure.caption %></a>
                         </li>

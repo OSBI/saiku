@@ -320,7 +320,7 @@ var Workspace = Backbone.View.extend({
         }
 
         if (this.query.model.type == "MDX") {
-                this.query.setProperty("formatter", "flat");
+                this.query.setProperty("saiku.olap.result.formatter", "flat");
             if (! $(this.el).find('.sidebar').hasClass('hide')) {
                 this.toggle_sidebar();
             }            
@@ -348,11 +348,11 @@ var Workspace = Backbone.View.extend({
 
         // Find the selected cube
         if (this.selected_cube === undefined) {
-            var schema = this.query.get('schema');
-            this.selected_cube = this.query.get('connection') + "/" + 
-                this.query.get('catalog') + "/"
+            var schema = this.query.model.cube.schema;
+            this.selected_cube = this.query.model.cube.connection + "/" + 
+                this.query.model.cube.catalog + "/"
                 + ((schema == "" || schema == null) ? "null" : schema) 
-                + "/" + this.query.get('cube');
+                + "/" + this.query.model.cube.name;
             $(this.el).find('.cubes')
                 .val(this.selected_cube);
         }
@@ -436,9 +436,9 @@ var Workspace = Backbone.View.extend({
         if (typeof needFetch == "undefined") {
             sync_ui();
         } else {
-            var formatter = this.query.getProperty("formatter");
+            var formatter = this.query.getProperty("saiku.olap.result.formatter");
             self.query.clear();
-            self.query.setProperty('formatter', formatter);
+            self.query.setProperty('saiku.olap.result.formatter', formatter);
             self.query.fetch({ success: sync_ui });
         }
     },
@@ -699,7 +699,7 @@ var Workspace = Backbone.View.extend({
 
     cancel: function(event) {
         var self = this;
-        this.query.action.del("/result", {
+        this.query.action.del("/cancel", {
             success: function() {
                 self.cancelled();
             }

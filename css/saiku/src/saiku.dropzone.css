@@ -143,7 +143,7 @@ span.clear_axis {
     padding: 0 !important;
 }
 
-.d_level {
+.workspace_fields .d_level {
     background: #e5f6ff;
     background: -webkit-gradient(linear, left top, left bottom, from(#e0e9ef), to(#c2d5e2));
     background: -moz-linear-gradient(top, #e0e9ef 0%, #c2d5e2 100%);
@@ -152,10 +152,10 @@ span.clear_axis {
     /* display: inline !important; */
     box-shadow: 0 0 2px #DDD;
 }
-.d_level:hover {
+.workspace_fields .d_level:hover {
     background: #C2DAEF;
 }
-.d_level span.selections {
+.workspace_fields .d_level span.selections {
     background-position: -981px 2px;
     height: 16px;
     width: 16px;
@@ -163,11 +163,11 @@ span.clear_axis {
     cursor: pointer;
     margin-top: 2px;
 }
-.d_level a {
+.workspace_fields .d_level a {
     color: #2a6085;
     text-decoration: none;
 }
-.d_measure {
+.workspace_fields .d_measure {
     background: #ffe8e8;
     background: -webkit-gradient(linear, left top, left bottom, from(#fcf5f5), to(#fad9d9));
     background: -moz-linear-gradient(top, #fcf5f5 0%, #fad9d9 100%);
@@ -175,38 +175,38 @@ span.clear_axis {
     color: #983030;
     display: inline !important;
 }
-.d_measure:hover {
+.workspace_fields .d_measure:hover {
     background: #fad9d9;
 }
-.d_measure a {
+.workspace_fields .d_measure a {
     color: #983030;
     text-decoration: none;
 }
 
-.d_measure span.sort,
-.d_dimension span.sort {
+.workspace_fields .d_measure span.sort,
+.workspace_fields .d_dimension span.sort {
         height: 16px;
         width: 16px;
         padding: 2px 3px;
         float: right;
         cursor: pointer;
 }
-.d_measure span.sort.BASC,
-.d_measure span.sort.ASC,
-.d_dimension span.sort.BASC,
-.d_dimension span.sort.ASC {
+.workspace_fields .d_measure span.sort.BASC,
+.workspace_fields .d_measure span.sort.ASC,
+.workspace_fields .d_dimension span.sort.BASC,
+.workspace_fields .d_dimension span.sort.ASC {
     background: url("../../../images/src/sort_up.png") no-repeat center transparent;
 
 }
 
-.d_measure span.sort.BDESC,
-.d_measure span.sort.DESC,
-.d_dimension span.sort.BDESC,
-.d_dimension span.sort.DESC {
+.workspace_fields .d_measure span.sort.BDESC,
+.workspace_fields .d_measure span.sort.DESC,
+.workspace_fields .d_dimension span.sort.BDESC,
+.workspace_fields .d_dimension span.sort.DESC {
     background: url("../../../images/src/sort_down.png") no-repeat center transparent;
 }
 
-.d_measure span.sort.none,
-.d_dimension span.sort.none {
+.workspace_fields .d_measure span.sort.none,
+.workspace_fields .d_dimension span.sort.none {
     background: url("../../../images/src/sort_none.png") no-repeat center transparent;
 }
