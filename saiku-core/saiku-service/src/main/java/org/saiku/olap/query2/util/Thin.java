@@ -56,6 +56,7 @@ public class Thin {
 		if (query.getParameters() != null) {
 			tq.setParameters(tq.getParameters());
 		}
+		tq.setMdx(query.getSelect().toString());
 		return tq;
 	}
 

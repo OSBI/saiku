@@ -51,7 +51,7 @@
     "caption" : "Sales",
     "visible" : true
   },
-  "mdx" : null,
+  "mdx" : "SELECT\nFROM [Sales]",
   "name" : "dummy",
   "parameters" : {
   },

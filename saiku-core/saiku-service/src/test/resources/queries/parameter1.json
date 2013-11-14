@@ -93,7 +93,7 @@
     "caption" : "Sales",
     "visible" : true
   },
-  "mdx" : null,
+  "mdx" : "WITH\nSET [~COLUMNS] AS\n    {[Education Level].[Education Level].Members}\nSET [~ROWS] AS\n    Except({[Product].[Product Family].Members}, {[Product].[Non-Consumable]})\nSELECT\n[~COLUMNS] ON COLUMNS,\n[~ROWS] ON ROWS\nFROM [Sales]",
   "name" : "parameter1",
   "parameters" : {
     "productFamilyList" : "[Product].[Food]"

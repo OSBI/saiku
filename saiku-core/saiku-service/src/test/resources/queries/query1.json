@@ -141,7 +141,7 @@
     "caption" : "Sales",
     "visible" : true
   },
-  "mdx" : null,
+  "mdx" : "WITH\nSET [~COLUMNS_Product] AS\n    TopCount(Except({[Product].[Product Family].Members}, {[Product].[Non-Consumable]}), 2, Measures.[Unit Sales])\nSET [~COLUMNS_Education Level] AS\n    {[Education Level].[Education Level].Members}\nSET [~COLUMNS] AS\n    Order(CrossJoin([~COLUMNS_Product], [~COLUMNS_Education Level]), [Measures].[Double Profit], BDESC)\nMEMBER [Measures].[Double Profit] AS\n    (([Measures].[Store Sales] - [Measures].[Store Cost]) * 2)\nSET [~ROWS] AS\n    {[Gender].[F]}\nSELECT\nCrossJoin([~COLUMNS], {[Measures].[Double Profit], [Measures].[Unit Sales]}) ON COLUMNS,\n[~ROWS] ON ROWS\nFROM [Sales]",
   "name" : "query1",
   "parameters" : {
   },

@@ -65,7 +65,7 @@ public class QueryContext {
 		if (objects.containsKey(ObjectKey.RESULT)) {
 			Object o = objects.get(ObjectKey.RESULT);
 			if (o instanceof CellSet) {
-				return (CellSet) objects.get(ObjectKey.QUERY);
+				return (CellSet) objects.get(ObjectKey.RESULT);
 			}
 		}
 		throw new SaikuServiceException("Context: " + id + " does not contain a olap result object");
@@ -73,9 +73,9 @@ public class QueryContext {
 	
 	public Statement getStatement() {
 		if (objects.containsKey(ObjectKey.STATEMENT)) {
-			return (Statement) objects.get(ObjectKey.CONNECTION);
+			return (Statement) objects.get(ObjectKey.STATEMENT);
 		}
-		throw new SaikuServiceException("Context: " + id + " does not contain a connection object");
+		throw new SaikuServiceException("Context: " + id + " does not contain a statement object");
 		
 	}
 	

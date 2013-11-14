@@ -16,6 +16,7 @@
 package org.saiku.service.olap;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,7 +35,6 @@ import org.saiku.olap.query2.util.Fat;
 import org.saiku.olap.query2.util.Thin;
 import org.saiku.olap.util.OlapResultSetUtil;
 import org.saiku.olap.util.formatter.CellSetFormatterFactory;
-import org.saiku.olap.util.formatter.HierarchicalCellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.query.Query;
 import org.saiku.service.util.QueryContext;
@@ -106,7 +106,7 @@ public class ThinQueryService implements Serializable {
 	
 	protected CellSet executeInternalQuery(ThinQuery query) throws Exception {
 		QueryContext queryContext = context.get(query.getName());
-		ThinQuery tqAfter = null;
+		
 		if (queryContext == null) {
 			queryContext = new QueryContext(Type.OLAP, query);
 			this.context.put(query.getName(), queryContext);
@@ -128,22 +128,10 @@ public class ThinQueryService implements Serializable {
 		OlapStatement stmt = con.createStatement();
 		queryContext.store(ObjectKey.STATEMENT, stmt);
 		
-		String mdx = null;
-		if (ThinQuery.Type.MDX.equals(query.getType())) {
-			mdx = query.getMdx();
-		} else if (ThinQuery.Type.QUERYMODEL.equals(query.getType())) {
-			Cube cub = olapDiscoverService.getNativeCube(query.getCube());
-			Query q = Fat.convert(query, cub);
-			mdx = q.getMdx();
-			tqAfter = Thin.convert(q, query.getCube());
-			query.setQueryModel(tqAfter.getQueryModel());
-			
-		} else {
-			throw new Exception("Cannot get mdx for query " + query.getName() + " - no querymodel or mdx present!");
-		}
+		query = updateQuery(query);
 		
 		try {
-			query.setMdx(mdx);
+			String mdx = query.getMdx();
 			CellSet cs = stmt.executeOlapQuery(mdx);
 			queryContext.store(ObjectKey.RESULT, cs);
 			if (query != null) {
@@ -160,7 +148,7 @@ public class ThinQueryService implements Serializable {
 		if (tq.getProperties().containsKey("saiku.olap.result.formatter")) {
 			return execute(tq, tq.getProperties().get("saiku.olap.result.formatter"));
 		}
-		return execute(tq,new HierarchicalCellSetFormatter());
+		return execute(tq, "");
 	}
 
 	public CellDataSet execute(ThinQuery tq, String formatter) {
@@ -187,7 +175,36 @@ public class ThinQueryService implements Serializable {
 			throw new SaikuServiceException("Can't execute query: " + tq.getName(),e);
 		}
 	}
+	
+	public void cancel(String name) throws SQLException {
+		if (context.containsKey(name)) {
+			QueryContext queryContext = context.get(name);
+			if (queryContext.contains(ObjectKey.STATEMENT)) {
+				Statement stmt = queryContext.getStatement();
+				if (stmt != null && !stmt.isClosed()) {
+					stmt.cancel();
+					stmt.close();
+				}
+				stmt = null;
+				queryContext.remove(ObjectKey.STATEMENT);
+			}
+		}
+	}
 
+	public ThinQuery updateQuery(ThinQuery old) throws SQLException {
+		if (ThinQuery.Type.QUERYMODEL.equals(old.getType())) {
+			Cube cub = olapDiscoverService.getNativeCube(old.getCube());
+			Query q = Fat.convert(old, cub);
+			ThinQuery tqAfter = Thin.convert(q, old.getCube());
+			old.setQueryModel(tqAfter.getQueryModel());
+		}
+		if (context.containsKey(old.getName())) {
+			QueryContext qc = context.get(old.getName());
+			qc.store(ObjectKey.QUERY, old);
+		}
+
+		return old;
+	}
 
 	public void deleteQuery(String queryName) {
 		try {

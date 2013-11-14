@@ -18,13 +18,11 @@ package org.saiku.web.rest.resources;
 import javax.servlet.ServletException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -32,7 +30,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.query2.ThinQuery;
@@ -76,7 +73,7 @@ public class Query2Resource {
 
 	/**
 	 * Delete query from the query pool.
-	 * @return a HTTP 410(Works) or HTTP 404(Call failed).
+	 * @return a HTTP 410(Works) or HTTP 500(Call failed).
 	 */
 	@DELETE
 	@Path("/{queryname}")
@@ -148,19 +145,48 @@ public class Query2Resource {
 	@POST
 	@Consumes({"application/json" })
 	@Path("/execute")
-	public Response execute(ThinQuery tq) {
+	public QueryResult execute(ThinQuery tq) {
 		try {
 			QueryResult qr = RestUtil.convert(thinQueryService.execute(tq));
 			ThinQuery tqAfter = thinQueryService.getContext(tq.getName()).getOlapQuery();
 			qr.setQuery(tqAfter);
-			return Response.ok(qr).type(MediaType.APPLICATION_JSON).build();
+			return qr;
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + tq + ")",e);
-			String error = ExceptionUtils.getRootCauseMessage(e);
-			return Response.serverError().entity(error).type(MediaType.TEXT_PLAIN).build();
+			throw new WebApplicationException(e);
 		}
-		
 	}
+	
+	@DELETE
+	@Path("/{queryname}/cancel")
+	public Response cancel(@PathParam("queryname") String queryName){
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "\tDELETE");
+		}
+		try{
+			thinQueryService.cancel(queryName);
+			return Response.ok(Status.GONE).build();
+		}
+		catch(Exception e){
+			log.error("Cannot cancel query (" + queryName + ")",e);
+			throw new WebApplicationException(e);
+		}
+	}
+	
+	@POST
+	@Consumes({"application/json" })
+	@Path("/enrich")
+	public ThinQuery enrich(ThinQuery tq) {
+		try {
+			ThinQuery tqAfter = thinQueryService.updateQuery(tq);
+			return tqAfter;
+		}
+		catch (Exception e) {
+			log.error("Cannot enrich query (" + tq + ")",e);
+			throw new WebApplicationException(e);
+		}		
+	}
+	
 	
 }
