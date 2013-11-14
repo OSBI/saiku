@@ -18,7 +18,7 @@
  * Change settings here
  */
 var Settings = {
-    VERSION: "Saiku 2.6-SNAPSHOT",
+    VERSION: "Saiku 3.0-SNAPSHOT",
     BIPLUGIN: false,
     BIPLUGIN5: false,
     BASE_URL: "",
