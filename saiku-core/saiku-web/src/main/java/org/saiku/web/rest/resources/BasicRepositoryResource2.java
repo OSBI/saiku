@@ -50,6 +50,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.vfs.AllFileSelector;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.FileType;
@@ -316,7 +317,11 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 
 				if (repoFile != null && repoFile.exists() ) {
 					if ( acl.canWrite(file, username, roles) ){
-						repoFile.delete();
+						if (repoFile.getType().equals(FileType.FILE)) {
+							repoFile.delete();
+						} else {
+							repoFile.delete(new AllFileSelector());
+						}
 						return Response.ok().build();
 					} else {
 						return Response.serverError().status(Status.FORBIDDEN).build();
