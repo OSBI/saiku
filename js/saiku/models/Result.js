@@ -32,7 +32,7 @@ var Result = Backbone.Model.extend({
         this.query.workspace.unblock();
         this.query.workspace.processing.hide();
         this.result = response;
-        this.query.model = _.extend({}, response.query, this.query.model);
+        this.query.model = _.extend({}, response.query);
         this.firstRun = true;
 
         this.query.workspace.trigger('query:result', {
