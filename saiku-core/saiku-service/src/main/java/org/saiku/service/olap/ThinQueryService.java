@@ -78,6 +78,7 @@ public class ThinQueryService implements Serializable {
 //			Query query = new Query(tq.getName(), cub);
 //			tq = Thin.convert(query, tq.getCube());
 			QueryContext qt = new QueryContext(Type.OLAP, tq);
+			qt.store(ObjectKey.QUERY, tq);
 			this.context.put(tq.getName(), qt);
 		}
 		return tq;
@@ -197,6 +198,7 @@ public class ThinQueryService implements Serializable {
 			Query q = Fat.convert(old, cub);
 			ThinQuery tqAfter = Thin.convert(q, old.getCube());
 			old.setQueryModel(tqAfter.getQueryModel());
+			old.setMdx(tqAfter.getMdx());
 		}
 		if (context.containsKey(old.getName())) {
 			QueryContext qc = context.get(old.getName());

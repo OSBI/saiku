@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.query2.ThinQuery;
@@ -154,7 +155,8 @@ public class Query2Resource {
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + tq + ")",e);
-			throw new WebApplicationException(e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return new QueryResult(error);
 		}
 	}
 	

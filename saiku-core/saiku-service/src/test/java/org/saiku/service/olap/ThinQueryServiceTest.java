@@ -246,7 +246,7 @@ public class ThinQueryServiceTest {
 			assertEquals(expectedMdx, mdx);
 
 			cs = tqs.executeInternalQuery(tq);
-			assertEquals("[ COLUMNS: 5 ][ ROWS: 2 ]", getResultInfo(cs));
+			assertEquals("[ COLUMNS: 5 ][ ROWS: 1 ]", getResultInfo(cs));
 
 		} catch (Exception e) {
 			e.printStackTrace();
