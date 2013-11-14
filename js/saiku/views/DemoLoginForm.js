@@ -52,11 +52,10 @@ var DemoLoginForm = Modal.extend({
         var email = $(this.el).find("#email").val();
 
         if (email) {
-            window.Intercom('boot', {
+            var TestLog = new logger({ url: Settings.TELEMETRY_SERVER + "/input/demo" });
+            TestLog.log ({
                         email: email,
-                        created_at:  Math.round((new Date()).getTime() / 1000),
-                        app_id: "597eb390acd63f51158efafc191ef490defb8bdd",
-                        widget: {activator: '#IntercomDefaultWidget'}
+                        created_at:  Math.round((new Date()).getTime() / 1000)
               }
             );
             $(this.el).dialog('close');
