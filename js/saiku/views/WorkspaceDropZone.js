@@ -24,7 +24,7 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
     
     events: {
-        'sortbeforestop .fields_list_body.details': 'select_measure',
+        'sortstop .fields_list_body.details': 'select_measure',
         'click .d_measure a' : 'remove_measure',
 //        'click .d_measure span.sort' : 'sort_measure',
         'click .clear_axis' : 'clear_axis'
@@ -45,8 +45,8 @@ var WorkspaceDropZone = Backbone.View.extend({
         // Activate drop zones
 
         $(this.el).find('.fields_list_body.details ul.connectable').sortable({
-            forcePlaceholderSize: true,
-            forceHelperSize: true,
+//            forcePlaceholderSize: true,
+//            forceHelperSize: true,
             items: '> li',
             opacity: 0.60,
             placeholder: 'placeholder',
@@ -72,6 +72,29 @@ var WorkspaceDropZone = Backbone.View.extend({
         });
         */
         return this; 
+    },
+
+    select_measure: function(event) {
+        var details = [];
+
+        $(this.el).find('.fields_list_body.details ul.connectable li.d_measure').each( function(index, element) {
+            var measure = {
+                "name": $(element).find('a').attr('measure'),
+                "type": $(element).find('a').attr('type')
+            };
+            details.push(measure);
+
+
+        });
+        this.workspace.query.helper.setMeasures(details);
+        this.workspace.query.run();
+
+    },
+
+    remove_measure: function(event) {
+        event.preventDefault();
+        $(event.target).parent().remove();
+        this.select_measure();
     },
     
     clear_axis: function(event) {

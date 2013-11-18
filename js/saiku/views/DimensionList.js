@@ -82,6 +82,7 @@ var DimensionList = Backbone.View.extend({
             cancel: '.not-draggable',
             connectToSortable: $(this.workspace.el).find('.fields_list_body.details ul.connectable'),
             helper: 'clone',
+            placeholder: 'placeholder',
             opacity: 0.60,
             tolerance: 'touch',
             stop: function() {
@@ -91,16 +92,14 @@ var DimensionList = Backbone.View.extend({
                     }
                 }
             },
-            cursorAt: {
-                top: 10,
-                left: 35
-            }
+            cursorAt: { top: 10, left: 35 }
         });        
 
         $(this.el).find('.level').parent('li').draggable({
             cancel: '.not-draggable, .hierarchy',
             connectToSortable: $(this.workspace.el).find('.fields_list_body.columns > ul.connectable, .fields_list_body.rows > ul.connectable, .fields_list_body.filter > ul.connectable'),
             helper: 'clone',
+            placeholder: 'placeholder',
             opacity: 0.60,
             tolerance: 'touch',
             stop: function() {

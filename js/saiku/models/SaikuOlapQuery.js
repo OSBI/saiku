@@ -91,6 +91,20 @@ SaikuOlapQueryHelper.prototype.includeMeasure = function(measure) {
   this.model().queryModel.details.measures.push(measure);
 };
 
+SaikuOlapQueryHelper.prototype.removeMeasure = function(name) {
+  var measures = this.query.model.queryModel.details.measures;
+  var removeMeasure = _.findWhere(measures , { name: name });
+  if (removeMeasure && _.indexOf(measures, removeMeasure) > -1) {
+    measures = _.without(measures, removeMeasure);
+    console.log(measures);
+  }
+};
+
+SaikuOlapQueryHelper.prototype.setMeasures = function(measures) {
+  this.model().queryModel.details.measures = measures;
+};
+
+
 SaikuOlapQueryHelper.prototype.swapAxes = function() {
   var axes = this.model().queryModel.axes;
   var tmpAxis = axes['ROWS'];

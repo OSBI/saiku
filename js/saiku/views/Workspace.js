@@ -604,8 +604,13 @@ var Workspace = Backbone.View.extend({
    
     
     remove_dimension: function(event, ui) {
-        if (this.query.get('type') == "QM") {
-            this.drop_zones.remove_dimension(event, ui);
+        if (this.query.model.type == "QUERYMODEL") {
+            if ($(ui.helper).hasClass('d_measure')) {
+                var measureName = $(ui.helper).find('a').attr('measure');
+                $(ui.helper).detach();
+                this.query.helper.removeMeasure(measureName);
+                this.query.run();
+            }
         }
     },
 
