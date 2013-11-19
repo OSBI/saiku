@@ -107,3 +107,52 @@
     background-repeat:  no-repeat;
     background-position: 7px 7px;
 }
+
+
+/** BLOCKUI  MODIFIED FOR EMBED**/
+
+.processing_container, .blockOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    opacity: 0.5;
+    z-index: 9999;
+    padding: 20px;
+}
+.processing_content {
+    padding: 5px;
+    display: inline;
+}
+.processing, .blockElement {
+    border-radius: 3px;
+    border: 1px solid #EAEAEA;
+    z-index: 10001;
+    position: fixed;
+    width: 20%;
+    min-width: 300px;
+    left: 40%;
+    top: 45%;
+    padding: 20px;
+}
+.processing_image {
+    display: inline-block;
+    background-image: url('../../../images/src/waiting.gif');
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+}
+
+.saiku_logo {
+    display: inline-block;
+    background-image: url('../../../images/src/saiku_32x32.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 32px;
+    height: 32px;
+    padding: 5px;
+    margin-right: 20px;
+}
