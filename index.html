@@ -194,6 +194,7 @@
                                 <a class="dimension" title="<%= hierarchy.description ? hierarchy.description : hierarchy.caption %>" href="#"  hierarchy="<%= hierarchy.name %>"><%= hierarchy.caption %></a>
                             </li>
                         <% } %>
+                        <ul class="d_hierarchy" hierarchy="<%= hierarchy.name %>" hierarchycaption="<%= hierarchy.caption %>">
                         <% _.each(hierarchy.levels, function(level) { %>
                             <% if (typeof level["visible"] == "undefined" || level["visible"]) { %>
                                 <li class="hide d_level"><a title="<%= level.description ? level.description : level.caption %>" level="<%= level.name %>" hierarchy="<%= hierarchy.name %>"
@@ -201,6 +202,7 @@
                                 </li>
                             <% } %>
                         <% }); %>
+                        </ul>
                     <% } %>
                 <% }); %>
                 </ul>
@@ -281,7 +283,7 @@
             </div>
             <div class="fields_list columns_fields" title="COLUMNS">
                 <div class="fields_list_header disabled_toolbar"><span class="i18n">Columns</span><span class="dropdown"></span></div>
-                <div class="fields_list_body columns">
+                <div class="fields_list_body columns axis_fields">
                     <ul class="connectable"></ul>
                 </div>
                 <span class="clear_axis i18n hide" title="Clear Axis"></span>
@@ -289,7 +291,7 @@
             </div>
             <div class="fields_list rows_fields" title="ROWS">
                 <div class="fields_list_header disabled_toolbar"><span class="i18n">Rows</span><span class="dropdown"></span></div>
-                <div class="fields_list_body rows">
+                <div class="fields_list_body rows axis_fields">
                     <ul class="connectable"></ul>
                 </div>
                 <span class="clear_axis i18n hide" title="Clear Axis"></span>
@@ -297,7 +299,7 @@
             </div>
             <div class="fields_list filter_fields" title="FILTER">
                 <div class="fields_list_header disabled_toolbar"><span class="i18n">Filter</span><span class="dropdown"></span></div>
-                <div class="fields_list_body filter">
+                <div class="fields_list_body filter axis_fields">
                     <ul class="connectable"></ul>
                 </div>
                 <span class="clear_axis i18n hide" title="Clear Axis"></span>

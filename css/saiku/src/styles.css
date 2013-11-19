@@ -403,10 +403,6 @@ textarea, select {
     padding: 0 0 0 18px;
     margin: 0;
 }
-.dimension_tree ul li ul li,
-.measure_tree ul li ul li {
-    padding-left: 18px;
-}
 .dimension_tree ul li ul li a {
     padding-left: 20px;
     background: url('../../../images/src/bullet_blue.png') 0px 4px no-repeat;
@@ -482,6 +478,7 @@ textarea, select {
     background-image: url(../../../images/sprite.png) !important;
     padding: 1px !important;
 }
+
 .ui-sortable-helper {
     line-height: 18px !important;
     min-width: 70px;
@@ -538,6 +535,7 @@ textarea, select {
     color: #999;
     margin: 2px 3px;
     padding: 1px 22px !important;
+    width: 100px;
 }
 .not-draggable a {
     /*cursor: not-allowed !important;*/

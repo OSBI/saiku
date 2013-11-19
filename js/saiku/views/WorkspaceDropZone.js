@@ -25,7 +25,7 @@ var WorkspaceDropZone = Backbone.View.extend({
     
     events: {
         'sortstop .fields_list_body.details': 'select_measure',
-        'click .d_measure a' : 'remove_measure',
+        'click .d_measure a' : 'remove_measure_click',
 //        'click .d_measure span.sort' : 'sort_measure',
         'click .clear_axis' : 'clear_axis'
     },
@@ -39,38 +39,90 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
     
     render: function() {
+        var self = this;
         // Generate drop zones from template
         $(this.el).html(this.template());
         
+        
         // Activate drop zones
-
         $(this.el).find('.fields_list_body.details ul.connectable').sortable({
 //            forcePlaceholderSize: true,
 //            forceHelperSize: true,
             items: '> li',
             opacity: 0.60,
             placeholder: 'placeholder',
-            tolerance: 'touch',
+            tolerance: 'pointer',
             start: function(event, ui) {
                 ui.placeholder.text(ui.helper.text());
             }
         });
-        /*
-        $(this.el).find('.connectable').sortable({
-            connectWith: $(this.el).find('.connectable'),
-            forcePlaceholderSize: true,
-            forceHelperSize: true,
-            items: '> li',
+        
+        $(this.el).find('.axis_fields ul.connectable').sortable({
+            connectWith: $(this.el).find('.axis_fields ul.connectable'),
+            forcePlaceholderSize: false,
+            forceHelperSize: false,
+            items: 'li.selection',
             opacity: 0.60,
             placeholder: 'placeholder',
             tolerance: 'touch',
-            
+            cursorAt: { top: 10, left: 10 },
             start: function(event, ui) {
-                ui.placeholder.text(ui.helper.text());
+                var hierarchy = $(ui.helper).find('a').parent().parent().attr('hierarchycaption');
+                ui.placeholder.text(hierarchy);
+                $(ui.helper).css({ width: "auto"});
+                
+                /*
+                $(self.el).find('.axis_fields ul.hierarchy').each( function(index, element) {
+                    $(element).find('li.d_level').hide();
+                    var group = $(element).attr('hierarchy');
+                    $('<li class="d_group d_level">' + group + "</li>").appendTo( $(element) );    
+                });
+                $(ui.helper).find('li.d_level').hide();
+                $('<li class="d_group d_level">' + hierarchy + "</li>").appendTo(ui.helper.find('ul'));
+                */
+            },
+            beforeStop: function(event, ui) {
+                /*
+                $(self.el).find('.axis_fields ul.hierarchy').each( function(index, element) {
+                    $(element).find('li.d_level').show();
+                    $(element).find('.d_group').remove();
+                });
+                */
+                if( $(ui.helper).hasClass('selection') ) {
+                    var hierarchy = ui.item.find('ul.hierarchy').attr('hierarchy');
+                    var indexHierarchy = -1;
+                    ui.helper.parents('ul.connectable').find('li.selection').each( function(index, element) {
+                        if ( $(element).find('ul.hierarchy').attr('hierarchy') == hierarchy) {
+                            indexHierarchy = index;
+                        }
+                    });
+
+                    var toAxis = ui.helper.parents('.axis_fields').parent().attr('title');
+                    var fromAxis = $(event.target).parents('.axis_fields').parent().attr('title');
+                    self.workspace.query.helper.moveHierarchy(fromAxis, toAxis, hierarchy, indexHierarchy);
+                    self.workspace.query.run();
+                    return;
+                }
+                var hierarchy = $(ui.helper).find('a').attr('hierarchy');
+                var level =  $(ui.helper).find('a').attr('level');
+
+                var h = $(self.workspace.el).find('.dimension_tree a.level[hierarchy="' + hierarchy +'"]').parent().parent().clone().removeClass('d_hierarchy').addClass('hierarchy');
+                h.find('.ui-draggable-dragging').remove();
+                h.find('li a[hierarchy="' + hierarchy + '"]').parent().hide();
+                h.find('li a[level="' + level + '"]').parent().show();
+
+                $(self.workspace.el).find('.dimension_tree a.level[hierarchy="' + hierarchy +'"][level="' + level + '"]').parent().not('.ui-draggable-dragging').draggable('disable');
+
+                var selection = $('<li class="selection"></li>');
+                selection.append(h);
+                $(ui.item).empty().removeClass('hide d_level').addClass('selection').append(h);
+                return true;
+                //$(ui.helper).html(selection.html())
+
             }
 
         });
-        */
+        
         return this; 
     },
 
@@ -84,6 +136,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             };
             details.push(measure);
 
+            $('.measure_tree li a[measure="' + measure.name + '"]').parent().css({fontWeight: "bold"}).draggable('disable');
 
         });
         this.workspace.query.helper.setMeasures(details);
@@ -91,9 +144,15 @@ var WorkspaceDropZone = Backbone.View.extend({
 
     },
 
-    remove_measure: function(event) {
-        event.preventDefault();
+    remove_measure_click: function(event) {
+        var m = $(event.target).attr('measure');
         $(event.target).parent().remove();
+        event.preventDefault();
+        this.remove_measure(m);
+    },
+
+    remove_measure: function(m) {
+        $('.measure_tree li a[measure="' + m + '"]').parent().css({fontWeight: "normal"}).draggable('enable');
         this.select_measure();
     },
     

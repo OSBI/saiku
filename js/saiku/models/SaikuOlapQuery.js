@@ -67,6 +67,22 @@ SaikuOlapQueryHelper.prototype.getHierarchy = function(name) {
     };
     return null;
 };
+
+SaikuOlapQueryHelper.prototype.moveHierarchy = function(fromAxis, toAxis, hierarchy, position) {
+  var h = this.getHierarchy(hierarchy);
+  var i = this.model().queryModel.axes[fromAxis].hierarchies.indexOf(h);
+  var target = this.model().queryModel.axes[toAxis].hierarchies;
+
+  this.model().queryModel.axes[fromAxis].hierarchies.splice(i,1);
+  if (typeof position != "undefined" && position > -1 && target.length > position) {
+      target.splice(position, 0, h);
+      return;
+  } 
+  target.push(h);
+
+};
+
+
 SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level) {
     var mHierarchy = this.getHierarchy(hierarchy);
     if (mHierarchy) {
@@ -96,7 +112,7 @@ SaikuOlapQueryHelper.prototype.removeMeasure = function(name) {
   var removeMeasure = _.findWhere(measures , { name: name });
   if (removeMeasure && _.indexOf(measures, removeMeasure) > -1) {
     measures = _.without(measures, removeMeasure);
-    console.log(measures);
+    //console.log(measures);
   }
 };
 

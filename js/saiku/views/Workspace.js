@@ -608,8 +608,7 @@ var Workspace = Backbone.View.extend({
             if ($(ui.helper).hasClass('d_measure')) {
                 var measureName = $(ui.helper).find('a').attr('measure');
                 $(ui.helper).detach();
-                this.query.helper.removeMeasure(measureName);
-                this.query.run();
+                this.drop_zones.remove_measure(measureName);
             }
         }
     },

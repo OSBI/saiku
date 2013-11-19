@@ -100,25 +100,49 @@ span.clear_axis {
 .fields_list_body.details li {
     padding-left: 0px;
 }
+
+.fields_list ul.hierarchy li.selection {
+    float:left;
+    line-height: 17px;
+    height: 19px;
+    display: inline;
+    padding: 1px;
+    margin: 1px;
+    min-width: 70px;
+    cursor: pointer;
+
+}
+.dimension_tree li.ui-draggable-disabled,
+.measure_tree li.ui-draggable-disabled {
+    font-weight: bold;
+}
+
 .fields_list .fields_list_body ul.hierarchy li, 
-.fields_list_body.details li {
+.fields_list_body.details li,
+.fields_list_body li.placeholder,
+.fields_list_body li.selection {
     float: left;
     line-height: 17px;
     list-style-type: none;
     height: 19px;
     display: inline;
-    padding: 1px 8px 1px 0px;
+    
     min-width: 70px;
     text-align: center;
     white-space:nowrap;
-    box-shadow: 0 0 2px #DDD;
-    border-radius: 3px;
-    -moz-box-shadow: 0 0 2px #DDD;
-    -moz-border-radius: 3px;
-    -webkit-box-shadow: 0 0 2px #DDD;
-    -webkit-border-radius: 3px;
+    
+}
+.fields_list .fields_list_body ul.hierarchy li, 
+.fields_list_body.details li,
+.fields_list_body li.placeholder {
     margin: 2px 3px;
-
+    padding: 1px 8px 1px 0px;
+    box-shadow: 0 0 2px #DDD;
+    -moz-box-shadow: 0 0 2px #DDD;
+    -webkit-box-shadow: 0 0 2px #DDD;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
 }
 .fields_list .fields_list_body ul.hierarchy li a , .fields_list_body.details li a {
     padding: 8px 0px 8px 10px;
@@ -173,7 +197,6 @@ span.clear_axis {
     background: -moz-linear-gradient(top, #fcf5f5 0%, #fad9d9 100%);
     border: 1px solid #ed9393;
     color: #983030;
-    display: inline !important;
 }
 .workspace_fields .d_measure:hover {
     background: #fad9d9;

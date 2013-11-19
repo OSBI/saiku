@@ -80,18 +80,19 @@ var Query = Backbone.Model.extend({
         var validated = false;
         var errorMessage = "Query Validation failed!";
 
-        if (this.model.queryType == "OLAP") {
-            if (this.model.type == "QUERYMODEL") {
-                var columnsOk = Object.keys(this.model.queryModel.axes['COLUMNS'].hierarchies).length > 0;
-                var detailsOk = this.model.queryModel.details.axis == 'COLUMNS' && this.model.queryModel.details.measures.length > 0;
+        var exModel = this.helper.model();
+        if (exModel.queryType == "OLAP") {
+            if (exModel.type == "QUERYMODEL") {
+                var columnsOk = Object.keys(exModel.queryModel.axes['COLUMNS'].hierarchies).length > 0;
+                var detailsOk = exModel.queryModel.details.axis == 'COLUMNS' && exModel.queryModel.details.measures.length > 0;
                 if (!columnsOk && !detailsOk) {
                     errorMessage = '<span class="i18n">You need to put at least one level or measure on Columns and Rows for a valid query.</span>';
                 } else if (columnsOk || detailsOk) {
                     validated = true;
                 }
 
-            } else if (this.model.type == "MDX") {
-                validated = (this.model.mdx && this.model.mdx.length > 0);
+            } else if (exModel.type == "MDX") {
+                validated = (exModel.mdx && exModel.mdx.length > 0);
                 if (!validated) {
                     errorMessage = '<span class="i18n">You need to enter some MDX statement to execute.</span>';
                 }
@@ -119,7 +120,7 @@ var Query = Backbone.Model.extend({
         TODO: i wonder if we should clean up the model (name and captions etc.)
         delete this.model.queryModel.axes['FILTER'].name;
 */        
-        this.result.save({},{ contentType: "application/json", data: JSON.stringify(this.model) });
+        this.result.save({},{ contentType: "application/json", data: JSON.stringify(exModel) });
     },
 
     enrich: function() {

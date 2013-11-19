@@ -98,7 +98,31 @@ var DimensionList = Backbone.View.extend({
         $(this.el).find('.level').parent('li').draggable({
             cancel: '.not-draggable, .hierarchy',
             connectToSortable: $(this.workspace.el).find('.fields_list_body.columns > ul.connectable, .fields_list_body.rows > ul.connectable, .fields_list_body.filter > ul.connectable'),
-            helper: 'clone',
+            helper: "clone",
+/*            helper: function(event, ui){
+                var target = $(event.target).hasClass('d_level') ? $(event.target) : $(event.target).parent();
+                var hierarchy = target.find('a').attr('hierarchy');
+                var h = target.parent().clone().removeClass('d_hierarchy').addClass('hierarchy');
+                h.find('li a[hierarchy="' + hierarchy + '"]').parent().hide();
+                target.show();
+                var selection = $('<li class="selection"></li>');
+                selection.append(h);
+                return selection;
+
+                
+
+                var hierarchy = target.find('a').attr('hierarchy');
+                var level = target.find('a').attr('level');
+                var levels = target.parent().find('li a[hierarchy="' + hierarchy + '"]').parent().clone().detach().hide();
+                levels.find('a[level="' + level + '"]').parent().show();
+                var dropHierarchy = $('<ul />').attr('hierarchy', hierarchy).addClass('hierarchy').append(levels);
+                var selection = $('<li class="selection"></li>');
+                selection.append(dropHierarchy);
+                return selection;
+
+
+            },*/
+
             placeholder: 'placeholder',
             opacity: 0.60,
             tolerance: 'touch',
@@ -139,6 +163,7 @@ var DimensionList = Backbone.View.extend({
         }
         
         var hierarchy = $(event.target).attr('hierarchy');
+        var hierarchyCaption = $(event.target).parent().parent().attr('hierarchycaption');
         var level = $(event.target).attr('level');
 
         if ($(this.workspace.el).find(".workspace_fields ul.hierarchy[hierarchy='" + hierarchy + "']").length > 0) {
@@ -156,12 +181,13 @@ var DimensionList = Backbone.View.extend({
             var axisName = $axis.parents('.fields_list').attr('title');
             var levels = $(event.target).parent().parent().find('li a[hierarchy="' + hierarchy + '"]').parent().clone().hide();
             levels.find('a[level="' + level + '"]').parent().show();
-            var dropHierarchy = $('<ul />').attr('hierarchy', hierarchy).addClass('hierarchy').append(levels).appendTo($axis);
+            var dropHierarchy = $('<ul />').attr('hierarchy', hierarchy).attr('hierarchycaption', hierarchyCaption).addClass('hierarchy').append(levels);
+            $( $('<li class="selection"></li>')).append(dropHierarchy).appendTo($axis);
+            //$(dropHierarchy).appendTo($axis);
 
             this.workspace.query.helper.includeLevel(axisName, hierarchy, level);
 
         }
-        $(event.target).parent().css({fontWeight: "bold"});
         $(event.target).parent().draggable('disable');
 
         this.workspace.query.run();
@@ -187,7 +213,6 @@ var DimensionList = Backbone.View.extend({
             $target.appendTo($axis);
         }
 
-        $(event.target).parent().css({fontWeight: "bold"});
         $(event.target).parent().draggable('disable');
 
         var measure = {
