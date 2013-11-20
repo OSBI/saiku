@@ -528,15 +528,6 @@ textarea, select {
     color: #983030 !important;
 }
 
-
-.empty_placeholder,
-.placeholder {
-    border: 1px dashed #999;
-    color: #999;
-    margin: 2px 3px;
-    padding: 1px 22px !important;
-    width: 100px;
-}
 .not-draggable a {
     /*cursor: not-allowed !important;*/
 }
@@ -836,14 +827,14 @@ textarea, select {
 }
 
 .workspace_editor {
-    overflow: hidden;
     padding-left: 5px;
 }
 
 .mdx_input {
     border: 1px solid #CCCCCC;
-    width: 99%;
     margin-top: 4px;
+    /* BECAUSE OF QUERY TOOLBAR */
+    margin-right: 112px;
 }
 
 .workspace_editor .editor_info {

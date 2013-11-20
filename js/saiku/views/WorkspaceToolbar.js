@@ -222,7 +222,16 @@ var WorkspaceToolbar = Backbone.View.extend({
             }
             return; 
         }
+        
+        if (action == 'hide') {
+            $(this.workspace.el).find('.workspace_editor').hide();
+        } else {
+            $(this.workspace.el).find('.workspace_editor').show();
+        }
+
         // avoid scrollbar on the right
+
+        /*
         var wf = $('.workspace_editor').height();
         if ( action == 'hide') {
             var wr = $('.workspace_results').height();
@@ -243,6 +252,8 @@ var WorkspaceToolbar = Backbone.View.extend({
                 self.workspace.adjust();
             }
         });
+
+        */
     },
 
 

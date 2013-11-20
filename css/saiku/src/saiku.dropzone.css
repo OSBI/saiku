@@ -1,12 +1,15 @@
 /** Field List */
 
 .workspace_fields {
-    overflow: hidden;
-    padding: 10px 10px 0 10px;
+     overflow: auto;
+     padding: 10px;
+     width: 220px;
+     float:left;
+
 }
 .fields_list {
-    min-width: 820px;
-    border: 1px solid #CCC;
+    border: 1px solid #CCCCCC;
+    float: left;
     margin-bottom: 10px;
     border-radius: 5px;
     -moz-border-radius: 5px;
@@ -17,17 +20,17 @@
 
 }
 .fields_list .fields_list_header {
-    background-color: #E6E6E6;
-    background: linear-gradient(to bottom, #FFFFFF, #E6E6E6); 
-    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#E6E6E6));
-    background: -moz-linear-gradient(top, #FFFFFF 0%, #E6E6E6 100%);
-    border-right: 1px solid #CCC;
+    background-color: #E5E5E5;
+    background: linear-gradient(to bottom, #FFFFFF, #E5E5E5); 
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#E5E5E5));
+    background: -moz-linear-gradient(top, #FFFFFF 0%, #E5E5E5 100%);
+    border-bottom: 1px solid #CCC; 
     float: left;
     font-weight: bold;
-    padding: 3px 5px 3px 10px;
+    padding: 3px 5px 3px 13px;
     line-height: 28px;
-    width: 70px;
-    border-radius: 5px 0px 0px 5px;
+    width: 200px;
+    border-radius: 5px 5px 0 0;
 }
 .fields_list .limit {
     cursor: pointer;
@@ -78,8 +81,7 @@ span.clear_axis {
 .fields_list .fields_list_body {
     float: left;
     padding:  0;
-    margin-right: 37px;
-    width: 85%;
+    width: 200px;
 }
 .fields_list .fields_list_body .all_measures span {
     margin: 0 5px 0 0;
@@ -87,14 +89,14 @@ span.clear_axis {
     padding: 0 6px 1px 6px;
 }
 .fields_list .fields_list_body ul.connectable {
-    height: 19px;
-    display: inline-table;
+    display: block;
     float: left;
     line-height: 19px;
     list-style: none;
     margin: 0px 0px;
     padding: 3px;
-    width: 100%;
+    min-width: 90%;
+    min-height: 50px;
 }
 .fields_list .fields_list_body ul.hierarchy,  
 .fields_list_body.details li {
@@ -104,11 +106,10 @@ span.clear_axis {
 .fields_list ul.hierarchy li.selection {
     float:left;
     line-height: 17px;
-    height: 19px;
-    display: inline;
+    display: block;
     padding: 1px;
     margin: 1px;
-    min-width: 70px;
+    min-width: 90%;
     cursor: pointer;
 
 }
@@ -124,11 +125,9 @@ span.clear_axis {
     float: left;
     line-height: 17px;
     list-style-type: none;
-    height: 19px;
-    display: inline;
-    
-    min-width: 70px;
-    text-align: center;
+    display: block;
+    width: 170px;
+    text-align: left;
     white-space:nowrap;
     
 }
@@ -136,7 +135,7 @@ span.clear_axis {
 .fields_list_body.details li,
 .fields_list_body li.placeholder {
     margin: 2px 3px;
-    padding: 1px 8px 1px 0px;
+    padding: 3px 6px;
     box-shadow: 0 0 2px #DDD;
     -moz-box-shadow: 0 0 2px #DDD;
     -webkit-box-shadow: 0 0 2px #DDD;
@@ -144,6 +143,17 @@ span.clear_axis {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
 }
+
+
+.empty_placeholder,
+.placeholder {
+    border: 1px dashed #999;
+    color: #999;
+    margin: 2px 3px;
+    padding-left: 22px !important;
+    width: 160px !important;
+}
+
 .fields_list .fields_list_body ul.hierarchy li a , .fields_list_body.details li a {
     padding: 8px 0px 8px 10px;
 }
