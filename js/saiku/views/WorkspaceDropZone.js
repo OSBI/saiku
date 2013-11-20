@@ -65,7 +65,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             opacity: 0.60,
             placeholder: 'placeholder',
             tolerance: 'touch',
-            cursorAt: { top: 10, left: 10 },
+            //cursorAt: { top: 10, left: 10 },
             start: function(event, ui) {
                 var hierarchy = $(ui.helper).find('a').parent().parent().attr('hierarchycaption');
                 ui.placeholder.text(hierarchy);
@@ -116,6 +116,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                 var selection = $('<li class="selection"></li>');
                 selection.append(h);
                 $(ui.item).empty().removeClass('hide d_level').addClass('selection').append(h);
+                self.update_dropzones();
                 return true;
                 //$(ui.helper).html(selection.html())
 
@@ -141,6 +142,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         });
         this.workspace.query.helper.setMeasures(details);
         this.workspace.query.run();
+        this.update_dropzones();
 
     },
 
@@ -149,11 +151,25 @@ var WorkspaceDropZone = Backbone.View.extend({
         $(event.target).parent().remove();
         event.preventDefault();
         this.remove_measure(m);
+        this.update_dropzones();
     },
 
     remove_measure: function(m) {
         $('.measure_tree li a[measure="' + m + '"]').parent().css({fontWeight: "normal"}).draggable('enable');
         this.select_measure();
+    },
+
+    update_dropzones: function() {
+        $(this.workspace.el).find('.fields_list_body').each(function(idx, ael) {
+            var $axis = $(ael);
+            if ($axis.find('ul.connectable li').length == 0) {
+                $axis.siblings('.clear_axis').addClass('hide');
+            } else {
+                $axis.siblings('.clear_axis').removeClass('hide');
+            }
+        });
+
+
     },
     
     clear_axis: function(event) {
@@ -162,7 +178,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             if (typeof this.workspace.query == "undefined") {
                 return false;
             }
-            if (this.workspace.query.get('type') != 'QM' || Settings.MODE == "view") {
+            if (this.workspace.query.helper.model().type != 'QUERYMODEL' || Settings.MODE == "view") {
                 return false;
             }
             var $target =  $(event.target);
@@ -172,15 +188,18 @@ var WorkspaceDropZone = Backbone.View.extend({
             if ($axis.hasClass('rows')) { target = "ROWS";  }
             if ($axis.hasClass('columns')) { target = "COLUMNS";  }
             if ($axis.hasClass('filter')) { target = "FILTER";  }
+            
 
-            var url = "/axis/" + target;
-            self.workspace.query.action.del(url, {
-                success: function(model, response) {
-                    $axis.find('.connectable').empty();
-                    self.workspace.query.parse(response);
-                    self.workspace.sync_query();
-                }
-            });
+            if ($axis.hasClass('details')) {
+                this.workspace.query.helper.clearMeasures();
+            } else {
+                this.workspace.query.helper.clearAxis(target);
+            }
+
+            $axis.find('.connectable').empty();
+
+            this.workspace.query.run();
+            this.update_dropzones();
             event.preventDefault();
             return false;
     },

@@ -190,6 +190,7 @@ var DimensionList = Backbone.View.extend({
         }
         $(event.target).parent().draggable('disable');
 
+        this.workspace.drop_zones.update_dropzones();
         this.workspace.query.run();
         /*
         if ( $(this.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
@@ -224,6 +225,7 @@ var DimensionList = Backbone.View.extend({
             this.workspace.query.helper.includeMeasure(measure);
             this.workspace.query.run();
         }
+        this.workspace.drop_zones.update_dropzones();
         
 /*
         if ( $(this.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {

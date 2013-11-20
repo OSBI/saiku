@@ -55,6 +55,10 @@ SaikuOlapQueryHelper.prototype.model = function() {
 	return this.query.model;
 };
 
+SaikuOlapQueryHelper.prototype.clearAxis = function(axisName) {
+  this.model().queryModel.axes[axisName].hierarchies = [];
+};
+
 SaikuOlapQueryHelper.prototype.getHierarchy = function(name) {
   for (var axisName in this.model().queryModel.axes) {
       var axis = this.model().queryModel.axes[axisName];
@@ -114,6 +118,10 @@ SaikuOlapQueryHelper.prototype.removeMeasure = function(name) {
     measures = _.without(measures, removeMeasure);
     //console.log(measures);
   }
+};
+
+SaikuOlapQueryHelper.prototype.clearMeasures = function() {
+  this.model().queryModel.details.measures = [];
 };
 
 SaikuOlapQueryHelper.prototype.setMeasures = function(measures) {
