@@ -58,6 +58,14 @@ var isIE = (function(){
 
 }());
 
+if ($.blockUI) {
+    $.blockUI.defaults.css = { "font-size" : "14px"};
+    $.blockUI.defaults.overlayCSS = {};
+    $.blockUI.defaults.blockMsgClass = 'processing';
+    $.blockUI.defaults.fadeOut = 0;
+    $.blockUI.defaults.fadeIn = 0;
+    $.blockUI.defaults.ignoreIfBlocked = false;
+}
 
 
 var SaikuConfig = {
@@ -97,7 +105,8 @@ SaikuClient.prototype.error = function(jqXHR, textStatus, errorThrown) {
 };
 
 SaikuClient.prototype.execute = function(usercall) {
-  call = _.extend(
+  var self = this;
+  var call = _.extend({},
     SaikuCall,
     usercall
   );
@@ -118,7 +127,11 @@ SaikuClient.prototype.execute = function(usercall) {
 );
 
   
-
+  if ($.blockUI) {
+    $(call.htmlObject).block({ 
+                message: '<span class="saiku_logo" style="float:left">&nbsp;&nbsp;</span> Executing....' 
+    });
+  }
   var params = {
       url:          client.server + "/rest/saiku/embed/export/saiku/json",
       type:         'GET',
@@ -128,14 +141,27 @@ SaikuClient.prototype.execute = function(usercall) {
       dataType:     "json",
       success:      function(data, textStatus, jqXHR) {
         
-            if (usercall.render in SaikuRenderer) {
-                  var r = new SaikuRenderer[usercall.render](data, usercall);
+            if (call.render in SaikuRenderer) {
+                  var r = new SaikuRenderer[call.render](data, call);
                   r.render();
+                  if ($.blockUI) {
+                    $(call.htmlObject).unblock();
+                  }
             } else {
-              alert('Render type ' + usercall.render + " not found!");
+              alert('Render type ' + call.render + " not found!");
+            }
+            if ($.blockUI) {
+              $(call.htmlObject).unblock();
             }
       },
-      error:        this.error,
+      error:        function(jqXHR, textStatus, errorThrown) {
+        if ($.blockUI) {
+              $(call.htmlObject).unblock();
+        }
+
+        $(call.htmlObject).text("Error: " + textStatus);
+        self.error(jqXHR, textStatus, errorThrown);
+      },
       crossDomain: true,
       async:        true,
       beforeSend:   function(request) {
