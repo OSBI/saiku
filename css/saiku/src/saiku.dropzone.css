@@ -60,12 +60,12 @@ span.save {
 span.clear_axis {
   background: url("../../../images/src/cancel3.png") no-repeat scroll center center transparent;
   cursor: pointer;
-  height: 32px;
+  height: 23px;
   opacity: 0.1;
   float: right;
   width: 30px;
-  margin-left: -35px;
   z-index: 1;
+/*  margin-left: -35px; */
 }
 .fields_list:hover span.clear_axis {
   opacity: 0.8;
@@ -96,8 +96,16 @@ span.clear_axis {
     margin: 0px 0px;
     padding: 3px;
     min-width: 90%;
-    min-height: 50px;
+    min-height: 30px;
 }
+
+ul.hierarchy {
+    border-radius: 3px;
+    display: block;
+    overflow: hidden;
+    width: 190px;
+}
+
 .fields_list .fields_list_body ul.hierarchy,  
 .fields_list_body.details li {
     padding-left: 0px;
