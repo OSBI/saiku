@@ -107,6 +107,13 @@ SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level) {
     }
 };
 
+SaikuOlapQueryHelper.prototype.removeLevel = function(hierarchy, level) {
+  var hierarchy = this.getHierarchy(hierarchy);
+  if (hierarchy && hierarchy.levels.hasOwnProperty(level)) {
+    delete hierarchy.levels[level];
+  }
+};
+
 SaikuOlapQueryHelper.prototype.includeMeasure = function(measure) {
   this.model().queryModel.details.measures.push(measure);
 };

@@ -609,6 +609,11 @@ var Workspace = Backbone.View.extend({
                 var measureName = $(ui.helper).find('a').attr('measure');
                 $(ui.helper).detach();
                 this.drop_zones.remove_measure(measureName);
+            } else {
+                var hierarchy = $(ui.helper).find('a').attr('hierarchy');
+                var level =  $(ui.helper).find('a').attr('level');
+                $(ui.helper).detach();
+                this.query.helper.removeLevel(hierarchy, level);
             }
         }
     },

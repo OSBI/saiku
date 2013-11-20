@@ -25,6 +25,7 @@ var WorkspaceDropZone = Backbone.View.extend({
     
     events: {
         'sortstop .fields_list_body.details': 'select_measure',
+        'sortbeforestop .axis_fields': 'select_dimension',
         'click .d_measure a' : 'remove_measure_click',
 //        'click .d_measure span.sort' : 'sort_measure',
         'click .clear_axis' : 'clear_axis'
@@ -80,48 +81,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                 $(ui.helper).find('li.d_level').hide();
                 $('<li class="d_group d_level">' + hierarchy + "</li>").appendTo(ui.helper.find('ul'));
                 */
-            },
-            beforeStop: function(event, ui) {
-                /*
-                $(self.el).find('.axis_fields ul.hierarchy').each( function(index, element) {
-                    $(element).find('li.d_level').show();
-                    $(element).find('.d_group').remove();
-                });
-                */
-                if( $(ui.helper).hasClass('selection') ) {
-                    var hierarchy = ui.item.find('ul.hierarchy').attr('hierarchy');
-                    var indexHierarchy = -1;
-                    ui.helper.parents('ul.connectable').find('li.selection').each( function(index, element) {
-                        if ( $(element).find('ul.hierarchy').attr('hierarchy') == hierarchy) {
-                            indexHierarchy = index;
-                        }
-                    });
-
-                    var toAxis = ui.helper.parents('.axis_fields').parent().attr('title');
-                    var fromAxis = $(event.target).parents('.axis_fields').parent().attr('title');
-                    self.workspace.query.helper.moveHierarchy(fromAxis, toAxis, hierarchy, indexHierarchy);
-                    self.workspace.query.run();
-                    return;
-                }
-                var hierarchy = $(ui.helper).find('a').attr('hierarchy');
-                var level =  $(ui.helper).find('a').attr('level');
-
-                var h = $(self.workspace.el).find('.dimension_tree a.level[hierarchy="' + hierarchy +'"]').parent().parent().clone().removeClass('d_hierarchy').addClass('hierarchy');
-                h.find('.ui-draggable-dragging').remove();
-                h.find('li a[hierarchy="' + hierarchy + '"]').parent().hide();
-                h.find('li a[level="' + level + '"]').parent().show();
-
-                $(self.workspace.el).find('.dimension_tree a.level[hierarchy="' + hierarchy +'"][level="' + level + '"]').parent().not('.ui-draggable-dragging').draggable('disable');
-
-                var selection = $('<li class="selection"></li>');
-                selection.append(h);
-                $(ui.item).empty().removeClass('hide d_level').addClass('selection').append(h);
-                self.update_dropzones();
-                return true;
-                //$(ui.helper).html(selection.html())
-
             }
-
         });
         
         return this; 
@@ -137,7 +97,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             };
             details.push(measure);
 
-            $('.measure_tree li a[measure="' + measure.name + '"]').parent().css({fontWeight: "bold"}).draggable('disable');
+            $('.measure_tree li a[measure="' + measure.name + '"]').parent().draggable('disable');
 
         });
         this.workspace.query.helper.setMeasures(details);
@@ -155,7 +115,7 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
 
     remove_measure: function(m) {
-        $('.measure_tree li a[measure="' + m + '"]').parent().css({fontWeight: "normal"}).draggable('enable');
+        $(this.workspace.el).find('.measure_tree li a[measure="' + m + '"]').parent().draggable('enable');
         this.select_measure();
     },
 
@@ -196,12 +156,75 @@ var WorkspaceDropZone = Backbone.View.extend({
                 this.workspace.query.helper.clearAxis(target);
             }
 
+/* TODO - maybe we should do this all in a synchronize? */
+            $axis.find('ul.hierarchy li.d_level').each( function(index, element) {
+                var hierarchy = $(element).find('a').attr('hierarchy');
+                var level = $(element).find('a').attr('level');
+                $(self.workspace.el).find('.dimension_tree li.d_level a[hierarchy="' + hierarchy + '"][level="' + level + '"]').parent().draggable('enable');
+            });
+            if (!$axis.hasClass('details')) {
+                    $axis.find('ul.hierarchy li.d_level').each( function(index, element) {
+                        var hierarchy = $(element).find('a').attr('hierarchy');
+                        var level = $(element).find('a').attr('level');
+                        $(self.workspace.el).find('.dimension_tree li.d_level a[hierarchy="' + hierarchy + '"][level="' + level + '"]').parent().draggable('enable');
+                    });
+
+            } else {
+                $axis.find('ul.connectable li.d_measure').each( function(index, element) {
+                        var measure = $(element).find('a').attr('measure');
+                        
+                        $(self.workspace.el).find('.measure_tree li.d_measure a[measure="' + measure + '"]').parent().draggable('enable');
+                    });
+            }
+
             $axis.find('.connectable').empty();
+/* up until here */
 
             this.workspace.query.run();
             this.update_dropzones();
             event.preventDefault();
             return false;
+    },
+
+    select_dimension: function(event, ui) {
+        var self = this;
+        /*
+        $(self.el).find('.axis_fields ul.hierarchy').each( function(index, element) {
+            $(element).find('li.d_level').show();
+            $(element).find('.d_group').remove();
+        });
+        */
+        if( $(ui.helper).hasClass('selection') ) {
+            var hierarchy = ui.item.find('ul.hierarchy').attr('hierarchy');
+            var indexHierarchy = -1;
+            ui.helper.parents('ul.connectable').find('li.selection').each( function(index, element) {
+                if ( $(element).find('ul.hierarchy').attr('hierarchy') == hierarchy) {
+                    indexHierarchy = index;
+                }
+            });
+
+            var toAxis = ui.helper.parents('.axis_fields').parent().attr('title');
+            var fromAxis = $(event.target).parents('.axis_fields').parent().attr('title');
+            self.workspace.query.helper.moveHierarchy(fromAxis, toAxis, hierarchy, indexHierarchy);
+            self.workspace.query.run();
+            return;
+        }
+        var hierarchy = $(ui.helper).find('a').attr('hierarchy');
+        var level =  $(ui.helper).find('a').attr('level');
+
+        var h = $(self.workspace.el).find('.dimension_tree a.level[hierarchy="' + hierarchy +'"]').parent().parent().clone().removeClass('d_hierarchy').addClass('hierarchy');
+        h.find('.ui-draggable-dragging').remove();
+        h.find('li a[hierarchy="' + hierarchy + '"]').parent().hide();
+        h.find('li a[level="' + level + '"]').parent().show();
+
+        $(self.workspace.el).find('.dimension_tree a.level[hierarchy="' + hierarchy +'"][level="' + level + '"]').parent().not('.ui-draggable-dragging').draggable('disable');
+
+        var selection = $('<li class="selection"></li>');
+        selection.append(h);
+        $(ui.item).empty().removeClass('hide d_level').addClass('selection').append(h);
+        self.update_dropzones();
+        return true;
+        //$(ui.helper).html(selection.html())
     },
 
     sort_measure: function(event, ui) {
@@ -254,220 +277,7 @@ var WorkspaceDropZone = Backbone.View.extend({
 
     },
     
-    select_dimension: function(event, ui) {
-
-/*
-        $('.workspace_fields').css('height','');
-        var wh = $('.workspace_fields').height();
-        $('.workspace_fields').css('height', wh);
-
-        if ($axis.length == 0) {
-            $axis = $('.workspace_fields .placeholder').parents('.fields_list_body');
-        }
-
-        // total width - fieldslist header + padding 15 - clear icon width
-        var bodyWidth = ww - $axis.siblings('.fields_list_header').width() - 15 - $axis.siblings('.clear_axis').width();
-        $axis.width(bodyWidth);
-
-        var axisHeight = $axis.height() ? $axis.height() : 0;
-        if (axisHeight > 40) {
-            $axis.siblings('.fields_list_header').height($axis.height() - 6);
-        } else {
-            $axis.siblings('.fields_list_header').css('height','');
-        }
-        */
-        
-        var $axis = ui.item.parents('.fields_list_body');
-        var target = "";
-        
-        if ($axis.hasClass('rows')) target = "ROWS";
-        if ($axis.hasClass('columns')) target = "COLUMNS";
-        if ($axis.hasClass('filter')) target = "FILTER";
-
-
-        // Short circuit if this is a move
-        if (ui.item.hasClass('d_measure') ||
-                ui.item.hasClass('d_dimension')) {
-            this.move_dimension(event, ui, target);
-            return;
-        }
-
-        // Make the element and its parent bold
-        var original_href = ui.item.find('a').attr('href');
-        var $original = $(this.workspace.el).find('.sidebar')
-            .find('a[href="' + original_href + '"]').parent('li').first();
-        $original
-            .css({fontWeight: "bold"});
-
-        $original.draggable('disable');
-
-        $original.parents('.parent_dimension')
-            .find('.folder_collapsed')
-            .css({fontWeight: "bold"});
-        
-
-        // Wrap with the appropriate parent element
-        if (ui.item.find('a').hasClass('level')) {
-            var $icon = $("<span />").addClass('sprite selections');
-            var $icon2 = $("<span />").addClass('sprite sort none');
-            ui.item.addClass('d_dimension').prepend($icon);
-            $icon2.insertBefore($icon);
-        } else {
-            var $icon = $("<span />").addClass('sort none');
-            ui.item.addClass('d_measure').prepend($icon);
-        }
-
-
-
-        var member = ui.item.find('a').attr('href').replace('#', '');
-        var dimension = member.split('/')[0];
-        var dimensions = [];
-
-        this.update_selections(event,ui);
-
-        $axis.find('a').each( function(i,element) {
-            var imember = $(element).attr('href');
-            var idimension = imember.replace('#', '').split('/')[0]; 
-            if (dimensions.indexOf(idimension) == -1) {
-                dimensions.push(idimension);
-            }
-        });
-
-        var index = dimensions.indexOf(dimension);
-
-
-        // Notify the model of the change
-        this.workspace.query.move_dimension(member, 
-                target, index);
-
-        if ("FILTER" == target && ui.item.hasClass('d_dimension')) {
-                var ev = { target : $axis.find('a[href="#' + member + '"]') };
-                this.selections(ev, ui);
-        }
-
-        // Prevent workspace from getting this event
-        return true;
-    },
     
-    move_dimension: function(event, ui, target) {
-        if (! ui.item.hasClass('deleted')) {
-            var $axis = ui.item.parents('.fields_list_body');
-
-            // Notify the model of the change
-            var dimension = ui.item.find('a').attr('href').replace('#', '').split('/')[0];
-            var dimensions = [];
-
-            this.update_selections(event,ui);
-
-            $axis.find('a').each( function(i,element) {
-                var imember = $(element).attr('href');
-                var idimension = imember.replace('#', '').split('/')[0]; 
-                if (dimensions.indexOf(idimension) == -1) {
-                    dimensions.push(idimension);
-                }
-            });
-            var index = dimensions.indexOf(dimension);
-
-            
-                this.workspace.query.move_dimension(dimension, 
-                    target, index);
-        }
-        
-        // Prevent workspace from getting this event
-        event.stopPropagation();
-        return false;
-    },
-
-    update_selections: function(event, ui) {
-        var member = ui.item.find('a').attr('href');
-        var dimension = member.replace('#', '').split('/')[0];
-        var index = ui.item.parent('.connectable').children().index(ui.item);
-        var $axis = ui.item.parents('.fields_list_body');
-        var allAxes = $axis.parent().parent();
-        var target = '';
-        var source = '';
-        var myself = this;
-        var $originalItem =  $(myself.workspace.el).find('.sidebar')
-                                    .find('a[href="' + member + '"]').parent();
-        var insertElement = $(ui.item);
-        var type = $(ui.item).hasClass('d_dimension') ? "d_dimension" : "d_measure";
-
-        var sourceAxis = "";
-        if ($axis.hasClass('rows')) sourceAxis = "ROWS";
-        if ($axis.hasClass('columns')) sourceAxis = "COLUMNS";
-        if ($axis.hasClass('filter')) sourceAxis = "FILTER";
-
-        source = ".rows, .columns, .filter";
-        allAxes.find(source).find('a').each( function(index, element) {
-            var p_member = $(element).attr('href').replace('#', '');
-            var p_dimension = p_member.split('/')[0];
-            if (p_dimension == dimension && (( "#" + p_member) != member )) {
-                $(element).parent().remove();
-            }
-        });
-        
-        var n_dimension = null;
-        var p_dimension = null;
-
-        
-        var prev = $(ui.item).prev();
-        if (prev && prev.length > 0) {
-            var p_member = prev.find('a').attr('href');
-            p_dimension = p_member.replace('#', '').split('/')[0];
-        }
-        var next = $(ui.placeholder).next();
-
-        while (p_dimension != null && next && next.length > 0 ) {
-            var n_member = next.find('a').attr('href');
-            n_dimension = n_member.replace('#', '').split('/')[0]; 
-            if (p_dimension == n_dimension) {
-                next.insertBefore($(ui.item));
-            } else {
-                p_dimension = null;
-            }
-            next = $(ui.placeholder).next();
-        }
-            
-
-        $originalItem.parent().find('.ui-draggable-disabled').clone().attr('class', 'ui-draggable').removeAttr('style')
-                                .addClass(type)
-                                .insertAfter(insertElement);
-        
-
-        $axis.find('.d_dimension a').each( function(index, element) {
-            element = $(element);
-            if (!element.prev() || (element.prev() && element.prev().length == 0)) {
-                var $icon = $("<span />").addClass('sprite sort none');
-                $icon.insertBefore(element);
-                var $icon = $("<span />").addClass('sprite selections');
-                $icon.insertBefore(element);
-
-            }
-        });
-
-        $axis.find('.d_measure a, .d_dimension a').each( function(index, element) {
-            element = $(element);
-            if (!element.prev() || (element.prev() && element.prev().length == 0)) {
-                if (sourceAxis != "FILTER") {
-                    var $icon = $("<span />").addClass('sort none');
-                    $icon.insertBefore(element);
-                }
-                
-            }
-        });
-
-        $(ui.item).remove();
-
-        $(this.workspace.el).find('.fields_list_body').each(function(idx, ael) {
-            var $axis = $(ael);
-            if ($axis.find('li').length == 0) {
-                $axis.siblings('.clear_axis').addClass('hide');
-            } else {
-                $axis.siblings('.clear_axis').removeClass('hide');
-            }
-        });
-        return false;
-    },
 
 
     remove_dimension: function(event, ui) {
