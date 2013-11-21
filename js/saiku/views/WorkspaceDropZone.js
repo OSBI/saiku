@@ -195,18 +195,33 @@ var WorkspaceDropZone = Backbone.View.extend({
         });
         */
         if( $(ui.helper).hasClass('selection') ) {
-            var hierarchy = ui.item.find('ul.hierarchy').attr('hierarchy');
+            var hierarchy = ui.helper.find('ul.hierarchy').attr('hierarchy');
             var indexHierarchy = -1;
-            ui.helper.parents('ul.connectable').find('li.selection').each( function(index, element) {
+            ui.placeholder.parents('ul.connectable').find('li.selection').each( function(index, element) {
                 if ( $(element).find('ul.hierarchy').attr('hierarchy') == hierarchy) {
                     indexHierarchy = index;
                 }
             });
 
-            var toAxis = ui.helper.parents('.axis_fields').parent().attr('title');
+            var toAxis = ui.placeholder.parents('.axis_fields').parent().attr('title');
             var fromAxis = $(event.target).parents('.axis_fields').parent().attr('title');
-            self.workspace.query.helper.moveHierarchy(fromAxis, toAxis, hierarchy, indexHierarchy);
+
+            var isNew = ui.placeholder.parent().find('ul.hierarchy[hierarchy="' + hierarchy + '"]').length == 0;
+            if (isNew) {
+                var level = ui.helper.find('ul.hierarchy li.d_level a:visible').attr('level');
+                this.workspace.query.helper.includeLevel(toAxis, hierarchy, level);
+            } else {
+                self.workspace.query.helper.moveHierarchy(fromAxis, toAxis, hierarchy, indexHierarchy);
+            }
+
+            //ui.helper.detach();
+            var sel = ui.helper.clone();
+            sel.removeAttr('style').removeClass('ui-draggable-dragging');
+            ui.item.replaceWith( sel );
+            
+            
             self.workspace.query.run();
+            self.update_dropzones();
             return;
         }
         var hierarchy = $(ui.helper).find('a').attr('hierarchy');

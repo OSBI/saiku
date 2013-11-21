@@ -98,18 +98,19 @@ var DimensionList = Backbone.View.extend({
         $(this.el).find('.level').parent('li').draggable({
             cancel: '.not-draggable, .hierarchy',
             connectToSortable: $(this.workspace.el).find('.fields_list_body.columns > ul.connectable, .fields_list_body.rows > ul.connectable, .fields_list_body.filter > ul.connectable'),
-            helper: "clone",
-/*            helper: function(event, ui){
+            //helper: "clone",
+            helper: function(event, ui){
                 var target = $(event.target).hasClass('d_level') ? $(event.target) : $(event.target).parent();
                 var hierarchy = target.find('a').attr('hierarchy');
+                var level = target.find('a').attr('level');
                 var h = target.parent().clone().removeClass('d_hierarchy').addClass('hierarchy');
                 h.find('li a[hierarchy="' + hierarchy + '"]').parent().hide();
-                target.show();
+                h.find('li a[level="' + level + '"]').parent().show();
                 var selection = $('<li class="selection"></li>');
                 selection.append(h);
                 return selection;
 
-                
+                /*
 
                 var hierarchy = target.find('a').attr('hierarchy');
                 var level = target.find('a').attr('level');
@@ -119,9 +120,10 @@ var DimensionList = Backbone.View.extend({
                 var selection = $('<li class="selection"></li>');
                 selection.append(dropHierarchy);
                 return selection;
+                */
 
 
-            },*/
+            },
 
             placeholder: 'placeholder',
             opacity: 0.60,
