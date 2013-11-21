@@ -259,7 +259,7 @@
 			<groupId>org.saiku</groupId>
 			<artifactId>saiku-bi-platform-plugin-util</artifactId>
 			<version>${project.version}</version>
-								<exclusions>
+            <exclusions>
 				<exclusion>
 					<artifactId>
 						pentaho-bi-platform-plugin-actions
@@ -320,11 +320,6 @@
 			<groupId>pentaho</groupId>
 			<artifactId>cda</artifactId>
 			<version>TRUNK-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>pentaho</groupId>
-			<artifactId>cpf-pentaho5</artifactId>
-			<version>REFACTOR-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 		 	<groupId>pentaho-library</groupId>
