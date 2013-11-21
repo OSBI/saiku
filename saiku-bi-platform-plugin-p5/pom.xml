@@ -309,6 +309,12 @@
 			<groupId>pentaho</groupId>
 			<artifactId>cpf-pentaho5</artifactId>
 			<version>REFACTOR-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<groupId>pentaho</groupId>
+					<artifactId>pentaho-user-console-package</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>pentaho</groupId>
