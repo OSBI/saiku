@@ -120,13 +120,13 @@
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
-									<groupId>pt.webdetails</groupId>
+									<groupId>pentaho</groupId>
 									<artifactId>cpf-core</artifactId>
 									<version>REFACTOR-SNAPSHOT</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
-									<groupId>pt.webdetails</groupId>
+									<groupId>pentaho</groupId>
 									<artifactId>cpf-pentaho5</artifactId>
 									<version>REFACTOR-SNAPSHOT</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
@@ -301,12 +301,12 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>pt.webdetails</groupId>
+			<groupId>pentaho</groupId>
 			<artifactId>cpf-core</artifactId>
 			<version>REFACTOR-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>pt.webdetails</groupId>
+			<groupId>pentaho</groupId>
 			<artifactId>cpf-pentaho5</artifactId>
 			<version>REFACTOR-SNAPSHOT</version>
 		</dependency>
@@ -316,7 +316,7 @@
 			<version>TRUNK-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>pt.webdetails</groupId>
+			<groupId>pentaho</groupId>
 			<artifactId>cpf-pentaho5</artifactId>
 			<version>REFACTOR-SNAPSHOT</version>
 		</dependency>
