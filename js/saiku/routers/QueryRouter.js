@@ -27,7 +27,7 @@ var QueryRouter = Backbone.Router.extend({
         Settings.ACTION = "OPEN_QUERY";
         var options = {};
         var dataType = "text";
-        if (Settings.BIPLUGIN) {
+        if (!Settings.BIPLUGIN5 && Settings.BIPLUGIN) {
             var file = (Settings.GET.SOLUTION ? (Settings.GET.SOLUTION + "/") : "")
                         + (Settings.GET.PATH && Settings.GET.PATH != "/" ? (Settings.GET.PATH + "/") : "")
                         + (Settings.GET.ACTION || "");
