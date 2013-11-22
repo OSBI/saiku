@@ -100,6 +100,12 @@
         <property name="relativeFilePath" value="ui/forward.html" />
         <property name="pluginId" value="saiku" />
     </bean>
+    
+    <bean id="saiku" class="org.pentaho.platform.plugin.services.webservices.content.PluginFileContentGenerator" scope="prototype">
+        <property name="mimeType" value="text/html" />
+        <property name="relativeFilePath" value="ui/forward.html" />
+        <property name="pluginId" value="saiku" />
+    </bean>
 
     
   <bean class="org.pentaho.platform.engine.core.solution.ContentInfo">
