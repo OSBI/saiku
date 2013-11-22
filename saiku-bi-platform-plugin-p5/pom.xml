@@ -304,6 +304,12 @@
 			<groupId>pentaho</groupId>
 			<artifactId>cpf-core</artifactId>
 			<version>REFACTOR-SNAPSHOT</version>
+			<exclusions>
+			<exclusion>
+					<groupId>janino</groupId>
+					<artifactId>janino</artifactId>
+			</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>pentaho</groupId>
@@ -314,8 +320,14 @@
 					<groupId>pentaho</groupId>
 					<artifactId>pentaho-user-console-package</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>janino</groupId>
+					<artifactId>janino</artifactId>
+				</exclusion>
+				
 			</exclusions>
 		</dependency>
+<!-- 
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>cda</artifactId>
@@ -326,6 +338,7 @@
   			<artifactId>libloader</artifactId>
   			<version>${pentaho.platform.version}</version>
 		</dependency>
+-->
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>mondrian</artifactId>

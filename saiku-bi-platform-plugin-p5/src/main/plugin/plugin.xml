@@ -8,7 +8,12 @@
   			<menuitem id="new-saiku-analytics" label="Saiku Analytics" command="mantleXulHandler.openUrl('Saiku Analytics','Saiku Analytics','content/saiku-ui/index.html?biplugin5=true')" />
   		</menubar>				
     </overlay>
+    
+    <overlay id="launch"> 
+    	<button id="SaikuAnalytics" label="Saiku Analytics" command="Home.openFile('Saiku Analytics','Saiku Analytics', 'content/saiku-ui/index.html?biplugin5=true');$('#btnCreateNew').popover('hide')"/> 
+    </overlay>
   </overlays>
+  
 <!--
     <content-types>
     	<content-type mime-type="text/xml" type="saiku">
