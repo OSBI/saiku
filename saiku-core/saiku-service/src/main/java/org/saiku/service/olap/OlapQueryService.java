@@ -940,7 +940,8 @@ public class OlapQueryService implements Serializable {
 				filters = getAxisSelection(queryName, "FILTER");
 			}
 			if (type.toLowerCase().equals("xls")) {
-				return ExcelExporter.exportExcel(rs, formatter, filters);
+				// TODO - added null parameter for filters - not used anymore
+				return ExcelExporter.exportExcel(rs, formatter, null);
 			}
 			if (type.toLowerCase().equals("csv")) {
 				return CsvExporter.exportCsv(rs,",","\"", formatter);
