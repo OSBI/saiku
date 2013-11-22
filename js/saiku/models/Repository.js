@@ -17,17 +17,28 @@
 /**
  * Repository query
  */
-
 var RepositoryUrl = "api/repository";
+var repoPathUrl = function() {
+    /*
+    return (Settings.BIPLUGIN5 ? "/repository"
+                    : (Settings.BIPLUGIN ? "/pentahorepository2" : "/repository2"));
+    */
+    return  RepositoryUrl;
+}
+
+
+
 var RepositoryObject = Backbone.Model.extend( {
     url: function( ) {
-        return RepositoryUrl + "resource";
+        var segment = repoPathUrl() + "/resource";
+        return segment;
     }
 } );
 
 var RepositoryAclObject = Backbone.Model.extend( {
     url: function( ) {
-        return RepositoryUrl + "/resource/acl";
+        var segment = repoPathUrl() + "/resource/acl";
+        return segment;
     },
     parse: function(response) {
         if (response != "OK") {
@@ -38,7 +49,8 @@ var RepositoryAclObject = Backbone.Model.extend( {
 
 var RepositoryZipExport = Backbone.Model.extend( {
     url: function( ) {
-        return RepositoryUrl + "/zip";
+        var segment = repoPathUrl() + "/resource/zip";
+        return segment;
     }
 } );
 
@@ -50,7 +62,9 @@ var SavedQuery = Backbone.Model.extend({
     },
     
     url: function() {
-        return RepositoryUrl + "/resource";
+        var u = repoPathUrl() + "/resource";
+        return u;
+
     },
     
     move_query_to_workspace: function(model, response) {
@@ -96,6 +110,7 @@ var Repository = Backbone.Collection.extend({
     },
     
     url: function() {
-        return RepositoryUrl + "?type=saiku";
+        var segment = repoPathUrl() + "?type=saiku";
+        return segment;
     }
 });
