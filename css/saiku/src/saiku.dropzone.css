@@ -102,8 +102,7 @@ span.clear_axis {
 ul.hierarchy {
     border-radius: 3px;
     display: block;
-    overflow: hidden;
-    width: 190px;
+    width: 194px;
 }
 
 .fields_list .fields_list_body ul.hierarchy,  
@@ -118,7 +117,6 @@ ul.hierarchy {
     padding: 1px;
     margin: 1px;
     min-width: 90%;
-    cursor: pointer;
 
 }
 .dimension_tree li.ui-draggable-disabled,
@@ -134,9 +132,10 @@ ul.hierarchy {
     line-height: 17px;
     list-style-type: none;
     display: block;
-    width: 170px;
+    width: 194px;
     text-align: left;
     white-space:nowrap;
+    cursor: pointer;
     
 }
 .fields_list .fields_list_body ul.hierarchy li, 
