@@ -283,6 +283,22 @@ var Table = Backbone.View.extend({
         if (this.workspace.query.get('type') == 'QM' && Settings.MODE != "view") {
             $(this.el).find('th.row, th.col').addClass('headerhighlight');
         }
+        /*
+        var tipOptions = {
+          delayIn: 200,
+          delayOut:80,
+          offset:  2,
+          html:    true,
+          gravity: "nw",
+          fade:    false,
+          followMouse: true,
+          corners: true,
+          arrow:   false,
+          opacity: 1
+    };
+
+        $(this.el).find('th.row, th.col').tipsy(tipOptions);
+        */
         this.workspace.trigger('table:rendered', this);
     }
 });

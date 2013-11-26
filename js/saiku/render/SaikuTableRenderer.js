@@ -112,6 +112,17 @@ SaikuTableRenderer.prototype.internalRender = function(data, options) {
 
                 var same = !isHeaderLowestLvl && (col == 0 || previousRow[col-1].value == data[row][col-1].value) && header.value === previousRow[col].value;
                 var value = (same ? "<div>&nbsp;</div>" : '<div rel="' + row + ":" + col +'">' + header.value + '</div>');
+                var tipsy = "";
+                /* var tipsy = ' original-title="';
+                if (!same && header.metaproperties) {
+                    for (key in header.metaproperties) {
+                        if (key.substring(0,1) != "$" && key.substring(1,2).toUpperCase() != key.substring(1,2)) {
+                            tipsy += "<b>" + safe_tags_replace(key) + "</b> : " + safe_tags_replace(header.metaproperties[key]) + "<br>";
+                        }
+                    }
+                }
+                tipsy += '"';
+                */
                 var cssclass = (same ? "row_null" : "row");
                 var colspan = 0;
 
@@ -125,7 +136,7 @@ SaikuTableRenderer.prototype.internalRender = function(data, options) {
                     }
                     col = col + colspan -1;
                 }
-                contents += '<th class="' + cssclass + '" ' + (colspan > 0 ? ' colspan="' + colspan + '"' : "") + '>' + value + '</th>';
+                contents += '<th class="' + cssclass + '" ' + (colspan > 0 ? ' colspan="' + colspan + '"' : "") + tipsy + '>' + value + '</th>';
             }
             else if (header.type === "ROW_HEADER_HEADER") {
                 contents += '<th class="row_header"><div>' + header.value + '</div></th>';
