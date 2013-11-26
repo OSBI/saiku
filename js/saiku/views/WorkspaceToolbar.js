@@ -131,14 +131,15 @@ var WorkspaceToolbar = Backbone.View.extend({
         }
 
         $(this.el).find(".spark_bar, .spark_line").removeClass('on');
+        $(this.el).find('a.edit').removeClass('disabled_toolbar');
 
         if (Settings.MODE == 'VIEW' || this.workspace.isReadOnly) {
             $(this.el).find('a.edit').hide();
         } else {
             if (this.workspace.viewState == 'view') {
-                $(this.el).find('a.edit').removeClass('on')
+                $(this.el).find('a.edit').removeClass('on');
             } else {
-                $(this.el).find('a.edit').addClass('on')
+                $(this.el).find('a.edit').addClass('on');
             }
             $(this.el).find('a.edit').show('normal');
         }
