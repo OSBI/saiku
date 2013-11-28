@@ -130,14 +130,13 @@ public class ObjectUtil {
 			throw new SaikuServiceException("Cannot convert level: " + level,e);
 		}
 	}
-
+	
 	public static List<SaikuMember> convertMembers(Collection<Member> members) {
 		List<SaikuMember> memberList= new ArrayList<SaikuMember>();
-		for (Member l : members) {
-			memberList.add(convert(l));
+		for (Member m : members) {
+			memberList.add(convert(m));
 		}
 		return memberList;
-
 	}
 	
 	public static List<SaikuSelection> convertSelections(List<Selection> selections) {
@@ -257,9 +256,9 @@ public class ObjectUtil {
 		
 	}
 
-	public static List<SimpleCubeElement> convert2Simple(Set<MetadataElement> mset) {
+	public static List<SimpleCubeElement> convert2Simple(Collection<? extends MetadataElement> mset) {
 		List<SimpleCubeElement> elements = new ArrayList<SimpleCubeElement>();
-		if (mset != null && mset.size() > 0) {
+		if (mset != null) {
 			for (MetadataElement e : mset) {
 				elements.add(new SimpleCubeElement(e.getName(), e.getUniqueName(), e.getCaption()));
 			}

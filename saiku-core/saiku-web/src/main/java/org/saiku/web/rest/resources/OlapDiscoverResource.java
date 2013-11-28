@@ -32,6 +32,7 @@ import org.saiku.olap.dto.SaikuDimension;
 import org.saiku.olap.dto.SaikuHierarchy;
 import org.saiku.olap.dto.SaikuLevel;
 import org.saiku.olap.dto.SaikuMember;
+import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -227,7 +228,7 @@ public class OlapDiscoverResource implements Serializable {
 	@GET
 	@Produces({"application/json" })
 	@Path("/{connection}/{catalog}/{schema}/{cube}/dimensions/{dimension}/hierarchies/{hierarchy}/levels/{level}")
-	public List<SaikuMember> getLevelMembers(
+	public List<SimpleCubeElement> getLevelMembers(
 			@PathParam("connection") String connectionName, 
 			@PathParam("catalog") String catalogName, 
 			@PathParam("schema") String schemaName, 
@@ -247,7 +248,7 @@ public class OlapDiscoverResource implements Serializable {
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 		}
-		return new ArrayList<SaikuMember>();
+		return new ArrayList<SimpleCubeElement>();
 	}
    
 	/**

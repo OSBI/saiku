@@ -45,6 +45,7 @@ import org.saiku.olap.dto.SaikuHierarchy;
 import org.saiku.olap.dto.SaikuLevel;
 import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.SaikuSchema;
+import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.util.ObjectUtil;
 import org.saiku.olap.util.SaikuCubeCaptionComparator;
 import org.saiku.olap.util.SaikuDimensionCaptionComparator;
@@ -292,10 +293,18 @@ public class OlapMetaExplorer {
 
 	}
 
-	public List<SaikuMember> getAllMembers(SaikuCube cube, String dimension, String hierarchy, String level) throws SaikuOlapException {
+	public List<SimpleCubeElement> getAllMembers(SaikuCube cube, String dimension, String hierarchy, String level) throws SaikuOlapException {
+		return getAllMembers(cube, dimension, hierarchy, level, null, -1);
+	}
+	
+	public List<SimpleCubeElement> getAllMembers(SaikuCube cube, String dimension, String hierarchy, String level, String searchString, int searchLimit) throws SaikuOlapException {
 		try {
 			Cube nativeCube = getNativeCube(cube);
 			Dimension dim = nativeCube.getDimensions().get(dimension);
+			boolean search = StringUtils.isNotBlank(searchString);
+			int found = 0;
+			List<SimpleCubeElement> simpleMembers = new ArrayList<SimpleCubeElement>();
+			
 			if (dim != null) {
 				Hierarchy h = dim.getHierarchies().get(hierarchy);
 				if (h == null) {
@@ -311,20 +320,42 @@ public class OlapMetaExplorer {
 					if (l == null) {
 						for (Level lvl : h.getLevels()) {
 							if (lvl.getUniqueName().equals(level) || lvl.getName().equals(level)) {
-								return (ObjectUtil.convertMembers(lvl.getMembers()));
+								l = lvl;
+								break;
 							}
 						}
-					} else {
-						return (ObjectUtil.convertMembers(l.getMembers()));
+					} 
+					if (l == null) {
+						throw new SaikuOlapException("Cannot find level " + level + " in hierarchy " + hierarchy + " of cube " + cube.getName());
 					}
-
+					if (search || searchLimit > 0) {
+						List<Member> foundMembers = new ArrayList<Member>();
+						for (Member m : l.getMembers()) {
+							if (search) {
+								if (m.getName().toLowerCase().contains(searchString) || m.getCaption().toLowerCase().contains(searchString) ) {
+										foundMembers.add(m);
+										found++;
+								}
+							} else {
+								foundMembers.add(m);
+								found++;
+							}
+							if (searchLimit > 0 && found >= searchLimit) {
+								break;
+							}
+						}
+						simpleMembers = ObjectUtil.convert2Simple(foundMembers);
+					} else {
+						simpleMembers = ObjectUtil.convert2Simple(l.getMembers());
+					}
+					return simpleMembers;
 				}
 			}
 		} catch (OlapException e) {
 			throw new SaikuOlapException("Cannot get all members",e);
 		}
 
-		return new ArrayList<SaikuMember>();
+		return new ArrayList<SimpleCubeElement>();
 
 	}
 

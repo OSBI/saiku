@@ -28,6 +28,7 @@ import org.saiku.olap.dto.SaikuDimension;
 import org.saiku.olap.dto.SaikuHierarchy;
 import org.saiku.olap.dto.SaikuLevel;
 import org.saiku.olap.dto.SaikuMember;
+import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.util.exception.SaikuServiceException;
@@ -151,9 +152,17 @@ public class OlapDiscoverService implements Serializable {
 		}
 	}
 
-	public List<SaikuMember> getLevelMembers(SaikuCube cube, String dimensionName, String hierarchyName, String levelName) {
+	public List<SimpleCubeElement> getLevelMembers(SaikuCube cube, String dimensionName, String hierarchyName, String levelName) {
+		return getLevelMembers(cube, dimensionName, hierarchyName, levelName, null, -1);
+	}
+	
+	public List<SimpleCubeElement> getLevelMembers(SaikuCube cube, String dimensionName, String hierarchyName, String levelName, int searchLimit) {
+		return getLevelMembers(cube, dimensionName, hierarchyName, levelName, null, searchLimit);
+	}
+	
+	public List<SimpleCubeElement> getLevelMembers(SaikuCube cube, String dimensionName, String hierarchyName, String levelName, String searchString, int searchLimit) {
 		try {
-			return  metaExplorer.getAllMembers(cube, dimensionName, hierarchyName, levelName);
+			return  metaExplorer.getAllMembers(cube, dimensionName, hierarchyName, levelName, searchString, searchLimit);
 		} catch (SaikuOlapException e) {
 			throw new SaikuServiceException("Cannot get all members for cube ( " + cube 
 					+ " ) dimension ( " + dimensionName + " ) hierarchy ( " + hierarchyName + " )", e);

@@ -270,7 +270,7 @@ public class OlapMetaExplorerTest {
     
     @Test
     public final void testGetAllMembers() throws SaikuOlapException{
-    	List<SaikuMember> members = olapMetaExplorer.getAllMembers(olapMetaExplorer.getAllCubes().get(0), "Department", "Department", "Department Description");
+    	List<SimpleCubeElement> members = olapMetaExplorer.getAllMembers(olapMetaExplorer.getAllCubes().get(0), "Department", "Department", "Department Description");
     	
     	assertNotNull(members);
     	
@@ -307,7 +307,7 @@ public class OlapMetaExplorerTest {
 
     @Test
     public final void testGetAllMembersUniqueNameHierarchy() throws SaikuOlapException{
-        List<SaikuMember> members = olapMetaExplorer.getAllMembers(olapMetaExplorer.getAllCubes().get(0), "Department", "[Department]", "Department Description");
+        List<SimpleCubeElement> members = olapMetaExplorer.getAllMembers(olapMetaExplorer.getAllCubes().get(0), "Department", "[Department]", "Department Description");
         
         assertNotNull(members);
         
@@ -316,7 +316,7 @@ public class OlapMetaExplorerTest {
     
     @Test
     public final void testGetAllMembersUniqueNameLevel() throws SaikuOlapException{
-        List<SaikuMember> members = olapMetaExplorer.getAllMembers(olapMetaExplorer.getAllCubes().get(0), "Department", "Department", "[Department].[(All)]");
+        List<SimpleCubeElement> members = olapMetaExplorer.getAllMembers(olapMetaExplorer.getAllCubes().get(0), "Department", "Department", "[Department].[(All)]");
         
         assertNotNull(members);
         

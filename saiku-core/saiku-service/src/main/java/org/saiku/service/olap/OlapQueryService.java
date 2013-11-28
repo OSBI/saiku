@@ -359,17 +359,20 @@ public class OlapQueryService implements Serializable {
 		return execute(queryName, formatter);
 	}
 
-	public List<SaikuMember> getResultMetadataMembers(String queryName, boolean preferResult, String dimensionName, String hierarchyName, String levelName) {
+	public List<SimpleCubeElement> getResultMetadataMembers(String queryName, boolean preferResult, String dimensionName, String hierarchyName, String levelName, String searchString, int searchLimit) {
 		IQuery query = getIQuery(queryName);
 		CellSet cs = query.getCellset();
-		List<SaikuMember> members = new ArrayList<SaikuMember>();
+		List<SimpleCubeElement> members = new ArrayList<SimpleCubeElement>();
 		Set<Level> levels = new HashSet<Level>();
+		boolean search = StringUtils.isNotBlank(searchString);
+		preferResult = (preferResult && search);
+		searchString = search ? searchString.toLowerCase() : null;
 
 		if (cs != null && preferResult) {
 			for (CellSetAxis axis : cs.getAxes()) {
 				int posIndex = 0;
 				for (Hierarchy h : axis.getAxisMetaData().getHierarchies()) {
-					if (h.getUniqueName().equals(hierarchyName)) {
+					if (h.getUniqueName().equals(hierarchyName) || h.getName().equals(hierarchyName)) {
 						log.debug("Found hierarchy in the result: " + hierarchyName);
 						if (h.getLevels().size() == 1) {
 							break;
@@ -380,12 +383,12 @@ public class OlapQueryService implements Serializable {
 							if (!m.getLevel().getLevelType().equals(Type.ALL)) {
 								levels.add(m.getLevel());
 							}
-							if (m.getLevel().getUniqueName().equals(levelName)) {
+							if (m.getLevel().getUniqueName().equals(levelName) || m.getLevel().getName().equals(levelName)) {
 								mset.add(m);
 							}
 						}
 
-						members = ObjectUtil.convertMembers(mset);
+						members = ObjectUtil.convert2Simple(mset);
 						Collections.sort(members, new SaikuUniqueNameComparator());
 
 						break;
@@ -397,9 +400,8 @@ public class OlapQueryService implements Serializable {
 
 		}
 		if (cs == null || !preferResult || members.size() == 0 || levels.size() == 1) {
-			members = olapDiscoverService.getLevelMembers(query.getSaikuCube(), dimensionName, hierarchyName, levelName);
+			members = olapDiscoverService.getLevelMembers(query.getSaikuCube(), dimensionName, hierarchyName, levelName, searchString, searchLimit);
 		}
-
 		return members;
 	}
 
