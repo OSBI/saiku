@@ -15,10 +15,12 @@
  */
 package org.saiku.olap.util;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
@@ -265,5 +267,50 @@ public class ObjectUtil {
 		}
 		return elements;
 	}
+	
+	public static List<SimpleCubeElement> convert(ResultSet rs) throws Exception {
+		try {
+			int width = 0;
+			boolean first = false;
+			List<SimpleCubeElement> elements = new ArrayList<SimpleCubeElement>();
+			if (rs != null) {
+				while (rs.next()) {
+					if (first) {
+						first = false;
+						width = rs.getMetaData().getColumnCount();
+					}
+					String[] row = new String[3];
+					for (int i = 0; i < width; i++) {
+						row[i] = rs.getString(i);
+					}
+					SimpleCubeElement s = new SimpleCubeElement(row[0], row[1], row[2]);
+					elements.add(s);
+				}
+			}
+			return elements;
+			
+	} catch (Exception e) {
+		throw new SaikuServiceException("Error converting ResultSet into SimpleCubeElement", e);
+	} finally {
+			if (rs != null) {
+				Statement statement = null;
+				Connection con = null;
+				try {
+					 statement = rs.getStatement();
 
+				} catch (Exception e) {
+					throw new SaikuServiceException(e);
+				} finally {
+					try {
+						rs.close();
+						if (statement != null) {
+							statement.close();
+						}
+					} catch (Exception ee) {};
+
+					rs = null;
+				}
+			}
+		}
+	}
 }

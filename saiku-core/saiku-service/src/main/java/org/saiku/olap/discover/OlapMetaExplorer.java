@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import mondrian.olap4j.SaikuMondrianHelper;
+import mondrian.rolap.RolapConnection;
+
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapDatabaseMetaData;
@@ -50,6 +53,7 @@ import org.saiku.olap.util.ObjectUtil;
 import org.saiku.olap.util.SaikuCubeCaptionComparator;
 import org.saiku.olap.util.SaikuDimensionCaptionComparator;
 import org.saiku.olap.util.exception.SaikuOlapException;
+import org.saiku.service.util.MondrianDictionary;
 
 public class OlapMetaExplorer {
 
@@ -300,6 +304,7 @@ public class OlapMetaExplorer {
 	public List<SimpleCubeElement> getAllMembers(SaikuCube cube, String dimension, String hierarchy, String level, String searchString, int searchLimit) throws SaikuOlapException {
 		try {
 			Cube nativeCube = getNativeCube(cube);
+			OlapConnection con = nativeCube.getSchema().getCatalog().getDatabase().getOlapConnection();
 			Dimension dim = nativeCube.getDimensions().get(dimension);
 			boolean search = StringUtils.isNotBlank(searchString);
 			int found = 0;
@@ -328,6 +333,18 @@ public class OlapMetaExplorer {
 					if (l == null) {
 						throw new SaikuOlapException("Cannot find level " + level + " in hierarchy " + hierarchy + " of cube " + cube.getName());
 					}
+					if (isMondrian(nativeCube)) {
+						if (SaikuMondrianHelper.hasAnnotation(l, MondrianDictionary.SQLMemberLookup)) {
+							if (search) {
+								ResultSet rs = SaikuMondrianHelper.getSQLMemberLookup(con, MondrianDictionary.SQLMemberLookup, l, searchString);
+								simpleMembers = ObjectUtil.convert(rs);
+								return simpleMembers;
+							} else {
+								return new ArrayList<SimpleCubeElement>();
+							}
+						}
+						
+					}
 					if (search || searchLimit > 0) {
 						List<Member> foundMembers = new ArrayList<Member>();
 						for (Member m : l.getMembers()) {
@@ -351,7 +368,7 @@ public class OlapMetaExplorer {
 					return simpleMembers;
 				}
 			}
-		} catch (OlapException e) {
+		} catch (Exception e) {
 			throw new SaikuOlapException("Cannot get all members",e);
 		}
 
@@ -410,6 +427,16 @@ public class OlapMetaExplorer {
 		} catch (Exception e) {
 			throw new SaikuOlapException("Cannot find member: " + uniqueMemberName + " in cube:"+cube.getName(),e);
 		}
+	}
+	
+	private boolean isMondrian(Cube cube) {
+		OlapConnection con = cube.getSchema().getCatalog().getDatabase().getOlapConnection();
+		try {
+			return con.isWrapperFor(RolapConnection.class);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }
