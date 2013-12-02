@@ -54,9 +54,12 @@ import org.saiku.olap.util.SaikuCubeCaptionComparator;
 import org.saiku.olap.util.SaikuDimensionCaptionComparator;
 import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.service.util.MondrianDictionary;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OlapMetaExplorer {
 
+	private static final Logger log = LoggerFactory.getLogger(OlapMetaExplorer.class);
 
 	private IConnectionManager connections;
 
@@ -337,7 +340,8 @@ public class OlapMetaExplorer {
 						if (SaikuMondrianHelper.hasAnnotation(l, MondrianDictionary.SQLMemberLookup)) {
 							if (search) {
 								ResultSet rs = SaikuMondrianHelper.getSQLMemberLookup(con, MondrianDictionary.SQLMemberLookup, l, searchString);
-								simpleMembers = ObjectUtil.convert(rs);
+								simpleMembers = ObjectUtil.convert2simple(rs);
+								log.debug("Found " + simpleMembers.size() + " members using SQL lookup for level " + level);
 								return simpleMembers;
 							} else {
 								return new ArrayList<SimpleCubeElement>();

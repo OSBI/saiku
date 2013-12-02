@@ -268,10 +268,10 @@ public class ObjectUtil {
 		return elements;
 	}
 	
-	public static List<SimpleCubeElement> convert(ResultSet rs) throws Exception {
+	public static List<SimpleCubeElement> convert2simple(ResultSet rs) throws Exception {
 		try {
 			int width = 0;
-			boolean first = false;
+			boolean first = true;
 			List<SimpleCubeElement> elements = new ArrayList<SimpleCubeElement>();
 			if (rs != null) {
 				while (rs.next()) {
@@ -281,7 +281,7 @@ public class ObjectUtil {
 					}
 					String[] row = new String[3];
 					for (int i = 0; i < width; i++) {
-						row[i] = rs.getString(i);
+						row[i] = rs.getString(i + 1);
 					}
 					SimpleCubeElement s = new SimpleCubeElement(row[0], row[1], row[2]);
 					elements.add(s);

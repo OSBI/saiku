@@ -38,8 +38,13 @@ import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.MetadataElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SaikuMondrianHelper {
+	
+	
+	private static final Logger log = LoggerFactory.getLogger(SaikuMondrianHelper.class);
 
 	public static RolapConnection getMondrianConnection(OlapConnection con) {
 		try {
@@ -123,9 +128,10 @@ public class SaikuMondrianHelper {
 			Annotation a = ann.get(annotation);
 			String sql = a.getValue().toString();
 			
+			log.debug("Level SQLMember Lookup for " + level.getName() + " sql:[" + sql + "] parameter [" + search + "]");
+			
 			RolapConnection rcon = con.unwrap(RolapConnection.class);
 			DataSource ds = rcon.getDataSource();
-			
 			Connection sqlcon = ds.getConnection();
 			PreparedStatement stmt = sqlcon.prepareCall(sql);
 			stmt.setString(1, search);
