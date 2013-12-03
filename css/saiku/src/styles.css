@@ -683,13 +683,16 @@ textarea, select {
 }
 .dialog_selections {
 	min-width: 800px !important;
+    height: 465px !important;
 }
 .dialog_selections .dialog_icon {
 	display: none;
 }
 .dialog_selections .dialog_body {
     height: 380px;
+    position: relative;
 }
+
 .dialog_selections .dialog_body .available_selections {
     padding-left: 5px;
     float: left;
@@ -697,13 +700,20 @@ textarea, select {
 .dialog_selections .dialog_body .selection_buttons {
     float: left;
     padding-left: 25px;
-    padding-top: 115px;
+    padding-top: 85px;
     text-align: center;
     vertical-align: middle;
 }
+.dialog_selections .header_selections {
+    padding-bottom: 10px;
+}
+.dialog_selections .header_selections input {
+    margin-left: 5px;
+}
+
+
 .dialog_selections .dialog_body .used_selections {
     padding-left: 25px;
-    padding-top: 36px;
     float: left;
 }
 .dialog_selections .dialog_body .updown_buttons {
@@ -720,13 +730,29 @@ textarea, select {
     font-size: 11px;
     overflow: auto;
 }
+
+.dialog_selections .filterbox {
+    width: 300px;
+}
+
+.ui-autocomplete {
+    max-height: 300px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    z-index: 1000;
+    position: absolute;
+
+}
 .dialog_selections .options:before {
     clear:both;
 }
-.dialog_selections .options {
+.dialog_selections .options, .dialog_selections .hint, .dialog_selections .info {
     float: left;
     width: 250px;
     text-align: left;
+}
+.dialog_selections .info {
+    width: 400px;
 }
 .dialog_selections .available_selections input[type="text"] {
     width: 300px;
