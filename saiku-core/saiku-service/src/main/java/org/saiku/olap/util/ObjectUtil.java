@@ -15,10 +15,12 @@
  */
 package org.saiku.olap.util;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
@@ -130,14 +132,13 @@ public class ObjectUtil {
 			throw new SaikuServiceException("Cannot convert level: " + level,e);
 		}
 	}
-
+	
 	public static List<SaikuMember> convertMembers(Collection<Member> members) {
 		List<SaikuMember> memberList= new ArrayList<SaikuMember>();
-		for (Member l : members) {
-			memberList.add(convert(l));
+		for (Member m : members) {
+			memberList.add(convert(m));
 		}
 		return memberList;
-
 	}
 	
 	public static List<SaikuSelection> convertSelections(List<Selection> selections) {
@@ -257,14 +258,59 @@ public class ObjectUtil {
 		
 	}
 
-	public static List<SimpleCubeElement> convert2Simple(Set<MetadataElement> mset) {
+	public static List<SimpleCubeElement> convert2Simple(Collection<? extends MetadataElement> mset) {
 		List<SimpleCubeElement> elements = new ArrayList<SimpleCubeElement>();
-		if (mset != null && mset.size() > 0) {
+		if (mset != null) {
 			for (MetadataElement e : mset) {
 				elements.add(new SimpleCubeElement(e.getName(), e.getUniqueName(), e.getCaption()));
 			}
 		}
 		return elements;
 	}
+	
+	public static List<SimpleCubeElement> convert2simple(ResultSet rs) throws Exception {
+		try {
+			int width = 0;
+			boolean first = true;
+			List<SimpleCubeElement> elements = new ArrayList<SimpleCubeElement>();
+			if (rs != null) {
+				while (rs.next()) {
+					if (first) {
+						first = false;
+						width = rs.getMetaData().getColumnCount();
+					}
+					String[] row = new String[3];
+					for (int i = 0; i < width; i++) {
+						row[i] = rs.getString(i + 1);
+					}
+					SimpleCubeElement s = new SimpleCubeElement(row[0], row[1], row[2]);
+					elements.add(s);
+				}
+			}
+			return elements;
+			
+	} catch (Exception e) {
+		throw new SaikuServiceException("Error converting ResultSet into SimpleCubeElement", e);
+	} finally {
+			if (rs != null) {
+				Statement statement = null;
+				Connection con = null;
+				try {
+					 statement = rs.getStatement();
 
+				} catch (Exception e) {
+					throw new SaikuServiceException(e);
+				} finally {
+					try {
+						rs.close();
+						if (statement != null) {
+							statement.close();
+						}
+					} catch (Exception ee) {};
+
+					rs = null;
+				}
+			}
+		}
+	}
 }

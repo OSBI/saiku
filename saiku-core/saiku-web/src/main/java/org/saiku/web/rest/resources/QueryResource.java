@@ -53,9 +53,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimensionSelection;
-import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.olap.dto.SaikuTag;
+import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query.IQuery;
@@ -535,12 +535,14 @@ public class QueryResource {
 	@GET
 	@Produces({"application/json" })
 	@Path("/{queryname}/result/metadata/dimensions/{dimension}/hierarchies/{hierarchy}/levels/{level}")
-	public Response getLevelMembers(
+	public List<SimpleCubeElement> getLevelMembers(
 			@PathParam("queryname") String queryName, 
 			@PathParam("dimension") String dimensionName, 
 			@PathParam("hierarchy") String hierarchyName,
 			@PathParam("level") String levelName,
-			@QueryParam("result") @DefaultValue("true") boolean result)
+			@QueryParam("result") @DefaultValue("true") boolean result,
+			@QueryParam("search") String searchString,
+			@QueryParam("searchlimit") @DefaultValue("-1") int searchLimit)
 	{
 		if (log.isDebugEnabled()) {
 			log.debug("TRACK\t" 
@@ -548,13 +550,13 @@ public class QueryResource {
 					+ "/hierarchies/" + hierarchyName + "/levels/" + levelName + "\tGET");
 		}
 		try {
-			List<SaikuMember> ms = olapQueryService.getResultMetadataMembers(queryName, result, dimensionName, hierarchyName, levelName);
-			return Response.ok(ms).build();
+			List<SimpleCubeElement> ms = olapQueryService.getResultMetadataMembers(queryName, result, dimensionName, hierarchyName, levelName, searchString, searchLimit);
+			return ms;
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ")",e);
 			String error = ExceptionUtils.getRootCauseMessage(e);
-			return Response.serverError().entity(error).build();
+			throw new WebApplicationException(Response.serverError().entity(error).build());
 		}
 	}
 
