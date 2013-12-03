@@ -365,7 +365,7 @@ public class OlapQueryService implements Serializable {
 		List<SimpleCubeElement> members = new ArrayList<SimpleCubeElement>();
 		Set<Level> levels = new HashSet<Level>();
 		boolean search = StringUtils.isNotBlank(searchString);
-		preferResult = (preferResult && search);
+		preferResult = (preferResult && !search);
 		searchString = search ? searchString.toLowerCase() : null;
 
 		if (cs != null && preferResult) {
