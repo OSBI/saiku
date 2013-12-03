@@ -511,8 +511,10 @@
         </script>
 
         <script type="text/x-jquery-tmpl" id="template-selections">
+            <div class="header_selections">
+                <label for="filter_selections" class="i18n">Search:</label> &nbsp;<input name="'filter_selections" id="filter_selections" type="text" class="filterbox" /> <input class="i18n search_term" type="submit" value="Pre-Filter on Server" /><input class="i18n clear_search" type="submit" value="Clear Filter" /><br />
+            </div>
             <div class="available_selections">
-            <label for="filter_selections" class="i18n">Search:</label> &nbsp;<input name="'filter_selections" id="filter_selections" type="text" class="filterbox" /> <br />
                 <span class="i18n">Available members:</span><br/>
                     <select multiple="true" size="17" disabled></select>
             </div>
@@ -535,6 +537,17 @@
                 <input name="show_unique" id="show_unique" type="checkbox" /><label for="show_unique" class="i18n">Show Unique Names</label><br />
                 <input name="use_result" id="use_result" type="checkbox" /><label for="use_result" class="i18n">Use Result</label>
             </div>
+            <div class="info">
+                <div><label for="items_size" class="i18n">Items</label>: <span class="items_size"></span></div>
+                <div><span class="warning i18n"></span></div>
+            </div>
+
+            <div class="hint">
+                <div><label for="search_limit" class="i18n">Display Limit</label>: <span class="members_limit"></span></div>
+                <div><label for="search_limit" class="i18n">Filter  Limit</label>: <span class="search_limit"></span></div>
+            </div>
+
+            <div class="autocomplete"></div>
         </script>
         <script type="text/x-jquery-tmpl" id="template-permissions">
             <div class="permissions">

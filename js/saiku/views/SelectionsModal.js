@@ -27,6 +27,8 @@ var SelectionsModal = Modal.extend({
     
     events: {
         'click a': 'call',
+        'click .search_term' : 'search_members',
+        'click .clear_search' : 'get_members',
         'change #show_unique': 'show_unique_action',
         'change #use_result': 'use_result_action',
         'dblclick select option' : 'click_move_selection',
@@ -37,6 +39,9 @@ var SelectionsModal = Modal.extend({
     show_unique_option: false,
 
     use_result_option: Settings.MEMBERS_FROM_RESULT,
+    members_limit: Settings.MEMBERS_LIMIT,
+    members_search_limit: Settings.MEMBERS_SEARCH_LIMIT,
+    members_search_server: false,
     
     initialize: function(args) {
         // Initialize properties
@@ -44,6 +49,8 @@ var SelectionsModal = Modal.extend({
         this.options.title = "<span class='i18n'>Selections for</span> " + this.name;
         this.message = "Fetching members...";
         this.query = args.workspace.query;
+        this.selected_members = [];
+        this.available_members = [];
 
         _.bindAll(this, "fetch_members", "populate", "finished", "get_members", "use_result_action");
         
@@ -78,13 +85,23 @@ var SelectionsModal = Modal.extend({
             dimension: args.key
         });
 
+        // Load template
+        $(this.el).find('.dialog_body')
+            .html(_.template($("#template-selections").html())(this));
+        
+        $(this.el).find('#use_result').attr('checked', this.use_result_option);
+        $(this.el).find('.search_limit').text(this.members_search_limit);
+        $(this.el).find('.members_limit').text(this.members_limit);
+
+
         this.get_members();
     },
 
     get_members: function() {
             var path = "/result/metadata/dimensions/" + this.member.dimension + "/hierarchies/" + this.member.hierarchy + "/levels/" + this.member.level;
+            this.search_path = path;
             //console.log(path);
-            this.workspace.query.action.get(path, { success: this.fetch_members, data: {result: this.use_result_option}});
+            this.workspace.query.action.get(path, { success: this.fetch_members, data: {result: this.use_result_option, searchlimit: this.members_limit }});
             
 // OLD CODE
 /*
@@ -94,9 +111,38 @@ var SelectionsModal = Modal.extend({
         }
 */
     },
+
+    search_members: function() {
+        var self = this;
+        var search_term = $(this.el).find('.filterbox').val();
+        if (!search_term) 
+            return false;
+
+        var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Searching for members matching:</span> ' + search_term;
+        self.workspace.block(message);
+
+        self.workspace.query.action.get(self.search_path, { 
+                async: false, 
+                success: function(response, model) {
+                                if (model && model.length > 0) {
+                                    self.available_members = model;
+                                }
+                                self.workspace.unblock();
+                                self.populate();
+                            }, 
+                error: function () {
+                    self.workspace.unblock();
+                },
+                data: { search: search_term, searchlimit: self.members_search_limit }
+        });
+
+
+    },
     
     fetch_members: function(model, response) {
-        this.available_members = response;
+        if (response && response.length > 0) {
+            this.available_members = response;
+        }
 
         this.workspace.query.action.get("/axis/" + this.axis + "/dimension/" + this.member.dimension, { 
             success: this.populate 
@@ -104,24 +150,18 @@ var SelectionsModal = Modal.extend({
     },
     
     populate: function(model, response) {
+            var self = this;
+            this.members_search_server = (this.available_members.length >= this.members_limit || this.available_members.length == 0);
 
-            // Load template
-            $(this.el).find('.dialog_body')
-                .html(_.template($("#template-selections").html())(this));
-            
-            $(this.el).find('#use_result').attr('checked', this.use_result_option);
+            $(this.el).find('.items_size').text(this.available_members.length);
+            if (this.members_search_server) {
+                $(this.el).find('.warning').text("More items available than listed. Pre-Filter on server.");
+            } else {
+                $(this.el).find('.warning').text("");
+            }
 
-            this.selected_members = [];
-
-            var this_dim_sel = response;
-
-            /*
-            _.detect(response, function(obj) {
-                return (obj.name == this.member.dimension || encodeURIComponent(obj.name) == this.member.dimension);
-            }, this);
-            */
-            if (typeof this_dim_sel != "undefined" && typeof this_dim_sel.selections != "undefined") {
-                this.selected_members = this_dim_sel.selections;
+            if (response && response.hasOwnProperty('selections')) {
+                this.selected_members = response.selections;
             }
             var used_members = [];
     
@@ -137,7 +177,9 @@ var SelectionsModal = Modal.extend({
                 }
             }
             if (used_members.length > 0) {
-                $(selected_members_opts).appendTo($(this.el).find('.used_selections select'));
+                var selectedMembers = $(this.el).find('.used_selections select');
+                selectedMembers.empty();
+                $(selected_members_opts).appendTo(selectedMembers);
             }
             
             // Filter out used members
@@ -152,29 +194,66 @@ var SelectionsModal = Modal.extend({
                 available_members_opts += '<option value="' + encodeURIComponent(member.uniqueName) + '">' + member.caption + "</option>";
             }
             if (this.available_members.length > 0) {
-                $(available_members_opts).appendTo($(this.el).find('.available_selections select'));
+                var availableMembersSelect = $(this.el).find('.available_selections select');
+                availableMembersSelect.empty();
+                $(available_members_opts).appendTo(availableMembersSelect);
             }
-            var self = this;
+            
             $(this.el).find('.filterbox').autocomplete({
-                    minLength: 1,
+                    minLength: 1, //(self.members_search_server ? 2 : 1),
+                    delay: 200, //(self.members_search_server ? 400 : 300),
+                    appendTo: ".autocomplete",
                     source: function(request, response ) {
-                        response( $.map( self.available_members, function( item ) {
-                                        if (item.caption.toLowerCase().indexOf(request.term.toLowerCase()) > -1) {
-                                            return {
-                                                label: item.caption ,
-                                                value: item.uniqueName
-                                            };
-                                        }
+                        var searchlist = self.available_members;
+                        /*
+                            if (false && self.members_search_server) {
+                                self.workspace.query.action.get(self.search_path, { async: false, success: function(response, model) {
+                                    searchlist = model;
+                                }, data: { search: request.term, searchlimit: self.members_search_limit }});
+
+                                response( $.map( searchlist, function( item ) {
+                                    return {
+                                                        label: item.caption ,
+                                                        value: item.uniqueName
+                                    };
                                 }));
+
+                            } else {
+                            */
+                            var search_target = self.show_unique_option == false ? "caption" : "name";
+                            var result =  $.map( searchlist, function( item ) {
+
+                                            if (item[search_target].toLowerCase().indexOf(request.term.toLowerCase()) > -1) {
+                                                var label = self.show_unique_option == false? item.caption : item.uniqueName;
+                                                var value = self.show_unique_option == false? item.uniqueName : item.caption;
+                                                
+
+                                                return {
+                                                    label: label,
+                                                    value: value
+                                                };
+                                            }
+                                    });
+                            response( result);
                     },
                     select:  function(event, ui) { 
-                        var value = self.show_unique_option == false? encodeURIComponent(ui.item.value) : ui.item.label;
-                        $(self.el).find('.available_selections select option[value="' + value + '"]')
-                            .appendTo($(self.el).find('.used_selections select'));
-                        $('#filter_selections').val('');
+                        var value = encodeURIComponent(ui.item.value);
+                        var label = ui.item.label;
+
+                        $(self.el).find('.available_selections select option[value="' + value + '"]').remove();
+                        $(self.el).find('.used_selections select option[value="' + value + '"]').remove();
+                        var option = '<option value="' + value + '">' + label + "</option>";
+                        
+                        $(option).appendTo($(self.el).find('.used_selections select'));
+                        $(self.el).find('.filterbox').val('');
+                        ui.item.value = "";
 
                     }, close: function(event, ui) { 
-                        $('#filter_selections').val('');
+                        //$('#filter_selections').val('');
+                        //$(self.el).find('.filterbox').css({ "text-align" : " left"});
+                    }, open: function( event, ui ) {
+                        //$(self.el).find('.filterbox').css({ "text-align" : " right"});
+
                     }
 
 
@@ -189,7 +268,7 @@ var SelectionsModal = Modal.extend({
     post_render: function(args) {
         var left = ($(window).width() - 1000)/2;
         $(args.modal.el).parents('.ui-dialog')
-            .css({ width: 1000, left: "inherit", margin:"0" })
+            .css({ width: 1040, left: "inherit", margin:"0", height: 465 })
             .offset({ left: left});
     },
     
