@@ -123,6 +123,7 @@ var DimensionList = Backbone.View.extend({
         var isAlreadyOnAxis = false;
         var href = $(event.target).attr('href');
         var hierarchy = href.substring(0,_.lastIndexOf(href, "/"));
+        var $axis = null;
         if ($(this.workspace.el).find(".workspace_fields ul li a[href^='" + hierarchy + "']:first").length > 0) {
             $axis = $(this.workspace.el).find(".workspace_fields ul li a[href^='" + hierarchy + "']").parent().parent();
         } else {
@@ -130,7 +131,7 @@ var DimensionList = Backbone.View.extend({
                 $(this.workspace.el).find(".rows ul") :
                 $(this.workspace.el).find(".columns ul");
         }
-        $target = $(event.target).parent().clone()
+        var $target = $(event.target).parent().clone()
             .appendTo($axis);
         this.workspace.drop_zones.select_dimension({
             target: $axis
@@ -156,7 +157,7 @@ var DimensionList = Backbone.View.extend({
         else if ($(this.workspace.el).find(".filter ul .d_measure").length > 0) $axis = $(this.workspace.el).find(".filter ul");
         else $axis = $(this.workspace.el).find(".columns ul");
 
-        $target = $(event.target).parent().clone();
+        var $target = $(event.target).parent().clone();
         if ($axis.find(".d_measure").length != 0)
             $target.insertAfter($axis.find(".d_measure:last"));
         else {

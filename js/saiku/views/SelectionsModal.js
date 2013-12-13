@@ -28,7 +28,7 @@ var SelectionsModal = Modal.extend({
     events: {
         'click a': 'call',
         'click .search_term' : 'search_members',
-        'click .clear_search' : 'get_members',
+        'click .clear_search' : 'clear_search',
         'change #show_unique': 'show_unique_action',
         'change #use_result': 'use_result_action',
         'dblclick select option' : 'click_move_selection',
@@ -110,6 +110,11 @@ var SelectionsModal = Modal.extend({
             });
         }
 */
+    },
+
+    clear_search: function() {
+        $(this.el).find('.filterbox').val('');
+        this.get_members();
     },
 
     search_members: function() {
@@ -255,9 +260,9 @@ var SelectionsModal = Modal.extend({
                         //$(self.el).find('.filterbox').css({ "text-align" : " right"});
 
                     }
-
-
                 });
+
+            $(this.el).find('.filterbox').autocomplete("enable");
 
 		// Translate
 		Saiku.i18n.translate();
@@ -372,7 +377,9 @@ var SelectionsModal = Modal.extend({
     finished: function() {
         $('#filter_selections').remove();
         this.available_members = null;
-        $(this.el).dialog('destroy').remove();
+        $(this.el).find('.filterbox').autocomplete('destroy');
+        $(this.el).dialog('destroy');
+        $(this.el).remove();
         this.query.run();
     }
 });
