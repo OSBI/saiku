@@ -155,7 +155,9 @@ var Table = Backbone.View.extend({
             });
             items["keeponly"] = { payload: keep_payload };
             items["getchildren"] = { payload: children_payload };
-            items["showall"] = { payload: items["remove-" + l_name].payload + ", " + items["include-" + l_name].payload};
+            if (items.hasOwnProperty("remove-" + l_name) && items.hasOwnProperty("include-" + l_name)) {
+                items["showall"] = { payload: items["remove-" + l_name].payload + ", " + items["include-" + l_name].payload};
+            }
             
 
             
@@ -193,7 +195,9 @@ var Table = Backbone.View.extend({
                 citems["filterlevel"] = {
                     name: "Filter Level"
                 };
-                citems["showall"]  =  { name: "Remove Filters"};
+                if (items["showall"]) {
+                    citems["showall"]  =  { name: "Remove Filters"};
+                }
             }
             return {
                 callback: function(key, options) {
