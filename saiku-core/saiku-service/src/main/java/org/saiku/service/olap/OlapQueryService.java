@@ -50,6 +50,7 @@ import org.olap4j.Scenario;
 import org.olap4j.impl.IdentifierParser;
 import org.olap4j.mdx.IdentifierNode;
 import org.olap4j.mdx.IdentifierSegment;
+import org.olap4j.mdx.ParseTreeNode;
 import org.olap4j.mdx.ParseTreeWriter;
 import org.olap4j.mdx.SelectNode;
 import org.olap4j.mdx.parser.impl.DefaultMdxParserImpl;
@@ -464,8 +465,21 @@ public class OlapQueryService implements Serializable {
 			final OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnection()); 
 			stmt = con.createStatement();
 
+			SelectNode sn = (new DefaultMdxParserImpl().parseSelect(getMDXQuery(queryName)));
 			String select = null;
 			StringBuffer buf = new StringBuffer();
+			if (sn.getWithList() != null && sn.getWithList().size() > 0) {
+	            buf.append("WITH \n");
+	            StringWriter sw = new StringWriter();
+	            ParseTreeWriter ptw = new ParseTreeWriter(sw);
+	            final PrintWriter pw = ptw.getPrintWriter();
+	            for (ParseTreeNode with : sn.getWithList()) {
+	                with.unparse(ptw);
+	                pw.println();
+	            }
+	            buf.append(sw.toString());
+			}
+			
 			buf.append("SELECT (");
 			for (int i = 0; i < cellPosition.size(); i++) {
 				List<Member> members = cs.getAxes().get(i).getPositions().get(cellPosition.get(i)).getMembers();
@@ -480,7 +494,7 @@ public class OlapQueryService implements Serializable {
 			buf.append(") ON COLUMNS \r\n");
 			buf.append("FROM [" + cube.getName() + "]\r\n");
 
-			SelectNode sn = (new DefaultMdxParserImpl().parseSelect(getMDXQuery(queryName))); 
+			 
 			final Writer writer = new StringWriter();
 			sn.getFilterAxis().unparse(new ParseTreeWriter(new PrintWriter(writer)));
 			if (StringUtils.isNotBlank(writer.toString())) {

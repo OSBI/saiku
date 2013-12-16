@@ -59,6 +59,14 @@
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
+									<groupId>org.saiku</groupId>
+									<artifactId>saiku-query</artifactId>
+									<version>0.1-SNAPSHOT</version>
+									<type>jar</type>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
 									<groupId>org.jvnet</groupId>
   									<artifactId>mimepull</artifactId>
   									<version>1.6</version>

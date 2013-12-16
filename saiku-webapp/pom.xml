@@ -133,6 +133,12 @@
 			<artifactId>saiku-web</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.saiku</groupId>
+			<artifactId>saiku-query</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		
 		<!-- Spring modules -->
 		<dependency>
 			<groupId>org.springframework</groupId>

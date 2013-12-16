@@ -33,6 +33,7 @@ import org.olap4j.OlapStatement;
 import org.olap4j.Scenario;
 import org.olap4j.impl.IdentifierParser;
 import org.olap4j.mdx.ParseTreeWriter;
+import org.olap4j.mdx.SelectNode;
 import org.olap4j.metadata.Catalog;
 import org.olap4j.metadata.Cube;
 import org.olap4j.query.LimitFunction;
@@ -47,9 +48,12 @@ import org.saiku.olap.dto.SaikuTag;
 import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.olap.query.QueryProperties.QueryProperty;
 import org.saiku.olap.query.QueryProperties.QueryPropertyFactory;
+import org.saiku.olap.util.QueryConverter;
 import org.saiku.olap.util.SaikuProperties;
+import org.saiku.olap.util.exception.SaikuIncompatibleException;
 import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
+import org.saiku.service.util.exception.SaikuServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -232,7 +236,19 @@ public class OlapQuery implements IQuery {
 
 	public String getMdx() {
 		final Writer writer = new StringWriter();
-		this.query.getSelect().unparse(new ParseTreeWriter(new PrintWriter(writer)));
+		if (SaikuProperties.olapConvertQuery) {
+			try {
+				SelectNode s = QueryConverter.convert(query);
+				s.unparse(new ParseTreeWriter(new PrintWriter(writer)));
+			} catch (SaikuIncompatibleException se) {
+				log.debug("Cannot convert to new query model mdx, falling back to old version", se);
+				this.query.getSelect().unparse(new ParseTreeWriter(new PrintWriter(writer)));	
+			} catch (Exception e) {
+				throw new SaikuServiceException("Cannot convert to new query model", e);
+			}
+		} else {
+			this.query.getSelect().unparse(new ParseTreeWriter(new PrintWriter(writer)));
+		}
 		return writer.toString();
 	}
 
