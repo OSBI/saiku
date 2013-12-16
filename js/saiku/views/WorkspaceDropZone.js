@@ -541,7 +541,7 @@ var WorkspaceDropZone = Backbone.View.extend({
 
         // Notify the model of the change
         this.workspace.query.move_dimension(member, 
-                target, index);
+                target, index, ("FILTER" == target));
 
         if ("FILTER" == target && ui.item.hasClass('d_dimension')) {
                 var ev = { target : $axis.find('a[href="#' + member + '"]') };
