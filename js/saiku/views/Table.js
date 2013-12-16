@@ -54,7 +54,7 @@ var Table = Backbone.View.extend({
         selector: '.row, .col', 
         ignoreRightClick: true,
          build: function($trigger, e) {
-            $target = $(e.currentTarget).find('div');
+            var $target = $(e.currentTarget).find('div');
             var axis = $(e.currentTarget).hasClass('rows') ? "ROWS" : "COLUMNS"
             var pos = $target.attr('rel').split(':');
             var row = parseInt(pos[0])
@@ -155,7 +155,9 @@ var Table = Backbone.View.extend({
             });
             items["keeponly"] = { payload: keep_payload };
             items["getchildren"] = { payload: children_payload };
-            items["showall"] = { payload: items["remove-" + l_name].payload + ", " + items["include-" + l_name].payload};
+            if (items.hasOwnProperty("remove-" + l_name) && items.hasOwnProperty("include-" + l_name)) {
+                items["showall"] = { payload: items["remove-" + l_name].payload + ", " + items["include-" + l_name].payload};
+            }
             
 
             
@@ -193,7 +195,9 @@ var Table = Backbone.View.extend({
                 citems["filterlevel"] = {
                     name: "Filter Level"
                 };
-                citems["showall"]  =  { name: "Remove Filters"};
+                if (items["showall"]) {
+                    citems["showall"]  =  { name: "Remove Filters"};
+                }
             }
             return {
                 callback: function(key, options) {

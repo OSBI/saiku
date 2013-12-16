@@ -164,6 +164,7 @@ var DimensionList = Backbone.View.extend({
             return;
         }
         
+
         var hierarchy = $(event.target).attr('hierarchy');
         var hierarchyCaption = $(event.target).parent().parent().attr('hierarchycaption');
         var level = $(event.target).attr('level');
@@ -173,7 +174,6 @@ var DimensionList = Backbone.View.extend({
             var axisName = $level.parents('.fields_list_body').hasClass('rows') ? "ROWS" : "COLUMNS";
 
             this.workspace.query.helper.includeLevel(axisName, hierarchy, level);
-            
 
         } else {
             var $axis = $(this.workspace.el).find(".workspace_fields .fields_list[title='ROWS'] ul.hierarchy").length > 0 ?
@@ -190,6 +190,7 @@ var DimensionList = Backbone.View.extend({
             this.workspace.query.helper.includeLevel(axisName, hierarchy, level);
 
         }
+
         $(event.target).parent().draggable('disable');
 
         this.workspace.drop_zones.update_dropzones();
@@ -208,6 +209,7 @@ var DimensionList = Backbone.View.extend({
             return;
         }
         
+
         var $axis = $(this.workspace.el).find(".workspace_fields .fields_list_body.details ul.connectable");
         var $target = $(event.target).parent().clone();
         if ($axis.find(".d_measure").length != 0)

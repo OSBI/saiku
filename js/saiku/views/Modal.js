@@ -86,6 +86,7 @@ var Modal = Backbone.View.extend({
     
     close: function() {
         $(this.el).dialog('destroy').remove();
+        $(this.el).remove();
         return false;
     }
 });
