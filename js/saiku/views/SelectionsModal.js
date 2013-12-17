@@ -98,18 +98,19 @@ var SelectionsModal = Modal.extend({
     },
 
     get_members: function() {
+            var self = this;
             var path = "/result/metadata/dimensions/" + this.member.dimension + "/hierarchies/" + this.member.hierarchy + "/levels/" + this.member.level;
             this.search_path = path;
-            //console.log(path);
-            this.workspace.query.action.get(path, { success: this.fetch_members, data: {result: this.use_result_option, searchlimit: this.members_limit }});
             
-// OLD CODE
-/*
-            this.member.fetch({
-                success: this.fetch_members
-            });
-        }
-*/
+            var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">' + self.message + '</span> ';
+            self.workspace.block(message);
+
+            this.workspace.query.action.get(path, { 
+                success: this.fetch_members, 
+                error: function() {
+                    self.workspace.unblock();
+                },
+                data: {result: this.use_result_option, searchlimit: this.members_limit }});
     },
 
     clear_search: function() {
@@ -132,7 +133,6 @@ var SelectionsModal = Modal.extend({
                                 if (model && model.length > 0) {
                                     self.available_members = model;
                                 }
-                                self.workspace.unblock();
                                 self.populate();
                             }, 
                 error: function () {
@@ -145,17 +145,22 @@ var SelectionsModal = Modal.extend({
     },
     
     fetch_members: function(model, response) {
+        var self = this;
         if (response && response.length > 0) {
             this.available_members = response;
         }
 
         this.workspace.query.action.get("/axis/" + this.axis + "/dimension/" + this.member.dimension, { 
-            success: this.populate 
+            success: this.populate,
+            error: function() {
+                self.workspace.unblock();
+            }
         });
     },
     
     populate: function(model, response) {
             var self = this;
+            self.workspace.unblock();
             this.members_search_server = (this.available_members.length >= this.members_limit || this.available_members.length == 0);
 
             $(this.el).find('.items_size').text(this.available_members.length);
