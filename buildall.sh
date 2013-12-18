@@ -1,5 +1,5 @@
 #!/bin/bash
-cd ../saiku-core
+cd saiku-core
 mvn clean install  
 #-DskipTests=true 
 cd ..

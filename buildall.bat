@@ -1,6 +1,6 @@
 
 echo "Building saiku-core"
-cd ..\saiku-core
+cd saiku-core
 call mvn clean install
 cd ..
 echo "Building saiku-webapp"
