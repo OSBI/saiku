@@ -110,19 +110,6 @@ var DimensionList = Backbone.View.extend({
                 selection.append(h);
                 return selection;
 
-                /*
-
-                var hierarchy = target.find('a').attr('hierarchy');
-                var level = target.find('a').attr('level');
-                var levels = target.parent().find('li a[hierarchy="' + hierarchy + '"]').parent().clone().detach().hide();
-                levels.find('a[level="' + level + '"]').parent().show();
-                var dropHierarchy = $('<ul />').attr('hierarchy', hierarchy).addClass('hierarchy').append(levels);
-                var selection = $('<li class="selection"></li>');
-                selection.append(dropHierarchy);
-                return selection;
-                */
-
-
             },
 
             placeholder: 'placeholder',
@@ -181,12 +168,23 @@ var DimensionList = Backbone.View.extend({
                 $(this.workspace.el).find(".workspace_fields .fields_list[title='ROWS'] ul.connectable") ;
 
             var axisName = $axis.parents('.fields_list').attr('title');
+
+            
+                var hierarchy = $(event.target).parent().find('a').attr('hierarchy');
+                var level = $(event.target).parent().find('a').attr('level');
+                var h = $(event.target).parent().parent().clone().removeClass('d_hierarchy').addClass('hierarchy');
+                h.find('li a[hierarchy="' + hierarchy + '"]').parent().hide();
+                h.find('li a[level="' + level + '"]').parent().show();
+                var selection = $('<li class="selection"></li>');
+                selection.append(h);
+                selection.appendTo($axis);
+
+/*
             var levels = $(event.target).parent().parent().find('li a[hierarchy="' + hierarchy + '"]').parent().clone().hide();
             levels.find('a[level="' + level + '"]').parent().show();
             var dropHierarchy = $('<ul />').attr('hierarchy', hierarchy).attr('hierarchycaption', hierarchyCaption).addClass('hierarchy').append(levels);
             $( $('<li class="selection"></li>')).append(dropHierarchy).appendTo($axis);
-            //$(dropHierarchy).appendTo($axis);
-
+*/
             this.workspace.query.helper.includeLevel(axisName, hierarchy, level);
 
         }

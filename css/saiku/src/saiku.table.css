@@ -41,7 +41,7 @@
 .workspace_results table th.row_header {
       border-top: 1px solid #d5d5d5;
       /*border-bottom: 1px solid #d5d5d5;*/
-      background: #E5E5E5;
+      background: #EAEAEA;
 }
 
 .workspace_results table th.row_null {

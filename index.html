@@ -195,6 +195,7 @@
                             </li>
                         <% } %>
                         <ul class="d_hierarchy" hierarchy="<%= hierarchy.name %>" hierarchycaption="<%= hierarchy.caption %>">
+                        <div class="hgroup treehidden"><%= hierarchy.caption %></div>
                         <% _.each(hierarchy.levels, function(level) { %>
                             <% if (typeof level["visible"] == "undefined" || level["visible"]) { %>
                                 <li class="hide d_level">

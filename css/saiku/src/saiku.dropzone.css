@@ -20,10 +20,11 @@
 
 }
 .fields_list .fields_list_header {
-    background-color: #E5E5E5;
+    /* background-color: #E5E5E5; 
     background: linear-gradient(to bottom, #FFFFFF, #E5E5E5); 
     background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#E5E5E5));
     background: -moz-linear-gradient(top, #FFFFFF 0%, #E5E5E5 100%);
+    */
     border-bottom: 1px solid #CCC; 
     float: left;
     font-weight: bold;
@@ -31,6 +32,7 @@
     line-height: 28px;
     width: 200px;
     border-radius: 5px 5px 0 0;
+    background-color: #F6F6F6;
 }
 .fields_list .limit {
     cursor: pointer;
@@ -81,7 +83,7 @@ span.clear_axis {
 .fields_list .fields_list_body {
     float: left;
     padding:  0;
-    width: 200px;
+    width: 100%;
 }
 .fields_list .fields_list_body .all_measures span {
     margin: 0 5px 0 0;
@@ -94,15 +96,22 @@ span.clear_axis {
     line-height: 19px;
     list-style: none;
     margin: 0px 0px;
-    padding: 3px;
-    min-width: 90%;
+    padding: 0px;
+    width: 100%;
     min-height: 30px;
 }
 
 ul.hierarchy {
-    border-radius: 3px;
-    display: block;
-    width: 194px;
+  display: block;
+  min-height: 30px;
+  
+}
+
+.hgroup {
+  text-align: center;
+  border-top: 1px solid #CCCCCC;
+  border-bottom: 1px solid #CCCCCC;
+  padding: 3px 9px;
 }
 
 .fields_list .fields_list_body ul.hierarchy,  
@@ -116,7 +125,6 @@ ul.hierarchy {
     display: block;
     padding: 1px;
     margin: 1px;
-    min-width: 90%;
 
 }
 .dimension_tree li.ui-draggable-disabled,
@@ -128,11 +136,9 @@ ul.hierarchy {
 .fields_list_body.details li,
 .fields_list_body li.placeholder,
 .fields_list_body li.selection {
-    float: left;
     line-height: 17px;
     list-style-type: none;
     display: block;
-    width: 194px;
     text-align: left;
     white-space:nowrap;
     cursor: pointer;
@@ -141,6 +147,8 @@ ul.hierarchy {
 .fields_list .fields_list_body ul.hierarchy li, 
 .fields_list_body.details li,
 .fields_list_body li.placeholder {
+    padding: 3px;
+    /*
     margin: 2px 3px;
     padding: 3px 6px;
     box-shadow: 0 0 2px #DDD;
@@ -149,6 +157,7 @@ ul.hierarchy {
     border-radius: 3px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
+    */
 }
 
 
@@ -159,7 +168,6 @@ ul.hierarchy {
     margin: 2px 3px;
     padding-left: 22px !important;
     padding-right: 0px !important;
-    width: 160px !important;
 }
 
 .fields_list .fields_list_body ul.hierarchy li a , .fields_list_body.details li a {
@@ -186,13 +194,16 @@ ul.hierarchy {
 }
 
 .workspace_fields .d_level {
+    /* 
     background: #e5f6ff;
     background: -webkit-gradient(linear, left top, left bottom, from(#e0e9ef), to(#c2d5e2));
     background: -moz-linear-gradient(top, #e0e9ef 0%, #c2d5e2 100%);
     border: 1px solid #2a6085;
+    box-shadow: 0 0 2px #DDD;
+    */
     color: #2a6085;
     /* display: inline !important; */
-    box-shadow: 0 0 2px #DDD;
+    
 }
 .workspace_fields .d_level:hover {
     background: #C2DAEF;
@@ -210,10 +221,12 @@ ul.hierarchy {
     text-decoration: none;
 }
 .workspace_fields .d_measure {
+    /*
     background: #ffe8e8;
     background: -webkit-gradient(linear, left top, left bottom, from(#fcf5f5), to(#fad9d9));
     background: -moz-linear-gradient(top, #fcf5f5 0%, #fad9d9 100%);
-    border: 1px solid #ed9393;
+    */
+    border-bottom: 1px solid #ed9393;
     color: #983030;
 }
 .workspace_fields .d_measure:hover {

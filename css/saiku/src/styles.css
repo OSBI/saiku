@@ -404,21 +404,27 @@ textarea, select {
     margin: 0;
 }
 .dimension_tree ul li ul li a {
+    /* 
     padding-left: 20px;
-    background: url('../../../images/src/bullet_blue.png') 0px 4px no-repeat;
+    background: url('../../../images/src/bullet_blue.png') 0px 4px no-repeat; 
+    */
 }
 .measure_tree ul li ul li a {
     padding-left: 20px;
     background: url('../../../images/src/bullet_red.png') 0px 4px no-repeat;
 }
 .dimension_tree .hierarchy {
-    padding-left: 1px;
+    padding-left: 0px;
 }
 .dimension_tree .hierarchy a {
     cursor: default;
+    padding-left: 20px;
     background: url('../../../images/src/bullet_green.png') 0px 4px no-repeat;
 }
 
+.dimension_tree .treehidden, .measure_tree .treehidden {
+    display: none;
+}
 .sidebar h3 {
     line-height: 1.5em;
     margin: 0;
