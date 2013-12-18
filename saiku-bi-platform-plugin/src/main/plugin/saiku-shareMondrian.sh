@@ -58,8 +58,8 @@ rm -f lib/mondrian* lib/olap4j* lib/eigenbase*
 
 # Step 3: Copy jar to WEB-INF
 
-echo -n "Copying plugin-util.jar to WEB-INF/lib .... "
-cp lib/saiku*plugin-util* $WEBAPP_PATH/WEB-INF/lib/
+echo -n "Copying saiku-olap-util.jar to WEB-INF/lib .... "
+cp lib/saiku*olap-util* $WEBAPP_PATH/WEB-INF/lib/
 
 
 echo Done

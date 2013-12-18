@@ -135,6 +135,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.saiku</groupId>
+			<artifactId>saiku-olap-util</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.saiku</groupId>
 			<artifactId>saiku-query</artifactId>
 			<version>0.1-SNAPSHOT</version>
 		</dependency>

@@ -2,11 +2,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.saiku</groupId>
-	<artifactId>saiku-bi-platform-plugin-util</artifactId>
+	<artifactId>saiku-olap-util</artifactId>
 	<packaging>jar</packaging>
 	<version>3.0-SNAPSHOT</version>
-	<name>saiku biserver plugin utils</name>
-
+	<name>saiku olap util</name>
 	<properties>
 		<maven.compiler.source>1.5</maven.compiler.source>
 		<maven.compiler.target>1.5</maven.compiler.target>
@@ -124,47 +123,6 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
-		</dependency>
-		<dependency>
-			<groupId>pentaho</groupId>
-			<artifactId>pentaho-bi-platform-api</artifactId>
-			<version>${pentaho.libs.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>pentaho</groupId>
-			<artifactId>pentaho-bi-platform-engine-core</artifactId>
-			<version>${pentaho.libs.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>pentaho</groupId>
-			<artifactId>pentaho-bi-platform-engine-services</artifactId>
-			<version>${pentaho.libs.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>pentaho</groupId>
-			<artifactId>pentaho-bi-platform-web-servlet</artifactId>
-			<version>${pentaho.libs.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>pentaho</groupId>
-			<artifactId>pentaho-bi-platform-util</artifactId>
-			<version>${pentaho.libs.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>pentaho</groupId>
-			<artifactId>pentaho-bi-platform-plugin-services</artifactId>
-			<version>${pentaho.libs.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>pentaho</groupId>
-			<artifactId>pentaho-bi-platform-plugin-actions</artifactId>
-			<version>${pentaho.libs.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>pentaho</groupId>
-					<artifactId>pentaho-third-party-security</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 	</dependencies>
 </project>

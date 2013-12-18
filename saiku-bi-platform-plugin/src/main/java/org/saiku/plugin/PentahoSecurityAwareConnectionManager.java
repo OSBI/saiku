@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import mondrian.olap4j.PentahoSaikuMondrianHelper;
+import mondrian.olap4j.SaikuMondrianHelper;
 
 import org.olap4j.OlapConnection;
 import org.pentaho.platform.api.engine.IConnectionUserRoleMapper;
@@ -161,7 +161,7 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 					else if (validMondrianRolesForUser != null && validMondrianRolesForUser.length == 1) {
 						c.setRoleName(validMondrianRolesForUser[0]);
 					} else {
-						PentahoSaikuMondrianHelper.setRoles(c, validMondrianRolesForUser);
+						SaikuMondrianHelper.setRoles(c, validMondrianRolesForUser);
 					}
 				} else {
 					c.setRoleName(null);

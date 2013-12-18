@@ -52,7 +52,7 @@
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.saiku</groupId>
-									<artifactId>saiku-bi-platform-plugin-util</artifactId>
+									<artifactId>saiku-olap-util</artifactId>
 									<version>${project.version}</version>
 									<type>jar</type>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
@@ -349,7 +349,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.saiku</groupId>
-			<artifactId>saiku-bi-platform-plugin-util</artifactId>
+			<artifactId>saiku-olap-util</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
