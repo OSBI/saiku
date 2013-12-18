@@ -20,6 +20,7 @@
   <classpathentry kind="var" path="M2_REPO/javax/servlet/jsp-api/2.0/jsp-api-2.0.jar"/>
   <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
   <classpathentry kind="src" path="/saiku-service"/>
+  <classpathentry kind="src" path="/saiku-query"/>
   <classpathentry kind="var" path="M2_REPO/org/olap4j/olap4j/1.2.0-SNAPSHOT/olap4j-1.2.0-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/net/java/dev/javacc/javacc/5.0/javacc-5.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/pentaho/mondrian/TRUNK-SNAPSHOT/mondrian-TRUNK-SNAPSHOT.jar"/>
@@ -140,7 +141,7 @@
   <classpathentry kind="var" path="M2_REPO/jfree/jfreechart/1.0.13/jfreechart-1.0.13.jar"/>
   <classpathentry kind="var" path="M2_REPO/jfree/jcommon/1.0.16/jcommon-1.0.16.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/swinglabs/pdf-renderer/1.0.5/pdf-renderer-1.0.5.jar"/>
-  <classpathentry kind="src" path="/saiku-bi-platform-plugin-util"/>
+  <classpathentry kind="src" path="/saiku-olap-util"/>
   <classpathentry kind="var" path="M2_REPO/pentaho/cpf-core/REFACTOR-SNAPSHOT/cpf-core-REFACTOR-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/json/json/3.1/json-3.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mozilla/rhino/1.7R4/rhino-1.7R4.jar"/>

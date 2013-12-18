@@ -1,6 +1,9 @@
 
 echo "Building saiku-core"
-cd saiku-core
+echo "Building saiku-olap-util"
+cd ..\saiku-bi-platform-plugin-util
+call mvn clean install
+cd ..\saiku-core
 call mvn clean install
 cd ..
 echo "Building saiku-webapp"
@@ -17,9 +20,6 @@ call mvn clean package install:install-file -Dfile=target/saiku-ui-2.6-SNAPSHOT.
 echo "Building saiku-server"
 cd ..\saiku\saiku-server
 call mvn clean package
-echo "Building saiku-bi-platform-plugin-util"
-cd ..\saiku-bi-platform-plugin-util
-call mvn clean install
 echo "Building saiku-bi-platform-plugin"
 cd ..\saiku-bi-platform-plugin
 call mvn clean package

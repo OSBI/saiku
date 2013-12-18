@@ -1,5 +1,7 @@
 #!/bin/bash
-cd saiku-core
+cd saiku-olap-util
+mvn clean install
+cd ../saiku-core
 mvn clean install  
 #-DskipTests=true 
 cd ..
@@ -14,8 +16,6 @@ git pull
 mvn clean package install:install-file -Dfile=target/saiku-ui-2.6-SNAPSHOT.war  -DgroupId=org.saiku -DartifactId=saiku-ui -Dversion=2.6-SNAPSHOT -Dpackaging=war
 cd ../saiku-server
 mvn clean package
-cd ../saiku-bi-platform-plugin-util
-mvn clean install
 cd ../saiku-bi-platform-plugin
 mvn clean package
 cd ../saiku-bi-platform-plugin-p5
