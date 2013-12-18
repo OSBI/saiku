@@ -1,8 +1,5 @@
 
 echo "Building saiku-core"
-echo "Building saiku-olap-util"
-cd ..\saiku-bi-platform-plugin-util
-call mvn clean install
 cd ..\saiku-core
 call mvn clean install
 cd ..

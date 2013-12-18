@@ -1,6 +1,4 @@
 #!/bin/bash
-cd saiku-olap-util
-mvn clean install
 cd ../saiku-core
 mvn clean install  
 #-DskipTests=true 
