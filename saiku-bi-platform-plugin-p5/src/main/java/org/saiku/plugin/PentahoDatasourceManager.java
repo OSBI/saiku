@@ -99,7 +99,9 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 			
 			List<MondrianCatalog> catalogs = catalogService.listCatalogs(session, true);
 			Thread.currentThread().setContextClassLoader(cl);
-			MondrianProperties.instance().DataSourceResolverClass.setString(this.datasourceResolver);
+			if (StringUtils.isNotBlank(this.datasourceResolver)) {
+				MondrianProperties.instance().DataSourceResolverClass.setString(this.datasourceResolver);
+			}
 			
 			for (MondrianCatalog catalog : catalogs) {
 				String name = catalog.getName();
