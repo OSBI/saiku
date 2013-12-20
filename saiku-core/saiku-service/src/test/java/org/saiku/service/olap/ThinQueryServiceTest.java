@@ -1,5 +1,8 @@
 package org.saiku.service.olap;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -9,7 +12,6 @@ import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.VFS;
 import org.codehaus.jackson.map.ObjectMapper;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.olap4j.Axis;
@@ -18,6 +20,7 @@ import org.olap4j.CellSetAxis;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Measure;
 import org.saiku.TestSaikuContext;
+import org.saiku.TestUtil;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.query2.ThinLevel;
 import org.saiku.olap.query2.ThinQuery;
@@ -122,21 +125,19 @@ public class ThinQueryServiceTest {
 
 			String expectedMdx = 
 					"WITH\n"
-							+ "SET [~COLUMNS_Product] AS\n"
-							+ "    TopCount(Except({[Product].[Product Family].Members}, {[Product].[Non-Consumable]}), 2, Measures.[Unit Sales])\n"
-							+ "SET [~COLUMNS_Education Level] AS\n"
-							+ "    {[Education Level].[Education Level].Members}\n"
-							+ "SET [~COLUMNS] AS\n"
-							+ "    Order(CrossJoin([~COLUMNS_Product], [~COLUMNS_Education Level]), [Measures].[Double Profit], BDESC)\n"
-							+ "MEMBER [Measures].[Double Profit] AS\n"
-							+ "    (([Measures].[Store Sales] - [Measures].[Store Cost]) * 2)\n"
-							+ "SET [~ROWS] AS\n"
-							+ "    {[Gender].[F]}\n"
-							+ "SELECT\n"
-							+ "CrossJoin([~COLUMNS], {[Measures].[Double Profit], [Measures].[Unit Sales]}) ON COLUMNS,\n"
-							+ "[~ROWS] ON ROWS\n"
-							+ "FROM [Sales]";
-
+			                + "SET [~COLUMNS_Product] AS\n"
+			                + "    TopCount(Except({[Product].[Product Family].Members}, {[Product].[Non-Consumable]}), 2, Measures.[Unit Sales])\n"
+			                + "SET [~COLUMNS_Education Level] AS\n"
+			                + "    {[Education Level].[Education Level].Members}\n"
+			                + "MEMBER [Measures].[Double Profit] AS\n"
+			                + "    (([Measures].[Store Sales] - [Measures].[Store Cost]) * 2)\n"
+			                + "SET [~ROWS] AS\n"
+			                + "    {[Gender].[F]}\n"
+			                + "SELECT\n"
+			                + "CrossJoin(Order(CrossJoin([~COLUMNS_Product], [~COLUMNS_Education Level]), [Measures].[Double Profit], BDESC), {[Measures].[Double Profit], [Measures].[Unit Sales]}) ON COLUMNS,\n"
+			                + "[~ROWS] ON ROWS\n"
+			                + "FROM [Sales]";
+			
 			assertEquals(expectedMdx, mdx);
 
 			CellSet cs = this.tqs.executeInternalQuery(tq2);
