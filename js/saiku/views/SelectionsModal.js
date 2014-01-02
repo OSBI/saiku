@@ -178,7 +178,7 @@ var SelectionsModal = Modal.extend({
             // Populate both boxes
             $(this.el).find('.used_selections select').removeAttr('disabled');
             var selected_members_opts = "";
-            for (var j = 0; j < this.selected_members.length; j++) {
+            for (var j = 0, len = this.selected_members.length; j < len; j++) {
                 var member = this.selected_members[j];
                 if (member.levelUniqueName == decodeURIComponent(this.member.level) && 
                     member.type == "MEMBER") {
@@ -199,7 +199,7 @@ var SelectionsModal = Modal.extend({
             
             $(this.el).find('.available_selections select').removeAttr('disabled');
             var available_members_opts = "";
-            for (var i = 0; i < this.available_members.length; i++) {
+            for (var i = 0, len = this.available_members.length; i < len; i++) {
                 var member = this.available_members[i];
                 available_members_opts += '<option value="' + encodeURIComponent(member.uniqueName) + '">' + member.caption + "</option>";
             }

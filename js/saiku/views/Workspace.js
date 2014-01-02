@@ -257,7 +257,7 @@ var Workspace = Backbone.View.extend({
         }
         var parsed_cube = this.selected_cube.split('/');
         var cube = parsed_cube[3];
-        for (var i = 4; i < parsed_cube.length; i++) {
+        for (var i = 4, len = parsed_cube.length; i < len; i++) {
             cube += "/" + parsed_cube[i];
         }
         this.query = new Query({
@@ -448,7 +448,7 @@ var Workspace = Backbone.View.extend({
         // Populate selections - trust me, this is prettier than it was :-/
         var axes = this.query ? this.query.get('axes') : false;
         if (axes) {
-            for (var axis_iter = 0; axis_iter < axes.length; axis_iter++) {
+            for (var axis_iter = 0, axis_iter_len = axes.length; axis_iter < axis_iter_len; axis_iter++) {
                 var axis = axes[axis_iter];
                 var $axis = $(this.el).find('.' + 
                     axis.name.toLowerCase() + ' ul');
@@ -458,7 +458,7 @@ var Workspace = Backbone.View.extend({
                 {
                     $axis.parent().siblings('.fields_list_header').addClass('on');
                 }
-                for (var dim_iter = 0; dim_iter < axis.dimensionSelections.length; dim_iter++) {
+                for (var dim_iter = 0, dim_iter_len = axis.dimensionSelections.length; dim_iter < dim_iter_len; dim_iter++) {
                     var dimension = axis.dimensionSelections[dim_iter];
                     var levels = [];
                     var members = {};
@@ -493,7 +493,7 @@ var Workspace = Backbone.View.extend({
                     }
 
 
-                    for (var sel_iter = 0; sel_iter < dimension.selections.length; sel_iter++) {
+                    for (var sel_iter = 0, sel_iter_len = dimension.selections.length; sel_iter < sel_iter_len; sel_iter++) {
                         var selection = dimension.selections[sel_iter];
                         
                         // Drag over dimensions and measures

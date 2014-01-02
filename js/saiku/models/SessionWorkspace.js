@@ -93,13 +93,13 @@ var SessionWorkspace = Backbone.Model.extend({
     },
     
     prefetch_dimensions: function() {        
-        for(var i = 0; i < this.connections.length; i++) {
+        for(var i = 0, iLen = this.connections.length; i < iLen; i++) {
             var connection = this.connections[i];
-            for(var j = 0; j < connection.catalogs.length; j++) {
+            for(var j = 0, jLen = connection.catalogs.length; j < jLen; j++) {
                 var catalog = connection.catalogs[j];
-                for(var k = 0; k < catalog.schemas.length; k++) {
+                for(var k = 0, kLen = catalog.schemas.length; k < kLen; k++) {
                     var schema = catalog.schemas[k];
-                    for(var l = 0; l < schema.cubes.length; l++) {
+                    for(var l = 0, lLen = schema.cubes.length; l < lLen; l++) {
                         var cube = schema.cubes[l];
                         var key = connection.name + "/" + catalog.name + "/"
                             + ((schema.name == "" || schema.name == null) ? "null" : schema.name) 
