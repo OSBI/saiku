@@ -237,6 +237,6 @@ var SaveQuery = Modal.extend({
             name: this.query.get('name'),
             file: file,
             content: response.xml
-        })).save({},{ success:  this.close, error: error  });
+        })).save({},{ success:  this.close, error: error, dataType: "text" });
     }
 });
