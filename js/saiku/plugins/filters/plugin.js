@@ -318,7 +318,7 @@ var Filters = Backbone.View.extend({
         }
         
         // Attach stats to existing tabs
-        for(var i = 0; i < Saiku.tabs._tabs.length; i++) {
+        for(var i = 0, len = Saiku.tabs._tabs.length; i < len; i++) {
             var tab = Saiku.tabs._tabs[i];
             new_workspace({
                 workspace: tab.content

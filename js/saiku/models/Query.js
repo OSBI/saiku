@@ -97,7 +97,7 @@ var Query = Backbone.Model.extend({
             if ((rows == 0 && columns == 0) && !this.workspace.other_dimension) {
                 var axes = this.get('axes');
                 if (axes) {
-                    for (var axis_iter = 0; axis_iter < axes.length; axis_iter++) {
+                    for (var axis_iter = 0, len = axes.length; axis_iter < len; axis_iter++) {
                         var axis = axes[axis_iter];
                         if (axis.name && axis.name == "ROWS") {
                             rows = axis.dimensionSelections.length;

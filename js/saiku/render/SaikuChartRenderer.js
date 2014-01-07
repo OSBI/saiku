@@ -598,8 +598,8 @@ SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
             var lowest_level = 0;
             var data_start = 0;
             var hasStart = false;
-            for (var row = 0; data_start == 0 && row < cellset.length; row++) {
-                    for (var field = 0; field < cellset[row].length; field++) {
+            for (var row = 0, rowLen = cellset.length; data_start == 0 && row < rowLen; row++) {
+                    for (var field = 0, fieldLen = cellset[row].length; field < fieldLen; field++) {
                         if (!hasStart) {
                             while (cellset[row][field].type == "COLUMN_HEADER" && cellset[row][field].value == "null") {
                                 row++;
@@ -644,7 +644,7 @@ SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
             for (var labelCol = 0; labelCol <= lowest_level; labelCol++) {
                 rowlabels.push(null);
             }
-            for (var row = data_start; row < cellset.length; row++) {
+            for (var row = data_start, rowLen = cellset.length; row < rowLen; row++) {
             if (cellset[row][0].value !== "") {
                     var record = [];
                     var flatrecord = [];
@@ -684,7 +684,7 @@ SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
                         }
                     }
                     flatrecord = _.clone(rowlabels);
-                    for (var col = lowest_level + 1; col < cellset[row].length; col++) {
+                    for (var col = lowest_level + 1, colLen = cellset[row].length; col < colLen; col++) {
                         var cell = cellset[row][col];
                         var value = cell.value || 0;
                         // check if the resultset contains the raw value, if not try to parse the given value

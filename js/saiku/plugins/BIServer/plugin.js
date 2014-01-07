@@ -169,7 +169,7 @@ if (Settings.PLUGIN) {
                     var ds = new Datasources();
                     ds.fetch({
                         success: function(dmodel, dresponse) {
-                            for (var i = 0; i < dresponse.length; i ++) {
+                            for (var i = 0, len = dresponse.length; i < len; i ++) {
                                 if (dresponse[i].name == response.cube.connectionName) {
                                     var urlParts = dresponse[i].properties.location.split(';');
                                     var jndi = "";
