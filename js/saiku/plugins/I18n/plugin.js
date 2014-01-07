@@ -151,7 +151,7 @@ var TranslationTab = Backbone.View.extend({
     },
     render: function() {
         var translation_table = {};
-        for (var i = 0; i < Saiku.i18n.elements.length; i++) {
+        for (var i = 0, len = Saiku.i18n.elements.length; i < len; i++) {
             translation_table[Saiku.i18n.elements[i]] = {
                 value: Saiku.i18n.po_file[Saiku.i18n.elements[i]],
                 name: encodeURI(Saiku.i18n.elements[i])

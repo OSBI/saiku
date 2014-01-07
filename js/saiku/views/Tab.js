@@ -173,7 +173,7 @@ var TabPager = Backbone.View.extend({
     
     render: function() {
         var pager = "";
-        for (var i = 0; i < this.tabset._tabs.length; i++) {
+        for (var i = 0, len = this.tabset._tabs.length; i < len; i++) {
             pager += "<a href='#" + i + "'>" + 
                 this.tabset._tabs[i].caption + "</a><br />";
         }
@@ -238,7 +238,7 @@ var TabSet = Backbone.View.extend({
     },
 
     find: function(id) {
-        for (var i = 0; i < this._tabs.length; i++) {
+        for (var i = 0, len = this._tabs.length; i < len; i++) {
             if (this._tabs[i].id == id) {
                 return this._tabs[i];
             }
@@ -269,7 +269,7 @@ var TabSet = Backbone.View.extend({
             this.add(new Workspace());
         }
         
-        for (var i = 0; i < this._tabs.length; i++) {
+        for (var i = 0, len = this._tabs.length; i < len; i++) {
             if (this._tabs[i] == tab) {
                 // Remove the element
                 this._tabs.splice(i, 1);
@@ -288,7 +288,7 @@ var TabSet = Backbone.View.extend({
     close_others: function(tab) {
         var index = _.indexOf(this._tabs, tab);
         this._tabs[index].select();
-        for (var i = 0; i < this._tabs.length; i++) {
+        for (var i = 0, len = this._tabs.length; i < len; i++) {
             if (this._tabs[i] != tab) {
                 // Remove the element
                 var otherTab = this._tabs[i];

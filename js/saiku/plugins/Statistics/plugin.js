@@ -167,11 +167,11 @@ var Statistics = Backbone.View.extend({
             var lowest_level = 0;
             var isHead = true
             var columnNames = new Array()
-            for (var row = 0; row < args.data.cellset.length; row++) {
+            for (var row = 0, rowLen = args.data.cellset.length; row < rowLen; row++) {
                 if (isHead && (args.data.cellset[row][0].type == "ROW_HEADER_HEADER" || 
                     args.data.cellset[row][0].value == "null")) {
                     this.data.metadata = [];
-                    for (var field = 0; field < args.data.cellset[row].length; field++) {
+                    for (var field = 0, fieldLen = args.data.cellset[row].length; field < fieldLen; field++) {
                         if (args.data.cellset[row][field].type == "ROW_HEADER_HEADER") {
                             this.data.metadata.shift();
                             lowest_level = field;
@@ -196,7 +196,7 @@ var Statistics = Backbone.View.extend({
                     isHead = false
                     var record = [];
                     this.data.width = args.data.cellset[row].length;
-                    for (var col = lowest_level; col < args.data.cellset[row].length; col++) {
+                    for (var col = lowest_level, colLen = args.data.cellset[row].length; col < colLen; col++) {
                         var value = args.data.cellset[row][col].value;
                         // check if the resultset contains the raw value, if not try to parse the given value
                         if (args.data.cellset[row][col].properties.raw && args.data.cellset[row][col].properties.raw !== "null")
@@ -261,7 +261,7 @@ var Statistics = Backbone.View.extend({
 
         
         // Attach stats to existing tabs
-        for(var i = 0; i < Saiku.tabs._tabs.length; i++) {
+        for(var i = 0, len = Saiku.tabs._tabs.length; i < len; i++) {
             var tab = Saiku.tabs._tabs[i];
             new_workspace({
                 workspace: tab.content

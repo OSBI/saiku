@@ -47,7 +47,7 @@ SaikuTableRenderer.prototype.internalRender = function(data, options) {
     var lowestRowLvl = 0;
     var rowGroups = [];
 
-    for (var row = 0; row < table.length; row++) {
+    for (var row = 0, rowLen = table.length; row < rowLen; row++) {
         colSpan = 1;
         colValue = "";
         isHeaderLowestLvl = false;
@@ -56,7 +56,7 @@ SaikuTableRenderer.prototype.internalRender = function(data, options) {
 
         contents += "<tr>";
 
-        for (var col = 0; col < table[row].length; col++) {
+        for (var col = 0, colLen = table[row].length; col < colLen; col++) {
             var header = data[row][col];
 
             // If the cell is a column header and is null (top left of table)
