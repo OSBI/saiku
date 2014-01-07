@@ -163,6 +163,9 @@ var SelectionsModal = Modal.extend({
             self.workspace.unblock();
             this.members_search_server = (this.available_members.length >= this.members_limit || this.available_members.length == 0);
 
+            self.show_unique_option = false;
+            $(this.el).find('.options #show_unique').attr('checked',false);
+
             $(this.el).find('.items_size').text(this.available_members.length);
             if (this.members_search_server) {
                 $(this.el).find('.warning').text("More items available than listed. Pre-Filter on server.");
