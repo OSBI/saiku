@@ -103,7 +103,7 @@
 	
 	<bean id="exporterBean" class="org.saiku.web.rest.resources.ExporterResource">
 		<property name="repository" ref="repositoryBean2" />
-		<property name="queryResource" ref="queryResource" />
+		<property name="query2Resource" ref="queryResource2" />
 	</bean>
 	
 	

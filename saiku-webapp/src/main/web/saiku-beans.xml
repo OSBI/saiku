@@ -100,7 +100,7 @@
 	<bean id="exporterBean" scope="request"
 		class="org.saiku.web.rest.resources.ExporterResource">
 		<property name="repository" ref="repository2bean" />
-		<property name="queryResource" ref="queryResource" />
+		<property name="query2Resource" ref="queryResource2" />
 	</bean>
 
 

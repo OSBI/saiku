@@ -36,6 +36,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.apache.commons.lang.StringUtils;
+import org.saiku.olap.query2.ThinQuery;
 import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.util.ServletUtil;
 import org.saiku.web.svg.Converter;
@@ -58,10 +59,10 @@ public class ExporterResource {
 
 	private ISaikuRepository repository;
 
-	private QueryResource queryResource;
+	private Query2Resource query2Resource;
 
-	public void setQueryResource(QueryResource qr){
-		this.queryResource = qr;
+	public void setQuery2Resource(Query2Resource qr){
+		this.query2Resource = qr;
 	}
 
 	public void setRepository(ISaikuRepository repository){
@@ -81,9 +82,11 @@ public class ExporterResource {
 			String fileContent = new String( (byte[]) f.getEntity());
 			String queryName = UUID.randomUUID().toString();
 			fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
-			queryResource.createQuery(null,  null,  null, null, fileContent, queryName, null);
-			queryResource.execute(queryName, formatter, 0);
-			return queryResource.getQueryExcelExport(queryName, formatter);
+//			queryResource.createQuery(queryName,  null,  null, null, fileContent, queryName, null);
+//			queryResource.execute(queryName, formatter, 0);
+			ThinQuery tq = query2Resource.createQuery(queryName, fileContent, null, null);
+			query2Resource.execute(tq);
+			return query2Resource.getQueryExcelExport(queryName, formatter);
 		} catch (Exception e) {
 			log.error("Error exporting XLS for file: " + file, e);
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
@@ -102,9 +105,11 @@ public class ExporterResource {
 			String fileContent = new String( (byte[]) f.getEntity());
 			fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
 			String queryName = UUID.randomUUID().toString();
-			queryResource.createQuery(null,  null,  null, null, fileContent, queryName, null);
-			queryResource.execute(queryName,formatter, 0);
-			return queryResource.getQueryCsvExport(queryName);
+//			query2Resource.createQuery(null,  null,  null, null, fileContent, queryName, null);
+//			query2Resource.execute(queryName,formatter, 0);
+			ThinQuery tq = query2Resource.createQuery(queryName, fileContent, null, null);
+			query2Resource.execute(tq);
+			return query2Resource.getQueryCsvExport(queryName);
 		} catch (Exception e) {
 			log.error("Error exporting CSV for file: " + file, e);
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
@@ -123,8 +128,10 @@ public class ExporterResource {
 			String fileContent = new String( (byte[]) f.getEntity());
 			fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
 			String queryName = UUID.randomUUID().toString();
-			queryResource.createQuery(null,  null,  null, null, fileContent, queryName, null);
-			QueryResult qr = queryResource.execute(queryName, formatter, 0);
+//			query2Resource.createQuery(null,  null,  null, null, fileContent, queryName, null);
+//			QueryResult qr = query2Resource.execute(queryName, formatter, 0);
+			ThinQuery tq = query2Resource.createQuery(queryName, fileContent, null, null);
+			QueryResult qr = query2Resource.execute(tq);
 			return Response.ok().entity(qr).build();
 		} catch (Exception e) {
 			log.error("Error exporting CSV for file: " + file, e);

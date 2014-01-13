@@ -66,7 +66,6 @@ public class Query2Resource {
 		thinQueryService = tqs;
 	}
 
-	private OlapDiscoverService olapDiscoverService;
 	private ISaikuRepository repository;
 	
 	@Autowired
@@ -74,12 +73,6 @@ public class Query2Resource {
 		this.repository = repository;
 	}
 
-
-
-	@Autowired
-	public void setOlapDiscoverService(OlapDiscoverService olapds) {
-		olapDiscoverService = olapds;
-	}
 
 	/**
 	 * Delete query from the query pool.
@@ -125,11 +118,12 @@ public class Query2Resource {
 	{
 		try {
 			ThinQuery tq = null;
-			String file = null, 
-					json = null;
+			String file = fileFormParam, 
+					json = jsonFormParam;
 			if (formParams != null) {
 				json = formParams.containsKey("json") ? formParams.getFirst("json") : jsonFormParam;
 				file = formParams.containsKey("file") ? formParams.getFirst("file") : fileFormParam;
+			}
 				if (StringUtils.isNotBlank(json)) {
 					ObjectMapper om = new ObjectMapper();
 					tq = om.readValue(json, ThinQuery.class);
@@ -141,7 +135,6 @@ public class Query2Resource {
 					tq = om.readValue(tqJson, ThinQuery.class);
 					
 				}
-			}
 
 			if (log.isDebugEnabled()) {
 				log.debug("TRACK\t"  + "\t/query/" + queryName + "\tPOST\t tq:" + (tq == null) + " file:" + (file));
