@@ -16,7 +16,6 @@
 package org.saiku.web.rest.resources;
 
 import java.io.Serializable;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -244,7 +243,7 @@ public class OlapDiscoverResource implements Serializable {
 		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 
 		try {
-			return olapDiscoverService.getLevelMembers(cube, dimensionName, hierarchyName, levelName);
+			return olapDiscoverService.getLevelMembers(cube, hierarchyName, levelName);
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 		}

@@ -152,20 +152,20 @@ public class OlapDiscoverService implements Serializable {
 		}
 	}
 
-	public List<SimpleCubeElement> getLevelMembers(SaikuCube cube, String dimensionName, String hierarchyName, String levelName) {
-		return getLevelMembers(cube, dimensionName, hierarchyName, levelName, null, -1);
+	public List<SimpleCubeElement> getLevelMembers(SaikuCube cube, String hierarchyName, String levelName) {
+		return getLevelMembers(cube, hierarchyName, levelName, null, -1);
 	}
 	
-	public List<SimpleCubeElement> getLevelMembers(SaikuCube cube, String dimensionName, String hierarchyName, String levelName, int searchLimit) {
-		return getLevelMembers(cube, dimensionName, hierarchyName, levelName, null, searchLimit);
+	public List<SimpleCubeElement> getLevelMembers(SaikuCube cube, String hierarchyName, String levelName, int searchLimit) {
+		return getLevelMembers(cube, hierarchyName, levelName, null, searchLimit);
 	}
 	
-	public List<SimpleCubeElement> getLevelMembers(SaikuCube cube, String dimensionName, String hierarchyName, String levelName, String searchString, int searchLimit) {
+	public List<SimpleCubeElement> getLevelMembers(SaikuCube cube, String hierarchyName, String levelName, String searchString, int searchLimit) {
 		try {
-			return  metaExplorer.getAllMembers(cube, dimensionName, hierarchyName, levelName, searchString, searchLimit);
+			return  metaExplorer.getAllMembers(cube, hierarchyName, levelName, searchString, searchLimit);
 		} catch (SaikuOlapException e) {
 			throw new SaikuServiceException("Cannot get all members for cube ( " + cube 
-					+ " ) dimension ( " + dimensionName + " ) hierarchy ( " + hierarchyName + " )", e);
+					+ " ) hierarchy ( " + hierarchyName + " )", e);
 		}
 	}
 	

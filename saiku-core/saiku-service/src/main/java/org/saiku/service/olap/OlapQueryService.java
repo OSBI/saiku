@@ -400,8 +400,8 @@ public class OlapQueryService implements Serializable {
 			log.debug("Found members in the result: " + members.size());
 
 		}
-		if (cs == null || !preferResult || members.size() == 0 || levels.size() == 1) {
-			members = olapDiscoverService.getLevelMembers(query.getSaikuCube(), dimensionName, hierarchyName, levelName, searchString, searchLimit);
+		if (cs == null || !preferResult || members.size() == 0 || levels.size() == 1) {			
+			members = olapDiscoverService.getLevelMembers(query.getSaikuCube(), hierarchyName, levelName, searchString, searchLimit);
 		}
 		return members;
 	}

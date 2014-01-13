@@ -15,7 +15,7 @@ public class ThinQuery implements ISaikuQuery {
 	private String name;
 	private Map<String, String> parameters = new HashMap<String, String>();
 	private Map<String, String> plugins = new HashMap<String, String>();
-	private Map<String, String> properties = new HashMap<String, String>();
+	private Map<String, Object> properties = new HashMap<String, Object>();
 	private Map<String, String> metadata = new HashMap<String, String>();
 	private String queryType = "OLAP";
 	
@@ -160,14 +160,14 @@ public class ThinQuery implements ISaikuQuery {
 	/**
 	 * @return the properties
 	 */
-	public Map<String, String> getProperties() {
+	public Map<String, Object> getProperties() {
 		return properties;
 	}
 
 	/**
 	 * @param properties the properties to set
 	 */
-	public void setProperties(Map<String, String> properties) {
+	public void setProperties(Map<String, Object> properties) {
 		this.properties = properties;
 	}
 

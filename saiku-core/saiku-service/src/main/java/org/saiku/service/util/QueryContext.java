@@ -68,7 +68,8 @@ public class QueryContext {
 				return (CellSet) objects.get(ObjectKey.RESULT);
 			}
 		}
-		throw new SaikuServiceException("Context: " + id + " does not contain a olap result object");
+		return null;
+		//throw new SaikuServiceException("Context: " + id + " does not contain a olap result object");
 	}
 	
 	public Statement getStatement() {

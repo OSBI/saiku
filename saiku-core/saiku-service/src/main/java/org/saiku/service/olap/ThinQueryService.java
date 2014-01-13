@@ -19,19 +19,28 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.CellSet;
+import org.olap4j.CellSetAxis;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapStatement;
+import org.olap4j.Position;
 import org.olap4j.metadata.Cube;
+import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Level;
+import org.olap4j.metadata.Member;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SaikuDimensionSelection;
+import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query.IQuery;
 import org.saiku.olap.query.IQuery.QueryType;
@@ -40,7 +49,9 @@ import org.saiku.olap.query2.ThinQuery;
 import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
 import org.saiku.olap.query2.util.Fat;
 import org.saiku.olap.query2.util.Thin;
+import org.saiku.olap.util.ObjectUtil;
 import org.saiku.olap.util.OlapResultSetUtil;
+import org.saiku.olap.util.SaikuUniqueNameComparator;
 import org.saiku.olap.util.formatter.CellSetFormatter;
 import org.saiku.olap.util.formatter.CellSetFormatterFactory;
 import org.saiku.olap.util.formatter.FlattenedCellSetFormatter;
@@ -159,7 +170,7 @@ public class ThinQueryService implements Serializable {
 	
 	public CellDataSet execute(ThinQuery tq) {
 		if (tq.getProperties().containsKey("saiku.olap.result.formatter")) {
-			return execute(tq, tq.getProperties().get("saiku.olap.result.formatter"));
+			return execute(tq, tq.getProperties().get("saiku.olap.result.formatter").toString());
 		}
 		return execute(tq, "");
 	}
@@ -257,5 +268,60 @@ public class ThinQueryService implements Serializable {
 			}
 		}
 		return new byte[0];
+	}
+
+	public List<SimpleCubeElement> getResultMetadataMembers(
+				String queryName,
+				boolean preferResult, 
+				String hierarchyName, 
+				String levelName,
+				String searchString, 
+				int searchLimit) {
+		
+		if (context.containsKey(queryName)) {
+			CellSet cs = context.get(queryName).getOlapResult();
+			List<SimpleCubeElement> members = new ArrayList<SimpleCubeElement>();
+			Set<Level> levels = new HashSet<Level>();
+			boolean search = StringUtils.isNotBlank(searchString);
+			preferResult = (preferResult && !search);
+			searchString = search ? searchString.toLowerCase() : null;
+
+			if (cs != null && preferResult) {
+				for (CellSetAxis axis : cs.getAxes()) {
+					int posIndex = 0;
+					for (Hierarchy h : axis.getAxisMetaData().getHierarchies()) {
+						if (h.getUniqueName().equals(hierarchyName) || h.getName().equals(hierarchyName)) {
+							log.debug("Found hierarchy in the result: " + hierarchyName);
+							if (h.getLevels().size() == 1) {
+								break;
+							}
+							Set<Member> mset = new HashSet<Member>();
+							for (Position pos : axis.getPositions()) {
+								Member m = pos.getMembers().get(posIndex);
+								if (!m.getLevel().getLevelType().equals(org.olap4j.metadata.Level.Type.ALL)) {
+									levels.add(m.getLevel());
+								}
+								if (m.getLevel().getUniqueName().equals(levelName) || m.getLevel().getName().equals(levelName)) {
+									mset.add(m);
+								}
+							}
+
+							members = ObjectUtil.convert2Simple(mset);
+							Collections.sort(members, new SaikuUniqueNameComparator());
+
+							break;
+						}
+						posIndex++;
+					}
+				}
+				log.debug("Found members in the result: " + members.size());
+
+			}
+			if (cs == null || !preferResult || members.size() == 0 || levels.size() == 1) {
+				members = olapDiscoverService.getLevelMembers(context.get(queryName).getOlapQuery().getCube(), hierarchyName, levelName, searchString, searchLimit);
+			}
+			return members;
+		}
+		return null;
 	}
 }

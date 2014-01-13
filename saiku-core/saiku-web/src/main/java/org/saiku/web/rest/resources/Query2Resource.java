@@ -15,6 +15,8 @@
  */
 package org.saiku.web.rest.resources;
 
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -24,6 +26,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -36,6 +39,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.query2.ThinQuery;
 import org.saiku.olap.util.SaikuProperties;
 import org.saiku.service.olap.OlapDiscoverService;
@@ -196,6 +200,32 @@ public class Query2Resource {
 		}		
 	}
 	
+	@GET
+	@Produces({"application/json" })
+	@Path("/{queryname}/result/metadata/hierarchies/{hierarchy}/levels/{level}")
+	public List<SimpleCubeElement> getLevelMembers(
+			@PathParam("queryname") String queryName, 
+			@PathParam("hierarchy") String hierarchyName,
+			@PathParam("level") String levelName,
+			@QueryParam("result") @DefaultValue("true") boolean result,
+			@QueryParam("search") String searchString,
+			@QueryParam("searchlimit") @DefaultValue("-1") int searchLimit)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t" 
+					+ "\t/query/" + queryName + "/result/metadata"
+					+ "/hierarchies/" + hierarchyName + "/levels/" + levelName + "\tGET");
+		}
+		try {
+			List<SimpleCubeElement> ms = thinQueryService.getResultMetadataMembers(queryName, result, hierarchyName, levelName, searchString, searchLimit);
+			return ms;
+		}
+		catch (Exception e) {
+			log.error("Cannot execute query (" + queryName + ")",e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			throw new WebApplicationException(Response.serverError().entity(error).build());
+		}
+	}
 	
 	
 	@GET
