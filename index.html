@@ -200,7 +200,7 @@
                             <% if (typeof level["visible"] == "undefined" || level["visible"]) { %>
                                 <li class="hide d_level">
                                 <a title="<%= level.description ? level.description : level.caption %>" level="<%= level.name %>" hierarchy="<%= hierarchy.name %>"
-                                    class="level" href="#<%= encodeURIComponent(hierarchy.uniqueName) %>/<%= encodeURIComponent(level.uniqueName) %>"><%= level.caption %></a>
+                                    class="level" href="#<%= encodeURIComponent(hierarchy.name) %>/<%= encodeURIComponent(level.name) %>"><%= level.caption %></a>
                                 </li>
                             <% } %>
                         <% }); %>

@@ -63,7 +63,7 @@ SaikuOlapQueryHelper.prototype.getHierarchy = function(name) {
   for (var axisName in this.model().queryModel.axes) {
       var axis = this.model().queryModel.axes[axisName];
       var hierarchy = _.find(axis.hierarchies, function(he) { 
-                  return he.name == name; 
+                  return (he && he.name == name); 
               });
       if (hierarchy) {
         return hierarchy;
@@ -85,6 +85,13 @@ SaikuOlapQueryHelper.prototype.moveHierarchy = function(fromAxis, toAxis, hierar
   target.push(h);
 
 };
+
+SaikuOlapQueryHelper.prototype.removeHierarchy = function(fromAxis, hierarchy) {
+  var h = this.getHierarchy(hierarchy);
+  var i = this.model().queryModel.axes[fromAxis].hierarchies.indexOf(h);
+  this.model().queryModel.axes[fromAxis].hierarchies.splice(i,1);
+};
+
 
 
 SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level) {

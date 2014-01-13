@@ -487,8 +487,9 @@ textarea, select {
 
 .ui-sortable-helper {
     line-height: 18px !important;
-    min-width: 70px;
+    min-width: 200px;
     text-align: center;
+
 }
 .ui-draggable-dragging {
     display: inline !important;
@@ -496,7 +497,7 @@ textarea, select {
     line-height: 18px !important;
     list-style-type: none !important;
     margin: 0 !important;
-    min-width: 70px;
+    min-width: 200px;
     padding: 1px 8px !important;
     text-align: center;
     border-radius: 3px;
@@ -511,7 +512,8 @@ textarea, select {
     padding: 0 !important;
     white-space: nowrap;
 }
-.dimension_tree ul .ui-draggable-dragging {
+.dimension_tree ul .ui-draggable-dragging, 
+.workspace_fields ul  .ui-draggable-dragging {
     background: #e5f6ff !important;
     background: -webkit-gradient(linear, left top, left bottom, from(#e0e9ef), to(#c2d5e2)) !important;
     background: -moz-linear-gradient(top, #e0e9ef 0%, #c2d5e2 100%) !important;
@@ -519,7 +521,8 @@ textarea, select {
     color: #2a6085 !important;
     text-align: left;
 }
-.dimension_tree ul .ui-draggable-dragging a {
+.dimension_tree ul .ui-draggable-dragging a,
+.workspace_fields ul  .ui-draggable-dragging a {
     color: #2a6085 !important;
 }
 .measure_tree ul .ui-draggable-dragging {

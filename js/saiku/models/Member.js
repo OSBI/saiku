@@ -21,15 +21,13 @@ var Member = Backbone.Model.extend({
     initialize: function(args, options) {
         this.cube = options.cube;
         var dimension = options.dimension.split("/");
-        this.dimension = dimension[0];
-        this.hierarchy = dimension[2];
-        this.level = dimension[3];
+        this.hierarchy = decodeURIComponent(dimension[0]);
+        this.level = decodeURIComponent(dimension[1]);
     },
     
     url: function() {
         var url = encodeURI(Saiku.session.username + "/discover/") +
-            this.cube + encodeURI("/dimensions/" + this.dimension +  
-            "/hierarchies/" + this.hierarchy + "/levels/" + this.level);
+            this.cube + "/hierarchies/" + encodeURIComponent(this.hierarchy) + "/levels/" + encodeURIComponent(this.level);
         
         return url;
     }

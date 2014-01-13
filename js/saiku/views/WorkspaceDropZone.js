@@ -26,7 +26,8 @@ var WorkspaceDropZone = Backbone.View.extend({
     events: {
         'sortstop .fields_list_body.details': 'select_measure',
         'sortbeforestop .axis_fields': 'select_dimension',
-        'click .d_measure a' : 'remove_measure_click',
+        'click .d_measure' : 'remove_measure_click',
+        'click .d_level': 'selections',
 //        'click .d_measure span.sort' : 'sort_measure',
         'click .clear_axis' : 'clear_axis'
     },
@@ -59,28 +60,29 @@ var WorkspaceDropZone = Backbone.View.extend({
         });
         
         $(this.el).find('.axis_fields ul.connectable').sortable({
-            connectWith: $(this.el).find('.axis_fields ul.connectable'),
+            connectWith: $(self.el).find('.axis_fields ul.connectable'),
             forcePlaceholderSize: false,
             forceHelperSize: false,
             items: 'li.selection',
             opacity: 0.60,
             placeholder: 'placeholder',
             tolerance: 'touch',
-            //cursorAt: { top: 10, left: 10 },
+            cursorAt: { top: 10, left: 60 },
+            scroll: false,
             start: function(event, ui) {
                 var hierarchy = $(ui.helper).find('a').parent().parent().attr('hierarchycaption');
                 ui.placeholder.text(hierarchy);
                 $(ui.helper).css({ width: "auto"});
                 
-                /*
+                
                 $(self.el).find('.axis_fields ul.hierarchy').each( function(index, element) {
-                    $(element).find('li.d_level').hide();
-                    var group = $(element).attr('hierarchy');
-                    $('<li class="d_group d_level">' + group + "</li>").appendTo( $(element) );    
+                    $(element).find('li.d_level:visible').addClass('temphide').hide();
+                    //var group = $(element).attr('hierarchy');
+                    //$('<li class="d_group d_level">' + group + "</li>").appendTo( $(element) );    
                 });
-                $(ui.helper).find('li.d_level').hide();
-                $('<li class="d_group d_level">' + hierarchy + "</li>").appendTo(ui.helper.find('ul'));
-                */
+                //$(ui.helper).find('li.d_level').hide();
+                //$('<li class="d_group d_level">' + hierarchy + "</li>").appendTo(ui.helper.find('ul'));
+                
             }
         });
         
@@ -107,8 +109,9 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
 
     remove_measure_click: function(event) {
-        var m = $(event.target).attr('measure');
-        $(event.target).parent().remove();
+        var target = $(event.target).hasClass('d_measure') ?  $(event.target).find('a') :  $(event.target);
+        var m = target.attr('measure')
+        target.parent().remove();
         event.preventDefault();
         this.remove_measure(m);
         this.update_dropzones();
@@ -119,10 +122,28 @@ var WorkspaceDropZone = Backbone.View.extend({
         this.select_measure();
     },
 
+    remove_dimension: function(event, ui) {
+        if ($(ui.helper).hasClass('d_measure')) {
+                var measureName = $(ui.helper).find('a').attr('measure');
+                $(ui.helper).detach();
+                this.remove_measure(measureName);
+            } else {
+                var hierarchy = $(ui.helper).find('a').attr('hierarchy');
+                var fromAxis = $(this.el).find('ul.hierarchy[hierarchy="' + hierarchy + '"]').parents('.fields_list').attr('title');
+                var level =  $(ui.helper).find('a').attr('level');
+                this.toggle_draggable(true);
+                $(ui.helper).detach();
+
+                this.workspace.query.helper.removeHierarchy(fromAxis, hierarchy);
+                this.workspace.query.run();
+        }
+        
+    },
+
     update_dropzones: function() {
         $(this.workspace.el).find('.fields_list_body').each(function(idx, ael) {
             var $axis = $(ael);
-            if ($axis.find('ul.connectable li').length == 0) {
+            if ($axis.find('ul.connectable li.selection, ul.connectable li.d_measure').length == 0) {
                 $axis.siblings('.clear_axis').addClass('hide');
             } else {
                 $axis.siblings('.clear_axis').removeClass('hide');
@@ -157,43 +178,59 @@ var WorkspaceDropZone = Backbone.View.extend({
             }
 
 /* TODO - maybe we should do this all in a synchronize? */
-            $axis.find('ul.hierarchy li.d_level').each( function(index, element) {
-                var hierarchy = $(element).find('a').attr('hierarchy');
-                var level = $(element).find('a').attr('level');
-                $(self.workspace.el).find('.dimension_tree li.d_level a[hierarchy="' + hierarchy + '"][level="' + level + '"]').parent().draggable('enable');
-            });
-            if (!$axis.hasClass('details')) {
-                    $axis.find('ul.hierarchy li.d_level').each( function(index, element) {
-                        var hierarchy = $(element).find('a').attr('hierarchy');
-                        var level = $(element).find('a').attr('level');
-                        $(self.workspace.el).find('.dimension_tree li.d_level a[hierarchy="' + hierarchy + '"][level="' + level + '"]').parent().draggable('enable');
-                    });
 
-            } else {
-                $axis.find('ul.connectable li.d_measure').each( function(index, element) {
-                        var measure = $(element).find('a').attr('measure');
-                        
-                        $(self.workspace.el).find('.measure_tree li.d_measure a[measure="' + measure + '"]').parent().draggable('enable');
-                    });
-            }
+            this.toggle_draggable(true);
 
-            $axis.find('.connectable').empty();
 /* up until here */
-
+            $axis.find('.connectable').empty();
             this.workspace.query.run();
             this.update_dropzones();
             event.preventDefault();
             return false;
     },
 
+    toggle_draggable: function(enable) {
+        var self = this;
+        $(this.el).find('.fields_list_body').each(function (i, axiselement ) {
+            var $axis = $(axiselement);
+            if (!$axis.hasClass('details')) {
+                    $axis.find('ul.hierarchy li.d_level').each( function(index, element) {
+                        var hierarchy = $(element).find('a').attr('hierarchy');
+                        var level = $(element).find('a').attr('level');
+                        if (enable) {
+                            $(self.workspace.el).find('.dimension_tree li.d_level a[hierarchy="' + hierarchy + '"][level="' + level + '"]').parent().draggable('enable');
+                        } else {
+                            $(self.workspace.el).find('.dimension_tree li.d_level a[hierarchy="' + hierarchy + '"][level="' + level + '"]').parent().draggable('disable');
+                        }
+                    });
+
+            } else {
+                $axis.find('ul.connectable li.d_measure').each( function(index, element) {
+                        var measure = $(element).find('a').attr('measure');
+                        if (enable) {
+                            $(self.workspace.el).find('.measure_tree li.d_measure a[measure="' + measure + '"]').parent().draggable('enable');
+                        } else {
+                            $(self.workspace.el).find('.measure_tree li.d_measure a[measure="' + measure + '"]').parent().draggable('disable');
+                        }
+                    });
+            }
+        });
+    },
+
     select_dimension: function(event, ui) {
         var self = this;
-        /*
+        
         $(self.el).find('.axis_fields ul.hierarchy').each( function(index, element) {
-            $(element).find('li.d_level').show();
+            $(element).find('li.temphide').show().removeClass('temphide');
             $(element).find('.d_group').remove();
         });
-        */
+        
+        // if we drop to remove dont execute the following
+        if ( !$(ui.helper).is(':visible')) {
+            //$(ui.placeholder).detach();
+            this.update_dropzones();
+            return;
+        }
         if( $(ui.helper).hasClass('selection') ) {
             var hierarchy = ui.helper.find('ul.hierarchy').attr('hierarchy');
             var indexHierarchy = -1;
@@ -209,6 +246,8 @@ var WorkspaceDropZone = Backbone.View.extend({
             var isNew = ui.placeholder.parent().find('ul.hierarchy[hierarchy="' + hierarchy + '"]').length == 0;
             if (isNew) {
                 var level = ui.helper.find('ul.hierarchy li.d_level a:visible').attr('level');
+                var parent = $(self.workspace.el).find('.dimension_tree .d_hierarchy a.level[hierarchy="' + hierarchy +'"][level="' + level + '"]').parent().parent().not('.hierarchy');
+                parent.children('li.hide').find('a.level[hierarchy="' + hierarchy +'"][level="' + level + '"]').parent().draggable('disable');
                 this.workspace.query.helper.includeLevel(toAxis, hierarchy, level);
             } else {
                 self.workspace.query.helper.moveHierarchy(fromAxis, toAxis, hierarchy, indexHierarchy);
@@ -222,8 +261,11 @@ var WorkspaceDropZone = Backbone.View.extend({
             
             self.workspace.query.run();
             self.update_dropzones();
+
             return;
         }
+        alert("There might be dragons! We probably need that again!");
+        /*
         var hierarchy = $(ui.helper).find('a').attr('hierarchy');
         var level =  $(ui.helper).find('a').attr('level');
 
@@ -234,115 +276,22 @@ var WorkspaceDropZone = Backbone.View.extend({
 
         $(self.workspace.el).find('.dimension_tree a.level[hierarchy="' + hierarchy +'"][level="' + level + '"]').parent().not('.ui-draggable-dragging').draggable('disable');
 
+
         var selection = $('<li class="selection"></li>');
         selection.append(h);
         $(ui.item).empty().removeClass('hide d_level').addClass('selection').append(h);
+
         self.update_dropzones();
         return true;
         //$(ui.helper).html(selection.html())
+        */
     },
 
-    sort_measure: function(event, ui) {
-        var $axis = $(event.target).parent().parents('.fields_list_body');
-        var source = "";
-        var target = "ROWS";
-        
-        if ($axis.hasClass('rows')) { source = "ROWS"; target= "COLUMNS"; }
-        if ($axis.hasClass('columns')) { source = "COLUMNS"; target="ROWS"; }
-        if ($axis.hasClass('filter')) { source = "FILTER"; target="COLUMNS"; }
-
-        var sortOrder = "";
-        if ($(event.target).hasClass('none')) sortOrder = "none";
-        if ($(event.target).hasClass('BASC')) sortOrder = "BASC";
-        if ($(event.target).hasClass('BDESC')) sortOrder = "BDESC";
-
-        var memberpath = $(event.target).parent().find('a').attr('href').replace('#', '').split('/');
-        var member = "-";
-        if ($(event.target).parent().hasClass('d_dimension')) {
-            member = memberpath[2] + ".CurrentMember.Name";
-            $axis.find('.d_dimension .sort').removeClass('BASC').removeClass('BDESC').addClass('none');
-            $axis.parent().parent().find("." + target.toLowerCase() + " .d_measure .sort").removeClass('BASC').removeClass('BDESC').addClass('none');
-            target = source;
-        } else {
-            member = memberpath[memberpath.length -1];
-            $axis.find('.d_measure .sort').removeClass('BASC').removeClass('BDESC').addClass('none');
-            $axis.parent().parent().find("." + target.toLowerCase() + " .d_dimension .sort").removeClass('BASC').removeClass('BDESC').addClass('none');
-        }
-
-        var futureSortOrder = "none";
-        if (sortOrder == "none") futureSortOrder = "BASC";
-        if (sortOrder == "BASC") futureSortOrder = "BDESC";
-        if (sortOrder == "BDESC") futureSortOrder = "none";
-        
-
-
-        $(event.target).removeClass('none').addClass(futureSortOrder);
-
-        if (futureSortOrder == "none") {
-            var url = "/axis/" + target + "/sort/";
-            this.workspace.query.action.del(url, {
-                success: this.workspace.query.run
-            });
-        } else {
-            var url = "/axis/" + target + "/sort/" + futureSortOrder + "/" + member;
-            this.workspace.query.action.post(url, {
-                success: this.workspace.query.run
-            });
-        }
-
-    },
-    
-    
-
-
-    remove_dimension: function(event, ui) {
-        // Reenable original element
-        var $source = ui ? ui.draggable : $(event.target).parent();
-        var original_href = $source.find('a').attr('href');
-        var $original = $(this.workspace.el).find('.sidebar')
-            .find('a[href="' + original_href + '"]').parent('li').first();
-        $original
-            .draggable('enable')
-            .css({ fontWeight: 'normal' });
-        
-        // Unhighlight the parent if applicable
-        if ($original.parents('.parent_dimension')
-                .children().children('.ui-state-disabled').length === 0) {
-            $original.parents('.parent_dimension')
-                .find('.folder_collapsed')
-                .css({fontWeight: "normal"});
-        }
-        
-        // Notify server
-        var target = '';
-        var dimension = original_href.replace('#', '');
-        $target_el = $source.parent().parent('div.fields_list_body');
-        if ($target_el.hasClass('rows')) target = "ROWS";
-        if ($target_el.hasClass('columns')) target = "COLUMNS";
-        if ($target_el.hasClass('filter')) target = "FILTER";
-        
-        var url = "/axis/" + target + "/dimension/" + dimension;
-        this.workspace.query.action.del(url, {
-            success: this.workspace.query.run,
-            dataType: "text"
-        });
-        
-        // Remove element
-        $source.addClass('deleted').remove();
-        if ($target_el.find('li.d_dimension, li.d_measure, li.ui-draggable').length == 0) {
-            $target_el.siblings('.clear_axis').addClass('hide');
-        }
-        
-        // Prevent workspace from getting this event
-        event.stopPropagation();
-        event.preventDefault();
-        return false;
-    },
     
     selections: function(event, ui) {
         // Determine dimension
-        var $target = $(event.target).hasClass('sprite') ?
-            $(event.target).parent().find('.level') :
+        var $target = $(event.target).hasClass('d_level') ?
+            $(event.target).find('.level') :
             $(event.target);
         var key = $target.attr('href').replace('#', '');
         

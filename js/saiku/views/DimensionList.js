@@ -124,7 +124,7 @@ var DimensionList = Backbone.View.extend({
             },
             cursorAt: {
                 top: 10,
-                left: 35
+                left: 85
             }
         });
     },

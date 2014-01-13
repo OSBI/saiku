@@ -128,12 +128,12 @@ var Workspace = Backbone.View.extend({
             // Activate sidebar for removing elements
             $(this.el).find('.sidebar')
                 .droppable({
-                    accept: '.d_measure, .d_dimension'
+                    accept: '.d_measure, .selection'
                 });
 
             $(this.el).find('.workspace_results')
                 .droppable({
-                    accept: '.d_measure, .d_dimension'
+                    accept: '.d_measure, .selection'
                 });
         }
 
@@ -605,16 +605,7 @@ var Workspace = Backbone.View.extend({
     
     remove_dimension: function(event, ui) {
         if (this.query.model.type == "QUERYMODEL") {
-            if ($(ui.helper).hasClass('d_measure')) {
-                var measureName = $(ui.helper).find('a').attr('measure');
-                $(ui.helper).detach();
-                this.drop_zones.remove_measure(measureName);
-            } else {
-                var hierarchy = $(ui.helper).find('a').attr('hierarchy');
-                var level =  $(ui.helper).find('a').attr('level');
-                $(ui.helper).detach();
-                this.query.helper.removeLevel(hierarchy, level);
-            }
+                this.drop_zones.remove_dimension(event, ui);
         }
     },
 

@@ -99,7 +99,7 @@ var SelectionsModal = Modal.extend({
 
     get_members: function() {
             var self = this;
-            var path = "/result/metadata/dimensions/" + this.member.dimension + "/hierarchies/" + this.member.hierarchy + "/levels/" + this.member.level;
+            var path = "/result/metadata/hierarchies/" + encodeURIComponent(this.member.hierarchy) + "/levels/" + encodeURIComponent(this.member.level);
             this.search_path = path;
             
             var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">' + self.message + '</span> ';
@@ -149,13 +149,7 @@ var SelectionsModal = Modal.extend({
         if (response && response.length > 0) {
             this.available_members = response;
         }
-
-        this.workspace.query.action.get("/axis/" + this.axis + "/dimension/" + this.member.dimension, { 
-            success: this.populate,
-            error: function() {
-                self.workspace.unblock();
-            }
-        });
+        this.populate();
     },
     
     populate: function(model, response) {
@@ -173,8 +167,11 @@ var SelectionsModal = Modal.extend({
                 $(this.el).find('.warning').text("");
             }
 
-            if (response && response.hasOwnProperty('selections')) {
-                this.selected_members = response.selections;
+            var hName = self.member.hierarchy;
+            var lName = self.member.level;
+            var hierarchy = self.workspace.query.helper.getHierarchy(hName);
+            if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
+                this.selected_members = hierarchy.levels[lName].selection ? hierarchy.levels[lName].selection.members : [];
             }
             var used_members = [];
     
@@ -183,11 +180,8 @@ var SelectionsModal = Modal.extend({
             var selected_members_opts = "";
             for (var j = 0, len = this.selected_members.length; j < len; j++) {
                 var member = this.selected_members[j];
-                if (member.levelUniqueName == decodeURIComponent(this.member.level) && 
-                    member.type == "MEMBER") {
                     selected_members_opts += '<option value="' + encodeURIComponent(member.uniqueName) + '">' + member.caption + "</option>";
                     used_members.push(member.caption);
-                }
             }
             if (used_members.length > 0) {
                 var selectedMembers = $(this.el).find('.used_selections select');
@@ -334,28 +328,24 @@ var SelectionsModal = Modal.extend({
 
     
     save: function() {
+        var self = this;
         // Notify user that updates are in progress
         var $loading = $("<div>Saving...</div>");
         $(this.el).find('.dialog_body').children().hide();
         $(this.el).find('.dialog_body').prepend($loading);
         var show_u = this.show_unique_option;
 
+        var hName = decodeURIComponent(self.member.hierarchy);
+        var lName = decodeURIComponent(self.member.level)
+        var hierarchy = self.workspace.query.helper.getHierarchy(hName);
+        
+
         // Determine updates
-        var updates = [{
-            hierarchy: decodeURIComponent(this.member.hierarchy),
-            uniquename: decodeURIComponent(this.member.level),
-            type: 'level',
-            action: 'delete'
-        }];
+        var updates = [];
         
         // If no selections are used, add level
         if ($(this.el).find('.used_selections option').length === 0) {
-            updates.push({
-                hierarchy: decodeURIComponent(this.member.hierarchy),
-                uniquename: decodeURIComponent(this.member.level),
-                type: 'level',
-                action: 'add'
-            });
+            // nothing to do - include all members of this level
         } else {
             // Loop through selections
             $(this.el).find('.used_selections option')
@@ -363,23 +353,16 @@ var SelectionsModal = Modal.extend({
                 var value = show_u ? 
                     encodeURIComponent($(selection).text()) : $(selection).val();
                 updates.push({
-                    uniquename: decodeURIComponent(value),
-                    type: 'member',
-                    action: 'add'
+                    uniqueName: decodeURIComponent(value)
                 });
             });
         }
         
-        // Notify server
-        this.query.action.put('/axis/' + this.axis + '/dimension/' + this.member.dimension, { 
-            success: this.finished,
-            dataType: "text",
-            data: {
-                selections: JSON.stringify(updates)
-            }
-        });
-        
-        return false;
+        if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
+                hierarchy.levels[lName].selection = { "type": "INCLUSION", "members": updates };
+        }
+
+        this.finished();
     },
     
     finished: function() {
