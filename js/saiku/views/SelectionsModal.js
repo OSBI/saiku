@@ -264,7 +264,7 @@ var SelectionsModal = Modal.extend({
                     }
                 });
 
-            $(this.el).find('.filterbox').autocomplete("enable");
+        $(this.el).find('.filterbox').autocomplete("enable");
 
 		// Translate
 		Saiku.i18n.translate();
@@ -352,8 +352,11 @@ var SelectionsModal = Modal.extend({
                 .each(function(i, selection) {
                 var value = show_u ? 
                     encodeURIComponent($(selection).text()) : $(selection).val();
+                var caption = show_u ? 
+                    $(selection).val() : encodeURIComponent($(selection).text());
                 updates.push({
-                    uniqueName: decodeURIComponent(value)
+                    uniqueName: decodeURIComponent(value),
+                    caption: decodeURIComponent(caption)
                 });
             });
         }
@@ -368,7 +371,7 @@ var SelectionsModal = Modal.extend({
     finished: function() {
         $('#filter_selections').remove();
         this.available_members = null;
-        $(this.el).find('.filterbox').autocomplete('destroy');
+        $(this.el).find('.filterbox').autocomplete('destroy').remove();
         $(this.el).dialog('destroy');
         $(this.el).remove();
         this.query.run();
