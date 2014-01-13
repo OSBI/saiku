@@ -21,6 +21,7 @@ import javax.servlet.ServletException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -38,12 +39,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.query2.ThinQuery;
 import org.saiku.olap.util.SaikuProperties;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.ThinQueryService;
+import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.util.RestUtil;
 import org.slf4j.Logger;
@@ -116,14 +117,19 @@ public class Query2Resource {
 	@POST
 	@Produces({"application/json" })
 	@Path("/{queryname}")
-	public ThinQuery createQuery(@PathParam("queryname") String queryName, MultivaluedMap<String, String> formParams) throws ServletException {
+	public ThinQuery createQuery(
+			@PathParam("queryname") String queryName,
+			@FormParam("json") String jsonFormParam,
+			@FormParam("file") String fileFormParam,
+			MultivaluedMap<String, String> formParams) throws ServletException 
+	{
 		try {
 			ThinQuery tq = null;
 			String file = null, 
 					json = null;
 			if (formParams != null) {
-				json = formParams.containsKey("json") ? formParams.getFirst("json") : null;
-				file = formParams.containsKey("file") ? formParams.getFirst("file") : null;
+				json = formParams.containsKey("json") ? formParams.getFirst("json") : jsonFormParam;
+				file = formParams.containsKey("file") ? formParams.getFirst("file") : fileFormParam;
 				if (StringUtils.isNotBlank(json)) {
 					ObjectMapper om = new ObjectMapper();
 					tq = om.readValue(json, ThinQuery.class);
@@ -136,16 +142,22 @@ public class Query2Resource {
 					
 				}
 			}
+
 			if (log.isDebugEnabled()) {
 				log.debug("TRACK\t"  + "\t/query/" + queryName + "\tPOST\t tq:" + (tq == null) + " file:" + (file));
 			}
-			SaikuCube cube = tq.getCube();
+			
+			if (tq == null) {
+				throw new SaikuServiceException("Cannot create blank query (ThinQuery object = null)");
+			}
+//			SaikuCube cube = tq.getCube();
 //			if (StringUtils.isNotBlank(xml)) {
 //				String query = ServletUtil.replaceParameters(formParams, xml);
 //				return thinQueryService.createNewOlapQuery(queryName, query);
 //			}
 			return thinQueryService.storeQuery(tq);
 		} catch (Exception e) {
+			log.error("Error creating new query", e);
 			throw new WebApplicationException(e);
 		}
 	}
