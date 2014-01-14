@@ -52,7 +52,6 @@ var DimensionList = Backbone.View.extend({
         this.template = this.dimension.get('template_' + this.type);
         this.render(); 
         this.workspace.trigger('dimensions:loaded', $(this.el));
-
     },
     
     render: function() {
@@ -85,6 +84,7 @@ var DimensionList = Backbone.View.extend({
             placeholder: 'placeholder',
             opacity: 0.60,
             tolerance: 'touch',
+            containment:    $(self.workspace.el),
             stop: function() {
                 if (self.workspace.query.get('type') == "QM") {
                     if ( $(self.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
@@ -98,6 +98,7 @@ var DimensionList = Backbone.View.extend({
         $(this.el).find('.level').parent('li').draggable({
             cancel: '.not-draggable, .hierarchy',
             connectToSortable: $(this.workspace.el).find('.fields_list_body.columns > ul.connectable, .fields_list_body.rows > ul.connectable, .fields_list_body.filter > ul.connectable'),
+            containment:    $(self.workspace.el),
             //helper: "clone",
             helper: function(event, ui){
                 var target = $(event.target).hasClass('d_level') ? $(event.target) : $(event.target).parent();
@@ -179,12 +180,6 @@ var DimensionList = Backbone.View.extend({
                 selection.append(h);
                 selection.appendTo($axis);
 
-/*
-            var levels = $(event.target).parent().parent().find('li a[hierarchy="' + hierarchy + '"]').parent().clone().hide();
-            levels.find('a[level="' + level + '"]').parent().show();
-            var dropHierarchy = $('<ul />').attr('hierarchy', hierarchy).attr('hierarchycaption', hierarchyCaption).addClass('hierarchy').append(levels);
-            $( $('<li class="selection"></li>')).append(dropHierarchy).appendTo($axis);
-*/
             this.workspace.query.helper.includeLevel(axisName, hierarchy, level);
 
         }
@@ -207,7 +202,6 @@ var DimensionList = Backbone.View.extend({
             return;
         }
         
-
         var $axis = $(this.workspace.el).find(".workspace_fields .fields_list_body.details ul.connectable");
         var $target = $(event.target).parent().clone();
         if ($axis.find(".d_measure").length != 0)

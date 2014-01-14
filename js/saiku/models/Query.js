@@ -52,6 +52,10 @@ var Query = Backbone.Model.extend({
     parse: function(response) {
         // Assign id so Backbone knows to PUT instead of POST
         this.id = this.uuid;
+        if (response.name) {
+            this.id = response.name;
+            this.uuid = response.name;
+        }
         this.model = _.extend(this.model, response);
         this.model.properties = _.extend(this.model.properties, Settings.QUERY_PROPERTIES);
 

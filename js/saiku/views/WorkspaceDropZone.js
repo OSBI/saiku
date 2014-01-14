@@ -18,13 +18,14 @@
  * Sets up workspace drop zones for DnD and other interaction
  */
 var WorkspaceDropZone = Backbone.View.extend({
+
     template: function() {
         var template = $("#template-workspace-dropzones").html() || "";
         return _.template(template)();
     },
     
     events: {
-        'sortstop .fields_list_body.details': 'select_measure',
+        'sortstop .fields_list_body.details': 'drop_measure',
         'sortbeforestop .axis_fields': 'select_dimension',
         'click .d_measure' : 'remove_measure_click',
         'click .d_level': 'selections',
@@ -44,52 +45,46 @@ var WorkspaceDropZone = Backbone.View.extend({
         var self = this;
         // Generate drop zones from template
         $(this.el).html(this.template());
-        
-        
+
         // Activate drop zones
         $(this.el).find('.fields_list_body.details ul.connectable').sortable({
-//            forcePlaceholderSize: true,
-//            forceHelperSize: true,
-            items: '> li',
-            opacity: 0.60,
-            placeholder: 'placeholder',
-            tolerance: 'pointer',
-            start: function(event, ui) {
+            items:          '> li',
+            opacity:        0.60,
+            placeholder:    'placeholder',
+            tolerance:      'pointer',
+            containment:    $(self.workspace.el),
+            start:          function(event, ui) {
                 ui.placeholder.text(ui.helper.text());
             }
         });
-        
+
         $(this.el).find('.axis_fields ul.connectable').sortable({
             connectWith: $(self.el).find('.axis_fields ul.connectable'),
-            forcePlaceholderSize: false,
-            forceHelperSize: false,
-            items: 'li.selection',
-            opacity: 0.60,
-            placeholder: 'placeholder',
-            tolerance: 'touch',
-            cursorAt: { top: 10, left: 60 },
-            scroll: false,
-            start: function(event, ui) {
-                var hierarchy = $(ui.helper).find('a').parent().parent().attr('hierarchycaption');
-                ui.placeholder.text(hierarchy);
-                $(ui.helper).css({ width: "auto"});
-                
-                
-                $(self.el).find('.axis_fields ul.hierarchy').each( function(index, element) {
-                    $(element).find('li.d_level:visible').addClass('temphide').hide();
-                    //var group = $(element).attr('hierarchy');
-                    //$('<li class="d_group d_level">' + group + "</li>").appendTo( $(element) );    
-                });
-                //$(ui.helper).find('li.d_level').hide();
-                //$('<li class="d_group d_level">' + hierarchy + "</li>").appendTo(ui.helper.find('ul'));
-                
-            }
-        });
+            forcePlaceholderSize:   false,
+            forceHelperSize:        false,
+            items:                  'li.selection',
+            opacity:                0.60,
+            placeholder:            'placeholder',
+            tolerance:              'touch',
+            cursorAt:               { top: 10, left: 60 },
+            containment:            $(self.workspace.el),
+            start:                  function(event, ui) 
+            {
+                    var hierarchy = $(ui.helper).find('a').parent().parent().attr('hierarchycaption');
+                    ui.placeholder.text(hierarchy);
+                    $(ui.helper).css({ width: "auto"});
+                    
+                    
+                    $(self.el).find('.axis_fields ul.hierarchy').each( function(index, element) {
+                        $(element).find('li.d_level:visible').addClass('temphide').hide();
+                    });
+                }
+            });
         
         return this; 
     },
 
-    select_measure: function(event) {
+    drop_measure: function(event) {
         var details = [];
 
         $(this.el).find('.fields_list_body.details ul.connectable li.d_measure').each( function(index, element) {
@@ -119,7 +114,7 @@ var WorkspaceDropZone = Backbone.View.extend({
 
     remove_measure: function(m) {
         $(this.workspace.el).find('.measure_tree li a[measure="' + m + '"]').parent().draggable('enable');
-        this.select_measure();
+        this.drop_measure();
     },
 
     remove_dimension: function(event, ui) {
@@ -154,18 +149,16 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
     
     clear_axis: function(event) {
-            var self = this;
+            event.preventDefault();
             
-            if (typeof this.workspace.query == "undefined") {
+            if (typeof this.workspace.query == "undefined" || this.workspace.query.helper.model().type != 'QUERYMODEL' || Settings.MODE == "view") {
                 return false;
             }
-            if (this.workspace.query.helper.model().type != 'QUERYMODEL' || Settings.MODE == "view") {
-                return false;
-            }
-            var $target =  $(event.target);
-            var $axis = $target.siblings('.fields_list_body');
-            var source = "";
+
+            var self = this;
+            var $axis = $(event.target).siblings('.fields_list_body');
             var target = "";
+
             if ($axis.hasClass('rows')) { target = "ROWS";  }
             if ($axis.hasClass('columns')) { target = "COLUMNS";  }
             if ($axis.hasClass('filter')) { target = "FILTER";  }
@@ -178,14 +171,12 @@ var WorkspaceDropZone = Backbone.View.extend({
             }
 
 /* TODO - maybe we should do this all in a synchronize? */
-
             this.toggle_draggable(true);
-
-/* up until here */
             $axis.find('.connectable').empty();
-            this.workspace.query.run();
             this.update_dropzones();
-            event.preventDefault();
+/* up until here */
+
+            this.workspace.query.run();
             return false;
     },
 
@@ -222,7 +213,6 @@ var WorkspaceDropZone = Backbone.View.extend({
         
         $(self.el).find('.axis_fields ul.hierarchy').each( function(index, element) {
             $(element).find('li.temphide').show().removeClass('temphide');
-            $(element).find('.d_group').remove();
         });
         
         // if we drop to remove dont execute the following

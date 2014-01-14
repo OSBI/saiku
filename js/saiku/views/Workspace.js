@@ -352,7 +352,7 @@ var Workspace = Backbone.View.extend({
             this.selected_cube = this.query.model.cube.connection + "/" + 
                 this.query.model.cube.catalog + "/"
                 + ((schema == "" || schema == null) ? "null" : schema) 
-                + "/" + this.query.model.cube.name;
+                + "/" + encodeURIComponent(this.query.model.cube.name);
             $(this.el).find('.cubes')
                 .val(this.selected_cube);
         }
