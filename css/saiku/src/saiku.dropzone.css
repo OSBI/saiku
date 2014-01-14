@@ -113,6 +113,9 @@ ul.hierarchy {
   border-bottom: 1px solid #CCCCCC;
   padding: 3px 9px;
 }
+.hgroup:hover {
+    background-color: #EDEDED;
+}
 
 .fields_list .fields_list_body ul.hierarchy,  
 .fields_list_body.details li {
