@@ -61,7 +61,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         $(this.el).find('.axis_fields ul.connectable').sortable({
             connectWith: $(self.el).find('.axis_fields ul.connectable'),
             forcePlaceholderSize:   false,
-            forceHelperSize:        false,
+            forceHelperSize:        true,
             items:                  'li.selection',
             opacity:                0.60,
             placeholder:            'placeholder',
@@ -72,7 +72,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             {
                     var hierarchy = $(ui.helper).find('a').parent().parent().attr('hierarchycaption');
                     ui.placeholder.text(hierarchy);
-                    $(ui.helper).css({ width: "auto"});
+                    $(ui.helper).css({ width: "auto", height: "auto"});
                     
                     
                     $(self.el).find('.axis_fields ul.hierarchy').each( function(index, element) {
@@ -222,6 +222,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             return;
         }
         if( $(ui.helper).hasClass('selection') ) {
+
             var hierarchy = ui.helper.find('ul.hierarchy').attr('hierarchy');
             var indexHierarchy = -1;
             ui.placeholder.parents('ul.connectable').find('li.selection').each( function(index, element) {
@@ -245,7 +246,7 @@ var WorkspaceDropZone = Backbone.View.extend({
 
             //ui.helper.detach();
             var sel = ui.helper.clone();
-            sel.removeAttr('style').removeClass('ui-draggable-dragging');
+            sel.removeAttr('style').removeClass('ui-draggable-dragging').removeClass('ui-sortable-helper');
             ui.item.replaceWith( sel );
             
             

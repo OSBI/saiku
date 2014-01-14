@@ -513,7 +513,8 @@ textarea, select {
     white-space: nowrap;
 }
 .dimension_tree ul .ui-draggable-dragging, 
-.workspace_fields ul  .ui-draggable-dragging {
+.workspace_fields ul  .ui-draggable-dragging,
+.workspace_fields li.ui-sortable-helper {
     background: #e5f6ff !important;
     background: -webkit-gradient(linear, left top, left bottom, from(#e0e9ef), to(#c2d5e2)) !important;
     background: -moz-linear-gradient(top, #e0e9ef 0%, #c2d5e2 100%) !important;
@@ -522,7 +523,8 @@ textarea, select {
     text-align: left;
 }
 .dimension_tree ul .ui-draggable-dragging a,
-.workspace_fields ul  .ui-draggable-dragging a {
+.workspace_fields ul  .ui-draggable-dragging a,
+.workspace_fields li.ui-sortable-helper a {
     color: #2a6085 !important;
 }
 .measure_tree ul .ui-draggable-dragging {
