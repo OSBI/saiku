@@ -149,9 +149,7 @@ var DrillthroughModal = Modal.extend({
         params = params + (typeof this.position !== "undefined" ? "&position=" + this.position : "" );
         params += "&returns=" + selections;
         if (this.action == "export") {
-            var location = Settings.REST_URL +
-                Saiku.session.username + "/query/" + 
-                this.query.id + "/drillthrough/export/csv" + params;
+            var location = Settings.REST_URL + this.query.url() + "/drillthrough/export/csv" + params;
             this.close();
             window.open(location);
         } else if (this.action == "table") {
