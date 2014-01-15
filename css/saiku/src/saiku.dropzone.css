@@ -114,13 +114,17 @@ ul.hierarchy {
   
 }
 
-.hgroup {
+li.selection .hgroup {
   text-align: center;
   border-top: 1px solid #CCCCCC;
   border-bottom: 1px solid #CCCCCC;
   padding: 3px 9px;
 }
-.hgroup:hover {
+ul.connectable > li.selection:first-child .hgroup {
+    border-top: none;
+}
+
+li.selection .hgroup:hover {
     background-color: #EDEDED;
 }
 
