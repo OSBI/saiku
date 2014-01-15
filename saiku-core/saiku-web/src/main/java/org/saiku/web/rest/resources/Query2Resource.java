@@ -15,6 +15,12 @@
  */
 package org.saiku.web.rest.resources;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -133,7 +139,6 @@ public class Query2Resource {
 					String tqJson = new String( (byte[]) f.getEntity());
 					ObjectMapper om = new ObjectMapper();
 					tq = om.readValue(tqJson, ThinQuery.class);
-					
 				}
 
 			if (log.isDebugEnabled()) {
@@ -143,12 +148,14 @@ public class Query2Resource {
 			if (tq == null) {
 				throw new SaikuServiceException("Cannot create blank query (ThinQuery object = null)");
 			}
+			tq.setName(queryName);
+			
 //			SaikuCube cube = tq.getCube();
 //			if (StringUtils.isNotBlank(xml)) {
 //				String query = ServletUtil.replaceParameters(formParams, xml);
 //				return thinQueryService.createNewOlapQuery(queryName, query);
 //			}
-			return thinQueryService.storeQuery(tq);
+			return thinQueryService.createQuery(tq);
 		} catch (Exception e) {
 			log.error("Error creating new query", e);
 			throw new WebApplicationException(e);
@@ -300,6 +307,130 @@ public class Query2Resource {
 			throw new WebApplicationException(Response.serverError().entity(error).build());
 		}
 	}
+	
+	@GET
+	@Produces({"application/json" })
+	@Path("/{queryname}/drillthrough")
+	public QueryResult drillthrough(
+			@PathParam("queryname") String queryName, 
+			@QueryParam("maxrows") @DefaultValue("100") Integer maxrows,
+			@QueryParam("position") String position,
+			@QueryParam("returns") String returns)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/drillthrough\tGET");
+		}
+		QueryResult rsc;
+		ResultSet rs = null;
+		try {
+			Long start = (new Date()).getTime();
+			if (position == null) {
+				rs = thinQueryService.drillthrough(queryName, maxrows, returns);
+			} else {
+				String[] positions = position.split(":");
+				List<Integer> cellPosition = new ArrayList<Integer>();
+
+				for (String p : positions) {
+					Integer pInt = Integer.parseInt(p);
+					cellPosition.add(pInt);
+				}
+
+				rs = thinQueryService.drillthrough(queryName, cellPosition, maxrows, returns);
+			}
+			rsc = RestUtil.convert(rs);
+			Long runtime = (new Date()).getTime()- start;
+			rsc.setRuntime(runtime.intValue());
+
+		}
+		catch (Exception e) {
+			log.error("Cannot execute query (" + queryName + ")",e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			rsc =  new QueryResult(error);
+
+		}
+		finally {
+			if (rs != null) {
+				Statement statement = null;
+				Connection con = null;
+				try {
+					 statement = rs.getStatement();
+					 con = rs.getStatement().getConnection();
+				} catch (Exception e) {
+					throw new SaikuServiceException(e);
+				} finally {
+					try {
+						rs.close();
+						if (statement != null) {
+							statement.close();
+						}
+					} catch (Exception ee) {};
+
+					rs = null;
+				}
+			}
+		}
+		return rsc;
+
+	}
+
+
+	@GET
+	@Produces({"text/csv" })
+	@Path("/{queryname}/drillthrough/export/csv")
+	public Response getDrillthroughExport(			
+			@PathParam("queryname") String queryName, 
+			@QueryParam("maxrows") @DefaultValue("100") Integer maxrows,
+			@QueryParam("position") String position,
+			@QueryParam("returns") String returns)
+	{
+		if (log.isDebugEnabled()) {
+			log.debug("TRACK\t"  + "\t/query/" + queryName + "/drillthrough/export/csv (maxrows:" + maxrows + " position" + position + ")\tGET");
+		}
+		ResultSet rs = null;
+
+		try {
+			if (position == null) {
+				rs = thinQueryService.drillthrough(queryName, maxrows, returns);
+			} else {
+				String[] positions = position.split(":");
+				List<Integer> cellPosition = new ArrayList<Integer>();
+
+				for (String p : positions) {
+					Integer pInt = Integer.parseInt(p);
+					cellPosition.add(pInt);
+				}
+
+				rs = thinQueryService.drillthrough(queryName, cellPosition, maxrows, returns);
+			}
+			byte[] doc = thinQueryService.exportResultSetCsv(rs);
+			String name = SaikuProperties.webExportCsvName;
+			return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
+					"content-disposition",
+					"attachment; filename = " + name + "-drillthrough.csv").header(
+							"content-length",doc.length).build();
+
+
+		} catch (Exception e) {
+			log.error("Cannot export drillthrough query (" + queryName + ")",e);
+			return Response.serverError().build();
+		}
+		finally {
+			if (rs != null) {
+				try {
+					Statement statement = rs.getStatement();
+					statement.close();
+					rs.close();
+				} catch (SQLException e) {
+					throw new SaikuServiceException(e);
+				} finally {
+					rs = null;
+				}
+			}
+		}
+
+
+	}
+
 	
 	@Deprecated
 	@GET

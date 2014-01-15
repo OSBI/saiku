@@ -18,6 +18,8 @@ package org.saiku.web.rest.resources;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -128,11 +130,12 @@ public class OlapDiscoverResource implements Serializable {
 		try {
 			List<SaikuDimension> dimensions = olapDiscoverService.getAllDimensions(cube);
 			List<SaikuMember> measures = olapDiscoverService.getMeasures(cube);
-			return new SaikuCubeMetadata(dimensions, measures);
+			Map<String, Object> properties = olapDiscoverService.getProperties(cube);
+			return new SaikuCubeMetadata(dimensions, measures, properties);
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 		}
-		return new SaikuCubeMetadata(null, null);
+		return new SaikuCubeMetadata(null, null, null);
 	}
 	
 	@GET

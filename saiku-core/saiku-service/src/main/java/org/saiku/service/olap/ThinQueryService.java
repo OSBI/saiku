@@ -15,7 +15,11 @@
  */
 package org.saiku.service.olap;
 
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -34,16 +38,17 @@ import org.olap4j.CellSetAxis;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapStatement;
 import org.olap4j.Position;
+import org.olap4j.mdx.ParseTreeNode;
+import org.olap4j.mdx.ParseTreeWriter;
+import org.olap4j.mdx.SelectNode;
+import org.olap4j.mdx.parser.impl.DefaultMdxParserImpl;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.saiku.olap.dto.SaikuCube;
-import org.saiku.olap.dto.SaikuDimensionSelection;
 import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.dto.resultset.CellDataSet;
-import org.saiku.olap.query.IQuery;
-import org.saiku.olap.query.IQuery.QueryType;
 import org.saiku.olap.query2.ThinHierarchy;
 import org.saiku.olap.query2.ThinQuery;
 import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
@@ -52,12 +57,11 @@ import org.saiku.olap.query2.util.Thin;
 import org.saiku.olap.util.ObjectUtil;
 import org.saiku.olap.util.OlapResultSetUtil;
 import org.saiku.olap.util.SaikuUniqueNameComparator;
-import org.saiku.olap.util.formatter.CellSetFormatter;
 import org.saiku.olap.util.formatter.CellSetFormatterFactory;
 import org.saiku.olap.util.formatter.FlattenedCellSetFormatter;
-import org.saiku.olap.util.formatter.HierarchicalCellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.query.Query;
+import org.saiku.service.util.KeyValue;
 import org.saiku.service.util.QueryContext;
 import org.saiku.service.util.QueryContext.ObjectKey;
 import org.saiku.service.util.QueryContext.Type;
@@ -92,10 +96,12 @@ public class ThinQueryService implements Serializable {
  
 
 
-	public ThinQuery storeQuery(ThinQuery tq) throws Exception {
+	public ThinQuery createQuery(ThinQuery tq) throws Exception {
 		if (StringUtils.isBlank(tq.getName())) {
 			tq.setName(UUID.randomUUID().toString());
 		}
+		Map<String, Object> cubeProperties = olapDiscoverService.getProperties(tq.getCube());
+		tq.getProperties().putAll(cubeProperties);
 		if (!context.containsKey(tq.getName())) {
 //			Cube cub = olapDiscoverService.getNativeCube(tq.getCube());
 //			Query query = new Query(tq.getName(), cub);
@@ -227,6 +233,9 @@ public class ThinQueryService implements Serializable {
 			QueryContext qc = context.get(old.getName());
 			qc.store(ObjectKey.QUERY, old);
 		}
+		
+		Map<String, Object> cubeProperties = olapDiscoverService.getProperties(old.getCube());
+		old.getProperties().putAll(cubeProperties);
 
 		return old;
 	}
@@ -269,6 +278,141 @@ public class ThinQueryService implements Serializable {
 		}
 		return new byte[0];
 	}
+	
+	public ResultSet drillthrough(String queryName, int maxrows, String returns) {
+		OlapStatement stmt = null;
+		try {
+				
+			ThinQuery query = context.get(queryName).getOlapQuery();
+			final OlapConnection con = olapDiscoverService.getNativeConnection(query.getCube().getConnection()); 
+			stmt = con.createStatement();
+			String mdx = query.getMdx();
+			if (maxrows > 0) {
+				mdx = "DRILLTHROUGH MAXROWS " + maxrows + " " + mdx;
+			}
+			else {
+				mdx = "DRILLTHROUGH " + mdx;
+			}
+			if (StringUtils.isNotBlank(returns)) {
+				mdx += "\r\n RETURN " + returns;
+			}
+			ResultSet rs = stmt.executeQuery(mdx);
+			return rs;
+		} catch (SQLException e) {
+			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
+		} finally {
+			try {
+				if (stmt != null)  stmt.close();
+			} catch (Exception e) {}
+		}
+	}
+
+	public ResultSet drillthrough(String queryName, List<Integer> cellPosition, Integer maxrows, String returns) {
+		OlapStatement stmt = null;
+		try {
+			QueryContext queryContext = context.get(queryName);
+			ThinQuery query = queryContext.getOlapQuery();
+			CellSet cs = queryContext.getOlapResult();
+			SaikuCube cube = query.getCube();
+			final OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnection()); 
+			stmt = con.createStatement();
+			
+			SelectNode sn = (new DefaultMdxParserImpl().parseSelect(query.getMdx()));
+			String select = null;
+			StringBuffer buf = new StringBuffer();
+			if (sn.getWithList() != null && sn.getWithList().size() > 0) {
+	            buf.append("WITH \n");
+	            StringWriter sw = new StringWriter();
+	            ParseTreeWriter ptw = new ParseTreeWriter(sw);
+	            final PrintWriter pw = ptw.getPrintWriter();
+	            for (ParseTreeNode with : sn.getWithList()) {
+	                with.unparse(ptw);
+	                pw.println();
+	            }
+	            buf.append(sw.toString());
+			}
+			
+			buf.append("SELECT (");
+			for (int i = 0; i < cellPosition.size(); i++) {
+				List<Member> members = cs.getAxes().get(i).getPositions().get(cellPosition.get(i)).getMembers();
+				for (int k = 0; k < members.size(); k++) {
+					Member m = members.get(k);
+					if (k > 0 || i > 0) {
+						buf.append(", ");
+					}
+					buf.append(m.getUniqueName());
+				}
+			}
+			buf.append(") ON COLUMNS \r\n");
+			buf.append("FROM [" + cube.getName() + "]\r\n");
+
+			 
+			final Writer writer = new StringWriter();
+			sn.getFilterAxis().unparse(new ParseTreeWriter(new PrintWriter(writer)));
+			if (StringUtils.isNotBlank(writer.toString())) {
+				buf.append("WHERE " + writer.toString());
+			}
+			select = buf.toString(); 
+			if (maxrows > 0) {
+				select = "DRILLTHROUGH MAXROWS " + maxrows + " " + select + "\r\n";
+			}
+			else {
+				select = "DRILLTHROUGH " + select + "\r\n";
+			}
+			if (StringUtils.isNotBlank(returns)) {
+				select += "\r\n RETURN " + returns;
+			}
+
+			log.debug("Drill Through for query (" + queryName + ") : \r\n" + select);
+			ResultSet rs = stmt.executeQuery(select);
+			return rs;
+		} catch (Exception e) {
+			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
+		} finally {
+			try {
+				if (stmt != null)  stmt.close();
+			} catch (Exception e) {}
+		}
+
+	}
+
+
+	public byte[] exportDrillthroughCsv(String queryName, int maxrows) {
+		OlapStatement stmt = null;
+		try {
+			QueryContext queryContext = context.get(queryName);
+			ThinQuery query = queryContext.getOlapQuery();
+			final OlapConnection con = olapDiscoverService.getNativeConnection(query.getCube().getConnection()); 
+			stmt = con.createStatement();
+			String mdx = query.getMdx();
+			if (maxrows > 0) {
+				mdx = "DRILLTHROUGH MAXROWS " + maxrows + " " + mdx;
+			}
+			else {
+				mdx = "DRILLTHROUGH " + mdx;
+			}
+
+			ResultSet rs = stmt.executeQuery(mdx);
+			return CsvExporter.exportCsv(rs);
+		} catch (SQLException e) {
+			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
+		} finally {
+			try {
+				if (stmt != null)  stmt.close();
+			} catch (Exception e) {}
+		}
+
+	}
+	
+	public byte[] exportResultSetCsv(ResultSet rs) {
+		return CsvExporter.exportCsv(rs);
+	}
+	
+	public byte[] exportResultSetCsv(ResultSet rs, String delimiter, String enclosing, boolean printHeader, List<KeyValue<String,String>> additionalColumns) {
+		return CsvExporter.exportCsv(rs, delimiter, enclosing, printHeader, additionalColumns);
+	}
+
+
 
 	public List<SimpleCubeElement> getResultMetadataMembers(
 				String queryName,

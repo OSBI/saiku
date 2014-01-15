@@ -17,7 +17,12 @@ package org.saiku.service.olap;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import mondrian.rolap.RolapConnection;
 
 import org.olap4j.OlapConnection;
 import org.olap4j.metadata.Cube;
@@ -199,5 +204,25 @@ public class OlapDiscoverService implements Serializable {
 		} catch (SaikuOlapException e) {
 			throw new SaikuServiceException(e);
 		}
+	}
+
+	public Map<String, Object> getProperties(SaikuCube cube) {
+		Map<String, Object> properties = new HashMap<String, Object>();
+		try {
+			Cube c = getNativeCube(cube);
+			OlapConnection con = c.getSchema().getCatalog().getDatabase().getOlapConnection();
+			properties.put("saiku.olap.query.drillthrough", c.isDrillThroughEnabled());
+			properties.put("org.saiku.query.explain", con.isWrapperFor(RolapConnection.class));
+			
+			try {
+				Boolean isScenario = (c.getDimensions().get("Scenario") != null);
+				properties.put("org.saiku.connection.scenario", isScenario);			
+			} catch (Exception e) {
+				properties.put("org.saiku.connection.scenario", false);
+			}
+		} catch (Exception e) {
+			throw new SaikuServiceException(e);
+		}
+		return properties;
 	}
 }
