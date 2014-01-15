@@ -99,7 +99,7 @@ textarea, select {
 }
 .refresh_cubes_nav {
     float:right;
-    margin-top:-25px;
+    margin-top:-30px;
     margin-right:8px;
 }
 .refresh_cubes_nav a.button {
@@ -303,8 +303,10 @@ textarea, select {
 }
 .sidebar h3 {
     background: #F9F9F9;
+    /*
     background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#F0F0F0));
     background: -moz-linear-gradient(top, #FFFFFF 0%, #F0F0F0 100%);
+    */
     border-top: 1px solid #CCC;
     border-bottom: 1px solid #CCC;
     /*font-size: 13px;*/
@@ -318,7 +320,8 @@ textarea, select {
 .sidebar h3.top {
     border-top: none !important;
     margin: 0;
-    padding-top: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 .sidebar .sidebar_inner {
     padding: 10px;
@@ -339,11 +342,14 @@ textarea, select {
 
 .sidebar_separator {
     background: #F0F0F0;
-    border-right: 1px solid #CCC;
+    
     border-left: 1px solid #CCC;
     cursor: pointer;
     float: left;
+    /*
+    border-right: 1px solid #CCC;
     width: 3px;
+    */
 }
 .sidebar_separator:hover {
     background: #E0E0E0;
@@ -442,14 +448,14 @@ textarea, select {
 .workspace {
     background: #FFFFFF;
     float: right;
-    margin-left: -265px;
+    margin-left: -261px;
     width: 100%;
 }
 
 /** Tab Workspace Inner */
 
 .workspace_inner {
-    margin-left: 265px;
+    margin-left: 261px;
     /*overflow: auto;*/
 }
 

@@ -14,9 +14,12 @@
     border-radius: 5px;
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
+    /*
+    FLAT DESIGN
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
     -moz-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
     -webkit-box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.10);
+    */
 
 }
 .fields_list .fields_list_header {
@@ -38,10 +41,14 @@
     cursor: pointer;
 }
 .fields_list .limit:hover {
+    background-color: #EDEDED;
+    /*
+    FLAT DESIGN
     background: #efefef;
     background: linear-gradient(to bottom, #ddd, #efefef);
     background: -webkit-gradient(linear, left top, left bottom, from(#ddd), to(#efefef));
     background: -moz-linear-gradient(top, #ddd 0%, #efefef 100%);
+    */
     
 }
 
