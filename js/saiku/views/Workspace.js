@@ -255,6 +255,7 @@ var Workspace = Backbone.View.extend({
             $(this.el).find('.measure_tree').html('');
             return false;
         }
+        this.metadata = Saiku.session.sessionworkspace.cube[this.selected_cube];
         var parsed_cube = this.selected_cube.split('/');
         var cube = parsed_cube[3];
         for (var i = 4, len = parsed_cube.length; i < len; i++) {
@@ -390,6 +391,16 @@ var Workspace = Backbone.View.extend({
         // is this a new query?
         if (typeof isNew != "undefined") {
             this.query.run(true);
+        }
+
+
+    },
+
+    synchronize_query: function() {
+        var self = this;
+        if (!self.isReadOnly && (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view"))) {
+
+
         }
 
 
@@ -595,7 +606,7 @@ var Workspace = Backbone.View.extend({
         }
 
     },
-    
+
     update_caption: function(increment) {
         var caption = this.caption(increment);
         this.tab.set_caption(caption);
