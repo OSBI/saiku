@@ -21,15 +21,15 @@
     position: absolute;
     list-style-type: none;
     
-    border: 1px solid #DDD;
+    border: 1px solid #CCC;
     background: #FFF;
-    
+    /*
     -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
        -moz-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         -ms-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
          -o-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-    
+    */
     font-family: Verdana, Arial, Helvetica, sans-serif;
     font-size: 11px;
 }
@@ -55,9 +55,12 @@
 
 .context-menu-item.hover {
     cursor: pointer;
+    background: #DEDEDE;
+    /*
     background: #e5f6ff;
     background: -webkit-gradient(linear, left top, left bottom, from(#e0e9ef), to(#c2d5e2));
     background: -moz-linear-gradient(top, #e0e9ef 0%, #c2d5e2 100%);
+    */
 }
 
 .context-menu-item.disabled {
