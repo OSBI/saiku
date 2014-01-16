@@ -126,6 +126,42 @@ var WorkspaceDropZone = Backbone.View.extend({
         
     },
 
+
+    synchronize_query: function() {
+        var self = this;
+        this.reset_dropzones();
+
+        var model = this.workspace.query.helper.model();
+
+        if (model.hasOwnProperty('queryModel') && model.queryModel.hasOwnProperty('axes')) {
+            var axes = model.queryModel.axes;
+            for (var axis in axes) {
+                var $axis = $(self.el).find('.fields_list[title="' + axis + '"]');
+                _.each(axes[axis].hierarchies, function(hierarchy) {
+                    var h = $(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"]').clone().removeClass('d_hierarchy').addClass('hierarchy');
+                    h.find('li.d_level').hide();
+                    for (var level in hierarchy.levels) {
+                        h.find('li a[level="' + level + '"]').parent().show();
+                    }
+                    var selection = $('<li class="selection"></li>');
+                    selection.append(h);
+                    selection.appendTo($axis.find('ul.connectable'));
+                });
+            }
+
+            this.update_dropzones();
+        }
+    },
+
+    reset_dropzones: function() {
+            var self = this;
+            $(self.el).find('.fields_list_body ul.connectable').empty();
+            $(self.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
+            $(self.el).find('.fields_list[title="COLUMNS"] .limit').removeClass('on');
+            $(this.workspace.el).find('.fields_list_body .clear_axis').addClass('hide');
+
+    },
+
     update_dropzones: function() {
         $(this.workspace.el).find('.fields_list_body').each(function(idx, ael) {
             var $axis = $(ael);

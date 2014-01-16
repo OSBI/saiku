@@ -291,6 +291,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         // Swap axes
         $(this.workspace.el).find('.workspace_results table').html('');
         this.workspace.query.helper.swapAxes();
+        this.workspace.sync_query();
         this.workspace.query.run(true);
     },
     
@@ -546,7 +547,7 @@ var WorkspaceToolbar = Backbone.View.extend({
 
 
 
-        if (this.workspace.dimension_list && this.workspace.measure_list) {
+        if (this.workspace.dimension_list) {
             $(this.workspace.el).find('.sidebar_inner ul li a')
                 .css({fontWeight: "normal"}).parent('li').removeClass('ui-draggable ui-draggable-disabled ui-state-disabled');
         }

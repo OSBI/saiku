@@ -34,30 +34,35 @@ var DimensionList = Backbone.View.extend({
         
         // Bind parent element
         this.workspace = args.workspace;
-        this.dimension = args.dimension;
-        this.type = args.type;
-        
-        // Fetch from the server if we haven't already
-        if (args.dimension && args.dimension.has('template_' + args.type)) {
-            this.load_dimension();
-        } else if (! args.dimension){
-            $(this.el).html('Could not load dimension. Please log out and log in again.');
-        } else {
-            $(this.el).html('Loading...');
-            this.workspace.bind('cube:loaded',  this.load_dimension);
-        }
+        this.cube = args.cube;
     },
     
     load_dimension: function() {
-        this.template = this.dimension.get('template_' + this.type);
-        this.render(); 
-        this.workspace.trigger('dimensions:loaded', $(this.el));
+        this.template = this.cube.get('template_attributes');
+        this.render_attributes();
+
+        this.workspace.sync_query();
     },
     
     render: function() {
+         // Fetch from the server if we haven't already
+        if (this.cube && this.cube.has('template_attributes')) {
+            this.load_dimension();
+        } else if (! this.cube){
+            $(this.el).html('Could not load attributes. Please log out and log in again.');
+        } else {
+            var template = _.template($("#template-attributes").html());
+            $(this.el).html(template);
+            this.workspace.bind('cube:loaded',  this.load_dimension);
+        }
+
+        return this;
+    },
+
+    render_attributes: function() {
         // Pull the HTML from cache and hide all dimensions
         var self = this;
-        $(this.el).hide().html(this.template);
+        $(this.el).html(this.template);
         if (isIE && isIE <= 8) {
             $(this.el).show();
         } else {

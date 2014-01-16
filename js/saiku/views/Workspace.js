@@ -124,6 +124,7 @@ var Workspace = Backbone.View.extend({
         } else {
 
             // Show drop zones
+
             $(this.el).find('.workspace_editor').append($(this.drop_zones.el));    
             // Activate sidebar for removing elements
             $(this.el).find('.sidebar')
@@ -367,17 +368,11 @@ var Workspace = Backbone.View.extend({
 
             this.dimension_list = new DimensionList({
                 workspace: this,
-                dimension: cubeModel,
-                type: "dimensions"
-            });        
-            $(this.el).find('.dimension_tree').html('').append($(this.dimension_list.el));
-            
-            this.measure_list = new DimensionList({
-                workspace: this,
-                dimension: cubeModel,
-                type: "measures"
+                cube: cubeModel
             });
-            $(this.el).find('.measure_tree').html('').append($(this.measure_list.el));
+            this.dimension_list.render();
+
+            $(this.el).find('.metadata_attribute_wrapper').html('').append($(this.dimension_list.el));
 
             if (!cubeModel.has('data')) {
                 cubeModel.fetch({ success: function() {
@@ -409,56 +404,34 @@ var Workspace = Backbone.View.extend({
 
     },
 
-    sync_query: function(needFetch) {
+    sync_query: function(dimension_el) {
         var self = this;
-        var sync_ui = function() {
+        var dimlist = dimension_el ? dimension_el : $(self.dimension_list.el);
                 
-                if (!self.isReadOnly && (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view"))) {
-                    $(self.el).find('.fields_list_body ul').empty();
+        if (!self.isReadOnly && (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view"))) {
+            dimlist.find('.parent_dimension a.folder_collapsed').removeAttr('style');
+            dimlist.find('.parent_dimension ul li').not('.hierarchy')
+                .draggable('enable')
+                .css({ fontWeight: 'normal' });
+            dimlist.find('a.measure').parent().not('.hierarchy')
+                .draggable('enable')
+                .css({ fontWeight: 'normal' });
 
-                    $(self.dimension_list.el).find('.parent_dimension a.folder_collapsed').removeAttr('style');
-                    
-                    $(self.dimension_list.el).find('.parent_dimension ul li').not('.hierarchy')
-                        .draggable('enable')
-                        .css({ fontWeight: 'normal' });
-
-                    $(self.measure_list.el).find('a.measure').parent().not('.hierarchy')
-                        .draggable('enable')
-                        .css({ fontWeight: 'normal' });
-
-                    $(self.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
-                    $(self.el).find('.fields_list[title="COLUMNS"] .limit').removeClass('on');
-
-
-                    self.populate_selections(self.measure_list.el);
-                    $(self.el).find('.fields_list_body ul li')
-                        .removeClass('ui-draggable-disabled ui-state-disabled')
-                        .css({ fontWeight: 'normal' });
-
-                    $(self.el).find('.fields_list_body').each(function(index, element) {
-                            var $axis = $(element);
-                            if ($axis.find('li').length == 0) {
-                                $axis.siblings('.clear_axis').addClass('hide');
-                            } else {
-                                $axis.siblings('.clear_axis').removeClass('hide');
-                            }
-                    });
-                }
-                self.query.run();
-
-        };
-        if (typeof needFetch == "undefined") {
-            sync_ui();
-        } else {
-            var formatter = this.query.getProperty("saiku.olap.result.formatter");
-            self.query.clear();
-            self.query.setProperty('saiku.olap.result.formatter', formatter);
-            self.query.fetch({ success: sync_ui });
+            self.drop_zones.synchronize_query();
         }
+
+
+        self.query.run();
+
     },
 
-    populate_selections: function(dimension_el) {
+    populate_selections: function(dimlist) {
         var self = this;
+
+        console.log('populate_selections');
+        dimlist.workspace.sync_query();        
+        
+        return false;
 
         if (this.other_dimension) {
         // Populate selections - trust me, this is prettier than it was :-/
@@ -531,13 +504,13 @@ var Workspace = Backbone.View.extend({
                                 .find('a[rel="' + name + '"]')
                                 .parent();
                             }
-
+/*
                             if (typeof self.measure_list != "undefined" && (!$dim.html() || $dim.html() == null)) {
                                 $dim = $(self.measure_list.el)
                                 .find('a[rel="' + name + '"]')
                                 .parent();
                             }
-                            
+*/                            
                             if (typeof self.dimension_list != "undefined" && (!$dim.html() || $dim.html() == null)) {
                                 $dim = $(self.dimension_list.el)
                                 .find('a[rel="' + name + '"]')

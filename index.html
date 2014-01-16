@@ -263,15 +263,42 @@
             <div class="sidebar_inner">
                 <%= cube_navigation %>
             </div>
-            <h3 class="i18n">Dimensions</h3>
-            <div class="sidebar_inner dimension_tree"></div>
-            <h3 class="i18n">Measures</h3>
-            <div class="sidebar_inner measure_tree"></div>
+            <div class="metadata_attribute_wrapper">
+                <%=  _.template($("#template-attributes").html())() %>
+            </div>
+            
         </div>
         
         <div class="sidebar_separator"></div>
         <div class="clear"></div>
         </script>
+
+        <script type="text/x-jquery-tmpl" id="template-attributes">
+
+        <div class="metadata_attribute_container" id="asdfasdfasdfasdfasdf">
+            
+            <h3 class="i18n">Dimensions</h3>
+            <div class="sidebar_inner dimension_tree">
+                <% if (typeof cube != "undefined" && cube && cube.dimensions) { %>
+                    <%=  _.template($("#template-dimensions").html(), { dimensions: cube.dimensions }) %>
+                <% } else { %>
+                    
+                <% } %>
+
+            </div>
+            <h3 class="i18n">Measures</h3>
+            <div class="sidebar_inner measure_tree">
+                <% if (typeof cube != "undefined" && cube && cube.dimensions) { %>
+                    <%= _.template($("#template-measures").html(), { measures: cube.measures }) %>
+                <% } else { %>
+                    
+                <% } %>
+            </div>
+
+        </div>
+
+        </script>
+
 
         <script type="text/x-jquery-tmpl" id="template-workspace-dropzones">
         <div class="workspace_fields disabled">
