@@ -420,9 +420,6 @@ var Workspace = Backbone.View.extend({
             self.drop_zones.synchronize_query();
         }
 
-
-        self.query.run();
-
     },
 
     populate_selections: function(dimlist) {
