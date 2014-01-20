@@ -275,8 +275,15 @@
 
         <script type="text/x-jquery-tmpl" id="template-attributes">
 
-        <div class="metadata_attribute_container" id="asdfasdfasdfasdfasdf">
-            
+        <div class="metadata_attribute_container">
+            <h3 class="i18n">Measures</h3>
+            <div class="sidebar_inner measure_tree">
+                <% if (typeof cube != "undefined" && cube && cube.dimensions) { %>
+                    <%= _.template($("#template-measures").html(), { measures: cube.measures }) %>
+                <% } else { %>
+                    
+                <% } %>
+            </div>
             <h3 class="i18n">Dimensions</h3>
             <div class="sidebar_inner dimension_tree">
                 <% if (typeof cube != "undefined" && cube && cube.dimensions) { %>
@@ -286,15 +293,6 @@
                 <% } %>
 
             </div>
-            <h3 class="i18n">Measures</h3>
-            <div class="sidebar_inner measure_tree">
-                <% if (typeof cube != "undefined" && cube && cube.dimensions) { %>
-                    <%= _.template($("#template-measures").html(), { measures: cube.measures }) %>
-                <% } else { %>
-                    
-                <% } %>
-            </div>
-
         </div>
 
         </script>
