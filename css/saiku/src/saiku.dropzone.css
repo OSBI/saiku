@@ -100,7 +100,7 @@ span.clear_axis {
 .fields_list .fields_list_body ul.connectable {
     display: block;
     float: left;
-    line-height: 19px;
+    line-height: 14px;
     list-style: none;
     margin: 0px 0px;
     padding: 0px;
@@ -111,13 +111,13 @@ span.clear_axis {
 ul.hierarchy {
   display: block;
   min-height: 30px;
+  padding-bottom: 5px;
   
 }
 
 li.selection .hgroup {
-  text-align: center;
+  text-align: right;
   border-top: 1px solid #CCCCCC;
-  border-bottom: 1px solid #CCCCCC;
   padding: 3px 9px;
 }
 ul.connectable > li.selection:first-child .hgroup {
@@ -150,7 +150,6 @@ li.selection .hgroup:hover {
 .fields_list_body.details li,
 .fields_list_body li.placeholder,
 .fields_list_body li.selection {
-    line-height: 17px;
     list-style-type: none;
     display: block;
     text-align: left;
@@ -185,7 +184,7 @@ li.selection .hgroup:hover {
 }
 
 .fields_list .fields_list_body ul.hierarchy li a , .fields_list_body.details li a {
-    padding: 8px 0px 8px 10px;
+    padding: 2px 0px 2px 10px;
 }
 
 /*
