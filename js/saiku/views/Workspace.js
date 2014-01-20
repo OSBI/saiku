@@ -37,7 +37,6 @@ var Workspace = Backbone.View.extend({
         // Attach an event bus to the workspace
         _.extend(this, Backbone.Events);
         this.loaded = false;
-        this.bind('dimensions:loaded',this.populate_selections);
         this.bind('query:result',this.render_result);
 
         // Generate toolbar and append to workspace
@@ -318,7 +317,6 @@ var Workspace = Backbone.View.extend({
                 Saiku.error(this.cid, e);
         }
 
-
         if ((Settings.MODE == "table") && this.query) {
             this.query.run(true);
             return;
@@ -379,6 +377,7 @@ var Workspace = Backbone.View.extend({
                     self.trigger('cube:loaded')
                 }});
             }
+            this.trigger('query:new', { workspace: this });
 
         } else {
             // Someone literally selected "Select a cube"
@@ -390,6 +389,7 @@ var Workspace = Backbone.View.extend({
         if (typeof isNew != "undefined") {
             this.query.run(true);
         }
+        Saiku.i18n.translate();
 
 
     },
@@ -426,8 +426,7 @@ var Workspace = Backbone.View.extend({
         var self = this;
 
         console.log('populate_selections');
-        dimlist.workspace.sync_query();        
-        
+        dimlist.workspace.sync_query();
         return false;
 
         if (this.other_dimension) {
