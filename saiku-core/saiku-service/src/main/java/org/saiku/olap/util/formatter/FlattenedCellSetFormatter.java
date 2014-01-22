@@ -15,13 +15,23 @@
  */
 package org.saiku.olap.util.formatter;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.olap4j.Cell;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
 import org.olap4j.Position;
 import org.olap4j.impl.CoordinateIterator;
 import org.olap4j.impl.Olap4jUtil;
-import org.olap4j.metadata.Dimension;
+import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.Property;
@@ -29,10 +39,6 @@ import org.saiku.olap.dto.resultset.DataCell;
 import org.saiku.olap.dto.resultset.Matrix;
 import org.saiku.olap.dto.resultset.MemberCell;
 import org.saiku.olap.util.SaikuProperties;
-
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.*;
 
 
 public class FlattenedCellSetFormatter implements ICellSetFormatter {
@@ -413,14 +419,14 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
 			final Position position = axis.getPositions().get(i);
 			int yOffset = 0;
 			final List<Member> memberList = position.getMembers();
-			final Map<Dimension,List<Integer>> lvls = new HashMap<Dimension, List<Integer>>();
+			final Map<Hierarchy,List<Integer>> lvls = new HashMap<Hierarchy, List<Integer>>();
 			boolean stop = false;
 			for (int j = 0; j < memberList.size(); j++) {
 				Member member = memberList.get(j);
 				final AxisOrdinalInfo ordinalInfo = axisInfo.ordinalInfos.get(j);
 				List<Integer> depths = ordinalInfo.depths;
 				Collections.sort(depths);
-				lvls.put(member.getDimension(), depths);
+				lvls.put(member.getHierarchy(), depths);
 				if (member.getDepth() < Collections.max(depths)) {
 					stop = true;
 					if (isColumns) {

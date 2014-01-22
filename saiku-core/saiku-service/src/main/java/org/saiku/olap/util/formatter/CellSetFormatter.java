@@ -15,13 +15,23 @@
  */
 package org.saiku.olap.util.formatter;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.olap4j.Cell;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
 import org.olap4j.Position;
 import org.olap4j.impl.CoordinateIterator;
 import org.olap4j.impl.Olap4jUtil;
-import org.olap4j.metadata.Dimension;
+import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.Property;
@@ -29,10 +39,6 @@ import org.saiku.olap.dto.resultset.DataCell;
 import org.saiku.olap.dto.resultset.Matrix;
 import org.saiku.olap.dto.resultset.MemberCell;
 import org.saiku.olap.util.SaikuProperties;
-
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.*;
 
 
 public class CellSetFormatter implements ICellSetFormatter {
@@ -365,13 +371,13 @@ public class CellSetFormatter implements ICellSetFormatter {
 			final Position position = axis.getPositions().get(i);
 			int yOffset = 0;
 			final List<Member> memberList = position.getMembers();
-			final Map<Dimension,List<Integer>> lvls = new HashMap<Dimension, List<Integer>>();
+			final Map<Hierarchy,List<Integer>> lvls = new HashMap<Hierarchy, List<Integer>>();
 			for (int j = 0; j < memberList.size(); j++) {
 				Member member = memberList.get(j);
 				final AxisOrdinalInfo ordinalInfo = axisInfo.ordinalInfos.get(j);
 				List<Integer> depths = ordinalInfo.depths;
 				Collections.sort(depths);
-				lvls.put(member.getDimension(), depths);
+				lvls.put(member.getHierarchy(), depths);
 				if (ordinalInfo.getDepths().size() > 0 && member.getDepth() < ordinalInfo.getDepths().get(0))
 					break;
 				final int y = yOffset + ordinalInfo.depths.indexOf(member.getDepth());
@@ -398,8 +404,8 @@ public class CellSetFormatter implements ICellSetFormatter {
 
 
 				if (member != null) {
-					if (lvls != null && lvls.get(member.getDimension()) != null) {
-						memberInfo.setProperty("levelindex", "" + lvls.get(member.getDimension()).indexOf(member.getLevel().getDepth()));
+					if (lvls != null && lvls.get(member.getHierarchy()) != null) {
+						memberInfo.setProperty("levelindex", "" + lvls.get(member.getHierarchy()).indexOf(member.getLevel().getDepth()));
 					}
 					if (x - 1 == offset)
 						memberInfo.setLastRow(true);
