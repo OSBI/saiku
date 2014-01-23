@@ -410,12 +410,7 @@ var Workspace = Backbone.View.extend({
                 
         if (!self.isReadOnly && (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view"))) {
             dimlist.find('.parent_dimension a.folder_collapsed').removeAttr('style');
-            dimlist.find('.parent_dimension ul li').not('.hierarchy')
-                .draggable('enable')
-                .css({ fontWeight: 'normal' });
-            dimlist.find('a.measure').parent().not('.hierarchy')
-                .draggable('enable')
-                .css({ fontWeight: 'normal' });
+            
 
             self.drop_zones.synchronize_query();
         }

@@ -70,18 +70,7 @@ var DimensionList = Backbone.View.extend({
         }
         
         // Add draggable behavior
-        $(this.el).find('.measure,.level').parent('li').mousedown(function(event, ui) {
-            event.preventDefault();
-            if ($(event.target).parent().hasClass('ui-state-disabled')) {
-                return;
-            }
-            if (self.workspace.query.get('type') == "QM") {
-                if ( $(self.workspace.toolbar.el).find('.toggle_fields').hasClass('on') && $(self.workspace.el).find('.workspace_editor').is(':hidden')) {
-                    self.workspace.toolbar.toggle_fields();
-                }
-            }
-        });
-
+        
         $(this.el).find('.measure').parent('li').draggable({
             cancel: '.not-draggable',
             connectToSortable: $(this.workspace.el).find('.fields_list_body.details ul.connectable'),
@@ -90,13 +79,6 @@ var DimensionList = Backbone.View.extend({
             opacity: 0.60,
             tolerance: 'touch',
             containment:    $(self.workspace.el),
-            stop: function() {
-                if (self.workspace.query.get('type') == "QM") {
-                    if ( $(self.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
-                        self.workspace.toolbar.toggle_fields();
-                    }
-                }
-            },
             cursorAt: { top: 10, left: 35 }
         });        
 
@@ -121,13 +103,6 @@ var DimensionList = Backbone.View.extend({
             placeholder: 'placeholder',
             opacity: 0.60,
             tolerance: 'touch',
-            stop: function() {
-                if (self.workspace.query.get('type') == "QM") {
-                    if ( $(self.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
-                        self.workspace.toolbar.toggle_fields();
-                    }
-                }
-            },
             cursorAt: {
                 top: 10,
                 left: 85
@@ -156,48 +131,25 @@ var DimensionList = Backbone.View.extend({
             event.stopPropagation();
             return;
         }
-        
 
         var hierarchy = $(event.target).attr('hierarchy');
         var hierarchyCaption = $(event.target).parent().parent().attr('hierarchycaption');
         var level = $(event.target).attr('level');
+        var axisName = "ROWS";
 
         if ($(this.workspace.el).find(".workspace_fields ul.hierarchy[hierarchy='" + hierarchy + "']").length > 0) {
-            var $level = $(this.workspace.el).find(".workspace_fields ul[hierarchy='" + hierarchy + "'] a[level='" + level + "']").parent().show();
-            var axisName = $level.parents('.fields_list_body').hasClass('rows') ? "ROWS" : "COLUMNS";
-
-            this.workspace.query.helper.includeLevel(axisName, hierarchy, level);
-
+             var $level = $(this.workspace.el).find(".workspace_fields ul[hierarchy='" + hierarchy + "'] a[level='" + level + "']").parent().show();
+            axisName = $level.parents('.fields_list_body').hasClass('rows') ? "ROWS" : "COLUMNS";
         } else {
             var $axis = $(this.workspace.el).find(".workspace_fields .fields_list[title='ROWS'] ul.hierarchy").length > 0 ?
                 $(this.workspace.el).find(".workspace_fields .fields_list[title='COLUMNS'] ul.connectable") :
                 $(this.workspace.el).find(".workspace_fields .fields_list[title='ROWS'] ul.connectable") ;
 
-            var axisName = $axis.parents('.fields_list').attr('title');
-
-            
-                var hierarchy = $(event.target).parent().find('a').attr('hierarchy');
-                var level = $(event.target).parent().find('a').attr('level');
-                var h = $(event.target).parent().parent().clone().removeClass('d_hierarchy').addClass('hierarchy');
-                h.find('li a[hierarchy="' + hierarchy + '"]').parent().hide();
-                h.find('li a[level="' + level + '"]').parent().show();
-                var selection = $('<li class="selection"></li>');
-                selection.append(h);
-                selection.appendTo($axis);
-
-            this.workspace.query.helper.includeLevel(axisName, hierarchy, level);
-
+            axisName = $axis.parents('.fields_list').attr('title');
         }
-
-        $(event.target).parent().draggable('disable');
-
-        this.workspace.drop_zones.update_dropzones();
+        this.workspace.query.helper.includeLevel(axisName, hierarchy, level);
+        this.workspace.sync_query();
         this.workspace.query.run();
-        /*
-        if ( $(this.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
-            $(this.workspace.el).find('.workspace_editor').delay(2000).slideUp({ complete: this.workspace.adjust });
-        }
-        */
         event.preventDefault();
         return false;
     },
@@ -207,32 +159,15 @@ var DimensionList = Backbone.View.extend({
             return;
         }
         
-        var $axis = $(this.workspace.el).find(".workspace_fields .fields_list_body.details ul.connectable");
+        
         var $target = $(event.target).parent().clone();
-        if ($axis.find(".d_measure").length != 0)
-            $target.insertAfter($axis.find(".d_measure:last"));
-        else {
-            $target.appendTo($axis);
-        }
-
-        $(event.target).parent().draggable('disable');
-
         var measure = {
             "name": $target.find('a').attr('measure'),
             "type": $target.find('a').attr('type')
         };
-        if (measure) {
-
-            this.workspace.query.helper.includeMeasure(measure);
-            this.workspace.query.run();
-        }
-        this.workspace.drop_zones.update_dropzones();
-        
-/*
-        if ( $(this.workspace.toolbar.el).find('.toggle_fields').hasClass('on')) {
-            $(this.workspace.el).find('.workspace_editor').delay(2000).slideUp({ complete: this.workspace.adjust });
-        }
-*/        
+        this.workspace.query.helper.includeMeasure(measure);
+        this.workspace.sync_query();
+        this.workspace.query.run();
         event.preventDefault();
         return false;
     }

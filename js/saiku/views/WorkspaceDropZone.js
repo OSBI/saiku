@@ -25,8 +25,8 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
     
     events: {
-        'sortstop .fields_list_body.details': 'drop_measure',
-        'sortbeforestop .axis_fields': 'select_dimension',
+        'sortstop .fields_list_body.details': 'set_measures',
+        'sortstop .axis_fields': 'select_dimension',
         'click .d_measure' : 'remove_measure_click',
         'click .d_level': 'selections',
 //        'click .d_measure span.sort' : 'sort_measure',
@@ -79,7 +79,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         return this; 
     },
 
-    drop_measure: function(event) {
+    set_measures: function(event, ui) {
         var details = [];
 
         $(this.el).find('.fields_list_body.details ul.connectable li.d_measure').each( function(index, element) {
@@ -88,42 +88,31 @@ var WorkspaceDropZone = Backbone.View.extend({
                 "type": $(element).find('a').attr('type')
             };
             details.push(measure);
-
-// TODO - sync query stuff
-//            $('.measure_tree li a[measure="' + measure.name + '"]').parent().draggable('disable');
-
         });
         this.workspace.query.helper.setMeasures(details);
+        this.workspace.sync_query();
         this.workspace.query.run();
-        this.update_dropzones();
-
     },
 
     remove_measure_click: function(event) {
         event.preventDefault();
         var target = $(event.target).hasClass('d_measure') ?  $(event.target).find('a') :  $(event.target);
         target.parent().remove();
-        
-//        $(this.workspace.el).find('.measure_tree li a[measure="' + m + '"]').parent().draggable('enable');
-        this.drop_measure();
+        this.set_measures();
     },
 
     remove_dimension: function(event, ui) {
         if ($(ui.helper).hasClass('d_measure')) {
-                var measureName = $(ui.helper).find('a').attr('measure');
                 $(ui.helper).detach();
-                this.drop_measure();
+                this.set_measures();
             } else {
                 var hierarchy = $(ui.helper).find('a').attr('hierarchy');
                 var fromAxis = $(this.el).find('ul.hierarchy[hierarchy="' + hierarchy + '"]').parents('.fields_list').attr('title');
                 var level =  $(ui.helper).find('a').attr('level');
-                this.toggle_draggable(true);
-                $(ui.helper).detach();
-
                 this.workspace.query.helper.removeHierarchy(fromAxis, hierarchy);
+                this.workspace.sync_query();
                 this.workspace.query.run();
         }
-        
     },
 
 
@@ -142,6 +131,14 @@ var WorkspaceDropZone = Backbone.View.extend({
                     h.find('li.d_level').hide();
                     for (var level in hierarchy.levels) {
                         h.find('li a[level="' + level + '"]').parent().show();
+
+                        // sync attribute list
+                        $(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"] li a[level="' + level + '"]').parent()
+                                .draggable('disable')
+                                .parents('.parent_dimension')
+                                .find('.folder_collapsed')
+                                .css({fontWeight: "bold"}); 
+
                     }
                     var selection = $('<li class="selection"></li>');
                     selection.append(h);
@@ -150,8 +147,11 @@ var WorkspaceDropZone = Backbone.View.extend({
             }
             var measures = model.queryModel.details.measures || [];
             _.each(measures, function (measure) {
-                var h = $(self.workspace.dimension_list.el).find('.measure_tree a.measure[measure="' + measure.name + '"]').parent().clone();
-                h.appendTo( $(self.el).find('.fields_list_body.details ul.connectable'));
+                var m = $(self.workspace.dimension_list.el).find('.measure_tree a.measure[measure="' + measure.name + '"]').parent();
+                var m2 = m.clone();
+                m2.appendTo( $(self.el).find('.fields_list_body.details ul.connectable'));
+
+                m.draggable('disable');
             });
 
             this.update_dropzones();
@@ -160,7 +160,8 @@ var WorkspaceDropZone = Backbone.View.extend({
 
     reset_dropzones: function() {
             var self = this;
-            $(self.el).find('.fields_list_body ul.connectable').empty();
+            $(self.el).find('.fields_list_body ul.connectable').find('li.selection, li.d_measure').remove();
+            $(self.workspace.dimension_list.el).find('li.ui-draggable-disabled').draggable('enable');
             $(self.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
             $(self.el).find('.fields_list[title="COLUMNS"] .limit').removeClass('on');
             $(this.workspace.el).find('.fields_list_body .clear_axis').addClass('hide');
@@ -183,108 +184,55 @@ var WorkspaceDropZone = Backbone.View.extend({
     clear_axis: function(event) {
             var self = this;
             event.preventDefault();
-            
-            if (typeof this.workspace.query == "undefined" || this.workspace.query.helper.model().type != 'QUERYMODEL' || Settings.MODE == "view") {
-                return false;
-            }
-            
-            var $axis = $(event.target).siblings('.fields_list_body');
-            var target = $axis.parent().attr('title');;
-
-            if (target == "DETAILS") {
+            var axis = $(event.target).siblings('.fields_list_body').parent().attr('title');
+            if (axis == "DETAILS") {
                 this.workspace.query.helper.clearMeasures();
             } else {
-                this.workspace.query.helper.clearAxis(target);
+                this.workspace.query.helper.clearAxis(axis);
             }
-
-/* TODO - maybe we should do this all in a synchronize? */
-            this.toggle_draggable(true);
-            $axis.find('.connectable').empty();
-            this.update_dropzones();
-/* up until here */
-
+            
+            this.workspace.sync_query();
             this.workspace.query.run();
             return false;
     },
 
-    toggle_draggable: function(enable) {
-        var self = this;
-        $(this.el).find('.fields_list_body').each(function (i, axiselement ) {
-            var $axis = $(axiselement);
-            if (!$axis.hasClass('details')) {
-                    $axis.find('ul.hierarchy li.d_level').each( function(index, element) {
-                        var hierarchy = $(element).find('a').attr('hierarchy');
-                        var level = $(element).find('a').attr('level');
-                        if (enable) {
-                            $(self.workspace.el).find('.dimension_tree li.d_level a[hierarchy="' + hierarchy + '"][level="' + level + '"]').parent().draggable('enable');
-                        } else {
-                            $(self.workspace.el).find('.dimension_tree li.d_level a[hierarchy="' + hierarchy + '"][level="' + level + '"]').parent().draggable('disable');
-                        }
-                    });
 
-            } else {
-                $axis.find('ul.connectable li.d_measure').each( function(index, element) {
-                        var measure = $(element).find('a').attr('measure');
-                        if (enable) {
-                            $(self.workspace.el).find('.measure_tree li.d_measure a[measure="' + measure + '"]').parent().draggable('enable');
-                        } else {
-                            $(self.workspace.el).find('.measure_tree li.d_measure a[measure="' + measure + '"]').parent().draggable('disable');
-                        }
-                    });
-            }
-        });
-    },
 
     select_dimension: function(event, ui) {
         var self = this;
-        
-        $(self.el).find('.axis_fields ul.hierarchy').each( function(index, element) {
-            $(element).find('li.temphide').show().removeClass('temphide');
-        });
-        
         // if we drop to remove dont execute the following
-        if ( !$(ui.helper).is(':visible')) {
-            //$(ui.placeholder).detach();
-            this.update_dropzones();
-            return;
-        }
-        if( $(ui.helper).hasClass('selection') ) {
+        
+        if ( false || $(ui.item).is(':visible')) {
+            $(self.el).find('.axis_fields ul.hierarchy').each( function(index, element) {
+                $(element).find('li.temphide').show().removeClass('temphide');
+            });
 
-            var hierarchy = ui.helper.find('ul.hierarchy').attr('hierarchy');
+            var hierarchy = ui.item.find('.level').attr('hierarchy');
             var indexHierarchy = -1;
-            ui.placeholder.parents('ul.connectable').find('li.selection').each( function(index, element) {
+            ui.item.parents('ul.connectable').find('li.selection').each( function(index, element) {
                 if ( $(element).find('ul.hierarchy').attr('hierarchy') == hierarchy) {
                     indexHierarchy = index;
                 }
             });
 
-            var toAxis = ui.placeholder.parents('.axis_fields').parent().attr('title');
+            var toAxis = ui.item.parents('.axis_fields').parent().attr('title');
             var fromAxis = $(event.target).parents('.axis_fields').parent().attr('title');
+            var isNew = ui.item.parent().find('ul.hierarchy[hierarchy="' + hierarchy + '"]').length == 0;
 
-            var isNew = ui.placeholder.parent().find('ul.hierarchy[hierarchy="' + hierarchy + '"]').length == 0;
             if (isNew) {
-                var level = ui.helper.find('ul.hierarchy li.d_level a:visible').attr('level');
-                var parent = $(self.workspace.el).find('.dimension_tree .d_hierarchy a.level[hierarchy="' + hierarchy +'"][level="' + level + '"]').parent().parent().not('.hierarchy');
-                parent.children('li.hide').find('a.level[hierarchy="' + hierarchy +'"][level="' + level + '"]').parent().draggable('disable');
+                var level = ui.item.find('a.level').attr('level');
                 this.workspace.query.helper.includeLevel(toAxis, hierarchy, level);
             } else {
                 self.workspace.query.helper.moveHierarchy(fromAxis, toAxis, hierarchy, indexHierarchy);
             }
-
-            //ui.helper.detach();
-            var sel = ui.helper.clone();
-            sel.removeAttr('style').removeClass('ui-draggable-dragging').removeClass('ui-sortable-helper');
-            ui.item.replaceWith( sel );
             
-            
+            $(ui.item).detach();
+            this.workspace.sync_query();
             self.workspace.query.run();
-            self.update_dropzones();
-
             return;
         }
-        alert("There might be dragons! We probably need that again!");
+        return;
     },
-
     
     selections: function(event, ui) {
         if (event) {
