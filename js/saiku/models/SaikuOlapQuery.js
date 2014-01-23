@@ -76,7 +76,6 @@ SaikuOlapQueryHelper.prototype.moveHierarchy = function(fromAxis, toAxis, hierar
   var h = this.getHierarchy(hierarchy);
   var i = this.model().queryModel.axes[fromAxis].hierarchies.indexOf(h);
   var target = this.model().queryModel.axes[toAxis].hierarchies;
-
   this.model().queryModel.axes[fromAxis].hierarchies.splice(i,1);
   if (typeof position != "undefined" && position > -1 && target.length > position) {
       target.splice(position, 0, h);
@@ -88,8 +87,12 @@ SaikuOlapQueryHelper.prototype.moveHierarchy = function(fromAxis, toAxis, hierar
 
 SaikuOlapQueryHelper.prototype.removeHierarchy = function(fromAxis, hierarchy) {
   var h = this.getHierarchy(hierarchy);
-  var i = this.model().queryModel.axes[fromAxis].hierarchies.indexOf(h);
-  this.model().queryModel.axes[fromAxis].hierarchies.splice(i,1);
+  if (this.model().queryModel.axes[fromAxis].hierarchies.length == 1) {
+    this.model().queryModel.axes[fromAxis].hierarchies = [];
+  } else {
+    var i = this.model().queryModel.axes[fromAxis].hierarchies.indexOf(h);
+    this.model().queryModel.axes[fromAxis].hierarchies.splice(i,1);
+  }
 };
 
 

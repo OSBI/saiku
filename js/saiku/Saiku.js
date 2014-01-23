@@ -65,7 +65,9 @@ var Saiku = {
     log: function(channel, item) {
         if (console && console.log) {
             console.log("Logging for: " + channel);
-            console.log(item);
+            if (item) {
+                console.log(item);
+            }
         }
     },
     error: function(channel, item) {
