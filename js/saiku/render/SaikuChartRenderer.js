@@ -687,15 +687,21 @@ SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
                     for (var col = lowest_level + 1, colLen = cellset[row].length; col < colLen; col++) {
                         var cell = cellset[row][col];
                         var value = cell.value || 0;
+                        var maybePercentage = (value != 0);
                         // check if the resultset contains the raw value, if not try to parse the given value
                         var raw = cell.properties.raw;
                         if (raw && raw !== "null") {
                             value = parseFloat(raw);
                         } else if (typeof(cell.value) !== "number" && parseFloat(cell.value.replace(/[^a-zA-Z 0-9.]+/g,''))) {
                             value = parseFloat(cell.value.replace(/[^a-zA-Z 0-9.]+/g,''));
+                            maybePercentage = false;
+                        }
+                        if (value > 0 && maybePercentage) {
+                            value = cell.value && cell.value.indexOf('%')>= 0 ? value * 100 : value; 
                         }
                         record.push(value);
-                        flatrecord.push(value);
+
+                        flatrecord.push({ f: cell.value, v: value});
                     }
                     if (flat) data.resultset.push(flatrecord);
                     var sum = _.reduce(record, function(memo, num){ return memo + num; }, 0);
