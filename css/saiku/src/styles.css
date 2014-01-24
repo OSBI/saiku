@@ -478,12 +478,6 @@ textarea, select {
 }
 
 /** Draggables, Sortables and Droppables */
-.ui-selectable-helper{
-  position:absolute;
-  z-index:100;
-  border:2px solid #86fe00;
-  background-color: rgba(203, 239, 163, 0.6);
-} 
 
 .ui-dialog.ui-draggable {
     margin: 0px !important;
@@ -509,63 +503,15 @@ textarea, select {
     padding: 1px !important;
 }
 
-.ui-sortable-helper {
-    line-height: 18px !important;
-    min-width: 200px;
-    text-align: center;
+.ui-selectable-helper {
+  position:absolute;
+  z-index:100;
+  border:2px solid #86fe00;
+  background-color: rgba(203, 239, 163, 0.6);
+} 
 
-}
-.ui-draggable-dragging {
-    display: inline !important;
-    height: 18px !important;
-    line-height: 18px !important;
-    list-style-type: none !important;
-    margin: 0 !important;
-    min-width: 200px;
-    padding: 1px 8px !important;
-    text-align: center;
-    border-radius: 3px;
-    box-shadow: 0 0 2px #DDD;
-    -moz-box-shadow: 0 0 2px #DDD;
-    -moz-border-radius: 3px;
-    -webkit-box-shadow: 0 0 2px #DDD;
-    -webkit-border-radius: 3px;
-}
-.ui-draggable-dragging a {
-    background-image: none !important;
-    padding: 0 !important;
-    white-space: nowrap;
-}
-.dimension_tree ul .ui-draggable-dragging, 
-.workspace_fields ul  .ui-draggable-dragging,
-.workspace_fields li.ui-sortable-helper {
-    background: #e5f6ff !important;
-    background: -webkit-gradient(linear, left top, left bottom, from(#e0e9ef), to(#c2d5e2)) !important;
-    background: -moz-linear-gradient(top, #e0e9ef 0%, #c2d5e2 100%) !important;
-    border: 1px solid #2a6085 !important;
-    color: #2a6085 !important;
-    text-align: left;
-}
-.dimension_tree ul .ui-draggable-dragging a,
-.workspace_fields ul  .ui-draggable-dragging a,
-.workspace_fields li.ui-sortable-helper a {
-    color: #2a6085 !important;
-}
-.measure_tree ul .ui-draggable-dragging {
-    background: #ffe8e8 !important;
-    background: -webkit-gradient(linear, left top, left bottom, from(#fcf5f5), to(#fad9d9)) !important;
-    background: -moz-linear-gradient(top, #fcf5f5 0%, #fad9d9 100%) !important;
-    border: 1px solid #ed9393 !important;
-    color: #983030 !important;
-    text-align: left;
-}
-.measure_tree ul .ui-draggable-dragging a {
-    color: #983030 !important;
-}
 
-.not-draggable a {
-    /*cursor: not-allowed !important;*/
-}
+
 
 /** Table */
 
