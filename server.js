@@ -31,24 +31,48 @@ var argv = process.ARGV || process.argv;
 
 var http = require('http');
 var express = require('express');
+var path = require('path');
 var app = express();
 var port = process.env.C9_PORT || parseInt(argv[2], 10) || 8080;
 var backend_host = argv[3] || 'dev.analytical-labs.com';
 var backend_port = argv[4] || 80;
+var backend_path_prefix = argv[5] || '';
+var auth = argv[6] || null;
+var isAuthed = false;
 
 // Load static server
 var twoHours = 1000 * 60 * 60 * 2;
 app.use(express['static'](__dirname));
 
+var standard_prefix = "/saiku/rest/saiku/";
+
 // Proxy request
 function get_from_proxy(request, response) {
+
+    // if a path prefix is set, remove the existing one
+    if (backend_path_prefix !== '') {
+      if (request.url.indexOf(standard_prefix) === 0) {
+        request.url = backend_path_prefix + request.url.substr(standard_prefix.length);
+      }
+    }
+
+    if (!isAuthed && auth) {
+        request.headers['authorization'] = 'Basic ' + new Buffer(auth).toString('base64');
+        request.headers['www-authorization'] = 'Basic ' + new Buffer(auth).toString('base64');
+        isAuthed = true;
+        //console.log(request.headers);
+    }
+    
+
     var options = {
-        hostname: backend_host,
-        port: backend_port,
-        path: request.url,
-        method: request.method,
-	headers: request.headers
+        hostname : backend_host,
+        port     : backend_port,
+        path     : request.url,
+        method   : request.method,
+	    headers  : request.headers
     };
+
+    console.log(options.method, options.path);
     
     var proxy_request = http.request(options);
     
@@ -66,7 +90,7 @@ function get_from_proxy(request, response) {
                 response.end();
             }
         });
-        
+        //console.log(proxy_response.headers);
         response.writeHead(proxy_response.statusCode, proxy_response.headers);
     });
     
@@ -90,14 +114,8 @@ function unleash_chaos_monkey(request, response) {
 
 // Handle incoming requests
 app.all("/saiku/*", function(request, response) {
-    console.log(request.method, request.url);
     request.headers.host = backend_host;
-
-    if (process.env.CHAOS_MONKEY && Math.random() < 0.25) {
-        unleash_chaos_monkey(request, response);
-    } else {
-        get_from_proxy(request, response);
-    }
+    get_from_proxy(request, response);
 });
 console.log("Connected to '", backend_host, ":", backend_port,"'");
 console.log("Proxy listening on", port);
