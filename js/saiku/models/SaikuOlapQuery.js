@@ -85,34 +85,58 @@ SaikuOlapQueryHelper.prototype.moveHierarchy = function(fromAxis, toAxis, hierar
 
 };
 
-SaikuOlapQueryHelper.prototype.removeHierarchy = function(fromAxis, hierarchy) {
+SaikuOlapQueryHelper.prototype.removeHierarchy = function(hierarchy) {
   var h = this.getHierarchy(hierarchy);
-  if (this.model().queryModel.axes[fromAxis].hierarchies.length == 1) {
-    this.model().queryModel.axes[fromAxis].hierarchies = [];
-  } else {
-    var i = this.model().queryModel.axes[fromAxis].hierarchies.indexOf(h);
-    this.model().queryModel.axes[fromAxis].hierarchies.splice(i,1);
+  if (!h) {
+    return null;
   }
+  var axis = this.findAxisForHierarchy(hierarchy);
+  if (axis) {
+    var i = axis.hierarchies.indexOf(h);
+      axis.hierarchies.splice(i,1);  
+  }
+  return h;
+};
+
+SaikuOlapQueryHelper.prototype.findAxisForHierarchy = function(hierarchy) {
+  for (var axisName in this.model().queryModel.axes) {
+    var axis = this.model().queryModel.axes[axisName];
+    if (axis.hierarchies && axis.hierarchies.length > 0) {
+      for (var i = 0, len = axis.hierarchies.length; i < len; i++) {
+        if (axis.hierarchies[i].name == hierarchy) {
+          return axis;
+        }
+      }
+    }
+  }
+  return null;
 };
 
 
 
-SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level) {
+
+SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, position) {
     var mHierarchy = this.getHierarchy(hierarchy);
     if (mHierarchy) {
       mHierarchy.levels[level] = { name: level };
     } else {
-      if (axis) {
-        var _axis = this.model().queryModel.axes[axis];
-        if (_axis) {
-              var h = { "name" : hierarchy, "levels": { }};
-              h.levels[level] = { name: level };
-              _axis.hierarchies.push(h);
-        } else {
-          Saiku.log("Cannot find axis: " + axis + " to include Level: " + level);
-        }
+      var mHierarchy = { "name" : hierarchy, "levels": { }};
+      mHierarchy.levels[level] = { name: level };
+    }
+    
+    var existingAxis = this.findAxisForHierarchy(hierarchy);
+    if (existingAxis) {
+      this.moveHierarchy(existingAxis.location, axis, hierarchy, position);
+    } else {
+      var _axis = this.model().queryModel.axes[axis];
+      if (_axis) {
+        if (typeof position != "undefined" && position > -1 && _axis.hierarchies.length > position) {
+          _axis.hierarchies.splice(position, 0, mHierarchy);
+          return;
+        } 
+        _axis.hierarchies.push(mHierarchy);
       } else {
-        Saiku.log("You need to provide an axis to include new hierarchy: " + hierarchy + " to include Level: " + level);
+        Saiku.log("Cannot find axis: " + axis + " to include Level: " + level);
       }
     }
 };

@@ -409,9 +409,7 @@ var Workspace = Backbone.View.extend({
         var dimlist = dimension_el ? dimension_el : $(self.dimension_list.el);
                 
         if (!self.isReadOnly && (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view"))) {
-            dimlist.find('.parent_dimension a.folder_collapsed').removeAttr('style');
-            
-
+            dimlist.find('.selected').removeClass('selected');
             self.drop_zones.synchronize_query();
         }
 

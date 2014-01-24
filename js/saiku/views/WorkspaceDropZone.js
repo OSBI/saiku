@@ -109,7 +109,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                 var hierarchy = $(ui.helper).find('a').attr('hierarchy');
                 var fromAxis = $(this.el).find('ul.hierarchy[hierarchy="' + hierarchy + '"]').parents('.fields_list').attr('title');
                 var level =  $(ui.helper).find('a').attr('level');
-                this.workspace.query.helper.removeHierarchy(fromAxis, hierarchy);
+                this.workspace.query.helper.removeHierarchy(hierarchy);
                 this.workspace.sync_query();
                 this.workspace.query.run();
         }
@@ -137,7 +137,8 @@ var WorkspaceDropZone = Backbone.View.extend({
                                 .draggable('disable')
                                 .parents('.parent_dimension')
                                 .find('.folder_collapsed')
-                                .css({fontWeight: "bold"}); 
+                                .addClass('selected');
+
 
                     }
                     var selection = $('<li class="selection"></li>');
@@ -217,11 +218,10 @@ var WorkspaceDropZone = Backbone.View.extend({
 
             var toAxis = ui.item.parents('.axis_fields').parent().attr('title');
             var fromAxis = $(event.target).parents('.axis_fields').parent().attr('title');
-            var isNew = ui.item.parent().find('ul.hierarchy[hierarchy="' + hierarchy + '"]').length == 0;
-
+            var isNew = ui.item.hasClass('d_level');
             if (isNew) {
                 var level = ui.item.find('a.level').attr('level');
-                this.workspace.query.helper.includeLevel(toAxis, hierarchy, level);
+                this.workspace.query.helper.includeLevel(toAxis, hierarchy, level, indexHierarchy);
             } else {
                 self.workspace.query.helper.moveHierarchy(fromAxis, toAxis, hierarchy, indexHierarchy);
             }
