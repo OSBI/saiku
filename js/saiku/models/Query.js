@@ -59,6 +59,7 @@ var Query = Backbone.Model.extend({
         this.model = _.extend(this.model, response);
         this.model.properties = _.extend(this.model.properties, Settings.QUERY_PROPERTIES);
 
+
     },
     
     setProperty: function(key, value) {
@@ -90,7 +91,7 @@ var Query = Backbone.Model.extend({
                 var columnsOk = Object.keys(exModel.queryModel.axes['COLUMNS'].hierarchies).length > 0;
                 var detailsOk = exModel.queryModel.details.axis == 'COLUMNS' && exModel.queryModel.details.measures.length > 0;
                 if (!columnsOk && !detailsOk) {
-                    errorMessage = '<span class="i18n">You need to put at least one level or measure on Columns and Rows for a valid query.</span>';
+                    errorMessage = '<span class="i18n">You need to include at least one measure or a level on columns for a valid query.</span>';
                 } else if (columnsOk || detailsOk) {
                     validated = true;
                 }
