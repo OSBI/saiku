@@ -500,8 +500,6 @@ var WorkspaceDropZone = Backbone.View.extend({
                                             "function" : fun,
                                             "expressions": expressions
                                         });
-
-                                    console.log("Do i Need this? " + items[ikey].payload);
                                 }
                                 self.synchronize_query();
                                 self.workspace.query.run();
