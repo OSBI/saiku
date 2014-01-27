@@ -30,6 +30,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         'click .d_measure' : 'remove_measure_click',
         'click .d_level': 'selections',
 //        'click .d_measure span.sort' : 'sort_measure',
+        'click .limit' : 'limit_axis',
         'click .clear_axis' : 'clear_axis'
     },
     
@@ -253,5 +254,265 @@ var WorkspaceDropZone = Backbone.View.extend({
         })).open();
         
         return false;
+    },
+
+    limit_axis: function(event) {
+        var self = this;
+        
+        if (typeof this.workspace.query == "undefined" || this.workspace.query.model.type != "QUERYMODEL" || Settings.MODE == "view") {
+            return false;
+        }
+        
+        var $target =  $(event.target).hasClass('limit') ? $(event.target) : $(event.target).parent();
+        var $axis = $target.siblings('.fields_list_body');
+        var target = $axis.parent().attr('title');
+        
+        $.contextMenu('destroy', '.limit');
+        $.contextMenu({
+            appendTo: $target,
+            selector: '.limit', 
+            ignoreRightClick: true,
+             build: function($trigger, e) {
+                var query = self.workspace.query;
+                var cube = self.workspace.selected_cube;
+                var items = {};
+                var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
+                var a = self.workspace.query.helper.getAxis(target);
+
+                var func, n, sortliteral, filterCondition, sortOrder, sortOrderLiteral, sortHl, topHl, filterHl;
+                var isFilter = false, isSort = false, isTop = false;
+                if (a && a.filters) {
+                    _.each(a.filters, function(filter) {
+                        if (filter.flavour == "N") {
+                            func = a.function;
+                            n = filter.expressions[0];
+                            sortliteral = filter.expressions[1];
+                            isTop = true;
+                        }
+                        if (filter.flavour == "Generic") {
+                            filterCondition = filter.expressions[0];
+                            isFilter = true;
+                        }                         
+                    });
+                }
+                if (a && a.sortOrder) {
+                    sortOrder = a.sortOrder;
+                    sortOrderLiteral = a.sortEvaluationLiteral;
+                    isSort = true;
+                }          
+
+                if (func != null && sortliteral == null) {
+                    topHl = func + "###SEPARATOR###" + n;
+                } else if (func != null && sortliteral != null && n != null) {
+                    topHl = "custom";
+                }
+
+                if (isSort && sortOrder != null) {
+                    sortHl = "customsort";
+                }
+
+                _.each(measures, function(measure) {
+                    items[measure.uniqueName] = {
+                        name: measure.caption,
+                        payload: {
+                            "n"     : 10,
+                            "sortliteral"    : measure.uniqueName
+                        }
+                    };
+                });
+
+
+                var addFun = function(items, fun) {
+                    var ret = {};
+                    for (key in items) {
+                        ret[ (fun + '###SEPARATOR###'+ key) ] = _.clone(items[key]);
+                        ret[ (fun + '###SEPARATOR###' + key) ].fun = fun;
+                        if (fun == func && sortliteral == key && items[key].payload["n"] == n) {
+                            topHl = fun + "Quick";
+                            ret[ (fun + '###SEPARATOR###' + key) ].name =
+                                    "<b>" + items[key].name + "</b>";
+                        }
+                        if (fun == sortOrder && sortOrderLiteral == key) {
+                            sortHl = fun + "Quick";
+                            ret[ (fun + '###SEPARATOR###' + key) ].name =
+                                    "<b>" + items[key].name + "</b>";
+                        }
+                    }
+                    return ret;
+                };
+
+                var citems = {
+                        "filter" : {name: "Filter", items: 
+                         { 
+                                "customfilter": {name: "Custom..." },
+                                "clearfilter": {name: "Clear Filter" }
+                         }},
+                        "limit" : {name: "Limit", items: 
+                        {
+                                "TopCount###SEPARATOR###10": {name: "Top 10" },
+                                "BottomCount###SEPARATOR###10": {name: "Bottom 10" },
+                                "TopCountQuick" : { name: "Top 10 by...", items: addFun(items, "TopCount") },
+                                "BottomCountQuick" : { name: "Bottom 10 by...", items: addFun(items, "BottomCount") },
+                                "customtop" : {name: "Custom Limit..." },
+                                "clearlimit" : {name: "Clear Limit"}
+                         }},
+                        "sort" : {name: "Sort", items:
+                        {
+                            "ASCQuick": {name: "Ascending" , items: addFun(items, "ASC") },
+                            "DESCQuick": {name: "Descending", items: addFun(items, "DESC")},
+                            "BASCQuick": {name: "Ascending (Breaking Hierarchy)", items: addFun(items, "BASC")},
+                            "BDESCQuick": {name: "Descending (Breaking Hierarchy)", items: addFun(items, "BDESC") },
+                            "customsort" : { name: "Custom..." },
+                            "clearsort" : {name: "Clear Sort" }
+                        }}
+                };
+
+                items["10"] = {
+                   payload: { "n" : 10 }
+                }
+                
+                if (isFilter) {
+                    var f = citems["filter"];
+                    f.name = "<b>" + f.name + "</b>";
+                    f.items["customfilter"].name = "<b>" + f.items["customfilter"].name + "</b>";
+                }
+                if (isSort) {
+                    var s = citems["sort"].items;
+                    citems["sort"].name = "<b>" + citems["sort"].name + "</b>";
+                    if (sortHl in s) {
+                        s[sortHl].name = "<b>" + s[sortHl].name + "</b>";    
+                    }
+                }
+                if (isTop) {
+                    var t = citems["limit"].items;
+                    citems["limit"].name = "<b>" + citems["limit"].name + "</b>";
+                    if (topHl in t) {
+                        t[topHl].name = "<b>" + t[topHl].name + "</b>";    
+                    }   
+                }
+
+                return {
+                    callback: function(key, options) {
+                            if (key == "clearfilter") {
+                                $target.removeClass('on');
+                                self.workspace.query.helper.removeFilter(a, 'Generic');
+                                self.synchronize_query();
+                                self.workspace.query.run();
+                            } else if (key == "customfilter") {
+                                var save_custom = function(filterCondition) {
+                                    var expressions = [];
+                                    expressions.push(filterCondition);
+
+                                    self.workspace.query.helper.removeFilter(a, 'Generic');
+                                    a.filters.push( 
+                                        {   "flavour" : "Generic", 
+                                            "operator": null, 
+                                            "function" : "Filter",
+                                            "expressions": expressions
+                                        });
+                                    self.synchronize_query();
+                                    self.workspace.query.run();
+                                };
+
+                                 (new FilterModal({ 
+                                    axis: target,
+                                    success: save_custom, 
+                                    query: self.workspace.query,
+                                    expression: filterCondition,
+                                    expressionType: "Filter"
+                                })).render().open();
+
+                            } else if (key == "clearlimit") {
+                                $target.removeClass('on');
+                                self.workspace.query.helper.removeFilter(a, 'N');
+                                self.synchronize_query();
+                                self.workspace.query.run();
+                            } else if (key == "customtop") {
+
+                                var save_custom = function(fun, n, sortliteral) {
+                                    var expressions = [];
+                                    expressions.push(n);
+                                    if (sortliteral) {
+                                        expressions.push(sortliteral);
+                                    }
+
+                                    self.workspace.query.helper.removeFilter(a, 'N');
+                                    a.filters.push( 
+                                        {   "flavour" : "N", 
+                                            "operator": null, 
+                                            "function" : fun,
+                                            "expressions": expressions
+                                        });
+                                    self.synchronize_query();
+                                    self.workspace.query.run();
+                                };
+
+                                 (new CustomFilterModal({ 
+                                    axis: target,
+                                    measures: measures,
+                                    success: save_custom, 
+                                    query: self.workspace.query,
+                                    func: func,
+                                    n: n,
+                                    sortliteral: sortliteral
+                                })).render().open();
+                            } else if (key == "customsort") {
+
+                                var save_customsort = function(sortO, sortL) {
+                                    a.sortOrder = sortO;
+                                    a.sortEvaluationLiteral = sortL;
+                                    self.synchronize_query();
+                                    self.workspace.query.run();
+                                };
+
+                                 (new FilterModal({ 
+                                    axis: target,
+                                    success: save_customsort, 
+                                    query: self.workspace.query,
+                                    expression: sortOrderLiteral,
+                                    expressionType: "Order"
+                                })).render().open();
+                            } else if (key == "clearsort") {
+                                a.sortOrder = null;
+                                a.sortEvaluationLiteral = null;
+                            } else {
+
+                                var fun = key.split('###SEPARATOR###')[0];
+                                var ikey = key.split('###SEPARATOR###')[1];
+                                var method = "";
+                                var data = {};
+                                if (_.indexOf(["ASC", "BASC", "DESC", "BDESC"], fun) > -1) {
+                                    a.sortOrder = fun;
+                                    a.sortEvaluationLiteral = items[ikey].payload["sortliteral"];
+
+                                } else {
+                                    var expressions = [];
+                                    expressions.push(items[ikey].payload.n);
+                                    var sl = items[ikey].payload["sortliteral"];
+                                    if (sl) {
+                                        expressions.push(sl);
+                                    }
+
+                                    self.workspace.query.helper.removeFilter(a, 'N');
+                                    a.filters.push( 
+                                        {   "flavour" : "N", 
+                                            "operator": null, 
+                                            "function" : fun,
+                                            "expressions": expressions
+                                        });
+
+                                    console.log("Do i Need this? " + items[ikey].payload);
+                                }
+                                self.synchronize_query();
+                                self.workspace.query.run();
+                            }
+                    },
+                    items: citems
+                } 
+            }
+        });
+    $target.contextMenu();
+
+
     }
 });

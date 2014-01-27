@@ -112,8 +112,28 @@ SaikuOlapQueryHelper.prototype.findAxisForHierarchy = function(hierarchy) {
   return null;
 };
 
+SaikuOlapQueryHelper.prototype.getAxis = function(axisName) {
+  if (axisName in this.model().queryModel.axes) {
+    return this.model().queryModel.axes[axisName];
+  }
+  Saiku.log("Cannot find axis: " + axisName);
+};
 
-
+SaikuOlapQueryHelper.prototype.removeFilter = function(filterable, flavour) {
+    if (flavour && filterable.filters.length > 1) {
+      var removeIndex = -1;
+      for (var i = 0, len = filterable.filters.length; i < len; i++) {
+        if (filterable.filters[i].flavour == flavour) {
+          removeIndex = i;
+        }
+      }
+      if (removeIndex && removeIndex >= 0) {
+        filterable.filters.splice(removeIndex, 0);
+      }
+    } else {
+      filterable.filters = [];
+    }
+};
 
 SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, position) {
     var mHierarchy = this.getHierarchy(hierarchy);
