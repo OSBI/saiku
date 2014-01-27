@@ -38,7 +38,6 @@ var backend_host = argv[3] || 'dev.analytical-labs.com';
 var backend_port = argv[4] || 80;
 var backend_path_prefix = argv[5] || '';
 var auth = argv[6] || null;
-var isAuthed = false;
 
 // Load static server
 var twoHours = 1000 * 60 * 60 * 2;
@@ -56,20 +55,18 @@ function get_from_proxy(request, response) {
       }
     }
 
-    if (!isAuthed && auth) {
-        request.headers['authorization'] = 'Basic ' + new Buffer(auth).toString('base64');
+    if (auth) {
+        request.headers['authorization']     = 'Basic ' + new Buffer(auth).toString('base64');
         request.headers['www-authorization'] = 'Basic ' + new Buffer(auth).toString('base64');
-        isAuthed = true;
-        //console.log(request.headers);
+        delete request.headers['cookie'];
     }
-    
 
     var options = {
         hostname : backend_host,
         port     : backend_port,
         path     : request.url,
         method   : request.method,
-	    headers  : request.headers
+        headers  : request.headers
     };
 
     console.log(options.method, options.path);
