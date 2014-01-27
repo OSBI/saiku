@@ -255,10 +255,13 @@ public class Fat {
 					break;
 				case N:
 					List<String> nexp = f.getExpressions();
-					if (nexp != null && nexp.size() > 1) {
+					if (nexp != null && nexp.size() > 0) {
 						MdxFunctionType mf = MdxFunctionType.valueOf(f.getFunction().toString());
 						int n = Integer.parseInt(nexp.get(0));
-						String expression = nexp.get(1);
+						String expression = null;
+						if (nexp.size() > 1) {
+							expression = nexp.get(1);
+						}
 						NFilter nf = new NFilter(mf, n, expression);
 						qfs.add(nf);
 					}

@@ -264,7 +264,9 @@ public class Thin {
 				NFilter nf = (NFilter) f;
 				List<String> expressions = new ArrayList<String>();
 				expressions.add(Integer.toString(nf.getN()));
-				expressions.add(nf.getFilterExpression());
+				if (nf.getFilterExpression() != null) {
+					expressions.add(nf.getFilterExpression());
+				}
 				FilterFunction type = FilterFunction.valueOf(nf.getFunctionType().toString());
 				ThinFilter tf = new ThinFilter(FilterFlavour.N, null, type, expressions);
 				tfs.add(tf);
