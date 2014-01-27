@@ -30,7 +30,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         'click .d_measure' : 'remove_measure_click',
         'click .d_level': 'selections',
 //        'click .d_measure span.sort' : 'sort_measure',
-        'click .limit' : 'limit_axis',
+        'click .axis_fields_header.limit' : 'limit_axis',
         'click .clear_axis' : 'clear_axis'
     },
     
