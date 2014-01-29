@@ -18,8 +18,7 @@
  * Class which handles table rendering of resultsets
  */
 var Table = Backbone.View.extend({
-    tagName: "table",
-
+    className: 'table_wrapper',
     events: {
         'click th.row' : 'clicked_cell',
         'click th.col' : 'clicked_cell'
@@ -32,6 +31,8 @@ var Table = Backbone.View.extend({
         // Bind table rendering to query result event
         _.bindAll(this, "render", "process_data");
         this.workspace.bind('query:result', this.render);
+        this.id = _.uniqueId("table_");
+        $(this.el).attr('id', this.id);
     },
     
     clicked_cell: function(event) {
@@ -256,19 +257,23 @@ var Table = Backbone.View.extend({
             return;
         }        
         // Check to see if there is data
-        if (args.data == null || (args.data.cellset && args.data.cellset.length === 0)) {
+        if (args.data == null || (args.data.height && args.data.height === 0)) {
             return;
         }
-
-        $(this.el).html('<tr><td>Rendering ' + args.data.width + ' columns and ' + args.data.height + ' rows...</td></tr>');
+        this.clearOut();
+        $(this.el).html('Rendering ' + args.data.width + ' columns and ' + args.data.height + ' rows...');
 
         // Render the table without blocking the UI thread
-        if (block === true) {
-            this.process_data(args.data);
-        } else {
-            _.delay(this.process_data, 0, args.data);
-        }
+        _.delay(this.process_data, 2, args.data);
 
+    },
+
+    clearOut: function() {        
+        var element = document.getElementById(this.id);
+        var table = element.firstChild;
+        if (table) {
+            element.removeChild(table);
+        }
     },
 
     process_data: function(data) {
@@ -276,16 +281,21 @@ var Table = Backbone.View.extend({
         this.workspace.processing.hide();
         this.workspace.adjust();
         // Append the table
-        var contents = this.renderer.render(data);
-        $(this.el).html(contents);
+        this.clearOut();
+        $(this.el).html('<table></table>');
+        var contents = this.renderer.render(data, { 
+            htmlObject:         $(this.el).find('table'),
+            batch:              Settings.TABLE_LAZY, 
+            batchSize:          Settings.TABLE_LAZY_SIZE, 
+            batchIntervalSize:  Settings.TABLE_LAZY_LOAD_ITEMS,
+            batchIntervalTime:  Settings.TABLE_LAZY_LOAD_TIME 
+        });
         this.post_process();
-
-
     },
 
     post_process: function() {
-        if (this.workspace.query.get('type') == 'QM' && Settings.MODE != "view") {
-            $(this.el).find('th.row, th.col').addClass('headerhighlight');
+        if (this.workspace.query.get('type') == 'QUERYMODEL' && Settings.MODE != "view") {
+            $(this.el).find('table').find('th.row, th.col').addClass('headerhighlight');
         }
         /*
         var tipOptions = {

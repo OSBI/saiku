@@ -85,3 +85,24 @@ if (! Settings.BIPLUGIN) {
         Saiku.toolbar = new Toolbar();
     });
 }
+
+var SaikuTimeLogger = function(element) {
+    this._element = $(element);
+    this._timestamps = [];
+    this._events = [];
+};
+
+SaikuTimeLogger.prototype.log = function(eventname) {
+    var time = (new Date()).getTime();
+    if (!eventname) {
+        eventname = "Unknown";
+    }
+    if (this._timestamps.length > 0) {
+        var lastTime = this._timestamps[this._timestamps.length -1];
+        if ((time - lastTime) > 1) {
+            this._element.append( "<div>" + (time - lastTime) + " ms " + eventname + '  (previous: ' + this._events[this._events.length -1]  + " )</div>");
+        }
+    }
+    this._timestamps.push(time);
+    this._events.push(eventname);
+};
