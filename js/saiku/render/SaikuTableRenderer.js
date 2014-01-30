@@ -4,11 +4,12 @@ var SaikuTableRenderer = _.extend(SaikuRenderer, {
 });
 
 SaikuTableRenderer.prototype._render = function(data, options) {
+        var self = this;
         if (data) {
             this._data = data;
         }
         if (options) {
-            this._options = _.extend(options, SaikuRendererOptions);
+            this._options = _.extend(SaikuRendererOptions, options);
         }
 
         if (typeof this._data == "undefined") {
@@ -21,12 +22,49 @@ SaikuTableRenderer.prototype._render = function(data, options) {
         if (this._data == null || (this._data.cellset && this._data.cellset.length === 0)) {
             return;
         }
-
-        var html =  this.internalRender(this._data.cellset);
         if (this._options.htmlObject) {
-            $(this._options.htmlObject).html(html);
+            _.defer(function(that) {
+                var html =  self.internalRender(self._data.cellset, options);
+                $(self._options.htmlObject).html(html);
+                _.defer(function(that) {
+                    if (options.batch && options.hasBatchResult) {                        
+                        var batchRow = 0;
+                        var batchIsRunning = false;
+                        var batchIntervalSize = options.hasOwnProperty('batchIntervalSize') ? options.batchIntervalSize : 10;
+                        var batchIntervalTime = options.hasOwnProperty('batchIntervalTime') ? options.batchIntervalTime : 10;
+
+                        var len = options.batchResult.length;
+                        
+                        var batchInsert = function() {
+                            // maybe add check for reach table bottom - ($('.workspace_results').scrollTop() , $('.workspace_results table').height()
+
+                            if (!batchIsRunning && len > 0 && batchRow < len) {
+                                batchIsRunning = true;
+                                var batchContent = "";
+                                var startb = batchRow;
+                                for (var i = 0;  batchRow < len && i < batchIntervalSize ; i++, batchRow++) {
+                                    batchContent += options.batchResult[batchRow];
+                                }
+                                if (batchRow > startb) {
+                                    $(self._options.htmlObject).append( $(batchContent));
+                                }
+                                batchIsRunning = false;
+                            }
+                        };
+
+                        var lazyBatchInsert = _.debounce(batchInsert, batchIntervalTime);
+                        $('.workspace_results').scroll(function () { 
+                            lazyBatchInsert();
+                        });
+                    }
+                });
+                return html;
+            });
+        } else {
+            var html =  this.internalRender(this._data.cellset, options);
+            return html;
         }
-        return html;
+        
 };
 
 SaikuTableRenderer.prototype._processData = function(data, options) {
@@ -34,7 +72,9 @@ SaikuTableRenderer.prototype._processData = function(data, options) {
 };
 
 SaikuTableRenderer.prototype.internalRender = function(data, options) {
-    var contents = "";
+    var tableContent = "";
+    var rowContent = "";
+
     var table = data ? data : [];
     var colSpan;
     var colValue;
@@ -46,6 +86,12 @@ SaikuTableRenderer.prototype.internalRender = function(data, options) {
     var processedRowHeader = false;
     var lowestRowLvl = 0;
     var rowGroups = [];
+    var batchSize = null;
+    var batchStarted = false;
+    var resultRows = [];
+    if (options) {
+        batchSize = options.hasOwnProperty('batchSize') ? options.batchSize : null;
+    }
 
     for (var row = 0, rowLen = table.length; row < rowLen; row++) {
         colSpan = 1;
@@ -54,14 +100,13 @@ SaikuTableRenderer.prototype.internalRender = function(data, options) {
         isLastColumn = false;
         isLastRow = false;
 
-        contents += "<tr>";
-
+        rowContent = "<tr>";
         for (var col = 0, colLen = table[row].length; col < colLen; col++) {
             var header = data[row][col];
 
             // If the cell is a column header and is null (top left of table)
             if (header.type === "COLUMN_HEADER" && header.value === "null" && (firstColumn == null || col < firstColumn)) {
-                contents += '<th class="all_null"><div>&nbsp;</div></th>';
+                rowContent += '<th class="all_null"><div>&nbsp;</div></th>';
             } // If the cell is a column header and isn't null (column header of table)
             else if (header.type === "COLUMN_HEADER") {
                 if (firstColumn == null) {
@@ -76,9 +121,9 @@ SaikuTableRenderer.prototype.internalRender = function(data, options) {
                 if (isLastColumn) {
                     // Last column in a row...
                     if (header.value == "null") {
-                        contents += '<th class="col_null"><div>&nbsp;</div></th>';
+                        rowContent += '<th class="col_null"><div>&nbsp;</div></th>';
                     } else {
-                        contents += '<th class="col" style="text-align: center;" colspan="' + colSpan + '" title="' + header.value + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';    
+                        rowContent += '<th class="col" style="text-align: center;" colspan="' + colSpan + '" title="' + header.value + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';    
                     }
                     
                 } else {
@@ -89,9 +134,9 @@ SaikuTableRenderer.prototype.internalRender = function(data, options) {
                     var maxColspan = colSpan > 999 ? true : false;
                     if (header.value != nextHeader.value || isHeaderLowestLvl || groupChange || maxColspan) {
                         if (header.value == "null") {
-                            contents += '<th class="col_null" colspan="' + colSpan + '"><div>&nbsp;</div></th>';
+                            rowContent += '<th class="col_null" colspan="' + colSpan + '"><div>&nbsp;</div></th>';
                         } else {
-                            contents += '<th class="col" style="text-align: center;" colspan="' + (colSpan == 0 ? 1 : colSpan) + '" title="' + header.value + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
+                            rowContent += '<th class="col" style="text-align: center;" colspan="' + (colSpan == 0 ? 1 : colSpan) + '" title="' + header.value + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
                         }
                         colSpan = 1;
                     } else {
@@ -100,7 +145,7 @@ SaikuTableRenderer.prototype.internalRender = function(data, options) {
                 }
             } // If the cell is a row header and is null (grouped row header)
             else if (header.type === "ROW_HEADER" && header.value === "null") {
-                contents += '<th class="row_null"><div>&nbsp;</div></th>';
+                rowContent += '<th class="row_null"><div>&nbsp;</div></th>';
             } // If the cell is a row header and isn't null (last row header)
             else if (header.type === "ROW_HEADER") {
                 if (lowestRowLvl == col)
@@ -136,10 +181,10 @@ SaikuTableRenderer.prototype.internalRender = function(data, options) {
                     }
                     col = col + colspan -1;
                 }
-                contents += '<th class="' + cssclass + '" ' + (colspan > 0 ? ' colspan="' + colspan + '"' : "") + tipsy + '>' + value + '</th>';
+                rowContent += '<th class="' + cssclass + '" ' + (colspan > 0 ? ' colspan="' + colspan + '"' : "") + tipsy + '>' + value + '</th>';
             }
             else if (header.type === "ROW_HEADER_HEADER") {
-                contents += '<th class="row_header"><div>' + header.value + '</div></th>';
+                rowContent += '<th class="row_header"><div>' + header.value + '</div></th>';
                 isHeaderLowestLvl = true;
                 processedRowHeader = true;
                 lowestRowLvl = col;
@@ -152,6 +197,7 @@ SaikuTableRenderer.prototype.internalRender = function(data, options) {
                 }
             } // If the cell is a normal data cell
             else if (header.type === "DATA_CELL") {
+                batchStarted = true;
                 var color = "";
                 var val = header.value;
                 var arrow = "";
@@ -171,11 +217,24 @@ SaikuTableRenderer.prototype.internalRender = function(data, options) {
                     arrow = "<img height='10' width='10' style='padding-left: 5px' src='./images/arrow-" + header.properties.arrow + ".gif' border='0'>";
                 }
 
-                contents += '<td class="data" ' + color + '><div alt="' + header.properties.raw + '" rel="' + header.properties.position + '">' + val + arrow + '</div></td>';
+                rowContent += '<td class="data" ' + color + '><div alt="' + header.properties.raw + '" rel="' + header.properties.position + '">' + val + arrow + '</div></td>';
             }
         }
-        contents += "</tr>";
+        rowContent += "</tr>";
+        if (batchStarted && batchSize) {
+                if (row <= batchSize) {
+                    tableContent += rowContent;
+                } else {
+                    resultRows.push(rowContent);        
+                }
+        } else {
+            tableContent += rowContent;
+        }
         
     }
-    return "<table>" + contents + "</table>";
+    if (options) {
+        options['batchResult'] = resultRows;
+        options['hasBatchResult'] = true;
+    }
+    return "<table>" + tableContent + "</table>";
 }

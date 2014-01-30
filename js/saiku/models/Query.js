@@ -104,7 +104,7 @@ var Query = Backbone.Model.extend({
             }
         }
         if (!validated) {
-            $(this.workspace.table.el).html('');
+            this.workspace.table.clearOut();
             $(this.workspace.processing).html(errorMessage).show();
             this.workspace.adjust();
             Saiku.i18n.translate();
@@ -113,8 +113,7 @@ var Query = Backbone.Model.extend({
 
 
         // Run it
-        $(this.workspace.table.el)
-            .html('');
+        this.workspace.table.clearOut();
         $(this.workspace.processing).html('<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span> [&nbsp;<a class="cancel i18n" href="#cancel">Cancel</a>&nbsp;]').show();
         this.workspace.adjust();
         this.workspace.trigger('query:fetch');

@@ -92,5 +92,13 @@
    "Clear Axis":"Tengelyek törlése",
    "New":"Új",
    "Close This":"Aktuális bezárása",
-   "Close Others":"Többi bezárása"
+   "Close Others":"Többi bezárása",
+   "Table Mode":"Tábla beállítás",
+   "Chart Mode":"Diagram beállítás",
+   "Treemap ":"Fa-struktúra",
+   "Tree Map":"Fa-struktúra",
+   "Sunburst":"Torta",
+   "Edit query":"Lekérdezés szerkesztése",
+   "Show MDX":"MDX megjelenítése",
+   "Zoom into table":"Tábla nagyítása"
 }
