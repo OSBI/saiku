@@ -214,14 +214,14 @@ public class ExcelWorksheetBuilder {
 
         int row = 1;
 
-        Row sheetRow = summarySheet.createRow((short) row);
+        Row sheetRow = summarySheet.createRow((int) row);
         Cell cell = sheetRow.createCell(0);
         String todayDate = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date());
         cell.setCellValue("Export date and time: " + todayDate);
         summarySheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 2));
         row = row+2;
 
-        sheetRow = summarySheet.createRow((short) row);
+        sheetRow = summarySheet.createRow((int) row);
         cell = sheetRow.createCell(0);
         cell.setCellValue("Dimension");
         cell = sheetRow.createCell(1);
@@ -232,7 +232,7 @@ public class ExcelWorksheetBuilder {
 
         for (SaikuDimensionSelection item : queryFilters) {
             for (SaikuSelection s : item.getSelections()) {
-                sheetRow = summarySheet.createRow((short) row);
+                sheetRow = summarySheet.createRow((int) row);
                 cell = sheetRow.createCell(0);
                 cell.setCellValue(s.getDimensionUniqueName());
                 cell = sheetRow.createCell(1);
@@ -245,7 +245,7 @@ public class ExcelWorksheetBuilder {
 
         row += 2;
 
-        sheetRow = summarySheet.createRow((short) row);
+        sheetRow = summarySheet.createRow((int) row);
         cell = sheetRow.createCell(0);
         cell.setCellValue("Export made using Saiku OLAP client.");
         summarySheet.addMergedRegion(new CellRangeAddress(row, row, 0, 10));
@@ -264,7 +264,7 @@ public class ExcelWorksheetBuilder {
 
         for (int x = 0; x < rowsetBody.length; x++) {
 
-            sheetRow = workbookSheet.createRow((short) x + startingRow);
+            sheetRow = workbookSheet.createRow((int) x + startingRow);
             for (int y = 0; y < rowsetBody[x].length; y++) {
                 cell = sheetRow.createCell(y);
                 String value = rowsetBody[x][y].getFormattedValue();
@@ -397,7 +397,7 @@ public class ExcelWorksheetBuilder {
 
         for (x = 0; x < rowsetHeader.length; x++) {
 
-            sheetRow = workbookSheet.createRow((short) x + startRow);
+            sheetRow = workbookSheet.createRow((int) x + startRow);
 
             nextHeader = EMPTY_STRING;
             isLastColumn = false;
