@@ -294,8 +294,10 @@ var Table = Backbone.View.extend({
     },
 
     post_process: function() {
-        if (this.workspace.query.get('type') == 'QUERYMODEL' && Settings.MODE != "view") {
-            $(this.el).find('table').find('th.row, th.col').addClass('headerhighlight');
+        if (this.workspace.query.get('type') == 'QM' && Settings.MODE != "view") {
+            $(this.el).addClass('headerhighlight');
+        } else {
+            $(this.el).removeClass('headerhighlight');
         }
         /*
         var tipOptions = {
