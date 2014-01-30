@@ -64,10 +64,12 @@
   cursor: pointer;
 }
 
-.workspace_results .headerhighlight:hover {
+.workspace_results .headerhighlight th.row:hover,
+.workspace_results .headerhighlight th.col:hover {
   background: #c2d5e2 !important;
 }
-.workspace_results .headerhighlight {
+.workspace_results .headerhighlight th.row,
+.workspace_results .headerhighlight th.col {
   cursor: pointer;
 }
 

@@ -116,7 +116,7 @@ var QueryToolbar = Backbone.View.extend({
             $(this.el).find('ul.table').show();
             $(this.el).find('ul.table .stats').removeClass('on');
             $(this.workspace.el).find('.workspace_results').children().hide();
-            $(this.workspace.el).find('.workspace_results table').show();
+            $(this.workspace.el).find('.workspace_results .table_wrapper').show();
             $(this.workspace.chart.el).hide().children().hide();
             this.render_mode = "table";
             var hasRun = this.workspace.query.result.hasRun();
