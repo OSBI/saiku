@@ -24,6 +24,9 @@ SaikuTableRenderer.prototype._render = function(data, options) {
             return;
         }
         if (this._options.htmlObject) {
+            // in case we have some left over scrollers
+            $(self._options.htmlObject).parent().parent().unbind('scroll');
+
             _.defer(function(that) {
                 var html =  self.internalRender(self._data.cellset, options);
                 $(self._options.htmlObject).html(html);
@@ -38,7 +41,6 @@ SaikuTableRenderer.prototype._render = function(data, options) {
                         
                         var batchInsert = function() {
                             // maybe add check for reach table bottom - ($('.workspace_results').scrollTop() , $('.workspace_results table').height()
-
                             if (!batchIsRunning && len > 0 && batchRow < len) {
                                 batchIsRunning = true;
                                 var batchContent = "";
@@ -51,10 +53,13 @@ SaikuTableRenderer.prototype._render = function(data, options) {
                                 }
                                 batchIsRunning = false;
                             }
+                            if (batchRow >= len) {
+                                $(self._options.htmlObject).parent().parent().unbind('scroll');
+                            }
                         };
 
                         var lazyBatchInsert = _.debounce(batchInsert, batchIntervalTime);
-                        $('.workspace_results').scroll(function () { 
+                        $(self._options.htmlObject).parent().parent().scroll(function () { 
                             lazyBatchInsert();
                         });
                     }
