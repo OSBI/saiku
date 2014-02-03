@@ -10,7 +10,7 @@ SaikuTableRenderer.prototype._render = function(data, options) {
             this._data = data;
         }
         if (options) {
-            this._options = _.extend(SaikuRendererOptions, options);
+            this._options = _.extend({}, SaikuRendererOptions, options);
         }
 
         if (typeof this._data == "undefined") {
