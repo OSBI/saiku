@@ -104,7 +104,7 @@ var Statistics = Backbone.View.extend({
         }
 
         var group = function(grid, el, cback){
-            var elements = _.filter(_.map(grid, function(it){return it[el]}), function(it){return it});
+            var elements = _.map(grid, function(it){ return it[el]});
             return cback(elements).toFixed(3);
         }
 

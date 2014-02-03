@@ -1557,6 +1557,8 @@ span.cancel_search:hover {
 
 .RepositoryObjects ul.folder_content {
     margin-top: 5px;
+    margin-left: 13px;
+    padding-left: 0px;
 }
 
 .RepositoryObjects .folder_row.selected {
