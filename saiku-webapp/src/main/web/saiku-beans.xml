@@ -102,4 +102,6 @@
 
 	<bean id="statsBean" scope="singleton" class="org.saiku.web.rest.resources.StatisticsResource" />
 	
+	<bean id="startupBean" scope="singleton" class="org.saiku.web.rest.util.StartupResource"  init-method="init" />
+	
 </beans>

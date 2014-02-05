@@ -13,7 +13,7 @@
 		<pentaho.libs.version>TRUNK-SNAPSHOT</pentaho.libs.version>
 		<pentaho.platform.version>5.0.0</pentaho.platform.version>
 		<slf4j.version>1.6.1</slf4j.version>
-		<enunciate.version>1.25</enunciate.version>
+		<enunciate.version>1.28</enunciate.version>
 		<jersey.version>1.11</jersey.version>
 	</properties>
 	<build>

@@ -97,5 +97,7 @@
 		<property name="queryResource" ref="queryResource" />
 	</bean>
 	
+	<bean id="startupBean" scope="singleton" class="org.saiku.web.rest.util.StartupResource"  init-method="init"  />
+	
 	
 </beans>
