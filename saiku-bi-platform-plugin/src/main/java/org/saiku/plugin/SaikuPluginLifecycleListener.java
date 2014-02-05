@@ -21,6 +21,11 @@ public class SaikuPluginLifecycleListener implements IPluginLifecycleListener {
 
 	
 	public void init() throws PluginLifecycleException {
+		
+//		//com.sun.jersey.spi.container.servlet.WebComponent
+//		java.util.logging.Logger jerseyLogger = java.util.logging.Logger.getLogger(WebComponent.class.getName());
+//		jerseyLogger.setLevel(Level.SEVERE);
+		
 		String mondrianPropsFilename = "system" + File.separator + "mondrian" + File.separator + "mondrian.properties"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	    InputStream is = null;
 	    try {

@@ -119,5 +119,6 @@
 	<pen:publish as-type="INTERFACES"/>
   </bean>
 	
+<bean id="startupBean" scope="singleton" class="org.saiku.web.rest.util.StartupResource"  init-method="init"  />
 	
 </beans>
