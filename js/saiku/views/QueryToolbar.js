@@ -55,7 +55,7 @@ var QueryToolbar = Backbone.View.extend({
             if (!args.data) {
                 $(this.el).find('a.export_button, a.stats').addClass('disabled_toolbar');
             }
-            if (isIE) {
+            if (isIE || Settings.BIPLUGIN5) {
                 $(this.el).find('a.export_button').addClass('disabled_toolbar');
             }
         }      
