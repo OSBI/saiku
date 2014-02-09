@@ -57,6 +57,7 @@ import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.FileUtil;
 import org.apache.commons.vfs.VFS;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.saiku.service.ISessionService;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.web.rest.objects.acl.Acl;
 import org.saiku.web.rest.objects.acl.AclEntry;
@@ -85,7 +86,7 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	private static final Logger log = LoggerFactory.getLogger(BasicRepositoryResource2.class);
 
 	private FileObject repo;
-	private SessionService sessionService;
+	private ISessionService sessionService;
 	
 	private Acl acl;
 
