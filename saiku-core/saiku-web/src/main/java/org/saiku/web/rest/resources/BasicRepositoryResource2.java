@@ -120,7 +120,7 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	 * Sets the sessionService
 	 * @param sessionService
 	 */
-	public void setSessionService(SessionService sessionService){
+	public void setSessionService(ISessionService sessionService){
 		this.sessionService = sessionService;
 	}
 	
