@@ -81,6 +81,7 @@ var Chart = Backbone.View.extend({
     },
     
     show: function(event, ui) {
+        var self = this;
         this.workspace.adjust();
         this.renderer.cccOptions.width = $(this.workspace.el).find('.workspace_results').width() - 40;
         this.renderer.cccOptions.height = $(this.workspace.el).find('.workspace_results').height() - 40;
@@ -88,9 +89,12 @@ var Chart = Backbone.View.extend({
         $(this.el).show();
 
         var hasRun = this.workspace.query.result.hasRun();
+        
         if (hasRun) {
-            this.renderer.process_data_tree({ data: this.workspace.query.result.lastresult() }, true, true);
-            this.renderer.switch_chart(this.renderer.type);
+            _.defer( function() {
+                self.renderer.process_data_tree({ data: self.workspace.query.result.lastresult() }, true, true);
+                self.renderer.switch_chart(self.renderer.type);
+            });
         }
 
 

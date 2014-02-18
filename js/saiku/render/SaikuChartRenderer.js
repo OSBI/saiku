@@ -717,6 +717,7 @@ SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
                     }
                     if (flat) data.resultset.push(flatrecord);
                     var sum = _.reduce(record, function(memo, num){ return memo + num; }, 0);
+                    rv =  (rv == null ? "null" : rv);
                     parent[rv] = sum;
                     currentDataPos = data;
                 }

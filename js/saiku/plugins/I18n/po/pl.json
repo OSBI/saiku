@@ -60,5 +60,12 @@
 	"Hide Parents": "Schowaj rodziców",
 	"Show Explain Plan": "Pokaż plan zapytania",
 	"Tags": "Tagi",
-	"Cancel":"Anuluj"
+	"Cancel":"Anuluj",
+	"Export":"Eksport",
+	"Edit query":"Edytuj zapytanie",
+	"Query Scenario":"Scenariusz zapytania",
+	"EXPERIMENTAL: Export PDF":"Eksperymentalny : Eksport do PDF",
+	"New":"Nowy",
+	"Close This":"Zamknij",
+	"Close Others":"Zamknij pozostałe"
 }
