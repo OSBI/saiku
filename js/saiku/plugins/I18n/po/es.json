@@ -80,5 +80,13 @@
    "Max":"Máximo",
    "Sum":"Suma",
    "Average":"Promedio",
-   "Std. Deviation":"Desviación Estandard"
+   "Std. Deviation":"Desviación Estandard",
+   "Pie":"Torta",
+   "Clear Axis":"Limpiar eje",
+   "Search:":"Buscar:",
+   "Available members:":"Miembros disponibles:",
+   "Used members:":"Miembros utilizados:",
+   "Show Unique Names":"Mostrar nombres únicos",
+   "Use Result":"Usar resultado",
+   "Swapping axes...":"Intercambiando ejes..."
 }

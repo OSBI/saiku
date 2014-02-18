@@ -648,6 +648,8 @@ var Workspace = Backbone.View.extend({
                 $(this.toolbar.el).find(".auto, .toggle_fields, .toggle_sidebar,.switch_to_mdx").parent().hide();
         }
         this.viewState = target;
+        $(window).trigger('resize');
+
     },
 
     block: function(message) {

@@ -168,11 +168,15 @@ SaikuChartRenderer.prototype.switch_chart = function(key) {
                 },
                 "treemap" : {
                     type: "TreemapChart"
+                },
+                "sunburst" : {
+                    type: "SunburstChart"
+                    //multiChartColumnsMax: Math.floor( this.cccOptions.width / 200)
                 }
     };
 
 
-    if (key == "sunburst") {
+    if (key == "suanburst") {
         $(this.el).find('.zoombuttons a').hide();
         this.type = key;
         this.sunburst();
@@ -332,6 +336,14 @@ SaikuChartRenderer.prototype.cccOptionsDefault = {
             },
             layoutMode: "slice-and-dice",
             valuesVisible: true
+        },
+        SunburstChart: {
+            valuesVisible: false,
+            hoverable: false,
+            selectable: true,
+            clickable: false,
+            multiChartIndexes: [0],
+            multiChartMax: 30
         }
 };
     
