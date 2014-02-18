@@ -187,11 +187,12 @@ public class ExcelWorksheetBuilder {
 
         int headerWidth = rowsetHeader.length;
 
-        // Autosize columns
-        for (int i=0; i<rowsetBody[0].length; i++) {
-            workbookSheet.autoSizeColumn(i);
+        if (rowsetBody != null && rowsetBody.length > 0) {
+	        // Autosize columns
+	        for (int i=0; i < rowsetBody[0].length; i++) {
+	            workbookSheet.autoSizeColumn(i);
+	        }
         }
-
         // Freeze the header columns
         workbookSheet.createFreezePane( 0, startRow + headerWidth, 0, startRow + headerWidth );
     }
