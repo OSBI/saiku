@@ -413,14 +413,12 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
 			final Position position = axis.getPositions().get(i);
 			int yOffset = 0;
 			final List<Member> memberList = position.getMembers();
-			final Map<Dimension,List<Integer>> lvls = new HashMap<Dimension, List<Integer>>();
 			boolean stop = false;
 			for (int j = 0; j < memberList.size(); j++) {
 				Member member = memberList.get(j);
 				final AxisOrdinalInfo ordinalInfo = axisInfo.ordinalInfos.get(j);
 				List<Integer> depths = ordinalInfo.depths;
 				Collections.sort(depths);
-				lvls.put(member.getDimension(), depths);
 				if (member.getDepth() < Collections.max(depths)) {
 					stop = true;
 					if (isColumns) {
@@ -428,7 +426,7 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
 					} else {
 						ignorey.add(i);
 					}
-					continue;
+					break;
 				}
 				if (ordinalInfo.getDepths().size() > 0 && member.getDepth() < ordinalInfo.getDepths().get(0))
 					break;
