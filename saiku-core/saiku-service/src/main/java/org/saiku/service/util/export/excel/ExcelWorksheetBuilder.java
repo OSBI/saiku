@@ -299,8 +299,14 @@ public class ExcelWorksheetBuilder {
             // the format string can contain macro values such as "Standard" from mondrian.util.Format
             // try and look it up, otherwise use the given one
             formatString = FormatUtil.getFormatString(formatString);
-            short dataFormat = fmt.getFormat(formatString);
-            numberCSClone.setDataFormat(dataFormat);
+            try {
+            	short dataFormat = fmt.getFormat(formatString);
+            	numberCSClone.setDataFormat(dataFormat);
+            } catch (Exception e) {
+            	// we tried to apply the mondrian format, but probably failed, so lets use the standard one
+            	//short dataFormat = fmt.getFormat(SaikuProperties.webExportExcelDefaultNumberFormat);
+            	//numberCSClone.setDataFormat(dataFormat);
+            }
 
             // Check for cell background
             Map<String, String> properties = ((DataCell) rowsetBody[x][y]).getProperties();
