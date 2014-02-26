@@ -438,7 +438,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     export_xls: function(event) {
         window.location = Settings.REST_URL +
             Saiku.session.username + "/query/" + 
-            this.workspace.query.id + "/export/xls";
+            this.workspace.query.id + "/export/xls/"+ this.workspace.query.get('formatter');
     },
     
     export_csv: function(event) {
@@ -450,7 +450,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     export_pdf: function(event) {
         window.location = Settings.REST_URL +
             Saiku.session.username + "/query/" + 
-            this.workspace.query.id + "/export/pdf/" + this.workspace.query.formatter;
+            this.workspace.query.id + "/export/pdf/flattened";
     },
 
     switch_to_mdx: function(event) {
