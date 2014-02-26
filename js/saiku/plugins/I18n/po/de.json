@@ -81,5 +81,6 @@
    "Max":"Max",
    "Sum":"Summe",
    "Average":"Durchschnitt",
-   "Std. Deviation":"Standardabweichung"
+   "Std. Deviation":"Standardabweichung",
+   "error_loading_query" : "Fehler beim laden der Abfrage"
 }

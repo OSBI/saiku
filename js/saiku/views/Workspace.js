@@ -71,7 +71,23 @@ var Workspace = Backbone.View.extend({
         if (args && args.query) {
             this.query = args.query;
             this.query.workspace = this;
-            this.query.save({}, { success: this.init_query });
+            this.query.save({}, { success: this.init_query , error: function() {
+                Saiku.ui.unblock();
+                if ( $('body').find('.error_loading_query').length < 1) {
+                    var message = (Saiku.i18n && Saiku.i18n.po_file['error_loading_query']) ? Saiku.i18n.po_file['error_loading_query'] : null;
+                    if (!message) {
+                        message = "Error Loading Query";
+                        $('<span class="i18n error_loading_query">' + message + '</span>').hide().appendTo('body');
+                        Saiku.i18n.translate();
+                        message = $('.error_loading_query').text()
+                    }
+                    alert(message);
+                    
+                } else {
+                    var m = $('.error_loading_query').text()
+                    alert(m);
+                }
+            }});
         }
 
         // Flash cube navigation when rendered
