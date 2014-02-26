@@ -269,18 +269,22 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
 		populateAxis(matrix, columnsAxis, columnsAxisInfo, true, xOffsset);
 		populateAxis(matrix, rowsAxis, rowsAxisInfo, false, yOffset);
 
-		int headerwidth = matrix.getMatrixWidth();
-
-			for(int yy=matrix.getMatrixHeight(); yy > matrix.getOffset() ; yy--) {
-				for(int xx=0; xx < headerwidth-1;xx++) {
-							if (matrix.get(xx,yy-1) != null && matrix.get(xx,yy) != null && matrix.get(xx,yy-1).getRawValue().equals(matrix.get(xx, yy).getRawValue())) {
-								matrix.set(xx, yy, new MemberCell());
-							}
-							else {
-								break;
-							}
-					}
-			}
+		// TODO - why did we do this in the first place??? HERE BE DRAGONS
+//		int headerwidth = matrix.getMatrixWidth();
+//		if (headerwidth > 2) {
+//			for(int yy=matrix.getMatrixHeight(); yy > matrix.getOffset() ; yy--) {
+//				for(int xx=0; xx < headerwidth-1;xx++) {
+//							if (matrix.get(xx,yy-1) != null && matrix.get(xx,yy) != null &&  matrix.get(xx,yy-1).getRawValue() != null 
+//									&& matrix.get(xx,yy-1).getRawValue().equals(matrix.get(xx, yy).getRawValue())) 
+//							{
+//								matrix.set(xx, yy, new MemberCell());
+//							}
+//							else {
+//								break;
+//							}
+//					}
+//			}
+//		}
 
 
 		// Populate cell values
@@ -461,7 +465,7 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
 						memberInfo.setLastRow(true);
 
 					matrix.setOffset(oldoffset);
-					memberInfo.setRawValue(member.getCaption());
+					memberInfo.setRawValue(member.getUniqueName());
 					memberInfo.setFormattedValue(member.getCaption()); // First try to get a formatted value
 					memberInfo.setParentDimension(member.getDimension().getName());
 					memberInfo.setUniquename(member.getUniqueName());
@@ -531,7 +535,7 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
 						}
 						final MemberCell pInfo = new MemberCell();
 						if (parent != null) {
-							pInfo.setRawValue(parent.getCaption());
+							pInfo.setRawValue(parent.getUniqueName());
 							pInfo.setFormattedValue(parent.getCaption()); // First try to get a formatted value
 							pInfo.setParentDimension(parent.getDimension().getName());
 							pInfo.setHierarchy(parent.getHierarchy().getUniqueName());

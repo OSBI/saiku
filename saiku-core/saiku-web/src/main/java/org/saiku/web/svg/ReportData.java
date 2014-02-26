@@ -92,19 +92,19 @@ public class ReportData {
 		Section section = null;
 
 		for (int i = 0; i < dataMatrix.length; i++) {
-			if (dataMatrix[i][dimIndex].getRawValue() != null) {
+			if (dataMatrix[i][dimIndex].getFormattedValue() != null) {
 				section = new Section();
 
 				int start = i; 
 				i++;
 				while (i < dataMatrix.length
-						&& dataMatrix[i][dimIndex].getRawValue() == null) {
+						&& dataMatrix[i][dimIndex].getFormattedValue() == null) {
 					i++;  
 				}
 				if(dim==1)i=dataMatrix.length;
 				int row=i - start;
 				if(dataMatrix[0][dim-1].getClass().equals(MemberCell.class) 
-						&& dataMatrix[0][dim-1].getRawValue()==null &&
+						&& dataMatrix[0][dim-1].getFormattedValue()==null &&
 						dataMatrix[0][0].getParentDimension()==(dataMatrix[1][dim-1].getParentDimension())){
 					row=row-1;
 				}
@@ -123,7 +123,7 @@ public class ReportData {
 				}
 				int temp=dim;
 				if(dim>1){
-					section.setDes(dataMatrix[start][dimIndex].getRawValue());
+					section.setDes(dataMatrix[start][dimIndex].getFormattedValue());
 					temp=dim-1;}
 				if (dimIndex == temp-1 ) {
 					section.setData(abc);
@@ -158,7 +158,7 @@ public class ReportData {
 			section = new Section();
 			ArrayList<String> head = new ArrayList<String>();
 			for (int j = dim-1; j < headMatrix[headMatrix.length - 1].length; j++) {
-				head.add(headMatrix[headMatrix.length - 1][j].getRawValue());
+				head.add(headMatrix[headMatrix.length - 1][j].getFormattedValue());
 			}
 			section.setHead(head);
 			section.setChild(section(dataMatrix, 0, dim, section));
@@ -167,26 +167,26 @@ public class ReportData {
 		else {
 			for (int i = 1; i < headMatrix[0].length; i++) {
 				if(headMatrix[rowIndex][i]!=null)
-					if (headMatrix[rowIndex][i].getRawValue() != "MeasuresLevel"
-					&& headMatrix[rowIndex][i].getRawValue() != null ) {
+					if (headMatrix[rowIndex][i].getFormattedValue() != "MeasuresLevel"
+					&& headMatrix[rowIndex][i].getFormattedValue() != null ) {
 						section = new Section();
-						section.setDes(headMatrix[rowIndex][i].getRawValue());
+						section.setDes(headMatrix[rowIndex][i].getFormattedValue());
 						sections.add(section);
 
 						int start = i;
 						Boolean tot=false; 
-						if(i<headMatrix[0].length-1 && headMatrix[rowIndex][i+1].getRawValue()==null){
+						if(i<headMatrix[0].length-1 && headMatrix[rowIndex][i+1].getFormattedValue()==null){
 							tot=true;
 							while (i < headMatrix[rowIndex].length - 1 &&
-									headMatrix[rowIndex][i+1].getRawValue()==null) {
+									headMatrix[rowIndex][i+1].getFormattedValue()==null) {
 								i++;
 							}
 
 						}
 						else{
 							while (i < headMatrix[rowIndex].length - 1
-									&& headMatrix[rowIndex][i].getRawValue().equals(
-											headMatrix[rowIndex][i + 1].getRawValue())) {
+									&& headMatrix[rowIndex][i].getFormattedValue().equals(
+											headMatrix[rowIndex][i + 1].getFormattedValue())) {
 								i++;
 							}
 						}
@@ -213,7 +213,7 @@ public class ReportData {
 						ArrayList<String> head = new ArrayList<String>();
 
 						head.add(rowHeader[rowHeader.length - 1][dim-1]
-								.getRawValue());
+								.getFormattedValue());
 						int k=0;
 						for (int j = start; j <= i; j++) {
 							if (j != 0)
@@ -223,7 +223,7 @@ public class ReportData {
 								}
 								else
 									head.add(headMatrix[headMatrix.length - 1][j]
-											.getRawValue());
+											.getFormattedValue());
 
 						}
 						if (rowIndex == headMatrix.length - 2) {

@@ -405,7 +405,7 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
 						memberInfo.setLastRow(true);
 
 					matrix.setOffset(offset);
-					memberInfo.setRawValue(member.getCaption());
+					memberInfo.setRawValue(member.getUniqueName());
 					memberInfo.setFormattedValue(member.getCaption()); // First try to get a formatted value
 					memberInfo.setParentDimension(member.getDimension().getName());
 					memberInfo.setUniquename(member.getUniqueName());
