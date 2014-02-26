@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -45,7 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 
 public class ExcelWorksheetBuilder {
-
+	
     private static final String BASIC_SHEET_FONT_FAMILY = "Arial";
     private static final short BASIC_SHEET_FONT_SIZE = 11;
     private static final String EMPTY_STRING = "";
@@ -69,16 +70,17 @@ public class ExcelWorksheetBuilder {
     private Properties cssColorCodesProperties;
     
     private HSSFPalette customColorsPalette;
+	private ExcelBuilderOptions options;
     
     private static final Logger log = LoggerFactory.getLogger(ExcelWorksheetBuilder.class);
 
-    public ExcelWorksheetBuilder(CellDataSet table, List<SaikuDimensionSelection> filters, String sheetName) {
-
-        init(table, filters, sheetName);
+    public ExcelWorksheetBuilder(CellDataSet table, List<SaikuDimensionSelection> filters, ExcelBuilderOptions options) {
+        init(table, filters, options);
     }
 
-    protected void init(CellDataSet table, List<SaikuDimensionSelection> filters, String sheetName) {
+    protected void init(CellDataSet table, List<SaikuDimensionSelection> filters, ExcelBuilderOptions options) {
 
+    	this.options = options;
         queryFilters = filters;
         if ("xls".equals(SaikuProperties.webExportExcelFormat)) {
         	HSSFWorkbook wb = new HSSFWorkbook();
@@ -95,7 +97,7 @@ public class ExcelWorksheetBuilder {
         CreationHelper createHelper = excelWorkbook.getCreationHelper();
 
         colorCodesMap = new HashMap<String, Integer>();
-        this.sheetName = sheetName;
+        this.sheetName = options.sheetName;
         rowsetHeader = table.getCellSetHeaders();
         rowsetBody = table.getCellSetBody();
 
@@ -201,7 +203,11 @@ public class ExcelWorksheetBuilder {
 
         
         // Main Workbook Sheet
-        workbookSheet = excelWorkbook.createSheet(this.sheetName);
+    	if (StringUtils.isNotBlank(options.sheetName)) {
+    		workbookSheet = excelWorkbook.createSheet(this.sheetName);
+    	} else {
+    		workbookSheet = excelWorkbook.createSheet();
+    	}
     
         initSummarySheet();
 
@@ -269,7 +275,7 @@ public class ExcelWorksheetBuilder {
             for (int y = 0; y < rowsetBody[x].length; y++) {
                 cell = sheetRow.createCell(y);
                 String value = rowsetBody[x][y].getFormattedValue();
-                if (value == null) {
+                if (value == null && options.repeatValues) {
                     // If the row cells has a null values it means the value is repeated in the data internally
                     // but not in the interface. To properly format the Excel export file we need that value so we
                     // get it from the same position in the prev row
