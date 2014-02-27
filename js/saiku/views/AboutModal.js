@@ -25,7 +25,7 @@ var AboutModal = Modal.extend({
     },
 
     events: {
-    	'click a' : 'dummy'
+    	'click a' : 'close'
     },
 
     dummy: function() { return true;},
