@@ -895,13 +895,13 @@ span.clear_axis {
 }
 .dialog_selections {
 	min-width: 800px !important;
-    height: 465px !important;
+    height: 490px !important;
 }
 .dialog_selections .dialog_icon {
 	display: none;
 }
 .dialog_selections .dialog_body {
-    height: 380px;
+    height: 410px;
     position: relative;
 }
 
@@ -941,6 +941,20 @@ span.clear_axis {
     width: 430px;
     font-size: 11px;
     overflow: auto;
+}
+
+.totals_container {
+	margin:4px;
+	margin-bottom:0px;
+}
+
+.totals_container label{
+	margin-right:4px;
+}
+
+#show_totals {
+	width: 140px;
+	height: 20px
 }
 
 .dialog_selections .filterbox {

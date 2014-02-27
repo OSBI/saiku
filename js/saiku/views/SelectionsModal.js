@@ -31,6 +31,7 @@ var SelectionsModal = Modal.extend({
         'click .clear_search' : 'clear_search',
         'change #show_unique': 'show_unique_action',
         'change #use_result': 'use_result_action',
+        'change #show_totals': 'show_totals_action',
         'dblclick select option' : 'click_move_selection',
         'click div.selection_buttons a.form_button': 'move_selection',
         'click div.updown_buttons a.form_button': 'updown_selection'
@@ -39,6 +40,7 @@ var SelectionsModal = Modal.extend({
     show_unique_option: false,
 
     use_result_option: Settings.MEMBERS_FROM_RESULT,
+    show_totals_option: '',
     members_limit: Settings.MEMBERS_LIMIT,
     members_search_limit: Settings.MEMBERS_SEARCH_LIMIT,
     members_search_server: false,
@@ -52,7 +54,7 @@ var SelectionsModal = Modal.extend({
         this.selected_members = [];
         this.available_members = [];
 
-        _.bindAll(this, "fetch_members", "populate", "finished", "get_members", "use_result_action");
+        _.bindAll(this, "fetch_members", "populate", "finished", "get_members", "use_result_action", "show_totals_action");
         
         // Determine axis
         this.axis = "undefined"; 
@@ -90,11 +92,16 @@ var SelectionsModal = Modal.extend({
             .html(_.template($("#template-selections").html())(this));
         
         $(this.el).find('#use_result').attr('checked', this.use_result_option);
+        $(this.el).find('#show_totals').val('');
         $(this.el).find('.search_limit').text(this.members_search_limit);
         $(this.el).find('.members_limit').text(this.members_limit);
 
 
         this.get_members();
+    },
+    
+    show_totals_action: function(event) {
+    	this.show_totals_option = $(event.target).val();
     },
 
     get_members: function() {
@@ -165,6 +172,21 @@ var SelectionsModal = Modal.extend({
 
             self.show_unique_option = false;
             $(this.el).find('.options #show_unique').attr('checked',false);
+
+            var showTotalsEl = $(this.el).find('#show_totals');
+            for (var i = 0; i < response.selections.length; i++) {
+            	var member = response.selections[i];
+	            if (member.levelUniqueName == decodeURIComponent(this.member.level)) { 
+		            if (member.disableTotals) {
+		            	showTotalsEl.attr("disabled", true);
+		            	this.show_totals_option = '';
+		            } else {
+		            	this.show_totals_option = member.showTotals;
+		            	showTotalsEl.removeAttr("disabled");
+		            }
+	            }
+            }
+            showTotalsEl.val(this.show_totals_option);
 
             $(this.el).find('.items_size').text(this.available_members.length);
             if (this.members_search_server) {
@@ -281,7 +303,7 @@ var SelectionsModal = Modal.extend({
     post_render: function(args) {
         var left = ($(window).width() - 1000)/2;
         $(args.modal.el).parents('.ui-dialog')
-            .css({ width: 1040, left: "inherit", margin:"0", height: 465 })
+            .css({ width: 1040, left: "inherit", margin:"0", height: 490 })
             .offset({ left: left});
     },
     
@@ -331,7 +353,6 @@ var SelectionsModal = Modal.extend({
         //console.log(this.use_result_option);
         this.get_members();
     },
-
     
     save: function() {
         // Notify user that updates are in progress
@@ -353,10 +374,12 @@ var SelectionsModal = Modal.extend({
             updates.push({
                 hierarchy: decodeURIComponent(this.member.hierarchy),
                 uniquename: decodeURIComponent(this.member.level),
+                totalsFunction: this.show_totals_option,
                 type: 'level',
                 action: 'add'
             });
         } else {
+        	var totalsFunction = this.show_totals_option;
             // Loop through selections
             $(this.el).find('.used_selections option')
                 .each(function(i, selection) {
@@ -364,6 +387,7 @@ var SelectionsModal = Modal.extend({
                     encodeURIComponent($(selection).text()) : $(selection).val();
                 updates.push({
                     uniquename: decodeURIComponent(value),
+                    totalsFunction: totalsFunction,
                     type: 'member',
                     action: 'add'
                 });

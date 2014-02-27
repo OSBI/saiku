@@ -186,6 +186,14 @@ var WorkspaceDropZone = Backbone.View.extend({
                             "BDESCQuick": {name: "Descending (Breaking Hierarchy)", items: addFun(items, "BDESC") },
                             "customsort" : { name: "Custom..." },
                             "clearsort" : {name: "Clear Sort" }
+                        }},
+                        "grand_totals" : {name: "Grand totals", items:
+                        {
+                        	"show_totals_not": {name: "None"},
+                        	"show_totals_sum": {name: "Sum"},
+                        	"show_totals_min": {name: "Min"},
+                        	"show_totals_max": {name: "Max"},
+                        	"show_totals_avg": {name: "Avg"}
                         }}
                 };
 
@@ -294,6 +302,11 @@ var WorkspaceDropZone = Backbone.View.extend({
                                 self.workspace.query.action.del(url, {
                                     success: self.workspace.query.run
                                 });
+                            } else if (key.indexOf("show_totals_") == 0){
+                            	var url = "/axis/" + target + "/show_totals/" + key.substring("show_totals_".length);
+                            	self.workspace.query.action.put(url, {
+                            		success: self.workspace.query.run
+                            	});
                             } else {
 
                                 var fun = key.split('###SEPARATOR###')[0];
