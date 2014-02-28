@@ -16,6 +16,7 @@
 
 package org.saiku.olap.query;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 
@@ -45,6 +46,7 @@ import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class MdxQuery implements IQuery {
 
@@ -317,6 +319,18 @@ public class MdxQuery implements IQuery {
 
 	public ICellSetFormatter getFormatter() {
 		return formatter;
+	}
+
+	public void setTotalFunction(String uniqueLevelName, String value) {
+				
+	}
+
+	public String getTotalFunction(String uniqueLevelName) {
+		return "";
+	}
+
+	public Map<String, String> getTotalFunctions() {
+		return Collections.emptyMap();
 	}
 
 }
