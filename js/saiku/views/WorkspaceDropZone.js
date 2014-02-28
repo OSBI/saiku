@@ -188,6 +188,10 @@ var WorkspaceDropZone = Backbone.View.extend({
                             "clearsort" : {name: "Clear Sort" }
                         }}
                 };
+				
+                $.each(citems, function(key, item){
+                	recursive_menu_translate(item, Saiku.i18n.po_file);
+                });
 
                 items["10"] = {
                    payload: { "n" : 10 }

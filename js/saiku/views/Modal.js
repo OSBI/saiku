@@ -44,7 +44,7 @@ var Modal = Backbone.View.extend({
                 "<div class='dialog_body'><%= message %></div>" +
         		"<div class='dialog_footer'>" +
             "<% _.each(buttons, function(button) { %>" +
-                "<a class='form_button' href='#<%= button.method %>'>&nbsp;<%= button.text %>&nbsp;</a>" +
+                "<a class='form_button i18n' href='#<%= button.method %>'>&nbsp;<%= button.text %>&nbsp;</a>" +
             "<% }); %>" +
             "</div>")(this);
     },
