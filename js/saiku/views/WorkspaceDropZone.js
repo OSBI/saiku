@@ -108,6 +108,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                 var isFilter = false;
                 var isSort = false;
                 var isTop = false;
+                var totalFunction;
                 var axes = self.workspace.query.get('axes');
                 _.each(axes, function(a) {
                     if (a.name == target) {
@@ -118,6 +119,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                         isTop = (a.limitFunction != null);
                         isFilter = (a.filterCondition != null);
                         isSort = (a.sortOrder != null);
+                        totalFunction = a.totalFunction;
                         sortOrder = a.sortOrder;
                         sortOrderLiteral = a.sortOrderLiteral;
                     }
@@ -196,6 +198,19 @@ var WorkspaceDropZone = Backbone.View.extend({
                         	"show_totals_avg": {name: "Avg"}
                         }}
                 };
+
+                $.each(citems, function(key, item){
+                	recursive_menu_translate(item, Saiku.i18n.po_file);
+                });
+                var totalItems = citems["grand_totals"].items;
+                if (totalFunction) {
+	                for (var key in totalItems) {
+	                	if (key.substring("show_totals_".length) == totalFunction) {
+	                		totalItems[key].name = "<b>" + totalItems[key].name + "</b";
+	                	}
+	                }
+                } else 
+                	totalItems["show_totals_not"].name = "<b>" + totalItems["show_totals_not"].name + "</b";
 
                 items["10"] = {
                    payload: { "n" : 10 }
@@ -303,7 +318,9 @@ var WorkspaceDropZone = Backbone.View.extend({
                                     success: self.workspace.query.run
                                 });
                             } else if (key.indexOf("show_totals_") == 0){
-                            	var url = "/axis/" + target + "/show_totals/" + key.substring("show_totals_".length);
+                            	var total = key.substring("show_totals_".length);
+                            	var url = "/axis/" + target + "/show_totals/" + total;
+                    			self.set_query_axis_total(target, total);
                             	self.workspace.query.action.put(url, {
                             		success: self.workspace.query.run
                             	});
@@ -337,7 +354,18 @@ var WorkspaceDropZone = Backbone.View.extend({
 
 
     },
-
+    
+    set_query_axis_total: function(target, totalFunction) {
+    	var axes = this.workspace.query.get('axes');
+    	_.each(axes, function(axis) {
+    		if (axis.name == target) {
+	        	axis.totalFunction = totalFunction;
+	            return false;
+	        }
+    	});
+    	return false;
+	},
+    
     set_query_axis_filter: function(target, filterCondition) {
         var self = this;
         var axes = this.workspace.query.get('axes');
