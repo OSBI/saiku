@@ -85,6 +85,14 @@ SaikuTableRenderer.prototype._processData = function(data, options) {
     this._hasProcessed = true;
 };
 
+function nextParentsDiffer(data, row, col) {
+    while (row-- > 0) {
+        if (data[row][col].properties.uniquename != data[row][col + 1].properties.uniquename)
+            return true;
+    }
+    return false;
+}
+
 SaikuTableRenderer.prototype.internalRender = function(data, options) {
     var tableContent = "";
     var rowContent = "";
@@ -148,7 +156,7 @@ SaikuTableRenderer.prototype.internalRender = function(data, options) {
                         : false;
 
                     var maxColspan = colSpan > 999 ? true : false;
-                    if (header.value != nextHeader.value || header.properties.uniquename != nextHeader.properties.uniquename || isHeaderLowestLvl || groupChange || maxColspan) {
+                    if (header.value != nextHeader.value || nextParentsDiffer(data, row, col) || header.properties.uniquename != nextHeader.properties.uniquename || isHeaderLowestLvl || groupChange || maxColspan) {
                         if (header.value == "null") {
                             rowContent += '<th class="col_null" colspan="' + colSpan + '"><div>&nbsp;</div></th>';
                         } else {
