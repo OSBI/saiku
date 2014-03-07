@@ -215,9 +215,10 @@ var ROWS = "ROWS";
 var COLUMNS = "COLUMNS";
 
 function nextParentsDiffer(data, row, col) {
-	while (row-- > 0)
+	while (row-- > 0) {
 		if (data[row][col].properties.uniquename != data[row][col + 1].properties.uniquename)
 			return true;
+    }
 	return false;
 }
 
