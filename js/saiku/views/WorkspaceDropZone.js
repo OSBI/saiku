@@ -198,10 +198,6 @@ var WorkspaceDropZone = Backbone.View.extend({
                         	"show_totals_avg": {name: "Avg"}
                         }}
                 };
-
-                $.each(citems, function(key, item){
-                	recursive_menu_translate(item, Saiku.i18n.po_file);
-                });
                 var totalItems = citems["grand_totals"].items;
                 if (totalFunction) {
 	                for (var key in totalItems) {
