@@ -141,10 +141,12 @@ public class QuerySerializer {
     	Map<String, String > functions = this.query.getTotalFunctions();
     	for (String uniqueLevelName : functions.keySet()) {
     		String functionName = functions.get(uniqueLevelName);
-    		Element function = new Element("Total");
-    		function.setAttribute("uniqueLevelName", uniqueLevelName);
-    		function.setAttribute("functionName", functionName);
-    		totals.addContent(function);
+    		if (StringUtils.isNotBlank(functionName) && StringUtils.isNotBlank(uniqueLevelName)) {
+	    		Element function = new Element("Total");
+	    		function.setAttribute("uniqueLevelName", uniqueLevelName);
+	    		function.setAttribute("functionName", functionName);
+	    		totals.addContent(function);
+    		}
     	}
     	rootElement.addContent(totals);
     	
