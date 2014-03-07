@@ -2,7 +2,9 @@ package org.saiku.service.olap.totals;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import mondrian.util.Format;
 
@@ -27,7 +29,7 @@ public class TotalsListsBuilder implements FormatList {
 	private final int measuresAt;
 	private final String[] measuresCaptions;
 	private final Measure[] measures;
-	private final int[] ordinalToSelected;
+	private final Map<String, Integer> uniqueToSelected;
 	private final AxisInfo dataAxisInfo;
 	private final AxisInfo totalsAxisInfo;
 	private final CellSet cellSet;
@@ -35,28 +37,31 @@ public class TotalsListsBuilder implements FormatList {
 	
 	
 	
-	public TotalsListsBuilder(Measure[] selectedMeasures, TotalAggregator[] aggrTempl, CellSet cellSet, AxisInfo totalsAxisInfo, AxisInfo dataAxisInfo) {
+	public TotalsListsBuilder(Measure[] selectedMeasures, TotalAggregator[] aggrTempl, CellSet cellSet, AxisInfo totalsAxisInfo, AxisInfo dataAxisInfo) throws Exception {
 		Cube cube;
 		try {
 			cube = cellSet.getMetaData().getCube();
 		} catch (OlapException e) {
 			throw new RuntimeException(e);
 		}
-		int measuresCount = cube.getMeasures().size();
-
+		uniqueToSelected = new HashMap<String, Integer>();
 		if (selectedMeasures.length > 0) {
-			valueFormats = new Format[selectedMeasures.length];
-			ordinalToSelected = new int[measuresCount];
+			valueFormats = new Format[selectedMeasures.length];			
 			measures = selectedMeasures;
 			for (int i = 0; i < valueFormats.length; i++) {
 				valueFormats[i] = getMeasureFormat(selectedMeasures[i]);
-				ordinalToSelected[selectedMeasures[i].getOrdinal()] = i;
+				uniqueToSelected.put(selectedMeasures[i].getUniqueName(), i);
 			}
 		} else {
 			Measure defaultMeasure = cube.getMeasures().get(0);
+			if (cube.getDimensions().get("Measures") != null) {
+				Member ms = cube.getDimensions().get("Measures").getDefaultHierarchy().getDefaultMember();
+				if (ms instanceof Measure) {
+					defaultMeasure = (Measure) ms;
+				}
+			}
 			measures = new Measure[]{defaultMeasure};
 			valueFormats = new Format[]{getMeasureFormat(defaultMeasure)};
-			ordinalToSelected = null;
 		}
 		this.cellSet = cellSet;
 		this.dataAxisInfo = dataAxisInfo;
@@ -183,10 +188,13 @@ public class TotalsListsBuilder implements FormatList {
 	}
 	
 	private int getMemberIndex(int depth, int index) {
-		if (depth - 1 < measuresAt)
-			return ordinalToSelected[dataAxisInfo.fullPositions.get(index).getMembers().get(dataAxisInfo.measuresMember).getOrdinal()];
-		else
-			return 0;
+		if (depth - 1 < measuresAt) {
+			Member m = dataAxisInfo.fullPositions.get(index).getMembers().get(dataAxisInfo.measuresMember);
+			if (uniqueToSelected.containsKey(m.getUniqueName())) {
+				return uniqueToSelected.get(m.getUniqueName());
+			}
+		}
+		return 0;
 	}
 
 	public Format getValueFormat(int position, int member) {
@@ -194,7 +202,10 @@ public class TotalsListsBuilder implements FormatList {
 		if (dataAxisInfo.measuresMember >= 0)
 			formatIndex = member;
 		else if (totalsAxisInfo.measuresMember >= 0) {
-			formatIndex = ordinalToSelected[totalsAxisInfo.fullPositions.get(position).getMembers().get(totalsAxisInfo.measuresMember).getOrdinal()];
+			Member m = totalsAxisInfo.fullPositions.get(position).getMembers().get(totalsAxisInfo.measuresMember);
+			if (uniqueToSelected.containsKey(m.getUniqueName())) {
+				formatIndex = uniqueToSelected.get(m.getUniqueName());
+			}
 		}
 		return valueFormats[formatIndex];
 	}
