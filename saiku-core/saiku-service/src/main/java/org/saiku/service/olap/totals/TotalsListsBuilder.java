@@ -8,6 +8,7 @@ import java.util.Map;
 
 import mondrian.util.Format;
 
+import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
 import org.olap4j.Cell;
 import org.olap4j.CellSet;
@@ -107,7 +108,16 @@ public class TotalsListsBuilder implements FormatList {
 	
 	private Format getMeasureFormat(Measure m) {
 		try {
-			return new Format((String) m.getPropertyValue(Property.StandardCellProperty.FORMAT_STRING), SaikuProperties.locale);
+			String formatString = (String) m.getPropertyValue(Property.StandardCellProperty.FORMAT_STRING);
+			if (StringUtils.isBlank(formatString)) {
+				Map<String, Property> props = m.getProperties().asMap();
+				if (props.containsKey("FORMAT_STRING")) {
+					formatString = (String) m.getPropertyValue(props.get("FORMAT_STRING"));
+				} else if (props.containsKey("FORMAT_EXP")) {
+					formatString = (String) m.getPropertyValue(props.get("FORMAT_EXP"));
+				} 
+			}
+			return Format.get(formatString, SaikuProperties.locale);
 		} catch (OlapException e) {
 			throw new RuntimeException(e);
 		}
