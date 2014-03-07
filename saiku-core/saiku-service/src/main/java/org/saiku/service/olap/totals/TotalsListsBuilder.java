@@ -115,7 +115,9 @@ public class TotalsListsBuilder implements FormatList {
 					formatString = (String) m.getPropertyValue(props.get("FORMAT_STRING"));
 				} else if (props.containsKey("FORMAT_EXP")) {
 					formatString = (String) m.getPropertyValue(props.get("FORMAT_EXP"));
-				} 
+				} else if (props.containsKey("FORMAT")) {
+					formatString = (String) m.getPropertyValue(props.get("FORMAT"));
+				}
 			}
 			return Format.get(formatString, SaikuProperties.locale);
 		} catch (OlapException e) {
