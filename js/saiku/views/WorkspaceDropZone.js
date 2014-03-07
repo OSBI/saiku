@@ -230,7 +230,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                             } else if (key == "customfilter") {
                                 var save_custom = function(filterCondition) {
                                     self.set_query_axis_filter(target, filterCondition);
-                                    var url = "/axis/" + target + "/filter/" ;
+                                    var url = "/axis/" + target + "/filter" ;
                                     self.workspace.query.action.post(url, {
                                         success: self.workspace.query.run, data : { filterCondition: filterCondition }
                                     });    
@@ -444,7 +444,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         $(event.target).removeClass('none').addClass(futureSortOrder);
 
         if (futureSortOrder == "none") {
-            var url = "/axis/" + target + "/sort/";
+            var url = "/axis/" + target + "/sort";
             this.workspace.query.action.del(url, {
                 success: this.workspace.query.run
             });
