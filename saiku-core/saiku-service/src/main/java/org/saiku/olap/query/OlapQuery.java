@@ -480,7 +480,7 @@ public class OlapQuery implements IQuery {
 
 	public String getTotalFunction(String uniqueLevelName) {
 		String retVal = totalsFunctions.get(uniqueLevelName);
-		return retVal == null ? "" : retVal;
+		return retVal;
 	}
 
 	public Map<String, String> getTotalFunctions() {
