@@ -65,6 +65,7 @@ var Chart = Backbone.View.extend({
         if (svgContent.substr(0,rep.length) != rep) {
             svgContent = svgContent.replace('<svg ', rep);    
         }
+        svgContent = '<!DOCTYPE svg [<!ENTITY nbsp "&#160;">]>' + svgContent;
         
         var form = $('#svgChartPseudoForm');
         form.find('.type').val(type);

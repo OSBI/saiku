@@ -73,6 +73,14 @@ SaikuTableRenderer.prototype._render = function(data, options) {
         
 };
 
+SaikuTableRenderer.prototype.clear = function(data, options) {
+    var self = this;
+    if (this._options.htmlObject) {
+        $(self._options.htmlObject).parent().parent().unbind('scroll');
+    }
+
+};
+
 SaikuTableRenderer.prototype._processData = function(data, options) {
     this._hasProcessed = true;
 };
