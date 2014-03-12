@@ -1,0 +1,158 @@
+.workspace_results {
+    margin-right: 10px;
+    margin-left: 10px;
+    padding-top: 10px;
+    overflow: auto;
+    font-size: 11px;
+}
+.workspace_results table {
+    border-bottom: 1px solid #d5d5d5;
+    border-right: 1px solid #d5d5d5;
+    margin-bottom: 0;
+    table-layout: fixed;
+    width: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+.workspace_results table th, .workspace_results table td {
+      padding: 4px 10px 4px 5px;
+}
+.workspace_results table th {
+    border-left: 1px solid #d5d5d5;
+    margin-bottom: 0;
+    white-space: normal;
+    font-weight: 500;
+}
+
+.workspace_results table th.all_null {
+    text-align: center;
+    border: none;
+}
+.workspace_results table th.col {
+    border-top: 1px solid #d5d5d5;
+    background: #f9f9f9;
+    text-align: left;
+}
+.workspace_results table th.col_null {
+    background: #f9f9f9;
+}
+.workspace_results table th.row {
+    border-top: 1px solid #d5d5d5;
+    background: #f9f9f9;
+}
+
+.workspace_results table th.row_header {
+      border-top: 1px solid #d5d5d5;
+      /*border-bottom: 1px solid #d5d5d5;*/
+      background: #E5E5E5;
+}
+
+.workspace_results table th.row_null {
+    background: #f9f9f9;
+}
+.workspace_results table td.data {
+    border-left: 1px solid #d5d5d5;
+    border-top: 1px solid #d5d5d5;
+    text-align: right;
+    white-space: nowrap;
+}
+.workspace_results table tr:hover {
+  background: #edf4fa !important;
+}
+
+.workspace_results table td.cellhighlight:hover {
+  background: #c2d5e2 !important;
+}
+.workspace_results table td.cellhighlight {
+  cursor: pointer;
+}
+
+.workspace_results .headerhighlight:hover {
+  background: #c2d5e2 !important;
+}
+.workspace_results .headerhighlight {
+  cursor: pointer;
+}
+
+.workspace_results table td.selected {
+  background: #c2d5e2 !important;
+}
+
+.canvas_wrapper a.button {
+    display: block;
+    height: 16px;
+    padding: 12px;
+    width: 16px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+
+.canvas_wrapper a.button:hover {
+    border: 1px solid #CCC;
+    padding: 11px;
+}
+.canvas_wrapper .zoomin {
+    background: url('../../../images/src/arrow_in.png') no-repeat;
+    background-repeat:  no-repeat;
+    background-position: 7px 7px;
+}
+.canvas_wrapper .zoomout {
+    background: url('../../../images/src/arrow_up_bnw.png') no-repeat;
+    background-repeat:  no-repeat;
+    background-position: 7px 7px;
+}
+.canvas_wrapper .rerender {
+    background: url('../../../images/src/arrow_refresh_bnw.png') no-repeat;
+    background-repeat:  no-repeat;
+    background-position: 7px 7px;
+}
+
+
+/** BLOCKUI  MODIFIED FOR EMBED**/
+
+.processing_container, .blockOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    opacity: 0.5;
+    z-index: 9999;
+    padding: 20px;
+}
+.processing_content {
+    padding: 5px;
+    display: inline;
+}
+.processing, .blockElement {
+    border-radius: 3px;
+    border: 1px solid #EAEAEA;
+    z-index: 10001;
+    position: fixed;
+    width: 20%;
+    min-width: 300px;
+    left: 40%;
+    top: 45%;
+    padding: 20px;
+}
+.processing_image {
+    display: inline-block;
+    background-image: url('../../../images/src/waiting.gif');
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+}
+
+.saiku_logo {
+    display: inline-block;
+    background-image: url('../../../images/src/saiku_32x32.png');
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    width: 32px;
+    height: 32px;
+    padding: 5px;
+    margin-right: 20px;
+}
