@@ -61,7 +61,9 @@ var Modal = Backbone.View.extend({
             .addClass("dialog_" + this.type)
             .dialog(this.options);
 
-        $('.ui-dialog-title').html(this.options.title);
+        var uiDialogTitle = $('.ui-dialog-title'); 
+        uiDialogTitle.html(this.options.title);
+        uiDialogTitle.addClass('i18n');
         Saiku.i18n.translate();
         return this;
     },
