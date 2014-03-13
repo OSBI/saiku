@@ -25,7 +25,9 @@ SaikuTableRenderer.prototype._render = function(data, options) {
         }
         if (this._options.htmlObject) {
             // in case we have some left over scrollers
-            $(self._options.htmlObject).parent().parent().unbind('scroll');
+            if (self._options.hasOwnProperty('batch')) {
+                $(self._options.htmlObject).parent().parent().unbind('scroll');
+            }
 
             _.defer(function(that) {
                 if (self._options.hasOwnProperty('batch') && !self._options.hasOwnProperty('batchSize')) {
@@ -79,7 +81,7 @@ SaikuTableRenderer.prototype._render = function(data, options) {
 
 SaikuTableRenderer.prototype.clear = function(data, options) {
     var self = this;
-    if (this._options.htmlObject) {
+    if (this._options.htmlObject && this._options.hasOwnProperty('batch')) {
         $(self._options.htmlObject).parent().parent().unbind('scroll');
     }
 
