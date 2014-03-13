@@ -30,7 +30,7 @@
         <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/def.js"></script>
         <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/protovis.js"></script>
         <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/protovis-msie.js"></script>
-        <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/pvc-r2.0.js"></script>
+        <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/pvc.js"></script>
         <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/jquery.tipsy.js"></script>
         <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/tipsy.js"></script>
         <link type="text/css" href="../js/saiku/plugins/CCC_Chart/tipsy.css" rel="stylesheet"/>
@@ -43,7 +43,7 @@
         <script type="text/javascript" src="../js/saiku/render/SaikuChartRenderer.js"></script>
         <script type="text/javascript" src="../js/saiku/embed/SaikuEmbed.js"></script>
 
-        <div id='saiku' class='workspace_results' style="height:200px;">
+        <div id='saiku' class='workspace_results' style="height:300px;">
         </div>
 
         <div id='saiku2' class='workspace_results' style="height:500px;">
@@ -59,7 +59,7 @@ var myClient = new SaikuClient({
 });
 
 myClient.execute({
-    file: "table.saiku",
+    file: "Examples/table.saiku",
     htmlObject: "#saiku",
     render: "table",
     params: {

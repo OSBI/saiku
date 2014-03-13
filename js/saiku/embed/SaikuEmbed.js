@@ -80,6 +80,13 @@ var SaikuCall = {
   mode: 'null', // table: sparkline, sparkbar - chart: line, bar, treemap, ...
   formatter: 'flattened', // should be left unless you want an hierarchical resultset
   htmlObject: "saiku",
+  // table specific options for lazy loading table, doesn't quite work yet, so dont enable yet
+  /*
+  batch:              true, 
+  batchSize:          1000, 
+  batchIntervalSize:  20,
+  batchIntervalTime:  20 
+  */
   params: {
 
   }

@@ -268,12 +268,16 @@ var Table = Backbone.View.extend({
 
     },
 
-    clearOut: function() {        
+    clearOut: function() {
+        // Do some clearing in the renderer
+        this.renderer.clear();
+        $(this.workspace.el).find( ".workspace_results" ).unbind('scroll');
         var element = document.getElementById(this.id);
         var table = element.firstChild;
         if (table) {
             element.removeChild(table);
         }
+
     },
 
     process_data: function(data) {

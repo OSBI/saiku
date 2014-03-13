@@ -185,6 +185,7 @@ var Workspace = Backbone.View.extend({
     
     clear: function() {
         // Prepare the workspace for a new query
+        this.table.clearOut();
         $(this.el).find('.workspace_results table,.connectable')
             .html('');
         $(this.el).find('.workspace_results_info').empty();

@@ -13,8 +13,10 @@ var SaikuChartRenderer = function(data, options) {
     this.el = $(options.htmlObject);
     this.id = _.uniqueId("chart_");
     $('<div class="canvas_wrapper" style="display:none;"><div id="canvas_' + this.id + '"></div></div>').appendTo($(this.el));
+    this.zoom = options.zoom;
 
     if (options.zoom) {
+
         var self = this;
         var btns = "<span style='float:left;' class='zoombuttons'><a href='#' class='button rerender' title='Re-render chart'></a><a href='#' class='button zoomout' style='display:none;' title='Zoom back out'></a></span>";
         $( btns).prependTo($(this.el).find('.canvas_wrapper'));
@@ -425,10 +427,8 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
             if (runtimeChartDefinition.hasOwnProperty('extensionPoints') && runtimeChartDefinition.extensionPoints.hasOwnProperty('area_interpolate'))
                 delete runtimeChartDefinition.extensionPoints.area_interpolate;
          }
-         runtimeChartDefinition = _.extend(runtimeChartDefinition, {
-                hoverable: hoverable,
-                animate: animate,
-                legend: {
+         var zoomDefinition = {
+            legend: {
                     scenes: {
                         item: {
                             execute: function() {
@@ -517,7 +517,16 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
                 return [];
 
                 }
+        };
+
+         runtimeChartDefinition = _.extend(runtimeChartDefinition, {
+                hoverable: hoverable,
+                animate: animate
         }, this.chartDefinition);
+
+         if (self.zoom) {
+            runtimeChartDefinition = _.extend(runtimeChartDefinition, zoomDefinition);
+         }
 
         if (runtimeChartDefinition.type == "TreemapChart") {
             runtimeChartDefinition.legend.scenes.item.labelText = function() {
