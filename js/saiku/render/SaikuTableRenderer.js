@@ -28,14 +28,18 @@ SaikuTableRenderer.prototype._render = function(data, options) {
             $(self._options.htmlObject).parent().parent().unbind('scroll');
 
             _.defer(function(that) {
+                if (self._options.hasOwnProperty('batch') && !self._options.hasOwnProperty('batchSize')) {
+                    self._options['batchSize'] = 1000;
+                }
+
                 var html =  self.internalRender(self._data.cellset, self._options);
                 $(self._options.htmlObject).html(html);
                 _.defer(function(that) {
-                    if (self._options.batch && self._options.hasBatchResult) {                        
+                    if (self._options.hasOwnProperty('batch') && self._options.hasBatchResult) {                        
                         var batchRow = 0;
                         var batchIsRunning = false;
-                        var batchIntervalSize = self._options.hasOwnProperty('batchIntervalSize') ? self._options.batchIntervalSize : 10;
-                        var batchIntervalTime = self._options.hasOwnProperty('batchIntervalTime') ? self._options.batchIntervalTime : 10;
+                        var batchIntervalSize = self._options.hasOwnProperty('batchIntervalSize') ? self._options.batchIntervalSize : 20;
+                        var batchIntervalTime = self._options.hasOwnProperty('batchIntervalTime') ? self._options.batchIntervalTime : 20;
 
                         var len = self._options.batchResult.length;
                         
