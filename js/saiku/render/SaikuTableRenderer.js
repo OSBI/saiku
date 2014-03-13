@@ -25,19 +25,25 @@ SaikuTableRenderer.prototype._render = function(data, options) {
         }
         if (this._options.htmlObject) {
             // in case we have some left over scrollers
-            $(self._options.htmlObject).parent().parent().unbind('scroll');
+            if (self._options.hasOwnProperty('batch')) {
+                $(self._options.htmlObject).parent().parent().unbind('scroll');
+            }
 
             _.defer(function(that) {
-                var html =  self.internalRender(self._data, options);
+                if (self._options.hasOwnProperty('batch') && !self._options.hasOwnProperty('batchSize')) {
+                    self._options['batchSize'] = 1000;
+                }
+
+                var html =  self.internalRender(self._data.cellset, self._options);
                 $(self._options.htmlObject).html(html);
                 _.defer(function(that) {
-                    if (options.batch && options.hasBatchResult) {                        
+                    if (self._options.hasOwnProperty('batch') && self._options.hasBatchResult) {                        
                         var batchRow = 0;
                         var batchIsRunning = false;
-                        var batchIntervalSize = options.hasOwnProperty('batchIntervalSize') ? options.batchIntervalSize : 10;
-                        var batchIntervalTime = options.hasOwnProperty('batchIntervalTime') ? options.batchIntervalTime : 10;
+                        var batchIntervalSize = self._options.hasOwnProperty('batchIntervalSize') ? self._options.batchIntervalSize : 20;
+                        var batchIntervalTime = self._options.hasOwnProperty('batchIntervalTime') ? self._options.batchIntervalTime : 20;
 
-                        var len = options.batchResult.length;
+                        var len = self._options.batchResult.length;
                         
                         var batchInsert = function() {
                             // maybe add check for reach table bottom - ($('.workspace_results').scrollTop() , $('.workspace_results table').height()
@@ -46,7 +52,7 @@ SaikuTableRenderer.prototype._render = function(data, options) {
                                 var batchContent = "";
                                 var startb = batchRow;
                                 for (var i = 0;  batchRow < len && i < batchIntervalSize ; i++, batchRow++) {
-                                    batchContent += options.batchResult[batchRow];
+                                    batchContent += self._options.batchResult[batchRow];
                                 }
                                 if (batchRow > startb) {
                                     $(self._options.htmlObject).append( $(batchContent));
@@ -67,7 +73,7 @@ SaikuTableRenderer.prototype._render = function(data, options) {
                 return html;
             });
         } else {
-            var html =  this.internalRender(this._data.cellset, options);
+            var html =  this.internalRender(this._data.cellset, self._options);
             return html;
         }
         
@@ -75,7 +81,7 @@ SaikuTableRenderer.prototype._render = function(data, options) {
 
 SaikuTableRenderer.prototype.clear = function(data, options) {
     var self = this;
-    if (this._options.htmlObject) {
+    if (this._options.htmlObject && this._options.hasOwnProperty('batch')) {
         $(self._options.htmlObject).parent().parent().unbind('scroll');
     }
 
@@ -446,7 +452,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
     }
     if (options) {
         options['batchResult'] = resultRows;
-        options['hasBatchResult'] = true;
+        options['hasBatchResult'] = resultRows.length > 0;
     }
     return "<table>" + tableContent + "</table>";
 }
