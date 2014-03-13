@@ -29,7 +29,7 @@
         <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/def.js"></script>
         <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/protovis.js"></script>
         <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/protovis-msie.js"></script>
-        <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/pvc-r2.0.js"></script>
+        <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/pvc.js"></script>
         <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/jquery.tipsy.js"></script>
         <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/tipsy.js"></script>
         <link type="text/css" href="../js/saiku/plugins/CCC_Chart/tipsy.css" rel="stylesheet"/>
@@ -158,7 +158,15 @@ myClient.execute({
     htmlObject: "#saiku2",
     render: "chart",
     mode: "heatgrid",
-    zoom: true
+    zoom: false,
+    chartDefinition: {
+        clickable: true,
+        colors: [ 'white', 'red'],
+        clickAction: function(datum) {
+            alert('You clicked on: Category: ' + datum.getCategoryLabel() + " Series: " + datum.getSeriesLabel() + " Measure: " +  datum.getValue());
+            console.log(datum);
+        }
+    }
 });
 
 myClient.execute({
