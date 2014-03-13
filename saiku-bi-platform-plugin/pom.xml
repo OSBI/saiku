@@ -171,7 +171,7 @@
 								<artifactItem>
 									<groupId>pentaho</groupId>
 									<artifactId>mondrian</artifactId>
-									<version>TRUNK-SNAPSHOT</version>
+									<version>3.6.5</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
@@ -356,7 +356,7 @@
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>mondrian</artifactId>
-			<version>TRUNK-SNAPSHOT</version>
+			<version>3.6.5</version>
 		</dependency>
 		<dependency>
 			<groupId>eigenbase</groupId>

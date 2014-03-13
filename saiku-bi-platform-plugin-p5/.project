@@ -5,8 +5,8 @@
   <projects>
     <project>saiku-service</project>
     <project>saiku-query</project>
-    <project>saiku-web</project>
     <project>saiku-olap-util</project>
+    <project>saiku-web</project>
   </projects>
   <buildSpec>
     <buildCommand>
