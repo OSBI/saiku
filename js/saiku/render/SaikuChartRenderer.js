@@ -273,6 +273,7 @@ SaikuChartRenderer.prototype.cccOptionsDefault = {
             legend:  true,
             legendPosition: "top",
             legendAlign: "right",
+            compatVersion: 2,
             legendSizeMax: "30%",
             axisSizeMax: "40%",
             plotFrameVisible : false,
