@@ -28,16 +28,17 @@
 		<Implementation>
 			<Code src="SaikuWidgetComponent.js" />
 
-			<Dependencies>		    
-				<Dependency src="SaikuRenderer.js">saikurenderer</Dependency>
-				<Dependency src="SaikuTableRenderer.js">saikutable</Dependency>
-				<Dependency src="SaikuChartRenderer.js">saikuchart</Dependency>
-				<Dependency src="SaikuEmbed.js">saikuembed</Dependency>
+			<Dependencies>
+                <Dependency src="../../ui/js/saiku/plugins/CCC_Chart/pvc.js">saikupvc</Dependency>
+				<Dependency src="../../ui/js/saiku/render/SaikuRenderer.js">saikurenderer</Dependency>
+				<Dependency src="../../ui/js/saiku/render/SaikuTableRenderer.js">saikutable</Dependency>
+				<Dependency src="../../ui/js/saiku/render/SaikuChartRenderer.js">saikuchart</Dependency>
+				<Dependency src="../../ui/js/saiku/embed/SaikuEmbed.js">saikuembed</Dependency>
 			</Dependencies>
 
 			<Styles>
-				<Style src="saiku.css"></Style>
-				<Style src="saiku.table.css"></Style>
+				<Style src="../../ui/embed/saiku.css"></Style>
+				<Style src="../../ui/css/saiku/src/saiku.table.css"></Style>
 			</Styles>
 
 			<CustomProperties>
