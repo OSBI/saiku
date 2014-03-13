@@ -131,7 +131,7 @@ public class TotalsListsBuilder implements FormatList {
 			i--;
 			do
 				m = m.getParentMember();
-			while (i >= 0 && m.getDepth() != levels.get(i));
+			while (i >= 0 && m != null && m.getDepth() != levels.get(i));
 		}
 	}
 	
