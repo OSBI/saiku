@@ -3,8 +3,8 @@ var saikuWidgetComponent = BaseComponent.extend({
 	update : function() {
 		var myself=this;
 		var htmlId = "#" + myself.htmlObject;
-		if (myself.saikuFilePath.substr(0,1) == "/") {
-			myself.saikuFilePath = myself.saikuFilePath.substr(1,myself.saikuFilePath.length - 1 );
+		if (myself.saikuFilePath.substr(0,1) != "/") {
+			myself.saikuFilePath = "/" + myself.saikuFilePath;
 		}
 		Dashboards.log(myself);
 
@@ -21,7 +21,7 @@ var saikuWidgetComponent = BaseComponent.extend({
 			htmlId = t;
 		}
 		var myClient = new SaikuClient({
-		    server: "../saiku",
+			server: "../../../plugin/saiku/api",
 		    path: "/cde-component"
 		});
 

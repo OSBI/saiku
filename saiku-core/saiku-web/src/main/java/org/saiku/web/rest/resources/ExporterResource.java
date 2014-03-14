@@ -127,7 +127,7 @@ public class ExporterResource {
 			QueryResult qr = queryResource.execute(queryName, formatter, 0);
 			return Response.ok().entity(qr).build();
 		} catch (Exception e) {
-			log.error("Error exporting CSV for file: " + file, e);
+			log.error("Error exporting JSON for file: " + file, e);
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}

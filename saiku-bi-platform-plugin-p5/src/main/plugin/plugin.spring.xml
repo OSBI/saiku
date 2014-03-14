@@ -83,7 +83,7 @@
 	<bean id="pluginResource" class="org.saiku.plugin.resources.PluginResource" />
 	
 	<bean id="exporterBean" class="org.saiku.plugin.resources.PentahoExporterResource">
-		<!--  <property name="repository" ref="repositoryBean2" /> -->
+		<property name="repository" ref="repositoryBean2" />
 		<property name="queryResource" ref="queryResource" />
 	</bean>
 	
