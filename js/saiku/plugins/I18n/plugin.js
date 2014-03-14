@@ -52,10 +52,16 @@ Saiku.i18n = {
 };
 
 function recursive_menu_translate(object, po_file) {
-	var translation = po_file[object.name];
-	if (typeof translation != "undefined") {
-		object.name = translation;
-	}
+    if (object && object.hasOwnProperty('name') && object.i18n && po_file) {
+    	var translation = po_file[object.name];
+    	if (typeof translation != "undefined") {
+    		object.name = translation;
+    	} else if (object && object.hasOwnProperty('name') && po_file) {
+            if (Saiku.i18n.elements.indexOf(object.name) === -1) {
+                Saiku.i18n.elements.push(object.name);
+            }
+        }
+    }
 	
 	if (typeof object.items != "undefined") {
 		$.each(object.items, function(key, item){

@@ -164,28 +164,28 @@ var WorkspaceDropZone = Backbone.View.extend({
                 };
 
                 var citems = {
-                        "filter" : {name: "Filter", items: 
+                        "filter" : {name: "Filter", i18n: true, items: 
                          { 
-                                "customfilter": {name: "Custom..." },
-                                "clearfilter": {name: "Clear Filter" }
+                                "customfilter": {name: "Custom...", i18n: true },
+                                "clearfilter": {name: "Clear Filter", i18n: true }
                          }},
-                        "limit" : {name: "Limit", items: 
+                        "limit" : {name: "Limit", i18n: true, items: 
                         {
-                                "TopCount###SEPARATOR###10": {name: "Top 10" },
-                                "BottomCount###SEPARATOR###10": {name: "Bottom 10" },
-                                "TopCountQuick" : { name: "Top 10 by...", items: addFun(items, "TopCount") },
-                                "BottomCountQuick" : { name: "Bottom 10 by...", items: addFun(items, "BottomCount") },
-                                "customtop" : {name: "Custom Limit..." },
-                                "clearlimit" : {name: "Clear Limit"}
+                                "TopCount###SEPARATOR###10": {name: "Top 10", i18n: true },
+                                "BottomCount###SEPARATOR###10": {name: "Bottom 10", i18n: true },
+                                "TopCountQuick" : { name: "Top 10 by...", i18n: true, items: addFun(items, "TopCount") },
+                                "BottomCountQuick" : { name: "Bottom 10 by...", i18n: true, items: addFun(items, "BottomCount") },
+                                "customtop" : {name: "Custom Limit...", i18n: true },
+                                "clearlimit" : {name: "Clear Limit", i18n: true }
                          }},
                         "sort" : {name: "Sort", items:
                         {
-                            "ASCQuick": {name: "Ascending" , items: addFun(items, "ASC") },
-                            "DESCQuick": {name: "Descending", items: addFun(items, "DESC")},
-                            "BASCQuick": {name: "Ascending (Breaking Hierarchy)", items: addFun(items, "BASC")},
-                            "BDESCQuick": {name: "Descending (Breaking Hierarchy)", items: addFun(items, "BDESC") },
-                            "customsort" : { name: "Custom..." },
-                            "clearsort" : {name: "Clear Sort" }
+                            "ASCQuick": {name: "Ascending" , i18n: true, items: addFun(items, "ASC") },
+                            "DESCQuick": {name: "Descending", i18n: true, items: addFun(items, "DESC")},
+                            "BASCQuick": {name: "Ascending (Breaking Hierarchy)", i18n: true, items: addFun(items, "BASC")},
+                            "BDESCQuick": {name: "Descending (Breaking Hierarchy)", i18n: true, items: addFun(items, "BDESC") },
+                            "customsort" : { name: "Custom...", i18n: true },
+                            "clearsort" : {name: "Clear Sort", i18n: true }
                         }}
                 };
 				

@@ -177,27 +177,27 @@ var Table = Backbone.View.extend({
             var citems = {
                     "name" : {name: "<b>" + member + "</b>", disabled: true },
                     "sep1": "---------",
-                    "keeponly": {name: "Keep Only", payload: keep_payload }
+                    "keeponly": {name: "Keep Only", i18n: true, payload: keep_payload }
             };
             if (d != "Measures") {
-                citems["getchildren"] = {name: "Show Children", payload: children_payload }
+                citems["getchildren"] = {name: "Show Children", i18n: true, payload: children_payload }
                 citems["fold1key"] = {
-                        name: "Include Level",
+                        name: "Include Level", i18n: true, 
                         items: lvlitems("include-")
                     };
                 citems["fold2key"] = {
-                        name: "Keep and Include Level",
+                        name: "Keep and Include Level", i18n: true, 
                         items: lvlitems("keep-")
                     };
                 citems["fold3key"] = {
-                        name: "Remove Level",
+                        name: "Remove Level", i18n: true,
                         items: lvlitems("remove-")
                     };
                 citems["filterlevel"] = {
-                    name: "Filter Level"
+                    name: "Filter Level", i18n: true
                 };
                 if (items["showall"]) {
-                    citems["showall"]  =  { name: "Remove Filters"};
+                    citems["showall"]  =  { name: "Remove Filters", i18n: true };
                 }
             }
             $.each(citems, function(key, item){
