@@ -63,7 +63,7 @@ var Statistics = Backbone.View.extend({
     },
     
     show: function(event, ui) {
-        $(this.workspace.el).find('.workspace_results table').toggle();
+        $(this.workspace.table.el).toggle();
         $(this.el).toggle();
         $(event.target).toggleClass('on');
         
@@ -104,8 +104,18 @@ var Statistics = Backbone.View.extend({
         }
 
         var group = function(grid, el, cback){
+            //var elements = _.filter(_.map(grid, function(it){return it[el]}), function(it){return it});
+
             var elements = _.map(grid, function(it){ return it[el]});
-            return cback(elements).toFixed(3);
+            elements = _.filter(elements, function(it) { 
+                return (typeof it !== "undefined" && it != null && (it !== "" || it === 0));
+            });
+            var retVal = cback(elements);
+            if (elements.length > 0 && (typeof retVal !== "undefined" && retVal != null && (retVal !== "" || retVal === 0))) {
+                return retVal.toFixed(3);
+            }
+            return "";
+
         }
 
         var sum = function(elems){return _.reduce(elems, function(memo, num){ return memo + num }, 0)};
