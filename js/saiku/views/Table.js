@@ -200,6 +200,9 @@ var Table = Backbone.View.extend({
                     citems["showall"]  =  { name: "Remove Filters"};
                 }
             }
+            $.each(citems, function(key, item){
+            	recursive_menu_translate(item, Saiku.i18n.po_file);
+            });
             return {
                 callback: function(key, options) {
 
