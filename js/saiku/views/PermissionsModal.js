@@ -81,7 +81,7 @@ var PermissionsModal = Modal.extend({
             $(this.el).find('.private_owner .owner').text(owner);
             $(this.el).find('.private_owner').show();
         }
-		
+        $(this.el).find(".i18n").i18n(Saiku.i18n.po_file);
     },
     
     add_role: function(event) {

@@ -178,6 +178,7 @@ var TabPager = Backbone.View.extend({
                 this.tabset._tabs[i].caption + "</a><br />";
         }
         $(this.el).html(pager);
+        $(this.el).find(".i18n").i18n(Saiku.i18n.po_file);
     },
     
     select: function(event) {
