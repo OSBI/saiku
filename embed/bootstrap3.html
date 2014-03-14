@@ -143,6 +143,7 @@
 
 var myClient = new SaikuClient({
     server: "/saiku",
+    path: "/rest/saiku/embed",
     user: "admin",
     password: "admin"
 });
@@ -161,10 +162,10 @@ myClient.execute({
     zoom: false,
     chartDefinition: {
         clickable: true,
-        colors: [ 'white', 'red'],
-        clickAction: function(datum) {
-            alert('You clicked on: Category: ' + datum.getCategoryLabel() + " Series: " + datum.getSeriesLabel() + " Measure: " +  datum.getValue());
-            console.log(datum);
+        clickAction: function(scene) {
+            //scene.datum.atoms.category + " - " + scene.datum.atoms.category2 + " - " + scene.datum.atoms.value
+            alert('You clicked on: Category: ' + scene.getCategoryLabel() + " Series: " + scene.getSeriesLabel() + " Measure: " +  scene.datum.atoms.value);
+            console.log(scene);
         }
     }
 });
