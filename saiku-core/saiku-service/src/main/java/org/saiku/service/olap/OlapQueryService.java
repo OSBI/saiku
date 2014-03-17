@@ -260,6 +260,7 @@ public class OlapQueryService implements Serializable {
 			result.setRuntime(new Double(format - start).intValue());
 			getIQuery(queryName).storeCellset(cellSet);
 			getIQuery(queryName).storeFormatter(formatter);
+			// we could do a check if query.getTotalFunctions() actually includes a total function and if not dont execute the following
 			if (QueryType.QM.equals(query.getType()) && formatter instanceof FlattenedCellSetFormatter) {
 				QueryDimension queryDimension = query.getDimension("Measures");
 				Measure[] selectedMeasures = new Measure[queryDimension.getInclusions().size()];
