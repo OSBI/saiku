@@ -44,7 +44,7 @@ var Modal = Backbone.View.extend({
                 "<div class='dialog_body'><%= message %></div>" +
         		"<div class='dialog_footer'>" +
             "<% _.each(buttons, function(button) { %>" +
-                "<a class='form_button' href='#<%= button.method %>'>&nbsp;<%= button.text %>&nbsp;</a>" +
+                "<a class='form_button i18n' href='#<%= button.method %>'>&nbsp;<%= button.text %>&nbsp;</a>" +
             "<% }); %>" +
             "</div>")(this);
     },
@@ -61,7 +61,9 @@ var Modal = Backbone.View.extend({
             .addClass("dialog_" + this.type)
             .dialog(this.options);
 
-        $('.ui-dialog-title').html(this.options.title);
+        var uiDialogTitle = $('.ui-dialog-title'); 
+        uiDialogTitle.html(this.options.title);
+        uiDialogTitle.addClass('i18n');
         Saiku.i18n.translate();
         return this;
     },

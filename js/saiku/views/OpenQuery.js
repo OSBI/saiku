@@ -64,6 +64,18 @@ var OpenQuery = Backbone.View.extend({
         $(window).resize(this.adjust);
         
         var self = this;
+        var menuitems = {
+                    "open": {name: "Open", i18n: true },
+                    "edit": {name: "Edit", i18n: true },
+//                    "rename": {name: "Rename", i18n: true },
+                    "delete": {name: "Delete", i18n: true },
+                    "sep1": "---------",
+                    "new": {name: "New Folder", i18n: true}
+        };
+        $.each(menuitems, function(key, item){
+            recursive_menu_translate(item, Saiku.i18n.po_file);
+        });
+        
         $.contextMenu('destroy', 'li.query, div.folder_row');
         $.contextMenu({
                 selector: 'li.query, div.folder_row',
@@ -112,14 +124,7 @@ var OpenQuery = Backbone.View.extend({
 
 
                 },
-                items: {
-                    "open": {name: "<span class='i18n'>Open</span>" },
-                    "edit": {name: "<span class='i18n'>Edit</span>" },
-//                    "rename": {name: "<span class='i18n'>Rename</span>" },
-                    "delete": {name: "<span class='i18n'>Delete</span>" },
-                    "sep1": "---------",
-                    "new": {name: "<span class='i18n'>New Folder</span>"}
-                }
+                items: menuitems
             });
 
         return this;

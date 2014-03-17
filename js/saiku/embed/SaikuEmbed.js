@@ -70,6 +70,7 @@ if ($.blockUI) {
 
 var SaikuConfig = {
   server: null,
+  path: null,
   user: null,
   password: null
 };
@@ -140,7 +141,8 @@ SaikuClient.prototype.execute = function(usercall) {
     });
   }
   var params = {
-      url:          client.server + "/rest/saiku/embed/export/saiku/json",
+                    // path ? "rest/saiku/embed/"
+      url:          client.server + (client.path ? client.path : "") + "/export/saiku/json",
       type:         'GET',
       cache:        false,
       data:         parameters,
@@ -170,14 +172,7 @@ SaikuClient.prototype.execute = function(usercall) {
         self.error(jqXHR, textStatus, errorThrown);
       },
       crossDomain: true,
-      async:        true,
-      beforeSend:   function(request) {
-          var auth = "Basic " + Base64.encode(
-              client.user + ":" + client.password
-          );
-          request.setRequestHeader('Authorization', auth);
-          return true;
-        }
+      async:        true
       };
     
     $.ajax(params);

@@ -43,7 +43,7 @@
         <script type="text/javascript" src="../js/saiku/render/SaikuChartRenderer.js"></script>
         <script type="text/javascript" src="../js/saiku/embed/SaikuEmbed.js"></script>
 
-        <div id='saiku' class='workspace_results' style="height:300px;">
+        <div id='saiku' class='workspace_results' style="height:330px;">
         </div>
 
         <div id='saiku2' class='workspace_results' style="height:500px;">
@@ -54,6 +54,7 @@
 
 var myClient = new SaikuClient({
     server: "/saiku",
+    path: "/rest/saiku/embed",
     user: "admin",
     password: "admin"
 });

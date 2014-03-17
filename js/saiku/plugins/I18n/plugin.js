@@ -51,6 +51,25 @@ Saiku.i18n = {
     }
 };
 
+function recursive_menu_translate(object, po_file) {
+    if (object && object.hasOwnProperty('name') && object.i18n && po_file) {
+    	var translation = po_file[object.name];
+    	if (typeof translation != "undefined") {
+    		object.name = translation;
+    	} else if (object && object.hasOwnProperty('name') && po_file) {
+            if (Saiku.i18n.elements.indexOf(object.name) === -1) {
+                Saiku.i18n.elements.push(object.name);
+            }
+        }
+    }
+	
+	if (typeof object.items != "undefined") {
+		$.each(object.items, function(key, item){
+	    	recursive_menu_translate(item, po_file);
+		});
+	}
+};		
+
 /**
  * jQuery plugin for i18n
  */
@@ -100,6 +119,19 @@ Saiku.i18n = {
 				if (translated_title) {
 					element.data('original', element.attr('title'));
 					element.attr({ 'title': translated_title });
+					element.removeClass('i18n');
+				}
+			}
+			
+			if (element.attr('value')) {
+				translated_value = translate( element.attr('value'), po_file );
+                if (Saiku.i18n.elements.indexOf && 
+                    Saiku.i18n.elements.indexOf(element.attr('value')) === -1) {
+                    Saiku.i18n.elements.push(element.attr('value'));
+                }
+				if (translated_value) {
+					element.data('original', element.attr('value'));
+					element.attr({ 'value': translated_value });
 					element.removeClass('i18n');
 				}
 			}
