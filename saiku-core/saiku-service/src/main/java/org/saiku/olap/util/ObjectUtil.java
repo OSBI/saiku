@@ -255,7 +255,8 @@ public class ObjectUtil {
 				axis.getName(),
 				dims,
 				so,
-				axis.getSortIdentifierNodeName());
+				axis.getSortIdentifierNodeName(),
+				query.getTotalFunction(axis.getName()));
 		
 		try {
 			if (axis.getLimitFunction() != null) {

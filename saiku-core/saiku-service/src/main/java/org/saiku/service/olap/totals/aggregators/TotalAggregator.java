@@ -7,8 +7,8 @@ import java.util.Map;
 import mondrian.util.Format;
 
 import org.olap4j.Cell;
-import org.olap4j.OlapException;
 import org.olap4j.metadata.Measure;
+import org.olap4j.metadata.Property;
 import org.saiku.olap.util.SaikuProperties;
 
 public abstract class TotalAggregator {
@@ -22,23 +22,31 @@ public abstract class TotalAggregator {
 		all = Collections.unmodifiableMap(tmp);
 	}
 	private String formattedValue;
-	protected final Format format;
+	protected Format format;
 	
 	protected TotalAggregator(Format format) {
 		this.format = format;
 	}
 	
 	public void addData(Cell cell) {
+		try {
+		// FIXME - maybe we should try to do fetch the format here, but seems to cause some issues? infinite loop? make sure we try this only once to override existing format?
+//		if (format == null) {
+//			String formatString = (String) cell.getPropertyValue(Property.StandardCellProperty.FORMAT_STRING);
+//			this.format = Format.get(formatString, SaikuProperties.locale);
+//			
+//		}
 		Object value = cell.getValue();
 		if (value instanceof Number) {
 			double doubleVal;
-			try {
+
 				doubleVal = cell.getDoubleValue();
 				addData(doubleVal);
-			} catch (OlapException e) {
-				throw new RuntimeException(e);
-			}
 		}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 	
 	protected abstract void addData(double data);

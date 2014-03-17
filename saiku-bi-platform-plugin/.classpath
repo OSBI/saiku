@@ -19,7 +19,7 @@
   <classpathentry kind="src" path="/saiku-query"/>
   <classpathentry kind="var" path="M2_REPO/org/olap4j/olap4j/1.2.0-SNAPSHOT/olap4j-1.2.0-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/net/java/dev/javacc/javacc/5.0/javacc-5.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/pentaho/mondrian/TRUNK-SNAPSHOT/mondrian-TRUNK-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/pentaho/mondrian/3.6.5/mondrian-3.6.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/3.1/commons-collections-3.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-dbcp/commons-dbcp/1.2.2/commons-dbcp-1.2.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-pool/commons-pool/1.4/commons-pool-1.4.jar"/>
@@ -92,9 +92,9 @@
   <classpathentry kind="var" path="M2_REPO/org/springframework/ldap/spring-ldap-core/1.3.0.RELEASE/spring-ldap-core-1.3.0.RELEASE.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-webmvc/3.0.3.RELEASE/spring-webmvc-3.0.3.RELEASE.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-web/3.0.3.RELEASE/spring-web-3.0.3.RELEASE.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/codehaus/enunciate/enunciate-jersey-rt/1.25/enunciate-jersey-rt-1.25.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/codehaus/enunciate/enunciate-core-rt/1.25/enunciate-core-rt-1.25.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/codehaus/enunciate/enunciate-core-annotations/1.25/enunciate-core-annotations-1.25.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/codehaus/enunciate/enunciate-jersey-rt/1.28/enunciate-jersey-rt-1.28.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/codehaus/enunciate/enunciate-core-rt/1.28/enunciate-core-rt-1.28.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/codehaus/enunciate/enunciate-core-annotations/1.28/enunciate-core-annotations-1.28.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/codehaus/jackson/jackson-jaxrs/1.9.3/jackson-jaxrs-1.9.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/codehaus/jackson/jackson-xc/1.9.3/jackson-xc-1.9.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/sun/jersey/jersey-server/1.11/jersey-server-1.11.jar"/>
@@ -105,8 +105,8 @@
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-test/3.0.3.RELEASE/spring-test-3.0.3.RELEASE.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/sun/jersey/contribs/jersey-multipart/1.11/jersey-multipart-1.11.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jvnet/mimepull/1.6/mimepull-1.6.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/codehaus/enunciate/enunciate-rt/1.25/enunciate-rt-1.25.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/codehaus/enunciate/enunciate-jaxws-ri-rt/1.25/enunciate-jaxws-ri-rt-1.25.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/codehaus/enunciate/enunciate-rt/1.28/enunciate-rt-1.28.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/codehaus/enunciate/enunciate-jaxws-ri-rt/1.28/enunciate-jaxws-ri-rt-1.28.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/sun/xml/ws/jaxws-rt/2.1.7/jaxws-rt-2.1.7.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/sun/xml/messaging/saaj/saaj-impl/1.3.3/saaj-impl-1.3.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/com/sun/xml/stream/buffer/streambuffer/0.9/streambuffer-0.9.jar"/>
