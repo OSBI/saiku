@@ -61,7 +61,14 @@ var Tab = Backbone.View.extend({
         
         // Generate the element
         $(this.el).html(this.template());
-
+        var menuitems = {
+            "new": {name: "New", i18n: true },
+            "closethis": {name: "Close This", i18n: true },
+            "closeothers": {name: "Close Others", i18n: true }
+        };
+        $.each(menuitems, function(key, item){
+            recursive_menu_translate(item, Saiku.i18n.po_file);
+        });
 
         $.contextMenu('destroy', '.saikutab');
         $.contextMenu({
@@ -81,11 +88,7 @@ var Tab = Backbone.View.extend({
                     }
                     //self.workspace.chart.exportChart(key);
                 },
-                items: {
-                    "new": {name: "<span class='i18n'>New</span>"},
-                    "closethis": {name: "<span class='i18n'>Close This</span>"},
-                    "closeothers": {name: "<span class='i18n'>Close Others</span>"}
-                }
+                items: menuitems
             });
 
         return this;
@@ -178,6 +181,7 @@ var TabPager = Backbone.View.extend({
                 this.tabset._tabs[i].caption + "</a><br />";
         }
         $(this.el).html(pager);
+        $(this.el).find(".i18n").i18n(Saiku.i18n.po_file);
     },
     
     select: function(event) {
