@@ -189,6 +189,31 @@ SaikuOlapQueryHelper.prototype.setMeasures = function(measures) {
   this.model().queryModel.details.measures = measures;
 };
 
+SaikuOlapQueryHelper.prototype.addCalculatedMeasure = function(measure) {
+  if (measure) {
+    this.removeCalculatedMeasure(measure.name);
+    this.model().queryModel.calculatedMeasures.push(measure);
+  }
+};
+
+SaikuOlapQueryHelper.prototype.removeCalculatedMeasure = function(name) {
+  var measures = this.model().queryModel.calculatedMeasures;
+  var removeMeasure = _.findWhere(measures , { name: name });
+  if (removeMeasure && _.indexOf(measures, removeMeasure) > -1) {
+    measures = _.without(measures, removeMeasure);
+    //console.log(measures);
+  }
+};
+
+SaikuOlapQueryHelper.prototype.getCalculatedMeasures = function() {
+  var ms = this.model().queryModel.calculatedMeasures;
+  if (ms) {
+    return ms;
+  }
+  return null;
+};
+
+
 
 SaikuOlapQueryHelper.prototype.swapAxes = function() {
   var axes = this.model().queryModel.axes;

@@ -437,6 +437,23 @@ textarea, select {
     background: url('../../../images/src/bullet_red.png') 0px 4px no-repeat;
     */
 }
+.measure_caption a.button {
+    display: block;
+    height: 16px;
+    padding: 1px 10px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+.measure_caption a.button:hover {
+    border: 1px solid #CCC;
+    padding: 0px 9px;
+    cursor: pointer;
+}
+.measure_caption a.button.addMeasure {
+    float: right;
+    font-weight: normal;
+}
+
 .dimension_tree .hierarchy {
     padding-left: 0px;
 }
@@ -776,7 +793,10 @@ textarea, select {
     width: 300px;
     height: 60px;
 }
-
+.dialog_filter textarea.measureFormula {
+    width: 300px;
+    height: 60px;
+}
 
 .dialog_drillthrough .dialog_icon {
     display: none;

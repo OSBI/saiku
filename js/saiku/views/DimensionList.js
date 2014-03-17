@@ -25,7 +25,8 @@ var DimensionList = Backbone.View.extend({
         'click span': 'select',
         'click a': 'select',
         'click .parent_dimension ul li a.level' : 'select_dimension',
-        'click .measure' : 'select_measure'
+        'click .measure' : 'select_measure',
+        'click .addMeasure' : 'measure_dialog'
     },
     
     initialize: function(args) {
@@ -70,7 +71,7 @@ var DimensionList = Backbone.View.extend({
         }
         
         // Add draggable behavior
-        
+        $(this.el).find('.addMeasure, .calculated_measures').show();
         $(this.el).find('.measure').parent('li').draggable({
             cancel: '.not-draggable',
             connectToSortable: $(this.workspace.el).find('.fields_list_body.details ul.connectable'),
@@ -170,5 +171,13 @@ var DimensionList = Backbone.View.extend({
         this.workspace.query.run();
         event.preventDefault();
         return false;
+    },
+
+    measure_dialog: function(event, ui) {
+        (new MeasuresModal({ 
+                                    workspace: this.workspace,
+                                    measure: null
+        })).render().open();
     }
+
 });

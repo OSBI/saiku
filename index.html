@@ -86,6 +86,7 @@
         <script type="text/javascript" src="js/saiku/views/AddFolderModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/FilterModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/CustomFilterModal.js"></script>
+        <script type="text/javascript" src="js/saiku/views/MeasuresModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/QueryToolbar.js"></script>
         <script type="text/javascript" src="js/saiku/views/WorkspaceToolbar.js"></script>
         <script type="text/javascript" src="js/saiku/views/WorkspaceDropZone.js"></script>
@@ -233,6 +234,26 @@
             </li>
         </ul>
         </script>
+        <script type="text/x-jquery-tmpl" id="template-calculated-measures">
+        <ul>
+            <li>
+                <span class="root expand sprite"></span>
+                   <a href="#" title="Calculated Measures" class="folder_expand sprite i18n">Calculated Measures</a>
+                <% if (measures) { %>
+                <ul>
+                <% _.each(measures, function(measure) { %>
+                    
+                        <li class="d_measure"><a title="<%= measure.name %>"
+                                measure="<%= measure.name %>" type="CALCULATED"
+                            class="measure" href="#Measures/member/<%= encodeURIComponent(measure.uniqueName) %>"><%= measure.name %></a>
+                        </li>
+                    
+                <% }); %>
+                <% } %>
+                </ul>
+            </li>
+        </ul>
+        </script>
         
         <script type="text/x-jquery-tmpl" id="template-workspace">
         <div class="workspace">
@@ -277,13 +298,14 @@
         <script type="text/x-jquery-tmpl" id="template-attributes">
 
         <div class="metadata_attribute_container">
-            <h3 class="i18n">Measures</h3>
+            <h3 class="measure_caption"><span class="i18n">Measures</span><a class="button addMeasure i18n" style="display:none;">Add</a></h3>
             <div class="sidebar_inner measure_tree">
                 <% if (typeof cube != "undefined" && cube && cube.dimensions) { %>
                     <%= _.template($("#template-measures").html(), { measures: cube.measures }) %>
                 <% } else { %>
                     
                 <% } %>
+                <div class="calculated_measures" style="display:none;"></div>
             </div>
             <h3 class="i18n">Dimensions</h3>
             <div class="sidebar_inner dimension_tree">

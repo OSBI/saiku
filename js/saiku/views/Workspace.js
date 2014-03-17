@@ -271,6 +271,7 @@ var Workspace = Backbone.View.extend({
         this.selected_cube = $(this.el).find('.cubes').val();
         if (!this.selected_cube) {
             // Someone literally selected "Select a cube"
+            $(this.el).find('.calculated_measures, .addMeasure').hide();
             $(this.el).find('.dimension_tree').html('');
             $(this.el).find('.measure_tree').html('');
             return false;
@@ -398,6 +399,7 @@ var Workspace = Backbone.View.extend({
 
         } else {
             // Someone literally selected "Select a cube"
+            $(this.el).find('.calculated_measures, .addMeasure').hide();
             $(this.el).find('.dimension_tree').html('');
             $(this.el).find('.measure_tree').html('');
         }
@@ -419,6 +421,7 @@ var Workspace = Backbone.View.extend({
         }
 
 
+
     },
 
     sync_query: function(dimension_el) {
@@ -427,8 +430,27 @@ var Workspace = Backbone.View.extend({
                 
         if (!self.isReadOnly && (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view"))) {
             dimlist.find('.selected').removeClass('selected');
+
+            var cms = self.query.helper.getCalculatedMeasures();
+            if (cms && cms.length > 0) {
+                var template = _.template($("#template-calculated-measures").html(),{ measures: cms });
+                dimlist.find('.calculated_measures').html(template);
+                dimlist.find('.calculated_measures').find('.measure').parent('li').draggable({
+                    cancel: '.not-draggable',
+                    connectToSortable: $(self.el).find('.fields_list_body.details ul.connectable'),
+                    helper: 'clone',
+                    placeholder: 'placeholder',
+                    opacity: 0.60,
+                    tolerance: 'touch',
+                    containment:    $(self.el),
+                    cursorAt: { top: 10, left: 35 }
+                });        
+            }
+
             self.drop_zones.synchronize_query();
+            
         }
+        Saiku.i18n.translate();
 
     },
 
