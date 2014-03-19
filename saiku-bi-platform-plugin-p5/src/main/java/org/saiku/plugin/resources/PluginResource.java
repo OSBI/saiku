@@ -20,6 +20,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -33,7 +34,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
+import org.pentaho.platform.api.engine.IPluginManager;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.plugin.services.pluginmgr.PluginClassLoader;
 import org.saiku.datasources.connection.ISaikuConnection;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.olap.dto.SaikuQuery;
@@ -133,32 +137,58 @@ public class PluginResource {
 	public String getPlugins() 
 	{
       Packager packager = Packager.getInstance();
+      List<File> files = new ArrayList<File>();
+      
+      
       String searchRootDir = PentahoSystem.getApplicationContext().getSolutionPath("saiku/plugins");  
-      
       File searchRootFile = new File(searchRootDir);
+      if (searchRootFile.exists()) {
+    	  List<File> solutionFiles = getJsFiles(searchRootFile);
+    	  files.addAll(solutionFiles);
+      }
       
-      if (!searchRootFile.exists())
-        return "";
       
-      File[] files = getJsFiles(searchRootFile);      
+      final IPluginManager pluginManager = (IPluginManager) PentahoSystem.get(IPluginManager.class, PentahoSessionHolder.getSession());
+      FilenameFilter saikuFilter = new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return ("saiku".equals(name));
+			}
+      };
+		
+      Long start = (new Date()).getTime();
+      for (String plugin : pluginManager.getRegisteredPlugins()) {
+    	  final PluginClassLoader pluginClassloader = (PluginClassLoader) pluginManager.getClassLoader(plugin);
+    	  File pluginDir = pluginClassloader.getPluginDir();
+    	  for (File f : pluginDir.listFiles(saikuFilter)) {
+    		  if (f.isDirectory()) {
+    			  List<File> jsFiles = getJsFiles(f);
+    			  files.addAll(jsFiles);
+    		  }
+    		  
+    	  }
+      }
+      Long end = (new Date()).getTime();
+      log.debug("Looking for all plugin files time: " + (end - start) + "ms - " + files.size());
       
-      String pluginRootDir = PentahoSystem.getApplicationContext().getSolutionPath("system/saiku");
-      File rootDir = new File(searchRootDir);
-          
-      packager.registerPackage("scripts", Packager.Filetype.JS, searchRootDir, pluginRootDir + "/../../system/saiku/ui/js/scripts.js", files);          
-      packager.minifyPackage("scripts", Packager.Mode.CONCATENATE);
-      
-      try {
-        return ResourceManager.getInstance().getResourceAsString( "ui/js/scripts.js");
-      } catch (IOException ioe) {
-        ioe.printStackTrace();
+      if (files.size() > 0) {
+	      String pluginRootDir = PentahoSystem.getApplicationContext().getSolutionPath("system/saiku");
+	      File[] fileArray = files.toArray(new File[files.size()]);
+	          
+	      packager.registerPackage("scripts", Packager.Filetype.JS, searchRootDir, pluginRootDir + "/../../system/saiku/ui/js/scripts.js", fileArray);          
+	      packager.minifyPackage("scripts", Packager.Mode.CONCATENATE);
+	      
+	      try {
+	        return ResourceManager.getInstance().getResourceAsString( "ui/js/scripts.js");
+	      } catch (IOException ioe) {
+	        ioe.printStackTrace();
+	      }
       }
             
       return "";
 	}
   
   
-  private File[] getJsFiles(File rootDir) {
+  private List<File> getJsFiles(File rootDir) {
     List<File> result = new ArrayList<File>();
     
     File[] files = rootDir.listFiles(new FilenameFilter() {
@@ -178,13 +208,13 @@ public class PluginResource {
 
     if (folders != null) {
       for (File f : folders) {
-        File[] partial = getJsFiles(f);
+        List<File> partial = getJsFiles(f);
         if (partial != null)
-          result.addAll(Arrays.asList(partial));
+          result.addAll(partial);
       }
     }
 
-    return result.toArray(new File[result.size()]);    
+    return result;    
   }
   
 
