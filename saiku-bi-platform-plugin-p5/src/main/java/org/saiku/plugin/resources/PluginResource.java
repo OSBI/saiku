@@ -149,24 +149,21 @@ public class PluginResource {
       
       
       final IPluginManager pluginManager = (IPluginManager) PentahoSystem.get(IPluginManager.class, PentahoSessionHolder.getSession());
-      FilenameFilter saikuFilter = new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return ("saiku".equals(name));
-			}
-      };
 		
       Long start = (new Date()).getTime();
       for (String plugin : pluginManager.getRegisteredPlugins()) {
     	  final PluginClassLoader pluginClassloader = (PluginClassLoader) pluginManager.getClassLoader(plugin);
     	  File pluginDir = pluginClassloader.getPluginDir();
-    	  for (File f : pluginDir.listFiles(saikuFilter)) {
-    		  if (f.isDirectory()) {
-    			  List<File> jsFiles = getJsFiles(f);
+    	  File saikuDir = new File(pluginDir, "saiku");
+    	  if (saikuDir.exists()) {
+    		  File saikuPluginDir = new File(saikuDir, "plugins");
+    		  if (saikuPluginDir.exists()) {
+    			  List<File> jsFiles = getJsFiles(saikuPluginDir);
     			  files.addAll(jsFiles);
     		  }
-    		  
     	  }
       }
+    	  
       Long end = (new Date()).getTime();
       log.debug("Looking for all plugin files time: " + (end - start) + "ms - " + files.size());
       
