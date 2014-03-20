@@ -1,16 +1,12 @@
 package org.saiku.plugin.util.packager;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
 import java.util.Enumeration;
 import java.util.NoSuchElementException;
-import org.apache.commons.lang.StringUtils;
 
 class Concatenate
 {

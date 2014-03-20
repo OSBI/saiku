@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -134,54 +135,54 @@ public class PluginResource {
 	@GET
 	@Produces({"text/plain" })
 	@Path("/plugins")
-	public String getPlugins() 
+	public String getPlugins(@QueryParam("debug") @DefaultValue("false") Boolean debug) 
 	{
-      Packager packager = Packager.getInstance();
-      List<File> files = new ArrayList<File>();
-      
-      
-      String searchRootDir = PentahoSystem.getApplicationContext().getSolutionPath("saiku/plugins");  
-      File searchRootFile = new File(searchRootDir);
-      if (searchRootFile.exists()) {
-    	  List<File> solutionFiles = getJsFiles(searchRootFile);
-    	  files.addAll(solutionFiles);
-      }
-      
-      
-      final IPluginManager pluginManager = (IPluginManager) PentahoSystem.get(IPluginManager.class, PentahoSessionHolder.getSession());
-		
-      Long start = (new Date()).getTime();
-      for (String plugin : pluginManager.getRegisteredPlugins()) {
-    	  final PluginClassLoader pluginClassloader = (PluginClassLoader) pluginManager.getClassLoader(plugin);
-    	  File pluginDir = pluginClassloader.getPluginDir();
-    	  File saikuDir = new File(pluginDir, "saiku");
-    	  if (saikuDir.exists()) {
-    		  File saikuPluginDir = new File(saikuDir, "plugins");
-    		  if (saikuPluginDir.exists()) {
-    			  List<File> jsFiles = getJsFiles(saikuPluginDir);
-    			  files.addAll(jsFiles);
-    		  }
-    	  }
-      }
-    	  
-      Long end = (new Date()).getTime();
-      log.debug("Looking for all plugin files time: " + (end - start) + "ms - " + files.size());
-      
-      if (files.size() > 0) {
-	      String pluginRootDir = PentahoSystem.getApplicationContext().getSolutionPath("system/saiku");
-	      File[] fileArray = files.toArray(new File[files.size()]);
-	          
-	      packager.registerPackage("scripts", Packager.Filetype.JS, searchRootDir, pluginRootDir + "/../../system/saiku/ui/js/scripts.js", fileArray);          
-	      packager.minifyPackage("scripts", Packager.Mode.CONCATENATE);
-	      
-	      try {
-	        return ResourceManager.getInstance().getResourceAsString( "ui/js/scripts.js");
-	      } catch (IOException ioe) {
-	        ioe.printStackTrace();
-	      }
-      }
-            
-      return "";
+
+		try {
+			Packager packager = Packager.getInstance();
+			List<File> files = new ArrayList<File>();
+
+
+			String searchRootDir = PentahoSystem.getApplicationContext().getSolutionPath("saiku/plugins");  
+			File searchRootFile = new File(searchRootDir);
+			if (searchRootFile.exists()) {
+				List<File> solutionFiles = getJsFiles(searchRootFile);
+				files.addAll(solutionFiles);
+			}
+
+
+			final IPluginManager pluginManager = (IPluginManager) PentahoSystem.get(IPluginManager.class, PentahoSessionHolder.getSession());
+
+			Long start = (new Date()).getTime();
+			for (String plugin : pluginManager.getRegisteredPlugins()) {
+				final PluginClassLoader pluginClassloader = (PluginClassLoader) pluginManager.getClassLoader(plugin);
+				File pluginDir = pluginClassloader.getPluginDir();
+				File saikuDir = new File(pluginDir, "saiku");
+				if (saikuDir.exists()) {
+					File saikuPluginDir = new File(saikuDir, "plugins");
+					if (saikuPluginDir.exists()) {
+						List<File> jsFiles = getJsFiles(saikuPluginDir);
+						files.addAll(jsFiles);
+					}
+				}
+			}
+
+			Long end = (new Date()).getTime();
+			log.debug("Looking for all plugin files time: " + (end - start) + "ms - Files: " + files.size());
+
+			if (files.size() > 0) {
+				String pluginRootDir = PentahoSystem.getApplicationContext().getSolutionPath("system/saiku");
+				File[] fileArray = files.toArray(new File[files.size()]);
+				packager.registerPackage("scripts", Packager.Filetype.JS, searchRootDir, pluginRootDir + "/../../system/saiku/ui/js/scripts.js", fileArray);          
+				packager.minifyPackage("scripts", ( debug ? Packager.Mode.CONCATENATE : Packager.Mode.MINIFY));
+				return ResourceManager.getInstance().getResourceAsString( "ui/js/scripts.js");
+
+			}
+		} catch (IOException ioe) {
+			log.error("Error fetching plugins", ioe);
+		}
+
+		return "";
 	}
   
   

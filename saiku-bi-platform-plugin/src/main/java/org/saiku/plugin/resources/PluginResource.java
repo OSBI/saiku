@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -109,23 +110,23 @@ public class PluginResource {
 		try {
 			String cdaString = getCda(query);
 			Document cda = DocumentHelper.parseText(cdaString);
-			
-		    final CdaSettings cdaSettings = new CdaSettings(cda, "cda1", null);
-		    
-		    log.debug("Doing query on Cda - Initializing CdaEngine");
-		    final CdaEngine engine = CdaEngine.getInstance();
-		    final QueryOptions queryOptions = new QueryOptions();
-		    queryOptions.setDataAccessId("1");
-		    queryOptions.setOutputType("json");
-		    log.info("Doing query");
-		    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		    PrintStream printstream = new PrintStream(outputStream);
-		    engine.doQuery(printstream, cdaSettings, queryOptions);
+
+			final CdaSettings cdaSettings = new CdaSettings(cda, "cda1", null);
+
+			log.debug("Doing query on Cda - Initializing CdaEngine");
+			final CdaEngine engine = CdaEngine.getInstance();
+			final QueryOptions queryOptions = new QueryOptions();
+			queryOptions.setDataAccessId("1");
+			queryOptions.setOutputType("json");
+			log.info("Doing query");
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			PrintStream printstream = new PrintStream(outputStream);
+			engine.doQuery(printstream, cdaSettings, queryOptions);
 			byte[] doc = outputStream.toByteArray();
-			
+
 			return Response.ok(doc, MediaType.APPLICATION_JSON).header(
-							"content-length",doc.length).build();
-			
+					"content-length",doc.length).build();
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -135,91 +136,91 @@ public class PluginResource {
 
 	}
 
-  
-  
+
+
 	@GET
 	@Produces({"text/plain" })
 	@Path("/plugins")
-	public String getPlugins() 
+	public String getPlugins(@QueryParam("debug") @DefaultValue("false") Boolean debug) 
 	{
-      Packager packager = Packager.getInstance();
-      List<File> files = new ArrayList<File>();
-      
-      
-      String searchRootDir = PentahoSystem.getApplicationContext().getSolutionPath("saiku/plugins");  
-      File searchRootFile = new File(searchRootDir);
-      if (searchRootFile.exists()) {
-    	  List<File> solutionFiles = getJsFiles(searchRootFile);
-    	  files.addAll(solutionFiles);
-      }
-      
-      
-      final IPluginManager pluginManager = (IPluginManager) PentahoSystem.get(IPluginManager.class, PentahoSessionHolder.getSession());
-		
-      Long start = (new Date()).getTime();
-      for (String plugin : pluginManager.getRegisteredPlugins()) {
-    	  final PluginClassLoader pluginClassloader = (PluginClassLoader) pluginManager.getClassLoader(plugin);
-    	  File pluginDir = pluginClassloader.getPluginDir();
-    	  File saikuDir = new File(pluginDir, "saiku");
-    	  if (saikuDir.exists()) {
-    		  File saikuPluginDir = new File(saikuDir, "plugins");
-    		  if (saikuPluginDir.exists()) {
-    			  List<File> jsFiles = getJsFiles(saikuPluginDir);
-    			  files.addAll(jsFiles);
-    		  }
-    	  }
-      }
-    	  
-      Long end = (new Date()).getTime();
-      log.debug("Looking for all plugin files time: " + (end - start) + "ms - " + files.size());
-      
-      if (files.size() > 0) {
-	      String pluginRootDir = PentahoSystem.getApplicationContext().getSolutionPath("system/saiku");
-	      File[] fileArray = files.toArray(new File[files.size()]);
-	          
-	      packager.registerPackage("scripts", Packager.Filetype.JS, searchRootDir, pluginRootDir + "/../../system/saiku/ui/js/scripts.js", fileArray);          
-	      packager.minifyPackage("scripts", Packager.Mode.CONCATENATE);
-	      
-	      try {
-	        return ResourceManager.getInstance().getResourceAsString( "ui/js/scripts.js");
-	      } catch (IOException ioe) {
-	        ioe.printStackTrace();
-	      }
-      }
-            
-      return "";
+
+		try {
+			Packager packager = Packager.getInstance();
+			List<File> files = new ArrayList<File>();
+
+
+			String searchRootDir = PentahoSystem.getApplicationContext().getSolutionPath("saiku/plugins");  
+			File searchRootFile = new File(searchRootDir);
+			if (searchRootFile.exists()) {
+				List<File> solutionFiles = getJsFiles(searchRootFile);
+				files.addAll(solutionFiles);
+			}
+
+
+			final IPluginManager pluginManager = (IPluginManager) PentahoSystem.get(IPluginManager.class, PentahoSessionHolder.getSession());
+
+			Long start = (new Date()).getTime();
+			for (String plugin : pluginManager.getRegisteredPlugins()) {
+				final PluginClassLoader pluginClassloader = (PluginClassLoader) pluginManager.getClassLoader(plugin);
+				File pluginDir = pluginClassloader.getPluginDir();
+				File saikuDir = new File(pluginDir, "saiku");
+				if (saikuDir.exists()) {
+					File saikuPluginDir = new File(saikuDir, "plugins");
+					if (saikuPluginDir.exists()) {
+						List<File> jsFiles = getJsFiles(saikuPluginDir);
+						files.addAll(jsFiles);
+					}
+				}
+			}
+
+			Long end = (new Date()).getTime();
+			log.debug("Looking for all plugin files time: " + (end - start) + "ms - Files: " + files.size());
+
+			if (files.size() > 0) {
+				String pluginRootDir = PentahoSystem.getApplicationContext().getSolutionPath("system/saiku");
+				File[] fileArray = files.toArray(new File[files.size()]);
+				packager.registerPackage("scripts", Packager.Filetype.JS, searchRootDir, pluginRootDir + "/../../system/saiku/ui/js/scripts.js", fileArray);          
+				packager.minifyPackage("scripts", ( debug ? Packager.Mode.CONCATENATE : Packager.Mode.MINIFY));
+				return ResourceManager.getInstance().getResourceAsString( "ui/js/scripts.js");
+
+			}
+		} catch (IOException ioe) {
+			log.error("Error fetching plugins", ioe);
+		}
+
+		return "";
 	}
-  
-  
-  private List<File> getJsFiles(File rootDir) {
-    List<File> result = new ArrayList<File>();
-    
-    File[] files = rootDir.listFiles(new FilenameFilter() {
-      public boolean accept(File file, String name) {
-        return name.endsWith(".js");
-      }            
-    });
-    
-    if (files != null)
-      result.addAll(Arrays.asList(files));
 
-    File[] folders = rootDir.listFiles(new FilenameFilter() {
-      public boolean accept(File file, String name) {
-        return file.isDirectory();
-      }            
-    });
 
-    if (folders != null) {
-      for (File f : folders) {
-        List<File> partial = getJsFiles(f);
-        if (partial != null)
-          result.addAll(partial);
-      }
-    }
+	private List<File> getJsFiles(File rootDir) {
+		List<File> result = new ArrayList<File>();
 
-    return result;    
-  }
-  
+		File[] files = rootDir.listFiles(new FilenameFilter() {
+			public boolean accept(File file, String name) {
+				return name.endsWith(".js");
+			}            
+		});
+
+		if (files != null)
+			result.addAll(Arrays.asList(files));
+
+		File[] folders = rootDir.listFiles(new FilenameFilter() {
+			public boolean accept(File file, String name) {
+				return file.isDirectory();
+			}            
+		});
+
+		if (folders != null) {
+			for (File f : folders) {
+				List<File> partial = getJsFiles(f);
+				if (partial != null)
+					result.addAll(partial);
+			}
+		}
+
+		return result;    
+	}
+
 
 	//	private CdaSettings initCda(String sessionId, String domain) throws Exception {
 	//		CdaSettings cda = new CdaSettings("cda" + sessionId, null);
@@ -236,17 +237,17 @@ public class PluginResource {
 	//	}
 
 
-//	private CdaSettings getCdaSettings(String sessionId, SaikuDatasource ds, SaikuQuery query) {
-//
-//		try {		
-//			Document document = DocumentHelper.parseText("");
-//
-//			return new CdaSettings(document, sessionId, null);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
+	//	private CdaSettings getCdaSettings(String sessionId, SaikuDatasource ds, SaikuQuery query) {
+	//
+	//		try {		
+	//			Document document = DocumentHelper.parseText("");
+	//
+	//			return new CdaSettings(document, sessionId, null);
+	//		} catch (Exception e) {
+	//			e.printStackTrace();
+	//		}
+	//		return null;
+	//	}
 
 	private Document getCdaAsDocument(String driver, String url, String name, String query) throws Exception {
 		String cda = getCdaAsString(driver, url, name, query);
@@ -264,21 +265,21 @@ public class PluginResource {
 
 	private String getCdaTemplate() {
 		String cda = 
-			"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-			"<CDADescriptor>\n" +
-			"   <DataSources>\n" +
-			"        <Connection id=\"1\" type=\"olap4j.jdbc\">\n" +
-			"            <Driver>@@DRIVER@@</Driver>\n" +
-			"            <Url>@@URL@@</Url>\n" +
-			"        </Connection>\n" +
-			"    </DataSources>\n" +
-			"  <DataAccess id=\"1\" connection=\"1\" type=\"olap4j\" access=\"public\">\n" +
-			"		<Name>@@NAME@@</Name>\n" +
-			"        <Query><![CDATA[" +
-			"			@@QUERY@@" +
-			"		]]></Query>\n" +
-			"    </DataAccess>\n" +
-			"</CDADescriptor>\n";
+				"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+						"<CDADescriptor>\n" +
+						"   <DataSources>\n" +
+						"        <Connection id=\"1\" type=\"olap4j.jdbc\">\n" +
+						"            <Driver>@@DRIVER@@</Driver>\n" +
+						"            <Url>@@URL@@</Url>\n" +
+						"        </Connection>\n" +
+						"    </DataSources>\n" +
+						"  <DataAccess id=\"1\" connection=\"1\" type=\"olap4j\" access=\"public\">\n" +
+						"		<Name>@@NAME@@</Name>\n" +
+						"        <Query><![CDATA[" +
+						"			@@QUERY@@" +
+						"		]]></Query>\n" +
+						"    </DataAccess>\n" +
+						"</CDADescriptor>\n";
 
 		return cda;
 	}
