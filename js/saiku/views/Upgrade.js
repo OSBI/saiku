@@ -35,6 +35,9 @@ var Upgrade = Backbone.View.extend({
     },
     
     render: function() {
+        if (!Settings.UPGRADE)
+            return this;
+
         var timeout = Saiku.session.upgradeTimeout;
         var localStorageUsed = false;
         var first = true;

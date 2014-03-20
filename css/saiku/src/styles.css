@@ -1972,14 +1972,12 @@ span.cancel_search:hover {
 }
 
 .upgradeheader {
-    background-color:#F9F9F9;
-    padding: 0;
+    background-color:#F0F0F0;
+    padding: 3px;
     text-align:center;
     margin: 0;
-}
-.upgradeheader h3 {
-    margin: 0;
-    padding: 5px;
+    border: 1px solid #CCC;
+    overflow: hidden;
 }
 .upgradeheader span.close_tab {
     -moz-background-origin: 0px 2px;
