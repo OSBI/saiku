@@ -73,6 +73,7 @@
         <script type="text/javascript" src="js/saiku/models/Dimension.js"></script>
         <script type="text/javascript" src="js/saiku/views/DimensionList.js"></script>
         <script type="text/javascript" src="js/saiku/views/Toolbar.js"></script>
+        <script type="text/javascript" src="js/saiku/views/Upgrade.js"></script>
         <script type="text/javascript" src="js/saiku/views/Modal.js"></script>
         <script type="text/javascript" src="js/saiku/views/MDXModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/SelectionsModal.js"></script>
@@ -157,6 +158,10 @@
                 </h1>
         </script>
 
+        <script type="text/x-jquery-tmpl" id="template-upgrade">
+            <div class="upgradeheader"><h3 class="">You are using Saiku Community Edition, please consider <a target="_blank" href="http://saiku.meteorite.bi">purchasing support, or sponsoring us</a> to support development</h3></div>
+        </script>
+
         <script type="text/x-jquery-tmpl" id="template-cubes">
             <select class="cubes">
                 <option value="" class="i18n">Select a cube</option>
@@ -234,6 +239,7 @@
             <div class="workspace_inner">
                 <div class="query_toolbar"></div>
                 <div class="workspace_toolbar"></div>
+                <div class="upgrade"></div>
                 <div class="workspace_editor hide">
                     <div id='mdx_editor' class='mdx_input hide'>
                     </div>

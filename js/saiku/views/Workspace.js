@@ -44,6 +44,9 @@ var Workspace = Backbone.View.extend({
         this.toolbar = new WorkspaceToolbar({ workspace: this });
         this.toolbar.render();
 
+        this.upgrade = new Upgrade({ workspace: this});
+        this.upgrade.render();
+
         this.querytoolbar = new QueryToolbar({ workspace: this });
         this.querytoolbar.render();
         
@@ -160,6 +163,7 @@ var Workspace = Backbone.View.extend({
             // Show toolbar
             $(this.el).find('.workspace_toolbar').append($(this.toolbar.el));
             $(this.el).find('.query_toolbar').append($(this.querytoolbar.el));
+            $(this.el).find('.upgrade').append($(this.upgrade.el));
         
         }
 

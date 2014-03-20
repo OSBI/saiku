@@ -1970,3 +1970,10 @@ span.cancel_search:hover {
     overflow: auto;
     margin-left: 400px;
 }
+
+.upgradeheader{
+background-color:#F4F7D2;
+padding-top:5px;
+padding-bottom:5px;
+text-align:center;
+}

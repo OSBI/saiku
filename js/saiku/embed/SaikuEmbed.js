@@ -172,7 +172,16 @@ SaikuClient.prototype.execute = function(usercall) {
         self.error(jqXHR, textStatus, errorThrown);
       },
       crossDomain: true,
-      async:        true
+      async:        true,
+      beforeSend:   function(request) {
+        if (client && client.user && client.password) {
+          var auth = "Basic " + Base64.encode(
+              client.user + ":" + client.password
+          );
+          request.setRequestHeader('Authorization', auth);
+          return true;
+        }
+      }
       };
     
     $.ajax(params);
