@@ -24,6 +24,7 @@ var Session = Backbone.Model.extend({
     username: null,
     password: null,
     sessionid: null,
+    upgradeTimeout: null,
         
     initialize: function(args, options) {
         // Attach a custom event bus to this model

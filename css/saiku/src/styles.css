@@ -1984,3 +1984,29 @@ span.cancel_search:hover {
     overflow: auto;
     margin-left: 400px;
 }
+
+.upgradeheader {
+    background-color:#F0F0F0;
+    padding: 3px;
+    text-align:center;
+    margin: 0;
+    border: 1px solid #CCC;
+    overflow: hidden;
+}
+.upgradeheader span.close_tab {
+    -moz-background-origin: 0px 2px;
+    background-position: -624px -96px;
+    display: inline-block;
+    height: 18px;
+    text-indent: -9999px;
+    width: 20px;
+
+}
+.upgradeheader span.close_tab:hover {
+    background-position: -690px -96px;
+    cursor: pointer !important;
+    display: inline-block;
+    height: 18px;
+    width: 20px;
+    -moz-background-origin: 0px 2px;
+}
