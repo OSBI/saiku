@@ -98,9 +98,15 @@ if (Settings.BIPLUGIN) {
 
 
     $(document).ready(function() {
-        Saiku.session = new Session();
-        
-        $.getScript(Settings.REST_URL + Saiku.session.username + "/plugin/plugins");        
+    var pluginUrl = Settings.REST_URL + "load/plugin/plugins";
+        if (Settings.DEBUG) {
+            pluginUrl += "?debug=true";
+        }
+        $.getScript(pluginUrl).promise().done(function() {
+                Saiku.session = new Session();
+        }).fail(function() {
+                Saiku.session = new Session();
+        });
     });
 }
 
