@@ -1,17 +1,10 @@
 package org.saiku.plugin.util.packager;
 
-import org.saiku.plugin.util.packager.JSMin;
-import org.saiku.plugin.util.packager.Concatenate;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -20,10 +13,9 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.saiku.plugin.util.packager.Packager.Mode;
 
 public class Packager
@@ -182,19 +174,22 @@ class FileSet
 
   private String minify(Mode mode) throws IOException, NoSuchAlgorithmException
   {
-    InputStream concatenatedStream;
-    FileWriter wout;
-    Reader freader;
-    //FileWriter output;
+    final InputStream concatenatedStream;
     try
     {
+    
+      StringBuffer fileContents = new StringBuffer();
+      for(File f : files) {
+    	String content = FileUtils.readFileToString(f);
+    	fileContents.append(content);
+      }
+      String content = fileContents.toString();
+      byte[] contentBytes = content.getBytes("UTF8");
+      concatenatedStream = new ByteArrayInputStream(contentBytes);
       //output = new FileWriter(location);
       switch (this.filetype)
       {
         case JS:
-          concatenatedStream = Concatenate.concat(this.files.toArray(new File[this.files.size()]));
-          freader = new InputStreamReader(concatenatedStream, "UTF8");
-
           switch (mode)
           {
             case MINIFY:
@@ -202,36 +197,18 @@ class FileSet
               jsmin.jsmin();
               break;
             case CONCATENATE:
-              OutputStream fos = new FileOutputStream(location);
-              byte[] buffer = new byte[4096];
-              while (concatenatedStream.available() > 0)
-              {
-                int read = concatenatedStream.read(buffer, 0, 4096);
-                fos.write(buffer, 0, read);
-              }
+              FileUtils.writeStringToFile(location, content);
           }
           break;
         case CSS:
-          concatenatedStream = Concatenate.concat(this.files.toArray(new File[this.files.size()]));
-          freader = new InputStreamReader(concatenatedStream, "UTF8");
-
-          //FileWriter 
-          wout = new FileWriter(location);
-
-          IOUtils.copy(freader, wout);
-
+          FileUtils.writeStringToFile(location, content);
           //CSSMin.formatFile(freader, new FileOutputStream(location));
-          wout.close();
           break;
       }
-      FileInputStream script = new FileInputStream(location);
-      byte[] fileContent = new byte[(int) location.length()];
-
-      script.read(fileContent);
-
+      
       this.dirty = false;
-
-      this.latestVersion = byteToHex(MessageDigest.getInstance("MD5").digest(fileContent));
+      byte[] writtenFile = FileUtils.readFileToByteArray(location);
+      this.latestVersion = byteToHex(MessageDigest.getInstance("MD5").digest(writtenFile));
 
       return latestVersion;
     }

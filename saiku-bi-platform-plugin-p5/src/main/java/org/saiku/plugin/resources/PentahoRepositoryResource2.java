@@ -15,12 +15,19 @@
  */
 package org.saiku.plugin.resources;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -35,6 +42,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.pentaho.platform.api.engine.IAuthorizationPolicy;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.security.policy.rolebased.actions.AdministerSecurityAction;
@@ -55,6 +63,9 @@ import pt.webdetails.cpf.repository.api.IBasicFileFilter;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
 import pt.webdetails.cpf.repository.api.IUserContentAccess;
 
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataParam;
+
 /**
  * QueryServlet contains all the methods required when manipulating an OLAP Query.
  * @author Paul Stoellberger
@@ -70,6 +81,11 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 	@Autowired
 	private IContentAccessFactory contentAccessFactory;
 
+	public List<IRepositoryObject> getRepository (
+			final @QueryParam("path") String path,
+			final @QueryParam("type") String type) {
+		return getRepository(path, type, false);
+	}
 	/**
 	 * Get Saved Queries.
 	 * @return A list of SavedQuery Objects.
@@ -78,7 +94,8 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 	@Produces({"application/json" })
 	public List<IRepositoryObject> getRepository (
 			final @QueryParam("path") String path,
-			final @QueryParam("type") String type)  
+			final @QueryParam("type") String type,
+			final @QueryParam("showHidden") @DefaultValue("false") Boolean hidden)  
 	{
 		List<IRepositoryObject> objects = new ArrayList<IRepositoryObject>();
 		try {
@@ -88,7 +105,7 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 			
 			IUserContentAccess access = contentAccessFactory.getUserContentAccess("/");
 			String root = (StringUtils.isBlank(path)) ? "/" : path;
-			return getRepositoryObjects(access, root, type);
+			return getRepositoryObjects(access, root, type, hidden);
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 			e.printStackTrace();
@@ -209,132 +226,129 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 		return Response.serverError().build();
 	}	
 
-//	@GET
-//	@Path("/zip")
-//	public Response getResourcesAsZip (
-//			@QueryParam("directory") String directory,
-//			@QueryParam("files") String files) 
-//	{
-//		try {
-//			if (StringUtils.isBlank(directory))
-//				return Response.ok().build();
-//
-//			IPentahoSession userSession = PentahoSessionHolder.getSession();
-//			ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
-//			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//			ZipOutputStream zos = new ZipOutputStream(bos);
-//
-//			String[] fileArray = null;
-//			if (StringUtils.isBlank(files)) {
-//				ISolutionFile dir = repository.getSolutionFile(directory);
-//				for (ISolutionFile fo : dir.listFiles()) {
-//					if (!fo.isDirectory()) {
-//						String entry = fo.getFileName();
-//						if (".saiku".equals(fo.getExtension())) {
-//							byte[] doc = fo.getData();
-//							ZipEntry ze = new ZipEntry(entry);
-//							zos.putNextEntry(ze);
-//							zos.write(doc);
-//						}
-//					}
-//				}
-//			} else {
-//				fileArray = files.split(",");
-//				for (String f : fileArray) {
-//					String resource = directory + "/" + f;
-//					Response r = getResource(resource);
-//					if (Status.OK.equals(Status.fromStatusCode(r.getStatus()))) {
-//						byte[] doc = (byte[]) r.getEntity();
-//						ZipEntry ze = new ZipEntry(f);
-//						zos.putNextEntry(ze);
-//						zos.write(doc);
-//					}
-//				}
-//			}
-//			zos.closeEntry();
-//			zos.close();
-//			byte[] zipDoc = bos.toByteArray();
-//
-//			return Response.ok(zipDoc, MediaType.APPLICATION_OCTET_STREAM).header(
-//					"content-disposition",
-//					"attachment; filename = " + directory + ".zip").header(
-//							"content-length",zipDoc.length).build();
-//
-//
-//		} catch(Exception e){
-//			log.error("Cannot zip resources " + files ,e);
-//			String error = ExceptionUtils.getRootCauseMessage(e);
-//			return Response.serverError().entity(error).build();
-//		}
-//
-//	}
-//
-//	@POST
-//	@Path("/zipupload")
-//	@Consumes(MediaType.MULTIPART_FORM_DATA)
-//	public Response uploadArchiveZip(
-//			@QueryParam("test") String test,
-//			@FormDataParam("file") InputStream uploadedInputStream,
-//			@FormDataParam("file") FormDataContentDisposition fileDetail, 
-//			@FormDataParam("directory") String directory) 
-//	{
-//		String zipFile = fileDetail.getFileName();
-//		String output = "";
-//		try {
-//			if (StringUtils.isBlank(zipFile))
-//				throw new Exception("You must specify a zip file to upload");
-//
-//			output = "Uploding file: " + zipFile + " ...\r\n";
-//			ZipInputStream zis = new ZipInputStream(uploadedInputStream);
-//			ZipEntry ze = zis.getNextEntry();
-//			byte[] doc = null;
-//			boolean isFile = false;
-//			if (ze == null) {
-//				doc = IOUtils.toByteArray(uploadedInputStream);
-//				isFile = true;
-//			}
-//			while (ze != null || doc != null) {
-//				String fileName = null; 
-//				if (!isFile) {
-//					fileName = ze.getName();
-//					doc = IOUtils.toByteArray(zis);
-//				} else {
-//					fileName = zipFile;
-//				}
-//
-//				output += "Saving " + fileName + "... ";
-//				String fullPath = (StringUtils.isNotBlank(directory)) ? directory + "/" + fileName : fileName;		    	   
-//
-//				String content = new String(doc);
-//				Response r = saveResource(fullPath, content);
-//				doc = null;
-//
-//				if (Status.OK.getStatusCode() != r.getStatus()) {
-//					output += " ERROR: " + r.getEntity().toString() + "\r\n";
-//				} else {
-//					output += " OK\r\n";
-//				}
-//				if (!isFile)
-//					ze = zis.getNextEntry();
-//			}
-//
-//			if (!isFile) {
-//				zis.closeEntry();
-//				zis.close();
-//			}
-//			uploadedInputStream.close();
-//
-//			output += " SUCCESSFUL!\r\n";
-//			return Response.ok(output).build();
-//
-//		} catch(Exception e){
-//			log.error("Cannot unzip resources " + zipFile ,e);
-//			String error = ExceptionUtils.getRootCauseMessage(e);
-//			return Response.serverError().entity(output + "\r\n" + error).build();
-//		}	
-//	}
+	@GET
+	@Path("/zip")
+	public Response getResourcesAsZip (
+			@QueryParam("directory") String directory,
+			@QueryParam("files") String files,
+			@QueryParam("type") String type) 
+	{
+		try {
+			if (StringUtils.isBlank(directory))
+				return Response.ok().build();
 
-	private List<IRepositoryObject> getRepositoryObjects(final IUserContentAccess root, final String path, final String type) throws Exception {
+			final String fileType = type;
+			IUserContentAccess access = contentAccessFactory.getUserContentAccess(null);
+			
+			if( !access.fileExists(directory) && access.hasAccess(directory, FileAccess.READ)) {
+				throw new SaikuServiceException("Access to Repository has failed File does not exist or no read right: " + directory);
+			}
+			
+			IBasicFileFilter txtFilter = StringUtils.isBlank(type) ? null : new IBasicFileFilter() {
+				public boolean accept(IBasicFile file) {
+					return file.isDirectory() || file.getExtension().equals(fileType);
+				}
+			};
+			
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ZipOutputStream zos = new ZipOutputStream(bos);
+
+			List<IBasicFile> basicFiles = access.listFiles(directory, txtFilter);
+			
+			for (IBasicFile basicFile : basicFiles) {
+				if (!basicFile.isDirectory()) {
+					String entry = basicFile.getName();
+					byte[] doc = IOUtils.toByteArray(basicFile.getContents());
+					ZipEntry ze = new ZipEntry(entry);
+					zos.putNextEntry(ze);
+					zos.write(doc);
+					
+				}
+			}
+			
+			zos.closeEntry();
+			zos.close();
+			byte[] zipDoc = bos.toByteArray();
+
+			return Response.ok(zipDoc, MediaType.APPLICATION_OCTET_STREAM).header(
+					"content-disposition",
+					"attachment; filename = " + directory + ".zip").header(
+							"content-length",zipDoc.length).build();
+
+
+		} catch(Exception e){
+			log.error("Cannot zip resources " + files ,e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return Response.serverError().entity(error).build();
+		}
+
+	}
+
+	@POST
+	@Path("/zipupload")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response uploadArchiveZip(
+			@FormDataParam("file") InputStream uploadedInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail, 
+			@FormDataParam("directory") String directory) 
+	{
+		String zipFile = fileDetail.getFileName();
+		String output = "";
+		try {
+			if (StringUtils.isBlank(zipFile))
+				throw new Exception("You must specify a zip file to upload");
+
+			output = "Uploding file: " + zipFile + " ...\r\n";
+			ZipInputStream zis = new ZipInputStream(uploadedInputStream);
+			ZipEntry ze = zis.getNextEntry();
+			byte[] doc = null;
+			boolean isFile = false;
+			if (ze == null) {
+				doc = IOUtils.toByteArray(uploadedInputStream);
+				isFile = true;
+			}
+			while (ze != null || doc != null) {
+				String fileName = null; 
+				if (!isFile) {
+					fileName = ze.getName();
+					doc = IOUtils.toByteArray(zis);
+				} else {
+					fileName = zipFile;
+				}
+
+				output += "Saving " + fileName + "... ";
+				String fullPath = (StringUtils.isNotBlank(directory)) ? directory + "/" + fileName : fileName;		    	   
+
+				String content = new String(doc);
+				Response r = saveResource(fullPath, content);
+				doc = null;
+
+				if (Status.OK.getStatusCode() != r.getStatus()) {
+					output += " ERROR: " + r.getEntity().toString() + "\r\n";
+				} else {
+					output += " OK\r\n";
+				}
+				if (!isFile)
+					ze = zis.getNextEntry();
+			}
+
+			if (!isFile) {
+				zis.closeEntry();
+				zis.close();
+			}
+			uploadedInputStream.close();
+
+			output += " SUCCESSFUL!\r\n";
+			return Response.ok(output).build();
+
+		} catch(Exception e){
+			log.error("Cannot unzip resources " + zipFile ,e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return Response.serverError().entity(output + "\r\n" + error).build();
+		}	
+	}
+
+	private List<IRepositoryObject> getRepositoryObjects(final IUserContentAccess root, final String path, final String type, final Boolean hidden) throws Exception {
 		List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
 		IBasicFileFilter txtFilter = StringUtils.isBlank(type) ? null : new IBasicFileFilter() {
 			public boolean accept(IBasicFile file) {
@@ -349,7 +363,7 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 				files.add(bf);
 				log.debug("Found file in " + path);
 			} else {
-				files = root.listFiles(path, txtFilter, 0, true);
+				files = root.listFiles(path, txtFilter, 0, true, hidden);
 				log.debug("Found files in " + path + " : " + files.size());
 			}
 		}
@@ -372,7 +386,7 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 				String extension = file.getExtension();
 				repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath, acls));
 			} else { 
-				repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepositoryObjects(root, relativePath, type)));
+				repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepositoryObjects(root, relativePath, type, hidden)));
 			}
 			Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
 
