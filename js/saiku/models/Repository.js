@@ -49,7 +49,7 @@ var RepositoryAclObject = Backbone.Model.extend( {
 
 var RepositoryZipExport = Backbone.Model.extend( {
     url: function( ) {
-        var segment = repoPathUrl() + "/resource/zip";
+        var segment = repoPathUrl() + "/zip";
         return segment;
     }
 } );

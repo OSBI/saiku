@@ -186,7 +186,7 @@ var OpenDialog = Modal.extend({
         var file = this.selected_folder;
         if (typeof file != "undefined" && file != "") {
             var url = Settings.REST_URL + (new RepositoryZipExport({ directory : file })).url();
-            window.open(url + "?directory=" + file);
+            window.open(url + "?directory=" + file + "&type=saiku");
         }
     },
 

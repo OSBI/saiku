@@ -100,5 +100,7 @@
     "Unsaved query": "Новый запрос",
     "Drill through current query": "Детализировать текущий запрос",
     "Select a cube": "Выберите куб",
-    "Open": "Открыть"
+    "Open": "Открыть",
+    "Reset query":"Сброс запроса",
+    "Edit query":"Редактировать запрос"
 }
