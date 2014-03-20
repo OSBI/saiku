@@ -49,7 +49,6 @@ var Upgrade = Backbone.View.extend({
         }
 
         var current = (new Date()).getTime();
-        console.log("timeout: " + (!timeout) + " localstorage: " + localStorageUsed + " : diff " + (current - timeout));
         if (!timeout || (current - timeout) > (10 * 60 * 1000)) {
             $(this.el).html(this.template());
             Saiku.session.upgradeTimeout = current;
