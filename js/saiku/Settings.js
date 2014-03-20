@@ -173,6 +173,7 @@ if (window.location.hostname && (window.location.hostname == "dev.analytical-lab
     Settings.USERNAME = "admin";
     Settings.PASSWORD = "admin";
     Settings.DEMO = true;
+    Settings.UPGRADE = false;
 }
 
 var isIE = (function(){
