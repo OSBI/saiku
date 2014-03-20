@@ -83,7 +83,6 @@ if (! Settings.BIPLUGIN) {
         });
 
         Saiku.toolbar = new Toolbar();
-        Saiku.upgrade = new Upgrade();
     });
 }
 

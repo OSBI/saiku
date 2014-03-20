@@ -31,12 +31,30 @@ var Upgrade = Backbone.View.extend({
     },
     
     initialize: function() {
-        this.render();
 
     },
     
     render: function() {
-        $(this.el).html(this.template());
+        var timeout = Saiku.session.upgradeTimeout;
+        var localStorageUsed = false;
+        var first = true;
+        if (typeof localStorage !== "undefined" && localStorage) {
+            if (localStorage.getItem("saiku.upgradeTimeout") !== null) {
+                timeout = localStorage.getItem("saiku.upgradeTimeout");
+            }
+            localStorageUsed = true;
+        }
+
+        var current = (new Date()).getTime();
+        console.log("timeout: " + (!timeout) + " localstorage: " + localStorageUsed + " : diff " + (current - timeout));
+        if (!timeout || (current - timeout) > (10 * 60 * 1000)) {
+            $(this.el).html(this.template());
+            Saiku.session.upgradeTimeout = current;
+            if (typeof localStorage !== "undefined" && localStorage) {
+                localStorage.setItem("saiku.upgradeTimeout", current);
+            }
+        }
+        
 
         return this;
     },
