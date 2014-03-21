@@ -120,3 +120,33 @@
   background: #c2d5e2 !important;
 }
 
+/*For some weird reason you can not have all css queries
+separated by commas, and have just one of these...*/
+.workspace_results:fullscreen {
+  width: 100%;
+  height: 100%;
+  background-color: #FFF;  
+}
+.workspace_results:-moz-full-screen {
+  width: 100%;
+  height: 100%;
+  background-color: #FFF;
+}
+.workspace_results:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+  background-color: #FFF;
+}
+.workspace_results:fullscreen table {
+    margin: 0 auto;
+    font-size: 200%;
+}
+.workspace_results:-webkit-full-screen table {
+    margin: 0 auto;
+    font-size: 200%;
+}
+.workspace_results:-moz-full-screen table {
+    margin: 0 auto;
+    font-size: 200%;
+}
+
