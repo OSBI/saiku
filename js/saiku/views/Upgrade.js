@@ -63,7 +63,6 @@ var Upgrade = Backbone.View.extend({
     
     call: function(e) {
         $(".upgradeheader").slideUp("slow");
-        setTimeout("showIt()",15000);
     }
 
 });
