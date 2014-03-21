@@ -14,7 +14,7 @@
 			<Property>htmlObject</Property>
 			<Property>width</Property>
 			<Property>height</Property>
-			<Property>parameters</Property>
+<!-- 			<Property>parameters</Property> -->
 			<Property>listeners</Property>
 			<Property>preExecution</Property>
 			<Property>postExecution</Property>
