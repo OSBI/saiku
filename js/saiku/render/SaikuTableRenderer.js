@@ -34,7 +34,7 @@ SaikuTableRenderer.prototype._render = function(data, options) {
                     self._options['batchSize'] = 1000;
                 }
 
-                var html =  self.internalRender(self._data.cellset, self._options);
+                var html =  self.internalRender(self._data, self._options);
                 $(self._options.htmlObject).html(html);
                 _.defer(function(that) {
                     if (self._options.hasOwnProperty('batch') && self._options.hasBatchResult) {                        
@@ -73,7 +73,7 @@ SaikuTableRenderer.prototype._render = function(data, options) {
                 return html;
             });
         } else {
-            var html =  this.internalRender(this._data.cellset, self._options);
+            var html =  this.internalRender(this._data, self._options);
             return html;
         }
         
