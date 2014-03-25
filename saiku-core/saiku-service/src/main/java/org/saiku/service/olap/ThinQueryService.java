@@ -221,7 +221,7 @@ public class ThinQueryService implements Serializable {
 		}
 	}
 
-	public ThinQuery updateQuery(ThinQuery old) throws SQLException {
+	public ThinQuery updateQuery(ThinQuery old) throws Exception {
 		if (ThinQuery.Type.QUERYMODEL.equals(old.getType())) {
 			Cube cub = olapDiscoverService.getNativeCube(old.getCube());
 			Query q = Fat.convert(old, cub);

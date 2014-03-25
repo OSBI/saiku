@@ -10,14 +10,16 @@ public class ThinHierarchy extends AbstractThinSortableQuerySet implements Named
 
 	private String name;
 	private String caption;
+	private String dimension;
 	
 	private Map<String, ThinLevel> levels = new HashMap<String, ThinLevel>();
 	
 	public ThinHierarchy() {};
 	
-	public ThinHierarchy(String name, String caption,Map<String, ThinLevel> levels) {
-		this.name = name;
+	public ThinHierarchy(String uniqueName, String caption, String dimension, Map<String, ThinLevel> levels) {
+		this.name = uniqueName;
 		this.caption = caption;
+		this.dimension = dimension;
 		if (levels != null) {
 			this.levels = levels;
 		}
@@ -68,6 +70,20 @@ public class ThinHierarchy extends AbstractThinSortableQuerySet implements Named
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * @return the dimension
+	 */
+	public String getDimension() {
+		return dimension;
+	}
+
+	/**
+	 * @param dimension the dimension to set
+	 */
+	public void setDimension(String dimension) {
+		this.dimension = dimension;
 	}
 
 }

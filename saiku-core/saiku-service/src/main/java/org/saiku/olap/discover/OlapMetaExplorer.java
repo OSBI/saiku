@@ -247,7 +247,7 @@ public class OlapMetaExplorer {
 
 	public SaikuHierarchy getHierarchy(SaikuCube cube, String hierarchyName) throws SaikuOlapException {
 		Cube nativeCube = getNativeCube(cube);
-		Hierarchy h = nativeCube.getHierarchies().get(hierarchyName);
+		Hierarchy h = findHierarchy(hierarchyName, nativeCube);
 		if (h != null) {
 			return ObjectUtil.convert(h);
 		}
@@ -257,7 +257,7 @@ public class OlapMetaExplorer {
 	public List<SaikuMember> getHierarchyRootMembers(SaikuCube cube, String hierarchyName) throws SaikuOlapException {
 		Cube nativeCube = getNativeCube(cube);
 		List<SaikuMember> members = new ArrayList<SaikuMember>();
-		Hierarchy h = nativeCube.getHierarchies().get(hierarchyName);
+		Hierarchy h = findHierarchy(hierarchyName, nativeCube);
 
 		if (h == null) {
 			for (Hierarchy hlist : nativeCube.getHierarchies()) {
@@ -308,7 +308,7 @@ public class OlapMetaExplorer {
 		try {
 			Cube nativeCube = getNativeCube(cube);
 			OlapConnection con = nativeCube.getSchema().getCatalog().getDatabase().getOlapConnection();
-			Hierarchy h = nativeCube.getHierarchies().get(hierarchy);
+			Hierarchy h = findHierarchy(hierarchy, nativeCube);
 			
 			boolean search = StringUtils.isNotBlank(searchString);
 			int found = 0;
@@ -430,6 +430,19 @@ public class OlapMetaExplorer {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	private Hierarchy findHierarchy(String name, Cube cube) {
+		Hierarchy h = cube.getHierarchies().get(name);
+		if (h != null) {
+			return h;
+		}
+		for (Hierarchy hierarchy : cube.getHierarchies()) {
+			if (hierarchy.getUniqueName().equals(name)) {
+				return hierarchy;
+			}
+		}
+		return null;
 	}
 
 }

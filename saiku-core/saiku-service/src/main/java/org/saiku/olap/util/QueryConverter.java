@@ -72,9 +72,9 @@ public class QueryConverter {
 		for (Selection sel : qD.getInclusions()) {
 			if (first) {
 				if ((sel.getRootElement() instanceof Member)) {
-					hierarchyName = ((Member) sel.getRootElement()).getHierarchy().getName();
+					hierarchyName = ((Member) sel.getRootElement()).getHierarchy().getUniqueName();
 				} else {
-					hierarchyName = ((Level) sel.getRootElement()).getHierarchy().getName();
+					hierarchyName = ((Level) sel.getRootElement()).getHierarchy().getUniqueName();
 				}
 				
 				qh = sQuery.getHierarchy(hierarchyName);

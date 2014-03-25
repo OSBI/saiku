@@ -50,7 +50,7 @@ import org.saiku.query.metadata.CalculatedMeasure;
 
 public class Thin {
 	
-	public static ThinQuery convert(Query query, SaikuCube cube) {
+	public static ThinQuery convert(Query query, SaikuCube cube) throws Exception {
 		ThinQueryModel tqm = convert(query);
 		ThinQuery tq = new ThinQuery(query.getName(), cube, tqm);
 		if (query.getParameters() != null) {
@@ -150,7 +150,7 @@ public class Thin {
 	}
 
 	private static ThinHierarchy convertHierarchy(QueryHierarchy qh) {
-		ThinHierarchy th = new ThinHierarchy(qh.getName(), qh.getCaption(), convertLevels(qh.getActiveQueryLevels()));
+		ThinHierarchy th = new ThinHierarchy(qh.getUniqueName(), qh.getCaption(), qh.getHierarchy().getDimension().getName(), convertLevels(qh.getActiveQueryLevels()));
 		extendSortableQuerySet(th, qh);
 		return th;
 	}

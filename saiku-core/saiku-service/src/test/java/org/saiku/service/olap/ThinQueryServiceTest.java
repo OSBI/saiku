@@ -20,7 +20,6 @@ import org.olap4j.CellSetAxis;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Measure;
 import org.saiku.TestSaikuContext;
-import org.saiku.TestUtil;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.query2.ThinLevel;
 import org.saiku.olap.query2.ThinQuery;
@@ -80,7 +79,7 @@ public class ThinQueryServiceTest {
 			Query query = new Query(name, cub);
 			QueryAxis columns = query.getAxis(Axis.COLUMNS);
 			QueryAxis rows = query.getAxis(Axis.ROWS);
-			QueryHierarchy products = query.getHierarchy("Product");
+			QueryHierarchy products = query.getHierarchy("[Product]");
 
 			products.includeLevel("Product Family");
 			products.excludeMember("[Product].[Non-Consumable]");
@@ -88,11 +87,11 @@ public class ThinQueryServiceTest {
 			products.addFilter(top2filter);
 			columns.addHierarchy(products);
 
-			QueryHierarchy edu = query.getHierarchy("Education Level");
+			QueryHierarchy edu = query.getHierarchy("[Education Level]");
 			edu.includeLevel("Education Level");
 			columns.addHierarchy(edu);
 
-			QueryHierarchy gender = query.getHierarchy("Gender");
+			QueryHierarchy gender = query.getHierarchy("[Gender]");
 			gender.includeMember("[Gender].[F]");
 			rows.addHierarchy(gender);
 
@@ -161,17 +160,17 @@ public class ThinQueryServiceTest {
 			Query query = new Query(name, cub);
 			QueryAxis columns = query.getAxis(Axis.COLUMNS);
 			QueryAxis rows = query.getAxis(Axis.ROWS);
-			QueryHierarchy products = query.getHierarchy("Product");
+			QueryHierarchy products = query.getHierarchy("[Product]");
 			products.includeLevel("Product Family");
 			products.excludeMember("[Product].[Non-Consumable]");
 			rows.addHierarchy(products);
 
-			QueryHierarchy edu = query.getHierarchy("Education Level");
+			QueryHierarchy edu = query.getHierarchy("[Education Level]");
 			edu.includeLevel("Education Level");
 			columns.addHierarchy(edu);
 
 			ThinQuery tq = Thin.convert(query, c);
-			ThinLevel tl = tq.getQueryModel().getAxis(AxisLocation.ROWS).getHierarchy("Product").getLevel("Product Family");
+			ThinLevel tl = tq.getQueryModel().getAxis(AxisLocation.ROWS).getHierarchy("[Product]").getLevel("Product Family");
 			tl.getSelection().setParameterName("productFamilyList");
 			tq.setParameter("productFamilyList", "[Product].[Food]");
 

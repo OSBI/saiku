@@ -24,8 +24,9 @@
           "sortOrder" : null,
           "sortEvaluationLiteral" : null,
           "hierarchizeMode" : null,
-          "name" : "Education Level",
+          "name" : "[Education Level]",
           "caption" : "Education Level",
+          "dimension" : "Education Level",
           "levels" : {
             "Education Level" : {
               "mdx" : null,
@@ -51,8 +52,9 @@
           "sortOrder" : null,
           "sortEvaluationLiteral" : null,
           "hierarchizeMode" : null,
-          "name" : "Product",
+          "name" : "[Product]",
           "caption" : "Product",
+          "dimension" : "Product",
           "levels" : {
             "Product Family" : {
               "mdx" : null,
