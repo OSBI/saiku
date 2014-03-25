@@ -196,11 +196,10 @@
             <li class='parent_dimension'>
                 <span class="root collapsed sprite"></span>
                 <a class="folder_collapsed sprite" href="#" title="<%= dimension.description ? dimension.description : dimension.caption %>"><%= dimension.caption %></a>
-                
                 <ul>
                 <% _.each(dimension.hierarchies, function(hierarchy) { %>
                     <% if (typeof hierarchy["visible"] == "undefined" || hierarchy["visible"]) { %>
-                        <% if (dimension.hierarchies.length > 1) { %>
+                        <% if (!Settings.DIMENSION_SHOW_REDUCED && dimension.hierarchies.length > 1) { %>
                             <li class="hierarchy hide">
                                 <a class="dimension" title="<%= hierarchy.description ? hierarchy.description : hierarchy.caption %>" href="#"  hierarchy="<%= hierarchy.name %>"><%= hierarchy.caption %></a>
                             </li>
