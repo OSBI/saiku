@@ -25,7 +25,7 @@
 html, body {
     background: #FFF;
     height: 100%;
-    min-width: 1052px;
+    min-width: 960px;
     min-height: 600px;
     overflow: auto;
     text-align: left;
