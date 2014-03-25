@@ -313,7 +313,7 @@
                 <% if (typeof cube != "undefined" && cube && cube.dimensions) { %>
                     <%= _.template($("#template-measures").html(), { measures: cube.measures }) %>
                 <% } else { %>
-                    
+                    <span class="i18n loading hide">Loading...</span>
                 <% } %>
                 <div class="calculated_measures" style="display:none;"></div>
             </div>
@@ -322,7 +322,7 @@
                 <% if (typeof cube != "undefined" && cube && cube.dimensions) { %>
                     <%=  _.template($("#template-dimensions").html(), { dimensions: cube.dimensions }) %>
                 <% } else { %>
-                    
+                    <span class="i18n loading hide">Loading...</span>
                 <% } %>
 
             </div>

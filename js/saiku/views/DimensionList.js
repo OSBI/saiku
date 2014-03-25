@@ -54,6 +54,7 @@ var DimensionList = Backbone.View.extend({
         } else {
             var template = _.template($("#template-attributes").html());
             $(this.el).html(template);
+            $(this.el).find(".loading").removeClass("hide");
             this.workspace.bind('cube:loaded',  this.load_dimension);
         }
 
