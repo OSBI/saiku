@@ -204,13 +204,13 @@
                                 <a class="dimension" title="<%= hierarchy.description ? hierarchy.description : hierarchy.caption %>" href="#"  hierarchy="<%= hierarchy.name %>"><%= hierarchy.caption %></a>
                             </li>
                         <% } %>
-                        <ul class="d_hierarchy" hierarchy="<%= hierarchy.name %>" hierarchycaption="<%= hierarchy.caption %>">
+                        <ul class="d_hierarchy" hierarchy="<%= hierarchy.uniqueName %>" hierarchycaption="<%= hierarchy.caption %>">
                         <div class="hgroup treehidden"><%= hierarchy.caption %></div>
                         <% _.each(hierarchy.levels, function(level) { %>
                             <% if ((Settings.DIMENSION_SHOW_ALL || level.name != "(All)") && (typeof level["visible"] == "undefined" || level["visible"])) { %>
                                 <li class="hide d_level">
-                                <a title="<%= level.description ? level.description : level.caption %>" level="<%= level.name %>" hierarchy="<%= hierarchy.name %>"
-                                    class="level" href="#<%= encodeURIComponent(hierarchy.name) %>/<%= encodeURIComponent(level.name) %>"><%= level.caption %></a>
+                                <a title="<%= level.description ? level.description : level.caption %>" level="<%= level.name %>" hierarchy="<%= hierarchy.uniqueName %>"
+                                    class="level" href="#<%= encodeURIComponent(hierarchy.uniqueName) %>/<%= encodeURIComponent(level.name) %>"><%= level.caption %></a>
                                 </li>
                             <% } %>
                         <% }); %>
