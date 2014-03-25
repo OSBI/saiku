@@ -299,7 +299,7 @@ textarea, select {
 .sidebar {
     float: left;
     overflow: auto;
-    width: 260px;
+    width: 240px;
 }
 .sidebar h3 {
     background: #F9F9F9;
@@ -490,7 +490,7 @@ textarea, select {
 /** Tab Workspace Inner */
 
 .workspace_inner {
-    margin-left: 261px;
+    margin-left: 241px;
     /*overflow: auto;*/
 }
 
