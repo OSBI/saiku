@@ -41,7 +41,6 @@ var DimensionList = Backbone.View.extend({
     load_dimension: function() {
         this.template = this.cube.get('template_attributes');
         this.render_attributes();
-
         this.workspace.sync_query();
     },
     
