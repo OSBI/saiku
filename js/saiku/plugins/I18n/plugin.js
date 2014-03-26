@@ -21,8 +21,12 @@ Saiku.i18n = {
     locale: (navigator.language || navigator.browserLanguage ||
         navigator.systemLanguage || navigator.userLanguage).substring(0, 2).toLowerCase(),
     po_file: {},
-    translate: function () {
-        $('.i18n').i18n(Saiku.i18n.po_file);
+    translate: function (specificElement) {
+        if (specificElement) {
+            $(specificElement).find('.i18n').i18n(Saiku.i18n.po_file);
+        } else {
+            $('.i18n').i18n(Saiku.i18n.po_file);
+        }
     },
     automatic_i18n: function () {
         // Load language file if it isn't English

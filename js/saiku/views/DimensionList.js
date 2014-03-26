@@ -51,6 +51,7 @@ var DimensionList = Backbone.View.extend({
     load_dimension: function() {
         this.template = this.dimension.get('template_' + this.type);
         this.render(); 
+        Saiku.i18n.translate(this.el);
         this.workspace.trigger('dimensions:loaded', $(this.el));
 
     },
