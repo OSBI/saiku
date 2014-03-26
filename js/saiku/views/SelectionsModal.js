@@ -274,8 +274,9 @@ var SelectionsModal = Modal.extend({
     
     post_render: function(args) {
         var left = ($(window).width() - 1000)/2;
+        var width = $(window).width() < 1040 ? $(window).width() : 1040;
         $(args.modal.el).parents('.ui-dialog')
-            .css({ width: 1040, left: "inherit", margin:"0", height: 465 })
+            .css({ width: width, left: "inherit", margin:"0", height: 465 })
             .offset({ left: left});
     },
     
