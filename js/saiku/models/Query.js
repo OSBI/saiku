@@ -87,10 +87,19 @@ var Query = Backbone.Model.extend({
         if (exModel.queryType == "OLAP") {
             if (exModel.type == "QUERYMODEL") {
                 var columnsOk = Object.keys(exModel.queryModel.axes['COLUMNS'].hierarchies).length > 0;
+                var rowsOk = Object.keys(exModel.queryModel.axes['ROWS'].hierarchies).length > 0;
                 var detailsOk = exModel.queryModel.details.axis == 'COLUMNS' && exModel.queryModel.details.measures.length > 0;
+                if (!rowsOk || !columnsOk || !detailsOk) {
+                    errorMessage = "";
+                }
                 if (!columnsOk && !detailsOk) {
-                    errorMessage = '<span class="i18n">You need to include at least one measure or a level on columns for a valid query.</span>';
-                } else if (columnsOk || detailsOk) {
+                    errorMessage += '<span class="i18n">You need to include at least one measure or a level on columns for a valid query.</span>';
+                }
+                if(!rowsOk) {
+                    errorMessage += '<span class="i18n">You need to include at least one level on rows for a valid query.</span>';
+
+                } 
+                if ( (columnsOk || detailsOk) && rowsOk) {
                     validated = true;
                 }
 
