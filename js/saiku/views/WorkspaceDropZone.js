@@ -364,7 +364,8 @@ var WorkspaceDropZone = Backbone.View.extend({
                             "BDESCQuick": {name: "Descending (Breaking Hierarchy)", i18n: true, items: addFun(items, "BDESC") },
                             "customsort" : { name: "Custom...", i18n: true },
                             "clearsort" : {name: "Clear Sort", i18n: true }
-                        }}
+                        }},
+                        "cancel" : { name: "Cancel", i18n: true }
                 };
 				
                 $.each(citems, function(key, item){
@@ -397,6 +398,10 @@ var WorkspaceDropZone = Backbone.View.extend({
 
                 return {
                     callback: function(key, options) {
+                            if (key == "cancel") {
+                                return;
+                            }
+
                             if (key == "clearfilter") {
                                 $target.removeClass('on');
                                 self.workspace.query.helper.removeFilter(a, 'Generic');
