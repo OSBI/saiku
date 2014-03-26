@@ -57,9 +57,7 @@ var Query = Backbone.Model.extend({
             this.uuid = response.name;
         }
         this.model = _.extend(this.model, response);
-        this.model.properties = _.extend(this.model.properties, Settings.QUERY_PROPERTIES);
-
-
+        this.model.properties = _.extend({}, Settings.QUERY_PROPERTIES, this.model.properties);
     },
     
     setProperty: function(key, value) {
