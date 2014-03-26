@@ -150,7 +150,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             var measures = model.queryModel.details.measures || [];
             _.each(measures, function (measure) {
                 var m = $(self.workspace.dimension_list.el).find('.measure_tree a.measure[measure="' + measure.name + '"]').parent();
-                var m2 = m.clone();
+                var m2 = m.clone().show();
                 m2.appendTo( $(self.el).find('.fields_list_body.details ul.connectable'));
 
                 m.draggable('disable');
