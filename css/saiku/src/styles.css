@@ -398,13 +398,15 @@ textarea, select {
 .measure_tree ul li a.folder_collapsed {
     background: #fff;
 }
-.dimension_tree ul li ul,
-.measure_tree ul li ul {
+.dimension_tree ul li ul {
     padding: 0 0 0 18px;
     margin: 0;
 }
-.dimension_tree ul li ul li,
-.measure_tree ul li ul li {
+.measure_tree ul li ul {
+    padding: 0 0 0 10px;
+    margin: 0;   
+}
+.dimension_tree ul li ul li {
     padding-left: 18px;
 }
 .dimension_tree ul li ul li a {
