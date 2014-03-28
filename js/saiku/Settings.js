@@ -55,6 +55,7 @@ var Settings = {
     MEMBERS_LIMIT: 3000,
     MEMBERS_SEARCH_LIMIT: 75,
     ALLOW_IMPORT_EXPORT: false,
+    ALLOW_PARAMETERS: false,
     PLUGINS: [
         "Chart"
     ],

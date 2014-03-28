@@ -562,14 +562,19 @@ var WorkspaceToolbar = Backbone.View.extend({
 
     },
 
+
+
     post_mdx_transform: function() {
         var self = this;
 
-        this.workspace.query.enrich();
-        this.workspace.query.model.queryModel = {};
-        this.workspace.query.model.type = "MDX";
-        this.workspace.query.setProperty('saiku.olap.result.formatter', 'flat');
+        if (this.workspace.query.model.type !== "MDX") {
+            this.workspace.query.enrich();
+            this.workspace.query.model.queryModel = {};
+            this.workspace.query.model.type = "MDX";
+            this.workspace.query.setProperty('saiku.olap.result.formatter', 'flat');
+            self.workspace.query.helper.model().parameters = {};
 
+        }
         var mdx = this.workspace.query.model.mdx;
 
         if (self.editor) {
@@ -578,6 +583,53 @@ var WorkspaceToolbar = Backbone.View.extend({
             self.editor.focus();
         }
         $(self.el).find('.group_parents').removeClass('on');
+        
+        if (Settings.ALLOW_PARAMETERS) {
+
+            var parameterDetector = function() {
+                var mdx = self.editor.getValue();
+                var parameters = [];
+                if (mdx) {
+                    for (var i = 0, len = mdx.length; i < (len-1); i++ ) {
+                        if (mdx[i] === "$" && mdx[i+1] === "{") {
+                            var param = "";
+                            var closed = false;
+                            for(i = i + 2; i < len; i++) {
+                                if (mdx[i] !== '}') {
+                                    param += mdx[i];
+                                } else {
+                                    closed = true;
+                                    i++;
+                                    break;
+                                }
+                            }
+                            if (closed && param && param.length > 0) {
+                                parameters.push(param);
+                            }
+                        }
+                    }
+                }
+                var qParams = self.workspace.query.helper.model().parameters;
+                var newParams = {};
+                _.each(parameters, function(p) {
+                    if (!qParams[p]) {
+                        newParams[p] = "";
+                    } else {
+                        newParams[p] = qParams[p];
+                    }
+
+                });
+                self.workspace.query.helper.model().parameters = newParams;
+                self.workspace.update_parameters();
+
+                
+            };
+
+            var lazyDetector = function() { _.delay(parameterDetector, 1000); };
+            self.editor.getSession().off('change', lazyDetector);
+            self.editor.getSession().on('change', lazyDetector);
+            self.workspace.update_parameters();
+        }
 
     },
 

@@ -193,6 +193,7 @@ var Workspace = Backbone.View.extend({
         $(this.el).find('.workspace_results table,.connectable')
             .html('');
         $(this.el).find('.workspace_results_info').empty();
+        $(this.el).find('.parameter_input').empty();
         $(this.chart.el).find('div.canvas').empty();
         $(this.querytoolbar.el).find('ul.options a.on').removeClass('on');
         $(this.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
@@ -429,30 +430,35 @@ var Workspace = Backbone.View.extend({
     },
 
     sync_query: function(dimension_el) {
-        var self = this;
-        var dimlist = dimension_el ? dimension_el : $(self.dimension_list.el);
+
+        var model = this.query.helper.model();
+        if (model.type === "QUERYMODEL") {
+
+            var self = this;
+            var dimlist = dimension_el ? dimension_el : $(self.dimension_list.el);
+                    
+            if (!self.isReadOnly && (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view"))) {
+                dimlist.find('.selected').removeClass('selected');
+
+                var cms = self.query.helper.getCalculatedMeasures();
+                if (cms && cms.length > 0) {
+                    var template = _.template($("#template-calculated-measures").html(),{ measures: cms });
+                    dimlist.find('.calculated_measures').html(template);
+                    dimlist.find('.calculated_measures').find('.measure').parent('li').draggable({
+                        cancel: '.not-draggable',
+                        connectToSortable: $(self.el).find('.fields_list_body.details ul.connectable'),
+                        helper: 'clone',
+                        placeholder: 'placeholder',
+                        opacity: 0.60,
+                        tolerance: 'touch',
+                        containment:    $(self.el),
+                        cursorAt: { top: 10, left: 35 }
+                    });        
+                }
+
+                self.drop_zones.synchronize_query();
                 
-        if (!self.isReadOnly && (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view"))) {
-            dimlist.find('.selected').removeClass('selected');
-
-            var cms = self.query.helper.getCalculatedMeasures();
-            if (cms && cms.length > 0) {
-                var template = _.template($("#template-calculated-measures").html(),{ measures: cms });
-                dimlist.find('.calculated_measures').html(template);
-                dimlist.find('.calculated_measures').find('.measure').parent('li').draggable({
-                    cancel: '.not-draggable',
-                    connectToSortable: $(self.el).find('.fields_list_body.details ul.connectable'),
-                    helper: 'clone',
-                    placeholder: 'placeholder',
-                    opacity: 0.60,
-                    tolerance: 'touch',
-                    containment:    $(self.el),
-                    cursorAt: { top: 10, left: 35 }
-                });        
             }
-
-            self.drop_zones.synchronize_query();
-            
         }
         Saiku.i18n.translate();
 
@@ -628,8 +634,41 @@ var Workspace = Backbone.View.extend({
         }
     },
 
-    render_result: function(args) {
+    update_parameters: function () {
+        var self = this;
+        if (!Settings.ALLOW_PARAMETERS)
+            return;
 
+        var paramDiv = "<span class='i18n'>Parameters</span>: ";
+        var parameters = this.query.helper.model().parameters;
+        var hasParams = false;
+        for (var key in parameters) {
+            var val = "";
+            if (parameters[key] && parameters[key] != null) {
+                val = parameters[key];
+            }
+            paramDiv += "<b>" + key + "</b> <input type='text' placeholder='" + key + "' value='" + val + "' />";
+            hasParams = true;
+        }
+        paramDiv +="";
+
+        if (hasParams) {
+            $(this.el).find('.parameter_input').html(paramDiv);
+        } else {
+            $(this.el).find('.parameter_input').html("");
+        }
+
+        $(this.el).find('.parameter_input input').off('change');
+        $(this.el).find('.parameter_input input').on('change', function(event) {
+            var paramName = $(event.target).attr('placeholder');
+            var paramVal = $(event.target).val();
+            self.query.helper.model().parameters[paramName] = paramVal;
+        });
+
+    },
+
+    render_result: function(args) {
+        var self = this;
         $(this.el).find(".workspace_results_info").empty();
 
         if (args.data != null && args.data.error != null) {
@@ -658,6 +697,9 @@ var Workspace = Backbone.View.extend({
                 + "&emsp;/ &nbsp;" + args.data.width 
                 + " x " + args.data.height 
                 + "&nbsp; / &nbsp;" + runtime + "s";
+
+
+        this.update_parameters();
 
         $(this.el).find(".workspace_results_info").html(info);
         this.adjust();

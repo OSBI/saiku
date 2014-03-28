@@ -88,6 +88,21 @@ var SelectionsModal = Modal.extend({
         // Load template
         $(this.el).find('.dialog_body')
             .html(_.template($("#template-selections").html())(this));
+
+        if (Settings.ALLOW_PARAMETERS) {
+            var hName = this.member.hierarchy;
+            var lName = this.member.level;
+            var hierarchy = this.workspace.query.helper.getHierarchy(hName);
+            var pName = null;
+            if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
+                pName = hierarchy.levels[lName].selection ? hierarchy.levels[lName].selection.parameterName : null;
+            }
+
+            $(this.el).find('.parameter').removeClass('hide');
+            if (pName) {
+                $(this.el).find('input.parameter').val(pName);
+            }
+        }
         
         $(this.el).find('#use_result').attr('checked', this.use_result_option);
         $(this.el).find('.search_limit').text(this.members_search_limit);
@@ -276,7 +291,7 @@ var SelectionsModal = Modal.extend({
         var left = ($(window).width() - 1000)/2;
         var width = $(window).width() < 1040 ? $(window).width() : 1040;
         $(args.modal.el).parents('.ui-dialog')
-            .css({ width: width, left: "inherit", margin:"0", height: 465 })
+            .css({ width: width, left: "inherit", margin:"0", height: 485 })
             .offset({ left: left});
     },
     
@@ -361,10 +376,22 @@ var SelectionsModal = Modal.extend({
                 });
             });
         }
-        
-        if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
-                hierarchy.levels[lName].selection = { "type": "INCLUSION", "members": updates };
+
+        if (Settings.ALLOW_PARAMETERS) {
+            var parameterName = $('#parameter').val();
+            if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
+                    hierarchy.levels[lName].selection = { "type": "INCLUSION", "members": updates };
+                    if (parameterName) {
+                        hierarchy.levels[lName].selection["parameterName"] = parameterName;
+                        var parameters = self.workspace.query.helper.model().parameters;
+                        if (!parameters[parameterName]) {
+                        //    self.workspace.query.helper.model().parameters[parameterName] = "";
+                        }
+                    }
+
+            }
         }
+
 
         this.finished();
     },
