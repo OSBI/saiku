@@ -295,6 +295,10 @@ var SelectionsModal = Modal.extend({
         $(args.modal.el).parents('.ui-dialog')
             .css({ width: width, left: "inherit", margin:"0", height: 485 })
             .offset({ left: left});
+
+        $('#filter_selections').attr("disabled", false);
+        $(this.el).find('a[href=#save]').focus();
+        $(this.el).find('a[href=#save]').blur();
     },
     
     move_selection: function(event) {
