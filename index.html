@@ -585,9 +585,9 @@
             <div class="header_selections">
                 <label for="filter_selections" class="i18n">Search:</label> &nbsp;<input name="'filter_selections" id="filter_selections" type="text" class="filterbox" /> <input class="i18n search_term" type="submit" value="Pre-Filter on Server" /><input class="i18n clear_search" type="submit" value="Clear Filter" /><br />
             </div>
-            <div class="available_selections">
+            <div class="available_selections caption">
                 <span class="i18n">Available members:</span><br/>
-                    <select multiple="true" size="17" disabled></select>
+                    <div class="selection_options" ><ul></ul></div>
             </div>
             <div class="selection_buttons">
                 <a class="form_button" href="#move_selection" id="add_members">&nbsp;&gt;&nbsp;</a><br><br>
@@ -595,9 +595,9 @@
                 <a class="form_button" href="#move_selection" id="remove_all_members">&lt;&lt;</a><br><br>
                 <a class="form_button" href="#move_selection" id="remove_members">&nbsp;&lt;&nbsp;</a>
             </div>
-            <div class="used_selections">
+            <div class="used_selections caption">
                 <span class="i18n">Used members:</span><br/>
-                    <select multiple="true" size="17" disabled></select>
+                    <div class="selection_options" ><ul></ul></div>
             </div>
             <div class="updown_buttons">
                 <a class="form_button" href="#up" id="up_members">&nbsp;&uarr;&nbsp;</a><br><br>
@@ -621,6 +621,24 @@
 
             <div class="autocomplete"></div>
         </script>
+        <script type="text/x-jquery-tmpl" id="template-selections-options">
+            <ul>
+            <%  var counter = 0;
+                _.each(options, function(option) { 
+                    counter++; %>
+            
+                <li class="option_value"> 
+                    <input type="checkbox" class="check_option" 
+                        value="<%= encodeURIComponent(option.uniqueName) %>" name="selections_checker" id="selections_checker<%= counter %>"
+                        label="<%= encodeURIComponent(option.caption) %>" />
+                        <label for="selections_checker<%= counter %>" class="caption"><%= option.caption %></label>
+                        <label for="selections_checker<%= counter %>" class="unique"><%= option.uniqueName %></label>
+                </li>
+            <% }); %>
+            </ul>
+        </script>
+        
+
         <script type="text/x-jquery-tmpl" id="template-permissions">
             <div class="permissions">
 

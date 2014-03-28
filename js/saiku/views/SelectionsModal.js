@@ -31,9 +31,8 @@ var SelectionsModal = Modal.extend({
         'click .clear_search' : 'clear_search',
         'change #show_unique': 'show_unique_action',
         'change #use_result': 'use_result_action',
-        'dblclick select option' : 'click_move_selection',
-        'click div.selection_buttons a.form_button': 'move_selection',
-        'click div.updown_buttons a.form_button': 'updown_selection'
+        'dblclick .selection_options li label' : 'click_move_selection'
+        //,'click div.updown_buttons a.form_button': 'updown_selection'
     },    
 
     show_unique_option: false,
@@ -191,17 +190,17 @@ var SelectionsModal = Modal.extend({
             var used_members = [];
     
             // Populate both boxes
-            $(this.el).find('.used_selections select').removeAttr('disabled');
-            var selected_members_opts = "";
+            
+            
             for (var j = 0, len = this.selected_members.length; j < len; j++) {
-                var member = this.selected_members[j];
-                    selected_members_opts += '<option value="' + encodeURIComponent(member.uniqueName) + '">' + member.caption + "</option>";
+                    var member = this.selected_members[j];
                     used_members.push(member.caption);
             }
             if (used_members.length > 0) {
-                var selectedMembers = $(this.el).find('.used_selections select');
+                var selectedMembers = $(this.el).find('.used_selections .selection_options');
                 selectedMembers.empty();
-                $(selected_members_opts).appendTo(selectedMembers);
+                var selectedHtml = _.template($("#template-selections-options").html())({ options: this.selected_members });
+                $(selectedMembers).html(selectedHtml);
             }
             
             // Filter out used members
@@ -209,16 +208,11 @@ var SelectionsModal = Modal.extend({
                 return used_members.indexOf(obj.caption) === -1;
             });
             
-            $(this.el).find('.available_selections select').removeAttr('disabled');
-            var available_members_opts = "";
-            for (var i = 0, len = this.available_members.length; i < len; i++) {
-                var member = this.available_members[i];
-                available_members_opts += '<option value="' + encodeURIComponent(member.uniqueName) + '">' + member.caption + "</option>";
-            }
             if (this.available_members.length > 0) {
-                var availableMembersSelect = $(this.el).find('.available_selections select');
+                var availableMembersSelect = $(this.el).find('.available_selections .selection_options');
                 availableMembersSelect.empty();
-                $(available_members_opts).appendTo(availableMembersSelect);
+                var selectedHtml = _.template($("#template-selections-options").html())({ options: this.available_members });
+                $(availableMembersSelect).html(selectedHtml);   
             }
             
             $(this.el).find('.filterbox').autocomplete({
@@ -261,12 +255,20 @@ var SelectionsModal = Modal.extend({
                     select:  function(event, ui) { 
                         var value = encodeURIComponent(ui.item.value);
                         var label = ui.item.label;
+                        var searchVal = self.show_unique_option == false? ui.item.value : ui.item.label;
+                        var cap = self.show_unique_option == false? ui.item.label : ui.item.value;
 
-                        $(self.el).find('.available_selections select option[value="' + value + '"]').remove();
-                        $(self.el).find('.used_selections select option[value="' + value + '"]').remove();
-                        var option = '<option value="' + value + '">' + label + "</option>";
+                        $(self.el).find('.available_selections .selection_options input[value="' + encodeURIComponent(searchVal) + '"]').parent().remove();
+                        $(self.el).find('.used_selections .selection_options input[value="' + encodeURIComponent(searchVal) + '"]').parent().remove();
+
+                        var option = '<li class="option_value"><input type="checkbox" class="check_option" value="' 
+                                            +  encodeURIComponent(searchVal) + '" label="' + encodeURIComponent(cap)  + '">' + label + '</input></li>';
+            
+
                         
-                        $(option).appendTo($(self.el).find('.used_selections select'));
+                        
+                        
+                        $(option).appendTo($(self.el).find('.used_selections .selection_options ul'));
                         $(self.el).find('.filterbox').val('');
                         ui.item.value = "";
 
@@ -299,18 +301,21 @@ var SelectionsModal = Modal.extend({
         event.preventDefault();
         var action = $(event.target).attr('id');
         var $to = action.indexOf('add') !== -1 ? 
-            $(this.el).find('.used_selections select') :
-            $(this.el).find('.available_selections select');
+            $(this.el).find('.used_selections .selection_options ul') :
+            $(this.el).find('.available_selections .selection_options ul');
         var $from = action.indexOf('add') !== -1 ? 
-            $(this.el).find('.available_selections select') :
-            $(this.el).find('.used_selections select');
+            $(this.el).find('.available_selections .selection_options ul') :
+            $(this.el).find('.used_selections .selection_options ul');
         var $els = action.indexOf('all') !== -1 ? 
-            $from.find('option') :$from.find('option:selected');
+            $from.find('input').parent() : $from.find('input:checked').parent();
         $els.detach().appendTo($to);
+        $(this.el).find('.selection_options ul input:checked').attr('checked', false);
     },
 
     updown_selection: function(event) {
         event.preventDefault();
+        return false;
+        /*
         var action = $(event.target).attr('href').replace('#','');
         if (typeof action != "undefined") {
             if ("up" == action) {
@@ -320,20 +325,27 @@ var SelectionsModal = Modal.extend({
             }
 
         }
+        */
     },
 
     click_move_selection: function(event, ui) {
-      var to = ($(event.target).parent().parent().hasClass('used_selections')) ? '.available_selections' : '.used_selections';
-      $(event.target).appendTo($(this.el).find(to +' select'));
+      event.preventDefault();
+      var to = ($(event.target).parent().parent().parent().parent().hasClass('used_selections')) ? '.available_selections' : '.used_selections';
+      $(event.target).parent().appendTo($(this.el).find(to +' .selection_options ul'));
     },
 
     show_unique_action: function() {
-        $.each($(this.el).find('option'), function(i, option) {
-            var text = $(option).text();
-            $(option).text(decodeURIComponent($(option).val()));
-            $(option).val(encodeURIComponent(text));
-        });
+        var self = this;
         this.show_unique_option= ! this.show_unique_option;
+
+        if(this.show_unique_option === true) {
+            $(this.el).find('.available_selections, .used_selections').addClass('unique');
+            $(this.el).find('.available_selections, .used_selections').removeClass('caption');
+        } else {
+            $(this.el).find('.available_selections, .used_selections').addClass('caption');
+            $(this.el).find('.available_selections, .used_selections').removeClass('unique');
+        }
+
     },
 
     use_result_action: function() {
@@ -360,16 +372,14 @@ var SelectionsModal = Modal.extend({
         var updates = [];
         
         // If no selections are used, add level
-        if ($(this.el).find('.used_selections option').length === 0) {
+        if ($(this.el).find('.used_selections input').length === 0) {
             // nothing to do - include all members of this level
         } else {
             // Loop through selections
-            $(this.el).find('.used_selections option')
+            $(this.el).find('.used_selections input')
                 .each(function(i, selection) {
-                var value = show_u ? 
-                    encodeURIComponent($(selection).text()) : $(selection).val();
-                var caption = show_u ? 
-                    $(selection).val() : encodeURIComponent($(selection).text());
+                var value = $(selection).val();
+                var caption = $(selection).attr('label');
                 updates.push({
                     uniqueName: decodeURIComponent(value),
                     caption: decodeURIComponent(caption)
@@ -377,19 +387,18 @@ var SelectionsModal = Modal.extend({
             });
         }
 
-        if (Settings.ALLOW_PARAMETERS) {
-            var parameterName = $('#parameter').val();
-            if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
-                    hierarchy.levels[lName].selection = { "type": "INCLUSION", "members": updates };
-                    if (parameterName) {
-                        hierarchy.levels[lName].selection["parameterName"] = parameterName;
-                        var parameters = self.workspace.query.helper.model().parameters;
-                        if (!parameters[parameterName]) {
-                        //    self.workspace.query.helper.model().parameters[parameterName] = "";
-                        }
+        
+        var parameterName = $('#parameter').val();
+        if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
+                hierarchy.levels[lName].selection = { "type": "INCLUSION", "members": updates };
+                if (Settings.ALLOW_PARAMETERS && parameterName) {
+                    hierarchy.levels[lName].selection["parameterName"] = parameterName;
+                    var parameters = self.workspace.query.helper.model().parameters;
+                    if (!parameters[parameterName]) {
+                    //    self.workspace.query.helper.model().parameters[parameterName] = "";
                     }
+                }
 
-            }
         }
 
 

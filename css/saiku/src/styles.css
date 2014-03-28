@@ -723,12 +723,41 @@ textarea, select {
     vertical-align: middle;
     display: none;
 }
-.dialog_selections .dialog_body select {
+.dialog_selections .dialog_body .selection_options  {
     height: 270px;
     width: 430px;
     font-size: 11px;
     overflow: auto;
+    border: 1px solid #CCC;
 }
+.dialog_selections .dialog_body .selection_options ul {
+    list-style: none;
+    padding-left: 5px;
+    margin: 0;
+
+}
+.dialog_selections .dialog_body .selection_options ul li label,
+.dialog_selections .dialog_body .selection_options ul li input {
+    cursor: pointer;
+}
+
+.dialog_selections .available_selections.unique label.unique,
+.dialog_selections .used_selections.unique label.unique {
+    display: normal;
+}
+.dialog_selections .available_selections.unique label.caption,
+.dialog_selections .used_selections.unique label.caption {
+    display: none;
+}
+.dialog_selections .available_selections.caption label.unique,
+.dialog_selections .used_selections.caption label.unique {
+    display: none;
+}
+.dialog_selections .available_selections.caption label.caption,
+.dialog_selections .used_selections.caption label.caption {
+    display: normal;
+}
+
 
 .dialog_selections .filterbox {
     width: 300px;
