@@ -51,18 +51,21 @@ import org.saiku.query.metadata.CalculatedMeasure;
 public class Thin {
 	
 	public static ThinQuery convert(Query query, SaikuCube cube) throws Exception {
-		ThinQueryModel tqm = convert(query);
-		ThinQuery tq = new ThinQuery(query.getName(), cube, tqm);
+		ThinQuery tq = new ThinQuery(query.getName(), cube);
+		ThinQueryModel tqm = convert(query, tq);
+		tq.setQueryModel(tqm);
+		
 		if (query.getParameters() != null) {
-			tq.setParameters(tq.getParameters());
+			query.retrieveParameters();
+			tq.setParameters(query.getParameters());
 		}
-		tq.setMdx(query.getSelect().toString());
+		tq.setMdx(query.getMdx());
 		return tq;
 	}
 
-	private static ThinQueryModel convert(Query query) {
+	private static ThinQueryModel convert(Query query, ThinQuery tq) {
 		ThinQueryModel tqm = new ThinQueryModel();
-		tqm.setAxes(convertAxes(query.getAxes()));
+		tqm.setAxes(convertAxes(query.getAxes(), tq));
 		ThinDetails td = convert(query.getDetails());
 		tqm.setDetails(td);
 		List<ThinCalculatedMeasure> cms = convert(query.getCalculatedMeasures());
@@ -108,12 +111,12 @@ public class Thin {
 		return new ThinDetails(axis, location, measures);
 	}
 
-	private static Map<AxisLocation, ThinAxis> convertAxes(Map<Axis, QueryAxis> axes) {
+	private static Map<AxisLocation, ThinAxis> convertAxes(Map<Axis, QueryAxis> axes, ThinQuery tq) {
 		Map<ThinQueryModel.AxisLocation, ThinAxis> thinAxes = new TreeMap<ThinQueryModel.AxisLocation, ThinAxis>();
 		if (axes != null) {
 			for (Axis axis : sortAxes(axes.keySet())) {
 				if (axis != null) {
-					ThinAxis ta = convertAxis(axes.get(axis));
+					ThinAxis ta = convertAxis(axes.get(axis), tq);
 					thinAxes.put(ta.getLocation(), ta);
 				}
 			}
@@ -131,47 +134,47 @@ public class Thin {
 		return ax;
 	}
 	
-	private static ThinAxis convertAxis(QueryAxis queryAxis) {
+	private static ThinAxis convertAxis(QueryAxis queryAxis, ThinQuery tq) {
 		AxisLocation loc = getLocation(queryAxis);
-		ThinAxis ta = new ThinAxis(loc, convertHierarchies(queryAxis.getQueryHierarchies()), queryAxis.isNonEmpty());
+		ThinAxis ta = new ThinAxis(loc, convertHierarchies(queryAxis.getQueryHierarchies(), tq), queryAxis.isNonEmpty());
 		extendSortableQuerySet(ta, queryAxis);
 		return ta;
 	}
 	
-	private static NamedList<ThinHierarchy> convertHierarchies(List<QueryHierarchy> queryHierarchies) {
+	private static NamedList<ThinHierarchy> convertHierarchies(List<QueryHierarchy> queryHierarchies, ThinQuery tq) {
 		NamedListImpl<ThinHierarchy> hs = new NamedListImpl<ThinHierarchy>();
 		if (queryHierarchies != null) {
 			for (QueryHierarchy qh : queryHierarchies) {
-				ThinHierarchy th = convertHierarchy(qh);
+				ThinHierarchy th = convertHierarchy(qh, tq);
 				hs.add(th);
 			}
 		}
 		return hs;
 	}
 
-	private static ThinHierarchy convertHierarchy(QueryHierarchy qh) {
-		ThinHierarchy th = new ThinHierarchy(qh.getUniqueName(), qh.getCaption(), qh.getHierarchy().getDimension().getName(), convertLevels(qh.getActiveQueryLevels()));
+	private static ThinHierarchy convertHierarchy(QueryHierarchy qh, ThinQuery tq) {
+		ThinHierarchy th = new ThinHierarchy(qh.getUniqueName(), qh.getCaption(), qh.getHierarchy().getDimension().getName(), convertLevels(qh.getActiveQueryLevels(), tq));
 		extendSortableQuerySet(th, qh);
 		return th;
 	}
 
-	private static Map<String, ThinLevel> convertLevels(List<QueryLevel> levels) {
+	private static Map<String, ThinLevel> convertLevels(List<QueryLevel> levels, ThinQuery tq) {
 		Map<String, ThinLevel> tl = new HashMap<String, ThinLevel>();
 		if (levels != null) {
 			for (QueryLevel ql : levels) {
-				ThinLevel l = convertLevel(ql);
+				ThinLevel l = convertLevel(ql, tq);
 				tl.put(ql.getName(), l);
 			}
 		}
 		return tl;
 	}
 
-	private static ThinLevel convertLevel(QueryLevel ql) {
+	private static ThinLevel convertLevel(QueryLevel ql, ThinQuery tq) {
 		List<ThinMember> inclusions = convertMembers(ql.getInclusions());
 		List<ThinMember> exclusions = convertMembers(ql.getExclusions());
 		ThinMember rangeStart = convertMember(ql.getRangeStart());
 		ThinMember rangeEnd = convertMember(ql.getRangeEnd());
-		ThinSelection ts = null;
+		ThinSelection ts = new ThinSelection(ThinSelection.Type.INCLUSION, null);
 		
 		if (inclusions.size() > 0) {
 			ts = new ThinSelection(ThinSelection.Type.INCLUSION, inclusions);
@@ -184,8 +187,9 @@ public class Thin {
 			ts = new ThinSelection(ThinSelection.Type.RANGE, range);
 		}
 		
-		if (ql.hasParameter()) {
+		if (ql.hasParameter() && ts != null) {
 			ts.setParameterName(ql.getParameterName());
+			tq.addParameter(ql.getParameterName());
 		}
 		
 		ThinLevel l = new ThinLevel(ql.getName(), ql.getCaption(), ts);

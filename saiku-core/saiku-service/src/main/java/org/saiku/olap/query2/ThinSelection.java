@@ -19,10 +19,14 @@ public class ThinSelection {
 	
 	public ThinSelection() {};
 	public ThinSelection(Type type, List<ThinMember> members) {
+		this(type, members, null);
+	}
+	public ThinSelection(Type type, List<ThinMember> members, String parameter) {
 		this.type = type;
 		if (members != null) {
 			this.members.addAll(members);
 		}
+		this.parameter = parameter;
 	}
 	/**
 	 * @return the type

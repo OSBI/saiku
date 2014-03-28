@@ -1,10 +1,13 @@
 package org.saiku.olap.query2;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.query2.util.ServiceUtil;
 import org.saiku.service.util.ISaikuQuery;
 
 public class ThinQuery implements ISaikuQuery {
@@ -28,6 +31,9 @@ public class ThinQuery implements ISaikuQuery {
 	
 	public ThinQuery() {};
 	
+	public ThinQuery(String name, SaikuCube cube) {
+		this(name, cube, new ThinQueryModel());
+	}
 	public ThinQuery(String name, SaikuCube cube, ThinQueryModel queryModel) {
 		super();
 		this.queryModel = queryModel;
@@ -81,6 +87,16 @@ public class ThinQuery implements ISaikuQuery {
 	 */
 	public String getMdx() {
 		return mdx;
+	}
+	
+	@JsonIgnore
+	public String getParameterResolvedMdx() {
+		String replacedMdx = mdx;
+		if (parameters != null) {
+			replacedMdx = ServiceUtil.replaceParameters(replacedMdx, parameters);
+		}
+		return replacedMdx;
+		
 	}
 
 	/**
@@ -141,6 +157,22 @@ public class ThinQuery implements ISaikuQuery {
 			return parameters.get(parameter);
 		}
 		return null;
+	}
+	
+	public void addParameter(String parameter) {
+		if (StringUtils.isNotBlank(parameter)) {
+			if (!parameters.containsKey(parameter)) {
+				parameters.put(parameter, null);
+			}
+		}
+	}
+	
+	public void addParameters(List<String> parameters) {
+		if (parameters != null) {
+			for (String param : parameters) {
+				addParameter(param);
+			}
+		}
 	}
 
 	/**

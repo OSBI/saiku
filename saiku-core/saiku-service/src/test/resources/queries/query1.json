@@ -64,7 +64,11 @@
               "filters" : [ ],
               "name" : "Education Level",
               "caption" : "Education Level",
-              "selection" : null
+              "selection" : {
+                "type" : "INCLUSION",
+                "members" : [ ],
+                "parameterName" : null
+              }
             }
           }
         } ],

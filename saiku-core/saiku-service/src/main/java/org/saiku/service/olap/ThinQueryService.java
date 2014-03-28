@@ -61,6 +61,7 @@ import org.saiku.olap.util.formatter.CellSetFormatterFactory;
 import org.saiku.olap.util.formatter.FlattenedCellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.query.Query;
+import org.saiku.query.util.QueryUtil;
 import org.saiku.service.util.KeyValue;
 import org.saiku.service.util.QueryContext;
 import org.saiku.service.util.QueryContext.ObjectKey;
@@ -161,7 +162,7 @@ public class ThinQueryService implements Serializable {
 		query = updateQuery(query);
 		
 		try {
-			String mdx = query.getMdx();
+			String mdx = query.getParameterResolvedMdx();
 			CellSet cs = stmt.executeOlapQuery(mdx);
 			queryContext.store(ObjectKey.RESULT, cs);
 			if (query != null) {
@@ -233,6 +234,9 @@ public class ThinQueryService implements Serializable {
 			QueryContext qc = context.get(old.getName());
 			qc.store(ObjectKey.QUERY, old);
 		}
+		String mdx = old.getMdx();
+		List<String> params = QueryUtil.parseParameters(mdx);
+		old.addParameters(params);
 		
 		Map<String, Object> cubeProperties = olapDiscoverService.getProperties(old.getCube());
 		old.getProperties().putAll(cubeProperties);
