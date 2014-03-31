@@ -1,6 +1,6 @@
 
 var SaikuTableRenderer = _.extend(SaikuRenderer, {
-    key: "table",
+    key: "table"
 });
 
 SaikuTableRenderer.prototype._render = function(data, options) {

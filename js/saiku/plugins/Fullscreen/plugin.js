@@ -4,11 +4,13 @@ var Fullscreen = Backbone.Model.extend({
         this.workspace = args.workspace;
         // Add buckets button
         _.bindAll(this, "change_handler", "adjust");
-        document.addEventListener("fullscreenchange", this.change_handler, false);      
-        document.addEventListener("webkitfullscreenchange", this.change_handler, false);
-        document.addEventListener("mozfullscreenchange", this.change_handler, false);
-        this.add_button();
-        this.workspace.bind('workspace:adjust', this.adjust);
+        if (document && document["addEventListener"]) {
+            document.addEventListener("fullscreenchange", this.change_handler, false);      
+            document.addEventListener("webkitfullscreenchange", this.change_handler, false);
+            document.addEventListener("mozfullscreenchange", this.change_handler, false);
+            this.add_button();
+            this.workspace.bind('workspace:adjust', this.adjust);
+        }
     },
     add_button: function() {
         var elem = $('.workspace_results', this.workspace.el).get(0);
