@@ -234,6 +234,9 @@ var Workspace = Backbone.View.extend({
                 editorHeight - processingHeight - upgradeHeight - 20
         });
         
+        if (this.querytoolbar) { $(this.querytoolbar.el).find('a').tipsy({ delayIn: 700, fade: true}); }
+        if (this.toolbar) { $(this.toolbar.el).find('a').tipsy({ delayIn: 900, fade: true}); }
+
         // Fire off the adjust event
         this.trigger('workspace:adjust', { workspace: this });
     },
