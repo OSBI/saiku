@@ -141,8 +141,8 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 					List<AclMethod> acls = getAcl(path, false);
 	                String localizedName = repository.getLocalizedFileProperty(sf, "title", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
 					objects.add(new RepositoryFileObject(localizedName, "#" + path, type, path, acls));
+					return objects;
 				}
-				return objects;
 			}
 			Document navDoc = getRepositoryDocument(PentahoSessionHolder.getSession());
 			Node tree = navDoc.getRootElement();
@@ -160,7 +160,7 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 			e.printStackTrace();
 		}
 		return objects;
-			}
+	}
 
 
 	/**

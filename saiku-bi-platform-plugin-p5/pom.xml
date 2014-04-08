@@ -292,6 +292,14 @@
 					<groupId>janino</groupId>
 					<artifactId>janino</artifactId>
 				</exclusion>
+				                <exclusion>
+					<groupId>pentaho-kettle</groupId>
+					<artifactId>kettle-ui-swt</artifactId>
+                </exclusion>
+                <exclusion>
+                	<groupId>pentaho</groupId>
+                	<artifactId>pentaho-platform-extensions</artifactId>
+                </exclusion>
 				
 			</exclusions>
 		</dependency>

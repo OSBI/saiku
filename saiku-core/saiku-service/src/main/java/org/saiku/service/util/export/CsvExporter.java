@@ -104,6 +104,7 @@ public class CsvExporter {
 			        if (i > 0) {
 			        	sb.append(delimiter);
 			        }
+			        content = content.replace("\"", "\"\"");
 			        sb.append(enclosing + content + enclosing);
 			    }
 			    sb.append("\r\n");
@@ -164,6 +165,7 @@ public class CsvExporter {
 					if(value == null || "null".equals(value))  {
 						value="";
 					}
+					value = value.replace("\"", "\"\"");
 					value = enclosing + value + enclosing;
 					cols.add(value); 
 				}
