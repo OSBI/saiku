@@ -732,9 +732,14 @@ textarea, select {
 }
 .dialog_selections .dialog_body .selection_options ul {
     list-style: none;
-    padding-left: 5px;
+    padding-left: 3px;
     margin: 0;
-
+    white-space: nowrap;
+}
+.dialog_selections .dialog_body .selection_options ul li.all_options {
+    border-bottom: 1px solid #CCC;
+    margin-bottom: 2px;
+    padding-bottom: 2px;
 }
 .dialog_selections .dialog_body .selection_options ul li label,
 .dialog_selections .dialog_body .selection_options ul li input {

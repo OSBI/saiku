@@ -583,7 +583,7 @@
 
         <script type="text/x-jquery-tmpl" id="template-selections">
             <div class="header_selections">
-                <label for="filter_selections" class="i18n">Search:</label> &nbsp;<input name="'filter_selections" id="filter_selections" disabled="true" type="text" class="filterbox" /> <input class="i18n search_term" type="submit" value="Pre-Filter on Server" /><input class="i18n clear_search" type="submit" value="Clear Filter" /><br />
+                <label for="filter_selections" class="i18n">Search:</label> &nbsp;<input name="'filter_selections" id="filter_selections" disabled="true" type="text" class="filterbox" /> <input class="i18n search_term form_button" type="submit" value="Pre-Filter on Server" /><input class="i18n clear_search form_button" type="submit" value="Clear Filter" /><br />
             </div>
             <div class="available_selections caption">
                 <span class="i18n">Available members:</span><br/>
@@ -623,6 +623,7 @@
         </script>
         <script type="text/x-jquery-tmpl" id="template-selections-options">
             <ul>
+            <li class="i18n all_options"><input type="checkbox" class="check_all_option" id="check_all_option"><label for="check_all_option" class="i18n">All Members</label></li>
             <%  var counter = 0;
                 _.each(options, function(option) { 
                     counter++; %>

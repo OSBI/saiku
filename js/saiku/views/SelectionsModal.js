@@ -31,7 +31,8 @@ var SelectionsModal = Modal.extend({
         'click .clear_search' : 'clear_search',
         'change #show_unique': 'show_unique_action',
         'change #use_result': 'use_result_action',
-        'dblclick .selection_options li label' : 'click_move_selection'
+        'dblclick .selection_options li.option_value label' : 'click_move_selection',
+        'click li.all_options' : 'click_all_member_selection'
         //,'click div.updown_buttons a.form_button': 'updown_selection'
     },    
 
@@ -44,6 +45,7 @@ var SelectionsModal = Modal.extend({
     
     initialize: function(args) {
         // Initialize properties
+        var self = this;
         _.extend(this, args);
         this.options.title = "<span class='i18n'>Selections for</span> " + this.name;
         this.message = "Fetching members...";
@@ -106,7 +108,6 @@ var SelectionsModal = Modal.extend({
         $(this.el).find('#use_result').attr('checked', this.use_result_option);
         $(this.el).find('.search_limit').text(this.members_search_limit);
         $(this.el).find('.members_limit').text(this.members_limit);
-
 
         this.get_members();
     },
@@ -196,7 +197,7 @@ var SelectionsModal = Modal.extend({
                     var member = this.selected_members[j];
                     used_members.push(member.caption);
             }
-            if (used_members.length > 0) {
+            if ($(this.el).find('.used_selections .selection_options li.option_value' ).length == 0) {
                 var selectedMembers = $(this.el).find('.used_selections .selection_options');
                 selectedMembers.empty();
                 var selectedHtml = _.template($("#template-selections-options").html())({ options: this.selected_members });
@@ -214,7 +215,24 @@ var SelectionsModal = Modal.extend({
                 var selectedHtml = _.template($("#template-selections-options").html())({ options: this.available_members });
                 $(availableMembersSelect).html(selectedHtml);   
             }
+            if ($(self.el).find( ".selection_options.ui-selectable" ).length > 0) {
+                $(self.el).find( ".selection_options" ).selectable( "destroy" );
+            }
             
+            $(self.el).find( ".selection_options" ).selectable({ distance: 20, filter: "li", stop: function( event, ui ) {
+            
+                $(self.el).find( ".selection_options li.ui-selected input").each(function(index, element) {
+                    if (element && element.hasAttribute('checked')) {
+                        element.checked = true;
+                    } else {
+                        $(element).attr('checked', true);
+                    }
+                    $(element).parents('.selection_options').find('li.all_options input').prop('checked', true);
+                });
+                $(self.el).find( ".selection_options li.ui-selected").removeClass('ui-selected');
+
+            } });
+
             $(this.el).find('.filterbox').autocomplete({
                     minLength: 1, //(self.members_search_server ? 2 : 1),
                     delay: 200, //(self.members_search_server ? 400 : 300),
@@ -311,9 +329,10 @@ var SelectionsModal = Modal.extend({
             $(this.el).find('.available_selections .selection_options ul') :
             $(this.el).find('.used_selections .selection_options ul');
         var $els = action.indexOf('all') !== -1 ? 
-            $from.find('input').parent() : $from.find('input:checked').parent();
+            $from.find('li.option_value input').parent() : $from.find('li.option_value input:checked').parent();
         $els.detach().appendTo($to);
-        $(this.el).find('.selection_options ul input:checked').attr('checked', false);
+        $(this.el).find('.selection_options ul li.option_value input:checked').prop('checked', false);
+        $(this.el).find('.selection_options li.all_options input').prop('checked', false);
     },
 
     updown_selection: function(event) {
@@ -330,6 +349,16 @@ var SelectionsModal = Modal.extend({
 
         }
         */
+    },
+
+    click_all_member_selection: function(event, ui) {
+        var checked = $(event.currentTarget).find('input').is(':checked');
+        if (!checked) {
+            $(event.currentTarget).parent().find('li.option_value input').removeAttr('checked');
+        } else {
+            $(event.currentTarget).parent().find('li.option_value input').prop('checked', true);
+        }
+
     },
 
     click_move_selection: function(event, ui) {
