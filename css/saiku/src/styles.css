@@ -399,15 +399,15 @@ textarea, select {
     background: #fff;
 }
 .dimension_tree ul li ul {
-    padding: 0 0 0 18px;
+    padding: 0 0 0 8px;
     margin: 0;
 }
 .measure_tree ul li ul {
-    padding: 0 0 0 10px;
+    padding: 0 0 0 2px;
     margin: 0;   
 }
 .dimension_tree ul li ul li {
-    padding-left: 18px;
+    padding-left: 10px;
 }
 .dimension_tree ul li ul li a {
     padding-left: 20px;
@@ -594,7 +594,7 @@ span.clear_axis {
 /** Draggables, Sortables and Droppables */
 .ui-selectable-helper{
   position:absolute;
-  z-index:100;
+  z-index:10000;
   border:2px solid #86fe00;
   
 
@@ -725,7 +725,6 @@ span.clear_axis {
 .d_dimension span.sort.BASC,
 .d_dimension span.sort.ASC {
     background: url("../../../images/src/sort_up.png") no-repeat center transparent;
-
 }
 
 .d_measure span.sort.BDESC,
@@ -829,9 +828,9 @@ span.clear_axis {
     text-shadow: 1px 1px 0 #FFFFFF;
 }
 .ui-dialog .ui-dialog-titlebar-close {
-    background-color: : none;
+    background-color: inherit;
     border: none;
-    background-position: -624px -97px;
+    background-position: -690px -97px;
     display: inline-block;
     float: right;
     height: 18px;
@@ -923,6 +922,7 @@ span.clear_axis {
 }
 .dialog_selections .header_selections input {
     margin-left: 5px;
+    height: inherit;
 }
 
 
