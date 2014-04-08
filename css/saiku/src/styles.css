@@ -614,9 +614,9 @@ textarea, select {
     text-shadow: 1px 1px 0 #FFFFFF;
 }
 .ui-dialog .ui-dialog-titlebar-close {
-    background-color: : none;
+    background-color: inherit;
     border: none;
-    background-position: -624px -97px;
+    background-position: -690px -97px;
     display: inline-block;
     float: right;
     height: 18px;
@@ -708,6 +708,7 @@ textarea, select {
 }
 .dialog_selections .header_selections input {
     margin-left: 5px;
+    height: inherit;
 }
 
 

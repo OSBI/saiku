@@ -216,6 +216,7 @@ var Workspace = Backbone.View.extend({
         if ($('#header').length == 0 || $('#header').is('hidden')) {
             heightReduction = 2;
         }
+
         $separator.height($("body").height() - heightReduction);
         $(this.el).find('.sidebar').height($("body").height() - heightReduction);
 
@@ -224,12 +225,13 @@ var Workspace = Backbone.View.extend({
         // Adjust the dimensions of the results window
         var editorHeight = $(this.el).find('.workspace_editor').is(':hidden') ? 0 : $(this.el).find('.workspace_editor').height();
         var processingHeight = $(this.el).find('.query_processing').is(':hidden') ? 0 : $(this.el).find('.query_processing').height() + 62;
+        var upgradeHeight = $(this.el).find('.upgradeheader').is(':hidden') ? 0 : $(this.el).find('.upgrade').height();
 
         $(this.el).find('.workspace_results').css({
             height: $("body").height() - heightReduction -
                 $(this.el).find('.workspace_toolbar').height() - 
                 $(this.el).find('.workspace_results_info').height() - 
-                editorHeight - processingHeight - 20
+                editorHeight - processingHeight - upgradeHeight - 20
         });
         
         // Fire off the adjust event
