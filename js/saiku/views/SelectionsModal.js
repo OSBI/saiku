@@ -409,7 +409,7 @@ var SelectionsModal = Modal.extend({
             // nothing to do - include all members of this level
         } else {
             // Loop through selections
-            $(this.el).find('.used_selections input')
+            $(this.el).find('.used_selections .option_value input')
                 .each(function(i, selection) {
                 var value = $(selection).val();
                 var caption = $(selection).attr('label');
