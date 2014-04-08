@@ -277,6 +277,10 @@
 					<groupId>janino</groupId>
 					<artifactId>janino</artifactId>
 			</exclusion>
+                <exclusion>
+					<groupId>pentaho-kettle</groupId>
+					<artifactId>kettle-ui-swt</artifactId>
+                </exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
