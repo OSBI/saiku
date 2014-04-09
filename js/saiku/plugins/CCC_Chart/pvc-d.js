@@ -17689,11 +17689,11 @@ var pvc = function(def, pv) {
                 roleVar: "size",
                 allowNestedVars: !0,
                 hasPercentSubVar: !0
-            }), colorGrouping = roles.color && roles.color.grouping, colorByParent = colorGrouping && "byparent" === this.plot.option("ColorMode"), recursive = function(scene) {
+            }), sizeIsBound = roles.size.isBound(), colorGrouping = roles.color && roles.color.grouping, colorByParent = colorGrouping && "byparent" === this.plot.option("ColorMode"), recursive = function(scene) {
                 var group = scene.group;
                 scene.vars.category = pvc_ValueLabelVar.fromComplex(group);
                 sizeVarHelper.onNewScene(scene, !0);
-                if (!scene.vars.size.value) {
+                if (sizeIsBound && !scene.vars.size.value) {
                     scene.parentNode && scene.parentNode.removeChild(scene);
                     return scene;
                 }
@@ -17932,7 +17932,7 @@ var pvc = function(def, pv) {
                 var group = scene.group, catVar = scene.vars.category = pvc_ValueLabelVar.fromComplex(group);
                 emptySlicesLabel && null == catVar.value && (catVar.value = emptySlicesLabel);
                 sizeVarHelper.onNewScene(scene, !0);
-                if (!scene.vars.size.value) {
+                if (sizeIsBound && !scene.vars.size.value) {
                     scene.parentNode && scene.parentNode.removeChild(scene);
                     return scene;
                 }
