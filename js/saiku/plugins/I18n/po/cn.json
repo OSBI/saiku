@@ -96,5 +96,9 @@
 	"Hide Parents":"隐藏父节点",
 	"Zoom into table":"在表格中缩放 ",
 	"Dimensions":"维度",
-	"Measures":"指标"
+	"Measures":"指标",
+	"Clear Limit":"清除限制",
+	"Clear Sort":"清除排序",
+	"MDX":"多维表达式",
+	"Info:":"信息："
 }
