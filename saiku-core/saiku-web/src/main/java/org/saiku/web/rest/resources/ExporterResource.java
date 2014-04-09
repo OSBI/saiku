@@ -19,6 +19,8 @@ package org.saiku.web.rest.resources;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -80,11 +82,15 @@ public class ExporterResource {
 		try {
 			Response f = repository.getResource(file);
 			String fileContent = new String( (byte[]) f.getEntity());
-			String queryName = UUID.randomUUID().toString();
-			fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
+			String queryName = UUID.randomUUID().toString();			
+			//fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
 //			queryResource.createQuery(queryName,  null,  null, null, fileContent, queryName, null);
 //			queryResource.execute(queryName, formatter, 0);
+			Map<String, String> parameters = ServletUtil.getParameters(servletRequest);
 			ThinQuery tq = query2Resource.createQuery(queryName, fileContent, null, null);
+			if (parameters != null) {
+				tq.getParameters().putAll(parameters);
+			}
 			query2Resource.execute(tq);
 			return query2Resource.getQueryExcelExport(queryName, formatter);
 		} catch (Exception e) {
@@ -103,11 +109,15 @@ public class ExporterResource {
 		try {
 			Response f = repository.getResource(file);
 			String fileContent = new String( (byte[]) f.getEntity());
-			fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
+			//fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
 			String queryName = UUID.randomUUID().toString();
 //			query2Resource.createQuery(null,  null,  null, null, fileContent, queryName, null);
 //			query2Resource.execute(queryName,formatter, 0);
+			Map<String, String> parameters = ServletUtil.getParameters(servletRequest);
 			ThinQuery tq = query2Resource.createQuery(queryName, fileContent, null, null);
+			if (parameters != null) {
+				tq.getParameters().putAll(parameters);
+			}
 			query2Resource.execute(tq);
 			return query2Resource.getQueryCsvExport(queryName);
 		} catch (Exception e) {
@@ -130,7 +140,11 @@ public class ExporterResource {
 			String queryName = UUID.randomUUID().toString();
 //			query2Resource.createQuery(null,  null,  null, null, fileContent, queryName, null);
 //			QueryResult qr = query2Resource.execute(queryName, formatter, 0);
+			Map<String, String> parameters = ServletUtil.getParameters(servletRequest);
 			ThinQuery tq = query2Resource.createQuery(queryName, fileContent, null, null);
+			if (parameters != null) {
+				tq.getParameters().putAll(parameters);
+			}
 			QueryResult qr = query2Resource.execute(tq);
 			return Response.ok().entity(qr).build();
 		} catch (Exception e) {

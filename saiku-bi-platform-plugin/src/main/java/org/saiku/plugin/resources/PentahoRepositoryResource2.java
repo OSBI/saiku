@@ -73,7 +73,7 @@ import com.sun.jersey.multipart.FormDataParam;
  *
  */
 @Component
-@Path("/saiku/{username}/pentahorepository2")
+@Path("/saiku/{username}/repository")
 @XmlAccessorType(XmlAccessType.NONE)
 public class PentahoRepositoryResource2 implements ISaikuRepository {
 
