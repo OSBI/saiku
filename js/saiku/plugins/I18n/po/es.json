@@ -90,5 +90,10 @@
    "Use Result":"Usar resultado",
    "Swapping axes...":"Intercambiando ejes...",
    "Edit query":"Editar consulta",
-   "Zoom into table":"Mas Zoom"
+   "Zoom into table":"Mas Zoom",
+   "Open":"Abir",
+   "Edit":"Editar",
+   "Delete":"Eliminar",
+   "New Folder":"Nueva Carpeta",
+   " Open ":"Abir"
 }
