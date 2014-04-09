@@ -398,14 +398,16 @@ textarea, select {
 .measure_tree ul li a.folder_collapsed {
     background: #fff;
 }
-.dimension_tree ul li ul,
-.measure_tree ul li ul {
-    padding: 0 0 0 18px;
+.dimension_tree ul li ul {
+    padding: 0 0 0 8px;
     margin: 0;
 }
-.dimension_tree ul li ul li,
-.measure_tree ul li ul li {
-    padding-left: 18px;
+.measure_tree ul li ul {
+    padding: 0 0 0 2px;
+    margin: 0;   
+}
+.dimension_tree ul li ul li {
+    padding-left: 10px;
 }
 .dimension_tree ul li ul li a {
     padding-left: 20px;
@@ -592,7 +594,7 @@ span.clear_axis {
 /** Draggables, Sortables and Droppables */
 .ui-selectable-helper{
   position:absolute;
-  z-index:100;
+  z-index:10000;
   border:2px solid #86fe00;
   
 
@@ -723,7 +725,6 @@ span.clear_axis {
 .d_dimension span.sort.BASC,
 .d_dimension span.sort.ASC {
     background: url("../../../images/src/sort_up.png") no-repeat center transparent;
-
 }
 
 .d_measure span.sort.BDESC,
@@ -827,9 +828,9 @@ span.clear_axis {
     text-shadow: 1px 1px 0 #FFFFFF;
 }
 .ui-dialog .ui-dialog-titlebar-close {
-    background-color: : none;
+    background-color: inherit;
     border: none;
-    background-position: -624px -97px;
+    background-position: -690px -97px;
     display: inline-block;
     float: right;
     height: 18px;
@@ -921,6 +922,7 @@ span.clear_axis {
 }
 .dialog_selections .header_selections input {
     margin-left: 5px;
+    height: inherit;
 }
 
 
@@ -1331,10 +1333,10 @@ a.disabled_toolbar:hover {
     border-left: 1px solid #CCC;
     font-weight: bold;
     height: 732px;
-    width: 90px;
+    width: 70px;
     float: right;
     margin: 0 0 3px 0;
-    padding: 3px 10px 3px 5px;
+    padding: 3px 10px 3px 1px;
     text-shadow: 1px 1px 0 #FFFFFF;
     overflow: auto;
 }
@@ -1354,6 +1356,10 @@ a.disabled_toolbar:hover {
 
 .query_toolbar ul.renderer {
     padding-top: 8px;
+    padding-left: 3px;
+}
+.query_toolbar ul.renderer li {
+    padding-left: 1px;
 }
 
 .query_toolbar ul {
@@ -1364,6 +1370,7 @@ a.disabled_toolbar:hover {
     display: inline;
     float: left;
     padding-left: 5px;
+    margin-bottom: 6px;
 }
 .query_toolbar ul li.hide {
     display: none;
@@ -1422,116 +1429,116 @@ a.disabled_toolbar:hover {
 }
 
 .query_toolbar a.spark_line {
-    background: url('../../../images/chart/gray/trendline.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/gray/trendline.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 
 .query_toolbar a.spark_line:hover,
 .query_toolbar a.spark_line.on {
-    background: url('../../../images/chart/trendline.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/trendline.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.spark_bar {
-    background: url('../../../images/chart/gray/trendbars.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/gray/trendbars.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 
 .query_toolbar a.spark_bar:hover,
 .query_toolbar a.spark_bar.on {
-    background: url('../../../images/chart/trendbars.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/trendbars.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 
 
 .query_toolbar a.bar {
-    background: url('../../../images/chart/gray/bar.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/gray/bar.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.stackedBar100 {
-    background: url('../../../images/chart/gray/100bar.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/gray/100bar.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.stackedBar {
-    background: url('../../../images/chart/gray/stackedbar.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/gray/stackedbar.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.multiple {
-    background: url('../../../images/chart/gray/multiple.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/gray/multiple.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.pie {
-    background: url('../../../images/chart/gray/pie.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/gray/pie.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.line {
-    background: url('../../../images/chart/gray/line.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/gray/line.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.waterfall {
-    background: url('../../../images/chart/gray/waterfall.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/gray/waterfall.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.dot {
-    background: url('../../../images/chart/gray/dot.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/gray/dot.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.heatgrid {
-    background: url('../../../images/chart/gray/area2.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/gray/area2.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.area {
-    background: url('../../../images/chart/gray/area.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/gray/area.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.bar:hover,
 .query_toolbar a.bar.on {
-    background: url('../../../images/chart/bar.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/bar.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.stackedBar100:hover,
 .query_toolbar a.stackedBar100.on {
-    background: url('../../../images/chart/100bar.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/100bar.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.stackedBar:hover,
 .query_toolbar a.stackedBar.on {
-    background: url('../../../images/chart/stackedbar.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/stackedbar.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.multiple:hover,
 .query_toolbar a.multiple.on {
-    background: url('../../../images/chart/multiple.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/multiple.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.pie:hover,
 .query_toolbar a.pie.on {
-    background: url('../../../images/chart/pie.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/pie.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.line:hover,
 .query_toolbar a.line.on {
-    background: url('../../../images/chart/line.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/line.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.waterfall:hover,
 .query_toolbar a.waterfall.on {
-    background: url('../../../images/chart/waterfall.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/waterfall.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.dot:hover,
 .query_toolbar a.dot.on {
-    background: url('../../../images/chart/dot.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/dot.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.heatgrid:hover,
 .query_toolbar a.heatgrid.on {
-    background: url('../../../images/chart/area2.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/area2.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 .query_toolbar a.area:hover,
 .query_toolbar a.area.on {
-    background: url('../../../images/chart/area.png') no-repeat 30px 7px;
-    height: 32px;
+    background: url('../../../images/chart/area.png') no-repeat 21px -1px;;
+    height: 16px;
 }
 
 .form_button {

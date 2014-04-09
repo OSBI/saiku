@@ -135,6 +135,7 @@ var WorkspaceToolbar = Backbone.View.extend({
 
         if (Settings.MODE == 'VIEW' || this.workspace.isReadOnly) {
             $(this.el).find('a.edit').hide();
+            $(this.el).find('a.save').hide();
         } else {
             if (this.workspace.viewState == 'view') {
                 $(this.el).find('a.edit').removeClass('on');

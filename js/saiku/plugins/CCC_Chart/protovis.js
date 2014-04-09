@@ -11,9 +11,22 @@
  * the license for the specific language governing your rights and limitations.
  */
 
+/*!
+ * Copyright 2002 - 2013 Webdetails, a Pentaho company.  All rights reserved.
+ * 
+ * This software was developed by Webdetails and is provided under the terms
+ * of the Mozilla Public License, Version 2.0, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to  http://mozilla.org/MPL/2.0/. The Initial Developer is Webdetails.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
+
 /*! Copyright 2010 Stanford Visualization Group, Mike Bostock, BSD license. */
 
-/*! 1b167ca0959bad5b82220bc4731c9d9390084acb */
+/*! 539b7b4908c29303d90a687962d250d90abf0def */
 
 /*
  * TERMS OF USE - EASING EQUATIONS
@@ -4184,14 +4197,16 @@ pv.SvgScene.dot = function(scenes) {
                     svg.rx = s._width / 2;
                     svg.ry = s._height / 2;
                 } else {
-                    svg.d = this.renderSymbol(shape, s);
+                    var r = s.shapeRadius, rx = r, ry = r;
+                    if (ar > 0 && 1 !== ar) {
+                        var sy = 1 / Math.sqrt(ar), sx = ar * sy;
+                        rx *= sx;
+                        ry *= sy;
+                    }
+                    svg.d = this.renderSymbol(shape, s, rx, ry);
                     shape = "path";
                     t = "translate(" + s.left + "," + s.top + ") ";
                     sa && (t += "rotate(" + pv.degrees(sa) + ") ");
-                    if (1 !== ar) {
-                        var sy = 1 / Math.sqrt(ar), sx = ar * sy;
-                        t += "scale(" + sx + "," + sy + ")";
-                    }
                 }
                 t && (svg.transform = t);
                 e = this.expect(e, shape, scenes, i, svg);
@@ -4210,8 +4225,8 @@ pv.SvgScene.dot = function(scenes) {
         _renderersBySymName[symName] = funRenderer;
         return S;
     };
-    S.renderSymbol = function(symName, instance) {
-        return _renderersBySymName[symName].call(S, instance, symName);
+    S.renderSymbol = function(symName, instance, rx, ry) {
+        return _renderersBySymName[symName].call(S, instance, symName, rx, ry);
     };
     S.hasSymbol = function(symName) {
         return _renderersBySymName.hasOwnProperty(symName);
@@ -4222,22 +4237,23 @@ pv.SvgScene.dot = function(scenes) {
     var C1 = 2 / Math.sqrt(3);
     S.registerSymbol("circle", function() {
         throw new Error("Not implemented as a symbol");
-    }).registerSymbol("cross", function(s) {
-        var rp = s.shapeRadius, rn = -rp;
-        return "M" + rn + "," + rn + "L" + rp + "," + rp + "M" + rp + "," + rn + "L" + rn + "," + rp;
-    }).registerSymbol("triangle", function(s) {
-        var hp = s.shapeRadius, wp = hp * C1, hn = -hp, wn = -wp;
+    }).registerSymbol("cross", function(s, name, rx, ry) {
+        var rxn = (s.shapeRadius, -rx), ryn = -ry;
+        return "M" + rxn + "," + ryn + "L" + rx + "," + ry + "M" + rx + "," + ryn + "L" + rxn + "," + ry;
+    }).registerSymbol("triangle", function(s, name, rx, ry) {
+        var hp = ry, wp = rx * C1, hn = -ry, wn = -wp;
         return "M0," + hp + "L" + wp + "," + hn + " " + wn + "," + hn + "Z";
-    }).registerSymbol("diamond", function(s) {
-        var rp = s.shapeRadius * Math.SQRT2, rn = -rp;
-        return "M0," + rn + "L" + rp + ",0 0," + rp + " " + rn + ",0Z";
-    }).registerSymbol("square", function(s) {
-        var rp = s.shapeRadius, rn = -rp;
-        return "M" + rn + "," + rn + "L" + rp + "," + rn + " " + rp + "," + rp + " " + rn + "," + rp + "Z";
-    }).registerSymbol("tick", function(s) {
-        return "M0,0L0," + -s.shapeSize;
-    }).registerSymbol("bar", function(s) {
-        var z2 = s.shapeSize / 2;
+    }).registerSymbol("diamond", function(s, name, rx, ry) {
+        var rxp = rx * Math.SQRT2, ryp = ry * Math.SQRT2, rxn = -rxp, ryn = -ryp;
+        return "M0," + ryn + "L" + rxp + ",0 0," + ryp + " " + rxn + ",0Z";
+    }).registerSymbol("square", function(s, name, rx, ry) {
+        var rxn = -rx, ryn = -ry;
+        return "M" + rxn + "," + ryn + "L" + rx + "," + ryn + " " + rx + "," + ry + " " + rxn + "," + ry + "Z";
+    }).registerSymbol("tick", function(s, name, rx, ry) {
+        var ry2 = -ry * ry;
+        return "M0,0L0," + ry2;
+    }).registerSymbol("bar", function(s, name, rx, ry) {
+        var z2 = ry * ry / 2;
         return "M0," + z2 + "L0," + -z2;
     });
 }(pv.SvgScene);
@@ -5347,8 +5363,22 @@ pv.Mark.prototype.buildInstance = function(s) {
         _protoProp = protoPropBefore;
         return v;
     };
+    pv.Mark.prototype.evalInPropertyContext = function(f, protoProp) {
+        var protoPropBefore = _protoProp;
+        _protoProp = protoProp;
+        var v = f.apply(this, _stack);
+        _protoProp = protoPropBefore;
+        return v;
+    };
     pv.Mark.prototype.delegate = function(dv, tag) {
         if (_protoProp && (!tag || _protoProp.tag === tag)) {
+            var value = this.evalProperty(_protoProp);
+            if (void 0 !== value) return value;
+        }
+        return dv;
+    };
+    pv.Mark.prototype.delegateExcept = function(dv, notTag) {
+        if (_protoProp && (!notTag || _protoProp.tag !== notTag)) {
             var value = this.evalProperty(_protoProp);
             if (void 0 !== value) return value;
         }
