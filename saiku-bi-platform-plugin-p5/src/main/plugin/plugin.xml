@@ -59,6 +59,7 @@
   		<static-path url="/saiku-ui/views" localFolder="ui/views" />
   		<static-path url="/saiku-ui/js" localFolder="ui/js" />
   		<static-path url="/saiku-ui/config" localFolder="ui/config" />
+  		<static-path url="/saiku/ui" localFolder="ui" />
 	</static-paths>
 
 </plugin>
