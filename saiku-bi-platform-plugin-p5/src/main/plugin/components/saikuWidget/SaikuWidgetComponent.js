@@ -6,12 +6,10 @@ var saikuWidgetComponent = BaseComponent.extend({
 		if (myself.saikuFilePath.substr(0,1) != "/") {
 			myself.saikuFilePath = "/" + myself.saikuFilePath;
 		}
-		Dashboards.log(myself);
 
 		var parameters = {};
 		if (myself.parameters) {
 			_.each(myself.parameters, function(parameter) {
-				console.log(parameter);
 				var k = parameter[0];
 				var v = parameter[1];
 				
