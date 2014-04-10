@@ -12,7 +12,7 @@ var SaikuChartRenderer = function(data, options) {
     }
     this.el = $(options.htmlObject);
     this.id = _.uniqueId("chart_");
-    $('<div class="canvas_wrapper" style="display:none;"><div id="canvas_' + this.id + '"></div></div>').appendTo($(this.el));
+    $(this.el).html('<div class="canvas_wrapper" style="display:none;"><div id="canvas_' + this.id + '"></div></div>');
     this.zoom = options.zoom;
 
     if (options.zoom) {
