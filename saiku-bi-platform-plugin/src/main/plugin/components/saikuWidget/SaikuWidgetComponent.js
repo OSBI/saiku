@@ -8,6 +8,19 @@ var saikuWidgetComponent = BaseComponent.extend({
 		}
 		Dashboards.log(myself);
 
+		var parameters = {};
+		if (myself.parameters) {
+			_.each(myself.parameters, function(parameter) {
+				console.log(parameter);
+				var k = parameter[0];
+				var v = parameter[1];
+				
+				if (window.hasOwnProperty(v)) {
+					v = window[v];
+				}
+				parameters[k] = v;
+			});
+		}
 		if (myself.width) {
 			$(htmlId).width(myself.width);
 		}
@@ -17,7 +30,7 @@ var saikuWidgetComponent = BaseComponent.extend({
 		if ("table" == myself.renderMode) {
 			$(htmlId).addClass('workspace_results');
 			var t = $("<div></div>");
-			$(htmlId).append(t);
+			$(htmlId).html(t);
 			htmlId = t;
 		}
 		var myClient = new SaikuClient({
@@ -30,7 +43,8 @@ var saikuWidgetComponent = BaseComponent.extend({
 		    htmlObject: htmlId,
 		    render: myself.renderMode,
 		    mode: myself.renderType,
-		    zoom: true
+		    zoom: true,
+		    params: parameters
 		});
 
 	}
