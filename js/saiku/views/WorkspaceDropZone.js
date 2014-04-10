@@ -284,7 +284,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                 if (a && a.filters) {
                     _.each(a.filters, function(filter) {
                         if (filter.flavour == "N") {
-                            func = a.function;
+                            func = a["function"];
                             n = filter.expressions[0];
                             sortliteral = filter.expressions[1];
                             isTop = true;
