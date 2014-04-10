@@ -73,6 +73,7 @@
   		<static-path url="/saiku-ui/js" localFolder="ui/js" />
   		<static-path url="/saiku-ui/config" localFolder="ui/config" />
   		<static-path url="/saiku/ui" localFolder="ui" />
+   		<static-path url="/saiku/components" localFolder="components" />
 	</static-paths>
 
 </plugin>
