@@ -770,7 +770,7 @@ var Workspace = Backbone.View.extend({
         if (event) {
             event.preventDefault();
         }
-        this.query.action.del("/result", {
+        this.query.action.del("/cancel", {
             success: function() {
                 self.cancelled();
             }
