@@ -58,7 +58,7 @@ var isIE = (function(){
 
 }());
 
-if ($.blockUI) {
+if ($.blockUI && !Dashboards) {
     $.blockUI.defaults.css = { "font-size" : "14px"};
     $.blockUI.defaults.overlayCSS = {};
     $.blockUI.defaults.blockMsgClass = 'processing';
