@@ -135,7 +135,7 @@ SaikuClient.prototype.execute = function(usercall) {
 );
 
   
-  if ($.blockUI) {
+  if ($.blockUI && !Dashboards) {
     $(call.htmlObject).block({ 
                 message: '<span class="saiku_logo" style="float:left">&nbsp;&nbsp;</span> Executing....' 
     });
