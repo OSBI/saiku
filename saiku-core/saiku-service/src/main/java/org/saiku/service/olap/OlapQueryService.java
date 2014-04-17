@@ -89,6 +89,7 @@ import org.saiku.olap.query.OlapQuery;
 import org.saiku.olap.query.QueryDeserializer;
 import org.saiku.olap.util.ObjectUtil;
 import org.saiku.olap.util.OlapResultSetUtil;
+import org.saiku.olap.util.SaikuProperties;
 import org.saiku.olap.util.SaikuUniqueNameComparator;
 import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.olap.util.formatter.CellSetFormatter;
@@ -1021,7 +1022,7 @@ public class OlapQueryService implements Serializable {
 				return ExcelExporter.exportExcel(rs, formatter, null);
 			}
 			if (type.toLowerCase().equals("csv")) {
-				return CsvExporter.exportCsv(rs,",","\"", formatter);
+				return CsvExporter.exportCsv(rs, SaikuProperties.webExportCsvDelimiter, SaikuProperties.webExportCsvTextEscape, formatter);
 			}
 		}
 		return new byte[0];
