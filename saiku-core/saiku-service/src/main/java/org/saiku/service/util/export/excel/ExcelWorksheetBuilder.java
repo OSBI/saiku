@@ -206,14 +206,16 @@ public class ExcelWorksheetBuilder {
 
     private void finalizeExcelSheet(int startRow) {
 
-        int headerWidth = rowsetHeader.length;
         
-        if (rowsetBody != null && rowsetBody.length >= 10000) {
-    		log.warn("Skipping auto-sizing columns, more than 10000 rows");
+        
+        boolean autoSize = (rowsetBody != null && rowsetBody.length > 0 && rowsetBody.length < 10000 && rowsetHeader != null && rowsetHeader.length > 0 && rowsetHeader[0].length < 200);
+        
+        if (autoSize) {
+    		log.warn("Skipping auto-sizing columns, more than 10000 rows and/or 200 columns");
     	}
         
         Long start = (new Date()).getTime();
-        if (rowsetBody != null && rowsetBody.length > 0 && rowsetBody.length < 10000) {
+        if (autoSize) {
 	        // Autosize columns
 	        for (int i=0; i < maxColumns && i < rowsetBody[0].length; i++) {
 	            workbookSheet.autoSizeColumn(i);
@@ -222,6 +224,7 @@ public class ExcelWorksheetBuilder {
         Long end = (new Date()).getTime();
         log.debug("Autosizing: " + (end - start) + "ms");
         // Freeze the header columns
+        int headerWidth = rowsetHeader.length;
         workbookSheet.createFreezePane( 0, startRow + headerWidth, 0, startRow + headerWidth );
     }
 
