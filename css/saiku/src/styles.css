@@ -497,6 +497,7 @@ textarea, select {
 
 .context-menu-item {
     line-height: 16.5px;
+    text-align: left;
 }
 
 span.dropdown {
