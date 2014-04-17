@@ -56,6 +56,7 @@ import org.saiku.olap.query2.util.Fat;
 import org.saiku.olap.query2.util.Thin;
 import org.saiku.olap.util.ObjectUtil;
 import org.saiku.olap.util.OlapResultSetUtil;
+import org.saiku.olap.util.SaikuProperties;
 import org.saiku.olap.util.SaikuUniqueNameComparator;
 import org.saiku.olap.util.formatter.CellSetFormatterFactory;
 import org.saiku.olap.util.formatter.FlattenedCellSetFormatter;
@@ -277,7 +278,7 @@ public class ThinQueryService implements Serializable {
 				return ExcelExporter.exportExcel(rs, formatter, filterHierarchies);
 			}
 			if (type.toLowerCase().equals("csv")) {
-				return CsvExporter.exportCsv(rs,",","\"", formatter);
+				return CsvExporter.exportCsv(rs, SaikuProperties.webExportCsvDelimiter, SaikuProperties.webExportCsvTextEscape, formatter);
 			}
 		}
 		return new byte[0];
