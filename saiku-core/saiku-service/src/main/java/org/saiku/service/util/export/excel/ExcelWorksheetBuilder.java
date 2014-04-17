@@ -100,7 +100,6 @@ public class ExcelWorksheetBuilder {
             maxColumns = SpreadsheetVersion.EXCEL97.getMaxColumns();
         } else if ("xlsx".equals(SaikuProperties.webExportExcelFormat)) {
         	excelWorkbook = new XSSFWorkbook();
-        	
         } else {
         	excelWorkbook = new XSSFWorkbook();
         }
@@ -382,11 +381,17 @@ public class ExcelWorksheetBuilder {
                     numberCSClone.setFillForegroundColor(colorCodeIndex);
                     numberCSClone.setFillPattern(CellStyle.SOLID_FOREGROUND);
                 } else if (customColorsPalette == null) {
-                    numberCSClone.setFillPattern(CellStyle.SOLID_FOREGROUND);
                     try {
+                    	
+                    	if (cssColorCodesProperties != null && cssColorCodesProperties.containsKey(colorCode)) {
+                    		colorCode = cssColorCodesProperties.getProperty(colorCode);
+                    	}
+                    	
+                    	
                     	int redCode = Integer.parseInt(colorCode.substring(1, 3), 16);
                     	int greenCode = Integer.parseInt(colorCode.substring(3, 5), 16);
                     	int blueCode = Integer.parseInt(colorCode.substring(5, 7), 16);
+                    	numberCSClone.setFillPattern(CellStyle.SOLID_FOREGROUND);
                     	((XSSFCellStyle) numberCSClone).setFillForegroundColor(new XSSFColor(new java.awt.Color(redCode, greenCode, blueCode)));
                     	((XSSFCellStyle) numberCSClone).setFillBackgroundColor(new XSSFColor(new java.awt.Color(redCode, greenCode, blueCode)));
                     } catch (Exception e) {
@@ -395,8 +400,9 @@ public class ExcelWorksheetBuilder {
                     
                 }
             } else {
-            	numberCSClone.setFillBackgroundColor(numberCS.getFillBackgroundColor());
+            	
             	numberCSClone.setFillForegroundColor(numberCS.getFillForegroundColor());
+            	numberCSClone.setFillBackgroundColor(numberCS.getFillBackgroundColor());
             }
             cell.setCellStyle(numberCSClone);
         } else {
