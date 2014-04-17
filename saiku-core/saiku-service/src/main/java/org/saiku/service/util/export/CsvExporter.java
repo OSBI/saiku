@@ -26,6 +26,7 @@ import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.dto.resultset.DataCell;
 import org.saiku.olap.dto.resultset.MemberCell;
 import org.saiku.olap.util.OlapResultSetUtil;
+import org.saiku.olap.util.SaikuProperties;
 import org.saiku.olap.util.formatter.CellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.service.util.exception.SaikuServiceException;
@@ -34,7 +35,7 @@ import org.saiku.service.util.KeyValue;
 public class CsvExporter {
 	
 	public static byte[] exportCsv(CellSet cellSet) {
-		return exportCsv(cellSet,",","\"");
+		return exportCsv(cellSet, SaikuProperties.webExportCsvDelimiter, SaikuProperties.webExportCsvTextEscape);
 	}
 	
 	public static byte[] exportCsv(CellSet cellSet, String delimiter, String enclosing) {
@@ -47,7 +48,7 @@ public class CsvExporter {
 	}
 	
 	public static byte[] exportCsv(ResultSet rs) { 
-		return getCsv(rs,",","\"", true, null);
+		return getCsv(rs, SaikuProperties.webExportCsvDelimiter, SaikuProperties.webExportCsvTextEscape, true, null);
 	}
 	
 	public static byte[] exportCsv(ResultSet rs, String delimiter, String enclosing) {
@@ -110,7 +111,7 @@ public class CsvExporter {
 			    sb.append("\r\n");
 			    height++;
 			}
-			return sb.toString().getBytes("UTF8"); //$NON-NLS-1$
+			return sb.toString().getBytes(SaikuProperties.webExportCsvTextEncoding); //$NON-NLS-1$
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -153,8 +154,10 @@ public class CsvExporter {
 				List<String> cols = new ArrayList<String>();
 				for(int y = 0; y < rowData[x].length;y++) {
 					String value = rowData[x][y].getFormattedValue();
-					if (rowData[x][y] instanceof DataCell && ((DataCell) rowData[x][y]).getRawNumber() != null ) {
-						value = ((DataCell) rowData[x][y]).getRawNumber().toString();
+					if (!SaikuProperties.webExportCsvUseFormattedValue) {
+						if (rowData[x][y] instanceof DataCell && ((DataCell) rowData[x][y]).getRawNumber() != null ) {
+							value = ((DataCell) rowData[x][y]).getRawNumber().toString();
+						}
 					}
 					if (rowData[x][y] instanceof MemberCell && StringUtils.isNotBlank(value) && !"null".equals(value)) {
 						lastKnownHeader[y] = value;
@@ -201,7 +204,7 @@ public class CsvExporter {
 					//output += "\r\n"; //$NON-NLS-1$
 				}
 				output = buf.toString();
-				return output.getBytes("UTF8"); //$NON-NLS-1$
+				return output.getBytes(SaikuProperties.webExportCsvTextEncoding); //$NON-NLS-1$
 			}
 		} catch (Throwable e) {
 			throw new SaikuServiceException("Error creating csv export for query"); //$NON-NLS-1$
