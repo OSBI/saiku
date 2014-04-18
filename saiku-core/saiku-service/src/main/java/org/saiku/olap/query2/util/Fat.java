@@ -133,12 +133,17 @@ public class Fat {
 			}
 		}
 		qaxis.setNonEmpty(thinAxis.isNonEmpty());
+		List<String> aggs = thinAxis.getAggregators();
+		qaxis.getQuery().setAggregators(qaxis.getLocation().toString(), aggs);
 		extendSortableQuerySet(query, qaxis, thinAxis);
 	}
 	
 	private static void convertHierarchy(QueryHierarchy qh, ThinHierarchy th, ThinQuery tq) throws OlapException {
 		for (ThinLevel tl : th.getLevels().values()) {
 			QueryLevel ql = qh.includeLevel(tl.getName());
+			
+			List<String> aggs =  tl.getAggregators();
+			qh.getQuery().setAggregators(ql.getUniqueName(), aggs);
 			
 			if (tl.getSelection() != null) {
 				String parameter = tl.getSelection().getParameterName();

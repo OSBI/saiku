@@ -136,7 +136,8 @@ public class Thin {
 	
 	private static ThinAxis convertAxis(QueryAxis queryAxis, ThinQuery tq) {
 		AxisLocation loc = getLocation(queryAxis);
-		ThinAxis ta = new ThinAxis(loc, convertHierarchies(queryAxis.getQueryHierarchies(), tq), queryAxis.isNonEmpty());
+		List<String> aggs = queryAxis.getQuery().getAggregators(queryAxis.getLocation().toString());
+		ThinAxis ta = new ThinAxis(loc, convertHierarchies(queryAxis.getQueryHierarchies(), tq), queryAxis.isNonEmpty(), aggs);
 		extendSortableQuerySet(ta, queryAxis);
 		return ta;
 	}
@@ -191,8 +192,8 @@ public class Thin {
 			ts.setParameterName(ql.getParameterName());
 			tq.addParameter(ql.getParameterName());
 		}
-		
-		ThinLevel l = new ThinLevel(ql.getName(), ql.getCaption(), ts);
+		List<String> aggs = ql.getQueryHierarchy().getQuery().getAggregators(ql.getUniqueName());
+		ThinLevel l = new ThinLevel(ql.getName(), ql.getCaption(), ts, aggs);
 		extendQuerySet(l, ql);
 		return l;
 	}

@@ -31,8 +31,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang.StringUtils;
+import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
 import org.olap4j.OlapConnection;
@@ -45,6 +47,7 @@ import org.olap4j.mdx.parser.impl.DefaultMdxParserImpl;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
+import org.olap4j.metadata.Measure;
 import org.olap4j.metadata.Member;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SimpleCubeElement;
@@ -62,7 +65,12 @@ import org.saiku.olap.util.formatter.CellSetFormatterFactory;
 import org.saiku.olap.util.formatter.FlattenedCellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.query.Query;
+import org.saiku.query.QueryDetails;
 import org.saiku.query.util.QueryUtil;
+import org.saiku.service.olap.totals.AxisInfo;
+import org.saiku.service.olap.totals.TotalNode;
+import org.saiku.service.olap.totals.TotalsListsBuilder;
+import org.saiku.service.olap.totals.aggregators.TotalAggregator;
 import org.saiku.service.util.KeyValue;
 import org.saiku.service.util.QueryContext;
 import org.saiku.service.util.QueryContext.ObjectKey;
@@ -81,6 +89,8 @@ public class ThinQueryService implements Serializable {
 	private static final long serialVersionUID = -7615296596528274904L;
 
 	private static final Logger log = LoggerFactory.getLogger(ThinQueryService.class);
+	
+	private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
 	private OlapDiscoverService olapDiscoverService;
 	
@@ -137,6 +147,7 @@ public class ThinQueryService implements Serializable {
 
 	
 	protected CellSet executeInternalQuery(ThinQuery query) throws Exception {
+		String runId = "RUN#:" + ID_GENERATOR.getAndIncrement();
 		QueryContext queryContext = context.get(query.getName());
 		
 		if (queryContext == null) {
@@ -164,6 +175,8 @@ public class ThinQueryService implements Serializable {
 		
 		try {
 			String mdx = query.getParameterResolvedMdx();
+			log.info(runId + "\tType:" + query.getType() + ":\n" + mdx);
+			
 			CellSet cs = stmt.executeOlapQuery(mdx);
 			queryContext.store(ObjectKey.RESULT, cs);
 			if (query != null) {
@@ -191,14 +204,22 @@ public class ThinQueryService implements Serializable {
 
 	public CellDataSet execute(ThinQuery tq, ICellSetFormatter formatter) {
 		try {
+			
 			Long start = (new Date()).getTime();
 			CellSet cellSet =  executeInternalQuery(tq);
+			String runId = "RUN#:" + ID_GENERATOR.get();
 			Long exec = (new Date()).getTime();
 
 			CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cellSet,formatter);
 			Long format = (new Date()).getTime();
-			log.info("Size: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
-					+ "ms\tFormat:\t" + (format - exec) + "ms\t Total: " + (format - start) + "ms");
+			
+			if (ThinQuery.Type.QUERYMODEL.equals(tq.getType()) && formatter instanceof FlattenedCellSetFormatter && tq.hasAggregators()) {
+				calculateTotals(tq, result, cellSet, formatter);
+			}
+			Long totals = (new Date()).getTime();
+			log.info(runId + "\tSize: " + result.getWidth() + "/" + result.getHeight() + "\tExecute:\t" + (exec - start)
+					+ "ms\tFormat:\t" + (format - exec) + "ms\tTotals:\t" + (totals - format) + "ms\t Total: " + (totals - start) + "ms");
+			
 			result.setRuntime(new Double(format - start).intValue());
 			return result;
 		} catch (Exception e) {
@@ -472,5 +493,45 @@ public class ThinQueryService implements Serializable {
 			return members;
 		}
 		return null;
+	}
+	
+	private void calculateTotals(ThinQuery tq, CellDataSet result, CellSet cellSet, ICellSetFormatter formatter) throws Exception {
+		if (ThinQuery.Type.QUERYMODEL.equals(tq.getType()) && formatter instanceof FlattenedCellSetFormatter) {
+			Cube cub = olapDiscoverService.getNativeCube(tq.getCube());
+			Query query = Fat.convert(tq, cub);
+			
+			QueryDetails details = query.getDetails();
+			Measure[] selectedMeasures = new Measure[details.getMeasures().size()];
+			query = null;
+			for (int i = 0; i < selectedMeasures.length; i++)
+				selectedMeasures[i] = details.getMeasures().get(i);
+			result.setSelectedMeasures(selectedMeasures);
+
+			int rowsIndex = 0;
+			if (!cellSet.getAxes().get(0).getAxisOrdinal().equals(Axis.ROWS)) {
+				rowsIndex = (rowsIndex + 1) & 1;
+			}
+			// TODO - refactor this using axis ordinals etc.
+			final AxisInfo[] axisInfos = new AxisInfo[]{new AxisInfo(cellSet.getAxes().get(rowsIndex)), new AxisInfo(cellSet.getAxes().get((rowsIndex + 1) & 1))};
+			List<TotalNode>[][] totals = new List[2][];
+			TotalsListsBuilder builder = null;
+			for (int index = 0; index < 2; index++) {
+				final int second = (index + 1) & 1;
+				TotalAggregator[] aggregators = new TotalAggregator[axisInfos[second].maxDepth + 1];
+				for (int i = 1; i < aggregators.length - 1; i++) {
+					List<String> aggs = query.getAggregators(axisInfos[second].uniqueLevelNames.get(i - 1));;
+					String totalFunctionName = aggs != null && aggs.size() > 0 ? aggs.get(0) : null; 
+					aggregators[i] = StringUtils.isNotBlank(totalFunctionName) ? TotalAggregator.newInstanceByFunctionName(totalFunctionName) : null;
+				}
+				List<String> aggs = query.getAggregators(axisInfos[second].axis.getAxisOrdinal().name());
+				String totalFunctionName = aggs != null && aggs.size() > 0 ? aggs.get(0) : null;  
+				aggregators[0] = StringUtils.isNotBlank(totalFunctionName) ? TotalAggregator.newInstanceByFunctionName(totalFunctionName) : null;
+				builder = new TotalsListsBuilder(selectedMeasures, aggregators, cellSet, axisInfos[index], axisInfos[second]);
+				totals[index] = builder.buildTotalsLists();
+			}
+			result.setLeftOffset(axisInfos[0].maxDepth);
+			result.setRowTotalsLists(totals[1]);
+			result.setColTotalsLists(totals[0]);
+		}		
 	}
 }

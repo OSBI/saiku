@@ -9,7 +9,8 @@
         "hierarchizeMode" : null,
         "location" : "FILTER",
         "hierarchies" : [ ],
-        "nonEmpty" : false
+        "nonEmpty" : false,
+        "aggregators" : [ ]
       },
       "COLUMNS" : {
         "mdx" : null,
@@ -46,7 +47,8 @@
                   "caption" : "Non-Consumable"
                 } ],
                 "parameterName" : null
-              }
+              },
+              "aggregators" : [ ]
             }
           }
         }, {
@@ -68,11 +70,13 @@
                 "type" : "INCLUSION",
                 "members" : [ ],
                 "parameterName" : null
-              }
+              },
+              "aggregators" : [ ]
             }
           }
         } ],
-        "nonEmpty" : false
+        "nonEmpty" : false,
+        "aggregators" : [ ]
       },
       "ROWS" : {
         "mdx" : null,
@@ -104,11 +108,13 @@
                   "caption" : "F"
                 } ],
                 "parameterName" : null
-              }
+              },
+              "aggregators" : [ ]
             }
           }
         } ],
-        "nonEmpty" : false
+        "nonEmpty" : false,
+        "aggregators" : [ ]
       }
     },
     "visualTotals" : false,

@@ -96,4 +96,25 @@ public class ThinQueryModel {
 	public void setDetails(ThinDetails details) {
 		this.details = details;
 	}
+
+	public boolean hasAggregators() {
+		if (axes != null) {
+			for (ThinAxis ta : axes.values()) {
+				if (ta.getAggregators().size() > 1) {
+					return true;
+				}
+				if (ta.getHierarchies() != null) {
+					for (ThinHierarchy th : ta.getHierarchies()) {
+						for (ThinLevel tl : th.getLevels().values()) {
+							if (tl.getAggregators() != null && tl.getAggregators().size() > 0) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

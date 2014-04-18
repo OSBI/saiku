@@ -1,5 +1,6 @@
 package org.saiku.olap.query2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -15,14 +16,18 @@ public class ThinAxis extends AbstractThinSortableQuerySet {
 	private AxisLocation location;
 	private List<ThinHierarchy> hierarchies = new NamedListImpl<ThinHierarchy>();
 	private boolean nonEmpty;
+	private List<String> aggs = new ArrayList<String>();
 	
 	
 	public ThinAxis() {};
 	
-	public ThinAxis(AxisLocation location, NamedList<ThinHierarchy> hierarchies, boolean nonEmpty) {
+	public ThinAxis(AxisLocation location, NamedList<ThinHierarchy> hierarchies, boolean nonEmpty, List<String> aggs) {
 		this.location = location;
 		if (hierarchies != null) {
 			this.hierarchies = hierarchies;
+		}
+		if (aggs != null) {
+			this.aggs = aggs;
 		}
 		this.nonEmpty = nonEmpty;
 	}
@@ -70,6 +75,10 @@ public class ThinAxis extends AbstractThinSortableQuerySet {
 	 */
 	public void setNonEmpty(boolean nonEmpty) {
 		this.nonEmpty = nonEmpty;
+	}
+		
+	public List<String> getAggregators() {
+		return aggs;
 	}
 
 }

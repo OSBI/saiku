@@ -1,5 +1,6 @@
 package org.saiku.olap.query2;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ public class ThinQuery implements ISaikuQuery {
 	private Map<String, String> plugins = new HashMap<String, String>();
 	private Map<String, Object> properties = new HashMap<String, Object>();
 	private Map<String, String> metadata = new HashMap<String, String>();
+	
 	private String queryType = "OLAP";
 	
 	public enum Type {
@@ -173,6 +175,13 @@ public class ThinQuery implements ISaikuQuery {
 				addParameter(param);
 			}
 		}
+	}
+	
+	public boolean hasAggregators() {
+		if (Type.QUERYMODEL.equals(type) && queryModel != null && queryModel.hasAggregators())
+			return true;
+		
+		return false;
 	}
 
 	/**
