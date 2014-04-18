@@ -682,7 +682,7 @@ textarea, select {
 }
 .dialog_selections {
 	min-width: 800px !important;
-    height: 485px !important;
+    height: 490px !important;
 }
 .dialog_selections .dialog_icon {
 	display: none;
@@ -764,6 +764,20 @@ textarea, select {
     display: normal;
 }
 
+
+.totals_container {
+	margin:4px;
+	margin-bottom:0px;
+}
+
+.totals_container label{
+	margin-right:4px;
+}
+
+#show_totals {
+	width: 140px;
+	height: 20px
+}
 
 .dialog_selections .filterbox {
     width: 300px;

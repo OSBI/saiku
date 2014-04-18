@@ -279,7 +279,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                 var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
                 var a = self.workspace.query.helper.getAxis(target);
 
-                var func, n, sortliteral, filterCondition, sortOrder, sortOrderLiteral, sortHl, topHl, filterHl;
+                var func, n, sortliteral, filterCondition, sortOrder, sortOrderLiteral, sortHl, topHl, filterHl, totalFunction;;
                 var isFilter = false, isSort = false, isTop = false;
                 if (a && a.filters) {
                     _.each(a.filters, function(filter) {
@@ -299,7 +299,10 @@ var WorkspaceDropZone = Backbone.View.extend({
                     sortOrder = a.sortOrder;
                     sortOrderLiteral = a.sortEvaluationLiteral;
                     isSort = true;
-                }          
+                }
+                if (a && a.aggregators && a.aggregators.length > 0) {
+                    totalFunction = a.aggregators[0];
+                }
 
                 if (func != null && sortliteral == null) {
                     topHl = func + "###SEPARATOR###" + n;
@@ -365,12 +368,33 @@ var WorkspaceDropZone = Backbone.View.extend({
                             "customsort" : { name: "Custom...", i18n: true },
                             "clearsort" : {name: "Clear Sort", i18n: true }
                         }},
+                        "grand_totals" : {name: "Grand totals", items:
+                        {
+                            "show_totals_not": {name: "None", i18n: true},
+                            "show_totals_sum": {name: "Sum", i18n: true},
+                            "show_totals_min": {name: "Min", i18n: true},
+                            "show_totals_max": {name: "Max", i18n: true},
+                            "show_totals_avg": {name: "Avg", i18n: true}
+                        }},
+
                         "cancel" : { name: "Cancel", i18n: true }
+
                 };
-				
                 $.each(citems, function(key, item){
-                	recursive_menu_translate(item, Saiku.i18n.po_file);
+                    recursive_menu_translate(item, Saiku.i18n.po_file);
                 });
+
+                var totalItems = citems["grand_totals"].items;
+                if (totalFunction) {
+                    for (var key in totalItems) {
+                        if (key.substring("show_totals_".length) == totalFunction) {
+                            totalItems[key].name = "<b>" + totalItems[key].name + "</b";
+                        }
+                    }
+                } else {
+                    totalItems["show_totals_not"].name = "<b>" + totalItems["show_totals_not"].name + "</b";
+                }
+                
 
                 items["10"] = {
                    payload: { "n" : 10 }
@@ -484,6 +508,15 @@ var WorkspaceDropZone = Backbone.View.extend({
                             } else if (key == "clearsort") {
                                 a.sortOrder = null;
                                 a.sortEvaluationLiteral = null;
+                                alert('maybe?');
+                                self.synchronize_query();
+                                self.workspace.query.run();
+                            } else if (key.indexOf("show_totals_") == 0){
+                                var total = key.substring("show_totals_".length);
+                                var aggs = [];
+                                aggs.push(total);
+                                a['aggregators'] = aggs;
+                                self.workspace.query.run();
                             } else {
 
                                 var fun = key.split('###SEPARATOR###')[0];
@@ -519,7 +552,5 @@ var WorkspaceDropZone = Backbone.View.extend({
             }
         });
     $target.contextMenu();
-
-
     }
 });

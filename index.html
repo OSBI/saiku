@@ -607,6 +607,16 @@
             <div class="options">
                 <input name="show_unique" id="show_unique" type="checkbox" /><label for="show_unique" class="i18n">Show Unique Names</label><br />
                 <input name="use_result" id="use_result" type="checkbox" /><label for="use_result" class="i18n">Use Result</label><br />
+				<div class="totals_container">
+					<label for="show_totals" class="i18n">Sub totals</label>
+					<select name="show_totals" id="show_totals">
+    					<option class="i18n" value="" selected="selected">None</option>
+    					<option class="i18n" value="sum">Sum</option>
+				    	<option class="i18n" value="min">Min</option>
+						<option class="i18n" value="max">Max</option>
+						<option class="i18n" value="avg">Avg</option>
+					</select>
+				</div>
                 <label for="parameter" class="i18n hide parameter">Parameter Name</label>&nbsp;<input name="parameter" id="parameter" type="text" class="parameter hide" />
             </div>
             <div class="info">

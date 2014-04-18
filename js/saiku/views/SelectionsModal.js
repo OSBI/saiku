@@ -32,13 +32,15 @@ var SelectionsModal = Modal.extend({
         'change #show_unique': 'show_unique_action',
         'change #use_result': 'use_result_action',
         'dblclick .selection_options li.option_value label' : 'click_move_selection',
-        'click li.all_options' : 'click_all_member_selection'
+        'click li.all_options' : 'click_all_member_selection',
+        'change #show_totals': 'show_totals_action'
         //,'click div.updown_buttons a.form_button': 'updown_selection'
     },    
 
     show_unique_option: false,
 
     use_result_option: Settings.MEMBERS_FROM_RESULT,
+    show_totals_option: '',
     members_limit: Settings.MEMBERS_LIMIT,
     members_search_limit: Settings.MEMBERS_SEARCH_LIMIT,
     members_search_server: false,
@@ -53,7 +55,7 @@ var SelectionsModal = Modal.extend({
         this.selected_members = [];
         this.available_members = [];
 
-        _.bindAll(this, "fetch_members", "populate", "finished", "get_members", "use_result_action");
+        _.bindAll(this, "fetch_members", "populate", "finished", "get_members", "use_result_action", "show_totals_action");
         
         // Determine axis
         this.axis = "undefined"; 
@@ -90,26 +92,49 @@ var SelectionsModal = Modal.extend({
         $(this.el).find('.dialog_body')
             .html(_.template($("#template-selections").html())(this));
 
-        if (Settings.ALLOW_PARAMETERS) {
-            var hName = this.member.hierarchy;
-            var lName = this.member.level;
-            var hierarchy = this.workspace.query.helper.getHierarchy(hName);
-            var pName = null;
-            if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
-                pName = hierarchy.levels[lName].selection ? hierarchy.levels[lName].selection.parameterName : null;
-            }
-
-            $(this.el).find('.parameter').removeClass('hide');
-            if (pName) {
-                $(this.el).find('input.parameter').val(pName);
-            }
+    
+        var hName = this.member.hierarchy;
+        var lName = this.member.level;
+        var hierarchy = this.workspace.query.helper.getHierarchy(hName);
+        var level = null;
+        if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
+            level = hierarchy.levels[lName];
         }
-        
+        if (Settings.ALLOW_PARAMETERS) {
+            if (level) {
+                var pName = level.selection ? level.selection.parameterName : null;
+                if (pName) {
+                    $(this.el).find('input.parameter').val(pName);
+                }
+            }
+            $(this.el).find('.parameter').removeClass('hide');
+        }
+
+        var showTotalsEl = $(this.el).find('#show_totals');
+        showTotalsEl.val('');
+
+        // fixme: we should check for deepest level here
+        if (_.size(hierarchy.levels) > 1 && level && level.hasOwnProperty('aggregators') && level.aggregators) {
+            if (level.aggregators.length > 0) {
+                this.show_totals_option = level.aggregators[0];
+            }
+            showTotalsEl.removeAttr("disabled");
+        } else {
+            showTotalsEl.attr("disabled", true);
+            this.show_totals_option = '';
+        }
+        showTotalsEl.val(this.show_totals_option);
+
         $(this.el).find('#use_result').attr('checked', this.use_result_option);
         $(this.el).find('.search_limit').text(this.members_search_limit);
         $(this.el).find('.members_limit').text(this.members_limit);
 
+
         this.get_members();
+    },
+    
+    show_totals_action: function(event) {
+        this.show_totals_option = $(event.target).val();
     },
 
     get_members: function() {
@@ -174,6 +199,7 @@ var SelectionsModal = Modal.extend({
 
             self.show_unique_option = false;
             $(this.el).find('.options #show_unique').attr('checked',false);
+
 
             $(this.el).find('.items_size').text(this.available_members.length);
             if (this.members_search_server) {
@@ -311,7 +337,7 @@ var SelectionsModal = Modal.extend({
         var left = ($(window).width() - 1000)/2;
         var width = $(window).width() < 1040 ? $(window).width() : 1040;
         $(args.modal.el).parents('.ui-dialog')
-            .css({ width: width, left: "inherit", margin:"0", height: 485 })
+            .css({ width: width, left: "inherit", margin:"0", height: 490 })
             .offset({ left: left});
 
         $('#filter_selections').attr("disabled", false);
@@ -386,7 +412,6 @@ var SelectionsModal = Modal.extend({
         //console.log(this.use_result_option);
         this.get_members();
     },
-
     
     save: function() {
         var self = this;
@@ -403,11 +428,13 @@ var SelectionsModal = Modal.extend({
 
         // Determine updates
         var updates = [];
-        
+        var totalsFunction = this.show_totals_option;        
+
         // If no selections are used, add level
         if ($(this.el).find('.used_selections input').length === 0) {
             // nothing to do - include all members of this level
         } else {
+
             // Loop through selections
             $(this.el).find('.used_selections .option_value input')
                 .each(function(i, selection) {
@@ -423,6 +450,10 @@ var SelectionsModal = Modal.extend({
         
         var parameterName = $('#parameter').val();
         if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
+                hierarchy.levels[lName]["aggregators"] = [];
+                if (totalsFunction) {
+                    hierarchy.levels[lName]["aggregators"].push(totalsFunction);
+                }
                 hierarchy.levels[lName].selection = { "type": "INCLUSION", "members": updates };
                 if (Settings.ALLOW_PARAMETERS && parameterName) {
                     hierarchy.levels[lName].selection["parameterName"] = parameterName;
