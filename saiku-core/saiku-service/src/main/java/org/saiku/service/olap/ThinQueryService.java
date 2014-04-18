@@ -502,7 +502,6 @@ public class ThinQueryService implements Serializable {
 			
 			QueryDetails details = query.getDetails();
 			Measure[] selectedMeasures = new Measure[details.getMeasures().size()];
-			query = null;
 			for (int i = 0; i < selectedMeasures.length; i++)
 				selectedMeasures[i] = details.getMeasures().get(i);
 			result.setSelectedMeasures(selectedMeasures);

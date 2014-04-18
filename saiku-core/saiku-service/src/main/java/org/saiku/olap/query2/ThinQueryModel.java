@@ -100,7 +100,7 @@ public class ThinQueryModel {
 	public boolean hasAggregators() {
 		if (axes != null) {
 			for (ThinAxis ta : axes.values()) {
-				if (ta.getAggregators().size() > 1) {
+				if (ta.getAggregators().size() > 0) {
 					return true;
 				}
 				if (ta.getHierarchies() != null) {
