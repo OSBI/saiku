@@ -578,7 +578,7 @@ SaikuChartRenderer.prototype.render_chart_element = function(context) {
             self.chart.render();
             self.hasRendered = true;
         } catch (e) {
-            $(self.el).find('.canvas_wrapper').text("Could not render chart" + e);
+            $('#' + 'canvas_' + self.id).text("Could not render chart" + e);
         }
         if (self.chart.options && self.chart.options.animate) {
             return false;
