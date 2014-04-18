@@ -13,7 +13,8 @@
     border-collapse: separate; 
     border-spacing: 0; 
 }
-.workspace_results th, .workspace_results td { padding: 4px 10px 4px 5px; }
+.workspace_results th, .workspace_results td { padding: 3px 9px 3px 4px; }
+.workspace_results td { font-size: 10px; }
 .workspace_results table th {
     border-left: 1px solid #d5d5d5;
     margin-bottom: 0;
@@ -51,6 +52,7 @@
 .workspace_results table th.row {
     border-top: 1px solid #d5d5d5;
     background: #f9f9f9;
+    white-space: nowrap;
 }
 .workspace_results table th.row_total {
 	border-left: 1px none #d5d5d5;
@@ -78,7 +80,7 @@
 .workspace_results table th.row_header {
       border-top: 1px solid #d5d5d5;
       /*border-bottom: 1px solid #d5d5d5;*/
-      background: #E5E5E5;
+      background: #ECECEC;
 }
 
 .workspace_results table th.row_null {
