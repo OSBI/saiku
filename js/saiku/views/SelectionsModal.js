@@ -173,21 +173,23 @@ var SelectionsModal = Modal.extend({
             self.show_unique_option = false;
             $(this.el).find('.options #show_unique').attr('checked',false);
 
-            var showTotalsEl = $(this.el).find('#show_totals');
-            for (var i = 0; i < response.selections.length; i++) {
-            	var member = response.selections[i];
-	            if (member.levelUniqueName == decodeURIComponent(this.member.level)) { 
-		            if (member.disableTotals) {
-		            	showTotalsEl.attr("disabled", true);
-		            	this.show_totals_option = '';
-		            } else {
-		            	this.show_totals_option = member.showTotals;
-		            	showTotalsEl.removeAttr("disabled");
-		            }
-	            }
-            }
-            showTotalsEl.val(this.show_totals_option);
+            if (response && response.hasOwnProperty('selections')) {
+                var showTotalsEl = $(this.el).find('#show_totals');
+                for (var i = 0; i < response.selections.length; i++) {
+                	var member = response.selections[i];
+    	            if (member.levelUniqueName == decodeURIComponent(this.member.level)) { 
+    		            if (member.disableTotals) {
+    		            	showTotalsEl.attr("disabled", true);
+    		            	this.show_totals_option = '';
+    		            } else {
+    		            	this.show_totals_option = member.showTotals;
+    		            	showTotalsEl.removeAttr("disabled");
+    		            }
+    	            }
+                }
+                showTotalsEl.val(this.show_totals_option);
 
+            }
             $(this.el).find('.items_size').text(this.available_members.length);
             if (this.members_search_server) {
                 $(this.el).find('.warning').text("More items available than listed. Pre-Filter on server.");
