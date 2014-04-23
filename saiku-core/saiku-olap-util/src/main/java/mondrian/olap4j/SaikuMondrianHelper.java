@@ -27,7 +27,9 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import mondrian.olap.Annotation;
+import mondrian.olap.DrillThrough;
 import mondrian.olap.MondrianServer;
+import mondrian.olap.QueryPart;
 import mondrian.olap.Role;
 import mondrian.olap.RoleImpl;
 import mondrian.olap.Schema;
@@ -68,6 +70,15 @@ public class SaikuMondrianHelper {
 		return (con instanceof MondrianOlap4jConnection);
 	}
 
+	public static boolean isMondrianDrillthrough(OlapConnection con, String mdx) {
+		boolean isMondrian = isMondrianConnection(con);
+		if (isMondrian) {
+			RolapConnection rcon = getMondrianConnection(con);
+			QueryPart qp = rcon.parseStatement(mdx);
+			return (qp != null && qp instanceof DrillThrough);
+		}
+		return false;
+	}
 	public static void setRoles(OlapConnection con, String[] roleNames) throws Exception {
 		if (!(con instanceof MondrianOlap4jConnection)) {
 			throw new IllegalArgumentException("Connection has to be instance of MondrianOlap4jConnection");
