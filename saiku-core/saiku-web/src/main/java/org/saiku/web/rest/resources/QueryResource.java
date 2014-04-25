@@ -499,6 +499,15 @@ public class QueryResource {
 			}
 
 			olapQueryService.qm2mdx(queryName);
+			
+			if (olapQueryService.isMdxDrillthrough(queryName, mdx)) {
+				Long start = (new Date()).getTime();
+				ResultSet rs = olapQueryService.drillthrough(queryName, mdx);
+				QueryResult rsc = RestUtil.convert(rs);
+				Long runtime = (new Date()).getTime()- start;
+				rsc.setRuntime(runtime.intValue());
+				return rsc;
+			}
 			CellDataSet cs = olapQueryService.executeMdx(queryName,mdx, icf);
 			return RestUtil.convert(cs, limit);
 		}
@@ -508,6 +517,7 @@ public class QueryResource {
 			return new QueryResult(error);
 		}
 	}
+	
 		
 	@POST
 	@Produces({"application/json" })
@@ -521,9 +531,7 @@ public class QueryResource {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/result\tPOST\t"+mdx);
 		}
 		try {
-			olapQueryService.qm2mdx(queryName);
-			CellDataSet cs = olapQueryService.executeMdx(queryName,mdx);
-			return RestUtil.convert(cs, limit);
+			return executeMdx(queryName, null, mdx, limit);
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ") using mdx:\n" + mdx,e);

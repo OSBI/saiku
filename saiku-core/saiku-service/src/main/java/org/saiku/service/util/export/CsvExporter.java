@@ -16,6 +16,7 @@
 package org.saiku.service.util.export;
 
 import java.sql.ResultSet;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,8 +30,8 @@ import org.saiku.olap.util.OlapResultSetUtil;
 import org.saiku.olap.util.SaikuProperties;
 import org.saiku.olap.util.formatter.CellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
-import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.service.util.KeyValue;
+import org.saiku.service.util.exception.SaikuServiceException;
 
 public class CsvExporter {
 	
@@ -49,6 +50,7 @@ public class CsvExporter {
 	
 	public static byte[] exportCsv(ResultSet rs) { 
 		return getCsv(rs, SaikuProperties.webExportCsvDelimiter, SaikuProperties.webExportCsvTextEscape, true, null);
+		
 	}
 	
 	public static byte[] exportCsv(ResultSet rs, String delimiter, String enclosing) {
@@ -65,6 +67,7 @@ public class CsvExporter {
         Integer height = 0;
         StringBuilder sb = new StringBuilder();
         String addCols = null;
+        ResultSetHelper rsch = new ResultSetHelper();
         try {
 			while (rs.next()) {
 			    if (height == 0) {
@@ -99,7 +102,8 @@ public class CsvExporter {
 			    	sb.append(addCols);
 			    }
 			    for (int i = 0; i < width; i++) {
-			    	String content = rs.getString(i + 1);
+			    	int colType = rs.getMetaData().getColumnType(i + 1);
+			    	String content = rsch.getValue(rs, colType, i + 1);
 			        if (content == null)
 			            content = "";
 			        if (i > 0) {

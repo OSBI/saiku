@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
   <name>saiku-service</name>
   <comment>NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
   <projects>
-    <project>saiku-query</project>
     <project>saiku-olap-util</project>
+    <project>saiku-query</project>
   </projects>
   <buildSpec>
     <buildCommand>

@@ -230,7 +230,10 @@ public class SaikuProperties extends Properties{
 	public static final String  webExportCsvDelimiter = getPropString("saiku.web.export.csv.delimiter", ",");
 	public static final String  webExportCsvTextEscape = getPropString("saiku.web.export.csv.textEscape", "\"");
 	public static final String  webExportCsvTextEncoding = getPropString("saiku.web.export.csv.textEncoding", "UTF-8");
-	public static final Boolean webExportCsvUseFormattedValue=getPropBoolean("saiku.web.export.csv.useFormattedValue", "false");
+	public static final Boolean webExportCsvUseFormattedValue = getPropBoolean("saiku.web.export.csv.useFormattedValue", "false");
+	public static final String  webExportCsvNumberFormat = getPropString("saiku.web.export.csv.numberformat", "#,##.00");
+	public static final String  webExportCsvDateFormat = getPropString("saiku.web.export.csv.dateformat", "dd-MMM-yyyy");
+	public static final String  webExportCsvTimestampFormat = getPropString("saiku.web.export.csv.timestampformat", "dd-MMM-yyyy HH:mm:ss");
 	public static final String  webExportExcelName = getPropString("saiku.web.export.excel.name","saiku-export");
 	public static final String  webExportExcelFormat = getPropString("saiku.web.export.excel.format","xlsx");
 	public static final String  webExportExcelDefaultNumberFormat = getPropString("saiku.web.export.excel.numberformat","#,##0.00");	

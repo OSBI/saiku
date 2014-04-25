@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
+import mondrian.olap4j.SaikuMondrianHelper;
 import mondrian.rolap.RolapConnection;
 
 import org.apache.commons.lang.StringUtils;
@@ -470,6 +471,32 @@ public class OlapQueryService implements Serializable {
 		}
 	}
 
+	
+	public boolean isMdxDrillthrough(String queryName, String drillthroughMdx) {
+		try {
+			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnectionName());
+			return SaikuMondrianHelper.isMondrianDrillthrough(con, drillthroughMdx);
+		} catch (Exception e) {
+			throw new SaikuServiceException("Error checking for DRILLTHROUGH: " + queryName + " DRILLTHROUGH MDX:" + drillthroughMdx,e);
+		}	
+	}
+	
+	public ResultSet drillthrough(String queryName, String drillthroughMdx) {
+		OlapStatement stmt = null;
+		try {
+			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnectionName()); 
+			stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(drillthroughMdx);
+			return rs;
+		} catch (SQLException e) {
+			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName + " DRILLTHROUGH MDX:" + drillthroughMdx,e);
+		} finally {
+			try {
+				if (stmt != null)  stmt.close();
+			} catch (Exception e) {}
+		}
+		
+	}
 
 	public ResultSet drillthrough(String queryName, int maxrows, String returns) {
 		OlapStatement stmt = null;
