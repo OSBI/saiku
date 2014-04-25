@@ -48,7 +48,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.query2.ThinQuery;
 import org.saiku.olap.util.SaikuProperties;
-import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.ThinQueryService;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.web.rest.objects.resultset.QueryResult;
@@ -168,6 +167,16 @@ public class Query2Resource {
 	@Path("/execute")
 	public QueryResult execute(ThinQuery tq) {
 		try {
+			if (thinQueryService.isMdxDrillthrough(tq)) {
+				Long start = (new Date()).getTime();
+				ResultSet rs = thinQueryService.drillthrough(tq);
+				QueryResult rsc = RestUtil.convert(rs);
+				rsc.setQuery(tq);
+				Long runtime = (new Date()).getTime()- start;
+				rsc.setRuntime(runtime.intValue());
+				return rsc;
+			}
+			
 			QueryResult qr = RestUtil.convert(thinQueryService.execute(tq));
 			ThinQuery tqAfter = thinQueryService.getContext(tq.getName()).getOlapQuery();
 			qr.setQuery(tqAfter);

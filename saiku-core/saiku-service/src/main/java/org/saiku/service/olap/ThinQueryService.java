@@ -33,6 +33,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
+import mondrian.olap4j.SaikuMondrianHelper;
+
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
@@ -331,6 +333,37 @@ public class ThinQueryService implements Serializable {
 				if (stmt != null)  stmt.close();
 			} catch (Exception e) {}
 		}
+	}
+	
+	public boolean isMdxDrillthrough(ThinQuery query) {
+		try {
+			if (ThinQuery.Type.MDX.equals(query.getType())) {
+				SaikuCube cube = query.getCube();
+				final OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnection());
+				return SaikuMondrianHelper.isMondrianDrillthrough(con, query.getMdx());
+			}
+			return false;
+		} catch (Exception e) {
+			throw new SaikuServiceException("Error checking for DRILLTHROUGH: " + query.getName() + " DRILLTHROUGH MDX:" + query.getMdx(),e);
+		}	
+	}
+	
+	public ResultSet drillthrough(ThinQuery query) {
+		OlapStatement stmt = null;
+		try {
+			SaikuCube cube = query.getCube();
+			final OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnection()); 
+			stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query.getMdx());
+			return rs;
+		} catch (SQLException e) {
+			throw new SaikuServiceException("Error DRILLTHROUGH: " + query.getMdx() + " DRILLTHROUGH MDX:" + query.getMdx(),e);
+		} finally {
+			try {
+				if (stmt != null)  stmt.close();
+			} catch (Exception e) {}
+		}
+		
 	}
 
 	public ResultSet drillthrough(String queryName, List<Integer> cellPosition, Integer maxrows, String returns) {
