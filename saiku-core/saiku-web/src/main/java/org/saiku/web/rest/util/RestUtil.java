@@ -28,21 +28,22 @@ import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.dto.resultset.DataCell;
 import org.saiku.olap.dto.resultset.MemberCell;
 import org.saiku.service.olap.totals.TotalNode;
+import org.saiku.service.util.export.ResultSetHelper;
 import org.saiku.web.rest.objects.resultset.Cell;
 import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.objects.resultset.Total;
 
 public class RestUtil {
 	
-	public static QueryResult convert(ResultSet rs) {
+	public static QueryResult convert(ResultSet rs) throws Exception {
 		return convert(rs, 0);
 	}
 
-	public static QueryResult convert(ResultSet rs, int limit) {
+	public static QueryResult convert(ResultSet rs, int limit) throws Exception {
 
 		Integer width = 0;
         Integer height = 0;
-        
+        ResultSetHelper rsch = new ResultSetHelper();
         Cell[] header = null;
         ArrayList<Cell[]> rows = new ArrayList<Cell[]>();
         
@@ -62,8 +63,8 @@ public class RestUtil {
 			    }
 			    Cell[] row = new Cell[width];
 			    for (int i = 0; i < width; i++) {
-			    	String content = rs.getString(i + 1);
-			        
+			    	int colType = rs.getMetaData().getColumnType(i + 1);
+			    	String content = rsch.getValue(rs, colType, i + 1);
 			        if (content == null)
 			            content = "";
 			        row[i] = new Cell(content, Cell.Type.DATA_CELL);
