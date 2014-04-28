@@ -167,9 +167,7 @@ var Workspace = Backbone.View.extend({
         
         }
 
-        this.switch_view_state(this.viewState, true);
-
-        
+        this.switch_view_state(this.viewState, true);        
         
         // Add results table
         $(this.el).find('.workspace_results')
@@ -184,6 +182,7 @@ var Workspace = Backbone.View.extend({
         // Fire off new workspace event
         Saiku.session.trigger('workspace:new', { workspace: this });
 
+        Saiku.i18n.translate(this.el);
         return this; 
     },
     
