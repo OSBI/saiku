@@ -1,5 +1,7 @@
 SAIKU
 
+Issue Tracker: http://jira.meteorite.bi
+
 saiku
 ---------------
 Usage: ./saiku build <all | project>
