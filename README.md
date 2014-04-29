@@ -1,9 +1,9 @@
 SAIKU
-
-Issue Tracker: http://jira.meteorite.bi
-
-saiku
 ---------------
+
+*Issue Tracker: http://jira.meteorite.bi*
+
+
 Usage: ./saiku build <all | project>
 	Builds all or an individual saiku project
 
