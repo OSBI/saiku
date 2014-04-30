@@ -86,6 +86,20 @@ if (! Settings.BIPLUGIN) {
     });
 }
 
+/**
+ * Dynamically load plugins!
+ * @type {PluginCollection}
+ */
+var plugins = new PluginCollection();
+
+plugins.fetch({
+    success: function() {
+        plugins.each(function(log) {
+            jQuery.getScript(log.attributes.path);
+        });
+    }
+});
+
 var SaikuTimeLogger = function(element) {
     this._element = $(element);
     this._timestamps = [];
