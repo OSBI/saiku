@@ -20,54 +20,54 @@ import java.util.Properties;
 
 public class SaikuQuery extends AbstractSaikuObject {
 
-	private SaikuCube cube;
-	
-	private List<SaikuAxis> axes;
+  private SaikuCube cube;
 
-	private String mdx;
-	
-	private String type;
+  private List<SaikuAxis> axes;
 
-	private Properties properties;
-	
-	public SaikuQuery() {
-		super(null,null);
-		throw new RuntimeException("Unsupported Constructor. Serialization only");
-	}
+  private String mdx;
 
-	public SaikuQuery(String name, SaikuCube cube, List<SaikuAxis> axes, String mdx, String type, Properties props) {
-		super(name,name);
-		this.cube = cube;
-		this.axes = axes;
-		this.mdx = mdx;
-		this.type = type;
-		this.properties = props;
-	}
+  private String type;
 
-	public List<SaikuAxis> getSaikuAxes() {
-		return axes;
-	}
+  private Properties properties;
 
-	@Override
-	public String getUniqueName() {
-		String uniqueName = cube.getUniqueName() + ".[" + getName() + "]";
-		return uniqueName;
-	}
-	
-	public SaikuCube getCube() {
-			return cube;
-	}
-	
-	public String getMdx() {
-		return mdx;
-	}
-	
-	public String getType() {
-		return type;
-	}
-	
-	public Properties getProperties() {
-		return properties;
-	}
+  public SaikuQuery() {
+    super( null, null );
+    throw new RuntimeException( "Unsupported Constructor. Serialization only" );
+  }
+
+  public SaikuQuery( String name, SaikuCube cube, List<SaikuAxis> axes, String mdx, String type, Properties props ) {
+    super( name, name );
+    this.cube = cube;
+    this.axes = axes;
+    this.mdx = mdx;
+    this.type = type;
+    this.properties = props;
+  }
+
+  public List<SaikuAxis> getSaikuAxes() {
+    return axes;
+  }
+
+  @Override
+  public String getUniqueName() {
+    String uniqueName = cube.getUniqueName() + ".[" + getName() + "]";
+    return uniqueName;
+  }
+
+  public SaikuCube getCube() {
+    return cube;
+  }
+
+  public String getMdx() {
+    return mdx;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public Properties getProperties() {
+    return properties;
+  }
 }
 

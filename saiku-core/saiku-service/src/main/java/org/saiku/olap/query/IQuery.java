@@ -15,9 +15,6 @@
  */
 package org.saiku.olap.query;
 
-import java.util.Map;
-import java.util.Properties;
-
 import org.olap4j.Axis;
 import org.olap4j.CellSet;
 import org.olap4j.OlapConnection;
@@ -32,51 +29,97 @@ import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
 
+import java.util.Map;
+import java.util.Properties;
+
 public interface IQuery {
 
-	public enum QueryType { MDX, QM };
-	public String getName();
-	public SaikuCube getSaikuCube();
-	public CellSet execute() throws Exception;
-	public String getMdx();
-	public void resetQuery();
-	public void setProperties(Properties props);
-	public Properties getProperties();
-	public String toXml();
-	public Boolean isDrillThroughEnabled();
-	public QueryType getType();
+  public enum QueryType {MDX, QM}
 
-	public void swapAxes();
-	public Map<Axis, QueryAxis> getAxes();
-	public QueryAxis getAxis(Axis axis);
-	public QueryAxis getAxis(String name) throws SaikuOlapException;
-	public Cube getCube();			
-	public QueryAxis getUnusedAxis();
-	public void moveDimension(QueryDimension dimension, Axis axis);
-	public void moveDimension(QueryDimension dimension, Axis axis, int position);
-	public QueryDimension getDimension(String name);
-	public void resetAxisSelections(QueryAxis axis);
-	public void clearAllQuerySelections();
-	public void setMdx(String mdx);
-	public void setScenario(Scenario scenario);
-	public Scenario getScenario();
-	public void setTag(SaikuTag tag);
-	public SaikuTag getTag();
-	public void removeTag();
-	public void setFilter(SaikuFilter filter);
-	public SaikuFilter getFilter();
-	public void removeFilter();
-	public void storeCellset(CellSet cs);
-	public CellSet getCellset();
-	public void setStatement(OlapStatement os);
-	public OlapStatement getStatement();
-	public void cancel() throws Exception;
-	public void clearAxis(String axisName) throws SaikuOlapException;
-	public OlapConnection getConnection();
-	public void storeFormatter(ICellSetFormatter formatter);
-	public ICellSetFormatter getFormatter();
-	public void setTotalFunction(String uniqueLevelName, String value);
-	public String getTotalFunction(String uniqueLevelName);
-	public Map<String, String> getTotalFunctions();
+  ;
+
+  public String getName();
+
+  public SaikuCube getSaikuCube();
+
+  public CellSet execute() throws Exception;
+
+  public String getMdx();
+
+  public void resetQuery();
+
+  public void setProperties( Properties props );
+
+  public Properties getProperties();
+
+  public String toXml();
+
+  public Boolean isDrillThroughEnabled();
+
+  public QueryType getType();
+
+  public void swapAxes();
+
+  public Map<Axis, QueryAxis> getAxes();
+
+  public QueryAxis getAxis( Axis axis );
+
+  public QueryAxis getAxis( String name ) throws SaikuOlapException;
+
+  public Cube getCube();
+
+  public QueryAxis getUnusedAxis();
+
+  public void moveDimension( QueryDimension dimension, Axis axis );
+
+  public void moveDimension( QueryDimension dimension, Axis axis, int position );
+
+  public QueryDimension getDimension( String name );
+
+  public void resetAxisSelections( QueryAxis axis );
+
+  public void clearAllQuerySelections();
+
+  public void setMdx( String mdx );
+
+  public void setScenario( Scenario scenario );
+
+  public Scenario getScenario();
+
+  public void setTag( SaikuTag tag );
+
+  public SaikuTag getTag();
+
+  public void removeTag();
+
+  public void setFilter( SaikuFilter filter );
+
+  public SaikuFilter getFilter();
+
+  public void removeFilter();
+
+  public void storeCellset( CellSet cs );
+
+  public CellSet getCellset();
+
+  public void setStatement( OlapStatement os );
+
+  public OlapStatement getStatement();
+
+  public void cancel() throws Exception;
+
+  public void clearAxis( String axisName ) throws SaikuOlapException;
+
+  public OlapConnection getConnection();
+
+  public void storeFormatter( ICellSetFormatter formatter );
+
+  public ICellSetFormatter getFormatter();
+
+  public void setTotalFunction( String uniqueLevelName, String value );
+
+  public String getTotalFunction( String uniqueLevelName );
+
+  public Map<String, String> getTotalFunctions();
 
 }

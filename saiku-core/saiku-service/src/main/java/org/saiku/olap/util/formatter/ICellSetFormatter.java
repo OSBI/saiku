@@ -20,5 +20,5 @@ import org.saiku.olap.dto.resultset.Matrix;
 
 public interface ICellSetFormatter {
 
-	public Matrix format(final CellSet cellSet);
+  public Matrix format( final CellSet cellSet );
 }

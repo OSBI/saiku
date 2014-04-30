@@ -18,17 +18,20 @@ package org.saiku.olap.dto;
 
 public class SimpleCubeElement extends AbstractSaikuObject {
 
-	private String caption;
-	
-	public SimpleCubeElement() {	};
-	
-	public SimpleCubeElement(String name, String uniqueName, String caption) {
-		super(uniqueName,name);
-		this.caption = caption;
-	}
+  private String caption;
 
-	public String getCaption() {
-		return caption;
-	}
+  public SimpleCubeElement() {
+  }
+
+  ;
+
+  public SimpleCubeElement( String name, String uniqueName, String caption ) {
+    super( uniqueName, name );
+    this.caption = caption;
+  }
+
+  public String getCaption() {
+    return caption;
+  }
 
 }

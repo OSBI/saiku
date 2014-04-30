@@ -174,5 +174,11 @@
             <artifactId>hsqldb</artifactId>
             <version>1.8.0.10</version>
         </dependency>
+        <dependency>
+            <groupId>com.cenqua.clover</groupId>
+            <artifactId>clover</artifactId>
+            <version>3.3.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>

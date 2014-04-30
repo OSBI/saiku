@@ -17,7 +17,7 @@ package org.saiku.datasources.connection;
 
 
 public interface IConnectionProcessor {
-	
-	public ISaikuConnection process(ISaikuConnection con);
+
+  public ISaikuConnection process( ISaikuConnection con );
 
 }

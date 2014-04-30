@@ -17,49 +17,49 @@ package org.saiku.olap.dto;
 
 
 public class SaikuMember extends AbstractSaikuObject {
-	
-	private String caption;
-	private String dimensionUniqueName;
-	private String description;
-	private String levelUniqueName;
-	private String hierarchyUniqueName;
-	
-	public SaikuMember() {}
 
-	public SaikuMember(
-			String name, 
-			String uniqueName, 
-			String caption, 
-			String description, 
-			String dimensionUniqueName, 
-			String hierarchyUniqueName, 
-			String levelUniqueName) 
-	{
-		super(uniqueName,name);
-		this.caption = caption;
-		this.description = description;
-		this.dimensionUniqueName = dimensionUniqueName;
-		this.levelUniqueName = levelUniqueName;
-		this.hierarchyUniqueName = hierarchyUniqueName;
-	}
+  private String caption;
+  private String dimensionUniqueName;
+  private String description;
+  private String levelUniqueName;
+  private String hierarchyUniqueName;
 
-	public String getCaption() {
-		return caption;
-	}
+  public SaikuMember() {
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public SaikuMember(
+    String name,
+    String uniqueName,
+    String caption,
+    String description,
+    String dimensionUniqueName,
+    String hierarchyUniqueName,
+    String levelUniqueName ) {
+    super( uniqueName, name );
+    this.caption = caption;
+    this.description = description;
+    this.dimensionUniqueName = dimensionUniqueName;
+    this.levelUniqueName = levelUniqueName;
+    this.hierarchyUniqueName = hierarchyUniqueName;
+  }
 
-	public String getLevelUniqueName() {
-		return levelUniqueName;
-	}
-	
-	public String getDimensionUniqueName() {
-		return dimensionUniqueName;
-	}
+  public String getCaption() {
+    return caption;
+  }
 
-	public String getHierarchyUniqueName() {
-		return hierarchyUniqueName;
-	}	
+  public String getDescription() {
+    return description;
+  }
+
+  public String getLevelUniqueName() {
+    return levelUniqueName;
+  }
+
+  public String getDimensionUniqueName() {
+    return dimensionUniqueName;
+  }
+
+  public String getHierarchyUniqueName() {
+    return hierarchyUniqueName;
+  }
 }

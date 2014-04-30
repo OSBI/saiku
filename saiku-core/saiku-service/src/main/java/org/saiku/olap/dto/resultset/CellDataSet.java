@@ -15,147 +15,145 @@
  */
 package org.saiku.olap.dto.resultset;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.olap4j.metadata.Measure;
 import org.saiku.service.olap.totals.TotalNode;
 
+import java.io.Serializable;
+import java.util.List;
+
 public class CellDataSet implements Serializable {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
 
-    private int width;
+  private int width;
 
-    private int height;
+  private int height;
 
-    private AbstractBaseCell[][] cellSetHeader;
+  private AbstractBaseCell[][] cellSetHeader;
 
-    private AbstractBaseCell[][] cellSetBody;
+  private AbstractBaseCell[][] cellSetBody;
 
-    private Measure[] selectedMeasures;
-    
-    private List<TotalNode>[] colTotalsLists;
-    
-    private List<TotalNode>[] rowTotalsLists;
+  private Measure[] selectedMeasures;
 
-    private int offset;
-    
-    private int topOffset;
-    
-    private int leftOffset;
-    
-    public int runtime;
+  private List<TotalNode>[] colTotalsLists;
 
-    public CellDataSet() {
-        super();
-    }
+  private List<TotalNode>[] rowTotalsLists;
 
-    public CellDataSet(final int width, final int height) {
-        this.width = width;
-        this.height = height;
-    }
+  private int offset;
 
-    public AbstractBaseCell[][] getCellSetHeaders() {
-        return cellSetHeader;
-    }
+  private int topOffset;
 
-    public void setCellSetHeaders(final AbstractBaseCell[][] cellSet) {
-    	this.topOffset = cellSet.length;
-        this.cellSetHeader = cellSet;
-    }
+  private int leftOffset;
 
-    public AbstractBaseCell[][] getCellSetBody() {
-        return cellSetBody;
-    }
+  public int runtime;
 
-    public void setCellSetBody(final AbstractBaseCell[][] cellSet) {
-        this.cellSetBody = cellSet;
-    }
+  public CellDataSet() {
+    super();
+  }
 
-    public void setOffset(final int offset) {
-        this.offset = offset;
-    }
+  public CellDataSet( final int width, final int height ) {
+    this.width = width;
+    this.height = height;
+  }
 
-    public int getOffset() {
-        return offset;
+  public AbstractBaseCell[][] getCellSetHeaders() {
+    return cellSetHeader;
+  }
 
-    }
+  public void setCellSetHeaders( final AbstractBaseCell[][] cellSet ) {
+    this.topOffset = cellSet.length;
+    this.cellSetHeader = cellSet;
+  }
 
-	public int getTopOffset() {
-		return topOffset;
-	}
+  public AbstractBaseCell[][] getCellSetBody() {
+    return cellSetBody;
+  }
 
-	public int getLeftOffset() {
-		return leftOffset;
-	}
+  public void setCellSetBody( final AbstractBaseCell[][] cellSet ) {
+    this.cellSetBody = cellSet;
+  }
 
-	public void setLeftOffset(int leftOffset) {
-		this.leftOffset = leftOffset;
-	}
+  public void setOffset( final int offset ) {
+    this.offset = offset;
+  }
 
-	public Measure[] getSelectedMeasures() {
-		return selectedMeasures;
-	}
+  public int getOffset() {
+    return offset;
 
-	public void setSelectedMeasures(Measure[] selectedMeasures) {
-		this.selectedMeasures = selectedMeasures;
-	}
+  }
 
-	public List<TotalNode>[] getRowTotalsLists() {
-		return rowTotalsLists;
-	}
+  public int getTopOffset() {
+    return topOffset;
+  }
 
-	public void setRowTotalsLists(List<TotalNode>[] rowTotalsLists) {
-		this.rowTotalsLists = rowTotalsLists;
-	}
-	
-	public List<TotalNode>[] getColTotalsLists() {
-		return colTotalsLists;
-	}
+  public int getLeftOffset() {
+    return leftOffset;
+  }
 
-	public void setColTotalsLists(List<TotalNode>[] colTotalsLists) {
-		this.colTotalsLists = colTotalsLists;
-	}
+  public void setLeftOffset( int leftOffset ) {
+    this.leftOffset = leftOffset;
+  }
 
-	/**
-     * @param width
-     *            the width to set
-     */
-    public void setWidth(final int width) {
-        this.width = width;
-    }
+  public Measure[] getSelectedMeasures() {
+    return selectedMeasures;
+  }
 
-    /**
-     * @return the width
-     */
-    public int getWidth() {
-        return width;
-    }
+  public void setSelectedMeasures( Measure[] selectedMeasures ) {
+    this.selectedMeasures = selectedMeasures;
+  }
 
-    /**
-     * @param height
-     *            the height to set
-     */
-    public void setHeight(final int height) {
-        this.height = height;
-    }
+  public List<TotalNode>[] getRowTotalsLists() {
+    return rowTotalsLists;
+  }
 
-    /**
-     * @return the height
-     */
-    public int getHeight() {
-        return height;
-    }
+  public void setRowTotalsLists( List<TotalNode>[] rowTotalsLists ) {
+    this.rowTotalsLists = rowTotalsLists;
+  }
 
-	public int getRuntime() {
-		return runtime;
-	}
+  public List<TotalNode>[] getColTotalsLists() {
+    return colTotalsLists;
+  }
 
-	public void setRuntime(int runtime) {
-		this.runtime = runtime;
-	}
+  public void setColTotalsLists( List<TotalNode>[] colTotalsLists ) {
+    this.colTotalsLists = colTotalsLists;
+  }
+
+  /**
+   * @param width the width to set
+   */
+  public void setWidth( final int width ) {
+    this.width = width;
+  }
+
+  /**
+   * @return the width
+   */
+  public int getWidth() {
+    return width;
+  }
+
+  /**
+   * @param height the height to set
+   */
+  public void setHeight( final int height ) {
+    this.height = height;
+  }
+
+  /**
+   * @return the height
+   */
+  public int getHeight() {
+    return height;
+  }
+
+  public int getRuntime() {
+    return runtime;
+  }
+
+  public void setRuntime( int runtime ) {
+    this.runtime = runtime;
+  }
 }

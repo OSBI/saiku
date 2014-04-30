@@ -23,3 +23,4 @@ Usage: ./saiku run <package>
 			Default is:
 				node server.js 8080 dev.analytical-labs.com 80
 
+mvn clean clover2:setup test clover2:aggregate clover2:clover

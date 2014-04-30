@@ -15,25 +15,25 @@
  */
 package org.saiku.olap.util;
 
-import java.util.Comparator;
-
 import org.saiku.olap.dto.ISaikuObject;
+
+import java.util.Comparator;
 
 public abstract class SaikuObjectComparator<T> implements Comparator<ISaikuObject> {
 
-	public class SaikuNameComparator extends SaikuObjectComparator<ISaikuObject> {
+  public class SaikuNameComparator extends SaikuObjectComparator<ISaikuObject> {
 
-		public int compare(ISaikuObject o1, ISaikuObject o2) {
-			return o1.getName().compareTo(o2.getName());
-		}
-	}
-	
-	public class SaikuUniqueNameComparator extends SaikuObjectComparator<ISaikuObject> {
+    public int compare( ISaikuObject o1, ISaikuObject o2 ) {
+      return o1.getName().compareTo( o2.getName() );
+    }
+  }
 
-		public int compare(ISaikuObject o1, ISaikuObject o2) {
-			return o1.getUniqueName().compareTo(o2.getUniqueName());
-		}
-		
-	}
+  public class SaikuUniqueNameComparator extends SaikuObjectComparator<ISaikuObject> {
+
+    public int compare( ISaikuObject o1, ISaikuObject o2 ) {
+      return o1.getUniqueName().compareTo( o2.getUniqueName() );
+    }
+
+  }
 
 }

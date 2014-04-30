@@ -16,59 +16,58 @@
 package org.saiku.olap.dto;
 
 public class SaikuLevel extends AbstractSaikuObject {
-	
-	private String caption;
-	private String hierarchyUniqueName;
-	private String dimensionUniqueName;
-//	private transient List<SaikuMember> members;
-	private boolean visible;
-	private String description;
-	
-	public SaikuLevel() {
-		super(null,null);
-		throw new RuntimeException("Unsupported Constructor. Serialization only");
-	}
 
-	
-	public SaikuLevel(
-			String name, 
-			String uniqueName, 
-			String caption, 
-			String description,
-			String dimensionUniqueName, 
-			String hierarchyUniqueName, 
-			boolean visible) 
-	{
-		super(uniqueName,name);
-		this.caption = caption;
-		this.hierarchyUniqueName = hierarchyUniqueName;
-		this.dimensionUniqueName = dimensionUniqueName;
-		this.visible = visible;
-		this.description = description;
-//		this.members = members;
-	}
+  private String caption;
+  private String hierarchyUniqueName;
+  private String dimensionUniqueName;
+  //	private transient List<SaikuMember> members;
+  private boolean visible;
+  private String description;
 
-	public String getCaption() {
-		return caption;
-	}
-	
-	public String getHierarchyUniqueName() {
-		return hierarchyUniqueName;
-	}
-	
-	public String getDimensionUniqueName() {
-		return dimensionUniqueName;
-	}
-	
-	public boolean isVisible() {
-		return visible;
-	}
-	
-	public String getDescription() {
-		return description;
-	}
-	
-//	public List<SaikuMember> getMembers() {
-//		return members;
-//	}
+  public SaikuLevel() {
+    super( null, null );
+    throw new RuntimeException( "Unsupported Constructor. Serialization only" );
+  }
+
+
+  public SaikuLevel(
+    String name,
+    String uniqueName,
+    String caption,
+    String description,
+    String dimensionUniqueName,
+    String hierarchyUniqueName,
+    boolean visible ) {
+    super( uniqueName, name );
+    this.caption = caption;
+    this.hierarchyUniqueName = hierarchyUniqueName;
+    this.dimensionUniqueName = dimensionUniqueName;
+    this.visible = visible;
+    this.description = description;
+    //		this.members = members;
+  }
+
+  public String getCaption() {
+    return caption;
+  }
+
+  public String getHierarchyUniqueName() {
+    return hierarchyUniqueName;
+  }
+
+  public String getDimensionUniqueName() {
+    return dimensionUniqueName;
+  }
+
+  public boolean isVisible() {
+    return visible;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  //	public List<SaikuMember> getMembers() {
+  //		return members;
+  //	}
 }

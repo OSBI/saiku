@@ -1,34 +1,33 @@
 package org.saiku.service.olap.totals.aggregators;
 
+import mondrian.util.Format;
 import org.olap4j.metadata.Measure;
 
-import mondrian.util.Format;
-
 public class SumAggregator extends TotalAggregator {
-	
-	protected SumAggregator(Format format) {
-		super(format);
-	}
 
-	double sum = 0.0;
+  protected SumAggregator( Format format ) {
+    super( format );
+  }
 
-	@Override
-	public void addData(double data) {
-		sum += data;
-	}
+  double sum = 0.0;
 
-	@Override
-	public Double getValue() {
-		return sum;
-	}
+  @Override
+  public void addData( double data ) {
+    sum += data;
+  }
 
-	@Override
-	public TotalAggregator newInstance() {
-		return new SumAggregator(format);
-	}
-	
-	public TotalAggregator newInstance(Format format, Measure measure) {
-		return new SumAggregator(format);
-	}
-	
+  @Override
+  public Double getValue() {
+    return sum;
+  }
+
+  @Override
+  public TotalAggregator newInstance() {
+    return new SumAggregator( format );
+  }
+
+  public TotalAggregator newInstance( Format format, Measure measure ) {
+    return new SumAggregator( format );
+  }
+
 }

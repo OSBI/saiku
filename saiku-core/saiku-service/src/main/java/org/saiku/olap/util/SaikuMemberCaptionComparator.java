@@ -16,19 +16,18 @@
 
 package org.saiku.olap.util;
 
-import java.util.Comparator;
-
 import org.saiku.olap.dto.SaikuMember;
 
+import java.util.Comparator;
 
 
 public class SaikuMemberCaptionComparator implements Comparator<SaikuMember> {
 
-	public int compare(SaikuMember o1, SaikuMember o2) {
-		if (o1.getCaption() == null || o2.getCaption() == null) {
-			return 0;
-		}
-		return o1.getCaption().compareTo(o2.getCaption());
-	}
+  public int compare( SaikuMember o1, SaikuMember o2 ) {
+    if ( o1.getCaption() == null || o2.getCaption() == null ) {
+      return 0;
+    }
+    return o1.getCaption().compareTo( o2.getCaption() );
+  }
 
 }

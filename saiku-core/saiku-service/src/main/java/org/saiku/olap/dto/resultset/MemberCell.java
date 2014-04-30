@@ -19,121 +19,115 @@ import java.io.Serializable;
 
 
 public class MemberCell extends AbstractBaseCell implements Serializable {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    private boolean lastRow = false;
+  private boolean lastRow = false;
 
-    private boolean expanded = false;
+  private boolean expanded = false;
 
-    private String parentDimension = null;
+  private String parentDimension = null;
 
-    private String uniqueName;
+  private String uniqueName;
 
-    private String hierarchy;
-    
-    private String level;
+  private String hierarchy;
 
-    //private HashMap<String, String> properties = new HashMap<String, String>();
-    /**
-     * 
-     * Blank Constructor for Serializable niceness, don't use it.
-     * 
-     */
-    public MemberCell() {
-        super();
-    }
+  private String level;
 
-    /**
-     * 
-     * Creates a member cell.
-     * 
-     * @param b
-     * @param c
-     */
-    public MemberCell(final boolean right, final boolean sameAsPrev) {
-        this();
-        this.right = right;
-        this.sameAsPrev = sameAsPrev;
-    }
+  //private HashMap<String, String> properties = new HashMap<String, String>();
 
-    /**
-     * Returns true if this is the bottom row of the column headers(supposedly).
-     * 
-     * @return the lastRow
-     */
-    public boolean isLastRow() {
-        return lastRow;
-    }
+  /**
+   * Blank Constructor for Serializable niceness, don't use it.
+   */
+  public MemberCell() {
+    super();
+  }
 
-    /**
-     * 
-     * Set true if this is the bottom row of the column headers.
-     * 
-     * @param lastRow
-     *            the lastRow to set
-     */
-    public void setLastRow(final boolean lastRow) {
-        this.lastRow = lastRow;
-    }
+  /**
+   * Creates a member cell.
+   *
+   * @param b
+   * @param c
+   */
+  public MemberCell( final boolean right, final boolean sameAsPrev ) {
+    this();
+    this.right = right;
+    this.sameAsPrev = sameAsPrev;
+  }
 
-    public void setParentDimension(final String parDim) {
-        parentDimension = parDim;
-    }
+  /**
+   * Returns true if this is the bottom row of the column headers(supposedly).
+   *
+   * @return the lastRow
+   */
+  public boolean isLastRow() {
+    return lastRow;
+  }
 
-    public String getParentDimension() {
-        return parentDimension;
-    }
+  /**
+   * Set true if this is the bottom row of the column headers.
+   *
+   * @param lastRow the lastRow to set
+   */
+  public void setLastRow( final boolean lastRow ) {
+    this.lastRow = lastRow;
+  }
 
-    public String getHierarchy() {
-		return hierarchy;
-	}
+  public void setParentDimension( final String parDim ) {
+    parentDimension = parDim;
+  }
 
-	public void setHierarchy(String hierarchy) {
-		this.hierarchy = hierarchy;
-	}
+  public String getParentDimension() {
+    return parentDimension;
+  }
 
-	public String getLevel() {
-		return level;
-	}
+  public String getHierarchy() {
+    return hierarchy;
+  }
 
-	public void setLevel(String level) {
-		this.level = level;
-	}
+  public void setHierarchy( String hierarchy ) {
+    this.hierarchy = hierarchy;
+  }
 
-	/**
-     *Is the member expanded?.
-     * 
-     * @return the expanded
-     */
-    public boolean isExpanded() {
-        return expanded;
-    }
+  public String getLevel() {
+    return level;
+  }
 
-    /**
-     * 
-     *Set Expanded Flag.
-     * 
-     * @param expanded
-     *            the expanded to set
-     */
-    public void setExpanded(final boolean expanded) {
-        this.expanded = expanded;
-    }
+  public void setLevel( String level ) {
+    this.level = level;
+  }
 
-    /**
-     * Set the cell's unique name. 
-     * 
-     * @param uniqueName
-     */
-    public void setUniquename(final String uniqueName) {
+  /**
+   * Is the member expanded?.
+   *
+   * @return the expanded
+   */
+  public boolean isExpanded() {
+    return expanded;
+  }
 
-        this.uniqueName = uniqueName;
+  /**
+   * Set Expanded Flag.
+   *
+   * @param expanded the expanded to set
+   */
+  public void setExpanded( final boolean expanded ) {
+    this.expanded = expanded;
+  }
 
-    }
+  /**
+   * Set the cell's unique name.
+   *
+   * @param uniqueName
+   */
+  public void setUniquename( final String uniqueName ) {
 
-    public String getUniqueName() {
-        return uniqueName;
-    }
+    this.uniqueName = uniqueName;
+
+  }
+
+  public String getUniqueName() {
+    return uniqueName;
+  }
 
 
     /*public void setProperty(String name, String value){
