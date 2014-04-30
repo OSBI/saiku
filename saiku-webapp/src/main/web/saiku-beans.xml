@@ -54,12 +54,21 @@
 		<property name="sessionService" ref="sessionService" />
 	</bean>
 
+    <bean id="platformBean" class="org.saiku.service.PlatformUtilsService">
+
+        <property name="path" value="/tmp/saiku-server/tomcat/webapps/ROOT/js/saiku/plugins/"/>
+    </bean>
+
+    <bean id="infoResource" class="org.saiku.web.rest.resources.InfoResource">
+        <property name="platformUtilsService" ref="platformBean"/>
+    </bean>
 
 
 	<bean id="repositoryBean" scope="request"
 		class="org.saiku.web.rest.resources.BasicRepositoryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />
 		<property name="path" value="res:saiku-repository" />
+
 	</bean>
 	<!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
 

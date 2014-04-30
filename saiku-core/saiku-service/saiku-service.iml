@@ -72,6 +72,8 @@
     <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
     <orderEntry type="library" name="Maven: hsqldb:hsqldb:1.8.0.10" level="project" />
     <orderEntry type="library" name="Maven: com.cenqua.clover:clover:3.3.0" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-beans:3.2.1.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-core:3.2.1.RELEASE" level="project" />
   </component>
 </module>
 
