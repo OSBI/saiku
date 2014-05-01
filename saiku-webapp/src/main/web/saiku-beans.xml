@@ -9,6 +9,7 @@
 		<property name="path" value="res:saiku-datasources" />
 	</bean>
 	<!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
+    <bean id="h2database" class="org.saiku.database.Database" init-method="init"/>
 
 	<bean id="sessionService" class="org.saiku.web.service.SessionService">
 		<property name="authenticationManager" ref="authenticationManager" />

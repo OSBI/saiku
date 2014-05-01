@@ -1,4 +1,4 @@
-package org.saiku.service.util;
+package org.saiku.service.util.dto;
 
 /**
  * Created by bugg on 30/04/14.
