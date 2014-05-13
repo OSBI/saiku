@@ -1,32 +1,31 @@
 /*
 package org.saiku.olap.discover;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.olap4j.OlapConnection;
-import org.saiku.AbstractServiceUtils;
-import org.saiku.TConnectionManager;
-import org.saiku.datasources.connection.IConnectionManager;
-import org.saiku.datasources.datasource.SaikuDatasource;
-import org.saiku.olap.dto.*;
+import org.saiku.TestSaikuContext;
+import org.saiku.olap.dto.SaikuConnection;
+import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SaikuDimension;
+import org.saiku.olap.dto.SaikuHierarchy;
+import org.saiku.olap.dto.SaikuLevel;
+import org.saiku.olap.dto.SaikuMember;
+import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.util.exception.SaikuOlapException;
-import org.saiku.service.datasource.ClassPathResourceDatasourceManager;
-import org.saiku.service.datasource.IDatasourceManager;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import static org.junit.Assert.*;
 
 
 public class OlapMetaExplorerTest {
 
     private static OlapMetaExplorer olapMetaExplorer;
-    private static Properties testProps = new Properties();
     
     */
 /**
@@ -78,7 +77,7 @@ public class OlapMetaExplorerTest {
             output = olapMetaExplorer.getConnection("noname");
         }
         catch (Exception e){
-            Exception outpu2t = e;
+            
         }
         assertNull(output);
 
@@ -167,11 +166,10 @@ public class OlapMetaExplorerTest {
         assertEquals(8, output.size());
         
         for (int i = 0; i < output.size(); i++){
-        	assertEquals("FoodMart", output.get(i).getCatalogName());
+        	assertEquals("FoodMart", output.get(i).getCatalog());
         	output.get(i).getName();
-        	assertEquals("test", output.get(i).getConnectionName());
-        	output.get(i).getCubeName();
-        	assertEquals("FoodMart", output.get(i).getSchemaName());
+        	assertEquals("test", output.get(i).getConnection());
+        	assertEquals("FoodMart", output.get(i).getSchema());
         	output.get(i).getUniqueName();
         }
         
@@ -192,7 +190,6 @@ public class OlapMetaExplorerTest {
 
          for (int i = 0; i < output.size(); i++){
          	assertEquals(names[i], output.get(i).getName());
-         	assertEquals("["+names[i]+"]",output.get(i).getCubeName());
          }
     }
     public final void testGetNativeCube(){
@@ -295,7 +292,7 @@ public class OlapMetaExplorerTest {
     
     @Test
     public final void testGetAllMembers() throws SaikuOlapException{
-    	List<SimpleCubeElement> members = olapMetaExplorer.getAllMembers(olapMetaExplorer.getAllCubes().get(0), "Department", "Department", "Department Description");
+    	List<SimpleCubeElement> members = olapMetaExplorer.getAllMembers(olapMetaExplorer.getAllCubes().get(0), "Department", "Department Description");
     	
     	assertNotNull(members);
     	
@@ -332,7 +329,7 @@ public class OlapMetaExplorerTest {
 
     @Test
     public final void testGetAllMembersUniqueNameHierarchy() throws SaikuOlapException{
-        List<SimpleCubeElement> members = olapMetaExplorer.getAllMembers(olapMetaExplorer.getAllCubes().get(0), "Department", "[Department]", "Department Description");
+        List<SimpleCubeElement> members = olapMetaExplorer.getAllMembers(olapMetaExplorer.getAllCubes().get(0), "Department", "Department Description");
         
         assertNotNull(members);
         
@@ -341,7 +338,7 @@ public class OlapMetaExplorerTest {
     
     @Test
     public final void testGetAllMembersUniqueNameLevel() throws SaikuOlapException{
-        List<SimpleCubeElement> members = olapMetaExplorer.getAllMembers(olapMetaExplorer.getAllCubes().get(0), "Department", "Department", "[Department].[(All)]");
+        List<SimpleCubeElement> members = olapMetaExplorer.getAllMembers(olapMetaExplorer.getAllCubes().get(0), "Department", "[Department].[(All)]");
         
         assertNotNull(members);
         
@@ -352,6 +349,7 @@ public class OlapMetaExplorerTest {
     
     
     @BeforeClass
+<<<<<<< HEAD
 public static void setup() throws IOException{
 
    AbstractServiceUtils ast = new AbstractServiceUtils();
@@ -385,5 +383,11 @@ public static void setup() throws IOException{
             substring(0,absolutePath.lastIndexOf(File.separator));
         return tempFilePath+"/";
       }
+=======
+    public static void setup() throws IOException{
+    	olapMetaExplorer = TestSaikuContext.instance().olapMetaExplorer;
+
+    }
+>>>>>>> origin/saiku3
 }
 */

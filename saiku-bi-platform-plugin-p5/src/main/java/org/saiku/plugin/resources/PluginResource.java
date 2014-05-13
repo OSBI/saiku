@@ -76,7 +76,7 @@ public class PluginResource {
 	{
 		try {
 			SaikuQuery sq = queryService.getQuery(query);
-			SaikuDatasource ds = datasourceService.getDatasource(sq.getCube().getConnectionName());
+			SaikuDatasource ds = datasourceService.getDatasource(sq.getCube().getConnection());
 			Properties props = ds.getProperties();
 
 			String cdaFile = getCdaAsString(

@@ -40,7 +40,7 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
     return ds;
   }
 
-  public abstract void init();
+  public abstract void init() throws SaikuOlapException;
 
   public void destroy() throws SaikuOlapException {
     Map<String, OlapConnection> connections = getAllOlapConnections();

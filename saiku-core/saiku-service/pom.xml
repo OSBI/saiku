@@ -3,29 +3,68 @@
     <parent>
         <artifactId>saiku-core</artifactId>
         <groupId>org.saiku</groupId>
-        <version>2.6-SNAPSHOT</version>
+        <version>3.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.saiku</groupId>
     <artifactId>saiku-service</artifactId>
-    <version>2.6-SNAPSHOT</version>
+    <version>3.0-SNAPSHOT</version>
     <name>saiku - services</name>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.2</version>
-                <executions>
-                    <execution>
-                        <id>create-package</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <unzip dest="target/test/">
+        			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+				<configuration>
+					<argLine> -Xmx512m</argLine>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>mondrian-data-foodmart-hsql</groupId>
+									<artifactId>mondrian-data-foodmart-hsql</artifactId>
+  									<version>0.1</version>
+									<type>jar</type>
+									<outputDirectory>target/</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<id>test</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<echo message="Prepare Test. Unzipping foodmart" />
+								<unzip dest="target/test-classes/">
+									<fileset dir="target/">
+										<include name="mondrian-data*.jar" />
+									</fileset>
+								</unzip>
+								<echo message="Unzipped!" />
+                  <unzip dest="target/test/">
                                     <fileset dir="${basedir}/../../util/">
                                         <include name="foodmart_hsql.script.zip"/>
                                     </fileset>
@@ -41,11 +80,12 @@
                                         <include name="foodmart_hsql.script"/>
                                     </fileset>
                                 </copy>
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -91,6 +131,16 @@
 			<groupId>org.saiku</groupId>
 			<artifactId>saiku-olap-util</artifactId>
 			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
         <dependency>
             <groupId>org.olap4j</groupId>
@@ -124,8 +174,18 @@
                     <groupId>javax.servlet</groupId>
                     <artifactId>jsp-api</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.olap4j</groupId>
+                    <artifactId>xmlaserver</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.3</version>
+			<scope>compile</scope>
+		</dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
@@ -156,6 +216,7 @@
             <artifactId>olap4j-xmla</artifactId>
             <version>1.2.0-SNAPSHOT</version>
         </dependency>
+        
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom</artifactId>
@@ -248,5 +309,23 @@
         <version>2.4</version>
         <scope>test</scope>
       </dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.17</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>mondrian-data-foodmart-hsql</groupId>
+  			<artifactId>mondrian-data-foodmart-hsql</artifactId>
+  			<version>0.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+  			<artifactId>jackson-jaxrs</artifactId>
+  			<version>1.9.3</version>
+			<scope>test</scope>
+		</dependency>
     </dependencies>
 </project>
