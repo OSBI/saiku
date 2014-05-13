@@ -20,39 +20,40 @@ import java.util.List;
 
 public class SaikuTuple {
 
-	private List<SaikuMember> saikuMembers;
-	
-	public SaikuTuple() {}
-	
-	public SaikuTuple(List<SaikuMember> members) {
-		this.saikuMembers = members;
-	}
-	
-	public List<SaikuMember> getSaikuMembers() {
-		return saikuMembers;
-	}
-	
-	public void setSaikuMembers(List<SaikuMember> members) {
-		this.saikuMembers = members;
-	}
-	
-	public SaikuMember getSaikuMember(String dimensionUniqueName) {
-		for (SaikuMember m : saikuMembers) {
-			if (m.getDimensionUniqueName().equals(dimensionUniqueName)) {
-				return m;
-			}
-		}
-		return null;
-	}
-	
-	public List<SaikuMember> getOtherSaikuMembers(String dimensionUniqueName) {
-		List<SaikuMember> others = new ArrayList<SaikuMember>();
-		for (SaikuMember m : saikuMembers) {
-			if (!m.getDimensionUniqueName().equals(dimensionUniqueName)) {
-				others.add(m);
-			}
-		}
-		return others;
-	}
-	
+  private List<SaikuMember> saikuMembers;
+
+  public SaikuTuple() {
+  }
+
+  public SaikuTuple( List<SaikuMember> members ) {
+    this.saikuMembers = members;
+  }
+
+  public List<SaikuMember> getSaikuMembers() {
+    return saikuMembers;
+  }
+
+  public void setSaikuMembers( List<SaikuMember> members ) {
+    this.saikuMembers = members;
+  }
+
+  public SaikuMember getSaikuMember( String dimensionUniqueName ) {
+    for ( SaikuMember m : saikuMembers ) {
+      if ( m.getDimensionUniqueName().equals( dimensionUniqueName ) ) {
+        return m;
+      }
+    }
+    return null;
+  }
+
+  public List<SaikuMember> getOtherSaikuMembers( String dimensionUniqueName ) {
+    List<SaikuMember> others = new ArrayList<SaikuMember>();
+    for ( SaikuMember m : saikuMembers ) {
+      if ( !m.getDimensionUniqueName().equals( dimensionUniqueName ) ) {
+        others.add( m );
+      }
+    }
+    return others;
+  }
+
 }

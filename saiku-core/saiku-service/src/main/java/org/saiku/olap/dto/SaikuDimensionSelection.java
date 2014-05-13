@@ -18,35 +18,36 @@ package org.saiku.olap.dto;
 import java.util.List;
 
 public class SaikuDimensionSelection extends AbstractSaikuObject {
-	
-	private String caption;
-	private String description;
-	
-	private List<SaikuSelection> selections;
-	
-	public SaikuDimensionSelection() {};
-	
-	public SaikuDimensionSelection(String name, String uniqueName, String caption, String description, List<SaikuSelection> selections) {
-		super(uniqueName,name);
-		this.caption = caption;
-		this.description = description;
-		this.selections = selections;
-	}
 
-	public String getCaption() {
-		return caption;
-	}
+  private String caption;
+  private String description;
 
-	public String getDescription() {
-		return description;
-	}
+  private List<SaikuSelection> selections;
 
-	public List<SaikuSelection> getSelections() {
-		return selections;
-	}
-	
-	
-	
-	
+  public SaikuDimensionSelection() {
+  }
+
+  ;
+
+  public SaikuDimensionSelection( String name, String uniqueName, String caption, String description,
+                                  List<SaikuSelection> selections ) {
+    super( uniqueName, name );
+    this.caption = caption;
+    this.description = description;
+    this.selections = selections;
+  }
+
+  public String getCaption() {
+    return caption;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public List<SaikuSelection> getSelections() {
+    return selections;
+  }
+
 
 }

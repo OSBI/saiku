@@ -19,105 +19,106 @@ import java.util.List;
 
 public class SaikuAxis extends AbstractSaikuObject {
 
-	private List<SaikuDimensionSelection> dimensionSelections;
-	private int ordinal;
-	private String sortOrder;
-	private String sortLiteral;
-	private String limitFunction;
-	private String limitFunctionN;
-	private String limitFunctionSortLiteral;
-	private String filterCondition;
-	private String totalFunction;
+  private List<SaikuDimensionSelection> dimensionSelections;
+  private int ordinal;
+  private String sortOrder;
+  private String sortLiteral;
+  private String limitFunction;
+  private String limitFunctionN;
+  private String limitFunctionSortLiteral;
+  private String filterCondition;
+  private String totalFunction;
 
-	public SaikuAxis() {		
-		super(null,null);
-		throw new RuntimeException("Unsupported Constructor. Serialization only");
-	}
-	
-	public SaikuAxis(String name, int ordinal, String uniqueName, List<SaikuDimensionSelection> dimsel, String sortOrder, String sortLiteral, String totalFunction) {
-		super(uniqueName,name);
-		this.dimensionSelections = dimsel;
-		this.ordinal = ordinal;
-		this.sortOrder = sortOrder;
-		this.sortLiteral = sortLiteral;
-		this.totalFunction = totalFunction;
-	}
-	
-	public List<SaikuDimensionSelection> getDimensionSelections() {
-		return dimensionSelections;
-	}
-	
-	public int getOrdinal() {
-		return ordinal;
-	}
+  public SaikuAxis() {
+    super( null, null );
+    throw new RuntimeException( "Unsupported Constructor. Serialization only" );
+  }
 
-	public String getSortOrder() {
-		return sortOrder;
-	}
+  public SaikuAxis( String name, int ordinal, String uniqueName, List<SaikuDimensionSelection> dimsel, String sortOrder,
+                    String sortLiteral, String totalFunction ) {
+    super( uniqueName, name );
+    this.dimensionSelections = dimsel;
+    this.ordinal = ordinal;
+    this.sortOrder = sortOrder;
+    this.sortLiteral = sortLiteral;
+    this.totalFunction = totalFunction;
+  }
 
-	public String getSortLiteral() {
-		return sortLiteral;
-	}
-	
-	public String getTotalFunction() {
-		return totalFunction;
-	}
+  public List<SaikuDimensionSelection> getDimensionSelections() {
+    return dimensionSelections;
+  }
 
-	/**
-	 * @return the limitFunction
-	 */
-	public String getLimitFunction() {
-		return limitFunction;
-	}
+  public int getOrdinal() {
+    return ordinal;
+  }
 
-	/**
-	 * @param limitFunction the limitFunction to set
-	 */
-	public void setLimitFunction(String limitFunction) {
-		this.limitFunction = limitFunction;
-	}
+  public String getSortOrder() {
+    return sortOrder;
+  }
 
-	/**
-	 * @return the limitFunctionN
-	 */
-	public String getLimitFunctionN() {
-		return limitFunctionN;
-	}
+  public String getSortLiteral() {
+    return sortLiteral;
+  }
 
-	/**
-	 * @param limitFunctionN the limitFunctionN to set
-	 */
-	public void setLimitFunctionN(String limitFunctionN) {
-		this.limitFunctionN = limitFunctionN;
-	}
+  public String getTotalFunction() {
+    return totalFunction;
+  }
 
-	/**
-	 * @return the limitFunctionSortLiteral
-	 */
-	public String getLimitFunctionSortLiteral() {
-		return limitFunctionSortLiteral;
-	}
+  /**
+   * @return the limitFunction
+   */
+  public String getLimitFunction() {
+    return limitFunction;
+  }
 
-	/**
-	 * @param limitFunctionSortLiteral the limitFunctionSortLiteral to set
-	 */
-	public void setLimitFunctionSortLiteral(String limitFunctionSortLiteral) {
-		this.limitFunctionSortLiteral = limitFunctionSortLiteral;
-	}
+  /**
+   * @param limitFunction the limitFunction to set
+   */
+  public void setLimitFunction( String limitFunction ) {
+    this.limitFunction = limitFunction;
+  }
 
-	/**
-	 * @return the filterCondition
-	 */
-	public String getFilterCondition() {
-		return filterCondition;
-	}
+  /**
+   * @return the limitFunctionN
+   */
+  public String getLimitFunctionN() {
+    return limitFunctionN;
+  }
 
-	/**
-	 * @param filterCondition the filterCondition to set
-	 */
-	public void setFilterCondition(String filterCondition) {
-		this.filterCondition = filterCondition;
-	}
+  /**
+   * @param limitFunctionN the limitFunctionN to set
+   */
+  public void setLimitFunctionN( String limitFunctionN ) {
+    this.limitFunctionN = limitFunctionN;
+  }
+
+  /**
+   * @return the limitFunctionSortLiteral
+   */
+  public String getLimitFunctionSortLiteral() {
+    return limitFunctionSortLiteral;
+  }
+
+  /**
+   * @param limitFunctionSortLiteral the limitFunctionSortLiteral to set
+   */
+  public void setLimitFunctionSortLiteral( String limitFunctionSortLiteral ) {
+    this.limitFunctionSortLiteral = limitFunctionSortLiteral;
+  }
+
+  /**
+   * @return the filterCondition
+   */
+  public String getFilterCondition() {
+    return filterCondition;
+  }
+
+  /**
+   * @param filterCondition the filterCondition to set
+   */
+  public void setFilterCondition( String filterCondition ) {
+    this.filterCondition = filterCondition;
+  }
 
 
 }

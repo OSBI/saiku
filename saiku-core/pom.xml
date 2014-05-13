@@ -122,7 +122,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>2.5.3</version>
                 <configuration>
                     <threshold>Normal</threshold>
                     <effort>Default</effort>
@@ -132,9 +132,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.1</version>
+                <version>2.12</version>
                 <configuration>
                     <!--configLocation>checkstyle.xml</configLocation-->
+                  <configLocation>../pentaho_checkStyle.xml</configLocation>
                     <enableRulesSummary>false</enableRulesSummary>
                 </configuration>
             </plugin>

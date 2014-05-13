@@ -15,50 +15,50 @@
  */
 package org.saiku.service.datasource;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.datasources.datasource.SaikuDatasource;
 
+import java.io.Serializable;
+import java.util.Map;
+
 public class DatasourceService implements Serializable {
 
-	/**
-	 * Unique serialization UID 
-	 */
-	private static final long serialVersionUID = -4407446633148181669L;
+  /**
+   * Unique serialization UID
+   */
+  private static final long serialVersionUID = -4407446633148181669L;
 
-	private IDatasourceManager datasources;
-	
-	private IConnectionManager connectionManager;
-	
-	public void setConnectionManager(IConnectionManager ic) {
-		connectionManager = ic;
-		datasources = ic.getDataSourceManager();
-	}
+  private IDatasourceManager datasources;
 
-	public IConnectionManager getConnectionManager() {
-		return connectionManager;
-	}
-	
-	public void addDatasource(SaikuDatasource datasource) {
-		datasources.addDatasource(datasource);
-	}
-	
-	public void setDatasource(SaikuDatasource datasource) {
-		datasources.setDatasource(datasource);
-	}
-	
-	public void removeDatasource(String datasourceName) {
-		datasources.removeDatasource(datasourceName);
-	}
-	
-	public SaikuDatasource getDatasource(String datasourceName) {
-		return datasources.getDatasource(datasourceName);
-	}
-	
-	public Map<String,SaikuDatasource> getDatasources() {
-		return datasources.getDatasources();
-	}
+  private IConnectionManager connectionManager;
+
+  public void setConnectionManager( IConnectionManager ic ) {
+    connectionManager = ic;
+    datasources = ic.getDataSourceManager();
+  }
+
+  public IConnectionManager getConnectionManager() {
+    return connectionManager;
+  }
+
+  public void addDatasource( SaikuDatasource datasource ) {
+    datasources.addDatasource( datasource );
+  }
+
+  public void setDatasource( SaikuDatasource datasource ) {
+    datasources.setDatasource( datasource );
+  }
+
+  public void removeDatasource( String datasourceName ) {
+    datasources.removeDatasource( datasourceName );
+  }
+
+  public SaikuDatasource getDatasource( String datasourceName ) {
+    return datasources.getDatasource( datasourceName );
+  }
+
+  public Map<String, SaikuDatasource> getDatasources() {
+    return datasources.getDatasources();
+  }
 
 }

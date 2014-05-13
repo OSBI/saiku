@@ -9,6 +9,7 @@
 		<property name="path" value="res:saiku-datasources" />
 	</bean>
 	<!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
+    <bean id="h2database" class="org.saiku.database.Database" init-method="init"/>
 
 	<bean id="sessionService" class="org.saiku.web.service.SessionService">
 		<property name="authenticationManager" ref="authenticationManager" />
@@ -54,15 +55,31 @@
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
 
+    <bean id="platformBean" class="org.saiku.service.PlatformUtilsService">
+
+        <property name="path" value="/tmp/saiku-server/tomcat/webapps/ROOT/js/saiku/plugins/"/>
+    </bean>
+
+    <bean id="infoResource" class="org.saiku.web.rest.resources.InfoResource">
+        <property name="platformUtilsService" ref="platformBean"/>
+    </bean>
 
 	<bean id="queryResource2" scope="request"
 		class="org.saiku.web.rest.resources.Query2Resource">
 		<property name="thinQueryService" ref="thinQueryBean" />
 	</bean>
 
+<<<<<<< HEAD
 
 	<bean id="sessionResource" class="org.saiku.web.rest.resources.SessionResource">
 		<property name="sessionService" ref="sessionService" />
+=======
+	<bean id="repositoryBean" scope="request"
+		class="org.saiku.web.rest.resources.BasicRepositoryResource">
+		<property name="olapQueryService" ref="olapQueryBean" />
+		<property name="path" value="res:saiku-repository" />
+
+>>>>>>> hibernate
 	</bean>
 
 

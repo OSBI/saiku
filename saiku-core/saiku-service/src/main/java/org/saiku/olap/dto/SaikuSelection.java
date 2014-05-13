@@ -17,66 +17,69 @@ package org.saiku.olap.dto;
 
 
 public class SaikuSelection extends AbstractSaikuObject {
-	
-	private String caption;
-	private String description;
-	private String dimensionUniqueName;
-	private String hierarchyUniqueName;
-	private String levelUniqueName;
-	
-	public static enum Type {
-		MEMBER,
-		LEVEL
-	}
-	
-	private Type type;
-	private String showTotals;
-	private boolean disableTotals;
-	
-	public SaikuSelection() {}
 
-	public SaikuSelection(String name, String uniqueName, String caption, String description, String dimensionUniqueName, String hierarchyUniqueName, String levelUniqueName, Type type, String showTotals, boolean disableTotals) {
-		super(uniqueName,name);
-		this.caption = caption;
-		this.description = description;
-		this.dimensionUniqueName = dimensionUniqueName;
-		this.hierarchyUniqueName = hierarchyUniqueName;
-		this.levelUniqueName = levelUniqueName;
-		this.type = type;
-		this.showTotals = showTotals;
-		this.disableTotals = disableTotals;
-	}
+  private String caption;
+  private String description;
+  private String dimensionUniqueName;
+  private String hierarchyUniqueName;
+  private String levelUniqueName;
 
-	public String getHierarchyUniqueName() {
-		return hierarchyUniqueName;
-	}
+  public static enum Type {
+    MEMBER,
+    LEVEL
+  }
 
-	public String getLevelUniqueName() {
-		return levelUniqueName;
-	}
+  private Type type;
+  private String showTotals;
+  private boolean disableTotals;
 
-	public String getCaption() {
-		return caption;
-	}
+  public SaikuSelection() {
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public SaikuSelection( String name, String uniqueName, String caption, String description, String dimensionUniqueName,
+                         String hierarchyUniqueName, String levelUniqueName, Type type, String showTotals,
+                         boolean disableTotals ) {
+    super( uniqueName, name );
+    this.caption = caption;
+    this.description = description;
+    this.dimensionUniqueName = dimensionUniqueName;
+    this.hierarchyUniqueName = hierarchyUniqueName;
+    this.levelUniqueName = levelUniqueName;
+    this.type = type;
+    this.showTotals = showTotals;
+    this.disableTotals = disableTotals;
+  }
 
-	public String getDimensionUniqueName() {
-		return dimensionUniqueName;
-	}
-	
-	public Type getType() {
-		return type;
-	}
+  public String getHierarchyUniqueName() {
+    return hierarchyUniqueName;
+  }
 
-	public String getShowTotals() {
-		return showTotals;
-	}
-	
-	public boolean getDisableTotals() {
-		return disableTotals;
-	}	
-	
+  public String getLevelUniqueName() {
+    return levelUniqueName;
+  }
+
+  public String getCaption() {
+    return caption;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public String getDimensionUniqueName() {
+    return dimensionUniqueName;
+  }
+
+  public Type getType() {
+    return type;
+  }
+
+  public String getShowTotals() {
+    return showTotals;
+  }
+
+  public boolean getDisableTotals() {
+    return disableTotals;
+  }
+
 }

@@ -18,7 +18,7 @@ package org.saiku.service.datasource;
 import org.saiku.datasources.datasource.SaikuDatasource;
 
 public interface IDatasourceProcessor {
-	
-	public SaikuDatasource process(SaikuDatasource ds);
+
+  public SaikuDatasource process( SaikuDatasource ds );
 
 }

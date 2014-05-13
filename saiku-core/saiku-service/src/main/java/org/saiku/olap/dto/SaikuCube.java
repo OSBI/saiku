@@ -23,8 +23,8 @@ public class SaikuCube extends AbstractSaikuObject {
 	private String caption;
 	private boolean visible;
 
-	public SaikuCube() {
-	}
+  public SaikuCube() {
+  }
 
 	public SaikuCube(String connectionName, String uniqueCubeName, String name, String caption, String catalog, String schema) {
 		this(connectionName, uniqueCubeName, name, caption, catalog, schema, true);
@@ -69,5 +69,6 @@ public class SaikuCube extends AbstractSaikuObject {
 	public String getSchema() {
 		return schema;
 	}
+
 }
 

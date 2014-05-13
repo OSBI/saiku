@@ -193,7 +193,11 @@
 			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-core</artifactId>
@@ -376,7 +380,14 @@
 			<version>2.1</version>
 			<scope>provided</scope>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.177</version>
+        </dependency>
+
+
+    </dependencies>
 	<reporting>
 		<plugins>
 			<!-- FIXME: currently produces a NullPointerException <plugin> <groupId>org.apache.maven.plugins</groupId> 

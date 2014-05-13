@@ -29,22 +29,22 @@ import org.saiku.service.util.export.excel.ExcelWorksheetBuilder;
 
 public class ExcelExporter {
 
-	public static byte[] exportExcel(CellSet cellSet, List<ThinHierarchy> filters) {
-		return exportExcel(cellSet, new HierarchicalCellSetFormatter(), filters);
-	}
+  public static byte[] exportExcel(CellSet cellSet, List<ThinHierarchy> filters) {
+    return exportExcel(cellSet, new HierarchicalCellSetFormatter(), filters);
+  }
 
-	public static byte[] exportExcel(CellSet cellSet,
-                                     ICellSetFormatter formatter,
-                                     List<ThinHierarchy> filters) {
-		CellDataSet table = OlapResultSetUtil.cellSet2Matrix(cellSet, formatter);
-		ExcelBuilderOptions exb = new ExcelBuilderOptions();
-		exb.repeatValues = (formatter instanceof FlattenedCellSetFormatter);
-		return getExcel(table, filters, exb);
-	}
+  public static byte[] exportExcel(CellSet cellSet,
+                                   ICellSetFormatter formatter,
+                                   List<ThinHierarchy> filters) {
+    CellDataSet table = OlapResultSetUtil.cellSet2Matrix(cellSet, formatter);
+    ExcelBuilderOptions exb = new ExcelBuilderOptions();
+    exb.repeatValues = (formatter instanceof FlattenedCellSetFormatter);
+    return getExcel(table, filters, exb);
+  }
 
-	private static byte[] getExcel(CellDataSet table, List<ThinHierarchy> filters, ExcelBuilderOptions options) {
-        // TBD Sheet name is parametric. Useful for future ideas or improvements
-        ExcelWorksheetBuilder worksheetBuilder = new ExcelWorksheetBuilder(table, filters, options);
-        return worksheetBuilder.build();
-	}
+  private static byte[] getExcel(CellDataSet table, List<ThinHierarchy> filters, ExcelBuilderOptions options) {
+    // TBD Sheet name is parametric. Useful for future ideas or improvements
+    ExcelWorksheetBuilder worksheetBuilder = new ExcelWorksheetBuilder(table, filters, options);
+    return worksheetBuilder.build();
+  }
 }

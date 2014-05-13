@@ -15,15 +15,8 @@
  */
 package org.saiku.olap.discover;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import mondrian.olap4j.SaikuMondrianHelper;
 import mondrian.rolap.RolapConnection;
-
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapDatabaseMetaData;
@@ -56,6 +49,12 @@ import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.service.util.MondrianDictionary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class OlapMetaExplorer {
 

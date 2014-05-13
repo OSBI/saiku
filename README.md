@@ -1,7 +1,9 @@
 SAIKU
-
-saiku
 ---------------
+
+*Issue Tracker: http://jira.meteorite.bi*
+
+
 Usage: ./saiku build <all | project>
 	Builds all or an individual saiku project
 
@@ -21,3 +23,4 @@ Usage: ./saiku run <package>
 			Default is:
 				node server.js 8080 dev.analytical-labs.com 80
 
+mvn clean clover2:setup test clover2:aggregate clover2:clover

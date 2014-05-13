@@ -5,7 +5,7 @@ import java.util.Map;
 
 
 public class SaikuCubeMetadata {
-	
+
 	private List<SaikuDimension> dimensions;
 	private List<SaikuMember> measures;
 	private Map<String, Object> properties;
@@ -31,15 +31,5 @@ public class SaikuCubeMetadata {
 	public List<SaikuMember> getMeasures() {
 		return measures;
 	}
-
-
-	/**
-	 * @return the properties
-	 */
-	public Map<String, Object> getProperties() {
-		return properties;
-	}
-
-
 
 }

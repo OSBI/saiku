@@ -17,34 +17,34 @@ package org.saiku.service.util.exception;
 
 public class SaikuServiceException extends RuntimeException {
 
-	private static final long serialVersionUID = 6079334291828346380L;
-	
-	/**
-	 * @see java.lang.Exception#Exception()
-	 */
-	public SaikuServiceException() {
-		super();
-	}
-	
-	/**
-	 * @see java.lang.Exception#Exception(String))
-	 */
+  private static final long serialVersionUID = 6079334291828346380L;
 
-	public SaikuServiceException(String message) {
-		super(message);
-	}
+  /**
+   * @see java.lang.Exception#Exception()
+   */
+  public SaikuServiceException() {
+    super();
+  }
 
-	/**
-	 * @see java.lang.Exception#Exception(Throwable)
-	 */
-	public SaikuServiceException(Throwable cause) {
-		super(cause);
-	}
-	
-	/**
-	 * @see java.lang.Exception#Exception(String, Throwable)
-	 */
-	public SaikuServiceException(String message, Throwable cause) {
-		super(message,cause);
-	}
+  /**
+   * @see java.lang.Exception#Exception(String))
+   */
+
+  public SaikuServiceException( String message ) {
+    super( message );
+  }
+
+  /**
+   * @see java.lang.Exception#Exception(Throwable)
+   */
+  public SaikuServiceException( Throwable cause ) {
+    super( cause );
+  }
+
+  /**
+   * @see java.lang.Exception#Exception(String, Throwable)
+   */
+  public SaikuServiceException( String message, Throwable cause ) {
+    super( message, cause );
+  }
 }

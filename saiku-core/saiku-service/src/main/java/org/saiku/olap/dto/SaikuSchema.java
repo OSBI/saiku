@@ -19,21 +19,21 @@ import java.util.List;
 
 public class SaikuSchema extends AbstractSaikuObject {
 
-	private List<SaikuCube> cubes;
+  private List<SaikuCube> cubes;
 
-	public SaikuSchema() {		
-		super(null,null);
-		throw new RuntimeException("Unsupported Constructor. Serialization only");
-	}
-	
-	public SaikuSchema(String name, List<SaikuCube> cubes) {
-		super(name,name);
-		this.cubes = cubes;
-	}
-	
-	public List<SaikuCube> getCubes() {
-		return cubes;
-	}
+  public SaikuSchema() {
+    super( null, null );
+    throw new RuntimeException( "Unsupported Constructor. Serialization only" );
+  }
+
+  public SaikuSchema( String name, List<SaikuCube> cubes ) {
+    super( name, name );
+    this.cubes = cubes;
+  }
+
+  public List<SaikuCube> getCubes() {
+    return cubes;
+  }
 
 
 }

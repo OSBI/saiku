@@ -21,132 +21,128 @@ import java.util.Map;
 
 public abstract class AbstractBaseCell implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    /** The formatted value. */
-    private String formattedValue;
+  /**
+   * The formatted value.
+   */
+  private String formattedValue;
 
-    /** The raw value. */
-    private String rawValue;
+  /**
+   * The raw value.
+   */
+  private String rawValue;
 
-    public boolean right = false;
+  public boolean right = false;
 
-    public boolean sameAsPrev = false;
+  public boolean sameAsPrev = false;
 
-    private String parentDimension = null;
+  private String parentDimension = null;
 
-    private HashMap<String,String> properties = new HashMap<String, String>();
-    /**
-     * 
-     * Blank Constructor for serialization dont use.
-     * 
-     */
-    public AbstractBaseCell() {
-        super();
-    }
+  private HashMap<String, String> properties = new HashMap<String, String>();
 
-    /**
-     * 
-     * BaseCell Constructor, every cell type should inherit basecell.
-     * 
-     * @param right
-     * @param sameAsPrev
-     */
-    public AbstractBaseCell(final boolean right, final boolean sameAsPrev) {
-        this.right = right;
-        this.sameAsPrev = sameAsPrev;
-    }
+  /**
+   * Blank Constructor for serialization dont use.
+   */
+  public AbstractBaseCell() {
+    super();
+  }
 
-    /**
-     * Gets the formatted value.
-     * 
-     * @return the formatted value
-     */
-    public String getFormattedValue() {
-        return formattedValue;
-    }
+  /**
+   * BaseCell Constructor, every cell type should inherit basecell.
+   *
+   * @param right
+   * @param sameAsPrev
+   */
+  public AbstractBaseCell( final boolean right, final boolean sameAsPrev ) {
+    this.right = right;
+    this.sameAsPrev = sameAsPrev;
+  }
 
-    /**
-     * Gets the raw value.
-     * 
-     * @return the raw value
-     */
-    public String getRawValue() {
-        return rawValue;
-    }
+  /**
+   * Gets the formatted value.
+   *
+   * @return the formatted value
+   */
+  public String getFormattedValue() {
+    return formattedValue;
+  }
 
-    /**
-     * Sets the formatted value.
-     * 
-     * @param formattedValue
-     *            the new formatted value
-     */
-    public void setFormattedValue(final String formattedValue) {
-        this.formattedValue = formattedValue;
-    }
+  /**
+   * Gets the raw value.
+   *
+   * @return the raw value
+   */
+  public String getRawValue() {
+    return rawValue;
+  }
 
-    /**
-     * Sets the raw value.
-     * 
-     * @param rawValue
-     *            the new raw value
-     */
-    public void setRawValue(final String rawValue) {
-        this.rawValue = rawValue;
-    }
+  /**
+   * Sets the formatted value.
+   *
+   * @param formattedValue the new formatted value
+   */
+  public void setFormattedValue( final String formattedValue ) {
+    this.formattedValue = formattedValue;
+  }
 
-    /**
-     * 
-     *TODO JAVADOC
-     * 
-     * @param set
-     */
-    public void setRight(final boolean set) {
-        this.right = set;
-    }
+  /**
+   * Sets the raw value.
+   *
+   * @param rawValue the new raw value
+   */
+  public void setRawValue( final String rawValue ) {
+    this.rawValue = rawValue;
+  }
 
-    /**
-     * 
-     * Set true if value is same as the previous one in the row.
-     * 
-     * @param same
-     */
-    public void setSameAsPrev(final boolean same) {
-        this.sameAsPrev = same;
-    }
+  /**
+   * TODO JAVADOC
+   *
+   * @param set
+   */
+  public void setRight( final boolean set ) {
+    this.right = set;
+  }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return formattedValue;
-    }
+  /**
+   * Set true if value is same as the previous one in the row.
+   *
+   * @param same
+   */
+  public void setSameAsPrev( final boolean same ) {
+    this.sameAsPrev = same;
+  }
 
-    /**
-     * 
-     *TODO JAVADOC
-     * 
-     */
-    public void setParentDimension(final String pdim) {
-        parentDimension = pdim;
-    }
+  /*
+   * (non-Javadoc)
+   *
+   * @see java.lang.Object#toString()
+   */
+  @Override
+  public String toString() {
+    return formattedValue;
+  }
 
-    public String getParentDimension() {
-        return parentDimension;
-    }
+  /**
+   * TODO JAVADOC
+   */
+  public void setParentDimension( final String pdim ) {
+    parentDimension = pdim;
+  }
 
-    public void setProperty(String name, String value){
-        properties.put(name, value);
-    }
-    
-    public Map<String, String> getProperties(){
-        return properties;
-    }
-    
-    public String getProperty(String name){
-        return properties.get(name);
-    }
+  public String getParentDimension() {
+    return parentDimension;
+  }
+
+  public void setProperty( String name, String value ) {
+    properties.put( name, value );
+  }
+
+  public Map<String, String> getProperties() {
+    return properties;
+  }
+
+  public String getProperty( String name ) {
+    return properties.get( name );
+  }
 }
