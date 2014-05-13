@@ -16,6 +16,7 @@
 package org.saiku.datasources.connection;
 
 import org.olap4j.OlapConnection;
+import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.service.datasource.IDatasourceManager;
 
 import java.util.Map;
@@ -30,11 +31,11 @@ public interface IConnectionManager {
 
   public void refreshAllConnections();
 
-  public OlapConnection getOlapConnection( String name );
+  public OlapConnection getOlapConnection( String name ) throws SaikuOlapException;
 
-  public Map<String, OlapConnection> getAllOlapConnections();
+  public Map<String, OlapConnection> getAllOlapConnections() throws SaikuOlapException;
 
-  public ISaikuConnection getConnection( String name );
+  public ISaikuConnection getConnection( String name ) throws SaikuOlapException;
 
-  public Map<String, ISaikuConnection> getAllConnections();
+  public Map<String, ISaikuConnection> getAllConnections() throws SaikuOlapException;
 }

@@ -48,7 +48,7 @@ public class OlapDiscoverService implements Serializable {
     metaExplorer = new OlapMetaExplorer( ds.getConnectionManager() );
   }
 
-  public List<SaikuCube> getAllCubes() {
+  public List<SaikuCube> getAllCubes() throws SaikuOlapException {
     return metaExplorer.getAllCubes();
   }
 

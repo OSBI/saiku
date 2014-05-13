@@ -9,6 +9,7 @@ import org.saiku.datasources.connection.AbstractConnectionManager;
 import org.saiku.datasources.connection.ISaikuConnection;
 import org.saiku.datasources.connection.SaikuConnectionFactory;
 import org.saiku.datasources.datasource.SaikuDatasource;
+import org.saiku.olap.util.exception.SaikuOlapException;
 
 public class TConnectionManager extends AbstractConnectionManager {
     private Map<String, ISaikuConnection> connections = new HashMap<String, ISaikuConnection>();
@@ -23,7 +24,8 @@ public class TConnectionManager extends AbstractConnectionManager {
     }
 
     @Override
-    protected ISaikuConnection getInternalConnection(String name, SaikuDatasource datasource) {
+    protected ISaikuConnection getInternalConnection(String name, SaikuDatasource datasource)
+      throws SaikuOlapException {
 
         ISaikuConnection con = null;
 
@@ -64,17 +66,20 @@ public class TConnectionManager extends AbstractConnectionManager {
     	return null;
         
     }
-    private ISaikuConnection connect(String name, SaikuDatasource datasource) {
+    private ISaikuConnection connect(String name, SaikuDatasource datasource) throws SaikuOlapException {
+      if ( datasource != null ) {
         try {
-            ISaikuConnection con = SaikuConnectionFactory.getConnection(datasource);
-            if (con.initialized()) {
-                return con;
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+          ISaikuConnection con = SaikuConnectionFactory.getConnection( datasource );
+          if ( con.initialized() ) {
+            return con;
+          }
+        } catch ( Exception e ) {
+          e.printStackTrace();
         }
 
         return null;
-    }
+      }
+
+    throw new SaikuOlapException(  "Cannot find connection: (" + name + ")"  );
+  }
 }
