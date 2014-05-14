@@ -13,15 +13,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.saiku.service;
+package org.saiku.helper;
 
 import org.hsqldb.jdbc.jdbcDataSource;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
@@ -89,7 +87,7 @@ public class DatabaseHelper {
   }
 
   public void setup() throws Exception {
-    InputStream inputStream = getClass().getResourceAsStream( "connection.properties" );
+    InputStream inputStream = getClass().getResourceAsStream( "../connection.properties" );
     testProps.load( inputStream ); //$NON-NLS-1$
 
     jdbcDataSource ds = new jdbcDataSource();
@@ -121,7 +119,7 @@ public class DatabaseHelper {
         stm = c.createStatement();
 
         slurp( stm, DatabaseHelper.class
-          .getResourceAsStream( "foodmart_hsql.script" ) ); //$NON-NLS-1$
+          .getResourceAsStream( "../foodmart_hsql.script" ) ); //$NON-NLS-1$
         stm.executeBatch();
         stm.clearBatch();
         stm.close();

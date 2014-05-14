@@ -1,4 +1,4 @@
-package org.saiku;
+package org.saiku.datasource;
 
 
 import net.thucydides.core.annotations.Steps;

@@ -1,8 +1,8 @@
 /*
 package org.saiku;
 
-import org.saiku.datasources.connection.IConnectionManager;
-import org.saiku.datasources.connection.impl.SimpleConnectionManager;
+import org.saiku.org.saiku.datasources.connection.IConnectionManager;
+import org.saiku.org.saiku.datasources.connection.impl.SimpleConnectionManager;
 import org.saiku.olap.discover.OlapMetaExplorer;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.util.exception.SaikuOlapException;
@@ -29,7 +29,7 @@ public class TestSaikuContext {
 	}
 
 	private void setup() throws SaikuOlapException {
-		this.datasourceManager = new ClassPathResourceDatasourceManager("res:saiku-datasources");
+		this.datasourceManager = new ClassPathResourceDatasourceManager("res:saiku-org.saiku.datasources");
 		System.out.println("Datasources: " + datasourceManager.getDatasources().keySet().size());
 		
 		this.connectionManager = new SimpleConnectionManager();

@@ -13,17 +13,17 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.saiku;
+package org.saiku.datasource;
 
 import net.thucydides.core.annotations.Step;
 import org.junit.Test;
+import org.saiku.helper.DatabaseHelper;
 import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.datasources.connection.impl.SimpleConnectionManager;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.olap.discover.OlapMetaExplorer;
 import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.olap.util.exception.SaikuOlapException;
-import org.saiku.service.DatabaseHelper;
 import org.saiku.service.datasource.ClassPathResourceDatasourceManager;
 import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.datasource.IDatasourceManager;
@@ -56,13 +56,13 @@ public class DataSteps {
   private void setup() throws Exception {
     DatabaseHelper db = new DatabaseHelper();
     db.setup();
-    InputStream inputStream = getClass().getResourceAsStream( "connection.properties" );
+    InputStream inputStream = getClass().getResourceAsStream( "../connection.properties" );
     testProps.load( inputStream ); //$NON-NLS-1$
 
 
     File f = new File( System.getProperty( "java.io.tmpdir" ) + "/files/" );
     f.mkdir();
-    //this.datasourceManager = new ClassPathResourceDatasourceManager("res:saiku-datasources");
+    //this.datasourceManager = new ClassPathResourceDatasourceManager("res:saiku-org.saiku.datasources");
 
     this.datasourceManager =
       new ClassPathResourceDatasourceManager( System.getProperty( "java.io.tmpdir" ) + "/files/" );
