@@ -69,11 +69,27 @@
 		<property name="thinQueryService" ref="thinQueryBean" />
 	</bean>
 
+<<<<<<< HEAD
 
 
 	<bean id="sessionResource" class="org.saiku.web.rest.resources.SessionResource">
 		<property name="sessionService" ref="sessionService" />
     </bean>
+=======
+<<<<<<< HEAD
+	<bean id="repositoryBean" scope="request"
+		class="org.saiku.web.rest.resources.BasicRepositoryResource">
+		<property name="olapQueryService" ref="olapQueryBean" />
+		<property name="path" value="res:saiku-repository" />
+
+=======
+
+	<bean id="sessionResource" class="org.saiku.web.rest.resources.SessionResource">
+		<property name="sessionService" ref="sessionService" />
+>>>>>>> origin/saiku3
+	</bean>
+
+>>>>>>> bdd
 
 	<bean id="acl" scope="singleton" class="org.saiku.web.rest.objects.acl.Acl">
 		<property name="path" value="res:saiku-repository" />

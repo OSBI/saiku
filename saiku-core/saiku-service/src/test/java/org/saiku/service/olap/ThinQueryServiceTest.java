@@ -1,3 +1,4 @@
+/*
 package org.saiku.service.olap;
 
 import static org.junit.Assert.assertEquals;
@@ -307,3 +308,4 @@ public class ThinQueryServiceTest {
 	}
 
 }
+*/

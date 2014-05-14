@@ -139,7 +139,7 @@ public class OlapMetaExplorer {
 	}
 
 
-	public List<SaikuCube> getCubes(String connectionName) {
+	public List<SaikuCube> getCubes(String connectionName) throws SaikuOlapException {
 		OlapConnection olapcon = connections.getOlapConnection(connectionName);
 		List<SaikuCube> cubes = new ArrayList<SaikuCube>();
 		if (olapcon != null) {
@@ -161,7 +161,7 @@ public class OlapMetaExplorer {
 
 	}
 
-	public List<SaikuCube> getCubes(List<String> connectionNames) {
+	public List<SaikuCube> getCubes(List<String> connectionNames) throws SaikuOlapException {
 		List<SaikuCube> cubesList = new ArrayList<SaikuCube>();
 		for (String connectionName : connectionNames) {
 			cubesList.addAll(getCubes(connectionName));
@@ -170,7 +170,7 @@ public class OlapMetaExplorer {
 		return cubesList;
 	}
 
-	public List<SaikuCube> getAllCubes() {
+	public List<SaikuCube> getAllCubes() throws SaikuOlapException {
 		List<SaikuCube> cubes = new ArrayList<SaikuCube>();
 		for (String connectionName : connections.getAllOlapConnections().keySet()) {
 			cubes.addAll(getCubes(connectionName));

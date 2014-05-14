@@ -57,7 +57,7 @@ public class OlapDiscoverResource implements Serializable {
     }
     
     /**
-     * Returns the datasources available.
+     * Returns the org.saiku.datasources available.
      */
     @GET
     @Produces({"application/json" })
@@ -72,7 +72,7 @@ public class OlapDiscoverResource implements Serializable {
     
     
     /**
-     * Returns the datasources available.
+     * Returns the org.saiku.datasources available.
      */
     @GET
     @Produces({"application/json" })

@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,7 +53,7 @@ public class OlapDiscoverService implements Serializable {
     metaExplorer = new OlapMetaExplorer(ds.getConnectionManager());
   }
 
-  public List<SaikuCube> getAllCubes() {
+  public List<SaikuCube> getAllCubes() throws SaikuOlapException {
     return metaExplorer.getAllCubes();
   }
 
@@ -149,7 +149,9 @@ public class OlapDiscoverService implements Serializable {
 
   public List<SaikuLevel> getAllHierarchyLevels(SaikuCube cube, String dimensionName, String hierarchyName) {
     try {
-      return  metaExplorer.getAllLevels(cube, dimensionName, hierarchyName);
+
+      return metaExplorer.getAllLevels(cube, dimensionName, hierarchyName);
+
     } catch (SaikuOlapException e) {
       throw new SaikuServiceException("Cannot get all levels for cube ( " + cube
         + " ) dimension ( " + dimensionName + " ) hierarchy ( " + hierarchyName + " )", e);
@@ -167,7 +169,9 @@ public class OlapDiscoverService implements Serializable {
 
   public List<SimpleCubeElement> getLevelMembers(SaikuCube cube, String hierarchyName, String levelName, String searchString, int searchLimit) {
     try {
-      return  metaExplorer.getAllMembers(cube, hierarchyName, levelName, searchString, searchLimit);
+
+      return metaExplorer.getAllMembers(cube, hierarchyName, levelName, searchString, searchLimit);
+
     } catch (SaikuOlapException e) {
       throw new SaikuServiceException("Cannot get all members for cube ( " + cube
         + " ) hierarchy ( " + hierarchyName + " )", e);

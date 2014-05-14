@@ -17,11 +17,13 @@ package org.saiku.olap.dto;
 
 public class SaikuCube extends AbstractSaikuObject {
 
+
 	private String connection;
 	private String catalog;
 	private String schema;
 	private String caption;
 	private boolean visible;
+
 
   public SaikuCube() {
   }

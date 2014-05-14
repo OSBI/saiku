@@ -1,4 +1,5 @@
 *.DS_Store
+<<<<<<< HEAD
 
 # Intellij
 .idea/
@@ -6,3 +7,6 @@
 *.iws
 
 .clover
+=======
+saiku-webapp/saiku-webapp.iml
+>>>>>>> bdd

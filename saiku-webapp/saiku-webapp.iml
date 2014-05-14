@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
+<<<<<<< HEAD:saiku-webapp/saiku-webapp.iml
     <facet type="web" name="Web">
       <configuration>
         <webroots>
           <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
         </webroots>
+=======
+    <facet type="Spring" name="Spring">
+      <configuration>
+        <fileset id="fileset" name="Spring Application Context" removed="false">
+          <file>file://$MODULE_DIR$/src/oldtest/resources/org/saiku/web/rest/resources/saiku-beans.xml</file>
+        </fileset>
+>>>>>>> bdd:saiku-core/saiku-web/saiku-web.iml
       </configuration>
     </facet>
   </component>
@@ -62,8 +70,8 @@
     <orderEntry type="library" name="Maven: commons-httpclient:commons-httpclient:20020423" level="project" />
     <orderEntry type="library" name="Maven: org.saiku:saiku-olap-util:2.6-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.olap4j:olap4j-xmla:1.2.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-log4j12:1.6.4" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.4" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.3" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.poi:poi:3.7" level="project" />
     <orderEntry type="library" name="Maven: org.apache.poi:poi-ooxml:3.7" level="project" />
     <orderEntry type="library" name="Maven: org.apache.poi:poi-ooxml-schemas:3.7" level="project" />
@@ -71,6 +79,8 @@
     <orderEntry type="library" name="Maven: stax:stax-api:1.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.apache.geronimo.specs:geronimo-stax-api_1.0_spec:1.0" level="project" />
     <orderEntry type="library" name="Maven: org.jdom:jdom:1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-log4j12:1.6.4" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.2" level="project" />
     <orderEntry type="library" name="Maven: hsqldb:hsqldb:1.8.0.10" level="project" />
     <orderEntry type="library" name="Maven: com.cenqua.clover:clover:3.3.0" level="project" />
@@ -102,8 +112,6 @@
     <orderEntry type="library" name="Maven: javax.annotation:jsr250-api:1.0" level="project" />
     <orderEntry type="library" name="Maven: javax.ws.rs:jsr311-api:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-jaxrs:1.9.3" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.3" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.3" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-xc:1.9.3" level="project" />
     <orderEntry type="library" name="Maven: com.sun.jersey:jersey-server:1.11" level="project" />
     <orderEntry type="library" name="Maven: asm:asm:3.1" level="project" />
