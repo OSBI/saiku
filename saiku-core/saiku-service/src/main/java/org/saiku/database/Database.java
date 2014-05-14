@@ -68,14 +68,14 @@ public class Database {
       statement.execute( "INSERT INTO users(username,password,enabled)\n"
         + "VALUES ('admin','admin', TRUE);" +
         "INSERT INTO users(username,password,enabled)\n"
-        + "VALUES ('alex','123456', TRUE);");
+        + "VALUES ('smith','pravah@001', TRUE);");
       statement.execute(
         "INSERT INTO user_roles (username, ROLE)\n"
         + "VALUES ('admin', 'ROLE_USER');" +
         "INSERT INTO user_roles (username, ROLE)\n"
         + "VALUES ('admin', 'ROLE_ADMIN');" +
         "INSERT INTO user_roles (username, ROLE)\n"
-        + "VALUES ('alex', 'ROLE_USER');" );
+        + "VALUES ('smith', 'ROLE_USER');" );
 
       statement.execute( "INSERT INTO LOG(log) VALUES('insert users');" );
     }

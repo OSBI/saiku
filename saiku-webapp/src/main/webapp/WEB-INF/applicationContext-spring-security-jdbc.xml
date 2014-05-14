@@ -49,7 +49,7 @@
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.h2.Driver" />
 		<property name="url"
-			value="jdbc:h2:~/test" />
+			value="jdbc:h2:./userdb" />
 		<property name="username" value="sa" />
 		<property name="password" value="" />
 	</bean>
