@@ -18,7 +18,7 @@ var SaikuChartRenderer = function(data, options) {
     if (options.zoom) {
 
         var self = this;
-        var btns = "<span style='float:left;' class='zoombuttons'><a href='#' class='button rerender' title='Re-render chart'></a><a href='#' class='button zoomout' style='display:none;' title='Zoom back out'></a></span>";
+        var btns = "<span style='float:left;' class='zoombuttons'><a href='#' class='button rerender i18n' title='Re-render chart'></a><a href='#' class='button zoomout i18n' style='display:none;' title='Zoom back out'></a></span>";
         $( btns).prependTo($(this.el).find('.canvas_wrapper'));
         $(this.el).find('.zoomout').on('click', function(event) {
             event.preventDefault();

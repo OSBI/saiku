@@ -180,7 +180,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                                 "customtop" : {name: "Custom Limit...", i18n: true },
                                 "clearlimit" : {name: "Clear Limit", i18n: true }
                          }},
-                        "sort" : {name: "Sort", items:
+                        "sort" : {name: "Sort", i18n: true, items:
                         {
                             "ASCQuick": {name: "Ascending" , i18n: true, items: addFun(items, "ASC") },
                             "DESCQuick": {name: "Descending", i18n: true, items: addFun(items, "DESC")},
@@ -189,7 +189,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                             "customsort" : { name: "Custom...", i18n: true },
                             "clearsort" : {name: "Clear Sort", i18n: true }
                         }},
-                        "grand_totals" : {name: "Grand totals", items:
+                        "grand_totals" : {name: "Grand totals", i18n: true, items:
                         {
                             "show_totals_not": {name: "None", i18n: true},
                             "show_totals_sum": {name: "Sum", i18n: true},
