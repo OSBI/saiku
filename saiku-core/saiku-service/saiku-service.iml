@@ -13,6 +13,13 @@
     <orderEntry type="library" name="Clover IDEA Plugin" level="application" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: commons-dbcp:commons-dbcp:1.2.1" level="project" />
+    <orderEntry type="library" name="Maven: xml-apis:xml-apis:2.0.2" level="project" />
+    <orderEntry type="library" name="Maven: commons-io:commons-io:1.4" level="project" />
+    <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils-core:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.2" level="project" />
+    <orderEntry type="library" name="Maven: junit:junit:4.10" level="project" />
+    <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
     <orderEntry type="library" name="Maven: org.saiku:saiku-query:0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.olap4j:olap4j:1.2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: net.java.dev.javacc:javacc:5.0" level="project" />
@@ -57,7 +64,7 @@
     <orderEntry type="library" name="Maven: net.sourceforge.nekohtml:nekohtml:1.9.12" level="project" />
     <orderEntry type="library" name="Maven: commons-httpclient:commons-httpclient:3.1" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.2" level="project" />
-    <orderEntry type="module" module-name="saiku-olap-util" />
+    <orderEntry type="library" name="Maven: org.saiku:saiku-olap-util:2.6-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.olap4j:olap4j-xmla:1.2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-log4j12:1.6.4" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.4" level="project" />
