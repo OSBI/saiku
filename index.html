@@ -78,6 +78,7 @@
         <script type="text/javascript" src="js/saiku/views/MDXModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/SelectionsModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/DrillthroughModal.js"></script>
+        <script type="text/javascript" src="js/saiku/views/DrillAcrossModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/PermissionsModal.js"></script>
         <script type="text/javascript" src="js/saiku/views/DemoLoginForm.js"></script>
         <script type="text/javascript" src="js/saiku/views/LoginForm.js"></script>
@@ -104,7 +105,6 @@
         <script type="text/javascript" src="js/saiku/models/Session.js"></script>
         <script type="text/javascript" src="js/saiku/models/SessionWorkspace.js"></script>
         <script type="text/javascript" src="js/saiku/models/Member.js"></script>
-        <script type="text/javascript" src="js/saiku/models/Plugin.js"></script>
         <script type="text/javascript" src="js/saiku/Saiku.js"></script>
         <script type="text/javascript" src="js/saiku/adapters/SaikuServer.js"></script>
         <script type="text/javascript" src="js/saiku/routers/QueryRouter.js"></script>
@@ -113,15 +113,15 @@
         <!--
             <script type="text/javascript" src="Saiku.min.js"></script>        
         -->
-        <!--Enable these for non dynamically loading plugins-->
+                
         <!-- Saiku plugins -->
-        <!--<script type="text/javascript" src="js/saiku/plugins/Statistics/plugin.js" defer></script>
+        <script type="text/javascript" src="js/saiku/plugins/Statistics/plugin.js" defer></script>
         <script type="text/javascript" src="js/saiku/plugins/I18n/plugin.js" defer></script>
         <script type="text/javascript" src="js/saiku/plugins/BIServer/plugin.js" defer></script>
         <script type="text/javascript" src="js/saiku/plugins/Buckets/plugin.js" defer></script> 
         <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/plugin.js"></script>
         <script type="text/javascript" src="js/saiku/plugins/Fullscreen/plugin.js" defer></script>
--->
+
 
         <!-- FILTER PLUGIN disabled by default       
         <script type="text/javascript" src="js/saiku/plugins/filters/filterconfig.js" defer></script>
@@ -358,7 +358,10 @@
             <li class="seperator"><a href="#query_scenario" 
                 class="i18n table_mode query_scenario button disabled_toolbar sprite" 
                 title="Query Scenario"></a></li>
-            <li class="seperator"><a href="#drillthrough" 
+            <li class="seperator"><a href="#drillacross" 
+                class="i18n table_mode drillacross button disabled_toolbar sprite" 
+                title="Drill across on cell"></a></li>
+            <li ><a href="#drillthrough" 
                 class="i18n table_mode drillthrough button disabled_toolbar sprite" 
                 title="Drill through on cell"></a></li>
             <li><a href="#export_drillthrough" 
@@ -619,6 +622,8 @@
                 <span class="i18n"><b>CAUTION:</b> The number of rows can have a significant impact on the performance of the following action.</span>
             </div>
         </script>
+        <script type="text/x-jquery-tmpl" id="template-drillacross">
+        </script>
         <script type="text/x-jquery-tmpl" id="template-drillthrough-list">
         <div class="sidebar" style="border:1px solid #CCCCCC">
             <h3><input type="checkbox" class="all_dimensions"/> &nbsp;<span class="i18n">Dimensions</span></h3>
@@ -644,7 +649,7 @@
                     <% if (typeof hierarchy["visible"] == "undefined" || hierarchy["visible"]) { %>
                         <% if (dimension.hierarchies.length > 1) { %>
                             <li class="hierarchy hide">
-                                <a class="dimension" title="<%= hierarchy.description ? hierarchy.description : hierarchy.caption %>" href="#"><%= hierarchy.caption %></a>
+                                <a class="dimension" title="<%= hierarchy.description ? hierarchy.description : hierarchy.caption %>" href="#" key="<%= dimension.name %>###<%= hierarchy.name %>"><%= hierarchy.caption %></a>
                             </li>
                         <% } %>
                     <% } %>
@@ -652,7 +657,7 @@
                         <% if (typeof level["visible"] == "undefined" || level["visible"]) { %>
                             <% if (level.caption != "(All)") { %>
                                 <li class="hide"> &nbsp;&nbsp;&nbsp;&nbsp;
-                                <input type="checkbox" class="check_level" value="<%= level.uniqueName %>"> <%= level.caption %></input>
+                                <input type="checkbox" class="check_level" value="<%= level.uniqueName %>" key="<%= dimension.name %>###<%= hierarchy.name %>"> <%= level.caption %></input>
                                 </li>
                             <% } %>
                         <% } %>
@@ -673,9 +678,10 @@
                 <ul>
                 <% _.each(measures, function(measure) { %>
                     <% if (typeof measure["visible"] == "undefined" || measure["visible"]) { %>
-                        <% if(typeof measure.calculated == "undefined" || measure.calculated == false) { %>
+
+                        <% if(typeof measure.calculated == "undefined" || (measure.calculated == false || allMeasures)) { %>
                             <li> &nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input type="checkbox" class="check_level" value="<%= measure.uniqueName %>"> <%= measure.caption %></input>
+                                    <input type="checkbox" class="check_level" value="<%= measure.uniqueName %>" key="Measures###"> <%= measure.caption %></input>
                                     </li>
                         <% } %>
                     <% } %>
@@ -687,3 +693,4 @@
         <script type="text/javascript" src="js/ga.js"></script>
     </body>
 </html>
+

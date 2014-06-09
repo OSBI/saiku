@@ -29,7 +29,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         
         // Maintain `this` in callbacks
         _.bindAll(this, "call", "reflect_properties", "run_query",
-            "swap_axes_on_dropzones", "display_drillthrough","clicked_cell_drillthrough_export",
+            "swap_axes_on_dropzones", "display_drillthrough","clicked_cell_drillthrough_export", "clicked_cell_drillacross",
             "clicked_cell_drillthrough","activate_buttons", "switch_to_mdx","post_mdx_transform", "toggle_fields_action");
         
         // Redraw the toolbar to reflect properties
@@ -310,13 +310,16 @@ var WorkspaceToolbar = Backbone.View.extend({
         } else {
             if ($(source).hasClass('drillthrough_export')) {
                 $(this.workspace.el).find("td.data").addClass('cellhighlight').unbind('click').click(this.clicked_cell_drillthrough_export);
-                $(this.workspace.el).find(".query_scenario, .drillthrough, .zoom_mode").removeClass('on');
+                $(this.workspace.el).find(".query_scenario, .drillthrough, .zoom_mode, .drillacross").removeClass('on');
             } else if ($(source).hasClass('drillthrough')) {
                 $(this.workspace.el).find("td.data").addClass('cellhighlight').unbind('click').click(this.clicked_cell_drillthrough);
-                $(this.workspace.el).find(".query_scenario, .drillthrough_export, .zoom_mode").removeClass('on');
+                $(this.workspace.el).find(".query_scenario, .drillthrough_export, .zoom_mode, .drillacross").removeClass('on');
             } else if ($(source).hasClass('query_scenario')) {
                 this.workspace.query.scenario.activate();
-                $(this.workspace.el).find(".drillthrough, .drillthrough_export, .zoom_mode").removeClass('on');
+                $(this.workspace.el).find(".drillthrough, .drillthrough_export, .zoom_mode, .drillacross").removeClass('on');
+            } else if ($(source).hasClass('drillacross')) {
+                $(this.workspace.el).find("td.data").addClass('cellhighlight').unbind('click').click(this.clicked_cell_drillacross);
+                $(this.workspace.el).find(".query_scenario, .drillthrough, .drillthrough_export, .zoom_mode").removeClass('on');
             } else if ($(source).hasClass('zoom_mode')) {
                 
                 var self = this;
@@ -337,7 +340,7 @@ var WorkspaceToolbar = Backbone.View.extend({
                             });
                     }
                 } });
-                $(this.workspace.el).find(".drillthrough, .drillthrough_export").removeClass('on');
+                $(this.workspace.el).find(".drillthrough, .drillthrough_export, .query_scenario, .drillacross").removeClass('on');
             }
         }
 
@@ -354,6 +357,11 @@ var WorkspaceToolbar = Backbone.View.extend({
 
     },
 
+    drillacross: function(event) {
+       $(event.target).toggleClass('on');
+        this.check_modes($(event.target));        
+    },
+
     drillthrough: function(event) {
        $(event.target).toggleClass('on');
         this.check_modes($(event.target));        
@@ -367,6 +375,20 @@ var WorkspaceToolbar = Backbone.View.extend({
     export_drillthrough: function(event) {
         $(event.target).toggleClass('on');
         this.check_modes($(event.target));        
+    },
+
+    clicked_cell_drillacross: function(event) {
+        $target = $(event.target).hasClass('data') ?
+            $(event.target).find('div') : $(event.target);
+        var pos = $target.attr('rel');     
+        (new DrillAcrossModal({
+            workspace: this.workspace,
+            title: "Drill Across",
+            action: "export",
+            position: pos,
+            query: this.workspace.query
+        })).open();
+   
     },
 
     clicked_cell_drillthrough_export: function(event) {
@@ -451,13 +473,13 @@ var WorkspaceToolbar = Backbone.View.extend({
     export_pdf: function(event) {
         window.location = Settings.REST_URL +
             Saiku.session.username + "/query/" + 
-            this.workspace.query.id + "/export/pdf/flattened";
+this.workspace.query.id + "/export/pdf/"+ this.workspace.query.get('formatter');
     },
 
     switch_to_mdx: function(event) {
         var self = this;
         $(this.workspace.el).find('.workspace_fields').addClass('hide');
-        $(this.el).find('.auto, .query_scenario, .buckets, .non_empty, .swap_axis, .mdx, .switch_to_mdx, .zoom_mode').parent().hide();
+        $(this.el).find('.auto, .query_scenario, .buckets, .non_empty, .swap_axis, .mdx, .switch_to_mdx, .zoom_mode, .drillacross').parent().hide();
 
         if ($(this.workspace.el).find( ".workspace_results tbody.ui-selectable" ).length > 0) {
             $(this.workspace.el).find( ".workspace_results tbody" ).selectable( "destroy" );
@@ -634,3 +656,4 @@ var WorkspaceToolbar = Backbone.View.extend({
 
     }
 });
+

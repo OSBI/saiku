@@ -37,6 +37,13 @@ var DrillthroughModal = Modal.extend({
         'click input.all_dimensions' : 'select_all_dimensions'
     },
 
+    allMeasures: false,
+
+    templateContent: function() {
+        return $("#template-drillthrough").html();
+    },
+
+
     
     initialize: function(args) {
         // Initialize properties
@@ -47,14 +54,14 @@ var DrillthroughModal = Modal.extend({
         this.position = args.position;
         this.action = args.action;
         Saiku.ui.unblock();
-        _.bindAll(this, "ok", "drilled");
+        _.bindAll(this, "ok", "drilled", "template");
 
         // Resize when rendered
         
         this.render();
                // Load template
        $(this.el).find('.dialog_body')
-          .html(_.template($("#template-drillthrough").html())(this));
+          .html(_.template(this.templateContent())(this));
         // Show dialog
         $(this.el).find('.maxrows').val(this.maxrows);
                     
@@ -87,7 +94,7 @@ var DrillthroughModal = Modal.extend({
         } 
 
         var templ_dim =_.template($("#template-drillthrough-dimensions").html())({dimensions: dimensions});
-        var templ_measure =_.template($("#template-drillthrough-measures").html())({measures: measures});
+        var templ_measure =_.template($("#template-drillthrough-measures").html())({measures: measures, allMeasures: this.allMeasures});
 
         $(container).appendTo($(this.el).find('.dialog_body'));
         $(this.el).find('.sidebar').height(($("body").height() / 2) + ($("body").height() / 6) );
@@ -144,7 +151,7 @@ var DrillthroughModal = Modal.extend({
         var $loading = $("<div>Drilling through...</div>");
         $(this.el).find('.dialog_body').children().hide();
         $(this.el).find('.dialog_body').prepend($loading);
-        var selections = ""
+        var selections = "";
         $(this.el).find('.check_level:checked').each( function(index) { 
             if (index > 0) {
                 selections += ", ";
