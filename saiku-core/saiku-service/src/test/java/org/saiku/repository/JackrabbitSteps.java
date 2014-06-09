@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class JackrabbitSteps {
 
-  private IRepositoryManager iRepositoryManager = new JackRabbitRepositoryManager();
+  private IRepositoryManager iRepositoryManager = JackRabbitRepositoryManager.getJackRabbitRepositoryManager();
 
 
   @Step
@@ -75,11 +75,6 @@ public class JackrabbitSteps {
     while(nodes.hasNext()){
       Node node = nodes.nextNode();
       try {
-        System.out.println( node.getName() );
-      } catch ( RepositoryException e ) {
-        e.printStackTrace();
-      }
-      try {
         names.add(node.getProperty( "user" ).getString());
       } catch ( RepositoryException e ) {
         e.printStackTrace();
@@ -96,7 +91,6 @@ public class JackrabbitSteps {
     try {
       node = iRepositoryManager.getHomeFolder( directory );
         String path = node.getPath();
-        System.out.println(path);
     } catch ( RepositoryException e ) {
       e.printStackTrace();
     }
@@ -106,7 +100,7 @@ public class JackrabbitSteps {
 
   @Step
   public void shutdownRepository() {
-    iRepositoryManager.shutdown();
+      JackRabbitRepositoryManager.getJackRabbitRepositoryManager().shutdown();
   }
 
   @Step

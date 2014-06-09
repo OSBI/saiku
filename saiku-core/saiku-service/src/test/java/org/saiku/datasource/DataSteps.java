@@ -66,7 +66,6 @@ public class DataSteps {
 
     this.datasourceManager =
       new RepositoryDatasourceManager();
-    System.out.println( "Datasources: " + datasourceManager.getDatasources().keySet().size() );
     //InputStream inputStream= DataSteps.class.getResourceAsStream("connection.properties");
     testProps.load( inputStream );
     this.datasourceManager.load();
@@ -126,7 +125,7 @@ public class DataSteps {
 
     if ( data != null ) {
 
-      datasourceManager.setDatasource( new SaikuDatasource( data.get( 0 ), SaikuDatasource.Type.OLAP, testProps ) );
+      datasourceManager.addDatasource( new SaikuDatasource( data.get( 0 ), SaikuDatasource.Type.OLAP, testProps ) );
 
     }
 

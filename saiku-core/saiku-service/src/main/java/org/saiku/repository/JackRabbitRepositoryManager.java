@@ -48,6 +48,25 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
   private static final Logger log = LoggerFactory.getLogger( JackRabbitRepositoryManager.class );
 
+    private JackRabbitRepositoryManager(){
+
+    }
+    public static synchronized JackRabbitRepositoryManager getJackRabbitRepositoryManager()
+    {
+        if (ref == null)
+            // it's ok, we can call this constructor
+            ref = new JackRabbitRepositoryManager();
+        return ref;
+    }
+
+    public Object clone()
+            throws CloneNotSupportedException
+    {
+        throw new CloneNotSupportedException();
+        // that'll teach 'em
+    }
+  private static JackRabbitRepositoryManager ref;
+
   private Repository repository;
   private Session session;
   private Node root;
@@ -260,7 +279,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         int pos = path.lastIndexOf("/");
         String filename = "./"+path.substring(pos+1, path.length());
         Node n = getFolder(path.substring(0, pos));
-        Node resNode = n.addNode(filename, "nt:datasource");
+        Node resNode = n.addNode(filename, "nt:olapdatasource");
         //resNode.setProperty ("jcr:mimeType", "text/plain");
         //resNode.setProperty ("jcr:encoding", "utf8");
         resNode.setProperty ("jcr:data", baos.toString());
