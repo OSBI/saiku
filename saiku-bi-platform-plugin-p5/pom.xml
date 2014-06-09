@@ -139,6 +139,18 @@
 									<version>REFACTOR-SNAPSHOT</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
+								<artifactItem>
+									<groupId>com.itextpdf</groupId>
+									<artifactId>itextpdf</artifactId>
+									<version>5.5.0</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.itextpdf.tool</groupId>
+									<artifactId>xmlworker</artifactId>
+									<version>5.5.0</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>	
 							</artifactItems>
 						</configuration>
 					</execution>
@@ -524,5 +536,20 @@
 			<artifactId>spring-security-core</artifactId>
 			<version>2.0.5.RELEASE</version>
 		</dependency>
+			<dependency>
+<groupId>com.itextpdf</groupId>
+<artifactId>itextpdf</artifactId>
+<version>5.5.0</version>
+</dependency>
+<dependency>
+<groupId>com.itextpdf.tool</groupId>
+<artifactId>xmlworker</artifactId>
+<version>5.5.0</version>
+</dependency>	
+<dependency>
+<groupId>rhino</groupId>
+<artifactId>js</artifactId>
+<version>1.7R2</version>
+</dependency>
 	</dependencies>
 </project>

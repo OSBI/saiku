@@ -36,6 +36,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.apache.commons.lang.StringUtils;
+import org.saiku.web.export.PdfReport;
 import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.util.ServletUtil;
 import org.saiku.web.svg.Converter;
@@ -111,6 +112,34 @@ public class ExporterResource {
 		}
 	}
 
+
+	@GET
+	@Produces({"application/json" })
+	@Path("/saiku/pdf")
+	public Response exportPdf(@QueryParam("file") String file, 
+			@QueryParam("formatter") String formatter,
+			@Context HttpServletRequest servletRequest) 
+	{
+		try {
+			Response f = repository.getResource(file);
+			String fileContent = new String( (byte[]) f.getEntity());
+			String queryName = UUID.randomUUID().toString();
+			fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
+			queryResource.createQuery(null,  null,  null, null, fileContent, queryName, null);
+			QueryResult qr = queryResource.execute(queryName, formatter, 0);
+			PdfReport pdf = new PdfReport();
+			byte[] doc  = pdf.pdf(qr, null);
+			return Response.ok(doc).type("application/pdf").header(
+					"content-disposition",
+					"attachment; filename = export.pdf").header(
+							"content-length",doc.length).build();
+			
+		} catch (Exception e) {
+			log.error("Error exporting PDF for file: " + file, e);
+			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
 	@GET
 	@Produces({"application/json" })
 	@Path("/saiku/json")
@@ -176,3 +205,4 @@ public class ExporterResource {
 		}
 	}
 }
+

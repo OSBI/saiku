@@ -115,10 +115,18 @@ public class TotalsListsBuilder implements FormatList {
         Map<String, Property> props = m.getProperties().asMap();
         if ( props.containsKey( "FORMAT_STRING" ) ) {
           formatString = (String) m.getPropertyValue( props.get( "FORMAT_STRING" ) );
-        } else if ( props.containsKey( "FORMAT_EXP" ) ) {
+        } else if (props.containsKey("FORMAT_EXP_PARSED")) {
+            formatString = (String) m.getPropertyValue(props.get("FORMAT_EXP_PARSED"));
+        }else if ( props.containsKey( "FORMAT_EXP" ) ) {
           formatString = (String) m.getPropertyValue( props.get( "FORMAT_EXP" ) );
         } else if ( props.containsKey( "FORMAT" ) ) {
           formatString = (String) m.getPropertyValue( props.get( "FORMAT" ) );
+        }
+	    if (StringUtils.isBlank(formatString)) {
+          formatString = "Standard";
+        }
+    	if (StringUtils.isNotBlank(formatString) && formatString.length() > 1 && formatString.startsWith("\"") && formatString.endsWith("\"")) {
+            formatString = formatString.substring(1, formatString.length() - 1);
         }
       }
       return Format.get( formatString, SaikuProperties.locale );

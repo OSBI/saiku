@@ -68,13 +68,13 @@ import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.service.util.exception.SaikuServiceException;
+import org.saiku.web.export.PdfReport;
 import org.saiku.web.rest.objects.MdxQueryObject;
 import org.saiku.web.rest.objects.SavedQuery;
 import org.saiku.web.rest.objects.SelectionRestObject;
 import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.util.RestUtil;
 import org.saiku.web.rest.util.ServletUtil;
-import org.saiku.web.svg.PdfReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -416,15 +416,15 @@ public class QueryResource {
 	{
 		
 		try {
-			PdfReport pdf = new PdfReport();
 			CellDataSet cs = null;
 			if (StringUtils.isNotBlank(format)) {
 				cs = olapQueryService.execute(queryName, format);
 			} else {
 				cs = olapQueryService.execute(queryName);
 			}
-			
-			byte[] doc  = pdf.pdf(cs, svg);
+			QueryResult qr = RestUtil.convert(cs);
+			PdfReport pdf = new PdfReport();
+			byte[] doc  = pdf.pdf(qr, svg);
 			return Response.ok(doc).type("application/pdf").header(
 					"content-disposition",
 					"attachment; filename = export.pdf").header(
@@ -1468,3 +1468,4 @@ public class QueryResource {
 	}
 
 }
+
