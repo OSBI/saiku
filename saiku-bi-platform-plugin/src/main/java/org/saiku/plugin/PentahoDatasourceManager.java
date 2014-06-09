@@ -82,6 +82,10 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 		loadDatasourcesFromXml(ds);
 	}
 
+    public void unload(){
+
+    }
+
 	private void loadDatasourcesFromXml(String dataSources) {
 		EntityResolver loader = new PentahoEntityResolver();
 		Document doc = null;

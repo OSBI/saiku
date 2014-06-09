@@ -1,5 +1,188 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="EclipseModuleManager">
+    <varelement var="file://$M2_REPO$/javax/validation/validation-api/1.0.0.GA/validation-api-1.0.0.GA.jar" value="M2_REPO/javax/validation/validation-api/1.0.0.GA/validation-api-1.0.0.GA.jar" />
+    <varelement var="file://$M2_REPO$/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar" value="M2_REPO/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar" />
+    <varelement var="file://$M2_REPO$/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar" value="M2_REPO/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar" />
+    <varelement var="file://$M2_REPO$/javax/ws/rs/jsr311-api/1.1.1/jsr311-api-1.1.1.jar" value="M2_REPO/javax/ws/rs/jsr311-api/1.1.1/jsr311-api-1.1.1.jar" />
+    <varelement var="file://$M2_REPO$/javax/mail/mail/1.4.4/mail-1.4.4.jar" value="M2_REPO/javax/mail/mail/1.4.4/mail-1.4.4.jar" />
+    <varelement var="file://$M2_REPO$/javax/activation/activation/1.1/activation-1.1.jar" value="M2_REPO/javax/activation/activation/1.1/activation-1.1.jar" />
+    <varelement var="file://$M2_REPO$/javax/xml/ws/jaxws-api/2.1/jaxws-api-2.1.jar" value="M2_REPO/javax/xml/ws/jaxws-api/2.1/jaxws-api-2.1.jar" />
+    <varelement var="file://$M2_REPO$/javax/xml/bind/jaxb-api/2.1/jaxb-api-2.1.jar" value="M2_REPO/javax/xml/bind/jaxb-api/2.1/jaxb-api-2.1.jar" />
+    <varelement var="file://$M2_REPO$/javax/xml/stream/stax-api/1.0/stax-api-1.0.jar" value="M2_REPO/javax/xml/stream/stax-api/1.0/stax-api-1.0.jar" />
+    <varelement var="file://$M2_REPO$/javax/xml/soap/saaj-api/1.3/saaj-api-1.3.jar" value="M2_REPO/javax/xml/soap/saaj-api/1.3/saaj-api-1.3.jar" />
+    <varelement var="file://$M2_REPO$/javax/servlet/jstl/1.2/jstl-1.2.jar" value="M2_REPO/javax/servlet/jstl/1.2/jstl-1.2.jar" />
+    <varelement var="file://$M2_REPO$/javax/servlet/jsp-api/2.0/jsp-api-2.0.jar" value="M2_REPO/javax/servlet/jsp-api/2.0/jsp-api-2.0.jar" />
+    <varelement var="file://$M2_REPO$/org/olap4j/olap4j/1.2.0-SNAPSHOT/olap4j-1.2.0-SNAPSHOT.jar" value="M2_REPO/org/olap4j/olap4j/1.2.0-SNAPSHOT/olap4j-1.2.0-SNAPSHOT.jar" />
+    <varelement var="file://$M2_REPO$/net/java/dev/javacc/javacc/5.0/javacc-5.0.jar" value="M2_REPO/net/java/dev/javacc/javacc/5.0/javacc-5.0.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/mondrian/3.6.5/mondrian-3.6.5.jar" value="M2_REPO/pentaho/mondrian/3.6.5/mondrian-3.6.5.jar" />
+    <varelement var="file://$M2_REPO$/commons-collections/commons-collections/3.1/commons-collections-3.1.jar" value="M2_REPO/commons-collections/commons-collections/3.1/commons-collections-3.1.jar" />
+    <varelement var="file://$M2_REPO$/commons-dbcp/commons-dbcp/1.2.2/commons-dbcp-1.2.2.jar" value="M2_REPO/commons-dbcp/commons-dbcp/1.2.2/commons-dbcp-1.2.2.jar" />
+    <varelement var="file://$M2_REPO$/commons-pool/commons-pool/1.4/commons-pool-1.4.jar" value="M2_REPO/commons-pool/commons-pool/1.4/commons-pool-1.4.jar" />
+    <varelement var="file://$M2_REPO$/xml-apis/xml-apis/1.3.04/xml-apis-1.3.04.jar" value="M2_REPO/xml-apis/xml-apis/1.3.04/xml-apis-1.3.04.jar" />
+    <varelement var="file://$M2_REPO$/xerces/xercesImpl/2.9.1/xercesImpl-2.9.1.jar" value="M2_REPO/xerces/xercesImpl/2.9.1/xercesImpl-2.9.1.jar" />
+    <varelement var="file://$M2_REPO$/commons-lang/commons-lang/2.4/commons-lang-2.4.jar" value="M2_REPO/commons-lang/commons-lang/2.4/commons-lang-2.4.jar" />
+    <varelement var="file://$M2_REPO$/commons-io/commons-io/1.3.2/commons-io-1.3.2.jar" value="M2_REPO/commons-io/commons-io/1.3.2/commons-io-1.3.2.jar" />
+    <varelement var="file://$M2_REPO$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" value="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" />
+    <varelement var="file://$M2_REPO$/commons-math/commons-math/1.2/commons-math-1.2.jar" value="M2_REPO/commons-math/commons-math/1.2/commons-math-1.2.jar" />
+    <varelement var="file://$M2_REPO$/commons-vfs/commons-vfs/1.0/commons-vfs-1.0.jar" value="M2_REPO/commons-vfs/commons-vfs/1.0/commons-vfs-1.0.jar" />
+    <varelement var="file://$M2_REPO$/javacup/javacup/10k/javacup-10k.jar" value="M2_REPO/javacup/javacup/10k/javacup-10k.jar" />
+    <varelement var="file://$M2_REPO$/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar" value="M2_REPO/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar" />
+    <varelement var="file://$M2_REPO$/eigenbase/eigenbase-xom/1.3.0.11999/eigenbase-xom-1.3.0.11999.jar" value="M2_REPO/eigenbase/eigenbase-xom/1.3.0.11999/eigenbase-xom-1.3.0.11999.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/ant/ant/1.7.0/ant-1.7.0.jar" value="M2_REPO/org/apache/ant/ant/1.7.0/ant-1.7.0.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/ant/ant-launcher/1.7.0/ant-launcher-1.7.0.jar" value="M2_REPO/org/apache/ant/ant-launcher/1.7.0/ant-launcher-1.7.0.jar" />
+    <varelement var="file://$M2_REPO$/eigenbase/eigenbase-properties/1.1.0.10924/eigenbase-properties-1.1.0.10924.jar" value="M2_REPO/eigenbase/eigenbase-properties/1.1.0.10924/eigenbase-properties-1.1.0.10924.jar" />
+    <varelement var="file://$M2_REPO$/eigenbase/eigenbase-resgen/1.3.0.11873/eigenbase-resgen-1.3.0.11873.jar" value="M2_REPO/eigenbase/eigenbase-resgen/1.3.0.11873/eigenbase-resgen-1.3.0.11873.jar" />
+    <varelement var="file://$M2_REPO$/sun/jlfgr/1.0/jlfgr-1.0.jar" value="M2_REPO/sun/jlfgr/1.0/jlfgr-1.0.jar" />
+    <varelement var="file://$M2_REPO$/log4j/log4j/1.2.14/log4j-1.2.14.jar" value="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar" />
+    <varelement var="file://$M2_REPO$/org/owasp/esapi/esapi/2.0.1/esapi-2.0.1.jar" value="M2_REPO/org/owasp/esapi/esapi/2.0.1/esapi-2.0.1.jar" />
+    <varelement var="file://$M2_REPO$/commons-configuration/commons-configuration/1.5/commons-configuration-1.5.jar" value="M2_REPO/commons-configuration/commons-configuration/1.5/commons-configuration-1.5.jar" />
+    <varelement var="file://$M2_REPO$/commons-digester/commons-digester/1.8/commons-digester-1.8.jar" value="M2_REPO/commons-digester/commons-digester/1.8/commons-digester-1.8.jar" />
+    <varelement var="file://$M2_REPO$/commons-beanutils/commons-beanutils/1.6/commons-beanutils-1.6.jar" value="M2_REPO/commons-beanutils/commons-beanutils/1.6/commons-beanutils-1.6.jar" />
+    <varelement var="file://$M2_REPO$/commons-beanutils/commons-beanutils-core/1.7.0/commons-beanutils-core-1.7.0.jar" value="M2_REPO/commons-beanutils/commons-beanutils-core/1.7.0/commons-beanutils-core-1.7.0.jar" />
+    <varelement var="file://$M2_REPO$/commons-fileupload/commons-fileupload/1.2/commons-fileupload-1.2.jar" value="M2_REPO/commons-fileupload/commons-fileupload/1.2/commons-fileupload-1.2.jar" />
+    <varelement var="file://$M2_REPO$/xom/xom/1.1/xom-1.1.jar" value="M2_REPO/xom/xom/1.1/xom-1.1.jar" />
+    <varelement var="file://$M2_REPO$/xerces/xmlParserAPIs/2.6.2/xmlParserAPIs-2.6.2.jar" value="M2_REPO/xerces/xmlParserAPIs/2.6.2/xmlParserAPIs-2.6.2.jar" />
+    <varelement var="file://$M2_REPO$/xalan/xalan/2.6.0/xalan-2.6.0.jar" value="M2_REPO/xalan/xalan/2.6.0/xalan-2.6.0.jar" />
+    <varelement var="file://$M2_REPO$/jaxen/jaxen/1.1/jaxen-1.1.jar" value="M2_REPO/jaxen/jaxen/1.1/jaxen-1.1.jar" />
+    <varelement var="file://$M2_REPO$/jdom/jdom/1.0/jdom-1.0.jar" value="M2_REPO/jdom/jdom/1.0/jdom-1.0.jar" />
+    <varelement var="file://$M2_REPO$/org/beanshell/bsh-core/2.0b4/bsh-core-2.0b4.jar" value="M2_REPO/org/beanshell/bsh-core/2.0b4/bsh-core-2.0b4.jar" />
+    <varelement var="file://$M2_REPO$/org/owasp/antisamy/antisamy/1.4.3/antisamy-1.4.3.jar" value="M2_REPO/org/owasp/antisamy/antisamy/1.4.3/antisamy-1.4.3.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/batik-css/1.7/batik-css-1.7.jar" value="M2_REPO/org/apache/xmlgraphics/batik-css/1.7/batik-css-1.7.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/batik-ext/1.7/batik-ext-1.7.jar" value="M2_REPO/org/apache/xmlgraphics/batik-ext/1.7/batik-ext-1.7.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/batik-util/1.7/batik-util-1.7.jar" value="M2_REPO/org/apache/xmlgraphics/batik-util/1.7/batik-util-1.7.jar" />
+    <varelement var="file://$M2_REPO$/xml-apis/xml-apis-ext/1.3.04/xml-apis-ext-1.3.04.jar" value="M2_REPO/xml-apis/xml-apis-ext/1.3.04/xml-apis-ext-1.3.04.jar" />
+    <varelement var="file://$M2_REPO$/net/sourceforge/nekohtml/nekohtml/0.9.5/nekohtml-0.9.5.jar" value="M2_REPO/net/sourceforge/nekohtml/nekohtml/0.9.5/nekohtml-0.9.5.jar" />
+    <varelement var="file://$M2_REPO$/commons-httpclient/commons-httpclient/20020423/commons-httpclient-20020423.jar" value="M2_REPO/commons-httpclient/commons-httpclient/20020423/commons-httpclient-20020423.jar" />
+    <varelement var="file://$M2_REPO$/commons-codec/commons-codec/1.3/commons-codec-1.3.jar" value="M2_REPO/commons-codec/commons-codec/1.3/commons-codec-1.3.jar" />
+    <varelement var="file://$M2_REPO$/org/olap4j/olap4j-xmla/1.2.0-SNAPSHOT/olap4j-xmla-1.2.0-SNAPSHOT.jar" value="M2_REPO/org/olap4j/olap4j-xmla/1.2.0-SNAPSHOT/olap4j-xmla-1.2.0-SNAPSHOT.jar" />
+    <varelement var="file://$M2_REPO$/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar" value="M2_REPO/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar" />
+    <varelement var="file://$M2_REPO$/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar" value="M2_REPO/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar" />
+    <varelement var="file://$M2_REPO$/org/codehaus/jackson/jackson-mapper-asl/1.9.3/jackson-mapper-asl-1.9.3.jar" value="M2_REPO/org/codehaus/jackson/jackson-mapper-asl/1.9.3/jackson-mapper-asl-1.9.3.jar" />
+    <varelement var="file://$M2_REPO$/org/codehaus/jackson/jackson-core-asl/1.9.3/jackson-core-asl-1.9.3.jar" value="M2_REPO/org/codehaus/jackson/jackson-core-asl/1.9.3/jackson-core-asl-1.9.3.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/poi/poi/3.7/poi-3.7.jar" value="M2_REPO/org/apache/poi/poi/3.7/poi-3.7.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/poi/poi-ooxml/3.7/poi-ooxml-3.7.jar" value="M2_REPO/org/apache/poi/poi-ooxml/3.7/poi-ooxml-3.7.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/poi/poi-ooxml-schemas/3.7/poi-ooxml-schemas-3.7.jar" value="M2_REPO/org/apache/poi/poi-ooxml-schemas/3.7/poi-ooxml-schemas-3.7.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar" value="M2_REPO/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar" />
+    <varelement var="file://$M2_REPO$/stax/stax-api/1.0.1/stax-api-1.0.1.jar" value="M2_REPO/stax/stax-api/1.0.1/stax-api-1.0.1.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/geronimo/specs/geronimo-stax-api_1.0_spec/1.0/geronimo-stax-api_1.0_spec-1.0.jar" value="M2_REPO/org/apache/geronimo/specs/geronimo-stax-api_1.0_spec/1.0/geronimo-stax-api_1.0_spec-1.0.jar" />
+    <varelement var="file://$M2_REPO$/org/jdom/jdom/1.1/jdom-1.1.jar" value="M2_REPO/org/jdom/jdom/1.1/jdom-1.1.jar" />
+    <varelement var="file://$M2_REPO$/junit/junit/4.10/junit-4.10.jar" value="M2_REPO/junit/junit/4.10/junit-4.10.jar" />
+    <varelement var="file://$M2_REPO$/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar" value="M2_REPO/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/spring-core/3.0.3.RELEASE/spring-core-3.0.3.RELEASE.jar" value="M2_REPO/org/springframework/spring-core/3.0.3.RELEASE/spring-core-3.0.3.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/spring-asm/3.0.3.RELEASE/spring-asm-3.0.3.RELEASE.jar" value="M2_REPO/org/springframework/spring-asm/3.0.3.RELEASE/spring-asm-3.0.3.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/spring-beans/3.0.3.RELEASE/spring-beans-3.0.3.RELEASE.jar" value="M2_REPO/org/springframework/spring-beans/3.0.3.RELEASE/spring-beans-3.0.3.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/spring-aop/3.0.3.RELEASE/spring-aop-3.0.3.RELEASE.jar" value="M2_REPO/org/springframework/spring-aop/3.0.3.RELEASE/spring-aop-3.0.3.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/aopalliance/aopalliance/1.0/aopalliance-1.0.jar" value="M2_REPO/aopalliance/aopalliance/1.0/aopalliance-1.0.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/spring-context/3.0.3.RELEASE/spring-context-3.0.3.RELEASE.jar" value="M2_REPO/org/springframework/spring-context/3.0.3.RELEASE/spring-context-3.0.3.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/spring-expression/3.0.3.RELEASE/spring-expression-3.0.3.RELEASE.jar" value="M2_REPO/org/springframework/spring-expression/3.0.3.RELEASE/spring-expression-3.0.3.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/spring-context-support/3.0.3.RELEASE/spring-context-support-3.0.3.RELEASE.jar" value="M2_REPO/org/springframework/spring-context-support/3.0.3.RELEASE/spring-context-support-3.0.3.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/security/spring-security-taglibs/3.0.3.RELEASE/spring-security-taglibs-3.0.3.RELEASE.jar" value="M2_REPO/org/springframework/security/spring-security-taglibs/3.0.3.RELEASE/spring-security-taglibs-3.0.3.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/security/spring-security-web/3.0.3.RELEASE/spring-security-web-3.0.3.RELEASE.jar" value="M2_REPO/org/springframework/security/spring-security-web/3.0.3.RELEASE/spring-security-web-3.0.3.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/security/spring-security-core/2.0.5.RELEASE/spring-security-core-2.0.5.RELEASE.jar" value="M2_REPO/org/springframework/security/spring-security-core/2.0.5.RELEASE/spring-security-core-2.0.5.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/security/spring-security-acl/3.0.3.RELEASE/spring-security-acl-3.0.3.RELEASE.jar" value="M2_REPO/org/springframework/security/spring-security-acl/3.0.3.RELEASE/spring-security-acl-3.0.3.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/spring-jdbc/3.0.3.RELEASE/spring-jdbc-3.0.3.RELEASE.jar" value="M2_REPO/org/springframework/spring-jdbc/3.0.3.RELEASE/spring-jdbc-3.0.3.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/security/spring-security-ldap/3.0.3.RELEASE/spring-security-ldap-3.0.3.RELEASE.jar" value="M2_REPO/org/springframework/security/spring-security-ldap/3.0.3.RELEASE/spring-security-ldap-3.0.3.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/ldap/spring-ldap-core/1.3.0.RELEASE/spring-ldap-core-1.3.0.RELEASE.jar" value="M2_REPO/org/springframework/ldap/spring-ldap-core/1.3.0.RELEASE/spring-ldap-core-1.3.0.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/spring-webmvc/3.0.3.RELEASE/spring-webmvc-3.0.3.RELEASE.jar" value="M2_REPO/org/springframework/spring-webmvc/3.0.3.RELEASE/spring-webmvc-3.0.3.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/spring-web/3.0.3.RELEASE/spring-web-3.0.3.RELEASE.jar" value="M2_REPO/org/springframework/spring-web/3.0.3.RELEASE/spring-web-3.0.3.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/org/codehaus/enunciate/enunciate-jersey-rt/1.28/enunciate-jersey-rt-1.28.jar" value="M2_REPO/org/codehaus/enunciate/enunciate-jersey-rt/1.28/enunciate-jersey-rt-1.28.jar" />
+    <varelement var="file://$M2_REPO$/org/codehaus/enunciate/enunciate-core-rt/1.28/enunciate-core-rt-1.28.jar" value="M2_REPO/org/codehaus/enunciate/enunciate-core-rt/1.28/enunciate-core-rt-1.28.jar" />
+    <varelement var="file://$M2_REPO$/org/codehaus/enunciate/enunciate-core-annotations/1.28/enunciate-core-annotations-1.28.jar" value="M2_REPO/org/codehaus/enunciate/enunciate-core-annotations/1.28/enunciate-core-annotations-1.28.jar" />
+    <varelement var="file://$M2_REPO$/org/codehaus/jackson/jackson-jaxrs/1.9.3/jackson-jaxrs-1.9.3.jar" value="M2_REPO/org/codehaus/jackson/jackson-jaxrs/1.9.3/jackson-jaxrs-1.9.3.jar" />
+    <varelement var="file://$M2_REPO$/org/codehaus/jackson/jackson-xc/1.9.3/jackson-xc-1.9.3.jar" value="M2_REPO/org/codehaus/jackson/jackson-xc/1.9.3/jackson-xc-1.9.3.jar" />
+    <varelement var="file://$M2_REPO$/com/sun/jersey/jersey-server/1.11/jersey-server-1.11.jar" value="M2_REPO/com/sun/jersey/jersey-server/1.11/jersey-server-1.11.jar" />
+    <varelement var="file://$M2_REPO$/asm/asm/3.1/asm-3.1.jar" value="M2_REPO/asm/asm/3.1/asm-3.1.jar" />
+    <varelement var="file://$M2_REPO$/com/sun/jersey/jersey-core/1.11/jersey-core-1.11.jar" value="M2_REPO/com/sun/jersey/jersey-core/1.11/jersey-core-1.11.jar" />
+    <varelement var="file://$M2_REPO$/com/sun/jersey/jersey-servlet/1.11/jersey-servlet-1.11.jar" value="M2_REPO/com/sun/jersey/jersey-servlet/1.11/jersey-servlet-1.11.jar" />
+    <varelement var="file://$M2_REPO$/com/sun/xml/bind/jaxb-impl/2.2.3/jaxb-impl-2.2.3.jar" value="M2_REPO/com/sun/xml/bind/jaxb-impl/2.2.3/jaxb-impl-2.2.3.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/spring-test/3.0.3.RELEASE/spring-test-3.0.3.RELEASE.jar" value="M2_REPO/org/springframework/spring-test/3.0.3.RELEASE/spring-test-3.0.3.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/com/sun/jersey/contribs/jersey-multipart/1.11/jersey-multipart-1.11.jar" value="M2_REPO/com/sun/jersey/contribs/jersey-multipart/1.11/jersey-multipart-1.11.jar" />
+    <varelement var="file://$M2_REPO$/org/jvnet/mimepull/1.6/mimepull-1.6.jar" value="M2_REPO/org/jvnet/mimepull/1.6/mimepull-1.6.jar" />
+    <varelement var="file://$M2_REPO$/org/codehaus/enunciate/enunciate-rt/1.28/enunciate-rt-1.28.jar" value="M2_REPO/org/codehaus/enunciate/enunciate-rt/1.28/enunciate-rt-1.28.jar" />
+    <varelement var="file://$M2_REPO$/org/codehaus/enunciate/enunciate-jaxws-ri-rt/1.28/enunciate-jaxws-ri-rt-1.28.jar" value="M2_REPO/org/codehaus/enunciate/enunciate-jaxws-ri-rt/1.28/enunciate-jaxws-ri-rt-1.28.jar" />
+    <varelement var="file://$M2_REPO$/com/sun/xml/ws/jaxws-rt/2.1.7/jaxws-rt-2.1.7.jar" value="M2_REPO/com/sun/xml/ws/jaxws-rt/2.1.7/jaxws-rt-2.1.7.jar" />
+    <varelement var="file://$M2_REPO$/com/sun/xml/messaging/saaj/saaj-impl/1.3.3/saaj-impl-1.3.3.jar" value="M2_REPO/com/sun/xml/messaging/saaj/saaj-impl/1.3.3/saaj-impl-1.3.3.jar" />
+    <varelement var="file://$M2_REPO$/com/sun/xml/stream/buffer/streambuffer/0.9/streambuffer-0.9.jar" value="M2_REPO/com/sun/xml/stream/buffer/streambuffer/0.9/streambuffer-0.9.jar" />
+    <varelement var="file://$M2_REPO$/org/jvnet/staxex/stax-ex/1.2/stax-ex-1.2.jar" value="M2_REPO/org/jvnet/staxex/stax-ex/1.2/stax-ex-1.2.jar" />
+    <varelement var="file://$M2_REPO$/org/codehaus/woodstox/wstx-asl/3.2.3/wstx-asl-3.2.3.jar" value="M2_REPO/org/codehaus/woodstox/wstx-asl/3.2.3/wstx-asl-3.2.3.jar" />
+    <varelement var="file://$M2_REPO$/com/sun/org/apache/xml/internal/resolver/20050927/resolver-20050927.jar" value="M2_REPO/com/sun/org/apache/xml/internal/resolver/20050927/resolver-20050927.jar" />
+    <varelement var="file://$M2_REPO$/cglib/cglib/2.2/cglib-2.2.jar" value="M2_REPO/cglib/cglib/2.2/cglib-2.2.jar" />
+    <varelement var="file://$M2_REPO$/org/codehaus/jettison/jettison/1.2/jettison-1.2.jar" value="M2_REPO/org/codehaus/jettison/jettison/1.2/jettison-1.2.jar" />
+    <varelement var="file://$M2_REPO$/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar" value="M2_REPO/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/security/spring-security-config/3.0.3.RELEASE/spring-security-config-3.0.3.RELEASE.jar" value="M2_REPO/org/springframework/security/spring-security-config/3.0.3.RELEASE/spring-security-config-3.0.3.RELEASE.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/batik-transcoder/1.7/batik-transcoder-1.7.jar" value="M2_REPO/org/apache/xmlgraphics/batik-transcoder/1.7/batik-transcoder-1.7.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/fop/0.94/fop-0.94.jar" value="M2_REPO/org/apache/xmlgraphics/fop/0.94/fop-0.94.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/batik-awt-util/1.7/batik-awt-util-1.7.jar" value="M2_REPO/org/apache/xmlgraphics/batik-awt-util/1.7/batik-awt-util-1.7.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/batik-bridge/1.7/batik-bridge-1.7.jar" value="M2_REPO/org/apache/xmlgraphics/batik-bridge/1.7/batik-bridge-1.7.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/batik-anim/1.7/batik-anim-1.7.jar" value="M2_REPO/org/apache/xmlgraphics/batik-anim/1.7/batik-anim-1.7.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/batik-dom/1.7/batik-dom-1.7.jar" value="M2_REPO/org/apache/xmlgraphics/batik-dom/1.7/batik-dom-1.7.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/batik-xml/1.7/batik-xml-1.7.jar" value="M2_REPO/org/apache/xmlgraphics/batik-xml/1.7/batik-xml-1.7.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/batik-parser/1.7/batik-parser-1.7.jar" value="M2_REPO/org/apache/xmlgraphics/batik-parser/1.7/batik-parser-1.7.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/batik-svg-dom/1.7/batik-svg-dom-1.7.jar" value="M2_REPO/org/apache/xmlgraphics/batik-svg-dom/1.7/batik-svg-dom-1.7.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/batik-gvt/1.7/batik-gvt-1.7.jar" value="M2_REPO/org/apache/xmlgraphics/batik-gvt/1.7/batik-gvt-1.7.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/batik-script/1.7/batik-script-1.7.jar" value="M2_REPO/org/apache/xmlgraphics/batik-script/1.7/batik-script-1.7.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/batik-svggen/1.7/batik-svggen-1.7.jar" value="M2_REPO/org/apache/xmlgraphics/batik-svggen/1.7/batik-svggen-1.7.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/batik-codec/1.7/batik-codec-1.7.jar" value="M2_REPO/org/apache/xmlgraphics/batik-codec/1.7/batik-codec-1.7.jar" />
+    <varelement var="file://$M2_REPO$/avalon-framework/avalon-framework/4.1.5/avalon-framework-4.1.5.jar" value="M2_REPO/avalon-framework/avalon-framework/4.1.5/avalon-framework-4.1.5.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/xmlgraphics/xmlgraphics-commons/1.2/xmlgraphics-commons-1.2.jar" value="M2_REPO/org/apache/xmlgraphics/xmlgraphics-commons/1.2/xmlgraphics-commons-1.2.jar" />
+    <varelement var="file://$M2_REPO$/com/lowagie/itext/4.2.0/itext-4.2.0.jar" value="M2_REPO/com/lowagie/itext/4.2.0/itext-4.2.0.jar" />
+    <varelement var="file://$M2_REPO$/org/bouncycastle/bctsp-jdk14/1.38/bctsp-jdk14-1.38.jar" value="M2_REPO/org/bouncycastle/bctsp-jdk14/1.38/bctsp-jdk14-1.38.jar" />
+    <varelement var="file://$M2_REPO$/org/bouncycastle/bcprov-jdk14/1.38/bcprov-jdk14-1.38.jar" value="M2_REPO/org/bouncycastle/bcprov-jdk14/1.38/bcprov-jdk14-1.38.jar" />
+    <varelement var="file://$M2_REPO$/org/bouncycastle/bcmail-jdk14/1.38/bcmail-jdk14-1.38.jar" value="M2_REPO/org/bouncycastle/bcmail-jdk14/1.38/bcmail-jdk14-1.38.jar" />
+    <varelement var="file://$M2_REPO$/jfree/jfreechart/1.0.12/jfreechart-1.0.12.jar" value="M2_REPO/jfree/jfreechart/1.0.12/jfreechart-1.0.12.jar" />
+    <varelement var="file://$M2_REPO$/jfree/jcommon/1.0.15/jcommon-1.0.15.jar" value="M2_REPO/jfree/jcommon/1.0.15/jcommon-1.0.15.jar" />
+    <varelement var="file://$M2_REPO$/org/swinglabs/pdf-renderer/1.0.5/pdf-renderer-1.0.5.jar" value="M2_REPO/org/swinglabs/pdf-renderer/1.0.5/pdf-renderer-1.0.5.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/cda/TRUNK-SNAPSHOT/cda-TRUNK-SNAPSHOT.jar" value="M2_REPO/pentaho/cda/TRUNK-SNAPSHOT/cda-TRUNK-SNAPSHOT.jar" />
+    <varelement var="file://$M2_REPO$/pentaho-library/libloader/1.2.3/libloader-1.2.3.jar" value="M2_REPO/pentaho-library/libloader/1.2.3/libloader-1.2.3.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/pentaho-bi-platform-api/3.10.0-stable/pentaho-bi-platform-api-3.10.0-stable.jar" value="M2_REPO/pentaho/pentaho-bi-platform-api/3.10.0-stable/pentaho-bi-platform-api-3.10.0-stable.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/pentaho-connections/2.2.3/pentaho-connections-2.2.3.jar" value="M2_REPO/pentaho/pentaho-connections/2.2.3/pentaho-connections-2.2.3.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/pentaho-actionsequence-dom/2.3.4/pentaho-actionsequence-dom-2.3.4.jar" value="M2_REPO/pentaho/pentaho-actionsequence-dom/2.3.4/pentaho-actionsequence-dom-2.3.4.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/pentaho-xul-core/3.3.2/pentaho-xul-core-3.3.2.jar" value="M2_REPO/pentaho/pentaho-xul-core/3.3.2/pentaho-xul-core-3.3.2.jar" />
+    <varelement var="file://$M2_REPO$/org/codehaus/groovy/groovy-all/1.5.6/groovy-all-1.5.6.jar" value="M2_REPO/org/codehaus/groovy/groovy-all/1.5.6/groovy-all-1.5.6.jar" />
+    <varelement var="file://$M2_REPO$/jline/jline/0.9.94/jline-0.9.94.jar" value="M2_REPO/jline/jline/0.9.94/jline-0.9.94.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/pentaho-bi-platform-engine-core/3.10.0-stable/pentaho-bi-platform-engine-core-3.10.0-stable.jar" value="M2_REPO/pentaho/pentaho-bi-platform-engine-core/3.10.0-stable/pentaho-bi-platform-engine-core-3.10.0-stable.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/pentaho-bi-platform-util/3.10.0-stable/pentaho-bi-platform-util-3.10.0-stable.jar" value="M2_REPO/pentaho/pentaho-bi-platform-util/3.10.0-stable/pentaho-bi-platform-util-3.10.0-stable.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/pentaho-bi-platform-engine-services/3.10.0-stable/pentaho-bi-platform-engine-services-3.10.0-stable.jar" value="M2_REPO/pentaho/pentaho-bi-platform-engine-services/3.10.0-stable/pentaho-bi-platform-engine-services-3.10.0-stable.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/pentaho-bi-platform-engine-security/3.10.0-stable/pentaho-bi-platform-engine-security-3.10.0-stable.jar" value="M2_REPO/pentaho/pentaho-bi-platform-engine-security/3.10.0-stable/pentaho-bi-platform-engine-security-3.10.0-stable.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/pentaho-bi-platform-web-servlet/3.10.0-stable/pentaho-bi-platform-web-servlet-3.10.0-stable.jar" value="M2_REPO/pentaho/pentaho-bi-platform-web-servlet/3.10.0-stable/pentaho-bi-platform-web-servlet-3.10.0-stable.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/pentaho-bi-platform-repository/3.10.0-stable/pentaho-bi-platform-repository-3.10.0-stable.jar" value="M2_REPO/pentaho/pentaho-bi-platform-repository/3.10.0-stable/pentaho-bi-platform-repository-3.10.0-stable.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/pentaho-bi-platform-ui-foundation/3.10.0-stable/pentaho-bi-platform-ui-foundation-3.10.0-stable.jar" value="M2_REPO/pentaho/pentaho-bi-platform-ui-foundation/3.10.0-stable/pentaho-bi-platform-ui-foundation-3.10.0-stable.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/pentaho-bi-platform-web/3.10.0-stable/pentaho-bi-platform-web-3.10.0-stable.jar" value="M2_REPO/pentaho/pentaho-bi-platform-web/3.10.0-stable/pentaho-bi-platform-web-3.10.0-stable.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/pentaho-bi-platform-plugin-services/3.10.0-stable/pentaho-bi-platform-plugin-services-3.10.0-stable.jar" value="M2_REPO/pentaho/pentaho-bi-platform-plugin-services/3.10.0-stable/pentaho-bi-platform-plugin-services-3.10.0-stable.jar" />
+    <varelement var="file://$M2_REPO$/net/sf/saxon/saxon-dom/8.5.1/saxon-dom-8.5.1.jar" value="M2_REPO/net/sf/saxon/saxon-dom/8.5.1/saxon-dom-8.5.1.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/spring/2.5.6/spring-2.5.6.jar" value="M2_REPO/org/springframework/spring/2.5.6/spring-2.5.6.jar" />
+    <varelement var="file://$M2_REPO$/annogen/annogen/0.1.0/annogen-0.1.0.jar" value="M2_REPO/annogen/annogen/0.1.0/annogen-0.1.0.jar" />
+    <varelement var="file://$M2_REPO$/backport-util-concurrent/backport-util-concurrent/3.1/backport-util-concurrent-3.1.jar" value="M2_REPO/backport-util-concurrent/backport-util-concurrent/3.1/backport-util-concurrent-3.1.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/httpcomponents/httpcore/4.0-beta3/httpcore-4.0-beta3.jar" value="M2_REPO/org/apache/httpcomponents/httpcore/4.0-beta3/httpcore-4.0-beta3.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/ws/commons/neethi/neethi/2.0.1/neethi-2.0.1.jar" value="M2_REPO/org/apache/ws/commons/neethi/neethi/2.0.1/neethi-2.0.1.jar" />
+    <varelement var="file://$M2_REPO$/woodstox/wstx-asl/3.2.4/wstx-asl-3.2.4.jar" value="M2_REPO/woodstox/wstx-asl/3.2.4/wstx-asl-3.2.4.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/ws/commons/schema/XmlSchema/1.4.2/XmlSchema-1.4.2.jar" value="M2_REPO/org/apache/ws/commons/schema/XmlSchema/1.4.2/XmlSchema-1.4.2.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/pentaho-bi-platform-scheduler/3.10.0-stable/pentaho-bi-platform-scheduler-3.10.0-stable.jar" value="M2_REPO/pentaho/pentaho-bi-platform-scheduler/3.10.0-stable/pentaho-bi-platform-scheduler-3.10.0-stable.jar" />
+    <varelement var="file://$M2_REPO$/pentaho/pentaho-bi-platform-plugin-actions/3.10.0-stable/pentaho-bi-platform-plugin-actions-3.10.0-stable.jar" value="M2_REPO/pentaho/pentaho-bi-platform-plugin-actions/3.10.0-stable/pentaho-bi-platform-plugin-actions-3.10.0-stable.jar" />
+    <varelement var="file://$M2_REPO$/pentaho-kettle/kettle-engine/4.2.1-stable/kettle-engine-4.2.1-stable.jar" value="M2_REPO/pentaho-kettle/kettle-engine/4.2.1-stable/kettle-engine-4.2.1-stable.jar" />
+    <varelement var="file://$M2_REPO$/pentaho-kettle/kettle-core/4.2.1-stable/kettle-core-4.2.1-stable.jar" value="M2_REPO/pentaho-kettle/kettle-core/4.2.1-stable/kettle-core-4.2.1-stable.jar" />
+    <varelement var="file://$M2_REPO$/pentaho-kettle/kettle-db/4.2.1-stable/kettle-db-4.2.1-stable.jar" value="M2_REPO/pentaho-kettle/kettle-db/4.2.1-stable/kettle-db-4.2.1-stable.jar" />
+    <varelement var="file://$M2_REPO$/org/snmp4j/snmp4j/1.9.3d/snmp4j-1.9.3d.jar" value="M2_REPO/org/snmp4j/snmp4j/1.9.3d/snmp4j-1.9.3d.jar" />
+    <varelement var="file://$M2_REPO$/salesforce/salesforce/20.0/salesforce-20.0.jar" value="M2_REPO/salesforce/salesforce/20.0/salesforce-20.0.jar" />
+    <varelement var="file://$M2_REPO$/rome/rome/0.9/rome-0.9.jar" value="M2_REPO/rome/rome/0.9/rome-0.9.jar" />
+    <varelement var="file://$M2_REPO$/georss-rome/georss-rome/0.9.8/georss-rome-0.9.8.jar" value="M2_REPO/georss-rome/georss-rome/0.9.8/georss-rome-0.9.8.jar" />
+    <varelement var="file://$M2_REPO$/feed4j/feed4j/1.0/feed4j-1.0.jar" value="M2_REPO/feed4j/feed4j/1.0/feed4j-1.0.jar" />
+    <varelement var="file://$M2_REPO$/janino/janino/2.5.x/janino-2.5.x.jar" value="M2_REPO/janino/janino/2.5.x/janino-2.5.x.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/hadoop/hive/hive-jdbc/0.7.0-pentaho-1.0.0/hive-jdbc-0.7.0-pentaho-1.0.0.jar" value="M2_REPO/org/apache/hadoop/hive/hive-jdbc/0.7.0-pentaho-1.0.0/hive-jdbc-0.7.0-pentaho-1.0.0.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/hadoop/hadoop-core/0.20.2-cdh3u0/hadoop-core-0.20.2-cdh3u0.jar" value="M2_REPO/org/apache/hadoop/hadoop-core/0.20.2-cdh3u0/hadoop-core-0.20.2-cdh3u0.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/hadoop/hive/hive-exec/0.7.0-pentaho-1.0.0/hive-exec-0.7.0-pentaho-1.0.0.jar" value="M2_REPO/org/apache/hadoop/hive/hive-exec/0.7.0-pentaho-1.0.0/hive-exec-0.7.0-pentaho-1.0.0.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/hadoop/hive/hive-metastore/0.7.0-pentaho-1.0.0/hive-metastore-0.7.0-pentaho-1.0.0.jar" value="M2_REPO/org/apache/hadoop/hive/hive-metastore/0.7.0-pentaho-1.0.0/hive-metastore-0.7.0-pentaho-1.0.0.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/hadoop/hive/hive-service/0.7.0-pentaho-1.0.0/hive-service-0.7.0-pentaho-1.0.0.jar" value="M2_REPO/org/apache/hadoop/hive/hive-service/0.7.0-pentaho-1.0.0/hive-service-0.7.0-pentaho-1.0.0.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/thrift/libfb303/0.5.0/libfb303-0.5.0.jar" value="M2_REPO/org/apache/thrift/libfb303/0.5.0/libfb303-0.5.0.jar" />
+    <varelement var="file://$M2_REPO$/org/apache/thrift/libthrift/0.5.0/libthrift-0.5.0.jar" value="M2_REPO/org/apache/thrift/libthrift/0.5.0/libthrift-0.5.0.jar" />
+    <varelement var="file://$M2_REPO$/com/sun/jersey/contribs/jersey-spring/1.11/jersey-spring-1.11.jar" value="M2_REPO/com/sun/jersey/contribs/jersey-spring/1.11/jersey-spring-1.11.jar" />
+    <varelement var="file://$M2_REPO$/com/sun/jersey/jersey-client/1.11/jersey-client-1.11.jar" value="M2_REPO/com/sun/jersey/jersey-client/1.11/jersey-client-1.11.jar" />
+    <varelement var="file://$M2_REPO$/org/springframework/spring-support/2.0.8/spring-support-2.0.8.jar" value="M2_REPO/org/springframework/spring-support/2.0.8/spring-support-2.0.8.jar" />
+    <src_description expected_position="0">
+      <src_folder value="file://$MODULE_DIR$/src/main/java" expected_position="0" />
+    </src_description>
+  </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
@@ -7,165 +190,1614 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="validation-api-1.0.0.GA.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/javax/validation/validation-api/1.0.0.GA/validation-api-1.0.0.GA.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="servlet-api-2.4.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/javax/servlet/servlet-api/2.4/servlet-api-2.4.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jsr250-api-1.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jsr311-api-1.1.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/javax/ws/rs/jsr311-api/1.1.1/jsr311-api-1.1.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="mail-1.4.4.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/javax/mail/mail/1.4.4/mail-1.4.4.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="activation-1.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/javax/activation/activation/1.1/activation-1.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jaxws-api-2.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/javax/xml/ws/jaxws-api/2.1/jaxws-api-2.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jaxb-api-2.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/javax/xml/bind/jaxb-api/2.1/jaxb-api-2.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="stax-api-1.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/javax/xml/stream/stax-api/1.0/stax-api-1.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="saaj-api-1.3.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/javax/xml/soap/saaj-api/1.3/saaj-api-1.3.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jstl-1.2.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/javax/servlet/jstl/1.2/jstl-1.2.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jsp-api-2.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/javax/servlet/jsp-api/2.0/jsp-api-2.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="jdk" jdkName="J2SE-1.5" jdkType="JavaSDK" />
     <orderEntry type="module" module-name="saiku-service" />
-    <orderEntry type="library" name="Maven: org.olap4j:olap4j:1.0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: net.java.dev.javacc:javacc:5.0" level="project" />
-    <orderEntry type="library" name="Maven: pentaho:mondrian:3.4.0-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.1" level="project" />
-    <orderEntry type="library" name="Maven: commons-dbcp:commons-dbcp:1.2.2" level="project" />
-    <orderEntry type="library" name="Maven: commons-pool:commons-pool:1.4" level="project" />
-    <orderEntry type="library" name="Maven: xml-apis:xml-apis:1.0.b2" level="project" />
-    <orderEntry type="library" name="Maven: xerces:xercesImpl:2.5.0" level="project" />
-    <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.4" level="project" />
-    <orderEntry type="library" name="Maven: commons-io:commons-io:1.4" level="project" />
-    <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.1.1" level="project" />
-    <orderEntry type="library" name="Maven: commons-math:commons-math:1.2" level="project" />
-    <orderEntry type="library" name="Maven: commons-vfs:commons-vfs:1.0" level="project" />
-    <orderEntry type="library" name="Maven: javacup:javacup:10k" level="project" />
-    <orderEntry type="library" name="Maven: dom4j:dom4j:1.6.1" level="project" />
-    <orderEntry type="library" name="Maven: javax.validation:validation-api:1.0.0.GA" level="project" />
-    <orderEntry type="library" name="Maven: eigenbase:eigenbase-xom:1.3.0.11999" level="project" />
-    <orderEntry type="library" name="Maven: eigenbase:eigenbase-properties:1.1.0.10924" level="project" />
-    <orderEntry type="library" name="Maven: eigenbase:eigenbase-resgen:1.3.0.11873" level="project" />
-    <orderEntry type="library" name="Maven: sun:jlfgr:1.0" level="project" />
-    <orderEntry type="library" name="Maven: javax.servlet:servlet-api:2.4" level="project" />
-    <orderEntry type="library" name="Maven: log4j:log4j:1.2.14" level="project" />
-    <orderEntry type="library" name="Maven: xalan:xalan:2.4.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.poi:poi:3.6" level="project" />
-    <orderEntry type="library" name="Maven: org.olap4j:olap4j-xmla:1.0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: org.jdom:jdom:1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-log4j12:1.6.1" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.1" level="project" />
-    <orderEntry type="library" name="Maven: net.sourceforge.jexcelapi:jxl:2.6.10" level="project" />
-    <orderEntry type="library" name="Maven: junit:junit:4.10" level="project" />
-    <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
-    <orderEntry type="library" name="Maven: hsqldb:hsqldb:1.8.0.10" level="project" />
+    <orderEntry type="module" module-name="saiku-query" />
+    <orderEntry type="module-library">
+      <library name="olap4j-1.2.0-SNAPSHOT.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/olap4j/olap4j/1.2.0-SNAPSHOT/olap4j-1.2.0-SNAPSHOT.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="javacc-5.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/net/java/dev/javacc/javacc/5.0/javacc-5.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="mondrian-3.6.5.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/mondrian/3.6.5/mondrian-3.6.5.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-collections-3.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/commons-collections/commons-collections/3.1/commons-collections-3.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-dbcp-1.2.2.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/commons-dbcp/commons-dbcp/1.2.2/commons-dbcp-1.2.2.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-pool-1.4.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/commons-pool/commons-pool/1.4/commons-pool-1.4.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xml-apis-1.3.04.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/xml-apis/xml-apis/1.3.04/xml-apis-1.3.04.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xercesImpl-2.9.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/xerces/xercesImpl/2.9.1/xercesImpl-2.9.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-lang-2.4.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/commons-lang/commons-lang/2.4/commons-lang-2.4.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-io-1.3.2.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/commons-io/commons-io/1.3.2/commons-io-1.3.2.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-logging-1.1.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-math-1.2.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/commons-math/commons-math/1.2/commons-math-1.2.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-vfs-1.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/commons-vfs/commons-vfs/1.0/commons-vfs-1.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="javacup-10k.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/javacup/javacup/10k/javacup-10k.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="dom4j-1.6.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="eigenbase-xom-1.3.0.11999.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/eigenbase/eigenbase-xom/1.3.0.11999/eigenbase-xom-1.3.0.11999.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ant-1.7.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/ant/ant/1.7.0/ant-1.7.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ant-launcher-1.7.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/ant/ant-launcher/1.7.0/ant-launcher-1.7.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="eigenbase-properties-1.1.0.10924.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/eigenbase/eigenbase-properties/1.1.0.10924/eigenbase-properties-1.1.0.10924.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="eigenbase-resgen-1.3.0.11873.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/eigenbase/eigenbase-resgen/1.3.0.11873/eigenbase-resgen-1.3.0.11873.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jlfgr-1.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/sun/jlfgr/1.0/jlfgr-1.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="log4j-1.2.14.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/log4j/log4j/1.2.14/log4j-1.2.14.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="esapi-2.0.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/owasp/esapi/esapi/2.0.1/esapi-2.0.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-configuration-1.5.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/commons-configuration/commons-configuration/1.5/commons-configuration-1.5.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-digester-1.8.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/commons-digester/commons-digester/1.8/commons-digester-1.8.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-beanutils-1.6.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/commons-beanutils/commons-beanutils/1.6/commons-beanutils-1.6.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-beanutils-core-1.7.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/commons-beanutils/commons-beanutils-core/1.7.0/commons-beanutils-core-1.7.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-fileupload-1.2.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/commons-fileupload/commons-fileupload/1.2/commons-fileupload-1.2.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xom-1.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/xom/xom/1.1/xom-1.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xmlParserAPIs-2.6.2.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/xerces/xmlParserAPIs/2.6.2/xmlParserAPIs-2.6.2.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xalan-2.6.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/xalan/xalan/2.6.0/xalan-2.6.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jaxen-1.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/jaxen/jaxen/1.1/jaxen-1.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jdom-1.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/jdom/jdom/1.0/jdom-1.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="bsh-core-2.0b4.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/beanshell/bsh-core/2.0b4/bsh-core-2.0b4.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="antisamy-1.4.3.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/owasp/antisamy/antisamy/1.4.3/antisamy-1.4.3.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-css-1.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/batik-css/1.7/batik-css-1.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-ext-1.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/batik-ext/1.7/batik-ext-1.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-util-1.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/batik-util/1.7/batik-util-1.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xml-apis-ext-1.3.04.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/xml-apis/xml-apis-ext/1.3.04/xml-apis-ext-1.3.04.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="nekohtml-0.9.5.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/net/sourceforge/nekohtml/nekohtml/0.9.5/nekohtml-0.9.5.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-httpclient-20020423.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/commons-httpclient/commons-httpclient/20020423/commons-httpclient-20020423.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-codec-1.3.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/commons-codec/commons-codec/1.3/commons-codec-1.3.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module" module-name="saiku-olap-util" />
+    <orderEntry type="module-library">
+      <library name="olap4j-xmla-1.2.0-SNAPSHOT.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/olap4j/olap4j-xmla/1.2.0-SNAPSHOT/olap4j-xmla-1.2.0-SNAPSHOT.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="slf4j-log4j12-1.6.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="slf4j-api-1.6.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jackson-mapper-asl-1.9.3.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/codehaus/jackson/jackson-mapper-asl/1.9.3/jackson-mapper-asl-1.9.3.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jackson-core-asl-1.9.3.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/codehaus/jackson/jackson-core-asl/1.9.3/jackson-core-asl-1.9.3.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="poi-3.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/poi/poi/3.7/poi-3.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="poi-ooxml-3.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/poi/poi-ooxml/3.7/poi-ooxml-3.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="poi-ooxml-schemas-3.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/poi/poi-ooxml-schemas/3.7/poi-ooxml-schemas-3.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xmlbeans-2.3.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="stax-api-1.0.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/stax/stax-api/1.0.1/stax-api-1.0.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="geronimo-stax-api_1.0_spec-1.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/geronimo/specs/geronimo-stax-api_1.0_spec/1.0/geronimo-stax-api_1.0_spec-1.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jdom-1.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/jdom/jdom/1.1/jdom-1.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="junit-4.10.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/junit/junit/4.10/junit-4.10.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="hamcrest-core-1.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/hamcrest/hamcrest-core/1.1/hamcrest-core-1.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
     <orderEntry type="module" module-name="saiku-web" />
-    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-taglibs:3.0.3.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-web:3.0.3.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-core:2.0.5.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-expression:3.0.3.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-core:2.5.6" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-asm:3.0.3.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-context:2.5.6" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-aop:2.5.6" level="project" />
-    <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-beans:2.5.6" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-acl:3.0.3.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-context-support:3.0.3.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:3.0.3.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-ldap:3.0.3.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.ldap:spring-ldap-core:1.3.0.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:3.0.3.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-web:2.5.6" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-core-tiger:2.0.6.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.enunciate:enunciate-gwt-rt:1.23" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.enunciate:enunciate-core-rt:1.23" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.enunciate:enunciate-core-annotations:1.23" level="project" />
-    <orderEntry type="library" name="Maven: javax.annotation:jsr250-api:1.0" level="project" />
-    <orderEntry type="library" name="Maven: javax.ws.rs:jsr311-api:1.1.1" level="project" />
-    <orderEntry type="library" name="Maven: com.google.gwt:gwt-servlet:1.5.2" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.enunciate:enunciate-jersey-rt:1.23" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-jaxrs:1.7.4" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-core-asl:1.5.2" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.5.2" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-xc:1.7.4" level="project" />
-    <orderEntry type="library" name="Maven: com.sun.jersey:jersey-server:1.8" level="project" />
-    <orderEntry type="library" name="Maven: com.sun.jersey:jersey-core:1.8" level="project" />
-    <orderEntry type="library" name="Maven: asm:asm:3.1" level="project" />
-    <orderEntry type="library" name="Maven: javax.mail:mail:1.4" level="project" />
-    <orderEntry type="library" name="Maven: com.sun.xml.bind:jaxb-impl:2.1.13" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.enunciate:enunciate-amf-rt:1.23" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.blazeds:blazeds-common:3.0.0.544" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.blazeds:blazeds-core:3.0.0.544" level="project" />
-    <orderEntry type="library" name="Maven: backport-util-concurrent:backport-util-concurrent:3.1" level="project" />
-    <orderEntry type="library" name="Maven: com.adobe.blazeds:blazeds-remoting:3.0.0.544" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.enunciate:enunciate-obj-c:1.23" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.enunciate:enunciate-core:1.23" level="project" />
-    <orderEntry type="library" name="Maven: net.sf.apt-jelly:apt-jelly-freemarker:2.14" level="project" />
-    <orderEntry type="library" name="Maven: net.sf.apt-jelly:apt-jelly-core:2.14" level="project" />
-    <orderEntry type="library" name="Maven: com.sun:tools:local" level="project" />
-    <orderEntry type="library" name="Maven: org.freemarker:freemarker:2.3.14" level="project" />
-    <orderEntry type="library" name="Maven: commons-digester:commons-digester:1.7" level="project" />
-    <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils:1.6" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.enunciate:enunciate-c:1.23" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-test:3.0.4.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.enunciate:enunciate-rt:1.23" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.enunciate:enunciate-jaxws-ri-rt:1.23" level="project" />
-    <orderEntry type="library" name="Maven: com.sun.xml.ws:jaxws-rt:2.1.7" level="project" />
-    <orderEntry type="library" name="Maven: javax.xml.ws:jaxws-api:2.1" level="project" />
-    <orderEntry type="library" name="Maven: javax.xml.bind:jaxb-api:2.1" level="project" />
-    <orderEntry type="library" name="Maven: javax.xml.stream:stax-api:1.0-2" level="project" />
-    <orderEntry type="library" name="Maven: com.sun.xml.messaging.saaj:saaj-impl:1.3.3" level="project" />
-    <orderEntry type="library" name="Maven: javax.xml.soap:saaj-api:1.3" level="project" />
-    <orderEntry type="library" name="Maven: com.sun.org.apache.xml.internal:resolver:20050927" level="project" />
-    <orderEntry type="library" name="Maven: org.jvnet:mimepull:1.3" level="project" />
-    <orderEntry type="library" name="Maven: org.jvnet.staxex:stax-ex:1.2" level="project" />
-    <orderEntry type="library" name="Maven: com.sun.xml.stream.buffer:streambuffer:0.9" level="project" />
-    <orderEntry type="library" name="Maven: cglib:cglib:2.2" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.jettison:jettison:1.2" level="project" />
-    <orderEntry type="library" name="Maven: stax:stax-api:1.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-config:3.0.3.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: javax.servlet:jstl:1.2" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.security.oauth:spring-security-oauth:1.0.0.BUILD-SNAPSHOT" level="project" />
-    <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.3" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpclient:4.1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.httpcomponents:httpcore:4.0-beta3" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-io:1.3.2" level="project" />
-    <orderEntry type="library" name="Maven: commons-httpclient:commons-httpclient:20020423" level="project" />
-    <orderEntry type="library" name="Maven: javax.servlet:jsp-api:2.0" level="project" />
-    <orderEntry type="library" name="Maven: pentaho:pentaho-bi-platform-api:3.10.0-stable" level="project" />
-    <orderEntry type="library" name="Maven: pentaho:pentaho-connections:2.2.3" level="project" />
-    <orderEntry type="library" name="Maven: pentaho:pentaho-actionsequence-dom:2.3.4" level="project" />
-    <orderEntry type="library" name="Maven: jaxen:jaxen:1.1" level="project" />
-    <orderEntry type="library" name="Maven: jdom:jdom:1.0" level="project" />
-    <orderEntry type="library" name="Maven: xom:xom:1.0" level="project" />
-    <orderEntry type="library" name="Maven: xerces:xmlParserAPIs:2.6.2" level="project" />
-    <orderEntry type="library" name="Maven: com.ibm.icu:icu4j:2.6.1" level="project" />
-    <orderEntry type="library" name="Maven: pentaho:pentaho-xul-core:3.3.2" level="project" />
-    <orderEntry type="library" name="Maven: org.codehaus.groovy:groovy-all:1.5.6" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.ant:ant:1.7.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.ant:ant-launcher:1.7.0" level="project" />
-    <orderEntry type="library" name="Maven: jline:jline:0.9.94" level="project" />
-    <orderEntry type="library" name="Maven: pentaho:pentaho-bi-platform-engine-core:3.10.0-stable" level="project" />
-    <orderEntry type="library" name="Maven: pentaho:pentaho-bi-platform-util:3.10.0-stable" level="project" />
-    <orderEntry type="library" name="Maven: pentaho:pentaho-bi-platform-engine-services:3.10.0-stable" level="project" />
-    <orderEntry type="library" name="Maven: pentaho:pentaho-bi-platform-engine-security:3.10.0-stable" level="project" />
-    <orderEntry type="library" name="Maven: pentaho:pentaho-bi-platform-web-servlet:3.10.0-stable" level="project" />
-    <orderEntry type="library" name="Maven: pentaho:pentaho-bi-platform-repository:3.10.0-stable" level="project" />
-    <orderEntry type="library" name="Maven: pentaho:pentaho-bi-platform-ui-foundation:3.10.0-stable" level="project" />
-    <orderEntry type="library" name="Maven: pentaho:pentaho-bi-platform-web:3.10.0-stable" level="project" />
-    <orderEntry type="library" name="Maven: pentaho:pentaho-bi-platform-plugin-services:3.10.0-stable" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: net.sf.saxon:saxon-dom:8.5.1" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.springframework:spring:2.5.6" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: annogen:annogen:0.1.0" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.ws.commons.neethi:neethi:2.0.1" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: woodstox:wstx-asl:3.2.4" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.apache.ws.commons.schema:XmlSchema:1.4.2" level="project" />
-    <orderEntry type="library" name="Maven: pentaho:pentaho-bi-platform-scheduler:3.10.0-stable" level="project" />
-    <orderEntry type="library" name="Maven: pentaho:pentaho-bi-platform-plugin-actions:3.10.0-stable" level="project" />
-    <orderEntry type="library" name="Maven: pentaho-kettle:kettle-engine:4.2.1-stable" level="project" />
-    <orderEntry type="library" name="Maven: pentaho-kettle:kettle-core:4.2.1-stable" level="project" />
-    <orderEntry type="library" name="Maven: pentaho-kettle:kettle-db:4.2.1-stable" level="project" />
-    <orderEntry type="library" name="Maven: org.snmp4j:snmp4j:1.9.3d" level="project" />
-    <orderEntry type="library" name="Maven: salesforce:salesforce:20.0" level="project" />
-    <orderEntry type="library" name="Maven: rome:rome:0.9" level="project" />
-    <orderEntry type="library" name="Maven: georss-rome:georss-rome:0.9.8" level="project" />
-    <orderEntry type="library" name="Maven: feed4j:feed4j:1.0" level="project" />
-    <orderEntry type="library" name="Maven: net.sourceforge.nekohtml:nekohtml:0.9.5" level="project" />
-    <orderEntry type="library" name="Maven: janino:janino:2.5.x" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.hadoop.hive:hive-jdbc:0.7.0-pentaho-1.0.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.hadoop:hadoop-core:0.20.2-cdh3u0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.hadoop.hive:hive-exec:0.7.0-pentaho-1.0.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.hadoop.hive:hive-metastore:0.7.0-pentaho-1.0.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.hadoop.hive:hive-service:0.7.0-pentaho-1.0.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.thrift:libfb303:0.5.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.thrift:libthrift:0.5.0" level="project" />
-    <orderEntry type="library" name="Maven: com.sun.jersey.contribs:jersey-spring:1.8" level="project" />
-    <orderEntry type="library" name="Maven: com.sun.jersey:jersey-client:1.8" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: org.springframework:spring-support:2.0.8" level="project" />
+    <orderEntry type="module-library">
+      <library name="spring-core-3.0.3.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/spring-core/3.0.3.RELEASE/spring-core-3.0.3.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-asm-3.0.3.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/spring-asm/3.0.3.RELEASE/spring-asm-3.0.3.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-beans-3.0.3.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/spring-beans/3.0.3.RELEASE/spring-beans-3.0.3.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-aop-3.0.3.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/spring-aop/3.0.3.RELEASE/spring-aop-3.0.3.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="aopalliance-1.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/aopalliance/aopalliance/1.0/aopalliance-1.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-context-3.0.3.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/spring-context/3.0.3.RELEASE/spring-context-3.0.3.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-expression-3.0.3.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/spring-expression/3.0.3.RELEASE/spring-expression-3.0.3.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-context-support-3.0.3.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/spring-context-support/3.0.3.RELEASE/spring-context-support-3.0.3.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-security-taglibs-3.0.3.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/security/spring-security-taglibs/3.0.3.RELEASE/spring-security-taglibs-3.0.3.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-security-web-3.0.3.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/security/spring-security-web/3.0.3.RELEASE/spring-security-web-3.0.3.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-security-core-2.0.5.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/security/spring-security-core/2.0.5.RELEASE/spring-security-core-2.0.5.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-security-acl-3.0.3.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/security/spring-security-acl/3.0.3.RELEASE/spring-security-acl-3.0.3.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-jdbc-3.0.3.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/spring-jdbc/3.0.3.RELEASE/spring-jdbc-3.0.3.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-security-ldap-3.0.3.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/security/spring-security-ldap/3.0.3.RELEASE/spring-security-ldap-3.0.3.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-ldap-core-1.3.0.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/ldap/spring-ldap-core/1.3.0.RELEASE/spring-ldap-core-1.3.0.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-webmvc-3.0.3.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/spring-webmvc/3.0.3.RELEASE/spring-webmvc-3.0.3.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-web-3.0.3.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/spring-web/3.0.3.RELEASE/spring-web-3.0.3.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="enunciate-jersey-rt-1.28.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/codehaus/enunciate/enunciate-jersey-rt/1.28/enunciate-jersey-rt-1.28.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="enunciate-core-rt-1.28.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/codehaus/enunciate/enunciate-core-rt/1.28/enunciate-core-rt-1.28.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="enunciate-core-annotations-1.28.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/codehaus/enunciate/enunciate-core-annotations/1.28/enunciate-core-annotations-1.28.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jackson-jaxrs-1.9.3.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/codehaus/jackson/jackson-jaxrs/1.9.3/jackson-jaxrs-1.9.3.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jackson-xc-1.9.3.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/codehaus/jackson/jackson-xc/1.9.3/jackson-xc-1.9.3.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jersey-server-1.11.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/com/sun/jersey/jersey-server/1.11/jersey-server-1.11.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="asm-3.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/asm/asm/3.1/asm-3.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jersey-core-1.11.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/com/sun/jersey/jersey-core/1.11/jersey-core-1.11.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jersey-servlet-1.11.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/com/sun/jersey/jersey-servlet/1.11/jersey-servlet-1.11.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jaxb-impl-2.2.3.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/com/sun/xml/bind/jaxb-impl/2.2.3/jaxb-impl-2.2.3.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-test-3.0.3.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/spring-test/3.0.3.RELEASE/spring-test-3.0.3.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jersey-multipart-1.11.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/com/sun/jersey/contribs/jersey-multipart/1.11/jersey-multipart-1.11.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="mimepull-1.6.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/jvnet/mimepull/1.6/mimepull-1.6.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="enunciate-rt-1.28.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/codehaus/enunciate/enunciate-rt/1.28/enunciate-rt-1.28.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="enunciate-jaxws-ri-rt-1.28.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/codehaus/enunciate/enunciate-jaxws-ri-rt/1.28/enunciate-jaxws-ri-rt-1.28.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jaxws-rt-2.1.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/com/sun/xml/ws/jaxws-rt/2.1.7/jaxws-rt-2.1.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="saaj-impl-1.3.3.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/com/sun/xml/messaging/saaj/saaj-impl/1.3.3/saaj-impl-1.3.3.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="streambuffer-0.9.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/com/sun/xml/stream/buffer/streambuffer/0.9/streambuffer-0.9.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="stax-ex-1.2.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/jvnet/staxex/stax-ex/1.2/stax-ex-1.2.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="wstx-asl-3.2.3.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/codehaus/woodstox/wstx-asl/3.2.3/wstx-asl-3.2.3.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="resolver-20050927.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/com/sun/org/apache/xml/internal/resolver/20050927/resolver-20050927.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="cglib-2.2.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/cglib/cglib/2.2/cglib-2.2.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jettison-1.2.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/codehaus/jettison/jettison/1.2/jettison-1.2.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="hsqldb-1.8.0.10.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-security-config-3.0.3.RELEASE.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/security/spring-security-config/3.0.3.RELEASE/spring-security-config-3.0.3.RELEASE.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-transcoder-1.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/batik-transcoder/1.7/batik-transcoder-1.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="fop-0.94.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/fop/0.94/fop-0.94.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-awt-util-1.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/batik-awt-util/1.7/batik-awt-util-1.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-bridge-1.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/batik-bridge/1.7/batik-bridge-1.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-anim-1.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/batik-anim/1.7/batik-anim-1.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-dom-1.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/batik-dom/1.7/batik-dom-1.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-xml-1.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/batik-xml/1.7/batik-xml-1.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-parser-1.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/batik-parser/1.7/batik-parser-1.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-svg-dom-1.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/batik-svg-dom/1.7/batik-svg-dom-1.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-gvt-1.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/batik-gvt/1.7/batik-gvt-1.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-script-1.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/batik-script/1.7/batik-script-1.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-svggen-1.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/batik-svggen/1.7/batik-svggen-1.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="batik-codec-1.7.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/batik-codec/1.7/batik-codec-1.7.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="avalon-framework-4.1.5.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/avalon-framework/avalon-framework/4.1.5/avalon-framework-4.1.5.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xmlgraphics-commons-1.2.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/xmlgraphics/xmlgraphics-commons/1.2/xmlgraphics-commons-1.2.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="itext-4.2.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/com/lowagie/itext/4.2.0/itext-4.2.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="bctsp-jdk14-1.38.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/bouncycastle/bctsp-jdk14/1.38/bctsp-jdk14-1.38.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="bcprov-jdk14-1.38.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/bouncycastle/bcprov-jdk14/1.38/bcprov-jdk14-1.38.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="bcmail-jdk14-1.38.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/bouncycastle/bcmail-jdk14/1.38/bcmail-jdk14-1.38.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jfreechart-1.0.12.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/jfree/jfreechart/1.0.12/jfreechart-1.0.12.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jcommon-1.0.15.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/jfree/jcommon/1.0.15/jcommon-1.0.15.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pdf-renderer-1.0.5.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/swinglabs/pdf-renderer/1.0.5/pdf-renderer-1.0.5.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="cda-TRUNK-SNAPSHOT.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/cda/TRUNK-SNAPSHOT/cda-TRUNK-SNAPSHOT.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="libloader-1.2.3.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho-library/libloader/1.2.3/libloader-1.2.3.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pentaho-bi-platform-api-3.10.0-stable.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/pentaho-bi-platform-api/3.10.0-stable/pentaho-bi-platform-api-3.10.0-stable.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pentaho-connections-2.2.3.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/pentaho-connections/2.2.3/pentaho-connections-2.2.3.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pentaho-actionsequence-dom-2.3.4.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/pentaho-actionsequence-dom/2.3.4/pentaho-actionsequence-dom-2.3.4.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pentaho-xul-core-3.3.2.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/pentaho-xul-core/3.3.2/pentaho-xul-core-3.3.2.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="groovy-all-1.5.6.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/codehaus/groovy/groovy-all/1.5.6/groovy-all-1.5.6.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jline-0.9.94.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/jline/jline/0.9.94/jline-0.9.94.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pentaho-bi-platform-engine-core-3.10.0-stable.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/pentaho-bi-platform-engine-core/3.10.0-stable/pentaho-bi-platform-engine-core-3.10.0-stable.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pentaho-bi-platform-util-3.10.0-stable.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/pentaho-bi-platform-util/3.10.0-stable/pentaho-bi-platform-util-3.10.0-stable.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pentaho-bi-platform-engine-services-3.10.0-stable.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/pentaho-bi-platform-engine-services/3.10.0-stable/pentaho-bi-platform-engine-services-3.10.0-stable.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pentaho-bi-platform-engine-security-3.10.0-stable.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/pentaho-bi-platform-engine-security/3.10.0-stable/pentaho-bi-platform-engine-security-3.10.0-stable.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pentaho-bi-platform-web-servlet-3.10.0-stable.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/pentaho-bi-platform-web-servlet/3.10.0-stable/pentaho-bi-platform-web-servlet-3.10.0-stable.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pentaho-bi-platform-repository-3.10.0-stable.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/pentaho-bi-platform-repository/3.10.0-stable/pentaho-bi-platform-repository-3.10.0-stable.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pentaho-bi-platform-ui-foundation-3.10.0-stable.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/pentaho-bi-platform-ui-foundation/3.10.0-stable/pentaho-bi-platform-ui-foundation-3.10.0-stable.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pentaho-bi-platform-web-3.10.0-stable.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/pentaho-bi-platform-web/3.10.0-stable/pentaho-bi-platform-web-3.10.0-stable.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pentaho-bi-platform-plugin-services-3.10.0-stable.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/pentaho-bi-platform-plugin-services/3.10.0-stable/pentaho-bi-platform-plugin-services-3.10.0-stable.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="saxon-dom-8.5.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/net/sf/saxon/saxon-dom/8.5.1/saxon-dom-8.5.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-2.5.6.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/spring/2.5.6/spring-2.5.6.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="annogen-0.1.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/annogen/annogen/0.1.0/annogen-0.1.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="backport-util-concurrent-3.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/backport-util-concurrent/backport-util-concurrent/3.1/backport-util-concurrent-3.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="httpcore-4.0-beta3.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/httpcomponents/httpcore/4.0-beta3/httpcore-4.0-beta3.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="neethi-2.0.1.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/ws/commons/neethi/neethi/2.0.1/neethi-2.0.1.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="wstx-asl-3.2.4.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/woodstox/wstx-asl/3.2.4/wstx-asl-3.2.4.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="XmlSchema-1.4.2.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/ws/commons/schema/XmlSchema/1.4.2/XmlSchema-1.4.2.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pentaho-bi-platform-scheduler-3.10.0-stable.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/pentaho-bi-platform-scheduler/3.10.0-stable/pentaho-bi-platform-scheduler-3.10.0-stable.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pentaho-bi-platform-plugin-actions-3.10.0-stable.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho/pentaho-bi-platform-plugin-actions/3.10.0-stable/pentaho-bi-platform-plugin-actions-3.10.0-stable.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="kettle-engine-4.2.1-stable.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho-kettle/kettle-engine/4.2.1-stable/kettle-engine-4.2.1-stable.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="kettle-core-4.2.1-stable.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho-kettle/kettle-core/4.2.1-stable/kettle-core-4.2.1-stable.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="kettle-db-4.2.1-stable.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/pentaho-kettle/kettle-db/4.2.1-stable/kettle-db-4.2.1-stable.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="snmp4j-1.9.3d.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/snmp4j/snmp4j/1.9.3d/snmp4j-1.9.3d.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="salesforce-20.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/salesforce/salesforce/20.0/salesforce-20.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="rome-0.9.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/rome/rome/0.9/rome-0.9.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="georss-rome-0.9.8.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/georss-rome/georss-rome/0.9.8/georss-rome-0.9.8.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="feed4j-1.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/feed4j/feed4j/1.0/feed4j-1.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="janino-2.5.x.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/janino/janino/2.5.x/janino-2.5.x.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="hive-jdbc-0.7.0-pentaho-1.0.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/hadoop/hive/hive-jdbc/0.7.0-pentaho-1.0.0/hive-jdbc-0.7.0-pentaho-1.0.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="hadoop-core-0.20.2-cdh3u0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/hadoop/hadoop-core/0.20.2-cdh3u0/hadoop-core-0.20.2-cdh3u0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="hive-exec-0.7.0-pentaho-1.0.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/hadoop/hive/hive-exec/0.7.0-pentaho-1.0.0/hive-exec-0.7.0-pentaho-1.0.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="hive-metastore-0.7.0-pentaho-1.0.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/hadoop/hive/hive-metastore/0.7.0-pentaho-1.0.0/hive-metastore-0.7.0-pentaho-1.0.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="hive-service-0.7.0-pentaho-1.0.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/hadoop/hive/hive-service/0.7.0-pentaho-1.0.0/hive-service-0.7.0-pentaho-1.0.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="libfb303-0.5.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/thrift/libfb303/0.5.0/libfb303-0.5.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="libthrift-0.5.0.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/apache/thrift/libthrift/0.5.0/libthrift-0.5.0.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jersey-spring-1.11.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/com/sun/jersey/contribs/jersey-spring/1.11/jersey-spring-1.11.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jersey-client-1.11.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/com/sun/jersey/jersey-client/1.11/jersey-client-1.11.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="spring-support-2.0.8.jar">
+        <CLASSES>
+          <root url="file://$M2_REPO$/org/springframework/spring-support/2.0.8/spring-support-2.0.8.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
 
