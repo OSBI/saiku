@@ -24,9 +24,9 @@ import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.olap.discover.OlapMetaExplorer;
 import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.olap.util.exception.SaikuOlapException;
-import org.saiku.service.datasource.ClassPathResourceDatasourceManager;
 import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.datasource.IDatasourceManager;
+import org.saiku.service.datasource.RepositoryDatasourceManager;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.ThinQueryService;
 import org.saiku.service.util.exception.SaikuServiceException;
@@ -65,11 +65,11 @@ public class DataSteps {
     //this.datasourceManager = new ClassPathResourceDatasourceManager("res:saiku-org.saiku.datasources");
 
     this.datasourceManager =
-      new ClassPathResourceDatasourceManager( System.getProperty( "java.io.tmpdir" ) + "/files/" );
+      new RepositoryDatasourceManager();
     System.out.println( "Datasources: " + datasourceManager.getDatasources().keySet().size() );
     //InputStream inputStream= DataSteps.class.getResourceAsStream("connection.properties");
     testProps.load( inputStream );
-
+    this.datasourceManager.load();
     this.connectionManager = new SimpleConnectionManager();
     this.connectionManager.setDataSourceManager( datasourceManager );
     this.connectionManager.init();
@@ -88,6 +88,7 @@ public class DataSteps {
 
 
     List<SaikuDatasource> l = new ArrayList<SaikuDatasource>();
+
 
     if ( data != null ) {
       for ( String s : data ) {
@@ -177,4 +178,15 @@ public class DataSteps {
   public void removeDatasource( String foodmart ) {
 
   }
+
+    @Step
+    public void shutdownRepository() {
+        if(datasourceManager!=null) {
+            datasourceManager.unload();
+        }
+        else{
+            //Log message
+        }
+    }
+
 }
