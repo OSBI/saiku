@@ -18,6 +18,8 @@ package org.saiku.web.rest.objects.resultset;
 import java.util.List;
 
 import org.saiku.olap.dto.resultset.CellDataSet;
+import org.saiku.olap.query2.ThinQuery;
+import org.saiku.service.util.ISaikuQuery;
 import org.saiku.web.rest.util.RestUtil;
 
 public class QueryResult {
@@ -29,6 +31,7 @@ public class QueryResult {
 	private String error;
 	private Integer height;
 	private Integer width;
+	private ISaikuQuery query;
 	private int topOffset;
 	private int leftOffset;
 	
@@ -43,7 +46,6 @@ public class QueryResult {
 		this.topOffset = topOffset;
 		this.leftOffset = leftOffset;
 	}
-
 	public QueryResult(List<Cell[]> cellset, int runtime, int width, int height) {
 		this.cellset = cellset;
 		this.runtime = runtime;
@@ -85,6 +87,15 @@ public class QueryResult {
 
 	public void setWidth(Integer width) {
 		this.width = width;
+	}
+
+	public void setQuery(ThinQuery query) {
+		this.query = query;
+		
+	}
+
+	public ISaikuQuery getQuery() {
+		return query;
 	}
 
 	public Total[][] getRowTotalsLists() {

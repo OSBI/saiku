@@ -80,8 +80,7 @@ import com.sun.jersey.multipart.FormDataParam;
  *
  */
 @Component
-@Path("/saiku/{username}/repository2")
-@XmlAccessorType(XmlAccessType.NONE)
+@Path("/saiku/api/repository")
 public class BasicRepositoryResource2 implements ISaikuRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(BasicRepositoryResource2.class);

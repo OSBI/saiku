@@ -3,12 +3,12 @@
 	<parent>
 		<artifactId>saiku-core</artifactId>
 		<groupId>org.saiku</groupId>
-		<version>2.6-SNAPSHOT</version>
+		<version>3.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-webapp</artifactId>
-	<version>2.6-SNAPSHOT</version>
+	<version>3.0-SNAPSHOT</version>
 	<name>saiku - webapp</name>
 	<packaging>war</packaging>
 
@@ -193,7 +193,11 @@
 			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-core</artifactId>
@@ -376,7 +380,14 @@
 			<version>2.1</version>
 			<scope>provided</scope>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.177</version>
+        </dependency>
+
+
+    </dependencies>
 	<reporting>
 		<plugins>
 			<!-- FIXME: currently produces a NullPointerException <plugin> <groupId>org.apache.maven.plugins</groupId> 

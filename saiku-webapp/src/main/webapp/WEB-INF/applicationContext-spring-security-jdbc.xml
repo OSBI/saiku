@@ -36,26 +36,28 @@
 		</property>
 		<property name="authoritiesByUsernameQuery">
 			<value>
-				<![CDATA[SELECT username, authority FROM GRANTED_AUTHORITIES WHERE username = ? ORDER BY authority]]>
+				<![CDATA[select username, role from user_roles where username =?]]>
 			</value>
 		</property>
 		<property name="usersByUsernameQuery">
 			<value>
-				<![CDATA[SELECT username, password, enabled FROM USERS WHERE username = ? ORDER BY username]]>
+				<![CDATA[select username,password, enabled from users where username=?]]>
 			</value>
 		</property>
 	</bean>
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+		<property name="driverClassName" value="org.h2.Driver" />
 		<property name="url"
-			value="jdbc:hsqldb:hsql://localhost:9001/hibernate" />
-		<property name="username" value="hibuser" />
-		<property name="password" value="password" />
+			value="jdbc:h2:./userdb" />
+		<property name="username" value="sa" />
+		<property name="password" value="" />
 	</bean>
 
   <bean id="passwordEncoder"
     class="org.springframework.security.authentication.encoding.PlaintextPasswordEncoder" />
  
-
+    <bean id="customerDAO" class="org.saiku.database.JdbcUserDAO">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 </beans>

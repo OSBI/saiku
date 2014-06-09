@@ -17,6 +17,7 @@ package org.saiku.datasources.connection;
 
 import org.olap4j.OlapConnection;
 import org.saiku.datasources.datasource.SaikuDatasource;
+import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.datasource.IDatasourceProcessor;
 import org.saiku.service.util.exception.SaikuServiceException;
@@ -39,9 +40,9 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
     return ds;
   }
 
-  public abstract void init();
+  public abstract void init() throws SaikuOlapException;
 
-  public void destroy() {
+  public void destroy() throws SaikuOlapException {
     Map<String, OlapConnection> connections = getAllOlapConnections();
     if ( connections != null && !connections.isEmpty() ) {
       for ( OlapConnection con : connections.values() ) {
@@ -59,7 +60,7 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
   }
 
   private SaikuDatasource preProcess( SaikuDatasource datasource ) {
-    if ( datasource.getProperties().containsKey( ISaikuConnection.DATASOURCE_PROCESSORS ) ) {
+    if ( datasource != null && datasource.getProperties().containsKey( ISaikuConnection.DATASOURCE_PROCESSORS ) ) {
       datasource = datasource.clone();
       String[] processors =
         datasource.getProperties().getProperty( ISaikuConnection.DATASOURCE_PROCESSORS ).split( "," );
@@ -82,7 +83,7 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
   }
 
   private ISaikuConnection postProcess( SaikuDatasource datasource, ISaikuConnection con ) {
-    if ( datasource.getProperties().containsKey( ISaikuConnection.CONNECTION_PROCESSORS ) ) {
+    if ( datasource!=null && datasource.getProperties().containsKey( ISaikuConnection.CONNECTION_PROCESSORS ) ) {
       datasource = datasource.clone();
       String[] processors =
         datasource.getProperties().getProperty( ISaikuConnection.CONNECTION_PROCESSORS ).split( "," );
@@ -104,7 +105,7 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
     return con;
   }
 
-  public ISaikuConnection getConnection( String name ) {
+  public ISaikuConnection getConnection( String name ) throws SaikuOlapException {
     SaikuDatasource datasource = ds.getDatasource( name );
     datasource = preProcess( datasource );
     ISaikuConnection con = getInternalConnection( name, datasource );
@@ -112,7 +113,8 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
     return con;
   }
 
-  protected abstract ISaikuConnection getInternalConnection( String name, SaikuDatasource datasource );
+  protected abstract ISaikuConnection getInternalConnection( String name, SaikuDatasource datasource )
+    throws SaikuOlapException;
 
   protected abstract ISaikuConnection refreshInternalConnection( String name, SaikuDatasource datasource );
 
@@ -130,7 +132,7 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
     con = postProcess( datasource, con );
   }
 
-  public Map<String, ISaikuConnection> getAllConnections() {
+  public Map<String, ISaikuConnection> getAllConnections() throws SaikuOlapException {
     Map<String, ISaikuConnection> resultDs = new HashMap<String, ISaikuConnection>();
     for ( String name : ds.getDatasources().keySet() ) {
       ISaikuConnection con = getConnection( name );
@@ -141,7 +143,7 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
     return resultDs;
   }
 
-  public OlapConnection getOlapConnection( String name ) {
+  public OlapConnection getOlapConnection( String name ) throws SaikuOlapException {
     ISaikuConnection con = getConnection( name );
     if ( con != null ) {
       Object o = con.getConnection();
@@ -152,7 +154,7 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
     return null;
   }
 
-  public Map<String, OlapConnection> getAllOlapConnections() {
+  public Map<String, OlapConnection> getAllOlapConnections() throws SaikuOlapException {
     Map<String, ISaikuConnection> connections = getAllConnections();
     Map<String, OlapConnection> ocons = new HashMap<String, OlapConnection>();
     for ( ISaikuConnection con : connections.values() ) {
