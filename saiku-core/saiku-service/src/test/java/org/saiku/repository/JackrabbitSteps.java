@@ -148,7 +148,7 @@ public class JackrabbitSteps {
 
     @Step
     public void saveFile(Object file, String path, String user, String type) throws RepositoryException {
-        iRepositoryManager.saveFile(file, path, user, type);
+        iRepositoryManager.saveFile(file, path, user, type, null);
     }
 
     @Step

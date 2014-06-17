@@ -16,23 +16,16 @@
 package org.saiku.web.rest.resources;
 
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.query.QueryResult;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -56,8 +49,10 @@ import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.FileUtil;
 import org.apache.commons.vfs.VFS;
+import org.apache.jackrabbit.commons.JcrUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.saiku.service.ISessionService;
+import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.web.rest.objects.acl.Acl;
 import org.saiku.web.rest.objects.acl.AclEntry;
@@ -89,6 +84,11 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	private ISessionService sessionService;
 	
 	private Acl acl;
+    private DatasourceService datasourceService;
+
+    public void setDatasourceService(DatasourceService ds) {
+        datasourceService = ds;
+    }
 
 	public void setPath(String path) throws Exception {
 		FileSystemManager fileSystemManager;
@@ -133,7 +133,10 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 			@QueryParam("type") String type) 
 	{
 		List<IRepositoryObject> objects = new ArrayList<IRepositoryObject>();
-		try {
+        Node files = datasourceService.getFiles();
+        objects = getRepoObjects(files, type);
+        return objects;
+	/*	try {
 			if (path != null && (path.startsWith("/") || path.startsWith("."))) {
 				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + path);
 			}
@@ -145,13 +148,13 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 				} else {
 					path = repo.getName().getRelativeName(folder.getName());
 				}
-				
+
 				String username = sessionService.getAllSessionObjects().get("username").toString();
 				List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-				
+
 				//TODO : shall throw an exception ???
 				if ( !acl.canRead(path,username, roles) ) {
-					return new ArrayList<IRepositoryObject>(); // empty  
+					return new ArrayList<IRepositoryObject>(); // empty
 				} else {
 					return getRepositoryObjects(folder, type);
 				}
@@ -161,11 +164,12 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 			}
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
-		}
-		return objects;
+		}*/
+
 	}
 
-	@GET
+
+    @GET
 	@Produces({"application/json" })
 	@Path("/resource/acl")
 	public AclEntry getResourceAcl(@QueryParam("file") String file) {
@@ -219,7 +223,18 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	@Path("/resource")
 	public Response getResource (@QueryParam("file") String file)
 	{
-		try {
+        String username = sessionService.getAllSessionObjects().get("username").toString();
+        List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
+
+        byte[] data = new byte[0];
+        try {
+            data = datasourceService.getFileData(file).getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return Response.ok(data, MediaType.TEXT_PLAIN).header(
+                "content-length",data.length).build();
+	/*	try {
 			if (file == null || file.startsWith("/") || file.startsWith(".")) {
 				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
 			}
@@ -249,7 +264,7 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 		} catch(Exception e){
 			log.error("Cannot load query (" + file + ")",e);
 		}
-		return Response.serverError().build();
+		return Response.serverError().build();*/
 	}
 	
 	/* (non-Javadoc)
@@ -261,7 +276,16 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 			@FormParam("file") String file, 
 			@FormParam("content") String content)
 	{
-		try {
+        String username = sessionService.getAllSessionObjects().get("username").toString();
+        List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
+        String resp = datasourceService.saveFile(content, file, username, roles);
+        if(resp.equals("Save Okay")){
+            return Response.ok().build();
+        }
+        else{
+            return Response.serverError().entity("Cannot save resource to ( file: " + file + ")").type("text/plain").build();
+        }
+		/*try {
 			if (file == null || file.startsWith("/") || file.startsWith(".")) {
 				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
 			}
@@ -294,8 +318,10 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 		} catch(Exception e){
 			log.error("Cannot save resource to ( file: " + file + ")",e);
 		}
-		return Response.serverError().entity("Cannot save resource to ( file: " + file + ")").type("text/plain").build();
-	}
+		return Response.serverError().entity("Cannot save resource to ( file: " + file + ")").type("text/plain").build();*/
+
+
+    }
 	
 	/* (non-Javadoc)
 	 * @see org.saiku.web.rest.resources.ISaikuRepository#deleteResource(java.lang.String)
@@ -508,8 +534,100 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 		
 		
 	}
-	
-	private List<IRepositoryObject> getRepositoryObjects(FileObject root, String fileType) throws Exception {
+
+    private List<IRepositoryObject> getRepoObjects(Node files, String fileType) {
+        List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
+        Iterable<Node> objects = null;
+        NodeIterator n = null;
+        try {
+             n = files.getNodes();
+
+
+        while(n.hasNext()){
+            Node node = n.nextNode();
+            String nodetype = node.getPrimaryNodeType().getName();
+            String nodename = node.getName();
+            String nodepath = node.getPath();
+
+            //if(nodetype.equals("nt:folder")){
+            //objects = new ArrayList<Node>();
+            //objects.add(node);
+                objects = JcrUtils.getChildNodes(node);
+            //}
+            //else if(nodetype.equals("nt:saikufiles")){
+            //    objects =
+           // }
+            //else{
+
+            //}
+            if (node.getPrimaryNodeType().getName().equals("nt:file")) {
+                if (StringUtils.isNotEmpty(fileType) && !node.getName().endsWith(fileType)) {
+                    continue;
+                }
+                String extension = ".saiku";//file.getName().getExtension();
+
+                repoObjects.add(new RepositoryFileObject(node.getName(), "#" + node.getPath(), extension, node.getPath(), null));
+            }
+            if (node.getPrimaryNodeType().getName().equals("nt:folder")) {
+                repoObjects.add(new RepositoryFolderObject(node.getName(), "#" + node.getPath(), node.getPath(), null, getRepoObjects(node, fileType)));
+            }
+            Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
+
+                public int compare(IRepositoryObject o1, IRepositoryObject o2) {
+                    if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(IRepositoryObject.Type.FILE))
+                        return -1;
+                    if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
+                        return 1;
+                    return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+
+                }
+
+            });
+            for (Node file : objects) {
+                //if (!file.isHidden()) {
+                    String filename = file.getName();
+                    String relativePath = file.getPath();//repo.getName().getRelativeName(file.getName());
+
+                    String username = sessionService.getAllSessionObjects().get("username").toString();
+                    List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
+                    //if ( acl.canRead(relativePath,username, roles) ) {
+                        List<AclMethod> acls = acl.getMethods(relativePath, username, roles);
+                        if (file.getPrimaryNodeType().getName().equals("nt:saikufiles")) {
+                            if (StringUtils.isNotEmpty(fileType) && !filename.endsWith(fileType)) {
+                                continue;
+                            }
+                            String extension = ".saiku";//file.getName().getExtension();
+
+                            repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath, acls));
+                        }
+                        if (file.getPrimaryNodeType().getName().equals("nt:folder")) {
+                            repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepoObjects(file, fileType)));
+                        }
+                        Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
+
+                            public int compare(IRepositoryObject o1, IRepositoryObject o2) {
+                                if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(IRepositoryObject.Type.FILE))
+                                    return -1;
+                                if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
+                                    return 1;
+                                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+
+                            }
+
+                        });
+                    //}
+                //}
+            }
+
+        }
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        return repoObjects;
+    }
+
+
+    private List<IRepositoryObject> getRepositoryObjects(FileObject root, String fileType) throws Exception {
 		List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
 		FileObject[] objects = new FileObject[0];
 		if (root.getType().equals(FileType.FOLDER)) {

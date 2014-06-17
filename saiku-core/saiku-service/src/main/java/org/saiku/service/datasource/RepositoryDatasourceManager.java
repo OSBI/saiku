@@ -16,6 +16,8 @@
 
 package org.saiku.service.datasource;
 
+import org.saiku.database.dto.MondrianSchema;
+import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.repository.DataSource;
 import org.saiku.repository.IRepositoryManager;
@@ -29,10 +31,10 @@ import java.util.*;
  * A Datasource Manager for the Saiku Repository API layer.
  */
 public class RepositoryDatasourceManager implements IDatasourceManager {
+    IRepositoryManager irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager();
     private Map<String, SaikuDatasource> datasources =
             Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
 
-    IRepositoryManager irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager();
     public void load() {
         try {
             irm.start();
@@ -50,35 +52,36 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             }
 
             if (exporteddatasources != null) {
-                for ( DataSource file : exporteddatasources ) {
-                            if ( file.getName() != null && file.getType() != null ) {
-                                Properties props = new Properties();
-                                props.put("driver", file.getDriver());
-                                props.put("location", file.getLocation());
-                                props.put("username", file.getUsername());
-                                props.put("password", file.getPassword());
-                                SaikuDatasource.Type t = SaikuDatasource.Type.valueOf( file.getType().toUpperCase() );
-                                SaikuDatasource ds = new SaikuDatasource( file.getName(), t, props );
-                                datasources.put( file.getName(), ds );
-                            }
-                        }
+                for (DataSource file : exporteddatasources) {
+                    if (file.getName() != null && file.getType() != null) {
+                        Properties props = new Properties();
+                        props.put("driver", file.getDriver());
+                        props.put("location", file.getLocation());
+                        props.put("username", file.getUsername());
+                        props.put("password", file.getPassword());
+                        SaikuDatasource.Type t = SaikuDatasource.Type.valueOf(file.getType().toUpperCase());
+                        SaikuDatasource ds = new SaikuDatasource(file.getName(), t, props);
+                        datasources.put(file.getName(), ds);
+                    }
+                }
             }
 
 
-        } catch ( Exception e ) {
-            throw new SaikuServiceException( e.getMessage(), e );
+        } catch (Exception e) {
+            throw new SaikuServiceException(e.getMessage(), e);
         }
     }
 
-    public void unload(){
+    public void unload() {
         irm.shutdown();
     }
+
     public SaikuDatasource addDatasource(SaikuDatasource datasource) {
         DataSource ds = new DataSource(datasource);
 
         try {
-            irm.saveDataSource(ds, "/datasources/"+ds.getName()+".sds", "fixme");
-            datasources.put( datasource.getName(), datasource );
+            irm.saveDataSource(ds, "/datasources/" + ds.getName() + ".sds", "fixme");
+            datasources.put(datasource.getName(), datasource);
         } catch (RepositoryException e) {
             e.printStackTrace();
         }
@@ -87,16 +90,16 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
     public SaikuDatasource setDatasource(SaikuDatasource datasource) {
-        return null;
+        return addDatasource(datasource);
     }
 
     public List<SaikuDatasource> addDatasources(List<SaikuDatasource> dsources) {
-        for(SaikuDatasource datasource : dsources) {
+        for (SaikuDatasource datasource : dsources) {
             DataSource ds = new DataSource(datasource);
 
             try {
-                irm.saveDataSource(ds, "/datasources/"+ds.getName()+".sds", "fixme");
-                datasources.put( datasource.getName(), datasource );
+                irm.saveDataSource(ds, "/datasources/" + ds.getName() + ".sds", "fixme");
+                datasources.put(datasource.getName(), datasource);
 
             } catch (RepositoryException e) {
                 e.printStackTrace();
@@ -115,6 +118,60 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
     public SaikuDatasource getDatasource(String datasourceName) {
-        return datasources.get( datasourceName );
+        return datasources.get(datasourceName);
+    }
+
+    public void addSchema(String file, String path, String name) {
+        try {
+            irm.saveFile(file, path, "admin", "nt:mondrianschema", null);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<MondrianSchema> getMondrianSchema() {
+        try {
+            return irm.getAllSchema();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public MondrianSchema getMondrianSchema(String catalog) {
+        //return irm.getMondrianSchema();
+        return null;
+    }
+
+    public RepositoryFile getFile(String file) {
+        return irm.getFile(file);
+    }
+
+    public String getFileData(String file) {
+        try {
+            return irm.getFile(file, "admin");
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String saveFile(String path, String content, String user, List<String> roles) {
+        try {
+            irm.saveFile(content, path, user, "nt:saikufiles", roles);
+            return "Save Okay";
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            return "Save Failed: " + e.getLocalizedMessage();
+        }
+    }
+
+    public javax.jcr.Node getFiles() {
+        try {
+            return irm.getAllFiles();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

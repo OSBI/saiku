@@ -15,9 +15,11 @@
  */
 package org.saiku.service.datasource;
 
+import org.saiku.database.dto.MondrianSchema;
+import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
 
-import javax.jcr.RepositoryException;
+import javax.xml.soap.Node;
 import java.util.List;
 import java.util.Map;
 
@@ -40,4 +42,17 @@ public interface IDatasourceManager {
 
   public SaikuDatasource getDatasource( String datasourceName );
 
+  public void addSchema(String file, String path, String name);
+
+  public List<MondrianSchema> getMondrianSchema();
+
+  public MondrianSchema getMondrianSchema(String catalog);
+
+  public RepositoryFile getFile(String file);
+
+  public String getFileData(String file);
+
+  public String saveFile(String path, String content, String user, List<String> roles);
+
+  public javax.jcr.Node getFiles();
 }

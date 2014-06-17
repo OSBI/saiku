@@ -16,7 +16,11 @@
 package org.saiku.repository;
 
 
+import org.saiku.datasources.connection.RepositoryFile;
+
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.query.InvalidQueryException;
 import java.io.IOException;
 import java.util.List;
 
@@ -46,11 +50,11 @@ public interface IRepositoryManager {
 
   boolean moveFolder(String user, String folder, String source, String target) throws RepositoryException;
 
-    javax.jcr.Node saveFile(Object file, String path, String user, String type) throws RepositoryException;
+    javax.jcr.Node saveFile(Object file, String path, String user, String type, List<String> roles) throws RepositoryException;
 
     String getFile(String s, String username) throws RepositoryException;
 
-    void getAllSchema() throws RepositoryException;
+    List<org.saiku.database.dto.MondrianSchema> getAllSchema() throws RepositoryException;
 
     List<DataSource> getAllDataSources() throws RepositoryException;
 
@@ -59,4 +63,9 @@ public interface IRepositoryManager {
     byte[] exportRepository() throws RepositoryException, IOException;
 
     void restoreRepository(String xml) throws RepositoryException, IOException;
+
+    RepositoryFile getFile(String fileUrl);
+
+    Node getAllFiles() throws RepositoryException;
+
 }

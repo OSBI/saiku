@@ -16,6 +16,9 @@
 package org.saiku.datasources.connection;
 
 import mondrian.rolap.RolapConnection;
+import org.apache.commons.vfs.FileSystemException;
+import org.apache.commons.vfs.VFS;
+import org.apache.commons.vfs.impl.DefaultFileSystemManager;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapWrapper;
 

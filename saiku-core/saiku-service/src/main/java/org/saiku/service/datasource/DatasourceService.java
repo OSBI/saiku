@@ -16,8 +16,10 @@
 package org.saiku.service.datasource;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
+import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.datasources.datasource.SaikuDatasource;
 
@@ -61,4 +63,19 @@ public class DatasourceService implements Serializable {
     return datasources.getDatasources();
   }
 
+  public List<MondrianSchema> getAvailableSchema(){
+      return datasources.getMondrianSchema();
+  }
+
+  public void addSchema(String schema, String path, String name){
+      datasources.addSchema(schema, path, name);
+  }
+
+  public String saveFile(String content, String path, String name, List<String> roles) { return datasources.saveFile(path, content, name, roles); }
+
+  public javax.jcr.Node getFiles() {
+      return datasources.getFiles();
+  }
+
+  public String getFileData(String path){return datasources.getFileData(path); }
 }

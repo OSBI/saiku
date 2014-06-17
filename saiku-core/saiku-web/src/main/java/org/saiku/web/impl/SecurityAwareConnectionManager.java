@@ -32,6 +32,7 @@ import org.saiku.datasources.connection.AbstractConnectionManager;
 import org.saiku.datasources.connection.ISaikuConnection;
 import org.saiku.datasources.connection.SaikuConnectionFactory;
 import org.saiku.datasources.datasource.SaikuDatasource;
+import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.service.ISessionService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -55,8 +56,12 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 
 	@Override
 	public void init() {
-		this.connections = getAllConnections();
-	}
+        try {
+            this.connections = getAllConnections();
+        } catch (SaikuOlapException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	@Override
 	public void destroy() {

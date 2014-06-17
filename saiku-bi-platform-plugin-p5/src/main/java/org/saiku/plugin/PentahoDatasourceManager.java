@@ -39,6 +39,8 @@ import org.pentaho.platform.util.messages.LocaleHelper;
 import org.saiku.datasources.connection.ISaikuConnection;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.service.datasource.IDatasourceManager;
+import org.saiku.database.dto.MondrianSchema;
+import org.saiku.datasources.connection.RepositoryFile;
 
 public class PentahoDatasourceManager implements IDatasourceManager {
 
@@ -200,7 +202,25 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 		return loadDatasources().get(datasourceName);
 	}
 
+    public void addSchema(String file, String path, String name) {
 
+    }
 
+    public List<MondrianSchema> getMondrianSchema() {
+     return null;
+    }
 
+    public MondrianSchema getMondrianSchema(String catalog) {
+        //return irm.getMondrianSchema();
+        return null;
+    }
+
+    public RepositoryFile getFile(String file){
+        return null;
+    }
+
+    public String getFileData(String file){
+
+        return null;
+    }
 }
