@@ -13,13 +13,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * Dialog for member selections
  */
 var DrillthroughModal = Modal.extend({
     type: "drillthrough",
-    
+
     buttons: [
         { text: "Ok", method: "ok" },
         { text: "Cancel", method: "close" }
@@ -44,38 +44,38 @@ var DrillthroughModal = Modal.extend({
     },
 
 
-    
+
     initialize: function(args) {
         // Initialize properties
         _.extend(this, args);
         this.options.title = args.title;
         this.query = args.workspace.query;
-        
+
         this.position = args.position;
         this.action = args.action;
         Saiku.ui.unblock();
         _.bindAll(this, "ok", "drilled", "template");
 
         // Resize when rendered
-        
+
         this.render();
-               // Load template
-       $(this.el).find('.dialog_body')
-          .html(_.template(this.templateContent())(this));
+        // Load template
+        $(this.el).find('.dialog_body')
+            .html(_.template(this.templateContent())(this));
         // Show dialog
         $(this.el).find('.maxrows').val(this.maxrows);
-                    
+
         var schema = this.query.get('schema');
-        var key = this.query.get('connection') + "/" + 
-                this.query.get('catalog') + "/"
-                + ((schema == "" || schema == null) ? "null" : schema) 
-                + "/" + this.query.get('cube');
+        var key = this.query.get('connection') + "/" +
+            this.query.get('catalog') + "/"
+            + ((schema == "" || schema == null) ? "null" : schema)
+            + "/" + this.query.get('cube');
 
         var container = $("#template-drillthrough-list").html();
 
         var cubeModel = Saiku.session.sessionworkspace.cube[key];
         var dimensions = null;
-        var measures = null; 
+        var measures = null;
 
         if (cubeModel && cubeModel.has('data')) {
             dimensions = cubeModel.get('data').dimensions;
@@ -83,15 +83,15 @@ var DrillthroughModal = Modal.extend({
         }
 
         if (!cubeModel || !dimensions || !measures) {
-                        if (typeof localStorage !== "undefined" && localStorage && localStorage.getItem("cube." + key) !== null) {
-                            Saiku.session.sessionworkspace.cube[key] = new Cube(JSON.parse(localStorage.getItem("cube." + key)));
-                        } else {
-                            Saiku.session.sessionworkspace.cube[key] = new Cube({ key: key });
-                            Saiku.session.sessionworkspace.cube[key].fetch({ async : false });
-                        }
-                        dimensions = Saiku.session.sessionworkspace.cube[key].get('data').dimensions;
-                        measures = Saiku.session.sessionworkspace.cube[key].get('data').measures;
-        } 
+            if (typeof localStorage !== "undefined" && localStorage && localStorage.getItem("cube." + key) !== null) {
+                Saiku.session.sessionworkspace.cube[key] = new Cube(JSON.parse(localStorage.getItem("cube." + key)));
+            } else {
+                Saiku.session.sessionworkspace.cube[key] = new Cube({ key: key });
+                Saiku.session.sessionworkspace.cube[key].fetch({ async : false });
+            }
+            dimensions = Saiku.session.sessionworkspace.cube[key].get('data').dimensions;
+            measures = Saiku.session.sessionworkspace.cube[key].get('data').measures;
+        }
 
         var templ_dim =_.template($("#template-drillthrough-dimensions").html())({dimensions: dimensions});
         var templ_measure =_.template($("#template-drillthrough-measures").html())({measures: measures, allMeasures: this.allMeasures});
@@ -102,10 +102,10 @@ var DrillthroughModal = Modal.extend({
 
         $(this.el).find('.dimension_tree').html('').append($(templ_dim));
         $(this.el).find('.measure_tree').html('').append($(templ_measure));
-        
-		Saiku.i18n.translate();
+
+        Saiku.i18n.translate();
     },
-    
+
     select: function(event) {
         var $target = $(event.target).hasClass('root')
             ? $(event.target) : $(event.target).parent().find('span');
@@ -114,7 +114,7 @@ var DrillthroughModal = Modal.extend({
             $target.toggleClass('collapsed').toggleClass('expand');
             $target.parents('li').find('ul').children('li').toggle();
         }
-        
+
         return false;
     },
 
@@ -145,14 +145,14 @@ var DrillthroughModal = Modal.extend({
     },
 
 
-    
+
     ok: function() {
         // Notify user that updates are in progress
         var $loading = $("<div>Drilling through...</div>");
         $(this.el).find('.dialog_body').children().hide();
         $(this.el).find('.dialog_body').prepend($loading);
         var selections = "";
-        $(this.el).find('.check_level:checked').each( function(index) { 
+        $(this.el).find('.check_level:checked').each( function(index) {
             if (index > 0) {
                 selections += ", ";
             }
@@ -165,7 +165,7 @@ var DrillthroughModal = Modal.extend({
         params += "&returns=" + selections;
         if (this.action == "export") {
             var location = Settings.REST_URL +
-                Saiku.session.username + "/query/" + 
+                Saiku.session.username + "/query/" +
                 this.query.id + "/drillthrough/export/csv" + params;
             this.close();
             window.open(location);
@@ -174,7 +174,7 @@ var DrillthroughModal = Modal.extend({
             this.query.action.get("/drillthrough", { data: { position: this.position, maxrows: maxrows , returns: selections}, success: this.drilled } );
             this.close();
         }
-        
+
         return false;
     },
 
@@ -196,17 +196,17 @@ var DrillthroughModal = Modal.extend({
         $.fancybox(html
             ,
             {
-            'autoDimensions'    : false,
-            'autoScale'         : false,
-            'height'            :  ($("body").height() - 100),
-            'width'             :  ($("body").width() - 100),
-            'transitionIn'      : 'none',
-            'transitionOut'     : 'none'
+                'autoDimensions'    : false,
+                'autoScale'         : false,
+                'height'            :  ($("body").height() - 100),
+                'width'             :  ($("body").width() - 100),
+                'transitionIn'      : 'none',
+                'transitionOut'     : 'none'
             }
         );
 
     },
-    
+
     finished: function() {
         $(this.el).dialog('destroy').remove();
         this.query.run();

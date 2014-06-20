@@ -1309,8 +1309,6 @@ a.disabled_toolbar:hover {
     background-image: url('../../../images/src/table_across.png');
     background-position: 7px 7px;
 }
-
-
 .workspace_toolbar .drillthrough_export {
     background-image: url('../../../images/src/export_drillthrough.png');
     background-position: 7px 7px;
@@ -2024,4 +2022,3 @@ span.cancel_search:hover {
     width: 20px;
     -moz-background-origin: 0px 2px;
 }
-

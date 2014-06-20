@@ -72,28 +72,19 @@ var Saiku = {
  */
 Backbone.emulateHTTP = false;
 
-var plugins = new PluginCollection();
 /**
  * Up up and away!
  */
 if (! Settings.BIPLUGIN) {
     $(document).ready(function() {
-        plugins.fetch({
-            success: function () {
-                plugins.each(function (log) {
-                    jQuery.getScript(log.attributes.path);
-                    Saiku.session = new Session({}, {
-                        username: Settings.USERNAME,
-                        password: Settings.PASSWORD
-                    });
-
-                    Saiku.toolbar = new Toolbar();
-                });
-            }
+        Saiku.session = new Session({}, {
+            username: Settings.USERNAME,
+            password: Settings.PASSWORD
         });
+
+        Saiku.toolbar = new Toolbar();
     });
 }
-
 
 var SaikuTimeLogger = function(element) {
     this._element = $(element);

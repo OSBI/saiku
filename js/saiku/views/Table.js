@@ -260,7 +260,7 @@ var Table = Backbone.View.extend({
             return;
         }        
         // Check to see if there is data
-if (args.data == null || (args.data.height === 0) || args.data.cellset.length === 0) {
+        if (args.data == null || (args.data.height === 0) || args.data.cellset.length === 0) {
             return;
         }
         this.clearOut();

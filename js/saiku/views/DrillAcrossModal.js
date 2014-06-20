@@ -13,12 +13,12 @@
  *              *   See the License for the specific language governing permissions and
  *               *   limitations under the License.
  *                */
- 
+
 /**
  *  * Dialog for member selections
  *   */
 var DrillAcrossModal = DrillthroughModal.extend({
-    
+
     allMeasures: true,
 
     templateContent: function() {
@@ -28,7 +28,7 @@ var DrillAcrossModal = DrillthroughModal.extend({
     ok: function() {
         var self = this;
         var selections = {};
-        $(this.el).find('.check_level:checked').each( function(index) { 
+        $(this.el).find('.check_level:checked').each( function(index) {
             var key = $(this).attr('key');
             if (!selections[key]) {
                 selections[key] = [];
@@ -50,10 +50,10 @@ var DrillAcrossModal = DrillthroughModal.extend({
             alert("Error drilling across. Check logs! " + text);
         }});
         this.close();
-        
+
         return false;
     }
 
-    
-    
+
+
 });

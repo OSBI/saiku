@@ -1,16 +1,16 @@
 /*
-var SaikuRendererRegistry = {
+ var SaikuRendererRegistry = {
 
-};
+ };
 
-SaikuRendererRegistry.prototype.register = function(key, data, options) {
-    if (this.hasOwnProperty(key)) {
-        return new SaikuRendererRegistry[key](data, options);
-    } else {
-        throw("No renderer with name '" + key + "' registered!");
-    }
-};
-*/
+ SaikuRendererRegistry.prototype.register = function(key, data, options) {
+ if (this.hasOwnProperty(key)) {
+ return new SaikuRendererRegistry[key](data, options);
+ } else {
+ throw("No renderer with name '" + key + "' registered!");
+ }
+ };
+ */
 
 var SaikuRendererOptions = {
     mode: null,
@@ -66,4 +66,3 @@ SaikuRenderer.prototype.hasProcessedData = function() {
 
 SaikuRenderer.prototype._render = function(data, options) {};
 SaikuRenderer.prototype._processData = function(data, options) {};
-

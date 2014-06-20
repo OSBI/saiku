@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * The workspace toolbar, and associated actions
  */
@@ -22,34 +22,34 @@ var WorkspaceToolbar = Backbone.View.extend({
     events: {
         'click a': 'call'
     },
-    
+
     initialize: function(args) {
         // Keep track of parent workspace
         this.workspace = args.workspace;
-        
+
         // Maintain `this` in callbacks
         _.bindAll(this, "call", "reflect_properties", "run_query",
             "swap_axes_on_dropzones", "display_drillthrough","clicked_cell_drillthrough_export", "clicked_cell_drillacross",
             "clicked_cell_drillthrough","activate_buttons", "switch_to_mdx","post_mdx_transform", "toggle_fields_action");
-        
+
         // Redraw the toolbar to reflect properties
         this.workspace.bind('properties:loaded', this.reflect_properties);
-        
+
         // Fire off workspace event
-        this.workspace.trigger('workspace:toolbar:render', { 
+        this.workspace.trigger('workspace:toolbar:render', {
             workspace: this.workspace
         });
-        
+
         // Activate buttons when a new query is created or run
         this.workspace.bind('query:new', this.activate_buttons);
         this.workspace.bind('query:result', this.activate_buttons);
-        
+
     },
-    
+
     activate_buttons: function(args) {
         if (args != null && args.data && args.data.cellset && args.data.cellset.length > 0 ) {
             $(args.workspace.toolbar.el).find('.button')
-                .removeClass('disabled_toolbar');       
+                .removeClass('disabled_toolbar');
 
             $(args.workspace.el).find("td.data").removeClass('cellhighlight').unbind('click');
             $(args.workspace.el).find(".table_mode").removeClass('on');
@@ -71,23 +71,23 @@ var WorkspaceToolbar = Backbone.View.extend({
         var template = $("#template-workspace-toolbar").html() || "";
         return _.template(template)();
     },
-    
+
     render: function() {
         $(this.el).html(this.template());
-        
-        return this; 
+
+        return this;
     },
-    
+
     call: function(event) {
         // Determine callback
         event.preventDefault();
         var callback = event.target.hash.replace('#', '');
-        
+
         // Attempt to call callback
         if (! $(event.target).hasClass('disabled_toolbar') && this[callback]) {
             this[callback](event);
         }
-        
+
         return false;
     },
 
@@ -102,7 +102,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         if (properties['saiku.olap.query.automatic_execution'] === 'true') {
             $(this.el).find('.auto').addClass('on');
         }
-        
+
         if (properties['saiku.olap.query.drillthrough'] !== 'true') {
             $(this.el).find('.drillthrough, .drillthrough_export').addClass('disabled_toolbar');
         }
@@ -145,11 +145,11 @@ var WorkspaceToolbar = Backbone.View.extend({
             $(this.el).find('a.edit').show('normal');
         }
     },
-    
+
     new_query: function(event) {
         this.workspace.switch_view_state('edit');
         this.workspace.new_query();
-        
+
         return false;
     },
 
@@ -169,7 +169,7 @@ var WorkspaceToolbar = Backbone.View.extend({
             this.workspace.query.properties.update(false);
             if (typeof this.editor != "undefined") {
                 var mdx = this.editor.getValue();
-                this.workspace.query.action.post("/mdx", { 
+                this.workspace.query.action.post("/mdx", {
                     success: function(model, response) {
                         (new SaveQuery({ query: self.workspace.query })).render().open();
                     }, data: {mdx:mdx}
@@ -181,23 +181,23 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
 
     open_query: function(event) {
-            (new OpenDialog()).render().open();
+        (new OpenDialog()).render().open();
     },
 
-    
+
     run_query: function(event) {
         this.workspace.query.run(true);
     },
-    
+
     automatic_execution: function(event) {
         // Change property
         this.workspace.query.properties
             .toggle('saiku.olap.query.automatic_execution').update();
-        
+
         // Toggle state of button
         $(event.target).toggleClass('on');
     },
-    
+
     toggle_fields: function(event) {
         var self = this;
         if (event) {
@@ -208,7 +208,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         } else {
             this.toggle_fields_action('show');
         }
-        
+
     },
 
     toggle_fields_action: function(action, dontAnimate) {
@@ -225,7 +225,7 @@ var WorkspaceToolbar = Backbone.View.extend({
             } else {
                 $('.workspace_editor').hide();
             }
-            return; 
+            return;
         }
         // avoid scrollbar on the right
         var wf = $('.workspace_editor').height();
@@ -242,20 +242,20 @@ var WorkspaceToolbar = Backbone.View.extend({
                 if ($('.workspace_editor').is(':hidden')) {
                     $('.workspace_editor').height(wf);
                 } else {
-                    $('.workspace_editor').css('height','');                    
+                    $('.workspace_editor').css('height','');
                 }
-                
+
                 self.workspace.adjust();
             }
         });
     },
 
 
-    
+
     toggle_sidebar: function() {
         this.workspace.toggle_sidebar();
     },
-    
+
     group_parents: function(event) {
         $(event.target).toggleClass('on');
         if ($(event.target).hasClass('on')) {
@@ -275,30 +275,30 @@ var WorkspaceToolbar = Backbone.View.extend({
             .toggle('saiku.olap.query.nonempty.rows')
             .toggle('saiku.olap.query.nonempty.columns')
             .update();
-    
+
         // Toggle state of button
         $(event.target).toggleClass('on');
-        
+
         // Run query
         this.workspace.query.run();
     },
-    
+
     swap_axis: function(event) {
         // Swap axes
         $(this.workspace.el).find('.workspace_results table').html('');
         $(this.workspace.processing).html('<span class="i18n">Swapping axes...</span>');
         this.workspace.block('Swapping axes...');
-        this.workspace.query.action.put("/swapaxes", { 
+        this.workspace.query.action.put("/swapaxes", {
             success: this.swap_axes_on_dropzones,
             error: this.workspace.unblock
         });
     },
-    
+
 
     check_modes: function(source) {
         if (typeof source === "undefined" || source == null)
             return;
-        
+
         if ($(this.workspace.el).find( ".workspace_results tbody.ui-selectable" ).length > 0) {
             $(this.workspace.el).find( ".workspace_results tbody" ).selectable( "destroy" );
         }
@@ -321,7 +321,7 @@ var WorkspaceToolbar = Backbone.View.extend({
                 $(this.workspace.el).find("td.data").addClass('cellhighlight').unbind('click').click(this.clicked_cell_drillacross);
                 $(this.workspace.el).find(".query_scenario, .drillthrough, .drillthrough_export, .zoom_mode").removeClass('on');
             } else if ($(source).hasClass('zoom_mode')) {
-                
+
                 var self = this;
                 $(self.workspace.el).find( ".workspace_results tbody" ).selectable({ filter: "td", stop: function( event, ui ) {
                     var positions = [];
@@ -336,37 +336,37 @@ var WorkspaceToolbar = Backbone.View.extend({
                     positions = _.uniq(positions);
                     if (positions.length > 0) {
                         self.workspace.query.action.put("/zoomin", { success: self.workspace.sync_query,
-                                data: { selections : JSON.stringify(positions) }
-                            });
+                            data: { selections : JSON.stringify(positions) }
+                        });
                     }
                 } });
                 $(this.workspace.el).find(".drillthrough, .drillthrough_export, .query_scenario, .drillacross").removeClass('on');
             }
         }
 
-                
+
     },
     query_scenario: function(event) {
-       $(event.target).toggleClass('on');
-        this.check_modes($(event.target));        
+        $(event.target).toggleClass('on');
+        this.check_modes($(event.target));
 
     },
     zoom_mode: function(event) {
-       $(event.target).toggleClass('on');
-        this.check_modes($(event.target));        
+        $(event.target).toggleClass('on');
+        this.check_modes($(event.target));
 
     },
 
     drillacross: function(event) {
-       $(event.target).toggleClass('on');
-        this.check_modes($(event.target));        
+        $(event.target).toggleClass('on');
+        this.check_modes($(event.target));
     },
 
     drillthrough: function(event) {
-       $(event.target).toggleClass('on');
-        this.check_modes($(event.target));        
+        $(event.target).toggleClass('on');
+        this.check_modes($(event.target));
     },
-    
+
     display_drillthrough: function(model, response) {
         this.workspace.table.render({ data: response });
         Saiku.ui.unblock();
@@ -374,13 +374,13 @@ var WorkspaceToolbar = Backbone.View.extend({
 
     export_drillthrough: function(event) {
         $(event.target).toggleClass('on');
-        this.check_modes($(event.target));        
+        this.check_modes($(event.target));
     },
 
     clicked_cell_drillacross: function(event) {
         $target = $(event.target).hasClass('data') ?
             $(event.target).find('div') : $(event.target);
-        var pos = $target.attr('rel');     
+        var pos = $target.attr('rel');
         (new DrillAcrossModal({
             workspace: this.workspace,
             title: "Drill Across",
@@ -388,13 +388,13 @@ var WorkspaceToolbar = Backbone.View.extend({
             position: pos,
             query: this.workspace.query
         })).open();
-   
+
     },
 
     clicked_cell_drillthrough_export: function(event) {
         $target = $(event.target).hasClass('data') ?
             $(event.target).find('div') : $(event.target);
-        var pos = $target.attr('rel');     
+        var pos = $target.attr('rel');
         (new DrillthroughModal({
             workspace: this.workspace,
             maxrows: 10000,
@@ -403,7 +403,7 @@ var WorkspaceToolbar = Backbone.View.extend({
             position: pos,
             query: this.workspace.query
         })).open();
-   
+
     },
 
     clicked_cell_drillthrough: function(event) {
@@ -419,61 +419,61 @@ var WorkspaceToolbar = Backbone.View.extend({
             position: pos,
             query: this.workspace.query
         })).open();
-   
+
     },
 
     swap_axes_on_dropzones: function(model, response) {
         this.workspace.query.parse(response);
         /*
-        $columns = $(this.workspace.drop_zones.el).find('.columns')
-            .children()
-            .detach();
-        $rows = $(this.workspace.drop_zones.el).find('.rows')
-            .children()
-            .detach();
-            
-        $(this.workspace.drop_zones.el).find('.columns').append($rows);
-        $(this.workspace.drop_zones.el).find('.rows').append($columns);
-        var rowLimit = $(this.workspace).find('fields_list.ROWS .limit').hasClass('on') | false;
-        var colLimit = $(this.workspace).find('fields_list.COLUMNS .limit').hasClass('on') | false;
-        $(this.workspace).find('fields_list.ROWS .limit').removeClass('on');
-        $(this.workspace).find('fields_list.COLUMNS .limit').removeClass('on');
-        if (rowLimit) {
-            $(this.workspace).find('fields_list.COLUMNS .limit').addClass('on');
-        }
-        if (colLimit) {
-            $(this.workspace).find('fields_list.ROWS .limit').addClass('on');
-        }
-        */
+         $columns = $(this.workspace.drop_zones.el).find('.columns')
+         .children()
+         .detach();
+         $rows = $(this.workspace.drop_zones.el).find('.rows')
+         .children()
+         .detach();
+
+         $(this.workspace.drop_zones.el).find('.columns').append($rows);
+         $(this.workspace.drop_zones.el).find('.rows').append($columns);
+         var rowLimit = $(this.workspace).find('fields_list.ROWS .limit').hasClass('on') | false;
+         var colLimit = $(this.workspace).find('fields_list.COLUMNS .limit').hasClass('on') | false;
+         $(this.workspace).find('fields_list.ROWS .limit').removeClass('on');
+         $(this.workspace).find('fields_list.COLUMNS .limit').removeClass('on');
+         if (rowLimit) {
+         $(this.workspace).find('fields_list.COLUMNS .limit').addClass('on');
+         }
+         if (colLimit) {
+         $(this.workspace).find('fields_list.ROWS .limit').addClass('on');
+         }
+         */
         this.workspace.unblock();
         this.workspace.sync_query();
         Saiku.ui.unblock();
     },
-    
+
     show_mdx: function(event) {
-        this.workspace.query.action.get("/mdx", { 
+        this.workspace.query.action.get("/mdx", {
             success: function(model, response) {
                 (new MDXModal({ mdx: response.mdx })).render().open();
             }
         });
     },
-    
+
     export_xls: function(event) {
         window.location = Settings.REST_URL +
-            Saiku.session.username + "/query/" + 
+            Saiku.session.username + "/query/" +
             this.workspace.query.id + "/export/xls/"+ this.workspace.query.get('formatter');
     },
-    
+
     export_csv: function(event) {
         window.location = Settings.REST_URL +
-            Saiku.session.username + "/query/" + 
+            Saiku.session.username + "/query/" +
             this.workspace.query.id + "/export/csv";
     },
 
     export_pdf: function(event) {
         window.location = Settings.REST_URL +
-            Saiku.session.username + "/query/" + 
-this.workspace.query.id + "/export/pdf/"+ this.workspace.query.get('formatter');
+            Saiku.session.username + "/query/" +
+            this.workspace.query.id + "/export/pdf/"+ this.workspace.query.get('formatter');
     },
 
     switch_to_mdx: function(event) {
@@ -512,16 +512,16 @@ this.workspace.query.id + "/export/pdf/"+ this.workspace.query.get('formatter');
             this.editor.on('changeSelection', showPosition);
             showPosition();
 
-             var heightUpdateFunction = function() {
+            var heightUpdateFunction = function() {
 
                 // http://stackoverflow.com/questions/11584061/
                 var max_height = $(document).height() / 3;
                 var height = Math.floor(max_height / self.editor.renderer.lineHeight);
                 var screen_length = self.editor.getSession().getScreenLength() > height ? height : self.editor.getSession().getScreenLength();
                 var newHeight =
-                          (screen_length + 1)
-                          * self.editor.renderer.lineHeight
-                          + self.editor.renderer.scrollBar.getWidth();
+                    (screen_length + 1)
+                    * self.editor.renderer.lineHeight
+                    + self.editor.renderer.scrollBar.getWidth();
 
                 $mdx_editor.height(newHeight.toString() + "px");
                 self.editor.resize();
@@ -552,22 +552,22 @@ this.workspace.query.id + "/export/pdf/"+ this.workspace.query.get('formatter');
             self.editor.getSession().setValue("");
             self.editor.getSession().on('change', heightUpdateFunction);
             $(window).resize(resizeFunction);
-            
+
             self.editor.on('changeSelection', heightUpdateFunction);
             self.editor.on('focus', function(e) { heightUpdateFunction(); return true; });
             self.editor.on('blur', function(e) {
-                    if ($(self.workspace.el).find(".mdx_input").height() > 100) {
-                                $(self.workspace.el).find(".mdx_input").height(100);
-                            }
-                            self.editor.resize();
-                            self.workspace.adjust();
-             return true; });
+                if ($(self.workspace.el).find(".mdx_input").height() > 100) {
+                    $(self.workspace.el).find(".mdx_input").height(100);
+                }
+                self.editor.resize();
+                self.workspace.adjust();
+                return true; });
 
             //this.editor.on('focusout', function(e) { alert('blur');  });
 
             //this.editor.setTheme("ace/theme/crimson_editor");
             this.editor.getSession().setMode("ace/mode/text");
-            
+
         }
 
 
@@ -578,8 +578,8 @@ this.workspace.query.id + "/export/pdf/"+ this.workspace.query.get('formatter');
         }
         this.activate_buttons({ workspace: this.workspace });
         $(this.workspace.toolbar.el)
-                .find('.run')
-                .removeClass('disabled_toolbar');
+            .find('.run')
+            .removeClass('disabled_toolbar');
 
         $(this.workspace.table.el).empty();
         this.workspace.adjust();
@@ -590,7 +590,7 @@ this.workspace.query.id + "/export/pdf/"+ this.workspace.query.get('formatter');
     post_mdx_transform: function() {
         var self = this;
 
-        this.workspace.query.action.post("/qm2mdx", { 
+        this.workspace.query.action.post("/qm2mdx", {
             success: function(response, model) {
                 //$(self.workspace.el).find(".mdx_input").val(response.mdx);
                 if (self.editor) {
@@ -632,20 +632,20 @@ this.workspace.query.id + "/export/pdf/"+ this.workspace.query.get('formatter');
 
             Saiku.ui.unblock();
             var html =  explainPlan;
-            var html = '<div id="fancy_results" class="workspace_results" style="overflow:visible"><table>' 
-                    + "<tr><th clas='row_header'>Explain Plan</th></tr>"
-                    + "<tr><td>" + explainPlan + "</td></tr>"
-                    + '</table></div>';
+            var html = '<div id="fancy_results" class="workspace_results" style="overflow:visible"><table>'
+                + "<tr><th clas='row_header'>Explain Plan</th></tr>"
+                + "<tr><td>" + explainPlan + "</td></tr>"
+                + '</table></div>';
 
             $.fancybox(html
                 ,
                 {
-                'autoDimensions'    : false,
-                'autoScale'         : false,
-                'height'            :  ($("body").height() - 100),
-                'width'             :  ($("body").width() - 100),
-                'transitionIn'      : 'none',
-                'transitionOut'     : 'none'
+                    'autoDimensions'    : false,
+                    'autoScale'         : false,
+                    'height'            :  ($("body").height() - 100),
+                    'width'             :  ($("body").width() - 100),
+                    'transitionIn'      : 'none',
+                    'transitionOut'     : 'none'
                 }
             );
         };
