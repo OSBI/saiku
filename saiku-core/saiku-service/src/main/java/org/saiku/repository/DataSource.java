@@ -6,18 +6,20 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Created by bugg on 04/06/14.
+ * DataSource Object
  */
 
 @XmlRootElement
 public class DataSource {
 
-    String type;
-    String name;
-    String driver;
-    String location;
-    String username;
-    String password;
+    private String id;
+    private String type;
+    private String name;
+    private String driver;
+    private String location;
+    private String username;
+    private String password;
+    private String path;
 
     public DataSource(SaikuDatasource datasource) {
         this.type = datasource.getType().toString();
@@ -26,7 +28,7 @@ public class DataSource {
         this.location = datasource.getProperties().getProperty("location");
         this.username = datasource.getProperties().getProperty("username");
         this.password = datasource.getProperties().getProperty("password");
-
+        this.id = datasource.getProperties().getProperty("id");
     }
 
     public DataSource(){
@@ -86,5 +88,20 @@ public class DataSource {
         this.type = type;
     }
 
+    public String getId() {
+        return id;
+    }
 
+    @XmlElement
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getPath() {
+        return path;
+    }
 }

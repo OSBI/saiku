@@ -47,7 +47,6 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 
   }
 
-
   public ClassPathResourceDatasourceManager( String path ) {
     try {
       setPath( path );
@@ -205,6 +204,14 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 
     public javax.jcr.Node getFiles() {
         return null;
+    }
+
+    public void createUser(String user) {
+
+    }
+
+    public void deleteFolder(String folder) {
+
     }
 
     public String saveFile(String path, String content, String user) {

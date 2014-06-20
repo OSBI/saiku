@@ -119,7 +119,7 @@ public class JackrabbitSteps {
 
   @Step
   public boolean deleteFolder( String username, String folder ) throws RepositoryException {
-    return iRepositoryManager.deleteFolder(username, folder);
+    return iRepositoryManager.deleteFolder(folder);
   }
 
   @Step

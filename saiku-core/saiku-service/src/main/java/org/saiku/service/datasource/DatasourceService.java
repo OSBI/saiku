@@ -51,8 +51,8 @@ public class DatasourceService implements Serializable {
     datasources.setDatasource(datasource);
   }
 
-  public void removeDatasource(String datasourceName) {
-    datasources.removeDatasource(datasourceName);
+  public void removeDatasource(String datasourceId) {
+    datasources.removeDatasource(datasourceId);
   }
 
   public SaikuDatasource getDatasource(String datasourceName) {
@@ -78,4 +78,16 @@ public class DatasourceService implements Serializable {
   }
 
   public String getFileData(String path){return datasources.getFileData(path); }
+
+  public void importLegacySchema(){
+
+  }
+
+  public void importLegacyDatasources(){
+
+  }
+
+  public void importLegacyUsers(){
+
+  }
 }

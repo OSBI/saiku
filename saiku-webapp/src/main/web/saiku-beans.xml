@@ -32,6 +32,7 @@
 
     <bean id="userServiceBean" class="org.saiku.service.user.UserService">
         <property name="jdbcUserDAO" ref="customerDAO"/>
+        <property name="iRepositoryManager" ref="repositoryDsManager"/>
     </bean>
     <bean id="adminBean" class="org.saiku.web.rest.resources.AdminResource">
         <property name="userService" ref="userServiceBean"/>

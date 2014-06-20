@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by bugg on 14/05/14.
+ * Repository Manager Interface
  */
 public interface IRepositoryManager {
   void init();
@@ -44,7 +44,7 @@ public interface IRepositoryManager {
 
   boolean createFolder( String username, String folder ) throws RepositoryException;
 
-  boolean deleteFolder( String username, String folder ) throws RepositoryException;
+  boolean deleteFolder( String folder ) throws RepositoryException;
 
   void deleteRepository() throws RepositoryException;
 
@@ -68,4 +68,5 @@ public interface IRepositoryManager {
 
     Node getAllFiles() throws RepositoryException;
 
+    void deleteFile(String datasourcePath);
 }

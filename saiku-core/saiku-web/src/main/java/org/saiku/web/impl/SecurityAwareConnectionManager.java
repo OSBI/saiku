@@ -138,8 +138,7 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 			if (con != null) {
 				con.clearCache();
 			}
-			con = null;
-			return getInternalConnection(name, datasource);
+            return getInternalConnection(name, datasource);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

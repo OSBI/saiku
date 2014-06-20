@@ -59,6 +59,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                         props.put("location", file.getLocation());
                         props.put("username", file.getUsername());
                         props.put("password", file.getPassword());
+                        props.put("path", file.getPath());
                         SaikuDatasource.Type t = SaikuDatasource.Type.valueOf(file.getType().toUpperCase());
                         SaikuDatasource ds = new SaikuDatasource(file.getName(), t, props);
                         datasources.put(file.getName(), ds);
@@ -109,8 +110,26 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         return dsources;
     }
 
-    public boolean removeDatasource(String datasourceName) {
-        return false;
+    public boolean removeDatasource(String datasourceId) {
+        List<DataSource> ds = null;
+        try {
+            ds = irm.getAllDataSources();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+
+        if (ds != null) {
+            for(DataSource data : ds){
+                if(data.getId().equals(datasourceId)){
+                    datasources.remove(data.getName());
+                    irm.deleteFile(data.getPath());
+                }
+            }
+        }
+
+
+        return true;
+
     }
 
     public Map<String, SaikuDatasource> getDatasources() {
@@ -173,5 +192,21 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void createUser(String username){
+        try {
+            irm.createUser(username);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteFolder(String folder) {
+        try {
+            irm.deleteFolder(folder);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -55,4 +55,8 @@ public interface IDatasourceManager {
   public String saveFile(String path, String content, String user, List<String> roles);
 
   public javax.jcr.Node getFiles();
+
+  public void createUser(String user);
+
+  public void deleteFolder(String folder);
 }

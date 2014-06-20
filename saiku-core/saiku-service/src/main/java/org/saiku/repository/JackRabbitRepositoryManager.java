@@ -17,6 +17,7 @@ package org.saiku.repository;
 
 
 import org.apache.commons.io.FileUtils;
+import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.core.TransientRepository;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
@@ -89,8 +90,9 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
             login();
             log.info("logged in");
             root = session.getRootNode();
-            root.addNode("homes", "nt:folder");
-            root.addNode("datasources", "nt:folder");
+            JcrUtils.getOrAddFolder(root, "homes");
+            JcrUtils.getOrAddFolder(root, "datasources");
+
             root.getSession().save();
             createFiles();
             createNamespace();
@@ -155,10 +157,10 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         return true;
     }
 
-    public boolean deleteFolder(String username, String folder) throws RepositoryException {
-        Node userfolder = getHomeFolder(username);
-        userfolder.getNode(folder).remove();
-        userfolder.getSession().save();
+    public boolean deleteFolder(String folder) throws RepositoryException {
+        Node node = JcrUtils.getNodeIfExists(root, folder);
+        node.remove();
+        node.getSession().save();
         return true;
     }
 
@@ -238,9 +240,17 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     }
 
     public Node getAllFiles() throws RepositoryException {
-
-
         return root;
+    }
+
+    public void deleteFile(String datasourcePath) {
+        Node n;
+        try {
+            n = getFolder(datasourcePath);
+            n.remove();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -276,7 +286,9 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
                 e.printStackTrace();
             }
 
-
+            if (d != null) {
+                d.setPath(n.getPath());
+            }
             ds.add(d);
 
         }
@@ -402,7 +414,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
     public void createSchemas() throws RepositoryException {
 
-        NodeTypeManager manager = (NodeTypeManager)
+        NodeTypeManager manager =
                 session.getWorkspace().getNodeTypeManager();
         NodeTypeTemplate ntt = manager.createNodeTypeTemplate();
         ntt.setName("nt:mondrianschema");
@@ -436,7 +448,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
     public void createFiles() throws RepositoryException {
 
-        NodeTypeManager manager = (NodeTypeManager)
+        NodeTypeManager manager =
                 session.getWorkspace().getNodeTypeManager();
         NodeTypeTemplate ntt = manager.createNodeTypeTemplate();
         ntt.setName("nt:saikufiles");
