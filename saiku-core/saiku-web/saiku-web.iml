@@ -5,13 +5,38 @@
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="library" name="Clover IDEA Plugin" level="application" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="saiku-service" />
+    <orderEntry type="library" name="Maven: pentaho:mondrian:3.6.5" level="project" />
+    <orderEntry type="library" name="Maven: javacup:javacup:10k" level="project" />
+    <orderEntry type="library" name="Maven: org.owasp.esapi:esapi:2.0.1" level="project" />
+    <orderEntry type="library" name="Maven: commons-configuration:commons-configuration:1.5" level="project" />
+    <orderEntry type="library" name="Maven: commons-digester:commons-digester:1.8" level="project" />
+    <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils-core:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-fileupload:commons-fileupload:1.2" level="project" />
+    <orderEntry type="library" name="Maven: xom:xom:1.1" level="project" />
+    <orderEntry type="library" name="Maven: xerces:xmlParserAPIs:2.6.2" level="project" />
+    <orderEntry type="library" name="Maven: jaxen:jaxen:1.1-beta-8" level="project" />
+    <orderEntry type="library" name="Maven: jdom:jdom:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.beanshell:bsh-core:2.0b4" level="project" />
+    <orderEntry type="library" name="Maven: org.owasp.antisamy:antisamy:1.4.3" level="project" />
+    <orderEntry type="library" name="Maven: net.sourceforge.nekohtml:nekohtml:1.9.12" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-tx:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.lowagie:itext:4.2.0" level="project" />
+    <orderEntry type="library" name="Maven: org.bouncycastle:bctsp-jdk14:1.38" level="project" />
+    <orderEntry type="library" name="Maven: org.bouncycastle:bcprov-jdk14:1.38" level="project" />
+    <orderEntry type="library" name="Maven: org.bouncycastle:bcmail-jdk14:1.38" level="project" />
+    <orderEntry type="library" name="Maven: jfree:jfreechart:1.0.12" level="project" />
+    <orderEntry type="library" name="Maven: jfree:jcommon:1.0.15" level="project" />
+    <orderEntry type="library" name="Maven: org.swinglabs:pdf-renderer:1.0.5" level="project" />
+    <orderEntry type="library" name="Maven: org.saiku:saiku-service:2.6-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.saiku:saiku-query:0.1-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.olap4j:olap4j:1.2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: net.java.dev.javacc:javacc:5.0" level="project" />
@@ -54,7 +79,7 @@
     <orderEntry type="library" name="Maven: xml-apis:xml-apis-ext:1.3.04" level="project" />
     <orderEntry type="library" name="Maven: net.sourceforge.nekohtml:nekohtml:1.9.12" level="project" />
     <orderEntry type="library" name="Maven: commons-httpclient:commons-httpclient:20020423" level="project" />
-    <orderEntry type="module" module-name="saiku-olap-util" />
+    <orderEntry type="library" name="Maven: org.saiku:saiku-olap-util:2.6-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.olap4j:olap4j-xmla:1.2.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-log4j12:1.6.4" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.4" level="project" />
@@ -70,6 +95,7 @@
     <orderEntry type="library" name="Maven: com.cenqua.clover:clover:3.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-beans:3.0.3.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-core:3.0.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.h2database:h2:1.4.177" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-asm:3.0.3.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-aop:3.0.3.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />
@@ -152,13 +178,9 @@
     <orderEntry type="library" name="Maven: org.apache.xmlgraphics:batik-svggen:1.7" level="project" />
     <orderEntry type="library" name="Maven: org.apache.xmlgraphics:batik-codec:1.7" level="project" />
     <orderEntry type="library" name="Maven: avalon-framework:avalon-framework:4.1.5" level="project" />
-    <orderEntry type="library" name="Maven: com.lowagie:itext:4.2.0" level="project" />
-    <orderEntry type="library" name="Maven: org.bouncycastle:bctsp-jdk14:1.38" level="project" />
-    <orderEntry type="library" name="Maven: org.bouncycastle:bcprov-jdk14:1.38" level="project" />
-    <orderEntry type="library" name="Maven: org.bouncycastle:bcmail-jdk14:1.38" level="project" />
-    <orderEntry type="library" name="Maven: jfree:jfreechart:1.0.12" level="project" />
-    <orderEntry type="library" name="Maven: jfree:jcommon:1.0.15" level="project" />
-    <orderEntry type="library" name="Maven: org.swinglabs:pdf-renderer:1.0.5" level="project" />
+    <orderEntry type="library" name="Maven: com.itextpdf:itextpdf:5.5.0" level="project" />
+    <orderEntry type="library" name="Maven: com.itextpdf.tool:xmlworker:5.5.0" level="project" />
+    <orderEntry type="library" name="Maven: rhino:js:1.7R2" level="project" />
   </component>
 </module>
 
