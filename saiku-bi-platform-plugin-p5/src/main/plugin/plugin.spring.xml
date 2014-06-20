@@ -45,10 +45,6 @@
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
 
-	<bean id="thinQueryBean" class="org.saiku.service.olap.ThinQueryService">
-		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
-	</bean>
-
 
 	<bean id="datasourceResourceBean" class="org.saiku.plugin.resources.PentahoDatasourceResource">
 		<property name="datasourceService" ref="datasourceServiceBean" />
@@ -59,7 +55,8 @@
 	</bean>
 
 	<bean id="queryResource" class="org.saiku.plugin.resources.PentahoQueryResource">
-		<property name="thinQueryService" ref="thinQueryBean" />
+		<property name="olapQueryService" ref="olapQueryBean" />
+		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
 	
 	<bean id="sessionService" class="org.saiku.plugin.PentahoSessionService">
@@ -86,8 +83,8 @@
 	<bean id="pluginResource" class="org.saiku.plugin.resources.PluginResource" />
 	
 	<bean id="exporterBean" class="org.saiku.plugin.resources.PentahoExporterResource">
-   		<property name="repository" ref="repositoryBean2" />
-		<property name="query2Resource" ref="queryResource" />
+		<property name="repository" ref="repositoryBean2" />
+		<property name="queryResource" ref="queryResource" />
 	</bean>
 	
 	

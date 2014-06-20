@@ -9,7 +9,6 @@
 		<property name="path" value="res:saiku-datasources" />
 	</bean>
 	<!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
-    <bean id="h2database" class="org.saiku.database.Database" init-method="init"/>
 
 	<bean id="sessionService" class="org.saiku.web.service.SessionService">
 		<property name="authenticationManager" ref="authenticationManager" />
@@ -50,9 +49,9 @@
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
 
-	<bean id="thinQueryBean" scope="session"
-		class="org.saiku.service.olap.ThinQueryService">
-		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
+
+	<bean id="sessionResource" class="org.saiku.web.rest.resources.SessionResource">
+		<property name="sessionService" ref="sessionService" />
 	</bean>
 
     <bean id="platformBean" class="org.saiku.service.PlatformUtilsService">
@@ -64,16 +63,14 @@
         <property name="platformUtilsService" ref="platformBean"/>
     </bean>
 
-	<bean id="queryResource2" scope="request"
-		class="org.saiku.web.rest.resources.Query2Resource">
-		<property name="thinQueryService" ref="thinQueryBean" />
-	</bean>
 
-	<bean id="sessionResource" class="org.saiku.web.rest.resources.SessionResource">
-		<property name="sessionService" ref="sessionService" />
+	<bean id="repositoryBean" scope="request"
+		class="org.saiku.web.rest.resources.BasicRepositoryResource">
+		<property name="olapQueryService" ref="olapQueryBean" />
+		<property name="path" value="res:saiku-repository" />
 
 	</bean>
-
+	<!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
 
 	<bean id="acl" scope="singleton" class="org.saiku.web.rest.objects.acl.Acl">
 		<property name="path" value="res:saiku-repository" />
@@ -90,8 +87,7 @@
 		<property name="sessionService" ref="sessionService" />
 		<property name="acl" ref="acl" />
 	</bean>
-	<!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
-	
+
 	<bean id="tagRepositoryBean" scope="request"
 		class="org.saiku.web.rest.resources.BasicTagRepositoryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />
@@ -109,7 +105,7 @@
 	<bean id="exporterBean" scope="request"
 		class="org.saiku.web.rest.resources.ExporterResource">
 		<property name="repository" ref="repository2bean" />
-		<property name="query2Resource" ref="queryResource2" />
+		<property name="queryResource" ref="queryResource" />
 	</bean>
 
 

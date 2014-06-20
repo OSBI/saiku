@@ -1,6 +1,6 @@
 package org.saiku.service;
 
-import org.saiku.service.util.dto.Plugin;
+import org.saiku.service.util.Plugin;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;

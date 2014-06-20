@@ -1,5 +1,5 @@
 /*  
- *   Copyright 2014 OSBI Ltd
+ *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -107,11 +107,7 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
     }
   }
 
-    public void unload() {
-
-    }
-
-    public SaikuDatasource addDatasource( SaikuDatasource datasource ) {
+  public SaikuDatasource addDatasource( SaikuDatasource datasource ) {
     try {
       String uri = repoURL.toURI().toString();
       if ( uri != null && datasource != null ) {

@@ -86,10 +86,6 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 		loadDatasources();
 	}
 
-    public void unload(){
-
-    }
-
 	private Map<String, SaikuDatasource> loadDatasources() {
 		try {
 			this.session = PentahoSessionHolder.getSession();

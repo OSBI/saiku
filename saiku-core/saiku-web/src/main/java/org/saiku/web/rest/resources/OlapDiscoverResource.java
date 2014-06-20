@@ -16,10 +16,9 @@
 package org.saiku.web.rest.resources;
 
 import java.io.Serializable;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -57,7 +56,7 @@ public class OlapDiscoverResource implements Serializable {
     }
     
     /**
-     * Returns the org.saiku.datasources available.
+     * Returns the datasources available.
      */
     @GET
     @Produces({"application/json" })
@@ -72,7 +71,7 @@ public class OlapDiscoverResource implements Serializable {
     
     
     /**
-     * Returns the org.saiku.datasources available.
+     * Returns the datasources available.
      */
     @GET
     @Produces({"application/json" })
@@ -130,12 +129,11 @@ public class OlapDiscoverResource implements Serializable {
 		try {
 			List<SaikuDimension> dimensions = olapDiscoverService.getAllDimensions(cube);
 			List<SaikuMember> measures = olapDiscoverService.getMeasures(cube);
-			Map<String, Object> properties = olapDiscoverService.getProperties(cube);
-			return new SaikuCubeMetadata(dimensions, measures, properties);
+			return new SaikuCubeMetadata(dimensions, measures);
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 		}
-		return new SaikuCubeMetadata(null, null, null);
+		return new SaikuCubeMetadata(null, null);
 	}
 	
 	@GET
@@ -246,7 +244,7 @@ public class OlapDiscoverResource implements Serializable {
 		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 
 		try {
-			return olapDiscoverService.getLevelMembers(cube, hierarchyName, levelName);
+			return olapDiscoverService.getLevelMembers(cube, dimensionName, hierarchyName, levelName);
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 		}

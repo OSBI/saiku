@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-@Path("/saiku/{username}/org.saiku.datasources")
+@Path("/saiku/{username}/datasources")
 public class DataSourceResource {
 
     DatasourceService datasourceService;

@@ -4,7 +4,7 @@
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-bi-platform-plugin</artifactId>
 	<packaging>jar</packaging>
-	<version>3.0-SNAPSHOT</version>
+	<version>2.6-SNAPSHOT</version>
 	<name>saiku biserver plugin</name>
 
 	<properties>
@@ -140,25 +140,25 @@
 								<artifactItem>
 									<groupId>org.codehaus.jackson</groupId>
 									<artifactId>jackson-core-asl</artifactId>
-									<version>1.9.3</version>
+									<version>1.7.4</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.codehaus.jackson</groupId>
 									<artifactId>jackson-jaxrs</artifactId>
-									<version>1.9.3</version>
+									<version>1.7.4</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.codehaus.jackson</groupId>
 									<artifactId>jackson-mapper-asl</artifactId>
-									<version>1.9.3</version>
+									<version>1.7.4</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.codehaus.jackson</groupId>
 									<artifactId>jackson-xc</artifactId>
-									<version>1.9.3</version>
+									<version>1.7.4</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>

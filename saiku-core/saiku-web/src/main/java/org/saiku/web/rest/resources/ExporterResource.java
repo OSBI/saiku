@@ -19,8 +19,6 @@ package org.saiku.web.rest.resources;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +36,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.apache.commons.lang.StringUtils;
-<<<<<<< HEAD
 import org.saiku.web.export.PdfReport;
 import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.util.ServletUtil;
@@ -62,10 +59,10 @@ public class ExporterResource {
 
 	private ISaikuRepository repository;
 
-	private Query2Resource query2Resource;
+	private QueryResource queryResource;
 
-	public void setQuery2Resource(Query2Resource qr){
-		this.query2Resource = qr;
+	public void setQueryResource(QueryResource qr){
+		this.queryResource = qr;
 	}
 
 	public void setRepository(ISaikuRepository repository){
@@ -83,17 +80,11 @@ public class ExporterResource {
 		try {
 			Response f = repository.getResource(file);
 			String fileContent = new String( (byte[]) f.getEntity());
-			String queryName = UUID.randomUUID().toString();			
-			//fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
-//			queryResource.createQuery(queryName,  null,  null, null, fileContent, queryName, null);
-//			queryResource.execute(queryName, formatter, 0);
-			Map<String, String> parameters = ServletUtil.getParameters(servletRequest);
-			ThinQuery tq = query2Resource.createQuery(queryName, fileContent, null, null);
-			if (parameters != null) {
-				tq.getParameters().putAll(parameters);
-			}
-			query2Resource.execute(tq);
-			return query2Resource.getQueryExcelExport(queryName, formatter);
+			String queryName = UUID.randomUUID().toString();
+			fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
+			queryResource.createQuery(null,  null,  null, null, fileContent, queryName, null);
+			queryResource.execute(queryName, formatter, 0);
+			return queryResource.getQueryExcelExport(queryName, formatter);
 		} catch (Exception e) {
 			log.error("Error exporting XLS for file: " + file, e);
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
@@ -110,17 +101,11 @@ public class ExporterResource {
 		try {
 			Response f = repository.getResource(file);
 			String fileContent = new String( (byte[]) f.getEntity());
-			//fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
+			fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
 			String queryName = UUID.randomUUID().toString();
-//			query2Resource.createQuery(null,  null,  null, null, fileContent, queryName, null);
-//			query2Resource.execute(queryName,formatter, 0);
-			Map<String, String> parameters = ServletUtil.getParameters(servletRequest);
-			ThinQuery tq = query2Resource.createQuery(queryName, fileContent, null, null);
-			if (parameters != null) {
-				tq.getParameters().putAll(parameters);
-			}
-			query2Resource.execute(tq);
-			return query2Resource.getQueryCsvExport(queryName);
+			queryResource.createQuery(null,  null,  null, null, fileContent, queryName, null);
+			queryResource.execute(queryName,formatter, 0);
+			return queryResource.getQueryCsvExport(queryName);
 		} catch (Exception e) {
 			log.error("Error exporting CSV for file: " + file, e);
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
@@ -167,14 +152,8 @@ public class ExporterResource {
 			String fileContent = new String( (byte[]) f.getEntity());
 			fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
 			String queryName = UUID.randomUUID().toString();
-//			query2Resource.createQuery(null,  null,  null, null, fileContent, queryName, null);
-//			QueryResult qr = query2Resource.execute(queryName, formatter, 0);
-			Map<String, String> parameters = ServletUtil.getParameters(servletRequest);
-			ThinQuery tq = query2Resource.createQuery(queryName, fileContent, null, null);
-			if (parameters != null) {
-				tq.getParameters().putAll(parameters);
-			}
-			QueryResult qr = query2Resource.execute(tq);
+			queryResource.createQuery(null,  null,  null, null, fileContent, queryName, null);
+			QueryResult qr = queryResource.execute(queryName, formatter, 0);
 			return Response.ok().entity(qr).build();
 		} catch (Exception e) {
 			log.error("Error exporting JSON for file: " + file, e);

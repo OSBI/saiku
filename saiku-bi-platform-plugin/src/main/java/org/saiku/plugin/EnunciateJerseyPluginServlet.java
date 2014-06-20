@@ -70,7 +70,7 @@ public class EnunciateJerseyPluginServlet extends EnunciateJerseyServletContaine
   }
   
   @Override
-  public void service(final HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     logger.debug("servicing request for resource " + request.getPathInfo()); //$NON-NLS-1$
     //Strip out the content generator id from the URL here so Jersey can match the @Path of the resource
     HttpServletRequestWrapper wrapper = new HttpServletRequestWrapper(request) {
@@ -86,18 +86,6 @@ public class EnunciateJerseyPluginServlet extends EnunciateJerseyServletContaine
         String url = super.getRequestURL().toString();
         return new StringBuffer(url.replace("content/", ""));
       }
-      
-  	@Override
-	public Map getParameterMap() {
-		return request.getParameterMap();
-	}
-  	
-  	@Override
-  		public String getQueryString() {
-  			return super.getQueryString();
-  		}
-      
-      
       
     };
     super.service(wrapper, response);

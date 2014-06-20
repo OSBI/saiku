@@ -471,95 +471,6 @@ public class OlapQueryService implements Serializable {
 		}
 	}
 
-    public SaikuQuery drillacross(String queryName, List<Integer> cellPosition, Map<String, List<String>> levels) {
-        try {
-            IQuery query = getIQuery(queryName);
-            query.clearAxis("ROWS");
-            query.clearAxis("COLUMNS");
-            Set<Level> levelSet = new HashSet<Level>();
-            CellSet cs = query.getCellset();
-            if (cs == null) {
-                throw new SaikuServiceException("Cannot drill across. Last CellSet empty");
-            }
-            for (int i = 0; i < cellPosition.size(); i++) {
-                List<Member> members = cs.getAxes().get(i).getPositions().get(cellPosition.get(i)).getMembers();
-                for (int k = 0; k < members.size(); k++) {
-                    Member m = members.get(k);
-                    QueryDimension qd = query.getDimension(m.getDimension().getName());
-                    if (qd.getName().equals("Measures")) {
-                        query.moveDimension(qd, Axis.COLUMNS);
-                    } else {
-                        query.moveDimension(qd, Axis.FILTER);
-                    }
-                    levelSet.add(m.getLevel());
-                    qd.include(m);
-                }
-            }
-            if (levels != null) {
-                for (String key : levels.keySet()) {
-                    String dimName = key.split("###")[0];
-                    QueryDimension qd = query.getDimension(dimName);
-
-                    if ("Measures".equals(dimName)) {
-                        for (String measureName : levels.get(key)) {
-                            List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(measureName).getSegmentList();
-
-                            Selection sel = qd.createSelection(memberList);
-                            if (!qd.getInclusions().contains(sel)) {
-                                qd.getInclusions().add(sel);
-                            }
-
-                        }
-                        if (qd.getInclusions().size() > 0) {
-                            query.moveDimension(qd, Axis.COLUMNS);
-                        }
-                        continue;
-
-                    }
-                    if (qd.getInclusions().size() > 0 && !"Measures".equals(dimName)) {
-                        query.moveDimension(qd, Axis.ROWS);
-                        continue;
-                    }
-                    String hName = key.split("###")[1];
-                    Dimension d = qd.getDimension();
-                    Hierarchy h = d.getHierarchies().get(hName);
-
-                    for (Level l : h.getLevels()) {
-                        if (levelSet.contains(l)) {
-                            if (qd.getInclusions().size() > 0) {
-                                query.moveDimension(qd, Axis.ROWS);
-                            }
-                            continue;
-                        }
-                        for (String levelU : levels.get(key)) {
-                            if (l.getUniqueName().equals(levelU) || l.getName().equals(levelU)) {
-                                qd.include(l);
-                                if (qd.getInclusions().size() > 0) {
-                                    query.moveDimension(qd, Axis.ROWS);
-                                }
-                            }
-                        }
-                    }
-
-                }
-            }
-            if (query.getAxis(Axis.COLUMNS).getDimensions().size() == 0) {
-                QueryDimension mD = query.getDimension("Measures");
-
-                if (mD.getInclusions().size() == 0) {
-                    Member defaultMeasure = mD.getDimension().getDefaultHierarchy().getDefaultMember();
-                    mD.include(defaultMeasure);
-                }
-                query.moveDimension(mD, Axis.COLUMNS);
-            }
-            putIQuery(queryName, query);
-            return ObjectUtil.convert(query);
-
-
-        } catch (Exception e) {
-            throw new SaikuServiceException("Error drilling across: " + queryName, e);
-        }
-    }
 	
 	public boolean isMdxDrillthrough(String queryName, String drillthroughMdx) {
 		try {
@@ -1459,3 +1370,4 @@ public class OlapQueryService implements Serializable {
 		return queries;
 	}
 }
+

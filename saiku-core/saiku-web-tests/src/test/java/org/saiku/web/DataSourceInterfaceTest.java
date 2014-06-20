@@ -60,7 +60,7 @@ public class DataSourceInterfaceTest extends AbstractServiceTest {
         client.setFollowRedirects(false);
 
         WebResource webResource = client.resource("http://localhost:9999/saiku");
-        String applicationWadl = webResource.path("/rest/saiku/bugg/org.saiku.datasources").accept("application/json").get(String.class);
+        String applicationWadl = webResource.path("/rest/saiku/bugg/datasources").accept("application/json").get(String.class);
         System.out.println(applicationWadl);
         assertEquals("[{\"connection\":\"TestConnection1\",\"cube\":\"Quadrant Analysis\",\"catalog\":\"SampleData\",\"schema\":\"SampleData\"},{\"connection\":\"TestConnection1\",\"cube\":\"SteelWheelsSales\",\"catalog\":\"SteelWheels\",\"schema\":\"SteelWheels\"}]", applicationWadl);
         
@@ -74,7 +74,7 @@ public class DataSourceInterfaceTest extends AbstractServiceTest {
         client.setFollowRedirects(false);
 
         WebResource webResource = client.resource("http://localhost:9999/saiku");
-        String applicationWadl = webResource.path("/rest/saiku/bugg/org.saiku.datasources").accept("application/xml").get(String.class);
+        String applicationWadl = webResource.path("/rest/saiku/bugg/datasources").accept("application/xml").get(String.class);
         System.out.println(applicationWadl);
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><items><datasource connection=\"TestConnection1\" cube=\"Quadrant Analysis\" catalog=\"SampleData\" schema=\"SampleData\"/><datasource connection=\"TestConnection1\" cube=\"SteelWheelsSales\" catalog=\"SteelWheels\" schema=\"SteelWheels\"/></items>", applicationWadl);
         

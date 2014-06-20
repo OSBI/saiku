@@ -48,12 +48,7 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 
 	@Override
 	public void init() {
-        try {
-            this.connections = getAllConnections();
-        }
-        catch (Exception e){
-            //TODO
-        }
+		this.connections = getAllConnections();
 	}
 	
 	public void setUserAware(boolean aware) {

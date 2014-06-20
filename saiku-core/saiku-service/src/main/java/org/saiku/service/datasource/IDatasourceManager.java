@@ -17,16 +17,12 @@ package org.saiku.service.datasource;
 
 import org.saiku.datasources.datasource.SaikuDatasource;
 
-import javax.jcr.RepositoryException;
 import java.util.List;
 import java.util.Map;
 
 public interface IDatasourceManager {
 
   public void load();
-
-  public void unload();
-
 
   public SaikuDatasource addDatasource( SaikuDatasource datasource );
 
