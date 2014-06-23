@@ -97,6 +97,7 @@ public class DataSource {
         this.id = id;
     }
 
+    @XmlElement
     public void setPath(String path) {
         this.path = path;
     }

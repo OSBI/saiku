@@ -29,9 +29,9 @@ public interface IDatasourceManager {
   public void unload();
 
 
-  public SaikuDatasource addDatasource( SaikuDatasource datasource );
+  public SaikuDatasource addDatasource( SaikuDatasource datasource ) throws Exception;
 
-  public SaikuDatasource setDatasource( SaikuDatasource datasource );
+  public SaikuDatasource setDatasource( SaikuDatasource datasource ) throws Exception;
 
   public List<SaikuDatasource> addDatasources( List<SaikuDatasource> datasources );
 
@@ -41,7 +41,7 @@ public interface IDatasourceManager {
 
   public SaikuDatasource getDatasource( String datasourceName );
 
-  public void addSchema(String file, String path, String name);
+  public void addSchema(String file, String path, String name) throws Exception;
 
   public List<MondrianSchema> getMondrianSchema();
 

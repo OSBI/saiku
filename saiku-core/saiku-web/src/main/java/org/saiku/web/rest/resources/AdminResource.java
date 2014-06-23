@@ -6,6 +6,7 @@ import org.saiku.database.dto.MondrianSchema;
 import org.saiku.database.dto.SaikuUser;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.service.datasource.DatasourceService;
+import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.web.rest.objects.DataSourceMapper;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +35,12 @@ public class AdminResource {
 
     UserService userService;
     private static final Logger log = LoggerFactory.getLogger(DataSourceResource.class);
+    private OlapDiscoverService olapDiscoverService;
+
+    public void setOlapDiscoverService(OlapDiscoverService olapDiscoverService) {
+        this.olapDiscoverService = olapDiscoverService;
+    }
+
 
     public void setDatasourceService(DatasourceService ds) {
         datasourceService = ds;
@@ -62,8 +70,29 @@ public class AdminResource {
     @Produces( {"application/json"})
     @Consumes( {"application/json"})
     @Path("/datasources/{id}")
-    public DataSourceMapper updateDatasource(DataSourceMapper json, @PathParam("id") int id) {
-        return null;
+    public Response updateDatasource(DataSourceMapper json, @PathParam("id") String id) {
+        try {
+            return Response.ok().entity(datasourceService.addDatasource( json.toSaikuDataSource(), true ))
+                    .type("application/json").build();
+        }
+        catch (Exception e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getLocalizedMessage())
+                    .type("text/plain").build();
+        }
+    }
+
+    @GET
+    @Produces( {"application/json"})
+    @Path("/datasources/{id}/refresh")
+    public Response refreshDatasource(@PathParam("id") String id) {
+        try {
+            olapDiscoverService.refreshConnection(id);
+            return Response.ok().entity(olapDiscoverService.getConnection(id)).type("application/json").build();
+        } catch (Exception e) {
+            log.error(this.getClass().getName(), e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getLocalizedMessage())
+                    .type("text/plain").build();
+        }
 
     }
 
@@ -71,9 +100,16 @@ public class AdminResource {
     @Produces( {"application/json"})
     @Consumes( {"application/json"})
     @Path("/datasources")
-    public DataSourceMapper createDatasource(DataSourceMapper json) {
-        datasourceService.addDatasource(json.toSaikuDataSource());
-        return json;
+    public Response createDatasource(DataSourceMapper json) {
+        try {
+            datasourceService.addDatasource(json.toSaikuDataSource(), false);
+            return Response.ok().entity(json).type("application/json").build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getLocalizedMessage())
+                    .type("text/plain").build();
+        }
     }
 
     @DELETE
@@ -93,12 +129,20 @@ public class AdminResource {
     @Produces( {"application/json"})
     @Consumes("multipart/form-data")
     @Path("/schema")
-    public void uploadSchema(@FormDataParam("file") InputStream is, @FormDataParam("file") FormDataContentDisposition detail,
-                             @FormDataParam("name") String name) {
+    public Response uploadSchema(@FormDataParam("file") InputStream is, @FormDataParam("file") FormDataContentDisposition detail,
+                                 @FormDataParam("name") String name) {
 
         String path = "/datasources/" + name + ".xml";
         String schema = getStringFromInputStream(is);
-        datasourceService.addSchema(schema, path, name);
+        try {
+            datasourceService.addSchema(schema, path, name);
+            return Response.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getLocalizedMessage())
+                    .type("text/plain").build();
+        }
 
     }
 

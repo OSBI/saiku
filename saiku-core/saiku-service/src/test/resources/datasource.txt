@@ -1,0 +1,6 @@
+type=OLAP
+name=test
+driver=mondrian.olap4j.MondrianOlap4jDriver
+location=jdbc:mondrian:Jdbc=jdbc:hsqldb:res:foodmart/foodmart;Catalog=res:FoodMart.xml;
+username=sa
+password=

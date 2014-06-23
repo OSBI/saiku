@@ -43,11 +43,24 @@ public class DatasourceService implements Serializable {
     return connectionManager;
   }
 
-  public void addDatasource(SaikuDatasource datasource) {
-    datasources.addDatasource(datasource);
+  public void addDatasource(SaikuDatasource datasource, boolean overwrite) throws Exception {
+      SaikuDatasource ds = getDatasources().get(datasource.getName());
+      if(ds == null){
+          datasources.addDatasource(datasource);
+      }
+      else{
+          if(overwrite){
+              datasources.removeDatasource(ds.getName());
+              datasources.addDatasource(ds);
+          }
+          else {
+              throw new Exception("Datasource Name Already Exists!");
+          }
+      }
+
   }
 
-  public void setDatasource(SaikuDatasource datasource) {
+  public void setDatasource(SaikuDatasource datasource) throws Exception {
     datasources.setDatasource(datasource);
   }
 
@@ -67,7 +80,7 @@ public class DatasourceService implements Serializable {
       return datasources.getMondrianSchema();
   }
 
-  public void addSchema(String schema, String path, String name){
+  public void addSchema(String schema, String path, String name) throws Exception {
       datasources.addSchema(schema, path, name);
   }
 

@@ -37,6 +37,7 @@
     <bean id="adminBean" class="org.saiku.web.rest.resources.AdminResource">
         <property name="userService" ref="userServiceBean"/>
         <property name="datasourceService" ref="datasourceServiceBean"/>
+        <property name="olapDiscoverService" ref="olapDiscoverServiceBean"/>
     </bean>
     <bean class="org.saiku.datasources.connection.MondrianVFS" init-method="init">
         <property name="datasourceManager" ref="repositoryDsManager"/>

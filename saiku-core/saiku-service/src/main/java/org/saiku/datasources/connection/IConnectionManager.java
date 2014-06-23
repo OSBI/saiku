@@ -31,8 +31,8 @@ public interface IConnectionManager {
 	public IDatasourceManager getDataSourceManager();
 	
 	public void refreshConnection(String name);
-	
-	public void refreshAllConnections();
+
+    public void refreshAllConnections();
 	
 	public OlapConnection getOlapConnection(String name) throws SaikuOlapException;
 	

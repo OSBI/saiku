@@ -60,6 +60,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                         props.put("username", file.getUsername());
                         props.put("password", file.getPassword());
                         props.put("path", file.getPath());
+                        props.put("id", file.getId());
                         SaikuDatasource.Type t = SaikuDatasource.Type.valueOf(file.getType().toUpperCase());
                         SaikuDatasource ds = new SaikuDatasource(file.getName(), t, props);
                         datasources.put(file.getName(), ds);
@@ -77,20 +78,16 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         irm.shutdown();
     }
 
-    public SaikuDatasource addDatasource(SaikuDatasource datasource) {
+    public SaikuDatasource addDatasource(SaikuDatasource datasource) throws Exception {
         DataSource ds = new DataSource(datasource);
 
-        try {
             irm.saveDataSource(ds, "/datasources/" + ds.getName() + ".sds", "fixme");
             datasources.put(datasource.getName(), datasource);
-        } catch (RepositoryException e) {
-            e.printStackTrace();
-        }
 
         return datasource;
     }
 
-    public SaikuDatasource setDatasource(SaikuDatasource datasource) {
+    public SaikuDatasource setDatasource(SaikuDatasource datasource) throws Exception {
         return addDatasource(datasource);
     }
 
@@ -123,12 +120,17 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 if(data.getId().equals(datasourceId)){
                     datasources.remove(data.getName());
                     irm.deleteFile(data.getPath());
+                    break;
                 }
             }
+            return true;
+        }
+        else{
+            return false;
         }
 
 
-        return true;
+
 
     }
 
@@ -140,12 +142,9 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         return datasources.get(datasourceName);
     }
 
-    public void addSchema(String file, String path, String name) {
-        try {
+    public void addSchema(String file, String path, String name) throws Exception {
             irm.saveFile(file, path, "admin", "nt:mondrianschema", null);
-        } catch (RepositoryException e) {
-            e.printStackTrace();
-        }
+
     }
 
     public List<MondrianSchema> getMondrianSchema() {
@@ -211,3 +210,4 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         }
     }
 }
+

@@ -88,7 +88,10 @@ public class JdbcUserDAO
 
     public SaikuUser findByUserId(int userId)
     {
-        return null;
+
+        return (SaikuUser) getJdbcTemplate().query("select T.USER_ID, t.USERNAME, t.PASSWORD, t.email, t.ENABLED,GROUP_CONCAT(ROLE) as ROLES from USERS t " +
+                "inner join (\nselect MAX(USERS.USER_ID) ID, USERS.USERNAME from USERS group by USERS.USERNAME) tm on t.USER_ID = tm.ID\n" +
+                "left join (select USER_ID, ROLE from USER_ROLES) ur on t.USER_ID = ur.USER_ID where t.user_id = ? GROUP BY t.USER_ID", new Object[] { Integer.valueOf(userId) }, new UserMapper()).get(0);
     }
 
     public Collection findAllUsers()
@@ -100,7 +103,7 @@ public class JdbcUserDAO
 
     public void deleteUser(String username)
     {
-        String newsql = "DELETE from USERS where username = ?";
+        String newsql = "DELETE from USERS where USER_ID = ?";
         getJdbcTemplate().update(newsql, new Object[] { username });
     }
 

@@ -186,6 +186,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     }
 
     public Node saveFile(Object file, String path, String user, String type, List<String> roles) throws RepositoryException {
+
         int pos = path.lastIndexOf("/");
         String filename = "./" + path.substring(pos + 1, path.length());
         Node n = getFolder(path.substring(0, pos));
@@ -278,7 +279,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
             } catch (JAXBException e) {
                 e.printStackTrace();
             }
-            InputStream stream = new ByteArrayInputStream(n.getProperty("jcr:data").getString().getBytes());
+            InputStream stream = new ByteArrayInputStream(n.getNodes("jcr:content").nextNode().getProperty("jcr:data").getString().getBytes());
             DataSource d = null;
             try {
                 d = (DataSource) (jaxbMarshaller != null ? jaxbMarshaller.unmarshal(stream) : null);
