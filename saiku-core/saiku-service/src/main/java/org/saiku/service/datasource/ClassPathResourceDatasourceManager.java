@@ -194,6 +194,10 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
         return null;
     }
 
+    public RepositoryFile getFile2(String file) {
+        return null;
+    }
+
     public String getFileData(String file) {
         return null;
     }

@@ -366,7 +366,6 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         return null;
     }
 
-
     public Node getFolder(String path) throws RepositoryException {
         return session.getNode(path);
     }

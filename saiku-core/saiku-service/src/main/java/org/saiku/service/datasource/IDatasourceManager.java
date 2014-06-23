@@ -19,7 +19,6 @@ import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
 
-import javax.xml.soap.Node;
 import java.util.List;
 import java.util.Map;
 
