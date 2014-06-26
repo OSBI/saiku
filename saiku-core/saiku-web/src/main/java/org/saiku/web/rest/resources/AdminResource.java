@@ -2,7 +2,6 @@ package org.saiku.web.rest.resources;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
-import org.saiku.database.dto.MondrianSchema;
 import org.saiku.database.dto.SaikuUser;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.service.datasource.DatasourceService;
@@ -21,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -41,7 +39,6 @@ public class AdminResource {
         this.olapDiscoverService = olapDiscoverService;
     }
 
-
     public void setDatasourceService(DatasourceService ds) {
         datasourceService = ds;
     }
@@ -53,16 +50,19 @@ public class AdminResource {
     @GET
     @Produces( {"application/json"})
     @Path("/datasources")
-    public Collection<DataSourceMapper> getAvailableDataSources() {
+    public Response getAvailableDataSources() {
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
         List<DataSourceMapper> l = new ArrayList<DataSourceMapper>();
         try {
             for (SaikuDatasource d : datasourceService.getDatasources().values()) {
                 l.add(new DataSourceMapper(d));
             }
-            return l;
+            return Response.ok().entity(l).build();
         } catch (SaikuServiceException e) {
             log.error(this.getClass().getName(), e);
-            return new ArrayList<DataSourceMapper>();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getLocalizedMessage()).type("text/plain").build();
         }
     }
 
@@ -71,9 +71,13 @@ public class AdminResource {
     @Consumes( {"application/json"})
     @Path("/datasources/{id}")
     public Response updateDatasource(DataSourceMapper json, @PathParam("id") String id) {
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         try {
-            return Response.ok().entity(datasourceService.addDatasource( json.toSaikuDataSource(), true ))
-                    .type("application/json").build();
+            datasourceService.addDatasource( json.toSaikuDataSource(), true );
+            return Response.ok().build();
         }
         catch (Exception e){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getLocalizedMessage())
@@ -85,6 +89,10 @@ public class AdminResource {
     @Produces( {"application/json"})
     @Path("/datasources/{id}/refresh")
     public Response refreshDatasource(@PathParam("id") String id) {
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         try {
             olapDiscoverService.refreshConnection(id);
             return Response.ok().entity(olapDiscoverService.getConnection(id)).type("application/json").build();
@@ -101,6 +109,10 @@ public class AdminResource {
     @Consumes( {"application/json"})
     @Path("/datasources")
     public Response createDatasource(DataSourceMapper json) {
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         try {
             datasourceService.addDatasource(json.toSaikuDataSource(), false);
             return Response.ok().entity(json).type("application/json").build();
@@ -114,15 +126,24 @@ public class AdminResource {
 
     @DELETE
     @Path("/datasources/{id}")
-    public void deleteDatasource(@PathParam("id") String id) {
+    public Response deleteDatasource(@PathParam("id") String id) {
+
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
         datasourceService.removeDatasource(id);
+        return Response.ok().build();
     }
 
     @GET
     @Produces( {"application/json"})
     @Path("/schema")
-    public List<MondrianSchema> getAvailableSchema() {
-        return datasourceService.getAvailableSchema();
+    public Response getAvailableSchema() {
+
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        return Response.ok().entity(datasourceService.getAvailableSchema()).build();
     }
 
     @POST
@@ -131,7 +152,9 @@ public class AdminResource {
     @Path("/schema")
     public Response uploadSchema(@FormDataParam("file") InputStream is, @FormDataParam("file") FormDataContentDisposition detail,
                                  @FormDataParam("name") String name) {
-
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
         String path = "/datasources/" + name + ".xml";
         String schema = getStringFromInputStream(is);
         try {
@@ -149,9 +172,11 @@ public class AdminResource {
     @GET
     @Produces( {"application/json"})
     @Path("/users")
-    public List<SaikuUser> getExistingUsers() {
-
-        return userService.getUsers();
+    public Response getExistingUsers() {
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        return Response.ok().entity(userService.getUsers()).build();
 
     }
 
@@ -163,51 +188,79 @@ public class AdminResource {
 
     @GET
     @Path("/datasource/import")
-    public void importLegacyDatasources() {
+    public Response importLegacyDatasources() {
+
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
         datasourceService.importLegacyDatasources();
+        return Response.ok().build();
     }
 
     @GET
     @Path("/schema/import")
-    public void importLegacySchema() {
+    public Response importLegacySchema() {
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         datasourceService.importLegacySchema();
+        return Response.ok().build();
     }
 
     @GET
     @Path("/users/import")
-    public void importLegacyUsers() {
+    public Response importLegacyUsers() {
+
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
         datasourceService.importLegacyUsers();
+        return Response.ok().build();
     }
 
     @GET
     @Produces( {"application/json"})
     @Path("/users/{id}")
-    public SaikuUser getUserDetails(@PathParam("id") int id) {
-        return userService.getUser(id);
+    public Response getUserDetails(@PathParam("id") int id) {
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        return Response.ok().entity(userService.getUser(id)).build();
     }
 
     @PUT
     @Produces( {"application/json"})
     @Consumes("application/json")
     @Path("/users/{username}")
-    public SaikuUser updateUserDetails(SaikuUser jsonString, @PathParam("username") String userName) {
-        return userService.addUser(jsonString);
+    public Response updateUserDetails(SaikuUser jsonString, @PathParam("username") String userName) {
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        return Response.ok().entity(userService.updateUser(jsonString)).build();
     }
 
     @POST
     @Produces( {"application/json"})
     @Consumes( {"application/json"})
     @Path("/users")
-    public SaikuUser createUserDetails(SaikuUser jsonString) {
-        return userService.addUser(jsonString);
+    public Response createUserDetails(SaikuUser jsonString) {
+
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        return Response.ok().entity(userService.addUser(jsonString)).build();
     }
 
     @DELETE
     @Produces( {"application/json"})
     @Path("/users/{username}")
-    public boolean removeUser(@PathParam("username") String username) {
+    public Response removeUser(@PathParam("username") String username) {
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
         userService.removeUser(username);
-        return true;
+        return Response.ok().build();
     }
 
     private static String getStringFromInputStream(InputStream is) {

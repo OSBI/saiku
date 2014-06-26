@@ -25,7 +25,6 @@ import java.util.zip.ZipOutputStream;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.QueryResult;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -37,30 +36,21 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.commons.vfs.AllFileSelector;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.FileUtil;
 import org.apache.commons.vfs.VFS;
 import org.apache.jackrabbit.commons.JcrUtils;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.saiku.repository.AclEntry;
+import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.ISessionService;
 import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.util.exception.SaikuServiceException;
-import org.saiku.web.rest.objects.acl.Acl;
-import org.saiku.web.rest.objects.acl.AclEntry;
-import org.saiku.web.rest.objects.acl.enumeration.AclMethod;
-import org.saiku.web.rest.objects.repository.IRepositoryObject;
-import org.saiku.web.rest.objects.repository.RepositoryFileObject;
-import org.saiku.web.rest.objects.repository.RepositoryFolderObject;
-import org.saiku.web.service.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -83,7 +73,7 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	private FileObject repo;
 	private ISessionService sessionService;
 	
-	private Acl acl;
+	//private Acl acl;
     private DatasourceService datasourceService;
 
     public void setDatasourceService(DatasourceService ds) {
@@ -111,9 +101,9 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 		}
 	}
 	
-	public void setAcl(Acl acl) {
+	/*public void setAcl(Acl acl) {
 		this.acl = acl;
-	}
+	}*/
 	
 	/**
 	 * Sets the sessionService
@@ -132,39 +122,9 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 			@QueryParam("path") String path,
 			@QueryParam("type") String type) 
 	{
-		List<IRepositoryObject> objects = new ArrayList<IRepositoryObject>();
-        Node files = datasourceService.getFiles();
-        objects = getRepoObjects(files, type);
-        return objects;
-	/*	try {
-			if (path != null && (path.startsWith("/") || path.startsWith("."))) {
-				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + path);
-			}
-
-			if (repo != null) {
-				FileObject folder = repo;
-				if (path != null) {
-					folder = repo.resolveFile(path);
-				} else {
-					path = repo.getName().getRelativeName(folder.getName());
-				}
-
-				String username = sessionService.getAllSessionObjects().get("username").toString();
-				List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-
-				//TODO : shall throw an exception ???
-				if ( !acl.canRead(path,username, roles) ) {
-					return new ArrayList<IRepositoryObject>(); // empty
-				} else {
-					return getRepositoryObjects(folder, type);
-				}
-			}
-			else {
-				throw new Exception("repo URL is null");
-			}
-		} catch (Exception e) {
-			log.error(this.getClass().getName(),e);
-		}*/
+        String username = sessionService.getAllSessionObjects().get("username").toString();
+        List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
+        return datasourceService.getFiles(type, username, roles);
 
 	}
 
@@ -174,18 +134,16 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	@Path("/resource/acl")
 	public AclEntry getResourceAcl(@QueryParam("file") String file) {
 		try {
-			if (file == null || file.startsWith("/") || file.startsWith(".")) {
-				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
-			}
 			String username = sessionService.getAllSessionObjects().get("username").toString();
 			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-			if (acl.canGrant(file, username, roles) ) {
-				return getAcl(file);
-			}
+            return datasourceService.getResourceACL(file, username, roles);
+
 		} catch (Exception e) {
 			log.error("Error retrieving ACL for file: " + file, e);
 		}
 		throw new SaikuServiceException("You dont have permission to retrieve ACL for file: " + file);
+
+
 	}
 	
 	
@@ -194,24 +152,17 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	@Path("/resource/acl")
 	public Response setResourceAcl(@FormParam("file") String file, @FormParam("acl") String aclEntry) {
 		try {
-			if (file == null || file.startsWith("/") || file.startsWith(".")) {
-				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
-			}
-			ObjectMapper mapper = new ObjectMapper();
-			log.debug("Set ACL to " + file + " : " + aclEntry);
-			AclEntry ae = mapper.readValue(aclEntry, AclEntry.class);
 			String username = sessionService.getAllSessionObjects().get("username").toString();
 			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-			FileObject repoFile = repo.resolveFile(file);
-			if (repoFile.exists() && acl.canGrant(file, username, roles) ) {
-				acl.addEntry(file, ae);
-				return Response.ok().build();
-			}
-			log.debug("Repo file does not exist or cannot grant access. repo file:" + repoFile + " - file: " + file);
+		    datasourceService.setResourceACL(file, aclEntry, username, roles);
+		    return Response.ok().build();
+
+			//log.debug("Repo file does not exist or cannot grant access. repo file:" + repoFile + " - file: " + file);
 		} catch (Exception e) {
 			log.error("An error occured while setting permissions to file: " + file, e);
 		}
 		return Response.serverError().build();
+
 	}
 
 
@@ -228,43 +179,17 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 
         byte[] data = new byte[0];
         try {
-            data = datasourceService.getFileData(file).getBytes("UTF-8");
+            data = datasourceService.getFileData(file, username, roles).getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         return Response.ok(data, MediaType.TEXT_PLAIN).header(
                 "content-length",data.length).build();
-	/*	try {
-			if (file == null || file.startsWith("/") || file.startsWith(".")) {
-				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
-			}
-			String username = sessionService.getAllSessionObjects().get("username").toString();
-			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-			FileObject repoFile = repo.resolveFile(file);
+	/*
 			if ( !acl.canRead(file, username, roles) ) {
 				return Response.serverError().status(Status.FORBIDDEN).build();
 			}
-//			System.out.println("path:" + repo.getName().getRelativeName(repoFile.getName()));
-			if (repoFile.exists()) {
-				InputStreamReader reader = new InputStreamReader(repoFile.getContent().getInputStream());
-				BufferedReader br = new BufferedReader(reader);
-				String chunk ="",content ="";
-				while ((chunk = br.readLine()) != null) {
-					content += chunk + "\n";
-				}
-				byte[] doc = content.getBytes("UTF-8");
-				return Response.ok(doc, MediaType.TEXT_PLAIN).header(
-								"content-length",doc.length).build();
-			}
-			else {
-				throw new Exception("File does not exist:" + repoFile.getName().getPath());
-			}
-		} catch(FileNotFoundException e) {
-			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-		} catch(Exception e){
-			log.error("Cannot load query (" + file + ")",e);
-		}
-		return Response.serverError().build();*/
+*/
 	}
 	
 	/* (non-Javadoc)
@@ -285,42 +210,11 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
         else{
             return Response.serverError().entity("Cannot save resource to ( file: " + file + ")").type("text/plain").build();
         }
-		/*try {
-			if (file == null || file.startsWith("/") || file.startsWith(".")) {
-				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
-			}
-
-			String username = sessionService.getAllSessionObjects().get("username").toString();
-			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-			FileObject repoFile = repo.resolveFile(file);
-
-			if ( !acl.canWrite(file,username, roles) ) {
+		/*
 				return Response.serverError().status(Status.FORBIDDEN)
 							.entity("You don't have permissions to save here!")
 								.type("text/plain").build();
-			}
-
-			if (repoFile == null) throw new Exception("Repo File not found");
-
-			if (repoFile.exists()) {
-				repoFile.delete();
-			}
-			if (!StringUtils.isNotBlank(content)) {
-				repoFile.createFolder();
-			} else {
-				repoFile.createFile();
-				OutputStreamWriter ow = new OutputStreamWriter(repoFile.getContent().getOutputStream());
-				BufferedWriter bw = new BufferedWriter(ow);
-				bw.write(content);
-				bw.close();
-			}
-			return Response.ok().build();
-		} catch(Exception e){
-			log.error("Cannot save resource to ( file: " + file + ")",e);
-		}
-		return Response.serverError().entity("Cannot save resource to ( file: " + file + ")").type("text/plain").build();*/
-
-
+		*/
     }
 	
 	/* (non-Javadoc)
@@ -331,7 +225,7 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	public Response deleteResource (
 			@QueryParam("file") String file)
 	{
-		try {
+		/*try {
 			if (file == null || file.startsWith("/") || file.startsWith(".")) {
 				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
 			}
@@ -356,7 +250,8 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 		} catch(Exception e){
 			log.error("Cannot save resource to (file: " + file + ")",e);
 		}
-		return Response.serverError().build();
+		return Response.serverError().build();*/
+        return null;
 	}
 	
 	/* (non-Javadoc)
@@ -366,7 +261,7 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	@Path("/resource/move")
 	public Response moveResource(@FormParam("source") String source, @FormParam("target") String target)
 	{
-		try {
+		/*try {
 			if (source == null || source.startsWith("/") || source.startsWith(".")) {
 				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + source);
 			}
@@ -407,7 +302,8 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 			log.error("Cannot move resource from " + source + " to " + target ,e);
 			return Response.serverError().entity("Cannot move resource from " + source + " to " + target + " ( " + e.getMessage() + ")").type("text/plain").build();
 		}
-		
+		*/
+        return null;
 	}
 	
 	@GET
@@ -533,154 +429,6 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 		}	
 		
 		
-	}
-
-    private List<IRepositoryObject> getRepoObjects(Node files, String fileType) {
-        List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
-        Iterable<Node> objects = null;
-        NodeIterator n = null;
-        try {
-             n = files.getNodes();
-
-
-        while(n.hasNext()){
-            Node node = n.nextNode();
-            String nodetype = node.getPrimaryNodeType().getName();
-            String nodename = node.getName();
-            String nodepath = node.getPath();
-
-            //if(nodetype.equals("nt:folder")){
-            //objects = new ArrayList<Node>();
-            //objects.add(node);
-                objects = JcrUtils.getChildNodes(node);
-            //}
-            //else if(nodetype.equals("nt:saikufiles")){
-            //    objects =
-           // }
-            //else{
-
-            //}
-            if (node.getPrimaryNodeType().getName().equals("nt:file")) {
-                if (StringUtils.isNotEmpty(fileType) && !node.getName().endsWith(fileType)) {
-                    continue;
-                }
-                String extension = ".saiku";//file.getName().getExtension();
-
-                repoObjects.add(new RepositoryFileObject(node.getName(), "#" + node.getPath(), extension, node.getPath(), null));
-            }
-            if (node.getPrimaryNodeType().getName().equals("nt:folder")) {
-                repoObjects.add(new RepositoryFolderObject(node.getName(), "#" + node.getPath(), node.getPath(), null, getRepoObjects(node, fileType)));
-            }
-            Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
-
-                public int compare(IRepositoryObject o1, IRepositoryObject o2) {
-                    if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(IRepositoryObject.Type.FILE))
-                        return -1;
-                    if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
-                        return 1;
-                    return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-
-                }
-
-            });
-            for (Node file : objects) {
-                //if (!file.isHidden()) {
-                    String filename = file.getName();
-                    String relativePath = file.getPath();//repo.getName().getRelativeName(file.getName());
-
-                    String username = sessionService.getAllSessionObjects().get("username").toString();
-                    List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-                    //if ( acl.canRead(relativePath,username, roles) ) {
-                        List<AclMethod> acls = acl.getMethods(relativePath, username, roles);
-                        if (file.getPrimaryNodeType().getName().equals("nt:saikufiles")) {
-                            if (StringUtils.isNotEmpty(fileType) && !filename.endsWith(fileType)) {
-                                continue;
-                            }
-                            String extension = ".saiku";//file.getName().getExtension();
-
-                            repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath, acls));
-                        }
-                        if (file.getPrimaryNodeType().getName().equals("nt:folder")) {
-                            repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepoObjects(file, fileType)));
-                        }
-                        Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
-
-                            public int compare(IRepositoryObject o1, IRepositoryObject o2) {
-                                if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(IRepositoryObject.Type.FILE))
-                                    return -1;
-                                if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
-                                    return 1;
-                                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-
-                            }
-
-                        });
-                    //}
-                //}
-            }
-
-        }
-        } catch (RepositoryException e) {
-            e.printStackTrace();
-        }
-        return repoObjects;
-    }
-
-
-    private List<IRepositoryObject> getRepositoryObjects(FileObject root, String fileType) throws Exception {
-		List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
-		FileObject[] objects = new FileObject[0];
-		if (root.getType().equals(FileType.FOLDER)) {
-			objects = root.getChildren();
-		} else { 
-			objects = new FileObject[]{ root };
-		}
-		
-		
-		for (FileObject file : objects) {
-			if (!file.isHidden()) {
-				String filename = file.getName().getBaseName();
-				String relativePath = repo.getName().getRelativeName(file.getName());
-
-				String username = sessionService.getAllSessionObjects().get("username").toString();
-				List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-				if ( acl.canRead(relativePath,username, roles) ) {
-					List<AclMethod> acls = acl.getMethods(relativePath, username, roles);
-					if (file.getType().equals(FileType.FILE)) {
-						if (StringUtils.isNotEmpty(fileType) && !filename.endsWith(fileType)) {
-							continue;
-						}
-						String extension = file.getName().getExtension();
-
-						repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath, acls));
-					}
-					if (file.getType().equals(FileType.FOLDER)) { 
-						repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepositoryObjects(file, fileType)));
-					}
-					Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
-
-						public int compare(IRepositoryObject o1, IRepositoryObject o2) {
-							if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(IRepositoryObject.Type.FILE))
-								return -1;
-							if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
-								return 1;
-							return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-							
-						}
-						
-					});
-				}
-			}
-		}
-		return repoObjects;
-	}
-	
-
-
-	private AclEntry getAcl(String path){
-		AclEntry entry = this.acl.getEntry(path);
-		if ( entry == null ) entry = new AclEntry();
-		return entry;
 	}
 
 }

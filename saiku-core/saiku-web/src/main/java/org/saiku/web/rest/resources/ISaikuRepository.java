@@ -1,5 +1,7 @@
 package org.saiku.web.rest.resources;
 
+import org.saiku.repository.IRepositoryObject;
+
 import java.util.List;
 
 import javax.ws.rs.DELETE;
@@ -11,7 +13,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
-import org.saiku.web.rest.objects.repository.IRepositoryObject;
 
 public interface ISaikuRepository {
 

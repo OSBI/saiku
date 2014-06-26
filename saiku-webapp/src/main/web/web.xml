@@ -12,7 +12,7 @@
 	</context-param>
     <context-param>
         <param-name>db.url</param-name>
-        <param-value>jdbc:h2:~/test</param-value>
+        <param-value>jdbc:h2:../../data/saiku;MODE=MySQL</param-value>
     </context-param>
     <context-param>
         <param-name>db.user</param-name>
@@ -20,6 +20,18 @@
     </context-param>
     <context-param>
         <param-name>db.password</param-name>
+        <param-value></param-value>
+    </context-param>
+    <context-param>
+        <param-name>foodmart.url</param-name>
+        <param-value>jdbc:h2:../../data/foodmart;MODE=MySQL</param-value>
+    </context-param>
+    <context-param>
+        <param-name>foodmart.user</param-name>
+        <param-value>sa</param-value>
+    </context-param>
+    <context-param>
+        <param-name>foodmart.password</param-name>
         <param-value></param-value>
     </context-param>
     <context-param>

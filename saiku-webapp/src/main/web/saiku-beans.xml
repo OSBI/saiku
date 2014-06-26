@@ -8,9 +8,14 @@
             class="org.saiku.service.datasource.ClassPathResourceDatasourceManager">
             <property name="path" value="res:saiku-datasources" />
         </bean>-->
-    <bean id="repositoryDsManager" class="org.saiku.service.datasource.RepositoryDatasourceManager" init-method="load"/>
+    <bean id="repositoryDsManager" class="org.saiku.service.datasource.RepositoryDatasourceManager" init-method="load">
+        <property name="userService" ref="userServiceBean"/>
+    </bean>
+
     <!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
-    <bean id="h2database" class="org.saiku.database.Database" init-method="init"/>
+    <bean id="h2database" class="org.saiku.database.Database" init-method="init">
+        <property name="datasourceManager" ref="repositoryDsManager"/>
+    </bean>
 
     <bean id="sessionService" class="org.saiku.web.service.SessionService">
         <property name="authenticationManager" ref="authenticationManager" />
@@ -33,6 +38,12 @@
     <bean id="userServiceBean" class="org.saiku.service.user.UserService">
         <property name="jdbcUserDAO" ref="customerDAO"/>
         <property name="iDatasourceManager" ref="repositoryDsManager"/>
+        <property name="adminRoles">
+            <list>
+                <value>ROLE_ADMIN</value>
+            </list>
+        </property>
+        <property name="sessionService" ref="sessionService"/>
     </bean>
     <bean id="adminBean" class="org.saiku.web.rest.resources.AdminResource">
         <property name="userService" ref="userServiceBean"/>
@@ -88,24 +99,14 @@
 
     <bean id="sessionResource" class="org.saiku.web.rest.resources.SessionResource">
         <property name="sessionService" ref="sessionService" />
+        <property name="userService" ref ="userServiceBean"/>
 
-    </bean>
-
-
-    <bean id="acl" scope="singleton" class="org.saiku.web.rest.objects.acl.Acl">
-        <property name="path" value="res:saiku-repository" />
-        <property name="adminRoles">
-            <list>
-                <value>ROLE_ADMIN</value>
-            </list>
-        </property>
     </bean>
 
     <bean id="repository2bean" scope="request"
           class="org.saiku.web.rest.resources.BasicRepositoryResource2">
         <property name="path" value="res:saiku-repository" />
         <property name="sessionService" ref="sessionService" />
-        <property name="acl" ref="acl" />
         <property name="datasourceService" ref="datasourceServiceBean"/>
     </bean>
     <!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->

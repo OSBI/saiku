@@ -32,6 +32,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
 import org.saiku.service.ISessionService;
+import org.saiku.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -45,12 +46,17 @@ public class SessionResource  {
 	private static final Logger log = LoggerFactory.getLogger(SessionResource.class);
 
 	private ISessionService sessionService;
+    private UserService userService;
 
-	public void setSessionService(ISessionService ss) {
+    public void setSessionService(ISessionService ss) {
 		this.sessionService = ss;
 	}
 
-	@POST
+    public void setUserService(UserService us) {
+        userService = us;
+    }
+
+    @POST
 	@Consumes("application/x-www-form-urlencoded")
 	public Response login(
 			@Context HttpServletRequest req,
@@ -82,6 +88,8 @@ public class SessionResource  {
 		} catch (Exception e) {
 			log.debug("Cannot get language!", e);
 		}
+
+        sess.put("isadmin", userService.isAdmin());
 		return sess;
 	}
 

@@ -71,7 +71,21 @@
 								<copy todir="target/dist/saiku-server/">
 									<fileset dir="${basedir}/scripts/" />
 								</copy>
-								<copy todir="target/dist/saiku-server/tomcat">
+                                <mkdir dir="target/dist/saiku-server/data"/>
+                                <unzip dest="target/dist/saiku-server/data/">
+                                    <fileset dir="${basedir}/../util/">
+                                        <include name="foodmart_h2.sql.zip" />
+                                    </fileset>
+                                </unzip>
+
+                                <mkdir dir="target/dist/saiku-server/repository"/>
+                                <mkdir dir="target/dist/saiku-server/repository/data"/>
+                                <copy todir="target/dist/saiku-server/repository">
+                                    <fileset dir="${basedir}/../util/">
+                                    <include name="configuration.xml"/>
+                                    </fileset>
+                                </copy>
+                                <copy todir="target/dist/saiku-server/tomcat">
 									<fileset dir="${tomcat.source}${tomcat.version}/" >
 									    <exclude name="webapps/docs/**" />
           								<exclude name="webapps/examples/**" />
