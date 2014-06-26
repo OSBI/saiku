@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import org.saiku.UserDAO;
 import org.saiku.database.dto.SaikuUser;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
@@ -39,9 +38,9 @@ public class JdbcUserDAO
     public void insertRole(SaikuUser user)
     {
         String sql = "INSERT INTO user_roles(user_id,username, role)\nVALUES (?,?,?);";
+        String removeSQL = "DELETE FROM user_roles where user_id = ?";
 
-
-        String[] existingroles = getRoles(user);
+        /*String[] existingroles = getRoles(user);
         List<String> bList = null;
         if ((existingroles != null) && (existingroles.length > 0))
         {
@@ -55,7 +54,13 @@ public class JdbcUserDAO
         }
         for (String r : bList) {
             getJdbcTemplate().update(sql, new Object[] { Integer.valueOf(user.getId()), user.getUsername(), r });
+        }*/
+        getJdbcTemplate().update(removeSQL, new Object[] {user.getId()});
+
+        for(String r: user.getRoles()) {
+            getJdbcTemplate().update(sql, new Object[] {Integer.valueOf(user.getId()), user.getUsername(), r});
         }
+
     }
 
     public void deleteUser(SaikuUser user)
@@ -105,6 +110,28 @@ public class JdbcUserDAO
     {
         String newsql = "DELETE from USERS where USER_ID = ?";
         getJdbcTemplate().update(newsql, new Object[] { username });
+    }
+
+    public SaikuUser updateUser(SaikuUser user) {
+        String sql = "UPDATE users set username = ?,password =?,email =? , enabled = ? where user_id = ?;";
+
+        String newsql = "SELECT MAX(USER_ID) from USERS where username = ?";
+        getJdbcTemplate().update(sql, new Object[] { user.getUsername(), user.getPassword(), user.getEmail(), Boolean.valueOf(true), user.getId()});
+
+        Integer name = (Integer)getJdbcTemplate().queryForObject(newsql, new Object[] { user.getUsername() }, Integer.class);
+
+        String updatesql = "UPDATE USER_ROLES set user_id = ? where user_id = ?";
+
+        getJdbcTemplate().update(updatesql, new Object[] { name, Integer.valueOf(user.getId()) });
+
+        user.setId(name.intValue());
+
+        insertRole(user);
+        return user;
+    }
+
+    public void updateRoles(SaikuUser user) {
+        insertRole(user);
     }
 
     private static final class UserMapper

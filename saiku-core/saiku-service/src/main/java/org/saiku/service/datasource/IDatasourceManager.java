@@ -21,6 +21,9 @@ import org.saiku.datasources.datasource.SaikuDatasource;
 
 import java.util.List;
 import java.util.Map;
+import org.saiku.repository.AclEntry;
+import org.saiku.repository.IRepositoryObject;
+import org.saiku.service.user.UserService;
 
 public interface IDatasourceManager {
 
@@ -49,13 +52,21 @@ public interface IDatasourceManager {
 
   public RepositoryFile getFile(String file);
 
-  public String getFileData(String file);
+  public String getFileData(String file, String username, List<String> roles);
 
-  public String saveFile(String path, String content, String user, List<String> roles);
+  public String getInternalFileData(String file);
 
-  public javax.jcr.Node getFiles();
+    public String saveFile(String path, String content, String user, List<String> roles);
+
+  public List<IRepositoryObject> getFiles(String type, String username, List<String> roles);
 
   public void createUser(String user);
 
   public void deleteFolder(String folder);
+
+  public AclEntry getACL(String object, String username, List<String> roles);
+
+  public void setACL(String object, String acl, String username, List<String> roles);
+
+  public void setUserService(UserService userService);
 }

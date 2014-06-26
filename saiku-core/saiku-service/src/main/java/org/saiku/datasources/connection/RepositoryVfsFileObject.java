@@ -226,7 +226,7 @@ public class RepositoryVfsFileObject
     {
         InputStream inputStream = null;
         if (exists()) {
-            inputStream = new ByteArrayInputStream(this.repo.getFileData(this.fileUrl).getBytes(StandardCharsets.UTF_8));
+            inputStream = new ByteArrayInputStream(this.repo.getInternalFileData(this.fileUrl).getBytes(StandardCharsets.UTF_8));
         }
         return inputStream;
     }

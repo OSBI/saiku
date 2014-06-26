@@ -22,6 +22,8 @@ import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.datasources.datasource.SaikuDatasource.Type;
+import org.saiku.repository.IRepositoryObject;
+import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
 
 import java.io.File;
@@ -35,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
+import org.saiku.repository.AclEntry;
 public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 
   private URL repoURL;
@@ -194,6 +196,14 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
         return null;
     }
 
+    public String getFileData(String file, String username, List<String> roles) {
+        return null;
+    }
+
+    public String getInternalFileData(String file) {
+        return null;
+    }
+
     public RepositoryFile getFile2(String file) {
         return null;
     }
@@ -206,6 +216,10 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
         return null;
     }
 
+    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
+        return null;
+    }
+
     public javax.jcr.Node getFiles() {
         return null;
     }
@@ -215,6 +229,18 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
     }
 
     public void deleteFolder(String folder) {
+
+    }
+
+    public AclEntry getACL(String object, String username, List<String> roles) {
+        return null;
+    }
+
+    public void setACL(String object, String acl, String username, List<String> roles) {
+
+    }
+
+    public void setUserService(UserService userService) {
 
     }
 

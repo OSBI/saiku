@@ -19,9 +19,8 @@ package org.saiku.service.datasource;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
-import org.saiku.repository.DataSource;
-import org.saiku.repository.IRepositoryManager;
-import org.saiku.repository.JackRabbitRepositoryManager;
+import org.saiku.repository.*;
+import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
 
 import javax.jcr.RepositoryException;
@@ -34,10 +33,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     IRepositoryManager irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager();
     private Map<String, SaikuDatasource> datasources =
             Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
+    private UserService userService;
 
     public void load() {
         try {
-            irm.start();
+            irm.start(userService);
         } catch (RepositoryException e) {
             e.printStackTrace();
         }
@@ -166,9 +166,18 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
 
-    public String getFileData(String file) {
+    public String getFileData(String file, String username, List<String> roles) {
         try {
-            return irm.getFile(file, "admin");
+            return irm.getFile(file, username, roles);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getInternalFileData(String file) {
+        try {
+            return irm.getInternalFile(file);
         } catch (RepositoryException e) {
             e.printStackTrace();
         }
@@ -185,9 +194,9 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         }
     }
 
-    public javax.jcr.Node getFiles() {
+    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
         try {
-            return irm.getAllFiles();
+            return irm.getAllFiles(type, username, roles);
         } catch (RepositoryException e) {
             e.printStackTrace();
         }
@@ -208,6 +217,19 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         } catch (RepositoryException e) {
             e.printStackTrace();
         }
+    }
+
+    public AclEntry getACL(String object, String username, List<String> roles) {
+        return irm.getACL(object, username, roles);
+    }
+
+    public void setACL(String object, String acl, String username, List<String> roles) {
+        irm.setACL(object, acl, username, roles);
+    }
+
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 }
 

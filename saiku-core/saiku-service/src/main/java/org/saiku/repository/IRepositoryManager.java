@@ -17,10 +17,10 @@ package org.saiku.repository;
 
 
 import org.saiku.datasources.connection.RepositoryFile;
+import org.saiku.service.user.UserService;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.InvalidQueryException;
 import java.io.IOException;
 import java.util.List;
 
@@ -30,7 +30,7 @@ import java.util.List;
 public interface IRepositoryManager {
   void init();
 
-  boolean start() throws RepositoryException;
+  boolean start(UserService userService) throws RepositoryException;
 
   void createUser( String u ) throws RepositoryException;
 
@@ -52,7 +52,10 @@ public interface IRepositoryManager {
 
     javax.jcr.Node saveFile(Object file, String path, String user, String type, List<String> roles) throws RepositoryException;
 
-    String getFile(String s, String username) throws RepositoryException;
+    String getFile(String s, String username, List<String> roles) throws RepositoryException;
+
+    String getInternalFile(String s) throws RepositoryException;
+
 
     List<org.saiku.database.dto.MondrianSchema> getAllSchema() throws RepositoryException;
 
@@ -66,7 +69,13 @@ public interface IRepositoryManager {
 
     RepositoryFile getFile(String fileUrl);
 
-    Node getAllFiles() throws RepositoryException;
+    List<IRepositoryObject> getAllFiles(String type, String username, List<String> roles) throws RepositoryException;
 
     void deleteFile(String datasourcePath);
+
+    AclEntry getACL(String object, String username, List<String> roles);
+
+    void setACL(String object, String acl, String username, List<String> roles);
+
+
 }

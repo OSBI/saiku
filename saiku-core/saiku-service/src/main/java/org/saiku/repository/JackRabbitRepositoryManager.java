@@ -17,10 +17,15 @@ package org.saiku.repository;
 
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.JcrUtils;
+import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.TransientRepository;
+import org.apache.jackrabbit.core.config.RepositoryConfig;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
+import org.saiku.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +42,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -53,6 +56,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     private Repository repository;
     private Session session;
     private Node root;
+    private UserService userService;
 
     private JackRabbitRepositoryManager() {
 
@@ -81,23 +85,32 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     }
 
 
-    public boolean start() throws RepositoryException {
+    public boolean start(UserService userService) throws RepositoryException {
+        this.userService = userService;
         if (session == null) {
             log.info("starting repo");
-            repository = new TransientRepository("../jackrabbit2.properties", "./target/tmp");
+            String xml = "../../repository/configuration.xml";
+            String dir = "../../repository/data";
+            RepositoryConfig config = RepositoryConfig.create(xml, dir);
+            repository = RepositoryImpl.create(config);
             log.info("repo started");
             log.info("logging in");
             login();
             log.info("logged in");
             root = session.getRootNode();
-            JcrUtils.getOrAddFolder(root, "homes");
-            JcrUtils.getOrAddFolder(root, "datasources");
 
             root.getSession().save();
             createFiles();
+            createFolders();
             createNamespace();
             createSchemas();
             createDataSources();
+
+            Node n = JcrUtils.getOrAddFolder(root, "homes");
+            n.addMixin("nt:saikufolders");
+
+            n = JcrUtils.getOrAddFolder(root, "datasources");
+            n.addMixin("nt:saikufolders");
             session.save();
             log.info("node added");
         }
@@ -107,10 +120,24 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
     public void createUser(String u) throws RepositoryException {
         login();
-        Node node = root.getNode("homes").addNode("home:" + u, "nt:folder");
-        node.setProperty("type", "homedirectory");
-        node.setProperty("user", u);
-        node.getSession().save();
+        Node parent = JcrUtils.getNodeIfExists(root, "homes");
+        if(parent != null) {
+            Node node = parent.addNode("home:" + u, "nt:folder");
+            node.addMixin("nt:saikufolders");
+            //node.setProperty("type", "homedirectory");
+            //node.setProperty("user", u);
+            AclEntry e = new AclEntry(u, AclType.PRIVATE, null, null);
+
+            Acl2 acl2 = new Acl2(node);
+            acl2.addEntry(node.getPath(), e);
+            acl2.serialize(node);
+
+            node.getSession().save();
+
+        }
+        else{
+            //TODO CANT CREATE DIRECTORY
+        }
     }
 
     public javax.jcr.NodeIterator getHomeFolders() throws RepositoryException {
@@ -125,6 +152,12 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
     public Node getFolder(String user, String directory) throws RepositoryException {
         return getHomeFolder(user).getNode(directory);
+    }
+    public Node getFolderNode(String directory) throws RepositoryException {
+        if(directory.startsWith("/")){
+            directory = directory.substring(1, directory.length());
+        }
+        return root.getNode(directory);
     }
 
     public void shutdown() {
@@ -186,36 +219,70 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     }
 
     public Node saveFile(Object file, String path, String user, String type, List<String> roles) throws RepositoryException {
+        if(file==null){
+            //Create new folder
+            String parent = path.substring(0, path.lastIndexOf("/"));
+            Node node = getFolder(parent);
+            Acl2 acl2 = new Acl2(node);
+            acl2.setAdminRoles(userService.getAdminRoles());
+            if (!acl2.canWrite(node, user, roles)) {
+                //TODO Throw exception
+            }
 
-        int pos = path.lastIndexOf("/");
-        String filename = "./" + path.substring(pos + 1, path.length());
-        Node n = getFolder(path.substring(0, pos));
-        Node resNode = n.addNode(filename, "nt:file");
-        if(type.equals("nt:saikufiles")){
-            resNode.addMixin("nt:saikufiles");
-        }
-        else if(type.equals("nt:mondrianschema")){
-            resNode.addMixin("nt:mondrianschema");
-        }
-        else if(type.equals("nt:olapdatasource")){
-            resNode.addMixin("nt:olapdatasource");
-        }
-        Node contentNode = resNode.addNode("jcr:content", "nt:resource");
+            int pos = path.lastIndexOf("/");
+            String filename = "./" + path.substring(pos + 1, path.length());
+            Node resNode = node.addNode(filename, "nt:folder");
+            resNode.addMixin("nt:saikufolders");
+            return resNode;
 
-        //resNode.setProperty ("jcr:mimeType", "text/plain");
-        //resNode.setProperty ("jcr:encoding", "utf8");
-        contentNode.setProperty("jcr:data", (String) file);
+        }
+        else {
+            int pos = path.lastIndexOf("/");
+            String filename = "./" + path.substring(pos + 1, path.length());
+            Node n = getFolder(path.substring(0, pos));
+            Acl2 acl2 = new Acl2(n);
+            acl2.setAdminRoles(userService.getAdminRoles());
+            if (!acl2.canWrite(n, user, roles)) {
+                //TODO Throw exception
+            }
+
+
+            Node resNode = n.addNode(filename, "nt:file");
+            if (type.equals("nt:sa" +
+                    "ikufiles")) {
+                resNode.addMixin("nt:saikufiles");
+            } else if (type.equals("nt:mondrianschema")) {
+                resNode.addMixin("nt:mondrianschema");
+            } else if (type.equals("nt:olapdatasource")) {
+                resNode.addMixin("nt:olapdatasource");
+            }
+            Node contentNode = resNode.addNode("jcr:content", "nt:resource");
+
+            //resNode.setProperty ("jcr:mimeType", "text/plain");
+            //resNode.setProperty ("jcr:encoding", "utf8");
+            contentNode.setProperty("jcr:data", (String) file);
         /*Calendar lastModified = Calendar.getInstance ();
         lastModified.setTimeInMillis (new Date().getTime());
         resNode.setProperty ("jcr:lastModified", lastModified);*/
-        resNode.getSession().save();
-        return resNode;
+            resNode.getSession().save();
+            return resNode;
+        }
     }
 
-    public String getFile(String s, String username) throws RepositoryException {
+    public String getFile(String s, String username, List<String> roles) throws RepositoryException {
+        Node node = getFolder(s);
+        Acl2 acl2 = new Acl2(node);
+        acl2.setAdminRoles(userService.getAdminRoles());
+        if ( !acl2.canRead(node, username, roles) ) {
+            //TODO Throw exception
+        }
         return getFolder(s).getNodes("jcr:content").nextNode().getProperty("jcr:data").getString();
     }
 
+    public String getInternalFile(String s) throws RepositoryException {
+
+        return getFolder(s).getNodes("jcr:content").nextNode().getProperty("jcr:data").getString();
+    }
     public List<MondrianSchema> getAllSchema() throws RepositoryException {
         QueryManager qm = session.getWorkspace().getQueryManager();
         String sql = "SELECT * FROM [nt:mondrianschema]";
@@ -240,8 +307,8 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         return l;
     }
 
-    public Node getAllFiles() throws RepositoryException {
-        return root;
+    public List<IRepositoryObject> getAllFiles(String type, String username, List<String> roles) throws RepositoryException {
+        return getRepoObjects(root, type, username, roles);
     }
 
     public void deleteFile(String datasourcePath) {
@@ -254,6 +321,70 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         }
 
     }
+    private AclEntry getAclObj(String path){
+        Node node = null;
+        try {
+            node = getFolderNode(path);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        Acl2 acl2 = new Acl2(node);
+        acl2.setAdminRoles(userService.getAdminRoles());
+        AclEntry entry = acl2.getEntry(path);
+        if ( entry == null ) entry = new AclEntry();
+        return entry;
+    }
+    public AclEntry getACL(String object, String username, List<String> roles) {
+
+
+
+        Node node = null;
+        try {
+               node = getFolderNode(object);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        Acl2 acl2 = new Acl2(node);
+        acl2.setAdminRoles(userService.getAdminRoles());
+
+        if(acl2.canGrant(node, username, roles)){
+            return getAclObj(object);
+        }
+
+        return null;
+    }
+
+    public void setACL(String object, String acl, String username, List<String> roles) {
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        log.debug("Set ACL to " + object + " : " + acl);
+        AclEntry ae = null;
+        try {
+            ae = mapper.readValue(acl, AclEntry.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Node node = null;
+        try {
+            node = getFolderNode(object);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+
+        Acl2 acl2 = new Acl2(node);
+        acl2.setAdminRoles(userService.getAdminRoles());
+
+        if(acl2.canGrant(node, username, roles)) {
+            if (node != null) {
+                acl2.addEntry(object, ae);
+                acl2.serialize(node);
+            }
+        }
+
+    }
+
 
     public List<DataSource> getAllDataSources() throws RepositoryException {
         QueryManager qm = session.getWorkspace().getQueryManager();
@@ -485,4 +616,135 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
         manager.registerNodeType(ntt, false);
     }
+
+    public void createFolders() throws RepositoryException {
+
+        NodeTypeManager manager =
+                session.getWorkspace().getNodeTypeManager();
+        NodeTypeTemplate ntt = manager.createNodeTypeTemplate();
+        ntt.setName("nt:saikufolders");
+        String[] str = new String[]{"nt:folder"};
+        ntt.setDeclaredSuperTypeNames(str);
+        ntt.setMixin(true);
+        PropertyDefinitionTemplate pdt = manager.createPropertyDefinitionTemplate();
+        pdt.setName("owner");
+        pdt.setRequiredType(PropertyType.STRING);
+
+
+        PropertyDefinitionTemplate pdt2 = manager.createPropertyDefinitionTemplate();
+        pdt2.setName("type");
+        pdt2.setRequiredType(PropertyType.STRING);
+
+        PropertyDefinitionTemplate pdt4 = manager.createPropertyDefinitionTemplate();
+        pdt4.setName("roles");
+        pdt4.setRequiredType(PropertyType.STRING);
+
+        PropertyDefinitionTemplate pdt5 = manager.createPropertyDefinitionTemplate();
+        pdt5.setName("users");
+        pdt5.setRequiredType(PropertyType.STRING);
+
+
+
+        ntt.getPropertyDefinitionTemplates().add(pdt);
+        ntt.getPropertyDefinitionTemplates().add(pdt2);
+        ntt.getPropertyDefinitionTemplates().add(pdt4);
+        ntt.getPropertyDefinitionTemplates().add(pdt5);
+
+        manager.registerNodeType(ntt, false);
+    }
+
+    private List<IRepositoryObject> getRepoObjects(Node files, String fileType, String username, List<String> roles) {
+        Acl2 acl2 = new Acl2(files);
+        acl2.setAdminRoles(userService.getAdminRoles());
+
+        List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
+        Iterable<Node> objects = null;
+        NodeIterator n = null;
+        try {
+            n = files.getNodes();
+
+
+            while(n.hasNext()){
+                Node node = n.nextNode();
+                String nodetype = node.getPrimaryNodeType().getName();
+                String nodename = node.getName();
+                String nodepath = node.getPath();
+
+                objects = JcrUtils.getChildNodes(node);
+                String s = (node.getPrimaryNodeType().getName());
+                if ( acl2.canRead(node, username, roles) ) {
+                    List<AclMethod> acls = acl2.getMethods(node, username, roles);
+                    if (node.getPrimaryNodeType().getName().equals("nt:file")) {
+                        if (StringUtils.isNotEmpty(fileType) && !node.getName().endsWith(fileType)) {
+                            continue;
+                        }
+                        String extension = ".saiku";//file.getName().getExtension();
+
+                        repoObjects.add(new RepositoryFileObject(node.getName(), "#" + node.getPath(), extension, node.getPath(), acls));
+                    }
+                    if (node.getPrimaryNodeType().getName().equals("nt:folder")) {
+                        repoObjects.add(new RepositoryFolderObject(node.getName(), "#" + node.getPath(), node.getPath(), acls, getRepoObjects(node, fileType, username, roles)));
+                    }
+                    Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
+
+                        public int compare(IRepositoryObject o1, IRepositoryObject o2) {
+                            if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(IRepositoryObject.Type.FILE))
+                                return -1;
+                            if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
+                                return 1;
+                            return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+
+                        }
+
+                    });
+                }
+                for (Node file : objects) {
+                    //if (!file.isHidden()) {
+                    Acl2 acl3 = new Acl2(files);
+                    acl3.setAdminRoles(userService.getAdminRoles());
+                    if ( acl3.canRead(file ,username, roles) ) {
+                        String filename = file.getName();
+                        String relativePath = file.getPath();//repo.getName().getRelativeName(file.getName());
+
+
+                        //if ( acl.canRead(relativePath,username, roles) ) {
+                            List<AclMethod> acls = acl3.getMethods(file, username, roles);
+
+                        String s2 = (file.getPrimaryNodeType().getName());
+
+                        if (file.getPrimaryNodeType().getName().equals("nt:saikufiles")) {
+                            if (StringUtils.isNotEmpty(fileType) && !filename.endsWith(fileType)) {
+                                continue;
+                            }
+                            String extension = ".saiku";//file.getName().getExtension();
+
+                                  repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath, acls));
+                        }
+                        if (file.getPrimaryNodeType().getName().equals("nt:folder")) {
+                            repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepoObjects(file, fileType, username, roles)));
+                        }
+                        Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
+
+                            public int compare(IRepositoryObject o1, IRepositoryObject o2) {
+                                if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(IRepositoryObject.Type.FILE))
+                                    return -1;
+                                if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
+                                    return 1;
+                                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+
+                            }
+
+                        });
+                    }
+                    //}
+                    //}
+                }
+
+            }
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        return repoObjects;
+    }
+
 }

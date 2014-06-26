@@ -43,7 +43,7 @@ public class JackrabbitSteps {
   @Step
   public boolean startRepository() {
     try {
-      return iRepositoryManager.start();
+      return iRepositoryManager.start(null);
     } catch ( RepositoryException e ) {
       e.printStackTrace();
     }
@@ -153,7 +153,7 @@ public class JackrabbitSteps {
 
     @Step
     public String getFile(String s, String username) throws RepositoryException {
-        return iRepositoryManager.getFile(s, username);
+        return iRepositoryManager.getFile(s, username, null);
     }
 
     @Step

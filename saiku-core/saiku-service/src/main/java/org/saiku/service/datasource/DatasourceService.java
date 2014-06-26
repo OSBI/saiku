@@ -22,6 +22,8 @@ import java.util.Map;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.datasources.datasource.SaikuDatasource;
+import org.saiku.repository.AclEntry;
+import org.saiku.repository.IRepositoryObject;
 
 public class DatasourceService implements Serializable {
 
@@ -50,8 +52,8 @@ public class DatasourceService implements Serializable {
       }
       else{
           if(overwrite){
-              datasources.removeDatasource(ds.getName());
-              datasources.addDatasource(ds);
+              datasources.removeDatasource(ds.getProperties().getProperty("id"));
+              datasources.addDatasource(datasource);
           }
           else {
               throw new Exception("Datasource Name Already Exists!");
@@ -86,11 +88,11 @@ public class DatasourceService implements Serializable {
 
   public String saveFile(String content, String path, String name, List<String> roles) { return datasources.saveFile(path, content, name, roles); }
 
-  public javax.jcr.Node getFiles() {
-      return datasources.getFiles();
+  public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
+      return datasources.getFiles(type,username,roles);
   }
 
-  public String getFileData(String path){return datasources.getFileData(path); }
+  public String getFileData(String path, String username, List<String> roles){return datasources.getFileData(path, username, roles); }
 
   public void importLegacySchema(){
 
@@ -102,5 +104,13 @@ public class DatasourceService implements Serializable {
 
   public void importLegacyUsers(){
 
+  }
+
+  public void setResourceACL(String file, String acl, String username, List<String> roles){
+        datasources.setACL(file, acl, username, roles);
+  }
+
+  public AclEntry getResourceACL(String file, String username, List<String> roles){
+       return datasources.getACL(file, username, roles);
   }
 }
