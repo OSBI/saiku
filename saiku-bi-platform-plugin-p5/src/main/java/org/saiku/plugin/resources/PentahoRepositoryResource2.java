@@ -15,8 +15,11 @@
  */
 package org.saiku.plugin.resources;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -93,7 +96,7 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 	@GET
 	@Produces({"application/json" })
 	public List<IRepositoryObject> getRepository (
-			final @QueryParam("path") String path,
+			@QueryParam("path") String path,
 			final @QueryParam("type") String type,
 			final @QueryParam("showHidden") @DefaultValue("false") Boolean hidden)  
 	{
@@ -104,6 +107,9 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 //			}
 			
 			IUserContentAccess access = contentAccessFactory.getUserContentAccess("/");
+            if(path!=null){
+                path = path.replaceAll(":", "/");
+            }
 			String root = (StringUtils.isBlank(path)) ? "/" : path;
 			return getRepositoryObjects(access, root, type, hidden);
 		} catch (Exception e) {
@@ -130,7 +136,9 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 			if (StringUtils.isBlank(file)) {
 				throw new IllegalArgumentException("Path cannot be null  - Illegal Path: " + file);
 			}
-
+            if(file!=null){
+                file = file.replaceAll(":", "/");
+            }
 			log.debug("Get repository file: " + file);
 
 			IUserContentAccess access = contentAccessFactory.getUserContentAccess(null);
@@ -180,7 +188,7 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 
 			IUserContentAccess access = contentAccessFactory.getUserContentAccess(null);
 
-			boolean ok = access.saveFile(file, IOUtils.toInputStream(content));
+			boolean ok = access.saveFile(file, /*IOUtils.toInputStream(content)*/new ByteArrayInputStream( safeGetEncodedBytes(content)));
 			if (!ok) {
 				throw new SaikuServiceException("Failed to write file: " + file);
 			}
@@ -192,6 +200,17 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 		}
 
 	}
+    private static final String ENCODING = "UTF-8";
+
+    private static byte[] safeGetEncodedBytes( String text ) {
+        try {
+            return text.getBytes( ENCODING );
+        } catch ( UnsupportedEncodingException ex ) {
+            // Never happens
+            return null;
+        }
+    }
+
 
 	/**
 	 * Delete a resource.
@@ -356,7 +375,8 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 			}
 		};
 		List<IBasicFile> files = new ArrayList<IBasicFile>();
-		IUserContentAccess access = contentAccessFactory.getUserContentAccess(null);
+
+        IUserContentAccess access = contentAccessFactory.getUserContentAccess(null);
 		if (access.fileExists(path)) {
 			IBasicFile bf = access.fetchFile(path);
 			if (!bf.isDirectory()) {
