@@ -89,7 +89,12 @@ public class SessionResource  {
 			log.debug("Cannot get language!", e);
 		}
 
-        sess.put("isadmin", userService.isAdmin());
+        try {
+            sess.put("isadmin", userService.isAdmin());
+        }
+        catch (Exception e){
+            //throw new UnsupportedOperationException();
+        }
 		return sess;
 	}
 

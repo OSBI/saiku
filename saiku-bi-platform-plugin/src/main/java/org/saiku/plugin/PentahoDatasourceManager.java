@@ -38,7 +38,10 @@ import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
 import org.saiku.datasources.connection.ISaikuConnection;
 import org.saiku.datasources.datasource.SaikuDatasource;
+import org.saiku.repository.AclEntry;
+import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.datasource.IDatasourceManager;
+import org.saiku.service.user.UserService;
 import org.xml.sax.EntityResolver;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
@@ -205,6 +208,42 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
     public RepositoryFile getFile(String file){
         return null;
+    }
+
+    public String getFileData(String s, String s2, List<String> strings) {
+        return null;
+    }
+
+    public String getInternalFileData(String s) {
+        return null;
+    }
+
+    public String saveFile(String s, String s2, String s3, List<String> strings) {
+        return null;
+    }
+
+    public List<IRepositoryObject> getFiles(String s, String s2, List<String> strings) {
+        return null;
+    }
+
+    public void createUser(String s) {
+
+    }
+
+    public void deleteFolder(String s) {
+
+    }
+
+    public AclEntry getACL(String s, String s2, List<String> strings) {
+        return null;
+    }
+
+    public void setACL(String s, String s2, String s3, List<String> strings) {
+
+    }
+
+    public void setUserService(UserService userService) {
+
     }
 
     public String getFileData(String file){

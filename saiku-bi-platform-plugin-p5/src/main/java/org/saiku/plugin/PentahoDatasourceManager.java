@@ -39,188 +39,226 @@ import org.pentaho.platform.util.messages.LocaleHelper;
 import org.saiku.datasources.connection.ISaikuConnection;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.service.datasource.IDatasourceManager;
-import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
+import org.saiku.database.dto.MondrianSchema;
+import org.saiku.service.user.UserService;
+import org.saiku.repository.AclEntry;
+import org.saiku.repository.IRepositoryObject;
+import javax.jcr.RepositoryException;
 
 public class PentahoDatasourceManager implements IDatasourceManager {
 
-	private static final Log LOG = LogFactory.getLog(PentahoDatasourceManager.class);
+    private static final Log LOG = LogFactory.getLog(PentahoDatasourceManager.class);
 
-	private Map<String,SaikuDatasource> datasources = Collections.synchronizedMap(new HashMap<String,SaikuDatasource>());
+    private Map<String, SaikuDatasource> datasources = Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
 
-	private String saikuDatasourceProcessor;
-	
-	private String saikuConnectionProcessor;
+    private String saikuDatasourceProcessor;
 
-	private String dynamicSchemaProcessor;
+    private String saikuConnectionProcessor;
 
-	private IPentahoSession session;
+    private String dynamicSchemaProcessor;
 
-	private IMondrianCatalogService catalogService;
+    private IPentahoSession session;
 
-	private String datasourceResolver;
+    private IMondrianCatalogService catalogService;
 
-	public void setDatasourceResolverClass(String datasourceResolverClass) {
-		this.datasourceResolver = datasourceResolverClass;
-	}
-	
-	public void setSaikuDatasourceProcessor(String datasourceProcessor) {
-		this.saikuDatasourceProcessor = datasourceProcessor;
-	}
-	
-	public void setSaikuConnectionProcessor(String connectionProcessor) {
-		this.saikuConnectionProcessor = connectionProcessor;
-	}
-	
-	public void setDynamicSchemaProcessor(String dynamicSchemaProcessor) {
-		this.dynamicSchemaProcessor = dynamicSchemaProcessor;
-	}
-	
-	public PentahoDatasourceManager() {
-	}
-	
-	public void init() {
-		load();
-	}
+    private String datasourceResolver;
 
-	public void load() {
-		datasources.clear();
-		loadDatasources();
-	}
+    public void setDatasourceResolverClass(String datasourceResolverClass) {
+        this.datasourceResolver = datasourceResolverClass;
+    }
 
-    public void unload(){
+    public void setSaikuDatasourceProcessor(String datasourceProcessor) {
+        this.saikuDatasourceProcessor = datasourceProcessor;
+    }
+
+    public void setSaikuConnectionProcessor(String connectionProcessor) {
+        this.saikuConnectionProcessor = connectionProcessor;
+    }
+
+    public void setDynamicSchemaProcessor(String dynamicSchemaProcessor) {
+        this.dynamicSchemaProcessor = dynamicSchemaProcessor;
+    }
+
+    public PentahoDatasourceManager() {
+    }
+
+    public void init() {
+        load();
+    }
+
+    public void load() {
+        datasources.clear();
+        loadDatasources();
+    }
+
+    public void unload() {
 
     }
 
-	private Map<String, SaikuDatasource> loadDatasources() {
-		try {
-			this.session = PentahoSessionHolder.getSession();
-			
-			ClassLoader cl = this.getClass().getClassLoader();
-			ClassLoader cl2 = this.getClass().getClassLoader().getParent();
-			
-			Thread.currentThread().setContextClassLoader(cl2);
-			this.catalogService = PentahoSystem.get(IMondrianCatalogService.class,
-					session);
-			
-			List<MondrianCatalog> catalogs = catalogService.listCatalogs(session, true);
-			Thread.currentThread().setContextClassLoader(cl);
-			if (StringUtils.isNotBlank(this.datasourceResolver)) {
-				MondrianProperties.instance().DataSourceResolverClass.setString(this.datasourceResolver);
-			}
-			
-			for (MondrianCatalog catalog : catalogs) {
-				String name = catalog.getName();
-				Util.PropertyList parsedProperties = Util.parseConnectString(catalog
-						.getDataSourceInfo());
+    private Map<String, SaikuDatasource> loadDatasources() {
+        try {
+            this.session = PentahoSessionHolder.getSession();
 
-				String dynProcName = parsedProperties.get(
-		                RolapConnectionProperties.DynamicSchemaProcessor.name());
-				if (StringUtils.isNotBlank(dynamicSchemaProcessor) && StringUtils.isBlank(dynProcName)) {
-					parsedProperties.put(RolapConnectionProperties.DynamicSchemaProcessor.name(), dynamicSchemaProcessor);
-					
-				}
-				
-				StringBuilder builder = new StringBuilder();
-				builder.append("jdbc:mondrian:");
-				builder.append("Catalog=");
-				builder.append(catalog.getDefinition());
-				builder.append("; ");
+            ClassLoader cl = this.getClass().getClassLoader();
+            ClassLoader cl2 = this.getClass().getClassLoader().getParent();
 
-				Iterator<Pair<String, String>> it = parsedProperties.iterator();
+            Thread.currentThread().setContextClassLoader(cl2);
+            this.catalogService = PentahoSystem.get(IMondrianCatalogService.class,
+                    session);
 
-				while (it.hasNext()) {
-					Pair<String, String> pair = it.next();
-					builder.append(pair.getKey());
-					builder.append("=");
-					builder.append(pair.getValue());
-					builder.append("; ");
-				}
+            List<MondrianCatalog> catalogs = catalogService.listCatalogs(session, true);
+            Thread.currentThread().setContextClassLoader(cl);
+            if (StringUtils.isNotBlank(this.datasourceResolver)) {
+                MondrianProperties.instance().DataSourceResolverClass.setString(this.datasourceResolver);
+            }
+
+            for (MondrianCatalog catalog : catalogs) {
+                String name = catalog.getName();
+                Util.PropertyList parsedProperties = Util.parseConnectString(catalog
+                        .getDataSourceInfo());
+
+                String dynProcName = parsedProperties.get(
+                        RolapConnectionProperties.DynamicSchemaProcessor.name());
+                if (StringUtils.isNotBlank(dynamicSchemaProcessor) && StringUtils.isBlank(dynProcName)) {
+                    parsedProperties.put(RolapConnectionProperties.DynamicSchemaProcessor.name(), dynamicSchemaProcessor);
+
+                }
+
+                StringBuilder builder = new StringBuilder();
+                builder.append("jdbc:mondrian:");
+                builder.append("Catalog=");
+                builder.append(catalog.getDefinition());
+                builder.append("; ");
+
+                Iterator<Pair<String, String>> it = parsedProperties.iterator();
+
+                while (it.hasNext()) {
+                    Pair<String, String> pair = it.next();
+                    builder.append(pair.getKey());
+                    builder.append("=");
+                    builder.append(pair.getValue());
+                    builder.append("; ");
+                }
 
 //				builder.append("PoolNeeded=false; ");
-				
-				builder.append("Locale=");
-				if (session != null) {
-					builder.append(session.getLocale().toString());
-				} else {
-					builder.append(LocaleHelper.getLocale().toString());
-				}
-				builder.append(";");
 
-				String url = builder.toString();
-				
-				LOG.debug("NAME: " + catalog.getName() + " DSINFO: " + url + "  ###CATALOG: " + catalog.getName());
-				
-				Properties props = new Properties();
-				props.put("driver", "mondrian.olap4j.MondrianOlap4jDriver");
-				props.put("location",url);
-				
-				if (saikuDatasourceProcessor != null) {
-					props.put(ISaikuConnection.DATASOURCE_PROCESSORS, saikuDatasourceProcessor);
-				}
-				if (saikuConnectionProcessor != null) {
-					props.put(ISaikuConnection.CONNECTION_PROCESSORS, saikuConnectionProcessor);
-				}
-				props.list(System.out);
+                builder.append("Locale=");
+                if (session != null) {
+                    builder.append(session.getLocale().toString());
+                } else {
+                    builder.append(LocaleHelper.getLocale().toString());
+                }
+                builder.append(";");
 
-				SaikuDatasource sd = new SaikuDatasource(name, SaikuDatasource.Type.OLAP, props);
-				datasources.put(name, sd);
-				
-				
-			}
-			return datasources;
-		} catch(Exception e) {
-			e.printStackTrace();
-			LOG.error(e);
-		}
-		return new HashMap<String, SaikuDatasource>();
-	}
+                String url = builder.toString();
+
+                LOG.debug("NAME: " + catalog.getName() + " DSINFO: " + url + "  ###CATALOG: " + catalog.getName());
+
+                Properties props = new Properties();
+                props.put("driver", "mondrian.olap4j.MondrianOlap4jDriver");
+                props.put("location", url);
+
+                if (saikuDatasourceProcessor != null) {
+                    props.put(ISaikuConnection.DATASOURCE_PROCESSORS, saikuDatasourceProcessor);
+                }
+                if (saikuConnectionProcessor != null) {
+                    props.put(ISaikuConnection.CONNECTION_PROCESSORS, saikuConnectionProcessor);
+                }
+                props.list(System.out);
+
+                SaikuDatasource sd = new SaikuDatasource(name, SaikuDatasource.Type.OLAP, props);
+                datasources.put(name, sd);
 
 
+            }
+            return datasources;
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOG.error(e);
+        }
+        return new HashMap<String, SaikuDatasource>();
+    }
 
-	public SaikuDatasource addDatasource(SaikuDatasource datasource) {
-		throw new UnsupportedOperationException();
-	}
 
-	public SaikuDatasource setDatasource(SaikuDatasource datasource) {
-		throw new UnsupportedOperationException();
-	}
+    public SaikuDatasource addDatasource(SaikuDatasource datasource) {
+        throw new UnsupportedOperationException();
+    }
 
-	public List<SaikuDatasource> addDatasources(List<SaikuDatasource> datasources) {
-		throw new UnsupportedOperationException();
-	}
+    public SaikuDatasource setDatasource(SaikuDatasource datasource) {
+        throw new UnsupportedOperationException();
+    }
 
-	public boolean removeDatasource(String datasourceName) {
-		throw new UnsupportedOperationException();
-	}
+    public List<SaikuDatasource> addDatasources(List<SaikuDatasource> datasources) {
+        throw new UnsupportedOperationException();
+    }
 
-	public Map<String,SaikuDatasource> getDatasources() {
-		return loadDatasources();
-	}
+    public boolean removeDatasource(String datasourceName) {
+        throw new UnsupportedOperationException();
+    }
 
-	public SaikuDatasource getDatasource(String datasourceName) {
-		return loadDatasources().get(datasourceName);
-	}
+    public Map<String, SaikuDatasource> getDatasources() {
+        return loadDatasources();
+    }
+
+    public SaikuDatasource getDatasource(String datasourceName) {
+        return loadDatasources().get(datasourceName);
+    }
 
     public void addSchema(String file, String path, String name) {
-
+        throw new UnsupportedOperationException();
     }
 
     public List<MondrianSchema> getMondrianSchema() {
-     return null;
+        throw new UnsupportedOperationException();
     }
 
     public MondrianSchema getMondrianSchema(String catalog) {
-        //return irm.getMondrianSchema();
-        return null;
+        throw new UnsupportedOperationException();
     }
 
-    public RepositoryFile getFile(String file){
-        return null;
+    public RepositoryFile getFile(String file) {
+        throw new UnsupportedOperationException();
     }
 
-    public String getFileData(String file){
+    public String getFileData(String file) {
+        throw new UnsupportedOperationException();
+    }
 
-        return null;
+    public void setUserService(UserService us) {
+
+    }
+
+    public void setACL(String a, String b, String c, List<String> d) {
+
+    }
+
+    public AclEntry getACL(String a, String b, List<String> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    public void deleteFolder(String folder) {
+        throw new UnsupportedOperationException();
+    }
+
+    public void createUser(String username) {
+        throw new UnsupportedOperationException();
+    }
+
+    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
+        throw new UnsupportedOperationException();
+    }
+
+    public String saveFile(String path, String content, String user, List<String> roles) {
+        throw new UnsupportedOperationException();
+
+    }
+
+    public String getInternalFileData(String file) {
+        throw new UnsupportedOperationException();
+    }
+
+    public String getFileData(String file, String username, List<String> roles) {
+        throw new UnsupportedOperationException();
     }
 }
