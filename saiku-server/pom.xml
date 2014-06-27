@@ -75,6 +75,7 @@
                                 <unzip dest="target/dist/saiku-server/data/">
                                     <fileset dir="${basedir}/../util/">
                                         <include name="foodmart_h2.sql.zip" />
+                                        <include name="FoodMart4.xml"/>
                                     </fileset>
                                 </unzip>
 

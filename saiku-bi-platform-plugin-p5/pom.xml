@@ -184,6 +184,30 @@
 				</executions>
 
 			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-patch-plugin</artifactId>
+                <version>1.1.1</version>
+                <configuration>
+                    <targetDirectory>target/</targetDirectory>
+                    <skipApplication>false</skipApplication>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>bugfix-patches</id>
+                        <configuration>
+                            <patchDirectory>./patches</patchDirectory>
+                            <patchTrackingFile>${project.build.directory}/optimization-files/bugfix/patches-applied.txt</patchTrackingFile>
+                            <naturalOrderProcessing>true</naturalOrderProcessing>
+                        </configuration>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>apply</goal>
+                        </goals>
+                    </execution>
+
+                </executions>
+            </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
