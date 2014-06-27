@@ -79,9 +79,17 @@ textarea, select {
     font-weight: bold;
 }
 .sprite, .ui-dialog-titlebar-close,.ui-dialog-titlebar-close button, .ui-dialog-titlebar-close:hover, .dialog_icon {
-	background-image: url(../../../images/sprite.png);
-	background-repeat: no-repeat;
+    background: url(../../../images/sprite.png) no-repeat;
 }
+.admin {
+    background: url(../../../images/src/admin.png) no-repeat;
+}
+.dashboard {
+    background: url(../../../images/src/dashboard.png) no-repeat;
+}
+.accordion-toggle {cursor: pointer;}
+.accordion-content {display: none;padding:10px;}
+.accordion-content.default {display: block;}
 
 /** Header */
 #header {
@@ -1847,4 +1855,88 @@ span.cancel_search:hover {
     height: 18px;
     width: 20px;
     -moz-background-origin: 0px 2px;
+}
+
+.controls {
+    margin-bottom: 20px;
+}
+.gridster ul {
+    background-color: #EFEFEF;
+    list-style-type: none;
+}
+.gridster li {
+    font-size: 1em;
+    font-weight: bold;
+    line-height: 100%;
+    text-align: center;
+}
+.gridster {
+    margin: 0 auto;
+    opacity: 0.8;
+    transition: opacity 0.6s ease 0s;
+}
+.gridster .gs-w {
+    background: none repeat scroll 0 0 #DDDDDD;
+    cursor: pointer;
+}
+.gridster .player {
+    background: none repeat scroll 0 0 #BBBBBB;
+}
+.gridster .preview-holder {
+    background: none repeat scroll 0 0 #FF0000 !important;
+    border: medium none !important;
+}
+
+.user_info {
+    width:600px;
+}
+.user_info label {
+    display: inline-block; width: 140px; text-align: right;
+    /*float: left;
+    text-align: right;
+    margin-right: 15px;
+    width: 100px;
+ display: block*/
+}
+.user_info select {
+    border: 1px solid #CCC;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-size: 100.01%;
+    margin: 0;
+    padding: 2px;
+    width: 300px;
+}
+
+.user_info input{
+    display:inline;
+    width: 300px;
+}
+
+.user_info input:focus {
+    border: 2px solid #900;
+}
+.user_info .user_button{
+    float:right;
+    margin-right:50px;
+}
+.user_info .upload_button{
+    padding:3px;
+    width:auto;
+    height:auto;
+}
+.user_info h3 {
+    background: #F9F9F9;
+
+    /*
+    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#F0F0F0));
+    background: -moz-linear-gradient(top, #FFFFFF 0%, #F0F0F0 100%);
+    */
+    border-top: 1px solid #CCC;
+    border-bottom: 1px solid #CCC;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1.6em;
+    margin: 0;
+    padding: 4px 10px 6px;
+    text-shadow: 1px 1px 0 #FFFFFF;
 }

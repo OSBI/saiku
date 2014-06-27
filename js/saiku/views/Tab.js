@@ -48,6 +48,7 @@ var Tab = Backbone.View.extend({
         this.content.tab = this;
         this.caption = this.content.caption();
         this.id = _.uniqueId('tab_');
+        this.close = args.close;
     },
     
     /**
@@ -58,9 +59,13 @@ var Tab = Backbone.View.extend({
         var self = this;
         // Render the content
         this.content.render();
-        
+
         // Generate the element
         $(this.el).html(this.template());
+        if(this.close==false){
+            $(this.el).find('.close_tab').hide();
+            $(this.el).css('padding-right','10px')
+        }
         var menuitems = {
             "new": {name: "New", i18n: true },
             "closethis": {name: "Close This", i18n: true },
@@ -223,10 +228,11 @@ var TabSet = Backbone.View.extend({
      * Add a tab to the collection
      * @param tab
      */
-    add: function(content) {
+    add: function(content, close) {
         // Add it to the set
         this.queryCount++;
-        var tab = new Tab({ content: content });
+
+        var tab = new Tab({ content: content, close: close});
         this._tabs.push(tab);
         tab.parent = this;
         
@@ -259,8 +265,10 @@ var TabSet = Backbone.View.extend({
         $(this.el).find('li').removeClass('selected');
         
         // Replace the contents of the tab panel with the new content
-        this.content.children().detach();
-        this.content.append($(tab.content.el));
+
+            this.content.children().detach();
+            this.content.append($(tab.content.el));
+
     },
     
     /**
@@ -270,7 +278,8 @@ var TabSet = Backbone.View.extend({
     remove: function(tab) {
         // Add another tab if the last one has been deleted
         if (this._tabs.length == 1) {
-            this.add(new Workspace());
+            //this.add(new Workspace());
+
         }
         
         for (var i = 0, len = this._tabs.length; i < len; i++) {
@@ -304,6 +313,13 @@ var TabSet = Backbone.View.extend({
         
 
     },
+    close_all: function() {
+        for (var i = 0, len = this._tabs.length; i < len; i++) {
+                var otherTab = this._tabs[i];
+                otherTab.remove();
+            }
+        }
+    ,
     
     togglePager: function() {
         $(this.pager.el).toggle();

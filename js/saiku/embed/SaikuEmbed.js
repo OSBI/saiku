@@ -58,14 +58,14 @@ var isIE = (function(){
 
 }());
 
-if ($.blockUI && !Dashboards) {
+/*if ($.blockUI && !Dashboards) {
     $.blockUI.defaults.css = { "font-size" : "14px"};
     $.blockUI.defaults.overlayCSS = {};
     $.blockUI.defaults.blockMsgClass = 'processing';
     $.blockUI.defaults.fadeOut = 0;
     $.blockUI.defaults.fadeIn = 0;
     $.blockUI.defaults.ignoreIfBlocked = false;
-}
+}*/
 
 
 var SaikuConfig = {
@@ -135,11 +135,11 @@ SaikuClient.prototype.execute = function(usercall) {
 );
 
   
-  if ($.blockUI && !Dashboards) {
+ /* if ($.blockUI && !Dashboards) {
     $(call.htmlObject).block({ 
                 message: '<span class="saiku_logo" style="float:left">&nbsp;&nbsp;</span> Executing....' 
     });
-  }
+  }*/
   var params = {
                     // path ? "rest/saiku/embed/"
       url:          client.server + (client.path ? client.path : "") + "/export/saiku/json",

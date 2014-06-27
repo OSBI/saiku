@@ -120,10 +120,11 @@ var Workspace = Backbone.View.extend({
         if (e) { e.preventDefault(); };
         Saiku.session.sessionworkspace.refresh();
     },
-    
+
     render: function() {
         // Load template
         $(this.el).html(this.template());
+
         this.processing = $(this.el).find('.query_processing');
 
         if (this.isReadOnly || Settings.MODE && (Settings.MODE == "view" || Settings.MODE == "table")) {

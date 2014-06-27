@@ -92,11 +92,11 @@
                   <include>classes/Saiku.js</include>
                   <include>classes/adapters/SaikuServer.js</include>
                   <include>classes/routers/QueryRouter.js</include>
-                  <include>classes/plugins/Statistics/plugin.js</include>
-                  <include>classes/plugins/I18n/plugin.js</include>
-                  <include>classes/plugins/BIServer/plugin.js</include>
-                  <include>classes/plugins/Buckets/plugin.js</include>
-                  <include>classes/plugins/CCC_Chart/plugin.js</include>
+                  <include>classes/plugins/Statistics/plugin_disabled.js</include>
+                  <include>classes/plugins/I18n/plugin_disabled.js</include>
+                  <include>classes/plugins/BIServer/plugin_disabled.js</include>
+                  <include>classes/plugins/Buckets/plugin_disabled.js</include>
+                  <include>classes/plugins/CCC_Chart/plugin_disabled.js</include>
               </includes>
             </aggregation>
               <aggregation>

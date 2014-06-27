@@ -25,6 +25,7 @@ var Session = Backbone.Model.extend({
     password: null,
     sessionid: null,
     upgradeTimeout: null,
+    isadmin: false,
         
     initialize: function(args, options) {
         // Attach a custom event bus to this model
@@ -72,6 +73,7 @@ var Session = Backbone.Model.extend({
         } else {
             this.sessionid = response.sessionid;
             this.roles = response.roles;
+            this.isadmin = response.isadmin;
             this.username = encodeURIComponent(response.username);
             this.language = response.language;
             if (typeof this.language != "undefined" && this.language != Saiku.i18n.locale) {
@@ -107,9 +109,10 @@ var Session = Backbone.Model.extend({
         this.sessionid = null;
         this.username = null;
         this.password = null;
+        this.isadmin = false;
         this.destroy({async: false });
         //console.log("REFRESH!");
-        document.location.reload(false)
+        document.location.reload(false);
         delete this.id;
 
     },

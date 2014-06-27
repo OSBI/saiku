@@ -27,7 +27,8 @@ var Saiku = {
      * View which handles tabs
      */
     tabs: new TabSet(),
-    
+
+    splash: new SplashScreen(),
     /**
      * Model which handles session and authentication
      */
@@ -91,20 +92,43 @@ Backbone.emulateHTTP = false;
  */
 if (! Settings.BIPLUGIN) {
     $(document).ready(function() {
-        Saiku.session = new Session({}, {
-            username: Settings.USERNAME,
-            password: Settings.PASSWORD
+        var plugins = new PluginCollection();
+
+        plugins.fetch({
+            success: function() {
+                var i = plugins.size();
+                var j = 0;
+                plugins.each(function(log) {
+                    j = j+1;
+                    jQuery.getScript(log.attributes.path);
+
+                    if(j == i) {
+                        Saiku.session = new Session({}, {
+                            username: Settings.USERNAME,
+                            password: Settings.PASSWORD
+                        });
+
+                        Saiku.toolbar = new Toolbar();
+                    }
+                });
+            }
         });
 
-        Saiku.toolbar = new Toolbar();
     });
 }
+/**
+ * Dynamically load plugins!
+ * @type {PluginCollection}
+ */
+
 
 var SaikuTimeLogger = function(element) {
     this._element = $(element);
     this._timestamps = [];
     this._events = [];
 };
+
+
 
 SaikuTimeLogger.prototype.log = function(eventname) {
     var time = (new Date()).getTime();
