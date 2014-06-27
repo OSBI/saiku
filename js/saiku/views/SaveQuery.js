@@ -207,9 +207,7 @@ var SaveQuery = Modal.extend({
         if (name != null && name.length > 0) {
             this.query.set({ name: name, folder: foldername });
             this.query.trigger('query:save');
-            this.query.action.get("/xml", {
-                success: this.copy_to_repository
-            });
+            this.copy_to_repository();
         } else {
             alert("You need to enter a name!");
         }
@@ -218,7 +216,7 @@ var SaveQuery = Modal.extend({
         return false;
     },
     
-    copy_to_repository: function(model, response) {
+    copy_to_repository: function() {
         var self = this;
         var folder = this.query.get('folder');
         var file = this.query.get('name');
@@ -236,7 +234,7 @@ var SaveQuery = Modal.extend({
         (new SavedQuery({
             name: this.query.get('name'),
             file: file,
-            content: response.xml
-        })).save({},{ success:  this.close, error: error, dataType: "text" });
+            content: JSON.stringify(this.query.model)
+        })).save({},{ success:  this.close, error: error, dataType: 'text'  });
     }
 });

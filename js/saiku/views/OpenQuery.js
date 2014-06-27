@@ -214,6 +214,7 @@ var OpenQuery = Backbone.View.extend({
         }
         if (typeof query.acl != "undefined" && _.indexOf(query.acl, "WRITE") > -1) {
             $( this.el ).find( '.for_queries .delete' ).parent().removeClass( 'hide' );
+            $( this.el ).find( '.for_queries .edit' ).parent().removeClass( 'hide' );
         }
         if (typeof query.acl != "undefined" && _.indexOf(query.acl, "GRANT") > -1) {
             $( this.el ).find( '.for_queries .edit_permissions' ).parent().removeClass( 'hide' );
@@ -351,7 +352,10 @@ var OpenQuery = Backbone.View.extend({
                     }, Settings.PARAMS);
 
         var query = new Query(params,{ name: this.selected_query.get('name') });
-        var state = viewstate;
+        var state = null;
+        if(viewstate && !viewstate.hasOwnProperty('currentTarget')) {
+            state = viewstate;
+        }
         var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state }));
         return false;
     },

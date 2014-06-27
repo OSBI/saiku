@@ -59,21 +59,14 @@ var DrillthroughModal = Modal.extend({
         // Resize when rendered
 
         this.render();
-        // Load template
-        $(this.el).find('.dialog_body')
-            .html(_.template(this.templateContent())(this));
+        $(this.el).find('.dialog_body').html(_.template($("#template-drillthrough").html())(this));
+
         // Show dialog
         $(this.el).find('.maxrows').val(this.maxrows);
 
-        var schema = this.query.get('schema');
-        var key = this.query.get('connection') + "/" +
-            this.query.get('catalog') + "/"
-            + ((schema == "" || schema == null) ? "null" : schema)
-            + "/" + this.query.get('cube');
-
         var container = $("#template-drillthrough-list").html();
 
-        var cubeModel = Saiku.session.sessionworkspace.cube[key];
+        var cubeModel = this.workspace.metadata;
         var dimensions = null;
         var measures = null;
 
@@ -164,9 +157,8 @@ var DrillthroughModal = Modal.extend({
         params = params + (typeof this.position !== "undefined" ? "&position=" + this.position : "" );
         params += "&returns=" + selections;
         if (this.action == "export") {
-            var location = Settings.REST_URL +
-                Saiku.session.username + "/query/" +
-                this.query.id + "/drillthrough/export/csv" + params;
+            var location = Settings.REST_URL + this.query.url() + "/drillthrough/export/csv" + params;
+
             this.close();
             window.open(location);
         } else if (this.action == "table") {

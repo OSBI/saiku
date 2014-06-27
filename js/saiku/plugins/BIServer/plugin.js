@@ -102,11 +102,13 @@ if (Settings.BIPLUGIN) {
         if (Settings.DEBUG) {
             pluginUrl += "?debug=true";
         }
-        $.getScript(pluginUrl).promise().done(function() {
+        $.getScript(pluginUrl, function() {  //).promise().done(function() {
                 Saiku.session = new Session();
-        }).fail(function() {
+        })/*.fail(function() {
                 Saiku.session = new Session();
-        });
+        })*/;
+
+
     });
 }
 

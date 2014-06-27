@@ -114,5 +114,11 @@
    "Keep and Include Level":"Nur dieses Element und Level hinzufügen",
    "Remove Level":"Level Entfernen",
    "Filter Level":"Level Filtern",
-   "Remove Filters":"Filter Entfernen"
+   "Remove Filters":"Filter Entfernen",
+   "Add":"Neu",
+   "Opening query...":"Abfrage wird geladen...",
+   "Calculated Measures":"Berechnete Kennzahlen",
+   "Calculated Measure":"Berechnete Kennzahl",
+   "Formula:":"Formel:",
+   " Cancel ":"Abbrechen"
 }

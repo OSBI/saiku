@@ -24,16 +24,18 @@ var Cube = Backbone.Model.extend({
     },
     
     parse: function(response) {
+        var template_dimensions = _.template($("#template-dimensions").html(), { dimensions: response.dimensions });
+        var template_measures = _.template($("#template-measures").html(), { measures: response.measures });
+        var template_attributes = _.template($("#template-attributes").html(), { cube: response });
+
         this.set({ 
-            template_measures: _.template($("#template-measures").html())({
-                measures: response.measures
-            }),
-            template_dimensions: _.template($("#template-dimensions").html())({
-                dimensions: response.dimensions
-            }),
-            
+            template_measures: template_measures,
+            template_dimensions: template_dimensions,
+            template_attributes: $(template_attributes).html(),
             data: response
         });
+
+
         
         typeof localStorage !== "undefined" && localStorage && localStorage.setItem("cube." + this.get('key'),
                 JSON.stringify(this));

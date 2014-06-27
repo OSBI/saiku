@@ -18,7 +18,7 @@
  * Change settings here
  */
 var Settings = {
-    VERSION: "Saiku 2.6-SNAPSHOT",
+    VERSION: "Saiku 3.0-SNAPSHOT",
     BIPLUGIN: false,
     BIPLUGIN5: false,
     BASE_URL: "",
@@ -26,15 +26,18 @@ var Settings = {
     REST_MOUNT_POINT: "/rest/saiku/",
     DIMENSION_PREFETCH: true,
     DIMENSION_SHOW_ALL: true,
+    DIMENSION_SHOW_REDUCED: false,
     ERROR_LOGGING: false,
     // number of erroneous ajax calls in a row before UI cant recover
     ERROR_TOLERANCE: 3,
     QUERY_PROPERTIES: {
-        'saiku.olap.query.automatic_execution': 'true',
-        'saiku.olap.query.nonempty': 'true',
-        'saiku.olap.query.nonempty.rows': 'true',
-        'saiku.olap.query.nonempty.columns': 'true',
-        'saiku.ui.render.mode' : 'table'
+        'saiku.olap.query.automatic_execution': true,
+        'saiku.olap.query.nonempty': true,
+        'saiku.olap.query.nonempty.rows': true,
+        'saiku.olap.query.nonempty.columns': true,
+        'saiku.ui.render.mode' : 'table',
+        'saiku.olap.query.filter' : true,
+        'saiku.olap.result.formatter' : "flattened"
     },
     TABLE_LAZY: true,          // Turn lazy loading off / on
     TABLE_LAZY_SIZE: 1000,     // Initial number of items to be rendered
@@ -52,6 +55,7 @@ var Settings = {
     MEMBERS_LIMIT: 3000,
     MEMBERS_SEARCH_LIMIT: 75,
     ALLOW_IMPORT_EXPORT: false,
+    ALLOW_PARAMETERS: false,
     PLUGINS: [
         "Chart"
     ],

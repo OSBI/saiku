@@ -61,6 +61,20 @@ var Saiku = {
             // Fix For Internet Explorer 10 UIBlock issue
             $('.blockUI').fadeOut('slow');
         }
+    },
+    log: function(channel, item) {
+        if (console && console.log) {
+            console.log("Logging for: " + channel);
+            if (item) {
+                console.log(item);
+            }
+        }
+    },
+    error: function(channel, item) {
+        if (console && console.error) {
+            console.error("Logging for: " + channel);
+            console.error(item);
+        }
     }
 };
 

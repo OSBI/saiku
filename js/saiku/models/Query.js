@@ -27,7 +27,7 @@ var Query = Backbone.Model.extend({
         _.extend(this, options);
         
         // Bind `this`
-        _.bindAll(this, "run", "move_dimension", "reflect_properties");
+        _.bindAll(this, "run");
         
         // Generate a unique query id
         this.uuid = 'xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, 
@@ -37,49 +37,42 @@ var Query = Backbone.Model.extend({
                 return v.toString(16);
             }).toUpperCase();
         
+        this.model = _.extend({ name: this.uuid }, SaikuOlapQueryTemplate);
+        if (args.cube) {
+            this.model.cube = args.cube;
+        }
+        this.helper = new SaikuOlapQueryHelper(this);
+
         // Initialize properties, action handler, and result handler
         this.action = new QueryAction({}, { query: this });
         this.result = new Result({ limit: Settings.RESULT_LIMIT }, { query: this });
         this.scenario = new QueryScenario({}, { query: this });
-
-        this.set({type:'QM'});
     },
     
     parse: function(response) {
         // Assign id so Backbone knows to PUT instead of POST
         this.id = this.uuid;
-
-        this.set({
-            connection: response.cube.connectionName,
-                catalog: response.cube.catalogName,
-                schema: response.cube.schemaName,
-                cube: encodeURIComponent(response.cube.name),
-                axes: response.saikuAxes,
-                type: response.type
-        });
-
-        if (typeof response.properties != "undefined" && "saiku.ui.formatter" in response.properties) {
-            this.set({formatter : response.properties['saiku.ui.formatter']});
+        if (response.name) {
+            this.id = response.name;
+            this.uuid = response.name;
         }
-
-        this.properties = new Properties(response.properties, { query: this });
-        this.reflect_properties();
+        this.model = _.extend(this.model, response);
+        this.model.properties = _.extend({}, Settings.QUERY_PROPERTIES, this.model.properties);
     },
     
-    reflect_properties: function() {
-        this.workspace.trigger('properties:loaded');
-    },
-
     setProperty: function(key, value) {
-        if (typeof this.properties != "undefined" && this.properties.properties ) {
-            this.properties.properties[key] = value;
-        }
+            this.model.properties[key] = value;
     },
-    
+
+    getProperty: function(key) {
+        return this.model.properties[key];
+    },
+
     run: function(force, mdx) {
+        var self = this;
         // Check for automatic execution
         Saiku.ui.unblock();
-        if (typeof this.properties != "undefined" && this.properties.properties['saiku.olap.query.automatic_execution'] === 'false'&&
+        if (typeof this.model.properties != "undefined" && this.model.properties['saiku.olap.query.automatic_execution'] === false &&
             ! (force === true)) {
             return;
         }
@@ -88,33 +81,42 @@ var Query = Backbone.Model.extend({
         $(this.workspace.el).find(".workspace_results_info").empty();
         this.workspace.trigger('query:run');
         this.result.result = null;
-        // TODO - Validate query
-        // maybe we should sync it with the backend query JSON?
-        // this definitely needs improvement
-        if (this.get('type') != "MDX") {
-            var rows = $(this.workspace.el).find('.rows ul li').size();
-            var columns = $(this.workspace.el).find('.columns ul li').size(); 
-            if ((rows == 0 && columns == 0) && !this.workspace.other_dimension) {
-                var axes = this.get('axes');
-                if (axes) {
-                    for (var axis_iter = 0, len = axes.length; axis_iter < len; axis_iter++) {
-                        var axis = axes[axis_iter];
-                        if (axis.name && axis.name == "ROWS") {
-                            rows = axis.dimensionSelections.length;
-                        }
-                        if (axis.name && axis.name == "COLUMNS") {
-                            columns = axis.dimensionSelections.length;
-                        }
-                    }
+        var validated = false;
+        var errorMessage = "Query Validation failed!";
+
+        var exModel = this.helper.model();
+        if (exModel.queryType == "OLAP") {
+            if (exModel.type == "QUERYMODEL") {
+                var columnsOk = Object.keys(exModel.queryModel.axes['COLUMNS'].hierarchies).length > 0;
+                var rowsOk = Object.keys(exModel.queryModel.axes['ROWS'].hierarchies).length > 0;
+                var detailsOk = exModel.queryModel.details.axis == 'COLUMNS' && exModel.queryModel.details.measures.length > 0;
+                if (!rowsOk || !columnsOk || !detailsOk) {
+                    errorMessage = "";
+                }
+                if (!columnsOk && !detailsOk) {
+                    errorMessage += '<span class="i18n">You need to include at least one measure or a level on columns for a valid query.</span>';
+                }
+                if(!rowsOk) {
+                    errorMessage += '<span class="i18n">You need to include at least one level on rows for a valid query.</span>';
+
+                } 
+                if ( (columnsOk || detailsOk) && rowsOk) {
+                    validated = true;
+                }
+
+            } else if (exModel.type == "MDX") {
+                validated = (exModel.mdx && exModel.mdx.length > 0);
+                if (!validated) {
+                    errorMessage = '<span class="i18n">You need to enter some MDX statement to execute.</span>';
                 }
             }
-            if (rows == 0 || columns == 0) {
-                this.workspace.table.clearOut();
-                $(this.workspace.processing).html('<span class="i18n">You need to put at least one level or measure on Columns and Rows for a valid query.</span>').show();
-                this.workspace.adjust();
-                Saiku.i18n.translate();
-                return;
-            }
+        }
+        if (!validated) {
+            this.workspace.table.clearOut();
+            $(this.workspace.processing).html(errorMessage).show();
+            this.workspace.adjust();
+            Saiku.i18n.translate();
+            return;
         }
 
 
@@ -124,43 +126,35 @@ var Query = Backbone.Model.extend({
         this.workspace.adjust();
         this.workspace.trigger('query:fetch');
 		Saiku.i18n.translate();
-            // <a class="cancel" href="#cancel">x</a>
-        
         var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span> [&nbsp;<a class="cancel i18n" href="#cancel">Cancel</a>&nbsp;]';
         this.workspace.block(message);
-
-        
-        if (this.get('type')  == "MDX" && mdx != null) {
-            this.result.save({ mdx: mdx});
-        } else {
-            this.result.fetch();
-        }
+/*
+        TODO: i wonder if we should clean up the model (name and captions etc.)
+        delete this.model.queryModel.axes['FILTER'].name;
+*/        
+        this.result.save({},{ contentType: "application/json", data: JSON.stringify(exModel), error: function() {
+            Saiku.ui.unblock();
+            var errorMessage = '<span class="i18n">Error executing query. Please check the server logs or contact your administrator!</span>';
+            self.workspace.table.clearOut();
+            $(self.workspace.processing).html(errorMessage).show();
+            self.workspace.adjust();
+            Saiku.i18n.translate();
+        } });
     },
-    
-    move_dimension: function(dimension, target, index, dontExecute) {
-        var self = this;
-        $(this.workspace.el).find('.run').removeClass('disabled_toolbar');
-        var url = "/axis/" + target + "/dimension/" + dimension;
-        
-        this.action.post(url, {
-            data: {
-                position: index
-            },
-            dataType: "text",
-            success: function() {
-                if (('MODE' in Settings && (Settings.MODE == 'view' || Settings.MODE == 'table')) 
-                        || (typeof self.properties != "undefined" 
-                                && self.properties .properties['saiku.olap.query.automatic_execution'] === 'true')) {
 
-                    if (!dontExecute) {
-                        self.run(true);
-                    }
-                }
+    enrich: function() {
+        var self = this;
+        this.workspace.query.action.post("/../enrich", { 
+            contentType: "application/json",
+            data: JSON.stringify(self.model),
+            async: false,
+            success: function(response, model) {
+                self.model = model;
             }
         });
     },
     
     url: function() {
-        return encodeURI(Saiku.session.username + "/query/" + this.uuid);
+        return "api/query/" + encodeURI(this.uuid);
     }
 });
