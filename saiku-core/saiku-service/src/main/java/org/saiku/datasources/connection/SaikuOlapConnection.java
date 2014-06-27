@@ -61,6 +61,10 @@ public class SaikuOlapConnection implements ISaikuConnection {
     System.out.println( "url:" + url );
     System.out.flush();
 
+      if(url.contains("Mondrian=4")){
+          url=url.replace("Mondrian=4; ", "");
+          url= url.replace("jdbc:mondrian", "jdbc:mondrian4");
+      }
     if ( url.length() > 0 && url.charAt( url.length() - 1 ) != ';' ) {
       url += ";";
     }
