@@ -343,6 +343,7 @@
 			<groupId>pentaho</groupId>
 			<artifactId>mondrian</artifactId>
 			<version>3.6.1</version>
+            <scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>eigenbase</groupId>
