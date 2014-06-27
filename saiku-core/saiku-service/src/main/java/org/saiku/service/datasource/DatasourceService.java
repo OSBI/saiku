@@ -15,8 +15,15 @@
  */
 package org.saiku.service.datasource;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.datasources.datasource.SaikuDatasource;
+import org.saiku.repository.AclEntry;
+import org.saiku.repository.IRepositoryObject;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -41,6 +48,7 @@ public class DatasourceService implements Serializable {
     return connectionManager;
   }
 
+<<<<<<< HEAD
   public void addDatasource( SaikuDatasource datasource ) {
     datasources.addDatasource( datasource );
   }
@@ -51,6 +59,31 @@ public class DatasourceService implements Serializable {
 
   public void removeDatasource( String datasourceName ) {
     datasources.removeDatasource( datasourceName );
+=======
+  public void addDatasource(SaikuDatasource datasource, boolean overwrite) throws Exception {
+      SaikuDatasource ds = getDatasources().get(datasource.getName());
+      if(ds == null){
+          datasources.addDatasource(datasource);
+      }
+      else{
+          if(overwrite){
+              datasources.removeDatasource(ds.getProperties().getProperty("id"));
+              datasources.addDatasource(datasource);
+          }
+          else {
+              throw new Exception("Datasource Name Already Exists!");
+          }
+      }
+
+  }
+
+  public void setDatasource(SaikuDatasource datasource) throws Exception {
+    datasources.setDatasource(datasource);
+  }
+
+  public void removeDatasource(String datasourceId) {
+    datasources.removeDatasource(datasourceId);
+>>>>>>> saiku3
   }
 
   public SaikuDatasource getDatasource( String datasourceName ) {
@@ -61,4 +94,43 @@ public class DatasourceService implements Serializable {
     return datasources.getDatasources();
   }
 
+<<<<<<< HEAD
 }
+=======
+  public List<MondrianSchema> getAvailableSchema(){
+      return datasources.getMondrianSchema();
+  }
+
+  public void addSchema(String schema, String path, String name) throws Exception {
+      datasources.addSchema(schema, path, name);
+  }
+
+  public String saveFile(String content, String path, String name, List<String> roles) { return datasources.saveFile(path, content, name, roles); }
+
+  public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
+      return datasources.getFiles(type,username,roles);
+  }
+
+  public String getFileData(String path, String username, List<String> roles){return datasources.getFileData(path, username, roles); }
+
+  public void importLegacySchema(){
+
+  }
+
+  public void importLegacyDatasources(){
+
+  }
+
+  public void importLegacyUsers(){
+
+  }
+
+  public void setResourceACL(String file, String acl, String username, List<String> roles){
+        datasources.setACL(file, acl, username, roles);
+  }
+
+  public AclEntry getResourceACL(String file, String username, List<String> roles){
+       return datasources.getACL(file, username, roles);
+  }
+}
+>>>>>>> saiku3

@@ -16,6 +16,9 @@
 package org.saiku.datasources.connection;
 
 import mondrian.rolap.RolapConnection;
+import org.apache.commons.vfs.FileSystemException;
+import org.apache.commons.vfs.VFS;
+import org.apache.commons.vfs.impl.DefaultFileSystemManager;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapWrapper;
 
@@ -92,6 +95,7 @@ public class SaikuOlapConnection implements ISaikuConnection {
       System.out.println( "Clearing cache" );
       RolapConnection rcon = olapConnection.unwrap( RolapConnection.class );
       rcon.getCacheControl( null ).flushSchemaCache();
+
     }
     return true;
   }

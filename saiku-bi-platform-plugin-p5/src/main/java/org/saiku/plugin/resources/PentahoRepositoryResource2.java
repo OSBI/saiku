@@ -47,10 +47,11 @@ import org.pentaho.platform.api.engine.IAuthorizationPolicy;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.security.policy.rolebased.actions.AdministerSecurityAction;
 import org.saiku.service.util.exception.SaikuServiceException;
-import org.saiku.web.rest.objects.acl.enumeration.AclMethod;
-import org.saiku.web.rest.objects.repository.IRepositoryObject;
-import org.saiku.web.rest.objects.repository.RepositoryFileObject;
-import org.saiku.web.rest.objects.repository.RepositoryFolderObject;
+import org.saiku.repository.AclMethod;
+import org.saiku.repository.AclEntry;
+import org.saiku.repository.IRepositoryObject;
+import org.saiku.repository.RepositoryFileObject;
+import org.saiku.repository.RepositoryFolderObject;
 import org.saiku.web.rest.resources.ISaikuRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -413,7 +414,7 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 		if (access.fileExists(file)) {
 			acls.add(AclMethod.READ);
 			if (isAdmin || access.hasAccess(file, FileAccess.WRITE)) {
-				acls.add(AclMethod.WRITE);	
+				acls.add(AclMethod.WRITE);
 			}
 			if (isAdmin) {
 				acls.add(AclMethod.GRANT);

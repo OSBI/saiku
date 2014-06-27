@@ -18,8 +18,12 @@ package org.saiku.service.datasource;
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.VFS;
+import org.saiku.database.dto.MondrianSchema;
+import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.datasources.datasource.SaikuDatasource.Type;
+import org.saiku.repository.IRepositoryObject;
+import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
 
 import java.io.File;
@@ -33,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
+import org.saiku.repository.AclEntry;
 public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 
   private URL repoURL;
@@ -44,7 +48,6 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
   public ClassPathResourceDatasourceManager() {
 
   }
-
 
   public ClassPathResourceDatasourceManager( String path ) {
     try {
@@ -171,4 +174,73 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
   public SaikuDatasource getDatasource( String datasourceName ) {
     return datasources.get( datasourceName );
   }
+
+    public void addSchema(String file, String path, String name) {
+
+    }
+
+
+    public List<MondrianSchema> getMondrianSchema() {
+        return null;
+    }
+
+    public MondrianSchema getMondrianSchema(String catalog) {
+        return null;
+    }
+
+    public RepositoryFile getFile(String file) {
+        return null;
+    }
+
+    public String getFileData(String file, String username, List<String> roles) {
+        return null;
+    }
+
+    public String getInternalFileData(String file) {
+        return null;
+    }
+
+    public RepositoryFile getFile2(String file) {
+        return null;
+    }
+
+    public String getFileData(String file) {
+        return null;
+    }
+
+    public String saveFile(String path, String content, String user, List<String> roles) {
+        return null;
+    }
+
+    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
+        return null;
+    }
+
+    public javax.jcr.Node getFiles() {
+        return null;
+    }
+
+    public void createUser(String user) {
+
+    }
+
+    public void deleteFolder(String folder) {
+
+    }
+
+    public AclEntry getACL(String object, String username, List<String> roles) {
+        return null;
+    }
+
+    public void setACL(String object, String acl, String username, List<String> roles) {
+
+    }
+
+    public void setUserService(UserService userService) {
+
+    }
+
+    public String saveFile(String path, String content, String user) {
+        return null;
+    }
 }

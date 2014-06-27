@@ -1,58 +1,94 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-	<bean id="classpathDsManager"
-		class="org.saiku.service.datasource.ClassPathResourceDatasourceManager">
-		<property name="path" value="res:saiku-datasources" />
-	</bean>
-	<!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
+    <!--	<bean id="classpathDsManager"
+            class="org.saiku.service.datasource.ClassPathResourceDatasourceManager">
+            <property name="path" value="res:saiku-datasources" />
+        </bean>-->
+    <bean id="repositoryDsManager" class="org.saiku.service.datasource.RepositoryDatasourceManager" init-method="load">
+        <property name="userService" ref="userServiceBean"/>
+    </bean>
 
-	<bean id="sessionService" class="org.saiku.web.service.SessionService">
-		<property name="authenticationManager" ref="authenticationManager" />
-	</bean>
+    <!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
+    <bean id="h2database" class="org.saiku.database.Database" init-method="init">
+        <property name="datasourceManager" ref="repositoryDsManager"/>
+    </bean>
 
-	<bean id="connectionManager" class="org.saiku.web.impl.SecurityAwareConnectionManager" init-method="init" destroy-method="destroy">
-		<property name="dataSourceManager" ref="classpathDsManager" />
-		<property name="sessionService" ref="sessionService" />
+    <bean id="sessionService" class="org.saiku.web.service.SessionService">
+        <property name="authenticationManager" ref="authenticationManager" />
+    </bean>
 
-	</bean>
+    <bean id="connectionManager" class="org.saiku.web.impl.SecurityAwareConnectionManager" init-method="init" destroy-method="destroy">
+        <property name="dataSourceManager" ref="repositoryDsManager" />
+        <property name="sessionService" ref="sessionService" />
 
-	<bean id="datasourceServiceBean" class="org.saiku.service.datasource.DatasourceService">
-		<property name="connectionManager" ref="connectionManager" />
-	</bean>
+    </bean>
 
-	<bean id="olapDiscoverServiceBean" class="org.saiku.service.olap.OlapDiscoverService">
-		<property name="datasourceService" ref="datasourceServiceBean" />
-	</bean>
+    <bean id="datasourceServiceBean" class="org.saiku.service.datasource.DatasourceService">
+        <property name="connectionManager" ref="connectionManager" />
+    </bean>
 
-	<bean id="olapQueryBean" scope="session" class="org.saiku.service.olap.OlapQueryService" destroy-method="destroy">
-		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
-	</bean>
+    <bean id="customerDAO" class="org.saiku.database.JdbcUserDAO">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <bean id="userServiceBean" class="org.saiku.service.user.UserService">
+        <property name="jdbcUserDAO" ref="customerDAO"/>
+        <property name="iDatasourceManager" ref="repositoryDsManager"/>
+        <property name="adminRoles">
+            <list>
+                <value>ROLE_ADMIN</value>
+            </list>
+        </property>
+        <property name="sessionService" ref="sessionService"/>
+    </bean>
+    <bean id="adminBean" class="org.saiku.web.rest.resources.AdminResource">
+        <property name="userService" ref="userServiceBean"/>
+        <property name="datasourceService" ref="datasourceServiceBean"/>
+        <property name="olapDiscoverService" ref="olapDiscoverServiceBean"/>
+    </bean>
+    <bean class="org.saiku.datasources.connection.MondrianVFS" init-method="init">
+        <property name="datasourceManager" ref="repositoryDsManager"/>
+    </bean>
+    <bean id="olapDiscoverServiceBean" class="org.saiku.service.olap.OlapDiscoverService">
+        <property name="datasourceService" ref="datasourceServiceBean" />
+    </bean>
+
+    <bean id="olapQueryBean" scope="session" class="org.saiku.service.olap.OlapQueryService" destroy-method="destroy">
+        <property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
+    </bean>
 
 
-	<bean id="datasourceResourceBean" class="org.saiku.web.rest.resources.DataSourceResource">
-		<property name="datasourceService" ref="datasourceServiceBean" />
-	</bean>
+    <bean id="datasourceResourceBean" class="org.saiku.web.rest.resources.DataSourceResource">
+        <property name="datasourceService" ref="datasourceServiceBean" />
+    </bean>
 
-	<bean id="olapDiscoverBean" scope="session"
-		class="org.saiku.web.rest.resources.OlapDiscoverResource">
-		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
-	</bean>
+    <bean id="olapDiscoverBean" scope="session"
+          class="org.saiku.web.rest.resources.OlapDiscoverResource">
+        <property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
+    </bean>
 
 
-	<bean id="queryResource" scope="request"
-		class="org.saiku.web.rest.resources.QueryResource">
-		<property name="olapQueryService" ref="olapQueryBean" />
-		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
-	</bean>
+    <bean id="queryResource" scope="request"
+          class="org.saiku.web.rest.resources.QueryResource">
+        <property name="olapQueryService" ref="olapQueryBean" />
+        <property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
+    </bean>
 
+<<<<<<< HEAD
 
 	<bean id="sessionResource" class="org.saiku.web.rest.resources.SessionResource">
 		<property name="sessionService" ref="sessionService" />
 	</bean>
+=======
+    <bean id="thinQueryBean" scope="session"
+          class="org.saiku.service.olap.ThinQueryService">
+        <property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
+    </bean>
+>>>>>>> saiku3
 
     <bean id="platformBean" class="org.saiku.service.PlatformUtilsService">
 
@@ -63,6 +99,7 @@
         <property name="platformUtilsService" ref="platformBean"/>
     </bean>
 
+<<<<<<< HEAD
 
 	<bean id="repositoryBean" scope="request"
 		class="org.saiku.web.rest.resources.BasicRepositoryResource">
@@ -114,3 +151,51 @@
 	<bean id="startupBean" scope="singleton" class="org.saiku.web.rest.util.StartupResource"  init-method="init" />
 	
 </beans>
+=======
+    <bean id="queryResource2" scope="request"
+          class="org.saiku.web.rest.resources.Query2Resource">
+        <property name="thinQueryService" ref="thinQueryBean" />
+    </bean>
+
+    <bean id="sessionResource" class="org.saiku.web.rest.resources.SessionResource">
+        <property name="sessionService" ref="sessionService" />
+        <property name="userService" ref ="userServiceBean"/>
+
+    </bean>
+
+    <bean id="repository2bean" scope="request"
+          class="org.saiku.web.rest.resources.BasicRepositoryResource2">
+        <property name="path" value="res:saiku-repository" />
+        <property name="sessionService" ref="sessionService" />
+        <property name="datasourceService" ref="datasourceServiceBean"/>
+    </bean>
+    <!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
+
+    <bean id="tagRepositoryBean" scope="request"
+          class="org.saiku.web.rest.resources.BasicTagRepositoryResource">
+        <property name="olapQueryService" ref="olapQueryBean" />
+        <property name="path" value="res:saiku-repository" />
+    </bean>
+
+    <bean id="filterRepositoryBean" scope="session"
+          class="org.saiku.web.rest.resources.FilterRepositoryResource">
+        <property name="olapQueryService" ref="olapQueryBean" />
+        <property name="path" value="res:saiku-repository" />
+    </bean>
+
+
+
+    <bean id="exporterBean" scope="request"
+          class="org.saiku.web.rest.resources.ExporterResource">
+        <property name="repository" ref="repository2bean" />
+        <property name="query2Resource" ref="queryResource2" />
+    </bean>
+
+
+
+    <bean id="statsBean" scope="singleton" class="org.saiku.web.rest.resources.StatisticsResource" />
+
+    <bean id="startupBean" scope="singleton" class="org.saiku.web.rest.util.StartupResource"  init-method="init" />
+
+</beans>
+>>>>>>> saiku3
