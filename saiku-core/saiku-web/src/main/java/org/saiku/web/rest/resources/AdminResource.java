@@ -15,12 +15,10 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * AdminResource for the Saiku 3.0+ Admin console
@@ -290,6 +288,37 @@ public class AdminResource {
 
         return sb.toString();
 
+    }
+
+    @GET
+    @Produces("text/plain")
+    @Path("/version")
+    public Response getVersion(){
+        Properties prop = new Properties();
+        InputStream input = null;
+        String version = "";
+        try {
+
+            input = new FileInputStream("version.properties");
+
+            // load a properties file
+            prop.load(input);
+
+            // get the property value and print it out
+            System.out.println(prop.getProperty("VERSION"));
+            version = prop.getProperty("VERSION");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return Response.ok().entity(version).type("text/plain").build();
     }
 
 }
