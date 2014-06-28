@@ -128,7 +128,8 @@ separated by commas, and have just one of these...*/
 .workspace_results:fullscreen {
   width: 100%;
   height: 100%;
-  background-color: #FFF;  
+  background-color: #FFF;
+  font-weight:500;  
 }
 .workspace_results:-moz-full-screen {
   width: 100%;
@@ -143,11 +144,17 @@ separated by commas, and have just one of these...*/
 .workspace_results:fullscreen table {
     margin: 0 auto;
     font-size: 200%;
+    font-weight:500;
 }
 .workspace_results:-webkit-full-screen table {
     margin: 0 auto;
     font-size: 200%;
+    font-weight:500;
 }
+.workspace_results:-webkit-full-screen table td{
+    font-size: 100%;
+}
+
 .workspace_results:-moz-full-screen table {
     margin: 0 auto;
     font-size: 200%;
