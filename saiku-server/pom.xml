@@ -74,7 +74,7 @@
                                 <mkdir dir="target/dist/saiku-server/data"/>
                                 <copy todir="target/dist/saiku-server/data">
                                     <fileset dir="${basedir}/../util">
-                                        <include name="FoodMart4.xml/>
+                                        <include name="FoodMart4.xml"/>
                                     </fileset>
                                 </copy>
                                 <unzip dest="target/dist/saiku-server/data/">
