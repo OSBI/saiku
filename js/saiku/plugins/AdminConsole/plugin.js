@@ -22,13 +22,14 @@ var AdminConsole = Backbone.View.extend({
         'click .accordion-toggle': 'accordion',
         'click .remove_datasource' : 'remove_datasource',
         'click .remove_user' : 'remove_user',
-        'click .refresh_button':'refresh_datasource'
+        'click .refresh_button':'refresh_datasource',
+        'click .advancedurl' :'advanced_url'
 
     },
     initialize: function (args) {
         // Maintain `this`
         //_.bindAll(this);
-        _.bindAll(this, "fetch_users", "fetch_schemas", "fetch_datasources", "clear_users", "clear_datasources", "new_add_role", "new_remove_role", "save_new_user");
+        _.bindAll(this, "fetch_users", "fetch_schemas", "fetch_datasources", "clear_users", "clear_datasources", "new_add_role", "new_remove_role", "save_new_user", "advanced_url", "view_datasource");
         // Initialize repository
         this.users = new Users({}, { dialog: this });
         this.schemas = new Schemas();
@@ -231,7 +232,7 @@ var AdminConsole = Backbone.View.extend({
         "<a href='#' class='save_new_user form_button user_button hide'>Save User</a><div class='clear'>" +
         "</div></div></form>"),
     datasourcetemplate: _.template("<form><h3>Create Data Source</h3>" +
-        "<label for='connname'>Name:</label> <input type='text' name='connname' value='<%= conn.connectionname %>'><br/>" +
+        "<div class='simpleConnection'><label for='connname'>Name:</label> <input type='text' name='connname' value='<%= conn.connectionname %>'><br/>" +
         "<label for='drivertype'>Connection Type:</label><select name='drivertype' class='drivertype'><option value='MONDRIAN'>Mondrian</option><option value='XMLA'>XMLA</option></select><br/>" +
         "<label for='jdbcurl'>URL:</label> <input name='jdbcurl' value='<%= conn.jdbcurl %>' type='text'><br/>" +
         "<label for='schemapath'>Schema:</label><select class='schemaselect' name='schemapath'>" +
@@ -240,7 +241,9 @@ var AdminConsole = Backbone.View.extend({
         "<%});%></select><br/>" +
         "<label for='driver'>Jdbc Driver: </label><input name='driver' value='<%= conn.driver %>' type='text'><br/>" +
         "<label for='connusername'>Username: </label><input name='connusername' type='text' value='<%= conn.username %>'><br/>" +
-        "<label for='connpassword'>Password:</label> <input name='connpassword' type='text' value='<%= conn.password %>'<br/><br/>" +
+        "<label for='connpassword'>Password:</label> <input name='connpassword' type='text' value='<%= conn.password %>'<br/><br/></div>" +
+        "<div class='advconnection'><textarea name='adv_text' rows='10' cols='75'><%= conn.advanced %></textarea></div>" +
+        "<br/><br/><a href='' name='advancedurl' class='advancedurl'>Advanced</a>" +
         "<a href='<%= conn.id%>' class='user_button form_button remove_datasource hide'>Remove</a>" +
         "<a href='<%= conn.id%>' class='user_button form_button save_datasource'>Save</a>" +
         "<a href='<%= conn.id%>' class='refresh_button form_button user_button hide'>Refresh Cache</a><div class='clear'></div></form>" +
@@ -292,7 +295,14 @@ var AdminConsole = Backbone.View.extend({
         var user = this.datasources.get(path);
         var s = this.schemas;
         var html = this.datasourcetemplate({conn: user.attributes,schemas: s.models});
+
         $(this.el).find('.user_info').html(html);
+        if(user.get("advanced")!=null){
+            this.advanced_url(event);
+        }
+        else{
+            this.simple_url(event);
+        }
         $(this.el).find('.remove_datasource').removeClass("hide");
         $(this.el).find('.refresh_button').removeClass("hide");
     },
@@ -505,14 +515,18 @@ var AdminConsole = Backbone.View.extend({
         var that = this;
         if(path == undefined || path == "") {
             var conn = new Connection();
-            conn.set({"connectionname": $(this.el).find("input[name='connname']").val()});
-            conn.set({"connectiontype": $(this.el).find(".drivertype").val()});
-            conn.set({"jdbcurl": $(this.el).find("input[name='jdbcurl']").val()});
-            conn.set({"schema": $(this.el).find(".schemaselect").val()});
-            conn.set({"driver": $(this.el).find("input[name='driver']").val()});
-            conn.set({"username": $(this.el).find("input[name='connusername']").val()});
-            conn.set({"password": $(this.el).find("input[name='connpassword']").val()});
-
+            if($(this.el).find("textarea[name='adv_text']").val()!=null){
+                conn.set({"advanced": $(this.el).find("textarea[name='adv_text']").val()});
+            }
+            else {
+                conn.set({"connectionname": $(this.el).find("input[name='connname']").val()});
+                conn.set({"connectiontype": $(this.el).find(".drivertype").val()});
+                conn.set({"jdbcurl": $(this.el).find("input[name='jdbcurl']").val()});
+                conn.set({"schema": $(this.el).find(".schemaselect").val()});
+                conn.set({"driver": $(this.el).find("input[name='driver']").val()});
+                conn.set({"username": $(this.el).find("input[name='connusername']").val()});
+                conn.set({"password": $(this.el).find("input[name='connpassword']").val()});
+            }
             this.datasources.add(conn);
             conn.save({}, {data: JSON.stringify(conn.attributes), contentType: "application/json", success: function(){
                 that.clear_datasources();
@@ -522,14 +536,18 @@ var AdminConsole = Backbone.View.extend({
         }
         else{
             var conn = this.datasources.get(path);
-            conn.set({"connectionname": $(this.el).find("input[name='connname']").val()});
-            conn.set({"connectiontype": $(this.el).find(".drivertype").val()});
-            conn.set({"jdbcurl": $(this.el).find("input[name='jdbcurl']").val()});
-            conn.set({"schema": $(this.el).find(".schemaselect").val()});
-            conn.set({"driver": $(this.el).find("input[name='driver']").val()});
-            conn.set({"username": $(this.el).find("input[name='connusername']").val()});
-            conn.set({"password": $(this.el).find("input[name='connpassword']").val()});
-
+            if($(this.el).find("textarea[name='adv_text']").val()!=null){
+                conn.set({"advanced": $(this.el).find("textarea[name='advancedurl']").val()});
+            }
+            else {
+                conn.set({"connectionname": $(this.el).find("input[name='connname']").val()});
+                conn.set({"connectiontype": $(this.el).find(".drivertype").val()});
+                conn.set({"jdbcurl": $(this.el).find("input[name='jdbcurl']").val()});
+                conn.set({"schema": $(this.el).find(".schemaselect").val()});
+                conn.set({"driver": $(this.el).find("input[name='driver']").val()});
+                conn.set({"username": $(this.el).find("input[name='connusername']").val()});
+                conn.set({"password": $(this.el).find("input[name='connpassword']").val()});
+            }
             conn.save({}, {data: JSON.stringify(conn.attributes), contentType: "application/json", success: function(){
                 that.fetch_datasources();
                 $(that.el).find('.user_info').html("");
@@ -574,8 +592,18 @@ var AdminConsole = Backbone.View.extend({
         var ds = this.datasources.get(path);
 
         ds.refresh();
-    }
+    },
+    advanced_url : function(event){
+        event.preventDefault();
+        $(this.el).find(".simpleConnection").hide();
+        $(this.el).find(".advconnection").show();
+    },
+    simple_url : function(event){
+        event.preventDefault();
+        $(this.el).find(".simpleConnection").show();
+        $(this.el).find(".advconnection").hide();
 
+    }
 
 });
 
