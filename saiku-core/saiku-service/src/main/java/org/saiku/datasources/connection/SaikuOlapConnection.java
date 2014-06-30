@@ -78,6 +78,7 @@ public class SaikuOlapConnection implements ISaikuConnection {
     }
 
     Class.forName( driver );
+      Connection object = DriverManager.getConnection(url, username, password);
     OlapConnection connection;
     connection = (OlapConnection) DriverManager.getConnection( url, username, password );
     final OlapWrapper wrapper = connection;
