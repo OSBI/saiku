@@ -94,7 +94,7 @@ var Toolbar = Backbone.View.extend({
      * Go to the issue tracker
      */
     issue_tracker: function() {
-        window.open('https://github.com/OSBI/saiku/issues/new');
+        window.open('http://jira.meteorite.bi/');
         return false;
     }
 });
