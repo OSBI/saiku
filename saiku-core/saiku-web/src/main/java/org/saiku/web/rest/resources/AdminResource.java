@@ -297,12 +297,14 @@ public class AdminResource {
         Properties prop = new Properties();
         InputStream input = null;
         String version = "";
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        InputStream is = classloader.getResourceAsStream("org/saiku/web/rest/resources/version.properties");
         try {
 
-            input = new FileInputStream("version.properties");
+            //input = new FileInputStream("version.properties");
 
             // load a properties file
-            prop.load(input);
+            prop.load(is);
 
             // get the property value and print it out
             System.out.println(prop.getProperty("VERSION"));

@@ -20,7 +20,7 @@
 	<build>
 <resources>
     <resource>
-        <directory>src/main/resources/org/saiku/web/rest/resources/</directory>
+        <directory>src/main/resources/</directory>
         <filtering>true</filtering>
     </resource>
 </resources>
