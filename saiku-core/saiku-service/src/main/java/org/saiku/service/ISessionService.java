@@ -21,7 +21,7 @@ import java.util.Map;
 public interface ISessionService {
 
   public Map<String, Object> login( HttpServletRequest req,
-                                    String username, String password );
+                                    String username, String password ) throws Exception;
 
   public void logout( HttpServletRequest req );
 

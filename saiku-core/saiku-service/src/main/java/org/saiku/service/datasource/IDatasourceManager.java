@@ -56,7 +56,9 @@ public interface IDatasourceManager {
 
   public String getInternalFileData(String file);
 
-    public String saveFile(String path, String content, String user, List<String> roles);
+  public String saveFile(String path, String content, String user, List<String> roles);
+
+  public String saveInternalFile(String path, String content, String type);
 
   public List<IRepositoryObject> getFiles(String type, String username, List<String> roles);
 

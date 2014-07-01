@@ -194,6 +194,16 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         }
     }
 
+    public String saveInternalFile(String path, String content, String type) {
+        try {
+            irm.saveInternalFile(content, path, type);
+            return "Save Okay";
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            return "Save Failed: " + e.getLocalizedMessage();
+        }
+    }
+
     public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
         try {
             return irm.getAllFiles(type, username, roles);

@@ -52,6 +52,8 @@ public interface IRepositoryManager {
 
     javax.jcr.Node saveFile(Object file, String path, String user, String type, List<String> roles) throws RepositoryException;
 
+    javax.jcr.Node saveInternalFile(Object file, String path, String type) throws RepositoryException;
+
     String getFile(String s, String username, List<String> roles) throws RepositoryException;
 
     String getInternalFile(String s) throws RepositoryException;

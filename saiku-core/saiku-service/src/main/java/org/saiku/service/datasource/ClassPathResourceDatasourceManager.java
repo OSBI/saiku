@@ -216,6 +216,14 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
         return null;
     }
 
+    public String saveInternalFile(String path, String content, String type) {
+        return null;
+    }
+
+    public String saveInternalFile(String path, String content) {
+        return null;
+    }
+
     public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
         return null;
     }

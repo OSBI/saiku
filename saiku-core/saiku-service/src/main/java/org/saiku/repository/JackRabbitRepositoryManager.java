@@ -269,6 +269,48 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         }
     }
 
+    public Node saveInternalFile(Object file, String path, String type) throws RepositoryException {
+        if(file==null){
+            //Create new folder
+            String parent = path.substring(0, path.lastIndexOf("/"));
+            Node node = getFolder(parent);
+
+            int pos = path.lastIndexOf("/");
+            String filename = "./" + path.substring(pos + 1, path.length());
+            Node resNode = node.addNode(filename, "nt:folder");
+            resNode.addMixin("nt:saikufolders");
+            return resNode;
+
+        }
+        else {
+            int pos = path.lastIndexOf("/");
+            String filename = "./" + path.substring(pos + 1, path.length());
+            Node n = getFolder(path.substring(0, pos));
+
+
+
+            Node resNode = n.addNode(filename, "nt:file");
+            if (type.equals("nt:sa" +
+                    "ikufiles")) {
+                resNode.addMixin("nt:saikufiles");
+            } else if (type.equals("nt:mondrianschema")) {
+                resNode.addMixin("nt:mondrianschema");
+            } else if (type.equals("nt:olapdatasource")) {
+                resNode.addMixin("nt:olapdatasource");
+            }
+            Node contentNode = resNode.addNode("jcr:content", "nt:resource");
+
+            //resNode.setProperty ("jcr:mimeType", "text/plain");
+            //resNode.setProperty ("jcr:encoding", "utf8");
+            contentNode.setProperty("jcr:data", (String) file);
+        /*Calendar lastModified = Calendar.getInstance ();
+        lastModified.setTimeInMillis (new Date().getTime());
+        resNode.setProperty ("jcr:lastModified", lastModified);*/
+            resNode.getSession().save();
+            return resNode;
+        }
+    }
+
     public String getFile(String s, String username, List<String> roles) throws RepositoryException {
         Node node = getFolder(s);
         Acl2 acl2 = new Acl2(node);

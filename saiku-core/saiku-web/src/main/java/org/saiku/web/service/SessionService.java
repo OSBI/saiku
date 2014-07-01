@@ -65,7 +65,7 @@ public class SessionService implements ISessionService {
 	/* (non-Javadoc)
 	 * @see org.saiku.web.service.ISessionService#login(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String)
 	 */
-	public Map<String, Object> login(HttpServletRequest req, String username, String password ) {
+	public Map<String, Object> login(HttpServletRequest req, String username, String password ) throws Exception {
 		if (authenticationManager != null) {
 			authenticate(req, username, password);
 		}

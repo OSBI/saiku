@@ -70,7 +70,7 @@ public class SessionResource  {
 		}
 		catch (Exception e) {
 			log.debug("Error logging in:" + username, e);
-			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getLocalizedMessage()).build();
 		}
 	}
 
