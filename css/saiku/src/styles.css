@@ -1940,3 +1940,10 @@ span.cancel_search:hover {
     padding: 4px 10px 6px;
     text-shadow: 1px 1px 0 #FFFFFF;
 }
+
+.dialog_response {
+    font-weight: bold;
+    text-align: left;
+    color: red;
+    padding-top:5px;
+}

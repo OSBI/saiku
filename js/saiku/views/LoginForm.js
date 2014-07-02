@@ -58,8 +58,12 @@ var LoginForm = Modal.extend({
         var l_username = $(this.el).find("#username").val();
         var l_password = $(this.el).find("#password").val();
         $(this.el).dialog('close');
-        this.session.login(l_username, l_password);
+        this.session.login(l_username, l_password, $(this.el));
 
         return true;
+    },
+
+    setMessage: function(message) {
+        $(this.el).find(".dialog_response").html(message);
     }
 });

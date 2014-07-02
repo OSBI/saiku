@@ -91,10 +91,17 @@ var Session = Backbone.Model.extend({
     },
     
     login: function(username, password) {
-        this.save({username:username, password:password},{dataType: "text", success: this.check_session, error: this.check_session});
+        var that = this;
+        this.save({username:username, password:password},{dataType: "text", success: this.check_session, error: function(model, response){
+            that.login_failed(response.responseText)
+        }});
         
     },
-    
+    login_failed: function(response){
+        this.form = new LoginForm({ session: this });
+        this.form.render().open();
+        this.form.setMessage(response);
+    },
     logout: function() {
         // FIXME - This is a hack (inherited from old UI)
         Saiku.ui.unblock();
