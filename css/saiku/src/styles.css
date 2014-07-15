@@ -1947,3 +1947,42 @@ span.cancel_search:hover {
     color: red;
     padding-top:5px;
 }
+
+
+#navlist table
+{
+    border: 1px solid black;
+    float:left;
+    width:148px;
+    table-layout: inherit;
+}
+
+#navlist {
+
+    left:0;
+    right:0;
+    margin:0 auto;
+    display: inline-block;
+    white-space: nowrap;
+    width:auto;
+}
+
+.tablewrapper{
+    white-space: nowrap; /* this does the trick */
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    vertical-align: top;
+    display: inline-block;
+    padding:5px;
+}
+
+.tablewrapper > table{
+    border-collapse:separate;
+    border:solid black 1px;
+    border-radius:6px;
+    -moz-border-radius:6px;
+}
+
+.tablewrapper > table  th {
+    background-color: #ffc3c3;
+}
