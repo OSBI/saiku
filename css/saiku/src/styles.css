@@ -1966,7 +1966,15 @@ span.cancel_search:hover {
     white-space: nowrap;
     width:auto;
 }
+.ui-draggable{
+    white-space: nowrap; /* this does the trick */
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+    vertical-align: top;
+    display: inline-block;
+    padding:5px;
 
+}
 .tablewrapper{
     white-space: nowrap; /* this does the trick */
     -moz-border-radius: 15px;
@@ -1985,4 +1993,15 @@ span.cancel_search:hover {
 
 .tablewrapper > table  th {
     background-color: #ffc3c3;
+}
+
+.glowing-border {
+    border: 2px solid #dadada;
+    border-radius: 7px;
+}
+
+.glowing-border:focus { 
+    outline: none;
+    border-color: #9ecaed;
+    box-shadow: 0 0 10px #9ecaed;
 }
