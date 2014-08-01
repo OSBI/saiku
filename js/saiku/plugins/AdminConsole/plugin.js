@@ -483,7 +483,11 @@ var AdminConsole = Backbone.View.extend({
     },
     clear_datasources: function(){
         $(this.el).find('.inner_datasource').empty();
-        $(this.el).find('.inner_datasource').append("<li class='create_datasource'>Add Data Source</li>");
+        Saiku.events.trigger('admin:loaddatasources', {
+            admin: this
+        });
+
+
         //this.fetch_datasources();
     },
     create_datasource: function (event) {
@@ -606,7 +610,10 @@ var AdminConsole = Backbone.View.extend({
     }
 
 });
+Saiku.events.bind('admin:loaddatasources', function(admin){
+    $(admin.admin.el).find('.inner_datasource').append("<li class='create_datasource'>Add Data Source</li>");
 
+});
 Saiku.events.bind('session:new', function (session) {
 if(Saiku.session.isadmin) {
     var $link = $("<a />")
