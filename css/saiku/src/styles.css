@@ -1966,15 +1966,15 @@ span.cancel_search:hover {
     white-space: nowrap;
     width:auto;
 }
-.ui-draggable{
-    white-space: nowrap; /* this does the trick */
+/*.ui-draggable{
+    white-space: nowrap;
     -moz-border-radius: 15px;
     border-radius: 15px;
     vertical-align: top;
     display: inline-block;
     padding:5px;
 
-}
+}*/
 .tablewrapper{
     white-space: nowrap; /* this does the trick */
     -moz-border-radius: 15px;
