@@ -242,7 +242,7 @@ var AdminConsole = Backbone.View.extend({
         "<label for='driver'>Jdbc Driver: </label><input name='driver' value='<%= conn.driver %>' type='text'><br/>" +
         "<label for='connusername'>Username: </label><input name='connusername' type='text' value='<%= conn.username %>'><br/>" +
         "<label for='connpassword'>Password:</label> <input name='connpassword' type='text' value='<%= conn.password %>'<br/><br/></div>" +
-        "<div class='advconnection'><textarea name='adv_text' rows='10' cols='75'><%= conn.advanced %></textarea></div>" +
+        "<div class='advconnection' style='display:none;'><textarea name='adv_text' rows='10' cols='75'><%= conn.advanced %></textarea></div>" +
         "<br/><br/><a href='' name='advancedurl' class='advancedurl'>Advanced</a>" +
         "<a href='<%= conn.id%>' class='user_button form_button remove_datasource hide'>Remove</a>" +
         "<a href='<%= conn.id%>' class='user_button form_button save_datasource'>Save</a>" +
