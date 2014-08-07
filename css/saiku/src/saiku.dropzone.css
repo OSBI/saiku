@@ -273,7 +273,7 @@ li.selection .hgroup:hover {
     text-align: center;
 
 }
-.ui-draggable-dragging/*:not(._jsPlumb_endpoint)*/ {
+.ui-draggable-dragging:not(._jsPlumb_endpoint) {
     display: inline !important;
     height: 18px !important;
     line-height: 18px !important;

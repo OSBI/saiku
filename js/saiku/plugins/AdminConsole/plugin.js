@@ -232,16 +232,16 @@ var AdminConsole = Backbone.View.extend({
         "<a href='#' class='save_new_user form_button user_button hide'>Save User</a><div class='clear'>" +
         "</div></div></form>"),
     datasourcetemplate: _.template("<form><h3>Create Data Source</h3>" +
-        "<div class='simpleConnection'><label for='connname'>Name:</label> <input type='text' name='connname' value='<%= conn.connectionname %>'><br/>" +
+        "<div class='simpleConnection'><label for='connname'>Name:</label><input type='text' name='connname' value='<%= conn.connectionname %>'/><br/>" +
         "<label for='drivertype'>Connection Type:</label><select name='drivertype' class='drivertype'><option value='MONDRIAN'>Mondrian</option><option value='XMLA'>XMLA</option></select><br/>" +
-        "<label for='jdbcurl'>URL:</label> <input name='jdbcurl' value='<%= conn.jdbcurl %>' type='text'><br/>" +
+        "<label for='jdbcurl'>URL:</label><input name='jdbcurl' value='<%= conn.jdbcurl %>' type='text'/><br/>" +
         "<label for='schemapath'>Schema:</label><select class='schemaselect' name='schemapath'>" +
         "<% _.each(schemas, function(path){%>" +
         "<option><%= path.attributes.path %></option>" +
         "<%});%></select><br/>" +
-        "<label for='driver'>Jdbc Driver: </label><input name='driver' value='<%= conn.driver %>' type='text'><br/>" +
-        "<label for='connusername'>Username: </label><input name='connusername' type='text' value='<%= conn.username %>'><br/>" +
-        "<label for='connpassword'>Password:</label> <input name='connpassword' type='text' value='<%= conn.password %>'<br/><br/></div>" +
+        "<label for='driver'>Jdbc Driver: </label><input name='driver' value='<%= conn.driver %>' type='text'/><br/>" +
+        "<label for='connusername'>Username: </label><input name='connusername' type='text' value='<%= conn.username %>'/><br/>" +
+        "<label for='connpassword'>Password:</label><input name='connpassword' type='text' value='<%= conn.password %>'/><br/></div>" +
         "<div class='advconnection' style='display:none;'><textarea name='adv_text' rows='10' cols='75'><%= conn.advanced %></textarea></div>" +
         "<br/><br/><a href='' name='advancedurl' class='advancedurl'>Advanced</a>" +
         "<a href='<%= conn.id%>' class='user_button form_button remove_datasource hide'>Remove</a>" +
@@ -519,7 +519,8 @@ var AdminConsole = Backbone.View.extend({
         var that = this;
         if(path == undefined || path == "") {
             var conn = new Connection();
-            if($(this.el).find("textarea[name='adv_text']").val()!=null){
+            var v = $(this.el).find("textarea[name='adv_text']").val();
+            if(v!=null && v!=undefined && v!=""){
                 conn.set({"advanced": $(this.el).find("textarea[name='adv_text']").val()});
             }
             else {

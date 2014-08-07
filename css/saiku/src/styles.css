@@ -1890,13 +1890,61 @@ span.cancel_search:hover {
 .user_info {
     width:600px;
 }
+/*label, input {
+    display: inline-block;
+    vertical-align: baseline;
+    width: 125px;
+}
+
+label {
+    color: #2D2D2D;
+    font-size: 15px;
+}
+
+form, input {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+form {
+    width: 300px;
+}*/
+.conn_forms label {
+    display: inline-block; width: 70px; text-align: right;
+}
+.conn_forms select {
+    border: 1px solid #CCC;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-size: 100.01%;
+    margin: 0;
+    padding: 2px;
+    width: 32px;
+}
+.conn_forms input[type="password"] {
+    margin:0;
+    border: 2px solid #EEE;
+
+}
+.conn_forms input{
+    display:inline;
+    width: 150px;
+}
+
+.conn_forms input:focus {
+    border: 2px solid #900;
+}
+.keyrow label{
+width:90px !important;
+}
+.keyrow select{
+width:70px !important;
+}
+.keyrow input{
+width:70px !important;
+}
 .user_info label {
     display: inline-block; width: 140px; text-align: right;
-    /*float: left;
-    text-align: right;
-    margin-right: 15px;
-    width: 100px;
- display: block*/
 }
 .user_info select {
     border: 1px solid #CCC;
@@ -1904,7 +1952,7 @@ span.cancel_search:hover {
     font-size: 100.01%;
     margin: 0;
     padding: 2px;
-    width: 300px;
+    width: 302px;
 }
 
 .user_info input{
@@ -1966,7 +2014,7 @@ span.cancel_search:hover {
     white-space: nowrap;
     width:auto;
 }
-/*.ui-draggable{
+.dbtable{
     white-space: nowrap;
     -moz-border-radius: 15px;
     border-radius: 15px;
@@ -1974,7 +2022,7 @@ span.cancel_search:hover {
     display: inline-block;
     padding:5px;
 
-}*/
+}
 .tablewrapper{
     white-space: nowrap; /* this does the trick */
     -moz-border-radius: 15px;
