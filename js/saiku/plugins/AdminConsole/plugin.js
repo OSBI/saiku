@@ -23,17 +23,24 @@ var AdminConsole = Backbone.View.extend({
         'click .remove_datasource' : 'remove_datasource',
         'click .remove_user' : 'remove_user',
         'click .refresh_button':'refresh_datasource',
-        'click .advancedurl' :'advanced_url'
+        'click .advancedurl' :'advanced_url',
+        'change .drivertype' : 'change_driver'
 
     },
     initialize: function (args) {
-        // Maintain `this`
-        //_.bindAll(this);
         _.bindAll(this, "fetch_users", "fetch_schemas", "fetch_datasources", "clear_users", "clear_datasources", "new_add_role", "new_remove_role", "save_new_user", "advanced_url", "view_datasource");
         // Initialize repository
         this.users = new Users({}, { dialog: this });
         this.schemas = new Schemas();
         this.datasources = new Connections({}, { dialog: this });
+    },
+    change_driver: function(){
+        var div = $(this.el).find(".simpleConnection");
+        var type = $(this.el).find(".drivertype").val();
+        Saiku.events.trigger('admin:changedriver', {
+            div: div,
+            type: type
+        });
     },
     fetch_users: function () {
         self = this;
@@ -297,6 +304,9 @@ var AdminConsole = Backbone.View.extend({
         var html = this.datasourcetemplate({conn: user.attributes,schemas: s.models});
 
         $(this.el).find('.user_info').html(html);
+        Saiku.events.trigger('admin:viewdatasource', {
+            admin: this
+        });
         if(user.get("advanced")!=null){
             this.advanced_url(event);
         }
@@ -498,6 +508,9 @@ var AdminConsole = Backbone.View.extend({
         var html = this.datasourcetemplate({conn: conn, schemas: s.models});
 
         $(this.el).find('.user_info').html(html);
+        Saiku.events.trigger('admin:viewdatasource', {
+            admin: this
+        });
 
     },
     uploadFile: function (event) {
@@ -628,6 +641,35 @@ if(Saiku.session.isadmin) {
     $(Saiku.toolbar.el).find('ul').append($li);
 
 }
+});
+Saiku.events.bind('admin:changedriver', function(options){
+    var div = options.div;
+    var type = options.type;
+
+    switch(type) {
+        case "XMLA":
+            console.log("Xmla");
+            $(div).find('input[name="connusername"]').show();
+            $(div).find('input[name="connpassword"]').show();
+            $(div).find('input[name="driver"]').show();
+            $(div).find('input[name="jdbcurl"]').show();
+            $(div).find('label[for="connusername"]').show();
+            $(div).find('label[for="connpassword"]').show();
+            $(div).find('label[for="driver"]').show();
+            $(div).find('label[for="jdbcurl"]').show();
+            break;
+        case "MONDRIAN":
+            console.log("mondrian");
+            $(div).find('input[name="connusername"]').show();
+            $(div).find('input[name="connpassword"]').show();
+            $(div).find('input[name="driver"]').show();
+            $(div).find('input[name="jdbcurl"]').show();
+            $(div).find('label[for="connusername"]').show();
+            $(div).find('label[for="connpassword"]').show();
+            $(div).find('label[for="driver"]').show();
+            $(div).find('label[for="jdbcurl"]').show();
+            break;
+    }
 });
 
 var AdminUrl = "admin";
