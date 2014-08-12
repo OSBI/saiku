@@ -24,7 +24,8 @@ var AdminConsole = Backbone.View.extend({
         'click .remove_user' : 'remove_user',
         'click .refresh_button':'refresh_datasource',
         'click .advancedurl' :'advanced_url',
-        'change .drivertype' : 'change_driver'
+        'change .drivertype' : 'change_driver',
+        'click .create_schema': 'create_schema'
 
     },
     initialize: function (args) {
@@ -82,6 +83,8 @@ var AdminConsole = Backbone.View.extend({
             "<li><strong>Data Source Management</strong></li>" +
             "<ul class='inner_datasource'><li class='create_datasource'>Add Data Source</li></ul>" +
             "</ul>" +
+            "<ul class='inner_schema'><li class='create_schema'>Add Schema</li></ul>" +
+            "</ul>" +
             "</div>" +
             "</div>" +
 
@@ -89,7 +92,17 @@ var AdminConsole = Backbone.View.extend({
             "<div class='sidebar_separator' style='height: 676px;'></div>"+
             "    <div class='clear'></div>")();
     },
+    create_schema: function(event){
+        event.preventDefault();
+        var conn = new Connection();
+        var s = this.schemas;
+        var html = this.schemauploadtemplate({conn: conn, schemas: s.models});
 
+        $(this.el).find('.user_info').html(html);
+        Saiku.events.trigger('admin:viewdatasource', {
+            admin: this
+        });
+    },
     caption: function () {
         return "Admin Console";
     },
@@ -253,10 +266,12 @@ var AdminConsole = Backbone.View.extend({
         "<br/><br/><a href='' name='advancedurl' class='advancedurl'>Advanced</a>" +
         "<a href='<%= conn.id%>' class='user_button form_button remove_datasource hide'>Remove</a>" +
         "<a href='<%= conn.id%>' class='user_button form_button save_datasource'>Save</a>" +
-        "<a href='<%= conn.id%>' class='refresh_button form_button user_button hide'>Refresh Cache</a><div class='clear'></div></form>" +
-        "<br/><h3>Upload Schema</h3>" +
+        "<a href='<%= conn.id%>' class='refresh_button form_button user_button hide'>Refresh Cache</a><div class='clear'></div></form>"
+       ),
+    schemauploadtemplate: _.template( "<h3>Upload Schema</h3>" +
         "<input name='fileschema' type='file' class='upload_button'/><div class='clear'></div><br/>" +
-        "<label for='schemaname'>Schema Name:</label><input name='schemaname' type='text'/><br/>    <input type='submit' class='user_button form_button upload_button submitdatasource' value='Upload'>"),
+        "<label for='schemaname'>Schema Name:</label><input name='schemaname' type='text'/><br/>    <input type='submit' class='user_button form_button upload_button submitdatasource' value='Upload'>" +
+        "<br/><div id='uploadstatus'></div>"),
 
     view_user: function (event) {
         event.preventDefault();
@@ -265,10 +280,6 @@ var AdminConsole = Backbone.View.extend({
         var $target = $currentTarget.find('a');
         $currentTarget.addClass('selected');
         var path = $target.attr('href').replace('#', '');
-        var name = $target.text();
-
-        //var user = this.fetchedusers[path];
-        //var user = this.users.findWhere({ username: path});
         var user = this.users.get(path);
         var html = this.usertemplate({user: user.attributes});
         $(this.el).find('.user_info').html(html);
@@ -295,10 +306,7 @@ var AdminConsole = Backbone.View.extend({
         var $target = $currentTarget.find('a');
         $currentTarget.addClass('selected');
         var path = $target.attr('href').replace('#', '');
-        var name = $target.text();
 
-        //var user = this.fetchedusers[path];
-        //var user = this.users.findWhere({ username: path});
         var user = this.datasources.get(path);
         var s = this.schemas;
         var html = this.datasourcetemplate({conn: user.attributes,schemas: s.models});
@@ -319,7 +327,6 @@ var AdminConsole = Backbone.View.extend({
     save_user: function (event) {
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
-        var $target = $currentTarget.find('.save_user');
         $currentTarget.addClass('selected');
         var name = $currentTarget.text();
 
@@ -382,16 +389,9 @@ var AdminConsole = Backbone.View.extend({
         var $currentTarget = $(event.currentTarget);
         var $target = $(this.el).find("input[name='role']");
         $currentTarget.addClass('selected');
-        var path = $currentTarget.attr('href').replace('#', '');
         var name = $target.val();
 
 
-
-       /* var user = this.users.get(path);
-        var roles = user.get("roles");
-        if (roles == undefined) {
-            roles = [];
-        }*/
         if(this.temproles == undefined) {
             this.temproles = [];
         }
@@ -406,9 +406,7 @@ var AdminConsole = Backbone.View.extend({
     new_remove_role: function (event) {
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
-        var $target = $currentTarget.find('a');
         $currentTarget.addClass('selected');
-        var path = $currentTarget.attr('href').replace('#', '');
         var selected = $(this.el).find('.role_select').val();
 
 
@@ -455,7 +453,6 @@ var AdminConsole = Backbone.View.extend({
     },
     save_new_user: function (event) {
         event.preventDefault();
-        var $currentTarget = $(event.currentTarget);
 
         var user = new User();
         var username = $(this.el).find("input[name='username']");
@@ -489,7 +486,6 @@ var AdminConsole = Backbone.View.extend({
     clear_users: function() {
     $(this.el).find('.inner_users').empty();
     $(this.el).find('.inner_users').append("<li class='create_user'>Add User</li>");
-    //this.fetch_users();
     },
     clear_datasources: function(){
         $(this.el).find('.inner_datasource').empty();
@@ -502,7 +498,6 @@ var AdminConsole = Backbone.View.extend({
     },
     create_datasource: function (event) {
         event.preventDefault();
-        var $currentTarget = $(event.currentTarget);
         var conn = new Connection();
         var s = this.schemas;
         var html = this.datasourcetemplate({conn: conn, schemas: s.models});
@@ -520,13 +515,15 @@ var AdminConsole = Backbone.View.extend({
         var schema = new Schema();
         schema.set('file', file);
         schema.set('name', $(this.el).find("input[name='schemaname']").val());
-        schema.save({}, {processData: true});
+        var that = this;
+        schema.save({}, {processData: true, success: function(){
+            $(that.el).find('#uploadstatus').html("Upload Successful!")
+        }});
         this.schemas.add(schema);
     },
     save_datasource: function (event) {
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
-        var $target = $currentTarget.find('a');
         $currentTarget.addClass('selected');
         var path = $currentTarget.attr('href').replace('#', '');
         var that = this;
