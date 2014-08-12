@@ -60,7 +60,7 @@ public class Database {
         String url = servletContext.getInitParameter("foodmart.url");
         String user = servletContext.getInitParameter("foodmart.user");
         String pword = servletContext.getInitParameter("foodmart.password");
-        if(url!=null) {
+        if(url!=null && !url.equals("[[foodmartplaceholder]]")) {
             JdbcDataSource ds2 = new JdbcDataSource();
             ds2.setURL(url);
             ds2.setUser(user);

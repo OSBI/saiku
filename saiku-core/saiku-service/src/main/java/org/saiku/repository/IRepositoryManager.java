@@ -79,5 +79,7 @@ public interface IRepositoryManager {
 
     void setACL(String object, String acl, String username, List<String> roles);
 
+    List<org.saiku.database.dto.MondrianSchema> getInternalFilesOfFileType(String type) throws RepositoryException;
 
+    void createFileMixin(String type) throws RepositoryException;
 }

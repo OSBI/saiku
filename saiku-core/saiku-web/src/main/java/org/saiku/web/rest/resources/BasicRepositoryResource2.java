@@ -22,9 +22,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -45,7 +42,6 @@ import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.FileUtil;
 import org.apache.commons.vfs.VFS;
-import org.apache.jackrabbit.commons.JcrUtils;
 import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.ISessionService;

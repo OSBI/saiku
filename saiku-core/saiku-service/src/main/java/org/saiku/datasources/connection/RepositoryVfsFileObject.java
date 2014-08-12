@@ -19,16 +19,21 @@ import org.apache.commons.vfs.NameScope;
 import org.apache.commons.vfs.operations.FileOperations;
 import org.saiku.service.datasource.IDatasourceManager;
 
+import javax.jcr.RepositoryException;
+
 public class RepositoryVfsFileObject
         implements FileObject
 {
-    private final String fileRef;
+    private String fileRef;
     private boolean fileInitialized;
     private RepositoryFile repositoryFile;
     private IDatasourceManager repo;
     private RepositoryVfsFileContent content;
     private String fileUrl;
 
+    public RepositoryVfsFileObject(){
+
+    }
     public RepositoryVfsFileObject(String fileRef, IDatasourceManager repo)
     {
         this.repo = repo;
@@ -226,7 +231,11 @@ public class RepositoryVfsFileObject
     {
         InputStream inputStream = null;
         if (exists()) {
-            inputStream = new ByteArrayInputStream(this.repo.getInternalFileData(this.fileUrl).getBytes(StandardCharsets.UTF_8));
+            try {
+                inputStream = new ByteArrayInputStream(this.repo.getInternalFileData(this.fileUrl).getBytes(StandardCharsets.UTF_8));
+            } catch (RepositoryException e) {
+                e.printStackTrace();
+            }
         }
         return inputStream;
     }

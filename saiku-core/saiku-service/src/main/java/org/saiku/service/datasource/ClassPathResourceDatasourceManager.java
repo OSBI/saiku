@@ -38,6 +38,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import org.saiku.repository.AclEntry;
+
+import javax.jcr.RepositoryException;
+
 public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 
   private URL repoURL;
@@ -250,6 +253,14 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 
     public void setUserService(UserService userService) {
 
+    }
+
+    public List<MondrianSchema> getInternalFilesOfFileType(String type) throws RepositoryException {
+        return null;
+    }
+
+    public void createFileMixin(String type) throws RepositoryException {
+        
     }
 
     public String saveFile(String path, String content, String user) {

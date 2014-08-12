@@ -1,12 +1,15 @@
 *.DS_Store
-<<<<<<< HEAD
-
-# Intellij
 .idea/
 *.iml
 *.iws
-
 .clover
-=======
 saiku-webapp/saiku-webapp.iml
->>>>>>> bdd
+saiku-core/jackrabbit.properties
+saiku-core/jackrabbit2.properties
+saiku-core/saiku-service/data/
+saiku-core/saiku-service/derby.log
+saiku-core/saiku-service/locks
+saiku-core/saiku-service/output/
+saiku-core/saiku-service/repo-conf
+saiku-core/saiku-service/repository.xml
+

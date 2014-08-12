@@ -175,13 +175,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         return null;
     }
 
-    public String getInternalFileData(String file) {
-        try {
+    public String getInternalFileData(String file) throws RepositoryException {
+
             return irm.getInternalFile(file);
-        } catch (RepositoryException e) {
-            e.printStackTrace();
-        }
-        return null;
+
+
     }
 
     public String saveFile(String path, String content, String user, List<String> roles) {
@@ -240,6 +238,19 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+    public List<MondrianSchema> getInternalFilesOfFileType(String type){
+        try {
+            return irm.getInternalFilesOfFileType(type);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void createFileMixin(String type) throws RepositoryException {
+        irm.createFileMixin(type);
     }
 }
 

@@ -31,8 +31,9 @@
 	<security:intercept-url pattern="/serverdocs/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
   	<security:intercept-url pattern="/rest/saiku/session*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
       	<security:intercept-url pattern="/rest/saiku/session/" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-	<security:intercept-url pattern="/rest/**" access="IS_AUTHENTICATED_FULLY" />
-    <security:intercept-url pattern="/rest/saiku/info" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <security:intercept-url pattern="/rest/saiku/info"  filters="none" />
+
+        <security:intercept-url pattern="/rest/**" access="IS_AUTHENTICATED_FULLY" />
 	<security:intercept-url pattern="/json/**" access="IS_AUTHENTICATED_FULLY" />
     <security:intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />	
     <security:logout logout-url="/logout"/>  

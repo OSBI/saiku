@@ -7,6 +7,7 @@ public class MondrianSchema {
 
     String name;
     String path;
+    String type;
 
     public MondrianSchema() {
     }
@@ -26,4 +27,8 @@ public class MondrianSchema {
     public void setPath(String path) {
         this.path = path;
     }
+
+    public void setType(String type) { this.type = type;}
+
+    public String getType() { return type; }
 }

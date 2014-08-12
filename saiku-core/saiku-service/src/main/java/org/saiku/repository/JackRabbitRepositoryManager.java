@@ -111,6 +111,11 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
             n = JcrUtils.getOrAddFolder(root, "datasources");
             n.addMixin("nt:saikufolders");
+
+            n = JcrUtils.getOrAddFolder(root, "etc");
+            n.addMixin("nt:saikufolders");
+
+
             session.save();
             log.info("node added");
         }
@@ -191,10 +196,25 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     }
 
     public boolean deleteFolder(String folder) throws RepositoryException {
+        Node n;
+        try {
+            if(folder.startsWith("/")){
+                folder = folder.substring(1, folder.length());
+            }
+            n = getFolder(folder);
+            n.remove();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
         Node node = JcrUtils.getNodeIfExists(root, folder);
-        node.remove();
-        node.getSession().save();
-        return true;
+        if(node!=null) {
+            node.remove();
+            node.getSession().save();
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     public void deleteRepository() throws RepositoryException {
@@ -248,8 +268,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
 
             Node resNode = n.addNode(filename, "nt:file");
-            if (type.equals("nt:sa" +
-                    "ikufiles")) {
+            if (type.equals("nt:saikufiles")) {
                 resNode.addMixin("nt:saikufiles");
             } else if (type.equals("nt:mondrianschema")) {
                 resNode.addMixin("nt:mondrianschema");
@@ -289,14 +308,19 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
 
 
+            if(type == null){
+                type ="";
+            }
             Node resNode = n.addNode(filename, "nt:file");
-            if (type.equals("nt:sa" +
-                    "ikufiles")) {
+            if (type.equals("nt:saikufiles")) {
                 resNode.addMixin("nt:saikufiles");
             } else if (type.equals("nt:mondrianschema")) {
                 resNode.addMixin("nt:mondrianschema");
             } else if (type.equals("nt:olapdatasource")) {
                 resNode.addMixin("nt:olapdatasource");
+            }
+            else if(type!=null && !type.equals("") ){
+                resNode.addMixin(type);
             }
             Node contentNode = resNode.addNode("jcr:content", "nt:resource");
 
@@ -425,6 +449,30 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
             }
         }
 
+    }
+
+    public List<MondrianSchema> getInternalFilesOfFileType(String type) throws RepositoryException {
+        QueryManager qm = session.getWorkspace().getQueryManager();
+        String sql = "SELECT * FROM [nt:mongoschema]";
+        Query query = qm.createQuery(sql, Query.JCR_SQL2);
+
+        QueryResult res = query.execute();
+
+        NodeIterator node = res.getNodes();
+
+        List<MondrianSchema> l = new ArrayList<MondrianSchema>();
+        while (node.hasNext()) {
+            Node n = node.nextNode();
+            String p = n.getPath();
+
+            MondrianSchema m = new MondrianSchema();
+            m.setName(n.getName());
+            m.setPath(p);
+            m.setType(type);
+            l.add(m);
+
+        }
+        return l;
     }
 
 
@@ -659,6 +707,45 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         manager.registerNodeType(ntt, false);
     }
 
+    public void createFileMixin(String type) throws RepositoryException {
+
+        NodeTypeManager manager =
+                session.getWorkspace().getNodeTypeManager();
+        NodeTypeTemplate ntt = manager.createNodeTypeTemplate();
+        ntt.setName(type);
+        String[] str = new String[]{"nt:file"};
+        ntt.setDeclaredSuperTypeNames(str);
+        ntt.setMixin(true);
+        PropertyDefinitionTemplate pdt = manager.createPropertyDefinitionTemplate();
+        pdt.setName("owner");
+        pdt.setRequiredType(PropertyType.STRING);
+
+
+        PropertyDefinitionTemplate pdt2 = manager.createPropertyDefinitionTemplate();
+        pdt2.setName("type");
+        pdt2.setRequiredType(PropertyType.STRING);
+
+        PropertyDefinitionTemplate pdt4 = manager.createPropertyDefinitionTemplate();
+        pdt4.setName("roles");
+        pdt4.setRequiredType(PropertyType.STRING);
+
+        PropertyDefinitionTemplate pdt5 = manager.createPropertyDefinitionTemplate();
+        pdt5.setName("users");
+        pdt5.setRequiredType(PropertyType.STRING);
+
+
+        PropertyDefinitionTemplate pdt3 = manager.createPropertyDefinitionTemplate();
+        pdt3.setName("jcr:data");
+        pdt3.setRequiredType(PropertyType.STRING);
+
+        ntt.getPropertyDefinitionTemplates().add(pdt);
+        ntt.getPropertyDefinitionTemplates().add(pdt2);
+        ntt.getPropertyDefinitionTemplates().add(pdt3);
+        ntt.getPropertyDefinitionTemplates().add(pdt4);
+        ntt.getPropertyDefinitionTemplates().add(pdt5);
+
+        manager.registerNodeType(ntt, false);
+    }
     public void createFolders() throws RepositoryException {
 
         NodeTypeManager manager =

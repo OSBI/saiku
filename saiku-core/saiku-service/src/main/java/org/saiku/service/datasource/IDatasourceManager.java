@@ -25,6 +25,8 @@ import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.user.UserService;
 
+import javax.jcr.RepositoryException;
+
 public interface IDatasourceManager {
 
   public void load();
@@ -54,7 +56,7 @@ public interface IDatasourceManager {
 
   public String getFileData(String file, String username, List<String> roles);
 
-  public String getInternalFileData(String file);
+  public String getInternalFileData(String file) throws RepositoryException;
 
   public String saveFile(String path, String content, String user, List<String> roles);
 
@@ -71,4 +73,8 @@ public interface IDatasourceManager {
   public void setACL(String object, String acl, String username, List<String> roles);
 
   public void setUserService(UserService userService);
+
+  public List<org.saiku.database.dto.MondrianSchema> getInternalFilesOfFileType(String type) throws RepositoryException;
+
+  public void createFileMixin(String type) throws RepositoryException;
 }

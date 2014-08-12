@@ -18,6 +18,10 @@ public class RepositoryVfsFileContent
     private InputStream inputStream = null;
     private boolean isOpen;
 
+    public RepositoryVfsFileContent(){
+
+    }
+
     public RepositoryVfsFileContent(RepositoryVfsFileObject repositoryVfsFileObject)
     {
         this.fileObject = repositoryVfsFileObject;
