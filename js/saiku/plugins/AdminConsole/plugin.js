@@ -98,7 +98,10 @@ var AdminConsole = Backbone.View.extend({
         event.preventDefault();
         var conn = new Connection();
         var s = this.schemas;
-        var html = this.schemauploadtemplate({conn: conn, schemas: s.models});
+
+        var schema = new Schema();
+        schema.id = "";
+        var html = this.schemauploadtemplate({schema:schema});
 
         $(this.el).find('.user_info').html(html);
         Saiku.events.trigger('admin:viewdatasource', {
@@ -209,6 +212,7 @@ var AdminConsole = Backbone.View.extend({
     },
     populateschema: function (repository) {
         this.clear_schema();
+
         this.template_schema_objects(repository);
 
 
@@ -560,10 +564,13 @@ var AdminConsole = Backbone.View.extend({
         schema.set('file', file);
         schema.set('name', $(this.el).find("input[name='schemaname']").val());
         var that = this;
-        schema.save({}, {processData: true, success: function(){
+        this.schemas.create({file: file, name: $(this.el).find("input[name='schemaname']").val()}, {processData: true, success: function(){
             $(that.el).find('#uploadstatus').html("Upload Successful!")
         }});
-        this.schemas.add(schema);
+       /* schema.save({}, {processData: true, success: function(){
+            $(that.el).find('#uploadstatus').html("Upload Successful!")
+        }});*/
+        //this.schemas.add(schema);
     },
     save_datasource: function (event) {
         event.preventDefault();
