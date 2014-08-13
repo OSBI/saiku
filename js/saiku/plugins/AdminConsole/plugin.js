@@ -19,8 +19,10 @@ var AdminConsole = Backbone.View.extend({
         'click .submitdatasource': 'uploadFile',
         'click .save_datasource': 'save_datasource',
         'click .datasource': 'view_datasource',
+        'click .schema': 'view_schema',
         'click .accordion-toggle': 'accordion',
         'click .remove_datasource' : 'remove_datasource',
+        'click .remove_schema' : 'remove_schema',
         'click .remove_user' : 'remove_user',
         'click .refresh_button':'refresh_datasource',
         'click .advancedurl' :'advanced_url',
@@ -32,7 +34,7 @@ var AdminConsole = Backbone.View.extend({
         _.bindAll(this, "fetch_users", "fetch_schemas", "fetch_datasources", "clear_users", "clear_datasources", "new_add_role", "new_remove_role", "save_new_user", "advanced_url", "view_datasource");
         // Initialize repository
         this.users = new Users({}, { dialog: this });
-        this.schemas = new Schemas();
+        this.schemas = new Schemas({}, { dialog: this });
         this.datasources = new Connections({}, { dialog: this });
     },
     change_driver: function(){
@@ -200,9 +202,14 @@ var AdminConsole = Backbone.View.extend({
         getQueries(repository);
     },
     populate2: function (repository) {
-        var self = this;
-        self.clear_datasources();
-        self.template_user_objects2(repository);
+        this.clear_datasources();
+        this.template_datasource_objects(repository);
+
+
+    },
+    populateschema: function (repository) {
+        this.clear_schema();
+        this.template_schema_objects(repository);
 
 
     },
@@ -211,18 +218,24 @@ var AdminConsole = Backbone.View.extend({
         $(this.el).find('.inner_users').append(html);
 
     },
-    template_user_objects2: function (repository) {
-        var html = this.maintemplate2({repoObjects: repository});
+    template_datasource_objects: function (repository) {
+        var html = this.connectiontemplate({repoObjects: repository});
         $(this.el).find('.inner_datasource').append(html);
+    },
+    template_schema_objects: function (repository) {
+        var html = this.schematemplate({repoObjects: repository});
+        $(this.el).find('.inner_schema').append(html);
     },
     //itemTemplate : _.template( "<% console.log('Hello2 from template' +Object.keys(entry)); %>" +"Helo<!--<li class='query'><span class='icon'></span><a href=''>hello</a></li>-->"),
     maintemplate: _.template("<% _.each( repoObjects, function( entry ) { %>" +
         "<li class='user'><span class='icon'></span><a href='<%= entry.id%>'><%= entry.username %></a></li>" +
         "<% } ); %>"),
-    maintemplate2: _.template("<% _.each( repoObjects, function( entry ) { %>" +
+    connectiontemplate: _.template("<% _.each( repoObjects, function( entry ) { %>" +
         "<li class='datasource'><span class='icon'></span><a href='<%= entry.id%>'><%= entry.connectionname %></a></li>" +
         "<% } ); %>"),
-
+    schematemplate: _.template("<% _.each( repoObjects, function( entry ) { %>" +
+        "<li class='schema'><span class='icon'></span><a href='<%= entry.name%>'><%= entry.name %></a></li>" +
+        "<% } ); %>"),
     usertemplate: _.template(" <form><div id='accordion'><h3 class='accordion-toggle' >User Details</h3>" +
         "<div class='accordion-content default'>"+
         "<label for='username'>Username:</label> <input onfocus=\"this.value=''; this.onfocus=null;\" type='text' name='username' value='<% if(user.username) { %><%= user.username %><%} else{ %>Enter Username<%}%>'><br/>" +
@@ -270,7 +283,7 @@ var AdminConsole = Backbone.View.extend({
        ),
     schemauploadtemplate: _.template( "<h3>Upload Schema</h3>" +
         "<input name='fileschema' type='file' class='upload_button'/><div class='clear'></div><br/>" +
-        "<label for='schemaname'>Schema Name:</label><input name='schemaname' type='text'/><br/>    <input type='submit' class='user_button form_button upload_button submitdatasource' value='Upload'>" +
+        "<label for='schemaname'>Schema Name:</label><input name='schemaname' type='text' value='<%= schema.id %>'/><br/><a href='<%= schema.id%>' class='user_button form_button remove_schema hide'>Remove</a><input type='submit' class='user_button form_button upload_button submitdatasource' value='Upload'>" +
         "<br/><div id='uploadstatus'></div>"),
 
     view_user: function (event) {
@@ -298,6 +311,27 @@ var AdminConsole = Backbone.View.extend({
             //$($currentTarget.parent()).not($($currentTarget).next()).slideUp('fast');
 
 
+
+    },
+    view_schema: function (event) {
+        event.preventDefault();
+        var $currentTarget = $(event.currentTarget);
+        var $target = $currentTarget.find('a');
+        $currentTarget.addClass('selected');
+        var path = $target.attr('href').replace('#', '');
+
+        var user = this.schemas.get(path);
+        var html = this.schemauploadtemplate({schema: user});
+
+        $(this.el).find('.user_info').html(html);
+        Saiku.events.trigger('admin:viewschema', {
+            admin: this
+        });
+
+        $(this.el).find('.remove_schema').removeClass("hide");
+
+        $(this.el).find('.submitdatasource').hide();
+        $(this.el).find('input[name="fileschema"]').hide();
 
     },
     view_datasource: function (event) {
@@ -496,6 +530,16 @@ var AdminConsole = Backbone.View.extend({
 
         //this.fetch_datasources();
     },
+    clear_schema: function(){
+        $(this.el).find('.inner_schema').empty();
+        Saiku.events.trigger('admin:loadschema', {
+            admin: this
+        });
+
+
+        //this.fetch_datasources();
+    },
+
     create_datasource: function (event) {
         event.preventDefault();
         var conn = new Connection();
@@ -585,6 +629,18 @@ var AdminConsole = Backbone.View.extend({
 
         ds.destroy({success: this.fetch_datasources()});
     },
+    remove_schema : function(event){
+        event.preventDefault();
+
+        var $currentTarget = $(event.currentTarget);
+        // var $target = $currentTarget.find('a');
+        $currentTarget.addClass('selected');
+        var path = $currentTarget.attr('href').replace('#', '');
+
+        var s = this.schemas.get(path);
+
+        s.destroy({success: this.fetch_schemas()})
+    },
     remove_user : function(event){
         event.preventDefault();
 
@@ -623,6 +679,10 @@ var AdminConsole = Backbone.View.extend({
 });
 Saiku.events.bind('admin:loaddatasources', function(admin){
     $(admin.admin.el).find('.inner_datasource').append("<li class='create_datasource'>Add Data Source</li>");
+
+});
+Saiku.events.bind('admin:loadschema', function(admin){
+    $(admin.admin.el).find('.inner_schema').append("<li class='create_schema'>Add Schema</li>");
 
 });
 Saiku.events.bind('session:new', function (session) {
@@ -698,15 +758,27 @@ var Users = Backbone.Collection.extend({
 });
 
 var Schema = Backbone.Model.extend({
-    url: function () {
-        return AdminUrl + "/schema";
-    },
-    fileAttribute: 'file'
+
+    fileAttribute: 'file',
+    idAttribute: "name"
 });
 
 var Schemas = Backbone.Collection.extend({
+    model: Schema,
     url: function () {
         return AdminUrl + "/schema";
+    },
+    initialize: function (args, options) {
+        if (options && options.dialog) {
+            this.dialog = options.dialog;
+        }
+    },
+
+    parse: function (response) {
+        if (this.dialog) {
+            this.dialog.populateschema(response);
+        }
+        return response;
     }
 })
 var Connection = Backbone.Model.extend({
