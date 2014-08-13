@@ -84,8 +84,8 @@ var AdminConsole = Backbone.View.extend({
             "<ul class='inner_users'><li class='create_user'>Add User</li></ul></li>" +
             "<li><strong>Data Source Management</strong></li>" +
             "<ul class='inner_datasource'><li class='create_datasource'>Add Data Source</li></ul>" +
-            "</ul>" +
             "<ul class='inner_schema'><li class='create_schema'>Add Schema</li></ul>" +
+            "</ul>" +
             "</ul>" +
             "</div>" +
             "</div>" +
@@ -565,12 +565,9 @@ var AdminConsole = Backbone.View.extend({
         schema.set('name', $(this.el).find("input[name='schemaname']").val());
         var that = this;
         this.schemas.create({file: file, name: $(this.el).find("input[name='schemaname']").val()}, {processData: true, success: function(){
-            $(that.el).find('#uploadstatus').html("Upload Successful!")
+            $(that.el).find('#uploadstatus').html("Upload Successful!");
+            that.schemas.fetch();
         }});
-       /* schema.save({}, {processData: true, success: function(){
-            $(that.el).find('#uploadstatus').html("Upload Successful!")
-        }});*/
-        //this.schemas.add(schema);
     },
     save_datasource: function (event) {
         event.preventDefault();
