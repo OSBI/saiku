@@ -29,7 +29,6 @@ public interface ISaikuRepository {
 	/**
 	 * Load a resource.
 	 * @param file - The name of the repository file to load.
-	 * @param path - The path of the given file to load.
 	 * @return A Repository File Object.
 	 */
 	@GET
@@ -40,7 +39,6 @@ public interface ISaikuRepository {
 	/**
 	 * Save a resource.
 	 * @param file - The name of the repository file to load.
-	 * @param path - The path of the given file to load.
 	 * @param content - The content to save.
 	 * @return Status
 	 */
@@ -52,7 +50,6 @@ public interface ISaikuRepository {
 	/**
 	 * Delete a resource.
 	 * @param file - The name of the repository file to load.
-	 * @param path - The path of the given file to load.
 	 * @return Status
 	 */
 	@DELETE

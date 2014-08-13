@@ -144,12 +144,12 @@ public class AdminResource {
         return Response.ok().entity(datasourceService.getAvailableSchema()).build();
     }
 
-    @POST
+    @PUT
     @Produces( {"application/json"})
     @Consumes("multipart/form-data")
-    @Path("/schema")
-    public Response uploadSchema(@FormDataParam("file") InputStream is, @FormDataParam("file") FormDataContentDisposition detail,
-                                 @FormDataParam("name") String name) {
+    @Path("/schema/{id}")
+    public Response uploadSchemaPut(@FormDataParam("file") InputStream is, @FormDataParam("file") FormDataContentDisposition detail,
+                                 @FormDataParam("name") String name, @PathParam("id") String id) {
         if(!userService.isAdmin()){
             return Response.status(Response.Status.FORBIDDEN).build();
         }
@@ -157,7 +157,30 @@ public class AdminResource {
         String schema = getStringFromInputStream(is);
         try {
             datasourceService.addSchema(schema, path, name);
-            return Response.ok().build();
+            return Response.ok().entity(datasourceService.getAvailableSchema()).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(e.getLocalizedMessage())
+                    .type("text/plain").build();
+        }
+
+    }
+
+    @POST
+    @Produces( {"application/json"})
+    @Consumes("multipart/form-data")
+    @Path("/schema/{id}")
+    public Response uploadSchema(@FormDataParam("file") InputStream is, @FormDataParam("file") FormDataContentDisposition detail,
+                                 @FormDataParam("name") String name, @PathParam("id") String id) {
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        String path = "/datasources/" + name + ".xml";
+        String schema = getStringFromInputStream(is);
+        try {
+            datasourceService.addSchema(schema, path, name);
+            return Response.ok().entity(datasourceService.getAvailableSchema()).build();
         } catch (Exception e) {
             e.printStackTrace();
             return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -181,7 +204,7 @@ public class AdminResource {
     @DELETE
     @Path("/schema/{id}")
     public void deleteSchema(@PathParam("id") String id) {
-        //datasourceService.removeSchema(id);
+        datasourceService.removeSchema(id);
     }
 
     @GET

@@ -288,6 +288,42 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         }
     }
 
+    public void removeFile(String path, String user, List<String> roles) throws RepositoryException {
+        Node node = getFolder(path);
+        Acl2 acl2 = new Acl2(node);
+        acl2.setAdminRoles(userService.getAdminRoles());
+        if ( !acl2.canRead(node, user, roles) ) {
+            //TODO Throw exception
+            throw new RepositoryException();
+
+        }
+
+        node.remove();
+
+        node.getSession().save();
+
+
+    }
+
+    public void moveFile(String source, String target, String user, List<String> roles) throws RepositoryException {
+        Node node = getFolder(source);
+        Node t = getFolder(target);
+        Acl2 acl2 = new Acl2(node);
+        acl2.setAdminRoles(userService.getAdminRoles());
+        if ( !acl2.canRead(node, user, roles) || !acl2.canWrite(t, user, roles)) {
+            //TODO Throw exception
+            throw new RepositoryException();
+
+        }
+
+        node.getSession().move(source, target);
+
+        node.getSession().save();
+
+
+    }
+
+
     public Node saveInternalFile(Object file, String path, String type) throws RepositoryException {
         if(file==null){
             //Create new folder
@@ -341,6 +377,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         acl2.setAdminRoles(userService.getAdminRoles());
         if ( !acl2.canRead(node, username, roles) ) {
             //TODO Throw exception
+            throw new RepositoryException();
         }
         return getFolder(s).getNodes("jcr:content").nextNode().getProperty("jcr:data").getString();
     }

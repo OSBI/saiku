@@ -24,3 +24,5 @@ Usage: ./saiku run <package>
 				node server.js 8080 dev.analytical-labs.com 80
 
 mvn clean clover2:setup test clover2:aggregate clover2:clover
+
+If you require Foodmart for a different database checkout the foodmart loader wrapper script: https://github.com/OSBI/foodmart-data

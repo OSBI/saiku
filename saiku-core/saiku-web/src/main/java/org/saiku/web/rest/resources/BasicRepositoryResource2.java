@@ -221,33 +221,16 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	public Response deleteResource (
 			@QueryParam("file") String file)
 	{
-		/*try {
-			if (file == null || file.startsWith("/") || file.startsWith(".")) {
-				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
-			}
-	
-			
-			String username = sessionService.getAllSessionObjects().get("username").toString();
-			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-				FileObject repoFile = repo.resolveFile(file);
+        String username = sessionService.getAllSessionObjects().get("username").toString();
+        List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
+        String resp = datasourceService.removeFile(file, username, roles);
+        if(resp.equals("Remove Okay")){
+            return Response.ok().build();
+        }
+        else{
+            return Response.serverError().entity("Cannot save resource to ( file: " + file + ")").type("text/plain").build();
+        }
 
-				if (repoFile != null && repoFile.exists() ) {
-					if ( acl.canWrite(file, username, roles) ){
-						if (repoFile.getType().equals(FileType.FILE)) {
-							repoFile.delete();
-						} else {
-							repoFile.delete(new AllFileSelector());
-						}
-						return Response.ok().build();
-					} else {
-						return Response.serverError().status(Status.FORBIDDEN).build();
-					} 
-				}
-		} catch(Exception e){
-			log.error("Cannot save resource to (file: " + file + ")",e);
-		}
-		return Response.serverError().build();*/
-        return null;
 	}
 	
 	/* (non-Javadoc)
@@ -257,6 +240,18 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	@Path("/resource/move")
 	public Response moveResource(@FormParam("source") String source, @FormParam("target") String target)
 	{
+        String username = sessionService.getAllSessionObjects().get("username").toString();
+        List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
+        String resp = datasourceService.moveFile(source, target, username, roles);
+        if(resp.equals("Remove Okay")){
+            return Response.ok().build();
+        }
+        else{
+            return Response.serverError().entity("Cannot move resource to ( file: " + target + ")").type("text/plain").build();
+        }
+
+
+
 		/*try {
 			if (source == null || source.startsWith("/") || source.startsWith(".")) {
 				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + source);
@@ -299,7 +294,6 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 			return Response.serverError().entity("Cannot move resource from " + source + " to " + target + " ( " + e.getMessage() + ")").type("text/plain").build();
 		}
 		*/
-        return null;
 	}
 	
 	@GET

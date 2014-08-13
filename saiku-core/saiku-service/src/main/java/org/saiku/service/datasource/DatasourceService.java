@@ -70,6 +70,10 @@ public class DatasourceService implements Serializable {
     datasources.removeDatasource(datasourceId);
   }
 
+  public void removeSchema(String schemaId) {
+        datasources.removeSchema(schemaId);
+  }
+
   public SaikuDatasource getDatasource(String datasourceName) {
     return datasources.getDatasource(datasourceName);
   }
@@ -88,7 +92,12 @@ public class DatasourceService implements Serializable {
 
   public String saveFile(String content, String path, String name, List<String> roles) { return datasources.saveFile(path, content, name, roles); }
 
-  public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
+  public String removeFile(String path, String name, List<String> roles) { return datasources.removeFile(path, name, roles); }
+
+    public String moveFile(String source, String target, String name, List<String> roles) { return datasources.moveFile(source, target, name, roles); }
+
+
+    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
       return datasources.getFiles(type,username,roles);
   }
 

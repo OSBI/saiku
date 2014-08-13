@@ -42,6 +42,8 @@ public interface IDatasourceManager {
 
   public boolean removeDatasource( String datasourceName );
 
+  public boolean removeSchema( String schemaName );
+
   public Map<String, SaikuDatasource> getDatasources();
 
   public SaikuDatasource getDatasource( String datasourceName );
@@ -59,6 +61,10 @@ public interface IDatasourceManager {
   public String getInternalFileData(String file) throws RepositoryException;
 
   public String saveFile(String path, String content, String user, List<String> roles);
+
+  public String removeFile(String path, String user, List<String> roles);
+
+  public String moveFile(String source, String target, String user, List<String> roles);
 
   public String saveInternalFile(String path, String content, String type);
 

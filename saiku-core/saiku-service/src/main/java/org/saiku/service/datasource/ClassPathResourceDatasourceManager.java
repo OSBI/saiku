@@ -174,7 +174,11 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
     }
   }
 
-  public Map<String, SaikuDatasource> getDatasources() {
+    public boolean removeSchema(String schemaName) {
+        return false;
+    }
+
+    public Map<String, SaikuDatasource> getDatasources() {
     return datasources;
   }
 
@@ -216,6 +220,14 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
     }
 
     public String saveFile(String path, String content, String user, List<String> roles) {
+        return null;
+    }
+
+    public String removeFile(String path, String user, List<String> roles) {
+        return null;
+    }
+
+    public String moveFile(String source, String target, String user, List<String> roles) {
         return null;
     }
 

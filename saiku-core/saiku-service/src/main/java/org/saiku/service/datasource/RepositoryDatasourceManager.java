@@ -134,6 +134,31 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     }
 
+    public boolean removeSchema(String schemaName) {
+        List<org.saiku.database.dto.MondrianSchema> s = null;
+        try {
+            s = irm.getAllSchema();
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+
+        if (s != null) {
+            for(MondrianSchema data : s){
+                if(data.getName().equals(schemaName)){
+                    irm.deleteFile(data.getPath());
+                    break;
+                }
+            }
+            return true;
+        }
+        else{
+            return false;
+        }
+
+
+
+    }
+
     public Map<String, SaikuDatasource> getDatasources() {
         return datasources;
     }
@@ -189,6 +214,26 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         } catch (RepositoryException e) {
             e.printStackTrace();
             return "Save Failed: " + e.getLocalizedMessage();
+        }
+    }
+
+    public String removeFile(String path, String user, List<String> roles) {
+        try {
+            irm.removeFile(path, user, roles);
+            return "Remove Okay";
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            return "Save Failed: " + e.getLocalizedMessage();
+        }
+    }
+
+    public String moveFile(String source, String target, String user, List<String> roles) {
+        try {
+            irm.moveFile(source, target, user, roles);
+            return "Move Okay";
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            return "Move Failed: " + e.getLocalizedMessage();
         }
     }
 
