@@ -1,0 +1,33 @@
+{
+  "name": "saiku-ui",
+  "description": "A user interface for the Saiku analytical tool",
+  "homepage": "http://www.meteorite.bi/saiku",
+  "version": "2.6.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OSBI/saiku-ui"
+  },
+  "keywords": [
+    "saiku-ui",
+    "user-interface",
+    "analytics-client",
+    "business-intelligence"
+  ],
+  "author": "Meteorite BI",
+  "license": "Apache License Version 2",
+  "bugs": {
+    "url": "http://jira.meteorite.bi/"
+  },
+  "engines": {
+    "node": ">=0.8.x",
+    "npm": ">=1.1.2"
+  },
+  "devDependencies": {
+    "express": "^4.8.4"
+  }
+}
