@@ -305,6 +305,8 @@ var TabSet = Backbone.View.extend({
             if (this._tabs[i] != tab) {
                 // Remove the element
                 var otherTab = this._tabs[i];
+                if(!otherTab)
+                    break;
                 otherTab.remove();
                 i--;
             }
