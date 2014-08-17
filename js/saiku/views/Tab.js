@@ -82,15 +82,17 @@ var Tab = Backbone.View.extend({
                 callback: function(key, options) {
                     var selected = options.$trigger.attr('href').replace('#','');
                     var tab = Saiku.tabs.find(selected);
-                    if (key == "closethis") {
+                 	  if (key == "closethis") {
                         tab.remove();
                         self.select();
                         return;
-                    } else if (key == "new") {
-                        Saiku.tabs.new_tab();
                     } else if (key == "closeothers") {
                         tab.select();
                         Saiku.tabs.close_others(tab);
+                    } else if (key == "duplicate") {
+                        Saiku.tabs.duplicate(tab);
+                    } else if (key == "new") {
+                        Saiku.tabs.new_tab();
                     }
                     //self.workspace.chart.exportChart(key);
                 },
