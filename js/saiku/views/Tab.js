@@ -314,17 +314,14 @@ var TabSet = Backbone.View.extend({
                 i--;
             }
         }
-        
-        
-
     },
+    
     close_all: function() {
         for (var i = 0, len = this._tabs.length; i < len; i++) {
-                var otherTab = this._tabs[i];
-                otherTab.remove();
-            }
+            var otherTab = this._tabs[i];
+            otherTab.remove();
         }
-    ,
+    },
     
     togglePager: function() {
         $(this.pager.el).toggle();
