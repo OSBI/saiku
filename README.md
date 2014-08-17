@@ -34,7 +34,7 @@ In order to run it locally you'll need a basic server setup.
 3. You can simply test and run the UI on a NodeJS proxy server called [server.js](https://github.com/OSBI/saiku-ui/blob/master/server.js), that will utilize a remote backend as source.
 
 	Just run the following command in your command line and then access the UI in
-	the browser (by default, it will run at [http://localhost:8080](http://localhost:8080) and proxy requests to [dev.analytical-labs.com:80](dev.analytical-labs.com:80)):
+	the browser (by default, it will run at [http://localhost:8080](http://localhost:8080) and proxy requests to dev.analytical-labs.com:80):
 
 		node server.js [port] [backend_host] [backend_port]
 
