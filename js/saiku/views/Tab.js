@@ -68,8 +68,9 @@ var Tab = Backbone.View.extend({
         }
         var menuitems = {
             "new": {name: "New", i18n: true },
-            "closethis": {name: "Close This", i18n: true },
-            "closeothers": {name: "Close Others", i18n: true }
+            "duplicate": { name: "Duplicate", i18n: true},
+            "closeothers": {name: "Close Others", i18n: true },
+            "closethis": {name: "Close This", i18n: true }
         };
         $.each(menuitems, function(key, item){
             recursive_menu_translate(item, Saiku.i18n.po_file);
@@ -81,15 +82,17 @@ var Tab = Backbone.View.extend({
                 callback: function(key, options) {
                     var selected = options.$trigger.attr('href').replace('#','');
                     var tab = Saiku.tabs.find(selected);
-                    if (key == "closethis") {
+                 	  if (key == "closethis") {
                         tab.remove();
                         self.select();
                         return;
-                    } else if (key == "new") {
-                        Saiku.tabs.new_tab();
                     } else if (key == "closeothers") {
                         tab.select();
                         Saiku.tabs.close_others(tab);
+                    } else if (key == "duplicate") {
+                        Saiku.tabs.duplicate(tab);
+                    } else if (key == "new") {
+                        Saiku.tabs.new_tab();
                     }
                     //self.workspace.chart.exportChart(key);
                 },
@@ -305,21 +308,20 @@ var TabSet = Backbone.View.extend({
             if (this._tabs[i] != tab) {
                 // Remove the element
                 var otherTab = this._tabs[i];
+                if(!otherTab)
+                    break;
                 otherTab.remove();
                 i--;
             }
         }
-        
-        
-
     },
+    
     close_all: function() {
         for (var i = 0, len = this._tabs.length; i < len; i++) {
-                var otherTab = this._tabs[i];
-                otherTab.remove();
-            }
+            var otherTab = this._tabs[i];
+            otherTab.remove();
         }
-    ,
+    },
     
     togglePager: function() {
         $(this.pager.el).toggle();
@@ -331,5 +333,36 @@ var TabSet = Backbone.View.extend({
         var next = this._tabs.length - 1;
         this._tabs[next].select();
         return false;
+    },
+    
+    duplicate: function(tab) {
+        // Duplicating the Workspace
+        var query = tab.content.query;
+        var viewState = tab.content.viewState;
+        
+        // Block UI to prevent other events
+        Saiku.ui.block("Duplicating tab...");
+        
+        // Check for empty query
+        if(query){
+            query.action.get("/xml",
+                { success: function(model, response) {
+                    Saiku.tabs.add(
+                        new Workspace(
+                            { query: new Query(
+                                { xml: response.xml, formatter: Settings.CELLSET_FORMATTER },
+                                Settings.PARAMS),
+                            viewState: viewState }
+                        )
+                    );}
+                },
+            { async: false });
+        } else {
+            this.add(new Workspace());
+        }
+        
+        // Unblock UI and restore functionality
+    	Saiku.ui.unblock();
+    	return false;
     }
 });
