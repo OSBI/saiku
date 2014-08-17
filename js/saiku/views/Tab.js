@@ -333,5 +333,36 @@ var TabSet = Backbone.View.extend({
         var next = this._tabs.length - 1;
         this._tabs[next].select();
         return false;
+    },
+    
+    duplicate: function(tab) {
+        // Duplicating the Workspace
+        var query = tab.content.query;
+        var viewState = tab.content.viewState;
+        
+        // Block UI to prevent other events
+        Saiku.ui.block("Duplicating tab...");
+        
+        // Check for empty query
+        if(query){
+            query.action.get("/xml",
+                { success: function(model, response) {
+                    Saiku.tabs.add(
+                        new Workspace(
+                            { query: new Query(
+                                { xml: response.xml, formatter: Settings.CELLSET_FORMATTER },
+                                Settings.PARAMS),
+                            viewState: viewState }
+                        )
+                    );}
+                },
+            { async: false });
+        } else {
+            this.add(new Workspace());
+        }
+        
+        // Unblock UI and restore functionality
+    	Saiku.ui.unblock();
+    	return false;
     }
 });
