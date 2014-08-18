@@ -285,7 +285,8 @@ var AdminConsole = Backbone.View.extend({
         "<br/><br/><a href='' name='advancedurl' class='advancedurl'>Advanced</a>" +
         "<a href='<%= conn.id%>' class='user_button form_button remove_datasource hide'>Remove</a>" +
         "<a href='<%= conn.id%>' class='user_button form_button save_datasource'>Save</a>" +
-        "<a href='<%= conn.id%>' class='refresh_button form_button user_button hide'>Refresh Cache</a><div class='clear'></div></form>"
+        "<a href='<%= conn.id%>' class='refresh_button form_button user_button hide'>Refresh Cache</a><div class='clear'></div></form>" +
+        "<div id='savestatus'></div>"
        ),
     schemauploadtemplate: _.template( "<h3>Upload Schema</h3>" +
         "<input name='fileschema' type='file' class='upload_button'/><div class='clear'></div><br/>" +
@@ -569,6 +570,9 @@ var AdminConsole = Backbone.View.extend({
         this.schemas.create({file: file, name: $(this.el).find("input[name='schemaname']").val()}, {processData: true, success: function(){
             $(that.el).find('#uploadstatus').html("Upload Successful!");
             that.schemas.fetch();
+        },error: function(data, xhr){
+            $(that.el).find('#uploadstatus').html("Upload failed!<br/>("+xhr.responseText+")");
+            that.schemas.fetch();
         }});
     },
     save_datasource: function (event) {
@@ -597,6 +601,9 @@ var AdminConsole = Backbone.View.extend({
                 that.clear_datasources();
                 $(that.el).find('.user_info').html("");
 
+            }, error: function(data, xhr){
+                $(that.el).find('#savestatus').html("Save failed!<br/>("+xhr.responseText+")");
+                that.schemas.fetch();
             }});
         }
         else{
@@ -617,6 +624,9 @@ var AdminConsole = Backbone.View.extend({
                 that.fetch_datasources();
                 $(that.el).find('.user_info').html("");
 
+            }, error: function(data, xhr){
+                $(that.el).find('#savestatus').html("Save failed!<br/>("+xhr.responseText+")");
+                that.schemas.fetch();
             }});
 
 
