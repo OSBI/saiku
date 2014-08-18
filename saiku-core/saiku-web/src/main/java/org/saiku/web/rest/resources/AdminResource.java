@@ -203,8 +203,9 @@ public class AdminResource {
 
     @DELETE
     @Path("/schema/{id}")
-    public void deleteSchema(@PathParam("id") String id) {
+    public Response deleteSchema(@PathParam("id") String id) {
         datasourceService.removeSchema(id);
+        return Response.status(Response.Status.NO_CONTENT).entity(datasourceService.getAvailableSchema()).build();
     }
 
     @GET
