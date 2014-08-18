@@ -83,8 +83,10 @@ var AdminConsole = Backbone.View.extend({
             "<li><strong>User Management</strong>" +
             "<ul class='inner_users'><li class='create_user'>Add User</li></ul></li>" +
             "<li><strong>Data Source Management</strong></li>" +
-            "<ul class='inner_datasource'><li class='create_datasource'>Add Data Source</li></ul>" +
-            "<ul class='inner_schema'><li class='create_schema'>Add Schema</li></ul>" +
+            "<ul class='dslist'><strong>Data Sources</strong>"+
+            "<ul class='inner_datasource'><li class='create_datasource'>Add Data Source</li></ul></ul>" +
+            "<ul class='dslist'><strong>Schema</strong>"+
+            "<ul class='inner_schema'><li class='create_schema'>Add Schema</li></ul></ul>" +
             "</ul>" +
             "</ul>" +
             "</div>" +
