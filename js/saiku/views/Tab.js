@@ -345,18 +345,31 @@ var TabSet = Backbone.View.extend({
         
         // Check for empty query
         if(query){
-            query.action.get("/xml",
-                { success: function(model, response) {
-                    Saiku.tabs.add(
-                        new Workspace(
-                            { query: new Query(
-                                { xml: response.xml, formatter: Settings.CELLSET_FORMATTER },
-                                Settings.PARAMS),
-                            viewState: viewState }
-                        )
-                    );}
-                },
-            { async: false });
+            // For versions < 3.0 (Using QueryResource)
+            /*
+            query.action.get("/xml", {
+                success: function(model, response) {
+                    Saiku.tabs.add(new Workspace({
+                        query: new Query({
+                            xml: response.xml,
+                            formatter: Settings.CELLSET_FORMATTER
+                        }, Settings.PARAMS),
+                        viewState: viewState
+                    }));
+                }
+            }, {
+                async: false
+            });
+            */
+            
+            // For versions >= 3.0 (Using Query2Resource)
+            this.add(new Workspace({
+                query : new Query({
+                    json : JSON.stringify(query.model)
+                }, Settings.PARAMS),
+                viewState : viewState
+            }));
+            
         } else {
             this.add(new Workspace());
         }
