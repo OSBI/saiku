@@ -304,15 +304,14 @@ var TabSet = Backbone.View.extend({
     close_others: function(tab) {
         var index = _.indexOf(this._tabs, tab);
         this._tabs[index].select();
-        for (var i = 0, len = this._tabs.length; i < len; i++) {
-            if (this._tabs[i] != tab) {
-                // Remove the element
-                var otherTab = this._tabs[i];
-                if(!otherTab)
-                    break;
-                otherTab.remove();
-                i--;
-            }
+        
+        // Remove tabs placed before and after selected tab
+        var i = 0;
+        while(1 < this._tabs.length){
+            if (this._tabs[i] != tab)
+                this._tabs[i].remove();
+            else
+                i++;
         }
     },
     
