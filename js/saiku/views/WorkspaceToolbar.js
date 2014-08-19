@@ -431,7 +431,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     show_mdx: function(event) {
-        this.workspace.query.enrich();
+        //this.workspace.query.enrich();
 
         (new MDXModal({ mdx: this.workspace.query.model.mdx })).render().open();
     },
@@ -569,7 +569,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         var self = this;
 
         if (this.workspace.query.model.type !== "MDX") {
-            this.workspace.query.enrich();
+            //this.workspace.query.enrich();
             this.workspace.query.model.queryModel = {};
             this.workspace.query.model.type = "MDX";
             this.workspace.query.setProperty('saiku.olap.result.formatter', 'flat');
