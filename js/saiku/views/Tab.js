@@ -336,38 +336,17 @@ var TabSet = Backbone.View.extend({
     },
     
     duplicate: function(tab) {
-        // Duplicating the Workspace
-        var query = tab.content.query;
-        var viewState = tab.content.viewState;
-        
         // Block UI to prevent other events
         Saiku.ui.block("Duplicating tab...");
         
         // Check for empty query
-        if(query){
-            // For versions < 3.0 (Using QueryResource)
-            /*
-            query.action.get("/xml", {
-                success: function(model, response) {
-                    Saiku.tabs.add(new Workspace({
-                        query: new Query({
-                            xml: response.xml,
-                            formatter: Settings.CELLSET_FORMATTER
-                        }, Settings.PARAMS),
-                        viewState: viewState
-                    }));
-                }
-            }, {
-                async: false
-            });
-            */
-            
-            // For versions >= 3.0 (Using Query2Resource)
+        if(tab.content.query){
+            // For versions using Query2Resource
             this.add(new Workspace({
                 query : new Query({
-                    json : JSON.stringify(query.model)
+                    json : JSON.stringify(tab.content.query.model)
                 }, Settings.PARAMS),
-                viewState : viewState
+                viewState : tab.content.viewState
             }));
             
         } else {
@@ -375,7 +354,7 @@ var TabSet = Backbone.View.extend({
         }
         
         // Unblock UI and restore functionality
-    	Saiku.ui.unblock();
-    	return false;
+        Saiku.ui.unblock();
+        return false;
     }
 });
