@@ -99,7 +99,7 @@
 	font-weight: bold;
 }
 
-.workspace_results table tr:hover {
+.workspace_results table tbody tr:hover {
   background: #edf4fa !important;
 }
 
