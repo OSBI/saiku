@@ -507,7 +507,7 @@ public class ExcelWorksheetBuilder {
           if ( rowsetHeader[ x ].length == y + 1 ) {
             isLastColumn = true;
           } else {
-            nextHeader = rowsetHeader[ x ][ y + 1 ].getFormattedValue();
+            nextHeader = EMPTY_STRING + rowsetHeader[ x ][ y + 1 ].getFormattedValue();
           }
 
           manageColumnHeaderDisplay( sheetRow, x, y, currentHeader );
