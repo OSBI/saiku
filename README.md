@@ -38,6 +38,10 @@ In order to run it locally you'll need a basic server setup.
 
 		node server.js [port] [backend_host] [backend_port]
 
+## Bugs and Feature Requests
+
+* [Meteorite BI Jira](http://jira.meteorite.bi/)
+
 ## Discussion
 
 * [Meteorite BI Forums](http://forums.meteorite.bi/)
