@@ -665,8 +665,15 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         pdt4.setName("enabled");
         pdt4.setRequiredType(PropertyType.STRING);
 
+        PropertyDefinitionTemplate pdt5 = manager.createPropertyDefinitionTemplate();
+
+        pdt5.setName("owner");
+        pdt5.setRequiredType(PropertyType.STRING);
+
+
         ntt.getPropertyDefinitionTemplates().add(pdt3);
         ntt.getPropertyDefinitionTemplates().add(pdt4);
+        ntt.getPropertyDefinitionTemplates().add(pdt5);
         manager.registerNodeType(ntt, false);
     }
 
@@ -696,9 +703,14 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         pdt3.setName("jcr:data");
         pdt3.setRequiredType(PropertyType.STRING);
 
+        PropertyDefinitionTemplate pdt4 = manager.createPropertyDefinitionTemplate();
+        pdt4.setName("owner");
+        pdt4.setRequiredType(PropertyType.STRING);
+
         ntt.getPropertyDefinitionTemplates().add(pdt);
         ntt.getPropertyDefinitionTemplates().add(pdt2);
         ntt.getPropertyDefinitionTemplates().add(pdt3);
+        ntt.getPropertyDefinitionTemplates().add(pdt4);
 
 
         manager.registerNodeType(ntt, false);

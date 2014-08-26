@@ -4,15 +4,20 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
 import java.util.*;
 
 /**
  * Created by bugg on 24/06/14.
  */
 public class Acl2 {
+
+    private static final Logger log = LoggerFactory.getLogger(Acl2.class);
 
     private List<String> adminRoles;
 
@@ -52,10 +57,10 @@ public class Acl2 {
                 entry = e.getValue();
             }
             catch (PathNotFoundException e){
-                e.printStackTrace();
+                log.debug("Path(owner) not found: "+node.getPath(), e.getCause());
             }
             catch (Exception e ){
-                e.printStackTrace();
+                log.debug("Exception: " + node.getPath(), e.getCause());
             }
             AclMethod method;
 
@@ -128,8 +133,7 @@ public class Acl2 {
           //  String parentPath = repoRoot
             return getAllAcls( method );
         } catch ( Exception e ) {
-            e.printStackTrace();
-            //logger.error( "Cannot get methods for: " + path, e );
+            log.debug("Error", e.getCause());
         }
         List<AclMethod> noMethod = new ArrayList<AclMethod>();
         noMethod.add( AclMethod.NONE );
@@ -181,8 +185,11 @@ public class Acl2 {
             node.setProperty("owner", "");
             node.setProperty("owner", mapper.writeValueAsString(acl));
         } catch ( Exception e ) {
-            e.printStackTrace();
-            //logger.error( "Error writing data to file", e );
+            try {
+                log.debug("Error while reading ACL files at path: "+node.getPath(), e.getCause());
+            } catch (RepositoryException e1) {
+                log.debug("Repository Exception", e1.getCause());
+            }
         }
     }
 
@@ -195,7 +202,12 @@ public class Acl2 {
                         .mapType(HashMap.class, String.class, AclEntry.class) );
             }
         } catch ( Exception e ) {
-            //logger.error( "Error reading the json file:" + accessFile, e );
+
+            try {
+                log.debug("Error while reading ACL files at path: "+node.getPath(), e.getCause());
+            } catch (RepositoryException e1) {
+                log.debug("Repository Exception", e1.getCause());
+            }
         }
 
         return acl;
@@ -251,8 +263,12 @@ public class Acl2 {
                 }
             }
         } catch ( Exception e ) {
-            e.printStackTrace();
-          //  logger.error( "Error while reading ACL files at path: " + path, e );
+
+            try {
+                log.debug("Error while reading ACL files at path: "+resource.getPath(), e.getCause());
+            } catch (RepositoryException e1) {
+                log.debug("Repository Exception", e1.getCause());
+            }
         }
     }
 
