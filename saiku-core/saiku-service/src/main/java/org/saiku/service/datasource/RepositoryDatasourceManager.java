@@ -277,7 +277,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
     public void setACL(String object, String acl, String username, List<String> roles) {
-        irm.setACL(object, acl, username, roles);
+        try {
+            irm.setACL(object, acl, username, roles);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
     }
 
 

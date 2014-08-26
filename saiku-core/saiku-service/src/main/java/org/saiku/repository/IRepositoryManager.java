@@ -82,7 +82,7 @@ public interface IRepositoryManager {
 
     AclEntry getACL(String object, String username, List<String> roles);
 
-    void setACL(String object, String acl, String username, List<String> roles);
+    void setACL(String object, String acl, String username, List<String> roles) throws RepositoryException;
 
     List<org.saiku.database.dto.MondrianSchema> getInternalFilesOfFileType(String type) throws RepositoryException;
 

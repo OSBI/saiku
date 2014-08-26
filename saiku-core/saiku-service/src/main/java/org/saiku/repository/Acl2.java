@@ -237,9 +237,9 @@ public class Acl2 {
         try {
 
             String s = resource.getPrimaryNodeType().getName();
-            Node folder =
-                    resource.getPrimaryNodeType().getName().equals( "nt:folder" )
-                            ? resource : resource.getParent();
+            Node folder = resource;
+                    //resource.getPrimaryNodeType().getName().equals( "nt:folder" )
+                    //        ? resource : resource.getParent();
 
             String jsonFile = folder.getProperty("owner").getString();
 
@@ -258,9 +258,9 @@ public class Acl2 {
             }
 
             for ( Node file : JcrUtils.getChildNodes(folder) ) {
-                if ( file.getPrimaryNodeType().equals( "nt:folder" ) ) {
+                //if ( file.getPrimaryNodeType().equals( "nt:folder" ) ) {
                     readAclTree( file );
-                }
+                //}
             }
         } catch ( Exception e ) {
 

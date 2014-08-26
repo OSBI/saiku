@@ -457,7 +457,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         return null;
     }
 
-    public void setACL(String object, String acl, String username, List<String> roles) {
+    public void setACL(String object, String acl, String username, List<String> roles) throws RepositoryException {
 
 
         ObjectMapper mapper = new ObjectMapper();
@@ -486,6 +486,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
             }
         }
 
+        node.getSession().save();
     }
 
     public List<MondrianSchema> getInternalFilesOfFileType(String type) throws RepositoryException {
@@ -899,7 +900,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
                                   repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath, acls));
                         }
                         if (file.getPrimaryNodeType().getName().equals("nt:folder")) {
-                            repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepoObjects(file, fileType, username, roles)));
+                            //repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepoObjects(file, fileType, username, roles)));
                         }
                         Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
 
