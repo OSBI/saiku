@@ -22,6 +22,8 @@ import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.repository.*;
 import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 import java.util.*;
@@ -34,12 +36,12 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private Map<String, SaikuDatasource> datasources =
             Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
     private UserService userService;
-
+    private static final Logger log = LoggerFactory.getLogger(RepositoryDatasourceManager.class);
     public void load() {
         try {
             irm.start(userService);
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Could not start repo", e);
         }
         datasources.clear();
         try {
@@ -48,7 +50,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             try {
                 exporteddatasources = irm.getAllDataSources();
             } catch (RepositoryException e1) {
-                e1.printStackTrace();
+                log.error("Could not export data sources", e1);
             }
 
             if (exporteddatasources != null) {
@@ -100,7 +102,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 datasources.put(datasource.getName(), datasource);
 
             } catch (RepositoryException e) {
-                e.printStackTrace();
+                log.error("Could not add data source"+ datasource.getName(), e);
             }
 
         }
@@ -112,7 +114,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         try {
             ds = irm.getAllDataSources();
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Could not get all data sources");
         }
 
         if (ds != null) {
@@ -139,7 +141,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         try {
             s = irm.getAllSchema();
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Could not get All Schema", e);
         }
 
         if (s != null) {
@@ -176,7 +178,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         try {
             return irm.getAllSchema();
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Could not get all Schema", e);
         }
         return null;
     }
@@ -195,7 +197,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         try {
             return irm.getFile(file, username, roles);
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Could not get file "+file, e);
         }
         return null;
     }
@@ -212,7 +214,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             irm.saveFile(content, path, user, "nt:saikufiles", roles);
             return "Save Okay";
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Save Failed",e );
             return "Save Failed: " + e.getLocalizedMessage();
         }
     }
@@ -222,7 +224,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             irm.removeFile(path, user, roles);
             return "Remove Okay";
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Save Failed", e);
             return "Save Failed: " + e.getLocalizedMessage();
         }
     }
@@ -232,7 +234,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             irm.moveFile(source, target, user, roles);
             return "Move Okay";
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Move Failed", e);
             return "Move Failed: " + e.getLocalizedMessage();
         }
     }
@@ -251,7 +253,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         try {
             return irm.getAllFiles(type, username, roles);
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Get failed", e);
         }
         return null;
     }
@@ -260,7 +262,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         try {
             irm.createUser(username);
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Create User Failed", e);
         }
     }
 
@@ -268,7 +270,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         try {
             irm.deleteFolder(folder);
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Delete User Failed", e);
         }
     }
 
@@ -280,7 +282,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         try {
             irm.setACL(object, acl, username, roles);
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Set ACL Failed", e);
         }
     }
 
@@ -293,7 +295,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         try {
             return irm.getInternalFilesOfFileType(type);
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Get internal file failed", e);
         }
         return null;
     }

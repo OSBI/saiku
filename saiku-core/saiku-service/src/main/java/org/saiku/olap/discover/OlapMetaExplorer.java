@@ -68,7 +68,7 @@ public class OlapMetaExplorer {
 
 	public SaikuConnection getConnection(String connectionName) throws SaikuOlapException {
 		OlapConnection olapcon = connections.getOlapConnection(connectionName);
-		SaikuConnection connection = null;
+		SaikuConnection connection;
 		if (olapcon != null) {
 			List<SaikuCatalog> catalogs = new ArrayList<SaikuCatalog>();
 			try {
@@ -102,8 +102,7 @@ public class OlapMetaExplorer {
 							    try {
                                     cubesResult.close();
                                 } catch (SQLException e) {
-                                    // TODO Auto-generated catch block
-                                    e.printStackTrace();
+                                    log.error("Could not close cubesResult", e.getNextException());
                                 }
 							}
 
@@ -152,8 +151,7 @@ public class OlapMetaExplorer {
 					}
 				}
 			} catch (OlapException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error("Olap Exception", e.getCause());
 			}
 		}
 		Collections.sort(cubes, new SaikuCubeCaptionComparator());
@@ -291,8 +289,7 @@ public class OlapMetaExplorer {
 			}
 
 			if (h!= null) {
-				List<SaikuLevel> levels = (ObjectUtil.convertLevels(h.getLevels()));
-				return levels;
+                return (ObjectUtil.convertLevels(h.getLevels()));
 			}
 		}
 		return new ArrayList<SaikuLevel>();
@@ -311,7 +308,7 @@ public class OlapMetaExplorer {
 			
 			boolean search = StringUtils.isNotBlank(searchString);
 			int found = 0;
-			List<SimpleCubeElement> simpleMembers = new ArrayList<SimpleCubeElement>();
+			List<SimpleCubeElement> simpleMembers;
 			if (h!= null) {
 				Level l = h.getLevels().get(level);
 				if (l == null) {
@@ -426,7 +423,7 @@ public class OlapMetaExplorer {
 		try {
 			return con.isWrapperFor(RolapConnection.class);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error("SQLException", e.getNextException());
 		}
 		return false;
 	}

@@ -4,6 +4,8 @@ import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.VFS;
 import org.saiku.service.importer.LegacyImporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
@@ -12,6 +14,8 @@ import java.net.URL;
  * Created by bugg on 19/06/14.
  */
 public class LegacyImporterImpl implements LegacyImporter {
+    private static final Logger log = LoggerFactory.getLogger(LegacyImporter.class);
+
     private URL repoURL;
 
     public void importUsers() {
@@ -47,7 +51,7 @@ public class LegacyImporterImpl implements LegacyImporter {
                 //load();
             }
         } catch ( Exception e ) {
-            e.printStackTrace();
+            log.error("Exception",e);
         }
 
     }

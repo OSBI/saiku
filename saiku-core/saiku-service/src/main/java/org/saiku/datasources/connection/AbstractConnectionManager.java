@@ -21,6 +21,8 @@ import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.datasource.IDatasourceProcessor;
 import org.saiku.service.util.exception.SaikuServiceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -30,6 +32,7 @@ import java.util.Properties;
 public abstract class AbstractConnectionManager implements IConnectionManager {
 
 
+  private static final Logger log = LoggerFactory.getLogger(AbstractConnectionManager.class);
   private IDatasourceManager ds;
 
   public void setDataSourceManager( IDatasourceManager ds ) {
@@ -51,12 +54,14 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
             con.close();
           }
         } catch ( Exception e ) {
-          e.printStackTrace();
+          log.error("Could not close connection", e);
         }
       }
     }
-    connections.clear();
-    System.out.println( "Do we still have connections? : " + getAllOlapConnections().size() );
+      if (connections != null) {
+          connections.clear();
+      }
+      System.out.println( "Do we still have connections? : " + getAllOlapConnections().size() );
   }
 
   private SaikuDatasource preProcess( SaikuDatasource datasource ) {
@@ -184,8 +189,7 @@ public abstract class AbstractConnectionManager implements IConnectionManager {
       Properties props = datasource.getProperties();
       if ( props != null && props.containsKey( ISaikuConnection.SECURITY_ENABLED_KEY ) ) {
         String enabled = props.getProperty( ISaikuConnection.SECURITY_ENABLED_KEY, "false" );
-        boolean isSecurity = Boolean.parseBoolean( enabled );
-        return isSecurity;
+          return Boolean.parseBoolean( enabled );
       }
     }
     return false;

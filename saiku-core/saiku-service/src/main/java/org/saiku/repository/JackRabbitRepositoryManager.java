@@ -204,7 +204,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
             n = getFolder(folder);
             n.remove();
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Could not remove folder: "+folder, e);
         }
         Node node = JcrUtils.getNodeIfExists(root, folder);
         if(node!=null) {
@@ -420,7 +420,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
             n = getFolder(datasourcePath);
             n.remove();
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Could not remove file "+datasourcePath, e );
         }
 
     }
@@ -429,7 +429,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         try {
             node = getFolderNode(path);
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Could not get file", e);
         }
         Acl2 acl2 = new Acl2(node);
         acl2.setAdminRoles(userService.getAdminRoles());
@@ -445,7 +445,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         try {
                node = getFolderNode(object);
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Could not get file/folder", e);
         }
         Acl2 acl2 = new Acl2(node);
         acl2.setAdminRoles(userService.getAdminRoles());
@@ -466,14 +466,14 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         try {
             ae = mapper.readValue(acl, AclEntry.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Could not read ACL blob", e);
         }
 
         Node node = null;
         try {
             node = getFolderNode(object);
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Could not get file/folder "+ object, e);
         }
 
         Acl2 acl2 = new Acl2(node);
@@ -486,7 +486,9 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
             }
         }
 
-        node.getSession().save();
+        if (node != null) {
+            node.getSession().save();
+        }
     }
 
     public List<MondrianSchema> getInternalFilesOfFileType(String type) throws RepositoryException {
@@ -531,19 +533,19 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
             try {
                 jaxbContext = JAXBContext.newInstance(DataSource.class);
             } catch (JAXBException e) {
-                e.printStackTrace();
+                log.error("Could not read XML", e);
             }
             try {
                 jaxbMarshaller = jaxbContext != null ? jaxbContext.createUnmarshaller() : null;
             } catch (JAXBException e) {
-                e.printStackTrace();
+                log.error("Could not read XML", e);
             }
             InputStream stream = new ByteArrayInputStream(n.getNodes("jcr:content").nextNode().getProperty("jcr:data").getString().getBytes());
             DataSource d = null;
             try {
                 d = (DataSource) (jaxbMarshaller != null ? jaxbMarshaller.unmarshal(stream) : null);
             } catch (JAXBException e) {
-                e.printStackTrace();
+                log.error("Could not read XML", e);
             }
 
             if (d != null) {
@@ -569,7 +571,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
 
         } catch (JAXBException e) {
-            e.printStackTrace();
+            log.error("Could not read XML", e);
         }
 
         int pos = path.lastIndexOf("/");
@@ -921,7 +923,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
             }
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            log.error("Error processing repo objects", e);
         }
         return repoObjects;
     }

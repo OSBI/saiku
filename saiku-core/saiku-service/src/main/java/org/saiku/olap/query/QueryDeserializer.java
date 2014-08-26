@@ -38,6 +38,8 @@ import org.olap4j.query.Selection;
 import org.olap4j.query.SortOrder;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.util.exception.QueryParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 
 import java.io.ByteArrayInputStream;
@@ -56,6 +58,8 @@ import java.util.Properties;
  */
 public class QueryDeserializer {
 
+  private static final Logger log = LoggerFactory.getLogger(QueryDeserializer.class);
+
   private static final String QUERY = "Query";
   private static final String CUBE = "cube";
   private static final String CONNECTION = "connection";
@@ -64,21 +68,19 @@ public class QueryDeserializer {
   private static final String SELECTION = "Selection";
   private Document dom;
   private Query qm;
-  private String xml;
-  private OlapConnection connection;
+    private OlapConnection connection;
   private InputSource source;
 
   public IQuery unparse( String xml, OlapConnection connection ) throws Exception {
     this.connection = connection;
-    this.xml = xml;
-    SAXBuilder parser = new SAXBuilder();
+      SAXBuilder parser = new SAXBuilder();
     source = new InputSource( ( new ByteArrayInputStream( xml.getBytes( "UTF8" ) ) ) );
     dom = parser.build( source );
-    Element child = (Element) dom.getRootElement();
+    Element child = dom.getRootElement();
     Element qmElement = child.getChild( "QueryModel" );
     Element mdxElement = child.getChild( "MDX" );
 
-    IQuery returnQuery = null;
+    IQuery returnQuery;
     if ( qmElement != null ) {
       returnQuery = createQmQuery();
       return returnQuery;
@@ -109,8 +111,7 @@ public class QueryDeserializer {
 
   public SaikuCube getCube( String xml, OlapConnection con ) throws Exception {
     this.connection = con;
-    this.xml = xml;
-    SAXBuilder parser = new SAXBuilder();
+      SAXBuilder parser = new SAXBuilder();
     source = new InputSource( ( new ByteArrayInputStream( xml.getBytes() ) ) );
     dom = parser.build( source );
 
@@ -237,7 +238,7 @@ public class QueryDeserializer {
 
       }
     } catch ( Exception e ) {
-      e.printStackTrace();
+      log.error("Exception", e.getCause());
     }
     return props;
   }
@@ -292,8 +293,9 @@ public class QueryDeserializer {
             qAxis.filter( filterCondition );
           }
         } catch ( Error e ) {
+            log.error("ERROR", e);
         }
-        ;
+
 
 
         Element dimensions = axisElement.getChild( "Dimensions" );
@@ -379,7 +381,7 @@ public class QueryDeserializer {
                   );
                 }
               } else {
-                throw new OlapException( "Cannot find dimension with name:" + contextDim );
+                throw new OlapException( "Context dimension is null" );
               }
             }
 
@@ -437,8 +439,7 @@ public class QueryDeserializer {
     }
     if ( cube != null ) {
       try {
-        Query q = new Query( queryName, cube );
-        return q;
+          return new Query( queryName, cube );
       } catch ( SQLException e ) {
         throw new OlapException( "Error creating query :" + queryName, e );
       }

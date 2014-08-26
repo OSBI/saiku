@@ -77,16 +77,13 @@ public class MdxQuery implements IQuery {
   public SaikuCube getSaikuCube() {
     try {
       Cube c = getCube();
-      SaikuCube sc= new SaikuCube(
-        cube.getConnection(),
-        c.getUniqueName(),
-        c.getName(),
-        c.getCaption(),
-        cube.getCatalog(),
-        c.getSchema().getName());
-      if (sc != null) {
-        cube = sc;
-      }
+        cube = new SaikuCube(
+          cube.getConnection(),
+          c.getUniqueName(),
+          c.getName(),
+          c.getCaption(),
+          cube.getCatalog(),
+          c.getSchema().getName());
     } catch (Exception e) {
       // we tried, but it just doesn't work, so let's return the last working cube
     }
@@ -131,8 +128,13 @@ public class MdxQuery implements IQuery {
       Cube cube = getCube();
       return (cube != null && cube.isDrillThroughEnabled());
     } catch (Exception e) {
-      e.printStackTrace();
-    };
+        if(cube == null) {
+            log.error("Cube is null");
+        }
+        else{
+            log.error("Could not detect drillthrough", e.getCause());
+        }
+    }
     return false;
   }
 
@@ -147,9 +149,8 @@ public class MdxQuery implements IQuery {
       con.setCatalog(getSaikuCube().getCatalog());
       OlapStatement stmt = con.createStatement();
       this.statement = stmt;
-      CellSet cs = stmt.executeOlapQuery(mdx);
 
-      return cs;
+        return stmt.executeOlapQuery(mdx);
     } finally {
       if (statement != null) {
         statement.close();
@@ -198,10 +199,8 @@ public class MdxQuery implements IQuery {
       }
     } catch (Exception e) {
       log.debug("Parsing MDX to get the Cube failed. Using fallback scenario.", e);
-    } finally {
-      mdxValidator = null;
     }
-    try {
+      try {
       // ok seems like we failed to get the cube, lets try it differently
       if (connection != null && mdx != null && mdx.length() > 0) {
         for (Database db : connection.getOlapDatabases()) {

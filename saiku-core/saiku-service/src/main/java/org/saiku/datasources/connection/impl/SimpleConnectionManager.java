@@ -10,11 +10,13 @@ import org.saiku.datasources.connection.ISaikuConnection;
 import org.saiku.datasources.connection.SaikuConnectionFactory;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.olap.util.exception.SaikuOlapException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SimpleConnectionManager extends AbstractConnectionManager {
     private Map<String, ISaikuConnection> connections = new HashMap<String, ISaikuConnection>();
     private List<String> errorConnections = new ArrayList<String>();
-
+    private static final Logger log = LoggerFactory.getLogger(SimpleConnectionManager.class);
  
     
     @Override
@@ -26,21 +28,20 @@ public class SimpleConnectionManager extends AbstractConnectionManager {
     protected ISaikuConnection getInternalConnection(String name, SaikuDatasource datasource)
       throws SaikuOlapException {
 
-        ISaikuConnection con = null;
-        String newName = name;
-        
-        if (!connections.containsKey(newName)) {
+        ISaikuConnection con;
+
+        if (!connections.containsKey(name)) {
             con =  connect(name, datasource);
             if (con != null) {
-                connections.put(newName, con);
+                connections.put(name, con);
             } else {
-                if (!errorConnections.contains(newName)) {
-                    errorConnections.add(newName);
+                if (!errorConnections.contains(name)) {
+                    errorConnections.add(name);
                 }
             }
 
         } else {
-            con = connections.get(newName);
+            con = connections.get(name);
         }
         return con;
     }
@@ -48,16 +49,14 @@ public class SimpleConnectionManager extends AbstractConnectionManager {
     @Override
     protected ISaikuConnection refreshInternalConnection(String name, SaikuDatasource datasource) {
 		try {
-			String newName = name;
-			ISaikuConnection con = connections.remove(newName);
+            ISaikuConnection con = connections.remove(name);
 			if (con != null) {
 				con.clearCache();
 			}
-			con = null;
-			return getInternalConnection(name, datasource);
+            return getInternalConnection(name, datasource);
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			log.error("Could not get internal connection", e);
 		}
 		return null;
     }
@@ -72,7 +71,7 @@ public class SimpleConnectionManager extends AbstractConnectionManager {
             return con;
           }
         } catch ( Exception e ) {
-          e.printStackTrace();
+          log.error("Could not get connection", e);
         }
 
         return null;

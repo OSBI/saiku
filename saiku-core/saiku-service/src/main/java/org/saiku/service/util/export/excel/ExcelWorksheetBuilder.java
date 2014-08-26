@@ -455,13 +455,13 @@ public class ExcelWorksheetBuilder {
           }
         }
       } catch (IOException e) {
-        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+          log.error("IO Exception", e);
       } finally {
         try {
           if (is != null)
             is.close();
         } catch (IOException e) {
-          e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+          log.error("IO Exception", e);
         }
       }
 

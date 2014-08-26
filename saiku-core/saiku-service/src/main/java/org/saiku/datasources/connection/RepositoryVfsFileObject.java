@@ -18,12 +18,15 @@ import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.NameScope;
 import org.apache.commons.vfs.operations.FileOperations;
 import org.saiku.service.datasource.IDatasourceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 
 public class RepositoryVfsFileObject
         implements FileObject
 {
+    private static final Logger log = LoggerFactory.getLogger(RepositoryVfsFileObject.class);
     private String fileRef;
     private boolean fileInitialized;
     private RepositoryFile repositoryFile;
@@ -34,6 +37,7 @@ public class RepositoryVfsFileObject
     public RepositoryVfsFileObject(){
 
     }
+
     public RepositoryVfsFileObject(String fileRef, IDatasourceManager repo)
     {
         this.repo = repo;
@@ -234,7 +238,7 @@ public class RepositoryVfsFileObject
             try {
                 inputStream = new ByteArrayInputStream(this.repo.getInternalFileData(this.fileUrl).getBytes(StandardCharsets.UTF_8));
             } catch (RepositoryException e) {
-                e.printStackTrace();
+                log.error("Could not create input stream", e);
             }
         }
         return inputStream;

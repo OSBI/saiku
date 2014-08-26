@@ -3,6 +3,8 @@ package org.saiku.database;
 import org.h2.jdbcx.JdbcDataSource;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.service.datasource.IDatasourceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.ServletContext;
@@ -22,6 +24,7 @@ public class Database {
     @Autowired
     ServletContext servletContext;
     private JdbcDataSource ds;
+    private static final Logger log = LoggerFactory.getLogger(Database.class);
 
     IDatasourceManager dsm;
     public Database() {
@@ -79,12 +82,12 @@ public class Database {
                 try {
                     schema = readFile("../../data/FoodMart4.xml", StandardCharsets.UTF_8);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("Can't read schema file",e);
                 }
                 try {
                     dsm.addSchema(schema, "/datasources/foodmart4.xml", null);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error("Can't add schema file to repo", e);
                 }
                 Properties p = new Properties();
                 p.setProperty("driver", "mondrian.olap4j.MondrianOlap4jDriver");
@@ -97,7 +100,7 @@ public class Database {
                 try {
                     dsm.addDatasource(ds);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error("Can't add data source to reop",e);
                 }
             } else {
                 Statement statement = c.createStatement();

@@ -30,13 +30,18 @@ import org.saiku.olap.dto.resultset.DataCell;
 import org.saiku.olap.dto.resultset.Matrix;
 import org.saiku.olap.dto.resultset.MemberCell;
 import org.saiku.olap.util.SaikuProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
 
 public class HierarchicalCellSetFormatter implements ICellSetFormatter {
-  /**
+
+    private static final Logger log = LoggerFactory.getLogger(HierarchicalCellSetFormatter.class);
+
+    /**
    * Description of an axis.
    */
   private static class AxisInfo {
