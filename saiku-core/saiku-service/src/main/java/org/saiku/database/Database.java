@@ -133,7 +133,8 @@ public class Database {
         ResultSet result = statement.executeQuery("select count(*) as c from LOG where log = 'insert users'");
         result.next();
         if (result.getInt("c") == 0) {
-
+            dsm.createUser("admin");
+            dsm.createUser("smith");
             statement.execute("INSERT INTO users(username,password,email, enabled)\n"
                     + "VALUES ('admin','admin', 'test@admin.com',TRUE);" +
                     "INSERT INTO users(username,password,enabled)\n"
@@ -148,5 +149,7 @@ public class Database {
 
             statement.execute("INSERT INTO LOG(log) VALUES('insert users');");
         }
+
+
     }
 }
