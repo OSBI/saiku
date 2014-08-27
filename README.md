@@ -38,6 +38,10 @@ In order to run it locally you'll need a basic server setup.
 
 		node server.js [port] [backend_host] [backend_port]
 
+## Wiki
+
+* [Meteorite BI Wiki](http://wiki.meteorite.bi/display/SAIK/Saiku)
+
 ## Bugs and Feature Requests
 
 * [Meteorite BI Jira](http://jira.meteorite.bi/)
@@ -46,6 +50,7 @@ In order to run it locally you'll need a basic server setup.
 
 * [Meteorite BI Forums](http://forums.meteorite.bi/)
 * [Stack Overflow](http://stackoverflow.com/questions/tagged/saiku)
+* [Freenode IRC - Channel: #saiku](http://irc.lc/freenode/%23saiku/t4nk@)
 
 ## Browser Support
 
