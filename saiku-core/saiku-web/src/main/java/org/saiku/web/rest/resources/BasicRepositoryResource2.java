@@ -177,7 +177,7 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
         try {
             data = datasourceService.getFileData(file, username, roles).getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.error("Error reading file encoding",e);
         }
         return Response.ok(data, MediaType.TEXT_PLAIN).header(
                 "content-length",data.length).build();

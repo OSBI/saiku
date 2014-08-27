@@ -115,7 +115,7 @@ public class AdminResource {
             datasourceService.addDatasource(json.toSaikuDataSource(), false);
             return Response.ok().entity(json).type("application/json").build();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error adding data source", e);
             return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(e.getLocalizedMessage())
                     .type("text/plain").build();
@@ -159,7 +159,7 @@ public class AdminResource {
             datasourceService.addSchema(schema, path, name);
             return Response.ok().entity(datasourceService.getAvailableSchema()).build();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error uploading schema: "+name, e);
             return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(e.getLocalizedMessage())
                     .type("text/plain").build();
@@ -182,7 +182,7 @@ public class AdminResource {
             datasourceService.addSchema(schema, path, name);
             return Response.ok().entity(datasourceService.getAvailableSchema()).build();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error uploading schema: "+name, e);
             return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(e.getLocalizedMessage())
                     .type("text/plain").build();
@@ -299,13 +299,13 @@ public class AdminResource {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("IO Exception when reading from input stream", e);
         } finally {
             if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error("IO Exception closing input stream",e );
                 }
             }
         }
@@ -334,15 +334,7 @@ public class AdminResource {
             System.out.println(prop.getProperty("VERSION"));
             version = prop.getProperty("VERSION");
         } catch (IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            log.error("IO Exception when reading input stream", ex);
         }
         return Response.ok().entity(version).type("text/plain").build();
     }

@@ -34,6 +34,8 @@ import org.saiku.datasources.connection.SaikuConnectionFactory;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.service.ISessionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -54,12 +56,14 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 		this.sessionService = ss;
 	}
 
+    private static final Logger log = LoggerFactory.getLogger(SecurityAwareConnectionManager.class);
+
 	@Override
 	public void init() {
         try {
             this.connections = getAllConnections();
         } catch (SaikuOlapException e) {
-            e.printStackTrace();
+            log.error("Error getting connections", e);
         }
     }
 	
@@ -73,12 +77,14 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 							c.close();
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
+						log.error("Error destroying connections", e);
 					}
 				}
 			}
-			connections.clear();
-	}
+        if (connections != null) {
+            connections.clear();
+        }
+    }
 	
 	
 	@Override
@@ -141,7 +147,7 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
             return getInternalConnection(name, datasource);
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error refreshing connection: "+name, e);
 		}
 		return null;
 	}
@@ -218,10 +224,8 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 		if (con.getConnection() instanceof OlapConnection) 
 		{
 			OlapConnection c = (OlapConnection) con.getConnection();
-			if (c == null)
-				return false;
-			
-			System.out.println("Setting role to datasource:" + datasource.getName() + " role:" + roleName);
+
+            System.out.println("Setting role to datasource:" + datasource.getName() + " role:" + roleName);
 			try {
 				if (StringUtils.isNotBlank(roleName) && SaikuMondrianHelper.isMondrianConnection(c) && roleName.split(",").length > 1) {
 					SaikuMondrianHelper.setRoles(c, roleName.split(","));
@@ -230,7 +234,7 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 				}
 				return true;
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("Error setting role: "+roleName, e);
 			}
 		}
 		return false;
@@ -256,7 +260,7 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 			try {
 				return c.getAvailableRoleNames();
 			} catch (OlapException e) {
-				e.printStackTrace();
+				log.error("Error getting connection roles", e);
 			}
 		}
 		return new ArrayList<String>();
@@ -291,7 +295,7 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 			}
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error connecting: "+name, e);
 		}
 
 		return null;

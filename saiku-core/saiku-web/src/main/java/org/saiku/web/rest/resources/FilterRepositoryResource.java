@@ -117,7 +117,7 @@ public class FilterRepositoryResource {
 			//				
 			//			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error setting path: "+path, e);
 		}
 
 	}

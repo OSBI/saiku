@@ -32,9 +32,12 @@ import org.saiku.service.util.export.ResultSetHelper;
 import org.saiku.web.rest.objects.resultset.Cell;
 import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.objects.resultset.Total;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RestUtil {
-	
+    private static final Logger log = LoggerFactory.getLogger(RestUtil.class);
+
 	public static QueryResult convert(ResultSet rs) throws Exception {
 		return convert(rs, 0);
 	}
@@ -73,8 +76,7 @@ public class RestUtil {
 			    height++;
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("SQL Exception", e);
 		}
 		
 		return new QueryResult(rows,0,width,height);

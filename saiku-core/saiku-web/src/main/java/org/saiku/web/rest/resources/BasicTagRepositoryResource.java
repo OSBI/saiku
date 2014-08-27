@@ -108,7 +108,7 @@ public class BasicTagRepositoryResource {
 			}
 			repo = fileObject;
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("Error setting path: "+path,e);
 		}
 
 	}
@@ -153,7 +153,7 @@ public class BasicTagRepositoryResource {
 			}
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
-			e.printStackTrace();
+
 		}
 		Collections.sort(allTags);
 		return allTags;

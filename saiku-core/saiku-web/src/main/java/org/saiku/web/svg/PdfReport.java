@@ -32,11 +32,14 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PdfReport {
-    private ReportData section= new ReportData(); 
-    
-	public byte[] pdf(CellDataSet c, String svg) throws DocumentException, IOException {
+    private ReportData section= new ReportData();
+    private static final Logger log = LoggerFactory.getLogger(PdfReport.class);
+
+    public byte[] pdf(CellDataSet c, String svg) throws DocumentException, IOException {
 		section.setRowBody(c.getCellSetBody());
 		section.setRowHeader(c.getCellSetHeaders());
 		
@@ -90,8 +93,7 @@ public class PdfReport {
 
 			document.close();
 		} catch (DocumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Error creating PDF", e);
 		}
 		return baos.toByteArray();
 	}
@@ -178,9 +180,8 @@ public class PdfReport {
 				doc.add(table);
 				doc.add(data);
 			} catch (DocumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+                log.error("Error creating PDF", e);
+            }
 
 			populatePdf(doc, section.get(i).getChild(), dim,color(color,c+0.15f),c);
 		}
