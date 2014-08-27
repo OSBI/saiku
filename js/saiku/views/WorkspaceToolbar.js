@@ -446,10 +446,10 @@ var WorkspaceToolbar = Backbone.View.extend({
             this.workspace.query.url() + "/export/csv";
     },
 
+
     export_pdf: function(event) {
         window.location = Settings.REST_URL +
-            Saiku.session.username + "/query/" + 
-            this.workspace.query.id + "/export/pdf/flattened";
+            this.workspace.query.url() + "/export/pdf/" + this.workspace.query.getProperty('saiku.olap.result.formatter');
     },
 
     switch_to_mdx: function(event) {
