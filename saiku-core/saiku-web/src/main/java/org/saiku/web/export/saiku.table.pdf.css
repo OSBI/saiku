@@ -1,0 +1,133 @@
+
+body {
+    font-family: "Helvetica", "Arial";
+    margin-right: 10px;
+    margin-left: 10px;
+    padding-top: 10px;
+    overflow: auto;
+    font-size: 10px;
+}
+table {
+    border-bottom-width: 1px;
+    border-bottom-color: #d5d5d5;
+    border-right-width: 1px;
+    border-right-color: #d5d5d5;
+    margin-bottom: 0;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+th,  td { padding: 3px 9px 3px 4px;}
+td { font-size: 10px; }
+
+.col,.row {
+    border-left-width: 1px;
+    border-left-style: solid;
+    border-left-color: #d5d5d5;
+    margin-bottom: 0;
+    white-space: normal;
+    font-weight: 500;
+    font-size: 10px;
+}
+
+table .all_null {
+    text-align: center;
+    border: none;
+}
+.col {
+    border-top-width: 1px;
+    border-top-color: #d5d5d5;
+    background: #f9f9f9;
+}
+.col_total_corner {
+    border-top-width: 1px;
+    border-top-color: #d5d5d5;
+    background: #f9f9f9;
+    font-size: 10px;
+
+}
+
+.col_total_first {
+    border-top-width: 1px;
+    border-top-color: #d5d5d5;
+    border-left-width: 1px;
+    border-left-color: #d5d5d5;
+    background: #f9f9f9;
+
+    font-size: 10px;
+}
+
+.col_null {
+    background: #f9f9f9;
+    font-size: 10px;
+    border-left-width: 1px;
+    border-left-color: #d5d5d5;
+
+}
+.row {
+    border-top-width: 1px;
+    border-top-color: #d5d5d5;
+    border-left-width: 1px;
+    border-left-color: #d5d5d5;
+    background: #f9f9f9;
+    white-space: nowrap;
+}
+.row_total {
+    border-top-width: 1px;
+    border-top-color: #d5d5d5;
+    border-left-width: 0px;
+    background: #f9f9f9;
+
+    font-size: 10px;
+}
+
+.row_total_first {
+    border-top-width: 1px;
+    border-top-color: #d5d5d5;
+    border-left-width: 1px;
+    border-left-color: #d5d5d5;
+    background: #f9f9f9;
+
+    font-size: 10px;
+}
+
+.row_total_corner {
+    border-left-width: 1px;
+    border-left-color: #d5d5d5;
+    background: #f9f9f9;
+
+    font-size: 10px;
+}
+
+.row_header {
+    border-top-width: 1px;
+    border-top-color: #d5d5d5;
+    border-left-width: 1px;
+    border-left-color: #d5d5d5;
+    background: #ECECEC;
+    font-size: 10px;
+}
+
+.row_null {
+    background: #f9f9f9;
+    border-left-width: 1px;
+    border-left-color: #d5d5d5;
+    font-size: 10px;
+
+}
+.data {
+    border-top-width: 1px;
+    border-top-color: #d5d5d5;
+    border-left-width: 1px;
+    border-left-color: #d5d5d5;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.total {
+    background: #fbfbfb;
+    font-weight: bold;
+}
+
+
