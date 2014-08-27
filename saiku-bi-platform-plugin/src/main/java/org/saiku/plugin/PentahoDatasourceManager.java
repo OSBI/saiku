@@ -46,6 +46,8 @@ import org.xml.sax.EntityResolver;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
 
+import javax.jcr.RepositoryException;
+
 public class PentahoDatasourceManager implements IDatasourceManager {
 
 	private static final Log LOG = LogFactory.getLog(PentahoDatasourceManager.class);
@@ -185,7 +187,11 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 		throw new UnsupportedOperationException();
 	}
 
-	public Map<String,SaikuDatasource> getDatasources() {
+    public boolean removeSchema(String schemaName) {
+        return false;
+    }
+
+    public Map<String,SaikuDatasource> getDatasources() {
 		return datasources;
 	}
 
@@ -222,6 +228,18 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         return null;
     }
 
+    public String removeFile(String path, String user, List<String> roles) {
+        return null;
+    }
+
+    public String moveFile(String source, String target, String user, List<String> roles) {
+        return null;
+    }
+
+    public String saveInternalFile(String path, String content, String type) {
+        return null;
+    }
+
     public List<IRepositoryObject> getFiles(String s, String s2, List<String> strings) {
         return null;
     }
@@ -243,6 +261,14 @@ public class PentahoDatasourceManager implements IDatasourceManager {
     }
 
     public void setUserService(UserService userService) {
+
+    }
+
+    public List<MondrianSchema> getInternalFilesOfFileType(String type) throws RepositoryException {
+        return null;
+    }
+
+    public void createFileMixin(String type) throws RepositoryException {
 
     }
 
