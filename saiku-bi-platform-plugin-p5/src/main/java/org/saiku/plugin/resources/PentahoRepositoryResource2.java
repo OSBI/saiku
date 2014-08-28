@@ -131,6 +131,7 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 			if (StringUtils.isBlank(file)) {
 				throw new IllegalArgumentException("Path cannot be null  - Illegal Path: " + file);
 			}
+            file = file.replaceAll(":", "/");
 
 			log.debug("Get repository file: " + file);
 
@@ -349,7 +350,7 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 		}	
 	}
 
-	private List<IRepositoryObject> getRepositoryObjects(final IUserContentAccess root, final String path, final String type, final Boolean hidden) throws Exception {
+	private List<IRepositoryObject> getRepositoryObjects(final IUserContentAccess root, String path, final String type, final Boolean hidden) throws Exception {
 		List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
 		IBasicFileFilter txtFilter = StringUtils.isBlank(type) ? null : new IBasicFileFilter() {
 			public boolean accept(IBasicFile file) {
@@ -358,6 +359,7 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 		};
 		List<IBasicFile> files = new ArrayList<IBasicFile>();
 		IUserContentAccess access = contentAccessFactory.getUserContentAccess(null);
+        path = path.replace(":", "/");
 		if (access.fileExists(path)) {
 			IBasicFile bf = access.fetchFile(path);
 			if (!bf.isDirectory()) {
