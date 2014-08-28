@@ -27,7 +27,8 @@ var AdminConsole = Backbone.View.extend({
         'click .refresh_button':'refresh_datasource',
         'click .advancedurl' :'advanced_url',
         'change .drivertype' : 'change_driver',
-        'click .create_schema': 'create_schema'
+        'click .create_schema': 'create_schema',
+        'click .backup_restore' : 'backup_restore'
 
     },
     initialize: function (args) {
@@ -87,6 +88,8 @@ var AdminConsole = Backbone.View.extend({
             "<ul class='inner_datasource'><li class='create_datasource'>Add Data Source</li></ul></ul>" +
             "<ul class='dslist'><strong>Schema</strong>"+
             "<ul class='inner_schema'><li class='create_schema'>Add Schema</li></ul></ul>" +
+            "<li><strong>Maintenance</strong>" +
+            "<ul><li class='backup_restore'>Backup/Restore</li></ul></li>"+
             "</ul>" +
             "</ul>" +
             "</div>" +
@@ -109,6 +112,11 @@ var AdminConsole = Backbone.View.extend({
         Saiku.events.trigger('admin:viewdatasource', {
             admin: this
         });
+    },
+    backup_restore: function(event){
+        event.preventDefault();
+        var html = this.backup_restore_template();
+        $(this.el).find('.user_info').html(html);
     },
     caption: function () {
         return "Admin Console";
@@ -232,6 +240,12 @@ var AdminConsole = Backbone.View.extend({
         var html = this.schematemplate({repoObjects: repository});
         $(this.el).find('.inner_schema').append(html);
     },
+    backup_restore_template: _.template("<div><h1>Backup</h1><a href='/saiku/rest/saiku/admin/backup' class='btn'>Backup Now!</a>" +
+        "<hr>" +
+        "<h1>Restore</h1>" +
+        "<form><input name='restore' type='file' class='restore_button'/><div class='clear'></div><br/>" +
+        "<input type='submit' class='user_button form_button upload_button submitrestore' value='Restore'></form>" +
+"<br/><div id='uploadstatus'>"),
     //itemTemplate : _.template( "<% console.log('Hello2 from template' +Object.keys(entry)); %>" +"Helo<!--<li class='query'><span class='icon'></span><a href=''>hello</a></li>-->"),
     maintemplate: _.template("<% _.each( repoObjects, function( entry ) { %>" +
         "<li class='user'><span class='icon'></span><a href='<%= entry.id%>'><%= entry.username %></a></li>" +
