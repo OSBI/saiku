@@ -83,4 +83,6 @@ public interface IDatasourceManager {
   public List<org.saiku.database.dto.MondrianSchema> getInternalFilesOfFileType(String type) throws RepositoryException;
 
   public void createFileMixin(String type) throws RepositoryException;
+
+  public byte[] exportRepository();
 }

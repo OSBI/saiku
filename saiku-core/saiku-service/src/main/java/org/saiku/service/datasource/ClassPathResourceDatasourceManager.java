@@ -275,6 +275,10 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
         
     }
 
+    public byte[] exportRepository() {
+        return new byte[0];
+    }
+
     public String saveFile(String path, String content, String user) {
         return null;
     }

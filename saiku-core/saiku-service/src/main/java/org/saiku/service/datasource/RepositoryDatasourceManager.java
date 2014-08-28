@@ -16,6 +16,7 @@
 
 package org.saiku.service.datasource;
 
+import org.apache.commons.io.IOUtils;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
@@ -26,6 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -302,6 +306,18 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public void createFileMixin(String type) throws RepositoryException {
         irm.createFileMixin(type);
+    }
+
+    public byte[] exportRepository(){
+        try {
+            return irm.exportRepository();
+
+        } catch (RepositoryException e) {
+            log.error("could not export repository", e);
+        } catch (IOException e) {
+            log.error("could not export repository IO issue", e);
+        }
+        return null;
     }
 }
 

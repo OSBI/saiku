@@ -122,4 +122,8 @@ public class DatasourceService implements Serializable {
   public AclEntry getResourceACL(String file, String username, List<String> roles){
        return datasources.getACL(file, username, roles);
   }
+
+  public byte[] exportRepository(){
+      return datasources.exportRepository();
+  }
 }

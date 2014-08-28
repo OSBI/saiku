@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -339,4 +340,16 @@ public class AdminResource {
         return Response.ok().entity(version).type("text/plain").build();
     }
 
+    @GET
+    @Produces("application/zip")
+    @Path("/backup")
+    public StreamingOutput getBackup(){
+        return new StreamingOutput() {
+            public void write(OutputStream output) throws IOException, WebApplicationException {
+                BufferedOutputStream bus = new BufferedOutputStream(output);
+                bus.write(datasourceService.exportRepository());
+                
+            }
+        };
+    }
 }
