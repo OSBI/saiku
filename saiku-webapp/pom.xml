@@ -133,6 +133,12 @@
 			<artifactId>saiku-web</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.saiku</groupId>
+            <artifactId>saiku-web</artifactId>
+            <version>${project.version}</version>
+            <classifier>source</classifier>
+        </dependency>
 		<dependency>
 			<groupId>org.saiku</groupId>
 			<artifactId>saiku-olap-util</artifactId>
