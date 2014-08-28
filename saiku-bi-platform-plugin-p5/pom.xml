@@ -30,6 +30,24 @@
 						</goals>
 						<configuration>
 							<artifactItems>
+                                <artifactItem>
+                                    <groupId>com.itextpdf</groupId>
+                                    <artifactId>itextpdf</artifactId>
+                                    <version>5.5.0</version>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.itextpdf.tool</groupId>
+                                    <artifactId>xmlworker</artifactId>
+                                    <version>5.5.0</version>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>rhino</groupId>
+                                    <artifactId>js</artifactId>
+                                    <version>1.7R2</version>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
 								<artifactItem>
 									<groupId>org.saiku</groupId>
 									<artifactId>saiku-ui</artifactId>
@@ -37,6 +55,14 @@
 									<type>war</type>
 									<outputDirectory>target/stage</outputDirectory>
 								</artifactItem>
+                                <artifactItem>
+                                    <groupId>org.saiku</groupId>
+                                    <artifactId>saiku-web</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <classifier>sources</classifier>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
 								<artifactItem>
 									<groupId>org.saiku</groupId>
 									<artifactId>saiku-service</artifactId>
@@ -526,5 +552,6 @@
 			<artifactId>spring-security-core</artifactId>
 			<version>2.0.5.RELEASE</version>
 		</dependency>
+
 	</dependencies>
 </project>
