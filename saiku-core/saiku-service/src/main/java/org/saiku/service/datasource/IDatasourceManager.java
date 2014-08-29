@@ -85,4 +85,6 @@ public interface IDatasourceManager {
   public void createFileMixin(String type) throws RepositoryException;
 
   public byte[] exportRepository();
+
+  public void restoreRepository(byte[] data);
 }

@@ -126,4 +126,8 @@ public class DatasourceService implements Serializable {
   public byte[] exportRepository(){
       return datasources.exportRepository();
   }
+
+  public void restoreRepository(byte[] data){
+      datasources.restoreRepository(data);
+  }
 }

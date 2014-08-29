@@ -319,5 +319,14 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         }
         return null;
     }
+
+    public void restoreRepository(byte[] data) {
+        try {
+            irm.restoreRepository(data);
+        }
+        catch (Exception e){
+            log.error("Could not restore export", e);
+        }
+    }
 }
 

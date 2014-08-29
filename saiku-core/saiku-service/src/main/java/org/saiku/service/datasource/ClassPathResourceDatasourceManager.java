@@ -279,6 +279,10 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
         return new byte[0];
     }
 
+    public void restoreRepository(byte[] data) {
+        
+    }
+
     public String saveFile(String path, String content, String user) {
         return null;
     }

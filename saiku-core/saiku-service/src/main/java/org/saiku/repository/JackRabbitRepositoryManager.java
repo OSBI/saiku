@@ -606,8 +606,8 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         return os2.toByteArray();
     }
 
-    public void restoreRepository(String xml) throws RepositoryException, IOException {
-        InputStream stream = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+    public void restoreRepository(byte[] xml) throws RepositoryException, IOException {
+        InputStream stream = new ByteArrayInputStream(xml);
         session.importXML("/", stream, ImportUUIDBehavior.IMPORT_UUID_COLLISION_REPLACE_EXISTING);
     }
 

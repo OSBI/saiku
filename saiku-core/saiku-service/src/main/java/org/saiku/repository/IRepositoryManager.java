@@ -72,7 +72,7 @@ public interface IRepositoryManager {
 
     byte[] exportRepository() throws RepositoryException, IOException;
 
-    void restoreRepository(String xml) throws RepositoryException, IOException;
+    void restoreRepository(byte[] xml) throws RepositoryException, IOException;
 
     RepositoryFile getFile(String fileUrl);
 

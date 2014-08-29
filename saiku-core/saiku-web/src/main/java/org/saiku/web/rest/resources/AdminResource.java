@@ -2,6 +2,7 @@ package org.saiku.web.rest.resources;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
+import org.apache.commons.io.IOUtils;
 import org.saiku.database.dto.SaikuUser;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.service.datasource.DatasourceService;
@@ -351,5 +352,20 @@ public class AdminResource {
                 
             }
         };
+    }
+
+    @POST
+    @Produces("text/plain")
+    @Consumes("multipart/form-data")
+    @Path("/restore")
+    public Response postRestore(@FormDataParam("file") InputStream is, @FormDataParam("file") FormDataContentDisposition detail){
+        try {
+            byte[] bytes = IOUtils.toByteArray(is);
+            datasourceService.restoreRepository(bytes);
+            return Response.ok().entity("Restore Ok").type("text/plain").build();
+        } catch (IOException e) {
+            log.error("Error reading restore file", e);
+        }
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Restore Ok").type("text/plain").build();
     }
 }
