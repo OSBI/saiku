@@ -28,8 +28,8 @@ var AdminConsole = Backbone.View.extend({
         'click .advancedurl' :'advanced_url',
         'change .drivertype' : 'change_driver',
         'click .create_schema': 'create_schema',
-        'click .backup_restore' : 'backup_restore'
-
+        'click .backup_restore' : 'backup_restore',
+        'click .submitrestore' : 'restoreFile'
     },
     initialize: function (args) {
         _.bindAll(this, "fetch_users", "fetch_schemas", "fetch_datasources", "clear_users", "clear_datasources", "new_add_role", "new_remove_role", "save_new_user", "advanced_url", "view_datasource");
@@ -240,11 +240,11 @@ var AdminConsole = Backbone.View.extend({
         var html = this.schematemplate({repoObjects: repository});
         $(this.el).find('.inner_schema').append(html);
     },
-    backup_restore_template: _.template("<div><h1>Backup</h1><a href='/saiku/rest/saiku/admin/backup' class='btn'>Backup Now!</a>" +
+    backup_restore_template: _.template("<div><h1>Backup</h1><p><a href='/saiku/rest/saiku/admin/backup' class='form_button'>Backup Now!</a></p>" +
         "<hr>" +
         "<h1>Restore</h1>" +
         "<form><input name='restore' type='file' class='restore_button'/><div class='clear'></div><br/>" +
-        "<input type='submit' class='user_button form_button upload_button submitrestore' value='Restore'></form>" +
+        "<input type='submit' class='form_button upload_button submitrestore' value='Restore'></form>" +
 "<br/><div id='uploadstatus'>"),
     //itemTemplate : _.template( "<% console.log('Hello2 from template' +Object.keys(entry)); %>" +"Helo<!--<li class='query'><span class='icon'></span><a href=''>hello</a></li>-->"),
     maintemplate: _.template("<% _.each( repoObjects, function( entry ) { %>" +
@@ -589,6 +589,15 @@ var AdminConsole = Backbone.View.extend({
             that.schemas.fetch();
         }});
     },
+    restoreFile: function(event){
+        event.preventDefault();
+
+        var file = $(this.el).find("input[type='file']")[0].files[0];
+        var restore = new Restore();
+        restore.set('file', file);
+        var that = this;
+        restore.save();
+    },
     save_datasource: function (event) {
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
@@ -792,7 +801,12 @@ var Schema = Backbone.Model.extend({
     fileAttribute: 'file',
     idAttribute: "name"
 });
-
+var Restore = Backbone.Model.extend({
+    url: function(){
+      return AdminUrl + "/restore";
+    },
+    fileAttribute: 'file'
+});
 var Schemas = Backbone.Collection.extend({
     model: Schema,
     url: function () {
