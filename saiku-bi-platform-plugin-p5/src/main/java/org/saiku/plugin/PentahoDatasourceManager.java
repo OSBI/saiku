@@ -241,6 +241,14 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
     }
 
+    public byte[] exportRepository() {
+        return new byte[0];
+    }
+
+    public void restoreRepository(byte[] data) {
+
+    }
+
     public void setACL(String a, String b, String c, List<String> d) {
 
     }
