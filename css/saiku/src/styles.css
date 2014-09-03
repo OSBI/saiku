@@ -81,12 +81,7 @@ textarea, select {
 .sprite, .ui-dialog-titlebar-close,.ui-dialog-titlebar-close button, .ui-dialog-titlebar-close:hover, .dialog_icon {
     background: url(../../../images/sprite.png) no-repeat;
 }
-.admin {
-    background: url(../../../images/src/admin.png) no-repeat;
-}
-.dashboard {
-    background: url(../../../images/src/dashboard.png) no-repeat;
-}
+
 .accordion-toggle {cursor: pointer;}
 .accordion-content {display: none;padding:10px;}
 .accordion-content.default {display: block;}
@@ -186,6 +181,12 @@ textarea, select {
     text-align: right;
     text-decoration: none;
     text-shadow: 1px 1px 1px #000;
+}
+#toolbar ul li a.admin {
+    background: url(../../../images/src/admin.png) no-repeat center;
+}
+#toolbar ul li a.dashboard {
+    background: url(../../../images/src/dashboard.png) no-repeat center;
 }
 
 /** Logo */
