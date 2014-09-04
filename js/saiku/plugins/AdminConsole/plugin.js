@@ -6,6 +6,7 @@ Saiku.AdminConsole = {
 };
 var AdminConsole = Backbone.View.extend({
     events: {
+        'click .back_query': 'back_query',
         'click .user': 'view_user',
         'click .save_user': 'save_user',
         'click .save_password': 'save_password',
@@ -37,6 +38,10 @@ var AdminConsole = Backbone.View.extend({
         this.users = new Users({}, { dialog: this });
         this.schemas = new Schemas({}, { dialog: this });
         this.datasources = new Connections({}, { dialog: this });
+    },
+    back_query: function() {
+        Saiku.tabs.add(new Workspace());
+        return false;
     },
     change_driver: function(){
         var div = $(this.el).find(".simpleConnection");
@@ -80,6 +85,7 @@ var AdminConsole = Backbone.View.extend({
             "<div class='sidebar queries' style='width: 300px'>" +
 
             "<div class='sidebar_inner'>" +
+            "<a class='back_query' href='#back_query' style='display:none'></a>" +
             "    <ul id='queries' class='RepositoryObjects'>" +
             "<li><strong>User Management</strong>" +
             "<ul class='inner_users'><li class='create_user'>Add User</li></ul></li>" +
@@ -197,6 +203,10 @@ var AdminConsole = Backbone.View.extend({
             },
             items: menuitems
         });
+
+        if (Settings.PLUGIN) {
+            $(this.el).find('.back_query').css('display', 'block');
+        }
 
         return this;
     },
