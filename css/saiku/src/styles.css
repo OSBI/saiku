@@ -1645,6 +1645,13 @@ span.cancel_search:hover {
   opacity: 1;
 }
 
+.back_query {
+    background: url('../../../images/src/arrow_up_bnw.png') no-repeat;
+    width: 16px;
+    height: 16px;
+    transform: rotate(-90deg);
+}
+
 .RepositoryObjects {
     margin: 0;
     padding: 0;
