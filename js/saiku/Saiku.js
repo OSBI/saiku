@@ -43,7 +43,7 @@ var Saiku = {
      * Collection of routers for page fragments
      */
     routers: [],
-    
+
     /**
      * Convenience functions for blocking the UI
      */

@@ -26,7 +26,8 @@ var Workspace = Backbone.View.extend({
         'drop .sidebar': 'remove_dimension',
         'drop .workspace_results': 'remove_dimension',
         'click .refresh_cubes' : 'refresh',
-        'click .cancel' : 'cancel'
+        'click .cancel' : 'cancel',
+        'click .admin' : 'admin'
     },
     
     initialize: function(args) {
@@ -185,6 +186,19 @@ var Workspace = Backbone.View.extend({
             
         // Fire off new workspace event
         Saiku.session.trigger('workspace:new', { workspace: this });
+
+        if(Settings.PLUGIN && Saiku.session.isadmin) {
+            var $link = $("<a />")
+                .attr({
+                    href: "#adminconsole",
+                    title: "Admin Console"
+                })
+                .text("Admin")
+                .click(Saiku.AdminConsole.show_admin)
+                .addClass('admin');
+            var $li = $("<li />").append($link);
+            $(this.el).find('.refresh_cubes_nav').append($link);
+        }
 
         return this; 
     },
@@ -778,7 +792,11 @@ var Workspace = Backbone.View.extend({
             }
         });
     },
-    
+
+    admin: function(event){
+        Saiku.AdminConsole.show_admin
+    },
+
     cancelled: function(args) {
         this.processing.html('<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Canceling Query...</span>').show();
     },
