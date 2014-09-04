@@ -798,6 +798,11 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
         manager.registerNodeType(ntt, false);
     }
+
+    public Object getRepositoryObject() {
+        return repository;
+    }
+
     public void createFolders() throws RepositoryException {
 
         NodeTypeManager manager =

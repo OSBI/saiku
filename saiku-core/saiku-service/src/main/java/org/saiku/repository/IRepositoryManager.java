@@ -87,4 +87,6 @@ public interface IRepositoryManager {
     List<org.saiku.database.dto.MondrianSchema> getInternalFilesOfFileType(String type) throws RepositoryException;
 
     void createFileMixin(String type) throws RepositoryException;
+
+    Object getRepositoryObject();
 }

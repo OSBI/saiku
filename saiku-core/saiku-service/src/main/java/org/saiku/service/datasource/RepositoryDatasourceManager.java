@@ -26,6 +26,7 @@ import org.saiku.service.util.exception.SaikuServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -327,6 +328,10 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         catch (Exception e){
             log.error("Could not restore export", e);
         }
+    }
+
+    public Object getRepository() {
+        return irm.getRepositoryObject();
     }
 }
 
