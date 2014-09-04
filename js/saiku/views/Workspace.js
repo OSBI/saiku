@@ -187,17 +187,16 @@ var Workspace = Backbone.View.extend({
         // Fire off new workspace event
         Saiku.session.trigger('workspace:new', { workspace: this });
 
-        if(Settings.PLUGIN && Saiku.session.isadmin) {
-            var $link = $("<a />")
+        if (Settings.PLUGIN && Saiku.session.isadmin) {
+            var $link = $('<a />')
                 .attr({
-                    href: "#adminconsole",
-                    title: "Admin Console"
+                    href: '#adminconsole',
+                    title: 'Admin Console'
                 })
-                .text("Admin")
                 .click(Saiku.AdminConsole.show_admin)
-                .addClass('admin');
-            var $li = $("<li />").append($link);
-            $(this.el).find('.refresh_cubes_nav').append($link);
+                .addClass('button admin_console');
+            $(this.el).find('.refresh_cubes_nav').css('margin-right', '40px');
+            $(this.el).find('.admin_console_nav').append($link);
         }
 
         return this; 

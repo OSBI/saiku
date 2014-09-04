@@ -118,6 +118,32 @@ textarea, select {
     border: 1px solid #CCC;
 }
 
+.admin_console {
+    background: url('../../../images/src/admin_console.png') no-repeat;
+    border: 1px solid transparent;
+    display: block;
+    height: 26px;
+    padding: 4px;
+    width: 26px;
+}
+.admin_console_nav {
+    float:right;
+    margin-top:-30px;
+    margin-right:8px;
+}
+.admin_console_nav a.button {
+    display: block;
+    height: 12px;
+    padding: 3px;
+    width: 12px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+}
+.admin_console_nav a.button:hover {
+    border: 1px solid #ccc;
+}
+
 /** Toolbar */
 
 #toolbar {
