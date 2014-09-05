@@ -16,7 +16,6 @@
 
 package org.saiku.service.datasource;
 
-import org.apache.commons.io.IOUtils;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
@@ -26,10 +25,8 @@ import org.saiku.service.util.exception.SaikuServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Repository;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -328,6 +325,19 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         catch (Exception e){
             log.error("Could not restore export", e);
         }
+    }
+
+    public boolean hasHomeDirectory(String name) {
+        try{
+            Node eturn = irm.getHomeFolder(name);
+            if (eturn!=null){
+                return true;
+            }
+            return false;
+        } catch (RepositoryException e) {
+            log.error("could not get home directory");
+        }
+        return false;
     }
 
     public Object getRepository() {

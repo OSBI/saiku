@@ -3,6 +3,7 @@ package org.saiku.service.user;
 import org.saiku.database.JdbcUserDAO;
 import org.saiku.database.dto.SaikuUser;
 import org.saiku.service.ISessionService;
+import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.datasource.IDatasourceManager;
 
 import java.io.Serializable;
@@ -19,6 +20,7 @@ public class UserService implements IUserManager, Serializable {
     JdbcUserDAO uDAO;
 
     IDatasourceManager iDatasourceManager;
+    DatasourceService datasourceService;
     private ISessionService sessionService;
     private List<String> adminRoles;
 
@@ -37,6 +39,14 @@ public class UserService implements IUserManager, Serializable {
 
     public void setSessionService(ISessionService sessionService){
         this.sessionService = sessionService;
+    }
+
+    public DatasourceService getDatasourceService() {
+        return datasourceService;
+    }
+
+    public void setDatasourceService(DatasourceService datasourceService) {
+        this.datasourceService = datasourceService;
     }
 
     public SaikuUser addUser(SaikuUser u) {
@@ -102,11 +112,24 @@ public class UserService implements IUserManager, Serializable {
     public boolean isAdmin() {
         List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
 
-        if(!Collections.disjoint(roles, adminRoles)){
-            return true;
+        return !Collections.disjoint(roles, adminRoles);
+
+    }
+
+    public void checkFolders(){
+
+        String username = (String ) sessionService.getAllSessionObjects().get("username");
+
+        boolean home = true;
+        if(username != null) {
+          home = datasourceService.hasHomeDirectory(username);
+        }
+        if(!home){
+            datasourceService.createUserHome(username);
         }
 
-        return false;
+
+
     }
 
     public List<String> getAdminRoles(){

@@ -283,6 +283,11 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
         
     }
 
+    public boolean hasHomeDirectory(String name) {
+
+        return false;
+    }
+
     public String saveFile(String path, String content, String user) {
         return null;
     }

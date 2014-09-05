@@ -37,6 +37,7 @@
 
     <bean id="userServiceBean" class="org.saiku.service.user.UserService">
         <property name="jdbcUserDAO" ref="customerDAO"/>
+        <property name="datasourceService" ref="datasourceServiceBean"/>
         <property name="iDatasourceManager" ref="repositoryDsManager"/>
         <property name="adminRoles">
             <list>

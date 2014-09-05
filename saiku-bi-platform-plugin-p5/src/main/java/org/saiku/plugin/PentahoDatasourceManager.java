@@ -249,6 +249,10 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
     }
 
+    public boolean hasHomeDirectory(String name) {
+        return false;
+    }
+
     public void setACL(String a, String b, String c, List<String> d) {
 
     }

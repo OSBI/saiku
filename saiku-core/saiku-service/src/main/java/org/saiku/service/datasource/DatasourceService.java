@@ -130,4 +130,12 @@ public class DatasourceService implements Serializable {
   public void restoreRepository(byte[] data){
       datasources.restoreRepository(data);
   }
+
+    public boolean hasHomeDirectory(String name){
+        return datasources.hasHomeDirectory(name);
+    }
+
+    public void createUserHome(String user){
+        datasources.createUser(user);
+    }
 }

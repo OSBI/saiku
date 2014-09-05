@@ -87,4 +87,6 @@ public interface IDatasourceManager {
   public byte[] exportRepository();
 
   public void restoreRepository(byte[] data);
+
+    public boolean hasHomeDirectory(String name);
 }
