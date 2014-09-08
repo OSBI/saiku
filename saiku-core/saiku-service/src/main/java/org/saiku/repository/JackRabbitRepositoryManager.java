@@ -196,16 +196,17 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     }
 
     public boolean deleteFolder(String folder) throws RepositoryException {
-        Node n;
+        if(folder.startsWith("/")){
+            folder = folder.substring(1, folder.length());
+        }
+        /*Node n;
         try {
-            if(folder.startsWith("/")){
-                folder = folder.substring(1, folder.length());
-            }
+
             n = getFolder(folder);
             n.remove();
         } catch (RepositoryException e) {
             log.error("Could not remove folder: "+folder, e);
-        }
+        }*/
         Node node = JcrUtils.getNodeIfExists(root, folder);
         if(node!=null) {
             node.remove();

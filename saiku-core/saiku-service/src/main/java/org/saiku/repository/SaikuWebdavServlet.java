@@ -1,5 +1,9 @@
 package org.saiku.repository;
 
+import org.apache.jackrabbit.webdav.DavException;
+import org.apache.jackrabbit.webdav.DavResource;
+import org.apache.jackrabbit.webdav.WebdavRequest;
+import org.apache.jackrabbit.webdav.WebdavResponse;
 import org.apache.jackrabbit.webdav.simple.SimpleWebdavServlet;
 import org.saiku.service.datasource.RepositoryDatasourceManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +14,7 @@ import javax.jcr.Repository;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import java.io.IOException;
 
 /**
  * Created by bugg on 04/09/14.
@@ -36,4 +41,21 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
     }
 
 
+    @Override
+    public void doPost(WebdavRequest request,
+                       WebdavResponse response,
+                       DavResource resource)
+            throws IOException,
+            DavException{
+        super.doPost(request, response, resource);
+    }
+
+    @Override
+    public void doPut(WebdavRequest request,
+                       WebdavResponse response,
+                       DavResource resource)
+            throws IOException,
+            DavException{
+        super.doPut(request, response, resource);
+    }
 }
