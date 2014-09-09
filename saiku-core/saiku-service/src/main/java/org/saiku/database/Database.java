@@ -3,6 +3,8 @@ package org.saiku.database;
 import org.h2.jdbcx.JdbcDataSource;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.service.datasource.IDatasourceManager;
+import org.saiku.service.importer.LegacyImporter;
+import org.saiku.service.importer.impl.LegacyImporterImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,7 @@ public class Database {
         initDB();
         loadUsers();
         loadFoodmart();
+        loadLegacyDatasources();
     }
 
     private void initDB() {
@@ -154,5 +157,21 @@ public class Database {
         }
 
 
+    }
+
+    public void loadLegacyDatasources() throws SQLException {
+        Connection c = ds.getConnection();
+
+        Statement statement = c.createStatement();
+        ResultSet result = statement.executeQuery("select count(*) as c from LOG where log = 'insert datasources'");
+
+        result.next();
+        if (result.getInt("c") == 0) {
+            LegacyImporter l = new LegacyImporterImpl(dsm);
+            l.importSchema();
+            l.importDatasources();
+            statement.execute("INSERT INTO LOG(log) VALUES('insert datasources');");
+
+        }
     }
 }
