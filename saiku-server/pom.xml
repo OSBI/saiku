@@ -125,21 +125,21 @@
       									</tarfileset>
            						</tar>
            						
-           						<unzip dest="target/dist/saiku-server/tomcat/webapps/saiku/WEB-INF/classes/">
+           						<!--<unzip dest="target/dist/saiku-server/tomcat/webapps/saiku/WEB-INF/classes/">
 									<fileset dir="${basedir}/../util/">
 										<include name="foodmart.zip" />
 									</fileset>
-								</unzip>
-								<copy todir="target/dist/saiku-server/tomcat/webapps/saiku/WEB-INF/classes/saiku-datasources/" overwrite="true">
+								</unzip>-->
+								<!--<copy todir="target/dist/saiku-server/tomcat/webapps/saiku/WEB-INF/classes/saiku-datasources/" overwrite="true">
 									<fileset dir="${basedir}/../util/">
 										<include name="foodmart" />
 									</fileset>
-								</copy>
-                                <copy todir="target/dist/saiku-server/tomcat/webapps/saiku/WEB-INF/classes/foodmart/" overwrite="true">
+								</copy>-->
+                                <!--<copy todir="target/dist/saiku-server/tomcat/webapps/saiku/WEB-INF/classes/foodmart/" overwrite="true">
 									<fileset dir="${basedir}/../util/">
 										<include name="FoodMart.xml" />
 									</fileset>
-								</copy>
+								</copy>-->
 
 								
 								<zip destfile="target/saiku-server-foodmart-${project.version}.zip">
