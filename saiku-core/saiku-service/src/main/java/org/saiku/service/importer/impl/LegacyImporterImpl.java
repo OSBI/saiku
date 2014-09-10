@@ -98,7 +98,7 @@ public class LegacyImporterImpl implements LegacyImporter {
                                         Path p = Paths.get(s.substring(8,s.length()));
                                         String f = p.getFileName().toString();
 
-                                        String fixedString = "Catalog=/datasources/"+f;
+                                        String fixedString = "Catalog=mondrian:///datasources/"+f;
 
                                         split[i] = fixedString;
                                         StringBuilder builder = new StringBuilder();
