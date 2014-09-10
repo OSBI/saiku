@@ -608,64 +608,48 @@ var AdminConsole = Backbone.View.extend({
         var that = this;
         restore.save();
     },
+
     save_datasource: function (event) {
-        event.preventDefault();
-        var $currentTarget = $(event.currentTarget);
+    	event.preventDefault();
+    	var $currentTarget = $(event.currentTarget);
         $currentTarget.addClass('selected');
         var path = $currentTarget.attr('href').replace('#', '');
-        var that = this;
+                
         if(path == undefined || path == "") {
-            var conn = new Connection();
-            var v = $(this.el).find("textarea[name='adv_text']").val();
-            if(v!=null && v!=undefined && v!=""){
-                conn.set({"advanced": $(this.el).find("textarea[name='adv_text']").val()});
-            }
-            else {
-                conn.set({"connectionname": $(this.el).find("input[name='connname']").val()});
-                conn.set({"connectiontype": $(this.el).find(".drivertype").val()});
-                conn.set({"jdbcurl": $(this.el).find("input[name='jdbcurl']").val()});
-                conn.set({"schema": $(this.el).find(".schemaselect").val()});
-                conn.set({"driver": $(this.el).find("input[name='driver']").val()});
-                conn.set({"username": $(this.el).find("input[name='connusername']").val()});
-                conn.set({"password": $(this.el).find("input[name='connpassword']").val()});
-            }
+        	var conn = new Connection();
             this.datasources.add(conn);
-            conn.save({}, {data: JSON.stringify(conn.attributes), contentType: "application/json", success: function(){
-                that.clear_datasources();
-                $(that.el).find('.user_info').html("");
-
-            }, error: function(data, xhr){
-                $(that.el).find('#savestatus').html("Save failed!<br/>("+xhr.responseText+")");
-                that.schemas.fetch();
-            }});
+        } else {
+        	var conn = this.datasources.get(path);
         }
-        else{
-            var conn = this.datasources.get(path);
-            if($(this.el).find("textarea[name='adv_text']").val()!=null){
-                conn.set({"advanced": $(this.el).find("textarea[name='advancedurl']").val()});
-            }
-            else {
-                conn.set({"connectionname": $(this.el).find("input[name='connname']").val()});
-                conn.set({"connectiontype": $(this.el).find(".drivertype").val()});
-                conn.set({"jdbcurl": $(this.el).find("input[name='jdbcurl']").val()});
-                conn.set({"schema": $(this.el).find(".schemaselect").val()});
-                conn.set({"driver": $(this.el).find("input[name='driver']").val()});
-                conn.set({"username": $(this.el).find("input[name='connusername']").val()});
-                conn.set({"password": $(this.el).find("input[name='connpassword']").val()});
-            }
-            conn.save({}, {data: JSON.stringify(conn.attributes), contentType: "application/json", success: function(){
-                that.fetch_datasources();
-                $(that.el).find('.user_info').html("");
-
-            }, error: function(data, xhr){
-                $(that.el).find('#savestatus').html("Save failed!<br/>("+xhr.responseText+")");
-                that.schemas.fetch();
-            }});
-
-
+        
+        var v = $(this.el).find("textarea[name='adv_text']").val();
+        
+        if(v!=null && v!=undefined && v!=""){
+            conn.set({"advanced": v});
+        } else {
+            conn.set({"connectionname": $(this.el).find("input[name='connname']").val()});
+            conn.set({"connectiontype": $(this.el).find(".drivertype").val()});
+            conn.set({"jdbcurl": $(this.el).find("input[name='jdbcurl']").val()});
+            conn.set({"schema": $(this.el).find(".schemaselect").val()});
+            conn.set({"driver": $(this.el).find("input[name='driver']").val()});
+            conn.set({"username": $(this.el).find("input[name='connusername']").val()});
+            conn.set({"password": $(this.el).find("input[name='connpassword']").val()});
         }
-
+        
+        conn.save({}, {
+			data: JSON.stringify(conn.attributes),
+			contentType: "application/json",
+			success : function() {
+				that.fetch_datasources();
+				$(that.el).find('.user_info').html("");
+			},
+			error : function(data, xhr) {
+				$(that.el).find('#savestatus').html("Save failed!<br/>(" + xhr.responseText + ")");
+				that.schemas.fetch();
+			}
+		});
     },
+
     remove_datasource : function(event) {
         event.preventDefault();
 
