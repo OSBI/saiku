@@ -1,36 +1,79 @@
-var BASE_URL = "http://127.0.0.1:8080/saiku/rest/saiku/api/license";
+/**
+* Description: Module License Upload.
+* Version: 1.0.0
+* Last update: 2014/09/09
+* Author: Breno Polanski <breno.polanski@gmail.com>
+*/
 
-onload = function() {
-    document.getElementById("submit").onclick = sendFile;
-};
+// the semi-colon before function invocation is a safety net against concatenated
+// scripts and/or other plugins which may not be closed properly.
+var app = (function($, window, document, undefined) {
 
-function sendFile() {
-    document.getElementById("status").innerHTML = "";
+    // undefined is used here as the undefined global variable in ECMAScript 3 is
+    // mutable (ie. it can be changed by someone else). undefined isn't really being
+    // passed in so we can ensure the value of it is truly undefined. In ES5, undefined
+    // can no longer be modified.
 
-    var file = document.getElementById("filechooser").files[0];
-    var extension = file.name.split(".").pop();
+    // window and document are passed through as local variable rather than global
+    // as this (slightly) quickens the resolution process and can be more efficiently
+    // minified (especially when both are regularly referenced in your plugin).
 
-    var type;
-   /* if (extension === "jpg" || extension === "jpeg" ||
-        extension === "JPG" || extension === "JPEG") {
-        type = "image/jpeg";
-    } else if (extension === "png" || extension === "PNG") {
-        type = "image/png";
-    } else {
-        document.getElementById("status").innerHTML = "Invalid file type";
-        return;
-    }*/
+    'use strict';
 
-    var request = new XMLHttpRequest();
-    request.open("POST", BASE_URL);
-    request.onload = function() {
-        if (request.status === 201) {
-            var fileName = request.getResponseHeader("Location").split("/").pop();
-            document.getElementById("status").innerHTML = "File created with name " + fileName;
-        } else {
-            document.getElementById("status").innerHTML = "Error creating file: (" + request.status + ") " + request.responseText;
+    var BASE_URL = window.location.origin + '/saiku/rest/saiku/api/license';
+
+    var app = {
+        init: function() {
+            this.formChange();
+            this.sendFile();
+        },
+
+        formChange: function() {
+            $('#file-chooser').change(function() {
+                $('.form-upload p').text(this.files.length + ' file selected');
+            });
+        },
+
+        notifyUser: function(alertType, msg) {
+            $('#notification').removeClass();        
+            $('#notification').addClass(alertType);
+            app.setNotificationMessage(msg);
+            $('#notification').slideDown();
+            setTimeout(function() {
+                $('#notification').slideUp();
+            }, 3000);
+        },
+
+        setNotificationMessage: function(msg) {
+            $('#notification p').text(msg);
+        },
+
+        sendFile: function() {
+            $('#btn-sendfile').on('click', function() {
+                var file = $('#file-chooser')[0].files[0];
+                
+                if (file !== undefined) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', BASE_URL);
+                    xhr.onload = function() {
+                        if (xhr.status === 201) {
+                            app.notifyUser('alert-success', xhr.responseText);
+                            $('.form-upload p').text('Drag your license or click in this area.');
+                        } else {
+                            app.notifyUser('alert-success', xhr.responseText);
+                            $('.form-upload p').text('Drag your license or click in this area.');
+                        }
+                    };
+                    xhr.setRequestHeader('Content-Type', 'application/x-java-serialized-object');
+                    xhr.send(file);
+                }
+                else {
+                    app.notifyUser('alert-danger', 'Ops! Select file.');
+                }
+            });
         }
     };
-    request.setRequestHeader("Content-Type", "application/x-java-serialized-object");
-    request.send(file);
-}
+
+    return app;
+
+}(jQuery, window, document));
