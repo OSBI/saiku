@@ -846,7 +846,8 @@ var Connections = Backbone.Collection.extend({
     refresh: function(){
         $.ajax({
             type: 'GET',
-            url: AdminUrl+"/datasources/"+this.connectionname+"/refresh"
+            //url: AdminUrl+"/datasources/"+this.connectionname+"/refresh"
+            url: Settings.REST_URL + AdminUrl + "/datasources"
         });
     }
 });
