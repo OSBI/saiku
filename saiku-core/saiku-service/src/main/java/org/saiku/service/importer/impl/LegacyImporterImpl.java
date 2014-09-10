@@ -103,7 +103,7 @@ public class LegacyImporterImpl implements LegacyImporter {
                                         split[i] = fixedString;
                                         StringBuilder builder = new StringBuilder();
                                         for(String str : split){
-                                            builder.append(str);
+                                            builder.append(str+";");
                                         }
                                         props.setProperty("location", builder.toString());
 
