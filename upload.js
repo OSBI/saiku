@@ -1,13 +1,27 @@
-/**
-* Description: Module License Upload.
-* Version: 1.0.0
-* Last update: 2014/09/09
-* Author: Breno Polanski <breno.polanski@gmail.com>
-*/
+/**  
+ *   Copyright 2012 OSBI Ltd
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+ *
+ * Description: Module License Upload.
+ * Version: 1.0.0
+ * Last update: 2014/09/10
+ * Author: Breno Polanski <breno.polanski@gmail.com>
+ */
 
-// the semi-colon before function invocation is a safety net against concatenated
-// scripts and/or other plugins which may not be closed properly.
-var app = (function($, window, document, undefined) {
+var upload = (function($, window, document, undefined) {
 
     // undefined is used here as the undefined global variable in ECMAScript 3 is
     // mutable (ie. it can be changed by someone else). undefined isn't really being
@@ -18,15 +32,10 @@ var app = (function($, window, document, undefined) {
     // as this (slightly) quickens the resolution process and can be more efficiently
     // minified (especially when both are regularly referenced in your plugin).
 
-    'use strict';
+    'use strict';    
 
-    var BASE_URL = window.location.origin + '/saiku/rest/saiku/api/license';
-
-    var app = {
-        init: function() {
-            this.formChange();
-            this.sendFile();
-        },
+    var module = {
+        _baseURL: window.location.origin + '/saiku/rest/saiku/api/license',
 
         formChange: function() {
             $('#file-chooser').change(function() {
@@ -34,18 +43,54 @@ var app = (function($, window, document, undefined) {
             });
         },
 
-        notifyUser: function(alertType, msg) {
+        _notifyUser: function(alertType, msg) {
             $('#notification').removeClass();        
             $('#notification').addClass(alertType);
-            app.setNotificationMessage(msg);
             $('#notification').slideDown();
+            module._setNotificationMessage(msg);
             setTimeout(function() {
                 $('#notification').slideUp();
             }, 3000);
         },
 
-        setNotificationMessage: function(msg) {
+        _setNotificationMessage: function(msg) {
             $('#notification p').text(msg);
+        },
+
+        _clearInputFile: function() {
+            var inputFile = $('#file-chooser');
+
+            inputFile.replaceWith(inputFile.val('').clone(true));
+        },
+
+        _loadingButton: function(isLoadBtn) {
+            if (isLoadBtn) {
+                $('#btn-sendfile').attr('disabled', 'disabled');
+                $('#btn-sendfile').text('Loading file...');
+            }
+            else {
+                $('#btn-sendfile').removeAttr('disabled');
+                $('#btn-sendfile').text('Upload');
+            }
+        },
+
+        _xhr: function(options, callback) {
+            var xhttp = new window.XMLHttpRequest();
+            xhttp.open(options.type, options.url, true);
+            xhttp.setRequestHeader('Content-Type', 'application/x-java-serialized-object');            
+            xhttp.send(options.data);
+            xhttp.onreadystatechange = function() {
+                if (xhttp.status === 200 && xhttp.readyState === 4) {
+                    module._clearInputFile();
+                    module._loadingButton(false);
+                    callback('alert-success', xhttp.responseText);
+                }
+                else {
+                    module._clearInputFile();
+                    module._loadingButton(false);
+                    callback('alert-danger', 'Error while uploading the file: (' + xhttp.statusText + ')');
+                }
+            };
         },
 
         sendFile: function() {
@@ -53,27 +98,24 @@ var app = (function($, window, document, undefined) {
                 var file = $('#file-chooser')[0].files[0];
                 
                 if (file !== undefined) {
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', BASE_URL);
-                    xhr.onload = function() {
-                        if (xhr.status === 201) {
-                            app.notifyUser('alert-success', xhr.responseText);
-                            $('.form-upload p').text('Drag your license or click in this area.');
-                        } else {
-                            app.notifyUser('alert-success', xhr.responseText);
-                            $('.form-upload p').text('Drag your license or click in this area.');
-                        }
-                    };
-                    xhr.setRequestHeader('Content-Type', 'application/x-java-serialized-object');
-                    xhr.send(file);
+                    module._loadingButton(true);
+                    module._xhr({type: 'POST', url: module._baseURL, data: file}, module._notifyUser);
+                    $('.form-upload p').text('Drag your license or click in this area.');
                 }
                 else {
-                    app.notifyUser('alert-danger', 'Ops! Select file.');
+                    module._notifyUser('alert-danger', 'Oops... Select a file!');
                 }
             });
+        },
+
+        init: function() {
+            module.formChange();
+            module.sendFile();
         }
     };
 
-    return app;
+    return {
+        init: module.init
+    }
 
 }(jQuery, window, document));
