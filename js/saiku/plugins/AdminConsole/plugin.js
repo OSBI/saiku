@@ -614,6 +614,9 @@ var AdminConsole = Backbone.View.extend({
     	var $currentTarget = $(event.currentTarget);
         $currentTarget.addClass('selected');
         var path = $currentTarget.attr('href').replace('#', '');
+        
+        // Keep a reference to the main plugin object.
+        var this_p = this;
                 
         if(path == undefined || path == "") {
         	var conn = new Connection();
@@ -640,12 +643,12 @@ var AdminConsole = Backbone.View.extend({
 			data: JSON.stringify(conn.attributes),
 			contentType: "application/json",
 			success : function() {
-				that.fetch_datasources();
-				$(that.el).find('.user_info').html("");
+				this_p.fetch_datasources();
+				$(this_p.el).find('.user_info').html("");
 			},
 			error : function(data, xhr) {
-				$(that.el).find('#savestatus').html("Save failed!<br/>(" + xhr.responseText + ")");
-				that.schemas.fetch();
+				$(this_p.el).find('#savestatus').html("Save failed!<br/>(" + xhr.responseText + ")");
+				this_p.schemas.fetch();
 			}
 		});
     },
