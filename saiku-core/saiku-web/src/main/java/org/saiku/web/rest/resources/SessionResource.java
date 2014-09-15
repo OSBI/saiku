@@ -94,7 +94,12 @@ public class SessionResource  {
         catch (Exception e){
             //throw new UnsupportedOperationException();
         }
-        userService.checkFolders();
+        try {
+            userService.checkFolders();
+        }
+        catch (Exception e){
+            //TODO detect if plugin or not.
+        }
         return sess;
 	}
 
