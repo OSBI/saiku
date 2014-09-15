@@ -76,6 +76,38 @@ var Saiku = {
             console.error("Logging for: " + channel);
             console.error(item);
         }
+    },
+    URLParams: {
+        buildValue: function(value) {
+            if (/^\s*$/.test(value))           { return null; }
+            if (/^(true|false)$/i.test(value)) { return value.toLowerCase() === 'true'; }
+            if (isFinite(value))               { return parseFloat(value); }
+            if (isFinite(Date.parse(value)))   { return new Date(value); }
+
+            return value;
+        },
+
+        equals: function() {
+            params = Array.prototype.slice.call(arguments);
+
+            var paramsURI = {},
+                keyValue,               
+                couples = window.location.search.substr(1).split('&');
+
+            if (window.location.search.length > 1) {
+                for (var keyId = 0; keyId < couples.length; keyId++) {                    
+                    keyValue = couples[keyId].split('=');
+                    paramsURI[decodeURIComponent(keyValue[0])] = keyValue.length > 1 ? this.buildValue(decodeURIComponent(keyValue[1])) : null;
+                }
+            }
+
+            if (_.isEqual(paramsURI, params[0])) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
     }
 };
 

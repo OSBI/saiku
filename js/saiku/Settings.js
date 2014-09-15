@@ -21,7 +21,7 @@ var Settings = {
     VERSION: "Saiku 3.0-SNAPSHOT",
     BIPLUGIN: false,
     BIPLUGIN5: false,
-    BASE_URL: "",
+    BASE_URL: window.location.origin,
     TOMCAT_WEBAPP: "/saiku",
     REST_MOUNT_POINT: "/rest/saiku/",
     DIMENSION_PREFETCH: true,
@@ -99,8 +99,7 @@ Settings.PARAMS = (function() {
     return p;
 }());
 
-Settings.REST_URL = Settings.BASE_URL
-    + Settings.TOMCAT_WEBAPP 
+Settings.REST_URL = Settings.TOMCAT_WEBAPP 
     + Settings.REST_MOUNT_POINT;
 
 // lets assume we dont need a min width/height for table mode

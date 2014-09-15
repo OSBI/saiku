@@ -1,0 +1,200 @@
+/**  
+ *   Copyright 2012 OSBI Ltd
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ * \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+ *
+ * Description: Stylesheet License Upload.
+ * Version: 1.0.0
+ * Last update: 2014/09/10
+ * Author: Breno Polanski <breno.polanski@gmail.com>
+ *
+ * TABLE OF CONTENTS:
+ *
+ *	0. GLOBAL
+ *	1. DEFAULT
+ *		- 1.1. CONTAINER
+ *	2. COMPONENTS
+ *		- 2.1. FORM UPLOAD
+ *		- 2.2. NOTIFICATION
+ */
+
+/* ==========================================================================
+   0. GLOBAL
+   ========================================================================== */
+
+*, *:before, *:after {
+	-webkit-box-sizing: border-box;
+	   -moz-box-sizing: border-box;
+	        box-sizing: border-box;
+}
+
+body,
+html {
+	padding: 0;
+	margin: 0;
+	height: 100%;
+	font-size: 100%;
+	background-color: #f5f5f5;
+    overflow: hidden;
+    overflow-x: hidden;
+	box-shadow: inset 0 -20px 120px 10px rgba(0,0,0,.2);
+}
+
+/*
+ * Clearfix hack by Nicolas Gallagher
+ * Link: http://nicolasgallagher.com/micro-clearfix-hack/
+ */
+
+.clearfix:before, 
+.clearfix:after { 
+	content: " "; 
+	display: table; 
+}
+
+.clearfix:after { 
+	clear: both; 
+}
+
+body {
+	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+	color: #333;
+}
+
+/*.debug {
+	border: 1px solid #000;
+}*/
+
+/* ==========================================================================
+   1. DEFAULT
+   ========================================================================== */
+
+/* 1.1. CONTAINER
+   ========================================================================== */
+
+.container > header {
+	width: 90%;
+	max-width: 69em;
+	margin: 0 auto;
+	padding: 2.875em 1.875em 1.875em;
+}
+
+.container > header .saiku-logo { 
+	display: block; 
+	margin-right: auto;
+	margin-left: auto;
+}
+
+.container > header .description {
+	margin-top: 2em;
+	font-size: 1.250em;
+	line-height: 2;
+	text-align: center;
+	font-weight: 400;
+	text-transform: uppercase;
+}
+
+/* ==========================================================================
+   2. COMPONENTS
+   ========================================================================== */
+
+/* 2.1. FORM UPLOAD
+   ========================================================================== */
+
+.form-upload {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -6.250em;
+	margin-left: -15.625em;
+	width: 500px;
+	height: 200px;
+	border: 4px dashed #333;
+}
+
+.form-upload p {
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	line-height: 150px;
+}
+
+.form-upload .file-upload {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	outline: none;
+	opacity: 0;
+}
+
+.form-upload .btn-upload {
+	margin: 0 auto;
+	margin-top: -1.250em;
+  	margin-left: -0.250em;
+	width: 500px;
+	height: 35px;
+	font-size: .750em;
+	text-transform: uppercase;
+	color: #fff;
+	background-color: #999;
+	border: none;
+	border-bottom: 4px solid #666;
+	border-radius: 4px;
+	outline: none;
+	transition: all .2s ease;
+}
+
+.form-upload .btn-upload:hover {
+	background-color: #888;
+	cursor: pointer;
+}
+
+.form-upload .btn-upload:active {
+	border: 0;
+}
+
+/* 2.2. NOTIFICATION
+   ========================================================================== */
+
+#notification {
+	position: absolute;
+	bottom: 0;
+	display: none;
+	width: 100%;
+	padding: 5px;
+	color: #fff;
+	font-weight: bold;
+}
+
+.alert-success {
+	padding: 10px;
+	background-color: green;
+}
+
+.alert-info {
+	padding: 10px;
+	background-color: blue;
+}
+
+.alert-danger {
+	padding: 10px;
+	background-color: red;  
+}
+
+#notification > p {
+	margin: 10px;
+	text-align: center;
+}
