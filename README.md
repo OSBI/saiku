@@ -70,11 +70,14 @@ IE 8+ ✔ | Latest ✔ | Latest ✔ | Latest ✔ | Latest ✔ |
 
 ## Contributing
 
-1. Fork it!
-2. Create your feature branch: `git checkout -b my-new-feature`
-3. Commit your changes: `git commit -m 'Add some feature'`
-4. Push to the branch: `git push origin my-new-feature`
-5. Submit a pull request :)
+Check [CONTRIBUTING.md](https://github.com/OSBI/saiku-ui/blob/master/CONTRIBUTING.md#contributing) for more details. Some important information:
+
+* To get started, [sign the Contributor License Agreement](https://www.clahub.com/agreements/OSBI/saiku-ui).
+
+* If you find a bug then please report it on [Jira](http://jira.meteorite.bi/secure/Dashboard.jspa) or our [Support Forum](http://forums.meteorite.bi/).
+
+* If you have a feature request, then please get in touch. We'd love to hear from you! Either post to our [forum](http://forums.meteorite.bi/t/saiku-3-and-beyond/9) or email: [info@meteorite.bi](mailto:info@meteorite.bi)
+
 
 ## History
 
