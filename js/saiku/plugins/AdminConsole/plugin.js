@@ -1,6 +1,16 @@
 Saiku.AdminConsole = {
-    show_admin: function () {
-        Saiku.tabs.add(new AdminConsole());
+    show_admin: function() {
+        var tab = _.find(Saiku.tabs._tabs, function(tab) {
+            return tab.content instanceof AdminConsole;
+        });
+
+        if (tab) {
+            tab.select();
+        }
+        else {
+            Saiku.tabs.add(new AdminConsole());
+        }
+
         return false;
     }
 };
