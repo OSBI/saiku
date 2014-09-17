@@ -1,3 +1,5 @@
+# Contributing
+
 To get started, [sign the Contributor License Agreement](https://www.clahub.com/agreements/OSBI/saiku-ui). 
 
 1. Fork it!
