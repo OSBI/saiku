@@ -231,7 +231,7 @@ var SelectionsModal = Modal.extend({
             }
             
             // Filter out used members
-            this.available_members = _.select(this.available_members, function(obj) {
+            this.available_members = _.filter(this.available_members, function(obj) {
                 return used_members.indexOf(obj.caption) === -1;
             });
             
