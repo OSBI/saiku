@@ -1947,6 +1947,34 @@ form, input {
 form {
     width: 300px;
 }*/
+
+/* Schema Designer */
+
+.connection-form {
+    max-width: 255px;
+    box-sizing: border-box;
+}
+
+.connection-form label {
+    display: inline-block;
+    width: 75px;
+    text-align: right;
+}
+
+.connection-form input[type="text"],
+.connection-form input[type="password"] {
+    width: 170px;
+    margin-left: 5px;
+}
+
+.connection-form button {
+    float: right;
+    cursor: pointer;
+}
+
+
+/* begin delete this block */
+
 .conn_forms label {
     display: inline-block; width: 70px; text-align: right;
 }
@@ -1971,6 +1999,9 @@ form {
 .conn_forms input:focus {
     border: 2px solid #900;
 }
+
+/* end delete this block */
+
 .keyrow label{
 width:90px !important;
 }
