@@ -192,6 +192,9 @@ textarea, select {
 #toolbar ul li a.open_query {
     background-position: -1628px 5px;
 }
+#toolbar ul li a.schema_designer {
+    background: url(../../../images/src/main_toolbar_schema_designer.png) no-repeat center;
+}
 #toolbar ul li a.logout {
     background-position: -1776px 5px;
 }
