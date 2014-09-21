@@ -1989,6 +1989,37 @@ form {
     font-weight: bold;
 }
 
+.table_list {
+    margin: 0 auto;
+    width: auto;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.dbtable {
+    display: inline-block;
+    padding: 5px;
+    white-space: nowrap;
+}
+
+.table_wrapper {
+    white-space: nowrap;
+    vertical-align: top;
+    display: inline-block;
+    padding:5px;
+}
+
+.table_wrapper > table {
+    float: left;
+    width: 148px !important;
+    border: 1px solid #c8c8c8 !important;
+    table-layout: fixed;
+    border-radius: 5px;
+}
+
+.table_wrapper > table  th {
+    background-color: #98bfda;
+}
 
 /* begin delete this block */
 
@@ -2099,7 +2130,7 @@ width:70px !important;
     white-space: nowrap;
     width:auto;
 }
-.dbtable{
+/*.dbtable{
     white-space: nowrap;
     -moz-border-radius: 15px;
     border-radius: 15px;
@@ -2107,9 +2138,9 @@ width:70px !important;
     display: inline-block;
     padding:5px;
 
-}
+}*/
 .tablewrapper{
-    white-space: nowrap; /* this does the trick */
+    white-space: nowrap;
     -moz-border-radius: 15px;
     border-radius: 15px;
     vertical-align: top;
