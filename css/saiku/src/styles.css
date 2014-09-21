@@ -1950,26 +1950,43 @@ form {
 
 /* Schema Designer */
 
-.connection-form {
+.connection_form {
     max-width: 255px;
     box-sizing: border-box;
 }
 
-.connection-form label {
+.connection_form label {
     display: inline-block;
     width: 75px;
     text-align: right;
 }
 
-.connection-form input[type="text"],
-.connection-form input[type="password"] {
+.connection_form input[type="text"],
+.connection_form input[type="password"] {
     width: 170px;
     margin-left: 5px;
 }
 
-.connection-form button {
+.connection_form button {
     float: right;
     cursor: pointer;
+}
+
+.database_list > li.database > a,
+.schema_list > li.schema > a {
+    color: #999;
+    text-decoration: none;
+}
+
+.database_list > li.database > a:hover,
+.schema_list > li.schema > a:hover {
+    text-decoration: underline;
+}
+
+.database_list > li.database.selected > a,
+.schema_list > li.schema.selected > a {
+    color: #000;
+    font-weight: bold;
 }
 
 
