@@ -76,7 +76,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-jshint'); // A tool that helps to detect errors and potential problems in your JavaScript code.
 
 	// By default, lint and run all tests
-	grunt.registerTask('default', ['autoprefixer', 'clean', 'concat', 'uglify']);
+	grunt.registerTask('default', ['autoprefixer', 'jshint', 'clean', 'concat', 'uglify']);
 	grunt.registerTask('errors', ['jshint']);
 };
 
