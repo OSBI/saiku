@@ -16,10 +16,10 @@ SaikuTableRenderer.prototype._render = function(data, options) {
             return;
         }
 
-        if (this._data != null && this._data.error != null) {
+        if (this._data !== null && this._data.error !== null) {
             return;
         }        
-        if (this._data == null || (this._data.cellset && this._data.cellset.length === 0)) {
+        if (this._data === null || (this._data.cellset && this._data.cellset.length === 0)) {
             return;
         }
         if (this._options.htmlObject) {
@@ -30,7 +30,7 @@ SaikuTableRenderer.prototype._render = function(data, options) {
 
             _.defer(function(that) {
                 if (self._options.hasOwnProperty('batch') && !self._options.hasOwnProperty('batchSize')) {
-                    self._options['batchSize'] = 1000;
+                    self._options.batchSize = 1000;
                 }
 
                 var html =  self.internalRender(self._data, self._options);
@@ -92,7 +92,7 @@ SaikuTableRenderer.prototype._processData = function(data, options) {
 
 function genTotalDataCells(currentIndex, cellIndex, scanSums, scanIndexes, lists) {
 	var contents = '';
-	var lists = lists[ROWS];
+	lists = lists[ROWS];
 	for (var i = scanSums.length - 1; i >= 0; i--) {
 		if (currentIndex == scanSums[i]) {
 			var currentListNode = lists[i][scanIndexes[i]];
@@ -112,7 +112,7 @@ function genTotalHeaderCells(currentIndex, bottom, scanSums, scanIndexes, lists)
 		if (currentIndex == scanSums[i]) {
 			var currentListNode = lists[i][scanIndexes[i]];
 			var cssClass;
-			if (i == 0 && bottom == 1)
+			if (i === 0 && bottom == 1)
 				cssClass = "col";
 			else if (i == bottom)
 				cssClass = "col_total_corner";
@@ -126,7 +126,7 @@ function genTotalHeaderCells(currentIndex, bottom, scanSums, scanIndexes, lists)
 					if (currentListNode.captions) {
 						text = lists[i][scanIndexes[i]].captions[m];
 					}
-					if (i == 0 && scanIndexes[i] == 0) {
+					if (i === 0 && scanIndexes[i] === 0) {
 						if (currentListNode.captions)
 							text += "<span class='i18n'> Grand Total</span>";
 						else text = "<span class='i18n'>Grand Total</span>";
@@ -173,7 +173,7 @@ function genTotalHeaderRowCells(currentIndex, scanSums, scanIndexes, totalsLists
 				for (var j = 0; j <= bottom; j++) {
 					var cssClass;
 					var text = '&nbsp;';
-					if (i == 0 && j == 0)
+					if (i === 0 && j === 0)
 						cssClass = 'row';
 					else if (i == j + 1) 
 						cssClass = 'row_total_corner';
@@ -187,7 +187,7 @@ function genTotalHeaderRowCells(currentIndex, scanSums, scanIndexes, totalsLists
 						if (colLists[i][colScanIndexes[i]].captions) {
 							text = colLists[i][colScanIndexes[i]].captions[m];
 						}
-						if (i == 0 && colScanIndexes[i] == 0) {
+						if (i === 0 && colScanIndexes[i] === 0) {
 							if (colLists[i][colScanIndexes[i]].captions)
 								text += "<span class='i18n'> Grand Total</span>";
 							else text = "<span class='i18n'>Grand Total</span>";
@@ -196,8 +196,8 @@ function genTotalHeaderRowCells(currentIndex, scanSums, scanIndexes, totalsLists
 					contents += '<th class="' + cssClass + '"><div>' + text + '</div></th>';
 				}
 				
-				var scanIndexes = {};
-				var scanSums = {};
+				scanIndexes = {};
+				scanSums = {};
 				for (var z = 0; z < totalsLists[ROWS].length; z++) {
 		        	scanIndexes[z] = 0;
 		        	scanSums[z] = totalsLists[ROWS][z][scanIndexes[z]].width;
@@ -265,13 +265,15 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
     var scanIndexes = {};
     
     var dirs = [ROWS, COLUMNS];
+    var i;
+    var group;
     
-    for (var i = 0; i < dirs.length; i++) {
-        scanSums[dirs[i]] = new Array();
-        scanIndexes[dirs[i]] = new Array();
+    for (i = 0; i < dirs.length; i++) {
+        scanSums[dirs[i]] = [];
+        scanIndexes[dirs[i]] = [];
     }
     if (totalsLists[COLUMNS])
-		for (var i = 0; i < totalsLists[COLUMNS].length; i++) {
+		for (i = 0; i < totalsLists[COLUMNS].length; i++) {
 	    	scanIndexes[COLUMNS][i] = 0;
 	    	scanSums[COLUMNS][i] = totalsLists[COLUMNS][i][scanIndexes[COLUMNS][i]].width;
 	    }
@@ -286,7 +288,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
         var headerSame = false;
 
         if (totalsLists[ROWS])
-	        for (var i = 0; i < totalsLists[ROWS].length; i++) {
+	        for (i = 0; i < totalsLists[ROWS].length; i++) {
 	        	scanIndexes[ROWS][i] = 0;
 	        	scanSums[ROWS][i] = totalsLists[ROWS][i][scanIndexes[ROWS][i]].width;
 	        }
@@ -297,11 +299,11 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 
 
             // If the cell is a column header and is null (top left of table)
-            if (header.type === "COLUMN_HEADER" && header.value === "null" && (firstColumn == null || col < firstColumn)) {
+            if (header.type === "COLUMN_HEADER" && header.value === "null" && (firstColumn === null || col < firstColumn)) {
                 rowContent += '<th class="all_null"><div>&nbsp;</div></th>';
             } // If the cell is a column header and isn't null (column header of table)
             else if (header.type === "COLUMN_HEADER") {
-                if (firstColumn == null) {
+                if (firstColumn === null) {
                     firstColumn = col;
                 }
                 if (table[row].length == col+1)
@@ -333,7 +335,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
                         } else {
                         	if (totalsLists[ROWS])
                         		colSpan = totalsLists[ROWS][row + 1][scanIndexes[ROWS][row + 1]].span;
-                            rowContent += '<th class="col" style="text-align: center;" colspan="' + (colSpan == 0 ? 1 : colSpan) + '" title="' + header.value + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
+                            rowContent += '<th class="col" style="text-align: center;" colspan="' + (colSpan === 0 ? 1 : colSpan) + '" title="' + header.value + '"><div rel="' + row + ":" + col +'">' + header.value + '</div></th>';
                         }
                         colSpan = 1;
                     } else {
@@ -354,7 +356,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 
                 var previousRow = data[row - 1];
 
-                var same = !headerSame && !isHeaderLowestLvl && (col == 0 || !topParentsDiffer(data, row, col)) && header.value === previousRow[col].value;
+                var same = !headerSame && !isHeaderLowestLvl && (col === 0 || !topParentsDiffer(data, row, col)) && header.value === previousRow[col].value;
                 headerSame = !same;
                 var value = (same ? "<div>&nbsp;</div>" : '<div rel="' + row + ":" + col +'">' + header.value + '</div>');
                 var tipsy = "";
@@ -373,7 +375,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 
                 if (!isHeaderLowestLvl && (typeof nextHeader == "undefined" || nextHeader.value === "null")) {
                     colspan = 1;
-                    var group = header.properties.dimension;
+                    group = header.properties.dimension;
                     var level = header.properties.level;
                     var groupWidth = (group in rowGroups ? rowGroups[group].length - rowGroups[group].indexOf(level) : 1);
                     for (var k = col + 1; colspan < groupWidth && k <= (lowestRowLvl+1) && data[row][k] !== "null"; k++) {
@@ -389,7 +391,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
                 processedRowHeader = true;
                 lowestRowLvl = col;
                 if (header.properties.hasOwnProperty("dimension")) {
-                    var group = header.properties.dimension;
+                    group = header.properties.dimension;
                     if (!(group in rowGroups)) {
                         rowGroups[group] = [];
                     }
@@ -450,8 +452,8 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
         
     }
     if (options) {
-        options['batchResult'] = resultRows;
-        options['hasBatchResult'] = resultRows.length > 0;
+        options.batchResult = resultRows;
+        options.hasBatchResult = resultRows.length > 0;
     }
     return "<table>" + tableContent + "</table>";
-}
+};
