@@ -64,7 +64,29 @@ module.exports = function(grunt) {
 	            //,ignores: ['src/**/banner.js','src/**/footer.js']
 	        }
 	      }
-	    }
+	    },
+		watch: {
+	      gruntfile: {
+	        files: '<%= jshint.gruntfile.src %>',
+	        tasks: ['jshint:gruntfile']
+	      },
+	      scripts: {
+	        files: '<%= jshint.scripts.src %>',
+	        tasks: ['default']
+	      },
+	      css: {
+	        files: '<%= autoprefixer.file.src %>',
+	        tasks: ['autoprefixer']
+	      },
+	      reload: {
+	          files: ['<%= autoprefixer.file.src %>', '<%= jshint.scripts.src %>'],
+	          options: {
+	            livereload: {
+	                port: 9000
+	            }
+	          }
+	      }
+	    },
 
 	});
 
@@ -74,10 +96,11 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-concat'); // Join multiples js files in one file
 	grunt.loadNpmTasks('grunt-contrib-uglify'); // A JavaScript parser/compressor/beautifier
 	grunt.loadNpmTasks('grunt-contrib-jshint'); // A tool that helps to detect errors and potential problems in your JavaScript code.
+	grunt.loadNpmTasks('grunt-contrib-watch'); // Run predefined tasks whenever watched file patterns are added, changed or deleted.
 
 	// By default, lint and run all tests
-	grunt.registerTask('default', ['autoprefixer', 'jshint', 'clean', 'concat', 'uglify']);
-	grunt.registerTask('errors', ['jshint']);
+	grunt.registerTask('default', ['autoprefixer', 'jshint']);
+	grunt.registerTask('build', ['default', 'clean', 'concat', 'uglify']);
 };
 
 
