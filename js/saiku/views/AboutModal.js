@@ -33,6 +33,6 @@ var AboutModal = Modal.extend({
     type: "info",
     
     message: Settings.VERSION + "<br>" + 
-        "<a  target='_blank' href='http://www.analytical-labs.com'>http://www.analytical-labs.com/</a><br><br>"
-        + "Powered by <img width='20px' src='/images/src/meteorite_free.png'  /> <a target='_blank' href='http://meteorite.bi'>http://meteorite.bi/</a> "
+        "<a  target='_blank' href='http://www.analytical-labs.com'>http://www.analytical-labs.com/</a><br><br>" +
+        "Powered by <img width='20px' src='/images/src/meteorite_free.png'  /> <a target='_blank' href='http://meteorite.bi'>http://meteorite.bi/</a> "
 });

@@ -39,7 +39,7 @@ var AddFolderModal = Modal.extend({
             "<label class='i18n' for='name'>To add a new folder, " + 
             "please type a name in the text box below:</label>" +
             "<input type='text' class='newfolder' name='name' />" +
-            "</form>"
+            "</form>";
 
         _.extend(this.options, {
             title: "Add Folder"
@@ -52,8 +52,6 @@ var AddFolderModal = Modal.extend({
         }
 
     },
-    
-    type: "save",
 
     save: function( event ) {
         event.preventDefault( );
