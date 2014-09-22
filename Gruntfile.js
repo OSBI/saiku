@@ -52,6 +52,18 @@ module.exports = function(grunt) {
 	            dest: saikuEmbedOutput.min
 	          },]
 	      }
+	    },
+	    jshint: {
+	      gruntfile: {
+	        src: 'Gruntfile.js'
+	      },
+	      scripts: {
+	        src: [saikuFiles, saikuEmbedFiles],
+	        options: {
+	            indent: 4
+	            //,ignores: ['src/**/banner.js','src/**/footer.js']
+	        }
+	      }
 	    }
 
 	});
@@ -61,10 +73,11 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-clean'); // Delete files from a directory
 	grunt.loadNpmTasks('grunt-contrib-concat'); // Join multiples js files in one file
 	grunt.loadNpmTasks('grunt-contrib-uglify'); // A JavaScript parser/compressor/beautifier
-	//grunt.loadNpmTasks('grunt-contrib-jshint'); // A tool that helps to detect errors and potential problems in your JavaScript code.
+	grunt.loadNpmTasks('grunt-contrib-jshint'); // A tool that helps to detect errors and potential problems in your JavaScript code.
 
 	// By default, lint and run all tests
 	grunt.registerTask('default', ['autoprefixer', 'clean', 'concat', 'uglify']);
+	grunt.registerTask('errors', ['jshint']);
 };
 
 
