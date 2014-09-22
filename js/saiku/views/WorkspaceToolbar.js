@@ -47,7 +47,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
     
     activate_buttons: function(args) {
-        if (args != null && args.data && args.data.cellset && args.data.cellset.length > 0 ) {
+        if (args !== null && args.data && args.data.cellset && args.data.cellset.length > 0 ) {
             $(args.workspace.toolbar.el).find('.button')
                 .removeClass('disabled_toolbar');       
 
@@ -117,7 +117,7 @@ var WorkspaceToolbar = Backbone.View.extend({
             $(this.el).find('.query_scenario').removeClass('disabled_toolbar');
             $(this.el).find('.drillthrough, .drillthrough_export').addClass('disabled_toolbar');
         }
-        if (properties['saiku.olap.query.limit'] == 'true' || properties['saiku.olap.query.filter'] == true) {
+        if (properties['saiku.olap.query.limit'] == 'true' || properties['saiku.olap.query.filter'] === true) {
             $(this.workspace.el).find('.fields_list_header').addClass('limit');
         }
 
@@ -298,7 +298,7 @@ var WorkspaceToolbar = Backbone.View.extend({
     
 
     check_modes: function(source) {
-        if (typeof source === "undefined" || source == null)
+        if (typeof source === "undefined" || source === null)
             return;
         
         if ($(this.workspace.el).find( ".workspace_results tbody.ui-selectable" ).length > 0) {
@@ -484,7 +484,8 @@ var WorkspaceToolbar = Backbone.View.extend({
             var showPosition = function() {
                 var pos = self.editor.getCursorPosition();
                 $mdx_editor.parent().find('.editor_info').html("&nbsp; " + (pos.row +1) + ", " + pos.column);
-            }
+            };
+
             this.editor.on('changeSelection', showPosition);
             showPosition();
 
@@ -495,9 +496,9 @@ var WorkspaceToolbar = Backbone.View.extend({
                 var height = Math.floor(max_height / self.editor.renderer.lineHeight);
                 var screen_length = self.editor.getSession().getScreenLength() > height ? height : self.editor.getSession().getScreenLength();
                 var newHeight =
-                          (screen_length + 1)
-                          * self.editor.renderer.lineHeight
-                          + self.editor.renderer.scrollBar.getWidth();
+                          (screen_length + 1) *
+                          self.editor.renderer.lineHeight +
+                          self.editor.renderer.scrollBar.getWidth();
 
                 $mdx_editor.height(newHeight.toString() + "px");
                 self.editor.resize();
@@ -650,7 +651,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         var explained = function(model, args) {
 
             var explainPlan = "<textarea style='width: " + ($("body").width() - 165) + "px;height:" + ($("body").height() - 175) + "px;'>";
-            if (args != null && args.error != null) {
+            if (args !== null && args.error !== null) {
                 explainPlan += args.error;
             } else if (args.cellset && args.cellset.length === 0) {
                 explainPlan += "Empty explain plan!";
@@ -660,14 +661,13 @@ var WorkspaceToolbar = Backbone.View.extend({
             explainPlan += "</textarea>";
 
             Saiku.ui.unblock();
-            var html =  explainPlan;
-            var html = '<div id="fancy_results" class="workspace_results" style="overflow:visible"><table>' 
-                    + "<tr><th clas='row_header'>Explain Plan</th></tr>"
-                    + "<tr><td>" + explainPlan + "</td></tr>"
-                    + '</table></div>';
 
-            $.fancybox(html
-                ,
+            var html = '<div id="fancy_results" class="workspace_results" style="overflow:visible"><table>' +
+                       '<tr><th clas="row_header">Explain Plan</th></tr>' +
+                       '<tr><td>' + explainPlan + '</td></tr>' +
+                       '</table></div>';
+
+            $.fancybox(html,
                 {
                 'autoDimensions'    : false,
                 'autoScale'         : false,
