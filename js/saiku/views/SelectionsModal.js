@@ -194,8 +194,9 @@ var SelectionsModal = Modal.extend({
     
     populate: function(model, response) {
             var self = this;
+            var selectedHtml;
             self.workspace.unblock();
-            this.members_search_server = (this.available_members.length >= this.members_limit || this.available_members.length == 0);
+            this.members_search_server = (this.available_members.length >= this.members_limit || this.available_members.length === 0);
 
             self.show_unique_option = false;
             $(this.el).find('.options #show_unique').attr('checked',false);
@@ -223,10 +224,10 @@ var SelectionsModal = Modal.extend({
                     var member = this.selected_members[j];
                     used_members.push(member.caption);
             }
-            if ($(this.el).find('.used_selections .selection_options li.option_value' ).length == 0) {
+            if ($(this.el).find('.used_selections .selection_options li.option_value' ).length === 0) {
                 var selectedMembers = $(this.el).find('.used_selections .selection_options');
                 selectedMembers.empty();
-                var selectedHtml = _.template($("#template-selections-options").html())({ options: this.selected_members });
+                selectedHtml = _.template($("#template-selections-options").html())({ options: this.selected_members });
                 $(selectedMembers).html(selectedHtml);
             }
             
@@ -238,7 +239,7 @@ var SelectionsModal = Modal.extend({
             if (this.available_members.length > 0) {
                 var availableMembersSelect = $(this.el).find('.available_selections .selection_options');
                 availableMembersSelect.empty();
-                var selectedHtml = _.template($("#template-selections-options").html())({ options: this.available_members });
+                selectedHtml = _.template($("#template-selections-options").html())({ options: this.available_members });
                 $(availableMembersSelect).html(selectedHtml);   
             }
             if ($(self.el).find( ".selection_options.ui-selectable" ).length > 0) {
@@ -280,12 +281,12 @@ var SelectionsModal = Modal.extend({
 
                             } else {
                             */
-                            var search_target = self.show_unique_option == false ? "caption" : "name";
+                            var search_target = self.show_unique_option === false ? "caption" : "name";
                             var result =  $.map( searchlist, function( item ) {
 
                                             if (item[search_target].toLowerCase().indexOf(request.term.toLowerCase()) > -1) {
-                                                var label = self.show_unique_option == false? item.caption : item.uniqueName;
-                                                var value = self.show_unique_option == false? item.uniqueName : item.caption;
+                                                var label = self.show_unique_option === false? item.caption : item.uniqueName;
+                                                var value = self.show_unique_option === false? item.uniqueName : item.caption;
                                                 
 
                                                 return {
@@ -299,14 +300,14 @@ var SelectionsModal = Modal.extend({
                     select:  function(event, ui) { 
                         var value = encodeURIComponent(ui.item.value);
                         var label = ui.item.label;
-                        var searchVal = self.show_unique_option == false? ui.item.value : ui.item.label;
-                        var cap = self.show_unique_option == false? ui.item.label : ui.item.value;
+                        var searchVal = self.show_unique_option === false? ui.item.value : ui.item.label;
+                        var cap = self.show_unique_option === false? ui.item.label : ui.item.value;
 
                         $(self.el).find('.available_selections .selection_options input[value="' + encodeURIComponent(searchVal) + '"]').parent().remove();
                         $(self.el).find('.used_selections .selection_options input[value="' + encodeURIComponent(searchVal) + '"]').parent().remove();
 
-                        var option = '<li class="option_value"><input type="checkbox" class="check_option" value="' 
-                                            +  encodeURIComponent(searchVal) + '" label="' + encodeURIComponent(cap)  + '">' + label + '</input></li>';
+                        var option = '<li class="option_value"><input type="checkbox" class="check_option" value="' +
+                                            encodeURIComponent(searchVal) + '" label="' + encodeURIComponent(cap)  + '">' + label + '</input></li>';
             
 
                         
@@ -422,7 +423,7 @@ var SelectionsModal = Modal.extend({
         var show_u = this.show_unique_option;
 
         var hName = decodeURIComponent(self.member.hierarchy);
-        var lName = decodeURIComponent(self.member.level)
+        var lName = decodeURIComponent(self.member.level);
         var hierarchy = self.workspace.query.helper.getHierarchy(hName);
         
 
@@ -450,13 +451,13 @@ var SelectionsModal = Modal.extend({
         
         var parameterName = $('#parameter').val();
         if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
-                hierarchy.levels[lName]["aggregators"] = [];
+                hierarchy.levels[lName].aggregators = [];
                 if (totalsFunction) {
-                    hierarchy.levels[lName]["aggregators"].push(totalsFunction);
+                    hierarchy.levels[lName].aggregators.push(totalsFunction);
                 }
                 hierarchy.levels[lName].selection = { "type": "INCLUSION", "members": updates };
                 if (Settings.ALLOW_PARAMETERS && parameterName) {
-                    hierarchy.levels[lName].selection["parameterName"] = parameterName;
+                    hierarchy.levels[lName].selection.parameterName = parameterName;
                     var parameters = self.workspace.query.helper.model().parameters;
                     if (!parameters[parameterName]) {
                     //    self.workspace.query.helper.model().parameters[parameterName] = "";
