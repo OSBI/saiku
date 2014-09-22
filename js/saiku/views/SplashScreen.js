@@ -43,7 +43,7 @@ var SplashScreen = Backbone.View.extend({
           $(this).parent().addClass('active');
           $('.tabs section').hide();
           $('#'+active).fadeIn();
-      })
+      });
       return this;
   },
     remove:function(){
