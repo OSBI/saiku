@@ -76,13 +76,14 @@ Settings.GET = function () {
         tokens,
         re = /[?&]?([^=]+)=([^&]*)/g;
 
-    while (tokens = re.exec(qs)) {
+    tokens = re.exec(qs);
+    while (tokens) {
         var value = decodeURIComponent(tokens[2]);
         if (! isNaN(value)) value = parseInt(value);
         if (value === "true") value = true;
         if (value === "false") value = false;
-        params[decodeURIComponent(tokens[1]).toUpperCase()]
-            = value;
+        params[decodeURIComponent(tokens[1]).toUpperCase()] = value;
+        tokens = re.exec(qs);
     }
 
     return params;
@@ -99,8 +100,7 @@ Settings.PARAMS = (function() {
     return p;
 }());
 
-Settings.REST_URL = Settings.TOMCAT_WEBAPP 
-    + Settings.REST_MOUNT_POINT;
+Settings.REST_URL = Settings.TOMCAT_WEBAPP + Settings.REST_MOUNT_POINT;
 
 // lets assume we dont need a min width/height for table mode
 if (Settings.MODE == "table") {
@@ -132,9 +132,7 @@ if (!Array.prototype.indexOf)
     var len = this.length >>> 0;
 
     var from = Number(arguments[1]) || 0;
-    from = (from < 0)
-         ? Math.ceil(from)
-         : Math.floor(from);
+    from = (from < 0) ? Math.ceil(from) : Math.floor(from);
     if (from < 0)
       from += len;
 
