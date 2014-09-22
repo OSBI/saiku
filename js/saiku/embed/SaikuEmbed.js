@@ -2,7 +2,7 @@
  * Base 64 module
  */
 ;(function (window) {
-
+  /*jshint -W030 */
   var
     characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
     fromCharCode = String.fromCharCode,
@@ -92,7 +92,7 @@ var SaikuCall = {
 
   }
 
-}
+};
 var SaikuRenderer = {
   "table" : SaikuTableRenderer,
   "chart" : SaikuChartRenderer
@@ -124,7 +124,7 @@ SaikuClient.prototype.execute = function(usercall) {
   var client = this.config;
   var parameters = {};
   if (call.params) {
-    for (key in call.params) {
+    for (var key in call.params) {
       parameters['param' + key] = call.params[key];
     }
   }

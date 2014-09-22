@@ -17,9 +17,9 @@
 /**
  * Base 64 module
  */
- /*jshint -W030 */
-;(function (window) {
 
+;(function (window) {
+  /*jshint -W030 */
   var
     characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
     fromCharCode = String.fromCharCode,
