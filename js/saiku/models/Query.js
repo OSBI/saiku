@@ -72,8 +72,8 @@ var Query = Backbone.Model.extend({
         var self = this;
         // Check for automatic execution
         Saiku.ui.unblock();
-        if (typeof this.model.properties != "undefined" && this.model.properties['saiku.olap.query.automatic_execution'] === false &&
-            ! (force === true)) {
+        if (typeof this.model.properties != "undefined" && this.model.properties['saiku.olap.query.automatic_execution'] === false && 
+            force === false) {
             return;
         }
         this.workspace.unblock();
@@ -87,8 +87,8 @@ var Query = Backbone.Model.extend({
         var exModel = this.helper.model();
         if (exModel.queryType == "OLAP") {
             if (exModel.type == "QUERYMODEL") {
-                var columnsOk = Object.keys(exModel.queryModel.axes['COLUMNS'].hierarchies).length > 0;
-                var rowsOk = Object.keys(exModel.queryModel.axes['ROWS'].hierarchies).length > 0;
+                var columnsOk = Object.keys(exModel.queryModel.axes.COLUMNS.hierarchies).length > 0;
+                var rowsOk = Object.keys(exModel.queryModel.axes.ROWS.hierarchies).length > 0;
                 var detailsOk = exModel.queryModel.details.axis == 'COLUMNS' && exModel.queryModel.details.measures.length > 0;
                 if (!rowsOk || !columnsOk || !detailsOk) {
                     errorMessage = "";

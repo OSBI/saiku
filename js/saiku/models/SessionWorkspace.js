@@ -33,7 +33,7 @@ var SessionWorkspace = Backbone.Model.extend({
             if (!Settings.LOCALSTORAGE_EXPIRATION || Settings.LOCALSTORAGE_EXPIRATION === 0) {
                 localStorage.clear();
             }
-            if (localStorage.getItem('expiration') && !(localStorage.getItem('expiration') > (new Date()).getTime())) {
+            if (localStorage.getItem('expiration') && localStorage.getItem('expiration') <= (new Date()).getTime()) {
                 localStorage.clear();
             } else if (!localStorage.getItem('saiku-version') || (localStorage.getItem('saiku-version') !== Settings.VERSION) ) {
                 localStorage.clear();
@@ -46,14 +46,23 @@ var SessionWorkspace = Backbone.Model.extend({
     },
 
     refresh: function() {
-        typeof localStorage !== "undefined" && localStorage && localStorage.clear();
+        if (typeof localStorage !== "undefined" && localStorage) {
+            localStorage.clear();
+        }
+
         this.clear();
-        typeof localStorage !== "undefined" && localStorage && localStorage.setItem('saiku-version', Settings.VERSION);
+
+        if(typeof localStorage !== "undefined" && localStorage) {
+          localStorage.setItem('saiku-version', Settings.VERSION);  
+        }
+
         this.fetch({success:this.process_datasources},{});
     },
         
     destroy: function() {
-        typeof localStorage !== "undefined" && localStorage && localStorage.clear();
+        if (typeof localStorage !== "undefined" && localStorage) {
+            localStorage.clear();
+        }
         return false;
     },
     
@@ -64,7 +73,9 @@ var SessionWorkspace = Backbone.Model.extend({
             
             // Set expiration on localStorage to one day in the future
             var expires = (new Date()).getTime() +  Settings.LOCALSTORAGE_EXPIRATION;
-            typeof localStorage !== "undefined" && localStorage && localStorage.setItem('expiration', expires);
+            if (typeof localStorage !== "undefined" && localStorage) {
+                localStorage.setItem('expiration', expires);
+            }
         }
 
         // Generate cube navigation for reuse
@@ -113,9 +124,9 @@ var SessionWorkspace = Backbone.Model.extend({
                     var schema = catalog.schemas[k];
                     for(var l = 0, lLen = schema.cubes.length; l < lLen; l++) {
                         var cube = schema.cubes[l];
-                        var key = connection.name + "/" + catalog.name + "/"
-                            + ((schema.name == "" || schema.name == null) ? "null" : schema.name) 
-                            + "/" + encodeURIComponent(cube.name);
+                        var key = connection.name + "/" + catalog.name + "/" +
+                            ((schema.name === "" || schema.name === null) ? "null" : schema.name) +
+                            "/" + encodeURIComponent(cube.name);
 
                         if (typeof localStorage !== "undefined" && localStorage && 
                             localStorage.getItem("cube." + key) !== null) {
