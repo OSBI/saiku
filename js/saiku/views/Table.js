@@ -56,17 +56,17 @@ var Table = Backbone.View.extend({
         ignoreRightClick: true,
          build: function($trigger, e) {
             var $target = $(e.currentTarget).find('div');
-            var axis = $(e.currentTarget).hasClass('rows') ? "ROWS" : "COLUMNS"
+            var axis = $(e.currentTarget).hasClass('rows') ? "ROWS" : "COLUMNS";
             var pos = $target.attr('rel').split(':');
-            var row = parseInt(pos[0])
-            var col = parseInt(pos[1])
+            var row = parseInt(pos[0]);
+            var col = parseInt(pos[1]);
             var cell = self.workspace.query.result.lastresult().cellset[row][col];
             var query = self.workspace.query;
             var schema = query.get('schema');
             var cube = query.get('connection') + "/" + 
-                query.get('catalog') + "/"
-                + ((schema == "" || schema == null) ? "null" : schema) 
-                + "/" + query.get('cube');
+                query.get('catalog') + "/" +
+                ((schema === "" || schema === null) ? "null" : schema) +
+                "/" + query.get('cube');
 
             var d = cell.properties.dimension;
             var h = cell.properties.hierarchy;
@@ -79,8 +79,8 @@ var Table = Backbone.View.extend({
                     "uniquename"    : l,
                     "type"          : "level",
                     "action"        : "delete"
-                }) 
-            + "," +JSON.stringify(
+                }) +
+                "," + JSON.stringify(
                 {
                     "hierarchy"     :  h,
                     "uniquename"    : cell.properties.uniquename,
@@ -154,23 +154,23 @@ var Table = Backbone.View.extend({
                     });
                 }
             });
-            items["keeponly"] = { payload: keep_payload };
-            items["getchildren"] = { payload: children_payload };
+            items.keeponly = { payload: keep_payload };
+            items.getchildren = { payload: children_payload };
             if (items.hasOwnProperty("remove-" + l_name) && items.hasOwnProperty("include-" + l_name)) {
-                items["showall"] = { payload: items["remove-" + l_name].payload + ", " + items["include-" + l_name].payload};
+                items.showall = { payload: items["remove-" + l_name].payload + ", " + items["include-" + l_name].payload};
             }
             
 
             
             var lvlitems = function(prefix) {
                 var ritems = {};
-                for (key in items) {
-                    if (prefix != null && prefix.length < key.length && key.substr(0, prefix.length) == prefix) {
+                for (var key in items) {
+                    if (prefix !== null && prefix.length < key.length && key.substr(0, prefix.length) == prefix) {
                             ritems[key] = items[key];
                     }
                 }
                 return ritems;
-            }
+            };
 
             var member = $target.html();
 
@@ -180,24 +180,24 @@ var Table = Backbone.View.extend({
                     "keeponly": {name: "Keep Only", i18n: true, payload: keep_payload }
             };
             if (d != "Measures") {
-                citems["getchildren"] = {name: "Show Children", i18n: true, payload: children_payload }
-                citems["fold1key"] = {
+                citems.getchildren = {name: "Show Children", i18n: true, payload: children_payload };
+                citems.fold1key = {
                         name: "Include Level", i18n: true, 
                         items: lvlitems("include-")
                     };
-                citems["fold2key"] = {
+                citems.fold2key = {
                         name: "Keep and Include Level", i18n: true, 
                         items: lvlitems("keep-")
                     };
-                citems["fold3key"] = {
+                citems.fold3key = {
                         name: "Remove Level", i18n: true,
                         items: lvlitems("remove-")
                     };
-                citems["filterlevel"] = {
+                citems.filterlevel = {
                     name: "Filter Level", i18n: true
                 };
-                if (items["showall"]) {
-                    citems["showall"]  =  { name: "Remove Filters", i18n: true };
+                if (items.showall) {
+                    citems.showall  =  { name: "Remove Filters", i18n: true };
                 }
             }
             $.each(citems, function(key, item){
@@ -209,7 +209,7 @@ var Table = Backbone.View.extend({
                     var url = '/axis/' + axis + '/dimension/' + encodeURIComponent(d);
                     var children = false;
                     if (key.indexOf("filterlevel") >= 0) {
-                        var key = encodeURIComponent(d) + "/hierarchy/" + encodeURIComponent(h) + "/" + encodeURIComponent(l);
+                        key = encodeURIComponent(d) + "/hierarchy/" + encodeURIComponent(h) + "/" + encodeURIComponent(l);
                         (new SelectionsModal({
                             target: null,
                             axis: axis,
@@ -240,7 +240,7 @@ var Table = Backbone.View.extend({
                     
                 },
                 items: citems
-            } 
+            };
         }
     });
     $target.contextMenu();
@@ -256,11 +256,11 @@ var Table = Backbone.View.extend({
             return;
         }
 
-        if (args.data != null && args.data.error != null) {
+        if (args.data !== null && args.data.error !== null) {
             return;
         }        
         // Check to see if there is data
-        if (args.data == null || (args.data.height && args.data.height === 0)) {
+        if (args.data === null || (args.data.height && args.data.height === 0)) {
             return;
         }
         this.clearOut();
