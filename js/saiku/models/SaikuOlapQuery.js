@@ -60,15 +60,17 @@ SaikuOlapQueryHelper.prototype.clearAxis = function(axisName) {
 };
 
 SaikuOlapQueryHelper.prototype.getHierarchy = function(name) {
+  var _searchFunction = function(he) { 
+    return (he && he.name == name); 
+  };
+
   for (var axisName in this.model().queryModel.axes) {
       var axis = this.model().queryModel.axes[axisName];
-      var hierarchy = _.find(axis.hierarchies, function(he) { 
-                  return (he && he.name == name); 
-              });
+      var hierarchy = _.find(axis.hierarchies, _searchFunction);
       if (hierarchy) {
         return hierarchy;
       }
-    };
+    }
     return null;
 };
 
