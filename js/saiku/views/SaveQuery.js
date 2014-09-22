@@ -45,7 +45,7 @@ var SaveQuery = Modal.extend({
         var name = "";
         var full_path = "";
         if (args.query.name) {
-            var full_path = args.query.name;
+            full_path = args.query.name;
             var path = args.query.name.split('/');
 
             name = path[path.length -1];
@@ -130,12 +130,12 @@ var SaveQuery = Modal.extend({
     },
 
     set_name: function(folder, file) {
-        if (folder != null) {
+        if (folder !== null) {
             this.folder_name = folder;
-            var name = (this.folder_name != null ? this.folder_name + "/" : "") + (this.file_name != null ? this.file_name : "")
+            var name = (this.folder_name !== null ? this.folder_name + "/" : "") + (this.file_name !== null ? this.file_name : "");
             $(this.el).find('input[name="name"]').val( name );
         }
-        if (file != null) {
+        if (file !== null) {
             $(this.el).find('input[name="name"]').val( file );
         }
 
@@ -144,7 +144,7 @@ var SaveQuery = Modal.extend({
     // XXX - duplicaten from OpenQuery
         search_file: function(event) {
         var filter = $(this.el).find('.search_file').val().toLowerCase();
-        var isEmpty = (typeof filter == "undefined" || filter == "" || filter == null);
+        var isEmpty = (typeof filter == "undefined" || filter === "" || filter === null);
         if (isEmpty || event.which == 27 || event.which == 9) {
             this.cancel_search();
         } else {
@@ -153,7 +153,7 @@ var SaveQuery = Modal.extend({
             } else {
                 $(this.el).find('.cancel_search').hide();
             }
-            $(this.el).find('li.query').removeClass('hide')
+            $(this.el).find('li.query').removeClass('hide');
             $(this.el).find('li.query a').filter(function (index) { 
                 return $(this).text().toLowerCase().indexOf(filter) == -1; 
             }).parent().addClass('hide');
@@ -206,7 +206,7 @@ var SaveQuery = Modal.extend({
         */
         
         var name = $(this.el).find('input[name="name"]').val();
-        if (name != null && name.length > 0) {
+        if (name !== null && name.length > 0) {
             this.query.set({ name: name, folder: foldername });
             this.query.trigger('query:save');
             this.copy_to_repository();

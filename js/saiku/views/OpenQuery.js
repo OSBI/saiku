@@ -54,6 +54,7 @@ var OpenQuery = Backbone.View.extend({
         return "Repository";
     },
     
+    /*jshint -W069 */
     render: function() {
         // Load template
         $(this.el).html(this.template());
@@ -160,7 +161,7 @@ var OpenQuery = Backbone.View.extend({
 
     search_file: function(event) {
         var filter = $(this.el).find('.search_file').val().toLowerCase();
-        var isEmpty = (typeof filter == "undefined" || filter == "" || filter == null);
+        var isEmpty = (typeof filter == "undefined" || filter === "" || filter === null);
         if (isEmpty || event.which == 27 || event.which == 9) {
             this.cancel_search();
         } else {
@@ -169,7 +170,7 @@ var OpenQuery = Backbone.View.extend({
             } else {
                 $(this.el).find('.cancel_search').hide();
             }
-            $(this.el).find('li.query').removeClass('hide')
+            $(this.el).find('li.query').removeClass('hide');
             $(this.el).find('li.query a').each(function (index) { 
                 if($(this).text().toLowerCase().indexOf(filter) == -1) {
                     $(this).parent('li.query').addClass('hide');
