@@ -99,6 +99,22 @@ var Saiku = {
 
         return cssNode;
     },
+    loadJS: function(src, callback) {
+        var scriptNode = window.document.createElement('script'),
+            ref = window.document.getElementsByTagName('script')[0];
+
+        scriptNode.src = src;
+
+        // Inject script
+        ref.parentNode.insertBefore(scriptNode, ref);
+
+        // if callback...
+        if (callback && typeof(callback) === 'function') {
+            scriptNode.onload = callback;
+        }
+
+        return scriptNode;
+    },
     URLParams: {
         buildValue: function(value) {
             if (/^\s*$/.test(value))           { return null; }
