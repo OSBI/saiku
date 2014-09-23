@@ -82,6 +82,12 @@ textarea, select {
     background: url(../../../images/sprite.png) no-repeat;
 }
 
+.truncate {
+  	white-space: nowrap;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+}
+
 .accordion-toggle {cursor: pointer;}
 .accordion-content {display: none;padding:10px;}
 .accordion-content.default {display: block;}
