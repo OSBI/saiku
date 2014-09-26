@@ -698,8 +698,8 @@ var AdminConsole = Backbone.View.extend({
         var path = $currentTarget.attr('href').replace('#', '');
 
         var ds = this.datasources.get(path);
-
-        ds.destroy({success: this.fetch_datasources()});
+        var that = this;
+        ds.destroy({wait: true,success: function(){that.fetch_datasources();$(that.el).find('.user_info').html("");}});
     },
     remove_schema : function(event){
         event.preventDefault();
@@ -710,8 +710,8 @@ var AdminConsole = Backbone.View.extend({
         var path = $currentTarget.attr('href').replace('#', '');
 
         var s = this.schemas.get(path);
-
-        s.destroy({success: this.fetch_schemas()})
+        var that = this;
+        s.destroy({wait:true, success: function(){this.fetch_schemas();$(that.el).find('.user_info').html("");}})
     },
     remove_user : function(event){
         event.preventDefault();
@@ -722,8 +722,8 @@ var AdminConsole = Backbone.View.extend({
         var path = $currentTarget.attr('href').replace('#', '');
 
         var ds = this.users.get(path);
-
-        ds.destroy({success: this.fetch_users()});
+        var that = this;
+        ds.destroy({wait:true, success: function(){this.fetch_users();$(that.el).find('.user_info').html("");}});
     },
     refresh_datasource : function(event){
         event.preventDefault();
