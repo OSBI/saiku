@@ -132,7 +132,7 @@ public class AdminResource {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         datasourceService.removeDatasource(id);
-        return Response.ok().build();
+        return Response.ok().type("application/json").entity(datasourceService.getDatasources()).build();
     }
 
     @GET
