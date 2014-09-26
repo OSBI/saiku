@@ -77,7 +77,7 @@ public class AdminResource {
 
         try {
             datasourceService.addDatasource( json.toSaikuDataSource(), true );
-            return Response.ok().build();
+            return Response.ok().type("application/json").entity(json).build();
         }
         catch (Exception e){
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getLocalizedMessage())
