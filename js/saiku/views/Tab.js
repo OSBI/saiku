@@ -62,9 +62,9 @@ var Tab = Backbone.View.extend({
 
         // Generate the element
         $(this.el).html(this.template());
-        if(this.close==false){
+        if(this.close === false){
             $(this.el).find('.close_tab').hide();
-            $(this.el).css('padding-right','10px')
+            $(this.el).css('padding-right','10px');
         }
         var menuitems = {
             "new": {name: "New", i18n: true },

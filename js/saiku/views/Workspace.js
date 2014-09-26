@@ -78,17 +78,17 @@ var Workspace = Backbone.View.extend({
             this.query.save({}, { success: this.init_query , error: function() {
                 Saiku.ui.unblock();
                 if ( $('body').find('.error_loading_query').length < 1) {
-                    var message = (Saiku.i18n && Saiku.i18n.po_file['error_loading_query']) ? Saiku.i18n.po_file['error_loading_query'] : null;
+                    var message = (Saiku.i18n && Saiku.i18n.po_file.error_loading_query) ? Saiku.i18n.po_file.error_loading_query : null;
                     if (!message) {
                         message = "Error Loading Query";
                         $('<span class="i18n error_loading_query">' + message + '</span>').hide().appendTo('body');
                         Saiku.i18n.translate();
-                        message = $('.error_loading_query').text()
+                        message = $('.error_loading_query').text();
                     }
                     alert(message);
                     
                 } else {
-                    var m = $('.error_loading_query').text()
+                    var m = $('.error_loading_query').text();
                     alert(m);
                 }
             }});
@@ -119,7 +119,7 @@ var Workspace = Backbone.View.extend({
     },
 
     refresh: function(e) {
-        if (e) { e.preventDefault(); };
+        if (e) { e.preventDefault(); }
         Saiku.session.sessionworkspace.refresh();
     },
 
@@ -222,13 +222,13 @@ var Workspace = Backbone.View.extend({
         // Adjust the height of the separator
         var $separator = $(this.el).find('.sidebar_separator');
         var heightReduction = 87;
-        if (Settings.PLUGIN == true || Settings.BIPLUGIN == true) {
+        if (Settings.PLUGIN === true || Settings.BIPLUGIN === true) {
             heightReduction = 2;
             if (Settings.MODE == 'table') {
                 heightReduction = -5;
             }
         }
-        if ($('#header').length == 0 || $('#header').is('hidden')) {
+        if ($('#header').length === 0 || $('#header').is('hidden')) {
             heightReduction = 2;
         }
 
@@ -261,9 +261,9 @@ var Workspace = Backbone.View.extend({
         $(this.el).find('.sidebar').toggleClass('hide');
         $(this.toolbar.el).find('.toggle_sidebar').toggleClass('on');
         var calculatedMargin = 
-                ($(this.el).find('.sidebar').is(':visible') ? $(this.el).find('.sidebar').width() : 0)
-                + ($(this.el).find('.sidebar_separator').width())
-                + 1;
+                ($(this.el).find('.sidebar').is(':visible') ? $(this.el).find('.sidebar').width() : 0) +
+                ($(this.el).find('.sidebar_separator').width()) +
+                1;
         var new_margin = calculatedMargin;
         $(this.el).find('.workspace_inner').css({ 'margin-left': new_margin });
     },
@@ -340,7 +340,7 @@ var Workspace = Backbone.View.extend({
                                     : ('saiku.ui.render.type' in properties) ? properties['saiku.ui.render.type'] 
                                     : null;
             
-            if (typeof renderMode != "undefined" && renderMode != null) {
+            if (typeof renderMode != "undefined" && renderMode !== null) {
                 this.querytoolbar.switch_render(renderMode);
             }
 
@@ -370,7 +370,7 @@ var Workspace = Backbone.View.extend({
             if (! $(this.el).find('.sidebar').hasClass('hide')) {
                 this.toggle_sidebar();
             }            
-            $(this.el).find('.workspace_fields').addClass('hide')
+            $(this.el).find('.workspace_fields').addClass('hide');
             this.toolbar.switch_to_mdx();
         } else {
             $(this.el).find('.workspace_editor').removeClass('hide').show();
@@ -396,9 +396,9 @@ var Workspace = Backbone.View.extend({
         if (this.selected_cube === undefined) {
             var schema = this.query.model.cube.schema;
             this.selected_cube = this.query.model.cube.connection + "/" + 
-                this.query.model.cube.catalog + "/"
-                + ((schema == "" || schema == null) ? "null" : schema) 
-                + "/" + encodeURIComponent(this.query.model.cube.name);
+                this.query.model.cube.catalog + "/" +
+                ((schema === "" || schema === null) ? "null" : schema) +
+                "/" + encodeURIComponent(this.query.model.cube.name);
             $(this.el).find('.cubes')
                 .val(this.selected_cube);
         }
@@ -417,7 +417,7 @@ var Workspace = Backbone.View.extend({
 
             if (!cubeModel.has('data')) {
                 cubeModel.fetch({ success: function() {
-                    self.trigger('cube:loaded')
+                    self.trigger('cube:loaded');
                 }});
             }
             this.trigger('query:new', { workspace: this });
@@ -484,6 +484,8 @@ var Workspace = Backbone.View.extend({
 
     },
 
+    /*jshint -W027*/
+    /*jshint -W083*/
     populate_selections: function(dimlist) {
         var self = this;
 
@@ -499,9 +501,9 @@ var Workspace = Backbone.View.extend({
                 var axis = axes[axis_iter];
                 var $axis = $(this.el).find('.' + 
                     axis.name.toLowerCase() + ' ul');
-                if ((axis.filterCondition != null) 
-                        || (axis.limitFunction && axis.limitFunction != null && axis.limitFunction != "")
-                        || (axis.sortOrder != null)) 
+                if ((axis.filterCondition !== null) || 
+                        (axis.limitFunction && axis.limitFunction !== null && axis.limitFunction !== "") || 
+                        (axis.sortOrder !== null)) 
                 {
                     $axis.parent().siblings('.fields_list_header').addClass('on');
                 }
@@ -557,7 +559,7 @@ var Workspace = Backbone.View.extend({
 
                             var $dim = $(''); 
 
-                            if (typeof dimension_el != "undefined" && (!$dim.html() || $dim.html() == null)) {
+                            if (typeof dimension_el != "undefined" && (!$dim.html() || $dim.html() === null)) {
                                 $dim = $(dimension_el)
                                 .find('a[rel="' + name + '"]')
                                 .parent();
@@ -569,7 +571,7 @@ var Workspace = Backbone.View.extend({
                                 .parent();
                             }
 */                            
-                            if (typeof self.dimension_list != "undefined" && (!$dim.html() || $dim.html() == null)) {
+                            if (typeof self.dimension_list != "undefined" && (!$dim.html() || $dim.html() === null)) {
                                 $dim = $(self.dimension_list.el)
                                 .find('a[rel="' + name + '"]')
                                 .parent();
@@ -579,14 +581,16 @@ var Workspace = Backbone.View.extend({
                             var $clone = $dim.clone()
                                 .addClass('d_' + type)
                                 .appendTo($axis);
+
+                            var sort;
                             
                             if (type == "dimension") {
                                 $("<span />").addClass('sprite selections')
                                     .prependTo($clone);
                                 $icon = $("<span />").addClass('sort');
-                                var sort = false;
+                                sort = false;
                                 _.each(axes, function(i_axis) {
-                                    if (i_axis.sortLiteral && i_axis.sortLiteral != null && i_axis.sortLiteral.indexOf(selection.hierarchyUniqueName) != -1) {
+                                    if (i_axis.sortLiteral && i_axis.sortLiteral !== null && i_axis.sortLiteral.indexOf(selection.hierarchyUniqueName) != -1) {
                                         $icon.addClass(i_axis.sortOrder);
                                         sort = true;
                                     }
@@ -600,9 +604,9 @@ var Workspace = Backbone.View.extend({
 
                             if (type == "measure") {
                                 $icon = $("<span />").addClass('sort');
-                                var sort = false;
+                                sort = false;
                                 _.each(axes, function(i_axis) {
-                                    if (i_axis.sortLiteral && i_axis.sortLiteral != null && i_axis.sortLiteral.indexOf(name) != -1) {
+                                    if (i_axis.sortLiteral && i_axis.sortLiteral !== null && i_axis.sortLiteral.indexOf(name) != -1) {
                                         $icon.addClass(i_axis.sortOrder);
                                         sort = true;
                                     }
@@ -664,7 +668,7 @@ var Workspace = Backbone.View.extend({
         var hasParams = false;
         for (var key in parameters) {
             var val = "";
-            if (parameters[key] && parameters[key] != null) {
+            if (parameters[key] && parameters[key] !== null) {
                 val = parameters[key];
             }
             paramDiv += "<b>" + key + "</b> <input type='text' placeholder='" + key + "' value='" + val + "' />";
@@ -691,11 +695,11 @@ var Workspace = Backbone.View.extend({
         var self = this;
         $(this.el).find(".workspace_results_info").empty();
 
-        if (args.data != null && args.data.error != null) {
+        if (args.data !== null && args.data.error !== null) {
             return this.error(args);
         }        
         // Check to see if there is data
-        if (args.data == null || (args.data.cellset && args.data.cellset.length === 0)) {
+        if (args.data === null || (args.data.cellset && args.data.cellset.length === 0)) {
             return this.no_results(args);
         }
 
@@ -706,17 +710,17 @@ var Workspace = Backbone.View.extend({
         if (cminutes < 10) cminutes = "0" + cminutes;
         
         var cdate = chour + ":" + cminutes;
-        var runtime = args.data.runtime != null ? (args.data.runtime / 1000).toFixed(2) : "";
+        var runtime = args.data.runtime !== null ? (args.data.runtime / 1000).toFixed(2) : "";
         /*
         var info = '<b>Time:</b> ' + cdate 
                 + " &emsp;<b>Rows:</b> " + args.data.height 
                 + " &emsp;<b>Columns:</b> " + args.data.width 
                 + " &emsp;<b>Duration:</b> " + runtime + "s";
         */
-        var info = '<b><span class="i18n">Info:</span></b> &nbsp;' + cdate 
-                + "&emsp;/ &nbsp;" + args.data.width 
-                + " x " + args.data.height 
-                + "&nbsp; / &nbsp;" + runtime + "s";
+        var info = '<b><span class="i18n">Info:</span></b> &nbsp;' + cdate +
+                   "&emsp;/ &nbsp;" + args.data.width +
+                   " x " + args.data.height +
+                   "&nbsp; / &nbsp;" + runtime + "s";
 
 
         this.update_parameters();
@@ -793,7 +797,7 @@ var Workspace = Backbone.View.extend({
     },
 
     admin: function(event){
-        Saiku.AdminConsole.show_admin
+        Saiku.AdminConsole.show_admin();
     },
 
     cancelled: function(args) {

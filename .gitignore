@@ -390,3 +390,6 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+
+# Grunt Dist directory
+dist/

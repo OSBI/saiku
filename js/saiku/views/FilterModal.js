@@ -37,11 +37,11 @@ var FilterModal = Modal.extend({
     expression_text: function() {
         var c = "<form id='custom_filter'><table border='0px'>";
         if (this.expressionType == "Order") {
-            c += "<tr><td class='col1'>Sort Type: <select id='fun'><option>ASC</option><option>BASC</option><option>DESC</option><option>BDESC</option> </select></td></tr>" 
+            c += "<tr><td class='col1'>Sort Type: <select id='fun'><option>ASC</option><option>BASC</option><option>DESC</option><option>BDESC</option> </select></td></tr>";
         }
-        c += "<tr><td class='col1'>" + this.expressionType + " MDX Expression:</td></tr>"
-             + "<tr><td class='col1'><textarea class='filter_expression'></textarea></td></tr>"
-             + "</table></form>";
+        c += "<tr><td class='col1'>" + this.expressionType + " MDX Expression:</td></tr>" +
+             "<tr><td class='col1'><textarea class='filter_expression'></textarea></td></tr>" +
+             "</table></form>";
         return c;
     },
 
@@ -84,7 +84,7 @@ var FilterModal = Modal.extend({
         this.expression = $(this.el).find('textarea').val();
 
         var alert_msg = "";
-        if (typeof this.expression == "undefined" || !this.expression || this.expression == "") {
+        if (typeof this.expression == "undefined" || !this.expression || this.expression === "") {
             alert_msg += "You have to enter a MDX expression for the " + this.expressionType + " function! ";
             alert(alert_msg);
         } else {

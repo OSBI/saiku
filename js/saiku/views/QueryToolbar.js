@@ -50,7 +50,7 @@ var QueryToolbar = Backbone.View.extend({
     },
     
     activate_buttons: function(args) {
-        if (typeof args != "undefined" && args != null ) {
+        if (typeof args != "undefined" && args !== null ) {
             $(this.el).find('a').removeClass('disabled_toolbar');
             if (!args.data) {
                 $(this.el).find('a.export_button, a.stats').addClass('disabled_toolbar');
@@ -88,7 +88,7 @@ var QueryToolbar = Backbone.View.extend({
             var c = $(this.el).find('ul.chart li a.on:first').size() > 0 ?
                         $(this.el).find('ul.chart li a.on:first').attr('href').replace('#', '')
                         : null;
-            if (c != null) {
+            if (c !== null) {
                 this.workspace.query.setProperty('saiku.ui.render.type', c);
             }
         } else {
@@ -186,7 +186,7 @@ var QueryToolbar = Backbone.View.extend({
     },
 
     run_row_viz: function(args) {
-        if (this.render_mode == "table" && this.spark_mode != null) {
+        if (this.render_mode == "table" && this.spark_mode !== null) {
             this.render_row_viz(this.spark_mode);
         }
 
@@ -197,7 +197,7 @@ var QueryToolbar = Backbone.View.extend({
             var rowData = [];
             $(element).find('td.data div').each(function(i,data) {
                 var val = $(data).attr('alt');
-                val = (typeof val != "undefined" && val != "" && val != null && val  != "undefined") ? parseFloat(val) : 0;
+                val = (typeof val != "undefined" && val !== "" && val !== null && val  != "undefined") ? parseFloat(val) : 0;
                 rowData.push(val);
             });
             

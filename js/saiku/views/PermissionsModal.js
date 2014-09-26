@@ -68,16 +68,16 @@ var PermissionsModal = Modal.extend({
         var acl = new RepositoryAclObject({ file : this.file });
         acl.fetch({ async: false });
 
-        var definedRoles = (typeof acl.get('roles') == "undefined" || acl.get('roles') == null ? {} : acl.get('roles')); 
+        var definedRoles = (typeof acl.get('roles') == "undefined" || acl.get('roles') === null ? {} : acl.get('roles')); 
         this.rolesacl = definedRoles;
         var templ_roles =_.template($("#template-permissions-rolelist").html())({roles: definedRoles });
 
 
         $(this.el).find('.rolelist').html(templ_roles);
 
-        var owner = (typeof acl.get('owner') == "undefined" || acl.get('owner') == null ? "" : acl.get('owner')); 
-        var atype = (typeof acl.get('type') == "undefined" || acl.get('type') == null ? null : acl.get('type')); 
-        if (atype != null && atype == "PRIVATE") {
+        var owner = (typeof acl.get('owner') == "undefined" || acl.get('owner') === null ? "" : acl.get('owner')); 
+        var atype = (typeof acl.get('type') == "undefined" || acl.get('type') === null ? null : acl.get('type')); 
+        if (atype !== null && atype == "PRIVATE") {
             $(this.el).find('.private_owner .owner').text(owner);
             $(this.el).find('.private_owner').show();
         }
@@ -106,7 +106,7 @@ var PermissionsModal = Modal.extend({
             if (rolecount > 0) {
                 self.rolesacl[role] = acls;
                 $("<option value='" + role + "'>" + role + " ["+aclstring+"]</option>").appendTo($(this.el).find(".select_roles"));
-                var role = $(this.el).find(".filterbox").val("");
+                role = $(this.el).find(".filterbox").val("");
             } else {
                 alert("You need to chose at least one ACL method for this role.");
             }
@@ -117,7 +117,7 @@ var PermissionsModal = Modal.extend({
     },
 
     keep_private: function(event) {
-        var isPrivate = $(this.el).find('input.private').is(':checked')
+        var isPrivate = $(this.el).find('input.private').is(':checked');
         if (isPrivate) {
             $(this.el).find('.permissions').addClass('disabled_toolbar');
             $("input.acl, input.filterbox, input.add_role, input.remove_acl").prop('disabled', true);

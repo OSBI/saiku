@@ -116,7 +116,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         }
     },
 
-
+    /*jshint -W083 */
     synchronize_query: function() {
         var self = this;
         this.reset_dropzones();
@@ -173,7 +173,7 @@ var WorkspaceDropZone = Backbone.View.extend({
     update_dropzones: function() {
         $(this.workspace.el).find('.fields_list_body').each(function(idx, ael) {
             var $axis = $(ael);
-            if ($axis.find('ul.connectable li.selection, ul.connectable li.d_measure').length == 0) {
+            if ($axis.find('ul.connectable li.selection, ul.connectable li.d_measure').length === 0) {
                 $axis.siblings('.clear_axis').addClass('hide');
             } else {
                 $axis.siblings('.clear_axis').removeClass('hide');
@@ -279,7 +279,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                 var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
                 var a = self.workspace.query.helper.getAxis(target);
 
-                var func, n, sortliteral, filterCondition, sortOrder, sortOrderLiteral, sortHl, topHl, filterHl, totalFunction;;
+                var func, n, sortliteral, filterCondition, sortOrder, sortOrderLiteral, sortHl, topHl, filterHl, totalFunction;
                 var isFilter = false, isSort = false, isTop = false;
                 if (a && a.filters) {
                     _.each(a.filters, function(filter) {
@@ -304,13 +304,13 @@ var WorkspaceDropZone = Backbone.View.extend({
                     totalFunction = a.aggregators[0];
                 }
 
-                if (func != null && sortliteral == null) {
+                if (func !== null && sortliteral === null) {
                     topHl = func + "###SEPARATOR###" + n;
-                } else if (func != null && sortliteral != null && n != null) {
+                } else if (func !== null && sortliteral !== null && n !== null) {
                     topHl = "custom";
                 }
 
-                if (isSort && sortOrder != null) {
+                if (isSort && sortOrder !== null) {
                     sortHl = "customsort";
                 }
 
@@ -327,10 +327,10 @@ var WorkspaceDropZone = Backbone.View.extend({
 
                 var addFun = function(items, fun) {
                     var ret = {};
-                    for (key in items) {
+                    for (var key in items) {
                         ret[ (fun + '###SEPARATOR###'+ key) ] = _.clone(items[key]);
                         ret[ (fun + '###SEPARATOR###' + key) ].fun = fun;
-                        if (fun == func && sortliteral == key && items[key].payload["n"] == n) {
+                        if (fun == func && sortliteral == key && items[key].payload.n == n) {
                             topHl = fun + "Quick";
                             ret[ (fun + '###SEPARATOR###' + key) ].name =
                                     "<b>" + items[key].name + "</b>";
@@ -384,7 +384,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                     recursive_menu_translate(item, Saiku.i18n.po_file);
                 });
 
-                var totalItems = citems["grand_totals"].items;
+                var totalItems = citems.grand_totals.items;
                 if (totalFunction) {
                     for (var key in totalItems) {
                         if (key.substring("show_totals_".length) == totalFunction) {
@@ -392,29 +392,29 @@ var WorkspaceDropZone = Backbone.View.extend({
                         }
                     }
                 } else {
-                    totalItems["show_totals_not"].name = "<b>" + totalItems["show_totals_not"].name + "</b";
+                    totalItems.show_totals_not.name = "<b>" + totalItems.show_totals_not.name + "</b";
                 }
                 
 
                 items["10"] = {
                    payload: { "n" : 10 }
-                }
+                };
                 
                 if (isFilter) {
-                    var f = citems["filter"];
+                    var f = citems.filter;
                     f.name = "<b>" + f.name + "</b>";
-                    f.items["customfilter"].name = "<b>" + f.items["customfilter"].name + "</b>";
+                    f.items.customfilter.name = "<b>" + f.items.customfilter.name + "</b>";
                 }
                 if (isSort) {
-                    var s = citems["sort"].items;
-                    citems["sort"].name = "<b>" + citems["sort"].name + "</b>";
+                    var s = citems.sort.items;
+                    citems.sort.name = "<b>" + citems.sort.name + "</b>";
                     if (sortHl in s) {
                         s[sortHl].name = "<b>" + s[sortHl].name + "</b>";    
                     }
                 }
                 if (isTop) {
-                    var t = citems["limit"].items;
-                    citems["limit"].name = "<b>" + citems["limit"].name + "</b>";
+                    var t = citems.limit.items;
+                    citems.limit.name = "<b>" + citems.limit.name + "</b>";
                     if (topHl in t) {
                         t[topHl].name = "<b>" + t[topHl].name + "</b>";    
                     }   
@@ -422,6 +422,9 @@ var WorkspaceDropZone = Backbone.View.extend({
 
                 return {
                     callback: function(key, options) {
+                            var save_custom,
+                                save_customsort;
+
                             if (key == "cancel") {
                                 return;
                             }
@@ -432,7 +435,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                                 self.synchronize_query();
                                 self.workspace.query.run();
                             } else if (key == "customfilter") {
-                                var save_custom = function(filterCondition) {
+                                save_custom = function(filterCondition) {
                                     var expressions = [];
                                     expressions.push(filterCondition);
 
@@ -462,7 +465,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                                 self.workspace.query.run();
                             } else if (key == "customtop") {
 
-                                var save_custom = function(fun, n, sortliteral) {
+                                save_custom = function(fun, n, sortliteral) {
                                     var expressions = [];
                                     expressions.push(n);
                                     if (sortliteral) {
@@ -491,7 +494,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                                 })).render().open();
                             } else if (key == "customsort") {
 
-                                var save_customsort = function(sortO, sortL) {
+                                save_customsort = function(sortO, sortL) {
                                     a.sortOrder = sortO;
                                     a.sortEvaluationLiteral = sortL;
                                     self.synchronize_query();
@@ -511,11 +514,11 @@ var WorkspaceDropZone = Backbone.View.extend({
                                 alert('maybe?');
                                 self.synchronize_query();
                                 self.workspace.query.run();
-                            } else if (key.indexOf("show_totals_") == 0){
+                            } else if (key.indexOf("show_totals_") === 0){
                                 var total = key.substring("show_totals_".length);
                                 var aggs = [];
                                 aggs.push(total);
-                                a['aggregators'] = aggs;
+                                a.aggregators = aggs;
                                 self.workspace.query.run();
                             } else {
 
@@ -525,12 +528,12 @@ var WorkspaceDropZone = Backbone.View.extend({
                                 var data = {};
                                 if (_.indexOf(["ASC", "BASC", "DESC", "BDESC"], fun) > -1) {
                                     a.sortOrder = fun;
-                                    a.sortEvaluationLiteral = items[ikey].payload["sortliteral"];
+                                    a.sortEvaluationLiteral = items[ikey].payload.sortliteral;
 
                                 } else {
                                     var expressions = [];
                                     expressions.push(items[ikey].payload.n);
-                                    var sl = items[ikey].payload["sortliteral"];
+                                    var sl = items[ikey].payload.sortliteral;
                                     if (sl) {
                                         expressions.push(sl);
                                     }
@@ -548,7 +551,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                             }
                     },
                     items: citems
-                } 
+                }; 
             }
         });
     $target.contextMenu();

@@ -32,15 +32,15 @@ var MeasuresModal = Modal.extend({
         { text: "Cancel", method: "close" }
     ],
 
-    message: "<form id='measure_form'>"
-                     + "<table border='0px'>"
-                     + "<tr><td class='col0 i18n'>Name:</td>"
-                     + "<td class='col1'><input type='text' class='measure_name' value='Measure Name'></input></td></tr>"
-                     + "<tr><td class='col0 i18n'>Formula:</td>"
-                     + "<td class='col1'><textarea class='measureFormula'>Measures.[Store Sales] + 100</textarea></td></tr>"
-                     + "<tr><td class='col0 i18n'>Format:</td>"
-                     + "<td class='col1'><input class='measure_format' type='text' value='#,##0.00'></input></td></tr>"
-                     + "</table></form>",
+    message: "<form id='measure_form'>" +
+                     "<table border='0px'>" +
+                     "<tr><td class='col0 i18n'>Name:</td>" +
+                     "<td class='col1'><input type='text' class='measure_name' value='Measure Name'></input></td></tr>" +
+                     "<tr><td class='col0 i18n'>Formula:</td>" +
+                     "<td class='col1'><textarea class='measureFormula'>Measures.[Store Sales] + 100</textarea></td></tr>" +
+                     "<tr><td class='col0 i18n'>Format:</td>" +
+                     "<td class='col1'><input class='measure_format' type='text' value='#,##0.00'></input></td></tr>" +
+                     "</table></form>",
 
 
     measure: null,
@@ -52,7 +52,7 @@ var MeasuresModal = Modal.extend({
         this.measure = args.measure;
         _.bindAll(this, "save");
 
-        this.options['title'] = "Calculated Measure";
+        this.options.title = "Calculated Measure";
 
         if (this.measure) {
             _.extend(this.options, {
@@ -91,12 +91,12 @@ var MeasuresModal = Modal.extend({
         if (typeof measure_formula == "undefined" || !measure_formula || measure_formula === "") {
             alert_msg += "You have to enter a MDX formula for the calculated measure! ";
         }
-        if (alert_msg != "") {
+        if (alert_msg !== "") {
             alert(alert_msg);
         } else {
             var m = { name: measure_name, formula: measure_formula, properties: {}, uniqueName: "[Measures]." + measure_name };
             if (measure_format) {
-                m.properties['FORMAT_STRING'] = measure_format;
+                m.properties.FORMAT_STRING = measure_format;
             }
             self.workspace.query.helper.addCalculatedMeasure(m);
             self.workspace.sync_query();

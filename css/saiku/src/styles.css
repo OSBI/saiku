@@ -155,7 +155,6 @@ textarea, select {
 #toolbar {
     background: #EEEEEE;
     background: -webkit-gradient(linear, left top, left bottom, from(#EEEEEE), to(#DDDDDD));
-    background: -moz-linear-gradient(top, #EEEEEE 0%, #DDDDDD 100%);
     border-bottom: 1px solid #BBB;
     height: 50px;
 }
@@ -298,7 +297,6 @@ textarea, select {
     border-top: 1px solid #CCC;
     border-right: 1px solid #CCC;
     background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#F0F0F0));
-    background: -moz-linear-gradient(top, #FFFFFF 0%, #F0F0F0 100%);
     border-bottom: 1px solid #F0F0F0 !important;
     font-weight: bold;
 }
@@ -557,7 +555,6 @@ textarea, select {
     padding: 5px 5px !important;
     background: #F0F0F0 !important;
     background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#F0F0F0)) !important;
-    background: -moz-linear-gradient(center top , #FFFFFF 0%, #F0F0F0 100%) repeat scroll 0 0 rgba(0, 0, 0, 0) !important;
 }
 
 .ui-dialog.ui-draggable-dragging .ui-dialog-titlebar-close {
@@ -612,8 +609,6 @@ textarea, select {
     border: 3px solid #EEE;
     min-width: 400px !important;
     min-height: auto !important;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     border-radius: 3px;
     border: 1px solid #CCC;
     z-index: 100;
@@ -639,7 +634,6 @@ textarea, select {
 .ui-dialog-titlebar {
     background: #F0F0F0;
     background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#F0F0F0));
-    background: -moz-linear-gradient(top, #FFFFFF 0%, #F0F0F0 100%);
     border-bottom: 1px solid #CCC;
     height: 18px;
     padding: 5px 5px 6px 10px !important;
@@ -1425,7 +1419,6 @@ a.disabled_toolbar:hover {
 .form_button {
     background: #F0F0F0;
     background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#F0F0F0));
-    background: -moz-linear-gradient(top, #FFFFFF 0%, #F0F0F0 100%);
     border: 1px solid #CCCCCC;
     box-shadow: none;
     color: #222222 !important;
@@ -1664,7 +1657,9 @@ span.cancel_search:hover {
     background: url('../../../images/src/arrow_up_bnw.png') no-repeat;
     width: 16px;
     height: 16px;
-    transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
+        -ms-transform: rotate(-90deg);
+            transform: rotate(-90deg);
 }
 
 .RepositoryObjects {
@@ -1922,7 +1917,8 @@ span.cancel_search:hover {
 .gridster {
     margin: 0 auto;
     opacity: 0.8;
-    transition: opacity 0.6s ease 0s;
+    -webkit-transition: opacity 0.6s ease 0s;
+            transition: opacity 0.6s ease 0s;
 }
 .gridster .gs-w {
     background: none repeat scroll 0 0 #DDDDDD;
@@ -1965,7 +1961,8 @@ form {
 .schema-designer .connection-form,
 .schema-designer .schema-details-form {
     max-width: 255px;
-    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+         box-sizing: border-box;
 }
 
 .schema-designer .connection-form label,
@@ -2160,7 +2157,6 @@ width:70px !important;
 }*/
 .tablewrapper{
     white-space: nowrap;
-    -moz-border-radius: 15px;
     border-radius: 15px;
     vertical-align: top;
     display: inline-block;

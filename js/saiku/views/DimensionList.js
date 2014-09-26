@@ -112,8 +112,7 @@ var DimensionList = Backbone.View.extend({
     },
     
     select: function(event) {
-        var $target = $(event.target).hasClass('root')
-            ? $(event.target) : $(event.target).parent().find('span');
+        var $target = $(event.target).hasClass('root') ? $(event.target) : $(event.target).parent().find('span');
         if ($target.hasClass('root')) {
             $target.find('a').toggleClass('folder_collapsed').toggleClass('folder_expand');
             $target.toggleClass('collapsed').toggleClass('expand');

@@ -3,6 +3,6 @@ var Plugin = Backbone.Model.extend({
 });
 
 var PluginCollection = Backbone.Collection.extend({
-    model: Plugin
-    , url: 'info'
+    model: Plugin,
+    url: 'info'
 });

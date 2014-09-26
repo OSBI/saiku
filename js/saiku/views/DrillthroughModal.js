@@ -92,8 +92,7 @@ var DrillthroughModal = Modal.extend({
     },
     
     select: function(event) {
-        var $target = $(event.target).hasClass('root')
-            ? $(event.target) : $(event.target).parent().find('span');
+        var $target = $(event.target).hasClass('root') ? $(event.target) : $(event.target).parent().find('span');
         if ($target.hasClass('root')) {
             $target.find('a').toggleClass('folder_collapsed').toggleClass('folder_expand');
             $target.toggleClass('collapsed').toggleClass('expand');
@@ -136,7 +135,7 @@ var DrillthroughModal = Modal.extend({
         var $loading = $("<div>Drilling through...</div>");
         $(this.el).find('.dialog_body').children().hide();
         $(this.el).find('.dialog_body').prepend($loading);
-        var selections = ""
+        var selections = "";
         $(this.el).find('.check_level:checked').each( function(index) { 
             if (index > 0) {
                 selections += ", ";
@@ -163,7 +162,7 @@ var DrillthroughModal = Modal.extend({
 
     drilled: function(model, response) {
         var html = "";
-        if (response != null && response.error != null) {
+        if (response !== null && response.error !== null) {
             html = safe_tags_replace(response.error);
         } else {
             var tr = new SaikuTableRenderer();
@@ -174,10 +173,9 @@ var DrillthroughModal = Modal.extend({
 
 
         Saiku.ui.unblock();
-        var html = '<div id="fancy_results" class="workspace_results" style="overflow:visible">' + html + '</div>';
+        html = '<div id="fancy_results" class="workspace_results" style="overflow:visible">' + html + '</div>';
         this.remove();
-        $.fancybox(html
-            ,
+        $.fancybox(html,
             {
             'autoDimensions'    : false,
             'autoScale'         : false,

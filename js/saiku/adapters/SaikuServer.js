@@ -17,8 +17,9 @@
 /**
  * Base 64 module
  */
-;(function (window) {
 
+;(function (window) {
+  /*jshint -W030 */
   var
     characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
     fromCharCode = String.fromCharCode,
@@ -77,8 +78,7 @@ Backbone.sync = function(method, model, options) {
     
     // Generate AJAX action
     var type = methodMap[method];
-    var url = Settings.REST_URL
-        + (_.isFunction(model.url) ? model.url() : model.url);
+    var url = Settings.REST_URL + (_.isFunction(model.url) ? model.url() : model.url);
     
     // Prepare for failure
     if (typeof Settings.ERRORS == "undefined") {
@@ -117,16 +117,16 @@ Backbone.sync = function(method, model, options) {
       Saiku.ui.unblock();  
       options.success(data, textStatus, jqXHR);
     };
-    var async = true
+    var async = true;
     if (options.async === false) {
       async = false;
     }
-    var dataType = 'json'
+    var dataType = 'json';
     if (typeof options.dataType != "undefined") {
       dataType = options.dataType;
     }
 
-    var contentType = 'application/x-www-form-urlencoded'
+    var contentType = 'application/x-www-form-urlencoded';
     if (typeof options.contentType != "undefined") {
       contentType = options.contentType;
     }
@@ -158,7 +158,7 @@ Backbone.sync = function(method, model, options) {
       } */
     };
 
-    if(options.processData == false){
+    if(options.processData === false){
         params.processData = false;
     }
     // For older servers, emulate HTTP by mimicking the HTTP method with `_method`

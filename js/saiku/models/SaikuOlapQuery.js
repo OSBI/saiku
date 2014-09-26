@@ -60,15 +60,17 @@ SaikuOlapQueryHelper.prototype.clearAxis = function(axisName) {
 };
 
 SaikuOlapQueryHelper.prototype.getHierarchy = function(name) {
+  var _searchFunction = function(he) { 
+    return (he && he.name == name); 
+  };
+
   for (var axisName in this.model().queryModel.axes) {
       var axis = this.model().queryModel.axes[axisName];
-      var hierarchy = _.find(axis.hierarchies, function(he) { 
-                  return (he && he.name == name); 
-              });
+      var hierarchy = _.find(axis.hierarchies, _searchFunction);
       if (hierarchy) {
         return hierarchy;
       }
-    };
+    }
     return null;
 };
 
@@ -140,7 +142,7 @@ SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, p
     if (mHierarchy) {
       mHierarchy.levels[level] = { name: level };
     } else {
-      var mHierarchy = { "name" : hierarchy, "levels": { }};
+      mHierarchy = { "name" : hierarchy, "levels": { }};
       mHierarchy.levels[level] = { name: level };
     }
     
@@ -162,7 +164,7 @@ SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, p
 };
 
 SaikuOlapQueryHelper.prototype.removeLevel = function(hierarchy, level) {
-  var hierarchy = this.getHierarchy(hierarchy);
+  hierarchy = this.getHierarchy(hierarchy);
   if (hierarchy && hierarchy.levels.hasOwnProperty(level)) {
     delete hierarchy.levels[level];
   }
@@ -217,23 +219,22 @@ SaikuOlapQueryHelper.prototype.getCalculatedMeasures = function() {
 
 SaikuOlapQueryHelper.prototype.swapAxes = function() {
   var axes = this.model().queryModel.axes;
-  var tmpAxis = axes['ROWS'];
+  var tmpAxis = axes.ROWS;
   tmpAxis.location = 'COLUMNS';
-  axes['ROWS'] = axes['COLUMNS'];
-  axes['ROWS'].location = 'ROWS';
-  axes['COLUMNS'] = tmpAxis;
+  axes.ROWS = axes.COLUMNS;
+  axes.ROWS.location = 'ROWS';
+  axes.COLUMNS = tmpAxis;
 };
 
 SaikuOlapQueryHelper.prototype.nonEmpty = function(nonEmpty) {
   if (nonEmpty) {
-    this.model().queryModel.axes['ROWS'].nonEmpty = true;
-    this.model().queryModel.axes['COLUMNS'].nonEmpty = true;
+    this.model().queryModel.axes.ROWS.nonEmpty = true;
+    this.model().queryModel.axes.COLUMNS.nonEmpty = true;
   } else {
-    this.model().queryModel.axes['ROWS'].nonEmpty = false;
-    this.model().queryModel.axes['COLUMNS'].nonEmpty = false;
+    this.model().queryModel.axes.ROWS.nonEmpty = false;
+    this.model().queryModel.axes.COLUMNS.nonEmpty = false;
   }
-
-}
+};
 
 
 

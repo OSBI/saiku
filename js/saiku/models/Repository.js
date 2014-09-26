@@ -27,7 +27,7 @@ var repoPathUrl = function() {
         return "pentaho/repository";
     
     return  RepositoryUrl;
-}
+};
 
 
 

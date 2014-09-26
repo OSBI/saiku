@@ -3,7 +3,7 @@ var SaikuChartRenderer = function(data, options) {
     this.rawdata = data;
     this.cccOptions = {};
 
-    this.data = null,
+    this.data = null;
     this.hasProcessed = false;
     this.hasRendered = false;
 
@@ -74,7 +74,8 @@ SaikuChartRenderer.prototype.adjust = function () {
         if (self.hasRendered && $(self.el).is(':visible')) {
             self.switch_chart(self.type);
         }
-    }
+    };
+
     var lazyLayout = _.debounce(calculateLayout, 300);
     $(window).resize(function() {
         $(self.el).find('.canvas_wrapper').fadeOut(150);
@@ -94,14 +95,14 @@ SaikuChartRenderer.prototype.zoomin = function() {
         data.clearSelected();         
         chart.render(true, true, false);
         this.render_chart_element();
-    },
+};
 
 SaikuChartRenderer.prototype.zoomout = function() {
         var chart = this.chart.root;
         var data = chart.data;
         var kData = chart.keptVisibleDatumSet;
 
-        if (kData == null || kData.length == 0) {
+        if (kData === null || kData.length === 0) {
             $(this.el).find('.zoomout').hide();
         }
         else if (kData.length == 1) {
@@ -241,7 +242,7 @@ SaikuChartRenderer.prototype.sunburst = function() {
         .orient("radial");
 
     partition.node.add(pv.Wedge)
-        .fillStyle( pv.colors(options.colors).by(function(d) { return d.parentNode && d.parentNode.nodeName }))
+        .fillStyle( pv.colors(options.colors).by(function(d) { return d.parentNode && d.parentNode.nodeName; }))
         .visible(function(d) { return d.depth > 0; })
         .strokeStyle("#000")
         .lineWidth(0.5)
@@ -374,7 +375,7 @@ SaikuChartRenderer.prototype.getQuickOptions = function(baseOptions) {
             }
         }
         
-        if(this.data != null && this.data.resultset.length > 5) {
+        if(this.data !== null && this.data.resultset.length > 5) {
             if(options.type === "HeatGridChart") {
 //                options.xAxisSize = 200;
             } else if(options.orientation !== "horizontal") {
@@ -397,8 +398,8 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
         }
         var self = this;
         var workspaceResults = (this.adjustSizeTo ? $(this.adjustSizeTo) : $(this.el));
-        var isSmall = (this.data != null && this.data.height < 80 && this.data.width < 80);
-        var isMedium = (this.data != null && this.data.height < 300 && this.data.width < 300);
+        var isSmall = (this.data !== null && this.data.height < 80 && this.data.width < 80);
+        var isMedium = (this.data !== null && this.data.height < 300 && this.data.width < 300);
         var isBig = (!isSmall && !isMedium);
         var animate = false;
         var hoverable =  isSmall;
@@ -440,9 +441,7 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
                                     chart.keptVisibleDatumSet = [];
                                 }
 
-                                var keptSet = chart.keptVisibleDatumSet.length > 0
-                                                            ? chart.keptVisibleDatumSet[chart.keptVisibleDatumSet.length - 1] 
-                                                            : [];
+                                var keptSet = chart.keptVisibleDatumSet.length > 0 ? chart.keptVisibleDatumSet[chart.keptVisibleDatumSet.length - 1] : [];
                                 var zoomedIn = keptSet.length > 0;
 
                                 if (zoomedIn) {
@@ -460,7 +459,7 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
                     }
                 },
                 userSelectionAction: function(selectingDatums) {
-                    if (selectingDatums.length == 0) {
+                    if (selectingDatums.length === 0) {
                         return [];
                     }
 
@@ -488,9 +487,7 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
                         selfChart.keptVisibleDatumSet.push(selectingDatums);
 
                     } else {
-                        var kept = selfChart.keptVisibleDatumSet.length > 0 
-                            ? selfChart.keptVisibleDatumSet[selfChart.keptVisibleDatumSet.length - 1] : [];
-
+                        var kept = selfChart.keptVisibleDatumSet.length > 0 ? selfChart.keptVisibleDatumSet[selfChart.keptVisibleDatumSet.length - 1] : [];
                         
                         var visibleOnes = data.datums(null, { visible: true }).array();
 
@@ -559,8 +556,8 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
 
 SaikuChartRenderer.prototype.render_chart_element = function(context) {
         var self = context || this;
-        var isSmall = (self.data != null && self.data.height < 80 && self.data.width < 80);
-        var isMedium = (self.data != null && self.data.height < 300 && self.data.width < 300);
+        var isSmall = (self.data !== null && self.data.height < 80 && self.data.width < 80);
+        var isMedium = (self.data !== null && self.data.height < 300 && self.data.width < 300);
         var isBig = (!isSmall && !isMedium);
         var animate = false;
         if (self.chart.options && self.chart.options.animate) {
@@ -607,11 +604,11 @@ SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
             return;
         }
 
-        if (args.data != null && args.data.error != null) {
+        if (args.data !== null && args.data.error !== null) {
             return;
         }        
         // Check to see if there is data
-        if (args.data == null || (args.data.cellset && args.data.cellset.length === 0)) {
+        if (args.data === null || (args.data.cellset && args.data.cellset.length === 0)) {
             return;
         }
 
@@ -620,7 +617,12 @@ SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
             var lowest_level = 0;
             var data_start = 0;
             var hasStart = false;
-            for (var row = 0, rowLen = cellset.length; data_start == 0 && row < rowLen; row++) {
+            var row,
+                rowLen,
+                labelCol,
+                reduceFunction = function(memo, num){ return memo + num; };
+
+            for (row = 0, rowLen = cellset.length; data_start === 0 && row < rowLen; row++) {
                     for (var field = 0, fieldLen = cellset[row].length; field < fieldLen; field++) {
                         if (!hasStart) {
                             while (cellset[row][field].type == "COLUMN_HEADER" && cellset[row][field].value == "null") {
@@ -663,17 +665,17 @@ SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
             }
             var labelsSet = {};
             var rowlabels = [];
-            for (var labelCol = 0; labelCol <= lowest_level; labelCol++) {
+            for (labelCol = 0; labelCol <= lowest_level; labelCol++) {
                 rowlabels.push(null);
             }
-            for (var row = data_start, rowLen = cellset.length; row < rowLen; row++) {
+            for (row = data_start, rowLen = cellset.length; row < rowLen; row++) {
             if (cellset[row][0].value !== "") {
                     var record = [];
                     var flatrecord = [];
                     var parent = null;
                     var rv = null;                        
                     
-                    for (var labelCol = 0; labelCol <= lowest_level; labelCol++) {
+                    for (labelCol = 0; labelCol <= lowest_level; labelCol++) {
                         if (cellset[row] && cellset[row][labelCol].value === 'null') {
                             currentDataPos = data;
                             var prevLabel = 0;
@@ -686,7 +688,7 @@ SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
 
                         }
                         if (cellset[row] && cellset[row][labelCol].value !== 'null') {
-                            if (labelCol == 0) {
+                            if (labelCol === 0) {
                                 for (var xx = 0; xx <= lowest_level; xx++) {
                                     rowlabels[xx] = null;
                                 }
@@ -709,7 +711,7 @@ SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
                     for (var col = lowest_level + 1, colLen = cellset[row].length; col < colLen; col++) {
                         var cell = cellset[row][col];
                         var value = cell.value || 0;
-                        var maybePercentage = (value != 0);
+                        var maybePercentage = (value !== 0);
                         // check if the resultset contains the raw value, if not try to parse the given value
                         var raw = cell.properties.raw;
                         if (raw && raw !== "null") {
@@ -726,8 +728,8 @@ SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
                         flatrecord.push({ f: cell.value, v: value});
                     }
                     if (flat) data.resultset.push(flatrecord);
-                    var sum = _.reduce(record, function(memo, num){ return memo + num; }, 0);
-                    rv =  (rv == null ? "null" : rv);
+                    var sum = _.reduce(record, reduceFunction, 0);
+                    rv =  (rv === null ? "null" : rv);
                     parent[rv] = sum;
                     currentDataPos = data;
                 }
