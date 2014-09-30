@@ -18,6 +18,7 @@ package org.saiku.repository;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.TransientRepository;
@@ -30,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.*;
+import javax.jcr.nodetype.NodeTypeExistsException;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
 import javax.jcr.nodetype.PropertyDefinitionTemplate;
@@ -41,7 +43,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -62,6 +63,9 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
     }
 
+    /*
+     * TODO this is currently threadsafe but to improve performance we should split it up to allow multiple sessions to hit the repo at the same time.
+     */
     public static synchronized JackRabbitRepositoryManager getJackRabbitRepositoryManager() {
         if (ref == null)
             // it's ok, we can call this constructor
@@ -166,14 +170,14 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     }
 
     public void shutdown() {
-        ((TransientRepository) repository).shutdown();
-        String repositoryLocation = ((TransientRepository) repository).getHomeDir();
+        ((JackrabbitRepository)repository).shutdown();
+      /*  String repositoryLocation = ((TransientRepository) repository).getHomeDir();
         try {
             FileUtils.deleteDirectory(new File(repositoryLocation));
         } catch (final IOException e) {
             System.out.println(e.getLocalizedMessage());
             //TODO FIX
-        }
+        }*/
         repository = null;
         session = null;
     }
@@ -678,7 +682,12 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         ntt.getPropertyDefinitionTemplates().add(pdt3);
         ntt.getPropertyDefinitionTemplates().add(pdt4);
         ntt.getPropertyDefinitionTemplates().add(pdt5);
-        manager.registerNodeType(ntt, false);
+        try {
+            manager.registerNodeType(ntt, false);
+        }
+        catch(NodeTypeExistsException ignored){
+
+        }
     }
 
     public void createSchemas() throws RepositoryException {
@@ -717,7 +726,12 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         ntt.getPropertyDefinitionTemplates().add(pdt4);
 
 
-        manager.registerNodeType(ntt, false);
+        try {
+            manager.registerNodeType(ntt, false);
+        }
+        catch(NodeTypeExistsException ignored){
+
+        }
     }
 
     public void createFiles() throws RepositoryException {
@@ -757,7 +771,12 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         ntt.getPropertyDefinitionTemplates().add(pdt4);
         ntt.getPropertyDefinitionTemplates().add(pdt5);
 
-        manager.registerNodeType(ntt, false);
+        try {
+            manager.registerNodeType(ntt, false);
+        }
+        catch(NodeTypeExistsException ignored){
+
+        }
     }
 
     public void createFileMixin(String type) throws RepositoryException {
@@ -797,7 +816,12 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         ntt.getPropertyDefinitionTemplates().add(pdt4);
         ntt.getPropertyDefinitionTemplates().add(pdt5);
 
-        manager.registerNodeType(ntt, false);
+        try {
+            manager.registerNodeType(ntt, false);
+        }
+        catch(NodeTypeExistsException ignored){
+
+        }
     }
 
     public Object getRepositoryObject() {
@@ -837,7 +861,12 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         ntt.getPropertyDefinitionTemplates().add(pdt4);
         ntt.getPropertyDefinitionTemplates().add(pdt5);
 
-        manager.registerNodeType(ntt, false);
+        try {
+            manager.registerNodeType(ntt, false);
+        }
+        catch(NodeTypeExistsException ignored){
+
+        }
     }
 
     private List<IRepositoryObject> getRepoObjects(Node files, String fileType, String username, List<String> roles) {

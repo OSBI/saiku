@@ -8,7 +8,7 @@
             class="org.saiku.service.datasource.ClassPathResourceDatasourceManager">
             <property name="path" value="res:saiku-datasources" />
         </bean>-->
-    <bean id="repositoryDsManager" class="org.saiku.service.datasource.RepositoryDatasourceManager" init-method="load">
+    <bean id="repositoryDsManager" class="org.saiku.service.datasource.RepositoryDatasourceManager" init-method="load" destroy-method="unload">
         <property name="userService" ref="userServiceBean"/>
     </bean>
 
