@@ -1958,7 +1958,7 @@ form {
 
 /* Begin - New style for Schema Designer */
 
-.schema-designer .connection-form,
+/*.schema-designer .connection-form,
 .schema-designer .schema-details-form {
     max-width: 255px;
     -moz-box-sizing: border-box;
@@ -1982,7 +1982,46 @@ form {
 .schema-designer .connection-form button {
     float: right;
     cursor: pointer;
+}*/
+
+/* begin:  new css */
+
+.schema-designer .sidebar h3 {
+    position: relative;
+    height: 33px;
+    line-height: 33px;
 }
+
+.schema-designer .form-group {
+    max-width: 255px;
+    -moz-box-sizing: border-box;
+         box-sizing: border-box;
+}
+
+.schema-designer .form-group label {
+    display: inline-block;
+    width: 75px;
+    text-align: right;
+}
+
+.schema-designer .form-group input[type="text"],
+.schema-designer .form-group input[type="password"],
+.schema-designer .form-group select {
+    width: 170px;
+    margin-left: 5px;
+}
+
+.schema-designer .form-group button {
+    float: right;
+    cursor: pointer;
+}
+
+.schema-designer .form-group .margin-select {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* end: new css */
 
 .schema-designer .database-list li.database a,
 .schema-designer .schema-list li.schema a {
@@ -2008,31 +2047,61 @@ form {
     white-space: nowrap;
 }
 
-.schema-designer .dbtable {
+.schema-designer .dbtable,
+.ui-draggable-dragging .dbtable {
     display: inline-block;
     vertical-align: top;
     padding: 5px;
 }
 
-.schema-designer .table-wrapper {
+.schema-designer .table-wrapper,
+.ui-draggable-dragging .table-wrapper {
     vertical-align: top;
     display: inline-block;
     padding:5px;
 }
 
-.schema-designer .table-wrapper table {
+.schema-designer .table-wrapper table,
+.ui-draggable-dragging .table-wrapper table {
     float: left;
     width: 148px;
     text-align: left;
+    background-color: #fff;
     border: 1px solid #ccc;
     table-layout: fixed;
     border-radius: 5px;
+    cursor: -webkit-grab; 
+    cursor: -moz-grab; 
+    cursor: grab;
 }
 
-.schema-designer .table-wrapper table th {
+.schema-designer .table-wrapper table th,
+.ui-draggable-dragging .table-wrapper table th {
     text-align: left;
     font-weight: bold;
     background-color: #98bfda;
+}
+
+.schema-designer .workspace_toolbar .info-console {
+    background-image: url('../../../images/src/information.png');
+    background-position: 7px 7px;
+}
+
+.schema-designer .workspace-canvas {
+    background-size: 50px 50px;
+    background-image: 
+    linear-gradient(0deg, transparent 9%, 
+        rgba(0, 0, 0, .1) 10%, rgba(0, 0, 0, .1) 12%, transparent 13%, transparent 29%, 
+        rgba(0, 0, 0, .1) 30%, rgba(0, 0, 0, .1) 31%, transparent 32%, transparent 49%, 
+        rgba(0, 0, 0, .1) 50%, rgba(0, 0, 0, .1) 51%, transparent 52%, transparent 69%, 
+        rgba(0, 0, 0, .1) 70%, rgba(0, 0, 0, .1) 71%, transparent 72%, transparent 89%,
+        rgba(0, 0, 0, .1) 90%, rgba(0, 0, 0, .1) 91%, transparent 92%, transparent),
+    linear-gradient(90deg, transparent 9%, 
+        rgba(0, 0, 0, .1) 10%, rgba(0, 0, 0, .1) 12%, transparent 13%, transparent 29%, 
+        rgba(0, 0, 0, .1) 30%, rgba(0, 0, 0, .1) 31%, transparent 32%, transparent 49%, 
+        rgba(0, 0, 0, .1) 50%, rgba(0, 0, 0, .1) 51%, transparent 52%, transparent 69%, 
+        rgba(0, 0, 0, .1) 70%, rgba(0, 0, 0, .1) 71%, transparent 72%, transparent 89%,
+        rgba(0, 0, 0, .1) 90%, rgba(0, 0, 0, .1) 91%, transparent 92%, transparent);
 }
 
 /* End - New style for Schema Designer */
