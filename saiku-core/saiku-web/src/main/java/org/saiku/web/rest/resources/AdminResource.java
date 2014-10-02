@@ -368,4 +368,19 @@ public class AdminResource {
         }
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Restore Ok").type("text/plain").build();
     }
+
+    @POST
+    @Produces("text/plain")
+    @Consumes("multipart/form-data")
+    @Path("/legacyfiles")
+    public Response postRestoreFiles(@FormDataParam("file") InputStream is, @FormDataParam("file") FormDataContentDisposition detail){
+        try {
+            byte[] bytes = IOUtils.toByteArray(is);
+            datasourceService.restoreLegacyFiles(bytes);
+            return Response.ok().entity("Restore Ok").type("text/plain").build();
+        } catch (IOException e) {
+            log.error("Error reading restore file", e);
+        }
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Restore Ok").type("text/plain").build();
+    }
 }

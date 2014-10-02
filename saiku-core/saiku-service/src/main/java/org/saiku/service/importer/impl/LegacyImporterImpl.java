@@ -4,20 +4,22 @@ import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.VFS;
 import org.saiku.datasources.datasource.SaikuDatasource;
+import org.saiku.repository.IRepositoryManager;
 import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.datasource.RepositoryDatasourceManager;
 import org.saiku.service.importer.LegacyImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import javax.jcr.RepositoryException;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Created by bugg on 19/06/14.
@@ -152,6 +154,89 @@ public class LegacyImporterImpl implements LegacyImporter {
             log.error("Exception",e);
         }
 
+    }
+
+
+    public void importLegacyReports(IRepositoryManager repositoryManager, byte[] file){
+
+
+
+        ZipInputStream zis =
+                new ZipInputStream(new ByteArrayInputStream(file));
+        //get the zipped file list entry
+        ZipEntry ze = null;
+        try {
+            ze = zis.getNextEntry();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String strUnzipped = "";
+        while(ze!=null){
+
+           /* String fileName = ze.getName();
+            File newFile = new File(fileName);
+
+            System.out.println("file unzip : "+ newFile.getAbsoluteFile());
+
+            byte[] bytes= new byte[2048];
+            try {
+                zis.read(bytes, 0, 2048);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                strUnzipped= new String( bytes, "UTF-8" );
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }*/
+            String fileName = ze.getName();
+            int size;
+            byte[] buffer = new byte[2048];
+
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(fileName);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            try {
+                while ((size = zis.read(buffer, 0, buffer.length)) != -1) {
+                    bos.write(buffer, 0, size);
+                }
+                bos.flush();
+                bos.close();
+                strUnzipped= new String( bos.toByteArray(), "UTF-8" );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+
+            try {
+                repositoryManager.saveInternalFile(strUnzipped, "/etc/legacyreports/"+fileName, "nt:saikufiles");
+            } catch (RepositoryException e) {
+                e.printStackTrace();
+            }
+
+
+            try {
+                ze = zis.getNextEntry();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            zis.closeEntry();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            zis.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

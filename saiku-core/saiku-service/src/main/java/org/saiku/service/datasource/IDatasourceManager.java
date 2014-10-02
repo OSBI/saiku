@@ -89,4 +89,6 @@ public interface IDatasourceManager {
   public void restoreRepository(byte[] data);
 
     public boolean hasHomeDirectory(String name);
+
+    public void restoreLegacyFiles(byte[] data);
 }

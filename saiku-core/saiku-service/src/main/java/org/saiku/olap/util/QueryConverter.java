@@ -94,7 +94,7 @@ public class QueryConverter {
                 qh.includeLevel(sel.getRootElement().getName());
             }
         }
-        sAxis.addHierarchy(qh);
+         sAxis.addHierarchy(qh);
 
     }
 

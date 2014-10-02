@@ -288,6 +288,10 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
         return false;
     }
 
+    public void restoreLegacyFiles(byte[] data) {
+
+    }
+
     public String saveFile(String path, String content, String user) {
         return null;
     }

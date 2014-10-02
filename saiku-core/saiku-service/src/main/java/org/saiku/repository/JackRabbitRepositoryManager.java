@@ -124,7 +124,8 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
             n = JcrUtils.getOrAddFolder(root, "etc");
             n.addMixin("nt:saikufolders");
-
+            n = JcrUtils.getOrAddFolder(n, "legacyreports");
+            n.addMixin("nt:saikufolders");
 
             session.save();
             log.info("node added");

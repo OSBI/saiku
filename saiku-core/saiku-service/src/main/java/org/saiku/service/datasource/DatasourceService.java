@@ -24,6 +24,8 @@ import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
+import org.saiku.service.importer.LegacyImporter;
+import org.saiku.service.importer.impl.LegacyImporterImpl;
 
 public class DatasourceService implements Serializable {
 
@@ -130,6 +132,10 @@ public class DatasourceService implements Serializable {
   public void restoreRepository(byte[] data){
       datasources.restoreRepository(data);
   }
+
+    public void restoreLegacyFiles(byte[] data) {
+        datasources.restoreLegacyFiles(data);
+    }
 
     public boolean hasHomeDirectory(String name){
         return datasources.hasHomeDirectory(name);
