@@ -34,12 +34,14 @@ var DeleteRepositoryObject = Modal.extend({
     },
     
     del: function() {
+        this.query.set("id", _.uniqueId("query_"));
         this.query.id = _.uniqueId("query_");
         this.query.url = this.query.url() + "?file=" + encodeURIComponent(this.query.get('file'));
         this.query.destroy({
             success: this.success,
             dataType: "text",
-            error: this.error
+            error: this.error,
+            wait:true
         });
         this.close();
     },
