@@ -17,9 +17,6 @@ call mvn clean package install:install-file -Dfile=target/saiku-ui-3.0-GA.war  -
 echo "Building saiku-server"
 cd ..\saiku\saiku-server
 call mvn clean package
-echo "Building saiku-bi-platform-plugin"
-cd ..\saiku-bi-platform-plugin
-call mvn clean package
 echo "Building saiku-bi-platform-plugin-p5"
 cd ..\saiku-bi-platform-plugin-p5
 call mvn clean package

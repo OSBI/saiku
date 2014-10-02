@@ -14,7 +14,7 @@ git pull origin 3.0-GA
 mvn clean package install:install-file -Dfile=target/saiku-ui-3.0-GA.war  -DgroupId=org.saiku -DartifactId=saiku-ui -Dversion=3.0-GA -Dpackaging=war
 cd ../saiku-server
 mvn clean package
-cd ../saiku-bi-platform-plugin
-mvn clean package
+#cd ../saiku-bi-platform-plugin
+#mvn clean package
 cd ../saiku-bi-platform-plugin-p5
 mvn clean package
