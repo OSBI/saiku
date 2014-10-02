@@ -44,20 +44,13 @@ var MoveRepositoryObject = Modal.extend({
         var self = this;
         var name = "";
         this.movefolder = args.query;
+        this.success = args.success;
+
         this.message =  "<br/><b><div class='query_name'><span class='i18n'>Please select a folder.....</span></div></b><br/><div class='RepositoryObjects'>Loading....</div>" +
             "<br>" +
             '<div style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
             ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>';
 
-        if (Settings.ALLOW_IMPORT_EXPORT) {
-            this.message += "<span class='export_zip'> </span> <b><span class='i18n'>Import or Export Files for Folder</span>: </b> <span class='i18n zip_folder'>< Select Folder... ></span>" +
-                " &nbsp; <input type='submit' value='Export' class='export_btn' disabled /><br/><br />" +
-                "<br /><form id='importForm' target='_blank' method='POST' enctype='multipart/form-data'>" +
-                "<input type='hidden' name='directory' class='directory'/>" +
-                "<input type='file' name='file' class='file'/>" +
-                "<input type='submit' value='Import' class='import_btn' disabled />" +
-                "</form>";
-        }
         _.extend(this.options, {
             title: "Move"
         });
@@ -184,34 +177,17 @@ var MoveRepositoryObject = Modal.extend({
             file = $currentTarget.find( 'a' ).attr('href').replace('#','');
         }
 
-        /*var selected_query = new SavedQuery({ file: file });
-        this.close();
-        Saiku.ui.block("Opening query...");
-        var item = this.queries[file];
-        var params = _.extend({
-            file: file,
-            formatter: Settings.CELLSET_FORMATTER
-        }, Settings.PARAMS);
-
-        var query = new Query(params,{ name: file  });
-        var tab = Saiku.tabs.add(new Workspace({ query: query, item: item }));
-        */
-
-        var form_data = new FormData();
-        form_data.append('source', this.movefolder.get("file"));
-        form_data.append('target', file);
-
+        var that= this;
         var picture_entity = new MoveObject;
-        picture_entity.save(null, {
-            data: form_data,
-            contentType: false,
-            processData: false,
-        });
+        picture_entity.save({source: this.movefolder.get("file"), target: file}, {success: function(){
+            that.close();
+            that.success();
+        }});
 
 
         event.preventDefault();
         return false;
-    },
+    }
 
 
 
