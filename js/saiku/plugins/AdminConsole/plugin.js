@@ -41,6 +41,8 @@ var AdminConsole = Backbone.View.extend({
         'click .create_schema': 'create_schema',
         'click .backup_restore' : 'backup_restore',
         'click .submitrestore' : 'restoreFile',
+        'click .submitrestorelegacy' : 'restoreLegacy',
+
         'click .license_info' : 'show_license_info'
     },
     initialize: function (args) {
@@ -287,7 +289,7 @@ var AdminConsole = Backbone.View.extend({
         "<hr>" +
         "<h1>Restore</h1>" +
         "<form><input name='restore' type='file' class='restore_button'/><div class='clear'></div><br/>" +
-        "<input type='submit' class='form_button upload_button submitrestore' value='Restore'></form>" +
+        "<input type='submit' class='form_button upload_button submitrestore' value='Restore Repository'><input type='submit' class='form_button upload_button submitrestorelegacy' value='Restore Legacy Reports'></form>" +
 "<br/><div id='uploadstatus'>"),
     //itemTemplate : _.template( "<% console.log('Hello2 from template' +Object.keys(entry)); %>" +"Helo<!--<li class='query'><span class='icon'></span><a href=''>hello</a></li>-->"),
     maintemplate: _.template("<% _.each( repoObjects, function( entry ) { %>" +
@@ -641,7 +643,14 @@ var AdminConsole = Backbone.View.extend({
         var file = $(this.el).find("input[type='file']")[0].files[0];
         var restore = new Restore();
         restore.set('file', file);
-        var that = this;
+        restore.save();
+    },
+    restoreLegacy: function(event){
+        event.preventDefault();
+
+        var file = $(this.el).find("input[type='file']")[0].files[0];
+        var restore = new RestoreFiles();
+        restore.set('file', file);
         restore.save();
     },
 
@@ -840,6 +849,15 @@ var Restore = Backbone.Model.extend({
     },
     fileAttribute: 'file'
 });
+
+var RestoreFiles = Backbone.Model.extend({
+    url: function(){
+        return AdminUrl + "/legacyfiles";
+    },
+    fileAttribute: 'file'
+});
+
+
 var Schemas = Backbone.Collection.extend({
     model: Schema,
     url: function () {
