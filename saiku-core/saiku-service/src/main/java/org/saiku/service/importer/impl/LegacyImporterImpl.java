@@ -49,7 +49,7 @@ public class LegacyImporterImpl implements LegacyImporter {
                 File[] files = new File( repoURL.getFile() ).listFiles();
                 if (files != null) {
                     for ( File file : files ) {
-                        if ( !file.isHidden() ) {
+                        if ( !file.isHidden() && !file.getName().equals("README")) {
                             byte[] encoded = null;
                             try {
                                 encoded = org.apache.commons.io.IOUtils.toByteArray(new FileInputStream(file));
@@ -79,7 +79,7 @@ public class LegacyImporterImpl implements LegacyImporter {
                 File[] files = new File(repoURL.getFile()).listFiles();
                 if (files != null) {
                     for (File file : files) {
-                        if (!file.isHidden()) {
+                        if (!file.isHidden() && !file.getName().equals("README")) {
                             Properties props = new Properties();
                             try {
                                 props.load(new FileInputStream(file));
