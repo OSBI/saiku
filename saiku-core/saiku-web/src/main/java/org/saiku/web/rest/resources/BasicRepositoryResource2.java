@@ -243,8 +243,8 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
         String username = sessionService.getAllSessionObjects().get("username").toString();
         List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
         String resp = datasourceService.moveFile(source, target, username, roles);
-        if(resp.equals("Remove Okay")){
-            return Response.ok().build();
+        if(resp.equals("Move Okay")){
+            return Response.ok().entity("{}").build();
         }
         else{
             return Response.serverError().entity("Cannot move resource to ( file: " + target + ")").type("text/plain").build();
