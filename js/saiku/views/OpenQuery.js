@@ -70,6 +70,7 @@ var OpenQuery = Backbone.View.extend({
                     "edit": {name: "Edit", i18n: true },
 //                    "rename": {name: "Rename", i18n: true },
                     "delete": {name: "Delete", i18n: true },
+                    "move": {name: "Move", i18n: true},
                     "sep1": "---------",
                     "new": {name: "New Folder", i18n: true}
         };
@@ -92,11 +93,16 @@ var OpenQuery = Backbone.View.extend({
                             opt.items['delete'].disabled = true;
                             opt.commands['edit'].disabled = true;
                             opt.items['edit'].disabled = true;
+                            opt.commands['move'].disabled = true;
+                            opt.items['move'].disabled = true;
+
                         } else {
                             opt.commands['delete'].disabled = false;
                             opt.items['delete'].disabled = false;
                             opt.commands['edit'].disabled = false;
                             opt.items['edit'].disabled = false;
+                            opt.commands['move'].disabled = false;
+                            opt.items['move'].disabled = false;
                         }
 
                         if ($(this).hasClass('folder_row')) {
@@ -121,6 +127,8 @@ var OpenQuery = Backbone.View.extend({
                         self.add_folder();
                     } else if (key == "delete") {
                         self.delete_repoObject();
+                    } else if(key == "move"){
+                        self.move_repoObject();
                     }
 
 
@@ -373,7 +381,16 @@ var OpenQuery = Backbone.View.extend({
         
         return false;
     },
-    
+
+    move_repoObject: function(event) {
+        (new MoveRepositoryObject({
+            query: this.selected_query,
+            success: this.clear_query
+        })).render().open();
+
+        return false;
+    },
+
     edit_folder: function( event ) {
         alert( 'todo: edit folder properties/permissions' );
         return false;
