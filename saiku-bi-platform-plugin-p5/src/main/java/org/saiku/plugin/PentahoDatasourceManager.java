@@ -254,7 +254,7 @@ public class PentahoDatasourceManager implements IDatasourceManager {
     }
 
     public void restoreLegacyFiles(byte[] data) {
-        
+
     }
 
     public void setACL(String a, String b, String c, List<String> d) {

@@ -113,7 +113,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
             Node n = JcrUtils.getOrAddFolder(root, "homes");
             n.addMixin("nt:saikufolders");
 
-            AclEntry e = new AclEntry("admin", AclType.PRIVATE, null, null);
+            AclEntry e = new AclEntry("admin", AclType.SECURED, null, null);
 
             Acl2 acl2 = new Acl2(n);
             acl2.addEntry(n.getPath(), e);
