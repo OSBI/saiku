@@ -68,10 +68,13 @@ var AdminConsole = Backbone.View.extend({
         event.preventDefault();
         var html = this.licenseInfoTemplate;
 
+        yourEpoch = parseFloat(this.licenseInfo.expiration);
+        var yourDate = new Date( yourEpoch  );
         $(this.el).find('.user_info').html(html);
         $(this.el).find('.license_type > li:nth-child(1)').append(this.licenseInfo.licenseType);
-        $(this.el).find('.license_type > li:nth-child(2)').append(this.licenseInfo.expiration);
+        $(this.el).find('.license_type > li:nth-child(2)').append(yourDate.toLocaleDateString());
     },
+
     back_query: function() {
         Saiku.tabs.add(new Workspace());
         return false;
