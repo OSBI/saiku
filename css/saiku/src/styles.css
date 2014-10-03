@@ -50,10 +50,10 @@ textarea:focus {
   border-color:#666;
   outline: 1;
 }
-input[type="text"]:disabled, 
-input[type="password"]:disabled,
-:disabled {
+input[disabled],
+select[disabled] {
     background-color: #f0f0f0;
+    cursor: not-allowed;
 }
 select { background-color:#fff; border-width:1px; border-style:solid; }
 
@@ -1963,34 +1963,6 @@ form {
 
 /* Begin - New style for Schema Designer */
 
-/*.schema-designer .connection-form,
-.schema-designer .schema-details-form {
-    max-width: 255px;
-    -moz-box-sizing: border-box;
-         box-sizing: border-box;
-}
-
-.schema-designer .connection-form label,
-.schema-designer .schema-details-form label {
-    display: inline-block;
-    width: 75px;
-    text-align: right;
-}
-
-.schema-designer .connection-form input[type="text"],
-.schema-designer .connection-form input[type="password"],
-.schema-designer .schema-details-form input[type="text"] {
-    width: 170px;
-    margin-left: 5px;
-}
-
-.schema-designer .connection-form button {
-    float: right;
-    cursor: pointer;
-}*/
-
-/* begin:  new css */
-
 .schema-designer .sidebar h3 {
     position: relative;
     height: 33px;
@@ -2025,8 +1997,6 @@ form {
     margin-top: 10px;
     margin-bottom: 10px;
 }
-
-/* end: new css */
 
 .schema-designer .database-list li.database a,
 .schema-designer .schema-list li.schema a {
@@ -2063,7 +2033,7 @@ form {
 .ui-draggable-dragging .table-wrapper {
     vertical-align: top;
     display: inline-block;
-    padding:5px;
+    padding: 5px;
 }
 
 .schema-designer .table-wrapper table,
