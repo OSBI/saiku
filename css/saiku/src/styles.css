@@ -50,6 +50,11 @@ textarea:focus {
   border-color:#666;
   outline: 1;
 }
+input[type="text"]:disabled, 
+input[type="password"]:disabled,
+:disabled {
+    background-color: #f0f0f0;
+}
 select { background-color:#fff; border-width:1px; border-style:solid; }
 
 input[type=text], input[type=password],
