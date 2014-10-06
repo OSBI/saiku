@@ -1,4 +1,4 @@
-#splash {height:100%}
+#splash {height:100%;position:fixed;}
 #splash *{padding:0;margin:0;text-decoration:none;}
 /*body{background:linear-gradient(#ffffff 0%, #e4e4e4 100%);font-family:'News Cycle',Arial,sans-serif;height:100%;display:block;}*/
 #splash nav{width:100%;border-bottom:1px solid #ccc;float:left;background:linear-gradient(#ffffff 0%, #e4e4e4 100%);}
@@ -38,6 +38,7 @@
 #splash a:hover{color:#000;}
 
 @media screen and (max-width:1200px){
+	#splash {height:100%;position:inherit;}
 	nav ul{margin-left:0px;}
 	nav h2{margin-right:20px;}
 	.tabs section{width:960px;}
@@ -45,6 +46,7 @@
 }
 
 @media screen and (max-width:1000px){
+	#splash {height:100%;position:inherit;}
 	nav h2{font-size:18px;}
 	nav ul li{font-size:18px;}
 	.tabs section{width:90%;margin:0 auto;}
@@ -52,11 +54,13 @@
 }
 
 @media screen and (max-width:800px){
+	#splash {height:100%;position:inherit;}
 	nav h2{font-size:16px;}
 	nav ul li{font-size:16px;padding:0px 20px;}
 }
 
 @media screen and (max-width:600px){
+	#splash {height:100%;position:inherit;}
 	h1.saikulogo{width:275px;height:72px;background:url('../../../images/src/saikux2.png') top left no-repeat;background-size:275px 72px;}
 	nav h2{display:none;}
 	nav ul li{font-size:16px;width:25%;border-right:none;padding:0px 0px;text-align: center;}
