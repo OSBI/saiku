@@ -1,11 +1,11 @@
-#splash {height:100%;position:fixed;}
+#splash{height:100%;position:fixed;}
 #splash *{padding:0;margin:0;text-decoration:none;}
 /*body{background:linear-gradient(#ffffff 0%, #e4e4e4 100%);font-family:'News Cycle',Arial,sans-serif;height:100%;display:block;}*/
-#splash nav{width:100%;border-bottom:1px solid #ccc;float:left;background:linear-gradient(#ffffff 0%, #e4e4e4 100%);}
+#splash nav{width:100%;border-bottom:1px solid #ccc;float:left;background:-webkit-gradient(linear,left top,left bottom,color-stop(#ffffff,0),color-stop(#e4e4e4,1));background:-webkit-linear-gradient(#ffffff 0%, #e4e4e4 100%);background:-moz-linear-gradient(#ffffff 0%, #e4e4e4 100%);background:-o-linear-gradient(#ffffff 0%, #e4e4e4 100%);background:linear-gradient(#ffffff 0%, #e4e4e4 100%);}
 #splash nav h2{float:right;line-height:48px;margin-right:100px;color:#BE1E2D;font-weight:400;}
-#splash nav ul{list-style: none;line-height:48px;font-size:21px;margin-left:100px;}
+#splash nav ul{list-style:none;line-height:48px;font-size:21px;margin-left:100px;}
 #splash nav ul li{display:inline-block;float:left;padding:0px 40px;border-right:1px solid #fff;}
-#splash nav ul li.enterprise{background:linear-gradient(#a62323 0%, #BE1E2D 100%);}
+#splash nav ul li.enterprise{background:-webkit-gradient(linear,left top,left bottom,color-stop(#a62323,0),color-stop(#BE1E2D,1));background:-webkit-linear-gradient(#a62323 0%, #BE1E2D 100%);background:-moz-linear-gradient(#a62323 0%, #BE1E2D 100%);background:-o-linear-gradient(#a62323 0%, #BE1E2D 100%);background:linear-gradient(#a62323 0%, #BE1E2D 100%);}
 
 #splash nav a{color:#A7A9AC;}
 #splash nav a:hover,nav li.active a{color:#6D6E71;}
@@ -21,18 +21,18 @@
 #splash .tabs h2{clear:left;margin-left:0.5%;color:#6D6E71;font-weight:400;margin-bottom:12px;}
 #splash small a{color:#A7A9AC;}
 
-#splash ul.quicklinks{list-style: none;max-width:500px;text-align: center;margin-bottom:40px;float:left;}
-#splash ul.quicklinks li{width:48%;margin:1%;float:left;border:3px solid #BE1E2D;border-radius:4px;line-height:36px;box-sizing: border-box;padding-bottom:3px;}
+#splash ul.quicklinks{list-style:none;max-width:500px;text-align:center;margin-bottom:40px;float:left;}
+#splash ul.quicklinks li{width:48%;margin:1%;float:left;border:3px solid #BE1E2D;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;line-height:36px;box-sizing:border-box;padding-bottom:3px;}
 #splash ul.quicklinks li a{color:#BE1E2D;}
-#splash ul.quicklinks li:hover{background:linear-gradient(#a62323 0%, #BE1E2D 100%);}
+#splash ul.quicklinks li:hover{background:-webkit-gradient(linear,left top,left bottom,color-stop(#a62323,0),color-stop(#BE1E2D,1));background:-webkit-linear-gradient(#a62323 0%, #BE1E2D 100%);background:-moz-linear-gradient(#a62323 0%, #BE1E2D 100%);background:-o-linear-gradient(#a62323 0%, #BE1E2D 100%);background:linear-gradient(#a62323 0%, #BE1E2D 100%);}
 #splash ul.quicklinks li:hover a{color:#fff;}
 
-#splash a.button{border-radius:4px;background:linear-gradient(#a62323 0%, #BE1E2D 100%);width:48%;margin:0%;display:inline-block;line-height:36px;color:#fff;text-align: center;padding-bottom:3px;border:3px solid #BE1E2D;box-sizing:border-box;margin-right:20px;}
+#splash a.button{-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;background:-webkit-gradient(linear,left top,left bottom,color-stop(#a62323,0),color-stop(#BE1E2D,1));background:-webkit-linear-gradient(#a62323 0%, #BE1E2D 100%);background:-moz-linear-gradient(#a62323 0%, #BE1E2D 100%);background:-o-linear-gradient(#a62323 0%, #BE1E2D 100%);background:linear-gradient(#a62323 0%, #BE1E2D 100%);width:48%;margin:0%;display:inline-block;line-height:36px;color:#fff;text-align:center;padding-bottom:3px;border:3px solid #BE1E2D;box-sizing:border-box;margin-right:20px;}
 
 #splash #welcome{background:url('../../../images/src/mac.png') bottom right no-repeat;}
 
-#splash table{width:100%;color:#6D6E71;text-align: center;}
-#splash table th{text-align: center;font-size:24px;font-weight:400;}
+#splash table{width:100%;color:#6D6E71;text-align:center;}
+#splash table th{text-align:center;font-size:24px;font-weight:400;}
 
 #splash a{color:#BE1E2D;}
 #splash a:hover{color:#000;}
