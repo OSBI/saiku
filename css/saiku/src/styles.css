@@ -1969,6 +1969,35 @@ form {
     line-height: 33px;
 }
 
+.schema-designer .back-arrow {
+    float: right;
+    margin-top: -30px;
+    margin-right: 8px;
+}
+
+.schema-designer .back-arrow a {
+    background: url('../../../images/src/arrow_up_bnw.png') no-repeat;
+    width: 16px;
+    height: 16px;
+    -webkit-transform: rotate(-90deg);
+        -ms-transform: rotate(-90deg);
+            transform: rotate(-90deg);
+}
+
+.schema-designer .back-arrow a.button {
+    display: block;
+    height: 12px;
+    padding: 3px;
+    width: 12px;
+    -webkit-border-radius: 3px;
+       -moz-border-radius: 3px;
+            border-radius: 3px;
+}
+
+.schema-designer .back-arrow a.button:hover {
+    border: 1px solid #ccc;
+}
+
 .schema-designer .form-group {
     max-width: 255px;
     -moz-box-sizing: border-box;
