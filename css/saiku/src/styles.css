@@ -2091,6 +2091,56 @@ form {
     background-position: 7px 7px;
 }
 
+.schema-designer .popover {
+    position: absolute;
+    width: 25em;
+    padding: 1em;
+    background: #fff;
+    border: 4px solid #777;
+    z-index: 1;
+    -moz-box-sizing: border-box;
+         box-sizing: border-box;
+}
+
+.schema-designer .popover:before,
+.schema-designer .popover:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border: 4px solid #777;
+    background: #fff;
+    -webkit-transform: rotate(45deg);
+       -moz-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+         -o-transform: rotate(45deg);
+            transform: rotate(45deg);
+}
+
+.schema-designer .popover:before {
+    z-index: -1;
+}
+
+.schema-designer .popover.arrow-left:before,
+.schema-designer .popover.arrow-left:after {
+  top: 20px;
+  left: 0;
+  margin-left: -12px; 
+  border-top: 0;
+  border-right: 0;
+}
+
+.schema-designer .popover.popover-fact {
+    top: 231px;
+    left: 280px;
+}
+
+.schema-designer .popover.popover-nonfact {
+    top: 287px;
+    left: 280px;
+}
+
 .schema-designer .workspace-canvas {
     background-size: 50px 50px;
     background-image: 
