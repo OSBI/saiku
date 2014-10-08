@@ -190,6 +190,12 @@ var isIE = (function(){
 
 }());
 
+var isFF = (function(userAgent) {
+    'use strict';
+
+    return !!userAgent.match(/Firefox/);
+}(navigator.userAgent));
+
 var isMobile = (function(userAgent) {
   'use strict';
 
