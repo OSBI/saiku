@@ -4,7 +4,7 @@
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-olap-util</artifactId>
 	<packaging>jar</packaging>
-	<version>3.0-GA</version>
+	<version>3.0.1-SNAPSHOT</version>
 	<name>saiku olap util</name>
 	<properties>
 		<maven.compiler.source>1.5</maven.compiler.source>

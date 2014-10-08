@@ -3,12 +3,12 @@
 	<parent>
 		<artifactId>saiku-core</artifactId>
 		<groupId>org.saiku</groupId>
-		<version>3.0-GA</version>
+		<version>3.0.1-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-webapp</artifactId>
-	<version>3.0-GA</version>
+	<version>3.0.1-SNAPSHOT</version>
 	<name>saiku - webapp</name>
 	<packaging>war</packaging>
 
@@ -40,7 +40,7 @@
                 <version>${project.version}</version>
                 <type>jar</type>
                 <classifier>sources</classifier>
-                <outputDirectory>target/saiku-webapp-3.0-GA/WEB-INF/lib/</outputDirectory>
+                <outputDirectory>target/saiku-webapp-3.0.1-SNAPSHOT/WEB-INF/lib/</outputDirectory>
             </artifactItem>
             </artifactItems>
             </configuration>
