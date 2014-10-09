@@ -2091,6 +2091,34 @@ form {
     background-position: 7px 7px;
 }
 
+.schema-designer li.create-schema:before {
+    content: url('../../../images/src/database_add.png');
+    position: relative;
+    top: 3px;
+    right: 3px;
+}
+
+.schema-designer li.create-schema {
+    margin: 0;
+    padding: 4px 20px 6px;
+    float: right;
+    line-height: 1.6em;
+    cursor: pointer;
+}
+
+.schema-designer li.create-schema:hover {
+    background-color: #f1f1f1;
+    outline: 1px solid #ccc;
+}
+
+.schema-designer li.create-schema a {
+    font-size: 12px;
+    font-weight: bold;
+    color: #000;
+    text-shadow: 1px 1px 0 #fff;
+    text-decoration: none;
+}
+
 .schema-designer .popover {
     position: absolute;
     width: 25em;
