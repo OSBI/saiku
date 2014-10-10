@@ -402,6 +402,13 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
         return getFolder(s).getNodes("jcr:content").nextNode().getProperty("jcr:data").getString();
     }
+    
+    public void removeInternalFile(String s) throws RepositoryException {
+        Node n = getFolder(s);
+        n.remove();
+        n.getSession().save();
+    }
+    
     public List<MondrianSchema> getAllSchema() throws RepositoryException {
         QueryManager qm = session.getWorkspace().getQueryManager();
         String sql = "SELECT * FROM [nt:mondrianschema]";
