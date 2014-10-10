@@ -252,6 +252,15 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             return "Save Failed: " + e.getLocalizedMessage();
         }
     }
+    
+    public void removeInternalFile(String filePath) {
+        try{
+            irm.removeInternalFile(filePath);
+        } catch(RepositoryException e) {
+            log.error("Remove file failed: " + filePath);
+            e.printStackTrace();
+        }
+    }
 
     public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
         try {
