@@ -238,6 +238,10 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
     public String saveInternalFile(String path, String content) {
         return null;
     }
+    
+    public void removeInternalFile(String filePath) {
+      
+    }
 
     public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
         return null;
