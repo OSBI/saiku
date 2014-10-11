@@ -294,6 +294,10 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         return null;
     }
 
+    public void removeInternalFile(String filePath{
+    
+    }
+
     public String getInternalFileData(String file) {
         throw new UnsupportedOperationException();
     }
