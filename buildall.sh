@@ -11,7 +11,7 @@ cd saiku-ui
 git pull
 git checkout 3.0-GA 
 git pull origin 3.0-GA
-mvn clean package install:install-file -Dfile=target/saiku-ui-3.0-GA.war  -DgroupId=org.saiku -DartifactId=saiku-ui -Dversion=3.0-GA -Dpackaging=war
+mvn clean package install:install-file -Dfile=target/saiku-ui-3.0.1-SNAPSHOT.war  -DgroupId=org.saiku -DartifactId=saiku-ui -Dversion=3.0.1-SNAPSHOT -Dpackaging=war
 cd ../saiku-server
 mvn clean package
 #cd ../saiku-bi-platform-plugin
