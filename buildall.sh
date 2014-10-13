@@ -9,8 +9,8 @@ git submodule init
 git submodule update
 cd saiku-ui
 git pull
-git checkout master
-git pull origin master
+git checkout 3.0-GA 
+git pull origin 3.0-GA
 mvn clean package install:install-file -Dfile=target/saiku-ui-3.0.1-SNAPSHOT.war  -DgroupId=org.saiku -DartifactId=saiku-ui -Dversion=3.0.1-SNAPSHOT -Dpackaging=war
 cd ../saiku-server
 mvn clean package

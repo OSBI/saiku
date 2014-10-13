@@ -67,6 +67,8 @@ public interface IDatasourceManager {
   public String moveFile(String source, String target, String user, List<String> roles);
 
   public String saveInternalFile(String path, String content, String type);
+  
+  public void removeInternalFile(String filePath);
 
   public List<IRepositoryObject> getFiles(String type, String username, List<String> roles);
 

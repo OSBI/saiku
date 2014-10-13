@@ -314,12 +314,14 @@
       <version>1.3</version>
         <scope>test</scope>
       </dependency>
+<!--
       <dependency>
         <groupId>net.thucydides</groupId>
         <artifactId>thucydides-core</artifactId>
         <version>0.9.245-SNAPSHOT</version>
         <scope>test</scope>
       </dependency>
+-->
       <dependency>
         <groupId>net.thucydides</groupId>
         <artifactId>thucydides-jbehave-plugin</artifactId>
