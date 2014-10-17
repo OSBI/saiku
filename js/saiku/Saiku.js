@@ -104,6 +104,7 @@ var Saiku = {
             ref = window.document.getElementsByTagName('script')[0];
 
         scriptNode.src = src;
+        scriptNode.async = true;
 
         // Inject script
         ref.parentNode.insertBefore(scriptNode, ref);
