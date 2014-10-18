@@ -37,12 +37,12 @@ public interface ISaikuConnection {
   public static final String SECURITY_LOOKUP_KEY = "security.mapping"; //$NON-NLS-1$
   public static final String DATASOURCE_PROCESSORS = "datasource.processors"; //$NON-NLS-1$
   public static final String CONNECTION_PROCESSORS = "connection.processors"; //$NON-NLS-1$
-
+  public static final String PASSWORD_ENCRYPT_KEY = "encrypt.password"; //$NON-NLS-1$
 
   public static final String[] KEYS = new String[] { NAME_KEY, DRIVER_KEY, URL_KEY,
     USERNAME_KEY, PASSWORD_KEY, SECURITY_ENABLED_KEY, SECURITY_TYPE_KEY, SECURITY_TYPE_PASSTHROUGH_VALUE,
     SECURITY_TYPE_SPRING2MONDRIAN_VALUE, SECURITY_TYPE_SPRINGLOOKUPMONDRIAN_VALUE, DATASOURCE_PROCESSORS,
-    CONNECTION_PROCESSORS };
+    CONNECTION_PROCESSORS, PASSWORD_ENCRYPT_KEY };
 
   public static final String[] DATASOURCES = new String[] { OLAP_DATASOURCE };
 

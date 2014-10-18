@@ -1,11 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+        <artifactId>saiku</artifactId>
+        <groupId>org.saiku</groupId>
+        <version>3.0-GA</version>
+    </parent>
+
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-core</artifactId>
 	<packaging>pom</packaging>
 	<name>saiku - core libraries</name>
-       <version>3.0.1-SNAPSHOT</version>
+       <version>3.0-GA</version>
 	<properties>
 		<maven.compiler.source>1.5</maven.compiler.source>
 		<maven.compiler.target>1.5</maven.compiler.target>
@@ -20,39 +26,6 @@
 		<module>saiku-service</module>
 		<module>saiku-web</module>
 	</modules>
-	<repositories>
-<repository>
-                        <id>pentaho-third-party</id>
-                        <url>http://repo.pentaho.org/artifactory/third-party/</url>
-        </repository>
-	<repository>
-                        <id>codehaus</id>
-                        <url>http://repository.codehaus.org/</url>
-        </repository>
-		
-<repository>
-			<id>pentaho-repo</id>
-			<name>pentaho repository</name>
-			<url>http://repository.pentaho.org/artifactory/pentaho</url>
-		</repository>
-		<repository>
-			<id>Analytical Labs Repo</id>
-			<name>Analytical Labs Repo-releases</name>
-			<url>http://repo.analytical-labs.com/alabs-release-local</url>
-		</repository>
-        <repository>
-            <id>Analytical Labs Snapshots</id>
-            <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.analytical-labs.com/alabs-release-local</url>
-        </repository>
-        <repository>
-            <id>Analytical Labs snapshots</id>
-            <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.analytical-labs.com/alabs-snapshot-local</url>
-        </repository>
-
-
-	</repositories>
 	<build>
 <plugins>
       <plugin>

@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class DataSource {
 
+    private String encryptpassword;
     private String id;
     private String type;
     private String name;
@@ -29,6 +30,7 @@ public class DataSource {
         this.username = datasource.getProperties().getProperty("username");
         this.password = datasource.getProperties().getProperty("password");
         this.id = datasource.getProperties().getProperty("id");
+        this.encryptpassword = datasource.getProperties().getProperty("encrypt.password");
     }
 
     public DataSource(){
@@ -104,5 +106,14 @@ public class DataSource {
 
     public String getPath() {
         return path;
+    }
+
+    @XmlElement
+    public String getEncryptpassword() {
+        return encryptpassword;
+    }
+
+    public void setEncryptpassword(String encryptpassword) {
+        this.encryptpassword = encryptpassword;
     }
 }

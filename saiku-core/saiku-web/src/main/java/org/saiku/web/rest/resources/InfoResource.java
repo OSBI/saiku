@@ -16,10 +16,13 @@
 package org.saiku.web.rest.resources;
 
 import org.saiku.service.PlatformUtilsService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -46,7 +49,7 @@ public class InfoResource {
 
   @GET
   @Produces({"application/json" })
-  public java.util.ArrayList getAvailablePlugins() {
+  public ArrayList getAvailablePlugins() {
 
     return platformService.getAvailablePlugins();
   }

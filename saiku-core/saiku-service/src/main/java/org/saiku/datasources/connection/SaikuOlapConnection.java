@@ -21,10 +21,13 @@ import org.apache.commons.vfs.VFS;
 import org.apache.commons.vfs.impl.DefaultFileSystemManager;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapWrapper;
+import org.saiku.datasources.connection.encrypt.CryptoUtil;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
+
+import static org.saiku.datasources.connection.encrypt.CryptoUtil.decrypt;
 
 public class SaikuOlapConnection implements ISaikuConnection {
 
@@ -34,8 +37,9 @@ public class SaikuOlapConnection implements ISaikuConnection {
   private OlapConnection olapConnection;
   private String username;
   private String password;
+  private String passwordenc;
 
-  public SaikuOlapConnection( String name, Properties props ) {
+    public SaikuOlapConnection( String name, Properties props ) {
     this.name = name;
     this.properties = props;
   }
@@ -49,11 +53,21 @@ public class SaikuOlapConnection implements ISaikuConnection {
     return connect( properties );
   }
 
+  private String decryptPassword(String password)
+    {
+
+        if ( password != null )
+        {
+            return decrypt(password);
+        }
+        return null;
+  }
 
   public boolean connect( Properties props ) throws Exception {
     this.username = props.getProperty( ISaikuConnection.USERNAME_KEY );
     this.password = props.getProperty( ISaikuConnection.PASSWORD_KEY );
     String driver = props.getProperty( ISaikuConnection.DRIVER_KEY );
+    this.passwordenc = props.getProperty(ISaikuConnection.PASSWORD_ENCRYPT_KEY);
     this.properties = props;
     String url = props.getProperty( ISaikuConnection.URL_KEY );
     System.out.println( "name:" + name );
@@ -61,6 +75,10 @@ public class SaikuOlapConnection implements ISaikuConnection {
     System.out.println( "url:" + url );
     System.out.flush();
 
+
+      if(this.passwordenc != null && this.passwordenc.equals("true")){
+          this.password = decryptPassword(password);
+      }
       if(url.contains("Mondrian=4")){
           url=url.replace("Mondrian=4; ", "");
           url= url.replace("jdbc:mondrian", "jdbc:mondrian4");

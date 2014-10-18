@@ -115,6 +115,8 @@ public class LegacyImporterImpl implements LegacyImporter {
                             }
                             if (name != null && type != null) {
                                 props.put("id", java.util.UUID.randomUUID().toString());
+                                props.put("advanced", "true");
+
                                 SaikuDatasource.Type t = SaikuDatasource.Type.valueOf(type.toUpperCase());
                                 SaikuDatasource ds = new SaikuDatasource(name, t, props);
 

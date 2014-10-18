@@ -2,7 +2,6 @@ package org.saiku.web.rest.objects;
 
 import org.saiku.datasources.datasource.SaikuDatasource;
 
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -70,6 +69,9 @@ public class DataSourceMapper {
             }
             if(ds.getProperties().containsKey("security.mapping")){
                 this.advanced += "security.mapping"+ds.getProperties().get("security.mapping");
+            }
+            if(ds.getProperties().contains("encrypt.password")){
+                this.advanced += "encrypt.password="+ds.getProperties().get("encrypt.password");
             }
             this.connectionname = ds.getName();
             this.id = ds.getProperties().getProperty("id");
@@ -140,6 +142,9 @@ public class DataSourceMapper {
                 }
                 if(row.startsWith("security.enabled=")){
                     props.setProperty("security.enabled", row.substring(17, row.length()));
+                }
+                if(row.startsWith("encrypt.password=")){
+                    props.setProperty("encrypt.password", row.substring(17, row.length()));
                 }
                 if (this.id != null) {
                     props.setProperty("id", this.id);
