@@ -1,0 +1,17 @@
+{
+   "Loading...":"Laster...",
+   "Loading datasources....":"Laster datakilder...",
+   "New query":"Ny spørring",
+   "Open query":"Åpne spørring",
+   "Logout":"Log ut",
+   "Unsaved query":"Ulagret spørring",
+   "Mode:":"Modus",
+   "Columns":"Kolonner",
+   "Rows":"Rader",
+   "Filter":"Filter",
+   "Running query...":"Kjører spørring",
+   "Cancel":"Avbryt",
+   "Cubes":"Kuber",
+   "Measures":"",
+   "Use Result":"Bruk resultat"
+}
