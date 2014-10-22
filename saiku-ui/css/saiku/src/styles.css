@@ -38,6 +38,20 @@ html, body {
     border:0; 
 }
 
+.clearfix:before,
+.clearfix:after {
+    content: " ";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.clearfix {
+    *zoom: 1;
+}
+
 input[type=text], input[type=password],
 input.text, input.title,
 textarea {
