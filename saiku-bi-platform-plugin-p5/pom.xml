@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saiku</groupId>
@@ -164,9 +163,7 @@
 										<include name="saiku-ui-${project.version}.war" />
 									</fileset>
 								</unzip>
-								<copy
-									file="${basedir}/target/${project.artifactId}-${project.version}.jar"
-									todir="target/dist/saiku/lib" />
+								<copy file="${basedir}/target/${project.artifactId}-${project.version}.jar" todir="target/dist/saiku/lib" />
 								<copy todir="target/dist/saiku/" overwrite="true">
 									<fileset dir="${basedir}/src/main/plugin/" />
 								</copy>
@@ -175,7 +172,7 @@
 										<include name="*.properties" />
 									</fileset>
 								</copy>
-                                <patch patchfile="newpatch.patch" originalfile="target/dist/saiku/ui/index.html"/>
+                                <patch patchfile="newpatch.patch" originalfile="target/dist/saiku/ui/index.html" />
 								<zip destfile="target/saiku-plugin-p5-${project.version}.zip">
 									<zipfileset dir="target/dist/" />
 								</zip>
