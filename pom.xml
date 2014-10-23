@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-ui</artifactId>
 	<packaging>pom</packaging>
-	<version>3.0.1-SNAPSHOT</version>
+	<version>3.0-GA</version>
 	<build>
 		<plugins>
 <!--
@@ -135,12 +134,12 @@
                                         <exclude name=".gitignore" />
                                     </fileset>
 								</copy>
-<!--                                <copy file="target/saiku.min.js" tofile="target/saiku-ui/saiku.min.js"/>
-                                <copy file="target/saiku.min.js.gz" tofile="target/saiku-ui/saiku.min.js.gz"/>
+<!--                                <copy file="target/saiku.min.js" tofile="target/saiku-ui/saiku.min.js" />
+                                <copy file="target/saiku.min.js.gz" tofile="target/saiku-ui/saiku.min.js.gz" />
 -->
 <!--
                                 <copy todir="target/saiku-ui/doc/">
-									<fileset dir="${basedir}/target/jsdoc"/>
+									<fileset dir="${basedir}/target/jsdoc" />
 								</copy>
 -->
 								<zip destfile="target/saiku-ui-${project.version}.zip">
