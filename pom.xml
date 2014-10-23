@@ -9,7 +9,11 @@
     <packaging>pom</packaging>
     <version>3.0-GA</version>
     <name>Saiku Module Project</name>
-
+    <scm>
+        <developerConnection>
+            scm:git:https://github.com/OSBI/saiku.git
+        </developerConnection>
+    </scm>
     <modules>
         <module>saiku-core</module>
         <module>saiku-ui</module>
@@ -96,6 +100,11 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.1</version>
             </plugin>
             <!--<plugin>-->
                 <!--<groupId>org.codehaus.mojo</groupId>-->

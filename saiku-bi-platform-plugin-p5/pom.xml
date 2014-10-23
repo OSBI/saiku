@@ -316,7 +316,7 @@
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>mondrian</artifactId>
-            <version>3.7.0.0</version>
+            <version>3.6.7</version>
 		</dependency>
 		<dependency>
 			<groupId>eigenbase</groupId>
