@@ -113,6 +113,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
+                <version>2.3</version>
 				<executions>
 					<execution>
 						<id>surefire-it</id>
@@ -129,13 +130,7 @@
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>maven-jetty-plugin</artifactId>
-				<!-- <configuration> <contextPath>/</contextPath> <scanIntervalSeconds>10</scanIntervalSeconds> 
-					<stopKey>sparklr</stopKey> <stopPort>9999</stopPort> </configuration> <executions> 
-					<execution> <id>start-jetty</id> <phase>pre-integration-test</phase> <goals> 
-					<goal>run</goal> </goals> <configuration> <scanIntervalSeconds>0</scanIntervalSeconds> 
-					<daemon>true</daemon> </configuration> </execution> <execution> <id>stop-jetty</id> 
-					<phase>post-integration-test</phase> <goals> <goal>stop</goal> </goals> </execution> 
-					</executions> -->
+                <version>6.1.10</version>
 			</plugin>
 		</plugins>
 	</build>

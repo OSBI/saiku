@@ -21,14 +21,6 @@
     </resource>
 </resources>
 		<plugins>
- <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.0.2</version>
-        <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-        </configuration>
-      </plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -43,20 +35,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			  <plugin>
-                                <groupId>org.apache.maven.plugins</groupId>
-                                <artifactId>maven-source-plugin</artifactId>
-                                <executions>
-                                  <execution>
-                                    <id>attach-sources</id>
-                                    <phase>package</phase>
-                                    <goals>
-                                      <goal>jar</goal>
-                                    </goals>
-                                  </execution>
-                                </executions>
-                        </plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
