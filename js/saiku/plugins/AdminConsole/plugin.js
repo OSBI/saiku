@@ -342,7 +342,7 @@ var AdminConsole = Backbone.View.extend({
             "<input name='jdbcurl' value='<%= conn.jdbcurl %>' type='text'/><br/>" +
             "<label for='schemapath'>Schema:</label>" +
             "<select class='schemaselect' name='schemapath'>" +
-                "<% _.each(schemas, function(path){%>" + "<option><%= path.attributes.path %></option>" + "<%});%>" +
+                "<% _.each(schemas, function(path){%>" + "<option <% if(conn.schema.contains(path.attributes.path)){ print('selected'); } %>><%= path.attributes.path %></option>" + "<%});%>" +
             "</select><br/>" +
             "<label for='driver'>Jdbc Driver: </label><input name='driver' value='<%= conn.driver %>' type='text'/><br/>" +
             "<label for='connusername'>Username: </label><input name='connusername' type='text' value='<%= conn.username %>'/><br/>" +
