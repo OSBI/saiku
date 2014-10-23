@@ -70,7 +70,15 @@
             <name>Analytical Labs Repo-releases</name>
             <url>http://repo.analytical-labs.com/alabs-snapshot-local</url>
         </repository>
-
+        <repository>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <layout>default</layout>
+            <url>http://repo1.maven.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
 
     </repositories>
     <build>
@@ -533,9 +541,9 @@
                 <version>${jersey.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jvnet</groupId>
+                <groupId>org.jvnet.mimepull</groupId>
                 <artifactId>mimepull</artifactId>
-                <version>1.6</version>
+                <version>1.9.4</version>
             </dependency>
             <dependency>
                 <groupId>javax.ws.rs</groupId>

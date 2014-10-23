@@ -80,7 +80,7 @@
 								</artifactItem>
 
 								<artifactItem>
-									<groupId>org.jvnet</groupId>
+                                        <groupId>org.jvnet.mimepull</groupId>
   									<artifactId>mimepull</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
@@ -456,11 +456,11 @@
 			<groupId>com.sun.jersey.contribs</groupId>
 			<artifactId>jersey-multipart</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.jvnet</groupId>
-  			<artifactId>mimepull</artifactId>
-  		</dependency>
-		<dependency>
+        <dependency>
+            <groupId>org.jvnet.mimepull</groupId>
+            <artifactId>mimepull</artifactId>
+        </dependency>
+        <dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-servlet</artifactId>
 		</dependency>
