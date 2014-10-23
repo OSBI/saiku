@@ -2,7 +2,7 @@
 	<parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saiku</groupId>
-        <version>3.1-SNAPSHOT</version>
+        <version>3.0-GA</version>
     </parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -10,7 +10,7 @@
 	<artifactId>saiku-core</artifactId>
 	<packaging>pom</packaging>
 	<name>saiku - core libraries</name>
-       <version>3.1-SNAPSHOT</version>
+       <version>3.0-GA</version>
 	<properties>
 		<maven.compiler.source>1.5</maven.compiler.source>
 		<maven.compiler.target>1.5</maven.compiler.target>
