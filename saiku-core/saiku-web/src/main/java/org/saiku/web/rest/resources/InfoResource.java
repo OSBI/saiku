@@ -16,17 +16,19 @@
 package org.saiku.web.rest.resources;
 
 import org.saiku.service.PlatformUtilsService;
+import org.saiku.service.util.dto.Plugin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -42,15 +44,18 @@ public class InfoResource {
 
   private PlatformUtilsService platformService;
 
-  @Autowired
+  //@Autowired
   public void setPlatformUtilsService(PlatformUtilsService ps) {
     this.platformService = ps;
   }
 
   @GET
   @Produces({"application/json" })
-  public ArrayList getAvailablePlugins() {
+  public Response getAvailablePlugins() {
 
-    return platformService.getAvailablePlugins();
+    GenericEntity<List<Plugin>> entity =
+        new GenericEntity<List<Plugin>>(platformService.getAvailablePlugins())
+        {};
+    return Response.ok(entity).build();
   }
 }

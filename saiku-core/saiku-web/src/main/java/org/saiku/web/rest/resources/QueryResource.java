@@ -101,14 +101,14 @@ public class QueryResource {
 		olapQueryService = olapqs;
 	}
 
-	@Autowired
+	//@Autowired
 	public void setRepository(ISaikuRepository repository){
 		this.repository = repository;
 	}
 
 
 
-	@Autowired
+	//@Autowired
 	public void setOlapDiscoverService(OlapDiscoverService olapds) {
 		olapDiscoverService = olapds;
 	}

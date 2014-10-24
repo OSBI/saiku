@@ -24,7 +24,7 @@ public class PlatformUtilsService {
   }
 
 
-  public ArrayList getAvailablePlugins(){
+  public ArrayList<Plugin> getAvailablePlugins(){
     ArrayList l = new ArrayList<Plugin>(  );
     File f = new File(filePath);
 

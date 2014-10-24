@@ -62,7 +62,7 @@ import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.util.RestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -74,14 +74,14 @@ public class Query2Resource {
 
     private ThinQueryService thinQueryService;
 
-    @Autowired
+    //@Autowired
     public void setThinQueryService(ThinQueryService tqs) {
         thinQueryService = tqs;
     }
 
     private ISaikuRepository repository;
 
-    @Autowired
+    //@Autowired
     public void setRepository(ISaikuRepository repository){
         this.repository = repository;
     }

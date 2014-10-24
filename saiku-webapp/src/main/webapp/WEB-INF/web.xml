@@ -39,7 +39,13 @@
         <param-value>-tcpAllowOthers</param-value>
     </context-param>
 
-	<session-config>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </context-param>
+
+
+    <session-config>
 		<session-timeout>60</session-timeout>
 	</session-config>
 	
@@ -54,21 +60,27 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-	<servlet>
-		<servlet-name>spring</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-	</servlet>
 
- 	<listener>
-		<listener-class>
-			org.springframework.web.context.request.RequestContextListener
-		</listener-class>
-	</listener>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>
+            org.springframework.web.context.request.RequestContextListener
+        </listener-class>
+    </listener>
+
+<!--    <servlet>
+        <servlet-name>spring</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    </servlet>-->
 
     <!-- ====================================================================== -->
     <!-- W E B D A V S E R V L E T -->
     <!-- ====================================================================== -->
-    <servlet>
+ <!--   <servlet>
         <servlet-name>Webdav</servlet-name>
         <description>
             The webdav servlet that connects HTTP request to the repository.
@@ -91,11 +103,11 @@
 
 
         <load-on-startup>4</load-on-startup>
-    </servlet>
+    </servlet>-->
     <!-- ====================================================================== -->
     <!-- J C R R E M O T I N G S E R V L E T -->
     <!-- ====================================================================== -->
-    <servlet>
+    <!--<servlet>
         <servlet-name>JCRWebdavServer</servlet-name>
         <description>
             The servlet used to remote JCR calls over HTTP.
@@ -118,18 +130,18 @@
             <description>JcrRemotingServlet: Optional mapping from node type names to default depth.</description>
         </init-param>
          <load-on-startup>5</load-on-startup>
-    </servlet>
+    </servlet>-->
     <!-- ====================================================================== -->
     <!-- R M I B I N D I N G S E R V L E T -->
     <!-- ====================================================================== -->
-    <servlet>
+    <!--<servlet>
         <servlet-name>RMI</servlet-name>
         <servlet-class>org.apache.jackrabbit.servlet.remote.RemoteBindingServlet</servlet-class>
-    </servlet>
+    </servlet>-->
     <!-- ====================================================================== -->
     <!-- S E R V L E T M A P P I N G -->
     <!-- ====================================================================== -->
-    <servlet-mapping>
+    <!--<servlet-mapping>
         <servlet-name>Webdav</servlet-name>
         <url-pattern>/repository/*</url-pattern>
     </servlet-mapping>
@@ -141,7 +153,7 @@
         <servlet-name>RMI</servlet-name>
         <url-pattern>/rmi</url-pattern>
     </servlet-mapping>
-
+-->
     <servlet>
         <servlet-name>H2Console</servlet-name>
         <servlet-class>org.h2.server.web.WebServlet</servlet-class>
@@ -164,35 +176,60 @@
 
 	<servlet>
     	<servlet-name>jersey2</servlet-name>
-    	<servlet-class>org.codehaus.enunciate.modules.jersey.EnunciateJerseyServletContainer</servlet-class>
+    	<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
     	<init-param>
       		<param-name>com.sun.jersey.config.property.packages</param-name>
-      		<param-value>org.saiku.web</param-value>
+      		<param-value>org.saiku.web;org.codehaus.jackson.jaxrs</param-value>
     	</init-param>
-    	<init-param>
+        <init-param>
+            <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    	<!--<init-param>
       		<param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
       		<param-value>com.sun.jersey.api.container.filter.PostReplaceFilter</param-value>
-    	</init-param>
-<!-- 		<init-param>
-		    <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
-		    <param-value>com.sun.jersey.api.container.filter.GZIPContentEncodingFilter</param-value>
-		</init-param>  -->
-    	<init-param>
+    	</init-param>-->
+        <init-param>
+            <param-name>com.sun.jersey.config.feature.Trace</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>jaxrs.providers</param-name>
+            <param-value>
+                org.saiku.web.rest.SerializableProvider
+            </param-value>
+        </init-param>
+
+
+        <!-- 		<init-param>
+                    <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
+                    <param-value>com.sun.jersey.api.container.filter.GZIPContentEncodingFilter</param-value>
+                </init-param>  -->
+    	<!--<init-param>
       		<param-name>org.codehaus.enunciate.modules.jersey.config.ServletPath</param-name>
       		<param-value>/rest</param-value>
-    	</init-param>
+    	</init-param>-->
     	<load-on-startup>1</load-on-startup>
   	</servlet>
 
 	  <servlet-mapping>
 	    <servlet-name>jersey2</servlet-name>
-	    <url-pattern>/rest/saiku/*</url-pattern>
+	    <url-pattern>/rest/*</url-pattern>
 	  </servlet-mapping>
 
-  <servlet-mapping>
+  <!--<servlet-mapping>
     <servlet-name>jersey2</servlet-name>
     <url-pattern>/rest/saiku/session</url-pattern>
   </servlet-mapping>
 
+    <mime-mapping>
+        <extension>wsdl</extension>
+        <mime-type>text/xml</mime-type>
+    </mime-mapping>
+
+    <mime-mapping>
+        <extension>xsd</extension>
+        <mime-type>text/xml</mime-type>
+    </mime-mapping>-->
 
 </web-app>
