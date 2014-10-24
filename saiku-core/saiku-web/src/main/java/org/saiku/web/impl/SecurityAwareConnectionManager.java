@@ -15,29 +15,25 @@
  */
 package org.saiku.web.impl;
 
-import java.io.Serializable;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import mondrian.olap4j.SaikuMondrianHelper;
-
-import org.apache.commons.lang.StringUtils;
-import org.olap4j.OlapConnection;
-import org.olap4j.OlapException;
 import org.saiku.datasources.connection.AbstractConnectionManager;
 import org.saiku.datasources.connection.ISaikuConnection;
 import org.saiku.datasources.connection.SaikuConnectionFactory;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.service.ISessionService;
+
+import org.apache.commons.lang.StringUtils;
+import org.olap4j.OlapConnection;
+import org.olap4j.OlapException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.io.Serializable;
+import java.sql.Connection;
+import java.util.*;
+import mondrian.olap4j.SaikuMondrianHelper;
 
 public class SecurityAwareConnectionManager extends AbstractConnectionManager implements Serializable {
 
@@ -244,7 +240,8 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 	private List<String> getSpringRoles() {
 		List<String> roles = new ArrayList<String>();
 		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
-			Collection<GrantedAuthority> auths = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+			Collection<? extends GrantedAuthority>
+                auths = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
 			for (GrantedAuthority a : auths) {
 				roles.add(a.getAuthority());
 			}

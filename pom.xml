@@ -35,7 +35,7 @@
         <maven.compiler.source>1.5</maven.compiler.source>
         <maven.compiler.target>1.5</maven.compiler.target>
         <top.dir>${project.basedir}</top.dir>
-        <spring.version>3.2.1.RELEASE</spring.version>
+        <spring.version>4.0.5.RELEASE</spring.version>
         <spring.security.version>3.2.1.RELEASE</spring.security.version>
         <slf4j.version>1.6.4</slf4j.version>
         <enunciate.version>1.28</enunciate.version>
@@ -225,7 +225,7 @@
 <dependency>
 <groupId>org.springframework.security</groupId>
 <artifactId>spring-security-cas</artifactId>
-<version>${spring.version}</version>
+<version>${spring.security.version}</version>
 </dependency>
 	<dependency>
 <groupId>org.jasig.cas.client</groupId>
@@ -406,7 +406,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-ldap</artifactId>
-                <version>${spring.version}</version>
+                <version>${spring.security.version}</version>
             </dependency>
             <!-- Batik/SVG -->
             <dependency>
@@ -791,12 +791,12 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-core</artifactId>
-                <version>${spring.version}</version>
+                <version>${spring.security.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-config</artifactId>
-                <version>${spring.version}</version>
+                <version>${spring.security.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
