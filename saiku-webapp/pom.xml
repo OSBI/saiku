@@ -114,7 +114,13 @@
             </plugin>
 		</plugins>
 	</build>
-	<dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.5</version>
+            <scope>provided</scope>
+        </dependency>
 	<!--	<dependency>
 			<groupId>org.jasig.cas.client</groupId>
 			<artifactId>cas-client-core</artifactId>
@@ -312,10 +318,10 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.hive</groupId>
             <artifactId>hive-jdbc</artifactId>
-        </dependency>
+        </dependency>-->
 
         <dependency>
 			<groupId>commons-dbcp</groupId>
