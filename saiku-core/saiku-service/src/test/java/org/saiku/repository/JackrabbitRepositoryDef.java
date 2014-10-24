@@ -16,23 +16,21 @@
 package org.saiku.repository;
 
 import net.thucydides.core.annotations.Steps;
+
 import org.jbehave.core.annotations.*;
 
-import javax.jcr.RepositoryException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
+import javax.jcr.RepositoryException;
+
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by bugg on 14/05/14.
@@ -45,7 +43,7 @@ public class JackrabbitRepositoryDef {
 
   boolean start = false;
     private String datasource;
-
+  @Pending
     @Given( "the server is starting up" )
   public void givenTheServerIsStartingUp() {
     //data.initializeRepository();
@@ -64,6 +62,7 @@ public class JackrabbitRepositoryDef {
     assertThat( true, is( true ) );
   }
 
+
   @Given( "user Joe has created a valid query" )
   @Pending
   public void givenUserJoeHasCreatedAValidQuery() {
@@ -71,6 +70,7 @@ public class JackrabbitRepositoryDef {
       data.initializeRepository();
       data.startRepository();
   }
+
 
   @When( "the query is saved to Joe's home directory" )
   @Pending
@@ -84,6 +84,7 @@ public class JackrabbitRepositoryDef {
     // PENDING
   }
 
+  @Pending
   @Given( "an existing repository with content" )
   public void givenAnExistingRepositoryWithContent() throws RepositoryException {
       data.initializeRepository();
@@ -111,6 +112,7 @@ byte[] zip = null;
     assertNotNull(zip);
   }
 
+  @Pending
   @Given( "user $username has a valid datasource" )
   public void givenUserAdminHasAValidDatasource(String username) throws IOException {
       data.initializeRepository();
@@ -182,6 +184,7 @@ String ds = "type=OLAP\n" +
   }
 
     String schema;
+  @Pending
   @Given( "user $username has a valid mondrian schema file" )
   public void givenUserAdminHasAValidMondrianSchemaFile(String username) throws IOException {
       data.initializeRepository();
@@ -228,6 +231,7 @@ String ds = "type=OLAP\n" +
     // PENDING
   }
 
+  @Pending
   @Given ("user $username does not exist")
   public void username_does_not_exist(String username){
       data.initializeRepository();
@@ -269,6 +273,7 @@ String ds = "type=OLAP\n" +
     // PENDING
   }
 
+  @Pending
   @Given("$user has a node within his home directory called $folder")
   public void givenJoeHasANodeWithinHisHomeDirectoryCalledTestingfolder1(String user, String folder) throws RepositoryException {
       data.initializeRepository();
@@ -290,6 +295,7 @@ public void thenANewNodeShouldNotBeCreatedAndAnExceptionThrown() throws Reposito
   data.initializeDuplicateUsers( l );
 }
 
+  @Pending
   @Given ("a user called $username already exists")
   public void givenUserCalledJoeAlreadyExists(String username){
       data.initializeRepository();
@@ -302,6 +308,7 @@ public void thenANewNodeShouldNotBeCreatedAndAnExceptionThrown() throws Reposito
     assertThat( names, hasItem( username ) );
   }
 
+  @Pending
   @Given( "user $username has a directory called $folder in his home directory" )
   public void givenUserJoeHasADirectoryCalledDeletetestInHisHomeDirectory(String username, String folder) {
       data.initializeRepository();

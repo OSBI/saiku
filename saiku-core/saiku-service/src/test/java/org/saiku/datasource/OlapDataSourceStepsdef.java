@@ -16,10 +16,15 @@
 package org.saiku.datasource;
 
 
-import net.thucydides.core.annotations.Steps;
-import org.jbehave.core.annotations.*;
 import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.olap.util.exception.SaikuOlapException;
+
+import net.thucydides.core.annotations.Steps;
+
+import org.jbehave.core.annotations.Given;
+import org.jbehave.core.annotations.Pending;
+import org.jbehave.core.annotations.Then;
+import org.jbehave.core.annotations.When;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +44,7 @@ public class OlapDataSourceStepsdef {
   private List<SaikuConnection> connections;
   private SaikuConnection ds;
 
+  @Pending
   @Given("a server has no available data sources")
   public void givenAServerHasNoAvailableDataSources() throws Exception {
     List<String> l = new ArrayList<String>();
@@ -46,6 +52,7 @@ public class OlapDataSourceStepsdef {
     data.load();
   }
 
+  @Pending
   @Given("There are $datasources data sources registered on the server")
   public void there_are_data_sources_registered_on_the_server( int datasources ) throws Exception {
     List<String> l = new ArrayList<String>();
@@ -55,21 +62,25 @@ public class OlapDataSourceStepsdef {
     data.load();
   }
 
+  @Pending
   @Given("The server has not yet been started")
   public void the_server_has_not_yet_been_started() {
 
   }
 
+  @Pending
   @Given("There aren't any data sources registered on the server")
   public void there_arent_any_data_sources_registered() throws Throwable {
     data.createDataSources( null );
     data.load();
   }
 
+  @Pending
   @Given("a null data source is configured in the server")
   public void givenANullDataSourceIsConfiguredInTheServer() {
     data.createDataSources( null );
   }
+
 
 
   @When("I load one data source")
