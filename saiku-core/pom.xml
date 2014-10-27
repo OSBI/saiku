@@ -9,7 +9,7 @@
     <artifactId>saiku-core</artifactId>
     <packaging>pom</packaging>
     <name>saiku - core libraries</name>
-    <version>3.1-GA-SNAPSHOT</version>
+    <version>3.1-SNAPSHOT</version>
     <properties>
         <maven.compiler.source>1.5</maven.compiler.source>
         <maven.compiler.target>1.5</maven.compiler.target>
