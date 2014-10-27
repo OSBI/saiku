@@ -48,7 +48,7 @@ limitations under the License.
     <suppress checks="JavadocPackage" files="src[/\\]test[/\\]java[/\\]"/>
     <suppress checks=".*"
               files="src[/\\]main[/\\]java[/\\]bi[/\\]meteorite[/\\]mondrian[/\\]"/>
-
+    <suppress checks=".*" files="target[/\\]clover[/\\]"/>
     <!-- And likewise in ubenchmark -->
     <suppress checks="JavadocPackage" files="StatementTest.java"/>
 
