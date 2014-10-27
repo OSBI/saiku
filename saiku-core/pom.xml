@@ -6,7 +6,6 @@
         <version>3.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.saiku</groupId>
     <artifactId>saiku-core</artifactId>
     <packaging>pom</packaging>
     <name>saiku - core libraries</name>
