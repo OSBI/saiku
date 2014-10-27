@@ -11,7 +11,9 @@
 	<name>saiku - webapp</name>
 	<packaging>war</packaging>
 
-
+    <properties>
+        <checkstyle.skip>true</checkstyle.skip>
+    </properties>
 	<build>
 		<!-- <outputDirectory>target/WEB-INF/classes</outputDirectory> -->
 		<plugins>

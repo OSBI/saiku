@@ -7,6 +7,7 @@
     font-family: "Helvetica", "Arial";
     font-size: 11px;
 }
+
 .workspace_results table {
     border-bottom: 1px solid #d5d5d5;
     border-right: 1px solid #d5d5d5;
@@ -16,8 +17,15 @@
     border-collapse: separate;
     border-spacing: 0;
 }
-.workspace_results th, .workspace_results td { padding: 3px 9px 3px 4px; }
-.workspace_results td { font-size: 10px; }
+
+.workspace_results th, .workspace_results td {
+    padding: 3px 9px 3px 4px;
+}
+
+.workspace_results td {
+    font-size: 10px;
+}
+
 .workspace_results table th {
     border-left: 1px solid #d5d5d5;
     margin-bottom: 0;
@@ -29,11 +37,13 @@
     text-align: center;
     border: none;
 }
+
 .workspace_results table th.col {
     border-top: 1px solid #d5d5d5;
     background: #f9f9f9;
     text-align: left;
 }
+
 .workspace_results table th.col_total_corner {
     border-top: 1px solid #d5d5d5;
     border-left: 1px none #d5d5d5;
@@ -52,12 +62,14 @@
 .workspace_results table th.col_null {
     background: #f9f9f9;
 }
+
 .workspace_results table th.row {
     border-top: 1px solid #d5d5d5;
     background: #f9f9f9;
     white-space: nowrap;
     text-align: left;
 }
+
 .workspace_results table th.row_total {
     border-left: 1px none #d5d5d5;
     border-top: 1px solid #d5d5d5;
@@ -90,6 +102,7 @@
 .workspace_results table th.row_null {
     background: #f9f9f9;
 }
+
 .workspace_results table td.data {
     border-left: 1px solid #d5d5d5;
     border-top: 1px solid #d5d5d5;
@@ -109,6 +122,7 @@
 .workspace_results table td.cellhighlight:hover {
     background: #c2d5e2 !important;
 }
+
 .workspace_results table td.cellhighlight {
     cursor: pointer;
 }
@@ -117,11 +131,12 @@
 .workspace_results .headerhighlight th.col:hover {
     background: #c2d5e2 !important;
 }
+
 .workspace_results .headerhighlight th.row,
 .workspace_results .headerhighlight th.col {
     cursor: pointer;
 }
 
-.workspace_results table td.selected,.workspace_results table td.ui-selected,.workspace_results table td.ui-selecting {
+.workspace_results table td.selected, .workspace_results table td.ui-selected, .workspace_results table td.ui-selecting {
     background: #c2d5e2 !important;
 }

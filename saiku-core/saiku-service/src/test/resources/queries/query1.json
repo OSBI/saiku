@@ -1,169 +1,185 @@
 {
-  "queryModel" : {
-    "axes" : {
-      "FILTER" : {
-        "mdx" : null,
-        "filters" : [ ],
-        "sortOrder" : null,
-        "sortEvaluationLiteral" : null,
-        "hierarchizeMode" : null,
-        "location" : "FILTER",
-        "hierarchies" : [ ],
-        "nonEmpty" : false,
-        "aggregators" : [ ]
-      },
-      "COLUMNS" : {
-        "mdx" : null,
-        "filters" : [ ],
-        "sortOrder" : "BDESC",
-        "sortEvaluationLiteral" : "[Measures].[Double Profit]",
-        "hierarchizeMode" : null,
-        "location" : "COLUMNS",
-        "hierarchies" : [ {
-          "mdx" : null,
-          "filters" : [ {
-            "flavour" : "N",
-            "operator" : null,
-            "function" : "TopCount",
-            "expressions" : [ "2", "Measures.[Unit Sales]" ]
-          } ],
-          "sortOrder" : null,
-          "sortEvaluationLiteral" : null,
-          "hierarchizeMode" : null,
-          "name" : "[Product]",
-          "caption" : "Product",
-          "dimension" : "Product",
-          "levels" : {
-            "Product Family" : {
-              "mdx" : null,
-              "filters" : [ ],
-              "name" : "Product Family",
-              "caption" : "Product Family",
-              "selection" : {
-                "type" : "EXCLUSION",
-                "members" : [ {
-                  "name" : "Non-Consumable",
-                  "uniqueName" : "[Product].[Non-Consumable]",
-                  "caption" : "Non-Consumable"
-                } ],
-                "parameterName" : null
-              },
-              "aggregators" : [ ]
+    "queryModel": {
+        "axes": {
+            "FILTER": {
+                "mdx": null,
+                "filters": [ ],
+                "sortOrder": null,
+                "sortEvaluationLiteral": null,
+                "hierarchizeMode": null,
+                "location": "FILTER",
+                "hierarchies": [ ],
+                "nonEmpty": false,
+                "aggregators": [ ]
+            },
+            "COLUMNS": {
+                "mdx": null,
+                "filters": [ ],
+                "sortOrder": "BDESC",
+                "sortEvaluationLiteral": "[Measures].[Double Profit]",
+                "hierarchizeMode": null,
+                "location": "COLUMNS",
+                "hierarchies": [
+                    {
+                        "mdx": null,
+                        "filters": [
+                            {
+                                "flavour": "N",
+                                "operator": null,
+                                "function": "TopCount",
+                                "expressions": [ "2", "Measures.[Unit Sales]" ]
+                            }
+                        ],
+                        "sortOrder": null,
+                        "sortEvaluationLiteral": null,
+                        "hierarchizeMode": null,
+                        "name": "[Product]",
+                        "caption": "Product",
+                        "dimension": "Product",
+                        "levels": {
+                            "Product Family": {
+                                "mdx": null,
+                                "filters": [ ],
+                                "name": "Product Family",
+                                "caption": "Product Family",
+                                "selection": {
+                                    "type": "EXCLUSION",
+                                    "members": [
+                                        {
+                                            "name": "Non-Consumable",
+                                            "uniqueName": "[Product].[Non-Consumable]",
+                                            "caption": "Non-Consumable"
+                                        }
+                                    ],
+                                    "parameterName": null
+                                },
+                                "aggregators": [ ]
+                            }
+                        }
+                    },
+                    {
+                        "mdx": null,
+                        "filters": [ ],
+                        "sortOrder": null,
+                        "sortEvaluationLiteral": null,
+                        "hierarchizeMode": null,
+                        "name": "[Education Level]",
+                        "caption": "Education Level",
+                        "dimension": "Education Level",
+                        "levels": {
+                            "Education Level": {
+                                "mdx": null,
+                                "filters": [ ],
+                                "name": "Education Level",
+                                "caption": "Education Level",
+                                "selection": {
+                                    "type": "INCLUSION",
+                                    "members": [ ],
+                                    "parameterName": null
+                                },
+                                "aggregators": [ ]
+                            }
+                        }
+                    }
+                ],
+                "nonEmpty": false,
+                "aggregators": [ ]
+            },
+            "ROWS": {
+                "mdx": null,
+                "filters": [ ],
+                "sortOrder": null,
+                "sortEvaluationLiteral": null,
+                "hierarchizeMode": null,
+                "location": "ROWS",
+                "hierarchies": [
+                    {
+                        "mdx": null,
+                        "filters": [ ],
+                        "sortOrder": null,
+                        "sortEvaluationLiteral": null,
+                        "hierarchizeMode": null,
+                        "name": "[Gender]",
+                        "caption": "Gender",
+                        "dimension": "Gender",
+                        "levels": {
+                            "Gender": {
+                                "mdx": null,
+                                "filters": [ ],
+                                "name": "Gender",
+                                "caption": "Gender",
+                                "selection": {
+                                    "type": "INCLUSION",
+                                    "members": [
+                                        {
+                                            "name": "F",
+                                            "uniqueName": "[Gender].[F]",
+                                            "caption": "F"
+                                        }
+                                    ],
+                                    "parameterName": null
+                                },
+                                "aggregators": [ ]
+                            }
+                        }
+                    }
+                ],
+                "nonEmpty": false,
+                "aggregators": [ ]
             }
-          }
-        }, {
-          "mdx" : null,
-          "filters" : [ ],
-          "sortOrder" : null,
-          "sortEvaluationLiteral" : null,
-          "hierarchizeMode" : null,
-          "name" : "[Education Level]",
-          "caption" : "Education Level",
-          "dimension" : "Education Level",
-          "levels" : {
-            "Education Level" : {
-              "mdx" : null,
-              "filters" : [ ],
-              "name" : "Education Level",
-              "caption" : "Education Level",
-              "selection" : {
-                "type" : "INCLUSION",
-                "members" : [ ],
-                "parameterName" : null
-              },
-              "aggregators" : [ ]
+        },
+        "visualTotals": false,
+        "visualTotalsPattern": null,
+        "lowestLevelsOnly": false,
+        "details": {
+            "axis": "COLUMNS",
+            "location": "BOTTOM",
+            "measures": [
+                {
+                    "name": "Double Profit",
+                    "uniqueName": "[Measures].[Double Profit]",
+                    "caption": "Double Profit",
+                    "type": "CALCULATED"
+                },
+                {
+                    "name": "Unit Sales",
+                    "uniqueName": "[Measures].[Unit Sales]",
+                    "caption": "Unit Sales",
+                    "type": "EXACT"
+                }
+            ]
+        },
+        "calculatedMeasures": [
+            {
+                "name": "Double Profit",
+                "uniqueName": "[Measures].[Double Profit]",
+                "caption": "Double Profit",
+                "properties": {
+                },
+                "formula": "( [Measures].[Store Sales] - [Measures].[Store Cost]) * 2",
+                "hierarchyName": "[Measures]"
             }
-          }
-        } ],
-        "nonEmpty" : false,
-        "aggregators" : [ ]
-      },
-      "ROWS" : {
-        "mdx" : null,
-        "filters" : [ ],
-        "sortOrder" : null,
-        "sortEvaluationLiteral" : null,
-        "hierarchizeMode" : null,
-        "location" : "ROWS",
-        "hierarchies" : [ {
-          "mdx" : null,
-          "filters" : [ ],
-          "sortOrder" : null,
-          "sortEvaluationLiteral" : null,
-          "hierarchizeMode" : null,
-          "name" : "[Gender]",
-          "caption" : "Gender",
-          "dimension" : "Gender",
-          "levels" : {
-            "Gender" : {
-              "mdx" : null,
-              "filters" : [ ],
-              "name" : "Gender",
-              "caption" : "Gender",
-              "selection" : {
-                "type" : "INCLUSION",
-                "members" : [ {
-                  "name" : "F",
-                  "uniqueName" : "[Gender].[F]",
-                  "caption" : "F"
-                } ],
-                "parameterName" : null
-              },
-              "aggregators" : [ ]
-            }
-          }
-        } ],
-        "nonEmpty" : false,
-        "aggregators" : [ ]
-      }
+        ]
     },
-    "visualTotals" : false,
-    "visualTotalsPattern" : null,
-    "lowestLevelsOnly" : false,
-    "details" : {
-      "axis" : "COLUMNS",
-      "location" : "BOTTOM",
-      "measures" : [ {
-        "name" : "Double Profit",
-        "uniqueName" : "[Measures].[Double Profit]",
-        "caption" : "Double Profit",
-        "type" : "CALCULATED"
-      }, {
-        "name" : "Unit Sales",
-        "uniqueName" : "[Measures].[Unit Sales]",
-        "caption" : "Unit Sales",
-        "type" : "EXACT"
-      } ]
+    "cube": {
+        "uniqueName": "[test].[FoodMart].[FoodMart].[Sales]",
+        "name": "Sales",
+        "connection": "test",
+        "catalog": "FoodMart",
+        "schema": "FoodMart",
+        "caption": "Sales",
+        "visible": true
     },
-    "calculatedMeasures" : [ {
-      "name" : "Double Profit",
-      "uniqueName" : "[Measures].[Double Profit]",
-      "caption" : "Double Profit",
-      "properties" : {
-      },
-      "formula" : "( [Measures].[Store Sales] - [Measures].[Store Cost]) * 2",
-      "hierarchyName" : "[Measures]"
-    } ]
-  },
-  "cube" : {
-    "uniqueName" : "[test].[FoodMart].[FoodMart].[Sales]",
-    "name" : "Sales",
-    "connection" : "test",
-    "catalog" : "FoodMart",
-    "schema" : "FoodMart",
-    "caption" : "Sales",
-    "visible" : true
-  },
-  "mdx" : "WITH\nSET [~COLUMNS_Product] AS\n    TopCount(Except({[Product].[Product Family].Members}, {[Product].[Non-Consumable]}), 2, Measures.[Unit Sales])\nSET [~COLUMNS_Education Level] AS\n    {[Education Level].[Education Level].Members}\nMEMBER [Measures].[Double Profit] AS\n    (([Measures].[Store Sales] - [Measures].[Store Cost]) * 2)\nSET [~ROWS] AS\n    {[Gender].[F]}\nSELECT\nCrossJoin(Order(CrossJoin([~COLUMNS_Product], [~COLUMNS_Education Level]), [Measures].[Double Profit], BDESC), {[Measures].[Double Profit], [Measures].[Unit Sales]}) ON COLUMNS,\n[~ROWS] ON ROWS\nFROM [Sales]",
-  "name" : "query1",
-  "parameters" : {
-  },
-  "plugins" : {
-  },
-  "properties" : {
-  },
-  "metadata" : {
-  },
-  "queryType" : "OLAP",
-  "type" : "QUERYMODEL"
+    "mdx": "WITH\nSET [~COLUMNS_Product] AS\n    TopCount(Except({[Product].[Product Family].Members}, {[Product].[Non-Consumable]}), 2, Measures.[Unit Sales])\nSET [~COLUMNS_Education Level] AS\n    {[Education Level].[Education Level].Members}\nMEMBER [Measures].[Double Profit] AS\n    (([Measures].[Store Sales] - [Measures].[Store Cost]) * 2)\nSET [~ROWS] AS\n    {[Gender].[F]}\nSELECT\nCrossJoin(Order(CrossJoin([~COLUMNS_Product], [~COLUMNS_Education Level]), [Measures].[Double Profit], BDESC), {[Measures].[Double Profit], [Measures].[Unit Sales]}) ON COLUMNS,\n[~ROWS] ON ROWS\nFROM [Sales]",
+    "name": "query1",
+    "parameters": {
+    },
+    "plugins": {
+    },
+    "properties": {
+    },
+    "metadata": {
+    },
+    "queryType": "OLAP",
+    "type": "QUERYMODEL"
 }

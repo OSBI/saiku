@@ -1,24 +1,30 @@
-/*  
- *   Copyright 2012 OSBI Ltd
+/*
+ * Copyright 2014 OSBI Ltd
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.saiku.olap.dto.resultset;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * AbstractBaseCell.
+ */
 public abstract class AbstractBaseCell implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -33,18 +39,20 @@ public abstract class AbstractBaseCell implements Serializable {
    */
   private String rawValue;
 
-  public boolean right = false;
+  boolean right = false;
 
-  public boolean sameAsPrev = false;
+  boolean sameAsPrev = false;
 
+  @Nullable
   private String parentDimension = null;
 
-  private HashMap<String, String> properties = new HashMap<String, String>();
+  @NotNull
+  private final HashMap<String, String> properties = new HashMap<String, String>();
 
   /**
    * Blank Constructor for serialization dont use.
    */
-  public AbstractBaseCell() {
+  AbstractBaseCell() {
     super();
   }
 
@@ -54,7 +62,7 @@ public abstract class AbstractBaseCell implements Serializable {
    * @param right
    * @param sameAsPrev
    */
-  public AbstractBaseCell( final boolean right, final boolean sameAsPrev ) {
+  public AbstractBaseCell(final boolean right, final boolean sameAsPrev) {
     this.right = right;
     this.sameAsPrev = sameAsPrev;
   }
@@ -82,7 +90,7 @@ public abstract class AbstractBaseCell implements Serializable {
    *
    * @param formattedValue the new formatted value
    */
-  public void setFormattedValue( final String formattedValue ) {
+  public void setFormattedValue(final String formattedValue) {
     this.formattedValue = formattedValue;
   }
 
@@ -91,17 +99,15 @@ public abstract class AbstractBaseCell implements Serializable {
    *
    * @param rawValue the new raw value
    */
-  public void setRawValue( final String rawValue ) {
+  public void setRawValue(final String rawValue) {
     this.rawValue = rawValue;
   }
 
   /**
    * TODO JAVADOC
-   *
-   * @param set
    */
-  public void setRight( final boolean set ) {
-    this.right = set;
+  public void setRight() {
+    this.right = false;
   }
 
   /**
@@ -109,11 +115,11 @@ public abstract class AbstractBaseCell implements Serializable {
    *
    * @param same
    */
-  public void setSameAsPrev( final boolean same ) {
+  public void setSameAsPrev(final boolean same) {
     this.sameAsPrev = same;
   }
 
-  /*
+  /**
    * (non-Javadoc)
    *
    * @see java.lang.Object#toString()
@@ -126,23 +132,25 @@ public abstract class AbstractBaseCell implements Serializable {
   /**
    * TODO JAVADOC
    */
-  public void setParentDimension( final String pdim ) {
+  public void setParentDimension(final String pdim) {
     parentDimension = pdim;
   }
 
+  @Nullable
   public String getParentDimension() {
     return parentDimension;
   }
 
-  public void setProperty( String name, String value ) {
-    properties.put( name, value );
+  public void setProperty(String name, String value) {
+    properties.put(name, value);
   }
 
+  @NotNull
   public Map<String, String> getProperties() {
     return properties;
   }
 
-  public String getProperty( String name ) {
-    return properties.get( name );
+  public String getProperty(String name) {
+    return properties.get(name);
   }
 }

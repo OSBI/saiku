@@ -10,7 +10,9 @@
 	<packaging>jar</packaging>
 	<version>3.1-SNAPSHOT</version>
 	<name>saiku biserver plugin</name>
-
+    <properties>
+        <checkstyle.skip>true</checkstyle.skip>
+    </properties>
 	<build>
 		<plugins>
 			<plugin>

@@ -1,22 +1,25 @@
-/*  
- *   Copyright 2012 OSBI Ltd
+/*
+ * Copyright 2014 OSBI Ltd
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.saiku.olap.dto;
 
 import java.util.List;
 
+/**
+ * SaikuAxis.
+ */
 public class SaikuAxis extends AbstractSaikuObject {
 
   private List<SaikuDimensionSelection> dimensionSelections;
@@ -30,13 +33,13 @@ public class SaikuAxis extends AbstractSaikuObject {
   private String totalFunction;
 
   public SaikuAxis() {
-    super( null, null );
-    throw new RuntimeException( "Unsupported Constructor. Serialization only" );
+    super(null, null);
+    throw new RuntimeException("Unsupported Constructor. Serialization only");
   }
 
-  public SaikuAxis( String name, int ordinal, String uniqueName, List<SaikuDimensionSelection> dimsel, String sortOrder,
-                    String sortLiteral, String totalFunction ) {
-    super( uniqueName, name );
+  public SaikuAxis(String name, int ordinal, String uniqueName, List<SaikuDimensionSelection> dimsel, String sortOrder,
+                   String sortLiteral, String totalFunction) {
+    super(uniqueName, name);
     this.dimensionSelections = dimsel;
     this.ordinal = ordinal;
     this.sortOrder = sortOrder;
@@ -74,7 +77,7 @@ public class SaikuAxis extends AbstractSaikuObject {
   /**
    * @param limitFunction the limitFunction to set
    */
-  public void setLimitFunction( String limitFunction ) {
+  public void setLimitFunction(String limitFunction) {
     this.limitFunction = limitFunction;
   }
 
@@ -88,7 +91,7 @@ public class SaikuAxis extends AbstractSaikuObject {
   /**
    * @param limitFunctionN the limitFunctionN to set
    */
-  public void setLimitFunctionN( String limitFunctionN ) {
+  public void setLimitFunctionN(String limitFunctionN) {
     this.limitFunctionN = limitFunctionN;
   }
 
@@ -102,7 +105,7 @@ public class SaikuAxis extends AbstractSaikuObject {
   /**
    * @param limitFunctionSortLiteral the limitFunctionSortLiteral to set
    */
-  public void setLimitFunctionSortLiteral( String limitFunctionSortLiteral ) {
+  public void setLimitFunctionSortLiteral(String limitFunctionSortLiteral) {
     this.limitFunctionSortLiteral = limitFunctionSortLiteral;
   }
 
@@ -116,7 +119,7 @@ public class SaikuAxis extends AbstractSaikuObject {
   /**
    * @param filterCondition the filterCondition to set
    */
-  public void setFilterCondition( String filterCondition ) {
+  public void setFilterCondition(String filterCondition) {
     this.filterCondition = filterCondition;
   }
 

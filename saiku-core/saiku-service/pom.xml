@@ -1,103 +1,103 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>saiku-core</artifactId>
         <groupId>org.saiku</groupId>
         <version>3.1-GA-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.saiku</groupId>
     <artifactId>saiku-service</artifactId>
     <version>3.1-SNAPSHOT</version>
     <name>saiku - services</name>
     <build>
         <plugins>
-        			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.12.4</version>
-				<configuration>
-					<argLine> -Xmx512m</argLine>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>mondrian-data-foodmart-hsql</groupId>
-									<artifactId>mondrian-data-foodmart-hsql</artifactId>
-  									<version>0.1</version>
-									<type>jar</type>
-									<outputDirectory>target/</outputDirectory>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			 <plugin>
-			        <groupId>org.apache.maven.plugins</groupId>
-			        <artifactId>maven-source-plugin</artifactId>
-			        <executions>
-			          <execution>
-			            <id>attach-sources</id>
-			            <phase>package</phase>
-			            <goals>
-			              <goal>jar</goal>
-			            </goals>
-			          </execution>
-			        </executions>
-		        </plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.2</version>
-				<executions>
-					<execution>
-						<id>test</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<tasks>
-								<echo message="Prepare Test. Unzipping foodmart" />
-								<unzip dest="target/test-classes/">
-									<fileset dir="target/">
-										<include name="mondrian-data*.jar" />
-									</fileset>
-								</unzip>
-								<echo message="Unzipped!" />
-                  <unzip dest="target/test/">
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.4</version>
+                <configuration>
+                    <argLine>-Xmx512m</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>mondrian-data-foodmart-hsql</groupId>
+                                    <artifactId>mondrian-data-foodmart-hsql</artifactId>
+                                    <version>0.1</version>
+                                    <type>jar</type>
+                                    <outputDirectory>target/</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <id>test</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <echo message="Prepare Test. Unzipping foodmart"/>
+                                <unzip dest="target/test-classes/">
+                                    <fileset dir="target/">
+                                        <include name="mondrian-data*.jar"/>
+                                    </fileset>
+                                </unzip>
+                                <echo message="Unzipped!"/>
+                                <unzip dest="target/test/">
                                     <fileset dir="${basedir}/../../util/">
-                                        <include name="foodmart_hsql.script.zip" />
+                                        <include name="foodmart_hsql.script.zip"/>
                                     </fileset>
                                 </unzip>
                                 <copy todir="target/test/foodmart/">
                                     <fileset dir="${basedir}/../../util/">
-                                        <include name="FoodMart.xml" />
+                                        <include name="FoodMart.xml"/>
                                     </fileset>
                                 </copy>
 
                                 <copy todir="target/test-classes/org/saiku/" overwrite="true">
                                     <fileset dir="target/test/">
-                                        <include name="foodmart_hsql.script" />
+                                        <include name="foodmart_hsql.script"/>
                                     </fileset>
                                 </copy>
 
-							</tasks>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -117,41 +117,41 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-          <plugin>
-            <groupId>net.thucydides.maven.plugins</groupId>
-            <artifactId>maven-thucydides-plugin</artifactId>
-            <version>0.9.229</version>
-            <executions>
-              <execution>
-                <id>thucydides-reports</id>
-                <phase>post-integration-test</phase>
-                <goals>
-                  <goal>aggregate</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
+            <plugin>
+                <groupId>net.thucydides.maven.plugins</groupId>
+                <artifactId>maven-thucydides-plugin</artifactId>
+                <version>0.9.229</version>
+                <executions>
+                    <execution>
+                        <id>thucydides-reports</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
-    <dependency>
+        <dependency>
             <groupId>org.saiku</groupId>
             <artifactId>saiku-query</artifactId>
-     </dependency>
-		<dependency>
-			<groupId>org.saiku</groupId>
-			<artifactId>saiku-olap-util</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-log4j12</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        </dependency>
+        <dependency>
+            <groupId>org.saiku</groupId>
+            <artifactId>saiku-olap-util</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>org.olap4j</groupId>
             <artifactId>olap4j</artifactId>
@@ -193,18 +193,18 @@
             </exclusions>
         </dependency>
         <dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
-			<scope>compile</scope>
-		</dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
         </dependency>
         <dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi-ooxml</artifactId>
-		</dependency>        
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+        </dependency>
         <dependency>
             <groupId>eigenbase</groupId>
             <artifactId>eigenbase-properties</artifactId>
@@ -221,26 +221,26 @@
             <groupId>org.olap4j</groupId>
             <artifactId>olap4j-xmla</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom</artifactId>
         </dependency>
 
-     <!--   <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.4</version>
-        </dependency>-->
+        <!--   <dependency>
+               <groupId>commons-io</groupId>
+               <artifactId>commons-io</artifactId>
+               <version>1.4</version>
+           </dependency>-->
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
         </dependency>
 
-     <!-- <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>-->
+        <!-- <dependency>
+               <groupId>org.slf4j</groupId>
+               <artifactId>slf4j-log4j12</artifactId>
+           </dependency>-->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -249,14 +249,14 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
         </dependency>
-      <dependency>
-        <groupId>javax.jcr</groupId>
-        <artifactId>jcr</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.jackrabbit</groupId>
-        <artifactId>jackrabbit-core</artifactId>
-      </dependency>
+        <dependency>
+            <groupId>javax.jcr</groupId>
+            <artifactId>jcr</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>jackrabbit-jcr-server</artifactId>
@@ -265,7 +265,7 @@
             <groupId>org.apache.jackrabbit</groupId>
             <artifactId>jackrabbit-jcr-servlet</artifactId>
         </dependency>
-      <dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
@@ -279,51 +279,51 @@
             <scope>compile</scope>
         </dependency>
 
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-beans</artifactId>
-      </dependency>
-      <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-all</artifactId>
-        <scope>test</scope>
-      </dependency>
-<!--
-      <dependency>
-        <groupId>net.thucydides</groupId>
-        <artifactId>thucydides-core</artifactId>
-        <version>0.9.245-SNAPSHOT</version>
-        <scope>test</scope>
-      </dependency>
--->
-      <dependency>
-        <groupId>net.thucydides</groupId>
-        <artifactId>thucydides-jbehave-plugin</artifactId>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>commons-io</groupId>
-        <artifactId>commons-io</artifactId>
-      </dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>mondrian-data-foodmart-hsql</groupId>
-  			<artifactId>mondrian-data-foodmart-hsql</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-  			<artifactId>jackson-jaxrs</artifactId>
-			<scope>test</scope>
-		</dependency>
         <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-jdbc</artifactId>
-    </dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!--
+              <dependency>
+                <groupId>net.thucydides</groupId>
+                <artifactId>thucydides-core</artifactId>
+                <version>0.9.245-SNAPSHOT</version>
+                <scope>test</scope>
+              </dependency>
+        -->
+        <dependency>
+            <groupId>net.thucydides</groupId>
+            <artifactId>thucydides-jbehave-plugin</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>mondrian-data-foodmart-hsql</groupId>
+            <artifactId>mondrian-data-foodmart-hsql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-jaxrs</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
@@ -338,17 +338,17 @@
         </dependency>
 
         <dependency>
-        <groupId>com.h2database</groupId>
-        <artifactId>h2</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-annotations</artifactId>
-      </dependency>
-      <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-core</artifactId>
-      </dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
 
     </dependencies>
 </project>

@@ -1,6 +1,24 @@
+/*
+ * Copyright 2014 OSBI Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.saiku.repository;
 
 import org.saiku.datasources.datasource.SaikuDatasource;
+
+import org.jetbrains.annotations.NotNull;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -12,108 +30,109 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class DataSource {
 
-    private String encryptpassword;
-    private String id;
-    private String type;
-    private String name;
-    private String driver;
-    private String location;
-    private String username;
-    private String password;
-    private String path;
+  private String encryptpassword;
+  private String id;
+  private String type;
+  private String name;
+  private String driver;
+  private String location;
+  private String username;
+  private String password;
+  private String path;
 
-    public DataSource(SaikuDatasource datasource) {
-        this.type = datasource.getType().toString();
-        this.name = datasource.getName();
-        this.driver = datasource.getProperties().getProperty("driver");
-        this.location = datasource.getProperties().getProperty("location");
-        this.username = datasource.getProperties().getProperty("username");
-        this.password = datasource.getProperties().getProperty("password");
-        this.id = datasource.getProperties().getProperty("id");
-        this.encryptpassword = datasource.getProperties().getProperty("encrypt.password");
-    }
+  public DataSource(@NotNull SaikuDatasource datasource) {
+    this.type = datasource.getType().toString();
+    this.name = datasource.getName();
+    this.driver = datasource.getProperties().getProperty("driver");
+    this.location = datasource.getProperties().getProperty("location");
+    this.username = datasource.getProperties().getProperty("username");
+    this.password = datasource.getProperties().getProperty("password");
+    this.id = datasource.getProperties().getProperty("id");
+    this.encryptpassword = datasource.getProperties().getProperty("encrypt.password");
+  }
 
-    public DataSource(){
+  public DataSource() {
 
-    }
-    public String getPassword() {
-        return password;
-    }
+  }
 
-    @XmlElement
-    public void setPassword(String password) {
-        this.password = password;
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    public String getUsername() {
-        return username;
-    }
+  @XmlElement
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-    @XmlElement
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public String getLocation() {
-        return location;
-    }
+  @XmlElement
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    @XmlElement
-    public void setLocation(String location) {
-        this.location = location;
-    }
+  public String getLocation() {
+    return location;
+  }
 
-    public String getDriver() {
-        return driver;
-    }
+  @XmlElement
+  public void setLocation(String location) {
+    this.location = location;
+  }
 
-    @XmlElement
-    public void setDriver(String driver) {
-        this.driver = driver;
-    }
+  public String getDriver() {
+    return driver;
+  }
 
-    public String getName() {
-        return name;
-    }
+  @XmlElement
+  public void setDriver(String driver) {
+    this.driver = driver;
+  }
 
-    @XmlElement
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getType() {
-        return type;
-    }
+  @XmlElement
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    @XmlElement
-    public void setType(String type) {
-        this.type = type;
-    }
+  public String getType() {
+    return type;
+  }
 
-    public String getId() {
-        return id;
-    }
+  @XmlElement
+  public void setType(String type) {
+    this.type = type;
+  }
 
-    @XmlElement
-    public void setId(String id) {
-        this.id = id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    @XmlElement
-    public void setPath(String path) {
-        this.path = path;
-    }
+  @XmlElement
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public String getPath() {
-        return path;
-    }
+  @XmlElement
+  public void setPath(String path) {
+    this.path = path;
+  }
 
-    @XmlElement
-    public String getEncryptpassword() {
-        return encryptpassword;
-    }
+  public String getPath() {
+    return path;
+  }
 
-    public void setEncryptpassword(String encryptpassword) {
-        this.encryptpassword = encryptpassword;
-    }
+  @XmlElement
+  public String getEncryptpassword() {
+    return encryptpassword;
+  }
+
+  public void setEncryptpassword(String encryptpassword) {
+    this.encryptpassword = encryptpassword;
+  }
 }

@@ -95,6 +95,7 @@
     <bean id="queryResource2" scope="request"
           class="org.saiku.web.rest.resources.Query2Resource">
         <property name="thinQueryService" ref="thinQueryBean" />
+        <property name="repository" ref="basicRepositoryResource2"/>
     </bean>
 
     <bean id="sessionResource" class="org.saiku.web.rest.resources.SessionResource">

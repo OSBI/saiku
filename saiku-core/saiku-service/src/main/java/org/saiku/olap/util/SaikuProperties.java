@@ -1,29 +1,26 @@
-/*  
- *   Copyright 2012 OSBI Ltd
+/*
+ * Copyright 2014 OSBI Ltd
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.saiku.olap.util;
 
 import org.apache.commons.lang.LocaleUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -31,14 +28,18 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Properties;
 
+/**
+ * SaikuProperties.
+ */
 public class SaikuProperties extends Properties {
 
 
   private static final long serialVersionUID = 4835692048422342660L;
 
-  private static final Logger log = LoggerFactory.getLogger( SaikuProperties.class );
+  private static final Logger LOG = LoggerFactory.getLogger(SaikuProperties.class);
 
 
+  @NotNull
   private final PropertySource propertySource;
   private int populateCount;
 
@@ -52,18 +53,21 @@ public class SaikuProperties extends Properties {
    * @return Singleton instance
    */
   private static synchronized SaikuProperties instance() {
-    if ( instance == null ) {
+    if (instance == null) {
       instance = new SaikuProperties();
       instance.populate();
     }
     return instance;
   }
 
-  public SaikuProperties() {
+  private SaikuProperties() {
     this.propertySource =
-      new FilePropertySource( new File( SAIKU_PROPERTIES ) );
+        new FilePropertySource(new File(SAIKU_PROPERTIES));
   }
 
+  /**
+   * PropertySource.
+   */
   public interface PropertySource {
     InputStream openStream();
 
@@ -72,35 +76,40 @@ public class SaikuProperties extends Properties {
     String getDescription();
   }
 
+  /**
+   * FilePropertySource.
+   */
   static class FilePropertySource implements PropertySource {
     private final File file;
     private long lastModified;
 
-    FilePropertySource( File file ) {
+    FilePropertySource(File file) {
       this.file = file;
       this.lastModified = 0;
     }
 
+    @NotNull
     public InputStream openStream() {
       try {
         this.lastModified = file.lastModified();
-        FileInputStream in = new FileInputStream( file );
-        log.info( "Opening properties file: '" + file + "'" );
+        FileInputStream in = new FileInputStream(file);
+        LOG.info("Opening properties file: '" + file + "'");
         return in;
-      } catch ( FileNotFoundException e ) {
+      } catch (FileNotFoundException e) {
         throw new RuntimeException(
-          "Error while opening properties file: '" + file + "'", e );
+            "Error while opening properties file: '" + file + "'", e);
       }
     }
 
     public boolean isStale() {
       return file.exists()
-        && file.lastModified() > this.lastModified;
+             && file.lastModified() > this.lastModified;
     }
 
+    @NotNull
     public String getDescription() {
       return "file=" + file.getAbsolutePath()
-        + " (exists=" + file.exists() + ")";
+             + " (exists=" + file.exists() + ")";
     }
   }
 
@@ -111,15 +120,15 @@ public class SaikuProperties extends Properties {
     private final URL url;
     private long lastModified;
 
-    UrlPropertySource( URL url ) {
+    UrlPropertySource(URL url) {
       this.url = url;
     }
 
     private URLConnection getConnection() {
       try {
         return url.openConnection();
-      } catch ( IOException e ) {
-        throw new RuntimeException( "Error while opening properties file '" + url + "'", e );
+      } catch (IOException e) {
+        throw new RuntimeException("Error while opening properties file '" + url + "'", e);
       }
     }
 
@@ -128,10 +137,10 @@ public class SaikuProperties extends Properties {
         final URLConnection connection = getConnection();
         this.lastModified = connection.getLastModified();
         return connection.getInputStream();
-      } catch ( IOException e ) {
+      } catch (IOException e) {
         throw new RuntimeException(
-          "Error while opening properties file '" + url + "'",
-          e );
+            "Error while opening properties file '" + url + "'",
+            e);
       }
     }
 
@@ -148,136 +157,138 @@ public class SaikuProperties extends Properties {
   /**
    * Loads saiku.properties from: 1) the file "$PWD/" 2) CLASSPATH 3) the system properties
    */
-  public void populate() {
-    loadIfStale( propertySource );
+  void populate() {
+    loadIfStale(propertySource);
 
     URL url = null;
-    File file = new File( SAIKU_PROPERTIES );
-    if ( file.exists() && file.isFile() ) {
+    File file = new File(SAIKU_PROPERTIES);
+    if (file.exists() && file.isFile()) {
       // Read properties file "saiku.properties" from PWD, if it exists.
       try {
         url = file.toURI().toURL();
-      } catch ( MalformedURLException e ) {
-        log.warn(
-          "Saiku: file '"
+      } catch (MalformedURLException e) {
+        LOG.warn(
+            "Saiku: file '"
             + file.getAbsolutePath()
             + "' could not be loaded",
-          e
+            e
         );
       }
     } else {
       // Then try load it from classloader
       url =
-        SaikuProperties.class.getClassLoader().getResource(
-          SAIKU_PROPERTIES );
+          SaikuProperties.class.getClassLoader().getResource(
+              SAIKU_PROPERTIES);
     }
 
-    if ( url != null ) {
-      load( new UrlPropertySource( url ) );
+    if (url != null) {
+      load(new UrlPropertySource(url));
     } else {
-      log.warn(
-        "saiku.properties can't be found under '"
-          + new File( "." ).getAbsolutePath() + "' or classloader"
+      LOG.warn(
+          "saiku.properties can't be found under '"
+          + new File(".").getAbsolutePath() + "' or classloader"
       );
     }
 
     // copy in all system properties which start with "saiku."
     int count = 0;
-    for ( Enumeration<Object> keys = System.getProperties().keys();
-          keys.hasMoreElements(); ) {
+    for (Enumeration<Object> keys = System.getProperties().keys();
+      //@formatter:off
+         keys.hasMoreElements();) {
+        //@formatter:on
       String key = (String) keys.nextElement();
-      String value = System.getProperty( key );
-      if ( key.startsWith( "saiku." ) ) {
-        if ( log.isDebugEnabled() ) {
-          log.debug( "System property : populate: key=" + key + ", value=" + value );
+      String value = System.getProperty(key);
+      if (key.startsWith("saiku.")) {
+        if (LOG.isDebugEnabled()) {
+          LOG.debug("System property : populate: key=" + key + ", value=" + value);
         }
-        instance.setProperty( key, value );
+        instance.setProperty(key, value);
         count++;
       }
     }
-    if ( populateCount++ == 0 ) {
-      log.info(
-        "Saiku: loaded " + count + " system properties" );
+    if (populateCount++ == 0) {
+      LOG.info(
+          "Saiku: loaded " + count + " system properties");
     }
   }
 
-  private void loadIfStale( PropertySource source ) {
-    if ( source.isStale() ) {
-      if ( log.isDebugEnabled() ) {
-        log.debug( "Saiku: loading " + source.getDescription() );
+  private void loadIfStale(@NotNull PropertySource source) {
+    if (source.isStale()) {
+      if (LOG.isDebugEnabled()) {
+        LOG.debug("Saiku: loading " + source.getDescription());
       }
-      load( source );
+      load(source);
     }
   }
 
-  private void load( final PropertySource source ) {
+  private void load(@NotNull final PropertySource source) {
     try {
-      instance.load( source.openStream() );
-      if ( populateCount == 0 ) {
-        log.info(
-          "Saiku: properties loaded from '"
+      instance.load(source.openStream());
+      if (populateCount == 0) {
+        LOG.info(
+            "Saiku: properties loaded from '"
             + source.getDescription()
             + "'"
         );
-        instance.list( System.out );
+        instance.list(System.out);
       }
-    } catch ( IOException e ) {
-      log.error(
-        "Saiku: error while loading properties "
+    } catch (IOException e) {
+      LOG.error(
+          "Saiku: error while loading properties "
           + "from '" + source.getDescription() + "' (" + e.getMessage() + ")"
       );
     }
   }
 
 
-  public static final Boolean olapDefaultNonEmpty = getPropBoolean( "saiku.olap.nonempty", "false" );
-  public static final String webExportCsvName = getPropString( "saiku.web.export.csv.name", "saiku-export" );
-  public static final String webExportCsvDelimiter = getPropString( "saiku.web.export.csv.delimiter", "," );
-  public static final String webExportCsvTextEscape = getPropString( "saiku.web.export.csv.textEscape", "\"" );
-  public static final String webExportCsvTextEncoding = getPropString( "saiku.web.export.csv.textEncoding", "UTF-8" );
-  public static final Boolean webExportCsvUseFormattedValue =
-    getPropBoolean( "saiku.web.export.csv.useFormattedValue", "false" );
-  public static final String webExportCsvNumberFormat = getPropString( "saiku.web.export.csv.numberformat", "#,##.00" );
-  public static final String webExportCsvDateFormat = getPropString( "saiku.web.export.csv.dateformat", "dd-MMM-yyyy" );
-  public static final String webExportCsvTimestampFormat =
-    getPropString( "saiku.web.export.csv.timestampformat", "dd-MMM-yyyy HH:mm:ss" );
-  public static final String webExportExcelName = getPropString( "saiku.web.export.excel.name", "saiku-export" );
-  public static final String webExportExcelFormat = getPropString( "saiku.web.export.excel.format", "xlsx" );
-  public static final String webExportExcelDefaultNumberFormat =
-    getPropString( "saiku.web.export.excel.numberformat", "#,##0.00" );
-  public static final String formatDefautNumberFormat = getPropString( "saiku.format.numberformat", "#,##0.00" );
-  public static final Locale locale = getLocale();
-  public static final Boolean olapConvertQuery = getPropBoolean( "saiku.olap.convert.query", "false" );
+  public static final Boolean OLAPEFAULTNONEMPTY = getPropBoolean("saiku.olap.nonempty");
+  public static final String WEBEXPORTCSVNAME = getPropString("saiku.web.export.csv.name", "saiku-export");
+  public static final String WEBEXPORTCSVDELIMITER = getPropString("saiku.web.export.csv.delimiter", ",");
+  public static final String WEBEXPORTCSVTEXTESCAPE = getPropString("saiku.web.export.csv.textEscape", "\"");
+  public static final String WEBEXPORTCSVTEXTENCODING = getPropString("saiku.web.export.csv.textEncoding", "UTF-8");
+  public static final Boolean WEBEXPORTCSVUSEFORMATTEDVALUE =
+      getPropBoolean("saiku.web.export.csv.useFormattedValue");
+  public static final String WEBEXPORTCSVNUMBERFORMAT = getPropString("saiku.web.export.csv.numberformat", "#,##.00");
+  public static final String WEBEXPORTCSVDATEFORMAT = getPropString("saiku.web.export.csv.dateformat", "dd-MMM-yyyy");
+  public static final String WEBEXPORTCSVTIMESTAMPFORMAT =
+      getPropString("saiku.web.export.csv.timestampformat", "dd-MMM-yyyy HH:mm:ss");
+  public static final String WEBEXPORTEXCELNAME = getPropString("saiku.web.export.excel.name", "saiku-export");
+  public static final String WEBEXPORTEXCELFORMAT = getPropString("saiku.web.export.excel.format", "xlsx");
+  public static final String WEBEXPORTEXCELDEFAULTNUMBERFORMAT =
+      getPropString("saiku.web.export.excel.numberformat", "#,##0.00");
+  public static final String FORMATDEFAULTNUMBERFORMAT = getPropString("saiku.format.numberformat", "#,##0.00");
+  public static final Locale LOCALE = getLocale();
+  public static final Boolean OLAPCONVERTQUERY = getPropBoolean("saiku.olap.convert.query");
 
   private static Locale getLocale() {
     String locale = null;
     try {
-      locale = getPropString( "saiku.format.default.locale", null );
-      if ( locale != null ) {
-        return LocaleUtils.toLocale( locale );
+      locale = getPropString("saiku.format.default.LOCALE", null);
+      if (locale != null) {
+        return LocaleUtils.toLocale(locale);
       }
-    } catch ( Exception e ) {
-      log.warn( "Property: saiku.format.default.locale with value: " + locale
-        + ", cannot be used for a Locale, falling back to default locale: " + Locale.getDefault(), e );
+    } catch (Exception e) {
+      LOG.warn("Property: saiku.format.default.LOCALE with value: " + locale
+               + ", cannot be used for a Locale, falling back to default LOCALE: " + Locale.getDefault(), e);
     }
 
     return Locale.getDefault();
   }
 
-  private static Boolean getPropBoolean( String key, String defaultValue ) {
+  private static Boolean getPropBoolean(String key) {
     Boolean ret;
-    if ( instance.containsKey( key ) ) {
-      ret = Boolean.parseBoolean( instance.getProperty( key ) );
+    if (instance.containsKey(key)) {
+      ret = Boolean.parseBoolean(instance.getProperty(key));
     } else {
-      ret = Boolean.parseBoolean( defaultValue );
+      ret = Boolean.parseBoolean("false");
     }
     return ret;
   }
 
-  private static String getPropString( String key, String defaultValue ) {
+  private static String getPropString(String key, String defaultValue) {
     String ret;
-    if ( instance.containsKey( key ) ) {
-      ret = instance.getProperty( key );
+    if (instance.containsKey(key)) {
+      ret = instance.getProperty(key);
     } else {
       ret = defaultValue;
     }

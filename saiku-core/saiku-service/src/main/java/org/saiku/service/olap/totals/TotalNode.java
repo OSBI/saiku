@@ -1,57 +1,79 @@
+/*
+ * Copyright 2014 OSBI Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.saiku.service.olap.totals;
 
-import org.olap4j.Cell;
-import org.olap4j.metadata.Measure;
 import org.saiku.service.olap.totals.aggregators.TotalAggregator;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.olap4j.Cell;
+import org.olap4j.metadata.Measure;
 
+/**
+ * TotalNode.
+ */
 public class TotalNode {
-  final String captions[];
-  final TotalAggregator totals[][];
-  final boolean showsTotals;
-  final int cellsAdded;
-  int span;
-  int width;
+  @Nullable
+  private final String[] captions;
+  @NotNull
+  private final TotalAggregator[][] totals;
+  private final boolean showsTotals;
+  private final int cellsAdded;
+  private int span;
+  private int width;
 
-  public TotalNode( String[] captions, Measure[] measures, TotalAggregator aggregatorTemplate, FormatList formatList,
-                    int count ) {
+  public TotalNode(
+      @Nullable String[] captions, Measure[] measures, @Nullable TotalAggregator aggregatorTemplate,
+      @NotNull FormatList formatList,
+      int count) {
     this.captions = captions;
     showsTotals = aggregatorTemplate != null;
 
-    if ( showsTotals ) {
+    if (showsTotals) {
       cellsAdded = captions != null ? captions.length : 1;
-      totals = new TotalAggregator[ cellsAdded ][ count ];
+      totals = new TotalAggregator[cellsAdded][count];
 
-      if ( aggregatorTemplate != null ) {
-        for ( int i = 0; i < totals.length; i++ ) {
-          for ( int j = 0; j < totals[ 0 ].length; j++ ) {
-            totals[ i ][ j ] = aggregatorTemplate.newInstance( formatList.getValueFormat( j, i ), measures[ i ] );
-          }
+      for (int i = 0; i < totals.length; i++) {
+        for (int j = 0; j < totals[0].length; j++) {
+          totals[i][j] = aggregatorTemplate.newInstance(formatList.getValueFormat(j, i), measures[i]);
         }
       }
     } else {
-      totals = new TotalAggregator[ 0 ][ count ];
+      totals = new TotalAggregator[0][count];
       cellsAdded = 0;
     }
   }
 
-  public void addData( int member, int index, Cell cell ) {
-    totals[ member ][ index ].addData( cell );
+  public void addData(int member, int index, @NotNull Cell cell) {
+    totals[member][index].addData(cell);
   }
 
-  public void setFormattedValue( int member, int index, String value ) {
-    totals[ member ][ index ].setFormattedValue( value );
+  public void setFormattedValue(int member, int index, String value) {
+    totals[member][index].setFormattedValue(value);
   }
 
   public int getSpan() {
     return span;
   }
 
-  public void setSpan( int span ) {
-    this.span = span;
+  public void setSpan() {
+    this.span = 1;
   }
 
-  public void appendSpan( int append ) {
+  void appendSpan(int append) {
     this.span += append;
   }
 
@@ -59,28 +81,30 @@ public class TotalNode {
     return width;
   }
 
-  public void setWidth( int width ) {
+  public void setWidth(int width) {
     this.width = width;
   }
 
-  public void appendWidth( int append ) {
+  void appendWidth(int append) {
     this.width += append;
   }
 
-  public void appendChild( TotalNode child ) {
-    appendSpan( child.getRenderedCount() );
-    appendWidth( child.width );
+  public void appendChild(@NotNull TotalNode child) {
+    appendSpan(child.getRenderedCount());
+    appendWidth(child.width);
   }
 
+  @Nullable
   public String[] getMemberCaptions() {
     return captions;
   }
 
+  @NotNull
   public TotalAggregator[][] getTotalGroups() {
     return totals;
   }
 
-  public int getRenderedCount() {
+  int getRenderedCount() {
     return span + cellsAdded;
   }
 }

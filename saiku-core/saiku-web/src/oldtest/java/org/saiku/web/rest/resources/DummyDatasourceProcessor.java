@@ -19,10 +19,10 @@ import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.service.datasource.IDatasourceProcessor;
 
 public class DummyDatasourceProcessor implements IDatasourceProcessor {
-	
-	public SaikuDatasource process(SaikuDatasource ds) {
-		System.out.println("Dummy Process Datasource: " + ds.getName());
-		return ds;
-	}
+
+  public SaikuDatasource process(SaikuDatasource ds) {
+    System.out.println("Dummy Process Datasource: " + ds.getName());
+    return ds;
+  }
 
 }

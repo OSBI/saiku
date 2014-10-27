@@ -1,26 +1,31 @@
-/*  
- *   Copyright 2012 OSBI Ltd
+/*
+ * Copyright 2014 OSBI Ltd
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.saiku.olap.dto.resultset;
 
-import org.olap4j.metadata.Measure;
 import org.saiku.service.olap.totals.TotalNode;
+
+import org.jetbrains.annotations.NotNull;
+import org.olap4j.metadata.Measure;
 
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * CellDataSet.
+ */
 public class CellDataSet implements Serializable {
 
   /**
@@ -48,13 +53,13 @@ public class CellDataSet implements Serializable {
 
   private int leftOffset;
 
-  public int runtime;
+  private int runtime;
 
   public CellDataSet() {
     super();
   }
 
-  public CellDataSet( final int width, final int height ) {
+  public CellDataSet(final int width, final int height) {
     this.width = width;
     this.height = height;
   }
@@ -63,7 +68,7 @@ public class CellDataSet implements Serializable {
     return cellSetHeader;
   }
 
-  public void setCellSetHeaders( final AbstractBaseCell[][] cellSet ) {
+  public void setCellSetHeaders(@NotNull final AbstractBaseCell[][] cellSet) {
     this.topOffset = cellSet.length;
     this.cellSetHeader = cellSet;
   }
@@ -72,11 +77,11 @@ public class CellDataSet implements Serializable {
     return cellSetBody;
   }
 
-  public void setCellSetBody( final AbstractBaseCell[][] cellSet ) {
+  public void setCellSetBody(final AbstractBaseCell[][] cellSet) {
     this.cellSetBody = cellSet;
   }
 
-  public void setOffset( final int offset ) {
+  public void setOffset(final int offset) {
     this.offset = offset;
   }
 
@@ -93,7 +98,7 @@ public class CellDataSet implements Serializable {
     return leftOffset;
   }
 
-  public void setLeftOffset( int leftOffset ) {
+  public void setLeftOffset(int leftOffset) {
     this.leftOffset = leftOffset;
   }
 
@@ -101,7 +106,7 @@ public class CellDataSet implements Serializable {
     return selectedMeasures;
   }
 
-  public void setSelectedMeasures( Measure[] selectedMeasures ) {
+  public void setSelectedMeasures(Measure[] selectedMeasures) {
     this.selectedMeasures = selectedMeasures;
   }
 
@@ -109,7 +114,7 @@ public class CellDataSet implements Serializable {
     return rowTotalsLists;
   }
 
-  public void setRowTotalsLists( List<TotalNode>[] rowTotalsLists ) {
+  public void setRowTotalsLists(List<TotalNode>[] rowTotalsLists) {
     this.rowTotalsLists = rowTotalsLists;
   }
 
@@ -117,14 +122,14 @@ public class CellDataSet implements Serializable {
     return colTotalsLists;
   }
 
-  public void setColTotalsLists( List<TotalNode>[] colTotalsLists ) {
+  public void setColTotalsLists(List<TotalNode>[] colTotalsLists) {
     this.colTotalsLists = colTotalsLists;
   }
 
   /**
    * @param width the width to set
    */
-  public void setWidth( final int width ) {
+  public void setWidth(final int width) {
     this.width = width;
   }
 
@@ -138,7 +143,7 @@ public class CellDataSet implements Serializable {
   /**
    * @param height the height to set
    */
-  public void setHeight( final int height ) {
+  public void setHeight(final int height) {
     this.height = height;
   }
 
@@ -153,7 +158,7 @@ public class CellDataSet implements Serializable {
     return runtime;
   }
 
-  public void setRuntime( int runtime ) {
+  public void setRuntime(int runtime) {
     this.runtime = runtime;
   }
 }

@@ -1,33 +1,30 @@
 /*
- *   Copyright 2012 OSBI Ltd
+ * Copyright 2014 OSBI Ltd
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.saiku.olap.query;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Properties;
+import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SaikuTag;
+import org.saiku.olap.dto.filter.SaikuFilter;
+import org.saiku.olap.util.exception.SaikuOlapException;
+import org.saiku.olap.util.formatter.ICellSetFormatter;
 
-import mondrian.rolap.RolapConnection;
-
-import org.olap4j.Axis;
-import org.olap4j.CellSet;
-import org.olap4j.OlapConnection;
-import org.olap4j.OlapException;
-import org.olap4j.OlapStatement;
-import org.olap4j.Scenario;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.olap4j.*;
 import org.olap4j.mdx.SelectNode;
 import org.olap4j.mdx.parser.MdxParser;
 import org.olap4j.mdx.parser.MdxParserFactory;
@@ -39,26 +36,31 @@ import org.olap4j.metadata.Schema;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
 import org.olap4j.type.CubeType;
-import org.saiku.olap.dto.SaikuCube;
-import org.saiku.olap.dto.SaikuTag;
-import org.saiku.olap.dto.filter.SaikuFilter;
-import org.saiku.olap.util.exception.SaikuOlapException;
-import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Properties;
 
+import mondrian.rolap.RolapConnection;
+
+/**
+ * MdxQuery.
+ */
 public class MdxQuery implements IQuery {
 
-  private static final Logger log = LoggerFactory.getLogger(MdxQuery.class);
+  private static final Logger LOG = LoggerFactory.getLogger(MdxQuery.class);
 
-  private Properties properties = new Properties();
+  @NotNull
+  private final Properties properties = new Properties();
   private String mdx;
   private SaikuCube cube;
-  private OlapConnection connection;
-  private String name;
+  private final OlapConnection connection;
+  private final String name;
   private Scenario scenario;
   private CellSet cellset;
+  @Nullable
   private OlapStatement statement;
 
   private ICellSetFormatter formatter;
@@ -77,7 +79,7 @@ public class MdxQuery implements IQuery {
   public SaikuCube getSaikuCube() {
     try {
       Cube c = getCube();
-        cube = new SaikuCube(
+      cube = new SaikuCube(
           cube.getConnection(),
           c.getUniqueName(),
           c.getName(),
@@ -106,6 +108,7 @@ public class MdxQuery implements IQuery {
     this.properties.putAll(props);
   }
 
+  @NotNull
   public Properties getProperties() {
     Properties props = this.properties;
     props.put(QueryProperties.KEY_IS_DRILLTHROUGH, isDrillThroughEnabled().toString());
@@ -123,17 +126,17 @@ public class MdxQuery implements IQuery {
     return qs.createXML();
   }
 
+  @NotNull
   public Boolean isDrillThroughEnabled() {
     try {
       Cube cube = getCube();
-      return (cube != null && cube.isDrillThroughEnabled());
+      return cube != null && cube.isDrillThroughEnabled();
     } catch (Exception e) {
-        if(cube == null) {
-            log.error("Cube is null");
-        }
-        else{
-            log.error("Could not detect drillthrough", e.getCause());
-        }
+      if (cube == null) {
+        LOG.error("Cube is null");
+      } else {
+        LOG.error("Could not detect drillthrough", e.getCause());
+      }
     }
     return false;
   }
@@ -150,7 +153,7 @@ public class MdxQuery implements IQuery {
       OlapStatement stmt = con.createStatement();
       this.statement = stmt;
 
-        return stmt.executeOlapQuery(mdx);
+      return stmt.executeOlapQuery(mdx);
     } finally {
       if (statement != null) {
         statement.close();
@@ -159,6 +162,7 @@ public class MdxQuery implements IQuery {
     }
   }
 
+  @NotNull
   public QueryType getType() {
     return QueryType.MDX;
   }
@@ -167,40 +171,44 @@ public class MdxQuery implements IQuery {
     throw new UnsupportedOperationException();
   }
 
+  @NotNull
   public Map<Axis, QueryAxis> getAxes() {
     throw new UnsupportedOperationException();
   }
 
+  @NotNull
   public QueryAxis getAxis(Axis axis) {
     throw new UnsupportedOperationException();
   }
 
+  @NotNull
   public QueryAxis getAxis(String name) throws SaikuOlapException {
     throw new UnsupportedOperationException();
   }
 
+  @Nullable
   public Cube getCube() {
     final MdxParserFactory parserFactory =
-      connection.getParserFactory();
+        connection.getParserFactory();
     MdxParser mdxParser =
-      parserFactory.createMdxParser(connection);
+        parserFactory.createMdxParser(connection);
     MdxValidator mdxValidator =
-      parserFactory.createMdxValidator(connection);
+        parserFactory.createMdxValidator(connection);
 
     String mdx = getMdx();
     try {
 
       if (mdx != null && mdx.length() > 0 && mdx.toUpperCase().contains("FROM")) {
         SelectNode select =
-          mdxParser.parseSelect(getMdx());
+            mdxParser.parseSelect(getMdx());
         select = mdxValidator.validateSelect(select);
         CubeType cubeType = (CubeType) select.getFrom().getType();
         return cubeType.getCube();
       }
     } catch (Exception e) {
-      log.debug("Parsing MDX to get the Cube failed. Using fallback scenario.", e);
+      LOG.debug("Parsing MDX to get the Cube failed. Using fallback scenario.", e);
     }
-      try {
+    try {
       // ok seems like we failed to get the cube, lets try it differently
       if (connection != null && mdx != null && mdx.length() > 0) {
         for (Database db : connection.getOlapDatabases()) {
@@ -224,6 +232,7 @@ public class MdxQuery implements IQuery {
     return null;
   }
 
+  @NotNull
   public QueryAxis getUnusedAxis() {
     throw new UnsupportedOperationException();
   }
@@ -236,6 +245,7 @@ public class MdxQuery implements IQuery {
     throw new UnsupportedOperationException();
   }
 
+  @NotNull
   public QueryDimension getDimension(String name) {
     throw new UnsupportedOperationException();
   }
@@ -264,6 +274,7 @@ public class MdxQuery implements IQuery {
     throw new UnsupportedOperationException();
   }
 
+  @Nullable
   public SaikuTag getTag() {
     return null;
   }
@@ -285,6 +296,7 @@ public class MdxQuery implements IQuery {
 
   }
 
+  @Nullable
   public OlapStatement getStatement() {
     return this.statement;
   }
@@ -300,6 +312,7 @@ public class MdxQuery implements IQuery {
     throw new UnsupportedOperationException();
   }
 
+  @Nullable
   public SaikuFilter getFilter() {
     return null;
   }
@@ -324,10 +337,12 @@ public class MdxQuery implements IQuery {
 
   }
 
+  @NotNull
   public String getTotalFunction(String uniqueLevelName) {
     return "";
   }
 
+  @NotNull
   public Map<String, String> getTotalFunctions() {
     return Collections.emptyMap();
   }

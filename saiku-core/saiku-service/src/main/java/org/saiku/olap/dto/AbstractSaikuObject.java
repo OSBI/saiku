@@ -1,29 +1,35 @@
-/*  
- *   Copyright 2012 OSBI Ltd
+/*
+ * Copyright 2014 OSBI Ltd
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.saiku.olap.dto;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+/**
+ * AbstractSaikuObject
+ */
 public class AbstractSaikuObject implements ISaikuObject, Comparable<ISaikuObject> {
 
   private String uniqueName;
   private String name;
 
-  public AbstractSaikuObject() {
+  AbstractSaikuObject() {
   }
 
-  public AbstractSaikuObject( String uniqueName, String name ) {
+  AbstractSaikuObject(String uniqueName, String name) {
     this.uniqueName = uniqueName;
     this.name = name;
   }
@@ -40,27 +46,27 @@ public class AbstractSaikuObject implements ISaikuObject, Comparable<ISaikuObjec
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ( ( uniqueName == null ) ? 0 : uniqueName.hashCode() );
+    result = prime * result + (uniqueName == null ? 0 : uniqueName.hashCode());
     return result;
   }
 
   @Override
-  public boolean equals( Object obj ) {
-    if ( this == obj ) {
+  public boolean equals(@Nullable Object obj) {
+    if (this == obj) {
       return true;
     }
-    if ( obj == null ) {
+    if (obj == null) {
       return false;
     }
-    if ( getClass() != obj.getClass() ) {
+    if (getClass() != obj.getClass()) {
       return false;
     }
     AbstractSaikuObject other = (AbstractSaikuObject) obj;
-    if ( uniqueName == null ) {
-      if ( other.uniqueName != null ) {
+    if (uniqueName == null) {
+      if (other.uniqueName != null) {
         return false;
       }
-    } else if ( !uniqueName.equals( other.uniqueName ) ) {
+    } else if (!uniqueName.equals(other.uniqueName)) {
       return false;
     }
     return true;
@@ -71,8 +77,8 @@ public class AbstractSaikuObject implements ISaikuObject, Comparable<ISaikuObjec
     return this.uniqueName;
   }
 
-  public int compareTo( ISaikuObject o ) {
-    return getUniqueName().compareTo( o.getUniqueName() );
+  public int compareTo(@NotNull ISaikuObject o) {
+    return getUniqueName().compareTo(o.getUniqueName());
   }
 
 }

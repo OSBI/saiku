@@ -1,29 +1,37 @@
-/*  
- *   Copyright 2012 OSBI Ltd
+/*
+ * Copyright 2014 OSBI Ltd
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.saiku.service.util;
 
+import org.jetbrains.annotations.NotNull;
 import org.olap4j.CellSet;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class OlapUtil {
+/**
+ * OlapUtil.
+ */
+class OlapUtil {
 
+  private OlapUtil() {
 
-  private static Map<String, CellSet> cellSetMap = new HashMap<String, CellSet>();
+  }
+
+  @NotNull
+  private static final Map<String, CellSet> CELLSETMAP = new HashMap<String, CellSet>();
 
 
   /**
@@ -32,20 +40,20 @@ public class OlapUtil {
    * @param cellSet
    * @param queryId
    */
-  public static void storeCellSet( final String queryId, final CellSet cellSet ) {
-    if ( cellSetMap.containsKey( queryId ) ) {
-      cellSetMap.remove( queryId );
+  public static void storeCellSet(final String queryId, final CellSet cellSet) {
+    if (CELLSETMAP.containsKey(queryId)) {
+      CELLSETMAP.remove(queryId);
     }
-    cellSetMap.put( queryId, cellSet );
+    CELLSETMAP.put(queryId, cellSet);
   }
 
-  public static CellSet getCellSet( final String queryId ) {
-    return cellSetMap.get( queryId );
+  public static CellSet getCellSet(final String queryId) {
+    return CELLSETMAP.get(queryId);
 
   }
 
-  public static void deleteCellSet( final String queryId ) {
-    cellSetMap.remove( queryId );
+  public static void deleteCellSet(final String queryId) {
+    CELLSETMAP.remove(queryId);
   }
 
 }

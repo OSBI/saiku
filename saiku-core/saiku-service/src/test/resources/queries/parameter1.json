@@ -1,120 +1,126 @@
 {
-  "queryModel" : {
-    "axes" : {
-      "FILTER" : {
-        "mdx" : null,
-        "filters" : [ ],
-        "sortOrder" : null,
-        "sortEvaluationLiteral" : null,
-        "hierarchizeMode" : null,
-        "location" : "FILTER",
-        "hierarchies" : [ ],
-        "nonEmpty" : false,
-        "aggregators" : [ ]
-      },
-      "COLUMNS" : {
-        "mdx" : null,
-        "filters" : [ ],
-        "sortOrder" : null,
-        "sortEvaluationLiteral" : null,
-        "hierarchizeMode" : null,
-        "location" : "COLUMNS",
-        "hierarchies" : [ {
-          "mdx" : null,
-          "filters" : [ ],
-          "sortOrder" : null,
-          "sortEvaluationLiteral" : null,
-          "hierarchizeMode" : null,
-          "name" : "[Education Level]",
-          "caption" : "Education Level",
-          "dimension" : "Education Level",
-          "levels" : {
-            "Education Level" : {
-              "mdx" : null,
-              "filters" : [ ],
-              "name" : "Education Level",
-              "caption" : "Education Level",
-              "selection" : {
-                "type" : "INCLUSION",
-                "members" : [ ],
-                "parameterName" : null
-              },
-              "aggregators" : [ ]
+    "queryModel": {
+        "axes": {
+            "FILTER": {
+                "mdx": null,
+                "filters": [ ],
+                "sortOrder": null,
+                "sortEvaluationLiteral": null,
+                "hierarchizeMode": null,
+                "location": "FILTER",
+                "hierarchies": [ ],
+                "nonEmpty": false,
+                "aggregators": [ ]
+            },
+            "COLUMNS": {
+                "mdx": null,
+                "filters": [ ],
+                "sortOrder": null,
+                "sortEvaluationLiteral": null,
+                "hierarchizeMode": null,
+                "location": "COLUMNS",
+                "hierarchies": [
+                    {
+                        "mdx": null,
+                        "filters": [ ],
+                        "sortOrder": null,
+                        "sortEvaluationLiteral": null,
+                        "hierarchizeMode": null,
+                        "name": "[Education Level]",
+                        "caption": "Education Level",
+                        "dimension": "Education Level",
+                        "levels": {
+                            "Education Level": {
+                                "mdx": null,
+                                "filters": [ ],
+                                "name": "Education Level",
+                                "caption": "Education Level",
+                                "selection": {
+                                    "type": "INCLUSION",
+                                    "members": [ ],
+                                    "parameterName": null
+                                },
+                                "aggregators": [ ]
+                            }
+                        }
+                    }
+                ],
+                "nonEmpty": false,
+                "aggregators": [ ]
+            },
+            "ROWS": {
+                "mdx": null,
+                "filters": [ ],
+                "sortOrder": null,
+                "sortEvaluationLiteral": null,
+                "hierarchizeMode": null,
+                "location": "ROWS",
+                "hierarchies": [
+                    {
+                        "mdx": null,
+                        "filters": [ ],
+                        "sortOrder": null,
+                        "sortEvaluationLiteral": null,
+                        "hierarchizeMode": null,
+                        "name": "[Product]",
+                        "caption": "Product",
+                        "dimension": "Product",
+                        "levels": {
+                            "Product Family": {
+                                "mdx": null,
+                                "filters": [ ],
+                                "name": "Product Family",
+                                "caption": "Product Family",
+                                "selection": {
+                                    "type": "EXCLUSION",
+                                    "members": [
+                                        {
+                                            "name": "Non-Consumable",
+                                            "uniqueName": "[Product].[Non-Consumable]",
+                                            "caption": "Non-Consumable"
+                                        }
+                                    ],
+                                    "parameterName": "productFamilyList"
+                                },
+                                "aggregators": [ ]
+                            }
+                        }
+                    }
+                ],
+                "nonEmpty": false,
+                "aggregators": [ ]
             }
-          }
-        } ],
-        "nonEmpty" : false,
-        "aggregators" : [ ]
-      },
-      "ROWS" : {
-        "mdx" : null,
-        "filters" : [ ],
-        "sortOrder" : null,
-        "sortEvaluationLiteral" : null,
-        "hierarchizeMode" : null,
-        "location" : "ROWS",
-        "hierarchies" : [ {
-          "mdx" : null,
-          "filters" : [ ],
-          "sortOrder" : null,
-          "sortEvaluationLiteral" : null,
-          "hierarchizeMode" : null,
-          "name" : "[Product]",
-          "caption" : "Product",
-          "dimension" : "Product",
-          "levels" : {
-            "Product Family" : {
-              "mdx" : null,
-              "filters" : [ ],
-              "name" : "Product Family",
-              "caption" : "Product Family",
-              "selection" : {
-                "type" : "EXCLUSION",
-                "members" : [ {
-                  "name" : "Non-Consumable",
-                  "uniqueName" : "[Product].[Non-Consumable]",
-                  "caption" : "Non-Consumable"
-                } ],
-                "parameterName" : "productFamilyList"
-              },
-              "aggregators" : [ ]
-            }
-          }
-        } ],
-        "nonEmpty" : false,
-        "aggregators" : [ ]
-      }
+        },
+        "visualTotals": false,
+        "visualTotalsPattern": null,
+        "lowestLevelsOnly": false,
+        "details": {
+            "axis": "COLUMNS",
+            "location": "BOTTOM",
+            "measures": [ ]
+        },
+        "calculatedMeasures": [ ]
     },
-    "visualTotals" : false,
-    "visualTotalsPattern" : null,
-    "lowestLevelsOnly" : false,
-    "details" : {
-      "axis" : "COLUMNS",
-      "location" : "BOTTOM",
-      "measures" : [ ]
+    "cube": {
+        "uniqueName": "[test].[FoodMart].[FoodMart].[Sales]",
+        "name": "Sales",
+        "connection": "test",
+        "catalog": "FoodMart",
+        "schema": "FoodMart",
+        "caption": "Sales",
+        "visible": true
     },
-    "calculatedMeasures" : [ ]
-  },
-  "cube" : {
-    "uniqueName" : "[test].[FoodMart].[FoodMart].[Sales]",
-    "name" : "Sales",
-    "connection" : "test",
-    "catalog" : "FoodMart",
-    "schema" : "FoodMart",
-    "caption" : "Sales",
-    "visible" : true
-  },
-  "mdx" : "WITH\nSET [~COLUMNS] AS\n    {[Education Level].[Education Level].Members}\nSET [~ROWS] AS\n    Except({[Product].[Product Family].Members}, {[Product].[Non-Consumable]})\nSELECT\n[~COLUMNS] ON COLUMNS,\n[~ROWS] ON ROWS\nFROM [Sales]",
-  "name" : "parameter1",
-  "parameters" : {
-    "productFamilyList" : "[Product].[Food]"
-  },
-  "plugins" : {
-  },
-  "properties" : {
-  },
-  "metadata" : {
-  },
-  "queryType" : "OLAP",
-  "type" : "QUERYMODEL"
+    "mdx": "WITH\nSET [~COLUMNS] AS\n    {[Education Level].[Education Level].Members}\nSET [~ROWS] AS\n    Except({[Product].[Product Family].Members}, {[Product].[Non-Consumable]})\nSELECT\n[~COLUMNS] ON COLUMNS,\n[~ROWS] ON ROWS\nFROM [Sales]",
+    "name": "parameter1",
+    "parameters": {
+        "productFamilyList": "[Product].[Food]"
+    },
+    "plugins": {
+    },
+    "properties": {
+    },
+    "metadata": {
+    },
+    "queryType": "OLAP",
+    "type": "QUERYMODEL"
 }

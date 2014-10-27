@@ -1,30 +1,27 @@
-/*  
- *   Copyright 2012 OSBI Ltd
+/*
+ * Copyright 2014 OSBI Ltd
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.saiku.olap.util.formatter;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import org.saiku.olap.dto.resultset.DataCell;
+import org.saiku.olap.dto.resultset.Matrix;
+import org.saiku.olap.dto.resultset.MemberCell;
+import org.saiku.olap.util.SaikuProperties;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.olap4j.Cell;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
@@ -35,24 +32,30 @@ import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.Property;
-import org.saiku.olap.dto.resultset.DataCell;
-import org.saiku.olap.dto.resultset.Matrix;
-import org.saiku.olap.dto.resultset.MemberCell;
-import org.saiku.olap.util.SaikuProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.*;
 
+/**
+ * CellSetFormatter.
+ */
 public class CellSetFormatter implements ICellSetFormatter {
+  private static final Logger LOG = LoggerFactory.getLogger(CellSetFormatter.class);
+
   /**
    * Description of an axis.
    */
   private static class AxisInfo {
+    @NotNull
     final List<AxisOrdinalInfo> ordinalInfos;
 
     /**
      * Creates an AxisInfo.
      *
-     * @param ordinalCount
-     *            Number of hierarchies on this axis
+     * @param ordinalCount Number of hierarchies on this axis
      */
     AxisInfo(final int ordinalCount) {
       ordinalInfos = new ArrayList<AxisOrdinalInfo>(ordinalCount);
@@ -80,13 +83,16 @@ public class CellSetFormatter implements ICellSetFormatter {
    * Description of a particular hierarchy mapped to an axis.
    */
   private static class AxisOrdinalInfo {
-    private List<Integer> depths = new ArrayList<Integer>();
-    private Map<Integer,Level> depthLevel = new HashMap<Integer,Level>();
+    @NotNull
+    private final List<Integer> depths = new ArrayList<Integer>();
+    @NotNull
+    private final Map<Integer, Level> depthLevel = new HashMap<Integer, Level>();
 
     public int getWidth() {
       return depths.size();
     }
 
+    @NotNull
     public List<Integer> getDepths() {
       return depths;
     }
@@ -103,8 +109,10 @@ public class CellSetFormatter implements ICellSetFormatter {
   /**
    * Returns an iterator over cells in a result.
    */
-  private static Iterable<Cell> cellIter(final int[] pageCoords, final CellSet cellSet) {
+  @NotNull
+  private static Iterable<Cell> cellIter(@NotNull final int[] pageCoords, @NotNull final CellSet cellSet) {
     return new Iterable<Cell>() {
+      @NotNull
       public Iterator<Cell> iterator() {
         final int[] axisDimensions = new int[cellSet.getAxes().size() - pageCoords.length];
         assert pageCoords.length <= axisDimensions.length;
@@ -144,7 +152,7 @@ public class CellSetFormatter implements ICellSetFormatter {
 
   private Matrix matrix;
 
-  public Matrix format(final CellSet cellSet) {
+  public Matrix format(@NotNull final CellSet cellSet) {
     // Compute how many rows are required to display the columns axis.
     final CellSetAxis columnsAxis;
     if (cellSet.getAxes().size() > 0) {
@@ -173,7 +181,7 @@ public class CellSetFormatter implements ICellSetFormatter {
         matrix = formatPage(cellSet, pageCoords, columnsAxis, columnsAxisInfo, rowsAxis, rowsAxisInfo);
       }
     } else {
-      matrix = formatPage(cellSet, new int[] {}, columnsAxis, columnsAxisInfo, rowsAxis, rowsAxisInfo);
+      matrix = formatPage(cellSet, new int[] { }, columnsAxis, columnsAxisInfo, rowsAxis, rowsAxisInfo);
     }
 
     return matrix;
@@ -182,11 +190,11 @@ public class CellSetFormatter implements ICellSetFormatter {
   /**
    * Computes a description of an axis.
    *
-   * @param axis
-   *            Axis
+   * @param axis Axis
    * @return Description of axis
    */
-  private AxisInfo computeAxisInfo(final CellSetAxis axis) {
+  @NotNull
+  private AxisInfo computeAxisInfo(@Nullable final CellSetAxis axis) {
     if (axis == null) {
       return new AxisInfo(0);
     }
@@ -211,23 +219,19 @@ public class CellSetFormatter implements ICellSetFormatter {
   /**
    * Formats a two-dimensional page.
    *
-   * @param cellSet
-   *            Cell set
-   * @param pw
-   *            Print writer
-   * @param pageCoords
-   *            Coordinates of page [page, chapter, section, ...]
-   * @param columnsAxis
-   *            Columns axis
-   * @param columnsAxisInfo
-   *            Description of columns axis
-   * @param rowsAxis
-   *            Rows axis
-   * @param rowsAxisInfo
-   *            Description of rows axis
+   * @param cellSet         Cell set
+   * @param pw              Print writer
+   * @param pageCoords      Coordinates of page [page, chapter, section, ...]
+   * @param columnsAxis     Columns axis
+   * @param columnsAxisInfo Description of columns axis
+   * @param rowsAxis        Rows axis
+   * @param rowsAxisInfo    Description of rows axis
    */
-  private Matrix formatPage(final CellSet cellSet, final int[] pageCoords, final CellSetAxis columnsAxis,
-                            final AxisInfo columnsAxisInfo, final CellSetAxis rowsAxis, final AxisInfo rowsAxisInfo) {
+  @NotNull
+  private Matrix formatPage(@NotNull final CellSet cellSet, @NotNull final int[] pageCoords,
+                            @Nullable final CellSetAxis columnsAxis,
+                            @NotNull final AxisInfo columnsAxisInfo, @Nullable final CellSetAxis rowsAxis,
+                            @NotNull final AxisInfo rowsAxisInfo) {
 
     // Figure out the dimensions of the blank rectangle in the top left
     // corner.
@@ -236,7 +240,7 @@ public class CellSetFormatter implements ICellSetFormatter {
 
     // Populate a string matrix
     final Matrix matrix = new Matrix(xOffsset + (columnsAxis == null ? 1 : columnsAxis.getPositions().size()),
-      yOffset + (rowsAxis == null ? 1 : rowsAxis.getPositions().size()));
+        yOffset + (rowsAxis == null ? 1 : rowsAxis.getPositions().size()));
 
     // Populate corner
     List<Level> levels = new ArrayList<Level>();
@@ -252,8 +256,8 @@ public class CellSetFormatter implements ICellSetFormatter {
         Level xLevel = levels.get(x);
         String s = xLevel.getCaption();
         for (int y = 0; y < yOffset; y++) {
-          final MemberCell memberInfo = new MemberCell(false, x > 0);
-          if (y == yOffset-1) {
+          final MemberCell memberInfo = new MemberCell(x > 0);
+          if (y == yOffset - 1) {
             memberInfo.setRawValue(s);
             memberInfo.setFormattedValue(s);
             memberInfo.setProperty("__headertype", "row_header_header");
@@ -276,40 +280,42 @@ public class CellSetFormatter implements ICellSetFormatter {
     for (final Cell cell : cellIter(pageCoords, cellSet)) {
       final List<Integer> coordList = cell.getCoordinateList();
       int x = xOffsset;
-      if (coordList.size() > 0)
+      if (coordList.size() > 0) {
         x += coordList.get(0);
+      }
       int y = yOffset;
-      if (coordList.size() > 1)
+      if (coordList.size() > 1) {
         y += coordList.get(1);
-      final DataCell cellInfo = new DataCell(true, false, coordList);
+      }
+      final DataCell cellInfo = new DataCell(true, coordList);
       cellInfo.setCoordinates(cell.getCoordinateList());
 
       if (cell.getValue() != null) {
         try {
           cellInfo.setRawNumber(cell.getDoubleValue());
         } catch (Exception e1) {
+          LOG.error("could not get double value", e1);
         }
       }
       String cellValue = cell.getFormattedValue(); // First try to get a
       // formatted value
 
       if (cellValue == null || cellValue.equals("null")) { //$NON-NLS-1$
-        cellValue =""; //$NON-NLS-1$
+        cellValue = ""; //$NON-NLS-1$
       }
-      if ( cellValue.length() < 1) {
-        final Object value =  cell.getValue();
-        if (value == null  || value.equals("null")) //$NON-NLS-1$
+      if (cellValue.length() < 1) {
+        final Object value = cell.getValue();
+        if (value == null || value.equals("null")) { //$NON-NLS-1$
           cellValue = ""; //$NON-NLS-1$
-        else {
+        } else {
           try {
             // TODO this needs to become query / execution specific
-            DecimalFormat myFormatter = new DecimalFormat(SaikuProperties.formatDefautNumberFormat); //$NON-NLS-1$
-            DecimalFormatSymbols dfs = new DecimalFormatSymbols(SaikuProperties.locale);
+            DecimalFormat myFormatter = new DecimalFormat(SaikuProperties.FORMATDEFAULTNUMBERFORMAT); //$NON-NLS-1$
+            DecimalFormatSymbols dfs = new DecimalFormatSymbols(SaikuProperties.LOCALE);
             myFormatter.setDecimalFormatSymbols(dfs);
             String output = myFormatter.format(cell.getValue());
             cellValue = output;
-          }
-          catch (Exception e) {
+          } catch (Exception e) {
             // TODO: handle exception
           }
         }
@@ -346,22 +352,19 @@ public class CellSetFormatter implements ICellSetFormatter {
   /**
    * Populates cells in the matrix corresponding to a particular axis.
    *
-   * @param matrix
-   *            Matrix to populate
-   * @param axis
-   *            Axis
-   * @param axisInfo
-   *            Description of axis
-   * @param isColumns
-   *            True if columns, false if rows
-   * @param offset
-   *            Ordinal of first cell to populate in matrix
+   * @param matrix    Matrix to populate
+   * @param axis      Axis
+   * @param axisInfo  Description of axis
+   * @param isColumns True if columns, false if rows
+   * @param offset    Ordinal of first cell to populate in matrix
    */
-  private void populateAxis(final Matrix matrix, final CellSetAxis axis, final AxisInfo axisInfo,
+  private void populateAxis(@NotNull final Matrix matrix, @Nullable final CellSetAxis axis,
+                            @NotNull final AxisInfo axisInfo,
                             final boolean isColumns, final int offset) {
 
-    if (axis == null)
+    if (axis == null) {
       return;
+    }
     final Member[] prevMembers = new Member[axisInfo.getWidth()];
     final MemberCell[] prevMemberInfo = new MemberCell[axisInfo.getWidth()];
     final Member[] members = new Member[axisInfo.getWidth()];
@@ -371,15 +374,16 @@ public class CellSetFormatter implements ICellSetFormatter {
       final Position position = axis.getPositions().get(i);
       int yOffset = 0;
       final List<Member> memberList = position.getMembers();
-      final Map<Hierarchy,List<Integer>> lvls = new HashMap<Hierarchy, List<Integer>>();
+      final Map<Hierarchy, List<Integer>> lvls = new HashMap<Hierarchy, List<Integer>>();
       for (int j = 0; j < memberList.size(); j++) {
         Member member = memberList.get(j);
         final AxisOrdinalInfo ordinalInfo = axisInfo.ordinalInfos.get(j);
         List<Integer> depths = ordinalInfo.depths;
         Collections.sort(depths);
         lvls.put(member.getHierarchy(), depths);
-        if (ordinalInfo.getDepths().size() > 0 && member.getDepth() < ordinalInfo.getDepths().get(0))
+        if (ordinalInfo.getDepths().size() > 0 && member.getDepth() < ordinalInfo.getDepths().get(0)) {
           break;
+        }
         final int y = yOffset + ordinalInfo.depths.indexOf(member.getDepth());
         members[y] = member;
         yOffset += ordinalInfo.getWidth();
@@ -405,10 +409,13 @@ public class CellSetFormatter implements ICellSetFormatter {
 
         if (member != null) {
           if (lvls != null && lvls.get(member.getHierarchy()) != null) {
-            memberInfo.setProperty("levelindex", "" + lvls.get(member.getHierarchy()).indexOf(member.getLevel().getDepth()));
+            memberInfo
+                .setProperty("levelindex",
+                    "" + lvls.get(member.getHierarchy()).indexOf(member.getLevel().getDepth()));
           }
-          if (x - 1 == offset)
-            memberInfo.setLastRow(true);
+          if (x - 1 == offset) {
+            memberInfo.setLastRow();
+          }
 
           matrix.setOffset(offset);
           memberInfo.setRawValue(member.getUniqueName());
@@ -417,37 +424,39 @@ public class CellSetFormatter implements ICellSetFormatter {
           memberInfo.setHierarchy(member.getHierarchy().getUniqueName());
           memberInfo.setLevel(member.getLevel().getUniqueName());
           memberInfo.setUniquename(member.getUniqueName());
-          //					try {
-          //						memberInfo.setChildMemberCount(member.getChildMemberCount());
-          //					} catch (OlapException e) {
-          //						e.printStackTrace();
-          //						throw new RuntimeException(e);
-          //					}
-          //					NamedList<Property> values = member.getLevel().getProperties();
-          //					for(int j=0; j<values.size();j++){
-          //						String val;
-          //						try {
-          //							val = member.getPropertyFormattedValue(values.get(j));
-          //						} catch (OlapException e) {
-          //							e.printStackTrace();
-          //							throw new RuntimeException(e);
-          //						}
-          //						memberInfo.setProperty(values.get(j).getCaption(), val);
-          //					}
+          //try {
+          //memberInfo.setChildMemberCount(member.getChildMemberCount());
+          //} catch (OlapException e) {
+          //e.printStackTrace();
+          //throw new RuntimeException(e);
+          //}
+          //NamedList<Property> values = member.getLevel().getProperties();
+          //for(int j=0; j<values.size();j++){
+          //String val;
+          //try {
+          //val = member.getPropertyFormattedValue(values.get(j));
+          //} catch (OlapException e) {
+          //e.printStackTrace();
+          //throw new RuntimeException(e);
+          //}
+          //memberInfo.setProperty(values.get(j).getCaption(), val);
+          //}
 
-          //					if (y > 0) {
-          //						for (int previ = y-1; previ >= 0;previ--) {
-          //							if(prevMembers[previ] != null) {
-          //								memberInfo.setRightOf(prevMemberInfo[previ]);
-          //								memberInfo.setRightOfDimension(prevMembers[previ].getDimension().getName());
-          //								previ = -1;
-          //							}
-          //						}
-          //					}
+          //if (y > 0) {
+          //for (int previ = y-1; previ >= 0;previ--) {
+          //if(prevMembers[previ] != null) {
+          //memberInfo.setRightOf(prevMemberInfo[previ]);
+          //
+          // memberInfo.setRightOfDimension(prevMembers[previ].getDimension().getName());
+          //previ = -1;
+          //}
+          //}
+          //}
           //
           //
-          //					if (member.getParentMember() != null)
-          //						memberInfo.setParentMember(member.getParentMember().getUniqueName());
+          //if (member.getParentMember() != null)
+          //
+          // memberInfo.setParentMember(member.getParentMember().getUniqueName());
 
         } else {
           memberInfo.setRawValue(null);
@@ -456,24 +465,25 @@ public class CellSetFormatter implements ICellSetFormatter {
         }
 
         if (isColumns) {
-          memberInfo.setRight(false);
+          memberInfo.setRight();
           memberInfo.setSameAsPrev(same);
-          if (member != null)
+          if (member != null) {
             memberInfo.setParentDimension(member.getDimension().getName());
+          }
           matrix.set(x, y, memberInfo);
         } else {
-          memberInfo.setRight(false);
+          memberInfo.setRight();
           memberInfo.setSameAsPrev(false);
           matrix.set(y, x, memberInfo);
         }
-        int x_parent = isColumns ? x : y-1;
-        int y_parent = isColumns ? y-1 : x;
+        int x_parent = isColumns ? x : y - 1;
+        int y_parent = isColumns ? y - 1 : x;
         if (index >= 0) {
           final AxisOrdinalInfo ordinalInfo = axisInfo.ordinalInfos.get(index);
           int depth_i = ordinalInfo.getDepths().indexOf(member.getDepth());
           while (depth_i > 0) {
             depth_i--;
-            int parentDepth = (ordinalInfo.getDepths().get(depth_i));
+            int parentDepth = ordinalInfo.getDepths().get(depth_i);
             Member parent = member.getParentMember();
             while (parent != null && parent.getDepth() > parentDepth) {
               parent = parent.getParentMember();

@@ -1,69 +1,69 @@
 {
-  "queryModel" : {
-    "axes" : {
-      "FILTER" : {
-        "mdx" : null,
-        "filters" : [ ],
-        "sortOrder" : null,
-        "sortEvaluationLiteral" : null,
-        "hierarchizeMode" : null,
-        "location" : "FILTER",
-        "hierarchies" : [ ],
-        "nonEmpty" : false,
-        "aggregators" : [ ]
-      },
-      "COLUMNS" : {
-        "mdx" : null,
-        "filters" : [ ],
-        "sortOrder" : null,
-        "sortEvaluationLiteral" : null,
-        "hierarchizeMode" : null,
-        "location" : "COLUMNS",
-        "hierarchies" : [ ],
-        "nonEmpty" : false,
-        "aggregators" : [ ]
-      },
-      "ROWS" : {
-        "mdx" : null,
-        "filters" : [ ],
-        "sortOrder" : null,
-        "sortEvaluationLiteral" : null,
-        "hierarchizeMode" : null,
-        "location" : "ROWS",
-        "hierarchies" : [ ],
-        "nonEmpty" : false,
-        "aggregators" : [ ]
-      }
+    "queryModel": {
+        "axes": {
+            "FILTER": {
+                "mdx": null,
+                "filters": [ ],
+                "sortOrder": null,
+                "sortEvaluationLiteral": null,
+                "hierarchizeMode": null,
+                "location": "FILTER",
+                "hierarchies": [ ],
+                "nonEmpty": false,
+                "aggregators": [ ]
+            },
+            "COLUMNS": {
+                "mdx": null,
+                "filters": [ ],
+                "sortOrder": null,
+                "sortEvaluationLiteral": null,
+                "hierarchizeMode": null,
+                "location": "COLUMNS",
+                "hierarchies": [ ],
+                "nonEmpty": false,
+                "aggregators": [ ]
+            },
+            "ROWS": {
+                "mdx": null,
+                "filters": [ ],
+                "sortOrder": null,
+                "sortEvaluationLiteral": null,
+                "hierarchizeMode": null,
+                "location": "ROWS",
+                "hierarchies": [ ],
+                "nonEmpty": false,
+                "aggregators": [ ]
+            }
+        },
+        "visualTotals": false,
+        "visualTotalsPattern": null,
+        "lowestLevelsOnly": false,
+        "details": {
+            "axis": "COLUMNS",
+            "location": "BOTTOM",
+            "measures": [ ]
+        },
+        "calculatedMeasures": [ ]
     },
-    "visualTotals" : false,
-    "visualTotalsPattern" : null,
-    "lowestLevelsOnly" : false,
-    "details" : {
-      "axis" : "COLUMNS",
-      "location" : "BOTTOM",
-      "measures" : [ ]
+    "cube": {
+        "uniqueName": "[test].[FoodMart].[FoodMart].[Sales]",
+        "name": "Sales",
+        "connection": "test",
+        "catalog": "FoodMart",
+        "schema": "FoodMart",
+        "caption": "Sales",
+        "visible": true
     },
-    "calculatedMeasures" : [ ]
-  },
-  "cube" : {
-    "uniqueName" : "[test].[FoodMart].[FoodMart].[Sales]",
-    "name" : "Sales",
-    "connection" : "test",
-    "catalog" : "FoodMart",
-    "schema" : "FoodMart",
-    "caption" : "Sales",
-    "visible" : true
-  },
-  "mdx" : "SELECT\nFROM [Sales]",
-  "name" : "dummy",
-  "parameters" : {
-  },
-  "plugins" : {
-  },
-  "properties" : {
-  },
-  "metadata" : {
-  },
-  "queryType" : "OLAP",
-  "type" : "QUERYMODEL"
+    "mdx": "SELECT\nFROM [Sales]",
+    "name": "dummy",
+    "parameters": {
+    },
+    "plugins": {
+    },
+    "properties": {
+    },
+    "metadata": {
+    },
+    "queryType": "OLAP",
+    "type": "QUERYMODEL"
 }

@@ -17,10 +17,10 @@ package org.saiku.web;
 
 import org.junit.Test;
 
-public class AuthTest extends AbstractServiceTest{
+public class AuthTest extends AbstractServiceTest {
 
-    @Test
-    public void testHappyDay() throws Exception {
+  @Test
+  public void testHappyDay() throws Exception {
         /*int port = 9999;
         Client client = Client.create();
         client.setFollowRedirects(false);
@@ -52,14 +52,14 @@ public class AuthTest extends AbstractServiceTest{
           .get(ClientResponse.class);
         assertEquals(200, response.getClientResponseStatus().getStatusCode());
         */
-      }
+  }
 
-    
-    /**
-     * tests that an error occurs if you attempt to use username/password creds for a non-password grant type.
-     */
-     @Test
-    public void testInvalidGrantType() throws Exception {
+
+  /**
+   * tests that an error occurs if you attempt to use username/password creds for a non-password grant type.
+   */
+  @Test
+  public void testInvalidGrantType() throws Exception {
       /* int port = 9999;
       Client client = Client.create();
       client.setFollowRedirects(false);
@@ -87,6 +87,6 @@ public class AuthTest extends AbstractServiceTest{
         assertEquals("invalid_request", e.getOAuth2ErrorCode());
       }
       */
-    }
+  }
 
 }

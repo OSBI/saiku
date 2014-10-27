@@ -1,55 +1,63 @@
 /*
- *   Copyright 2012 OSBI Ltd
+ * Copyright 2014 OSBI Ltd
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.saiku.olap.query;
 
-import java.io.StringWriter;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.xml.parsers.ParserConfigurationException;
+import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.util.exception.QueryParseException;
 
 import org.apache.commons.lang.StringUtils;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import org.jetbrains.annotations.NotNull;
 import org.olap4j.Axis;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Member;
 import org.olap4j.query.QueryAxis;
 import org.olap4j.query.QueryDimension;
 import org.olap4j.query.Selection;
-import org.saiku.olap.dto.SaikuCube;
-import org.saiku.olap.util.exception.QueryParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class QuerySerializer {
+import java.io.StringWriter;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
-  private IQuery query;
-  Document dom;
-  private SaikuCube saikuCube;
+/**
+ * QuerySerializer.
+ */
+class QuerySerializer {
 
-  public QuerySerializer(IQuery query) {
+  private static final Logger LOG = LoggerFactory.getLogger(QuerySerializer.class);
+  private final IQuery query;
+  private Document dom;
+  private final SaikuCube saikuCube;
+
+  public QuerySerializer(@NotNull IQuery query) {
     this.query = query;
     this.saikuCube = query.getSaikuCube();
   }
 
-  public String createXML() throws QueryParseException{
-    if (this.query == null)
+  @NotNull
+  public String createXML() throws QueryParseException {
+    if (this.query == null) {
       throw new QueryParseException("Query object can not be null");
+    }
 
     try {
       createDocument();
@@ -64,16 +72,16 @@ public class QuerySerializer {
       return st.getBuffer().toString();
 
     } catch (Exception e) {
-      throw new QueryParseException(e.getMessage(),e);
+      throw new QueryParseException(e.getMessage(), e);
     }
 
   }
 
-  private void createDocument() throws ParserConfigurationException {
+  private void createDocument() {
     dom = new Document();
   }
 
-  private void createDOMTree(){
+  private void createDOMTree() {
 
     Element rootEle = new Element("Query");
 
@@ -114,7 +122,8 @@ public class QuerySerializer {
 
   }
 
-  private Element appendQmQuery(Element rootElement) {
+  @NotNull
+  private Element appendQmQuery(@NotNull Element rootElement) {
 
     if (this.query != null) {
       Element qm = new Element("QueryModel");
@@ -125,7 +134,8 @@ public class QuerySerializer {
     return rootElement;
   }
 
-  private Element appendMdxQuery(Element rootElement) {
+  @NotNull
+  private Element appendMdxQuery(@NotNull Element rootElement) {
     Element mdx = new Element("MDX");
     if (StringUtils.isNotBlank(this.query.getMdx())) {
       mdx.setText(this.query.getMdx());
@@ -136,9 +146,10 @@ public class QuerySerializer {
     return rootElement;
   }
 
-  private Element appendTotalFunctions(Element rootElement) {
+  @NotNull
+  private Element appendTotalFunctions(@NotNull Element rootElement) {
     Element totals = new Element("Totals");
-    Map<String, String > functions = this.query.getTotalFunctions();
+    Map<String, String> functions = this.query.getTotalFunctions();
     for (String uniqueLevelName : functions.keySet()) {
       String functionName = functions.get(uniqueLevelName);
       if (StringUtils.isNotBlank(functionName) && StringUtils.isNotBlank(uniqueLevelName)) {
@@ -153,7 +164,8 @@ public class QuerySerializer {
     return rootElement;
   }
 
-  private Element appendProperties(Element rootElement) {
+  @NotNull
+  private Element appendProperties(@NotNull Element rootElement) {
     Element props = new Element("Properties");
     Properties p = this.query.getProperties();
     if (p != null && !p.isEmpty()) {
@@ -170,29 +182,30 @@ public class QuerySerializer {
     return rootElement;
   }
 
-  private Element appendAxes(Element rootElement) {
+  @NotNull
+  private Element appendAxes(@NotNull Element rootElement) {
 
     Element axes = new Element("Axes");
 
-    QueryAxis rows =  ((OlapQuery)query).getAxes().get(Axis.ROWS);
+    QueryAxis rows = query.getAxes().get(Axis.ROWS);
     if (rows != null) {
       Element rowsElement = createAxisElement(rows);
       axes.addContent(rowsElement);
     }
 
-    QueryAxis columns =  ((OlapQuery)query).getAxes().get(Axis.COLUMNS);
+    QueryAxis columns = query.getAxes().get(Axis.COLUMNS);
     if (columns != null) {
       Element columnsElement = createAxisElement(columns);
       axes.addContent(columnsElement);
     }
 
-    QueryAxis filters =  ((OlapQuery)query).getAxes().get(Axis.FILTER);
+    QueryAxis filters = query.getAxes().get(Axis.FILTER);
     if (filters != null) {
       Element filtersElement = createAxisElement(filters);
       axes.addContent(filtersElement);
     }
 
-    QueryAxis pages =  ((OlapQuery)query).getAxes().get(Axis.PAGES);
+    QueryAxis pages = query.getAxes().get(Axis.PAGES);
     if (pages != null) {
       Element pagesElement = createAxisElement(pages);
       axes.addContent(pagesElement);
@@ -204,9 +217,10 @@ public class QuerySerializer {
 
   }
 
-  private Element createAxisElement(QueryAxis axis) {
+  @NotNull
+  private Element createAxisElement(@NotNull QueryAxis axis) {
     Element axisElement = new Element("Axis");
-    axisElement.setAttribute("location",getAxisName(axis));
+    axisElement.setAttribute("location", getAxisName(axis));
 
     //        if (axis.isNonEmpty() == true) {
     axisElement.setAttribute("nonEmpty", "" + axis.isNonEmpty());
@@ -238,7 +252,9 @@ public class QuerySerializer {
         axisElement.setAttribute("filterCondition", axis.getFilterCondition());
       }
 
-    } catch (Error e) {};
+    } catch (Error e) {
+      LOG.error("Could not create axis element", e);
+    }
 
     Element dimensions = new Element("Dimensions");
 
@@ -254,7 +270,8 @@ public class QuerySerializer {
     return axisElement;
   }
 
-  private Element createDimensionElement(QueryDimension dim) {
+  @NotNull
+  private Element createDimensionElement(@NotNull QueryDimension dim) {
     Element dimension = new Element("Dimension");
     dimension.setAttribute("name", dim.getDimension().getName());
     if (dim.getSortOrder() != null) {
@@ -283,14 +300,16 @@ public class QuerySerializer {
     return dimension;
   }
 
-  private Element createSelectionsElement(Element rootElement, List<Selection> selections) {
+  @NotNull
+  private Element createSelectionsElement(@NotNull Element rootElement, @NotNull List<Selection> selections) {
     for (Selection sel : selections) {
       Element selection = new Element("Selection");
-      if (sel.getDimension() != null)
+      if (sel.getDimension() != null) {
         selection.setAttribute("dimension", sel.getDimension().getName());
-      if ((sel.getRootElement() instanceof Level)) {
+      }
+      if (sel.getRootElement() instanceof Level) {
         selection.setAttribute("type", "level");
-      } else if ((sel.getRootElement() instanceof Member)) {
+      } else if (sel.getRootElement() instanceof Member) {
         selection.setAttribute("type", "member");
       }
       selection.setAttribute("node", sel.getUniqueName());
@@ -306,15 +325,23 @@ public class QuerySerializer {
     return rootElement;
   }
 
-  public String getAxisName(QueryAxis axis) {
-    switch(axis.getLocation().axisOrdinal()) {
-      case -1: return "FILTER";
-      case  0: return "COLUMNS";
-      case  1: return "ROWS";
-      case  2: return "PAGES";
-      case  3: return "CHAPTERS";
-      case  4: return "SECTIONS";
-      default: throw new RuntimeException("Unsupported Axis-Ordinal: " + axis.getLocation().axisOrdinal());
+  @NotNull
+  String getAxisName(@NotNull QueryAxis axis) {
+    switch (axis.getLocation().axisOrdinal()) {
+    case -1:
+      return "FILTER";
+    case 0:
+      return "COLUMNS";
+    case 1:
+      return "ROWS";
+    case 2:
+      return "PAGES";
+    case 3:
+      return "CHAPTERS";
+    case 4:
+      return "SECTIONS";
+    default:
+      throw new RuntimeException("Unsupported Axis-Ordinal: " + axis.getLocation().axisOrdinal());
     }
   }
 

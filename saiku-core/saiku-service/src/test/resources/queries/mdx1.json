@@ -1,24 +1,24 @@
 {
-  "queryModel" : null,
-  "cube" : {
-    "uniqueName" : "[test].[FoodMart].[FoodMart].[Sales]",
-    "name" : "Sales",
-    "connection" : "test",
-    "catalog" : "FoodMart",
-    "schema" : "FoodMart",
-    "caption" : "Sales",
-    "visible" : true
-  },
-  "mdx" : "SELECT Gender.Members on COLUMNS, Measures.Profit on ROWS from Sales",
-  "name" : "mdx1",
-  "parameters" : {
-  },
-  "plugins" : {
-  },
-  "properties" : {
-  },
-  "metadata" : {
-  },
-  "queryType" : "OLAP",
-  "type" : "MDX"
+    "queryModel": null,
+    "cube": {
+        "uniqueName": "[test].[FoodMart].[FoodMart].[Sales]",
+        "name": "Sales",
+        "connection": "test",
+        "catalog": "FoodMart",
+        "schema": "FoodMart",
+        "caption": "Sales",
+        "visible": true
+    },
+    "mdx": "SELECT Gender.Members on COLUMNS, Measures.Profit on ROWS from Sales",
+    "name": "mdx1",
+    "parameters": {
+    },
+    "plugins": {
+    },
+    "properties": {
+    },
+    "metadata": {
+    },
+    "queryType": "OLAP",
+    "type": "MDX"
 }

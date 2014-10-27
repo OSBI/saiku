@@ -1,30 +1,31 @@
-/*  
- *   Copyright 2012 OSBI Ltd
+/*
+ * Copyright 2014 OSBI Ltd
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.saiku.olap.dto.resultset;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.*;
+
+/**
+ * Matrix.
+ */
 public class Matrix {
 
-  private Map<List<Integer>, AbstractBaseCell> map = new HashMap<List<Integer>, AbstractBaseCell>();
+  @NotNull
+  private final Map<List<Integer>, AbstractBaseCell> map = new HashMap<List<Integer>, AbstractBaseCell>();
 
   private int width = 0;
 
@@ -32,8 +33,10 @@ public class Matrix {
 
   private int offset = 0;
 
-  private Set<Integer> xAxis = new HashSet<Integer>();
-  private Set<Integer> yAxis = new HashSet<Integer>();
+  @NotNull
+  private final Set<Integer> xAxis = new HashSet<Integer>();
+  @NotNull
+  private final Set<Integer> yAxis = new HashSet<Integer>();
 
 
   public Matrix() {
@@ -45,7 +48,7 @@ public class Matrix {
    * @param width  Width of matrix
    * @param height Height of matrix
    */
-  public Matrix( final int width, final int height ) {
+  public Matrix(final int width, final int height) {
     this.width = width;
     this.height = height;
   }
@@ -59,9 +62,9 @@ public class Matrix {
    * @param right      Whether value is right-justified
    * @param sameAsPrev Whether value is the same as the previous value. If true, some formats separators between cells
    */
-  public void set( final int x, final int y, final DataCell cell ) {
-    map.put( Arrays.asList( x, y ), cell );
-    addCoordinates( x, y );
+  public void set(final int x, final int y, final DataCell cell) {
+    map.put(Arrays.asList(x, y), cell);
+    addCoordinates(x, y);
     assert x >= 0 && x < width : x;
     assert y >= 0 && y < height : y;
   }
@@ -76,9 +79,9 @@ public class Matrix {
    * @param sameAsPrev - Whether value is the same as the previous value. If true, some formats separators between
    *                   cells
    */
-  public void set( final int x, final int y, final MemberCell value ) {
-    map.put( Arrays.asList( x, y ), value );
-    addCoordinates( x, y );
+  public void set(final int x, final int y, final MemberCell value) {
+    map.put(Arrays.asList(x, y), value);
+    addCoordinates(x, y);
     assert x >= 0 && x < width : x;
     assert y >= 0 && y < height : y;
   }
@@ -90,8 +93,8 @@ public class Matrix {
    * @param y Y coordinate
    * @return Cell
    */
-  public AbstractBaseCell get( final int x, final int y ) {
-    return map.get( Arrays.asList( x, y ) );
+  public AbstractBaseCell get(final int x, final int y) {
+    return map.get(Arrays.asList(x, y));
   }
 
   /**
@@ -119,6 +122,7 @@ public class Matrix {
    *
    * @return the map
    */
+  @NotNull
   public Map<List<Integer>, AbstractBaseCell> getMap() {
     return map;
   }
@@ -128,7 +132,7 @@ public class Matrix {
    *
    * @param offset
    */
-  public void setOffset( final int offset ) {
+  public void setOffset(final int offset) {
     this.offset = offset;
   }
 
@@ -142,17 +146,17 @@ public class Matrix {
 
   }
 
-  private void addCoordinates( Integer x, Integer y ) {
-    xAxis.add( x );
-    yAxis.add( y );
+  private void addCoordinates(Integer x, Integer y) {
+    xAxis.add(x);
+    yAxis.add(y);
   }
 
-  public boolean containsY( Integer yCoordinate ) {
-    return yAxis.contains( yCoordinate );
+  public boolean containsY(Integer yCoordinate) {
+    return yAxis.contains(yCoordinate);
   }
 
-  public boolean containsX( Integer xCoordinate ) {
-    return xAxis.contains( xCoordinate );
+  public boolean containsX(Integer xCoordinate) {
+    return xAxis.contains(xCoordinate);
   }
 
 }

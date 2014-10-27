@@ -1,67 +1,90 @@
+/*
+ * Copyright 2014 OSBI Ltd
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.saiku.datasources.connection;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
 /**
- * Created by bugg on 23/06/14.
+ * RepositoryFile.
  */
 public class RepositoryFile {
 
-    private String path = null;
-    private String fileName = null;
-    private String fileId = null;
-    private byte[] data;
+  @Nullable
+  private String path = null;
+  @Nullable
+  private String fileName = null;
+  @Nullable
+  private String fileId = null;
+  private byte[] data;
 
-    public RepositoryFile() {
-    }
+  private RepositoryFile() {
+  }
 
-    public RepositoryFile(String fileName, RepositoryFile parent, byte[] data) {
-        this(fileName, parent, data, System.currentTimeMillis());
-    }
+  public RepositoryFile(String fileName, RepositoryFile parent, byte[] data) {
+    this(fileName, parent, data, System.currentTimeMillis());
+  }
 
-    public RepositoryFile(String fileName, RepositoryFile parent, byte[] data, String path) {
-        this(fileName, parent, data, System.currentTimeMillis());
-        this.path = path;
-    }
+  public RepositoryFile(String fileName, RepositoryFile parent, String path) {
+    this(fileName, null, null, System.currentTimeMillis());
+    this.path = path;
+  }
 
-    public RepositoryFile(String fileName, RepositoryFile parent, byte[] data, long lastModified) {
-        this();
-        this.fileId = UUID.randomUUID().toString();
+  private RepositoryFile(String fileName, RepositoryFile parent, byte[] data, long lastModified) {
+    this();
+    this.fileId = UUID.randomUUID().toString();
 
-        this.fileName = fileName;
+    this.fileName = fileName;
 
-        setData(data);
-    }
+    setData(data);
+  }
 
-    public void setData(byte[] data) {
-        this.data = data;
-    }
+  void setData(byte[] data) {
+    this.data = data;
+  }
 
-    public byte[] getData() {
-        return this.data;
-    }
+  public byte[] getData() {
+    return this.data;
+  }
 
-    public String getFileName() {
-        return this.fileName;
-    }
+  @Nullable
+  public String getFileName() {
+    return this.fileName;
+  }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
+  }
 
-    public String getFileId() {
-        return this.fileId;
-    }
+  @Nullable
+  public String getFileId() {
+    return this.fileId;
+  }
 
-    public void setFileId(String fileId) {
-        this.fileId = fileId;
-    }
+  public void setFileId(String fileId) {
+    this.fileId = fileId;
+  }
 
-    public boolean isFolder() {
-        return false;
-    }
+  public boolean isFolder() {
+    return false;
+  }
 
-    public String getPath() {
-        return this.path;
-    }
+  @Nullable
+  public String getPath() {
+    return this.path;
+  }
 }

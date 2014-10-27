@@ -1,17 +1,17 @@
 /*
- *   Copyright 2012 OSBI Ltd
+ * Copyright 2014 OSBI Ltd
  *
- *   Licensed under the Apache License, Version 2.0 (the "License");
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.saiku.web.rest.resources;
 
@@ -37,10 +37,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
  */
 @Component
 @Path("/saiku/info")
-@XmlAccessorType( XmlAccessType.NONE)
+@XmlAccessorType(XmlAccessType.NONE)
 public class InfoResource {
 
-  private static final Logger log = LoggerFactory.getLogger( InfoResource.class );
+  private static final Logger LOG = LoggerFactory.getLogger(InfoResource.class);
 
   private PlatformUtilsService platformService;
 
@@ -50,12 +50,12 @@ public class InfoResource {
   }
 
   @GET
-  @Produces({"application/json" })
+  @Produces({ "application/json" })
   public Response getAvailablePlugins() {
 
     GenericEntity<List<Plugin>> entity =
-        new GenericEntity<List<Plugin>>(platformService.getAvailablePlugins())
-        {};
+        new GenericEntity<List<Plugin>>(platformService.getAvailablePlugins()) {
+        };
     return Response.ok(entity).build();
   }
 }

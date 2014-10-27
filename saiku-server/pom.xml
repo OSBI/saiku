@@ -9,6 +9,9 @@
 	<artifactId>saiku-server</artifactId>
 	<packaging>pom</packaging>
     <version>3.1-SNAPSHOT</version>
+    <properties>
+        <checkstyle.skip>true</checkstyle.skip>
+    </properties>
 	<build>
 		<plugins>
 			<plugin>
