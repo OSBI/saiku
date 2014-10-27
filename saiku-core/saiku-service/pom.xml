@@ -279,7 +279,7 @@
             <artifactId>hsqldb</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.cenqua.clover</groupId>
+            <groupId>com.atlassian.clover</groupId>
             <artifactId>clover</artifactId>
             <scope>compile</scope>
         </dependency>

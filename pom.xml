@@ -882,9 +882,9 @@
                 <version>${calcite.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.cenqua.clover</groupId>
+                <groupId>com.atlassian.clover</groupId>
                 <artifactId>clover</artifactId>
-                <version>3.3.0</version>
+                <version>4.0.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
