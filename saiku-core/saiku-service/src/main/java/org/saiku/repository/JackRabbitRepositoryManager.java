@@ -16,19 +16,23 @@
 package org.saiku.repository;
 
 
-import org.apache.commons.io.FileUtils;
+import org.saiku.database.dto.MondrianSchema;
+import org.saiku.datasources.connection.RepositoryFile;
+import org.saiku.service.user.UserService;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.core.RepositoryImpl;
-import org.apache.jackrabbit.core.TransientRepository;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.saiku.database.dto.MondrianSchema;
-import org.saiku.datasources.connection.RepositoryFile;
-import org.saiku.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.jcr.*;
 import javax.jcr.nodetype.NodeTypeExistsException;
@@ -42,10 +46,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import java.io.*;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 /**
  * JackRabbit JCR Repository Manager for Saiku.
@@ -442,6 +442,8 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         try {
             n = getFolder(datasourcePath);
             n.remove();
+          n.getSession().save();
+
         } catch (RepositoryException e) {
             log.error("Could not remove file "+datasourcePath, e );
         }
