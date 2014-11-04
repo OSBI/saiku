@@ -737,14 +737,17 @@ textarea, select {
 .dialog_login .dialog_icon {
     background-position: -666px 15px;
 }
-.dialog_selections {
+.dialog_selections,
+.dialog_date-filter {
 	min-width: 800px !important;
     height: 490px !important;
 }
-.dialog_selections .dialog_icon {
+.dialog_selections .dialog_icon,
+.dialog_date-filter .dialog_icon {
 	display: none;
 }
-.dialog_selections .dialog_body {
+.dialog_selections .dialog_body,
+.dialog_date-filter .dialog_body {
     height: 410px;
     position: relative;
 }
