@@ -34,16 +34,13 @@ import mondrian.rolap.RolapCubeLevel;
 import mondrian.server.Locus;
 
 /**
- * Implementation of {@link org.olap4j.metadata.Level}
- * for the Mondrian OLAP engine.
+ * Implementation of {@link org.olap4j.metadata.Level} for the Mondrian OLAP engine.
  *
- * @author jhyde
  * @since May 25, 2007
  */
 public class MondrianOlap4jLevel
     extends MondrianOlap4jMetadataElement
-    implements Level, Named
-{
+    implements Level, Named {
   final MondrianOlap4jSchema olap4jSchema;
   final mondrian.olap.Level level;
 
@@ -51,12 +48,11 @@ public class MondrianOlap4jLevel
    * Creates a MondrianOlap4jLevel.
    *
    * @param olap4jSchema Schema
-   * @param level Mondrian level
+   * @param level        Mondrian level
    */
   MondrianOlap4jLevel(
       MondrianOlap4jSchema olap4jSchema,
-      mondrian.olap.Level level)
-  {
+      mondrian.olap.Level level) {
     this.olap4jSchema = olap4jSchema;
     this.level = level;
   }
@@ -106,9 +102,9 @@ public class MondrianOlap4jLevel
   }
 
   /**
-   * Returns a list of this level's properties, optionally including standard
-   * properties that are available on every level.
-   *
+   * Returns a list of this level's properties, optionally including standard properties that are available on every
+   * level.
+   * <p/>
    * <p>NOTE: Not part of the mondrian.olap4j API.
    *
    * @param includeStandard Whether to include standard properties
@@ -117,7 +113,7 @@ public class MondrianOlap4jLevel
   NamedList<Property> getProperties(boolean includeStandard) {
     final NamedList<Property> list = new ArrayNamedListImpl<Property>() {
       public String getName(Object property) {
-        return ((Property)property).getName();
+        return ((Property) property).getName();
       }
     };
     // standard properties first
@@ -162,6 +158,7 @@ public class MondrianOlap4jLevel
                 return olap4jConnection.toOlap4j(
                     levelMembers.get(index));
               }
+
               public int size() {
                 return levelMembers.size();
               }
@@ -190,9 +187,10 @@ public class MondrianOlap4jLevel
         olap4jSchema.getLocale());
   }
 
-  public Map<String, Annotation> getAnnotations(){
-      return level.getAnnotationMap();
+  public Map<String, Annotation> getAnnotations() {
+    return level.getAnnotationMap();
   }
+
   public int getCardinality() {
     return level.getApproxRowCount();
   }

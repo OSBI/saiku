@@ -62,7 +62,7 @@ public class SaikuDimension extends AbstractSaikuObject {
     return hierarchies;
   }
 
-  public String getType(){
+  public String getType() {
     return type;
   }
 

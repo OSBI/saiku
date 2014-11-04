@@ -154,7 +154,7 @@ public class ObjectUtil {
           level.getDimension().getUniqueName(),
           level.getHierarchy().getUniqueName(),
           level.isVisible(),
-          ((MondrianOlap4jLevel)level).getAnnotations());
+          ((MondrianOlap4jLevel) level).getAnnotations());
     } catch (Exception e) {
       throw new SaikuServiceException("Cannot convert level: " + level, e);
     }

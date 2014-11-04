@@ -299,7 +299,10 @@
 
         <Hierarchies>
             <Hierarchy name='Time' hasAll='false'>
-                <Level attribute='Year'/>
+                <Level attribute='Year'>
+                    <Annotations><Annotation name="AnalyzerDateFormat">[yyyy]</Annotation></Annotations>
+
+                </Level>
                 <Level attribute='Quarter'/>
                 <Level attribute='Month'/>
             </Hierarchy>
