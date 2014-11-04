@@ -66,13 +66,19 @@ public class ObjectUtil {
 
   @NotNull
   public static SaikuDimension convert(@NotNull Dimension dim) {
-    SaikuDimension sDim = new SaikuDimension(
-        dim.getName(),
-        dim.getUniqueName(),
-        dim.getCaption(),
-        dim.getDescription(),
-        dim.isVisible(),
-        convertHierarchies(dim.getHierarchies()));
+    SaikuDimension sDim = null;
+    try {
+      sDim = new SaikuDimension(
+          dim.getName(),
+          dim.getUniqueName(),
+          dim.getCaption(),
+          dim.getDescription(),
+          dim.isVisible(),
+          dim.getDimensionType(),
+          convertHierarchies(dim.getHierarchies()));
+    } catch (OlapException e) {
+      e.printStackTrace();
+    }
     return sDim;
   }
 

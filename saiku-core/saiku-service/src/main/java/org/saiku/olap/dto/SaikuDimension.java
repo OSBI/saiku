@@ -15,6 +15,8 @@
  */
 package org.saiku.olap.dto;
 
+import org.olap4j.metadata.Dimension;
+
 import java.util.List;
 
 /**
@@ -22,6 +24,7 @@ import java.util.List;
  */
 public class SaikuDimension extends AbstractSaikuObject {
 
+  private final String type;
   private String caption;
   private String description;
   private boolean visible;
@@ -34,12 +37,13 @@ public class SaikuDimension extends AbstractSaikuObject {
   }
 
   public SaikuDimension(String name, String uniqueName, String caption, String description, boolean visible,
-                        List<SaikuHierarchy> hierarchies) {
+                        Dimension.Type dimensionType, List<SaikuHierarchy> hierarchies) {
     super(uniqueName, name);
     this.caption = caption;
     this.description = description;
     this.visible = visible;
     this.hierarchies = hierarchies;
+    this.type = dimensionType.toString();
   }
 
   public String getCaption() {
@@ -56,6 +60,10 @@ public class SaikuDimension extends AbstractSaikuObject {
 
   public List<SaikuHierarchy> getHierarchies() {
     return hierarchies;
+  }
+
+  public String getType(){
+    return type;
   }
 
 }
