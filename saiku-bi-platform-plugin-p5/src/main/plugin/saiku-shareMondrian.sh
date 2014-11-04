@@ -53,7 +53,7 @@ echo Done
 # Step 2: Delete saiku's libs
 
 echo -n "Deleting Saiku version of mondrian.jar and related dependencies.... "
-rm -f lib/mondrian* lib/olap4j* lib/eigenbase*
+rm -f lib/mondrian* lib/mondrian.olap4j* lib/eigenbase*
 
 
 # Step 3: Copy jar to WEB-INF
