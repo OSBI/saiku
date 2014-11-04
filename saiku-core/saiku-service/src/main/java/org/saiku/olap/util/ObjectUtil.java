@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import mondrian.olap4j.MondrianOlap4jLevel;
+
 /**
  * ObjectUtil.
  */
@@ -145,7 +147,8 @@ public class ObjectUtil {
           level.getDescription(),
           level.getDimension().getUniqueName(),
           level.getHierarchy().getUniqueName(),
-          level.isVisible());
+          level.isVisible(),
+          ((MondrianOlap4jLevel)level).getAnnotations());
     } catch (Exception e) {
       throw new SaikuServiceException("Cannot convert level: " + level, e);
     }

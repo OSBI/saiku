@@ -15,11 +15,17 @@
  */
 package org.saiku.olap.dto;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import mondrian.olap.Annotation;
+
 /**
  * SaikuLevel.
  */
 public class SaikuLevel extends AbstractSaikuObject {
 
+  private final Map<String, Annotation> annotations;
   private String caption;
   private String hierarchyUniqueName;
   private String dimensionUniqueName;
@@ -27,7 +33,8 @@ public class SaikuLevel extends AbstractSaikuObject {
   private boolean visible;
   private String description;
 
-  public SaikuLevel() {
+  public SaikuLevel(String name, String uniqueName, String caption, String description, String s, String uniqueName1,
+                    boolean visible) {
     super(null, null);
     throw new RuntimeException("Unsupported Constructor. Serialization only");
   }
@@ -40,13 +47,15 @@ public class SaikuLevel extends AbstractSaikuObject {
       String description,
       String dimensionUniqueName,
       String hierarchyUniqueName,
-      boolean visible) {
+      boolean visible,
+      Map<String, Annotation> annotations) {
     super(uniqueName, name);
     this.caption = caption;
     this.hierarchyUniqueName = hierarchyUniqueName;
     this.dimensionUniqueName = dimensionUniqueName;
     this.visible = visible;
     this.description = description;
+    this.annotations = annotations;
     //this.members = members;
   }
 
@@ -68,6 +77,18 @@ public class SaikuLevel extends AbstractSaikuObject {
 
   public String getDescription() {
     return description;
+  }
+
+  public Map<String, String> getAnnotations() {
+
+    Map<String, String> m = new HashMap<String, String>();
+    for (Map.Entry<String, Annotation> entry : annotations.entrySet())
+    {
+      m.put(entry.getKey(), (String) entry.getValue().getValue());
+    }
+
+
+    return m;
   }
 
   //public List<SaikuMember> getMembers() {

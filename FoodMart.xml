@@ -52,9 +52,13 @@
       <Level name="Year" column="the_year" type="Numeric" uniqueMembers="true"
           levelType="TimeYears"/>
       <Level name="Quarter" column="quarter" uniqueMembers="false"
-          levelType="TimeQuarters"/>
+          levelType="TimeQuarters">
+          <Annotations><Annotation name="AnalyzerDateFormat">[yyyy].['QTR'q]</Annotation></Annotations>
+      </Level>
       <Level name="Month" column="month_of_year" uniqueMembers="false" type="Numeric"
-          levelType="TimeMonths"/>
+          levelType="TimeMonths">
+          <Annotations><Annotation name="AnalyzerDateFormat">[yyyy].['QTR'q].[m]</Annotation></Annotations>
+      </Level>
     </Hierarchy>
     <Hierarchy hasAll="true" name="Weekly" primaryKey="time_id">
       <Table name="time_by_day"/>
