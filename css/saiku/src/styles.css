@@ -866,6 +866,35 @@ textarea, select {
     width: 300px;
 }
 
+.dialog_date-filter .dialog_body .box_selections {
+    /*border: 1px solid #000;*/
+    margin: 0 auto;
+    width: 600px;
+}
+
+.dialog_date-filter .dialog_body .available_selections {
+    padding-left: 25px;
+    float: left;
+}
+
+.dialog_date-filter .dialog_body .checkbox-selection {
+    position: relative;
+    height: 270px;
+}
+
+.dialog_date-filter .dialog_body .selection_options  {
+    height: 270px;
+    width: 430px;
+    font-size: 11px;
+    overflow: auto;
+    border: 1px solid #ccc;
+}
+
+.dialog_date-filter .dialog_body .form-group-selection  {
+    width: 100px;
+    display: inline-block;
+}
+
 .dialog_permissions .dialog_body {
     width: 370px;
     height: 380px;

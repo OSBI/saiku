@@ -18,8 +18,7 @@
  * Dialog for date filter
  */
 var DateFilterModal = Modal.extend({
-	// type: 'date-filter',
-	type: 'selections',
+	type: 'date-filter',
 
 	buttons: [
 		{ text: 'Save', method: 'close' },
@@ -31,48 +30,71 @@ var DateFilterModal = Modal.extend({
 	},
 
 	template_selection_operator: _.template(
-		'<div class="available_selections">' +
-			'<span class="i18n">Operator:</span><br>' +
-			'<div class="selection_options">' +
-				'<label><input type="radio">Equals</label>' +
-				'<label><input type="radio">After</label>' +
-				'<label><input type="radio">Before</label>' +
-				'<label><input type="radio">Between</label><br>' +
-				'<label><input type="radio">Different</label>' +
-				'<label><input type="radio">After&Equals</label>' +
-				'<label><input type="radio">Before&Equals</label>' +
-				'<label><input type="radio">Not Between</label><br>' +
-				'<label>Select a date:</label>' +
-				'<input type="text">' +
+		'<div class="box_selections">' +
+			'<div class="available_selections">' +
+				'<div class="checkbox-selection">' +
+					'<input type="checkbox">' +
+				'</div>' +
 			'</div>' +
-		'</div>' +
-
-		'<div class="available_selections">' +
-			'<span class="i18n">Fixed Date:</span><br>' +
-			'<div class="selection_options">' +
-				'<label><input type="radio">Today</label>' +
-				'<label><input type="radio">Yesterday</label>' +
-				'<label><input type="radio">Current Week</label>' +
-				'<label><input type="radio">Current Month</label><br>' +
-				'<label><input type="radio">Current Year</label>' +
-			'</div>' +
-		'</div>' +
-
-		'<div class="available_selections">' +
-			'<span class="i18n">Rolling Date:</span><br>' +
-			'<div class="selection_options">' +
-				'<select>' +
-					'<option>Last</option>' +
-					'<option>Next</option>' +
-				'</select>' +
-				'<select>' +
-					'<option>Day(s)</option>' +
-					'<option>Week(s)</option>' +
-					'<option>Month(s)</option>' +
-					'<option>Year(s)</option>' +
-				'</select>' +
+			'<div class="available_selections">' +
+				'<span class="i18n">Operator:</span><br>' +
+				'<div class="selection_options">' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio"> Equals</label>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio"> After</label>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio"> Before</label>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio"> Between</label><br>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio"> Different</label>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio"> After&Equals</label>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio"> Before&Equals</label>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio"> Not Between</label><br>' +
+					'</div>' +
+					// '<label>Select a date:</label>' +
+					// '<input type="text">' +
+				'</div>' +
 			'</div>' +
 		'</div>'
+
+		// '<div class="available_selections">' +
+		// 	'<span class="i18n">Fixed Date:</span><br>' +
+		// 	'<div class="selection_options">' +
+		// 		'<label><input type="radio">Today</label>' +
+		// 		'<label><input type="radio">Yesterday</label>' +
+		// 		'<label><input type="radio">Current Week</label>' +
+		// 		'<label><input type="radio">Current Month</label><br>' +
+		// 		'<label><input type="radio">Current Year</label>' +
+		// 	'</div>' +
+		// '</div>' +
+
+		// '<div class="available_selections">' +
+		// 	'<span class="i18n">Rolling Date:</span><br>' +
+		// 	'<div class="selection_options">' +
+		// 		'<select>' +
+		// 			'<option>Last</option>' +
+		// 			'<option>Next</option>' +
+		// 		'</select>' +
+		// 		'<select>' +
+		// 			'<option>Day(s)</option>' +
+		// 			'<option>Week(s)</option>' +
+		// 			'<option>Month(s)</option>' +
+		// 			'<option>Year(s)</option>' +
+		// 		'</select>' +
+		// 	'</div>' +
+		// '</div>'
 	),
 
 	initialize: function(args) {
@@ -92,8 +114,8 @@ var DateFilterModal = Modal.extend({
 	},
 
     post_render: function(args) {
-        var left = ($(window).width() - 1000)/2;
-        var width = $(window).width() < 1040 ? $(window).width() : 1040;
+        var left = ($(window).width() - 800)/2;
+        var width = $(window).width() < 800 ? $(window).width() : 800;
         $(args.modal.el).parents('.ui-dialog')
             .css({ width: width, left: "inherit", margin:"0", height: 490 })
             .offset({ left: left});
