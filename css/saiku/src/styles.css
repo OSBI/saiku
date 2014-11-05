@@ -737,8 +737,7 @@ textarea, select {
 .dialog_login .dialog_icon {
     background-position: -666px 15px;
 }
-.dialog_selections,
-.dialog_date-filter {
+.dialog_selections {
 	min-width: 800px !important;
     height: 490px !important;
 }
@@ -866,25 +865,33 @@ textarea, select {
     width: 300px;
 }
 
-.dialog_date-filter .dialog_body .box_selections {
-    /*border: 1px solid #000;*/
-    margin: 0 auto;
-    width: 600px;
+.dialog_date-filter {
+    min-width: 500px !important;
+    height: 490px !important;
 }
 
-.dialog_date-filter .dialog_body .available_selections {
+.dialog_date-filter .dialog_body .box-selections {
+    /*border: 1px solid #000;*/
+    margin: 10px auto;
+    width: 100%;
+}
+
+.dialog_date-filter .dialog_body .available-selections {
+    /*border: 1px solid #000;*/
     padding-left: 25px;
     float: left;
 }
 
 .dialog_date-filter .dialog_body .checkbox-selection {
+    /*border: 1px solid #000;*/
     position: relative;
-    height: 270px;
+    height: auto;
 }
 
-.dialog_date-filter .dialog_body .selection_options  {
-    height: 270px;
+.dialog_date-filter .dialog_body .selection-options  {
+    padding: 10px;
     width: 430px;
+    height: auto;
     font-size: 11px;
     overflow: auto;
     border: 1px solid #ccc;
