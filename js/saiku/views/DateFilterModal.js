@@ -18,7 +18,8 @@
  * Dialog for date filter
  */
 var DateFilterModal = Modal.extend({
-	type: 'date-filter',
+	// type: 'date-filter',
+	type: 'selections',
 
 	buttons: [
 		{ text: 'Save', method: 'close' },
@@ -30,7 +31,48 @@ var DateFilterModal = Modal.extend({
 	},
 
 	template_selection_operator: _.template(
-		'<span><%= name %></span>'
+		'<div class="available_selections">' +
+			'<span class="i18n">Operator:</span><br>' +
+			'<div class="selection_options">' +
+				'<label><input type="radio">Equals</label>' +
+				'<label><input type="radio">After</label>' +
+				'<label><input type="radio">Before</label>' +
+				'<label><input type="radio">Between</label><br>' +
+				'<label><input type="radio">Different</label>' +
+				'<label><input type="radio">After&Equals</label>' +
+				'<label><input type="radio">Before&Equals</label>' +
+				'<label><input type="radio">Not Between</label><br>' +
+				'<label>Select a date:</label>' +
+				'<input type="text">' +
+			'</div>' +
+		'</div>' +
+
+		'<div class="available_selections">' +
+			'<span class="i18n">Fixed Date:</span><br>' +
+			'<div class="selection_options">' +
+				'<label><input type="radio">Today</label>' +
+				'<label><input type="radio">Yesterday</label>' +
+				'<label><input type="radio">Current Week</label>' +
+				'<label><input type="radio">Current Month</label><br>' +
+				'<label><input type="radio">Current Year</label>' +
+			'</div>' +
+		'</div>' +
+
+		'<div class="available_selections">' +
+			'<span class="i18n">Rolling Date:</span><br>' +
+			'<div class="selection_options">' +
+				'<select>' +
+					'<option>Last</option>' +
+					'<option>Next</option>' +
+				'</select>' +
+				'<select>' +
+					'<option>Day(s)</option>' +
+					'<option>Week(s)</option>' +
+					'<option>Month(s)</option>' +
+					'<option>Year(s)</option>' +
+				'</select>' +
+			'</div>' +
+		'</div>'
 	),
 
 	initialize: function(args) {
@@ -46,7 +88,7 @@ var DateFilterModal = Modal.extend({
 
 		// Load template
         this.$el.find('.dialog_body')
-        	.html(this.template_selection_operator({ name: 'test' }));
+        	.html(this.template_selection_operator);
 	},
 
     post_render: function(args) {
