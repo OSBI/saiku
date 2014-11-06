@@ -2167,3 +2167,41 @@ width:70px !important;
     border-color: #9ecaed;
     box-shadow: 0 0 10px #9ecaed;
 }
+
+.ui-datepicker {
+    padding: 10px;
+    display: none;
+    font-size: 11px;
+    background: #fcfcfc;
+    background: #fff -moz-linear-gradient(top, #fcfcfc 0%, #fff 100%);
+    background: #fff -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fcfcfc)), color-stop(100%,#fff));
+    background: #fff -webkit-linear-gradient(top, #fcfcfc 0%, #fff 100%);
+    background: #fff -o-linear-gradient(top, #fcfcfc 0%, #fff 100%);
+    background: #fff -ms-linear-gradient(top, #fcfcfc 0%, #fff 100%);
+    background: #fff linear-gradient(top, #fcfcfc 0%, #fff 100%);
+    border: 1px solid #ccc;
+}
+ 
+.ui-datepicker table {
+    width: 100%;
+}
+ 
+.ui-datepicker table td {
+    text-align: center;
+}
+ 
+.ui-datepicker a {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.ui-datepicker-title {
+    text-align: center;
+    font-weight: bold;
+}
+ 
+.ui-datepicker-prev {
+}
+ 
+.ui-datepicker-next {
+}
