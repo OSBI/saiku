@@ -36,7 +36,13 @@ public class DataSourceMapper {
                 String[] cat = loc[1].split("=");
                 String[] drv = loc[2].split("=");
                 this.schema = cat[1];
-                this.driver = drv[1];
+                if(drv.length>1) {
+                    this.driver = drv[1];
+                }
+                else{
+                    this.driver = "invalid";
+                    //TODO throw some error.
+                }
                 this.connectiontype = "MONDRIAN";
             } else {
                 this.connectiontype = "XMLA";
