@@ -3,12 +3,12 @@
 <parent>
 		<artifactId>saiku</artifactId>
 		<groupId>org.saiku</groupId>
-		<version>3.0.2-SNAPSHOT</version>
+		<version>3.0.2</version>
 	</parent>
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-ui</artifactId>
 	<packaging>pom</packaging>
-	<version>3.0.2-SNAPSHOT</version>
+	<version>3.0.2</version>
 	<build>
 		<plugins>
 <!--
