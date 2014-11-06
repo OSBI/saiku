@@ -3,12 +3,12 @@
 <parent>
 		<artifactId>saiku</artifactId>
 		<groupId>org.saiku</groupId>
-		<version>3.0.1-GA</version>
+		<version>3.0.2-SNAPSHOT</version>
 	</parent>
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-ui</artifactId>
 	<packaging>pom</packaging>
-	<version>3.0.1-GA</version>
+	<version>3.0.2-SNAPSHOT</version>
 	<build>
 		<plugins>
 <!--
@@ -46,7 +46,7 @@
               <goal>compress</goal>
             </goals>
           </execution>
-        </executions>        
+        </executions>
         <configuration>
           <nosuffix>true</nosuffix>
           <gzip>true</gzip>
@@ -173,11 +173,11 @@
 			                <artifacts>
 			                    <artifact>
 			                        <file>target/saiku-ui-${project.version}.war</file>
-			                        <type>war</type>                           
+			                        <type>war</type>
 			                    </artifact>
 			                     <artifact>
 			                        <file>target/saiku-ui-${project.version}.zip</file>
-			                        <type>zip</type>                           
+			                        <type>zip</type>
 			                    </artifact>
 			                </artifacts>
 			            </configuration>
