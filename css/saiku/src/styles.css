@@ -871,21 +871,23 @@ textarea, select {
 }
 
 .dialog_date-filter .dialog_body .box-selections {
-    /*border: 1px solid #000;*/
-    margin: 10px auto;
+    position: relative;
+    margin: 20px auto;
     width: 100%;
+    /*border: 1px solid #000;*/
 }
 
 .dialog_date-filter .dialog_body .available-selections {
+    margin: 0 auto;
+    width: 80%;
     /*border: 1px solid #000;*/
-    padding-left: 25px;
-    float: left;
 }
 
-.dialog_date-filter .dialog_body .checkbox-selection {
-    /*border: 1px solid #000;*/
-    position: relative;
-    height: auto;
+.dialog_date-filter .dialog_body .selection-checkbox {
+    position: absolute;
+    top: 50%;
+    left: 18px;
+    transform: translateY(-50%);
 }
 
 .dialog_date-filter .dialog_body .selection-options  {
@@ -893,13 +895,21 @@ textarea, select {
     width: 430px;
     height: auto;
     font-size: 11px;
-    overflow: auto;
     border: 1px solid #ccc;
+    overflow: auto;
 }
 
 .dialog_date-filter .dialog_body .form-group-selection  {
-    width: 100px;
     display: inline-block;
+    width: 100px;
+}
+
+.dialog_date-filter .dialog_body .form-group  {
+    margin-top: 5px;
+}
+
+.dialog_date-filter .dialog_body .form-group label  {
+    padding-right: 10px;
 }
 
 .dialog_permissions .dialog_body {

@@ -26,15 +26,14 @@ var DateFilterModal = Modal.extend({
 	],
 
 	events: {
-		'click a': 'call'
+		'click a': 'call',
+		'focus #select-date': 'select_date'
 	},
 
 	template_selection: _.template(
 		'<div class="box-selections">' +
-			'<div class="available-selections">' +
-				'<div class="checkbox-selection">' +
-					'<input type="checkbox">' +
-				'</div>' +
+			'<div class="selection-checkbox">' +
+				'<input type="checkbox">' +
 			'</div>' +
 			'<div class="available-selections">' +
 				'<span class="i18n">Operator:</span><br>' +
@@ -63,16 +62,17 @@ var DateFilterModal = Modal.extend({
 					'<div class="form-group-selection">' +
 						'<label><input type="radio"> Not Between</label><br>' +
 					'</div>' +
+					'<div class="form-group">' +
+						'<label>Select a date:</label>' +
+						'<input type="text" id="select-date">' +
+					'</div>' +
 				'</div>' +
 			'</div>' +
 		'</div>' +
 		'<div class="box-selections">' +
-			'<div class="clearfix"></div>' +
-			'<div class="available-selections">' +
-				'<div class="checkbox-selection">' +
-					'<input type="checkbox">' +
-				'</div>' +
-			'</div>' +
+			'<div class="selection-checkbox">' +
+				'<input type="checkbox">' +
+			'</div>' +			
 			'<div class="available-selections">' +
 				'<span class="i18n">Fixed Date:</span><br>' +
 				'<div class="selection-options">' +
@@ -85,11 +85,8 @@ var DateFilterModal = Modal.extend({
 			'</div>' +
 		'</div>' +
 		'<div class="box-selections">' +
-			'<div class="clearfix"></div>' +
-			'<div class="available-selections">' +
-				'<div class="checkbox-selection">' +
-					'<input type="checkbox">' +
-				'</div>' +
+			'<div class="selection-checkbox">' +
+				'<input type="checkbox">' +
 			'</div>' +
 			'<div class="available-selections">' +
 				'<span class="i18n">Rolling Date:</span><br>' +
@@ -131,5 +128,10 @@ var DateFilterModal = Modal.extend({
         $(args.modal.el).parents('.ui-dialog')
             .css({ width: width, left: "inherit", margin:"0", height: 490 })
             .offset({ left: left});
+    },
+
+    select_date: function(event) {
+    	var $currentTarget = $(event.currentTarget);
+    	$currentTarget.datepicker();
     }
 });
