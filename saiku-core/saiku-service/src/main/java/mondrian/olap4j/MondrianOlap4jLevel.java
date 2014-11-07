@@ -35,7 +35,7 @@ import mondrian.server.Locus;
 
 /**
  * Implementation of {@link org.olap4j.metadata.Level} for the Mondrian OLAP engine.
- *
+ * Tweaked by tom
  * @since May 25, 2007
  */
 public class MondrianOlap4jLevel
