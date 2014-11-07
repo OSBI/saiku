@@ -62,10 +62,25 @@ var DateFilterModal = Modal.extend({
 					'<div class="form-group-selection">' +
 						'<label><input type="radio"> Not Between</label><br>' +
 					'</div>' +
-					'<div class="form-group">' +
-						'<label>Select a date:</label>' +
-						'<input type="text" id="select-date">' +
+					'<div class="inline-form-group">' +
+						'<div class="form-group">' +
+							'<label>Select a date:</label>' +
+							'<input type="text" id="select-date" placeholder="Choose a date">' +
+						'</div>' +
+						'<div class="form-group">' +
+							'<fieldset id="selected-date">' +
+								'<legend>Selected date:</legend>' +
+							'</fieldset>' +
+						'</div>' +
 					'</div>' +
+					// '<div class="form-group">' +
+					// 	'<label>Select a start date:</label>' +
+					// 	'<input type="text" placeholder="Choose a date">' +
+					// '</div>' +
+					// '<div class="form-group">' +
+					// 	'<label>Select an end date:</label>' +
+					// 	'<input type="text" placeholder="Choose a date">' +
+					// '</div>' +
 				'</div>' +
 			'</div>' +
 		'</div>' +
@@ -91,19 +106,43 @@ var DateFilterModal = Modal.extend({
 			'<div class="available-selections">' +
 				'<span class="i18n">Rolling Date:</span><br>' +
 				'<div class="selection-options">' +
-					'<select>' +
-						'<option>Last</option>' +
-						'<option>Next</option>' +
-					'</select>' +
-					'<select>' +
-						'<option>Day(s)</option>' +
-						'<option>Week(s)</option>' +
-						'<option>Month(s)</option>' +
-						'<option>Year(s)</option>' +
-					'</select>' +
+					'<div class="form-group-selection">' +
+						'<select>' +
+							'<option>Last</option>' +
+							'<option>Next</option>' +
+						'</select>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<select>' +
+							'<option>Day(s)</option>' +
+							'<option>Week(s)</option>' +
+							'<option>Month(s)</option>' +
+							'<option>Year(s)</option>' +
+						'</select>' +
+					'</div>' +
 				'</div>' +
 			'</div>' +
 		'</div>'
+		// '<div class="box-selections">' +
+		// 	'<div class="available-selections">' +
+		// 		'<span class="i18n">Available member:</span><br>' +
+		// 		'<div class="selection-options"></div>' +
+		// 	'</div>' +
+		// '</div>' +
+		// '<div class="box-selections">' +
+		// 	'<div class="selection_buttons">' +
+	 //            '<a class="form_button">&nbsp;&gt;&nbsp;</a><br><br>' +
+	 //            '<a class="form_button">&gt;&gt;</a><br><br>' +
+	 //            '<a class="form_button">&lt;&lt;</a><br><br>' +
+	 //            '<a class="form_button">&nbsp;&lt;&nbsp;</a>' +
+	 //        '</div>' +
+  //       '</div>' +
+		// '<div class="box-selections">' +
+		// 	'<div class="available-selections">' +
+		// 		'<span class="i18n">Used members:</span><br>' +
+		// 		'<div class="selection-options"></div>' +
+		// 	'</div>' +
+		// '</div>'
 	),
 
 	initialize: function(args) {

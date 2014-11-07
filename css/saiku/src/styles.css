@@ -890,7 +890,7 @@ textarea, select {
     transform: translateY(-50%);
 }
 
-.dialog_date-filter .dialog_body .selection-options  {
+.dialog_date-filter .dialog_body .selection-options {
     padding: 10px;
     width: 430px;
     height: auto;
@@ -899,17 +899,33 @@ textarea, select {
     overflow: auto;
 }
 
-.dialog_date-filter .dialog_body .form-group-selection  {
+.dialog_date-filter .dialog_body .form-group-selection {
     display: inline-block;
     width: 100px;
 }
 
-.dialog_date-filter .dialog_body .form-group  {
+.dialog_date-filter .dialog_body .form-group {
     margin-top: 5px;
+    padding-right: 10px;
+    float: left;
+    /*border: 1px solid #000;*/
 }
 
-.dialog_date-filter .dialog_body .form-group label  {
+.dialog_date-filter .dialog_body .inline-form-group {
+    display: inline-block;
+}
+
+.dialog_date-filter .dialog_body .form-group label,
+.dialog_date-filter .dialog_body .form-group select {
     padding-right: 10px;
+}
+
+.dialog_date-filter .dialog_body .form-group #select-date {
+    width: 100px;
+}
+
+.dialog_date-filter .dialog_body .form-group #selected-date {
+    border: 1px solid #ccc;
 }
 
 .dialog_permissions .dialog_body {
@@ -2191,8 +2207,8 @@ width:70px !important;
 }
  
 .ui-datepicker a {
-    cursor: pointer;
     text-decoration: none;
+    cursor: pointer;
 }
 
 .ui-datepicker-title {
