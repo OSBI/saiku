@@ -243,15 +243,27 @@ var WorkspaceDropZone = Backbone.View.extend({
         var $target = $(event.target).hasClass('d_level') ?
             $(event.target).find('.level') :
             $(event.target);
-        var key = $target.attr('href').replace('#', '');
-        
-        // Launch selections dialog
-        (new SelectionsModal({
-            target: $target,
-            name: $target.text(),
-            key: key,
-            workspace: this.workspace
-        })).open();
+        var key = $target.attr('href').replace('#', ''),
+            hierarchy = $target.attr('hierarchy').replace(/[^A-Za-z.]/gi, '').split('.')[0];
+
+        if (hierarchy === 'Time') {
+            // Launch date filter dialog
+            (new DateFilterModal({
+                target: $target,
+                name: $target.text(),
+                key: key,
+                workspace: this.workspace
+            })).open();
+        }
+        else {
+            // Launch selections dialog
+            (new SelectionsModal({
+                target: $target,
+                name: $target.text(),
+                key: key,
+                workspace: this.workspace
+            })).open();
+        }
         
         return false;
     },
