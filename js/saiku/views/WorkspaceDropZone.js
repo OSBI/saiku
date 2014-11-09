@@ -234,6 +234,15 @@ var WorkspaceDropZone = Backbone.View.extend({
         }
         return;
     },
+
+    find_type_time: function(dimension, hierarchy, level) {
+        var metadata = this.workspace.metadata.attributes.data,
+            value;
+        value = _.findWhere(metadata.dimensions, {name: dimension});
+        value = _.findWhere(value.hierarchies, {name: hierarchy});
+        value = _.findWhere(value.levels, {name: level});
+        return value;
+    },
     
     selections: function(event, ui) {
         if (event) {
@@ -243,12 +252,16 @@ var WorkspaceDropZone = Backbone.View.extend({
         var $target = $(event.target).hasClass('d_level') ?
             $(event.target).find('.level') :
             $(event.target);
-        var key = $target.attr('href').replace('#', ''),
-            hierarchy = $target.attr('hierarchy').replace(/[^A-Za-z.]/gi, '').split('.')[0];
+        var dimension = $target.attr('hierarchy').replace(/[^A-Za-z.]/gi, '').split('.')[0],
+            hierarchy = $target.attr('hierarchy').replace(/[^A-Za-z.]/gi, '').split('.')[1],
+            level = $target.text(),
+            objLevel = this.find_type_time(dimension, hierarchy, level),
+            key = $target.attr('href').replace('#', '');
 
-        if (hierarchy === 'Time') {
+        if (objLevel.annotations.AnalyzerDateFormat !== undefined) {
             // Launch date filter dialog
             (new DateFilterModal({
+                AnalyzerDateFormat: objLevel.annotations.AnalyzerDateFormat, 
                 target: $target,
                 name: $target.text(),
                 key: key,

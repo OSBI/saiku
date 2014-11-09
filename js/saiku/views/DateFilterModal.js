@@ -39,28 +39,28 @@ var DateFilterModal = Modal.extend({
 				'<span class="i18n">Operator:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio"> Equals</label>' +
+						'<label><input type="radio" id="operator-equals"> Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio"> After</label>' +
+						'<label><input type="radio" id="operator-after"> After</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio"> Before</label>' +
+						'<label><input type="radio" id="operator-before"> Before</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio"> Between</label><br>' +
+						'<label><input type="radio" id="operator-between"> Between</label><br>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio"> Different</label>' +
+						'<label><input type="radio" id="operator-different"> Different</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio"> After&Equals</label>' +
+						'<label><input type="radio" id="operator-after-equals"> After&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio"> Before&Equals</label>' +
+						'<label><input type="radio" id="operator-before-equals"> Before&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio"> Not Between</label><br>' +
+						'<label><input type="radio" id="operator-notbetween"> Not Between</label><br>' +
 					'</div>' +
 					'<div class="inline-form-group">' +
 						'<div class="form-group">' +
@@ -91,11 +91,11 @@ var DateFilterModal = Modal.extend({
 			'<div class="available-selections">' +
 				'<span class="i18n">Fixed Date:</span><br>' +
 				'<div class="selection-options">' +
-					'<label><input type="radio">Today</label>' +
-					'<label><input type="radio">Yesterday</label>' +
-					'<label><input type="radio">Current Week</label>' +
-					'<label><input type="radio">Current Month</label><br>' +
-					'<label><input type="radio">Current Year</label>' +
+					'<label><input type="radio" id="fd-today">Today</label>' +
+					'<label><input type="radio" id="fd-yesterday">Yesterday</label>' +
+					'<label><input type="radio" id="fd-current-week">Current Week</label>' +
+					'<label><input type="radio" id="fd-current-month">Current Month</label><br>' +
+					'<label><input type="radio" id="fd-current-year">Current Year</label>' +
 				'</div>' +
 			'</div>' +
 		'</div>' +
@@ -107,17 +107,17 @@ var DateFilterModal = Modal.extend({
 				'<span class="i18n">Rolling Date:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
-						'<select>' +
-							'<option>Last</option>' +
-							'<option>Next</option>' +
+						'<select id="">' +
+							'<option value="last">Last</option>' +
+							'<option value="next">Next</option>' +
 						'</select>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<select>' +
-							'<option>Day(s)</option>' +
-							'<option>Week(s)</option>' +
-							'<option>Month(s)</option>' +
-							'<option>Year(s)</option>' +
+						'<select id="">' +
+							'<option value="days">Day(s)</option>' +
+							'<option value="weeks">Week(s)</option>' +
+							'<option value="months">Month(s)</option>' +
+							'<option value="years">Year(s)</option>' +
 						'</select>' +
 					'</div>' +
 				'</div>' +
