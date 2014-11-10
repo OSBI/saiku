@@ -21,7 +21,7 @@ var DateFilterModal = Modal.extend({
 	type: 'date-filter',
 
 	buttons: [
-		{ text: 'Save', method: 'close' },
+		{ text: 'Save', method: 'save' },
 		{ text: 'Cancel', method: 'close' }
 	],
 
@@ -152,11 +152,19 @@ var DateFilterModal = Modal.extend({
 		this.message = 'Loading...';
 		this.query = args.workspace.query;
 
+		// _.bind(this);
+
 		// Resize when rendered
 		this.bind('open', this.post_render);
 		this.render();
+        
+        this.$el.parent().find('.ui-dialog-titlebar-close').bind('click', this.finished);
 
-		// _.bind(this);
+        // Fetch available members
+        this.member = new Member({}, {
+            cube: this.workspace.selected_cube,
+            dimension: this.key
+        });
 
 		// Load template
         this.$el.find('.dialog_body')
@@ -174,6 +182,9 @@ var DateFilterModal = Modal.extend({
     select_date: function(event) {
     	var $currentTarget = $(event.currentTarget);
     	$currentTarget.datepicker();
+    },
+
+    save: function() {
     },
 
     finished: function() {
