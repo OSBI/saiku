@@ -194,6 +194,14 @@ var DateFilterModal = Modal.extend({
         	lName = decodeURIComponent(this.member.level),
         	hierarchy = this.workspace.query.helper.getHierarchy(hName);
 
+       	var updates = [];
+
+       	updates.push({ mdx: '(CurrentDateMember([Time], \"[Time]\\.[yyyy]\\").Lag(6) : CurrentDateMember([Time], \"[Time]\\.[yyyy]\\"))' });
+
+       	if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
+       		hierarchy.levels[lName] = { 'type': 'INCLUSION', 'members': updates };
+       	}
+
         this.finished();
     },
 
