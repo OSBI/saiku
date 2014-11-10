@@ -32,6 +32,7 @@ import org.olap4j.query.Selection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -39,7 +40,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import mondrian.olap4j.MondrianOlap4jLevelExtend;
+import mondrian.olap4j.LevelInterface;
 
 
 /**
@@ -140,17 +141,34 @@ public class ObjectUtil {
   @NotNull
   private static SaikuLevel convert(@NotNull Level level) {
     try {
-//List<SaikuMember> members = convertMembers(level.getMembers());
-      MondrianOlap4jLevelExtend test = new MondrianOlap4jLevelExtend(level);
-      return new SaikuLevel(
-          level.getName(),
-          level.getUniqueName(),
-          level.getCaption(),
-          level.getDescription(),
-          level.getDimension().getUniqueName(),
-          level.getHierarchy().getUniqueName(),
-          level.isVisible(),
-          ((MondrianOlap4jLevelExtend)test).getAnnotations());
+      try {
+        Class.forName("mondrian.olap4j.MondrianOlap4jLevelExtend");
+        Class<LevelInterface> _tempClass = (Class<LevelInterface>) Class.forName("mondrian.olap4j.MondrianOlap4jLevelExtend");
+        Constructor<LevelInterface> ctor = _tempClass.getDeclaredConstructor(org.olap4j.metadata.Level.class);
+        LevelInterface test = ctor.newInstance(level);
+        return new SaikuLevel(
+            test.getName(),
+            test.getUniqueName(),
+            test.getCaption(),
+            test.getDescription(),
+            test.getDimension().getUniqueName(),
+            test.getHierarchy().getUniqueName(),
+            test.isVisible(),
+            test.getLevelType(),
+            test.getAnnotations());
+      }
+      catch(ClassNotFoundException e){
+        return new SaikuLevel(
+            level.getName(),
+            level.getUniqueName(),
+            level.getCaption(),
+            level.getDescription(),
+            level.getDimension().getUniqueName(),
+            level.getHierarchy().getUniqueName(),
+            level.isVisible(),
+            null,null);
+      }
+
     } catch (Exception e) {
       throw new SaikuServiceException("Cannot convert level: " + level, e);
     }

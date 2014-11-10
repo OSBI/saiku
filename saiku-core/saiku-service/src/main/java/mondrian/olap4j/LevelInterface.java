@@ -13,35 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package mondrian.olap4j;
+
+import org.olap4j.metadata.Dimension;
+import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Level;
 
 import java.util.Map;
 
 import mondrian.olap.Annotation;
-import mondrian.olap.Level;
 
 /**
- * Implementation of {@link org.olap4j.metadata.Level} for the Mondrian OLAP engine.
- * Tweaked by tom
- * @since May 25, 2007
+ * Created by bugg on 20/11/14.
  */
-public class MondrianOlap4jLevelExtend extends MondrianOlap4jLevel
-    {
+public interface LevelInterface {
 
-
-      /**
-       * Creates a MondrianOlap4jLevel.
-       *  @param olap4jSchema Schema
-       * @param level        Mondrian level
-       */
-      public MondrianOlap4jLevelExtend(org.olap4j.metadata.Level level) {
-        super(((MondrianOlap4jLevel)level).olap4jSchema, ((MondrianOlap4jLevel)level).level);
-      }
-
-      public Map<String, Annotation> getAnnotations() {
-    return level.getAnnotationMap();
-  }
-
+  String getName();
+  String getUniqueName();
+  String getCaption();
+  String getDescription();
+  Dimension getDimension();
+  Hierarchy getHierarchy();
+  boolean isVisible();
+  Level.Type getLevelType();
+  Map<String, Annotation> getAnnotations();
 }
-
-// End MondrianOlap4jLevel.java

@@ -15,6 +15,8 @@
  */
 package org.saiku.olap.dto;
 
+import org.olap4j.metadata.Level;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +28,7 @@ import mondrian.olap.Annotation;
 public class SaikuLevel extends AbstractSaikuObject {
 
   private final Map<String, Annotation> annotations;
+  private String levelType;
   private String caption;
   private String hierarchyUniqueName;
   private String dimensionUniqueName;
@@ -48,7 +51,7 @@ public class SaikuLevel extends AbstractSaikuObject {
       String dimensionUniqueName,
       String hierarchyUniqueName,
       boolean visible,
-      Map<String, Annotation> annotations) {
+      Level.Type levelType, Map<String, Annotation> annotations) {
     super(uniqueName, name);
     this.caption = caption;
     this.hierarchyUniqueName = hierarchyUniqueName;
@@ -56,6 +59,9 @@ public class SaikuLevel extends AbstractSaikuObject {
     this.visible = visible;
     this.description = description;
     this.annotations = annotations;
+    if(levelType!=null) {
+      this.levelType = levelType.name();
+    }
     //this.members = members;
   }
 
@@ -91,6 +97,9 @@ public class SaikuLevel extends AbstractSaikuObject {
     return m;
   }
 
+  public String getLevelType() {
+    return levelType;
+  }
   //public List<SaikuMember> getMembers() {
   //return members;
   //}
