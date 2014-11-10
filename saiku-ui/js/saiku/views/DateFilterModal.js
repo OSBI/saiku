@@ -21,7 +21,7 @@ var DateFilterModal = Modal.extend({
 	type: 'date-filter',
 
 	buttons: [
-		{ text: 'Save', method: 'close' },
+		{ text: 'Save', method: 'save' },
 		{ text: 'Cancel', method: 'close' }
 	],
 
@@ -152,11 +152,19 @@ var DateFilterModal = Modal.extend({
 		this.message = 'Loading...';
 		this.query = args.workspace.query;
 
+		// _.bind(this);
+
 		// Resize when rendered
 		this.bind('open', this.post_render);
 		this.render();
+        
+        this.$el.parent().find('.ui-dialog-titlebar-close').bind('click', this.finished);
 
-		// _.bind(this);
+        // Fetch available members
+        this.member = new Member({}, {
+            cube: this.workspace.selected_cube,
+            dimension: this.key
+        });
 
 		// Load template
         this.$el.find('.dialog_body')
@@ -167,13 +175,34 @@ var DateFilterModal = Modal.extend({
         var left = ($(window).width() - 600)/2;
         var width = $(window).width() < 600 ? $(window).width() : 600;
         $(args.modal.el).parents('.ui-dialog')
-            .css({ width: width, left: "inherit", margin:"0", height: 490 })
+            .css({ width: width, left: 'inherit', margin: '0', height: 490 })
             .offset({ left: left});
     },
 
     select_date: function(event) {
     	var $currentTarget = $(event.currentTarget);
     	$currentTarget.datepicker();
+    },
+
+    save: function() {
+        // Notify user that updates are in progress
+        var $loading = $('<div>Saving...</div>');
+        $(this.el).find('.dialog_body').children().hide();
+        $(this.el).find('.dialog_body').prepend($loading);
+
+        var hName = decodeURIComponent(this.member.hierarchy),
+        	lName = decodeURIComponent(this.member.level),
+        	hierarchy = this.workspace.query.helper.getHierarchy(hName);
+
+       	var updates = [];
+
+       	updates.push({ mdx: '(CurrentDateMember([Time], \"[Time]\\.[yyyy]\\").Lag(6) : CurrentDateMember([Time], \"[Time]\\.[yyyy]\\"))' });
+
+       	if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
+       		hierarchy.levels[lName] = { 'type': 'INCLUSION', 'members': updates };
+       	}
+
+        this.finished();
     },
 
     finished: function() {
