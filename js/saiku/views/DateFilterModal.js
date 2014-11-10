@@ -175,7 +175,7 @@ var DateFilterModal = Modal.extend({
         var left = ($(window).width() - 600)/2;
         var width = $(window).width() < 600 ? $(window).width() : 600;
         $(args.modal.el).parents('.ui-dialog')
-            .css({ width: width, left: "inherit", margin:"0", height: 490 })
+            .css({ width: width, left: 'inherit', margin: '0', height: 490 })
             .offset({ left: left});
     },
 
@@ -185,6 +185,16 @@ var DateFilterModal = Modal.extend({
     },
 
     save: function() {
+        // Notify user that updates are in progress
+        var $loading = $('<div>Saving...</div>');
+        $(this.el).find('.dialog_body').children().hide();
+        $(this.el).find('.dialog_body').prepend($loading);
+
+        var hName = decodeURIComponent(this.member.hierarchy),
+        	lName = decodeURIComponent(this.member.level),
+        	hierarchy = this.workspace.query.helper.getHierarchy(hName);
+
+        this.finished();
     },
 
     finished: function() {
