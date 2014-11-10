@@ -32,8 +32,8 @@ var DateFilterModal = Modal.extend({
 
 	template_selection: _.template(
 		'<div class="box-selections">' +
-			'<div class="selection-checkbox">' +
-				'<input type="checkbox">' +
+			'<div class="selection-option">' +
+				'<input type="radio" name="selection-option" id="selection-option-operator">' +
 			'</div>' +
 			'<div class="available-selections">' +
 				'<span class="i18n">Operator:</span><br>' +
@@ -85,8 +85,8 @@ var DateFilterModal = Modal.extend({
 			'</div>' +
 		'</div>' +
 		'<div class="box-selections">' +
-			'<div class="selection-checkbox">' +
-				'<input type="checkbox">' +
+			'<div class="selection-option">' +
+				'<input type="radio" name="selection-option" id="selection-option-fixed-date">' +
 			'</div>' +			
 			'<div class="available-selections">' +
 				'<span class="i18n">Fixed Date:</span><br>' +
@@ -100,8 +100,8 @@ var DateFilterModal = Modal.extend({
 			'</div>' +
 		'</div>' +
 		'<div class="box-selections">' +
-			'<div class="selection-checkbox">' +
-				'<input type="checkbox">' +
+			'<div class="selection-option">' +
+				'<input type="radio" name="selection-option" id="selection-option-available">' +
 			'</div>' +
 			'<div class="available-selections">' +
 				'<span class="i18n">Rolling Date:</span><br>' +

@@ -883,7 +883,7 @@ textarea, select {
     /*border: 1px solid #000;*/
 }
 
-.dialog_date-filter .dialog_body .selection-checkbox {
+.dialog_date-filter .dialog_body .selection-option {
     position: absolute;
     top: 50%;
     left: 18px;
