@@ -174,5 +174,11 @@ var DateFilterModal = Modal.extend({
     select_date: function(event) {
     	var $currentTarget = $(event.currentTarget);
     	$currentTarget.datepicker();
+    },
+
+    finished: function() {
+    	this.$el.dialog('destroy');
+    	this.$el.remove();
+    	this.query.run();
     }
 });
