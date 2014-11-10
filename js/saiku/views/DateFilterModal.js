@@ -147,8 +147,10 @@ var DateFilterModal = Modal.extend({
 
 	initialize: function(args) {
 		// Initialize properties
+		_.extend(this, args);
 		this.options.title = 'Selections for Year';
 		this.message = 'Loading...';
+		this.query = args.workspace.query;
 
 		// Resize when rendered
 		this.bind('open', this.post_render);
