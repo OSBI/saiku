@@ -27,13 +27,14 @@ var DateFilterModal = Modal.extend({
 
 	events: {
 		'click a': 'call',
-		'focus #select-date': 'select_date'
+		'focus #selection-date'  : 'selection_date',
+		'click .selection-radio' : 'selection_radio'
 	},
 
 	template_selection: _.template(
 		'<div class="box-selections">' +
 			'<div class="selection-option">' +
-				'<input type="radio" name="selection-option" id="selection-option-operator">' +
+				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-operator">' +
 			'</div>' +
 			'<div class="available-selections">' +
 				'<span class="i18n">Operator:</span><br>' +
@@ -65,7 +66,7 @@ var DateFilterModal = Modal.extend({
 					'<div class="inline-form-group">' +
 						'<div class="form-group">' +
 							'<label>Select a date:</label>' +
-							'<input type="text" id="select-date" placeholder="Choose a date">' +
+							'<input type="text" id="selection-date" placeholder="Choose a date">' +
 						'</div>' +
 						'<div class="form-group">' +
 							'<fieldset id="selected-date">' +
@@ -86,7 +87,7 @@ var DateFilterModal = Modal.extend({
 		'</div>' +
 		'<div class="box-selections">' +
 			'<div class="selection-option">' +
-				'<input type="radio" name="selection-option" id="selection-option-fixed-date">' +
+				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-fixed-date">' +
 			'</div>' +			
 			'<div class="available-selections">' +
 				'<span class="i18n">Fixed Date:</span><br>' +
@@ -101,7 +102,7 @@ var DateFilterModal = Modal.extend({
 		'</div>' +
 		'<div class="box-selections">' +
 			'<div class="selection-option">' +
-				'<input type="radio" name="selection-option" id="selection-option-available">' +
+				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-available">' +
 			'</div>' +
 			'<div class="available-selections">' +
 				'<span class="i18n">Rolling Date:</span><br>' +
@@ -169,6 +170,8 @@ var DateFilterModal = Modal.extend({
 		// Load template
         this.$el.find('.dialog_body')
         	.html(this.template_selection);
+
+        this.$el.find('.available-selections *').attr('disabled', 'disabled').off('click');
 	},
 
     post_render: function(args) {
@@ -179,9 +182,16 @@ var DateFilterModal = Modal.extend({
             .offset({ left: left});
     },
 
-    select_date: function(event) {
+    selection_date: function(event) {
     	var $currentTarget = $(event.currentTarget);
     	$currentTarget.datepicker();
+    },
+
+    selection_radio: function(event) {
+    	this.$el.find('.available-selections *').attr('disabled', 'disabled').off('click');
+    	var $currentTarget = $(event.currentTarget);
+    	$currentTarget.closest('.box-selections').find('.available-selections *')
+    		.removeAttr('disabled').on('click');
     },
 
     save: function() {
