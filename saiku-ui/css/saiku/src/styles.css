@@ -641,6 +641,20 @@ textarea, select {
     padding: 4px;
     width: 240px;
 }
+#login_form .eval-panel {
+    width: 250px;
+}
+#login_form #eval-login {
+    float: right;
+}
+#login_form .eval-panel-user ul {
+    padding: 0;
+    float: left;
+    list-style: none;
+}
+#login_form .eval-panel-user ul li:first-child {
+    font-weight: bold;
+}
 
 .context-menu-item {
     line-height: 16.5px;
@@ -741,10 +755,12 @@ textarea, select {
 	min-width: 800px !important;
     height: 490px !important;
 }
-.dialog_selections .dialog_icon {
+.dialog_selections .dialog_icon,
+.dialog_date-filter .dialog_icon {
 	display: none;
 }
-.dialog_selections .dialog_body {
+.dialog_selections .dialog_body,
+.dialog_date-filter .dialog_body {
     height: 410px;
     position: relative;
 }
@@ -861,6 +877,69 @@ textarea, select {
 }
 .dialog_selections .available_selections input[type="text"] {
     width: 300px;
+}
+
+.dialog_date-filter {
+    min-width: 500px !important;
+    height: 490px !important;
+}
+
+.dialog_date-filter .dialog_body .box-selections {
+    position: relative;
+    margin: 20px auto;
+    width: 100%;
+    /*border: 1px solid #000;*/
+}
+
+.dialog_date-filter .dialog_body .available-selections {
+    margin: 0 auto;
+    width: 80%;
+    /*border: 1px solid #000;*/
+}
+
+.dialog_date-filter .dialog_body .selection-option {
+    position: absolute;
+    top: 50%;
+    left: 18px;
+    transform: translateY(-50%);
+}
+
+.dialog_date-filter .dialog_body .selection-options {
+    padding: 10px;
+    width: 430px;
+    height: auto;
+    font-size: 11px;
+    border: 1px solid #ccc;
+    overflow: auto;
+}
+
+.dialog_date-filter .dialog_body .form-group-selection {
+    display: inline-block;
+    width: 100px;
+}
+
+.dialog_date-filter .dialog_body .form-group {
+    margin-top: 5px;
+    padding-right: 10px;
+    float: left;
+    /*border: 1px solid #000;*/
+}
+
+.dialog_date-filter .dialog_body .inline-form-group {
+    display: inline-block;
+}
+
+.dialog_date-filter .dialog_body .form-group label,
+.dialog_date-filter .dialog_body .form-group select {
+    padding-right: 10px;
+}
+
+.dialog_date-filter .dialog_body .form-group #select-date {
+    width: 100px;
+}
+
+.dialog_date-filter .dialog_body .form-group #selected-date {
+    border: 1px solid #ccc;
 }
 
 .dialog_permissions .dialog_body {
@@ -2117,4 +2196,42 @@ width:70px !important;
     outline: none;
     border-color: #9ecaed;
     box-shadow: 0 0 10px #9ecaed;
+}
+
+.ui-datepicker {
+    padding: 10px;
+    display: none;
+    font-size: 11px;
+    background: #fcfcfc;
+    background: #fff -moz-linear-gradient(top, #fcfcfc 0%, #fff 100%);
+    background: #fff -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fcfcfc)), color-stop(100%,#fff));
+    background: #fff -webkit-linear-gradient(top, #fcfcfc 0%, #fff 100%);
+    background: #fff -o-linear-gradient(top, #fcfcfc 0%, #fff 100%);
+    background: #fff -ms-linear-gradient(top, #fcfcfc 0%, #fff 100%);
+    background: #fff linear-gradient(top, #fcfcfc 0%, #fff 100%);
+    border: 1px solid #ccc;
+}
+ 
+.ui-datepicker table {
+    width: 100%;
+}
+ 
+.ui-datepicker table td {
+    text-align: center;
+}
+ 
+.ui-datepicker a {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.ui-datepicker-title {
+    text-align: center;
+    font-weight: bold;
+}
+ 
+.ui-datepicker-prev {
+}
+ 
+.ui-datepicker-next {
 }
