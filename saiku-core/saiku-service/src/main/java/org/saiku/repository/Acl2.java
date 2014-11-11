@@ -29,6 +29,17 @@ public class Acl2 {
     private AclMethod rootMethod = AclMethod.WRITE;
 
     private Map<String, AclEntry> acl = new TreeMap<String, AclEntry>();
+        acl = mapper.readValue(node.getProperty("owner").getString(), TypeFactory
+            .mapType(HashMap.class, String.class, AclEntry.class));
+        // mapper.readValue(acl, AclEntry.class);
+        entry = acl.get(node.getPath());
+        ///entry = e.getValue();
+      } catch (PathNotFoundException e) {
+        LOG.debug("Path(owner) not found: " + node.getPath(), e.getCause());
+      } catch (Exception e) {
+        LOG.debug("Exception: " + node.getPath(), e.getCause());
+      }
+      AclMethod method;
 
     public Acl2(Node root){
         readAclTree(root);
