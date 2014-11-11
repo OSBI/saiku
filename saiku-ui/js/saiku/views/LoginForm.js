@@ -19,12 +19,24 @@
  */
 var LoginForm = Modal.extend({
     type: "login",
-    message: "<form id='login_form'>" +
+    message: _.template("<form id='login_form'>" +
         "<label for='username' class='i18n'>Username</label>" +
         "<input type='text' id='username' name='username' value='' />" +
         "<label for='password' class='i18n'>Password</label>" +
         "<input type='password' id='password' name='password' value='' />" +
-        "</form>",
+        "<% if (Settings.EVALUATION_PANEL_LOGIN) { %>" +
+        "<div class='eval-panel'>" +
+        "<a href='#eval_login' class='i18n' id='eval-login'>Evaluation Login</a>" +
+        "<div class='eval-panel-user clearfix' hidden>" +
+        "<ul>" +
+        "<li class='i18n'>Administrator</li>" +
+        "<li class='i18n'>Username: admin</li>" +
+        "<li class='i18n'>Password: admin</li>" +
+        "</ul>" +
+        "</div>" +
+        "</div>" +
+        "<% } %>" +
+        "</form>")(),
         
     buttons: [
         { text: "Login", method: "login" }
@@ -32,7 +44,8 @@ var LoginForm = Modal.extend({
     
     events: {
         'click a': 'call',
-        'keyup #login_form input': 'check'
+        'keyup #login_form input': 'check',
+        'click #eval-login': 'show_panel_user'
     },
     
     initialize: function(args) {
@@ -64,6 +77,12 @@ var LoginForm = Modal.extend({
     },
 
     setMessage: function(message) {
-        $(this.el).find(".dialog_response").html(message);
+        this.$el.find('.dialog_body').html(this.message);
+    },
+
+    show_panel_user: function(event) {
+        event.preventDefault();
+        var $currentTarget = $(event.currentTarget);
+        $currentTarget.next().slideToggle('fast');
     }
 });

@@ -641,6 +641,20 @@ textarea, select {
     padding: 4px;
     width: 240px;
 }
+#login_form .eval-panel {
+    width: 250px;
+}
+#login_form #eval-login {
+    float: right;
+}
+#login_form .eval-panel-user ul {
+    padding: 0;
+    float: left;
+    list-style: none;
+}
+#login_form .eval-panel-user ul li:first-child {
+    font-weight: bold;
+}
 
 .context-menu-item {
     line-height: 16.5px;

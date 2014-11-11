@@ -261,7 +261,9 @@ var WorkspaceDropZone = Backbone.View.extend({
         if (objLevel.annotations.AnalyzerDateFormat !== undefined) {
             // Launch date filter dialog
             (new DateFilterModal({
-                AnalyzerDateFormat: objLevel.annotations.AnalyzerDateFormat, 
+                AnalyzerDateFormat: objLevel.annotations.AnalyzerDateFormat,
+                dimension: dimension,
+                hierarchy: hierarchy,
                 target: $target,
                 name: $target.text(),
                 key: key,
