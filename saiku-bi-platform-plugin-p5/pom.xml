@@ -8,7 +8,7 @@
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-bi-platform-plugin-p5</artifactId>
 	<packaging>jar</packaging>
-	<version>3.1-GA-SNAPSHOT</version>
+	<version>3.0.3-SNAPSHOT</version>
 	<name>saiku biserver plugin</name>
 
 	<build>
