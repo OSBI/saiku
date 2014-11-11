@@ -7,10 +7,11 @@ import org.codehaus.jackson.map.type.TypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.*;
+
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import java.util.*;
 
 /**
  * Created by bugg on 24/06/14.
@@ -168,50 +169,53 @@ public class Acl2 {
         return acls.contains( AclMethod.GRANT );
     }
 
-    public void addEntry( String path, AclEntry entry ) {
+    public void addEntry(String path, AclEntry entry) {
         try {
-            if ( entry != null ) {
-                acl.put( path, entry );
-                //writeAcl( path, entry );
+            if (entry != null) {
+                acl.put(path, entry);
+//writeAcl( path, entry );
             }
-        } catch ( Exception e ) {
-            //logger.error( "Cannot add entry for resource: " + path, e );
+        } catch (Exception e) {
+//logger.error( "Cannot add entry for resource: " + path, e );
         }
     }
 
-    public void serialize( Node node ) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            node.setProperty("owner", "");
-            node.setProperty("owner", mapper.writeValueAsString(acl));
-        } catch ( Exception e ) {
-            try {
-                log.debug("Error while reading ACL files at path: "+node.getPath(), e.getCause());
-            } catch (RepositoryException e1) {
-                log.debug("Repository Exception", e1.getCause());
-            }
-        }
-    }
 
-    private Map<String, AclEntry> deserialize( Node node ) {
+
+    public Node serialize(Node node) {
+    try {
+      ObjectMapper mapper = new ObjectMapper();
+      node.setProperty("owner", "");
+      node.setProperty("owner", mapper.writeValueAsString(acl));
+      return node;
+    } catch (Exception e) {
+      try {
+        log.debug("Error while reading ACL files at path: " + node.getPath(), e.getCause());
+      } catch (RepositoryException e1) {
+        log.debug("Repository Exception", e1.getCause());
+      }
+    }
+    return node;
+  }
+
+    private Map<String, AclEntry> deserialize(Node node) {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, AclEntry> acl = new TreeMap<String, AclEntry>();
         try {
-            if ( node != null && node.getProperty("owner")!= null ) {
-                acl = (Map<String, AclEntry>) mapper.readValue( node.getProperty("owner").getString(), TypeFactory
-                        .mapType(HashMap.class, String.class, AclEntry.class) );
+            if (node != null && node.getProperty("owner") != null) {
+                acl = mapper.readValue(node.getProperty("owner").getString(), TypeFactory
+                    .mapType(HashMap.class, String.class, AclEntry.class));
             }
-        } catch ( Exception e ) {
-
+        } catch (Exception e) {
             try {
-                log.debug("Error while reading ACL files at path: "+node.getPath(), e.getCause());
+                log.debug("Error while reading ACL files at path: " + node.getPath(), e.getCause());
             } catch (RepositoryException e1) {
                 log.debug("Repository Exception", e1.getCause());
             }
         }
-
         return acl;
     }
+
     public AclEntry getEntry( String path ) {
         return ( acl.containsKey( path ) ? acl.get( path ) : null );
     }
@@ -244,31 +248,35 @@ public class Acl2 {
             String jsonFile = folder.getProperty("owner").getString();
 
             if ( jsonFile != null && jsonFile != "" ) {
-                Map<String, AclEntry> folderAclMap = deserialize( folder );
+                Map<String, AclEntry> folderAclMap = deserialize(folder);
                 Map<String, AclEntry> aclMap = new TreeMap<String, AclEntry>();
 
-                for ( String key : folderAclMap.keySet() ) {
-                    AclEntry entry = folderAclMap.get( key );
-                    //FileName fn = folder.resolveFile( key ).getName();
-                    //String childPath = repoRoot.getName().getRelativeName( fn );
-                    aclMap.put( folder.getPath(), entry );
+                for (String key : folderAclMap.keySet()) {
+                    if (key.equals(folder.getPath())) {
+                        AclEntry entry = folderAclMap.get(key);
+                        //FileName fn = folder.resolveFile( key ).getName();
+                        //String childPath = repoRoot.getName().getRelativeName( fn );
+                        aclMap.put(folder.getPath(), entry);
+                    }
+
+                    acl.putAll(aclMap);
                 }
 
-                acl.putAll( aclMap );
+                for (Node file : JcrUtils.getChildNodes(folder)) {
+                    //if ( file.getPrimaryNodeType().equals( "nt:folder" ) ) {
+                    readAclTree(file);
+                    //}
+                }
             }
-
-            for ( Node file : JcrUtils.getChildNodes(folder) ) {
-                //if ( file.getPrimaryNodeType().equals( "nt:folder" ) ) {
-                    readAclTree( file );
-                //}
-            }
-        } catch ( Exception e ) {
+        }
+        catch ( Exception e ) {
 
             try {
                 log.debug("Error while reading ACL files at path: "+resource.getPath(), e.getCause());
             } catch (RepositoryException e1) {
                 log.debug("Repository Exception", e1.getCause());
             }
+
         }
     }
 

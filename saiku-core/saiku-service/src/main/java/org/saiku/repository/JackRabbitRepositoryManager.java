@@ -504,12 +504,14 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         Acl2 acl2 = new Acl2(node);
         acl2.setAdminRoles(userService.getAdminRoles());
 
-        if(acl2.canGrant(node, username, roles)) {
-            if (node != null) {
-                acl2.addEntry(object, ae);
-                acl2.serialize(node);
-            }
-        }
+
+    if (acl2.canGrant(node, username, roles)) {
+      if (node != null) {
+        acl2.addEntry(object, ae);
+        node = acl2.serialize(node);
+      }
+    }
+
 
         if (node != null) {
             node.getSession().save();
