@@ -196,6 +196,12 @@ var DateFilterModal = Modal.extend({
     		.removeAttr('disabled').on('click');
     },
 
+    populate_mdx: function(event) {
+    	this.template_mdx = this.template_mdx.replace(/{(\w+)}/g, function(m, p) {
+			return logExp[p];
+		});
+    },
+
     save: function() {
         // Notify user that updates are in progress
         var $loading = $('<div>Saving...</div>');
