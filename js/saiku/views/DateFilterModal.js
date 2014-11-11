@@ -38,7 +38,7 @@ var DateFilterModal = Modal.extend({
 			'<div class="selection-option">' +
 				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-operator">' +
 			'</div>' +
-			'<div class="available-selections">' +
+			'<div class="available-selections" available="false">' +
 				'<span class="i18n">Operator:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
@@ -91,7 +91,7 @@ var DateFilterModal = Modal.extend({
 			'<div class="selection-option">' +
 				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-fixed-date">' +
 			'</div>' +			
-			'<div class="available-selections">' +
+			'<div class="available-selections" available="false">' +
 				'<span class="i18n">Fixed Date:</span><br>' +
 				'<div class="selection-options">' +
 					'<label><input type="radio" id="fd-today" date-format="">Today</label>' +
@@ -106,7 +106,7 @@ var DateFilterModal = Modal.extend({
 			'<div class="selection-option">' +
 				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-available">' +
 			'</div>' +
-			'<div class="available-selections" >' +
+			'<div class="available-selections" available="false">' +
 				'<span class="i18n">Rolling Date:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
@@ -190,8 +190,10 @@ var DateFilterModal = Modal.extend({
     },
 
     disable_divselections: function(event) {
+    	this.$el.find('.available-selections').attr('available', false);
     	this.$el.find('.available-selections *').prop('disabled', true).off('click');
     	var $currentTarget = $(event.currentTarget);
+    	$currentTarget.closest('.box-selections').find('.available-selections').attr('available', true);
     	$currentTarget.closest('.box-selections').find('.available-selections *')
     		.prop('disabled', false).on('click');
     },
