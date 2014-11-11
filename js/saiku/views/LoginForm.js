@@ -29,8 +29,8 @@ var LoginForm = Modal.extend({
         "<div class='eval-panel-user clearfix' hidden>" +
         "<ul>" +
         "<li>Administrator</li>" +
-        "<li>Username: Admin</li>" +
-        "<li>Password: Admin</li>" +
+        "<li>Username: admin</li>" +
+        "<li>Password: admin</li>" +
         "</ul>" +
         "</div>" +
         "</div>" +
