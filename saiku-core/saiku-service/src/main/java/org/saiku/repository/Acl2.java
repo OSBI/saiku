@@ -191,8 +191,6 @@ public class Acl2 {
         }
     }
 
-
-
     public Node serialize(Node node) {
     try {
       ObjectMapper mapper = new ObjectMapper();
