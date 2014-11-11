@@ -75,8 +75,8 @@ class Acl2 {
         acl = mapper.readValue(node.getProperty("owner").getString(), TypeFactory
             .mapType(HashMap.class, String.class, AclEntry.class));
         // mapper.readValue(acl, AclEntry.class);
-        Map.Entry<String, AclEntry> e = acl.entrySet().iterator().next();
-        entry = e.getValue();
+        entry = acl.get(node.getPath());
+        ///entry = e.getValue();
       } catch (PathNotFoundException e) {
         LOG.debug("Path(owner) not found: " + node.getPath(), e.getCause());
       } catch (Exception e) {
