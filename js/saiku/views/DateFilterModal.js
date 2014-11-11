@@ -28,8 +28,10 @@ var DateFilterModal = Modal.extend({
 	events: {
 		'click a': 'call',
 		'focus #selection-date'  : 'selection_date',
-		'click .selection-radio' : 'selection_radio'
+		'click .selection-radio' : 'disable_div'
 	},
+
+	template_mdx: 'SET [TFILTER] as {CurrentDateMember([{dimension}].[{hierarchy}], "[{hierarchy}]\.{AnalyzerDateFormat}", EXACT)}',
 
 	template_selection: _.template(
 		'<div class="box-selections">' +
@@ -187,7 +189,7 @@ var DateFilterModal = Modal.extend({
     	$currentTarget.datepicker();
     },
 
-    selection_radio: function(event) {
+    disable_div: function(event) {
     	this.$el.find('.available-selections *').attr('disabled', 'disabled').off('click');
     	var $currentTarget = $(event.currentTarget);
     	$currentTarget.closest('.box-selections').find('.available-selections *')
