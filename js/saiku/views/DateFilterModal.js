@@ -28,7 +28,7 @@ var DateFilterModal = Modal.extend({
 	events: {
 		'click a': 'call',
 		'focus #selection-date'  : 'selection_date',
-		'click .selection-radio' : 'disable_div'
+		'click .selection-radio' : 'disable_divselections'
 	},
 
 	template_mdx: 'SET [TFILTER] as {CurrentDateMember([{dimension}].[{hierarchy}], "[{hierarchy}]\.{AnalyzerDateFormat}", EXACT)}',
@@ -94,11 +94,11 @@ var DateFilterModal = Modal.extend({
 			'<div class="available-selections">' +
 				'<span class="i18n">Fixed Date:</span><br>' +
 				'<div class="selection-options">' +
-					'<label><input type="radio" id="fd-today">Today</label>' +
-					'<label><input type="radio" id="fd-yesterday">Yesterday</label>' +
-					'<label><input type="radio" id="fd-current-week">Current Week</label>' +
-					'<label><input type="radio" id="fd-current-month">Current Month</label><br>' +
-					'<label><input type="radio" id="fd-current-year">Current Year</label>' +
+					'<label><input type="radio" id="fd-today" date-format="">Today</label>' +
+					'<label><input type="radio" id="fd-yesterday" date-format="">Yesterday</label>' +
+					'<label><input type="radio" id="fd-current-week" date-format="">Current Week</label>' +
+					'<label><input type="radio" id="fd-current-month" date-format="[yyyy].[Qq].[m]">Current Month</label><br>' +
+					'<label><input type="radio" id="fd-current-year" date-format="[yyyy]">Current Year</label>' +
 				'</div>' +
 			'</div>' +
 		'</div>' +
@@ -106,7 +106,7 @@ var DateFilterModal = Modal.extend({
 			'<div class="selection-option">' +
 				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-available">' +
 			'</div>' +
-			'<div class="available-selections">' +
+			'<div class="available-selections" >' +
 				'<span class="i18n">Rolling Date:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
@@ -173,12 +173,12 @@ var DateFilterModal = Modal.extend({
         this.$el.find('.dialog_body')
         	.html(this.template_selection);
 
-        this.$el.find('.available-selections *').attr('disabled', 'disabled').off('click');
+        this.$el.find('.available-selections *').prop('disabled', true).off('click');
 	},
 
     post_render: function(args) {
-        var left = ($(window).width() - 600)/2;
-        var width = $(window).width() < 600 ? $(window).width() : 600;
+        var left = ($(window).width() - 600) / 2,
+        	width = $(window).width() < 600 ? $(window).width() : 600;
         $(args.modal.el).parents('.ui-dialog')
             .css({ width: width, left: 'inherit', margin: '0', height: 490 })
             .offset({ left: left});
@@ -189,11 +189,11 @@ var DateFilterModal = Modal.extend({
     	$currentTarget.datepicker();
     },
 
-    disable_div: function(event) {
-    	this.$el.find('.available-selections *').attr('disabled', 'disabled').off('click');
+    disable_divselections: function(event) {
+    	this.$el.find('.available-selections *').prop('disabled', true).off('click');
     	var $currentTarget = $(event.currentTarget);
     	$currentTarget.closest('.box-selections').find('.available-selections *')
-    		.removeAttr('disabled').on('click');
+    		.prop('disabled', false).on('click');
     },
 
     populate_mdx: function(event) {
