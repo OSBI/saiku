@@ -94,11 +94,11 @@ var DateFilterModal = Modal.extend({
 			'<div class="available-selections" available="false">' +
 				'<span class="i18n">Fixed Date:</span><br>' +
 				'<div class="selection-options">' +
-					'<label><input type="radio" id="fd-today" date-format="">Today</label>' +
-					'<label><input type="radio" id="fd-yesterday" date-format="">Yesterday</label>' +
-					'<label><input type="radio" id="fd-current-week" date-format="">Current Week</label>' +
-					'<label><input type="radio" id="fd-current-month" date-format="[yyyy].[Qq].[m]">Current Month</label><br>' +
-					'<label><input type="radio" id="fd-current-year" date-format="[yyyy]">Current Year</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-today" date-format="">Today</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-yesterday" date-format="">Yesterday</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-current-week" date-format="">Current Week</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-current-month" value="[yyyy].[Qq].[m]" date-format="[yyyy].[Qq].[m]">Current Month</label><br>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-current-year" value="[yyyy]" date-format="[yyyy]">Current Year</label>' +
 				'</div>' +
 			'</div>' +
 		'</div>' +
@@ -190,16 +190,16 @@ var DateFilterModal = Modal.extend({
     },
 
     disable_divselections: function(event) {
+    	var $currentTarget = $(event.currentTarget);
     	this.$el.find('.available-selections').attr('available', false);
     	this.$el.find('.available-selections *').prop('disabled', true).off('click');
-    	var $currentTarget = $(event.currentTarget);
     	$currentTarget.closest('.box-selections').find('.available-selections').attr('available', true);
     	$currentTarget.closest('.box-selections').find('.available-selections *')
     		.prop('disabled', false).on('click');
     },
 
-    populate_mdx: function(event) {
-    	this.template_mdx = this.template_mdx.replace(/{(\w+)}/g, function(m, p) {
+    populate_mdx: function(logExp) {
+    	return this.template_mdx = this.template_mdx.replace(/{(\w+)}/g, function(m, p) {
 			return logExp[p];
 		});
     },
@@ -210,16 +210,39 @@ var DateFilterModal = Modal.extend({
         $(this.el).find('.dialog_body').children().hide();
         $(this.el).find('.dialog_body').prepend($loading);
 
+		var self = this,
+			mdx;
+
+		this.$el.find('.available-selections').each(function(key, selection) {
+			var analyzerDateFormat;
+
+			if ($(selection).attr('available') === 'true') {
+				$(selection).find('input:radio').each(function(key, radio) {
+					if ($(radio).is(":checked") === true) {
+						analyzerDateFormat = $(radio).val();
+					}
+				});
+
+				var logExp = {
+					dimension: self.dimension,
+					hierarchy: self.hierarchy,
+					AnalyzerDateFormat: analyzerDateFormat
+				};
+
+				mdx = self.populate_mdx(logExp);
+			}
+		});
+
         var hName = decodeURIComponent(this.member.hierarchy),
         	lName = decodeURIComponent(this.member.level),
         	hierarchy = this.workspace.query.helper.getHierarchy(hName);
 
        	var updates = [];
 
-       	updates.push({ mdx: '(CurrentDateMember([Time], \"[Time]\\.[yyyy]\\").Lag(6) : CurrentDateMember([Time], \"[Time]\\.[yyyy]\\"))' });
+       	updates.push({ mdx: mdx });
 
        	if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
-       		hierarchy.levels[lName] = { 'type': 'INCLUSION', 'members': updates };
+       		hierarchy.levels[lName] = { mdx: mdx, name: this.dimension };
        	}
 
         this.finished();
