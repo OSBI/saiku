@@ -201,11 +201,12 @@ class Acl2 {
     }
   }
 
-  public void serialize(@NotNull Node node) {
+  public Node serialize(@NotNull Node node) {
     try {
       ObjectMapper mapper = new ObjectMapper();
       node.setProperty("owner", "");
       node.setProperty("owner", mapper.writeValueAsString(acl));
+      return node;
     } catch (Exception e) {
       try {
         LOG.debug("Error while reading ACL files at path: " + node.getPath(), e.getCause());
@@ -213,6 +214,7 @@ class Acl2 {
         LOG.debug("Repository Exception", e1.getCause());
       }
     }
+    return node;
   }
 
   private Map<String, AclEntry> deserialize(@Nullable Node node) {
@@ -272,10 +274,12 @@ class Acl2 {
         Map<String, AclEntry> aclMap = new TreeMap<String, AclEntry>();
 
         for (String key : folderAclMap.keySet()) {
-          AclEntry entry = folderAclMap.get(key);
-          //FileName fn = folder.resolveFile( key ).getName();
-          //String childPath = repoRoot.getName().getRelativeName( fn );
-          aclMap.put(folder.getPath(), entry);
+          if (key.equals(folder.getPath())) {
+            AclEntry entry = folderAclMap.get(key);
+            //FileName fn = folder.resolveFile( key ).getName();
+            //String childPath = repoRoot.getName().getRelativeName( fn );
+            aclMap.put(folder.getPath(), entry);
+          }
         }
 
         acl.putAll(aclMap);

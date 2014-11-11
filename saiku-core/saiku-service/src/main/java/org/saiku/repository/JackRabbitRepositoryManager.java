@@ -521,7 +521,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     if (acl2.canGrant(node, username, roles)) {
       if (node != null) {
         acl2.addEntry(object, ae);
-        acl2.serialize(node);
+        node = acl2.serialize(node);
       }
     }
 
