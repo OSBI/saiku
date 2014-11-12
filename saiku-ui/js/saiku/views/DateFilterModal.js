@@ -31,7 +31,7 @@ var DateFilterModal = Modal.extend({
 		'click .selection-radio' : 'disable_divselections'
 	},
 
-	template_mdx: 'SET [TFILTER] as {CurrentDateMember([{dimension}].[{hierarchy}], "[{hierarchy}]\.{AnalyzerDateFormat}", EXACT)}',
+	template_mdx: 'SET [TFILTER] as {CurrentDateMember([{dimension}].[{hierarchy}], \"[{hierarchy2}]\\\.{AnalyzerDateFormat}\", EXACT)}',
 
 	template_selection: _.template(
 		'<div class="box-selections">' +
@@ -97,7 +97,7 @@ var DateFilterModal = Modal.extend({
 					'<label><input type="radio" name="fixed-radio" id="fd-today" date-format="">Today</label>' +
 					'<label><input type="radio" name="fixed-radio" id="fd-yesterday" date-format="">Yesterday</label>' +
 					'<label><input type="radio" name="fixed-radio" id="fd-current-week" date-format="">Current Week</label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-current-month" value="[yyyy].[Qq].[m]" date-format="[yyyy].[Qq].[m]">Current Month</label><br>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-current-month" value="[yyyy]\\.[Qq]\\.[m]" date-format="[yyyy].[Qq].[m]">Current Month</label><br>' +
 					'<label><input type="radio" name="fixed-radio" id="fd-current-year" value="[yyyy]" date-format="[yyyy]">Current Year</label>' +
 				'</div>' +
 			'</div>' +
@@ -204,7 +204,8 @@ var DateFilterModal = Modal.extend({
 		});
     },
 
-    save: function() {
+    save: function(event) {
+    	event.preventDefault();
         // Notify user that updates are in progress
         var $loading = $('<div>Saving...</div>');
         $(this.el).find('.dialog_body').children().hide();
@@ -226,6 +227,7 @@ var DateFilterModal = Modal.extend({
 				var logExp = {
 					dimension: self.dimension,
 					hierarchy: self.hierarchy,
+					hierarchy2: 'Ti\\me',
 					AnalyzerDateFormat: analyzerDateFormat
 				};
 
