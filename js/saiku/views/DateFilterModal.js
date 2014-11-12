@@ -94,11 +94,11 @@ var DateFilterModal = Modal.extend({
 			'<div class="available-selections" available="false">' +
 				'<span class="i18n">Fixed Date:</span><br>' +
 				'<div class="selection-options">' +
-					'<label><input type="radio" name="fixed-radio" id="fd-today" date-format="">Today</label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-yesterday" date-format="">Yesterday</label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-current-week" date-format="">Current Week</label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-current-month" value="[yyyy]\\.[Qq]\\.[m]" date-format="[yyyy].[Qq].[m]">Current Month</label><br>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-current-year" value="[yyyy]" date-format="[yyyy]">Current Year</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-today" value="">Today</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-yesterday" value="">Yesterday</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-current-week" value="">Current Week</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-current-month" value="[yyyy]\\.[Qq]\\.[m]">Current Month</label><br>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-current-year" value="[yyyy]">Current Year</label>' +
 				'</div>' +
 			'</div>' +
 		'</div>' +
