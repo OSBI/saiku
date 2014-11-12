@@ -31,7 +31,7 @@ var DateFilterModal = Modal.extend({
 		'click .selection-radio' : 'disable_divselections'
 	},
 
-	template_mdx: 'SET [TFILTER] as {CurrentDateMember([{dimension}].[{hierarchy}], \"[{hierarchy2}]\\\.{AnalyzerDateFormat}\", EXACT)}',
+	template_mdx: 'CurrentDateMember([{dimension}].[{hierarchy}], \"[{hierarchy2}]\\\.{AnalyzerDateFormat}\", EXACT)',
 
 	template_selection: _.template(
 		'<div class="box-selections">' +
@@ -244,7 +244,7 @@ var DateFilterModal = Modal.extend({
        	updates.push({ mdx: mdx });
 
        	if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
-       		hierarchy.levels[lName] = { mdx: mdx, name: this.dimension };
+       		hierarchy.levels[lName] = { mdx: mdx, name: lName };
        	}
 
         this.finished();
