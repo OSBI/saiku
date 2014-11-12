@@ -1,5 +1,5 @@
 /*  
- *   Copyright 2012 OSBI Ltd
+ *   Copyright 2014 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -154,6 +154,20 @@ var DateFilterModal = Modal.extend({
 		this.options.title = 'Selections for Year';
 		this.message = 'Loading...';
 		this.query = args.workspace.query;
+		this.dateType = [];
+
+		var self = this;
+
+		_.each(this.data.hierarchies.levels, function(value, key, list) {		
+			if (list[key].annotations.AnalyzerDateFormat !== undefined) {
+				self.dateType.push({ 
+					analyzerDateFormat: list[key].annotations.AnalyzerDateFormat, 
+					levelType: list[key].levelType
+				});
+			}
+		});
+
+		console.log(this.dateType);
 
 		// _.bind(this);
 
@@ -245,6 +259,11 @@ var DateFilterModal = Modal.extend({
 
        	if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
        		hierarchy.levels[lName] = { mdx: mdx, name: lName };
+       		// hierarchy.levels[lName] = { mdx: 'CurrentDateMember([Time].[Time], \'[\"Time.Time\"]\\\.[yyyy].[Qq]\', EXACT)', name: lName };
+       		// hierarchy.levels[lName] = { mdx: 'CurrentDateMember([Time].[Time], \'[\"Time.Time\"]\\\.[yyyy]\', EXACT)', name: lName };
+       		// hierarchy.levels[lName] = { mdx: 'CurrentDateMember([Time].[Time], \'[\"Time.Time\"]\\\.[yyyy]\\\.[Qq]\', EXACT)', name: lName };
+       		// hierarchy.levels[lName] = { mdx: 'CurrentDateMember([Time].[Time], \'[\"Time.Time\"]\\\.[yyyy]\\\.[Qq]\\\.[mm]\', EXACT)', name: lName };
+       		// hierarchy.levels[lName] = { mdx: 'CurrentDateMember([Time].[Time], \'[\"Time.Time\"]\\\.[yyyy]\\\.[Qq]\\\.[mm]\', EXACT)', name: lName };
        	}
 
         this.finished();
