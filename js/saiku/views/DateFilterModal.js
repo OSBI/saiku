@@ -198,7 +198,7 @@ var DateFilterModal = Modal.extend({
 			if (list[key].annotations.AnalyzerDateFormat !== undefined) {
 				dataLevels.push({
 					name: list[key].name,
-					analyzerDateFormat: list[key].annotations.AnalyzerDateFormat, 
+					analyzerDateFormat: list[key].annotations.AnalyzerDateFormat.replace(/[.]/gi, '\\\.'), 
 					levelType: list[key].levelType
 				});
 			}
@@ -284,11 +284,6 @@ var DateFilterModal = Modal.extend({
 
        	if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
        		hierarchy.levels[lName] = { mdx: mdx, name: lName };
-       		// hierarchy.levels[lName] = { mdx: 'CurrentDateMember([Time].[Time], \'[\"Time.Time\"]\\\.[yyyy].[Qq]\', EXACT)', name: lName };
-       		// hierarchy.levels[lName] = { mdx: 'CurrentDateMember([Time].[Time], \'[\"Time.Time\"]\\\.[yyyy]\', EXACT)', name: lName };
-       		// hierarchy.levels[lName] = { mdx: 'CurrentDateMember([Time].[Time], \'[\"Time.Time\"]\\\.[yyyy]\\\.[Qq]\', EXACT)', name: lName };
-       		// hierarchy.levels[lName] = { mdx: 'CurrentDateMember([Time].[Time], \'[\"Time.Time\"]\\\.[yyyy]\\\.[Qq]\\\.[mm]\', EXACT)', name: lName };
-       		// hierarchy.levels[lName] = { mdx: 'CurrentDateMember([Time].[Time], \'[\"Time.Time\"]\\\.[yyyy]\\\.[Qq]\\\.[mm]\', EXACT)', name: lName };
        	}
 
         this.finished();
