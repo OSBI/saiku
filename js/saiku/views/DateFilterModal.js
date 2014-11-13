@@ -44,28 +44,28 @@ var DateFilterModal = Modal.extend({
 				'<span class="i18n">Operator:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" id="operator-equals"> Equals</label>' +
+						'<label><input type="radio" name="operator-radio" id="operator-equals"> Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" id="operator-after"> After</label>' +
+						'<label><input type="radio" name="operator-radio" id="operator-after"> After</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" id="operator-before"> Before</label>' +
+						'<label><input type="radio" name="operator-radio" id="operator-before"> Before</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" id="operator-between"> Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" id="operator-between"> Between</label><br>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" id="operator-different"> Different</label>' +
+						'<label><input type="radio" name="operator-radio" id="operator-different"> Different</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" id="operator-after-equals"> After&Equals</label>' +
+						'<label><input type="radio" name="operator-radio" id="operator-after-equals"> After&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" id="operator-before-equals"> Before&Equals</label>' +
+						'<label><input type="radio" name="operator-radio" id="operator-before-equals"> Before&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" id="operator-notbetween"> Not Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" id="operator-notbetween"> Not Between</label><br>' +
 					'</div>' +
 					'<div class="inline-form-group">' +
 						'<div class="form-group">' +
