@@ -28,7 +28,8 @@ var DateFilterModal = Modal.extend({
 	events: {
 		'click a': 'call',
 		'focus #selection-date'  : 'selection_date',
-		'click .selection-radio' : 'disable_divselections'
+		'click .selection-radio' : 'disable_divselections',
+		'click .operator-radio'  : 'show_fields'
 	},
 
 	template_mdx: '{parent} CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
@@ -44,35 +45,35 @@ var DateFilterModal = Modal.extend({
 				'<span class="i18n">Operator:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" id="operator-equals"> Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-equals"> Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" id="operator-after"> After</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-after"> After</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" id="operator-before"> Before</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-before"> Before</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" id="operator-between"> Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-between"> Between</label><br>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" id="operator-different"> Different</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-different"> Different</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" id="operator-after-equals"> After&Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-after-equals"> After&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" id="operator-before-equals"> Before&Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-before-equals"> Before&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" id="operator-notbetween"> Not Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-notbetween"> Not Between</label><br>' +
 					'</div>' +
 					'<div class="inline-form-group">' +
-						'<div class="form-group">' +
+						'<div class="form-group" id="div-selection-date" hidden>' +
 							'<label>Select a date:</label>' +
 							'<input type="text" id="selection-date" placeholder="Choose a date">' +
 						'</div>' +
-						'<div class="form-group">' +
+						'<div class="form-group" id="div-selected-date" hidden>' +
 							'<fieldset id="selected-date">' +
 								'<legend>Selected date:</legend>' +
 							'</fieldset>' +
@@ -197,6 +198,28 @@ var DateFilterModal = Modal.extend({
 		$(args.modal.el).parents('.ui-dialog')
 			.css({ width: width, left: 'inherit', margin: '0', height: 490 })
 			.offset({ left: left});
+	},
+
+	show_fields: function(event) {
+		var $currentTarget = $(event.currentTarget),
+			name = $currentTarget.parent('label').text().split(' ')[1];
+		switch (name) {
+		case 'Equals':
+		case 'Different':
+			$currentTarget.closest('.selection-options').find('#div-selection-date').show();
+			$currentTarget.closest('.selection-options').find('#div-selected-date').show();
+			break;
+		case 'After':
+		case 'After&Equals':
+		case 'Before':
+		case 'Before&Equals':
+			$currentTarget.closest('.selection-options').find('#div-selection-date').show();
+			$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
+			break;
+		default:
+			$currentTarget.closest('.selection-options').find('#div-selection-date').hide();
+			$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
+		}
 	},
 
 	save_data_levels: function() {
