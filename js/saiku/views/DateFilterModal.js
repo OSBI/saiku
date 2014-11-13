@@ -31,7 +31,7 @@ var DateFilterModal = Modal.extend({
 		'click .selection-radio' : 'disable_divselections'
 	},
 
-	template_mdx: ' CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
+	template_mdx: '{parent} CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
 
 	template_last_mdx: '{parent} LastPeriods({periodamount}, CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT))',
 
