@@ -31,7 +31,7 @@ var DateFilterModal = Modal.extend({
 		'click .selection-radio' : 'disable_divselections'
 	},
 
-	template_mdx: 'CurrentDateMember([{dimension}].[{hierarchy}], \"[{hierarchy2}]\\\.{AnalyzerDateFormat}\", EXACT)',
+	template_mdx: 'CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
 
 	template_selection: _.template(
 		'<div class="box-selections">' +
@@ -217,6 +217,9 @@ var DateFilterModal = Modal.extend({
 						if (name === value.name.toLowerCase()) {
 							$(radio).val(self.dataLevels[key].analyzerDateFormat);
 						}
+						else if (name === 'yesterday' && value.name.toLowerCase() === 'day') {
+							$(radio).val(self.dataLevels[key].analyzerDateFormat);
+						}
 					});
 				});
 			}
@@ -237,10 +240,17 @@ var DateFilterModal = Modal.extend({
     		.prop('disabled', false).on('click');
     },
 
-    populate_mdx: function(logExp) {
-    	return this.template_mdx = this.template_mdx.replace(/{(\w+)}/g, function(m, p) {
+    populate_mdx: function(logExp, fixedDateName) {
+    	this.template_mdx = this.template_mdx.replace(/{(\w+)}/g, function(m, p) {
 			return logExp[p];
 		});
+
+		if (fixedDateName !== 'yesterday') {
+			return this.template_mdx;
+		}
+		else {
+			return this.template_mdx + '.lag(1)';
+		}
     },
 
     save: function(event) {
@@ -251,6 +261,7 @@ var DateFilterModal = Modal.extend({
         $(this.el).find('.dialog_body').prepend($loading);
 
 		var self = this,
+			fixedDateName,
 			mdx;
 
 		this.$el.find('.available-selections').each(function(key, selection) {
@@ -259,6 +270,7 @@ var DateFilterModal = Modal.extend({
 			if ($(selection).attr('available') === 'true') {
 				$(selection).find('input:radio').each(function(key, radio) {
 					if ($(radio).is(":checked") === true) {
+						fixedDateName = $(radio).attr('id').split('-')[1];
 						analyzerDateFormat = $(radio).val();
 					}
 				});
@@ -266,11 +278,10 @@ var DateFilterModal = Modal.extend({
 				var logExp = {
 					dimension: self.dimension,
 					hierarchy: self.hierarchy,
-					hierarchy2: 'Ti\\me',
 					AnalyzerDateFormat: analyzerDateFormat
 				};
 
-				mdx = self.populate_mdx(logExp);
+				mdx = self.populate_mdx(logExp, fixedDateName);
 			}
 		});
 
