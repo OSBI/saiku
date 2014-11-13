@@ -938,8 +938,23 @@ textarea, select {
     width: 100px;
 }
 
-.dialog_date-filter .dialog_body .form-group #selected-date {
+.dialog_date-filter .dialog_body #div-selected-date fieldset {
     border: 1px solid #ccc;
+}
+
+.dialog_date-filter .dialog_body .form-group #selected-date {
+    padding: 0;
+    list-style: none;
+}
+
+.dialog_date-filter .dialog_body .form-group #selected-date a {
+    margin-left: 5px;
+    color: blue;
+    text-decoration: none;
+}
+
+.dialog_date-filter .dialog_body .form-group #selected-date a:hover {
+    text-decoration: underline;   
 }
 
 .dialog_permissions .dialog_body {

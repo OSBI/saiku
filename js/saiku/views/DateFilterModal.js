@@ -29,7 +29,8 @@ var DateFilterModal = Modal.extend({
 		'click a': 'call',
 		'focus #selection-date'  : 'selection_date',
 		'click .selection-radio' : 'disable_divselections',
-		'click .operator-radio'  : 'show_fields'
+		'click .operator-radio'  : 'show_fields',
+		'blur  #selection-date'  : 'populate_selected_date'
 	},
 
 	template_mdx: '{parent} CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
@@ -69,13 +70,14 @@ var DateFilterModal = Modal.extend({
 						'<label><input type="radio" name="operator-radio" class="operator-radio op-notbetween"> Not Between</label><br>' +
 					'</div>' +
 					'<div class="inline-form-group">' +
-						'<div class="form-group" id="div-selection-date" hidden>' +
+						'<div class="form-group" id="div-selection-date">' +
 							'<label>Select a date:</label>' +
 							'<input type="text" id="selection-date" placeholder="Choose a date">' +
 						'</div>' +
-						'<div class="form-group" id="div-selected-date" hidden>' +
-							'<fieldset id="selected-date">' +
+						'<div class="form-group" id="div-selected-date">' +
+							'<fieldset>' +
 								'<legend>Selected date:</legend>' +
+								'<ul id="selected-date"></ul>' +
 							'</fieldset>' +
 						'</div>' +
 					'</div>' +
@@ -287,7 +289,9 @@ var DateFilterModal = Modal.extend({
 
 	selection_date: function(event) {
 		var $currentTarget = $(event.currentTarget);
-		$currentTarget.datepicker();
+		$currentTarget.datepicker({ 
+			dateFormat: 'yy-mm-dd' 
+		});
 	},
 
 	disable_divselections: function(event) {
@@ -302,6 +306,14 @@ var DateFilterModal = Modal.extend({
 		} );
 
 
+	},
+
+	populate_selected_date: function(event) {
+		var $currentTarget = $(event.currentTarget);
+		$currentTarget.closest('.inline-form-group').find('#div-selected-date').find('#selected-date')
+			.append($('<li></li>')
+				.text($currentTarget.val()));
+		$currentTarget.val('');
 	},
 
 	populate_mdx: function(logExp, fixedDateName, periodamount) {
