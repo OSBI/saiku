@@ -38,7 +38,7 @@ var DateFilterModal = Modal.extend({
 			'<div class="selection-option">' +
 				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-operator">' +
 			'</div>' +
-			'<div class="available-selections" available="false">' +
+			'<div class="available-selections" selection-name="operator" available="false">' +
 				'<span class="i18n">Operator:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
@@ -91,15 +91,15 @@ var DateFilterModal = Modal.extend({
 			'<div class="selection-option">' +
 				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-fixed-date">' +
 			'</div>' +			
-			'<div class="available-selections" available="false">' +
+			'<div class="available-selections" selection-name="fixed-date" available="false">' +
 				'<span class="i18n">Fixed Date:</span><br>' +
 				'<div class="selection-options">' +
-					'<label><input type="radio" name="fixed-radio" id="fd-yesterday">Yesterday</label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-today">Today</label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-week">Current Week</label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-month">Current Month</label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-quarter">Current Quarter</label><br>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-year">Current Year</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-yesterday"> Yesterday</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-day"> Today</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-week"> Current Week</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-month"> Current Month</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-quarter"> Current Quarter</label><br>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-year"> Current Year</label>' +
 				'</div>' +
 			'</div>' +
 		'</div>' +
@@ -107,13 +107,13 @@ var DateFilterModal = Modal.extend({
 			'<div class="selection-option">' +
 				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-available">' +
 			'</div>' +
-			'<div class="available-selections" available="false">' +
+			'<div class="available-selections" selection-name="rolling-date" available="false">' +
 				'<span class="i18n">Rolling Date:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
 						'<select id="">' +
 							'<option value="last">Last</option>' +
-							'<option value="next">Next</option>' +
+							'<option value="next" disabled>Next</option>' +
 						'</select>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
@@ -179,7 +179,18 @@ var DateFilterModal = Modal.extend({
 		// Save data of levels
 		this.dataLevels = this.save_data_levels();
 		console.log(this.dataLevels);
+
+		// Initialize adding values
+		this.add_values_fixed_date();
 	},
+
+    post_render: function(args) {
+        var left = ($(window).width() - 600) / 2,
+        	width = $(window).width() < 600 ? $(window).width() : 600;
+        $(args.modal.el).parents('.ui-dialog')
+            .css({ width: width, left: 'inherit', margin: '0', height: 490 })
+            .offset({ left: left});
+    },
 
 	save_data_levels: function() {
 		var dataLevels = [];
@@ -196,13 +207,21 @@ var DateFilterModal = Modal.extend({
 		return dataLevels;
 	},
 
-    post_render: function(args) {
-        var left = ($(window).width() - 600) / 2,
-        	width = $(window).width() < 600 ? $(window).width() : 600;
-        $(args.modal.el).parents('.ui-dialog')
-            .css({ width: width, left: 'inherit', margin: '0', height: 490 })
-            .offset({ left: left});
-    },
+	add_values_fixed_date: function() {
+		var self = this;
+		this.$el.find('.available-selections').each(function(key, selection) {
+			if ($(selection).attr('selection-name') === 'fixed-date') {
+				$(selection).find('input:radio').each(function(key, radio) {
+					var name = $(radio).attr('id').split('-')[1];
+					_.find(self.dataLevels, function(value, key, list) {					
+						if (name === value.name.toLowerCase()) {
+							$(radio).val(self.dataLevels[key].analyzerDateFormat);
+						}
+					});
+				});
+			}
+		});
+	},
 
     selection_date: function(event) {
     	var $currentTarget = $(event.currentTarget);

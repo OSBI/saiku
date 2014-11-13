@@ -240,7 +240,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             value = {};
         value.dimensions  = _.findWhere(metadata.dimensions, {name: dimension});
         value.hierarchies = _.findWhere(value.dimensions.hierarchies, {name: hierarchy});
-        value.levels      = _.findWhere(value.hierarchies.levels, {name: level});
+        value.level      = _.findWhere(value.hierarchies.levels, {name: level});
         return value;
     },
     
@@ -258,10 +258,10 @@ var WorkspaceDropZone = Backbone.View.extend({
             objData = this.find_type_time(dimension, hierarchy, level),
             key = $target.attr('href').replace('#', '');
 
-        if (objData.levels.annotations.AnalyzerDateFormat !== undefined) {
+        if (objData.level.annotations.AnalyzerDateFormat !== undefined) {
             // Launch date filter dialog
             (new DateFilterModal({
-                AnalyzerDateFormat: objData.levels.annotations.AnalyzerDateFormat,
+                AnalyzerDateFormat: objData.level.annotations.AnalyzerDateFormat,
                 data: objData,
                 dimension: dimension,
                 hierarchy: hierarchy,
