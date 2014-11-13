@@ -365,3 +365,4 @@ var DateFilterModal = Modal.extend({
 		this.query.run();
 	}
 });
+
