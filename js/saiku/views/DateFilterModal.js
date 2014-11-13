@@ -37,100 +37,100 @@ var DateFilterModal = Modal.extend({
 
 	template_selection: _.template(
 		'<div class="box-selections">' +
-		'<div class="selection-option">' +
-		'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-operator">' +
-		'</div>' +
-		'<div class="available-selections" selection-name="operator" available="false">' +
-		'<span class="i18n">Operator:</span><br>' +
-		'<div class="selection-options">' +
-		'<div class="form-group-selection">' +
-		'<label><input type="radio" id="operator-equals"> Equals</label>' +
-		'</div>' +
-		'<div class="form-group-selection">' +
-		'<label><input type="radio" id="operator-after"> After</label>' +
-		'</div>' +
-		'<div class="form-group-selection">' +
-		'<label><input type="radio" id="operator-before"> Before</label>' +
-		'</div>' +
-		'<div class="form-group-selection">' +
-		'<label><input type="radio" id="operator-between"> Between</label><br>' +
-		'</div>' +
-		'<div class="form-group-selection">' +
-		'<label><input type="radio" id="operator-different"> Different</label>' +
-		'</div>' +
-		'<div class="form-group-selection">' +
-		'<label><input type="radio" id="operator-after-equals"> After&Equals</label>' +
-		'</div>' +
-		'<div class="form-group-selection">' +
-		'<label><input type="radio" id="operator-before-equals"> Before&Equals</label>' +
-		'</div>' +
-		'<div class="form-group-selection">' +
-		'<label><input type="radio" id="operator-notbetween"> Not Between</label><br>' +
-		'</div>' +
-		'<div class="inline-form-group">' +
-		'<div class="form-group">' +
-		'<label>Select a date:</label>' +
-		'<input type="text" id="selection-date" placeholder="Choose a date">' +
-		'</div>' +
-		'<div class="form-group">' +
-		'<fieldset id="selected-date">' +
-		'<legend>Selected date:</legend>' +
-		'</fieldset>' +
-		'</div>' +
-		'</div>' +
-			// '<div class="form-group">' +
-			// 	'<label>Select a start date:</label>' +
-			// 	'<input type="text" placeholder="Choose a date">' +
-			// '</div>' +
-			// '<div class="form-group">' +
-			// 	'<label>Select an end date:</label>' +
-			// 	'<input type="text" placeholder="Choose a date">' +
-			// '</div>' +
-		'</div>' +
-		'</div>' +
-		'</div>' +
-		'<div class="box-selections">' +
-		'<div class="selection-option">' +
-		'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-fixed-date">' +
-		'</div>' +
-		'<div class="available-selections" selection-name="fixed-date" available="false">' +
-		'<span class="i18n">Fixed Date:</span><br>' +
-		'<div class="selection-options">' +
-		'<label><input type="radio" name="fixed-radio" id="fd-yesterday"> Yesterday</label>' +
-		'<label><input type="radio" name="fixed-radio" id="fd-day"> Today</label>' +
-		'<label><input type="radio" name="fixed-radio" id="fd-week"> Current Week</label>' +
-		'<label><input type="radio" name="fixed-radio" id="fd-month"> Current Month</label>' +
-		'<label><input type="radio" name="fixed-radio" id="fd-quarter"> Current Quarter</label><br>' +
-		'<label><input type="radio" name="fixed-radio" id="fd-year"> Current Year</label>' +
-		'</div>' +
-		'</div>' +
+			'<div class="selection-option">' +
+				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-operator">' +
+			'</div>' +
+			'<div class="available-selections" selection-name="operator" available="false">' +
+				'<span class="i18n">Operator:</span><br>' +
+				'<div class="selection-options">' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio" id="operator-equals"> Equals</label>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio" id="operator-after"> After</label>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio" id="operator-before"> Before</label>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio" id="operator-between"> Between</label><br>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio" id="operator-different"> Different</label>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio" id="operator-after-equals"> After&Equals</label>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio" id="operator-before-equals"> Before&Equals</label>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio" id="operator-notbetween"> Not Between</label><br>' +
+					'</div>' +
+					'<div class="inline-form-group">' +
+						'<div class="form-group">' +
+							'<label>Select a date:</label>' +
+							'<input type="text" id="selection-date" placeholder="Choose a date">' +
+						'</div>' +
+						'<div class="form-group">' +
+							'<fieldset id="selected-date">' +
+								'<legend>Selected date:</legend>' +
+							'</fieldset>' +
+						'</div>' +
+					'</div>' +
+					// '<div class="form-group">' +
+					// 	'<label>Select a start date:</label>' +
+					// 	'<input type="text" placeholder="Choose a date">' +
+					// '</div>' +
+					// '<div class="form-group">' +
+					// 	'<label>Select an end date:</label>' +
+					// 	'<input type="text" placeholder="Choose a date">' +
+					// '</div>' +
+				'</div>' +
+			'</div>' +
 		'</div>' +
 		'<div class="box-selections">' +
-		'<div class="selection-option">' +
-		'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-available">' +
+			'<div class="selection-option">' +
+				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-fixed-date">' +
+			'</div>' +
+			'<div class="available-selections" selection-name="fixed-date" available="false">' +
+				'<span class="i18n">Fixed Date:</span><br>' +
+				'<div class="selection-options">' +
+					'<label><input type="radio" name="fixed-radio" id="fd-yesterday"> Yesterday</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-day"> Today</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-week"> Current Week</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-month"> Current Month</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-quarter"> Current Quarter</label><br>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-year"> Current Year</label>' +
+				'</div>' +
+			'</div>' +
 		'</div>' +
-		'<div class="available-selections" selection-name="rolling-date" available="false">' +
-		'<span class="i18n">Rolling Date:</span><br>' +
-		'<div class="selection-options">' +
-		'<div class="form-group-selection">' +
-		'<select id="">' +
-		'<option value="last">Last</option>' +
-		'<option value="next" disabled class="keep-disabled">Next</option>' +
-		'</select>' +
-		'</div>' +
-		'<div class="form-group-selection">' +
-		'<input id="date-input" type="text"/>'+
-		'</div>' +
-		'<div class="form-group-selection">' +
-		'<select id="period-select">' +
-		'<option name="TIME_DAYS" value="">Day(s)</option>' +
-		'<option name="TIME_WEEKS" value="">Week(s)</option>' +
-		'<option name="TIME_MONTHS" value="">Month(s)</option>' +
-		'<option name="TIME_YEARS" value="">Year(s)</option>' +
-		'</select>' +
-		'</div>' +
-		'</div>' +
-		'</div>' +
+		'<div class="box-selections">' +
+			'<div class="selection-option">' +
+				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-available">' +
+			'</div>' +
+			'<div class="available-selections" selection-name="rolling-date" available="false">' +
+				'<span class="i18n">Rolling Date:</span><br>' +
+				'<div class="selection-options">' +
+					'<div class="form-group-selection">' +
+						'<select id="">' +
+							'<option value="last">Last</option>' +
+							'<option value="next" disabled class="keep-disabled">Next</option>' +
+						'</select>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<input type="text" id="date-input">' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<select id="period-select">' +
+							'<option name="TIME_DAYS" value="">Day(s)</option>' +
+							'<option name="TIME_WEEKS" value="">Week(s)</option>' +
+							'<option name="TIME_MONTHS" value="">Month(s)</option>' +
+							'<option name="TIME_YEARS" value="">Year(s)</option>' +
+						'</select>' +
+					'</div>' +
+				'</div>' +
+			'</div>' +
 		'</div>'
 		// '<div class="box-selections">' +
 		// 	'<div class="available-selections">' +
@@ -140,12 +140,12 @@ var DateFilterModal = Modal.extend({
 		// '</div>' +
 		// '<div class="box-selections">' +
 		// 	'<div class="selection_buttons">' +
-		//            '<a class="form_button">&nbsp;&gt;&nbsp;</a><br><br>' +
-		//            '<a class="form_button">&gt;&gt;</a><br><br>' +
-		//            '<a class="form_button">&lt;&lt;</a><br><br>' +
-		//            '<a class="form_button">&nbsp;&lt;&nbsp;</a>' +
-		//        '</div>' +
-		//       '</div>' +
+		// 		'<a class="form_button">&nbsp;&gt;&nbsp;</a><br><br>' +
+		// 		'<a class="form_button">&gt;&gt;</a><br><br>' +
+		// 		'<a class="form_button">&lt;&lt;</a><br><br>' +
+		// 		'<a class="form_button">&nbsp;&lt;&nbsp;</a>' +
+		// 	'</div>' +
+		// '</div>' +
 		// '<div class="box-selections">' +
 		// 	'<div class="available-selections">' +
 		// 		'<span class="i18n">Used members:</span><br>' +
