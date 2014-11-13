@@ -115,7 +115,7 @@ var DateFilterModal = Modal.extend({
 		'<div class="form-group-selection">' +
 		'<select id="">' +
 		'<option value="last">Last</option>' +
-		'<option value="next" disabled>Next</option>' +
+		'<option value="next" disabled class="keep-disabled">Next</option>' +
 		'</select>' +
 		'</div>' +
 		'<div class="form-group-selection">' +
@@ -229,6 +229,13 @@ var DateFilterModal = Modal.extend({
 						}
 					});
 				});
+
+				$(selection).find('input:radio').each(function(key, radio) {
+						if ($(radio).val() === null ||$(radio).val() === undefined ||$(radio).val() === "" || $(radio).val()=="on") {
+							$(radio).addClass("keep-disabled");
+						}
+				});
+
 			}
 		});
 	},
@@ -247,13 +254,9 @@ var DateFilterModal = Modal.extend({
 					});
 				});
 				$(selection).find('#period-select > option').each(function(key, radio) {
-					var name = $(radio).attr('name');
-					_.find(self.dataLevels, function(value, key, list) {
 						if ($(radio).val() === null ||$(radio).val() === undefined ||$(radio).val() === "") {
 							$(radio).addClass("keep-disabled");
 						}
-
-					});
 				});
 			}
 		});
@@ -365,4 +368,3 @@ var DateFilterModal = Modal.extend({
 		this.query.run();
 	}
 });
-
