@@ -94,11 +94,12 @@ var DateFilterModal = Modal.extend({
 			'<div class="available-selections" available="false">' +
 				'<span class="i18n">Fixed Date:</span><br>' +
 				'<div class="selection-options">' +
-					'<label><input type="radio" name="fixed-radio" id="fd-today" value="">Today</label>' +
 					'<label><input type="radio" name="fixed-radio" id="fd-yesterday" value="">Yesterday</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-today" value="">Today</label>' +
 					'<label><input type="radio" name="fixed-radio" id="fd-current-week" value="">Current Week</label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-current-month" value="[yyyy]\\.[Qq]\\.[m]">Current Month</label><br>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-current-year" value="[yyyy]">Current Year</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-current-month" value="">Current Month</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-current-quarter" value="">Current Quarter</label><br>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-current-year" value="">Current Year</label>' +
 				'</div>' +
 			'</div>' +
 		'</div>' +
@@ -160,7 +161,8 @@ var DateFilterModal = Modal.extend({
 
 		_.each(this.data.hierarchies.levels, function(value, key, list) {		
 			if (list[key].annotations.AnalyzerDateFormat !== undefined) {
-				self.dateType.push({ 
+				self.dateType.push({
+					name: list[key].name,
 					analyzerDateFormat: list[key].annotations.AnalyzerDateFormat, 
 					levelType: list[key].levelType
 				});
