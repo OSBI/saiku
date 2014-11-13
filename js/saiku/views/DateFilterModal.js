@@ -70,11 +70,11 @@ var DateFilterModal = Modal.extend({
 						'<label><input type="radio" name="operator-radio" class="operator-radio op-notbetween"> Not Between</label><br>' +
 					'</div>' +
 					'<div class="inline-form-group">' +
-						'<div class="form-group" id="div-selection-date">' +
+						'<div class="form-group" id="div-selection-date" hidden>' +
 							'<label>Select a date:</label>' +
 							'<input type="text" id="selection-date" placeholder="Choose a date">' +
 						'</div>' +
-						'<div class="form-group" id="div-selected-date">' +
+						'<div class="form-group" id="div-selected-date" hidden>' +
 							'<fieldset>' +
 								'<legend>Selected date:</legend>' +
 								'<ul id="selected-date"></ul>' +
