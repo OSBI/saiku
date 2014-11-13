@@ -94,12 +94,12 @@ var DateFilterModal = Modal.extend({
 			'<div class="available-selections" available="false">' +
 				'<span class="i18n">Fixed Date:</span><br>' +
 				'<div class="selection-options">' +
-					'<label><input type="radio" name="fixed-radio" id="fd-yesterday" value="">Yesterday</label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-today" value="">Today</label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-current-week" value="">Current Week</label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-current-month" value="">Current Month</label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-current-quarter" value="">Current Quarter</label><br>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-current-year" value="">Current Year</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-yesterday">Yesterday</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-today">Today</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-week">Current Week</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-month">Current Month</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-quarter">Current Quarter</label><br>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-year">Current Year</label>' +
 				'</div>' +
 			'</div>' +
 		'</div>' +
@@ -155,21 +155,6 @@ var DateFilterModal = Modal.extend({
 		this.options.title = 'Selections for Year';
 		this.message = 'Loading...';
 		this.query = args.workspace.query;
-		this.dateType = [];
-
-		var self = this;
-
-		_.each(this.data.hierarchies.levels, function(value, key, list) {		
-			if (list[key].annotations.AnalyzerDateFormat !== undefined) {
-				self.dateType.push({
-					name: list[key].name,
-					analyzerDateFormat: list[key].annotations.AnalyzerDateFormat, 
-					levelType: list[key].levelType
-				});
-			}
-		});
-
-		console.log(this.dateType);
 
 		// _.bind(this);
 
@@ -190,6 +175,25 @@ var DateFilterModal = Modal.extend({
         	.html(this.template_selection);
 
         this.$el.find('.available-selections *').prop('disabled', true).off('click');
+
+		// Save data of levels
+		this.dataLevels = this.save_data_levels();
+		console.log(this.dataLevels);
+	},
+
+	save_data_levels: function() {
+		var dataLevels = [];
+		_.each(this.data.hierarchies.levels, function(value, key, list) {		
+			if (list[key].annotations.AnalyzerDateFormat !== undefined) {
+				dataLevels.push({
+					name: list[key].name,
+					analyzerDateFormat: list[key].annotations.AnalyzerDateFormat, 
+					levelType: list[key].levelType
+				});
+			}
+		});
+
+		return dataLevels;
 	},
 
     post_render: function(args) {
