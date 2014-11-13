@@ -31,9 +31,9 @@ var DateFilterModal = Modal.extend({
 		'click .selection-radio' : 'disable_divselections'
 	},
 
-	template_mdx: 'CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
+	template_mdx: ' CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
 
-	template_last_mdx: 'LastPeriods({periodamount}, CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT))',
+	template_last_mdx: '{parent} LastPeriods({periodamount}, CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT))',
 
 	template_selection: _.template(
 		'<div class="box-selections">' +
@@ -282,6 +282,13 @@ var DateFilterModal = Modal.extend({
 	},
 
 	populate_mdx: function(logExp, fixedDateName, periodamount) {
+		if(logExp.level!=undefined){
+			logExp.parent = "[{dimension}].[{hierarchy}].[{level}].members,";
+			logExp.parent = logExp.parent.replace(/{(\w+)}/g, function(m, p) {
+				return logExp[p];
+			});
+		}
+
 		this.template_mdx = this.template_mdx.replace(/{(\w+)}/g, function(m, p) {
 			return logExp[p];
 		});
@@ -313,6 +320,7 @@ var DateFilterModal = Modal.extend({
 		var self = this,
 			fixedDateName,
 			mdx,
+			parentmembers,
 			periodamount;
 
 		this.$el.find('.available-selections').each(function(key, selection) {
@@ -336,9 +344,19 @@ var DateFilterModal = Modal.extend({
 					periodamount = $(selection).find('input:text').val();
 
 				}
+
+				for (var i = 0, len = self.dataLevels.length; i < len; i++) {
+					if (self.dataLevels[i].analyzerDateFormat === analyzerDateFormat)
+						if(self.dataLevels[i].name != self.name) {
+							parentmembers = self.name;
+						}
+				}
+
 				var logExp = {
 					dimension: self.dimension,
 					hierarchy: self.hierarchy,
+					level: parentmembers,
+					parent: "",
 					AnalyzerDateFormat: analyzerDateFormat,
 					periodamount: periodamount
 				};
