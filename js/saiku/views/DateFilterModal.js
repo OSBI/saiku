@@ -47,25 +47,25 @@ var DateFilterModal = Modal.extend({
 				'<span class="i18n">Operator:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-equals"> Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-equals" value="="> Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-after"> After</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-after" value=">"> After</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-before"> Before</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-before" value="<"> Before</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-between"> Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-between" value=""> Between</label><br>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-different"> Different</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-different" value="<>"> Different</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-after-equals"> After&Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-after-equals" value=">="> After&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-before-equals"> Before&Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-before-equals" value="<="> Before&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
 						'<label><input type="radio" name="operator-radio" class="operator-radio op-notbetween"> Not Between</label><br>' +
