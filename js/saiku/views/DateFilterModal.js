@@ -210,6 +210,7 @@ var DateFilterModal = Modal.extend({
 		case 'Different':
 			$currentTarget.closest('.selection-options').find('#div-selection-date').show();
 			$currentTarget.closest('.selection-options').find('#div-selected-date').show();
+			$currentTarget.closest('.selection-options').find('#add-date').show();
 			break;
 		case 'After':
 		case 'After&Equals':
@@ -217,10 +218,12 @@ var DateFilterModal = Modal.extend({
 		case 'Before&Equals':
 			$currentTarget.closest('.selection-options').find('#div-selection-date').show();
 			$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
+			$currentTarget.closest('.selection-options').find('#add-date').hide();
 			break;
 		default:
 			$currentTarget.closest('.selection-options').find('#div-selection-date').hide();
 			$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
+			$currentTarget.closest('.selection-options').find('#add-date').hide();
 		}
 	},
 
@@ -314,16 +317,6 @@ var DateFilterModal = Modal.extend({
 			sDate = this.$el.find('#selection-date'),
 			selectedDate = $currentTarget.closest('.inline-form-group')
 				.find('#div-selected-date').find('#selected-date');
-
-		selectedDate.each(function(key, sDate) {
-			sDate = $(sDate).find('li').text().split('x');
-			_.find(sDate, function(value, key, list) {
-				console.log(value);
-				console.log(key);
-				console.log(list);
-			});
-		});
-
 		selectedDate.append($('<li></li>').text(sDate.val())
 			.append('<a href="#" class="del-date">x</a>'));
 		sDate.val('');
