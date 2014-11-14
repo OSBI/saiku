@@ -34,6 +34,9 @@ var DateFilterModal = Modal.extend({
 		'click .del-date'        : 'del_selected_date'
 	},
 
+	// template_day_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties(\"{SaikuDateProperty}\") {logicalOperator} \"1997/02/01\")',
+	template_day_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties(\"date_string\") {logicalOperator} \'1997/02/01\')',
+
 	template_mdx: '{parent} CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
 
 	template_last_mdx: '{parent} LastPeriods({periodamount}, CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT))',
@@ -367,8 +370,8 @@ var DateFilterModal = Modal.extend({
 	},
 
 	populate_mdx: function(logExp, fixedDateName, periodamount) {
-		if(logExp.level!=undefined){
-			logExp.parent = "[{dimension}].[{hierarchy}].[{level}].members,";
+		if (logExp.level!=undefined) {
+			logExp.parent = '[{dimension}].[{hierarchy}].[{level}].members,';
 			logExp.parent = logExp.parent.replace(/{(\w+)}/g, function(m, p) {
 				return logExp[p];
 			});
@@ -378,9 +381,14 @@ var DateFilterModal = Modal.extend({
 			return logExp[p];
 		});
 
+		if (fixedDateName === 'dayperiods') {
+			this.template_day_mdx = this.template_day_mdx.replace(/{(\w+)}/g, function(m, p) {
+				return logExp[p];
+			});
 
-
-		if(fixedDateName == 'lastperiods'){
+			return this.template_day_mdx;
+		}
+		else if (fixedDateName === 'lastperiods') {
 			this.template_last_mdx = this.template_last_mdx.replace(/{(\w+)}/g, function(m, p) {
 				return logExp[p];
 			});
@@ -406,13 +414,22 @@ var DateFilterModal = Modal.extend({
 			fixedDateName,
 			mdx,
 			parentmembers,
-			periodamount;
+			periodamount,
+			logicalOperator;
 
 		this.$el.find('.available-selections').each(function(key, selection) {
 			var analyzerDateFormat;
 
 			if ($(selection).attr('available') === 'true') {
-				if ($(selection).attr('selection-name') === 'fixed-date') {
+				if ($(selection).attr('selection-name') === 'operator') {
+					$(selection).find('input:radio').each(function (key, radio) {
+						if ($(radio).is(':checked') === true) {
+							fixedDateName = 'dayperiods';
+							logicalOperator = $(radio).val();
+						}
+					});
+				}
+				else if ($(selection).attr('selection-name') === 'fixed-date') {
 					$(selection).find('input:radio').each(function (key, radio) {
 						if ($(radio).is(":checked") === true) {
 							fixedDateName = $(radio).attr('id').split('-')[1];
@@ -422,12 +439,9 @@ var DateFilterModal = Modal.extend({
 
 				}
 				else if($(selection).attr('selection-name') === 'rolling-date') {
-
-
 					analyzerDateFormat = $('#period-select').find(':selected').val();
 					fixedDateName = 'lastperiods';
 					periodamount = $(selection).find('input:text').val();
-
 				}
 
 				for (var i = 0, len = self.dataLevels.length; i < len; i++) {
@@ -443,7 +457,8 @@ var DateFilterModal = Modal.extend({
 					level: parentmembers,
 					parent: "",
 					AnalyzerDateFormat: analyzerDateFormat,
-					periodamount: periodamount
+					periodamount: periodamount,
+					logicalOperator: logicalOperator
 				};
 
 				mdx = self.populate_mdx(logExp, fixedDateName);
