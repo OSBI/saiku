@@ -34,8 +34,7 @@ var DateFilterModal = Modal.extend({
 		'click .del-date'        : 'del_selected_date'
 	},
 
-	// template_day_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties(\"{SaikuDateProperty}\") {logicalOperator} \"1997/02/01\")',
-	template_day_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties(\"date_string\") {logicalOperator} \'1997/02/01\')',
+	template_days_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties(\"{SaikuDateProperty}\") {logicalOperator} \'1997\/02\/01\')',
 
 	template_mdx: '{parent} CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
 
@@ -267,7 +266,9 @@ var DateFilterModal = Modal.extend({
 				dataLevels.push({
 					name: list[key].name,
 					analyzerDateFormat: list[key].annotations.AnalyzerDateFormat.replace(/[.]/gi, '\\\.'),
-					levelType: list[key].levelType
+					levelType: list[key].levelType,
+					saikuDateProperty: list[key].annotations.SaikuDateProperty,
+					saikuDayFormatString: list[key].annotations.SaikuDayFormatString
 				});
 			}
 		});
@@ -326,7 +327,7 @@ var DateFilterModal = Modal.extend({
 	selection_date: function(event) {
 		var $currentTarget = $(event.currentTarget);
 		$currentTarget.datepicker({ 
-			dateFormat: 'yy-mm-dd' 
+			dateFormat: 'yy/mm/dd' 
 		});
 	},
 
@@ -382,11 +383,11 @@ var DateFilterModal = Modal.extend({
 		});
 
 		if (fixedDateName === 'dayperiods') {
-			this.template_day_mdx = this.template_day_mdx.replace(/{(\w+)}/g, function(m, p) {
+			this.template_days_mdx = this.template_days_mdx.replace(/{(\w+)}/g, function(m, p) {
 				return logExp[p];
 			});
 
-			return this.template_day_mdx;
+			return this.template_days_mdx;
 		}
 		else if (fixedDateName === 'lastperiods') {
 			this.template_last_mdx = this.template_last_mdx.replace(/{(\w+)}/g, function(m, p) {
