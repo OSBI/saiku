@@ -41,7 +41,7 @@ var DateFilterModal = Modal.extend({
 	template_selection: _.template(
 		'<div class="box-selections">' +
 			'<div class="selection-option">' +
-				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-operator">' +
+				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-operator" level-type="TIME_DAYS" disabled>' +
 			'</div>' +
 			'<div class="available-selections" selection-name="operator" available="false">' +
 				'<span class="i18n">Operator:</span><br>' +
@@ -188,6 +188,10 @@ var DateFilterModal = Modal.extend({
 
 		// Save data of levels
 		this.dataLevels = this.save_data_levels();
+		console.log(this.dataLevels);
+
+		// Check level type in input radio
+		this.check_leveltype_radio();
 
 		// Initialize adding values
 		this.add_values_fixed_date();
@@ -200,6 +204,19 @@ var DateFilterModal = Modal.extend({
 		$(args.modal.el).parents('.ui-dialog')
 			.css({ width: width, left: 'inherit', margin: '0', height: 490 })
 			.offset({ left: left});
+	},
+
+	check_leveltype_radio: function() {
+		var self = this,
+			levelType;
+		this.$el.find('.selection-radio').each(function(key, radio) {
+			levelType = $(radio).attr('level-type');
+			_.find(self.dataLevels, function(value, key, list) {
+				if (levelType === value.levelType) {
+					$(radio).prop('disabled', false);
+				}
+			});
+		});
 	},
 
 	show_fields: function(event) {
