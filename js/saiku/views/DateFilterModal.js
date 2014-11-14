@@ -83,14 +83,14 @@ var DateFilterModal = Modal.extend({
 							'</fieldset>' +
 						'</div>' +
 					'</div>' +
-					// '<div class="form-group">' +
-					// 	'<label>Select a start date:</label>' +
-					// 	'<input type="text" placeholder="Choose a date">' +
-					// '</div>' +
-					// '<div class="form-group">' +
-					// 	'<label>Select an end date:</label>' +
-					// 	'<input type="text" placeholder="Choose a date">' +
-					// '</div>' +
+					'<div class="form-group" id="div-select-start-date" hidden>' +
+						'<label>Select a start date:</label>' +
+						'<input type="text" placeholder="Choose a date">' +
+					'</div>' +
+					'<div class="form-group" id="div-select-end-date" hidden>' +
+						'<label>Select an end date:</label>' +
+						'<input type="text" placeholder="Choose a date">' +
+					'</div>' +
 				'</div>' +
 			'</div>' +
 		'</div>' +
@@ -188,7 +188,6 @@ var DateFilterModal = Modal.extend({
 
 		// Save data of levels
 		this.dataLevels = this.save_data_levels();
-		console.log(this.dataLevels);
 
 		// Check level type in input radio
 		this.check_leveltype_radio();
@@ -227,6 +226,8 @@ var DateFilterModal = Modal.extend({
 		case 'Different':
 			$currentTarget.closest('.selection-options').find('#div-selection-date').show();
 			$currentTarget.closest('.selection-options').find('#div-selected-date').show();
+			$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
+			$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
 			$currentTarget.closest('.selection-options').find('#add-date').show();
 			break;
 		case 'After':
@@ -235,11 +236,23 @@ var DateFilterModal = Modal.extend({
 		case 'Before&Equals':
 			$currentTarget.closest('.selection-options').find('#div-selection-date').show();
 			$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
+			$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
+			$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
+			$currentTarget.closest('.selection-options').find('#add-date').hide();
+			break;
+		case 'Between':
+		case 'Not':
+			$currentTarget.closest('.selection-options').find('#div-selection-date').hide();
+			$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
+			$currentTarget.closest('.selection-options').find('#div-select-start-date').show();
+			$currentTarget.closest('.selection-options').find('#div-select-end-date').show();
 			$currentTarget.closest('.selection-options').find('#add-date').hide();
 			break;
 		default:
 			$currentTarget.closest('.selection-options').find('#div-selection-date').hide();
 			$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
+			$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
+			$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
 			$currentTarget.closest('.selection-options').find('#add-date').hide();
 		}
 	},
