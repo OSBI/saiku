@@ -317,8 +317,16 @@ var DateFilterModal = Modal.extend({
 			sDate = this.$el.find('#selection-date'),
 			selectedDate = $currentTarget.closest('.inline-form-group')
 				.find('#div-selected-date').find('#selected-date');
-		selectedDate.append($('<li></li>').text(sDate.val())
-			.append('<a href="#" class="del-date">x</a>'));
+
+		if (sDate.val() !== '') {
+			sDate.css('border', '1px solid #ccc');
+			selectedDate.append($('<li></li>').text(sDate.val())
+				.append('<a href="#" class="del-date">x</a>'));
+		}
+		else {
+			sDate.css('border', '1px solid red');
+		}
+
 		sDate.val('');
 	},
 
