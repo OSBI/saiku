@@ -30,7 +30,8 @@ var DateFilterModal = Modal.extend({
 		'focus #selection-date'  : 'selection_date',
 		'click .selection-radio' : 'disable_divselections',
 		'click .operator-radio'  : 'show_fields',
-		'blur  #selection-date'  : 'populate_selected_date'
+		'click #add-date'        : 'add_selected_date',
+		'click .del-date'        : 'del_selected_date'
 	},
 
 	template_mdx: '{parent} CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
@@ -73,6 +74,7 @@ var DateFilterModal = Modal.extend({
 						'<div class="form-group" id="div-selection-date" hidden>' +
 							'<label>Select a date:</label>' +
 							'<input type="text" id="selection-date" placeholder="Choose a date">' +
+							'<a class="form_button" id="add-date">add</a>' +
 						'</div>' +
 						'<div class="form-group" id="div-selected-date" hidden>' +
 							'<fieldset>' +
@@ -186,11 +188,9 @@ var DateFilterModal = Modal.extend({
 
 		// Save data of levels
 		this.dataLevels = this.save_data_levels();
-		console.log(this.dataLevels);
 
 		// Initialize adding values
 		this.add_values_fixed_date();
-
 		this.add_values_last_periods();
 	},
 
@@ -308,12 +308,31 @@ var DateFilterModal = Modal.extend({
 
 	},
 
-	populate_selected_date: function(event) {
+	add_selected_date: function(event) {
+		event.preventDefault();
+		var $currentTarget = $(event.currentTarget),
+			sDate = this.$el.find('#selection-date'),
+			selectedDate = $currentTarget.closest('.inline-form-group')
+				.find('#div-selected-date').find('#selected-date');
+
+		selectedDate.each(function(key, sDate) {
+			sDate = $(sDate).find('li').text().split('x');
+			_.find(sDate, function(value, key, list) {
+				console.log(value);
+				console.log(key);
+				console.log(list);
+			});
+		});
+
+		selectedDate.append($('<li></li>').text(sDate.val())
+			.append('<a href="#" class="del-date">x</a>'));
+		sDate.val('');
+	},
+
+	del_selected_date: function(event) {
+		event.preventDefault();
 		var $currentTarget = $(event.currentTarget);
-		$currentTarget.closest('.inline-form-group').find('#div-selected-date').find('#selected-date')
-			.append($('<li></li>')
-				.text($currentTarget.val()));
-		$currentTarget.val('');
+		$currentTarget.parent().remove();
 	},
 
 	populate_mdx: function(logExp, fixedDateName, periodamount) {

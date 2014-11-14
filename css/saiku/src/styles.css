@@ -934,17 +934,25 @@ textarea, select {
     padding-right: 10px;
 }
 
-.dialog_date-filter .dialog_body .form-group #select-date {
+.dialog_date-filter .dialog_body .form-group #selection-date {
     width: 100px;
 }
 
+.dialog_date-filter .dialog_body .form-group #add-date {
+    margin-left: 5px;
+    cursor: pointer;
+}
+
 .dialog_date-filter .dialog_body #div-selected-date fieldset {
+    width: 150px;
     border: 1px solid #ccc;
 }
 
 .dialog_date-filter .dialog_body .form-group #selected-date {
     padding: 0;
+    max-height: 50px;
     list-style: none;
+    overflow: auto;   
 }
 
 .dialog_date-filter .dialog_body .form-group #selected-date a {
