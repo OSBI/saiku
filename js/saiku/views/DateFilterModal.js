@@ -213,7 +213,7 @@ var DateFilterModal = Modal.extend({
 		this.$el.find('.selection-radio').each(function(key, radio) {
 			levelType = $(radio).attr('level-type');
 			_.find(self.dataLevels, function(value, key, list) {
-				if (levelType === value.levelType) {
+				if (levelType === value.levelType || (value.saikuDateProperty && value.saikuDayFormatString)) {
 					$(radio).prop('disabled', false);
 				}
 			});
