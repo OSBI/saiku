@@ -267,8 +267,8 @@ var DateFilterModal = Modal.extend({
 					name: list[key].name,
 					analyzerDateFormat: list[key].annotations.AnalyzerDateFormat.replace(/[.]/gi, '\\\.'),
 					levelType: list[key].levelType,
-					saikuDateProperty: list[key].annotations.SaikuDateProperty,
-					saikuDayFormatString: list[key].annotations.SaikuDayFormatString
+					saikuDateProperty: list[key].annotations.SaikuDateProperty !== undefined ? list[key].annotations.SaikuDateProperty : '',
+					saikuDayFormatString: list[key].annotations.SaikuDayFormatString !== undefined ? list[key].annotations.SaikuDayFormatString : ''
 				});
 			}
 		});
