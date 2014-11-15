@@ -260,16 +260,21 @@ var DateFilterModal = Modal.extend({
 	},
 
 	save_data_levels: function() {
-		var dataLevels = [];
+		var self = this,
+			dataLevels = [];
 		_.each(this.data.hierarchies.levels, function(value, key, list) {
 			if (list[key].annotations.AnalyzerDateFormat !== undefined) {
 				dataLevels.push({
 					name: list[key].name,
 					analyzerDateFormat: list[key].annotations.AnalyzerDateFormat.replace(/[.]/gi, '\\\.'),
 					levelType: list[key].levelType,
-					saikuDateProperty: list[key].annotations.SaikuDateProperty !== undefined ? list[key].annotations.SaikuDateProperty : '',
-					saikuDayFormatString: list[key].annotations.SaikuDayFormatString !== undefined ? list[key].annotations.SaikuDayFormatString : ''
+					saikuDateProperty: list[key].annotations.SaikuDateProperty || '',
+					saikuDayFormatString: list[key].annotations.SaikuDayFormatString || ''
 				});
+
+				if (list[key].annotations.SaikuDayFormatString) {
+					self.saikuDayFormatString = list[key].annotations.SaikuDayFormatString;
+				}
 			}
 		});
 
@@ -293,9 +298,12 @@ var DateFilterModal = Modal.extend({
 				});
 
 				$(selection).find('input:radio').each(function(key, radio) {
-						if ($(radio).val() === null ||$(radio).val() === undefined ||$(radio).val() === "" || $(radio).val()=="on") {
-							$(radio).addClass("keep-disabled");
-						}
+					if ($(radio).val() === null || 
+						$(radio).val() === undefined || 
+						$(radio).val() === '' || 
+						$(radio).val() === 'on') {
+						$(radio).addClass('keep-disabled');
+					}
 				});
 
 			}
@@ -316,8 +324,10 @@ var DateFilterModal = Modal.extend({
 					});
 				});
 				$(selection).find('#period-select > option').each(function(key, radio) {
-						if ($(radio).val() === null ||$(radio).val() === undefined ||$(radio).val() === "") {
-							$(radio).addClass("keep-disabled");
+						if ($(radio).val() === null || 
+							$(radio).val() === undefined || 
+							$(radio).val() === '') {
+							$(radio).addClass('keep-disabled');
 						}
 				});
 			}
@@ -340,21 +350,27 @@ var DateFilterModal = Modal.extend({
 			.prop('disabled', false).on('click');
 		$currentTarget.closest('.box-selections').find('select').each(function(key, selection){
 			$(selection).find("option:not([disabled])").first().attr("selected", "selected");
-		} );
+		});
+	},
 
-
+	day_format_string: function() {
+		var dayFormatString = this.saikuDayFormatString;
+		dayFormatString = dayFormatString.replace(/[a-zA-Z]/gi, '9');
+		return dayFormatString;
 	},
 
 	add_selected_date: function(event) {
 		event.preventDefault();
 		var $currentTarget = $(event.currentTarget),
+			dayFormatString = this.day_format_string(),
 			sDate = this.$el.find('#selection-date'),
 			selectedDate = $currentTarget.closest('.inline-form-group')
 				.find('#div-selected-date').find('#selected-date');
 
 		if (sDate.val() !== '') {
 			sDate.css('border', '1px solid #ccc');
-			selectedDate.append($('<li></li>').text(sDate.val())
+			selectedDate.append($('<li></li>')
+				.text(Saiku.toPattern(sDate.val(), dayFormatString))
 				.append('<a href="#" class="del-date">x</a>'));
 		}
 		else {
@@ -456,7 +472,7 @@ var DateFilterModal = Modal.extend({
 					dimension: self.dimension,
 					hierarchy: self.hierarchy,
 					level: parentmembers,
-					parent: "",
+					parent: '',
 					AnalyzerDateFormat: analyzerDateFormat,
 					periodamount: periodamount,
 					logicalOperator: logicalOperator
