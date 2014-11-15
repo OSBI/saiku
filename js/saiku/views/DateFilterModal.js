@@ -34,7 +34,8 @@ var DateFilterModal = Modal.extend({
 		'click .del-date'        : 'del_selected_date'
 	},
 
-	template_days_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties(\"{SaikuDateProperty}\") {logicalOperator} \'1997\/02\/01\')',
+	// template_days_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties(\"{SaikuDateProperty}\") {logicalOperator} \'1997\/02\/01\')',
+	template_days_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties(\"{saikuDateProperty}\") {logicalOperator} {dates})',
 
 	template_mdx: '{parent} CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
 
@@ -272,7 +273,9 @@ var DateFilterModal = Modal.extend({
 					saikuDayFormatString: list[key].annotations.SaikuDayFormatString || ''
 				});
 
-				if (list[key].annotations.SaikuDayFormatString) {
+				if (list[key].annotations.SaikuDateProperty &&
+					list[key].annotations.SaikuDayFormatString) {
+					self.saikuDateProperty = list[key].annotations.SaikuDateProperty;
 					self.saikuDayFormatString = list[key].annotations.SaikuDayFormatString;
 				}
 			}
@@ -366,12 +369,15 @@ var DateFilterModal = Modal.extend({
 			sDate = this.$el.find('#selection-date'),
 			selectedDate = $currentTarget.closest('.inline-form-group')
 				.find('#div-selected-date').find('#selected-date');
+			
+		this.dates = [];
 
 		if (sDate.val() !== '') {
 			sDate.css('border', '1px solid #ccc');
 			selectedDate.append($('<li></li>')
 				.text(Saiku.toPattern(sDate.val(), dayFormatString))
 				.append('<a href="#" class="del-date">x</a>'));
+			this.dates.push(sDate.val());
 		}
 		else {
 			sDate.css('border', '1px solid red');
@@ -387,7 +393,7 @@ var DateFilterModal = Modal.extend({
 	},
 
 	populate_mdx: function(logExp, fixedDateName, periodamount) {
-		if (logExp.level!=undefined) {
+		if (logExp.level !== undefined) {
 			logExp.parent = '[{dimension}].[{hierarchy}].[{level}].members,';
 			logExp.parent = logExp.parent.replace(/{(\w+)}/g, function(m, p) {
 				return logExp[p];
@@ -432,7 +438,9 @@ var DateFilterModal = Modal.extend({
 			mdx,
 			parentmembers,
 			periodamount,
-			logicalOperator;
+			logicalOperator,
+			saikuDateProperty,
+			dates;
 
 		this.$el.find('.available-selections').each(function(key, selection) {
 			var analyzerDateFormat;
@@ -475,7 +483,9 @@ var DateFilterModal = Modal.extend({
 					parent: '',
 					AnalyzerDateFormat: analyzerDateFormat,
 					periodamount: periodamount,
-					logicalOperator: logicalOperator
+					logicalOperator: logicalOperator,
+					saikuDateProperty: self.saikuDateProperty,
+					dates: self.dates[0]
 				};
 
 				mdx = self.populate_mdx(logExp, fixedDateName);
