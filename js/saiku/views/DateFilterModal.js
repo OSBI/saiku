@@ -33,8 +33,7 @@ var DateFilterModal = Modal.extend({
 		'click #add-date'        : 'add_selected_date',
 		'click .del-date'        : 'del_selected_date'
 	},
-
-	// template_days_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties(\"{SaikuDateProperty}\") {logicalOperator} \'1997\/02\/01\')',
+	
 	template_days_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties(\"{saikuDateProperty}\") {logicalOperator} {dates})',
 
 	template_mdx: '{parent} CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
