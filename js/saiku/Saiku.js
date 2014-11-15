@@ -77,6 +77,38 @@ var Saiku = {
             console.error(item);
         }
     },
+    URLParams: {
+        buildValue: function(value) {
+            if (/^\s*$/.test(value))           { return null; }
+            if (/^(true|false)$/i.test(value)) { return value.toLowerCase() === 'true'; }
+            if (isFinite(value))               { return parseFloat(value); }
+            if (isFinite(Date.parse(value)))   { return new Date(value); }
+
+            return value;
+        },
+
+        equals: function() {
+            params = Array.prototype.slice.call(arguments);
+
+            var paramsURI = {},
+                keyValue,               
+                couples = window.location.search.substr(1).split('&');
+
+            if (window.location.search.length > 1) {
+                for (var keyId = 0; keyId < couples.length; keyId++) {                    
+                    keyValue = couples[keyId].split('=');
+                    paramsURI[decodeURIComponent(keyValue[0])] = keyValue.length > 1 ? this.buildValue(decodeURIComponent(keyValue[1])) : null;
+                }
+            }
+
+            if (_.isEqual(paramsURI, params[0])) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    },
     loadCSS: function(href, media) {
         var cssNode = window.document.createElement('link'),
             ref = window.document.getElementsByTagName('script')[0];
@@ -116,37 +148,33 @@ var Saiku = {
 
         return scriptNode;
     },
-    URLParams: {
-        buildValue: function(value) {
-            if (/^\s*$/.test(value))           { return null; }
-            if (/^(true|false)$/i.test(value)) { return value.toLowerCase() === 'true'; }
-            if (isFinite(value))               { return parseFloat(value); }
-            if (isFinite(Date.parse(value)))   { return new Date(value); }
+    toPattern: function(value, opts) {
+        var DIGIT = '9',
+            ALPHA = 'A',
+            ALPHANUM = 'S',
+            output = (typeof opts === 'object' ? opts.pattern : opts).split(''),
+            values = value.toString().replace(/[^0-9a-zA-Z]/g, ''),
+            index = 0,
+            len = output.length,
+            i;
 
-            return value;
-        },
-
-        equals: function() {
-            params = Array.prototype.slice.call(arguments);
-
-            var paramsURI = {},
-                keyValue,               
-                couples = window.location.search.substr(1).split('&');
-
-            if (window.location.search.length > 1) {
-                for (var keyId = 0; keyId < couples.length; keyId++) {                    
-                    keyValue = couples[keyId].split('=');
-                    paramsURI[decodeURIComponent(keyValue[0])] = keyValue.length > 1 ? this.buildValue(decodeURIComponent(keyValue[1])) : null;
-                }
+        for (i = 0; i < len; i++) {
+            if (index >= values.length) {
+                break;
             }
-
-            if (_.isEqual(paramsURI, params[0])) {
-                return true;
-            }
-            else {
-                return false;
+            if ((output[i] === DIGIT && values[index].match(/[0-9]/)) ||
+                (output[i] === ALPHA && values[index].match(/[a-zA-Z]/)) ||
+                (output[i] === ALPHANUM && values[index].match(/[0-9a-zA-Z]/))) {
+                output[i] = values[index++];
+            } 
+            else if (output[i] === DIGIT || 
+                     output[i] === ALPHA || 
+                     output[i] === ALPHANUM) {
+                output = output.slice(0, i);
             }
         }
+
+        return output.join('').substr(0, i);
     }
 };
 
