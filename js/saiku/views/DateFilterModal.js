@@ -30,8 +30,11 @@ var DateFilterModal = Modal.extend({
 		'focus #selection-date'  : 'selection_date',
 		'click .selection-radio' : 'disable_divselections',
 		'click .operator-radio'  : 'show_fields',
-		'blur  #selection-date'  : 'populate_selected_date'
+		'click #add-date'        : 'add_selected_date',
+		'click .del-date'        : 'del_selected_date'
 	},
+	
+	template_days_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties(\"{saikuDateProperty}\") {logicalOperator} {dates})',
 
 	template_mdx: '{parent} CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
 
@@ -40,31 +43,31 @@ var DateFilterModal = Modal.extend({
 	template_selection: _.template(
 		'<div class="box-selections">' +
 			'<div class="selection-option">' +
-				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-operator">' +
+				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-operator" level-type="TIME_DAYS" disabled>' +
 			'</div>' +
 			'<div class="available-selections" selection-name="operator" available="false">' +
 				'<span class="i18n">Operator:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-equals"> Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-equals" value="="> Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-after"> After</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-after" value=">"> After</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-before"> Before</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-before" value="<"> Before</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-between"> Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-between" value=""> Between</label><br>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-different"> Different</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-different" value="<>"> Different</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-after-equals"> After&Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-after-equals" value=">="> After&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-before-equals"> Before&Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-before-equals" value="<="> Before&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
 						'<label><input type="radio" name="operator-radio" class="operator-radio op-notbetween"> Not Between</label><br>' +
@@ -73,6 +76,7 @@ var DateFilterModal = Modal.extend({
 						'<div class="form-group" id="div-selection-date" hidden>' +
 							'<label>Select a date:</label>' +
 							'<input type="text" id="selection-date" placeholder="Choose a date">' +
+							'<a class="form_button" id="add-date">add</a>' +
 						'</div>' +
 						'<div class="form-group" id="div-selected-date" hidden>' +
 							'<fieldset>' +
@@ -81,14 +85,14 @@ var DateFilterModal = Modal.extend({
 							'</fieldset>' +
 						'</div>' +
 					'</div>' +
-					// '<div class="form-group">' +
-					// 	'<label>Select a start date:</label>' +
-					// 	'<input type="text" placeholder="Choose a date">' +
-					// '</div>' +
-					// '<div class="form-group">' +
-					// 	'<label>Select an end date:</label>' +
-					// 	'<input type="text" placeholder="Choose a date">' +
-					// '</div>' +
+					'<div class="form-group" id="div-select-start-date" hidden>' +
+						'<label>Select a start date:</label>' +
+						'<input type="text" placeholder="Choose a date">' +
+					'</div>' +
+					'<div class="form-group" id="div-select-end-date" hidden>' +
+						'<label>Select an end date:</label>' +
+						'<input type="text" placeholder="Choose a date">' +
+					'</div>' +
 				'</div>' +
 			'</div>' +
 		'</div>' +
@@ -186,11 +190,12 @@ var DateFilterModal = Modal.extend({
 
 		// Save data of levels
 		this.dataLevels = this.save_data_levels();
-		console.log(this.dataLevels);
+
+		// Check level type in input radio
+		this.check_leveltype_radio();
 
 		// Initialize adding values
 		this.add_values_fixed_date();
-
 		this.add_values_last_periods();
 	},
 
@@ -202,6 +207,19 @@ var DateFilterModal = Modal.extend({
 			.offset({ left: left});
 	},
 
+	check_leveltype_radio: function() {
+		var self = this,
+			levelType;
+		this.$el.find('.selection-radio').each(function(key, radio) {
+			levelType = $(radio).attr('level-type');
+			_.find(self.dataLevels, function(value, key, list) {
+				if (levelType === value.levelType || (value.saikuDateProperty && value.saikuDayFormatString)) {
+					$(radio).prop('disabled', false);
+				}
+			});
+		});
+	},
+
 	show_fields: function(event) {
 		var $currentTarget = $(event.currentTarget),
 			name = $currentTarget.parent('label').text().split(' ')[1];
@@ -210,6 +228,9 @@ var DateFilterModal = Modal.extend({
 		case 'Different':
 			$currentTarget.closest('.selection-options').find('#div-selection-date').show();
 			$currentTarget.closest('.selection-options').find('#div-selected-date').show();
+			$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
+			$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
+			$currentTarget.closest('.selection-options').find('#add-date').show();
 			break;
 		case 'After':
 		case 'After&Equals':
@@ -217,22 +238,45 @@ var DateFilterModal = Modal.extend({
 		case 'Before&Equals':
 			$currentTarget.closest('.selection-options').find('#div-selection-date').show();
 			$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
+			$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
+			$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
+			$currentTarget.closest('.selection-options').find('#add-date').hide();
+			break;
+		case 'Between':
+		case 'Not':
+			$currentTarget.closest('.selection-options').find('#div-selection-date').hide();
+			$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
+			$currentTarget.closest('.selection-options').find('#div-select-start-date').show();
+			$currentTarget.closest('.selection-options').find('#div-select-end-date').show();
+			$currentTarget.closest('.selection-options').find('#add-date').hide();
 			break;
 		default:
 			$currentTarget.closest('.selection-options').find('#div-selection-date').hide();
 			$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
+			$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
+			$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
+			$currentTarget.closest('.selection-options').find('#add-date').hide();
 		}
 	},
 
 	save_data_levels: function() {
-		var dataLevels = [];
+		var self = this,
+			dataLevels = [];
 		_.each(this.data.hierarchies.levels, function(value, key, list) {
 			if (list[key].annotations.AnalyzerDateFormat !== undefined) {
 				dataLevels.push({
 					name: list[key].name,
 					analyzerDateFormat: list[key].annotations.AnalyzerDateFormat.replace(/[.]/gi, '\\\.'),
-					levelType: list[key].levelType
+					levelType: list[key].levelType,
+					saikuDateProperty: list[key].annotations.SaikuDateProperty || '',
+					saikuDayFormatString: list[key].annotations.SaikuDayFormatString || ''
 				});
+
+				if (list[key].annotations.SaikuDateProperty &&
+					list[key].annotations.SaikuDayFormatString) {
+					self.saikuDateProperty = list[key].annotations.SaikuDateProperty;
+					self.saikuDayFormatString = list[key].annotations.SaikuDayFormatString;
+				}
 			}
 		});
 
@@ -256,9 +300,12 @@ var DateFilterModal = Modal.extend({
 				});
 
 				$(selection).find('input:radio').each(function(key, radio) {
-						if ($(radio).val() === null ||$(radio).val() === undefined ||$(radio).val() === "" || $(radio).val()=="on") {
-							$(radio).addClass("keep-disabled");
-						}
+					if ($(radio).val() === null || 
+						$(radio).val() === undefined || 
+						$(radio).val() === '' || 
+						$(radio).val() === 'on') {
+						$(radio).addClass('keep-disabled');
+					}
 				});
 
 			}
@@ -279,8 +326,10 @@ var DateFilterModal = Modal.extend({
 					});
 				});
 				$(selection).find('#period-select > option').each(function(key, radio) {
-						if ($(radio).val() === null ||$(radio).val() === undefined ||$(radio).val() === "") {
-							$(radio).addClass("keep-disabled");
+						if ($(radio).val() === null || 
+							$(radio).val() === undefined || 
+							$(radio).val() === '') {
+							$(radio).addClass('keep-disabled');
 						}
 				});
 			}
@@ -290,7 +339,7 @@ var DateFilterModal = Modal.extend({
 	selection_date: function(event) {
 		var $currentTarget = $(event.currentTarget);
 		$currentTarget.datepicker({ 
-			dateFormat: 'yy-mm-dd' 
+			dateFormat: 'yy/mm/dd' 
 		});
 	},
 
@@ -303,22 +352,48 @@ var DateFilterModal = Modal.extend({
 			.prop('disabled', false).on('click');
 		$currentTarget.closest('.box-selections').find('select').each(function(key, selection){
 			$(selection).find("option:not([disabled])").first().attr("selected", "selected");
-		} );
-
-
+		});
 	},
 
-	populate_selected_date: function(event) {
+	day_format_string: function() {
+		var dayFormatString = this.saikuDayFormatString;
+		dayFormatString = dayFormatString.replace(/[a-zA-Z]/gi, '9');
+		return dayFormatString;
+	},
+
+	add_selected_date: function(event) {
+		event.preventDefault();
+		var $currentTarget = $(event.currentTarget),
+			dayFormatString = this.day_format_string(),
+			sDate = this.$el.find('#selection-date'),
+			selectedDate = $currentTarget.closest('.inline-form-group')
+				.find('#div-selected-date').find('#selected-date');
+			
+		this.dates = [];
+
+		if (sDate.val() !== '') {
+			sDate.css('border', '1px solid #ccc');
+			selectedDate.append($('<li></li>')
+				.text(Saiku.toPattern(sDate.val(), dayFormatString))
+				.append('<a href="#" class="del-date">x</a>'));
+			this.dates.push(sDate.val());
+		}
+		else {
+			sDate.css('border', '1px solid red');
+		}
+
+		sDate.val('');
+	},
+
+	del_selected_date: function(event) {
+		event.preventDefault();
 		var $currentTarget = $(event.currentTarget);
-		$currentTarget.closest('.inline-form-group').find('#div-selected-date').find('#selected-date')
-			.append($('<li></li>')
-				.text($currentTarget.val()));
-		$currentTarget.val('');
+		$currentTarget.parent().remove();
 	},
 
 	populate_mdx: function(logExp, fixedDateName, periodamount) {
-		if(logExp.level!=undefined){
-			logExp.parent = "[{dimension}].[{hierarchy}].[{level}].members,";
+		if (logExp.level !== undefined) {
+			logExp.parent = '[{dimension}].[{hierarchy}].[{level}].members,';
 			logExp.parent = logExp.parent.replace(/{(\w+)}/g, function(m, p) {
 				return logExp[p];
 			});
@@ -328,9 +403,14 @@ var DateFilterModal = Modal.extend({
 			return logExp[p];
 		});
 
+		if (fixedDateName === 'dayperiods') {
+			this.template_days_mdx = this.template_days_mdx.replace(/{(\w+)}/g, function(m, p) {
+				return logExp[p];
+			});
 
-
-		if(fixedDateName == 'lastperiods'){
+			return this.template_days_mdx;
+		}
+		else if (fixedDateName === 'lastperiods') {
 			this.template_last_mdx = this.template_last_mdx.replace(/{(\w+)}/g, function(m, p) {
 				return logExp[p];
 			});
@@ -356,13 +436,24 @@ var DateFilterModal = Modal.extend({
 			fixedDateName,
 			mdx,
 			parentmembers,
-			periodamount;
+			periodamount,
+			logicalOperator,
+			saikuDateProperty,
+			dates;
 
 		this.$el.find('.available-selections').each(function(key, selection) {
 			var analyzerDateFormat;
 
 			if ($(selection).attr('available') === 'true') {
-				if ($(selection).attr('selection-name') === 'fixed-date') {
+				if ($(selection).attr('selection-name') === 'operator') {
+					$(selection).find('input:radio').each(function (key, radio) {
+						if ($(radio).is(':checked') === true) {
+							fixedDateName = 'dayperiods';
+							logicalOperator = $(radio).val();
+						}
+					});
+				}
+				else if ($(selection).attr('selection-name') === 'fixed-date') {
 					$(selection).find('input:radio').each(function (key, radio) {
 						if ($(radio).is(":checked") === true) {
 							fixedDateName = $(radio).attr('id').split('-')[1];
@@ -372,12 +463,9 @@ var DateFilterModal = Modal.extend({
 
 				}
 				else if($(selection).attr('selection-name') === 'rolling-date') {
-
-
 					analyzerDateFormat = $('#period-select').find(':selected').val();
 					fixedDateName = 'lastperiods';
 					periodamount = $(selection).find('input:text').val();
-
 				}
 
 				for (var i = 0, len = self.dataLevels.length; i < len; i++) {
@@ -391,9 +479,12 @@ var DateFilterModal = Modal.extend({
 					dimension: self.dimension,
 					hierarchy: self.hierarchy,
 					level: parentmembers,
-					parent: "",
+					parent: '',
 					AnalyzerDateFormat: analyzerDateFormat,
-					periodamount: periodamount
+					periodamount: periodamount,
+					logicalOperator: logicalOperator,
+					saikuDateProperty: self.saikuDateProperty,
+					dates: self.dates[0]
 				};
 
 				mdx = self.populate_mdx(logExp, fixedDateName);
