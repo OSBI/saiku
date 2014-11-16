@@ -270,33 +270,47 @@
 						<configuration>
 							<tasks>
 							<mkdir dir="target/saiku-ui" />
-								<copy todir="target/saiku-ui">
-									<fileset dir="${basedir}/">
-										<exclude name="js/saiku/"/>
-                                        <exclude name="target/" />
-                                        <exclude name="pom.xml" />
-                                        <exclude name=".git/" />
-                                        <exclude name=".gitignore" />
 
-                                    </fileset>
-									<fileset dir="${basedir}/">
-										<include name="js/saiku/plugins/"/>
-										<include name="js/saiku/Settings.js"/>
-										<include name="js/saiku/Saiku.js"/>
-									</fileset>
-								</copy>
                                 <copy file="target/saiku-ui-3.1-SNAPSHOT/saiku.min.js" tofile="target/saiku-ui/saiku.min.js"/>
 								<taskdef resource="net/sf/antcontrib/antcontrib.properties"
 										 classpathref="maven.plugin.classpath" />
-								<echo message="Project name from Maven: ${build.prod}" />
 								<if>
 								<equals arg1="${build.prod}" arg2="true" />
 								<then>
-									<echo message="Project name from Maven: ${build.prod}" />
+									<copy todir="target/saiku-ui">
+										<fileset dir="${basedir}/">
+											<exclude name="js/saiku/"/>
+											<exclude name="target/" />
+											<exclude name="pom.xml" />
+											<exclude name=".git/" />
+											<exclude name=".gitignore" />
 
+										</fileset>
+										<fileset dir="${basedir}/">
+											<include name="js/saiku/plugins/"/>
+											<include name="js/saiku/Settings.js"/>
+											<include name="js/saiku/Saiku.js"/>
+										</fileset>
+									</copy>
 									<copy overwrite="true" file="target/saiku-ui/index_prod.html"
 										  tofile="target/saiku-ui/index.html"/>
 								</then>
+									<else>
+										<copy todir="target/saiku-ui">
+											<fileset dir="${basedir}/">
+												<exclude name="target/" />
+												<exclude name="pom.xml" />
+												<exclude name=".git/" />
+												<exclude name=".gitignore" />
+
+											</fileset>
+											<fileset dir="${basedir}/">
+												<include name="js/saiku/plugins/"/>
+												<include name="js/saiku/Settings.js"/>
+												<include name="js/saiku/Saiku.js"/>
+											</fileset>
+										</copy>
+									</else>
 								</if>
                                 <!--<copy file="target/saiku-ui-3.1-SNAPSHOT/saiku.min.js.gz"
 									   tofile="target/saiku-ui/saiku.min.js.gz"/>-->
