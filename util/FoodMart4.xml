@@ -243,7 +243,7 @@
                 <Annotations><Annotation name="AnalyzerDateFormat">[yyyy]</Annotation></Annotations>
             </Attribute>
             <Attribute name='Quarter' levelType='TimeQuarters' hasHierarchy='false'>
-                <Annotations><Annotation name="AnalyzerDateFormat">[yyyy].['Q'q]</Annotation></Annotations>
+                <Annotations><Annotation name="AnalyzerDateFormat">[yyyy].[Qq]</Annotation></Annotations>
                 <Key>
                     <Column name='the_year'/>
                     <Column name='quarter'/>
@@ -253,7 +253,7 @@
                 </Name>
             </Attribute>
             <Attribute name='Month' levelType='TimeMonths' hasHierarchy='false'>
-                <Annotations><Annotation name="AnalyzerDateFormat">[yyyy].['Q'q].[mm]</Annotation></Annotations>
+                <Annotations><Annotation name="AnalyzerDateFormat">[yyyy].[Qq].[mm]</Annotation></Annotations>
                 <Key>
                     <Column name='the_year'/>
                     <Column name='month_of_year'/>
@@ -263,7 +263,7 @@
                 </Name>
             </Attribute>
             <Attribute name='Week' levelType='TimeWeeks' hasHierarchy='false'>
-                <Annotations><Annotation name="AnalyzerDateFormat">[yyyy].['Q'q].[ww]</Annotation></Annotations>
+                <Annotations><Annotation name="AnalyzerDateFormat">[yyyy].[ww]</Annotation></Annotations>
                 <Key>
                     <Column name='the_year'/>
                     <Column name='week_of_year'/>
@@ -273,7 +273,7 @@
                 </Name>
             </Attribute>
             <Attribute name='Day' levelType='TimeDays' hasHierarchy='false'>
-                <Annotations><Annotation name="AnalyzerDateFormat">[yyyy].['Q'q].[mm].[dd]</Annotation></Annotations>
+                <Annotations><Annotation name="AnalyzerDateFormat">[yyyy].[Qq].[mm].[dd]</Annotation></Annotations>
                 <Key>
                     <Column name='time_id'/>
                 </Key>
@@ -303,13 +303,24 @@
                     <Annotations><Annotation name="AnalyzerDateFormat">[yyyy]</Annotation></Annotations>
 
                 </Level>
-                <Level attribute='Quarter'/>
-                <Level attribute='Month'/>
+                <Level attribute='Quarter'>
+<Annotations><Annotation name="AnalyzerDateFormat">[yyyy].[Qq]</Annotation></Annotations>
+</Level>
+                <Level attribute='Month'>
+<Annotations><Annotation name="AnalyzerDateFormat">[yyyy].[Qq].[mm]</Annotation></Annotations>
+</Level>
             </Hierarchy>
             <Hierarchy name='Weekly' hasAll='true'>
-                <Level attribute='Year'/>
-                <Level attribute='Week'/>
-                <Level attribute='Day'/>
+                <Level attribute='Year'>
+<Annotations><Annotation name="AnalyzerDateFormat">[yyyy]</Annotation></Annotations>
+		</Level>
+                <Level attribute='Week'>
+<Annotations><Annotation name="AnalyzerDateFormat">[yyyy].[ww]</Annotation></Annotations>
+</Level>
+                <Level attribute='Day'>
+<Annotations><Annotation name="AnalyzerDateFormat">[yyyy].[ww].[dd]</Annotation></Annotations>
+
+</Level>
             </Hierarchy>
         </Hierarchies>
     </Dimension>
