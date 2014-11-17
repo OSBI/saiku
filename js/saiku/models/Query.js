@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * Workspace query
  */
@@ -25,18 +25,18 @@ var Query = Backbone.Model.extend({
     initialize: function(args, options) {
         // Save cube
         _.extend(this, options);
-        
+
         // Bind `this`
         _.bindAll(this, "run");
-        
+
         // Generate a unique query id
-        this.uuid = 'xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, 
+        this.uuid = 'xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,
             function (c) {
                 var r = Math.random() * 16 | 0,
                 v = c == 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             }).toUpperCase();
-        
+
         this.model = _.extend({ name: this.uuid }, SaikuOlapQueryTemplate);
         if (args.cube) {
             this.model.cube = args.cube;
@@ -48,7 +48,7 @@ var Query = Backbone.Model.extend({
         this.result = new Result({ limit: Settings.RESULT_LIMIT }, { query: this });
         this.scenario = new QueryScenario({}, { query: this });
     },
-    
+
     parse: function(response) {
         // Assign id so Backbone knows to PUT instead of POST
         this.id = this.uuid;
@@ -59,7 +59,7 @@ var Query = Backbone.Model.extend({
         this.model = _.extend(this.model, response);
         this.model.properties = _.extend({}, Settings.QUERY_PROPERTIES, this.model.properties);
     },
-    
+
     setProperty: function(key, value) {
             this.model.properties[key] = value;
     },
@@ -72,8 +72,8 @@ var Query = Backbone.Model.extend({
         var self = this;
         // Check for automatic execution
         Saiku.ui.unblock();
-        if (typeof this.model.properties != "undefined" && this.model.properties['saiku.olap.query.automatic_execution'] === false && 
-            force === false) {
+        if (typeof this.model.properties != "undefined" && this.model.properties['saiku.olap.query.automatic_execution'] === false &&
+			(force === false || force === undefined || force === null)) {
             return;
         }
         this.workspace.unblock();
@@ -99,7 +99,7 @@ var Query = Backbone.Model.extend({
                 if(!rowsOk) {
                     errorMessage += '<span class="i18n">You need to include at least one level on rows for a valid query.</span>';
 
-                } 
+                }
                 if ( (columnsOk || detailsOk) && rowsOk) {
                     validated = true;
                 }
@@ -131,7 +131,7 @@ var Query = Backbone.Model.extend({
 /*
         TODO: i wonder if we should clean up the model (name and captions etc.)
         delete this.model.queryModel.axes['FILTER'].name;
-*/        
+*/
         this.result.save({},{ contentType: "application/json", data: JSON.stringify(exModel), error: function() {
             Saiku.ui.unblock();
             var errorMessage = '<span class="i18n">Error executing query. Please check the server logs or contact your administrator!</span>';
@@ -144,7 +144,7 @@ var Query = Backbone.Model.extend({
 
     enrich: function() {
         var self = this;
-        this.workspace.query.action.post("/../enrich", { 
+        this.workspace.query.action.post("/../enrich", {
             contentType: "application/json",
             data: JSON.stringify(self.model),
             async: false,
@@ -153,7 +153,7 @@ var Query = Backbone.Model.extend({
             }
         });
     },
-    
+
     url: function() {
         return "api/query/" + encodeURI(this.uuid);
     }

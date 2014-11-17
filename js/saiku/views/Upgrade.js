@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,30 +13,36 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * The global toolbar
  */
 var Upgrade = Backbone.View.extend({
     tagName: "div",
-    
+
     events: {
-        'click .upgradeheader' : 'call'
     },
-    
+
     template: function() {
-        var template = $("#template-upgrade").html() || "";
+        var template = $("<div><div id='uphead' class='upgradeheader'>You are using Saiku Community Edition, please consider upgrading to <a target='_blank' href='http://meteorite.bi'>Saiku Enterprise, or entering a sponsorship agreement with us</a> to support development. <a href='mailto:info@meteorite.bi?subject=Supporting Saiku'>info@meteorite.bi</a></div></div>").html() || "";
 
         return _.template(template)();
     },
-    
+
     initialize: function() {
 
     },
-    
+
     render: function() {
-        if (!Settings.UPGRADE)
-            return this;
+
+		var license = new License();
+
+		license.fetch_license('api/license/', function(opt) {
+			if (opt.status !== 'error') {
+				return this;
+			}
+		});
+
 
         var timeout = Saiku.session.upgradeTimeout;
         var localStorageUsed = false;
@@ -56,13 +62,12 @@ var Upgrade = Backbone.View.extend({
                 localStorage.setItem("saiku.upgradeTimeout", current);
             }
         }
-        
+
 
         return this;
     },
-    
+
     call: function(e) {
-        $(".upgradeheader").slideUp("slow");
     }
 
 });
