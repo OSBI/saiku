@@ -24,7 +24,7 @@ var Upgrade = Backbone.View.extend({
     },
 
     template: function() {
-        var template = $("#template-upgrade").html() || "";
+        var template = $("<div><div id='uphead' class='upgradeheader'>You are using Saiku Community Edition, please consider upgrading to <a target='_blank' href='http://meteorite.bi'>Saiku Enterprise, or entering a sponsorship agreement with us</a> to support development. <a href='mailto:info@meteorite.bi?subject=Supporting Saiku'>info@meteorite.bi</a></div></div>").html() || "";
 
         return _.template(template)();
     },
