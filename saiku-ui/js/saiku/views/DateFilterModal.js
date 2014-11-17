@@ -34,7 +34,7 @@ var DateFilterModal = Modal.extend({
 		'click .del-date'        : 'del_selected_date'
 	},
 	
-	template_days_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties(\"{saikuDateProperty}\") {logicalOperator} {dates})',
+	template_days_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {logicalOperator} \'{dates}\')',
 
 	template_mdx: '{parent} CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
 
@@ -377,7 +377,7 @@ var DateFilterModal = Modal.extend({
 			selectedDate.append($('<li></li>')
 				.text(sDate)
 				.append('<a href="#" class="del-date">x</a>'));
-			this.dates.push('\\\'' + sDate.replace(/[\/]/gi, '\\/') + '\\\'');
+			this.dates.push(sDate);
 		}
 		else {
 			sDate.css('border', '1px solid red');
