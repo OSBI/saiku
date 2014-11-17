@@ -258,7 +258,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             objData = this.find_type_time(dimension, hierarchy, level),
             key = $target.attr('href').replace('#', '');
 
-        if (objData.level.annotations.AnalyzerDateFormat !== undefined) {
+        if (objData.level.annotations !== undefined && objData.level.annotations.AnalyzerDateFormat !== undefined) {
             // Launch date filter dialog
             (new DateFilterModal({
                 AnalyzerDateFormat: objData.level.annotations.AnalyzerDateFormat,
