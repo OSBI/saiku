@@ -376,7 +376,7 @@ var DateFilterModal = Modal.extend({
 			selectedDate.append($('<li></li>')
 				.text(Saiku.toPattern(sDate.val(), dayFormatString))
 				.append('<a href="#" class="del-date">x</a>'));
-			this.dates.push(sDate.val());
+			this.dates.push(sDate.val().replace(/[\/]/gi, '\\/'));
 		}
 		else {
 			sDate.css('border', '1px solid red');
