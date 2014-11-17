@@ -383,7 +383,7 @@ var DateFilterModal = Modal.extend({
 			sDate.css('border', '1px solid red');
 		}
 
-		sDate.val('');
+		this.$el.find('#selection-date').val('');
 	},
 
 	del_selected_date: function(event) {
@@ -485,7 +485,7 @@ var DateFilterModal = Modal.extend({
 					periodamount: periodamount,
 					logicalOperator: logicalOperator,
 					saikuDateProperty: self.saikuDateProperty,
-					dates: self.dates[0]
+					dates: self.dates ? self.dates[0] : ''
 				};
 
 				mdx = self.populate_mdx(logExp, fixedDateName);
