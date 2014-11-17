@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * @fileOverview Saiku User Inteface (UI) Default Styles
  * @author Prashant Raju and Mark Cahill
@@ -33,9 +33,9 @@ html, body {
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
     font-size: 11px;
     line-height: 1.5;
-    margin:0; 
-    padding:0; 
-    border:0; 
+    margin:0;
+    padding:0;
+    border:0;
 }
 
 .clearfix:before,
@@ -402,7 +402,7 @@ textarea, select {
 
 .sidebar_separator {
     background: #F0F0F0;
-    
+
     border-left: 1px solid #CCC;
     cursor: pointer;
     float: left;
@@ -487,9 +487,9 @@ textarea, select {
 }
 .dimension_tree ul li ul li a.level {
     color: #2A6085;
-    /* 
+    /*
     padding-left: 20px;
-    background: url('../../../images/src/bullet_blue.png') 0px 4px no-repeat; 
+    background: url('../../../images/src/bullet_blue.png') 0px 4px no-repeat;
     */
 }
 .measure_tree ul li ul li a {
@@ -586,7 +586,7 @@ textarea, select {
   z-index:100;
   border:2px solid #86fe00;
   background-color: rgba(203, 239, 163, 0.6);
-} 
+}
 
 
 
@@ -675,7 +675,7 @@ textarea, select {
     -moz-box-shadow:0 1px 3px #DDDDDD;
     -webkit-box-shadow:0 1px 3px #DDDDDD;
     font-family: inherit !important;
-}    
+}
 .ui-dialog-titlebar .ui-dialog-title {
     float: left;
     font-size: 12px;
@@ -934,12 +934,35 @@ textarea, select {
     padding-right: 10px;
 }
 
-.dialog_date-filter .dialog_body .form-group #select-date {
+.dialog_date-filter .dialog_body .form-group #selection-date {
     width: 100px;
 }
 
-.dialog_date-filter .dialog_body .form-group #selected-date {
+.dialog_date-filter .dialog_body .form-group #add-date {
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.dialog_date-filter .dialog_body #div-selected-date fieldset {
+    width: 150px;
     border: 1px solid #ccc;
+}
+
+.dialog_date-filter .dialog_body .form-group #selected-date {
+    padding: 0;
+    max-height: 50px;
+    list-style: none;
+    overflow: auto;   
+}
+
+.dialog_date-filter .dialog_body .form-group #selected-date a {
+    margin-left: 5px;
+    color: blue;
+    text-decoration: none;
+}
+
+.dialog_date-filter .dialog_body .form-group #selected-date a:hover {
+    text-decoration: underline;   
 }
 
 .dialog_permissions .dialog_body {
@@ -1657,7 +1680,7 @@ a.disabled_toolbar:hover {
         background: url('../../../images/src/arrow_refresh.png') no-repeat;
         width: 16px;
         background-position: 50% 50%;
-        
+
 }
 .filter_items a.button:hover {
     border: 1px solid #CCC;
@@ -2192,7 +2215,7 @@ width:70px !important;
     border-radius: 7px;
 }
 
-.glowing-border:focus { 
+.glowing-border:focus {
     outline: none;
     border-color: #9ecaed;
     box-shadow: 0 0 10px #9ecaed;
@@ -2211,15 +2234,15 @@ width:70px !important;
     background: #fff linear-gradient(top, #fcfcfc 0%, #fff 100%);
     border: 1px solid #ccc;
 }
- 
+
 .ui-datepicker table {
     width: 100%;
 }
- 
+
 .ui-datepicker table td {
     text-align: center;
 }
- 
+
 .ui-datepicker a {
     text-decoration: none;
     cursor: pointer;
@@ -2229,9 +2252,13 @@ width:70px !important;
     text-align: center;
     font-weight: bold;
 }
- 
+
 .ui-datepicker-prev {
 }
- 
+
 .ui-datepicker-next {
+}
+
+#date-input {
+	width:50px;
 }

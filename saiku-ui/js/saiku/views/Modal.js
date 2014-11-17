@@ -1,4 +1,6 @@
-/*  
+//goog.provide('saiku.views.Modal');
+
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +15,8 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
+
 /**
  * The base class for all modal dialogs
  */
@@ -22,7 +25,7 @@ var Modal = Backbone.View.extend({
     className: "dialog",
     type: "modal",
     message: "Put content here",
-    
+
     options: {
         autoOpen: false,
         modal: true,
@@ -30,15 +33,15 @@ var Modal = Backbone.View.extend({
         resizable: false,
         draggable: true
     },
-    
+
     events: {
         'click a': 'call'
     },
-    
+
     buttons: [
         { text: "OK", method: "close" }
     ],
-    
+
     template: function() {
         return _.template("<div class='dialog_icon'></div>" +
                 "<div class='dialog_body'><%= message %></div>" +
@@ -49,44 +52,44 @@ var Modal = Backbone.View.extend({
             "<div class='dialog_response'></div>"+
             "</div>")(this);
     },
-    
+
     initialize: function(args) {
         _.extend(this, args);
         _.bindAll(this, "call");
         _.extend(this, Backbone.Events);
 
     },
-    
+
     render: function() {
         $(this.el).html(this.template())
             .addClass("dialog_" + this.type)
             .dialog(this.options);
 
-        var uiDialogTitle = $('.ui-dialog-title'); 
+        var uiDialogTitle = $('.ui-dialog-title');
         uiDialogTitle.html(this.options.title);
         uiDialogTitle.addClass('i18n');
         Saiku.i18n.translate();
         return this;
     },
-    
+
     call: function(event) {
         // Determine callback
         var callback = event.target.hash.replace('#', '');
-        
+
         // Attempt to call callback
         if (! $(event.target).hasClass('disabled_toolbar') && this[callback]) {
             this[callback](event);
         }
-        
+
         return false;
     },
-    
+
     open: function() {
         $(this.el).dialog('open');
         this.trigger('open', { modal: this });
         return this;
     },
-    
+
     close: function() {
         $(this.el).dialog('destroy').remove();
         $(this.el).remove();

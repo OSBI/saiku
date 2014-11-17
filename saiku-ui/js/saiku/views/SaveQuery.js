@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * The save query dialog
  */
@@ -30,7 +30,7 @@ var SaveQuery = Modal.extend({
         'keyup .search_file' : 'search_file',
         'click .cancel_search' : 'cancel_search'
     },
-    
+
     buttons: [
         { text: "Save", method: "save" },
         { text: "Cancel", method: "close" }
@@ -45,8 +45,10 @@ var SaveQuery = Modal.extend({
         var name = "";
         var full_path = "";
         if (args.query.name) {
-            full_path = args.query.name;
+
+			args.query.name = args.query.name.replace(/:/g, "/");
             var path = args.query.name.split('/');
+			full_path = args.query.name;
 
             name = path[path.length -1];
             this.file_name = name;
@@ -85,20 +87,20 @@ var SaveQuery = Modal.extend({
 
         // Maintain `this`
         _.bindAll( this, "copy_to_repository", "close", "toggle_folder", "select_name", "populate", "set_name", "cancel_search" );
-        
+
         // fix event listening in IE < 9
         if(isIE && isIE < 9) {
-            $(this.el).find('form').on('submit', this.save);    
+            $(this.el).find('form').on('submit', this.save);
         }
 
-    
+
     },
 
     populate: function( repository ) {
         $( this.el ).find( '.RepositoryObjects' ).html(
             _.template( $( '#template-repository-objects' ).html( ) )( {
                 repoObjects: repository
-            } ) 
+            } )
         );
     },
 
@@ -154,8 +156,8 @@ var SaveQuery = Modal.extend({
                 $(this.el).find('.cancel_search').hide();
             }
             $(this.el).find('li.query').removeClass('hide');
-            $(this.el).find('li.query a').filter(function (index) { 
-                return $(this).text().toLowerCase().indexOf(filter) == -1; 
+            $(this.el).find('li.query a').filter(function (index) {
+                return $(this).text().toLowerCase().indexOf(filter) == -1;
             }).parent().addClass('hide');
             $(this.el).find('li.folder').addClass('hide');
             $(this.el).find('li.query').not('.hide').parents('li.folder').removeClass('hide');
@@ -204,7 +206,7 @@ var SaveQuery = Modal.extend({
             foldername = (foldername != null && foldername.length > 0 ? foldername + "/" : "");
         }
         */
-        
+
         var name = $(this.el).find('input[name="name"]').val();
         if (name !== null && name.length > 0) {
             this.query.set({ name: name, folder: foldername });
@@ -213,11 +215,11 @@ var SaveQuery = Modal.extend({
         } else {
             alert("You need to enter a name!");
         }
-        
+
         event.preventDefault();
         return false;
     },
-    
+
     copy_to_repository: function() {
         var self = this;
         var folder = this.query.get('folder');
