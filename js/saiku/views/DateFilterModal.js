@@ -27,16 +27,16 @@ var DateFilterModal = Modal.extend({
 
 	events: {
 		'click a': 'call',
-		'focus #selection-date'  : 'selection_date',
+		'focus .selection-date'  : 'selection_date',
 		'click .selection-radio' : 'disable_divselections',
 		'click .operator-radio'  : 'show_fields',
 		'click #add-date'        : 'add_selected_date',
 		'click .del-date'        : 'del_selected_date'
 	},
 	
-	template_days_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {logicalOperator} \'{dates}\'',
+	template_days_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
 	
-	template_many_years_mdx: ' OR [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {logicalOperator} \'{dates}\'',
+	template_many_years_mdx: ' {logicalOperator} [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
 
 	template_mdx: '{parent} CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
 
@@ -60,7 +60,7 @@ var DateFilterModal = Modal.extend({
 						'<label><input type="radio" name="operator-radio" class="operator-radio op-before" value="<"> Before</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-between" value=""> Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio op-between" value=">|<"> Between</label><br>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
 						'<label><input type="radio" name="operator-radio" class="operator-radio op-different" value="<>"> Different</label>' +
@@ -77,7 +77,7 @@ var DateFilterModal = Modal.extend({
 					'<div class="inline-form-group">' +
 						'<div class="form-group" id="div-selection-date" hidden>' +
 							'<label>Select a date:</label>' +
-							'<input type="text" id="selection-date" placeholder="Choose a date">' +
+							'<input type="text" class="selection-date" id="selection-date" placeholder="Choose a date">' +
 							'<a class="form_button" id="add-date">add</a>' +
 						'</div>' +
 						'<div class="form-group" id="div-selected-date" hidden>' +
@@ -89,11 +89,11 @@ var DateFilterModal = Modal.extend({
 					'</div>' +
 					'<div class="form-group" id="div-select-start-date" hidden>' +
 						'<label>Select a start date:</label>' +
-						'<input type="text" placeholder="Choose a date">' +
+						'<input type="text" class="selection-date" id="start-date" placeholder="Choose a date">' +
 					'</div>' +
 					'<div class="form-group" id="div-select-end-date" hidden>' +
 						'<label>Select an end date:</label>' +
-						'<input type="text" placeholder="Choose a date">' +
+						'<input type="text" class="selection-date" id="end-date" placeholder="Choose a date">' +
 					'</div>' +
 				'</div>' +
 			'</div>' +
@@ -413,15 +413,34 @@ var DateFilterModal = Modal.extend({
 				for (i = 0; i < len; i++) {
 					logExp.dates = this.dates[i];
 
-					if (i === 0) {
-						this.template_days_mdx = this.template_days_mdx.replace(/{(\w+)}/g, function(m, p) {
-							return logExp[p];
-						});
+					if (logExp.comparisonOperator === '>|<') {
+						if (i === 0) {
+							logExp.comparisonOperator = logExp.comparisonOperator.split('|')[0];
+							this.template_days_mdx = this.template_days_mdx.replace(/{(\w+)}/g, function(m, p) {
+								return logExp[p];
+							});
+							logExp.comparisonOperator = '>|<';
+						}
+						else {
+							logExp.logicalOperator = 'AND';
+							logExp.comparisonOperator = logExp.comparisonOperator.split('|')[1];
+							this.template_days_mdx += this.template_many_years_mdx.replace(/{(\w+)}/g, function(m, p) {
+								return logExp[p];
+							});
+						}
 					}
 					else {
-						this.template_days_mdx += this.template_many_years_mdx.replace(/{(\w+)}/g, function(m, p) {
-							return logExp[p];
-						});
+						if (i === 0) {
+							this.template_days_mdx = this.template_days_mdx.replace(/{(\w+)}/g, function(m, p) {
+								return logExp[p];
+							});
+						}
+						else {
+							logExp.logicalOperator = 'OR';
+							this.template_days_mdx += this.template_many_years_mdx.replace(/{(\w+)}/g, function(m, p) {
+								return logExp[p];
+							});
+						}
 					}
 				}
 
@@ -463,7 +482,7 @@ var DateFilterModal = Modal.extend({
 			mdx,
 			parentmembers,
 			periodamount,
-			logicalOperator,
+			comparisonOperator,
 			saikuDateProperty,
 			dates;
 
@@ -480,9 +499,13 @@ var DateFilterModal = Modal.extend({
 								name === 'Before' || name === 'Before&Equals') {
 								self.dates.push(self.$el.find('#selection-date').val());
 							}
+							else if (name === 'Between') {
+								self.dates.push(self.$el.find('#start-date').val());
+								self.dates.push(self.$el.find('#end-date').val());
+							}
 							
 							fixedDateName = 'dayperiods';
-							logicalOperator = $(radio).val();
+							comparisonOperator = $(radio).val();
 						}
 					});
 				}
@@ -514,7 +537,7 @@ var DateFilterModal = Modal.extend({
 					parent: '',
 					AnalyzerDateFormat: analyzerDateFormat,
 					periodamount: periodamount,
-					logicalOperator: logicalOperator,
+					comparisonOperator: comparisonOperator,
 					saikuDateProperty: self.saikuDateProperty
 				};
 
