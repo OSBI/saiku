@@ -474,6 +474,13 @@ var DateFilterModal = Modal.extend({
 				if ($(selection).attr('selection-name') === 'operator') {
 					$(selection).find('input:radio').each(function (key, radio) {
 						if ($(radio).is(':checked') === true) {
+							var name = $(radio).parent('label').text().split(' ')[1];
+
+							if (name === 'After' || name === 'After&Equals' ||
+								name === 'Before' || name === 'Before&Equals') {
+								self.dates.push(self.$el.find('#selection-date').val());
+							}
+							
 							fixedDateName = 'dayperiods';
 							logicalOperator = $(radio).val();
 						}
@@ -509,8 +516,6 @@ var DateFilterModal = Modal.extend({
 					periodamount: periodamount,
 					logicalOperator: logicalOperator,
 					saikuDateProperty: self.saikuDateProperty
-					// dates: self.dates ? self.dates[0] : ''
-					// dates: self.dates ? self.dates : ''
 				};
 
 				mdx = self.populate_mdx(logExp, fixedDateName);
