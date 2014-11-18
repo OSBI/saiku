@@ -34,7 +34,9 @@ var DateFilterModal = Modal.extend({
 		'click .del-date'        : 'del_selected_date'
 	},
 	
-	template_days_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {logicalOperator} \'{dates}\')',
+	template_days_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {logicalOperator} \'{dates}\'',
+	
+	template_many_years_mdx: ' OR [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {logicalOperator} \'{dates}\'',
 
 	template_mdx: '{parent} CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
 
@@ -167,6 +169,7 @@ var DateFilterModal = Modal.extend({
 		this.options.title = 'Selections for Year';
 		this.message = 'Loading...';
 		this.query = args.workspace.query;
+		this.dates = [];
 
 		// _.bind(this);
 
@@ -326,11 +329,11 @@ var DateFilterModal = Modal.extend({
 					});
 				});
 				$(selection).find('#period-select > option').each(function(key, radio) {
-						if ($(radio).val() === null || 
-							$(radio).val() === undefined || 
-							$(radio).val() === '') {
-							$(radio).addClass('keep-disabled');
-						}
+					if ($(radio).val() === null || 
+						$(radio).val() === undefined || 
+						$(radio).val() === '') {
+						$(radio).addClass('keep-disabled');
+					}
 				});
 			}
 		});
@@ -368,22 +371,20 @@ var DateFilterModal = Modal.extend({
 			sDate = this.$el.find('#selection-date'),
 			selectedDate = $currentTarget.closest('.inline-form-group')
 				.find('#div-selected-date').find('#selected-date');
-			
-		this.dates = [];
 
 		if (sDate.val() !== '') {
+			var newDate = Saiku.toPattern(sDate.val(), dayFormatString);
 			sDate.css('border', '1px solid #ccc');
-			sDate = Saiku.toPattern(sDate.val(), dayFormatString);
 			selectedDate.append($('<li></li>')
-				.text(sDate)
+				.text(newDate)
 				.append('<a href="#" class="del-date">x</a>'));
-			this.dates.push(sDate);
+			this.dates.push(newDate);
 		}
 		else {
 			sDate.css('border', '1px solid red');
 		}
 
-		this.$el.find('#selection-date').val('');
+		sDate.val('');
 	},
 
 	del_selected_date: function(event) {
@@ -405,11 +406,35 @@ var DateFilterModal = Modal.extend({
 		});
 
 		if (fixedDateName === 'dayperiods') {
-			this.template_days_mdx = this.template_days_mdx.replace(/{(\w+)}/g, function(m, p) {
-				return logExp[p];
-			});
+			if (this.dates.length > 1) {
+				var len = this.dates.length,
+					i;
 
-			return this.template_days_mdx;
+				for (i = 0; i < len; i++) {
+					logExp.dates = this.dates[i];
+
+					if (i === 0) {
+						this.template_days_mdx = this.template_days_mdx.replace(/{(\w+)}/g, function(m, p) {
+							return logExp[p];
+						});
+					}
+					else {
+						this.template_days_mdx += this.template_many_years_mdx.replace(/{(\w+)}/g, function(m, p) {
+							return logExp[p];
+						});
+					}
+				}
+
+				return this.template_days_mdx + ')';
+			}
+			else {
+				logExp.dates = this.dates[0];
+				this.template_days_mdx = this.template_days_mdx.replace(/{(\w+)}/g, function(m, p) {
+					return logExp[p];
+				}) + ')';
+
+				return this.template_days_mdx;
+			}
 		}
 		else if (fixedDateName === 'lastperiods') {
 			this.template_last_mdx = this.template_last_mdx.replace(/{(\w+)}/g, function(m, p) {
@@ -461,9 +486,8 @@ var DateFilterModal = Modal.extend({
 							analyzerDateFormat = $(radio).val();
 						}
 					});
-
 				}
-				else if($(selection).attr('selection-name') === 'rolling-date') {
+				else if ($(selection).attr('selection-name') === 'rolling-date') {
 					analyzerDateFormat = $('#period-select').find(':selected').val();
 					fixedDateName = 'lastperiods';
 					periodamount = $(selection).find('input:text').val();
@@ -484,8 +508,9 @@ var DateFilterModal = Modal.extend({
 					AnalyzerDateFormat: analyzerDateFormat,
 					periodamount: periodamount,
 					logicalOperator: logicalOperator,
-					saikuDateProperty: self.saikuDateProperty,
-					dates: self.dates ? self.dates[0] : ''
+					saikuDateProperty: self.saikuDateProperty
+					// dates: self.dates ? self.dates[0] : ''
+					// dates: self.dates ? self.dates : ''
 				};
 
 				mdx = self.populate_mdx(logExp, fixedDateName);
