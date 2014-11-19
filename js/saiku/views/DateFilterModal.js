@@ -51,28 +51,28 @@ var DateFilterModal = Modal.extend({
 				'<span class="i18n">Operator:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" class="operator-radio op-equals" name="operator-radio" id="op-equals" value="="> Equals</label>' +
+						'<label><input type="radio" class="operator-radio" name="operator-radio" id="op-equals" value="="> Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" class="operator-radio op-after" name="operator-radio" id="op-after" value=">"> After</label>' +
+						'<label><input type="radio" class="operator-radio" name="operator-radio" id="op-after" value=">"> After</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" class="operator-radio op-before" name="operator-radio" id="op-before" value="<"> Before</label>' +
+						'<label><input type="radio" class="operator-radio" name="operator-radio" id="op-before" value="<"> Before</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" class="operator-radio op-between" name="operator-radio" id="op-between" value=">|<"> Between</label><br>' +
+						'<label><input type="radio" class="operator-radio" name="operator-radio" id="op-between" value=">|<"> Between</label><br>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" class="operator-radio op-different" name="operator-radio" id="op-different" value="<>"> Different</label>' +
+						'<label><input type="radio" class="operator-radio" name="operator-radio" id="op-different" value="<>"> Different</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" class="operator-radio op-after-equals" name="operator-radio" id="op-after-equals" value=">="> After&Equals</label>' +
+						'<label><input type="radio" class="operator-radio" name="operator-radio" id="op-after-equals" value=">="> After&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" class="operator-radio op-before-equals" name="operator-radio" id="op-before-equals" value="<="> Before&Equals</label>' +
+						'<label><input type="radio" class="operator-radio" name="operator-radio" id="op-before-equals" value="<="> Before&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" class="operator-radio op-notbetween" name="operator-radio" id="op-notbetween"> Not Between</label><br>' +
+						'<label><input type="radio" class="operator-radio" name="operator-radio" id="op-notbetween"> Not Between</label><br>' +
 					'</div>' +
 					'<div class="inline-form-group">' +
 						'<div class="form-group" id="div-selection-date" hidden>' +
