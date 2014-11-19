@@ -132,10 +132,10 @@ var DateFilterModal = Modal.extend({
 					'</div>' +
 					'<div class="form-group-selection">' +
 						'<select id="period-select">' +
-							'<option name="TIME_DAYS" value="">Day(s)</option>' +
-							'<option name="TIME_WEEKS" value="">Week(s)</option>' +
-							'<option name="TIME_MONTHS" value="">Month(s)</option>' +
-							'<option name="TIME_YEARS" value="">Year(s)</option>' +
+							'<option name="TIME_DAYS" id="rd-days" value="">Day(s)</option>' +
+							'<option name="TIME_WEEKS" id="rd-weeks" value="">Week(s)</option>' +
+							'<option name="TIME_MONTHS" id="rd-months" value="">Month(s)</option>' +
+							'<option name="TIME_YEARS" id="rd-years" value="">Year(s)</option>' +
 						'</select>' +
 					'</div>' +
 				'</div>' +
@@ -169,6 +169,7 @@ var DateFilterModal = Modal.extend({
 		this.options.title = 'Selections for Year';
 		this.message = 'Loading...';
 		this.query = args.workspace.query;
+		this.selections = [];
 		this.dates = [];
 
 		// _.bind(this);
@@ -200,6 +201,8 @@ var DateFilterModal = Modal.extend({
 		// Initialize adding values
 		this.add_values_fixed_date();
 		this.add_values_last_periods();
+
+		this.populate();
 	},
 
 	post_render: function(args) {
@@ -393,6 +396,21 @@ var DateFilterModal = Modal.extend({
 		$currentTarget.parent().remove();
 	},
 
+	populate: function() {
+		var hName = this.member.hierarchy,
+			lName = this.member.level,
+			hierarchy = this.workspace.query.helper.getHierarchy(hName);
+
+		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
+			this.selections = hierarchy.levels[lName].selection ? hierarchy.levels[lName].selection.selections : [];
+		}
+
+		console.log(JSON.stringify(hName));
+		console.log(JSON.stringify(lName));
+		console.log(JSON.stringify(hierarchy));
+		console.log(JSON.stringify(this.selections));
+	},
+
 	populate_mdx: function(logExp, fixedDateName, periodamount) {
 		if (logExp.level !== undefined) {
 			logExp.parent = '[{dimension}].[{hierarchy}].[{level}].members,';
@@ -470,6 +488,7 @@ var DateFilterModal = Modal.extend({
 		}
 	},
 
+	// TODO: Update code
 	save: function(event) {
 		event.preventDefault();
 		// Notify user that updates are in progress
@@ -484,16 +503,22 @@ var DateFilterModal = Modal.extend({
 			periodamount,
 			comparisonOperator,
 			saikuDateProperty,
-			dates;
+			dates,
+			selectedType,
+			selectedChecked,
+			periodSelect;
 
 		this.$el.find('.available-selections').each(function(key, selection) {
 			var analyzerDateFormat;
 
 			if ($(selection).attr('available') === 'true') {
+				selectedType = $(selection).attr('selection-name');
+
 				if ($(selection).attr('selection-name') === 'operator') {
-					$(selection).find('input:radio').each(function (key, radio) {
+					$(selection).find('input:radio').each(function(key, radio) {
 						if ($(radio).is(':checked') === true) {
 							var name = $(radio).parent('label').text().split(' ')[1];
+							selectedChecked = $(radio).attr('id');
 
 							if (name === 'After' || name === 'After&Equals' ||
 								name === 'Before' || name === 'Before&Equals') {
@@ -510,24 +535,27 @@ var DateFilterModal = Modal.extend({
 					});
 				}
 				else if ($(selection).attr('selection-name') === 'fixed-date') {
-					$(selection).find('input:radio').each(function (key, radio) {
+					$(selection).find('input:radio').each(function(key, radio) {
 						if ($(radio).is(":checked") === true) {
+							selectedChecked = $(radio).attr('id');
 							fixedDateName = $(radio).attr('id').split('-')[1];
 							analyzerDateFormat = $(radio).val();
 						}
 					});
 				}
 				else if ($(selection).attr('selection-name') === 'rolling-date') {
+					periodSelect = $('#period-select').find(':selected').attr('id');
 					analyzerDateFormat = $('#period-select').find(':selected').val();
 					fixedDateName = 'lastperiods';
 					periodamount = $(selection).find('input:text').val();
 				}
 
 				for (var i = 0, len = self.dataLevels.length; i < len; i++) {
-					if (self.dataLevels[i].analyzerDateFormat === analyzerDateFormat)
-						if(self.dataLevels[i].name != self.name) {
+					if (self.dataLevels[i].analyzerDateFormat === analyzerDateFormat) {
+						if(self.dataLevels[i].name === self.name) {
 							parentmembers = self.name;
 						}
+					}
 				}
 
 				var logExp = {
@@ -549,12 +577,34 @@ var DateFilterModal = Modal.extend({
 			lName = decodeURIComponent(this.member.level),
 			hierarchy = this.workspace.query.helper.getHierarchy(hName);
 
+        // Determine updates
 		var updates = [];
 
-		updates.push({ mdx: mdx });
+		if (selectedType === 'operator') {
+			updates.push({
+				type: selectedType,
+				checked: selectedChecked,
+				values: this.dates
+			});
+		}
+		else if (selectedType === 'fixed-date') {
+			updates.push({
+				type: selectedType,
+				checked: selectedChecked
+			});
+		}
+		else {
+			updates.push({
+				type: selectedType,
+				fixedDateName: fixedDateName,
+				periodamount: periodamount,
+				periodSelect: periodSelect
+			});
+		}
 
 		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
 			hierarchy.levels[lName] = { mdx: mdx, name: lName };
+			hierarchy.levels[lName].selection = { type: 'INCLUSION', selections: updates[0] };
 		}
 
 		this.finished();
