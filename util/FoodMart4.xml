@@ -302,6 +302,9 @@
                 <Level attribute='Week'/>
                 <Level attribute='Day'/>
             </Hierarchy>
+            <Hierarchy name='Date Only' hasAll='true'>
+                <Level attribute='Date'/>
+            </Hierarchy>
         </Hierarchies>
     </Dimension>
 
