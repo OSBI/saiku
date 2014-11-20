@@ -3,12 +3,12 @@
 <parent>
 		<artifactId>saiku</artifactId>
 		<groupId>org.saiku</groupId>
-		<version>3.0.5-SNAPSHOT</version>
+		<version>3.0.5</version>
 	</parent>
 	<groupId>org.saiku</groupId>
 	<artifactId>saiku-ui</artifactId>
 	<packaging>pom</packaging>
-	<version>3.0.5-SNAPSHOT</version>
+	<version>3.0.5</version>
         <properties>
 	<checkstyle.skip>true</checkstyle.skip>
 	 <build.prod>false</build.prod>
@@ -270,7 +270,7 @@
 							<tasks>
 							<mkdir dir="target/saiku-ui" />
 
-                                <copy file="target/saiku-ui-3.0.5-SNAPSHOT/saiku.min.js" tofile="target/saiku-ui/saiku.min.js" />
+                                <copy file="target/saiku-ui-3.0.5/saiku.min.js" tofile="target/saiku-ui/saiku.min.js" />
 								<taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
 								<if>
 								<equals arg1="${build.prod}" arg2="true" />
