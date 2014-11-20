@@ -191,7 +191,7 @@ var DateFilterModal = Modal.extend({
 		this.$el.find('.dialog_body')
 			.html(this.template_selection);
 
-		// this.$el.find('.available-selections *').prop('disabled', true).off('click');
+		this.$el.find('.available-selections *').prop('disabled', true).off('click');
 
 		// Save data of levels
 		this.dataLevels = this.save_data_levels();
