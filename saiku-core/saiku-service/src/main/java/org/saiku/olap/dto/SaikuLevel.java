@@ -15,19 +15,16 @@
  */
 package org.saiku.olap.dto;
 
-import org.olap4j.metadata.Level;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import mondrian.olap.Annotation;
 
 /**
  * SaikuLevel.
  */
 public class SaikuLevel extends AbstractSaikuObject {
 
-  private final Map<String, Annotation> annotations;
+  private final Map<String, String> annotations;
   private String levelType;
   private String caption;
   private String hierarchyUniqueName;
@@ -51,7 +48,8 @@ public class SaikuLevel extends AbstractSaikuObject {
       String dimensionUniqueName,
       String hierarchyUniqueName,
       boolean visible,
-      Level.Type levelType, Map<String, Annotation> annotations) {
+      String levelType,
+      Map<String, String> annotations) {
     super(uniqueName, name);
     this.caption = caption;
     this.hierarchyUniqueName = hierarchyUniqueName;
@@ -60,7 +58,7 @@ public class SaikuLevel extends AbstractSaikuObject {
     this.description = description;
     this.annotations = annotations;
     if(levelType!=null) {
-      this.levelType = levelType.name();
+      this.levelType = levelType;
     }
     //this.members = members;
   }
@@ -86,11 +84,12 @@ public class SaikuLevel extends AbstractSaikuObject {
   }
 
   public Map<String, String> getAnnotations() {
-
-    Map<String, String> m = new HashMap<String, String>();
-    for (Map.Entry<String, Annotation> entry : annotations.entrySet())
-    {
-      m.put(entry.getKey(), (String) entry.getValue().getValue());
+    Map<String, String> m = null;
+    if (annotations != null) {
+      m = new HashMap<String, String>();
+      for (Map.Entry<String, String> entry : annotations.entrySet()) {
+        m.put(entry.getKey(), entry.getValue());
+      }
     }
 
 

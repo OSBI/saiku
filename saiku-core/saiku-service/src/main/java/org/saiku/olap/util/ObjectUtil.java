@@ -36,10 +36,9 @@ import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
+import mondrian.olap.Annotation;
 import mondrian.olap4j.LevelInterface;
 
 
@@ -143,9 +142,17 @@ public class ObjectUtil {
     try {
       try {
         Class.forName("mondrian.olap4j.MondrianOlap4jLevelExtend");
-        Class<LevelInterface> _tempClass = (Class<LevelInterface>) Class.forName("mondrian.olap4j.MondrianOlap4jLevelExtend");
+        Class<LevelInterface> _tempClass =
+            (Class<LevelInterface>) Class.forName("mondrian.olap4j.MondrianOlap4jLevelExtend");
         Constructor<LevelInterface> ctor = _tempClass.getDeclaredConstructor(org.olap4j.metadata.Level.class);
         LevelInterface test = ctor.newInstance(level);
+        HashMap<String, String> m = null;
+        if (test.getAnnotations() != null) {
+          m = new HashMap<String, String>();
+          for (Map.Entry<String, Annotation> entry : test.getAnnotations().entrySet()) {
+            m.put(entry.getKey(), (String) entry.getValue().getValue());
+          }
+        }
         return new SaikuLevel(
             test.getName(),
             test.getUniqueName(),
@@ -154,8 +161,8 @@ public class ObjectUtil {
             test.getDimension().getUniqueName(),
             test.getHierarchy().getUniqueName(),
             test.isVisible(),
-            test.getLevelType(),
-            test.getAnnotations());
+            test.getLevelType().toString(),
+            m);
       }
       catch(ClassNotFoundException e){
         return new SaikuLevel(
