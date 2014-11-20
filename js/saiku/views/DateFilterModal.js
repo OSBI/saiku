@@ -33,7 +33,8 @@ var DateFilterModal = Modal.extend({
 		'click #add-date'        : 'add_selected_date',
 		'click .del-date'        : 'del_selected_date'
 	},
-//Filter({[Time].[Date Only].[Date String].Members}, [Time].[Date Only].[Date String].CurrentMember.NAME >= '1997/01/02')
+
+	//Filter({[Time].[Date Only].[Date String].Members}, [Time].[Date Only].[Date String].CurrentMember.NAME >= '1997/01/02')
 	template_days_mdx: 'Filter([Time].[Date Only].[Date String].Members, [Time].[Date Only].[Date String].CurrentMember.NAME {comparisonOperator} \'{dates}\'',
 
 	template_many_years_mdx: ' {logicalOperator} [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
@@ -190,7 +191,7 @@ var DateFilterModal = Modal.extend({
 		this.$el.find('.dialog_body')
 			.html(this.template_selection);
 
-		this.$el.find('.available-selections *').prop('disabled', true).off('click');
+		// this.$el.find('.available-selections *').prop('disabled', true).off('click');
 
 		// Save data of levels
 		this.dataLevels = this.save_data_levels();
@@ -409,6 +410,19 @@ var DateFilterModal = Modal.extend({
 		console.log(JSON.stringify(lName));
 		console.log(JSON.stringify(hierarchy));
 		console.log(JSON.stringify(this.selections));
+
+		if (this.selections && !(_.isEmpty(this.selections))) {
+			if (this.selections.type === 'operator') {
+				this.$el.find('#selection-radio-operator').prop('checked', true);
+				this.$el.find('#' + this.selections.checked).prop('checked', true);				
+			}
+			else if (this.selections.type === 'fixed-date') {
+				this.$el.find('#selection-radio-fixed-date').prop('checked', true);
+				this.$el.find('#' + this.selections.checked).prop('checked', true);
+			}
+			else {
+			}
+		}
 	},
 
 	populate_mdx: function(logExp, fixedDateName, periodamount) {
