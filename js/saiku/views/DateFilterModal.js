@@ -393,6 +393,34 @@ var DateFilterModal = Modal.extend({
 		$currentTarget.parent().remove();
 	},
 
+	populate: function() {
+		var hName = this.member.hierarchy,
+			lName = this.member.level,
+			hierarchy = this.workspace.query.helper.getHierarchy(hName);
+
+		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
+			this.selections = hierarchy.levels[lName].selection ? hierarchy.levels[lName].selection.selections : [];
+		}
+
+		console.log(JSON.stringify(hName));
+		console.log(JSON.stringify(lName));
+		console.log(JSON.stringify(hierarchy));
+		console.log(JSON.stringify(this.selections));
+
+		if (this.selections && !(_.isEmpty(this.selections))) {
+			if (this.selections.type === 'operator') {
+				this.$el.find('#selection-radio-operator').prop('checked', true);
+				this.$el.find('#' + this.selections.checked).prop('checked', true);				
+			}
+			else if (this.selections.type === 'fixed-date') {
+				this.$el.find('#selection-radio-fixed-date').prop('checked', true);
+				this.$el.find('#' + this.selections.checked).prop('checked', true);
+			}
+			else {
+			}
+		}
+	},
+
 	populate_mdx: function(logExp, fixedDateName, periodamount) {
 		if (logExp.level !== undefined) {
 			logExp.parent = '[{dimension}].[{hierarchy}].[{level}].members,';
@@ -485,7 +513,9 @@ var DateFilterModal = Modal.extend({
 			comparisonOperator,
 			saikuDateProperty,
 			dates;
-
+		if(self.hierarchy === null || self.hierarchy === undefined){
+			self.hierarchy = self.dimension;
+		}
 		this.$el.find('.available-selections').each(function(key, selection) {
 			var analyzerDateFormat;
 
