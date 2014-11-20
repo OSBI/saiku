@@ -33,9 +33,9 @@ var DateFilterModal = Modal.extend({
 		'click #add-date'        : 'add_selected_date',
 		'click .del-date'        : 'del_selected_date'
 	},
-	
-	template_days_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
-	
+//Filter({[Time].[Date Only].[Date String].Members}, [Time].[Date Only].[Date String].CurrentMember.NAME >= '1997/01/02')
+	template_days_mdx: 'Filter([Time].[Date Only].[Date String].Members, [Time].[Date Only].[Date String].CurrentMember.NAME {comparisonOperator} \'{dates}\'',
+
 	template_many_years_mdx: ' {logicalOperator} [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
 
 	template_mdx: '{parent} CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
@@ -219,7 +219,7 @@ var DateFilterModal = Modal.extend({
 		this.$el.find('.selection-radio').each(function(key, radio) {
 			levelType = $(radio).attr('level-type');
 			_.find(self.dataLevels, function(value, key, list) {
-				if (levelType === value.levelType || (value.saikuDateProperty && value.saikuDayFormatString)) {
+				if (levelType === value.levelType || (value.saikuDayFormatString)) {
 					$(radio).prop('disabled', false);
 				}
 			});
@@ -306,9 +306,9 @@ var DateFilterModal = Modal.extend({
 				});
 
 				$(selection).find('input:radio').each(function(key, radio) {
-					if ($(radio).val() === null || 
-						$(radio).val() === undefined || 
-						$(radio).val() === '' || 
+					if ($(radio).val() === null ||
+						$(radio).val() === undefined ||
+						$(radio).val() === '' ||
 						$(radio).val() === 'on') {
 						$(radio).addClass('keep-disabled');
 					}
@@ -332,8 +332,8 @@ var DateFilterModal = Modal.extend({
 					});
 				});
 				$(selection).find('#period-select > option').each(function(key, radio) {
-					if ($(radio).val() === null || 
-						$(radio).val() === undefined || 
+					if ($(radio).val() === null ||
+						$(radio).val() === undefined ||
 						$(radio).val() === '') {
 						$(radio).addClass('keep-disabled');
 					}
@@ -344,8 +344,8 @@ var DateFilterModal = Modal.extend({
 
 	selection_date: function(event) {
 		var $currentTarget = $(event.currentTarget);
-		$currentTarget.datepicker({ 
-			dateFormat: 'yy/mm/dd' 
+		$currentTarget.datepicker({
+			dateFormat: 'yy/mm/dd'
 		});
 	},
 
@@ -528,7 +528,7 @@ var DateFilterModal = Modal.extend({
 								self.dates.push(self.$el.find('#start-date').val());
 								self.dates.push(self.$el.find('#end-date').val());
 							}
-							
+
 							fixedDateName = 'dayperiods';
 							comparisonOperator = $(radio).val();
 						}
