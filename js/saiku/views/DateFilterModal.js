@@ -201,6 +201,8 @@ var DateFilterModal = Modal.extend({
 		// Initialize adding values
 		this.add_values_fixed_date();
 		this.add_values_last_periods();
+
+		console.log(this.storage.get());
 	},
 
 	post_render: function(args) {
@@ -513,7 +515,8 @@ var DateFilterModal = Modal.extend({
 			periodamount,
 			comparisonOperator,
 			saikuDateProperty,
-			dates;
+			dates,
+			selectedData = {};
 		
 		if (self.hierarchy === null || self.hierarchy === undefined) {
 			self.hierarchy = self.dimension;
@@ -523,6 +526,8 @@ var DateFilterModal = Modal.extend({
 			var analyzerDateFormat;
 
 			if ($(selection).attr('available') === 'true') {
+				selectedData.type = $(selection).attr('selection-name');
+
 				if ($(selection).attr('selection-name') === 'operator') {
 					$(selection).find('input:radio').each(function (key, radio) {
 						if ($(radio).is(':checked') === true) {
@@ -583,8 +588,8 @@ var DateFilterModal = Modal.extend({
 			hierarchy = this.workspace.query.helper.getHierarchy(hName);
 
 		var updates = [];
-
-		updates.push({ mdx: mdx });
+		updates.push(selectedData);
+		this.storage.set(updates);
 
 		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
 			hierarchy.levels[lName] = { mdx: mdx, name: lName };
