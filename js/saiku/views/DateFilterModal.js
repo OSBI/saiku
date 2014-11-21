@@ -202,8 +202,8 @@ var DateFilterModal = Modal.extend({
 		this.add_values_fixed_date();
 		this.add_values_last_periods();
 
-		// console.log(this.storage.get());
-		// this.populate();
+		console.log(this.storage.get());
+		this.populate();
 	},
 
 	post_render: function(args) {
@@ -406,8 +406,14 @@ var DateFilterModal = Modal.extend({
 				this.$el.find('#' + data.checked).prop('checked', true);
 			}
 			else if (data.type === 'fixed-date') {
+				var $selection = this.$el.find('#selection-radio-fixed-date').closest('.box-selections');
 				this.$el.find('#selection-radio-fixed-date').prop('checked', true);
 				this.$el.find('#' + data.checked).prop('checked', true);
+				$selection.each(function(key, selection) {
+					$(selection).find('.available-selections').attr('available', true);
+					$(selection).find('.available-selections *:not(.keep-disabled)')
+						.prop('disabled', false).on('click');
+				});
 			}
 			else {
 			}
