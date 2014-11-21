@@ -42,7 +42,7 @@ var DateFilterModal = Modal.extend({
 
 	template_last_mdx: '{parent} LastPeriods({periodamount}, CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT))',
 
-	template_selection: _.template(
+	template_dialog: _.template(
 		'<div class="box-selections">' +
 			'<div class="selection-option">' +
 				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-operator" level-type="TIME_DAYS" disabled>' +
@@ -51,28 +51,28 @@ var DateFilterModal = Modal.extend({
 				'<span class="i18n">Operator:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-equals" value="="> Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-equals" value="="> Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-after" value=">"> After</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-after" value=">"> After</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-before" value="<"> Before</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-before" value="<"> Before</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-between" value=">|<"> Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-between" value=">|<"> Between</label><br>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-different" value="<>"> Different</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-different" value="<>"> Different</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-after-equals" value=">="> After&Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-after-equals" value=">="> After&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-before-equals" value="<="> Before&Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-before-equals" value="<="> Before&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-notbetween"> Not Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-notbetween"> Not Between</label><br>' +
 					'</div>' +
 					'<div class="inline-form-group">' +
 						'<div class="form-group" id="div-selection-date" hidden>' +
@@ -170,6 +170,7 @@ var DateFilterModal = Modal.extend({
 		this.message = 'Loading...';
 		this.query = args.workspace.query;
 		this.dates = [];
+		this.storage = new Saiku.singleton();
 
 		// _.bind(this);
 
@@ -187,7 +188,7 @@ var DateFilterModal = Modal.extend({
 
 		// Load template
 		this.$el.find('.dialog_body')
-			.html(this.template_selection);
+			.html(this.template_dialog);
 
 		this.$el.find('.available-selections *').prop('disabled', true).off('click');
 
@@ -513,9 +514,11 @@ var DateFilterModal = Modal.extend({
 			comparisonOperator,
 			saikuDateProperty,
 			dates;
-		if(self.hierarchy === null || self.hierarchy === undefined){
+		
+		if (self.hierarchy === null || self.hierarchy === undefined) {
 			self.hierarchy = self.dimension;
 		}
+
 		this.$el.find('.available-selections').each(function(key, selection) {
 			var analyzerDateFormat;
 
