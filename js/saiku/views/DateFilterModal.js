@@ -132,10 +132,10 @@ var DateFilterModal = Modal.extend({
 					'</div>' +
 					'<div class="form-group-selection">' +
 						'<select id="period-select">' +
-							'<option name="TIME_DAYS" value="">Day(s)</option>' +
-							'<option name="TIME_WEEKS" value="">Week(s)</option>' +
-							'<option name="TIME_MONTHS" value="">Month(s)</option>' +
-							'<option name="TIME_YEARS" value="">Year(s)</option>' +
+							'<option name="TIME_DAYS" id="rd-days">Day(s)</option>' +
+							'<option name="TIME_WEEKS" id="rd-weeks">Week(s)</option>' +
+							'<option name="TIME_MONTHS" id="rd-months">Month(s)</option>' +
+							'<option name="TIME_YEARS" id="rd-years">Year(s)</option>' +
 						'</select>' +
 					'</div>' +
 				'</div>' +
@@ -532,6 +532,7 @@ var DateFilterModal = Modal.extend({
 					$(selection).find('input:radio').each(function (key, radio) {
 						if ($(radio).is(':checked') === true) {
 							var name = $(radio).parent('label').text().split(' ')[1];
+							selectedData.checked = $(radio).attr('id');
 
 							if (name === 'After' || name === 'After&Equals' ||
 								name === 'Before' || name === 'Before&Equals') {
@@ -544,6 +545,7 @@ var DateFilterModal = Modal.extend({
 							
 							fixedDateName = 'dayperiods';
 							comparisonOperator = $(radio).val();
+							selectedData.values = self.dates;
 						}
 					});
 				}
@@ -552,6 +554,7 @@ var DateFilterModal = Modal.extend({
 						if ($(radio).is(":checked") === true) {
 							fixedDateName = $(radio).attr('id').split('-')[1];
 							analyzerDateFormat = $(radio).val();
+							selectedData.checked = $(radio).attr('id');
 						}
 					});
 				}
@@ -559,6 +562,9 @@ var DateFilterModal = Modal.extend({
 					analyzerDateFormat = $('#period-select').find(':selected').val();
 					fixedDateName = 'lastperiods';
 					periodamount = $(selection).find('input:text').val();
+					selectedData.fixedDateName = fixedDateName;
+					selectedData.periodAmount = $(selection).find('input:text').val();
+					selectedData.periodSelect = $('#period-select').find(':selected').attr('id');
 				}
 
 				for (var i = 0, len = self.dataLevels.length; i < len; i++) {
