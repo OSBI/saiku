@@ -203,6 +203,7 @@ var DateFilterModal = Modal.extend({
 		this.add_values_last_periods();
 
 		console.log(this.storage.get());
+		this.populate();
 	},
 
 	post_render: function(args) {
@@ -397,27 +398,16 @@ var DateFilterModal = Modal.extend({
 	},
 
 	populate: function() {
-		var hName = this.member.hierarchy,
-			lName = this.member.level,
-			hierarchy = this.workspace.query.helper.getHierarchy(hName);
+		var data = this.storage.get();
 
-		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
-			this.selections = hierarchy.levels[lName].selection ? hierarchy.levels[lName].selection.selections : [];
-		}
-
-		console.log(JSON.stringify(hName));
-		console.log(JSON.stringify(lName));
-		console.log(JSON.stringify(hierarchy));
-		console.log(JSON.stringify(this.selections));
-
-		if (this.selections && !(_.isEmpty(this.selections))) {
-			if (this.selections.type === 'operator') {
+		if (data && !(_.isEmpty(data))) {
+			if (data[0].type === 'operator') {
 				this.$el.find('#selection-radio-operator').prop('checked', true);
-				this.$el.find('#' + this.selections.checked).prop('checked', true);				
+				this.$el.find('#' + data[0].checked).prop('checked', true);
 			}
-			else if (this.selections.type === 'fixed-date') {
+			else if (data[0].type === 'fixed-date') {
 				this.$el.find('#selection-radio-fixed-date').prop('checked', true);
-				this.$el.find('#' + this.selections.checked).prop('checked', true);
+				this.$el.find('#' + data[0].checked).prop('checked', true);
 			}
 			else {
 			}
