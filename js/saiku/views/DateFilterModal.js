@@ -357,9 +357,11 @@ var DateFilterModal = Modal.extend({
 		$currentTarget.closest('.box-selections').find('.available-selections').attr('available', true);
 		$currentTarget.closest('.box-selections').find('.available-selections *:not(.keep-disabled)')
 			.prop('disabled', false).on('click');
-		$currentTarget.closest('.box-selections').find('select').each(function(key, selection){
-			$(selection).find("option:not([disabled])").first().attr("selected", "selected");
-		});
+		if (event.type) {
+			$currentTarget.closest('.box-selections').find('select').each(function(key, selection) {
+				$(selection).find('option:not([disabled])').first().attr('selected', 'selected');
+			});
+		}
 	},
 
 	day_format_string: function() {
@@ -436,6 +438,11 @@ var DateFilterModal = Modal.extend({
 				this.disable_divselections($selection);
 			}
 			else {
+				var $selection = this.$el.find('#selection-radio-available');
+				$selection.prop('checked', true);
+				this.$el.find('#date-input').val(data.periodAmount);
+				this.$el.find('select#period-select option[id="' + data.periodSelect + '"]').prop('selected', true);
+				this.disable_divselections($selection);
 			}
 		}
 	},
