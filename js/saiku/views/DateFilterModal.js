@@ -228,7 +228,7 @@ var DateFilterModal = Modal.extend({
 	},
 
 	show_fields: function(event) {
-		var $currentTarget = $(event.currentTarget),
+		var $currentTarget = event.type ? $(event.currentTarget) : $(event),
 			name = $currentTarget.parent('label').text().split(' ')[1];
 		switch (name) {
 		case 'Equals':
@@ -351,7 +351,7 @@ var DateFilterModal = Modal.extend({
 	},
 
 	disable_divselections: function(event) {
-		var $currentTarget = $(event.currentTarget);
+		var $currentTarget = event.type ? $(event.currentTarget) : $(event);
 		this.$el.find('.available-selections').attr('available', false);
 		this.$el.find('.available-selections *').prop('disabled', true).off('click');
 		$currentTarget.closest('.box-selections').find('.available-selections').attr('available', true);
@@ -402,18 +402,18 @@ var DateFilterModal = Modal.extend({
 
 		if (data && !(_.isEmpty(data))) {
 			if (data.type === 'operator') {
-				this.$el.find('#selection-radio-operator').prop('checked', true);
-				this.$el.find('#' + data.checked).prop('checked', true);
+				var $selection = this.$el.find('#selection-radio-operator'),
+					$checked = this.$el.find('#' + data.checked);
+				$selection.prop('checked', true);
+				$checked.prop('checked', true);
+				this.disable_divselections($selection);
+				this.show_fields($checked);
 			}
 			else if (data.type === 'fixed-date') {
-				var $selection = this.$el.find('#selection-radio-fixed-date').closest('.box-selections');
-				this.$el.find('#selection-radio-fixed-date').prop('checked', true);
+				var $selection = this.$el.find('#selection-radio-fixed-date');
+				$selection.prop('checked', true);
 				this.$el.find('#' + data.checked).prop('checked', true);
-				$selection.each(function(key, selection) {
-					$(selection).find('.available-selections').attr('available', true);
-					$(selection).find('.available-selections *:not(.keep-disabled)')
-						.prop('disabled', false).on('click');
-				});
+				this.disable_divselections($selection);
 			}
 			else {
 			}
