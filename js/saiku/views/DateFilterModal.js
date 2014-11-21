@@ -401,13 +401,13 @@ var DateFilterModal = Modal.extend({
 		var data = this.storage.get();
 
 		if (data && !(_.isEmpty(data))) {
-			if (data[0].type === 'operator') {
+			if (data.type === 'operator') {
 				this.$el.find('#selection-radio-operator').prop('checked', true);
-				this.$el.find('#' + data[0].checked).prop('checked', true);
+				this.$el.find('#' + data.checked).prop('checked', true);
 			}
-			else if (data[0].type === 'fixed-date') {
+			else if (data.type === 'fixed-date') {
 				this.$el.find('#selection-radio-fixed-date').prop('checked', true);
-				this.$el.find('#' + data[0].checked).prop('checked', true);
+				this.$el.find('#' + data.checked).prop('checked', true);
 			}
 			else {
 			}
@@ -583,9 +583,7 @@ var DateFilterModal = Modal.extend({
 			lName = decodeURIComponent(this.member.level),
 			hierarchy = this.workspace.query.helper.getHierarchy(hName);
 
-		var updates = [];
-		updates.push(selectedData);
-		this.storage.set(updates);
+		this.storage.set(selectedData);
 
 		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
 			hierarchy.levels[lName] = { mdx: mdx, name: lName };
