@@ -404,17 +404,30 @@ var DateFilterModal = Modal.extend({
 			if (data.type === 'operator') {
 				var $selection = this.$el.find('#selection-radio-operator'),
 					$checked = this.$el.find('#' + data.checked),
+					name = $checked.parent('label').text().split(' ')[1],
 					self = this;
 				$selection.prop('checked', true);
 				$checked.prop('checked', true);
 				this.disable_divselections($selection);
 				this.show_fields($checked);
+
 				this.dates = data.values;
-				_.each(this.dates, function(value, key) {
-					self.$el.find('#selected-date').append($('<li></li>')
-						.text(value)
-						.append('<a href="#" class="del-date">x</a>'));
-				});
+
+				if (name === 'After' || name === 'After&Equals' ||
+					name === 'Before' || name === 'Before&Equals') {
+					this.$el.find('#selection-date').val(this.dates[0]);
+				}
+				else if (name === 'Between') {
+					self.$el.find('#start-date').val(this.dates[0]);
+					self.$el.find('#end-date').val(this.dates[1]);
+				}
+				else {
+					_.each(this.dates, function(value, key) {
+						self.$el.find('#selected-date').append($('<li></li>')
+							.text(value)
+							.append('<a href="#" class="del-date">x</a>'));
+					});
+				}
 			}
 			else if (data.type === 'fixed-date') {
 				var $selection = this.$el.find('#selection-radio-fixed-date');
@@ -539,9 +552,11 @@ var DateFilterModal = Modal.extend({
 
 							if (name === 'After' || name === 'After&Equals' ||
 								name === 'Before' || name === 'Before&Equals') {
+								self.dates = [];
 								self.dates.push(self.$el.find('#selection-date').val());
 							}
 							else if (name === 'Between') {
+								self.dates = [];
 								self.dates.push(self.$el.find('#start-date').val());
 								self.dates.push(self.$el.find('#end-date').val());
 							}
