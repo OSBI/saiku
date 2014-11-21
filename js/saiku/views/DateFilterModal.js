@@ -34,7 +34,7 @@ var DateFilterModal = Modal.extend({
 		'click .del-date'        : 'del_selected_date'
 	},
 	
-	template_days_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
+	template_days_mdx: 'Filter({parent} [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
 	
 	template_many_years_mdx: ' {logicalOperator} [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
 
@@ -202,8 +202,8 @@ var DateFilterModal = Modal.extend({
 		this.add_values_fixed_date();
 		this.add_values_last_periods();
 
-		console.log(this.storage.get());
-		this.populate();
+		// console.log(this.storage.get());
+		// this.populate();
 	},
 
 	post_render: function(args) {
@@ -533,6 +533,7 @@ var DateFilterModal = Modal.extend({
 								self.dates.push(self.$el.find('#end-date').val());
 							}
 							
+							parentmembers = self.name;
 							fixedDateName = 'dayperiods';
 							comparisonOperator = $(radio).val();
 							selectedData.values = self.dates;
@@ -558,10 +559,11 @@ var DateFilterModal = Modal.extend({
 				}
 
 				for (var i = 0, len = self.dataLevels.length; i < len; i++) {
-					if (self.dataLevels[i].analyzerDateFormat === analyzerDateFormat)
-						if(self.dataLevels[i].name != self.name) {
+					if (self.dataLevels[i].analyzerDateFormat === analyzerDateFormat) {
+						if (self.dataLevels[i].name === self.name) {
 							parentmembers = self.name;
 						}
+					}
 				}
 
 				var logExp = {
