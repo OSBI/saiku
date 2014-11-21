@@ -403,11 +403,18 @@ var DateFilterModal = Modal.extend({
 		if (data && !(_.isEmpty(data))) {
 			if (data.type === 'operator') {
 				var $selection = this.$el.find('#selection-radio-operator'),
-					$checked = this.$el.find('#' + data.checked);
+					$checked = this.$el.find('#' + data.checked),
+					self = this;
 				$selection.prop('checked', true);
 				$checked.prop('checked', true);
 				this.disable_divselections($selection);
 				this.show_fields($checked);
+				this.dates = data.values;
+				_.each(this.dates, function(value, key) {
+					self.$el.find('#selected-date').append($('<li></li>')
+						.text(value)
+						.append('<a href="#" class="del-date">x</a>'));
+				});
 			}
 			else if (data.type === 'fixed-date') {
 				var $selection = this.$el.find('#selection-radio-fixed-date');
