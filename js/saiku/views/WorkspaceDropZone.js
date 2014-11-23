@@ -115,8 +115,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                 this.workspace.query.run();
         }
     },
-
-    /*jshint -W083 */
+    
     synchronize_query: function() {
         var self = this;
         this.reset_dropzones();
@@ -261,7 +260,9 @@ var WorkspaceDropZone = Backbone.View.extend({
             objData = this.find_type_time(dimension, hierarchy, level),
             key = $target.attr('href').replace('#', '');
 
-        if (objData.level.annotations !== undefined && objData.level.annotations != null && objData.level.annotations.AnalyzerDateFormat !== undefined) {
+        if (objData.level.annotations !== undefined && 
+            objData.level.annotations !== null && 
+            objData.level.annotations.AnalyzerDateFormat !== undefined) {
             // Launch date filter dialog
             (new DateFilterModal({
                 AnalyzerDateFormat: objData.level.annotations.AnalyzerDateFormat,
