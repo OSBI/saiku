@@ -179,6 +179,33 @@ var Saiku = {
 };
 
 /**
+ * Saiku Singleton pattern
+ */
+Saiku.singleton = (function() {
+    'use strict';
+
+    var instance;
+
+    Saiku.singleton = function() {
+        if (instance) {
+            return instance;
+        }
+
+        instance = this;
+
+        this.set = function(data) {
+            this.data = data;
+        };
+
+        this.get = function() {
+            return this.data;
+        };
+    };
+
+    return Saiku.singleton;
+}());
+
+/**
  * Setting this option to true will fake PUT and DELETE requests 
  * with a HTTP POST, and pass them under the _method parameter. 
  * Setting this option will also set an X-HTTP-Method-Override header 
@@ -227,8 +254,6 @@ var SaikuTimeLogger = function(element) {
     this._events = [];
 };
 
-
-
 SaikuTimeLogger.prototype.log = function(eventname) {
     var time = (new Date()).getTime();
     if (!eventname) {
@@ -243,4 +268,3 @@ SaikuTimeLogger.prototype.log = function(eventname) {
     this._timestamps.push(time);
     this._events.push(eventname);
 };
-
