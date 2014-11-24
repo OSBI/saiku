@@ -34,7 +34,7 @@ var DateFilterModal = Modal.extend({
 		'click .del-date'        : 'del_selected_date'
 	},
 	
-	template_days_mdx: 'Filter([Time].[Weekly].[Day].members, [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
+	template_days_mdx: 'Filter({parent} [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
 	
 	template_many_years_mdx: ' {logicalOperator} [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
 
@@ -42,7 +42,7 @@ var DateFilterModal = Modal.extend({
 
 	template_last_mdx: '{parent} LastPeriods({periodamount}, CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT))',
 
-	template_selection: _.template(
+	template_dialog: _.template(
 		'<div class="box-selections">' +
 			'<div class="selection-option">' +
 				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-operator" level-type="TIME_DAYS" disabled>' +
@@ -51,28 +51,28 @@ var DateFilterModal = Modal.extend({
 				'<span class="i18n">Operator:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-equals" value="="> Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-equals" value="="> Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-after" value=">"> After</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-after" value=">"> After</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-before" value="<"> Before</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-before" value="<"> Before</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-between" value=">|<"> Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-between" value=">|<"> Between</label><br>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-different" value="<>"> Different</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-different" value="<>"> Different</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-after-equals" value=">="> After&Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-after-equals" value=">="> After&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-before-equals" value="<="> Before&Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-before-equals" value="<="> Before&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio op-notbetween"> Not Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-notbetween"> Not Between</label><br>' +
 					'</div>' +
 					'<div class="inline-form-group">' +
 						'<div class="form-group" id="div-selection-date" hidden>' +
@@ -132,10 +132,10 @@ var DateFilterModal = Modal.extend({
 					'</div>' +
 					'<div class="form-group-selection">' +
 						'<select id="period-select">' +
-							'<option name="TIME_DAYS" value="">Day(s)</option>' +
-							'<option name="TIME_WEEKS" value="">Week(s)</option>' +
-							'<option name="TIME_MONTHS" value="">Month(s)</option>' +
-							'<option name="TIME_YEARS" value="">Year(s)</option>' +
+							'<option name="TIME_DAYS" id="rd-days">Day(s)</option>' +
+							'<option name="TIME_WEEKS" id="rd-weeks">Week(s)</option>' +
+							'<option name="TIME_MONTHS" id="rd-months">Month(s)</option>' +
+							'<option name="TIME_YEARS" id="rd-years">Year(s)</option>' +
 						'</select>' +
 					'</div>' +
 				'</div>' +
@@ -170,6 +170,7 @@ var DateFilterModal = Modal.extend({
 		this.message = 'Loading...';
 		this.query = args.workspace.query;
 		this.dates = [];
+		this.storage = new Saiku.singleton();
 
 		// _.bind(this);
 
@@ -187,7 +188,7 @@ var DateFilterModal = Modal.extend({
 
 		// Load template
 		this.$el.find('.dialog_body')
-			.html(this.template_selection);
+			.html(this.template_dialog);
 
 		this.$el.find('.available-selections *').prop('disabled', true).off('click');
 
@@ -200,6 +201,9 @@ var DateFilterModal = Modal.extend({
 		// Initialize adding values
 		this.add_values_fixed_date();
 		this.add_values_last_periods();
+
+		console.log(this.storage.get());
+		this.populate();
 	},
 
 	post_render: function(args) {
@@ -224,7 +228,7 @@ var DateFilterModal = Modal.extend({
 	},
 
 	show_fields: function(event) {
-		var $currentTarget = $(event.currentTarget),
+		var $currentTarget = event.type ? $(event.currentTarget) : $(event),
 			name = $currentTarget.parent('label').text().split(' ')[1];
 		switch (name) {
 		case 'Equals':
@@ -347,15 +351,17 @@ var DateFilterModal = Modal.extend({
 	},
 
 	disable_divselections: function(event) {
-		var $currentTarget = $(event.currentTarget);
+		var $currentTarget = event.type ? $(event.currentTarget) : $(event);
 		this.$el.find('.available-selections').attr('available', false);
 		this.$el.find('.available-selections *').prop('disabled', true).off('click');
 		$currentTarget.closest('.box-selections').find('.available-selections').attr('available', true);
 		$currentTarget.closest('.box-selections').find('.available-selections *:not(.keep-disabled)')
 			.prop('disabled', false).on('click');
-		$currentTarget.closest('.box-selections').find('select').each(function(key, selection){
-			$(selection).find("option:not([disabled])").first().attr("selected", "selected");
-		});
+		if (event.type) {
+			$currentTarget.closest('.box-selections').find('select').each(function(key, selection) {
+				$(selection).find('option:not([disabled])').first().attr('selected', 'selected');
+			});
+		}
 	},
 
 	day_format_string: function() {
@@ -394,29 +400,49 @@ var DateFilterModal = Modal.extend({
 	},
 
 	populate: function() {
-		var hName = this.member.hierarchy,
-			lName = this.member.level,
-			hierarchy = this.workspace.query.helper.getHierarchy(hName);
+		var data = this.storage.get();
 
-		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
-			this.selections = hierarchy.levels[lName].selection ? hierarchy.levels[lName].selection.selections : [];
-		}
+		if (data && !(_.isEmpty(data))) {
+			if (data.type === 'operator') {
+				var $selection = this.$el.find('#selection-radio-operator'),
+					$checked = this.$el.find('#' + data.checked),
+					name = $checked.parent('label').text().split(' ')[1],
+					self = this;
+				$selection.prop('checked', true);
+				$checked.prop('checked', true);
+				this.disable_divselections($selection);
+				this.show_fields($checked);
 
-		console.log(JSON.stringify(hName));
-		console.log(JSON.stringify(lName));
-		console.log(JSON.stringify(hierarchy));
-		console.log(JSON.stringify(this.selections));
+				this.dates = data.values;
 
-		if (this.selections && !(_.isEmpty(this.selections))) {
-			if (this.selections.type === 'operator') {
-				this.$el.find('#selection-radio-operator').prop('checked', true);
-				this.$el.find('#' + this.selections.checked).prop('checked', true);				
+				if (name === 'After' || name === 'After&Equals' ||
+					name === 'Before' || name === 'Before&Equals') {
+					this.$el.find('#selection-date').val(this.dates[0]);
+				}
+				else if (name === 'Between') {
+					self.$el.find('#start-date').val(this.dates[0]);
+					self.$el.find('#end-date').val(this.dates[1]);
+				}
+				else {
+					_.each(this.dates, function(value, key) {
+						self.$el.find('#selected-date').append($('<li></li>')
+							.text(value)
+							.append('<a href="#" class="del-date">x</a>'));
+					});
+				}
 			}
-			else if (this.selections.type === 'fixed-date') {
-				this.$el.find('#selection-radio-fixed-date').prop('checked', true);
-				this.$el.find('#' + this.selections.checked).prop('checked', true);
+			else if (data.type === 'fixed-date') {
+				var $selection = this.$el.find('#selection-radio-fixed-date');
+				$selection.prop('checked', true);
+				this.$el.find('#' + data.checked).prop('checked', true);
+				this.disable_divselections($selection);
 			}
 			else {
+				var $selection = this.$el.find('#selection-radio-available');
+				$selection.prop('checked', true);
+				this.$el.find('#date-input').val(data.periodAmount);
+				this.$el.find('select#period-select option[id="' + data.periodSelect + '"]').prop('selected', true);
+				this.disable_divselections($selection);
 			}
 		}
 	},
@@ -512,30 +538,40 @@ var DateFilterModal = Modal.extend({
 			periodamount,
 			comparisonOperator,
 			saikuDateProperty,
-			dates;
-		if(self.hierarchy === null || self.hierarchy === undefined){
+			dates,
+			selectedData = {};
+		
+		if (self.hierarchy === null || self.hierarchy === undefined) {
 			self.hierarchy = self.dimension;
 		}
+
 		this.$el.find('.available-selections').each(function(key, selection) {
 			var analyzerDateFormat;
 
 			if ($(selection).attr('available') === 'true') {
+				selectedData.type = $(selection).attr('selection-name');
+
 				if ($(selection).attr('selection-name') === 'operator') {
 					$(selection).find('input:radio').each(function (key, radio) {
 						if ($(radio).is(':checked') === true) {
 							var name = $(radio).parent('label').text().split(' ')[1];
+							selectedData.checked = $(radio).attr('id');
 
 							if (name === 'After' || name === 'After&Equals' ||
 								name === 'Before' || name === 'Before&Equals') {
+								self.dates = [];
 								self.dates.push(self.$el.find('#selection-date').val());
 							}
 							else if (name === 'Between') {
+								self.dates = [];
 								self.dates.push(self.$el.find('#start-date').val());
 								self.dates.push(self.$el.find('#end-date').val());
 							}
 							
+							parentmembers = self.name;
 							fixedDateName = 'dayperiods';
 							comparisonOperator = $(radio).val();
+							selectedData.values = self.dates;
 						}
 					});
 				}
@@ -544,6 +580,7 @@ var DateFilterModal = Modal.extend({
 						if ($(radio).is(":checked") === true) {
 							fixedDateName = $(radio).attr('id').split('-')[1];
 							analyzerDateFormat = $(radio).val();
+							selectedData.checked = $(radio).attr('id');
 						}
 					});
 				}
@@ -551,13 +588,17 @@ var DateFilterModal = Modal.extend({
 					analyzerDateFormat = $('#period-select').find(':selected').val();
 					fixedDateName = 'lastperiods';
 					periodamount = $(selection).find('input:text').val();
+					selectedData.fixedDateName = fixedDateName;
+					selectedData.periodAmount = $(selection).find('input:text').val();
+					selectedData.periodSelect = $('#period-select').find(':selected').attr('id');
 				}
 
 				for (var i = 0, len = self.dataLevels.length; i < len; i++) {
-					if (self.dataLevels[i].analyzerDateFormat === analyzerDateFormat)
-						if(self.dataLevels[i].name != self.name) {
+					if (self.dataLevels[i].analyzerDateFormat === analyzerDateFormat) {
+						if (self.dataLevels[i].name === self.name) {
 							parentmembers = self.name;
 						}
+					}
 				}
 
 				var logExp = {
@@ -579,9 +620,7 @@ var DateFilterModal = Modal.extend({
 			lName = decodeURIComponent(this.member.level),
 			hierarchy = this.workspace.query.helper.getHierarchy(hName);
 
-		var updates = [];
-
-		updates.push({ mdx: mdx });
+		this.storage.set(selectedData);
 
 		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
 			hierarchy.levels[lName] = { mdx: mdx, name: lName };
