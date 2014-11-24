@@ -614,6 +614,19 @@ textarea, select {
     border-right: 1px solid #CCC;
 }
 
+.table-applied-filter {
+    color: #999;
+}
+
+.table-applied-filter p {
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.table-applied-filter table {
+    border: none !important;
+}
+
 /** Dialog */
 .ui-widget {
 	font-family: inherit !important;
