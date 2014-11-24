@@ -270,7 +270,7 @@
 							<tasks>
 							<mkdir dir="target/saiku-ui" />
 
-                                <copy file="target/saiku-ui-3.0.5/saiku.min.js" tofile="target/saiku-ui/saiku.min.js" />
+                                <copy file="target/saiku-ui-3.0.6-SNAPSHOT/saiku.min.js" tofile="target/saiku-ui/saiku.min.js" />
 								<taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
 								<if>
 								<equals arg1="${build.prod}" arg2="true" />
