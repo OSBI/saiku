@@ -244,7 +244,7 @@ var WorkspaceDropZone = Backbone.View.extend({
 		value.hierarchies = _.findWhere(value.dimensions.hierarchies, {name: hierarchy});
 
 		if (value.hierarchies === undefined || value.hierarchies === null) {
-			value.hierarchies = _.findWhere(value.dimensions.hierarchies, {name: dimension.hierarchy});
+			value.hierarchies = _.findWhere(value.dimensions.hierarchies, {name: dimension+"."+hierarchy});
 		}
 		value.level = _.findWhere(value.hierarchies.levels, {name: level});
 		return value;
