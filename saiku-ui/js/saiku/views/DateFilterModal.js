@@ -354,9 +354,9 @@ var DateFilterModal = Modal.extend({
 					});
 				});
 				$(selection).find('#period-select > option').each(function(key, radio) {
-					if ($(radio).val() === null ||
-						$(radio).val() === undefined ||
-						$(radio).val() === '') {
+					if ($(radio).attr('value') === null ||
+						$(radio).attr('value') === undefined ||
+						$(radio).attr('value') === '') {
 						$(radio).addClass('keep-disabled');
 					}
 				});
@@ -374,17 +374,22 @@ var DateFilterModal = Modal.extend({
 	clear_selections: function(event) {
 		// clear dialog
 		this.show_fields(event);
-		this.$el.find('input').val('');
-		this.$el.find('#selected-date').empty();
+		this.$el.find('input[type="text"]').val('');
 		this.$el.find('select').prop('selectedIndex', 0);
+		this.$el.find('#selected-date').empty();
 		this.$el.find('.available-selections *').prop('checked', false);
 		// Clear variables
 		this.dates = [];
 	},
 
 	disable_divselections: function(event) {
-		var $currentTarget = event.type ? $(event.currentTarget) : $(event);
-		this.clear_selections(event);
+		var params = Array.prototype.slice.call(arguments),
+			$currentTarget = event.type ? $(event.currentTarget) : $(event);
+		
+		if (!params[1]) {
+			this.clear_selections(event);
+		}
+
 		this.$el.find('.available-selections').attr('available', false);
 		this.$el.find('.available-selections *').prop('disabled', true).off('click');
 		$currentTarget.closest('.box-selections').find('.available-selections').attr('available', true);
@@ -443,7 +448,7 @@ var DateFilterModal = Modal.extend({
 					self = this;
 				$selection.prop('checked', true);
 				$checked.prop('checked', true);
-				this.disable_divselections($selection);
+				this.disable_divselections($selection, true);
 				this.show_fields($checked);
 
 				this.dates = data.values;
@@ -468,20 +473,20 @@ var DateFilterModal = Modal.extend({
 				var $selection = this.$el.find('#selection-radio-fixed-date');
 				$selection.prop('checked', true);
 				this.$el.find('#' + data.checked).prop('checked', true);
-				this.disable_divselections($selection);
+				this.disable_divselections($selection, true);
 			}
 			else {
 				var $selection = this.$el.find('#selection-radio-available');
 				$selection.prop('checked', true);
 				this.$el.find('#date-input').val(data.periodAmount);
 				this.$el.find('select#period-select option[id="' + data.periodSelect + '"]').prop('selected', true);
-				this.disable_divselections($selection);
+				this.disable_divselections($selection, true);
 			}
 		}
 	},
 
 	populate_mdx: function(logExp, fixedDateName, periodamount) {
-		if (logExp.workinglevel != logExp.level && logExp.workinglevel != undefined) {
+		if ((logExp.workinglevel === logExp.level || logExp.workinglevel !== logExp.level) && logExp.workinglevel !== undefined) {
 			logExp.parent = '[{dimension}.{hierarchy}].[{level}].members,';
 			logExp.parent = logExp.parent.replace(/{(\w+)}/g, function(m, p) {
 				return logExp[p];
@@ -626,14 +631,15 @@ var DateFilterModal = Modal.extend({
 					selectedData.periodSelect = $('#period-select').find(':selected').attr('id');
 				}
 
-				var p = "";
+				var p = '';
 				var workinglevel;
 				for (var i = 0, len = self.dataLevels.length; i < len; i++) {
 					if (self.dataLevels[i].analyzerDateFormat === analyzerDateFormat) {
 						if (self.dataLevels[i].name === self.name) {
 							parentmembers = self.name;
+							workinglevel = self.dataLevels[i].name;
 						}
-						else{
+						else {
 							workinglevel = self.dataLevels[i].name;
 						}
 					}
