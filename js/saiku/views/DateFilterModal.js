@@ -36,8 +36,7 @@ var DateFilterModal = Modal.extend({
 
 	template_days_mdx: 'Filter([Time].[Date Only].[Date String].Members, [Time].[Date Only].[Date String].CurrentMember.NAME {comparisonOperator} \'{dates}\'',
 
-	template_many_years_mdx: ' {logicalOperator} [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
-
+	template_many_years_mdx: ' {logicalOperator} [Time].[Weekly].[Day].CurrentMember.NAME("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
 
 	template_mdx: '{parent} CurrentDateMember([{dimension}.{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
 
@@ -174,7 +173,7 @@ var DateFilterModal = Modal.extend({
 		this.dates = [];
 		this.storage = new Saiku.singleton();
 
-		// _.bind(this);
+		_.bindAll(this, 'finished');
 
 		// Resize when rendered
 		this.bind('open', this.post_render);
@@ -189,8 +188,7 @@ var DateFilterModal = Modal.extend({
 		});
 
 		// Load template
-		this.$el.find('.dialog_body')
-			.html(this.template_dialog);
+		this.$el.find('.dialog_body').html(this.template_dialog);
 
 		this.$el.find('.available-selections *').prop('disabled', true).off('click');
 
@@ -232,39 +230,49 @@ var DateFilterModal = Modal.extend({
 	show_fields: function(event) {
 		var $currentTarget = event.type ? $(event.currentTarget) : $(event),
 			name = $currentTarget.parent('label').text().split(' ')[1];
-		switch (name) {
-		case 'Equals':
-		case 'Different':
-			$currentTarget.closest('.selection-options').find('#div-selection-date').show();
-			$currentTarget.closest('.selection-options').find('#div-selected-date').show();
-			$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
-			$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
-			$currentTarget.closest('.selection-options').find('#add-date').show();
-			break;
-		case 'After':
-		case 'After&Equals':
-		case 'Before':
-		case 'Before&Equals':
-			$currentTarget.closest('.selection-options').find('#div-selection-date').show();
-			$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
-			$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
-			$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
-			$currentTarget.closest('.selection-options').find('#add-date').hide();
-			break;
-		case 'Between':
-		case 'Not':
-			$currentTarget.closest('.selection-options').find('#div-selection-date').hide();
-			$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
-			$currentTarget.closest('.selection-options').find('#div-select-start-date').show();
-			$currentTarget.closest('.selection-options').find('#div-select-end-date').show();
-			$currentTarget.closest('.selection-options').find('#add-date').hide();
-			break;
-		default:
-			$currentTarget.closest('.selection-options').find('#div-selection-date').hide();
-			$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
-			$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
-			$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
-			$currentTarget.closest('.selection-options').find('#add-date').hide();
+
+		if (name !== undefined) {
+			switch (name) {
+			case 'Equals':
+			case 'Different':
+				$currentTarget.closest('.selection-options').find('#div-selection-date').show();
+				$currentTarget.closest('.selection-options').find('#div-selected-date').show();
+				$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
+				$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
+				$currentTarget.closest('.selection-options').find('#add-date').show();
+				break;
+			case 'After':
+			case 'After&Equals':
+			case 'Before':
+			case 'Before&Equals':
+				$currentTarget.closest('.selection-options').find('#div-selection-date').show();
+				$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
+				$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
+				$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
+				$currentTarget.closest('.selection-options').find('#add-date').hide();
+				break;
+			case 'Between':
+			case 'Not':
+				$currentTarget.closest('.selection-options').find('#div-selection-date').hide();
+				$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
+				$currentTarget.closest('.selection-options').find('#div-select-start-date').show();
+				$currentTarget.closest('.selection-options').find('#div-select-end-date').show();
+				$currentTarget.closest('.selection-options').find('#add-date').hide();
+				break;
+			default:
+				$currentTarget.closest('.selection-options').find('#div-selection-date').hide();
+				$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
+				$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
+				$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
+				$currentTarget.closest('.selection-options').find('#add-date').hide();
+			}
+		}
+		else {
+			this.$el.find('.selection-options').find('#div-selection-date').hide();
+			this.$el.find('.selection-options').find('#div-selected-date').hide();
+			this.$el.find('.selection-options').find('#div-select-start-date').hide();
+			this.$el.find('.selection-options').find('#div-select-end-date').hide();
+			this.$el.find('.selection-options').find('#add-date').hide();
 		}
 	},
 
@@ -363,8 +371,20 @@ var DateFilterModal = Modal.extend({
 		});
 	},
 
+	clear_selections: function(event) {
+		// clear dialog
+		this.show_fields(event);
+		this.$el.find('input').val('');
+		this.$el.find('#selected-date').empty();
+		this.$el.find('select').prop('selectedIndex', 0);
+		this.$el.find('.available-selections *').prop('checked', false);
+		// Clear variables
+		this.dates = [];
+	},
+
 	disable_divselections: function(event) {
 		var $currentTarget = event.type ? $(event.currentTarget) : $(event);
+		this.clear_selections(event);
 		this.$el.find('.available-selections').attr('available', false);
 		this.$el.find('.available-selections *').prop('disabled', true).off('click');
 		$currentTarget.closest('.box-selections').find('.available-selections').attr('available', true);
