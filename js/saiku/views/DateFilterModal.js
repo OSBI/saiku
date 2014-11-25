@@ -33,14 +33,15 @@ var DateFilterModal = Modal.extend({
 		'click #add-date'        : 'add_selected_date',
 		'click .del-date'        : 'del_selected_date'
 	},
-	
-	template_days_mdx: 'Filter({parent} [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
-	
+
+	template_days_mdx: 'Filter([Time].[Date Only].[Date String].Members, [Time].[Date Only].[Date String].CurrentMember.NAME {comparisonOperator} \'{dates}\'',
+
 	template_many_years_mdx: ' {logicalOperator} [Time].[Weekly].[Day].CurrentMember.Properties("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
 
-	template_mdx: '{parent} CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
 
-	template_last_mdx: '{parent} LastPeriods({periodamount}, CurrentDateMember([{dimension}].[{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT))',
+	template_mdx: '{parent} CurrentDateMember([{dimension}.{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
+
+	template_last_mdx: '{parent} LastPeriods({periodamount}, CurrentDateMember([{dimension}.{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT))',
 
 	template_dialog: _.template(
 		'<div class="box-selections">' +
@@ -169,6 +170,7 @@ var DateFilterModal = Modal.extend({
 		this.options.title = 'Selections for Year';
 		this.message = 'Loading...';
 		this.query = args.workspace.query;
+		this.selections = [];
 		this.dates = [];
 		this.storage = new Saiku.singleton();
 
@@ -220,7 +222,7 @@ var DateFilterModal = Modal.extend({
 		this.$el.find('.selection-radio').each(function(key, radio) {
 			levelType = $(radio).attr('level-type');
 			_.find(self.dataLevels, function(value, key, list) {
-				if (levelType === value.levelType || (value.saikuDateProperty && value.saikuDayFormatString)) {
+				if (levelType === value.levelType || value.saikuDayFormatString) {
 					$(radio).prop('disabled', false);
 				}
 			});
@@ -270,14 +272,25 @@ var DateFilterModal = Modal.extend({
 		var self = this,
 			dataLevels = [];
 		_.each(this.data.hierarchies.levels, function(value, key, list) {
-			if (list[key].annotations.AnalyzerDateFormat !== undefined) {
-				dataLevels.push({
-					name: list[key].name,
-					analyzerDateFormat: list[key].annotations.AnalyzerDateFormat.replace(/[.]/gi, '\\\.'),
-					levelType: list[key].levelType,
-					saikuDateProperty: list[key].annotations.SaikuDateProperty || '',
-					saikuDayFormatString: list[key].annotations.SaikuDayFormatString || ''
-				});
+			if (list[key].annotations.AnalyzerDateFormat !== undefined || list[key].annotations.SaikuDayFormatString !== undefined) {
+				if(list[key].annotations.AnalyzerDateFormat !== undefined) {
+					dataLevels.push({
+						name: list[key].name,
+						analyzerDateFormat: list[key].annotations.AnalyzerDateFormat.replace(/[.]/gi, '\\\.'),
+						levelType: list[key].levelType,
+						saikuDateProperty: list[key].annotations.SaikuDateProperty || '',
+						saikuDayFormatString: list[key].annotations.SaikuDayFormatString || ''
+					});
+				}
+				else{
+					dataLevels.push({
+						name: list[key].name,
+						analyzerDateFormat: "",
+						levelType: list[key].levelType,
+						saikuDateProperty: list[key].annotations.SaikuDateProperty || '',
+						saikuDayFormatString: list[key].annotations.SaikuDayFormatString || ''
+					});
+				}
 
 				if (list[key].annotations.SaikuDateProperty &&
 					list[key].annotations.SaikuDayFormatString) {
@@ -307,9 +320,9 @@ var DateFilterModal = Modal.extend({
 				});
 
 				$(selection).find('input:radio').each(function(key, radio) {
-					if ($(radio).val() === null || 
-						$(radio).val() === undefined || 
-						$(radio).val() === '' || 
+					if ($(radio).val() === null ||
+						$(radio).val() === undefined ||
+						$(radio).val() === '' ||
 						$(radio).val() === 'on') {
 						$(radio).addClass('keep-disabled');
 					}
@@ -333,8 +346,8 @@ var DateFilterModal = Modal.extend({
 					});
 				});
 				$(selection).find('#period-select > option').each(function(key, radio) {
-					if ($(radio).val() === null || 
-						$(radio).val() === undefined || 
+					if ($(radio).val() === null ||
+						$(radio).val() === undefined ||
 						$(radio).val() === '') {
 						$(radio).addClass('keep-disabled');
 					}
@@ -345,8 +358,8 @@ var DateFilterModal = Modal.extend({
 
 	selection_date: function(event) {
 		var $currentTarget = $(event.currentTarget);
-		$currentTarget.datepicker({ 
-			dateFormat: 'yy/mm/dd' 
+		$currentTarget.datepicker({
+			dateFormat: 'yy/mm/dd'
 		});
 	},
 
@@ -448,8 +461,8 @@ var DateFilterModal = Modal.extend({
 	},
 
 	populate_mdx: function(logExp, fixedDateName, periodamount) {
-		if (logExp.level !== undefined) {
-			logExp.parent = '[{dimension}].[{hierarchy}].[{level}].members,';
+		if (logExp.workinglevel != logExp.level && logExp.workinglevel != undefined) {
+			logExp.parent = '[{dimension}.{hierarchy}].[{level}].members,';
 			logExp.parent = logExp.parent.replace(/{(\w+)}/g, function(m, p) {
 				return logExp[p];
 			});
@@ -540,7 +553,7 @@ var DateFilterModal = Modal.extend({
 			saikuDateProperty,
 			dates,
 			selectedData = {};
-		
+
 		if (self.hierarchy === null || self.hierarchy === undefined) {
 			self.hierarchy = self.dimension;
 		}
@@ -567,7 +580,7 @@ var DateFilterModal = Modal.extend({
 								self.dates.push(self.$el.find('#start-date').val());
 								self.dates.push(self.$el.find('#end-date').val());
 							}
-							
+
 							parentmembers = self.name;
 							fixedDateName = 'dayperiods';
 							comparisonOperator = $(radio).val();
@@ -593,10 +606,15 @@ var DateFilterModal = Modal.extend({
 					selectedData.periodSelect = $('#period-select').find(':selected').attr('id');
 				}
 
+				var p = "";
+				var workinglevel;
 				for (var i = 0, len = self.dataLevels.length; i < len; i++) {
 					if (self.dataLevels[i].analyzerDateFormat === analyzerDateFormat) {
 						if (self.dataLevels[i].name === self.name) {
 							parentmembers = self.name;
+						}
+						else{
+							workinglevel = self.dataLevels[i].name;
 						}
 					}
 				}
@@ -604,12 +622,13 @@ var DateFilterModal = Modal.extend({
 				var logExp = {
 					dimension: self.dimension,
 					hierarchy: self.hierarchy,
-					level: parentmembers,
-					parent: '',
+					level: self.name,
+					parent: p,
 					AnalyzerDateFormat: analyzerDateFormat,
 					periodamount: periodamount,
 					comparisonOperator: comparisonOperator,
-					saikuDateProperty: self.saikuDateProperty
+					saikuDateProperty: self.saikuDateProperty,
+					workinglevel: workinglevel
 				};
 
 				mdx = self.populate_mdx(logExp, fixedDateName);
