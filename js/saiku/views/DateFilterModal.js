@@ -374,9 +374,9 @@ var DateFilterModal = Modal.extend({
 	clear_selections: function(event) {
 		// clear dialog
 		this.show_fields(event);
-		this.$el.find('input').val('');
-		this.$el.find('#selected-date').empty();
+		this.$el.find('input[type="text"]').val('');
 		this.$el.find('select').prop('selectedIndex', 0);
+		this.$el.find('#selected-date').empty();
 		this.$el.find('.available-selections *').prop('checked', false);
 		// Clear variables
 		this.dates = [];
