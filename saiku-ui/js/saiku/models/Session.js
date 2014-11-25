@@ -26,7 +26,7 @@ var Session = Backbone.Model.extend({
     sessionid: null,
     upgradeTimeout: null,
     isAdmin: false,
-        
+    id: null,    
     initialize: function(args, options) {
         // Attach a custom event bus to this model
         _.extend(this, Backbone.Events);
@@ -115,7 +115,9 @@ var Session = Backbone.Model.extend({
             localStorage.clear();
         }
 
-        this.id = _.uniqueId('queryaction_');
+        this.set('id', _.uniqueId('queryaction_'));
+        this.destroy({async: false });
+
         this.clear();
         this.sessionid = null;
         this.username = null;
