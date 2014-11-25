@@ -125,8 +125,10 @@ SaikuChartRenderer.prototype.render = function() {
     _.delay(this.render_chart_element, 0, this);
 };
 
-SaikuChartRenderer.prototype.switch_chart = function(key) {
-
+SaikuChartRenderer.prototype.switch_chart = function(key, override) {
+	if((override != null || override != undefined) && (override.chartDefinition!=null || override.chartDefinition != undefined)) {
+		this.chartDefinition = override.chartDefinition;
+	}
     var keyOptions =
     {
                 "stackedBar" : {
@@ -134,7 +136,8 @@ SaikuChartRenderer.prototype.switch_chart = function(key) {
                     stacked: true
                 },
                 "bar" : {
-                    type: "BarChart"
+                    type: "BarChart",
+		    title: "Test Title"
                 },
                 "multiplebar" : {
                     type: "BarChart",
@@ -178,8 +181,10 @@ SaikuChartRenderer.prototype.switch_chart = function(key) {
                 }
     };
 
+	if(key === null || key === ''){
 
-    if (key == "sunburst") {
+	}
+    else if (key == "sunburst") {
         $(this.el).find('.zoombuttons a').hide();
         this.type = key;
         this.sunburst();
@@ -191,7 +196,7 @@ SaikuChartRenderer.prototype.switch_chart = function(key) {
         $(this.el).find('.zoombuttons a').hide();
         this.type = key;
         var o = keyOptions[key];
-        this.cccOptions = this.getQuickOptions(o);
+		this.cccOptions = this.getQuickOptions(o);
         this.define_chart();
         if (this.hasProcessed) {
             this.render();
@@ -363,6 +368,9 @@ SaikuChartRenderer.prototype.getQuickOptions = function(baseOptions) {
 
         if (this.adjustSizeTo) {
             var al = $(this.adjustSizeTo);
+//al.appendTo(document.body);
+//var width = al.width();
+//al.remove();
             if (al && al.length > 0) {
                 var runtimeWidth = al.width() - 40;
                 var runtimeHeight = al.height() - 40;
@@ -388,6 +396,7 @@ SaikuChartRenderer.prototype.getQuickOptions = function(baseOptions) {
             }
         }
 
+	options.colors = ['#AE1717', '#AE5B17', '#0E6868'];
         return options;
 };
 
@@ -452,6 +461,7 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
                                 } else {
                                     pvc.data.Data.toggleVisible(this.datums());
                                 }
+
                                 this.chart().render(true, true, false);
 
                             }
@@ -521,10 +531,15 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
                 hoverable: hoverable,
                 animate: animate
         }, this.chartDefinition);
-
+//	if(this.chartDefinition != undefined && this.chartDefinition.legend == true){
          if (self.zoom) {
+			 var l = runtimeChartDefinition.legend;
             runtimeChartDefinition = _.extend(runtimeChartDefinition, zoomDefinition);
+			 if(l === false){
+				 runtimeChartDefinition.legend = false;
+			 }
          }
+//}
 
         if (runtimeChartDefinition.type == "TreemapChart") {
             runtimeChartDefinition.legend.scenes.item.labelText = function() {
