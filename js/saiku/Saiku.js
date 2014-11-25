@@ -88,7 +88,7 @@ var Saiku = {
         },
 
         equals: function() {
-            params = Array.prototype.slice.call(arguments);
+            var params = Array.prototype.slice.call(arguments);
 
             var paramsURI = {},
                 keyValue,               
