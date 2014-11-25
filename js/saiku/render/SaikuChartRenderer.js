@@ -52,7 +52,7 @@ var SaikuChartRenderer = function(data, options) {
     if (this.rawdata) {
         if (this.type == "sunburst") {
             this.process_data_tree( { data : this.rawdata });
-        } else {    
+        } else {
             this.process_data_tree( { data : this.rawdata }, true, true);
         }
     }
@@ -86,13 +86,13 @@ SaikuChartRenderer.prototype.adjust = function () {
 SaikuChartRenderer.prototype.zoomin = function() {
         $(this.el).find('.canvas_wrapper').hide();
         var chart = this.chart.root;
-        var data = chart.data;         
+        var data = chart.data;
         data
         .datums(null, {selected: false})
         .each(function(datum) {
             datum.setVisible(false);
         });
-        data.clearSelected();         
+        data.clearSelected();
         chart.render(true, true, false);
         this.render_chart_element();
 };
@@ -149,7 +149,7 @@ SaikuChartRenderer.prototype.switch_chart = function(key) {
                 },
                 "line" : {
                     type: "LineChart"
-                }, 
+                },
                 "pie" : {
                     type: "PieChart",
                     multiChartIndexes: [0] // ideally this would be chosen by the user (count, which)
@@ -179,14 +179,14 @@ SaikuChartRenderer.prototype.switch_chart = function(key) {
     };
 
 
-    if (key == "suanburst") {
+    if (key == "sunburst") {
         $(this.el).find('.zoombuttons a').hide();
         this.type = key;
         this.sunburst();
         if (this.hasProcessed) {
             this.render();
         }
-        
+
     } else if (keyOptions.hasOwnProperty(key)) {
         $(this.el).find('.zoombuttons a').hide();
         this.type = key;
@@ -246,12 +246,12 @@ SaikuChartRenderer.prototype.sunburst = function() {
         .visible(function(d) { return d.depth > 0; })
         .strokeStyle("#000")
         .lineWidth(0.5)
-        .text(function(d) {  
+        .text(function(d) {
             var v = "";
             if (typeof d.nodeValue != "undefined") {
                 v = " : " + d.nodeValue;
             }
-            return (d.nodeName + v); 
+            return (d.nodeName + v);
         } )
                 .cursor('pointer')
                 .events("all")
@@ -260,7 +260,7 @@ SaikuChartRenderer.prototype.sunburst = function() {
     partition.label.add(pv.Label)
         .visible(function(d) { return d.angle * d.outerRadius >= 6; });
 
-    
+
         this.chart = vis;
 };
 
@@ -281,7 +281,7 @@ SaikuChartRenderer.prototype.cccOptionsDefault = {
             orthoAxisMinorTicks : false,
             colors: ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5" ]
         },
-        
+
         HeatGridChart: {
             orientation: "horizontal",
             useShapes: true,
@@ -297,11 +297,11 @@ SaikuChartRenderer.prototype.cccOptionsDefault = {
             yAxisSize: "20%"
 
         },
-        
+
         WaterfallChart: {
             orientation: "horizontal"
         },
-        
+
         PieChart: {
             multiChartColumnsMax: 3,
             multiChartMax: 30,
@@ -318,14 +318,14 @@ SaikuChartRenderer.prototype.cccOptionsDefault = {
             clickable: true
             //valuesLabelStyle: 'inside'
         },
-        
+
         LineChart: {
             extensionPoints: {
                 area_interpolate: "monotone", // cardinal
                 line_interpolate: "monotone"
             }
         },
-        
+
         StackedAreaChart: {
             extensionPoints: {
                 area_interpolate: "monotone",
@@ -350,7 +350,7 @@ SaikuChartRenderer.prototype.cccOptionsDefault = {
             multiChartMax: 30
         }
 };
-    
+
 SaikuChartRenderer.prototype.getQuickOptions = function(baseOptions) {
         var chartType = (baseOptions && baseOptions.type) || "BarChart";
         var options = _.extend({
@@ -371,10 +371,10 @@ SaikuChartRenderer.prototype.getQuickOptions = function(baseOptions) {
                 }
                 if (runtimeHeight > 0) {
                     options.height = runtimeHeight;
-                }   
+                }
             }
         }
-        
+
         if(this.data !== null && this.data.resultset.length > 5) {
             if(options.type === "HeatGridChart") {
 //                options.xAxisSize = 200;
@@ -387,11 +387,11 @@ SaikuChartRenderer.prototype.getQuickOptions = function(baseOptions) {
                     });
             }
         }
-        
+
         return options;
 };
 
-    
+
 SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
         if (!this.hasProcessed) {
             this.process_data_tree( { data : this.rawdata }, true, true);
@@ -488,7 +488,7 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
 
                     } else {
                         var kept = selfChart.keptVisibleDatumSet.length > 0 ? selfChart.keptVisibleDatumSet[selfChart.keptVisibleDatumSet.length - 1] : [];
-                        
+
                         var visibleOnes = data.datums(null, { visible: true }).array();
 
                         var baseSet = kept;
@@ -509,8 +509,8 @@ SaikuChartRenderer.prototype.define_chart = function(displayOptions) {
                             selfChart.keptVisibleDatumSet.push(newSelection);
                         }
                     }
-                    
-                
+
+
                 chart.render(true, true, false);
                 return [];
 
@@ -587,8 +587,8 @@ SaikuChartRenderer.prototype.render_chart_element = function(context) {
         }
         return false;
 };
-            
-    
+
+
 SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
     var self = this;
         var data = {};
@@ -606,7 +606,7 @@ SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
 
         if (args.data !== null && args.data.error !== null) {
             return;
-        }        
+        }
         // Check to see if there is data
         if (args.data === null || (args.data.cellset && args.data.cellset.length === 0)) {
             return;
@@ -673,8 +673,8 @@ SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
                     var record = [];
                     var flatrecord = [];
                     var parent = null;
-                    var rv = null;                        
-                    
+                    var rv = null;
+
                     for (labelCol = 0; labelCol <= lowest_level; labelCol++) {
                         if (cellset[row] && cellset[row][labelCol].value === 'null') {
                             currentDataPos = data;
@@ -721,7 +721,7 @@ SaikuChartRenderer.prototype.process_data_tree = function(args, flat, setdata) {
                             maybePercentage = false;
                         }
                         if (value > 0 && maybePercentage) {
-                            value = cell.value && cell.value.indexOf('%')>= 0 ? value * 100 : value; 
+                            value = cell.value && cell.value.indexOf('%')>= 0 ? value * 100 : value;
                         }
                         record.push(value);
 
