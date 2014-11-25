@@ -370,6 +370,7 @@ var DateFilterModal = Modal.extend({
 			dateFormat: 'yy/mm/dd'
 		});
 	},
+	
 
 	clear_selections: function(event) {
 		// clear dialog
