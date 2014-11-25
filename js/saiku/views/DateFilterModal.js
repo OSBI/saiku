@@ -354,9 +354,9 @@ var DateFilterModal = Modal.extend({
 					});
 				});
 				$(selection).find('#period-select > option').each(function(key, radio) {
-					if ($(radio).val() === null ||
-						$(radio).val() === undefined ||
-						$(radio).val() === '') {
+					if ($(radio).attr('value') === null ||
+						$(radio).attr('value') === undefined ||
+						$(radio).attr('value') === '') {
 						$(radio).addClass('keep-disabled');
 					}
 				});
@@ -486,7 +486,7 @@ var DateFilterModal = Modal.extend({
 	},
 
 	populate_mdx: function(logExp, fixedDateName, periodamount) {
-		if (logExp.workinglevel != logExp.level && logExp.workinglevel != undefined) {
+		if ((logExp.workinglevel === logExp.level || logExp.workinglevel !== logExp.level) && logExp.workinglevel !== undefined) {
 			logExp.parent = '[{dimension}.{hierarchy}].[{level}].members,';
 			logExp.parent = logExp.parent.replace(/{(\w+)}/g, function(m, p) {
 				return logExp[p];
@@ -631,14 +631,15 @@ var DateFilterModal = Modal.extend({
 					selectedData.periodSelect = $('#period-select').find(':selected').attr('id');
 				}
 
-				var p = "";
+				var p = '';
 				var workinglevel;
 				for (var i = 0, len = self.dataLevels.length; i < len; i++) {
 					if (self.dataLevels[i].analyzerDateFormat === analyzerDateFormat) {
 						if (self.dataLevels[i].name === self.name) {
 							parentmembers = self.name;
+							workinglevel = self.dataLevels[i].name;
 						}
-						else{
+						else {
 							workinglevel = self.dataLevels[i].name;
 						}
 					}
