@@ -173,7 +173,7 @@ var DateFilterModal = Modal.extend({
 		this.dates = [];
 		this.storage = new Saiku.singleton();
 
-		// _.bind(this);
+		_.bindAll(this, 'finished');
 
 		// Resize when rendered
 		this.bind('open', this.post_render);
@@ -188,8 +188,7 @@ var DateFilterModal = Modal.extend({
 		});
 
 		// Load template
-		this.$el.find('.dialog_body')
-			.html(this.template_dialog);
+		this.$el.find('.dialog_body').html(this.template_dialog);
 
 		this.$el.find('.available-selections *').prop('disabled', true).off('click');
 
