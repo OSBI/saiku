@@ -266,7 +266,7 @@ var WorkspaceDropZone = Backbone.View.extend({
 
         if (objData.level.annotations !== undefined &&
             objData.level.annotations !== null &&
-            objData.level.annotations.AnalyzerDateFormat !== undefined) {
+			(objData.level.annotations.AnalyzerDateFormat !== undefined || objData.level.annotations.SaikuDayFormatString !== undefined)) {
             // Launch date filter dialog
             (new DateFilterModal({
                 AnalyzerDateFormat: objData.level.annotations.AnalyzerDateFormat,
