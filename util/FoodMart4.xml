@@ -298,10 +298,10 @@
                     <Annotations><Annotation name="AnalyzerDateFormat">[yyyy]</Annotation></Annotations>
                 </Level>
                 <Level attribute='Quarter'>
-                    <Annotations><Annotation name="AnalyzerDateFormat">[yyyy].['Q'q]</Annotation></Annotations>
+                    <Annotations><Annotation name="AnalyzerDateFormat">[yyyy].[Qq]</Annotation></Annotations>
                 </Level>
                 <Level attribute='Month'>
-                    <Annotations><Annotation name="AnalyzerDateFormat">[yyyy].['Q'q].[mm]</Annotation></Annotations>
+                    <Annotations><Annotation name="AnalyzerDateFormat">[yyyy].[Qq].[mm]</Annotation></Annotations>
                 </Level>
             </Hierarchy>
             <Hierarchy name='Weekly' hasAll='true'>
