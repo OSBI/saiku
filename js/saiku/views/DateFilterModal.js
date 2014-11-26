@@ -300,9 +300,9 @@ var DateFilterModal = Modal.extend({
 					});
 				}
 
-				if (list[key].annotations.SaikuDateProperty &&
+				if (
 					list[key].annotations.SaikuDayFormatString) {
-					self.saikuDateProperty = list[key].annotations.SaikuDateProperty;
+					self.saikuDateProperty = "";
 					self.saikuDayFormatString = list[key].annotations.SaikuDayFormatString;
 				}
 			}
