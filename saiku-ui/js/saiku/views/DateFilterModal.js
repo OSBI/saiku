@@ -34,9 +34,11 @@ var DateFilterModal = Modal.extend({
 		'click .del-date'        : 'del_selected_date'
 	},
 
-	template_days_mdx: 'Filter([Time].[Date Only].[Date String].Members, [Time].[Date Only].[Date String].CurrentMember.NAME {comparisonOperator} \'{dates}\'',
+	// template_days_mdx: 'Filter([Time].[Date Only].[Date String].Members, [Time].[Date Only].[Date String].CurrentMember.NAME {comparisonOperator} \'{dates}\'',
+	template_days_mdx: 'Filter({parent}.Members, {parent}.CurrentMember.NAME {comparisonOperator} \'{dates}\'',
 
-	template_many_years_mdx: ' {logicalOperator} [Time].[Weekly].[Day].CurrentMember.NAME("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
+	// template_many_years_mdx: ' {logicalOperator} [Time].[Weekly].[Day].CurrentMember.NAME("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
+	template_many_years_mdx: ' {logicalOperator} {parent}.CurrentMember.NAME {comparisonOperator} \'{dates}\'',
 
 	template_mdx: '{parent} CurrentDateMember([{dimension}.{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
 
@@ -300,9 +302,9 @@ var DateFilterModal = Modal.extend({
 					});
 				}
 
-				if (list[key].annotations.SaikuDateProperty &&
+				if (
 					list[key].annotations.SaikuDayFormatString) {
-					self.saikuDateProperty = list[key].annotations.SaikuDateProperty;
+					self.saikuDateProperty = "";
 					self.saikuDayFormatString = list[key].annotations.SaikuDayFormatString;
 				}
 			}
@@ -498,6 +500,11 @@ var DateFilterModal = Modal.extend({
 		});
 
 		if (fixedDateName === 'dayperiods') {
+			logExp.parent = '[{dimension}].[{hierarchy}].[{level}]';
+			logExp.parent = logExp.parent.replace(/{(\w+)}/g, function(m, p) {
+				return logExp[p];
+			});
+
 			if (this.dates.length > 1) {
 				var len = this.dates.length,
 					i;
