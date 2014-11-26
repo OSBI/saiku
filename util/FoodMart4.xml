@@ -289,6 +289,7 @@
                 </Name>
             </Attribute>
             <Attribute name='Date' keyColumn='the_date' hasHierarchy='false'/>
+            <Attribute name='Date String' keyColumn='date_string' hasHierarchy='false'/>
             <Attribute name='Time Id' keyColumn='time_id' hasHierarchy='false'/>
         </Attributes>
 
@@ -316,7 +317,7 @@
                 </Level>
             </Hierarchy>
             <Hierarchy name='Date Only' hasAll='true'>
-                <Level attribute='Date'>
+                <Level attribute='Date String'>
                     <Annotations><Annotation name="SaikuDayFormatString">yyyy/mm/dd</Annotation></Annotations>
                 </Level>
             </Hierarchy>
