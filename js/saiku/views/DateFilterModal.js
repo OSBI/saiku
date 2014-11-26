@@ -387,7 +387,7 @@ var DateFilterModal = Modal.extend({
 	disable_divselections: function(event) {
 		var params = Array.prototype.slice.call(arguments),
 			$currentTarget = event.type ? $(event.currentTarget) : $(event);
-		
+
 		if (!params[1]) {
 			this.clear_selections(event);
 		}
@@ -489,7 +489,7 @@ var DateFilterModal = Modal.extend({
 	},
 
 	populate_mdx: function(logExp, fixedDateName, periodamount) {
-		if ((logExp.workinglevel === logExp.level || logExp.workinglevel !== logExp.level) && logExp.workinglevel !== undefined) {
+		if ((logExp.workinglevel !== logExp.level) && logExp.workinglevel !== undefined) {
 			logExp.parent = '[{dimension}.{hierarchy}].[{level}].members,';
 			logExp.parent = logExp.parent.replace(/{(\w+)}/g, function(m, p) {
 				return logExp[p];
