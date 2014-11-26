@@ -178,7 +178,7 @@ var Workspace = Backbone.View.extend({
         $(this.el).find('.workspace_results')
             .append($(this.table.el));
 
-        this.chart.render_view();
+this.chart.render_view();
         // Adjust tab when selected
         this.tab.bind('tab:select', this.adjust);
         $(window).resize(this.adjust);
@@ -340,6 +340,12 @@ var Workspace = Backbone.View.extend({
                                     : ('saiku.ui.render.type' in properties) ? properties['saiku.ui.render.type']
                                     : null;
 
+	    if(Settings.MODE == "table"){
+		renderMode= "table";
+	    }
+	    else if(Settings.MODE == "chart"){
+		renderMode="chart";
+	    }
             if (typeof renderMode != "undefined" && renderMode !== null) {
                 this.querytoolbar.switch_render(renderMode);
             }
