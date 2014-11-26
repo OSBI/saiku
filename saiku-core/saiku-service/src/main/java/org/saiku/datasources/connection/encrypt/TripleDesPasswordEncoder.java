@@ -8,7 +8,7 @@ import org.springframework.dao.DataAccessException;
  */
 public class TripleDesPasswordEncoder {
 
-    protected final static byte defaultKey1[] = { ( byte ) 0x93,
+    protected final static byte defaultKey1[] = { ( byte ) 0xa9,
             ( byte ) 0xa9,
             ( byte ) 0x0f,
             ( byte ) 0xb4,
@@ -17,7 +17,7 @@ public class TripleDesPasswordEncoder {
             ( byte ) 0x8d,
             ( byte ) 0x2c };
 
-    protected final static byte defaultKey2[] = { ( byte ) 0x75,
+    protected final static byte defaultKey2[] = { ( byte ) 0x2c,
             ( byte ) 0x2c,
             ( byte ) 0xf4,
             ( byte ) 0x5c,
