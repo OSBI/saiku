@@ -173,7 +173,7 @@ var DateFilterModal = Modal.extend({
 		this.query = args.workspace.query;
 		this.selections = [];
 		this.dates = [];
-		this.storage = new Saiku.singleton();
+		// this.storage = new Saiku.singleton();
 
 		_.bindAll(this, 'finished');
 
@@ -204,7 +204,7 @@ var DateFilterModal = Modal.extend({
 		this.add_values_fixed_date();
 		this.add_values_last_periods();
 
-		console.log(this.storage.get());
+		// console.log(this.storage.get());
 		this.populate();
 	},
 
@@ -440,7 +440,8 @@ var DateFilterModal = Modal.extend({
 	},
 
 	populate: function() {
-		var data = this.storage.get();
+		// var data = this.storage.get();
+		var data = this.get_storage();
 
 		if (data && !(_.isEmpty(data))) {
 			if (data.type === 'operator') {
@@ -672,13 +673,51 @@ var DateFilterModal = Modal.extend({
 			lName = decodeURIComponent(this.member.level),
 			hierarchy = this.workspace.query.helper.getHierarchy(hName);
 
-		this.storage.set(selectedData);
+		// this.storage.set(selectedData);
+		selectedData.name = this.name;
+		this.set_storage(selectedData);
 
 		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
 			hierarchy.levels[lName] = { mdx: mdx, name: lName };
 		}
 
 		this.finished();
+	},
+
+	set_storage: function(data) {
+		var self = this;
+		if (localStorage.getItem('dateFilter')) {
+			var arr = JSON.parse(localStorage.getItem('dateFilter'));
+			_.find(arr, function(value, key, list) {
+				if (list[key].name === self.name) {
+					arr[key] = data;
+					localStorage.setItem('dateFilter', JSON.stringify(arr));
+				}
+				else {
+					arr.push(data);
+					localStorage.setItem('dateFilter', JSON.stringify(arr));
+				}
+			});
+		}
+		else {
+			var arr = [];
+			arr.push(data);
+			localStorage.setItem('dateFilter', JSON.stringify(arr));
+		}
+	},
+
+	get_storage: function() {
+		var self = this,
+			data;
+		if (localStorage.getItem('dateFilter')) {
+			var arr = JSON.parse(localStorage.getItem('dateFilter'));
+			_.find(arr, function(value, key, list) {
+				if (list[key].name === self.name) {
+					data = list[key];
+				}
+			});
+		}
+		return data;
 	},
 
 	finished: function() {
