@@ -100,8 +100,11 @@ var Workspace = Backbone.View.extend({
 
     caption: function(increment) {
         if (this.query && this.query.model) {
-            if (this.query.model.mdx)
+            if (this.item && this.item.name) {
+                return this.item.name.split('.')[0];
+            } else if (this.query.model.mdx) {
                 return this.query.model.name;
+            }
         } else if (this.query && this.query.get('name')) {
             return this.query.get('name');
         }
