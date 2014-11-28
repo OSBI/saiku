@@ -137,7 +137,6 @@ SaikuChartRenderer.prototype.switch_chart = function(key, override) {
                 },
                 "bar" : {
                     type: "BarChart",
-		    title: "Test Title"
                 },
                 "multiplebar" : {
                     type: "BarChart",

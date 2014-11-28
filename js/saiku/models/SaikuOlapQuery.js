@@ -171,7 +171,28 @@ SaikuOlapQueryHelper.prototype.removeLevel = function(hierarchy, level) {
 };
 
 SaikuOlapQueryHelper.prototype.includeMeasure = function(measure) {
-  this.model().queryModel.details.measures.push(measure);
+  var measures = this.model().queryModel.details.measures,
+      len = measures.length,
+      i,
+      aux = false;
+  if (measures && !(_.isEmpty(measures))) {
+    for (i = 0; i < len; i++) {
+      if (measures[i].name === measure.name) {
+        aux = true;
+        break;
+      }
+      else {
+        aux = false;
+      }
+    }
+
+    if (aux === false) {
+      measures.push(measure);
+    }
+  }
+  else {
+    measures.push(measure);
+  }
 };
 
 SaikuOlapQueryHelper.prototype.removeMeasure = function(name) {
