@@ -100,8 +100,8 @@ var Session = Backbone.Model.extend({
     login_failed: function(response){
         this.form = new LoginForm({ session: this });
         this.form.render().open();
-		this.form.setError(response);
-	},
+        this.form.setError(response);
+    },
     logout: function() {
         // FIXME - This is a hack (inherited from old UI)
         Saiku.ui.unblock();
@@ -122,6 +122,7 @@ var Session = Backbone.Model.extend({
         this.sessionid = null;
         this.username = null;
         this.password = null;
+		this.roles = null;
         this.isAdmin = false;
         this.destroy({async: false });
         //console.log("REFRESH!");
