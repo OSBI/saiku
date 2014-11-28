@@ -235,6 +235,9 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
 
 	find_type_time: function (dimension, hierarchy, level) {
+        if (this.workspace.metadata === undefined) {
+            this.workspace.metadata = Saiku.session.sessionworkspace.cube[this.workspace.selected_cube];
+        }
 		var metadata = this.workspace.metadata.attributes.data,
 			value = {};
 		value.dimensions = _.findWhere(metadata.dimensions, {name: dimension});
