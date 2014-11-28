@@ -113,8 +113,8 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
             Node n = JcrUtils.getOrAddFolder(root, "homes");
             n.addMixin("nt:saikufolders");
 
-            Map<String, List<AclMethod>> m = new HashMap();
-            ArrayList l = new ArrayList();
+            HashMap<String, List<AclMethod>> m = new HashMap<String, List<AclMethod>>();
+            ArrayList<AclMethod> l = new ArrayList<AclMethod>();
             l.add(AclMethod.READ);
             m.put("ROLE_USER", l);
             AclEntry e = new AclEntry("admin", AclType.SECURED, m, null);
@@ -126,10 +126,26 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
             n = JcrUtils.getOrAddFolder(root, "datasources");
             n.addMixin("nt:saikufolders");
 
+            m = new HashMap<String, List<AclMethod>>();
+            l = new ArrayList<AclMethod>();
+            l.add(AclMethod.WRITE);
+            l.add(AclMethod.READ);
+            l.add(AclMethod.GRANT);
+            m.put("ROLE_ADMIN", l);
+            e = new AclEntry("admin", AclType.SECURED, m, null);
+
+            acl2 = new Acl2(n);
+            acl2.addEntry(n.getPath(), e);
+            acl2.serialize(n);
+
             n = JcrUtils.getOrAddFolder(root, "etc");
             n.addMixin("nt:saikufolders");
             n = JcrUtils.getOrAddFolder(n, "legacyreports");
             n.addMixin("nt:saikufolders");
+
+            acl2 = new Acl2(n);
+            acl2.addEntry(n.getPath(), e);
+            acl2.serialize(n);
 
             session.save();
             log.info("node added");

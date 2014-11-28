@@ -272,7 +272,11 @@
             <groupId>rhino</groupId>
             <artifactId>js</artifactId>
         </dependency>
-            
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+		</dependency>
+
 	</dependencies>
 	<reporting>
 		<plugins>

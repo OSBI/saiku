@@ -16,36 +16,41 @@
 package org.saiku.web.rest.resources;
 
 
+import org.saiku.olap.query2.ThinQuery;
+import org.saiku.web.rest.objects.resultset.QueryResult;
+import org.saiku.web.rest.util.ServletUtil;
+import org.saiku.web.svg.Converter;
+
+import com.lowagie.text.Image;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfStamper;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageTree;
+import org.apache.pdfbox.rendering.PDFRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.net.URL;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-
-import org.apache.commons.lang.StringUtils;
-import org.saiku.olap.query2.ThinQuery;
-import org.saiku.web.rest.objects.resultset.QueryResult;
-import org.saiku.web.rest.util.ServletUtil;
-import org.saiku.web.svg.Converter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 
 /**
  * QueryServlet contains all the methods required when manipulating an OLAP Query.
@@ -163,7 +168,7 @@ public class ExporterResource {
 	{
 		try {
 			final String imageType = type.toUpperCase();
-			Converter converter = Converter.byType(imageType);
+			Converter converter = Converter.byType("PDF");
 			if (converter == null)
 			{
 				throw new Exception("Image convert is null");
@@ -187,10 +192,61 @@ public class ExporterResource {
 			converter.convert(in, out, size);
 			out.flush();
 			byte[] doc = out.toByteArray();
-			return Response.ok(doc).type(converter.getContentType()).header(
-					"content-disposition",
-					"attachment; filename = chart." + converter.getExtension()).header(
-							"content-length",doc.length).build();
+		  ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		  PdfReader reader = new PdfReader(doc);
+		  PdfStamper pdfStamper = new PdfStamper(reader,
+			  baos);
+
+		  URL dir_url = ExporterResource.class.getResource("/org/saiku/web/svg/watermark.png");
+		  Image image = Image.getInstance(dir_url);
+
+
+		  for(int i=1; i<= reader.getNumberOfPages(); i++) {
+
+			PdfContentByte content = pdfStamper.getUnderContent(i);
+
+
+			image.setAbsolutePosition(0f, 280f);
+
+
+			content.addImage(image);
+		  }
+			pdfStamper.close();
+		  byte[] b = baos.toByteArray();
+
+
+		  if(!type.equals("pdf")) {
+
+			PDDocument document = PDDocument.load(new ByteArrayInputStream(b), null);
+
+			PDPageTree pdPages = document.getDocumentCatalog().getPages();
+			PDPage page = pdPages.get(0);
+			BufferedImage o = new PDFRenderer(document).renderImage(0);
+			ByteArrayOutputStream imgb = new ByteArrayOutputStream();
+			String ct = "";
+			String ext = "";
+			if(type.equals("png")){
+			  ct = "image/png";
+			  ext = "png";
+			}
+			else if(type.equals("jpg")){
+			  ct = "image/jpg";
+			  ext = "jpg";
+			}
+			ImageIO.write(o, type, imgb);
+			byte[] outfile = imgb.toByteArray();
+			return Response.ok(outfile).type(ct).header(
+				"content-disposition",
+				"attachment; filename = chart." + ext).header(
+				"content-length", outfile.length).build();
+		  }
+		  else{
+			return Response.ok(b).type(converter.getContentType()).header(
+				"content-disposition",
+				"attachment; filename = chart." + converter.getExtension()).header(
+				"content-length", b.length).build();
+		  }
 		} catch (Exception e) {
 			log.error("Error exporting Chart to  " + type, e);
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();

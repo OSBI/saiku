@@ -5,12 +5,16 @@ package org.saiku.web.svg;
  * @since 1/15/13, 10:29 AM
  */
 
-import java.io.*;
-
 import org.apache.batik.transcoder.*;
-import org.apache.batik.transcoder.image.*;
-import org.apache.commons.io.*;
-import org.apache.fop.svg.*;
+import org.apache.batik.transcoder.image.JPEGTranscoder;
+import org.apache.batik.transcoder.image.PNGTranscoder;
+import org.apache.batik.transcoder.image.TIFFTranscoder;
+import org.apache.commons.io.IOUtils;
+import org.apache.fop.svg.PDFTranscoder;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public abstract class Converter
 {

@@ -1,13 +1,15 @@
 package org.saiku.web.export;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
+import org.saiku.web.rest.objects.resultset.QueryResult;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
-import org.saiku.web.rest.objects.resultset.QueryResult;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
 public class JSConverter {
     public static String convertToHtml(QueryResult qr, boolean wrapcontent) throws IOException {
         ObjectMapper om = new ObjectMapper();
@@ -29,6 +31,8 @@ public class JSConverter {
         context.evaluateString(globalScope, code, "<mem>", 1, null);
         Context.exit();
         String content = sw.toString();
+        content = content+"<br/><div><p>Export Provided By Saiku Community Edition, please visit "
+                  + "http://meteorite.bi to upgrade and support the project</p></div>";
         return content;
     }
     public static String convertToHtml(QueryResult qr) throws IOException {
