@@ -50,7 +50,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         // Activate drop zones
         $(this.el).find('.fields_list_body.details ul.connectable').sortable({
             items:          '> li',
-            opacity:        0.60,
+            opacityg:        0.60,
             placeholder:    'placeholder',
             tolerance:      'pointer',
             containment:    $(self.workspace.el),
@@ -362,8 +362,22 @@ var WorkspaceDropZone = Backbone.View.extend({
                         }
                     };
                 });
-
-
+var levels=[];
+				 _.each(a.hierarchies, function(hierarchy){
+					 for(var property in hierarchy.levels){
+						 console.log(property);
+						 var n ="";
+						 if(hierarchy.levels[property].caption!=null){
+							 n = hierarchy.levels[property].caption;
+						 }
+						 else{
+							 n = hierarchy.levels[property].name;
+						 }
+						 levels[hierarchy.levels[property].name] = {
+							 name: n
+						 }
+					 }
+				 });
                 var addFun = function(items, fun) {
                     var ret = {};
                     for (var key in items) {
@@ -415,7 +429,11 @@ var WorkspaceDropZone = Backbone.View.extend({
                             "show_totals_max": {name: "Max", i18n: true},
                             "show_totals_avg": {name: "Avg", i18n: true}
                         }},
-
+						"parameters" : {name: "Parameters", i18n: true, items:
+				 		{
+					 		"ParamQuick": {name: "Add Parameter", i18n: true, items: addFun(levels, "Param")},
+							"ParamRemove": {name: "Remove Parameter", i18n: true, items: addFun(null, "Param")}
+				 		}},
                         "cancel" : { name: "Cancel", i18n: true }
 
                 };
