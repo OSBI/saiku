@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,13 +13,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * The query toolbar, and associated actions
  */
 var QueryToolbar = Backbone.View.extend({
 
-    
+
 
     events: {
         'click .options a.button': 'call',
@@ -35,10 +35,10 @@ var QueryToolbar = Backbone.View.extend({
     initialize: function(args) {
         // Keep track of parent workspace
         this.workspace = args.workspace;
-        
+
         // Maintain `this` in callbacks
         _.bindAll(this, "call","activate_buttons", "spark_bar", "spark_line", "render_row_viz", "run_row_viz", "switch_render_button");
-        
+
         this.render_mode = "table";
         this.spark_mode = null;
 
@@ -46,19 +46,19 @@ var QueryToolbar = Backbone.View.extend({
         this.workspace.bind('query:new', this.activate_buttons);
         this.workspace.bind('query:result', this.activate_buttons);
         this.workspace.bind('table:rendered', this.run_row_viz);
-        
+
     },
-    
+
     activate_buttons: function(args) {
         if (typeof args != "undefined" && args !== null ) {
             $(this.el).find('a').removeClass('disabled_toolbar');
             if (!args.data) {
                 $(this.el).find('a.export_button, a.stats').addClass('disabled_toolbar');
             }
-            if (isIE || Settings.BIPLUGIN5) {
+            if (isIE /*|| Settings.BIPLUGIN5*/) {
                 $(this.el).find('a.export_button').addClass('disabled_toolbar');
             }
-        }      
+        }
 
     },
 
@@ -66,15 +66,15 @@ var QueryToolbar = Backbone.View.extend({
         var template = $("#template-query-toolbar").html() || "";
         return _.template(template)();
     },
-    
+
     render: function() {
         $(this.el).html(this.template());
 
         $(this.el).find('render_table').addClass('on');
         $(this.el).find('ul.table').show();
-        return this; 
+        return this;
     },
-    
+
     switch_render_button: function(event) {
         var $target = $(event.target);
         event.preventDefault();
@@ -123,7 +123,7 @@ var QueryToolbar = Backbone.View.extend({
             if (hasRun) {
                 this.workspace.table.render({ data: this.workspace.query.result.lastresult() });
             }
-            
+
         }
         return false;
     },
@@ -133,7 +133,7 @@ var QueryToolbar = Backbone.View.extend({
         if (!$target.hasClass('disabled_toolbar')) {
             // Determine callback
             var callback = $target.attr('href').replace('#', '');
-            
+
             // Attempt to call callback
             if (this.render_mode == "table" && this[callback]) {
                 this[callback](event);
@@ -150,7 +150,7 @@ var QueryToolbar = Backbone.View.extend({
                     this.workspace.query.setProperty('saiku.ui.render.type', callback);
                 }
 
-                
+
             }
         }
         event.preventDefault();
@@ -200,7 +200,7 @@ var QueryToolbar = Backbone.View.extend({
                 val = (typeof val != "undefined" && val !== "" && val !== null && val  != "undefined") ? parseFloat(val) : 0;
                 rowData.push(val);
             });
-            
+
             $("<td class='data spark'>&nbsp;<div id='chart" + index + "'></div></td>").appendTo($(element));
 
             var width = rowData.length * 9;
@@ -218,7 +218,7 @@ var QueryToolbar = Backbone.View.extend({
                             .left(pv.Scale.linear(0, rowData.length).range(0, width).by(pv.index))
                             .height(pv.Scale.linear(0,_.max(rowData)).range(0, 12))
                             .width(6)
-                            .bottom(0);        
+                            .bottom(0);
                     } else if (type == "spark_line") {
                         width = width / 2;
                         vis.width(width);
@@ -227,7 +227,7 @@ var QueryToolbar = Backbone.View.extend({
                             .left(pv.Scale.linear(0, rowData.length - 1).range(0, width).by(pv.index))
                             .bottom(pv.Scale.linear(rowData).range(0, 12))
                             .strokeStyle("#000")
-                            .lineWidth(1);        
+                            .lineWidth(1);
                     }
                     vis.render();
                 }

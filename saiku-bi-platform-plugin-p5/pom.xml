@@ -139,6 +139,57 @@
 									<artifactId>cpf-pentaho5</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
+								<!-- Batik/SVG -->
+								<artifactItem>
+									<groupId>org.apache.xmlgraphics</groupId>
+									<artifactId>batik-transcoder</artifactId>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.apache.xmlgraphics</groupId>
+									<artifactId>batik-codec</artifactId>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>avalon-framework</groupId>
+									<artifactId>avalon-framework</artifactId>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.apache.xmlgraphics</groupId>
+									<artifactId>xmlgraphics-commons</artifactId>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.lowagie</groupId>
+									<artifactId>itext</artifactId>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.itextpdf</groupId>
+									<artifactId>itextpdf</artifactId>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>com.itextpdf.tool</groupId>
+									<artifactId>xmlworker</artifactId>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>rhino</groupId>
+									<artifactId>js</artifactId>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.apache.pdfbox</groupId>
+									<artifactId>pdfbox</artifactId>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.apache.xmlgraphics</groupId>
+									<artifactId>fop</artifactId>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
 							</artifactItems>
 						</configuration>
 					</execution>
@@ -501,6 +552,49 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
             <version>2.0.5.RELEASE</version>
+		</dependency>
+
+		<!-- Batik/SVG -->
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-transcoder</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>batik-codec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>avalon-framework</groupId>
+			<artifactId>avalon-framework</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>xmlgraphics-commons</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf</groupId>
+			<artifactId>itextpdf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.itextpdf.tool</groupId>
+			<artifactId>xmlworker</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>rhino</groupId>
+			<artifactId>js</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlgraphics</groupId>
+			<artifactId>fop</artifactId>
+			<version>0.94</version>
 		</dependency>
 
 	</dependencies>

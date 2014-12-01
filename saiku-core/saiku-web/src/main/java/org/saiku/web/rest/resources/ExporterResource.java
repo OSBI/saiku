@@ -38,9 +38,11 @@ import org.springframework.stereotype.Component;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
@@ -192,29 +194,35 @@ public class ExporterResource {
 			converter.convert(in, out, size);
 			out.flush();
 			byte[] doc = out.toByteArray();
-		  ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		  byte[] b = null;
+		  if(getVersion()!=null && !getVersion().contains("EE")) {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-		  PdfReader reader = new PdfReader(doc);
-		  PdfStamper pdfStamper = new PdfStamper(reader,
-			  baos);
+			PdfReader reader = new PdfReader(doc);
+			PdfStamper pdfStamper = new PdfStamper(reader,
+				baos);
 
-		  URL dir_url = ExporterResource.class.getResource("/org/saiku/web/svg/watermark.png");
-		  Image image = Image.getInstance(dir_url);
-
-
-		  for(int i=1; i<= reader.getNumberOfPages(); i++) {
-
-			PdfContentByte content = pdfStamper.getOverContent(i);
+			URL dir_url = ExporterResource.class.getResource("/org/saiku/web/svg/watermark.png");
+			Image image = Image.getInstance(dir_url);
 
 
-			image.setAbsolutePosition(450f, 280f);
+			for (int i = 1; i <= reader.getNumberOfPages(); i++) {
+
+			  PdfContentByte content = pdfStamper.getOverContent(i);
+
+
+			  image.setAbsolutePosition(450f, 280f);
 			/*image.setAbsolutePosition(reader.getPageSize(1).getWidth() - image.getScaledWidth(), reader.getPageSize
 				(1).getHeight() - image.getScaledHeight());*/
-			//image.setAlignment(Image.MIDDLE);
-			content.addImage(image);
-		  }
+			  //image.setAlignment(Image.MIDDLE);
+			  content.addImage(image);
+			}
 			pdfStamper.close();
-		  byte[] b = baos.toByteArray();
+			b = baos.toByteArray();
+		  }
+		  else{
+			b = doc;
+		  }
 
 
 		  if(!type.equals("pdf")) {
@@ -253,4 +261,27 @@ public class ExporterResource {
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+
+
+  public static String getVersion() {
+	Properties prop = new Properties();
+	InputStream input = null;
+	String version = "";
+	ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+	InputStream is = classloader.getResourceAsStream("org/saiku/web/rest/resources/version.properties");
+	try {
+
+	  //input = new FileInputStream("version.properties");
+
+	  // load a properties file
+	  prop.load(is);
+
+	  // get the property value and print it out
+	  System.out.println(prop.getProperty("VERSION"));
+	  version = prop.getProperty("VERSION");
+	} catch (IOException e) {
+	  e.printStackTrace();
+	}
+	return version;
+  }
 }
