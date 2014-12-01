@@ -31,8 +31,8 @@ public class JSConverter {
         context.evaluateString(globalScope, code, "<mem>", 1, null);
         Context.exit();
         String content = sw.toString();
-        content = content+"<br/><div><p>Export Provided By Saiku Community Edition, please visit "
-                  + "http://meteorite.bi to upgrade and support the project</p></div>";
+        content = content+"<br/><div><h5>Export Provided By Saiku Analytics Community Edition(http://meteorite.bi)"
+                  + "</h5></div>";
         return content;
     }
     public static String convertToHtml(QueryResult qr) throws IOException {

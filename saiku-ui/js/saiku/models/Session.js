@@ -122,6 +122,7 @@ var Session = Backbone.Model.extend({
         this.sessionid = null;
         this.username = null;
         this.password = null;
+		this.roles = null;
         this.isAdmin = false;
         this.destroy({async: false });
         //console.log("REFRESH!");

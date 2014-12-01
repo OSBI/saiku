@@ -204,12 +204,13 @@ public class ExporterResource {
 
 		  for(int i=1; i<= reader.getNumberOfPages(); i++) {
 
-			PdfContentByte content = pdfStamper.getUnderContent(i);
+			PdfContentByte content = pdfStamper.getOverContent(i);
 
 
-			image.setAbsolutePosition(0f, 280f);
-
-
+			image.setAbsolutePosition(450f, 280f);
+			/*image.setAbsolutePosition(reader.getPageSize(1).getWidth() - image.getScaledWidth(), reader.getPageSize
+				(1).getHeight() - image.getScaledHeight());*/
+			//image.setAlignment(Image.MIDDLE);
 			content.addImage(image);
 		  }
 			pdfStamper.close();
