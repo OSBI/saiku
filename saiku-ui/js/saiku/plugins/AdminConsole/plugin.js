@@ -56,8 +56,8 @@ var AdminConsole = Backbone.View.extend({
             license = new License();
 
         license.fetch_license('api/license/', function(opt) {
-            if (opt.status !== 'error') {
-                that.licenseInfo = opt.data;
+            if (opt.status === 'success') {
+                that.licenseInfo = opt.data.toJSON();
             }
             else {
                 $(that.el).find('.license_container').hide();
