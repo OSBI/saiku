@@ -24,20 +24,6 @@ var License = Backbone.Model.extend({
 	},
 
 	fetch_license: function(path, callback) {
-		/*$.ajax({
-			type: 'GET',
-			url: Settings.REST_URL + path,
-			success: function(res) {
-				if (callback && typeof(callback) === 'function') {
-					callback({status: 'success', data: res});
-				}
-			},
-			error: function(err) {
-				if (callback && typeof(callback) === 'function') {
-					callback({status: 'error', data: err});
-				}
-			}
-		});*/
 		this.fetch({
 			success: function(res) {
 				if (callback && typeof(callback) === 'function') {
@@ -50,5 +36,10 @@ var License = Backbone.Model.extend({
 				}
 			}
 		});
-	}
+	},
+
+    toJSON: function() {
+        var attr = _.clone(this.attributes);
+        return attr;
+    }
 });
