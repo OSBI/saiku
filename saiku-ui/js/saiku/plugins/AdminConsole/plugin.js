@@ -43,7 +43,10 @@ var AdminConsole = Backbone.View.extend({
         'click .submitrestore' : 'restoreFile',
         'click .submitrestorelegacy' : 'restoreLegacy',
 
-        'click .license_info' : 'show_license_info'
+        'click .license_info' : 'show_license_info',
+        'click .license_users_list' : 'show_license_user_list',
+        'click .add_license_user' : 'add_license_user',
+        'click .remove_license_user' : 'remove_license_user'
     },
     initialize: function (args) {
         _.bindAll(this, "fetch_users", "fetch_schemas", "fetch_datasources", "clear_users", "clear_datasources", "new_add_role", "new_remove_role", "save_new_user", "advanced_url", "view_datasource");
@@ -58,6 +61,8 @@ var AdminConsole = Backbone.View.extend({
         license.fetch_license('api/license/', function(opt) {
             if (opt.status === 'success') {
                 that.licenseInfo = opt.data.toJSON();
+                that.licenseUsers = new LicenseUsersCollection(null, {});
+                that.licenseUsers.fetch();
             }
             else {
                 $(that.el).find('.license_container').hide();
@@ -69,10 +74,80 @@ var AdminConsole = Backbone.View.extend({
         var html = this.licenseInfoTemplate;
 
         yourEpoch = parseFloat(this.licenseInfo.expiration);
-        var yourDate = new Date( yourEpoch  );
+        var yourDate = new Date(yourEpoch);
         $(this.el).find('.user_info').html(html);
         $(this.el).find('.license_type > li:nth-child(1)').append(this.licenseInfo.licenseType);
         $(this.el).find('.license_type > li:nth-child(2)').append(yourDate.toLocaleDateString());
+    },
+
+    show_license_user_list: function(event) {
+        event ? event.preventDefault() : '';
+        var html = this.licenseAddUserTemplate;
+        $(this.el).find('.user_info').html(html);
+        var listUsers = this.licenseUsers.toJSON();
+        if (listUsers && !(_.isEmpty(listUsers))) {
+            var htmlListUsers = this.list_users_license_template(listUsers);
+            $(this.el).find('.license_listusers').html(htmlListUsers);  
+        }
+    },
+
+    add_license_user: function(event) {
+        event.preventDefault();
+        var self = this;
+        var user = new LicenseUserModel();
+        var name = $(this.el).find("input[name='username']").val();
+
+        if (name !== '') {
+            this.licenseUsers.add({
+                name: name
+            });
+
+            user.save({}, {
+                data: JSON.stringify(self.licenseUsers.toJSON()),
+                contentType: "application/json",
+                success: function(data) {
+                    $(self.el).find("input[name='username']").val('');
+                    self.licenseUsers.fetch();
+                    self.show_license_user_list();
+                },
+                error: function(data) {
+                    $(self.el).find("input[name='username']").val('');
+                    self.licenseUsers.fetch();
+                    self.show_license_user_list();
+                }
+            });
+        }
+        else {
+            alert('The username field can not be empty!');
+            $(this.el).find("input[name='username']").focus();
+        }
+    },
+
+    remove_license_user: function(event) {
+        event.preventDefault();
+        var $currentTarget = $(event.currentTarget);
+        var self = this;
+        var idUser = $currentTarget.parent().attr('id').split('-')[1];
+        var user = this.licenseUsers.get(idUser);
+        user.destroy({
+            wait: true,
+            success: function(data) {
+                self.licenseUsers.fetch();
+                self.show_license_user_list();
+            },
+            error: function(data) {
+                self.licenseUsers.fetch();
+                self.show_license_user_list();
+            }
+        });
+    },
+
+    list_users_license_template: function(obj) {
+        return _.template(
+            '<% _.each(obj, function(entry) { %>' +
+                '<li id="user-<%= entry.id %>"><%= entry.name %> <a href="#" class="remove_license_user">x</a></li>' +
+            '<% }); %>'
+        )(obj);
     },
 
     back_query: function() {
@@ -133,7 +208,8 @@ var AdminConsole = Backbone.View.extend({
             "<li><strong>Maintenance</strong>" +
             "<ul><li class='backup_restore'>Backup/Restore</li></ul></li>"+
             "<li class='license_container'><strong>License</strong>" +
-            "<ul><li class='license_info'>Information</li></ul></li>"+
+            "<ul><li class='license_info'>Information</li>" +
+            "<li class='license_users_list'>Users List</li></ul></li>"+
             "</ul>" +
             "</ul>" +
             "</div>" +
@@ -357,6 +433,13 @@ var AdminConsole = Backbone.View.extend({
     licenseInfoTemplate: _.template("<h3>License Information</h3>" +
         "<ul class='license_type'><li><strong>License Type: </strong></li>" +
         "<li><strong>License Expiry: </strong></li></ul>"),
+    licenseAddUserTemplate: _.template("<form>" +
+        "<h3>Add user</h3><br>" +
+        "<label for='username'>Username:</label> <input type='text' name='username'>" +
+        "<a href='#' class='add_license_user form_button user_button'>Add User</a><div class='clear'></div><br>" +
+        "<h3>List of Users</h3>" + 
+        "<ol class='license_listusers'></ol>" +
+        "</form>"),
 
     view_user: function (event) {
         event.preventDefault();

@@ -18,8 +18,9 @@
  * Model which fetches the information of license
  */
 var License = Backbone.Model.extend({
+	url: 'api/license',
+
 	initialize: function() {
-		this.url = "api/license";
 		_.bindAll(this, 'fetch_license');
 	},
 
@@ -36,10 +37,14 @@ var License = Backbone.Model.extend({
 				}
 			}
 		});
-	},
+	}
+});
 
-    toJSON: function() {
-        var attr = _.clone(this.attributes);
-        return attr;
-    }
+var LicenseUserModel = Backbone.Model.extend({
+	url: 'api/license/users'
+});
+
+var LicenseUsersCollection = Backbone.Collection.extend({
+	url: 'api/license/users',
+    model: LicenseUserModel
 });
