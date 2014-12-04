@@ -41,20 +41,7 @@ var License = Backbone.Model.extend({
 });
 
 var LicenseUserModel = Backbone.Model.extend({
-	url: 'api/license/users',
-
-    initialize: function (args, options) {
-        if (options && options.dialog) {
-            this.dialog = options.dialog;
-        }
-    },
-
-    parse: function (response) {
-        if (this.dialog) {
-            this.dialog.populate(response);
-        }
-        return response;
-    }
+	url: 'api/license/users'
 });
 
 var LicenseUsersCollection = Backbone.Collection.extend({
