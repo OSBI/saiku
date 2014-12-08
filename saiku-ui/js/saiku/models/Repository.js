@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * Repository query
  */
@@ -25,7 +25,7 @@ var repoPathUrl = function() {
     */
     if (Settings.BIPLUGIN)
         return "pentaho/repository";
-    
+
     return  RepositoryUrl;
 };
 
@@ -63,13 +63,13 @@ var SavedQuery = Backbone.Model.extend({
         //console.log("response: " + response);
         //this.xml = response;
     },
-    
+
     url: function() {
         var u = repoPathUrl() + "/resource";
         return u;
 
     },
-    
+
     move_query_to_workspace: function(model, response) {
         var file = response;
         var filename = model.get('file');
@@ -80,16 +80,16 @@ var SavedQuery = Backbone.Model.extend({
                 var Re2 = new RegExp("\\$\\{" + variable.toLowerCase() + "\\}","g");
                 file = file.replace(Re,Settings[key]);
                 file = file.replace(Re2,Settings[key]);
-                
+
             }
         }
-        var query = new Query({ 
+        var query = new Query({
             xml: file,
             formatter: Settings.CELLSET_FORMATTER
         },{
             name: filename
         });
-        
+
         var tab = Saiku.tabs.add(new Workspace({ query: query }));
     }
 });
@@ -99,21 +99,24 @@ var SavedQuery = Backbone.Model.extend({
  */
 var Repository = Backbone.Collection.extend({
     model: SavedQuery,
-    
+	file: null,
     initialize: function(args, options) {
         if (options && options.dialog) {
             this.dialog = options.dialog;
         }
     },
-    
+
     parse: function(response) {
         if (this.dialog) {
             this.dialog.populate(response);
         }
     },
-    
-    url: function() {
-        var segment = repoPathUrl() + "?type=saiku";
-        return segment;
-    }
+
+	url: function() {
+		var segment = repoPathUrl() + "?type=saiku";
+		if (Settings.REPO_BASE && !this.file) {
+			segment += "&path=" + Settings.REPO_BASE;
+		}
+		return segment;
+	}
 });

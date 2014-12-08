@@ -568,6 +568,7 @@ textarea, select {
     text-align: left !important;
     padding: 0.2em !important;
     line-height: 16px !important;
+	z-index: 99999;
 }
 
 .ui-dialog.ui-draggable-dragging .form_button {
@@ -766,7 +767,7 @@ textarea, select {
 }
 .dialog_selections {
 	min-width: 800px !important;
-    height: 490px !important;
+	height: 530px !important;
 }
 .dialog_selections .dialog_icon,
 .dialog_date-filter .dialog_icon {
@@ -965,7 +966,7 @@ textarea, select {
     padding: 0;
     max-height: 50px;
     list-style: none;
-    overflow: auto;   
+    overflow: auto;
 }
 
 .dialog_date-filter .dialog_body .form-group #selected-date a {
@@ -975,7 +976,7 @@ textarea, select {
 }
 
 .dialog_date-filter .dialog_body .form-group #selected-date a:hover {
-    text-decoration: underline;   
+    text-decoration: underline;
 }
 
 .dialog_permissions .dialog_body {
@@ -1812,6 +1813,7 @@ span.cancel_search:hover {
 }
 .RepositoryObjects li.query {
     margin-left: 16px;
+	z-index: 10000;
 }
 
 
@@ -2274,4 +2276,7 @@ width:70px !important;
 
 #date-input {
 	width:50px;
+}
+.drop-over {
+ background-color: #F0F8FF;
 }
