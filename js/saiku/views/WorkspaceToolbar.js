@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * The workspace toolbar, and associated actions
  */
@@ -22,34 +22,34 @@ var WorkspaceToolbar = Backbone.View.extend({
     events: {
         'click a': 'call'
     },
-    
+
     initialize: function(args) {
         // Keep track of parent workspace
         this.workspace = args.workspace;
-        
+
         // Maintain `this` in callbacks
         _.bindAll(this, "call", "reflect_properties", "run_query",
             "swap_axes_on_dropzones", "display_drillthrough","clicked_cell_drillthrough_export",
             "clicked_cell_drillthrough","activate_buttons", "switch_to_mdx","post_mdx_transform", "toggle_fields_action");
-        
+
         // Redraw the toolbar to reflect properties
         this.workspace.bind('properties:loaded', this.reflect_properties);
-        
+
         // Fire off workspace event
-        this.workspace.trigger('workspace:toolbar:render', { 
+        this.workspace.trigger('workspace:toolbar:render', {
             workspace: this.workspace
         });
-        
+
         // Activate buttons when a new query is created or run
         this.workspace.bind('query:new', this.activate_buttons);
         this.workspace.bind('query:result', this.activate_buttons);
-        
+
     },
-    
+
     activate_buttons: function(args) {
         if (args !== null && args.data && args.data.cellset && args.data.cellset.length > 0 ) {
             $(args.workspace.toolbar.el).find('.button')
-                .removeClass('disabled_toolbar');       
+                .removeClass('disabled_toolbar');
 
             $(args.workspace.el).find("td.data").removeClass('cellhighlight').unbind('click');
             $(args.workspace.el).find(".table_mode").removeClass('on');
@@ -71,23 +71,23 @@ var WorkspaceToolbar = Backbone.View.extend({
         var template = $("#template-workspace-toolbar").html() || "";
         return _.template(template)();
     },
-    
+
     render: function() {
         $(this.el).html(this.template());
-        
-        return this; 
+
+        return this;
     },
-    
+
     call: function(event) {
         // Determine callback
         event.preventDefault();
         var callback = event.target.hash.replace('#', '');
-        
+
         // Attempt to call callback
         if (! $(event.target).hasClass('disabled_toolbar') && this[callback]) {
             this[callback](event);
         }
-        
+
         return false;
     },
 
@@ -102,7 +102,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         if (properties['saiku.olap.query.automatic_execution'] === true) {
             $(this.el).find('.auto').addClass('on');
         }
-        
+
         if (properties['saiku.olap.query.drillthrough'] !== true) {
             $(this.el).find('.drillthrough, .drillthrough_export').addClass('disabled_toolbar');
         }
@@ -145,11 +145,11 @@ var WorkspaceToolbar = Backbone.View.extend({
             $(this.el).find('a.edit').show('normal');
         }
     },
-    
+
     new_query: function(event) {
         this.workspace.switch_view_state('edit');
         this.workspace.new_query();
-        
+
         return false;
     },
 
@@ -178,23 +178,23 @@ var WorkspaceToolbar = Backbone.View.extend({
             (new OpenDialog()).render().open();
     },
 
-    
+
     run_query: function(event) {
         this.workspace.query.run(true);
     },
-    
+
     automatic_execution: function(event) {
         // Change property
         var newState = !this.workspace.query.getProperty('saiku.olap.query.automatic_execution');
         this.workspace.query.setProperty('saiku.olap.query.automatic_execution', newState);
 
         if (newState) {
-            $(event.target).addClass('on');    
+            $(event.target).addClass('on');
         } else {
-            $(event.target).removeClass('on');    
+            $(event.target).removeClass('on');
         }
     },
-    
+
     toggle_fields: function(event) {
         var self = this;
         if (event) {
@@ -205,7 +205,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         } else {
             this.toggle_fields_action('show');
         }
-        
+
     },
 
     toggle_fields_action: function(action, dontAnimate) {
@@ -222,9 +222,9 @@ var WorkspaceToolbar = Backbone.View.extend({
             } else {
                 $('.workspace_editor').hide();
             }
-            return; 
+            return;
         }
-        
+
         if (action == 'hide') {
             $(this.workspace.el).find('.workspace_editor').hide();
         } else {
@@ -248,9 +248,9 @@ var WorkspaceToolbar = Backbone.View.extend({
                 if ($('.workspace_editor').is(':hidden')) {
                     $('.workspace_editor').height(wf);
                 } else {
-                    $('.workspace_editor').css('height','');                    
+                    $('.workspace_editor').css('height','');
                 }
-                
+
                 self.workspace.adjust();
             }
         });
@@ -259,11 +259,11 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
 
 
-    
+
     toggle_sidebar: function() {
         this.workspace.toggle_sidebar();
     },
-    
+
     group_parents: function(event) {
         $(event.target).toggleClass('on');
         if ($(event.target).hasClass('on')) {
@@ -280,14 +280,14 @@ var WorkspaceToolbar = Backbone.View.extend({
         this.workspace.query.helper.nonEmpty(nonEmpty);
 
         this.workspace.query.setProperty('saiku.olap.query.nonempty', nonEmpty);
-    
+
         // Toggle state of button
         $(event.target).toggleClass('on');
-        
+
         // Run query
         this.workspace.query.run();
     },
-    
+
     swap_axis: function(event) {
         // Swap axes
         $(this.workspace.el).find('.workspace_results table').html('');
@@ -295,12 +295,12 @@ var WorkspaceToolbar = Backbone.View.extend({
         this.workspace.sync_query();
         this.workspace.query.run(true);
     },
-    
+
 
     check_modes: function(source) {
         if (typeof source === "undefined" || source === null)
             return;
-        
+
         if ($(this.workspace.el).find( ".workspace_results tbody.ui-selectable" ).length > 0) {
             $(this.workspace.el).find( ".workspace_results tbody" ).selectable( "destroy" );
         }
@@ -320,7 +320,7 @@ var WorkspaceToolbar = Backbone.View.extend({
                 this.workspace.query.scenario.activate();
                 $(this.workspace.el).find(".drillthrough, .drillthrough_export, .zoom_mode").removeClass('on');
             } else if ($(source).hasClass('zoom_mode')) {
-                
+
                 var self = this;
                 $(self.workspace.el).find( ".workspace_results tbody" ).selectable({ filter: "td", stop: function( event, ui ) {
                     var positions = [];
@@ -334,33 +334,39 @@ var WorkspaceToolbar = Backbone.View.extend({
 
                     positions = _.uniq(positions);
                     if (positions.length > 0) {
-                        self.workspace.query.action.put("/zoomin", { success: self.workspace.sync_query,
-                                data: { selections : JSON.stringify(positions) }
-                            });
+						self.workspace.query.action.put("/zoomin", { success: function(model, response) {
+							self.workspace.query.parse(response);
+							self.workspace.unblock();
+							self.workspace.sync_query();
+							Saiku.ui.unblock();
+							self.workspace.query.run();
+						},
+							data: { selections : JSON.stringify(positions) }
+						});
                     }
                 } });
                 $(this.workspace.el).find(".drillthrough, .drillthrough_export").removeClass('on');
             }
         }
 
-                
+
     },
     query_scenario: function(event) {
        $(event.target).toggleClass('on');
-        this.check_modes($(event.target));        
+        this.check_modes($(event.target));
 
     },
     zoom_mode: function(event) {
        $(event.target).toggleClass('on');
-        this.check_modes($(event.target));        
+        this.check_modes($(event.target));
 
     },
 
     drillthrough: function(event) {
        $(event.target).toggleClass('on');
-        this.check_modes($(event.target));        
+        this.check_modes($(event.target));
     },
-    
+
     display_drillthrough: function(model, response) {
         this.workspace.table.render({ data: response });
         Saiku.ui.unblock();
@@ -368,13 +374,13 @@ var WorkspaceToolbar = Backbone.View.extend({
 
     export_drillthrough: function(event) {
         $(event.target).toggleClass('on');
-        this.check_modes($(event.target));        
+        this.check_modes($(event.target));
     },
 
     clicked_cell_drillthrough_export: function(event) {
         $target = $(event.target).hasClass('data') ?
             $(event.target).find('div') : $(event.target);
-        var pos = $target.attr('rel');     
+        var pos = $target.attr('rel');
         (new DrillthroughModal({
             workspace: this.workspace,
             maxrows: 10000,
@@ -383,7 +389,7 @@ var WorkspaceToolbar = Backbone.View.extend({
             position: pos,
             query: this.workspace.query
         })).open();
-   
+
     },
 
     clicked_cell_drillthrough: function(event) {
@@ -399,11 +405,14 @@ var WorkspaceToolbar = Backbone.View.extend({
             position: pos,
             query: this.workspace.query
         })).open();
-   
+
     },
 
     swap_axes_on_dropzones: function(model, response) {
-        this.workspace.query.parse(response);
+		this.workspace.query.parse(response);
+		this.workspace.unblock();
+		this.workspace.sync_query();
+		Saiku.ui.unblock();
         /*
         $columns = $(this.workspace.drop_zones.el).find('.columns')
             .children()
@@ -411,7 +420,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         $rows = $(this.workspace.drop_zones.el).find('.rows')
             .children()
             .detach();
-            
+
         $(this.workspace.drop_zones.el).find('.columns').append($rows);
         $(this.workspace.drop_zones.el).find('.rows').append($columns);
         var rowLimit = $(this.workspace).find('fields_list.ROWS .limit').hasClass('on') | false;
@@ -429,18 +438,18 @@ var WorkspaceToolbar = Backbone.View.extend({
         this.workspace.sync_query();
         Saiku.ui.unblock();
     },
-    
+
     show_mdx: function(event) {
         //this.workspace.query.enrich();
 
         (new MDXModal({ mdx: this.workspace.query.model.mdx })).render().open();
     },
-    
+
     export_xls: function(event) {
         window.location = Settings.REST_URL +
             this.workspace.query.url() + "/export/xls/" + this.workspace.query.getProperty('saiku.olap.result.formatter');
     },
-    
+
     export_csv: function(event) {
         window.location = Settings.REST_URL +
             this.workspace.query.url() + "/export/csv";
@@ -529,7 +538,7 @@ var WorkspaceToolbar = Backbone.View.extend({
             self.editor.getSession().setValue("");
             self.editor.getSession().on('change', heightUpdateFunction);
             $(window).resize(resizeFunction);
-            
+
             self.editor.on('changeSelection', heightUpdateFunction);
             self.editor.on('focus', function(e) { heightUpdateFunction(); return true; });
             self.editor.on('blur', function(e) {
@@ -544,7 +553,7 @@ var WorkspaceToolbar = Backbone.View.extend({
 
             //this.editor.setTheme("ace/theme/crimson_editor");
             this.editor.getSession().setMode("ace/mode/text");
-            
+
         }
 
 
@@ -585,7 +594,7 @@ var WorkspaceToolbar = Backbone.View.extend({
             self.editor.focus();
         }
         $(self.el).find('.group_parents').removeClass('on');
-        
+
         if (Settings.ALLOW_PARAMETERS) {
 
             var parameterDetector = function() {
@@ -624,13 +633,15 @@ var WorkspaceToolbar = Backbone.View.extend({
                 self.workspace.query.helper.model().parameters = newParams;
                 self.workspace.update_parameters();
 
-                
+
             };
 
-            var lazyDetector = function() { _.delay(parameterDetector, 1000); };
-            self.editor.getSession().off('change', lazyDetector);
-            self.editor.getSession().on('change', lazyDetector);
-            self.workspace.update_parameters();
+			var lazyDetector = function() { _.delay(parameterDetector, 1000); };
+			if (self.editor) {
+				self.editor.getSession().off('change', lazyDetector);
+				self.editor.getSession().on('change', lazyDetector);
+			}
+			self.workspace.update_parameters();
         }
 
     },

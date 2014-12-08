@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,13 +13,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * Dialog for member selections
  */
 var DrillthroughModal = Modal.extend({
     type: "drillthrough",
-    
+
     buttons: [
         { text: "Ok", method: "ok" },
         { text: "Cancel", method: "close" }
@@ -37,20 +37,20 @@ var DrillthroughModal = Modal.extend({
         'click input.all_dimensions' : 'select_all_dimensions'
     },
 
-    
+
     initialize: function(args) {
         // Initialize properties
         _.extend(this, args);
         this.options.title = args.title;
         this.query = args.workspace.query;
-        
+
         this.position = args.position;
         this.action = args.action;
         Saiku.ui.unblock();
         _.bindAll(this, "ok", "drilled");
 
         // Resize when rendered
-        
+
         this.render();
         $(this.el).find('.dialog_body').html(_.template($("#template-drillthrough").html())(this));
 
@@ -60,7 +60,8 @@ var DrillthroughModal = Modal.extend({
 
         var cubeModel = this.workspace.metadata;
         var dimensions = null;
-        var measures = null; 
+        var measures = null;
+		var key = this.workspace.selected_cube;
 
         if (cubeModel && cubeModel.has('data')) {
             dimensions = cubeModel.get('data').dimensions;
@@ -76,7 +77,7 @@ var DrillthroughModal = Modal.extend({
                         }
                         dimensions = Saiku.session.sessionworkspace.cube[key].get('data').dimensions;
                         measures = Saiku.session.sessionworkspace.cube[key].get('data').measures;
-        } 
+        }
 
         var templ_dim =_.template($("#template-drillthrough-dimensions").html())({dimensions: dimensions});
         var templ_measure =_.template($("#template-drillthrough-measures").html())({measures: measures});
@@ -87,10 +88,10 @@ var DrillthroughModal = Modal.extend({
 
         $(this.el).find('.dimension_tree').html('').append($(templ_dim));
         $(this.el).find('.measure_tree').html('').append($(templ_measure));
-        
+
 		Saiku.i18n.translate();
     },
-    
+
     select: function(event) {
         var $target = $(event.target).hasClass('root') ? $(event.target) : $(event.target).parent().find('span');
         if ($target.hasClass('root')) {
@@ -98,7 +99,7 @@ var DrillthroughModal = Modal.extend({
             $target.toggleClass('collapsed').toggleClass('expand');
             $target.parents('li').find('ul').children('li').toggle();
         }
-        
+
         return false;
     },
 
@@ -129,14 +130,14 @@ var DrillthroughModal = Modal.extend({
     },
 
 
-    
+
     ok: function() {
         // Notify user that updates are in progress
         var $loading = $("<div>Drilling through...</div>");
         $(this.el).find('.dialog_body').children().hide();
         $(this.el).find('.dialog_body').prepend($loading);
         var selections = "";
-        $(this.el).find('.check_level:checked').each( function(index) { 
+        $(this.el).find('.check_level:checked').each( function(index) {
             if (index > 0) {
                 selections += ", ";
             }
@@ -156,7 +157,7 @@ var DrillthroughModal = Modal.extend({
             this.query.action.get("/drillthrough", { data: { position: this.position, maxrows: maxrows , returns: selections}, success: this.drilled } );
             this.close();
         }
-        
+
         return false;
     },
 
@@ -187,7 +188,7 @@ var DrillthroughModal = Modal.extend({
         );
 
     },
-    
+
     finished: function() {
         $(this.el).dialog('destroy').remove();
         this.query.run();

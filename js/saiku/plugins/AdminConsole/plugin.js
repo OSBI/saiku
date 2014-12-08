@@ -87,7 +87,7 @@ var AdminConsole = Backbone.View.extend({
         var listUsers = this.licenseUsers.toJSON();
         if (listUsers && !(_.isEmpty(listUsers))) {
             var htmlListUsers = this.list_users_license_template(listUsers);
-            $(this.el).find('.license_listusers').html(htmlListUsers);  
+            $(this.el).find('.license_listusers').html(htmlListUsers);
         }
     },
 
@@ -129,7 +129,7 @@ var AdminConsole = Backbone.View.extend({
         var self = this;
         var idUser = $currentTarget.parent().attr('id').split('-')[1];
         var user = this.licenseUsers.get(idUser);
-        user.destroy({
+        /*user.destroy({
             wait: true,
             success: function(data) {
                 self.licenseUsers.fetch();
@@ -139,7 +139,30 @@ var AdminConsole = Backbone.View.extend({
                 self.licenseUsers.fetch();
                 self.show_license_user_list();
             }
-        });
+        });*/
+		this.licenseUsers.remove(user);
+
+		var s =this.licenseUsers.first();
+
+		if(s != null || s!= undefined){
+			s.save({}, {
+				data: JSON.stringify(self.licenseUsers.toJSON()),
+				contentType: "application/json",
+				success: function(data) {
+					$(self.el).find("input[name='username']").val('');
+					self.licenseUsers.fetch();
+					self.show_license_user_list();
+				},
+				error: function(data) {
+					$(self.el).find("input[name='username']").val('');
+					self.licenseUsers.fetch();
+					self.show_license_user_list();
+				}
+			});
+		}
+
+
+
     },
 
     list_users_license_template: function(obj) {
@@ -437,7 +460,7 @@ var AdminConsole = Backbone.View.extend({
         "<h3>Add user</h3><br>" +
         "<label for='username'>Username:</label> <input type='text' name='username'>" +
         "<a href='#' class='add_license_user form_button user_button'>Add User</a><div class='clear'></div><br>" +
-        "<h3>List of Users</h3>" + 
+        "<h3>List of Users</h3>" +
         "<ol class='license_listusers'></ol>" +
         "</form>"),
 
