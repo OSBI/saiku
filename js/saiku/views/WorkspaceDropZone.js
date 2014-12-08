@@ -590,7 +590,11 @@ var levels=[];
                                     a.sortOrder = fun;
                                     a.sortEvaluationLiteral = items[ikey].payload.sortliteral;
 
-                                } else {
+                                }
+								else if(_.indexOf(["Param"], fun) > -1) {
+									console.log("here");
+									a.sortEvaluationLiteral = items[ikey].payload.sortliteral;
+								}else {
                                     var expressions = [];
                                     expressions.push(items[ikey].payload.n);
                                     var sl = items[ikey].payload.sortliteral;
