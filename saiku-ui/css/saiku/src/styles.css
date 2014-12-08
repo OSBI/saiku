@@ -775,7 +775,7 @@ textarea, select {
 }
 .dialog_selections .dialog_body,
 .dialog_date-filter .dialog_body {
-    height: 410px;
+    height: 440px;
     position: relative;
 }
 
@@ -1032,7 +1032,10 @@ textarea, select {
 .dialog_drillthrough .dialog_body .row_limit {
     text-align: center;
 }
-
+.workspace_toolbar .drillacross {
+  background-image: url('../../../images/src/table_across.png');
+  background-position: 7px 7px;
+ }
 .ui-menu {
     list-style:none;
     padding: 2px;
@@ -1550,7 +1553,26 @@ a.disabled_toolbar:hover {
     background: url('../../../images/chart/area.png') no-repeat 21px -1px;;
     height: 16px;
 }
+.query_toolbar a.sunburst {
+  background: url('../../../images/chart/gray/sunburst.png') no-repeat 21px -1px;;
+  height: 16px;
+ }
+.query_toolbar a.treemap {
+  background: url('../../../images/chart/gray/treemap.png') no-repeat 21px -1px;;
+  height: 16px;
+ }
 
+.query_toolbar a.sunburst:hover,
+.query_toolbar a.sunburst.on {
+ background: url('../../../images/chart/sunburst.png') no-repeat 21px -1px;;
+ height: 16px;
+}
+
+.query_toolbar a.treemap:hover,
+.query_toolbar a.treemap.on {
+  background: url('../../../images/chart/treemap.png') no-repeat 21px -1px;;
+ height: 16px;
+ }
 .form_button {
     background: #F0F0F0;
     background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#F0F0F0));

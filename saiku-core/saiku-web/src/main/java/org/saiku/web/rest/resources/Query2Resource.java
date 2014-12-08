@@ -331,7 +331,7 @@ public class Query2Resource {
         }
     }
 
-    @PUT
+    @POST
     @Consumes("application/x-www-form-urlencoded")
     @Path("/{queryname}/zoomin")
     public ThinQuery zoomIn(
