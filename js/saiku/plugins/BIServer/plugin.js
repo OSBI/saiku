@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,21 +13,21 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * Object which controls save to solution repository
  */
 /**
  * Changelog:
- *     2011.12.29 - RNP (rodrigonovo@gmail.com) - replaced the "top." 
- *       reference by the "window.parent" reference. This was done to 
+ *     2011.12.29 - RNP (rodrigonovo@gmail.com) - replaced the "top."
+ *       reference by the "window.parent" reference. This was done to
  *       make saiku work in systems where Pentaho runs inside an iframe.
  *
 **/
 
 var puc = {
     allowSave: function(isAllowed) {
-        if(window.parent.mantle_initialized !== undefined && window.parent.mantle_initialized && 
+        if(window.parent.mantle_initialized !== undefined && window.parent.mantle_initialized &&
             window.parent.enableAdhocSave ) {
             if (window.ALLOW_PUC_SAVE === undefined || ALLOW_PUC_SAVE) {
                 window.parent.enableAdhocSave(isAllowed);
@@ -43,9 +43,9 @@ var puc = {
 
     save_to_solution: function(filename, solution, path, type, overwrite) {
         var query = Saiku.tabs._tabs[0].content.query;
-        query.action.get("/xml", {
+        query.action.gett("/xml", {
             success: function(model, response) {
-                    filename = filename 
+                    filename = filename
                                 && filename.length > ".saiku".length
                                 && filename.substring(filename.length - ".saiku".length,filename.length) == ".saiku" ? filename : filename + ".saiku";
 
@@ -94,7 +94,7 @@ if (Settings.BIPLUGIN) {
     if (Settings.BIPLUGIN5) {
         Settings.REST_URL = "../../plugin/saiku/api/";
     }
-    
+
 
 
     $(document).ready(function() {
@@ -118,10 +118,10 @@ if (Settings.BIPLUGIN) {
 var BIPlugin = {
     bind_callbacks: function(workspace) {
         $(workspace.toolbar.el).find('.run').parent().removeClass('seperator');
-        
+
         // Toggle save button
         workspace.bind('query:result', function(args) {
-            var isAllowed = args.data.cellset && 
+            var isAllowed = args.data.cellset &&
                 args.data.cellset.length > 0;
             puc.allowSave(isAllowed);
         });
@@ -132,7 +132,7 @@ var BIPlugin = {
  * If plugin active, customize chrome
  */
 Saiku.events.bind('session:new', function(session) {
-    if (Settings.PLUGIN) {        
+    if (Settings.PLUGIN) {
         // Remove tabs and global toolbar
         $('#header').remove();
         // Bind to workspace
@@ -148,17 +148,17 @@ Saiku.events.bind('session:new', function(session) {
 
 var Datasources = Backbone.Model.extend({
     list: [],
-        
+
     initialize: function(args, options) {
         // Attach a custom event bus to this model
         _.extend(this, Backbone.Events);
     },
 
     parse: function(response) {
-        this.set({ 
+        this.set({
             list: response
         });
-                
+
         return response;
     },
     url: function() {
@@ -172,7 +172,7 @@ if (Settings.PLUGIN) {
             var myself = this;
             var query = Saiku.tabs._tabs[0].content.query;
             query.clear();
-            query.fetch({ 
+            query.fetch({
             success: function(model, response) {
                     var ds = new Datasources();
                     ds.fetch({
@@ -182,14 +182,14 @@ if (Settings.PLUGIN) {
                                     var urlParts = dresponse[i].properties.location.split(';');
                                     var jndi = "";
                                     var catalog = "";
-                                    $.each(urlParts,function(index, value) { 
+                                    $.each(urlParts,function(index, value) {
                                         var prop = value.split('=');
                                         if (prop[0] == "DataSource") {
                                             jndi = prop[1];
                                         }
                                        if (prop[0] == "Catalog") {
                                             catalog = prop[1];
-                                        } 
+                                        }
                                     });
                                     var saikuStub = {
                                         connection: dresponse[i].name,
@@ -198,11 +198,11 @@ if (Settings.PLUGIN) {
                                         mdx: response.mdx
                                     }
                                     window.parent.saveSaiku(saikuStub);
-                                }        
+                                }
                             }
                         }
                     })
-                    
+
                 }
             });
     };

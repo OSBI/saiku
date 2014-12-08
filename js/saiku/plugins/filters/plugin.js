@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,11 +28,11 @@ var Filters = Backbone.View.extend({
         'click .delete' : 'delete_filter'
     },
 
-    filter_css: { 
-        'color': '#555', 
-        'margin-right': '5px', 
-        'text-decoration': 'none', 
-        'border': '1px solid #ccc', 
+    filter_css: {
+        'color': '#555',
+        'margin-right': '5px',
+        'text-decoration': 'none',
+        'border': '1px solid #ccc',
         'padding': '5px',
         '-moz-border-radius': '3px',
         '-webkit-border-radius': '3px'
@@ -51,7 +51,7 @@ var Filters = Backbone.View.extend({
                 ;
             _.each(this.filters, function(filter) {
               t += self.filter_template(filter);
-            });     
+            });
             t += "</div>";
             return t;
     },
@@ -70,37 +70,37 @@ var Filters = Backbone.View.extend({
         });
         title += ")";
 
-          return "<li class='seperator'><a href='#" + filter.name + "' title='" + title + "' class='filter button'>" + filter.name + " (" + filter.members.length + ")</a></li>" 
+          return "<li class='seperator'><a href='#" + filter.name + "' title='" + title + "' class='filter button'>" + filter.name + " (" + filter.members.length + ")</a></li>"
           + "<li style='padding-left:0px'><a class='delete' href='#" + filter.name + "'>x</a></li>";
     },
-    
+
 
     initialize: function(args) {
         this.workspace = args.workspace;
-        
+
         // Create a unique ID for use as the CSS selector
         this.id = _.uniqueId("filters_");
         $(this.el).attr({ id: this.id });
-        
+
         // Bind table rendering to query result event
-        _.bindAll(this, "render",  "show", "buildTemplate", "render", "deactivate_add_filter", 
+        _.bindAll(this, "render",  "show", "buildTemplate", "render", "deactivate_add_filter",
             "add_filter", "save_filter", "click_filter", "render_menu", "post_activation");
-        
+
         // Add filters button
         this.add_button();
         this.workspace.toolbar.filters = this.show;
-        
+
         // Listen to adjust event and rerender filters
         //this.workspace.bind('workspace:adjust', this.render);
-        
+
         $(this.workspace.el).find('.workspace_results')
             .prepend($(this.el).hide());
 
 
     },
-    
+
     add_button: function() {
-        var $stats_button = 
+        var $stats_button =
             $('<a href="#filters" class="filters button disabled_toolbar i18n" title="Filters"></a>')
             .css({  'background-image': "url('js/saiku/plugins/filters/tag_red.png')",
                     'background-repeat':'no-repeat',
@@ -110,21 +110,21 @@ var Filters = Backbone.View.extend({
         var $stats_li = $('<li class="seperator"></li>').append($stats_button);
         $(this.workspace.toolbar.el).find("ul").append($stats_li);
     },
-    
+
     show: function(event, ui) {
         var self = this;
         $(this.el).toggle();
         $(event.target).toggleClass('on');
-        
+
         if ($(event.target).hasClass('on')) {
             this.render_menu();
         } else {
-            this.workspace.query.action.del("/filter", { 
+            this.workspace.query.action.del("/filter", {
                             success: this.workspace.query.run,
                             data: this.currentFilter
             });
         }
-        
+
     },
 
     render_menu: function() {
@@ -138,7 +138,7 @@ var Filters = Backbone.View.extend({
         this.filters = response;
         this.render();
     },
-    
+
     render: function() {
         /*
         if (! $(this.workspace.toolbar.el).find('.filters').hasClass('on')) {
@@ -148,7 +148,7 @@ var Filters = Backbone.View.extend({
 
         $(this.el).empty();
 
-        
+
         var rendered = this.filters_template();
         var $table = $(rendered);
         $(this.el).append($table)
@@ -178,7 +178,7 @@ var Filters = Backbone.View.extend({
         var other = filterAction == "add" ? "edit" : "add";
 
         this.deactivate_add_filter(other);
-        
+
         var $addBtn = $(event.target);
         if ($addBtn.hasClass('on')) {
             self.deactivate_add_filter();
@@ -186,7 +186,7 @@ var Filters = Backbone.View.extend({
         }
         $addBtn.addClass('on');
         var queryFilter = null;
-        this.workspace.query.action.get("/filter", { 
+        this.workspace.query.action.gett("/filter", {
                             success: function(model, response) {
                                 if (response != null && response.dimension != null && response.members.length > 0) {
                                     queryFilter = response;
@@ -258,7 +258,7 @@ var Filters = Backbone.View.extend({
         var self = this;
         if ($(event.target).hasClass('on')) {
             $(event.target).removeClass('on');
-            this.workspace.query.action.del("/filter", { 
+            this.workspace.query.action.del("/filter", {
                             success: this.post_activation
             });
         } else {
@@ -266,10 +266,10 @@ var Filters = Backbone.View.extend({
 
             _.each(this.filters, function(filter) {
                 if (filter.name == filterName) {
-                    self.workspace.query.action.put("/filter", { 
+                    self.workspace.query.action.put("/filter", {
                           success: self.post_activation, data: {filter:JSON.stringify(filter)}});
                 }
-            });     
+            });
         }
         $(event.target).parent().siblings().find('.on').removeClass('on');
     },
@@ -299,7 +299,7 @@ var Filters = Backbone.View.extend({
 
 /**
  * Start Plugin
- */ 
+ */
  Saiku.events.bind('session:new', function(session) {
 
         function new_workspace(args) {
@@ -316,7 +316,7 @@ var Filters = Backbone.View.extend({
 
                     }
         }
-        
+
         // Attach stats to existing tabs
         for(var i = 0, len = Saiku.tabs._tabs.length; i < len; i++) {
             var tab = Saiku.tabs._tabs[i];
@@ -355,12 +355,12 @@ var SaikuFilter = Backbone.Model.extend({
  */
 var FilterRepository = Backbone.Collection.extend({
     model: SaikuFilter,
-    
+
     initialize: function(args, options) {},
-    
-    
+
+
     url: function() {
         return encodeURI(Saiku.session.username + "/filters/");
     }
 });
- 
+

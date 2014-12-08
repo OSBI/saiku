@@ -709,7 +709,7 @@ var WorkspaceToolbar = Backbone.View.extend({
             );
         };
 
-        self.workspace.query.action.get("/explain", { success: explained } );
+        self.workspace.query.action.gett("/explain", { success: explained } );
 
         return false;
 

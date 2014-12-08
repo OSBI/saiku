@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,12 +13,12 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * Change settings here
  */
 var Settings = {
-    VERSION: "Saiku 3.0-GA", 
+    VERSION: "Saiku 3.0-GA",
     BIPLUGIN: false,
     BIPLUGIN5: false,
     BASE_URL: window.location.origin,
@@ -55,7 +55,7 @@ var Settings = {
     MEMBERS_LIMIT: 3000,
     MEMBERS_SEARCH_LIMIT: 75,
     ALLOW_IMPORT_EXPORT: false,
-    ALLOW_PARAMETERS: false,
+    ALLOW_PARAMETERS: true,
     PLUGINS: [
         "Chart"
     ],
@@ -179,10 +179,10 @@ if (window.location.hostname && (window.location.hostname == "dev.analytical-lab
 }
 
 var isIE = (function(){
-    var undef, v = 3; 
-    
+    var undef, v = 3;
+
     var dav = navigator.appVersion;
-    
+
     if(dav.indexOf('MSIE') != -1) {
         v  = parseFloat(dav.split('MSIE ')[1]);
         return v> 4 ? v : false;

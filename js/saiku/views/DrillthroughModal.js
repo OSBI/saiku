@@ -168,7 +168,7 @@ var DrillthroughModal = Modal.extend({
 			window.open(location);
 		} else if (this.action == "table") {
 			Saiku.ui.block("Executing drillthrough...");
-			this.query.action.get("/drillthrough", { data: { position: this.position, maxrows: maxrows , returns: selections}, success: this.drilled } );
+			this.query.action.gett("/drillthrough", { data: { position: this.position, maxrows: maxrows , returns: selections}, success: this.drilled } );
 			this.close();
 		}
 
