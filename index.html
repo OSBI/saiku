@@ -381,7 +381,7 @@
 <script type="text/x-jquery-tmpl" id="template-workspace-dropzones">
         <div class="workspace_fields disabled">
             <div class="fields_list details_fields" title="DETAILS">
-                <div class="fields_list_header disabled_toolbar"><span class="i18n">Measures</span><span class="dropdown"></span></div>
+                <div class="fields_list_header measure_fields disabled_toolbar"><span class="i18n">Measures</span><span class="dropdown"></span></div>
                 <div class="fields_list_body details">
                     <ul class="connectable"></ul>
                 </div>
@@ -642,7 +642,12 @@
                 <a class="form_button" href="#move_selection" id="remove_members">&nbsp;&lt;&nbsp;</a>
             </div>
             <div class="used_selections caption">
-                <span class="i18n">Used members:</span><br/>
+                <span class="i18n">Used members:</span>
+				<span>
+	 			<input class="selection_type selection_type_inclusion" type="radio" name="inclusion_type" value="INCLUSION" checked="true"><span class="i18n">Include</span>
+	 			<input class="selection_type selection_type_exclusion" type="radio" name="inclusion_type" value="EXCLUSION"><span class="i18n">Exclude</span>
+	 			</span>
+	 			<br/>
                     <div class="selection_options" ><ul></ul></div>
             </div>
             <div class="updown_buttons">
@@ -800,7 +805,7 @@
                     <% if (typeof measure["visible"] == "undefined" || measure["visible"]) { %>
                         <% if(typeof measure.calculated == "undefined" || measure.calculated == false) { %>
                             <li> &nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input type="checkbox" class="check_level" value="<%= measure.uniqueName %>"> <%= measure.caption %></input>
+                                    <input type="checkbox" class="check_level" value="<%= measure.uniqueName %>" key="Measures###<%= measure.name %>"> <%= measure.caption %></input>
                                     </li>
                         <% } %>
                     <% } %>

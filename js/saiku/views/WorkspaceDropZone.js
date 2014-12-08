@@ -30,6 +30,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         'click .d_measure' : 'remove_measure_click',
         'click .d_level': 'selections',
 //        'click .d_measure span.sort' : 'sort_measure',
+		'click .measure_fields.limit' : 'measure_action',
         'click .axis_fields_header.limit' : 'limit_axis',
         'click .clear_axis' : 'clear_axis'
     },
@@ -297,6 +298,59 @@ var WorkspaceDropZone = Backbone.View.extend({
 
         return false;
     },
+
+
+	measure_action: function(event) {
+		var self = this;
+		if (typeof this.workspace.query == "undefined" || this.workspace.query.model.type != "QUERYMODEL" || Settings.MODE == "view") {
+			return false;
+		}
+		var $target = $(event.target).hasClass('limit') ? $(event.target) : $(event.target).parent();
+		var menuitems = {
+			"HEADER": {name: "Position", disabled:true, i18n: true },
+			"sep1": "---------",
+			"BOTTOM_COLUMNS": {name: "Columns | Measures", i18n: true },
+			"TOP_COLUMNS": {name: "Measures | Columns", i18n: true },
+			"BOTTOM_ROWS": {name: "Rows | Measures", i18n: true },
+			"TOP_ROWS": {name: "Measures | Rows", i18n: true },
+			"sep2": "---------",
+			"reset": {name: "Reset Default", i18n: true },
+			"cancel": {name: "Cancel", i18n: true }
+		};
+		$.each(menuitems, function(key, item){
+			recursive_menu_translate(item, Saiku.i18n.po_file);
+		});
+		$.contextMenu('destroy', '.limit');
+		$.contextMenu({
+			appendTo: $target,
+			selector: '.limit',
+			ignoreRightClick: true,
+			build: function($trigger, e) {
+				var query = self.workspace.query;
+				var cube = self.workspace.selected_cube;
+				return {
+					callback: function(key, options) {
+						var details = query.helper.model().queryModel.details;
+						if (key === "cancel") {
+							return;
+						}
+						if ( key === "reset") {
+							details.location = SaikuOlapQueryTemplate.queryModel.details.location;
+							details.axis = SaikuOlapQueryTemplate.queryModel.details.axis;
+						} else {
+							var location = key.split('_')[0];
+							var axis = key.split('_')[1];
+							details.location = location;
+							details.axis = axis;
+						}
+						query.run();
+					},
+					items: menuitems
+				}
+			}
+		});
+		$target.contextMenu();
+	},
 
     limit_axis: function(event) {
         var self = this;

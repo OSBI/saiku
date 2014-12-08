@@ -669,8 +669,9 @@ this.chart.render_view();
 
     update_parameters: function () {
         var self = this;
-        if (!Settings.ALLOW_PARAMETERS)
-            return;
+        $(this.el).find('.parameter_input').html("");
+		if (!self.hasOwnProperty('query') || !Settings.ALLOW_PARAMETERS || Settings.MODE === "view" || self.viewState === 'view')
+			return;
 
         var paramDiv = "<span class='i18n'>Parameters</span>: ";
         var parameters = this.query.helper.model().parameters;
@@ -766,6 +767,7 @@ this.chart.render_view();
                 $(this.toolbar.el).find(".auto, .toggle_fields, .toggle_sidebar,.switch_to_mdx").parent().hide();
         }
         this.viewState = target;
+		this.update_parameters();
         $(window).trigger('resize');
 
     },
