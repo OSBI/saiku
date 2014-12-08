@@ -15,47 +15,7 @@
  */
 package org.saiku.web.rest.resources;
 
-import java.io.StringReader;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Properties;
-
-import javax.servlet.ServletException;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.TypeFactory;
-import org.saiku.olap.dto.SaikuCube;
-import org.saiku.olap.dto.SaikuDimensionSelection;
-import org.saiku.olap.dto.SaikuQuery;
-import org.saiku.olap.dto.SaikuTag;
-import org.saiku.olap.dto.SimpleCubeElement;
+import org.saiku.olap.dto.*;
 import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query.IQuery;
@@ -68,6 +28,7 @@ import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.service.util.exception.SaikuServiceException;
+import org.saiku.web.export.JSConverter;
 import org.saiku.web.rest.objects.MdxQueryObject;
 import org.saiku.web.rest.objects.SavedQuery;
 import org.saiku.web.rest.objects.SelectionRestObject;
@@ -75,10 +36,34 @@ import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.util.RestUtil;
 import org.saiku.web.rest.util.ServletUtil;
 import org.saiku.web.svg.PdfReport;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.type.TypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.InputStream;
+import java.io.StringReader;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
+
+import javax.servlet.ServletException;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * QueryServlet contains all the methods required when manipulating an OLAP Query.
@@ -152,7 +137,7 @@ public class QueryResource {
 		}
 		catch(Exception e){
 			log.error("Cannot delete query (" + queryName + ")",e);
-			return(Status.NOT_FOUND);
+		    throw new WebApplicationException(Response.serverError().entity(e).build());
 		}
 	}
 
@@ -435,6 +420,48 @@ public class QueryResource {
 		}
 	}
 
+  @GET
+  @Produces({"text/html" })
+  @Path("/{queryname}/export/html/{format}")
+  public Response exportHtml(
+	  @PathParam("queryname") String queryName,
+	  @PathParam("format") String format,
+	  @QueryParam("css") @DefaultValue("false") Boolean css,
+	  @QueryParam("tableonly") @DefaultValue("false") Boolean tableonly,
+	  @QueryParam("wrapcontent") @DefaultValue("true") Boolean wrapcontent)
+  {
+	try {
+	  CellDataSet cs = null;
+	  if (StringUtils.isNotBlank(format)) {
+		cs = olapQueryService.execute(queryName, format);
+	  } else {
+		cs = olapQueryService.execute(queryName);
+	  }
+	  QueryResult qr = RestUtil.convert(cs);
+	  String content = JSConverter.convertToHtml(qr, wrapcontent);
+	  String html = "";
+	  if (!tableonly) {
+		html += "<!DOCTYPE html><html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n";
+		if (css) {
+		  html += "<style>\n";
+		  InputStream is = JSConverter.class.getResourceAsStream("saiku.table.full.css");
+		  String cssContent = IOUtils.toString(is);
+		  html += cssContent;
+		  html += "</style>\n";
+		}
+		html += "</head>\n<body><div class='workspace_results'>\n";
+	  }
+	  html += content;
+	  if (!tableonly) {
+		html += "\n</div></body></html>";
+	  }
+	  return Response.ok(html).build();
+	} catch (Exception e) {
+	  log.error("Error exporting query to HTML", e);
+	  return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
+	}
+  }
+
 	@DELETE
 	@Path("/{queryname}/result")
 	public Status cancel(@PathParam("queryname") String queryName){
@@ -680,6 +707,35 @@ public class QueryResource {
 
 	}
 
+  @POST
+  @Produces({"application/json" })
+  @Path("/{queryname}/drillacross")
+  public SaikuQuery drillacross(
+	  @PathParam("queryname") String queryName,
+	  @FormParam("position") String position,
+	  @FormParam("drill") String returns)
+  {
+	if (log.isDebugEnabled()) {
+	  log.debug("TRACK\t" + "\t/query/" + queryName + "/drillacross\tPOST");
+	}
+	try {
+	  String[] positions = position.split(":");
+	  List<Integer> cellPosition = new ArrayList<Integer>();
+	  for (String p : positions) {
+		Integer pInt = Integer.parseInt(p);
+		cellPosition.add(pInt);
+	  }
+	  ObjectMapper mapper = new ObjectMapper();
+	  Map<String, List<String>> levels = mapper.readValue(returns, TypeFactory.mapType(Map.class, TypeFactory.fromClass(String.class), TypeFactory.collectionType(ArrayList.class, String.class)));
+	  SaikuQuery q = olapQueryService.drillacross(queryName, cellPosition, levels);
+	  return q;
+	}
+	catch (Exception e) {
+	  log.error("Cannot execute query (" + queryName + ")",e);
+	  String error = ExceptionUtils.getRootCauseMessage(e);
+	  throw new WebApplicationException(Response.serverError().entity(error).build());
+	}
+  }
 
 	@GET
 	@Produces({"text/csv" })

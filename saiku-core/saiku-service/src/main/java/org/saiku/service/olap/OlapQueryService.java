@@ -15,69 +15,7 @@
  */
 package org.saiku.service.olap;
 
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicLong;
-
-import mondrian.olap4j.SaikuMondrianHelper;
-import mondrian.rolap.RolapConnection;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.olap4j.AllocationPolicy;
-import org.olap4j.Axis;
-import org.olap4j.CellSet;
-import org.olap4j.CellSetAxis;
-import org.olap4j.OlapConnection;
-import org.olap4j.OlapException;
-import org.olap4j.OlapStatement;
-import org.olap4j.Position;
-import org.olap4j.Scenario;
-import org.olap4j.impl.IdentifierParser;
-import org.olap4j.mdx.IdentifierNode;
-import org.olap4j.mdx.IdentifierSegment;
-import org.olap4j.mdx.ParseTreeNode;
-import org.olap4j.mdx.ParseTreeWriter;
-import org.olap4j.mdx.SelectNode;
-import org.olap4j.mdx.parser.impl.DefaultMdxParserImpl;
-import org.olap4j.metadata.Cube;
-import org.olap4j.metadata.Dimension;
-import org.olap4j.metadata.Hierarchy;
-import org.olap4j.metadata.Level;
-import org.olap4j.metadata.Level.Type;
-import org.olap4j.metadata.Measure;
-import org.olap4j.metadata.Member;
-import org.olap4j.metadata.MetadataElement;
-import org.olap4j.query.LimitFunction;
-import org.olap4j.query.Query;
-import org.olap4j.query.QueryAxis;
-import org.olap4j.query.QueryDimension;
-import org.olap4j.query.Selection;
-import org.olap4j.query.Selection.Operator;
-import org.olap4j.query.SortOrder;
-import org.saiku.olap.dto.SaikuCube;
-import org.saiku.olap.dto.SaikuDimensionSelection;
-import org.saiku.olap.dto.SaikuMember;
-import org.saiku.olap.dto.SaikuQuery;
-import org.saiku.olap.dto.SaikuSelection;
-import org.saiku.olap.dto.SaikuTag;
-import org.saiku.olap.dto.SaikuTuple;
-import org.saiku.olap.dto.SimpleCubeElement;
+import org.saiku.olap.dto.*;
 import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
@@ -105,8 +43,32 @@ import org.saiku.service.util.KeyValue;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.service.util.export.CsvExporter;
 import org.saiku.service.util.export.ExcelExporter;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.olap4j.*;
+import org.olap4j.impl.IdentifierParser;
+import org.olap4j.mdx.*;
+import org.olap4j.mdx.parser.impl.DefaultMdxParserImpl;
+import org.olap4j.metadata.*;
+import org.olap4j.metadata.Level.Type;
+import org.olap4j.query.*;
+import org.olap4j.query.Selection.Operator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
+
+import mondrian.olap4j.SaikuMondrianHelper;
+import mondrian.rolap.RolapConnection;
 
 public class OlapQueryService implements Serializable {
 
@@ -471,14 +433,106 @@ public class OlapQueryService implements Serializable {
 		}
 	}
 
-	
+  public SaikuQuery drillacross(String queryName, List<Integer> cellPosition, Map<String, List<String>> levels) {
+	try {
+	  IQuery query = getIQuery(queryName);
+	  query.clearAxis("ROWS");
+	  query.clearAxis("COLUMNS");
+	  Set<Level> levelSet = new HashSet<Level>();
+	  CellSet cs = query.getCellset();
+	  if (cs == null) {
+		throw new SaikuServiceException("Cannot drill across. Last CellSet empty");
+	  }
+	  for (int i = 0; i < cellPosition.size(); i++) {
+		List<Member> members = cs.getAxes().get(i).getPositions().get(cellPosition.get(i)).getMembers();
+		for (int k = 0; k < members.size(); k++) {
+		  Member m = members.get(k);
+		  QueryDimension qd = query.getDimension(m.getDimension().getName());
+		  if (qd.getName().equals("Measures")) {
+			query.moveDimension(qd, Axis.COLUMNS);
+		  } else {
+			query.moveDimension(qd, Axis.FILTER);
+		  }
+		  levelSet.add(m.getLevel());
+		  qd.include(m);
+		}
+	  }
+	  if (levels != null) {
+		for (String key : levels.keySet()) {
+		  String dimName = key.split("###")[0];
+		  QueryDimension qd = query.getDimension(dimName);
+
+		  if ("Measures".equals(dimName)) {
+			for (String measureName : levels.get(key)) {
+			  List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(measureName).getSegmentList();
+
+			  Selection sel = qd.createSelection(memberList);
+			  if (!qd.getInclusions().contains(sel)) {
+				qd.getInclusions().add(sel);
+			  }
+
+			}
+			if (qd.getInclusions().size() > 0) {
+			  query.moveDimension(qd, Axis.COLUMNS);
+			}
+			continue;
+
+		  }
+		  if (qd.getInclusions().size() > 0 && !"Measures".equals(dimName)) {
+			query.moveDimension(qd, Axis.ROWS);
+			continue;
+		  }
+		  String hName = key.split("###")[1];
+		  Dimension d = qd.getDimension();
+		  Hierarchy h = d.getHierarchies().get(hName);
+
+		  for (Level l : h.getLevels()) {
+			if (levelSet.contains(l)) {
+			  if (qd.getInclusions().size() > 0) {
+				query.moveDimension(qd, Axis.ROWS);
+			  }
+			  continue;
+			}
+			for (String levelU : levels.get(key)) {
+			  if (l.getUniqueName().equals(levelU) || l.getName().equals(levelU)) {
+				qd.include(l);
+				if (qd.getInclusions().size() > 0) {
+				  query.moveDimension(qd, Axis.ROWS);
+				}
+			  }
+			}
+		  }
+
+		}
+	  }
+	  if (query.getAxis(Axis.COLUMNS).getDimensions().size() == 0) {
+		QueryDimension mD = query.getDimension("Measures");
+
+		if (mD.getInclusions().size() == 0) {
+		  Member defaultMeasure = mD.getDimension().getDefaultHierarchy().getDefaultMember();
+		  mD.include(defaultMeasure);
+		}
+		query.moveDimension(mD, Axis.COLUMNS);
+	  }
+	  putIQuery(queryName, query);
+	  return ObjectUtil.convert(query);
+
+
+	} catch (Exception e) {
+	  throw new SaikuServiceException("Error drilling across: " + queryName, e);
+	}
+  }
+
 	public boolean isMdxDrillthrough(String queryName, String drillthroughMdx) {
 		try {
 			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnection());
 			return SaikuMondrianHelper.isMondrianDrillthrough(con, drillthroughMdx);
 		} catch (Exception e) {
-			throw new SaikuServiceException("Error checking for DRILLTHROUGH: " + queryName + " DRILLTHROUGH MDX:" + drillthroughMdx,e);
-		}	
+		  log.warn("Error checking for DRILLTHROUGH: " + queryName + " DRILLTHROUGH MDX:" + drillthroughMdx, e);
+		} catch (Error e) {
+		  log.warn("Error checking for DRILLTHROUGH: " + queryName + " DRILLTHROUGH MDX:" + drillthroughMdx,e);
+		}
+	  return false;
 	}
 	
 	public ResultSet drillthrough(String queryName, String drillthroughMdx) {

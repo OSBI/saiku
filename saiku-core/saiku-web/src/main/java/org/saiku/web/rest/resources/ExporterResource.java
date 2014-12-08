@@ -41,6 +41,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
@@ -98,6 +99,15 @@ public class ExporterResource {
 			if (parameters != null) {
 				tq.getParameters().putAll(parameters);
 			}
+		  if (StringUtils.isNotBlank(formatter)) {
+			HashMap<String, Object> p = new HashMap<String, Object>();
+			p.put("saiku.olap.result.formatter", formatter);
+			if (tq.getProperties() == null) {
+			  tq.setProperties(p);
+			} else {
+			  tq.getProperties().putAll(p);
+			}
+		  }
 			query2Resource.execute(tq);
 			return query2Resource.getQueryExcelExport(queryName, formatter);
 		} catch (Exception e) {
@@ -125,6 +135,16 @@ public class ExporterResource {
 			if (parameters != null) {
 				tq.getParameters().putAll(parameters);
 			}
+
+		  if (StringUtils.isNotBlank(formatter)) {
+			HashMap<String, Object> p = new HashMap<String, Object>();
+			p.put("saiku.olap.result.formatter", formatter);
+			if (tq.getProperties() == null) {
+			  tq.setProperties(p);
+			} else {
+			  tq.getProperties().putAll(p);
+			}
+		  }
 			query2Resource.execute(tq);
 			return query2Resource.getQueryCsvExport(queryName);
 		} catch (Exception e) {
@@ -152,6 +172,15 @@ public class ExporterResource {
 			if (parameters != null) {
 				tq.getParameters().putAll(parameters);
 			}
+		  if (StringUtils.isNotBlank(formatter)) {
+			HashMap<String, Object> p = new HashMap<String, Object>();
+			p.put("saiku.olap.result.formatter", formatter);
+			if (tq.getProperties() == null) {
+			  tq.setProperties(p);
+			} else {
+			  tq.getProperties().putAll(p);
+			}
+		  }
 			QueryResult qr = query2Resource.execute(tq);
 			return Response.ok().entity(qr).build();
 		} catch (Exception e) {
@@ -159,6 +188,29 @@ public class ExporterResource {
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+
+  @GET
+  @Produces({"text/html" })
+  @Path("/saiku/html")
+  public Response exportHtml(@QueryParam("file") String file,
+							 @QueryParam("formatter") String formatter,
+							 @QueryParam("css") @DefaultValue("false") Boolean css,
+							 @QueryParam("tableonly") @DefaultValue("false") Boolean tableonly,
+							 @QueryParam("wrapcontent") @DefaultValue("true") Boolean wrapcontent,
+							 @Context HttpServletRequest servletRequest)
+  {
+	try {
+	  Response f = repository.getResource(file);
+	  String fileContent = new String( (byte[]) f.getEntity());
+	  fileContent = ServletUtil.replaceParameters(servletRequest, fileContent);
+	  String queryName = UUID.randomUUID().toString();
+	  query2Resource.createQuery(queryName, fileContent, null, null);
+	  return query2Resource.exportHtml(queryName, formatter, css, tableonly, wrapcontent);
+	} catch (Exception e) {
+	  log.error("Error exporting JSON for file: " + file, e);
+	  return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
+	}
+  }
 
 	@POST
 	@Produces({"image/*" })

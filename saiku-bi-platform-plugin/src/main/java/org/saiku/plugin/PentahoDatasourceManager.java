@@ -15,16 +15,14 @@
  */
 package org.saiku.plugin;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import mondrian.olap.MondrianProperties;
-import mondrian.olap.Util;
-import mondrian.olap.Util.PropertyList;
-import mondrian.rolap.RolapConnectionProperties;
+import org.saiku.database.dto.MondrianSchema;
+import org.saiku.datasources.connection.ISaikuConnection;
+import org.saiku.datasources.connection.RepositoryFile;
+import org.saiku.datasources.datasource.SaikuDatasource;
+import org.saiku.repository.AclEntry;
+import org.saiku.repository.IRepositoryObject;
+import org.saiku.service.datasource.IDatasourceManager;
+import org.saiku.service.user.UserService;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -36,17 +34,16 @@ import org.dom4j.Node;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.PentahoEntityResolver;
 import org.pentaho.platform.util.xml.dom4j.XmlDom4JHelper;
-import org.saiku.datasources.connection.ISaikuConnection;
-import org.saiku.datasources.datasource.SaikuDatasource;
-import org.saiku.repository.AclEntry;
-import org.saiku.repository.IRepositoryObject;
-import org.saiku.service.datasource.IDatasourceManager;
-import org.saiku.service.user.UserService;
 import org.xml.sax.EntityResolver;
-import org.saiku.database.dto.MondrianSchema;
-import org.saiku.datasources.connection.RepositoryFile;
+
+import java.util.*;
 
 import javax.jcr.RepositoryException;
+
+import mondrian.olap.MondrianProperties;
+import mondrian.olap.Util;
+import mondrian.olap.Util.PropertyList;
+import mondrian.rolap.RolapConnectionProperties;
 
 public class PentahoDatasourceManager implements IDatasourceManager {
 
@@ -240,7 +237,11 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         return null;
     }
 
-    public List<IRepositoryObject> getFiles(String s, String s2, List<String> strings) {
+  public void removeInternalFile(String filePath) {
+
+  }
+
+  public List<IRepositoryObject> getFiles(String s, String s2, List<String> strings) {
         return null;
     }
 
@@ -272,7 +273,23 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
     }
 
-    public String getFileData(String file){
+  public byte[] exportRepository() {
+	return new byte[0];
+  }
+
+  public void restoreRepository(byte[] data) {
+
+  }
+
+  public boolean hasHomeDirectory(String name) {
+	return false;
+  }
+
+  public void restoreLegacyFiles(byte[] data) {
+
+  }
+
+  public String getFileData(String file){
 
         return null;
     }

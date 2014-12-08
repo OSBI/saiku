@@ -1,24 +1,18 @@
 package org.saiku.service.olap.totals;
 
-import mondrian.util.Format;
+import org.saiku.olap.util.SaikuProperties;
+import org.saiku.service.olap.totals.aggregators.TotalAggregator;
+
 import org.apache.commons.lang.StringUtils;
-import org.olap4j.Axis;
-import org.olap4j.Cell;
-import org.olap4j.CellSet;
-import org.olap4j.OlapException;
-import org.olap4j.Position;
+import org.olap4j.*;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Measure;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.Property;
-import org.saiku.olap.util.SaikuProperties;
-import org.saiku.service.olap.totals.aggregators.TotalAggregator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import mondrian.util.Format;
 
 public class TotalsListsBuilder implements FormatList {
   private final Member[] memberBranch;
@@ -108,26 +102,35 @@ public class TotalsListsBuilder implements FormatList {
     memberBranch = new Member[ dataAxisInfo.maxDepth + 1 ];
   }
 
-  private Format getMeasureFormat( Measure m ) {
+
+  private Format getMeasureFormat(Measure m) {
     try {
-      String formatString = (String) m.getPropertyValue( Property.StandardCellProperty.FORMAT_STRING );
-      if ( StringUtils.isBlank( formatString ) ) {
+      String formatString = (String) m.getPropertyValue(Property.StandardCellProperty.FORMAT_STRING);
+      if (StringUtils.isBlank(formatString)) {
         Map<String, Property> props = m.getProperties().asMap();
-        if ( props.containsKey( "FORMAT_STRING" ) ) {
-          formatString = (String) m.getPropertyValue( props.get( "FORMAT_STRING" ) );
-        } else if ( props.containsKey( "FORMAT_EXP" ) ) {
-          formatString = (String) m.getPropertyValue( props.get( "FORMAT_EXP" ) );
-        } else if ( props.containsKey( "FORMAT" ) ) {
-          formatString = (String) m.getPropertyValue( props.get( "FORMAT" ) );
+        if (props.containsKey("FORMAT_STRING")) {
+          formatString = (String) m.getPropertyValue(props.get("FORMAT_STRING"));
+        } else if (props.containsKey("FORMAT_EXP_PARSED")) {
+          formatString = (String) m.getPropertyValue(props.get("FORMAT_EXP_PARSED"));
+        } else if (props.containsKey("FORMAT_EXP")) {
+          formatString = (String) m.getPropertyValue(props.get("FORMAT_EXP"));
+        } else if (props.containsKey("FORMAT")) {
+          formatString = (String) m.getPropertyValue(props.get("FORMAT"));
+        }
+        if (StringUtils.isBlank(formatString)) {
+          formatString = "Standard";
+        }
+        if (StringUtils.isNotBlank(formatString) && formatString.length() > 1 && formatString.startsWith("\"") && formatString.endsWith("\"")) {
+          formatString = formatString.substring(1, formatString.length() - 1);
         }
       }
-      return Format.get( formatString, SaikuProperties.locale );
-    } catch ( OlapException e ) {
-      throw new RuntimeException( e );
+      return Format.get(formatString, SaikuProperties.locale);
+    } catch (OlapException e) {
+      throw new RuntimeException(e);
     }
   }
 
-  private final void positionMember( final int depth, Member m, final List<Integer> levels, final Member[] branch ) {
+  private void positionMember( final int depth, Member m, final List<Integer> levels, final Member[] branch ) {
     for ( int i = levels.size() - 1; i >= 0; ) {
       branch[ depth + i ] = m;
       i--;

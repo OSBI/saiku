@@ -39,7 +39,7 @@ var SplashScreen = Backbone.View.extend({
 		var license = new License();
 		var that = this;
 		license.fetch_license('api/license/', function(opt) {
-			if (opt.status !== 'error') {
+			if (opt.status !== 'error' && opt.data.get("licenseType")!="trial") {
 				$(".enterprisetoggle").css("visibility", "hidden");
 			}
 		});

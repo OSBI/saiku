@@ -15,48 +15,31 @@
  */
 package org.saiku.plugin.resources;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.pentaho.platform.api.engine.IPluginManager;
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.plugin.services.pluginmgr.PluginClassLoader;
-import org.saiku.datasources.connection.ISaikuConnection;
-import org.saiku.datasources.datasource.SaikuDatasource;
-import org.saiku.olap.dto.SaikuQuery;
 import org.saiku.plugin.util.ResourceManager;
 import org.saiku.plugin.util.packager.Packager;
 import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.olap.OlapQueryService;
+
+import org.pentaho.platform.api.engine.IPluginManager;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.plugin.services.pluginmgr.PluginClassLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import pt.webdetails.cda.CdaEngine;
-import pt.webdetails.cda.query.QueryOptions;
-import pt.webdetails.cda.settings.CdaSettings;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.ws.rs.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * QueryServlet contains all the methods required when manipulating an OLAP Query.
@@ -76,70 +59,70 @@ public class PluginResource {
 	@Autowired
 	private DatasourceService datasourceService;
 
+//	@GET
+//	@Produces({"text/plain" })
+//	@Path("/cda")
+//	public String getCda(@QueryParam("query") String query)
+//	{
+//		try {
+//			SaikuQuery sq = queryService.getQuery(query);
+//			SaikuDatasource ds = datasourceService.getDatasource(sq.getCube().getConnection());
+//			Properties props = ds.getProperties();
+//
+//			String cdaFile = getCdaAsString(
+//					props.getProperty(ISaikuConnection.DRIVER_KEY),
+//					props.getProperty(ISaikuConnection.URL_KEY),
+//					sq.getName(),
+//					sq.getMdx());
+//
+//			return cdaFile;
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return "";
+//	}
+//
+//	@GET
+//	@Produces({"application/json" })
+//	@Path("/cda/execute")
+//	public Response execute(
+//			@QueryParam("query") String query,
+//			@QueryParam("type") String type)
+//	{
+//		try {
+//			String cdaString = getCda(query);
+//			Document cda = DocumentHelper.parseText(cdaString);
+//
+//			final CdaSettings cdaSettings = new CdaSettings(cda, "cda1", null);
+//
+//			log.debug("Doing query on Cda - Initializing CdaEngine");
+//			final CdaEngine engine = CdaEngine.getInstance();
+//			final QueryOptions queryOptions = new QueryOptions();
+//			queryOptions.setDataAccessId("1");
+//			queryOptions.setOutputType("json");
+//			log.info("Doing query");
+//			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//			PrintStream printstream = new PrintStream(outputStream);
+//			engine.doQuery(printstream, cdaSettings, queryOptions);
+//			byte[] doc = outputStream.toByteArray();
+//
+//			return Response.ok(doc, MediaType.APPLICATION_JSON).header(
+//					"content-length",doc.length).build();
+//
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return Response.serverError().build();
+//
+//
+//	}
+
+
+
 	@GET
-	@Produces({"text/plain" })
-	@Path("/cda")
-	public String getCda(@QueryParam("query") String query) 
-	{
-		try {
-			SaikuQuery sq = queryService.getQuery(query);
-			SaikuDatasource ds = datasourceService.getDatasource(sq.getCube().getConnection());
-			Properties props = ds.getProperties();
-
-			String cdaFile = getCdaAsString(
-					props.getProperty(ISaikuConnection.DRIVER_KEY), 
-					props.getProperty(ISaikuConnection.URL_KEY),
-					sq.getName(),
-					sq.getMdx());
-
-			return cdaFile;
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "";
-	}
-
-	@GET
-	@Produces({"application/json" })
-	@Path("/cda/execute")
-	public Response execute(
-			@QueryParam("query") String query,
-			@QueryParam("type") String type) 
-	{
-		try {
-			String cdaString = getCda(query);
-			Document cda = DocumentHelper.parseText(cdaString);
-
-			final CdaSettings cdaSettings = new CdaSettings(cda, "cda1", null);
-
-			log.debug("Doing query on Cda - Initializing CdaEngine");
-			final CdaEngine engine = CdaEngine.getInstance();
-			final QueryOptions queryOptions = new QueryOptions();
-			queryOptions.setDataAccessId("1");
-			queryOptions.setOutputType("json");
-			log.info("Doing query");
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			PrintStream printstream = new PrintStream(outputStream);
-			engine.doQuery(printstream, cdaSettings, queryOptions);
-			byte[] doc = outputStream.toByteArray();
-
-			return Response.ok(doc, MediaType.APPLICATION_JSON).header(
-					"content-length",doc.length).build();
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return Response.serverError().build();
-
-
-	}
-
-
-
-	@GET
-	@Produces({"text/plain" })
+	@Produces({"application/javascript" })
 	@Path("/plugins")
 	public String getPlugins(@QueryParam("debug") @DefaultValue("false") Boolean debug) 
 	{
@@ -249,38 +232,38 @@ public class PluginResource {
 	//		return null;
 	//	}
 
-	private Document getCdaAsDocument(String driver, String url, String name, String query) throws Exception {
-		String cda = getCdaAsString(driver, url, name, query);
-		return DocumentHelper.parseText(cda);
-	}
-
-	private String getCdaAsString(String driver, String url, String name, String query) throws Exception {
-		String cda = getCdaTemplate();
-		cda = cda.replaceAll("@@DRIVER@@", driver);
-		cda = cda.replaceAll("@@NAME@@", name);
-		cda = cda.replaceAll("@@URL@@", url);
-		cda = cda.replaceAll("@@QUERY@@", query);
-		return cda;
-	}
-
-	private String getCdaTemplate() {
-		String cda = 
-				"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-						"<CDADescriptor>\n" +
-						"   <DataSources>\n" +
-						"        <Connection id=\"1\" type=\"olap4j.jdbc\">\n" +
-						"            <Driver>@@DRIVER@@</Driver>\n" +
-						"            <Url>@@URL@@</Url>\n" +
-						"        </Connection>\n" +
-						"    </DataSources>\n" +
-						"  <DataAccess id=\"1\" connection=\"1\" type=\"olap4j\" access=\"public\">\n" +
-						"		<Name>@@NAME@@</Name>\n" +
-						"        <Query><![CDATA[" +
-						"			@@QUERY@@" +
-						"		]]></Query>\n" +
-						"    </DataAccess>\n" +
-						"</CDADescriptor>\n";
-
-		return cda;
-	}
+//	private Document getCdaAsDocument(String driver, String url, String name, String query) throws Exception {
+//		String cda = getCdaAsString(driver, url, name, query);
+//		return DocumentHelper.parseText(cda);
+//	}
+//
+//	private String getCdaAsString(String driver, String url, String name, String query) throws Exception {
+//		String cda = getCdaTemplate();
+//		cda = cda.replaceAll("@@DRIVER@@", driver);
+//		cda = cda.replaceAll("@@NAME@@", name);
+//		cda = cda.replaceAll("@@URL@@", url);
+//		cda = cda.replaceAll("@@QUERY@@", query);
+//		return cda;
+//	}
+//
+//	private String getCdaTemplate() {
+//		String cda =
+//				"<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+//						"<CDADescriptor>\n" +
+//						"   <DataSources>\n" +
+//						"        <Connection id=\"1\" type=\"olap4j.jdbc\">\n" +
+//						"            <Driver>@@DRIVER@@</Driver>\n" +
+//						"            <Url>@@URL@@</Url>\n" +
+//						"        </Connection>\n" +
+//						"    </DataSources>\n" +
+//						"  <DataAccess id=\"1\" connection=\"1\" type=\"olap4j\" access=\"public\">\n" +
+//						"		<Name>@@NAME@@</Name>\n" +
+//						"        <Query><![CDATA[" +
+//						"			@@QUERY@@" +
+//						"		]]></Query>\n" +
+//						"    </DataAccess>\n" +
+//						"</CDADescriptor>\n";
+//
+//		return cda;
+//	}
 }

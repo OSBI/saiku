@@ -1,13 +1,15 @@
 package org.saiku.olap.util.formatter;
 
+import org.saiku.service.olap.ThinQueryService;
+import org.saiku.service.util.exception.SaikuServiceException;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.saiku.service.olap.ThinQueryService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CellSetFormatterFactory {
 
@@ -31,34 +33,26 @@ public class CellSetFormatterFactory {
 		formatters.put("flat", CellSetFormatter.class.getName());
 	}
 
-	public ICellSetFormatter forName(String name) {
-		ICellSetFormatter cf = create(name);
-		if (cf == null) {
-			cf = create(defaultFormatter);
-		}
-		return cf;
-	}
-	
-	private ICellSetFormatter create(String name) {
+  public ICellSetFormatter forName(String name) {
+	ICellSetFormatter cf = create(name, defaultFormatter);
+	return cf;
+  }
 
-		if (StringUtils.isNotBlank(name)) {
-			String clazzName = formatters.get(name);
-			try {
-				@SuppressWarnings("unchecked")
-				final Class<ICellSetFormatter> clazz = (Class<ICellSetFormatter>)
-				Class.forName(clazzName);
-				final Constructor<ICellSetFormatter> ctor = clazz.getConstructor();
-				final ICellSetFormatter cellSetFormatter = ctor.newInstance();
-				return cellSetFormatter;
-			}
-			catch (Exception e) {
-				log.error("Error creating CellSetFormatter \"" + clazzName + "\"", e);
-			}
-		}
-		
-		return null;
+  private ICellSetFormatter create(String name, String defaultFormatter) {
+	String clazzName = StringUtils.isBlank(name) || !formatters.containsKey(name) ? defaultFormatter : formatters.get(name);
+	try {
+	  @SuppressWarnings("unchecked")
+	  final Class<ICellSetFormatter> clazz = (Class<ICellSetFormatter>)
+		  Class.forName(clazzName);
+	  final Constructor<ICellSetFormatter> ctor = clazz.getConstructor();
+	  final ICellSetFormatter cellSetFormatter = ctor.newInstance();
+	  return cellSetFormatter;
 	}
-
+	catch (Exception e) {
+	  log.error("Error creating CellSetFormatter \"" + clazzName + "\"", e);
+	  throw new SaikuServiceException("Error creating cellsetformatter for class: " + clazzName, e);
+	}
+  }
 
 
 }

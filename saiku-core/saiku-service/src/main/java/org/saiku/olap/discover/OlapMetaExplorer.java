@@ -15,38 +15,21 @@
  */
 package org.saiku.olap.discover;
 
-import mondrian.olap4j.SaikuMondrianHelper;
-import mondrian.rolap.RolapConnection;
+import org.saiku.datasources.connection.IConnectionManager;
+import org.saiku.olap.dto.*;
+import org.saiku.olap.util.ObjectUtil;
+import org.saiku.olap.util.SaikuCubeCaptionComparator;
+import org.saiku.olap.util.SaikuDimensionCaptionComparator;
+import org.saiku.olap.util.exception.SaikuOlapException;
+import org.saiku.service.util.MondrianDictionary;
+
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapDatabaseMetaData;
 import org.olap4j.OlapException;
 import org.olap4j.mdx.IdentifierNode;
 import org.olap4j.mdx.IdentifierSegment;
-import org.olap4j.metadata.Catalog;
-import org.olap4j.metadata.Cube;
-import org.olap4j.metadata.Database;
-import org.olap4j.metadata.Dimension;
-import org.olap4j.metadata.Hierarchy;
-import org.olap4j.metadata.Level;
-import org.olap4j.metadata.Measure;
-import org.olap4j.metadata.Member;
-import org.olap4j.metadata.Schema;
-import org.saiku.datasources.connection.IConnectionManager;
-import org.saiku.olap.dto.SaikuCatalog;
-import org.saiku.olap.dto.SaikuConnection;
-import org.saiku.olap.dto.SaikuCube;
-import org.saiku.olap.dto.SaikuDimension;
-import org.saiku.olap.dto.SaikuHierarchy;
-import org.saiku.olap.dto.SaikuLevel;
-import org.saiku.olap.dto.SaikuMember;
-import org.saiku.olap.dto.SaikuSchema;
-import org.saiku.olap.dto.SimpleCubeElement;
-import org.saiku.olap.util.ObjectUtil;
-import org.saiku.olap.util.SaikuCubeCaptionComparator;
-import org.saiku.olap.util.SaikuDimensionCaptionComparator;
-import org.saiku.olap.util.exception.SaikuOlapException;
-import org.saiku.service.util.MondrianDictionary;
+import org.olap4j.metadata.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +38,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import mondrian.olap4j.SaikuMondrianHelper;
+import mondrian.rolap.RolapConnection;
 
 public class OlapMetaExplorer {
 
@@ -187,7 +173,8 @@ public class OlapMetaExplorer {
 						for (Schema schema : cat.getSchemas()) {
 							if ((StringUtils.isBlank(cube.getSchema()) && StringUtils.isBlank(schema.getName())) || schema.getName().equals(cube.getSchema())) {
 								for (Cube cub : schema.getCubes()) {
-									if (cub.getName().equals(cube.getName()) || cub.getUniqueName().equals(cube.getUniqueName())) {
+									if (cub.getName().equals(cube.getName()) || cub.getUniqueName().equals(cube
+										.getName())) {
 										return cub;
 									}
 								}

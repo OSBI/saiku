@@ -37,8 +37,8 @@
 			</Dependencies>
 
 			<Styles>
-				<Style src="../../ui/embed/saiku.css"></Style>
-				<Style src="../../ui/css/saiku/src/saiku.table.css"></Style>
+				<Style src="../../ui/embed/saiku.css">saikuembedstyle</Style>
+				<Style src="../../ui/css/saiku/src/saiku.table.css">saikutablestyle</Style>
 			</Styles>
 
 			<CustomProperties>

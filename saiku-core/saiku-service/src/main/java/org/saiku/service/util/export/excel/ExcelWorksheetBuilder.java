@@ -1,33 +1,5 @@
 package org.saiku.service.util.export.excel;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFPalette;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.dto.resultset.DataCell;
@@ -36,8 +8,24 @@ import org.saiku.olap.query2.ThinLevel;
 import org.saiku.olap.query2.ThinMember;
 import org.saiku.olap.util.SaikuProperties;
 import org.saiku.service.util.exception.SaikuServiceException;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFPalette;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -262,17 +250,19 @@ public class ExcelWorksheetBuilder {
     cell.setCellValue("Filter Applied");
     row++;
 
-    for (ThinHierarchy item : queryFilters) {
-      for (ThinLevel s : item.getLevels().values()) {
-        for (ThinMember i : s.getSelection().getMembers()) {
-          sheetRow = summarySheet.createRow((short) row);
-          cell = sheetRow.createCell(0);
-          cell.setCellValue(item.getCaption());
-          cell = sheetRow.createCell(1);
-          cell.setCellValue(s.getCaption());
-          cell = sheetRow.createCell(2);
-          cell.setCellValue(i.getCaption());
-          row++;
+    if (queryFilters != null) {
+      for (ThinHierarchy item : queryFilters) {
+        for (ThinLevel s : item.getLevels().values()) {
+          for (ThinMember i : s.getSelection().getMembers()) {
+            sheetRow = summarySheet.createRow((short) row);
+            cell = sheetRow.createCell(0);
+            cell.setCellValue(item.getCaption());
+            cell = sheetRow.createCell(1);
+            cell.setCellValue(s.getCaption());
+            cell = sheetRow.createCell(2);
+            cell.setCellValue(i.getCaption());
+            row++;
+          }
         }
       }
     }

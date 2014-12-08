@@ -15,43 +15,6 @@
  */
 package org.saiku.service.olap;
 
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicLong;
-
-import mondrian.olap4j.SaikuMondrianHelper;
-
-import org.apache.commons.lang.StringUtils;
-import org.olap4j.Axis;
-import org.olap4j.CellSet;
-import org.olap4j.CellSetAxis;
-import org.olap4j.OlapConnection;
-import org.olap4j.OlapStatement;
-import org.olap4j.Position;
-import org.olap4j.mdx.ParseTreeNode;
-import org.olap4j.mdx.ParseTreeWriter;
-import org.olap4j.mdx.SelectNode;
-import org.olap4j.mdx.parser.impl.DefaultMdxParserImpl;
-import org.olap4j.metadata.Cube;
-import org.olap4j.metadata.Dimension;
-import org.olap4j.metadata.Hierarchy;
-import org.olap4j.metadata.Level;
-import org.olap4j.metadata.Measure;
-import org.olap4j.metadata.Member;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.dto.resultset.CellDataSet;
@@ -64,11 +27,7 @@ import org.saiku.olap.query2.ThinQuery;
 import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
 import org.saiku.olap.query2.util.Fat;
 import org.saiku.olap.query2.util.Thin;
-import org.saiku.olap.util.ObjectUtil;
-import org.saiku.olap.util.OlapResultSetUtil;
-import org.saiku.olap.util.QueryConverter;
-import org.saiku.olap.util.SaikuProperties;
-import org.saiku.olap.util.SaikuUniqueNameComparator;
+import org.saiku.olap.util.*;
 import org.saiku.olap.util.formatter.CellSetFormatterFactory;
 import org.saiku.olap.util.formatter.FlattenedCellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
@@ -88,8 +47,28 @@ import org.saiku.service.util.QueryContext.Type;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.service.util.export.CsvExporter;
 import org.saiku.service.util.export.ExcelExporter;
+
+import org.apache.commons.lang.StringUtils;
+import org.olap4j.*;
+import org.olap4j.mdx.ParseTreeNode;
+import org.olap4j.mdx.ParseTreeWriter;
+import org.olap4j.mdx.SelectNode;
+import org.olap4j.mdx.parser.impl.DefaultMdxParserImpl;
+import org.olap4j.metadata.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
+
+import mondrian.olap4j.SaikuMondrianHelper;
 
 public class ThinQueryService implements Serializable {
 
@@ -400,7 +379,6 @@ public class ThinQueryService implements Serializable {
             SaikuCube cube = query.getCube();
             final OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnection());
             stmt = con.createStatement();
-
             SelectNode sn = (new DefaultMdxParserImpl().parseSelect(query.getMdx()));
             String select = null;
             StringBuffer buf = new StringBuffer();
@@ -415,7 +393,6 @@ public class ThinQueryService implements Serializable {
                 }
                 buf.append(sw.toString());
             }
-
             buf.append("SELECT (");
             for (int i = 0; i < cellPosition.size(); i++) {
                 List<Member> members = cs.getAxes().get(i).getPositions().get(cellPosition.get(i)).getMembers();
@@ -429,8 +406,6 @@ public class ThinQueryService implements Serializable {
             }
             buf.append(") ON COLUMNS \r\n");
             buf.append("FROM [" + cube.getName() + "]\r\n");
-
-
             final Writer writer = new StringWriter();
             sn.getFilterAxis().unparse(new ParseTreeWriter(new PrintWriter(writer)));
             if (StringUtils.isNotBlank(writer.toString())) {
@@ -446,7 +421,6 @@ public class ThinQueryService implements Serializable {
             if (StringUtils.isNotBlank(returns)) {
                 select += "\r\n RETURN " + returns;
             }
-
             log.debug("Drill Through for query (" + queryName + ") : \r\n" + select);
             ResultSet rs = stmt.executeQuery(select);
             return rs;
@@ -454,11 +428,11 @@ public class ThinQueryService implements Serializable {
             throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
         } finally {
             try {
-                if (stmt != null)  stmt.close();
+                if (stmt != null) stmt.close();
             } catch (Exception e) {}
         }
-
     }
+
 
 
     public byte[] exportDrillthroughCsv(String queryName, int maxrows) {

@@ -15,12 +15,10 @@
  */
 package org.saiku.plugin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import mondrian.olap4j.SaikuMondrianHelper;
+import org.saiku.datasources.connection.AbstractConnectionManager;
+import org.saiku.datasources.connection.ISaikuConnection;
+import org.saiku.datasources.connection.SaikuConnectionFactory;
+import org.saiku.datasources.datasource.SaikuDatasource;
 
 import org.olap4j.OlapConnection;
 import org.pentaho.platform.api.engine.IConnectionUserRoleMapper;
@@ -29,10 +27,13 @@ import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.engine.services.solution.SolutionReposHelper;
 import org.pentaho.platform.plugin.services.connections.mondrian.MDXConnection;
-import org.saiku.datasources.connection.AbstractConnectionManager;
-import org.saiku.datasources.connection.ISaikuConnection;
-import org.saiku.datasources.connection.SaikuConnectionFactory;
-import org.saiku.datasources.datasource.SaikuDatasource;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import mondrian.olap4j.SaikuMondrianHelper;
 
 public class PentahoSecurityAwareConnectionManager extends AbstractConnectionManager {
 
@@ -114,6 +115,9 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 			}
 			if (con != null) {
 				con.clearCache();
+			  try {
+				 con.getConnection().close();
+				 } catch (Exception e) {}
 			}
 			con = null;
 			return getInternalConnection(name, datasource);
