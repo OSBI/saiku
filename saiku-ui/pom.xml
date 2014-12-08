@@ -11,7 +11,7 @@
         <properties>
 	<checkstyle.skip>true</checkstyle.skip>
 	 <build.prod>false</build.prod>
-    </properties>
+     </properties>
 	<build>
 		<pluginManagement>
 			<plugins>
