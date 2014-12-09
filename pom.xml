@@ -184,8 +184,8 @@
 						<jsSourceInclude>views/Modal.js</jsSourceInclude>
 						<jsSourceInclude>views/MDXModal.js</jsSourceInclude>
 						<jsSourceInclude>views/SelectionsModal.js</jsSourceInclude>
-						<jsSourceInclude>views/DrillAcrossModal.js</jsSourceInclude>
 						<jsSourceInclude>views/DrillthroughModal.js</jsSourceInclude>
+						<jsSourceInclude>views/DrillAcrossModal.js</jsSourceInclude>
 						<jsSourceInclude>views/PermissionsModal.js</jsSourceInclude>
 						<jsSourceInclude>views/LoginForm.js</jsSourceInclude>
 						<jsSourceInclude>views/DemoLoginForm.js</jsSourceInclude>
