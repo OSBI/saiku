@@ -223,7 +223,7 @@
 										<include name="*.properties" />
 									</fileset>
 								</copy>
-                                <patch patchfile="newpatch.patch" originalfile="target/dist/saiku/ui/index.html" />
+                                <patch patchfile="addplugins.patch" originalfile="target/dist/saiku/ui/index.html" />
 								<zip destfile="target/saiku-plugin-p5-${project.version}.zip">
 									<zipfileset dir="target/dist/" />
 								</zip>
