@@ -290,7 +290,7 @@
 											<include name="js/saiku/Saiku.js" />
 										</fileset>
 									</copy>
-									<copy overwrite="true" file="target/saiku-ui/index_prod.html" tofile="target/saiku-ui/index.html" />
+									<patch patchfile="minify.patch" originalfile="target/saiku-ui/index.html" />
 
 									<copy todir="target/saiku-ui2">
 										<fileset dir="${basedir}/">
