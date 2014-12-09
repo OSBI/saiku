@@ -1,4 +1,4 @@
-/*
+/*  
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-
+ 
 /**
  * Dialog for member selections
  */
@@ -24,7 +24,7 @@ var SelectionsModal = Modal.extend({
         { text: "OK", method: "save" },
         { text: "Cancel", method: "close" }
     ],
-
+    
     events: {
         'click a': 'call',
         'click .search_term' : 'search_members',
@@ -35,7 +35,7 @@ var SelectionsModal = Modal.extend({
         'click li.all_options' : 'click_all_member_selection',
         'change #show_totals': 'show_totals_action'
         //,'click div.updown_buttons a.form_button': 'updown_selection'
-    },
+    },    
 
     show_unique_option: false,
 
@@ -44,8 +44,8 @@ var SelectionsModal = Modal.extend({
     members_limit: Settings.MEMBERS_LIMIT,
     members_search_limit: Settings.MEMBERS_SEARCH_LIMIT,
     members_search_server: false,
-	selection_type: "INCLUSION",
-
+    selection_type: "INCLUSION",
+    
     initialize: function(args) {
         // Initialize properties
         var self = this;
@@ -57,22 +57,22 @@ var SelectionsModal = Modal.extend({
         this.available_members = [];
 
         _.bindAll(this, "fetch_members", "populate", "finished", "get_members", "use_result_action", "show_totals_action");
-
+        
         // Determine axis
-        this.axis = "undefined";
+        this.axis = "undefined"; 
         if (args.axis) {
             this.axis = args.axis;
             if (args.axis == "FILTER") {
                 this.use_result_option = false;
             }
         } else {
-            if (args.target.parents('.fields_list_body').hasClass('rows')) {
+            if (args.target.parents('.fields_list_body').hasClass('rows')) { 
                 this.axis = "ROWS";
             }
-            if (args.target.parents('.fields_list_body').hasClass('columns')) {
+            if (args.target.parents('.fields_list_body').hasClass('columns')) { 
                 this.axis = "COLUMNS";
             }
-            if (args.target.parents('.fields_list_body').hasClass('filter')) {
+            if (args.target.parents('.fields_list_body').hasClass('filter')) { 
                 this.axis = "FILTER";
                 this.use_result_option = false;
             }
@@ -80,7 +80,7 @@ var SelectionsModal = Modal.extend({
         // Resize when rendered
         this.bind('open', this.post_render);
         this.render();
-
+        
         $(this.el).parent().find('.ui-dialog-titlebar-close').bind('click',this.finished);
 
         // Fetch available members
@@ -93,7 +93,7 @@ var SelectionsModal = Modal.extend({
         $(this.el).find('.dialog_body')
             .html(_.template($("#template-selections").html())(this));
 
-
+    
         var hName = this.member.hierarchy;
         var lName = this.member.level;
         var hierarchy = this.workspace.query.helper.getHierarchy(hName);
@@ -101,6 +101,7 @@ var SelectionsModal = Modal.extend({
         if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
             level = hierarchy.levels[lName];
         }
+
         if (Settings.ALLOW_PARAMETERS) {
             if (level) {
                 var pName = level.selection ? level.selection.parameterName : null;
@@ -110,6 +111,7 @@ var SelectionsModal = Modal.extend({
             }
             $(this.el).find('.parameter').removeClass('hide');
         }
+
 
         var showTotalsEl = $(this.el).find('#show_totals');
         showTotalsEl.val('');
@@ -125,7 +127,7 @@ var SelectionsModal = Modal.extend({
             this.show_totals_option = '';
         }
         showTotalsEl.val(this.show_totals_option);
-		showTotalsEl.removeAttr("disabled");
+        showTotalsEl.removeAttr("disabled");
 
         $(this.el).find('#use_result').attr('checked', this.use_result_option);
         $(this.el).find('.search_limit').text(this.members_search_limit);
@@ -134,7 +136,7 @@ var SelectionsModal = Modal.extend({
 
         this.get_members();
     },
-
+    
     show_totals_action: function(event) {
         this.show_totals_option = $(event.target).val();
     },
@@ -143,12 +145,12 @@ var SelectionsModal = Modal.extend({
             var self = this;
             var path = "/result/metadata/hierarchies/" + encodeURIComponent(this.member.hierarchy) + "/levels/" + encodeURIComponent(this.member.level);
             this.search_path = path;
-
+            
             var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">' + self.message + '</span> ';
             self.workspace.block(message);
 
-            this.workspace.query.action.gett(path, {
-                success: this.fetch_members,
+            this.workspace.query.action.gett(path, { 
+                success: this.fetch_members, 
                 error: function() {
                     self.workspace.unblock();
                 },
@@ -163,20 +165,20 @@ var SelectionsModal = Modal.extend({
     search_members: function() {
         var self = this;
         var search_term = $(this.el).find('.filterbox').val();
-        if (!search_term)
+        if (!search_term) 
             return false;
 
         var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Searching for members matching:</span> ' + search_term;
         self.workspace.block(message);
 
-        self.workspace.query.action.gett(self.search_path, {
-                async: false,
+        self.workspace.query.action.gett(self.search_path, { 
+                async: false, 
                 success: function(response, model) {
                                 if (model && model.length > 0) {
                                     self.available_members = model;
                                 }
                                 self.populate();
-                            },
+                            }, 
                 error: function () {
                     self.workspace.unblock();
                 },
@@ -185,7 +187,7 @@ var SelectionsModal = Modal.extend({
 
 
     },
-
+    
     fetch_members: function(model, response) {
         var self = this;
         if (response && response.length > 0) {
@@ -193,12 +195,11 @@ var SelectionsModal = Modal.extend({
         }
         this.populate();
     },
-
+    
     populate: function(model, response) {
             var self = this;
-            var selectedHtml;
             self.workspace.unblock();
-            this.members_search_server = (this.available_members.length >= this.members_limit || this.available_members.length === 0);
+            this.members_search_server = (this.available_members.length >= this.members_limit || this.available_members.length == 0);
 
             self.show_unique_option = false;
             $(this.el).find('.options #show_unique').attr('checked',false);
@@ -216,41 +217,41 @@ var SelectionsModal = Modal.extend({
             var hierarchy = self.workspace.query.helper.getHierarchy(hName);
             if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
                 this.selected_members = hierarchy.levels[lName].selection ? hierarchy.levels[lName].selection.members : [];
-				this.selection_type = hierarchy.levels[lName].selection ? hierarchy.levels[lName].selection.type : "INCLUSION";
+                this.selection_type = hierarchy.levels[lName].selection ? hierarchy.levels[lName].selection.type : "INCLUSION";
             }
             var used_members = [];
-
+    
             // Populate both boxes
-
-
+            
+            
             for (var j = 0, len = this.selected_members.length; j < len; j++) {
                     var member = this.selected_members[j];
                     used_members.push(member.caption);
             }
-            if ($(this.el).find('.used_selections .selection_options li.option_value' ).length === 0) {
+            if ($(this.el).find('.used_selections .selection_options li.option_value' ).length == 0) {
                 var selectedMembers = $(this.el).find('.used_selections .selection_options');
                 selectedMembers.empty();
-                selectedHtml = _.template($("#template-selections-options").html())({ options: this.selected_members });
+                var selectedHtml = _.template($("#template-selections-options").html())({ options: this.selected_members });
                 $(selectedMembers).html(selectedHtml);
             }
-
+            
             // Filter out used members
-            this.available_members = _.filter(this.available_members, function(obj) {
+            this.available_members = _.select(this.available_members, function(obj) {
                 return used_members.indexOf(obj.caption) === -1;
             });
-
+            
             if (this.available_members.length > 0) {
                 var availableMembersSelect = $(this.el).find('.available_selections .selection_options');
                 availableMembersSelect.empty();
-                selectedHtml = _.template($("#template-selections-options").html())({ options: this.available_members });
-                $(availableMembersSelect).html(selectedHtml);
+                var selectedHtml = _.template($("#template-selections-options").html())({ options: this.available_members });
+                $(availableMembersSelect).html(selectedHtml);   
             }
             if ($(self.el).find( ".selection_options.ui-selectable" ).length > 0) {
                 $(self.el).find( ".selection_options" ).selectable( "destroy" );
             }
-
+            
             $(self.el).find( ".selection_options" ).selectable({ distance: 20, filter: "li", stop: function( event, ui ) {
-
+            
                 $(self.el).find( ".selection_options li.ui-selected input").each(function(index, element) {
                     if (element && element.hasAttribute('checked')) {
                         element.checked = true;
@@ -284,13 +285,13 @@ var SelectionsModal = Modal.extend({
 
                             } else {
                             */
-                            var search_target = self.show_unique_option === false ? "caption" : "name";
+                            var search_target = self.show_unique_option == false ? "caption" : "name";
                             var result =  $.map( searchlist, function( item ) {
 
                                             if (item[search_target].toLowerCase().indexOf(request.term.toLowerCase()) > -1) {
-                                                var label = self.show_unique_option === false? item.caption : item.uniqueName;
-                                                var value = self.show_unique_option === false? item.uniqueName : item.caption;
-
+                                                var label = self.show_unique_option == false? item.caption : item.uniqueName;
+                                                var value = self.show_unique_option == false? item.uniqueName : item.caption;
+                                                
 
                                                 return {
                                                     label: label,
@@ -300,27 +301,27 @@ var SelectionsModal = Modal.extend({
                                     });
                             response( result);
                     },
-                    select:  function(event, ui) {
+                    select:  function(event, ui) { 
                         var value = encodeURIComponent(ui.item.value);
                         var label = ui.item.label;
-                        var searchVal = self.show_unique_option === false? ui.item.value : ui.item.label;
-                        var cap = self.show_unique_option === false? ui.item.label : ui.item.value;
+                        var searchVal = self.show_unique_option == false? ui.item.value : ui.item.label;
+                        var cap = self.show_unique_option == false? ui.item.label : ui.item.value;
 
                         $(self.el).find('.available_selections .selection_options input[value="' + encodeURIComponent(searchVal) + '"]').parent().remove();
                         $(self.el).find('.used_selections .selection_options input[value="' + encodeURIComponent(searchVal) + '"]').parent().remove();
 
-                        var option = '<li class="option_value"><input type="checkbox" class="check_option" value="' +
-                                            encodeURIComponent(searchVal) + '" label="' + encodeURIComponent(cap)  + '">' + label + '</input></li>';
+                        var option = '<li class="option_value"><input type="checkbox" class="check_option" value="' 
+                                            +  encodeURIComponent(searchVal) + '" label="' + encodeURIComponent(cap)  + '">' + label + '</input></li>';
+            
 
-
-
-
-
+                        
+                        
+                        
                         $(option).appendTo($(self.el).find('.used_selections .selection_options ul'));
                         $(self.el).find('.filterbox').val('');
                         ui.item.value = "";
 
-                    }, close: function(event, ui) {
+                    }, close: function(event, ui) { 
                         //$('#filter_selections').val('');
                         //$(self.el).find('.filterbox').css({ "text-align" : " left"});
                     }, open: function( event, ui ) {
@@ -330,41 +331,42 @@ var SelectionsModal = Modal.extend({
                 });
 
         $(this.el).find('.filterbox').autocomplete("enable");
-		if (this.selection_type === "EXCLUSION") {
-			 $(this.el).find('.selection_type_inclusion').prop('checked', false);
-			 $(this.el).find('.selection_type_exclusion').prop('checked', true);
-			 } else {
-			 $(this.el).find('.selection_type_inclusion').prop('checked', true);
-			 $(this.el).find('.selection_type_exclusion').prop('checked', false);
-			}
+        if (this.selection_type === "EXCLUSION") {
+            $(this.el).find('.selection_type_inclusion').prop('checked', false);
+            $(this.el).find('.selection_type_exclusion').prop('checked', true);
+        } else {
+            $(this.el).find('.selection_type_inclusion').prop('checked', true);
+            $(this.el).find('.selection_type_exclusion').prop('checked', false);
+        }
+
 		// Translate
 		Saiku.i18n.translate();
         // Show dialog
         Saiku.ui.unblock();
     },
-
+    
     post_render: function(args) {
         var left = ($(window).width() - 1000)/2;
         var width = $(window).width() < 1040 ? $(window).width() : 1040;
         $(args.modal.el).parents('.ui-dialog')
             .css({ width: width, left: "inherit", margin:"0", height: 530 })
             .offset({ left: left});
-
+            
         $('#filter_selections').attr("disabled", false);
         $(this.el).find('a[href=#save]').focus();
         $(this.el).find('a[href=#save]').blur();
     },
-
+    
     move_selection: function(event) {
         event.preventDefault();
         var action = $(event.target).attr('id');
-        var $to = action.indexOf('add') !== -1 ?
+        var $to = action.indexOf('add') !== -1 ? 
             $(this.el).find('.used_selections .selection_options ul') :
             $(this.el).find('.available_selections .selection_options ul');
-        var $from = action.indexOf('add') !== -1 ?
+        var $from = action.indexOf('add') !== -1 ? 
             $(this.el).find('.available_selections .selection_options ul') :
             $(this.el).find('.used_selections .selection_options ul');
-        var $els = action.indexOf('all') !== -1 ?
+        var $els = action.indexOf('all') !== -1 ? 
             $from.find('li.option_value input').parent() : $from.find('li.option_value input:checked').parent();
         $els.detach().appendTo($to);
         $(this.el).find('.selection_options ul li.option_value input:checked').prop('checked', false);
@@ -422,7 +424,7 @@ var SelectionsModal = Modal.extend({
         //console.log(this.use_result_option);
         this.get_members();
     },
-
+    
     save: function() {
         var self = this;
         // Notify user that updates are in progress
@@ -432,13 +434,13 @@ var SelectionsModal = Modal.extend({
         var show_u = this.show_unique_option;
 
         var hName = decodeURIComponent(self.member.hierarchy);
-        var lName = decodeURIComponent(self.member.level);
+        var lName = decodeURIComponent(self.member.level)
         var hierarchy = self.workspace.query.helper.getHierarchy(hName);
-
+        
 
         // Determine updates
         var updates = [];
-        var totalsFunction = this.show_totals_option;
+        var totalsFunction = this.show_totals_option;        
 
         // If no selections are used, add level
         if ($(this.el).find('.used_selections input').length === 0) {
@@ -457,20 +459,18 @@ var SelectionsModal = Modal.extend({
             });
         }
 
-
+        
         var parameterName = $('#parameter').val();
         if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
-                hierarchy.levels[lName].aggregators = [];
+                hierarchy.levels[lName]["aggregators"] = [];
                 if (totalsFunction) {
                     hierarchy.levels[lName]["aggregators"].push(totalsFunction);
-					var selectionType = $(self.el).find('input.selection_type:checked').val();
-					selectionType = selectionType ? selectionType : "INCLUSION";
-					console.log("selection type: " + selectionType);
-					hierarchy.levels[lName].selection = { "type": selectionType, "members": updates };
                 }
-                hierarchy.levels[lName].selection = { "type": "INCLUSION", "members": updates };
+                var selectionType = $(self.el).find('input.selection_type:checked').val();
+                selectionType = selectionType ? selectionType : "INCLUSION";
+                hierarchy.levels[lName].selection = { "type": selectionType, "members": updates };
                 if (Settings.ALLOW_PARAMETERS && parameterName) {
-                    hierarchy.levels[lName].selection.parameterName = parameterName;
+                    hierarchy.levels[lName].selection["parameterName"] = parameterName;
                     var parameters = self.workspace.query.helper.model().parameters;
                     if (!parameters[parameterName]) {
                     //    self.workspace.query.helper.model().parameters[parameterName] = "";
@@ -482,7 +482,7 @@ var SelectionsModal = Modal.extend({
 
         this.finished();
     },
-
+    
     finished: function() {
         $('#filter_selections').remove();
         this.available_members = null;
@@ -492,3 +492,4 @@ var SelectionsModal = Modal.extend({
         this.query.run();
     }
 });
+
