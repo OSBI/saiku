@@ -1,20 +1,18 @@
 package org.saiku.repository;
 
-import org.apache.jackrabbit.webdav.DavException;
-import org.apache.jackrabbit.webdav.DavResource;
-import org.apache.jackrabbit.webdav.WebdavRequest;
-import org.apache.jackrabbit.webdav.WebdavResponse;
-import org.apache.jackrabbit.webdav.simple.SimpleWebdavServlet;
 import org.saiku.service.datasource.RepositoryDatasourceManager;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.apache.jackrabbit.webdav.*;
+import org.apache.jackrabbit.webdav.simple.SimpleWebdavServlet;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import java.io.IOException;
 
 import javax.jcr.Repository;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import java.io.IOException;
 
 /**
  * Created by bugg on 04/09/14.
@@ -47,7 +45,26 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
                        DavResource resource)
             throws IOException,
             DavException{
-        super.doPost(request, response, resource);
+
+//        super.doPost(request, response, resource);
+      DavResource parentResource = resource.getCollection();
+      if (parentResource == null || !parentResource.exists()) {
+        // parent does not exist
+        response.sendError(DavServletResponse.SC_CONFLICT);
+        return;
+      }
+
+      int status;
+      // test if resource already exists
+      if (resource.exists()) {
+        status = DavServletResponse.SC_NO_CONTENT;
+      } else {
+        status = DavServletResponse.SC_CREATED;
+      }
+
+      parentResource.addMember(resource, getInputContext(request, request.getInputStream()));
+      response.setStatus(status);
+
     }
 
     @Override

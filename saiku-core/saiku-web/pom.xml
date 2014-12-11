@@ -143,6 +143,12 @@
 		<dependency>
 			<groupId>com.sun.jersey.contribs</groupId>
 			<artifactId>jersey-multipart</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>mimepull</artifactId>
+					<groupId>org.jvnet</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		
 		<dependency>
@@ -167,6 +173,12 @@
 		<dependency>
 			<groupId>org.codehaus.enunciate</groupId>
 			<artifactId>enunciate-rt</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.jvnet</groupId>
+					<artifactId>mimepull</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<dependency>

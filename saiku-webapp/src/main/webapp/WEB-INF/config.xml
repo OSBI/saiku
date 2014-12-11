@@ -71,17 +71,17 @@
         <iohandler>
             <class name="org.apache.jackrabbit.server.io.VersionHistoryHandler" />
         </iohandler>
-        <iohandler>
+<!--        <iohandler>
             <class name="org.apache.jackrabbit.server.io.ZipHandler" />
         </iohandler>
         <iohandler>
             <class name="org.apache.jackrabbit.server.io.XmlHandler" />
-        </iohandler>
+        </iohandler>-->
         <iohandler>
             <class name="org.apache.jackrabbit.server.io.DirListingExportHandler" />
         </iohandler>
         <iohandler>
-            <class name="org.apache.jackrabbit.server.io.DefaultHandler" />
+            <class name="org.saiku.repository.SaikuDavResourceImpl" />
         </iohandler>
     </iomanager>
     <!--
@@ -110,14 +110,14 @@
         <propertyhandler>
             <class name="org.apache.jackrabbit.server.io.VersionHistoryHandler" />
         </propertyhandler>
-        <propertyhandler>
+        <!--<propertyhandler>
             <class name="org.apache.jackrabbit.server.io.ZipHandler" />
         </propertyhandler>
         <propertyhandler>
             <class name="org.apache.jackrabbit.server.io.XmlHandler" />
-        </propertyhandler>
+        </propertyhandler>-->
         <propertyhandler>
-            <class name="org.apache.jackrabbit.server.io.DefaultHandler" />
+            <class name="org.saiku.repository.SaikuDavResourceImpl" />
         </propertyhandler>
     </propertymanager>
     <!--

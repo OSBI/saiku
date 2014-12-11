@@ -597,7 +597,7 @@
         <CalculatedMembers>
             <CalculatedMember name='Profit' dimension='Measures'>
             <Formula>[Measures].[Store Sales] - [Measures].[Store Cost]</Formula>
-                <CalculatedMemberProperty name='FORMAT_STRING' value='$#,##0.00'/>
+                <CalculatedMemberProperty name="FORMAT_STRING" expression="Iif(([Measures].[Store Sales]) &lt; 10000, '|(#,##0.00 &#8364;)|style=red', '|#,##0.00 &#8364;|style=green')"/>
             </CalculatedMember>
             <CalculatedMember name='Profit last Period' dimension='Measures'
                     formula='COALESCEEMPTY((Measures.[Profit], [Time].[Time].PREVMEMBER),    Measures.[Profit])'
