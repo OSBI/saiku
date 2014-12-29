@@ -66,12 +66,12 @@
         <repository>
             <id>Analytical Labs Repo</id>
             <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.analytical-labs.com/alabs-release-local</url>
+            <url>http://repo.analytical-labs.com/artifactory/alabs-release-local</url>
         </repository>
         <repository>
             <id>Analytical Labs snapshots</id>
             <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.analytical-labs.com/alabs-snapshot-local</url>
+            <url>http://repo.analytical-labs.com/artifactory/alabs-snapshot-local</url>
         </repository>
         <repository>
             <id>central</id>
@@ -217,7 +217,7 @@
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox</artifactId>
-                <version>2.0.0-20141127.210128-743</version>
+                <version>2.0.0-20141212.210914-782</version>
             </dependency>
 
             <dependency>

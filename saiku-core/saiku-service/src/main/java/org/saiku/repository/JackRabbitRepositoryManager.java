@@ -379,7 +379,12 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
             if(type == null){
                 type ="";
             }
+            if(n.hasNode(filename)){
+                n.getNode(filename).remove();
+            }
+
             Node resNode = n.addNode(filename, "nt:file");
+
             if (type.equals("nt:saikufiles")) {
                 resNode.addMixin("nt:saikufiles");
             } else if (type.equals("nt:mondrianschema")) {
