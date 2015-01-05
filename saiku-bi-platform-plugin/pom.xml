@@ -313,32 +313,52 @@
 	</build>
 	<repositories>
 		<repository>
+			<id>pentaho-third-party</id>
+			<url>http://nexus.pentaho.org/content/repositories/proxied-3rd-party-releases/</url>
+		</repository>
+		<repository>
+			<id>pentaho-public-release</id>
+			<url>http://nexus.pentaho.org/content/repositories/pentaho-public-release-repos/</url>
+		</repository>
+		<repository>
+			<id>pentaho-snapshot</id>
+			<url>http://nexus.pentaho.org/content/repositories/public-snapshots/</url>
+		</repository>
+		<repository>
+			<id>codehaus</id>
+			<url>http://repository.codehaus.org/</url>
+		</repository>
+
+		<repository>
 			<id>pentaho-repo</id>
 			<name>pentaho repository</name>
 			<url>http://repository.pentaho.org/artifactory/pentaho</url>
 		</repository>
 		<repository>
-			<id>pentaho-third-party</id>
-			<url>http://repo.pentaho.org/artifactory/third-party/</url>
-		</repository>
-                <repository>
-			<id>alabs-repo</id>
-			<name>alabs repository</name>
-			<url>http://repo.analytical-labs.com/repo/</url>
+			<id>Analytical Labs Repo</id>
+			<name>Analytical Labs Repo-releases</name>
+			<url>http://repo.analytical-labs.com/artifactory/alabs-release-local</url>
 		</repository>
 		<repository>
-			<id>ibiblio</id>
-			<url>http://ibiblio.org/maven2/</url>
+			<id>Analytical Labs snapshots</id>
+			<name>Analytical Labs Repo-releases</name>
+			<url>http://repo.analytical-labs.com/artifactory/alabs-snapshot-local</url>
+		</repository>
+		<repository>
+			<id>central</id>
+			<name>Maven Repository Switchboard</name>
+			<layout>default</layout>
+			<url>http://repo1.maven.org/maven2</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
 		<repository>
-			<id>java</id>
-			<url>http://download.java.net/maven/2/</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
+			<id>apache</id>
+			<name>Apache repo</name>
+			<layout>default</layout>
+			<url>https://repository.apache.org/content/repositories/snapshots/</url>
+			<snapshots><enabled>true</enabled></snapshots>
 		</repository>
 	</repositories>
 	<dependencies>
