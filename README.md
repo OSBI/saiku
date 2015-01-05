@@ -31,7 +31,6 @@ Help and Support
 ________________
 
 http://community.meteorite.bi
-(Work in progress)
 
 Commit Messages
 _______________
