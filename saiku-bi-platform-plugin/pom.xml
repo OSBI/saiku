@@ -328,12 +328,6 @@
 			<id>codehaus</id>
 			<url>http://repository.codehaus.org/</url>
 		</repository>
-
-		<repository>
-			<id>pentaho-repo</id>
-			<name>pentaho repository</name>
-			<url>http://repository.pentaho.org/artifactory/pentaho</url>
-		</repository>
 		<repository>
 			<id>Analytical Labs Repo</id>
 			<name>Analytical Labs Repo-releases</name>
