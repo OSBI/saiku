@@ -47,10 +47,26 @@
         <pentaho.libs.version>TRUNK-SNAPSHOT</pentaho.libs.version>
         <pentaho.platform.version>5.0.0</pentaho.platform.version>
     </properties>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>Analytical Labs Plugin Repo</id>
+            <name>Analytical Labs Repo-releases</name>
+            <url>http://repo.analytical-labs.com/artifactory/alabs-release-local</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <repositories>
         <repository>
             <id>pentaho-third-party</id>
-            <url>http://repo.pentaho.org/artifactory/third-party/</url>
+            <url>http://nexus.pentaho.org/content/repositories/proxied-3rd-party-releases/</url>
+        </repository>
+        <repository>
+            <id>pentaho-public-release</id>
+            <url>http://nexus.pentaho.org/content/repositories/pentaho-public-release-repos/</url>
+        </repository>
+        <repository>
+            <id>pentaho-snapshot</id>
+            <url>http://nexus.pentaho.org/content/repositories/public-snapshots/</url>
         </repository>
         <repository>
             <id>codehaus</id>
@@ -65,12 +81,12 @@
         <repository>
             <id>Analytical Labs Repo</id>
             <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.analytical-labs.com/alabs-release-local</url>
+            <url>http://repo.analytical-labs.com/artifactory/alabs-release-local</url>
         </repository>
         <repository>
             <id>Analytical Labs snapshots</id>
             <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.analytical-labs.com/alabs-snapshot-local</url>
+            <url>http://repo.analytical-labs.com/artifactory/alabs-snapshot-local</url>
         </repository>
         <repository>
             <id>central</id>
@@ -81,7 +97,13 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-
+        <repository>
+            <id>apache</id>
+            <name>Apache repo</name>
+            <layout>default</layout>
+            <url>https://repository.apache.org/content/repositories/snapshots/</url>
+            <snapshots><enabled>true</enabled></snapshots>
+        </repository>
     </repositories>
     <build>
         <plugins>
