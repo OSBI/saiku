@@ -357,6 +357,11 @@
 	</repositories>
 	<dependencies>
 		<dependency>
+			<groupId>org.apache.hadoop.hive</groupId>
+			<artifactId>hive-jdbc</artifactId>
+			<version>0.7.0-pentaho-1.0.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.saiku</groupId>
 			<artifactId>saiku-service</artifactId>
 			<version>${project.version}</version>
