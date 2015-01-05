@@ -75,11 +75,6 @@
         </repository>
 
         <repository>
-            <id>pentaho-repo</id>
-            <name>pentaho repository</name>
-            <url>http://repository.pentaho.org/artifactory/pentaho</url>
-        </repository>
-        <repository>
             <id>Analytical Labs Repo</id>
             <name>Analytical Labs Repo-releases</name>
             <url>http://repo.analytical-labs.com/artifactory/alabs-release-local</url>
