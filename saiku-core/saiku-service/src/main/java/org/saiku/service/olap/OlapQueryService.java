@@ -21,11 +21,8 @@ import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.dto.resultset.DataCell;
 import org.saiku.olap.dto.resultset.MemberCell;
-import org.saiku.olap.query.IQuery;
+import org.saiku.olap.query.*;
 import org.saiku.olap.query.IQuery.QueryType;
-import org.saiku.olap.query.MdxQuery;
-import org.saiku.olap.query.OlapQuery;
-import org.saiku.olap.query.QueryDeserializer;
 import org.saiku.olap.util.ObjectUtil;
 import org.saiku.olap.util.OlapResultSetUtil;
 import org.saiku.olap.util.SaikuProperties;
@@ -57,10 +54,7 @@ import org.olap4j.query.Selection.Operator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -81,7 +75,8 @@ public class OlapQueryService implements Serializable {
 
 	private OlapDiscoverService olapDiscoverService;
 
-	private Map<String, IQuery> queries = new HashMap<String, IQuery>(); 
+	private transient Map<String, IQuery> queries = new HashMap<String, IQuery>();
+  	private Map<String, String> serializableQueries = null;
 
 	private static final AtomicLong ID_GENERATOR = new AtomicLong();
 
@@ -1423,4 +1418,27 @@ public class OlapQueryService implements Serializable {
 	private Map<String, IQuery> getIQueryMap() {
 		return queries;
 	}
+
+  private void writeObject(ObjectOutputStream stream)
+	  throws IOException {
+
+	serializableQueries = new HashMap<String, String>();
+	for (Map.Entry<String, IQuery> entry  : queries.entrySet() )
+	{
+	  serializableQueries.put(entry.getKey(), new QuerySerializer(entry.getValue()).createXML());
+	}
+	stream.defaultWriteObject();
+  }
+  private void readObject(ObjectInputStream stream)
+	  throws IOException, ClassNotFoundException {
+
+	stream.defaultReadObject();
+	queries = new HashMap<String, IQuery>();
+	for (Map.Entry<String, String> entry  : serializableQueries.entrySet() )
+	{
+	  createNewOlapQuery (entry.getKey(), entry.getValue());
+	}
+	serializableQueries = null;
+  }
+
 }

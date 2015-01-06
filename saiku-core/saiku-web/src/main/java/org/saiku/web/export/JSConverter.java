@@ -34,7 +34,7 @@ public class JSConverter {
         String content = sw.toString();
         if(getVersion()!=null && !getVersion().contains("EE")) {
             content =
-                content + "<br/><div><h5>Export Provided By Saiku Analytics Community Edition(http://meteorite.bi)"
+                content + "<div style='margin-top:10px;'><h5>Export Provided By Saiku Analytics Community Edition(http://meteorite.bi)"
                 + "</h5></div>";
         }
         return content;

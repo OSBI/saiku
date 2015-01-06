@@ -15,28 +15,24 @@
  */
 package org.saiku.service.olap;
 
+import org.saiku.olap.discover.OlapMetaExplorer;
+import org.saiku.olap.dto.*;
+import org.saiku.olap.util.exception.SaikuOlapException;
+import org.saiku.service.datasource.DatasourceService;
+import org.saiku.service.util.exception.SaikuServiceException;
+
+import org.olap4j.OlapConnection;
+import org.olap4j.metadata.Cube;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import mondrian.rolap.RolapConnection;
-
-import org.olap4j.OlapConnection;
-import org.olap4j.metadata.Cube;
-import org.saiku.olap.discover.OlapMetaExplorer;
-import org.saiku.olap.dto.SaikuConnection;
-import org.saiku.olap.dto.SaikuCube;
-import org.saiku.olap.dto.SaikuDimension;
-import org.saiku.olap.dto.SaikuHierarchy;
-import org.saiku.olap.dto.SaikuLevel;
-import org.saiku.olap.dto.SaikuMember;
-import org.saiku.olap.dto.SimpleCubeElement;
-import org.saiku.olap.util.exception.SaikuOlapException;
-import org.saiku.service.datasource.DatasourceService;
-import org.saiku.service.util.exception.SaikuServiceException;
 
 public class OlapDiscoverService implements Serializable {
 
@@ -46,7 +42,7 @@ public class OlapDiscoverService implements Serializable {
   private static final long serialVersionUID = 884682532600907574L;
 
   private DatasourceService datasourceService;
-  private OlapMetaExplorer metaExplorer;
+  private transient OlapMetaExplorer metaExplorer;
 
   public void setDatasourceService(DatasourceService ds) {
     datasourceService = ds;
@@ -228,5 +224,11 @@ public class OlapDiscoverService implements Serializable {
       throw new SaikuServiceException(e);
     }
     return properties;
+  }
+
+  private void readObject(ObjectInputStream stream)
+      throws IOException, ClassNotFoundException {
+    stream.defaultReadObject();
+    metaExplorer = new OlapMetaExplorer( datasourceService.getConnectionManager() );
   }
 }

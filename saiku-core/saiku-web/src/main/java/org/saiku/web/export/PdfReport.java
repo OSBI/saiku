@@ -1,43 +1,42 @@
 package org.saiku.web.export;
 
-import java.awt.Graphics2D;
-import java.awt.print.PageFormat;
-import java.awt.print.Paper;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.saiku.service.util.exception.SaikuServiceException;
+import org.saiku.web.rest.objects.resultset.QueryResult;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.PageSize;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfWriter;
 
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.print.PrintTranscoder;
 import org.apache.commons.lang.StringUtils;
-import org.saiku.service.util.exception.SaikuServiceException;
-import org.saiku.web.rest.objects.resultset.QueryResult;
+import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.MimeConstants;
+import org.htmlcleaner.CleanerProperties;
+import org.htmlcleaner.DomSerializer;
+import org.htmlcleaner.HtmlCleaner;
+import org.htmlcleaner.TagNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.tool.xml.XMLWorker;
-import com.itextpdf.tool.xml.XMLWorkerFontProvider;
-import com.itextpdf.tool.xml.XMLWorkerHelper;
-import com.itextpdf.tool.xml.css.CssFile;
-import com.itextpdf.tool.xml.css.StyleAttrCSSResolver;
-import com.itextpdf.tool.xml.html.CssAppliers;
-import com.itextpdf.tool.xml.html.CssAppliersImpl;
-import com.itextpdf.tool.xml.html.Tags;
-import com.itextpdf.tool.xml.parser.XMLParser;
-import com.itextpdf.tool.xml.pipeline.css.CSSResolver;
-import com.itextpdf.tool.xml.pipeline.css.CssResolverPipeline;
-import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
-import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
-import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+import java.awt.*;
+import java.awt.print.PageFormat;
+import java.awt.print.Paper;
+import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamResult;
 
 public class PdfReport {
 
@@ -64,7 +63,9 @@ public class PdfReport {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfWriter writer = PdfWriter.getInstance(document, baos);
         document.open();
-        populatePdf(document, writer, qr);
+
+        ByteArrayOutputStream pdf = new ByteArrayOutputStream();
+        populatePdf(qr, pdf);
 
         // do we want to add a svg image?
         if (StringUtils.isNotBlank(svg)) {
@@ -96,39 +97,167 @@ public class PdfReport {
             cb.restoreState();
         }
 
-        document.close();
-        return baos.toByteArray();
+      //  document.close();
+        return pdf.toByteArray();
     }
 
-    public void populatePdf(Document doc, PdfWriter writer, QueryResult qr) throws Exception {
+    public void populatePdf(QueryResult qr, OutputStream pdf) throws Exception {
         Long start = (new Date()).getTime();
         String content = JSConverter.convertToHtml(qr);
 
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         Date date = new Date();
-        content = "<p>" + "Saiku Export - " + dateFormat.format(date) + "</p><p>&nbsp;</p>" + content;
+        content = "<p>" + "Saiku Export - " + dateFormat.format(date) + "</p>" + content;
 
 
-        InputStream contentIs = new ByteArrayInputStream(content.getBytes("UTF-8"));
         Long rhino = (new Date()).getTime();
-        // CSS
-        CSSResolver cssResolver = new StyleAttrCSSResolver();
-        CssFile cssFile = XMLWorkerHelper.getCSS(getClass().getResourceAsStream("saiku.table.pdf.css"));
-        cssResolver.addCss(cssFile);
-        // HTML
-        XMLWorkerFontProvider fontProvider = new XMLWorkerFontProvider();
-        fontProvider.defaultEncoding = "UTF-8";
-        CssAppliers cssAppliers = new CssAppliersImpl(fontProvider);
-        HtmlPipelineContext htmlContext = new HtmlPipelineContext(cssAppliers);
-        htmlContext.setTagFactory(Tags.getHtmlTagProcessorFactory());
-        // Pipelines
-        PdfWriterPipeline pdf = new PdfWriterPipeline(doc, writer);
-        HtmlPipeline html = new HtmlPipeline(htmlContext, pdf);
-        CssResolverPipeline css = new CssResolverPipeline(cssResolver, html);
-        XMLWorker worker = new XMLWorker(css, true);
-        XMLParser p = new XMLParser(worker);
-        p.parse(contentIs, true);
+
+
+        org.w3c.dom.Document out = getDom(content);
+
+        org.w3c.dom.Document foDoc = getFO(out);
+
+        String s= toString(out);
+        System.out.println(s);
+
+        try {
+
+            pdf.write(fo2PDF(foDoc, null));
+        } catch (java.io.FileNotFoundException e) {
+            e.printStackTrace();
+            System.out.println("Error creating PDF: ");
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            System.out.println("Error writing PDF: ");
+        }
+
         Long parse = (new Date()).getTime();
         log.debug("PDF Output - JSConverter: " + (rhino - start) + "ms PDF Render: " + (parse - rhino) + "ms");
+    }
+
+
+
+  public static String toString(org.w3c.dom.Document doc) {
+    try {
+      StringWriter sw = new StringWriter();
+      TransformerFactory tf = TransformerFactory.newInstance();
+      Transformer transformer = tf.newTransformer();
+      transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+      transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+      transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+      transformer.transform(new DOMSource(doc), new StreamResult(sw));
+      return sw.toString();
+    } catch (Exception ex) {
+      throw new RuntimeException("Error converting to String", ex);
+    }
+  }
+
+
+  private org.w3c.dom.Document getDom(String html){
+        ByteArrayInputStream input = new ByteArrayInputStream(html.getBytes());
+
+        final HtmlCleaner cleaner = new HtmlCleaner();
+        CleanerProperties props = cleaner.getProperties();
+
+      props.setAdvancedXmlEscape(true);
+      
+      props.setRecognizeUnicodeChars(true);
+      props.setTranslateSpecialEntities(true);
+        DomSerializer doms = new DomSerializer(props, false);
+
+        org.w3c.dom.Document xmlDoc;
+
+        try {
+            TagNode node = cleaner.clean(input);
+            xmlDoc = doms.createDOM(node);
+            return xmlDoc;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private org.w3c.dom.Document getFO(org.w3c.dom.Document xmlDoc){
+
+        try {
+            return xml2FO(xmlDoc);
+        } catch (Exception e) {
+            System.out.println("ERROR: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private byte[] fo2PDF(org.w3c.dom.Document foDocument, String styleSheet) {
+        FopFactory fopFactory = FopFactory.newInstance();
+
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
+            Transformer transformer = getTransformer(styleSheet);
+
+            Source src = new DOMSource(foDocument);
+            Result res = new SAXResult(fop.getDefaultHandler());
+
+            transformer.transform(src, res);
+
+            return out.toByteArray();
+
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    private Transformer getTransformer(String styleSheet) {
+        try {
+            TransformerFactory tFactory = TransformerFactory.newInstance();
+
+            DocumentBuilderFactory dFactory = DocumentBuilderFactory.newInstance();
+            dFactory.setNamespaceAware(true);
+
+            InputStream is = this.getClass().getResourceAsStream("xhtml2fo.xsl");
+            DocumentBuilder dBuilder = dFactory.newDocumentBuilder();
+            org.w3c.dom.Document xslDoc = dBuilder.parse(is);
+            DOMSource xslDomSource = new DOMSource(xslDoc);
+
+            return tFactory.newTransformer(xslDomSource);
+        } catch (javax.xml.transform.TransformerException e) {
+            e.printStackTrace();
+            return null;
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (javax.xml.parsers.ParserConfigurationException e) {
+            e.printStackTrace();
+            return null;
+        } catch (org.xml.sax.SAXException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    private static org.w3c.dom.Document xml2FO(org.w3c.dom.Document xml) throws Exception {
+        DOMSource xmlDomSource = new DOMSource(xml);
+        DOMResult domResult = new DOMResult();
+
+        TransformerFactory factory = TransformerFactory.newInstance();
+        Transformer transformer = factory.newTransformer();
+
+        if (transformer == null) {
+            System.out.println("Error creating transformer");
+            System.exit(1);
+        }
+
+        try {
+            transformer.transform(xmlDomSource, domResult);
+        } catch (javax.xml.transform.TransformerException e) {
+            return null;
+        }
+
+        return (org.w3c.dom.Document) domResult.getNode();
     }
 }
