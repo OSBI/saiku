@@ -20,7 +20,7 @@
     <bean id="sessionService" class="org.saiku.web.service.SessionService">
         <property name="authenticationManager" ref="authenticationManager" />
     </bean>
-
+    <bean id="securityContextPersistenceFilter" class="org.springframework.security.web.context.SecurityContextPersistenceFilter" />
     <bean id="connectionManager" class="org.saiku.web.impl.SecurityAwareConnectionManager" init-method="init" destroy-method="destroy">
         <property name="dataSourceManager" ref="repositoryDsManager" />
         <property name="sessionService" ref="sessionService" />
