@@ -162,7 +162,7 @@ var DrillthroughModal = Modal.extend({
 		params += "&returns=" + selections;
 		if (this.action == "export") {
 			var location = Settings.REST_URL +
-				Saiku.session.username + "/query/" +
+				"api/query/" +
 				this.query.id + "/drillthrough/export/csv" + params;
 			this.close();
 			window.open(location);
