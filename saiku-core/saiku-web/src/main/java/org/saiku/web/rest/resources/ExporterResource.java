@@ -84,7 +84,7 @@ public class ExporterResource {
 	@Produces({"application/json" })
 	@Path("/saiku/xls")
 	public Response exportExcel(@QueryParam("file") String file, 
-			@QueryParam("formatter") String formatter,
+			@QueryParam("formatter") String formatter,@QueryParam("name") String name,
 			@Context HttpServletRequest servletRequest) 
 	{
 		try {
@@ -109,7 +109,7 @@ public class ExporterResource {
 			}
 		  }
 			query2Resource.execute(tq);
-			return query2Resource.getQueryExcelExport(queryName, formatter);
+			return query2Resource.getQueryExcelExport(queryName, formatter, name);
 		} catch (Exception e) {
 			log.error("Error exporting XLS for file: " + file, e);
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
@@ -218,7 +218,8 @@ public class ExporterResource {
 	public Response exportChart(
 			@FormParam("type") @DefaultValue("png")  String type,
 			@FormParam("svg") String svg,
-			@FormParam("size") Integer size) 
+			@FormParam("size") Integer size,
+			@FormParam("name") String name)
 	{
 		try {
 			final String imageType = type.toUpperCase();
@@ -297,15 +298,18 @@ public class ExporterResource {
 			}
 			ImageIO.write(o, type, imgb);
 			byte[] outfile = imgb.toByteArray();
+			if(name == null || name.equals("")){
+			  name = "chart";
+			}
 			return Response.ok(outfile).type(ct).header(
 				"content-disposition",
-				"attachment; filename = chart." + ext).header(
+				"attachment; filename = "+name+"." + ext).header(
 				"content-length", outfile.length).build();
 		  }
 		  else{
 			return Response.ok(b).type(converter.getContentType()).header(
 				"content-disposition",
-				"attachment; filename = chart." + converter.getExtension()).header(
+				"attachment; filename = "+name+"." + converter.getExtension()).header(
 				"content-length", b.length).build();
 		  }
 		} catch (Exception e) {

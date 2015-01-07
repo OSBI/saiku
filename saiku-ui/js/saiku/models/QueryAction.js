@@ -52,6 +52,7 @@ var QueryAction = Backbone.Model.extend({
         // Set query action
         this.url = this.query.url() + action;
 
+		var id = this.id;
         // Clear out old attributes
         this.attributes = options.data? options.data : {};
 
@@ -62,6 +63,7 @@ var QueryAction = Backbone.Model.extend({
 
             this.save({}, options);
         } else if (method == "delete") {
+			this.set("id", this.id);
             this.destroy(options);
         } else if (method == "fetch") {
             this.parse = function() {};

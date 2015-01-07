@@ -15,41 +15,6 @@
  */
 package org.saiku.web.rest.resources;
 
-import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.TypeFactory;
 import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query2.ThinQuery;
@@ -60,10 +25,34 @@ import org.saiku.web.export.JSConverter;
 import org.saiku.web.export.PdfReport;
 import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.util.RestUtil;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.type.TypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.InputStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 @Component
 @Path("/saiku/api/query")
@@ -109,12 +98,6 @@ public class Query2Resource {
 
     /**
      * Create a new Saiku Query.
-     * @param connectionName the name of the Saiku connection.
-     * @param cubeName the name of the cube.
-     * @param catalogName the catalog name.
-     * @param schemaName the name of the schema.
-     * @param queryName the name you want to assign to the query.
-     * @return
      *
      * @return a query model.
      *
@@ -130,7 +113,7 @@ public class Query2Resource {
             MultivaluedMap<String, String> formParams) throws ServletException
     {
         try {
-            ThinQuery tq = null;
+            ThinQuery tq;
             String file = fileFormParam,
                     json = jsonFormParam;
             if (formParams != null) {
@@ -225,8 +208,7 @@ public class Query2Resource {
     @Path("/enrich")
     public ThinQuery enrich(ThinQuery tq) {
         try {
-            ThinQuery tqAfter = thinQueryService.updateQuery(tq);
-            return tqAfter;
+            return thinQueryService.updateQuery(tq);
         }
         catch (Exception e) {
             log.error("Cannot enrich query (" + tq + ")",e);
@@ -252,8 +234,7 @@ public class Query2Resource {
                     + "/hierarchies/" + hierarchyName + "/levels/" + levelName + "\tGET");
         }
         try {
-            List<SimpleCubeElement> ms = thinQueryService.getResultMetadataMembers(queryName, result, hierarchyName, levelName, searchString, searchLimit);
-            return ms;
+            return thinQueryService.getResultMetadataMembers(queryName, result, hierarchyName, levelName, searchString, searchLimit);
         }
         catch (Exception e) {
             log.error("Cannot execute query (" + queryName + ")",e);
@@ -270,7 +251,7 @@ public class Query2Resource {
         if (log.isDebugEnabled()) {
             log.debug("TRACK\t"  + "\t/query/" + queryName + "/export/xls/\tGET");
         }
-        return getQueryExcelExport(queryName, "flattened");
+        return getQueryExcelExport(queryName, "flattened", null);
     }
 
     @GET
@@ -278,13 +259,16 @@ public class Query2Resource {
     @Path("/{queryname}/export/xls/{format}")
     public Response getQueryExcelExport(
             @PathParam("queryname") String queryName,
-            @PathParam("format") @DefaultValue("flattened") String format){
+            @PathParam("format") @DefaultValue("flattened") String format, @QueryParam("exportname") @DefaultValue("")
+            String name){
         if (log.isDebugEnabled()) {
             log.debug("TRACK\t"  + "\t/query/" + queryName + "/export/xls/"+format+"\tGET");
         }
         try {
             byte[] doc = thinQueryService.getExport(queryName,"xls",format);
-            String name = SaikuProperties.webExportExcelName + "." + SaikuProperties.webExportExcelFormat;
+            if(name == null || name.equals("")) {
+                name = SaikuProperties.webExportExcelName + "." + SaikuProperties.webExportExcelFormat;
+            }
             return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
                     "content-disposition",
                     "attachment; filename = " + name).header(
@@ -304,7 +288,7 @@ public class Query2Resource {
         if (log.isDebugEnabled()) {
             log.debug("TRACK\t"  + "\t/query/" + queryName + "/export/csv\tGET");
         }
-        return getQueryCsvExport(queryName, "flattened");
+        return getQueryCsvExport(queryName, "flattened", null);
     }
 
     @GET
@@ -312,13 +296,16 @@ public class Query2Resource {
     @Path("/{queryname}/export/csv/{format}")
     public Response getQueryCsvExport(
             @PathParam("queryname") String queryName,
-            @PathParam("format") String format){
+            @PathParam("format") String format, @QueryParam("exportname") @DefaultValue("") String name){
         if (log.isDebugEnabled()) {
             log.debug("TRACK\t"  + "\t/query/" + queryName + "/export/csv/"+format+"\tGET");
         }
         try {
             byte[] doc = thinQueryService.getExport(queryName,"csv",format);
-            String name = SaikuProperties.webExportCsvName;
+            if(name == null || name.equals("")) {
+                 name = SaikuProperties.webExportCsvName;
+            }
+
             return Response.ok(doc, MediaType.APPLICATION_OCTET_STREAM).header(
                     "content-disposition",
                     "attachment; filename = " + name + ".csv").header(
@@ -359,8 +346,7 @@ public class Query2Resource {
                     }
                 }
             }
-            ThinQuery tq = thinQueryService.zoomIn(queryName, realPositions);
-            return tq;
+            return thinQueryService.zoomIn(queryName, realPositions);
 
         } catch (Exception e){
             log.error("Cannot zoom in on query (" + queryName + ")",e);
@@ -411,10 +397,8 @@ public class Query2Resource {
         finally {
             if (rs != null) {
                 Statement statement = null;
-                Connection con = null;
                 try {
                     statement = rs.getStatement();
-                    con = rs.getStatement().getConnection();
                 } catch (Exception e) {
                     throw new SaikuServiceException(e);
                 } finally {
@@ -425,7 +409,6 @@ public class Query2Resource {
                         }
                     } catch (Exception ee) {};
 
-                    rs = null;
                 }
             }
         }
@@ -483,7 +466,6 @@ public class Query2Resource {
                 } catch (SQLException e) {
                     throw new SaikuServiceException(e);
                 } finally {
-                    rs = null;
                 }
             }
         }
@@ -498,7 +480,7 @@ public class Query2Resource {
             @PathParam("queryname")  String queryName,
             @PathParam("svg")  @DefaultValue("") String svg)
     {
-        return exportPdfWithChartAndFormat(queryName, null, svg);
+        return exportPdfWithChartAndFormat(queryName, null, svg, null);
     }
 
     @GET
@@ -506,7 +488,7 @@ public class Query2Resource {
     @Path("/{queryname}/export/pdf")
     public Response exportPdf(@PathParam("queryname")  String queryName)
     {
-        return exportPdfWithChartAndFormat(queryName, null, null);
+        return exportPdfWithChartAndFormat(queryName, null, null, null);
     }
 
     @GET
@@ -514,9 +496,9 @@ public class Query2Resource {
     @Path("/{queryname}/export/pdf/{format}")
     public Response exportPdfWithFormat(
             @PathParam("queryname")  String queryName,
-            @PathParam("format") String format)
+            @PathParam("format") String format, @QueryParam("exportname") String name)
     {
-        return exportPdfWithChartAndFormat(queryName, format, null);
+        return exportPdfWithChartAndFormat(queryName, format, null, name);
     }
 
     @POST
@@ -525,7 +507,7 @@ public class Query2Resource {
     public Response exportPdfWithChartAndFormat(
             @PathParam("queryname")  String queryName,
             @PathParam("format") String format,
-            @FormParam("svg") @DefaultValue("") String svg)
+            @FormParam("svg") @DefaultValue("") String svg, @QueryParam("name") String name)
     {
 
         try {
@@ -533,9 +515,12 @@ public class Query2Resource {
             QueryResult qr = RestUtil.convert(cs);
             PdfReport pdf = new PdfReport();
             byte[] doc  = pdf.pdf(qr, svg);
+            if(name==null || name.equals("")){
+                name = "export";
+            }
             return Response.ok(doc).type("application/pdf").header(
                     "content-disposition",
-                    "attachment; filename = export.pdf").header(
+                    "attachment; filename = "+name+".pdf").header(
                     "content-length",doc.length).build();
         } catch (Exception e) {
             log.error("Error exporting query to  PDF", e);
@@ -569,7 +554,7 @@ public class Query2Resource {
     {
 
         try {
-            CellDataSet cs = null;
+            CellDataSet cs;
             if (StringUtils.isNotBlank(format)) {
                 cs = thinQueryService.execute(tq, format);
             } else {
