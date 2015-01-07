@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * Central object for handling global application state
  */
@@ -22,7 +22,7 @@ var Saiku = {
      * View which manages toolbar interactions
      */
     toolbar: {},
-    
+
     /**
      * View which handles tabs
      */
@@ -33,12 +33,12 @@ var Saiku = {
      * Model which handles session and authentication
      */
     session: null,
-    
+
     /**
      * Global event bus
      */
     events: _.extend({}, Backbone.Events),
-    
+
     /**
      * Collection of routers for page fragments
      */
@@ -53,9 +53,9 @@ var Saiku = {
             $('.processing_message').removeClass("i18n_translated").addClass("i18n");
             Saiku.i18n.translate();
 
-            $('.processing,.processing_container').show();  
+            $('.processing,.processing_container').show();
         },
-        
+
         unblock: function() {
             $('.processing,.processing_container, .blockOverlay').hide();
 
@@ -91,11 +91,11 @@ var Saiku = {
             var params = Array.prototype.slice.call(arguments);
 
             var paramsURI = {},
-                keyValue,               
+                keyValue,
                 couples = window.location.search.substr(1).split('&');
 
             if (window.location.search.length > 1) {
-                for (var keyId = 0; keyId < couples.length; keyId++) {                    
+                for (var keyId = 0; keyId < couples.length; keyId++) {
                     keyValue = couples[keyId].split('=');
                     paramsURI[decodeURIComponent(keyValue[0])] = keyValue.length > 1 ? this.buildValue(decodeURIComponent(keyValue[1])) : null;
                 }
@@ -116,16 +116,16 @@ var Saiku = {
         cssNode.rel = 'stylesheet';
         cssNode.href = href;
 
-        // Temporarily, set media to something non-matching to 
+        // Temporarily, set media to something non-matching to
         // ensure it'll fetch without blocking render
         cssNode.media = 'only x';
 
         // Inject link
         ref.parentNode.insertBefore(cssNode, ref);
 
-        // Set media back to `all` so that the 
+        // Set media back to `all` so that the
         // stylesheet applies once it loads
-        setTimeout(function() {            
+        setTimeout(function() {
             cssNode.media = media || 'all';
         });
 
@@ -166,9 +166,9 @@ var Saiku = {
                 (output[i] === ALPHA && values[index].match(/[a-zA-Z]/)) ||
                 (output[i] === ALPHANUM && values[index].match(/[0-9a-zA-Z]/))) {
                 output[i] = values[index++];
-            } 
-            else if (output[i] === DIGIT || 
-                     output[i] === ALPHA || 
+            }
+            else if (output[i] === DIGIT ||
+                     output[i] === ALPHA ||
                      output[i] === ALPHANUM) {
                 output = output.slice(0, i);
             }
@@ -206,9 +206,9 @@ Saiku.singleton = (function() {
 }());
 
 /**
- * Setting this option to true will fake PUT and DELETE requests 
- * with a HTTP POST, and pass them under the _method parameter. 
- * Setting this option will also set an X-HTTP-Method-Override header 
+ * Setting this option to true will fake PUT and DELETE requests
+ * with a HTTP POST, and pass them under the _method parameter.
+ * Setting this option will also set an X-HTTP-Method-Override header
  * with the true method. This is required for BI server integration
  */
 Backbone.emulateHTTP = false;
@@ -226,7 +226,9 @@ if (! Settings.BIPLUGIN) {
                 var j = 0;
                 plugins.each(function(log) {
                     j = j+1;
-                    jQuery.getScript(log.attributes.path);
+					if(log.attributes.path != "js/saiku/plugins/I18n/plugin.js") {
+						jQuery.getScript(log.attributes.path);
+					}
 
                     if(j == i) {
                         Saiku.session = new Session({}, {
