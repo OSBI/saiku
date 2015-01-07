@@ -208,19 +208,60 @@ var SaveQuery = Modal.extend({
         }
         */
 
+		var self = this;
+
         var name = $(this.el).find('input[name="name"]').val();
         if (name !== null && name.length > 0) {
-            this.query.set({ name: name, folder: foldername });
-            this.query.trigger('query:save');
-            this.copy_to_repository();
+			this.repository.fetch({success: function(collection, response){
+
+
+				var paths=[];
+				paths.push.apply(paths, self.get_files(response));
+				if(paths.indexOf(name)> -1 && self.query.get("name")!=name){
+					new OverwriteModal({name: name, foldername: foldername, parent: self}).render().open();
+				}
+				else{
+					 self.query.set({ name: name, folder: foldername });
+					 self.query.trigger('query:save');
+					 self.copy_to_repository();
+					 event.preventDefault();
+					 return false;
+				}
+
+				}});
+
+
+
+
         } else {
             alert("You need to enter a name!");
         }
 
-        event.preventDefault();
-        return false;
+
     },
 
+	save_remote: function(name, foldername, parent){
+		parent.query.set({ name: name, folder: foldername });
+		parent.query.trigger('query:save');
+		parent.copy_to_repository();
+		event.preventDefault();
+		return false;
+	},
+
+	get_files: function(response){
+		var self = this;
+		var paths = [];
+		_.each( response, function( entry ){
+			if( entry.type === 'FOLDER' ) {
+				paths.push.apply(paths, self.get_files(entry.repoObjects));
+			}
+			else{
+				paths.push(entry.path);
+
+			}
+		});
+			return paths;
+	},
     copy_to_repository: function() {
         var self = this;
         var folder = this.query.get('folder');
