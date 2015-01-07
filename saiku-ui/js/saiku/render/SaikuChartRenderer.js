@@ -311,7 +311,7 @@ SaikuChartRenderer.prototype.cccOptionsDefault = {
             multiChartMax: 30,
             smallTitleFont: "bold 14px sans-serif",
             valuesVisible: true,
-            valuesMask: "{value.percent}",
+			valuesMask: "{category} / {value.percent}",
             explodedSliceRadius: "10%",
             extensionPoints: {
                 slice_innerRadiusEx: '40%',
