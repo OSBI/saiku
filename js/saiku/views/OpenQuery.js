@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,20 +13,20 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * The open query tab (Repository viewer)
  */
 var OpenQuery = Backbone.View.extend({
     className: 'tab_container',
-    
+
     events: {
         'click .query': 'view_query',
         'dblclick .query': 'select_and_open_query',
         'click .add_folder' : 'add_folder',
         'click li.folder': 'toggle_folder',
         'click .workspace_toolbar a.button' : 'prevent_default',
-        'click .workspace_toolbar a.open': 'open_query',
+        'click .workspace_toolbar a.run': 'open_query',
         'click .workspace_toolbar a.edit': 'edit_query',
         'click .workspace_toolbar [href=#edit_folder]': 'edit_folder',
         'click .workspace_toolbar [href=#delete_folder]': 'delete_repoObject',
@@ -36,9 +36,9 @@ var OpenQuery = Backbone.View.extend({
         'keyup .search_file' : 'search_file',
         'click .cancel_search' : 'cancel_search'
     },
-    
+
     template: function() {
-        return _.template($("#template-open-dialog").html())();        
+        return _.template($("#template-open-dialog").html())();
     },
 
     template_repository_objects: function( repository ) {
@@ -46,14 +46,14 @@ var OpenQuery = Backbone.View.extend({
         $(this.el).find('.sidebar ul').html(
             _.template( $( '#template-repository-objects' ).html( ) )( {
                 repoObjects: repository
-            } ) 
+            } )
         );
     },
-    
+
     caption: function() {
         return "Repository";
     },
-    
+
     /*jshint -W069 */
     render: function() {
         // Load template
@@ -63,7 +63,7 @@ var OpenQuery = Backbone.View.extend({
         this.tab.bind('tab:select', this.fetch_queries);
         this.tab.bind('tab:select', this.adjust);
         $(window).resize(this.adjust);
-        
+
         var self = this;
         var menuitems = {
                     "open": {name: "Open", i18n: true },
@@ -77,7 +77,7 @@ var OpenQuery = Backbone.View.extend({
         $.each(menuitems, function(key, item){
             recursive_menu_translate(item, Saiku.i18n.po_file);
         });
-        
+
         $.contextMenu('destroy', 'li.query, div.folder_row');
         $.contextMenu({
                 selector: 'li.query, div.folder_row',
@@ -138,20 +138,20 @@ var OpenQuery = Backbone.View.extend({
 
         return this;
     },
-    
+
     initialize: function(args) {
         // Maintain `this`
         _.bindAll(this, "adjust", "fetch_queries",
                 "clear_query","select_and_open_query", "cancel_search", "add_folder");
-        
+
         // Initialize repository
         this.repository = new Repository({}, { dialog: this });
     },
-    
+
     fetch_queries: function() {
         this.repository.fetch();
     },
-    
+
     populate: function( repository ) {
         var self = this;
         self.template_repository_objects( repository );
@@ -179,10 +179,10 @@ var OpenQuery = Backbone.View.extend({
                 $(this.el).find('.cancel_search').hide();
             }
             $(this.el).find('li.query').removeClass('hide');
-            $(this.el).find('li.query a').each(function (index) { 
+            $(this.el).find('li.query a').each(function (index) {
                 if($(this).text().toLowerCase().indexOf(filter) == -1) {
                     $(this).parent('li.query').addClass('hide');
-                } 
+                }
             });
             $(this.el).find('li.folder').addClass('hide');
             $(this.el).find('li.query').not('.hide').parents('li.folder').removeClass('hide');
@@ -219,7 +219,7 @@ var OpenQuery = Backbone.View.extend({
         $( this.el ).find( '.add_folder' ).parent().addClass( 'hide' );
 
         if (typeof query.acl != "undefined" && _.indexOf(query.acl, "READ") > -1) {
-            $( this.el ).find( '.for_queries .open' ).parent().removeClass( 'hide' );
+            $( this.el ).find( '.for_queries .run' ).parent().removeClass( 'hide' );
         }
         if (typeof query.acl != "undefined" && _.indexOf(query.acl, "WRITE") > -1) {
             $( this.el ).find( '.for_queries .delete' ).parent().removeClass( 'hide' );
@@ -234,7 +234,7 @@ var OpenQuery = Backbone.View.extend({
                     var folder_path = query_path.splice(0,query_path.length - 1).join("/");
                     var folder = this.queries[folder_path];
                     if (typeof folder.acl != "undefined" && _.indexOf(folder.acl, "WRITE") > -1) {
-                        $( this.el ).find( '.add_folder' ).parent().removeClass( 'hide' );   
+                        $( this.el ).find( '.add_folder' ).parent().removeClass( 'hide' );
                     }
             } else if (query_path.length == 1) {
                 $( this.el ).find( '.add_folder' ).parent().removeClass( 'hide' );
@@ -243,21 +243,21 @@ var OpenQuery = Backbone.View.extend({
             //console.log(e);
         }
 
-        
+
         var $results = $(this.el).find('.workspace_results')
             .html('<h3><strong>' + query.name + '</strong></h3>');
         var $properties = $('<ul id="query_info" />').appendTo($results);
-        
+
         // Iterate through properties and show a key=>value set in the information pane
         for (var property in query) {
             if (query.hasOwnProperty(property) && property != "name") {
-                $properties.append($('<li />').html("<strong>" + 
+                $properties.append($('<li />').html("<strong>" +
                         property + "</strong> : " + query[property]));
             }
         }
-        
+
         this.selected_query = new SavedQuery({ file: path, name: name, type: query.type });
-        
+
         return false;
     },
 
@@ -297,7 +297,7 @@ var OpenQuery = Backbone.View.extend({
         if (typeof $selected !== "undefined" && $selected) {
             if ($selected.hasClass('folder_row')) {
                 path = $selected.children('a').attr('href');
-                path = path.length > 1 ? path.substring(1,path.length) : path; 
+                path = path.length > 1 ? path.substring(1,path.length) : path;
                 path+= "/";
 
             } else if ($selected.hasClass('query') && !$selected.parent().hasClass('RepositoryObjects')) {
@@ -307,10 +307,10 @@ var OpenQuery = Backbone.View.extend({
                 path = path.substring(1, path.length - queryname.length );
             }
         }
-        
-        (new AddFolderModal({ 
+
+        (new AddFolderModal({
             path: path,
-            success: this.clear_query 
+            success: this.clear_query
         })).render().open();
 
         return false;
@@ -351,11 +351,11 @@ var OpenQuery = Backbone.View.extend({
         this.selected_query = new SavedQuery({ file: path, name: path });
         this.open_query();
     },
-    
+
     open_query: function(viewstate) {
         Saiku.ui.block("Opening query...");
         var item = this.queries[this.selected_query.get('file')];
-        var params = _.extend({ 
+        var params = _.extend({
                         file: this.selected_query.get('file'),
                         formatter: Settings.CELLSET_FORMATTER
                     }, Settings.PARAMS);
@@ -378,7 +378,7 @@ var OpenQuery = Backbone.View.extend({
             query: this.selected_query,
             success: this.clear_query
         })).render().open();
-        
+
         return false;
     },
 
@@ -395,7 +395,7 @@ var OpenQuery = Backbone.View.extend({
         alert( 'todo: edit folder properties/permissions' );
         return false;
     },
-    
+
     edit_permissions: function(event) {
         (new PermissionsModal({
             workspace: this.workspace,
@@ -409,7 +409,7 @@ var OpenQuery = Backbone.View.extend({
         $(this.el).find('.workspace_results').html('');
         this.fetch_queries();
     },
-    
+
     adjust: function() {
         // Adjust the height of the separator
         $separator = $(this.el).find('.sidebar_separator');
@@ -422,11 +422,11 @@ var OpenQuery = Backbone.View.extend({
         $(this.el).find('.workspace_results').css({
             width: $(document).width() - $(this.el).find('.sidebar').width() - 30,
             height: $(document).height() - $("#header").height() -
-                $(this.el).find('.workspace_toolbar').height() - 
+                $(this.el).find('.workspace_toolbar').height() -
                 $(this.el).find('.workspace_fields').height() - 40
         });
     },
-    
+
     toggle_sidebar: function() {
         // Toggle sidebar
         $(this.el).find('.sidebar').toggleClass('hide');
