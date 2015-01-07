@@ -107,15 +107,17 @@ public class TotalsListsBuilder implements FormatList {
     try {
       String formatString = (String) m.getPropertyValue(Property.StandardCellProperty.FORMAT_STRING);
       if (StringUtils.isBlank(formatString)) {
-        Map<String, Property> props = m.getProperties().asMap();
-        if (props.containsKey("FORMAT_STRING")) {
-          formatString = (String) m.getPropertyValue(props.get("FORMAT_STRING"));
-        } else if (props.containsKey("FORMAT_EXP_PARSED")) {
-          formatString = (String) m.getPropertyValue(props.get("FORMAT_EXP_PARSED"));
-        } else if (props.containsKey("FORMAT_EXP")) {
-          formatString = (String) m.getPropertyValue(props.get("FORMAT_EXP"));
-        } else if (props.containsKey("FORMAT")) {
-          formatString = (String) m.getPropertyValue(props.get("FORMAT"));
+        if(m.getProperties()!=null) {
+          Map<String, Property> props = m.getProperties().asMap();
+          if (props.containsKey("FORMAT_STRING")) {
+            formatString = (String) m.getPropertyValue(props.get("FORMAT_STRING"));
+          } else if (props.containsKey("FORMAT_EXP_PARSED")) {
+            formatString = (String) m.getPropertyValue(props.get("FORMAT_EXP_PARSED"));
+          } else if (props.containsKey("FORMAT_EXP")) {
+            formatString = (String) m.getPropertyValue(props.get("FORMAT_EXP"));
+          } else if (props.containsKey("FORMAT")) {
+            formatString = (String) m.getPropertyValue(props.get("FORMAT"));
+          }
         }
         if (StringUtils.isBlank(formatString)) {
           formatString = "Standard";
