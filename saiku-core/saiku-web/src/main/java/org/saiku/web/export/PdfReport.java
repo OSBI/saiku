@@ -198,7 +198,7 @@ public class PdfReport {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-            Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
+            Fop fop = fopFactory.newFop(MimeConstants.MIME_FOP_PRINT, out);
             Transformer transformer = getTransformer(styleSheet);
 
             Source src = new DOMSource(foDocument);

@@ -150,11 +150,11 @@
 									<artifactId>batik-codec</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
-								<artifactItem>
+								<!--<artifactItem>
 									<groupId>avalon-framework</groupId>
 									<artifactId>avalon-framework</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
-								</artifactItem>
+								</artifactItem>-->
 								<artifactItem>
 									<groupId>org.apache.xmlgraphics</groupId>
 									<artifactId>xmlgraphics-commons</artifactId>
@@ -567,10 +567,7 @@
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-codec</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>avalon-framework</groupId>
-			<artifactId>avalon-framework</artifactId>
-		</dependency>
+
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>xmlgraphics-commons</artifactId>
