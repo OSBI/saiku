@@ -19,6 +19,7 @@ package org.saiku.repository;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.service.user.UserService;
+import org.saiku.service.util.exception.SaikuServiceException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.api.JackrabbitRepository;
@@ -278,7 +279,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
             Acl2 acl2 = new Acl2(node);
             acl2.setAdminRoles(userService.getAdminRoles());
             if (!acl2.canWrite(node, user, roles)) {
-                //TODO Throw exception
+                throw new SaikuServiceException("Can't write to file or folder");
             }
 
             int pos = path.lastIndexOf("/");
@@ -295,10 +296,13 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
             Acl2 acl2 = new Acl2(n);
             acl2.setAdminRoles(userService.getAdminRoles());
             if (!acl2.canWrite(n, user, roles)) {
-                //TODO Throw exception
+                throw new SaikuServiceException("Can't write to file or folder");
             }
 
-
+            Node check = JcrUtils.getNodeIfExists(n, filename);
+            if(check!=null){
+                check.remove();
+            }
             Node resNode = n.addNode(filename, "nt:file");
             if (type.equals("nt:saikufiles")) {
                 resNode.addMixin("nt:saikufiles");

@@ -255,7 +255,7 @@ class Acl2 {
       return true;
     }
     List<AclMethod> acls = getMethods(path, username, roles);
-    return !acls.contains(AclMethod.WRITE);
+    return acls.contains(AclMethod.WRITE);
   }
 
 

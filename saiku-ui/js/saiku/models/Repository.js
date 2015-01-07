@@ -110,6 +110,7 @@ var Repository = Backbone.Collection.extend({
         if (this.dialog) {
             this.dialog.populate(response);
         }
+		return response;
     },
 
 	url: function() {
