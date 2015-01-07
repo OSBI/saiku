@@ -48,6 +48,7 @@ var Chart = Backbone.View.extend({
          var pseudoForm = "<div id='nav" + this.id + "' style='display:none' class='nav'><form id='svgChartPseudoForm' target='_blank' method='POST'>" +
                 "<input type='hidden' name='type' class='type'/>" +
                 "<input type='hidden' name='svg' class='svg'/>" +
+			 	"<input type='hidden' name='name' class='name'/>" +
                 "</form></div>";
         if (isIE) {
             pseudoForm = "<div></div>";
@@ -70,6 +71,10 @@ var Chart = Backbone.View.extend({
         var form = $('#svgChartPseudoForm');
         form.find('.type').val(type);
         form.find('.svg').val(svgContent);
+		if(this.workspace.query.name!=undefined) {
+			var f = this.workspace.query.name.substring(this.workspace.query.name.lastIndexOf('/') + 1).slice(0, -6);
+			form.find('.name').val(f);
+		}
         form.attr('action', Settings.REST_URL + this.workspace.query.url() + escape("/../../export/saiku/chart"));
         form.submit();
         return false;
