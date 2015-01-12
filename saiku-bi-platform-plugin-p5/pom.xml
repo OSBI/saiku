@@ -26,16 +26,6 @@
 						<configuration>
 							<artifactItems>
                                 <artifactItem>
-                                    <groupId>com.itextpdf</groupId>
-                                    <artifactId>itextpdf</artifactId>
-                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>com.itextpdf.tool</groupId>
-                                    <artifactId>xmlworker</artifactId>
-                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
                                     <groupId>rhino</groupId>
                                     <artifactId>js</artifactId>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
@@ -161,8 +151,8 @@
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
-									<groupId>com.lowagie</groupId>
-									<artifactId>itext</artifactId>
+									<groupId>iText</groupId>
+									<artifactId>iText</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>

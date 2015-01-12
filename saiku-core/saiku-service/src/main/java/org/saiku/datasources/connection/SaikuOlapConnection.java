@@ -15,17 +15,14 @@
  */
 package org.saiku.datasources.connection;
 
-import mondrian.rolap.RolapConnection;
-import org.apache.commons.vfs.FileSystemException;
-import org.apache.commons.vfs.VFS;
-import org.apache.commons.vfs.impl.DefaultFileSystemManager;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapWrapper;
-import org.saiku.datasources.connection.encrypt.CryptoUtil;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
+
+import mondrian.rolap.RolapConnection;
 
 import static org.saiku.datasources.connection.encrypt.CryptoUtil.decrypt;
 
@@ -97,20 +94,26 @@ public class SaikuOlapConnection implements ISaikuConnection {
 
     Class.forName( driver );
       Connection object = DriverManager.getConnection(url, username, password);
-    OlapConnection connection;
-    connection = (OlapConnection) DriverManager.getConnection( url, username, password );
-    final OlapWrapper wrapper = connection;
-    OlapConnection tmpolapConnection = (OlapConnection) wrapper.unwrap( OlapConnection.class );
+    OlapConnection connection = null;
+      connection = (OlapConnection) DriverManager.getConnection(url, username, password);
 
 
-    if ( tmpolapConnection == null ) {
-      throw new Exception( "Connection is null" );
+    if(connection!=null) {
+      final OlapWrapper wrapper = connection;
+      OlapConnection tmpolapConnection = (OlapConnection) wrapper.unwrap(OlapConnection.class);
+
+
+      if (tmpolapConnection == null) {
+        throw new Exception("Connection is null");
+      }
+
+      System.out.println("Catalogs:" + tmpolapConnection.getOlapCatalogs().size());
+      olapConnection = tmpolapConnection;
+      initialized = true;
+      return true;
     }
 
-    System.out.println( "Catalogs:" + tmpolapConnection.getOlapCatalogs().size() );
-    olapConnection = tmpolapConnection;
-    initialized = true;
-    return true;
+    return false;
   }
 
   public boolean clearCache() throws Exception {

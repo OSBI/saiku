@@ -6,7 +6,6 @@
 		<groupId>org.saiku</groupId>
 		<version>3.0.9-SNAPSHOT</version>
 	</parent>
-	<groupId>org.saiku</groupId>
 	<artifactId>saiku-bi-platform-plugin</artifactId>
 	<packaging>jar</packaging>
 	<version>3.0.9-SNAPSHOT</version>

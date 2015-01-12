@@ -141,7 +141,7 @@ public class ServletAdapterContentGenerator extends BaseContentGenerator {
 					Response r = null;
 
 					if (exportType == null || "XLS".equals(exportType.toUpperCase())) {
-						r = ex.exportExcel(file, null, null);
+						r = ex.exportExcel(file, null, null, null);
 						mimeType = "application/vnd.ms-excel";
 						filename += ".xls";
 						
