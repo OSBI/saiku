@@ -262,6 +262,8 @@
 										<include name="*.properties" />
 									</fileset>
 								</copy>
+								<patch patchfile="addplugins.patch" originalfile="target/dist/saiku/ui/index.html" />
+
 								<zip destfile="target/saiku-plugin-${project.version}.zip">
 									<zipfileset dir="target/dist/" />
 								</zip>

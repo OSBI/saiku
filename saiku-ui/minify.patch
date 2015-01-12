@@ -1,9 +1,9 @@
 --- index.html	2014-12-08 15:50:53.298647150 +0000
 +++ index2.html	2014-12-09 20:25:08.039928031 +0000
-@@ -105,61 +105,8 @@
+@@ -105,62 +105,8 @@
  <!-- Saiku Project -->
  <script type="text/javascript" src="js/saiku/Settings.js"></script>
- 
+
 -<script type="text/javascript" src="js/saiku/models/SaikuOlapQuery.js"></script>
 -<script type="text/javascript" src="js/saiku/render/SaikuRenderer.js"></script>
 -<script type="text/javascript" src="js/saiku/render/SaikuTableRenderer.js"></script>
@@ -22,6 +22,7 @@
 -<script type="text/javascript" src="js/saiku/views/DemoLoginForm.js"></script>
 -<script type="text/javascript" src="js/saiku/views/LoginForm.js"></script>
 -<script type="text/javascript" src="js/saiku/views/AboutModal.js"></script>
+-<script type="text/javascript" src="js/saiku/views/OverwriteModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/AddFolderModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/FilterModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/CustomFilterModal.js"></script>
@@ -60,6 +61,6 @@
  <script type="text/javascript" src="saiku.min.js"></script>
 --->
 +
- 
+
  <script type="text/javascript" src="js/saiku/plugins/I18n/plugin.js"></script>
  <!-- Saiku plugins -->
