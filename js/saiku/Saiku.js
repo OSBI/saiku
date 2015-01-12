@@ -87,19 +87,28 @@ var Saiku = {
             return value;
         },
 
-        equals: function() {
-            var params = Array.prototype.slice.call(arguments);
-
+        paramsURI: function() {
             var paramsURI = {},
-                keyValue,
-                couples = window.location.search.substr(1).split('&');
+                couples = window.location.search.substr(1).split('&'),
+                lenCouples = couples.length,
+                keyId,
+                keyValue;
 
             if (window.location.search.length > 1) {
-                for (var keyId = 0; keyId < couples.length; keyId++) {
+                for (keyId = 0; keyId < lenCouples; keyId++) {
                     keyValue = couples[keyId].split('=');
-                    paramsURI[decodeURIComponent(keyValue[0])] = keyValue.length > 1 ? this.buildValue(decodeURIComponent(keyValue[1])) : null;
+                    paramsURI[decodeURIComponent(keyValue[0])] = keyValue.length > 1 
+                        ? this.buildValue(decodeURIComponent(keyValue[1])) 
+                        : null;
                 }
             }
+
+            return paramsURI;
+        },
+
+        equals: function() {
+            var params = Array.prototype.slice.call(arguments),
+                paramsURI = this.paramsURI();
 
             if (_.isEqual(paramsURI, params[0])) {
                 return true;
