@@ -40,9 +40,9 @@ var DateFilterModal = Modal.extend({
 	// template_many_years_mdx: ' {logicalOperator} [Time].[Weekly].[Day].CurrentMember.NAME("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
 	template_many_years_mdx: ' {logicalOperator} {parent}.CurrentMember.NAME {comparisonOperator} \'{dates}\'',
 
-	template_mdx: '{parent} CurrentDateMember([{dimension}.{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT)',
+	template_mdx: '{parent} CurrentDateMember([{dimension}.{hierarchy}], \'["{dimension}.{hierarchy}"]\\\.{AnalyzerDateFormat}\', EXACT)',
 
-	template_last_mdx: '{parent} LastPeriods({periodamount}, CurrentDateMember([{dimension}.{hierarchy}], \'[\"{dimension}.{hierarchy}\"]\\\.{AnalyzerDateFormat}\', EXACT))',
+	template_last_mdx: '{parent} LastPeriods({periodamount}, CurrentDateMember([{dimension}.{hierarchy}], \'["{dimension}.{hierarchy}"]\\\.{AnalyzerDateFormat}\', EXACT))',
 
 	template_dialog: _.template(
 		'<div class="box-selections">' +
@@ -489,6 +489,9 @@ var DateFilterModal = Modal.extend({
 	},
 
 	populate_mdx: function(logExp, fixedDateName, periodamount) {
+		logExp.tagdim = logExp.dimension.replace(/m/g, "\\m").replace(/y/g, "\\y").replace(/q/g, "\\q").replace(/d/g, "\\d");
+		logExp.taghier = logExp.hierarchy.replace(/m/g, "\\m").replace(/y/g, "\\y").replace(/q/g, "\\q").replace(/d/g, "\\d");
+
 		if ((logExp.workinglevel !== logExp.level) && logExp.workinglevel !== undefined) {
 			logExp.parent = '[{dimension}.{hierarchy}].[{level}].members,';
 			logExp.parent = logExp.parent.replace(/{(\w+)}/g, function(m, p) {
@@ -501,7 +504,7 @@ var DateFilterModal = Modal.extend({
 		});
 
 		if (fixedDateName === 'dayperiods') {
-			logExp.parent = '[{dimension}].[{hierarchy}].[{level}]';
+			logExp.parent = '[{dimension}.{hierarchy}].[{level}]';
 			logExp.parent = logExp.parent.replace(/{(\w+)}/g, function(m, p) {
 				return logExp[p];
 			});
