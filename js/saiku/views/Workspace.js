@@ -101,7 +101,7 @@ var Workspace = Backbone.View.extend({
         var paramsURI = Saiku.URLParams.paramsURI();
         if (Saiku.URLParams.equals({ schema: paramsURI.schema, cube: paramsURI.cube })) {
             console.log('TRUE');
-            this.connections_data(paramsURI);
+            this.data_connections(paramsURI);
         }
         else {
             console.log('ELSE');
@@ -290,9 +290,8 @@ var Workspace = Backbone.View.extend({
             .animate({ backgroundColor: '#fff' }, 'slow');
     },
 
-    connections_data: function() {
-        var params = Array.prototype.slice.call(arguments)[0],
-            connections = Saiku.session.sessionworkspace.connections,
+    data_connections: function(paramsURI) {
+        var connections = Saiku.session.sessionworkspace.connections,
             self = this;
         _.each(connections, function(connection) {
             _.each(connection.catalogs, function(catalog) {
@@ -302,7 +301,7 @@ var Workspace = Backbone.View.extend({
                             if (typeof cube['visible'] === 'undefined' || cube['visible']) {
                                 var schemaName = ((schema.name === '' || schema.name === null) ? 'null' : schema.name),
                                     cubeName = ((cube.caption === '' || cube.caption === null) ? cube.name : cube.caption);
-                                if (params.schema === schemaName && params.cube === cubeName) {
+                                if (paramsURI.schema === schemaName && paramsURI.cube === cubeName) {
                                     self.selected_cube = connection.name + '/' + catalog.name + '/' + schemaName + '/' + cubeName;
                                     _.delay(self.new_query, 1000);
                                 }
