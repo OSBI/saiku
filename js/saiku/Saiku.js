@@ -82,7 +82,6 @@ var Saiku = {
             if (/^\s*$/.test(value))           { return null; }
             if (/^(true|false)$/i.test(value)) { return value.toLowerCase() === 'true'; }
             if (isFinite(value))               { return parseFloat(value); }
-            if (isFinite(Date.parse(value)))   { return new Date(value); }
 
             return value;
         },
