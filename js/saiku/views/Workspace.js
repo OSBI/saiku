@@ -100,11 +100,7 @@ var Workspace = Backbone.View.extend({
         // Selected schema and cube via url
         var paramsURI = Saiku.URLParams.paramsURI();
         if (Saiku.URLParams.equals({ schema: paramsURI.schema, cube: paramsURI.cube })) {
-            console.log('TRUE');
             this.data_connections(paramsURI);
-        }
-        else {
-            console.log('ELSE');
         }
     },
 
@@ -124,10 +120,47 @@ var Workspace = Backbone.View.extend({
         return "<span class='i18n'>Unsaved query</span> (" + (Saiku.tabs.queryCount) + ")";
     },
 
+    selected_cube_template: function(selectedCube) {
+        var connections = Saiku.session.sessionworkspace;
+        connections.selected = selectedCube;
+        return _.template(
+            '<select class="cubes">' +
+                '<option value="" class="i18n">Select a cube</option>' +
+                '<% _.each(connections, function(connection) { %>' +
+                    '<% _.each(connection.catalogs, function(catalog) { %>' +
+                        '<% _.each(catalog.schemas, function(schema) { %>' +
+                            '<% if (schema.cubes.length > 0) { %>' +
+                                '<optgroup label="<%= (schema.name !== "" ? schema.name : catalog.name) %> <%= (connection.name) %>">' +
+                                    '<% _.each(schema.cubes, function(cube) { %>' +
+                                        '<% if ((typeof cube["visible"] === "undefined" || cube["visible"]) && selected !== cube.caption) { %>' +
+                                            '<option value="<%= connection.name %>/<%= catalog.name %>/<%= ((schema.name === "" || schema.name === null) ? "null" : schema.name) %>/<%= encodeURIComponent(cube.name) %>"><%= ((cube.caption === "" || cube.caption === null) ? cube.name : cube.caption) %></option>' +
+                                        '<% } else if ((typeof cube["visible"] === "undefined" || cube["visible"]) && selected === cube.caption) { %>' +
+                                            '<option value="<%= connection.name %>/<%= catalog.name %>/<%= ((schema.name === "" || schema.name === null) ? "null" : schema.name) %>/<%= encodeURIComponent(cube.name) %>" selected><%= ((cube.caption === "" || cube.caption === null) ? cube.name : cube.caption) %></option>' +
+                                        '<% } %>' +
+                                    '<% }); %>' +
+                                '</optgroup>' +
+                            '<% } %>' +
+                        '<% }); %>' +
+                    '<% }); %>' +
+                '<% }); %>' +
+            '</select>'
+        )(connections);
+    },
+
     template: function() {
-        var template = $("#template-workspace").html() || "";
+        var template = $("#template-workspace").html() || "",
+            htmlCubeNavigation = false,
+            selectedCube;
+
+        if (this.isUrlCubeNavigation) {
+            selectedCube = this.selected_cube.split('/')[3],
+            htmlCubeNavigation = this.selected_cube_template(selectedCube);
+        }
+
         return _.template(template)({
-            cube_navigation: Saiku.session.sessionworkspace.cube_navigation
+            cube_navigation: htmlCubeNavigation
+                ? htmlCubeNavigation
+                : Saiku.session.sessionworkspace.cube_navigation
         });
     },
 
@@ -303,6 +336,7 @@ var Workspace = Backbone.View.extend({
                                     cubeName = ((cube.caption === '' || cube.caption === null) ? cube.name : cube.caption);
                                 if (paramsURI.schema === schemaName && paramsURI.cube === cubeName) {
                                     self.selected_cube = connection.name + '/' + catalog.name + '/' + schemaName + '/' + cubeName;
+                                    self.isUrlCubeNavigation = true;
                                     _.delay(self.new_query, 1000);
                                 }
                             }
@@ -329,7 +363,9 @@ var Workspace = Backbone.View.extend({
         Saiku.session.trigger('workspace:clear', { workspace: this });
 
         // Initialize the new query
-        this.selected_cube = $(this.el).find('.cubes').val();
+        this.selected_cube = $(this.el).find('.cubes').val() 
+            ? $(this.el).find('.cubes').val() 
+            : this.selected_cube;
         if (!this.selected_cube) {
             // Someone literally selected "Select a cube"
             $(this.el).find('.calculated_measures, .addMeasure').hide();
