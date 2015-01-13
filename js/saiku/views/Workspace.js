@@ -96,6 +96,16 @@ var Workspace = Backbone.View.extend({
 
         // Flash cube navigation when rendered
         Saiku.session.bind('tab:add', this.prepare);
+
+        // Selected schema and cube via url
+        var paramsURI = Saiku.URLParams.paramsURI();
+        if (Saiku.URLParams.equals({ schema: paramsURI.schema, cube: paramsURI.cube })) {
+            console.log('TRUE');
+            this.connections_data(paramsURI);
+        }
+        else {
+            console.log('ELSE');
+        }
     },
 
     caption: function(increment) {
@@ -181,7 +191,7 @@ var Workspace = Backbone.View.extend({
         $(this.el).find('.workspace_results')
             .append($(this.table.el));
 
-this.chart.render_view();
+        this.chart.render_view();
         // Adjust tab when selected
         this.tab.bind('tab:select', this.adjust);
         $(window).resize(this.adjust);
@@ -278,6 +288,30 @@ this.chart.render_view();
             .css({ backgroundColor: '#AC1614' })
             .delay(300)
             .animate({ backgroundColor: '#fff' }, 'slow');
+    },
+
+    connections_data: function() {
+        var params = Array.prototype.slice.call(arguments)[0],
+            connections = Saiku.session.sessionworkspace.connections,
+            self = this;
+        _.each(connections, function(connection) {
+            _.each(connection.catalogs, function(catalog) {
+                _.each(catalog.schemas, function(schema) {
+                    if (schema.cubes.length > 0) {
+                        _.each(schema.cubes, function(cube) {
+                            if (typeof cube['visible'] === 'undefined' || cube['visible']) {
+                                var schemaName = ((schema.name === '' || schema.name === null) ? 'null' : schema.name),
+                                    cubeName = ((cube.caption === '' || cube.caption === null) ? cube.name : cube.caption);
+                                if (params.schema === schemaName && params.cube === cubeName) {
+                                    self.selected_cube = connection.name + '/' + catalog.name + '/' + schemaName + '/' + cubeName;
+                                    _.delay(self.new_query, 1000);
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        });
     },
 
     new_query: function() {
