@@ -102,6 +102,9 @@ var Workspace = Backbone.View.extend({
         if (Saiku.URLParams.equals({ schema: paramsURI.schema, cube: paramsURI.cube })) {
             this.data_connections(paramsURI);
         }
+        else {
+            this.data_connections(paramsURI);   
+        }
     },
 
     caption: function(increment) {
