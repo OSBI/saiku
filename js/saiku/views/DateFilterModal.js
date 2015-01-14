@@ -343,9 +343,10 @@ var DateFilterModal = Modal.extend({
 	},
 
 	selection_date: function(event) {
-		var $currentTarget = $(event.currentTarget);
+		var $currentTarget = $(event.currentTarget),
+			dateFormat = this.saikuDayFormatString.replace(/yyyy/gi, 'yy');
 		$currentTarget.datepicker({
-			dateFormat: 'yy/mm/dd'
+			dateFormat: dateFormat
 		});
 	},
 
