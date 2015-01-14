@@ -654,9 +654,9 @@ var DateFilterModal = Modal.extend({
 			hierarchy = this.workspace.query.helper.getHierarchy(hName),
 			cubeSelected = decodeURIComponent($('.cubes option:selected').val()).split('/')[3];
 
-		selectedData.name = this.name;
 		selectedData.cube = cubeSelected;
 		selectedData.tab = Saiku.session.tabSelected;
+		selectedData.name = this.name;
 		this.set_storage(selectedData);
 
 		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
@@ -669,9 +669,13 @@ var DateFilterModal = Modal.extend({
 	set_storage: function(data) {
 		var self = this;
 		if (localStorage.getItem('dateFilter')) {
-			var arr = JSON.parse(localStorage.getItem('dateFilter'));
+			var arr = JSON.parse(localStorage.getItem('dateFilter')),
+				cubeSelected = decodeURIComponent($('.cubes option:selected').val()).split('/')[3],
+				tabSelected = Saiku.session.tabSelected;
 			_.find(arr, function(value, key, list) {
-				if (list[key].name === self.name) {
+				if (list[key].cube === cubeSelected && 
+					list[key].tab === tabSelected &&
+					list[key].name === self.name) {
 					arr[key] = data;
 					localStorage.setItem('dateFilter', JSON.stringify(arr));
 				}
@@ -692,9 +696,13 @@ var DateFilterModal = Modal.extend({
 		var self = this,
 			data;
 		if (localStorage.getItem('dateFilter')) {
-			var arr = JSON.parse(localStorage.getItem('dateFilter'));
+			var arr = JSON.parse(localStorage.getItem('dateFilter')),
+				cubeSelected = decodeURIComponent($('.cubes option:selected').val()).split('/')[3],
+				tabSelected = Saiku.session.tabSelected;
 			_.find(arr, function(value, key, list) {
-				if (list[key].name === self.name) {
+				if (list[key].cube === cubeSelected && 
+					list[key].tab === tabSelected &&
+					list[key].name === self.name) {
 					data = list[key];
 				}
 			});
