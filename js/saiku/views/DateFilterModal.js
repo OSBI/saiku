@@ -656,6 +656,8 @@ var DateFilterModal = Modal.extend({
 
 		selectedData.cube = cubeSelected;
 		selectedData.tab = Saiku.session.tabSelected;
+		selectedData.dim = this.dimension;
+		selectedData.hier = this.hierarchy;
 		selectedData.name = this.name;
 		this.set_storage(selectedData);
 
@@ -668,13 +670,18 @@ var DateFilterModal = Modal.extend({
 
 	set_storage: function(data) {
 		var self = this;
+		console.log(this);
 		if (localStorage.getItem('dateFilter')) {
 			var arr = JSON.parse(localStorage.getItem('dateFilter')),
 				cubeSelected = decodeURIComponent($('.cubes option:selected').val()).split('/')[3],
-				tabSelected = Saiku.session.tabSelected;
+				tabSelected = Saiku.session.tabSelected,
+				dimension = this.dimension,
+				hierarchy = this.hierarchy;
 			_.find(arr, function(value, key, list) {
 				if (list[key].cube === cubeSelected && 
 					list[key].tab === tabSelected &&
+					list[key].dim === dimension &&
+					list[key].hier === hierarchy &&
 					list[key].name === self.name) {
 					arr[key] = data;
 					localStorage.setItem('dateFilter', JSON.stringify(arr));
@@ -698,10 +705,14 @@ var DateFilterModal = Modal.extend({
 		if (localStorage.getItem('dateFilter')) {
 			var arr = JSON.parse(localStorage.getItem('dateFilter')),
 				cubeSelected = decodeURIComponent($('.cubes option:selected').val()).split('/')[3],
-				tabSelected = Saiku.session.tabSelected;
+				tabSelected = Saiku.session.tabSelected,
+				dimension = this.dimension,
+				hierarchy = this.hierarchy;
 			_.find(arr, function(value, key, list) {
 				if (list[key].cube === cubeSelected && 
 					list[key].tab === tabSelected &&
+					list[key].dim === dimension &&
+					list[key].hier === hierarchy &&
 					list[key].name === self.name) {
 					data = list[key];
 				}
