@@ -651,10 +651,12 @@ var DateFilterModal = Modal.extend({
 
 		var hName = decodeURIComponent(this.member.hierarchy),
 			lName = decodeURIComponent(this.member.level),
-			hierarchy = this.workspace.query.helper.getHierarchy(hName);
+			hierarchy = this.workspace.query.helper.getHierarchy(hName),
+			cubeSelected = decodeURIComponent($('.cubes option:selected').val()).split('/')[3];
 
-		// this.storage.set(selectedData);
 		selectedData.name = this.name;
+		selectedData.cube = cubeSelected;
+		selectedData.tab = Saiku.session.tabSelected;
 		this.set_storage(selectedData);
 
 		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
