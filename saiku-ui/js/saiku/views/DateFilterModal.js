@@ -22,7 +22,7 @@ var DateFilterModal = Modal.extend({
 
 	buttons: [
 		{ text: 'Save', method: 'save' },
-		{ text: 'Cancel', method: 'close' }
+		{ text: 'Cancel', method: 'finished' }
 	],
 
 	events: {
@@ -34,10 +34,8 @@ var DateFilterModal = Modal.extend({
 		'click .del-date'        : 'del_selected_date'
 	},
 
-	// template_days_mdx: 'Filter([Time].[Date Only].[Date String].Members, [Time].[Date Only].[Date String].CurrentMember.NAME {comparisonOperator} \'{dates}\'',
 	template_days_mdx: 'Filter({parent}.Members, {parent}.CurrentMember.NAME {comparisonOperator} \'{dates}\'',
 
-	// template_many_years_mdx: ' {logicalOperator} [Time].[Weekly].[Day].CurrentMember.NAME("{saikuDateProperty}") {comparisonOperator} \'{dates}\'',
 	template_many_years_mdx: ' {logicalOperator} {parent}.CurrentMember.NAME {comparisonOperator} \'{dates}\'',
 
 	template_mdx: '{parent} CurrentDateMember([{dimension}.{hierarchy}], \'["{dimension}.{hierarchy}"]\\\.{AnalyzerDateFormat}\', EXACT)',
@@ -143,26 +141,6 @@ var DateFilterModal = Modal.extend({
 				'</div>' +
 			'</div>' +
 		'</div>'
-		// '<div class="box-selections">' +
-		// 	'<div class="available-selections">' +
-		// 		'<span class="i18n">Available member:</span><br>' +
-		// 		'<div class="selection-options"></div>' +
-		// 	'</div>' +
-		// '</div>' +
-		// '<div class="box-selections">' +
-		// 	'<div class="selection_buttons">' +
-		// 		'<a class="form_button">&nbsp;&gt;&nbsp;</a><br><br>' +
-		// 		'<a class="form_button">&gt;&gt;</a><br><br>' +
-		// 		'<a class="form_button">&lt;&lt;</a><br><br>' +
-		// 		'<a class="form_button">&nbsp;&lt;&nbsp;</a>' +
-		// 	'</div>' +
-		// '</div>' +
-		// '<div class="box-selections">' +
-		// 	'<div class="available-selections">' +
-		// 		'<span class="i18n">Used members:</span><br>' +
-		// 		'<div class="selection-options"></div>' +
-		// 	'</div>' +
-		// '</div>'
 	),
 
 	initialize: function(args) {
@@ -283,7 +261,7 @@ var DateFilterModal = Modal.extend({
 			dataLevels = [];
 		_.each(this.data.hierarchies.levels, function(value, key, list) {
 			if (list[key].annotations.AnalyzerDateFormat !== undefined || list[key].annotations.SaikuDayFormatString !== undefined) {
-				if(list[key].annotations.AnalyzerDateFormat !== undefined) {
+				if (list[key].annotations.AnalyzerDateFormat !== undefined) {
 					dataLevels.push({
 						name: list[key].name,
 						analyzerDateFormat: list[key].annotations.AnalyzerDateFormat.replace(/[.]/gi, '\\\.'),
@@ -292,19 +270,17 @@ var DateFilterModal = Modal.extend({
 						saikuDayFormatString: list[key].annotations.SaikuDayFormatString || ''
 					});
 				}
-				else{
+				else {
 					dataLevels.push({
 						name: list[key].name,
-						analyzerDateFormat: "",
+						analyzerDateFormat: '',
 						levelType: list[key].levelType,
 						saikuDateProperty: list[key].annotations.SaikuDateProperty || '',
 						saikuDayFormatString: list[key].annotations.SaikuDayFormatString || ''
 					});
 				}
-
-				if (
-					list[key].annotations.SaikuDayFormatString) {
-					self.saikuDateProperty = "";
+				if (list[key].annotations.SaikuDayFormatString) {
+					self.saikuDateProperty = '';
 					self.saikuDayFormatString = list[key].annotations.SaikuDayFormatString;
 				}
 			}
@@ -489,8 +465,8 @@ var DateFilterModal = Modal.extend({
 	},
 
 	populate_mdx: function(logExp, fixedDateName, periodamount) {
-		logExp.tagdim = logExp.dimension.replace(/m/g, "\\m").replace(/y/g, "\\y").replace(/q/g, "\\q").replace(/d/g, "\\d");
-		logExp.taghier = logExp.hierarchy.replace(/m/g, "\\m").replace(/y/g, "\\y").replace(/q/g, "\\q").replace(/d/g, "\\d");
+		logExp.tagdim = logExp.dimension.replace(/m/g, '\\m').replace(/y/g, '\\y').replace(/q/g, '\\q').replace(/d/g, '\\d');
+		logExp.taghier = logExp.hierarchy.replace(/m/g, '\\m').replace(/y/g, '\\y').replace(/q/g, '\\q').replace(/d/g, '\\d');
 
 		if ((logExp.workinglevel !== logExp.level) && logExp.workinglevel !== undefined) {
 			logExp.parent = '[{dimension}.{hierarchy}].[{level}].members,';
@@ -724,8 +700,7 @@ var DateFilterModal = Modal.extend({
 	},
 
 	finished: function() {
-		this.$el.dialog('destroy');
-		this.$el.remove();
+		this.$el.dialog('destroy').remove();
 		this.query.run();
 	}
 });

@@ -102,9 +102,22 @@ var SessionWorkspace = Backbone.Model.extend({
                 session: this
             });
 
-            //Saiku.splash.render();
-            if (!Settings.INITIAL_QUERY) {
+            var paramsURI = Saiku.URLParams.paramsURI();
+
+            if (!(_.has(paramsURI, 'splash'))) {
+                paramsURI.splash = true;
+            }
+            else if (_.has(paramsURI, 'splash') && paramsURI.splash ||
+                _.has(paramsURI, 'splash') && paramsURI.splash === null) {
+                paramsURI.splash = true;
+            }
+
+            // Saiku.splash.render();
+            if (!Settings.INITIAL_QUERY && paramsURI.splash) {
                 Saiku.tabs.add(new SplashScreen(), false);
+            }
+            else {
+               Saiku.tabs.add(new Workspace());
             }
             //if (!Settings.INITIAL_QUERY) {
             //    Saiku.tabs.add(new Workspace());
