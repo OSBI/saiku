@@ -24,24 +24,32 @@ import org.saiku.service.importer.LegacyImporter;
 import org.saiku.service.importer.impl.LegacyImporterImpl;
 import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import java.io.IOException;
 import java.util.*;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 /**
  * A Datasource Manager for the Saiku Repository API layer.
  */
 public class RepositoryDatasourceManager implements IDatasourceManager {
-    IRepositoryManager irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager();
     private Map<String, SaikuDatasource> datasources =
             Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
     private UserService userService;
     private static final Logger log = LoggerFactory.getLogger(RepositoryDatasourceManager.class);
+    private String configurationpath;
+    private String datadir;
+    IRepositoryManager irm;
+    private String foodmartdir;
+    private String foodmartschema;
+
     public void load() {
+        irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir);
         try {
             irm.start(userService);
         } catch (RepositoryException e) {
@@ -358,6 +366,38 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public Object getRepository() {
         return irm.getRepositoryObject();
+    }
+
+    public void setConfigurationpath(String configurationpath) {
+        this.configurationpath = configurationpath;
+    }
+
+    public String getConfigurationpath() {
+        return configurationpath;
+    }
+
+    public void setDatadir(String datadir) {
+        this.datadir = datadir;
+    }
+
+    public String getDatadir() {
+        return datadir;
+    }
+
+    public void setFoodmartdir(String foodmartdir) {
+        this.foodmartdir = foodmartdir;
+    }
+
+    public String getFoodmartdir() {
+        return foodmartdir;
+    }
+
+    public void setFoodmartschema(String foodmartschema) {
+        this.foodmartschema = foodmartschema;
+    }
+
+    public String getFoodmartschema() {
+        return foodmartschema;
     }
 }
 

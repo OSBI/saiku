@@ -15,16 +15,18 @@
  */
 package org.saiku.service.datasource;
 
-import org.apache.commons.vfs.FileObject;
-import org.apache.commons.vfs.FileSystemManager;
-import org.apache.commons.vfs.VFS;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.datasources.datasource.SaikuDatasource.Type;
+import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
+
+import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystemManager;
+import org.apache.commons.vfs.VFS;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,12 +34,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import org.saiku.repository.AclEntry;
+import java.util.*;
 
 import javax.jcr.RepositoryException;
 
@@ -296,7 +293,30 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 
     }
 
-    public String saveFile(String path, String content, String user) {
+  public String getFoodmartschema() {
+    return null;
+  }
+
+  public void setFoodmartschema(String schema) {
+
+  }
+
+  public void setFoodmartdir(String dir) {
+
+  }
+
+  public String getFoodmartdir() {
+    return null;
+  }
+
+  public String getDatadir() {
+    return null;
+  }
+
+  public void setDatadir(String dir) {
+  }
+
+  public String saveFile(String path, String content, String user) {
         return null;
     }
 }

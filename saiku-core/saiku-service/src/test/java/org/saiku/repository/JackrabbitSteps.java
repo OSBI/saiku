@@ -16,15 +16,17 @@
 package org.saiku.repository;
 
 import net.thucydides.core.annotations.Step;
+
 import org.junit.Test;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -32,7 +34,8 @@ import java.util.List;
  */
 public class JackrabbitSteps {
 
-  private IRepositoryManager iRepositoryManager = JackRabbitRepositoryManager.getJackRabbitRepositoryManager();
+  private IRepositoryManager iRepositoryManager = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(null,
+      null);
 
 
   @Step
@@ -100,7 +103,7 @@ public class JackrabbitSteps {
 
   @Step
   public void shutdownRepository() {
-      JackRabbitRepositoryManager.getJackRabbitRepositoryManager().shutdown();
+      JackRabbitRepositoryManager.getJackRabbitRepositoryManager(null,null).shutdown();
   }
 
   @Step

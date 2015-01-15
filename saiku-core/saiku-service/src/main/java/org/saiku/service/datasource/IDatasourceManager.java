@@ -18,12 +18,12 @@ package org.saiku.service.datasource;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
-
-import java.util.List;
-import java.util.Map;
 import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.user.UserService;
+
+import java.util.List;
+import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -93,4 +93,16 @@ public interface IDatasourceManager {
     public boolean hasHomeDirectory(String name);
 
     public void restoreLegacyFiles(byte[] data);
+
+  public String getFoodmartschema();
+
+  public void setFoodmartschema(String schema);
+
+  public void setFoodmartdir(String dir);
+
+  public String getFoodmartdir();
+
+  public String getDatadir();
+
+  public void setDatadir(String dir);
 }

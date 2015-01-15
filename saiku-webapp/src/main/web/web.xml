@@ -95,7 +95,7 @@
     <!-- ====================================================================== -->
     <!-- J C R R E M O T I N G S E R V L E T -->
     <!-- ====================================================================== -->
-    <servlet>
+   <!-- <servlet>
         <servlet-name>JCRWebdavServer</servlet-name>
         <description>
             The servlet used to remote JCR calls over HTTP.
@@ -118,7 +118,7 @@
             <description>JcrRemotingServlet: Optional mapping from node type names to default depth.</description>
         </init-param>
          <load-on-startup>5</load-on-startup>
-    </servlet>
+    </servlet>-->
     <!-- ====================================================================== -->
     <!-- R M I B I N D I N G S E R V L E T -->
     <!-- ====================================================================== -->
@@ -133,10 +133,10 @@
         <servlet-name>Webdav</servlet-name>
         <url-pattern>/repository/*</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
+  <!--  <servlet-mapping>
         <servlet-name>JCRWebdavServer</servlet-name>
         <url-pattern>/server/*</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>-->
     <servlet-mapping>
         <servlet-name>RMI</servlet-name>
         <url-pattern>/rmi</url-pattern>

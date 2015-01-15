@@ -27,6 +27,7 @@ public class Database {
 
     @Autowired
     ServletContext servletContext;
+
     private JdbcDataSource ds;
     private static final Logger log = LoggerFactory.getLogger(Database.class);
 
@@ -82,14 +83,14 @@ public class Database {
                 // Table exists
                 Statement statement = c.createStatement();
 
-                statement.execute("RUNSCRIPT FROM '../../data/foodmart_h2.sql'");
+                statement.execute("RUNSCRIPT FROM '"+dsm.getFoodmartdir()+"'");
 
                 statement.execute("alter table \"time_by_day\" add column \"date_string\" varchar(30);"
                                   + "update \"time_by_day\" "
                                   + "set \"date_string\" = TO_CHAR(\"the_date\", 'yyyy/mm/dd');");
                 String schema = null;
                 try {
-                    schema = readFile("../../data/FoodMart4.xml", StandardCharsets.UTF_8);
+                    schema = readFile(dsm.getFoodmartschema(), StandardCharsets.UTF_8);
                 } catch (IOException e) {
                     log.error("Can't read schema file",e);
                 }
@@ -100,7 +101,8 @@ public class Database {
                 }
                 Properties p = new Properties();
                 p.setProperty("driver", "mondrian.olap4j.MondrianOlap4jDriver");
-                p.setProperty("location", "jdbc:mondrian:Jdbc=jdbc:h2:../../data/foodmart;Catalog=mondrian:///datasources/foodmart4.xml;JdbcDrivers=org.h2.Driver");
+                p.setProperty("location", "jdbc:mondrian:Jdbc=jdbc:h2:"+dsm.getDatadir()+"/foodmart;"+
+                "Catalog=mondrian:///datasources/foodmart4.xml;JdbcDrivers=org.h2.Driver");
                 p.setProperty("username", "sa");
                 p.setProperty("password", "");
                 p.setProperty("id", "4432dd20-fcae-11e3-a3ac-0800200c9a66");

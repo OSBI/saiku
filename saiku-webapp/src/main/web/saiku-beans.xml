@@ -10,6 +10,10 @@
         </bean>-->
     <bean id="repositoryDsManager" class="org.saiku.service.datasource.RepositoryDatasourceManager" init-method="load" destroy-method="unload">
         <property name="userService" ref="userServiceBean"/>
+        <property name="configurationpath" value="${repoconfig}"/>
+        <property name="datadir" value="${repodata}"/>
+        <property name="foodmartdir" value="${foodmartrepo}"/>
+        <property name="foodmartschema" value="${foodmartschema}"/>
     </bean>
 
     <!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->

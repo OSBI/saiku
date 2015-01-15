@@ -55,22 +55,26 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
     private static final Logger log = LoggerFactory.getLogger(JackRabbitRepositoryManager.class);
     private static JackRabbitRepositoryManager ref;
+    private final String data;
+    private final String config;
     private Repository repository;
     private Session session;
     private Node root;
     private UserService userService;
 
-    private JackRabbitRepositoryManager() {
+    private JackRabbitRepositoryManager(String config, String data) {
 
+        this.config = config;
+        this.data = data;
     }
 
     /*
      * TODO this is currently threadsafe but to improve performance we should split it up to allow multiple sessions to hit the repo at the same time.
      */
-    public static synchronized JackRabbitRepositoryManager getJackRabbitRepositoryManager() {
+    public static synchronized JackRabbitRepositoryManager getJackRabbitRepositoryManager(String config, String data) {
         if (ref == null)
             // it's ok, we can call this constructor
-            ref = new JackRabbitRepositoryManager();
+            ref = new JackRabbitRepositoryManager(config, data);
         return ref;
     }
 
@@ -94,8 +98,8 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         this.userService = userService;
         if (session == null) {
             log.info("starting repo");
-            String xml = "../../repository/configuration.xml";
-            String dir = "../../repository/data";
+            String xml = config;
+            String dir = data;
             RepositoryConfig config = RepositoryConfig.create(xml, dir);
             repository = RepositoryImpl.create(config);
             log.info("repo started");

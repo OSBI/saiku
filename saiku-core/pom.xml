@@ -6,7 +6,6 @@
     </parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.saiku</groupId>
 	<artifactId>saiku-core</artifactId>
 	<packaging>pom</packaging>
 	<name>saiku - core libraries</name>
@@ -49,7 +48,6 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.7</version>
                 <configuration>
-                    <outputEncoding>UTF-8</outputEncoding>
                     <charset>UTF-8</charset>
                     <docencoding>UTF-8</docencoding>
                     <encoding>UTF-8</encoding>

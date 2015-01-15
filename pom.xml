@@ -17,6 +17,7 @@
         <module>saiku-core</module>
         <module>saiku-ui</module>
         <module>saiku-webapp</module>
+        <module>saiku-web-tests</module>
         <module>saiku-server</module>
         <module>saiku-bi-platform-plugin-p5</module>
         <module>saiku-bi-platform-plugin</module>
@@ -99,6 +100,16 @@
             <name>Apache repo</name>
             <layout>default</layout>
             <url>https://repository.apache.org/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+
+        <repository>
+            <id>atlassian</id>
+            <name>Atlassian Public</name>
+            <layout>default</layout>
+            <url>https://maven.atlassian.com/content/repositories/atlassian-public</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -198,16 +209,50 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0.23</version>
+        </dependency>
+        <dependency>
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>serenity-jbehave</artifactId>
+            <version>1.0.10</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>net.serenity-bdd</groupId>
+                <artifactId>core</artifactId>
+                <version>1.0.10</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.serenity-bdd</groupId>
+                <artifactId>serenity-jbehave</artifactId>
+                <version>1.0.10</version>
+                <scope>test</scope>
+
+            </dependency>
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox</artifactId>
                 <version>2.0.0-20141212.210914-782</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.sun.jersey.jersey-test-framework</groupId>
+                <artifactId>jersey-test-framework-core</artifactId>
+                <version>${jersey.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey.jersey-test-framework</groupId>
+                <artifactId>jersey-test-framework-external</artifactId>
+                <version>${jersey.version}</version>
+                <scope>test</scope>
+            </dependency>
             <dependency>
                 <groupId>net.sourceforge.jtds</groupId>
                 <artifactId>jtds</artifactId>
@@ -267,6 +312,12 @@
                 <groupId>org.saiku</groupId>
                 <artifactId>saiku-service</artifactId>
                 <version>3.0.9-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.saiku</groupId>
+                <artifactId>saiku-webapp</artifactId>
+                <version>3.0.9-SNAPSHOT</version>
+                <type>war</type>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -953,7 +1004,18 @@
                 <artifactId>clover</artifactId>
                 <version>3.3.0</version>
             </dependency>
+            <dependency>
+                <groupId>com.atlassian.jira</groupId>
+                <artifactId>jira-rest-java-client-api</artifactId>
+                <version>2.0.0-m29</version>
+            </dependency>
+            <dependency>
+                <groupId>com.atlassian.jira</groupId>
+                <artifactId>jira-rest-java-client-core</artifactId>
+                <version>2.0.0-m29</version>
+            </dependency>
         </dependencies>
+
     </dependencyManagement>
 
 </project>

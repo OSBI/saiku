@@ -15,42 +15,39 @@
  */
 package org.saiku.plugin;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import org.saiku.database.dto.MondrianSchema;
+import org.saiku.datasources.connection.ISaikuConnection;
+import org.saiku.datasources.connection.RepositoryFile;
+import org.saiku.datasources.datasource.SaikuDatasource;
+import org.saiku.repository.AclEntry;
+import org.saiku.repository.IRepositoryObject;
+import org.saiku.service.datasource.IDatasourceManager;
+import org.saiku.service.user.UserService;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.repository.RepositoryException;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.plugin.action.mondrian.catalog.IMondrianCatalogService;
+import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
+import org.pentaho.platform.util.messages.LocaleHelper;
+
+import java.util.*;
 
 import mondrian.olap.MondrianProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.RolapConnectionProperties;
 import mondrian.util.Pair;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.plugin.action.mondrian.catalog.IMondrianCatalogService;
-import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
-import org.pentaho.platform.util.messages.LocaleHelper;
-import org.saiku.datasources.connection.ISaikuConnection;
-import org.saiku.datasources.datasource.SaikuDatasource;
-import org.saiku.service.datasource.IDatasourceManager;
-import org.saiku.datasources.connection.RepositoryFile;
-import org.saiku.database.dto.MondrianSchema;
-import org.saiku.service.user.UserService;
-import org.saiku.repository.AclEntry;
-import org.saiku.repository.IRepositoryObject;
-import javax.jcr.RepositoryException;
-
 public class PentahoDatasourceManager implements IDatasourceManager {
 
     private static final Log LOG = LogFactory.getLog(PentahoDatasourceManager.class);
 
-    private Map<String, SaikuDatasource> datasources = Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
+    private Map<String, SaikuDatasource> datasources =
+        Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
 
     private String saikuDatasourceProcessor;
 
@@ -96,8 +93,15 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
     }
 
+
+
+
+
+
     private Map<String, SaikuDatasource> loadDatasources() {
         try {
+
+
             this.session = PentahoSessionHolder.getSession();
 
             ClassLoader cl = this.getClass().getClassLoader();
@@ -105,7 +109,7 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
             Thread.currentThread().setContextClassLoader(cl2);
             this.catalogService = PentahoSystem.get(IMondrianCatalogService.class,
-                    session);
+                session);
 
             List<MondrianCatalog> catalogs = catalogService.listCatalogs(session, true);
             Thread.currentThread().setContextClassLoader(cl);

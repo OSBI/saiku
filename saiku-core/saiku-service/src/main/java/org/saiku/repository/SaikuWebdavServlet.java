@@ -26,6 +26,7 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         ServletContext context = getServletContext();
+
         WebApplicationContext applicationContext =
                 WebApplicationContextUtils
                         .getWebApplicationContext(context);

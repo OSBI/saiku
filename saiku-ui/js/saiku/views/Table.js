@@ -38,7 +38,7 @@ var Table = Backbone.View.extend({
     clicked_cell: function(event) {
         var self = this;
 
-        if (this.workspace.query.get('type') != 'QM' || Settings.MODE == "table") {
+        if (/*this.workspace.query.get('type') != 'QM' || */Settings.MODE == "table") {
             return false;
         }
         if ($(this.workspace.el).find( ".workspace_results.ui-selectable" ).length > 0) {
@@ -93,15 +93,23 @@ var Table = Backbone.View.extend({
 
             var levels = [];
             var items = {};
-            var cubeModel = Saiku.session.sessionworkspace.cube[cube];
-            var dimensions = (cubeModel && cubeModel.has('data')) ? cubeModel.get('data').dimensions : null;
-            if (!dimensions) {
-                Saiku.session.sessionworkspace.cube[cube].fetch({async : false});
-                dimensions = Saiku.session.sessionworkspace.cube[cube].get('data').dimensions;
-            }
+			 var key = self.workspace.selected_cube;
+			 var cubeModel = Saiku.session.sessionworkspace.cube[key];
+
+			 var dimensions;
+			 if (!cubeModel || !dimensions || !measures) {
+				 if (typeof localStorage !== "undefined" && localStorage && localStorage.getItem("cube." + key) !== null) {
+					 Saiku.session.sessionworkspace.cube[key] = new Cube(JSON.parse(localStorage.getItem("cube." + key)));
+				 } else {
+					 Saiku.session.sessionworkspace.cube[key] = new Cube({ key: key });
+					 Saiku.session.sessionworkspace.cube[key].fetch({ async : false });
+				 }
+				 dimensions = Saiku.session.sessionworkspace.cube[key].get('data').dimensions;
+			 }
             var dimsel = {};
             var used_levels = [];
-
+			 //TODO GET USED LEVELS
+/*
             self.workspace.query.action.gett("/axis/" + axis + "/dimension/" + encodeURIComponent(d), {
                         success: function(response, model) {
                             dimsel = model;
@@ -114,7 +122,7 @@ var Table = Backbone.View.extend({
                     used_levels.push(selection.levelUniqueName);
 
             });
-
+*/
             _.each(dimensions, function(dimension) {
                 if (dimension.name == d) {
                     _.each(dimension.hierarchies, function(hierarchy) {

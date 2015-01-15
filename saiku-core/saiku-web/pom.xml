@@ -6,7 +6,6 @@
         <version>3.0.9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.saiku</groupId>
     <artifactId>saiku-web</artifactId>
     <version>3.0.9-SNAPSHOT</version>
     <name>saiku - web</name>
