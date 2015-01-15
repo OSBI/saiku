@@ -200,7 +200,10 @@ var DateFilterModal = Modal.extend({
 		this.$el.find('.selection-radio').each(function(key, radio) {
 			levelType = $(radio).attr('level-type');
 			_.find(self.dataLevels, function(value, key, list) {
-				if (levelType === value.levelType || value.saikuDayFormatString) {
+				// if (levelType === value.levelType || value.saikuDayFormatString) {
+				if (self.name === value.name &&
+					levelType === value.levelType && 
+					value.saikuDayFormatString) {
 					$(radio).prop('disabled', false);
 				}
 			});
@@ -670,7 +673,6 @@ var DateFilterModal = Modal.extend({
 
 	set_storage: function(data) {
 		var self = this;
-		console.log(this);
 		if (localStorage.getItem('dateFilter')) {
 			var arr = JSON.parse(localStorage.getItem('dateFilter')),
 				cubeSelected = decodeURIComponent($('.cubes option:selected').val()).split('/')[3],
