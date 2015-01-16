@@ -137,7 +137,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
             l.add(AclMethod.READ);
             l.add(AclMethod.GRANT);
             m.put("ROLE_ADMIN", l);
-            e = new AclEntry("admin", AclType.SECURED, m, null);
+            e = new AclEntry("admin", AclType.PUBLIC, m, null);
 
             acl2 = new Acl2(n);
             acl2.addEntry(n.getPath(), e);

@@ -83,7 +83,7 @@ public class Database {
                 // Table exists
                 Statement statement = c.createStatement();
 
-                statement.execute("RUNSCRIPT FROM '"+dsm.getFoodmartdir()+"'");
+                statement.execute("RUNSCRIPT FROM '"+dsm.getFoodmartdir()+"/foodmart_h2.sql'");
 
                 statement.execute("alter table \"time_by_day\" add column \"date_string\" varchar(30);"
                                   + "update \"time_by_day\" "
@@ -101,7 +101,7 @@ public class Database {
                 }
                 Properties p = new Properties();
                 p.setProperty("driver", "mondrian.olap4j.MondrianOlap4jDriver");
-                p.setProperty("location", "jdbc:mondrian:Jdbc=jdbc:h2:"+dsm.getDatadir()+"/foodmart;"+
+                p.setProperty("location", "jdbc:mondrian:Jdbc=jdbc:h2:"+dsm.getFoodmartdir()+"/foodmart;"+
                 "Catalog=mondrian:///datasources/foodmart4.xml;JdbcDrivers=org.h2.Driver");
                 p.setProperty("username", "sa");
                 p.setProperty("password", "");

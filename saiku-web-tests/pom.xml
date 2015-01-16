@@ -257,29 +257,30 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <mkdir dir="target/data" />
-                                <copy todir="target/data">
+                                <mkdir dir="${basedir}/target/data" />
+                                <copy todir="${basedir}/target/data">
                                     <fileset dir="${basedir}/../util">
                                         <include name="FoodMart4.xml" />
                                     </fileset>
                                 </copy>
-                                <unzip dest="target/data/">
+                                <unzip dest="${basedir}/target/data/">
                                     <fileset dir="${basedir}/../util/">
                                         <include name="foodmart_h2.sql.zip" />
 
                                     </fileset>
                                 </unzip>
 
-                                <mkdir dir="target/repository" />
-                                <mkdir dir="target/repository/data" />
-                                <copy todir="target/repository">
+                                <mkdir dir="${basedir}/target/repository" />
+                                <mkdir dir="${basedir}/target/repository/data" />
+                                <copy todir="${basedir}/target/repository">
                                     <fileset dir="${basedir}/../util/">
                                         <include name="configuration.xml" />
                                     </fileset>
                                 </copy>
 
-                                <unzip dest="target/saiku-webapp">
-                                    <fileset dir="target/stage/">
+
+                                <unzip dest="${basedir}/target/saiku-webapp">
+                                    <fileset dir="${basedir}/target/stage/">
                                         <include name="saiku-webapp-${project.version}.war" />
                                     </fileset>
                                 </unzip>
@@ -414,7 +415,7 @@
                             <deployables>
                                 <deployable>
                                     <type>war</type>
-                                    <location>target/saiku-webapp</location>
+                                    <location>${basedir}/target/saiku-webapp</location>
                                     <properties>
                                         <context>saiku</context>
                                     </properties>

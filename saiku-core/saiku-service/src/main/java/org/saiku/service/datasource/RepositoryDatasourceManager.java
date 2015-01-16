@@ -182,7 +182,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
     public void addSchema(String file, String path, String name) throws Exception {
-            irm.saveFile(file, path, "admin", "nt:mondrianschema", null);
+            irm.saveInternalFile(file, path, "nt:mondrianschema");
 
     }
 
