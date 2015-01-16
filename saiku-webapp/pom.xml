@@ -16,6 +16,7 @@
         <repodata>/home/bugg/Projects/saiku/saiku-core/saiku-web-tests/repository/data</repodata>
         <foodmartrepo>../../data/foodmart_h2.sql</foodmartrepo>
         <foodmartschema>../../data/FoodMart4.xml</foodmartschema>
+        <pluginpath>../webapps/ROOT/js/saiku/plugins/</pluginpath>
     </properties>
     <build>
         <!-- <outputDirectory>target/WEB-INF/classes</outputDirectory> -->

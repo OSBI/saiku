@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.saiku.web;
+package web;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
 import com.atlassian.jira.rest.client.api.JiraRestClientFactory;
@@ -29,7 +29,7 @@ import java.net.URI;
 /**
  * Created by bugg on 15/01/15.
  */
-public class JiraStoryLoader implements StoryLoader  {
+public class JiraStoryLoader implements StoryLoader {
 
   protected String jiraId = "";
   public JiraStoryLoader(String id) {

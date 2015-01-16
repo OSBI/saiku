@@ -209,7 +209,7 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>net.serenity-bdd</groupId>
             <artifactId>core</artifactId>
             <version>1.0.23</version>
@@ -218,11 +218,11 @@
             <groupId>net.serenity-bdd</groupId>
             <artifactId>serenity-jbehave</artifactId>
             <version>1.0.10</version>
-        </dependency>
+        </dependency>-->
     </dependencies>
     <dependencyManagement>
         <dependencies>
-            <dependency>
+           <!-- <dependency>
                 <groupId>net.serenity-bdd</groupId>
                 <artifactId>core</artifactId>
                 <version>1.0.10</version>
@@ -234,7 +234,7 @@
                 <version>1.0.10</version>
                 <scope>test</scope>
 
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox</artifactId>
@@ -464,12 +464,17 @@
             <dependency>
                 <groupId>net.thucydides</groupId>
                 <artifactId>thucydides-jbehave-plugin</artifactId>
-                <version>0.9.229</version>
+                <version>0.9.268</version>
             </dependency>
             <dependency>
                 <groupId>net.thucydides</groupId>
                 <artifactId>thucydides-core</artifactId>
-                <version>0.9.228</version>
+                <version>0.9.268</version>
+            </dependency>
+            <dependency>
+                <groupId>net.thucydides</groupId>
+                <artifactId>thucydides-junit</artifactId>
+                <version>0.9.268</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate.javax.persistence</groupId>
@@ -983,6 +988,12 @@
                 <artifactId>h2</artifactId>
                 <version>1.4.177</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>4.3-alpha1</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.apache.calcite</groupId>
                 <artifactId>calcite-core</artifactId>

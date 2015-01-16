@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>bi.meteorite</groupId>
+    <artifactId>saiku-web-tests</artifactId>
+    <version>3.0.9-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>saiku web tests for integration testing</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <repoconfig>${basedir}/target/repository/configuration.xml</repoconfig>
+        <repodata>${basedir}/target/repository/data</repodata>
+        <foodmartrepo>${basedir}/target/data/foodmart_h2.sql</foodmartrepo>
+        <foodmartschema>${basedir}/target/data/FoodMart4.xml</foodmartschema>
+        <thucydides.version>0.9.268</thucydides.version>
+        <thucydides.jbehave.version>0.9.268</thucydides.jbehave.version>
+        <webdriver.driver>chrome</webdriver.driver>
+        <webdriver.chrome.driver>/usr/bin/chromedriver</webdriver.chrome.driver>
+        <pluginpath>${basedir}/target/apache-tomcat-6.0.18/webapps/ROOT/js/saiku/plugins/</pluginpath>
+        <min>nomin</min>
+
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>17.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.3.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-rest-java-client-api</artifactId>
+            <version>2.0.0-m29</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jira</groupId>
+            <artifactId>jira-rest-java-client-core</artifactId>
+            <version>2.0.0-m29</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+            <version>4.3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.thucydides</groupId>
+            <artifactId>thucydides-core</artifactId>
+            <version>${thucydides.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thucydides</groupId>
+            <artifactId>thucydides-junit</artifactId>
+            <version>${thucydides.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thucydides</groupId>
+            <artifactId>thucydides-jbehave-plugin</artifactId>
+            <version>${thucydides.jbehave.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.easytesting</groupId>
+            <artifactId>fest-assert</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.lambdaj</groupId>
+            <artifactId>lambdaj</artifactId>
+            <version>2.3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.saiku</groupId>
+            <artifactId>saiku-ui</artifactId>
+            <classifier>${min}</classifier>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+    <build>
+        <pluginManagement>
+
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.cargo</groupId>
+                    <artifactId>cargo-maven2-plugin</artifactId>
+                    <version>1.4.9</version>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.11</version>
+                <configuration>
+                    <skip>true</skip>
+                    <systemPropertyVariables>
+                        <webdriver.driver>${webdriver.driver}</webdriver.driver>
+                        <webdriver.chrome.driver>${webdriver.chrome.driver}</webdriver.chrome.driver>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.11</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/Test*.java</include>
+                        <include>**/When*.java</include>
+                        <include>**/*TestSuite.java</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9</version>
+            </plugin>
+            <plugin>
+                <groupId>net.thucydides.maven.plugins</groupId>
+                <artifactId>maven-thucydides-plugin</artifactId>
+                <version>${thucydides.version}</version>
+                <configuration>
+                    <!--<systemPropertyVariables>
+                        <webdriver.firefox.bin>/usr/bin/firefox</webdriver.firefox.bin>
+                    </systemPropertyVariables>-->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>thucydides-reports</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.thucydides.plugins.jira</groupId>
+                        <artifactId>thucydides-jira-requirements-provider</artifactId>
+                        <version>0.9.268</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.saiku</groupId>
+                                    <artifactId>saiku-webapp</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>war</type>
+                                    <outputDirectory>target/stage/</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.saiku</groupId>
+                                    <artifactId>saiku-ui</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>${min}</classifier>
+                                    <type>war</type>
+                                    <destFileName>saiku-ui.war</destFileName>
+                                    <outputDirectory>target/stage/</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
+
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/test-classes</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/src/test/resources/</directory>
+                                </resource>
+                                <resource>
+                                    <directory>${basedir}/../saiku-webapp/src/main/web/</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>*.xml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <id>copy-package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <mkdir dir="target/data" />
+                                <copy todir="target/data">
+                                    <fileset dir="${basedir}/../util">
+                                        <include name="FoodMart4.xml" />
+                                    </fileset>
+                                </copy>
+                                <unzip dest="target/data/">
+                                    <fileset dir="${basedir}/../util/">
+                                        <include name="foodmart_h2.sql.zip" />
+
+                                    </fileset>
+                                </unzip>
+
+                                <mkdir dir="target/repository" />
+                                <mkdir dir="target/repository/data" />
+                                <copy todir="target/repository">
+                                    <fileset dir="${basedir}/../util/">
+                                        <include name="configuration.xml" />
+                                    </fileset>
+                                </copy>
+
+                                <unzip dest="target/saiku-webapp">
+                                    <fileset dir="target/stage/">
+                                        <include name="saiku-webapp-${project.version}.war" />
+                                    </fileset>
+                                </unzip>
+
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <version>1.4.9</version>
+
+                <configuration>
+                    <configuration>
+                        <properties>
+                            <cargo.servlet.port>9999</cargo.servlet.port>
+                        </properties>
+                        <type>standalone</type>
+
+                    </configuration>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>start</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+
+                    </execution>
+                    <execution>
+                        <id>stop</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>maven2</id>
+            <activation>
+                <file>
+                    <missing>${basedir}</missing>
+                </file>
+            </activation>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>net.thucydides.maven.plugins</groupId>
+                        <artifactId>maven-thucydides-plugin</artifactId>
+                        <version>${thucydides.version}</version>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+        <profile>
+            <id>maven3</id>
+            <activation>
+                <file>
+                    <exists>${basedir}</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-site-plugin</artifactId>
+                        <version>3.2</version>
+                        <configuration>
+                            <reportPlugins>
+                                <plugin>
+                                    <groupId>net.thucydides.maven.plugins</groupId>
+                                    <artifactId>maven-thucydides-plugin</artifactId>
+                                    <version>${thucydides.version}</version>
+                                </plugin>
+                            </reportPlugins>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>integration</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.cargo</groupId>
+                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <version>1.4.9</version>
+                        <configuration>
+                            <!-- Container configuration -->
+                            <container>
+                                <containerId>tomcat6x</containerId>
+                                <zipUrlInstaller>
+                                    <url>http://archive.apache.org/dist/tomcat/tomcat-6/v6.0.29/bin/apache-tomcat-6.0.29.zip</url>
+                                    <!--<installDir>${basedir}/cargo-installs</installDir>-->
+                                </zipUrlInstaller>
+                                <output>
+                                    ${project.build.directory}/tomcat6x.log
+                                </output>
+                                <!--<log>${project.build.directory}/cargo.log</log>-->
+                            </container>
+                            <configuration>
+                                <properties>
+                                    <cargo.servlet.port>9999</cargo.servlet.port>
+                                    <cargo.tomcat.ajp.port>8010</cargo.tomcat.ajp.port>
+                                    <cargo.jvmargs>-Xdebug -Xnoagent -Djava.compiler=NONE
+                                        -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8044</cargo.jvmargs>
+                                </properties>
+                                <home>${project.build.directory}/apache-tomcat-6.0.18</home>
+                                <files>
+                                    <copy>
+                                        <file>${basedir}/target/test-classes/saiku-beans.xml</file>
+                                        <todir>webapps/saiku/WEB-INF/</todir>
+                                        <tofile>saiku-beans.xml</tofile>
+                                        <overwrite>true</overwrite>
+                                    </copy>
+                                </files>
+                            </configuration>
+
+                            <deployables>
+                                <deployable>
+                                    <type>war</type>
+                                    <location>target/saiku-webapp</location>
+                                    <properties>
+                                        <context>saiku</context>
+                                    </properties>
+                                    <pingURL>http://localhost:9999/saiku/rest/saiku/session</pingURL>
+                                    <pingTimeout>30000</pingTimeout>
+                                </deployable>
+                                <deployable>
+                                    <type>war</type>
+                                    <groupId>org.saiku</groupId>
+                                    <artifactId>saiku-ui</artifactId>
+                                    <classifier>${min}</classifier>
+
+                                    <properties>
+                                        <context>ROOT</context>
+                                    </properties>
+                                    <pingURL>http://localhost:9999/saiku/rest/saiku/session</pingURL>
+                                    <pingTimeout>30000</pingTimeout>
+                                </deployable>
+                            </deployables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+    </profiles>
+</project>

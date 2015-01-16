@@ -89,7 +89,7 @@
     </bean>
 
     <bean id="platformBean" class="org.saiku.service.PlatformUtilsService">
-        <property name="path" value="../webapps/ROOT/js/saiku/plugins/"/>
+        <property name="path" value="${pluginpath}"/>
     </bean>
 
     <bean id="infoResource" class="org.saiku.web.rest.resources.InfoResource">
