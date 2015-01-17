@@ -20,8 +20,11 @@ import bi.meteorite.pages.LoginPage;
 
 import net.thucydides.core.annotations.Step;
 
+import org.jbehave.core.model.ExamplesTable;
 import org.openqa.selenium.WebDriver;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -83,5 +86,32 @@ public class UserSteps {
 
   public WebDriver getDriver(){
     return login.getDriver();
+  }
+
+  @Step
+  public void createquery() {
+
+    login.click_new_query();
+  }
+
+  @Step
+  public void selectCube(String cube) {
+    login.selectCube(cube);
+  }
+
+  @Step
+  public void click_link(String text) {
+    login.findByLinkText(text).get(0).click();
+  }
+
+  @Step
+  public void compareTable(ExamplesTable table){
+    List<Map<Object, String>> t = login.getResultTable();
+
+    List<Map<String, String>> example = table.getRows();
+    assertThat(t.get(1).get("Store Sales"), equalTo(example.get(0).get("Store Sales")));
+
+
+
   }
 }

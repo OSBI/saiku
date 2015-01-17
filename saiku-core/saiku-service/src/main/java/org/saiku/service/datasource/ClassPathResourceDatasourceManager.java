@@ -316,6 +316,14 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
   public void setDatadir(String dir) {
   }
 
+  public void setFoodmarturl(String foodmarturl) {
+
+  }
+
+  public String getFoodmarturl() {
+    return null;
+  }
+
   public String saveFile(String path, String content, String user) {
         return null;
     }

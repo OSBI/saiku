@@ -1,4 +1,4 @@
-package web.authentication;
+package web.utils;
 
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.steps.DependencyInjector;

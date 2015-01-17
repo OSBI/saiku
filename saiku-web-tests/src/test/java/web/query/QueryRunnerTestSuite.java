@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package web.authentication;
+package web.query;
 
 import web.AbstractTestSuite;
 
 /**
  * Created by bugg on 15/01/15.
  */
-public class CreateAuthenticationTestSuite extends AbstractTestSuite {
+public class QueryRunnerTestSuite extends AbstractTestSuite {
 
 
-  public CreateAuthenticationTestSuite() {
-    this.stepDefinitions.add(new CreateAuthenticationSteps());
-    this.jiraid = "SUT-2";
+  public QueryRunnerTestSuite() {
+    this.stepDefinitions.add(new CreateQuerySteps());
+    this.jiraid = "SUT-4";
   }
 }

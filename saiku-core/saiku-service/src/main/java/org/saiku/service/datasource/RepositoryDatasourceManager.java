@@ -47,6 +47,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     IRepositoryManager irm;
     private String foodmartdir;
     private String foodmartschema;
+    private String foodmarturl;
 
     public void load() {
         irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir);
@@ -398,6 +399,14 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public String getFoodmartschema() {
         return foodmartschema;
+    }
+
+    public void setFoodmarturl(String foodmarturl) {
+        this.foodmarturl = foodmarturl;
+    }
+
+    public String getFoodmarturl() {
+        return foodmarturl;
     }
 }
 

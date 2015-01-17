@@ -13,8 +13,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <repoconfig>${basedir}/target/repository/configuration.xml</repoconfig>
         <repodata>${basedir}/target/repository/data</repodata>
-        <foodmartrepo>${basedir}/target/data/foodmart_h2.sql</foodmartrepo>
+        <foodmartrepo>${basedir}/target/data/</foodmartrepo>
         <foodmartschema>${basedir}/target/data/FoodMart4.xml</foodmartschema>
+        <foodmarturl>jdbc:h2:${basedir}/target/data/foodmart;MODE=MySQL</foodmarturl>
         <thucydides.version>0.9.268</thucydides.version>
         <thucydides.jbehave.version>0.9.268</thucydides.jbehave.version>
         <webdriver.driver>chrome</webdriver.driver>

@@ -16,6 +16,7 @@
         <repodata>../../repository/data</repodata>
         <foodmartrepo>../../data</foodmartrepo>
         <foodmartschema>../../data/FoodMart4.xml</foodmartschema>
+        <foodmarturl>jdbc:h2:../../data/foodmart;MODE=MySQL</foodmarturl>
         <pluginpath>../webapps/ROOT/js/saiku/plugins/</pluginpath>
     </properties>
     <build>

@@ -23,8 +23,10 @@ import net.thucydides.core.pages.PageObject;
 import net.thucydides.core.pages.WebElementFacade;
 
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 
 import java.util.List;
+import java.util.Map;
 
 import ch.lambdaj.function.convert.Converter;
 
@@ -48,6 +50,9 @@ public class LoginPage extends PageObject {
 
   @FindBy(className = "dialog_response")
   private WebElementFacade dialog_response;
+
+  @FindBy(className = "cubes")
+  private WebElementFacade cube_select;
 
   public void enter_username(String keyword) {
     username.type(keyword);
@@ -77,6 +82,10 @@ public class LoginPage extends PageObject {
     return this.getDriver().findElements(org.openqa.selenium.By.xpath(xpath));
   }
 
+  public List<WebElement> findByLinkText(String text){
+    return this.getDriver().findElements(org.openqa.selenium.By.linkText(text));
+  }
+
   public String getDialog_Response() {
     return dialog_response.getText();
   }
@@ -87,5 +96,28 @@ public class LoginPage extends PageObject {
         return from.getText();
       }
     };
+  }
+
+  public void click_new_query() {
+    new_query_button.click();
+  }
+
+  public void selectCube(String cube) {
+    cube_select.click();
+    new Select(this.getDriver().findElement(org.openqa.selenium.By.className("cubes"))).selectByVisibleText(cube);
+    this.getDriver().findElement(By.cssSelector("option[value=\"foodmart/FoodMart/FoodMart/" + cube + "\"]")).click();
+
+  }
+
+  public List<Map<Object, String>> getResultTable(){
+    List<WebElement> ele = findByClass("table_wrapper");
+    for(WebElement el: ele){
+      if(el.isDisplayed()){
+        return SaikuTable.withColumns("Product Family", "Store Sales")
+                     .readRowsFrom(el.findElement(org.openqa.selenium.By.xpath(".//table")));
+
+      }
+    }
+    return null;
   }
 }

@@ -71,7 +71,7 @@ public class Database {
         String pword = servletContext.getInitParameter("foodmart.password");
         if(url!=null && !url.equals("${foodmart_url}")) {
             JdbcDataSource ds2 = new JdbcDataSource();
-            ds2.setURL(url);
+            ds2.setURL(dsm.getFoodmarturl());
             ds2.setUser(user);
             ds2.setPassword(pword);
 

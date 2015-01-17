@@ -105,4 +105,8 @@ public interface IDatasourceManager {
   public String getDatadir();
 
   public void setDatadir(String dir);
+
+  public void setFoodmarturl(String foodmarturl);
+
+  public String getFoodmarturl();
 }
