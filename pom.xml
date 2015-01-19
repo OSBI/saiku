@@ -13,7 +13,6 @@
 	 <build.prod>false</build.prod>
      </properties>
 	<build>
-
 		<pluginManagement>
 			<plugins>
 				<plugin>
