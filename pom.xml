@@ -13,6 +13,15 @@
 	 <build.prod>false</build.prod>
      </properties>
 	<build>
+		<resources>
+			<resource>
+				<directory>js/saiku</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>Settings.js</include>
+				</includes>
+			</resource>
+		</resources>
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -205,6 +214,7 @@
 						<jsSourceInclude>views/SaveQuery.js</jsSourceInclude>
 						<jsSourceInclude>views/OpenDialog.js</jsSourceInclude>
 						<jsSourceInclude>views/Upgrade.js</jsSourceInclude>
+						<jsSourceInclude>views/SessionErrorModal.js</jsSourceInclude>
 						<jsSourceInclude>models/License.js</jsSourceInclude>
 						<jsSourceInclude>models/SaikuOlapQuery.js</jsSourceInclude>
 						<jsSourceInclude>models/Plugin.js</jsSourceInclude>

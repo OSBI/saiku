@@ -49,12 +49,22 @@ var Session = Backbone.Model.extend({
     check_session: function() {
         if (this.sessionid === null || this.username === null || this.password === null) {
             this.clear();
-            this.fetch({ success: this.process_session });
+            this.fetch({ success: this.process_session, error: this.show_error });
         } else {
             this.username = encodeURIComponent(options.username);
             this.load_session();
         }
     },
+
+	show_error: function(model, response){
+
+		// Open form and retrieve credentials
+		Saiku.ui.unblock();
+		this.form = new SessionErrorModal({ issue: response.responseText });
+		this.form.render().open();
+
+
+	},
 
     load_session: function() {
         this.sessionworkspace = new SessionWorkspace();
