@@ -44,8 +44,8 @@ var Workspace = Backbone.View.extend({
         this.toolbar = new WorkspaceToolbar({ workspace: this });
         this.toolbar.render();
 
-        this.upgrade = new Upgrade({ workspace: this});
-        this.upgrade.render();
+		this.upgrade = new Upgrade({ workspace: this});
+		this.upgrade.render();
 
         this.querytoolbar = new QueryToolbar({ workspace: this });
         this.querytoolbar.render();
@@ -103,7 +103,7 @@ var Workspace = Backbone.View.extend({
             this.data_connections(paramsURI);
         }
         else {
-            this.data_connections(paramsURI);   
+            this.data_connections(paramsURI);
         }
     },
 
@@ -174,6 +174,7 @@ var Workspace = Backbone.View.extend({
 
     render: function() {
         // Load template
+		var self = this;
         $(this.el).html(this.template());
 
         this.processing = $(this.el).find('.query_processing');
@@ -215,7 +216,8 @@ var Workspace = Backbone.View.extend({
             // Show toolbar
             $(this.el).find('.workspace_toolbar').append($(this.toolbar.el));
             $(this.el).find('.query_toolbar').append($(this.querytoolbar.el));
-            $(this.el).find('.upgrade').append($(this.upgrade.el));
+			$(self.el).find('.upgrade').append($(self.upgrade.el));
+
 
         }
 
@@ -366,8 +368,8 @@ var Workspace = Backbone.View.extend({
         Saiku.session.trigger('workspace:clear', { workspace: this });
 
         // Initialize the new query
-        this.selected_cube = $(this.el).find('.cubes').val() 
-            ? $(this.el).find('.cubes').val() 
+        this.selected_cube = $(this.el).find('.cubes').val()
+            ? $(this.el).find('.cubes').val()
             : this.selected_cube;
         if (!this.selected_cube) {
             // Someone literally selected "Select a cube"

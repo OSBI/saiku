@@ -10,7 +10,7 @@
     </overlay>
     
     <overlay id="launch" resourcebundle="content/saiku-ui/saikuplugin.properties"> 
-    	<button id="SaikuAnalytics" label="New Saiku Analytics" command="Home.openFile('Saiku Analytics','Saiku Analytics', 'content/saiku-ui/index.html?biplugin5=true');$('#btnCreateNew').popover('hide')"/> 
+    	<button id="SaikuAnalytics" label="Saiku Analytics" command="Home.openFile('Saiku Analytics','Saiku Analytics', 'content/saiku-ui/index.html?biplugin5=true');$('#btnCreateNew').popover('hide')"/>
     </overlay>
   </overlays>
   

@@ -23,54 +23,69 @@ var Upgrade = Backbone.View.extend({
     events: {
     },
 
-    template: function() {
-        var template = $("<div><div id='uphead' class='upgradeheader'>You are using Saiku Community Edition, please consider upgrading to <a target='_blank' href='http://meteorite.bi'>Saiku Enterprise, or entering a sponsorship agreement with us</a> to support development. <a href='mailto:info@meteorite.bi?subject=Supporting Saiku'>info@meteorite.bi</a></div></div>").html() || "";
 
-        return _.template(template)();
-    },
+    initialize: function(a, b) {
 
-    initialize: function() {
+		this.workspace = a.workspace;
 
     },
+
+	daydiff: function(first, second) {
+	return Math.round((second-first)/(1000*60*60*24));
+	},
 
     render: function() {
 
+		var self = this;
 		var license = new License();
+		if(Settings.BIPLUGIN5){
+			license.fetch_license('api/api/license', function (opt) {
+				if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
+					return this;
+				}
+				else if(opt.status !== 'error' && opt.data.get("licenseType") === "trial"){
+					var yourEpoch = parseFloat(opt.data.get("expiration"));
+					var yourDate = new Date(yourEpoch);
+					self.remainingdays = self.daydiff(new Date(), yourDate);
 
-		/*license.fetch_license('api/license/', function(opt) {
-			if (opt.status !== 'error') {
-				return this;
-			}
-		});*/
 
-		var v = Settings.VERSION;
-		if(v.indexOf("EE")>-1){
-			return this;
+					$(self.workspace.el).find('.upgrade').append("<div><div id='uphead' class='upgradeheader'>You are using a Saiku Enterprise Trial license, you have "+ self.remainingdays+" days remaining until the license expires.</div>");
+					return self;
+				}
+				else {
+					$(self.workspace.el).find('.upgrade').append("<div><div id='uphead' class='upgradeheader'>You are using Saiku Community Edition, please consider upgrading to <a target='_blank' href='http://meteorite.bi'>Saiku Enterprise, or entering a sponsorship agreement with us</a> to support development. <a href='mailto:info@meteorite.bi?subject=Supporting Saiku'>info@meteorite.bi</a></div></div>");
+					return self;
+				}
+			});
+		}
+		else {
+			license.fetch_license('api/license/', function (opt) {
+				if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
+					return this;
+				}
+				else if(opt.status !== 'error' && opt.data.get("licenseType") === "trial"){
+					var yourEpoch = parseFloat(opt.data.get("expiration"));
+					var yourDate = new Date(yourEpoch);
+
+					self.remainingdays = self.daydiff(new Date(), yourDate);
+
+					$(self.workspace.el).find('.upgrade').append("<div><div id='uphead' class='upgradeheader'>You are using a Saiku Enterprise Trial license, you have "+ self.remainingdays+" days remaining until the license expires.</div>");
+					return self;
+				}
+				else {
+					$(self.workspace.el).find('.upgrade').append("<div><div id='uphead' class='upgradeheader'>You are using Saiku Community Edition, please consider upgrading to <a target='_blank' href='http://meteorite.bi'>Saiku Enterprise, or entering a sponsorship agreement with us</a> to support development. <a href='mailto:info@meteorite.bi?subject=Supporting Saiku'>info@meteorite.bi</a></div></div>");
+					return self;
+				}
+			});
 		}
 
 
 
-        var timeout = Saiku.session.upgradeTimeout;
-        var localStorageUsed = false;
-        var first = true;
-        if (typeof localStorage !== "undefined" && localStorage) {
-            if (localStorage.getItem("saiku.upgradeTimeout") !== null) {
-                timeout = localStorage.getItem("saiku.upgradeTimeout");
-            }
-            localStorageUsed = true;
-        }
-
-        var current = (new Date()).getTime();
-        if (!timeout || (current - timeout) > (10 * 60 * 1000)) {
-            $(this.el).html(this.template());
-            Saiku.session.upgradeTimeout = current;
-            if (typeof localStorage !== "undefined" && localStorage) {
-                localStorage.setItem("saiku.upgradeTimeout", current);
-            }
-        }
 
 
-        return this;
+
+
+
     },
 
     call: function(e) {
