@@ -38,11 +38,20 @@ var SplashScreen = Backbone.View.extend({
       $(this.el).html(this.template()).appendTo($('body'));
 		var license = new License();
 		var that = this;
-		license.fetch_license('api/license/', function(opt) {
-			if (opt.status !== 'error' && opt.data.get("licenseType")!="trial") {
-				$(".enterprisetoggle").css("visibility", "hidden");
-			}
-		});
+		if(Settings.BIPLUGIN5){
+			license.fetch_license('api/api/license', function (opt) {
+				if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
+					$(".enterprisetoggle").css("visibility", "hidden");
+				}
+			});
+		}
+		else {
+			license.fetch_license('api/license/', function (opt) {
+				if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
+					$(".enterprisetoggle").css("visibility", "hidden");
+				}
+			});
+		}
 		this.getNews();
 
       this.setupPage();
