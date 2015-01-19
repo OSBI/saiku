@@ -117,9 +117,6 @@ public class PdfReport {
 
         org.w3c.dom.Document foDoc = getFO(out);
 
-        String s= toString(out);
-        System.out.println(s);
-
         try {
 
             pdf.write(fo2PDF(foDoc, null));
@@ -156,6 +153,7 @@ public class PdfReport {
 
 
   private org.w3c.dom.Document getDom(String html){
+
         ByteArrayInputStream input = new ByteArrayInputStream(html.getBytes());
 
         final HtmlCleaner cleaner = new HtmlCleaner();
@@ -196,12 +194,11 @@ public class PdfReport {
         FopFactory fopFactory = FopFactory.newInstance();
 
         try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+          ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-            Fop fop = fopFactory.newFop(MimeConstants.MIME_FOP_PRINT, out);
+          Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
             Transformer transformer = getTransformer(styleSheet);
-
-            Source src = new DOMSource(foDocument);
+          Source src = new DOMSource(foDocument);
             Result res = new SAXResult(fop.getDefaultHandler());
 
             transformer.transform(src, res);

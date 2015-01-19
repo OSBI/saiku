@@ -11,7 +11,7 @@
         <developerConnection>
             scm:git:https://github.com/OSBI/saiku.git
         </developerConnection>
-        <tag>3.0.2-SNAPSHOT</tag>
+        <tag>3.0.9-SNAPSHOT</tag>
     </scm>
     <modules>
         <module>saiku-core</module>
