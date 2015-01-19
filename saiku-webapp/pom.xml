@@ -96,7 +96,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}/target/saiku-webapp-3.0.9-SNAPSHOT/WEB-INF</outputDirectory>
+                            <outputDirectory>${basedir}/target/saiku-webapp-${project.version}/WEB-INF</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/web</directory>
@@ -120,7 +120,7 @@
                         <phase>prepare-package</phase>
                         <configuration>
                             <tasks>
-                                <copy todir="${basedir}/target/saiku-webapp-3.0.9-SNAPSHOT/WEB-INF">
+                                <copy todir="${basedir}/target/saiku-webapp-${project.version}/WEB-INF">
                                     <fileset dir="${basedir}/target">
                                         <include name="saiku-beans.xml" />
                                     </fileset>
