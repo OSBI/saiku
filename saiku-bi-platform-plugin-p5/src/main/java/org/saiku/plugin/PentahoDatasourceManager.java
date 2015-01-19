@@ -261,6 +261,38 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
     }
 
+    public String getFoodmartschema() {
+        return null;
+    }
+
+    public void setFoodmartschema(String schema) {
+
+    }
+
+    public void setFoodmartdir(String dir) {
+
+    }
+
+    public String getFoodmartdir() {
+        return null;
+    }
+
+    public String getDatadir() {
+        return null;
+    }
+
+    public void setDatadir(String dir) {
+
+    }
+
+    public void setFoodmarturl(String foodmarturl) {
+
+    }
+
+    public String getFoodmarturl() {
+        return null;
+    }
+
     public void setACL(String a, String b, String c, List<String> d) {
 
     }
