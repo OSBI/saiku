@@ -1,14 +1,13 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>saiku</artifactId>
 		<groupId>org.saiku</groupId>
-		<version>3.0.9-SNAPSHOT</version>
+		<version>3.0.9</version>
 	</parent>
 	<artifactId>saiku-bi-platform-plugin</artifactId>
 	<packaging>jar</packaging>
-	<version>3.0.9-SNAPSHOT</version>
+	<version>3.0.9</version>
 	<name>saiku biserver plugin</name>
 
 	<properties>
@@ -251,9 +250,7 @@
 										<include name="saiku-ui-${project.version}.war" />
 									</fileset>
 								</unzip>
-								<copy
-									file="${basedir}/target/${project.artifactId}-${project.version}.jar"
-									todir="target/dist/saiku/lib" />
+								<copy file="${basedir}/target/${project.artifactId}-${project.version}.jar" todir="target/dist/saiku/lib" />
 								<copy todir="target/dist/saiku/" overwrite="true">
 									<fileset dir="${basedir}/src/main/plugin/" />
 								</copy>
