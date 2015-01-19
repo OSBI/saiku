@@ -1,13 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>saiku-core</artifactId>
         <groupId>org.saiku</groupId>
-        <version>3.0.9-SNAPSHOT</version>
+        <version>3.0.9</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>saiku-service</artifactId>
-    <version>3.0.9-SNAPSHOT</version>
+    <version>3.0.9</version>
     <name>saiku - services</name>
     <build>
         <plugins>
@@ -69,27 +68,27 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <echo message="Prepare Test. Unzipping foodmart"/>
+                                <echo message="Prepare Test. Unzipping foodmart" />
                                 <unzip dest="target/test-classes/">
                                     <fileset dir="target/">
-                                        <include name="mondrian-data*.jar"/>
+                                        <include name="mondrian-data*.jar" />
                                     </fileset>
                                 </unzip>
-                                <echo message="Unzipped!"/>
+                                <echo message="Unzipped!" />
                                 <unzip dest="target/test/">
                                     <fileset dir="${basedir}/../../util/">
-                                        <include name="foodmart_hsql.script.zip"/>
+                                        <include name="foodmart_hsql.script.zip" />
                                     </fileset>
                                 </unzip>
                                 <copy todir="target/test/foodmart/">
                                     <fileset dir="${basedir}/../../util/">
-                                        <include name="FoodMart.xml"/>
+                                        <include name="FoodMart.xml" />
                                     </fileset>
                                 </copy>
 
                                 <copy todir="target/test-classes/org/saiku/" overwrite="true">
                                     <fileset dir="target/test/">
-                                        <include name="foodmart_hsql.script"/>
+                                        <include name="foodmart_hsql.script" />
                                     </fileset>
                                 </copy>
 
