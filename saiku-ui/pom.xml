@@ -13,15 +13,7 @@
 	 <build.prod>false</build.prod>
      </properties>
 	<build>
-		<resources>
-			<resource>
-				<directory>js/saiku</directory>
-				<filtering>true</filtering>
-				<includes>
-					<include>Settings.js</include>
-				</includes>
-			</resource>
-		</resources>
+
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -244,6 +236,31 @@
 						<goal>minify</goal>
 					</goals>
 				</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/saiku-ui/js/saiku</outputDirectory>
+						<resources>
+							<resource>
+								<directory>js/saiku</directory>
+								<filtering>true</filtering>
+								<includes>
+									<include>Settings.js</include>
+								</includes>
+							</resource>
+						</resources>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
