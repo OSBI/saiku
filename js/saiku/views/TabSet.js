@@ -67,6 +67,9 @@ var TabSet = Backbone.View.extend({
 		// Clear selections
 		$(this.el).find('li').removeClass('selected');
 
+		Saiku.session.tabSelected = tab.id;
+		Saiku.session.trigger('tab:select', { tab: tab });
+
 		// Replace the contents of the tab panel with the new content
 
 		this.content.children().detach();
