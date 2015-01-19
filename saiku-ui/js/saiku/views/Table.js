@@ -38,6 +38,7 @@ var Table = Backbone.View.extend({
     clicked_cell: function(event) {
         var self = this;
 
+		return false;
         if (/*this.workspace.query.get('type') != 'QM' || */Settings.MODE == "table") {
             return false;
         }
