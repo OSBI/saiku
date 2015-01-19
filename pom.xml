@@ -260,6 +260,25 @@
 						</resources>
 						</configuration>
 					</execution>
+					<execution>
+						<id>copy-resources2</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/saiku-ui2/js/saiku</outputDirectory>
+							<resources>
+								<resource>
+									<directory>js/saiku</directory>
+									<filtering>true</filtering>
+									<includes>
+										<include>Settings.js</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
