@@ -12,6 +12,15 @@
 	<name>saiku biserver plugin</name>
 
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/plugin</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
