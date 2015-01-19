@@ -26,7 +26,7 @@
         <repository>
             <id>utility</id>
             <name>utility-releases</name>
-            <url>http://repo.analytical-labs.com/alabs-release-local</url>
+            <url>http://repo.analytical-labs.com/artifactory/alabs-release-local</url>
         </repository>
         <snapshotRepository>
             <id>utility</id>
