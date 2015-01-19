@@ -44,6 +44,10 @@ var Session = Backbone.Model.extend({
         } else {
             this.check_session();
         }
+
+        if (localStorage.getItem('dateFilter')) {
+            localStorage.clear();
+        }
     },
 
     check_session: function() {
