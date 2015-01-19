@@ -37,11 +37,17 @@ var Upgrade = Backbone.View.extend({
 
 		var license = new License();
 
-		license.fetch_license('api/license/', function(opt) {
+		/*license.fetch_license('api/license/', function(opt) {
 			if (opt.status !== 'error') {
 				return this;
 			}
-		});
+		});*/
+
+		var v = Settings.VERSION;
+		if(v.indexOf("EE")>-1){
+			return this;
+		}
+
 
 
         var timeout = Saiku.session.upgradeTimeout;

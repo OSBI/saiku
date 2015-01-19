@@ -16,17 +16,9 @@
 
 package org.saiku.web.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import org.saiku.service.ISessionService;
 
 import org.apache.commons.lang.StringUtils;
-import org.saiku.service.ISessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -38,6 +30,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+
+import java.util.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 
 public class SessionService implements ISessionService {
@@ -163,7 +160,7 @@ public class SessionService implements ISessionService {
 	/* (non-Javadoc)
 	 * @see org.saiku.web.service.ISessionService#getSession(javax.servlet.http.HttpServletRequest)
 	 */
-	public Map<String,Object> getSession() {
+	public Map<String,Object> getSession() throws Exception {
 		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {			
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			Object p = auth.getPrincipal();

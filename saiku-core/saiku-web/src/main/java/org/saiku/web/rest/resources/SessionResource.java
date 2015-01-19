@@ -15,27 +15,22 @@
  */
 package org.saiku.web.rest.resources;
 
+import org.saiku.service.ISessionService;
+import org.saiku.service.user.UserService;
+
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.apache.commons.lang.StringUtils;
-import org.saiku.service.ISessionService;
-import org.saiku.service.user.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 
 @Component
@@ -76,10 +71,15 @@ public class SessionResource  {
 	@GET
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Map<String,Object> getSession(@Context HttpServletRequest req) {
-		
-		Map<String, Object> sess = sessionService.getSession();
-		try {
+	public Response getSession(@Context HttpServletRequest req) {
+
+	  Map<String, Object> sess = null;
+	  try {
+		sess = sessionService.getSession();
+	  } catch (Exception e) {
+		return Response.serverError().entity(e.getLocalizedMessage()).build();
+	  }
+	  try {
 			String acceptLanguage = req.getLocale().getLanguage();
 			if (StringUtils.isNotBlank(acceptLanguage)) {
 				sess.put("language", acceptLanguage);
@@ -100,7 +100,8 @@ public class SessionResource  {
         catch (Exception e){
             //TODO detect if plugin or not.
         }
-        return sess;
+
+        return Response.ok().entity(sess).build();
 	}
 
 	@DELETE

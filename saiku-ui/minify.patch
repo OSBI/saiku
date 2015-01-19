@@ -1,5 +1,5 @@
---- index.html	2014-12-08 15:50:53.298647150 +0000
-+++ index2.html	2014-12-09 20:25:08.039928031 +0000
+--- index.html	2015-01-19 00:26:15.253343469 +0000
++++ index2.html	2015-01-19 00:26:51.105342346 +0000
 @@ -105,62 +105,8 @@
  <!-- Saiku Project -->
  <script type="text/javascript" src="js/saiku/Settings.js"></script>
@@ -44,7 +44,7 @@
 -<script type="text/javascript" src="js/saiku/models/QueryAction.js"></script>
 -<script type="text/javascript" src="js/saiku/models/QueryScenario.js"></script>
 -<script type="text/javascript" src="js/saiku/models/Query.js"></script>
--
+-<script type="text/javascript" src="js/saiku/views/SessionErrorModal.js"></script>
 -
 -<script type="text/javascript" src="js/saiku/models/Session.js"></script>
 -<script type="text/javascript" src="js/saiku/views/SplashScreen.js"></script>
@@ -56,11 +56,10 @@
 -<script type="text/javascript" src="js/saiku/adapters/SaikuServer.js"></script>
 -<script type="text/javascript" src="js/saiku/routers/QueryRouter.js"></script>
 -
--<!-- Saiku Minified - remove all of the above and uncomment the following -->
+ <!-- Saiku Minified - remove all of the above and uncomment the following -->
 -<!--
  <script type="text/javascript" src="saiku.min.js"></script>
 --->
-+
 
  <script type="text/javascript" src="js/saiku/plugins/I18n/plugin.js"></script>
  <!-- Saiku plugins -->

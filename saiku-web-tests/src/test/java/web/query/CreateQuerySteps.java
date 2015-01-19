@@ -52,13 +52,13 @@ public class CreateQuerySteps {
 
   @When("the measure '$measure' is placed in measures")
   public void whenTheMeasureStoreSalesIsPlacedInMeasures(String measure) {
-    steps.click_link(measure);
+    steps.click_link(measure, false);
   }
 
   @When("the level '$level' from the '$dimension' dimension is placed on rows")
   public void whenTheLevelProductFamilyIsPlacedOnRows(String level, String dimension) {
-    steps.click_link(dimension);
-    steps.click_link(level);
+    steps.click_link(dimension, false);
+    steps.click_link(level, true);
   }
 
   @Then("a result set is returned: $table")

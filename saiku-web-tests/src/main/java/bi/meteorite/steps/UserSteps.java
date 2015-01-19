@@ -100,8 +100,12 @@ public class UserSteps {
   }
 
   @Step
-  public void click_link(String text) {
+  public void click_link(String text, boolean wait) {
     login.findByLinkText(text).get(0).click();
+    if(wait) {
+      login.getDriver().manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+    }
+
   }
 
   @Step

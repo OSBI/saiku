@@ -15,8 +15,9 @@
  */
 package org.saiku.service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 public interface ISessionService {
 
@@ -28,7 +29,7 @@ public interface ISessionService {
   public void authenticate( HttpServletRequest req, String username,
                             String password );
 
-  public Map<String, Object> getSession();
+  public Map<String, Object> getSession() throws Exception;
 
   public Map<String, Object> getAllSessionObjects();
 
