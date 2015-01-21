@@ -606,7 +606,7 @@
             <dependency>
                 <groupId>pentaho</groupId>
                 <artifactId>mondrian</artifactId>
-                <version>4.0.0-SNAPSHOT</version>
+                <version>4.0.0-20150120.193813-15</version>
             </dependency>
             <!-- Spring modules -->
             <dependency>
