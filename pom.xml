@@ -8,7 +8,7 @@
     <name>Saiku Module Project</name>
     <scm>
         <developerConnection>
-            scm:git:https://github.com/OSBI/saiku.git
+            git@github.com:OSBI/saiku.git
         </developerConnection>
         <tag>3.0.9-SNAPSHOT</tag>
     </scm>
