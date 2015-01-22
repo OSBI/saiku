@@ -4,13 +4,13 @@
     <groupId>org.saiku</groupId>
     <artifactId>saiku</artifactId>
     <packaging>pom</packaging>
-    <version>3.1-SNAPSHOT</version>
+    <version>3.1</version>
     <name>Saiku Module Project</name>
     <scm>
         <developerConnection>
             scm:git:git@github.com:OSBI/saiku.git
         </developerConnection>
-        <tag>3.0.9-SNAPSHOT</tag>
+        <tag>saiku-</tag>
     </scm>
     <modules>
         <module>saiku-core</module>
@@ -310,12 +310,12 @@
             <dependency>
                 <groupId>org.saiku</groupId>
                 <artifactId>saiku-service</artifactId>
-                <version>3.1-SNAPSHOT</version>
+                <version>3.1</version>
             </dependency>
             <dependency>
                 <groupId>org.saiku</groupId>
                 <artifactId>saiku-webapp</artifactId>
-                <version>3.1-SNAPSHOT</version>
+                <version>3.1</version>
                 <type>war</type>
             </dependency>
             <dependency>
@@ -533,7 +533,7 @@
             <dependency>
                 <groupId>org.saiku</groupId>
                 <artifactId>saiku-web</artifactId>
-                <version>3.1-SNAPSHOT</version>
+                <version>3.1</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
@@ -580,7 +580,7 @@
             <dependency>
                 <groupId>org.saiku</groupId>
                 <artifactId>saiku-ui</artifactId>
-                <version>3.1-SNAPSHOT</version>
+                <version>3.1</version>
                 <type>war</type>
             </dependency>
             <dependency>
