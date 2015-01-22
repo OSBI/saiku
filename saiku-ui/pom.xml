@@ -171,29 +171,29 @@
 						</cssSourceFiles>-->
 					<jsSourceIncludes>
 						<!--<jsSourceInclude>**/*.js</jsSourceInclude>-->
-						<jsSourceInclude>views/SplashScreen.js</jsSourceInclude>
+						<jsSourceInclude>models/SaikuOlapQuery.js</jsSourceInclude>
 						<jsSourceInclude>render/SaikuRenderer.js</jsSourceInclude>
 						<jsSourceInclude>render/SaikuTableRenderer.js</jsSourceInclude>
 						<jsSourceInclude>render/SaikuChartRenderer.js</jsSourceInclude>
-						<jsSourceInclude>views/Modal.js</jsSourceInclude>
-						<jsSourceInclude>views/Tab.js</jsSourceInclude>
-						<jsSourceInclude>views/TabSet.js</jsSourceInclude>
 						<jsSourceInclude>models/Dimension.js</jsSourceInclude>
 						<jsSourceInclude>views/DimensionList.js</jsSourceInclude>
 						<jsSourceInclude>views/Toolbar.js</jsSourceInclude>
+						<jsSourceInclude>views/Upgrade.js</jsSourceInclude>
 						<jsSourceInclude>views/Modal.js</jsSourceInclude>
 						<jsSourceInclude>views/MDXModal.js</jsSourceInclude>
 						<jsSourceInclude>views/SelectionsModal.js</jsSourceInclude>
+						<jsSourceInclude>views/DateFilterModal.js</jsSourceInclude>
 						<jsSourceInclude>views/DrillthroughModal.js</jsSourceInclude>
 						<jsSourceInclude>views/DrillAcrossModal.js</jsSourceInclude>
 						<jsSourceInclude>views/PermissionsModal.js</jsSourceInclude>
-						<jsSourceInclude>views/LoginForm.js</jsSourceInclude>
 						<jsSourceInclude>views/DemoLoginForm.js</jsSourceInclude>
+						<jsSourceInclude>views/LoginForm.js</jsSourceInclude>
 						<jsSourceInclude>views/AboutModal.js</jsSourceInclude>
+						<jsSourceInclude>views/OverwriteModal.js</jsSourceInclude>
 						<jsSourceInclude>views/AddFolderModal.js</jsSourceInclude>
 						<jsSourceInclude>views/FilterModal.js</jsSourceInclude>
 						<jsSourceInclude>views/CustomFilterModal.js</jsSourceInclude>
-						<jsSourceInclude>views/DateFilterModal.js</jsSourceInclude>
+						<jsSourceInclude>views/MeasuresModal.js</jsSourceInclude>
 						<jsSourceInclude>views/QueryToolbar.js</jsSourceInclude>
 						<jsSourceInclude>views/WorkspaceToolbar.js</jsSourceInclude>
 						<jsSourceInclude>views/WorkspaceDropZone.js</jsSourceInclude>
@@ -204,19 +204,20 @@
 						<jsSourceInclude>views/OpenQuery.js</jsSourceInclude>
 						<jsSourceInclude>views/SaveQuery.js</jsSourceInclude>
 						<jsSourceInclude>views/OpenDialog.js</jsSourceInclude>
-						<jsSourceInclude>views/Upgrade.js</jsSourceInclude>
-						<jsSourceInclude>views/SessionErrorModal.js</jsSourceInclude>
-						<jsSourceInclude>models/License.js</jsSourceInclude>
-						<jsSourceInclude>models/SaikuOlapQuery.js</jsSourceInclude>
-						<jsSourceInclude>models/Plugin.js</jsSourceInclude>
+						<jsSourceInclude>views/Tab.js</jsSourceInclude>
+						<jsSourceInclude>views/TabSet.js</jsSourceInclude>
 						<jsSourceInclude>models/Repository.js</jsSourceInclude>
 						<jsSourceInclude>models/Result.js</jsSourceInclude>
 						<jsSourceInclude>models/QueryAction.js</jsSourceInclude>
 						<jsSourceInclude>models/QueryScenario.js</jsSourceInclude>
 						<jsSourceInclude>models/Query.js</jsSourceInclude>
 						<jsSourceInclude>models/Session.js</jsSourceInclude>
+						<jsSourceInclude>views/SessionErrorModal.js</jsSourceInclude>
+						<jsSourceInclude>views/SplashScreen.js</jsSourceInclude>
 						<jsSourceInclude>models/SessionWorkspace.js</jsSourceInclude>
 						<jsSourceInclude>models/Member.js</jsSourceInclude>
+						<jsSourceInclude>models/Plugin.js</jsSourceInclude>
+						<jsSourceInclude>models/License.js</jsSourceInclude>
 						<jsSourceInclude>Saiku.js</jsSourceInclude>
 						<jsSourceInclude>adapters/SaikuServer.js</jsSourceInclude>
 						<jsSourceInclude>routers/QueryRouter.js</jsSourceInclude>
