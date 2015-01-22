@@ -15,6 +15,7 @@
 		<resources>
 			<resource>
 				<directory>src/main/plugin</directory>
+				<targetPath>${basedir}/target/dist/saiku</targetPath>
 				<filtering>true</filtering>
 				<includes>
 					<include>**/*.xml</include>
@@ -205,7 +206,10 @@
 								</unzip>
 								<copy file="${basedir}/target/${project.artifactId}-${project.version}.jar" todir="target/dist/saiku/lib" />
 								<copy todir="target/dist/saiku/" overwrite="true">
-									<fileset dir="${basedir}/src/main/plugin/" />
+									<fileset dir="${basedir}/src/main/plugin/">
+										<include name="**/*.xml"/>
+										<exclude name="**/version.xml"/>
+									</fileset>
 								</copy>
 								<copy todir="target/dist/saiku/ui/" overwrite="true">
 									<fileset dir="${basedir}/src/main/plugin/">
