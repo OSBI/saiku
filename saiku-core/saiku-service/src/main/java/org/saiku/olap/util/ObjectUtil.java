@@ -142,6 +142,7 @@ public class ObjectUtil {
     try {
       try {
         Class.forName("mondrian.olap4j.MondrianOlap4jLevelExtend");
+        Class.forName("bi.meteorite.CheckClass");
         Class<LevelInterface> _tempClass =
             (Class<LevelInterface>) Class.forName("mondrian.olap4j.MondrianOlap4jLevelExtend");
         Constructor<LevelInterface> ctor = _tempClass.getDeclaredConstructor(org.olap4j.metadata.Level.class);
