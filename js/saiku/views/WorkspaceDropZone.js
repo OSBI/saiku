@@ -29,8 +29,8 @@ var WorkspaceDropZone = Backbone.View.extend({
         'sortstop .axis_fields': 'select_dimension',
         'click .d_measure' : 'remove_measure_click',
         'click .d_level': 'selections',
-//        'click .d_measure span.sort' : 'sort_measure',
-		'click .measure_fields.limit' : 'measure_action',
+        // 'click .d_measure span.sort' : 'sort_measure',
+        'click .measure_fields.limit' : 'measure_action',
         'click .axis_fields_header.limit' : 'limit_axis',
         'click .clear_axis' : 'clear_axis'
     },
@@ -71,10 +71,10 @@ var WorkspaceDropZone = Backbone.View.extend({
             cursorAt:               { top: 10, left: 60 },
             containment:            $(self.workspace.el),
             start:                  function(event, ui) {
-                    var hierarchy = $(ui.helper).find('a').parent().parent().attr('hierarchycaption');
-                    ui.placeholder.text(hierarchy);
-                    $(ui.helper).css({ width: "auto", height: "auto"});
-                    $(self.el).find('.axis_fields ul.hierarchy li.d_level:visible').addClass('temphide').hide();
+                var hierarchy = $(ui.helper).find('a').parent().parent().attr('hierarchycaption');
+                ui.placeholder.text(hierarchy);
+                $(ui.helper).css({ width: "auto", height: "auto"});
+                $(self.el).find('.axis_fields ul.hierarchy li.d_level:visible').addClass('temphide').hide();
             }
         });
 
@@ -107,13 +107,13 @@ var WorkspaceDropZone = Backbone.View.extend({
         if ($(ui.helper).hasClass('d_measure')) {
                 $(ui.helper).detach();
                 this.set_measures();
-            } else {
-                var hierarchy = $(ui.helper).find('a').attr('hierarchy');
-                var fromAxis = $(this.el).find('ul.hierarchy[hierarchy="' + hierarchy + '"]').parents('.fields_list').attr('title');
-                var level =  $(ui.helper).find('a').attr('level');
-                this.workspace.query.helper.removeHierarchy(hierarchy);
-                this.workspace.sync_query();
-                this.workspace.query.run();
+        } else {
+            var hierarchy = $(ui.helper).find('a').attr('hierarchy');
+            var fromAxis = $(this.el).find('ul.hierarchy[hierarchy="' + hierarchy + '"]').parents('.fields_list').attr('title');
+            var level =  $(ui.helper).find('a').attr('level');
+            this.workspace.query.helper.removeHierarchy(hierarchy);
+            this.workspace.sync_query();
+            this.workspace.query.run();
         }
     },
 
@@ -135,12 +135,10 @@ var WorkspaceDropZone = Backbone.View.extend({
 
                         // sync attribute list
                         $(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"] li a[level="' + level + '"]').parent()
-                                .draggable('disable')
-                                .parents('.parent_dimension')
-                                .find('.folder_collapsed')
-                                .addClass('selected');
-
-
+                            .draggable('disable')
+                            .parents('.parent_dimension')
+                            .find('.folder_collapsed')
+                            .addClass('selected');
                     }
                     var selection = $('<li class="selection"></li>');
                     selection.append(h);
@@ -161,13 +159,12 @@ var WorkspaceDropZone = Backbone.View.extend({
     },
 
     reset_dropzones: function() {
-            var self = this;
-            $(self.el).find('.fields_list_body ul.connectable').find('li.selection, li.d_measure').remove();
-            $(self.workspace.dimension_list.el).find('li.ui-draggable-disabled').draggable('enable');
-            $(self.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
-            $(self.el).find('.fields_list[title="COLUMNS"] .limit').removeClass('on');
-            $(this.workspace.el).find('.fields_list_body .clear_axis').addClass('hide');
-
+        var self = this;
+        $(self.el).find('.fields_list_body ul.connectable').find('li.selection, li.d_measure').remove();
+        $(self.workspace.dimension_list.el).find('li.ui-draggable-disabled').draggable('enable');
+        $(self.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
+        $(self.el).find('.fields_list[title="COLUMNS"] .limit').removeClass('on');
+        $(this.workspace.el).find('.fields_list_body .clear_axis').addClass('hide');
     },
 
     update_dropzones: function() {
@@ -179,26 +176,25 @@ var WorkspaceDropZone = Backbone.View.extend({
                 $axis.siblings('.clear_axis').removeClass('hide');
             }
         });
-
-
     },
 
     clear_axis: function(event) {
-            var self = this;
-            event.preventDefault();
-            var axis = $(event.target).siblings('.fields_list_body').parent().attr('title');
-            if (axis == "DETAILS") {
-                this.workspace.query.helper.clearMeasures();
-            } else {
-                this.workspace.query.helper.clearAxis(axis);
-            }
+        var self = this;
+        event.preventDefault();
+        var axis = $(event.target).siblings('.fields_list_body').parent().attr('title');
+        if (axis == "DETAILS") {
+            this.workspace.query.helper.clearMeasures();
+        } else {
+            this.workspace.query.helper.clearAxis(axis);
+        }
 
-            this.workspace.sync_query();
-            this.workspace.query.run();
-            return false;
+        // Trigger event to clear axis
+        Saiku.session.trigger('workspaceDropZone:clear_axis', { workspace: this.workspace, axis: axis });
+
+        this.workspace.sync_query();
+        this.workspace.query.run();
+        return false;
     },
-
-
 
     select_dimension: function(event, ui) {
         var self = this;
@@ -419,7 +415,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                         }
                     };
                 });
-var levels=[];
+                var levels=[];
 				 _.each(a.hierarchies, function(hierarchy){
 					 for(var property in hierarchy.levels){
 						 console.log(property);
@@ -434,7 +430,7 @@ var levels=[];
 							 name: n
 						 }
 					 }
-				 });
+                });
                 var addFun = function(items, fun) {
                     var ret = {};
                     for (var key in items) {
@@ -508,7 +504,6 @@ var levels=[];
                 } else {
                     totalItems.show_totals_not.name = "<b>" + totalItems.show_totals_not.name + "</b";
                 }
-
 
                 items["10"] = {
                    payload: { "n" : 10 }
