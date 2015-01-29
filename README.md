@@ -3,7 +3,7 @@
 [![saiku-view](https://dl.dropboxusercontent.com/u/13927708/SaikuBlog/saiku-view.png)](http://demo.saikuanalytics.com)
 
 A user interface for the analytical tool Saiku. <br />
-For more information, see [Saiku](http://www.meteorite.bi/saiku).
+For more information, see [Saiku](http://www.meteorite.bi).
 
 > You can put the UI on a separate server (apache httpd or simply a webapp in tomcat/webapps e.g).
 
