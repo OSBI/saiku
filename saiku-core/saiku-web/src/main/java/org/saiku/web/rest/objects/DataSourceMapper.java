@@ -77,16 +77,16 @@ public class DataSourceMapper {
                 this.advanced += "password=" + ds.getProperties().get("password") + "\n";
             }
             if (ds.getProperties().containsKey("security.enabled")) {
-                this.advanced += "security.enabled=" + ds.getProperties().get("security.enabled");
+                this.advanced += "security.enabled=" + ds.getProperties().get("security.enabled") + "\n";
             }
             if (ds.getProperties().containsKey("security.type")) {
-                this.advanced += "security.type=" + ds.getProperties().get("security.type");
+                this.advanced += "security.type=" + ds.getProperties().get("security.type") + "\n";
             }
             if (ds.getProperties().containsKey("security.mapping")) {
-                this.advanced += "security.mapping" + ds.getProperties().get("security.mapping");
+                this.advanced += "security.mapping" + ds.getProperties().get("security.mapping") + "\n";
             }
             if (ds.getProperties().contains("encrypt.password")) {
-                this.advanced += "encrypt.password=" + ds.getProperties().get("encrypt.password");
+                this.advanced += "encrypt.password=" + ds.getProperties().get("encrypt.password") + "\n";
             }
             this.connectionname = ds.getName();
             this.id = ds.getProperties().getProperty("id");

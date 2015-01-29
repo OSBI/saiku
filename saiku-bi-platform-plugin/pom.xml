@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>saiku</artifactId>
-		<groupId>bi.meteorite</groupId>
+		<groupId>org.saiku</groupId>
 		<version>3.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>saiku-bi-platform-plugin</artifactId>
