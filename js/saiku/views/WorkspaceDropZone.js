@@ -188,7 +188,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             this.workspace.query.helper.clearAxis(axis);
         }
 
-        // Trigger event to clear axis
+        // Trigger event when clear axis
         Saiku.session.trigger('workspaceDropZone:clear_axis', { workspace: this.workspace, axis: axis });
 
         this.workspace.sync_query();
@@ -200,7 +200,10 @@ var WorkspaceDropZone = Backbone.View.extend({
         var self = this;
         // if we drop to remove dont execute the following
 
-        if ( false || $(ui.item).is(':visible')) {
+        // Trigger event when select dimension
+        Saiku.session.trigger('workspaceDropZone:select_dimension', { workspace: this.workspace });
+
+        if (false || $(ui.item).is(':visible')) {
             $(self.el).find('.axis_fields ul.hierarchy').each( function(index, element) {
                 $(element).find('li.temphide').show().removeClass('temphide');
             });
