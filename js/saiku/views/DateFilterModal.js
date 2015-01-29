@@ -146,12 +146,11 @@ var DateFilterModal = Modal.extend({
 	initialize: function(args) {
 		// Initialize properties
 		_.extend(this, args);
-		this.options.title = 'Selections for Year';
+		this.options.title = 'Date Filter';
 		this.message = 'Loading...';
 		this.query = args.workspace.query;
 		this.selections = [];
 		this.dates = [];
-		// this.storage = new Saiku.singleton();
 
 		_.bindAll(this, 'finished');
 
@@ -182,7 +181,6 @@ var DateFilterModal = Modal.extend({
 		this.add_values_fixed_date();
 		this.add_values_last_periods();
 
-		// console.log(this.storage.get());
 		this.populate();
 	},
 
@@ -420,8 +418,7 @@ var DateFilterModal = Modal.extend({
 	},
 
 	populate: function() {
-		// var data = this.storage.get();
-		var data = this.get_storage();
+		var data = this.get_date_filter();
 
 		if (data && !(_.isEmpty(data))) {
 			if (data.type === 'operator') {
@@ -655,14 +652,13 @@ var DateFilterModal = Modal.extend({
 		var hName = decodeURIComponent(this.member.hierarchy),
 			lName = decodeURIComponent(this.member.level),
 			hierarchy = this.workspace.query.helper.getHierarchy(hName),
-			cubeSelected = decodeURIComponent($('.cubes option:selected').val()).split('/')[3];
+			cubeSelected = this.get_cube_name();
 
 		selectedData.cube = cubeSelected;
-		selectedData.tab = Saiku.session.tabSelected;
-		selectedData.dim = this.dimension;
-		selectedData.hier = this.hierarchy;
+		selectedData.dimension = this.dimension;
+		selectedData.hierarchy = this.hierarchy;
 		selectedData.name = this.name;
-		this.set_storage(selectedData);
+		this.set_date_filter(selectedData);
 
 		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
 			hierarchy.levels[lName] = { mdx: mdx, name: lName };
@@ -671,55 +667,49 @@ var DateFilterModal = Modal.extend({
 		this.finished();
 	},
 
-	set_storage: function(data) {
-		var self = this;
-		if (localStorage.getItem('dateFilter')) {
-			var arr = JSON.parse(localStorage.getItem('dateFilter')),
-				cubeSelected = decodeURIComponent($('.cubes option:selected').val()).split('/')[3],
-				tabSelected = Saiku.session.tabSelected,
-				dimension = this.dimension,
-				hierarchy = this.hierarchy;
-			_.find(arr, function(value, key, list) {
-				if (list[key].cube === cubeSelected && 
-					list[key].tab === tabSelected &&
-					list[key].dim === dimension &&
-					list[key].hier === hierarchy &&
-					list[key].name === self.name) {
-					arr[key] = data;
-					localStorage.setItem('dateFilter', JSON.stringify(arr));
-				}
-				else {
-					arr.push(data);
-					localStorage.setItem('dateFilter', JSON.stringify(arr));
-				}
-			});
+	get_cube_name: function() {
+		return decodeURIComponent($('.cubes option:selected').val()).split('/')[3];
+	},
+
+	get_uuid: function(data) {
+		return '[' + data.cube + '].[' + data.dimension + '].[' + 
+			data.hierarchy + '].[' + data.name + ']';
+	},
+
+	set_date_filter: function(data) {
+		var dateFilter = this.workspace.dateFilter,
+			objDateFilter = dateFilter.toJSON(),
+			uuid = this.get_uuid(data);
+		
+		data.id = uuid;
+
+		if (objDateFilter && !(_.isEmpty(objDateFilter))) {
+			if (dateFilter.get(uuid)) {
+				dateFilter = dateFilter.get(uuid);
+				dateFilter.set(data);
+			}
+			else {
+				dateFilter.add(data);				
+			}
 		}
 		else {
-			var arr = [];
-			arr.push(data);
-			localStorage.setItem('dateFilter', JSON.stringify(arr));
+			dateFilter.add(data);
 		}
 	},
 
-	get_storage: function() {
-		var self = this,
-			data;
-		if (localStorage.getItem('dateFilter')) {
-			var arr = JSON.parse(localStorage.getItem('dateFilter')),
-				cubeSelected = decodeURIComponent($('.cubes option:selected').val()).split('/')[3],
-				tabSelected = Saiku.session.tabSelected,
-				dimension = this.dimension,
-				hierarchy = this.hierarchy;
-			_.find(arr, function(value, key, list) {
-				if (list[key].cube === cubeSelected && 
-					list[key].tab === tabSelected &&
-					list[key].dim === dimension &&
-					list[key].hier === hierarchy &&
-					list[key].name === self.name) {
-					data = list[key];
-				}
-			});
-		}
+	get_date_filter: function() {
+		var data = {
+			cube: this.get_cube_name(),
+			dimension: this.dimension,
+			hierarchy: this.hierarchy,
+			name: this.name
+		};
+
+		var uuid = this.get_uuid(data),
+			data = this.workspace.dateFilter.get(uuid);
+
+		data = data ? data.toJSON() : [];
+
 		return data;
 	},
 
@@ -727,4 +717,10 @@ var DateFilterModal = Modal.extend({
 		this.$el.dialog('destroy').remove();
 		this.query.run();
 	}
+});
+
+var DateFilterModel = Backbone.Model.extend({});
+
+var DateFilterCollection = Backbone.Collection.extend({
+	model: DateFilterModel
 });

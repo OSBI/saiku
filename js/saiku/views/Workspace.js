@@ -58,6 +58,10 @@ var Workspace = Backbone.View.extend({
         this.table = new Table({ workspace: this });
 
         this.chart = new Chart({ workspace: this });
+
+        // Create instance for Date Filter
+        this.dateFilter = new DateFilterCollection();
+
         // Pull query from args
         this.item = {};
         this.viewState = (args && args.viewState) ? args.viewState : Settings.DEFAULT_VIEW_STATE; // view / edit
