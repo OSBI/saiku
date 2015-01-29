@@ -16,10 +16,10 @@
         <module>saiku-core</module>
         <module>saiku-ui</module>
         <module>saiku-webapp</module>
-<!--        <module>saiku-web-tests</module>-->
+        <!--        <module>saiku-web-tests</module>-->
         <module>saiku-server</module>
         <module>saiku-bi-platform-plugin-p5</module>
-        <!--<module>saiku-bi-platform-plugin</module>-->
+        <module>saiku-bi-platform-plugin</module>
     </modules>
     <distributionManagement>
         <repository>
@@ -221,19 +221,19 @@
     </dependencies>
     <dependencyManagement>
         <dependencies>
-           <!-- <dependency>
-                <groupId>net.serenity-bdd</groupId>
-                <artifactId>core</artifactId>
-                <version>1.0.10</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>net.serenity-bdd</groupId>
-                <artifactId>serenity-jbehave</artifactId>
-                <version>1.0.10</version>
-                <scope>test</scope>
+            <!-- <dependency>
+                 <groupId>net.serenity-bdd</groupId>
+                 <artifactId>core</artifactId>
+                 <version>1.0.10</version>
+                 <scope>test</scope>
+             </dependency>
+             <dependency>
+                 <groupId>net.serenity-bdd</groupId>
+                 <artifactId>serenity-jbehave</artifactId>
+                 <version>1.0.10</version>
+                 <scope>test</scope>
 
-            </dependency>-->
+             </dependency>-->
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox</artifactId>
@@ -310,12 +310,12 @@
             <dependency>
                 <groupId>org.saiku</groupId>
                 <artifactId>saiku-service</artifactId>
-                <version>3.1-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.saiku</groupId>
                 <artifactId>saiku-webapp</artifactId>
-                <version>3.1-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
             <dependency>
@@ -533,7 +533,7 @@
             <dependency>
                 <groupId>org.saiku</groupId>
                 <artifactId>saiku-web</artifactId>
-                <version>3.1-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
@@ -580,7 +580,7 @@
             <dependency>
                 <groupId>org.saiku</groupId>
                 <artifactId>saiku-ui</artifactId>
-                <version>3.1-SNAPSHOT</version>
+                <version>${project.version}</version>
                 <type>war</type>
             </dependency>
             <dependency>
