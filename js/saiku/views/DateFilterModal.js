@@ -1,5 +1,5 @@
 /*
- *   Copyright 2014 OSBI Ltd
+ *   Copyright 2015 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -717,10 +717,4 @@ var DateFilterModal = Modal.extend({
 		this.$el.dialog('destroy').remove();
 		this.query.run();
 	}
-});
-
-var DateFilterModel = Backbone.Model.extend({});
-
-var DateFilterCollection = Backbone.Collection.extend({
-	model: DateFilterModel
 });
