@@ -15,7 +15,7 @@
  */
 
 /**
- * Model and collection for date filter
+ * Model and collections for date filter
  */
 var DateFilterModel = Backbone.Model.extend({});
 

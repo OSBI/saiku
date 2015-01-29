@@ -718,3 +718,95 @@ var DateFilterModal = Modal.extend({
 		this.query.run();
 	}
 });
+
+/**
+ * Observer to remove elements in the date filter model
+ */
+var DateFilterObserver = Backbone.View.extend({
+	initialize: function(args) {
+		// Keep track of parent workspace
+		this.workspace = args.workspace;
+
+		// Maintain `this` in callbacks
+		_.bindAll(this, 'receive_data', 'workspace_levels');
+
+		// Listen to result event
+		this.workspace.bind('query:result', this.receive_data);
+	},
+
+    receive_data: function(args) {
+        return _.delay(this.workspace_levels, 1000, args);
+    },
+
+    workspace_levels: function(args) {
+    	var cubeName = decodeURIComponent(args.data.query.cube.name),
+    		axisColumns = this.workspace.query.helper.getAxis('COLUMNS'),
+    		axisRows = this.workspace.query.helper.getAxis('ROWS'),
+    		axisFilter = this.workspace.query.helper.getAxis('FILTER'),
+    		arrColumns = [], arrRows = [], arrFilter = [],
+    		arrData;
+
+    	if (axisColumns.location === 'COLUMNS' && axisColumns.hierarchies.length > 0) {
+    		arrColumns.push(this.get_axes(cubeName, axisColumns));
+    	}
+    	if (axisRows.location === 'ROWS' && axisRows.hierarchies.length > 0) {
+			arrRows.push(this.get_axes(cubeName, axisRows));
+    	}
+    	if (axisFilter.location === 'FILTER' && axisFilter.hierarchies.length > 0) {
+			arrFilter.push(this.get_axes(cubeName, axisFilter));
+    	}
+
+    	arrData = _.union(arrColumns[0], arrRows[0], arrFilter[0]);
+
+    	return arrData;
+    },
+
+    get_axes: function(cubeName, axis) {
+    	var arrAxis = [],
+    		len = axis.hierarchies.length,
+    		i;
+		for (i = 0; i < len; i++) {
+			arrAxis.push({
+				cube: cubeName,
+				dimension: axis.hierarchies[i].dimension,
+				hierarchy: axis.hierarchies[i].caption,
+				levels: this.get_levels(axis.hierarchies[i].levels)
+			});
+		}
+		return arrAxis;
+    },
+
+    get_levels: function(levels) {
+    	var arrLevels = [];
+    	for (var name in levels) {
+    		arrLevels.push(name);
+    	}
+    	return arrLevels;
+    },
+
+    // remove_element: function(args) {
+    // }
+});
+
+ /**
+  * Start DateFilterObserver
+  */
+Saiku.events.bind('session:new', function() {
+
+	function new_workspace(args) {
+		if (typeof args.workspace.dateFilterObserver === 'undefined') {
+			args.workspace.dateFilterObserver = new DateFilterObserver({ workspace: args.workspace });
+		}
+	}
+
+	// Add new tab content
+	for (var i = 0, len = Saiku.tabs._tabs.length; i < len; i += 1) {
+		var tab = Saiku.tabs._tabs[i];
+		new_workspace({
+			workspace: tab.content
+		});
+	}
+
+	// New workspace
+	Saiku.session.bind('workspace:new', new_workspace);
+});
