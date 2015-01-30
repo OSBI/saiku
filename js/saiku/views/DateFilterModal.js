@@ -393,7 +393,7 @@ var DateFilterModal = Modal.extend({
 			sDate.css('border', '1px solid #ccc');
 			selectedDate.append($('<li></li>')
 				.text(newDate)
-				.append('<a href="#" class="del-date">x</a>'));
+				.append('<a href="#" class="del-date" data-date="' + newDate + '">x</a>'));
 			this.dates.push(newDate);
 		}
 		else {
@@ -404,8 +404,11 @@ var DateFilterModal = Modal.extend({
 	},
 
 	del_selected_date: function(event) {
+		console.log(this);
 		event.preventDefault();
-		var $currentTarget = $(event.currentTarget);
+		var $currentTarget = $(event.currentTarget),
+			date = $currentTarget.data('date');
+		this.dates = _.without(this.dates, date);
 		$currentTarget.parent().remove();
 	},
 
@@ -437,7 +440,7 @@ var DateFilterModal = Modal.extend({
 					_.each(this.dates, function(value, key) {
 						self.$el.find('#selected-date').append($('<li></li>')
 							.text(value)
-							.append('<a href="#" class="del-date">x</a>'));
+							.append('<a href="#" class="del-date" data-date="' + value + '">x</a>'));
 					});
 				}
 			}
