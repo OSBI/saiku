@@ -174,8 +174,8 @@ var DateFilterModal = Modal.extend({
 		// Save data of levels
 		this.dataLevels = this.save_data_levels();
 
-		// Check level type in input radio
-		this.check_leveltype_radio();
+		// Check SaikuDayFormatString in level
+		this.check_saikuDayFormatString();
 
 		// Initialize adding values
 		this.add_values_fixed_date();
@@ -192,16 +192,11 @@ var DateFilterModal = Modal.extend({
 			.offset({ left: left});
 	},
 
-	check_leveltype_radio: function() {
-		var self = this,
-			levelType;
+	check_saikuDayFormatString: function() {
+		var self = this;
 		this.$el.find('.selection-radio').each(function(key, radio) {
-			levelType = $(radio).attr('level-type');
-			_.find(self.dataLevels, function(value, key, list) {
-				// if (levelType === value.levelType || value.saikuDayFormatString) {
-				if (self.name === value.name &&
-					levelType === value.levelType && 
-					value.saikuDayFormatString) {
+			_.find(self.dataLevels, function(value) {
+				if (self.name === value.name && value.saikuDayFormatString) {
 					$(radio).prop('disabled', false);
 				}
 			});
