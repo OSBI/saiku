@@ -732,9 +732,9 @@ var DateFilterObserver = Backbone.View.extend({
 
 		// Listen to result event
 		this.workspace.bind('query:result', this.receive_data);
-		// Saiku.session.bind(, this.receive_data);
-		// Saiku.session.bind(, this.receive_data);
-		// Saiku.session.bind(, this.receive_data);
+		Saiku.session.bind('dimensionList:select_dimension', this.receive_data);
+		Saiku.session.bind('workspaceDropZone:select_dimension', this.receive_data);
+		Saiku.session.bind('workspaceDropZone:clear_axis', this.receive_data);
 	},
 
     receive_data: function(args) {
@@ -792,10 +792,7 @@ var DateFilterObserver = Backbone.View.extend({
     		aux = 0,
     		i = 0;
 
-    	console.log(data);
-    	console.log(objDateFilter);
-
-    	if (objDateFilter && !(_.isEmpty(objDateFilter))) {
+    	if (lenData > 0 && (objDateFilter && !(_.isEmpty(objDateFilter)))) {
     		while (i < lenData) {
 	    		if (data[i] === objDateFilter[aux].id) {
 	    			arrChecked.push(objDateFilter[aux].id);
@@ -819,10 +816,21 @@ var DateFilterObserver = Backbone.View.extend({
 	    		}
     		}
 		}
+		else if (lenData === 0 && (objDateFilter && !(_.isEmpty(objDateFilter)))) {
+			for (var j = 0; j < lenDateFilter; j++) {
+				this.workspace.dateFilter.remove(objDateFilter[j].id);	
+			}
+		}
 
-		console.log(arrRemove);
-		console.log(arrChecked);
-		console.log(_.difference(arrRemove, arrChecked));
+		this.remove_dateFilter_model(_.difference(arrRemove, arrChecked));
+    },
+
+    remove_dateFilter_model: function(data) {
+    	var lenData = data.length,
+    		i;
+    	for (i = 0; i < lenData; i++) {
+    		this.workspace.dateFilter.remove(data[i]);
+    	}
     }
 });
 
