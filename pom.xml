@@ -19,7 +19,7 @@
         <!--        <module>saiku-web-tests</module>-->
         <module>saiku-server</module>
         <module>saiku-bi-platform-plugin-p5</module>
-        <module>saiku-bi-platform-plugin</module>
+      <!--  <module>saiku-bi-platform-plugin</module>-->
     </modules>
     <distributionManagement>
         <repository>
@@ -583,7 +583,7 @@
                 <version>${project.version}</version>
                 <type>war</type>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>bi.meteorite</groupId>
                 <artifactId>saikuee-service</artifactId>
                 <version>${project.version}</version>
@@ -592,7 +592,7 @@
                 <groupId>bi.meteorite</groupId>
                 <artifactId>saikuee-web</artifactId>
                 <version>${project.version}</version>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>org.saiku</groupId>
                 <artifactId>saiku-olap-util</artifactId>
