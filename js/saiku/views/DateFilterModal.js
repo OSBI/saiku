@@ -404,7 +404,6 @@ var DateFilterModal = Modal.extend({
 	},
 
 	del_selected_date: function(event) {
-		console.log(this);
 		event.preventDefault();
 		var $currentTarget = $(event.currentTarget),
 			date = $currentTarget.data('date');
@@ -433,6 +432,10 @@ var DateFilterModal = Modal.extend({
 					this.$el.find('#selection-date').val(this.dates[0]);
 				}
 				else if (name === 'Between') {
+					self.$el.find('#start-date').val(this.dates[0]);
+					self.$el.find('#end-date').val(this.dates[1]);
+				}
+				else if (name === 'Not') {
 					self.$el.find('#start-date').val(this.dates[0]);
 					self.$el.find('#end-date').val(this.dates[1]);
 				}
@@ -506,12 +509,14 @@ var DateFilterModal = Modal.extend({
 					}
 					else {
 						if (i === 0) {
+							logExp.comparisonOperator = '>';
 							this.template_days_mdx = this.template_days_mdx.replace(/{(\w+)}/g, function(m, p) {
 								return logExp[p];
 							});
 						}
 						else {
 							logExp.logicalOperator = 'OR';
+							logExp.comparisonOperator = '<';
 							this.template_days_mdx += this.template_many_years_mdx.replace(/{(\w+)}/g, function(m, p) {
 								return logExp[p];
 							});
@@ -583,6 +588,11 @@ var DateFilterModal = Modal.extend({
 								self.dates.push(self.$el.find('#selection-date').val());
 							}
 							else if (name === 'Between') {
+								self.dates = [];
+								self.dates.push(self.$el.find('#start-date').val());
+								self.dates.push(self.$el.find('#end-date').val());
+							}
+							else if (name === 'Not') {
 								self.dates = [];
 								self.dates.push(self.$el.find('#start-date').val());
 								self.dates.push(self.$el.find('#end-date').val());
