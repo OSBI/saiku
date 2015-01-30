@@ -132,6 +132,7 @@ var DateFilterModal = Modal.extend({
 					'</div>' +
 					'<div class="form-group-selection">' +
 						'<select id="period-select">' +
+							'<option>-- Select --</option>' +
 							'<option name="TIME_DAYS" id="rd-days">Day(s)</option>' +
 							'<option name="TIME_WEEKS" id="rd-weeks">Week(s)</option>' +
 							'<option name="TIME_MONTHS" id="rd-months">Month(s)</option>' +
