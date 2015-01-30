@@ -181,6 +181,7 @@ var DateFilterModal = Modal.extend({
 		this.add_values_fixed_date();
 		this.add_values_last_periods();
 
+		// Populate date filter
 		this.populate();
 	},
 
@@ -206,7 +207,6 @@ var DateFilterModal = Modal.extend({
 	show_fields: function(event) {
 		var $currentTarget = event.type ? $(event.currentTarget) : $(event),
 			name = $currentTarget.parent('label').text().split(' ')[1];
-
 		if (name !== undefined) {
 			switch (name) {
 			case 'Equals':
@@ -734,6 +734,7 @@ var DateFilterObserver = Backbone.View.extend({
 
     receive_data: function(args) {
 		var objDateFilter = this.workspace.dateFilter.toJSON();
+
 		if (objDateFilter && !(_.isEmpty(objDateFilter))) {
         	return _.delay(this.workspace_levels, 1000, args);
         }
@@ -769,6 +770,7 @@ var DateFilterObserver = Backbone.View.extend({
     	var arrAxis = [],
     		len = axis.hierarchies.length,
     		i;
+		
 		for (i = 0; i < len; i++) {
 			for (var name in axis.hierarchies[i].levels) {
 				if (axis.hierarchies[i].levels.hasOwnProperty(name)) {
@@ -777,6 +779,7 @@ var DateFilterObserver = Backbone.View.extend({
 				}
 			}
 		}
+
 		return arrAxis;
     },
 
@@ -825,6 +828,7 @@ var DateFilterObserver = Backbone.View.extend({
     remove_dateFilter_model: function(data) {
     	var lenData = data.length,
     		i;
+    		
     	for (i = 0; i < lenData; i++) {
     		this.workspace.dateFilter.remove(data[i]);
     	}

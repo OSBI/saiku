@@ -240,18 +240,17 @@ var WorkspaceDropZone = Backbone.View.extend({
         }
 		var metadata = this.workspace.metadata.attributes.data,
 			value = {};
-		value.dimensions = _.findWhere(metadata.dimensions, {name: dimension});
+		value.dimensions = _.findWhere(metadata.dimensions, { name: dimension });
 		if (hierarchy === undefined) {
 			hierarchy = dimension;
 		}
-		value.hierarchies = _.findWhere(value.dimensions.hierarchies, {name: hierarchy});
-
+		value.hierarchies = _.findWhere(value.dimensions.hierarchies, { name: hierarchy });
 		if (value.hierarchies === undefined || value.hierarchies === null) {
-			value.hierarchies = _.findWhere(value.dimensions.hierarchies, {name: dimension+"."+hierarchy});
+			value.hierarchies = _.findWhere(value.dimensions.hierarchies, { name: dimension + '.' + hierarchy });
 		}
-		value.level = _.findWhere(value.hierarchies.levels, {name: level});
-		if(value.level === null || value.level === undefined){
-			value.level = _.findWhere(value.hierarchies.levels, {caption: level});
+		value.level = _.findWhere(value.hierarchies.levels, { name: level });
+		if(value.level === null || value.level === undefined) {
+			value.level = _.findWhere(value.hierarchies.levels, { caption: level });
 		}
 		return value;
 	},
@@ -260,6 +259,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         if (event) {
             event.preventDefault();
         }
+
         // Determine dimension
         var $target = $(event.target).hasClass('d_level') ?
             $(event.target).find('.level') :
@@ -272,15 +272,15 @@ var WorkspaceDropZone = Backbone.View.extend({
 
         if (objData.level.annotations !== undefined &&
             objData.level.annotations !== null &&
-			(objData.level.annotations.AnalyzerDateFormat !== undefined || objData.level.annotations.SaikuDayFormatString !== undefined)) {
+			(objData.level.annotations.AnalyzerDateFormat !== undefined || 
+             objData.level.annotations.SaikuDayFormatString !== undefined)) {
             // Launch date filter dialog
             (new DateFilterModal({
-                AnalyzerDateFormat: objData.level.annotations.AnalyzerDateFormat,
-                data: objData,
                 dimension: dimension,
                 hierarchy: hierarchy,
-                target: $target,
                 name: $target.text(),
+                data: objData,
+                AnalyzerDateFormat: objData.level.annotations.AnalyzerDateFormat,
                 key: key,
                 workspace: this.workspace
             })).open();
@@ -297,7 +297,6 @@ var WorkspaceDropZone = Backbone.View.extend({
 
         return false;
     },
-
 
 	measure_action: function(event) {
 		var self = this;
