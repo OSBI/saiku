@@ -732,14 +732,22 @@ var DateFilterObserver = Backbone.View.extend({
 
 		// Listen to result event
 		this.workspace.bind('query:result', this.receive_data);
+		// Saiku.session.bind(, this.receive_data);
+		// Saiku.session.bind(, this.receive_data);
+		// Saiku.session.bind(, this.receive_data);
 	},
 
     receive_data: function(args) {
         return _.delay(this.workspace_levels, 1000, args);
     },
 
+	get_cube_name: function() {
+		return decodeURIComponent($('.cubes option:selected').val()).split('/')[3];
+	},
+
     workspace_levels: function(args) {
-    	var cubeName = decodeURIComponent(args.data.query.cube.name),
+    	// var cubeName = decodeURIComponent(args.data.query.cube.name),
+    	var cubeName = this.get_cube_name(),
     		axisColumns = this.workspace.query.helper.getAxis('COLUMNS'),
     		axisRows = this.workspace.query.helper.getAxis('ROWS'),
     		axisFilter = this.workspace.query.helper.getAxis('FILTER'),
@@ -757,7 +765,7 @@ var DateFilterObserver = Backbone.View.extend({
 
     	arrData = _.compact(_.union(arrData[0], arrData[1], arrData[2]));
 
-    	return arrData;
+    	this.check_dateFilter_model(arrData);
     },
 
     get_axes: function(cubeName, axis) {
@@ -775,8 +783,46 @@ var DateFilterObserver = Backbone.View.extend({
 		return arrAxis;
     },
 
-    remove_element: function() {
+    check_dateFilter_model: function(data) {
+    	var arrRemove = [],
+    		arrChecked = [],
+    		objDateFilter = this.workspace.dateFilter.toJSON(),
+    		lenDateFilter = objDateFilter.length,
+    		lenData = data.length,
+    		aux = 0,
+    		i = 0;
 
+    	console.log(data);
+    	console.log(objDateFilter);
+
+    	if (objDateFilter && !(_.isEmpty(objDateFilter))) {
+    		while (i < lenData) {
+	    		if (data[i] === objDateFilter[aux].id) {
+	    			arrChecked.push(objDateFilter[aux].id);
+	    			if ((aux + 1) < lenDateFilter) {
+	    				aux++;
+	    			}
+	    			else {
+	    				aux = 0;
+	    				i++;
+	    			}
+	    		}
+	    		else {
+	    			arrRemove.push(objDateFilter[aux].id);
+	    			if ((aux + 1) < lenDateFilter) {
+	    				aux++;
+	    			}
+	    			else {
+	    				aux = 0;
+	    				i++;
+	    			}
+	    		}
+    		}
+		}
+
+		console.log(arrRemove);
+		console.log(arrChecked);
+		console.log(_.difference(arrRemove, arrChecked));
     }
 });
 
