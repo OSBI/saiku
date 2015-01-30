@@ -262,7 +262,6 @@ var DateFilterModal = Modal.extend({
 						name: list[key].name,
 						analyzerDateFormat: list[key].annotations.AnalyzerDateFormat.replace(/[.]/gi, '\\\.'),
 						levelType: list[key].levelType,
-						saikuDateProperty: list[key].annotations.SaikuDateProperty || '',
 						saikuDayFormatString: list[key].annotations.SaikuDayFormatString || ''
 					});
 				}
@@ -271,12 +270,10 @@ var DateFilterModal = Modal.extend({
 						name: list[key].name,
 						analyzerDateFormat: '',
 						levelType: list[key].levelType,
-						saikuDateProperty: list[key].annotations.SaikuDateProperty || '',
 						saikuDayFormatString: list[key].annotations.SaikuDayFormatString || ''
 					});
 				}
 				if (list[key].annotations.SaikuDayFormatString) {
-					self.saikuDateProperty = '';
 					self.saikuDayFormatString = list[key].annotations.SaikuDayFormatString;
 				}
 			}
@@ -558,7 +555,6 @@ var DateFilterModal = Modal.extend({
 			parentmembers,
 			periodamount,
 			comparisonOperator,
-			saikuDateProperty,
 			dates,
 			selectedData = {};
 
@@ -636,7 +632,6 @@ var DateFilterModal = Modal.extend({
 					AnalyzerDateFormat: analyzerDateFormat,
 					periodamount: periodamount,
 					comparisonOperator: comparisonOperator,
-					saikuDateProperty: self.saikuDateProperty,
 					workinglevel: workinglevel
 				};
 
@@ -828,7 +823,7 @@ var DateFilterObserver = Backbone.View.extend({
     remove_dateFilter_model: function(data) {
     	var lenData = data.length,
     		i;
-    		
+
     	for (i = 0; i < lenData; i++) {
     		this.workspace.dateFilter.remove(data[i]);
     	}
