@@ -743,20 +743,19 @@ var DateFilterObserver = Backbone.View.extend({
     		axisColumns = this.workspace.query.helper.getAxis('COLUMNS'),
     		axisRows = this.workspace.query.helper.getAxis('ROWS'),
     		axisFilter = this.workspace.query.helper.getAxis('FILTER'),
-    		arrColumns = [], arrRows = [], arrFilter = [],
-    		arrData;
+    		arrData = [];
 
     	if (axisColumns.location === 'COLUMNS' && axisColumns.hierarchies.length > 0) {
-    		arrColumns.push(this.get_axes(cubeName, axisColumns));
+    		arrData.push(this.get_axes(cubeName, axisColumns));
     	}
     	if (axisRows.location === 'ROWS' && axisRows.hierarchies.length > 0) {
-			arrRows.push(this.get_axes(cubeName, axisRows));
+			arrData.push(this.get_axes(cubeName, axisRows));
     	}
     	if (axisFilter.location === 'FILTER' && axisFilter.hierarchies.length > 0) {
-			arrFilter.push(this.get_axes(cubeName, axisFilter));
+			arrData.push(this.get_axes(cubeName, axisFilter));
     	}
 
-    	arrData = _.union(arrColumns[0], arrRows[0], arrFilter[0]);
+    	arrData = _.compact(_.union(arrData[0], arrData[1], arrData[2]));
 
     	return arrData;
     },
@@ -766,26 +765,19 @@ var DateFilterObserver = Backbone.View.extend({
     		len = axis.hierarchies.length,
     		i;
 		for (i = 0; i < len; i++) {
-			arrAxis.push({
-				cube: cubeName,
-				dimension: axis.hierarchies[i].dimension,
-				hierarchy: axis.hierarchies[i].caption,
-				levels: this.get_levels(axis.hierarchies[i].levels)
-			});
+			for (var name in axis.hierarchies[i].levels) {
+				if (axis.hierarchies[i].levels.hasOwnProperty(name)) {
+					arrAxis.push('[' + cubeName + '].[' + axis.hierarchies[i].dimension + '].[' + 
+						axis.hierarchies[i].caption + '].[' + name + ']');
+				}
+			}
 		}
 		return arrAxis;
     },
 
-    get_levels: function(levels) {
-    	var arrLevels = [];
-    	for (var name in levels) {
-    		arrLevels.push(name);
-    	}
-    	return arrLevels;
-    },
+    remove_element: function() {
 
-    // remove_element: function(args) {
-    // }
+    }
 });
 
  /**
