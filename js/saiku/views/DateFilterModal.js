@@ -738,7 +738,10 @@ var DateFilterObserver = Backbone.View.extend({
 	},
 
     receive_data: function(args) {
-        return _.delay(this.workspace_levels, 1000, args);
+		var objDateFilter = this.workspace.dateFilter.toJSON();
+		if (objDateFilter && !(_.isEmpty(objDateFilter))) {
+        	return _.delay(this.workspace_levels, 1000, args);
+        }
     },
 
 	get_cube_name: function() {
@@ -746,7 +749,6 @@ var DateFilterObserver = Backbone.View.extend({
 	},
 
     workspace_levels: function(args) {
-    	// var cubeName = decodeURIComponent(args.data.query.cube.name),
     	var cubeName = this.get_cube_name(),
     		axisColumns = this.workspace.query.helper.getAxis('COLUMNS'),
     		axisRows = this.workspace.query.helper.getAxis('ROWS'),
@@ -846,7 +848,7 @@ Saiku.events.bind('session:new', function() {
 	}
 
 	// Add new tab content
-	for (var i = 0, len = Saiku.tabs._tabs.length; i < len; i += 1) {
+	for (var i = 0, len = Saiku.tabs._tabs.length; i < len; i++) {
 		var tab = Saiku.tabs._tabs[i];
 		new_workspace({
 			workspace: tab.content
