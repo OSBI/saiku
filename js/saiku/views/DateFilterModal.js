@@ -624,9 +624,11 @@ var DateFilterModal = Modal.extend({
 					selectedData.periodSelect = $('#period-select').find(':selected').attr('id');
 				}
 
-				var p = '';
-				var workinglevel;
-				for (var i = 0, len = self.dataLevels.length; i < len; i++) {
+				var len = self.dataLevels.length,
+					workinglevel,
+					i;
+
+				for (i = 0; i < len; i++) {
 					if (self.dataLevels[i].analyzerDateFormat === analyzerDateFormat) {
 						if (self.dataLevels[i].name === self.name) {
 							parentmembers = self.name;
@@ -638,11 +640,16 @@ var DateFilterModal = Modal.extend({
 					}
 				}
 
+				if ((fixedDateName !== 'dayperiods' && 
+					fixedDateName !== 'lastperiods') && 
+					(workinglevel === self.name)) {
+					workinglevel = 'Current_' + workinglevel;
+				}
+
 				var logExp = {
 					dimension: self.dimension,
 					hierarchy: self.hierarchy,
 					level: self.name,
-					parent: p,
 					AnalyzerDateFormat: analyzerDateFormat,
 					periodamount: periodamount,
 					comparisonOperator: comparisonOperator,
