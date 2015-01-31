@@ -817,6 +817,9 @@ var DateFilterObserver = Backbone.View.extend({
 			this.workspace.$el.find('.dateFilterObserver').removeClass('disabled_toolbar');
         	return _.delay(this.workspace_levels, 1000, args);
         }
+        else {
+    		this.workspace.$el.find('.dateFilterObserver').addClass('disabled_toolbar');
+        }
     },
 
 	get_cube_name: function() {
@@ -897,6 +900,7 @@ var DateFilterObserver = Backbone.View.extend({
 		}
 		else if (lenData === 0 && (objDateFilter && !(_.isEmpty(objDateFilter)))) {
 			for (var j = 0; j < lenDateFilter; j++) {
+				this.workspace.$el.find('.dateFilterObserver').addClass('disabled_toolbar');
 				this.workspace.dateFilter.remove(objDateFilter[j].id);
 			}
 		}
