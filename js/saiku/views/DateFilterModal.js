@@ -800,6 +800,8 @@ var DateFilterObserver = Backbone.View.extend({
 				hierarchy.levels[lName] = { mdx: null, name: lName };
 			}
 
+			this.workspace.dateFilter.remove(objDateFilter[i].id);
+
 			if ((i + 1) === lenDateFilter) {
 				this.workspace.query.run();
 			}
@@ -895,7 +897,7 @@ var DateFilterObserver = Backbone.View.extend({
 		}
 		else if (lenData === 0 && (objDateFilter && !(_.isEmpty(objDateFilter)))) {
 			for (var j = 0; j < lenDateFilter; j++) {
-				this.workspace.dateFilter.remove(objDateFilter[j].id);	
+				this.workspace.dateFilter.remove(objDateFilter[j].id);
 			}
 		}
 
