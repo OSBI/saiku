@@ -654,9 +654,7 @@ var DateFilterModal = Modal.extend({
 					}
 				}
 
-				if ((fixedDateName !== 'dayperiods' && 
-					fixedDateName !== 'lastperiods') && 
-					(workinglevel === self.name)) {
+				if (fixedDateName !== 'dayperiods' && workinglevel === self.name) {
 					workinglevel = 'Current_' + workinglevel;
 				}
 
@@ -684,8 +682,6 @@ var DateFilterModal = Modal.extend({
 		selectedData.hierarchy = this.hierarchy;
 		selectedData.name = this.name;
 		this.set_date_filter(selectedData);
-
-		console.log(mdx);
 
 		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
 			hierarchy.levels[lName] = { mdx: mdx, name: lName };
