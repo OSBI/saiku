@@ -601,12 +601,7 @@ var DateFilterModal = Modal.extend({
 								self.dates = [];
 								self.dates.push(self.$el.find('#selection-date').val());
 							}
-							else if (name === 'Between') {
-								self.dates = [];
-								self.dates.push(self.$el.find('#start-date').val());
-								self.dates.push(self.$el.find('#end-date').val());
-							}
-							else if (name === 'Not') {
+							else if (name === 'Between' || name === 'Not') {
 								self.dates = [];
 								self.dates.push(self.$el.find('#start-date').val());
 								self.dates.push(self.$el.find('#end-date').val());
