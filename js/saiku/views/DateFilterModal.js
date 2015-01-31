@@ -573,11 +573,11 @@ var DateFilterModal = Modal.extend({
 
 		var self = this,
 			fixedDateName,
-			mdx,
-			parentmembers,
-			periodamount,
 			comparisonOperator,
-			dates,
+			analyzerDateFormat,
+			periodamount,
+			parentmembers,
+			mdx,
 			selectedData = {};
 
 		if (self.hierarchy === null || self.hierarchy === undefined) {
@@ -585,8 +585,6 @@ var DateFilterModal = Modal.extend({
 		}
 
 		this.$el.find('.available-selections').each(function(key, selection) {
-			var analyzerDateFormat;
-
 			if ($(selection).attr('available') === 'true') {
 				selectedData.type = $(selection).attr('selection-name');
 
@@ -662,7 +660,14 @@ var DateFilterModal = Modal.extend({
 					workinglevel: workinglevel
 				};
 
-				mdx = self.populate_mdx(logExp, fixedDateName);
+				if ((fixedDateName === 'dayperiods' && !(_.isEmpty(self.dates))) ||
+					(fixedDateName === 'lastperiods' && !(_.isEmpty(analyzerDateFormat)) && analyzerDateFormat !== 'Day(s)' && !(_.isEmpty(periodamount))) ||
+					(fixedDateName !== 'dayperiods' && fixedDateName !== 'lastperiods') && !(_.isEmpty(analyzerDateFormat))) {
+					mdx = self.populate_mdx(logExp, fixedDateName);
+				}
+				else {
+					mdx = null;
+				}
 			}
 		});
 
@@ -675,7 +680,12 @@ var DateFilterModal = Modal.extend({
 		selectedData.dimension = this.dimension;
 		selectedData.hierarchy = this.hierarchy;
 		selectedData.name = this.name;
-		this.set_date_filter(selectedData);
+
+		if ((fixedDateName === 'dayperiods' && !(_.isEmpty(this.dates))) ||
+			(fixedDateName === 'lastperiods' && !(_.isEmpty(analyzerDateFormat)) && analyzerDateFormat !== 'Day(s)' && !(_.isEmpty(periodamount))) ||
+			(fixedDateName !== 'dayperiods' && fixedDateName !== 'lastperiods') && !(_.isEmpty(analyzerDateFormat))) {	
+			this.set_date_filter(selectedData);
+		}
 
 		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
 			hierarchy.levels[lName] = { mdx: mdx, name: lName };
