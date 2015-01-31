@@ -705,6 +705,7 @@ var DateFilterModal = Modal.extend({
 			uuid = this.get_uuid(data);
 		
 		data.id = uuid;
+		data.key = this.key;
 
 		if (objDateFilter && !(_.isEmpty(objDateFilter))) {
 			if (dateFilter.get(uuid)) {
@@ -753,6 +754,9 @@ var DateFilterObserver = Backbone.View.extend({
 		// Maintain `this` in callbacks
 		_.bindAll(this, 'receive_data', 'workspace_levels');
 
+		// Add button in workspace toolbar
+		this.add_button();
+
 		// Listen to result event
 		this.workspace.bind('query:result', this.receive_data);
 		Saiku.session.bind('dimensionList:select_dimension', this.receive_data);
@@ -760,10 +764,55 @@ var DateFilterObserver = Backbone.View.extend({
 		Saiku.session.bind('workspaceDropZone:clear_axis', this.receive_data);
 	},
 
+	add_button: function() {
+		var button =
+			$('<a href="#dateFilterObserver" class="dateFilterObserver button disabled_toolbar i18n" title="Clear date filter"></a>')
+			.css({ 'background-image': 'url("images/src/date_delete.png")',
+				   'background-repeat': 'no-repeat',
+				   'background-position': '50% 50%',
+				   'background-size': '16px'
+				});
+
+		var li = $('<li class="seperator"></li>').append(button);
+		this.workspace.toolbar.$el.find('ul').append(li);
+		this.workspace.toolbar.dateFilterObserver = this.show;
+	},
+
+	show: function(event) {
+		event.preventDefault();
+
+		var objDateFilter = this.workspace.dateFilter.toJSON(),
+			lenDateFilter = objDateFilter.length,
+			i;
+
+		for (i = 0; i < lenDateFilter; i++) {
+			// Fetch available members
+			var member = new Member({}, {
+				cube: this.workspace.selected_cube,
+				dimension: objDateFilter[i].key
+			});
+
+			var hName = decodeURIComponent(member.hierarchy),
+				lName = decodeURIComponent(member.level),
+				hierarchy = this.workspace.query.helper.getHierarchy(hName);
+
+			if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
+				hierarchy.levels[lName] = { mdx: null, name: lName };
+			}
+
+			if ((i + 1) === lenDateFilter) {
+				this.workspace.query.run();
+			}
+		}
+	},
+
     receive_data: function(args) {
 		var objDateFilter = this.workspace.dateFilter.toJSON();
 
+		this.workspace.$el.find('.dateFilterObserver').addClass('disabled_toolbar');
+
 		if (objDateFilter && !(_.isEmpty(objDateFilter))) {
+			this.workspace.$el.find('.dateFilterObserver').removeClass('disabled_toolbar');
         	return _.delay(this.workspace_levels, 1000, args);
         }
     },
