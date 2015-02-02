@@ -1,9 +1,9 @@
-# [Saiku UI](http://meteorite.bi/saiku)
+# [Saiku UI](http://www.meteorite.bi)
 
-[![saiku-view](https://dl.dropboxusercontent.com/u/13927708/SaikuBlog/saiku-view.png)](http://demo.analytical-labs.com)
+[![saiku-view](https://dl.dropboxusercontent.com/u/13927708/SaikuBlog/saiku-view.png)](http://demo.saikuanalytics.com)
 
 A user interface for the analytical tool Saiku. <br />
-For more information, see [Saiku](http://www.meteorite.bi/saiku).
+For more information, see [Saiku](http://www.meteorite.bi).
 
 > You can put the UI on a separate server (apache httpd or simply a webapp in tomcat/webapps e.g).
 
@@ -62,7 +62,7 @@ IE 8+ ✔ | Latest ✔ | Latest ✔ | Latest ✔ | Latest ✔ |
 
 ## Team
 
-[Saiku UI](http://meteorite.bi/saiku) is maintained by these people and a bunch of awesome [contributors](https://github.com/OSBI/saiku-ui/graphs/contributors).
+[Saiku UI](http://www.meteorite.bi) is maintained by these people and a bunch of awesome [contributors](https://github.com/OSBI/saiku-ui/graphs/contributors).
 
 [![Tom Barber](https://avatars0.githubusercontent.com/u/103544?v=2&s=70)](https://github.com/buggtb) | [![Paul Stoellberger](https://avatars3.githubusercontent.com/u/454645?v=2&s=70)](https://github.com/pstoellberger) | [![Mark Cahill](https://avatars3.githubusercontent.com/u/200365?v=2&s=70)](https://github.com/thinkjson) | [![Breno Polanski](https://avatars1.githubusercontent.com/u/1894191?v=2&s=70)](https://github.com/brenopolanski) | [![Luis Garcia](https://avatars2.githubusercontent.com/u/2557898?v=2&s=70)](https://github.com/PeterFalken) 
 --- | --- | --- | --- | --- | --- | --- |

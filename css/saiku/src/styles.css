@@ -2293,15 +2293,21 @@ width:70px !important;
     font-weight: bold;
 }
 
-.ui-datepicker-prev {
+.ui-datepicker-prev:after {
+    content: "\0AB \020";
+    position: absolute;
+    left: 7px;
 }
 
-.ui-datepicker-next {
+.ui-datepicker-next:after {
+    content: "\0BB \020";
+    position: absolute;
+    left: 7px;
 }
 
 #date-input {
 	width:50px;
 }
 .drop-over {
- background-color: #F0F8FF;
+    background-color: #f0f8ff;
 }
