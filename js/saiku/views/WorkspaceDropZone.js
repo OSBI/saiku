@@ -280,7 +280,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                 hierarchy: hierarchy,
                 name: $target.text(),
                 data: objData,
-                AnalyzerDateFormat: objData.level.annotations.AnalyzerDateFormat,
+                analyzerDateFormat: objData.level.annotations.AnalyzerDateFormat,
                 key: key,
                 workspace: this.workspace
             })).open();

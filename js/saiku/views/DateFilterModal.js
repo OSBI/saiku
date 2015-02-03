@@ -597,7 +597,6 @@ var DateFilterModal = Modal.extend({
 			analyzerDateFormat,
 			periodAmount,
 			parentmembers,
-			workinglevel,
 			mdx = null,
 			selectedData = {};
 
@@ -652,6 +651,7 @@ var DateFilterModal = Modal.extend({
 				}
 
 				var len = self.dataLevels.length,
+					workinglevel,
 					i;
 
 				for (i = 0; i < len; i++) {
@@ -699,23 +699,17 @@ var DateFilterModal = Modal.extend({
 
 		_.extend(selectedData, this.levelInfo);
 
-		if (fixedDateName === 'dayperiods' || (workinglevel !== this.name && workinglevel !== undefined)) {
-			if ((fixedDateName === 'dayperiods' && this.selectedDates[0] !== '' && self.selectedDates[0] !== undefined) ||
-				(fixedDateName === 'lastperiods' && !(_.isEmpty(analyzerDateFormat)) && analyzerDateFormat !== 'Day(s)' && !(_.isEmpty(periodAmount))) ||
-				(fixedDateName !== 'dayperiods' && fixedDateName !== 'lastperiods') && !(_.isEmpty(analyzerDateFormat))) {	
-				this.set_date_filter(selectedData);
-			}
-			else {
-				var uuid = this.get_uuid(selectedData);
-				this.workspace.dateFilter.remove(uuid);
-			}
+		if ((fixedDateName === 'dayperiods' && this.selectedDates[0] !== '' && self.selectedDates[0] !== undefined) ||
+			(fixedDateName === 'lastperiods' && !(_.isEmpty(analyzerDateFormat)) && analyzerDateFormat !== 'Day(s)' && !(_.isEmpty(periodAmount))) ||
+			(fixedDateName !== 'dayperiods' && fixedDateName !== 'lastperiods') && !(_.isEmpty(analyzerDateFormat))) {	
+			this.set_date_filter(selectedData);
 		}
 		else {
 			var uuid = this.get_uuid(selectedData);
 			this.workspace.dateFilter.remove(uuid);
 		}
 
-		console.log(mdx);
+		// console.log(mdx);
 
 		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
 			hierarchy.levels[lName] = { mdx: mdx, name: lName };
@@ -725,7 +719,7 @@ var DateFilterModal = Modal.extend({
 	},
 
 	get_cube_name: function() {
-		return this.workspace.selected_cube.split('/')[3];
+		return decodeURIComponent(this.workspace.selected_cube.split('/')[3]);
 	},
 
 	get_uuid: function(data) {
@@ -853,7 +847,7 @@ var DateFilterObserver = Backbone.View.extend({
     },
 
 	get_cube_name: function() {
-		return this.workspace.selected_cube.split('/')[3];
+		return decodeURIComponent(this.workspace.selected_cube.split('/')[3]);
 	},
 
     workspace_levels: function(args) {
