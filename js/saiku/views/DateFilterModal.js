@@ -21,6 +21,7 @@ var DateFilterModal = Modal.extend({
 	type: 'date-filter',
 
 	buttons: [
+		{ text: 'Clear', method: 'clear_date_filter' },
 		{ text: 'Save', method: 'save' },
 		{ text: 'Cancel', method: 'finished' }
 	],
@@ -157,6 +158,13 @@ var DateFilterModal = Modal.extend({
 		// Resize when rendered
 		this.bind('open', this.post_render);
 		this.render();
+
+		if (this.show_button_clear()) {
+			this.$el.find('.dialog_footer a:nth-child(1)').show();	
+		}
+		else {
+			this.$el.find('.dialog_footer a:nth-child(1)').hide();
+		}
 
 		this.$el.parent().find('.ui-dialog-titlebar-close').bind('click', this.finished);
 
@@ -744,6 +752,63 @@ var DateFilterModal = Modal.extend({
 
 		return data;
 	},
+
+    clear_date_filter: function(event) {
+    	event.preventDefault();
+
+		var objDateFilter = this.workspace.dateFilter.toJSON(),
+			selectedData = {},
+			uuid;
+
+		selectedData.cube = this.get_cube_name();
+		selectedData.dimension = this.dimension;
+		selectedData.hierarchy = this.hierarchy;
+		selectedData.name = this.name;
+
+		uuid = this.get_uuid(selectedData);
+
+		var hName = decodeURIComponent(this.member.hierarchy),
+			lName = decodeURIComponent(this.member.level),
+			hierarchy = this.workspace.query.helper.getHierarchy(hName);
+
+		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
+			hierarchy.levels[lName] = { mdx: null, name: lName };
+		}
+
+		this.workspace.dateFilter.remove(uuid);
+
+		this.clear_selections(event);
+
+		this.$el.find('.dialog_footer a:nth-child(1)').hide();
+
+		this.query.run();
+    },
+
+    show_button_clear: function() {
+		var dateFilter = this.workspace.dateFilter,
+			objDateFilter = dateFilter.toJSON(),
+			selectedData = {},
+			uuid;
+
+		selectedData.cube = this.get_cube_name();
+		selectedData.dimension = this.dimension;
+		selectedData.hierarchy = this.hierarchy;
+		selectedData.name = this.name;
+
+		uuid = this.get_uuid(selectedData);
+
+        if (objDateFilter && !(_.isEmpty(objDateFilter))) {
+            if (dateFilter.get(uuid)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    },
 
 	finished: function() {
 		this.$el.dialog('destroy').remove();
