@@ -21,6 +21,7 @@ var DateFilterModal = Modal.extend({
 	type: 'date-filter',
 
 	buttons: [
+		{ text: 'Clear', method: 'clear_date_filter' },
 		{ text: 'Save', method: 'save' },
 		{ text: 'Cancel', method: 'finished' }
 	],
@@ -157,6 +158,13 @@ var DateFilterModal = Modal.extend({
 		// Resize when rendered
 		this.bind('open', this.post_render);
 		this.render();
+
+		if (this.show_button_clear()) {
+			this.$el.find('.dialog_footer a:nth-child(1)').show();	
+		}
+		else {
+			this.$el.find('.dialog_footer a:nth-child(1)').hide();
+		}
 
 		this.$el.parent().find('.ui-dialog-titlebar-close').bind('click', this.finished);
 
@@ -745,6 +753,61 @@ var DateFilterModal = Modal.extend({
 		return data;
 	},
 
+    clear_date_filter: function(event) {
+    	event.preventDefault();
+
+		var objDateFilter = this.workspace.dateFilter.toJSON(),
+			selectedData = {},
+			uuid;
+
+		selectedData.cube = this.get_cube_name();
+		selectedData.dimension = this.dimension;
+		selectedData.hierarchy = this.hierarchy;
+		selectedData.name = this.name;
+
+		uuid = this.get_uuid(selectedData);
+
+		var hName = decodeURIComponent(this.member.hierarchy),
+			lName = decodeURIComponent(this.member.level),
+			hierarchy = this.workspace.query.helper.getHierarchy(hName);
+
+		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
+			hierarchy.levels[lName] = { mdx: null, name: lName };
+		}
+
+		this.workspace.dateFilter.remove(uuid);
+
+		this.clear_selections(event);
+
+		this.finished();
+    },
+
+    show_button_clear: function() {
+		var dateFilter = this.workspace.dateFilter,
+			objDateFilter = dateFilter.toJSON(),
+			selectedData = {},
+			uuid;
+
+		selectedData.cube = this.get_cube_name();
+		selectedData.dimension = this.dimension;
+		selectedData.hierarchy = this.hierarchy;
+		selectedData.name = this.name;
+
+		uuid = this.get_uuid(selectedData);
+
+        if (objDateFilter && !(_.isEmpty(objDateFilter))) {
+            if (dateFilter.get(uuid)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    },
+
 	finished: function() {
 		this.$el.dialog('destroy').remove();
 		this.query.run();
@@ -762,58 +825,11 @@ var DateFilterObserver = Backbone.View.extend({
 		// Maintain `this` in callbacks
 		_.bindAll(this, 'receive_data', 'workspace_levels');
 
-		// Add button in workspace toolbar
-		this.add_button();
-
 		// Listen to result event
 		this.workspace.bind('query:result', this.receive_data);
 		Saiku.session.bind('dimensionList:select_dimension', this.receive_data);
 		Saiku.session.bind('workspaceDropZone:select_dimension', this.receive_data);
 		Saiku.session.bind('workspaceDropZone:clear_axis', this.receive_data);
-	},
-
-	add_button: function() {
-		var button =
-			$('<a href="#dateFilterObserver" class="dateFilterObserver button disabled_toolbar i18n" title="Clear date filter"></a>')
-			.css({ 'background-image': 'url("images/src/date_delete.png")',
-				   'background-repeat': 'no-repeat',
-				   'background-position': '50% 50%',
-				   'background-size': '16px'
-				});
-
-		var li = $('<li class="seperator"></li>').append(button);
-		this.workspace.toolbar.$el.find('ul').append(li);
-		this.workspace.toolbar.dateFilterObserver = this.show;
-	},
-
-	show: function(event) {
-		event.preventDefault();
-
-		var objDateFilter = this.workspace.dateFilter.toJSON(),
-			lenDateFilter = objDateFilter.length,
-			i;
-
-		for (i = 0; i < lenDateFilter; i++) {
-			// Fetch available members
-			var member = new Member({}, {
-				cube: this.workspace.selected_cube,
-				dimension: objDateFilter[i].key
-			});
-
-			var hName = decodeURIComponent(member.hierarchy),
-				lName = decodeURIComponent(member.level),
-				hierarchy = this.workspace.query.helper.getHierarchy(hName);
-
-			if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
-				hierarchy.levels[lName] = { mdx: null, name: lName };
-			}
-
-			this.workspace.dateFilter.remove(objDateFilter[i].id);
-
-			if ((i + 1) === lenDateFilter) {
-				this.workspace.query.run();
-			}
-		}
 	},
 
     receive_data: function(args) {
