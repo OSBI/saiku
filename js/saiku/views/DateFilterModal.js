@@ -235,6 +235,7 @@ var DateFilterModal = Modal.extend({
 				$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
 				$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
 				$currentTarget.closest('.selection-options').find('#add-date').show();
+				this.clear_operators();
 				break;
 			case 'after':
 			case 'after&equals':
@@ -245,6 +246,7 @@ var DateFilterModal = Modal.extend({
 				$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
 				$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
 				$currentTarget.closest('.selection-options').find('#add-date').hide();
+				this.clear_operators();
 				break;
 			case 'between':
 			case 'notbetween':
@@ -253,6 +255,7 @@ var DateFilterModal = Modal.extend({
 				$currentTarget.closest('.selection-options').find('#div-select-start-date').show();
 				$currentTarget.closest('.selection-options').find('#div-select-end-date').show();
 				$currentTarget.closest('.selection-options').find('#add-date').hide();
+				this.clear_operators();
 				break;
 			default:
 				$currentTarget.closest('.selection-options').find('#div-selection-date').hide();
@@ -260,6 +263,7 @@ var DateFilterModal = Modal.extend({
 				$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
 				$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
 				$currentTarget.closest('.selection-options').find('#add-date').hide();
+				this.clear_operators();
 			}
 		}
 		else {
@@ -268,6 +272,7 @@ var DateFilterModal = Modal.extend({
 			this.$el.find('.selection-options').find('#div-select-start-date').hide();
 			this.$el.find('.selection-options').find('#div-select-end-date').hide();
 			this.$el.find('.selection-options').find('#add-date').hide();
+			this.clear_operators();
 		}
 	},
 
@@ -369,6 +374,14 @@ var DateFilterModal = Modal.extend({
 		this.$el.find('select').prop('selectedIndex', 0);
 		this.$el.find('#selected-date').empty();
 		this.$el.find('.available-selections *').prop('checked', false);
+		// Clear variables
+		this.selectedDates = [];
+	},
+
+	clear_operators: function() {
+		// Clear operator
+		this.$el.find('input[type="text"]').val('');
+		this.$el.find('#selected-date').empty();
 		// Clear variables
 		this.selectedDates = [];
 	},
