@@ -1,10 +1,11 @@
---- index.html	2015-01-19 00:26:15.253343469 +0000
-+++ index2.html	2015-01-19 00:26:51.105342346 +0000
-@@ -105,62 +105,8 @@
+--- index.html	2015-02-02 21:07:42.935984796 +0000
++++ index2.html	2015-02-03 14:09:59.487969596 +0000
+@@ -105,63 +105,8 @@
  <!-- Saiku Project -->
  <script type="text/javascript" src="js/saiku/Settings.js"></script>
-
+ 
 -<script type="text/javascript" src="js/saiku/models/SaikuOlapQuery.js"></script>
+-<script type="text/javascript" src="js/saiku/models/DateFilter.js"></script>
 -<script type="text/javascript" src="js/saiku/render/SaikuRenderer.js"></script>
 -<script type="text/javascript" src="js/saiku/render/SaikuTableRenderer.js"></script>
 -<script type="text/javascript" src="js/saiku/render/SaikuChartRenderer.js"></script>
@@ -15,7 +16,6 @@
 -<script type="text/javascript" src="js/saiku/views/Modal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/MDXModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/SelectionsModal.js"></script>
--<script type="text/javascript" src="js/saiku/views/DateFilterModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/DrillthroughModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/DrillAcrossModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/PermissionsModal.js"></script>
@@ -53,6 +53,7 @@
 -<script type="text/javascript" src="js/saiku/models/Plugin.js"></script>
 -<script type="text/javascript" src="js/saiku/models/License.js"></script>
 -<script type="text/javascript" src="js/saiku/Saiku.js"></script>
+-<script type="text/javascript" src="js/saiku/views/DateFilterModal.js"></script>
 -<script type="text/javascript" src="js/saiku/adapters/SaikuServer.js"></script>
 -<script type="text/javascript" src="js/saiku/routers/QueryRouter.js"></script>
 -
@@ -60,6 +61,6 @@
 -<!--
  <script type="text/javascript" src="saiku.min.js"></script>
 --->
-
+ 
  <script type="text/javascript" src="js/saiku/plugins/I18n/plugin.js"></script>
  <!-- Saiku plugins -->

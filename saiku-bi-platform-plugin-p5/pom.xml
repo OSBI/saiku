@@ -190,6 +190,24 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>1.2</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>ant-contrib</groupId>
+                        <artifactId>ant-contrib</artifactId>
+                        <version>1.0b3</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>ant</groupId>
+                                <artifactId>ant</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.ant</groupId>
+                        <artifactId>ant-nodeps</artifactId>
+                        <version>1.8.1</version>
+                    </dependency>
+                </dependencies>
 				<executions>
 					<execution>
 						<id>copy-package</id>
@@ -216,7 +234,7 @@
 										<include name="*.properties" />
 									</fileset>
 								</copy>
-                                <patch patchfile="addplugins.patch" originalfile="target/dist/saiku/ui/index.html" />
+                                <patch patchfile="addplugins.patch" originalfile="target/dist/saiku/ui/index.html" failonerror="true"/>
 								<zip destfile="target/saiku-plugin-p5-${project.version}.zip">
 									<zipfileset dir="target/dist/" />
 								</zip>
