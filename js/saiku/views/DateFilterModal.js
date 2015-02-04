@@ -123,7 +123,7 @@ var DateFilterModal = Modal.extend({
 				'<span class="i18n">Rolling Date:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
-						'<select id="">' +
+						'<select>' +
 							'<option value="last">Last</option>' +
 							'<option value="next" disabled class="keep-disabled">Next</option>' +
 						'</select>' +
