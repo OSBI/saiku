@@ -169,7 +169,7 @@ var DateFilterModal = Modal.extend({
 
 		// show/hide button for clear filter
 		if (this.show_button_clear()) {
-			this.$el.find('.dialog_footer a:nth-child(1)').show();	
+			this.$el.find('.dialog_footer a:nth-child(1)').show();
 		}
 		else {
 			this.$el.find('.dialog_footer a:nth-child(1)').hide();
@@ -506,6 +506,9 @@ var DateFilterModal = Modal.extend({
 				return logExp[p];
 			});
 		}
+		else{
+			logExp.parent = "";
+		}
 
 		this.template_mdx = this.template_mdx.replace(/{(\w+)}/g, function(m, p) {
 			return logExp[p];
@@ -689,7 +692,7 @@ var DateFilterModal = Modal.extend({
 					workinglevel: workinglevel
 				};
 
-				if (fixedDateName === 'dayperiods' || (logExp.workinglevel !== logExp.level && logExp.workinglevel !== undefined)) {
+				//if (fixedDateName === 'dayperiods' || (logExp.workinglevel !== logExp.level && logExp.workinglevel !== undefined)) {
 					if ((fixedDateName === 'dayperiods' && self.selectedDates[0] !== '' && self.selectedDates[0] !== undefined) ||
 						(fixedDateName === 'lastperiods' && !(_.isEmpty(analyzerDateFormat)) && analyzerDateFormat !== 'Day(s)' && !(_.isEmpty(periodAmount))) ||
 						(fixedDateName !== 'dayperiods' && fixedDateName !== 'lastperiods') && !(_.isEmpty(analyzerDateFormat))) {
@@ -698,10 +701,10 @@ var DateFilterModal = Modal.extend({
 					else {
 						mdx = null;
 					}
-				}
+				/*}
 				else {
 					mdx = null;
-				}
+				}*/
 			}
 		});
 
@@ -714,7 +717,7 @@ var DateFilterModal = Modal.extend({
 
 		if ((fixedDateName === 'dayperiods' && this.selectedDates[0] !== '' && self.selectedDates[0] !== undefined) ||
 			(fixedDateName === 'lastperiods' && !(_.isEmpty(analyzerDateFormat)) && analyzerDateFormat !== 'Day(s)' && !(_.isEmpty(periodAmount))) ||
-			(fixedDateName !== 'dayperiods' && fixedDateName !== 'lastperiods') && !(_.isEmpty(analyzerDateFormat))) {	
+			(fixedDateName !== 'dayperiods' && fixedDateName !== 'lastperiods') && !(_.isEmpty(analyzerDateFormat))) {
 			this.set_date_filter(selectedData);
 		}
 		else {
@@ -736,7 +739,7 @@ var DateFilterModal = Modal.extend({
 	},
 
 	get_uuid: function(data) {
-		return '[' + data.cube + '].[' + data.dimension + '].[' + 
+		return '[' + data.cube + '].[' + data.dimension + '].[' + data.dimension + '.' +
 			data.hierarchy + '].[' + data.name + ']';
 	},
 
@@ -744,7 +747,7 @@ var DateFilterModal = Modal.extend({
 		var dateFilter = this.workspace.dateFilter,
 			objDateFilter = dateFilter.toJSON(),
 			uuid = this.get_uuid(data);
-		
+
 		data.id = uuid;
 		data.key = this.key;
 
@@ -754,7 +757,7 @@ var DateFilterModal = Modal.extend({
 				dateFilter.set(data);
 			}
 			else {
-				dateFilter.add(data);				
+				dateFilter.add(data);
 			}
 		}
 		else {
@@ -889,11 +892,11 @@ var DateFilterObserver = Backbone.View.extend({
     	var arrAxis = [],
     		len = axis.hierarchies.length,
     		i;
-		
+
 		for (i = 0; i < len; i++) {
 			for (var name in axis.hierarchies[i].levels) {
 				if (axis.hierarchies[i].levels.hasOwnProperty(name)) {
-					arrAxis.push('[' + cubeName + '].[' + axis.hierarchies[i].dimension + '].[' + 
+					arrAxis.push('[' + cubeName + '].[' + axis.hierarchies[i].dimension + '].[' +
 						axis.hierarchies[i].caption + '].[' + name + ']');
 				}
 			}
