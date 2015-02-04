@@ -39,9 +39,9 @@ var DateFilterModal = Modal.extend({
 
 	template_many_years_mdx: ' {logicalOperator} {parent}.CurrentMember.NAME {comparisonOperator} \'{dates}\'',
 
-	template_mdx: '{parent} CurrentDateMember([{dimension}.{hierarchy}], \'["{dimension}.{hierarchy}"]\\\.{AnalyzerDateFormat}\', EXACT)',
+	template_mdx: '{parent} CurrentDateMember([{dimension}.{hierarchy}], \'["{dimension}.{hierarchy}"]\\\.{analyzerDateFormat}\', EXACT)',
 
-	template_last_mdx: '{parent} LastPeriods({periodamount}, CurrentDateMember([{dimension}.{hierarchy}], \'["{dimension}.{hierarchy}"]\\\.{AnalyzerDateFormat}\', EXACT))',
+	template_last_mdx: '{parent} LastPeriods({periodAmount}, CurrentDateMember([{dimension}.{hierarchy}], \'["{dimension}.{hierarchy}"]\\\.{analyzerDateFormat}\', EXACT))',
 
 	template_dialog: _.template(
 		'<div class="box-selections">' +
@@ -52,28 +52,28 @@ var DateFilterModal = Modal.extend({
 				'<span class="i18n">Operator:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-equals" value="="> Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-equals" value="=" data-operator="equals"> Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-after" value=">"> After</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-after" value=">" data-operator="after"> After</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-before" value="<"> Before</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-before" value="<" data-operator="before"> Before</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-between" value=">&&<"> Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-between" value=">&&<" data-operator="between"> Between</label><br>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-different" value="<>"> Different</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-different" value="<>" data-operator="different"> Different</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-after-equals" value=">="> After&Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-after-equals" value=">=" data-operator="after&equals"> After&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-before-equals" value="<="> Before&Equals</label>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-before-equals" value="<=" data-operator="before&equals"> Before&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-notbetween" value=">||<"> Not Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-notbetween" value=">||<" data-operator="notbetween"> Not Between</label><br>' +
 					'</div>' +
 					'<div class="inline-form-group">' +
 						'<div class="form-group" id="div-selection-date" hidden>' +
@@ -123,7 +123,7 @@ var DateFilterModal = Modal.extend({
 				'<span class="i18n">Rolling Date:</span><br>' +
 				'<div class="selection-options">' +
 					'<div class="form-group-selection">' +
-						'<select id="">' +
+						'<select>' +
 							'<option value="last">Last</option>' +
 							'<option value="next" disabled class="keep-disabled">Next</option>' +
 						'</select>' +
@@ -150,15 +150,24 @@ var DateFilterModal = Modal.extend({
 		this.options.title = 'Date Filter';
 		this.message = 'Loading...';
 		this.query = args.workspace.query;
-		this.selections = [];
-		this.dates = [];
+		this.selectedDates = [];
 
+		// Level information
+		this.levelInfo = {
+			cube: this.get_cube_name(),
+			dimension: this.dimension,
+			hierarchy: this.hierarchy,
+			name: this.name
+		};
+
+		// Maintain `this` in callbacks
 		_.bindAll(this, 'finished');
 
 		// Resize when rendered
 		this.bind('open', this.post_render);
 		this.render();
 
+		// show/hide button for clear filter
 		if (this.show_button_clear()) {
 			this.$el.find('.dialog_footer a:nth-child(1)').show();	
 		}
@@ -166,6 +175,7 @@ var DateFilterModal = Modal.extend({
 			this.$el.find('.dialog_footer a:nth-child(1)').hide();
 		}
 
+		// Add function for button Close `x`
 		this.$el.parent().find('.ui-dialog-titlebar-close').bind('click', this.finished);
 
 		// Fetch available members
@@ -177,6 +187,7 @@ var DateFilterModal = Modal.extend({
 		// Load template
 		this.$el.find('.dialog_body').html(this.template_dialog);
 
+		// Disable all elements and remove an event handler
 		this.$el.find('.available-selections *').prop('disabled', true).off('click');
 
 		// Save data of levels
@@ -214,34 +225,37 @@ var DateFilterModal = Modal.extend({
 
 	show_fields: function(event) {
 		var $currentTarget = event.type ? $(event.currentTarget) : $(event),
-			name = $currentTarget.parent('label').text().split(' ')[1];
+			name = $currentTarget.data('operator');
 		if (name !== undefined) {
 			switch (name) {
-			case 'Equals':
-			case 'Different':
+			case 'equals':
+			case 'different':
 				$currentTarget.closest('.selection-options').find('#div-selection-date').show();
 				$currentTarget.closest('.selection-options').find('#div-selected-date').show();
 				$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
 				$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
 				$currentTarget.closest('.selection-options').find('#add-date').show();
+				this.clear_operators();
 				break;
-			case 'After':
-			case 'After&Equals':
-			case 'Before':
-			case 'Before&Equals':
+			case 'after':
+			case 'after&equals':
+			case 'before':
+			case 'before&equals':
 				$currentTarget.closest('.selection-options').find('#div-selection-date').show();
 				$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
 				$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
 				$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
 				$currentTarget.closest('.selection-options').find('#add-date').hide();
+				this.clear_operators();
 				break;
-			case 'Between':
-			case 'Not':
+			case 'between':
+			case 'notbetween':
 				$currentTarget.closest('.selection-options').find('#div-selection-date').hide();
 				$currentTarget.closest('.selection-options').find('#div-selected-date').hide();
 				$currentTarget.closest('.selection-options').find('#div-select-start-date').show();
 				$currentTarget.closest('.selection-options').find('#div-select-end-date').show();
 				$currentTarget.closest('.selection-options').find('#add-date').hide();
+				this.clear_operators();
 				break;
 			default:
 				$currentTarget.closest('.selection-options').find('#div-selection-date').hide();
@@ -249,6 +263,7 @@ var DateFilterModal = Modal.extend({
 				$currentTarget.closest('.selection-options').find('#div-select-start-date').hide();
 				$currentTarget.closest('.selection-options').find('#div-select-end-date').hide();
 				$currentTarget.closest('.selection-options').find('#add-date').hide();
+				this.clear_operators();
 			}
 		}
 		else {
@@ -257,6 +272,7 @@ var DateFilterModal = Modal.extend({
 			this.$el.find('.selection-options').find('#div-select-start-date').hide();
 			this.$el.find('.selection-options').find('#div-select-end-date').hide();
 			this.$el.find('.selection-options').find('#add-date').hide();
+			this.clear_operators();
 		}
 	},
 
@@ -296,7 +312,7 @@ var DateFilterModal = Modal.extend({
 			if ($(selection).attr('selection-name') === 'fixed-date') {
 				$(selection).find('input:radio').each(function(key, radio) {
 					var name = $(radio).attr('id').split('-')[1];
-					_.find(self.dataLevels, function(value, key, list) {
+					_.find(self.dataLevels, function(value, key) {
 						if (name === value.name.toLowerCase()) {
 							$(radio).val(self.dataLevels[key].analyzerDateFormat);
 						}
@@ -325,7 +341,7 @@ var DateFilterModal = Modal.extend({
 			if ($(selection).attr('selection-name') === 'rolling-date') {
 				$(selection).find('#period-select > option').each(function(key, radio) {
 					var name = $(radio).attr('name');
-					_.find(self.dataLevels, function(value, key, list) {
+					_.find(self.dataLevels, function(value, key) {
 						if (name === value.levelType) {
 							$(radio).val(self.dataLevels[key].analyzerDateFormat);
 						}
@@ -352,14 +368,22 @@ var DateFilterModal = Modal.extend({
 	},
 
 	clear_selections: function(event) {
-		// clear dialog
+		// Clear dialog
 		this.show_fields(event);
 		this.$el.find('input[type="text"]').val('');
 		this.$el.find('select').prop('selectedIndex', 0);
 		this.$el.find('#selected-date').empty();
 		this.$el.find('.available-selections *').prop('checked', false);
 		// Clear variables
-		this.dates = [];
+		this.selectedDates = [];
+	},
+
+	clear_operators: function() {
+		// Clear operator
+		this.$el.find('input[type="text"]').val('');
+		this.$el.find('#selected-date').empty();
+		// Clear variables
+		this.selectedDates = [];
 	},
 
 	disable_divselections: function(event) {
@@ -375,6 +399,7 @@ var DateFilterModal = Modal.extend({
 		$currentTarget.closest('.box-selections').find('.available-selections').attr('available', true);
 		$currentTarget.closest('.box-selections').find('.available-selections *:not(.keep-disabled)')
 			.prop('disabled', false).on('click');
+
 		if (event.type) {
 			$currentTarget.closest('.box-selections').find('select').each(function(key, selection) {
 				$(selection).find('option:not([disabled])').first().attr('selected', 'selected');
@@ -402,7 +427,7 @@ var DateFilterModal = Modal.extend({
 			selectedDate.append($('<li></li>')
 				.text(newDate)
 				.append('<a href="#" class="del-date" data-date="' + newDate + '">x</a>'));
-			this.dates.push(newDate);
+			this.selectedDates.push(newDate);
 		}
 		else {
 			sDate.css('border', '1px solid red');
@@ -415,7 +440,7 @@ var DateFilterModal = Modal.extend({
 		event.preventDefault();
 		var $currentTarget = $(event.currentTarget),
 			date = $currentTarget.data('date');
-		this.dates = _.without(this.dates, date);
+		this.selectedDates = _.without(this.selectedDates, date);
 		$currentTarget.parent().remove();
 	},
 
@@ -426,29 +451,29 @@ var DateFilterModal = Modal.extend({
 			if (data.type === 'operator') {
 				var $selection = this.$el.find('#selection-radio-operator'),
 					$checked = this.$el.find('#' + data.checked),
-					name = $checked.parent('label').text().split(' ')[1],
+					name = $checked.data('operator'),
 					self = this;
 				$selection.prop('checked', true);
 				$checked.prop('checked', true);
 				this.disable_divselections($selection, true);
 				this.show_fields($checked);
 
-				this.dates = data.values;
+				this.selectedDates = data.values;
 
-				if (name === 'After' || name === 'After&Equals' ||
-					name === 'Before' || name === 'Before&Equals') {
-					this.$el.find('#selection-date').val(this.dates[0]);
+				if (name === 'after' || name === 'after&equals' ||
+					name === 'before' || name === 'before&equals') {
+					this.$el.find('#selection-date').val(this.selectedDates[0]);
 				}
-				else if (name === 'Between') {
-					self.$el.find('#start-date').val(this.dates[0]);
-					self.$el.find('#end-date').val(this.dates[1]);
+				else if (name === 'between') {
+					self.$el.find('#start-date').val(this.selectedDates[0]);
+					self.$el.find('#end-date').val(this.selectedDates[1]);
 				}
-				else if (name === 'Not') {
-					self.$el.find('#start-date').val(this.dates[0]);
-					self.$el.find('#end-date').val(this.dates[1]);
+				else if (name === 'notbetween') {
+					self.$el.find('#start-date').val(this.selectedDates[0]);
+					self.$el.find('#end-date').val(this.selectedDates[1]);
 				}
 				else {
-					_.each(this.dates, function(value, key) {
+					_.each(this.selectedDates, function(value, key) {
 						self.$el.find('#selected-date').append($('<li></li>')
 							.text(value)
 							.append('<a href="#" class="del-date" data-date="' + value + '">x</a>'));
@@ -471,7 +496,7 @@ var DateFilterModal = Modal.extend({
 		}
 	},
 
-	populate_mdx: function(logExp, fixedDateName, periodamount) {
+	populate_mdx: function(logExp, fixedDateName, periodAmount) {
 		logExp.tagdim = logExp.dimension.replace(/m/g, '\\m').replace(/y/g, '\\y').replace(/q/g, '\\q').replace(/d/g, '\\d');
 		logExp.taghier = logExp.hierarchy.replace(/m/g, '\\m').replace(/y/g, '\\y').replace(/q/g, '\\q').replace(/d/g, '\\d');
 
@@ -492,12 +517,12 @@ var DateFilterModal = Modal.extend({
 				return logExp[p];
 			});
 
-			if (this.dates.length > 1) {
-				var len = this.dates.length,
+			if (this.selectedDates.length > 1) {
+				var len = this.selectedDates.length,
 					i;
 
 				for (i = 0; i < len; i++) {
-					logExp.dates = this.dates[i];
+					logExp.dates = this.selectedDates[i];
 
 					if (logExp.comparisonOperator === '>&&<') {
 						if (i === 0) {
@@ -549,7 +574,7 @@ var DateFilterModal = Modal.extend({
 				return this.template_days_mdx + ')';
 			}
 			else {
-				logExp.dates = this.dates[0];
+				logExp.dates = this.selectedDates[0];
 				this.template_days_mdx = this.template_days_mdx.replace(/{(\w+)}/g, function(m, p) {
 					return logExp[p];
 				}) + ')';
@@ -583,7 +608,7 @@ var DateFilterModal = Modal.extend({
 			fixedDateName,
 			comparisonOperator,
 			analyzerDateFormat,
-			periodamount,
+			periodAmount,
 			parentmembers,
 			mdx = null,
 			selectedData = {};
@@ -599,30 +624,30 @@ var DateFilterModal = Modal.extend({
 				if ($(selection).attr('selection-name') === 'operator') {
 					$(selection).find('input:radio').each(function (key, radio) {
 						if ($(radio).is(':checked') === true) {
-							var name = $(radio).parent('label').text().split(' ')[1];
+							var name = $(radio).data('operator');
 							selectedData.checked = $(radio).attr('id');
 
-							if (name === 'After' || name === 'After&Equals' ||
-								name === 'Before' || name === 'Before&Equals') {
-								self.dates = [];
-								self.dates.push(self.$el.find('#selection-date').val());
+							if (name === 'after' || name === 'after&equals' ||
+								name === 'before' || name === 'before&equals') {
+								self.selectedDates = [];
+								self.selectedDates.push(self.$el.find('#selection-date').val());
 							}
-							else if (name === 'Between' || name === 'Not') {
-								self.dates = [];
-								self.dates.push(self.$el.find('#start-date').val());
-								self.dates.push(self.$el.find('#end-date').val());
+							else if (name === 'between' || name === 'notbetween') {
+								self.selectedDates = [];
+								self.selectedDates.push(self.$el.find('#start-date').val());
+								self.selectedDates.push(self.$el.find('#end-date').val());
 							}
 
 							parentmembers = self.name;
 							fixedDateName = 'dayperiods';
 							comparisonOperator = $(radio).val();
-							selectedData.values = self.dates;
+							selectedData.values = self.selectedDates;
 						}
 					});
 				}
 				else if ($(selection).attr('selection-name') === 'fixed-date') {
 					$(selection).find('input:radio').each(function (key, radio) {
-						if ($(radio).is(":checked") === true) {
+						if ($(radio).is(':checked') === true) {
 							fixedDateName = $(radio).attr('id').split('-')[1];
 							analyzerDateFormat = $(radio).val();
 							selectedData.checked = $(radio).attr('id');
@@ -632,7 +657,7 @@ var DateFilterModal = Modal.extend({
 				else if ($(selection).attr('selection-name') === 'rolling-date') {
 					analyzerDateFormat = $('#period-select').find(':selected').val();
 					fixedDateName = 'lastperiods';
-					periodamount = $(selection).find('input:text').val();
+					periodAmount = $(selection).find('input:text').val();
 					selectedData.fixedDateName = fixedDateName;
 					selectedData.periodAmount = $(selection).find('input:text').val();
 					selectedData.periodSelect = $('#period-select').find(':selected').attr('id');
@@ -654,24 +679,25 @@ var DateFilterModal = Modal.extend({
 					}
 				}
 
-				if (fixedDateName !== 'dayperiods' && workinglevel === self.name) {
-					workinglevel = 'Current_' + workinglevel;
-				}
-
 				var logExp = {
 					dimension: self.dimension,
 					hierarchy: self.hierarchy,
 					level: self.name,
-					AnalyzerDateFormat: analyzerDateFormat,
-					periodamount: periodamount,
+					analyzerDateFormat: analyzerDateFormat,
+					periodAmount: periodAmount,
 					comparisonOperator: comparisonOperator,
 					workinglevel: workinglevel
 				};
 
-				if ((fixedDateName === 'dayperiods' && self.dates[0] !== '' && self.dates[0] !== undefined) ||
-					(fixedDateName === 'lastperiods' && !(_.isEmpty(analyzerDateFormat)) && analyzerDateFormat !== 'Day(s)' && !(_.isEmpty(periodamount))) ||
-					(fixedDateName !== 'dayperiods' && fixedDateName !== 'lastperiods') && !(_.isEmpty(analyzerDateFormat))) {
-					mdx = self.populate_mdx(logExp, fixedDateName);
+				if (fixedDateName === 'dayperiods' || (logExp.workinglevel !== logExp.level && logExp.workinglevel !== undefined)) {
+					if ((fixedDateName === 'dayperiods' && self.selectedDates[0] !== '' && self.selectedDates[0] !== undefined) ||
+						(fixedDateName === 'lastperiods' && !(_.isEmpty(analyzerDateFormat)) && analyzerDateFormat !== 'Day(s)' && !(_.isEmpty(periodAmount))) ||
+						(fixedDateName !== 'dayperiods' && fixedDateName !== 'lastperiods') && !(_.isEmpty(analyzerDateFormat))) {
+						mdx = self.populate_mdx(logExp, fixedDateName);
+					}
+					else {
+						mdx = null;
+					}
 				}
 				else {
 					mdx = null;
@@ -684,13 +710,10 @@ var DateFilterModal = Modal.extend({
 			hierarchy = this.workspace.query.helper.getHierarchy(hName),
 			cubeSelected = this.get_cube_name();
 
-		selectedData.cube = cubeSelected;
-		selectedData.dimension = this.dimension;
-		selectedData.hierarchy = this.hierarchy;
-		selectedData.name = this.name;
+		_.extend(selectedData, this.levelInfo);
 
-		if ((fixedDateName === 'dayperiods' && this.dates[0] !== '' && self.dates[0] !== undefined) ||
-			(fixedDateName === 'lastperiods' && !(_.isEmpty(analyzerDateFormat)) && analyzerDateFormat !== 'Day(s)' && !(_.isEmpty(periodamount))) ||
+		if ((fixedDateName === 'dayperiods' && this.selectedDates[0] !== '' && self.selectedDates[0] !== undefined) ||
+			(fixedDateName === 'lastperiods' && !(_.isEmpty(analyzerDateFormat)) && analyzerDateFormat !== 'Day(s)' && !(_.isEmpty(periodAmount))) ||
 			(fixedDateName !== 'dayperiods' && fixedDateName !== 'lastperiods') && !(_.isEmpty(analyzerDateFormat))) {	
 			this.set_date_filter(selectedData);
 		}
@@ -698,6 +721,8 @@ var DateFilterModal = Modal.extend({
 			var uuid = this.get_uuid(selectedData);
 			this.workspace.dateFilter.remove(uuid);
 		}
+
+		// console.log(mdx);
 
 		if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
 			hierarchy.levels[lName] = { mdx: mdx, name: lName };
@@ -707,7 +732,7 @@ var DateFilterModal = Modal.extend({
 	},
 
 	get_cube_name: function() {
-		return decodeURIComponent($('.cubes option:selected').val()).split('/')[3];
+		return decodeURIComponent(this.workspace.selected_cube.split('/')[3]);
 	},
 
 	get_uuid: function(data) {
@@ -757,15 +782,9 @@ var DateFilterModal = Modal.extend({
     	event.preventDefault();
 
 		var objDateFilter = this.workspace.dateFilter.toJSON(),
-			selectedData = {},
 			uuid;
 
-		selectedData.cube = this.get_cube_name();
-		selectedData.dimension = this.dimension;
-		selectedData.hierarchy = this.hierarchy;
-		selectedData.name = this.name;
-
-		uuid = this.get_uuid(selectedData);
+		uuid = this.get_uuid(this.levelInfo);
 
 		var hName = decodeURIComponent(this.member.hierarchy),
 			lName = decodeURIComponent(this.member.level),
@@ -785,15 +804,9 @@ var DateFilterModal = Modal.extend({
     show_button_clear: function() {
 		var dateFilter = this.workspace.dateFilter,
 			objDateFilter = dateFilter.toJSON(),
-			selectedData = {},
 			uuid;
 
-		selectedData.cube = this.get_cube_name();
-		selectedData.dimension = this.dimension;
-		selectedData.hierarchy = this.hierarchy;
-		selectedData.name = this.name;
-
-		uuid = this.get_uuid(selectedData);
+		uuid = this.get_uuid(this.levelInfo);
 
         if (objDateFilter && !(_.isEmpty(objDateFilter))) {
             if (dateFilter.get(uuid)) {
@@ -847,7 +860,7 @@ var DateFilterObserver = Backbone.View.extend({
     },
 
 	get_cube_name: function() {
-		return decodeURIComponent($('.cubes option:selected').val()).split('/')[3];
+		return decodeURIComponent(this.workspace.selected_cube.split('/')[3]);
 	},
 
     workspace_levels: function(args) {
