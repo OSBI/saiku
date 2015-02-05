@@ -1,13 +1,10 @@
-package org.saiku.datasources.connection.impl;
+package org.saiku.datasources.connection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.saiku.datasources.connection.AbstractConnectionManager;
-import org.saiku.datasources.connection.ISaikuConnection;
-import org.saiku.datasources.connection.SaikuConnectionFactory;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.olap.util.exception.SaikuOlapException;
 import org.slf4j.Logger;

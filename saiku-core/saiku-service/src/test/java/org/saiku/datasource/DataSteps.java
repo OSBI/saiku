@@ -19,7 +19,7 @@ import net.thucydides.core.annotations.Step;
 import org.junit.Test;
 import org.saiku.helper.DatabaseHelper;
 import org.saiku.datasources.connection.IConnectionManager;
-import org.saiku.datasources.connection.impl.SimpleConnectionManager;
+import org.saiku.datasources.connection.SimpleConnectionManager;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.olap.discover.OlapMetaExplorer;
 import org.saiku.olap.dto.SaikuConnection;

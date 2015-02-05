@@ -1,4 +1,4 @@
-package org.saiku.web.impl;
+package org.saiku.web.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -123,12 +123,12 @@ public class FilterRepositoryResource {
 	}
 
 
-	@Autowired
+	//@Autowired
 	public void setOlapQueryService(OlapQueryService olapqs) {
 		olapQueryService = olapqs;
 	}
 	
-	@Autowired
+	//@Autowired
 	public void setSessionService(ISessionService ss) {
 		sessionService = ss;
 	}

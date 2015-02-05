@@ -26,7 +26,11 @@
         <property name="authenticationManager" ref="authenticationManager" />
     </bean>
     <bean id="securityContextPersistenceFilter" class="org.springframework.security.web.context.SecurityContextPersistenceFilter" />
-    <bean id="connectionManager" class="org.saiku.web.impl.SecurityAwareConnectionManager" init-method="init" destroy-method="destroy">
+    <bean class="org.saiku.datasources.connection.MondrianVFS" init-method="init" id="mondrianVFS">
+        <property name="datasourceManager" ref="repositoryDsManager"/>
+    </bean>
+    <bean id="connectionManager" class="org.saiku.web.core.SecurityAwareConnectionManager" init-method="init"
+          destroy-method="destroy" depends-on="mondrianVFS">
         <property name="dataSourceManager" ref="repositoryDsManager" />
         <property name="sessionService" ref="sessionService" />
 
@@ -56,9 +60,7 @@
         <property name="datasourceService" ref="datasourceServiceBean"/>
         <property name="olapDiscoverService" ref="olapDiscoverServiceBean"/>
     </bean>
-    <bean class="org.saiku.datasources.connection.MondrianVFS" init-method="init">
-        <property name="datasourceManager" ref="repositoryDsManager"/>
-    </bean>
+
     <bean id="olapDiscoverServiceBean" class="org.saiku.service.olap.OlapDiscoverService">
         <property name="datasourceService" ref="datasourceServiceBean" />
     </bean>

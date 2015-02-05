@@ -8,7 +8,8 @@
     <artifactId>saiku-web</artifactId>
     <version>3.1-SNAPSHOT</version>
     <name>saiku - web</name>
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
+
 
 
     <build>
@@ -49,7 +50,26 @@
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>maven-jetty-plugin</artifactId>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.4.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${pom.groupId}.${pom.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>${pom.artifactId}</Bundle-Name>
+                        <Bundle-Version>1.0.0</Bundle-Version>
+                        <Private-Package>org.saiku</Private-Package>
+                        <Bundle-Activator>org.saiku.Activator</Bundle-Activator>
+                        <Import-Package>
+                            org.osgi.framework,
+                            *;resolution:=optional,
+                            org.saiku
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
 
         </plugins>
     </build>

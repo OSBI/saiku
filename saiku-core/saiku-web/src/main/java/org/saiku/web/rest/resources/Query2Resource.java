@@ -33,7 +33,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
@@ -63,14 +62,14 @@ public class Query2Resource {
 
     private ThinQueryService thinQueryService;
 
-    @Autowired
+    //@Autowired
     public void setThinQueryService(ThinQueryService tqs) {
         thinQueryService = tqs;
     }
 
     private ISaikuRepository repository;
 
-    @Autowired
+    //@Autowired
     public void setRepository(ISaikuRepository repository){
         this.repository = repository;
     }

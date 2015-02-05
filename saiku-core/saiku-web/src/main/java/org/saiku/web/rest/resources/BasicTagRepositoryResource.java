@@ -113,7 +113,7 @@ public class BasicTagRepositoryResource {
 
 	}
 
-	@Autowired
+	//@Autowired
 	public void setOlapQueryService(OlapQueryService olapqs) {
 		olapQueryService = olapqs;
 	}

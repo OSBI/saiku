@@ -2,7 +2,7 @@
 package org.saiku;
 
 import org.saiku.org.saiku.datasources.connection.IConnectionManager;
-import org.saiku.org.saiku.datasources.connection.impl.SimpleConnectionManager;
+import org.saiku.org.saiku.datasources.connection.SimpleConnectionManager;
 import org.saiku.olap.discover.OlapMetaExplorer;
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.util.exception.SaikuOlapException;

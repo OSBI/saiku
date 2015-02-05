@@ -37,7 +37,7 @@
 
         <security:intercept-url pattern="/rest/**" access="IS_AUTHENTICATED_FULLY" />
 	<security:intercept-url pattern="/json/**" access="IS_AUTHENTICATED_FULLY" />
-    <security:intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+    <security:intercept-url pattern="/WEB-INF/classes/legacy-schema" access="IS_AUTHENTICATED_ANONYMOUSLY" />
     <security:logout logout-url="/logout"/>
  	<security:http-basic/>
   

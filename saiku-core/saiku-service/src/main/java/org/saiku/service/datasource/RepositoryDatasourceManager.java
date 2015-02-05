@@ -21,7 +21,7 @@ import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.repository.*;
 import org.saiku.service.importer.LegacyImporter;
-import org.saiku.service.importer.impl.LegacyImporterImpl;
+import org.saiku.service.importer.LegacyImporterImpl;
 import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
 

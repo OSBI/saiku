@@ -1,4 +1,4 @@
-package org.saiku.database.dao.impl;
+package org.saiku.database.dao;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

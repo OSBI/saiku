@@ -1,4 +1,4 @@
-package org.saiku.service.importer.impl;
+package org.saiku.service.importer;
 
 import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemManager;

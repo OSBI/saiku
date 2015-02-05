@@ -3,7 +3,7 @@ package org.saiku.database;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.importer.LegacyImporter;
-import org.saiku.service.importer.impl.LegacyImporterImpl;
+import org.saiku.service.importer.LegacyImporterImpl;
 
 import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;

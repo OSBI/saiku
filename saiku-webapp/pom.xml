@@ -21,7 +21,30 @@
     <build>
         <!-- <outputDirectory>target/WEB-INF/classes</outputDirectory> -->
         <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.7</version>
+                <extensions>true</extensions>
 
+                <configuration>
+                    <supportedProjectTypes>
+                        <supportedProjectType>war</supportedProjectType>
+                    </supportedProjectTypes>
+                    <manifestLocation>./src/main/webapp/META-INF</manifestLocation>
+                    <instructions>
+                        <_wab>src/main/webapp</_wab>
+                        <Export-Package>org.saiku</Export-Package>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-ClassPath>.,WEB-INF/classes,{maven-dependencies}</Bundle-ClassPath>
+                        <Embed-Directory>WEB-INF/lib</Embed-Directory>
+                        <Embed-Dependency>*;scope=compile|runtime;</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+                        <Web-ContextPath>/saiku</Web-ContextPath>
+                        <Webapp-Context></Webapp-Context>
+                    </instructions>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -81,6 +104,7 @@
                             <addClasspath>true</addClasspath>
                         </manifest>
                     </archive>
+
                 </configuration>
             </plugin>
             <plugin>
@@ -98,7 +122,7 @@
                             <outputDirectory>${basedir}/target/saiku-webapp-${project.version}/WEB-INF</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/main/web</directory>
+                                    <directory>src/main/webapp/WEB-INF</directory>
                                     <filtering>true</filtering>
                                     <includes>
                                         <include>saiku-beans.xml</include>
@@ -119,30 +143,15 @@
                         <phase>prepare-package</phase>
                         <configuration>
                             <tasks>
-                                <copy todir="${basedir}/target/saiku-webapp-${project.version}/WEB-INF">
+                              <!--  <copy todir="${basedir}/target/saiku-webapp-${project.version}/WEB-INF">
                                     <fileset dir="${basedir}/target">
                                         <include name="saiku-beans.xml" />
                                     </fileset>
-                                </copy>
+                                </copy>-->
                             </tasks>
                         </configuration>
                         <goals>
                             <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.enunciate</groupId>
-                <artifactId>maven-enunciate-spring-plugin</artifactId>
-                <version>${enunciate.version}</version>
-                <configuration>
-                    <configFile>enunciate.xml</configFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>assemble</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -169,18 +178,25 @@
                 <artifactId>maven-jetty-plugin</artifactId>
                 <version>6.1.10</version>
             </plugin>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <warSourceExcludes>WEB-INF/saiku-beans.xml</warSourceExcludes>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
-        <dependency>
+       <!-- <dependency>
             <groupId>org.jasig.cas.client</groupId>
             <artifactId>cas-client-core</artifactId>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.jasig.cas.client</groupId>
             <artifactId>cas-client-integration-tomcat-common</artifactId>
         </dependency>
-        <dependency>
+       <dependency>
             <groupId>org.jasig.cas.client</groupId>
             <artifactId>cas-client-integration-tomcat-v7</artifactId>
         </dependency>
@@ -188,7 +204,10 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-cas</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.saiku</groupId>
             <artifactId>saiku-service</artifactId>
@@ -208,6 +227,33 @@
         </dependency>
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-spring</artifactId>
+            <version>1.11</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
             <artifactId>jersey-multipart</artifactId>
             <exclusions>
                 <exclusion>
@@ -216,7 +262,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.codehaus.enunciate</groupId>
             <artifactId>enunciate-jersey-rt</artifactId>
             <exclusions>
@@ -229,14 +275,11 @@
                     <artifactId>mimepull</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency>-->
         <dependency>
-            <groupId>org.codehaus.enunciate</groupId>
-            <artifactId>enunciate-rt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.enunciate</groupId>
-            <artifactId>enunciate-spring3-app-rt</artifactId>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+            <version>1.11</version>
         </dependency>
         <dependency>
             <groupId>hsqldb</groupId>

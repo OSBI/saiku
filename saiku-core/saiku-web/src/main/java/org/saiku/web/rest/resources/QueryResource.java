@@ -45,7 +45,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
@@ -81,19 +80,19 @@ public class QueryResource {
 	private OlapDiscoverService olapDiscoverService;
 	private ISaikuRepository repository;
 	
-	@Autowired
+	//@Autowired
 	public void setOlapQueryService(OlapQueryService olapqs) {
 		olapQueryService = olapqs;
 	}
 
-	@Autowired
+	//@Autowired
 	public void setRepository(ISaikuRepository repository){
 		this.repository = repository;
 	}
 
 
 
-	@Autowired
+	//@Autowired
 	public void setOlapDiscoverService(OlapDiscoverService olapds) {
 		olapDiscoverService = olapds;
 	}
