@@ -172,7 +172,7 @@
 					<jsSourceIncludes>
 						<!--<jsSourceInclude>**/*.js</jsSourceInclude>-->
 						<jsSourceInclude>models/SaikuOlapQuery.js</jsSourceInclude>
-						<jsSourceInclude>js/saiku/models/DateFilter.js</jsSourceInclude>
+						<jsSourceInclude>models/DateFilter.js</jsSourceInclude>
 						<jsSourceInclude>render/SaikuRenderer.js</jsSourceInclude>
 						<jsSourceInclude>render/SaikuTableRenderer.js</jsSourceInclude>
 						<jsSourceInclude>render/SaikuChartRenderer.js</jsSourceInclude>
