@@ -1025,7 +1025,7 @@
             <dependency>
                 <groupId>com.atlassian.jira</groupId>
                 <artifactId>jira-rest-java-client-api</artifactId>
-                <version>2.0.0-m29</version>
+                <version>2.0.0-m31</version>
             </dependency>
             <dependency>
                 <groupId>com.atlassian.jira</groupId>
