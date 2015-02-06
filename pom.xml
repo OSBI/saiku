@@ -75,7 +75,7 @@
             <url>http://repository.codehaus.org/</url>
         </repository>
         <repository>
-            <id>atlassian</id>
+            <id>atlassian2</id>
             <url>http://repository.opencastproject.org/</url>
         </repository>
         <repository>
