@@ -306,6 +306,7 @@
                     <configuration>
                         <properties>
                             <cargo.servlet.port>9999</cargo.servlet.port>
+			    <cargo.tomcat.ajp.port>9997</cargo.tomcat.ajp.port>
                         </properties>
                         <type>standalone</type>
 
