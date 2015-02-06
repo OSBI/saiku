@@ -74,7 +74,10 @@
             <id>codehaus</id>
             <url>http://repository.codehaus.org/</url>
         </repository>
-
+        <repository>
+            <id>atlassian</id>
+            <url>http://repository.opencastproject.org/</url>
+        </repository>
         <repository>
             <id>Analytical Labs Repo</id>
             <name>Analytical Labs Repo-releases</name>

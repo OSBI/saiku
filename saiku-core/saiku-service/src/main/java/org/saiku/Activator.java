@@ -30,4 +30,16 @@ public class Activator implements BundleActivator {
   public void stop(BundleContext bundleContext) throws Exception {
     System.out.println("Goodbye World");
   }
+
+  public void onBindService(final Object sampleService) {
+    if (sampleService == null) {
+      System.out.println("sample service is null");
+    } else {
+      //System.out.println("greet: " + sampleService.getGreeting("bob"));
+    }
+  }
+
+  public void onUnbindService(final Object sampleService) {
+    System.out.println("service unbound");
+  }
 }
