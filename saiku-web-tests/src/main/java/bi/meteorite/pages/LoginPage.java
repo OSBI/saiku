@@ -110,6 +110,15 @@ public class LoginPage extends PageObject {
   }
 
   public List<Map<Object, String>> getResultTable(){
+    //FluentWait<WebDriver> myDynamicElement = (new WebDriverWait(this.getDriver(), 10)).withMessage("Waiting 10");
+    //this.getDriver().manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+    try {
+      Thread.sleep(10000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    //.until(ExpectedConditions.presenceOfElementLocated(By.className("table_wrapper")));
+
     List<WebElement> ele = findByClass("table_wrapper");
     for(WebElement el: ele){
       if(el.isDisplayed()){

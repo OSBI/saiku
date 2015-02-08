@@ -113,6 +113,7 @@ public class UserSteps {
     List<Map<Object, String>> t = login.getResultTable();
 
     List<Map<String, String>> example = table.getRows();
+
     assertThat(t.get(1).get("Store Sales"), equalTo(example.get(0).get("Store Sales")));
 
 
