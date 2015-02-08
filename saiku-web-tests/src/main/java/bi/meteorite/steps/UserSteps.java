@@ -109,6 +109,14 @@ public class UserSteps {
   }
 
   @Step
+  public void click_link_by_id(String id, boolean wait){
+    login.findByID(id).get(0).click();
+    if(wait) {
+      login.getDriver().manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+    }
+  }
+
+  @Step
   public void compareTable(ExamplesTable table){
     List<Map<Object, String>> t = login.getResultTable();
 
@@ -118,5 +126,9 @@ public class UserSteps {
 
 
 
+  }
+
+  public void user_should_see_login() {
+    assertThat(login.findByID("username").get(0).isDisplayed(), is(true));
   }
 }
