@@ -1,11 +1,9 @@
-
 var SaikuTableRenderer = _.extend(SaikuRenderer, {
-
     key: "table"
 });
 
 SaikuTableRenderer.prototype._render = function(data, options) {
-    var self = this;
+    //var self = this;
     if (data) {
         this._data = data;
     }
@@ -24,11 +22,8 @@ SaikuTableRenderer.prototype._render = function(data, options) {
         return;
     }
     if (this._options.htmlObject) {
-//            $(this._options.htmlObject).stickyTableHeaders("destroy");
-
-        // in case we have some left over scrollers
-        if (self._options.hasOwnProperty('batch')) {
-            $(self._options.htmlObject).parent().parent().unbind('scroll');
+        if (this._options.hasOwnProperty('batch')) {
+            $(this._options.htmlObject).parent().parent().unbind('scroll');
         }
 
         _.defer(function(that) {
@@ -38,7 +33,6 @@ SaikuTableRenderer.prototype._render = function(data, options) {
 
             var html =  self.internalRender(self._data, self._options);
             $(self._options.htmlObject).html(html);
-//                $(self._options.htmlObject).stickyTableHeaders( { container: self._options.htmlObject.parent().parent(), fixedOffset: self._options.htmlObject.parent().parent().offset().top });
 
             _.defer(function(that) {
                 if (self._options.hasOwnProperty('batch') && self._options.hasBatchResult) {
@@ -50,7 +44,6 @@ SaikuTableRenderer.prototype._render = function(data, options) {
                     var len = self._options.batchResult.length;
 
                     var batchInsert = function() {
-                        // maybe add check for reach table bottom - ($('.workspace_results').scrollTop() , $('.workspace_results table').height()
                         if (!batchIsRunning && len > 0 && batchRow < len) {
                             batchIsRunning = true;
                             var batchContent = "";

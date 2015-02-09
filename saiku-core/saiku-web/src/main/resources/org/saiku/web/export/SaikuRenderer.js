@@ -1,17 +1,3 @@
-/*
- var SaikuRendererRegistry = {
-
- };
-
- SaikuRendererRegistry.prototype.register = function(key, data, options) {
- if (this.hasOwnProperty(key)) {
- return new SaikuRendererRegistry[key](data, options);
- } else {
- throw("No renderer with name '" + key + "' registered!");
- }
- };
- */
-
 var SaikuRendererOptions = {
     mode: null,
     dataMode: null,
@@ -35,7 +21,6 @@ var SaikuRenderer = function(data, options) {
 };
 
 SaikuRenderer.prototype.render = function(data, options) {
-    var r = null;
     if (typeof Backbone !== "undefined") {
         this.trigger('render:start', this );
     }
@@ -43,7 +28,7 @@ SaikuRenderer.prototype.render = function(data, options) {
     if (!this.hasProcessedData()) {
         this.processData(data, options);
     }
-    r = this._render(data, options);
+    var r = this._render(data, options);
     if (typeof Backbone !== "undefined") {
         this.trigger('render:end', this );
     }

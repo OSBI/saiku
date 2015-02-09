@@ -36,8 +36,8 @@
 						<configuration>
 							<artifactItems>
                                 <artifactItem>
-                                    <groupId>rhino</groupId>
-                                    <artifactId>js</artifactId>
+                                    <groupId>org.mozilla</groupId>
+                                    <artifactId>rhino</artifactId>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
                                 </artifactItem>
 								<artifactItem>
@@ -166,8 +166,8 @@
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
-									<groupId>rhino</groupId>
-									<artifactId>js</artifactId>
+									<groupId>org.mozilla</groupId>
+									<artifactId>rhino</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
@@ -599,9 +599,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>rhino</groupId>
-			<artifactId>js</artifactId>
-		</dependency>
+			<groupId>org.mozilla</groupId>
+			<artifactId>rhino</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>

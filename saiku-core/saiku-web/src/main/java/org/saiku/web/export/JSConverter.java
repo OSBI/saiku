@@ -1,6 +1,8 @@
 package org.saiku.web.export;
+
 import org.saiku.web.rest.objects.resultset.QueryResult;
 
+import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
@@ -14,8 +16,18 @@ public class JSConverter {
         ObjectMapper om = new ObjectMapper();
         StringWriter sw = new StringWriter();
         Context context = Context.enter();
+      context.setOptimizationLevel(-1);
+      context.setLanguageVersion(Context.VERSION_1_5);
         Scriptable globalScope = context.initStandardObjects();
-        Reader underscoreReader = new InputStreamReader(JSConverter.class.getResourceAsStream("underscore.js"));
+
+      Reader envjsReader = new InputStreamReader(JSConverter.class.getResourceAsStream("env.rhino.js"));
+      Reader jqueryReader = new InputStreamReader(JSConverter.class.getResourceAsStream("jquery.js"));
+
+      context.evaluateReader(globalScope, envjsReader, "env.rhino.js", 1, null);
+      context.evaluateReader(globalScope, jqueryReader, "jquery.js", 1, null);
+
+
+      Reader underscoreReader = new InputStreamReader(JSConverter.class.getResourceAsStream("underscore.js"));
         context.evaluateReader(globalScope, underscoreReader, "underscore.js", 1, null);
         Reader srReader = new InputStreamReader(JSConverter.class.getResourceAsStream("SaikuRenderer.js"));
         context.evaluateReader(globalScope, srReader, "SaikuRenderer.js", 1, null);
