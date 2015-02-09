@@ -566,7 +566,12 @@ var DateFilterModal = Modal.extend({
 							});
 						}
 						else {
-							logExp.logicalOperator = 'OR';
+							if (logExp.comparisonOperator === '<>') {
+								logExp.logicalOperator = 'AND';
+							}
+							else {
+								logExp.logicalOperator = 'OR';
+							}
 							this.template_days_mdx += this.template_many_years_mdx.replace(/{(\w+)}/g, function(m, p) {
 								return logExp[p];
 							});
