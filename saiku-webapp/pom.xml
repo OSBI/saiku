@@ -2,11 +2,11 @@
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saiku</groupId>
-        <version>3.1-SNAPSHOT</version>
+        <version>3.0.9.4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>saiku-webapp</artifactId>
-    <version>3.1-SNAPSHOT</version>
+    <version>3.0.9.4</version>
     <name>saiku - webapp</name>
     <packaging>war</packaging>
 
@@ -41,7 +41,7 @@
                         <Embed-Dependency>*;scope=compile|runtime;</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Web-ContextPath>/saiku</Web-ContextPath>
-                        <Webapp-Context></Webapp-Context>
+                        <Webapp-Context />
                     </instructions>
                 </configuration>
             </plugin>
