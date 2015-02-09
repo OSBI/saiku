@@ -76,6 +76,18 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                         props.put("password", file.getPassword());
                         props.put("path", file.getPath());
                         props.put("id", file.getId());
+                        if(file.getSecurityenabled()!=null) {
+                          props.put("security.enabled", file.getSecurityenabled());
+                        }
+                        if(file.getSecuritytype()!=null) {
+                          props.put("security.type", file.getSecuritytype());
+                        }
+                        if(file.getSecuritymapping()!=null) {
+                          props.put("security.mapping", file.getSecuritymapping());
+                        }
+                        if(file.getAdvanced()!=null){
+                          props.put("advanced", file.getAdvanced());
+                        }
                         SaikuDatasource.Type t = SaikuDatasource.Type.valueOf(file.getType().toUpperCase());
                         SaikuDatasource ds = new SaikuDatasource(file.getName(), t, props);
                         datasources.put(file.getName(), ds);
