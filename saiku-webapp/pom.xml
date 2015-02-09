@@ -41,7 +41,7 @@
                         <Embed-Dependency>*;scope=compile|runtime;</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Web-ContextPath>/saiku</Web-ContextPath>
-                        <Webapp-Context></Webapp-Context>
+                        <Webapp-Context />
                     </instructions>
                 </configuration>
             </plugin>
