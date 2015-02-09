@@ -61,7 +61,7 @@ var DateFilterModal = Modal.extend({
 						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-before" value="<" data-operator="before"> Before</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-between" value=">&&<" data-operator="between"> Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-between" value=">=|<=" data-operator="between"> Between</label><br>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
 						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-different" value="<>" data-operator="different"> Different</label>' +
@@ -73,7 +73,7 @@ var DateFilterModal = Modal.extend({
 						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-before-equals" value="<=" data-operator="before&equals"> Before&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-notbetween" value=">||<" data-operator="notbetween"> Not Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-notbetween" value=">=||<=" data-operator="notbetween"> Not Between</label><br>' +
 					'</div>' +
 					'<div class="inline-form-group">' +
 						'<div class="form-group" id="div-selection-date" hidden>' +
@@ -507,7 +507,7 @@ var DateFilterModal = Modal.extend({
 			});
 		}
 		else{
-			logExp.parent = "";
+			logExp.parent = '';
 		}
 
 		this.template_mdx = this.template_mdx.replace(/{(\w+)}/g, function(m, p) {
@@ -527,36 +527,40 @@ var DateFilterModal = Modal.extend({
 				for (i = 0; i < len; i++) {
 					logExp.dates = this.selectedDates[i];
 
-					if (logExp.comparisonOperator === '>&&<') {
+					if (logExp.comparisonOperator === '>=|<=') {
 						if (i === 0) {
-							logExp.comparisonOperator = logExp.comparisonOperator.split('&&')[0];
+							logExp.comparisonOperator = logExp.comparisonOperator.split('|')[0];
 							this.template_days_mdx = this.template_days_mdx.replace(/{(\w+)}/g, function(m, p) {
 								return logExp[p];
 							});
-							logExp.comparisonOperator = '>&&<';
+							logExp.comparisonOperator = '>=|<=';
 						}
 						else {
 							logExp.logicalOperator = 'AND';
-							logExp.comparisonOperator = logExp.comparisonOperator.split('&&')[1];
+							logExp.comparisonOperator = logExp.comparisonOperator.split('|')[1];
 							this.template_days_mdx += this.template_many_years_mdx.replace(/{(\w+)}/g, function(m, p) {
 								return logExp[p];
 							});
 						}
 					}
-					else if (logExp.comparisonOperator === '>||<') {
+					else if (logExp.comparisonOperator === '>=||<=') {
 						if (i === 0) {
+							this.template_days_mdx = 'EXCEPT({parent}.Members, ' + this.template_days_mdx;
+
 							logExp.comparisonOperator = logExp.comparisonOperator.split('||')[0];
 							this.template_days_mdx = this.template_days_mdx.replace(/{(\w+)}/g, function(m, p) {
 								return logExp[p];
 							});
-							logExp.comparisonOperator = '>||<';
+							logExp.comparisonOperator = '>=||<=';
 						}
 						else {
-							logExp.logicalOperator = 'OR';
+							logExp.logicalOperator = 'AND';
 							logExp.comparisonOperator = logExp.comparisonOperator.split('||')[1];
 							this.template_days_mdx += this.template_many_years_mdx.replace(/{(\w+)}/g, function(m, p) {
 								return logExp[p];
 							});
+
+							return this.template_days_mdx + '))';
 						}
 					}
 					else {
