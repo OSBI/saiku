@@ -906,7 +906,7 @@ var DateFilterObserver = Backbone.View.extend({
 			for (var name in axis.hierarchies[i].levels) {
 				if (axis.hierarchies[i].levels.hasOwnProperty(name)) {
 					arrAxis.push('[' + cubeName + '].[' + axis.hierarchies[i].dimension + '].[' +
-						axis.hierarchies[i].caption + '].[' + name + ']');
+						axis.hierarchies[i].dimension + '.' + axis.hierarchies[i].caption + '].[' + name + ']');
 				}
 			}
 		}
