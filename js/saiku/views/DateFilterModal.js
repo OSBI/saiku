@@ -107,7 +107,7 @@ var DateFilterModal = Modal.extend({
 				'<span class="i18n">Fixed Date:</span><br>' +
 				'<div class="selection-options">' +
 					'<label><input type="radio" name="fixed-radio" id="fd-yesterday"> Yesterday</label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-day"> Today</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-today"> Today</label>' +
 					'<label><input type="radio" name="fixed-radio" id="fd-week"> Current Week</label>' +
 					'<label><input type="radio" name="fixed-radio" id="fd-month"> Current Month</label>' +
 					'<label><input type="radio" name="fixed-radio" id="fd-quarter"> Current Quarter</label><br>' +
@@ -316,7 +316,12 @@ var DateFilterModal = Modal.extend({
 						if (name === value.name.toLowerCase()) {
 							$(radio).val(self.dataLevels[key].analyzerDateFormat);
 						}
-						else if (name === 'yesterday' && value.name.toLowerCase() === 'day') {
+						else if ((name === 'yesterday' || name === 'today') &&
+							value.name === self.name &&
+							!(_.isEmpty(self.dataLevels[key].analyzerDateFormat)) &&
+							self.dataLevels[key].analyzerDateFormat !== undefined &&
+							self.dataLevels[key].analyzerDateFormat !== null &&
+							self.dataLevels[key].levelType === 'TIME_DAYS') {
 							$(radio).val(self.dataLevels[key].analyzerDateFormat);
 						}
 					});
