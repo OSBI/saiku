@@ -154,7 +154,7 @@ SaikuClient.prototype.execute = function(usercall) {
 			var renderMode = data.query.properties['saiku.ui.render.mode'] ? data.query.properties['saiku.ui.render.mode'] :  call.render;
 			var mode =  data.query.properties['saiku.ui.render.type'] ? data.query.properties['saiku.ui.render.type'] : call.mode;
 
-			call['render'] = renderMode;
+			//call['render'] = renderMode;
 			call['mode'] = mode;
 
 			if (call.render in SaikuRenderer) {
