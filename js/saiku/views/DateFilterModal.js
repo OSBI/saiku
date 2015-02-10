@@ -61,7 +61,7 @@ var DateFilterModal = Modal.extend({
 						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-before" value="<" data-operator="before"> Before</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-between" value=">&&<" data-operator="between"> Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-between" value=">=|<=" data-operator="between"> Between</label><br>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
 						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-different" value="<>" data-operator="different"> Different</label>' +
@@ -73,7 +73,7 @@ var DateFilterModal = Modal.extend({
 						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-before-equals" value="<=" data-operator="before&equals"> Before&Equals</label>' +
 					'</div>' +
 					'<div class="form-group-selection">' +
-						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-notbetween" value=">||<" data-operator="notbetween"> Not Between</label><br>' +
+						'<label><input type="radio" name="operator-radio" class="operator-radio" id="op-notbetween" value=">=||<=" data-operator="notbetween"> Not Between</label><br>' +
 					'</div>' +
 					'<div class="inline-form-group">' +
 						'<div class="form-group" id="div-selection-date" hidden>' +
@@ -107,7 +107,7 @@ var DateFilterModal = Modal.extend({
 				'<span class="i18n">Fixed Date:</span><br>' +
 				'<div class="selection-options">' +
 					'<label><input type="radio" name="fixed-radio" id="fd-yesterday"> Yesterday</label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-day"> Today</label>' +
+					'<label><input type="radio" name="fixed-radio" id="fd-today"> Today</label>' +
 					'<label><input type="radio" name="fixed-radio" id="fd-week"> Current Week</label>' +
 					'<label><input type="radio" name="fixed-radio" id="fd-month"> Current Month</label>' +
 					'<label><input type="radio" name="fixed-radio" id="fd-quarter"> Current Quarter</label><br>' +
@@ -316,7 +316,12 @@ var DateFilterModal = Modal.extend({
 						if (name === value.name.toLowerCase()) {
 							$(radio).val(self.dataLevels[key].analyzerDateFormat);
 						}
-						else if (name === 'yesterday' && value.name.toLowerCase() === 'day') {
+						else if ((name === 'yesterday' || name === 'today') &&
+							value.name === self.name &&
+							!(_.isEmpty(self.dataLevels[key].analyzerDateFormat)) &&
+							self.dataLevels[key].analyzerDateFormat !== undefined &&
+							self.dataLevels[key].analyzerDateFormat !== null &&
+							self.dataLevels[key].levelType === 'TIME_DAYS') {
 							$(radio).val(self.dataLevels[key].analyzerDateFormat);
 						}
 					});
@@ -507,7 +512,7 @@ var DateFilterModal = Modal.extend({
 			});
 		}
 		else{
-			logExp.parent = "";
+			logExp.parent = '';
 		}
 
 		this.template_mdx = this.template_mdx.replace(/{(\w+)}/g, function(m, p) {
@@ -527,36 +532,40 @@ var DateFilterModal = Modal.extend({
 				for (i = 0; i < len; i++) {
 					logExp.dates = this.selectedDates[i];
 
-					if (logExp.comparisonOperator === '>&&<') {
+					if (logExp.comparisonOperator === '>=|<=') {
 						if (i === 0) {
-							logExp.comparisonOperator = logExp.comparisonOperator.split('&&')[0];
+							logExp.comparisonOperator = logExp.comparisonOperator.split('|')[0];
 							this.template_days_mdx = this.template_days_mdx.replace(/{(\w+)}/g, function(m, p) {
 								return logExp[p];
 							});
-							logExp.comparisonOperator = '>&&<';
+							logExp.comparisonOperator = '>=|<=';
 						}
 						else {
 							logExp.logicalOperator = 'AND';
-							logExp.comparisonOperator = logExp.comparisonOperator.split('&&')[1];
+							logExp.comparisonOperator = logExp.comparisonOperator.split('|')[1];
 							this.template_days_mdx += this.template_many_years_mdx.replace(/{(\w+)}/g, function(m, p) {
 								return logExp[p];
 							});
 						}
 					}
-					else if (logExp.comparisonOperator === '>||<') {
+					else if (logExp.comparisonOperator === '>=||<=') {
 						if (i === 0) {
+							this.template_days_mdx = 'EXCEPT({parent}.Members, ' + this.template_days_mdx;
+
 							logExp.comparisonOperator = logExp.comparisonOperator.split('||')[0];
 							this.template_days_mdx = this.template_days_mdx.replace(/{(\w+)}/g, function(m, p) {
 								return logExp[p];
 							});
-							logExp.comparisonOperator = '>||<';
+							logExp.comparisonOperator = '>=||<=';
 						}
 						else {
-							logExp.logicalOperator = 'OR';
+							logExp.logicalOperator = 'AND';
 							logExp.comparisonOperator = logExp.comparisonOperator.split('||')[1];
 							this.template_days_mdx += this.template_many_years_mdx.replace(/{(\w+)}/g, function(m, p) {
 								return logExp[p];
 							});
+
+							return this.template_days_mdx + '))';
 						}
 					}
 					else {
@@ -566,7 +575,12 @@ var DateFilterModal = Modal.extend({
 							});
 						}
 						else {
-							logExp.logicalOperator = 'OR';
+							if (logExp.comparisonOperator === '<>') {
+								logExp.logicalOperator = 'AND';
+							}
+							else {
+								logExp.logicalOperator = 'OR';
+							}
 							this.template_days_mdx += this.template_many_years_mdx.replace(/{(\w+)}/g, function(m, p) {
 								return logExp[p];
 							});
@@ -897,7 +911,7 @@ var DateFilterObserver = Backbone.View.extend({
 			for (var name in axis.hierarchies[i].levels) {
 				if (axis.hierarchies[i].levels.hasOwnProperty(name)) {
 					arrAxis.push('[' + cubeName + '].[' + axis.hierarchies[i].dimension + '].[' +
-						axis.hierarchies[i].caption + '].[' + name + ']');
+						axis.hierarchies[i].dimension + '.' + axis.hierarchies[i].caption + '].[' + name + ']');
 				}
 			}
 		}
