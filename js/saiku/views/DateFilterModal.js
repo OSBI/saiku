@@ -753,8 +753,7 @@ var DateFilterModal = Modal.extend({
 	},
 
 	get_uuid: function(data) {
-		return '[' + data.cube + '].[' + data.dimension + '].[' + data.dimension + '.' +
-			data.hierarchy + '].[' + data.name + ']';
+		return '[' + data.cube + '].' + this.dimHier + '.[' + data.name + ']';
 	},
 
 	set_date_filter: function(data) {
@@ -912,8 +911,7 @@ var DateFilterObserver = Backbone.View.extend({
 		for (i = 0; i < len; i++) {
 			for (var name in axis.hierarchies[i].levels) {
 				if (axis.hierarchies[i].levels.hasOwnProperty(name)) {
-					arrAxis.push('[' + cubeName + '].[' + axis.hierarchies[i].dimension + '].[' +
-						axis.hierarchies[i].dimension + '.' + axis.hierarchies[i].caption + '].[' + name + ']');
+					arrAxis.push('[' + cubeName + '].' + axis.hierarchies[i].name + '.[' + name + ']');
 				}
 			}
 		}
