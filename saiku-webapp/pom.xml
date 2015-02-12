@@ -19,7 +19,6 @@
         <pluginpath>../webapps/ROOT/js/saiku/plugins/</pluginpath>
     </properties>
     <build>
-        <!-- <outputDirectory>target/WEB-INF/classes</outputDirectory> -->
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -143,11 +142,6 @@
                         <phase>prepare-package</phase>
                         <configuration>
                             <tasks>
-                              <!--  <copy todir="${basedir}/target/saiku-webapp-${project.version}/WEB-INF">
-                                    <fileset dir="${basedir}/target">
-                                        <include name="saiku-beans.xml" />
-                                    </fileset>
-                                </copy>-->
                             </tasks>
                         </configuration>
                         <goals>
@@ -188,15 +182,11 @@
         </plugins>
     </build>
     <dependencies>
-       <!-- <dependency>
-            <groupId>org.jasig.cas.client</groupId>
-            <artifactId>cas-client-core</artifactId>
-        </dependency>-->
         <dependency>
             <groupId>org.jasig.cas.client</groupId>
             <artifactId>cas-client-integration-tomcat-common</artifactId>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>org.jasig.cas.client</groupId>
             <artifactId>cas-client-integration-tomcat-v7</artifactId>
         </dependency>
@@ -262,24 +252,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--<dependency>
-            <groupId>org.codehaus.enunciate</groupId>
-            <artifactId>enunciate-jersey-rt</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.sun.jersey</groupId>
-                    <artifactId>jersey-server</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jvnet</groupId>
-                    <artifactId>mimepull</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>-->
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
-            <version>1.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jvnet.mimepull</groupId>
+            <artifactId>mimepull</artifactId>
         </dependency>
         <dependency>
             <groupId>hsqldb</groupId>
@@ -309,12 +288,6 @@
     </dependencies>
     <reporting>
         <plugins>
-            <!-- FIXME: currently produces a NullPointerException <plugin> <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-changes-plugin</artifactId> <version>2.0</version> <configuration>
-                <component>12311070</component> <resolutionIds>1</resolutionIds> <statusIds>5,6</statusIds>
-                <fixVersionIds>${jira.fix.version.ids}</fixVersionIds> </configuration> <reportSets>
-                <reportSet> <reports> <report>jira-report</report> </reports> </reportSet>
-                </reportSets> </plugin> -->
             <!-- Produce Source cross references -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

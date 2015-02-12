@@ -307,6 +307,9 @@ public class ExporterResource {
 				"content-length", outfile.length).build();
 		  }
 		  else{
+            if(name == null || name.equals("")){
+              name = "chart";
+            }
 			return Response.ok(b).type(converter.getContentType()).header(
 				"content-disposition",
 				"attachment; filename = "+name+"." + converter.getExtension()).header(

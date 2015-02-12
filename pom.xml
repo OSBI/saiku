@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.saiku</groupId>
@@ -10,7 +11,6 @@
         <developerConnection>
             scm:git:git@github.com:OSBI/saiku.git
         </developerConnection>
-        <tag>3.0.9-SNAPSHOT</tag>
     </scm>
     <modules>
         <module>saiku-core</module>
@@ -19,8 +19,8 @@
         <!--        <module>saiku-web-tests</module>-->
         <module>saiku-server</module>
         <module>saiku-bi-platform-plugin-p5</module>
-<!--        <module>saiku-web-tests</module>-->
-      <!--  <module>saiku-bi-platform-plugin</module>-->
+        <!--        <module>saiku-web-tests</module>-->
+        <!--  <module>saiku-bi-platform-plugin</module>-->
     </modules>
     <distributionManagement>
         <repository>
@@ -212,38 +212,14 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
-        <!--<dependency>
-            <groupId>net.serenity-bdd</groupId>
-            <artifactId>core</artifactId>
-            <version>1.0.23</version>
-        </dependency>
-        <dependency>
-            <groupId>net.serenity-bdd</groupId>
-            <artifactId>serenity-jbehave</artifactId>
-            <version>1.0.10</version>
-        </dependency>-->
     </dependencies>
     <dependencyManagement>
         <dependencies>
-            <!-- <dependency>
-                 <groupId>net.serenity-bdd</groupId>
-                 <artifactId>core</artifactId>
-                 <version>1.0.10</version>
-                 <scope>test</scope>
-             </dependency>
-             <dependency>
-                 <groupId>net.serenity-bdd</groupId>
-                 <artifactId>serenity-jbehave</artifactId>
-                 <version>1.0.10</version>
-                 <scope>test</scope>
-
-             </dependency>-->
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox</artifactId>
                 <version>2.0.0-20141212.210914-782</version>
             </dependency>
-
             <dependency>
                 <groupId>com.sun.jersey.jersey-test-framework</groupId>
                 <artifactId>jersey-test-framework-core</artifactId>
@@ -277,11 +253,6 @@
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-taglibs</artifactId>
-                <version>${spring.security.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jasig.cas.client</groupId>
                 <artifactId>cas-client-core</artifactId>
                 <version>3.3.2</version>
@@ -305,6 +276,11 @@
                 <groupId>org.apache.jackrabbit</groupId>
                 <artifactId>jackrabbit-api</artifactId>
                 <version>2.8.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jvnet.mimepull</groupId>
+                <artifactId>mimepull</artifactId>
+                <version>1.9.4</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.jackrabbit</groupId>
@@ -565,21 +541,10 @@
                 <artifactId>batik-bridge</artifactId>
                 <version>1.7</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-svg-dom</artifactId>
                 <version>1.7</version>
-            </dependency>
-            <!--<dependency>
-                <groupId>avalon-framework</groupId>
-                <artifactId>avalon-framework</artifactId>
-                <version>4.2.0</version>
-            </dependency>-->
-            <dependency>
-                <groupId>org.apache.xmlgraphics</groupId>
-                <artifactId>xmlgraphics-commons</artifactId>
-                <version>1.2</version>
             </dependency>
             <dependency>
                 <groupId>iText</groupId>
@@ -592,16 +557,6 @@
                 <version>${project.version}</version>
                 <type>war</type>
             </dependency>
-            <!--<dependency>
-                <groupId>bi.meteorite</groupId>
-                <artifactId>saikuee-service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>bi.meteorite</groupId>
-                <artifactId>saikuee-web</artifactId>
-                <version>${project.version}</version>
-            </dependency>-->
             <dependency>
                 <groupId>org.saiku</groupId>
                 <artifactId>saiku-olap-util</artifactId>
@@ -675,11 +630,6 @@
                 <version>${jersey.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-servlet</artifactId>
-                <version>${jersey.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.sun.jersey.contribs</groupId>
                 <artifactId>jersey-spring</artifactId>
                 <version>${jersey.version}</version>
@@ -705,19 +655,14 @@
                 <version>${jersey.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jvnet.mimepull</groupId>
-                <artifactId>mimepull</artifactId>
-                <version>1.9.4</version>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-json</artifactId>
+                <version>${jersey.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.ws.rs</groupId>
                 <artifactId>jsr311-api</artifactId>
                 <version>1.1.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.jersey.jersey-test-framework</groupId>
-                <artifactId>jersey-test-framework-core</artifactId>
-                <version>${jersey.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.grizzly</groupId>
@@ -936,14 +881,14 @@
                 <version>2.3</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>fontbox</artifactId>
+                <version>2.0.0-20150122.193253-1019</version>
+            </dependency>
+            <dependency>
                 <groupId>pentaho</groupId>
                 <artifactId>cda</artifactId>
                 <version>TRUNK-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>2.4</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
@@ -965,7 +910,6 @@
                 <artifactId>jstl</artifactId>
                 <version>1.2</version>
             </dependency>
-
             <dependency>
                 <groupId>commons-lang</groupId>
                 <artifactId>commons-lang</artifactId>
@@ -1012,7 +956,6 @@
                 <artifactId>calcite-avatica</artifactId>
                 <version>${calcite.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.calcite</groupId>
                 <artifactId>calcite-mongodb</artifactId>

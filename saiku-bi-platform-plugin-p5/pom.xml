@@ -5,7 +5,6 @@
         <version>3.1-SNAPSHOT</version>
     </parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.saiku</groupId>
 	<artifactId>saiku-bi-platform-plugin-p5</artifactId>
 	<packaging>jar</packaging>
 	<version>3.1-SNAPSHOT</version>
@@ -150,6 +149,26 @@
 									<artifactId>batik-codec</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
+                                <!--<artifactItem>
+                                    <groupId>batik</groupId>
+                                    <artifactId>batik-ext</artifactId>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>-->
+                                <artifactItem>
+                                    <groupId>org.apache.xmlgraphics</groupId>
+                                    <artifactId>batik-svg-dom</artifactId>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.xmlgraphics</groupId>
+                                    <artifactId>batik-bridge</artifactId>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.xmlgraphics</groupId>
+                                    <artifactId>batik-script</artifactId>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
 								<!--<artifactItem>
 									<groupId>avalon-framework</groupId>
 									<artifactId>avalon-framework</artifactId>
@@ -180,7 +199,18 @@
 									<artifactId>fop</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
-							</artifactItems>
+                                <artifactItem>
+                                    <groupId>net.sourceforge.htmlcleaner</groupId>
+                                    <artifactId>htmlcleaner</artifactId>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.pdfbox</groupId>
+                                    <artifactId>fontbox</artifactId>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
+
+                            </artifactItems>
 						</configuration>
 					</execution>
 				</executions>
@@ -583,12 +613,68 @@
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-transcoder</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>batik-js</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-codec</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>batik-js</artifactId>
+                </exclusion>
+            </exclusions>
 		</dependency>
-
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>fontbox</artifactId>
+        </dependency>
+       <!-- <dependency>
+            <groupId>batik</groupId>
+            <artifactId>batik-ext</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>batik-js</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>-->
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-svg-dom</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>batik-js</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-bridge</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>batik-js</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-script</artifactId>
+            <version>1.7</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>batik-js</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>xmlgraphics-commons</artifactId>
@@ -609,8 +695,10 @@
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>fop</artifactId>
-			<version>0.94</version>
 		</dependency>
-
+        <dependency>
+            <groupId>net.sourceforge.htmlcleaner</groupId>
+            <artifactId>htmlcleaner</artifactId>
+        </dependency>
 	</dependencies>
 </project>
