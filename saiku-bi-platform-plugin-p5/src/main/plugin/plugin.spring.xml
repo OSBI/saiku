@@ -60,6 +60,7 @@
 
 	<bean id="queryResource" class="org.saiku.plugin.resources.PentahoQueryResource">
 		<property name="thinQueryService" ref="thinQueryBean" />
+        <property name="repository" ref="repositoryBean2"/>
 	</bean>
 	
 	<bean id="sessionService" class="org.saiku.plugin.PentahoSessionService">
