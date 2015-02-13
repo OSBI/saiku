@@ -1,6 +1,6 @@
 # [Saiku UI](http://www.meteorite.bi)
 
-[![saiku-view](https://dl.dropboxusercontent.com/u/13927708/SaikuBlog/saiku-view.png)](http://demo.saikuanalytics.com)
+[![saiku-view](http://www.meteorite.bi/images/chart1.jpg)](http://demo.saikuanalytics.com)
 
 A user interface for the analytical tool Saiku. <br />
 For more information, see [Saiku](http://www.meteorite.bi).
