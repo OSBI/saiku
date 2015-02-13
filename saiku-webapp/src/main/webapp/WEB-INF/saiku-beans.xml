@@ -102,6 +102,7 @@
     <bean id="queryResource2" scope="request"
           class="org.saiku.web.rest.resources.Query2Resource">
         <property name="thinQueryService" ref="thinQueryBean" />
+        <property name="repository" ref="repository2bean"/>
     </bean>
 
     <bean id="sessionResource" class="org.saiku.web.rest.resources.SessionResource">
@@ -128,6 +129,7 @@
           class="org.saiku.web.rest.resources.FilterRepositoryResource">
         <property name="olapQueryService" ref="olapQueryBean" />
         <property name="path" value="res:saiku-repository" />
+        <property name="sessionService" ref="sessionService"/>
     </bean>
 
 
