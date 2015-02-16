@@ -40,7 +40,8 @@ var OverwriteModal = Modal.extend({
 
     dummy: function() { return true; },
 
-	save: function(){
+	save: function(event) {
+		event.preventDefault();
 		this.parentobj.save_remote(this.queryname, this.queryfolder, this.parentobj);
 		$(this.el).dialog('destroy').remove();
 	}
