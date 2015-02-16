@@ -84,6 +84,7 @@
           class="org.saiku.web.rest.resources.QueryResource">
         <property name="olapQueryService" ref="olapQueryBean" />
         <property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
+        <property name="repository" ref="repository2bean"/>
     </bean>
 
     <bean id="thinQueryBean" scope="session"
