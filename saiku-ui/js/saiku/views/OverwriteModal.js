@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 OSBI Ltd
+ * Copyright 2015 OSBI Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,49 +14,35 @@
  * limitations under the License.
  */
 
-//goog.provide('saiku.views.AboutModal');
-
-//goog.require('saiku.views.Modal');
-
-
-
 /**
- * The "about us" dialog
+ * The "over write" dialog
  */
 var OverwriteModal = Modal.extend({
-    initialize: function(args) {
-        _.extend(this.options, {
-            title: "Warning "
-        });
+    type: 'info',
 
-		this.queryname = args.name;
-		this.queryfolder = args.foldername;
-		this.parentobj = args.parent;
-
-    },
-
+    message: 'Are you sure you want to overwrite the existing query?',
 
 	buttons: [
-		{ text: "Yes", method: "save" },
-		{ text: "No", method: "close"}
+		{ text: 'Yes', method: 'save' },
+		{ text: 'No', method: 'close' }
 	],
 
-    dummy: function() { return true;},
+    initialize: function(args) {
+        // Initialize properties
+        _.extend(this, args);
 
-    type: "info",
+        this.options.title = 'Warning';
 
-    message: "Are you sure you want to overwrite the existing query?",
+		this.queryname   = this.name;
+		this.queryfolder = this.foldername;
+		this.parentobj   = this.parent;
+    },
 
-	save: function(){
+    dummy: function() { return true; },
 
+	save: function(event) {
+		event.preventDefault();
 		this.parentobj.save_remote(this.queryname, this.queryfolder, this.parentobj);
-		this.close();
-		this.parentobj.close();
-
-	},
-	close: function() {
 		$(this.el).dialog('destroy').remove();
-		$(this.el).remove();
-		return false;
 	}
 });

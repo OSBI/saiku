@@ -450,14 +450,15 @@ var DateFilterModal = Modal.extend({
 	},
 
 	populate: function() {
-		var data = this.get_date_filter();
+		var data = this.get_date_filter(),
+			$selection;
 
 		if (data && !(_.isEmpty(data))) {
 			if (data.type === 'operator') {
-				var $selection = this.$el.find('#selection-radio-operator'),
-					$checked = this.$el.find('#' + data.checked),
+				var $checked = this.$el.find('#' + data.checked),
 					name = $checked.data('operator'),
 					self = this;
+				$selection = this.$el.find('#selection-radio-operator');
 				$selection.prop('checked', true);
 				$checked.prop('checked', true);
 				this.disable_divselections($selection, true);
@@ -486,13 +487,13 @@ var DateFilterModal = Modal.extend({
 				}
 			}
 			else if (data.type === 'fixed-date') {
-				var $selection = this.$el.find('#selection-radio-fixed-date');
+				$selection = this.$el.find('#selection-radio-fixed-date');
 				$selection.prop('checked', true);
 				this.$el.find('#' + data.checked).prop('checked', true);
 				this.disable_divselections($selection, true);
 			}
 			else {
-				var $selection = this.$el.find('#selection-radio-available');
+				$selection = this.$el.find('#selection-radio-available');
 				$selection.prop('checked', true);
 				this.$el.find('#date-input').val(data.periodAmount);
 				this.$el.find('select#period-select option[id="' + data.periodSelect + '"]').prop('selected', true);
@@ -737,6 +738,7 @@ var DateFilterModal = Modal.extend({
 		else {
 			var uuid = this.get_uuid(selectedData);
 			this.workspace.dateFilter.remove(uuid);
+			this.workspace.query.setProperty('saiku.ui.datefilter.data', this.workspace.dateFilter.toJSON());
 		}
 
 		// console.log(mdx);
@@ -768,25 +770,28 @@ var DateFilterModal = Modal.extend({
 			if (dateFilter.get(uuid)) {
 				dateFilter = dateFilter.get(uuid);
 				dateFilter.set(data);
+				this.workspace.query.setProperty('saiku.ui.datefilter.data', dateFilter.toJSON());
 			}
 			else {
 				dateFilter.add(data);
+				this.workspace.query.setProperty('saiku.ui.datefilter.data', dateFilter.toJSON());
 			}
 		}
 		else {
 			dateFilter.add(data);
+			this.workspace.query.setProperty('saiku.ui.datefilter.data', dateFilter.toJSON());
 		}
 	},
 
 	get_date_filter: function() {
-		var data = {
+		var objData = {
 			cube: this.get_cube_name(),
 			dimension: this.dimension,
 			hierarchy: this.hierarchy,
 			name: this.name
 		};
 
-		var uuid = this.get_uuid(data),
+		var uuid = this.get_uuid(objData),
 			data = this.workspace.dateFilter.get(uuid);
 
 		data = data ? data.toJSON() : [];
@@ -811,6 +816,8 @@ var DateFilterModal = Modal.extend({
 		}
 
 		this.workspace.dateFilter.remove(uuid);
+
+		this.workspace.query.setProperty('saiku.ui.datefilter.data', this.workspace.dateFilter.toJSON());
 
 		this.clear_selections(event);
 
@@ -866,14 +873,10 @@ var DateFilterObserver = Backbone.View.extend({
     receive_data: function(args) {
 		var objDateFilter = this.workspace.dateFilter.toJSON();
 
-		this.workspace.$el.find('.dateFilterObserver').addClass('disabled_toolbar');
+		this.check_dateFilter_saved();
 
 		if (objDateFilter && !(_.isEmpty(objDateFilter))) {
-			this.workspace.$el.find('.dateFilterObserver').removeClass('disabled_toolbar');
         	return _.delay(this.workspace_levels, 1000, args);
-        }
-        else {
-    		this.workspace.$el.find('.dateFilterObserver').addClass('disabled_toolbar');
         }
     },
 
@@ -919,6 +922,20 @@ var DateFilterObserver = Backbone.View.extend({
 		return arrAxis;
     },
 
+	check_dateFilter_saved: function() {
+		var checkDateFilterSaved = this.workspace.checkDateFilterSaved;
+
+		if ((this.workspace.item && !(_.isEmpty(this.workspace.item))) &&
+			checkDateFilterSaved === undefined) {
+			var data = this.workspace.query.getProperty('saiku.ui.datefilter.data');
+			this.workspace.dateFilter.add(data);
+			this.workspace.checkDateFilterSaved = true;
+		}
+		else {
+			this.workspace.checkDateFilterSaved = true;
+		}
+	},
+
     check_dateFilter_model: function(data) {
     	var arrRemove = [],
     		arrChecked = [],
@@ -954,9 +971,10 @@ var DateFilterObserver = Backbone.View.extend({
 		}
 		else if (lenData === 0 && (objDateFilter && !(_.isEmpty(objDateFilter)))) {
 			for (var j = 0; j < lenDateFilter; j++) {
-				this.workspace.$el.find('.dateFilterObserver').addClass('disabled_toolbar');
 				this.workspace.dateFilter.remove(objDateFilter[j].id);
 			}
+
+			this.workspace.query.setProperty('saiku.ui.datefilter.data', this.workspace.dateFilter.toJSON());
 		}
 
 		this.remove_dateFilter_model(_.difference(arrRemove, arrChecked));
@@ -969,6 +987,8 @@ var DateFilterObserver = Backbone.View.extend({
     	for (i = 0; i < lenData; i++) {
     		this.workspace.dateFilter.remove(data[i]);
     	}
+
+    	this.workspace.query.setProperty('saiku.ui.datefilter.data', this.workspace.dateFilter.toJSON());
     }
 });
 
