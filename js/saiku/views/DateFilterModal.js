@@ -737,6 +737,7 @@ var DateFilterModal = Modal.extend({
 		else {
 			var uuid = this.get_uuid(selectedData);
 			this.workspace.dateFilter.remove(uuid);
+			this.workspace.query.setProperty('saiku.ui.datefilter.data', this.workspace.dateFilter.toJSON());
 		}
 
 		// console.log(mdx);
@@ -768,13 +769,16 @@ var DateFilterModal = Modal.extend({
 			if (dateFilter.get(uuid)) {
 				dateFilter = dateFilter.get(uuid);
 				dateFilter.set(data);
+				this.workspace.query.setProperty('saiku.ui.datefilter.data', dateFilter.toJSON());
 			}
 			else {
 				dateFilter.add(data);
+				this.workspace.query.setProperty('saiku.ui.datefilter.data', dateFilter.toJSON());
 			}
 		}
 		else {
 			dateFilter.add(data);
+			this.workspace.query.setProperty('saiku.ui.datefilter.data', dateFilter.toJSON());
 		}
 	},
 
@@ -811,6 +815,8 @@ var DateFilterModal = Modal.extend({
 		}
 
 		this.workspace.dateFilter.remove(uuid);
+
+		this.workspace.query.setProperty('saiku.ui.datefilter.data', this.workspace.dateFilter.toJSON());
 
 		this.clear_selections(event);
 
@@ -866,6 +872,8 @@ var DateFilterObserver = Backbone.View.extend({
     receive_data: function(args) {
 		var objDateFilter = this.workspace.dateFilter.toJSON();
 
+		this.check_dateFilter_saved();
+
 		if (objDateFilter && !(_.isEmpty(objDateFilter))) {
         	return _.delay(this.workspace_levels, 1000, args);
         }
@@ -913,6 +921,20 @@ var DateFilterObserver = Backbone.View.extend({
 		return arrAxis;
     },
 
+	check_dateFilter_saved: function() {
+		var checkDateFilterSaved = this.workspace.checkDateFilterSaved;
+
+		if ((this.workspace.item && !(_.isEmpty(this.workspace.item))) &&
+			checkDateFilterSaved === undefined) {
+			var data = this.workspace.query.getProperty('saiku.ui.datefilter.data');
+			this.workspace.dateFilter.add(data);
+			this.workspace.checkDateFilterSaved = true;
+		}
+		else {
+			this.workspace.checkDateFilterSaved = true;
+		}
+	},
+
     check_dateFilter_model: function(data) {
     	var arrRemove = [],
     		arrChecked = [],
@@ -950,6 +972,8 @@ var DateFilterObserver = Backbone.View.extend({
 			for (var j = 0; j < lenDateFilter; j++) {
 				this.workspace.dateFilter.remove(objDateFilter[j].id);
 			}
+
+			this.workspace.query.setProperty('saiku.ui.datefilter.data', this.workspace.dateFilter.toJSON());
 		}
 
 		this.remove_dateFilter_model(_.difference(arrRemove, arrChecked));
@@ -962,6 +986,8 @@ var DateFilterObserver = Backbone.View.extend({
     	for (i = 0; i < lenData; i++) {
     		this.workspace.dateFilter.remove(data[i]);
     	}
+
+    	this.workspace.query.setProperty('saiku.ui.datefilter.data', this.workspace.dateFilter.toJSON());
     }
 });
 
