@@ -4,8 +4,6 @@ import org.saiku.service.datasource.RepositoryDatasourceManager;
 
 import org.apache.jackrabbit.webdav.*;
 import org.apache.jackrabbit.webdav.simple.SimpleWebdavServlet;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.io.IOException;
 
@@ -27,10 +25,10 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
         super.init(config);
         ServletContext context = getServletContext();
 
-        WebApplicationContext applicationContext =
+      /*  WebApplicationContext applicationContext =
                 WebApplicationContextUtils
                         .getWebApplicationContext(context);
-        bean = (RepositoryDatasourceManager) applicationContext.getBean("repositoryDsManager");
+        bean = (RepositoryDatasourceManager) applicationContext.getBean("repositoryDsManager");*/
     }
 
     @Override

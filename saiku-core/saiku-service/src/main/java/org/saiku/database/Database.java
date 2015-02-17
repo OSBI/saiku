@@ -8,7 +8,6 @@ import org.saiku.service.importer.LegacyImporterImpl;
 import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -25,7 +24,6 @@ import javax.servlet.ServletContext;
  */
 public class Database {
 
-    @Autowired
     ServletContext servletContext;
 
     private JdbcDataSource ds;

@@ -1,6 +1,5 @@
 package org.saiku.datasources.connection.encrypt;
 
-import org.springframework.dao.DataAccessException;
 
 /**
  * Hello world!
@@ -33,7 +32,7 @@ public class TripleDesPasswordEncoder {
      * {@inheritDoc}
      */
     public String encode( String rawPass)
-            throws DataAccessException
+            throws Exception
     {
         Object salt = null;
         // The password may be empty. Not recommended, but.....

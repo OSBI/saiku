@@ -1,11 +1,10 @@
 package org.saiku.database.dao;
 
+import org.saiku.database.dto.User;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.saiku.database.dao.UserDAO;
-import org.saiku.database.dto.User;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.List;
  */
 public class UserDAOImpl implements UserDAO {
 
-  @Autowired
   private SessionFactory sessionFactory;
 
   private Session openSession() {

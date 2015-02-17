@@ -1,7 +1,6 @@
 package org.saiku.service;
 
 import org.saiku.service.util.dto.Plugin;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -14,7 +13,6 @@ public class PlatformUtilsService {
 
   private String filePath;
 
-  @Autowired
   public void setPath(String path) {
     this.filePath = path;
   }
