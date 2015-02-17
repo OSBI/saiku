@@ -450,14 +450,15 @@ var DateFilterModal = Modal.extend({
 	},
 
 	populate: function() {
-		var data = this.get_date_filter();
+		var data = this.get_date_filter(),
+			$selection;
 
 		if (data && !(_.isEmpty(data))) {
 			if (data.type === 'operator') {
-				var $selection = this.$el.find('#selection-radio-operator'),
-					$checked = this.$el.find('#' + data.checked),
+				var $checked = this.$el.find('#' + data.checked),
 					name = $checked.data('operator'),
 					self = this;
+				$selection = this.$el.find('#selection-radio-operator');
 				$selection.prop('checked', true);
 				$checked.prop('checked', true);
 				this.disable_divselections($selection, true);
@@ -486,13 +487,13 @@ var DateFilterModal = Modal.extend({
 				}
 			}
 			else if (data.type === 'fixed-date') {
-				var $selection = this.$el.find('#selection-radio-fixed-date');
+				$selection = this.$el.find('#selection-radio-fixed-date');
 				$selection.prop('checked', true);
 				this.$el.find('#' + data.checked).prop('checked', true);
 				this.disable_divselections($selection, true);
 			}
 			else {
-				var $selection = this.$el.find('#selection-radio-available');
+				$selection = this.$el.find('#selection-radio-available');
 				$selection.prop('checked', true);
 				this.$el.find('#date-input').val(data.periodAmount);
 				this.$el.find('select#period-select option[id="' + data.periodSelect + '"]').prop('selected', true);
@@ -783,14 +784,14 @@ var DateFilterModal = Modal.extend({
 	},
 
 	get_date_filter: function() {
-		var data = {
+		var objData = {
 			cube: this.get_cube_name(),
 			dimension: this.dimension,
 			hierarchy: this.hierarchy,
 			name: this.name
 		};
 
-		var uuid = this.get_uuid(data),
+		var uuid = this.get_uuid(objData),
 			data = this.workspace.dateFilter.get(uuid);
 
 		data = data ? data.toJSON() : [];
