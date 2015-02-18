@@ -5,13 +5,13 @@
     <groupId>org.saiku</groupId>
     <artifactId>saiku</artifactId>
     <packaging>pom</packaging>
-    <version>3.1-SNAPSHOT</version>
+    <version>3.0.9.12</version>
     <name>Saiku Module Project</name>
     <scm>
         <developerConnection>
             scm:git:git@github.com:OSBI/saiku.git
         </developerConnection>
-      <tag>HEAD</tag>
+      <tag>saiku-3.0.9.12</tag>
   </scm>
     <modules>
         <module>saiku-core</module>
