@@ -492,7 +492,7 @@ public class ThinQueryService implements Serializable {
                 for (CellSetAxis axis : cs.getAxes()) {
                     int posIndex = 0;
                     for (Hierarchy h : axis.getAxisMetaData().getHierarchies()) {
-                        if (h.getUniqueName().equals(hierarchyName) || h.getName().equals(hierarchyName)) {
+                        if (h!=null && (h.getUniqueName().equals(hierarchyName) || h.getName().equals(hierarchyName))) {
                             log.debug("Found hierarchy in the result: " + hierarchyName);
                             if (h.getLevels().size() == 1) {
                                 break;
