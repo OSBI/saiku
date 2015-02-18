@@ -152,7 +152,7 @@ public class Database {
             statement.execute("INSERT INTO users(username,password,email, enabled)\n"
                     + "VALUES ('admin','admin', 'test@admin.com',TRUE);" +
                     "INSERT INTO users(username,password,enabled)\n"
-                    + "VALUES ('smith','pravah@001', TRUE);");
+                    + "VALUES ('smith','smith', TRUE);");
             statement.execute(
                     "INSERT INTO user_roles (user_id, username, ROLE)\n"
                             + "VALUES (1, 'admin', 'ROLE_USER');" +
