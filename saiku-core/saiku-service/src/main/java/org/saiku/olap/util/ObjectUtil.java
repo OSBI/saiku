@@ -39,8 +39,8 @@ import java.sql.Statement;
 import java.util.*;
 
 import mondrian.olap.Annotation;
+import mondrian.olap4j.Checker;
 import mondrian.olap4j.LevelInterface;
-import mondrian.olap4j.MondrianOlap4jLevel;
 
 
 /**
@@ -140,13 +140,14 @@ public class ObjectUtil {
 
   @NotNull
   private static SaikuLevel convert(@NotNull Level level) {
+    Checker c= new Checker();
     try {
       try {
         Class.forName("mondrian.olap4j.MondrianOlap4jLevelExtend");
         //Class.forName("bi.meteorite.CheckClass");
         Class<LevelInterface> _tempClass =
             (Class<LevelInterface>) Class.forName("mondrian.olap4j.MondrianOlap4jLevelExtend");
-        if(level instanceof MondrianOlap4jLevel) {
+        if(c.checker(level)){
           Constructor<LevelInterface> ctor = _tempClass.getDeclaredConstructor(org.olap4j.metadata.Level.class);
           LevelInterface test = ctor.newInstance(level);
           HashMap<String, String> m = null;
