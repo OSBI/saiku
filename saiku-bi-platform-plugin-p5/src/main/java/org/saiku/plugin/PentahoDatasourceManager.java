@@ -15,26 +15,6 @@
  */
 package org.saiku.plugin;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import mondrian.olap.MondrianProperties;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.pentaho.platform.api.engine.IPentahoSession;
-import org.pentaho.platform.api.repository.RepositoryException;
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.plugin.action.mondrian.catalog.IMondrianCatalogService;
-import org.pentaho.platform.plugin.action.olap.IOlapService;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.ISaikuConnection;
 import org.saiku.datasources.connection.RepositoryFile;
@@ -44,9 +24,23 @@ import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.user.UserService;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.api.repository.RepositoryException;
+import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
+import org.pentaho.platform.plugin.action.mondrian.catalog.IMondrianCatalogService;
+import org.pentaho.platform.plugin.action.olap.IOlapService;
+
+import java.util.*;
+
+import mondrian.olap.MondrianProperties;
+
 public class PentahoDatasourceManager implements IDatasourceManager {
 
-    private static final Log LOG = LogFactory.getLog(PentahoDatasourceManagerNew.class);
+    private static final Log LOG = LogFactory.getLog(PentahoDatasourceManager.class);
 
     private Map<String, SaikuDatasource> datasources =
         Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
