@@ -23,6 +23,7 @@
         <pluginpath>${basedir}/target/apache-tomcat-6.0.18/webapps/ROOT/js/saiku/plugins/</pluginpath>
         <min>nomin</min>
 
+
     </properties>
 <repositories>
 <repository>
@@ -368,7 +369,7 @@
         <profile>
             <id>integration</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <build>
                 <plugins>
@@ -378,6 +379,7 @@
                         <version>2.11</version>
                         <configuration>
                             <skip>true</skip>
+
                             <systemPropertyVariables>
                                 <webdriver.driver>${webdriver.driver}</webdriver.driver>
                                 <webdriver.chrome.driver>${webdriver.chrome.driver}</webdriver.chrome.driver>
