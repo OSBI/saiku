@@ -136,7 +136,7 @@
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>2.11</version>
                     <configuration>
-                        <skipTests>true</skipTests>
+                        <skipTests>false</skipTests>
                     </configuration>
                 </plugin>
 
@@ -378,8 +378,6 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>2.11</version>
                         <configuration>
-                            <skip>true</skip>
-
                             <systemPropertyVariables>
                                 <webdriver.driver>${webdriver.driver}</webdriver.driver>
                                 <webdriver.chrome.driver>${webdriver.chrome.driver}</webdriver.chrome.driver>
