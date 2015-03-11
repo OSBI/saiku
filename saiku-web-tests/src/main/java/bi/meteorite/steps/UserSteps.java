@@ -128,6 +128,12 @@ public class UserSteps {
 
   }
 
+  @Step
+  public void closeTab(int i){
+
+    login.close_tab(i);
+  }
+
   public void user_should_see_login() {
     assertThat(login.findByID("username").get(0).isDisplayed(), is(true));
   }

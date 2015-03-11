@@ -33,22 +33,21 @@ public class CreateQuerySteps {
   @Steps
   UserSteps steps;
 
-  @Given("a server user 'admin' with password 'admin' has logged in")
-  @Pending
-  public void givenAServerUseradminWithPasswordadminHasLoggedIn() {
-    // PENDING
+  @Given("a server user '$user' with password '$password' has logged in")
+  public void givenAServerUseradminWithPasswordadminHasLoggedIn(String user, String password) {
+    steps.is_the_home_page();
+    steps.logsin(user, password);
   }
 
   @When("a new query is created")
-  @Pending
   public void whenANewQueryIsCreated() {
-    // PENDING
+    steps.createquery();
   }
 
   @When("a second new query is created")
   @Pending
   public void whenASecondNewQueryIsCreated() {
-    // PENDING
+    steps.createquery();
   }
 
   @When("The tab is right clicked")
@@ -83,28 +82,26 @@ public class CreateQuerySteps {
     // PENDING
   }
 
-  @When("the cube 'Sales' is selected")
-  @Pending
-  public void whenTheCubeSalesIsSelected() {
-    // PENDING
+  @When("the cube '$cube' is selected")
+  public void whenTheCubeSalesIsSelected(String cube) {
+    steps.selectCube(cube);
   }
 
-  @When("the measure 'Store Sales' is placed in measures")
-  @Pending
-  public void whenTheMeasureStoreSalesIsPlacedInMeasures() {
-    // PENDING
+  @When("the measure '$measure' is placed in measures")
+  public void whenTheMeasureStoreSalesIsPlacedInMeasures(String measure) {
+    steps.click_link(measure, false);
   }
 
-  @When("the level 'Product Family' from the 'Product' dimension is placed on rows")
-  @Pending
-  public void whenTheLevelProductFamilyFromTheProductDimensionIsPlacedOnRows() {
-    // PENDING
+  @When("the level '$level' from the '$dimension' dimension is placed on rows")
+  public void whenTheLevelProductFamilyFromTheProductDimensionIsPlacedOnRows(String level, String dimension) {
+    steps.click_link(dimension, false);
+    steps.click_link(level, true);
   }
 
   @Then("the close button is pressed")
   @Pending
   public void thenTheCloseButtonIsPressed() {
-    // PENDING
+    steps.closeTab(1);
   }
 
   @Then("the window should be closed")

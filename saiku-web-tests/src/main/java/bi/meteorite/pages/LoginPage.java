@@ -54,6 +54,9 @@ public class LoginPage extends PageObject {
   @FindBy(className = "cubes")
   private WebElementFacade cube_select;
 
+  @FindBy(xpath="//div[@class=\"tabs\"]/ul")
+  private WebElementFacade tablist;
+
   public void enter_username(String keyword) {
     username.type(keyword);
   }
@@ -128,5 +131,12 @@ public class LoginPage extends PageObject {
       }
     }
     return null;
+  }
+
+  public void close_tab(int i) {
+    List<WebElement> tabs = tablist.findElements(By.tagName("li"));
+
+    tabs.get(i).findElements(org.openqa.selenium.By.className("close_tab")).get(0).click();
+
   }
 }
