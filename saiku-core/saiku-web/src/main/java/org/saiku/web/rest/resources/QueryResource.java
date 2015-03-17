@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 package org.saiku.web.rest.resources;
-
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import org.saiku.olap.dto.*;
 import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.olap.dto.resultset.CellDataSet;
@@ -37,12 +37,12 @@ import org.saiku.web.rest.util.RestUtil;
 import org.saiku.web.rest.util.ServletUtil;
 import org.saiku.web.svg.PdfReport;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.TypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -725,7 +725,13 @@ public class QueryResource {
 		cellPosition.add(pInt);
 	  }
 	  ObjectMapper mapper = new ObjectMapper();
-	  Map<String, List<String>> levels = mapper.readValue(returns, TypeFactory.mapType(Map.class, TypeFactory.fromClass(String.class), TypeFactory.collectionType(ArrayList.class, String.class)));
+      JavaType ct =
+          mapper.getTypeFactory().constructCollectionType(ArrayList.class, String.class);
+
+      JavaType st = mapper.getTypeFactory().uncheckedSimpleType(String.class);
+	  Map<String, List<String>> levels = mapper.readValue(returns,
+          mapper.getTypeFactory().constructMapType(Map.class, st, ct));
+
 	  SaikuQuery q = olapQueryService.drillacross(queryName, cellPosition, levels);
 	  return q;
 	}
@@ -1014,7 +1020,8 @@ public class QueryResource {
 			List<List<Integer>> realPositions = new ArrayList<List<Integer>>();
 			if (StringUtils.isNotBlank(positionListString)) {
 				ObjectMapper mapper = new ObjectMapper();
-				String[] positions = mapper.readValue(positionListString, TypeFactory.arrayType(String.class));
+              String[] positions = mapper.readValue(positionListString, mapper.getTypeFactory().constructArrayType(String
+                    .class));
 				if (positions != null && positions.length > 0) {
 					for (String position : positions) {
 						String[] rPos = position.split(":");
@@ -1052,7 +1059,8 @@ public class QueryResource {
 
 			if (selectionJSON != null) {
 				ObjectMapper mapper = new ObjectMapper();
-				List<SelectionRestObject> selections = mapper.readValue(selectionJSON, TypeFactory.collectionType(ArrayList.class, SelectionRestObject.class));
+              List<SelectionRestObject> selections = mapper.readValue(selectionJSON,
+                  mapper.getTypeFactory().constructCollectionType(ArrayList.class, SelectionRestObject.class));
 
 				// remove stuff first, then add, removing removes all selections for that level first
 				for (SelectionRestObject selection : selections) {
@@ -1111,7 +1119,8 @@ public class QueryResource {
 				LinkedList<String> sels = (LinkedList<String>) formParams.get("selections");
 				String selectionJSON = (String) sels.getFirst();
 				ObjectMapper mapper = new ObjectMapper(); // can reuse, share globally
-				List<SelectionRestObject> selections = mapper.readValue(selectionJSON, TypeFactory.collectionType(ArrayList.class, SelectionRestObject.class));
+              List<SelectionRestObject> selections = mapper.readValue(selectionJSON,
+                  mapper.getTypeFactory().constructCollectionType(ArrayList.class, SelectionRestObject.class));
 				for (SelectionRestObject member : selections) {
 					removeMember("MEMBER", queryName, axisName, dimensionName, member.getUniquename());
 				}

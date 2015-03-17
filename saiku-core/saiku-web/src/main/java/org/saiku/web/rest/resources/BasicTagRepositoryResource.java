@@ -15,14 +15,28 @@
  */
 package org.saiku.web.rest.resources;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
+import org.saiku.olap.dto.*;
+import org.saiku.olap.dto.SaikuSelection.Type;
+import org.saiku.olap.util.SaikuProperties;
+import org.saiku.service.olap.OlapQueryService;
+import org.saiku.service.util.KeyValue;
+import org.saiku.service.util.exception.SaikuServiceException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystemManager;
+import org.apache.commons.vfs.VFS;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import org.olap4j.mdx.ParseTreeWriter;
+import org.olap4j.mdx.SelectNode;
+import org.olap4j.mdx.parser.impl.DefaultMdxParserImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import java.io.*;
 import java.net.URLDecoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,47 +46,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.vfs.FileObject;
-import org.apache.commons.vfs.FileSystemManager;
-import org.apache.commons.vfs.VFS;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.TypeFactory;
-import org.olap4j.mdx.ParseTreeWriter;
-import org.olap4j.mdx.SelectNode;
-import org.olap4j.mdx.parser.impl.DefaultMdxParserImpl;
-import org.saiku.olap.dto.SaikuCube;
-import org.saiku.olap.dto.SaikuDimensionSelection;
-import org.saiku.olap.dto.SaikuMember;
-import org.saiku.olap.dto.SaikuQuery;
-import org.saiku.olap.dto.SaikuSelection;
-import org.saiku.olap.dto.SaikuSelection.Type;
-import org.saiku.olap.dto.SaikuTag;
-import org.saiku.olap.dto.SaikuTuple;
-import org.saiku.olap.util.SaikuProperties;
-import org.saiku.service.olap.OlapQueryService;
-import org.saiku.service.util.KeyValue;
-import org.saiku.service.util.exception.SaikuServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * QueryServlet contains all the methods required when manipulating an OLAP Query.
@@ -139,8 +118,10 @@ public class BasicTagRepositoryResource {
 								BufferedReader br = new BufferedReader(fi);
 								ObjectMapper om = new ObjectMapper();
 							    om.setVisibilityChecker(om.getVisibilityChecker().withFieldVisibility(Visibility.ANY));
-							    
-								List<SaikuTag> tags = om.readValue(file, TypeFactory.collectionType(ArrayList.class, SaikuTag.class));
+
+                              List<SaikuTag> tags = om.readValue(file, om.getTypeFactory().constructCollectionType
+                                  (ArrayList.class,
+                                    SaikuTag.class));
 								allTags.addAll(tags);
 							}
 						}

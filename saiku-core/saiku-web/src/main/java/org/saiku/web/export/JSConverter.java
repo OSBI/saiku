@@ -2,8 +2,9 @@ package org.saiku.web.export;
 
 import org.saiku.web.rest.objects.resultset.QueryResult;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;

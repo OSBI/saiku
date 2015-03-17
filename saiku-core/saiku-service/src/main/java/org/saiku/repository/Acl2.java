@@ -16,16 +16,20 @@
 
 package org.saiku.repository;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.JcrUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.TypeFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -71,9 +75,8 @@ class Acl2 {
       Map<String, AclEntry> acl = new TreeMap<String, AclEntry>();
 
       try {
-
-        acl = mapper.readValue(node.getProperty("owner").getString(), TypeFactory
-            .mapType(HashMap.class, String.class, AclEntry.class));
+        TypeReference ref = new TypeReference<Map<String, AclEntry>>() { };
+        acl = mapper.readValue(node.getProperty("owner").getString(), ref);
         // mapper.readValue(acl, AclEntry.class);
         entry = acl.get(node.getPath());
         ///entry = e.getValue();
@@ -222,8 +225,9 @@ class Acl2 {
     Map<String, AclEntry> acl = new TreeMap<String, AclEntry>();
     try {
       if (node != null && node.getProperty("owner") != null) {
-        acl = mapper.readValue(node.getProperty("owner").getString(), TypeFactory
-            .mapType(HashMap.class, String.class, AclEntry.class));
+        TypeReference ref = new TypeReference<Map<String, AclEntry>>() { };
+
+        acl = mapper.readValue(node.getProperty("owner").getString(), ref);
       }
     } catch (Exception e) {
 

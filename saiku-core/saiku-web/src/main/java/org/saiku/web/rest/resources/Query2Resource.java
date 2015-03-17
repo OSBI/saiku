@@ -26,11 +26,13 @@ import org.saiku.web.export.PdfReport;
 import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.util.RestUtil;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.TypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -331,7 +333,8 @@ public class Query2Resource {
             List<List<Integer>> realPositions = new ArrayList<List<Integer>>();
             if (StringUtils.isNotBlank(positionListString)) {
                 ObjectMapper mapper = new ObjectMapper();
-                String[] positions = mapper.readValue(positionListString, TypeFactory.arrayType(String.class));
+                String[] positions = mapper.readValue(positionListString,
+                    mapper.getTypeFactory().constructArrayType(String.class));
                 if (positions != null && positions.length > 0) {
                     for (String position : positions) {
                         String[] rPos = position.split(":");
@@ -604,7 +607,14 @@ public class Query2Resource {
                 cellPosition.add(pInt);
             }
             ObjectMapper mapper = new ObjectMapper();
-            Map<String, List<String>> levels = mapper.readValue(returns, TypeFactory.mapType(Map.class, TypeFactory.fromClass(String.class),  TypeFactory.collectionType(ArrayList.class, String.class)));
+
+          CollectionType ct =
+              mapper.getTypeFactory().constructCollectionType(ArrayList.class, String.class);
+
+          JavaType st = mapper.getTypeFactory().uncheckedSimpleType(String.class);
+
+
+            Map<String, List<String>> levels = mapper.readValue(returns, mapper.getTypeFactory().constructMapType(Map.class, st, ct));
             ThinQuery q = thinQueryService.drillacross(queryName, cellPosition, levels);
             return q;
 

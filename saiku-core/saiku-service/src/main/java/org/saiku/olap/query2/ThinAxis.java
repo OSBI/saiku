@@ -1,14 +1,16 @@
 package org.saiku.olap.query2;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.olap4j.impl.NamedListImpl;
-import org.olap4j.metadata.NamedList;
 import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
 import org.saiku.olap.query2.common.AbstractThinSortableQuerySet;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import org.olap4j.impl.NamedListImpl;
+import org.olap4j.metadata.NamedList;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonIgnoreProperties
 public class ThinAxis extends AbstractThinSortableQuerySet {

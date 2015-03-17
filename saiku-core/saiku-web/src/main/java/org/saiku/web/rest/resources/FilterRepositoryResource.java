@@ -15,54 +15,34 @@
  */
 package org.saiku.web.rest.resources;
 
-import java.io.BufferedReader;
-import java.io.EOFException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.commons.vfs.FileObject;
-import org.apache.commons.vfs.FileSystemException;
-import org.apache.commons.vfs.FileSystemManager;
-import org.apache.commons.vfs.FileType;
-import org.apache.commons.vfs.VFS;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.TypeFactory;
 import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.dto.filter.SaikuFilter;
 import org.saiku.service.ISessionService;
 import org.saiku.service.olap.OlapQueryService;
 import org.saiku.service.util.exception.SaikuServiceException;
-import org.saiku.web.service.SessionService;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.MapType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.vfs.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.io.*;
+import java.util.*;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * QueryServlet contains all the methods required when manipulating an OLAP Query.
@@ -247,7 +227,7 @@ public class FilterRepositoryResource {
 		try {
 			
 			ObjectMapper mapper = new ObjectMapper();
-		    mapper.setVisibilityChecker(mapper.getVisibilityChecker().withFieldVisibility(Visibility.ANY));
+		    mapper.setVisibilityChecker(mapper.getVisibilityChecker().withFieldVisibility(JsonAutoDetect.Visibility.ANY));
 			SaikuFilter filter = mapper.readValue(filterJSON, SaikuFilter.class);
 			String username = sessionService.getAllSessionObjects().get("username").toString();
 			filter.setOwner(username);
@@ -319,9 +299,12 @@ public class FilterRepositoryResource {
 		if ( filterFile != null && filterFile.exists() && filterFile.getContent().getSize() > 0) {
 			InputStreamReader reader = new InputStreamReader(filterFile.getContent().getInputStream());
 			BufferedReader br = new BufferedReader(reader);
-			mapper.setVisibilityChecker(mapper.getVisibilityChecker().withFieldVisibility(Visibility.ANY));
+			mapper.setVisibilityChecker(mapper.getVisibilityChecker().withFieldVisibility(JsonAutoDetect.Visibility.ANY));
 			try {
-				filters = mapper.readValue(br, TypeFactory.mapType(HashMap.class, String.class, SaikuFilter.class));
+              TypeFactory tf = mapper.getTypeFactory();
+              MapType mt =
+                  mapper.getTypeFactory().constructMapType(HashMap.class, String.class, SaikuFilter.class);
+				filters = mapper.readValue(br, mt);
 			} catch (EOFException e) {}
 		}
 		return filters;

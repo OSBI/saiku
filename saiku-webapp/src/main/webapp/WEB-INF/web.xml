@@ -168,7 +168,7 @@
     	<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
     	<init-param>
       		<param-name>com.sun.jersey.config.property.packages</param-name>
-      		<param-value>org.saiku.web;org.codehaus.jackson.jaxrs</param-value>
+      		<param-value>org.saiku.web;com.fasterxml.jackson.jaxrs.json</param-value>
     	</init-param>
         <init-param>
             <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
