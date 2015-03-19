@@ -16,43 +16,36 @@
 package org.saiku.web.rest.resources;
 
 
-import java.io.*;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
+import org.saiku.repository.AclEntry;
+import org.saiku.repository.IRepositoryObject;
+import org.saiku.repository.RepositoryFolderObject;
+import org.saiku.service.ISessionService;
+import org.saiku.service.datasource.DatasourceService;
+import org.saiku.service.util.exception.SaikuServiceException;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataParam;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.commons.vfs.FileObject;
-import org.apache.commons.vfs.FileSystemManager;
-import org.apache.commons.vfs.FileType;
-import org.apache.commons.vfs.FileUtil;
-import org.apache.commons.vfs.VFS;
-import org.saiku.repository.AclEntry;
-import org.saiku.repository.IRepositoryObject;
-import org.saiku.service.ISessionService;
-import org.saiku.service.datasource.DatasourceService;
-import org.saiku.service.util.exception.SaikuServiceException;
+import org.apache.commons.vfs.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataParam;
+import java.io.*;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 
 /**
@@ -120,7 +113,10 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	{
         String username = sessionService.getAllSessionObjects().get("username").toString();
         List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-        return datasourceService.getFiles(type, username, roles);
+      List<IRepositoryObject> l = datasourceService.getFiles(type, username, roles);
+
+      return l;
+
 
 	}
 

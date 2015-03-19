@@ -940,74 +940,87 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
                 objects = JcrUtils.getChildNodes(node);
                 String s = (node.getPrimaryNodeType().getName());
-                if ( acl2.canRead(node, username, roles) ) {
+                if(!nodename.startsWith("jcr:") && !nodename.startsWith("rep:")) {
+                  if (acl2.canRead(node, username, roles)) {
                     List<AclMethod> acls = acl2.getMethods(node, username, roles);
                     if (node.getPrimaryNodeType().getName().equals("nt:file")) {
-                        if (StringUtils.isNotEmpty(fileType) && !node.getName().endsWith(fileType)) {
-                            continue;
-                        }
-                        String extension = ".saiku";//file.getName().getExtension();
+                      if (StringUtils.isNotEmpty(fileType) && !node.getName().endsWith(fileType)) {
+                        continue;
+                      }
+                      String extension = ".saiku";//file.getName().getExtension();
 
-                        repoObjects.add(new RepositoryFileObject(node.getName(), "#" + node.getPath(), extension, node.getPath(), acls));
+                      repoObjects.add(
+                          new RepositoryFileObject(node.getName(), "#" + node.getPath(), extension, node.getPath(),
+                              acls));
                     }
                     if (node.getPrimaryNodeType().getName().equals("nt:folder")) {
-                        repoObjects.add(new RepositoryFolderObject(node.getName(), "#" + node.getPath(), node.getPath(), acls, getRepoObjects(node, fileType, username, roles)));
+                      repoObjects.add(
+                          new RepositoryFolderObject(node.getName(), "#" + node.getPath(), node.getPath(), acls,
+                              getRepoObjects(node, fileType, username, roles)));
                     }
                     Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
 
-                        public int compare(IRepositoryObject o1, IRepositoryObject o2) {
-                            if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(IRepositoryObject.Type.FILE))
-                                return -1;
-                            if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
-                                return 1;
-                            return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+                      public int compare(IRepositoryObject o1, IRepositoryObject o2) {
+                        if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(
+                            IRepositoryObject.Type.FILE))
+                          return -1;
+                        if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(
+                            IRepositoryObject.Type.FOLDER))
+                          return 1;
+                        return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
 
-                        }
+                      }
 
                     });
-                }
-                for (Node file : objects) {
+                  }
+                  for (Node file : objects) {
                     //if (!file.isHidden()) {
-                    Acl2 acl3 = new Acl2(files);
-                    acl3.setAdminRoles(userService.getAdminRoles());
-                    if ( acl3.canRead(file ,username, roles) ) {
+                    if (!file.getName().startsWith("jcr:") && !file.getName().startsWith("rep:")) {
+
+
+                      if (acl2.canRead(file, username, roles)) {
                         String filename = file.getName();
                         String relativePath = file.getPath();//repo.getName().getRelativeName(file.getName());
 
 
                         //if ( acl.canRead(relativePath,username, roles) ) {
-                            List<AclMethod> acls = acl3.getMethods(file, username, roles);
+                        List<AclMethod> acls = acl2.getMethods(file, username, roles);
 
                         String s2 = (file.getPrimaryNodeType().getName());
 
                         if (file.getPrimaryNodeType().getName().equals("nt:saikufiles")) {
-                            if (StringUtils.isNotEmpty(fileType) && !filename.endsWith(fileType)) {
-                                continue;
-                            }
-                            String extension = ".saiku";//file.getName().getExtension();
+                          if (StringUtils.isNotEmpty(fileType) && !filename.endsWith(fileType)) {
+                            continue;
+                          }
+                          String extension = ".saiku";//file.getName().getExtension();
 
-                                  repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath, acls));
+                          repoObjects
+                              .add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath,
+                                  acls));
                         }
                         if (file.getPrimaryNodeType().getName().equals("nt:folder")) {
-                            //repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepoObjects(file, fileType, username, roles)));
+                          //repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepoObjects(file, fileType, username, roles)));
                         }
                         Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
 
-                            public int compare(IRepositoryObject o1, IRepositoryObject o2) {
-                                if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(IRepositoryObject.Type.FILE))
-                                    return -1;
-                                if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
-                                    return 1;
-                                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+                          public int compare(IRepositoryObject o1, IRepositoryObject o2) {
+                            if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(
+                                IRepositoryObject.Type.FILE))
+                              return -1;
+                            if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(
+                                IRepositoryObject.Type.FOLDER))
+                              return 1;
+                            return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
 
-                            }
+                          }
 
                         });
+                      }
+                      //}
+                      //}
                     }
-                    //}
-                    //}
+                  }
                 }
-
             }
         } catch (RepositoryException e) {
             log.error("Error processing repo objects", e);

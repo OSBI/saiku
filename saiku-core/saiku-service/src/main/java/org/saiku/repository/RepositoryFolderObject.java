@@ -1,11 +1,16 @@
 package org.saiku.repository;
 
-import org.saiku.repository.AclMethod;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.util.List;
 
 
-
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class RepositoryFolderObject implements IRepositoryObject {
 
 	private Type type;
@@ -42,9 +47,38 @@ public class RepositoryFolderObject implements IRepositoryObject {
 	public List<AclMethod> getAcl() {
 		return acl;
 	}
-	
+
+  @JsonProperty
 	public List<IRepositoryObject> getRepoObjects() {
 		return repoObjects;
 	}
 
+  public void setType(Type type) {
+    this.type = type;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public void setPath(String path) {
+    this.path = path;
+  }
+
+  public void setRepoObjects(List<IRepositoryObject> repoObjects) {
+    this.repoObjects = repoObjects;
+  }
+
+  public void setAcl(List<AclMethod> acl) {
+    this.acl = acl;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this);
+  }
 }

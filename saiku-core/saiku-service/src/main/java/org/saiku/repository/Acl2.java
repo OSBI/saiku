@@ -19,6 +19,7 @@ package org.saiku.repository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.jetbrains.annotations.NotNull;
@@ -26,10 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -81,6 +79,24 @@ class Acl2 {
         entry = acl.get(node.getPath());
         ///entry = e.getValue();
       } catch (PathNotFoundException e) {
+        //Figure out if its a folder
+
+        if(node.getMixinNodeTypes().length==0 && (FilenameUtils.getExtension(node.getName()).equals("")
+           || FilenameUtils.getExtension(node.getName())== null)){
+          node.addMixin("nt:saikufolders");
+        }
+
+
+
+
+        HashMap<String, List<AclMethod>> m = new HashMap<String, List<AclMethod>>();
+        AclEntry e2 = new AclEntry("admin", AclType.PUBLIC, m, null);
+        Acl2 acl2 = new Acl2(node);
+        acl2.addEntry(node.getPath(), e2);
+        acl2.serialize(node);
+
+        node.getSession().save();
+
         LOG.debug("Path(owner) not found: " + node.getPath(), e.getCause());
       } catch (Exception e) {
         LOG.debug("Exception: " + node.getPath(), e.getCause());
@@ -291,13 +307,17 @@ class Acl2 {
 
       for (Node file : JcrUtils.getChildNodes(folder)) {
         //if ( file.getPrimaryNodeType().equals( "nt:folder" ) ) {
-        readAclTree(file);
+        if (!file.getName().equals("/") && !file.getName().startsWith("jcr:") && !file.getName().startsWith("rep:")) {
+
+          readAclTree(file);
+        }
         //}
       }
     } catch (Exception e) {
 
       try {
         LOG.debug("Error while reading ACL files at path: " + resource.getPath(), e.getCause());
+
       } catch (RepositoryException e1) {
         LOG.debug("Repository Exception", e1.getCause());
       }

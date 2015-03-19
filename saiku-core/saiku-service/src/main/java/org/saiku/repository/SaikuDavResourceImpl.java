@@ -63,6 +63,9 @@ public class SaikuDavResourceImpl extends DefaultHandler {
       else if(ext.equals("sds")){
         contentNode.getParent().addMixin("nt:olapdatasource");
       }
+      else if(isCollection){
+        contentNode.getParent().addMixin("nt:saikufolders");
+      }
 
       //contentNode.addNode("jcr:content", "nt:resource");
 
