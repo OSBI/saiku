@@ -15,7 +15,6 @@
  */
 package org.saiku;
 
-import net.thucydides.core.annotations.Steps;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Pending;
 import org.jbehave.core.annotations.Then;
@@ -60,6 +59,4 @@ public class OlapCubeStepsDef {
   public void there_will_be_data_sources_listed(int cubes) throws Throwable {
     // Write code here that turns the phrase above into concrete actions
   }
-
-
 }

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -32,17 +33,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
  */
 public class OlapDataSourceStepsdef {
 
-
-
   @Steps
   DataSteps data;
+
   private List<SaikuConnection> connections;
   private SaikuConnection ds;
 
   @Given("a server has no available data sources")
   public void givenAServerHasNoAvailableDataSources() throws Exception {
     List<String> l = new ArrayList<String>();
-    data.createDataSources( l );
+    data.createDataSources(l);
     data.load();
   }
 
@@ -51,8 +51,9 @@ public class OlapDataSourceStepsdef {
     List<String> l = new ArrayList<String>();
     l.add( "test" );
     l.add( "foodmart" );
-    data.createDataSources( l );
+    data.createDataSources(l);
     data.load();
+    assertThat(data.getDatasources().size(), equalTo(2));
   }
 
   @Given("The server has not yet been started")
@@ -68,7 +69,7 @@ public class OlapDataSourceStepsdef {
 
   @Given("a null data source is configured in the server")
   public void givenANullDataSourceIsConfiguredInTheServer() {
-    data.createDataSources( null );
+    data.createDataSources(null);
   }
 
 
@@ -108,22 +109,27 @@ public class OlapDataSourceStepsdef {
   @When("2 new data sources are passed into the server as a list")
   public void when2NewDataSourcesArePassedIntoTheServerAsAList() throws Exception {
     List<String> l = new ArrayList<String>();
-    l.add( "test" );
-    l.add( "foodmart" );
+    l.add("test");
+    l.add("foodmart");
 
-    data.addDataSources( l );
+    data.addDataSources(l);
     data.loadNewDataSources();
   }
 
-  @Pending
   @When("a user removes a data source")
   public void whenAUserRemoves1DataSource() {
-    data.removeDatasource( "foodmart" );
+    assertThat(data.removeDatasource("foodmart"), is(true));
+  }
+
+  Boolean state = null;
+  @When("a user removes a non existing data source")
+  public void whenAUserRemovesNonExistingDataSource() {
+    state = data.removeDatasource("non-existing");
   }
 
   @When("a user removes a data source with an incorrect name")
   public void whenAUserRemovesADataSourceWithAnIncorrectName() {
-    data.removeDatasource( "broken" );
+    state = data.removeDatasource("broken");
   }
 
   @Then("there will be $datasources data sources listed")
@@ -138,14 +144,17 @@ public class OlapDataSourceStepsdef {
 
   @Then("The server should fail gracefully")
   public void the_server_should_fail_gracefully() throws SaikuOlapException {
-
     data.getInvalidDatasource( "nonexistant" );
-
   }
 
   @Then("the server should throw an exception")
   public void thenTheServerShouldThrowAnException() throws Exception {
     data.createInvalidDataSources();
+  }
+
+  @Then("the server should return unsuccessful state")
+  public void thenTheServerShouldUnSuccessfulState() throws Exception {
+    assertThat(state, is(false));
   }
 
   @Then("a SaikuServiceException should be thrown")
