@@ -147,18 +147,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 if(data.getId().equals(datasourceId)){
                     datasources.remove(data.getName());
                     irm.deleteFile(data.getPath());
-                    break;
+                    return true;
                 }
             }
-            return true;
         }
-        else{
-            return false;
-        }
-
-
-
-
+        return false;
     }
 
     public boolean removeSchema(String schemaName) {

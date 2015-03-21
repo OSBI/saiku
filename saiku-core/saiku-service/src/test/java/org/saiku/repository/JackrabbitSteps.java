@@ -16,134 +16,144 @@
 package org.saiku.repository;
 
 import net.thucydides.core.annotations.Step;
-
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.junit.Rule;
 import org.junit.Test;
+import static junit.framework.Assert.*;
+import org.junit.rules.ExpectedException;
+import org.saiku.service.user.UserService;
 
+import javax.jcr.*;
+import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-
+import static org.mockito.Mockito.*;
 
 /**
  * Created by bugg on 14/05/14.
  */
 public class JackrabbitSteps {
 
-  private IRepositoryManager iRepositoryManager = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(null,
-      null);
+    private String repoBasePath = System.getProperty("user.dir") + "/target";
+    private String repoLocation = repoBasePath + "/repo-data" + System.currentTimeMillis();
+    private URL repoConf = this.getClass().getClassLoader().getResource("repo-conf.xml");
+    private String repoConfPath = repoConf.getPath();
+    private IRepositoryManager iRepositoryManager = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(repoConfPath, repoLocation);
+    private UserService userService = mock(UserService.class);
+    private List<String> defaultRole = Collections.singletonList("ROLE_USER");
 
+    @Rule
+    public ExpectedException throwable = ExpectedException.none();
 
-  @Step
-  public void initializeRepository() {
-    iRepositoryManager.init();
-  }
-
-  @Step
-  public boolean startRepository() {
-    try {
-      return iRepositoryManager.start(null);
-    } catch ( RepositoryException e ) {
-      e.printStackTrace();
+    @Step
+    public void initializeRepository() {
+        iRepositoryManager.init();
     }
 
-    return false;
-  }
+    @Step
+    public boolean startRepository() {
+        when(userService.getAdminRoles()).thenReturn(Collections.singletonList("ROLE_ADMIN"));
 
-  @Step
-  public void initializeUsers(List<String> users) {
+        try {
+            return iRepositoryManager.start(userService);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
 
-    for(String u : users){
-      try {
-        iRepositoryManager.createUser(u);
-      } catch ( RepositoryException e ) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-  public List<String> getHomeDirectoryList() {
-    NodeIterator nodes = null;
-    try {
-      nodes = iRepositoryManager.getHomeFolders();
-    } catch ( RepositoryException e ) {
-      e.printStackTrace();
+        return false;
     }
 
-    List<String> names = new ArrayList<String>();
-    while(nodes.hasNext()){
-      Node node = nodes.nextNode();
-      try {
-        names.add(node.getProperty( "user" ).getString());
-      } catch ( RepositoryException e ) {
-        e.printStackTrace();
-      }
+    @Step
+    public void initializeUsers(List<String> users) {
+        for (String u : users) {
+            try {
+                iRepositoryManager.createUser(u);
+            } catch (RepositoryException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    return names;
-
-  }
-
-
-  public Node getHomeDirectory( String directory ) {
-    Node node = null;
-    try {
-      node = iRepositoryManager.getHomeFolder( directory );
-        String path = node.getPath();
-    } catch ( RepositoryException e ) {
-      e.printStackTrace();
+    public List<String> getHomeDirectoryList() {
+        List<String> names = new ArrayList<String>();
+        NodeIterator nodes;
+        try {
+            nodes = iRepositoryManager.getHomeFolders();
+            while (nodes.hasNext()) {
+                Node node = nodes.nextNode();
+                try {
+                    AclEntry entry = new Acl2(node).getEntry(node.getPath());
+                    names.add(entry.getOwner());
+                } catch (RepositoryException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        return names;
     }
 
-    return node;
-  }
-
-  @Step
-  public void shutdownRepository() {
-      JackRabbitRepositoryManager.getJackRabbitRepositoryManager(null,null).shutdown();
-  }
-
-  @Step
-  @Test( expected = RepositoryException.class )
-  public void initializeDuplicateUsers( List<String> users ) throws RepositoryException {
-    for(String u : users){
-        iRepositoryManager.createUser(u);
+    public Node getHomeDirectory(String directory) {
+        Node node = null;
+        try {
+            node = iRepositoryManager.getHomeFolder(directory);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+        return node;
     }
-  }
 
-  @Step
-  public boolean createFolder( String username, String folder ) throws RepositoryException {
-    return iRepositoryManager.createFolder(username, folder);
+    @Step
+    public void shutdownRepository() {
+        iRepositoryManager.shutdown();
+    }
 
-  }
+    @Step
+    public void initializeDuplicateUsers(List<String> users) throws RepositoryException {
+        try {
+            for (String u : users) {
+                iRepositoryManager.createUser(u);
+            }
+            fail("Expected to throw " + ItemExistsException.class.getName());
+        }catch(ItemExistsException ignored){}
+    }
 
-  @Step
-  public boolean deleteFolder( String username, String folder ) throws RepositoryException {
-    return iRepositoryManager.deleteFolder(folder);
-  }
+    @Step
+    public boolean createFolder(String username, String folder) throws RepositoryException {
+        return iRepositoryManager.createFolder(username, folder);
 
-  @Step
-  @Test( expected = PathNotFoundException.class)
-  public void getBrokenFolders(String user, String folder) throws RepositoryException {
-    iRepositoryManager.getFolder(user, folder);
-  }
+    }
+
+    @Step
+    public boolean deleteFolder(String username, String folder) throws RepositoryException {
+        return iRepositoryManager.deleteFolder(folder);
+    }
+
+    @Step
+    @Test(expected = PathNotFoundException.class)
+    public void getBrokenFolders(String user, String folder) throws RepositoryException {
+        iRepositoryManager.getFolder(user, folder);
+    }
 
     @Step
     public Node getFolders(String user, String folder) throws RepositoryException {
         return iRepositoryManager.getFolder(user, folder);
     }
 
-  @Step
-  public void deleteAllNodes() throws RepositoryException {
-    iRepositoryManager.deleteRepository();
-  }
+    @Step
+    public void deleteAllNodes() throws RepositoryException {
+        iRepositoryManager.deleteRepository();
+    }
 
     @Step
     public void moveFolder(String user, String folder, String source, String target) throws RepositoryException {
-        if(target.equals("home")){
+        if (target.equals("home")) {
             target = null;
         }
         iRepositoryManager.moveFolder(user, folder, source, target);
@@ -151,17 +161,27 @@ public class JackrabbitSteps {
 
     @Step
     public void saveFile(Object file, String path, String user, String type) throws RepositoryException {
-        iRepositoryManager.saveFile(file, path, user, type, null);
+        iRepositoryManager.saveFile(file, path, user, type, defaultRole);
     }
 
     @Step
     public String getFile(String s, String username) throws RepositoryException {
-        return iRepositoryManager.getFile(s, username, null);
+        return iRepositoryManager.getFile(s, username, defaultRole);
     }
 
     @Step
     public byte[] getBackup() throws IOException, RepositoryException {
         return iRepositoryManager.exportRepository();
+    }
+
+    @Step
+    public void cleanRepositoryData() throws IOException {
+        iRepositoryManager.shutdown();
+        FileFilter fileFilter = new WildcardFileFilter("repo-data*");
+        File[] files = new File(repoBasePath).listFiles(fileFilter);
+        for(File file: files){
+            if(file.isDirectory()) FileUtils.deleteDirectory(file);
+        }
     }
 }
 

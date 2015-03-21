@@ -50,11 +50,11 @@ Then the server should have 1 remaining data sources
 
 Scenario: User wants to remove a data source from the server without any available data sources
 Given a server has no available data sources
-When a user removes a data source
-Then the server should throw an exception
+When a user removes a non existing data source
+Then the server should return unsuccessful state
 
 Scenario: User wants to remove an invalid data source from the server
 Given There are 2 data sources registered on the server
 When a user removes a data source with an incorrect name
-Then the server should throw an exception
+Then the server should return unsuccessful state
 
