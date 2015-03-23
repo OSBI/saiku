@@ -11,14 +11,10 @@
   },
   "mdx" : "SELECT Gender.Members on COLUMNS, Measures.Profit on ROWS from Sales",
   "name" : "mdx1",
-  "parameters" : {
-  },
-  "plugins" : {
-  },
-  "properties" : {
-  },
-  "metadata" : {
-  },
+  "parameters" : { },
+  "plugins" : { },
+  "properties" : { },
+  "metadata" : { },
   "queryType" : "OLAP",
   "type" : "MDX"
 }

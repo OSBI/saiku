@@ -25,9 +25,9 @@
           "sortOrder" : null,
           "sortEvaluationLiteral" : null,
           "hierarchizeMode" : null,
-          "name" : "[Education Level]",
+          "name" : "[Customer].[Education Level]",
           "caption" : "Education Level",
-          "dimension" : "Education Level",
+          "dimension" : "Customer",
           "levels" : {
             "Education Level" : {
               "mdx" : null,
@@ -59,8 +59,8 @@
           "sortOrder" : null,
           "sortEvaluationLiteral" : null,
           "hierarchizeMode" : null,
-          "name" : "[Product]",
-          "caption" : "Product",
+          "name" : "[Product].[Products]",
+          "caption" : "Products",
           "dimension" : "Product",
           "levels" : {
             "Product Family" : {
@@ -72,7 +72,7 @@
                 "type" : "EXCLUSION",
                 "members" : [ {
                   "name" : "Non-Consumable",
-                  "uniqueName" : "[Product].[Non-Consumable]",
+                  "uniqueName" : "[Product].[Products].[Non-Consumable]",
                   "caption" : "Non-Consumable"
                 } ],
                 "parameterName" : "productFamilyList"
@@ -104,17 +104,14 @@
     "caption" : "Sales",
     "visible" : true
   },
-  "mdx" : "WITH\nSET [~COLUMNS] AS\n    {[Education Level].[Education Level].Members}\nSET [~ROWS] AS\n    Except({[Product].[Product Family].Members}, {[Product].[Non-Consumable]})\nSELECT\n[~COLUMNS] ON COLUMNS,\n[~ROWS] ON ROWS\nFROM [Sales]",
+  "mdx" : "WITH\nSET [~COLUMNS] AS\n    {[Customer].[Education Level].[Education Level].Members}\nSET [~ROWS] AS\n    Except({[Product].[Products].[Product Family].Members}, {[Product].[Products].[Non-Consumable]})\nSELECT\n[~COLUMNS] ON COLUMNS,\n[~ROWS] ON ROWS\nFROM [Sales]",
   "name" : "parameter1",
   "parameters" : {
-    "productFamilyList" : "[Product].[Food]"
+    "productFamilyList" : "[Product].[Products].[Food]"
   },
-  "plugins" : {
-  },
-  "properties" : {
-  },
-  "metadata" : {
-  },
+  "plugins" : { },
+  "properties" : { },
+  "metadata" : { },
   "queryType" : "OLAP",
   "type" : "QUERYMODEL"
 }

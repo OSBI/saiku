@@ -30,8 +30,8 @@
           "sortOrder" : null,
           "sortEvaluationLiteral" : null,
           "hierarchizeMode" : null,
-          "name" : "[Product]",
-          "caption" : "Product",
+          "name" : "[Product].[Products]",
+          "caption" : "Products",
           "dimension" : "Product",
           "levels" : {
             "Product Family" : {
@@ -43,7 +43,7 @@
                 "type" : "EXCLUSION",
                 "members" : [ {
                   "name" : "Non-Consumable",
-                  "uniqueName" : "[Product].[Non-Consumable]",
+                  "uniqueName" : "[Product].[Products].[Non-Consumable]",
                   "caption" : "Non-Consumable"
                 } ],
                 "parameterName" : null
@@ -57,9 +57,9 @@
           "sortOrder" : null,
           "sortEvaluationLiteral" : null,
           "hierarchizeMode" : null,
-          "name" : "[Education Level]",
+          "name" : "[Customer].[Education Level]",
           "caption" : "Education Level",
-          "dimension" : "Education Level",
+          "dimension" : "Customer",
           "levels" : {
             "Education Level" : {
               "mdx" : null,
@@ -91,9 +91,9 @@
           "sortOrder" : null,
           "sortEvaluationLiteral" : null,
           "hierarchizeMode" : null,
-          "name" : "[Gender]",
-          "caption" : "Gender",
-          "dimension" : "Gender",
+          "name" : "[Customer].[Gender]",
+          "caption" : "Customer - Gender",
+          "dimension" : "Customer",
           "levels" : {
             "Gender" : {
               "mdx" : null,
@@ -104,7 +104,7 @@
                 "type" : "INCLUSION",
                 "members" : [ {
                   "name" : "F",
-                  "uniqueName" : "[Gender].[F]",
+                  "uniqueName" : "[Customer].[Gender].[F]",
                   "caption" : "F"
                 } ],
                 "parameterName" : null
@@ -139,8 +139,7 @@
       "name" : "Double Profit",
       "uniqueName" : "[Measures].[Double Profit]",
       "caption" : "Double Profit",
-      "properties" : {
-      },
+      "properties" : { },
       "formula" : "( [Measures].[Store Sales] - [Measures].[Store Cost]) * 2",
       "hierarchyName" : "[Measures]"
     } ]
@@ -154,16 +153,12 @@
     "caption" : "Sales",
     "visible" : true
   },
-  "mdx" : "WITH\nSET [~COLUMNS_Product] AS\n    TopCount(Except({[Product].[Product Family].Members}, {[Product].[Non-Consumable]}), 2, Measures.[Unit Sales])\nSET [~COLUMNS_Education Level] AS\n    {[Education Level].[Education Level].Members}\nMEMBER [Measures].[Double Profit] AS\n    (([Measures].[Store Sales] - [Measures].[Store Cost]) * 2)\nSET [~ROWS] AS\n    {[Gender].[F]}\nSELECT\nCrossJoin(Order(CrossJoin([~COLUMNS_Product], [~COLUMNS_Education Level]), [Measures].[Double Profit], BDESC), {[Measures].[Double Profit], [Measures].[Unit Sales]}) ON COLUMNS,\n[~ROWS] ON ROWS\nFROM [Sales]",
+  "mdx" : "WITH\nSET [~COLUMNS_Products] AS\n    TopCount(Except({[Product].[Products].[Product Family].Members}, {[Product].[Products].[Non-Consumable]}), 2, Measures.[Unit Sales])\nSET [~COLUMNS_Education Level] AS\n    {[Customer].[Education Level].[Education Level].Members}\nMEMBER [Measures].[Double Profit] AS\n    (([Measures].[Store Sales] - [Measures].[Store Cost]) * 2)\nSET [~ROWS] AS\n    {[Customer].[Gender].[F]}\nSELECT\nCrossJoin(Order(CrossJoin([~COLUMNS_Products], [~COLUMNS_Education Level]), [Measures].[Double Profit], BDESC), {[Measures].[Double Profit], [Measures].[Unit Sales]}) ON COLUMNS,\n[~ROWS] ON ROWS\nFROM [Sales]",
   "name" : "query1",
-  "parameters" : {
-  },
-  "plugins" : {
-  },
-  "properties" : {
-  },
-  "metadata" : {
-  },
+  "parameters" : { },
+  "plugins" : { },
+  "properties" : { },
+  "metadata" : { },
   "queryType" : "OLAP",
   "type" : "QUERYMODEL"
 }
