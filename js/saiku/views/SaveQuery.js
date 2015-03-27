@@ -224,6 +224,7 @@ var SaveQuery = Modal.extend({
 					 self.query.set({ name: name, folder: foldername });
 					 self.query.trigger('query:save');
 					 self.copy_to_repository();
+					 event.stopPropagation();
 					 event.preventDefault();
 					 return false;
 				}
@@ -237,7 +238,7 @@ var SaveQuery = Modal.extend({
             alert("You need to enter a name!");
         }
 
-
+return false;
     },
 
 	save_remote: function(name, foldername, parent){
