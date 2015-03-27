@@ -26,6 +26,8 @@ import org.saiku.web.export.PdfReport;
 import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.util.RestUtil;
 
+import com.qmino.miredot.annotations.ReturnType;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -53,6 +55,9 @@ import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+/**
+ * Saiku Query Endpoints
+ */
 @Component
 @Path("/saiku/api/query")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -77,6 +82,8 @@ public class Query2Resource {
 
     /**
      * Delete query from the query pool.
+     * @summary Delete Query
+     * @param queryName The query name
      * @return a HTTP 410(Works) or HTTP 500(Call failed).
      */
     @DELETE
@@ -97,10 +104,13 @@ public class Query2Resource {
 
     /**
      * Create a new Saiku Query.
-     *
+     * @summary Create query.
+     * @param queryName The query name
+     * @param fileFormParam The file
+     * @param jsonFormParam The json
+     * @param formParams The form params
      * @return a query model.
      *
-     * @see
      */
     @POST
     @Produces({"application/json" })
@@ -158,6 +168,13 @@ public class Query2Resource {
     }
 
 
+  /**
+   *
+   * Execute a Saiku Query
+   * @summary Execute Query
+   * @param tq Thin Query model
+   * @return A query result set.
+   */
     @POST
     @Consumes({"application/json" })
     @Path("/execute")
@@ -185,6 +202,12 @@ public class Query2Resource {
         }
     }
 
+  /**
+   * Cancel a running query.
+   * @summary Cancel Query.
+   * @param queryName The query name
+   * @return A 410 on success
+   */
     @DELETE
     @Path("/{queryname}/cancel")
     public Response cancel(@PathParam("queryname") String queryName){
@@ -202,6 +225,12 @@ public class Query2Resource {
         }
     }
 
+  /**
+   * Enrich a thin query model
+   * @summary Enrich thin query.
+   * @param tq The thin query
+   * @return An updated thin query.
+   */
     @POST
     @Consumes({"application/json" })
     @Path("/enrich")
@@ -216,6 +245,17 @@ public class Query2Resource {
         }
     }
 
+  /**
+   * Get level members from a query.
+   * @summary Get level members.
+   * @param queryName The query name
+   * @param hierarchyName The hierarchy name
+   * @param levelName The level name
+   * @param result Use the current result
+   * @param searchString The search string
+   * @param searchLimit The search limit
+   * @return
+   */
     @GET
     @Produces({"application/json" })
     @Path("/{queryname}/result/metadata/hierarchies/{hierarchy}/levels/{level}")
@@ -243,6 +283,12 @@ public class Query2Resource {
     }
 
 
+  /**
+   * Query export to excel.
+   * @summary Excel export
+   * @param queryName The query name
+   * @return A response containing an excel spreadsheet.
+   */
     @GET
     @Produces({"application/vnd.ms-excel" })
     @Path("/{queryname}/export/xls")
@@ -253,6 +299,14 @@ public class Query2Resource {
         return getQueryExcelExport(queryName, "flattened", null);
     }
 
+  /**
+   * Query export to excel
+   * @summary Excel export
+   * @param queryName The query
+   * @param format The cellset format
+   * @param name The export name
+   * @return A response containing and excel spreadsheet.
+   */
     @GET
     @Produces({"application/vnd.ms-excel" })
     @Path("/{queryname}/export/xls/{format}")
@@ -280,6 +334,12 @@ public class Query2Resource {
         }
     }
 
+  /**
+   * Get CSV export of a query.
+   * @summary CSV Export.
+   * @param queryName The query name
+   * @return A response containing a CSV file
+   */
     @GET
     @Produces({"text/csv" })
     @Path("/{queryname}/export/csv")
@@ -290,6 +350,14 @@ public class Query2Resource {
         return getQueryCsvExport(queryName, "flattened", null);
     }
 
+  /**
+   * Get CSV export of a query.
+   * @summary CSV Export.
+   * @param queryName The query name
+   * @param format The cell set format
+   * @param name The export name
+   * @return A response containing a CSV file
+   */
     @GET
     @Produces({"text/csv" })
     @Path("/{queryname}/export/csv/{format}")
@@ -317,6 +385,13 @@ public class Query2Resource {
         }
     }
 
+  /**
+   * Zoom into a query result table.
+   * @summary Zoom in.
+   * @param queryName The query name
+   * @param positionListString The zoom position
+   * @return A new thin query model with a reduced table.
+   */
     @POST
     @Consumes("application/x-www-form-urlencoded")
     @Path("/{queryname}/zoomin")
@@ -353,6 +428,15 @@ public class Query2Resource {
         }
     }
 
+  /**
+   * Drill through on the query result set.
+   * @summary Drill through
+   * @param queryName The query name
+   * @param maxrows The max rows returned
+   * @param position The position
+   * @param returns The returned dimensions and levels
+   * @return A query result set.
+   */
     @GET
     @Produces({"application/json" })
     @Path("/{queryname}/drillthrough")
@@ -416,6 +500,15 @@ public class Query2Resource {
     }
 
 
+  /**
+   * Export the drill through to a CSV file for further analysis
+   * @summary Export to CSV
+   * @param queryName The query name
+   * @param maxrows The max rows
+   * @param position The position
+   * @param returns The returned dimensions and levels
+   * @return A response containing a CSV file
+   */
     @GET
     @Produces({"text/csv" })
     @Path("/{queryname}/drillthrough/export/csv")
@@ -472,6 +565,13 @@ public class Query2Resource {
 
     }
 
+  /**
+   * Export PDF with chart
+   * @summary Export PDF with Chart.
+   * @param queryName The query.
+   * @param svg The SVG string
+   * @return A response with a PDF file
+   */
     @POST
     @Produces({"application/pdf" })
     @Path("/{queryname}/export/pdf")
@@ -482,6 +582,12 @@ public class Query2Resource {
         return exportPdfWithChartAndFormat(queryName, null, svg, null);
     }
 
+  /**
+   * Export table to PDF.
+   * @summary Export to PDF.
+   * @param queryName The query name
+   * @return A response with a PDF export.
+   */
     @GET
     @Produces({"application/pdf" })
     @Path("/{queryname}/export/pdf")
@@ -490,6 +596,14 @@ public class Query2Resource {
         return exportPdfWithChartAndFormat(queryName, null, null, null);
     }
 
+  /**
+   * Export to PDF with cellset format.
+   * @summary Export with format
+   * @param queryName The query
+   * @param format The cellset format
+   * @param name The name of the export.
+   * @return A response with a PDF
+   */
     @GET
     @Produces({"application/pdf" })
     @Path("/{queryname}/export/pdf/{format}")
@@ -500,6 +614,15 @@ public class Query2Resource {
         return exportPdfWithChartAndFormat(queryName, format, null, name);
     }
 
+  /**
+   * Export PDF with chart and cellset format.
+   * @summary Export to PDF with chart and cellset format
+   * @param queryName The query name
+   * @param format The cell set format
+   * @param svg The SVG
+   * @param name The export name
+   * @return A response with a PDF contained.
+   */
     @POST
     @Produces({"application/pdf" })
     @Path("/{queryname}/export/pdf/{format}")
@@ -527,9 +650,20 @@ public class Query2Resource {
         }
     }
 
+  /**
+   * Get HTML export
+   * @summary HTML export
+   * @param queryname The query name
+   * @param format The cellset format
+   * @param css The css stylesheet
+   * @param tableonly Export table only or chart as well
+   * @param wrapcontent Wrap content
+   * @return A response with a HTML export.
+   */
     @GET
     @Produces({"text/html" })
     @Path("/{queryname}/export/html")
+    @ReturnType("java.lang.String")
     public Response exportHtml(
             @PathParam("queryname") String queryname,
             @QueryParam("format") String format,
@@ -541,9 +675,20 @@ public class Query2Resource {
         return exportHtml(tq, format, css, tableonly, wrapcontent);
     }
 
+  /**
+   * Get HTML export
+   * @summary HTML export
+   * @param tq The current thin query model
+   * @param format The cellset format
+   * @param css The css stylesheet
+   * @param tableonly Export table only or chart as well
+   * @param wrapcontent Wrap content
+   * @return A response with a HTML export.
+   */
     @POST
     @Produces({"text/html" })
     @Path("/export/html")
+    @ReturnType("java.lang.String")
     public Response exportHtml(
             ThinQuery tq,
             @QueryParam("format") String format,
@@ -584,6 +729,14 @@ public class Query2Resource {
         }
     }
 
+  /**
+   * Drill across on a result set
+   * @summary Drill across
+   * @param queryName The query name
+   * @param position The drill position
+   * @param returns The dimensions and levels returned
+   * @return The new thin query object.
+   */
     @POST
     @Produces({"application/json" })
     @Path("/{queryname}/drillacross")

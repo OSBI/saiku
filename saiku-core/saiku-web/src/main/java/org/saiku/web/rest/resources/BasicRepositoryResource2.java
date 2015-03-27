@@ -16,43 +16,34 @@
 package org.saiku.web.rest.resources;
 
 
-import java.io.*;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.commons.vfs.FileObject;
-import org.apache.commons.vfs.FileSystemManager;
-import org.apache.commons.vfs.FileType;
-import org.apache.commons.vfs.FileUtil;
-import org.apache.commons.vfs.VFS;
 import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.ISessionService;
 import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.util.exception.SaikuServiceException;
+
+import com.qmino.miredot.annotations.ReturnType;
+import com.sun.jersey.core.header.FormDataContentDisposition;
+import com.sun.jersey.multipart.FormDataParam;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.vfs.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataParam;
+import java.io.*;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 
 /**
@@ -103,7 +94,8 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	
 	/**
 	 * Sets the sessionService
-	 * @param sessionService
+     * @summary Set the session service
+	 * @param sessionService The session service
 	 */
 	public void setSessionService(ISessionService sessionService){
 		this.sessionService = sessionService;
@@ -125,10 +117,17 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	}
 
 
+  /**
+   * Get the ACL information for a given resource.
+   * @summary Get ACL information.
+   * @param file The file object
+   * @return An AclEntry Object.
+   */
     @GET
 	@Produces({"application/json" })
 	@Path("/resource/acl")
-	public AclEntry getResourceAcl(@QueryParam("file") String file) {
+    @ReturnType("org.saiku.repository.AclEntry")
+    public AclEntry getResourceAcl(@QueryParam("file") String file) {
 		try {
 			String username = sessionService.getAllSessionObjects().get("username").toString();
 			List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
@@ -141,8 +140,15 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 
 
 	}
-	
-	
+
+
+  /**
+   * Set the ACL information for a file/folder.
+   * @summary Set the ACL information
+   * @param file The file you want to change
+   * @param aclEntry The ACL information.
+   * @return A response 200.
+   */
 	@POST
 	@Produces({"application/json" })
 	@Path("/resource/acl")
@@ -162,13 +168,16 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.saiku.web.rest.resources.ISaikuRepository#getResource(java.lang.String)
-	 */
+  /**
+   * Get an object from the repository.
+   * @summary Fetch from the repository.
+   * @param file - The name of the repository file to load.
+   * @return A response containing the file data.
+   */
 	@GET
 	@Produces({"text/plain" })
 	@Path("/resource")
-	public Response getResource (@QueryParam("file") String file)
+    public Response getResource (@QueryParam("file") String file)
 	{
         String username = sessionService.getAllSessionObjects().get("username").toString();
         List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
@@ -187,10 +196,14 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 			}
 */
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.saiku.web.rest.resources.ISaikuRepository#saveResource(java.lang.String, java.lang.String)
-	 */
+
+  /**
+   * Save an object to the repository.
+   * @summary Save object
+   * @param file - The name of the repository file to load.
+   * @param content - The content to save.
+   * @return A response status 200.
+   */
 	@POST
 	@Path("/resource")
 	public Response saveResource (
@@ -212,10 +225,12 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 								.type("text/plain").build();
 		*/
     }
-	
-	/* (non-Javadoc)
-	 * @see org.saiku.web.rest.resources.ISaikuRepository#deleteResource(java.lang.String)
-	 */
+
+  /**
+   * Delete a resource from the repository
+   * @param file - The name of the repository file to load.
+   * @return a response status 200.
+   */
 	@DELETE
 	@Path("/resource")
 	public Response deleteResource (
@@ -232,11 +247,15 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
         }
 
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.saiku.web.rest.resources.ISaikuRepository#saveResource(java.lang.String, java.lang.String)
-	 */
-	@POST
+
+  /**
+   * Move an object within the repository.
+   * @summary Move object.
+   * @param source Source object
+   * @param target Target location
+   * @return A response status 200
+   */
+    @POST
 	@Path("/resource/move")
 	public Response moveResource(@FormParam("source") String source, @FormParam("target") String target)
 	{
@@ -295,7 +314,14 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 		}
 		*/
 	}
-	
+
+  /**
+   * Export the repository to a zip file.
+   * @summary Export repository
+   * @param directory
+   * @param files
+   * @return A response conataining a zip file.
+   */
 	@GET
 	@Path("/zip")
 	public Response getResourcesAsZip (
@@ -353,7 +379,15 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 		}
 
 	}
-	
+
+  /**
+   * Upload a zip archive to the server.
+   * @param test Not used.
+   * @param uploadedInputStream File Info
+   * @param fileDetail File Info
+   * @param directory Location
+   * @return A response status 200
+   */
 	@POST
 	@Path("/zipupload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)

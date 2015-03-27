@@ -309,6 +309,11 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.qmino</groupId>
+                <artifactId>miredot-annotations</artifactId>
+                <version>1.3.1</version>
+            </dependency>
+            <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
