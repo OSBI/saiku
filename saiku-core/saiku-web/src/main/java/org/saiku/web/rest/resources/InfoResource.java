@@ -18,6 +18,8 @@ package org.saiku.web.rest.resources;
 import org.saiku.service.PlatformUtilsService;
 import org.saiku.service.util.dto.Plugin;
 
+import com.qmino.miredot.annotations.ReturnType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -49,8 +51,14 @@ public class InfoResource {
     this.platformService = ps;
   }
 
+  /**
+   * Get a list of available plugins.
+   * @summary Get plugins
+   * @return A response containing a list of plugins.
+   */
   @GET
   @Produces({"application/json" })
+  @ReturnType("java.util.List<Plugin>")
   public Response getAvailablePlugins() {
 
     GenericEntity<List<Plugin>> entity =

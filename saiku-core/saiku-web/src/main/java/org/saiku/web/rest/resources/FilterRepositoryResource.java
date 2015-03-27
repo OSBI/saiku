@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.MapType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-
+import com.qmino.miredot.annotations.ReturnType;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -140,7 +140,13 @@ public class FilterRepositoryResource {
 		return MapUtils.orderedMap(allFilters);
 	}
 
-	
+
+  /**
+   * Get All Filters as a CSV file.
+   * @param delimiter The CSV Delimeter.
+   * @param memberdelimiter Member Delimiter.
+   * @return A response containing the CSV file.
+   */
 	@GET
 	@Produces({"text/csv" })
 	@Path("/csv")
@@ -170,10 +176,16 @@ public class FilterRepositoryResource {
 	}
 
 
+  /**
+   * Get filternames as JSON.
+   * @param queryName The query name.
+   * @return A response containing the filter names.
+   */
 	@GET
 	@Produces({"application/json" })
 	@Path("/names/")
-	public Response getSavedFilterNames(@QueryParam("queryname") String queryName) 
+    @ReturnType("java.lang.List<String>")
+    public Response getSavedFilterNames(@QueryParam("queryname") String queryName)
 	{
 		try {
 			Map<String, SaikuFilter> allFilters = getFiltersInternal(queryName);
@@ -187,9 +199,15 @@ public class FilterRepositoryResource {
 			return Response.serverError().entity(error).build();
 		}
 	}
-	
 
 
+  /**
+   * Get Saved Filters as JSON.
+   * @summary Get filters as JSON.
+   * @param queryName The query name.
+   * @param filterName The filter name.
+   * @return A response containing the JSON.
+   */
 	@GET
 	@Produces({"application/json" })
 	public Response getSavedFilters(
@@ -217,11 +235,18 @@ public class FilterRepositoryResource {
 			return Response.serverError().entity(error).build();
 		}
 	}
-	
+
+  /**
+   * Save filter
+   * @summary Save Filter.
+   * @param filterJSON The Filter JSON object.
+   * @return A response containing the filter.
+   */
 	@POST
 	@Produces({"application/json" })
 	@Path("/{filtername}")
-	public Response saveFilter(
+    @ReturnType("org.saiku.olap.dto.filter.SaikuFilter")
+    public Response saveFilter(
 			@FormParam ("filter") String filterJSON)
 	{
 		try {
@@ -244,10 +269,17 @@ public class FilterRepositoryResource {
 	}
 
 
+  /**
+   * Delete the filter.
+   * @summary Delete filter
+   * @param filterName The filter name
+   * @return A reponse containing the remaining filters.
+   */
 	@DELETE
 	@Produces({"application/json" })
 	@Path("/{filtername}")
-	public Response deleteFilter(@PathParam("filtername") String filterName)
+    @ReturnType("java.util.Map<String, SaikuFilter>")
+    public Response deleteFilter(@PathParam("filtername") String filterName)
 	{
 		try{
 			if (repo != null) {

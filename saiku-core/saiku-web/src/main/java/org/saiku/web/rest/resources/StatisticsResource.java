@@ -20,6 +20,9 @@ import org.apache.log4j.PatternLayout;
 import org.apache.log4j.WriterAppender;
 import org.springframework.stereotype.Component;
 
+/**
+ * Mondrian Server Info and Stats Endpoints.
+ */
 @Component
 @Path("/saiku/statistics")
 public class StatisticsResource {
@@ -48,8 +51,12 @@ public class StatisticsResource {
 //		pkgLogger.addAppender(appender);
 //		Logger.getRootLogger().addAppender(appender);
 //	}
-	
-	
+
+  /**
+   * Get Mondrian Stats
+   * @summary Get Mondrian stats
+   * @return A selection of Mondrian stats.
+   */
 	@GET
 	@Produces({"application/json" })
 	@Path("/mondrian")
@@ -86,8 +93,13 @@ public class StatisticsResource {
 		
 		return null;
 	}
-	
 
+
+  /**
+   * Get Mondrian Server Info
+   * @summary Get Mondrian Info
+   * @return Server Info
+   */
 	@GET
 	@Produces({"application/json" })
 	@Path("/mondrian/server")

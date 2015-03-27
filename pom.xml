@@ -11,7 +11,7 @@
         <developerConnection>
             scm:git:git@github.com:OSBI/saiku.git
         </developerConnection>
-      <tag>HEAD</tag>
+      <tag>saiku-3.1-SNAPSHOT</tag>
   </scm>
     <modules>
         <module>saiku-core</module>
@@ -309,6 +309,11 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
                 <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.qmino</groupId>
+                <artifactId>miredot-annotations</artifactId>
+                <version>1.3.1</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>

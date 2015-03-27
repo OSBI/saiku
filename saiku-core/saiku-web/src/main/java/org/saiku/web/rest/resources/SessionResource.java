@@ -18,6 +18,8 @@ package org.saiku.web.rest.resources;
 import org.saiku.service.ISessionService;
 import org.saiku.service.user.UserService;
 
+import com.qmino.miredot.annotations.ReturnType;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +35,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 
+/**
+ * Saiku Session Endpoints
+ */
 @Component
 @Path("/saiku/session")
 public class SessionResource  {
@@ -51,6 +56,14 @@ public class SessionResource  {
         userService = us;
     }
 
+  /**
+   * Login to Saiku
+   * @summary Login
+   * @param req Servlet request
+   * @param username Username
+   * @param password Password
+   * @return A 200 response
+   */
     @POST
 	@Consumes("application/x-www-form-urlencoded")
 	public Response login(
@@ -68,10 +81,17 @@ public class SessionResource  {
 		}
 	}
 
+  /**
+   * Get the session in the request
+   * @summary Get session
+   * @param req The servlet request
+   * @return A reponse with a session map
+   */
 	@GET
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSession(@Context HttpServletRequest req) {
+    @ReturnType("java.util.Map<String, Object>")
+    public Response getSession(@Context HttpServletRequest req) {
 
 	  Map<String, Object> sess = null;
 	  try {
@@ -104,6 +124,12 @@ public class SessionResource  {
         return Response.ok().entity(sess).build();
 	}
 
+  /**
+   * Logout of the Session
+   * @summary Logout
+   * @param req The servlet request
+   * @return A 200 response.
+   */
 	@DELETE
 	public Response logout(@Context HttpServletRequest req) 
 	{
