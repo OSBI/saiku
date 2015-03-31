@@ -173,6 +173,11 @@
         </dependency>
         <dependency>
             <groupId>org.olap4j</groupId>
+            <artifactId>olap4j-xmlaserver-noclose</artifactId>
+            <version>TRUNK-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.olap4j</groupId>
             <artifactId>olap4j</artifactId>
             <exclusions>
                 <exclusion>
