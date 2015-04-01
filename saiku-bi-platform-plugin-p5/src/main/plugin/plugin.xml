@@ -3,14 +3,14 @@
 <plugin title="saiku" name="saiku" loader="OVERRIDING">
 
  <overlays>
-    <overlay id="startup.saikuAnalytics"  resourcebundle="content/saiku-ui/saikuplugin.properties" priority="1">
+    <overlay id="startup.saikuAnalytics"  resourcebundle="content/saiku-ui/saikuplugin" priority="1">
   		<menubar id="newmenu">
-  			<menuitem id="new-saiku-analytics" label="Saiku Analytics" command="mantleXulHandler.openUrl('Saiku Analytics','Saiku Analytics','content/saiku-ui/index.html?biplugin5=true')" />
+  			<menuitem id="new-saiku-analytics" label="${saiku-plugin.label}" command="mantleXulHandler.openUrl('Saiku Analytics','Saiku Analytics','content/saiku-ui/index.html?biplugin5=true')" />
   		</menubar>				
     </overlay>
     
-    <overlay id="launch" resourcebundle="content/saiku-ui/saikuplugin.properties" > 
-    	<button id="SaikuAnalytics" label="New Saiku Analytics" command="Home.openFile('Saiku Analytics','Saiku Analytics', 'content/saiku-ui/index.html?biplugin5=true');$('#btnCreateNew').popover('hide')"/> 
+    <overlay id="launch" resourcebundle="content/saiku-ui/saikuplugin" > 
+    	<button id="SaikuAnalytics" label="${saiku-plugin.button}" command="Home.openFile('Saiku Analytics','Saiku Analytics', 'content/saiku-ui/index.html?biplugin5=true');$('#btnCreateNew').popover('hide')"/> 
     </overlay>
   </overlays>
   
