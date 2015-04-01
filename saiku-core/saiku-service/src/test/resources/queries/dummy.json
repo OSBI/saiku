@@ -56,14 +56,10 @@
   },
   "mdx" : "SELECT\nFROM [Sales]",
   "name" : "dummy",
-  "parameters" : {
-  },
-  "plugins" : {
-  },
-  "properties" : {
-  },
-  "metadata" : {
-  },
+  "parameters" : { },
+  "plugins" : { },
+  "properties" : { },
+  "metadata" : { },
   "queryType" : "OLAP",
   "type" : "QUERYMODEL"
 }

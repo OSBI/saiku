@@ -214,6 +214,10 @@
                     <groupId>net.java.openjdk</groupId>
                     <artifactId>rt-java6</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>validation-api</artifactId>
+                    <groupId>javax.validation</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>

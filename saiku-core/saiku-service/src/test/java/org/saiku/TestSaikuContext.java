@@ -1,16 +1,20 @@
-/*
+
 package org.saiku;
 
-import org.saiku.org.saiku.datasources.connection.IConnectionManager;
-import org.saiku.org.saiku.datasources.connection.SimpleConnectionManager;
+import org.saiku.datasources.connection.IConnectionManager;
+import org.saiku.datasources.connection.SimpleConnectionManager;
+import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.olap.discover.OlapMetaExplorer;
 import org.saiku.olap.dto.SaikuCube;
-import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.service.datasource.ClassPathResourceDatasourceManager;
 import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.ThinQueryService;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.Properties;
 
 
 public class TestSaikuContext {
@@ -24,29 +28,39 @@ public class TestSaikuContext {
 	public DatasourceService datasourceService;
 	public ThinQueryService thinQueryService;
 
-	public TestSaikuContext() throws SaikuOlapException {
+	public TestSaikuContext() throws Exception {
 		setup();
 	}
 
-	private void setup() throws SaikuOlapException {
-		this.datasourceManager = new ClassPathResourceDatasourceManager("res:saiku-org.saiku.datasources");
-		System.out.println("Datasources: " + datasourceManager.getDatasources().keySet().size());
-		
+	private void setup() throws Exception {
+		File f = new File(System.getProperty("java.io.tmpdir") + "/files/");
+		f.mkdir();
+
+		this.datasourceManager = new ClassPathResourceDatasourceManager(System.getProperty("java.io.tmpdir") + "/files/");
+		InputStream inputStream = TestSaikuContext.class.getResourceAsStream("connection.properties");
+		Properties testProps = new Properties();
+		testProps.load(inputStream);
+		this.datasourceManager.setDatasource(new SaikuDatasource("test", SaikuDatasource.Type.OLAP, testProps));
+
 		this.connectionManager = new SimpleConnectionManager();
 		this.connectionManager.setDataSourceManager(datasourceManager);
 		this.connectionManager.init();
+
 		this.olapMetaExplorer = new OlapMetaExplorer(connectionManager);
+
 		this.datasourceService = new DatasourceService();
 		this.datasourceService.setConnectionManager(connectionManager);
+
 		this.olapDiscoverService = new OlapDiscoverService();
 		this.olapDiscoverService.setDatasourceService(datasourceService);
+
 		this.thinQueryService = new ThinQueryService();
 		thinQueryService.setOlapDiscoverService(olapDiscoverService);
 	}
 	
 	
 
-	public static TestSaikuContext instance() throws SaikuOlapException {
+	public static TestSaikuContext instance() throws Exception {
 		if (instance == null) {
 			instance = new TestSaikuContext();
 		}
@@ -59,4 +73,4 @@ public class TestSaikuContext {
 	}
 
 }
-*/
+
