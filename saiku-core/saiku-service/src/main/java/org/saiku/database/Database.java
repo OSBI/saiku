@@ -111,7 +111,7 @@ public class Database {
                 try {
                     dsm.addDatasource(ds);
                 } catch (Exception e) {
-                    log.error("Can't add data source to reop",e);
+                    log.error("Can't add data source to repo",e);
                 }
             } else {
                 Statement statement = c.createStatement();
