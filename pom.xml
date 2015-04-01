@@ -378,7 +378,7 @@
             <dependency>
                 <groupId>org.olap4j</groupId>
                 <artifactId>olap4j-xmlaserver-noclose</artifactId>
-                <version>1.2.0</version>
+                <version>TRUNK-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.jdom</groupId>
