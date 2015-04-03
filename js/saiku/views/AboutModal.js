@@ -27,7 +27,7 @@ var AboutModal = Modal.extend({
     message: Settings.VERSION + '<br>' +
         '<a href="http://saiku.meteorite.bi" target="_blank">http://saiku.meteorite.bi</a><br><br>' +
         '<a href="http://wiki.meteorite.bi/display/SAIK/Saiku+Documentation" target="_blank">Saiku Wiki online help</a><br><br>' +
-        'Powered by <img src="images/src/meteorite_free.png" width="20px"> <a href="http://www.meteorite.bi/consulting/" target="_blank">http://www.meteorite.bi/consulting/</a>',
+        'Powered by <img src="images/src/meteorite_free.png" width="20px"> <a href="http://www.meteorite.bi/consulting/" target="_blank">www.meteorite.bi</a>',
 
     initialize: function() {
         this.options.title = 'About ' + Settings.VERSION;
