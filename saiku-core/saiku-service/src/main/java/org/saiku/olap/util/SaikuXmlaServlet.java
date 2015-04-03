@@ -74,7 +74,19 @@ public class SaikuXmlaServlet extends Olap4jXmlaServlet {
       public OlapConnection getConnection(String s, String s1, String s2, Properties properties) throws SQLException {
         try {
           //connections.refreshAllConnections();
-          return connections.getOlapConnection(s);
+          if(s!=null) {
+            for(Map.Entry<String, OlapConnection> entry : connections.getAllOlapConnections().entrySet()) {
+              if(entry.getKey().toLowerCase().equals(s.toLowerCase())) {
+                return entry.getValue();
+              }
+            }
+            return connections.getOlapConnection(s);
+          }
+          else{
+            for(Map.Entry<String, OlapConnection> entry : connections.getAllOlapConnections().entrySet()) {
+              return entry.getValue();
+            }
+          }
 
 
         } catch (SaikuOlapException e) {

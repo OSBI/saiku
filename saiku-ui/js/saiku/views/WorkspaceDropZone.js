@@ -275,7 +275,7 @@ var WorkspaceDropZone = Backbone.View.extend({
 
         if (objData.level.annotations !== undefined &&
             objData.level.annotations !== null &&
-			(objData.level.annotations.AnalyzerDateFormat !== undefined || 
+			(objData.level.annotations.AnalyzerDateFormat !== undefined ||
              objData.level.annotations.SaikuDayFormatString !== undefined)) {
             // Launch date filter dialog
             (new DateFilterModal({
@@ -488,11 +488,6 @@ var WorkspaceDropZone = Backbone.View.extend({
                             "show_totals_max": {name: "Max", i18n: true},
                             "show_totals_avg": {name: "Avg", i18n: true}
                         }},
-						"parameters" : {name: "Parameters", i18n: true, items:
-				 		{
-					 		"ParamQuick": {name: "Add Parameter", i18n: true, items: addFun(levels, "Param")},
-							"ParamRemove": {name: "Remove Parameter", i18n: true, items: addFun(null, "Param")}
-				 		}},
                         "cancel" : { name: "Cancel", i18n: true }
 
                 };

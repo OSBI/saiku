@@ -474,7 +474,7 @@
                         </Name>
                     </Attribute>
                     <Attribute name='Name' keyColumn='customer_id' nameColumn='full_name' orderByColumn='full_name' hasHierarchy='false'/>
-                    <Attribute name='Gender' keyColumn='gender'/>
+                    <Attribute name='Gender' keyColumn='gender' datatype="Boolean"/>
                     <Attribute name='Marital Status' keyColumn='marital_status' approxRowCount='111'/>
                     <Attribute name='Education' keyColumn='education' hasHierarchy='false'/>
                     <Attribute name='Yearly Income' keyColumn='yearly_income' hierarchyAllMemberName='All Yearly Incomes'/>
