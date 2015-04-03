@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,35 +13,35 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * The global toolbar
  */
 var Toolbar = Backbone.View.extend({
     tagName: "div",
-    
+
     events: {
         'click a' : 'call'
     },
-    
+
     template: function() {
         return _.template( $("#template-toolbar").html() )(this);
     },
-    
+
     initialize: function() {
         this.render();
     },
-    
+
     render: function() {
         $(this.el).attr('id', 'toolbar')
             .html(this.template());
-        
+
         // Trigger render event on toolbar so plugins can register buttons
         Saiku.events.trigger('toolbar:render', { toolbar: this });
-        
+
         return this;
     },
-    
+
     call: function(e) {
         var target = $(e.target);
         var callback = target.attr('href').replace('#', '');
@@ -57,7 +57,7 @@ var Toolbar = Backbone.View.extend({
         Saiku.tabs.add(new Workspace());
         return false;
     },
-    
+
     /**
      * Open a query from the repository into a new tab
      */
@@ -65,23 +65,23 @@ var Toolbar = Backbone.View.extend({
         var tab = _.find(Saiku.tabs._tabs, function(tab) {
             return tab.content instanceof OpenQuery;
         });
-        
+
         if (tab) {
             tab.select();
         } else {
             Saiku.tabs.add(new OpenQuery());
         }
-        
+
         return false;
     },
-    
+
     /**
      * Clear the current session and show the login window
      */
     logout: function() {
         Saiku.session.logout();
     },
-    
+
     /**
      * Show the credits dialog
      */
@@ -89,12 +89,20 @@ var Toolbar = Backbone.View.extend({
         (new AboutModal()).render().open();
         return false;
     },
-    
+
     /**
      * Go to the issue tracker
      */
     issue_tracker: function() {
         window.open('http://jira.meteorite.bi/');
         return false;
-    }
+    },
+
+	/**
+	 * Go to the help
+	 */
+	help: function() {
+		window.open('http://wiki.meteorite.bi/display/SAIK/Saiku+Documentation');
+		return false;
+	}
 });
