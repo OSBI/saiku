@@ -273,10 +273,25 @@ var WorkspaceDropZone = Backbone.View.extend({
             dimHier = $target.attr('hierarchy'),
             key = $target.attr('href').replace('#', '');
 
+        // Fetch available members
+        this.member = new Member({}, {
+            cube: this.workspace.selected_cube,
+            dimension: key
+        });
+
+        var hName = decodeURIComponent(this.member.hierarchy),
+            memberHierarchy = this.workspace.query.helper.getHierarchy(hName),
+            memberLevel;
+
+        if (memberHierarchy && memberHierarchy.levels.hasOwnProperty(level)) {
+            memberLevel = memberHierarchy.levels[level];
+        }
+
         if (objData.level.annotations !== undefined &&
             objData.level.annotations !== null &&
 			(objData.level.annotations.AnalyzerDateFormat !== undefined || 
-             objData.level.annotations.SaikuDayFormatString !== undefined)) {
+             objData.level.annotations.SaikuDayFormatString !== undefined) &&
+            (memberLevel.selection.members.length === 0)) {
             // Launch date filter dialog
             (new DateFilterModal({
                 dimension: dimension,

@@ -23,7 +23,8 @@ var DateFilterModal = Modal.extend({
 	buttons: [
 		{ text: 'Clear', method: 'clear_date_filter' },
 		{ text: 'Save', method: 'save' },
-		{ text: 'Cancel', method: 'finished' }
+		{ text: 'Cancel', method: 'finished' },
+		{ text: 'Open Standard Filter', method: 'open_standard_filter' }
 	],
 
 	events: {
@@ -170,6 +171,7 @@ var DateFilterModal = Modal.extend({
 		// show/hide button for clear filter
 		if (this.show_button_clear()) {
 			this.$el.find('.dialog_footer a:nth-child(1)').show();
+			this.$el.find('.dialog_footer a:nth-child(4)').hide();
 		}
 		else {
 			this.$el.find('.dialog_footer a:nth-child(1)').hide();
@@ -202,6 +204,28 @@ var DateFilterModal = Modal.extend({
 
 		// Populate date filter
 		this.populate();
+	},
+
+	open_standard_filter: function(event) {
+		event.preventDefault();
+
+    	// Launch selections dialog
+    	(new SelectionsModal({
+    		source: 'DateFilterModal',
+		    target: this.target,
+		    name: this.name,
+		    key: this.key,
+		    objDateFilter: {
+		        dimension: this.dimension,
+		        hierarchy: this.hierarchy,
+		        data: this.data,
+		        analyzerDateFormat: this.analyzerDateFormat,
+		        dimHier: this.dimHier
+		    },
+		    workspace: this.workspace
+		})).open();
+
+		this.$el.dialog('destroy').remove();
 	},
 
 	post_render: function(args) {
