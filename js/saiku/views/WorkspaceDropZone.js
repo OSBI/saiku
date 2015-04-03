@@ -281,6 +281,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             (new DateFilterModal({
                 dimension: dimension,
                 hierarchy: hierarchy,
+                target: $target,
                 name: $target.text(),
                 data: objData,
                 analyzerDateFormat: objData.level.annotations.AnalyzerDateFormat,
