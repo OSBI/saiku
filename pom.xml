@@ -45,7 +45,7 @@
         <slf4j.version>1.6.4</slf4j.version>
         <enunciate.version>1.28</enunciate.version>
         <jersey.version>1.19</jersey.version>
-        <tomcat.version>apache-tomcat-6.0.24</tomcat.version>
+        <tomcat.version>apache-tomcat-8.0.18</tomcat.version>
         <tomcat.source>target/stage/tomcat/</tomcat.source>
         <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
         <calcite.version>0.9.2-incubating-SNAPSHOT</calcite.version>
@@ -156,8 +156,11 @@
                     <featureBranchPrefix>feature-</featureBranchPrefix>
                     <releaseBranchPrefix>release-</releaseBranchPrefix>
                     <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
-                    <versionTagPrefix>blither-</versionTagPrefix>
+                    <versionTagPrefix>saiku-</versionTagPrefix>
                     </flowInitContext>
+                    <allowSnapshots>true</allowSnapshots>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <pushReleases>true</pushReleases>
                 </configuration>
             </plugin>
             <plugin>
