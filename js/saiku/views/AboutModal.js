@@ -33,7 +33,10 @@ var AboutModal = Modal.extend({
         this.options.title = 'About ' + Settings.VERSION;
     },
 
-    close: function() {
+    close: function(event) {
+        if (event.target.hash === '#close') {
+            event.preventDefault();
+        }
         this.$el.dialog('destroy').remove();
     }
 });
