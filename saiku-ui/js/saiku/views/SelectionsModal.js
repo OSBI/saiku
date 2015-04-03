@@ -22,7 +22,8 @@ var SelectionsModal = Modal.extend({
 
     buttons: [
         { text: "OK", method: "save" },
-        { text: "Cancel", method: "close" }
+        { text: "Cancel", method: "close" },
+        { text: "Open Date Filter", method: "open_date_filter" }
     ],
 
     events: {
@@ -102,6 +103,13 @@ var SelectionsModal = Modal.extend({
             level = hierarchy.levels[lName];
         }
 
+        if (this.source === 'DateFilterModal' && level.selection.members.length === 0) {
+            this.$el.find('.dialog_footer a:nth-child(3)').show();
+        }
+        else {
+            this.$el.find('.dialog_footer a:nth-child(3)').hide();
+        }
+
         if (Settings.ALLOW_PARAMETERS) {
             if (level) {
                 var pName = level.selection ? level.selection.parameterName : null;
@@ -135,6 +143,25 @@ var SelectionsModal = Modal.extend({
 
 
         this.get_members();
+    },
+
+    open_date_filter: function(event) {
+        event.preventDefault();
+
+        // Launch date filter dialog
+        (new DateFilterModal({
+            dimension: this.objDateFilter.dimension,
+            hierarchy: this.objDateFilter.hierarchy,
+            target: this.target,
+            name: this.name,
+            data: this.objDateFilter.data,
+            analyzerDateFormat: this.objDateFilter.analyzerDateFormat,
+            dimHier: this.objDateFilter.dimHier,
+            key: this.key,
+            workspace: this.workspace
+        })).open();
+
+        this.$el.dialog('destroy').remove();
     },
 
     show_totals_action: function(event) {

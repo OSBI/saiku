@@ -1,6 +1,3 @@
-//goog.provide('saiku.views.AboutModal');
-
-//goog.require('saiku.views.Modal');
 /*
  *   Copyright 2012 OSBI Ltd
  *
@@ -17,26 +14,29 @@
  *   limitations under the License.
  */
 
-
 /**
  * The "about us" dialog
  */
 var AboutModal = Modal.extend({
-    initialize: function() {
-        _.extend(this.options, {
-            title: "About " + Settings.VERSION
-        });
-    },
+    type: 'info',
 
     events: {
-    	'click a' : 'close'
+        'click a' : 'close'
     },
 
-    dummy: function() { return true;},
+    message: Settings.VERSION + '<br>' +
+        '<a href="http://saiku.meteorite.bi" target="_blank">http://saiku.meteorite.bi</a><br><br>' +
+        '<a href="http://wiki.meteorite.bi/display/SAIK/Saiku+Documentation" target="_blank">Saiku Wiki online help</a><br><br>' +
+        'Powered by <img src="images/src/meteorite_free.png" width="20px"> <a href="http://www.meteorite.bi/consulting/" target="_blank">www.meteorite.bi</a>',
 
-    type: "info",
+    initialize: function() {
+        this.options.title = 'About ' + Settings.VERSION;
+    },
 
-    message: Settings.VERSION + "<br>" +
-        "<a  target='_blank' href='http://www.analytical-labs.com'>http://www.analytical-labs.com/</a><br><br>" +
-        "Powered by <img width='20px' src='images/src/meteorite_free.png'  /> <a target='_blank' href='http://meteorite.bi'>http://meteorite.bi/</a> "
+    close: function(event) {
+        if (event.target.hash === '#close') {
+            event.preventDefault();
+        }
+        this.$el.dialog('destroy').remove();
+    }
 });
