@@ -225,6 +225,9 @@ textarea, select {
 #toolbar ul li a.about {
     background-position: -1702px 5px;
 }
+#toolbar ul li a.help {
+	background-position: -1967px 4px;
+}
 #toolbar ul li a.bug {
     background-position: -1480px 5px;
 }
