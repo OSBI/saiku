@@ -1,6 +1,3 @@
-//goog.provide('saiku.views.AboutModal');
-
-//goog.require('saiku.views.Modal');
 /*
  *   Copyright 2012 OSBI Ltd
  *
@@ -16,7 +13,6 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-
 
 /**
  * The "about us" dialog
