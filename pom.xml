@@ -146,9 +146,19 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.1</version>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
+                <version>1.0-m4.3</version>
+                <configuration>
+                    <flowInitContext>
+                    <masterBranchName>master</masterBranchName>
+                    <developBranchName>development</developBranchName>
+                    <featureBranchPrefix>feature-</featureBranchPrefix>
+                    <releaseBranchPrefix>release-</releaseBranchPrefix>
+                    <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
+                    <versionTagPrefix>blither-</versionTagPrefix>
+                    </flowInitContext>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
