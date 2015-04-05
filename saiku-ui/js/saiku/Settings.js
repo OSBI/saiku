@@ -84,7 +84,13 @@ Settings.GET = function () {
         if (! isNaN(value)) value = parseInt(value);
         if (value === "true") value = true;
         if (value === "false") value = false;
-        params[decodeURIComponent(tokens[1]).toUpperCase()] = value;
+		if(decodeURIComponent(tokens[1].toUpperCase()).substring(0,5)==="PARAM"){
+			params["PARAM"+decodeURIComponent(tokens[1]).substring(5,decodeURIComponent(tokens[1]).length)] = value;
+		}
+		else{
+			params[decodeURIComponent(tokens[1]).toUpperCase()] = value;
+		}
+
         tokens = re.exec(qs);
     }
 

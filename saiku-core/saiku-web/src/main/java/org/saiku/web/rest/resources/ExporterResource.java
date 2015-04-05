@@ -80,6 +80,15 @@ public class ExporterResource {
 	}
 
 
+  /**
+   * Export query to excel file format.
+   * @summary Export to excel.
+   * @param file The file
+   * @param formatter The cellset formatter
+   * @param name The name
+   * @param servletRequest The servlet request.
+   * @return A response containing an excel file.
+   */
 	@GET
 	@Produces({"application/json" })
 	@Path("/saiku/xls")
@@ -116,6 +125,14 @@ public class ExporterResource {
 		}
 	}
 
+  /**
+   * Export the query to a CSV file format.
+   * @summary Export to CSV.
+   * @param file The file
+   * @param formatter The cellset formatter
+   * @param servletRequest The servlet request
+   * @return A response containing a CSV file.
+   */
 	@GET
 	@Produces({"application/json" })
 	@Path("/saiku/csv")
@@ -153,6 +170,14 @@ public class ExporterResource {
 		}
 	}
 
+  /**
+   * Export the query response to JSON.
+   * @summary Export to JSON
+   * @param file The file
+   * @param formatter The cellset formatter
+   * @param servletRequest The servlet request
+   * @return A response containing a JSON query response.
+   */
 	@GET
 	@Produces({"application/json" })
 	@Path("/saiku/json")
@@ -189,6 +214,17 @@ public class ExporterResource {
 		}
 	}
 
+  /**
+   * Export the current resultset to an HTML file.
+   * @summary Export to HTML
+   * @param file The file
+   * @param formatter The formatter
+   * @param css The css
+   * @param tableonly Table only, or include chart
+   * @param wrapcontent Wrap content
+   * @param servletRequest The servlet reaquest.
+   * @return A reponse containing the HTML export.
+   */
   @GET
   @Produces({"text/html" })
   @Path("/saiku/html")
@@ -212,6 +248,15 @@ public class ExporterResource {
 	}
   }
 
+  /**
+   * Export chart to a file.
+   * @summary Export Chart.
+   * @param type The export type (png, svg, jpeg)
+   * @param svg The SVG
+   * @param size The size
+   * @param name The name
+   * @return A reponse containing the chart export.
+   */
 	@POST
 	@Produces({"image/*" })
 	@Path("/saiku/chart")
@@ -322,6 +367,11 @@ public class ExporterResource {
 	}
 
 
+  /**
+   * Get the version.
+   * @summary Get the Saiku version.
+   * @return A String containing the current version.
+   */
   public static String getVersion() {
 	Properties prop = new Properties();
 	InputStream input = null;

@@ -32,6 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+/**
+ * Data Source Manipulation Utility Endpoints
+ *
+ */
 @Component
 @Path("/saiku/{username}/org.saiku.datasources")
 public class DataSourceResource {
@@ -45,7 +49,8 @@ public class DataSourceResource {
     }
     
     /**
-     * Get Data Sources.
+     * Get Data Sources available on the server.
+     * @summary Get Data Sources
      * @return A Collection of SaikuDatasource's.
      */
     @GET
@@ -60,7 +65,8 @@ public class DataSourceResource {
     }
     
     /**
-     * Delete Data Source.
+     * Delete available data source from the server.
+     * @summary Delete data source
      * @param datasourceName - The name of the data source.
      * @return A GONE Status.
      */
@@ -72,8 +78,9 @@ public class DataSourceResource {
     }
     
     /**
-     * Get Data Source.
-     * @param datasourceName.
+     * Get a specific data source from a sever.
+     * @summary Get Data Source.
+     * @param datasourceName The data source name.
      * @return A Saiku Datasource.
      */
     @GET

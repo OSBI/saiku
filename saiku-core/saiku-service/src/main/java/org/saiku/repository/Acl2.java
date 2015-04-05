@@ -82,7 +82,8 @@ class Acl2 {
         //Figure out if its a folder
 
         if(node.getMixinNodeTypes().length==0 && (FilenameUtils.getExtension(node.getName()).equals("")
-           || FilenameUtils.getExtension(node.getName())== null)){
+
+                                                  || FilenameUtils.getExtension(node.getName())== null)){
           node.addMixin("nt:saikufolders");
         }
 

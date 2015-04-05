@@ -171,6 +171,9 @@ public abstract class AbstractConnectionManager implements IConnectionManager, S
         return (OlapConnection) o;
       }
     }
+    else{
+
+    }
     return null;
   }
 

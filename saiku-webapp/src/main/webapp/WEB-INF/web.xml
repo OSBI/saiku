@@ -203,6 +203,122 @@
     <servlet-name>jersey2</servlet-name>
     <url-pattern>/rest/saiku/session</url-pattern>
   </servlet-mapping>-->
+    <servlet>
+        <servlet-name>xmla</servlet-name>
+        <servlet-class>org.saiku.olap.util.SaikuXmlaServlet</servlet-class>
 
+        <init-param>
+            <param-name>OlapDriverUsePreConfiguredDiscoverDatasourcesResponse</param-name>
+            <param-value>true</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>OlapDriverDiscoverDatasources.dataSourceName</param-name>
+            <param-value>[XMLA olap4ld]</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>OlapDriverDiscoverDatasources.dataSourceInfo</param-name>
+            <param-value>[LdCatalogSchema]</param-value>
+        </init-param>
+        <init-param>
+            <param-name>OlapDriverDiscoverDatasources.url</param-name>
+            <param-value>@datasourceUrl@</param-value>
+        </init-param>
+        <init-param>
+            <param-name>OlapDriverDiscoverDatasources.providerType</param-name>
+            <param-value>TDP</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>OlapDriverDiscoverDatasources.authenticationMode</param-name>
+            <param-value>Unauthenticated</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>OlapDriverMaxNumConnectionsPerUser</param-name>
+            <param-value>15</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>OlapDriverClassName</param-name>
+            <param-value>org.olap4j.driver.olap4ld.Olap4ldDriver</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>OlapDriverConnectionString</param-name>
+            <param-value>jdbc:ld://olap4ld;Catalog=LdCatalog;JdbcDrivers=com.mysql.jdbc.Driver;Server=http://;Database=EMBEDDEDSESAME;Datastructuredefinitions=;Datasets=;</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>OlapDriverConnectionProperty.Prefix</param-name>
+            <param-value>@connectionPrefix@</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>OlapDriverConnectionProperty.FetchLevelProperties</param-name>
+            <param-value>false</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>OlapDriverConnectionProperty.FetchMemberProperties</param-name>
+            <param-value>false</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>OlapDriverConnectionProperty.FetchMembers</param-name>
+            <param-value>true</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>OlapDriverConnectionProperty.QueryTimeoutMs</param-name>
+            <param-value>@queryTimeout@</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>OlapDriverConnectionProperty.AuthenticationProvider</param-name>
+            <param-value>com.someotherclass.XmlaAuthenticationProvider</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>OlapDriverConnectionProperty.ConnectionTimeoutMs</param-name>
+            <param-value>@connectionTimeout@</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>OlapDriverConnectionProperty.TotalCellLimit</param-name>
+            <param-value>@totalCellLimit@</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>OlapDriverConnectionProperty.PerPivotCellLimit</param-name>
+            <param-value>@perPivotCellLimit@</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>OlapDriverConnectionProperty.Source</param-name>
+            <param-value>Excel</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>IdleConnectionsTimeoutMinutes</param-name>
+            <param-value>@idleConnectionCleanupTimeout@</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>EnableConnectionReuse</param-name>
+            <param-value>@enableConnectionsReuse@</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>EnableCubesMetadataPrefetch</param-name>
+            <param-value>@enableCubesMetadataPrefetch@</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>xmla</servlet-name>
+        <url-pattern>/xmla/*</url-pattern>
+    </servlet-mapping>
 
 </web-app>

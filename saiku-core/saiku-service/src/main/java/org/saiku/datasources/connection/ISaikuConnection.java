@@ -82,4 +82,6 @@ public interface ISaikuConnection {
 
   public String getName();
 
+  public Properties getProperties();
+
 }

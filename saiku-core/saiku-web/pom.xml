@@ -135,6 +135,10 @@
             <artifactId>xml-apis</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.qmino</groupId>
+            <artifactId>miredot-annotations</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>fop</artifactId>
         </dependency>

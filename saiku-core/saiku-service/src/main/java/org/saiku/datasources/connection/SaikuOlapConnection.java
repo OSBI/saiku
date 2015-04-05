@@ -147,4 +147,8 @@ public class SaikuOlapConnection implements ISaikuConnection {
     return name;
   }
 
+  public Properties getProperties() {
+    return properties;
+  }
+
 }

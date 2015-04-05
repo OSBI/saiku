@@ -273,14 +273,31 @@ var WorkspaceDropZone = Backbone.View.extend({
             dimHier = $target.attr('hierarchy'),
             key = $target.attr('href').replace('#', '');
 
+        // Fetch available members
+        this.member = new Member({}, {
+            cube: this.workspace.selected_cube,
+            dimension: key
+        });
+
+        var hName = decodeURIComponent(this.member.hierarchy),
+            memberHierarchy = this.workspace.query.helper.getHierarchy(hName),
+            memberLevel;
+
+        if (memberHierarchy && memberHierarchy.levels.hasOwnProperty(level)) {
+            memberLevel = memberHierarchy.levels[level];
+        }
+
         if (objData.level.annotations !== undefined &&
             objData.level.annotations !== null &&
-			(objData.level.annotations.AnalyzerDateFormat !== undefined || 
-             objData.level.annotations.SaikuDayFormatString !== undefined)) {
+			(objData.level.annotations.AnalyzerDateFormat !== undefined ||
+             objData.level.annotations.SaikuDayFormatString !== undefined) &&
+            (memberLevel.selection.members.length === 0)) {
+
             // Launch date filter dialog
             (new DateFilterModal({
                 dimension: dimension,
                 hierarchy: hierarchy,
+                target: $target,
                 name: $target.text(),
                 data: objData,
                 analyzerDateFormat: objData.level.annotations.AnalyzerDateFormat,
@@ -488,11 +505,6 @@ var WorkspaceDropZone = Backbone.View.extend({
                             "show_totals_max": {name: "Max", i18n: true},
                             "show_totals_avg": {name: "Avg", i18n: true}
                         }},
-						"parameters" : {name: "Parameters", i18n: true, items:
-				 		{
-					 		"ParamQuick": {name: "Add Parameter", i18n: true, items: addFun(levels, "Param")},
-							"ParamRemove": {name: "Remove Parameter", i18n: true, items: addFun(null, "Param")}
-				 		}},
                         "cancel" : { name: "Cancel", i18n: true }
 
                 };
