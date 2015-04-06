@@ -176,7 +176,7 @@ var SelectionsModal = Modal.extend({
             var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">' + self.message + '</span> ';
             self.workspace.block(message);
 
-            this.workspace.query.action.gett(path, {
+            this.workspace.query.action.get(path, {
                 success: this.fetch_members,
                 error: function() {
                     self.workspace.unblock();
@@ -197,7 +197,7 @@ var SelectionsModal = Modal.extend({
 
         var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Searching for members matching:</span> ' + search_term;
         self.workspace.block(message);
-		self.workspace.query.action.gett(self.search_path, {
+		self.workspace.query.action.get(self.search_path, {
                 async: false,
 
                 success: function(response, model) {
