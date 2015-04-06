@@ -22,8 +22,8 @@ var SelectionsModal = Modal.extend({
 
     buttons: [
         { text: "OK", method: "save" },
-        { text: "Cancel", method: "close" },
-        { text: "Open Date Filter", method: "open_date_filter" }
+        { text: "Open Date Filter", method: "open_date_filter" },
+        { text: "Cancel", method: "close" }
     ],
 
     events: {
@@ -104,10 +104,10 @@ var SelectionsModal = Modal.extend({
         }
 
         if (this.source === 'DateFilterModal' && level.selection.members.length === 0) {
-            this.$el.find('.dialog_footer a:nth-child(3)').show();
+            this.$el.find('.dialog_footer a:nth-child(2)').show();
         }
         else {
-            this.$el.find('.dialog_footer a:nth-child(3)').hide();
+            this.$el.find('.dialog_footer a:nth-child(2)').hide();
         }
 
         if (Settings.ALLOW_PARAMETERS) {
