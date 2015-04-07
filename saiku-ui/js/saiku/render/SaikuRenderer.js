@@ -23,20 +23,13 @@ var SaikuRendererOptions = {
 var SaikuRenderer = function(data, options) {
     this._options = _.extend(SaikuRendererOptions, options);
     this._hasProcessed = false;
-    if (Backbone) {
+    if (typeof Backbone !== "undefined") {
         _.extend(this, Backbone.Events);
     }
-    if (data) {
-        this._data = data;
-        this.processData(data, options);
-        this._hasProcessed = true;
-    }
 
-};
-
-SaikuRenderer.prototype.render = function(data, options) {
+this.render = function(data, options) {
     var r = null;
-    if (Backbone) {
+    if (typeof Backbone !== "undefined") {
         this.trigger('render:start', this );
     }
 
@@ -44,21 +37,33 @@ SaikuRenderer.prototype.render = function(data, options) {
         this.processData(data, options);
     }
     r = this._render(data, options);
-    if (Backbone) {
+    if (typeof Backbone !== "undefined") {
         this.trigger('render:end', this );
     }
     return r;
 };
 
-SaikuRenderer.prototype.processData = function(data, options) {
-    this.trigger('processData:start', this );
+this.processData = function(data, options) {
+    if (typeof Backbone !== "undefined") {
+        this.trigger('processData:start', this );
+    }
     this._processData(data, options);
-    this.trigger('processData:end', this );
+    if (typeof Backbone !== "undefined") {
+        this.trigger('processData:end', this );
+    }
 };
-SaikuRenderer.prototype.hasProcessedData = function() {
+this.hasProcessedData = function() {
     return this._hasProcessed;
 };
 
 
-SaikuRenderer.prototype._render = function(data, options) {};
-SaikuRenderer.prototype._processData = function(data, options) {};
+this._render = function(data, options) {};
+this._processData = function(data, options) {};
+
+if (data) {
+        this._data = data;
+        this.processData(data, options);
+        this._hasProcessed = true;
+}
+
+};

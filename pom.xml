@@ -5,7 +5,7 @@
     <groupId>org.saiku</groupId>
     <artifactId>saiku</artifactId>
     <packaging>pom</packaging>
-    <version>3.1-SNAPSHOT</version>
+    <version>3.1</version>
     <name>Saiku Module Project</name>
     <scm>
         <developerConnection>
@@ -20,7 +20,7 @@
         <!--        <module>saiku-web-tests</module>-->
         <module>saiku-server</module>
         <module>saiku-bi-platform-plugin-p5</module>
-        <module>saiku-web-tests</module>
+  <!--      <module>saiku-web-tests</module>-->
         <!--  <module>saiku-bi-platform-plugin</module>-->
     <!--<module>saiku-service-osgi</module>-->
   </modules>
@@ -146,9 +146,22 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.1</version>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
+                <version>1.0-m4.3</version>
+                <configuration>
+                    <flowInitContext>
+                    <masterBranchName>master</masterBranchName>
+                    <developBranchName>development</developBranchName>
+                    <featureBranchPrefix>feature-</featureBranchPrefix>
+                    <releaseBranchPrefix>release-</releaseBranchPrefix>
+                    <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
+                    <versionTagPrefix>saiku-</versionTagPrefix>
+                    </flowInitContext>
+                    <allowSnapshots>true</allowSnapshots>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <pushReleases>true</pushReleases>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

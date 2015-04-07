@@ -22,8 +22,8 @@ var SelectionsModal = Modal.extend({
 
     buttons: [
         { text: "OK", method: "save" },
-        { text: "Cancel", method: "close" },
-        { text: "Open Date Filter", method: "open_date_filter" }
+        { text: "Open Date Filter", method: "open_date_filter" },
+        { text: "Cancel", method: "close" }
     ],
 
     events: {
@@ -104,10 +104,10 @@ var SelectionsModal = Modal.extend({
         }
 
         if (this.source === 'DateFilterModal' && level.selection.members.length === 0) {
-            this.$el.find('.dialog_footer a:nth-child(3)').show();
+            this.$el.find('.dialog_footer a:nth-child(2)').show();
         }
         else {
-            this.$el.find('.dialog_footer a:nth-child(3)').hide();
+            this.$el.find('.dialog_footer a:nth-child(2)').hide();
         }
 
         if (Settings.ALLOW_PARAMETERS) {
@@ -176,7 +176,7 @@ var SelectionsModal = Modal.extend({
             var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">' + self.message + '</span> ';
             self.workspace.block(message);
 
-            this.workspace.query.action.gett(path, {
+            this.workspace.query.action.get(path, {
                 success: this.fetch_members,
                 error: function() {
                     self.workspace.unblock();
@@ -197,7 +197,7 @@ var SelectionsModal = Modal.extend({
 
         var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Searching for members matching:</span> ' + search_term;
         self.workspace.block(message);
-		self.workspace.query.action.gett(self.search_path, {
+		self.workspace.query.action.get(self.search_path, {
                 async: false,
 
                 success: function(response, model) {

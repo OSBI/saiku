@@ -127,6 +127,7 @@
     display: inline;
 }
 .processing, .blockElement {
+    background-color: #FFFFFF;
     border-radius: 3px;
     border: 1px solid #EAEAEA;
     z-index: 10001;
