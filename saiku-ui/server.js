@@ -72,30 +72,26 @@ function get_from_proxy(request, response) {
     console.log(options.method, options.path);
     
     var proxy_request = http.request(options);
+    request.addListener('data', function(chunk) {
+        proxy_request.write(chunk, 'binary');
+    });
+    request.addListener('end', function() {
+        proxy_request.end();
+    });
     
+    proxy_request.addListener('error', function (error) {
+        console.log("ERROR:",error);
+    });    
     proxy_request.addListener('response', function (proxy_response) {
         proxy_response.addListener('data', function(chunk) {
             response.write(chunk, 'binary');
         });
         
         proxy_response.addListener('end', function() {
-            if (process.env.CHAOS_MONKEY) {
-                setTimeout(function() {
-                    response.end();
-                }, Math.floor(Math.random() * 3000));
-            } else {
                 response.end();
-            }
         });
-        //console.log(proxy_response.headers);
         response.writeHead(proxy_response.statusCode, proxy_response.headers);
     });
-    
-    request.addListener('data', function(chunk) {
-        proxy_request.write(chunk, 'binary');
-    });
-    
-    proxy_request.end();
 }
 
 // Unleash the chaos monkey!

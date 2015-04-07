@@ -95,7 +95,7 @@ var SaikuCall = {
 
 };
 
-var SaikuRenderer = {
+var SaikuRendererFactory = {
 	"table" : SaikuTableRenderer,
 	"chart" : SaikuChartRenderer
 };
@@ -157,8 +157,8 @@ SaikuClient.prototype.execute = function(usercall) {
 			//call['render'] = renderMode;
 			call['mode'] = mode;
 
-			if (call.render in SaikuRenderer) {
-				var r = new SaikuRenderer[call.render](data, call);
+			if (call.render in SaikuRendererFactory) {
+				var r = new SaikuRendererFactory[call.render](data, call);
 				r.render();
 				if ($.blockUI) {
 					$(call.htmlObject).unblock();
