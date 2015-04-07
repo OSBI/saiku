@@ -2,12 +2,12 @@
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saiku</groupId>
-        <version>3.1-SNAPSHOT</version>
+        <version>3.1</version>
     </parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>saiku-bi-platform-plugin-p5</artifactId>
 	<packaging>jar</packaging>
-	<version>3.1-SNAPSHOT</version>
+	<version>3.1</version>
 	<name>saiku biserver plugin</name>
 
 	<build>
@@ -284,7 +284,7 @@
 										<exclude name="**/version.xml" />
 									</fileset>
 								</copy>
-                                <mkdir dir="target/dist/saiku/saiku-repository"/>
+                                <mkdir dir="target/dist/saiku/saiku-repository" />
                                 <copy todir="target/dist/saiku/ui/" overwrite="true">
 									<fileset dir="${basedir}/src/main/plugin/">
 										<include name="*.properties" />
