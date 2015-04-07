@@ -176,7 +176,10 @@ var SelectionsModal = Modal.extend({
             var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">' + self.message + '</span> ';
             self.workspace.block(message);
 
-            this.workspace.query.action.get(path, {
+		/**
+		 * gett isn't a typo, although someone should probably rename that method to avoid confusion.
+		 */
+            this.workspace.query.action.gett(path, {
                 success: this.fetch_members,
                 error: function() {
                     self.workspace.unblock();
