@@ -165,6 +165,21 @@
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
+                                    <groupId>com.fasterxml.jackson.core</groupId>
+                                    <artifactId>jackson-databind</artifactId>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.fasterxml.jackson.core</groupId>
+                                    <artifactId>jackson-core</artifactId>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.fasterxml.jackson.core</groupId>
+                                    <artifactId>jackson-annotations</artifactId>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
                                     <groupId>org.apache.xmlgraphics</groupId>
                                     <artifactId>batik-script</artifactId>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
@@ -405,6 +420,14 @@
 
 			</exclusions>
 		</dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
 <!-- 
 		<dependency>
 			<groupId>pentaho</groupId>
@@ -712,6 +735,10 @@
         <dependency>
             <groupId>net.sourceforge.htmlcleaner</groupId>
             <artifactId>htmlcleaner</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
 	</dependencies>
 </project>
