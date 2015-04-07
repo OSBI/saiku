@@ -15,24 +15,17 @@
  ******************************************************************************/
 package org.saiku.plugin.resources;
 
+import com.sun.jersey.api.core.ResourceConfig;
+import com.sun.jersey.spi.container.WebApplication;
+
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import org.pentaho.platform.web.servlet.JAXRSPluginServlet;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.pentaho.platform.api.engine.IPluginManager;
-import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
-import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.pentaho.platform.plugin.services.pluginmgr.PluginClassLoader;
-import org.pentaho.platform.web.servlet.JAXRSPluginServlet;
-import org.saiku.plugin.util.PluginConfig;
-
-import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
-
-import com.sun.jersey.api.container.filter.GZIPContentEncodingFilter;
-import com.sun.jersey.api.core.ResourceConfig;
-import com.sun.jersey.spi.container.WebApplication;
 
 public class ExtendedJAXRSPluginServlet extends JAXRSPluginServlet {
 
