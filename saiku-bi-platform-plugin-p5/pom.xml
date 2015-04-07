@@ -417,7 +417,7 @@
                 	<groupId>pentaho</groupId>
                 	<artifactId>pentaho-platform-extensions</artifactId>
                 </exclusion>
-
+				
 			</exclusions>
 		</dependency>
         <dependency>
@@ -527,25 +527,12 @@
 					<artifactId>secondstring</artifactId>
 					<groupId>secondstring</groupId>
 				</exclusion>
-				<exclusion>
-					<groupId>pentaho</groupId>
-					<artifactId>pentaho-user-console-package</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>janino</groupId>
-					<artifactId>janino</artifactId>
-				</exclusion>
-				                <exclusion>
-					<groupId>pentaho-kettle</groupId>
-					<artifactId>kettle-ui-swt</artifactId>
-                </exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>pentaho-platform-extensions</artifactId>
 			<scope>provided</scope>
-			<version>TRUNK-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>javax.faces</groupId>
