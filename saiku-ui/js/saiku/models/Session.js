@@ -30,7 +30,7 @@ var Session = Backbone.Model.extend({
     initialize: function(args, options) {
         // Attach a custom event bus to this model
         _.extend(this, Backbone.Events);
-        _.bindAll(this, "check_session", "process_session", "load_session","login");
+        _.bindAll(this, "check_session", "process_session", "load_session","login", "brute_force");
         // Check if credentials are being injected into session
         if (options && options.username && options.password) {
             this.username = options.username;
@@ -48,14 +48,23 @@ var Session = Backbone.Model.extend({
 
     check_session: function() {
         if (this.sessionid === null || this.username === null || this.password === null) {
+			var that = this;
             this.clear();
-            this.fetch({ success: this.process_session, error: this.show_error });
+            this.fetch({ success: this.process_session, error: this.brute_force });
         } else {
             this.username = encodeURIComponent(options.username);
             this.load_session();
         }
     },
 
+	/**
+	 * This is a complete hack to get the BI platform plugin working.
+	 * @param obj
+	 */
+	brute_force: function(model, response){
+		this.clear();
+		this.fetch({ success: this.process_session, error: this.show_error });
+	},
 	show_error: function(model, response){
 
 		// Open form and retrieve credentials

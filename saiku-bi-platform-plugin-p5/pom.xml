@@ -175,6 +175,16 @@
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
                                 </artifactItem>
                                 <artifactItem>
+                                    <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                                    <artifactId>jackson-jaxrs-json-provider</artifactId>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                                    <artifactId>jackson-jaxrs-base</artifactId>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
                                     <groupId>com.fasterxml.jackson.core</groupId>
                                     <artifactId>jackson-annotations</artifactId>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
@@ -274,7 +284,8 @@
 										<exclude name="**/version.xml" />
 									</fileset>
 								</copy>
-								<copy todir="target/dist/saiku/ui/" overwrite="true">
+                                <mkdir dir="target/dist/saiku/saiku-repository"/>
+                                <copy todir="target/dist/saiku/ui/" overwrite="true">
 									<fileset dir="${basedir}/src/main/plugin/">
 										<include name="*.properties" />
 									</fileset>
@@ -618,6 +629,15 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-base</artifactId>
+            <version>2.5.1</version>
+        </dependency>
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-client</artifactId>
