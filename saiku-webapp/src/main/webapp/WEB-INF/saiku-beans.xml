@@ -59,6 +59,7 @@
         <property name="userService" ref="userServiceBean"/>
         <property name="datasourceService" ref="datasourceServiceBean"/>
         <property name="olapDiscoverService" ref="olapDiscoverServiceBean"/>
+        <property name="repositoryDatasourceManager" ref="repositoryDsManager"/>
     </bean>
 
     <bean id="olapDiscoverServiceBean" class="org.saiku.service.olap.OlapDiscoverService">

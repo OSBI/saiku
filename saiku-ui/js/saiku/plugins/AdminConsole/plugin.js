@@ -42,7 +42,7 @@ var AdminConsole = Backbone.View.extend({
         'click .backup_restore' : 'backup_restore',
         'click .submitrestore' : 'restoreFile',
         'click .submitrestorelegacy' : 'restoreLegacy',
-
+		//'click .download_schema' : 'download_schema',
         'click .license_info' : 'show_license_info',
         'click .license_users_list' : 'show_license_user_list',
         'click .add_license_user' : 'add_license_user',
@@ -449,9 +449,11 @@ var AdminConsole = Backbone.View.extend({
         "<a href='<%= conn.id%>' class='refresh_button form_button user_button hide'>Refresh Cache</a><div class='clear'></div></form>" +
         "<div id='savestatus'></div>"
        ),
-    schemauploadtemplate: _.template( "<h3>Upload Schema</h3>" +
+    schemauploadtemplate: _.template( "<h3>Schema Management</h3>" +
         "<input name='fileschema' type='file' class='upload_button'/><div class='clear'></div><br/>" +
-        "<label for='schemaname'>Schema Name:</label><input name='schemaname' type='text' value='<%= schema.id %>'/><br/><a href='<%= schema.id%>' class='user_button form_button remove_schema hide'>Remove</a><input type='submit' class='user_button form_button upload_button submitdatasource' value='Upload'>" +
+        "<label for='schemaname'>Schema Name:</label><input name='schemaname' type='text' value='<%= schema.id %>'/><br/>" +
+	    "<a href='<%= schema.id%>' class='user_button form_button remove_schema hide'>Remove</a>" +
+	    "<a href='/saiku/rest/saiku/admin/schema/<%= schema.id%>' class='user_button form_button download_schema hide'>Download</a><input type='submit' class='user_button form_button upload_button submitdatasource' value='Upload'>" +
         "<br/><div id='uploadstatus'></div>"),
     licenseInfoTemplate: _.template("<h3>License Information</h3>" +
         "<ul class='license_type'><li><strong>License Type: </strong></li>" +
@@ -507,6 +509,7 @@ var AdminConsole = Backbone.View.extend({
         });
 
         $(this.el).find('.remove_schema').removeClass("hide");
+		$(this.el).find('.download_schema').removeClass("hide");
 
         $(this.el).find('.submitdatasource').hide();
         $(this.el).find('input[name="fileschema"]').hide();
@@ -834,6 +837,18 @@ var AdminConsole = Backbone.View.extend({
         var that = this;
         s.destroy({wait:true, success: function(){that.fetch_schemas();$(that.el).find('.user_info').html("");}})
     },
+	download_schema : function(event) {
+		event.preventDefault();
+
+		var $currentTarget = $(event.currentTarget);
+		// var $target = $currentTarget.find('a');
+		$currentTarget.addClass('selected');
+		var path = $currentTarget.attr('href').replace('#', '');
+
+		var s = this.schemas.get(path);
+		s.fetch({wait:true, success: function(){alert("here");}})
+
+	},
     remove_user : function(event){
         event.preventDefault();
 

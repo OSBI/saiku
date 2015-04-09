@@ -1,8 +1,10 @@
 package org.saiku.web.rest.resources;
 
+import org.saiku.database.dto.MondrianSchema;
 import org.saiku.database.dto.SaikuUser;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.service.datasource.DatasourceService;
+import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
@@ -22,7 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.jcr.RepositoryException;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
@@ -51,6 +55,17 @@ public class AdminResource {
         userService = us;
     }
 
+
+    private IDatasourceManager repositoryDatasourceManager;
+
+    public IDatasourceManager getRepositoryDatasourceManager() {
+    return repositoryDatasourceManager;
+  }
+
+    public void setRepositoryDatasourceManager(
+        IDatasourceManager repositoryDatasourceManager) {
+      this.repositoryDatasourceManager = repositoryDatasourceManager;
+    }
   /**
    * Get all the available data sources on the platform.
    * @return A response containing a list of datasources.
@@ -287,6 +302,25 @@ public class AdminResource {
         datasourceService.removeSchema(id);
         return Response.status(Response.Status.NO_CONTENT).entity(datasourceService.getAvailableSchema()).build();
     }
+
+  @GET
+  @Path("/schema/{id}")
+  @Produces("application/xml")
+  public Response getSavedSchema(@PathParam("id") String id){
+    String p = "";
+    for(MondrianSchema s :datasourceService.getAvailableSchema()){
+      if(s.getName().equals(id)){
+        p = s.getPath();
+        break;
+      }
+    }
+
+
+    return Response
+        .ok(p.getBytes(), MediaType.APPLICATION_OCTET_STREAM)
+        .header("content-disposition","attachment; filename = "+ id)
+        .build();
+  }
 
   /**
    * Import a legacy data source into the Saiku server.
