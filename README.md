@@ -19,16 +19,8 @@ ________________
 http://community.meteorite.bi
 (Work in progress)
 
-Commit Messages
-_______________
+Contributing
+_____________
 
-Please try and make sure there is a relevant Jira ticket available to commit against, this helps us track issues and the code committed to fix the issue/enhancement
+Please read CONTRIBUTING.md for contribution guidelines.
 
-When committing please format your commit message with a Jira reference and comment for example:
-git commit -a -m "SKU-1234 #comment fix bug x by doing y"
-
-
-CLA
-___
-
-If you want to commit to the Saiku code base can you please get in contact at info@meteorite.bi and ask for a copy of our Contibutors License Agreement to sign.
