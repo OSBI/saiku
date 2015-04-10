@@ -19,6 +19,9 @@ For people developing directly in our repository please create feature branches,
 
 == Feature Branches ==
 
+*Create a feature branch*
+
+mvn jgitflow:feature-start
 
 == Hot Fix Branches ==
 
