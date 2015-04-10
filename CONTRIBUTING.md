@@ -25,9 +25,11 @@ For people developing directly in our repository please create feature branches,
 Hot fixes are releases forked from the latest release branch and merged back into master and development. After you have completed a hotfix a new release should be issued.
 
 *Create a hot fix*
+
 mvn jgitflow:hotfix-start
 
 *Finish a hot fix*
+
 mvn jgitflow:hotfix-finish -DkeepBranch -DnoHotfixBuild
 
 == Release Branches ==
