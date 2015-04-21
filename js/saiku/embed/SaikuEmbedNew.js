@@ -26,7 +26,7 @@
 	var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 	var fromCharCode = String.fromCharCode;
 	var INVALID_CHARACTER_ERR = (function() {
-			// fabricate a suitable error object
+			// Fabricate a suitable error object
 			try { 
 				document.createElement('$'); 
 			}
@@ -130,9 +130,9 @@ var SaikuClient = (function() {
 	 */
 	var _options = {
 		file: null,
-		render: 'table',
-		mode: null,
-		formatter: 'flattened',
+		render: 'table', // table || chart
+		mode: null,      // table: sparkline, sparkbar || chart: line, bar, treemap, ...
+		formatter: 'flattened', // Should be left unless you want an hierarchical resultset
 		htmlObject: '#saiku',
 		zoom: true,
 		params: {}
