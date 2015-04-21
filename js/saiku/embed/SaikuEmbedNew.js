@@ -1,3 +1,25 @@
+/**  
+ * Copyright 2015 OSBI Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Base 64 module
+ * 
+ * @param  {window} window Window is passed through as local variable rather than global
+ * @return {String} Encoding data
+ */
 ;(function(window) {
 	'use strict';
 
@@ -41,11 +63,19 @@
 				}
 				result += characters.charAt(b1) + characters.charAt(b2) + characters.charAt(b3) + characters.charAt(b4);
 			}
+
 			return result;
 		}});
 }(this));
 
+/**
+ * IE Browser detection
+ * 
+ * @return {Boolean} If `true` return the value of `v`, else return `false`
+ */
 var isIE = (function() {
+	'use strict';
+
 	var undef, v = 3;
 	var dav = navigator.appVersion;
 
@@ -57,9 +87,32 @@ var isIE = (function() {
 	return false;
 }());
 
+/**
+ * A client for working with files Saiku
+ *
+ * @class
+ * @constructor
+ * @chainable
+ * @example
+ * 		var myClient = new SaikuClient({
+ * 			server: '/saiku',
+ * 			path: '/rest/saiku/embed',
+ * 			user: 'admin',
+ * 			password: 'admin'
+ * 		});
+ * @return {SaikuClient} The SaikuClient instance (for chaining)
+ */
 var SaikuClient = (function() {
 	'use strict';
 
+	/**
+	 * The configuration settings for the request
+	 * 
+	 * @property _settings
+	 * @type {Object}
+	 * @private
+	 * @default { server: '/saiku', path: '/rest/saiku/embed', user: 'admin', password: 'admin' }
+	 */
 	var _settings = {
 		server: '/saiku',
 		path: '/rest/saiku/embed',
@@ -67,6 +120,14 @@ var SaikuClient = (function() {
 		password: 'admin'
 	};
 
+	/**
+	 * The configuration options to render the file on page
+	 * 
+	 * @property _options
+	 * @type {Object}
+	 * @private
+	 * @default { file: null, render: 'table', mode: null, formatter: 'flattened', htmlObject: '#saiku', zoom: true, params: {} }
+	 */
 	var _options = {
 		file: null,
 		render: 'table',
@@ -77,13 +138,21 @@ var SaikuClient = (function() {
 		params: {}
 	};
 
-	var _saikuRendererFactory = {
+	/**
+	 * Instance of SaikuTableRenderer and SaikuChartRenderer
+	 *
+	 * @property _SaikuRendererFactory
+	 * @type {Object}
+	 * @private
+	 * @default { 'table': SaikuTableRenderer, 'chart': SaikuChartRenderer }
+	 */
+	var _SaikuRendererFactory = {
 		'table': SaikuTableRenderer,
 		'chart': SaikuChartRenderer
 	};
 
 	function SaikuClient(opts) {
-		// enforces new
+		// Enforces new
 		if (!(this instanceof SaikuClient)) {
 			return new SaikuClient(opts);
 		}
@@ -91,6 +160,18 @@ var SaikuClient = (function() {
 		this.settings = _.extend(_settings, opts);
 	}
 
+	/**
+	 * Method for execute the requests of files Saiku
+	 *
+	 * @method execute
+	 * @param  {Object} opts The configuration options to render the file on page
+	 * @example
+	 * 		myClient.execute({
+	 *   		file: '/homes/home:admin/report.saiku',
+	 *     		htmlObject: '#panel-body',
+	 *       	render: 'table',
+	 *      });
+	 */
 	SaikuClient.prototype.execute = function(opts) {
 		var self = this;
 		var parameters = {};
@@ -134,8 +215,8 @@ var SaikuClient = (function() {
 
 				options['mode'] = mode;
 
-				if (options.render in _saikuRendererFactory) {
-					var saikuRenderer = new _saikuRendererFactory[options.render](data, options);
+				if (options.render in _SaikuRendererFactory) {
+					var saikuRenderer = new _SaikuRendererFactory[options.render](data, options);
 					saikuRenderer.render();
 				}
 				else {
@@ -143,7 +224,10 @@ var SaikuClient = (function() {
 				}
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
-				// body...
+				$(options.htmlObject).text('Error: ' + textStatus);
+				console.error(textStatus);
+				console.error(jqXHR);
+				console.error(errorThrown);
 			}
 		};
 
