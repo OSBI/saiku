@@ -174,8 +174,8 @@ var SaikuClient = (function() {
 	 */
 	SaikuClient.prototype.execute = function(opts) {
 		var self = this;
-		var parameters = {};
 		var options = _.extend({}, _options, opts);
+		var parameters = {};
 
 		if (options.params) {
 			for (var key in options.params) {
