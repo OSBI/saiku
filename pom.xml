@@ -51,6 +51,8 @@
         <calcite.version>0.9.2-incubating-SNAPSHOT</calcite.version>
         <pentaho.libs.version>TRUNK-SNAPSHOT</pentaho.libs.version>
         <pentaho.platform.version>5.0.0</pentaho.platform.version>
+        <thucydides.version>0.9.268</thucydides.version>
+        <jbehave.version>3.9.3</jbehave.version>
     </properties>
     <pluginRepositories>
         <pluginRepository>
@@ -483,17 +485,17 @@
             <dependency>
                 <groupId>net.thucydides</groupId>
                 <artifactId>thucydides-jbehave-plugin</artifactId>
-                <version>0.9.268</version>
+                <version>${thucydides.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.thucydides</groupId>
                 <artifactId>thucydides-core</artifactId>
-                <version>0.9.268</version>
+                <version>${thucydides.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.thucydides</groupId>
                 <artifactId>thucydides-junit</artifactId>
-                <version>0.9.268</version>
+                <version>${thucydides.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate.javax.persistence</groupId>
@@ -503,7 +505,7 @@
             <dependency>
                 <groupId>org.jbehave</groupId>
                 <artifactId>jbehave-core</artifactId>
-                <version>3.8</version>
+                <version>${jbehave.version}</version>
             </dependency>
             <dependency>
                 <groupId>mondrian-data-foodmart-hsql</groupId>
