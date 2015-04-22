@@ -264,10 +264,16 @@ var WorkspaceDropZone = Backbone.View.extend({
         var $target = $(event.target).hasClass('d_level') ?
             $(event.target).find('.level') :
             $(event.target);
-        var dimension = $target.attr('hierarchy').split('].[')[0].replace(/[\[\]]/gi, ''),
-            hierarchy = $target.attr('hierarchy').split('].[')[1].replace(/[\[\]]/gi, '')
-                ? $target.attr('hierarchy').split('].[')[1].replace(/[\[\]]/gi, '')
-                : $target.attr('hierarchy').split('].[')[0].replace(/[\[\]]/gi, ''),
+        var dimension = $target.attr('hierarchy').split('].[')[0].replace(/[\[\]]/gi, '');
+		var hierarchy = "";
+		var split = $target.attr('hierarchy').split('].[');
+		if(split.length>1){
+			hierarchy = split[1].replace(/[\[\]]/gi, '')
+		}
+		else{
+			hierarchy = split[0].replace(/[\[\]]/gi, '')
+		}
+
             level = $target.text(),
             objData = this.find_type_time(dimension, hierarchy, level),
             dimHier = $target.attr('hierarchy'),
