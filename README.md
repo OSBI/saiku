@@ -40,15 +40,21 @@ In order to run it locally you'll need a basic server setup.
 
 ## Wiki
 
-* [Meteorite BI Wiki](http://wiki.meteorite.bi/display/SAIK/Saiku)
+* [Saiku Wiki](http://wiki.meteorite.bi/display/SAIK/Saiku)
+
+## Community
+
+* [Saiku Community](http://community.meteorite.bi/)
 
 ## Bugs and Feature Requests
 
-* [Meteorite BI Jira](http://jira.meteorite.bi/)
+* [Saiku Jira](http://jira.meteorite.bi/)
 
 ## Discussion
 
-* [Meteorite BI Forums](http://forums.meteorite.bi/)
+* [Saiku Dev Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/dev)
+* [Saiku User Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/user)
+* [<strike>Saiku Forums</strike>](http://forums.meteorite.bi/)
 * [Stack Overflow](http://stackoverflow.com/questions/tagged/saiku)
 * [Freenode IRC - Channel: #saiku](http://irc.lc/freenode/%23saiku/t4nk@)
 
