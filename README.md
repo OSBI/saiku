@@ -7,6 +7,20 @@ For more information, see [Saiku](http://www.meteorite.bi).
 
 > You can put the UI on a separate server (apache httpd or simply a webapp in tomcat/webapps e.g).
 
+## Table of Contents
+  1. [Setup](#setup)
+  	- [Build Instructions](#build-instructions)
+  	- [Run UI on Node.js proxy](#run-ui-on-nodejs-proxy)
+  3. [Wiki](#wiki)
+  4. [Community](#community)
+  5. [Bugs and Feature Requests](#bugs-and-feature-requests)
+  6. [Discussion List](#discussion-list)
+  7. [Browser Support](#browser-support)
+  8. [Team](#team)
+  9. [Contributing](#contributing)
+  10. [History](#history)
+  11. [License](#license)
+
 ## Setup
 
 ### Build Instructions
@@ -50,7 +64,7 @@ In order to run it locally you'll need a basic server setup.
 
 * [Saiku Jira](http://jira.meteorite.bi/)
 
-## Discussion
+## Discussion List
 
 * [Saiku Dev Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/dev)
 * [Saiku User Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/user)
