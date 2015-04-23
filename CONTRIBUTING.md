@@ -2,7 +2,7 @@
 
 To get started, [sign the Contributor License Agreement](https://www.clahub.com/agreements/OSBI/saiku-ui).
 
-Follow the standards of [**style guide**]() Saiku UI :metal:
+Follow the standards of [**style guide**](http://wiki.meteorite.bi/display/SAIK/Style+Guide) Saiku UI :metal:
 
 1. Fork it!
 2. Create your feature branch: `git checkout -b my-new-feature`
