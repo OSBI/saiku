@@ -98,7 +98,6 @@ Check [CONTRIBUTING.md](https://github.com/OSBI/saiku-ui/blob/master/CONTRIBUTIN
 
 * If you have a feature request, then please get in touch. We'd love to hear from you! Either post to our [forum](http://forums.meteorite.bi/t/saiku-3-and-beyond/9) or email: [info@meteorite.bi](mailto:info@meteorite.bi)
 
-
 ## History
 
 For detailed changelog, check [Releases](https://github.com/OSBI/saiku-ui/releases).
@@ -107,3 +106,5 @@ For detailed changelog, check [Releases](https://github.com/OSBI/saiku-ui/releas
 
 Saiku and the Saiku UI are free software. The UI, contained in this repository,
 is available under the terms of the Apache License Version 2. A copy is attached for your convenience.
+
+**[⬆ back to top](#table-of-contents)**
