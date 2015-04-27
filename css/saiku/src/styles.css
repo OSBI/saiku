@@ -2155,13 +2155,16 @@ form {
 }
 
 .keyrow label{
-width:90px !important;
+width:120px !important;
 }
 .keyrow select{
 width:70px !important;
 }
 .keyrow input{
 width:70px !important;
+}
+.tablerow {
+margin-bottom: 20px;
 }
 .user_info label {
     display: inline-block; width: 140px; text-align: right;
