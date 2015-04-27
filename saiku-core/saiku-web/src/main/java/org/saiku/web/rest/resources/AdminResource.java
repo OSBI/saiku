@@ -310,12 +310,16 @@ public class AdminResource {
     String p = "";
     for(MondrianSchema s :datasourceService.getAvailableSchema()){
       if(s.getName().equals(id)){
-        p = s.getPath();
+
+        try {
+          p= repositoryDatasourceManager.getInternalFileData(s.getPath());
+        } catch (RepositoryException e) {
+          Response.serverError().entity(e.getLocalizedMessage()).build();
+        }
         break;
       }
     }
-
-
+    
     return Response
         .ok(p.getBytes(), MediaType.APPLICATION_OCTET_STREAM)
         .header("content-disposition","attachment; filename = "+ id)
