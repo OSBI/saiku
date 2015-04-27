@@ -111,13 +111,14 @@ var SaikuClient = (function() {
 	 * @property _settings
 	 * @type {Object}
 	 * @private
-	 * @default { server: '/saiku', path: '/rest/saiku/embed', user: 'admin', password: 'admin' }
+	 * @default { server: '/saiku', path: '/rest/saiku/embed', user: 'admin', password: 'admin', blockUI: false }
 	 */
 	var _settings = {
 		server: '/saiku',
 		path: '/rest/saiku/embed',
 		user: 'admin',
-		password: 'admin'
+		password: 'admin',
+		blockUI: false
 	};
 
 	/**
@@ -177,6 +178,15 @@ var SaikuClient = (function() {
 		var options = _.extend({}, _options, opts);
 		var parameters = {};
 
+		if ($.blockUI && this.settings.blockUI) {
+			$.blockUI.defaults.css = { 'color': 'black', 'font-weight': 'normal' };
+			$.blockUI.defaults.overlayCSS = {};
+			$.blockUI.defaults.blockMsgClass = 'processing';
+			$.blockUI.defaults.fadeOut = 0;
+			$.blockUI.defaults.fadeIn = 0;
+			$.blockUI.defaults.ignoreIfBlocked = false;
+		}
+
 		if (options.params) {
 			for (var key in options.params) {
 				if (options.params.hasOwnProperty(key)) {
@@ -190,6 +200,12 @@ var SaikuClient = (function() {
 			{ 'formatter': options.formatter },
 			{ 'file': options.file }
 		);
+
+		if ($.blockUI && this.settings.blockUI) {
+			$(options.htmlObject).block({
+				message: '<span class="saiku_logo" style="float:left">&nbsp;&nbsp;</span> Executing....'
+			});
+		}
 
 		var params = {
 			url: self.settings.server + (self.settings.path ? self.settings.path : '') + '/export/saiku/json',
@@ -218,12 +234,21 @@ var SaikuClient = (function() {
 				if (options.render in _saikuRendererFactory) {
 					var saikuRenderer = new _saikuRendererFactory[options.render](data, options);
 					saikuRenderer.render();
+					if ($.blockUI) {
+						$(options.htmlObject).unblock();
+					}
 				}
 				else {
 					alert('Render type ' + options.render + ' not found!');
 				}
+				if ($.blockUI) {
+					$(options.htmlObject).unblock();
+				}
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
+				if ($.blockUI) {
+					$(options.htmlObject).unblock();
+				}
 				$(options.htmlObject).text('Error: ' + textStatus);
 				console.error(textStatus);
 				console.error(jqXHR);
