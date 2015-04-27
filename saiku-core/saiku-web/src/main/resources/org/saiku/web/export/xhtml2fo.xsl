@@ -22,7 +22,7 @@
   <xsl:template match="xhtml:html|html">
     <fo:root>
       <fo:layout-master-set>
-        <fo:simple-page-master master-name="page">
+        <fo:simple-page-master master-name="page" page-height="8.50in" page-width="11.00in" margin="1cm">
           <fo:region-body margin=".75in .75in .75in .75in"/>
           <fo:region-before extent=".5in"/>
           <fo:region-after extent=".5in"/>
