@@ -789,7 +789,20 @@ var AdminConsole = Backbone.View.extend({
 
         if(v!=null && v!=undefined && v!=""){
             conn.set({"advanced": v});
-        } else {
+        }
+		else if($(this.el).find(".drivertype").val() === 'MONGO'){
+            var name = $(this.el).find("input[name='connname']").val();
+            var schema = $(this.el).find("select[name='mongoschema']").val();
+            var mondrianschema = $(this.el).find(".schemaselect").val();
+			var c = "type=OLAP\n"+
+			"name="+name+"\n"+
+			"driver=mondrian.olap4j.MondrianOlap4jDriver\n"+
+			"location=jdbc:mondrian:Jdbc=jdbc:calcite:model=mongo:///etc/mongoschema/"+schema+";Catalog=mondrian://"+mondrianschema+";JdbcDrivers=net.hydromatic.optiq.jdbc.Driver;\n"+
+			"username=admin\n"+
+			"password=admin";
+			conn.set({"advanced": c});
+		}
+		else {
             conn.set({"connectionname": $(this.el).find("input[name='connname']").val()});
             conn.set({"connectiontype": $(this.el).find(".drivertype").val()});
             conn.set({"jdbcurl": $(this.el).find("input[name='jdbcurl']").val()});
