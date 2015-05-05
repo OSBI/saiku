@@ -2,7 +2,7 @@
 <%@ page import="org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter" %>
 <%@ taglib prefix="authz" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<authz:authorize ifAllGranted="ROLE_USER">
+<authz:authorize  ifAllGranted="ROLE_USER">
   <c:redirect url="index.jsp"/>
 </authz:authorize>
 
