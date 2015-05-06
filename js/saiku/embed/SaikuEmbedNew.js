@@ -1,22 +1,23 @@
-/**  
- * Copyright 2015 OSBI Ltd.
+/*  
+ *   Copyright 2015 OSBI Ltd
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
  */
 
 /**
  * Base 64 module
- * 
+ *
+ * @public
  * @param  {window} window Window is passed through as local variable rather than global
  * @return {String} Encoding data
  */
@@ -70,7 +71,8 @@
 
 /**
  * IE Browser detection
- * 
+ *
+ * @public
  * @return {Boolean} If `true` return the value of `v`, else return `false`
  */
 var isIE = (function() {
@@ -91,7 +93,6 @@ var isIE = (function() {
  * A client for working with files Saiku
  *
  * @class
- * @constructor
  * @chainable
  * @example
  * 		var myClient = new SaikuClient({
@@ -111,13 +112,14 @@ var SaikuClient = (function() {
 	 * @property _settings
 	 * @type {Object}
 	 * @private
-	 * @default { server: '/saiku', path: '/rest/saiku/embed', user: 'admin', password: 'admin' }
+	 * @default { server: '/saiku', path: '/rest/saiku/embed', user: 'admin', password: 'admin', blockUI: false }
 	 */
 	var _settings = {
 		server: '/saiku',
 		path: '/rest/saiku/embed',
 		user: 'admin',
-		password: 'admin'
+		password: 'admin',
+		blockUI: false
 	};
 
 	/**
@@ -141,16 +143,49 @@ var SaikuClient = (function() {
 	/**
 	 * Instance of SaikuTableRenderer and SaikuChartRenderer
 	 *
-	 * @property _SaikuRendererFactory
+	 * @property _saikuRendererFactory
 	 * @type {Object}
 	 * @private
 	 * @default { 'table': SaikuTableRenderer, 'chart': SaikuChartRenderer }
 	 */
-	var _SaikuRendererFactory = {
+	var _saikuRendererFactory = {
 		'table': SaikuTableRenderer,
 		'chart': SaikuChartRenderer
 	};
+	
+	/**
+	 * Add levels and parameter names
+	 * 
+	 * @private 
+	 * @param  {Object} dataAxis Axis FILTER, COLUMNS and ROWS with values in hierarchies
+	 * @return {Object} Levels and parameter names
+	 */
+	function joinParameters(dataAxis) {
+		var parametersLevels = [];
 
+		_.each(dataAxis, function(axis) {
+			_.each(axis, function(value) {
+				_.each(value.levels, function(levels) {
+					if (levels.selection.parameterName) {
+						parametersLevels.push({
+							levels: value.name + '.[' + levels.name + ']',
+							parameterName: levels.selection.parameterName
+						});
+					}
+				});
+			});
+		});
+
+		return parametersLevels;
+	}
+
+	/**
+	 * That constructor enforces the use of new, even if you call the constructor like a function
+	 *
+	 * @constructor
+	 * @private
+	 * @param  {Object} opts Settings for the request
+	 */
 	function SaikuClient(opts) {
 		// Enforces new
 		if (!(this instanceof SaikuClient)) {
@@ -164,6 +199,7 @@ var SaikuClient = (function() {
 	 * Method for execute the requests of files Saiku
 	 *
 	 * @method execute
+ 	 * @public
 	 * @param  {Object} opts The configuration options to render the file on page
 	 * @example
 	 * 		myClient.execute({
@@ -176,6 +212,15 @@ var SaikuClient = (function() {
 		var self = this;
 		var options = _.extend({}, _options, opts);
 		var parameters = {};
+
+		if ($.blockUI && this.settings.blockUI) {
+			$.blockUI.defaults.css = { 'color': 'black', 'font-weight': 'normal' };
+			$.blockUI.defaults.overlayCSS = {};
+			$.blockUI.defaults.blockMsgClass = 'processing';
+			$.blockUI.defaults.fadeOut = 0;
+			$.blockUI.defaults.fadeIn = 0;
+			$.blockUI.defaults.ignoreIfBlocked = false;
+		}
 
 		if (options.params) {
 			for (var key in options.params) {
@@ -190,6 +235,12 @@ var SaikuClient = (function() {
 			{ 'formatter': options.formatter },
 			{ 'file': options.file }
 		);
+
+		if ($.blockUI && this.settings.blockUI) {
+			$(options.htmlObject).block({
+				message: '<span class="saiku_logo" style="float:left">&nbsp;&nbsp;</span> Executing....'
+			});
+		}
 
 		var params = {
 			url: self.settings.server + (self.settings.path ? self.settings.path : '') + '/export/saiku/json',
@@ -211,19 +262,41 @@ var SaikuClient = (function() {
 			},
 			success: function(data, textStatus, jqXHR) {
 				var renderMode = data.query.properties['saiku.ui.render.mode'] ? data.query.properties['saiku.ui.render.mode'] : options.render;
-				var mode =  data.query.properties['saiku.ui.render.type'] ? data.query.properties['saiku.ui.render.type'] : options.mode;
+				var mode = data.query.properties['saiku.ui.render.type'] ? data.query.properties['saiku.ui.render.type'] : options.mode;
+				var dataAxis = {
+					dataFilter: data.query.queryModel.axes.FILTER['hierarchies'],
+					dataColumns: data.query.queryModel.axes.COLUMNS['hierarchies'],
+					dataRows: data.query.queryModel.axes.ROWS['hierarchies']
+				};
+				var parametersValues = data.query.parameters;
+				var parametersLevels;
+
+				if (self.settings.dashboards) {
+					parametersLevels = joinParameters(dataAxis);
+					$(options.htmlObject).closest('.gs-w').data('parametersLevels', JSON.stringify(parametersLevels));
+					$(options.htmlObject).closest('.gs-w').data('parametersValues', JSON.stringify(parametersValues));
+				}
 
 				options['mode'] = mode;
 
-				if (options.render in _SaikuRendererFactory) {
-					var saikuRenderer = new _SaikuRendererFactory[options.render](data, options);
+				if (options.render in _saikuRendererFactory) {
+					var saikuRenderer = new _saikuRendererFactory[options.render](data, options);
 					saikuRenderer.render();
+					if ($.blockUI) {
+						$(options.htmlObject).unblock();
+					}
 				}
 				else {
 					alert('Render type ' + options.render + ' not found!');
 				}
+				if ($.blockUI) {
+					$(options.htmlObject).unblock();
+				}
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
+				if ($.blockUI) {
+					$(options.htmlObject).unblock();
+				}
 				$(options.htmlObject).text('Error: ' + textStatus);
 				console.error(textStatus);
 				console.error(jqXHR);
