@@ -16,7 +16,8 @@
 
 /**
  * Base 64 module
- * 
+ *
+ * @public
  * @param  {window} window Window is passed through as local variable rather than global
  * @return {String} Encoding data
  */
@@ -70,7 +71,8 @@
 
 /**
  * IE Browser detection
- * 
+ *
+ * @public
  * @return {Boolean} If `true` return the value of `v`, else return `false`
  */
 var isIE = (function() {
@@ -91,7 +93,6 @@ var isIE = (function() {
  * A client for working with files Saiku
  *
  * @class
- * @constructor
  * @chainable
  * @example
  * 		var myClient = new SaikuClient({
@@ -151,7 +152,40 @@ var SaikuClient = (function() {
 		'table': SaikuTableRenderer,
 		'chart': SaikuChartRenderer
 	};
+	
+	/**
+	 * Add levels and parameter names
+	 * 
+	 * @private 
+	 * @param  {Object} dataAxis Axis FILTER, COLUMNS and ROWS with values in hierarchies
+	 * @return {Object} Levels and parameter names
+	 */
+	function joinParameters(dataAxis) {
+		var parametersLevels = [];
 
+		_.each(dataAxis, function(axis) {
+			_.each(axis, function(value) {
+				_.each(value.levels, function(levels) {
+					if (levels.selection.parameterName) {
+						parametersLevels.push({
+							levels: value.name + '.[' + levels.name + ']',
+							parameterName: levels.selection.parameterName
+						});
+					}
+				});
+			});
+		});
+
+		return parametersLevels;
+	}
+
+	/**
+	 * That constructor enforces the use of new, even if you call the constructor like a function
+	 *
+	 * @constructor
+	 * @private
+	 * @param  {Object} opts Settings for the request
+	 */
 	function SaikuClient(opts) {
 		// Enforces new
 		if (!(this instanceof SaikuClient)) {
@@ -165,6 +199,7 @@ var SaikuClient = (function() {
 	 * Method for execute the requests of files Saiku
 	 *
 	 * @method execute
+ 	 * @public
 	 * @param  {Object} opts The configuration options to render the file on page
 	 * @example
 	 * 		myClient.execute({
@@ -227,7 +262,20 @@ var SaikuClient = (function() {
 			},
 			success: function(data, textStatus, jqXHR) {
 				var renderMode = data.query.properties['saiku.ui.render.mode'] ? data.query.properties['saiku.ui.render.mode'] : options.render;
-				var mode =  data.query.properties['saiku.ui.render.type'] ? data.query.properties['saiku.ui.render.type'] : options.mode;
+				var mode = data.query.properties['saiku.ui.render.type'] ? data.query.properties['saiku.ui.render.type'] : options.mode;
+				var dataAxis = {
+					dataFilter: data.query.queryModel.axes.FILTER['hierarchies'],
+					dataColumns: data.query.queryModel.axes.COLUMNS['hierarchies'],
+					dataRows: data.query.queryModel.axes.ROWS['hierarchies']
+				};
+				var parametersValues = data.query.parameters;
+				var parametersLevels;
+
+				if (self.settings.dashboards) {
+					parametersLevels = joinParameters(dataAxis);
+					$(options.htmlObject).closest('.gs-w').data('parametersLevels', JSON.stringify(parametersLevels));
+					$(options.htmlObject).closest('.gs-w').data('parametersValues', JSON.stringify(parametersValues));
+				}
 
 				options['mode'] = mode;
 
