@@ -7,6 +7,20 @@ For more information, see [Saiku](http://www.meteorite.bi).
 
 > You can put the UI on a separate server (apache httpd or simply a webapp in tomcat/webapps e.g).
 
+## Table of Contents
+  1. [Setup](#setup)
+  	- [Build Instructions](#build-instructions)
+  	- [Run UI on Node.js proxy](#run-ui-on-nodejs-proxy)
+  3. [Wiki](#wiki)
+  4. [Community](#community)
+  5. [Bugs and Feature Requests](#bugs-and-feature-requests)
+  6. [Discussion List](#discussion-list)
+  7. [Browser Support](#browser-support)
+  8. [Team](#team)
+  9. [Contributing](#contributing)
+  10. [History](#history)
+  11. [License](#license)
+
 ## Setup
 
 ### Build Instructions
@@ -40,15 +54,21 @@ In order to run it locally you'll need a basic server setup.
 
 ## Wiki
 
-* [Meteorite BI Wiki](http://wiki.meteorite.bi/display/SAIK/Saiku)
+* [Saiku Wiki](http://wiki.meteorite.bi/display/SAIK/Saiku)
+
+## Community
+
+* [Saiku Community](http://community.meteorite.bi/)
 
 ## Bugs and Feature Requests
 
-* [Meteorite BI Jira](http://jira.meteorite.bi/)
+* [Saiku Jira](http://jira.meteorite.bi/)
 
-## Discussion
+## Discussion List
 
-* [Meteorite BI Forums](http://forums.meteorite.bi/)
+* [Saiku Dev Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/dev)
+* [Saiku User Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/user)
+* [<strike>Saiku Forums</strike>](http://forums.meteorite.bi/)
 * [Stack Overflow](http://stackoverflow.com/questions/tagged/saiku)
 * [Freenode IRC - Channel: #saiku](http://irc.lc/freenode/%23saiku/t4nk@)
 
@@ -78,7 +98,6 @@ Check [CONTRIBUTING.md](https://github.com/OSBI/saiku-ui/blob/master/CONTRIBUTIN
 
 * If you have a feature request, then please get in touch. We'd love to hear from you! Either post to our [forum](http://forums.meteorite.bi/t/saiku-3-and-beyond/9) or email: [info@meteorite.bi](mailto:info@meteorite.bi)
 
-
 ## History
 
 For detailed changelog, check [Releases](https://github.com/OSBI/saiku-ui/releases).
@@ -87,3 +106,5 @@ For detailed changelog, check [Releases](https://github.com/OSBI/saiku-ui/releas
 
 Saiku and the Saiku UI are free software. The UI, contained in this repository,
 is available under the terms of the Apache License Version 2. A copy is attached for your convenience.
+
+**[⬆ back to top](#table-of-contents)**

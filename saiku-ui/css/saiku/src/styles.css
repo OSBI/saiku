@@ -218,6 +218,13 @@ textarea, select {
 }
 #toolbar ul li a.schema_designer {
     background: url(../../../images/src/main_toolbar_schema_designer.png) no-repeat center;
+    text-align: center;
+    text-decoration: none;
+}
+#toolbar ul li a.schema_designer span {
+    position: relative;
+    top: 23px;
+    color: #ae1816;
 }
 #toolbar ul li a.logout {
     background-position: -1776px 5px;
