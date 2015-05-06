@@ -38,9 +38,9 @@ var Table = Backbone.View.extend({
     clicked_cell: function(event) {
         var self = this;
 
-		return false;
-        if (/*this.workspace.query.get('type') != 'QM' || */Settings.MODE == "table") {
-            return false;
+		//return false;
+        if (/*this.workspace.query.get('type') != 'QM' ||*/ Settings.MODE == "table") {
+            //return false;
         }
         if ($(this.workspace.el).find( ".workspace_results.ui-selectable" ).length > 0) {
             $(this.workspace.el).find( ".workspace_results" ).selectable( "destroy" );
@@ -57,7 +57,7 @@ var Table = Backbone.View.extend({
         ignoreRightClick: true,
          build: function($trigger, e) {
             var $target = $(e.currentTarget).find('div');
-            var axis = $(e.currentTarget).hasClass('rows') ? "ROWS" : "COLUMNS";
+            var axis = $(e.currentTarget).hasClass('row') ? "ROWS" : "COLUMNS";
             var pos = $target.attr('rel').split(':');
             var row = parseInt(pos[0]);
             var col = parseInt(pos[1]);
@@ -107,23 +107,14 @@ var Table = Backbone.View.extend({
 				 }
 				 dimensions = Saiku.session.sessionworkspace.cube[key].get('data').dimensions;
 			 }
-            var dimsel = {};
             var used_levels = [];
-			 //TODO GET USED LEVELS
-/*
-            self.workspace.query.action.gett("/axis/" + axis + "/dimension/" + encodeURIComponent(d), {
-                        success: function(response, model) {
-                            dimsel = model;
-                        },
-                        async: false
-            });
 
-            _.each(dimsel.selections, function(selection) {
-                if(_.indexOf(used_levels, selection.levelUniqueName) == -1)
-                    used_levels.push(selection.levelUniqueName);
-
-            });
-*/
+             var v1 = self.workspace.query.helper.getHierarchy(h);
+             var v2 =
+             _.each(v1.levels, function(level){
+                 var lev = h+".["+level.name+"]";
+                used_levels.push(lev);
+             });
             _.each(dimensions, function(dimension) {
                 if (dimension.name == d) {
                     _.each(dimension.hierarchies, function(hierarchy) {
@@ -189,7 +180,7 @@ var Table = Backbone.View.extend({
                     "keeponly": {name: "Keep Only", i18n: true, payload: keep_payload }
             };
             if (d != "Measures") {
-                citems.getchildren = {name: "Show Children", i18n: true, payload: children_payload };
+                //citems.getchildren = {name: "Show Children", i18n: true, payload: children_payload };
                 citems.fold1key = {
                         name: "Include Level", i18n: true,
                         items: lvlitems("include-")
@@ -214,38 +205,66 @@ var Table = Backbone.View.extend({
             });
             return {
                 callback: function(key, options) {
+                    var updates = [];
 
-                    var url = '/axis/' + axis + '/dimension/' + encodeURIComponent(d);
-                    var children = false;
-                    if (key.indexOf("filterlevel") >= 0) {
-                        key = encodeURIComponent(d) + "/hierarchy/" + encodeURIComponent(h) + "/" + encodeURIComponent(l);
+                    if(key === "keeponly") {
+
+                        //self.workspace.query.helper.removeLevel(h, k);
+                        var hierarchy = self.workspace.query.helper.getHierarchy(h);
+                        if (hierarchy && hierarchy.levels.hasOwnProperty(l_caption)) {
+                            updates.push({
+                                uniqueName: cell.properties.uniquename,
+                                caption: cell.properties.uniquename
+                            });
+                            hierarchy.levels[l_caption].selection = {"type": "INCLUSION", "members": updates};
+                            self.workspace.drop_zones.synchronize_query();
+                            self.workspace.query.run(true);
+                        }
+                    }
+                    else if(key === "filterlevel"){
+                        var lname = cell.properties.level.substring(cell.properties.level.lastIndexOf(".")+1);
+                        lname = lname.replace("[","").replace("]","");
                         (new SelectionsModal({
-                            target: null,
-                            axis: axis,
-                            name: l_caption,
-                            key: key,
-                            workspace: self.workspace
+                            target: $target,
+                            name: "Filter Level",
+                            key: cell.properties.hierarchy+"/"+lname,
+                            workspace: self.workspace,
+                            axis: "ROWS"
                         })).open();
-                        return;
                     }
-                    if (key.indexOf("children") >= 0) {
-                        url = '/axis/' + axis + '/dimension/' + encodeURIComponent(d) + "/children";
-                        children = true;
+                    else if(key.substring(0,key.indexOf("-")) === "remove"){
+                        var k = key.substring(key.indexOf("-") + 1);
+
+                        self.workspace.query.helper.removeLevel(h, k);
+                        self.workspace.drop_zones.synchronize_query();
+                        self.workspace.query.run(true);
                     }
-                    if (children) {
-                        self.workspace.query.set({ 'formatter' : 'flat' });
+                    else if(key.substring(0,key.indexOf("-")) === "keep"){
+
+
+                        //Keep and Include
+                        var k = key.substring(key.indexOf("-") + 1);
+
+                        //self.workspace.query.helper.removeLevel(h, k);
+                        var hierarchy = self.workspace.query.helper.getHierarchy(h);
+                        if (hierarchy && hierarchy.levels.hasOwnProperty(l_caption)) {
+                            updates.push({
+                                uniqueName: cell.properties.uniquename,
+                                caption: cell.properties.uniquename
+                            });
+                            hierarchy.levels[l_caption].selection = {"type": "INCLUSION", "members": updates};
+                            self.workspace.query.helper.includeLevel(axis, h, k, null);
+                            self.workspace.drop_zones.synchronize_query();
+                            self.workspace.query.run(true);
+                        }
                     }
-                    self.workspace.query.action.put(url, { success: self.workspace.sync_query,
-                        dataType: "text",
-                        data: children ?
-                            {
-                                member: items[key].payload
-                            }
-                            :
-                            {
-                                selections: "[" + items[key].payload + "]"
-                            }
-                    });
+                    else if(key.substring(0,key.indexOf("-")) === "include"){
+                        //Include
+                        var k =  key.substring(key.indexOf("-") + 1);
+                        self.workspace.query.helper.includeLevel(axis, h, k, null);
+                        self.workspace.drop_zones.synchronize_query();
+                        self.workspace.query.run(true);
+                    }
 
                 },
                 items: citems
