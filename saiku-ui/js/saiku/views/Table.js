@@ -196,9 +196,9 @@ var Table = Backbone.View.extend({
                 citems.filterlevel = {
                     name: "Filter Level", i18n: true
                 };
-                if (items.showall) {
+                /*if (items.showall) {
                     citems.showall  =  { name: "Remove Filters", i18n: true };
-                }
+                }*/
             }
             $.each(citems, function(key, item){
             	recursive_menu_translate(item, Saiku.i18n.po_file);
