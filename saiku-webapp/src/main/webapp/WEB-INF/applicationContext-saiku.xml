@@ -31,7 +31,6 @@
     <security:http pattern="/repository" security="none">
     </security:http>
     <security:http auto-config='true' use-expressions="true"> <!--access-denied-page="/login.jsp"-->
-        <security:access-denied-handler error-page="/login.jsp" />
         <security:csrf disabled="true"/>
 
         <security:intercept-url pattern="/serverdocs/**" access="isAnonymous()" />
