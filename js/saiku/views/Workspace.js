@@ -475,6 +475,15 @@ var Workspace = Backbone.View.extend({
         }
         if ((Settings.MODE == "view") && this.query || this.isReadOnly) {
             this.query.run(true);
+            if (this.selected_cube === undefined) {
+                var schema = this.query.model.cube.schema;
+                this.selected_cube = this.query.model.cube.connection + "/" +
+                    this.query.model.cube.catalog + "/" +
+                    ((schema === "" || schema === null) ? "null" : schema) +
+                    "/" + encodeURIComponent(this.query.model.cube.name);
+                $(this.el).find('.cubes')
+                    .val(this.selected_cube);
+            }
             return;
         }
 
