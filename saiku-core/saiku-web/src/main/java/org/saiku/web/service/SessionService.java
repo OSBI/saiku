@@ -114,9 +114,7 @@ public class SessionService implements ISessionService {
 			
 			sessionHolder.put(p, session);
 		}
-	  	else if(sessionHolder.containsKey(p)){
-		  throw new SessionAuthenticationException("Another session already exists for this user, please logout.");
-		}
+	  
 	}
 
 	private String getUsername(Object p) {
