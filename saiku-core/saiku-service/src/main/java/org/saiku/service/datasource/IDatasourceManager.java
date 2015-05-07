@@ -72,6 +72,8 @@ public interface IDatasourceManager {
 
   public List<IRepositoryObject> getFiles(String type, String username, List<String> roles);
 
+  public List<IRepositoryObject> getFiles(String type, String username, List<String> roles, String path);
+
   public void createUser(String user);
 
   public void deleteFolder(String folder);
@@ -109,4 +111,6 @@ public interface IDatasourceManager {
   public void setFoodmarturl(String foodmarturl);
 
   public String getFoodmarturl();
+
+
 }

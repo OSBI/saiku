@@ -244,7 +244,11 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
         return null;
     }
 
-    public javax.jcr.Node getFiles() {
+  public List<IRepositoryObject> getFiles(String type, String username, List<String> roles, String path) {
+    return null;
+  }
+
+  public javax.jcr.Node getFiles() {
         return null;
     }
 

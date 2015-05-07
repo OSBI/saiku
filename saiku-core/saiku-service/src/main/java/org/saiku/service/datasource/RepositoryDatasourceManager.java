@@ -285,6 +285,16 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         return null;
     }
 
+    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles, String path) {
+        try {
+            return irm.getAllFiles(type, username, roles, path);
+        } catch (RepositoryException e) {
+            log.error("Get failed", e);
+        }
+        return null;
+    }
+
+
     public void createUser(String username){
         try {
             irm.createUser(username);

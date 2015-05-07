@@ -94,16 +94,21 @@ public class DatasourceService implements Serializable {
 
   public String saveFile(String content, String path, String name, List<String> roles) { return datasources.saveFile(path, content, name, roles); }
 
-  public String removeFile(String path, String name, List<String> roles) { return datasources.removeFile(path, name, roles); }
+  public String removeFile(String path, String name, List<String> roles) { return datasources.removeFile(path, name,
+      roles); }
 
-    public String moveFile(String source, String target, String name, List<String> roles) { return datasources.moveFile(source, target, name, roles); }
+    public String moveFile(String source, String target, String name, List<String> roles) { return datasources.moveFile(
+        source, target, name, roles); }
 
 
     public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
-      return datasources.getFiles(type,username,roles);
+      return datasources.getFiles(type, username, roles);
   }
-
-  public String getFileData(String path, String username, List<String> roles){return datasources.getFileData(path, username, roles); }
+  public List<IRepositoryObject> getFiles(String type, String username, List<String> roles, String path) {
+    return datasources.getFiles(type, username, roles, path);
+  }
+  public String getFileData(String path, String username, List<String> roles){return datasources.getFileData(path,
+      username, roles); }
 
   public void importLegacySchema(){
 
@@ -150,4 +155,6 @@ public class DatasourceService implements Serializable {
     stream.defaultReadObject();
     datasources = connectionManager.getDataSourceManager();
   }
+
+
 }
