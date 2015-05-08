@@ -372,13 +372,27 @@ var OpenQuery = Backbone.View.extend({
         return false;
     },
     open_contents: function(viewstate) {
-
-        var self = this;
+        var files = [];
         var itemF = this.queries[this.selected_query.get('file')];
-        _.forEach( itemF.repoObjects, function( entry ) {
+        _.forEach( itemF.repoObjects, function( entry){
+           if(entry.type === "FILE"){
+               files.push(entry);
+           }
+        });
+
+        var obj = {files: files, viewstate: viewstate};
+
+        (new WarningModal({
+            title: "Open Multiple Queries", message: "You are about to open "+files.length+" queries",
+            okay: this.run_open_contents, okayobj: obj
+        })).render().open();
+
+        return false;
+    },
+    run_open_contents: function(fileargs){
+        _.forEach( fileargs.files, function( entry ) {
             Saiku.ui.block("Opening query...");
 
-            setTimeout( function(){
             var item = entry;
             var params = _.extend({
                 file: item.path,
@@ -387,14 +401,12 @@ var OpenQuery = Backbone.View.extend({
 
             var query = new Query(params,{ name: item.name });
             var state = null;
-            if(viewstate && !viewstate.hasOwnProperty('currentTarget')) {
+            if(fileargs.viewstate && !fileargs.viewstate.hasOwnProperty('currentTarget')) {
                 state = viewstate;
             }
             var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state }));
 
-        }, 50000)
         });
-        return false;
     },
     edit_query: function() {
         this.open_query('edit');
