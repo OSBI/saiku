@@ -220,6 +220,7 @@
 						<jsSourceInclude>models/License.js</jsSourceInclude>
 						<jsSourceInclude>Saiku.js</jsSourceInclude>
 						<jsSourceInclude>views/DateFilterModal.js</jsSourceInclude>
+						<jsSourceInclude>views/WarningModal.js</jsSourceInclude>
 						<jsSourceInclude>adapters/SaikuServer.js</jsSourceInclude>
 						<jsSourceInclude>routers/QueryRouter.js</jsSourceInclude>
 						<!--<jsSourceInclude>plugins/Statistics/plugin_disabled.js</jsSourceInclude>

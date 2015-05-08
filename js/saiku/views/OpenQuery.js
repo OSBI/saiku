@@ -72,7 +72,8 @@ var OpenQuery = Backbone.View.extend({
                     "delete": {name: "Delete", i18n: true },
                     "move": {name: "Move", i18n: true},
                     "sep1": "---------",
-                    "new": {name: "New Folder", i18n: true}
+                    "new": {name: "New Folder", i18n: true},
+                    "opencontents": {name: "Open Folder Contents", i18n: true}
         };
         $.each(menuitems, function(key, item){
             recursive_menu_translate(item, Saiku.i18n.po_file);
@@ -129,6 +130,8 @@ var OpenQuery = Backbone.View.extend({
                         self.delete_repoObject();
                     } else if(key == "move"){
                         self.move_repoObject();
+                    } else if(key =="opencontents"){
+                        self.open_contents();
                     }
 
 
@@ -368,7 +371,31 @@ var OpenQuery = Backbone.View.extend({
         var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state }));
         return false;
     },
+    open_contents: function(viewstate) {
 
+        var self = this;
+        var itemF = this.queries[this.selected_query.get('file')];
+        _.forEach( itemF.repoObjects, function( entry ) {
+            Saiku.ui.block("Opening query...");
+
+            setTimeout( function(){
+            var item = entry;
+            var params = _.extend({
+                file: item.path,
+                formatter: Settings.CELLSET_FORMATTER
+            }, Settings.PARAMS);
+
+            var query = new Query(params,{ name: item.name });
+            var state = null;
+            if(viewstate && !viewstate.hasOwnProperty('currentTarget')) {
+                state = viewstate;
+            }
+            var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state }));
+
+        }, 50000)
+        });
+        return false;
+    },
     edit_query: function() {
         this.open_query('edit');
     },

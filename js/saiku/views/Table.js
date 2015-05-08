@@ -296,7 +296,6 @@ var Table = Backbone.View.extend({
 
         // Render the table without blocking the UI thread
         _.delay(this.process_data, 2, args.data);
-
     },
 
     clearOut: function() {
@@ -304,6 +303,10 @@ var Table = Backbone.View.extend({
         this.renderer.clear();
         $(this.workspace.el).find( ".workspace_results" ).unbind('scroll');
         var element = document.getElementById(this.id);
+        if(element == null){
+            this.workspace.tab.select();
+            var element = document.getElementById(this.id);
+        }
         var table = element.firstChild;
         if (table) {
             element.removeChild(table);
