@@ -238,6 +238,7 @@ var Table = Backbone.View.extend({
                         self.workspace.query.helper.removeLevel(h, k);
                         self.workspace.drop_zones.synchronize_query();
                         self.workspace.query.run(true);
+
                     }
                     else if(key.substring(0,key.indexOf("-")) === "keep"){
 
