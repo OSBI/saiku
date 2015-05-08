@@ -313,6 +313,10 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         throw new UnsupportedOperationException();
     }
 
+    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles, String path) {
+        throw new UnsupportedOperationException();
+    }
+
     public String saveFile(String path, String content, String user, List<String> roles) {
         throw new UnsupportedOperationException();
 
