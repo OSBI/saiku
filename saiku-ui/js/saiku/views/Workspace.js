@@ -228,7 +228,6 @@ var Workspace = Backbone.View.extend({
         this.switch_view_state(this.viewState, true);
 
 
-
         // Add results table
         $(this.el).find('.workspace_results')
             .append($(this.table.el));
@@ -355,35 +354,33 @@ var Workspace = Backbone.View.extend({
             });
         });
     },
-
-    new_query: function() {
-        // Delete the existing query
-        if (this.query) {
-            this.query.destroy();
-            this.query.clear();
-            if (this.query.name) {
-                this.query.name = undefined;
-                this.update_caption(true);
+    create_new_query: function(obj){
+        if (obj.query) {
+            obj.query.destroy();
+            obj.query.clear();
+            if (obj.query.name) {
+                obj.query.name = undefined;
+                obj.update_caption(true);
             }
-            this.query.name = undefined;
+            obj.query.name = undefined;
         }
-        this.clear();
-        this.processing.hide();
-        Saiku.session.trigger('workspace:clear', { workspace: this });
+        obj.clear();
+        obj.processing.hide();
+        Saiku.session.trigger('workspace:clear', { workspace: obj });
 
         // Initialize the new query
-        this.selected_cube = $(this.el).find('.cubes').val()
-            ? $(this.el).find('.cubes').val()
-            : this.selected_cube;
-        if (!this.selected_cube) {
+        obj.selected_cube = $(obj.el).find('.cubes').val()
+            ? $(obj.el).find('.cubes').val()
+            : obj.selected_cube;
+        if (!obj.selected_cube) {
             // Someone literally selected "Select a cube"
-            $(this.el).find('.calculated_measures, .addMeasure').hide();
-            $(this.el).find('.dimension_tree').html('');
-            $(this.el).find('.measure_tree').html('');
+            $(obj.el).find('.calculated_measures, .addMeasure').hide();
+            $(obj.el).find('.dimension_tree').html('');
+            $(obj.el).find('.measure_tree').html('');
             return false;
         }
-        this.metadata = Saiku.session.sessionworkspace.cube[this.selected_cube];
-        var parsed_cube = this.selected_cube.split('/');
+        obj.metadata = Saiku.session.sessionworkspace.cube[obj.selected_cube];
+        var parsed_cube = obj.selected_cube.split('/');
         var cube = parsed_cube[3];
         for (var i = 4, len = parsed_cube.length; i < len; i++) {
             cube += "/" + parsed_cube[i];
@@ -396,12 +393,31 @@ var Workspace = Backbone.View.extend({
                 name: decodeURIComponent(cube)
             }
         }, {
-                workspace: this
+            workspace: obj
         });
 
         // Save the query to the server and init the UI
-        this.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });
-        this.init_query();
+        obj.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });
+        obj.init_query();
+    },
+
+    new_query: function() {
+        // Delete the existing query
+        if (this.query) {
+            if(Settings.QUERY_OVERWRITE_WARNING) {
+                (new WarningModal({
+                    title: "New Query", message: "You are about to clear your existing query",
+                    okay: this.create_new_query, okayobj: this
+                })).render().open();
+            }
+            else{
+                this.create_new_query(this);
+            }
+        }
+        else{
+            this.create_new_query(this);
+        }
+
     },
 
     init_query: function(isNew) {
