@@ -30,7 +30,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.*;
@@ -192,4 +191,21 @@ public class SessionService implements ISessionService {
 		}
 		return new HashMap<String,Object>();
 	}
+
+  public void clearSessions(HttpServletRequest req, String username, String password) throws Exception {
+	if (authenticationManager != null) {
+	  authenticate(req, username, password);
+	}
+	if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
+	  Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	  Object p = auth.getPrincipal();
+	  if (sessionHolder.containsKey(p)) {
+		sessionHolder.remove(p);
+	  }
+	}
+
+
+  }
+
+
 }
