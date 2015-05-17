@@ -43,7 +43,6 @@
         <spring.version>4.1.6.RELEASE</spring.version>
         <spring.security.version>4.0.1.RELEASE</spring.security.version>
         <slf4j.version>1.6.4</slf4j.version>
-        <enunciate.version>1.28</enunciate.version>
         <jersey.version>1.19</jersey.version>
         <tomcat.version>apache-tomcat-6.0.24</tomcat.version>
         <tomcat.source>target/stage/tomcat/</tomcat.source>
@@ -702,19 +701,9 @@
                 <version>1.9.18-i</version>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.enunciate</groupId>
-                <artifactId>enunciate-jersey-rt</artifactId>
-                <version>${enunciate.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>1.8.5</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.enunciate</groupId>
-                <artifactId>enunciate-rt</artifactId>
-                <version>${enunciate.version}</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
@@ -725,11 +714,6 @@
                 <groupId>cglib</groupId>
                 <artifactId>cglib</artifactId>
                 <version>2.2</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.enunciate</groupId>
-                <artifactId>enunciate-spring3-app-rt</artifactId>
-                <version>${enunciate.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.jettison</groupId>
