@@ -115,6 +115,9 @@ SaikuClient.prototype.error = function(jqXHR, textStatus, errorThrown) {
 };
 
 SaikuClient.prototype.execute = function(usercall) {
+	if(ga!=undefined) {
+		ga('send', 'event', 'SaikuClient', 'Execute');
+	}
 	var self = this;
 	var call = _.extend({},
 		SaikuCall,
