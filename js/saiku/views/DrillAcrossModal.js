@@ -26,6 +26,9 @@ var DrillAcrossModal = DrillthroughModal.extend({
 	},
 
 	ok: function() {
+		if(ga!=undefined) {
+			ga('send', 'event', 'DrillAcross', 'Execute');
+		}
 		var self = this;
 		var selections = {};
 		$(this.el).find('.check_level:checked').each( function(index) {
