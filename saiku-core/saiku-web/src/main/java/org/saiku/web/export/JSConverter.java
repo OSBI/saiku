@@ -18,7 +18,7 @@ public class JSConverter {
         StringWriter stringWriter = new StringWriter();
         useJavascriptToConvertToHtml(queryResult, stringWriter);
         String content = stringWriter.toString();
-        appendSaikuCommercialIfNecessary(content);
+        content = appendSaikuCommercialIfNecessary(content);
         return content;
     }
 
@@ -71,7 +71,7 @@ public class JSConverter {
         javascriptContext.evaluateString(globalScope, result, "SaikuTableRenderer.js", 1, null);
     }
 
-    private static void appendSaikuCommercialIfNecessary(String content) {
+    private static String appendSaikuCommercialIfNecessary(String content) {
         if (getVersion() != null && !getVersion().contains("EE")) {
             content =
                 content + "<div style='margin-top:10px;'><h5>Export Provided By Saiku Analytics Community Edition(http://meteorite.bi)"
@@ -79,7 +79,7 @@ public class JSConverter {
         }
         content = content.replaceAll("&nbsp;", " ");
         content = content.replaceAll("&nbsp", " ");
-        //return content;
+        return content;
     }
 
     public static String convertToHtml(QueryResult qr) throws IOException {
