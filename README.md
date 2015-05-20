@@ -1,3 +1,6 @@
+<img src="http://slackin.yourhost.com/badge.svg">
+
+
 SAIKU
 ---------------
 *BUILDING*
