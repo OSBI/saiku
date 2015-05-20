@@ -49,7 +49,7 @@ var Upgrade = Backbone.View.extend({
 					self.remainingdays = self.daydiff(new Date(), yourDate);
 
 
-					$(self.workspace.el).find('.upgrade').append("<div><div id='uphead' class='upgradeheader'>You are using a Saiku Enterprise Trial license, you have "+ self.remainingdays+" days remaining until the license expires.</div>");
+					$(self.workspace.el).find('.upgrade').append("<div><div id='uphead' class='upgradeheader'>You are using a Saiku Enterprise Trial license, you have "+ self.remainingdays+" days remaining. <a href='http://www.meteorite.bi/saiku-pricing'>Buy licenses online.</a></div>");
 					return self;
 				}
 				else {
