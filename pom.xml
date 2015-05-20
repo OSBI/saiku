@@ -44,7 +44,7 @@
         <spring.security.version>4.0.1.RELEASE</spring.security.version>
         <slf4j.version>1.6.4</slf4j.version>
         <jersey.version>1.19</jersey.version>
-        <tomcat.version>apache-tomcat-6.0.24</tomcat.version>
+        <tomcat.version>apache-tomcat-7.0.62</tomcat.version>
         <tomcat.source>target/stage/tomcat/</tomcat.source>
         <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
         <calcite.version>0.9.2-incubating-SNAPSHOT</calcite.version>
