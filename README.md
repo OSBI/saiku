@@ -1,4 +1,4 @@
-<img src="http://slackin.yourhost.com/badge.svg">
+<img src="http://slackin.meteorite.bi/badge.svg">
 
 
 SAIKU
