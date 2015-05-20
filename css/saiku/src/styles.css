@@ -1594,6 +1594,10 @@ a.disabled_toolbar:hover {
   background: url('../../../images/chart/gray/sunburst.png') no-repeat 21px -1px;;
   height: 16px;
  }
+.query_toolbar a.multiplesunburst {
+    background: url('../../../images/chart/gray/multiplesunburst.png') no-repeat 21px -1px;;
+    height: 16px;
+}
 .query_toolbar a.treemap {
   background: url('../../../images/chart/gray/treemap.png') no-repeat 21px -1px;;
   height: 16px;
@@ -1604,7 +1608,11 @@ a.disabled_toolbar:hover {
  background: url('../../../images/chart/sunburst.png') no-repeat 21px -1px;;
  height: 16px;
 }
-
+.query_toolbar a.sunburst:hover,
+.query_toolbar a.sunburst.on {
+    background: url('../../../images/chart/multiplesunburst.png') no-repeat 21px -1px;;
+    height: 16px;
+}
 .query_toolbar a.treemap:hover,
 .query_toolbar a.treemap.on {
   background: url('../../../images/chart/treemap.png') no-repeat 21px -1px;;
