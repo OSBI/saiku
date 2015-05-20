@@ -53,7 +53,8 @@ var Upgrade = Backbone.View.extend({
 					return self;
 				}
 				else {
-					$(self.workspace.el).find('.upgrade').append("<div><div id='uphead' class='upgradeheader'>You are using Saiku Community Edition, please consider upgrading to <a target='_blank' href='http://meteorite.bi'>Saiku Enterprise, or entering a sponsorship agreement with us</a> to support development. <a href='mailto:info@meteorite.bi?subject=Supporting Saiku'>info@meteorite.bi</a></div></div>");
+					$(self.workspace.el).find('.upgrade').append("<div><div id='uphead' class='upgradeheader'>You are using Saiku Community Edition, please consider upgrading to <a target='_blank' href='http://meteorite.bi'>Saiku Enterprise</a>, or entering a <a href='http://meteorite.bi/products/saiku/sponsorship'>sponsorship agreement with us</a> to support development. " +
+						"<a href='http://meteorite.bi/products/saiku/community'>Or contribute by joining our community and helping other users!</a></div></div>");
 					return self;
 				}
 			});
