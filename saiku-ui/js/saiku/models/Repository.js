@@ -29,14 +29,32 @@ var repoPathUrl = function() {
     return  RepositoryUrl;
 };
 
+var RepositoryObject = Backbone.Model.extend({
+    initialize: function(args, options) {
+        if (options && options.dialog) {
+            this.dialog = options.dialog;
+            this.file = options.file || undefined;
+        }
+    },
 
+    parse: function(response) {
+        if (this.dialog) {
+            this.dialog.generate_grids_reports(response);
+        }
+        return response;
+    },
 
-var RepositoryObject = Backbone.Model.extend( {
-    url: function( ) {
-        var segment = repoPathUrl() + "/resource";
+    url: function() {
+        var segment;
+        if (this.file) {
+            segment = repoPathUrl() + '/resource?file=' + this.file;
+        }
+        else {
+            segment = repoPathUrl() + '/resource';
+        }
         return segment;
     }
-} );
+});
 
 var RepositoryAclObject = Backbone.Model.extend( {
     url: function( ) {
