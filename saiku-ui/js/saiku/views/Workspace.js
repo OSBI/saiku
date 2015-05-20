@@ -891,8 +891,6 @@ var Workspace = Backbone.View.extend({
             Saiku.i18n.translate();
 
         }
-
-
     },
 
     unblock: function() {
