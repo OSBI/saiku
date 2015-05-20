@@ -30,23 +30,18 @@ var Toolbar = Backbone.View.extend({
 
     initialize: function() {
         var self = this;
-        $.ajax({
-            url: '/images/override/logo.png', //or your url
-            success: function(data){
-                self.logo = "<h1 id='logo_override'>"+
-                    "<img src='/images/override/logo.png'/>"+
-                    "</h1>";
-                self.render();
-
-            },
-            error: function(data){
-                self.logo = "<h1 id='logo'>"+
+        if(Settings.LOGO){
+            self.logo = "<h1 id='logo_override'>"+
+                "<img src='"+Settings.LOGO+"'/>"+
+                "</h1>";
+            self.render();
+        }
+        else{
+            self.logo = "<h1 id='logo'>"+
                 "<a href='http://www.analytical-labs.com/' title='Saiku - Next Generation Open Source Analytics' target='_blank' class='sprite'>Saiku</a>"+
                 "</h1>";
-                self.render();
-
-            }
-        });
+            self.render();
+        }
 
     },
 

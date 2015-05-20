@@ -634,7 +634,11 @@ title="Drill across on cell"></a></li>
 
 <script type="text/x-jquery-tmpl" id="template-repository-file">
             <li class='query'>
+            <% if (Settings.ICON_16) { %>
+                <span class='icon_override' style='background-image: url('<%= Settings.ICON_16 %>');'></span>
+            <% } else { %>
                 <span class='icon'></span>
+            <% } %>
                 <a href="#<%= entry.path %>"><%= entry.name %></a>
             </li>
         </script>

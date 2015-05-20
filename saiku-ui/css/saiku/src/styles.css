@@ -1913,6 +1913,11 @@ span.cancel_search:hover {
 	margin-right: 4px;
 }
 
+.RepositoryObjects li.query .icon_override {
+    padding: 1px 8px 1px;
+    margin-right: 4px;
+}
+
 .RepositoryObjects li .sprite.folder {
     background-position: -1538px -95px;
     cursor: pointer;

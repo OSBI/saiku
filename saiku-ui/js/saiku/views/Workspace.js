@@ -876,25 +876,21 @@ var Workspace = Backbone.View.extend({
     },
 
     block: function(message) {
-
         var self = this;
-        $.ajax({
-            url: '/images/override/icon_32x32.png', //or your url
-            success: function(data){
-                $(self.el).block({
-                    message: '<img class="saiku_logo_override" style="float:left" src="/images/override/icon_32x32.png"/> ' + message
-                });
-                Saiku.i18n.translate();
 
-            },
-            error: function(data){
-                $(self.el).block({
-                    message: '<span class="saiku_logo" style="float:left">&nbsp;&nbsp;</span> ' + message
-                });
-                Saiku.i18n.translate();
+        if(Settings.LOGO_32x32){
+            $(self.el).block({
+                message: '<img class="saiku_logo_override" style="float:left" src="'+Settings.LOGO_32x32+'"/> ' + message
+            });
+            Saiku.i18n.translate();
+        }
+        else{
+            $(self.el).block({
+                message: '<span class="saiku_logo" style="float:left">&nbsp;&nbsp;</span> ' + message
+            });
+            Saiku.i18n.translate();
 
-            }
-        });
+        }
 
 
     },
