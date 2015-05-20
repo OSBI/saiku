@@ -127,8 +127,7 @@
 								<!--<zip destfile="target/saiku-server-${project.version}.zip">
 									<zipfileset dir="target/dist/" />
 								</zip>-->
-								<!--<tar destfile="target/saiku-server-${project.version}.tar.gz" longfile="gnu"
-									  compression="gzip">
+								<!--<tar destfile="target/saiku-server-${project.version}.tar.gz" longfile="gnu" compression="gzip">
       									<tarfileset dir="target/dist/" mode="755">
         									<include name="**/*.sh" />
       									</tarfileset>
@@ -138,11 +137,10 @@
            						</tar>-->
 
 								<zip destfile="target/saiku-server-foodmart-${project.version}.zip">
-									<zipfileset dir="target/dist/" excludes="**/*.sh"/>
-									<zipfileset dir="target/dist/" includes="**/*.sh" filemode="755"/>
+									<zipfileset dir="target/dist/" excludes="**/*.sh" />
+									<zipfileset dir="target/dist/" includes="**/*.sh" filemode="755" />
 								</zip>
-								<!--<tar destfile="target/saiku-server-foodmart-${project.version}.tar.gz"
-									  longfile="gnu" compression="gzip">
+								<!--<tar destfile="target/saiku-server-foodmart-${project.version}.tar.gz" longfile="gnu" compression="gzip">
       									<tarfileset dir="target/dist/" mode="755">
         									<include name="**/*.sh" />
       									</tarfileset>
