@@ -94,6 +94,7 @@
 						<jsSourceInclude>Saiku.js</jsSourceInclude>
 						<jsSourceInclude>views/DateFilterModal.js</jsSourceInclude>
 						<jsSourceInclude>views/WarningModal.js</jsSourceInclude>
+						<jsSourceInclude>views/TitlesModal.js</jsSourceInclude>
 						<jsSourceInclude>adapters/SaikuServer.js</jsSourceInclude>
 						<jsSourceInclude>routers/QueryRouter.js</jsSourceInclude>
 					</jsSourceIncludes>
