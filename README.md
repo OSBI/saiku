@@ -1,3 +1,6 @@
+<img src="http://chat.meteorite.bi/badge.svg">
+
+
 SAIKU
 ---------------
 *BUILDING*
