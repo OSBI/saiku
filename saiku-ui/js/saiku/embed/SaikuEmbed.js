@@ -209,7 +209,7 @@ var SaikuClient = (function() {
 	 *      });
 	 */
 	SaikuClient.prototype.execute = function(opts) {
-		if(ga!=undefined) {
+		if(typeof ga!= 'undefined'){
 			ga('send', 'event', 'SaikuClient', 'Execute');
 		}
 		var self = this;
