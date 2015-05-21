@@ -467,6 +467,12 @@ var WorkspaceToolbar = Backbone.View.extend({
         (new MDXModal({ mdx: this.workspace.query.model.mdx })).render().open();
     },
 
+    workspace_titles: function(event) {
+        //this.workspace.query.enrich();
+
+        (new TitlesModal({ query: this.workspace.query })).render().open();
+    },
+
     export_xls: function(event) {
 		if(this.workspace.query.name!=undefined){
 			var filename = this.workspace.query.name.substring(this.workspace.query.name.lastIndexOf('/')+1).slice(0, -5);

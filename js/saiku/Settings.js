@@ -67,7 +67,7 @@ var Settings = {
     UPGRADE: true,
     EVALUATION_PANEL_LOGIN: true,
     QUERY_OVERWRITE_WARNING: true,
-    LOGO_32x32: "",
+    USER_TITLES: true
 
 };
 
