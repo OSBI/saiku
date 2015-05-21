@@ -1,6 +1,6 @@
 --- index.html	2015-05-08 10:20:05.936934143 +0100
 +++ index2.html	2015-05-08 11:36:14.085042742 +0100
-@@ -103,64 +103,9 @@
+@@ -103,65 +103,9 @@
  <!-- Saiku Project -->
  <script type="text/javascript" src="js/saiku/Settings.js"></script>
  
@@ -46,6 +46,8 @@
 -<script type="text/javascript" src="js/saiku/models/Query.js"></script>
 -<script type="text/javascript" src="js/saiku/views/SessionErrorModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/WarningModal.js"></script>
+-<script type="text/javascript" src="js/saiku/views/TitlesModal.js"></script>
+
 -
 -<script type="text/javascript" src="js/saiku/models/Session.js"></script>
 -<script type="text/javascript" src="js/saiku/views/SplashScreen.js"></script>
