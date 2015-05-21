@@ -396,9 +396,11 @@ var Workspace = Backbone.View.extend({
             workspace: obj
         });
 
+
         // Save the query to the server and init the UI
         obj.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });
         obj.init_query();
+
     },
 
     new_query: function() {
@@ -839,6 +841,22 @@ var Workspace = Backbone.View.extend({
         this.update_parameters();
 
         $(this.el).find(".workspace_results_info").html(info);
+
+        var h = args.workspace.query.getProperty("saiku.ui.headings");
+        if(h!=undefined) {
+            var headings = JSON.parse(h);
+            var header = '';
+            if(headings.title!=null && headings.title != "") {
+                header = '<h3><span class="i18n">Title:</span></h3> &nbsp;' + headings.title + '<br/>';
+            }
+            if(headings.variable != null && headings.variable != "") {
+                header += '<h3><span class="i18n">Variable:</span></h3> &nbsp;' + headings.variable + '<br/>';
+            }
+            if(headings.explanation!=null && headings.explanation != "") {
+                header += '<h3><span class="i18n">Explanation:</span></h3> &nbsp;' + headings.explanation;
+            }
+            $(this.el).find(".workspace_results_titles").html(header);
+        }
         this.adjust();
         return;
     },
