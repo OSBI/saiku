@@ -147,8 +147,8 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
 
     new_query: function(event) {
-        if(ga!=undefined) {
-            ga('send', 'event', 'Toolbar', 'New Query');
+        if(typeof ga!= 'undefined'){
+		ga('send', 'event', 'Toolbar', 'New Query');
         }
         this.workspace.switch_view_state('edit');
         this.workspace.new_query();
