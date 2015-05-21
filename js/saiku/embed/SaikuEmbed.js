@@ -209,9 +209,6 @@ var SaikuClient = (function() {
 	 *      });
 	 */
 	SaikuClient.prototype.execute = function(opts) {
-		if(ga!=undefined) {
-			ga('send', 'event', 'SaikuClient', 'Execute');
-		}
 		var self = this;
 		var options = _.extend({}, _options, opts);
 		var parameters = {};
@@ -278,6 +275,15 @@ var SaikuClient = (function() {
 					parametersLevels = joinParameters(dataAxis);
 					$(options.htmlObject).closest('.gs-w').data('parametersLevels', JSON.stringify(parametersLevels));
 					$(options.htmlObject).closest('.gs-w').data('parametersValues', JSON.stringify(parametersValues));
+
+					if (options.openDashboards) {
+						$(options.htmlObject).closest('.gs-w').data('id', options.htmlObject);
+						$(options.htmlObject).closest('.gs-w').data('title', options.title);
+						$(options.htmlObject).closest('.gs-w').data('file', options.file);
+						$(options.htmlObject).closest('.gs-w').data('htmlObject', options.htmlObject);
+						$(options.htmlObject).closest('.gs-w').data('render', options.render);
+						$(options.htmlObject).closest('.gs-w').data('mode', options.mode);
+					}
 				}
 
 				options['mode'] = mode;
