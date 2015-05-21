@@ -213,9 +213,9 @@ var SaikuClient = (function() {
 		var options = _.extend({}, _options, opts);
 		var parameters = {};
 
-		if (ga !== undefined) {
-			ga('send', 'event', 'SaikuClient', 'Execute');
-		}
+		// if (ga !== undefined) {
+		// 	ga('send', 'event', 'SaikuClient', 'Execute');
+		// }
 
 		if ($.blockUI && this.settings.blockUI) {
 			$.blockUI.defaults.css = { 'color': 'black', 'font-weight': 'normal' };
