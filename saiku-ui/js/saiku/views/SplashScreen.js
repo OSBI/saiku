@@ -15,6 +15,7 @@ var SplashScreen = Backbone.View.extend({
             alert("Please upgrade to Saiku Enterprise for Dashboards")
         }
         else {
+
             var tab = _.find(Saiku.tabs._tabs, function(tab) {
                 return tab.content instanceof Dashboards;
             });
