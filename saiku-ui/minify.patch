@@ -1,6 +1,6 @@
---- index.html	2015-05-08 10:20:05.936934143 +0100
-+++ index2.html	2015-05-08 11:36:14.085042742 +0100
-@@ -103,65 +103,9 @@
+--- index.html	2015-05-26 14:06:21.778478371 +0100
++++ index2.html	2015-05-26 14:32:56.366460650 +0100
+@@ -105,67 +105,8 @@
  <!-- Saiku Project -->
  <script type="text/javascript" src="js/saiku/Settings.js"></script>
  
@@ -47,19 +47,20 @@
 -<script type="text/javascript" src="js/saiku/views/SessionErrorModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/WarningModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/TitlesModal.js"></script>
-
+-
 -
 -<script type="text/javascript" src="js/saiku/models/Session.js"></script>
 -<script type="text/javascript" src="js/saiku/views/SplashScreen.js"></script>
 -<script type="text/javascript" src="js/saiku/models/SessionWorkspace.js"></script>
 -<script type="text/javascript" src="js/saiku/models/Member.js"></script>
 -<script type="text/javascript" src="js/saiku/models/Plugin.js"></script>
+-<script type="text/javascript" src="js/saiku/models/Settings.js"></script>
 -<script type="text/javascript" src="js/saiku/models/License.js"></script>
 -<script type="text/javascript" src="js/saiku/Saiku.js"></script>
 -<script type="text/javascript" src="js/saiku/views/DateFilterModal.js"></script>
 -<script type="text/javascript" src="js/saiku/adapters/SaikuServer.js"></script>
 -<script type="text/javascript" src="js/saiku/routers/QueryRouter.js"></script>
- 
+-
  <!-- Saiku Minified - remove all of the above and uncomment the following -->
 -<!--
  <script type="text/javascript" src="saiku.min.js"></script>
