@@ -249,8 +249,8 @@ if (! Settings.BIPLUGIN) {
                                settingsoverride.each(function(log){
                                    l = l+1;
 
-                                   for(k in log.attributes) {
-                                       Settings[k] = log.attributes[k];
+                                   for(key in log.attributes) {
+                                       Settings[key] = log.attributes[key];
                                    }
 
                                    if(k == l){
