@@ -100,7 +100,7 @@
 						<jsSourceInclude>routers/QueryRouter.js</jsSourceInclude>
 					</jsSourceIncludes>
 					<jsSourceExcludes>
-						<jsSourceExclude>**/Settings.js</jsSourceExclude>
+						<jsSourceExclude>Settings.js</jsSourceExclude>
 						<jsSourceExclude>**/plugins/**/*.js</jsSourceExclude>
 					</jsSourceExcludes>
 					</configuration>
