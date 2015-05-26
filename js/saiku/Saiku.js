@@ -244,12 +244,12 @@ if (! Settings.BIPLUGIN) {
 
                            if(j == i) {
 
-                               var k = settingsoverride.size;
+                               var k = settingsoverride.size();
                                var l = 0;
                                settingsoverride.each(function(log){
                                    l = l+1;
 
-                                   for(key in log.attributes) {
+                                   for(var key in log.attributes) {
                                        Settings[key] = log.attributes[key];
                                    }
 
