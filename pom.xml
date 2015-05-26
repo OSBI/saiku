@@ -90,6 +90,7 @@
 						<jsSourceInclude>models/SessionWorkspace.js</jsSourceInclude>
 						<jsSourceInclude>models/Member.js</jsSourceInclude>
 						<jsSourceInclude>models/Plugin.js</jsSourceInclude>
+						<jsSourceInclude>models/Settings.js</jsSourceInclude>
 						<jsSourceInclude>models/License.js</jsSourceInclude>
 						<jsSourceInclude>Saiku.js</jsSourceInclude>
 						<jsSourceInclude>views/DateFilterModal.js</jsSourceInclude>
