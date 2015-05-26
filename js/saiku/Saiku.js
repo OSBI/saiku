@@ -230,15 +230,45 @@ if (! Settings.BIPLUGIN) {
 
         plugins.fetch({
             success: function() {
-                var i = plugins.size();
-                var j = 0;
-                plugins.each(function(log) {
-                    j = j+1;
-					if(log.attributes.path != "js/saiku/plugins/I18n/plugin.js") {
-						jQuery.getScript(log.attributes.path);
-					}
+                var settingsoverride = new SettingsOverrideCollection();
 
-                    if(j == i) {
+                settingsoverride.fetch({
+                   success: function(){
+                       var i = plugins.size();
+                       var j = 0;
+                       plugins.each(function(log) {
+                           j = j+1;
+                           if(log.attributes.path != "js/saiku/plugins/I18n/plugin.js") {
+                               jQuery.getScript(log.attributes.path);
+                           }
+
+                           if(j == i) {
+
+                               var k = settingsoverride.size;
+                               var l = 0;
+                               settingsoverride.each(function(log){
+                                   l = l+1;
+
+                                   for(k in log.attributes) {
+                                       Settings[k] = log.attributes[k];
+                                   }
+
+                                   if(k == l){
+                                       Saiku.session = new Session({}, {
+                                           username: Settings.USERNAME,
+                                           password: Settings.PASSWORD
+                                       });
+
+                                       Saiku.toolbar = new Toolbar();
+                                   }
+                               });
+
+                           }
+                       });
+
+
+                   },
+                    error: function(){
                         Saiku.session = new Session({}, {
                             username: Settings.USERNAME,
                             password: Settings.PASSWORD
@@ -247,6 +277,7 @@ if (! Settings.BIPLUGIN) {
                         Saiku.toolbar = new Toolbar();
                     }
                 });
+
             }
         });
 
