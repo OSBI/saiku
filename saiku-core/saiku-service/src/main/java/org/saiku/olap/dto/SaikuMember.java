@@ -62,4 +62,5 @@ public class SaikuMember extends AbstractSaikuObject {
   public String getHierarchyUniqueName() {
     return hierarchyUniqueName;
   }
+
 }

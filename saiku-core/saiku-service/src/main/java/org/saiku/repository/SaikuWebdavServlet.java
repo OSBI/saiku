@@ -61,6 +61,15 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
 
     return false;
   }
+
+  private boolean checkUnsecured(HttpServletRequest request){
+    if(request.getRequestURI().contains("/etc/theme")) {
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
   /**
    * Service the given request.
    *
@@ -84,7 +93,8 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
         return;
       }
 
-      if(!checkUserRole(request)){
+
+      if(!checkUnsecured(request) && !checkUserRole(request)){
         return;
       }
       // perform referrer host checks if CSRF protection is enabled
