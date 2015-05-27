@@ -1,4 +1,4 @@
-# [Saiku UI](http://www.meteorite.bi) <img src="http://chat.meteorite.bi/badge.svg">
+# [Saiku UI](http://www.meteorite.bi) [![Saiku Analytics on Slack](http://chat.meteorite.bi/badge.svg)](http://chat.meteorite.bi/)
 
 [![saiku-view](http://www.meteorite.bi/images/chart1.jpg)](http://demo.saikuanalytics.com)
 
