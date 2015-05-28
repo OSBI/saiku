@@ -1,4 +1,4 @@
-# [Saiku UI](http://www.meteorite.bi)
+# [Saiku UI](http://www.meteorite.bi) [![Saiku Analytics on Slack](http://chat.meteorite.bi/badge.svg)](http://chat.meteorite.bi/)
 
 [![saiku-view](http://www.meteorite.bi/images/chart1.jpg)](http://demo.saikuanalytics.com)
 
@@ -66,6 +66,7 @@ In order to run it locally you'll need a basic server setup.
 
 ## Discussion List
 
+* [Saiku Analytics on Slack](http://chat.meteorite.bi/)
 * [Saiku Dev Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/dev)
 * [Saiku User Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/user)
 * [<strike>Saiku Forums</strike>](http://forums.meteorite.bi/)
