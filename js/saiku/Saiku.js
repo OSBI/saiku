@@ -252,7 +252,9 @@ if (! Settings.BIPLUGIN) {
                                     for (var key in log.attributes) {
                                         Settings[key] = log.attributes[key];
                                     }
-
+                                    if(Settings.CSS != undefined){
+                                        Saiku.loadCSS(Settings.CSS, null)
+                                    }
                                     if (k == l) {
                                         Saiku.session = new Session({}, {
                                             username: Settings.USERNAME,
@@ -277,6 +279,9 @@ if (! Settings.BIPLUGIN) {
                                 jQuery.getScript(log.attributes.path);
                             }
                             if (j == i) {
+                                if(Settings.CSS != undefined){
+                                    Saiku.loadCSS(Settings.CSS, null)
+                                }
                                 Saiku.session = new Session({}, {
                                     username: Settings.USERNAME,
                                     password: Settings.PASSWORD
