@@ -60,6 +60,7 @@ or
 ### LiveReload Browser
 
 Automatically reload your browser when files are modified. Enter command:
+
 	```sh
 	npm watch
 	```
