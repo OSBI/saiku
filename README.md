@@ -11,7 +11,7 @@ For more information, see [Saiku](http://www.meteorite.bi).
   1. [Setup](#setup)
   	- [Build Instructions](#build-instructions)
   	- [Run UI on Node.js proxy](#run-ui-on-nodejs-proxy)
-  	- [LiveReload Browser](#liveReload-browser)
+  	- [LiveReload Browser](#livereload-browser)
   3. [Wiki](#wiki)
   4. [Community](#community)
   5. [Bugs and Feature Requests](#bugs-and-feature-requests)
