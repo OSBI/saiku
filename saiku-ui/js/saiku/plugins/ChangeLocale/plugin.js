@@ -28,15 +28,13 @@ var ChangeLocale = Backbone.View.extend({
 
         // Create locale screen
         this.localeOptionsScreen = $("<div>  " +
-            "<ul class='context-menu-list context-menu-root'>" +
-            "<li class='context-menu-item'>         <span id='en_US' > English </span></li> " +
-            "<li class='context-menu-item context-menu-separator not-selectable'></li>" +
-            "<li class='context-menu-item'>   	    <span id='nl_BE' > Dutch </span>  </li> " +
-            "<li class='context-menu-item context-menu-separator not-selectable'></li>" +
-            "<li class='context-menu-item'>   	    <span id='fr_FR' > French </span> </li>" +
+            "<ul>" +
+            "<li>         <button id='en_US' > English </button></li> " +
+            "<li>   	    <button id='nl_BE' > Dutch </button>  </li> " +
+            "<li>   	    <button id='fr_FR' > French </button> </li>" +
             " </ul>" +
             "</div> " +
-            "<div id ='feedback'> <p> Choose your language </p> </div>")
+            "<div id ='feedback' class='dialog_body' style='display: inline;'> Choose your language </div>")
         ;
 
         // attach event handler
