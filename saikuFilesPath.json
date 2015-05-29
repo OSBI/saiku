@@ -1,0 +1,31 @@
+{
+    "path": {
+        "css": [
+            "css/saiku/src/*.css",
+            "embed/*.css",
+            "js/saiku/plugins/CCC_Chart/*.css"
+        ],
+        "html": [
+            "./*.html",
+            "embed/*.html"
+        ],
+        "js": [
+            "embed/*.js",
+            "js/saiku/*.js",
+            "js/saiku/adapters/*.js",
+            "js/saiku/embed/*.js",
+            "js/saiku/plugins/AdminConsole/*.js",
+            "js/saiku/plugins/BIServer/*.js",
+            "js/saiku/plugins/CCC_Chart/*.js",
+            "js/saiku/plugins/filters/*.js",
+            "js/saiku/plugins/Fullscreen/*.js",
+            "js/saiku/plugins/I18n/*.js",
+            "js/saiku/plugins/I18n/po/*.json",
+            "js/saiku/plugins/Statistics/*.json",
+            "js/saiku/models/*.js",
+            "js/saiku/render/*.js",
+            "js/saiku/routers/*.js",
+            "js/saiku/views/*.js"
+        ]
+    }
+}
