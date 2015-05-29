@@ -38,7 +38,7 @@ var ChangeLocale = Backbone.View.extend({
         ;
 
         // attach event handler
-        this.localeOptionsScreen.find('span').click(this.handleClick);
+        this.localeOptionsScreen.find('button').click(this.handleClick);
 
         //function for menu
         $("#nav ul ").css({display: "none"}); // Opera Fix
@@ -119,27 +119,30 @@ var ChangeLocale = Backbone.View.extend({
                 }
                 else {
                     end = selectedConnection.advanced.indexOf(";", start);
+                    oldLocale = selectedConnection.advanced.substring(start, end);
+                    selectedDataSource.set({"advanced": selectedConnection.advanced.replace(oldLocale, newLocale)});
+                    // post update
+                    this_p.saveDataSource(selectedDataSource);
+                    // refresh datasources
+                    Saiku.session.sessionworkspace.refresh()
                 }
-                oldLocale = selectedConnection.advanced.substring(start, end);
-                selectedDataSource.attributes.advanced = selectedConnection.advanced.replace(oldLocale, newLocale);
-//                alert("selected connection : " + selectedConnection.advanced);
             }
-
-            // post update
-            selectedDataSource.save({}, {
-                data: JSON.stringify(selectedConnection.attributes),
-                contentType: "application/json",
-                success: function () {
-                    $(this_p.el).find('#feedback').html("");
-                },
-                error: function (data, xhr) {
-                    $(this_p.el).find('#feedback').html("Save failed!<br/>(" + xhr.responseText + ")");
-                }
-            });
-            // refresh datasources
-            // see onenote
         });
         return false;
+    },
+
+    saveDataSource: function (selectedDataSource) {
+        selectedDataSource.save({}, {
+                data: JSON.stringify(selectedDataSource.attributes),
+                contentType: "application/json",
+                success: function (model, respose, options) {
+                    console.log("The model has been updated to the server");
+                },
+                error: function (model, xhr, options) {
+                    console.log("Something went wrong while updating the model: " + xhr.responseText);
+                }
+            }
+        );
     },
 
     render: function (chartOptions) {
@@ -149,7 +152,8 @@ var ChangeLocale = Backbone.View.extend({
 });
 
 var DataSource = Backbone.Model.extend({
-    url: "admin/datasources",
+//    url: "admin/datasources",
+    urlRoot: "admin/datasources",
     refresh: function () {
         $.ajax({
             type: 'GET',
