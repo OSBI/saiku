@@ -61,10 +61,9 @@ or
 
 Automatically reload your browser when files are modified. Enter command:
 
-	```sh
-	npm watch
-	```
-
+```sh
+npm watch
+```
 ## Wiki
 
 * [Saiku Wiki](http://wiki.meteorite.bi/display/SAIK/Saiku)
