@@ -11,6 +11,7 @@ For more information, see [Saiku](http://www.meteorite.bi).
   1. [Setup](#setup)
   	- [Build Instructions](#build-instructions)
   	- [Run UI on Node.js proxy](#run-ui-on-nodejs-proxy)
+  	- [LiveReload Browser](#liveReload-browser)
   3. [Wiki](#wiki)
   4. [Community](#community)
   5. [Bugs and Feature Requests](#bugs-and-feature-requests)
@@ -54,6 +55,13 @@ In order to run it locally you'll need a basic server setup.
 or
 	```sh
 	npm start
+	```
+	
+### LiveReload Browser
+
+Automatically reload your browser when files are modified. Enter command:
+	```sh
+	npm watch
 	```
 
 ## Wiki
