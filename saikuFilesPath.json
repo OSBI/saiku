@@ -3,7 +3,8 @@
         "css": [
             "css/saiku/src/*.css",
             "embed/*.css",
-            "js/saiku/plugins/CCC_Chart/*.css"
+            "js/saiku/plugins/CCC_Chart/*.css",
+            "js/saiku/plugins/Dashboards/css/*.css"
         ],
         "html": [
             "./*.html",
@@ -17,6 +18,10 @@
             "js/saiku/plugins/AdminConsole/*.js",
             "js/saiku/plugins/BIServer/*.js",
             "js/saiku/plugins/CCC_Chart/*.js",
+            "js/saiku/plugins/Dashboards/*.js",
+            "js/saiku/plugins/Dashboards/js/dialogs/*.js",
+            "js/saiku/plugins/Dashboards/js/models/*.js",
+            "js/saiku/plugins/Dashboards/js/ui/*.js",
             "js/saiku/plugins/filters/*.js",
             "js/saiku/plugins/Fullscreen/*.js",
             "js/saiku/plugins/I18n/*.js",
