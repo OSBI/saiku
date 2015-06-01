@@ -15,7 +15,7 @@ var ChangeLocale = Backbone.View.extend({
         $(this.el).attr({ id: this.id });
 
         // Bind table rendering to query result event
-        _.bindAll(this, "render", "show", "handleClick");
+        _.bindAll(this, "render", "show", "handleClick", "processDatasourcesWithoutAddingNewTab");
 
         this.datasources = new Connections({}, { dialog: this });
 
@@ -66,16 +66,19 @@ var ChangeLocale = Backbone.View.extend({
     },
 
     show: function (event, ui) {
-        $(this.workspace.table.el).toggle();
-        $(this.el).toggle();
-        $(this.localeOptionsScreen).toggle();
-        $(event.target).toggleClass('on');
-
+        this.toggleWorkspaceWithLocaleScreen();
         if ($(event.target).hasClass('on')) {
             this.render();
         } else {
             this.workspace.table.render({ data: this.workspace.query.result.lastresult() });
         }
+    },
+
+    toggleWorkspaceWithLocaleScreen: function () {
+        $(this.workspace.table.el).toggle();
+        $(this.el).toggle();
+        $(this.localeOptionsScreen).toggle();
+        $(event.target).toggleClass('on');
     },
 
     handleClick: function (event) {
@@ -103,7 +106,7 @@ var ChangeLocale = Backbone.View.extend({
             var localeChanged = this_p.changeLocale(selectedConnection, selectedDataSource, newLocale);
             if (localeChanged) {
                 this_p.saveDataSource(selectedDataSource);
-                Saiku.session.sessionworkspace.refresh()
+                this_p.refreshDatasources();
             }
         });
         return false;
@@ -144,6 +147,49 @@ var ChangeLocale = Backbone.View.extend({
                 }
             }
         );
+    },
+
+    refreshDatasources: function () {
+        // set feedback to notice users datasources are refreshing
+
+        var this_plugin = this;
+        if (typeof localStorage !== "undefined" && localStorage) {
+            localStorage.clear();
+        }
+
+        Saiku.session.sessionworkspace.clear();
+
+        if (typeof localStorage !== "undefined" && localStorage) {
+            localStorage.setItem('saiku-version', Settings.VERSION);
+        }
+
+        Saiku.session.sessionworkspace.fetch({success: this_plugin.processDatasourcesWithoutAddingNewTab}, {});
+    },
+
+    processDatasourcesWithoutAddingNewTab: function (model, response) {
+        // Save session in localStorage for other tabs to use
+        if (typeof localStorage !== "undefined" && localStorage && localStorage.getItem('session') === null) {
+            localStorage.setItem('session', JSON.stringify(response));
+
+            // Set expiration on localStorage to one day in the future
+            var expires = (new Date()).getTime() + Settings.LOCALSTORAGE_EXPIRATION;
+            if (typeof localStorage !== "undefined" && localStorage) {
+                localStorage.setItem('expiration', expires);
+            }
+        }
+
+        // Generate cube navigation for reuse
+        Saiku.session.sessionworkspace.cube_navigation = _.template($("#template-cubes").html())({
+            connections: response
+        });
+
+
+        // Create cube objects
+        Saiku.session.sessionworkspace.cube = {};
+        Saiku.session.sessionworkspace.connections = response;
+        _.delay(Saiku.session.sessionworkspace.prefetch_dimensions, 20);
+
+        this.toggleWorkspaceWithLocaleScreen();
     }
 });
 
