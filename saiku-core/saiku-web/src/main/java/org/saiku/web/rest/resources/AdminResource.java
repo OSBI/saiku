@@ -215,6 +215,8 @@ public class AdminResource {
             return Response.serverError().status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(e.getLocalizedMessage())
                 .type("text/plain").build();
+<<<<<<< HEAD
+=======
         }
     }
 
@@ -241,10 +243,40 @@ public class AdminResource {
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getLocalizedMessage())
                 .type("text/plain").build();
+>>>>>>> 9dbf7b2... ChangeLocale: provide AdminResource backend call to change locale of a data source
         }
     }
 
     /**
+<<<<<<< HEAD
+     * Updates the locale parameter of the datasource
+     * @param locale: the new locale for the data source
+     * @param id: ID of the data source whose locale should be changed
+     * @return: Response indicating success or fail
+     */
+    @PUT
+    @Produces({"application/json"})
+    @Consumes({"application/json"})
+    @Path("/datasources/{id}/locale")
+    @ReturnType("org.saiku.web.rest.objects.DataSourceMapper")
+    public Response updateDatasourceLocale(String locale, @PathParam("id") String id) {
+        try {
+            boolean overwrite = true;
+            SaikuDatasource saikuDatasource = datasourceService.fetchDataSourceById(id);
+            datasourceService.setLocaleOfDataSource(saikuDatasource, locale);
+            datasourceService.addDatasource(saikuDatasource, overwrite);
+            return Response.ok().type("application/json").entity(new DataSourceMapper(saikuDatasource)).build();
+        }catch(SaikuDataSourceException e){
+            return Response.ok().type("application/json").entity(e.getLocalizedMessage()).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getLocalizedMessage())
+                .type("text/plain").build();
+        }
+    }
+
+    /**
+=======
+>>>>>>> 9dbf7b2... ChangeLocale: provide AdminResource backend call to change locale of a data source
      * Delete data source from the Saiku server
      *
      * @param id The data source ID
@@ -383,6 +415,7 @@ public class AdminResource {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   @GET
   @Path("/schema/{id}")
   @Produces("application/xml")
@@ -406,6 +439,8 @@ public class AdminResource {
         .build();
   }
 =======
+=======
+>>>>>>> 9dbf7b2... ChangeLocale: provide AdminResource backend call to change locale of a data source
     @GET
     @Path("/schema/{id}")
     @Produces("application/xml")
@@ -417,6 +452,7 @@ public class AdminResource {
                 break;
             }
         }
+<<<<<<< HEAD
 
         return Response
             .ok(p.getBytes(), MediaType.APPLICATION_OCTET_STREAM)
@@ -425,6 +461,15 @@ public class AdminResource {
     }
 >>>>>>> 9dbf7b2... ChangeLocale: provide AdminResource backend call to change locale of a data source
 
+=======
+
+        return Response
+            .ok(p.getBytes(), MediaType.APPLICATION_OCTET_STREAM)
+            .header("content-disposition", "attachment; filename = " + id)
+            .build();
+    }
+
+>>>>>>> 9dbf7b2... ChangeLocale: provide AdminResource backend call to change locale of a data source
     /**
      * Import a legacy data source into the Saiku server.
      *
