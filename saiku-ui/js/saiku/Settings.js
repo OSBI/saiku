@@ -179,7 +179,7 @@ if ($.blockUI) {
 
 }
 
-if (window.location.hostname && (window.location.hostname == "dev.analytical-labs.com" || window.location.hostname == "demo.analytical-labs.com" )) {
+if (window.location.hostname && (window.location.hostname == "try.meteorite.bi" )) {
     Settings.USERNAME = "admin";
     Settings.PASSWORD = "admin";
     Settings.DEMO = true;
