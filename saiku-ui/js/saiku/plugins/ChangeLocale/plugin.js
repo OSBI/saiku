@@ -23,9 +23,6 @@ var ChangeLocale = Backbone.View.extend({
         this.add_button();
         this.workspace.toolbar.changeLocale = this.show;
 
-        // Listen to adjust event and rerender
-        this.workspace.bind('workspace:adjust', this.render);
-
         // Create locale screen
         this.localeOptionsScreen = $("<div>  " +
             "<ul>" +
@@ -143,11 +140,6 @@ var ChangeLocale = Backbone.View.extend({
                 }
             }
         );
-    },
-
-    render: function (chartOptions) {
-
-
     }
 });
 
