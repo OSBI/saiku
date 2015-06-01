@@ -125,53 +125,23 @@ var ChangeLocale = Backbone.View.extend({
 
             var selectedDataSource = new DataSource(selectedConnection);
 
-            var localeChanged = this_p.changeLocale(selectedConnection, selectedDataSource, newLocale);
-            if (localeChanged) {
-                this_p.setUserFeedback("Adding locale to data source...");
-                this_p.saveDataSource(selectedDataSource);
-                this_p.setUserFeedback("Refreshing data source with new locale...");
-                this_p.refreshDatasources();
-            }
+            this_p.setUserFeedback("Persisting locale...");
+            this_p.persistLocaleOfDataSource(selectedDataSource, newLocale);
+            this_p.setUserFeedback("Refreshing data source with new locale...");
+            this_p.refreshDatasources();
+
         });
         return false;
     },
 
-    changeLocale: function (selectedConnection, selectedDataSource, newLocale) {
-        var localeChanged;
-        if (selectedConnection.advanced == null) {
-            this.setUserFeedback("Change the URL connection string to advanced");
-            localeChanged = false;
-        } else {
-            var referenceText = "locale=";
-            var start = selectedConnection.advanced.toLowerCase().indexOf(referenceText);
-            if (start == -1) {
-                this.setUserFeedback("no locale defined in connection string of data source");
-                localeChanged = false;
-            }
-            else {
-                start = start + referenceText.length;
-                var end = selectedConnection.advanced.indexOf(";", start);
-                var oldLocale = selectedConnection.advanced.substring(start, end);
-                selectedDataSource.set({"advanced": selectedConnection.advanced.replace(oldLocale, newLocale)});
-                localeChanged = true;
-            }
-        }
-        return localeChanged;
-    },
 
-    saveDataSource: function (selectedDataSource) {
-        var this_plugin = this;
-        selectedDataSource.save({}, {
-                data: JSON.stringify(selectedDataSource.attributes),
-                contentType: "application/json",
-                success: function (model, respose, options) {
-//                    this_plugin.setUserFeedback("The model has been updated to the server");
-                },
-                error: function (model, xhr, options) {
-                    this_plugin.setUserFeedback("Something went wrong while updating the model: " + xhr.responseText);
-                }
-            }
-        );
+    persistLocaleOfDataSource: function (selectedDataSource, newLocale) {
+        putUrl = Settings.REST_URL + "admin/datasources/" + selectedDataSource.id + "/locale";
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('PUT', putUrl);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(newLocale);
     },
 
     refreshDatasources: function () {
@@ -206,7 +176,6 @@ var ChangeLocale = Backbone.View.extend({
         Saiku.session.sessionworkspace.cube_navigation = _.template($("#template-cubes").html())({
             connections: response
         });
-
 
         // Create cube objects
         Saiku.session.sessionworkspace.cube = {};
