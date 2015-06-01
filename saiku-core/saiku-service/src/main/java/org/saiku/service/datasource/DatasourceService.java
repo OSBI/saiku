@@ -32,9 +32,6 @@ import java.util.Map;
 
 public class DatasourceService implements Serializable {
 
-  /**
-   * Unique serialization UID
-   */
   private static final long serialVersionUID = -4407446633148181669L;
 
   private transient IDatasourceManager datasources;
