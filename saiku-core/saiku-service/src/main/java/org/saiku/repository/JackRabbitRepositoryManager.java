@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.api.JackrabbitRepository;
+import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
@@ -104,10 +105,17 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
       String dir = data;
       RepositoryConfig config = RepositoryConfig.create(xml, dir);
       repository = RepositoryImpl.create(config);
+
       log.info("repo started");
       log.info("logging in");
       login();
       log.info("logged in");
+
+      JackrabbitSession js = (JackrabbitSession) session;
+      js.getUserManager().createUser("anon", "anon");
+      js.save();
+
+
       root = session.getRootNode();
 
       root.getSession().save();

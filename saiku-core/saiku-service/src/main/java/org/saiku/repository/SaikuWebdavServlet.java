@@ -88,6 +88,9 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
     boolean noCache = DavMethods.isDeltaVMethod(webdavRequest) && !(DavMethods.DAV_VERSION_CONTROL == methodCode || DavMethods.DAV_REPORT == methodCode);
     WebdavResponse webdavResponse = new WebdavResponseImpl(response, noCache);
     try {
+      if(checkUnsecured(request)) {
+        request.setAttribute("org.apache.jackrabbit.server.SessionProvider", new SaikuSessionProvider());
+      }
       // make sure there is a authenticated user
       if (!getDavSessionProvider().attachSession(webdavRequest)) {
         return;
