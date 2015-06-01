@@ -62,6 +62,7 @@ public class DataSourceResource {
     @GET
     @Produces({"application/json"})
     public Collection<SaikuDatasource> getDatasources() {
+        //TODO: admin security?
         try {
             return datasourceService.getDatasources().values();
         } catch (SaikuServiceException e) {
