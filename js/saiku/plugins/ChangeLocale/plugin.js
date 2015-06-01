@@ -15,7 +15,7 @@ var ChangeLocale = Backbone.View.extend({
         $(this.el).attr({ id: this.id });
 
         // Bind table rendering to query result event
-        _.bindAll(this, "render", "show", "handleClick", "fetch_datasources");
+        _.bindAll(this, "render", "show", "handleClick");
 
         this.datasources = new Connections({}, { dialog: this });
 
@@ -78,10 +78,6 @@ var ChangeLocale = Backbone.View.extend({
         }
     },
 
-    fetch_datasources: function () {
-        return true;
-    },
-
     handleClick: function (event) {
         // Keep a reference to the main plugin object.
         var this_p = this;
@@ -90,42 +86,50 @@ var ChangeLocale = Backbone.View.extend({
         var newLocale = $(event.target).attr('id');
 
         // get current selected connection name (without URL data)
-        selectedCube = $(".cubes option:selected").val();
-        selectedConnectionName = selectedCube.substring(0, selectedCube.indexOf("/"));
+        var selectedCube = $(".cubes option:selected").val();
+        var selectedConnectionName = selectedCube.substring(0, selectedCube.indexOf("/"));
 
         // Get all connections from back-end
-        getUrl = Settings.REST_URL + "admin" + "/datasources";
+        var getUrl = Settings.REST_URL + "admin" + "/datasources";
         $.get(getUrl, function (data) {
-            allConnections = data;
+            var allConnections = data;
             // match
-            selectedConnection = _.find(allConnections, function (connection) {
+            var selectedConnection = _.find(allConnections, function (connection) {
                 return connection.connectionname == selectedConnectionName
             });
 
-            selectedDataSource = new DataSource(selectedConnection);
+            var selectedDataSource = new DataSource(selectedConnection);
 
-            // change locale
-            if (selectedConnection.advanced == null) {
-                alert("Change the URL connection string to advanced");
-            } else {
-                referenceText = "locale=";
-                start = selectedConnection.advanced.toLowerCase().indexOf(referenceText);
-                start = start + referenceText.length;
-                if (start == -1) {
-                    alert("no locale defined in connection string of data source")
-                }
-                else {
-                    end = selectedConnection.advanced.indexOf(";", start);
-                    oldLocale = selectedConnection.advanced.substring(start, end);
-                    selectedDataSource.set({"advanced": selectedConnection.advanced.replace(oldLocale, newLocale)});
-                    // post update
-                    this_p.saveDataSource(selectedDataSource);
-                    // refresh datasources
-                    Saiku.session.sessionworkspace.refresh()
-                }
+            var localeChanged = this_p.changeLocale(selectedConnection, selectedDataSource, newLocale);
+            if (localeChanged) {
+                this_p.saveDataSource(selectedDataSource);
+                Saiku.session.sessionworkspace.refresh()
             }
         });
         return false;
+    },
+
+    changeLocale: function (selectedConnection, selectedDataSource, newLocale) {
+        var localeChanged;
+        if (selectedConnection.advanced == null) {
+            alert("Change the URL connection string to advanced");
+            localeChanged = false;
+        } else {
+            var referenceText = "locale=";
+            var start = selectedConnection.advanced.toLowerCase().indexOf(referenceText);
+            start = start + referenceText.length;
+            if (start == -1) {
+                alert("no locale defined in connection string of data source")
+                localeChanged = false;
+            }
+            else {
+                var end = selectedConnection.advanced.indexOf(";", start);
+                var oldLocale = selectedConnection.advanced.substring(start, end);
+                selectedDataSource.set({"advanced": selectedConnection.advanced.replace(oldLocale, newLocale)});
+                localeChanged = true;
+            }
+        }
+        return localeChanged;
     },
 
     saveDataSource: function (selectedDataSource) {
