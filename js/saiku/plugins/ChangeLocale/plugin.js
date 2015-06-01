@@ -1,5 +1,7 @@
 /*  
  *   Copyright 2015 OSBI
+ *
+ *   Created by Andreas Verleysen
  */
 
 /**
@@ -142,12 +144,12 @@ var ChangeLocale = Backbone.View.extend({
         } else {
             var referenceText = "locale=";
             var start = selectedConnection.advanced.toLowerCase().indexOf(referenceText);
-            start = start + referenceText.length;
             if (start == -1) {
                 this.setUserFeedback("no locale defined in connection string of data source");
                 localeChanged = false;
             }
             else {
+                start = start + referenceText.length;
                 var end = selectedConnection.advanced.indexOf(";", start);
                 var oldLocale = selectedConnection.advanced.substring(start, end);
                 selectedDataSource.set({"advanced": selectedConnection.advanced.replace(oldLocale, newLocale)});
