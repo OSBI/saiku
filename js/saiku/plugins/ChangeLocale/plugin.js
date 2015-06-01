@@ -8,6 +8,8 @@
 var ChangeLocale = Backbone.View.extend({
 
     initialize: function (args) {
+        this.visible = false;
+
         this.workspace = args.workspace;
 
         // Create a unique ID for use as the CSS selector
@@ -15,7 +17,7 @@ var ChangeLocale = Backbone.View.extend({
         $(this.el).attr({ id: this.id });
 
         // Bind table rendering to query result event
-        _.bindAll(this, "render", "show", "handleClick", "processDatasourcesWithoutAddingNewTab");
+        _.bindAll(this, "render", "show", "handleClick", "processDatasourcesWithoutAddingNewTab", "toggleLocaleScreen", "setUserFeedback");
 
         this.datasources = new Connections({}, { dialog: this });
 
@@ -24,14 +26,14 @@ var ChangeLocale = Backbone.View.extend({
         this.workspace.toolbar.changeLocale = this.show;
 
         // Create locale screen
-        this.localeOptionsScreen = $("<div>  " +
+        this.localeOptionsScreen = $("<div id='languageOptions'>  " +
             "<ul>" +
             "<li>         <button id='en_US' > English </button></li> " +
             "<li>   	    <button id='nl_BE' > Dutch </button>  </li> " +
             "<li>   	    <button id='fr_FR' > French </button> </li>" +
             " </ul>" +
             "</div> " +
-            "<div id ='feedback' class='dialog_body' style='display: inline;'> Choose your language </div>")
+            "<span id ='feedback' class='editor_info' > Choose your language </span>")
         ;
 
         // attach event handler
@@ -67,24 +69,42 @@ var ChangeLocale = Backbone.View.extend({
 
     show: function (event, ui) {
         this.toggleWorkspaceWithLocaleScreen();
-        if ($(event.target).hasClass('on')) {
-            this.render();
-        } else {
-            this.workspace.table.render({ data: this.workspace.query.result.lastresult() });
-        }
+//        if ($(event.target).hasClass('on')) {
+//            this.render();
+//        } else {
+//            this.workspace.table.render({ data: this.workspace.query.result.lastresult() });
+//        }
     },
 
     toggleWorkspaceWithLocaleScreen: function () {
+        this.toggleWorkSpace();
+        this.toggleLocaleScreen();
+    },
+
+    toggleWorkSpace: function () {
         $(this.workspace.table.el).toggle();
         $(this.el).toggle();
-        $(this.localeOptionsScreen).toggle();
+    },
+
+    toggleLocaleScreen: function () {
+        if (this.visible) {
+            this.setUserFeedback("Choose language");
+            $(this.workspace.el).find('#languageOptions').addClass('hide');
+            $(this.workspace.el).find('#feedback').addClass('hide');
+            this.workspace.toolbar.run_query();
+        }
+        else {
+            $(this.workspace.el).find('#languageOptions').removeClass('hide').show();
+            $(this.workspace.el).find('#feedback').removeClass('hide').show();
+        }
         $(event.target).toggleClass('on');
+        this.visible = !this.visible;
     },
 
     handleClick: function (event) {
         // Keep a reference to the main plugin object.
         var this_p = this;
-
+        this_p.setUserFeedback("Changing locale...");
         // get selected locale
         var newLocale = $(event.target).attr('id');
 
@@ -105,7 +125,9 @@ var ChangeLocale = Backbone.View.extend({
 
             var localeChanged = this_p.changeLocale(selectedConnection, selectedDataSource, newLocale);
             if (localeChanged) {
+                this_p.setUserFeedback("Adding locale to data source...");
                 this_p.saveDataSource(selectedDataSource);
+                this_p.setUserFeedback("Refreshing data source with new locale...");
                 this_p.refreshDatasources();
             }
         });
@@ -115,14 +137,14 @@ var ChangeLocale = Backbone.View.extend({
     changeLocale: function (selectedConnection, selectedDataSource, newLocale) {
         var localeChanged;
         if (selectedConnection.advanced == null) {
-            alert("Change the URL connection string to advanced");
+            this.setUserFeedback("Change the URL connection string to advanced");
             localeChanged = false;
         } else {
             var referenceText = "locale=";
             var start = selectedConnection.advanced.toLowerCase().indexOf(referenceText);
             start = start + referenceText.length;
             if (start == -1) {
-                alert("no locale defined in connection string of data source")
+                this.setUserFeedback("no locale defined in connection string of data source");
                 localeChanged = false;
             }
             else {
@@ -136,22 +158,22 @@ var ChangeLocale = Backbone.View.extend({
     },
 
     saveDataSource: function (selectedDataSource) {
+        var this_plugin = this;
         selectedDataSource.save({}, {
                 data: JSON.stringify(selectedDataSource.attributes),
                 contentType: "application/json",
                 success: function (model, respose, options) {
-                    console.log("The model has been updated to the server");
+//                    this_plugin.setUserFeedback("The model has been updated to the server");
                 },
                 error: function (model, xhr, options) {
-                    console.log("Something went wrong while updating the model: " + xhr.responseText);
+                    this_plugin.setUserFeedback("Something went wrong while updating the model: " + xhr.responseText);
                 }
             }
         );
     },
 
     refreshDatasources: function () {
-        // set feedback to notice users datasources are refreshing
-
+        // keep reference to this plugin
         var this_plugin = this;
         if (typeof localStorage !== "undefined" && localStorage) {
             localStorage.clear();
@@ -189,7 +211,11 @@ var ChangeLocale = Backbone.View.extend({
         Saiku.session.sessionworkspace.connections = response;
         _.delay(Saiku.session.sessionworkspace.prefetch_dimensions, 20);
 
-        this.toggleWorkspaceWithLocaleScreen();
+        this.show();
+    },
+
+    setUserFeedback: function (msg) {
+        $("#feedback").html(msg);
     }
 });
 
