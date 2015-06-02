@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.jcr.RepositoryException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -401,7 +402,7 @@ public class AdminResource {
     
     return Response
         .ok(p.getBytes(), MediaType.APPLICATION_OCTET_STREAM)
-        .header("content-disposition","attachment; filename = "+ id)
+        .header("content-disposition", "attachment; filename = " + id)
         .build();
   }
 
