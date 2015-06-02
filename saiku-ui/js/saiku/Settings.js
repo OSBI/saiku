@@ -130,6 +130,11 @@ if (document.location.hash) {
     }
 }
 
+Settings.MONDRIAN_LOCALES = {
+    "English": "en_US",
+    "Dutch": "nl_BE",
+    "French": "fr_FR"
+};
 
 /**
  * < IE9 doesn't support Array.indexOf
