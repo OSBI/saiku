@@ -59,7 +59,7 @@ var ChangeLocale = Backbone.View.extend({
 
     add_button: function () {
         var $chart_button =
-            $('<a href="#changeLocale" class="i18n change_locale button disabled_toolbar sprite" title="Change locale"></a>')
+            $('<a id="changeLocaleBtn" href="#changeLocale" class="i18n change_locale button disabled_toolbar sprite" title="Change locale"></a>')
                 .css({  'background-image': "url('js/saiku/plugins/ChangeLocale/images/change_locale.png')",
                     'background-repeat': 'no-repeat',
                     'background-position': '7px 7px'
@@ -99,7 +99,7 @@ var ChangeLocale = Backbone.View.extend({
             $(this.workspace.el).find('#languageOptions').removeClass('hide').show();
             $(this.workspace.el).find('#feedback').removeClass('hide').show();
         }
-        $(event.target).toggleClass('on');
+        $("#changeLocaleBtn").toggleClass('on');
         this.visible = !this.visible;
     },
 
