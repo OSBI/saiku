@@ -16,4 +16,5 @@ Steps:
     - provide the translations in the filename_locale.properties file
             e.g. person.firstname.caption = first name
             e.g. person.firstname.description = shows the first name of the person
-    - add this plugin to the index.html
+    - enable this plugin in Settings.JS by adding 'ChangeLocale' to the PLUGINS array
+    - add the desired locales in Settings.JS under Settings.MONDRIAN_LOCALES map in the form: language:locale
