@@ -139,7 +139,7 @@ var ChangeLocale = Backbone.View.extend({
         putUrl = Settings.REST_URL + "admin/datasources/" + selectedDataSource.id + "/locale";
 
         var xhr = new XMLHttpRequest();
-        xhr.open('PUT', putUrl);
+        xhr.open('PUT', putUrl, false);
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.send(newLocale);
     },
