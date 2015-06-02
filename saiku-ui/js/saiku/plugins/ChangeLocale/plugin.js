@@ -27,16 +27,19 @@ var ChangeLocale = Backbone.View.extend({
         this.add_button();
         this.workspace.toolbar.changeLocale = this.show;
 
-        // Create locale screen
-        this.localeOptionsScreen = $("<div id='languageOptions'>  " +
+        this.localeOptionsScreenTemplate = _.template("" +
+            "<div id='languageOptions'>  " +
             "<ol style='list-style-type: none;'>" +
-            "<li style='padding-bottom: 10px;'>         <button class='button' id='en_US' > English </button></li> " +
-            "<li style='padding-bottom: 10px;'>   	    <button class='button' id='nl_BE' > Dutch </button>  </li> " +
-            "<li style='padding-bottom: 10px;'>   	    <button class='button' id='fr_FR' > French </button> </li>" +
+            "<%_.each(localeMap, function(localeCode, language){ %>" +
+            "<li style='padding-bottom: 10px;'>         <button class='button' id='<%=localeCode%>' > <%=language%> </button></li> " +
+            "<%})%>" +
             " </ol>" +
             "</div> " +
-            "<span id ='feedback' class='editor_info' > Choose your language </span>")
-        ;
+            "<span id ='feedback' class='editor_info' > Choose your language </span>" +
+            "");
+
+        // Create locale screen
+        this.localeOptionsScreen = $(this.localeOptionsScreenTemplate({localeMap: Settings.MONDRIAN_LOCALES}));
 
         // attach event handler
         this.localeOptionsScreen.find('button').click(this.handleClick);
@@ -114,29 +117,18 @@ var ChangeLocale = Backbone.View.extend({
         var selectedCube = $(".cubes option:selected").val();
         var selectedConnectionName = selectedCube.substring(0, selectedCube.indexOf("/"));
 
-        // Get all connections from back-end
-        var getUrl = Settings.REST_URL + "admin" + "/datasources";
-        $.get(getUrl, function (data) {
-            var allConnections = data;
-            // match
-            var selectedConnection = _.find(allConnections, function (connection) {
-                return connection.connectionname == selectedConnectionName
-            });
+        //send connection name to back-end for update
+        this_p.setUserFeedback("Persisting locale...");
+        this_p.persistLocaleOfDataSource(selectedConnectionName, newLocale);
+        this_p.setUserFeedback("Refreshing data source with new locale...");
+        this_p.refreshDatasources();
 
-            var selectedDataSource = new DataSource(selectedConnection);
-
-            this_p.setUserFeedback("Persisting locale...");
-            this_p.persistLocaleOfDataSource(selectedDataSource, newLocale);
-            this_p.setUserFeedback("Refreshing data source with new locale...");
-            this_p.refreshDatasources();
-
-        });
         return false;
     },
 
 
-    persistLocaleOfDataSource: function (selectedDataSource, newLocale) {
-        putUrl = Settings.REST_URL + "admin/datasources/" + selectedDataSource.id + "/locale";
+    persistLocaleOfDataSource: function (selectedDataSourceName, newLocale) {
+        putUrl = Settings.REST_URL + "admin/datasources/" + selectedDataSourceName + "/locale";
 
         var xhr = new XMLHttpRequest();
         xhr.open('PUT', putUrl, false);
@@ -207,7 +199,6 @@ var DataSource = Backbone.Model.extend({
 Saiku.events.bind('session:new', function (session) {
 
     function new_workspace(args) {
-        // Add stats element
         if (typeof args.workspace.changeLocale == "undefined") {
             args.workspace.changeLocale = new ChangeLocale({ workspace: args.workspace });
         }
@@ -221,17 +212,18 @@ Saiku.events.bind('session:new', function (session) {
         }
     };
 
+    if (Settings.PLUGINS.indexOf("ChangeLocale") != -1) {
+        // Attach to existing tabs
+        for (var i = 0; i < Saiku.tabs._tabs.length; i++) {
+            var tab = Saiku.tabs._tabs[i];
+            new_workspace({
+                workspace: tab.content
+            });
+        }
+        ;
 
-    // Attach stats to existing tabs
-    for (var i = 0; i < Saiku.tabs._tabs.length; i++) {
-        var tab = Saiku.tabs._tabs[i];
-        new_workspace({
-            workspace: tab.content
-        });
+        // Attach to future tabs
+        Saiku.session.bind("workspace:new", new_workspace);
+        Saiku.session.bind("workspace:clear", clear_workspace);
     }
-    ;
-
-    // Attach stats to future tabs
-    Saiku.session.bind("workspace:new", new_workspace);
-    Saiku.session.bind("workspace:clear", clear_workspace);
 });
