@@ -1,0 +1,19 @@
+This plugin allows users to change the locale of the Saiku view.
+
+Requirements:
+    - Saiku v3.X
+    -
+
+Steps:
+    - mondrian.properties: add 'mondrian.rolap.localePropFile=foldername.filename'
+    - add a folder with name 'foldername' to webinf/classes
+    - add the locales to previous folders with following syntax: filename_en_US.properties, filename_nl_BE.properties, ...
+    - add the DynamicSchemaProcessor=mondrian.i18n.LocalizingDynamicSchemaProcessor; to the data source definition
+    - add a default locale under the location field of the data source definition: locale=en_US; (don't forget the ';')
+    - change the fields of your mondrian schema that has to be translated using %{}
+            e.g. first name --> %{person.firstname.caption}
+            e.g. shows the first name of the person --> %{person.firstname.description}
+    - provide the translations in the filename_locale.properties file
+            e.g. person.firstname.caption = first name
+            e.g. person.firstname.description = shows the first name of the person
+    - add this plugin to the index.html
