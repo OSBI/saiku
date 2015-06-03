@@ -112,9 +112,11 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
       log.info("logged in");
 
       JackrabbitSession js = (JackrabbitSession) session;
-      js.getUserManager().createUser("anon", "anon");
-      js.save();
+      if(js.getUserManager().getAuthorizable("anon")==null) {
+        js.getUserManager().createUser("anon", "anon");
+        js.save();
 
+      }
       session = js;
       root = session.getRootNode();
 
