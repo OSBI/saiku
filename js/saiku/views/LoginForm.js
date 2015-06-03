@@ -82,7 +82,8 @@ var LoginForm = Modal.extend({
 
 	setError: function(message){
 		$(this.el).find(".dialog_response").html(message);
-	},
+        $(this.el).find('.clearlink').unbind();
+    },
 
     show_panel_user: function(event) {
         event.preventDefault();
