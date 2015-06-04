@@ -1,27 +1,31 @@
 package org.saiku.database;
 
+import org.saiku.UserDAO;
+import org.saiku.database.dto.SaikuUser;
+
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
-import org.saiku.UserDAO;
-import org.saiku.database.dto.SaikuUser;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 public class JdbcUserDAO
         extends JdbcDaoSupport
         implements UserDAO
 {
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     public SaikuUser insert(SaikuUser user)
     {
         String sql = "INSERT INTO users(username,password,email, enabled)\nVALUES (?,?,?,?);";
 
         String newsql = "SELECT MAX(USER_ID) from USERS where username = ?";
-        getJdbcTemplate().update(sql, new Object[] { user.getUsername(), user.getPassword(), user.getEmail(), Boolean.valueOf(true) });
+        getJdbcTemplate().update(sql, new Object[] { user.getUsername(), passwordEncoder.encode(user.getPassword()), user.getEmail(), Boolean.valueOf(true) });
 
         Integer name = (Integer)getJdbcTemplate().queryForObject(newsql, new Object[] { user.getUsername() }, Integer.class);
 
@@ -116,7 +120,8 @@ public class JdbcUserDAO
         String sql = "UPDATE users set username = ?,password =?,email =? , enabled = ? where user_id = ?;";
 
         String newsql = "SELECT MAX(USER_ID) from USERS where username = ?";
-        getJdbcTemplate().update(sql, new Object[] { user.getUsername(), user.getPassword(), user.getEmail(), Boolean.valueOf(true), user.getId()});
+        getJdbcTemplate().update(sql, new Object[] { user.getUsername(), passwordEncoder.encode(user.getPassword()), user.getEmail(),
+            Boolean.valueOf(true), user.getId()});
 
         Integer name = (Integer)getJdbcTemplate().queryForObject(newsql, new Object[] { user.getUsername() }, Integer.class);
 

@@ -9,6 +9,7 @@ import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -30,7 +31,7 @@ public class Database {
 
     private JdbcDataSource ds;
     private static final Logger log = LoggerFactory.getLogger(Database.class);
-
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     IDatasourceManager dsm;
     public Database() {
 
@@ -135,7 +136,7 @@ public class Database {
         statement.execute("CREATE TABLE IF NOT EXISTS LOG(time TIMESTAMP AS CURRENT_TIMESTAMP NOT NULL, log CLOB);");
 
         statement.execute("CREATE TABLE IF NOT EXISTS USERS(user_id INT(11) NOT NULL AUTO_INCREMENT, " +
-                "username VARCHAR(45) NOT NULL UNIQUE, password VARCHAR(45) NOT NULL, email VARCHAR(100), " +
+                "username VARCHAR(45) NOT NULL UNIQUE, password VARCHAR(100) NOT NULL, email VARCHAR(100), " +
                 "enabled TINYINT NOT NULL DEFAULT 1, PRIMARY KEY(user_id));");
 
         statement.execute("CREATE TABLE IF NOT EXISTS USER_ROLES (\n"
@@ -164,6 +165,42 @@ public class Database {
             statement.execute("INSERT INTO LOG(log) VALUES('insert users');");
         }
 
+        String encrypt = servletContext.getInitParameter("db.encryptpassword");
+        if(encrypt.equals("true") && !checkUpdatedEncyption()){
+            updateForEncyption();
+        }
+
+
+    }
+
+    public boolean checkUpdatedEncyption() throws SQLException{
+        Connection c = ds.getConnection();
+
+        Statement statement = c.createStatement();
+        ResultSet result = statement.executeQuery("select count(*) as c from LOG where log = 'update passwords'");
+        result.next();
+        return result.getInt("c") != 0;
+    }
+    public void updateForEncyption() throws SQLException {
+        Connection c = ds.getConnection();
+
+        Statement statement = c.createStatement();
+        statement.execute("ALTER TABLE users ALTER COLUMN password VARCHAR(100) DEFAULT NULL");
+
+        ResultSet result = statement.executeQuery("select username, password from users");
+
+        while(result.next()){
+            statement = c.createStatement();
+
+            String pword = result.getString("password");
+            String hashedPassword = passwordEncoder.encode(pword);
+            String sql = "UPDATE users " +
+                        "SET password = '"+hashedPassword+"' WHERE username = '"+result.getString("username")+"'";
+            statement.executeUpdate(sql);
+        }
+        statement = c.createStatement();
+
+        statement.execute("INSERT INTO LOG(log) VALUES('update passwords');");
 
     }
 
