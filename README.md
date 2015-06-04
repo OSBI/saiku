@@ -59,10 +59,16 @@ or
 	
 ### LiveReload Browser
 
+Install [GruntJS](http://gruntjs.com/):
+
+```sh
+npm install -g grunt-cli
+```
+
 Automatically reload your browser when files are modified. Enter command:
 
 ```sh
-npm watch
+grunt watch
 ```
 ## Wiki
 
