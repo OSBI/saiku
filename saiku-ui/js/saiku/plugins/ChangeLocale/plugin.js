@@ -28,14 +28,14 @@ var ChangeLocale = Backbone.View.extend({
         this.workspace.toolbar.changeLocale = this.show;
 
         this.localeOptionsScreenTemplate = _.template("" +
+            "<div id='feedback' style='margin-left: 30px;'><p class='editor_info'> Choose your language </p></div>" +
             "<div id='languageOptions'>  " +
             "<ol style='list-style-type: none;'>" +
             "<%_.each(localeMap, function(localeCode, language){ %>" +
-            "<li style='padding-bottom: 10px;'>         <button class='button' id='<%=localeCode%>' > <%=language%> </button></li> " +
+            "<li style='padding-bottom: 10px; padding-right: 10px; float: left;'>         <button class='form_button' style='padding-bottom: 18px;' id='<%=localeCode%>' > <%=language%> </button></li> " +
             "<%})%>" +
             " </ol>" +
             "</div> " +
-            "<span id ='feedback' class='editor_info' > Choose your language </span>" +
             "");
 
         // Create locale screen
@@ -56,7 +56,6 @@ var ChangeLocale = Backbone.View.extend({
         $(this.workspace.el).find('.workspace_results')
             .prepend($(this.el).hide())
             .prepend(this.localeOptionsScreen.hide());
-
 
     },
 
@@ -128,7 +127,7 @@ var ChangeLocale = Backbone.View.extend({
 
 
     persistLocaleOfDataSource: function (selectedDataSourceName, newLocale) {
-        putUrl = Settings.REST_URL + "admin/datasources/" + selectedDataSourceName + "/locale";
+        var putUrl = Settings.REST_URL + "admin/datasources/" + selectedDataSourceName + "/locale";
 
         var xhr = new XMLHttpRequest();
         xhr.open('PUT', putUrl, false);
@@ -178,7 +177,7 @@ var ChangeLocale = Backbone.View.extend({
     },
 
     setUserFeedback: function (msg) {
-        $("#feedback").html(msg);
+        $("#feedback").html("<p class='editor_info'>" + msg + "</p>");
     }
 });
 
