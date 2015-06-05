@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * The "add a folder" dialog
  */
@@ -22,9 +22,13 @@ var MeasuresModal = Modal.extend({
     type: "filter",
     closeText: "Save",
 
+    mdxFunctions: ['distinct', 'count distinct'],
+
     events: {
         'submit form': 'save',
-        'click .dialog_footer a' : 'call'
+        'click .dialog_footer a': 'call',
+        'change #Measures': 'addMeasureToCalculationField',
+        'click .form_button.mathBtn': 'addMathOperatorToCalculationField'
     },
 
     buttons: [
@@ -32,24 +36,62 @@ var MeasuresModal = Modal.extend({
         { text: "Cancel", method: "close" }
     ],
 
-    message: "<form id='measure_form'>" +
-                     "<table border='0px'>" +
-                     "<tr><td class='col0 i18n'>Name:</td>" +
-                     "<td class='col1'><input type='text' class='measure_name' value='Measure Name'></input></td></tr>" +
-                     "<tr><td class='col0 i18n'>Formula:</td>" +
-                     "<td class='col1'><textarea class='measureFormula'>Measures.[Store Sales] + 100</textarea></td></tr>" +
-                     "<tr><td class='col0 i18n'>Format:</td>" +
-                     "<td class='col1'><input class='measure_format' type='text' value='#,##0.00'></input></td></tr>" +
-                     "</table></form>",
+    addMeasureTemplate: _.template("<form id='measure_form'>" +
+            "<table border='0px'>" +
+            "<tr><td class='col0 i18n'>Name:</td>" +
+            "<td class='col1'><input type='text' class='measure_name' value='Measure Name'></input></td></tr>" +
+
+            "<tr><td class='col0 i18n'>Measure:</td>" +
+            "<td class='col1'>" +
+            "<select id='Measures' name='MeasuresId'> " +
+            "    <option value='' selected='selected'>--select an existing measure--</option> " +
+            "    <% _(measures).each(function(m) { %> " +
+            "      <option value='<%= m.uniqueName %>'><%= m.name %></option> " +
+            "    <% }); %> " +
+            "</select> " +
+            "</td></tr>" +
+
+            "<tr><td class='col0 i18n'>Formula:</td>" +
+            "<td class='col1'><textarea class='measureFormula auto-hint' placeholder='Start writing a calculated measure or use the dropdown list'></textarea></td></tr>" +
+
+            "<tr> <td class='col0'> </td>" +
+            "<td class='col1'>" +
+            " <form> <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='+' id='plusBtn' >  </input>   " +
+            " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='-' id='minusBtn' > </input>  " +
+            " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='*' id='multiplyBtn' >  </input>  " +
+            " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='/' id='divisionBtn' >  </input> " +
+            " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='(' id='leftBracketBtn' >  </input> " +
+            " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value=')' id='rightBracketBtn' >  </input> " +
+
+            "</form> </td>" +
+            "</tr>" +
+
+//            "<tr><td class='col0 i18n'>Function:</td>" +
+//            "<td class='col1'>" +
+//            "<select id='mdxFunction' name='mdxFunctionId'> " +
+//            "    <option value='' selected='selected'>--select a MDX function--</option> " +
+//            "    <% _(mdxFunctions).each(function(mdxFunction) { %> " +
+//            "      <option value='<%= mdxFunction %>'><%= mdxFunction %></option> " +
+//            "    <% }); %> " +
+//            "</select> " +
+//            "</td></tr>" +
+
+            "<tr><td class='col0 i18n'>Format:</td>" +
+            "<td class='col1'><input class='measure_format' type='text' value='#,##0.00'></input></td></tr>" +
+            "</table></form>"
+    ),
 
 
     measure: null,
 
-
-    initialize: function(args) {
+    initialize: function (args) {
         var self = this;
         this.workspace = args.workspace;
         this.measure = args.measure;
+
+        var cube = this.workspace.selected_cube;
+        this.measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
+
         _.bindAll(this, "save");
 
         this.options.title = "Calculated Measure";
@@ -60,24 +102,30 @@ var MeasuresModal = Modal.extend({
             });
         }
 
-        this.bind( 'open', function( ) {
-            if (self.measure) {
+        this.bind('open', function () {
+            if (self.measure) {
             }
 
         });
-        
 
-        
+
         // fix event listening in IE < 9
-        if(isIE && isIE < 9) {
-            $(this.el).find('form').on('submit', this.save);    
+        if (isIE && isIE < 9) {
+            $(this.el).find('form').on('submit', this.save);
         }
+        ;
+
+        // Load template
+        this.message = this.addMeasureTemplate({
+            measures: this.measures,
+            mdxFunctions: this.mdxFunctions
+        });
 
     },
 
 
-    save: function( event ) {
-        event.preventDefault( );
+    save: function (event) {
+        event.preventDefault();
         var self = this;
         var measure_name = $(this.el).find('.measure_name').val();
         var measure_formula = $(this.el).find('.measureFormula').val();
@@ -102,14 +150,32 @@ var MeasuresModal = Modal.extend({
             self.workspace.sync_query();
             this.close();
         }
-        
+
         return false;
     },
 
-    error: function() {
+    error: function () {
         $(this.el).find('dialog_body')
             .html("Could not add new folder");
+    },
+
+    addMathOperatorToCalculationField: function (event) {
+        var mathOperator = ' ' + event.target.value + ' ';
+        $(".measureFormula").val($(".measureFormula").val() + mathOperator);
+    },
+
+    addMeasureToCalculationField: function (event) {
+        var measureName = this.$("#Measures option:selected").text();
+        measureName = this.surroundWithSquareBrackets("Measures") + '.' + this.surroundWithSquareBrackets(measureName);
+        $(".measureFormula").val($(".measureFormula").val() + measureName);
+        this.resetSelectDropdown();
+    },
+
+    surroundWithSquareBrackets: function (text) {
+        return '[' + text + ']';
+    },
+
+    resetSelectDropdown: function () {
+        document.getElementById("Measures").selectedIndex = 0;
     }
-
-
 });
