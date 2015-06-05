@@ -2,12 +2,12 @@
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saiku</groupId>
-        <version>3.1.10</version>
+        <version>3.2</version>
     </parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>saiku-bi-platform-plugin-p5</artifactId>
 	<packaging>jar</packaging>
-	<version>3.1.10</version>
+	<version>3.2</version>
 	<name>saiku biserver plugin</name>
 
 	<build>
@@ -18,6 +18,8 @@
 				<filtering>true</filtering>
 				<includes>
 					<include>**/*.xml</include>
+					<include>**/*.js</include>
+
 				</includes>
 			</resource>
 		</resources>
@@ -644,8 +646,9 @@
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
+			<artifactId>javax.servlet-api</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>

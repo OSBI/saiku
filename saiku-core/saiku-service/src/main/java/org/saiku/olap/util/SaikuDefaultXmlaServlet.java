@@ -31,7 +31,6 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import mondrian.olap.MondrianServer;
 import mondrian.xmla.XmlaHandler;
 import mondrian.xmla.XmlaRequest;
 import mondrian.xmla.impl.DefaultXmlaServlet;
@@ -67,7 +66,7 @@ public class SaikuDefaultXmlaServlet extends DefaultXmlaServlet{
       public OlapConnection getConnection(String s, String s1, String s2, Properties properties) throws SQLException {
         try {
           connections.refreshAllConnections();
-          return connections.getOlapConnection("foodmart");
+          return connections.getOlapConnection(System.getProperty("xmla_datasource"));
         } catch (SaikuOlapException e) {
           e.printStackTrace();
         }

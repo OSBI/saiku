@@ -1,4 +1,4 @@
-# [Saiku UI](http://www.meteorite.bi)
+# [Saiku UI](http://www.meteorite.bi) [![Saiku Analytics on Slack](http://chat.meteorite.bi/badge.svg)](http://chat.meteorite.bi/)
 
 [![saiku-view](http://www.meteorite.bi/images/chart1.jpg)](http://demo.saikuanalytics.com)
 
@@ -6,6 +6,21 @@ A user interface for the analytical tool Saiku. <br />
 For more information, see [Saiku](http://www.meteorite.bi).
 
 > You can put the UI on a separate server (apache httpd or simply a webapp in tomcat/webapps e.g).
+
+## Table of Contents
+  1. [Setup](#setup)
+  	- [Build Instructions](#build-instructions)
+  	- [Run UI on Node.js proxy](#run-ui-on-nodejs-proxy)
+  	- [LiveReload Browser](#livereload-browser)
+  3. [Wiki](#wiki)
+  4. [Community](#community)
+  5. [Bugs and Feature Requests](#bugs-and-feature-requests)
+  6. [Discussion List](#discussion-list)
+  7. [Browser Support](#browser-support)
+  8. [Team](#team)
+  9. [Contributing](#contributing)
+  10. [History](#history)
+  11. [License](#license)
 
 ## Setup
 
@@ -34,21 +49,45 @@ In order to run it locally you'll need a basic server setup.
 3. You can simply test and run the UI on a NodeJS proxy server called [server.js](https://github.com/OSBI/saiku-ui/blob/master/server.js), that will utilize a remote backend as source.
 
 	Just run the following command in your command line and then access the UI in
-	the browser (by default, it will run at [http://localhost:8080](http://localhost:8080) and proxy requests to dev.analytical-labs.com:80):
+	the browser (by default, it will run at [http://localhost:8080](http://localhost:8080) and proxy requests to try.meteorite.bi:80):
 
 		node server.js [port] [backend_host] [backend_port]
+or
+	```sh
+	npm start
+	```
+	
+### LiveReload Browser
 
+Install [GruntJS](http://gruntjs.com/):
+
+```sh
+npm install -g grunt-cli
+```
+
+Automatically reload your browser when files are modified. Enter command:
+
+```sh
+grunt watch
+```
 ## Wiki
 
-* [Meteorite BI Wiki](http://wiki.meteorite.bi/display/SAIK/Saiku)
+* [Saiku Wiki](http://wiki.meteorite.bi/display/SAIK/Saiku)
+
+## Community
+
+* [Saiku Community](http://community.meteorite.bi/)
 
 ## Bugs and Feature Requests
 
-* [Meteorite BI Jira](http://jira.meteorite.bi/)
+* [Saiku Jira](http://jira.meteorite.bi/)
 
-## Discussion
+## Discussion List
 
-* [Meteorite BI Forums](http://forums.meteorite.bi/)
+* [Saiku Analytics on Slack](http://chat.meteorite.bi/)
+* [Saiku Dev Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/dev)
+* [Saiku User Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/user)
+* [<strike>Saiku Forums</strike>](http://forums.meteorite.bi/)
 * [Stack Overflow](http://stackoverflow.com/questions/tagged/saiku)
 * [Freenode IRC - Channel: #saiku](http://irc.lc/freenode/%23saiku/t4nk@)
 
@@ -78,7 +117,6 @@ Check [CONTRIBUTING.md](https://github.com/OSBI/saiku-ui/blob/master/CONTRIBUTIN
 
 * If you have a feature request, then please get in touch. We'd love to hear from you! Either post to our [forum](http://forums.meteorite.bi/t/saiku-3-and-beyond/9) or email: [info@meteorite.bi](mailto:info@meteorite.bi)
 
-
 ## History
 
 For detailed changelog, check [Releases](https://github.com/OSBI/saiku-ui/releases).
@@ -87,3 +125,5 @@ For detailed changelog, check [Releases](https://github.com/OSBI/saiku-ui/releas
 
 Saiku and the Saiku UI are free software. The UI, contained in this repository,
 is available under the terms of the Apache License Version 2. A copy is attached for your convenience.
+
+**[⬆ back to top](#table-of-contents)**

@@ -1,0 +1,22 @@
+# Overview
+
+This charm provides Saiku Analytics(http://meteorite.bi/products/saiku). Saiku Analytics is a flexible & lightweight web based OLAP Analysis tool that is designed to allow users to slice and dice their data using any modern web browser. Saiku Analytics will run on top of most JDBC compliant databases.
+
+# Usage
+
+Step by step instructions on using the charm:
+
+    juju deploy saikuanalytics
+
+You can then browse to http://ip-address:8080 to configure the service.
+
+# Configuration
+
+Default login is admin/admin, this should be changed within the administration console once you have logged in.
+
+# Contact Information
+
+- http://meteorite.bi
+- http://jira.meteorite.bi
+- https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/user
+- ##saiku on Freenode IRC

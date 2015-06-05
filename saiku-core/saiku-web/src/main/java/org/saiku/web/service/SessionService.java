@@ -30,6 +30,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.util.*;
 
@@ -103,7 +104,7 @@ public class SessionService implements ISessionService {
 				session.put("password", password);		
 			}
 			session.put("sessionid", UUID.randomUUID().toString());
-			
+			session.put("authid", RequestContextHolder.currentRequestAttributes().getSessionId());
 			List<String> roles = new ArrayList<String>();
 			for (GrantedAuthority ga : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
 				roles.add(ga.getAuthority());
@@ -112,6 +113,7 @@ public class SessionService implements ISessionService {
 			
 			sessionHolder.put(p, session);
 		}
+
 	}
 
 	private String getUsername(Object p) {
@@ -164,13 +166,12 @@ public class SessionService implements ISessionService {
 		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {			
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			Object p = auth.getPrincipal();
-			createSession(auth, null, null);
-			if (sessionHolder.containsKey(p)) {
-				Map<String,Object> r = new HashMap<String,Object>();
-				r.putAll(sessionHolder.get(p)); 
-				r.remove("password");
-				return r;
-			}
+		  if (sessionHolder.containsKey(p)) {
+			  Map<String, Object> r = new HashMap<String, Object>();
+			  r.putAll(sessionHolder.get(p));
+			  r.remove("password");
+			  return r;
+		  }
 
 		}
 		return new HashMap<String,Object>();
@@ -180,7 +181,7 @@ public class SessionService implements ISessionService {
 		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {			
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			Object p = auth.getPrincipal();
-			createSession(auth, null, null);
+			//createSession(auth, null, null);
 			if (sessionHolder.containsKey(p)) {
 				Map<String,Object> r = new HashMap<String,Object>();
 				r.putAll(sessionHolder.get(p)); 
@@ -190,4 +191,21 @@ public class SessionService implements ISessionService {
 		}
 		return new HashMap<String,Object>();
 	}
+
+  public void clearSessions(HttpServletRequest req, String username, String password) throws Exception {
+	if (authenticationManager != null) {
+	  authenticate(req, username, password);
+	}
+	if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
+	  Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	  Object p = auth.getPrincipal();
+	  if (sessionHolder.containsKey(p)) {
+		sessionHolder.remove(p);
+	  }
+	}
+
+
+  }
+
+
 }

@@ -1,0 +1,16 @@
+name: saikuanalytics
+summary: Web Based OLAP data analysis tool
+maintainer: Meteorite BI <info@meteorite.bi>
+description: |
+  Web based OLAP tool which allows users to query data stored in JDBC compliant databases and NOSQL clusters.
+tags:
+  - analytics
+  - big_data
+subordinate: false
+provides:
+  website:
+    interface: http
+peers:
+  database:
+    interface: mysql
+    interface: postgresql

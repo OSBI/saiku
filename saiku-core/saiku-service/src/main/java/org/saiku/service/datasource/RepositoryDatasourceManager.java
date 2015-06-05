@@ -227,7 +227,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     }
 
-    public String saveFile(String path, String content, String user, List<String> roles) {
+    public String saveFile(String path, Object content, String user, List<String> roles) {
         try {
             irm.saveFile(content, path, user, "nt:saikufiles", roles);
             return "Save Okay";
@@ -257,7 +257,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         }
     }
 
-    public String saveInternalFile(String path, String content, String type) {
+    public String saveInternalFile(String path, Object content, String type) {
         try {
             irm.saveInternalFile(content, path, type);
             return "Save Okay";
@@ -284,6 +284,16 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         }
         return null;
     }
+
+    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles, String path) {
+        try {
+            return irm.getAllFiles(type, username, roles, path);
+        } catch (RepositoryException e) {
+            log.error("Get failed", e);
+        }
+        return null;
+    }
+
 
     public void createUser(String username){
         try {

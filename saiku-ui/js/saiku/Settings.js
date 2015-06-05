@@ -65,7 +65,8 @@ var Settings = {
     TELEMETRY_SERVER: 'http://telemetry.analytical-labs.com:7000',
     LOCALSTORAGE_EXPIRATION: 10 * 60 * 60 * 1000 /* 10 hours, in ms */,
     UPGRADE: true,
-    EVALUATION_PANEL_LOGIN: true
+    EVALUATION_PANEL_LOGIN: true,
+    QUERY_OVERWRITE_WARNING: true
 };
 
 /**
@@ -129,6 +130,11 @@ if (document.location.hash) {
     }
 }
 
+Settings.MONDRIAN_LOCALES = {
+    "English": "en_US",
+    "Dutch": "nl_BE",
+    "French": "fr_FR"
+};
 
 /**
  * < IE9 doesn't support Array.indexOf
@@ -178,7 +184,7 @@ if ($.blockUI) {
 
 }
 
-if (window.location.hostname && (window.location.hostname == "dev.analytical-labs.com" || window.location.hostname == "demo.analytical-labs.com" )) {
+if (window.location.hostname && (window.location.hostname == "try.meteorite.bi" )) {
     Settings.USERNAME = "admin";
     Settings.PASSWORD = "admin";
     Settings.DEMO = true;

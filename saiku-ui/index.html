@@ -22,11 +22,12 @@
     <link rel="stylesheet" href="css/saiku/src/giveitsomestyle.css" type="text/css" media="screen"/>
     <link rel="stylesheet" href="js/fancybox/jquery.fancybox.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="js/jquery/jquery.contextMenu.css" type="text/css" media="screen" />
-    <link rel="stylesheet" href="css/jquery/jquery.gridster.css" type="text/css" media="screen"/>
     <!-- Saiku CSS -->
     <link rel="stylesheet" href="css/saiku/src/styles.css" type="text/css">
     <link rel="stylesheet" href="css/saiku/src/saiku.table.css" type="text/css">
     <link rel="stylesheet" href="css/saiku/src/saiku.dropzone.css" type="text/css">
+
+
     <link rel="shortcut icon" href="favicon.ico">
 
 </head>
@@ -44,6 +45,10 @@
     </div>
 </div>
 
+<!--
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization"></script>
+-->
 
 <!--  jQuery 1.7.2 , jQuery UI 1.8.14-->
 <script src="js/jquery/jquery.min.js" type="text/javascript"></script>
@@ -97,7 +102,6 @@
 <script type="text/javascript" src="js/backbone/json2.js"></script>
 <script type="text/javascript" src="js/backbone/backbone.js"></script>
 <script src="js/backbone/backbone-model-file-upload.js" ></script>
-<script src="js/jquery/jquery.gridster.js"></script>
 <!-- Loggly error logging service -->
 <script type="text/javascript" src="js/logger/janky.post.min.js"></script>
 <script type="text/javascript" src="js/logger/Logger.js" defer></script>
@@ -146,12 +150,16 @@
 <script type="text/javascript" src="js/saiku/models/QueryScenario.js"></script>
 <script type="text/javascript" src="js/saiku/models/Query.js"></script>
 <script type="text/javascript" src="js/saiku/views/SessionErrorModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/WarningModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/TitlesModal.js"></script>
+
 
 <script type="text/javascript" src="js/saiku/models/Session.js"></script>
 <script type="text/javascript" src="js/saiku/views/SplashScreen.js"></script>
 <script type="text/javascript" src="js/saiku/models/SessionWorkspace.js"></script>
 <script type="text/javascript" src="js/saiku/models/Member.js"></script>
 <script type="text/javascript" src="js/saiku/models/Plugin.js"></script>
+<script type="text/javascript" src="js/saiku/models/Settings.js"></script>
 <script type="text/javascript" src="js/saiku/models/License.js"></script>
 <script type="text/javascript" src="js/saiku/Saiku.js"></script>
 <script type="text/javascript" src="js/saiku/views/DateFilterModal.js"></script>
@@ -189,6 +197,7 @@
 <script type="text/javascript" src="../js/saiku/render/SaikuChartRenderer.js"></script>
 <script type="text/javascript" src="../js/saiku/embed/SaikuEmbed.js"></script>-->
 
+<script type="text/javascript" src="../js/saiku/embed/SaikuEmbed.js"></script>
 <!-- ACE Editor for MDX -->
 <script type="text/javascript" src="js/ace/ace.js" charset="utf-8"></script>
 
@@ -210,9 +219,8 @@
                     <li class='separator'>&nbsp;</li>
 <!--                    <li><a id='issue_tracker' href='#issue_tracker' title='Issue Tracker' class='bug i18n sprite'></a></li>-->
             </ul>
-                <h1 id='logo'>
-                    <a href='http://www.analytical-labs.com/' title='Saiku - Next Generation Open Source Analytics' target="_blank" class='sprite'>Saiku</a>
-                </h1>
+
+            <%= data.logo %>
         </script>
 
 <script type="text/x-jquery-tmpl" id="template-upgrade">
@@ -277,23 +285,43 @@
         </script>
 
 <script type="text/x-jquery-tmpl" id="template-measures">
-        <ul>
-            <li>
-                <span class="root expand sprite"></span>
-                   <a href="#" title="Measures" class="folder_expand sprite i18n">Measures</a>
-
                 <ul>
-                <% _.each(measures, function(measure) { %>
-                    <% if (typeof measure["visible"] == "undefined" || measure["visible"]) { %>
+                <% var g = _.groupBy(measures, 'measureGroup'); %>
+                <% _.each(g, function(group, key) { %>
+                    <% if(key != "null") { %>
+                    <li class='parent_dimension'>
+                    <span class="root expand sprite"></span>
+                      <a class="folder_expand sprite" href="#" title="<%= key %>"><%= key %></a>
+                        <ul>
+                        <% _.each(group, function(measure) { %>
+                        <% if (typeof measure["visible"] == "undefined" || measure["visible"]) { %>
                         <li class="d_measure"><a title="<%= measure.description ? measure.description : measure.uniqueName %>"
                                 measure="<%= measure.name %>" type="EXACT"
                             class="measure" href="#Measures/member/<%= encodeURIComponent(measure.uniqueName) %>"><%= measure.caption %></a>
                         </li>
+
+                        <% } %>
+                        <% }); %>
+                        </ul>
+                        </li>
+                    <% } else {%>
+                    <li class='parent_dimension'>
+                    <span class="root expand sprite"></span>
+                      <a class="folder_expand sprite" href="#" title=" "> </a>
+                        <ul>
+                    <% _.each(group, function(measure) { %>
+
+                        <li class="d_measure"><a title="<%= measure.description ? measure.description : measure.uniqueName %>"
+                                measure="<%= measure.name %>" type="EXACT"
+                            class="measure" href="#Measures/member/<%= encodeURIComponent(measure.uniqueName) %>"><%= measure.caption %></a>
+                        </li>
+
+                        <% }); %>
+                      </ul>
+                      </li>
                     <% } %>
                 <% }); %>
                 </ul>
-            </li>
-        </ul>
         </script>
 <script type="text/x-jquery-tmpl" id="template-calculated-measures">
         <ul>
@@ -331,6 +359,7 @@
                 <div id="query_processing" class="query_processing" style="display:none;"><span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Running query...</span>  [&nbsp;<a class="cancel i18n" href="#cancel">Cancel</a>&nbsp;]</div>
 
                 <div class="workspace_results_info" align="right" />
+                <div class="workspace_results_titles" align="center"/>
                 <div class="workspace_results">
 
                 </div>
@@ -471,6 +500,11 @@
             <li class="seperator"><a href="#query_scenario"
                 class="i18n table_mode query_scenario button disabled_toolbar sprite"
                 title="Query Scenario"></a></li>
+            <% if (Settings.USER_TITLES == true) { %>
+            <li class="seperator"><a href="#workspace_titles"
+                class="i18n workspace_titles button disabled_toolbar sprite"
+                title="Titles"></a></li>
+                <% } %>
 	<li class="seperator"><a href="#drillacross"
 class="i18n table_mode drillacross button disabled_toolbar sprite"
 title="Drill across on cell"></a></li>
@@ -550,6 +584,9 @@ title="Drill across on cell"></a></li>
             <li><a href="#sunburst"
                 class="i18n sunburst chartoption button disabled_toolbar"
                 title="Sunburst"></a></li>
+            <li><a href="#multiplesunburst"
+                class="i18n multiplesunburst chartoption button disabled_toolbar"
+                title="Multi Sunburst"></a></li>
             <li><a href="#dot"
                 class="i18n dot chartoption button disabled_toolbar"
                 title="Dot"></a></li>
@@ -632,7 +669,11 @@ title="Drill across on cell"></a></li>
 
 <script type="text/x-jquery-tmpl" id="template-repository-file">
             <li class='query'>
+            <% if (Settings.ICON_16) { %>
+                <span class='icon_override' style='background-image: url('<%= Settings.ICON_16 %>');'></span>
+            <% } else { %>
                 <span class='icon'></span>
+            <% } %>
                 <a href="#<%= entry.path %>"><%= entry.name %></a>
             </li>
         </script>
@@ -825,6 +866,6 @@ title="Drill across on cell"></a></li>
 </ul>
 </script>
 <script type="text/javascript" src="js/ga.js"></script>
-<script src="http://localhost:9000/livereload.js"></script>
+<script src="http://localhost:35729/livereload.js"></script>
 </body>
 </html>

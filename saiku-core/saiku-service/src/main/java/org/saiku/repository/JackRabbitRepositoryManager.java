@@ -23,8 +23,10 @@ import org.saiku.service.util.exception.SaikuServiceException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.api.JackrabbitRepository;
+import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
@@ -103,10 +105,19 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
       String dir = data;
       RepositoryConfig config = RepositoryConfig.create(xml, dir);
       repository = RepositoryImpl.create(config);
+
       log.info("repo started");
       log.info("logging in");
       login();
       log.info("logged in");
+
+      JackrabbitSession js = (JackrabbitSession) session;
+      if(js.getUserManager().getAuthorizable("anon")==null) {
+        js.getUserManager().createUser("anon", "anon");
+        js.save();
+
+      }
+      session = js;
       root = session.getRootNode();
 
       root.getSession().save();
@@ -357,7 +368,7 @@ System.out.println(e.getLocalizedMessage());
 
     }
 
-    node.getSession().move(source, target+"/"+node.getName());
+    node.getSession().move(source, target + "/" + node.getName());
 
     node.getSession().save();
 
@@ -464,7 +475,13 @@ System.out.println(e.getLocalizedMessage());
   }
 
   public List<IRepositoryObject> getAllFiles(String type, String username, List<String> roles) throws RepositoryException {
-    return getRepoObjects(root, type, username, roles);
+    return getRepoObjects(root, type, username, roles, false);
+  }
+
+  public List<IRepositoryObject> getAllFiles(String type, String username, List<String> roles, String path) throws
+      RepositoryException {
+    Node node = JcrUtils.getNodeIfExists(path, session);
+    return getRepoObjects(node, type, username, roles, true);
   }
 
   public void deleteFile(String datasourcePath) {
@@ -921,7 +938,8 @@ System.out.println(e.getLocalizedMessage());
     }
   }
 
-  private List<IRepositoryObject> getRepoObjects(Node files, String fileType, String username, List<String> roles) {
+  private List<IRepositoryObject> getRepoObjects(Node files, String fileType, String username, List<String> roles,
+                                                 boolean includeparent) {
     Acl2 acl2 = new Acl2(files);
     acl2.setAdminRoles(userService.getAdminRoles());
 
@@ -929,10 +947,34 @@ System.out.println(e.getLocalizedMessage());
     Iterable<Node> objects = null;
     NodeIterator n = null;
     try {
-      n = files.getNodes();
+      if(includeparent){
+        String filename = files.getName();
+
+        if (files.getPrimaryNodeType().getName().equals("nt:file")) {
+          if (StringUtils.isNotEmpty(fileType) && !filename.endsWith(fileType)) {
+
+          } else {
+            String extension = FilenameUtils.getExtension(files.getName());
+            List<AclMethod> acls = acl2.getMethods(files, username, roles);
+
+            repoObjects
+                .add(new RepositoryFileObject(filename, "#" + files.getPath(), extension, files.getPath(),
+                    acls));
+          }
+          if (files.getPrimaryNodeType().getName().equals("nt:folder")) {
+            List<AclMethod> acls = acl2.getMethods(files, username, roles);
+
+            repoObjects.add(
+                new RepositoryFolderObject(files.getName(), "#" + files.getPath(), files.getPath(), acls,
+                    getRepoObjects(files, fileType, username, roles, false)));
+          }
+        }
+      }
+      else {
+        n = files.getNodes();
 
 
-      while(n.hasNext()){
+      while(n.hasNext()) {
         Node node = n.nextNode();
         String nodetype = node.getPrimaryNodeType().getName();
         String nodename = node.getName();
@@ -940,14 +982,14 @@ System.out.println(e.getLocalizedMessage());
 
         objects = JcrUtils.getChildNodes(node);
         String s = (node.getPrimaryNodeType().getName());
-        if(!nodename.startsWith("jcr:") && !nodename.startsWith("rep:")) {
+        if (!nodename.startsWith("jcr:") && !nodename.startsWith("rep:")) {
           if (acl2.canRead(node, username, roles)) {
             List<AclMethod> acls = acl2.getMethods(node, username, roles);
             if (node.getPrimaryNodeType().getName().equals("nt:file")) {
               if (StringUtils.isNotEmpty(fileType) && !node.getName().endsWith(fileType)) {
                 continue;
               }
-              String extension = ".saiku";//file.getName().getExtension();
+              String extension = FilenameUtils.getExtension(nodename);
 
               repoObjects.add(
                   new RepositoryFileObject(node.getName(), "#" + node.getPath(), extension, node.getPath(),
@@ -956,7 +998,7 @@ System.out.println(e.getLocalizedMessage());
             if (node.getPrimaryNodeType().getName().equals("nt:folder")) {
               repoObjects.add(
                   new RepositoryFolderObject(node.getName(), "#" + node.getPath(), node.getPath(), acls,
-                      getRepoObjects(node, fileType, username, roles)));
+                      getRepoObjects(node, fileType, username, roles, false)));
             }
             Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
 
@@ -992,7 +1034,7 @@ System.out.println(e.getLocalizedMessage());
                   if (StringUtils.isNotEmpty(fileType) && !filename.endsWith(fileType)) {
                     continue;
                   }
-                  String extension = ".saiku";//file.getName().getExtension();
+                  String extension = FilenameUtils.getExtension(nodename);
 
                   repoObjects
                       .add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath,
@@ -1021,6 +1063,7 @@ System.out.println(e.getLocalizedMessage());
             }
           }
         }
+      }
       }
     } catch (RepositoryException e) {
       log.error("Error processing repo objects", e);

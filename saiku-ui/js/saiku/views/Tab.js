@@ -158,7 +158,12 @@ var Tab = Backbone.View.extend({
         }
 
         return false;
+    },
+
+    rendered: function() {
+        return $.contains( document, this.el );
     }
+
 });
 
 /**

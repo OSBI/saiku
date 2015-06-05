@@ -161,5 +161,18 @@ public class PentahoSessionService implements ISessionService {
 		return new HashMap<String,Object>();
 	}
 
+  public void clearSessions(HttpServletRequest req, String username, String password) throws Exception {
+	if (authenticationManager != null) {
+	  authenticate(req, username, password);
+	}
+	if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
+	  Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	  Object p = auth.getPrincipal();
+	  if (sessionHolder.containsKey(p)) {
+		sessionHolder.remove(p);
+	  }
+	}
+  }
+
 
 }

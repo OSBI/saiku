@@ -7,6 +7,7 @@
 var TabSet = Backbone.View.extend({
 	className: 'tabs',
 	queryCount: 0,
+	dashCount: 0,
 
 	events: {
 		'click a.pager': 'togglePager' ,
@@ -33,7 +34,12 @@ var TabSet = Backbone.View.extend({
 	 */
 	add: function(content, close) {
 		// Add it to the set
-		this.queryCount++;
+		if (content.pluginName === 'dashboards') {
+			this.dashCount++;
+		}
+		else {
+			this.queryCount++;
+		}
 
 		var tab = new Tab({ content: content, close: close});
 		this._tabs.push(tab);

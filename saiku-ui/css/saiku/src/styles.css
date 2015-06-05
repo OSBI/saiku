@@ -218,6 +218,13 @@ textarea, select {
 }
 #toolbar ul li a.schema_designer {
     background: url(../../../images/src/main_toolbar_schema_designer.png) no-repeat center;
+    text-align: center;
+    text-decoration: none;
+}
+#toolbar ul li a.schema_designer span {
+    position: relative;
+    top: 23px;
+    color: #ae1816;
 }
 #toolbar ul li a.logout {
     background-position: -1776px 5px;
@@ -255,6 +262,12 @@ textarea, select {
     text-indent: -9999px;
 }
 
+#logo_override img {
+    float: right;
+    width: 166px;
+    height: 28px;
+    margin: -15px 10px 0 0;
+}
 /** Tabs */
 
 .tabs {
@@ -1120,6 +1133,16 @@ textarea, select {
     padding-right: 20px;
     overflow: hidden;
 }
+.workspace_results_titles {
+    /*color: #999999;*/
+    padding-right: 20px;
+    overflow: hidden;
+}
+
+.workspace_results_titles h3 {
+    display: inline;
+
+}
 
 .parameter_input {
     padding-left: 5px;
@@ -1185,6 +1208,15 @@ textarea, select {
     height: 32px;
     padding: 5px;
     margin-right: 20px;
+}
+
+.saiku_logo_override {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    padding: 5px;
+    margin-right: 20px;
+
 }
 
 
@@ -1572,6 +1604,10 @@ a.disabled_toolbar:hover {
   background: url('../../../images/chart/gray/sunburst.png') no-repeat 21px -1px;;
   height: 16px;
  }
+.query_toolbar a.multiplesunburst {
+    background: url('../../../images/chart/gray/multiplesunburst.png') no-repeat 21px -1px;;
+    height: 16px;
+}
 .query_toolbar a.treemap {
   background: url('../../../images/chart/gray/treemap.png') no-repeat 21px -1px;;
   height: 16px;
@@ -1582,7 +1618,11 @@ a.disabled_toolbar:hover {
  background: url('../../../images/chart/sunburst.png') no-repeat 21px -1px;;
  height: 16px;
 }
-
+.query_toolbar a.sunburst:hover,
+.query_toolbar a.sunburst.on {
+    background: url('../../../images/chart/multiplesunburst.png') no-repeat 21px -1px;;
+    height: 16px;
+}
 .query_toolbar a.treemap:hover,
 .query_toolbar a.treemap.on {
   background: url('../../../images/chart/treemap.png') no-repeat 21px -1px;;
@@ -1791,7 +1831,7 @@ span.search {
     top: -16px;
 }
 input.search_file {
-    width:350px;
+    width:175px;
     margin-left:10px;
     height: 18px;
     border-radius: 9px;
@@ -1814,7 +1854,7 @@ span.cancel_search {
   left: 175px;
   margin-top: 5px;
   position: absolute;
-  top: 13px;
+  top: 14px;
   width: 25px;
   z-index: 1;
   opacity: 0.7;
@@ -1881,6 +1921,11 @@ span.cancel_search:hover {
     background-image: url('../../../images/src/saiku_16.png');
 	padding: 1px 8px 1px;
 	margin-right: 4px;
+}
+
+.RepositoryObjects li.query .icon_override {
+    padding: 1px 8px 1px;
+    margin-right: 4px;
 }
 
 .RepositoryObjects li .sprite.folder {

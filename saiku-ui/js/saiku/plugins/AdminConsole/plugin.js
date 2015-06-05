@@ -78,6 +78,9 @@ var AdminConsole = Backbone.View.extend({
         $(this.el).find('.user_info').html(html);
         $(this.el).find('.license_type > li:nth-child(1)').append(this.licenseInfo.licenseType);
         $(this.el).find('.license_type > li:nth-child(2)').append(yourDate.toLocaleDateString());
+        $(this.el).find('.license_type > li:nth-child(3)').append(this.licenseInfo.name);
+        $(this.el).find('.license_type > li:nth-child(4)').append(this.licenseInfo.hostname);
+        $(this.el).find('.license_type > li:nth-child(5)').append(this.licenseInfo.userLimit);
     },
 
     show_license_user_list: function(event) {
@@ -457,7 +460,10 @@ var AdminConsole = Backbone.View.extend({
         "<br/><div id='uploadstatus'></div>"),
     licenseInfoTemplate: _.template("<h3>License Information</h3>" +
         "<ul class='license_type'><li><strong>License Type: </strong></li>" +
-        "<li><strong>License Expiry: </strong></li></ul>"),
+        "<li><strong>License Expiry: </strong></li>" +
+        "<li><strong>License Contact: </strong></li>" +
+        "<li><strong>License Hostname: </strong></li>" +
+        "<li><strong>User Limit: </strong></li></ul>"),
     licenseAddUserTemplate: _.template("<form>" +
         "<h3>Add user</h3><br>" +
         "<label for='username'>Username:</label> <input type='text' name='username'>" +
@@ -557,7 +563,10 @@ var AdminConsole = Backbone.View.extend({
         var emailaddress = $(this.el).find("input[name='email']");
         user.set({username: username.val(), email: emailaddress.val()});
 
-        user.save({}, {data: JSON.stringify(user.attributes), contentType: "application/json"});
+        user.save({}, {data: JSON.stringify(user.attributes), contentType: "application/json"
+            , success: function(e){
+
+        }});
 
 
     },

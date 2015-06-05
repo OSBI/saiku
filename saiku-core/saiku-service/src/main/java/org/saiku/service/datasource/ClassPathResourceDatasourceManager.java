@@ -208,7 +208,11 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
         return null;
     }
 
-    public RepositoryFile getFile2(String file) {
+  public String saveFile(String path, Object content, String user, List<String> roles) {
+    return null;
+  }
+
+  public RepositoryFile getFile2(String file) {
         return null;
     }
 
@@ -228,7 +232,7 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
         return null;
     }
 
-    public String saveInternalFile(String path, String content, String type) {
+    public String saveInternalFile(String path, Object content, String type) {
         return null;
     }
 
@@ -244,7 +248,11 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
         return null;
     }
 
-    public javax.jcr.Node getFiles() {
+  public List<IRepositoryObject> getFiles(String type, String username, List<String> roles, String path) {
+    return null;
+  }
+
+  public javax.jcr.Node getFiles() {
         return null;
     }
 

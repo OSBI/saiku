@@ -926,5 +926,7 @@
             <CubeGrant cube='HR' access='none'/>
         </SchemaGrant>
     </Role>
-
+    <Role name='No Cubes'>
+	<SchemaGrant access='none'/>
+    </Role>
 </Schema>

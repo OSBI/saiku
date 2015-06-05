@@ -19,10 +19,10 @@ package org.saiku.repository;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.service.user.UserService;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import java.io.IOException;
 import java.util.List;
+
+import javax.jcr.RepositoryException;
 
 /**
  * Repository Manager Interface
@@ -79,6 +79,9 @@ public interface IRepositoryManager {
 
     List<IRepositoryObject> getAllFiles(String type, String username, List<String> roles) throws RepositoryException;
 
+    List<IRepositoryObject> getAllFiles(String type, String username, List<String> roles, String path) throws
+        RepositoryException;
+
     void deleteFile(String datasourcePath);
 
     AclEntry getACL(String object, String username, List<String> roles);
@@ -90,4 +93,5 @@ public interface IRepositoryManager {
     void createFileMixin(String type) throws RepositoryException;
 
     Object getRepositoryObject();
+
 }
