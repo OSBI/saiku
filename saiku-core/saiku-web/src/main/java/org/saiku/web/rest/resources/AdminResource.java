@@ -40,7 +40,7 @@ public class AdminResource {
     DatasourceService datasourceService;
 
     UserService userService;
-    private static final Logger log = LoggerFactory.getLogger(DataSourceResource.class);
+    private static final Logger log = LoggerFactory.getLogger(AdminResource.class);
     private OlapDiscoverService olapDiscoverService;
 
     public void setOlapDiscoverService(OlapDiscoverService olapDiscoverService) {

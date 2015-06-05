@@ -44,26 +44,14 @@ public class JdbcUserDAO
         String sql = "INSERT INTO user_roles(user_id,username, role)\nVALUES (?,?,?);";
         String removeSQL = "DELETE FROM user_roles where user_id = ?";
 
-        /*String[] existingroles = getRoles(user);
-        List<String> bList = null;
-        if ((existingroles != null) && (existingroles.length > 0))
-        {
-            List<String> aList = new LinkedList(Arrays.asList(existingroles));
-            bList = new LinkedList(Arrays.asList(user.getRoles()));
-            bList.removeAll(aList);
-        }
-        else
-        {
-            bList = Arrays.asList(user.getRoles());
-        }
-        for (String r : bList) {
-            getJdbcTemplate().update(sql, new Object[] { Integer.valueOf(user.getId()), user.getUsername(), r });
-        }*/
         getJdbcTemplate().update(removeSQL, new Object[] {user.getId()});
 
-        for(String r: user.getRoles()) {
-            if(r!=null) {
-                getJdbcTemplate().update(sql, new Object[] { Integer.valueOf(user.getId()), user.getUsername(), r });
+        if(user.getRoles()!=null) {
+            for (String r : user.getRoles()) {
+                if (r != null) {
+                    getJdbcTemplate()
+                        .update(sql, new Object[] { Integer.valueOf(user.getId()), user.getUsername(), r });
+                }
             }
         }
 

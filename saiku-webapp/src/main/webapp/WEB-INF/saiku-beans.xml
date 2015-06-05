@@ -71,9 +71,9 @@
     </bean>
 
 
-    <bean id="datasourceResourceBean" class="org.saiku.web.rest.resources.DataSourceResource">
+    <!--<bean id="datasourceResourceBean" class="org.saiku.web.rest.resources.DataSourceResource">
         <property name="datasourceService" ref="datasourceServiceBean"/>
-    </bean>
+    </bean>-->
 
     <bean id="olapDiscoverBean" scope="session"
           class="org.saiku.web.rest.resources.OlapDiscoverResource">
