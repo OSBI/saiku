@@ -33,7 +33,7 @@ var RepositoryObject = Backbone.Model.extend({
     initialize: function(args, options) {
         if (options && options.dialog) {
             this.dialog = options.dialog;
-            this.file = options.file;
+            this.file = options.file || undefined;
         }
     },
 
@@ -121,7 +121,7 @@ var Repository = Backbone.Collection.extend({
     initialize: function(args, options) {
         if (options && options.dialog) {
             this.dialog = options.dialog;
-            this.type = options.type;
+            this.type = options.type || {};
         }
     },
 
@@ -133,7 +133,7 @@ var Repository = Backbone.Collection.extend({
     },
 
 	url: function() {
-        var segment = repoPathUrl() + '?type=' + (this.type ? this.type : 'saiku');
+		var segment = repoPathUrl() + '?type=' + (!(_.isEmpty(this.type)) ? this.type : 'saiku');
 		if (Settings.REPO_BASE && !this.file) {
 			segment += '&path=' + Settings.REPO_BASE;
 		}
