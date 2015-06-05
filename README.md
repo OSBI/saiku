@@ -11,6 +11,7 @@ For more information, see [Saiku](http://www.meteorite.bi).
   1. [Setup](#setup)
   	- [Build Instructions](#build-instructions)
   	- [Run UI on Node.js proxy](#run-ui-on-nodejs-proxy)
+  	- [LiveReload Browser](#livereload-browser)
   3. [Wiki](#wiki)
   4. [Community](#community)
   5. [Bugs and Feature Requests](#bugs-and-feature-requests)
@@ -51,7 +52,24 @@ In order to run it locally you'll need a basic server setup.
 	the browser (by default, it will run at [http://localhost:8080](http://localhost:8080) and proxy requests to try.meteorite.bi:80):
 
 		node server.js [port] [backend_host] [backend_port]
+or
+	```sh
+	npm start
+	```
+	
+### LiveReload Browser
 
+Install [GruntJS](http://gruntjs.com/):
+
+```sh
+npm install -g grunt-cli
+```
+
+Automatically reload your browser when files are modified. Enter command:
+
+```sh
+grunt watch
+```
 ## Wiki
 
 * [Saiku Wiki](http://wiki.meteorite.bi/display/SAIK/Saiku)
