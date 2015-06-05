@@ -14,16 +14,30 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
 public class JdbcUserDAO
         extends JdbcDaoSupport
         implements UserDAO
 {
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private ServletContext servletContext;
 
+    public ServletContext getServletContext() {
+        return servletContext;
+    }
+
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
     public SaikuUser insert(SaikuUser user)
     {
         String sql = "INSERT INTO users(username,password,email, enabled)\nVALUES (?,?,?,?);";
+        String encrypt = servletContext.getInitParameter("db.encryptpassword");
 
+        if(encrypt.equals("true")){
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         String newsql = "SELECT MAX(USER_ID) from USERS where username = ?";
         getJdbcTemplate().update(sql, new Object[] { user.getUsername(), passwordEncoder.encode(user.getPassword()), user.getEmail(), Boolean.valueOf(true) });
 
