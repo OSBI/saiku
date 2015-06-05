@@ -1,4 +1,4 @@
-# [Saiku UI](http://www.meteorite.bi)
+# [Saiku UI](http://www.meteorite.bi) [![Saiku Analytics on Slack](http://chat.meteorite.bi/badge.svg)](http://chat.meteorite.bi/)
 
 [![saiku-view](http://www.meteorite.bi/images/chart1.jpg)](http://demo.saikuanalytics.com)
 
@@ -11,6 +11,7 @@ For more information, see [Saiku](http://www.meteorite.bi).
   1. [Setup](#setup)
   	- [Build Instructions](#build-instructions)
   	- [Run UI on Node.js proxy](#run-ui-on-nodejs-proxy)
+  	- [LiveReload Browser](#livereload-browser)
   3. [Wiki](#wiki)
   4. [Community](#community)
   5. [Bugs and Feature Requests](#bugs-and-feature-requests)
@@ -48,10 +49,27 @@ In order to run it locally you'll need a basic server setup.
 3. You can simply test and run the UI on a NodeJS proxy server called [server.js](https://github.com/OSBI/saiku-ui/blob/master/server.js), that will utilize a remote backend as source.
 
 	Just run the following command in your command line and then access the UI in
-	the browser (by default, it will run at [http://localhost:8080](http://localhost:8080) and proxy requests to dev.analytical-labs.com:80):
+	the browser (by default, it will run at [http://localhost:8080](http://localhost:8080) and proxy requests to try.meteorite.bi:80):
 
 		node server.js [port] [backend_host] [backend_port]
+or
+	```sh
+	npm start
+	```
+	
+### LiveReload Browser
 
+Install [GruntJS](http://gruntjs.com/):
+
+```sh
+npm install -g grunt-cli
+```
+
+Automatically reload your browser when files are modified. Enter command:
+
+```sh
+grunt watch
+```
 ## Wiki
 
 * [Saiku Wiki](http://wiki.meteorite.bi/display/SAIK/Saiku)
@@ -66,6 +84,7 @@ In order to run it locally you'll need a basic server setup.
 
 ## Discussion List
 
+* [Saiku Analytics on Slack](http://chat.meteorite.bi/)
 * [Saiku Dev Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/dev)
 * [Saiku User Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/user)
 * [<strike>Saiku Forums</strike>](http://forums.meteorite.bi/)
