@@ -90,15 +90,17 @@
 						<jsSourceInclude>models/SessionWorkspace.js</jsSourceInclude>
 						<jsSourceInclude>models/Member.js</jsSourceInclude>
 						<jsSourceInclude>models/Plugin.js</jsSourceInclude>
+						<jsSourceInclude>models/Settings.js</jsSourceInclude>
 						<jsSourceInclude>models/License.js</jsSourceInclude>
 						<jsSourceInclude>Saiku.js</jsSourceInclude>
 						<jsSourceInclude>views/DateFilterModal.js</jsSourceInclude>
 						<jsSourceInclude>views/WarningModal.js</jsSourceInclude>
+						<jsSourceInclude>views/TitlesModal.js</jsSourceInclude>
 						<jsSourceInclude>adapters/SaikuServer.js</jsSourceInclude>
 						<jsSourceInclude>routers/QueryRouter.js</jsSourceInclude>
 					</jsSourceIncludes>
 					<jsSourceExcludes>
-						<jsSourceExclude>**/Settings.js</jsSourceExclude>
+						<jsSourceExclude>Settings.js</jsSourceExclude>
 						<jsSourceExclude>**/plugins/**/*.js</jsSourceExclude>
 					</jsSourceExcludes>
 					</configuration>
