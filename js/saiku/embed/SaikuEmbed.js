@@ -287,7 +287,7 @@ var SaikuClient = (function() {
 							$(options.htmlObject).closest('.gs-w').data('id', options.htmlObject);
 							$(options.htmlObject).closest('.gs-w').data('title', options.title);
 							$(options.htmlObject).closest('.gs-w').data('file', options.file);
-							$(options.htmlObject).closest('.gs-w').data('htmlObject', options.htmlObject);
+							$(options.htmlObject).closest('.gs-w').data('htmlobject', options.htmlObject);
 							$(options.htmlObject).closest('.gs-w').data('render', options.render);
 							$(options.htmlObject).closest('.gs-w').data('mode', options.mode);
 						}
@@ -310,7 +310,7 @@ var SaikuClient = (function() {
 					}
 				}
 				else {
-					$(options.htmlObject).html('<span>No data</span>');
+					$(options.htmlObject).text('No data');
 
 					if ($.blockUI) {
 						$(options.htmlObject).unblock();
@@ -321,7 +321,7 @@ var SaikuClient = (function() {
 				if ($.blockUI) {
 					$(options.htmlObject).unblock();
 				}
-				$(options.htmlObject).text('Error: ' + textStatus);
+				$(options.htmlObject).text('No data');
 				console.error(textStatus);
 				console.error(jqXHR);
 				console.error(errorThrown);
