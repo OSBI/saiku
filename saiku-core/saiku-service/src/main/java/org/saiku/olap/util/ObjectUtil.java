@@ -282,7 +282,17 @@ public class ObjectUtil {
   }
 
   @NotNull
-  public static SaikuMember convertMeasure(@NotNull Measure m) {
+  public static SaikuMeasure convertMeasure(@NotNull Measure m) {
+    Map<String, Property> props2 = m.getProperties().asMap();
+
+    NamedList<Property> props = m.getProperties();
+    //String f = m.getPropertyValue(Property.);
+    String f = null;
+    try {
+       f = (String) m.getPropertyValue(props.get("DISPLAY_FOLDER"));
+    } catch (OlapException e) {
+      e.printStackTrace();
+    }
     return new SaikuMeasure(
         m.getName(),
         m.getUniqueName(),
@@ -292,7 +302,8 @@ public class ObjectUtil {
         m.getHierarchy().getUniqueName(),
         m.getLevel().getUniqueName(),
         m.isVisible(),
-        m.isCalculated() | m.isCalculatedInQuery());
+        m.isCalculated() | m.isCalculatedInQuery(),
+        f);
 
   }
 

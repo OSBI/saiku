@@ -2,6 +2,7 @@ package org.saiku.olap.dto;
 
 public class SaikuMeasure extends SaikuMember {
 
+  private String measureGroup;
   private Boolean calculated;
 
   public SaikuMeasure() {
@@ -16,9 +17,11 @@ public class SaikuMeasure extends SaikuMember {
     String hierarchyUniqueName,
     String levelUniqueName,
     boolean visible,
-    boolean calculated ) {
+    boolean calculated,
+    String measuregroup) {
     super( name, uniqueName, caption, description, dimensionUniqueName, hierarchyUniqueName, levelUniqueName );
     this.calculated = calculated;
+    this.measureGroup = measuregroup;
   }
 
   /**
@@ -28,5 +31,12 @@ public class SaikuMeasure extends SaikuMember {
     return calculated;
   }
 
+  /**
+   *
+   * @return the measuregroup
+   */
+  public String getMeasureGroup() {
+    return measureGroup;
+  }
 
 }

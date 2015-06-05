@@ -20,18 +20,18 @@ import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
-import org.saiku.service.util.exception.SaikuDataSourceException;
-import org.saiku.service.util.exception.SaikuDataSourceNotFoundException;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class DatasourceService implements Serializable {
 
+  /**
+   * Unique serialization UID
+   */
   private static final long serialVersionUID = -4407446633148181669L;
 
   private transient IDatasourceManager datasources;
@@ -63,42 +63,6 @@ public class DatasourceService implements Serializable {
       }
 
   }
-
-  public SaikuDatasource fetchDataSourceById(String id) throws SaikuDataSourceNotFoundException {
-      SaikuDatasource saikuDatasource = null;
-      Map<String, SaikuDatasource> datasources = this.getDatasources();
-      Iterator<SaikuDatasource> iterator = datasources.values().iterator();
-      while (iterator.hasNext()) {
-          SaikuDatasource currentDatasource = iterator.next();
-          if (currentDatasource.getProperties().getProperty("id").equals(id)) {
-              saikuDatasource = currentDatasource;
-              break;
-          }
-      }
-      if(saikuDatasource == null){
-          throw new SaikuDataSourceException("Could not find data source with id: " + id);
-      }
-      return saikuDatasource;
-  }
-
-  public void setLocaleOfDataSource(SaikuDatasource dataSource, String newLocale) throws SaikuDataSourceException{
-      String location = dataSource.getProperties().getProperty("location");
-      String oldLocale = getOldLocale(location);
-      String newLocation = location.replace(oldLocale, newLocale);
-      dataSource.getProperties().setProperty("location", newLocation);
-  }
-
-    private String getOldLocale(String location) throws SaikuDataSourceException {
-        String referenceText = "locale=";
-        int start = location.toLowerCase().indexOf(referenceText);
-        if (start == -1) {
-            throw new SaikuDataSourceException("Could not find old locale because there is currently no locale defined in the data source");
-        } else {
-            start += referenceText.length();
-            int end = location.indexOf(";", start);
-            return location.substring(start, end);
-        }
-    }
 
   public void setDatasource(SaikuDatasource datasource) throws Exception {
     datasources.setDatasource(datasource);

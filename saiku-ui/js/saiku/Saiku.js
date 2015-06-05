@@ -225,31 +225,78 @@ Backbone.emulateHTTP = false;
  * Up up and away!
  */
 if (! Settings.BIPLUGIN) {
-    $(document).ready(function() {
+    $(document).ready(function () {
         var plugins = new PluginCollection();
 
         plugins.fetch({
-            success: function() {
-                var i = plugins.size();
-                var j = 0;
-                plugins.each(function(log) {
-                    j = j+1;
-					if(log.attributes.path != "js/saiku/plugins/I18n/plugin.js") {
-						jQuery.getScript(log.attributes.path);
-					}
+            success: function () {
+                var settingsoverride = new SettingsOverrideCollection();
 
-                    if(j == i) {
-                        Saiku.session = new Session({}, {
-                            username: Settings.USERNAME,
-                            password: Settings.PASSWORD
+                settingsoverride.fetch({
+                    success: function () {
+                        var i = plugins.size();
+                        var j = 0;
+                        plugins.each(function (log) {
+                            j = j + 1;
+                            if (log.attributes.path != "js/saiku/plugins/I18n/plugin.js") {
+                                jQuery.getScript(log.attributes.path);
+                            }
+
+                            if (j == i) {
+
+                                var k = settingsoverride.size();
+                                var l = 0;
+                                settingsoverride.each(function (log) {
+                                    l = l + 1;
+
+                                    for (var key in log.attributes) {
+                                        Settings[key] = log.attributes[key];
+                                    }
+                                    if(Settings.CSS != undefined){
+                                        Saiku.loadCSS(Settings.CSS, null)
+                                    }
+                                    if (k == l) {
+                                        Saiku.session = new Session({}, {
+                                            username: Settings.USERNAME,
+                                            password: Settings.PASSWORD
+                                        });
+
+                                        Saiku.toolbar = new Toolbar();
+                                    }
+                                });
+
+                            }
                         });
 
-                        Saiku.toolbar = new Toolbar();
+
+                    },
+                    error: function () {
+                        var i = plugins.size();
+                        var j = 0;
+                        plugins.each(function (log) {
+                            j = j + 1;
+                            if (log.attributes.path != "js/saiku/plugins/I18n/plugin.js") {
+                                jQuery.getScript(log.attributes.path);
+                            }
+                            if (j == i) {
+                                if(Settings.CSS != undefined){
+                                    Saiku.loadCSS(Settings.CSS, null)
+                                }
+                                Saiku.session = new Session({}, {
+                                    username: Settings.USERNAME,
+                                    password: Settings.PASSWORD
+                                });
+
+                                Saiku.toolbar = new Toolbar();
+                            }
+
+
+                        });
+
                     }
                 });
             }
         });
-
     });
 }
 /**

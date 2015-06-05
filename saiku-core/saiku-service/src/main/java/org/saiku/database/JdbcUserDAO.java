@@ -1,27 +1,45 @@
 package org.saiku.database;
 
+import org.saiku.UserDAO;
+import org.saiku.database.dto.SaikuUser;
+
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
-import org.saiku.UserDAO;
-import org.saiku.database.dto.SaikuUser;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
+
+import javax.servlet.ServletContext;
 
 public class JdbcUserDAO
         extends JdbcDaoSupport
         implements UserDAO
 {
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private ServletContext servletContext;
+
+    public ServletContext getServletContext() {
+        return servletContext;
+    }
+
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
     public SaikuUser insert(SaikuUser user)
     {
         String sql = "INSERT INTO users(username,password,email, enabled)\nVALUES (?,?,?,?);";
+        String encrypt = servletContext.getInitParameter("db.encryptpassword");
 
+        if(encrypt.equals("true")){
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         String newsql = "SELECT MAX(USER_ID) from USERS where username = ?";
-        getJdbcTemplate().update(sql, new Object[] { user.getUsername(), user.getPassword(), user.getEmail(), Boolean.valueOf(true) });
+        getJdbcTemplate().update(sql, new Object[] { user.getUsername(), passwordEncoder.encode(user.getPassword()), user.getEmail(), Boolean.valueOf(true) });
 
         Integer name = (Integer)getJdbcTemplate().queryForObject(newsql, new Object[] { user.getUsername() }, Integer.class);
 
@@ -40,25 +58,15 @@ public class JdbcUserDAO
         String sql = "INSERT INTO user_roles(user_id,username, role)\nVALUES (?,?,?);";
         String removeSQL = "DELETE FROM user_roles where user_id = ?";
 
-        /*String[] existingroles = getRoles(user);
-        List<String> bList = null;
-        if ((existingroles != null) && (existingroles.length > 0))
-        {
-            List<String> aList = new LinkedList(Arrays.asList(existingroles));
-            bList = new LinkedList(Arrays.asList(user.getRoles()));
-            bList.removeAll(aList);
-        }
-        else
-        {
-            bList = Arrays.asList(user.getRoles());
-        }
-        for (String r : bList) {
-            getJdbcTemplate().update(sql, new Object[] { Integer.valueOf(user.getId()), user.getUsername(), r });
-        }*/
         getJdbcTemplate().update(removeSQL, new Object[] {user.getId()});
 
-        for(String r: user.getRoles()) {
-            getJdbcTemplate().update(sql, new Object[] {Integer.valueOf(user.getId()), user.getUsername(), r});
+        if(user.getRoles()!=null) {
+            for (String r : user.getRoles()) {
+                if (r != null) {
+                    getJdbcTemplate()
+                        .update(sql, new Object[] { Integer.valueOf(user.getId()), user.getUsername(), r });
+                }
+            }
         }
 
     }
@@ -116,7 +124,12 @@ public class JdbcUserDAO
         String sql = "UPDATE users set username = ?,password =?,email =? , enabled = ? where user_id = ?;";
 
         String newsql = "SELECT MAX(USER_ID) from USERS where username = ?";
-        getJdbcTemplate().update(sql, new Object[] { user.getUsername(), user.getPassword(), user.getEmail(), Boolean.valueOf(true), user.getId()});
+        String encrypt = servletContext.getInitParameter("db.encryptpassword");
+        if(encrypt.equals("true")){
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+        getJdbcTemplate().update(sql, new Object[] { user.getUsername(), passwordEncoder.encode(user.getPassword()), user.getEmail(),
+            Boolean.valueOf(true), user.getId()});
 
         Integer name = (Integer)getJdbcTemplate().queryForObject(newsql, new Object[] { user.getUsername() }, Integer.class);
 

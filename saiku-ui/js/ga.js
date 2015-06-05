@@ -17,7 +17,7 @@
 
 var account = 'UA-16172251-20';
 
-if (window.location.hostname && window.location.hostname == "dev.analytical-labs.com" ) {
+if (window.location.hostname && window.location.hostname == "try.meteorite.bi" ) {
     account = 'UA-16172251-12';
 } else if (window.location.hostname && window.location.hostname == "demo.analytical-labs.com" ) {
 	account = 'UA-16172251-5';

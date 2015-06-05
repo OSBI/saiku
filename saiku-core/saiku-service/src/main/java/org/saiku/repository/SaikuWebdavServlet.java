@@ -61,6 +61,15 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
 
     return false;
   }
+
+  private boolean checkUnsecured(HttpServletRequest request){
+    if(request.getRequestURI().contains("/etc/theme")) {
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
   /**
    * Service the given request.
    *
@@ -79,12 +88,16 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
     boolean noCache = DavMethods.isDeltaVMethod(webdavRequest) && !(DavMethods.DAV_VERSION_CONTROL == methodCode || DavMethods.DAV_REPORT == methodCode);
     WebdavResponse webdavResponse = new WebdavResponseImpl(response, noCache);
     try {
+      if(checkUnsecured(request)) {
+        request.setAttribute("org.apache.jackrabbit.server.SessionProvider", new SaikuSessionProvider());
+      }
       // make sure there is a authenticated user
       if (!getDavSessionProvider().attachSession(webdavRequest)) {
         return;
       }
 
-      if(!checkUserRole(request)){
+
+      if(!checkUnsecured(request) && !checkUserRole(request)){
         return;
       }
       // perform referrer host checks if CSRF protection is enabled

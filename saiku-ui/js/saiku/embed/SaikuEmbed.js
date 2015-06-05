@@ -157,10 +157,11 @@ var SaikuClient = (function() {
 	 * Add levels and parameter names
 	 * 
 	 * @private 
+	 * @param  {String} dataSchema [connection].[catalog].[schema].[cube]
 	 * @param  {Object} dataAxis Axis FILTER, COLUMNS and ROWS with values in hierarchies
 	 * @return {Object} Levels and parameter names
 	 */
-	function joinParameters(dataAxis) {
+	function joinParameters(dataSchema, dataAxis) {
 		var parametersLevels = [];
 
 		_.each(dataAxis, function(axis) {
@@ -168,7 +169,7 @@ var SaikuClient = (function() {
 				_.each(value.levels, function(levels) {
 					if (levels.selection.parameterName) {
 						parametersLevels.push({
-							levels: value.name + '.[' + levels.name + ']',
+							levels: dataSchema + '.' + value.name + '.[' + levels.name + ']',
 							parameterName: levels.selection.parameterName
 						});
 					}
@@ -209,12 +210,13 @@ var SaikuClient = (function() {
 	 *      });
 	 */
 	SaikuClient.prototype.execute = function(opts) {
-		if(ga!=undefined) {
-			ga('send', 'event', 'SaikuClient', 'Execute');
-		}
 		var self = this;
 		var options = _.extend({}, _options, opts);
 		var parameters = {};
+
+		if (typeof ga !== 'undefined') {
+			ga('send', 'event', 'SaikuClient', 'Execute');
+		}
 
 		if ($.blockUI && this.settings.blockUI) {
 			$.blockUI.defaults.css = { 'color': 'black', 'font-weight': 'normal' };
@@ -266,6 +268,7 @@ var SaikuClient = (function() {
 			success: function(data, textStatus, jqXHR) {
 				var renderMode = data.query.properties['saiku.ui.render.mode'] ? data.query.properties['saiku.ui.render.mode'] : options.render;
 				var mode = data.query.properties['saiku.ui.render.type'] ? data.query.properties['saiku.ui.render.type'] : options.mode;
+				var dataSchema = data.query.cube.uniqueName;
 				var dataAxis = {
 					dataFilter: data.query.queryModel.axes.FILTER['hierarchies'],
 					dataColumns: data.query.queryModel.axes.COLUMNS['hierarchies'],
@@ -275,9 +278,18 @@ var SaikuClient = (function() {
 				var parametersLevels;
 
 				if (self.settings.dashboards) {
-					parametersLevels = joinParameters(dataAxis);
+					parametersLevels = joinParameters(dataSchema, dataAxis);
 					$(options.htmlObject).closest('.gs-w').data('parametersLevels', JSON.stringify(parametersLevels));
 					$(options.htmlObject).closest('.gs-w').data('parametersValues', JSON.stringify(parametersValues));
+
+					if (options.openDashboards) {
+						$(options.htmlObject).closest('.gs-w').data('id', options.htmlObject);
+						$(options.htmlObject).closest('.gs-w').data('title', options.title);
+						$(options.htmlObject).closest('.gs-w').data('file', options.file);
+						$(options.htmlObject).closest('.gs-w').data('htmlObject', options.htmlObject);
+						$(options.htmlObject).closest('.gs-w').data('render', options.render);
+						$(options.htmlObject).closest('.gs-w').data('mode', options.mode);
+					}
 				}
 
 				options['mode'] = mode;

@@ -23,6 +23,10 @@
         <param-value></param-value>
     </context-param>
     <context-param>
+        <param-name>db.encryptpassword</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
         <param-name>foodmart.url</param-name>
         <param-value>jdbc:h2:../../data/foodmart;MODE=MySQL</param-value>
     </context-param>
