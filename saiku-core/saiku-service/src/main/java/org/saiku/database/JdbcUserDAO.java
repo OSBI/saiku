@@ -62,7 +62,9 @@ public class JdbcUserDAO
         getJdbcTemplate().update(removeSQL, new Object[] {user.getId()});
 
         for(String r: user.getRoles()) {
-            getJdbcTemplate().update(sql, new Object[] {Integer.valueOf(user.getId()), user.getUsername(), r});
+            if(r!=null) {
+                getJdbcTemplate().update(sql, new Object[] { Integer.valueOf(user.getId()), user.getUsername(), r });
+            }
         }
 
     }
