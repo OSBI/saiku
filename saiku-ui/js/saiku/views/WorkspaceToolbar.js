@@ -147,8 +147,8 @@ var WorkspaceToolbar = Backbone.View.extend({
     },
 
     new_query: function(event) {
-        if(typeof ga!= 'undefined'){
-		ga('send', 'event', 'Toolbar', 'New Query');
+        if(ga!=undefined) {
+            ga('send', 'event', 'Toolbar', 'New Query');
         }
         this.workspace.switch_view_state('edit');
         this.workspace.new_query();
@@ -465,12 +465,6 @@ var WorkspaceToolbar = Backbone.View.extend({
         //this.workspace.query.enrich();
 
         (new MDXModal({ mdx: this.workspace.query.model.mdx })).render().open();
-    },
-
-    workspace_titles: function(event) {
-        //this.workspace.query.enrich();
-
-        (new TitlesModal({ query: this.workspace.query })).render().open();
     },
 
     export_xls: function(event) {

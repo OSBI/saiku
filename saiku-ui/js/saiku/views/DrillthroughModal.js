@@ -144,7 +144,7 @@ var DrillthroughModal = Modal.extend({
 
 
 	ok: function() {
-		if(typeof ga!= 'undefined'){
+		if(ga!=undefined) {
 			ga('send', 'event', 'Drillthrough', 'Execute');
 		}
 		// Notify user that updates are in progress

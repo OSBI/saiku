@@ -26,8 +26,8 @@ var DrillAcrossModal = DrillthroughModal.extend({
 	},
 
 	ok: function() {
-	if(typeof ga!= 'undefined'){	
-		ga('send', 'event', 'DrillAcross', 'Execute');
+		if(ga!=undefined) {
+			ga('send', 'event', 'DrillAcross', 'Execute');
 		}
 		var self = this;
 		var selections = {};

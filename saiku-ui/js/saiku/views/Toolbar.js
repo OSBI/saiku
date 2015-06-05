@@ -66,8 +66,8 @@ var Toolbar = Backbone.View.extend({
      * Add a new tab to the interface
      */
     new_query: function() {
-        if(typeof ga!= 'undefined'){
-		ga('send', 'event', 'MainToolbar', 'New Query');
+        if(ga!=undefined) {
+            ga('send', 'event', 'MainToolbar', 'New Query');
         }
         Saiku.tabs.add(new Workspace());
         return false;

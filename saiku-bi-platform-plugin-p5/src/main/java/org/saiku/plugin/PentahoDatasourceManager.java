@@ -330,10 +330,6 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         return null;
     }
 
-    public String saveInternalFile(String path, Object content, String type) {
-        return null;
-    }
-
     public String saveInternalFile(String path, String content, String type) {
         return null;
     }
@@ -344,10 +340,6 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
     public String getInternalFileData(String file) {
         throw new UnsupportedOperationException();
-    }
-
-    public String saveFile(String path, Object content, String user, List<String> roles) {
-        return null;
     }
 
     public String getFileData(String file, String username, List<String> roles) {

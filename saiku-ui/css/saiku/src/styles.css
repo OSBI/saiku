@@ -1133,16 +1133,6 @@ textarea, select {
     padding-right: 20px;
     overflow: hidden;
 }
-.workspace_results_titles {
-    /*color: #999999;*/
-    padding-right: 20px;
-    overflow: hidden;
-}
-
-.workspace_results_titles h3 {
-    display: inline;
-
-}
 
 .parameter_input {
     padding-left: 5px;

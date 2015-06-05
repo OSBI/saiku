@@ -28,8 +28,6 @@
   <!-- BASIC AUTHENTICATION -->
     <security:http pattern="/rest/saiku/info" security="none">
     </security:http>
-    <security:http pattern="/rest/saiku/info/ui-settings" security="none">
-    </security:http>
     <security:http pattern="/repository" security="none">
     </security:http>
     <security:http auto-config='true' use-expressions="true"> <!--access-denied-page="/login.jsp"-->
