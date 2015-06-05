@@ -495,7 +495,7 @@ public class ExcelWorksheetBuilder {
           manageColumnHeaderDisplay(sheetRow, x, y, currentHeader);
 
           if (!isLastHeaderRow) {
-            if (!nextHeader.equals(currentHeader) || isLastColumn) {
+            if (nextHeader!=null && !nextHeader.equals(currentHeader) || isLastColumn) {
               manageCellsMerge(y,
                 x + startRow,
                 mergedCellsWidth + 1,
@@ -503,7 +503,7 @@ public class ExcelWorksheetBuilder {
                 mergedItemsConfig);
               startSameFromPos = y+1;
               mergedCellsWidth = 0;
-            } else if (nextHeader.equals(currentHeader)) {
+            } else if (nextHeader != null && nextHeader.equals(currentHeader)) {
               mergedCellsWidth++;
             }
           }

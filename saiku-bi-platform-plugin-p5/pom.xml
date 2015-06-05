@@ -18,6 +18,8 @@
 				<filtering>true</filtering>
 				<includes>
 					<include>**/*.xml</include>
+					<include>**/*.js</include>
+
 				</includes>
 			</resource>
 		</resources>

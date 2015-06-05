@@ -48,7 +48,11 @@ public class SessionResource  {
 	private ISessionService sessionService;
     private UserService userService;
 
-    public void setSessionService(ISessionService ss) {
+  public ISessionService getSessionService() {
+	return sessionService;
+  }
+
+  public void setSessionService(ISessionService ss) {
 		this.sessionService = ss;
 	}
 
