@@ -124,6 +124,10 @@ public class JdbcUserDAO
         String sql = "UPDATE users set username = ?,password =?,email =? , enabled = ? where user_id = ?;";
 
         String newsql = "SELECT MAX(USER_ID) from USERS where username = ?";
+        String encrypt = servletContext.getInitParameter("db.encryptpassword");
+        if(encrypt.equals("true")){
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         getJdbcTemplate().update(sql, new Object[] { user.getUsername(), passwordEncoder.encode(user.getPassword()), user.getEmail(),
             Boolean.valueOf(true), user.getId()});
 

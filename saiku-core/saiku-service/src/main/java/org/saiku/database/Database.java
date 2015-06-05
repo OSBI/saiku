@@ -167,7 +167,9 @@ public class Database {
 
         String encrypt = servletContext.getInitParameter("db.encryptpassword");
         if(encrypt.equals("true") && !checkUpdatedEncyption()){
+            log.debug("Encrypting User Passwords");
             updateForEncyption();
+            log.debug("Finished Encrypting Passwords");
         }
 
 
