@@ -266,46 +266,55 @@ var SaikuClient = (function() {
 				}
 			},
 			success: function(data, textStatus, jqXHR) {
-				var renderMode = data.query.properties['saiku.ui.render.mode'] ? data.query.properties['saiku.ui.render.mode'] : options.render;
-				var mode = data.query.properties['saiku.ui.render.type'] ? data.query.properties['saiku.ui.render.type'] : options.mode;
-				var dataSchema = data.query.cube.uniqueName;
-				var dataAxis = {
-					dataFilter: data.query.queryModel.axes.FILTER['hierarchies'],
-					dataColumns: data.query.queryModel.axes.COLUMNS['hierarchies'],
-					dataRows: data.query.queryModel.axes.ROWS['hierarchies']
-				};
-				var parametersValues = data.query.parameters;
-				var parametersLevels;
+				if (data.query) {
+					var renderMode = data.query.properties['saiku.ui.render.mode'] ? data.query.properties['saiku.ui.render.mode'] : options.render;
+					var mode = data.query.properties['saiku.ui.render.type'] ? data.query.properties['saiku.ui.render.type'] : options.mode;
+					var dataSchema = data.query.cube.uniqueName;
+					var dataAxis = {
+						dataFilter: data.query.queryModel.axes.FILTER['hierarchies'],
+						dataColumns: data.query.queryModel.axes.COLUMNS['hierarchies'],
+						dataRows: data.query.queryModel.axes.ROWS['hierarchies']
+					};
+					var parametersValues = data.query.parameters;
+					var parametersLevels;
 
-				if (self.settings.dashboards) {
-					parametersLevels = joinParameters(dataSchema, dataAxis);
-					$(options.htmlObject).closest('.gs-w').data('parametersLevels', JSON.stringify(parametersLevels));
-					$(options.htmlObject).closest('.gs-w').data('parametersValues', JSON.stringify(parametersValues));
+					if (self.settings.dashboards) {
+						parametersLevels = joinParameters(dataSchema, dataAxis);
+						$(options.htmlObject).closest('.gs-w').data('parametersLevels', JSON.stringify(parametersLevels));
+						$(options.htmlObject).closest('.gs-w').data('parametersValues', JSON.stringify(parametersValues));
 
-					if (options.openDashboards) {
-						$(options.htmlObject).closest('.gs-w').data('id', options.htmlObject);
-						$(options.htmlObject).closest('.gs-w').data('title', options.title);
-						$(options.htmlObject).closest('.gs-w').data('file', options.file);
-						$(options.htmlObject).closest('.gs-w').data('htmlObject', options.htmlObject);
-						$(options.htmlObject).closest('.gs-w').data('render', options.render);
-						$(options.htmlObject).closest('.gs-w').data('mode', options.mode);
+						if (options.openDashboards) {
+							$(options.htmlObject).closest('.gs-w').data('id', options.htmlObject);
+							$(options.htmlObject).closest('.gs-w').data('title', options.title);
+							$(options.htmlObject).closest('.gs-w').data('file', options.file);
+							$(options.htmlObject).closest('.gs-w').data('htmlObject', options.htmlObject);
+							$(options.htmlObject).closest('.gs-w').data('render', options.render);
+							$(options.htmlObject).closest('.gs-w').data('mode', options.mode);
+						}
 					}
-				}
 
-				options['mode'] = mode;
+					options['mode'] = mode;
 
-				if (options.render in _saikuRendererFactory) {
-					var saikuRenderer = new _saikuRendererFactory[options.render](data, options);
-					saikuRenderer.render();
+					if (options.render in _saikuRendererFactory) {
+						var saikuRenderer = new _saikuRendererFactory[options.render](data, options);
+						saikuRenderer.render();
+						if ($.blockUI) {
+							$(options.htmlObject).unblock();
+						}
+					}
+					else {
+						alert('Render type ' + options.render + ' not found!');
+					}
 					if ($.blockUI) {
 						$(options.htmlObject).unblock();
 					}
 				}
 				else {
-					alert('Render type ' + options.render + ' not found!');
-				}
-				if ($.blockUI) {
-					$(options.htmlObject).unblock();
+					$(options.htmlObject).html('<span>No data</span>');
+
+					if ($.blockUI) {
+						$(options.htmlObject).unblock();
+					}
 				}
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
