@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 import javax.jcr.Node;
@@ -266,7 +267,16 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             return "Save Failed: " + e.getLocalizedMessage();
         }
     }
-    
+
+    public String saveBinaryInternalFile(String path, InputStream content, String type) {
+        try {
+            irm.saveBinaryInternalFile(content, path, type);
+            return "Save Okay";
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            return "Save Failed: " + e.getLocalizedMessage();
+        }
+    }
     public void removeInternalFile(String filePath) {
         try{
             irm.removeInternalFile(filePath);
