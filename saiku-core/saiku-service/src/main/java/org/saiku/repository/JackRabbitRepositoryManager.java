@@ -164,6 +164,16 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
       acl2.addEntry(n.getPath(), e);
       acl2.serialize(n);
 
+
+      n = JcrUtils.getOrAddFolder(root, "etc/theme");
+      n.addMixin("nt:saikufolders");
+      n = JcrUtils.getOrAddFolder(n, "legacyreports");
+      n.addMixin("nt:saikufolders");
+
+      acl2 = new Acl2(n);
+      acl2.addEntry(n.getPath(), e);
+      acl2.serialize(n);
+
       session.save();
       log.info("node added");
     }

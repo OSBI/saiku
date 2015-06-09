@@ -295,8 +295,14 @@ var SaikuClient = (function() {
 				options['mode'] = mode;
 
 				if (options.render in _saikuRendererFactory) {
-					var saikuRenderer = new _saikuRendererFactory[options.render](data, options);
-					saikuRenderer.render();
+					if(data.cellset.length==0){
+						$(options.htmlObject).text("No Data");
+					}
+					else {
+						var saikuRenderer = new _saikuRendererFactory[options.render](data, options);
+						saikuRenderer.render();
+					}
+
 					if ($.blockUI) {
 						$(options.htmlObject).unblock();
 					}

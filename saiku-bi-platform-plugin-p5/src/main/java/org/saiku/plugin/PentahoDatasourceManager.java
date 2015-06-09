@@ -35,6 +35,7 @@ import org.pentaho.platform.plugin.action.mondrian.catalog.IMondrianCatalogServi
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
+import java.io.InputStream;
 import java.util.*;
 
 import mondrian.olap.MondrianProperties;
@@ -331,6 +332,10 @@ public class PentahoDatasourceManager implements IDatasourceManager {
     }
 
     public String saveInternalFile(String path, Object content, String type) {
+        return null;
+    }
+
+    public String saveBinaryInternalFile(String path, InputStream content, String type) {
         return null;
     }
 
