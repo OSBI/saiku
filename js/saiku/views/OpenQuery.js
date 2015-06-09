@@ -464,6 +464,7 @@ var OpenQuery = Backbone.View.extend({
                 $(this.el).find('.workspace_toolbar').height() -
                 $(this.el).find('.workspace_fields').height() - 40
         });
+        //$(this.el).find('.canvas_wrapper').show();
     },
 
     toggle_sidebar: function() {
