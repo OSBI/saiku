@@ -266,7 +266,7 @@ var SaikuClient = (function() {
 				}
 			},
 			success: function(data, textStatus, jqXHR) {
-				if (data.query) {
+				if (data.query && data.height > 0 && data.width > 0) {
 					var renderMode = data.query.properties['saiku.ui.render.mode'] ? data.query.properties['saiku.ui.render.mode'] : options.render;
 					var mode = data.query.properties['saiku.ui.render.type'] ? data.query.properties['saiku.ui.render.type'] : options.mode;
 					var dataSchema = data.query.cube.uniqueName;
