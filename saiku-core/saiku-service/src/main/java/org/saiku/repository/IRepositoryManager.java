@@ -20,6 +20,7 @@ import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.service.user.UserService;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
@@ -58,6 +59,8 @@ public interface IRepositoryManager {
 
 
     javax.jcr.Node saveInternalFile(Object file, String path, String type) throws RepositoryException;
+
+    javax.jcr.Node saveBinaryInternalFile(InputStream file, String path, String type) throws RepositoryException;
 
     String getFile(String s, String username, List<String> roles) throws RepositoryException;
 

@@ -22,6 +22,7 @@ import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.user.UserService;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -67,7 +68,9 @@ public interface IDatasourceManager {
   public String moveFile(String source, String target, String user, List<String> roles);
 
   public String saveInternalFile(String path, Object content, String type);
-  
+
+  public String saveBinaryInternalFile(String path, InputStream content, String type);
+
   public void removeInternalFile(String filePath);
 
   public List<IRepositoryObject> getFiles(String type, String username, List<String> roles);

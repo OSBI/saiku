@@ -28,10 +28,7 @@ import org.apache.commons.vfs.FileObject;
 import org.apache.commons.vfs.FileSystemManager;
 import org.apache.commons.vfs.VFS;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
@@ -236,7 +233,11 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
         return null;
     }
 
-    public String saveInternalFile(String path, String content) {
+  public String saveBinaryInternalFile(String path, InputStream content, String type) {
+    return null;
+  }
+
+  public String saveInternalFile(String path, String content) {
         return null;
     }
     
