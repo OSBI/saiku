@@ -6,6 +6,11 @@ var SplashScreen = Backbone.View.extend({
         'click .run_query': 'run_query',
         'click .run_dashboards': 'run_dashboard'
     },
+    initialize: function(args) {
+        _.bindAll(this, "caption");
+        _.extend(this, Backbone.Events);
+
+    },
     run_query : function(){
         Saiku.tabs.add(new Workspace());
         return false;
@@ -57,7 +62,8 @@ var SplashScreen = Backbone.View.extend({
         var license = new License();
 		if(Settings.BIPLUGIN5){
 			license.fetch_license('api/api/license', function (opt) {
-                $(self.el).html(self.template()).appendTo($('body'));
+//                $(self.el).html(self.template()).appendTo($('body'));
+                $(self.el).html(self.template());
 
                 if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
 
@@ -79,7 +85,8 @@ var SplashScreen = Backbone.View.extend({
 		}
 		else {
 			license.fetch_license('api/license/', function (opt) {
-                $(self.el).html(self.template()).appendTo($('body'));
+                //$(self.el).html(self.template()).appendTo($('body'));
+                $(self.el).html(self.template());
 
                 if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
 
