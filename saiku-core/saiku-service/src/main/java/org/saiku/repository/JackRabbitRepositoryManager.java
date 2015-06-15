@@ -164,6 +164,16 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
       acl2.addEntry(n.getPath(), e);
       acl2.serialize(n);
 
+
+      n = JcrUtils.getOrAddFolder(root, "etc/theme");
+      n.addMixin("nt:saikufolders");
+      n = JcrUtils.getOrAddFolder(n, "legacyreports");
+      n.addMixin("nt:saikufolders");
+
+      acl2 = new Acl2(n);
+      acl2.addEntry(n.getPath(), e);
+      acl2.serialize(n);
+
       session.save();
       log.info("node added");
     }
@@ -420,6 +430,60 @@ System.out.println(e.getLocalizedMessage());
       //resNode.setProperty ("jcr:mimeType", "text/plain");
       //resNode.setProperty ("jcr:encoding", "utf8");
       contentNode.setProperty("jcr:data", (String) file);
+        /*Calendar lastModified = Calendar.getInstance ();
+        lastModified.setTimeInMillis (new Date().getTime());
+        resNode.setProperty ("jcr:lastModified", lastModified);*/
+      resNode.getSession().save();
+      return resNode;
+    }
+  }
+
+  public Node saveBinaryInternalFile(InputStream file, String path, String type) throws RepositoryException {
+    if(file==null){
+      //Create new folder
+      String parent = path.substring(0, path.lastIndexOf("/"));
+      Node node = getFolder(parent);
+
+      int pos = path.lastIndexOf("/");
+      String filename = "./" + path.substring(pos + 1, path.length());
+      Node resNode = node.addNode(filename, "nt:folder");
+      resNode.addMixin("nt:saikufolders");
+      return resNode;
+
+    }
+    else {
+      int pos = path.lastIndexOf("/");
+      String filename = "./" + path.substring(pos + 1, path.length());
+      Node n = getFolder(path.substring(0, pos));
+
+
+
+      if(type == null){
+        type ="";
+      }
+      if(n.hasNode(filename)){
+        n.getNode(filename).remove();
+      }
+
+      Node resNode = n.addNode(filename, "nt:file");
+
+      if (type.equals("nt:saikufiles")) {
+        resNode.addMixin("nt:saikufiles");
+      } else if (type.equals("nt:mondrianschema")) {
+        resNode.addMixin("nt:mondrianschema");
+      } else if (type.equals("nt:olapdatasource")) {
+        resNode.addMixin("nt:olapdatasource");
+      }
+      else if(type!=null && !type.equals("") ){
+        resNode.addMixin(type);
+      }
+      Node contentNode = resNode.addNode("jcr:content", "nt:resource");
+
+      //resNode.setProperty ("jcr:mimeType", "text/plain");
+      //resNode.setProperty ("jcr:encoding", "utf8");
+      Binary binary = session.getValueFactory().createBinary(file);
+
+      contentNode.setProperty("jcr:data", binary);
         /*Calendar lastModified = Calendar.getInstance ();
         lastModified.setTimeInMillis (new Date().getTime());
         resNode.setProperty ("jcr:lastModified", lastModified);*/

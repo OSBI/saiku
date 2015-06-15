@@ -70,6 +70,13 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
       return false;
     }
   }
+
+  private boolean checkSecret(HttpServletRequest request){
+    if(request.getRequestURI().contains("/datasources")){
+      return checkUserRole(request);
+    }
+    return true;
+  }
   /**
    * Service the given request.
    *
@@ -87,10 +94,19 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
     int methodCode = DavMethods.getMethodCode(request.getMethod());
     boolean noCache = DavMethods.isDeltaVMethod(webdavRequest) && !(DavMethods.DAV_VERSION_CONTROL == methodCode || DavMethods.DAV_REPORT == methodCode);
     WebdavResponse webdavResponse = new WebdavResponseImpl(response, noCache);
+
     try {
+      if(checkUnsecured(request) && !getDavSessionProvider().attachSession(webdavRequest)) {
+        request.setAttribute("org.apache.jackrabbit.server.SessionProvider", new SaikuSessionProvider());
+      }
+    } catch (DavException e) {
       if(checkUnsecured(request)) {
         request.setAttribute("org.apache.jackrabbit.server.SessionProvider", new SaikuSessionProvider());
       }
+    }
+
+    try {
+
       // make sure there is a authenticated user
       if (!getDavSessionProvider().attachSession(webdavRequest)) {
         return;
@@ -102,6 +118,10 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
       }
       // perform referrer host checks if CSRF protection is enabled
 
+      if(!checkSecret(request)){
+        webdavResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+        return;
+      }
       if (!csrfUtil.isValidRequest(webdavRequest)) {
         webdavResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
         return;
