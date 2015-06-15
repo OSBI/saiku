@@ -239,33 +239,67 @@ if (! Settings.BIPLUGIN) {
                         plugins.each(function (log) {
                             j = j + 1;
                             if (log.attributes.path != "js/saiku/plugins/I18n/plugin.js") {
-                                jQuery.getScript(log.attributes.path);
-                            }
+                                jQuery.ajax({
+                                    async:false,
+                                    type:'GET',
+                                    url:log.attributes.path,
+                                    data:null,
+                                    success:function(){
+                                        if (j == i) {
 
-                            if (j == i) {
+                                            var k = settingsoverride.size();
+                                            var l = 0;
+                                            settingsoverride.each(function (log) {
+                                                l = l + 1;
 
-                                var k = settingsoverride.size();
-                                var l = 0;
-                                settingsoverride.each(function (log) {
-                                    l = l + 1;
+                                                for (var key in log.attributes) {
+                                                    Settings[key] = log.attributes[key];
+                                                }
+                                                if(Settings.CSS != undefined){
+                                                    Saiku.loadCSS(Settings.CSS, null)
+                                                }
+                                                if (k == l) {
+                                                    Saiku.session = new Session({}, {
+                                                        username: Settings.USERNAME,
+                                                        password: Settings.PASSWORD
+                                                    });
 
-                                    for (var key in log.attributes) {
-                                        Settings[key] = log.attributes[key];
-                                    }
-                                    if(Settings.CSS != undefined){
-                                        Saiku.loadCSS(Settings.CSS, null)
-                                    }
-                                    if (k == l) {
-                                        Saiku.session = new Session({}, {
-                                            username: Settings.USERNAME,
-                                            password: Settings.PASSWORD
-                                        });
+                                                    Saiku.toolbar = new Toolbar();
+                                                }
+                                            });
 
-                                        Saiku.toolbar = new Toolbar();
-                                    }
+                                        }
+                                    },
+                                    dataType:'script'
                                 });
-
                             }
+                            else{
+                                if (j == i) {
+
+                                    var k = settingsoverride.size();
+                                    var l = 0;
+                                    settingsoverride.each(function (log) {
+                                        l = l + 1;
+
+                                        for (var key in log.attributes) {
+                                            Settings[key] = log.attributes[key];
+                                        }
+                                        if(Settings.CSS != undefined){
+                                            Saiku.loadCSS(Settings.CSS, null)
+                                        }
+                                        if (k == l) {
+                                            Saiku.session = new Session({}, {
+                                                username: Settings.USERNAME,
+                                                password: Settings.PASSWORD
+                                            });
+
+                                            Saiku.toolbar = new Toolbar();
+                                        }
+                                    });
+
+                                }
+                            }
+
                         });
 
 
@@ -276,21 +310,42 @@ if (! Settings.BIPLUGIN) {
                         plugins.each(function (log) {
                             j = j + 1;
                             if (log.attributes.path != "js/saiku/plugins/I18n/plugin.js") {
-                                jQuery.getScript(log.attributes.path);
-                            }
-                            if (j == i) {
-                                if(Settings.CSS != undefined){
-                                    Saiku.loadCSS(Settings.CSS, null)
-                                }
-                                Saiku.session = new Session({}, {
-                                    username: Settings.USERNAME,
-                                    password: Settings.PASSWORD
+                                jQuery.ajax({
+                                    async:false,
+                                    type:'GET',
+                                    url:log.attributes.path,
+                                    data:null,
+                                    success: function(){
+                                        if (j == i) {
+                                            if(Settings.CSS != undefined){
+                                                Saiku.loadCSS(Settings.CSS, null)
+                                            }
+                                            Saiku.session = new Session({}, {
+                                                username: Settings.USERNAME,
+                                                password: Settings.PASSWORD
+                                            });
+
+                                            Saiku.toolbar = new Toolbar();
+                                        }
+                                    },
+                                    dataType:'script'
                                 });
-
-                                Saiku.toolbar = new Toolbar();
                             }
+                            else{
+                                if (j == i) {
 
+                                    if(Settings.CSS != undefined){
+                                        Saiku.loadCSS(Settings.CSS, null)
+                                    }
+                                    Saiku.session = new Session({}, {
+                                        username: Settings.USERNAME,
+                                        password: Settings.PASSWORD
+                                    });
 
+                                    Saiku.toolbar = new Toolbar();
+
+                                }
+                            }
                         });
 
                     }

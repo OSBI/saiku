@@ -604,6 +604,7 @@ SaikuChartRenderer.prototype.render_chart_element = function (context) {
         animate = true;
     }
     if (!animate || $(self.el).find('.canvas_wrapper').is(':visible')) {
+        var els = $(self.el).find('.canvas_wrapper');
         $(self.el).find('.canvas_wrapper').hide();
     }
 
