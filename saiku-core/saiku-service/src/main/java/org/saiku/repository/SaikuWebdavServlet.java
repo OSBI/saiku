@@ -70,6 +70,13 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
       return false;
     }
   }
+
+  private boolean checkSecret(HttpServletRequest request){
+    if(request.getRequestURI().contains("/datasources")){
+      return checkUserRole(request);
+    }
+    return true;
+  }
   /**
    * Service the given request.
    *
@@ -111,6 +118,10 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
       }
       // perform referrer host checks if CSRF protection is enabled
 
+      if(!checkSecret(request)){
+        webdavResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+        return;
+      }
       if (!csrfUtil.isValidRequest(webdavRequest)) {
         webdavResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
         return;
