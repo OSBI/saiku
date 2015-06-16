@@ -41,7 +41,7 @@ public class JdbcUserDAO
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         String newsql = "SELECT MAX(USER_ID) from USERS where username = ?";
-        getJdbcTemplate().update(sql, new Object[] { user.getUsername(), passwordEncoder.encode(user.getPassword()), user.getEmail(), Boolean.valueOf(true) });
+        getJdbcTemplate().update(sql, new Object[] { user.getUsername(), user.getPassword(), user.getEmail(), Boolean.valueOf(true) });
 
         Integer name = (Integer)getJdbcTemplate().queryForObject(newsql, new Object[] { user.getUsername() }, Integer.class);
 
