@@ -130,7 +130,7 @@ public class JdbcUserDAO
         if(encrypt.equals("true")){
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-        getJdbcTemplate().update(sql, new Object[] { user.getUsername(), passwordEncoder.encode(user.getPassword()), user.getEmail(),
+        getJdbcTemplate().update(sql, new Object[] { user.getUsername(), user.getPassword(), user.getEmail(),
             Boolean.valueOf(true), user.getId()});
 
         Integer name = (Integer)getJdbcTemplate().queryForObject(newsql, new Object[] { user.getUsername() }, Integer.class);
