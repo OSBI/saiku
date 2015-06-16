@@ -3,6 +3,7 @@ package org.saiku.database;
 import org.saiku.UserDAO;
 import org.saiku.database.dto.SaikuUser;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,6 +22,7 @@ public class JdbcUserDAO
         implements UserDAO
 {
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
     private ServletContext servletContext;
 
     public ServletContext getServletContext() {
