@@ -50,9 +50,9 @@
 	</bean>
 
 
-	<bean id="datasourceResourceBean" class="org.saiku.plugin.resources.PentahoDatasourceResource">
+	<!--<bean id="datasourceResourceBean" class="org.saiku.plugin.resources.PentahoDatasourceResource">
 		<property name="datasourceService" ref="datasourceServiceBean" />
-	</bean>
+	</bean>-->
 
 	<bean id="olapDiscoverBean" class="org.saiku.plugin.resources.PentahoDiscoverResource">
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
