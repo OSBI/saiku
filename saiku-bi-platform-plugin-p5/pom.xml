@@ -89,7 +89,7 @@
 									<artifactId>mondrian</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
-								<artifactItem>
+								<!--<artifactItem>
 									<groupId>org.olap4j</groupId>
 									<artifactId>olap4j-xmla</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
@@ -98,7 +98,7 @@
 									<groupId>org.olap4j</groupId>
 									<artifactId>olap4j</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
-								</artifactItem>
+								</artifactItem>-->
 								<artifactItem>
 									<groupId>eigenbase</groupId>
 									<artifactId>eigenbase-properties</artifactId>
