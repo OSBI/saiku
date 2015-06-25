@@ -9,7 +9,7 @@
     <artifactId>saiku-core</artifactId>
     <packaging>pom</packaging>
     <name>saiku - core libraries</name>
-    <version>3.3-SNAPSHOT</version>
+    <version>3.2.5.2</version>
 
 
     <modules>
