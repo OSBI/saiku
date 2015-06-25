@@ -7,8 +7,8 @@
 	</parent>
 	<artifactId>saiku-ui</artifactId>
 	<packaging>pom</packaging>
-	<version>3.2.5.3</version>
-	<properties>
+	<version>3.3-SNAPSHOT</version>
+        <properties>
 	<checkstyle.skip>true</checkstyle.skip>
 	 <build.prod>false</build.prod>
      </properties>
