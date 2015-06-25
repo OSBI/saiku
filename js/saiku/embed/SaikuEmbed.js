@@ -279,6 +279,8 @@ var SaikuClient = (function() {
 					var parametersLevels;
 
 					if (self.settings.dashboards) {
+						renderMode = options.render;
+						mode = options.mode;
 						parametersLevels = joinParameters(dataSchema, dataAxis);
 						$(options.htmlObject).closest('.gs-w').data('parametersLevels', JSON.stringify(parametersLevels));
 						$(options.htmlObject).closest('.gs-w').data('parametersValues', JSON.stringify(parametersValues));
