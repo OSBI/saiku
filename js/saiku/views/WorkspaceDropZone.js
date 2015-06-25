@@ -638,7 +638,6 @@ var WorkspaceDropZone = Backbone.View.extend({
                             } else if (key == "clearsort") {
                                 a.sortOrder = null;
                                 a.sortEvaluationLiteral = null;
-                                alert('maybe?');
                                 self.synchronize_query();
                                 self.workspace.query.run();
                             } else if (key.indexOf("show_totals_") === 0){
