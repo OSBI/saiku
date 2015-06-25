@@ -60,7 +60,7 @@ var SaveQuery = Modal.extend({
         this.message = _.template(
             "<form id='save_query_form'>" +
             "<label for='name' class='i18n'>File:</label>&nbsp;" +
-            "<input type='text' name='name' value='<%= name %>' /> <span class='save sprite'></span>" +
+            "<input type='text' name='name' value='<%= name %>' />" +
             "<div class='RepositoryObjects'><span class='i18n'>Loading...</span></div>" +
             "<br />"+
             "</form>"+
@@ -277,6 +277,9 @@ return false;
                 }
                 return true;
         };
+
+        // Rename tab
+        this.query.workspace.tab.$el.find('.saikutab').text(file.replace(/^.*[\\\/]/, '').split('.')[0]);
 
         (new SavedQuery({
             name: this.query.get('name'),
