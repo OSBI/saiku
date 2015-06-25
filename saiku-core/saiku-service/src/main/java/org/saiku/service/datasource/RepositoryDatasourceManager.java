@@ -71,12 +71,24 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 for (DataSource file : exporteddatasources) {
                     if (file.getName() != null && file.getType() != null) {
                         Properties props = new Properties();
-                        props.put("driver", file.getDriver());
-                        props.put("location", file.getLocation());
-                        props.put("username", file.getUsername());
-                        props.put("password", file.getPassword());
-                        props.put("path", file.getPath());
-                        props.put("id", file.getId());
+                        if(file.getDriver()!= null) {
+                            props.put("driver", file.getDriver());
+                        }
+                        if(file.getLocation()!=null) {
+                            props.put("location", file.getLocation());
+                        }
+                        if(file.getUsername()!=null) {
+                            props.put("username", file.getUsername());
+                        }
+                        if(file.getPassword()!=null) {
+                            props.put("password", file.getPassword());
+                        }
+                        if(file.getPath()!=null) {
+                            props.put("path", file.getPath());
+                        }
+                        if(file.getId()!=null) {
+                            props.put("id", file.getId());
+                        }
                         if(file.getSecurityenabled()!=null) {
                           props.put("security.enabled", file.getSecurityenabled());
                         }
