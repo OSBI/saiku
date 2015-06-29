@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.saiku</groupId>
@@ -11,29 +12,19 @@
         <developerConnection>
             scm:git:git@github.com:OSBI/saiku.git
         </developerConnection>
-      <tag>saiku-3.1-SNAPSHOT</tag>
-  </scm>
+        <tag>saiku-3.1-SNAPSHOT</tag>
+    </scm>
     <modules>
         <module>saiku-core</module>
         <module>saiku-ui</module>
         <module>saiku-webapp</module>
-        <!--        <module>saiku-web-tests</module>-->
         <module>saiku-server</module>
         <module>saiku-bi-platform-plugin-p5</module>
-        <!--<module>saiku-web-tests</module>-->
-        <!--  <module>saiku-bi-platform-plugin</module>-->
-    <!--<module>saiku-service-osgi</module>-->
-  </modules>
+    </modules>
     <distributionManagement>
-        <repository>
-            <id>utility</id>
-            <name>utility-releases</name>
-            <url>http://repo.analytical-labs.com/artifactory/alabs-release-local</url>
-        </repository>
         <snapshotRepository>
-            <id>utility</id>
-            <name>utility-snapshots</name>
-            <url>http://repo.analytical-labs.com/alabs-snapshot-local</url>
+            <id>nexus-snapshots</id>
+            <url>http://repo.meteorite.bi/content/repositories/alabs-snapshot-local/</url>
         </snapshotRepository>
     </distributionManagement>
     <properties>
@@ -57,7 +48,7 @@
         <pluginRepository>
             <id>Analytical Labs Plugin Repo</id>
             <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.analytical-labs.com/artifactory/alabs-release-local</url>
+            <url>http://repo.meteorite.bi/content/repositories/alabs-release-local/</url>
         </pluginRepository>
     </pluginRepositories>
 
@@ -75,22 +66,18 @@
             <url>http://nexus.pentaho.org/content/repositories/public-snapshots/</url>
         </repository>
         <repository>
-            <id>codehaus</id>
-            <url>http://repository.codehaus.org/</url>
-        </repository>
-        <repository>
             <id>atlassian2</id>
             <url>http://repository.opencastproject.org/</url>
         </repository>
         <repository>
             <id>Analytical Labs Repo</id>
             <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.analytical-labs.com/artifactory/alabs-release-local</url>
+            <url>http://repo.meteorite.bi/content/repositories/alabs-release-local/</url>
         </repository>
         <repository>
             <id>Analytical Labs snapshots</id>
             <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.analytical-labs.com/artifactory/alabs-snapshot-local</url>
+            <url>http://repo.meteorite.bi/content/repositories/alabs-snapshot-local/</url>
         </repository>
         <repository>
             <id>central</id>
@@ -124,6 +111,25 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.5</version>
+                <executions>
+                    <execution>
+                        <id>default-deploy</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <serverId>nexus</serverId>
+                    <nexusUrl>http://repo.meteorite.bi</nexusUrl>
+                    <skipStaging>true</skipStaging>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
             </plugin>
@@ -152,12 +158,12 @@
                 <version>1.0-m4.3</version>
                 <configuration>
                     <flowInitContext>
-                    <masterBranchName>master</masterBranchName>
-                    <developBranchName>development</developBranchName>
-                    <featureBranchPrefix>feature-</featureBranchPrefix>
-                    <releaseBranchPrefix>release-</releaseBranchPrefix>
-                    <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
-                    <versionTagPrefix>saiku-</versionTagPrefix>
+                        <masterBranchName>master</masterBranchName>
+                        <developBranchName>development</developBranchName>
+                        <featureBranchPrefix>feature-</featureBranchPrefix>
+                        <releaseBranchPrefix>release-</releaseBranchPrefix>
+                        <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
+                        <versionTagPrefix>saiku-</versionTagPrefix>
                     </flowInitContext>
                     <allowSnapshots>true</allowSnapshots>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
