@@ -59,9 +59,9 @@ public abstract class AbstractTestSuite extends ThucydidesJUnitStories {
    //System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
     //getSystemConfiguration().setIfUndefined("webdriver.driver", "chrome");
     getSystemConfiguration()
-        .setIfUndefined(ThucydidesSystemProperty.THUCYDIDES_STORE_HTML_SOURCE.getPropertyName(), "true");
+        .setIfUndefined(serenity.store.html.source, "true");
     getSystemConfiguration()
-        .setIfUndefined(ThucydidesSystemProperty.THUCYDIDES_TAKE_SCREENSHOTS.getPropertyName(), "FOR_FAILURES");
+        .setIfUndefined("serenity.take.screenshots", "AFTER_EACH_STEP");
 
   }
 
