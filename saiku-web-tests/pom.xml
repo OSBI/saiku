@@ -189,7 +189,7 @@
             <plugin>
                 <groupId>net.serenity-bdd.maven.plugins</groupId>
                 <artifactId>serenity-maven-plugin</artifactId>
-                <version>1.0.58</version>
+                <version>1.0.49</version>
                 <configuration>
                 </configuration>
                 <executions>
@@ -253,7 +253,7 @@
                     <plugin>
                         <groupId>net.serenity-bdd.maven.plugins</groupId>
                         <artifactId>serenity-maven-plugin</artifactId>
-                        <version>1.0.58</version>
+                        <version>1.0.49</version>
                     </plugin>
                 </plugins>
             </reporting>
