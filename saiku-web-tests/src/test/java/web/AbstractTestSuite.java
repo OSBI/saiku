@@ -17,7 +17,6 @@
 package web;
 
 import net.serenitybdd.jbehave.SerenityJBehave;
-import net.thucydides.core.ThucydidesSystemProperty;
 import net.thucydides.jbehave.ThucydidesJUnitStories;
 
 import org.jbehave.core.configuration.Configuration;
@@ -59,7 +58,7 @@ public abstract class AbstractTestSuite extends ThucydidesJUnitStories {
    //System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
     //getSystemConfiguration().setIfUndefined("webdriver.driver", "chrome");
     getSystemConfiguration()
-        .setIfUndefined(serenity.store.html.source, "true");
+        .setIfUndefined("serenity.store.html.source", "true");
     getSystemConfiguration()
         .setIfUndefined("serenity.take.screenshots", "AFTER_EACH_STEP");
 
