@@ -189,6 +189,11 @@
                         <artifactId>serenity-jira-requirements-provider</artifactId>
                         <version>1.0.1</version>
                     </dependency>
+                    <dependency>
+                        <groupId>org.hamcrest</groupId>
+                        <artifactId>hamcrest-core</artifactId>
+                        <version>1.3</version>
+                    </dependency>
                 </dependencies>
             </plugin>
         </plugins>
