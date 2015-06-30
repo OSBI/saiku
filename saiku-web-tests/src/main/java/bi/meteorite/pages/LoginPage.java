@@ -27,7 +27,6 @@ import org.openqa.selenium.support.ui.Select;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import ch.lambdaj.function.convert.Converter;
 
@@ -59,8 +58,6 @@ public class LoginPage extends PageObject {
   private WebElementFacade tablist;
 
   public void enter_username(String keyword) {
-    username.withTimeoutOf(20, TimeUnit.SECONDS).waitUntilVisible();
-
     username.type(keyword);
   }
 
