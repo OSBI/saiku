@@ -16,8 +16,8 @@
 
 package web;
 
+import net.serenitybdd.jbehave.SerenityJBehave;
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.jbehave.ThucydidesJBehave;
 import net.thucydides.jbehave.ThucydidesJUnitStories;
 
 import org.jbehave.core.configuration.Configuration;
@@ -44,7 +44,7 @@ public abstract class AbstractTestSuite extends ThucydidesJUnitStories {
 
     List<Format> formats = Arrays.asList(Format.CONSOLE, Format.HTML, Format.XML, Format.TXT);
 
-    Configuration configuration = ThucydidesJBehave.defaultConfiguration(thucydidesConfiguration, formats, this);
+    Configuration configuration = SerenityJBehave.defaultConfiguration(thucydidesConfiguration, formats, this);
 
 
     return configuration
