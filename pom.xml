@@ -20,7 +20,6 @@
         <module>saiku-webapp</module>
         <module>saiku-server</module>
         <module>saiku-bi-platform-plugin-p5</module>
-        <module>saiku-web-tests</module>
     </modules>
 
     <distributionManagement>
