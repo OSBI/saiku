@@ -75,7 +75,7 @@
         <dependency>
             <groupId>net.serenity-bdd</groupId>
             <artifactId>serenity-core</artifactId>
-            <version>1.0.47</version>
+            <version>1.0.49</version>
         </dependency>
         <dependency>
             <groupId>net.serenity-bdd</groupId>
