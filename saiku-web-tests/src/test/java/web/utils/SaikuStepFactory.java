@@ -42,7 +42,7 @@ public class SaikuStepFactory extends AbstractStepsFactory {
   }
 
   private StepFactory getStepFactory() {
-    return ThucydidesWebDriverSupport.getStepFactory();//.thatThrowsExcpetionsImmediately();
+    return ThucydidesWebDriverSupport.getStepFactory();
   }
 
   public List<CandidateSteps> createCandidateSteps() {
