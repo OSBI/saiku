@@ -61,9 +61,7 @@ public abstract class AbstractTestSuite extends ThucydidesJUnitStories {
         .setIfUndefined("serenity.store.html.source", "true");
     getSystemConfiguration()
         .setIfUndefined("serenity.take.screenshots", "AFTER_EACH_STEP");
-    getSystemConfiguration().setIfUndefined("serenity.batch.size", "1");
-    getSystemConfiguration().setIfUndefined("serenity.batch.number", "1");
-    getSystemConfiguration().setIfUndefined("serenity.use.unique.browser", "true");
+    getSystemConfiguration().setIfUndefined("serenity.restart.browser.frequency", "1");
 
   }
 
