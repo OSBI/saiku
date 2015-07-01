@@ -75,7 +75,7 @@
         <dependency>
             <groupId>net.serenity-bdd</groupId>
             <artifactId>serenity-core</artifactId>
-            <version>1.0.59</version>
+            <version>1.0.58</version>
         </dependency>
         <dependency>
             <groupId>net.serenity-bdd</groupId>
@@ -85,7 +85,7 @@
         <dependency>
             <groupId>net.serenity-bdd</groupId>
             <artifactId>serenity-junit</artifactId>
-            <version>1.0.59</version>
+            <version>1.0.58</version>
         </dependency>
         <dependency>
             <groupId>net.serenity-bdd</groupId>
@@ -189,7 +189,7 @@
             <plugin>
                 <groupId>net.serenity-bdd.maven.plugins</groupId>
                 <artifactId>serenity-maven-plugin</artifactId>
-                <version>1.0.59</version>
+                <version>1.0.58</version>
                 <configuration>
                 </configuration>
                 <executions>
@@ -253,7 +253,7 @@
                     <plugin>
                         <groupId>net.serenity-bdd.maven.plugins</groupId>
                         <artifactId>serenity-maven-plugin</artifactId>
-                        <version>1.0.59</version>
+                        <version>1.0.58</version>
                     </plugin>
                 </plugins>
             </reporting>
@@ -281,7 +281,7 @@
                                 <plugin>
                                     <groupId>net.serenity-bdd.maven.plugins</groupId>
                                     <artifactId>serenity-maven-plugin</artifactId>
-                                    <version>1.0.59</version>
+                                    <version>1.0.58</version>
                                     <dependencies>
                                         <dependency>
                                             <groupId>net.serenity-bdd</groupId>
