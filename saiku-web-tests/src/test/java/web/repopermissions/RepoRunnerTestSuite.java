@@ -25,7 +25,7 @@ public class RepoRunnerTestSuite extends AbstractTestSuite {
 
 
   public RepoRunnerTestSuite() {
-    //this.stepDefinitions.add(new RepoSteps());
-    //this.jiraid = "SUT-7";
+    this.stepDefinitions.add(new RepoSteps());
+    this.jiraid = "SUT-7";
   }
 }

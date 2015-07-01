@@ -25,7 +25,7 @@ public class QueryRunnerTestSuite extends AbstractTestSuite {
 
 
   public QueryRunnerTestSuite() {
-    //this.stepDefinitions.add(new CreateQuerySteps());
-    //this.jiraid = "SUT-4";
+    this.stepDefinitions.add(new CreateQuerySteps());
+    this.jiraid = "SUT-4";
   }
 }
