@@ -112,7 +112,14 @@ var SaikuClient = (function() {
 	 * @property _settings
 	 * @type {Object}
 	 * @private
-	 * @default { server: '/saiku', path: '/rest/saiku/embed', user: 'admin', password: 'admin', blockUI: false }
+	 * @default 
+	 * 		{ 
+	 * 			server: '/saiku', 
+	 * 			path: '/rest/saiku/embed', 
+	 * 			user: 'admin', 
+	 * 			password: 'admin', 
+	 * 			blockUI: false 
+	 * 		}
 	 */
 	var _settings = {
 		server: '/saiku',
@@ -128,7 +135,16 @@ var SaikuClient = (function() {
 	 * @property _options
 	 * @type {Object}
 	 * @private
-	 * @default { file: null, render: 'table', mode: null, formatter: 'flattened', htmlObject: '#saiku', zoom: true, params: {} }
+	 * @default 
+	 * 		{ 
+	 * 			file: null, 
+	 * 			render: 'table', 
+	 * 			mode: null, 
+	 * 			formatter: 'flattened', 
+	 * 			htmlObject: '#saiku', 
+	 * 			zoom: true, 
+	 * 			params: {} 
+	 * 		}
 	 */
 	var _options = {
 		file: null,
@@ -141,16 +157,22 @@ var SaikuClient = (function() {
 	};
 
 	/**
-	 * Instance of SaikuTableRenderer and SaikuChartRenderer
+	 * Instance of SaikuTableRenderer, SaikuChartRenderer and SaikuPlaygroundRenderer
 	 *
 	 * @property _saikuRendererFactory
 	 * @type {Object}
 	 * @private
-	 * @default { 'table': SaikuTableRenderer, 'chart': SaikuChartRenderer }
+	 * @default 
+	 * 		{ 
+	 *      	'table': SaikuTableRenderer, 
+	 *          'chart': SaikuChartRenderer 
+	 *          'playground': SaikuPlaygroundRenderer
+	 *      }
 	 */
 	var _saikuRendererFactory = {
 		'table': SaikuTableRenderer,
-		'chart': SaikuChartRenderer
+		'chart': SaikuChartRenderer,
+		'playground': SaikuPlaygroundRenderer
 	};
 	
 	/**
