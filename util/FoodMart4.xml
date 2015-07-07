@@ -809,6 +809,7 @@
             <CalculatedMember name='Avg Salary' dimension='Measures'
                               formatString='Currency'
                               formula='[Measures].[Org Salary]/[Measures].[Number of Employees]'/>
+	    <CalculatedMember name="Test" hierarchy="[Store].[Stores]" formula="[Store].[Stores].[All Stores]"/>
         </CalculatedMembers>
     </Cube>
 
