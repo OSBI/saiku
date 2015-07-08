@@ -15,6 +15,10 @@
         <property name="foodmartdir" value="${foodmartrepo}"/>
         <property name="foodmartschema" value="${foodmartschema}"/>
         <property name="foodmarturl" value="${foodmarturl}"/>
+        <property name="repoPassword" value ="sa!kuanalyt!cs"/>
+        <!-- If you change the repoPassword set this property for at least 1 restart to update the old repo password-->
+        <!--<property name="oldRepoPassword" value="sa!kuanalyt!cs"/>-->
+
     </bean>
 
     <!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->

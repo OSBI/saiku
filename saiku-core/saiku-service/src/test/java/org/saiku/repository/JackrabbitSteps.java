@@ -15,16 +15,16 @@
  */
 package org.saiku.repository;
 
+import org.saiku.service.user.UserService;
+
 import net.thucydides.core.annotations.Step;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.junit.Rule;
 import org.junit.Test;
-import static junit.framework.Assert.*;
 import org.junit.rules.ExpectedException;
-import org.saiku.service.user.UserService;
 
-import javax.jcr.*;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -32,7 +32,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import static org.mockito.Mockito.*;
+
+import javax.jcr.*;
+
+import static junit.framework.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by bugg on 14/05/14.
@@ -43,7 +48,8 @@ public class JackrabbitSteps {
     private String repoLocation = repoBasePath + "/repo-data" + System.currentTimeMillis();
     private URL repoConf = this.getClass().getClassLoader().getResource("repo-conf.xml");
     private String repoConfPath = repoConf.getPath();
-    private IRepositoryManager iRepositoryManager = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(repoConfPath, repoLocation);
+    private IRepositoryManager iRepositoryManager = JackRabbitRepositoryManager.getJackRabbitRepositoryManager
+        (repoConfPath, repoLocation, "admin", "admin");
     private UserService userService = mock(UserService.class);
     private List<String> defaultRole = Collections.singletonList("ROLE_USER");
 

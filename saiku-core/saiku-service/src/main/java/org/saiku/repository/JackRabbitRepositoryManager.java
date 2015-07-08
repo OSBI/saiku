@@ -27,6 +27,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.api.JackrabbitSession;
+import org.apache.jackrabbit.api.security.user.Authorizable;
+import org.apache.jackrabbit.api.security.user.User;
+import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
@@ -60,24 +63,30 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
   private static JackRabbitRepositoryManager ref;
   private final String data;
   private final String config;
+  private final String password;
+  private final String oldpassword;
   private Repository repository;
   private Session session;
   private Node root;
   private UserService userService;
 
-  private JackRabbitRepositoryManager(String config, String data) {
+  private JackRabbitRepositoryManager(String config, String data, String password, String oldpassword) {
 
     this.config = config;
     this.data = data;
+    this.password = password;
+    this.oldpassword = oldpassword;
   }
 
   /*
    * TODO this is currently threadsafe but to improve performance we should split it up to allow multiple sessions to hit the repo at the same time.
    */
-  public static synchronized JackRabbitRepositoryManager getJackRabbitRepositoryManager(String config, String data) {
+  public static synchronized JackRabbitRepositoryManager getJackRabbitRepositoryManager(String config, String data,
+                                                                                        String password, String
+                                                                                            oldpassword) {
     if (ref == null)
       // it's ok, we can call this constructor
-      ref = new JackRabbitRepositoryManager(config, data);
+      ref = new JackRabbitRepositoryManager(config, data, password, oldpassword);
     return ref;
   }
 
@@ -92,8 +101,43 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
   }
 
   public void login() throws RepositoryException {
-    session = repository.login(
-        new SimpleCredentials("admin", "admin".toCharArray()));
+    try {
+
+      //Try default login
+      session = repository.login(
+          new SimpleCredentials("admin", "admin".toCharArray()));
+
+    }
+    catch(Exception e){
+      //If default fails check oldpassword property
+      if(oldpassword==null){
+        //If no old password try login with new password
+        session = repository.login(
+            new SimpleCredentials("admin", password.toCharArray()));
+      }
+      else{
+        //If old password is set
+        try{
+          //Try logging in with the new password
+          session = repository.login(
+              new SimpleCredentials("admin", password.toCharArray()));
+        }
+        catch(Exception e2){
+          //Login with the old password
+          session = repository.login(
+              new SimpleCredentials("admin", oldpassword.toCharArray()));
+        }
+      }
+    }
+
+    //Make sure new password is set to repo default
+    if(password!=null && !password.equals("")) {
+      UserManager userManager = ((JackrabbitSession) session).getUserManager();
+      Authorizable authorizable = userManager.getAuthorizable("admin");
+
+      ((User) authorizable).changePassword(password);
+    }
+
   }
 
 
