@@ -731,7 +731,11 @@
                     </Hierarchy>
                 </Hierarchies>
             </Dimension>
-
+            <Dimension name="Actual VS Budget" hanger="true">
+                <Attributes>
+                    <Attribute name="Type"/>
+                </Attributes>
+            </Dimension>
             <Dimension name='Department' table='department' key='Department Description'>
                 <Attributes>
                     <Attribute name='Department Description' keyColumn='department_id'/>
@@ -811,6 +815,11 @@
                               formula='[Measures].[Org Salary]/[Measures].[Number of Employees]'/>
 	    <CalculatedMember name="Test" hierarchy="[Store].[Stores]" formula="[Store].[Stores].[All Stores]"/>
         </CalculatedMembers>
+        <CalculatedMember hierarchy="[Actual VS Budget].[Type]" name="Actual">
+            <Formula>
+                [Store].[Stores].[All Stores]
+            </Formula>
+        </CalculatedMember>
     </Cube>
 
     <!-- Cubes for compatibility with old FoodMart. Will put them

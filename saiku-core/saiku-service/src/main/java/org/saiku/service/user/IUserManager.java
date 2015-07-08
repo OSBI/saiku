@@ -25,7 +25,7 @@ public interface IUserManager {
 
     public void removeUser(String username);
 
-    public SaikuUser updateUser(SaikuUser u);
+    public SaikuUser updateUser(SaikuUser u, boolean b);
 
     public boolean isAdmin();
 

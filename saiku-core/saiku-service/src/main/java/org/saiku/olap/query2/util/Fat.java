@@ -1,10 +1,16 @@
 package org.saiku.olap.query2.util;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.saiku.olap.query2.*;
+import org.saiku.olap.query2.ThinMeasure.Type;
+import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
+import org.saiku.olap.query2.common.ThinQuerySet;
+import org.saiku.olap.query2.common.ThinSortableQuerySet;
+import org.saiku.olap.query2.filter.ThinFilter;
+import org.saiku.query.*;
+import org.saiku.query.QueryDetails.Location;
+import org.saiku.query.mdx.*;
+import org.saiku.query.mdx.IFilterFunction.MdxFunctionType;
+import org.saiku.query.metadata.CalculatedMeasure;
 
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
@@ -12,34 +18,12 @@ import org.olap4j.OlapException;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Measure;
-import org.saiku.olap.query2.ThinAxis;
-import org.saiku.olap.query2.ThinCalculatedMeasure;
-import org.saiku.olap.query2.ThinDetails;
-import org.saiku.olap.query2.ThinHierarchy;
-import org.saiku.olap.query2.ThinLevel;
-import org.saiku.olap.query2.ThinMeasure;
-import org.saiku.olap.query2.ThinMeasure.Type;
-import org.saiku.olap.query2.ThinMember;
-import org.saiku.olap.query2.ThinQuery;
-import org.saiku.olap.query2.ThinQueryModel;
-import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
-import org.saiku.olap.query2.common.ThinQuerySet;
-import org.saiku.olap.query2.common.ThinSortableQuerySet;
-import org.saiku.olap.query2.filter.ThinFilter;
-import org.saiku.query.IQuerySet;
-import org.saiku.query.ISortableQuerySet;
-import org.saiku.query.Query;
-import org.saiku.query.QueryAxis;
-import org.saiku.query.QueryDetails.Location;
-import org.saiku.query.QueryHierarchy;
-import org.saiku.query.QueryLevel;
-import org.saiku.query.mdx.GenericFilter;
-import org.saiku.query.mdx.IFilterFunction;
-import org.saiku.query.mdx.IFilterFunction.MdxFunctionType;
-import org.saiku.query.mdx.NFilter;
-import org.saiku.query.mdx.NameFilter;
-import org.saiku.query.mdx.NameLikeFilter;
-import org.saiku.query.metadata.CalculatedMeasure;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Fat {
 	
@@ -140,65 +124,69 @@ public class Fat {
 	
 	private static void convertHierarchy(QueryHierarchy qh, ThinHierarchy th, ThinQuery tq) throws OlapException {
 		for (ThinLevel tl : th.getLevels().values()) {
-			QueryLevel ql = qh.includeLevel(tl.getName());
-			
-			List<String> aggs =  tl.getAggregators();
+		  QueryLevel ql = qh.includeLevel(tl.getName());
+
+		  if (ql == null) {
+			qh.includeMember(th.getName() + ".[" + tl.getName()+"]");
+		  } else {
+			List<String> aggs = tl.getAggregators();
 			qh.getQuery().setAggregators(ql.getUniqueName(), aggs);
-			
+
 			if (tl.getSelection() != null) {
-				String parameter = tl.getSelection().getParameterName();
-				if (StringUtils.isNotBlank(parameter)) {
-					ql.setParameterName(parameter);
-					ql.setParameterSelectionType(org.saiku.query.Parameter.SelectionType.INCLUSION);
-				}
-				switch(tl.getSelection().getType()) {
-				case INCLUSION:
+			  String parameter = tl.getSelection().getParameterName();
+			  if (StringUtils.isNotBlank(parameter)) {
+				ql.setParameterName(parameter);
+				ql.setParameterSelectionType(org.saiku.query.Parameter.SelectionType.INCLUSION);
+			  }
+			  switch (tl.getSelection().getType()) {
+			  case INCLUSION:
 //					if (parameterValues != null) {
 //						for (String m : parameterValues) {
 //							qh.includeMember(m);
 //						}
 //
 //					} else {
-						for (ThinMember tm : tl.getSelection().getMembers()) {
-							qh.includeMember(tm.getUniqueName());
-						}
-						ql.setParameterSelectionType(org.saiku.query.Parameter.SelectionType.INCLUSION);
+				for (ThinMember tm : tl.getSelection().getMembers()) {
+				  qh.includeMember(tm.getUniqueName());
+				}
+				ql.setParameterSelectionType(org.saiku.query.Parameter.SelectionType.INCLUSION);
 //					}
-					break;
+				break;
 
-				case EXCLUSION:
+			  case EXCLUSION:
 //					if (parameterValues != null) {
 //						for (String m : parameterValues) {
 //							qh.excludeMember(m);
 //						}
 //
 //					} else {
-						for (ThinMember tm : tl.getSelection().getMembers()) {
-							qh.excludeMember(tm.getUniqueName());
-						}
-						ql.setParameterSelectionType(org.saiku.query.Parameter.SelectionType.EXCLUSION);
-//					}
-					break;
-				case RANGE:
-					int size = tl.getSelection().getMembers().size();
-					int iterations = tl.getSelection().getMembers().size() / 2;
-					if (size > 2 && size % 2 == 0) {
-						for (int i = 0; i < iterations; i++) {
-							ThinMember start = tl.getSelection().getMembers().get(iterations * 2 + i);
-							ThinMember end = tl.getSelection().getMembers().get(iterations * 2 + i + 1);
-							qh.includeRange(start.getUniqueName(), end.getUniqueName());
-						}
-					}
-					break;
-				default:
-					break;
-
+				for (ThinMember tm : tl.getSelection().getMembers()) {
+				  qh.excludeMember(tm.getUniqueName());
 				}
+				ql.setParameterSelectionType(org.saiku.query.Parameter.SelectionType.EXCLUSION);
+//					}
+				break;
+			  case RANGE:
+				int size = tl.getSelection().getMembers().size();
+				int iterations = tl.getSelection().getMembers().size() / 2;
+				if (size > 2 && size % 2 == 0) {
+				  for (int i = 0; i < iterations; i++) {
+					ThinMember start = tl.getSelection().getMembers().get(iterations * 2 + i);
+					ThinMember end = tl.getSelection().getMembers().get(iterations * 2 + i + 1);
+					qh.includeRange(start.getUniqueName(), end.getUniqueName());
+				  }
+				}
+				break;
+			  default:
+				break;
+
+			  }
 			}
-			
+
 			extendQuerySet(qh.getQuery(), ql, tl);
+		  }
+		  extendSortableQuerySet(qh.getQuery(), qh, th);
 		}
-		extendSortableQuerySet(qh.getQuery(), qh, th);
 	}
 
 
