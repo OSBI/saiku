@@ -23,8 +23,14 @@
     </modules>
 
     <distributionManagement>
+        <repository>
+            <id>utility</id>
+            <name>utility-releases</name>
+            <url>http://repo.meteorite.bi/content/repositories/alabs-release-local/</url>
+        </repository>
         <snapshotRepository>
-            <id>nexus-snapshots</id>
+            <id>utility</id>
+            <name>utility-snapshots</name>
             <url>http://repo.meteorite.bi/content/repositories/alabs-snapshot-local/</url>
         </snapshotRepository>
     </distributionManagement>
@@ -80,7 +86,6 @@
             <id>atlassian2</id>
             <url>http://repository.opencastproject.org/</url>
         </repository>
-
         <repository>
             <id>central</id>
             <name>Maven Repository Switchboard</name>
@@ -632,7 +637,7 @@
             <dependency>
                 <groupId>pentaho</groupId>
                 <artifactId>mondrian</artifactId>
-                <version>4.0.0-20150120.193813-15</version>
+                <version>4.3.0.0-R-patched</version>
             </dependency>
             <!-- Spring modules -->
             <dependency>

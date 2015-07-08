@@ -17,6 +17,6 @@ public interface UserDAO {
     public SaikuUser findByUserId(int userId);
     public Collection findAllUsers();
     public void deleteUser(String username);
-    public SaikuUser updateUser(SaikuUser user);
+    public SaikuUser updateUser(SaikuUser user, boolean updatepassword);
     public void updateRoles(SaikuUser user);
 }

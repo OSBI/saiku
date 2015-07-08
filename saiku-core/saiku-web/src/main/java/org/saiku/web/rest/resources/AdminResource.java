@@ -434,7 +434,7 @@ public class AdminResource {
         if(!userService.isAdmin()){
             return Response.status(Response.Status.FORBIDDEN).build();
         }
-        return Response.ok().entity(userService.updateUser(jsonString)).build();
+        return Response.ok().entity(userService.updateUser(jsonString, false)).build();
     }
 
     /**

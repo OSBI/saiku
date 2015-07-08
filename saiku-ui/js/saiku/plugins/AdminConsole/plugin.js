@@ -565,6 +565,7 @@ var AdminConsole = Backbone.View.extend({
 
         user.save({}, {data: JSON.stringify(user.attributes), contentType: "application/json"
             , success: function(e){
+                $.notify('User updated successfully', { globalPosition: 'top center', className: 'success' });
 
         }});
 
@@ -582,12 +583,19 @@ var AdminConsole = Backbone.View.extend({
 
         var user = this.users.get(path);
 
+        var that = this;
         if ($newtarget.val() == $newtarget2.val()) {
             user.set({password: $newtarget.val()});
-            user.save({}, {data: JSON.stringify(user.attributes), contentType: "application/json"});
+            user.save({}, {data: JSON.stringify(user.attributes), contentType: "application/json", success: function(e){
+                $.notify('Password updated successfully', { globalPosition: 'top center', className: 'success' });
+                $newtarget.val("");
+                $newtarget2.val("");
+            }});
         }
         else {
             console.log("validation error");
+            $.notify('Validation Error', { globalPosition: 'top center', className: 'error' });
+
         }
     },
     add_role: function (event) {

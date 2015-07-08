@@ -3,8 +3,6 @@ package org.saiku.olap.dto;
 public class SaikuMeasure extends SaikuMember {
 
   private String measureGroup;
-  private Boolean calculated;
-
   public SaikuMeasure() {
   }
 
@@ -19,16 +17,8 @@ public class SaikuMeasure extends SaikuMember {
     boolean visible,
     boolean calculated,
     String measuregroup) {
-    super( name, uniqueName, caption, description, dimensionUniqueName, hierarchyUniqueName, levelUniqueName );
-    this.calculated = calculated;
+    super( name, uniqueName, caption, description, dimensionUniqueName, hierarchyUniqueName, levelUniqueName, calculated );
     this.measureGroup = measuregroup;
-  }
-
-  /**
-   * @return the calculated
-   */
-  public Boolean isCalculated() {
-    return calculated;
   }
 
   /**
