@@ -49,9 +49,12 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String foodmartdir;
     private String foodmartschema;
     private String foodmarturl;
+    private String repopassword;
+    private String oldpassword;
 
     public void load() {
-        irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir);
+        irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopassword,
+            oldpassword);
         try {
             irm.start(userService);
         } catch (RepositoryException e) {
@@ -444,6 +447,22 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public String getFoodmarturl() {
         return foodmarturl;
+    }
+
+    public void setRepoPassword(String password){
+        this.repopassword = password;
+    }
+
+    public String getRepopassword(){
+        return repopassword;
+    }
+
+    public void setOldRepoPassword(String password){
+        this.oldpassword = password;
+    }
+
+    public String getOldRepopassword(){
+        return oldpassword;
     }
 }
 
