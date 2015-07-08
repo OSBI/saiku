@@ -122,16 +122,29 @@ public class JdbcUserDAO
         getJdbcTemplate().update(newsql, new Object[] { username });
     }
 
-    public SaikuUser updateUser(SaikuUser user) {
-        String sql = "UPDATE users set username = ?,password =?,email =? , enabled = ? where user_id = ?;";
+    public SaikuUser updateUser(SaikuUser user, boolean updatepassword) {
+        String sql;
+        if(updatepassword) {
+            sql = "UPDATE users set username = ?,password =?,email =? , enabled = ? where user_id = ?;";
+        }
+        else{
+            sql = "UPDATE users set username = ?,email =? , enabled = ? where user_id = ?;";
+        }
 
         String newsql = "SELECT MAX(USER_ID) from USERS where username = ?";
         String encrypt = servletContext.getInitParameter("db.encryptpassword");
         if(encrypt.equals("true")){
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-        getJdbcTemplate().update(sql, new Object[] { user.getUsername(), user.getPassword(), user.getEmail(),
-            Boolean.valueOf(true), user.getId()});
+        if(updatepassword){
+            getJdbcTemplate().update(sql, new Object[] { user.getUsername(), user.getPassword(), user.getEmail(),
+                Boolean.valueOf(true), user.getId()});
+        }
+        else{
+            getJdbcTemplate().update(sql, new Object[] { user.getUsername(), user.getEmail(),
+                Boolean.valueOf(true), user.getId()});
+        }
+
 
         Integer name = (Integer)getJdbcTemplate().queryForObject(newsql, new Object[] { user.getUsername() }, Integer.class);
 

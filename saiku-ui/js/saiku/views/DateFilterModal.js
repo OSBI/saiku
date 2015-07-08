@@ -41,7 +41,10 @@ var DateFilterModal = Modal.extend({
 
 	template_many_years_mdx: ' {logicalOperator} {parent}.CurrentMember.NAME {comparisonOperator} \'{dates}\'',
 
-	template_mdx: '{parent} CurrentDateMember([{dimension}.{hierarchy}], \'["{dimension}.{hierarchy}"]\\\.{analyzerDateFormat}\', EXACT)',
+	template_mdx: 'IIF(ISEMPTY(CurrentDateMember([{dimension}.{hierarchy}],' +
+	' \'["{dimension}.{hierarchy}"]\\\.{analyzerDateFormat}\', EXACT)), {}, { {parent}' +
+	' CurrentDateMember([{dimension}.{hierarchy}],' +
+	' \'["{dimension}.{hierarchy}"]\\\.{analyzerDateFormat}\', EXACT)})',
 
 	template_last_mdx: '{parent} LastPeriods({periodAmount}, CurrentDateMember([{dimension}.{hierarchy}], \'["{dimension}.{hierarchy}"]\\\.{analyzerDateFormat}\', EXACT))',
 

@@ -271,14 +271,15 @@ public class ObjectUtil {
 
   @NotNull
   public static SaikuMember convert(@NotNull Member m) {
-    return new SaikuMember(
+     return new SaikuMember(
         m.getName(),
         m.getUniqueName(),
         m.getCaption(),
         m.getDescription(),
         m.getDimension().getUniqueName(),
         m.getHierarchy().getUniqueName(),
-        m.getLevel().getUniqueName());
+        m.getLevel().getUniqueName(),
+        m.isCalculated());
   }
 
   @NotNull

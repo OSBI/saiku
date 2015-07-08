@@ -2,12 +2,12 @@
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saiku</groupId>
-        <version>3.2.5.4</version>
+        <version>3.2.5.5</version>
     </parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>saiku-bi-platform-plugin-p5</artifactId>
 	<packaging>jar</packaging>
-	<version>3.2.5.4</version>
+	<version>3.2.5.5</version>
 	<name>saiku biserver plugin</name>
 
 	<build>
@@ -345,6 +345,16 @@
 	</build>
 	<repositories>
 		<repository>
+			<id>Analytical Labs Repo</id>
+			<name>Analytical Labs Repo-releases</name>
+			<url>http://repo.meteorite.bi/content/repositories/alabs-release-local/</url>
+		</repository>
+		<repository>
+			<id>Analytical Labs snapshots</id>
+			<name>Analytical Labs Repo-releases</name>
+			<url>http://repo.meteorite.bi/content/repositories/alabs-snapshot-local/</url>
+		</repository>
+		<repository>
 			<id>pentaho-third-party</id>
 			<url>http://nexus.pentaho.org/content/repositories/proxied-3rd-party-releases/</url>
 		</repository>
@@ -356,20 +366,7 @@
 			<id>pentaho-snapshot</id>
 			<url>http://nexus.pentaho.org/content/repositories/public-snapshots/</url>
 		</repository>
-		<repository>
-			<id>codehaus</id>
-			<url>http://repository.codehaus.org/</url>
-		</repository>
-		<repository>
-			<id>Analytical Labs Repo</id>
-			<name>Analytical Labs Repo-releases</name>
-			<url>http://repo.analytical-labs.com/artifactory/alabs-release-local</url>
-		</repository>
-		<repository>
-			<id>Analytical Labs snapshots</id>
-			<name>Analytical Labs Repo-releases</name>
-			<url>http://repo.analytical-labs.com/artifactory/alabs-snapshot-local</url>
-		</repository>
+
 		<repository>
 			<id>central</id>
 			<name>Maven Repository Switchboard</name>

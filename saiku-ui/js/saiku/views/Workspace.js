@@ -396,6 +396,7 @@ var Workspace = Backbone.View.extend({
             workspace: obj
         });
 
+        obj.query = this.query;
 
         // Save the query to the server and init the UI
         obj.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });
