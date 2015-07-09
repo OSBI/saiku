@@ -7,6 +7,7 @@ import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.user.UserService;
+import org.saiku.service.util.exception.SaikuDataSourceException;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.web.rest.objects.DataSourceMapper;
 
@@ -270,6 +271,32 @@ public class AdminResource {
                            .type("text/plain").build();
         }
 
+    }
+
+    /**
+     * Updates the locale parameter of the datasource
+     * @param locale: the new locale for the data source
+     * @param datasourceName: ID of the data source whose locale should be changed
+     * @return: Response indicating success or fail
+     */
+    @PUT
+    @Produces({"application/json"})
+    @Consumes({"application/json"})
+    @Path("/datasources/{datasourceName}/locale")
+    @ReturnType("org.saiku.web.rest.objects.DataSourceMapper")
+    public Response updateDatasourceLocale(String locale, @PathParam("datasourceName") String datasourceName) {
+        try {
+            boolean overwrite = true;
+            SaikuDatasource saikuDatasource = datasourceService.getDatasource(datasourceName);
+            datasourceService.setLocaleOfDataSource(saikuDatasource, locale);
+            datasourceService.addDatasource(saikuDatasource, overwrite);
+            return Response.ok().type("application/json").entity(new DataSourceMapper(saikuDatasource)).build();
+        } catch(SaikuDataSourceException e){
+            return Response.ok().type("application/json").entity(e.getLocalizedMessage()).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getLocalizedMessage())
+                .type("text/plain").build();
+        }
     }
 
     /**

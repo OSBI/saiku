@@ -16,11 +16,12 @@
 
 package bi.meteorite.pages;
 
+
+import net.serenitybdd.core.annotations.findby.By;
+import net.serenitybdd.core.annotations.findby.FindBy;
+import net.serenitybdd.core.pages.PageObject;
+import net.serenitybdd.core.pages.WebElementFacade;
 import net.thucydides.core.annotations.DefaultUrl;
-import net.thucydides.core.annotations.findby.By;
-import net.thucydides.core.annotations.findby.FindBy;
-import net.thucydides.core.pages.PageObject;
-import net.thucydides.core.pages.WebElementFacade;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -33,7 +34,8 @@ import ch.lambdaj.function.convert.Converter;
 /**
  * Created by bugg on 15/01/15.
  */
-@DefaultUrl("http://localhost:9999")
+
+@DefaultUrl("http://repo.meteorite.bi:9998")
 public class LoginPage extends PageObject {
 
   @FindBy(name="username")
