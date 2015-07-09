@@ -143,6 +143,8 @@ var SplashScreen = Backbone.View.extend({
 	},
     getContent: function(){
         var that =this;
+        var license = new License();
+
         $.ajax({
             type: 'GET',
             url: "http://meteorite.bi/content.json",
@@ -155,12 +157,32 @@ var SplashScreen = Backbone.View.extend({
 
                 $(that.el).find("#dyn_content").html(json.item[0].content);
                 $(that.el).find(".responsive-container").fitVids();
-                $(".enterprisetoggle").css("visibility", "hidden");
+                license.fetch_license('api/license/', function (opt) {
+                    //$(self.el).html(self.template()).appendTo($('body'));
+                    $(self.el).html(self.template());
+
+                    if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
+
+                        $(".enterprisetoggle").css("visibility", "hidden");
+
+
+                    }
+                });
 
             },
             error: function(e) {
 
-                $(".enterprisetoggle").css("visibility", "hidden");
+                license.fetch_license('api/license/', function (opt) {
+                    //$(self.el).html(self.template()).appendTo($('body'));
+                    $(self.el).html(self.template());
+
+                    if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
+
+                        $(".enterprisetoggle").css("visibility", "hidden");
+
+
+                    }
+                });
 
             }
         });
