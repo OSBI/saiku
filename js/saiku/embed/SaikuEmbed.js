@@ -157,7 +157,7 @@ var SaikuClient = (function() {
 	};
 
 	/**
-	 * Instance of SaikuTableRenderer, SaikuChartRenderer and SaikuPlaygroundRenderer
+	 * Instance of SaikuTableRenderer and SaikuChartRenderer
 	 *
 	 * @property _saikuRendererFactory
 	 * @type {Object}
@@ -165,14 +165,13 @@ var SaikuClient = (function() {
 	 * @default 
 	 * 		{ 
 	 *      	'table': SaikuTableRenderer, 
-	 *          'chart': SaikuChartRenderer 
-	 *          'playground': SaikuPlaygroundRenderer
+	 *          'chart': SaikuChartRenderer
 	 *      }
 	 */
 	var _saikuRendererFactory = {
 		'table': SaikuTableRenderer,
 		'chart': SaikuChartRenderer,
-		'playground': SaikuPlaygroundRenderer
+		'playground': typeof SaikuPlaygroundRenderer !== 'undefined' ? SaikuPlaygroundRenderer : ''
 	};
 	
 	/**
