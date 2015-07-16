@@ -4,11 +4,11 @@
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saiku</groupId>
-        <version>3.3-SNAPSHOT</version>
+        <version>3.3.1-SNAPSHOT</version>
     </parent>
     <groupId>bi.meteorite</groupId>
     <artifactId>saiku-web-tests</artifactId>
-    <version>3.3-SNAPSHOT</version>
+    <version>3.3.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>saiku web tests for integration testing</name>
