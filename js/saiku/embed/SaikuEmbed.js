@@ -300,8 +300,11 @@ var SaikuClient = (function() {
 					var parametersLevels;
 
 					if (self.settings.dashboards) {
-						renderMode = options.render;
-						mode = options.mode;
+						if (options.dropDashboards === undefined) {
+							renderMode = options.render;
+							mode = options.mode;
+						}
+
 						parametersLevels = joinParameters(dataSchema, dataAxis);
 						$(options.htmlObject).closest('.gs-w').data('parametersLevels', JSON.stringify(parametersLevels));
 						$(options.htmlObject).closest('.gs-w').data('parametersValues', JSON.stringify(parametersValues));
@@ -314,8 +317,15 @@ var SaikuClient = (function() {
 							$(options.htmlObject).closest('.gs-w').data('render', options.render);
 							$(options.htmlObject).closest('.gs-w').data('mode', options.mode);
 						}
+						else if (options.dropDashboards) {
+							$(options.htmlObject).closest('.gs-w').data('file', options.file);
+							$(options.htmlObject).closest('.gs-w').data('htmlobject', options.htmlObject);
+							$(options.htmlObject).closest('.gs-w').data('render', renderMode);
+							$(options.htmlObject).closest('.gs-w').data('mode', mode);
+						}
 					}
 
+					options['render'] = renderMode;
 					options['mode'] = mode;
 
 					if (options.render in _saikuRendererFactory) {
