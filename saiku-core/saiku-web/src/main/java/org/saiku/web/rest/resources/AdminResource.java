@@ -349,7 +349,7 @@ public class AdminResource {
 
         return Response
             .ok(p.getBytes(), MediaType.APPLICATION_OCTET_STREAM)
-            .header("content-disposition","attachment; filename = "+ id)
+            .header("content-disposition", "attachment; filename = " + id)
             .build();
     }
 
@@ -434,7 +434,12 @@ public class AdminResource {
         if(!userService.isAdmin()){
             return Response.status(Response.Status.FORBIDDEN).build();
         }
-        return Response.ok().entity(userService.updateUser(jsonString, false)).build();
+        if(jsonString.getPassword() == null || jsonString.getPassword().equals("")) {
+            return Response.ok().entity(userService.updateUser(jsonString, false)).build();
+        }
+        else{
+            return Response.ok().entity(userService.updateUser(jsonString, true)).build();
+        }
     }
 
     /**
