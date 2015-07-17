@@ -290,6 +290,7 @@ var SaikuClient = (function() {
 				if (data.query && data.height > 0 && data.width > 0) {
 					var renderMode = data.query.properties['saiku.ui.render.mode'] ? data.query.properties['saiku.ui.render.mode'] : options.render;
 					var mode = data.query.properties['saiku.ui.render.type'] ? data.query.properties['saiku.ui.render.type'] : options.mode;
+					var chartDefinition = data.query.properties['saiku.ui.chart.options'] ? data.query.properties['saiku.ui.chart.options'].chartDefinition : '';
 					var dataSchema = data.query.cube.uniqueName;
 					var dataAxis = {
 						dataFilter: data.query.queryModel.axes.FILTER['hierarchies'],
@@ -316,12 +317,23 @@ var SaikuClient = (function() {
 							$(options.htmlObject).closest('.gs-w').data('htmlobject', options.htmlObject);
 							$(options.htmlObject).closest('.gs-w').data('render', options.render);
 							$(options.htmlObject).closest('.gs-w').data('mode', options.mode);
+							$(options.htmlObject).closest('.gs-w').data('chartDefinition', JSON.stringify(options.chartDefinition));
 						}
 						else if (options.dropDashboards) {
-							$(options.htmlObject).closest('.gs-w').data('file', options.file);
-							$(options.htmlObject).closest('.gs-w').data('htmlobject', options.htmlObject);
-							$(options.htmlObject).closest('.gs-w').data('render', renderMode);
-							$(options.htmlObject).closest('.gs-w').data('mode', mode);
+							if (!(_.isEmpty(chartDefinition))) {
+								options['chartDefinition'] = chartDefinition;
+								$(options.htmlObject).closest('.gs-w').data('file', options.file);
+								$(options.htmlObject).closest('.gs-w').data('htmlobject', options.htmlObject);
+								$(options.htmlObject).closest('.gs-w').data('render', renderMode);
+								$(options.htmlObject).closest('.gs-w').data('mode', mode);
+								$(options.htmlObject).closest('.gs-w').data('chartDefinition', JSON.stringify(chartDefinition));
+							}
+							else {
+								$(options.htmlObject).closest('.gs-w').data('file', options.file);
+								$(options.htmlObject).closest('.gs-w').data('htmlobject', options.htmlObject);
+								$(options.htmlObject).closest('.gs-w').data('render', renderMode);
+								$(options.htmlObject).closest('.gs-w').data('mode', mode);
+							}
 						}
 					}
 
