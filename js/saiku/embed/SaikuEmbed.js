@@ -287,6 +287,7 @@ var SaikuClient = (function() {
 				}
 			},
 			success: function(data, textStatus, jqXHR) {
+				console.log(data);
 				if (data.query && data.height > 0 && data.width > 0) {
 					var renderMode = data.query.properties['saiku.ui.render.mode'] ? data.query.properties['saiku.ui.render.mode'] : options.render;
 					var mode = data.query.properties['saiku.ui.render.type'] ? data.query.properties['saiku.ui.render.type'] : options.mode;
@@ -333,6 +334,7 @@ var SaikuClient = (function() {
 								$(options.htmlObject).closest('.gs-w').data('htmlobject', options.htmlObject);
 								$(options.htmlObject).closest('.gs-w').data('render', renderMode);
 								$(options.htmlObject).closest('.gs-w').data('mode', mode);
+								$(options.htmlObject).closest('.gs-w').data('chartDefinition', '');
 							}
 						}
 					}
