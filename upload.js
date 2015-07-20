@@ -98,7 +98,7 @@ var upload = (function($, window, document, undefined) {
                 error: function(jqXHR, status, errorThrown) {
                     module._clearInputFile();
                     module._loadingButton(false);
-                    module._backLogin(false);
+                    // module._backLogin(false);
                     callback('alert-danger', 'Error while uploading the file: (' + errorThrown + ')');
                 }
             });
@@ -114,6 +114,7 @@ var upload = (function($, window, document, undefined) {
                     $('.form-upload p').text('Drag your license or click in this area.');
                 }
                 else {
+                    // module._backLogin(false);
                     module._notifyUser('alert-danger', 'Oops... Select a file!');
                 }
             });
