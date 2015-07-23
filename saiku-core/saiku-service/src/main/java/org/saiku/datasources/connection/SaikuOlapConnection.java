@@ -17,13 +17,12 @@ package org.saiku.datasources.connection;
 
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
-
-import javax.servlet.ServletContext;
 
 import mondrian.rolap.RolapConnection;
 
@@ -31,8 +30,6 @@ import static org.saiku.datasources.connection.encrypt.CryptoUtil.decrypt;
 
 public class SaikuOlapConnection implements ISaikuConnection {
 
-  @Autowired
-  ServletContext servletContext;
 
 
   private String name;
@@ -43,13 +40,8 @@ public class SaikuOlapConnection implements ISaikuConnection {
   private String password;
   private String passwordenc;
 
-  public ServletContext getServletContext() {
-    return servletContext;
-  }
+  private static final Logger log = LoggerFactory.getLogger(SaikuOlapConnection.class);
 
-  public void setServletContext(ServletContext servletContext) {
-    this.servletContext = servletContext;
-  }
 
     public SaikuOlapConnection( String name, Properties props ) {
     this.name = name;
@@ -76,15 +68,15 @@ public class SaikuOlapConnection implements ISaikuConnection {
   }
 
   public boolean connect( Properties props ) throws Exception {
-        String safemode = null;
+          String safemode = null;
             try {
-              safemode = servletContext.getInitParameter("safemode");
-
+              safemode = System.getProperty("saiku.safemode");
             }
             catch(Exception e){
              //Safemode doesn't exist, not a problem.
             }
         if(safemode!= null && safemode.equals("true")) {
+          log.debug("Not starting connection "+name+", Saiku in safe mode");
           return false;
         }
     else {
@@ -94,10 +86,6 @@ public class SaikuOlapConnection implements ISaikuConnection {
           this.passwordenc = props.getProperty(ISaikuConnection.PASSWORD_ENCRYPT_KEY);
           this.properties = props;
           String url = props.getProperty(ISaikuConnection.URL_KEY);
-          System.out.println("name:" + name);
-          System.out.println("driver:" + driver);
-          System.out.println("url:" + url);
-          System.out.flush();
 
 
           if (this.passwordenc != null && this.passwordenc.equals("true")) {
