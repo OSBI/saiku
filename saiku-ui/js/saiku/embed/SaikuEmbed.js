@@ -157,7 +157,7 @@ var SaikuClient = (function() {
 	};
 
 	/**
-	 * Instance of SaikuTableRenderer, SaikuChartRenderer and SaikuPlaygroundRenderer
+	 * Instance of SaikuTableRenderer and SaikuChartRenderer
 	 *
 	 * @property _saikuRendererFactory
 	 * @type {Object}
@@ -165,14 +165,13 @@ var SaikuClient = (function() {
 	 * @default 
 	 * 		{ 
 	 *      	'table': SaikuTableRenderer, 
-	 *          'chart': SaikuChartRenderer 
-	 *          'playground': SaikuPlaygroundRenderer
+	 *          'chart': SaikuChartRenderer
 	 *      }
 	 */
 	var _saikuRendererFactory = {
 		'table': SaikuTableRenderer,
 		'chart': SaikuChartRenderer,
-		'playground': SaikuPlaygroundRenderer
+		'playground': typeof SaikuPlaygroundRenderer !== 'undefined' ? SaikuPlaygroundRenderer : ''
 	};
 	
 	/**
@@ -291,6 +290,7 @@ var SaikuClient = (function() {
 				if (data.query && data.height > 0 && data.width > 0) {
 					var renderMode = data.query.properties['saiku.ui.render.mode'] ? data.query.properties['saiku.ui.render.mode'] : options.render;
 					var mode = data.query.properties['saiku.ui.render.type'] ? data.query.properties['saiku.ui.render.type'] : options.mode;
+					var chartDefinition = data.query.properties['saiku.ui.chart.options'] ? data.query.properties['saiku.ui.chart.options'].chartDefinition : '';
 					var dataSchema = data.query.cube.uniqueName;
 					var dataAxis = {
 						dataFilter: data.query.queryModel.axes.FILTER['hierarchies'],
@@ -301,8 +301,11 @@ var SaikuClient = (function() {
 					var parametersLevels;
 
 					if (self.settings.dashboards) {
-						renderMode = options.render;
-						mode = options.mode;
+						if (options.dropDashboards === undefined) {
+							renderMode = options.render;
+							mode = options.mode;
+						}
+
 						parametersLevels = joinParameters(dataSchema, dataAxis);
 						$(options.htmlObject).closest('.gs-w').data('parametersLevels', JSON.stringify(parametersLevels));
 						$(options.htmlObject).closest('.gs-w').data('parametersValues', JSON.stringify(parametersValues));
@@ -314,9 +317,28 @@ var SaikuClient = (function() {
 							$(options.htmlObject).closest('.gs-w').data('htmlobject', options.htmlObject);
 							$(options.htmlObject).closest('.gs-w').data('render', options.render);
 							$(options.htmlObject).closest('.gs-w').data('mode', options.mode);
+							$(options.htmlObject).closest('.gs-w').data('chartDefinition', JSON.stringify(options.chartDefinition));
+						}
+						else if (options.dropDashboards) {
+							if (!(_.isEmpty(chartDefinition))) {
+								options['chartDefinition'] = chartDefinition;
+								$(options.htmlObject).closest('.gs-w').data('file', options.file);
+								$(options.htmlObject).closest('.gs-w').data('htmlobject', options.htmlObject);
+								$(options.htmlObject).closest('.gs-w').data('render', renderMode);
+								$(options.htmlObject).closest('.gs-w').data('mode', mode);
+								$(options.htmlObject).closest('.gs-w').data('chartDefinition', JSON.stringify(chartDefinition));
+							}
+							else {
+								$(options.htmlObject).closest('.gs-w').data('file', options.file);
+								$(options.htmlObject).closest('.gs-w').data('htmlobject', options.htmlObject);
+								$(options.htmlObject).closest('.gs-w').data('render', renderMode);
+								$(options.htmlObject).closest('.gs-w').data('mode', mode);
+								$(options.htmlObject).closest('.gs-w').data('chartDefinition', '');
+							}
 						}
 					}
 
+					options['render'] = renderMode;
 					options['mode'] = mode;
 
 					if (options.render in _saikuRendererFactory) {
