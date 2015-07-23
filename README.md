@@ -5,7 +5,7 @@ SAIKU
 ---------------
 *BUILDING*
 
-mvn clean install -DskipTest
+mvn clean install -DskipTests
 
 
 *Issue Tracker: http://jira.meteorite.bi*
