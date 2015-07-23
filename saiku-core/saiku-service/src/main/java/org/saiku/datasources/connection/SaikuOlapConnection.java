@@ -17,16 +17,23 @@ package org.saiku.datasources.connection;
 
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
+
+import javax.servlet.ServletContext;
 
 import mondrian.rolap.RolapConnection;
 
 import static org.saiku.datasources.connection.encrypt.CryptoUtil.decrypt;
 
 public class SaikuOlapConnection implements ISaikuConnection {
+
+  @Autowired
+  ServletContext servletContext;
+
 
   private String name;
   private boolean initialized = false;
@@ -35,6 +42,14 @@ public class SaikuOlapConnection implements ISaikuConnection {
   private String username;
   private String password;
   private String passwordenc;
+
+  public ServletContext getServletContext() {
+    return servletContext;
+  }
+
+  public void setServletContext(ServletContext servletContext) {
+    this.servletContext = servletContext;
+  }
 
     public SaikuOlapConnection( String name, Properties props ) {
     this.name = name;
@@ -61,55 +76,68 @@ public class SaikuOlapConnection implements ISaikuConnection {
   }
 
   public boolean connect( Properties props ) throws Exception {
-    this.username = props.getProperty( ISaikuConnection.USERNAME_KEY );
-    this.password = props.getProperty( ISaikuConnection.PASSWORD_KEY );
-    String driver = props.getProperty( ISaikuConnection.DRIVER_KEY );
-    this.passwordenc = props.getProperty(ISaikuConnection.PASSWORD_ENCRYPT_KEY);
-    this.properties = props;
-    String url = props.getProperty( ISaikuConnection.URL_KEY );
-    System.out.println( "name:" + name );
-    System.out.println( "driver:" + driver );
-    System.out.println( "url:" + url );
-    System.out.flush();
+        String safemode = null;
+            try {
+              safemode = servletContext.getInitParameter("safemode");
+
+            }
+            catch(Exception e){
+             //Safemode doesn't exist, not a problem.
+            }
+        if(safemode!= null && safemode.equals("true")) {
+          return false;
+        }
+    else {
+          this.username = props.getProperty(ISaikuConnection.USERNAME_KEY);
+          this.password = props.getProperty(ISaikuConnection.PASSWORD_KEY);
+          String driver = props.getProperty(ISaikuConnection.DRIVER_KEY);
+          this.passwordenc = props.getProperty(ISaikuConnection.PASSWORD_ENCRYPT_KEY);
+          this.properties = props;
+          String url = props.getProperty(ISaikuConnection.URL_KEY);
+          System.out.println("name:" + name);
+          System.out.println("driver:" + driver);
+          System.out.println("url:" + url);
+          System.out.flush();
 
 
-      if(this.passwordenc != null && this.passwordenc.equals("true")){
-          this.password = decryptPassword(password);
-      }
-      if(url.contains("Mondrian=4")){
-          url=url.replace("Mondrian=4; ", "");
-          url= url.replace("jdbc:mondrian", "jdbc:mondrian4");
-      }
-    if ( url.length() > 0 && url.charAt( url.length() - 1 ) != ';' ) {
-      url += ";";
-    }
-    if ( driver.equals( "mondrian.olap4j.MondrianOlap4jDriver" ) ) {
-      if ( username != null && username.length() > 0 ) {
-        url += "JdbcUser=" + username + ";";
-      }
-      if ( password != null && password.length() > 0 ) {
-        url += "JdbcPassword=" + password + ";";
-      }
-    }
+          if (this.passwordenc != null && this.passwordenc.equals("true")) {
+            this.password = decryptPassword(password);
+          }
+          if (url.contains("Mondrian=4")) {
+            url = url.replace("Mondrian=4; ", "");
+            url = url.replace("jdbc:mondrian", "jdbc:mondrian4");
+          }
+          if (url.length() > 0 && url.charAt(url.length() - 1) != ';') {
+            url += ";";
+          }
+          if (driver.equals("mondrian.olap4j.MondrianOlap4jDriver")) {
+            if (username != null && username.length() > 0) {
+              url += "JdbcUser=" + username + ";";
+            }
+            if (password != null && password.length() > 0) {
+              url += "JdbcPassword=" + password + ";";
+            }
+          }
 
-    Class.forName( driver );
-    Connection connection = DriverManager.getConnection(url, username, password);
+          Class.forName(driver);
+          Connection connection = DriverManager.getConnection(url, username, password);
 
-    if(connection!=null) {
-      final OlapWrapper wrapper = (OlapWrapper) connection;
-      OlapConnection tmpolapConnection = wrapper.unwrap(OlapConnection.class);
+          if (connection != null) {
+            final OlapWrapper wrapper = (OlapWrapper) connection;
+            OlapConnection tmpolapConnection = wrapper.unwrap(OlapConnection.class);
 
-      if (tmpolapConnection == null) {
-        throw new Exception("Connection is null");
-      }
+            if (tmpolapConnection == null) {
+              throw new Exception("Connection is null");
+            }
 
-      System.out.println("Catalogs:" + tmpolapConnection.getOlapCatalogs().size());
-      olapConnection = tmpolapConnection;
-      initialized = true;
-      return true;
-    }
+            System.out.println("Catalogs:" + tmpolapConnection.getOlapCatalogs().size());
+            olapConnection = tmpolapConnection;
+            initialized = true;
+            return true;
+          }
 
-    return false;
+          return false;
+        }
   }
 
   public boolean clearCache() throws Exception {
