@@ -103,6 +103,13 @@ var SaveQuery = Modal.extend({
                 repoObjects: repository
             } )
         );
+
+        this.context_menu_disabled();
+    },
+
+    context_menu_disabled: function() {
+        this.$el.find('.RepositoryObjects').find('.folder_row').addClass('context-menu-disabled');
+        this.$el.find('.RepositoryObjects').find('.query').addClass('context-menu-disabled');
     },
 
     select_root_folder: function( event ) {
