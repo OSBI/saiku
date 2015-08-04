@@ -24,12 +24,12 @@ var DateFilterModal = Modal.extend({
 		{ text: 'Clear', method: 'clear_date_filter' },
 		{ text: 'Save', method: 'save' },
 		{ text: 'Open Standard Filter', method: 'open_standard_filter' },
-		{ text: 'Cancel', method: 'finished' }
+		{ text: 'Cancel', method: 'finished' },
+        { text: 'Help', method: 'help' }
 	],
 
 	events: {
 		'click a': 'call',
-		'click .button-help'     : 'open_help',
 		'focus .selection-date'  : 'selection_date',
 		'click .selection-radio' : 'disable_divselections',
 		'click .operator-radio'  : 'show_fields',
@@ -49,7 +49,6 @@ var DateFilterModal = Modal.extend({
 	template_last_mdx: '{parent} LastPeriods({periodAmount}, CurrentDateMember([{dimension}.{hierarchy}], \'["{dimension}.{hierarchy}"]\\\.{analyzerDateFormat}\', EXACT))',
 
 	template_dialog: _.template(
-		'<a href="#open_help" class="button-help"></a>' +
 		'<div class="box-selections">' +
 			'<div class="selection-option">' +
 				'<input type="radio" class="selection-radio" name="selection-radio" id="selection-radio-operator" level-type="TIME_DAYS" disabled>' +
@@ -209,20 +208,12 @@ var DateFilterModal = Modal.extend({
 
 		// Populate date filter
 		this.populate();
-
-		// TODO: Update this code and function open_help()
-		this.clickHelp = 0;
 	},
 
-	open_help: function(event) {
-		event.preventDefault();
-		
-		this.clickHelp++;
-
-		if (this.clickHelp === 1) {
-			window.open('http://wiki.meteorite.bi/display/SAIK/Advanced+Date+Filtering', '_blank');
-		}
-	},
+    help: function(event) {
+        event.preventDefault();
+        window.open('http://wiki.meteorite.bi/display/SAIK/Advanced+Date+Filtering');
+    },
 
 	open_standard_filter: function(event) {
 		event.preventDefault();

@@ -102,4 +102,6 @@ public class MondrianStats {
 		return statements;
 	}
 
+  public MondrianVersion getVersion() { return mondrianVersion; }
+
 }
