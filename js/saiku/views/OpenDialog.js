@@ -104,6 +104,11 @@ var OpenDialog = Modal.extend({
             } );
         }
         getQueries( repository );
+        this.context_menu_disabled();
+    },
+
+    context_menu_disabled: function() {
+        this.$el.find('.RepositoryObjects').find('.folder_row, .query').addClass('context-menu-disabled');
     },
 
     select_root_folder: function( event ) {
