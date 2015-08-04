@@ -972,7 +972,7 @@ if(Saiku.session.isAdmin) {
         .click(Saiku.AdminConsole.show_admin)
         .addClass('admin');
     var $li = $("<li />").append($link);
-    $(Saiku.toolbar.el).find('ul').append($li);
+    $(Saiku.toolbar.el).find('ul').append($li).append('<li class="separator">&nbsp;</li>');
 
 }
 });
