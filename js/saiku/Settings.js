@@ -67,7 +67,8 @@ var Settings = {
     UPGRADE: true,
     EVALUATION_PANEL_LOGIN: true,
     QUERY_OVERWRITE_WARNING: true,
-    MAPS: true
+    MAPS: true,
+    MAPS_TYPE: 'OSM' // OSM || GMAPS
 };
 
 /**
