@@ -61,7 +61,7 @@
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>mondrian</artifactId>
-			<version>4.3.0.0-R-patched</version>
+			<version>4.3.0.1-130</version>
 		</dependency>
 		<dependency>
 			<groupId>eigenbase</groupId>

@@ -8,12 +8,11 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import javax.servlet.ServletContext;
 
@@ -21,35 +20,41 @@ public class JdbcUserDAO
         extends JdbcDaoSupport
         implements UserDAO
 {
+
+    Properties prop = new Properties();
+    ClassLoader loader = Thread.currentThread().getContextClassLoader();
     BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     @Autowired
     private ServletContext servletContext;
 
-    public ServletContext getServletContext() {
-        return servletContext;
-    }
 
-    public void setServletContext(ServletContext servletContext) {
-        this.servletContext = servletContext;
+    public JdbcUserDAO() {
+        InputStream stream = loader.getResourceAsStream("../database-queries.properties");
+        try {
+            prop.load(stream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     public SaikuUser insert(SaikuUser user)
     {
-        String sql = "INSERT INTO users(username,password,email, enabled)\nVALUES (?,?,?,?);";
+        String sql = prop.getProperty("insertUser");
         String encrypt = servletContext.getInitParameter("db.encryptpassword");
 
         if(encrypt.equals("true")){
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-        String newsql = "SELECT MAX(USER_ID) from USERS where username = ?";
-        getJdbcTemplate().update(sql, new Object[] { user.getUsername(), user.getPassword(), user.getEmail(), Boolean.valueOf(true) });
+        String newsql = prop.getProperty("maxUser");
+        getJdbcTemplate().update(sql, user.getUsername(), user.getPassword(), user.getEmail(), Boolean.valueOf(true));
 
-        Integer name = (Integer)getJdbcTemplate().queryForObject(newsql, new Object[] { user.getUsername() }, Integer.class);
+        Integer name = getJdbcTemplate().queryForObject(newsql, new Object[] { user.getUsername() }, Integer.class);
 
-        String updatesql = "UPDATE USER_ROLES set user_id = ? where user_id = ?";
+        String updatesql = prop.getProperty("updateRole");
 
-        getJdbcTemplate().update(updatesql, new Object[] { name, Integer.valueOf(user.getId()) });
+        getJdbcTemplate().update(updatesql, name, Integer.valueOf(user.getId()));
 
-        user.setId(name.intValue());
+        user.setId(name);
 
         insertRole(user);
         return user;
@@ -57,16 +62,16 @@ public class JdbcUserDAO
 
     public void insertRole(SaikuUser user)
     {
-        String sql = "INSERT INTO user_roles(user_id,username, role)\nVALUES (?,?,?);";
-        String removeSQL = "DELETE FROM user_roles where user_id = ?";
+        String sql = prop.getProperty("insertRole");
+        String removeSQL = prop.getProperty("deleteRole");
 
-        getJdbcTemplate().update(removeSQL, new Object[] {user.getId()});
+        getJdbcTemplate().update(removeSQL, user.getId());
 
         if(user.getRoles()!=null) {
             for (String r : user.getRoles()) {
                 if (r != null) {
                     getJdbcTemplate()
-                        .update(sql, new Object[] { Integer.valueOf(user.getId()), user.getUsername(), r });
+                        .update(sql, Integer.valueOf(user.getId()), user.getUsername(), r);
                 }
             }
         }
@@ -75,28 +80,29 @@ public class JdbcUserDAO
 
     public void deleteUser(SaikuUser user)
     {
-        String sql = "DELETE FROM USER_ROLES where USER_ID IN(SELECT USER_ID FROM USERS where USERS.USERNAME = ?);";
-        String sql2 = "DELETE FROM USERS where USERNAME=?";
-        getJdbcTemplate().update(sql, new Object[] { user.getUsername() });
-        getJdbcTemplate().update(sql2, new Object[] { user.getUsername() });
+        String sql = prop.getProperty("deleteRoleByUserName");
+        String sql2 = prop.getProperty("deleteUserByUserName");
+        getJdbcTemplate().update(sql, user.getUsername());
+        getJdbcTemplate().update(sql2, user.getUsername());
     }
 
     public void deleteRole(SaikuUser user)
     {
         String role = "";
-        String sql = "DELETE FROM USER_ROLES where USER_ID = ? and ROLE = ?";
-        getJdbcTemplate().update(sql, new Object[] { Integer.valueOf(user.getId()), role });
+        String sql = prop.getProperty("deleteRoleByRoleAndUser");
+        getJdbcTemplate().update(sql, Integer.valueOf(user.getId()), role);
     }
 
     public String[] getRoles(SaikuUser user)
     {
-        String sql = "SELECT GROUP_CONCAT(ROLE) as ROLES from USER_ROLES where USER_ID = ?";
-        String roles = (String)getJdbcTemplate().queryForObject(sql, new Object[] { Integer.valueOf(user.getId()) }, String.class);
+        String sql = prop.getProperty("getRole");
+        String roles =
+            getJdbcTemplate().queryForObject(sql, new Object[] { user.getId() }, String.class);
         if (roles != null)
         {
             List<String> list = new ArrayList(Arrays.asList(roles.split(",")));
             String[] stockArr = new String[list.size()];
-            return (String[])list.toArray(stockArr);
+            return list.toArray(stockArr);
         }
         return null;
     }
@@ -104,55 +110,52 @@ public class JdbcUserDAO
     public SaikuUser findByUserId(int userId)
     {
 
-        return (SaikuUser) getJdbcTemplate().query("select T.USER_ID, t.USERNAME, t.PASSWORD, t.email, t.ENABLED,GROUP_CONCAT(ROLE) as ROLES from USERS t " +
-                "inner join (\nselect MAX(USERS.USER_ID) ID, USERS.USERNAME from USERS group by USERS.USERNAME) tm on t.USER_ID = tm.ID\n" +
-                "left join (select USER_ID, ROLE from USER_ROLES) ur on t.USER_ID = ur.USER_ID where t.user_id = ? GROUP BY t.USER_ID", new Object[] { Integer.valueOf(userId) }, new UserMapper()).get(0);
+        return (SaikuUser) getJdbcTemplate().query(prop.getProperty("getUserById"),
+            new Object[] { userId }, new UserMapper()).get(0);
     }
 
     public Collection findAllUsers()
     {
-        return getJdbcTemplate().query("select T.USER_ID, t.USERNAME, t.PASSWORD, t.email, t.ENABLED,GROUP_CONCAT(ROLE) as ROLES from USERS t " +
-                "inner join (\nselect MAX(USERS.USER_ID) ID, USERS.USERNAME from USERS group by USERS.USERNAME) tm on t.USER_ID = tm.ID\n" +
-                "left join (select USER_ID, ROLE from USER_ROLES) ur on t.USER_ID = ur.USER_ID\nGROUP BY t.USER_ID", new UserMapper());
+        return getJdbcTemplate().query(prop.getProperty("getAllUsers"), new UserMapper());
     }
 
     public void deleteUser(String username)
     {
-        String newsql = "DELETE from USERS where USER_ID = ?";
-        getJdbcTemplate().update(newsql, new Object[] { username });
+        String newsql = prop.getProperty("deleteUserById");
+        getJdbcTemplate().update(newsql, username);
     }
 
     public SaikuUser updateUser(SaikuUser user, boolean updatepassword) {
         String sql;
         if(updatepassword) {
-            sql = "UPDATE users set username = ?,password =?,email =? , enabled = ? where user_id = ?;";
+            sql = prop.getProperty("updateUserWithPassword");
         }
         else{
-            sql = "UPDATE users set username = ?,email =? , enabled = ? where user_id = ?;";
+            sql = prop.getProperty("updateUser");
         }
 
-        String newsql = "SELECT MAX(USER_ID) from USERS where username = ?";
+        String newsql = prop.getProperty("maxUser");
         String encrypt = servletContext.getInitParameter("db.encryptpassword");
         if(encrypt.equals("true")){
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         if(updatepassword){
-            getJdbcTemplate().update(sql, new Object[] { user.getUsername(), user.getPassword(), user.getEmail(),
-                Boolean.valueOf(true), user.getId()});
+            getJdbcTemplate().update(sql, user.getUsername(), user.getPassword(), user.getEmail(),
+                Boolean.valueOf(true), user.getId());
         }
         else{
-            getJdbcTemplate().update(sql, new Object[] { user.getUsername(), user.getEmail(),
-                Boolean.valueOf(true), user.getId()});
+            getJdbcTemplate().update(sql, user.getUsername(), user.getEmail(),
+                Boolean.valueOf(true), user.getId());
         }
 
 
-        Integer name = (Integer)getJdbcTemplate().queryForObject(newsql, new Object[] { user.getUsername() }, Integer.class);
+        Integer name = getJdbcTemplate().queryForObject(newsql, new Object[] { user.getUsername() }, Integer.class);
 
-        String updatesql = "UPDATE USER_ROLES set user_id = ? where user_id = ?";
+        String updatesql = prop.getProperty("updateRole");
 
-        getJdbcTemplate().update(updatesql, new Object[] { name, Integer.valueOf(user.getId()) });
+        getJdbcTemplate().update(updatesql, name, Integer.valueOf(user.getId()));
 
-        user.setId(name.intValue());
+        user.setId(name);
 
         insertRole(user);
         return user;
@@ -177,10 +180,18 @@ public class JdbcUserDAO
             {
                 List<String> list = new ArrayList(Arrays.asList(rs.getString("ROLES").split(",")));
                 String[] stockArr = new String[list.size()];
-                stockArr = (String[])list.toArray(stockArr);
+                stockArr = list.toArray(stockArr);
                 user.setRoles(stockArr);
             }
             return user;
         }
+    }
+
+    public ServletContext getServletContext() {
+        return servletContext;
+    }
+
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
     }
 }

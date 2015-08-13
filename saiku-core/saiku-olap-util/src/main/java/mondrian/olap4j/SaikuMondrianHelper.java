@@ -18,6 +18,7 @@ package mondrian.olap4j;
 import org.olap4j.*;
 import org.olap4j.Position;
 import org.olap4j.metadata.Level;
+import org.olap4j.metadata.Measure;
 import org.olap4j.metadata.MetadataElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +35,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import mondrian.olap.*;
-import mondrian.rolap.RolapConnection;
-import mondrian.rolap.RolapCubeDimension;
+import mondrian.rolap.*;
 
 public class SaikuMondrianHelper {
 	
@@ -126,7 +126,33 @@ public class SaikuMondrianHelper {
 		Map<String, Annotation> a = getAnnotations(level);
 		return a.containsKey(key);
 	}
-	
+
+  	public boolean isHanger(org.olap4j.metadata.Dimension dimension){
+	  if(isMondrian(dimension)){
+		RolapCubeDimension dim = (RolapCubeDimension) dimension;
+		return DimensionLookup.getHanger(dim);
+	  }
+		return false;
+	}
+
+  public static String getMeasureGroup(Measure measure){
+	if(isMondrian(measure)){
+	  MondrianOlap4jMeasure	m = (MondrianOlap4jMeasure) measure;
+
+	  try {
+		return ((RolapBaseCubeMeasure) m.member).getMeasureGroup().getName();
+	  }
+	  catch(Exception e){
+		return null;
+	  }
+	}
+	return null;
+  }
+
+  public static boolean isHanger(RolapCubeDimension dimension){
+	  return DimensionLookup.getHanger(dimension);
+
+  }
 	public  static ResultSet getSQLMemberLookup(OlapConnection con, String annotation, Level level, String search) throws SQLException {
 		if (hasAnnotation(level, annotation)) {
 			Map<String, Annotation> ann = getAnnotations(level);
@@ -157,7 +183,7 @@ public class SaikuMondrianHelper {
 	try {
 	  String l = null;
 	  RolapCubeDimension o = (RolapCubeDimension) ((MondrianOlap4jDimension) level.getDimension()).getOlapElement();
-	  if(o.getHanger()){
+	  if(isHanger(o)){
 		l = level.getHierarchy().getUniqueName();
 	  }
 	  else{
