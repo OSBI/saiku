@@ -40,7 +40,8 @@ var RepositoryObject = Backbone.Model.extend({
     parse: function(response) {
         if (this.dialog) {
             this.dialog.generate_grids_reports(response);
-        return response;
+            return response;
+        }
     },
 
     url: function() {
