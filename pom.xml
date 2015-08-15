@@ -637,7 +637,7 @@
             <dependency>
                 <groupId>pentaho</groupId>
                 <artifactId>mondrian</artifactId>
-                <version>4.3.0.1-130</version>
+                <version>4.3.0.1-SPARK</version>
             </dependency>
             <!-- Spring modules -->
             <dependency>
@@ -991,12 +991,22 @@
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-                <version>1.4.177</version>
+                <version>1.4.188</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
                 <version>4.3-alpha1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hive</groupId>
+                <artifactId>hive-jdbc</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hive</groupId>
+                <artifactId>hive-cli</artifactId>
+                <version>1.0.0</version>
             </dependency>
 
             <dependency>
