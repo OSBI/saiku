@@ -245,7 +245,15 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
       
     }
 
-    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
+  public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles) {
+    return null;
+  }
+
+  public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles, String path) {
+    return null;
+  }
+
+  public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
         return null;
     }
 

@@ -304,7 +304,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         }
     }
 
-    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
+    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles) {
         try {
             return irm.getAllFiles(type, username, roles);
         } catch (RepositoryException e) {
@@ -313,7 +313,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         return null;
     }
 
-    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles, String path) {
+    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles, String path) {
         try {
             return irm.getAllFiles(type, username, roles, path);
         } catch (RepositoryException e) {

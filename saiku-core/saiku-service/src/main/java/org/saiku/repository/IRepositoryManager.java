@@ -80,9 +80,10 @@ public interface IRepositoryManager {
 
     RepositoryFile getFile(String fileUrl);
 
-    List<IRepositoryObject> getAllFiles(String type, String username, List<String> roles) throws RepositoryException;
+    List<IRepositoryObject> getAllFiles(List<String> type, String username, List<String> roles) throws
+        RepositoryException;
 
-    List<IRepositoryObject> getAllFiles(String type, String username, List<String> roles, String path) throws
+    List<IRepositoryObject> getAllFiles(List<String> type, String username, List<String> roles, String path) throws
         RepositoryException;
 
     void deleteFile(String datasourcePath);

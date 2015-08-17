@@ -24,7 +24,6 @@ import org.saiku.service.util.exception.SaikuServiceException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.api.security.user.Authorizable;
@@ -584,11 +583,12 @@ System.out.println(e.getLocalizedMessage());
     return l;
   }
 
-  public List<IRepositoryObject> getAllFiles(String type, String username, List<String> roles) throws RepositoryException {
+  public List<IRepositoryObject> getAllFiles(List<String> type, String username, List<String> roles) throws
+      RepositoryException {
     return getRepoObjects(root, type, username, roles, false);
   }
 
-  public List<IRepositoryObject> getAllFiles(String type, String username, List<String> roles, String path) throws
+  public List<IRepositoryObject> getAllFiles(List<String> type, String username, List<String> roles, String path) throws
       RepositoryException {
     Node node = JcrUtils.getNodeIfExists(path, session);
     return getRepoObjects(node, type, username, roles, true);
@@ -1048,7 +1048,7 @@ System.out.println(e.getLocalizedMessage());
     }
   }
 
-  private List<IRepositoryObject> getRepoObjects(Node files, String fileType, String username, List<String> roles,
+  private List<IRepositoryObject> getRepoObjects(Node files, List<String> fileType, String username, List<String> roles,
                                                  boolean includeparent) {
     Acl2 acl2 = new Acl2(files);
     acl2.setAdminRoles(userService.getAdminRoles());
@@ -1061,7 +1061,7 @@ System.out.println(e.getLocalizedMessage());
         String filename = files.getName();
 
         if (files.getPrimaryNodeType().getName().equals("nt:file")) {
-          if (StringUtils.isNotEmpty(fileType) && !filename.endsWith(fileType)) {
+          if (fileType!=null && !filename.contains(FilenameUtils.getExtension(filename))) {
 
           } else {
             String extension = FilenameUtils.getExtension(files.getName());
@@ -1096,7 +1096,7 @@ System.out.println(e.getLocalizedMessage());
           if (acl2.canRead(node, username, roles)) {
             List<AclMethod> acls = acl2.getMethods(node, username, roles);
             if (node.getPrimaryNodeType().getName().equals("nt:file")) {
-              if (StringUtils.isNotEmpty(fileType) && !node.getName().endsWith(fileType)) {
+              if (fileType !=null && !fileType.contains(FilenameUtils.getExtension(node.getName()))) {
                 continue;
               }
               String extension = FilenameUtils.getExtension(nodename);
@@ -1141,7 +1141,7 @@ System.out.println(e.getLocalizedMessage());
                 String s2 = (file.getPrimaryNodeType().getName());
 
                 if (file.getPrimaryNodeType().getName().equals("nt:saikufiles")) {
-                  if (StringUtils.isNotEmpty(fileType) && !filename.endsWith(fileType)) {
+                  if (fileType != null && !fileType.contains(FilenameUtils.getExtension(filename))) {
                     continue;
                   }
                   String extension = FilenameUtils.getExtension(nodename);

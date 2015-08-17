@@ -36,6 +36,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -115,14 +116,15 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
 	String[] t = type.split(",");
 	List<IRepositoryObject> l = new ArrayList<IRepositoryObject>();
-	for(String str : t){
+	  List<IRepositoryObject> l2;
 	  if(path==null){
-		l.addAll(datasourceService.getFiles(str, username, roles));
+		l = (datasourceService.getFiles(Arrays.asList(t), username, roles));
 	  }
 	  else{
-		l.addAll(datasourceService.getFiles(str, username, roles, path));
+		l = (datasourceService.getFiles(Arrays.asList(t), username, roles, path));
 	  }
-	}
+
+
 	return l;
 
   }
