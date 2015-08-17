@@ -440,6 +440,8 @@ System.out.println(e.getLocalizedMessage());
       String filename = "./" + path.substring(pos + 1, path.length());
       Node resNode = node.addNode(filename, "nt:folder");
       resNode.addMixin("nt:saikufolders");
+      resNode.getSession().save();
+
       return resNode;
 
     }

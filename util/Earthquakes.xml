@@ -8,12 +8,12 @@
         </Table>
         <Table name='dim_date'>
             <Key>
-                <Column name='DATE_SK'/>
+                <Column name='date_sk'/>
             </Key>
         </Table>
         <Link source='earthquakes' target='dim_date'>
             <ForeignKey>
-                <Column name='DATE_SK'/>
+                <Column name='date_sk'/>
             </ForeignKey>
         </Link>
          </PhysicalSchema>
@@ -35,7 +35,7 @@
 
     <Dimension name="Date" table='dim_date' type='TIME' key="ID">
         <Attributes>
-            <Attribute name='ID' keyColumn='DATE_SK'  hasHierarchy='false'/>
+            <Attribute name='ID' keyColumn='date_sk'  hasHierarchy='false'/>
             <Attribute name='Year' keyColumn='year_number' levelType='TimeYears' hasHierarchy='false'/>
             <Attribute name='Quarter' levelType='TimeQuarters' hasHierarchy='false'>
                 <Key>

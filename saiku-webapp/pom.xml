@@ -16,6 +16,9 @@
         <foodmartrepo>../../data</foodmartrepo>
         <foodmartschema>../../data/FoodMart4.xml</foodmartschema>
         <foodmarturl>jdbc:h2:../../data/foodmart;MODE=MySQL</foodmarturl>
+        <earthquakerepo>../../data</earthquakerepo>
+        <earthquakeschema>../../data/Earthquakes.xml</earthquakeschema>
+        <earthquakeurl>jdbc:h2:../../data/earthquakes;MODE=MySQL</earthquakeurl>
         <pluginpath>../webapps/ROOT/js/saiku/plugins/</pluginpath>
     </properties>
     <build>

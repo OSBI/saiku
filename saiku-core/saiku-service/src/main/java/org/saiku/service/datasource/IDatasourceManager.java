@@ -116,4 +116,15 @@ public interface IDatasourceManager {
   public String getFoodmarturl();
 
 
+  String getEarthquakeUrl();
+
+  String getEarthquakeDir();
+
+  String getEarthquakeSchema();
+
+  void setEarthquakeUrl(String earthquakeUrl);
+
+  void setEarthquakeDir(String earthquakeDir);
+
+  void setEarthquakeSchema(String earthquakeSchema);
 }

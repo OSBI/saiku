@@ -86,14 +86,26 @@
                                 <copy todir="target/dist/saiku-server/data">
                                     <fileset dir="${basedir}/../util">
                                         <include name="FoodMart4.xml" />
+										<include name="Earthquakes.xml" />
                                     </fileset>
                                 </copy>
+								<mkdir dir="target/dist/saiku-server/data/sample_reports" />
+								<copy todir="target/dist/saiku-server/data/sample_reports">
+									<fileset dir="${basedir}/../util/sample_reports">
+									</fileset>
+								</copy>
                                 <unzip dest="target/dist/saiku-server/data/">
                                     <fileset dir="${basedir}/../util/">
                                         <include name="foodmart_h2.sql.zip" />
 
                                     </fileset>
                                 </unzip>
+								<unzip dest="target/dist/saiku-server/data/">
+									<fileset dir="${basedir}/../util/">
+										<include name="earthquakes.sql.zip" />
+
+									</fileset>
+								</unzip>
 
                                 <mkdir dir="target/dist/saiku-server/repository" />
                                 <mkdir dir="target/dist/saiku-server/repository/data" />

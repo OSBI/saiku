@@ -51,6 +51,9 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String foodmarturl;
     private String repopassword;
     private String oldpassword;
+    private String earthquakeurl;
+    private String earthquakedir;
+    private String earthquakeschema;
 
     public void load() {
         irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopassword,
@@ -248,7 +251,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             irm.saveFile(content, path, user, "nt:saikufiles", roles);
             return "Save Okay";
         } catch (RepositoryException e) {
-            log.error("Save Failed",e );
+            log.error("Save Failed", e);
             return "Save Failed: " + e.getLocalizedMessage();
         }
     }
@@ -447,6 +450,31 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public String getFoodmarturl() {
         return foodmarturl;
+    }
+
+    public String getEarthquakeUrl() {
+        return earthquakeurl;
+    }
+
+    public String getEarthquakeDir() {
+        return earthquakedir;
+    }
+
+    public String getEarthquakeSchema() {
+        return earthquakeschema;
+    }
+
+
+    public void setEarthquakeUrl(String earthquakeurl) {
+        this.earthquakeurl = earthquakeurl;
+    }
+
+    public void setEarthquakeDir(String earthquakedir) {
+        this.earthquakedir = earthquakedir;
+    }
+
+    public void setEarthquakeSchema(String earthquakeschema) {
+        this.earthquakeschema = earthquakeschema;
     }
 
     public void setRepoPassword(String password){

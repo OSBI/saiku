@@ -333,6 +333,30 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
     return null;
   }
 
+  public String getEarthquakeUrl() {
+    return null;
+  }
+
+  public String getEarthquakeDir() {
+    return null;
+  }
+
+  public String getEarthquakeSchema() {
+    return null;
+  }
+
+  public void setEarthquakeUrl(String earthquakeUrl) {
+
+  }
+
+  public void setEarthquakeDir(String earthquakeDir) {
+
+  }
+
+  public void setEarthquakeSchema(String earthquakeSchema) {
+
+  }
+
   public String saveFile(String path, String content, String user) {
         return null;
     }
