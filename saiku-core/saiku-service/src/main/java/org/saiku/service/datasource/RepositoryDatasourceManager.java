@@ -51,6 +51,9 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String foodmarturl;
     private String repopassword;
     private String oldpassword;
+    private String earthquakeurl;
+    private String earthquakedir;
+    private String earthquakeschema;
 
     public void load() {
         irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopassword,
@@ -248,7 +251,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             irm.saveFile(content, path, user, "nt:saikufiles", roles);
             return "Save Okay";
         } catch (RepositoryException e) {
-            log.error("Save Failed",e );
+            log.error("Save Failed", e);
             return "Save Failed: " + e.getLocalizedMessage();
         }
     }
@@ -301,7 +304,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         }
     }
 
-    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
+    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles) {
         try {
             return irm.getAllFiles(type, username, roles);
         } catch (RepositoryException e) {
@@ -310,7 +313,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         return null;
     }
 
-    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles, String path) {
+    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles, String path) {
         try {
             return irm.getAllFiles(type, username, roles, path);
         } catch (RepositoryException e) {
@@ -447,6 +450,31 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public String getFoodmarturl() {
         return foodmarturl;
+    }
+
+    public String getEarthquakeUrl() {
+        return earthquakeurl;
+    }
+
+    public String getEarthquakeDir() {
+        return earthquakedir;
+    }
+
+    public String getEarthquakeSchema() {
+        return earthquakeschema;
+    }
+
+
+    public void setEarthquakeUrl(String earthquakeurl) {
+        this.earthquakeurl = earthquakeurl;
+    }
+
+    public void setEarthquakeDir(String earthquakedir) {
+        this.earthquakedir = earthquakedir;
+    }
+
+    public void setEarthquakeSchema(String earthquakeschema) {
+        this.earthquakeschema = earthquakeschema;
     }
 
     public void setRepoPassword(String password){

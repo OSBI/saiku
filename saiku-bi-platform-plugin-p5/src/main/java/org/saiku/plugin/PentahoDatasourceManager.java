@@ -294,6 +294,30 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         return null;
     }
 
+    public String getEarthquakeUrl() {
+        return null;
+    }
+
+    public String getEarthquakeDir() {
+        return null;
+    }
+
+    public String getEarthquakeSchema() {
+        return null;
+    }
+
+    public void setEarthquakeUrl(String earthquakeUrl) {
+
+    }
+
+    public void setEarthquakeDir(String earthquakeDir) {
+
+    }
+
+    public void setEarthquakeSchema(String earthquakeSchema) {
+
+    }
+
     public void setACL(String a, String b, String c, List<String> d) {
 
     }
@@ -310,11 +334,11 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         throw new UnsupportedOperationException();
     }
 
-    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
+    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles) {
         throw new UnsupportedOperationException();
     }
 
-    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles, String path) {
+    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles, String path) {
         throw new UnsupportedOperationException();
     }
 

@@ -5,21 +5,25 @@ import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.importer.LegacyImporter;
 import org.saiku.service.importer.LegacyImporterImpl;
 
+import org.apache.commons.io.FileUtils;
 import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.util.Iterator;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
+
 
 /**
  * Created by bugg on 01/05/14.
@@ -53,6 +57,7 @@ public class Database {
         initDB();
         loadUsers();
         loadFoodmart();
+        loadEarthquakes();
         loadLegacyDatasources();
     }
 
@@ -112,9 +117,89 @@ public class Database {
                 try {
                     dsm.addDatasource(ds);
                 } catch (Exception e) {
-                    log.error("Can't add data source to repo",e);
+                    log.error("Can't add data source to repo", e);
                 }
+
+
+
             } else {
+                Statement statement = c.createStatement();
+
+                statement.executeQuery("select 1");
+            }
+        }
+    }
+
+    private void loadEarthquakes() throws SQLException {
+        String url = servletContext.getInitParameter("earthquakes.url");
+        String user = servletContext.getInitParameter("earthquakes.user");
+        String pword = servletContext.getInitParameter("earthquakes.password");
+
+        if (url != null && !url.equals("${earthquake_url}")) {
+            JdbcDataSource ds3 = new JdbcDataSource();
+            ds3.setURL(dsm.getEarthquakeUrl());
+            ds3.setUser(user);
+            ds3.setPassword(pword);
+
+            Connection c = ds3.getConnection();
+            DatabaseMetaData dbm = c.getMetaData();
+            ResultSet tables = dbm.getTables(null, null, "earthquakes", null);
+            String schema = null;
+
+            if (!tables.next()) {
+                Statement statement = c.createStatement();
+
+                statement.execute("RUNSCRIPT FROM '" + dsm.getEarthquakeDir() + "/earthquakes.sql'");
+                statement.executeQuery("select 1");
+
+
+                try {
+                    schema = readFile(dsm.getEarthquakeSchema(), StandardCharsets.UTF_8);
+                } catch (IOException e) {
+                    log.error("Can't read schema file", e);
+                }
+                try {
+                    dsm.addSchema(schema, "/datasources/earthquakes.xml", null);
+                } catch (Exception e) {
+                    log.error("Can't add schema file to repo", e);
+                }
+                Properties p = new Properties();
+                p.setProperty("advanced", "true");
+
+                p.setProperty("driver", "mondrian.olap4j.MondrianOlap4jDriver");
+                p.setProperty("location",
+                    "jdbc:mondrian:Jdbc=jdbc:h2:" + dsm.getEarthquakeDir() + "/earthquakes;MODE=MySQL;" +
+                    "Catalog=mondrian:///datasources/earthquakes.xml;JdbcDrivers=org.h2.Driver");
+                p.setProperty("username", "sa");
+                p.setProperty("password", "");
+                p.setProperty("id", "4432dd20-fcae-11e3-a3ac-0800200c9a67");
+                SaikuDatasource ds = new SaikuDatasource("earthquakes", SaikuDatasource.Type.OLAP, p);
+
+                try {
+                    dsm.addDatasource(ds);
+                } catch (Exception e) {
+                    log.error("Can't add data source to repo", e);
+                }
+
+                try {
+                    dsm.saveInternalFile("/homes/home:admin/sample_reports", null, null);
+                    String exts[] = {"saiku"};
+                    Iterator<File> files =
+                        FileUtils.iterateFiles(new File("../../data/sample_reports"), exts, false);
+
+                    while(files.hasNext()){
+                        File f = files.next();
+                        dsm.saveInternalFile("/homes/home:admin/sample_reports/"+f.getName(),FileUtils.readFileToString(f
+                                .getAbsoluteFile()), null);
+                        files.remove();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            else {
                 Statement statement = c.createStatement();
 
                 statement.executeQuery("select 1");
@@ -221,4 +306,6 @@ public class Database {
 
         }
     }
+
+
 }

@@ -73,9 +73,9 @@ public interface IDatasourceManager {
 
   public void removeInternalFile(String filePath);
 
-  public List<IRepositoryObject> getFiles(String type, String username, List<String> roles);
+  public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles);
 
-  public List<IRepositoryObject> getFiles(String type, String username, List<String> roles, String path);
+  public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles, String path);
 
   public void createUser(String user);
 
@@ -116,4 +116,15 @@ public interface IDatasourceManager {
   public String getFoodmarturl();
 
 
+  String getEarthquakeUrl();
+
+  String getEarthquakeDir();
+
+  String getEarthquakeSchema();
+
+  void setEarthquakeUrl(String earthquakeUrl);
+
+  void setEarthquakeDir(String earthquakeDir);
+
+  void setEarthquakeSchema(String earthquakeSchema);
 }

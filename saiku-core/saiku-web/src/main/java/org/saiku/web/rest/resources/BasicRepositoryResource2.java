@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -112,15 +114,18 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
   {
 	String username = sessionService.getAllSessionObjects().get("username").toString();
 	List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-	List<IRepositoryObject> l;
-	if(path==null){
-	  l = datasourceService.getFiles(type, username, roles);
-	}
-	else {
-	  l = datasourceService.getFiles(type, username, roles, path);
-	}
-	return l;
+	String[] t = type.split(",");
+	List<IRepositoryObject> l = new ArrayList<IRepositoryObject>();
+	  List<IRepositoryObject> l2;
+	  if(path==null){
+		l = (datasourceService.getFiles(Arrays.asList(t), username, roles));
+	  }
+	  else{
+		l = (datasourceService.getFiles(Arrays.asList(t), username, roles, path));
+	  }
 
+
+	return l;
 
   }
 

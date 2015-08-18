@@ -40,8 +40,8 @@ var RepositoryObject = Backbone.Model.extend({
     parse: function(response) {
         if (this.dialog) {
             this.dialog.generate_grids_reports(response);
+            return response;
         }
-        return response;
     },
 
     url: function() {
@@ -133,7 +133,7 @@ var Repository = Backbone.Collection.extend({
     },
 
 	url: function() {
-        var segment = repoPathUrl() + '?type=' + (this.type ? this.type : 'saiku');
+        var segment = repoPathUrl() + '?type=' + (this.type ? this.type : 'saiku,sdb');
 		if (Settings.REPO_BASE && !this.file) {
 			segment += '&path=' + Settings.REPO_BASE;
 		}

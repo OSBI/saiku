@@ -2,11 +2,11 @@
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saiku</groupId>
-        <version>3.3.3</version>
+        <version>3.4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>saiku-webapp</artifactId>
-    <version>3.3.3</version>
+    <version>3.4</version>
     <name>saiku - webapp</name>
     <packaging>war</packaging>
 
@@ -16,6 +16,9 @@
         <foodmartrepo>../../data</foodmartrepo>
         <foodmartschema>../../data/FoodMart4.xml</foodmartschema>
         <foodmarturl>jdbc:h2:../../data/foodmart;MODE=MySQL</foodmarturl>
+        <earthquakerepo>../../data</earthquakerepo>
+        <earthquakeschema>../../data/Earthquakes.xml</earthquakeschema>
+        <earthquakeurl>jdbc:h2:../../data/earthquakes;MODE=MySQL</earthquakeurl>
         <pluginpath>../webapps/ROOT/js/saiku/plugins/</pluginpath>
     </properties>
     <build>
@@ -202,7 +205,14 @@
             <groupId>org.saiku</groupId>
             <artifactId>saiku-service</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hive</groupId>
+            <artifactId>hive-cli</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.saiku</groupId>
             <artifactId>saiku-web</artifactId>

@@ -15,6 +15,9 @@
         <property name="foodmartdir" value="${foodmartrepo}"/>
         <property name="foodmartschema" value="${foodmartschema}"/>
         <property name="foodmarturl" value="${foodmarturl}"/>
+        <property name="earthquakeDir" value="${earthquakerepo}"/>
+        <property name="earthquakeSchema" value="${earthquakeschema}"/>
+        <property name="earthquakeUrl" value="${earthquakeurl}"/>
         <property name="repoPassword" value ="sa!kuanalyt!cs"/>
         <!-- If you change the repoPassword set this property for at least 1 restart to update the old repo password-->
         <!--<property name="oldRepoPassword" value="sa!kuanalyt!cs"/>-->
@@ -59,11 +62,15 @@
         </property>
         <property name="sessionService" ref="sessionService"/>
     </bean>
+    <bean id="logwriterbean" class="org.saiku.log.LogExtractor">
+        <property name="logdirectory" value="../logs"/>
+    </bean>
     <bean id="adminBean" class="org.saiku.web.rest.resources.AdminResource">
         <property name="userService" ref="userServiceBean"/>
         <property name="datasourceService" ref="datasourceServiceBean"/>
         <property name="olapDiscoverService" ref="olapDiscoverServiceBean"/>
         <property name="repositoryDatasourceManager" ref="repositoryDsManager"/>
+        <property name="logExtractor" ref="logwriterbean"/>
     </bean>
 
     <bean id="olapDiscoverServiceBean" class="org.saiku.service.olap.OlapDiscoverService">

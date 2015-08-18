@@ -3,11 +3,11 @@
     <parent>
         <artifactId>saiku-core</artifactId>
         <groupId>org.saiku</groupId>
-        <version>3.3.3</version>
+        <version>3.4</version>
     </parent>
 	<artifactId>saiku-olap-util</artifactId>
 	<packaging>jar</packaging>
-	<version>3.3.3</version>
+	<version>3.4</version>
 	<name>saiku olap util</name>
 	<properties>
 		<maven.compiler.source>1.5</maven.compiler.source>
@@ -61,7 +61,7 @@
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>mondrian</artifactId>
-			<version>4.3.0.0-R-patched</version>
+			<version>4.3.0.1-130</version>
 		</dependency>
 		<dependency>
 			<groupId>eigenbase</groupId>

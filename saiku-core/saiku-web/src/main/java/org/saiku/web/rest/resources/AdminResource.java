@@ -1,8 +1,24 @@
+/*
+ *   Copyright 2015 OSBI Ltd
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
 package org.saiku.web.rest.resources;
 
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.database.dto.SaikuUser;
 import org.saiku.datasources.datasource.SaikuDatasource;
+import org.saiku.log.LogExtractor;
 import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.olap.OlapDiscoverService;
@@ -43,6 +59,15 @@ public class AdminResource {
     UserService userService;
     private static final Logger log = LoggerFactory.getLogger(DataSourceResource.class);
     private OlapDiscoverService olapDiscoverService;
+    private LogExtractor logExtractor;
+
+    public LogExtractor getLogExtractor() {
+        return logExtractor;
+    }
+
+    public void setLogExtractor(LogExtractor logExtractor) {
+        this.logExtractor = logExtractor;
+    }
 
     public void setOlapDiscoverService(OlapDiscoverService olapDiscoverService) {
         this.olapDiscoverService = olapDiscoverService;
@@ -326,6 +351,9 @@ public class AdminResource {
     @Path("/schema/{id}")
     @ReturnType("java.util.List<MondrianSchema>")
     public Response deleteSchema(@PathParam("id") String id) {
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
         datasourceService.removeSchema(id);
         return Response.status(Response.Status.NO_CONTENT).entity(datasourceService.getAvailableSchema()).build();
     }
@@ -334,6 +362,9 @@ public class AdminResource {
     @Path("/schema/{id}")
     @Produces("application/xml")
     public Response getSavedSchema(@PathParam("id") String id){
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
         String p = "";
         for(MondrianSchema s :datasourceService.getAvailableSchema()){
             if(s.getName().equals(id)){
@@ -552,6 +583,9 @@ public class AdminResource {
     @Produces("application/zip")
     @Path("/backup")
     public StreamingOutput getBackup(){
+        if(!userService.isAdmin()){
+            return null;
+        }
         return new StreamingOutput() {
             public void write(OutputStream output) throws IOException, WebApplicationException {
                 BufferedOutputStream bus = new BufferedOutputStream(output);
@@ -573,6 +607,9 @@ public class AdminResource {
     @Consumes("multipart/form-data")
     @Path("/restore")
     public Response postRestore(@FormDataParam("file") InputStream is, @FormDataParam("file") FormDataContentDisposition detail){
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
         try {
             byte[] bytes = IOUtils.toByteArray(is);
             datasourceService.restoreRepository(bytes);
@@ -594,6 +631,9 @@ public class AdminResource {
     @Consumes("multipart/form-data")
     @Path("/legacyfiles")
     public Response postRestoreFiles(@FormDataParam("file") InputStream is, @FormDataParam("file") FormDataContentDisposition detail){
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
         try {
             byte[] bytes = IOUtils.toByteArray(is);
             datasourceService.restoreLegacyFiles(bytes);
@@ -602,5 +642,20 @@ public class AdminResource {
             log.error("Error reading restore file", e);
         }
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Restore Ok").type("text/plain").build();
+    }
+
+    @GET
+    @Produces("text/plain")
+    @Path("/log/{logname}")
+    public Response getLogFile(@PathParam("logname") String logname){
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+        try {
+            return Response.status(Response.Status.OK).entity(logExtractor.readLog(logname)).build();
+        } catch (IOException e) {
+            log.error("Could not read log file",e);
+            return Response.serverError().entity("Could not read log file").build();
+        }
     }
 }
