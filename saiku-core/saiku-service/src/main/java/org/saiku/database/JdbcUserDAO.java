@@ -121,7 +121,9 @@ public class JdbcUserDAO
 
     public void deleteUser(String username)
     {
+        String sql = prop.getProperty("deleteRoleByUserId");
         String newsql = prop.getProperty("deleteUserById");
+        getJdbcTemplate().update(sql, username);
         getJdbcTemplate().update(newsql, username);
     }
 
