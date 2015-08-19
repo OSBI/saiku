@@ -218,7 +218,7 @@
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.apache.pdfbox</groupId>
-									<artifactId>pdfbox</artifactId>
+									<artifactId>pdfbox-app</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
@@ -231,12 +231,6 @@
                                     <artifactId>htmlcleaner</artifactId>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
                                 </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.pdfbox</groupId>
-                                    <artifactId>fontbox</artifactId>
-                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
-                                </artifactItem>
-
                             </artifactItems>
 						</configuration>
 					</execution>
@@ -673,10 +667,6 @@
                 </exclusion>
             </exclusions>
 		</dependency>
-        <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>fontbox</artifactId>
-        </dependency>
        <!-- <dependency>
             <groupId>batik</groupId>
             <artifactId>batik-ext</artifactId>
@@ -733,7 +723,7 @@
         </dependency>
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
-			<artifactId>pdfbox</artifactId>
+			<artifactId>pdfbox-app</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
