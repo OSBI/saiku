@@ -138,6 +138,9 @@ var OpenQuery = Backbone.View.extend({
                 },
                 items: menuitems
             });
+            
+		// Fire off new openQuery event
+		Saiku.session.trigger('openQuery:new', { openQuery: this });
 
         return this;
     },
@@ -368,7 +371,14 @@ var OpenQuery = Backbone.View.extend({
         if(viewstate && !viewstate.hasOwnProperty('currentTarget')) {
             state = viewstate;
         }
-        var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state }));
+        
+        if (item.fileType === 'saiku') {
+            var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state }));
+        }
+        else if (item.fileType === 'sdb') {
+            Saiku.session.trigger('openQuery:open_query', { query: query, item: item, viewState: state });
+        }
+        
         return false;
     },
     open_contents: function(viewstate) {
