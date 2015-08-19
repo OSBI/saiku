@@ -375,7 +375,7 @@ var OpenQuery = Backbone.View.extend({
         if (item.fileType === 'saiku') {
             var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state }));
         }
-        else if (item.fileType === 'sdb') {
+        else {
             Saiku.session.trigger('openQuery:open_query', { query: query, item: item, viewState: state });
         }
         
