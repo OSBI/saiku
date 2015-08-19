@@ -17,7 +17,7 @@ def install():
     ##Need to create a saiku user for security.
     fetch.apt_install(fetch.filter_installed_packages(['openjdk-7-jdk']))
     handler = archiveurl.ArchiveUrlFetchHandler()
-    handler.install('http://meteorite.bi/downloads/saiku-latest.tar.gz', '/usr/local/SaikuCE')
+#    handler.install('http://meteorite.bi/downloads/saiku-latest.tar.gz', '/usr/local/SaikuCE')
 
 if __name__ == "__main__":
     install()

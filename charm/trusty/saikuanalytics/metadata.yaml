@@ -6,10 +6,16 @@ description: |
 tags:
   - analytics
   - big_data
-subordinate: false
-provides:
+subordinate: true
+requires:
   website:
     interface: http
+  webapp:
+    interface: java-webapp
+    scope: container
+#provides:
+#  website:
+#    interface: http
 peers:
   database:
     interface: mysql
