@@ -2,11 +2,11 @@
     <parent>
         <artifactId>saiku-core</artifactId>
         <groupId>org.saiku</groupId>
-        <version>3.4.1</version>
+        <version>3.4.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>saiku-web</artifactId>
-    <version>3.4.1</version>
+    <version>3.4.2</version>
     <name>saiku - web</name>
     <packaging>jar</packaging>
 
@@ -250,7 +250,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
-            <artifactId>pdfbox</artifactId>
+            <artifactId>pdfbox-app</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>

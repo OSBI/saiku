@@ -5,7 +5,7 @@
     <groupId>org.saiku</groupId>
     <artifactId>saiku</artifactId>
     <packaging>pom</packaging>
-    <version>3.4.1</version>
+    <version>3.4.2</version>
     <name>Saiku Module Project</name>
     <scm>
         <developerConnection>
@@ -256,11 +256,6 @@
     </dependencies>
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.apache.pdfbox</groupId>
-                <artifactId>pdfbox</artifactId>
-                <version>2.0.0-20141212.210914-782</version>
-            </dependency>
             <dependency>
                 <groupId>com.sun.jersey.jersey-test-framework</groupId>
                 <artifactId>jersey-test-framework-core</artifactId>
@@ -935,8 +930,8 @@
 
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
-                <artifactId>fontbox</artifactId>
-                <version>2.0.0-20150122.193253-1019</version>
+                <artifactId>pdfbox-app</artifactId>
+                <version>2.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>pentaho</groupId>
