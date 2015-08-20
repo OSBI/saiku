@@ -462,6 +462,10 @@ var Workspace = Backbone.View.extend({
                 this.querytoolbar.spark_mode = renderType;
                 $(this.querytoolbar.el).find('ul.table a.' + renderType).addClass('on');
             }
+            else if (renderMode === 'map') {
+                this.querytoolbar.$el.find('ul.chart > li').find('a').removeClass('on');
+                this.querytoolbar.$el.find('ul.chart [href="#' + renderMode + '"]').addClass('on');
+            }
         } catch (e) {
                 Saiku.error(this.cid, e);
         }
