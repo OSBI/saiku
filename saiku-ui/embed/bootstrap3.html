@@ -1,0 +1,194 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		
+	    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Saiku Embedded - Next Generation Open Source Analytics in your App!</title>
+        <link rel="shortcut icon" href="favicon.ico">
+
+       	
+       	<!-- BOOTSTRAP -->
+
+		<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+		<link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+		<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+		<script type="text/javascript" src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+
+        <!--  jQuery 1.7.2 , jQuery UI 1.8.14-->
+        <script src="../js/jquery/jquery.min.js" type="text/javascript"></script>
+        <script src="../js/jquery/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="../js/jquery/jquery.blockUI.js" type="text/javascript"></script>
+
+        <!-- BACKBONE -->
+        <script type="text/javascript" src="../js/backbone/underscore.js"></script>
+        <script type="text/javascript" src="../js/backbone/json2.js"></script>
+        <script type="text/javascript" src="../js/backbone/backbone.js"></script>
+
+        <!-- CCC2 -->
+        <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/def.js"></script>
+        <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/protovis.js"></script>
+        <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/protovis-msie.js"></script>
+        <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/pvc.js"></script>
+        <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/jquery.tipsy.js"></script>
+        <script type="text/javascript" src="../js/saiku/plugins/CCC_Chart/tipsy.js"></script>
+        <link type="text/css" href="../js/saiku/plugins/CCC_Chart/tipsy.css" rel="stylesheet"/>
+            
+        <!-- SAIKU EMBEDDED LIBRARIES -->
+        <!-- <link rel="stylesheet" href="../css/saiku/src/saiku.table.css" type="text/css"> -->
+        <link rel="stylesheet" href="saiku.css" type="text/css">
+        <script type="text/javascript" src="../js/saiku/render/SaikuRenderer.js"></script>
+        <script type="text/javascript" src="../js/saiku/render/SaikuTableRenderer.js"></script>
+        <script type="text/javascript" src="../js/saiku/render/SaikuChartRenderer.js"></script>
+        <script type="text/javascript" src="../js/saiku/embed/SaikuEmbed.js"></script>
+
+
+
+        <style>
+        body {
+            background: none repeat scroll 0 0 #FFFFFF;
+            color: #222222;
+            font-family: "Helvetica Neue",Arial,Helvetica,sans-serif;
+        }
+
+        .panel {
+        	margin: 20px;
+        }
+        .panel-body {
+        	margin: 2px;
+        }
+        </style>
+
+
+	</head>
+	<body>
+	
+	<style type="text/css>">
+	
+	</style>
+
+
+<nav class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="#">Ivy Information Solutions</a>
+	</div>
+	<div class="collapse navbar-collapse navbar-ex1-collapse">
+		<ul class="nav navbar-nav menu">
+			<li class="active" data-link="homePage">
+				<a href="#"><i class="icon-home"></i> Home</a>
+			</li>
+			<li>
+				<a href="#"><i class="icon-dashboard"></i> Dashboards</a>
+			</li>
+			<li>
+				<a href="#"><i class="icon-list"></i> Reports</a>
+			</li>
+			<li>
+				<a href="#"><i class="icon-bar-chart"></i> Analysis</a>
+			</li>
+			<li>
+				<a href="#"><i class="icon-beaker"></i> Knowledge</a>
+			</li>
+		</ul>
+	</div>
+</nav> 
+      
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Logout</h4>
+			</div>
+			<div class="modal-body">
+				Are you sure you want to logout?
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-primary">Logout</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<br ><br >
+<br ><br >
+<div style="float:left;">
+
+<div class="panel panel-default" style="width: 500px; float:left;">
+  <div class="panel-heading">
+    <h3 class="panel-title">Product Unit Sales / Marital Status</h3>
+  </div>
+  <div id="saiku" class="panel-body workspace_results" style="height: 450px;">
+  </div>
+  <div id="saiku3" class="panel-body workspace_results" style="height: 450px;">
+  </div>
+
+</div>
+
+<div class="panel panel-default left" style="width: 800px; float:left;">
+  <div class="panel-heading">
+    <h3 class="panel-title">Product Family per Quarter</h3>
+  </div>
+  <div id="saiku2" class="panel-body workspace_results" style="height: 900px;">
+  </div>
+</div>
+
+</div>
+
+
+        
+
+<script type="text/javascript">
+
+var myClient = new SaikuClient({
+    server: "/saiku",
+    path: "/rest/saiku/embed",
+    user: "admin",
+    password: "admin"
+});
+
+myClient.execute({
+    file: "Examples/ConditionalFormattingExample2.saiku",
+    htmlObject: "#saiku3",
+    render: "table"
+});
+
+myClient.execute({
+    file: "Examples/Heatgrid.saiku",
+    htmlObject: "#saiku2",
+    render: "chart",
+    mode: "heatgrid",
+    zoom: false,
+    chartDefinition: {
+        clickable: true,
+        clickAction: function(scene) {
+            //scene.datum.atoms.category + " - " + scene.datum.atoms.category2 + " - " + scene.datum.atoms.value
+            alert('You clicked on: Category: ' + scene.getCategoryLabel() + " Series: " + scene.getSeriesLabel() + " Measure: " +  scene.datum.atoms.value);
+            console.log(scene);
+        }
+    }
+});
+
+myClient.execute({
+    file: "Examples/pie.saiku",
+    htmlObject: "#saiku",
+    render: "chart",
+    mode: "stackedBar",
+    zoom: true,
+    chartDefinition: {
+    	height: 400,
+    	colors: ["red", "blue", "green", "yellow"],
+    	baseAxisSize: "300px",
+    	baseAxisSizeMax : "200"
+    }
+
+});
+
+</script>
+
+
+	</body>
+</html>
+
+
