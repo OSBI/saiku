@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# The start hook for the OpenMRS charm must restart the Tomcat container.
+# The start hook for the Saiku charm must restart the Tomcat container.
 set -e 
 
 container=tomcat7

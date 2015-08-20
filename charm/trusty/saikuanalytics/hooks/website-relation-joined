@@ -1,2 +1,2 @@
 #!/bin/sh
-relation-set hostname=`unit-get private-address` port=8080
+#relation-set hostname=`unit-get private-address` port=8080

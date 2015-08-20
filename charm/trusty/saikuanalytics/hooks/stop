@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# The stop hook for the OpenMRS charm.
+# The stop hook for the Saiku charm.
 set -e
 
 container=tomcat7

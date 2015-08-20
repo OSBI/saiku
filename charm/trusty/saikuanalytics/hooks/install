@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# This script installs the OpenMRS Charm in Juju.  See the ../README for more 
-# information about the OpenMRS Charm.
+# This script installs the Saiku Charm in Juju.  See the ../README for more 
+# information about the Saiku Charm.
 
 # Abort the script if any errors are encountered.
 set -e
@@ -20,45 +20,79 @@ if [ ! -d /usr/share/${container} ]; then
   exit 1
 fi
 
-openmrs_directory="/usr/share/saiku_ce"
-if [ ! -d ${openmrs_directory} ]; then
-  mkdir ${openmrs_directory}
-  chmod 777 ${openmrs_directory}
+saiku_directory="/usr/share/saiku_ce"
+if [ ! -d ${saiku_directory} ]; then
+  mkdir ${saiku_directory}
+  chmod 777 ${saiku_directory}
 fi
 
-# Install any tools that are needed for the install of OpenMRS.
+# Install any tools that are needed for the install of saiku.
 apt-get install -y wget coreutils unzip
 
-# Define the download location for OpenMRS.
-openmrs_url=http://192.168.1.108/saiku.zip
+# Define the download location for saiku.
+saiku_url=http://192.168.1.108/saiku.zip
 root_url=http://192.168.1.108/ROOT.zip
 data_url=http://192.168.1.108/data.tgz
 repository_url=http://192.168.1.108/repository.tgz
 
-juju-log "Downloading OpenMRS from ${openmrs_url} to ${openmrs_directory}"
-# Download the OpenMRS file into the openmrs directory.
-wget "${openmrs_url}" -O ${openmrs_directory}/saiku.war
-wget "${root_url}" -O ${openmrs_directory}/ROOT.war
-wget "${data_url}" -O ${openmrs_directory}/data.tgz
-tar xvfz ${openmrs_directory}/data.tgz -C ${openmrs_directory}
-wget "${repository_url}" -O ${openmrs_directory}/repository.tgz
-tar xvfz ${openmrs_directory}/repository.tgz -C ${openmrs_directory}
-unzip -o ${openmrs_directory}/ROOT.war -d /var/lib/${container}/webapps/ROOT
-unzip -o ${openmrs_directory}/saiku.war -d /var/lib/${container}/webapps/saiku
-chown -R ${container}:${container} ${openmrs_directory}
+juju-log "Downloading saiku from ${saiku_url} to ${saiku_directory}"
+# Download the saiku file into the saiku directory.
+wget "${saiku_url}" -O ${saiku_directory}/saiku.war
+wget "${root_url}" -O ${saiku_directory}/ROOT.war
+wget "${data_url}" -O ${saiku_directory}/data.tgz
+tar xvfz ${saiku_directory}/data.tgz -C ${saiku_directory}
+wget "${repository_url}" -O ${saiku_directory}/repository.tgz
+tar xvfz ${saiku_directory}/repository.tgz -C ${saiku_directory}
+unzip -o ${saiku_directory}/ROOT.war -d /var/lib/${container}/webapps/ROOT
+unzip -o ${saiku_directory}/saiku.war -d /var/lib/${container}/webapps/saiku
+chown -R ${container}:${container} ${saiku_directory}
 
-# The sha1sum for the openmrs.war version 1.9.7
-openmrs_1_9_7_sha1sum="97de4c82ba4c9d556c840e50a6624fc47c7ff77e"
+# The sha1sum for the saiku.war version 1.9.7
+saiku_official_sha1sum="38fe1310f3bc9508f65ca51a9dc3105c7dafa00b"
+root_official_sha1sum="d91e3289b5f277a4cd1fb0bdcb8dee4dc4e91788"
+data_official_sha1sum="38fe1310f3bc9508f65ca51a9dc3105c7dafa00b"
+repository_official_sha1sum="38fe1310f3bc9508f65ca51a9dc3105c7dafa00b"
+
 # It is best practice to check the hash value for the file that was downloaded.
-openmrs_sha1sum=`sha1sum ${openmrs_directory}/saiku.war | cut -d " " -f 1`
-if [[ ${openmrs_sha1sum} != ${openmrs_1_9_7_sha1sum} ]]; then
-  juju-log --log-level CRITICAL "The SHA1 checksum of ${openmrs_url} is invalid."
-  juju-log --log-level CRITICAL "The checksum of the openmrs.war was ${openmrs_sha1sum}"
-  juju-log --log-level CRITICAL "Expected ${openmrs_1_9_7_sha1sum}"
+saiku_sha1sum=`sha1sum ${saiku_directory}/saiku.war | cut -d " " -f 1`
+if [[ ${saiku_sha1sum} != ${saiku_official_sha1sum} ]]; then
+  juju-log --log-level CRITICAL "The SHA1 checksum of ${saiku_url} is invalid."
+  juju-log --log-level CRITICAL "The checksum of the saiku.war was ${saiku_sha1sum}"
+  juju-log --log-level CRITICAL "Expected ${saiku_official_sha1sum}"
   exit 1
 else 
-  juju-log "The SHA1 checksum of ${openmrs_directory}/openmrs.war was valid."
+  juju-log "The SHA1 checksum of ${saiku_directory}/saiku.war was valid."
 fi
 
+# It is best practice to check the hash value for the file that was downloaded.
+root_sha1sum=`sha1sum ${saiku_directory}/ROOT.war | cut -d " " -f 1`
+if [[ ${root_sha1sum} != ${root_official_sha1sum} ]]; then
+  juju-log --log-level CRITICAL "The SHA1 checksum of ${root_url} is invalid."
+  juju-log --log-level CRITICAL "The checksum of the saiku.war was ${root_sha1sum}"
+  juju-log --log-level CRITICAL "Expected ${root_official_sha1sum}"
+  exit 1
+else 
+  juju-log "The SHA1 checksum of ${saiku_directory}/root.war was valid."
+fi
+# It is best practice to check the hash value for the file that was downloaded.
+data_sha1sum=`sha1sum ${saiku_directory}/data.tgz | cut -d " " -f 1`
+if [[ ${data_sha1sum} != ${data_official_sha1sum} ]]; then
+  juju-log --log-level CRITICAL "The SHA1 checksum of ${saiku_url} is invalid."
+  juju-log --log-level CRITICAL "The checksum of the data.tgz was ${data_sha1sum}"
+  juju-log --log-level CRITICAL "Expected ${data_official_sha1sum}"
+  exit 1
+else 
+  juju-log "The SHA1 checksum of ${saiku_directory}/data.tgz was valid."
+fi
+# It is best practice to check the hash value for the file that was downloaded.
+repository_sha1sum=`sha1sum ${saiku_directory}/repository.tgz | cut -d " " -f 1`
+if [[ ${repository_sha1sum} != ${repository_official_sha1sum} ]]; then
+  juju-log --log-level CRITICAL "The SHA1 checksum of ${saiku_url} is invalid."
+  juju-log --log-level CRITICAL "The checksum of the repository.tgz was ${repository_sha1sum}"
+  juju-log --log-level CRITICAL "Expected ${repository_official_sha1sum}"
+  exit 1
+else 
+  juju-log "The SHA1 checksum of ${saiku_directory}/repository.tgz was valid."
+fi
 # Stop tomcat.
 $CHARM_DIR/hooks/stop
