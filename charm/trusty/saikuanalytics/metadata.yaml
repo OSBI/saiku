@@ -10,10 +10,8 @@ subordinate: true
 requires:
   website:
     interface: http
-  webapp:
-    interface: java-webapp
     scope: container
-#provides:
+  #provides:
 #  website:
 #    interface: http
 peers:

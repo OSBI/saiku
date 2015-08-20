@@ -1,23 +1,64 @@
-#!/usr/bin/python
+#!/bin/bash
 
-import setup
-setup.pre_install()
+# This script installs the OpenMRS Charm in Juju.  See the ../README for more 
+# information about the OpenMRS Charm.
 
-from charmhelpers.core import hookenv
-from charmhelpers import fetch
-from charmhelpers.core import host
-from charmhelpers.fetch import archiveurl
+# Abort the script if any errors are encountered.
+set -e
+# Show the commands that are getting executed.
+set -x
+
+container=tomcat7
+if [[ -e /var/lib/tomcat7 ]]; then
+  container=tomcat7
+elif [[ -e /var/lib/tomcat6 ]]; then
+  container=tomcat6
+fi
+
+if [ ! -d /usr/share/${container} ]; then
+  juju-log --log-level CRITICAL "${container} is not installed properly!"
+  exit 1
+fi
+
+openmrs_directory="/usr/share/saiku_ce"
+if [ ! -d ${openmrs_directory} ]; then
+  mkdir ${openmrs_directory}
+  chmod 777 ${openmrs_directory}
+fi
+
+# Install any tools that are needed for the install of OpenMRS.
+apt-get install -y wget coreutils unzip
+
+# Define the download location for OpenMRS.
+openmrs_url=http://192.168.1.108/saiku.zip
+root_url=http://192.168.1.108/ROOT.zip
+data_url=http://192.168.1.108/data.tgz
+repository_url=http://192.168.1.108/repository.tgz
+
+juju-log "Downloading OpenMRS from ${openmrs_url} to ${openmrs_directory}"
+# Download the OpenMRS file into the openmrs directory.
+wget "${openmrs_url}" -O ${openmrs_directory}/saiku.war
+wget "${root_url}" -O ${openmrs_directory}/ROOT.war
+wget "${data_url}" -O ${openmrs_directory}/data.tgz
+tar xvfz ${openmrs_directory}/data.tgz -C /usr/share/tomcat7
+wget "${repository_url}" -O ${openmrs_directory}/repository.tgz
+tar xvfz ${openmrs_directory}/repository.tgz -C /usr/share/tomcat7
+unzip ${openmrs_directory}/ROOT.war -d /var/lib/${container}/webapps/ROOT
+unzip ${openmrs_directory}/saiku.war -d /var/lib/${container}/webapps/saiku
 
 
-def install():
-    hookenv.log('Installing saiku')
-    # add steps for installing dependencies and packages here
+# The sha1sum for the openmrs.war version 1.9.7
+openmrs_1_9_7_sha1sum="972a8d8898204684ee1d32fa4c8ac1faeeb8d195"
+# It is best practice to check the hash value for the file that was downloaded.
+openmrs_sha1sum=`sha1sum ${openmrs_directory}/saiku.war | cut -d " " -f 1`
+if [[ ${openmrs_sha1sum} != ${openmrs_1_9_7_sha1sum} ]]; then
+  juju-log --log-level CRITICAL "The SHA1 checksum of ${openmrs_url} is invalid."
+  juju-log --log-level CRITICAL "The checksum of the openmrs.war was ${openmrs_sha1sum}"
+  juju-log --log-level CRITICAL "Expected ${openmrs_1_9_7_sha1sum}"
+  exit 1
+else 
+  juju-log "The SHA1 checksum of ${openmrs_directory}/openmrs.war was valid."
+fi
 
-    host.mkdir('/usr/local/SaikuCE')
-    ##Need to create a saiku user for security.
-    fetch.apt_install(fetch.filter_installed_packages(['openjdk-7-jdk']))
-    handler = archiveurl.ArchiveUrlFetchHandler()
-#    handler.install('http://meteorite.bi/downloads/saiku-latest.tar.gz', '/usr/local/SaikuCE')
-
-if __name__ == "__main__":
-    install()
+# Stop tomcat.
+$CHARM_DIR/hooks/stop

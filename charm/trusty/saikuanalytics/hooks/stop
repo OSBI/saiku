@@ -1,3 +1,17 @@
-#!/usr/bin/python
-import services
-services.manage()
+#!/bin/bash
+
+# The stop hook for the OpenMRS charm.
+set -e
+
+container=tomcat7
+if [[ -e /var/lib/tomcat7 ]]; then
+  container=tomcat7
+elif [[ -e /var/lib/tomcat6 ]]; then
+  container=tomcat6
+fi
+
+# Stop tomcat.
+if service $container status > /dev/null; then
+  juju-log "Stopping $container"
+  service $container stop
+fi

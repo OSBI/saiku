@@ -1,3 +1,17 @@
 #!/bin/bash
-set -e
-service saikuanalytics restart
+
+# The start hook for the OpenMRS charm must restart the Tomcat container.
+set -e 
+
+container=tomcat7
+if [[ -e /var/lib/tomcat7 ]]; then
+  container=tomcat7
+elif [[ -e /var/lib/tomcat6 ]]; then
+  container=tomcat6
+fi
+
+# Restart Tomcat.
+if ! service $container status > /dev/null; then
+  juju-log "Restarting $container"
+  service $container restart
+fi
