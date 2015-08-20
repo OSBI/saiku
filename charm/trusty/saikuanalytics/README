@@ -6,7 +6,10 @@ This charm provides Saiku Analytics(http://meteorite.bi/products/saiku). Saiku A
 
 Step by step instructions on using the charm:
 
+    juju deploy tomcat
     juju deploy saikuanalytics
+    juju add-relation saikuanalytics tomcat
+    juju expose tomcat
 
 You can then browse to http://ip-address:8080 to configure the service.
 

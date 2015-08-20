@@ -30,10 +30,10 @@ fi
 apt-get install -y wget coreutils unzip
 
 # Define the download location for saiku.
-saiku_url=http://192.168.1.108/saiku.zip
-root_url=http://192.168.1.108/ROOT.zip
-data_url=http://192.168.1.108/data.tgz
-repository_url=http://192.168.1.108/repository.tgz
+saiku_url=https://dl.dropboxusercontent.com/u/8503756/juju/3.4/saiku.zip
+root_url=https://dl.dropboxusercontent.com/u/8503756/juju/3.4/ROOT.zip
+data_url=https://dl.dropboxusercontent.com/u/8503756/juju/3.4/data.tgz
+repository_url=https://dl.dropboxusercontent.com/u/8503756/juju/3.4/repository.tgz
 
 juju-log "Downloading saiku from ${saiku_url} to ${saiku_directory}"
 # Download the saiku file into the saiku directory.
@@ -51,7 +51,7 @@ chown -R ${container}:${container} ${saiku_directory}
 saiku_official_sha1sum="38fe1310f3bc9508f65ca51a9dc3105c7dafa00b"
 root_official_sha1sum="d91e3289b5f277a4cd1fb0bdcb8dee4dc4e91788"
 data_official_sha1sum="38fe1310f3bc9508f65ca51a9dc3105c7dafa00b"
-repository_official_sha1sum="38fe1310f3bc9508f65ca51a9dc3105c7dafa00b"
+repository_official_sha1sum="15c048c9090426625740fa6449e6d029983c0660"
 
 # It is best practice to check the hash value for the file that was downloaded.
 saiku_sha1sum=`sha1sum ${saiku_directory}/saiku.war | cut -d " " -f 1`
