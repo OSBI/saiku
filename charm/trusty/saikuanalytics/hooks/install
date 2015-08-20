@@ -48,7 +48,7 @@ unzip -o ${openmrs_directory}/saiku.war -d /var/lib/${container}/webapps/saiku
 chown -R ${container}:${container} ${openmrs_directory}
 
 # The sha1sum for the openmrs.war version 1.9.7
-openmrs_1_9_7_sha1sum="81bd0d7ab0db819a8a76997b20e9f9f4458ff598"
+openmrs_1_9_7_sha1sum="97de4c82ba4c9d556c840e50a6624fc47c7ff77e"
 # It is best practice to check the hash value for the file that was downloaded.
 openmrs_sha1sum=`sha1sum ${openmrs_directory}/saiku.war | cut -d " " -f 1`
 if [[ ${openmrs_sha1sum} != ${openmrs_1_9_7_sha1sum} ]]; then
