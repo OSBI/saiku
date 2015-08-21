@@ -4,7 +4,8 @@
             "css/saiku/src/*.css",
             "embed/*.css",
             "js/saiku/plugins/CCC_Chart/*.css",
-            "js/saiku/plugins/Dashboards/css/*.css"
+            "js/saiku/plugins/Dashboards/css/*.css",
+            "js/saiku/plugins/SchemaDesigner/css/*.css"
         ],
         "html": [
             "./*.html",
@@ -26,6 +27,10 @@
             "js/saiku/plugins/Fullscreen/*.js",
             "js/saiku/plugins/I18n/*.js",
             "js/saiku/plugins/I18n/po/*.json",
+            "js/saiku/plugins/SchemaDesigner/*.js",
+            "js/saiku/plugins/SchemaDesigner/js/dialogs/*.js",
+            "js/saiku/plugins/SchemaDesigner/js/models/*.js",
+            "js/saiku/plugins/SchemaDesigner/js/ui/*.js",
             "js/saiku/plugins/Statistics/*.json",
             "js/saiku/models/*.js",
             "js/saiku/render/*.js",

@@ -324,7 +324,15 @@ public class OlapMetaExplorer {
 				}
 				if (search || searchLimit > 0) {
 					List<Member> foundMembers = new ArrayList<Member>();
-					for (Member m : l.getMembers()) {
+				  List<Member> lokuplist;
+				  if(SaikuMondrianHelper.isMondrianConnection(con) &&
+					 SaikuMondrianHelper.getMondrianServer(con).getVersion().getMajorVersion()>=4) {
+					lokuplist = SaikuMondrianHelper.getMDXMemberLookup(con, cube.getName(), l);
+				  }
+				  else{
+					lokuplist = l.getMembers();
+				  }
+					for (Member m : lokuplist) {
 						if (search) {
 							if (m.getName().toLowerCase().contains(searchString) || m.getCaption().toLowerCase().contains(searchString) ) {
 									foundMembers.add(m);
@@ -340,7 +348,15 @@ public class OlapMetaExplorer {
 					}
 					simpleMembers = ObjectUtil.convert2Simple(foundMembers);
 				} else {
-					simpleMembers = ObjectUtil.convert2Simple(l.getMembers());
+				  List<Member> lookuplist = null;
+				  if(SaikuMondrianHelper.isMondrianConnection(con) &&
+					 SaikuMondrianHelper.getMondrianServer(con).getVersion().getMajorVersion()>=4) {
+					 lookuplist = SaikuMondrianHelper.getMDXMemberLookup(con, cube.getName(), l);
+				  }
+				  else{
+					lookuplist = l.getMembers();
+				  }
+				  simpleMembers = ObjectUtil.convert2Simple(lookuplist);
 				}
 				return simpleMembers;
 			}

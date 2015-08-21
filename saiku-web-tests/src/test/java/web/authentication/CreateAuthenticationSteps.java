@@ -64,9 +64,4 @@ public class CreateAuthenticationSteps {
     steps.dialogErrorMessage(definition);
   }
 
-
-  @BeforeScenario()
-  public void clearCookies(){
-    steps.getDriver().manage().deleteAllCookies();
-  }
 }

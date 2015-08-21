@@ -245,7 +245,15 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
       
     }
 
-    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
+  public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles) {
+    return null;
+  }
+
+  public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles, String path) {
+    return null;
+  }
+
+  public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
         return null;
     }
 
@@ -331,6 +339,30 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 
   public String getFoodmarturl() {
     return null;
+  }
+
+  public String getEarthquakeUrl() {
+    return null;
+  }
+
+  public String getEarthquakeDir() {
+    return null;
+  }
+
+  public String getEarthquakeSchema() {
+    return null;
+  }
+
+  public void setEarthquakeUrl(String earthquakeUrl) {
+
+  }
+
+  public void setEarthquakeDir(String earthquakeDir) {
+
+  }
+
+  public void setEarthquakeSchema(String earthquakeSchema) {
+
   }
 
   public String saveFile(String path, String content, String user) {

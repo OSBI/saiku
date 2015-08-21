@@ -5,35 +5,33 @@
     <groupId>org.saiku</groupId>
     <artifactId>saiku</artifactId>
     <packaging>pom</packaging>
-    <version>3.3-SNAPSHOT</version>
+    <version>3.6-SNAPSHOT</version>
     <name>Saiku Module Project</name>
     <scm>
         <developerConnection>
             scm:git:git@github.com:OSBI/saiku.git
         </developerConnection>
-      <tag>saiku-3.1-SNAPSHOT</tag>
-  </scm>
+        <tag>saiku-3.1-SNAPSHOT</tag>
+    </scm>
     <modules>
         <module>saiku-core</module>
         <module>saiku-ui</module>
         <module>saiku-webapp</module>
-        <!--        <module>saiku-web-tests</module>-->
         <module>saiku-server</module>
         <module>saiku-bi-platform-plugin-p5</module>
-        <!--<module>saiku-web-tests</module>-->
-        <!--  <module>saiku-bi-platform-plugin</module>-->
-    <!--<module>saiku-service-osgi</module>-->
-  </modules>
+<!--        <module>saiku-web-tests</module>-->
+    </modules>
+
     <distributionManagement>
         <repository>
             <id>utility</id>
             <name>utility-releases</name>
-            <url>http://repo.analytical-labs.com/artifactory/alabs-release-local</url>
+            <url>http://repo.meteorite.bi/content/repositories/alabs-release-local/</url>
         </repository>
         <snapshotRepository>
             <id>utility</id>
             <name>utility-snapshots</name>
-            <url>http://repo.analytical-labs.com/alabs-snapshot-local</url>
+            <url>http://repo.meteorite.bi/content/repositories/alabs-snapshot-local/</url>
         </snapshotRepository>
     </distributionManagement>
     <properties>
@@ -50,18 +48,28 @@
         <calcite.version>0.9.2-incubating-SNAPSHOT</calcite.version>
         <pentaho.libs.version>TRUNK-SNAPSHOT</pentaho.libs.version>
         <pentaho.platform.version>5.0.0</pentaho.platform.version>
-        <thucydides.version>0.9.268</thucydides.version>
+        <serenity.version>1.0.58</serenity.version>
         <jbehave.version>3.9.3</jbehave.version>
     </properties>
     <pluginRepositories>
         <pluginRepository>
             <id>Analytical Labs Plugin Repo</id>
             <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.analytical-labs.com/artifactory/alabs-release-local</url>
+            <url>http://repo.meteorite.bi/content/repositories/alabs-release-local/</url>
         </pluginRepository>
     </pluginRepositories>
 
     <repositories>
+        <repository>
+            <id>Analytical Labs Repo</id>
+            <name>Analytical Labs Repo-releases</name>
+            <url>http://repo.meteorite.bi/content/repositories/alabs-release-local/</url>
+        </repository>
+        <repository>
+            <id>Analytical Labs snapshots</id>
+            <name>Analytical Labs Repo-releases</name>
+            <url>http://repo.meteorite.bi/content/repositories/alabs-snapshot-local/</url>
+        </repository>
         <repository>
             <id>pentaho-third-party</id>
             <url>http://nexus.pentaho.org/content/repositories/proxied-3rd-party-releases/</url>
@@ -75,22 +83,8 @@
             <url>http://nexus.pentaho.org/content/repositories/public-snapshots/</url>
         </repository>
         <repository>
-            <id>codehaus</id>
-            <url>http://repository.codehaus.org/</url>
-        </repository>
-        <repository>
             <id>atlassian2</id>
             <url>http://repository.opencastproject.org/</url>
-        </repository>
-        <repository>
-            <id>Analytical Labs Repo</id>
-            <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.analytical-labs.com/artifactory/alabs-release-local</url>
-        </repository>
-        <repository>
-            <id>Analytical Labs snapshots</id>
-            <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.analytical-labs.com/artifactory/alabs-snapshot-local</url>
         </repository>
         <repository>
             <id>central</id>
@@ -124,6 +118,25 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.5</version>
+                <executions>
+                    <execution>
+                        <id>default-deploy</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <serverId>nexus</serverId>
+                    <nexusUrl>http://repo.meteorite.bi</nexusUrl>
+                    <skipStaging>true</skipStaging>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>license-maven-plugin</artifactId>
             </plugin>
@@ -152,12 +165,12 @@
                 <version>1.0-m4.3</version>
                 <configuration>
                     <flowInitContext>
-                    <masterBranchName>master</masterBranchName>
-                    <developBranchName>development</developBranchName>
-                    <featureBranchPrefix>feature-</featureBranchPrefix>
-                    <releaseBranchPrefix>release-</releaseBranchPrefix>
-                    <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
-                    <versionTagPrefix>saiku-</versionTagPrefix>
+                        <masterBranchName>master</masterBranchName>
+                        <developBranchName>development</developBranchName>
+                        <featureBranchPrefix>feature-</featureBranchPrefix>
+                        <releaseBranchPrefix>release-</releaseBranchPrefix>
+                        <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
+                        <versionTagPrefix>saiku-</versionTagPrefix>
                     </flowInitContext>
                     <allowSnapshots>true</allowSnapshots>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -220,7 +233,19 @@
             </plugins>
         </pluginManagement>
     </build>
-
+    <profiles>
+            <profile>
+                <id>ci</id>
+                <modules>
+                <module>saiku-core</module>
+                <module>saiku-ui</module>
+                <module>saiku-webapp</module>
+                <module>saiku-server</module>
+                <module>saiku-bi-platform-plugin-p5</module>
+                <module>saiku-web-tests</module>
+            </modules>
+        </profile>
+    </profiles>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -231,11 +256,6 @@
     </dependencies>
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.apache.pdfbox</groupId>
-                <artifactId>pdfbox</artifactId>
-                <version>2.0.0-20141212.210914-782</version>
-            </dependency>
             <dependency>
                 <groupId>com.sun.jersey.jersey-test-framework</groupId>
                 <artifactId>jersey-test-framework-core</artifactId>
@@ -482,20 +502,31 @@
                 <version>1.3</version>
             </dependency>
             <dependency>
-                <groupId>net.thucydides</groupId>
-                <artifactId>thucydides-jbehave-plugin</artifactId>
-                <version>${thucydides.version}</version>
+                <groupId>net.serenity-bdd</groupId>
+                <artifactId>serenity-jbehave</artifactId>
+                <version>1.0.23</version>
             </dependency>
             <dependency>
-                <groupId>net.thucydides</groupId>
-                <artifactId>thucydides-core</artifactId>
-                <version>${thucydides.version}</version>
+                <groupId>net.serenity-bdd</groupId>
+                <artifactId>serenity-core</artifactId>
+                <version>1.0.58</version>
             </dependency>
             <dependency>
-                <groupId>net.thucydides</groupId>
-                <artifactId>thucydides-junit</artifactId>
-                <version>${thucydides.version}</version>
+                <groupId>net.serenity-bdd</groupId>
+                <artifactId>serenity-jira-requirements-provider</artifactId>
+                <version>1.0.1</version>
             </dependency>
+            <dependency>
+                <groupId>net.serenity-bdd</groupId>
+                <artifactId>serenity-junit</artifactId>
+                <version>1.0.58</version>
+            </dependency>
+            <dependency>
+                <groupId>net.serenity-bdd</groupId>
+                <artifactId>serenity-jira-plugin</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.hibernate.javax.persistence</groupId>
                 <artifactId>hibernate-jpa-2.1-api</artifactId>
@@ -601,7 +632,7 @@
             <dependency>
                 <groupId>pentaho</groupId>
                 <artifactId>mondrian</artifactId>
-                <version>4.0.0-20150120.193813-15</version>
+                <version>4.3.0.1-SPARK</version>
             </dependency>
             <!-- Spring modules -->
             <dependency>
@@ -899,8 +930,8 @@
 
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
-                <artifactId>fontbox</artifactId>
-                <version>2.0.0-20150122.193253-1019</version>
+                <artifactId>pdfbox-app</artifactId>
+                <version>2.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>pentaho</groupId>
@@ -955,12 +986,22 @@
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
-                <version>1.4.177</version>
+                <version>1.4.188</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
                 <version>4.3-alpha1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hive</groupId>
+                <artifactId>hive-jdbc</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hive</groupId>
+                <artifactId>hive-cli</artifactId>
+                <version>1.0.0</version>
             </dependency>
 
             <dependency>

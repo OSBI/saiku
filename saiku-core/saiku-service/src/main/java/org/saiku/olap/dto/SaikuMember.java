@@ -23,6 +23,7 @@ public class SaikuMember extends AbstractSaikuObject {
   private String description;
   private String levelUniqueName;
   private String hierarchyUniqueName;
+  private Boolean calculated;
 
   public SaikuMember() {
   }
@@ -34,13 +35,32 @@ public class SaikuMember extends AbstractSaikuObject {
     String description,
     String dimensionUniqueName,
     String hierarchyUniqueName,
-    String levelUniqueName ) {
+    String levelUniqueName,
+    boolean calculated) {
     super( uniqueName, name );
     this.caption = caption;
     this.description = description;
     this.dimensionUniqueName = dimensionUniqueName;
     this.levelUniqueName = levelUniqueName;
     this.hierarchyUniqueName = hierarchyUniqueName;
+    this.calculated = calculated;
+  }
+
+  public SaikuMember(
+      String name,
+      String uniqueName,
+      String caption,
+      String description,
+      String dimensionUniqueName,
+      String hierarchyUniqueName,
+      String levelUniqueName) {
+    super( uniqueName, name );
+    this.caption = caption;
+    this.description = description;
+    this.dimensionUniqueName = dimensionUniqueName;
+    this.levelUniqueName = levelUniqueName;
+    this.hierarchyUniqueName = hierarchyUniqueName;
+    this.calculated = false;
   }
 
   public String getCaption() {
@@ -63,4 +83,11 @@ public class SaikuMember extends AbstractSaikuObject {
     return hierarchyUniqueName;
   }
 
+  public Boolean isCalculated() {
+    return calculated;
+  }
+
+  public void setCalculated(Boolean calculated) {
+    this.calculated = calculated;
+  }
 }

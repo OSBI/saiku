@@ -1,14 +1,14 @@
 package web.utils;
 
+import net.serenitybdd.core.di.DependencyInjector;
+import net.serenitybdd.jbehave.SerenityCandidateSteps;
+import net.serenitybdd.jbehave.SerenityStepContext;
 import net.thucydides.core.guice.Injectors;
-import net.thucydides.core.steps.DependencyInjector;
 import net.thucydides.core.steps.PageObjectDependencyInjector;
 import net.thucydides.core.steps.StepAnnotations;
 import net.thucydides.core.steps.StepFactory;
 import net.thucydides.core.steps.di.DependencyInjectorService;
 import net.thucydides.core.webdriver.ThucydidesWebDriverSupport;
-import net.thucydides.jbehave.ThucydidesCandidateSteps;
-import net.thucydides.jbehave.ThucydidesStepContext;
 
 import org.jbehave.core.configuration.Configuration;
 import org.jbehave.core.steps.AbstractStepsFactory;
@@ -28,7 +28,7 @@ import static ch.lambdaj.Lambda.convert;
  */
 public class SaikuStepFactory extends AbstractStepsFactory {
 
-  private static final ThreadLocal<ThucydidesStepContext> context = new ThreadLocal<ThucydidesStepContext>();
+  private static final ThreadLocal<SerenityStepContext> context = new ThreadLocal<SerenityStepContext>();
 
   private final LinkedList<Object> rootPackage;
   private ClassLoader classLoader;
@@ -42,7 +42,7 @@ public class SaikuStepFactory extends AbstractStepsFactory {
   }
 
   private StepFactory getStepFactory() {
-    return ThucydidesWebDriverSupport.getStepFactory().thatThrowsExcpetionsImmediately();
+    return ThucydidesWebDriverSupport.getStepFactory();
   }
 
   public List<CandidateSteps> createCandidateSteps() {
@@ -81,7 +81,7 @@ public class SaikuStepFactory extends AbstractStepsFactory {
   private Converter<CandidateSteps, CandidateSteps> toThucydidesCandidateSteps() {
     return new Converter<CandidateSteps, CandidateSteps>() {
       public CandidateSteps convert(CandidateSteps candidateSteps) {
-        return new ThucydidesCandidateSteps(candidateSteps);
+        return new SerenityCandidateSteps(candidateSteps);
       }
     };
   }
@@ -105,9 +105,9 @@ public class SaikuStepFactory extends AbstractStepsFactory {
   }
 
 
-  public ThucydidesStepContext getContext() {
+  public SerenityStepContext getContext() {
     if (context.get() == null) {
-      context.set(new ThucydidesStepContext());
+      context.set(new SerenityStepContext());
     }
     return context.get();
   }

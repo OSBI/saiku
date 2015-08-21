@@ -229,9 +229,9 @@ class Acl2 {
       return node;
     } catch (Exception e) {
       try {
-        LOG.debug("Error while reading ACL files at path: " + node.getPath(), e.getCause());
+        LOG.info("Error while reading ACL files at path: " + node.getPath(), e.getCause());
       } catch (RepositoryException e1) {
-        LOG.debug("Repository Exception", e1.getCause());
+        LOG.info("Repository Exception", e1.getCause());
       }
     }
     return node;
@@ -249,9 +249,9 @@ class Acl2 {
     } catch (Exception e) {
 
       try {
-        LOG.debug("Error while reading ACL files at path: " + node.getPath(), e.getCause());
+        LOG.info("Error while reading ACL files at path: " + node.getPath(), e.getCause());
       } catch (RepositoryException e1) {
-        LOG.debug("Repository Exception", e1.getCause());
+        LOG.info("Repository Exception", e1.getCause());
       }
     }
 
@@ -317,10 +317,10 @@ class Acl2 {
     } catch (Exception e) {
 
       try {
-        LOG.debug("Error while reading ACL files at path: " + resource.getPath(), e.getCause());
+        LOG.info("Error while reading ACL files at path: " + resource.getPath(), e.getCause());
 
       } catch (RepositoryException e1) {
-        LOG.debug("Repository Exception", e1.getCause());
+        LOG.info("Repository Exception", e1.getCause());
       }
     }
   }

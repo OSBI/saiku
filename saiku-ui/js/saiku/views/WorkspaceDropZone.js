@@ -125,6 +125,14 @@ var WorkspaceDropZone = Backbone.View.extend({
 
         if (model.hasOwnProperty('queryModel') && model.queryModel.hasOwnProperty('axes')) {
             var axes = model.queryModel.axes;
+            console.dir(axes);
+
+            var o = this.workspace.query.helper.getHierarchy("[Store].[Stores]");
+            if(o!=null) {
+                Object.observe(o, function (changes) {
+                    debugger;
+                })
+            }
             for (var axis in axes) {
                 var $axis = $(self.el).find('.fields_list[title="' + axis + '"]');
                 _.each(axes[axis].hierarchies, function(hierarchy) {
@@ -291,7 +299,8 @@ var WorkspaceDropZone = Backbone.View.extend({
             objData.level.annotations !== null &&
 			(objData.level.annotations.AnalyzerDateFormat !== undefined ||
              objData.level.annotations.SaikuDayFormatString !== undefined) &&
-            (memberLevel.selection.members.length === 0)) {
+            (_.has(memberLevel, 'selection') && memberLevel.selection.members.length === 0) ||
+             _.has(memberLevel, 'selection') === false) {
 
             // Launch date filter dialog
             (new DateFilterModal({
@@ -638,7 +647,6 @@ var WorkspaceDropZone = Backbone.View.extend({
                             } else if (key == "clearsort") {
                                 a.sortOrder = null;
                                 a.sortEvaluationLiteral = null;
-                                alert('maybe?');
                                 self.synchronize_query();
                                 self.workspace.query.run();
                             } else if (key.indexOf("show_totals_") === 0){

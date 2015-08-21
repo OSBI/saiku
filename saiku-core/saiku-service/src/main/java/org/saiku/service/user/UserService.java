@@ -101,8 +101,8 @@ public class UserService implements IUserManager, Serializable {
 
     }
 
-    public SaikuUser updateUser(SaikuUser u) {
-        SaikuUser user = uDAO.updateUser(u);
+    public SaikuUser updateUser(SaikuUser u, boolean updatepassword) {
+        SaikuUser user = uDAO.updateUser(u, updatepassword);
         uDAO.updateRoles(u);
 
         return user;

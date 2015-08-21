@@ -396,6 +396,7 @@ var Workspace = Backbone.View.extend({
             workspace: obj
         });
 
+        obj.query = this.query;
 
         // Save the query to the server and init the UI
         obj.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });
@@ -460,6 +461,10 @@ var Workspace = Backbone.View.extend({
                 this.querytoolbar.render_mode = "table";
                 this.querytoolbar.spark_mode = renderType;
                 $(this.querytoolbar.el).find('ul.table a.' + renderType).addClass('on');
+            }
+            else if (renderMode === 'map') {
+                this.querytoolbar.$el.find('ul.chart > li').find('a').removeClass('on');
+                this.querytoolbar.$el.find('ul.chart [href="#' + renderMode + '"]').addClass('on');
             }
         } catch (e) {
                 Saiku.error(this.cid, e);

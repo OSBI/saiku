@@ -137,10 +137,10 @@ public class DatasourceService implements Serializable {
         source, target, name, roles); }
 
 
-    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
+    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles) {
       return datasources.getFiles(type, username, roles);
   }
-  public List<IRepositoryObject> getFiles(String type, String username, List<String> roles, String path) {
+  public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles, String path) {
     return datasources.getFiles(type, username, roles, path);
   }
   public String getFileData(String path, String username, List<String> roles){return datasources.getFileData(path,

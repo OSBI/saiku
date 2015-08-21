@@ -276,20 +276,6 @@
 			<url>http://nexus.pentaho.org/content/repositories/public-snapshots/</url>
 		</repository>
 		<repository>
-			<id>codehaus</id>
-			<url>http://repository.codehaus.org/</url>
-		</repository>
-		<repository>
-			<id>Analytical Labs Repo</id>
-			<name>Analytical Labs Repo-releases</name>
-			<url>http://repo.analytical-labs.com/artifactory/alabs-release-local</url>
-		</repository>
-		<repository>
-			<id>Analytical Labs snapshots</id>
-			<name>Analytical Labs Repo-releases</name>
-			<url>http://repo.analytical-labs.com/artifactory/alabs-snapshot-local</url>
-		</repository>
-		<repository>
 			<id>central</id>
 			<name>Maven Repository Switchboard</name>
 			<layout>default</layout>

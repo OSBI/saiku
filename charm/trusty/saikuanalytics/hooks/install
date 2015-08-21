@@ -1,23 +1,98 @@
-#!/usr/bin/python
+#!/bin/bash
 
-import setup
-setup.pre_install()
+# This script installs the Saiku Charm in Juju.  See the ../README for more 
+# information about the Saiku Charm.
 
-from charmhelpers.core import hookenv
-from charmhelpers import fetch
-from charmhelpers.core import host
-from charmhelpers.fetch import archiveurl
+# Abort the script if any errors are encountered.
+set -e
+# Show the commands that are getting executed.
+set -x
 
+container=tomcat7
+if [[ -e /var/lib/tomcat7 ]]; then
+  container=tomcat7
+elif [[ -e /var/lib/tomcat6 ]]; then
+  container=tomcat6
+fi
 
-def install():
-    hookenv.log('Installing saiku')
-    # add steps for installing dependencies and packages here
+if [ ! -d /usr/share/${container} ]; then
+  juju-log --log-level CRITICAL "${container} is not installed properly!"
+  exit 1
+fi
 
-    host.mkdir('/usr/local/SaikuCE')
-    ##Need to create a saiku user for security.
-    fetch.apt_install(fetch.filter_installed_packages(['openjdk-7-jdk']))
-    handler = archiveurl.ArchiveUrlFetchHandler()
-    handler.install('http://meteorite.bi/downloads/saiku-latest.tar.gz', '/usr/local/SaikuCE')
+saiku_directory="/usr/share/saiku_ce"
+if [ ! -d ${saiku_directory} ]; then
+  mkdir ${saiku_directory}
+  chmod 777 ${saiku_directory}
+fi
 
-if __name__ == "__main__":
-    install()
+# Install any tools that are needed for the install of saiku.
+apt-get install -y wget coreutils unzip
+
+# Define the download location for saiku.
+saiku_url=https://dl.dropboxusercontent.com/u/8503756/juju/3.4/saiku.zip
+root_url=https://dl.dropboxusercontent.com/u/8503756/juju/3.4/ROOT.zip
+data_url=https://dl.dropboxusercontent.com/u/8503756/juju/3.4/data.tgz
+repository_url=https://dl.dropboxusercontent.com/u/8503756/juju/3.4/repository.tgz
+
+juju-log "Downloading saiku from ${saiku_url} to ${saiku_directory}"
+# Download the saiku file into the saiku directory.
+wget "${saiku_url}" -O ${saiku_directory}/saiku.war
+wget "${root_url}" -O ${saiku_directory}/ROOT.war
+wget "${data_url}" -O ${saiku_directory}/data.tgz
+tar xvfz ${saiku_directory}/data.tgz -C ${saiku_directory}
+wget "${repository_url}" -O ${saiku_directory}/repository.tgz
+tar xvfz ${saiku_directory}/repository.tgz -C ${saiku_directory}
+unzip -o ${saiku_directory}/ROOT.war -d /var/lib/${container}/webapps/ROOT
+unzip -o ${saiku_directory}/saiku.war -d /var/lib/${container}/webapps/saiku
+chown -R ${container}:${container} ${saiku_directory}
+
+# The sha1sum for the saiku.war version 1.9.7
+saiku_official_sha1sum="38fe1310f3bc9508f65ca51a9dc3105c7dafa00b"
+root_official_sha1sum="d91e3289b5f277a4cd1fb0bdcb8dee4dc4e91788"
+data_official_sha1sum="38fe1310f3bc9508f65ca51a9dc3105c7dafa00b"
+repository_official_sha1sum="15c048c9090426625740fa6449e6d029983c0660"
+
+# It is best practice to check the hash value for the file that was downloaded.
+saiku_sha1sum=`sha1sum ${saiku_directory}/saiku.war | cut -d " " -f 1`
+if [[ ${saiku_sha1sum} != ${saiku_official_sha1sum} ]]; then
+  juju-log --log-level CRITICAL "The SHA1 checksum of ${saiku_url} is invalid."
+  juju-log --log-level CRITICAL "The checksum of the saiku.war was ${saiku_sha1sum}"
+  juju-log --log-level CRITICAL "Expected ${saiku_official_sha1sum}"
+  exit 1
+else 
+  juju-log "The SHA1 checksum of ${saiku_directory}/saiku.war was valid."
+fi
+
+# It is best practice to check the hash value for the file that was downloaded.
+root_sha1sum=`sha1sum ${saiku_directory}/ROOT.war | cut -d " " -f 1`
+if [[ ${root_sha1sum} != ${root_official_sha1sum} ]]; then
+  juju-log --log-level CRITICAL "The SHA1 checksum of ${root_url} is invalid."
+  juju-log --log-level CRITICAL "The checksum of the saiku.war was ${root_sha1sum}"
+  juju-log --log-level CRITICAL "Expected ${root_official_sha1sum}"
+  exit 1
+else 
+  juju-log "The SHA1 checksum of ${saiku_directory}/root.war was valid."
+fi
+# It is best practice to check the hash value for the file that was downloaded.
+data_sha1sum=`sha1sum ${saiku_directory}/data.tgz | cut -d " " -f 1`
+if [[ ${data_sha1sum} != ${data_official_sha1sum} ]]; then
+  juju-log --log-level CRITICAL "The SHA1 checksum of ${saiku_url} is invalid."
+  juju-log --log-level CRITICAL "The checksum of the data.tgz was ${data_sha1sum}"
+  juju-log --log-level CRITICAL "Expected ${data_official_sha1sum}"
+  exit 1
+else 
+  juju-log "The SHA1 checksum of ${saiku_directory}/data.tgz was valid."
+fi
+# It is best practice to check the hash value for the file that was downloaded.
+repository_sha1sum=`sha1sum ${saiku_directory}/repository.tgz | cut -d " " -f 1`
+if [[ ${repository_sha1sum} != ${repository_official_sha1sum} ]]; then
+  juju-log --log-level CRITICAL "The SHA1 checksum of ${saiku_url} is invalid."
+  juju-log --log-level CRITICAL "The checksum of the repository.tgz was ${repository_sha1sum}"
+  juju-log --log-level CRITICAL "Expected ${repository_official_sha1sum}"
+  exit 1
+else 
+  juju-log "The SHA1 checksum of ${saiku_directory}/repository.tgz was valid."
+fi
+# Stop tomcat.
+$CHARM_DIR/hooks/stop

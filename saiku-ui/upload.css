@@ -15,11 +15,6 @@
  */
 
 /**
- * Description: Stylesheet License Upload
- * Version: 1.0.0
- * Last update: 2015/02/04
- * Author: Breno Polanski <breno.polanski@gmail.com>
- *
  * TABLE OF CONTENTS:
  *
  *	0. GLOBAL
@@ -164,6 +159,19 @@ body {
 
 .form-upload .btn-upload:active {
 	border: 0;
+}
+
+.form-upload .back-login {
+	margin-top: 30px;
+	display: none;
+}
+
+.form-upload .back-login a {
+	text-decoration: none;
+}
+
+.form-upload .back-login a:hover {
+	text-decoration: underline;
 }
 
 /* 2.2. NOTIFICATION
