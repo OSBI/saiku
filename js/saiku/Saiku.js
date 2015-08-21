@@ -43,6 +43,11 @@ var Saiku = {
      * Collection of routers for page fragments
      */
     routers: [],
+    
+    /**
+     * Create a new variable for Leaflet interactive maps
+     */
+    leaflet: (typeof L !== 'undefined') ? L : {},
 
     /**
      * Convenience functions for blocking the UI
