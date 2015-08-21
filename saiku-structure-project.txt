@@ -1,0 +1,375 @@
+.
+├── ajaxtest.html
+├── CONTRIBUTING.md
+├── css
+│   ├── blueprint
+│   │   └── src
+│   │       ├── forms.css
+│   │       ├── grid.css
+│   │       ├── ie.css
+│   │       ├── print.css
+│   │       ├── reset.css
+│   │       └── typography.css
+│   ├── jquery
+│   │   ├── images
+│   │   │   ├── ui-bg_flat_0_aaaaaa_40x100.png
+│   │   │   ├── ui-bg_flat_75_ffffff_40x100.png
+│   │   │   ├── ui-bg_glass_55_fbf9ee_1x400.png
+│   │   │   ├── ui-bg_glass_65_ffffff_1x400.png
+│   │   │   ├── ui-bg_glass_75_dadada_1x400.png
+│   │   │   ├── ui-bg_glass_75_e6e6e6_1x400.png
+│   │   │   ├── ui-bg_glass_95_fef1ec_1x400.png
+│   │   │   ├── ui-bg_highlight-soft_75_cccccc_1x100.png
+│   │   │   ├── ui-icons_222222_256x240.png
+│   │   │   ├── ui-icons_2e83ff_256x240.png
+│   │   │   ├── ui-icons_454545_256x240.png
+│   │   │   ├── ui-icons_888888_256x240.png
+│   │   │   └── ui-icons_cd0a0a_256x240.png
+│   │   ├── jquery-ui.css
+│   │   └── spectrum.css
+│   └── saiku
+│       └── src
+│           ├── cssoverride.css
+│           ├── giveitsomestyle.css
+│           ├── saiku.dropzone.css
+│           ├── saiku.table.css
+│           └── styles.css
+├── embed
+│   ├── bootstrap3.html
+│   ├── embed.html
+│   ├── favicon.ico
+│   ├── images
+│   │   ├── arrow-down.gif
+│   │   ├── arrow-none.gif
+│   │   └── arrow-up.gif
+│   └── saiku.css
+├── favicon.ico
+├── forward.html
+├── Gruntfile.js
+├── images
+│   ├── arrow-down.gif
+│   ├── arrow-none.gif
+│   ├── arrow-up.gif
+│   ├── chart
+│   │   ├── 100bar.png
+│   │   ├── area2.png
+│   │   ├── area.png
+│   │   ├── bar.png
+│   │   ├── dot.png
+│   │   ├── gray
+│   │   │   ├── 100bar.png
+│   │   │   ├── area2.png
+│   │   │   ├── area.png
+│   │   │   ├── bar.png
+│   │   │   ├── dot.png
+│   │   │   ├── heat.png
+│   │   │   ├── line.png
+│   │   │   ├── multiple.png
+│   │   │   ├── multiplesunburst.png
+│   │   │   ├── pie.png
+│   │   │   ├── stackedbar.png
+│   │   │   ├── sunburst.png
+│   │   │   ├── treemap.png
+│   │   │   ├── trendbars.png
+│   │   │   ├── trendline.png
+│   │   │   └── waterfall.png
+│   │   ├── heat.png
+│   │   ├── line.png
+│   │   ├── multiple.png
+│   │   ├── multiplesunburst.png
+│   │   ├── pie.png
+│   │   ├── stackedbar.png
+│   │   ├── sunburst.png
+│   │   ├── treemap.png
+│   │   ├── trendbars.png
+│   │   ├── trendline.png
+│   │   └── waterfall.png
+│   ├── sprite.png
+│   └── src
+│       ├── admin_console.png
+│       ├── admin.png
+│       ├── arrow_in.png
+│       ├── arrow_refresh_bnw.png
+│       ├── arrow_refresh.png
+│       ├── arrow_up_bnw.png
+│       ├── auto.png
+│       ├── bullet_blue.png
+│       ├── bullet_green.png
+│       ├── bullet_red.png
+│       ├── button_blank.png
+│       ├── button_cog_off.png
+│       ├── button_cog_on.png
+│       ├── button_help.png
+│       ├── button_pdf.png
+│       ├── cancel3.png
+│       ├── ccc3.png
+│       ├── context_down.png
+│       ├── csv.png
+│       ├── delete.png
+│       ├── dialog_login.png
+│       ├── dialog_login_red.png
+│       ├── drillthrough.png
+│       ├── excel.png
+│       ├── export_drillthrough.png
+│       ├── fields.png
+│       ├── filter.png
+│       ├── folder_add.png
+│       ├── folder_edit.png
+│       ├── folder.png
+│       ├── group_edit.png
+│       ├── help.png
+│       ├── hide_parents.png
+│       ├── information.png
+│       ├── logo.png
+│       ├── logo_red.png
+│       ├── mac.png
+│       ├── main_toolbar_bug.png
+│       ├── main_toolbar_doc_plus.png
+│       ├── main_toolbar_folder.png
+│       ├── main_toolbar_info.png
+│       ├── main_toolbar_on_off.png
+│       ├── main_toolbar_schema_designer.png
+│       ├── mdx.png
+│       ├── meteorite_free.png
+│       ├── non.png
+│       ├── option_off.png
+│       ├── option_on.png
+│       ├── page_white_compressed.png
+│       ├── page_white.png
+│       ├── pencil.png
+│       ├── query_scenario.png
+│       ├── README
+│       ├── run.png
+│       ├── saiku_120.png
+│       ├── saiku_16.png
+│       ├── saiku_16x16.png
+│       ├── saiku_32.png
+│       ├── saiku_32x32.png
+│       ├── saiku.png
+│       ├── saikux2.png
+│       ├── save.png
+│       ├── sort_down.png
+│       ├── sort_none.png
+│       ├── sort_up.png
+│       ├── swap.png
+│       ├── switch_to_mdx.png
+│       ├── table2.png
+│       ├── table_across.png
+│       ├── table.png
+│       ├── tabs_cross_off.png
+│       ├── tabs_cross_on.png
+│       ├── toolbar_delete.png
+│       ├── toolbar_error.png
+│       ├── toolbar_help.png
+│       ├── toolbar_info.png
+│       ├── toolbar_logout.png
+│       ├── toolbar_message.png
+│       ├── toolbar_new.png
+│       ├── toolbar_open.png
+│       ├── toolbar_save.png
+│       ├── tree_collapsed.png
+│       ├── tree_dimension.png
+│       ├── tree_expand.png
+│       ├── tree_folder_collapsed.png
+│       ├── tree_folder_expand.png
+│       ├── tree_measure.png
+│       ├── waiting.gif
+│       └── zoom.png
+├── index.html
+├── js
+│   ├── ace
+│   │   ├── ace.js
+│   │   ├── ext-keybinding_menu.js
+│   │   ├── ext-options.js
+│   │   ├── ext-searchbox.js
+│   │   ├── ext-static_highlight.js
+│   │   ├── ext-textarea.js
+│   │   ├── keybinding-emacs.js
+│   │   ├── keybinding-vim.js
+│   │   ├── mode-text.js
+│   │   ├── theme-chrome.js
+│   │   ├── theme-clouds.js
+│   │   ├── theme-crimson_editor.js
+│   │   ├── theme-github.js
+│   │   └── theme-textmate.js
+│   ├── backbone
+│   │   ├── backbone.js
+│   │   ├── backbone-model-file-upload.js
+│   │   ├── backbone_old.js
+│   │   ├── json2.js
+│   │   └── underscore.js
+│   ├── externs
+│   │   ├── backbone_externs.js
+│   │   ├── jquery_externs.js
+│   │   └── underscore_externs.js
+│   ├── fancybox
+│   │   ├── blank.gif
+│   │   ├── fancybox_loading@2x.gif
+│   │   ├── fancybox_loading.gif
+│   │   ├── fancybox_overlay.png
+│   │   ├── fancybox_sprite@2x.png
+│   │   ├── fancybox_sprite.png
+│   │   ├── helpers
+│   │   │   ├── fancybox_buttons.png
+│   │   │   ├── jquery.fancybox-buttons.css
+│   │   │   ├── jquery.fancybox-buttons.js
+│   │   │   ├── jquery.fancybox-media.js
+│   │   │   ├── jquery.fancybox-thumbs.css
+│   │   │   └── jquery.fancybox-thumbs.js
+│   │   ├── jquery.fancybox.css
+│   │   ├── jquery.fancybox.js
+│   │   └── jquery.fancybox.pack.js
+│   ├── ga.js
+│   ├── jquery
+│   │   ├── jquery.blockUI.js
+│   │   ├── jquery.contextMenu.css
+│   │   ├── jquery.contextMenu.js
+│   │   ├── jquery.min.js
+│   │   ├── jquery-mobile-touch.js
+│   │   ├── jquery-ui-1.10.3.custom.js
+│   │   ├── jquery-ui.min.js
+│   │   ├── qunit.css
+│   │   ├── qunit.js
+│   │   └── spectrum.js
+│   ├── logger
+│   │   ├── janky.post.min.js
+│   │   └── Logger.js
+│   ├── saiku
+│   │   ├── adapters
+│   │   │   └── SaikuServer.js
+│   │   ├── embed
+│   │   │   └── SaikuEmbed.js
+│   │   ├── models
+│   │   │   ├── DateFilter.js
+│   │   │   ├── Dimension.js
+│   │   │   ├── License.js
+│   │   │   ├── Member.js
+│   │   │   ├── Plugin.js
+│   │   │   ├── QueryAction.js
+│   │   │   ├── Query.js
+│   │   │   ├── QueryScenario.js
+│   │   │   ├── Repository.js
+│   │   │   ├── Result.js
+│   │   │   ├── SaikuOlapQuery.js
+│   │   │   ├── Session.js
+│   │   │   ├── SessionWorkspace.js
+│   │   │   └── Settings.js
+│   │   ├── plugins
+│   │   │   ├── AdminConsole
+│   │   │   │   └── plugin.js
+│   │   │   ├── BIServer
+│   │   │   │   └── plugin.js
+│   │   │   ├── Buckets
+│   │   │   │   ├── plugin_disabled.js
+│   │   │   │   ├── tag_blue_add.png
+│   │   │   │   └── tag_red.png
+│   │   │   ├── CCC_Chart
+│   │   │   │   ├── _Base.js
+│   │   │   │   ├── cccCharts.js
+│   │   │   │   ├── cccProperties.ktr
+│   │   │   │   ├── ChartEditor.js
+│   │   │   │   ├── chart.png
+│   │   │   │   ├── def.js
+│   │   │   │   ├── jquery.tipsy.js
+│   │   │   │   ├── plugin.js
+│   │   │   │   ├── protovis.js
+│   │   │   │   ├── protovis-msie.js
+│   │   │   │   ├── pvc-d.js
+│   │   │   │   ├── pvc.js
+│   │   │   │   ├── tipsy.css
+│   │   │   │   ├── tipsy.gif
+│   │   │   │   └── tipsy.js
+│   │   │   ├── filters
+│   │   │   │   ├── filterconfig.js
+│   │   │   │   ├── plugin.js
+│   │   │   │   ├── tag_blue_add.png
+│   │   │   │   ├── tag_blue_edit.png
+│   │   │   │   └── tag_red.png
+│   │   │   ├── Fullscreen
+│   │   │   │   ├── fullscreen.png
+│   │   │   │   └── plugin.js
+│   │   │   ├── I18n
+│   │   │   │   ├── plugin.js
+│   │   │   │   └── po
+│   │   │   │       ├── cn.json
+│   │   │   │       ├── cs.json
+│   │   │   │       ├── de.json
+│   │   │   │       ├── en.json
+│   │   │   │       ├── es.json
+│   │   │   │       ├── fr.json
+│   │   │   │       ├── hr.json
+│   │   │   │       ├── hu.json
+│   │   │   │       ├── it.json
+│   │   │   │       ├── ko.json
+│   │   │   │       ├── lt.json
+│   │   │   │       ├── nb.json
+│   │   │   │       ├── nl.json
+│   │   │   │       ├── pl.json
+│   │   │   │       ├── pt.json
+│   │   │   │       └── ru.json
+│   │   │   └── Statistics
+│   │   │       ├── plugin.js
+│   │   │       └── sigma.png
+│   │   ├── render
+│   │   │   ├── SaikuChartRenderer.js
+│   │   │   ├── SaikuRenderer.js
+│   │   │   └── SaikuTableRenderer.js
+│   │   ├── routers
+│   │   │   └── QueryRouter.js
+│   │   ├── Saiku.js
+│   │   ├── Settings.js
+│   │   ├── tests
+│   │   │   └── TabTest.js
+│   │   └── views
+│   │       ├── AboutModal.js
+│   │       ├── AddFolderModal.js
+│   │       ├── CustomFilterModal.js
+│   │       ├── DateFilterModal.js
+│   │       ├── DeleteRepositoryObject.js
+│   │       ├── DemoLoginForm.js
+│   │       ├── DimensionList.js
+│   │       ├── DrillAcrossModal.js
+│   │       ├── DrillthroughModal.js
+│   │       ├── FilterModal.js
+│   │       ├── LoginForm.js
+│   │       ├── MDXModal.js
+│   │       ├── MeasuresModal.js
+│   │       ├── Modal.js
+│   │       ├── MoveRepositoryObject.js
+│   │       ├── OpenDialog.js
+│   │       ├── OpenQuery.js
+│   │       ├── OverwriteModal.js
+│   │       ├── PermissionsModal.js
+│   │       ├── QueryToolbar.js
+│   │       ├── SaveQuery.js
+│   │       ├── SelectionsModal.js
+│   │       ├── SessionErrorModal.js
+│   │       ├── SplashScreen.js
+│   │       ├── Tab.js
+│   │       ├── Table.js
+│   │       ├── TabSet.js
+│   │       ├── TitlesModal.js
+│   │       ├── Toolbar.js
+│   │       ├── Upgrade.js
+│   │       ├── WarningModal.js
+│   │       ├── WorkspaceDropZone.js
+│   │       ├── Workspace.js
+│   │       └── WorkspaceToolbar.js
+│   └── svgweb
+│       ├── svg.htc
+│       ├── svg.js
+│       └── svg.swf
+├── LICENSE
+├── minify.patch
+├── package.json
+├── pom.xml
+├── README.md
+├── saikuFilesPath.json
+├── saiku-structure-project.txt
+├── server.js
+├── test.html
+├── upload.css
+├── upload.html
+└── upload.js
+
+40 directories, 332 files
