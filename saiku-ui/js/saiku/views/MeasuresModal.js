@@ -28,7 +28,9 @@ var MeasuresModal = Modal.extend({
         'submit form': 'save',
         'click .dialog_footer a': 'call',
         'change #Measures': 'addMeasureToCalculationField',
-        'click .form_button.mathBtn': 'addMathOperatorToCalculationField'
+        'click .form_button.mathBtn': 'addMathOperatorToCalculationField',
+        'click .form_button.growthBtn': 'openGrowthModal'
+
     },
 
     buttons: [
@@ -62,9 +64,15 @@ var MeasuresModal = Modal.extend({
             " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='/' id='divisionBtn' >  </input> " +
             " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='(' id='leftBracketBtn' >  </input> " +
             " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value=')' id='rightBracketBtn' >  </input> " +
+            " <input type='button' class='form_button growthBtn' style='padding-bottom: 18px;' value='Growth'  " +
+            "         title='Calculate difference. Good to calculate previous period growth '   id='growthBtn' >  </input> " +
 
             "</form> </td>" +
             "</tr>" +
+
+            "<tr><td class='col0 i18n'>Function:</td>" +
+
+            "</td></tr>" +
 
 //            "<tr><td class='col0 i18n'>Function:</td>" +
 //            "<td class='col1'>" +
@@ -88,11 +96,12 @@ var MeasuresModal = Modal.extend({
         var self = this;
         this.workspace = args.workspace;
         this.measure = args.measure;
+        this.selectedDimensions = this.extractDimensionChoices(this.workspace.query.helper.model().queryModel.axes.ROWS.hierarchies);
 
         var cube = this.workspace.selected_cube;
         this.measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
 
-        _.bindAll(this, "save");
+        _.bindAll(this, "save", "openGrowthModal");
 
         this.options.title = "Calculated Measure";
 
@@ -118,6 +127,7 @@ var MeasuresModal = Modal.extend({
         // Load template
         this.message = this.addMeasureTemplate({
             measures: this.measures,
+            selectedDimensions: this.selectedDimensions,
             mdxFunctions: this.mdxFunctions
         });
 
@@ -177,5 +187,23 @@ var MeasuresModal = Modal.extend({
 
     resetSelectDropdown: function () {
         document.getElementById("Measures").selectedIndex = 0;
+    },
+
+    extractDimensionChoices: function (hierarchies) {
+        dimensionNames = [];
+        _.each(hierarchies, function (hierarchy) {
+            dimensionNames.push(hierarchy.name)
+        }, this);
+        return dimensionNames;
+    },
+
+    openGrowthModal: function (event) {
+        this.close();
+        (new GrowthModal({
+            workspace: this.workspace,
+            measures: this.measures,
+            dimensions: this.selectedDimensions,
+            workspace: this.workspace
+        })).render().open();
     }
 });
