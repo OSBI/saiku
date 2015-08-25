@@ -89,9 +89,11 @@ var QueryToolbar = Backbone.View.extend({
         
         if ($target.hasClass('render_chart')) {
             if (isMap === 'map') {
-                this.switch_render(isMap);
+                var mapProperties = this.workspace.query.getProperty('saiku.ui.map.options');
+                var mapType = mapProperties ? mapProperties.mapDefinition.type : '';
+                this.switch_render('map');
                 this.workspace.query.setProperty('saiku.ui.render.mode', 'map');
-                this.workspace.query.setProperty('saiku.ui.render.type', 'map_marker');
+                this.workspace.query.setProperty('saiku.ui.render.type', mapType);
             }
             else {
 	            this.switch_render('chart');
