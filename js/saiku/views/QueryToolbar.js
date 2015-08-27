@@ -122,6 +122,7 @@ var QueryToolbar = Backbone.View.extend({
             $(this.workspace.el).find('.workspace_results').children().hide();
             $(this.workspace.chart.el).find('.canvas_wrapper').hide();
             this.workspace.chart.show();
+            this.workspace.set_class_charteditor();
         } 
         else if (render_type === 'map') {
             this.$el.find('ul.renderer a.render_chart').addClass('on');
@@ -171,6 +172,7 @@ var QueryToolbar = Backbone.View.extend({
                     this.workspace.querytoolbar.$el.find('ul.chart [href="#map"]').removeClass('on');
                     $target.parent().siblings().find('.chartoption.on').removeClass('on');
                     $target.addClass('on');
+                    this.workspace.set_class_charteditor();
                 }
                 if (callback == "export_button") {
                     this.workspace.chart[callback](event);
