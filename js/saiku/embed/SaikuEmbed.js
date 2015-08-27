@@ -157,7 +157,7 @@ var SaikuClient = (function() {
 	};
 
 	/**
-	 * Instance of SaikuTableRenderer and SaikuChartRenderer
+	 * Factory for render layout
 	 *
 	 * @property _saikuRendererFactory
 	 * @type {Object}
@@ -171,6 +171,7 @@ var SaikuClient = (function() {
 	var _saikuRendererFactory = {
 		'table': SaikuTableRenderer,
 		'chart': SaikuChartRenderer,
+		'map': typeof SaikuMapRenderer !== 'undefined' ? SaikuMapRenderer : '',
 		'playground': typeof SaikuPlaygroundRenderer !== 'undefined' ? SaikuPlaygroundRenderer : ''
 	};
 	
