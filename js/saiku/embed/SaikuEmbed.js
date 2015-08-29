@@ -344,7 +344,14 @@ var SaikuClient = (function() {
 
 					if (options.render in _saikuRendererFactory) {
 						var saikuRenderer = new _saikuRendererFactory[options.render](data, options);
-						saikuRenderer.render();
+
+						if (options.render !== 'map') {
+							saikuRenderer.render();
+						}
+						else {
+							saikuRenderer.renderMap();
+						}
+
 						if ($.blockUI) {
 							$(options.htmlObject).unblock();
 						}
