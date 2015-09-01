@@ -292,7 +292,7 @@ var SaikuClient = (function() {
 					var renderMode = data.query.properties['saiku.ui.render.mode'] ? data.query.properties['saiku.ui.render.mode'] : options.render;
 					var mode = data.query.properties['saiku.ui.render.type'] ? data.query.properties['saiku.ui.render.type'] : options.mode;
 					var chartDefinition = data.query.properties['saiku.ui.chart.options'] ? data.query.properties['saiku.ui.chart.options'].chartDefinition : '';
-					var mapDefinition = data.query.properties['saiku.ui.chart.options'] ? data.query.properties['saiku.ui.chart.options'].mapDefinition : '';
+					var mapDefinition = data.query.properties['saiku.ui.map.options'] ? data.query.properties['saiku.ui.map.options'] : '';
 					var dataSchema = data.query.cube.uniqueName;
 					var dataAxis = {
 						dataFilter: data.query.queryModel.axes.FILTER['hierarchies'],
