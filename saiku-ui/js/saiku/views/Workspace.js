@@ -32,7 +32,7 @@ var Workspace = Backbone.View.extend({
 
     initialize: function(args) {
         // Maintain `this` in jQuery event handlers
-        _.bindAll(this, "caption", "adjust", "toggle_sidebar", "prepare", "new_query",
+        _.bindAll(this, "caption", "adjust", "toggle_sidebar", "prepare", "new_query", "set_class_charteditor",
                 "init_query", "update_caption", "populate_selections","refresh", "sync_query", "cancel", "cancelled", "no_results", "error", "switch_view_state");
 
         // Attach an event bus to the workspace
@@ -455,8 +455,7 @@ var Workspace = Backbone.View.extend({
                 this.chart.renderer.switch_chart(renderType);
                 $(this.querytoolbar.el).find('ul.chart [href="#' + renderType+ '"]').parent().siblings().find('.on').removeClass('on');
                 $(this.querytoolbar.el).find('ul.chart [href="#' + renderType+ '"]').addClass('on');
-
-
+				this.set_class_charteditor();
             } else if ('table' == renderMode && renderType in this.querytoolbar) {
                 this.querytoolbar.render_mode = "table";
                 this.querytoolbar.spark_mode = renderType;
@@ -555,6 +554,13 @@ var Workspace = Backbone.View.extend({
         Saiku.i18n.translate();
 
 
+    },
+    
+    set_class_charteditor: function() {
+        var chartOptions = this.query.getProperty('saiku.ui.chart.options');
+        if (chartOptions) {
+            $(this.querytoolbar.el).find('ul.chart [href="#charteditor"]').addClass('on');
+        }
     },
 
     synchronize_query: function() {
