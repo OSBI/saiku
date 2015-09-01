@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
     <artifactId>saiku</artifactId>
-    <groupId>org.saiku</groupId>
+    <groupId>org.saikuanalytics</groupId>
     <version>3.1-SNAPSHOT</version>
   </parent>
 
@@ -62,7 +62,7 @@
                 </dependency>
                 -->
                 <dependency>
-                    <groupId>org.saiku</groupId>
+                    <groupId>org.saikuanalytics</groupId>
                     <artifactId>saiku-service</artifactId>
                     <version>3.1-SNAPSHOT</version>
                 </dependency>
