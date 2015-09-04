@@ -68,7 +68,8 @@ var Settings = {
     EVALUATION_PANEL_LOGIN: true,
     QUERY_OVERWRITE_WARNING: true,
     MAPS: true,
-    MAPS_TYPE: 'OSM' // OSM || GMAPS
+    MAPS_TYPE: 'OSM', // OSM || GMAPS
+    DATA_SOURCES_LOOKUP: true
 };
 
 /**

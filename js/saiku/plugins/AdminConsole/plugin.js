@@ -447,7 +447,7 @@ var AdminConsole = Backbone.View.extend({
         "<label for='connusername'>Username: </label><input name='connusername' type='text' value='<%= conn.username %>'/><br/>" +
         "<label for='connpassword'>Password:</label><input name='connpassword' type='password' value='<%= conn.password %>'/><br/></div>" +
         "<div class='advconnection' style='display:none;'><textarea name='adv_text' rows='10' cols='75'><%= conn.advanced %></textarea></div>" +
-        "<br/><br/><a href='' name='advancedurl' class='advancedurl'>Advanced</a> | <a href='' name='getdatasources' class='getdatasources'>Data Sources</a>" +
+        "<br/><br/><a href='' name='advancedurl' class='advancedurl'>Advanced</a><% if (Settings.DATA_SOURCES_LOOKUP) { %> | <a href='' name='getdatasources' class='getdatasources'>Data Sources</a> <% } %>" +
         "<a href='<%= conn.id%>' class='user_button form_button remove_datasource hide'>Remove</a>" +
         "<a href='<%= conn.id%>' class='user_button form_button save_datasource'>Save</a>" +
         "<a href='<%= conn.id%>' class='refresh_button form_button user_button hide'>Refresh Cache</a><div class='clear'></div></form>" +

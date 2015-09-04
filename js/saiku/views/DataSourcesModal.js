@@ -15,9 +15,17 @@
  */
 
 /**
- * 
+ * Modal with Data Sources
  *
- * @class DataSources
+ * @class DataSourcesModal
+ * @example
+ *     var formElements = {
+ *         'url'      : '#jdbcurl',
+ *         'driver'   : '#driver',
+ *         'username' : '#connusername',
+ *         'password' : '#connpassword'
+ *     };
+ *     (new DataSourcesModal({ dialog: this, formElements: formElements })).render().open();
  */
 var DataSourcesModal = Modal.extend({
     /**
@@ -49,7 +57,7 @@ var DataSourcesModal = Modal.extend({
      * @private
      */
     buttons: [
-        { text: 'Save', method: 'save' },
+        { text: 'Add', method: 'add' },
         { text: 'Cancel', method: 'close' }
     ],
 
@@ -98,12 +106,22 @@ var DataSourcesModal = Modal.extend({
         )(data);
     },
 
+    /**
+     * Callback to put values in element <option>
+     * @private
+     * @param  {Object} data Values of data sources
+     */
     callback: function(data) {
         var $dataSources = this.option_template(data);
         this.dataSources = data;
         this.$el.find('#data-sources').append($dataSources);
     },
 
+    /**
+     * Method to populate parent form
+     * @private
+     * @param  {String} selectedDataSource Data source selected
+     */
     populate_form: function(selectedDataSource) {
         var dataSources = this.dataSources;
         var len = dataSources.length;
@@ -123,7 +141,12 @@ var DataSourcesModal = Modal.extend({
         }
     },
 
-    save: function(event) {
+    /**
+     * Add data source in parent form
+     * @private
+     * @param  {Object} event The Event interface represents any event of the DOM
+     */
+    add: function(event) {
         event.preventDefault();
         var selectedDataSource = this.$el.find('#data-sources option:selected').val();
         if (selectedDataSource) {
