@@ -15,7 +15,7 @@
  */
 
 /**
- * Select Parameter
+ * 
  *
  * @class DataSources
  */
@@ -102,10 +102,33 @@ var DataSourcesModal = Modal.extend({
         var $dataSources = this.option_template(data);
         this.dataSources = data;
         this.$el.find('#data-sources').append($dataSources);
-        console.log(data);
+    },
+
+    populate_form: function(selectedDataSource) {
+        var dataSources = this.dataSources;
+        var len = dataSources.length;
+        var i;
+
+        for (i = 0; i < len; i++) {
+            if (dataSources[i].name === selectedDataSource) {
+                // Set URL
+                this.dialog.$el.find(this.formElements.url).val(dataSources[i].url);
+                // Set Driver
+                this.dialog.$el.find(this.formElements.driver).val(dataSources[i].driver);
+                // Set Username
+                this.dialog.$el.find(this.formElements.username).val(dataSources[i].username);
+                // Set Password
+                this.dialog.$el.find(this.formElements.password).val(dataSources[i].password);
+            }
+        }
     },
 
     save: function(event) {
         event.preventDefault();
+        var selectedDataSource = this.$el.find('#data-sources option:selected').val();
+        if (selectedDataSource) {
+            this.populate_form(selectedDataSource);
+        }
+        this.$el.dialog('close');
     }
 });

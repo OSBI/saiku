@@ -46,7 +46,7 @@ var DataSources = Backbone.Model.extend({
 	 *
 	 * @method parse
 	 * @private
-	 * @param  {Array} response Returned data from the server
+	 * @param  {Object} response Returned data from the server
 	 */
 	parse: function(response) {
         if (this.dialog) {
