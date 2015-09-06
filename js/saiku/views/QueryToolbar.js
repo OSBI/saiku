@@ -161,7 +161,7 @@ var QueryToolbar = Backbone.View.extend({
                 this[callback](event);
             } 
             else if (this.render_mode == "chart") {
-                this.workspace.chart.$el.find('.canvas_wrapper').find('#map').data('action', 'querytoolbar');
+                this.workspace.chart.$el.find('.canvas_wrapper').find('.map-render').data('action', 'querytoolbar');
                 if ($target.hasClass('chartoption')) {
                     var mapProperties = {};
                     mapProperties.mapDefinition = {};
@@ -182,7 +182,7 @@ var QueryToolbar = Backbone.View.extend({
                 }
             }
             else if (this.render_mode === 'map' && callback !== 'map') {
-                this.workspace.chart.$el.find('.canvas_wrapper').find('#map').data('action', 'querytoolbar');
+                this.workspace.chart.$el.find('.canvas_wrapper').find('.map-render').data('action', 'querytoolbar');
                 if ($target.hasClass('chartoption')) {
                     var mapProperties = {};
                     mapProperties.mapDefinition = {};
