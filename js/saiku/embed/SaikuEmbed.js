@@ -360,7 +360,15 @@ var SaikuClient = (function() {
 							saikuRenderer.render();
 						}
 						else {
-							saikuRenderer.renderMap();
+							if (Settings.MAPS && Settings.MAPS_TYPE === 'OSM') {
+								saikuRenderer.renderMap();
+							}
+							else {
+								options.render = 'chart';
+								options.mode = 'stackedBar';
+								saikuRenderer = new _saikuRendererFactory[options.render](data, options);
+								saikuRenderer.render();
+							}
 						}
 
 						if ($.blockUI) {
