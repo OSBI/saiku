@@ -454,6 +454,10 @@ var Workspace = Backbone.View.extend({
             }
 
             if ('chart' == renderMode) {
+                if (Settings.MODE && Settings.MODE === 'chart' && (renderType === 'map_heat' || renderType === 'map_geo' || renderType === 'map_marker')) {
+                    this.query.setProperty('saiku.ui.render.mode', 'chart');
+                    renderType = 'stackedBar';
+                }
                 $(this.chart.el).find('.canvas_wrapper').hide();
                 this.chart.renderer.switch_chart(renderType);
                 $(this.querytoolbar.el).find('ul.chart [href="#' + renderType+ '"]').parent().siblings().find('.on').removeClass('on');
