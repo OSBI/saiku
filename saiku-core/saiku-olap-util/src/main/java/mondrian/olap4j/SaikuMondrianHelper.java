@@ -145,6 +145,9 @@ public class SaikuMondrianHelper {
 	  catch(NoSuchMethodError e){
 		mg = null;
 	  }
+	  catch(Exception e) {
+		mg = null;
+	  }
 	  return mg;
 	}
 	return null;
