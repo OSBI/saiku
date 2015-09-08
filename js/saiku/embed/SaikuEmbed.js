@@ -332,12 +332,22 @@ var SaikuClient = (function() {
 								$(options.htmlObject).closest('.gs-w').data('chartDefinition', JSON.stringify(chartDefinition));
 							}
 							else if (!(_.isEmpty(mapDefinition))) {
-								options['mapDefinition'] = mapDefinition;
-								$(options.htmlObject).closest('.gs-w').data('file', options.file);
-								$(options.htmlObject).closest('.gs-w').data('htmlobject', options.htmlObject);
-								$(options.htmlObject).closest('.gs-w').data('render', renderMode);
-								$(options.htmlObject).closest('.gs-w').data('mode', mode);
-								$(options.htmlObject).closest('.gs-w').data('mapDefinition', JSON.stringify(mapDefinition));
+								if (Settings.MAPS && Settings.MAPS_TYPE === 'OSM') {
+									options['mapDefinition'] = mapDefinition;
+									$(options.htmlObject).closest('.gs-w').data('file', options.file);
+									$(options.htmlObject).closest('.gs-w').data('htmlobject', options.htmlObject);
+									$(options.htmlObject).closest('.gs-w').data('render', renderMode);
+									$(options.htmlObject).closest('.gs-w').data('mode', mode);
+									$(options.htmlObject).closest('.gs-w').data('mapDefinition', JSON.stringify(mapDefinition));
+								}
+								else {
+									$(options.htmlObject).closest('.gs-w').data('file', options.file);
+									$(options.htmlObject).closest('.gs-w').data('htmlobject', options.htmlObject);
+									$(options.htmlObject).closest('.gs-w').data('render', 'chart');
+									$(options.htmlObject).closest('.gs-w').data('mode', 'stackedBar');
+									$(options.htmlObject).closest('.gs-w').data('chartDefinition', '');
+									$(options.htmlObject).closest('.gs-w').data('mapDefinition', '');
+								}
 							}
 							else {
 								$(options.htmlObject).closest('.gs-w').data('file', options.file);
