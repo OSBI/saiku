@@ -71,8 +71,10 @@ var Settings = {
     MAPS_TYPE: 'OSM', // OSM || GMAPS
     MAPS_TILE_LAYER: {
         OSM: {
-            'map_marker': 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-            'map_heat': 'http://otile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png'
+            // 'map_marker': 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+            'map_marker': 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            // 'map_heat': 'http://otile{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png'
+            'map_heat': 'https://otile{s}-s.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png'
         },
         GMAPS: {
         }
