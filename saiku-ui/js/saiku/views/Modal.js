@@ -1,5 +1,3 @@
-//goog.provide('saiku.views.Modal');
-
 /*
  *   Copyright 2012 OSBI Ltd
  *
@@ -15,7 +13,6 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-
 
 /**
  * The base class for all modal dialogs
@@ -96,3 +93,13 @@ var Modal = Backbone.View.extend({
         return false;
     }
 });
+
+/* jQuery UI - v1.10.2 - 2013-12-12  (and later)
+ * http://bugs.jqueryui.com/ticket/9087#comment:30
+ * http://bugs.jqueryui.com/ticket/9087#comment:27 - bugfix
+ * http://bugs.jqueryui.com/ticket/4727#comment:23 - bugfix
+ * allowInteraction fix
+ */
+$.ui.dialog.prototype._allowInteraction = function(event) {
+    return !!$(event.target).closest('.ui-dialog, .ui-datepicker, .sp-input').length;
+};
