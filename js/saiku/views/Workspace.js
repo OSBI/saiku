@@ -183,7 +183,7 @@ var Workspace = Backbone.View.extend({
 
         this.processing = $(this.el).find('.query_processing');
 
-        if (this.isReadOnly || Settings.MODE && (Settings.MODE == "view" || Settings.MODE == "table" || Settings.MODE == "chart")) {
+        if (this.isReadOnly || Settings.MODE && (Settings.MODE == "view" || Settings.MODE == "table" || Settings.MODE == "map" || Settings.MODE == "chart")) {
             $(this.el).find('.workspace_editor').remove();
             this.toggle_sidebar();
             $(this.el).find('.sidebar_separator').remove();
@@ -213,7 +213,7 @@ var Workspace = Backbone.View.extend({
                 });
         }
 
-        if (Settings.MODE && (Settings.MODE == "table" || Settings.MODE == "chart")) {
+        if (Settings.MODE && (Settings.MODE == "table" || Settings.MODE == "chart" || Settings.MODE == "map")) {
             $(this.el).find('.workspace_toolbar').remove();
             $(this.el).find('.query_toolbar').remove();
         } else {
@@ -446,11 +446,18 @@ var Workspace = Backbone.View.extend({
 	    else if(Settings.MODE == "chart"){
 		renderMode="chart";
 	    }
+	    else if(Settings.MODE == "map"){
+		renderMode="map";
+	    }
             if (typeof renderMode != "undefined" && renderMode !== null) {
                 this.querytoolbar.switch_render(renderMode);
             }
 
             if ('chart' == renderMode) {
+                if (Settings.MODE && Settings.MODE === 'chart' && (renderType === 'map_heat' || renderType === 'map_geo' || renderType === 'map_marker')) {
+                    this.query.setProperty('saiku.ui.render.mode', 'chart');
+                    renderType = 'stackedBar';
+                }
                 $(this.chart.el).find('.canvas_wrapper').hide();
                 this.chart.renderer.switch_chart(renderType);
                 $(this.querytoolbar.el).find('ul.chart [href="#' + renderType+ '"]').parent().siblings().find('.on').removeClass('on');
@@ -492,7 +499,7 @@ var Workspace = Backbone.View.extend({
         this.adjust();
         this.switch_view_state(this.viewState, true);
 
-        if (!$(this.el).find('.sidebar').hasClass('hide') && (Settings.MODE == "chart" || Settings.MODE == "table" || Settings.MODE == "view" || this.isReadOnly)) {
+        if (!$(this.el).find('.sidebar').hasClass('hide') && (Settings.MODE == "chart" || Settings.MODE == "table" || Settings.MODE == "map" || Settings.MODE == "view" || this.isReadOnly)) {
                 this.toggle_sidebar();
         }
         if ((Settings.MODE == "view") && this.query || this.isReadOnly) {
