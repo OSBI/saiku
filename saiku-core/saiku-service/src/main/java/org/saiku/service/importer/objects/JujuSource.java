@@ -1,4 +1,4 @@
-package org.saiku.web.rest.objects;
+package org.saiku.service.importer.objects;
 
 /**
  * Created by bugg on 02/09/15.

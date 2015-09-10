@@ -1,6 +1,6 @@
---- index.html	2015-08-31 11:19:37.408819276 +0100
-+++ index2.html	2015-08-31 11:27:00.844823909 +0100
-@@ -114,67 +114,8 @@
+--- index.html	2015-09-10 10:14:33.900272325 +0100
++++ index2.html	2015-09-10 10:26:26.612300050 +0100
+@@ -114,69 +114,8 @@
  <!-- Saiku Project -->
  <script type="text/javascript" src="js/saiku/Settings.js"></script>
  
@@ -27,6 +27,7 @@
 -<script type="text/javascript" src="js/saiku/views/FilterModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/CustomFilterModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/MeasuresModal.js"></script>
+-<script type="text/javascript" src="js/saiku/views/DataSourcesModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/QueryToolbar.js"></script>
 -<script type="text/javascript" src="js/saiku/views/WorkspaceToolbar.js"></script>
 -<script type="text/javascript" src="js/saiku/views/WorkspaceDropZone.js"></script>
@@ -56,6 +57,7 @@
 -<script type="text/javascript" src="js/saiku/models/Plugin.js"></script>
 -<script type="text/javascript" src="js/saiku/models/Settings.js"></script>
 -<script type="text/javascript" src="js/saiku/models/License.js"></script>
+-<script type="text/javascript" src="js/saiku/models/DataSources.js"></script>
 -<script type="text/javascript" src="js/saiku/Saiku.js"></script>
 -<script type="text/javascript" src="js/saiku/views/DateFilterModal.js"></script>
 -<script type="text/javascript" src="js/saiku/adapters/SaikuServer.js"></script>

@@ -26,7 +26,7 @@ import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuDataSourceException;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.web.rest.objects.DataSourceMapper;
-import org.saiku.web.rest.objects.JujuSource;
+import org.saiku.service.importer.objects.JujuSource;
 
 import com.qmino.miredot.annotations.ReturnType;
 import com.sun.jersey.core.header.FormDataContentDisposition;
@@ -668,13 +668,8 @@ public class AdminResource {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
-        List<JujuSource> list = new ArrayList<JujuSource>();
 
-        list.add(new JujuSource("testconn1", "jdbc:mysql://localhost/test", "username", "pass", "com.mysql.jdbc"
-                                                                                                + ".Driver"));
-        list.add(new JujuSource("testconn2", "jdbc:mysql://localhost/foodmart", "username", "pass", "com.mysql.jdbc"
-                                                                                                + ".Driver"));
-
+        List<JujuSource> list = repositoryDatasourceManager.getJujuDatasources();
         return Response.ok(list).build();
 
     }
