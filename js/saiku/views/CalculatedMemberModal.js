@@ -216,16 +216,21 @@ var CalculatedMemberModal = Modal.extend({
     template_calculated_members: function(data) {
         var $tpl = '';
 
-        _.each(data, function(value) {
-            $tpl += 
-                '<tr class="row-member-' + value.name + '">' +
-                    '<td class="member-name">' + value.name + '</td>' +
-                    '<td class="member-actions">' +
-                        '<a class="btn-action btn-action-edit" href="#edit_calculated_member" data-name="' + value.name + '">edit</a>' +
-                        '<a class="btn-action btn-action-del" href="#del_calculated_member" data-name="' + value.name + '">del</a>' +
-                    '</td>' +
-                '</tr>';
-        });
+        if (data.length !== 0) {
+            _.each(data, function(value) {
+                $tpl += 
+                    '<tr class="row-member-' + value.name + '">' +
+                        '<td class="member-name">' + value.name + '</td>' +
+                        '<td class="member-actions">' +
+                            '<a class="btn-action btn-action-edit" href="#edit_calculated_member" data-name="' + value.name + '">edit</a>' +
+                            '<a class="btn-action btn-action-del" href="#del_calculated_member" data-name="' + value.name + '">del</a>' +
+                        '</td>' +
+                    '</tr>';
+            });
+        }
+        else {
+            $tpl = '<p style="text-align: center; color: gray;">No calculated members created</p>';
+        }
 
         return $tpl;
     },
@@ -269,6 +274,7 @@ var CalculatedMemberModal = Modal.extend({
         this.formulaEditor.setValue('');
         this.$el.find('#member-dimension').prop('selectedIndex', 0);
         this.$el.find('#member-format').prop('selectedIndex', 1);
+        this.$el.find('.div-format-custom').hide();
         this.$el.find('#member-format-custom').val('');
     },
 
@@ -298,11 +304,9 @@ var CalculatedMemberModal = Modal.extend({
         var format = this.$el.find('#member-format option:selected').val();
         if (format === 'custom') {
             this.$el.find('.div-format-custom').show();
-            // this.memberFormat = this.$el.find('#member-format-custom').val();
         }
         else {
             this.$el.find('.div-format-custom').hide();
-            // this.memberFormat = this.$el.find('#member-format option:selected').val();
         }
     },
 
@@ -314,11 +318,6 @@ var CalculatedMemberModal = Modal.extend({
         var memberFormat = this.$el.find('#member-format option:selected').val();
         var alertMsg = '';
         var objMeasure;
-
-        console.log(memberName);
-        console.log(memberFormula);
-        console.log(memberDimension);
-        console.log(memberFormat);
 
         if (memberFormat === 'custom') {
             memberFormat = this.$el.find('#member-format-custom').val();
