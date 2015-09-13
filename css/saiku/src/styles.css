@@ -1088,6 +1088,10 @@ textarea, select {
     margin-left: 10px;
 }
 
+.dialog_calculated-member .form-group-inline .div-format-custom {
+    display: none;
+}
+
 .dialog_permissions .dialog_body {
     width: 370px;
     height: 380px;

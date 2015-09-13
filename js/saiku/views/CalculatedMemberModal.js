@@ -54,27 +54,53 @@ var CalculatedMemberModal = Modal.extend({
         '</div>' +
         '<div class="calculated-member-form">' +
             '<form class="form-group-inline">' +
-                '<label for="">Name:</label>' +
-                '<input type="text" id="">' +
-                '<label for="">Measure:</label>' +
-                '<select id="data-sources"></select>' +
+                '<label for="member-name">Name:</label>' +
+                '<input type="text" id="member-name" autofocus>' +
+                '<label for="member-measure">Measure:</label>' +
+                '<select id="member-measure">' +
+                    '<option value="" selected>-- Select an existing measure --</option>' +
+                    '<% _(measures).each(function(measure) { %>' +
+                        '<option value="<%= measure.uniqueName %>"><%= measure.name %></option>' +
+                    '<% }); %>' +
+                '</select>' +
                 '<label for="<%= idEditor %>">Formula:</label>' +
                 '<div class="formula-editor" id="<%= idEditor %>"></div>' +
                 '<div class="btn-group-math">' +
-                    '<a class="form_button" href="#">&nbsp;+&nbsp;</a>' +
-                    '<a class="form_button" href="#">&nbsp;-&nbsp;</a>' +
-                    '<a class="form_button" href="#">&nbsp;*&nbsp;</a>' +
-                    '<a class="form_button" href="#">&nbsp;/&nbsp;</a>' +
-                    '<a class="form_button" href="#">&nbsp;(&nbsp;</a>' +
-                    '<a class="form_button" href="#">&nbsp;)&nbsp;</a>' +
-                    '<a class="form_button" href="#">&nbsp;and&nbsp;</a>' +
-                    '<a class="form_button" href="#">&nbsp;or&nbsp;</a>' +
-                    '<a class="form_button" href="#">&nbsp;not&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#">&nbsp;+&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#">&nbsp;-&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#">&nbsp;*&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#">&nbsp;/&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#">&nbsp;(&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#">&nbsp;)&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#">&nbsp;and&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#">&nbsp;or&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#">&nbsp;not&nbsp;</a>' +
                 '</div>' +
-                '<label for="">Dimension:</label>' +
-                '<select id="data-sources"></select>' +
-                '<label for="">Format:</label>' +
-                '<input type="text" id="">' +
+                '<label for="member-dimension">Dimension:</label>' +
+                '<select id="member-dimension">' +
+                    '<option value="" selected>-- Select an existing dimension --</option>' +
+                    '<% _(dimensions).each(function(dimension) { %>' +
+                        '<option value="<%= dimension.uniqueName %>"><%= dimension.name %></option>' +
+                    '<% }); %>' +
+                '</select>' +
+                '<label for="member-format">Format:</label>' +
+                // '<input type="text" id="member-format" value="#,##0.00">' +
+                '<select id="member-format">' +
+                    '<option value="custom">Custom</option>' +
+                    '<option value="#,###.##" selected>#,###.## Decimal</option>' +
+                    '<option value="#,###">#,### Integer</option>' +
+                    '<option value="##.##%">##.##% Decimal percentage</option>' +
+                    '<option value="##%">##% Interger percentage</option>' +
+                    '<option value="mmmm dd yyyy">mmmm dd yyyy Month Day Year</option>' +
+                    '<option value="mmmm yyyy">mmmm yyyy Month Year</option>' +
+                    '<option value="yyyy-mm-dd">yyyy-mm-dd ISO format date</option>' +
+                    '<option value="yyyy-mm-dd hh:mi:ss">yyyy-mm-dd hh:mi:ss Date and time</option>' +
+                    '<option value="##h ##m">##h ##m Minutes</option>' +
+                '</select>' +
+                '<div class="div-format-custom">' +
+                    '<label for="member-format-custom">Format Custom:</label>' +
+                    '<input type="text" id="member-format-custom" value="" placeholder="Add a format custom">' +
+                '</div>' +
             '</form>' +
         '</div>'
     ),
@@ -100,7 +126,10 @@ var CalculatedMemberModal = Modal.extend({
      * @private
      */
     events: {
-        'click .dialog_footer a' : 'call'
+        'click  .dialog_footer a' : 'call',
+        'change #member-measure'  : 'add_measure',
+        'click  .btn-math'        : 'add_math_operator',
+        'change #member-format'   : 'type_format'
     },
 
     /**
@@ -114,12 +143,23 @@ var CalculatedMemberModal = Modal.extend({
         // Initialize properties
         _.extend(this, args);
         var self = this;
+        var cube = this.workspace.selected_cube;
+        var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
+        var dimensions = Saiku.session.sessionworkspace.cube[cube].get('data').dimensions;
+
+        // console.log(cube);
+        // console.log(measures);
+        // console.log(dimensions);
+        // console.log(Saiku.session.sessionworkspace.cube[cube].get('data'));
+
         this.options.title = 'Calculated Member';
-        this.id = _.uniqueId('editor-js-');
+        this.id = _.uniqueId('member-formula-');
 
         // Load template
         this.message = this.template_modal({
-            idEditor: this.id
+            measures: measures,
+            idEditor: this.id,
+            dimensions: dimensions
         });
 
         this.bind('open', function() {
@@ -156,11 +196,47 @@ var CalculatedMemberModal = Modal.extend({
      * @public
      */
     start_editor: function() {
-        // this.editorJS = ace.edit('formula-editor');
-        this.editorJS = ace.edit(this.id);
-        this.editorJS.getSession().setMode('ace/mode/text');
-        this.editorJS.getSession().setUseWrapMode(true);
-        this.editorJS.setValue(this.codeJS);
+        this.formulaEditor = ace.edit(this.id);
+        this.formulaEditor.getSession().setMode('ace/mode/text');
+        this.formulaEditor.getSession().setUseWrapMode(true);
         Saiku.ui.unblock();
     },
+
+    add_measure: function(event) {
+        event.preventDefault();
+        var measureName = this.$el.find('#member-measure option:selected').val();
+        var formula = this.formulaEditor.getValue();
+        formula = formula + measureName;
+        this.formulaEditor.setValue(formula);
+        this.reset_dropdown();
+    },
+
+    add_math_operator: function(event) {
+        event.preventDefault();
+        var $currentTarget = $(event.currentTarget);
+        var formula = this.formulaEditor.getValue();
+        formula = formula + ' ' + $currentTarget.text() + ' ';
+        this.formulaEditor.setValue(formula);
+    },
+
+    reset_dropdown: function () {
+        this.$el.find('#member-measure').prop('selectedIndex', 0);
+    },
+
+    type_format: function(event) {
+        event.preventDefault();
+        var format = this.$el.find('#member-format option:selected').val();
+        if (format === 'custom') {
+            this.$el.find('.div-format-custom').show();
+            // this.memberFormat = this.$el.find('#member-format-custom').val();
+        }
+        else {
+            this.$el.find('.div-format-custom').hide();
+            // this.memberFormat = this.$el.find('#member-format option:selected').val();
+        }
+    },
+
+    save: function(event) {
+        event.preventDefault();
+    }
 });
