@@ -58,7 +58,8 @@ var CalculatedMemberModal = Modal.extend({
                 '<input type="text" id="member-name" autofocus>' +
                 '<label for="member-measure">Measure:</label>' +
                 '<select id="member-measure">' +
-                    '<option value="" selected>-- Select an existing measure --</option>' +
+                    // '<option value="" selected>-- Select an existing measure --</option>' +
+                    '<option value="" selected>-- Add a measure in formula --</option>' +
                     '<% _(measures).each(function(measure) { %>' +
                         '<option value="<%= measure.uniqueName %>"><%= measure.name %></option>' +
                     '<% }); %>' +
@@ -66,15 +67,15 @@ var CalculatedMemberModal = Modal.extend({
                 '<label for="<%= idEditor %>">Formula:</label>' +
                 '<div class="formula-editor" id="<%= idEditor %>"></div>' +
                 '<div class="btn-group-math">' +
-                    '<a class="form_button btn-math" href="#">&nbsp;+&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#">&nbsp;-&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#">&nbsp;*&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#">&nbsp;/&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#">&nbsp;(&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#">&nbsp;)&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#">&nbsp;and&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#">&nbsp;or&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#">&nbsp;not&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator" data-math="+">&nbsp;+&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator" data-math="-">&nbsp;-&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator" data-math="*">&nbsp;*&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator" data-math="/">&nbsp;/&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator" data-math="(">&nbsp;(&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator" data-math=")">&nbsp;)&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator" data-math="and">&nbsp;and&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator" data-math="or">&nbsp;or&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator" data-math="not">&nbsp;not&nbsp;</a>' +
                 '</div>' +
                 '<label for="member-dimension">Dimension:</label>' +
                 '<select id="member-dimension">' +
@@ -87,7 +88,7 @@ var CalculatedMemberModal = Modal.extend({
                 // '<input type="text" id="member-format" value="#,##0.00">' +
                 '<select id="member-format">' +
                     '<option value="custom">Custom</option>' +
-                    '<option value="#,###.##" selected>#,###.## Decimal</option>' +
+                    '<option value="#,##0.00" selected>#,##0.00 Decimal</option>' +
                     '<option value="#,###">#,### Integer</option>' +
                     '<option value="##.##%">##.##% Decimal percentage</option>' +
                     '<option value="##%">##% Interger percentage</option>' +
@@ -150,7 +151,7 @@ var CalculatedMemberModal = Modal.extend({
         // console.log(cube);
         // console.log(measures);
         // console.log(dimensions);
-        // console.log(Saiku.session.sessionworkspace.cube[cube].get('data'));
+        console.log(Saiku.session.sessionworkspace.cube[cube].get('data'));
 
         this.options.title = 'Calculated Member';
         this.id = _.uniqueId('member-formula-');
@@ -215,7 +216,7 @@ var CalculatedMemberModal = Modal.extend({
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
         var formula = this.formulaEditor.getValue();
-        formula = formula + ' ' + $currentTarget.text() + ' ';
+        formula = formula + ' ' + $currentTarget.data('math') + ' ';
         this.formulaEditor.setValue(formula);
     },
 
@@ -236,7 +237,81 @@ var CalculatedMemberModal = Modal.extend({
         }
     },
 
+    // save: function (event) {
+    //     event.preventDefault();
+    //     var self = this;
+    //     var measure_name = $(this.el).find('.measure_name').val();
+    //     var measure_formula = $(this.el).find('.measureFormula').val();
+    //     var measure_format = $(this.el).find('.measure_format').val();
+
+
+    //     var alert_msg = "";
+    //     if (typeof measure_name == "undefined" || !measure_name) {
+    //         alert_msg += "You have to enter a name for the measure! ";
+    //     }
+    //     if (typeof measure_formula == "undefined" || !measure_formula || measure_formula === "") {
+    //         alert_msg += "You have to enter a MDX formula for the calculated measure! ";
+    //     }
+    //     if (alert_msg !== "") {
+    //         alert(alert_msg);
+    //     } else {
+    //         var m = { name: measure_name, formula: measure_formula, properties: {}, uniqueName: "[Measures]." + measure_name };
+    //         if (measure_format) {
+    //             m.properties.FORMAT_STRING = measure_format;
+    //         }
+    //         self.workspace.query.helper.addCalculatedMeasure(m);
+    //         self.workspace.sync_query();
+    //         this.close();
+    //     }
+
+    //     return false;
+    // },
+
     save: function(event) {
         event.preventDefault();
+        var memberName = this.$el.find('#member-name').val();
+        var memberFormula = this.formulaEditor.getValue();
+        var memberDimension = this.$el.find('#member-dimension option:selected').val();
+        var memberFormat = this.$el.find('#member-format option:selected').val();
+        var alertMsg = '';
+        var objMeasure;
+
+        console.log(memberName);
+        console.log(memberFormula);
+        console.log(memberDimension);
+        console.log(memberFormat);
+
+        if (memberFormat === 'custom') {
+            memberFormat = this.$el.find('#member-format-custom').val();
+        }
+        else {
+            memberFormat = this.$el.find('#member-format option:selected').val();
+        }
+
+        if (typeof memberName === 'undefined' || !memberName) {
+            alertMsg += 'You have to enter a name for the measure!';
+        }
+        if (typeof memberFormula === 'undefined' || memberFormula === '' || !memberFormula) {
+            alertMsg += 'You have to enter a MDX formula for the calculated measure!';
+        }
+        if (alertMsg !== '') {
+            alert(alertMsg);
+        } 
+        else {
+            objMeasure = { 
+                name: memberName, 
+                formula: memberFormula, 
+                properties: {}, 
+                uniqueName: '[Measures].' + memberName 
+            };
+            
+            if (memberFormat) {
+                objMeasure.properties.FORMAT_STRING = memberFormat;
+            }
+
+            this.workspace.query.helper.addCalculatedMeasure(objMeasure);
+            this.workspace.sync_query();
+            this.$el.dialog('close');
+        }
     }
 });
