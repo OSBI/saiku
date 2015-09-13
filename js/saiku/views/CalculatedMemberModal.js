@@ -41,13 +41,14 @@ var CalculatedMemberModal = Modal.extend({
             '<ul class="members-list">' +
                 '<li class="members-box">' +
                     '<table>' +
-                        '<tr>' +
-                            '<td class="member-name">Attributes 1</td>' +
-                            '<td class="member-actions">' +
-                               '<a class="btn-action" href="#">edit</a>' +
-                               '<a class="btn-action" href="#">del</a>' +
-                            '</td>' +
-                        '</tr>' +
+                        // '<tr>' +
+                        //     '<td class="member-name">Attributes 1</td>' +
+                        //     '<td class="member-actions">' +
+                        //        '<a class="btn-action" href="#">edit</a>' +
+                        //        '<a class="btn-action" href="#">del</a>' +
+                        //     '</td>' +
+                        // '</tr>' +
+                        '<%= tplCalculatedMembers %>' +
                     '</table>' +
                 '</li>' +
             '</ul>' +
@@ -67,21 +68,22 @@ var CalculatedMemberModal = Modal.extend({
                 '<label for="<%= idEditor %>">Formula:</label>' +
                 '<div class="formula-editor" id="<%= idEditor %>"></div>' +
                 '<div class="btn-group-math">' +
-                    '<a class="form_button btn-math" href="#add_math_operator" data-math="+">&nbsp;+&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator" data-math="-">&nbsp;-&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator" data-math="*">&nbsp;*&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator" data-math="/">&nbsp;/&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator" data-math="(">&nbsp;(&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator" data-math=")">&nbsp;)&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator" data-math="and">&nbsp;and&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator" data-math="or">&nbsp;or&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator" data-math="not">&nbsp;not&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="+">&nbsp;+&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="-">&nbsp;-&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="*">&nbsp;*&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="/">&nbsp;/&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="(">&nbsp;(&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math=")">&nbsp;)&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="and">&nbsp;and&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="or">&nbsp;or&nbsp;</a>' +
+                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="not">&nbsp;not&nbsp;</a>' +
                 '</div>' +
                 '<label for="member-dimension">Dimension:</label>' +
                 '<select id="member-dimension">' +
                     '<option value="" selected>-- Select an existing dimension --</option>' +
                     '<% _(dimensions).each(function(dimension) { %>' +
-                        '<option value="<%= dimension.uniqueName %>"><%= dimension.name %></option>' +
+                        // '<option value="<%= dimension.uniqueName %>"><%= dimension.name %></option>' +
+                        '<option value="<%= dimension.name %>"><%= dimension.name %></option>' +
                     '<% }); %>' +
                 '</select>' +
                 '<label for="member-format">Format:</label>' +
@@ -128,9 +130,11 @@ var CalculatedMemberModal = Modal.extend({
      */
     events: {
         'click  .dialog_footer a' : 'call',
-        'change #member-measure'  : 'add_measure',
-        'click  .btn-math'        : 'add_math_operator',
-        'change #member-format'   : 'type_format'
+        'change #member-measure'  : 'add_measure_formula',
+        'click  .btn-math'        : 'add_math_operator_formula',
+        'change #member-format'   : 'type_format',
+        'click  .btn-action-edit' : 'edit_calculated_member',
+        'click  .btn-action-del'  : 'del_calculated_member'
     },
 
     /**
@@ -143,21 +147,27 @@ var CalculatedMemberModal = Modal.extend({
     initialize: function(args) {
         // Initialize properties
         _.extend(this, args);
+        this.workspace = args.workspace;
         var self = this;
         var cube = this.workspace.selected_cube;
         var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
         var dimensions = Saiku.session.sessionworkspace.cube[cube].get('data').dimensions;
+        var calculatedMembers = this.workspace.query.helper.getCalculatedMeasures();
+        var $tplCalculatedMembers = this.template_calculated_members(calculatedMembers);
 
         // console.log(cube);
         // console.log(measures);
         // console.log(dimensions);
-        console.log(Saiku.session.sessionworkspace.cube[cube].get('data'));
+        // console.log(Saiku.session.sessionworkspace.cube[cube].get('data'));
+        // console.log(Saiku.session.sessionworkspace.cube[cube]);
+        // console.log(this.workspace.query.helper.getCalculatedMeasures());
 
         this.options.title = 'Calculated Member';
         this.id = _.uniqueId('member-formula-');
 
         // Load template
         this.message = this.template_modal({
+            tplCalculatedMembers: $tplCalculatedMembers,
             measures: measures,
             idEditor: this.id,
             dimensions: dimensions
@@ -203,7 +213,66 @@ var CalculatedMemberModal = Modal.extend({
         Saiku.ui.unblock();
     },
 
-    add_measure: function(event) {
+    template_calculated_members: function(data) {
+        var $tpl = '';
+
+        _.each(data, function(value) {
+            $tpl += 
+                '<tr class="row-member-' + value.name + '">' +
+                    '<td class="member-name">' + value.name + '</td>' +
+                    '<td class="member-actions">' +
+                        '<a class="btn-action btn-action-edit" href="#edit_calculated_member" data-name="' + value.name + '">edit</a>' +
+                        '<a class="btn-action btn-action-del" href="#del_calculated_member" data-name="' + value.name + '">del</a>' +
+                    '</td>' +
+                '</tr>';
+        });
+
+        return $tpl;
+    },
+
+    edit_calculated_member: function(event) {
+        event.preventDefault();
+        var self = this;
+        var $currentTarget = $(event.currentTarget);
+        var calculatedMembers = this.workspace.query.helper.getCalculatedMeasures();
+
+        _.each(calculatedMembers, function(value) {
+            if (value.name === $currentTarget.data('name')) {
+                self.$el.find('#member-name').val(value.name);
+                self.formulaEditor.setValue(value.formula);
+                // self.$el.find('#member-dimension').val(value.dimension);
+                if (0 !== $('#member-format option[value="' + value.properties.FORMAT_STRING + '"]').length) {
+                    self.$el.find('#member-format').val(value.properties.FORMAT_STRING);
+                    self.$el.find('.div-format-custom').hide();
+                }
+                else {
+                    self.$el.find('#member-format').prop('selectedIndex', 0);
+                    self.$el.find('.div-format-custom').show();
+                    self.$el.find('#member-format-custom').val(value.properties.FORMAT_STRING);
+                }
+            }
+        });
+    },
+
+    del_calculated_member: function(event) {
+        event.preventDefault();
+        var $currentTarget = $(event.currentTarget);
+        $currentTarget.parent().closest('.row-member-' + $currentTarget.data('name')).remove();
+        // TODO: Update method removeCalculatedMeasure
+        this.workspace.query.helper.removeCalculatedMeasure($currentTarget.data('name'));
+        this.reset_form();
+    },
+
+    reset_form: function() {
+        this.$el.find('#member-name').val('');
+        this.$el.find('#member-measure').prop('selectedIndex', 0);
+        this.formulaEditor.setValue('');
+        this.$el.find('#member-dimension').prop('selectedIndex', 0);
+        this.$el.find('#member-format').prop('selectedIndex', 1);
+        this.$el.find('#member-format-custom').val('');
+    },
+
+    add_measure_formula: function(event) {
         event.preventDefault();
         var measureName = this.$el.find('#member-measure option:selected').val();
         var formula = this.formulaEditor.getValue();
@@ -212,7 +281,7 @@ var CalculatedMemberModal = Modal.extend({
         this.reset_dropdown();
     },
 
-    add_math_operator: function(event) {
+    add_math_operator_formula: function(event) {
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
         var formula = this.formulaEditor.getValue();
@@ -237,36 +306,6 @@ var CalculatedMemberModal = Modal.extend({
         }
     },
 
-    // save: function (event) {
-    //     event.preventDefault();
-    //     var self = this;
-    //     var measure_name = $(this.el).find('.measure_name').val();
-    //     var measure_formula = $(this.el).find('.measureFormula').val();
-    //     var measure_format = $(this.el).find('.measure_format').val();
-
-
-    //     var alert_msg = "";
-    //     if (typeof measure_name == "undefined" || !measure_name) {
-    //         alert_msg += "You have to enter a name for the measure! ";
-    //     }
-    //     if (typeof measure_formula == "undefined" || !measure_formula || measure_formula === "") {
-    //         alert_msg += "You have to enter a MDX formula for the calculated measure! ";
-    //     }
-    //     if (alert_msg !== "") {
-    //         alert(alert_msg);
-    //     } else {
-    //         var m = { name: measure_name, formula: measure_formula, properties: {}, uniqueName: "[Measures]." + measure_name };
-    //         if (measure_format) {
-    //             m.properties.FORMAT_STRING = measure_format;
-    //         }
-    //         self.workspace.query.helper.addCalculatedMeasure(m);
-    //         self.workspace.sync_query();
-    //         this.close();
-    //     }
-
-    //     return false;
-    // },
-
     save: function(event) {
         event.preventDefault();
         var memberName = this.$el.find('#member-name').val();
@@ -288,18 +327,19 @@ var CalculatedMemberModal = Modal.extend({
             memberFormat = this.$el.find('#member-format option:selected').val();
         }
 
-        if (typeof memberName === 'undefined' || !memberName) {
-            alertMsg += 'You have to enter a name for the measure!';
+        if (typeof memberName === 'undefined' || memberName === '' || !memberName) {
+            alertMsg += 'You have to enter a name for the measure! ';
         }
         if (typeof memberFormula === 'undefined' || memberFormula === '' || !memberFormula) {
-            alertMsg += 'You have to enter a MDX formula for the calculated measure!';
+            alertMsg += 'You have to enter a MDX formula for the calculated measure! ';
         }
         if (alertMsg !== '') {
             alert(alertMsg);
         } 
         else {
             objMeasure = { 
-                name: memberName, 
+                name: memberName,
+                // dimension: memberDimension, 
                 formula: memberFormula, 
                 properties: {}, 
                 uniqueName: '[Measures].' + memberName 
