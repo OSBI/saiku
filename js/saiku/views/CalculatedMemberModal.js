@@ -32,12 +32,11 @@ var CalculatedMemberModal = Modal.extend({
     /**
      * Property with main template of modal
      *
-     * @property message
+     * @property template_modal
      * @type {String}
      * @private
      */
-    message:
-        // measures
+    template_modal: _.template(
         '<div class="calculated-member-group">' +
             '<ul class="members-list">' +
                 '<li class="members-box">' +
@@ -45,29 +44,40 @@ var CalculatedMemberModal = Modal.extend({
                         '<tr>' +
                             '<td class="member-name">Attributes 1</td>' +
                             '<td class="member-actions">' +
-                               '<a class="" href="#">edit</a>' +
-                               '<a class="" href="#">del</a>' +
+                               '<a class="btn-action" href="#">edit</a>' +
+                               '<a class="btn-action" href="#">del</a>' +
                             '</td>' +
                         '</tr>' +
                     '</table>' +
                 '</li>' +
             '</ul>' +
         '</div>' +
-        // form
         '<div class="calculated-member-form">' +
             '<form class="form-group-inline">' +
                 '<label for="">Name:</label>' +
                 '<input type="text" id="">' +
                 '<label for="">Measure:</label>' +
                 '<select id="data-sources"></select>' +
-                '<label for="">Formula:</label>' +
-                '<div id="editor-formula"></div>' +
+                '<label for="<%= idEditor %>">Formula:</label>' +
+                '<div class="formula-editor" id="<%= idEditor %>"></div>' +
+                '<div class="btn-group-math">' +
+                    '<a class="form_button" href="#">&nbsp;+&nbsp;</a>' +
+                    '<a class="form_button" href="#">&nbsp;-&nbsp;</a>' +
+                    '<a class="form_button" href="#">&nbsp;*&nbsp;</a>' +
+                    '<a class="form_button" href="#">&nbsp;/&nbsp;</a>' +
+                    '<a class="form_button" href="#">&nbsp;(&nbsp;</a>' +
+                    '<a class="form_button" href="#">&nbsp;)&nbsp;</a>' +
+                    '<a class="form_button" href="#">&nbsp;and&nbsp;</a>' +
+                    '<a class="form_button" href="#">&nbsp;or&nbsp;</a>' +
+                    '<a class="form_button" href="#">&nbsp;not&nbsp;</a>' +
+                '</div>' +
                 '<label for="">Dimension:</label>' +
                 '<select id="data-sources"></select>' +
                 '<label for="">Format:</label>' +
                 '<input type="text" id="">' +
             '</form>' +
-        '</div>',
+        '</div>'
+    ),
 
     /**
      * Events of buttons
@@ -103,8 +113,15 @@ var CalculatedMemberModal = Modal.extend({
     initialize: function(args) {
         // Initialize properties
         _.extend(this, args);
-        this.options.title = 'Calculated Member';
         var self = this;
+        this.options.title = 'Calculated Member';
+        this.id = _.uniqueId('editor-js-');
+
+        // Load template
+        this.message = this.template_modal({
+            idEditor: this.id
+        });
+
         this.bind('open', function() {
             this.post_render();
             this.$el.find('.calculated-member-group').height(this.$el.find('.calculated-member-form').height());
@@ -121,7 +138,7 @@ var CalculatedMemberModal = Modal.extend({
      * @public
      */
     post_render: function() {
-        var tPerc = (((($('body').height() - 480) / 2) * 100) / $('body').height());
+        var tPerc = (((($('body').height() - 500) / 2) * 100) / $('body').height());
         var lPerc = (((($('body').width() - 800) / 2) * 100) / $('body').width());
 
         this.$el.dialog('option', 'position', 'center');
@@ -139,7 +156,8 @@ var CalculatedMemberModal = Modal.extend({
      * @public
      */
     start_editor: function() {
-        this.editorJS = ace.edit('editor-formula');
+        // this.editorJS = ace.edit('formula-editor');
+        this.editorJS = ace.edit(this.id);
         this.editorJS.getSession().setMode('ace/mode/text');
         this.editorJS.getSession().setUseWrapMode(true);
         this.editorJS.setValue(this.codeJS);

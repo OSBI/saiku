@@ -1026,31 +1026,6 @@ textarea, select {
     margin: 15px;
 }
 
-.dialog_calculated-member .form-group-inline label {
-    padding-top: 10px;
-    float: left;
-    width: 80px;
-}
-
-.dialog_calculated-member .form-group-inline input[type="text"] {
-    padding: 4px;
-    width: 300px;
-    /*display: block;*/
-}
-
-.dialog_calculated-member .form-group-inline select {
-    padding: 4px;
-    width: 310px;
-    border-color: #ccc;
-    /*display: block;*/
-}
-
-.dialog_calculated-member .form-group-inline #editor-formula {
-    width: 308px;
-    height: 200px;
-    border: 1px solid #ccc;
-}
-
 .dialog_calculated-member .calculated-member-group {
     float: left;
     width: 300px;
@@ -1063,26 +1038,54 @@ textarea, select {
     list-style: none;
 }
 
-.dialog_calculated-member .calculated-member-group li.members-box {
-    /*border: 1px solid #000;*/
-}
+/*.dialog_calculated-member .calculated-member-group li.members-box {
+}*/
 
 .dialog_calculated-member .calculated-member-group li.members-box .member-name {
     width: 200px;
 }
 
-.dialog_calculated-member .calculated-member-group li.members-box .member-actions {
-    /*border: 1px solid #000;*/
-}
+/*.dialog_calculated-member .calculated-member-group li.members-box .member-actions {
+}*/
 
-.dialog_calculated-member .calculated-member-group li.members-box .member-actions a:nth-child(2) {
+.dialog_calculated-member .calculated-member-group li.members-box .member-actions .btn-action:nth-child(2) {
     margin-left: 10px;
 }
 
 .dialog_calculated-member .calculated-member-form {
     float: right;
     width: 400px;
-    /*border: 1px solid #000;*/
+}
+
+.dialog_calculated-member .form-group-inline label {
+    padding-top: 10px;
+    float: left;
+    width: 80px;
+}
+
+.dialog_calculated-member .form-group-inline input[type="text"] {
+    padding: 4px;
+    width: 300px;
+}
+
+.dialog_calculated-member .form-group-inline select {
+    padding: 4px;
+    width: 310px;
+    border-color: #ccc;
+}
+
+.dialog_calculated-member .form-group-inline .formula-editor {
+    width: 308px;
+    height: 200px;
+    border: 1px solid #ccc;
+}
+
+.dialog_calculated-member .form-group-inline .btn-group-math {
+    padding: 13px 70px;
+}
+
+.dialog_calculated-member .form-group-inline .btn-group-math .form_button {
+    margin-left: 10px;
 }
 
 .dialog_permissions .dialog_body {
