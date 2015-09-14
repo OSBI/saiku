@@ -1042,13 +1042,37 @@ textarea, select {
 }*/
 
 .dialog_calculated-member .calculated-member-group li.members-box .member-name {
-    width: 200px;
+    width: 150px;
 }
 
 /*.dialog_calculated-member .calculated-member-group li.members-box .member-actions {
 }*/
 
-.dialog_calculated-member .calculated-member-group li.members-box .member-actions .btn-action:nth-child(2) {
+.dialog_calculated-member .calculated-member-group li.members-box .member-actions a.button {
+    display: inline-block;
+    height: 16px;
+    padding: 8px;
+    width: 16px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    background-repeat: no-repeat;
+}
+.dialog_calculated-member .calculated-member-group li.members-box .member-actions a.button:hover {
+    border: 1px solid #ccc;
+    padding: 7px;
+}
+
+.dialog_calculated-member .calculated-member-group li.members-box .member-actions .edit {
+    background-image: url("../../../images/src/pencil.png");
+    background-position: 7px 7px;
+}
+
+.dialog_calculated-member .calculated-member-group li.members-box .member-actions .delete {
+    background-position: -521px 7px;
+}
+
+.dialog_calculated-member .calculated-member-group li.members-box .member-actions .button:nth-child(2) {
     margin-left: 10px;
 }
 

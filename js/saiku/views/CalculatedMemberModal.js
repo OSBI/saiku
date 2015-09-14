@@ -41,11 +41,11 @@ var CalculatedMemberModal = Modal.extend({
             '<ul class="members-list">' +
                 '<li class="members-box">' +
                     '<table>' +
-                        // '<tr>' +
-                        //     '<td class="member-name">Attributes 1</td>' +
+                        // '<tr class="row-member-">' +
+                        //     '<td class="member-name">Member Name</td>' +
                         //     '<td class="member-actions">' +
-                        //        '<a class="btn-action" href="#">edit</a>' +
-                        //        '<a class="btn-action" href="#">del</a>' +
+                        //         '<a class="edit button sprite btn-action-edit" href="#edit_calculated_member" data-name=""></a>' +
+                        //         '<a class="delete button sprite btn-action-del" href="#del_calculated_member" data-name=""></a>' +
                         //     '</td>' +
                         // '</tr>' +
                         '<%= tplCalculatedMembers %>' +
@@ -54,7 +54,7 @@ var CalculatedMemberModal = Modal.extend({
             '</ul>' +
         '</div>' +
         '<div class="calculated-member-form">' +
-            '<form class="form-group-inline">' +
+            '<form class="form-group-inline" data-action="cad">' +
                 '<label for="member-name">Name:</label>' +
                 '<input type="text" id="member-name" autofocus>' +
                 '<label for="member-measure">Measure:</label>' +
@@ -82,8 +82,8 @@ var CalculatedMemberModal = Modal.extend({
                 '<select id="member-dimension">' +
                     '<option value="" selected>-- Select an existing dimension --</option>' +
                     '<% _(dimensions).each(function(dimension) { %>' +
-                        // '<option value="<%= dimension.uniqueName %>"><%= dimension.name %></option>' +
-                        '<option value="<%= dimension.name %>"><%= dimension.name %></option>' +
+                        '<option value="<%= dimension.uniqueName %>"><%= dimension.name %></option>' +
+                        // '<option value="<%= dimension.name %>"><%= dimension.name %></option>' +
                     '<% }); %>' +
                 '</select>' +
                 '<label for="member-format">Format:</label>' +
@@ -116,8 +116,9 @@ var CalculatedMemberModal = Modal.extend({
      * @private
      */
     buttons: [
-        { text: 'Save', method: 'save' },
-        // { text: 'Edit', method: 'edit' },
+        { text: 'Add', method: 'save' },
+        { text: 'Edit', method: 'save' },
+        { text: 'New', method: 'new' },
         { text: 'Cancel', method: 'close' }
     ],
 
@@ -135,7 +136,8 @@ var CalculatedMemberModal = Modal.extend({
         'click  .btn-math'        : 'add_math_operator_formula',
         'change #member-format'   : 'type_format',
         'click  .btn-action-edit' : 'edit_calculated_member',
-        'click  .btn-action-del'  : 'del_calculated_member'
+        // 'click  .btn-action-del'  : 'del_calculated_member'
+        'click  .btn-action-del'  : 'show_del_calculated_member'
     },
 
     /**
@@ -176,7 +178,8 @@ var CalculatedMemberModal = Modal.extend({
 
         this.bind('open', function() {
             this.post_render();
-            // this.$el.find('.dialog_footer').find('a[href="#edit"]').hide();
+            this.$el.find('.dialog_footer a:nth-child(2)').hide();
+            this.$el.find('.dialog_footer a:nth-child(3)').hide();
             this.$el.find('.calculated-member-group').height(this.$el.find('.calculated-member-form').height());
             _.defer(function() {
                 self.start_editor();
@@ -224,8 +227,8 @@ var CalculatedMemberModal = Modal.extend({
                     '<tr class="row-member-' + value.name + '">' +
                         '<td class="member-name">' + value.name + '</td>' +
                         '<td class="member-actions">' +
-                            '<a class="btn-action btn-action-edit" href="#edit_calculated_member" data-name="' + value.name + '">edit</a>' +
-                            '<a class="btn-action btn-action-del" href="#del_calculated_member" data-name="' + value.name + '">del</a>' +
+                            '<a class="edit button sprite btn-action-edit" href="#edit_calculated_member" data-name="' + value.name + '"></a>' +
+                            '<a class="delete button sprite btn-action-del" href="#del_calculated_member" data-name="' + value.name + '"></a>' +
                         '</td>' +
                     '</tr>';
             });
@@ -247,7 +250,7 @@ var CalculatedMemberModal = Modal.extend({
             if (value.name === $currentTarget.data('name')) {
                 self.$el.find('#member-name').val(value.name);
                 self.formulaEditor.setValue(value.formula);
-                // self.$el.find('#member-dimension').val(value.dimension);
+                self.$el.find('#member-dimension').val(value.hierarchyName.split('.')[1]);
                 if (0 !== $('#member-format option[value="' + value.properties.FORMAT_STRING + '"]').length) {
                     self.$el.find('#member-format').val(value.properties.FORMAT_STRING);
                     self.$el.find('.div-format-custom').hide();
@@ -257,22 +260,47 @@ var CalculatedMemberModal = Modal.extend({
                     self.$el.find('.div-format-custom').show();
                     self.$el.find('#member-format-custom').val(value.properties.FORMAT_STRING);
                 }
+                self.$el.find('.form-group-inline').data('action', 'edit');
+                self.$el.find('.form-group-inline').data('oldmember', value.name);
             }
         });
-
-        // this.$el.find('.dialog_footer').find('a[href="#add"]').hide();
-        // this.$el.find('.dialog_footer').find('a[href="#edit"]').show();
+        this.$el.find('.dialog_footer a:nth-child(1)').hide();
+        this.$el.find('.dialog_footer a:nth-child(2)').show();
+        this.$el.find('.dialog_footer a:nth-child(3)').show();
     },
 
-    del_calculated_member: function(event) {
+    show_del_calculated_member: function(event) {
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
-        $currentTarget.parent().closest('.row-member-' + $currentTarget.data('name')).remove();
-        // TODO: Update method removeCalculatedMeasure
-        this.workspace.query.helper.removeCalculatedMeasure($currentTarget.data('name'));
-        this.workspace.sync_query();
-        this.reset_form();
+        this.delCalculatedMember = $currentTarget;
+        (new WarningModal({
+            title: "Delete Member", 
+            message: "You want to delete this Calculated Member " + '<b>' + $currentTarget.data('name') + '</b>?',
+            okay: this.del_calculated_member, 
+            // okayobj: $currentTarget
+            okayobj: this
+        })).render().open();
+        this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Calculated Member');
     },
+
+    del_calculated_member: function(args) {
+        // console.log(args);
+        args.delCalculatedMember.parent().closest('.row-member-' + args.delCalculatedMember.data('name')).remove();
+        args.workspace.query.helper.removeCalculatedMeasure(args.delCalculatedMember.data('name'));
+        args.workspace.sync_query();
+        args.reset_form();
+        args.new();
+    },
+
+    // del_calculated_member: function(event) {
+    //     event.preventDefault();
+    //     var $currentTarget = $(event.currentTarget);
+    //     $currentTarget.parent().closest('.row-member-' + $currentTarget.data('name')).remove();
+    //     // TODO: Update method removeCalculatedMeasure
+    //     this.workspace.query.helper.removeCalculatedMeasure($currentTarget.data('name'));
+    //     this.workspace.sync_query();
+    //     this.reset_form();
+    // },
 
     reset_form: function() {
         this.$el.find('#member-name').val('');
@@ -316,14 +344,27 @@ var CalculatedMemberModal = Modal.extend({
         }
     },
 
+    new: function(event) {
+        if (event) { event.preventDefault(); }
+        this.$el.find('.form-group-inline').data('action', 'cad');
+        this.$el.find('.form-group-inline').data('oldmember', '');
+        this.$el.find('.dialog_footer a:nth-child(1)').show();
+        this.$el.find('.dialog_footer a:nth-child(2)').hide();
+        this.$el.find('.dialog_footer a:nth-child(3)').hide();
+        this.reset_form();
+    },
+
     save: function(event) {
         event.preventDefault();
+        var $currentTarget = $(event.currentTarget);
+        var memberNameOld = this.$el.find('.form-group-inline').data('oldmember');
         var memberName = this.$el.find('#member-name').val();
         var memberFormula = this.formulaEditor.getValue();
         var memberDimension = this.$el.find('#member-dimension option:selected').val();
         var memberFormat = this.$el.find('#member-format option:selected').val();
+        var formAction = this.$el.find('.form-group-inline').data('action');
         var alertMsg = '';
-        var objMeasure;
+        var objMember;
 
         if (memberFormat === 'custom') {
             memberFormat = this.$el.find('#member-format-custom').val();
@@ -333,28 +374,53 @@ var CalculatedMemberModal = Modal.extend({
         }
 
         if (typeof memberName === 'undefined' || memberName === '' || !memberName) {
-            alertMsg += 'You have to enter a name for the measure! ';
+            alertMsg += 'You have to enter a name for the member! ';
         }
         if (typeof memberFormula === 'undefined' || memberFormula === '' || !memberFormula) {
-            alertMsg += 'You have to enter a MDX formula for the calculated measure! ';
+            alertMsg += 'You have to enter a MDX formula for the calculated member! ';
+        }
+        if (typeof memberDimension === 'undefined' || memberDimension === '' || !memberDimension) {
+            alertMsg += 'You have to choose a dimension for the calculated member! ';
         }
         if (alertMsg !== '') {
             alert(alertMsg);
         } 
         else {
-            objMeasure = { 
-                name: memberName,
-                // dimension: memberDimension, 
-                formula: memberFormula, 
-                properties: {}, 
-                uniqueName: '[Measures].' + memberName 
-            };
-            
-            if (memberFormat) {
-                objMeasure.properties.FORMAT_STRING = memberFormat;
+            if (formAction === 'cad') {
+                objMember = { 
+                    name: memberName,
+                    formula: memberFormula, 
+                    properties: {}, 
+                    uniqueName: '[Measures].' + memberName, 
+                    hierarchyName: '[Measures].' + memberDimension
+                    // uniqueName: '[Store].[Stores].' + memberName, 
+                    // hierarchyName: '[Store].[Stores].[Store Country].currentmember'
+                };
+                
+                if (memberFormat) {
+                    objMember.properties.FORMAT_STRING = memberFormat;
+                }
+
+                this.workspace.query.helper.addCalculatedMeasure(objMember);
+            }
+            else {
+                objMember = { 
+                    name: memberName,
+                    formula: memberFormula, 
+                    properties: {}, 
+                    uniqueName: '[Measures].' + memberName, 
+                    hierarchyName: '[Measures].' + memberDimension
+                    // uniqueName: '[Store].[Stores].' + memberName, 
+                    // hierarchyName: '[Store].[Stores].[Store Country].currentmember'
+                };
+                
+                if (memberFormat) {
+                    objMember.properties.FORMAT_STRING = memberFormat;
+                }
+
+                this.workspace.query.helper.editCalculatedMeasure(memberNameOld, objMember);
             }
 
-            this.workspace.query.helper.addCalculatedMeasure(objMeasure);
             this.workspace.sync_query();
             this.$el.dialog('close');
         }

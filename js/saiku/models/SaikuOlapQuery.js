@@ -219,6 +219,13 @@ SaikuOlapQueryHelper.prototype.addCalculatedMeasure = function(measure) {
   }
 };
 
+SaikuOlapQueryHelper.prototype.editCalculatedMeasure = function(name, measure) {
+  if (measure) {
+    this.removeCalculatedMeasure(name);
+    this.model().queryModel.calculatedMeasures.push(measure);
+  }
+};
+
 SaikuOlapQueryHelper.prototype.removeCalculatedMeasure = function(name) {
   var measures = this.model().queryModel.calculatedMeasures;
   var removeMeasure = _.findWhere(measures , { name: name });
