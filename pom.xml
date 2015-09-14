@@ -3,7 +3,7 @@
 <parent>
 		<artifactId>saiku</artifactId>
 		<groupId>org.saiku</groupId>
-		<version>3.5-SNAPSHOT</version>
+		<version>3.6-SNAPSHOT</version>
 	</parent>
 	<artifactId>saiku-ui</artifactId>
 	<packaging>pom</packaging>
