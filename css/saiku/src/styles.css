@@ -1063,6 +1063,12 @@ textarea, select {
     padding: 7px;
 }
 
+.dialog_calculated-member .calculated-member-group li.members-box .member-actions a.on {
+    border: 1px solid #ccc;
+    background-color: #e0e0e0;
+    padding: 7px !important;
+}
+
 .dialog_calculated-member .calculated-member-group li.members-box .member-actions .edit {
     background-image: url("../../../images/src/pencil.png");
     background-position: 7px 7px;

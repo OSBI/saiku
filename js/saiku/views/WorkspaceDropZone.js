@@ -40,7 +40,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         this.workspace = args.workspace;
 
         // Maintain `this` in jQuery event handlers
-        _.bindAll(this, "clear_axis");
+        _.bindAll(this, "clear_axis", "set_measures");
     },
 
     render: function() {

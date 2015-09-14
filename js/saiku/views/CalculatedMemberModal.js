@@ -158,6 +158,9 @@ var CalculatedMemberModal = Modal.extend({
         var calculatedMembers = this.workspace.query.helper.getCalculatedMeasures();
         var $tplCalculatedMembers = this.template_calculated_members(calculatedMembers);
 
+        // Maintain `this`
+        // _.bindAll(this, 'replace_member');
+
         // console.log(cube);
         // console.log(measures);
         // console.log(dimensions);
@@ -219,12 +222,14 @@ var CalculatedMemberModal = Modal.extend({
     },
 
     template_calculated_members: function(data) {
+        var self = this;
         var $tpl = '';
 
         if (data.length !== 0) {
             _.each(data, function(value) {
                 $tpl += 
-                    '<tr class="row-member-' + value.name + '">' +
+                    // '<tr class="row-member-' + value.name + '">' +
+                    '<tr class="row-member-' + self.replace_member(value.name) + '">' +
                         '<td class="member-name">' + value.name + '</td>' +
                         '<td class="member-actions">' +
                             '<a class="edit button sprite btn-action-edit" href="#edit_calculated_member" data-name="' + value.name + '"></a>' +
@@ -240,14 +245,22 @@ var CalculatedMemberModal = Modal.extend({
         return $tpl;
     },
 
+    replace_member: function(name) {
+        name = name.replace(' ', '-');
+        return name;
+    },
+
     edit_calculated_member: function(event) {
         event.preventDefault();
         var self = this;
         var $currentTarget = $(event.currentTarget);
         var calculatedMembers = this.workspace.query.helper.getCalculatedMeasures();
 
+        this.$el.find('.member-actions a').removeClass('on');
+
         _.each(calculatedMembers, function(value) {
             if (value.name === $currentTarget.data('name')) {
+                $currentTarget.addClass('on');
                 self.$el.find('#member-name').val(value.name);
                 self.formulaEditor.setValue(value.formula);
                 self.$el.find('#member-dimension').val(value.hierarchyName.split('.')[1]);
@@ -273,6 +286,7 @@ var CalculatedMemberModal = Modal.extend({
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
         this.delCalculatedMember = $currentTarget;
+        this.new();
         (new WarningModal({
             title: "Delete Member", 
             message: "You want to delete this Calculated Member " + '<b>' + $currentTarget.data('name') + '</b>?',
@@ -281,15 +295,6 @@ var CalculatedMemberModal = Modal.extend({
             okayobj: this
         })).render().open();
         this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Calculated Member');
-    },
-
-    del_calculated_member: function(args) {
-        // console.log(args);
-        args.delCalculatedMember.parent().closest('.row-member-' + args.delCalculatedMember.data('name')).remove();
-        args.workspace.query.helper.removeCalculatedMeasure(args.delCalculatedMember.data('name'));
-        args.workspace.sync_query();
-        args.reset_form();
-        args.new();
     },
 
     // del_calculated_member: function(event) {
@@ -301,6 +306,28 @@ var CalculatedMemberModal = Modal.extend({
     //     this.workspace.sync_query();
     //     this.reset_form();
     // },
+
+    del_calculated_member: function(args) {
+        // console.log(args);
+        args.delCalculatedMember.parent().closest('.row-member-' + args.replace_member(args.delCalculatedMember.data('name'))).remove();
+        args.workspace.query.helper.removeCalculatedMeasure(args.delCalculatedMember.data('name'));
+        args.workspace.sync_query();
+        args.workspace.drop_zones.set_measures();
+        args.new();
+        if (!args.is_calculated_member()) {
+            args.$el.find('.members-list li').append('<p style="text-align: center; color: gray;">No calculated members created</p>');
+        }
+    },
+
+    is_calculated_member:function() {
+        var calculatedMembers = this.workspace.query.helper.getCalculatedMeasures();
+        if (calculatedMembers.length > 0) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    },
 
     reset_form: function() {
         this.$el.find('#member-name').val('');
@@ -346,6 +373,7 @@ var CalculatedMemberModal = Modal.extend({
 
     new: function(event) {
         if (event) { event.preventDefault(); }
+        this.$el.find('.member-actions a').removeClass('on');
         this.$el.find('.form-group-inline').data('action', 'cad');
         this.$el.find('.form-group-inline').data('oldmember', '');
         this.$el.find('.dialog_footer a:nth-child(1)').show();
