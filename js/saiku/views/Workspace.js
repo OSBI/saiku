@@ -607,6 +607,9 @@ var Workspace = Backbone.View.extend({
                         cursorAt: { top: 10, left: 35 }
                     });
                 }
+                else {
+                    dimlist.find('.calculated_measures').empty();
+                }
 
                 self.drop_zones.synchronize_query();
 

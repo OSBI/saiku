@@ -174,7 +174,8 @@ var DimensionList = Backbone.View.extend({
     },
 
     measure_dialog: function(event, ui) {
-        (new MeasuresModal({ 
+        // (new MeasuresModal({ 
+        (new CalculatedMemberModal({ 
             workspace: this.workspace,
             measure: null
         })).render().open();

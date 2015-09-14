@@ -117,6 +117,7 @@ var CalculatedMemberModal = Modal.extend({
      */
     buttons: [
         { text: 'Save', method: 'save' },
+        // { text: 'Edit', method: 'edit' },
         { text: 'Cancel', method: 'close' }
     ],
 
@@ -175,6 +176,7 @@ var CalculatedMemberModal = Modal.extend({
 
         this.bind('open', function() {
             this.post_render();
+            // this.$el.find('.dialog_footer').find('a[href="#edit"]').hide();
             this.$el.find('.calculated-member-group').height(this.$el.find('.calculated-member-form').height());
             _.defer(function() {
                 self.start_editor();
@@ -257,6 +259,9 @@ var CalculatedMemberModal = Modal.extend({
                 }
             }
         });
+
+        // this.$el.find('.dialog_footer').find('a[href="#add"]').hide();
+        // this.$el.find('.dialog_footer').find('a[href="#edit"]').show();
     },
 
     del_calculated_member: function(event) {
@@ -265,6 +270,7 @@ var CalculatedMemberModal = Modal.extend({
         $currentTarget.parent().closest('.row-member-' + $currentTarget.data('name')).remove();
         // TODO: Update method removeCalculatedMeasure
         this.workspace.query.helper.removeCalculatedMeasure($currentTarget.data('name'));
+        this.workspace.sync_query();
         this.reset_form();
     },
 
