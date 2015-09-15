@@ -489,6 +489,7 @@ var CalculatedMemberModal = Modal.extend({
                 }
 
                 this.workspace.query.helper.addCalculatedMeasure(objMember);
+                this.workspace.sync_query();
             }
             else {
                 objMember = { 
@@ -504,9 +505,10 @@ var CalculatedMemberModal = Modal.extend({
                 }
 
                 this.workspace.query.helper.editCalculatedMeasure(memberNameOld, objMember);
+                this.workspace.sync_query();
+                this.workspace.drop_zones.set_measures();
             }
 
-            this.workspace.sync_query();
             this.$el.dialog('close');
         }
     }
