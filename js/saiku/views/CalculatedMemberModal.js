@@ -201,7 +201,7 @@ var CalculatedMemberModal = Modal.extend({
     },
 
     /**
-     * [template_calculated_members description]
+     * Template for add calculated member
      *
      * @method template_calculated_members
      * @private
@@ -480,10 +480,8 @@ var CalculatedMemberModal = Modal.extend({
                     name: memberName,
                     formula: memberFormula, 
                     properties: {}, 
-                    uniqueName: memberName,
+                    uniqueName: '[Measures].' + memberName, 
                     hierarchyName: memberDimension
-                    // uniqueName: '[Store].[Stores].' + memberName, 
-                    // hierarchyName: '[Store].[Stores].[Store Country].currentmember'
                 };
                 
                 if (memberFormat) {
@@ -497,10 +495,8 @@ var CalculatedMemberModal = Modal.extend({
                     name: memberName,
                     formula: memberFormula, 
                     properties: {}, 
-                    uniqueName: memberName,
+                    uniqueName: '[Measures].' + memberName, 
                     hierarchyName: memberDimension
-                    // uniqueName: '[Store].[Stores].' + memberName, 
-                    // hierarchyName: '[Store].[Stores].[Store Country].currentmember'
                 };
                 
                 if (memberFormat) {
