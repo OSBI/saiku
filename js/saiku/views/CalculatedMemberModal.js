@@ -70,7 +70,11 @@ var CalculatedMemberModal = Modal.extend({
                 '<select id="member-dimension">' +
                     '<option value="" selected>-- Select an existing dimension --</option>' +
                     '<% _(dimensions).each(function(dimension) { %>' +
-                        '<option value="<%= dimension.uniqueName %>"><%= dimension.name %></option>' +
+                        '<optgroup label="<%= dimension.name %>">' +
+                            '<% _(dimension.hierarchies).each(function(hierarchy) { %>' +
+                                '<option value="<%= hierarchy.uniqueName %>"><%= hierarchy.name %></option>' +
+                            '<% }); %>' +
+                        '</optgroup>' +
                     '<% }); %>' +
                 '</select>' +
                 '<label for="member-format">Format:</label>' +
@@ -201,7 +205,7 @@ var CalculatedMemberModal = Modal.extend({
      *
      * @method template_calculated_members
      * @private
-     * @param  {Object} data Dta calculated members
+     * @param  {Object} data Data calculated members
      * @return {String}      Template HTML
      */
     template_calculated_members: function(data) {
@@ -235,7 +239,7 @@ var CalculatedMemberModal = Modal.extend({
      * @param  {String} name Member name
      * @return {String}      Member name
      * @example
-     *     this.replace_member(My Member 1);
+     *     this.replace_member('My Member 1');
      *     Output: My-Member-1
      */
     replace_member: function(name) {
@@ -263,7 +267,8 @@ var CalculatedMemberModal = Modal.extend({
                 $currentTarget.addClass('on');
                 self.$el.find('#member-name').val(value.name);
                 self.formulaEditor.setValue(value.formula);
-                self.$el.find('#member-dimension').val(value.hierarchyName.split('.')[1]);
+                // self.$el.find('#member-dimension').val(value.hierarchyName.split('.')[1]);
+                self.$el.find('#member-dimension').val(value.hierarchyName);
                 if (0 !== $('#member-format option[value="' + value.properties.FORMAT_STRING + '"]').length) {
                     self.$el.find('#member-format').val(value.properties.FORMAT_STRING);
                     self.$el.find('.div-format-custom').hide();
@@ -476,7 +481,7 @@ var CalculatedMemberModal = Modal.extend({
                     formula: memberFormula, 
                     properties: {}, 
                     uniqueName: '[Measures].' + memberName, 
-                    hierarchyName: '[Measures].' + memberDimension
+                    hierarchyName: memberDimension
                     // uniqueName: '[Store].[Stores].' + memberName, 
                     // hierarchyName: '[Store].[Stores].[Store Country].currentmember'
                 };
@@ -493,7 +498,7 @@ var CalculatedMemberModal = Modal.extend({
                     formula: memberFormula, 
                     properties: {}, 
                     uniqueName: '[Measures].' + memberName, 
-                    hierarchyName: '[Measures].' + memberDimension
+                    hierarchyName: memberDimension
                     // uniqueName: '[Store].[Stores].' + memberName, 
                     // hierarchyName: '[Store].[Stores].[Store Country].currentmember'
                 };
