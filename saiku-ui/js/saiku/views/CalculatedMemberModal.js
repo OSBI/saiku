@@ -38,20 +38,9 @@ var CalculatedMemberModal = Modal.extend({
      */
     template_modal: _.template(
         '<div class="calculated-member-group">' +
-            '<ul class="members-list">' +
-                '<li class="members-box">' +
-                    '<table>' +
-                        // '<tr class="row-member-">' +
-                        //     '<td class="member-name">Member Name</td>' +
-                        //     '<td class="member-actions">' +
-                        //         '<a class="edit button sprite btn-action-edit" href="#edit_calculated_member" data-name=""></a>' +
-                        //         '<a class="delete button sprite btn-action-del" href="#del_calculated_member" data-name=""></a>' +
-                        //     '</td>' +
-                        // '</tr>' +
-                        '<%= tplCalculatedMembers %>' +
-                    '</table>' +
-                '</li>' +
-            '</ul>' +
+            '<table class="members-list">' +
+                '<%= tplCalculatedMembers %>' +
+            '</table>' +
         '</div>' +
         '<div class="calculated-member-form">' +
             '<form class="form-group-inline" data-action="cad">' +
@@ -59,7 +48,6 @@ var CalculatedMemberModal = Modal.extend({
                 '<input type="text" id="member-name" autofocus>' +
                 '<label for="member-measure">Measure:</label>' +
                 '<select id="member-measure">' +
-                    // '<option value="" selected>-- Select an existing measure --</option>' +
                     '<option value="" selected>-- Add a measure in formula --</option>' +
                     '<% _(measures).each(function(measure) { %>' +
                         '<option value="<%= measure.uniqueName %>"><%= measure.name %></option>' +
@@ -82,12 +70,14 @@ var CalculatedMemberModal = Modal.extend({
                 '<select id="member-dimension">' +
                     '<option value="" selected>-- Select an existing dimension --</option>' +
                     '<% _(dimensions).each(function(dimension) { %>' +
-                        '<option value="<%= dimension.uniqueName %>"><%= dimension.name %></option>' +
-                        // '<option value="<%= dimension.name %>"><%= dimension.name %></option>' +
+                        '<optgroup label="<%= dimension.name %>">' +
+                            '<% _(dimension.hierarchies).each(function(hierarchy) { %>' +
+                                '<option value="<%= hierarchy.uniqueName %>"><%= hierarchy.name %></option>' +
+                            '<% }); %>' +
+                        '</optgroup>' +
                     '<% }); %>' +
                 '</select>' +
                 '<label for="member-format">Format:</label>' +
-                // '<input type="text" id="member-format" value="#,##0.00">' +
                 '<select id="member-format">' +
                     '<option value="custom">Custom</option>' +
                     '<option value="#,##0.00" selected>#,##0.00 Decimal</option>' +
@@ -136,7 +126,6 @@ var CalculatedMemberModal = Modal.extend({
         'click  .btn-math'        : 'add_math_operator_formula',
         'change #member-format'   : 'type_format',
         'click  .btn-action-edit' : 'edit_calculated_member',
-        // 'click  .btn-action-del'  : 'del_calculated_member'
         'click  .btn-action-del'  : 'show_del_calculated_member'
     },
 
@@ -151,25 +140,15 @@ var CalculatedMemberModal = Modal.extend({
         // Initialize properties
         _.extend(this, args);
         this.workspace = args.workspace;
+        this.options.title = 'Calculated Member';
+        this.id = _.uniqueId('member-formula-');
+
         var self = this;
         var cube = this.workspace.selected_cube;
         var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
         var dimensions = Saiku.session.sessionworkspace.cube[cube].get('data').dimensions;
         var calculatedMembers = this.workspace.query.helper.getCalculatedMeasures();
         var $tplCalculatedMembers = this.template_calculated_members(calculatedMembers);
-
-        // Maintain `this`
-        // _.bindAll(this, 'replace_member');
-
-        // console.log(cube);
-        // console.log(measures);
-        // console.log(dimensions);
-        // console.log(Saiku.session.sessionworkspace.cube[cube].get('data'));
-        // console.log(Saiku.session.sessionworkspace.cube[cube]);
-        // console.log(this.workspace.query.helper.getCalculatedMeasures());
-
-        this.options.title = 'Calculated Member';
-        this.id = _.uniqueId('member-formula-');
 
         // Load template
         this.message = this.template_modal({
@@ -221,35 +200,60 @@ var CalculatedMemberModal = Modal.extend({
         Saiku.ui.unblock();
     },
 
+    /**
+     * [template_calculated_members description]
+     *
+     * @method template_calculated_members
+     * @private
+     * @param  {Object} data Data calculated members
+     * @return {String}      Template HTML
+     */
     template_calculated_members: function(data) {
         var self = this;
         var $tpl = '';
 
-        if (data.length !== 0) {
+        if (data && data.length !== 0) {
             _.each(data, function(value) {
                 $tpl += 
-                    // '<tr class="row-member-' + value.name + '">' +
                     '<tr class="row-member-' + self.replace_member(value.name) + '">' +
                         '<td class="member-name">' + value.name + '</td>' +
                         '<td class="member-actions">' +
                             '<a class="edit button sprite btn-action-edit" href="#edit_calculated_member" data-name="' + value.name + '"></a>' +
-                            '<a class="delete button sprite btn-action-del" href="#del_calculated_member" data-name="' + value.name + '"></a>' +
+                            '<a class="delete button sprite btn-action-del" href="#show_del_calculated_member" data-name="' + value.name + '"></a>' +
                         '</td>' +
                     '</tr>';
             });
         }
         else {
-            $tpl = '<p style="text-align: center; color: gray;">No calculated members created</p>';
+            $tpl = '<p class="msg-no-member">No calculated members created</p>';
         }
 
         return $tpl;
     },
 
+    /**
+     * Replace a member name and add a caractere "-"
+     *
+     * @method replace_member
+     * @private
+     * @param  {String} name Member name
+     * @return {String}      Member name
+     * @example
+     *     this.replace_member('My Member 1');
+     *     Output: My-Member-1
+     */
     replace_member: function(name) {
-        name = name.replace(' ', '-');
+        name = name.replace(/\s/g, '-');
         return name;
     },
 
+    /**
+     * Edit calculated member
+     *
+     * @method edit_calculated_member
+     * @private
+     * @param {Object} event The Event interface represents any event of the DOM
+     */
     edit_calculated_member: function(event) {
         event.preventDefault();
         var self = this;
@@ -263,7 +267,8 @@ var CalculatedMemberModal = Modal.extend({
                 $currentTarget.addClass('on');
                 self.$el.find('#member-name').val(value.name);
                 self.formulaEditor.setValue(value.formula);
-                self.$el.find('#member-dimension').val(value.hierarchyName.split('.')[1]);
+                // self.$el.find('#member-dimension').val(value.hierarchyName.split('.')[1]);
+                self.$el.find('#member-dimension').val(value.hierarchyName);
                 if (0 !== $('#member-format option[value="' + value.properties.FORMAT_STRING + '"]').length) {
                     self.$el.find('#member-format').val(value.properties.FORMAT_STRING);
                     self.$el.find('.div-format-custom').hide();
@@ -282,44 +287,53 @@ var CalculatedMemberModal = Modal.extend({
         this.$el.find('.dialog_footer a:nth-child(3)').show();
     },
 
+    /**
+     * show dialog to delete calculated member
+     *
+     * @method show_del_calculated_member
+     * @private
+     * @param {Object} event The Event interface represents any event of the DOM
+     */
     show_del_calculated_member: function(event) {
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
         this.delCalculatedMember = $currentTarget;
         this.new();
         (new WarningModal({
-            title: "Delete Member", 
-            message: "You want to delete this Calculated Member " + '<b>' + $currentTarget.data('name') + '</b>?',
-            okay: this.del_calculated_member, 
-            // okayobj: $currentTarget
+            title: 'Delete Member',
+            message: 'You want to delete this Calculated Member ' + '<b>' + $currentTarget.data('name') + '</b>?',
+            okay: this.del_calculated_member,
             okayobj: this
         })).render().open();
         this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Calculated Member');
     },
 
-    // del_calculated_member: function(event) {
-    //     event.preventDefault();
-    //     var $currentTarget = $(event.currentTarget);
-    //     $currentTarget.parent().closest('.row-member-' + $currentTarget.data('name')).remove();
-    //     // TODO: Update method removeCalculatedMeasure
-    //     this.workspace.query.helper.removeCalculatedMeasure($currentTarget.data('name'));
-    //     this.workspace.sync_query();
-    //     this.reset_form();
-    // },
-
+    /**
+     * Delete calculated member
+     *
+     * @method del_calculated_member
+     * @private
+     * @param  {Object} args Object `this` of class CalculatedMemberModal
+     */
     del_calculated_member: function(args) {
-        // console.log(args);
         args.delCalculatedMember.parent().closest('.row-member-' + args.replace_member(args.delCalculatedMember.data('name'))).remove();
         args.workspace.query.helper.removeCalculatedMeasure(args.delCalculatedMember.data('name'));
         args.workspace.sync_query();
         args.workspace.drop_zones.set_measures();
         args.new();
         if (!args.is_calculated_member()) {
-            args.$el.find('.members-list li').append('<p style="text-align: center; color: gray;">No calculated members created</p>');
+            args.$el.find('.members-list').append('<p class="msg-no-member">No calculated members created</p>');
         }
     },
 
-    is_calculated_member:function() {
+    /**
+     * Check if calculated member exists
+     *
+     * @method is_calculated_member
+     * @private
+     * @return {Boolean} True/False if calculated member exists
+     */
+    is_calculated_member: function() {
         var calculatedMembers = this.workspace.query.helper.getCalculatedMeasures();
         if (calculatedMembers.length > 0) {
             return true;
@@ -329,6 +343,12 @@ var CalculatedMemberModal = Modal.extend({
         }
     },
 
+    /**
+     * Reset form
+     *
+     * @method reset_form
+     * @private
+     */
     reset_form: function() {
         this.$el.find('#member-name').val('');
         this.$el.find('#member-measure').prop('selectedIndex', 0);
@@ -339,6 +359,23 @@ var CalculatedMemberModal = Modal.extend({
         this.$el.find('#member-format-custom').val('');
     },
 
+    /**
+     * Reset dropdown "Measure"
+     *
+     * @method reset_dropdown
+     * @private
+     */
+    reset_dropdown: function() {
+        this.$el.find('#member-measure').prop('selectedIndex', 0);
+    },
+
+    /**
+     * Add measure in formula
+     *
+     * @method add_measure_formula
+     * @private
+     * @param {Object} event The Event interface represents any event of the DOM
+     */
     add_measure_formula: function(event) {
         event.preventDefault();
         var measureName = this.$el.find('#member-measure option:selected').val();
@@ -348,6 +385,13 @@ var CalculatedMemberModal = Modal.extend({
         this.reset_dropdown();
     },
 
+    /**
+     * Add math operator in formula
+     *
+     * @method add_math_operator_formula
+     * @private
+     * @param {Object} event The Event interface represents any event of the DOM
+     */
     add_math_operator_formula: function(event) {
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
@@ -356,10 +400,13 @@ var CalculatedMemberModal = Modal.extend({
         this.formulaEditor.setValue(formula);
     },
 
-    reset_dropdown: function () {
-        this.$el.find('#member-measure').prop('selectedIndex', 0);
-    },
-
+    /**
+     * Type format - Decimal, Integer, Custom etc
+     *
+     * @method type_format
+     * @private
+     * @param {Object} event The Event interface represents any event of the DOM
+     */
     type_format: function(event) {
         event.preventDefault();
         var format = this.$el.find('#member-format option:selected').val();
@@ -371,6 +418,13 @@ var CalculatedMemberModal = Modal.extend({
         }
     },
 
+    /**
+     * New calculated member
+     *
+     * @method new
+     * @private
+     * @param {Object} event The Event interface represents any event of the DOM
+     */
     new: function(event) {
         if (event) { event.preventDefault(); }
         this.$el.find('.member-actions a').removeClass('on');
@@ -382,6 +436,13 @@ var CalculatedMemberModal = Modal.extend({
         this.reset_form();
     },
 
+    /**
+     * Save calculated member
+     *
+     * @method save
+     * @private
+     * @param {Object} event The Event interface represents any event of the DOM
+     */
     save: function(event) {
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
@@ -420,7 +481,7 @@ var CalculatedMemberModal = Modal.extend({
                     formula: memberFormula, 
                     properties: {}, 
                     uniqueName: '[Measures].' + memberName, 
-                    hierarchyName: '[Measures].' + memberDimension
+                    hierarchyName: memberDimension
                     // uniqueName: '[Store].[Stores].' + memberName, 
                     // hierarchyName: '[Store].[Stores].[Store Country].currentmember'
                 };
@@ -437,7 +498,7 @@ var CalculatedMemberModal = Modal.extend({
                     formula: memberFormula, 
                     properties: {}, 
                     uniqueName: '[Measures].' + memberName, 
-                    hierarchyName: '[Measures].' + memberDimension
+                    hierarchyName: memberDimension
                     // uniqueName: '[Store].[Stores].' + memberName, 
                     // hierarchyName: '[Store].[Stores].[Store Country].currentmember'
                 };
