@@ -11,14 +11,12 @@ import org.saiku.query.QueryDetails.Location;
 import org.saiku.query.mdx.*;
 import org.saiku.query.mdx.IFilterFunction.MdxFunctionType;
 import org.saiku.query.metadata.CalculatedMeasure;
+import org.saiku.query.metadata.CalculatedMember;
 
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
-import org.olap4j.metadata.Cube;
-import org.olap4j.metadata.Hierarchy;
-import org.olap4j.metadata.Measure;
-import org.olap4j.metadata.NamedList;
+import org.olap4j.metadata.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -41,19 +39,61 @@ public class Fat {
 		ThinQueryModel model = tq.getQueryModel();
 		convertAxes(q, tq.getQueryModel().getAxes(), tq);
 		convertCalculatedMeasures(q, model.getCalculatedMeasures());
+	  	convertCalculatedMembers(q, model.getCalculatedMembers());
 		convertDetails(q, model.getDetails());
 		q.setVisualTotals(model.isVisualTotals());
 		q.setVisualTotalsPattern(model.getVisualTotalsPattern());
 		return q;
 	}
 
-	private static void convertCalculatedMeasures(Query q, List<ThinCalculatedMeasure> thinCms) {
+  private static void convertCalculatedMembers(Query q, List<ThinCalculatedMember> thinCms) {
+	/*Hierarchy h = q.getCube().getHierarchies().get("Products");
+	CalculatedMember cm =
+		new CalculatedMember(
+			h.getDimension(),
+			h,
+			"Consumable",
+			"Consumable",
+			null,
+			Member.Type.FORMULA,
+			"Aggregate({Product.Drink, Product.Food})",
+			null);
+	q.addCalculatedMember(q.getHierarchy(h), cm);
+
+	try {
+	  q.getHierarchy(h).includeCalculatedMember(cm);
+	} catch (OlapException e) {
+	  e.printStackTrace();
+	}*/
+	if (thinCms != null && thinCms.size() > 0) {
+	  for (ThinCalculatedMember qcm : thinCms) {
+		NamedList<Hierarchy> h2 = q.getCube().getHierarchies();
+		for(Hierarchy h: h2){
+		  if(h.getUniqueName().equals(qcm.getHierarchyName())){
+			CalculatedMember cm =
+				new CalculatedMember(
+					h.getDimension(),
+					h,
+					qcm.getName(),
+					qcm.getName(),
+					null,
+					Member.Type.FORMULA,
+					qcm.getFormula(),
+					null);
+			q.addCalculatedMember(q.getHierarchy(h), cm);
+			break;
+		  }
+		}
+
+	  }
+	}
+  }
+
+  private static void convertCalculatedMeasures(Query q, List<ThinCalculatedMeasure> thinCms) {
 		if (thinCms != null && thinCms.size() > 0) {
 			for (ThinCalculatedMeasure qcm : thinCms) {
-			  NamedList<Hierarchy> h2 = q.getCube().getHierarchies();
-			  for(Hierarchy h: h2){
-				if(h.getUniqueName().equals(qcm.getHierarchyName())){
-				  CalculatedMeasure cm =
+			  Hierarchy h = q.getCube().getHierarchies().get("Measures");
+			  CalculatedMeasure cm =
 					  new CalculatedMeasure(
 						  h,
 						  qcm.getName(),
@@ -62,9 +102,6 @@ public class Fat {
 						  qcm.getProperties());
 
 				  q.addCalculatedMeasure(cm);
-				  break;
-				}
-			  }
 
 			}
 		}
