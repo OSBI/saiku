@@ -50,8 +50,8 @@ public class Fat {
 		if (thinCms != null && thinCms.size() > 0) {
 			for (ThinCalculatedMeasure qcm : thinCms) {
 				// TODO improve this
-				Hierarchy h = q.getCube().getMeasures().get(0).getHierarchy();
-				
+				//Hierarchy h = q.getCube().getMeasures().get(0).getHierarchy();
+			  	Hierarchy h = q.getCube().getHierarchies().get(qcm.getHierarchyName());
 				CalculatedMeasure cm = 
 						new CalculatedMeasure(
 								h, 
