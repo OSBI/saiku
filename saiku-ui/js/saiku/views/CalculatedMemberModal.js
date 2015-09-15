@@ -480,7 +480,7 @@ var CalculatedMemberModal = Modal.extend({
                     name: memberName,
                     formula: memberFormula, 
                     properties: {}, 
-                    uniqueName: '[Measures].' + memberName, 
+                    uniqueName: memberName,
                     hierarchyName: memberDimension
                     // uniqueName: '[Store].[Stores].' + memberName, 
                     // hierarchyName: '[Store].[Stores].[Store Country].currentmember'
@@ -497,7 +497,7 @@ var CalculatedMemberModal = Modal.extend({
                     name: memberName,
                     formula: memberFormula, 
                     properties: {}, 
-                    uniqueName: '[Measures].' + memberName, 
+                    uniqueName: memberName,
                     hierarchyName: memberDimension
                     // uniqueName: '[Store].[Stores].' + memberName, 
                     // hierarchyName: '[Store].[Stores].[Store Country].currentmember'

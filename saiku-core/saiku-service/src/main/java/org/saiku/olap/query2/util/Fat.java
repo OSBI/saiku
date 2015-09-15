@@ -18,6 +18,7 @@ import org.olap4j.OlapException;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Measure;
+import org.olap4j.metadata.NamedList;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -49,18 +50,22 @@ public class Fat {
 	private static void convertCalculatedMeasures(Query q, List<ThinCalculatedMeasure> thinCms) {
 		if (thinCms != null && thinCms.size() > 0) {
 			for (ThinCalculatedMeasure qcm : thinCms) {
-				// TODO improve this
-				//Hierarchy h = q.getCube().getMeasures().get(0).getHierarchy();
-			  	Hierarchy h = q.getCube().getHierarchies().get(qcm.getHierarchyName());
-				CalculatedMeasure cm = 
-						new CalculatedMeasure(
-								h, 
-								qcm.getName(), 
-								null, 
-								qcm.getFormula(),
-								qcm.getProperties());
-				
-				q.addCalculatedMeasure(cm);
+			  NamedList<Hierarchy> h2 = q.getCube().getHierarchies();
+			  for(Hierarchy h: h2){
+				if(h.getUniqueName().equals(qcm.getHierarchyName())){
+				  CalculatedMeasure cm =
+					  new CalculatedMeasure(
+						  h,
+						  qcm.getName(),
+						  null,
+						  qcm.getFormula(),
+						  qcm.getProperties());
+
+				  q.addCalculatedMeasure(cm);
+				  break;
+				}
+			  }
+
 			}
 		}
 	}
