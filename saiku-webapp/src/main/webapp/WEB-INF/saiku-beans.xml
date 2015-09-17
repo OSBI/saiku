@@ -47,7 +47,21 @@
         <property name="connectionManager" ref="connectionManager"/>
     </bean>
 
+    <bean id="userDaoDataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="url"
+                  value="jdbc:h2:../../data/saiku;MODE=MySQL"/>
+        <property name="username" value="sa" />
+        <property name="password" value="" />
+    </bean>
+
+    <bean id="userDAO" class="org.saiku.database.JdbcUserDAO">
+        <property name="dataSource" ref="userDaoDataSource" />
+    </bean>
+
     <bean id="userServiceBean" class="org.saiku.service.user.UserService">
+	<property name="jdbcUserDAO" ref="userDAO"/>
         <property name="datasourceService" ref="datasourceServiceBean"/>
         <property name="iDatasourceManager" ref="repositoryDsManager"/>
         <property name="adminRoles">
