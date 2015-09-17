@@ -141,6 +141,7 @@ var CalculatedMemberModal = Modal.extend({
      */
     events: {
         'click  .dialog_footer a' : 'call',
+        'blur   #cms-name'        : 'trigger_input_name',
         'change #cms-measure'     : 'add_measure_formula',
         'click  .btn-math'        : 'add_math_operator_formula',
         'change #cms-format'      : 'type_format',
@@ -170,15 +171,10 @@ var CalculatedMemberModal = Modal.extend({
         var calculatedMembers = this.workspace.query.helper.getCalculatedMembers();
         var $tplCalculatedMeasures = this.template_cms(calculatedMeasures, 'calcmeasure');
         var $tplCalculatedMembers = this.template_cms(calculatedMembers, 'calcmember');
-        this.dataMeasures = {
+        var dataMeasures = {
             name: measures ? measures[0].dimensionUniqueName.replace(/[\[\]]/gi, '') : null,
             uniqueName: measures ? measures[0].hierarchyUniqueName : null
         };
-
-        // console.log(this.workspace.query.helper);
-        // console.log(JSON.stringify(this.workspace.query.helper.query.model));
-        // console.log(Saiku.session.sessionworkspace.cube[cube]);
-        // console.log(this.dataMeasures);
 
         // Load template
         this.message = this.template_modal({
@@ -186,7 +182,7 @@ var CalculatedMemberModal = Modal.extend({
             tplCalculatedMembers: $tplCalculatedMembers,
             idEditor: this.id,
             measures: measures,
-            dataMeasures: this.dataMeasures,
+            dataMeasures: dataMeasures,
             dimensions: dimensions
         });
 
@@ -320,7 +316,7 @@ var CalculatedMemberModal = Modal.extend({
         this.$el.find('.cms-actions a').removeClass('on');
 
         _.each(cms, function(value) {
-            if (value.name === $currentTarget.data('name')) {                
+            if (value.name === $currentTarget.data('name')) {
                 $currentTarget.addClass('on');
                 self.$el.find('#cms-name').val(value.name);
                 self.formulaEditor.setValue(value.formula);
@@ -386,7 +382,7 @@ var CalculatedMemberModal = Modal.extend({
         args.workspace.sync_query();
         args.workspace.drop_zones.set_measures();
         args.new();
-        if (!args.is_cms(args.$delcms.data('type'))) {
+        if (!args.check_len_cms(args.$delcms.data('type'))) {
             if (args.$delcms.data('type') === 'calcmeasure') {
                 args.$el.find('.measures-list').append('<p class="msg-no-cms">No calculated measures created</p>');
             }
@@ -397,18 +393,86 @@ var CalculatedMemberModal = Modal.extend({
     },
 
     /**
+     * Trigger to verify if value of input name exists in calc measures or members
+     *
+     * @method trigger_input_name
+     * @private
+     */
+    trigger_input_name: function() {
+        var formAction = this.$el.find('.form-group-inline').data('action');
+        var name = this.$el.find('#cms-name').val();
+        var dimensionDataType = this.$el.find('#cms-dimension option:selected').data('type');
+        var alertMsg = '';
+
+        if (dimensionDataType === 'calcmeasure') {
+            if (this.check_name_cms(dimensionDataType, name) && formAction === 'cad') {
+                alertMsg = 'Exists a measure with the same name added!';
+                // this.$el.find('#cms-name').focus();
+            }
+        }
+        else if (dimensionDataType === 'calcmember') {
+            if (this.check_name_cms(dimensionDataType, name) && formAction === 'cad') {
+                alertMsg = 'Exists a member with the same name added!';
+                // this.$el.find('#cms-name').focus();
+            }
+        }
+        else {
+            if (this.check_name_cms(dimensionDataType, name) && formAction === 'cad') {
+                alertMsg = 'Exists a measure or member with the same name added!';
+                // this.$el.find('#cms-name').focus();
+            }
+        }
+
+        if (alertMsg !== '') {
+            alert(alertMsg);
+        }
+    },
+
+    /**
      * Check if calculated measure/member exists
      *
-     * @method is_cms
+     * @method check_name_cms
      * @private
-     * @param  {String}  type Type calcmeasure or calcmember
-     * @return {Boolean} True/False if calculated measure/member exists
+     * @param  {String} type type Type calcmeasure or calcmember
+     * @param  {String} name name Measure/Member name
+     * @return {Boolean}     True/False if calculated measure/member exists
      */
-    is_cms: function(type) {
-        var calculatedMembers = type === 'calcmeasure' 
+    check_name_cms: function(type, name) {
+        var cms = type === 'calcmeasure' 
             ? this.workspace.query.helper.getCalculatedMeasures() 
             : this.workspace.query.helper.getCalculatedMembers();
-        if (calculatedMembers.length > 0) {
+
+        if (type === null || type === undefined) {
+            var measures = this.workspace.query.helper.getCalculatedMeasures();
+            var members = this.workspace.query.helper.getCalculatedMembers();
+            cms = [];
+            cms = cms.concat(measures, members);
+        }
+
+        for (var i = 0; i < cms.length; i++) {
+            if (cms[i].name === name) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    },
+
+
+    /**
+     * Check if calculated measure/member length is > 0
+     *
+     * @method check_len_cms
+     * @private
+     * @param  {String}  type Type calcmeasure or calcmember
+     * @return {Boolean} True/False if calculated measure/member length is > 0
+     */
+    check_len_cms: function(type) {
+        var cms = type === 'calcmeasure' 
+            ? this.workspace.query.helper.getCalculatedMeasures() 
+            : this.workspace.query.helper.getCalculatedMembers();
+        if (cms.length > 0) {
             return true;
         }
         else {
@@ -519,110 +583,84 @@ var CalculatedMemberModal = Modal.extend({
     save: function(event) {
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
-        var cmsNameOld = this.$el.find('.form-group-inline').data('oldcms');
-        var cmsName = this.$el.find('#cms-name').val();
-        var cmsFormula = this.formulaEditor.getValue();
-        var cmsDimension = {
+        var nameOld = this.$el.find('.form-group-inline').data('oldcms');
+        var name = this.$el.find('#cms-name').val();
+        var formula = this.formulaEditor.getValue();
+        var dimension = {
             val: this.$el.find('#cms-dimension option:selected').val(),
             txt: this.$el.find('#cms-dimension option:selected').text(),
             dataDimension: this.$el.find('#cms-dimension option:selected').data('dimension'),
             dataType: this.$el.find('#cms-dimension option:selected').data('type')
         };
-        var cmsFormat = this.$el.find('#cms-format option:selected').val();
+        var format = this.$el.find('#cms-format option:selected').val();
         var formAction = this.$el.find('.form-group-inline').data('action');
         var alertMsg = '';
         var objMember;
 
-        if (cmsFormat === 'custom') {
-            cmsFormat = this.$el.find('#cms-format-custom').val();
+        if (format === 'custom') {
+            format = this.$el.find('#cms-format-custom').val();
         }
         else {
-            cmsFormat = this.$el.find('#cms-format option:selected').val();
+            format = this.$el.find('#cms-format option:selected').val();
         }
 
-        if (typeof cmsName === 'undefined' || cmsName === '' || !cmsName) {
+        if (typeof name === 'undefined' || name === '' || !name) {
             alertMsg += 'You have to enter a name for the member! ';
         }
-        if (typeof cmsFormula === 'undefined' || cmsFormula === '' || !cmsFormula) {
+        if (typeof formula === 'undefined' || formula === '' || !formula) {
             alertMsg += 'You have to enter a MDX formula for the calculated member! ';
         }
-        if (typeof cmsDimension.val === 'undefined' || cmsDimension.val === '' || !cmsDimension.val) {
+        if (typeof dimension.val === 'undefined' || dimension.val === '' || !dimension.val) {
             alertMsg += 'You have to choose a dimension for the calculated member! ';
         }
         if (alertMsg !== '') {
             alert(alertMsg);
         } 
         else {
-            if (cmsDimension.dataType === 'calcmeasure') {
-                if (formAction === 'cad') {
-                    objMember = { 
-                        name: cmsName,
-                        formula: cmsFormula, 
-                        properties: {}, 
-                        uniqueName: cmsName, 
-                        hierarchyName: cmsDimension.val
-                    };
-                    
-                    if (cmsFormat) {
-                        objMember.properties.FORMAT_STRING = cmsFormat;
-                    }
+            if (dimension.dataType === 'calcmeasure') {
+                objMember = { 
+                    name: name,
+                    formula: formula, 
+                    properties: {}, 
+                    uniqueName: name, 
+                    hierarchyName: dimension.val
+                };
+                
+                if (format) {
+                    objMember.properties.FORMAT_STRING = format;
+                }
 
+                if (formAction === 'cad') {
                     this.workspace.query.helper.addCalculatedMeasure(objMember);
                     this.workspace.sync_query();
                 }
                 else {
-                    objMember = { 
-                        name: cmsName,
-                        formula: cmsFormula, 
-                        properties: {}, 
-                        uniqueName: cmsName, 
-                        hierarchyName: cmsDimension.val
-                    };
-                    
-                    if (cmsFormat) {
-                        objMember.properties.FORMAT_STRING = cmsFormat;
-                    }
-
-                    this.workspace.query.helper.editCalculatedMeasure(cmsNameOld, objMember);
+                    this.workspace.query.helper.editCalculatedMeasure(nameOld, objMember);
                     this.workspace.sync_query();
                     this.workspace.drop_zones.set_measures();
                 }
             }
             else {
-                if (formAction === 'cad') {
-                    objMember = { 
-                        name: cmsName,
-                        dimension: cmsDimension.dataDimension,
-                        uniqueName: '[' + cmsDimension.txt + '].[' + cmsName + ']',
-                        caption: cmsName,
-                        properties: {},
-                        formula: cmsFormula,
-                        hierarchyName: cmsDimension.val
-                    };
-                    
-                    if (cmsFormat) {
-                        objMember.properties.FORMAT_STRING = cmsFormat;
-                    }
+                objMember = { 
+                    name: name,
+                    dimension: dimension.dataDimension,
+                    uniqueName: '[' + dimension.txt + '].[' + name + ']',
+                    caption: name,
+                    properties: {},
+                    formula: formula,
+                    hierarchyName: dimension.val
+                };
+                
+                if (format) {
+                    objMember.properties.FORMAT_STRING = format;
+                }
 
+                if (formAction === 'cad') {
                     this.workspace.query.helper.addCalculatedMember(objMember);
                     this.workspace.sync_query();
                 }
                 else {
-                    objMember = { 
-                        name: cmsName,
-                        dimension: cmsDimension.dataDimension,
-                        uniqueName: '[' + cmsDimension.txt + '].[' + cmsName + ']',
-                        caption: cmsName,
-                        properties: {},
-                        formula: cmsFormula,
-                        hierarchyName: cmsDimension.val
-                    };
-                    
-                    if (cmsFormat) {
-                        objMember.properties.FORMAT_STRING = cmsFormat;
-                    }
-
-                    this.workspace.query.helper.editCalculatedMember(cmsNameOld, objMember);
+                    this.workspace.query.helper.editCalculatedMember(nameOld, objMember);
                     this.workspace.sync_query();
                     this.workspace.drop_zones.set_measures();
                 }

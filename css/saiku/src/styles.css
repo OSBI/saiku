@@ -1034,7 +1034,6 @@ textarea, select {
 
 .dialog_calculated-member .calculated-measure-group,
 .dialog_calculated-member .calculated-member-group {
-    /*overflow: auto;*/
     width: 300px;
 }
 
