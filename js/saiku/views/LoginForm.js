@@ -58,6 +58,8 @@ var LoginForm = Modal.extend({
         _.extend(this, args);
         _.bindAll(this, 'adjust');
         this.options.title = Settings.VERSION;
+        this.options.closeOnEscape = false;
+        this.options.draggable = false;
         this.bind('open', this.adjust);
     },
 
