@@ -815,7 +815,7 @@ var AdminConsole = Backbone.View.extend({
 			var c = "type=OLAP\n"+
 			"name="+name+"\n"+
 			"driver=mondrian.olap4j.MondrianOlap4jDriver\n"+
-			"location=jdbc:mondrian:Jdbc=jdbc:calcite:model=mongo:///etc/mongoschema/"+schema+";Catalog=mondrian://"+mondrianschema+";JdbcDrivers=net.hydromatic.optiq.jdbc.Driver;\n"+
+			"location=jdbc:mondrian:Jdbc=jdbc:calcite:model=mongo:///etc/mongoschema/"+schema+";Catalog=mondrian://"+mondrianschema+";JdbcDrivers=org.apache.calcite.jdbc.Driver;\n"+
 			"username=admin\n"+
 			"password=admin";
 			conn.set({"advanced": c});
