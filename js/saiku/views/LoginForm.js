@@ -60,7 +60,6 @@ var LoginForm = Modal.extend({
         'keyup #login_form input' : 'check',
         'click #eval-login'       : 'show_panel_user',
         'click .clearlink'        : 'clear_login'
-
     },
 
     initialize: function(args) {
