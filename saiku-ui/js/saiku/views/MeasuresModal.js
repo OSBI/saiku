@@ -74,14 +74,6 @@ var MeasuresModal = Modal.extend({
         "</form> </td>" +
         "</tr>" +
 
-        "<tr><td class='col0 i18n'>Function:</td>" +
-
-        "</td></tr>" +
-
-            "<tr><td class='col0 i18n'>Function:</td>" +
-
-            "</td></tr>" +
-
 //            "<tr><td class='col0 i18n'>Function:</td>" +
 //            "<td class='col1'>" +
 //            "<select id='mdxFunction' name='mdxFunctionId'> " +
