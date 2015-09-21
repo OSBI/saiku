@@ -67,8 +67,18 @@ var MeasuresModal = Modal.extend({
             " <input type='button' class='form_button growthBtn' style='padding-bottom: 18px;' value='Growth'  " +
             "         title='Calculate difference. Good to calculate previous period growth '   id='growthBtn' >  </input> " +
 
-            "</form> </td>" +
-            "</tr>" +
+		"<tr> <td class='col0'> </td>" +
+		"<td class='col1'>" +
+		" <form> <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='+' id='plusBtn' >  </input>   " +
+		" <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='-' id='minusBtn' > </input>  " +
+		" <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='*' id='multiplyBtn' >  </input>  " +
+		" <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='/' id='divisionBtn' >  </input> " +
+		" <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='(' id='leftBracketBtn' >  </input> " +
+		" <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value=')' id='rightBracketBtn' >  </input> " +
+		" <input type='button' class='form_button growthBtn' style='padding-bottom: 18px;' value='Growth'  " +
+		"         title='Calculate difference. Good to calculate previous period growth '   id='growthBtn' >  </input> " +
+		" <input type='button' class='form_button formatBtn' style='padding-bottom: 18px;' value='Format %' id='formatBtn'  " +
+		"title='Post-process step: format this view as percentage of rows, columns or grand total. '" +
 
             "<tr><td class='col0 i18n'>Function:</td>" +
 
