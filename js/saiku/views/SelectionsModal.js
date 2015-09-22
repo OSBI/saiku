@@ -103,8 +103,7 @@ var SelectionsModal = Modal.extend({
             level = hierarchy.levels[lName];
         }
 
-        if ((this.source === 'DateFilterModal' && (_.has(level, 'selection') && level.selection.members.length === 0)) ||
-            (this.source === 'DateFilterModal' && (_.size(level) === 1 && _.has(level, 'name')))) {
+        if (this.source === 'DateFilterModal' && level.selection.members.length === 0) {
             this.$el.find('.dialog_footer a:nth-child(2)').show();
         }
         else {
