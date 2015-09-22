@@ -998,26 +998,6 @@ textarea, select {
     text-decoration: underline;
 }
 
-.dialog_data-sources .dialog_icon {
-    display: none;
-}
-
-.dialog_data-sources .dialog_body {
-    margin: 15px;
-}
-
-.dialog_data-sources .form-group-inline label {
-    float: left;
-    width: 120px;
-    padding-top: 10px;
-}
-
-.dialog_data-sources .form-group-inline select {
-    width: 230px;
-    padding: 4px;
-    border-color: #ccc;
-}
-
 .dialog_permissions .dialog_body {
     width: 370px;
     height: 380px;

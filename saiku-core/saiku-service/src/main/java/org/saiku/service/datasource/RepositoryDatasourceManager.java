@@ -22,7 +22,6 @@ import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.repository.*;
 import org.saiku.service.importer.LegacyImporter;
 import org.saiku.service.importer.LegacyImporterImpl;
-import org.saiku.service.importer.objects.JujuSource;
 import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
 
@@ -476,11 +475,6 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public void setEarthquakeSchema(String earthquakeschema) {
         this.earthquakeschema = earthquakeschema;
-    }
-
-    public List<JujuSource> getJujuDatasources() {
-        LegacyImporter l = new LegacyImporterImpl(null);
-        return l.importJujuDatasources();
     }
 
     public void setRepoPassword(String password){
