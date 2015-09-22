@@ -1,10 +1,13 @@
 package org.saiku.olap.query2;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.saiku.olap.query2.common.AbstractThinSortableQuerySet;
 
 import org.olap4j.impl.Named;
-import org.saiku.olap.query2.common.AbstractThinSortableQuerySet;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ThinHierarchy extends AbstractThinSortableQuerySet implements Named {
 
@@ -13,7 +16,8 @@ public class ThinHierarchy extends AbstractThinSortableQuerySet implements Named
 	private String dimension;
 	
 	private Map<String, ThinLevel> levels = new HashMap<String, ThinLevel>();
-	
+	private List<String> cmembers = new ArrayList<String>();
+
 	public ThinHierarchy() {};
 	
 	public ThinHierarchy(String uniqueName, String caption, String dimension, Map<String, ThinLevel> levels) {
@@ -24,6 +28,16 @@ public class ThinHierarchy extends AbstractThinSortableQuerySet implements Named
 			this.levels = levels;
 		}
 	}
+  	public ThinHierarchy(String uniqueName, String caption, String dimension, Map<String, ThinLevel> levels,
+						 List<String> tcm) {
+	this.name = uniqueName;
+	this.caption = caption;
+	this.dimension = dimension;
+	if (levels != null) {
+	  this.levels = levels;
+	}
+	  this.cmembers = tcm;
+  	}
 	@Override
 	public String getName() {
 		return name;
@@ -86,4 +100,11 @@ public class ThinHierarchy extends AbstractThinSortableQuerySet implements Named
 		this.dimension = dimension;
 	}
 
+  public List<String> getCmembers() {
+	return cmembers;
+  }
+
+  public void setCmembers(List<String> cmembers) {
+	this.cmembers = cmembers;
+  }
 }

@@ -154,7 +154,7 @@ public class Fat {
 		for (ThinHierarchy hierarchy : thinAxis.getHierarchies()) {
 			QueryHierarchy qh = query.getHierarchy(hierarchy.getName());
 			if (qh != null) {
-				convertHierarchy(qh, hierarchy, tq);
+				convertHierarchy(query, qh, hierarchy, tq);
 				qaxis.addHierarchy(qh);
 			}
 		}
@@ -164,12 +164,45 @@ public class Fat {
 		extendSortableQuerySet(query, qaxis, thinAxis);
 	}
 	
-	private static void convertHierarchy(QueryHierarchy qh, ThinHierarchy th, ThinQuery tq) throws OlapException {
+	private static void convertHierarchy(Query q, QueryHierarchy qh, ThinHierarchy th, ThinQuery tq) throws
+		OlapException {
+	  for (String tcm : th.getCmembers()) {
+		ThinCalculatedMember cres = null;
+		for(ThinCalculatedMember c : tq.getQueryModel().getCalculatedMembers()) {
+		  if(c.getUniqueName().equals(tcm)) {
+			cres = c;
+			break;
+		  }
+
+		}
+		Hierarchy h2 = null;
+		for (Hierarchy h : q.getCube().getHierarchies()) {
+		  if (h.getUniqueName().equals(cres.getHierarchyName())) {
+			h2 = h;
+			break;
+		  }
+		}
+		CalculatedMember cm;
+		cm = new CalculatedMember(
+			q.getCube().getDimensions().get(cres.getDimension()),
+			h2,
+			cres.getName(),
+			cres.getName(),
+			null,
+			Member.Type.FORMULA,
+			cres.getFormula(),
+			null);
+
+		qh.includeCalculatedMember(cm);
+		extendSortableQuerySet(qh.getQuery(), qh, th);
+
+	  }
 		for (ThinLevel tl : th.getLevels().values()) {
 		  QueryLevel ql = qh.includeLevel(tl.getName());
 
+
 		  if (ql == null) {
-			qh.includeMember(th.getName() + ".[" + tl.getName()+"]");
+			qh.includeMember(th.getName() + ".[" + tl.getName() + "]");
 		  } else {
 			List<String> aggs = tl.getAggregators();
 			qh.getQuery().setAggregators(ql.getUniqueName(), aggs);
@@ -229,6 +262,7 @@ public class Fat {
 		  }
 		  extendSortableQuerySet(qh.getQuery(), qh, th);
 		}
+
 	}
 
 
