@@ -125,14 +125,7 @@ var WorkspaceDropZone = Backbone.View.extend({
 
         if (model.hasOwnProperty('queryModel') && model.queryModel.hasOwnProperty('axes')) {
             var axes = model.queryModel.axes;
-            console.dir(axes);
 
-            var o = this.workspace.query.helper.getHierarchy("[Store].[Stores]");
-            if(o!=null) {
-                Object.observe(o, function (changes) {
-                    debugger;
-                })
-            }
             for (var axis in axes) {
                 var $axis = $(self.el).find('.fields_list[title="' + axis + '"]');
                 _.each(axes[axis].hierarchies, function(hierarchy) {
@@ -295,12 +288,11 @@ var WorkspaceDropZone = Backbone.View.extend({
             memberLevel = memberHierarchy.levels[level];
         }
 
-        if (objData.level.annotations !== undefined &&
-            objData.level.annotations !== null &&
-			(objData.level.annotations.AnalyzerDateFormat !== undefined ||
-             objData.level.annotations.SaikuDayFormatString !== undefined) &&
-            (_.has(memberLevel, 'selection') && memberLevel.selection.members.length === 0) ||
-             _.has(memberLevel, 'selection') === false) {
+        if ((objData.level.annotations !== undefined && objData.level.annotations !== null) &&
+           (objData.level.annotations.AnalyzerDateFormat !== undefined || objData.level.annotations.SaikuDayFormatString !== undefined) &&
+           ((_.has(memberLevel, 'selection') && memberLevel.selection.members.length === 0) ||
+           ((_.size(memberLevel) === 1 && _.has(memberLevel, 'name')) || (_.has(memberLevel, 'mdx') && memberLevel.mdx) || 
+           (_.size(memberLevel) === 2 && _.has(memberLevel, 'name') && _.has(memberLevel, 'mdx'))))) {
 
             // Launch date filter dialog
             (new DateFilterModal({

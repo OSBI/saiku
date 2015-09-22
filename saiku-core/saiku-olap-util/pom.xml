@@ -2,12 +2,12 @@
 	<modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>saiku-core</artifactId>
-        <groupId>org.saiku</groupId>
-        <version>3.5</version>
+        <groupId>org.saikuanalytics</groupId>
+        <version>3.6-SNAPSHOT</version>
     </parent>
 	<artifactId>saiku-olap-util</artifactId>
 	<packaging>jar</packaging>
-	<version>3.5</version>
+	<version>3.6-SNAPSHOT</version>
 	<name>saiku olap util</name>
 	<properties>
 		<maven.compiler.source>1.5</maven.compiler.source>
