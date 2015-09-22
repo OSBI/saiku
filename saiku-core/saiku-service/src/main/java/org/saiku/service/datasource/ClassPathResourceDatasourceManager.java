@@ -21,7 +21,6 @@ import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.datasources.datasource.SaikuDatasource.Type;
 import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
-import org.saiku.service.importer.objects.JujuSource;
 import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
 
@@ -364,10 +363,6 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 
   public void setEarthquakeSchema(String earthquakeSchema) {
 
-  }
-
-  public List<JujuSource> getJujuDatasources() {
-    return null;
   }
 
   public String saveFile(String path, String content, String user) {

@@ -22,7 +22,6 @@ import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.datasource.IDatasourceManager;
-import org.saiku.service.importer.objects.JujuSource;
 import org.saiku.service.user.UserService;
 
 import org.apache.commons.lang.StringUtils;
@@ -317,10 +316,6 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
     public void setEarthquakeSchema(String earthquakeSchema) {
 
-    }
-
-    public List<JujuSource> getJujuDatasources() {
-        return null;
     }
 
     public void setACL(String a, String b, String c, List<String> d) {

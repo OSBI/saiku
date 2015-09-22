@@ -1,4 +1,4 @@
-/*
+/*  
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,51 +28,43 @@ var MeasuresModal = Modal.extend({
         'submit form': 'save',
         'click .dialog_footer a': 'call',
         'change #Measures': 'addMeasureToCalculationField',
-        'click .form_button.mathBtn': 'addMathOperatorToCalculationField',
-        'click .form_button.growthBtn': 'openGrowthModal',
-        'click .form_button.formatBtn': 'openFormatModal'
-
-
+        'click .form_button.mathBtn': 'addMathOperatorToCalculationField'
     },
 
     buttons: [
-        {text: "OK", method: "save"},
-        {text: "Cancel", method: "close"}
+        { text: "OK", method: "save" },
+        { text: "Cancel", method: "close" }
     ],
 
     addMeasureTemplate: _.template("<form id='measure_form'>" +
-        "<table border='0px'>" +
-        "<tr><td class='col0 i18n'>Name:</td>" +
-        "<td class='col1'><input type='text' class='measure_name' value='Measure Name'></input></td></tr>" +
+            "<table border='0px'>" +
+            "<tr><td class='col0 i18n'>Name:</td>" +
+            "<td class='col1'><input type='text' class='measure_name' value='Measure Name'></input></td></tr>" +
 
-        "<tr><td class='col0 i18n'>Measure:</td>" +
-        "<td class='col1'>" +
-        "<select id='Measures' name='MeasuresId'> " +
-        "    <option value='' selected='selected'>--select an existing measure--</option> " +
-        "    <% _(measures).each(function(m) { %> " +
-        "      <option value='<%= m.uniqueName %>'><%= m.name %></option> " +
-        "    <% }); %> " +
-        "</select> " +
-        "</td></tr>" +
+            "<tr><td class='col0 i18n'>Measure:</td>" +
+            "<td class='col1'>" +
+            "<select id='Measures' name='MeasuresId'> " +
+            "    <option value='' selected='selected'>--select an existing measure--</option> " +
+            "    <% _(measures).each(function(m) { %> " +
+            "      <option value='<%= m.uniqueName %>'><%= m.name %></option> " +
+            "    <% }); %> " +
+            "</select> " +
+            "</td></tr>" +
 
-        "<tr><td class='col0 i18n'>Formula:</td>" +
-        "<td class='col1'><textarea class='measureFormula auto-hint' placeholder='Start writing a calculated measure or use the dropdown list'></textarea></td></tr>" +
+            "<tr><td class='col0 i18n'>Formula:</td>" +
+            "<td class='col1'><textarea class='measureFormula auto-hint' placeholder='Start writing a calculated measure or use the dropdown list'></textarea></td></tr>" +
 
-        "<tr> <td class='col0'> </td>" +
-        "<td class='col1'>" +
-        " <form> <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='+' id='plusBtn' >  </input>   " +
-        " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='-' id='minusBtn' > </input>  " +
-        " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='*' id='multiplyBtn' >  </input>  " +
-        " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='/' id='divisionBtn' >  </input> " +
-        " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='(' id='leftBracketBtn' >  </input> " +
-        " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value=')' id='rightBracketBtn' >  </input> " +
-        " <input type='button' class='form_button growthBtn' style='padding-bottom: 18px;' value='Growth'  " +
-        "         title='Calculate difference. Good to calculate previous period growth '   id='growthBtn' >  </input> " +
-        " <input type='button' class='form_button formatBtn' style='padding-bottom: 18px;' value='Format %' id='formatBtn'  " +
-        "title='Post-process step: format this view as percentage of rows, columns or grand total. '" +
+            "<tr> <td class='col0'> </td>" +
+            "<td class='col1'>" +
+            " <form> <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='+' id='plusBtn' >  </input>   " +
+            " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='-' id='minusBtn' > </input>  " +
+            " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='*' id='multiplyBtn' >  </input>  " +
+            " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='/' id='divisionBtn' >  </input> " +
+            " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value='(' id='leftBracketBtn' >  </input> " +
+            " <input type='button' class='form_button mathBtn' style='padding-bottom: 18px;' value=')' id='rightBracketBtn' >  </input> " +
 
-        "</form> </td>" +
-        "</tr>" +
+            "</form> </td>" +
+            "</tr>" +
 
 //            "<tr><td class='col0 i18n'>Function:</td>" +
 //            "<td class='col1'>" +
@@ -84,9 +76,9 @@ var MeasuresModal = Modal.extend({
 //            "</select> " +
 //            "</td></tr>" +
 
-        "<tr><td class='col0 i18n'>Format:</td>" +
-        "<td class='col1'><input class='measure_format' type='text' value='#,##0.00'></input></td></tr>" +
-        "</table></form>"
+            "<tr><td class='col0 i18n'>Format:</td>" +
+            "<td class='col1'><input class='measure_format' type='text' value='#,##0.00'></input></td></tr>" +
+            "</table></form>"
     ),
 
 
@@ -96,16 +88,11 @@ var MeasuresModal = Modal.extend({
         var self = this;
         this.workspace = args.workspace;
         this.measure = args.measure;
-        var selectedHierarchies = this.workspace.query.helper.model().queryModel.axes.ROWS.hierarchies.concat(this.workspace.query.helper.model().queryModel.axes.COLUMNS.hierarchies);
-        this.selectedDimensions = this.extractDimensionChoices(selectedHierarchies);
-        this.selectedRowDimensions = this.extractDimensionChoices(this.workspace.query.helper.model().queryModel.axes.ROWS.hierarchies);
-        this.selectedColumnDimensions = this.extractDimensionChoices(this.workspace.query.helper.model().queryModel.axes.COLUMNS.hierarchies);
-        this.selectedMeasures = this.workspace.query.helper.model().queryModel.details.measures;
 
         var cube = this.workspace.selected_cube;
         this.measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
 
-        _.bindAll(this, "save", "openGrowthModal", "openFormatModal");
+        _.bindAll(this, "save");
 
         this.options.title = "Calculated Measure";
 
@@ -131,7 +118,6 @@ var MeasuresModal = Modal.extend({
         // Load template
         this.message = this.addMeasureTemplate({
             measures: this.measures,
-            selectedDimensions: this.selectedDimensions,
             mdxFunctions: this.mdxFunctions
         });
 
@@ -156,7 +142,7 @@ var MeasuresModal = Modal.extend({
         if (alert_msg !== "") {
             alert(alert_msg);
         } else {
-            var m = {name: measure_name, formula: measure_formula, properties: {}, uniqueName: "[Measures]." + measure_name};
+            var m = { name: measure_name, formula: measure_formula, properties: {}, uniqueName: "[Measures]." + measure_name };
             if (measure_format) {
                 m.properties.FORMAT_STRING = measure_format;
             }
@@ -191,32 +177,5 @@ var MeasuresModal = Modal.extend({
 
     resetSelectDropdown: function () {
         document.getElementById("Measures").selectedIndex = 0;
-    },
-
-    extractDimensionChoices: function (hierarchies) {
-        dimensionNames = [];
-        _.each(hierarchies, function (hierarchy) {
-            dimensionNames.push(hierarchy.name)
-        }, this);
-        return dimensionNames;
-    },
-
-    openGrowthModal: function (event) {
-        this.close();
-        (new GrowthModal({
-            workspace: this.workspace,
-            measures: this.measures,
-            dimensions: this.selectedDimensions,
-            workspace: this.workspace
-        })).render().open();
-    },
-
-    openFormatModal: function (event) {
-        this.close();
-        (new FormatAsPercentageModal({
-            workspace: this.workspace,
-            measures: this.selectedMeasures,
-            workspace: this.workspace
-        })).render().open();
     }
 });
