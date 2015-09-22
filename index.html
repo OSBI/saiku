@@ -356,25 +356,12 @@
         </ul>
         </script>
 <script type="text/x-jquery-tmpl" id="template-calculated-members">
-        <ul>
-            <li>
-                <span class="root expand sprite"></span>
-                   <a href="#" title="Calculated Members" class="folder_expand sprite i18n">Calculated Members</a>
-                <% if (members) { %>
-                <ul>
-                <% _.each(members, function(member) { %>
-
-                        <li class="d_measure"><a title="<%= member.name %>"
-                                measure="<%= member.name %>" type="CALCULATED"
-                            class="measure" href="#Measures/member/<%= encodeURIComponent(member.uniqueName) %>"><%= member.name %></a>
-                        </li>
-
-                <% }); %>
-                <% } %>
-                </ul>
-            </li>
-        </ul>
-        </script>
+    <% if (member) { %>
+        <li class="hide d_level d_level_calcmember">
+            <a title="<%= member.name %>" level="<%= member.name %>" hierarchy="<%= member.hierarchyName %>" class="level l_calcmember" href="#<%= encodeURIComponent(member.hierarchyName) %>/<%= encodeURIComponent(member.name) %>"><%= member.name %></a>
+        </li>
+    <% } %>
+</script>
 <script type="text/x-jquery-tmpl" id="template-workspace">
         <div class="workspace">
             <div class="workspace_inner">
