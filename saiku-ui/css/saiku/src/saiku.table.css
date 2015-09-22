@@ -1,0 +1,170 @@
+.workspace_results {
+    margin-right: 10px;
+    margin-left: 10px;
+    padding-top: 10px;
+    overflow: auto;
+    line-height: 1.3;
+}
+.workspace_results table {
+    border-bottom: 1px solid #d5d5d5;
+    border-right: 1px solid #d5d5d5;
+    margin-bottom: 0;
+    table-layout: fixed;
+    width: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+.workspace_results th, .workspace_results td { padding: 3px 9px 3px 4px; }
+.workspace_results td { font-size: 10px; }
+.workspace_results table th {
+    border-left: 1px solid #d5d5d5;
+    margin-bottom: 0;
+    white-space: normal;
+    font-weight: 500;
+}
+
+.workspace_results table th.all_null {
+    text-align: center;
+    border: none;
+}
+.workspace_results table th.col {
+    border-top: 1px solid #d5d5d5;
+    background: #f9f9f9;
+    text-align: left;
+}
+.workspace_results table th.col_total_corner {
+    border-top: 1px solid #d5d5d5;
+    border-left: 1px none #d5d5d5;
+    border-bottom: 1px none #d5d5d5;
+    background: #f9f9f9;
+    text-align: left;
+}
+
+.workspace_results table th.col_total_first {
+	border-left: 1px solid #d5d5d5;
+	border-top: 1px solid #d5d5d5;
+    background: #f9f9f9;
+    text-align: left;
+}
+
+.workspace_results table th.col_null {
+    background: #f9f9f9;
+}
+.workspace_results table th.row {
+    border-top: 1px solid #d5d5d5;
+    background: #f9f9f9;
+    white-space: nowrap;
+	text-align: left;
+}
+.workspace_results table th.row_total {
+	border-left: 1px none #d5d5d5;
+	border-top: 1px solid #d5d5d5;
+    background: #f9f9f9;
+    text-align: left;
+}
+
+.workspace_results table th.row_total_first {
+	border-left: 1px solid #d5d5d5;
+	border-top: 1px solid #d5d5d5;
+    background: #f9f9f9;
+    text-align: left;
+}
+
+.workspace_results table th.row_total_corner {
+	border-left: 1px solid #d5d5d5;
+    border-top: 1px none #d5d5d5;
+    border-right: 1px none #d5d5d5;
+    border-bottom: 1px none #d5d5d5;
+    background: #f9f9f9;
+    text-align: left;
+}
+
+.workspace_results table th.row_header {
+      border-top: 1px solid #d5d5d5;
+      /*border-bottom: 1px solid #d5d5d5;*/
+      background: #ECECEC;
+}
+
+.workspace_results table th.row_null {
+    background: #f9f9f9;
+}
+.workspace_results table td.data {
+    border-left: 1px solid #d5d5d5;
+    border-top: 1px solid #d5d5d5;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.workspace_results table td.total {
+	background: #fbfbfb;
+	font-weight: bold;
+}
+
+.workspace_results table tbody tr:hover {
+  background: #edf4fa !important;
+}
+
+.workspace_results table td.cellhighlight:hover {
+  background: #c2d5e2 !important;
+}
+.workspace_results table td.cellhighlight {
+  cursor: pointer;
+}
+
+.workspace_results .headerhighlight th.row:hover,
+.workspace_results .headerhighlight th.col:hover {
+  background: #c2d5e2 !important;
+}
+.workspace_results .headerhighlight th.row,
+.workspace_results .headerhighlight th.col {
+  cursor: pointer;
+}
+
+.workspace_results table td.selected,.workspace_results table td.ui-selected,.workspace_results table td.ui-selecting {
+  background: #c2d5e2 !important;
+}
+
+/*For some weird reason you can not have all css queries
+separated by commas, and have just one of these...*/
+.workspace_results:fullscreen {
+  width: 100%;
+  height: 100%;
+  background-color: #FFF;
+  font-weight:500;
+}
+.workspace_results:-moz-full-screen {
+  width: 100%;
+  height: 100%;
+  background-color: #FFF;
+}
+.workspace_results:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+  background-color: #FFF;
+}
+.workspace_results:fullscreen table {
+    margin: 0 auto;
+    font-size: 200%;
+    font-weight:500;
+}
+.workspace_results: table td{
+    font-size: 100%;
+}
+
+.workspace_results:-webkit-full-screen table {
+    margin: 0 auto;
+    font-size: 200%;
+    font-weight:500;
+}
+.workspace_results:-webkit-full-screen table td{
+    font-size: 100%;
+}
+
+.workspace_results:-moz-full-screen table {
+    margin: 0 auto;
+    font-size: 200%;
+}
+.workspace_results:-moz-full-screen table td{
+    font-size: 100%;
+}
+
