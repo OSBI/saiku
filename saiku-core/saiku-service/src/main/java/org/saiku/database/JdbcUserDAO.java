@@ -138,10 +138,11 @@ public class JdbcUserDAO
 
         String newsql = prop.getProperty("maxUser");
         String encrypt = servletContext.getInitParameter("db.encryptpassword");
-        if(encrypt.equals("true")){
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-        }
+
         if(updatepassword){
+            if(encrypt.equals("true")){
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
             getJdbcTemplate().update(sql, user.getUsername(), user.getPassword(), user.getEmail(),
                 Boolean.valueOf(true), user.getId());
         }
