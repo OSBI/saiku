@@ -40,7 +40,8 @@ var SaikuOlapQueryTemplate = {
       "location": "BOTTOM",
       "measures": []
     },
-    "calculatedMeasures": []
+    "calculatedMeasures": [],
+    "calculatedMembers": []
   }, 
   "queryType": "OLAP",
   "type": "QUERYMODEL"
@@ -222,6 +223,7 @@ SaikuOlapQueryHelper.prototype.addCalculatedMeasure = function(measure) {
 SaikuOlapQueryHelper.prototype.editCalculatedMeasure = function(name, measure) {
   if (measure) {
     this.removeCalculatedMeasure(name);
+    this.removeCalculatedMember(name);
     this.model().queryModel.calculatedMeasures.push(measure);
   }
 };
@@ -244,7 +246,38 @@ SaikuOlapQueryHelper.prototype.getCalculatedMeasures = function() {
   return null;
 };
 
+SaikuOlapQueryHelper.prototype.addCalculatedMember = function(measure) {
+  if (measure) {
+    this.removeCalculatedMember(measure.name);
+    this.model().queryModel.calculatedMembers.push(measure);
+  }
+};
 
+SaikuOlapQueryHelper.prototype.editCalculatedMember = function(name, measure) {
+  if (measure) {
+    this.removeCalculatedMeasure(name);
+    this.removeCalculatedMember(name);
+    this.model().queryModel.calculatedMembers.push(measure);
+  }
+};
+
+SaikuOlapQueryHelper.prototype.removeCalculatedMember = function(name) {
+  var measures = this.model().queryModel.calculatedMembers;
+  var removeMeasure = _.findWhere(measures , { name: name });
+  if (removeMeasure && _.indexOf(measures, removeMeasure) > -1) {
+    measures = _.without(measures, removeMeasure);
+    this.model().queryModel.calculatedMembers = measures;
+    //console.log(measures);
+  }
+};
+
+SaikuOlapQueryHelper.prototype.getCalculatedMembers = function() {
+  var ms = this.model().queryModel.calculatedMembers;
+  if (ms) {
+    return ms;
+  }
+  return null;
+};
 
 SaikuOlapQueryHelper.prototype.swapAxes = function() {
   var axes = this.model().queryModel.axes;

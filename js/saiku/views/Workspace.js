@@ -375,6 +375,7 @@ var Workspace = Backbone.View.extend({
         if (!obj.selected_cube) {
             // Someone literally selected "Select a cube"
             $(obj.el).find('.calculated_measures, .addMeasure').hide();
+            $(obj.el).find('.calculated_members, .addMeasure').hide();
             $(obj.el).find('.dimension_tree').html('');
             $(obj.el).find('.measure_tree').html('');
             return false;
@@ -550,6 +551,7 @@ var Workspace = Backbone.View.extend({
         } else {
             // Someone literally selected "Select a cube"
             $(this.el).find('.calculated_measures, .addMeasure').hide();
+            $(this.el).find('.calculated_members, .addMeasure').hide();
             $(this.el).find('.dimension_tree').html('');
             $(this.el).find('.measure_tree').html('');
         }
@@ -592,9 +594,11 @@ var Workspace = Backbone.View.extend({
             if (!self.isReadOnly && (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view"))) {
                 dimlist.find('.selected').removeClass('selected');
 
-                var cms = self.query.helper.getCalculatedMeasures();
-                if (cms && cms.length > 0) {
-                    var template = _.template($("#template-calculated-measures").html(),{ measures: cms });
+                var calcMeasures = self.query.helper.getCalculatedMeasures();
+                var calcMembers = self.query.helper.getCalculatedMembers();
+
+                if (calcMeasures && calcMeasures.length > 0) {
+                    var template = _.template($("#template-calculated-measures").html(),{ measures: calcMeasures });
                     dimlist.find('.calculated_measures').html(template);
                     dimlist.find('.calculated_measures').find('.measure').parent('li').draggable({
                         cancel: '.not-draggable',
@@ -609,6 +613,24 @@ var Workspace = Backbone.View.extend({
                 }
                 else {
                     dimlist.find('.calculated_measures').empty();
+                }
+
+                if (calcMembers && calcMembers.length > 0) {
+                    var template = _.template($("#template-calculated-members").html(),{ members: calcMembers });
+                    dimlist.find('.calculated_members').html(template);
+                    dimlist.find('.calculated_members').find('.measure').parent('li').draggable({
+                        cancel: '.not-draggable',
+                        connectToSortable: $(self.el).find('.fields_list_body.details ul.connectable'),
+                        helper: 'clone',
+                        placeholder: 'placeholder',
+                        opacity: 0.60,
+                        tolerance: 'touch',
+                        containment:    $(self.el),
+                        cursorAt: { top: 10, left: 35 }
+                    });
+                }
+                else {
+                    dimlist.find('.calculated_members').empty();
                 }
 
                 self.drop_zones.synchronize_query();

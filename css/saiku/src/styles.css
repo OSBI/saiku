@@ -1026,27 +1026,48 @@ textarea, select {
     margin: 15px;
 }
 
-.dialog_calculated-member .calculated-member-group {
+.dialog_calculated-member .cms-container-group {
     float: left;
-    overflow: auto;
     width: 300px;
     border: 1px solid #ccc;
 }
 
-.dialog_calculated-member .calculated-member-group .members-list {
+.dialog_calculated-member .calculated-measure-group,
+.dialog_calculated-member .calculated-member-group {
+    width: 300px;
+}
+
+.dialog_calculated-member .calculated-member-group {
+    border-top: 1px solid #ccc;
+}
+
+.dialog_calculated-member .calculated-measure-group h4,
+.dialog_calculated-member .calculated-member-group h4 {
+    margin: 0;
+    padding: 5px;
+    width: 290px;
+    border-bottom: 1px solid #ccc;
+}
+
+.dialog_calculated-member .cms-container-group .cms-box {
+    overflow: auto;
+    height: 165px;
+}
+
+.dialog_calculated-member .cms-container-group .cms-list {
     margin: 10px auto;
 }
 
-.dialog_calculated-member .calculated-member-group .members-list .member-name {
+.dialog_calculated-member .cms-container-group .cms-list .cms-name {
     width: 150px;
 }
 
-.dialog_calculated-member .calculated-member-group .msg-no-member {
+.dialog_calculated-member .cms-container-group .msg-no-cms {
     color: #666;
     text-align: center;
 }
 
-.dialog_calculated-member .calculated-member-group .members-list .member-actions a.button {
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions a.button {
     display: inline-block;
     width: 16px;
     height: 16px;
@@ -1056,31 +1077,31 @@ textarea, select {
             border-radius: 3px;
     background-repeat: no-repeat;
 }
-.dialog_calculated-member .calculated-member-group .members-list .member-actions a.button:hover {
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions a.button:hover {
     padding: 7px;
     border: 1px solid #ccc;
 }
 
-.dialog_calculated-member .calculated-member-group .members-list .member-actions a.on {
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions a.on {
     padding: 7px !important;
     border: 1px solid #ccc;
     background-color: #e0e0e0;
 }
 
-.dialog_calculated-member .calculated-member-group .members-list .member-actions .edit {
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions .edit {
     background-image: url("../../../images/src/pencil.png");
     background-position: 7px 7px;
 }
 
-.dialog_calculated-member .calculated-member-group .members-list .member-actions .delete {
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions .delete {
     background-position: -521px 7px;
 }
 
-.dialog_calculated-member .calculated-member-group .members-list .member-actions .button:nth-child(2) {
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions .button:nth-child(2) {
     margin-left: 10px;
 }
 
-.dialog_calculated-member .calculated-member-form {
+.dialog_calculated-member .cms-container-form {
     float: right;
     width: 400px;
 }
