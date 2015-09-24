@@ -141,8 +141,10 @@ SaikuOlapQueryHelper.prototype.removeFilter = function(filterable, flavour) {
 SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, position) {
     var mHierarchy = this.getHierarchy(hierarchy);
     if (mHierarchy) {
+      console.log('TRUE');
       mHierarchy.levels[level] = { name: level };
     } else {
+      console.log('FALSE');
       mHierarchy = { "name" : hierarchy, "levels": { }};
       mHierarchy.levels[level] = { name: level };
     }

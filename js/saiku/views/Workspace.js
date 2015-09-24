@@ -667,6 +667,7 @@ var Workspace = Backbone.View.extend({
                     }
                 }
                 else {
+                    dimlist.find('.dimension_tree').find('.parent_dimension').find('.d_hierarchy').find('.dimension-level-calcmember').remove();
                 }
 
                 self.drop_zones.synchronize_query();
