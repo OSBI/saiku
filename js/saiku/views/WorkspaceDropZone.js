@@ -148,6 +148,21 @@ var WorkspaceDropZone = Backbone.View.extend({
                             .find('.folder_collapsed')
                             .addClass('selected');
                     }
+                    if (hierarchy.cmembers) {
+                        for (var i = 0, len = hierarchy.cmembers.length; i < len; i++) {
+                            var member = hierarchy.cmembers[i];                        
+                            var level = member.split('.')[member.split('.').length-1].replace(/[\[\]]/gi, '');
+
+                            h.find('li a[level="' + level + '"]').parent().show();
+
+                            // sync attribute list
+                            $(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"] li a[level="' + level + '"]').parent()
+                                .draggable('disable')
+                                .parents('.parent_dimension')
+                                .find('.folder_collapsed')
+                                .addClass('selected');
+                        }
+                    }
                     var selection = $('<li class="selection"></li>');
                     selection.append(h);
                     selection.appendTo($axis.find('ul.connectable'));
