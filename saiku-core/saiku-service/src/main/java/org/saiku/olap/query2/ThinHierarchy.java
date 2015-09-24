@@ -1,10 +1,12 @@
 package org.saiku.olap.query2;
 
+import org.saiku.ArrayMapDeserializer;
 import org.saiku.olap.query2.common.AbstractThinSortableQuerySet;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import org.olap4j.impl.Named;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +18,9 @@ public class ThinHierarchy extends AbstractThinSortableQuerySet implements Named
 	private String dimension;
 	
 	private Map<String, ThinLevel> levels = new HashMap<String, ThinLevel>();
-	private List<String> cmembers = new ArrayList<String>();
+
+	@JsonDeserialize(using = ArrayMapDeserializer.class)
+	private Map<String,String> cmembers = new HashMap<String, String>();
 
 	public ThinHierarchy() {};
 	
@@ -36,7 +40,10 @@ public class ThinHierarchy extends AbstractThinSortableQuerySet implements Named
 	if (levels != null) {
 	  this.levels = levels;
 	}
-	  this.cmembers = tcm;
+	  for(String t : tcm){
+			cmembers.put(t, t);
+	  }
+
   	}
 	@Override
 	public String getName() {
@@ -100,11 +107,11 @@ public class ThinHierarchy extends AbstractThinSortableQuerySet implements Named
 		this.dimension = dimension;
 	}
 
-  public List<String> getCmembers() {
+  public Map<String, String> getCmembers() {
 	return cmembers;
   }
 
-  public void setCmembers(List<String> cmembers) {
+  public void setCmembers(Map<String,String> cmembers) {
 	this.cmembers = cmembers;
   }
 }

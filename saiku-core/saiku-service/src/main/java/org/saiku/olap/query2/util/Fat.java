@@ -19,10 +19,7 @@ import org.olap4j.OlapException;
 import org.olap4j.metadata.*;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Fat {
 	
@@ -65,7 +62,7 @@ public class Fat {
 	} catch (OlapException e) {
 	  e.printStackTrace();
 	}*/
-	if (thinCms != null && thinCms.size() > 0) {
+	/*if (thinCms != null && thinCms.size() > 0) {
 	  for (ThinCalculatedMember qcm : thinCms) {
 		NamedList<Hierarchy> h2 = q.getCube().getHierarchies();
 		for(Hierarchy h: h2){
@@ -86,7 +83,7 @@ public class Fat {
 		}
 
 	  }
-	}
+	}*/
   }
 
   private static void convertCalculatedMeasures(Query q, List<ThinCalculatedMeasure> thinCms) {
@@ -166,37 +163,41 @@ public class Fat {
 	
 	private static void convertHierarchy(Query q, QueryHierarchy qh, ThinHierarchy th, ThinQuery tq) throws
 		OlapException {
-	  for (String tcm : th.getCmembers()) {
+	  Iterator it = th.getCmembers().entrySet().iterator();
+	  while (it.hasNext()) {
+		Map.Entry pair = (Map.Entry) it.next();
+
 		ThinCalculatedMember cres = null;
-		for(ThinCalculatedMember c : tq.getQueryModel().getCalculatedMembers()) {
-		  if(c.getUniqueName().equals(tcm)) {
+		for (ThinCalculatedMember c : tq.getQueryModel().getCalculatedMembers()) {
+		  if (c.getUniqueName().equals(pair.getValue())) {
 			cres = c;
 			break;
 		  }
-
+		  //it.remove(); // avoids a ConcurrentModificationException
 		}
-		Hierarchy h2 = null;
-		for (Hierarchy h : q.getCube().getHierarchies()) {
-		  if (h.getUniqueName().equals(cres.getHierarchyName())) {
-			h2 = h;
-			break;
+		  Hierarchy h2 = null;
+		  for (Hierarchy h : q.getCube().getHierarchies()) {
+			if (h.getUniqueName().equals(cres.getHierarchyName())) {
+			  h2 = h;
+			  break;
+			}
 		  }
+		  CalculatedMember cm;
+		  cm = new CalculatedMember(
+			  q.getCube().getDimensions().get(cres.getDimension()),
+			  h2,
+			  cres.getName(),
+			  cres.getName(),
+			  null,
+			  Member.Type.FORMULA,
+			  cres.getFormula(),
+			  null);
+
+		  qh.includeCalculatedMember(cm);
+		  extendSortableQuerySet(qh.getQuery(), qh, th);
+
 		}
-		CalculatedMember cm;
-		cm = new CalculatedMember(
-			q.getCube().getDimensions().get(cres.getDimension()),
-			h2,
-			cres.getName(),
-			cres.getName(),
-			null,
-			Member.Type.FORMULA,
-			cres.getFormula(),
-			null);
 
-		qh.includeCalculatedMember(cm);
-		extendSortableQuerySet(qh.getQuery(), qh, th);
-
-	  }
 		for (ThinLevel tl : th.getLevels().values()) {
 		  QueryLevel ql = qh.includeLevel(tl.getName());
 
