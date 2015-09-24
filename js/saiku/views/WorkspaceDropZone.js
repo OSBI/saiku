@@ -148,6 +148,21 @@ var WorkspaceDropZone = Backbone.View.extend({
                             .find('.folder_collapsed')
                             .addClass('selected');
                     }
+                    if (hierarchy.cmembers) {
+                        for (var i = 0, len = hierarchy.cmembers.length; i < len; i++) {
+                            var member = hierarchy.cmembers[i];
+                            var level = member.split('.')[member.split('.').length-1].replace(/[\[\]]/gi, '');
+
+                            h.find('li a[level="' + level + '"]').parent().show();
+
+                            // sync attribute list
+                            $(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"] li a[level="' + level + '"]').parent()
+                                .draggable('disable')
+                                .parents('.parent_dimension')
+                                .find('.folder_collapsed')
+                                .addClass('selected');
+                        }
+                    }
                     var selection = $('<li class="selection"></li>');
                     selection.append(h);
                     selection.appendTo($axis.find('ul.connectable'));
@@ -227,11 +242,19 @@ var WorkspaceDropZone = Backbone.View.extend({
             var toAxis = ui.item.parents('.axis_fields').parent().attr('title');
             var fromAxis = $(event.target).parents('.axis_fields').parent().attr('title');
             var isNew = ui.item.hasClass('d_level');
-            if (isNew) {
-                var level = ui.item.find('a.level').attr('level');
-                this.workspace.query.helper.includeLevel(toAxis, hierarchy, level, indexHierarchy);
-            } else {
-                self.workspace.query.helper.moveHierarchy(fromAxis, toAxis, hierarchy, indexHierarchy);
+            var isCalcMember = ui.item.hasClass('dimension-level-calcmember');
+
+            if (isCalcMember) {
+                var uniqueName = ui.item.find('a.level').attr('uniquename');
+                this.workspace.query.helper.includeCalculatedMember(toAxis, hierarchy, level, uniqueName, indexHierarchy);
+            }
+            else {
+                if (isNew) {
+                    var level = ui.item.find('a.level').attr('level');
+                    this.workspace.query.helper.includeLevel(toAxis, hierarchy, level, indexHierarchy);
+                } else {
+                    self.workspace.query.helper.moveHierarchy(fromAxis, toAxis, hierarchy, indexHierarchy);
+                }
             }
 
             $(ui.item).detach();
