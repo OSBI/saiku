@@ -150,7 +150,8 @@ var WorkspaceDropZone = Backbone.View.extend({
                     }
                     if (hierarchy.cmembers) {
                         for (var i = 0, len = hierarchy.cmembers.length; i < len; i++) {
-                            var member = hierarchy.cmembers[i];                        
+                            console.log(hierarchy);
+                            var member = hierarchy.cmembers[i];
                             var level = member.split('.')[member.split('.').length-1].replace(/[\[\]]/gi, '');
 
                             h.find('li a[level="' + level + '"]').parent().show();
