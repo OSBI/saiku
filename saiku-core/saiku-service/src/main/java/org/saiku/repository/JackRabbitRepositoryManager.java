@@ -64,28 +64,29 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
   private final String config;
   private final String password;
   private final String oldpassword;
+  private final String defaultRole;
   private Repository repository;
   private Session session;
   private Node root;
   private UserService userService;
 
-  private JackRabbitRepositoryManager(String config, String data, String password, String oldpassword) {
+
+  private JackRabbitRepositoryManager(String config, String data, String password, String oldpassword, String defaultRole) {
 
     this.config = config;
     this.data = data;
     this.password = password;
     this.oldpassword = oldpassword;
+    this.defaultRole = defaultRole;
   }
 
   /*
    * TODO this is currently threadsafe but to improve performance we should split it up to allow multiple sessions to hit the repo at the same time.
    */
-  public static synchronized JackRabbitRepositoryManager getJackRabbitRepositoryManager(String config, String data,
-                                                                                        String password, String
-                                                                                            oldpassword) {
+  public static synchronized JackRabbitRepositoryManager getJackRabbitRepositoryManager(String config, String data, String password, String oldpassword, String defaultRole) {
     if (ref == null)
       // it's ok, we can call this constructor
-      ref = new JackRabbitRepositoryManager(config, data, password, oldpassword);
+      ref = new JackRabbitRepositoryManager(config, data, password, oldpassword, defaultRole);
     return ref;
   }
 
@@ -176,7 +177,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
       HashMap<String, List<AclMethod>> m = new HashMap<String, List<AclMethod>>();
       ArrayList<AclMethod> l = new ArrayList<AclMethod>();
       l.add(AclMethod.READ);
-      m.put("ROLE_USER", l);
+      m.put(defaultRole, l);
       AclEntry e = new AclEntry("admin", AclType.SECURED, m, null);
 
       Acl2 acl2 = new Acl2(n);

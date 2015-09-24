@@ -19,6 +19,7 @@
         <property name="earthquakeSchema" value="${earthquakeschema}"/>
         <property name="earthquakeUrl" value="${earthquakeurl}"/>
         <property name="repoPassword" value ="sa!kuanalyt!cs"/>
+        <property name="defaultRole" value="ROLE_USER"/>
         <!-- If you change the repoPassword set this property for at least 1 restart to update the old repo password-->
         <!--<property name="oldRepoPassword" value="sa!kuanalyt!cs"/>-->
 

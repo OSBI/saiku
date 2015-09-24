@@ -55,10 +55,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String earthquakeurl;
     private String earthquakedir;
     private String earthquakeschema;
+    private String defaultRole;
 
     public void load() {
         irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopassword,
-            oldpassword);
+            oldpassword, defaultRole);
         try {
             irm.start(userService);
         } catch (RepositoryException e) {
@@ -494,6 +495,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public String getOldRepopassword(){
         return oldpassword;
+    }
+
+    public void setDefaultRole(String defaultRole)
+    {
+        this.defaultRole = defaultRole;
     }
 }
 

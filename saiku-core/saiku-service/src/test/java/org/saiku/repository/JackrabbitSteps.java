@@ -44,14 +44,16 @@ import static org.mockito.Mockito.when;
  */
 public class JackrabbitSteps {
 
+    private static final String DEFAULT_ROLE = "ROLE_USER";
+
     private String repoBasePath = System.getProperty("user.dir") + "/target";
     private String repoLocation = repoBasePath + "/repo-data" + System.currentTimeMillis();
     private URL repoConf = this.getClass().getClassLoader().getResource("repo-conf.xml");
     private String repoConfPath = repoConf.getPath();
     private IRepositoryManager iRepositoryManager = JackRabbitRepositoryManager.getJackRabbitRepositoryManager
-        (repoConfPath, repoLocation, "admin", "admin");
+        (repoConfPath, repoLocation, "admin", "admin", DEFAULT_ROLE);
     private UserService userService = mock(UserService.class);
-    private List<String> defaultRole = Collections.singletonList("ROLE_USER");
+    private List<String> defaultRole = Collections.singletonList(DEFAULT_ROLE);
 
     @Rule
     public ExpectedException throwable = ExpectedException.none();
