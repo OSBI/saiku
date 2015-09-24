@@ -227,11 +227,19 @@ var WorkspaceDropZone = Backbone.View.extend({
             var toAxis = ui.item.parents('.axis_fields').parent().attr('title');
             var fromAxis = $(event.target).parents('.axis_fields').parent().attr('title');
             var isNew = ui.item.hasClass('d_level');
-            if (isNew) {
-                var level = ui.item.find('a.level').attr('level');
-                this.workspace.query.helper.includeLevel(toAxis, hierarchy, level, indexHierarchy);
-            } else {
-                self.workspace.query.helper.moveHierarchy(fromAxis, toAxis, hierarchy, indexHierarchy);
+            var isCalcMember = ui.item.hasClass('dimension-level-calcmember');
+
+            if (isCalcMember) {
+                var uniqueName = ui.item.find('a.level').attr('uniquename');
+                this.workspace.query.helper.includeCalculatedMember(toAxis, hierarchy, level, uniqueName, indexHierarchy);
+            }
+            else {
+                if (isNew) {
+                    var level = ui.item.find('a.level').attr('level');
+                    this.workspace.query.helper.includeLevel(toAxis, hierarchy, level, indexHierarchy);
+                } else {
+                    self.workspace.query.helper.moveHierarchy(fromAxis, toAxis, hierarchy, indexHierarchy);
+                }
             }
 
             $(ui.item).detach();

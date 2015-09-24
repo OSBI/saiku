@@ -617,27 +617,33 @@ var Workspace = Backbone.View.extend({
 
                 if (calcMembers && calcMembers.length > 0) {
                     var self = this;
-                    // var template = _.template($("#template-calculated-members").html(),{ members: calcMembers });
-                    var template;
                     var $dimensionTree = dimlist.find('.dimension_tree').find('.parent_dimension').find('.d_hierarchy');
                     var len = calcMembers.length;
+                    var templateLevelMember;
                     var i;
 
-                    $dimensionTree.find('.d_level_calcmember').remove();
-                    
+                    $dimensionTree.find('.dimension-level-calcmember').remove();
+
                     for (i = 0; i < len; i++) {
                         $dimensionTree.each(function(key, value) {
                             if ($(value).attr('hierarchy') === calcMembers[i].hierarchyName) {
-                                template = _.template($("#template-calculated-members").html(),{ member: calcMembers[i] });
-                                
-                                $(value).append(template);
 
-                                $(value).find('.l_calcmember').parent('li').draggable({
+                                templateLevelMember = _.template($('#template-calculated-member').html(), { member: calcMembers[i] });
+
+                                if(!($(value).closest('.parent_dimension').find('span.root').hasClass('collapsed'))) {
+                                    templateLevelMember = $(templateLevelMember).css('display', 'list-item');
+                                }
+                                else {
+                                    templateLevelMember = $(templateLevelMember).css('display', 'none');
+                                }
+
+                                $(value).append(templateLevelMember);
+
+                                $(value).find('.level-calcmember').parent('li').draggable({
                                     cancel: '.not-draggable, .hierarchy',
                                     connectToSortable: $(self.el).find('.fields_list_body.columns > ul.connectable, .fields_list_body.rows > ul.connectable, .fields_list_body.filter > ul.connectable'),
-                                    containment:    $(self.el),
-                                    //helper: "clone",
-                                    helper: function(event, ui){
+                                    containment: $(self.el),
+                                    helper: function(event, ui) {
                                         var target = $(event.target).hasClass('d_level') ? $(event.target) : $(event.target).parent();
                                         var hierarchy = target.find('a').attr('hierarchy');
                                         var level = target.find('a').attr('level');
@@ -668,7 +674,6 @@ var Workspace = Backbone.View.extend({
             }
         }
         Saiku.i18n.translate();
-
     },
 
     /*jshint -W027*/

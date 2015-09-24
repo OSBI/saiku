@@ -350,12 +350,12 @@ var CalculatedMemberModal = Modal.extend({
     show_del_cms: function(event) {
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
-        var cmsType = $currentTarget.data('type') === 'calcmeasure' ? 'Measure' : 'Member';
+        var cmsType = $currentTarget.data('type') === 'calcmeasure' ? 'measure' : 'member';
         this.$delcms = $currentTarget;
         this.new();
         (new WarningModal({
             title: 'Delete Member',
-            message: 'You want to delete this Calculated ' + cmsType + ' <b>' + $currentTarget.data('name') + '</b>?',
+            message: 'You want to delete this calculated ' + cmsType + ' <b>' + $currentTarget.data('name') + '</b>?',
             okay: this.del_cms,
             okayobj: this
         })).render().open();
