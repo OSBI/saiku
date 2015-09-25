@@ -375,6 +375,7 @@ var Workspace = Backbone.View.extend({
         if (!obj.selected_cube) {
             // Someone literally selected "Select a cube"
             $(obj.el).find('.calculated_measures, .addMeasure').hide();
+            $(obj.el).find('.calculated_members, .addMeasure').hide();
             $(obj.el).find('.dimension_tree').html('');
             $(obj.el).find('.measure_tree').html('');
             return false;
@@ -550,6 +551,7 @@ var Workspace = Backbone.View.extend({
         } else {
             // Someone literally selected "Select a cube"
             $(this.el).find('.calculated_measures, .addMeasure').hide();
+            $(this.el).find('.calculated_members, .addMeasure').hide();
             $(this.el).find('.dimension_tree').html('');
             $(this.el).find('.measure_tree').html('');
         }
@@ -592,9 +594,11 @@ var Workspace = Backbone.View.extend({
             if (!self.isReadOnly && (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view"))) {
                 dimlist.find('.selected').removeClass('selected');
 
-                var cms = self.query.helper.getCalculatedMeasures();
-                if (cms && cms.length > 0) {
-                    var template = _.template($("#template-calculated-measures").html(),{ measures: cms });
+                var calcMeasures = self.query.helper.getCalculatedMeasures();
+                var calcMembers = self.query.helper.getCalculatedMembers();
+
+                if (calcMeasures && calcMeasures.length > 0) {
+                    var template = _.template($("#template-calculated-measures").html(),{ measures: calcMeasures });
                     dimlist.find('.calculated_measures').html(template);
                     dimlist.find('.calculated_measures').find('.measure').parent('li').draggable({
                         cancel: '.not-draggable',
@@ -607,13 +611,70 @@ var Workspace = Backbone.View.extend({
                         cursorAt: { top: 10, left: 35 }
                     });
                 }
+                else {
+                    dimlist.find('.calculated_measures').empty();
+                }
+
+                if (calcMembers && calcMembers.length > 0) {
+                    var self = this;
+                    var $dimensionTree = dimlist.find('.dimension_tree').find('.parent_dimension').find('.d_hierarchy');
+                    var len = calcMembers.length;
+                    var templateLevelMember;
+                    var i;
+
+                    $dimensionTree.find('.dimension-level-calcmember').remove();
+
+                    for (i = 0; i < len; i++) {
+                        $dimensionTree.each(function(key, value) {
+                            if ($(value).attr('hierarchy') === calcMembers[i].hierarchyName) {
+
+                                templateLevelMember = _.template($('#template-calculated-member').html(), { member: calcMembers[i] });
+
+                                if(!($(value).closest('.parent_dimension').find('span.root').hasClass('collapsed'))) {
+                                    templateLevelMember = $(templateLevelMember).css('display', 'list-item');
+                                }
+                                else {
+                                    templateLevelMember = $(templateLevelMember).css('display', 'none');
+                                }
+
+                                $(value).append(templateLevelMember);
+
+                                $(value).find('.level-calcmember').parent('li').draggable({
+                                    cancel: '.not-draggable, .hierarchy',
+                                    connectToSortable: $(self.el).find('.fields_list_body.columns > ul.connectable, .fields_list_body.rows > ul.connectable, .fields_list_body.filter > ul.connectable'),
+                                    containment: $(self.el),
+                                    helper: function(event, ui) {
+                                        var target = $(event.target).hasClass('d_level') ? $(event.target) : $(event.target).parent();
+                                        var hierarchy = target.find('a').attr('hierarchy');
+                                        var level = target.find('a').attr('level');
+                                        var h = target.parent().clone().removeClass('d_hierarchy').addClass('hierarchy');
+                                        h.find('li a[hierarchy="' + hierarchy + '"]').parent().hide();
+                                        h.find('li a[level="' + level + '"]').parent().show();
+                                        var selection = $('<li class="selection"></li>');
+                                        selection.append(h);
+                                        return selection;
+                                    },
+                                    placeholder: 'placeholder',
+                                    opacity: 0.60,
+                                    tolerance: 'touch',
+                                    cursorAt: {
+                                        top: 10,
+                                        left: 85
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+                else {
+                    dimlist.find('.dimension_tree').find('.parent_dimension').find('.d_hierarchy').find('.dimension-level-calcmember').remove();
+                }
 
                 self.drop_zones.synchronize_query();
 
             }
         }
         Saiku.i18n.translate();
-
     },
 
     /*jshint -W027*/

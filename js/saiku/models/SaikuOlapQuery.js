@@ -40,7 +40,8 @@ var SaikuOlapQueryTemplate = {
       "location": "BOTTOM",
       "measures": []
     },
-    "calculatedMeasures": []
+    "calculatedMeasures": [],
+    "calculatedMembers": []
   }, 
   "queryType": "OLAP",
   "type": "QUERYMODEL"
@@ -140,10 +141,38 @@ SaikuOlapQueryHelper.prototype.removeFilter = function(filterable, flavour) {
 SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, position) {
     var mHierarchy = this.getHierarchy(hierarchy);
     if (mHierarchy) {
+      console.log('TRUE');
       mHierarchy.levels[level] = { name: level };
     } else {
+      console.log('FALSE');
       mHierarchy = { "name" : hierarchy, "levels": { }};
       mHierarchy.levels[level] = { name: level };
+    }
+    
+    var existingAxis = this.findAxisForHierarchy(hierarchy);
+    if (existingAxis) {
+      this.moveHierarchy(existingAxis.location, axis, hierarchy, position);
+    } else {
+      var _axis = this.model().queryModel.axes[axis];
+      if (_axis) {
+        if (typeof position != "undefined" && position > -1 && _axis.hierarchies.length > position) {
+          _axis.hierarchies.splice(position, 0, mHierarchy);
+          return;
+        } 
+        _axis.hierarchies.push(mHierarchy);
+      } else {
+        Saiku.log("Cannot find axis: " + axis + " to include Level: " + level);
+      }
+    }
+};
+
+SaikuOlapQueryHelper.prototype.includeCalculatedMember = function(axis, hierarchy, level, uniqueName, position) {
+    var mHierarchy = this.getHierarchy(hierarchy);
+    if (mHierarchy) {
+      mHierarchy.cmembers.push(uniqueName);
+    } else {
+      mHierarchy = { "name" : hierarchy, "levels": { }, "cmembers": []};
+      mHierarchy.cmembers.push(uniqueName);
     }
     
     var existingAxis = this.findAxisForHierarchy(hierarchy);
@@ -219,11 +248,20 @@ SaikuOlapQueryHelper.prototype.addCalculatedMeasure = function(measure) {
   }
 };
 
+SaikuOlapQueryHelper.prototype.editCalculatedMeasure = function(name, measure) {
+  if (measure) {
+    this.removeCalculatedMeasure(name);
+    this.removeCalculatedMember(name);
+    this.model().queryModel.calculatedMeasures.push(measure);
+  }
+};
+
 SaikuOlapQueryHelper.prototype.removeCalculatedMeasure = function(name) {
   var measures = this.model().queryModel.calculatedMeasures;
   var removeMeasure = _.findWhere(measures , { name: name });
   if (removeMeasure && _.indexOf(measures, removeMeasure) > -1) {
     measures = _.without(measures, removeMeasure);
+    this.model().queryModel.calculatedMeasures = measures;
     //console.log(measures);
   }
 };
@@ -236,7 +274,38 @@ SaikuOlapQueryHelper.prototype.getCalculatedMeasures = function() {
   return null;
 };
 
+SaikuOlapQueryHelper.prototype.addCalculatedMember = function(measure) {
+  if (measure) {
+    this.removeCalculatedMember(measure.name);
+    this.model().queryModel.calculatedMembers.push(measure);
+  }
+};
 
+SaikuOlapQueryHelper.prototype.editCalculatedMember = function(name, measure) {
+  if (measure) {
+    this.removeCalculatedMeasure(name);
+    this.removeCalculatedMember(name);
+    this.model().queryModel.calculatedMembers.push(measure);
+  }
+};
+
+SaikuOlapQueryHelper.prototype.removeCalculatedMember = function(name) {
+  var measures = this.model().queryModel.calculatedMembers;
+  var removeMeasure = _.findWhere(measures , { name: name });
+  if (removeMeasure && _.indexOf(measures, removeMeasure) > -1) {
+    measures = _.without(measures, removeMeasure);
+    this.model().queryModel.calculatedMembers = measures;
+    //console.log(measures);
+  }
+};
+
+SaikuOlapQueryHelper.prototype.getCalculatedMembers = function() {
+  var ms = this.model().queryModel.calculatedMembers;
+  if (ms) {
+    return ms;
+  }
+  return null;
+};
 
 SaikuOlapQueryHelper.prototype.swapAxes = function() {
   var axes = this.model().queryModel.axes;
