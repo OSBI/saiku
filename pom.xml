@@ -68,6 +68,7 @@
 						<jsSourceInclude>views/CustomFilterModal.js</jsSourceInclude>
 						<jsSourceInclude>views/MeasuresModal.js</jsSourceInclude>
 						<jsSourceInclude>views/CalculatedMemberModal.js</jsSourceInclude>
+						<jsSourceInclude>views/DataSourcesModal.js</jsSourceInclude>
 						<jsSourceInclude>views/QueryToolbar.js</jsSourceInclude>
 						<jsSourceInclude>views/WorkspaceToolbar.js</jsSourceInclude>
 						<jsSourceInclude>views/WorkspaceDropZone.js</jsSourceInclude>
@@ -93,10 +94,12 @@
 						<jsSourceInclude>models/Plugin.js</jsSourceInclude>
 						<jsSourceInclude>models/Settings.js</jsSourceInclude>
 						<jsSourceInclude>models/License.js</jsSourceInclude>
+						<jsSourceInclude>models/DataSources.js</jsSourceInclude>
 						<jsSourceInclude>Saiku.js</jsSourceInclude>
 						<jsSourceInclude>views/DateFilterModal.js</jsSourceInclude>
 						<jsSourceInclude>views/WarningModal.js</jsSourceInclude>
 						<jsSourceInclude>views/TitlesModal.js</jsSourceInclude>
+						<jsSourceInclude>views/GrowthModal.js</jsSourceInclude>
 						<jsSourceInclude>adapters/SaikuServer.js</jsSourceInclude>
 						<jsSourceInclude>routers/QueryRouter.js</jsSourceInclude>
 					</jsSourceIncludes>
