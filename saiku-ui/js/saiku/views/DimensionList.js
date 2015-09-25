@@ -71,6 +71,7 @@ var DimensionList = Backbone.View.extend({
         
         // Add draggable behavior
         $(this.el).find('.addMeasure, .calculated_measures').show();
+        $(this.el).find('.addMeasure, .calculated_members').show();
         $(this.el).find('.measure').parent('li').draggable({
             cancel: '.not-draggable',
             connectToSortable: $(this.workspace.el).find('.fields_list_body.details ul.connectable'),
@@ -135,6 +136,7 @@ var DimensionList = Backbone.View.extend({
         var hierarchyCaption = $(event.target).parent().parent().attr('hierarchycaption');
         var level = $(event.target).attr('level');
         var axisName = "ROWS";
+        var isCalcMember = $(event.target).parent().hasClass('dimension-level-calcmember');
 
         if ($(this.workspace.el).find(".workspace_fields ul.hierarchy[hierarchy='" + hierarchy + "']").length > 0) {
              var $level = $(this.workspace.el).find(".workspace_fields ul[hierarchy='" + hierarchy + "'] a[level='" + level + "']").parent().show();
@@ -146,7 +148,14 @@ var DimensionList = Backbone.View.extend({
 
             axisName = $axis.parents('.fields_list').attr('title');
         }
-        this.workspace.query.helper.includeLevel(axisName, hierarchy, level);
+
+        if (isCalcMember) {
+            var uniqueName = $(event.target).attr('uniquename');
+            this.workspace.query.helper.includeCalculatedMember(axisName, hierarchy, level, uniqueName);
+        }
+        else {
+            this.workspace.query.helper.includeLevel(axisName, hierarchy, level);
+        }
 
         // Trigger event when select dimension
         Saiku.session.trigger('dimensionList:select_dimension', { workspace: this.workspace });
@@ -174,7 +183,8 @@ var DimensionList = Backbone.View.extend({
     },
 
     measure_dialog: function(event, ui) {
-        (new MeasuresModal({ 
+        // (new MeasuresModal({ 
+        (new CalculatedMemberModal({ 
             workspace: this.workspace,
             measure: null
         })).render().open();

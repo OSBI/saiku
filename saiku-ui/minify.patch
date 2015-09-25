@@ -1,6 +1,6 @@
---- index.html	2015-09-10 10:14:33.900272325 +0100
-+++ index2.html	2015-09-10 10:26:26.612300050 +0100
-@@ -114,69 +114,8 @@
+--- index.html	2015-09-25 09:15:49.669277673 +0100
++++ index2.html	2015-09-25 09:18:25.785277223 +0100
+@@ -114,70 +114,8 @@
  <!-- Saiku Project -->
  <script type="text/javascript" src="js/saiku/Settings.js"></script>
 
@@ -27,6 +27,7 @@
 -<script type="text/javascript" src="js/saiku/views/FilterModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/CustomFilterModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/MeasuresModal.js"></script>
+-<script type="text/javascript" src="js/saiku/views/CalculatedMemberModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/DataSourcesModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/QueryToolbar.js"></script>
 -<script type="text/javascript" src="js/saiku/views/WorkspaceToolbar.js"></script>

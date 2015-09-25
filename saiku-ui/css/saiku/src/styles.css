@@ -1018,6 +1018,129 @@ textarea, select {
     border-color: #ccc;
 }
 
+.dialog_calculated-member .dialog_icon {
+    display: none;
+}
+
+.dialog_calculated-member .dialog_body {
+    margin: 15px;
+}
+
+.dialog_calculated-member .cms-container-group {
+    float: left;
+    width: 300px;
+    border: 1px solid #ccc;
+}
+
+.dialog_calculated-member .calculated-measure-group,
+.dialog_calculated-member .calculated-member-group {
+    width: 300px;
+}
+
+.dialog_calculated-member .calculated-member-group {
+    border-top: 1px solid #ccc;
+}
+
+.dialog_calculated-member .calculated-measure-group h4,
+.dialog_calculated-member .calculated-member-group h4 {
+    margin: 0;
+    padding: 5px;
+    width: 290px;
+    border-bottom: 1px solid #ccc;
+}
+
+.dialog_calculated-member .cms-container-group .cms-box {
+    overflow: auto;
+    height: 165px;
+}
+
+.dialog_calculated-member .cms-container-group .cms-list {
+    margin: 10px auto;
+}
+
+.dialog_calculated-member .cms-container-group .cms-list .cms-name {
+    width: 150px;
+}
+
+.dialog_calculated-member .cms-container-group .msg-no-cms {
+    color: #666;
+    text-align: center;
+}
+
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions a.button {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    padding: 8px;
+    -webkit-border-radius: 3px;
+       -moz-border-radius: 3px;
+            border-radius: 3px;
+    background-repeat: no-repeat;
+}
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions a.button:hover {
+    padding: 7px;
+    border: 1px solid #ccc;
+}
+
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions a.on {
+    padding: 7px !important;
+    border: 1px solid #ccc;
+    background-color: #e0e0e0;
+}
+
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions .edit {
+    background-image: url("../../../images/src/pencil.png");
+    background-position: 7px 7px;
+}
+
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions .delete {
+    background-position: -521px 7px;
+}
+
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions .button:nth-child(2) {
+    margin-left: 10px;
+}
+
+.dialog_calculated-member .cms-container-form {
+    float: right;
+    width: 400px;
+}
+
+.dialog_calculated-member .form-group-inline label {
+    float: left;
+    width: 80px;
+    padding-top: 10px;
+}
+
+.dialog_calculated-member .form-group-inline input[type="text"] {
+    width: 300px;
+    padding: 4px;
+}
+
+.dialog_calculated-member .form-group-inline select {
+    width: 310px;
+    padding: 4px;
+    border-color: #ccc;
+}
+
+.dialog_calculated-member .form-group-inline .formula-editor {
+    width: 308px;
+    height: 200px;
+    border: 1px solid #ccc;
+}
+
+.dialog_calculated-member .form-group-inline .btn-group-math {
+    padding: 13px 70px;
+}
+
+.dialog_calculated-member .form-group-inline .btn-group-math .form_button {
+    margin-left: 10px;
+}
+
+.dialog_calculated-member .form-group-inline .div-format-custom {
+    display: none;
+}
+
 .dialog_permissions .dialog_body {
     width: 370px;
     height: 380px;
