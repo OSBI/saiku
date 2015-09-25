@@ -141,11 +141,9 @@ SaikuOlapQueryHelper.prototype.removeFilter = function(filterable, flavour) {
 SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, position) {
     var mHierarchy = this.getHierarchy(hierarchy);
     if (mHierarchy) {
-      console.log('TRUE');
       mHierarchy.levels[level] = { name: level };
     } else {
-      console.log('FALSE');
-      mHierarchy = { "name" : hierarchy, "levels": { }};
+      mHierarchy = { "name": hierarchy, "levels": {} };
       mHierarchy.levels[level] = { name: level };
     }
     
@@ -169,10 +167,10 @@ SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, p
 SaikuOlapQueryHelper.prototype.includeCalculatedMember = function(axis, hierarchy, level, uniqueName, position) {
     var mHierarchy = this.getHierarchy(hierarchy);
     if (mHierarchy) {
-      mHierarchy.cmembers.push(uniqueName);
+      mHierarchy.cmembers[uniqueName] = uniqueName;
     } else {
-      mHierarchy = { "name" : hierarchy, "levels": { }, "cmembers": []};
-      mHierarchy.cmembers.push(uniqueName);
+      mHierarchy = { "name": hierarchy, "levels": {}, "cmembers": {} };
+      mHierarchy.cmembers[uniqueName] = uniqueName;
     }
     
     var existingAxis = this.findAxisForHierarchy(hierarchy);
