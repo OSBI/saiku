@@ -588,6 +588,15 @@ var CalculatedMemberModal = Modal.extend({
             workspace: this.workspace
         })).render().open();
     },
+
+    openFormatModal: function (event) {
+        this.close();
+        (new FormatAsPercentageModal({
+            workspace: this.workspace,
+            measures: this.selectedMeasures,
+            workspace: this.workspace
+        })).render().open();
+    },
     /**
      * Save calculated member
      *
