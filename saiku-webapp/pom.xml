@@ -19,6 +19,7 @@
         <earthquakerepo>../../data</earthquakerepo>
         <earthquakeschema>../../data/Earthquakes.xml</earthquakeschema>
         <earthquakeurl>jdbc:h2:../../data/earthquakes;MODE=MySQL</earthquakeurl>
+        <defaultRole>ROLE_USER</defaultRole>
         <pluginpath>../webapps/ROOT/js/saiku/plugins/</pluginpath>
     </properties>
     <build>
