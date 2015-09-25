@@ -1,6 +1,6 @@
---- index.html	2015-09-14 20:58:27.223873198 +0100
-+++ index2.html	2015-09-14 20:58:58.743872687 +0100
-@@ -114,70 +114,7 @@
+--- index.html	2015-09-25 10:52:24.641260977 +0100
++++ index2.html	2015-09-25 10:53:01.997260869 +0100
+@@ -114,70 +114,8 @@
  <!-- Saiku Project -->
  <script type="text/javascript" src="js/saiku/Settings.js"></script>
  
@@ -49,8 +49,8 @@
 -<script type="text/javascript" src="js/saiku/views/SessionErrorModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/WarningModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/TitlesModal.js"></script>
--
--
+-<script type="text/javascript" src="js/saiku/views/GrowthModal.js"></script>
+-<script type="text/javascript" src="js/saiku/views/FormatAsPercentageModal.js"></script>
 -<script type="text/javascript" src="js/saiku/models/Session.js"></script>
 -<script type="text/javascript" src="js/saiku/views/SplashScreen.js"></script>
 -<script type="text/javascript" src="js/saiku/models/SessionWorkspace.js"></script>
@@ -64,10 +64,10 @@
 -<script type="text/javascript" src="js/saiku/adapters/SaikuServer.js"></script>
 -<script type="text/javascript" src="js/saiku/routers/QueryRouter.js"></script>
 -
--<!-- Saiku Minified - remove all of the above and uncomment the following -->
+ <!-- Saiku Minified - remove all of the above and uncomment the following -->
 -<!--
  <script type="text/javascript" src="saiku.min.js"></script>
 --->
  
- <!-- 
- <script src="js/leaflet/leaflet-heat.js"></script> 
+ <!--
+ <script src="js/leaflet/leaflet-heat.js"></script>
