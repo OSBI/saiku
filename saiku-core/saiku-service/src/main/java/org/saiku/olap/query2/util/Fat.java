@@ -11,19 +11,15 @@ import org.saiku.query.QueryDetails.Location;
 import org.saiku.query.mdx.*;
 import org.saiku.query.mdx.IFilterFunction.MdxFunctionType;
 import org.saiku.query.metadata.CalculatedMeasure;
+import org.saiku.query.metadata.CalculatedMember;
 
 import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
-import org.olap4j.metadata.Cube;
-import org.olap4j.metadata.Hierarchy;
-import org.olap4j.metadata.Measure;
+import org.olap4j.metadata.*;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Fat {
 	
@@ -40,27 +36,70 @@ public class Fat {
 		ThinQueryModel model = tq.getQueryModel();
 		convertAxes(q, tq.getQueryModel().getAxes(), tq);
 		convertCalculatedMeasures(q, model.getCalculatedMeasures());
+	  	convertCalculatedMembers(q, model.getCalculatedMembers());
 		convertDetails(q, model.getDetails());
 		q.setVisualTotals(model.isVisualTotals());
 		q.setVisualTotalsPattern(model.getVisualTotalsPattern());
 		return q;
 	}
 
-	private static void convertCalculatedMeasures(Query q, List<ThinCalculatedMeasure> thinCms) {
+  private static void convertCalculatedMembers(Query q, List<ThinCalculatedMember> thinCms) {
+	/*Hierarchy h = q.getCube().getHierarchies().get("Products");
+	CalculatedMember cm =
+		new CalculatedMember(
+			h.getDimension(),
+			h,
+			"Consumable",
+			"Consumable",
+			null,
+			Member.Type.FORMULA,
+			"Aggregate({Product.Drink, Product.Food})",
+			null);
+	q.addCalculatedMember(q.getHierarchy(h), cm);
+
+	try {
+	  q.getHierarchy(h).includeCalculatedMember(cm);
+	} catch (OlapException e) {
+	  e.printStackTrace();
+	}*/
+	/*if (thinCms != null && thinCms.size() > 0) {
+	  for (ThinCalculatedMember qcm : thinCms) {
+		NamedList<Hierarchy> h2 = q.getCube().getHierarchies();
+		for(Hierarchy h: h2){
+		  if(h.getUniqueName().equals(qcm.getHierarchyName())){
+			CalculatedMember cm =
+				new CalculatedMember(
+					h.getDimension(),
+					h,
+					qcm.getName(),
+					qcm.getName(),
+					null,
+					Member.Type.FORMULA,
+					qcm.getFormula(),
+					null);
+			q.addCalculatedMember(q.getHierarchy(h), cm);
+			break;
+		  }
+		}
+
+	  }
+	}*/
+  }
+
+  private static void convertCalculatedMeasures(Query q, List<ThinCalculatedMeasure> thinCms) {
 		if (thinCms != null && thinCms.size() > 0) {
 			for (ThinCalculatedMeasure qcm : thinCms) {
-				// TODO improve this
-				Hierarchy h = q.getCube().getMeasures().get(0).getHierarchy();
-				
-				CalculatedMeasure cm = 
-						new CalculatedMeasure(
-								h, 
-								qcm.getName(), 
-								null, 
-								qcm.getFormula(),
-								qcm.getProperties());
-				
-				q.addCalculatedMeasure(cm);
+			  Hierarchy h = q.getCube().getHierarchies().get("Measures");
+			  CalculatedMeasure cm =
+					  new CalculatedMeasure(
+						  h,
+						  qcm.getName(),
+						  null,
+						  qcm.getFormula(),
+						  qcm.getProperties());
+
+				  q.addCalculatedMeasure(cm);
+
 			}
 		}
 	}
@@ -112,7 +151,7 @@ public class Fat {
 		for (ThinHierarchy hierarchy : thinAxis.getHierarchies()) {
 			QueryHierarchy qh = query.getHierarchy(hierarchy.getName());
 			if (qh != null) {
-				convertHierarchy(qh, hierarchy, tq);
+				convertHierarchy(query, qh, hierarchy, tq);
 				qaxis.addHierarchy(qh);
 			}
 		}
@@ -122,12 +161,49 @@ public class Fat {
 		extendSortableQuerySet(query, qaxis, thinAxis);
 	}
 	
-	private static void convertHierarchy(QueryHierarchy qh, ThinHierarchy th, ThinQuery tq) throws OlapException {
+	private static void convertHierarchy(Query q, QueryHierarchy qh, ThinHierarchy th, ThinQuery tq) throws
+		OlapException {
+	  Iterator it = th.getCmembers().entrySet().iterator();
+	  while (it.hasNext()) {
+		Map.Entry pair = (Map.Entry) it.next();
+
+		ThinCalculatedMember cres = null;
+		for (ThinCalculatedMember c : tq.getQueryModel().getCalculatedMembers()) {
+		  if (c.getUniqueName().equals(pair.getValue())) {
+			cres = c;
+			break;
+		  }
+		  //it.remove(); // avoids a ConcurrentModificationException
+		}
+		  Hierarchy h2 = null;
+		  for (Hierarchy h : q.getCube().getHierarchies()) {
+			if (h.getUniqueName().equals(cres.getHierarchyName())) {
+			  h2 = h;
+			  break;
+			}
+		  }
+		  CalculatedMember cm;
+		  cm = new CalculatedMember(
+			  q.getCube().getDimensions().get(cres.getDimension()),
+			  h2,
+			  cres.getName(),
+			  cres.getName(),
+			  null,
+			  Member.Type.FORMULA,
+			  cres.getFormula(),
+			  null);
+
+		  qh.includeCalculatedMember(cm);
+		  extendSortableQuerySet(qh.getQuery(), qh, th);
+
+		}
+
 		for (ThinLevel tl : th.getLevels().values()) {
 		  QueryLevel ql = qh.includeLevel(tl.getName());
 
+
 		  if (ql == null) {
-			qh.includeMember(th.getName() + ".[" + tl.getName()+"]");
+			qh.includeMember(th.getName() + ".[" + tl.getName() + "]");
 		  } else {
 			List<String> aggs = tl.getAggregators();
 			qh.getQuery().setAggregators(ql.getUniqueName(), aggs);
@@ -187,6 +263,7 @@ public class Fat {
 		  }
 		  extendSortableQuerySet(qh.getQuery(), qh, th);
 		}
+
 	}
 
 

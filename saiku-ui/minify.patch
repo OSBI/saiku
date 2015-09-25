@@ -1,6 +1,6 @@
---- index.html	2015-09-25 09:50:38.785271654 +0100
-+++ index2.html	2015-09-25 09:54:16.801271026 +0100
-@@ -114,71 +114,8 @@
+--- index.html	2015-09-25 10:52:24.641260977 +0100
++++ index2.html	2015-09-25 10:53:01.997260869 +0100
+@@ -114,70 +114,8 @@
  <!-- Saiku Project -->
  <script type="text/javascript" src="js/saiku/Settings.js"></script>
  
@@ -51,7 +51,6 @@
 -<script type="text/javascript" src="js/saiku/views/TitlesModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/GrowthModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/FormatAsPercentageModal.js"></script>
--
 -<script type="text/javascript" src="js/saiku/models/Session.js"></script>
 -<script type="text/javascript" src="js/saiku/views/SplashScreen.js"></script>
 -<script type="text/javascript" src="js/saiku/models/SessionWorkspace.js"></script>

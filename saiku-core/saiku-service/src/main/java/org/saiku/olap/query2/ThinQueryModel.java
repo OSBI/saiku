@@ -13,8 +13,9 @@ public class ThinQueryModel {
 	private boolean lowestLevelsOnly = false;
 	private ThinDetails details;
 	private List<ThinCalculatedMeasure> calculatedMeasures = new ArrayList<ThinCalculatedMeasure>();
-	
-	public enum AxisLocation {
+	private List<ThinCalculatedMember> calculatedMembers = new ArrayList<ThinCalculatedMember>();
+
+  public enum AxisLocation {
 		FILTER,
 		COLUMNS,
 		ROWS,
@@ -89,7 +90,15 @@ public class ThinQueryModel {
 		this.calculatedMeasures = calculatedMeasures;
 	}
 
-	public ThinDetails getDetails() {
+  	public List<ThinCalculatedMember> getCalculatedMembers() {
+		return calculatedMembers;
+  	}
+
+  	public void setCalculatedMembers(List<ThinCalculatedMember> calculatedMembers) {
+		this.calculatedMembers = calculatedMembers;
+  	}
+
+  public ThinDetails getDetails() {
 		return details;
 	}
 
