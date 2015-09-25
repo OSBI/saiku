@@ -186,6 +186,9 @@ var CalculatedMemberModal = Modal.extend({
             uniqueName: measures ? measures[0].hierarchyUniqueName : null
         };
 
+        // console.log(JSON.stringify(this.workspace.query.helper.query.model));
+        console.log(calculatedMembers);
+
         // Load template
         this.message = this.template_modal({
             tplCalculatedMeasures: $tplCalculatedMeasures,
@@ -238,6 +241,7 @@ var CalculatedMemberModal = Modal.extend({
         this.formulaEditor = ace.edit(this.id);
         this.formulaEditor.getSession().setMode('ace/mode/text');
         this.formulaEditor.getSession().setUseWrapMode(true);
+        // this.formulaEditor.setValue('Aggregate({Product.Drink, Product.Food})');
         Saiku.ui.unblock();
     },
 
@@ -670,6 +674,7 @@ var CalculatedMemberModal = Modal.extend({
                     this.workspace.sync_query();
                 }
                 else {
+                    this.workspace.query.helper.removeLevelCalculatedMember(dimension.val, '[' + dimension.txt + '].[' + nameOld + ']');
                     this.workspace.query.helper.editCalculatedMember(nameOld, objMember);
                     this.workspace.sync_query();
                     this.workspace.drop_zones.set_measures();

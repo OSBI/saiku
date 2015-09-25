@@ -150,7 +150,7 @@ var DimensionList = Backbone.View.extend({
 
         if (isCalcMember) {
             var uniqueName = $(event.target).attr('uniquename');
-            this.workspace.query.helper.includeCalculatedMember(axisName, hierarchy, level, uniqueName);
+            this.workspace.query.helper.includeLevelCalculatedMember(axisName, hierarchy, level, uniqueName);
         }
         else {
             this.workspace.query.helper.includeLevel(axisName, hierarchy, level);
