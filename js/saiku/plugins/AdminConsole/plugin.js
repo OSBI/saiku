@@ -106,6 +106,7 @@ var AdminConsole = Backbone.View.extend({
                 name: name
             });
 
+
             user.save({}, {
                 data: JSON.stringify(self.licenseUsers.toJSON()),
                 contentType: "application/json",
@@ -621,7 +622,7 @@ var AdminConsole = Backbone.View.extend({
             roles = [];
         }
         roles.push(name);
-        user.set({roles: roles});
+        user.set({roles: roles, password: null});
         $(this.el).find(".role_select").append($("<option></option>")
             .attr("value", name)
             .text(name));
@@ -675,7 +676,7 @@ var AdminConsole = Backbone.View.extend({
             roles = jQuery.grep(roles, function (value) {
                 return value != selected[i];
             });
-            user.set({roles: roles});
+            user.set({roles: roles, password:null});
             $(this.el).find(".role_select").find(":selected").remove();
         }
         user.save({}, {data: JSON.stringify(user.attributes), contentType: "application/json"});
