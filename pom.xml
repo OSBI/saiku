@@ -68,6 +68,7 @@
 						<jsSourceInclude>views/CustomFilterModal.js</jsSourceInclude>
 						<jsSourceInclude>views/MeasuresModal.js</jsSourceInclude>
 						<jsSourceInclude>views/CalculatedMemberModal.js</jsSourceInclude>
+						<jsSourceInclude>views/DataSourcesModal.js</jsSourceInclude>
 						<jsSourceInclude>views/QueryToolbar.js</jsSourceInclude>
 						<jsSourceInclude>views/WorkspaceToolbar.js</jsSourceInclude>
 						<jsSourceInclude>views/WorkspaceDropZone.js</jsSourceInclude>

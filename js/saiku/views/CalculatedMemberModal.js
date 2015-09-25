@@ -78,6 +78,10 @@ var CalculatedMemberModal = Modal.extend({
                     '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="and">&nbsp;and&nbsp;</a>' +
                     '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="or">&nbsp;or&nbsp;</a>' +
                     '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="not">&nbsp;not&nbsp;</a>' +
+                    ' <input type="button" class="form_button growthBtn" style="padding-bottom: 18px;" value="Growth"  ' +
+                    '         title="Calculate difference. Good to calculate previous period growth "   id="growthBtn" >  </input> ' +
+                    ' <input type="button" class="form_button formatBtn" style="padding-bottom: 18px;" value="Format %" id="formatBtn"  ' +
+                    'title="Post-process step: format this view as percentage of rows, columns or grand total. "' +
                 '</div>' +
                 '<label for="cms-dimension">Dimension:</label>' +
                 '<select id="cms-dimension">' +
@@ -146,7 +150,9 @@ var CalculatedMemberModal = Modal.extend({
         'click  .btn-math'        : 'add_math_operator_formula',
         'change #cms-format'      : 'type_format',
         'click  .btn-action-edit' : 'edit_cms',
-        'click  .btn-action-del'  : 'show_del_cms'
+        'click  .btn-action-del'  : 'show_del_cms',
+        'click .form_button.growthBtn': 'openGrowthModal',
+        'click .form_button.formatBtn': 'openFormatModal'
     },
 
     /**
@@ -573,6 +579,24 @@ var CalculatedMemberModal = Modal.extend({
         this.reset_form();
     },
 
+    openGrowthModal: function (event) {
+        this.close();
+        (new GrowthModal({
+            workspace: this.workspace,
+            measures: this.measures,
+            dimensions: this.selectedDimensions,
+            workspace: this.workspace
+        })).render().open();
+    },
+
+    openFormatModal: function (event) {
+        this.close();
+        (new FormatAsPercentageModal({
+            workspace: this.workspace,
+            measures: this.selectedMeasures,
+            workspace: this.workspace
+        })).render().open();
+    },
     /**
      * Save calculated member
      *
