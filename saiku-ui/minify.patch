@@ -3,7 +3,7 @@
 @@ -114,69 +114,8 @@
  <!-- Saiku Project -->
  <script type="text/javascript" src="js/saiku/Settings.js"></script>
- 
+
 -<script type="text/javascript" src="js/saiku/models/SaikuOlapQuery.js"></script>
 -<script type="text/javascript" src="js/saiku/models/DateFilter.js"></script>
 -<script type="text/javascript" src="js/saiku/render/SaikuRenderer.js"></script>
@@ -49,6 +49,7 @@
 -<script type="text/javascript" src="js/saiku/views/WarningModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/TitlesModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/GrowthModal.js"></script>
+-<script type="text/javascript" src="js/saiku/views/FormatAsPercentageModal.js"></script>
 -
 -<script type="text/javascript" src="js/saiku/models/Session.js"></script>
 -<script type="text/javascript" src="js/saiku/views/SplashScreen.js"></script>
@@ -67,6 +68,6 @@
 -<!--
  <script type="text/javascript" src="saiku.min.js"></script>
 --->
- 
- <!-- 
- <script src="js/leaflet/leaflet-heat.js"></script> 
+
+ <!--
+ <script src="js/leaflet/leaflet-heat.js"></script>
