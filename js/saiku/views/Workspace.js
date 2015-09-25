@@ -375,7 +375,6 @@ var Workspace = Backbone.View.extend({
         if (!obj.selected_cube) {
             // Someone literally selected "Select a cube"
             $(obj.el).find('.calculated_measures, .addMeasure').hide();
-            $(obj.el).find('.calculated_members, .addMeasure').hide();
             $(obj.el).find('.dimension_tree').html('');
             $(obj.el).find('.measure_tree').html('');
             return false;
@@ -551,7 +550,6 @@ var Workspace = Backbone.View.extend({
         } else {
             // Someone literally selected "Select a cube"
             $(this.el).find('.calculated_measures, .addMeasure').hide();
-            $(this.el).find('.calculated_members, .addMeasure').hide();
             $(this.el).find('.dimension_tree').html('');
             $(this.el).find('.measure_tree').html('');
         }

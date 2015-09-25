@@ -15,6 +15,16 @@
  */
 
 /**
+ * @dependencies
+ * - models/SaikuOlapQuery.js
+ * - views/DimensionList.js
+ * - views/Workspace.js
+ * - views/WorkspaceDropZone.js
+ * - css/saiku/src/styles.css
+ * - index.html
+ */
+
+/**
  * Class for calculated measure/member
  *
  * @class CalculatedMemberModal

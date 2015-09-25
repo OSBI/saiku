@@ -148,9 +148,8 @@ var WorkspaceDropZone = Backbone.View.extend({
                             .find('.folder_collapsed')
                             .addClass('selected');
                     }
-                    if (hierarchy.cmembers) {
-                        for (var i = 0, len = hierarchy.cmembers.length; i < len; i++) {
-                            var member = hierarchy.cmembers[i];
+                    for (var member in hierarchy.cmembers) {
+                        if (hierarchy.cmembers.hasOwnProperty(member)) {
                             var level = member.split('.')[member.split('.').length-1].replace(/[\[\]]/gi, '');
 
                             h.find('li a[level="' + level + '"]').parent().show();
