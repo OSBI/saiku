@@ -20,6 +20,7 @@
         <foodmartrepo>${basedir}/target/data/</foodmartrepo>
         <foodmartschema>${basedir}/target/data/FoodMart4.xml</foodmartschema>
         <foodmarturl>jdbc:h2:${basedir}/target/data/foodmart;MODE=MySQL</foodmarturl>
+        <defaultRole>ROLE_USER</defaultRole>
         <webdriver.driver>chrome</webdriver.driver>
         <webdriver.chrome.driver>/usr/bin/chromedriver</webdriver.chrome.driver>
         <pluginpath>${basedir}/target/apache-tomcat-6.0.18/webapps/ROOT/js/saiku/plugins/</pluginpath>
