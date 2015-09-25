@@ -152,7 +152,13 @@ public class Thin {
 	}
 
 	private static ThinHierarchy convertHierarchy(QueryHierarchy qh, ThinQuery tq) {
-		ThinHierarchy th = new ThinHierarchy(qh.getUniqueName(), qh.getCaption(), qh.getHierarchy().getDimension().getName(), convertLevels(qh.getActiveQueryLevels(), tq));
+	  List<String> s = new ArrayList<String>();
+	  for(CalculatedMember cmember: qh.getCalculatedMembers()){
+		s.add(cmember.getUniqueName());
+	  }
+		ThinHierarchy th = new ThinHierarchy(qh.getUniqueName(), qh.getCaption(), qh.getHierarchy().getDimension()
+																					.getName(), convertLevels(qh
+			.getActiveQueryLevels(), tq), s);
 		extendSortableQuerySet(th, qh);
 		return th;
 	}
