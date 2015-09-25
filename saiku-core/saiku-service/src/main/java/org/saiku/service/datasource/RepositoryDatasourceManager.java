@@ -25,6 +25,7 @@ import org.saiku.service.importer.LegacyImporterImpl;
 import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
 
+import org.saiku.service.util.security.PasswordProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String foodmartdir;
     private String foodmartschema;
     private String foodmarturl;
-    private String repopassword;
+    private PasswordProvider repopasswordprovider;
     private String oldpassword;
     private String earthquakeurl;
     private String earthquakedir;
@@ -58,7 +59,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String defaultRole;
 
     public void load() {
-        irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopassword,
+        irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopasswordprovider.getPassword(),
             oldpassword, defaultRole);
         try {
             irm.start(userService);
@@ -481,12 +482,12 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         this.earthquakeschema = earthquakeschema;
     }
 
-    public void setRepoPassword(String password){
-        this.repopassword = password;
+    public void setRepoPasswordProvider(PasswordProvider passwordProvider){
+        this.repopasswordprovider = passwordProvider;
     }
 
-    public String getRepopassword(){
-        return repopassword;
+    public PasswordProvider getRepopasswordprovider(){
+        return repopasswordprovider;
     }
 
     public void setOldRepoPassword(String password){

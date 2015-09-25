@@ -18,11 +18,15 @@
         <property name="earthquakeDir" value="${earthquakerepo}"/>
         <property name="earthquakeSchema" value="${earthquakeschema}"/>
         <property name="earthquakeUrl" value="${earthquakeurl}"/>
-        <property name="repoPassword" value ="sa!kuanalyt!cs"/>
+        <property name="repoPasswordProvider" ref ="repoPasswordProviderBean"/>
         <property name="defaultRole" value="ROLE_USER"/>
         <!-- If you change the repoPassword set this property for at least 1 restart to update the old repo password-->
         <!--<property name="oldRepoPassword" value="sa!kuanalyt!cs"/>-->
 
+    </bean>
+
+    <bean id="repoPasswordProviderBean" class="org.saiku.service.util.security.SimplePasswordProvider">
+        <constructor-arg index="0" value="sa!kuanalyt!cs"/>
     </bean>
 
     <!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
