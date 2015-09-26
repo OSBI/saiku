@@ -629,11 +629,9 @@ var Workspace = Backbone.View.extend({
                                 templateLevelMember = _.template($('#template-calculated-member').html(), { member: calcMembers[i] });
 
                                 if(!($(value).closest('.parent_dimension').find('span.root').hasClass('collapsed'))) {
-                                    // templateLevelMember = $(templateLevelMember).css('display', 'list-item');
                                     templateLevelMember = $(templateLevelMember).show();
                                 }
                                 else {
-                                    // templateLevelMember = $(templateLevelMember).css('display', 'none');
                                     templateLevelMember = $(templateLevelMember).hide();
                                 }
 
