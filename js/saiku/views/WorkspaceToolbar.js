@@ -278,7 +278,10 @@ var WorkspaceToolbar = Backbone.View.extend({
     // },
 
     group_parents: function(event) {
-        this.$el.find('.group_parents').toggleClass('on')
+        if (event) {
+            $(event.target).toggleClass('on');
+        }
+        // this.$el.find('.group_parents').toggleClass('on')
         if (this.$el.find('.group_parents').hasClass('on')) {
             this.workspace.query.setProperty('saiku.olap.result.formatter', 'flattened');
         } else {
