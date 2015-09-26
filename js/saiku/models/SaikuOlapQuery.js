@@ -143,7 +143,7 @@ SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, p
     if (mHierarchy) {
       mHierarchy.levels[level] = { name: level };
     } else {
-      mHierarchy = { "name": hierarchy, "levels": {} };
+      mHierarchy = { "name": hierarchy, "levels": {}, "cmembers": {} };
       mHierarchy.levels[level] = { name: level };
     }
     
@@ -164,7 +164,7 @@ SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, p
     }
 };
 
-SaikuOlapQueryHelper.prototype.includeCalculatedMember = function(axis, hierarchy, level, uniqueName, position) {
+SaikuOlapQueryHelper.prototype.includeLevelCalculatedMember = function(axis, hierarchy, level, uniqueName, position) {
     var mHierarchy = this.getHierarchy(hierarchy);
     if (mHierarchy) {
       mHierarchy.cmembers[uniqueName] = uniqueName;
@@ -194,6 +194,13 @@ SaikuOlapQueryHelper.prototype.removeLevel = function(hierarchy, level) {
   hierarchy = this.getHierarchy(hierarchy);
   if (hierarchy && hierarchy.levels.hasOwnProperty(level)) {
     delete hierarchy.levels[level];
+  }
+};
+
+SaikuOlapQueryHelper.prototype.removeLevelCalculatedMember = function(hierarchy, level) {
+  hierarchy = this.getHierarchy(hierarchy);
+  if (hierarchy && hierarchy.cmembers.hasOwnProperty(level)) {
+    delete hierarchy.cmembers[level];
   }
 };
 

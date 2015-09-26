@@ -30,7 +30,7 @@ var WorkspaceToolbar = Backbone.View.extend({
         // Maintain `this` in callbacks
         _.bindAll(this, "call", "reflect_properties", "run_query",
             "swap_axes_on_dropzones", "display_drillthrough","clicked_cell_drillthrough_export",
-			"clicked_cell_drillacross","clicked_cell_drillthrough","activate_buttons", "switch_to_mdx","post_mdx_transform", "toggle_fields_action");
+			"clicked_cell_drillacross","clicked_cell_drillthrough","activate_buttons", "switch_to_mdx","post_mdx_transform", "toggle_fields_action", "group_parents");
 
         // Redraw the toolbar to reflect properties
         this.workspace.bind('properties:loaded', this.reflect_properties);
@@ -267,9 +267,22 @@ var WorkspaceToolbar = Backbone.View.extend({
         this.workspace.toggle_sidebar();
     },
 
+    // group_parents: function(event) {
+    //     $(event.target).toggleClass('on');
+    //     if ($(event.target).hasClass('on')) {
+    //         this.workspace.query.setProperty('saiku.olap.result.formatter', 'flattened');
+    //     } else {
+    //         this.workspace.query.setProperty('saiku.olap.result.formatter', 'flat');
+    //     }
+    //     this.workspace.query.run();
+    // },
+
     group_parents: function(event) {
-        $(event.target).toggleClass('on');
-        if ($(event.target).hasClass('on')) {
+        if (event) {
+            $(event.target).toggleClass('on');
+        }
+        // this.$el.find('.group_parents').toggleClass('on')
+        if (this.$el.find('.group_parents').hasClass('on')) {
             this.workspace.query.setProperty('saiku.olap.result.formatter', 'flattened');
         } else {
             this.workspace.query.setProperty('saiku.olap.result.formatter', 'flat');
