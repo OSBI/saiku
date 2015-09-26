@@ -95,7 +95,7 @@ var CalculatedMemberModal = Modal.extend({
 					' <input type="button" class="form_button growthBtn" style="padding-bottom: 18px;" value="Growth"  ' +
 					'         title="Calculate difference. Good to calculate previous period growth "   id="growthBtn" >  </input> ' +
 					' <input type="button" class="form_button formatBtn" style="padding-bottom: 18px;" value="Format %" id="formatBtn"  ' +
-					'title="Post-process step: format this view as percentage of rows, columns or grand total. "' +
+					'title="Post-process step: format this view as percentage of rows, columns or grand total. " />' +
 				'</div>' +
 
                 '<label for="cms-dimension">Dimension:</label>' +
