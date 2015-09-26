@@ -629,10 +629,12 @@ var Workspace = Backbone.View.extend({
                                 templateLevelMember = _.template($('#template-calculated-member').html(), { member: calcMembers[i] });
 
                                 if(!($(value).closest('.parent_dimension').find('span.root').hasClass('collapsed'))) {
-                                    templateLevelMember = $(templateLevelMember).css('display', 'list-item');
+                                    // templateLevelMember = $(templateLevelMember).css('display', 'list-item');
+                                    templateLevelMember = $(templateLevelMember).show();
                                 }
                                 else {
-                                    templateLevelMember = $(templateLevelMember).css('display', 'none');
+                                    // templateLevelMember = $(templateLevelMember).css('display', 'none');
+                                    templateLevelMember = $(templateLevelMember).hide();
                                 }
 
                                 $(value).append(templateLevelMember);
@@ -648,7 +650,7 @@ var Workspace = Backbone.View.extend({
                                         var h = target.parent().clone().removeClass('d_hierarchy').addClass('hierarchy');
                                         h.find('li a[hierarchy="' + hierarchy + '"]').parent().hide();
                                         h.find('li a[level="' + level + '"]').parent().show();
-                                        var selection = $('<li class="selection"></li>');
+                                        var selection = $('<li class="selection selection-calcmember"></li>');
                                         selection.append(h);
                                         return selection;
                                     },

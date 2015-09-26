@@ -358,7 +358,7 @@
 <script type="text/x-jquery-tmpl" id="template-calculated-member">
     <% if (member) { %>
         <li class="hide d_level dimension-level-calcmember">
-            <a title="<%= member.name %>" level="<%= member.name %>" hierarchy="<%= member.hierarchyName %>" uniquename="<%= member.uniqueName %>" class="level level-calcmember" href="#<%= encodeURIComponent(member.hierarchyName) %>/<%= encodeURIComponent(member.name) %>"><%= member.name %></a>
+            <a title="<%= member.name %>" level="<%= member.name %>" hierarchy="<%= member.hierarchyName %>" uniquename="<%= member.uniqueName %>" class="level level-calcmember" href="#<%= encodeURIComponent(member.hierarchyName) %>/<%= encodeURIComponent(member.name) %>" style="color: #1e7145;"><%= member.name %></a>
         </li>
     <% } %>
 </script>

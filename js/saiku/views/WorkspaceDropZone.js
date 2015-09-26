@@ -238,6 +238,8 @@ var WorkspaceDropZone = Backbone.View.extend({
 
             if (isCalcMember) {
                 var uniqueName = ui.item.find('a.level').attr('uniquename');
+                this.workspace.toolbar.group_parents();
+                this.workspace.toolbar.$el.find('.group_parents').removeClass('on');
                 this.workspace.query.helper.includeLevelCalculatedMember(toAxis, hierarchy, level, uniqueName, indexHierarchy);
             }
             else {
