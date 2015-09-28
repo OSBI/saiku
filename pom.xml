@@ -117,7 +117,7 @@
     </repositories>
     <build>
         <plugins>
-            <plugin>
+      <!--      <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-changes-plugin</artifactId>
                 <version>2.11</version>
@@ -129,7 +129,6 @@
                             <goal>announcement-generate</goal>
                         </goals>
                         <configuration>
-                            <!-- This will generate CHANGES.txt file under META-INF folder within the built artifact: -->
                             <announcementFile>CHANGES.txt</announcementFile>
                             <announcementDirectory>${project.build.outputDirectory}/META-INF</announcementDirectory>
                         </configuration>
@@ -149,18 +148,14 @@
                         <toAddress implementation="java.lang.String">to@example.com</toAddress>
                     </toAddresses>
                     <useJql>true</useJql>
-                    <!-- Use current build version: -->
                     <onlyCurrentVersion>true</onlyCurrentVersion>
-                    <!-- use this to define a specific version:
-                    <fixVersionIds>11412</fixVersionIds>
-                    -->
                     <resolutionIds>Fixed,Done</resolutionIds>
                     <statusIds>Closed,Resolved,Done</statusIds>
                     <columnNames>Type,Key,Summary,Priority,Status,Resolution,Fix Version,Assignee</columnNames>
                     <webUser>...</webUser>
                     <webPassword>...</webPassword>
                 </configuration>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
