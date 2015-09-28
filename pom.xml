@@ -281,7 +281,7 @@
         <system>JIRA</system>
         <url>http://jira.meteorite.bi/browse/SKU</url>
     </issueManagement>
-    <reporting>
+    <!--<reporting>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -289,7 +289,7 @@
                 <version>2.11</version>
             </plugin>
         </plugins>
-    </reporting>
+    </reporting>-->
     <profiles>
             <profile>
                 <id>ci</id>
