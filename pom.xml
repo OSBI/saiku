@@ -367,7 +367,7 @@
             <dependency>
                 <groupId>org.olap4j</groupId>
                 <artifactId>olap4j</artifactId>
-                <version>1.2.0</version>
+                <version>TRUNK-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.mongodb</groupId>
@@ -412,7 +412,7 @@
             <dependency>
                 <groupId>org.olap4j</groupId>
                 <artifactId>olap4j-xmla</artifactId>
-                <version>1.2.0</version>
+                <version>TRUNK-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.olap4j</groupId>

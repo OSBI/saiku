@@ -1,7 +1,7 @@
 SAIKU README
 ------------------------------------------------------------------
 
-Saiku Suite V2.1 GA
+Saiku Suite ${version}
 OSBI Ltd
 
 Saiku server is  a modular OLAP server. Allowing you to use and internal Mondrian
@@ -9,16 +9,6 @@ Server or 3rd party XML/A servers for data sources, Saiku Server allows you to i
 OLAP into your application with no MDX knowledge or writing. Saiku server also handles
 security, and query saving and loading.
 
-
-New Features
-------------------------------------------------------------------
-Fine grained  member selection.
-Drag and Drop query manipulation
-CRUD query operations.
-Export to XLS, CSV.
-Drillthrough to record level data.
-OAuth security along with standard Spring Security features (LDAP, Simple, DB...).
-....
 
 Hardware and software requirements
 ------------------------------------------------------------------
@@ -42,19 +32,18 @@ https://github.com/OSBI/saiku/wiki/Adding-a-new-data-source
 
 Important known problems
 ------------------------------------------------------------------
-There is an issue with XML/A connections with Mondrian XML/A instances. This issue is caused by mondrian and not saiku and will be fixed for the 2.0 stable release
 
 
 
 Pricing information
 ------------------------------------------------------------------
 Free as in speech, not as in beer.
-Donations are more than welcome (PayPal):  http://bit.ly/fQhpQQ
+Donations are more than welcome.
 
 
 Contact information
 ------------------------------------------------------------------
-Email: contact@analytical-labs.com
+Email: info@meteorite.bi
 Twitter: @SaikuAnalytics
 
-©2011 OSBI LTD
+©2015 OSBI LTD
