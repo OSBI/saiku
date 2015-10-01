@@ -62,6 +62,8 @@ public interface IDatasourceManager {
 
   public String getInternalFileData(String file) throws RepositoryException;
 
+  public InputStream getBinaryInternalFileData(String file) throws RepositoryException;
+
   public String saveFile(String path, Object content, String user, List<String> roles);
 
   public String removeFile(String path, String user, List<String> roles);

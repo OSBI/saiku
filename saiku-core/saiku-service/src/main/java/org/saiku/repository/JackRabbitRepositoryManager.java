@@ -549,11 +549,16 @@ System.out.println(e.getLocalizedMessage());
     return getFolder(s).getNodes("jcr:content").nextNode().getProperty("jcr:data").getString();
   }
 
+
   public String getInternalFile(String s) throws RepositoryException {
 
     return getFolder(s).getNodes("jcr:content").nextNode().getProperty("jcr:data").getString();
   }
 
+  public InputStream getBinaryInternalFile(String s) throws RepositoryException {
+
+    return getFolder(s).getNodes("jcr:content").nextNode().getProperty("jcr:data").getBinary().getStream();
+  }
   public void removeInternalFile(String s) throws RepositoryException {
     Node n = getFolder(s);
     n.remove();

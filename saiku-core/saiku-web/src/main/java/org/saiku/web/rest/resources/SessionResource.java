@@ -76,8 +76,7 @@ public class SessionResource  {
 			@FormParam("password") String password) 
 	{
 		try {
-			sessionService.login(req, username, password);
-			return Response.ok().build();
+				return Response.ok().build();
 		}
 		catch (Exception e) {
 			log.debug("Error logging in:" + username, e);
@@ -150,6 +149,8 @@ public class SessionResource  {
         catch (Exception e){
             //TODO detect if plugin or not.
         }
+
+	  sess.put("notice", "blah blah cclick here");
 
         return Response.ok().entity(sess).build();
 	}

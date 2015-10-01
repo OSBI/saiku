@@ -64,6 +64,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             oldpassword, defaultRole);
         try {
             irm.start(userService);
+            this.saveInternalFile("/etc/.repo_version", "d20f0bea-681a-11e5-9d70-feff819cdc9f", null);
         } catch (RepositoryException e) {
             log.error("Could not start repo", e);
         }
@@ -246,6 +247,13 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     public String getInternalFileData(String file) throws RepositoryException {
 
             return irm.getInternalFile(file);
+
+
+    }
+
+    public InputStream getBinaryInternalFileData(String file) throws RepositoryException {
+
+        return irm.getBinaryInternalFile(file);
 
 
     }
