@@ -20,6 +20,8 @@
  * - views/DimensionList.js
  * - views/Workspace.js
  * - views/WorkspaceDropZone.js
+ * - views/WorkspaceToolbar.js
+ * - css/saiku/src/saiku.dropzone.css
  * - css/saiku/src/styles.css
  * - index.html
  */
@@ -198,7 +200,9 @@ var CalculatedMemberModal = Modal.extend({
         };
 
         // console.log(JSON.stringify(this.workspace.query.helper.query.model));
-        console.log(calculatedMembers);
+        // console.log(calculatedMembers);
+
+        Saiku.ui.block('Loading...');
 
         // Load template
         this.message = this.template_modal({
@@ -252,7 +256,6 @@ var CalculatedMemberModal = Modal.extend({
         this.formulaEditor = ace.edit(this.id);
         this.formulaEditor.getSession().setMode('ace/mode/text');
         this.formulaEditor.getSession().setUseWrapMode(true);
-        // this.formulaEditor.setValue('Aggregate({Product.Drink, Product.Food})');
         Saiku.ui.unblock();
     },
 
