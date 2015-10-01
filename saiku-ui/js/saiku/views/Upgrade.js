@@ -18,28 +18,33 @@
  * The global toolbar
  */
 var Upgrade = Backbone.View.extend({
-    tagName: "div",
+	tagName: "div",
 
-    events: {
-    },
+	events: {
+	},
 
 
-    initialize: function(a, b) {
+	initialize: function(a, b) {
 
 		this.workspace = a.workspace;
 
-    },
-
-	daydiff: function(first, second) {
-	return Math.round((second-first)/(1000*60*60*24));
 	},
 
-    render: function() {
+	daydiff: function(first, second) {
+		return Math.round((second-first)/(1000*60*60*24));
+	},
+
+	render: function() {
 
 		var self = this;
 		var license = new License();
+
 		if(Settings.BIPLUGIN5){
 			license.fetch_license('api/api/license', function (opt) {
+				if(Saiku.session.get("notice") != undefined && Saiku.session.get("notice")!=null && Saiku.session.get("notice")!=""){
+					$(self.workspace.el).find('.upgrade').append("<div><div id='uphead' class='upgradeheader'>Notice:"+Saiku.session.get("notice")+"</div>");
+
+				}
 				if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
 					return this;
 				}
@@ -61,6 +66,10 @@ var Upgrade = Backbone.View.extend({
 		}
 		else {
 			license.fetch_license('api/license/', function (opt) {
+				if(Saiku.session.get("notice") != undefined && Saiku.session.get("notice")!=null && Saiku.session.get("notice")!=""){
+					$(self.workspace.el).find('.upgrade').append("<div><div id='uphead' class='upgradeheader'>Notice:"+Saiku.session.get("notice")+"</div>");
+
+				}
 				if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
 					return this;
 				}
@@ -88,9 +97,9 @@ var Upgrade = Backbone.View.extend({
 
 
 
-    },
+	},
 
-    call: function(e) {
-    }
+	call: function(e) {
+	}
 
 });
