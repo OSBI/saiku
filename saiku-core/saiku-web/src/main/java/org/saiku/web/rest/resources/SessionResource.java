@@ -151,8 +151,6 @@ public class SessionResource  {
             //TODO detect if plugin or not.
         }
 
-	  sess.put("notice", "blah blah cclick here");
-
         return Response.ok().entity(sess).build();
 	}
 
