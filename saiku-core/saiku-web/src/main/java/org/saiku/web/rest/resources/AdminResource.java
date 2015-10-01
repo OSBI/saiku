@@ -567,7 +567,6 @@ public class AdminResource {
             prop.load(is);
 
             // get the property value and print it out
-            System.out.println(prop.getProperty("VERSION"));
             version = prop.getProperty("VERSION");
         } catch (IOException ex) {
             log.error("IO Exception when reading input stream", ex);

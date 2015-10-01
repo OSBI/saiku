@@ -76,7 +76,7 @@ public abstract class AbstractConnectionManager implements IConnectionManager, S
       if (connections != null) {
           connections.clear();
       }
-      System.out.println( "Do we still have connections? : " + getAllOlapConnections().size() );
+    log.info("Do we still have connections? : " + getAllOlapConnections().size());
   }
 
   private SaikuDatasource preProcess( SaikuDatasource datasource ) {

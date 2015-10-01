@@ -344,7 +344,8 @@ public class BasicTagRepositoryResource {
 						if (StringUtils.isNotBlank(writer.toString())) {
 							mdx += "\r\nWHERE " + writer.toString();
 						}
-						System.out.println("Executing... :" + mdx);
+
+					  log.info("Executing... :" + mdx);
 						olapQueryService.executeMdx(queryName, mdx);
 						rs = olapQueryService.drillthrough(queryName, cellPosition, maxrows, returns);
 						byte[] doc = olapQueryService.exportResultSetCsv(rs,",","\"", first, additionalColumns);
@@ -357,7 +358,7 @@ public class BasicTagRepositoryResource {
 									if (ss.getType() == Type.MEMBER) {
 										String newmdx = mdx;
 										newmdx += "," + ss.getUniqueName() + ") ON COLUMNS from " + cube;
-										System.out.println("Executing... :" + newmdx);
+										log.info("Executing... :" + newmdx);
 										olapQueryService.executeMdx(queryName, newmdx);
 										rs = olapQueryService.drillthrough(queryName, cellPosition, maxrows, returns);
 										byte[] doc = olapQueryService.exportResultSetCsv(rs,",","\"", first, additionalColumns);

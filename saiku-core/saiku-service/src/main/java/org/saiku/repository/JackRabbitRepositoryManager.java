@@ -271,13 +271,6 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     if(session != null) {
       session.logout();
       ((JackrabbitRepository) repository).shutdown();
-/* String repositoryLocation = ((TransientRepository) repository).getHomeDir();
-try {
-FileUtils.deleteDirectory(new File(repositoryLocation));
-} catch (final IOException e) {
-System.out.println(e.getLocalizedMessage());
-//TODO FIX
-}*/
       repository = null;
       session = null;
     }
