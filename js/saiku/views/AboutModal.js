@@ -30,8 +30,8 @@ var AboutModal = Modal.extend({
         '<span class="licensetype"/> - Expires: <span class="licenseexpr"/><br/>'+
         'Number of users: <span class="licenseuserlimit"/><br/>'+
         'Licensed to: <span class="licensename"/> - <span class="licenseemail"/>'+
-        '<h2>Unlicenced User Quota</h2><br/>'+
         '<div id="licensetable">'+
+        '<h2>Unlicenced User Quota</h2><br/>'+
         '<div class="table-wrapper">'+
         '<div class="table-scroll">'+
         '<table>'+
@@ -67,27 +67,38 @@ var AboutModal = Modal.extend({
         Saiku.i18n.translate();
         license = new License();
 
-        yourEpoch = parseFloat(Settings.LICENSE.expiration);
-        var yourDate = new Date(yourEpoch);
-
-        $(this.el).find(".licensetype").text(Settings.LICENSE.licenseType);
-        $(this.el).find(".licenseexpr").text(yourDate.toLocaleDateString());
-        $(this.el).find(".licensename").text(Settings.LICENSE.name);
-        $(this.el).find(".licenseuserlimit").text(Settings.LICENSE.userLimit);
-        $(this.el).find(".licenseemail").text(Settings.LICENSE.email);
-        var tbl_body = "";
-        var odd_even = false;
-        $.each(Settings.LICENSEQUOTA, function() {
-            var tbl_row = "";
-            $.each(this, function(k , v) {
-                tbl_row += "<td>"+v+"</td>";
+        if(Settings.LICENSE.expiration != undefined) {
+            yourEpoch = parseFloat(Settings.LICENSE.expiration);
+            var yourDate = new Date(yourEpoch);
+            $(this.el).find(".licenseexpr").text(yourDate.toLocaleDateString());
+        }
+        if(Settings.LICENSE.licenseType != undefined) {
+            $(this.el).find(".licensetype").text(Settings.LICENSE.licenseType);
+            $(this.el).find(".licensename").text(Settings.LICENSE.name);
+            $(this.el).find(".licenseuserlimit").text(Settings.LICENSE.userLimit);
+            $(this.el).find(".licenseemail").text(Settings.LICENSE.email);
+        }
+        else{
+            $(this.el).find(".licensetype").text("Open Source License");
+        }
+        if(Settings.LICENSEQUOTA != undefined) {
+            var tbl_body = "";
+            var odd_even = false;
+            $.each(Settings.LICENSEQUOTA, function () {
+                var tbl_row = "";
+                $.each(this, function (k, v) {
+                    tbl_row += "<td>" + v + "</td>";
+                });
+                tbl_body += "<tr class=\"" + ( odd_even ? "odd" : "even") + "\">" + tbl_row + "</tr>";
+                odd_even = !odd_even;
             });
-            tbl_body += "<tr class=\""+( odd_even ? "odd" : "even")+"\">"+tbl_row+"</tr>";
-            odd_even = !odd_even;
-        });
 
-        $(this.el).find("#quotareplace").replaceWith(tbl_body);
+            $(this.el).find("#quotareplace").replaceWith(tbl_body);
 
+        }
+        else{
+            $(this.el).find("#licensetable").hide();
+        }
 
         return this;
     },
