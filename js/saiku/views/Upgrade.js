@@ -49,7 +49,7 @@ var Upgrade = Backbone.View.extend({
 				}
 				if (Settings.LICENSE.licenseType === "trial" || Settings.LICENSE.licenseType === "Open Source" +
 					" License") {
-					var yourEpoch = parseFloat(opt.data.get("expiration"));
+					var yourEpoch = parseFloat(Settings.LICENSE.expiration);
 					var yourDate = new Date(yourEpoch);
 					self.remainingdays = self.daydiff(new Date(), yourDate);
 
@@ -73,7 +73,7 @@ var Upgrade = Backbone.View.extend({
 				}
 				if (Settings.LICENSE.licenseType === "trial" || Settings.LICENSE.licenseType === "Open Source" +
 					" License") {
-					var yourEpoch = parseFloat(opt.data.get("expiration"));
+					var yourEpoch = parseFloat(Settings.LICENSE.expiration);
 					var yourDate = new Date(yourEpoch);
 
 					self.remainingdays = self.daydiff(new Date(), yourDate);
