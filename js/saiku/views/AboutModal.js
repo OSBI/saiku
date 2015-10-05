@@ -29,7 +29,7 @@ var AboutModal = Modal.extend({
         '<h2>License Type</h2>'+
         '<span class="licensetype"/> - Expires: <span class="licenseexpr"/><br/>'+
         'Number of users: <span class="licenseuserlimit"/><br/>'+
-        'Licensed to: <span class="licensename"/> - <span class="licenseemail"/>'+
+        'Licensed to: <span class="licensename"/> - <span class="licenseemail"/><br/>'+
         '<div id="licensetable">'+
         '<h2>Unlicenced User Quota</h2><br/>'+
         '<div class="table-wrapper">'+
