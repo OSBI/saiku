@@ -99,6 +99,24 @@ var Session = Backbone.Model.extend({
                 Saiku.i18n.locale = this.language;
                 Saiku.i18n.automatic_i18n();
             }
+            if(Saiku.session.isAdmin){
+                var license =new License();
+
+                license.fetch_license('api/license/', function(opt) {
+                    if (opt.status === 'success') {
+                        Settings.LICENSE = opt.data.toJSON();
+                    }
+
+                    var quota = new LicenseQuota();
+
+                    quota.fetch_quota('api/license/quota', function (opt) {
+                        if (opt.status === 'success') {
+                            Settings.LICENSEQUOTA = opt.data.toJSON();
+                        }
+                    });
+
+                });
+            }
             this.load_session();
         }
 
