@@ -47,7 +47,7 @@ var Upgrade = Backbone.View.extend({
 				if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenceType != "Open Source License") {
 					return this;
 				}
-				if (Settings.LICENSE.licenseType === "trial" && Settings.LICENSE.licenceType === "Open Source" +
+				if (Settings.LICENSE.licenseType === "trial" || Settings.LICENSE.licenceType === "Open Source" +
 					" License") {
 					var yourEpoch = parseFloat(opt.data.get("expiration"));
 					var yourDate = new Date(yourEpoch);
@@ -71,8 +71,8 @@ var Upgrade = Backbone.View.extend({
 				if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenceType != "Open Source License") {
 					return this;
 				}
-			if (Settings.LICENSE.licenseType === "trial" && Settings.LICENSE.licenceType === "Open Source" +
-				" License") {
+				if (Settings.LICENSE.licenseType === "trial" || Settings.LICENSE.licenceType === "Open Source" +
+					" License") {
 					var yourEpoch = parseFloat(opt.data.get("expiration"));
 					var yourDate = new Date(yourEpoch);
 
