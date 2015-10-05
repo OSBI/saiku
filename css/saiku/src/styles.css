@@ -52,6 +52,31 @@ html, body {
     *zoom: 1;
 }
 
+#licensetable > .table-wrapper {
+    position:relative;
+}
+#licensetable > .table-scroll {
+    height:150px;
+    overflow:auto;
+    margin-top:20px;
+}
+#licensetable > .table-wrapper table {
+    width:100%;
+
+}
+#licensetable > .table-wrapper table * {
+    /*background:yellow;*/
+    color:black;
+}
+#licensetable > .table-wrapper table thead th .text {
+    position:absolute;
+    top:-20px;
+    z-index:2;
+    height:20px;
+    width:35%;
+    /*border:1px solid red;*/
+}
+
 input[type=text], input[type=password],
 input.text, input.title,
 textarea {
