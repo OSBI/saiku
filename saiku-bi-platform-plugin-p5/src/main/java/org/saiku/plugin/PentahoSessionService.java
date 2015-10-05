@@ -16,6 +16,7 @@
 package org.saiku.plugin;
 
 import org.saiku.service.ISessionService;
+import org.saiku.service.user.UserService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +43,11 @@ public class PentahoSessionService implements ISessionService {
 
 
 	Map<Object,Map<String,Object>> sessionHolder = new HashMap<Object,Map<String,Object>>();
+  private UserService userService;
+
+  public void setUserService(UserService us) {
+	userService = us;
+  }
 
 
 	/* (non-Javadoc)
@@ -84,6 +90,7 @@ public class PentahoSessionService implements ISessionService {
 		else {
 			username = "existinguser";
 		}
+		sessionHolder.get(key).put("isadmin", userService.isAdmin());
 		sessionHolder.get(key).put("username", username);
 	}
 

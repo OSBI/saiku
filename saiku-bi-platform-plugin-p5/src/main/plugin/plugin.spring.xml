@@ -20,7 +20,18 @@
 
   <bean id="api" class="org.saiku.plugin.resources.ExtendedJAXRSPluginServlet"/>
 
-<bean id="contentAccessFactory" scope="prototype" class="pt.webdetails.cpf.PentahoPluginEnvironment" />  
+<bean id="contentAccessFactory" scope="prototype" class="pt.webdetails.cpf.PentahoPluginEnvironment" />
+
+	<bean id="userServiceBean" class="org.saiku.service.user.UserService">
+		<property name="datasourceService" ref="datasourceServiceBean"/>
+		<property name="iDatasourceManager" ref="pentahoDsManager"/>
+		<property name="adminRoles">
+			<list>
+				<value>Administrator</value>
+			</list>
+		</property>
+		<property name="sessionService" ref="sessionService"/>
+	</bean>
 
 	<bean id="pentahoDsManager" class="org.saiku.plugin.PentahoDatasourceManager">
 		<property name="datasourceResolverClass" value="org.saiku.plugin.PentahoDataSourceResolver" />
@@ -64,6 +75,7 @@
 	</bean>
 	
 	<bean id="sessionService" class="org.saiku.plugin.PentahoSessionService">
+		<property name="userService" ref="userServiceBean"/>
 	</bean>
 	
 	
@@ -123,16 +135,7 @@
 
 	<bean id="licenseUtilsBean" class="org.saiku.LicenseUtils" init-method="init">
 	</bean>
-	<bean id="userServiceBean" class="org.saiku.service.user.UserService">
-		<property name="datasourceService" ref="datasourceServiceBean"/>
-		<property name="iDatasourceManager" ref="pentahoDsManager"/>
-		<property name="adminRoles">
-			<list>
-				<value>ROLE_ADMIN</value>
-			</list>
-		</property>
-		<property name="sessionService" ref="sessionService"/>
-	</bean>
+
 
 	<bean id="licenseBean" class="org.saiku.plugin.resources.PentahoLicenseResource">
 		<property name="licenseUtils" ref="licenseUtilsBean"/>
