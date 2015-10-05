@@ -9,6 +9,7 @@ package org.saiku.web.rest.resources;
 import org.saiku.LicenseUtils;
 import org.saiku.database.Database;
 import org.saiku.license.LicenseException;
+import org.saiku.service.user.UserService;
 import org.saiku.web.rest.objects.UserList;
 
 import com.qmino.miredot.annotations.ReturnType;
@@ -35,6 +36,7 @@ import javax.ws.rs.core.Response;
 public class License {
 
   private LicenseUtils licenseUtils;
+  private UserService userService;
 
   public LicenseUtils getLicenseUtils() {
     return licenseUtils;
@@ -54,6 +56,10 @@ public class License {
     this.databaseManager = databaseManager;
   }
 
+  public void setUserService(UserService us) {
+    userService = us;
+  }
+
   /**
    * Get the saiku
    * @summary Get the Saiku License installed on the current server
@@ -63,7 +69,9 @@ public class License {
   @Produces({ "application/json" })
   @ReturnType("bi.meteorite.license.SaikuLicense")
   public Response getLicense() {
-
+    if(!userService.isAdmin()){
+      return Response.status(Response.Status.FORBIDDEN).build();
+    }
     try {
       return Response.ok().entity(licenseUtils.getLicense()).build();
     } catch (IOException | RepositoryException | ClassNotFoundException e) {
@@ -86,7 +94,9 @@ public class License {
   @Produces({ "text/plain" })
   @ReturnType("java.lang.String")
   public Response validateLicense() {
-
+    if(!userService.isAdmin()){
+      return Response.status(Response.Status.FORBIDDEN).build();
+    }
     try {
       licenseUtils.validateLicense();
     } catch (IOException e) {
@@ -124,7 +134,9 @@ public class License {
   @Produces({"application/json"})
   @ReturnType("java.util.ArrayList<UserList>")
   public Response getUserlist(){
-
+    if(!userService.isAdmin()){
+      return Response.status(Response.Status.FORBIDDEN).build();
+    }
     try {
       List<String> l = getAuthUsers();
       List<UserList> ul = new ArrayList();
@@ -154,7 +166,9 @@ public class License {
   @Produces("application/json")
   @Path("/quota")
   public Response getUserQuota(){
-
+    if(!userService.isAdmin()){
+      return Response.status(Response.Status.FORBIDDEN).build();
+    }
     return Response.ok().entity(licenseUtils.getQuota()).build();
   }
 }
