@@ -81,7 +81,7 @@ var AboutModal = Modal.extend({
         else{
             $(this.el).find(".licensetype").text("Open Source License");
         }
-        if(Settings.LICENSEQUOTA != undefined || Settings.LICENSEQUOTA.length == 0 ) {
+        if(Settings.LICENSEQUOTA != undefined && Settings.LICENSEQUOTA.length > 0 ) {
             var tbl_body = "";
             var odd_even = false;
             $.each(Settings.LICENSEQUOTA, function () {
