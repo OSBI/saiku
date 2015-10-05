@@ -105,6 +105,7 @@ var AdminConsole = Backbone.View.extend({
                 name: name
             });
 
+
             user.save({}, {
                 data: JSON.stringify(self.licenseUsers.toJSON()),
                 contentType: "application/json",
@@ -561,13 +562,20 @@ var AdminConsole = Backbone.View.extend({
         var user = this.users.get(path);
         var username = $(this.el).find("input[name='username']");
         var emailaddress = $(this.el).find("input[name='email']");
-        user.set({username: username.val(), email: emailaddress.val()});
+        if(username===null){
+            $.notify('Cannot update user with empty username', {globalPosition: 'top center', className: 'error'})
+        }
+        else {
+            user.set({username: username.val(), email: emailaddress.val(), password: null});
 
-        user.save({}, {data: JSON.stringify(user.attributes), contentType: "application/json"
-            , success: function(e){
-                $.notify('User updated successfully', { globalPosition: 'top center', className: 'success' });
+            user.save({}, {
+                data: JSON.stringify(user.attributes), contentType: "application/json"
+                , success: function (e) {
+                    $.notify('User updated successfully', {globalPosition: 'top center', className: 'success'});
 
-        }});
+                }
+            });
+        }
 
 
     },
@@ -613,7 +621,7 @@ var AdminConsole = Backbone.View.extend({
             roles = [];
         }
         roles.push(name);
-        user.set({roles: roles});
+        user.set({roles: roles, password: null});
         $(this.el).find(".role_select").append($("<option></option>")
             .attr("value", name)
             .text(name));
@@ -667,7 +675,7 @@ var AdminConsole = Backbone.View.extend({
             roles = jQuery.grep(roles, function (value) {
                 return value != selected[i];
             });
-            user.set({roles: roles});
+            user.set({roles: roles, password:null});
             $(this.el).find(".role_select").find(":selected").remove();
         }
         user.save({}, {data: JSON.stringify(user.attributes), contentType: "application/json"});
@@ -814,7 +822,7 @@ var AdminConsole = Backbone.View.extend({
 			var c = "type=OLAP\n"+
 			"name="+name+"\n"+
 			"driver=mondrian.olap4j.MondrianOlap4jDriver\n"+
-			"location=jdbc:mondrian:Jdbc=jdbc:calcite:model=mongo:///etc/mongoschema/"+schema+";Catalog=mondrian://"+mondrianschema+";JdbcDrivers=net.hydromatic.optiq.jdbc.Driver;\n"+
+			"location=jdbc:mondrian:Jdbc=jdbc:calcite:model=mongo:///etc/mongoschema/"+schema+";Catalog=mondrian://"+mondrianschema+";JdbcDrivers=org.apache.calcite.jdbc.Driver;\n"+
 			"username=admin\n"+
 			"password=admin";
 			conn.set({"advanced": c});

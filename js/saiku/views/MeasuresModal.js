@@ -28,7 +28,10 @@ var MeasuresModal = Modal.extend({
         'submit form': 'save',
         'click .dialog_footer a': 'call',
         'change #Measures': 'addMeasureToCalculationField',
-        'click .form_button.mathBtn': 'addMathOperatorToCalculationField'
+        'click .form_button.mathBtn': 'addMathOperatorToCalculationField',
+        'click .form_button.growthBtn': 'openGrowthModal',
+        'click .form_button.formatBtn': 'openFormatModal'
+
     },
 
     buttons: [
@@ -37,10 +40,10 @@ var MeasuresModal = Modal.extend({
     ],
 
     addMeasureTemplate: _.template("<form id='measure_form'>" +
-            "<table border='0px'>" +
-            "<tr><td class='col0 i18n'>Name:</td>" +
-            "<td class='col1'><input type='text' class='measure_name' value='Measure Name'></input></td></tr>" +
 
+        "<table border='0px'>" +
+        "<tr><td class='col0 i18n'>Name:</td>" +
+        "<td class='col1'><input type='text' class='measure_name' value='Measure Name'></input></td></tr>" +
             "<tr><td class='col0 i18n'>Measure:</td>" +
             "<td class='col1'>" +
             "<select id='Measures' name='MeasuresId'> " +
@@ -89,10 +92,17 @@ var MeasuresModal = Modal.extend({
         this.workspace = args.workspace;
         this.measure = args.measure;
 
+        var selectedHierarchies = this.workspace.query.helper.model().queryModel.axes.ROWS.hierarchies.concat(this.workspace.query.helper.model().queryModel.axes.COLUMNS.hierarchies);
+        this.selectedDimensions = this.extractDimensionChoices(selectedHierarchies);
+        this.selectedRowDimensions = this.extractDimensionChoices(this.workspace.query.helper.model().queryModel.axes.ROWS.hierarchies);
+        this.selectedColumnDimensions = this.extractDimensionChoices(this.workspace.query.helper.model().queryModel.axes.COLUMNS.hierarchies);
+        this.selectedMeasures = this.workspace.query.helper.model().queryModel.details.measures;
+
         var cube = this.workspace.selected_cube;
         this.measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
 
-        _.bindAll(this, "save");
+        _.bindAll(this, "save", "openGrowthModal", "openFormatModal");
+
 
         this.options.title = "Calculated Measure";
 
@@ -177,5 +187,33 @@ var MeasuresModal = Modal.extend({
 
     resetSelectDropdown: function () {
         document.getElementById("Measures").selectedIndex = 0;
+
+    },
+
+    extractDimensionChoices: function (hierarchies) {
+        dimensionNames = [];
+        _.each(hierarchies, function (hierarchy) {
+            dimensionNames.push(hierarchy.name)
+        }, this);
+        return dimensionNames;
+    },
+
+    openGrowthModal: function (event) {
+        this.close();
+        (new GrowthModal({
+            workspace: this.workspace,
+            measures: this.measures,
+            dimensions: this.selectedDimensions,
+            workspace: this.workspace
+        })).render().open();
+    },
+
+    openFormatModal: function (event) {
+        this.close();
+        (new FormatAsPercentageModal({
+            workspace: this.workspace,
+            measures: this.selectedMeasures,
+            workspace: this.workspace
+        })).render().open();
     }
 });

@@ -137,6 +137,8 @@
 <script type="text/javascript" src="js/saiku/views/FilterModal.js"></script>
 <script type="text/javascript" src="js/saiku/views/CustomFilterModal.js"></script>
 <script type="text/javascript" src="js/saiku/views/MeasuresModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/CalculatedMemberModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/DataSourcesModal.js"></script>
 <script type="text/javascript" src="js/saiku/views/QueryToolbar.js"></script>
 <script type="text/javascript" src="js/saiku/views/WorkspaceToolbar.js"></script>
 <script type="text/javascript" src="js/saiku/views/WorkspaceDropZone.js"></script>
@@ -157,8 +159,8 @@
 <script type="text/javascript" src="js/saiku/views/SessionErrorModal.js"></script>
 <script type="text/javascript" src="js/saiku/views/WarningModal.js"></script>
 <script type="text/javascript" src="js/saiku/views/TitlesModal.js"></script>
-
-
+<script type="text/javascript" src="js/saiku/views/GrowthModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/FormatAsPercentageModal.js"></script>
 <script type="text/javascript" src="js/saiku/models/Session.js"></script>
 <script type="text/javascript" src="js/saiku/views/SplashScreen.js"></script>
 <script type="text/javascript" src="js/saiku/models/SessionWorkspace.js"></script>
@@ -176,8 +178,8 @@
 <script type="text/javascript" src="saiku.min.js"></script>
 -->
 
-<!-- 
-<script src="js/leaflet/leaflet-heat.js"></script> 
+<!--
+<script src="js/leaflet/leaflet-heat.js"></script>
 -->
 
 <script type="text/javascript" src="js/saiku/plugins/I18n/plugin.js"></script>
@@ -237,7 +239,11 @@
                 You are using Saiku Community Edition, please consider <a target="_blank" href="http://saiku.meteorite.bi/support">purchasing support, or entering a sponsorship agreement with us</a> to support development. <a href="mailto:info@meteorite.bi?subject=Supporting Saiku">info@meteorite.bi</a><span class="close_tab sprite"></span>
             </div>
         </script>
+<script type="text/x-jquery-tmpl" id="template-logincount">
+            <div class="upgradeheader">
 
+            </div>
+        </script>
 <script type="text/x-jquery-tmpl" id="template-cubes">
             <select class="cubes">
                 <option value="" class="i18n">Select a cube</option>
@@ -352,6 +358,13 @@
             </li>
         </ul>
         </script>
+<script type="text/x-jquery-tmpl" id="template-calculated-member">
+    <% if (member) { %>
+        <li class="hide d_level dimension-level-calcmember">
+            <a title="<%= member.name %>" level="<%= member.name %>" hierarchy="<%= member.hierarchyName %>" uniquename="<%= member.uniqueName %>" class="level level-calcmember" href="#<%= encodeURIComponent(member.hierarchyName) %>/<%= encodeURIComponent(member.name) %>" style="color: #1e7145;"><%= member.name %></a>
+        </li>
+    <% } %>
+</script>
 <script type="text/x-jquery-tmpl" id="template-workspace">
         <div class="workspace">
             <div class="workspace_inner">
@@ -408,6 +421,7 @@
                     <span class="i18n loading hide">Loading...</span>
                 <% } %>
                 <div class="calculated_measures" style="display:none;"></div>
+                <div class="calculated_members" style="display:none;"></div>
             </div>
             <h3 class="i18n">Dimensions</h3>
             <div class="sidebar_inner dimension_tree">
@@ -535,6 +549,11 @@ title="Drill across on cell"></a></li>
             <li><a href="#switch_to_mdx"
                 class="i18n switch_to_mdx button disabled_toolbar"
                 title="Switch to MDX Mode"></a></li>
+            <% if (Settings.BIPLUGIN5 == true) { %>
+            <li class="seperator"><a href="#about"
+                class="i18n about button sprite"
+                title="About"></a></li>
+             <% } %>
         </ul>
 
         </script>
