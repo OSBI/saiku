@@ -48,7 +48,7 @@ var AboutModal = Modal.extend({
         '</div>'+
         '</div>'+
         '</div>'+
-        '<strong><a href="http://sites.fastspring.com/meteoriteconsulting/product/saikusilver" target="_blank">Order more licenses' +
+        '<strong><a href="www.meteorite.bi/saiku-pricing" target="_blank">Order more licenses' +
         ' here</a></strong><br/>'+
         'Powered by <img src="images/src/meteorite_free.png" width="20px"> <a href="http://www.meteorite.bi/consulting/" target="_blank">www.meteorite.bi</a><br/>',
 
