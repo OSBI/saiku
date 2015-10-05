@@ -56,6 +56,21 @@ var AboutModal = Modal.extend({
         this.options.title = 'About ' + Settings.VERSION;
     },
 
+    ObjectLength_Modern: function( object ) {
+    return Object.keys(object).length;
+    },
+
+    ObjectLength_Legacy: function( object ) {
+    var length = 0;
+    for( var key in object ) {
+        if( object.hasOwnProperty(key) ) {
+            ++length;
+        }
+    }
+    return length;
+    },
+
+
     render: function() {
         $(this.el).html(this.template())
             .addClass("dialog_" + this.type)
@@ -81,7 +96,10 @@ var AboutModal = Modal.extend({
         else{
             $(this.el).find(".licensetype").text("Open Source License");
         }
-        if(Settings.LICENSEQUOTA != undefined && Settings.LICENSEQUOTA.length > 0 ) {
+        ObjectLength =
+            Object.keys ? this.ObjectLength_Modern : this.ObjectLength_Legacy;
+
+        if(Settings.LICENSEQUOTA != undefined && ObjectLength(Settings.LICENSEQUOTA) > 0 ) {
             var tbl_body = "";
             var odd_even = false;
             $.each(Settings.LICENSEQUOTA, function () {
