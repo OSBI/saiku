@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
         <parent>
                 <artifactId>saiku</artifactId>
-                <groupId>org.saiku</groupId>
-                <version>3.5</version>
+                <groupId>org.saikuanalytics</groupId>
+                <version>3.6</version>
         </parent>
 	
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>saiku-server</artifactId>
 	<packaging>pom</packaging>
-    <version>3.5</version>
+    <version>3.6</version>
 	<properties>
 		<min>nomin</min>
 	</properties>
@@ -27,14 +27,14 @@
 						<configuration>
 							<artifactItems>
 								<artifactItem>
-									<groupId>org.saiku</groupId>
+									<groupId>org.saikuanalytics</groupId>
 									<artifactId>saiku-webapp</artifactId>
 									<version>${project.version}</version>
 									<type>war</type>
 									<outputDirectory>target/stage/</outputDirectory>
 								</artifactItem>
 								<artifactItem>
-									<groupId>org.saiku</groupId>
+									<groupId>org.saikuanalytics</groupId>
 									<artifactId>saiku-ui</artifactId>
 									<version>${project.version}</version>
 									<classifier>${min}</classifier>
@@ -43,7 +43,7 @@
 									<outputDirectory>target/stage/</outputDirectory>
 								</artifactItem>
 								<artifactItem>
-									<groupId>org.saiku</groupId>
+									<groupId>org.saikuanalytics</groupId>
 									<artifactId>saiku-ui</artifactId>
 									<version>${project.version}</version>
 									<type>war</type>
@@ -166,7 +166,31 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/dist/saiku-server</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/scripts</directory>
+									<filtering>true</filtering>
+									<includes>
+										<include>README</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>

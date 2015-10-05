@@ -41,6 +41,15 @@ var LoginForm = Modal.extend({
         '</form>'
     )(),
 
+    options: {
+        autoOpen: false,
+        closeOnEscape: false,
+        modal: true,
+        title: Settings.VERSION,
+        resizable: false,
+        draggable: false
+    },
+
     buttons: [
         { text: 'Login', method: 'login' },
         { text: 'Upload License', method: 'upload_license' },
@@ -51,13 +60,12 @@ var LoginForm = Modal.extend({
         'keyup #login_form input' : 'check',
         'click #eval-login'       : 'show_panel_user',
         'click .clearlink'        : 'clear_login'
-
     },
 
     initialize: function(args) {
         _.extend(this, args);
         _.bindAll(this, 'adjust');
-        this.options.title = Settings.VERSION;
+        // this.options.title = Settings.VERSION;
         this.bind('open', this.adjust);
     },
 

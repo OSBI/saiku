@@ -17,12 +17,6 @@
 package org.saiku.web.rest.util;
 
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.dto.resultset.DataCell;
@@ -32,8 +26,15 @@ import org.saiku.service.util.export.ResultSetHelper;
 import org.saiku.web.rest.objects.resultset.Cell;
 import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.saiku.web.rest.objects.resultset.Total;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 public class RestUtil {
     private static final Logger log = LoggerFactory.getLogger(RestUtil.class);
@@ -50,7 +51,6 @@ public class RestUtil {
         Cell[] header = null;
         ArrayList<Cell[]> rows = new ArrayList<Cell[]>();
         
-        // System.out.println("DATASET");
         try {
 			while (rs.next() && (limit == 0 || height < limit)) {
 			    if (height == 0) {
@@ -61,7 +61,6 @@ public class RestUtil {
 			        }
 			        if (width > 0) {
 			            rows.add(header);
-			            // System.out.println(" |");
 			        }
 			    }
 			    Cell[] row = new Cell[width];

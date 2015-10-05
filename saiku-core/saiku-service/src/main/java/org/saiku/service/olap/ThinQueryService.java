@@ -209,7 +209,9 @@ public class ThinQueryService implements Serializable {
         try {
 
             Long start = (new Date()).getTime();
+            log.debug("Query Start");
             CellSet cellSet =  executeInternalQuery(tq);
+            log.debug("Query End");
             String runId = "RUN#:" + ID_GENERATOR.get();
             Long exec = (new Date()).getTime();
 

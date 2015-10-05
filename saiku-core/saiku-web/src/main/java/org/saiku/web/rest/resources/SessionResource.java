@@ -76,8 +76,8 @@ public class SessionResource  {
 			@FormParam("password") String password) 
 	{
 		try {
-			sessionService.login(req, username, password);
-			return Response.ok().build();
+		  sessionService.login(req, username, password);
+		  return Response.ok().build();
 		}
 		catch (Exception e) {
 			log.debug("Error logging in:" + username, e);

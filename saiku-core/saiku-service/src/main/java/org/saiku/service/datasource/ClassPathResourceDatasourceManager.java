@@ -205,6 +205,10 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
         return null;
     }
 
+  public InputStream getBinaryInternalFileData(String file) throws RepositoryException {
+    return null;
+  }
+
   public String saveFile(String path, Object content, String user, List<String> roles) {
     return null;
   }

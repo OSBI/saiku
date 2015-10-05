@@ -175,22 +175,6 @@ public class LegacyImporterImpl implements LegacyImporter {
         String strUnzipped = "";
         while(ze!=null){
 
-           /* String fileName = ze.getName();
-            File newFile = new File(fileName);
-
-            System.out.println("file unzip : "+ newFile.getAbsoluteFile());
-
-            byte[] bytes= new byte[2048];
-            try {
-                zis.read(bytes, 0, 2048);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                strUnzipped= new String( bytes, "UTF-8" );
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }*/
             String fileName = ze.getName();
             int size;
             byte[] buffer = new byte[2048];

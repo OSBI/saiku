@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>saiku</artifactId>
-        <groupId>org.saiku</groupId>
-        <version>3.5</version>
+        <groupId>org.saikuanalytics</groupId>
+        <version>3.6</version>
     </parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>saiku-bi-platform-plugin-p5</artifactId>
 	<packaging>jar</packaging>
-	<version>3.5</version>
+	<version>3.6</version>
 	<name>saiku biserver plugin</name>
 
 	<build>
@@ -42,32 +42,32 @@
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
                                 </artifactItem>
 								<artifactItem>
-									<groupId>org.saiku</groupId>
+									<groupId>org.saikuanalytics</groupId>
 									<artifactId>saiku-ui</artifactId>
 									<type>war</type>
 									<outputDirectory>target/stage</outputDirectory>
 								</artifactItem>
                                 <artifactItem>
-                                    <groupId>org.saiku</groupId>
+                                    <groupId>org.saikuanalytics</groupId>
                                     <artifactId>saiku-web</artifactId>
                                     <type>jar</type>
                                     <classifier>sources</classifier>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
                                 </artifactItem>
 								<artifactItem>
-									<groupId>org.saiku</groupId>
+									<groupId>org.saikuanalytics</groupId>
 									<artifactId>saiku-service</artifactId>
 									<type>jar</type>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
-									<groupId>org.saiku</groupId>
+									<groupId>org.saikuanalytics</groupId>
 									<artifactId>saiku-web</artifactId>
 									<type>jar</type>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
-									<groupId>org.saiku</groupId>
+									<groupId>org.saikuanalytics</groupId>
 									<artifactId>saiku-olap-util</artifactId>
 									<type>jar</type>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
@@ -380,15 +380,15 @@
 	</repositories>
 	<dependencies>
 		<dependency>
-			<groupId>org.saiku</groupId>
+			<groupId>org.saikuanalytics</groupId>
 			<artifactId>saiku-service</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.saiku</groupId>
+			<groupId>org.saikuanalytics</groupId>
 			<artifactId>saiku-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.saiku</groupId>
+			<groupId>org.saikuanalytics</groupId>
 			<artifactId>saiku-olap-util</artifactId>
 		</dependency>
 		<dependency>

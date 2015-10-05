@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>saiku</artifactId>
-        <groupId>org.saiku</groupId>
-        <version>3.5</version>
+        <groupId>org.saikuanalytics</groupId>
+        <version>3.6</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>saiku-webapp</artifactId>
-    <version>3.5</version>
+    <version>3.6</version>
     <name>saiku - webapp</name>
     <packaging>war</packaging>
 
@@ -19,6 +19,7 @@
         <earthquakerepo>../../data</earthquakerepo>
         <earthquakeschema>../../data/Earthquakes.xml</earthquakeschema>
         <earthquakeurl>jdbc:h2:../../data/earthquakes;MODE=MySQL</earthquakeurl>
+        <defaultRole>ROLE_USER</defaultRole>
         <pluginpath>../webapps/ROOT/js/saiku/plugins/</pluginpath>
     </properties>
     <build>
@@ -60,7 +61,7 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.saiku</groupId>
+                                    <groupId>org.saikuanalytics</groupId>
                                     <artifactId>saiku-web</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>
@@ -202,7 +203,7 @@
             <artifactId>spring-security-taglibs</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.saiku</groupId>
+            <groupId>org.saikuanalytics</groupId>
             <artifactId>saiku-service</artifactId>
         </dependency>
         <dependency>
@@ -214,11 +215,11 @@
             <artifactId>hive-cli</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.saiku</groupId>
+            <groupId>org.saikuanalytics</groupId>
             <artifactId>saiku-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.saiku</groupId>
+            <groupId>org.saikuanalytics</groupId>
             <artifactId>saiku-olap-util</artifactId>
         </dependency>
         <dependency>
@@ -300,6 +301,16 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ldap</groupId>
+            <artifactId>spring-ldap-core</artifactId>
+            <version>2.0.4.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-ldap</artifactId>
+            <version>4.0.1.RELEASE</version>
         </dependency>
 
     </dependencies>

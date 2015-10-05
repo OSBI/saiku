@@ -375,6 +375,10 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         throw new UnsupportedOperationException();
     }
 
+    public InputStream getBinaryInternalFileData(String file) throws javax.jcr.RepositoryException {
+        return null;
+    }
+
     public String saveFile(String path, Object content, String user, List<String> roles) {
         return null;
     }

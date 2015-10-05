@@ -66,6 +66,8 @@ public interface IRepositoryManager {
 
     String getInternalFile(String s) throws RepositoryException;
 
+    InputStream getBinaryInternalFile(String s) throws RepositoryException;
+
     void removeInternalFile(String s) throws RepositoryException;
 
     List<org.saiku.database.dto.MondrianSchema> getAllSchema() throws RepositoryException;
