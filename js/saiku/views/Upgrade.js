@@ -40,15 +40,15 @@ var Upgrade = Backbone.View.extend({
 		var license = new License();
 
 		if(Settings.BIPLUGIN5){
-			license.fetch_license('api/api/license', function (opt) {
 				if(Saiku.session.get("notice") != undefined && Saiku.session.get("notice")!=null && Saiku.session.get("notice")!=""){
 					$(self.workspace.el).find('.upgrade').append("<div><div id='uphead' class='upgradeheader'>Notice:"+Saiku.session.get("notice")+"</div>");
 
 				}
-				if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
+				if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenceType != "Open Source License") {
 					return this;
 				}
-				else if(opt.status !== 'error' && opt.data.get("licenseType") === "trial"){
+				if (Settings.LICENSE.licenseType === "trial" && Settings.LICENSE.licenceType === "Open Source" +
+					" License") {
 					var yourEpoch = parseFloat(opt.data.get("expiration"));
 					var yourDate = new Date(yourEpoch);
 					self.remainingdays = self.daydiff(new Date(), yourDate);
@@ -62,18 +62,17 @@ var Upgrade = Backbone.View.extend({
 						"<a href='http://meteorite.bi/products/saiku/community'>Or contribute by joining our community and helping other users!</a></div></div>");
 					return self;
 				}
-			});
 		}
 		else {
-			license.fetch_license('api/license/', function (opt) {
 				if(Saiku.session.get("notice") != undefined && Saiku.session.get("notice")!=null && Saiku.session.get("notice")!=""){
 					$(self.workspace.el).find('.upgrade').append("<div><div id='uphead' class='upgradeheader'>Notice:"+Saiku.session.get("notice")+"</div>");
 
 				}
-				if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
+				if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenceType != "Open Source License") {
 					return this;
 				}
-				else if(opt.status !== 'error' && opt.data.get("licenseType") === "trial"){
+			if (Settings.LICENSE.licenseType === "trial" && Settings.LICENSE.licenceType === "Open Source" +
+				" License") {
 					var yourEpoch = parseFloat(opt.data.get("expiration"));
 					var yourDate = new Date(yourEpoch);
 
@@ -87,7 +86,6 @@ var Upgrade = Backbone.View.extend({
 						"<a href='http://meteorite.bi/products/saiku/community'>Or contribute by joining our community and helping other users!</a></div></div>");
 					return self;
 				}
-			});
 		}
 
 
