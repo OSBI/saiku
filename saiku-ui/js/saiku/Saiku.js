@@ -232,20 +232,6 @@ Backbone.emulateHTTP = false;
 if (! Settings.BIPLUGIN) {
     $(document).ready(function () {
         var plugins = new PluginCollection();
-        var license =new License();
-
-        license.fetch_license('api/license/', function(opt) {
-            if (opt.status === 'success') {
-                Settings.LICENSE = opt.data.toJSON();
-            }
-
-            var quota = new LicenseQuota();
-
-            quota.fetch_quota('api/license/quota', function(opt){
-                if(opt.status === 'success'){
-                    Settings.LICENSEQUOTA = opt.data.toJSON();
-                }
-            })
 
 
             plugins.fetch({
@@ -313,7 +299,7 @@ if (! Settings.BIPLUGIN) {
                                                     password: Settings.PASSWORD
                                                 });
 
-                                                Saiku.toolbar = new Toolbar();
+                                                    Saiku.toolbar = new Toolbar();
                                             }
                                         });
 
@@ -373,7 +359,6 @@ if (! Settings.BIPLUGIN) {
                 }
             });
         });
-    });
 }
 /**
  * Dynamically load plugins!
