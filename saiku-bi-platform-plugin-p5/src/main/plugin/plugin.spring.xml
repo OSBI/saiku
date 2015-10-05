@@ -94,7 +94,9 @@
     		<property name="sessionService" ref="sessionService" />
 	</bean>
 
-  	<bean id="repositoryBean2" class="org.saiku.plugin.resources.PentahoRepositoryResource2" />
+  	<bean id="repositoryBean2" class="org.saiku.plugin.resources.PentahoRepositoryResource2">
+		<property name="userService" ref="userServiceBean"/>
+	</bean>
 
   	 <bean id="tagRepositoryBean" class="org.saiku.plugin.resources.PentahoTagRepositoryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />

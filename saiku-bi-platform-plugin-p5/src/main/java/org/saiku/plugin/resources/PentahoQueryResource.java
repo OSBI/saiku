@@ -52,7 +52,7 @@ public class PentahoQueryResource extends Query2Resource {
 
     logelements.put("Username", userService.getActiveUsername());
     logelements.put("Executed MDX", ((ThinQuery)result.getQuery()).getMdx());
-    logelements.put("Result Set", resultToJson(result));
+    //logelements.put("Result Set", resultToJson(result));
     pah.endAudit("Saiku", "Execute Query", this.getClass().getName(), this.toString(), this.toString(),
         createLogEntry(logelements), getLogger(), start,
             uuid,
