@@ -62,11 +62,9 @@ var SplashScreen = Backbone.View.extend({
 
         var license = new License();
 		if(Settings.BIPLUGIN5){
-			license.fetch_license('api/api/license', function (opt) {
-//                $(self.el).html(self.template()).appendTo($('body'));
                 $(self.el).html(self.template());
 
-                if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
+                if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenseType != "Open Source License") {
 
                     $(".enterprisetoggle").css("visibility", "hidden");
 
@@ -84,14 +82,12 @@ var SplashScreen = Backbone.View.extend({
                     $('.stabs section').hide();
                     $('#'+active).fadeIn();
                 });
-			});
 		}
 		else {
-			license.fetch_license('api/license/', function (opt) {
                 //$(self.el).html(self.template()).appendTo($('body'));
                 $(self.el).html(self.template());
 
-                if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
+                if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenceType != "Open Source License") {
 
                     $(".enterprisetoggle").css("visibility", "hidden");
 
@@ -109,7 +105,6 @@ var SplashScreen = Backbone.View.extend({
                     $('.stabs section').hide();
                     $('#'+active).fadeIn();
                 });
-			});
 		}
 
       return this;
@@ -157,32 +152,28 @@ var SplashScreen = Backbone.View.extend({
 
                 $(that.el).find("#dyn_content").html(json.item[0].content);
                 $(that.el).find(".responsive-container").fitVids();
-                license.fetch_license('api/license/', function (opt) {
                     //$(self.el).html(self.template()).appendTo($('body'));
                     $(self.el).html(self.template());
 
-                    if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
+                    if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenceType != "Open Source License") {
 
                         $(".enterprisetoggle").css("visibility", "hidden");
 
 
                     }
-                });
 
             },
             error: function(e) {
 
-                license.fetch_license('api/license/', function (opt) {
                     //$(self.el).html(self.template()).appendTo($('body'));
                     $(self.el).html(self.template());
 
-                    if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
+                    if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenceType != "Open Source License") {
 
                         $(".enterprisetoggle").css("visibility", "hidden");
 
 
                     }
-                });
 
             }
         });
