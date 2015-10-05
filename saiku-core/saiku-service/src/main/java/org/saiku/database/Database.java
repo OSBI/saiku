@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -308,4 +309,12 @@ public class Database {
     }
 
 
+    public List<String> getUsers()  throws SQLException  {
+        //Stub for EE.
+        return null;
+    }
+
+    public void addUsers(List<String> l)  throws SQLException  {
+        //Stub for EE.
+    }
 }
