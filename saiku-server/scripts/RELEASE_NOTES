@@ -25,3 +25,7 @@ Release Notes - Saiku - Version 3.6
     * [SKU-1291] - calculated members should be removeable
     * [SKU-1307] - Build plugin for changing the locale of a mondrian schema
     * [SKU-1357] - allow new dashboard from new button 
+    * [SKU-1370] - Add both expected hostname and actual hostname to hostname warning
+
+
+
