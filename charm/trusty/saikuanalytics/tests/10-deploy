@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+
+import amulet
+import requests
+import unittest
+
+
+class TestDeployment(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.deployment = amulet.Deployment()
+
+        cls.deployment.add('saiku')
+        cls.deployment.expose('saiku')
+
+        try:
+            cls.deployment.setup(timeout=900)
+            cls.deployment.sentry.wait()
+        except amulet.helpers.TimeoutError:
+            amulet.raise_status(amulet.SKIP, msg="Environment wasn't stood up in time")
+        except:
+            raise
+        cls.unit = cls.deployment.sentry.unit['saiku/0']
+
+    def test_case(self):
+        # Now you can use self.deployment.sentry.unit[UNIT] to address each of
+        # the units and perform more in-depth steps.  You can also reference
+        # the first unit as self.unit.
+        # There are three test statuses that can be triggered with
+        # amulet.raise_status():
+        #   - amulet.PASS
+        #   - amulet.FAIL
+        #   - amulet.SKIP
+        # Each unit has the following methods:
+        #   - .info - An array of the information of that unit from Juju
+        #   - .file(PATH) - Get the details of a file on that unit
+        #   - .file_contents(PATH) - Get plain text output of PATH file from that unit
+        #   - .directory(PATH) - Get details of directory
+        #   - .directory_contents(PATH) - List files and folders in PATH on that unit
+        #   - .relation(relation, service:rel) - Get relation data from return service
+        #          add tests here to confirm service is up and working properly
+        # For example, to confirm that it has a functioning HTTP server:
+        #     page = requests.get('http://{}'.format(self.unit.info['public-address']))
+        #     page.raise_for_status()
+        # More information on writing Amulet tests can be found at:
+        #     https://juju.ubuntu.com/docs/tools-amulet.html
+        pass
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -138,17 +138,13 @@ public class SaikuMondrianHelper {
   public static String getMeasureGroup(Measure measure){
 	if(isMondrian(measure)){
 	  MondrianOlap4jMeasure	m = (MondrianOlap4jMeasure) measure;
-		String mg;
+
 	  try {
-		mg = ((RolapBaseCubeMeasure) m.member).getMeasureGroup().getName();
+		return ((RolapBaseCubeMeasure) m.member).getMeasureGroup().getName();
 	  }
-	  catch(NoSuchMethodError e){
-		mg = null;
+	  catch(Exception e){
+		return null;
 	  }
-	  catch(Exception e) {
-		mg = null;
-	  }
-	  return mg;
 	}
 	return null;
   }

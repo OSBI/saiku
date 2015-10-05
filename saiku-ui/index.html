@@ -168,7 +168,6 @@
 <script type="text/javascript" src="js/saiku/models/Plugin.js"></script>
 <script type="text/javascript" src="js/saiku/models/Settings.js"></script>
 <script type="text/javascript" src="js/saiku/models/License.js"></script>
-<script type="text/javascript" src="js/saiku/models/DataSources.js"></script>
 <script type="text/javascript" src="js/saiku/Saiku.js"></script>
 <script type="text/javascript" src="js/saiku/views/DateFilterModal.js"></script>
 <script type="text/javascript" src="js/saiku/adapters/SaikuServer.js"></script>
@@ -240,7 +239,11 @@
                 You are using Saiku Community Edition, please consider <a target="_blank" href="http://saiku.meteorite.bi/support">purchasing support, or entering a sponsorship agreement with us</a> to support development. <a href="mailto:info@meteorite.bi?subject=Supporting Saiku">info@meteorite.bi</a><span class="close_tab sprite"></span>
             </div>
         </script>
+<script type="text/x-jquery-tmpl" id="template-logincount">
+            <div class="upgradeheader">
 
+            </div>
+        </script>
 <script type="text/x-jquery-tmpl" id="template-cubes">
             <select class="cubes">
                 <option value="" class="i18n">Select a cube</option>
@@ -546,6 +549,11 @@ title="Drill across on cell"></a></li>
             <li><a href="#switch_to_mdx"
                 class="i18n switch_to_mdx button disabled_toolbar"
                 title="Switch to MDX Mode"></a></li>
+            <% if (Settings.BIPLUGIN5 == true) { %>
+            <li class="seperator"><a href="#about"
+                class="i18n about button sprite"
+                title="About"></a></li>
+             <% } %>
         </ul>
 
         </script>

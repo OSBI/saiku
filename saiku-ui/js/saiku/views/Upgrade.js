@@ -18,67 +18,82 @@
  * The global toolbar
  */
 var Upgrade = Backbone.View.extend({
-    tagName: "div",
 
-    events: {
-    },
+	events: {
+	},
 
 
-    initialize: function(a, b) {
+	initialize: function(a, b) {
 
 		this.workspace = a.workspace;
 
-    },
+		// Fire off workspace event
+		this.workspace.trigger('workspace:toolbar:render', {
+			workspace: this.workspace
+		});
 
-	daydiff: function(first, second) {
-	return Math.round((second-first)/(1000*60*60*24));
 	},
 
-    render: function() {
+	daydiff: function(first, second) {
+		return Math.round((second-first)/(1000*60*60*24));
+	},
+
+	render: function() {
 
 		var self = this;
 		var license = new License();
+
 		if(Settings.BIPLUGIN5){
-			license.fetch_license('api/api/license', function (opt) {
-				if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
+				if(Saiku.session.get("notice") != undefined && Saiku.session.get("notice")!=null && Saiku.session.get("notice")!=""){
+					$(this.el).append("<div><div id='uphead' class='upgradeheader'>Notice:"+Saiku.session.get("notice")+"</div>");
+
+				}
+				if (Settings.LICENSE.licenseType != undefined && (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenseType != "Open Source License")) {
 					return this;
 				}
-				else if(opt.status !== 'error' && opt.data.get("licenseType") === "trial"){
-					var yourEpoch = parseFloat(opt.data.get("expiration"));
+				if (Settings.LICENSE != undefined && Settings.LICENSE.licenseType === "trial") {
+					var yourEpoch = parseFloat(Settings.LICENSE.expiration);
 					var yourDate = new Date(yourEpoch);
 					self.remainingdays = self.daydiff(new Date(), yourDate);
 
 
-					$(self.workspace.el).find('.upgrade').append("<div><div id='uphead' class='upgradeheader'>You are using a Saiku Enterprise Trial license, you have "+ self.remainingdays+" days remaining. <a href='http://www.meteorite.bi/saiku-pricing'>Buy licenses online.</a></div>");
+					$(this.el).append("<div><div id='uphead' class='upgradeheader'>You are using a Saiku Enterprise" +
+						" Trial license, you have "+ self.remainingdays+" days remaining. <a href='http://www.meteorite.bi/saiku-pricing'>Buy licenses online.</a></div>");
 					return self;
 				}
 				else {
-					$(self.workspace.el).find('.upgrade').append("<div><div id='uphead' class='upgradeheader'>You are using Saiku Community Edition, please consider upgrading to <a target='_blank' href='http://meteorite.bi'>Saiku Enterprise</a>, or entering a <a href='http://meteorite.bi/products/saiku/sponsorship'>sponsorship agreement with us</a> to support development. " +
+					$(this.el).append("<div><div id='uphead' class='upgradeheader'>You are using Saiku Community" +
+						" Edition, please consider upgrading to <a target='_blank' href='http://meteorite.bi'>Saiku Enterprise</a>, or entering a <a href='http://meteorite.bi/products/saiku/sponsorship'>sponsorship agreement with us</a> to support development. " +
 						"<a href='http://meteorite.bi/products/saiku/community'>Or contribute by joining our community and helping other users!</a></div></div>");
+
 					return self;
 				}
-			});
 		}
 		else {
-			license.fetch_license('api/license/', function (opt) {
-				if (opt.status !== 'error' && opt.data.get("licenseType") != "trial") {
+				if(Saiku.session.get("notice") != undefined && Saiku.session.get("notice")!=null && Saiku.session.get("notice")!=""){
+					$(this.el).append("<div><div id='uphead' class='upgradeheader'>Notice:"+Saiku.session.get("notice")+"</div>");
+
+				}
+				if (Settings.LICENSE.licenseType != undefined && (Settings.LICENSE.licenseType != "trial" &&
+					Settings.LICENSE.licenseType != "Open Source License")) {
 					return this;
 				}
-				else if(opt.status !== 'error' && opt.data.get("licenseType") === "trial"){
-					var yourEpoch = parseFloat(opt.data.get("expiration"));
+				if (Settings.LICENSE.licenseType === "trial") {
+					var yourEpoch = parseFloat(Settings.LICENSE.expiration);
 					var yourDate = new Date(yourEpoch);
 
 					self.remainingdays = self.daydiff(new Date(), yourDate);
 
-					$(self.workspace.el).find('.upgrade').append("<div><div id='uphead' class='upgradeheader'>You are using a Saiku Enterprise Trial license, you have "+ self.remainingdays+" days remaining. <a href='http://www.meteorite.bi/saiku-pricing'>Buy licenses online.</a></div>");
+					$(this.el).append("<div><div id='uphead' class='upgradeheader'>You are using a Saiku Enterprise" +
+						" Trial license, you have "+ self.remainingdays+" days remaining. <a href='http://www.meteorite.bi/saiku-pricing'>Buy licenses online.</a></div>");
 					return self;
 				}
 				else {
-					$(self.workspace.el).find('.upgrade').append("<div><div id='uphead' class='upgradeheader'>You are using Saiku Community Edition, please consider upgrading to <a target='_blank' href='http://meteorite.bi'>Saiku Enterprise</a>, or entering a <a href='http://meteorite.bi/products/saiku/sponsorship'>sponsorship agreement with us</a> to support development. " +
+					$(this.el).append("<div><div id='uphead' class='upgradeheader'>You are using Saiku Community" +
+						" Edition, please consider upgrading to <a target='_blank' href='http://meteorite.bi'>Saiku Enterprise</a>, or entering a <a href='http://meteorite.bi/products/saiku/sponsorship'>sponsorship agreement with us</a> to support development. " +
 						"<a href='http://meteorite.bi/products/saiku/community'>Or contribute by joining our community and helping other users!</a></div></div>");
 					return self;
 				}
-			});
 		}
 
 
@@ -88,9 +103,9 @@ var Upgrade = Backbone.View.extend({
 
 
 
-    },
+	},
 
-    call: function(e) {
-    }
+	call: function(e) {
+	}
 
 });

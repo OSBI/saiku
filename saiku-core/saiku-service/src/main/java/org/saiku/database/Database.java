@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
@@ -185,7 +186,7 @@ public class Database {
                     dsm.saveInternalFile("/homes/home:admin/sample_reports", null, null);
                     String exts[] = {"saiku"};
                     Iterator<File> files =
-                        FileUtils.iterateFiles(new File(dsm.getEarthquakeDir()+"/sample_reports"), exts, false);
+                        FileUtils.iterateFiles(new File("../../data/sample_reports"), exts, false);
 
                     while(files.hasNext()){
                         File f = files.next();
@@ -308,4 +309,12 @@ public class Database {
     }
 
 
+    public List<String> getUsers()  throws SQLException  {
+        //Stub for EE.
+        return null;
+    }
+
+    public void addUsers(List<String> l)  throws SQLException  {
+        //Stub for EE.
+    }
 }

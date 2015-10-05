@@ -17,10 +17,7 @@ package org.saiku.plugin.resources;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -46,6 +43,9 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.pentaho.platform.api.engine.IAuthorizationPolicy;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.security.policy.rolebased.actions.AdministerSecurityAction;
+
+import org.saiku.plugin.util.PentahoAuditHelper;
+import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.repository.AclMethod;
 import org.saiku.repository.AclEntry;
@@ -53,6 +53,8 @@ import org.saiku.repository.IRepositoryObject;
 import org.saiku.repository.RepositoryFileObject;
 import org.saiku.repository.RepositoryFolderObject;
 import org.saiku.web.rest.resources.ISaikuRepository;
+
+import org.pentaho.platform.util.logging.SimpleLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,8 +78,14 @@ import com.sun.jersey.multipart.FormDataParam;
 @Path("/saiku/api/{username}/repository")
 @XmlAccessorType(XmlAccessType.NONE)
 public class PentahoRepositoryResource2 implements ISaikuRepository {
+	PentahoAuditHelper pah = new PentahoAuditHelper();
+	UserService userService;
 
-	private static final Logger log = LoggerFactory.getLogger(PentahoRepositoryResource2.class);
+  public void setUserService(UserService userService) {
+	this.userService = userService;
+  }
+
+  private static final Logger log = LoggerFactory.getLogger(PentahoRepositoryResource2.class);
 
 	@Autowired
 	private IContentAccessFactory contentAccessFactory;
@@ -127,6 +135,14 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 	@Path("/resource")
 	public Response getResource (@QueryParam("file") String file)
 	{
+	  long start = System.currentTimeMillis();
+
+	  Map<String,String> logelements = new HashMap<String, String>();
+	  logelements.put("username", userService.getActiveUsername());
+	  logelements.put("filename", file);
+
+	  UUID uuid = pah.startAudit("Saiku", "Open Query", this.getClass().getName(), this.toString(), this.toString(), createLogEntry(logelements),
+		  getLogger());
 		try {
 			if (StringUtils.isBlank(file)) {
 				throw new IllegalArgumentException("Path cannot be null  - Illegal Path: " + file);
@@ -147,14 +163,27 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 			if (doc == null) {
 				throw new SaikuServiceException("Error retrieving saiku document from solution repository: " + file); 
 			}
+		  long end = System.currentTimeMillis();
+
+		  pah.endAudit("Saiku", "Open Query", this.getClass().getName(), this.toString(), this.toString(),
+		  		createLogEntry(logelements), getLogger(), start,
+		  		uuid,
+		  		end);
 			return Response.ok(doc.getBytes("UTF-8"), MediaType.TEXT_PLAIN).header(
 					"content-length",doc.getBytes("UTF-8").length).build();
 
 		}
 		catch(Exception e){
+		  long end = System.currentTimeMillis();
+
+		  pah.endAudit("Saiku", "Execute Query", this.getClass().getName(), this.toString(), this.toString(),
+			  createLogEntry(logelements), getLogger(), start,
+			  uuid,
+			  end);
 			log.error("Cannot load file from repository (" + file + ")",e);
 			return Response.serverError().entity(e.getMessage()).status(Status.INTERNAL_SERVER_ERROR).build();
 		}
+
 	}
 
 	/**
@@ -425,5 +454,18 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 		return acls;
 	}
 
+  private String createLogEntry(Map<String, String> elements){
+	StringBuilder sb = new StringBuilder();
+	Iterator it = elements.entrySet().iterator();
+	while (it.hasNext()) {
+	  Map.Entry pair = (Map.Entry)it.next();
+	  sb.append(pair.getKey()).append(":").append(pair.getValue()).append("\n");
+	  it.remove();
+	}
+	return sb.toString();
+  }
 
+  private SimpleLogger getLogger(){
+	return new SimpleLogger(PentahoQueryResource.class.getName());
+  }
 }

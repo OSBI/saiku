@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>saiku</artifactId>
-        <groupId>org.saikuanalytics</groupId>
+        <groupId>org.saiku</groupId>
         <version>3.3.1-SNAPSHOT</version>
     </parent>
     <groupId>bi.meteorite</groupId>
@@ -139,7 +139,7 @@
             <version>2.3.3</version>
         </dependency>
         <dependency>
-            <groupId>org.saikuanalytics</groupId>
+            <groupId>org.saiku</groupId>
             <artifactId>saiku-ui</artifactId>
             <classifier>${min}</classifier>
             <version>${project.version}</version>

@@ -118,7 +118,7 @@ public class SaikuOlapConnection implements ISaikuConnection {
               throw new Exception("Connection is null");
             }
 
-            System.out.println("Catalogs:" + tmpolapConnection.getOlapCatalogs().size());
+            log.info("Catalogs:" + tmpolapConnection.getOlapCatalogs().size());
             olapConnection = tmpolapConnection;
             initialized = true;
             return true;
@@ -130,7 +130,7 @@ public class SaikuOlapConnection implements ISaikuConnection {
 
   public boolean clearCache() throws Exception {
     if ( olapConnection.isWrapperFor( RolapConnection.class ) ) {
-      System.out.println( "Clearing cache" );
+      log.info("Clearing cache");
       RolapConnection rcon = olapConnection.unwrap( RolapConnection.class );
       rcon.getCacheControl( null ).flushSchemaCache();
 

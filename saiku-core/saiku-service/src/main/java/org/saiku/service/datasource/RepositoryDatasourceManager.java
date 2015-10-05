@@ -22,7 +22,6 @@ import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.repository.*;
 import org.saiku.service.importer.LegacyImporter;
 import org.saiku.service.importer.LegacyImporterImpl;
-import org.saiku.service.importer.objects.JujuSource;
 import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
 
@@ -64,6 +63,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             oldpassword, defaultRole);
         try {
             irm.start(userService);
+            this.saveInternalFile("/etc/.repo_version", "d20f0bea-681a-11e5-9d70-feff819cdc9f", null);
         } catch (RepositoryException e) {
             log.error("Could not start repo", e);
         }
@@ -246,6 +246,13 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     public String getInternalFileData(String file) throws RepositoryException {
 
             return irm.getInternalFile(file);
+
+
+    }
+
+    public InputStream getBinaryInternalFileData(String file) throws RepositoryException {
+
+        return irm.getBinaryInternalFile(file);
 
 
     }
@@ -481,11 +488,6 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public void setEarthquakeSchema(String earthquakeschema) {
         this.earthquakeschema = earthquakeschema;
-    }
-
-    public List<JujuSource> getJujuDatasources() {
-        LegacyImporter l = new LegacyImporterImpl(null);
-        return l.importJujuDatasources();
     }
 
     public void setRepoPasswordProvider(PasswordProvider passwordProvider){

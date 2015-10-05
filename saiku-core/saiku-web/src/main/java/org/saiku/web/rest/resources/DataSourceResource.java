@@ -15,11 +15,13 @@
  */
 package org.saiku.web.rest.resources;
 
-import com.qmino.miredot.annotations.ReturnType;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.web.rest.objects.DataSourceMapper;
+
+import com.qmino.miredot.annotations.ReturnType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -29,13 +31,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -84,30 +80,6 @@ public class DataSourceResource {
         datasourceService.removeDatasource(datasourceName);
         return (Status.GONE);
     }
-
-    //    /**
-    //     * Get a specific data source from a sever.
-    //     *
-    //     * @param datasourceName The data source name.
-    //     * @return A Saiku Datasource.
-    //     * @summary Get Data Source.
-    //     */
-    //    @GET
-    //    @Produces({"application/json"})
-    //    @Path("/{datasource}")
-    //    public SaikuDatasource getDatasource(@PathParam("datasource") String datasourceName) {
-    //        return datasourceService.getDatasource(datasourceName);
-    //    }
-
-    //    @POST
-    //    @Consumes({"application/json" })
-    //	@Path("/{datasource}")
-    //	public Status addDatasource(@PathParam("datasource") String datasourceName , @Context SaikuDatasource ds){
-    //    	System.out.println("ds not null:" + (ds != null));
-    //    	System.out.println("ds name:"+ds.getName());
-    //    	datasourceService.addDatasource(ds);
-    //    	return Status.OK;
-    //    }
 
     /**
      * Get a specific data source from the server by ID.

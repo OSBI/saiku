@@ -127,7 +127,6 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
 
 
       if(!checkUnsecured(webdavRequest) && !checkUserRole(webdavRequest)){
-        System.out.println("Test");
         return;
       }
       // perform referrer host checks if CSRF protection is enabled
@@ -159,7 +158,7 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
       }
     }
     catch (Exception e){
-      System.out.println("test");
+      log("Exception:", e.getCause());
     }
     finally {
       getDavSessionProvider().releaseSession(webdavRequest);

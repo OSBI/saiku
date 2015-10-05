@@ -20,7 +20,6 @@ import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
-import org.saiku.service.importer.objects.JujuSource;
 import org.saiku.service.user.UserService;
 
 import java.io.InputStream;
@@ -61,6 +60,8 @@ public interface IDatasourceManager {
   public String getFileData(String file, String username, List<String> roles);
 
   public String getInternalFileData(String file) throws RepositoryException;
+
+  public InputStream getBinaryInternalFileData(String file) throws RepositoryException;
 
   public String saveFile(String path, Object content, String user, List<String> roles);
 
@@ -128,6 +129,4 @@ public interface IDatasourceManager {
   void setEarthquakeDir(String earthquakeDir);
 
   void setEarthquakeSchema(String earthquakeSchema);
-
-  List<JujuSource> getJujuDatasources();
 }

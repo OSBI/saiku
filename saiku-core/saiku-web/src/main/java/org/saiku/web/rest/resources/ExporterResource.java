@@ -379,14 +379,7 @@ public class ExporterResource {
 	ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 	InputStream is = classloader.getResourceAsStream("org/saiku/web/rest/resources/version.properties");
 	try {
-
-	  //input = new FileInputStream("version.properties");
-
-	  // load a properties file
 	  prop.load(is);
-
-	  // get the property value and print it out
-	  System.out.println(prop.getProperty("VERSION"));
 	  version = prop.getProperty("VERSION");
 	} catch (IOException e) {
 	  e.printStackTrace();

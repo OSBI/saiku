@@ -26,7 +26,6 @@ import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuDataSourceException;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.web.rest.objects.DataSourceMapper;
-import org.saiku.service.importer.objects.JujuSource;
 
 import com.qmino.miredot.annotations.ReturnType;
 import com.sun.jersey.core.header.FormDataContentDisposition;
@@ -567,7 +566,6 @@ public class AdminResource {
             prop.load(is);
 
             // get the property value and print it out
-            System.out.println(prop.getProperty("VERSION"));
             version = prop.getProperty("VERSION");
         } catch (IOException ex) {
             log.error("IO Exception when reading input stream", ex);
@@ -658,19 +656,5 @@ public class AdminResource {
             log.error("Could not read log file",e);
             return Response.serverError().entity("Could not read log file").build();
         }
-    }
-
-    @GET
-    @Produces("application/json")
-    @Path("/attacheddatasources")
-    public Response getDataSources(){
-        if(!userService.isAdmin()){
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
-
-
-        List<JujuSource> list = repositoryDatasourceManager.getJujuDatasources();
-        return Response.ok(list).build();
-
     }
 }

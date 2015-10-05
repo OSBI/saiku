@@ -117,6 +117,45 @@
     </repositories>
     <build>
         <plugins>
+      <!--      <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changes-plugin</artifactId>
+                <version>2.11</version>
+                <executions>
+                    <execution>
+                        <id>include-announcement-file</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>announcement-generate</goal>
+                        </goals>
+                        <configuration>
+                            <announcementFile>CHANGES.txt</announcementFile>
+                            <announcementDirectory>${project.build.outputDirectory}/META-INF</announcementDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <issueManagementSystems>
+                        <issueManagementSystem>JIRA</issueManagementSystem>
+                    </issueManagementSystems>
+                    <smtpHost>mail.yourhost.com</smtpHost>
+                    <smtpPort implementation="java.lang.Integer">25</smtpPort>
+                    <mailSender>
+                        <name>Release Notification</name>
+                        <email>build@example.com</email>
+                    </mailSender>
+                    <toAddresses>
+                        <toAddress implementation="java.lang.String">to@example.com</toAddress>
+                    </toAddresses>
+                    <useJql>true</useJql>
+                    <onlyCurrentVersion>true</onlyCurrentVersion>
+                    <resolutionIds>Fixed,Done</resolutionIds>
+                    <statusIds>Closed,Resolved,Done</statusIds>
+                    <columnNames>Type,Key,Summary,Priority,Status,Resolution,Fix Version,Assignee</columnNames>
+                    <webUser>...</webUser>
+                    <webPassword>...</webPassword>
+                </configuration>
+            </plugin>-->
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -233,6 +272,19 @@
             </plugins>
         </pluginManagement>
     </build>
+    <issueManagement>
+        <system>JIRA</system>
+        <url>http://jira.meteorite.bi/browse/SKU</url>
+    </issueManagement>
+    <!--<reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changes-plugin</artifactId>
+                <version>2.11</version>
+            </plugin>
+        </plugins>
+    </reporting>-->
     <profiles>
             <profile>
                 <id>ci</id>
@@ -367,7 +419,7 @@
             <dependency>
                 <groupId>org.olap4j</groupId>
                 <artifactId>olap4j</artifactId>
-                <version>1.2.0</version>
+                <version>TRUNK-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.mongodb</groupId>
@@ -412,7 +464,7 @@
             <dependency>
                 <groupId>org.olap4j</groupId>
                 <artifactId>olap4j-xmla</artifactId>
-                <version>1.2.0</version>
+                <version>TRUNK-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.olap4j</groupId>

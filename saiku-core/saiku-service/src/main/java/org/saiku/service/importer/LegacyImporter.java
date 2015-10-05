@@ -2,9 +2,8 @@ package org.saiku.service.importer;
 
 
 import org.saiku.repository.IRepositoryManager;
-import org.saiku.service.importer.objects.JujuSource;
 
-import java.util.List;
+import java.io.FileInputStream;
 
 public interface LegacyImporter {
 
@@ -15,7 +14,5 @@ public interface LegacyImporter {
     public void importDatasources();
 
     public void importLegacyReports(IRepositoryManager repositoryManager, byte[] bytes);
-
-    public List<JujuSource> importJujuDatasources();
 
 }

@@ -59,7 +59,7 @@ var WorkspaceToolbar = Backbone.View.extend({
                 .addClass('disabled_toolbar').removeClass('on');
             $(args.workspace.el).find('.fields_list .disabled_toolbar').removeClass('disabled_toolbar');
             $(args.workspace.toolbar.el)
-                .find('.new, .open, .save, .edit, .run,.auto,.non_empty,.toggle_fields,.toggle_sidebar,.switch_to_mdx, .mdx')
+                .find('.about, .new, .open, .save, .edit, .run,.auto,.non_empty,.toggle_fields,.toggle_sidebar,.switch_to_mdx, .mdx')
                 .removeClass('disabled_toolbar');
         }
 
@@ -261,7 +261,10 @@ var WorkspaceToolbar = Backbone.View.extend({
         */
     },
 
-
+    about: function() {
+        (new AboutModal()).render().open();
+        return false;
+    },
 
     toggle_sidebar: function() {
         this.workspace.toggle_sidebar();
@@ -364,7 +367,7 @@ var WorkspaceToolbar = Backbone.View.extend({
 						});
                     }
                 } });
-                $(this.workspace.el).find(".drillthrough, .drillthrough_export, .query_scenario, .drillacross").removeClass('on');
+                $(this.workspace.el).find(".drillthrough, .drillthrough_export, .query_scenario, .drillacross, .about").removeClass('on');
             }
         }
 
