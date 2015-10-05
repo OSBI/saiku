@@ -69,9 +69,20 @@
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
 
+	<bean id="userServiceBean" class="org.saiku.service.user.UserService">
+		<property name="datasourceService" ref="datasourceServiceBean"/>
+		<property name="adminRoles">
+			<list>
+				<value>ROLE_ADMIN</value>
+			</list>
+		</property>
+		<property name="sessionService" ref="sessionService"/>
+	</bean>
+
 	<bean id="queryResource" class="org.saiku.plugin.resources.PentahoQueryResource">
 		<property name="thinQueryService" ref="thinQueryBean" />
         <property name="repository" ref="repositoryBean2"/>
+		<property name="userService" ref="userServiceBean"/>
 	</bean>
 	
 	<bean id="sessionService" class="org.saiku.plugin.PentahoSessionService">

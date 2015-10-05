@@ -780,7 +780,7 @@ public class Query2Resource {
     }
 
 
-
-
-
+  public ThinQueryService getThinQueryService() {
+    return thinQueryService;
+  }
 }

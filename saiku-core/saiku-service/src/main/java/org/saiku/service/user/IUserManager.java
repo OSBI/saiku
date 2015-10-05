@@ -31,4 +31,7 @@ public interface IUserManager {
 
     public List<String> getAdminRoles();
 
+    public String getActiveUsername();
+
+
 }
