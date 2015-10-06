@@ -13,11 +13,7 @@
     <artifactId>saiku-core</artifactId>
     <packaging>pom</packaging>
     <name>saiku - core libraries</name>
-<<<<<<< HEAD
     <version>3.7-SNAPSHOT</version>
-=======
-    <version>3.6.2</version>
->>>>>>> master
 
 
     <modules>
