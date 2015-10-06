@@ -87,7 +87,7 @@ var SplashScreen = Backbone.View.extend({
                 //$(self.el).html(self.template()).appendTo($('body'));
                 $(self.el).html(self.template());
 
-                if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenceType != "Open Source License") {
+                if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenseType != "Open Source License") {
 
                     $(self.el).find(".enterprisetoggle").css("visibility", "hidden");
 
