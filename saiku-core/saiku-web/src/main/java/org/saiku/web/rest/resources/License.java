@@ -139,13 +139,15 @@ public class License {
     }
     try {
       List<String> l = getAuthUsers();
-      List<UserList> ul = new ArrayList();
-      int i = 0;
-      for(String l2 : l) {
-        ul.add(new UserList(l2, i));
-        i++;
+      if(l!=null) {
+        List<UserList> ul = new ArrayList();
+        int i = 0;
+        for (String l2 : l) {
+          ul.add(new UserList(l2, i));
+          i++;
+        }
+        return Response.ok().entity(ul).build();
       }
-      return Response.ok().entity(ul).build();
     } catch (SQLException e) {
       e.printStackTrace();
     }

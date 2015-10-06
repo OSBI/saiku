@@ -143,7 +143,10 @@ public class SaikuMondrianHelper {
 		return ((RolapBaseCubeMeasure) m.member).getMeasureGroup().getName();
 	  }
 	  catch(Exception e){
-		return null;
+		return "";
+	  }
+	  catch(Error e2){
+		return "";
 	  }
 	}
 	return null;

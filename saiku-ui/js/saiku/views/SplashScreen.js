@@ -66,7 +66,7 @@ var SplashScreen = Backbone.View.extend({
 
                 if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenseType != "Open Source License") {
 
-                    $(".enterprisetoggle").css("visibility", "hidden");
+                    $(self.el).find(".enterprisetoggle").css("visibility", "hidden");
 
 
 				}
@@ -89,7 +89,7 @@ var SplashScreen = Backbone.View.extend({
 
                 if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenceType != "Open Source License") {
 
-                    $(".enterprisetoggle").css("visibility", "hidden");
+                    $(self.el).find(".enterprisetoggle").css("visibility", "hidden");
 
 
 				}
@@ -157,7 +157,7 @@ var SplashScreen = Backbone.View.extend({
 
                     if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenceType != "Open Source License") {
 
-                        $(".enterprisetoggle").css("visibility", "hidden");
+                        $(self.el).find(".enterprisetoggle").css("visibility", "hidden");
 
 
                     }
@@ -170,7 +170,7 @@ var SplashScreen = Backbone.View.extend({
 
                     if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenceType != "Open Source License") {
 
-                        $(".enterprisetoggle").css("visibility", "hidden");
+                        $(self.el).find(".enterprisetoggle").css("visibility", "hidden");
 
 
                     }

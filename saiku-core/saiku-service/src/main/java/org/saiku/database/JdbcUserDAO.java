@@ -3,6 +3,7 @@ package org.saiku.database;
 import org.saiku.UserDAO;
 import org.saiku.database.dto.SaikuUser;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -52,6 +53,11 @@ public class JdbcUserDAO
 
         String updatesql = prop.getProperty("updateRole");
 
+        String[] roles = user.getRoles();
+        String[] roles2 = {"ROLE_USER"};
+        String[] both = ArrayUtils.addAll(roles2, roles);
+
+        user.setRoles(both);
         getJdbcTemplate().update(updatesql, name, Integer.valueOf(user.getId()));
 
         user.setId(name);
