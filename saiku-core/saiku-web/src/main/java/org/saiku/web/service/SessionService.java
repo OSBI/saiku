@@ -16,9 +16,9 @@
 
 package org.saiku.web.service;
 
-import org.saiku.service.ISessionService;
-
 import org.apache.commons.lang.StringUtils;
+import org.saiku.service.ISessionService;
+import org.saiku.service.util.security.authorisation.AuthorisationPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -32,10 +32,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.context.request.RequestContextHolder;
 
-import java.util.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 
 public class SessionService implements ISessionService {
@@ -43,6 +46,7 @@ public class SessionService implements ISessionService {
 	private static final Logger log = LoggerFactory.getLogger(SessionService.class);
 
 	private AuthenticationManager authenticationManager;
+	private AuthorisationPredicate authorisationPredicate;
 
 	Map<Object,Map<String,Object>> sessionHolder = new HashMap<Object,Map<String,Object>>();
 
@@ -60,6 +64,11 @@ public class SessionService implements ISessionService {
 		this.authenticationManager = auth;
 	}
 
+	public void setAuthorisationPredicate(AuthorisationPredicate authorisationPredicate)
+	{
+		this.authorisationPredicate = authorisationPredicate;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.saiku.web.service.ISessionService#login(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String)
 	 */
@@ -67,11 +76,20 @@ public class SessionService implements ISessionService {
 		if (authenticationManager != null) {
 			authenticate(req, username, password);
 		}
-		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {			
+		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			Object p = auth.getPrincipal();
-			createSession(auth, username, password);
-			return sessionHolder.get(p);
+
+			if(authorisationPredicate.isAuthorised(auth))
+			{
+				Object p = auth.getPrincipal();
+				createSession(auth, username, password);
+				return sessionHolder.get(p);
+			}
+			else
+			{
+				log.info(username + " failed authorisation. Rejecting login");
+				throw new RuntimeException("Authorisation failed for: " + username);
+			}
 		}
 		return new HashMap<String, Object>();
 	}

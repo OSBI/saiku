@@ -25,7 +25,7 @@
 
     </bean>
 
-    <bean id="repoPasswordProviderBean" class="org.saiku.service.util.security.SimplePasswordProvider">
+    <bean id="repoPasswordProviderBean" class="org.saiku.service.util.security.authentication.SimplePasswordProvider">
         <constructor-arg index="0" value="sa!kuanalyt!cs"/>
     </bean>
 
@@ -34,9 +34,13 @@
         <property name="datasourceManager" ref="repositoryDsManager"/>
     </bean>
 
+    <bean id="authorisationPredicate" class="org.saiku.service.util.security.authorisation.MustBeAuthenticatedAuthorisation"/>
+
     <bean id="sessionService" class="org.saiku.web.service.SessionService">
         <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="authorisationPredicate" ref="authorisationPredicate"/>
     </bean>
+
     <bean id="securityContextPersistenceFilter" class="org.springframework.security.web.context.SecurityContextPersistenceFilter"/>
     <bean class="org.saiku.datasources.connection.MondrianVFS" init-method="init" id="mondrianVFS">
         <property name="datasourceManager" ref="repositoryDsManager"/>
