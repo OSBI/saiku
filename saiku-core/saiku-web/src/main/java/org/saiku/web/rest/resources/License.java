@@ -69,9 +69,6 @@ public class License {
   @Produces({ "application/json" })
   @ReturnType("bi.meteorite.license.SaikuLicense")
   public Response getLicense() {
-    if(!userService.isAdmin()){
-      return Response.status(Response.Status.FORBIDDEN).build();
-    }
     try {
       return Response.ok().entity(licenseUtils.getLicense()).build();
     } catch (IOException | RepositoryException | ClassNotFoundException e) {
