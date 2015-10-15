@@ -141,7 +141,7 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 	  logelements.put("username", userService.getActiveUsername());
 	  logelements.put("filename", file);
 
-	  UUID uuid = pah.startAudit("Saiku", "Open Query", this.getClass().getName(), this.toString(), this.toString(), createLogEntry(logelements),
+	  UUID uuid = pah.startAudit("Saiku", "Open Query", this.getClass().getName(), userService.getActiveUsername(), this.toString(), file,
 		  getLogger());
 		try {
 			if (StringUtils.isBlank(file)) {
@@ -165,8 +165,8 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 			}
 		  long end = System.currentTimeMillis();
 
-		  pah.endAudit("Saiku", "Open Query", this.getClass().getName(), this.toString(), this.toString(),
-		  		createLogEntry(logelements), getLogger(), start,
+		  pah.endAudit("Saiku", "Open Query", this.getClass().getName(), userService.getActiveUsername(), this.toString(),
+				  file, getLogger(), start,
 		  		uuid,
 		  		end);
 			return Response.ok(doc.getBytes("UTF-8"), MediaType.TEXT_PLAIN).header(
@@ -176,8 +176,8 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 		catch(Exception e){
 		  long end = System.currentTimeMillis();
 
-		  pah.endAudit("Saiku", "Execute Query", this.getClass().getName(), this.toString(), this.toString(),
-			  createLogEntry(logelements), getLogger(), start,
+		  pah.endAudit("Saiku", "Execute Query", this.getClass().getName(), userService.getActiveUsername(), this.toString(),
+				  file, getLogger(), start,
 			  uuid,
 			  end);
 			log.error("Cannot load file from repository (" + file + ")",e);
