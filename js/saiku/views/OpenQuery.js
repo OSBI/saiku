@@ -143,7 +143,7 @@ var OpenQuery = Backbone.View.extend({
 		Saiku.session.trigger('openQuery:new', { openQuery: this });
 
         if (Settings.REPOSITORY_LAZY) {
-            this.$.find('.search_file').prop('disabled', true);
+            this.$el.find('.search_file').prop('disabled', true);
         }
 
         return this;
