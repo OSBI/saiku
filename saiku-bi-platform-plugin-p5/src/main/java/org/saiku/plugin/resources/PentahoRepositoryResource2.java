@@ -395,7 +395,7 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 				files.add(bf);
 				log.debug("Found file in " + path);
 			} else {
-				files = root.listFiles(path, txtFilter, 0, true, hidden);
+				files = root.listFiles(path, txtFilter, 1, true, hidden);
 				log.debug("Found files in " + path + " : " + files.size());
 			}
 		}
