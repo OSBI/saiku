@@ -47,7 +47,14 @@ public class SaikuOlapConnection implements ISaikuConnection {
   }
 
   public boolean connect() throws Exception {
-    return connect( properties );
+    try
+   {
+    if (olapConnection.isClosed())
+    { 
+     connect(); 
+    }
+   } catch (Exception e) {}
+    return olapConnection;
   }
 
   private String decryptPassword(String password)
