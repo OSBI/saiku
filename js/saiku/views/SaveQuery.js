@@ -153,6 +153,7 @@ var SaveQuery = Modal.extend({
     fetch_lazyload: function(target, path) {
         var repositoryLazyLoad = new RepositoryLazyLoad({}, { dialog: this, folder: target, path: path });
         repositoryLazyLoad.fetch();
+        Saiku.ui.block('Loading...');
     },
     
     template_repository_folder_lazyload: function(folder, repository) {
@@ -165,6 +166,7 @@ var SaveQuery = Modal.extend({
     },
 
     populate_lazyload: function(folder, repository) {
+        Saiku.ui.unblock();
         this.template_repository_folder_lazyload(folder, repository);
     },
 
