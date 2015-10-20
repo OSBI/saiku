@@ -58,6 +58,7 @@
 -<script type="text/javascript" src="js/saiku/models/Plugin.js"></script>
 -<script type="text/javascript" src="js/saiku/models/Settings.js"></script>
 -<script type="text/javascript" src="js/saiku/models/License.js"></script>
+-<script type="text/javascript" src="js/saiku/models/DataSources.js"></script>
 -<script type="text/javascript" src="js/saiku/Saiku.js"></script>
 -<script type="text/javascript" src="js/saiku/views/DateFilterModal.js"></script>
 -<script type="text/javascript" src="js/saiku/adapters/SaikuServer.js"></script>
