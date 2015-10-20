@@ -57,15 +57,25 @@ var SaveQuery = Modal.extend({
             }
         }
         this.query = args.query;
+        // this.message = _.template(
+        //     "<form id='save_query_form'>" +
+        //     "<label for='name' class='i18n'>File:</label>&nbsp;" +
+        //     "<input type='text' name='name' value='<%= name %>' />" +
+        //     "<div class='RepositoryObjects'><span class='i18n'>Loading...</span></div>" +
+        //     "<br />"+
+        //     "</form>"+
+        //     '<div class="box-search-file" style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
+        //     ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>')({ name: full_path });
+
         this.message = _.template(
             "<form id='save_query_form'>" +
+            '<div class="box-search-file" style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
+            ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>' +
+            "<div class='RepositoryObjects'><span class='i18n'>Loading...</span></div>" +
             "<label for='name' class='i18n'>File:</label>&nbsp;" +
             "<input type='text' name='name' value='<%= name %>' />" +
-            "<div class='RepositoryObjects'><span class='i18n'>Loading...</span></div>" +
             "<br />"+
-            "</form>"+
-            '<div class="box-search-file" style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
-            ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>')({ name: full_path });
+            "</form>")({ name: full_path });
 
         _.extend(this.options, {
             title: "Save query"
@@ -249,31 +259,36 @@ var SaveQuery = Modal.extend({
 		var self = this;
 
         var name = $(this.el).find('input[name="name"]').val();
-        if (name !== null && name.length > 0) {
-			this.repository.fetch({success: function(collection, response){
+        if (this.folder_name !== null && this.folder_name !== undefined && this.folder_name.length > 0) {
+            if (name !== null && name.length > 0) {
+    			this.repository.fetch({success: function(collection, response){
 
 
-				var paths=[];
-				paths.push.apply(paths, self.get_files(response));
-				if(paths.indexOf(name)> -1 && self.query.get("name")!=name){
-					new OverwriteModal({name: name, foldername: foldername, parent: self}).render().open();
-				}
-				else{
-					 self.query.set({ name: name, folder: foldername });
-					 self.query.trigger('query:save');
-					 self.copy_to_repository();
-					 event.stopPropagation();
-					 event.preventDefault();
-					 return false;
-				}
+    				var paths=[];
+    				paths.push.apply(paths, self.get_files(response));
+    				if(paths.indexOf(name)> -1 && self.query.get("name")!=name){
+    					new OverwriteModal({name: name, foldername: foldername, parent: self}).render().open();
+    				}
+    				else{
+    					 self.query.set({ name: name, folder: foldername });
+    					 self.query.trigger('query:save');
+    					 self.copy_to_repository();
+    					 event.stopPropagation();
+    					 event.preventDefault();
+    					 return false;
+    				}
 
-				}});
-
-
+    				}});
 
 
-        } else {
-            alert("You need to enter a name!");
+
+
+            } else {
+                alert("You need to enter a name!");
+            }
+        }
+        else {
+            alert("You need select a folder!");
         }
 
 return false;
