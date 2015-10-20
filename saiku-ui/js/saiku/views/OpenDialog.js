@@ -42,10 +42,16 @@ var OpenDialog = Modal.extend({
         // Append events
         var self = this;
         var name = "";
-        this.message =  "<br/><b><div class='query_name'><span class='i18n'>Please select a file.....</span></div></b><br/><div class='RepositoryObjects'>Loading....</div>" +
+        // this.message =  "<br/><b><div class='query_name'><span class='i18n'>Please select a file.....</span></div></b><br/><div class='RepositoryObjects'>Loading....</div>" +
+        //                 "<br>" +
+        //                 '<div class="box-search-file" style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
+        //                 ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>';
+
+        this.message =  '<div class="box-search-file" style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
+                        ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>' +
+                        "<div class='RepositoryObjects'>Loading....</div>" +
                         "<br>" +
-                        '<div class="box-search-file" style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
-                        ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>';
+                        "<b><div class='query_name'><span class='i18n'>Please select a file.....</span></div></b><br/>";
 
         if (Settings.ALLOW_IMPORT_EXPORT) {
             this.message += "<span class='export_zip'> </span> <b><span class='i18n'>Import or Export Files for Folder</span>: </b> <span class='i18n zip_folder'>< Select Folder... ></span>" +
@@ -151,6 +157,7 @@ var OpenDialog = Modal.extend({
     fetch_lazyload: function(target, path) {
         var repositoryLazyLoad = new RepositoryLazyLoad({}, { dialog: this, folder: target, path: path });
         repositoryLazyLoad.fetch();
+        Saiku.ui.block('Loading...');
     },
     
     template_repository_folder_lazyload: function(folder, repository) {
@@ -163,6 +170,7 @@ var OpenDialog = Modal.extend({
     },
 
     populate_lazyload: function(folder, repository) {
+        Saiku.ui.unblock();
         this.template_repository_folder_lazyload(folder, repository);
     },
 
