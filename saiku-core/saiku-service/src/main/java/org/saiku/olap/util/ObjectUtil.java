@@ -41,6 +41,7 @@ import java.util.*;
 import mondrian.olap.Annotation;
 import mondrian.olap4j.Checker;
 import mondrian.olap4j.LevelInterface;
+import mondrian.olap4j.SaikuMondrianHelper;
 
 
 /**
@@ -271,18 +272,25 @@ public class ObjectUtil {
 
   @NotNull
   public static SaikuMember convert(@NotNull Member m) {
-    return new SaikuMember(
+     return new SaikuMember(
         m.getName(),
         m.getUniqueName(),
         m.getCaption(),
         m.getDescription(),
         m.getDimension().getUniqueName(),
         m.getHierarchy().getUniqueName(),
-        m.getLevel().getUniqueName());
+        m.getLevel().getUniqueName(),
+        m.isCalculated());
   }
 
   @NotNull
-  public static SaikuMember convertMeasure(@NotNull Measure m) {
+  public static SaikuMeasure convertMeasure(@NotNull Measure m) {
+    Map<String, Property> props2 = m.getProperties().asMap();
+
+    NamedList<Property> props = m.getProperties();
+    //String f = m.getPropertyValue(Property.);
+    String f = SaikuMondrianHelper.getMeasureGroup(m);
+
     return new SaikuMeasure(
         m.getName(),
         m.getUniqueName(),
@@ -292,7 +300,8 @@ public class ObjectUtil {
         m.getHierarchy().getUniqueName(),
         m.getLevel().getUniqueName(),
         m.isVisible(),
-        m.isCalculated() | m.isCalculatedInQuery());
+        m.isCalculated() | m.isCalculatedInQuery(),
+        f);
 
   }
 

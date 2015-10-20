@@ -20,7 +20,18 @@
 
   <bean id="api" class="org.saiku.plugin.resources.ExtendedJAXRSPluginServlet"/>
 
-<bean id="contentAccessFactory" scope="prototype" class="pt.webdetails.cpf.PentahoPluginEnvironment" />  
+<bean id="contentAccessFactory" scope="prototype" class="pt.webdetails.cpf.PentahoPluginEnvironment" />
+
+	<bean id="userServiceBean" class="org.saiku.service.user.UserService">
+		<property name="datasourceService" ref="datasourceServiceBean"/>
+		<property name="iDatasourceManager" ref="pentahoDsManager"/>
+		<property name="adminRoles">
+			<list>
+				<value>Administrator</value>
+			</list>
+		</property>
+		<property name="sessionService" ref="sessionService"/>
+	</bean>
 
 	<bean id="pentahoDsManager" class="org.saiku.plugin.PentahoDatasourceManager">
 		<property name="datasourceResolverClass" value="org.saiku.plugin.PentahoDataSourceResolver" />
@@ -50,20 +61,23 @@
 	</bean>
 
 
-	<bean id="datasourceResourceBean" class="org.saiku.plugin.resources.PentahoDatasourceResource">
+	<!--<bean id="datasourceResourceBean" class="org.saiku.plugin.resources.PentahoDatasourceResource">
 		<property name="datasourceService" ref="datasourceServiceBean" />
-	</bean>
+	</bean>-->
 
 	<bean id="olapDiscoverBean" class="org.saiku.plugin.resources.PentahoDiscoverResource">
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
 
+
 	<bean id="queryResource" class="org.saiku.plugin.resources.PentahoQueryResource">
 		<property name="thinQueryService" ref="thinQueryBean" />
         <property name="repository" ref="repositoryBean2"/>
+		<property name="userService" ref="userServiceBean"/>
 	</bean>
 	
 	<bean id="sessionService" class="org.saiku.plugin.PentahoSessionService">
+		<property name="userService" ref="userServiceBean"/>
 	</bean>
 	
 	
@@ -71,7 +85,9 @@
     		<property name="sessionService" ref="sessionService" />
 	</bean>
 
-  	<bean id="repositoryBean2" class="org.saiku.plugin.resources.PentahoRepositoryResource2" />
+  	<bean id="repositoryBean2" class="org.saiku.plugin.resources.PentahoRepositoryResource2">
+		<property name="userService" ref="userServiceBean"/>
+	</bean>
 
   	 <bean id="tagRepositoryBean" class="org.saiku.plugin.resources.PentahoTagRepositoryResource">
 		<property name="olapQueryService" ref="olapQueryBean" />
@@ -119,7 +135,18 @@
 	<property name="canExport" value="true"/>		
 	<pen:publish as-type="INTERFACES"/>
   </bean>
-	
-<bean id="startupBean" scope="singleton" class="org.saiku.web.rest.util.StartupResource"  init-method="init"  />
+
+
+	<bean id="licenseUtilsBean" class="org.saiku.LicenseUtils" init-method="init">
+	</bean>
+
+
+	<bean id="licenseBean" class="org.saiku.plugin.resources.PentahoLicenseResource">
+		<property name="licenseUtils" ref="licenseUtilsBean"/>
+		<property name="userService" ref="userServiceBean"/>
+	</bean>
+
+
+	<bean id="startupBean" scope="singleton" class="org.saiku.web.rest.util.StartupResource"  init-method="init"  />
 	
 </beans>

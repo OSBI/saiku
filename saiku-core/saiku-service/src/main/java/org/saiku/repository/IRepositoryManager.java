@@ -19,10 +19,11 @@ package org.saiku.repository;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.service.user.UserService;
 
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+
+import javax.jcr.RepositoryException;
 
 /**
  * Repository Manager Interface
@@ -59,9 +60,13 @@ public interface IRepositoryManager {
 
     javax.jcr.Node saveInternalFile(Object file, String path, String type) throws RepositoryException;
 
+    javax.jcr.Node saveBinaryInternalFile(InputStream file, String path, String type) throws RepositoryException;
+
     String getFile(String s, String username, List<String> roles) throws RepositoryException;
 
     String getInternalFile(String s) throws RepositoryException;
+
+    InputStream getBinaryInternalFile(String s) throws RepositoryException;
 
     void removeInternalFile(String s) throws RepositoryException;
 
@@ -77,7 +82,11 @@ public interface IRepositoryManager {
 
     RepositoryFile getFile(String fileUrl);
 
-    List<IRepositoryObject> getAllFiles(String type, String username, List<String> roles) throws RepositoryException;
+    List<IRepositoryObject> getAllFiles(List<String> type, String username, List<String> roles) throws
+        RepositoryException;
+
+    List<IRepositoryObject> getAllFiles(List<String> type, String username, List<String> roles, String path) throws
+        RepositoryException;
 
     void deleteFile(String datasourcePath);
 
@@ -90,4 +99,5 @@ public interface IRepositoryManager {
     void createFileMixin(String type) throws RepositoryException;
 
     Object getRepositoryObject();
+
 }

@@ -224,7 +224,8 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 		{
 			OlapConnection c = (OlapConnection) con.getConnection();
 
-            System.out.println("Setting role to datasource:" + datasource.getName() + " role:" + roleName);
+
+		  	log.info("Setting role to datasource:" + datasource.getName() + " role:" + roleName);
 			try {
 				if (StringUtils.isNotBlank(roleName) && SaikuMondrianHelper.isMondrianConnection(c) && roleName.split(",").length > 1) {
 					SaikuMondrianHelper.setRoles(c, roleName.split(","));

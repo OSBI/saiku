@@ -35,6 +35,7 @@ import org.pentaho.platform.plugin.action.mondrian.catalog.IMondrianCatalogServi
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
+import java.io.InputStream;
 import java.util.*;
 
 import mondrian.olap.MondrianProperties;
@@ -293,6 +294,30 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         return null;
     }
 
+    public String getEarthquakeUrl() {
+        return null;
+    }
+
+    public String getEarthquakeDir() {
+        return null;
+    }
+
+    public String getEarthquakeSchema() {
+        return null;
+    }
+
+    public void setEarthquakeUrl(String earthquakeUrl) {
+
+    }
+
+    public void setEarthquakeDir(String earthquakeDir) {
+
+    }
+
+    public void setEarthquakeSchema(String earthquakeSchema) {
+
+    }
+
     public void setACL(String a, String b, String c, List<String> d) {
 
     }
@@ -309,7 +334,11 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         throw new UnsupportedOperationException();
     }
 
-    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
+    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles) {
+        throw new UnsupportedOperationException();
+    }
+
+    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles, String path) {
         throw new UnsupportedOperationException();
     }
 
@@ -326,6 +355,14 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         return null;
     }
 
+    public String saveInternalFile(String path, Object content, String type) {
+        return null;
+    }
+
+    public String saveBinaryInternalFile(String path, InputStream content, String type) {
+        return null;
+    }
+
     public String saveInternalFile(String path, String content, String type) {
         return null;
     }
@@ -336,6 +373,14 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
     public String getInternalFileData(String file) {
         throw new UnsupportedOperationException();
+    }
+
+    public InputStream getBinaryInternalFileData(String file) throws javax.jcr.RepositoryException {
+        return null;
+    }
+
+    public String saveFile(String path, Object content, String user, List<String> roles) {
+        return null;
     }
 
     public String getFileData(String file, String username, List<String> roles) {

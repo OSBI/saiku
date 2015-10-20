@@ -48,7 +48,11 @@ public class SessionResource  {
 	private ISessionService sessionService;
     private UserService userService;
 
-    public void setSessionService(ISessionService ss) {
+  public ISessionService getSessionService() {
+	return sessionService;
+  }
+
+  public void setSessionService(ISessionService ss) {
 		this.sessionService = ss;
 	}
 
@@ -72,14 +76,40 @@ public class SessionResource  {
 			@FormParam("password") String password) 
 	{
 		try {
-			sessionService.login(req, username, password);
-			return Response.ok().build();
+		  sessionService.login(req, username, password);
+		  return Response.ok().build();
 		}
 		catch (Exception e) {
 			log.debug("Error logging in:" + username, e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getLocalizedMessage()).build();
 		}
 	}
+
+  /**
+   * Clear logged in users session.
+   * @summary Login
+   * @param req Servlet request
+   * @param username Username
+   * @param password Password
+   * @return A 200 response
+   */
+  @POST
+  @Path("/clear")
+  @Consumes("application/x-www-form-urlencoded")
+  public Response clearSession(
+	  @Context HttpServletRequest req,
+	  @FormParam("username") String username,
+	  @FormParam("password") String password)
+  {
+	try {
+	  sessionService.clearSessions(req, username, password);
+	  return Response.ok("Session cleared").build();
+	}
+	catch (Exception e) {
+	  log.debug("Error clearing sessions for:" + username, e);
+	  return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getLocalizedMessage()).build();
+	}
+  }
 
   /**
    * Get the session in the request

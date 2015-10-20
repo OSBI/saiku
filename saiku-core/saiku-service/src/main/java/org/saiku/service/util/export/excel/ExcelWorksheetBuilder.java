@@ -294,7 +294,7 @@ public class ExcelWorksheetBuilder {
 
     sheetRow = summarySheet.createRow((int) row);
     cell = sheetRow.createCell(0);
-    cell.setCellValue("Export made using Saiku OLAP client.");
+    cell.setCellValue(SaikuProperties.webExportExcelPoweredBy);
     summarySheet.addMergedRegion(new CellRangeAddress(row, row, 0, 10));
 
     // Autosize columns for summary sheet
@@ -495,7 +495,7 @@ public class ExcelWorksheetBuilder {
           manageColumnHeaderDisplay(sheetRow, x, y, currentHeader);
 
           if (!isLastHeaderRow) {
-            if (!nextHeader.equals(currentHeader) || isLastColumn) {
+            if (nextHeader!=null && !nextHeader.equals(currentHeader) || isLastColumn) {
               manageCellsMerge(y,
                 x + startRow,
                 mergedCellsWidth + 1,
@@ -503,7 +503,7 @@ public class ExcelWorksheetBuilder {
                 mergedItemsConfig);
               startSameFromPos = y+1;
               mergedCellsWidth = 0;
-            } else if (nextHeader.equals(currentHeader)) {
+            } else if (nextHeader != null && nextHeader.equals(currentHeader)) {
               mergedCellsWidth++;
             }
           }

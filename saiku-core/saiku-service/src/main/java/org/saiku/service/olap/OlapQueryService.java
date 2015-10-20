@@ -157,7 +157,6 @@ public class OlapQueryService implements Serializable {
 
 	public void cancel(String queryName) {
 		try {
-			//			System.out.println("Cancel: ID " + Thread.currentThread().getId() + " Name: " + Thread.currentThread().getName());
 			IQuery q = getIQuery(queryName);
 			q.cancel();
 		} catch (Exception e) {
@@ -187,7 +186,6 @@ public class OlapQueryService implements Serializable {
 	public CellDataSet execute(String queryName, ICellSetFormatter formatter) {
 		String runId = "runId:" + ID_GENERATOR.getAndIncrement();
 		try {
-			//			System.out.println("Execute: ID " + Thread.currentThread().getId() + " Name: " + Thread.currentThread().getName());
 			IQuery query = getIQuery(queryName);
 			OlapConnection con = olapDiscoverService.getNativeConnection(query.getSaikuCube().getConnection());
 
@@ -686,11 +684,11 @@ public class OlapQueryService implements Serializable {
 				s = con.createScenario();
 				query.setScenario(s);
 				con.setScenario(s);
-				System.out.println("Created scenario:" + s + " : cell:" + position + " value" + value);
+			  	log.info("Created scenario:" + s + " : cell:" + position + " value" + value);
 			} else {
 				s = query.getScenario();
 				con.setScenario(s);
-				System.out.println("Using scenario:" + s + " : cell:" + position + " value" + value);
+			  	log.info("Using scenario:" + s + " : cell:" + position + " value" + value);
 
 			}
 
@@ -1319,9 +1317,6 @@ public class OlapQueryService implements Serializable {
 			}
 			Long end = (new Date()).getTime();
 			
-//			System.out.println("Header Time: " + new Double(header - start).intValue());
-//			System.out.println("Body   Time: " + new Double(body - header).intValue());
-//			System.out.println("Rest   Time: " + new Double(end- body).intValue());
 			members = ObjectUtil.convert2Simple(mset);
 			Collections.sort(members, new SaikuUniqueNameComparator());
 			log.debug("Create Filters: Found members in the result or query: " + members.size());

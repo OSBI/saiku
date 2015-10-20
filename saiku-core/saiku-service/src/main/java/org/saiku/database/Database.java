@@ -5,20 +5,26 @@ import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.importer.LegacyImporter;
 import org.saiku.service.importer.LegacyImporterImpl;
 
+import org.apache.commons.io.FileUtils;
 import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
+
 
 /**
  * Created by bugg on 01/05/14.
@@ -30,7 +36,7 @@ public class Database {
 
     private JdbcDataSource ds;
     private static final Logger log = LoggerFactory.getLogger(Database.class);
-
+    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     IDatasourceManager dsm;
     public Database() {
 
@@ -52,6 +58,7 @@ public class Database {
         initDB();
         loadUsers();
         loadFoodmart();
+        loadEarthquakes();
         loadLegacyDatasources();
     }
 
@@ -111,9 +118,89 @@ public class Database {
                 try {
                     dsm.addDatasource(ds);
                 } catch (Exception e) {
-                    log.error("Can't add data source to repo",e);
+                    log.error("Can't add data source to repo", e);
                 }
+
+
+
             } else {
+                Statement statement = c.createStatement();
+
+                statement.executeQuery("select 1");
+            }
+        }
+    }
+
+    private void loadEarthquakes() throws SQLException {
+        String url = servletContext.getInitParameter("earthquakes.url");
+        String user = servletContext.getInitParameter("earthquakes.user");
+        String pword = servletContext.getInitParameter("earthquakes.password");
+
+        if (url != null && !url.equals("${earthquake_url}")) {
+            JdbcDataSource ds3 = new JdbcDataSource();
+            ds3.setURL(dsm.getEarthquakeUrl());
+            ds3.setUser(user);
+            ds3.setPassword(pword);
+
+            Connection c = ds3.getConnection();
+            DatabaseMetaData dbm = c.getMetaData();
+            ResultSet tables = dbm.getTables(null, null, "earthquakes", null);
+            String schema = null;
+
+            if (!tables.next()) {
+                Statement statement = c.createStatement();
+
+                statement.execute("RUNSCRIPT FROM '" + dsm.getEarthquakeDir() + "/earthquakes.sql'");
+                statement.executeQuery("select 1");
+
+
+                try {
+                    schema = readFile(dsm.getEarthquakeSchema(), StandardCharsets.UTF_8);
+                } catch (IOException e) {
+                    log.error("Can't read schema file", e);
+                }
+                try {
+                    dsm.addSchema(schema, "/datasources/earthquakes.xml", null);
+                } catch (Exception e) {
+                    log.error("Can't add schema file to repo", e);
+                }
+                Properties p = new Properties();
+                p.setProperty("advanced", "true");
+
+                p.setProperty("driver", "mondrian.olap4j.MondrianOlap4jDriver");
+                p.setProperty("location",
+                    "jdbc:mondrian:Jdbc=jdbc:h2:" + dsm.getEarthquakeDir() + "/earthquakes;MODE=MySQL;" +
+                    "Catalog=mondrian:///datasources/earthquakes.xml;JdbcDrivers=org.h2.Driver");
+                p.setProperty("username", "sa");
+                p.setProperty("password", "");
+                p.setProperty("id", "4432dd20-fcae-11e3-a3ac-0800200c9a67");
+                SaikuDatasource ds = new SaikuDatasource("earthquakes", SaikuDatasource.Type.OLAP, p);
+
+                try {
+                    dsm.addDatasource(ds);
+                } catch (Exception e) {
+                    log.error("Can't add data source to repo", e);
+                }
+
+                try {
+                    dsm.saveInternalFile("/homes/home:admin/sample_reports", null, null);
+                    String exts[] = {"saiku"};
+                    Iterator<File> files =
+                        FileUtils.iterateFiles(new File("../../data/sample_reports"), exts, false);
+
+                    while(files.hasNext()){
+                        File f = files.next();
+                        dsm.saveInternalFile("/homes/home:admin/sample_reports/"+f.getName(),FileUtils.readFileToString(f
+                                .getAbsoluteFile()), null);
+                        files.remove();
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            else {
                 Statement statement = c.createStatement();
 
                 statement.executeQuery("select 1");
@@ -135,7 +222,7 @@ public class Database {
         statement.execute("CREATE TABLE IF NOT EXISTS LOG(time TIMESTAMP AS CURRENT_TIMESTAMP NOT NULL, log CLOB);");
 
         statement.execute("CREATE TABLE IF NOT EXISTS USERS(user_id INT(11) NOT NULL AUTO_INCREMENT, " +
-                "username VARCHAR(45) NOT NULL UNIQUE, password VARCHAR(45) NOT NULL, email VARCHAR(100), " +
+                "username VARCHAR(45) NOT NULL UNIQUE, password VARCHAR(100) NOT NULL, email VARCHAR(100), " +
                 "enabled TINYINT NOT NULL DEFAULT 1, PRIMARY KEY(user_id));");
 
         statement.execute("CREATE TABLE IF NOT EXISTS USER_ROLES (\n"
@@ -164,6 +251,44 @@ public class Database {
             statement.execute("INSERT INTO LOG(log) VALUES('insert users');");
         }
 
+        String encrypt = servletContext.getInitParameter("db.encryptpassword");
+        if(encrypt.equals("true") && !checkUpdatedEncyption()){
+            log.debug("Encrypting User Passwords");
+            updateForEncyption();
+            log.debug("Finished Encrypting Passwords");
+        }
+
+
+    }
+
+    public boolean checkUpdatedEncyption() throws SQLException{
+        Connection c = ds.getConnection();
+
+        Statement statement = c.createStatement();
+        ResultSet result = statement.executeQuery("select count(*) as c from LOG where log = 'update passwords'");
+        result.next();
+        return result.getInt("c") != 0;
+    }
+    public void updateForEncyption() throws SQLException {
+        Connection c = ds.getConnection();
+
+        Statement statement = c.createStatement();
+        statement.execute("ALTER TABLE users ALTER COLUMN password VARCHAR(100) DEFAULT NULL");
+
+        ResultSet result = statement.executeQuery("select username, password from users");
+
+        while(result.next()){
+            statement = c.createStatement();
+
+            String pword = result.getString("password");
+            String hashedPassword = passwordEncoder.encode(pword);
+            String sql = "UPDATE users " +
+                        "SET password = '"+hashedPassword+"' WHERE username = '"+result.getString("username")+"'";
+            statement.executeUpdate(sql);
+        }
+        statement = c.createStatement();
+
+        statement.execute("INSERT INTO LOG(log) VALUES('update passwords');");
 
     }
 
@@ -181,5 +306,15 @@ public class Database {
             statement.execute("INSERT INTO LOG(log) VALUES('insert datasources');");
 
         }
+    }
+
+
+    public List<String> getUsers()  throws SQLException  {
+        //Stub for EE.
+        return null;
+    }
+
+    public void addUsers(List<String> l)  throws SQLException  {
+        //Stub for EE.
     }
 }

@@ -25,13 +25,16 @@ import org.saiku.service.importer.LegacyImporterImpl;
 import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
 
+import org.saiku.service.util.security.PasswordProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
 /**
@@ -48,11 +51,19 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String foodmartdir;
     private String foodmartschema;
     private String foodmarturl;
+    private PasswordProvider repopasswordprovider;
+    private String oldpassword;
+    private String earthquakeurl;
+    private String earthquakedir;
+    private String earthquakeschema;
+    private String defaultRole;
 
     public void load() {
-        irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir);
+        irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopasswordprovider.getPassword(),
+            oldpassword, defaultRole);
         try {
             irm.start(userService);
+            this.saveInternalFile("/etc/.repo_version", "d20f0bea-681a-11e5-9d70-feff819cdc9f", null);
         } catch (RepositoryException e) {
             log.error("Could not start repo", e);
         }
@@ -70,12 +81,24 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 for (DataSource file : exporteddatasources) {
                     if (file.getName() != null && file.getType() != null) {
                         Properties props = new Properties();
-                        props.put("driver", file.getDriver());
-                        props.put("location", file.getLocation());
-                        props.put("username", file.getUsername());
-                        props.put("password", file.getPassword());
-                        props.put("path", file.getPath());
-                        props.put("id", file.getId());
+                        if(file.getDriver()!= null) {
+                            props.put("driver", file.getDriver());
+                        }
+                        if(file.getLocation()!=null) {
+                            props.put("location", file.getLocation());
+                        }
+                        if(file.getUsername()!=null) {
+                            props.put("username", file.getUsername());
+                        }
+                        if(file.getPassword()!=null) {
+                            props.put("password", file.getPassword());
+                        }
+                        if(file.getPath()!=null) {
+                            props.put("path", file.getPath());
+                        }
+                        if(file.getId()!=null) {
+                            props.put("id", file.getId());
+                        }
                         if(file.getSecurityenabled()!=null) {
                           props.put("security.enabled", file.getSecurityenabled());
                         }
@@ -227,12 +250,19 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     }
 
-    public String saveFile(String path, String content, String user, List<String> roles) {
+    public InputStream getBinaryInternalFileData(String file) throws RepositoryException {
+
+        return irm.getBinaryInternalFile(file);
+
+
+    }
+
+    public String saveFile(String path, Object content, String user, List<String> roles) {
         try {
             irm.saveFile(content, path, user, "nt:saikufiles", roles);
             return "Save Okay";
         } catch (RepositoryException e) {
-            log.error("Save Failed",e );
+            log.error("Save Failed", e);
             return "Save Failed: " + e.getLocalizedMessage();
         }
     }
@@ -257,7 +287,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         }
     }
 
-    public String saveInternalFile(String path, String content, String type) {
+    public String saveInternalFile(String path, Object content, String type) {
         try {
             irm.saveInternalFile(content, path, type);
             return "Save Okay";
@@ -266,7 +296,16 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             return "Save Failed: " + e.getLocalizedMessage();
         }
     }
-    
+
+    public String saveBinaryInternalFile(String path, InputStream content, String type) {
+        try {
+            irm.saveBinaryInternalFile(content, path, type);
+            return "Save Okay";
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+            return "Save Failed: " + e.getLocalizedMessage();
+        }
+    }
     public void removeInternalFile(String filePath) {
         try{
             irm.removeInternalFile(filePath);
@@ -276,7 +315,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         }
     }
 
-    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
+    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles) {
         try {
             return irm.getAllFiles(type, username, roles);
         } catch (RepositoryException e) {
@@ -284,6 +323,16 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         }
         return null;
     }
+
+    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles, String path) {
+        try {
+            return irm.getAllFiles(type, username, roles, path);
+        } catch (RepositoryException e) {
+            log.error("Get failed", e);
+        }
+        return null;
+    }
+
 
     public void createUser(String username){
         try {
@@ -359,6 +408,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 return true;
             }
             return false;
+        } catch(PathNotFoundException e) {
+            return false;
         } catch (RepositoryException e) {
             log.error("could not get home directory");
         }
@@ -412,6 +463,52 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public String getFoodmarturl() {
         return foodmarturl;
+    }
+
+    public String getEarthquakeUrl() {
+        return earthquakeurl;
+    }
+
+    public String getEarthquakeDir() {
+        return earthquakedir;
+    }
+
+    public String getEarthquakeSchema() {
+        return earthquakeschema;
+    }
+
+
+    public void setEarthquakeUrl(String earthquakeurl) {
+        this.earthquakeurl = earthquakeurl;
+    }
+
+    public void setEarthquakeDir(String earthquakedir) {
+        this.earthquakedir = earthquakedir;
+    }
+
+    public void setEarthquakeSchema(String earthquakeschema) {
+        this.earthquakeschema = earthquakeschema;
+    }
+
+    public void setRepoPasswordProvider(PasswordProvider passwordProvider){
+        this.repopasswordprovider = passwordProvider;
+    }
+
+    public PasswordProvider getRepopasswordprovider(){
+        return repopasswordprovider;
+    }
+
+    public void setOldRepoPassword(String password){
+        this.oldpassword = password;
+    }
+
+    public String getOldRepopassword(){
+        return oldpassword;
+    }
+
+    public void setDefaultRole(String defaultRole)
+    {
+        this.defaultRole = defaultRole;
     }
 }
 

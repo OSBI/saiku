@@ -23,6 +23,10 @@
         <param-value></param-value>
     </context-param>
     <context-param>
+        <param-name>db.encryptpassword</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
         <param-name>foodmart.url</param-name>
         <param-value>jdbc:h2:../../data/foodmart;MODE=MySQL</param-value>
     </context-param>
@@ -32,6 +36,18 @@
     </context-param>
     <context-param>
         <param-name>foodmart.password</param-name>
+        <param-value></param-value>
+    </context-param>
+    <context-param>
+        <param-name>earthquakes.url</param-name>
+        <param-value>jdbc:h2:../../data/earthquakes;MODE=MySQL</param-value>
+    </context-param>
+    <context-param>
+        <param-name>earthquakes.user</param-name>
+        <param-value>sa</param-value>
+    </context-param>
+    <context-param>
+        <param-name>earthquakes.password</param-name>
         <param-value></param-value>
     </context-param>
     <context-param>
@@ -65,6 +81,7 @@
     <listener>
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
+
 
     <!-- ====================================================================== -->
     <!-- W E B D A V S E R V L E T -->

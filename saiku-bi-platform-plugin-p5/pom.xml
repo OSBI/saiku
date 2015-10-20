@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <artifactId>saiku</artifactId>
-        <groupId>org.saiku</groupId>
-        <version>3.1.9</version>
+        <groupId>org.saikuanalytics</groupId>
+        <version>3.6.4</version>
     </parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>saiku-bi-platform-plugin-p5</artifactId>
 	<packaging>jar</packaging>
-	<version>3.1.9</version>
+	<version>3.6.4</version>
 	<name>saiku biserver plugin</name>
 
 	<build>
@@ -18,6 +18,8 @@
 				<filtering>true</filtering>
 				<includes>
 					<include>**/*.xml</include>
+					<include>**/*.js</include>
+
 				</includes>
 			</resource>
 		</resources>
@@ -40,32 +42,32 @@
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
                                 </artifactItem>
 								<artifactItem>
-									<groupId>org.saiku</groupId>
+									<groupId>org.saikuanalytics</groupId>
 									<artifactId>saiku-ui</artifactId>
 									<type>war</type>
 									<outputDirectory>target/stage</outputDirectory>
 								</artifactItem>
                                 <artifactItem>
-                                    <groupId>org.saiku</groupId>
+                                    <groupId>org.saikuanalytics</groupId>
                                     <artifactId>saiku-web</artifactId>
                                     <type>jar</type>
                                     <classifier>sources</classifier>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
                                 </artifactItem>
 								<artifactItem>
-									<groupId>org.saiku</groupId>
+									<groupId>org.saikuanalytics</groupId>
 									<artifactId>saiku-service</artifactId>
 									<type>jar</type>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
-									<groupId>org.saiku</groupId>
+									<groupId>org.saikuanalytics</groupId>
 									<artifactId>saiku-web</artifactId>
 									<type>jar</type>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
-									<groupId>org.saiku</groupId>
+									<groupId>org.saikuanalytics</groupId>
 									<artifactId>saiku-olap-util</artifactId>
 									<type>jar</type>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
@@ -87,7 +89,7 @@
 									<artifactId>mondrian</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
-								<artifactItem>
+								<!--<artifactItem>
 									<groupId>org.olap4j</groupId>
 									<artifactId>olap4j-xmla</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
@@ -96,7 +98,7 @@
 									<groupId>org.olap4j</groupId>
 									<artifactId>olap4j</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
-								</artifactItem>
+								</artifactItem>-->
 								<artifactItem>
 									<groupId>eigenbase</groupId>
 									<artifactId>eigenbase-properties</artifactId>
@@ -216,7 +218,7 @@
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.apache.pdfbox</groupId>
-									<artifactId>pdfbox</artifactId>
+									<artifactId>pdfbox-app</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
@@ -229,12 +231,6 @@
                                     <artifactId>htmlcleaner</artifactId>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
                                 </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.pdfbox</groupId>
-                                    <artifactId>fontbox</artifactId>
-                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
-                                </artifactItem>
-
                             </artifactItems>
 						</configuration>
 					</execution>
@@ -343,6 +339,16 @@
 	</build>
 	<repositories>
 		<repository>
+			<id>Analytical Labs Repo</id>
+			<name>Analytical Labs Repo-releases</name>
+			<url>http://repo.meteorite.bi/content/repositories/alabs-release-local/</url>
+		</repository>
+		<repository>
+			<id>Analytical Labs snapshots</id>
+			<name>Analytical Labs Repo-releases</name>
+			<url>http://repo.meteorite.bi/content/repositories/alabs-snapshot-local/</url>
+		</repository>
+		<repository>
 			<id>pentaho-third-party</id>
 			<url>http://nexus.pentaho.org/content/repositories/proxied-3rd-party-releases/</url>
 		</repository>
@@ -354,20 +360,7 @@
 			<id>pentaho-snapshot</id>
 			<url>http://nexus.pentaho.org/content/repositories/public-snapshots/</url>
 		</repository>
-		<repository>
-			<id>codehaus</id>
-			<url>http://repository.codehaus.org/</url>
-		</repository>
-		<repository>
-			<id>Analytical Labs Repo</id>
-			<name>Analytical Labs Repo-releases</name>
-			<url>http://repo.analytical-labs.com/artifactory/alabs-release-local</url>
-		</repository>
-		<repository>
-			<id>Analytical Labs snapshots</id>
-			<name>Analytical Labs Repo-releases</name>
-			<url>http://repo.analytical-labs.com/artifactory/alabs-snapshot-local</url>
-		</repository>
+
 		<repository>
 			<id>central</id>
 			<name>Maven Repository Switchboard</name>
@@ -387,15 +380,15 @@
 	</repositories>
 	<dependencies>
 		<dependency>
-			<groupId>org.saiku</groupId>
+			<groupId>org.saikuanalytics</groupId>
 			<artifactId>saiku-service</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.saiku</groupId>
+			<groupId>org.saikuanalytics</groupId>
 			<artifactId>saiku-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.saiku</groupId>
+			<groupId>org.saikuanalytics</groupId>
 			<artifactId>saiku-olap-util</artifactId>
 		</dependency>
 		<dependency>
@@ -644,8 +637,9 @@
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
+			<artifactId>javax.servlet-api</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
@@ -673,10 +667,6 @@
                 </exclusion>
             </exclusions>
 		</dependency>
-        <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>fontbox</artifactId>
-        </dependency>
        <!-- <dependency>
             <groupId>batik</groupId>
             <artifactId>batik-ext</artifactId>
@@ -733,7 +723,7 @@
         </dependency>
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
-			<artifactId>pdfbox</artifactId>
+			<artifactId>pdfbox-app</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>

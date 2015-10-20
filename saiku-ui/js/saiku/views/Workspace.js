@@ -228,7 +228,6 @@ var Workspace = Backbone.View.extend({
         this.switch_view_state(this.viewState, true);
 
 
-
         // Add results table
         $(this.el).find('.workspace_results')
             .append($(this.table.el));
@@ -242,7 +241,7 @@ var Workspace = Backbone.View.extend({
         // Fire off new workspace event
         Saiku.session.trigger('workspace:new', { workspace: this });
 
-        if (Settings.PLUGIN && Saiku.session.isAdmin) {
+        if (Settings.PLUGIN && Settings.BIPLUGIN5 == false && Saiku.session.isAdmin) {
             var $link = $('<a />')
                 .attr({
                     href: '#adminconsole',
@@ -355,35 +354,33 @@ var Workspace = Backbone.View.extend({
             });
         });
     },
-
-    new_query: function() {
-        // Delete the existing query
-        if (this.query) {
-            this.query.destroy();
-            this.query.clear();
-            if (this.query.name) {
-                this.query.name = undefined;
-                this.update_caption(true);
+    create_new_query: function(obj){
+        if (obj.query) {
+            obj.query.destroy();
+            obj.query.clear();
+            if (obj.query.name) {
+                obj.query.name = undefined;
+                obj.update_caption(true);
             }
-            this.query.name = undefined;
+            obj.query.name = undefined;
         }
-        this.clear();
-        this.processing.hide();
-        Saiku.session.trigger('workspace:clear', { workspace: this });
+        obj.clear();
+        obj.processing.hide();
+        Saiku.session.trigger('workspace:clear', { workspace: obj });
 
         // Initialize the new query
-        this.selected_cube = $(this.el).find('.cubes').val()
-            ? $(this.el).find('.cubes').val()
-            : this.selected_cube;
-        if (!this.selected_cube) {
+        obj.selected_cube = $(obj.el).find('.cubes').val()
+            ? $(obj.el).find('.cubes').val()
+            : obj.selected_cube;
+        if (!obj.selected_cube) {
             // Someone literally selected "Select a cube"
-            $(this.el).find('.calculated_measures, .addMeasure').hide();
-            $(this.el).find('.dimension_tree').html('');
-            $(this.el).find('.measure_tree').html('');
+            $(obj.el).find('.calculated_measures, .addMeasure').hide();
+            $(obj.el).find('.dimension_tree').html('');
+            $(obj.el).find('.measure_tree').html('');
             return false;
         }
-        this.metadata = Saiku.session.sessionworkspace.cube[this.selected_cube];
-        var parsed_cube = this.selected_cube.split('/');
+        obj.metadata = Saiku.session.sessionworkspace.cube[obj.selected_cube];
+        var parsed_cube = obj.selected_cube.split('/');
         var cube = parsed_cube[3];
         for (var i = 4, len = parsed_cube.length; i < len; i++) {
             cube += "/" + parsed_cube[i];
@@ -396,12 +393,34 @@ var Workspace = Backbone.View.extend({
                 name: decodeURIComponent(cube)
             }
         }, {
-                workspace: this
+            workspace: obj
         });
 
+        obj.query = this.query;
+
         // Save the query to the server and init the UI
-        this.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });
-        this.init_query();
+        obj.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });
+        obj.init_query();
+
+    },
+
+    new_query: function() {
+        // Delete the existing query
+        if (this.query) {
+            if(Settings.QUERY_OVERWRITE_WARNING) {
+                (new WarningModal({
+                    title: "New Query", message: "You are about to clear your existing query",
+                    okay: this.create_new_query, okayobj: this
+                })).render().open();
+            }
+            else{
+                this.create_new_query(this);
+            }
+        }
+        else{
+            this.create_new_query(this);
+        }
+
     },
 
     init_query: function(isNew) {
@@ -443,6 +462,10 @@ var Workspace = Backbone.View.extend({
                 this.querytoolbar.spark_mode = renderType;
                 $(this.querytoolbar.el).find('ul.table a.' + renderType).addClass('on');
             }
+            else if (renderMode === 'map') {
+                this.querytoolbar.$el.find('ul.chart > li').find('a').removeClass('on');
+                this.querytoolbar.$el.find('ul.chart [href="#' + renderMode + '"]').addClass('on');
+            }
         } catch (e) {
                 Saiku.error(this.cid, e);
         }
@@ -475,6 +498,15 @@ var Workspace = Backbone.View.extend({
         }
         if ((Settings.MODE == "view") && this.query || this.isReadOnly) {
             this.query.run(true);
+            if (this.selected_cube === undefined) {
+                var schema = this.query.model.cube.schema;
+                this.selected_cube = this.query.model.cube.connection + "/" +
+                    this.query.model.cube.catalog + "/" +
+                    ((schema === "" || schema === null) ? "null" : schema) +
+                    "/" + encodeURIComponent(this.query.model.cube.name);
+                $(this.el).find('.cubes')
+                    .val(this.selected_cube);
+            }
             return;
         }
 
@@ -547,9 +579,11 @@ var Workspace = Backbone.View.extend({
             if (!self.isReadOnly && (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view"))) {
                 dimlist.find('.selected').removeClass('selected');
 
-                var cms = self.query.helper.getCalculatedMeasures();
-                if (cms && cms.length > 0) {
-                    var template = _.template($("#template-calculated-measures").html(),{ measures: cms });
+                var calcMeasures = self.query.helper.getCalculatedMeasures();
+                var calcMembers = self.query.helper.getCalculatedMembers();
+
+                if (calcMeasures && calcMeasures.length > 0) {
+                    var template = _.template($("#template-calculated-measures").html(),{ measures: calcMeasures });
                     dimlist.find('.calculated_measures').html(template);
                     dimlist.find('.calculated_measures').find('.measure').parent('li').draggable({
                         cancel: '.not-draggable',
@@ -562,13 +596,70 @@ var Workspace = Backbone.View.extend({
                         cursorAt: { top: 10, left: 35 }
                     });
                 }
+                else {
+                    dimlist.find('.calculated_measures').empty();
+                }
+
+                if (calcMembers && calcMembers.length > 0) {
+                    var self = this;
+                    var $dimensionTree = dimlist.find('.dimension_tree').find('.parent_dimension').find('.d_hierarchy');
+                    var len = calcMembers.length;
+                    var templateLevelMember;
+                    var i;
+
+                    $dimensionTree.find('.dimension-level-calcmember').remove();
+
+                    for (i = 0; i < len; i++) {
+                        $dimensionTree.each(function(key, value) {
+                            if ($(value).attr('hierarchy') === calcMembers[i].hierarchyName) {
+
+                                templateLevelMember = _.template($('#template-calculated-member').html(), { member: calcMembers[i] });
+
+                                if(!($(value).closest('.parent_dimension').find('span.root').hasClass('collapsed'))) {
+                                    templateLevelMember = $(templateLevelMember).show();
+                                }
+                                else {
+                                    templateLevelMember = $(templateLevelMember).hide();
+                                }
+
+                                $(value).append(templateLevelMember);
+
+                                $(value).find('.level-calcmember').parent('li').draggable({
+                                    cancel: '.not-draggable, .hierarchy',
+                                    connectToSortable: $(self.el).find('.fields_list_body.columns > ul.connectable, .fields_list_body.rows > ul.connectable, .fields_list_body.filter > ul.connectable'),
+                                    containment: $(self.el),
+                                    helper: function(event, ui) {
+                                        var target = $(event.target).hasClass('d_level') ? $(event.target) : $(event.target).parent();
+                                        var hierarchy = target.find('a').attr('hierarchy');
+                                        var level = target.find('a').attr('level');
+                                        var h = target.parent().clone().removeClass('d_hierarchy').addClass('hierarchy');
+                                        h.find('li a[hierarchy="' + hierarchy + '"]').parent().hide();
+                                        h.find('li a[level="' + level + '"]').parent().show();
+                                        var selection = $('<li class="selection selection-calcmember"></li>');
+                                        selection.append(h);
+                                        return selection;
+                                    },
+                                    placeholder: 'placeholder',
+                                    opacity: 0.60,
+                                    tolerance: 'touch',
+                                    cursorAt: {
+                                        top: 10,
+                                        left: 85
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+                else {
+                    dimlist.find('.dimension_tree').find('.parent_dimension').find('.d_hierarchy').find('.dimension-level-calcmember').remove();
+                }
 
                 self.drop_zones.synchronize_query();
 
             }
         }
         Saiku.i18n.translate();
-
     },
 
     /*jshint -W027*/
@@ -814,6 +905,22 @@ var Workspace = Backbone.View.extend({
         this.update_parameters();
 
         $(this.el).find(".workspace_results_info").html(info);
+
+        var h = args.workspace.query.getProperty("saiku.ui.headings");
+        if(h!=undefined) {
+            var headings = JSON.parse(h);
+            var header = '';
+            if(headings.title!=null && headings.title != "") {
+                header = '<h3><span class="i18n">Title:</span></h3> &nbsp;' + headings.title + '<br/>';
+            }
+            if(headings.variable != null && headings.variable != "") {
+                header += '<h3><span class="i18n">Variable:</span></h3> &nbsp;' + headings.variable + '<br/>';
+            }
+            if(headings.explanation!=null && headings.explanation != "") {
+                header += '<h3><span class="i18n">Explanation:</span></h3> &nbsp;' + headings.explanation;
+            }
+            $(this.el).find(".workspace_results_titles").html(header);
+        }
         this.adjust();
         return;
     },
@@ -851,17 +958,21 @@ var Workspace = Backbone.View.extend({
     },
 
     block: function(message) {
-        /* Most probably not needed anymore. Seems ok now with fix #192
-        if (isIE) {
-            var $msg = $("<span>" + message + "</span>");
-            $msg.find('.processing_image').removeClass('processing_image');
-            Saiku.ui.block($msg.html());
+        var self = this;
+
+        if(Settings.LOGO_32x32){
+            $(self.el).block({
+                message: '<img class="saiku_logo_override" style="float:left" src="'+Settings.LOGO_32x32+'"/> ' + message
+            });
+            Saiku.i18n.translate();
         }
-        */
-            $(this.el).block({
+        else{
+            $(self.el).block({
                 message: '<span class="saiku_logo" style="float:left">&nbsp;&nbsp;</span> ' + message
             });
             Saiku.i18n.translate();
+
+        }
     },
 
     unblock: function() {

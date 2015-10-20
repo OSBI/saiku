@@ -324,3 +324,31 @@ li.selection .hgroup:hover {
 .not-draggable a {
     /*cursor: not-allowed !important;*/
 }
+
+.dimension_tree ul .selection-calcmember.ui-draggable-dragging, 
+.workspace_fields ul .selection-calcmember.ui-draggable-dragging,
+.workspace_fields li.selection-calcmember.ui-sortable-helper {
+    border: 1px solid #1e7145 !important;
+    background: rgb(26, 188, 156) !important;
+    background: -moz-linear-gradient(0deg, rgb(26, 188, 156) 0%, rgb(26, 188, 156) 100%) !important;
+    background: -webkit-linear-gradient(0deg, rgb(26, 188, 156) 0%, rgb(26, 188, 156) 100%) !important;
+    background: -o-linear-gradient(0deg, rgb(26, 188, 156) 0%, rgb(26, 188, 156) 100%) !important;
+    background: -ms-linear-gradient(0deg, rgb(26, 188, 156) 0%, rgb(26, 188, 156) 100%) !important;
+    background: linear-gradient(90deg, rgb(26, 188, 156) 0%, rgb(26, 188, 156) 100%) !important;
+    text-align: left;
+}
+
+.dimension_tree ul .selection-calcmember.ui-draggable-dragging a,
+.workspace_fields ul .selection-calcmember.ui-draggable-dragging a,
+.workspace_fields li.selection-calcmember.ui-sortable-helper a {
+    color: #fff !important;
+    text-decoration: none;
+}
+
+.workspace_fields .dimension-level-calcmember:hover {
+    background: rgb(26, 188, 156) !important;
+}
+
+.workspace_fields .dimension-level-calcmember:hover a {
+    color: #fff !important;
+}

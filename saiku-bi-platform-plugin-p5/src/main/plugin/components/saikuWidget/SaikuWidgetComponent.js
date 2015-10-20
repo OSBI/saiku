@@ -3,8 +3,8 @@ var saikuWidgetComponent = BaseComponent.extend({
 	update : function() {
 		var myself=this;
 		var htmlId = "#" + myself.htmlObject;
-		if (myself.saikuFilePath.substr(0,1) != "/") {
-			myself.saikuFilePath = "/" + myself.saikuFilePath;
+		if (myself.saikuFilePath.substr(0,1) == "/") {
+			myself.saikuFilePath = myself.saikuFilePath.substr(1,myself.saikuFilePath.length - 1 );
 		}
 
 		var parameters = {};

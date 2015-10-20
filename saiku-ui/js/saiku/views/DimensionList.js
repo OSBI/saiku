@@ -135,6 +135,7 @@ var DimensionList = Backbone.View.extend({
         var hierarchyCaption = $(event.target).parent().parent().attr('hierarchycaption');
         var level = $(event.target).attr('level');
         var axisName = "ROWS";
+        var isCalcMember = $(event.target).parent().hasClass('dimension-level-calcmember');
 
         if ($(this.workspace.el).find(".workspace_fields ul.hierarchy[hierarchy='" + hierarchy + "']").length > 0) {
              var $level = $(this.workspace.el).find(".workspace_fields ul[hierarchy='" + hierarchy + "'] a[level='" + level + "']").parent().show();
@@ -146,7 +147,16 @@ var DimensionList = Backbone.View.extend({
 
             axisName = $axis.parents('.fields_list').attr('title');
         }
-        this.workspace.query.helper.includeLevel(axisName, hierarchy, level);
+
+        if (isCalcMember) {
+            var uniqueName = $(event.target).attr('uniquename');
+            this.workspace.toolbar.$el.find('.group_parents').removeClass('on');
+            this.workspace.toolbar.group_parents();
+            this.workspace.query.helper.includeLevelCalculatedMember(axisName, hierarchy, level, uniqueName);
+        }
+        else {
+            this.workspace.query.helper.includeLevel(axisName, hierarchy, level);
+        }
 
         // Trigger event when select dimension
         Saiku.session.trigger('dimensionList:select_dimension', { workspace: this.workspace });
@@ -174,7 +184,8 @@ var DimensionList = Backbone.View.extend({
     },
 
     measure_dialog: function(event, ui) {
-        (new MeasuresModal({ 
+        // (new MeasuresModal({ 
+        (new CalculatedMemberModal({ 
             workspace: this.workspace,
             measure: null
         })).render().open();

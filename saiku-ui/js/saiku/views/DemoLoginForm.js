@@ -38,6 +38,11 @@ var DemoLoginForm = Modal.extend({
         _.bindAll(this, "adjust");
         this.options.title = Settings.VERSION;
         this.bind('open', this.adjust);
+        var l_username = Settings.USERNAME;
+        var l_password = Settings.PASSWORD;
+        this.session.login(l_username, l_password);
+        $(this.el).dialog('close');
+
     },
     
     adjust: function() {

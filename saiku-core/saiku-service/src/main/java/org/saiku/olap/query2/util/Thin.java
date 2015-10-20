@@ -1,31 +1,9 @@
 package org.saiku.olap.query2.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
-import org.apache.commons.lang.StringUtils;
-import org.olap4j.Axis;
-import org.olap4j.impl.NamedListImpl;
-import org.olap4j.metadata.Measure;
-import org.olap4j.metadata.Member;
-import org.olap4j.metadata.NamedList;
 import org.saiku.olap.dto.SaikuCube;
-import org.saiku.olap.query2.ThinAxis;
-import org.saiku.olap.query2.ThinCalculatedMeasure;
-import org.saiku.olap.query2.ThinDetails;
-import org.saiku.olap.query2.ThinHierarchy;
-import org.saiku.olap.query2.ThinLevel;
-import org.saiku.olap.query2.ThinMeasure;
+import org.saiku.olap.query2.*;
 import org.saiku.olap.query2.ThinMeasure.Type;
-import org.saiku.olap.query2.ThinMember;
-import org.saiku.olap.query2.ThinQuery;
-import org.saiku.olap.query2.ThinQueryModel;
 import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
-import org.saiku.olap.query2.ThinSelection;
 import org.saiku.olap.query2.common.ThinQuerySet;
 import org.saiku.olap.query2.common.ThinSortableQuerySet;
 import org.saiku.olap.query2.common.ThinSortableQuerySet.HierarchizeMode;
@@ -34,19 +12,19 @@ import org.saiku.olap.query2.filter.ThinFilter;
 import org.saiku.olap.query2.filter.ThinFilter.FilterFlavour;
 import org.saiku.olap.query2.filter.ThinFilter.FilterFunction;
 import org.saiku.olap.query2.filter.ThinFilter.FilterOperator;
-import org.saiku.query.IQuerySet;
-import org.saiku.query.ISortableQuerySet;
-import org.saiku.query.Query;
-import org.saiku.query.QueryAxis;
-import org.saiku.query.QueryDetails;
-import org.saiku.query.QueryHierarchy;
-import org.saiku.query.QueryLevel;
-import org.saiku.query.mdx.GenericFilter;
-import org.saiku.query.mdx.IFilterFunction;
-import org.saiku.query.mdx.NFilter;
-import org.saiku.query.mdx.NameFilter;
-import org.saiku.query.mdx.NameLikeFilter;
+import org.saiku.query.*;
+import org.saiku.query.mdx.*;
 import org.saiku.query.metadata.CalculatedMeasure;
+import org.saiku.query.metadata.CalculatedMember;
+
+import org.apache.commons.lang.StringUtils;
+import org.olap4j.Axis;
+import org.olap4j.impl.NamedListImpl;
+import org.olap4j.metadata.Measure;
+import org.olap4j.metadata.Member;
+import org.olap4j.metadata.NamedList;
+
+import java.util.*;
 
 public class Thin {
 	
@@ -69,7 +47,9 @@ public class Thin {
 		ThinDetails td = convert(query.getDetails());
 		tqm.setDetails(td);
 		List<ThinCalculatedMeasure> cms = convert(query.getCalculatedMeasures());
+	  	List<ThinCalculatedMember> cmem = convertCM(query.getCalculatedMembers());
 		tqm.setCalculatedMeasures(cms);
+	  	tqm.setCalculatedMembers(cmem);
 		tqm.setVisualTotals(query.isVisualTotals());
 		tqm.setVisualTotalsPattern(query.getVisualTotalsPattern());
 
@@ -94,6 +74,24 @@ public class Thin {
 		return tcms;
 	}
 
+  private static List<ThinCalculatedMember> convertCM(List<CalculatedMember> qcms) {
+	List<ThinCalculatedMember> tcms = new ArrayList<ThinCalculatedMember>();
+	if (qcms != null && qcms.size() > 0) {
+	  for (CalculatedMember qcm : qcms) {
+		ThinCalculatedMember tcm = new ThinCalculatedMember(
+			qcm.getHierarchy().getDimension().getName(),
+			qcm.getHierarchy().getUniqueName(),
+			qcm.getName(),
+			qcm.getUniqueName(),
+			qcm.getCaption(),
+			qcm.getFormula(),
+			qcm.getFormatProperties());
+		tcms.add(tcm);
+	  }
+	}
+
+	return tcms;
+  }
 	private static ThinDetails convert(QueryDetails details) {
 		ThinDetails.Location location = ThinDetails.Location.valueOf(details.getLocation().toString());
 		AxisLocation axis = AxisLocation.valueOf(details.getAxis().toString());
@@ -154,7 +152,13 @@ public class Thin {
 	}
 
 	private static ThinHierarchy convertHierarchy(QueryHierarchy qh, ThinQuery tq) {
-		ThinHierarchy th = new ThinHierarchy(qh.getUniqueName(), qh.getCaption(), qh.getHierarchy().getDimension().getName(), convertLevels(qh.getActiveQueryLevels(), tq));
+	  List<String> s = new ArrayList<String>();
+	  for(CalculatedMember cmember: qh.getCalculatedMembers()){
+		s.add(cmember.getUniqueName());
+	  }
+		ThinHierarchy th = new ThinHierarchy(qh.getUniqueName(), qh.getCaption(), qh.getHierarchy().getDimension()
+																					.getName(), convertLevels(qh
+			.getActiveQueryLevels(), tq), s);
 		extendSortableQuerySet(th, qh);
 		return th;
 	}

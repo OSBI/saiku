@@ -307,6 +307,7 @@ public class OlapDiscoverResource implements Serializable {
 
 		SaikuCube cube = new SaikuCube(connectionName, cubeName,cubeName,cubeName, catalogName, schemaName);
 
+	  
 		try {
 			return olapDiscoverService.getLevelMembers(cube, hierarchyName, levelName);
 		} catch (Exception e) {

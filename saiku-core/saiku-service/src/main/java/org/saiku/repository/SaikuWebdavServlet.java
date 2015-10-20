@@ -4,6 +4,7 @@ import org.saiku.database.dto.SaikuUser;
 import org.saiku.service.datasource.RepositoryDatasourceManager;
 import org.saiku.service.user.UserService;
 
+import org.apache.jackrabbit.server.BasicCredentialsProvider;
 import org.apache.jackrabbit.webdav.*;
 import org.apache.jackrabbit.webdav.simple.SimpleWebdavServlet;
 import org.apache.jackrabbit.webdav.util.CSRFUtil;
@@ -13,7 +14,9 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import java.io.IOException;
 import java.util.List;
 
+import javax.jcr.LoginException;
 import javax.jcr.Repository;
+import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -45,21 +48,47 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
     }
 
   private boolean checkUserRole(HttpServletRequest request){
-    for(SaikuUser u: us.getUsers()){
-          if(u.getUsername().equals(request.getRemoteUser())){
-            String[] roles = us.getRoles(u);
-            List<String> admin = us.getAdminRoles();
+    for(SaikuUser u: us.getUsers()) {
+      String req = request.getRemoteUser();
+      BasicCredentialsProvider b = new BasicCredentialsProvider(null);
+      SimpleCredentials creds = null;
+      try {
+        creds = (SimpleCredentials) b.getCredentials(request);
+      } catch (LoginException e) {
+        e.printStackTrace();
+      } catch (ServletException e) {
+        e.printStackTrace();
+      }
+      if (u.getUsername().equals(creds.getUserID())) {
+        String[] roles = us.getRoles(u);
+        List<String> admin = us.getAdminRoles();
 
-            for(String r: roles){
-              if(admin.contains(r)){
-                return true;
-              }
-
-            }
+        for (String r : roles) {
+          if (admin.contains(r)) {
+            return true;
           }
+
         }
+      }
+    }
 
     return false;
+  }
+
+  private boolean checkUnsecured(HttpServletRequest request){
+    if(request.getRequestURI().contains("/etc/theme")) {
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
+  private boolean checkSecret(HttpServletRequest request){
+    if(request.getRequestURI().contains("/datasources")){
+      return checkUserRole(request);
+    }
+    return true;
   }
   /**
    * Service the given request.
@@ -78,17 +107,34 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
     int methodCode = DavMethods.getMethodCode(request.getMethod());
     boolean noCache = DavMethods.isDeltaVMethod(webdavRequest) && !(DavMethods.DAV_VERSION_CONTROL == methodCode || DavMethods.DAV_REPORT == methodCode);
     WebdavResponse webdavResponse = new WebdavResponseImpl(response, noCache);
+
     try {
+      if(checkUnsecured(request) && !getDavSessionProvider().attachSession(webdavRequest)) {
+        request.setAttribute("org.apache.jackrabbit.server.SessionProvider", new SaikuSessionProvider());
+      }
+    } catch (DavException e) {
+      if(checkUnsecured(request)) {
+        request.setAttribute("org.apache.jackrabbit.server.SessionProvider", new SaikuSessionProvider());
+      }
+    }
+
+    try {
+
       // make sure there is a authenticated user
       if (!getDavSessionProvider().attachSession(webdavRequest)) {
         return;
       }
 
-      if(!checkUserRole(request)){
+
+      if(!checkUnsecured(webdavRequest) && !checkUserRole(webdavRequest)){
         return;
       }
       // perform referrer host checks if CSRF protection is enabled
 
+      if(!checkSecret(request)){
+        webdavResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
+        return;
+      }
       if (!csrfUtil.isValidRequest(webdavRequest)) {
         webdavResponse.sendError(HttpServletResponse.SC_FORBIDDEN);
         return;
@@ -110,7 +156,11 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
       } else {
         webdavResponse.sendError(e);
       }
-    } finally {
+    }
+    catch (Exception e){
+      log("Exception:", e.getCause());
+    }
+    finally {
       getDavSessionProvider().releaseSession(webdavRequest);
     }
   }

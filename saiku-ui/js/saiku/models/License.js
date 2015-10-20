@@ -48,3 +48,26 @@ var LicenseUsersCollection = Backbone.Collection.extend({
 	url: 'api/license/users',
     model: LicenseUserModel
 });
+
+var LicenseQuota = Backbone.Model.extend({
+	url: 'api/license/quota',
+
+	initialize: function() {
+		_.bindAll(this, 'fetch_quota');
+	},
+
+	fetch_quota: function(path, callback) {
+		this.fetch({
+			success: function(res) {
+				if (callback && typeof(callback) === 'function') {
+					callback({status: 'success', data: res});
+				}
+			},
+			error: function(err) {
+				if (callback && typeof(callback) === 'function') {
+					callback({status: 'error', data: err});
+				}
+			}
+		});
+	}
+});

@@ -22,6 +22,7 @@ import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.user.UserService;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -60,17 +61,23 @@ public interface IDatasourceManager {
 
   public String getInternalFileData(String file) throws RepositoryException;
 
-  public String saveFile(String path, String content, String user, List<String> roles);
+  public InputStream getBinaryInternalFileData(String file) throws RepositoryException;
+
+  public String saveFile(String path, Object content, String user, List<String> roles);
 
   public String removeFile(String path, String user, List<String> roles);
 
   public String moveFile(String source, String target, String user, List<String> roles);
 
-  public String saveInternalFile(String path, String content, String type);
-  
+  public String saveInternalFile(String path, Object content, String type);
+
+  public String saveBinaryInternalFile(String path, InputStream content, String type);
+
   public void removeInternalFile(String filePath);
 
-  public List<IRepositoryObject> getFiles(String type, String username, List<String> roles);
+  public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles);
+
+  public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles, String path);
 
   public void createUser(String user);
 
@@ -109,4 +116,17 @@ public interface IDatasourceManager {
   public void setFoodmarturl(String foodmarturl);
 
   public String getFoodmarturl();
+
+
+  String getEarthquakeUrl();
+
+  String getEarthquakeDir();
+
+  String getEarthquakeSchema();
+
+  void setEarthquakeUrl(String earthquakeUrl);
+
+  void setEarthquakeDir(String earthquakeDir);
+
+  void setEarthquakeSchema(String earthquakeSchema);
 }

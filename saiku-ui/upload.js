@@ -55,7 +55,6 @@ var upload = (function($, window, document, undefined) {
 
         _clearInputFile: function() {
             var inputFile = $('#file-chooser');
-
             inputFile.replaceWith(inputFile.val('').clone(true));
         },
 
@@ -70,6 +69,19 @@ var upload = (function($, window, document, undefined) {
             }
         },
 
+        _backLogin: function(isShow) {
+            if (isShow) {
+                $('.back-login').show();
+                $('#btn-back-login').on('click', function() {
+                    var url = window.location.origin;
+                    window.open(url, '_self');
+                });
+            }
+            else {
+                $('.back-login').hide();
+            }
+        },
+
         _xhr: function(options, callback) {
             $.ajax({
                 url: options.url,
@@ -80,11 +92,13 @@ var upload = (function($, window, document, undefined) {
                 success: function(data, status, jqXHR) {
                     module._clearInputFile();
                     module._loadingButton(false);
+                    module._backLogin(true);
                     callback('alert-success', data);
                 },
                 error: function(jqXHR, status, errorThrown) {
                     module._clearInputFile();
                     module._loadingButton(false);
+                    // module._backLogin(false);
                     callback('alert-danger', 'Error while uploading the file: (' + errorThrown + ')');
                 }
             });
@@ -100,6 +114,7 @@ var upload = (function($, window, document, undefined) {
                     $('.form-upload p').text('Drag your license or click in this area.');
                 }
                 else {
+                    // module._backLogin(false);
                     module._notifyUser('alert-danger', 'Oops... Select a file!');
                 }
             });

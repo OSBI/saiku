@@ -16,8 +16,7 @@
 
 package web;
 
-import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.jbehave.ThucydidesJBehave;
+import net.serenitybdd.jbehave.SerenityJBehave;
 import net.thucydides.jbehave.ThucydidesJUnitStories;
 
 import org.jbehave.core.configuration.Configuration;
@@ -44,7 +43,7 @@ public abstract class AbstractTestSuite extends ThucydidesJUnitStories {
 
     List<Format> formats = Arrays.asList(Format.CONSOLE, Format.HTML, Format.XML, Format.TXT);
 
-    Configuration configuration = ThucydidesJBehave.defaultConfiguration(thucydidesConfiguration, formats, this);
+    Configuration configuration = SerenityJBehave.defaultConfiguration(thucydidesConfiguration, formats, this);
 
 
     return configuration
@@ -59,9 +58,10 @@ public abstract class AbstractTestSuite extends ThucydidesJUnitStories {
    //System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
     //getSystemConfiguration().setIfUndefined("webdriver.driver", "chrome");
     getSystemConfiguration()
-        .setIfUndefined(ThucydidesSystemProperty.THUCYDIDES_STORE_HTML_SOURCE.getPropertyName(), "true");
+        .setIfUndefined("serenity.store.html.source", "true");
     getSystemConfiguration()
-        .setIfUndefined(ThucydidesSystemProperty.THUCYDIDES_TAKE_SCREENSHOTS.getPropertyName(), "FOR_FAILURES");
+        .setIfUndefined("serenity.take.screenshots", "AFTER_EACH_STEP");
+    getSystemConfiguration().setIfUndefined("serenity.restart.browser.frequency", "1");
 
   }
 

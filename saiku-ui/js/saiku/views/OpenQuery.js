@@ -72,7 +72,8 @@ var OpenQuery = Backbone.View.extend({
                     "delete": {name: "Delete", i18n: true },
                     "move": {name: "Move", i18n: true},
                     "sep1": "---------",
-                    "new": {name: "New Folder", i18n: true}
+                    "new": {name: "New Folder", i18n: true},
+                    "opencontents": {name: "Open Folder Contents", i18n: true}
         };
         $.each(menuitems, function(key, item){
             recursive_menu_translate(item, Saiku.i18n.po_file);
@@ -129,12 +130,17 @@ var OpenQuery = Backbone.View.extend({
                         self.delete_repoObject();
                     } else if(key == "move"){
                         self.move_repoObject();
+                    } else if(key =="opencontents"){
+                        self.open_contents();
                     }
 
 
                 },
                 items: menuitems
             });
+            
+		// Fire off new openQuery event
+		Saiku.session.trigger('openQuery:new', { openQuery: this });
 
         return this;
     },
@@ -365,10 +371,53 @@ var OpenQuery = Backbone.View.extend({
         if(viewstate && !viewstate.hasOwnProperty('currentTarget')) {
             state = viewstate;
         }
-        var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state }));
+        
+        if (item.fileType === 'saiku') {
+            var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state }));
+        }
+        else {
+            Saiku.session.trigger('openQuery:open_query', { query: query, item: item, viewState: state });
+        }
+        
         return false;
     },
+    open_contents: function(viewstate) {
+        var files = [];
+        var itemF = this.queries[this.selected_query.get('file')];
+        _.forEach( itemF.repoObjects, function( entry){
+           if(entry.type === "FILE"){
+               files.push(entry);
+           }
+        });
 
+        var obj = {files: files, viewstate: viewstate};
+
+        (new WarningModal({
+            title: "Open Multiple Queries", message: "You are about to open "+files.length+" queries",
+            okay: this.run_open_contents, okayobj: obj
+        })).render().open();
+
+        return false;
+    },
+    run_open_contents: function(fileargs){
+        _.forEach( fileargs.files, function( entry ) {
+            Saiku.ui.block("Opening query...");
+
+            var item = entry;
+            var params = _.extend({
+                file: item.path,
+                formatter: Settings.CELLSET_FORMATTER
+            }, Settings.PARAMS);
+
+            var query = new Query(params,{ name: item.name });
+            var state = null;
+            if(fileargs.viewstate && !fileargs.viewstate.hasOwnProperty('currentTarget')) {
+                state = viewstate;
+            }
+            var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state }));
+
+        });
+    },
     edit_query: function() {
         this.open_query('edit');
     },
@@ -425,6 +474,7 @@ var OpenQuery = Backbone.View.extend({
                 $(this.el).find('.workspace_toolbar').height() -
                 $(this.el).find('.workspace_fields').height() - 40
         });
+        //$(this.el).find('.canvas_wrapper').show();
     },
 
     toggle_sidebar: function() {

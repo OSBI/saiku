@@ -491,4 +491,4 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
         options['hasBatchResult'] = resultRows.length > 0;
     }
     return "<table>" + tableContent + "</tbody></table>";
-}
+};

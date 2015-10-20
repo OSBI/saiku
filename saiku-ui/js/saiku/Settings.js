@@ -19,6 +19,7 @@
  */
 var Settings = {
     VERSION: "Saiku-${version}",
+    LICENSE: {},
     BIPLUGIN: false,
     BIPLUGIN5: false,
     BASE_URL: window.location.origin,
@@ -65,7 +66,28 @@ var Settings = {
     TELEMETRY_SERVER: 'http://telemetry.analytical-labs.com:7000',
     LOCALSTORAGE_EXPIRATION: 10 * 60 * 60 * 1000 /* 10 hours, in ms */,
     UPGRADE: true,
-    EVALUATION_PANEL_LOGIN: true
+    EVALUATION_PANEL_LOGIN: true,
+    QUERY_OVERWRITE_WARNING: true,
+    MAPS: true,
+    MAPS_TYPE: 'OSM', // OSM || GMAPS
+    MAPS_TILE_LAYER: {
+        OSM: {
+            'map_marker': 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            'map_heat': 'https://otile{s}-s.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png'
+        },
+        GMAPS: {
+        }
+    },
+    MAPS_OPTIONS: {
+        OSM: {
+            maxZoom: 18,
+            attribution: '© <a href="http://osm.org/copyright" target="_blank">OpenStreetMap</a>'
+        },
+        GMAPS: {
+        }
+    },
+    MAPS_OSM_NOMINATIM: 'https://nominatim.openstreetmap.org/', // http://wiki.openstreetmap.org/wiki/Nominatim
+    DATA_SOURCES_LOOKUP: true
 };
 
 /**
@@ -129,6 +151,11 @@ if (document.location.hash) {
     }
 }
 
+Settings.MONDRIAN_LOCALES = {
+    "English": "en_US",
+    "Dutch": "nl_BE",
+    "French": "fr_FR"
+};
 
 /**
  * < IE9 doesn't support Array.indexOf
@@ -178,7 +205,7 @@ if ($.blockUI) {
 
 }
 
-if (window.location.hostname && (window.location.hostname == "dev.analytical-labs.com" || window.location.hostname == "demo.analytical-labs.com" )) {
+if (window.location.hostname && (window.location.hostname == "try.meteorite.bi" )) {
     Settings.USERNAME = "admin";
     Settings.PASSWORD = "admin";
     Settings.DEMO = true;

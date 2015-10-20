@@ -1,4 +1,4 @@
-#splash{height:100%;position:fixed;}
+#splash{height:100%;width:100%;}
 #splash *{padding:0;margin:0;text-decoration:none;}
 /*body{background:linear-gradient(#ffffff 0%, #e4e4e4 100%);font-family:'News Cycle',Arial,sans-serif;height:100%;display:block;}*/
 #splash nav{width:100%;border-bottom:1px solid #ccc;float:left;background:-webkit-gradient(linear,left top,left bottom,color-stop(#ffffff,0),color-stop(#e4e4e4,1));background:-webkit-linear-gradient(#ffffff 0%, #e4e4e4 100%);background:-moz-linear-gradient(#ffffff 0%, #e4e4e4 100%);background:-o-linear-gradient(#ffffff 0%, #e4e4e4 100%);background:linear-gradient(#ffffff 0%, #e4e4e4 100%);}
@@ -12,13 +12,13 @@
 
 #splash nav li.enterprise a{color:#fff;}
 
-#splash .tabs{width:100%;display:block;margin:0 auto;float:left;height:100%;}
-#splash .tabs section{width:1100px;margin:0 auto;display:block;}
+#splash .stabs{width:100%;display:block;margin:0 auto;float:left;height:100%;}
+#splash .stabs section{width:1100px;margin:0 auto;display:block;}
 #splash h1.saikulogo{width:275px;height:72px;background:url('../../../images/src/saiku.png') center center no-repeat;text-indent:-10000px;margin:0.5%;margin-bottom:20px;}
 
 #splash p{max-width:700px;margin:0.5%;margin-bottom:40px;}
 #splash p.fixed{max-width:500px;}
-#splash .tabs h2{clear:left;margin-left:0.5%;color:#6D6E71;font-weight:400;margin-bottom:12px;}
+#splash .stabs h2{clear:left;margin-left:0.5%;color:#6D6E71;font-weight:400;margin-bottom:12px;}
 #splash small a{color:#A7A9AC;}
 
 #splash ul.quicklinks{list-style:none;max-width:500px;text-align:center;margin-bottom:40px;float:left;}
@@ -41,7 +41,7 @@
 	#splash {height:100%;position:inherit;}
 	nav ul{margin-left:0px;}
 	nav h2{margin-right:20px;}
-	.tabs section{width:960px;}
+	.stabs section{width:960px;}
 	#welcome{background-size:60%;}
 }
 
@@ -49,7 +49,7 @@
 	#splash {height:100%;position:inherit;}
 	nav h2{font-size:18px;}
 	nav ul li{font-size:18px;}
-	.tabs section{width:90%;margin:0 auto;}
+	.stabs section{width:90%;margin:0 auto;}
 	#welcome{background-size:40%;}
 }
 

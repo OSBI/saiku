@@ -25,11 +25,23 @@ var Toolbar = Backbone.View.extend({
     },
 
     template: function() {
-        return _.template( $("#template-toolbar").html() )(this);
+        return _.template( $("#template-toolbar").html() )({data: this});
     },
 
     initialize: function() {
-        this.render();
+        var self = this;
+        if(Settings.LOGO){
+            self.logo = "<h1 id='logo_override'>"+
+                "<img src='"+Settings.LOGO+"'/>"+
+                "</h1>";
+            self.render();
+        }
+        else{
+            self.logo = "<h1 id='logo'>"+
+                "<a href='http://www.meteorite.bi/' title='Saiku - Next Generation Open Source Analytics' target='_blank' class='sprite'>Saiku</a>"+
+                "</h1>";
+            self.render();
+        }
     },
 
     render: function() {
@@ -54,6 +66,9 @@ var Toolbar = Backbone.View.extend({
      * Add a new tab to the interface
      */
     new_query: function() {
+        if(typeof ga!= 'undefined'){
+		ga('send', 'event', 'MainToolbar', 'New Query');
+        }
         Saiku.tabs.add(new Workspace());
         return false;
     },

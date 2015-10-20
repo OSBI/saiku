@@ -52,6 +52,31 @@ html, body {
     *zoom: 1;
 }
 
+#licensetable > .table-wrapper {
+    position:relative;
+}
+#licensetable > .table-scroll {
+    height:150px;
+    overflow:auto;
+    margin-top:20px;
+}
+#licensetable > .table-wrapper table {
+    width:100%;
+
+}
+#licensetable > .table-wrapper table * {
+    /*background:yellow;*/
+    color:black;
+}
+#licensetable > .table-wrapper table thead th .text {
+    position:absolute;
+    top:-20px;
+    z-index:2;
+    height:20px;
+    width:35%;
+    /*border:1px solid red;*/
+}
+
 input[type=text], input[type=password],
 input.text, input.title,
 textarea {
@@ -218,6 +243,13 @@ textarea, select {
 }
 #toolbar ul li a.schema_designer {
     background: url(../../../images/src/main_toolbar_schema_designer.png) no-repeat center;
+    text-align: center;
+    text-decoration: none;
+}
+#toolbar ul li a.schema_designer span {
+    position: relative;
+    top: 23px;
+    color: #ae1816;
 }
 #toolbar ul li a.logout {
     background-position: -1776px 5px;
@@ -255,6 +287,12 @@ textarea, select {
     text-indent: -9999px;
 }
 
+#logo_override img {
+    float: right;
+    width: 166px;
+    height: 28px;
+    margin: -15px 10px 0 0;
+}
 /** Tabs */
 
 .tabs {
@@ -904,15 +942,6 @@ textarea, select {
     height: 490px !important;
 }
 
-.dialog_date-filter .dialog_body .button-help {
-    background: url('../../../images/src/help.png') no-repeat;
-    position: absolute;
-    top: 10px;
-    right: 85px;
-    width: 16px;
-    height: 16px;
-}
-
 .dialog_date-filter .dialog_body .box-selections {
     position: relative;
     margin: 20px auto;
@@ -994,6 +1023,149 @@ textarea, select {
     text-decoration: underline;
 }
 
+.dialog_data-sources .dialog_icon {
+    display: none;
+}
+
+.dialog_data-sources .dialog_body {
+    margin: 15px;
+}
+
+.dialog_data-sources .form-group-inline label {
+    float: left;
+    width: 120px;
+    padding-top: 10px;
+}
+
+.dialog_data-sources .form-group-inline select {
+    width: 230px;
+    padding: 4px;
+    border-color: #ccc;
+}
+
+.dialog_calculated-member .dialog_icon {
+    display: none;
+}
+
+.dialog_calculated-member .dialog_body {
+    margin: 15px;
+}
+
+.dialog_calculated-member .cms-container-group {
+    float: left;
+    width: 300px;
+    border: 1px solid #ccc;
+}
+
+.dialog_calculated-member .calculated-measure-group,
+.dialog_calculated-member .calculated-member-group {
+    width: 300px;
+}
+
+.dialog_calculated-member .calculated-member-group {
+    border-top: 1px solid #ccc;
+}
+
+.dialog_calculated-member .calculated-measure-group h4,
+.dialog_calculated-member .calculated-member-group h4 {
+    margin: 0;
+    padding: 5px;
+    width: 290px;
+    border-bottom: 1px solid #ccc;
+}
+
+.dialog_calculated-member .cms-container-group .cms-box {
+    overflow: auto;
+    height: 165px;
+}
+
+.dialog_calculated-member .cms-container-group .cms-list {
+    margin: 10px auto;
+}
+
+.dialog_calculated-member .cms-container-group .cms-list .cms-name {
+    width: 150px;
+}
+
+.dialog_calculated-member .cms-container-group .msg-no-cms {
+    color: #666;
+    text-align: center;
+}
+
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions a.button {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    padding: 8px;
+    -webkit-border-radius: 3px;
+       -moz-border-radius: 3px;
+            border-radius: 3px;
+    background-repeat: no-repeat;
+}
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions a.button:hover {
+    padding: 7px;
+    border: 1px solid #ccc;
+}
+
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions a.on {
+    padding: 7px !important;
+    border: 1px solid #ccc;
+    background-color: #e0e0e0;
+}
+
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions .edit {
+    background-image: url("../../../images/src/pencil.png");
+    background-position: 7px 7px;
+}
+
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions .delete {
+    background-position: -521px 7px;
+}
+
+.dialog_calculated-member .cms-container-group .cms-list .cms-actions .button:nth-child(2) {
+    margin-left: 10px;
+}
+
+.dialog_calculated-member .cms-container-form {
+    float: right;
+    width: 400px;
+}
+
+.dialog_calculated-member .form-group-inline label {
+    float: left;
+    width: 80px;
+    padding-top: 10px;
+}
+
+.dialog_calculated-member .form-group-inline input[type="text"] {
+    width: 300px;
+    padding: 4px;
+}
+
+.dialog_calculated-member .form-group-inline select {
+    width: 310px;
+    padding: 4px;
+    border-color: #ccc;
+}
+
+.dialog_calculated-member .form-group-inline .formula-editor {
+    width: 308px;
+    height: 200px;
+    border: 1px solid #ccc;
+}
+
+.dialog_calculated-member .form-group-inline .btn-group-math {
+    padding: 13px 70px;
+}
+
+.dialog_calculated-member .form-group-inline .btn-group-math .form_button {
+    margin-left: 10px;
+}
+
+.dialog_calculated-member .form-group-inline .div-format-custom {
+    display: none;
+}
+
 .dialog_permissions .dialog_body {
     width: 370px;
     height: 380px;
@@ -1051,6 +1223,11 @@ textarea, select {
   background-image: url('../../../images/src/table_across.png');
   background-position: 7px 7px;
  }
+.workspace_toolbar ul li a.about {
+    background-position: -1702px 5px;
+    opacity: 0.6;
+
+}
 .ui-menu {
     list-style:none;
     padding: 2px;
@@ -1120,6 +1297,16 @@ textarea, select {
     padding-right: 20px;
     overflow: hidden;
 }
+.workspace_results_titles {
+    /*color: #999999;*/
+    padding-right: 20px;
+    overflow: hidden;
+}
+
+.workspace_results_titles h3 {
+    display: inline;
+
+}
 
 .parameter_input {
     padding-left: 5px;
@@ -1185,6 +1372,15 @@ textarea, select {
     height: 32px;
     padding: 5px;
     margin-right: 20px;
+}
+
+.saiku_logo_override {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    padding: 5px;
+    margin-right: 20px;
+
 }
 
 
@@ -1572,6 +1768,10 @@ a.disabled_toolbar:hover {
   background: url('../../../images/chart/gray/sunburst.png') no-repeat 21px -1px;;
   height: 16px;
  }
+.query_toolbar a.multiplesunburst {
+    background: url('../../../images/chart/gray/multiplesunburst.png') no-repeat 21px -1px;;
+    height: 16px;
+}
 .query_toolbar a.treemap {
   background: url('../../../images/chart/gray/treemap.png') no-repeat 21px -1px;;
   height: 16px;
@@ -1582,7 +1782,11 @@ a.disabled_toolbar:hover {
  background: url('../../../images/chart/sunburst.png') no-repeat 21px -1px;;
  height: 16px;
 }
-
+.query_toolbar a.sunburst:hover,
+.query_toolbar a.sunburst.on {
+    background: url('../../../images/chart/multiplesunburst.png') no-repeat 21px -1px;;
+    height: 16px;
+}
 .query_toolbar a.treemap:hover,
 .query_toolbar a.treemap.on {
   background: url('../../../images/chart/treemap.png') no-repeat 21px -1px;;
@@ -1791,7 +1995,7 @@ span.search {
     top: -16px;
 }
 input.search_file {
-    width:350px;
+    width:175px;
     margin-left:10px;
     height: 18px;
     border-radius: 9px;
@@ -1814,7 +2018,7 @@ span.cancel_search {
   left: 175px;
   margin-top: 5px;
   position: absolute;
-  top: 13px;
+  top: 14px;
   width: 25px;
   z-index: 1;
   opacity: 0.7;
@@ -1881,6 +2085,11 @@ span.cancel_search:hover {
     background-image: url('../../../images/src/saiku_16.png');
 	padding: 1px 8px 1px;
 	margin-right: 4px;
+}
+
+.RepositoryObjects li.query .icon_override {
+    padding: 1px 8px 1px;
+    margin-right: 4px;
 }
 
 .RepositoryObjects li .sprite.folder {

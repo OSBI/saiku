@@ -65,4 +65,5 @@ public class InfoResource {
          new GenericEntity<List<Plugin>>(platformService.getAvailablePlugins()){};
      return Response.ok(entity).build();
   }
+
 }

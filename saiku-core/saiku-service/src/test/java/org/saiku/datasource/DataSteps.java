@@ -15,12 +15,10 @@
  */
 package org.saiku.datasource;
 
-import net.thucydides.core.annotations.Step;
-import org.junit.Test;
-import org.saiku.helper.DatabaseHelper;
 import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.datasources.connection.SimpleConnectionManager;
 import org.saiku.datasources.datasource.SaikuDatasource;
+import org.saiku.helper.DatabaseHelper;
 import org.saiku.olap.discover.OlapMetaExplorer;
 import org.saiku.olap.dto.SaikuConnection;
 import org.saiku.olap.util.exception.SaikuOlapException;
@@ -30,6 +28,10 @@ import org.saiku.service.olap.OlapDiscoverService;
 import org.saiku.service.olap.ThinQueryService;
 import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
+
+import net.thucydides.core.annotations.Step;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.io.InputStream;
