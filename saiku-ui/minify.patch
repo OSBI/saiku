@@ -1,6 +1,6 @@
---- index.html	2015-10-05 15:10:29.264964752 +0100
-+++ index2.html	2015-10-05 15:18:48.336972521 +0100
-@@ -114,69 +114,9 @@
+--- index.html	2015-10-20 16:13:06.129953902 +0100
++++ index2.html	2015-10-20 16:19:22.201947805 +0100
+@@ -114,70 +114,8 @@
  <!-- Saiku Project -->
  <script type="text/javascript" src="js/saiku/Settings.js"></script>
  
@@ -68,7 +68,6 @@
 -<!--
  <script type="text/javascript" src="saiku.min.js"></script>
 --->
-+
  
  <!--
  <script src="js/leaflet/leaflet-heat.js"></script>

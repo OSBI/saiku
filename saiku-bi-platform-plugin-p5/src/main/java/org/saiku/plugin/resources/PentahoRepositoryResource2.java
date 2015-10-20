@@ -418,7 +418,8 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 				String extension = file.getExtension();
 				repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath, acls));
 			} else { 
-				repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepositoryObjects(root, relativePath, type, hidden)));
+				repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls,
+								/*getRepositoryObjects(root, relativePath, type, hidden)*/null));
 			}
 			Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
 
