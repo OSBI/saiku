@@ -64,7 +64,7 @@ var SaveQuery = Modal.extend({
             "<div class='RepositoryObjects'><span class='i18n'>Loading...</span></div>" +
             "<br />"+
             "</form>"+
-            '<div style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
+            '<div class="box-search-file" style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
             ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>')({ name: full_path });
 
         _.extend(this.options, {
@@ -84,6 +84,10 @@ var SaveQuery = Modal.extend({
             $(this.el).dialog( 'option', 'position', 'center' );
             $(this.el).parents('.ui-dialog').css({ width: "550px", top: perc+'%' });
             self.repository.fetch( );
+
+            if (Settings.REPOSITORY_LAZY) {
+                this.$el.find('.box-search-file').hide();
+            }
         } );
 
         // Maintain `this`
@@ -120,6 +124,8 @@ var SaveQuery = Modal.extend({
 
     toggle_folder: function( event ) {
         var $target = $( event.currentTarget );
+        var path = $target.children('.folder_row').find('a').attr('href');
+        path = path.replace('#', '');
         this.unselect_current_selected_folder( );
         $target.children('.folder_row').addClass( 'selected' );
         var f_name = $target.find( 'a' ).attr('href').replace('#', '');
@@ -131,11 +137,35 @@ var SaveQuery = Modal.extend({
         if( isClosed ) {
             $target.children( '.folder_row' ).find('.sprite').removeClass( 'collapsed' );
             $queries.removeClass( 'hide' );
+            if (Settings.REPOSITORY_LAZY) {
+                this.fetch_lazyload($target, path);
+            }
         } else {
             $target.children( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
             $queries.addClass( 'hide' );
+            if (Settings.REPOSITORY_LAZY) {
+                $target.find('.folder_content').remove();
+            }
         }
         return false;
+    },
+
+    fetch_lazyload: function(target, path) {
+        var repositoryLazyLoad = new RepositoryLazyLoad({}, { dialog: this, folder: target, path: path });
+        repositoryLazyLoad.fetch();
+    },
+    
+    template_repository_folder_lazyload: function(folder, repository) {
+        folder.find('.folder_content').remove();
+        folder.append(
+            _.template($('#template-repository-folder-lazyload').html())({
+                repoObjects: repository
+            })
+        );
+    },
+
+    populate_lazyload: function(folder, repository) {
+        this.template_repository_folder_lazyload(folder, repository);
     },
 
     set_name: function(folder, file) {

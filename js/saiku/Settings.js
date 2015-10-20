@@ -41,6 +41,7 @@ var Settings = {
         'saiku.olap.query.filter' : true,
         'saiku.olap.result.formatter' : "flattened"
     },
+    REPOSITORY_LAZY: true,
     TABLE_LAZY: true,          // Turn lazy loading off / on
     TABLE_LAZY_SIZE: 1000,     // Initial number of items to be rendered
     TABLE_LAZY_LOAD_ITEMS: 20,       // Additional item per scroll
