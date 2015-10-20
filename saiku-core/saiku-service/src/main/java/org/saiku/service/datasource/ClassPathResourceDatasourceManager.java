@@ -180,7 +180,12 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
     return datasources.get( datasourceName );
   }
 
-    public void addSchema(String file, String path, String name) {
+  @Override
+  public SaikuDatasource getDatasource(String datasourceName, boolean refresh) {
+    return null;
+  }
+
+  public void addSchema(String file, String path, String name) {
 
     }
 

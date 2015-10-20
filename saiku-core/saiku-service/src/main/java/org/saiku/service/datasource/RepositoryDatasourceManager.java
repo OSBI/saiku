@@ -210,6 +210,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         return datasources.get(datasourceName);
     }
 
+    @Override
+    public SaikuDatasource getDatasource(String datasourceName, boolean refresh) {
+        return null;
+    }
+
     public void addSchema(String file, String path, String name) throws Exception {
             irm.saveInternalFile(file, path, "nt:mondrianschema");
 
