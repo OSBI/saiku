@@ -142,6 +142,10 @@ var OpenQuery = Backbone.View.extend({
 		// Fire off new openQuery event
 		Saiku.session.trigger('openQuery:new', { openQuery: this });
 
+        if (Settings.REPOSITORY_LAZY) {
+            this.$el.find('.search_file').prop('disabled', true);
+        }
+
         return this;
     },
 
@@ -333,6 +337,8 @@ var OpenQuery = Backbone.View.extend({
 
     toggle_folder: function( event ) {
         var $target = $( event.currentTarget );
+        var path = $target.children('.folder_row').find('a').attr('href');
+        path = path.replace('#', '');
         this.unselect_current_selected( );
         $target.children('.folder_row').addClass( 'selected' );
         var $queries = $target.children( '.folder_content' );
@@ -340,14 +346,38 @@ var OpenQuery = Backbone.View.extend({
         if( isClosed ) {
             $target.children( '.folder_row' ).find('.sprite').removeClass( 'collapsed' );
             $queries.removeClass( 'hide' );
+            if (Settings.REPOSITORY_LAZY) {
+                this.fetch_lazyload($target, path);
+            }
         } else {
             $target.children( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
             $queries.addClass( 'hide' );
+            if (Settings.REPOSITORY_LAZY) {
+                $target.find('.folder_content').remove();
+            }
         }
 
         this.view_folder( event );
 
         return false;
+    },
+
+    fetch_lazyload: function(target, path) {
+        var repositoryLazyLoad = new RepositoryLazyLoad({}, { dialog: this, folder: target, path: path });
+        repositoryLazyLoad.fetch();
+    },
+    
+    template_repository_folder_lazyload: function(folder, repository) {
+        folder.find('.folder_content').remove();
+        folder.append(
+            _.template($('#template-repository-folder-lazyload').html())({
+                repoObjects: repository
+            })
+        );
+    },
+
+    populate_lazyload: function(folder, repository) {
+        this.template_repository_folder_lazyload(folder, repository);
     },
 
     select_and_open_query: function(event) {
