@@ -212,6 +212,14 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     @Override
     public SaikuDatasource getDatasource(String datasourceName, boolean refresh) {
+        if(!refresh) {
+            if(datasources.size()>0) {
+                return datasources.get(datasourceName);
+            }
+        }
+        else{
+            return getDatasource(datasourceName);
+        }
         return null;
     }
 
