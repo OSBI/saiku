@@ -358,6 +358,24 @@
             <groupId>org.saikuanalytics</groupId>
             <artifactId>saiku-bi-platform-plugin-p5</artifactId>
             <version>3.7-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>pentaho</groupId>
+                    <artifactId>mondrian</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>eigenbase</groupId>
+                    <artifactId>eigenbase-properties</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>eigenbase</groupId>
+                    <artifactId>eigenbase-resgen</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>eigenbase</groupId>
+                    <artifactId>eigenbase-xom</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.saikuanalytics</groupId>
