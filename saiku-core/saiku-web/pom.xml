@@ -143,10 +143,6 @@
             <artifactId>fop</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-vfs</groupId>
-            <artifactId>commons-vfs</artifactId>
-        </dependency>
-        <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
         </dependency>
