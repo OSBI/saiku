@@ -43,11 +43,11 @@ var MeasuresModal = Modal.extend({
 
         "<table border='0px'>" +
         "<tr><td class='col0 i18n'>Name:</td>" +
-        "<td class='col1'><input type='text' class='measure_name' value='Measure Name'></input></td></tr>" +
+        "<td class='col1'><input type='text' class='measure_name i18n' value='Measure Name'></input></td></tr>" +
             "<tr><td class='col0 i18n'>Measure:</td>" +
             "<td class='col1'>" +
             "<select id='Measures' name='MeasuresId'> " +
-            "    <option value='' selected='selected'>--select an existing measure--</option> " +
+            "    <option value='' class='i18n' selected='selected'>--select an existing measure--</option> " +
             "    <% _(measures).each(function(m) { %> " +
             "      <option value='<%= m.uniqueName %>'><%= m.name %></option> " +
             "    <% }); %> " +
@@ -55,7 +55,7 @@ var MeasuresModal = Modal.extend({
             "</td></tr>" +
 
             "<tr><td class='col0 i18n'>Formula:</td>" +
-            "<td class='col1'><textarea class='measureFormula auto-hint' placeholder='Start writing a calculated measure or use the dropdown list'></textarea></td></tr>" +
+            "<td class='col1'><textarea class='i18n measureFormula auto-hint' placeholder='Start writing a calculated measure or use the dropdown list'></textarea></td></tr>" +
 
             "<tr> <td class='col0'> </td>" +
             "<td class='col1'>" +
