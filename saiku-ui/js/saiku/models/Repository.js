@@ -140,3 +140,25 @@ var Repository = Backbone.Collection.extend({
 		return segment;
 	}
 });
+
+var RepositoryLazyLoad = Backbone.Model.extend({    
+    url: function() {
+        var segment = repoPathUrl() + '?type=' + (this.type ? this.type : 'saiku') + '&path=' + this.path;
+        return segment;
+    },
+
+    initialize: function(args, options) {
+        if (options && options.dialog) {
+            this.dialog = options.dialog;
+            this.folder = options.folder;
+            this.path = options.path;
+        }
+    },
+
+    parse: function(response) {
+        if (this.dialog) {
+            this.dialog.populate_lazyload(this.folder, response);
+        }
+        return response;
+    }
+});

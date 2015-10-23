@@ -168,6 +168,7 @@
 <script type="text/javascript" src="js/saiku/models/Plugin.js"></script>
 <script type="text/javascript" src="js/saiku/models/Settings.js"></script>
 <script type="text/javascript" src="js/saiku/models/License.js"></script>
+<script type="text/javascript" src="js/saiku/models/DataSources.js"></script>
 <script type="text/javascript" src="js/saiku/Saiku.js"></script>
 <script type="text/javascript" src="js/saiku/views/DateFilterModal.js"></script>
 <script type="text/javascript" src="js/saiku/adapters/SaikuServer.js"></script>
@@ -684,17 +685,32 @@ title="Drill across on cell"></a></li>
             <% } ); %>
         </script>
 <script type="text/x-jquery-tmpl" id="template-repository-folder">
-            <li class='folder'>
-                <div class='folder_row'>
-                    <span class='sprite folder collapsed'></span>
-                    <a href="#<%= entry.path %>"><%= entry.name %></a>
-                </div>
+            <% if(!Settings.REPOSITORY_LAZY) { %>
+                <li class='folder'>
+                    <div class='folder_row'>
+                        <span class='sprite folder collapsed'></span>
+                        <a href="#<%= entry.path %>"><%= entry.name %></a>
+                    </div>
 
-                <ul class='hide folder_content'>
+                    <ul class='hide folder_content'>
 
-                    <%= _.template($("#template-repository-objects").html())( { repoObjects: entry.repoObjects }) %>
+                        <%= _.template($("#template-repository-objects").html())( { repoObjects: entry.repoObjects }) %>
+                    </ul>
+                </li>
+            <% } else { %>
+                <li class='folder'>
+                    <div class='folder_row'>
+                        <span class='sprite folder collapsed'></span>
+                        <a href="#<%= entry.path %>"><%= entry.name %></a>
+                    </div>
+                </li>
+            <% } %>
+        </script>
+
+<script type="text/x-jquery-tmpl" id="template-repository-folder-lazyload">
+                <ul class='folder_content'>
+                    <%= _.template($("#template-repository-objects").html())( { repoObjects: repoObjects }) %>
                 </ul>
-            </li>
         </script>
 
 <script type="text/x-jquery-tmpl" id="template-repository-file">

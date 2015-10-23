@@ -25,7 +25,7 @@ import org.saiku.service.importer.LegacyImporterImpl;
 import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
 
-import org.saiku.service.util.security.PasswordProvider;
+import org.saiku.service.util.security.authentication.PasswordProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -208,6 +208,19 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public SaikuDatasource getDatasource(String datasourceName) {
         return datasources.get(datasourceName);
+    }
+
+    @Override
+    public SaikuDatasource getDatasource(String datasourceName, boolean refresh) {
+        if(!refresh) {
+            if(datasources.size()>0) {
+                return datasources.get(datasourceName);
+            }
+        }
+        else{
+            return getDatasource(datasourceName);
+        }
+        return null;
     }
 
     public void addSchema(String file, String path, String name) throws Exception {

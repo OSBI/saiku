@@ -170,7 +170,7 @@ public class PentahoDatasourceManager implements IDatasourceManager {
                 if (saikuConnectionProcessor != null) {
                     props.put(ISaikuConnection.CONNECTION_PROCESSORS, saikuConnectionProcessor);
                 }
-                props.list(System.out);
+                //props.list(System.out);
 
                 SaikuDatasource sd = new SaikuDatasource(name, SaikuDatasource.Type.OLAP, props);
                 datasources.put(name, sd);
@@ -212,6 +212,18 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
     public SaikuDatasource getDatasource(String datasourceName) {
         return loadDatasources().get(datasourceName);
+    }
+
+    public SaikuDatasource getDatasource(String datasourceName, boolean refresh) {
+        if(!refresh) {
+            if(datasources.size()>0) {
+                return datasources.get(datasourceName);
+            }
+        }
+        else{
+            return getDatasource(datasourceName);
+        }
+        return null;
     }
 
     public void addSchema(String file, String path, String name) {

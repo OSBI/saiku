@@ -126,7 +126,7 @@ public abstract class AbstractConnectionManager implements IConnectionManager, S
   }
 
   public ISaikuConnection getConnection( String name ) throws SaikuOlapException {
-    SaikuDatasource datasource = ds.getDatasource( name );
+    SaikuDatasource datasource = ds.getDatasource( name, false );
     datasource = preProcess( datasource );
     ISaikuConnection con = getInternalConnection( name, datasource );
     con = postProcess( datasource, con );

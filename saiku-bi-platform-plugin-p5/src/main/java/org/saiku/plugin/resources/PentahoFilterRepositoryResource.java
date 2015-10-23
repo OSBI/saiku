@@ -1,20 +1,20 @@
 package org.saiku.plugin.resources;
 
-import java.io.File;
-
-import javax.ws.rs.Path;
+import org.saiku.plugin.util.PluginConfig;
+import org.saiku.web.rest.resources.FilterRepositoryResource;
 
 import org.pentaho.platform.api.engine.IPluginManager;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.services.pluginmgr.PluginClassLoader;
-import org.saiku.plugin.util.PluginConfig;
-import org.saiku.web.rest.resources.FilterRepositoryResource;
+
+import java.io.File;
+
+import javax.ws.rs.Path;
 
 @Path("/saiku/api/{username}/filters")
 public class PentahoFilterRepositoryResource extends FilterRepositoryResource {
 	
-	@Override
 	public void setPath(String path) throws Exception {
 		final IPluginManager pluginManager = (IPluginManager) PentahoSystem.get(IPluginManager.class, PentahoSessionHolder.getSession());
 		final PluginClassLoader pluginClassloader = (PluginClassLoader)pluginManager.getClassLoader(PluginConfig.PLUGIN_NAME);
@@ -25,7 +25,7 @@ public class PentahoFilterRepositoryResource extends FilterRepositoryResource {
 		}
 		absolute += path;
 		System.out.println("Using tag repository path: " + absolute);
-		super.setPath(absolute);
+		//super.setPath(absolute);
 	}
 
 }

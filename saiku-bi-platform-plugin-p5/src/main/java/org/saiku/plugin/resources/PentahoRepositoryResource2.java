@@ -141,7 +141,7 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 	  logelements.put("username", userService.getActiveUsername());
 	  logelements.put("filename", file);
 
-	  UUID uuid = pah.startAudit("Saiku", "Open Query", this.getClass().getName(), this.toString(), this.toString(), createLogEntry(logelements),
+	  UUID uuid = pah.startAudit("Saiku", "Open Query", this.getClass().getName(), userService.getActiveUsername(), this.toString(), file,
 		  getLogger());
 		try {
 			if (StringUtils.isBlank(file)) {
@@ -165,8 +165,8 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 			}
 		  long end = System.currentTimeMillis();
 
-		  pah.endAudit("Saiku", "Open Query", this.getClass().getName(), this.toString(), this.toString(),
-		  		createLogEntry(logelements), getLogger(), start,
+		  pah.endAudit("Saiku", "Open Query", this.getClass().getName(), userService.getActiveUsername(), this.toString(),
+				  file, getLogger(), start,
 		  		uuid,
 		  		end);
 			return Response.ok(doc.getBytes("UTF-8"), MediaType.TEXT_PLAIN).header(
@@ -176,8 +176,8 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 		catch(Exception e){
 		  long end = System.currentTimeMillis();
 
-		  pah.endAudit("Saiku", "Execute Query", this.getClass().getName(), this.toString(), this.toString(),
-			  createLogEntry(logelements), getLogger(), start,
+		  pah.endAudit("Saiku", "Execute Query", this.getClass().getName(), userService.getActiveUsername(), this.toString(),
+				  file, getLogger(), start,
 			  uuid,
 			  end);
 			log.error("Cannot load file from repository (" + file + ")",e);
@@ -395,7 +395,7 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 				files.add(bf);
 				log.debug("Found file in " + path);
 			} else {
-				files = root.listFiles(path, txtFilter, 0, true, hidden);
+				files = root.listFiles(path, txtFilter, 1, true, hidden);
 				log.debug("Found files in " + path + " : " + files.size());
 			}
 		}
@@ -418,7 +418,8 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 				String extension = file.getExtension();
 				repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath, acls));
 			} else { 
-				repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepositoryObjects(root, relativePath, type, hidden)));
+				repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls,
+								/*getRepositoryObjects(root, relativePath, type, hidden)*/null));
 			}
 			Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
 

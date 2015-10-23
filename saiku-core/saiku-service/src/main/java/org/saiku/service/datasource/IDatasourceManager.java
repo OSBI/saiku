@@ -49,6 +49,8 @@ public interface IDatasourceManager {
 
   public SaikuDatasource getDatasource( String datasourceName );
 
+  public SaikuDatasource getDatasource( String datasourceName, boolean refresh );
+
   public void addSchema(String file, String path, String name) throws Exception;
 
   public List<MondrianSchema> getMondrianSchema();
