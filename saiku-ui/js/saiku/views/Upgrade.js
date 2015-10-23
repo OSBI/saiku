@@ -45,7 +45,7 @@ var Upgrade = Backbone.View.extend({
 
 		if(Settings.BIPLUGIN5){
 				if(Saiku.session.get("notice") != undefined && Saiku.session.get("notice")!=null && Saiku.session.get("notice")!=""){
-					$(this.el).append("<div><div id='uphead' class='upgradeheader'>Notice:"+Saiku.session.get("notice")+"</div>");
+					$(this.el).append("<div><div id='uphead' class='i18n upgradeheader'>Notice:"+Saiku.session.get("notice")+"</div>");
 
 				}
 				if (Settings.LICENSE.licenseType != undefined && (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenseType != "Open Source License")) {
@@ -57,21 +57,21 @@ var Upgrade = Backbone.View.extend({
 					self.remainingdays = self.daydiff(new Date(), yourDate);
 
 
-					$(this.el).append("<div><div id='uphead' class='upgradeheader'>You are using a Saiku Enterprise" +
-						" Trial license, you have "+ self.remainingdays+" days remaining. <a href='http://www.meteorite.bi/saiku-pricing'>Buy licenses online.</a></div>");
+					$(this.el).append("<div><div id='uphead' class='i18n upgradeheader'>You are using a Saiku Enterprise" +
+						" Trial license, you have "+ self.remainingdays+" days remaining. <a class='i18n' href='http://www.meteorite.bi/saiku-pricing'>Buy licenses online.</a></div>");
 					return self;
 				}
 				else {
-					$(this.el).append("<div><div id='uphead' class='upgradeheader'>You are using Saiku Community" +
-						" Edition, please consider upgrading to <a target='_blank' href='http://meteorite.bi'>Saiku Enterprise</a>, or entering a <a href='http://meteorite.bi/products/saiku/sponsorship'>sponsorship agreement with us</a> to support development. " +
-						"<a href='http://meteorite.bi/products/saiku/community'>Or contribute by joining our community and helping other users!</a></div></div>");
+					$(this.el).append("<div><div id='uphead' class='i18n upgradeheader'>You are using Saiku Community" +
+						" Edition, please consider upgrading to <a target='_blank' class='i18n' href='http://meteorite.bi'>Saiku  Enterprise</a>, or  entering a <a href='http://meteorite.bi/products/saiku/sponsorship'>sponsorship agreement with us</a> to support development. " +
+						"<a class='i18n' href='http://meteorite.bi/products/saiku/community'>Or contribute by joining our community and helping other users!</a></div></div>");
 
 					return self;
 				}
 		}
 		else {
 				if(Saiku.session.get("notice") != undefined && Saiku.session.get("notice")!=null && Saiku.session.get("notice")!=""){
-					$(this.el).append("<div><div id='uphead' class='upgradeheader'>Notice:"+Saiku.session.get("notice")+"</div>");
+					$(this.el).append("<div><div id='uphead' class='upgradeheader i18n'>Notice:"+Saiku.session.get("notice")+"</div>");
 
 				}
 				if (Settings.LICENSE.licenseType != undefined && (Settings.LICENSE.licenseType != "trial" &&
@@ -84,14 +84,14 @@ var Upgrade = Backbone.View.extend({
 
 					self.remainingdays = self.daydiff(new Date(), yourDate);
 
-					$(this.el).append("<div><div id='uphead' class='upgradeheader'>You are using a Saiku Enterprise" +
-						" Trial license, you have "+ self.remainingdays+" days remaining. <a href='http://www.meteorite.bi/saiku-pricing'>Buy licenses online.</a></div>");
+					$(this.el).append("<div><div id='uphead' class='upgradeheader i18n'>You are using a Saiku Enterprise" +
+						" Trial license, you have "+ self.remainingdays+" days remaining. <a class='i18n' href='http://www.meteorite.bi/saiku-pricing'>Buy licenses online.</a></div>");
 					return self;
 				}
 				else {
-					$(this.el).append("<div><div id='uphead' class='upgradeheader'>You are using Saiku Community" +
-						" Edition, please consider upgrading to <a target='_blank' href='http://meteorite.bi'>Saiku Enterprise</a>, or entering a <a href='http://meteorite.bi/products/saiku/sponsorship'>sponsorship agreement with us</a> to support development. " +
-						"<a href='http://meteorite.bi/products/saiku/community'>Or contribute by joining our community and helping other users!</a></div></div>");
+					$(this.el).append("<div><div id='uphead' class='upgradeheader i18n'>You are using Saiku Community" +
+						" Edition, please consider upgrading to <a target='_blank' class='i18n' href='http://meteorite.bi'>Saiku Enterprise</a>, or  entering a <a href='http://meteorite.bi/products/saiku/sponsorship'>sponsorship agreement with us</a> to support development. " +
+						"<a href='http://meteorite.bi/products/saiku/community' class='i18n' >Or contribute by joining our community and helping other users!</a></div></div>");
 					return self;
 				}
 		}

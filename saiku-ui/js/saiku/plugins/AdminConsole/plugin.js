@@ -225,18 +225,18 @@ var AdminConsole = Backbone.View.extend({
             "<div class='sidebar_inner'>" +
             "<a class='back_query' href='#back_query' style='display:none'></a>" +
             "    <ul id='queries' class='RepositoryObjects'>" +
-            "<li><strong>User Management</strong>" +
-            "<ul class='inner_users'><li class='create_user'>Add User</li></ul></li>" +
-            "<li><strong>Data Source Management</strong></li>" +
-            "<ul class='dslist'><strong>Data Sources</strong>"+
-            "<ul class='inner_datasource'><li class='create_datasource'>Add Data Source</li></ul></ul>" +
-            "<ul class='dslist'><strong>Schema</strong>"+
-            "<ul class='inner_schema'><li class='create_schema'>Add Schema</li></ul></ul>" +
-            "<li><strong>Maintenance</strong>" +
-            "<ul><li class='backup_restore'>Backup/Restore</li></ul></li>"+
-            "<li class='license_container'><strong>License</strong>" +
-            "<ul><li class='license_info'>Information</li>" +
-            "<li class='license_users_list'>Users List</li></ul></li>"+
+            "<li><strong class='i18n'>User Management</strong>" +
+            "<ul class='inner_users'><li class='i18n create_user'>Add User</li></ul></li>" +
+            "<li><strong class='i18n'>Data Source Management</strong></li>" +
+            "<ul class='dslist'><strong class='i18n'>Data Sources</strong>"+
+            "<ul class='inner_datasource'><li class='create_datasource i18n'>Add Data Source</li></ul></ul>" +
+            "<ul class='dslist'><strong class='i18n'>Schema</strong>"+
+            "<ul class='inner_schema'><li class='create_schema i18n'>Add Schema</li></ul></ul>" +
+            "<li><strong class='i18n'>Maintenance</strong>" +
+            "<ul><li class='backup_restore i18n'>Backup/Restore</li></ul></li>"+
+            "<li class='license_container'><strong class='i18n'>License</strong>" +
+            "<ul><li class='license_info i18n'>Information</li>" +
+            "<li class='license_users_list i18n'>Users List</li></ul></li>"+
             "</ul>" +
             "</ul>" +
             "</div>" +
@@ -349,6 +349,7 @@ var AdminConsole = Backbone.View.extend({
             $(this.el).find('.back_query').css('display', 'block');
         }
 
+        Saiku.i18n.translate();
         return this;
     },
     populate: function (repository) {
@@ -391,11 +392,12 @@ var AdminConsole = Backbone.View.extend({
         var html = this.schematemplate({repoObjects: repository});
         $(this.el).find('.inner_schema').append(html);
     },
-    backup_restore_template: _.template("<div><h1>Backup</h1><p><a href='/saiku/rest/saiku/admin/backup' class='form_button'>Backup Now!</a></p>" +
+    backup_restore_template: _.template("<div><h1 class='i18n'>Backup</h1><p><a href='/saiku/rest/saiku/admin/backup'" +
+        " class='form_button i18n'>Backup Now!</a></p>" +
         "<hr>" +
-        "<h1>Restore</h1>" +
-        "<form><input name='restore' type='file' class='restore_button'/><div class='clear'></div><br/>" +
-        "<input type='submit' class='form_button upload_button submitrestore' value='Restore Repository'><input type='submit' class='form_button upload_button submitrestorelegacy' value='Restore Legacy Reports'></form>" +
+        "<h1 class='i18n'>Restore</h1>" +
+        "<form><input name='restore' type='file' class='i18n restore_button'/><div class='clear'></div><br/>" +
+        "<input type='submit' class='i18n form_button upload_button submitrestore' value='Restore Repository'><input type='submit' class='form_button upload_button i18n submitrestorelegacy' value='Restore Legacy Reports'></form>" +
 "<br/><div id='uploadstatus'>"),
     //itemTemplate : _.template( "<% console.log('Hello2 from template' +Object.keys(entry)); %>" +"Helo<!--<li class='query'><span class='icon'></span><a href=''>hello</a></li>-->"),
     maintemplate: _.template("<% _.each( repoObjects, function( entry ) { %>" +
@@ -407,69 +409,73 @@ var AdminConsole = Backbone.View.extend({
     schematemplate: _.template("<% _.each( repoObjects, function( entry ) { %>" +
         "<li class='schema'><span class='icon'></span><a href='<%= entry.name%>'><%= entry.name %></a></li>" +
         "<% } ); %>"),
-    usertemplate: _.template(" <form><div id='accordion'><h3 class='accordion-toggle' >User Details</h3>" +
+    usertemplate: _.template(" <form><div id='accordion'><h3 class='accordion-toggle i18n' >User Details</h3>" +
         "<div class='accordion-content default'>"+
-        "<label for='username'>Username:</label> <input onfocus=\"this.value=''; this.onfocus=null;\" type='text' name='username' value='<% if(user.username) { %><%= user.username %><%} else{ %>Enter Username<%}%>'><br/>" +
-        "<label for='email'>Email address:</label> <input type='text' onfocus=\"this.value=''; this.onfocus=null;\" name='email' value='<% if(user.email) { %><%= user.email %><%} else{ %>Enter Email Address<%}%>'><br/>" +
+        "<label for='username' class='i18n'>Username:</label> <input onfocus=\"this.value=''; this.onfocus=null;\" type='text' name='username' value='<% if(user.username) { %><%= user.username %><%} else{ %>Enter Username<%}%>'><br/>" +
+        "<label for='email' class='i18n'>Email address:</label> <input type='text' onfocus=\"this.value=''; this.onfocus=null;\" name='email' value='<% if(user.email) { %><%= user.email %><%} else{ %>Enter Email Address<%}%>'><br/>" +
         "<div class='clear'></div>" +
         "</div>" +
 
-        "<h3 class='accordion-toggle'>Password</h3>" +
+        "<h3 class='accordion-toggle i18n'>Password</h3>" +
         "<div class='accordion-content'>"+
         //"Current password:<input type='password' value='' name='currpassword'><br/>" +
-        "<label for='newpassword'>Change password:</label><input type='password' value='' name='newpassword'><br/>" +
-        "<label for='newpassword2'>Repeat Password:</label><input type='password' value='' name='newpassword2'><br/>" +
-        "<a href='<%= user.id%>' class='save_password user_button form_button'>Change Password</a><div class='clear'></div>" +
+        "<label for='newpassword' class='i18n'>Change password:</label><input type='password' value=''" +
+        " name='newpassword'><br/>" +
+        "<label for='newpassword2' class='i18n'>Repeat Password:</label><input type='password' value='' name='newpassword2'><br/>" +
+        "<a href='<%= user.id%>' class='save_password user_button i18n form_button'>Change Password</a><div class='clear'></div>" +
         "</div>" +
 
-        "<h3 class='accordion-toggle'>Roles</h3>" +
+        "<h3 class='i18n accordion-toggle'>Roles</h3>" +
         "<div class='accordion-content'>"+
-        "<label for='roleselect'>Existing Roles: </label><select name='roleselect' class='role_select' multiple>" +
+        "<label for='roleselect i18n'>Existing Roles: </label><select name='roleselect' class='role_select' multiple>" +
         " <% _.each(user.roles, function(role){%><option><%= role %></option><%});%></select><br/><br/>" +
-        "<a href='<%= user.id%>' class='remove_role form_button user_button'>Remove selected role</a><br/> " +
-        "<a href='#' class='new_remove_role form_button user_button hide'>Remove selected role</a><br/><br/> <br/> " +
-        "<label for='role'>Add new role: </label><input type='text' name='role'><br/>" +
-        "<a href='<%= user.id%>' class=' form_button user_button add_role'>Add role</a>" +
-        "<a href='#' class='new_add_role form_button user_button hide'>Add role</a><br/></div>" +
-        "<br/><br/><a href='<%= user.id%>' class='remove_user form_button user_button hide'>Remove User</a> " +
-        "<a href='<%= user.id%>' class='save_user user_button form_button'>Save Changes</a>" +
-        "<a href='#' class='save_new_user form_button user_button hide'>Save User</a><div class='clear'>" +
+        "<a href='<%= user.id%>' class='remove_role i18n form_button user_button'>Remove selected role</a><br/> " +
+        "<a href='#' class='new_remove_role form_button i18n user_button hide'>Remove selected role</a><br/><br/> <br/> " +
+        "<label for='role' class='i18n'>Add new role: </label><input type='text' name='role'><br/>" +
+        "<a href='<%= user.id%>' class='i18n form_button user_button add_role'>Add role</a>" +
+        "<a href='#' class='new_add_role i18n form_button user_button hide'>Add role</a><br/></div>" +
+        "<br/><br/><a href='<%= user.id%>' class='i18n remove_user form_button user_button hide'>Remove User</a> " +
+        "<a href='<%= user.id%>' class='save_user i18n user_button form_button'>Save Changes</a>" +
+        "<a href='#' class='save_new_user form_button i18n user_button hide'>Save User</a><div class='clear'>" +
         "</div></div></form>"),
-    datasourcetemplate: _.template("<form><h3>Create Data Source</h3>" +
-        "<div class='simpleConnection'><label for='connname'>Name:</label><input type='text' name='connname' value='<%= conn.connectionname %>'/><br />" +
-        "<label for='drivertype'>Connection Type:</label><select name='drivertype' class='drivertype'><option value='MONDRIAN'>Mondrian</option><option value='XMLA'>XMLA</option></select><br/>" +
-        "<label for='jdbcurl'>URL:</label><input name='jdbcurl' value='<%= conn.jdbcurl %>' type='text'/><br class='horridbr'/>" +
+    datasourcetemplate: _.template("<form><h3 class='i18n'>Create Data Source</h3>" +
+        "<div class='simpleConnection'><label for='connname' class='i18n'>Name:</label><input type='text' name='connname' value='<%= conn.connectionname %>'/><br />" +
+        "<label class='i18n' for='drivertype'>Connection Type:</label><select name='drivertype' class='drivertype'><option value='MONDRIAN'>Mondrian</option><option value='XMLA'>XMLA</option></select><br/>" +
+        "<label for='jdbcurl' class='i18n'>URL:</label><input name='jdbcurl' value='<%= conn.jdbcurl %>' type='text'/><br" +
+        " class='horridbr'/>" +
         "<label for='schemapath'>Schema:</label><select class='schemaselect' name='schemapath'>" +
         "<% _.each(schemas, function(path){%>" +
         "<option  <% if(conn.schema != null && conn.schema === 'mondrian://'+path.attributes.path){ print('selected'); } %> ><%= path.attributes.path %></option>" +
         "<%});%></select><br/>" +
-        "<label for='driver'>Jdbc Driver: </label><input name='driver' value='<%= conn.driver %>' type='text'/><br class='horridbr'/>" +
-        "<label for='connusername'>Username: </label><input name='connusername' type='text' value='<%= conn.username %>'/><br/>" +
-        "<label for='connpassword'>Password:</label><input name='connpassword' type='password' value='<%= conn.password %>'/><br/></div>" +
-        "<div class='advconnection' style='display:none;'><textarea name='adv_text' rows='10' cols='75'><%= conn.advanced %></textarea></div>" +
-        "<br/><br/><a href='' name='advancedurl' class='advancedurl'>Advanced</a>" +
-        "<a href='<%= conn.id%>' class='user_button form_button remove_datasource hide'>Remove</a>" +
-        "<a href='<%= conn.id%>' class='user_button form_button save_datasource'>Save</a>" +
-        "<a href='<%= conn.id%>' class='refresh_button form_button user_button hide'>Refresh Cache</a><div class='clear'></div></form>" +
+        "<label for='driver' class='i18n'>Jdbc Driver: </label><input name='driver' value='<%= conn.driver %>' type='text'/><br class='horridbr'/>" +
+        "<label class='i18n' for='connusername'>Username: </label><input name='connusername' type='text' value='<%=" +
+        " conn.username %>'/><br/>" +
+        "<label for='connpassword' class='i18n'>Password:</label><input name='connpassword' type='password' value='<%= conn.password %>'/><br/></div>" +
+        "<div class='advconnection i18n' style='display:none;'><textarea name='adv_text' rows='10' cols='75'><%= conn.advanced %></textarea></div>" +
+        "<br/><br/><a href='' name='advancedurl' class='advancedurl i18n'>Advanced</a>" +
+        "<a href='<%= conn.id%>' class='user_button i18n form_button remove_datasource hide'>Remove</a>" +
+        "<a href='<%= conn.id%>' class='user_button i18n form_button save_datasource'>Save</a>" +
+        "<a href='<%= conn.id%>' class='refresh_button i18n form_button user_button hide'>Refresh Cache</a><div class='clear'></div></form>" +
         "<div id='savestatus'></div>"
        ),
-    schemauploadtemplate: _.template( "<h3>Schema Management</h3>" +
+    schemauploadtemplate: _.template( "<h3 class='i18n'>Schema Management</h3>" +
         "<input name='fileschema' type='file' class='upload_button'/><div class='clear'></div><br/>" +
-        "<label for='schemaname'>Schema Name:</label><input name='schemaname' type='text' value='<%= schema.id %>'/><br/>" +
-	    "<a href='<%= schema.id%>' class='user_button form_button remove_schema hide'>Remove</a>" +
-	    "<a href='/saiku/rest/saiku/admin/schema/<%= schema.id%>' class='user_button form_button download_schema hide'>Download</a><input type='submit' class='user_button form_button upload_button submitdatasource' value='Upload'>" +
+        "<label for='schemaname' class='i18n'>Schema Name:</label><input name='schemaname' type='text' value='<%= schema.id" +
+        " %>'/><br/>" +
+	    "<a href='<%= schema.id%>' class='user_button i18n form_button remove_schema hide'>Remove</a>" +
+	    "<a href='/saiku/rest/saiku/admin/schema/<%= schema.id%>' class='user_button i18n form_button download_schema hide'>Download</a><input type='submit' class='user_button form_button i18n upload_button submitdatasource' value='Upload'>" +
         "<br/><div id='uploadstatus'></div>"),
-    licenseInfoTemplate: _.template("<h3>License Information</h3>" +
-        "<ul class='license_type'><li><strong>License Type: </strong></li>" +
-        "<li><strong>License Expiry: </strong></li>" +
-        "<li><strong>License Contact: </strong></li>" +
-        "<li><strong>License Hostname: </strong></li>" +
-        "<li><strong>User Limit: </strong></li></ul>"),
+    licenseInfoTemplate: _.template("<h3 class='i18n'>License Information</h3>" +
+        "<ul class='license_type'><li><strong class='i18n'>License Type: </strong></li>" +
+        "<li><strong class='i18n'>License Expiry: </strong></li>" +
+        "<li><strong class='i18n'>License Contact: </strong></li>" +
+        "<li><strong class='i18n'>License Hostname: </strong></li>" +
+        "<li><strong class='i18n'>User Limit: </strong></li></ul>"),
     licenseAddUserTemplate: _.template("<form>" +
-        "<h3>Add user</h3><br>" +
-        "<label for='username'>Username:</label> <input type='text' name='username'>" +
-        "<a href='#' class='add_license_user form_button user_button'>Add User</a><div class='clear'></div><br>" +
-        "<h3>List of Users</h3>" +
+        "<h3 class='i18n'>Add user</h3><br>" +
+        "<label for='username' class='i18n'>Username:</label> <input type='text' name='username'>" +
+        "<a href='#' class='add_license_user i18n form_button user_button'>Add User</a><div class='clear'></div><br>" +
+        "<h3 class='i18n'>List of Users</h3>" +
         "<ol class='license_listusers'></ol>" +
         "</form>"),
 
@@ -963,11 +969,11 @@ var AdminConsole = Backbone.View.extend({
 
 });
 Saiku.events.bind('admin:loaddatasources', function(admin){
-    $(admin.admin.el).find('.inner_datasource').append("<li class='create_datasource'>Add Data Source</li>");
+    $(admin.admin.el).find('.inner_datasource').append("<li class='i18n create_datasource'>Add Data Source</li>");
 
 });
 Saiku.events.bind('admin:loadschema', function(admin){
-    $(admin.admin.el).find('.inner_schema').append("<li class='create_schema'>Add Schema</li>");
+    $(admin.admin.el).find('.inner_schema').append("<li class='i18n create_schema'>Add Schema</li>");
 
 });
 Saiku.events.bind('session:new', function (session) {
@@ -975,7 +981,8 @@ if(Saiku.session.isAdmin) {
     var $link = $("<a />")
         .attr({
             href: "#adminconsole",
-            title: "Admin Console"
+            title: "Admin Console",
+            class: "i18n"
         })
         .click(Saiku.AdminConsole.show_admin)
         .addClass('admin');
