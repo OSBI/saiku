@@ -144,22 +144,16 @@
 
     <bean id="repository2bean" scope="request"
           class="org.saiku.web.rest.resources.BasicRepositoryResource2">
-        <property name="path" value="res:saiku-repository"/>
         <property name="sessionService" ref="sessionService"/>
         <property name="datasourceService" ref="datasourceServiceBean"/>
     </bean>
     <!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
 
-    <bean id="tagRepositoryBean" scope="request"
-          class="org.saiku.web.rest.resources.BasicTagRepositoryResource">
-        <property name="olapQueryService" ref="olapQueryBean"/>
-        <property name="path" value="res:saiku-repository"/>
-    </bean>
+
 
     <bean id="filterRepositoryBean" scope="session"
           class="org.saiku.web.rest.resources.FilterRepositoryResource">
         <property name="olapQueryService" ref="olapQueryBean"/>
-        <property name="path" value="res:saiku-repository"/>
         <property name="sessionService" ref="sessionService"/>
     </bean>
 
