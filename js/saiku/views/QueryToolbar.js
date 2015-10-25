@@ -102,7 +102,13 @@ var QueryToolbar = Backbone.View.extend({
                             $(this.el).find('ul.chart li a.on:first').attr('href').replace('#', '')
                             : null;
                 if (c !== null) {
-                    this.workspace.query.setProperty('saiku.ui.render.type', c);
+                    if (c !== 'charteditor') {
+                        this.workspace.query.setProperty('saiku.ui.render.type', c);
+                    }
+                    else {
+                        c = $(this.el).find('ul.chart li').not('.chart_editor').find('a.on').attr('href').replace('#', '');
+                        this.workspace.query.setProperty('saiku.ui.render.type', c);
+                    }
                 }
             }
         } else {
