@@ -241,7 +241,7 @@ var Workspace = Backbone.View.extend({
         // Fire off new workspace event
         Saiku.session.trigger('workspace:new', { workspace: this });
 
-        if (Settings.PLUGIN && Saiku.session.isAdmin) {
+        if (Settings.PLUGIN && Settings.BIPLUGIN5 == false && Saiku.session.isAdmin) {
             var $link = $('<a />')
                 .attr({
                     href: '#adminconsole',
