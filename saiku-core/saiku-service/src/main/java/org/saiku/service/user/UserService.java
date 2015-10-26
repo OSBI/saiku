@@ -148,4 +148,14 @@ public class UserService implements IUserManager, Serializable {
         }
         return null;
     }
+
+    @Override
+    public String getSessionId() {
+        try {
+            return (String) sessionService.getSession().get("sessionid");
+        } catch (Exception e) {
+            log.error("Could not get sessionid: "+e.getMessage());
+        }
+        return null;
+    }
 }

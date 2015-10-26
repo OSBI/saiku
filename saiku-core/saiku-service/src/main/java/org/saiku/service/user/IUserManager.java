@@ -34,4 +34,5 @@ public interface IUserManager {
     public String getActiveUsername();
 
 
+  String getSessionId();
 }

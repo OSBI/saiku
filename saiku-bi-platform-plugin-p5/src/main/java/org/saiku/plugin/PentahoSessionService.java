@@ -93,13 +93,16 @@ public class PentahoSessionService implements ISessionService {
 	  else {
 		username = "existinguser";
 	  }
+	  String sessionId =UUID.randomUUID().toString();
 
-	  UUID uuid = pah.startAudit("Saiku", "Login", this.getClass().getName(), null, null, username + "Attempted Login",
+	  UUID uuid = pah.startAudit("Saiku", "Login", this.getClass().getName(), username, sessionId, username +
+																								 " Attempted "
+																							+ "Login",
 		  getLogger());
 		if (!sessionHolder.containsKey(key)) {
 			sessionHolder.put(key, new HashMap<String,Object>());
 		}
-		sessionHolder.get(key).put("sessionid", UUID.randomUUID().toString());
+		sessionHolder.get(key).put("sessionid", sessionId);
 		List<String> roles = new ArrayList<String>();
 		for (GrantedAuthority ga : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
 			roles.add(ga.getAuthority());
@@ -108,7 +111,7 @@ public class PentahoSessionService implements ISessionService {
 
 		sessionHolder.get(key).put("isadmin", userService.isAdmin());
 		sessionHolder.get(key).put("username", username);
-	  	pah.endAudit("Saiku", "Login", this.getClass().getName(), null, this.getSession().toString(), getLogger(),
+	  	pah.endAudit("Saiku", "Login", this.getClass().getName(), username, sessionId, getLogger(),
 			(long) 1, uuid, (long) 1);
 	}
 
