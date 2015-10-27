@@ -148,13 +148,6 @@ public class SaikuOlapConnection implements ISaikuConnection {
   }
 
   public Connection getConnection() {
-    try
-    {
-      if (olapConnection.isClosed())
-      {
-        connect();
-      }
-    } catch (Exception e) {}
     return olapConnection;
   }
 
