@@ -470,8 +470,8 @@
             </dependency>
             <dependency>
                 <groupId>org.olap4j</groupId>
-                <artifactId>olap4j-xmlaserver-noclose</artifactId>
-                <version>TRUNK-SNAPSHOT</version>
+                <artifactId>olap4j-xmlaserver</artifactId>
+                <version>1.2.0</version>
             </dependency>
             <dependency>
                 <groupId>org.jdom</groupId>
