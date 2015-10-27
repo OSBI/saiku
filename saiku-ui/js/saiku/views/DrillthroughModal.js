@@ -148,7 +148,7 @@ var DrillthroughModal = Modal.extend({
 			ga('send', 'event', 'Drillthrough', 'Execute');
 		}
 		// Notify user that updates are in progress
-		var $loading = $("<div class='i18n'>Drilling through...</div>");
+		var $loading = $("<div>Drilling through...</div>");
 		$(this.el).find('.dialog_body').children().hide();
 		$(this.el).find('.dialog_body').prepend($loading);
 		var selections = "";

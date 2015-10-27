@@ -31,7 +31,6 @@ var WorkspaceToolbar = Backbone.View.extend({
         _.bindAll(this, "call", "reflect_properties", "run_query",
             "swap_axes_on_dropzones", "display_drillthrough","clicked_cell_drillthrough_export",
 			"clicked_cell_drillacross","clicked_cell_drillthrough","activate_buttons", "switch_to_mdx","post_mdx_transform", "toggle_fields_action", "group_parents");
-        this.workspace.bind('workspace:toolbar:render', this.translate);
 
         // Redraw the toolbar to reflect properties
         this.workspace.bind('properties:loaded', this.reflect_properties);
@@ -79,9 +78,6 @@ var WorkspaceToolbar = Backbone.View.extend({
         return this;
     },
 
-    translate: function() {
-        //Saiku.i18n.translate();
-    },
     call: function(event) {
         // Determine callback
         event.preventDefault();

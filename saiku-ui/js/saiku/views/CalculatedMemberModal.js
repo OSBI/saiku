@@ -70,16 +70,16 @@ var CalculatedMemberModal = Modal.extend({
         '</div>' +
         '<div class="cms-container-form">' +
             '<form class="form-group-inline" data-action="cad">' +
-                '<label class="i18n" for="cms-name">Name:</label>' +
+                '<label for="cms-name">Name:</label>' +
                 '<input type="text" id="cms-name" autofocus>' +
-                '<label for="cms-measure" class="i18n">Measure:</label>' +
+                '<label for="cms-measure">Measure:</label>' +
                 '<select id="cms-measure">' +
-                    '<option value="" selected class="i18n">-- Add a measure in formula --</option>' +
+                    '<option value="" selected>-- Add a measure in formula --</option>' +
                     '<% _(measures).each(function(measure) { %>' +
                         '<option value="<%= measure.uniqueName %>"><%= measure.name %></option>' +
                     '<% }); %>' +
                 '</select>' +
-                '<label for="<%= idEditor %>" class="i18n">Formula:</label>' +
+                '<label for="<%= idEditor %>">Formula:</label>' +
                 '<div class="formula-editor" id="<%= idEditor %>"></div>' +
                 '<div class="btn-group-math">' +
                     '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="+">&nbsp;+&nbsp;</a>' +
@@ -93,18 +93,16 @@ var CalculatedMemberModal = Modal.extend({
                     '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="not">&nbsp;not&nbsp;</a>' +
                 '</div>' +
 				'<div class="cms-function">' +
-					'<label for="cms-function" class="i18n">Functions:</label>' +
-					' <input type="button" class="form_button growthBtn i18n" style="padding-bottom: 18px;"' +
-        ' value="Growth"  ' +
+					'<label for="cms-function">Functions:</label>' +
+					' <input type="button" class="form_button growthBtn" style="padding-bottom: 18px;" value="Growth"  ' +
 					'         title="Calculate difference. Good to calculate previous period growth "   id="growthBtn" >  </input> ' +
-					' <input type="button" class="form_button formatBtn i18n" style="padding-bottom: 18px;"' +
-        ' value="Format %" id="formatBtn"  ' +
+					' <input type="button" class="form_button formatBtn" style="padding-bottom: 18px;" value="Format %" id="formatBtn"  ' +
 					'title="Post-process step: format this view as percentage of rows, columns or grand total. " />' +
 				'</div>' +
 
-                '<label for="cms-dimension" class="i18n">Dimension:</label>' +
+                '<label for="cms-dimension">Dimension:</label>' +
                 '<select id="cms-dimension">' +
-                    '<option value="" selected class="i18n">-- Select an existing dimension --</option>' +
+                    '<option value="" selected>-- Select an existing dimension --</option>' +
                     '<% if (measures.length > 0) { %>' +
                         '<optgroup label="<%= dataMeasures.name %>">' +
                             '<option value="<%= dataMeasures.uniqueName %>" data-type="calcmeasure"><%= dataMeasures.name %></option>' +
@@ -118,23 +116,23 @@ var CalculatedMemberModal = Modal.extend({
                         '</optgroup>' +
                     '<% }); %>' +
                 '</select>' +
-                '<label for="cms-format" class="i18n">Format:</label>' +
-                '<select id="cms-format" class="i18n">' +
+                '<label for="cms-format">Format:</label>' +
+                '<select id="cms-format">' +
                     '<option value="" selected>-- Select a format --</option>' +
-                    '<option value="custom" class="i18n">Custom</option>' +
-                    '<option value="#,##0.00" class="i18n">#,##0.00 Decimal</option>' +
-                    '<option value="#,###" class="i18n">#,### Integer</option>' +
-                    '<option value="##.##%" class="i18n">##.##% Decimal percentage</option>' +
-                    '<option value="##%" class="i18n">##% Interger percentage</option>' +
-                    '<option value="mmmm dd yyyy" class="i18n">mmmm dd yyyy Month Day Year</option>' +
-                    '<option value="mmmm yyyy" class="i18n">mmmm yyyy Month Year</option>' +
-                    '<option value="yyyy-mm-dd" class="i18n">yyyy-mm-dd ISO format date</option>' +
-                    '<option value="yyyy-mm-dd hh:mi:ss" class="i18n">yyyy-mm-dd hh:mi:ss Date and time</option>' +
-                    '<option value="##h ##m" class="i18n">##h ##m Minutes</option>' +
+                    '<option value="custom">Custom</option>' +
+                    '<option value="#,##0.00">#,##0.00 Decimal</option>' +
+                    '<option value="#,###">#,### Integer</option>' +
+                    '<option value="##.##%">##.##% Decimal percentage</option>' +
+                    '<option value="##%">##% Interger percentage</option>' +
+                    '<option value="mmmm dd yyyy">mmmm dd yyyy Month Day Year</option>' +
+                    '<option value="mmmm yyyy">mmmm yyyy Month Year</option>' +
+                    '<option value="yyyy-mm-dd">yyyy-mm-dd ISO format date</option>' +
+                    '<option value="yyyy-mm-dd hh:mi:ss">yyyy-mm-dd hh:mi:ss Date and time</option>' +
+                    '<option value="##h ##m">##h ##m Minutes</option>' +
                 '</select>' +
                 '<div class="div-format-custom">' +
-                    '<label for="cms-format-custom" class="i18n">Format Custom:</label>' +
-                    '<input type="text" id="cms-format-custom" class="i18n" value="" placeholder="Add a format custom">' +
+                    '<label for="cms-format-custom">Format Custom:</label>' +
+                    '<input type="text" id="cms-format-custom" value="" placeholder="Add a format custom">' +
                 '</div>' +
             '</form>' +
         '</div>'
@@ -414,10 +412,10 @@ var CalculatedMemberModal = Modal.extend({
         args.new();
         if (!args.check_len_cms(args.$delcms.data('type'))) {
             if (args.$delcms.data('type') === 'calcmeasure') {
-                args.$el.find('.measures-list').append('<p class="msg-no-cms i18n">No calculated measures created</p>');
+                args.$el.find('.measures-list').append('<p class="msg-no-cms">No calculated measures created</p>');
             }
             else {
-                args.$el.find('.members-list').append('<p class="msg-no-cms i18n">No calculated members created</p>');
+                args.$el.find('.members-list').append('<p class="msg-no-cms">No calculated members created</p>');
             }
         }
     },

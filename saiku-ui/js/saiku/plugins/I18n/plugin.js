@@ -104,12 +104,9 @@ function recursive_menu_translate(object, po_file) {
 		// Iterate over UI elements that need to be translated
 		return $.each(this, function() {
 			element = $(this);
+			
 			// Translate text
-            if(element.html === undefined && element.attr('title')===undefined && element.attr('value')===undefined){
-                debugger;
-            }
 			if (element.html()) {
-                console.log("html:" + element.attr('html'));
 				translated_text = translate( element.html(), po_file );
                 if (Saiku.i18n.elements.indexOf &&
                     Saiku.i18n.elements.indexOf(element.html()) === -1) {
@@ -124,7 +121,6 @@ function recursive_menu_translate(object, po_file) {
 			
 			// Translate title
 			if (element.attr('title')) {
-                console.log("title:" + element.attr('title'));
 				translated_title = translate( element.attr('title'), po_file );
                 if (Saiku.i18n.elements.indexOf && 
                     Saiku.i18n.elements.indexOf(element.attr('title')) === -1) {
@@ -136,25 +132,9 @@ function recursive_menu_translate(object, po_file) {
 					element.removeClass('i18n');
 				}
 			}
-
-            // Translate title
-            if (element.attr('original-title')) {
-                console.log("original-title:" + element.attr('original-title'));
-                translated_title = translate( element.attr('original-title'), po_file );
-                if (Saiku.i18n.elements.indexOf &&
-                    Saiku.i18n.elements.indexOf(element.attr('original-title')) === -1) {
-                    Saiku.i18n.elements.push(element.attr('original-title'));
-                }
-                if (translated_title) {
-                    element.data('original', element.attr('original-title'));
-                    element.attr({ 'title': translated_title });
-                    element.removeClass('i18n');
-                }
-            }
 			
 			if (element.attr('value')) {
-                console.log("value:" + element.attr('value'));
-                translated_value = translate( element.attr('value'), po_file );
+				translated_value = translate( element.attr('value'), po_file );
                 if (Saiku.i18n.elements.indexOf && 
                     Saiku.i18n.elements.indexOf(element.attr('value')) === -1) {
                     Saiku.i18n.elements.push(element.attr('value'));
@@ -285,7 +265,7 @@ Saiku.events.bind('session:new', function() {
     /** 
      * Add translate button
      */
-    if (Saiku.i18n.locale != "en" && Saiku.session.isAdmin) {
+    if (Saiku.i18n.locale != "en") {
         var $link = $("<a />").text(Saiku.i18n.locale)
             .attr({ 
                 href: "#translate",

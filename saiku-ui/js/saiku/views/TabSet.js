@@ -52,8 +52,7 @@ var TabSet = Backbone.View.extend({
 		// Trigger add event on session
 		Saiku.session.trigger('tab:add', { tab: tab });
 		this.pager.render();
-		Saiku.i18n.translate();
-		Saiku.session.trigger('workspace:toolbar:render',null);
+
 		return tab;
 	},
 
