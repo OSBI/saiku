@@ -358,9 +358,15 @@ public class AdminResource {
         return Response.status(Response.Status.NO_CONTENT).entity(datasourceService.getAvailableSchema()).build();
     }
 
+    /**
+     * Get Saved Schema By ID
+     * @param id
+     * @return a schema file.
+     */
     @GET
     @Path("/schema/{id}")
     @Produces("application/xml")
+    @ReturnType("MondrianSchema")
     public Response getSavedSchema(@PathParam("id") String id){
         if(!userService.isAdmin()){
             return Response.status(Response.Status.FORBIDDEN).build();

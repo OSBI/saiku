@@ -72,6 +72,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @Component
 @Path("/saiku/{username}/query")
 @XmlAccessorType(XmlAccessType.NONE)
+@Deprecated
 public class QueryResource {
 
 	private static final Logger log = LoggerFactory.getLogger(QueryResource.class);
@@ -190,6 +191,11 @@ public class QueryResource {
 		}
 	}
 
+  /**
+   * Get the query properties.
+   * @param queryName
+   * @return
+   */
 	@GET
 	@Produces({"application/json" })
 	@Path("/{queryname}/properties")
@@ -201,6 +207,12 @@ public class QueryResource {
 	}
 
 
+  /**
+   * Set the query properties
+   * @param queryName
+   * @param properties
+   * @return
+   */
 	@POST
 	@Produces({"application/json" })
 	@Path("/{queryname}/properties")

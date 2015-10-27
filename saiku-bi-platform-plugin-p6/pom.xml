@@ -84,7 +84,27 @@
                                     <type>jar</type>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>eigenbase</groupId>
+                                    <artifactId>eigenbase-properties</artifactId>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>eigenbase</groupId>
+                                    <artifactId>eigenbase-resgen</artifactId>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
 
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>eigenbase</groupId>
+                                    <artifactId>eigenbase-xom</artifactId>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>pentaho</groupId>
+                                    <artifactId>mondrian</artifactId>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
                                 <artifactItem>
                                     <groupId>org.jvnet.mimepull</groupId>
                                     <artifactId>mimepull</artifactId>
@@ -742,6 +762,11 @@
             <groupId>com.orientechnologies</groupId>
             <artifactId>orientdb-core</artifactId>
             <version>1.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>pentaho</groupId>
+            <artifactId>mondrian</artifactId>
+            <version>3.11.0.0-353</version>
         </dependency>
     </dependencies>
 </project>

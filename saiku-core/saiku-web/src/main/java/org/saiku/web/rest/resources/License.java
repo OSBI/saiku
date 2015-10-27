@@ -26,7 +26,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 /**
- * Saiku EE license information resource.
+ * Saiku license information resource.
  *
  * @since 3.0
  * @author tbarber
@@ -161,9 +161,14 @@ public class License {
     return databaseManager.getUsers();
   }
 
+  /**
+   * Get the user quota for existing users with no license
+   * @return a list of user quota.
+   */
   @GET
   @Produces("application/json")
   @Path("/quota")
+  @ReturnType("java.util.List<UserQuota>")
   public Response getUserQuota(){
     if(!userService.isAdmin()){
       return Response.status(Response.Status.FORBIDDEN).build();
