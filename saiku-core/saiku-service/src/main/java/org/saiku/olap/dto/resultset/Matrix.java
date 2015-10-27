@@ -24,7 +24,7 @@ import java.util.Set;
 
 public class Matrix {
 
-  private Map<List<Integer>, AbstractBaseCell> map = new HashMap<List<Integer>, AbstractBaseCell>();
+  private final Map<List<Integer>, AbstractBaseCell> map = new HashMap<>();
 
   private int width = 0;
 
@@ -32,8 +32,8 @@ public class Matrix {
 
   private int offset = 0;
 
-  private Set<Integer> xAxis = new HashSet<Integer>();
-  private Set<Integer> yAxis = new HashSet<Integer>();
+  private final Set<Integer> xAxis = new HashSet<>();
+  private final Set<Integer> yAxis = new HashSet<>();
 
 
   public Matrix() {
@@ -55,9 +55,6 @@ public class Matrix {
    *
    * @param x          X coordinate
    * @param y          Y coordinate
-   * @param value      Value
-   * @param right      Whether value is right-justified
-   * @param sameAsPrev Whether value is the same as the previous value. If true, some formats separators between cells
    */
   public void set( final int x, final int y, final DataCell cell ) {
     map.put( Arrays.asList( x, y ), cell );
@@ -72,9 +69,6 @@ public class Matrix {
    * @param x          - X coordinate
    * @param y          - Y coordinate
    * @param value      - Value
-   * @param right      - Whether value is right-justified
-   * @param sameAsPrev - Whether value is the same as the previous value. If true, some formats separators between
-   *                   cells
    */
   public void set( final int x, final int y, final MemberCell value ) {
     map.put( Arrays.asList( x, y ), value );

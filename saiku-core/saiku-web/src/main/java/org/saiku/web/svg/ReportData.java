@@ -1,9 +1,9 @@
 package org.saiku.web.svg;
 
-import java.util.ArrayList;
-
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.MemberCell;
+
+import java.util.ArrayList;
 
 public class ReportData {
 	private AbstractBaseCell[][] rowHeader;
@@ -27,7 +27,7 @@ public class ReportData {
 
 	class Section {
 		private String des;
-		private ArrayList<Section> child = new ArrayList<Section>();
+		private ArrayList<Section> child = new ArrayList<>();
 		private Section parent;
 		private AbstractBaseCell[][] data;
 		private ArrayList<String> head;
@@ -87,8 +87,8 @@ public class ReportData {
 
 	}
 
-	public  ArrayList<Section> section(AbstractBaseCell[][] dataMatrix, int dimIndex, int dim, Section parent) {
-		ArrayList<Section> sections = new ArrayList<Section>();
+	private ArrayList<Section> section(AbstractBaseCell[][] dataMatrix, int dimIndex, int dim, Section parent) {
+		ArrayList<Section> sections = new ArrayList<>();
 		Section section = null;
 
 		for (int i = 0; i < dataMatrix.length; i++) {
@@ -151,12 +151,12 @@ public class ReportData {
 	public ArrayList<Section> section(AbstractBaseCell[][] dataMatrix,
 			AbstractBaseCell[][] headMatrix, int rowIndex, int dim,
 			Section parent) {
-		ArrayList<Section> sections = new ArrayList<Section>();
+		ArrayList<Section> sections = new ArrayList<>();
 
 		Section section = null;
 		if (rowHeader.length == 1) {
 			section = new Section();
-			ArrayList<String> head = new ArrayList<String>();
+			ArrayList<String> head = new ArrayList<>();
 			for (int j = dim-1; j < headMatrix[headMatrix.length - 1].length; j++) {
 				head.add(headMatrix[headMatrix.length - 1][j].getFormattedValue());
 			}
@@ -201,16 +201,13 @@ public class ReportData {
 						//body child
 						AbstractBaseCell[][] datarow = new AbstractBaseCell[dataMatrix.length][i - start + dim + 1];
 						for (int j = 0; j < dataMatrix.length; j++) {
-							for (int t = 0; t < dim; t++) {
-								datarow[j][t] = dataMatrix[j][t];
-
-							}
+						  System.arraycopy(dataMatrix[j], 0, datarow[j], 0, dim);
 							for (int t = start; t <= i; t++) {
 								if (dataMatrix[j][t] != null)
 									datarow[j][t - start + dim] = dataMatrix[j][t];
 							}
 						}
-						ArrayList<String> head = new ArrayList<String>();
+						ArrayList<String> head = new ArrayList<>();
 
 						head.add(rowHeader[rowHeader.length - 1][dim-1]
 								.getFormattedValue());

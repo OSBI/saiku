@@ -11,9 +11,9 @@ import mondrian.rolap.RolapConnection;
 
 public class SaikuReadyOlapConnection implements ISaikuConnection {
 
-	private String name;
+	private final String name;
 	private boolean initialized = false;
-	private OlapConnection olapConnection;
+	private final OlapConnection olapConnection;
 	private String username;
 	private String password;
 

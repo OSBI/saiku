@@ -35,10 +35,11 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by bugg on 14/05/14.
  */
-public class JackrabbitRepositoryDef {
-    List dupliacteUsers = new ArrayList<String>();
+class JackrabbitRepositoryDef {
+    private final List dupliacteUsers = new ArrayList<>();
 
     @Steps
+    private
     JackrabbitSteps data;
 
     boolean start = false;
@@ -57,12 +58,12 @@ public class JackrabbitRepositoryDef {
     }
 
     @Then("the jackrabbit repository should start cleanly")
-    public void thenTheJackrabbitRepositoryShouldStartCleanly() throws RepositoryException {
+    public void thenTheJackrabbitRepositoryShouldStartCleanly() {
         List<String> names = data.getHomeDirectoryList();
         assertThat(names.size(), equalTo(0));
     }
 
-    String query;
+    private String query;
     @Given("user Joe has created a valid query")
     public void givenUserJoeHasCreatedAValidQuery() throws Exception {
         data.initializeRepository();
@@ -98,7 +99,7 @@ public class JackrabbitRepositoryDef {
         data.saveFile(datasource, "/homes/home:joe/sampledatasource.sds", "joe", "nt:olapdatasource");
     }
 
-    byte[] zip = null;
+    private byte[] zip = null;
 
     @When("the export routine is executed")
     public void whenTheExportRoutineIsExecuted() throws IOException, RepositoryException {
@@ -111,7 +112,7 @@ public class JackrabbitRepositoryDef {
     }
 
     @Given("user $username has a valid datasource")
-    public void givenUserAdminHasAValidDatasource(String username) throws IOException {
+    public void givenUserAdminHasAValidDatasource(String username) {
         data.initializeRepository();
         data.startRepository();
         data.initializeUsers(Collections.singletonList(username));
@@ -130,7 +131,7 @@ public class JackrabbitRepositoryDef {
     }
 
     @Then("it should be stored within the jackrabbit repository in the datasource pool for $username")
-    public void thenItShouldBeStoredWithinTheJackrabbitRepositoryInTheDatasourcePool(String username) throws RepositoryException, IOException {
+    public void thenItShouldBeStoredWithinTheJackrabbitRepositoryInTheDatasourcePool(String username) throws RepositoryException {
         String ds = "type=OLAP\n" +
                 "name=test\n" +
                 "driver=mondrian.olap4j.MondrianOlap4jDriver\n" +
@@ -183,7 +184,7 @@ public class JackrabbitRepositoryDef {
         assertThat(folders.getName(), is(folder));
     }
 
-    String schema;
+    private String schema;
 
     @Given("user $username has a valid mondrian schema file")
     public void givenUserAdminHasAValidMondrianSchemaFile(String username) throws IOException {
@@ -238,7 +239,7 @@ public class JackrabbitRepositoryDef {
     }
 
     @When("a second user called $username is added")
-    public void second_username_is_added(String username) throws RepositoryException {
+    public void second_username_is_added(String username) {
         dupliacteUsers.add(username);
     }
 
@@ -315,7 +316,7 @@ public class JackrabbitRepositoryDef {
 
 
     @BeforeScenario
-    public void beforeAnyScenario() throws RepositoryException {
+    public void beforeAnyScenario() {
         //data.initializeRepository();
         //data.startRepository();
     }

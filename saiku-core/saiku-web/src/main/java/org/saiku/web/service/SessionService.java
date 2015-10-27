@@ -48,7 +48,7 @@ public class SessionService implements ISessionService {
 	private AuthenticationManager authenticationManager;
 	private AuthorisationPredicate authorisationPredicate;
 
-	Map<Object,Map<String,Object>> sessionHolder = new HashMap<Object,Map<String,Object>>();
+	private final Map<Object,Map<String,Object>> sessionHolder = new HashMap<>();
 
 	private Boolean anonymous = false;
 	
@@ -72,7 +72,7 @@ public class SessionService implements ISessionService {
 	/* (non-Javadoc)
 	 * @see org.saiku.web.service.ISessionService#login(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String)
 	 */
-	public Map<String, Object> login(HttpServletRequest req, String username, String password ) throws Exception {
+	public Map<String, Object> login(HttpServletRequest req, String username, String password ) {
 		if (authenticationManager != null) {
 			authenticate(req, username, password);
 		}
@@ -91,7 +91,7 @@ public class SessionService implements ISessionService {
 				throw new RuntimeException("Authorisation failed for: " + username);
 			}
 		}
-		return new HashMap<String, Object>();
+		return new HashMap<>();
 	}
 
 	private void createSession(Authentication auth, String username, String password) {
@@ -107,7 +107,7 @@ public class SessionService implements ISessionService {
 		boolean isAnonOk = (!isAnonymous || (isAnonymous && anonymous));
 			
 		if (isAnonOk && auth.isAuthenticated() && p != null && !sessionHolder.containsKey(p)) {
-			Map<String, Object> session = new HashMap<String, Object>();
+			Map<String, Object> session = new HashMap<>();
 			
 			if (isAnonymous) {
 				log.debug("Creating Session for Anonymous User");
@@ -123,7 +123,7 @@ public class SessionService implements ISessionService {
 			}
 			session.put("sessionid", UUID.randomUUID().toString());
 			session.put("authid", RequestContextHolder.currentRequestAttributes().getSessionId());
-			List<String> roles = new ArrayList<String>();
+			List<String> roles = new ArrayList<>();
 			for (GrantedAuthority ga : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
 				roles.add(ga.getAuthority());
 			}
@@ -180,19 +180,19 @@ public class SessionService implements ISessionService {
 	/* (non-Javadoc)
 	 * @see org.saiku.web.service.ISessionService#getSession(javax.servlet.http.HttpServletRequest)
 	 */
-	public Map<String,Object> getSession() throws Exception {
+	public Map<String,Object> getSession() {
 		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {			
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			Object p = auth.getPrincipal();
 		  if (sessionHolder.containsKey(p)) {
-			  Map<String, Object> r = new HashMap<String, Object>();
+			  Map<String, Object> r = new HashMap<>();
 			  r.putAll(sessionHolder.get(p));
 			  r.remove("password");
 			  return r;
 		  }
 
 		}
-		return new HashMap<String,Object>();
+		return new HashMap<>();
 	}
 	
 	public Map<String,Object> getAllSessionObjects() {
@@ -201,16 +201,16 @@ public class SessionService implements ISessionService {
 			Object p = auth.getPrincipal();
 			//createSession(auth, null, null);
 			if (sessionHolder.containsKey(p)) {
-				Map<String,Object> r = new HashMap<String,Object>();
+				Map<String,Object> r = new HashMap<>();
 				r.putAll(sessionHolder.get(p)); 
 				return r;
 			}
 
 		}
-		return new HashMap<String,Object>();
+		return new HashMap<>();
 	}
 
-  public void clearSessions(HttpServletRequest req, String username, String password) throws Exception {
+  public void clearSessions(HttpServletRequest req, String username, String password) {
 	if (authenticationManager != null) {
 	  authenticate(req, username, password);
 	}

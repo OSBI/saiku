@@ -54,9 +54,7 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
       SimpleCredentials creds = null;
       try {
         creds = (SimpleCredentials) b.getCredentials(request);
-      } catch (LoginException e) {
-        e.printStackTrace();
-      } catch (ServletException e) {
+      } catch (LoginException | ServletException e) {
         e.printStackTrace();
       }
       if (u.getUsername().equals(creds.getUserID())) {
@@ -76,12 +74,7 @@ public final class SaikuWebdavServlet extends SimpleWebdavServlet {
   }
 
   private boolean checkUnsecured(HttpServletRequest request){
-    if(request.getRequestURI().contains("/etc/theme")) {
-      return true;
-    }
-    else{
-      return false;
-    }
+    return request.getRequestURI().contains("/etc/theme");
   }
 
   private boolean checkSecret(HttpServletRequest request){

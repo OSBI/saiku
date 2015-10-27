@@ -25,7 +25,7 @@ public class PlatformUtilsService {
 
 
   public ArrayList<Plugin> getAvailablePlugins(){
-    ArrayList l = new ArrayList<Plugin>(  );
+    ArrayList l = new ArrayList<>();
     File f = new File(filePath);
 
     String[] directories = f.list(new FilenameFilter() {

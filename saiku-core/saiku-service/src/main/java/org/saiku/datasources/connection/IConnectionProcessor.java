@@ -18,6 +18,6 @@ package org.saiku.datasources.connection;
 
 public interface IConnectionProcessor {
 
-  public ISaikuConnection process( ISaikuConnection con );
+  ISaikuConnection process(ISaikuConnection con);
 
 }

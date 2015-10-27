@@ -19,6 +19,6 @@ import org.saiku.datasources.datasource.SaikuDatasource;
 
 public interface IDatasourceProcessor {
 
-  public SaikuDatasource process( SaikuDatasource ds );
+  SaikuDatasource process(SaikuDatasource ds);
 
 }

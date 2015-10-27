@@ -71,7 +71,7 @@ public class License {
   public Response getLicense() {
     try {
       return Response.ok().entity(licenseUtils.getLicense()).build();
-    } catch (IOException | RepositoryException | ClassNotFoundException e) {
+    } catch (IOException e) {
       e.printStackTrace();
     }
       return Response.serverError().build();
@@ -157,7 +157,7 @@ public class License {
    * @return a list of usernames
    * @throws SQLException
    */
-  public List<String> getAuthUsers() throws SQLException {
+  private List<String> getAuthUsers() throws SQLException {
     return databaseManager.getUsers();
   }
 

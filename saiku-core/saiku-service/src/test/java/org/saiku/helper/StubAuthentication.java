@@ -11,7 +11,7 @@ import java.util.List;
 public class StubAuthentication implements Authentication
 {
     private final boolean isAuthenticated;
-    private final List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+    private final List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
     public StubAuthentication(List<String> authorities, boolean isAuthenticated)
     {

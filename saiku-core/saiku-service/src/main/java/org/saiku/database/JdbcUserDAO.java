@@ -22,9 +22,9 @@ public class JdbcUserDAO
         implements UserDAO
 {
 
-    Properties prop = new Properties();
-    ClassLoader loader = Thread.currentThread().getContextClassLoader();
-    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final Properties prop = new Properties();
+    private final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     private ServletContext servletContext;

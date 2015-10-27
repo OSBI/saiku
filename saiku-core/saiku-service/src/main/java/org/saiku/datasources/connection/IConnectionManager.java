@@ -24,22 +24,22 @@ import java.util.Map;
 public interface IConnectionManager {
 
 
-	public void init() throws SaikuOlapException;
+	void init() throws SaikuOlapException;
 	
-	public void setDataSourceManager(IDatasourceManager ds);
+	void setDataSourceManager(IDatasourceManager ds);
 	
-	public IDatasourceManager getDataSourceManager();
+	IDatasourceManager getDataSourceManager();
 	
-	public void refreshConnection(String name);
+	void refreshConnection(String name);
 
-    public void refreshAllConnections();
+    void refreshAllConnections();
 	
-	public OlapConnection getOlapConnection(String name) throws SaikuOlapException;
+	OlapConnection getOlapConnection(String name) throws SaikuOlapException;
 	
-	public Map<String, OlapConnection> getAllOlapConnections() throws SaikuOlapException;
+	Map<String, OlapConnection> getAllOlapConnections() throws SaikuOlapException;
 	
-	public ISaikuConnection getConnection(String name) throws SaikuOlapException;
+	ISaikuConnection getConnection(String name) throws SaikuOlapException;
 	
-	public Map<String, ISaikuConnection> getAllConnections() throws SaikuOlapException;
+	Map<String, ISaikuConnection> getAllConnections() throws SaikuOlapException;
 
 }

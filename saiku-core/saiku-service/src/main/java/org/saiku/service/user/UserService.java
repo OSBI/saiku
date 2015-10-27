@@ -20,10 +20,10 @@ import java.util.List;
  */
 public class UserService implements IUserManager, Serializable {
 
-    JdbcUserDAO uDAO;
+    private JdbcUserDAO uDAO;
 
-    IDatasourceManager iDatasourceManager;
-    DatasourceService datasourceService;
+    private IDatasourceManager iDatasourceManager;
+    private DatasourceService datasourceService;
     private ISessionService sessionService;
     private List<String> adminRoles;
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
@@ -72,7 +72,7 @@ public class UserService implements IUserManager, Serializable {
 
     public List<SaikuUser> getUsers() {
         Collection users = uDAO.findAllUsers();
-        List<SaikuUser> l = new ArrayList<SaikuUser>();
+        List<SaikuUser> l = new ArrayList<>();
         for (Object user : users) {
             l.add((SaikuUser) user);
 

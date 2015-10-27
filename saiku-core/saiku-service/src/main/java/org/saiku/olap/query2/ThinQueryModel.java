@@ -7,13 +7,13 @@ import java.util.Map;
 
 public class ThinQueryModel {
 
-	private Map<AxisLocation, ThinAxis> axes = new HashMap<AxisLocation, ThinAxis>();
+	private Map<AxisLocation, ThinAxis> axes = new HashMap<>();
 	private boolean visualTotals = false;
 	private String visualTotalsPattern;
 	private boolean lowestLevelsOnly = false;
 	private ThinDetails details;
-	private List<ThinCalculatedMeasure> calculatedMeasures = new ArrayList<ThinCalculatedMeasure>();
-	private List<ThinCalculatedMember> calculatedMembers = new ArrayList<ThinCalculatedMember>();
+	private List<ThinCalculatedMeasure> calculatedMeasures = new ArrayList<>();
+	private List<ThinCalculatedMember> calculatedMembers = new ArrayList<>();
 
   public enum AxisLocation {
 		FILTER,
@@ -76,7 +76,6 @@ public class ThinQueryModel {
 	}
 
 	/**
-	 * @param visualTotals the visualTotals to set
 	 */
 	public void setLowestLevelsOnly(boolean lowest) {
 		this.lowestLevelsOnly = lowest;

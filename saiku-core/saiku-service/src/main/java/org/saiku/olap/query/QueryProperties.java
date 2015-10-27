@@ -21,13 +21,13 @@ import java.util.Properties;
 
 public class QueryProperties {
 
-  public static final String KEY_NONEMPTY = "saiku.olap.query.nonempty"; //$NON-NLS-1$
-  public static final String KEY_NONEMPTY_ROWS = "saiku.olap.query.nonempty.rows"; //$NON-NLS-1$
-  public static final String KEY_NONEMPTY_COLUMNS = "saiku.olap.query.nonempty.columns"; //$NON-NLS-1$
+  private static final String KEY_NONEMPTY = "saiku.olap.query.nonempty"; //$NON-NLS-1$
+  private static final String KEY_NONEMPTY_ROWS = "saiku.olap.query.nonempty.rows"; //$NON-NLS-1$
+  private static final String KEY_NONEMPTY_COLUMNS = "saiku.olap.query.nonempty.columns"; //$NON-NLS-1$
   public static final String KEY_IS_DRILLTHROUGH = "saiku.olap.query.drillthrough"; //$NON-NLS-1$
-  public static final String KEY_SUPPORTS_LIMIT = "saiku.olap.query.limit"; //$NON-NLS-1$
-  public static final String KEY_SUPPORTS_FILTER = "saiku.olap.query.filter"; //$NON-NLS-1$
-  public static final String[] KEYS = {
+  private static final String KEY_SUPPORTS_LIMIT = "saiku.olap.query.limit"; //$NON-NLS-1$
+  private static final String KEY_SUPPORTS_FILTER = "saiku.olap.query.filter"; //$NON-NLS-1$
+  private static final String[] KEYS = {
     KEY_NONEMPTY,
     KEY_NONEMPTY_ROWS,
     KEY_NONEMPTY_COLUMNS,
@@ -37,9 +37,9 @@ public class QueryProperties {
 
   public abstract class QueryProperty {
 
-    protected String key;
-    protected String value;
-    protected OlapQuery query;
+    final String key;
+    final String value;
+    final OlapQuery query;
 
     public QueryProperty( OlapQuery query, String key, String value ) {
       this.key = key;
@@ -220,7 +220,7 @@ public class QueryProperties {
   }
 
   public static class QueryPropertyFactory {
-    private static QueryProperties q = new QueryProperties();
+    private static final QueryProperties q = new QueryProperties();
 
     public static QueryProperty getProperty( final String key, final String value, final OlapQuery query ) {
       if ( KEY_NONEMPTY_ROWS.equals( key ) ) {

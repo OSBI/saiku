@@ -134,7 +134,7 @@ public class Fat {
 	}
 	
 	private static List<AxisLocation> sortAxes(Set<AxisLocation> axes) {
-		List<AxisLocation> ax = new ArrayList<AxisLocation>();
+		List<AxisLocation> ax = new ArrayList<>();
 		for (AxisLocation a : AxisLocation.values()) {
 			if (axes.contains(a)){
 				ax.add(a);
@@ -163,9 +163,8 @@ public class Fat {
 	
 	private static void convertHierarchy(Query q, QueryHierarchy qh, ThinHierarchy th, ThinQuery tq) throws
 		OlapException {
-	  Iterator it = th.getCmembers().entrySet().iterator();
-	  while (it.hasNext()) {
-		Map.Entry pair = (Map.Entry) it.next();
+	  for (Object o : th.getCmembers().entrySet()) {
+		Map.Entry pair = (Map.Entry) o;
 
 		ThinCalculatedMember cres = null;
 		for (ThinCalculatedMember c : tq.getQueryModel().getCalculatedMembers()) {
@@ -175,28 +174,28 @@ public class Fat {
 		  }
 		  //it.remove(); // avoids a ConcurrentModificationException
 		}
-		  Hierarchy h2 = null;
-		  for (Hierarchy h : q.getCube().getHierarchies()) {
-			if (h.getUniqueName().equals(cres.getHierarchyName())) {
-			  h2 = h;
-			  break;
-			}
+		Hierarchy h2 = null;
+		for (Hierarchy h : q.getCube().getHierarchies()) {
+		  if (h.getUniqueName().equals(cres.getHierarchyName())) {
+			h2 = h;
+			break;
 		  }
-		  CalculatedMember cm;
-		  cm = new CalculatedMember(
-			  q.getCube().getDimensions().get(cres.getDimension()),
-			  h2,
-			  cres.getName(),
-			  cres.getName(),
-			  null,
-			  Member.Type.FORMULA,
-			  cres.getFormula(),
-			  null);
-
-		  qh.includeCalculatedMember(cm);
-		  extendSortableQuerySet(qh.getQuery(), qh, th);
-
 		}
+		CalculatedMember cm;
+		cm = new CalculatedMember(
+			q.getCube().getDimensions().get(cres.getDimension()),
+			h2,
+			cres.getName(),
+			cres.getName(),
+			null,
+			Member.Type.FORMULA,
+			cres.getFormula(),
+			null);
+
+		qh.includeCalculatedMember(cm);
+		extendSortableQuerySet(qh.getQuery(), qh, th);
+
+	  }
 
 		for (ThinLevel tl : th.getLevels().values()) {
 		  QueryLevel ql = qh.includeLevel(tl.getName());
@@ -292,7 +291,7 @@ public class Fat {
 	}
 	
 	private static List<IFilterFunction> convertFilters(Query q, List<ThinFilter> filters) {
-		List<IFilterFunction> qfs = new ArrayList<IFilterFunction>();
+		List<IFilterFunction> qfs = new ArrayList<>();
 		for (ThinFilter f : filters) {
 			switch(f.getFlavour()) {
 				case Name:

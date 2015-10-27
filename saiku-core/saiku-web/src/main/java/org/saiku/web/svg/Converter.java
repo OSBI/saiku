@@ -24,7 +24,7 @@ public abstract class Converter
     private final String contentType;
     private final String extension;
 
-    protected Converter(String contentType, String extension)
+    Converter(String contentType, String extension)
     {
         this.contentType = contentType;
         this.extension = extension;
@@ -69,12 +69,12 @@ class SvgConverter extends Converter
 abstract class BatikConverter extends Converter
 {
 
-    protected BatikConverter(String extension)
+    BatikConverter(String extension)
     {
         super("image/" + extension, extension);
     }
 
-    protected BatikConverter(String contentType, String extension)
+    BatikConverter(String contentType, String extension)
     {
         super(contentType, extension);
     }

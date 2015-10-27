@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 
-public class TqUtil {
+class TqUtil {
 	
 	private final static String FORMULA_BEGIN = "${";
 	private final static String FORMULA_END = "}";
@@ -15,7 +15,7 @@ public class TqUtil {
 	
 
 	public static List<String> splitParameterValues(String value) {
-		List<String> values = new ArrayList<String>();
+		List<String> values = new ArrayList<>();
 		if (StringUtils.isNotBlank(value)) {
 			String[] vs = value.split(",");
 			for (String v : vs) {

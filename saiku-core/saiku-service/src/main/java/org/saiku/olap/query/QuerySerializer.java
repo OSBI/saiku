@@ -38,9 +38,9 @@ import org.saiku.olap.util.exception.QueryParseException;
 
 public class QuerySerializer {
 
-  private IQuery query;
-  Document dom;
-  private SaikuCube saikuCube;
+  private final IQuery query;
+  private Document dom;
+  private final SaikuCube saikuCube;
 
   public QuerySerializer(IQuery query) {
     this.query = query;
@@ -69,7 +69,7 @@ public class QuerySerializer {
 
   }
 
-  private void createDocument() throws ParserConfigurationException {
+  private void createDocument() {
     dom = new Document();
   }
 
@@ -238,7 +238,7 @@ public class QuerySerializer {
         axisElement.setAttribute("filterCondition", axis.getFilterCondition());
       }
 
-    } catch (Error e) {};
+    } catch (Error e) {}
 
     Element dimensions = new Element("Dimensions");
 
@@ -306,7 +306,7 @@ public class QuerySerializer {
     return rootElement;
   }
 
-  public String getAxisName(QueryAxis axis) {
+  private String getAxisName(QueryAxis axis) {
     switch(axis.getLocation().axisOrdinal()) {
       case -1: return "FILTER";
       case  0: return "COLUMNS";

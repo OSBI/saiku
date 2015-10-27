@@ -8,13 +8,6 @@
 // *****************************************************************************
 package org.saiku.datasources.connection.encrypt;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.net.URLEncoder;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
-
 
 public class CryptoUtil
 {
@@ -58,10 +51,7 @@ public class CryptoUtil
             byte [] source = text.getBytes( "UTF8" );
             byte [] digest = new byte [ length ];
 
-            for ( int i = 0; i < source.length; i++ )
-            {
-                digest[ i ] = source[ i ];
-            }
+            System.arraycopy(source, 0, digest, 0, source.length);
 
             // Initialize the encryption keys
             Des des = new Des();
@@ -71,7 +61,7 @@ public class CryptoUtil
             des.Crypt( digest );
 
             // Convert the encrypted data to ASCII HEX
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             for ( int i = 0; i < length; i++ )
             {
                 int temp = ( int ) digest[ i ] & 0x000000ff;
@@ -126,9 +116,8 @@ public class CryptoUtil
                     finalLen = i + 1;
                 }
             }
-            String res = new String( digest, 0, finalLen, "UTF8" );
 
-            return res;
+            return new String( digest, 0, finalLen, "UTF8" );
 
         }
         catch ( Exception e )
@@ -141,7 +130,7 @@ public class CryptoUtil
     /**
      * {@inheritDoc}
      */
-    public static String encodePassword( String rawPass )
+    private static String encodePassword(String rawPass)
         
     {
 
@@ -161,10 +150,7 @@ public class CryptoUtil
         byte [] source = rawPass.getBytes();
         byte [] digest = new byte [ length ];
 
-        for ( int i = 0; i < source.length; i++ )
-        {
-            digest[ i ] = source[ i ];
-        }
+        System.arraycopy(source, 0, digest, 0, source.length);
         // Initialize the encryption keys
         Des des = new Des();
         des.SetKey( true, defaultKey1, defaultKey2 );
@@ -174,7 +160,7 @@ public class CryptoUtil
         des.Crypt( digest );
 
         // Convert the encrypted data to ASCII HEX
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for ( int i = 0; i < length; i++ )
         {
             int temp = ( int ) digest[ i ] & 0x000000ff;

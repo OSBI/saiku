@@ -8,12 +8,12 @@ import java.util.List;
 
 public class RepositoryFileObject implements IRepositoryObject {
 
-	private Type type;
-	private String name;
-	private String id;
-	private String filetype;
-	private String path;
-	private List<AclMethod> acl;
+	private final Type type;
+	private final String name;
+	private final String id;
+	private final String filetype;
+	private final String path;
+	private final List<AclMethod> acl;
 
 	public RepositoryFileObject(String filename, String id, String filetype, String path, List<AclMethod> acl) {
 		this.type = Type.FILE;

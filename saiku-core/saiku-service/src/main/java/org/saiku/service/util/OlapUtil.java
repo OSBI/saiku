@@ -20,10 +20,10 @@ import org.olap4j.CellSet;
 import java.util.HashMap;
 import java.util.Map;
 
-public class OlapUtil {
+class OlapUtil {
 
 
-  private static Map<String, CellSet> cellSetMap = new HashMap<String, CellSet>();
+  private static final Map<String, CellSet> cellSetMap = new HashMap<>();
 
 
   /**

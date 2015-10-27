@@ -47,14 +47,14 @@ public class PentahoSessionService implements ISessionService {
 
 	private AuthenticationManager authenticationManager;
 
-	Map<Object,Map<String,Object>> sessionHolder = new HashMap<Object,Map<String,Object>>();
+	private final Map<Object,Map<String,Object>> sessionHolder = new HashMap<Object,Map<String,Object>>();
   private UserService userService;
 
   public void setUserService(UserService us) {
 	userService = us;
   }
 
-	PentahoAuditHelper pah = new PentahoAuditHelper();
+	private final PentahoAuditHelper pah = new PentahoAuditHelper();
 	/* (non-Javadoc)
 	 * @see org.saiku.web.service.ISessionService#setAuthenticationManager(org.springframework.security.authentication.AuthenticationManager)
 	 */
@@ -195,7 +195,7 @@ public class PentahoSessionService implements ISessionService {
 		return new HashMap<String,Object>();
 	}
 
-  public void clearSessions(HttpServletRequest req, String username, String password) throws Exception {
+  public void clearSessions(HttpServletRequest req, String username, String password) {
 	if (authenticationManager != null) {
 	  authenticate(req, username, password);
 	}

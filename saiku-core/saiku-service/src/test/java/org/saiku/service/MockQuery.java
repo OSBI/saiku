@@ -20,7 +20,7 @@ import org.saiku.olap.util.formatter.ICellSetFormatter;
 
 public class MockQuery implements IQuery {
 
-	private String name;
+	private final String name;
 
 	public MockQuery(String name) {
 		this.name = name;

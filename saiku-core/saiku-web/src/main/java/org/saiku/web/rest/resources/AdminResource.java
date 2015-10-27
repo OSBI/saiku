@@ -54,9 +54,9 @@ import javax.ws.rs.core.StreamingOutput;
 @Path("/saiku/admin")
 public class AdminResource {
 
-    DatasourceService datasourceService;
+    private DatasourceService datasourceService;
 
-    UserService userService;
+    private UserService userService;
     private static final Logger log = LoggerFactory.getLogger(DataSourceResource.class);
     private OlapDiscoverService olapDiscoverService;
     private LogExtractor logExtractor;
@@ -105,7 +105,7 @@ public class AdminResource {
         if(!userService.isAdmin()){
             return Response.status(Response.Status.FORBIDDEN).build();
         }
-        List<DataSourceMapper> l = new ArrayList<DataSourceMapper>();
+        List<DataSourceMapper> l = new ArrayList<>();
         try {
             for (SaikuDatasource d : datasourceService.getDatasources().values()) {
                 l.add(new DataSourceMapper(d));

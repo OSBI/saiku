@@ -48,7 +48,6 @@ import org.saiku.plugin.util.PentahoAuditHelper;
 import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.repository.AclMethod;
-import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
 import org.saiku.repository.RepositoryFileObject;
 import org.saiku.repository.RepositoryFolderObject;
@@ -78,8 +77,8 @@ import com.sun.jersey.multipart.FormDataParam;
 @Path("/saiku/api/{username}/repository")
 @XmlAccessorType(XmlAccessType.NONE)
 public class PentahoRepositoryResource2 implements ISaikuRepository {
-	PentahoAuditHelper pah = new PentahoAuditHelper();
-	UserService userService;
+	private final PentahoAuditHelper pah = new PentahoAuditHelper();
+	private UserService userService;
 
   public void setUserService(UserService userService) {
 	this.userService = userService;
@@ -127,7 +126,6 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 	/**
 	 * Load a resource.
 	 * @param file - The name of the repository file to load.
-	 * @param path - The path of the given file to load.
 	 * @return A Repository File Object.
 	 */
 	@GET
@@ -190,7 +188,6 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 	/**
 	 * Save a resource.
 	 * @param file - The name of the repository file to load.
-	 * @param path - The path of the given file to load.
 	 * @param content - The content to save.
 	 * @return Status
 	 */
@@ -228,7 +225,6 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 	/**
 	 * Delete a resource.
 	 * @param file - The name of the repository file to load.
-	 * @param path - The path of the given file to load.
 	 * @return Status
 	 */
 	@DELETE
@@ -380,7 +376,7 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 		}	
 	}
 
-	private List<IRepositoryObject> getRepositoryObjects(final IUserContentAccess root, String path, final String type, final Boolean hidden) throws Exception {
+	private List<IRepositoryObject> getRepositoryObjects(final IUserContentAccess root, String path, final String type, final Boolean hidden) {
 		List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
 		IBasicFileFilter txtFilter = StringUtils.isBlank(type) ? null : new IBasicFileFilter() {
 			public boolean accept(IBasicFile file) {

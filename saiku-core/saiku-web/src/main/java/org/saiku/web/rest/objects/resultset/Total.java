@@ -13,7 +13,7 @@ public class Total {
 		this(node.getTotalGroups(), node.getMemberCaptions(), node.getSpan(), node.getWidth());
 	}
 	
-	public Total(TotalAggregator[][] values, String[] captions, int span, int width) {
+	private Total(TotalAggregator[][] values, String[] captions, int span, int width) {
 		if (values.length > 0)
 			this.cells = new Cell[values.length][values[0].length];
 		else

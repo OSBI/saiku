@@ -1,5 +1,11 @@
 package org.saiku.plugin.util.packager;
 
+import org.saiku.plugin.util.packager.Packager.Mode;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,11 +19,6 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.saiku.plugin.util.packager.Packager.Mode;
-
 public class Packager
 {
 
@@ -25,16 +26,17 @@ public class Packager
   {
 
     CSS, JS
-  };
+  }
 
   public enum Mode
   {
 
     MINIFY, CONCATENATE
-  };
+  }
+
   static Log logger = LogFactory.getLog(Packager.class);
   private static Packager _instance;
-  private HashMap<String, FileSet> fileSets;
+  private final HashMap<String, FileSet> fileSets;
 
   private Packager()
   {
@@ -56,7 +58,7 @@ public class Packager
     registerPackage(filename, type, root, filename, files);
   }
 
-  public void registerPackage(String name, Filetype type, String root, String filename, String[] files)
+  private void registerPackage(String name, Filetype type, String root, String filename, String[] files)
   {
     ArrayList<File> fileHandles = new ArrayList<File>();
     if (files != null)
@@ -75,19 +77,8 @@ public class Packager
     {
       Logger.getLogger(Packager.class.getName()).log(Level.WARNING, name + " is overriding an existing file package!");
     }
-    try
-    {
-      FileSet fileSet = new FileSet(output, type, files, root);
-      this.fileSets.put(name, fileSet);
-    }
-    catch (IOException ex)
-    {
-      Logger.getLogger(Packager.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    catch (NoSuchAlgorithmException ex)
-    {
-      Logger.getLogger(Packager.class.getName()).log(Level.SEVERE, null, ex);
-    }
+    FileSet fileSet = new FileSet(output, type, files, root);
+    this.fileSets.put(name, fileSet);
 
   }
 
@@ -134,10 +125,9 @@ class FileSet
 
   private boolean dirty;
   private String latestVersion;
-  private ArrayList<File> files;
-  private File location;
+  private final ArrayList<File> files;
+  private final File location;
   private Packager.Filetype filetype;
-  private String rootdir;
 
   public void addFile(String file)
   {
@@ -153,32 +143,29 @@ class FileSet
     }
   }
 
-  public FileSet(String location, Packager.Filetype type, File[] fileSet, String rootdir) throws IOException, NoSuchAlgorithmException
-  {
+  public FileSet(String location, Packager.Filetype type, File[] fileSet, String rootdir) {
     this.files = new ArrayList<File>();
     this.files.addAll(Arrays.asList(fileSet));
     this.location = new File(location);
     this.filetype = type;
     this.latestVersion = "";
     this.dirty = true;
-    this.rootdir = rootdir;
+    String rootdir1 = rootdir;
   }
 
-  public FileSet() throws IOException, NoSuchAlgorithmException
-  {
+  private FileSet() {
     dirty = true;
     files = new ArrayList<File>();
     latestVersion = null;
     location = null;
   }
 
-  private String minify(Mode mode) throws IOException, NoSuchAlgorithmException
-  {
+  private String minify(Mode mode) {
     final InputStream concatenatedStream;
     try
     {
     
-      StringBuffer fileContents = new StringBuffer();
+      StringBuilder fileContents = new StringBuilder();
       for(File f : files) {
     	String content = FileUtils.readFileToString(f);
     	fileContents.append(content);
@@ -223,10 +210,9 @@ class FileSet
 
   private String byteToHex(byte[] bytes)
   {
-    StringBuffer hexString = new StringBuffer();
-    for (int i = 0; i < bytes.length; i++)
-    {
-      String byteValue = Integer.toHexString(0xFF & bytes[i]);
+    StringBuilder hexString = new StringBuilder();
+    for (byte aByte : bytes) {
+      String byteValue = Integer.toHexString(0xFF & aByte);
       hexString.append(byteValue.length() == 2 ? byteValue : "0" + byteValue);
     }
     return hexString.toString();
@@ -242,12 +228,12 @@ class FileSet
     return update(false, mode);
   }
 
-  public String update(boolean force) throws IOException, NoSuchAlgorithmException
+  private String update(boolean force) throws IOException, NoSuchAlgorithmException
   {
     return update(force, Mode.MINIFY);
   }
 
-  public String update(boolean force, Mode mode) throws IOException, NoSuchAlgorithmException
+  private String update(boolean force, Mode mode) throws IOException, NoSuchAlgorithmException
   {
     // If we're not otherwise sure we must update, we actively check if the
     //minified file is older than any file in the set.

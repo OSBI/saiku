@@ -7,9 +7,9 @@ public class ThinMember {
 	private String caption;
 	private String type;
 
-	public ThinMember() {};
+	public ThinMember() {}
 
-	public ThinMember(String name, String uniqueName, String caption) {
+  public ThinMember(String name, String uniqueName, String caption) {
 		this.name = name;
 		this.uniqueName = uniqueName;
 		this.caption = caption;

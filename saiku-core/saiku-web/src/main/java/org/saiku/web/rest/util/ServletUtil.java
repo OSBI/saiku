@@ -12,15 +12,15 @@ import org.apache.commons.lang.StringUtils;
 public class ServletUtil {
 	
 	
-	public static final String PREFIX_PARAMETER = "param";
+	private static final String PREFIX_PARAMETER = "param";
 	
 	public static Map<String, String> getParameters(HttpServletRequest req) {
 		return getParameters(req, PREFIX_PARAMETER);
 	}
 	
-	public static Map<String, String> getParameters(HttpServletRequest req, String prefix) {
+	private static Map<String, String> getParameters(HttpServletRequest req, String prefix) {
 
-		Map<String, String> queryParams = new HashMap<String, String>();
+		Map<String, String> queryParams = new HashMap<>();
 		if (req != null) {
 			// ... and the query parameters
 			// We identify any pathParams starting with "param" as query parameters 
@@ -44,12 +44,12 @@ public class ServletUtil {
 		return queryParams;
 	}
 	
-	public static Map<String, String> getParameters(MultivaluedMap<String, String> formParams) {
+	private static Map<String, String> getParameters(MultivaluedMap<String, String> formParams) {
 		return getParameters(formParams, PREFIX_PARAMETER);
 	}
 	
-	public static Map<String, String> getParameters(MultivaluedMap<String, String> formParams, String prefix) {
-		Map<String, String> queryParams = new HashMap<String, String>();
+	private static Map<String, String> getParameters(MultivaluedMap<String, String> formParams, String prefix) {
+		Map<String, String> queryParams = new HashMap<>();
 		if (formParams != null) {
 			for (String key : formParams.keySet()) {
 				String param = key;
@@ -70,7 +70,7 @@ public class ServletUtil {
 		
 	}
 
-	public static String replaceParameters(String query, Map<String,String> parameters) {
+	private static String replaceParameters(String query, Map<String, String> parameters) {
 		if (parameters != null) {
 			for (String parameter : parameters.keySet()) {
 				String value = parameters.get(parameter);
@@ -82,13 +82,11 @@ public class ServletUtil {
 	
 	public static String replaceParameters(HttpServletRequest req, String query) {
 		Map<String, String> queryParams = getParameters(req);
-		String r = replaceParameters(query, queryParams);
-		return r;
+	  return replaceParameters(query, queryParams);
 	}
 
 	public static String replaceParameters(MultivaluedMap<String, String> formParams, String query) {
 		Map<String, String> queryParams = getParameters(formParams);
-		String r = replaceParameters(query, queryParams);
-		return r;
+	  return replaceParameters(query, queryParams);
 	}
 }

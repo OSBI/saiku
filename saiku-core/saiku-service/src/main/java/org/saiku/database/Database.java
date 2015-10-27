@@ -36,9 +36,9 @@ public class Database {
 
     private JdbcDataSource ds;
     private static final Logger log = LoggerFactory.getLogger(Database.class);
-    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    IDatasourceManager dsm;
-    public Database() {
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private IDatasourceManager dsm;
+    private Database() {
 
     }
 
@@ -261,7 +261,7 @@ public class Database {
 
     }
 
-    public boolean checkUpdatedEncyption() throws SQLException{
+    private boolean checkUpdatedEncyption() throws SQLException{
         Connection c = ds.getConnection();
 
         Statement statement = c.createStatement();
@@ -269,7 +269,7 @@ public class Database {
         result.next();
         return result.getInt("c") != 0;
     }
-    public void updateForEncyption() throws SQLException {
+    private void updateForEncyption() throws SQLException {
         Connection c = ds.getConnection();
 
         Statement statement = c.createStatement();
@@ -292,7 +292,7 @@ public class Database {
 
     }
 
-    public void loadLegacyDatasources() throws SQLException {
+    private void loadLegacyDatasources() throws SQLException {
         Connection c = ds.getConnection();
 
         Statement statement = c.createStatement();
@@ -309,12 +309,12 @@ public class Database {
     }
 
 
-    public List<String> getUsers()  throws SQLException  {
+    public List<String> getUsers() {
         //Stub for EE.
         return null;
     }
 
-    public void addUsers(List<String> l)  throws SQLException  {
+    public void addUsers(List<String> l) {
         //Stub for EE.
     }
 }

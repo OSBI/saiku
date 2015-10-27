@@ -6,17 +6,17 @@ import org.saiku.olap.query2.filter.ThinFilter;
 
 public interface ThinQuerySet {
 
-		public String getName();
+		String getName();
 		
-		public void setMdx(String mdxSetExpression);
+		void setMdx(String mdxSetExpression);
 		
-		public String getMdx();
+		String getMdx();
 		
-		public void addFilter(ThinFilter filter);
+		void addFilter(ThinFilter filter);
 		
-		public void setFilter(int index, ThinFilter filter);
+		void setFilter(int index, ThinFilter filter);
 		
-		public List<ThinFilter> getFilters();
+		List<ThinFilter> getFilters();
 		
-		public void clearFilters();
+		void clearFilters();
 }

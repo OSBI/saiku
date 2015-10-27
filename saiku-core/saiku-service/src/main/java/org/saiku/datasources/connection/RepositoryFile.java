@@ -12,7 +12,7 @@ public class RepositoryFile {
     private String fileId = null;
     private byte[] data;
 
-    public RepositoryFile() {
+    private RepositoryFile() {
     }
 
     public RepositoryFile(String fileName, RepositoryFile parent, byte[] data) {
@@ -24,7 +24,7 @@ public class RepositoryFile {
         this.path = path;
     }
 
-    public RepositoryFile(String fileName, RepositoryFile parent, byte[] data, long lastModified) {
+    private RepositoryFile(String fileName, RepositoryFile parent, byte[] data, long lastModified) {
         this();
         this.fileId = UUID.randomUUID().toString();
 
@@ -33,7 +33,7 @@ public class RepositoryFile {
         setData(data);
     }
 
-    public void setData(byte[] data) {
+    private void setData(byte[] data) {
         this.data = data;
     }
 

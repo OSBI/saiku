@@ -19,8 +19,7 @@ public class RoleDAOImpl implements RoleDAO {
   }
 
   public Role getRole(int id) {
-    Role role = (Role) getCurrentSession().load(Role.class, id);
-    return role;
+    return (Role) getCurrentSession().load(Role.class, id);
   }
 
 }

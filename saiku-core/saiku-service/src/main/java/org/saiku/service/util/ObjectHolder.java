@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ObjectHolder {
+class ObjectHolder {
 
-  ThreadLocal<Map<String, IQuery>> threadQueries = new ThreadLocal<Map<String, IQuery>>();
+  private final ThreadLocal<Map<String, IQuery>> threadQueries = new ThreadLocal<>();
 
   private static final Logger LOG = LoggerFactory.getLogger( ObjectHolder.class );
 
@@ -46,7 +46,7 @@ public class ObjectHolder {
     return query;
   }
 
-  public Map<String, IQuery> getIQueryMap() {
+  private Map<String, IQuery> getIQueryMap() {
     LOG.trace(
       "ObjectHoler.getIQueryMap : Thread ID " + Thread.currentThread().getId() + " Name: " + Thread.currentThread()
         .getName() );

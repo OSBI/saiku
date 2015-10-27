@@ -84,8 +84,8 @@ public class FilterRepositoryResource {
 		return getFiltersInternal(null);
 	}
 
-	private Map<String, SaikuFilter> getFiltersInternal(String query) throws Exception {
-		Map<String, SaikuFilter> allFilters = new HashMap<String, SaikuFilter>();
+	private Map<String, SaikuFilter> getFiltersInternal(String query) {
+		Map<String, SaikuFilter> allFilters = new HashMap<>();
 		//Map<String, SaikuFilter> filters = deserialize(getUserFile());
 		//allFilters.putAll(filters);
 		if (StringUtils.isNotBlank(query)) {
@@ -112,7 +112,7 @@ public class FilterRepositoryResource {
 	{
 		try {
 			Map<String, SaikuFilter> allFilters = getFiltersInternal(queryName);
-			List<String> filternames = new ArrayList<String>(allFilters.keySet());
+			List<String> filternames = new ArrayList<>(allFilters.keySet());
 			Collections.sort(filternames);
 			return Response.ok(filternames).build();
 
@@ -138,12 +138,12 @@ public class FilterRepositoryResource {
 			@QueryParam("filtername") String filterName) 
 	{
 		try {
-			Map<String, SaikuFilter> allFilters = new HashMap<String, SaikuFilter>();
+			Map<String, SaikuFilter> allFilters = new HashMap<>();
 			if (StringUtils.isNotBlank(queryName)) {
 				allFilters = getFiltersInternal(queryName);
 			} else if (StringUtils.isNotBlank(filterName)) {
 				allFilters = getFiltersInternal();
-				Map<String, SaikuFilter> singleFilter = new HashMap<String, SaikuFilter>();
+				Map<String, SaikuFilter> singleFilter = new HashMap<>();
 				if (allFilters.containsKey(filterName)) {
 					singleFilter.put(filterName, allFilters.get(filterName));
 					allFilters = singleFilter;
@@ -195,8 +195,9 @@ public class FilterRepositoryResource {
 	private byte[] getCsv(Map<String, SaikuFilter> filters, String delimiter, String memberdelimiter) {
 		try {
 
-			StringBuffer sb = new StringBuffer();
-			sb.append("User" + delimiter + "FilterName" + delimiter + "Dimension" + delimiter + "Hierarchy" + delimiter + "Members");
+			StringBuilder sb = new StringBuilder();
+			sb.append("User").append(delimiter).append("FilterName").append(delimiter).append("Dimension")
+			  .append(delimiter).append("Hierarchy").append(delimiter).append("Members");
 			sb.append("\r\n");
 			for (SaikuFilter sf : filters.values()) {
 				String row = sf.getOwner() + delimiter + sf.getName() + delimiter + sf.getDimension().getName() + delimiter + sf.getHierarchy().getName() + delimiter;
@@ -209,7 +210,7 @@ public class FilterRepositoryResource {
 						first = false;
 					members += e.getName();
 				}
-				sb.append(row +  members + "\r\n");
+				sb.append(row).append(members).append("\r\n");
 			}
 			return sb.toString().getBytes("UTF-8");
 		} catch (Throwable e) {

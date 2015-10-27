@@ -109,7 +109,7 @@ public class ExporterResource {
 				tq.getParameters().putAll(parameters);
 			}
 		  if (StringUtils.isNotBlank(formatter)) {
-			HashMap<String, Object> p = new HashMap<String, Object>();
+			HashMap<String, Object> p = new HashMap<>();
 			p.put("saiku.olap.result.formatter", formatter);
 			if (tq.getProperties() == null) {
 			  tq.setProperties(p);
@@ -154,7 +154,7 @@ public class ExporterResource {
 			}
 
 		  if (StringUtils.isNotBlank(formatter)) {
-			HashMap<String, Object> p = new HashMap<String, Object>();
+			HashMap<String, Object> p = new HashMap<>();
 			p.put("saiku.olap.result.formatter", formatter);
 			if (tq.getProperties() == null) {
 			  tq.setProperties(p);
@@ -198,7 +198,7 @@ public class ExporterResource {
 				tq.getParameters().putAll(parameters);
 			}
 		  if (StringUtils.isNotBlank(formatter)) {
-			HashMap<String, Object> p = new HashMap<String, Object>();
+			HashMap<String, Object> p = new HashMap<>();
 			p.put("saiku.olap.result.formatter", formatter);
 			if (tq.getProperties() == null) {
 			  tq.setProperties(p);
@@ -372,7 +372,7 @@ public class ExporterResource {
    * @summary Get the Saiku version.
    * @return A String containing the current version.
    */
-  public static String getVersion() {
+  private static String getVersion() {
 	Properties prop = new Properties();
 	InputStream input = null;
 	String version = "";

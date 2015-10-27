@@ -11,11 +11,11 @@ import java.util.Date;
 public class PdfPerformanceLogger{
     private static final Logger log = LoggerFactory.getLogger(PdfPerformanceLogger.class);
 
-    long start;
-    long queryToHtmlStart;
-    long queryToHtmlEnd;
-    long renderStart;
-    long renderEnd;
+    private final long start;
+    private long queryToHtmlStart;
+    private long queryToHtmlEnd;
+    private long renderStart;
+    private long renderEnd;
 
     public PdfPerformanceLogger() {
         this.start = (new Date()).getTime();
@@ -41,7 +41,7 @@ public class PdfPerformanceLogger{
         log.debug("PDF Output - JSConverter: " + (queryToHtmlEnd - queryToHtmlStart) + "ms PDF Render: " + (renderEnd - renderStart) + "ms");
     }
 
-    public long getCurrentTime(){
+    private long getCurrentTime(){
         return (new Date()).getTime();
     }
 }

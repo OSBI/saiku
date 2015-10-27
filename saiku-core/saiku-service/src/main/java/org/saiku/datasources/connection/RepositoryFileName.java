@@ -4,7 +4,7 @@ import org.apache.commons.vfs.FileName;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.provider.AbstractFileName;
 
-public class RepositoryFileName
+class RepositoryFileName
         extends AbstractFileName
 {
     public RepositoryFileName(String fileRef, FileType fileType)
@@ -14,8 +14,7 @@ public class RepositoryFileName
 
     public FileName createName(String s, FileType fileType)
     {
-        FileName name = new RepositoryFileName(s, fileType);
-        return name;
+        return new RepositoryFileName(s, fileType);
     }
 
     protected void appendRootUri(StringBuffer stringBuffer, boolean b) {}

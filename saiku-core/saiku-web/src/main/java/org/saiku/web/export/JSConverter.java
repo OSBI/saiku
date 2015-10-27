@@ -86,7 +86,7 @@ public class JSConverter {
         return convertToHtml(qr, false);
     }
 
-    public static String getVersion() {
+    private static String getVersion() {
         Properties prop = new Properties();
         InputStream input = null;
         String version = "";

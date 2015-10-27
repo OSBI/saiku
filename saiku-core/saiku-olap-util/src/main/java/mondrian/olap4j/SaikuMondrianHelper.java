@@ -42,7 +42,7 @@ public class SaikuMondrianHelper {
 	
 	private static final Logger log = LoggerFactory.getLogger(SaikuMondrianHelper.class);
 
-	public static RolapConnection getMondrianConnection(OlapConnection con) {
+	private static RolapConnection getMondrianConnection(OlapConnection con) {
 		try {
             if (!isMondrianConnection(con)) {
                 throw new IllegalArgumentException("Connection has to wrap RolapConnection");
@@ -109,11 +109,11 @@ public class SaikuMondrianHelper {
 	}
 	
 	
-	public static boolean isMondrian(MetadataElement element) {
+	private static boolean isMondrian(MetadataElement element) {
 		return (element instanceof MondrianOlap4jMetadataElement);
 	}
 	
-	public static Map<String, Annotation> getAnnotations(Level level) {
+	private static Map<String, Annotation> getAnnotations(Level level) {
 		if (isMondrian(level)) {
 			MondrianOlap4jLevel mlevel = (MondrianOlap4jLevel) level;
 			mondrian.olap.Level rvl = mlevel.level;
@@ -152,7 +152,7 @@ public class SaikuMondrianHelper {
 	return null;
   }
 
-  public static boolean isHanger(RolapCubeDimension dimension){
+  private static boolean isHanger(RolapCubeDimension dimension){
 	  return DimensionLookup.getHanger(dimension);
 
   }
@@ -169,8 +169,7 @@ public class SaikuMondrianHelper {
 			Connection sqlcon = ds.getConnection();
 			PreparedStatement stmt = sqlcon.prepareCall(sql);
 			stmt.setString(1, search);
-			ResultSet rs = stmt.executeQuery();
-			return rs;
+		  return stmt.executeQuery();
 		}
 		return null;
 		

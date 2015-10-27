@@ -39,7 +39,7 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 
   private URL repoURL;
 
-  private Map<String, SaikuDatasource> datasources =
+  private final Map<String, SaikuDatasource> datasources =
     Collections.synchronizedMap( new HashMap<String, SaikuDatasource>() );
 
   public ClassPathResourceDatasourceManager() {
@@ -54,7 +54,7 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
     }
   }
 
-  public void setPath( String path ) {
+  private void setPath(String path) {
 
     FileSystemManager fileSystemManager;
     try {
@@ -294,7 +294,7 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 
     }
 
-    public List<MondrianSchema> getInternalFilesOfFileType(String type) throws RepositoryException {
+    public List<MondrianSchema> getInternalFilesOfFileType(String type) {
         return null;
     }
 

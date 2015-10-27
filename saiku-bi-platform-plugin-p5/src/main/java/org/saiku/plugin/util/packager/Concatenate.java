@@ -24,7 +24,7 @@ class Concatenate
 class ListOfFiles implements Enumeration<FileInputStream>
 {
 
-  private File[] listOfFiles;
+  private final File[] listOfFiles;
   private int current = 0;
 
   public ListOfFiles(File[] listOfFiles)
@@ -34,14 +34,7 @@ class ListOfFiles implements Enumeration<FileInputStream>
 
   public boolean hasMoreElements()
   {
-    if (current < listOfFiles.length)
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
+    return current < listOfFiles.length;
   }
 
   public FileInputStream nextElement()

@@ -1,7 +1,7 @@
 package org.saiku.olap.query2.filter;
 
 
-public class ThinNameFilter {
+class ThinNameFilter {
 //
 //	private List<String> filterExpression = new ArrayList<String>();
 //	private FilterFunction function = FilterFunction.Filter;

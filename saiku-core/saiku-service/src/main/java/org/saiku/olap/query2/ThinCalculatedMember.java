@@ -12,11 +12,11 @@ public class ThinCalculatedMember {
   private String name;
   private String uniqueName;
   private String caption;
-  private Map<String, String> properties = new HashMap<String, String>();
+  private Map<String, String> properties = new HashMap<>();
   private String formula;
   private String hierarchyName;
 
-  public ThinCalculatedMember() {};
+  public ThinCalculatedMember() {}
 
   public ThinCalculatedMember(String dimension, String hierarchyName, String name, String uniqueName, String caption,
                               String formula, Map<String, String> properties) {

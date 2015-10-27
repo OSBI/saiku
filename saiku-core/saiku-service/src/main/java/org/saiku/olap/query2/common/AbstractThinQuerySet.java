@@ -10,7 +10,7 @@ public abstract class AbstractThinQuerySet implements ThinQuerySet {
 
 	private String mdx;
 	
-	private List<ThinFilter> filters = new ArrayList<ThinFilter>();
+	private final List<ThinFilter> filters = new ArrayList<>();
 	
 	public abstract String getName();
 	

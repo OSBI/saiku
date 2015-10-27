@@ -17,14 +17,14 @@ public class ThinHierarchy extends AbstractThinSortableQuerySet implements Named
 	private String caption;
 	private String dimension;
 	
-	private Map<String, ThinLevel> levels = new HashMap<String, ThinLevel>();
+	private Map<String, ThinLevel> levels = new HashMap<>();
 
 	@JsonDeserialize(using = ArrayMapDeserializer.class)
-	private Map<String,String> cmembers = new HashMap<String, String>();
+	private Map<String,String> cmembers = new HashMap<>();
 
-	public ThinHierarchy() {};
-	
-	public ThinHierarchy(String uniqueName, String caption, String dimension, Map<String, ThinLevel> levels) {
+	public ThinHierarchy() {}
+
+  public ThinHierarchy(String uniqueName, String caption, String dimension, Map<String, ThinLevel> levels) {
 		this.name = uniqueName;
 		this.caption = caption;
 		this.dimension = dimension;

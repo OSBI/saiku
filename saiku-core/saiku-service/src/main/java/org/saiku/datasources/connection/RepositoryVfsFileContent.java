@@ -11,7 +11,7 @@ import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.RandomAccessContent;
 import org.apache.commons.vfs.util.RandomAccessMode;
 
-public class RepositoryVfsFileContent
+class RepositoryVfsFileContent
         implements FileContent
 {
     private RepositoryVfsFileObject fileObject = null;
@@ -48,9 +48,7 @@ public class RepositoryVfsFileContent
             throws FileSystemException
     {}
 
-    public boolean hasAttribute(String s)
-            throws FileSystemException
-    {
+    public boolean hasAttribute(String s) {
         return false;
     }
 
@@ -76,9 +74,7 @@ public class RepositoryVfsFileContent
             throws FileSystemException
     {}
 
-    public void removeAttribute(String s)
-            throws FileSystemException
-    {}
+    public void removeAttribute(String s) {}
 
     public Certificate[] getCertificates()
             throws FileSystemException

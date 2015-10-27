@@ -59,7 +59,7 @@ public class SaikuProperties extends Properties {
     return instance;
   }
 
-  public SaikuProperties() {
+  private SaikuProperties() {
     this.propertySource =
       new FilePropertySource( new File( SAIKU_PROPERTIES ) );
   }
@@ -148,7 +148,7 @@ public class SaikuProperties extends Properties {
   /**
    * Loads saiku.properties from: 1) the file "$PWD/" 2) CLASSPATH 3) the system properties
    */
-  public void populate() {
+  private void populate() {
     loadIfStale( propertySource );
 
     URL url = null;

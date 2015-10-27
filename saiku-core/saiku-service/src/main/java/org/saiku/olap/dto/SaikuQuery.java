@@ -50,8 +50,7 @@ public class SaikuQuery extends AbstractSaikuObject {
 
   @Override
   public String getUniqueName() {
-    String uniqueName = cube.getUniqueName() + ".[" + getName() + "]";
-    return uniqueName;
+    return cube.getUniqueName() + ".[" + getName() + "]";
   }
 
   public SaikuCube getCube() {

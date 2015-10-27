@@ -15,7 +15,7 @@ import javax.ws.rs.Path;
 @Path("/saiku/api/{username}/filters")
 public class PentahoFilterRepositoryResource extends FilterRepositoryResource {
 	
-	public void setPath(String path) throws Exception {
+	public void setPath(String path) {
 		final IPluginManager pluginManager = (IPluginManager) PentahoSystem.get(IPluginManager.class, PentahoSessionHolder.getSession());
 		final PluginClassLoader pluginClassloader = (PluginClassLoader)pluginManager.getClassLoader(PluginConfig.PLUGIN_NAME);
 		File pluginDir = pluginClassloader.getPluginDir();

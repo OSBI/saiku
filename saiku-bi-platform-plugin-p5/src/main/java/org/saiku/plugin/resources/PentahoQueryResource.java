@@ -25,9 +25,9 @@ import javax.ws.rs.Path;
 @Path("/saiku/api/{username}/query")
 public class PentahoQueryResource extends Query2Resource {
   private static final Logger log = LoggerFactory.getLogger(PentahoQueryResource.class);
-  PentahoAuditHelper pah = new PentahoAuditHelper();
-  UserService userService;
-  ObjectMapper mapper = new ObjectMapper();
+  private final PentahoAuditHelper pah = new PentahoAuditHelper();
+  private UserService userService;
+  private final ObjectMapper mapper = new ObjectMapper();
 
   /**
    *

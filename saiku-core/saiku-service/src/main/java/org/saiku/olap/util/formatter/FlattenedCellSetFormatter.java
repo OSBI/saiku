@@ -56,7 +56,7 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
      *            Number of hierarchies on this axis
      */
     AxisInfo(final int ordinalCount) {
-      ordinalInfos = new ArrayList<AxisOrdinalInfo>(ordinalCount);
+      ordinalInfos = new ArrayList<>(ordinalCount);
       for (int i = 0; i < ordinalCount; i++) {
         ordinalInfos.add(new AxisOrdinalInfo());
       }
@@ -81,8 +81,8 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
    * Description of a particular hierarchy mapped to an axis.
    */
   private static class AxisOrdinalInfo {
-    private List<Integer> depths = new ArrayList<Integer>();
-    private Map<Integer,Level> depthLevel = new HashMap<Integer,Level>();
+    private final List<Integer> depths = new ArrayList<>();
+    private final Map<Integer,Level> depthLevel = new HashMap<>();
 
     public int getWidth() {
       return depths.size();
@@ -145,8 +145,8 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
 
   private Matrix matrix;
 
-  private List<Integer> ignorex = new ArrayList<Integer>();
-  private List<Integer> ignorey = new ArrayList<Integer>();
+  private final List<Integer> ignorex = new ArrayList<>();
+  private final List<Integer> ignorey = new ArrayList<>();
 
   public Matrix format(final CellSet cellSet) {
     // Compute how many rows are required to display the columns axis.
@@ -243,7 +243,7 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
       yOffset + (rowsAxis == null ? 1 : rowsAxis.getPositions().size()));
 
     // Populate corner
-    List<Level> levels = new ArrayList<Level>();
+    List<Level> levels = new ArrayList<>();
     if (rowsAxis != null && rowsAxis.getPositions().size() > 0) {
       Position p = rowsAxis.getPositions().get(0);
       for (int m = 0; m < p.getMembers().size(); m++) {
@@ -296,8 +296,8 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
     // Populate cell values
     int newyOffset = yOffset;
     int newxOffset = xOffsset;
-    List<Integer> donex = new ArrayList<Integer>();
-    List<Integer> doney = new ArrayList<Integer>();
+    List<Integer> donex = new ArrayList<>();
+    List<Integer> doney = new ArrayList<>();
     for (final Cell cell : cellIter(pageCoords, cellSet)) {
       final List<Integer> coordList = cell.getCoordinateList();
       int y = newyOffset;
@@ -305,7 +305,7 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
       if (coordList.size() > 0) {
         if (coordList.get(0) == 0) {
           newxOffset = xOffsset;
-          donex = new ArrayList<Integer>();
+          donex = new ArrayList<>();
         }
         x = newxOffset;
         if (coordList.size() > 0)
@@ -359,8 +359,7 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
             DecimalFormat myFormatter = new DecimalFormat(SaikuProperties.formatDefautNumberFormat); //$NON-NLS-1$
             DecimalFormatSymbols dfs = new DecimalFormatSymbols(SaikuProperties.locale);
             myFormatter.setDecimalFormatSymbols(dfs);
-            String output = myFormatter.format(cell.getValue());
-            cellValue = output;
+            cellValue = myFormatter.format(cell.getValue());
           }
           catch (Exception e) {
             // TODO: handle exception
@@ -383,7 +382,7 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
         // we tried
       }
 
-      Map<String, String> cellProperties = new HashMap<String, String>();
+      Map<String, String> cellProperties = new HashMap<>();
       String val = Olap4jUtil.parseFormattedCellValue(cellValue, cellProperties);
       if (!cellProperties.isEmpty()) {
         cellInfo.setProperties(cellProperties);

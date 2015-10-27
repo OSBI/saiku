@@ -115,7 +115,7 @@ public class SaikuXmlaServlet extends Olap4jXmlaServlet {
   }
 
   private Map<String, Object> getDataSources() {
-    List<Map<String,Object>> lret = new ArrayList<Map<String, Object>>();
+    List<Map<String,Object>> lret = new ArrayList<>();
     try {
       Map<String, OlapConnection> conns = connections.getAllOlapConnections();
       for (Map.Entry<String, OlapConnection> c : conns.entrySet()) {
@@ -149,7 +149,7 @@ public class SaikuXmlaServlet extends Olap4jXmlaServlet {
       public List<Map<String, Object>> getDataSources(
           OlapConnection connection) throws OlapException
       {
-        List<Map<String,Object>> lret = new ArrayList<Map<String, Object>>();
+        List<Map<String,Object>> lret = new ArrayList<>();
         try {
           Map<String, OlapConnection> conns = connections.getAllOlapConnections();
           for(Map.Entry<String, OlapConnection> c : conns.entrySet()){

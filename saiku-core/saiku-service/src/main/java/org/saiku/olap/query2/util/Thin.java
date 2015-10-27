@@ -57,7 +57,7 @@ public class Thin {
 	}
 
 	private static List<ThinCalculatedMeasure> convert(List<CalculatedMeasure> qcms) {
-		List<ThinCalculatedMeasure> tcms = new ArrayList<ThinCalculatedMeasure>();
+		List<ThinCalculatedMeasure> tcms = new ArrayList<>();
 		if (qcms != null && qcms.size() > 0) {
 			for (CalculatedMeasure qcm : qcms) {
 				ThinCalculatedMeasure tcm = new ThinCalculatedMeasure(
@@ -75,7 +75,7 @@ public class Thin {
 	}
 
   private static List<ThinCalculatedMember> convertCM(List<CalculatedMember> qcms) {
-	List<ThinCalculatedMember> tcms = new ArrayList<ThinCalculatedMember>();
+	List<ThinCalculatedMember> tcms = new ArrayList<>();
 	if (qcms != null && qcms.size() > 0) {
 	  for (CalculatedMember qcm : qcms) {
 		ThinCalculatedMember tcm = new ThinCalculatedMember(
@@ -95,7 +95,7 @@ public class Thin {
 	private static ThinDetails convert(QueryDetails details) {
 		ThinDetails.Location location = ThinDetails.Location.valueOf(details.getLocation().toString());
 		AxisLocation axis = AxisLocation.valueOf(details.getAxis().toString());
-		List<ThinMeasure> measures = new ArrayList<ThinMeasure>();
+		List<ThinMeasure> measures = new ArrayList<>();
 		if (details != null && details.getMeasures().size() > 0) {
 			for (Measure m : details.getMeasures()) {
 				ThinMeasure.Type type = Type.EXACT;
@@ -110,7 +110,7 @@ public class Thin {
 	}
 
 	private static Map<AxisLocation, ThinAxis> convertAxes(Map<Axis, QueryAxis> axes, ThinQuery tq) {
-		Map<ThinQueryModel.AxisLocation, ThinAxis> thinAxes = new TreeMap<ThinQueryModel.AxisLocation, ThinAxis>();
+		Map<ThinQueryModel.AxisLocation, ThinAxis> thinAxes = new TreeMap<>();
 		if (axes != null) {
 			for (Axis axis : sortAxes(axes.keySet())) {
 				if (axis != null) {
@@ -123,7 +123,7 @@ public class Thin {
 	}
 
 	private static List<Axis> sortAxes(Set<Axis> axes) {
-		List<Axis> ax = new ArrayList<Axis>();
+		List<Axis> ax = new ArrayList<>();
 		for (Axis a : Axis.Standard.values()) {
 			if (axes.contains(a)){
 				ax.add(a);
@@ -141,7 +141,7 @@ public class Thin {
 	}
 	
 	private static NamedList<ThinHierarchy> convertHierarchies(List<QueryHierarchy> queryHierarchies, ThinQuery tq) {
-		NamedListImpl<ThinHierarchy> hs = new NamedListImpl<ThinHierarchy>();
+		NamedListImpl<ThinHierarchy> hs = new NamedListImpl<>();
 		if (queryHierarchies != null) {
 			for (QueryHierarchy qh : queryHierarchies) {
 				ThinHierarchy th = convertHierarchy(qh, tq);
@@ -152,7 +152,7 @@ public class Thin {
 	}
 
 	private static ThinHierarchy convertHierarchy(QueryHierarchy qh, ThinQuery tq) {
-	  List<String> s = new ArrayList<String>();
+	  List<String> s = new ArrayList<>();
 	  for(CalculatedMember cmember: qh.getCalculatedMembers()){
 		s.add(cmember.getUniqueName());
 	  }
@@ -164,7 +164,7 @@ public class Thin {
 	}
 
 	private static Map<String, ThinLevel> convertLevels(List<QueryLevel> levels, ThinQuery tq) {
-		Map<String, ThinLevel> tl = new HashMap<String, ThinLevel>();
+		Map<String, ThinLevel> tl = new HashMap<>();
 		if (levels != null) {
 			for (QueryLevel ql : levels) {
 				ThinLevel l = convertLevel(ql, tq);
@@ -186,7 +186,7 @@ public class Thin {
 		} else if (exclusions.size() > 0) {
 			ts = new ThinSelection(ThinSelection.Type.EXCLUSION, exclusions);
 		} else if (rangeStart != null && rangeEnd != null){
-			List<ThinMember> range = new ArrayList<ThinMember>();
+			List<ThinMember> range = new ArrayList<>();
 			range.add(rangeStart);
 			range.add(rangeEnd);
 			ts = new ThinSelection(ThinSelection.Type.RANGE, range);
@@ -203,7 +203,7 @@ public class Thin {
 	}
 
 	private static List<ThinMember> convertMembers(List<Member> members) {
-		List<ThinMember> ms = new ArrayList<ThinMember>();
+		List<ThinMember> ms = new ArrayList<>();
 		if (members != null) {
 			for (Member m : members) {
 				ms.add(convertMember(m));
@@ -246,7 +246,7 @@ public class Thin {
 	}
 	
 	private static List<ThinFilter> convertFilters(List<IFilterFunction> filters) {
-		List<ThinFilter> tfs = new ArrayList<ThinFilter>();
+		List<ThinFilter> tfs = new ArrayList<>();
 		for (IFilterFunction f : filters) {
 			if (f instanceof NameFilter) {
 				NameFilter nf = (NameFilter) f;
@@ -264,14 +264,14 @@ public class Thin {
 			}
 			if (f instanceof GenericFilter) {
 				GenericFilter nf = (GenericFilter) f;
-				List<String> expressions = new ArrayList<String>();
+				List<String> expressions = new ArrayList<>();
 				expressions.add(nf.getFilterExpression());
 				ThinFilter tf = new ThinFilter(FilterFlavour.Generic, null, FilterFunction.Filter, expressions);
 				tfs.add(tf);
 			}
 			if (f instanceof NFilter) {
 				NFilter nf = (NFilter) f;
-				List<String> expressions = new ArrayList<String>();
+				List<String> expressions = new ArrayList<>();
 				expressions.add(Integer.toString(nf.getN()));
 				if (nf.getFilterExpression() != null) {
 					expressions.add(nf.getFilterExpression());

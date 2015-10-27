@@ -47,7 +47,7 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
     private static final Log LOG = LogFactory.getLog(PentahoDatasourceManager.class);
 
-    private Map<String, SaikuDatasource> datasources =
+    private final Map<String, SaikuDatasource> datasources =
         Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
 
     private String saikuDatasourceProcessor;
@@ -55,10 +55,6 @@ public class PentahoDatasourceManager implements IDatasourceManager {
     private String saikuConnectionProcessor;
 
     private String dynamicSchemaProcessor;
-
-    private IPentahoSession session;
-
-    private IMondrianCatalogService catalogService;
 
     private String datasourceResolver;
 
@@ -78,7 +74,7 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         this.dynamicSchemaProcessor = dynamicSchemaProcessor;
     }
 
-    public PentahoDatasourceManager() {
+    private PentahoDatasourceManager() {
     }
 
     public void init() {
@@ -103,13 +99,13 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         try {
 
 
-            this.session = PentahoSessionHolder.getSession();
+            IPentahoSession session = PentahoSessionHolder.getSession();
 
             ClassLoader cl = this.getClass().getClassLoader();
             ClassLoader cl2 = this.getClass().getClassLoader().getParent();
 
             Thread.currentThread().setContextClassLoader(cl2);
-            this.catalogService = PentahoSystem.get(IMondrianCatalogService.class,
+            IMondrianCatalogService catalogService = PentahoSystem.get(IMondrianCatalogService.class,
                 session);
 
             List<MondrianCatalog> catalogs = catalogService.listCatalogs(session, true);
@@ -136,10 +132,7 @@ public class PentahoDatasourceManager implements IDatasourceManager {
                 builder.append(catalog.getDefinition());
                 builder.append("; ");
 
-                Iterator<Pair<String, String>> it = parsedProperties.iterator();
-
-                while (it.hasNext()) {
-                    Pair<String, String> pair = it.next();
+                for (Pair<String, String> pair : parsedProperties) {
                     builder.append(pair.getKey());
                     builder.append("=");
                     builder.append(pair.getValue());

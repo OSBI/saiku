@@ -45,8 +45,6 @@ public class MemberCell extends AbstractBaseCell implements Serializable {
   /**
    * Creates a member cell.
    *
-   * @param b
-   * @param c
    */
   public MemberCell( final boolean right, final boolean sameAsPrev ) {
     this();

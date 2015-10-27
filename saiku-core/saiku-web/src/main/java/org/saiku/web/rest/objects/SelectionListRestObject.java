@@ -22,9 +22,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SelectionListRestObject {
+class SelectionListRestObject {
 	
-	private List<SelectionRestObject> selections = new ArrayList<SelectionRestObject>();
+	private List<SelectionRestObject> selections = new ArrayList<>();
 
 	public SelectionListRestObject() {
 	}

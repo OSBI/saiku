@@ -25,9 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Created by bugg on 01/06/15.
  */
-public class SaikuSessionProvider implements SessionProvider {
+class SaikuSessionProvider implements SessionProvider {
   public Session getSession(HttpServletRequest request, Repository repository, String workspace)
-      throws LoginException, ServletException, RepositoryException {
+      throws ServletException, RepositoryException {
     Session s = null;
 
     SimpleCredentials c = new SimpleCredentials("anon", "anon".toCharArray());

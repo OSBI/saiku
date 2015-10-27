@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
 
-public class RepositoryVfsFileObject
+class RepositoryVfsFileObject
         implements FileObject
 {
     private static final Logger log = LoggerFactory.getLogger(RepositoryVfsFileObject.class);
@@ -34,7 +34,7 @@ public class RepositoryVfsFileObject
     private RepositoryVfsFileContent content;
     private String fileUrl;
 
-    public RepositoryVfsFileObject(){
+    private RepositoryVfsFileObject(){
 
     }
 

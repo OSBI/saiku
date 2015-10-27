@@ -34,7 +34,7 @@ public class SavedQuery implements Comparable<SavedQuery> {
 		this.xml = xml;
 	}
 	
-	public String getName() {
+	private String getName() {
 		return name;
 	}
 	

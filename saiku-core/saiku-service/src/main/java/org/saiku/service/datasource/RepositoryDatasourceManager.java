@@ -41,13 +41,13 @@ import javax.jcr.RepositoryException;
  * A Datasource Manager for the Saiku Repository API layer.
  */
 public class RepositoryDatasourceManager implements IDatasourceManager {
-    private Map<String, SaikuDatasource> datasources =
+    private final Map<String, SaikuDatasource> datasources =
             Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
     private UserService userService;
     private static final Logger log = LoggerFactory.getLogger(RepositoryDatasourceManager.class);
     private String configurationpath;
     private String datadir;
-    IRepositoryManager irm;
+    private IRepositoryManager irm;
     private String foodmartdir;
     private String foodmartschema;
     private String foodmarturl;
@@ -329,12 +329,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
     public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles) {
-        try {
-            return irm.getAllFiles(type, username, roles);
-        } catch (RepositoryException e) {
-            log.error("Get failed", e);
-        }
-        return null;
+        return irm.getAllFiles(type, username, roles);
     }
 
     public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles, String path) {
@@ -417,10 +412,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     public boolean hasHomeDirectory(String name) {
         try{
             Node eturn = irm.getHomeFolder(name);
-            if (eturn!=null){
-                return true;
-            }
-            return false;
+            return eturn != null;
         } catch(PathNotFoundException e) {
             return false;
         } catch (RepositoryException e) {

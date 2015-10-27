@@ -35,7 +35,7 @@ public class DataCell extends AbstractBaseCell implements Serializable {
   private String formatString = null; // Definition of the property which holds the format string
   // used to format cell values.
 
-  private Map<String, String> properties = new HashMap<String, String>();
+  private final Map<String, String> properties = new HashMap<>();
 
   /**
    * Blank constructor for serialization purposes, don't use it.

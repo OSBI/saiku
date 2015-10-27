@@ -43,13 +43,13 @@ public class RestUtil {
 		return convert(rs, 0);
 	}
 
-	public static QueryResult convert(ResultSet rs, int limit) throws Exception {
+	private static QueryResult convert(ResultSet rs, int limit) throws Exception {
 
 		Integer width = 0;
         Integer height = 0;
         ResultSetHelper rsch = new ResultSetHelper();
         Cell[] header = null;
-        ArrayList<Cell[]> rows = new ArrayList<Cell[]>();
+        ArrayList<Cell[]> rows = new ArrayList<>();
         
         try {
 			while (rs.next() && (limit == 0 || height < limit)) {
@@ -99,7 +99,7 @@ public class RestUtil {
 	}
 	
 	public static QueryResult convert(CellDataSet cellSet, int limit) {
-		ArrayList<Cell[]> rows = new ArrayList<Cell[]>();
+		ArrayList<Cell[]> rows = new ArrayList<>();
 		if (cellSet == null || cellSet.getCellSetBody() == null || cellSet.getCellSetHeaders() == null) {
 			return null;
 		}
@@ -115,13 +115,12 @@ public class RestUtil {
 			AbstractBaseCell[] row = body[i];
 			rows.add(convert(row, Cell.Type.ROW_HEADER));
 		}
-		
-		QueryResult qr = new QueryResult(rows, cellSet);
-		return qr;
+
+	  return new QueryResult(rows, cellSet);
 		
 	}
 	
-	public static Cell[] convert(AbstractBaseCell[] acells, Cell.Type headertype) {
+	private static Cell[] convert(AbstractBaseCell[] acells, Cell.Type headertype) {
 		Cell[]  cells = new Cell[acells.length];
 		for (int i = 0; i < acells.length; i++) {
 			cells[i] = convert(acells[i], headertype);
@@ -129,7 +128,7 @@ public class RestUtil {
 		return cells;
 	}
 	
-	public static Cell convert(AbstractBaseCell acell, Cell.Type headertype) {
+	private static Cell convert(AbstractBaseCell acell, Cell.Type headertype) {
 		if (acell != null) {
 			if (acell instanceof DataCell) {
 				DataCell dcell = (DataCell) acell;
