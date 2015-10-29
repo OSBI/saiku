@@ -44,7 +44,7 @@ public class LicenseUtils {
   }
 
   public Object getLicense()
-      throws IOException {
+      throws IOException, ClassNotFoundException, RepositoryException {
 
     SaikuLicense2 sl = new SaikuLicense2();
 

@@ -71,10 +71,10 @@ public class License {
   public Response getLicense() {
     try {
       return Response.ok().entity(licenseUtils.getLicense()).build();
-    } catch (IOException e) {
+    } catch (IOException | RepositoryException | ClassNotFoundException e) {
       e.printStackTrace();
     }
-      return Response.serverError().build();
+    return Response.serverError().build();
   }
 
   private static final int SIZE = 2048;

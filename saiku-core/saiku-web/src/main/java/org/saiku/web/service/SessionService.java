@@ -17,8 +17,10 @@
 package org.saiku.web.service;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.saiku.service.ISessionService;
 import org.saiku.service.util.security.authorisation.AuthorisationPredicate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -32,13 +34,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.context.request.RequestContextHolder;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 
 public class SessionService implements ISessionService {
@@ -72,7 +75,7 @@ public class SessionService implements ISessionService {
 	/* (non-Javadoc)
 	 * @see org.saiku.web.service.ISessionService#login(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String)
 	 */
-	public Map<String, Object> login(HttpServletRequest req, String username, String password ) {
+	public Map<String, Object> login(HttpServletRequest req, String username, String password ) throws Exception {
 		if (authenticationManager != null) {
 			authenticate(req, username, password);
 		}
@@ -210,7 +213,7 @@ public class SessionService implements ISessionService {
 		return new HashMap<>();
 	}
 
-  public void clearSessions(HttpServletRequest req, String username, String password) {
+  public void clearSessions(HttpServletRequest req, String username, String password) throws Exception {
 	if (authenticationManager != null) {
 	  authenticate(req, username, password);
 	}

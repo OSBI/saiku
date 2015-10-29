@@ -4,7 +4,7 @@ import org.apache.commons.vfs.FileName;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.provider.AbstractFileName;
 
-class RepositoryFileName
+public class RepositoryFileName
         extends AbstractFileName
 {
     public RepositoryFileName(String fileRef, FileType fileType)

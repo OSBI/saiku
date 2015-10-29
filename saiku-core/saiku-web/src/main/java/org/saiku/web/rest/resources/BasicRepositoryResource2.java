@@ -16,6 +16,13 @@
 package org.saiku.web.rest.resources;
 
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystemManager;
+import org.apache.commons.vfs.VFS;
+
 import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.ISessionService;
@@ -26,13 +33,12 @@ import com.qmino.miredot.annotations.ReturnType;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -53,7 +59,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-
 /**
  * QueryServlet contains all the methods required when manipulating an OLAP Query.
  * @author Paul Stoellberger
@@ -69,11 +74,32 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 
   //private Acl acl;
   private DatasourceService datasourceService;
+  private FileObject repo;
 
   public void setDatasourceService(DatasourceService ds) {
 	datasourceService = ds;
   }
 
+  public void setPath(String path) throws Exception {
+	FileSystemManager fileSystemManager;
+	try {
+	  if (!path.endsWith("" + File.separatorChar)) {
+		path += File.separatorChar;
+	  }
+	  fileSystemManager = VFS.getManager();
+	  FileObject fileObject;
+	  fileObject = fileSystemManager.resolveFile(path);
+	  if (fileObject == null) {
+		throw new IOException("File cannot be resolved: " + path);
+	  }
+	  if(!fileObject.exists()) {
+		throw new IOException("File does not exist: " + path);
+	  }
+	  repo = fileObject;
+	} catch (Exception e) {
+	  log.error("Error setting path for repository: " + path, e);
+	}
+  }
 	
 	/*public void setAcl(Acl acl) {
 		this.acl = acl;

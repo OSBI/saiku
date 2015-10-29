@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 public interface ISessionService {
 
   Map<String, Object> login(HttpServletRequest req,
-                            String username, String password);
+                            String username, String password) throws Exception;
 
   void logout(HttpServletRequest req);
 
@@ -33,5 +33,5 @@ public interface ISessionService {
 
   Map<String, Object> getAllSessionObjects();
 
-  void clearSessions(HttpServletRequest req, String username, String password);
+  void clearSessions(HttpServletRequest req, String username, String password) throws Exception;
 }
