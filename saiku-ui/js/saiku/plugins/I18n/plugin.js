@@ -31,13 +31,20 @@ Saiku.i18n = {
     automatic_i18n: function () {
         // Load language file if it isn't English
 
+        var paramsURI = Saiku.URLParams.paramsURI();
+
         // compatible 'zh-CN' -> 'zh';
         if (Saiku.i18n.locale == 'zh') {
             Saiku.i18n.locale = 'cn';
         }
         // Load language file if edit in Settings.js
         else if (Settings.I18N_LOCALE !== 'en') {
-            Saiku.i18n.locale = Settings.I18N_LOCALE;   
+            Saiku.i18n.locale = Settings.I18N_LOCALE;
+        }
+        // Load language file if add a parameter `lang` in URL. 
+        // for example: ?lang=cn
+        else if (_.has(paramsURI, 'lang')) {
+            Saiku.i18n.locale = paramsURI['lang'];
         }
 
         if (Saiku.i18n.locale != "en") {
@@ -109,7 +116,7 @@ function recursive_menu_translate(object, po_file) {
                 debugger;
             }
 			if (element.html()) {
-                console.log("html:" + element.attr('html'));
+                // console.log("html:" + element.attr('html'));
 				translated_text = translate( element.html(), po_file );
                 if (Saiku.i18n.elements.indexOf &&
                     Saiku.i18n.elements.indexOf(element.html()) === -1) {
@@ -124,7 +131,7 @@ function recursive_menu_translate(object, po_file) {
 			
 			// Translate title
 			if (element.attr('title')) {
-                console.log("title:" + element.attr('title'));
+                // console.log("title:" + element.attr('title'));
 				translated_title = translate( element.attr('title'), po_file );
                 if (Saiku.i18n.elements.indexOf && 
                     Saiku.i18n.elements.indexOf(element.attr('title')) === -1) {
@@ -139,7 +146,7 @@ function recursive_menu_translate(object, po_file) {
 
             // Translate title
             if (element.attr('original-title')) {
-                console.log("original-title:" + element.attr('original-title'));
+                // console.log("original-title:" + element.attr('original-title'));
                 translated_title = translate( element.attr('original-title'), po_file );
                 if (Saiku.i18n.elements.indexOf &&
                     Saiku.i18n.elements.indexOf(element.attr('original-title')) === -1) {
@@ -153,7 +160,7 @@ function recursive_menu_translate(object, po_file) {
             }
 			
 			if (element.attr('value')) {
-                console.log("value:" + element.attr('value'));
+                // console.log("value:" + element.attr('value'));
                 translated_value = translate( element.attr('value'), po_file );
                 if (Saiku.i18n.elements.indexOf && 
                     Saiku.i18n.elements.indexOf(element.attr('value')) === -1) {
