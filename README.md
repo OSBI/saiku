@@ -29,7 +29,7 @@ mvn clean clover2:setup test clover2:aggregate clover2:clover
 * [Saiku User Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/user)
 * [<strike>Saiku Forums</strike>](http://forums.meteorite.bi/)
 * [Stack Overflow](http://stackoverflow.com/questions/tagged/saiku)
-* [<strike>Freenode IRC - Channel: #saiku</strike>](http://irc.lc/freenode/%23saiku/t4nk@)
+* [Freenode IRC - Channel: #saiku](http://webchat.freenode.net/?channels=##saiku)
 
 ## Contributing
 
