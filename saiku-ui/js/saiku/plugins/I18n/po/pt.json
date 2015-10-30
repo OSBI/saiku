@@ -1,4 +1,4 @@
-﻿{
+{
 	"New query":"Nova consulta",
 	"Open query":"Abrir consulta",
 	"Save query":"Salvar consulta",
@@ -133,5 +133,10 @@
 	"Please select a file.....":"Por favor, selecione um arquivo.....",
 	"File:":"Arquivo:",
 	"Username":"Nome de usuário",
-	"Password":"Senha"
+	"Password":"Senha",
+	"Evaluation Login": "Login para avaliação",
+	"Administrator": "Administrador",
+	"Username: admin": "Nome de usuário: admin",
+	"Password: admin": "Senha: admin",
+	"&nbsp;Upload License&nbsp;": "&nbsp;Upload Licença&nbsp;"
 }
