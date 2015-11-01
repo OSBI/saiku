@@ -973,6 +973,11 @@ textarea, select {
 
 .dialog_date-filter .dialog_body .form-group-selection {
     display: inline-block;
+    width: 200px;
+}
+
+.dialog_date-filter .dialog_body .form-group-rolling {
+    display: inline-block;
     width: 100px;
 }
 
@@ -1002,7 +1007,7 @@ textarea, select {
 }
 
 .dialog_date-filter .dialog_body #div-selected-date fieldset {
-    width: 150px;
+    width: 130px;
     border: 1px solid #ccc;
 }
 
