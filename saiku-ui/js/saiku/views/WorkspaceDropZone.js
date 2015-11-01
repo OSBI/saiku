@@ -321,7 +321,6 @@ var WorkspaceDropZone = Backbone.View.extend({
            ((_.size(memberLevel) === 1 && _.has(memberLevel, 'name')) || (_.has(memberLevel, 'mdx') && memberLevel.mdx) || 
            (_.size(memberLevel) === 2 && _.has(memberLevel, 'name') && _.has(memberLevel, 'mdx'))))) {
 
-
             // Launch date filter dialog
             (new DateFilterModal({
                 dimension: dimension,
