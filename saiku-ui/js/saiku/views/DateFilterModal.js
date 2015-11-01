@@ -111,12 +111,24 @@ var DateFilterModal = Modal.extend({
 			'<div class="available-selections" selection-name="fixed-date" available="false">' +
 				'<span class="i18n">Fixed Date:</span><br>' +
 				'<div class="selection-options">' +
-					'<label><input type="radio" name="fixed-radio" id="fd-yesterday" data-leveltype="TIME_DAYS"> <span class="i18n">Yesterday</span></label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-today" data-leveltype="TIME_DAYS"> <span class="i18n">Today</span></label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-week" data-leveltype="TIME_WEEKS"> <span class="i18n">Current Week</span></label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-month" data-leveltype="TIME_MONTHS"> <span class="i18n">Current Month</span></label>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-quarter" data-leveltype="TIME_QUARTERS"> <span class="i18n">Current Quarter</span></label><br>' +
-					'<label><input type="radio" name="fixed-radio" id="fd-year" data-leveltype="TIME_YEARS"> <span class="i18n">Current Year</span></label>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio" name="fixed-radio" id="fd-yesterday" data-leveltype="TIME_DAYS"> <span class="i18n">Yesterday</span></label>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio" name="fixed-radio" id="fd-today" data-leveltype="TIME_DAYS"> <span class="i18n">Today</span></label>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio" name="fixed-radio" id="fd-week" data-leveltype="TIME_WEEKS"> <span class="i18n">Current Week</span></label>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio" name="fixed-radio" id="fd-month" data-leveltype="TIME_MONTHS"> <span class="i18n">Current Month</span></label>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio" name="fixed-radio" id="fd-quarter" data-leveltype="TIME_QUARTERS"> <span class="i18n">Current Quarter</span></label><br>' +
+					'</div>' +
+					'<div class="form-group-selection">' +
+						'<label><input type="radio" name="fixed-radio" id="fd-year" data-leveltype="TIME_YEARS"> <span class="i18n">Current Year</span></label>' +
+					'</div>' +
 				'</div>' +
 			'</div>' +
 		'</div>' +
@@ -127,16 +139,16 @@ var DateFilterModal = Modal.extend({
 			'<div class="available-selections" selection-name="rolling-date" available="false">' +
 				'<span class="i18n">Rolling Date:</span><br>' +
 				'<div class="selection-options">' +
-					'<div class="form-group-selection">' +
+					'<div class="form-group-rolling">' +
 						'<select>' +
 							'<option value="last">Last</option>' +
 							'<option value="next" disabled class="keep-disabled">Next</option>' +
 						'</select>' +
 					'</div>' +
-					'<div class="form-group-selection">' +
+					'<div class="form-group-rolling">' +
 						'<input type="text" id="date-input">' +
 					'</div>' +
-					'<div class="form-group-selection">' +
+					'<div class="form-group-rolling">' +
 						'<select id="period-select">' +
 							'<option name="TIME_DAYS" id="rd-days">Day(s)</option>' +
 							'<option name="TIME_WEEKS" id="rd-weeks">Week(s)</option>' +
