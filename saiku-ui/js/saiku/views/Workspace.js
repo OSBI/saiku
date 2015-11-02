@@ -35,6 +35,8 @@ var Workspace = Backbone.View.extend({
         _.bindAll(this, "caption", "adjust", "toggle_sidebar", "prepare", "new_query", "set_class_charteditor",
                 "init_query", "update_caption", "populate_selections","refresh", "sync_query", "cancel", "cancelled", "no_results", "error", "switch_view_state");
 
+        var that = this;
+
         // Attach an event bus to the workspace
         _.extend(this, Backbone.Events);
         this.loaded = false;
@@ -110,7 +112,9 @@ var Workspace = Backbone.View.extend({
             this.data_connections(paramsURI);
         }
     },
-
+    afterRender: function () {
+        console.log("After render");
+    },
     caption: function(increment) {
         if (this.query && this.query.model) {
             if (this.item && this.item.name) {

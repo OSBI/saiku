@@ -350,6 +350,7 @@ var AdminConsole = Backbone.View.extend({
             $(this.el).find('.back_query').css('display', 'block');
         }
 
+        Saiku.i18n.translate();
         return this;
     },
     populate: function (repository) {
@@ -974,11 +975,11 @@ var AdminConsole = Backbone.View.extend({
 
 });
 Saiku.events.bind('admin:loaddatasources', function(admin){
-    $(admin.admin.el).find('.inner_datasource').append("<li class='create_datasource'>Add Data Source</li>");
+    $(admin.admin.el).find('.inner_datasource').append("<li class='i18n create_datasource'>Add Data Source</li>");
 
 });
 Saiku.events.bind('admin:loadschema', function(admin){
-    $(admin.admin.el).find('.inner_schema').append("<li class='create_schema'>Add Schema</li>");
+    $(admin.admin.el).find('.inner_schema').append("<li class='i18n create_schema'>Add Schema</li>");
 
 });
 Saiku.events.bind('session:new', function (session) {
@@ -986,7 +987,8 @@ if(Saiku.session.isAdmin) {
     var $link = $("<a />")
         .attr({
             href: "#adminconsole",
-            title: "Admin Console"
+            title: "Admin Console",
+            class: "i18n"
         })
         .click(Saiku.AdminConsole.show_admin)
         .addClass('admin');
