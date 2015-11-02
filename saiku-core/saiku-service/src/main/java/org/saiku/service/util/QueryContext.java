@@ -12,7 +12,7 @@ import org.saiku.service.util.exception.SaikuServiceException;
 
 public class QueryContext {
 	
-	public String id = UUID.randomUUID().toString();
+	private final String id = UUID.randomUUID().toString();
 	
 	public enum Type {
 		OLAP
@@ -27,9 +27,9 @@ public class QueryContext {
 		QUERY
 	}
 	
-	private Type type;
+	private final Type type;
 	
-	private Map<ObjectKey, Object> objects = new HashMap<ObjectKey, Object>();
+	private final Map<ObjectKey, Object> objects = new HashMap<>();
 	
 	public QueryContext(Type type, ISaikuQuery query) {
 		this.type = type;
@@ -44,7 +44,7 @@ public class QueryContext {
 		return this.type;
 	}
 	
-	public Connection getConnection() {
+	private Connection getConnection() {
 		if (objects.containsKey(ObjectKey.CONNECTION)) {
 			return (Connection) objects.get(ObjectKey.CONNECTION);
 		}

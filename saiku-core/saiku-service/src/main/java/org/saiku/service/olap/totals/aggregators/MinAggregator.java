@@ -6,11 +6,11 @@ import org.olap4j.metadata.Measure;
 
 public class MinAggregator extends TotalAggregator {
 
-  protected MinAggregator( Format format ) {
+  MinAggregator(Format format) {
     super( format );
   }
 
-  Double min = null;
+  private Double min = null;
 
   @Override
   public void addData( double data ) {

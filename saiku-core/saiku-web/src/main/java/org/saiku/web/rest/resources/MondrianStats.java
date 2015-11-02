@@ -9,15 +9,15 @@ import mondrian.server.monitor.StatementInfo;
 
 public class MondrianStats {
 
-	private ServerInfo server;
-	private MondrianVersion mondrianVersion;
-	private int openConnectionCount;
-	private int openMdxStatementCount;
-	private int openSqlStatementCount;
-	private int executingMdxStatementCount;
-	private float avgCellDimensionality;
-	private List<ConnectionInfo> connections;
-	private List<StatementInfo> statements;
+	private final ServerInfo server;
+	private final MondrianVersion mondrianVersion;
+	private final int openConnectionCount;
+	private final int openMdxStatementCount;
+	private final int openSqlStatementCount;
+	private final int executingMdxStatementCount;
+	private final float avgCellDimensionality;
+	private final List<ConnectionInfo> connections;
+	private final List<StatementInfo> statements;
 
 	public MondrianStats(
 			ServerInfo server, 

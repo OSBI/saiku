@@ -40,10 +40,10 @@ import java.util.*;
 import java.util.regex.*;
 import java.io.*;
 
-public class CSSMin
+class CSSMin
 {
 
-  protected static boolean bDebug = false;
+  static boolean bDebug = false;
 
   public static void main(String[] args)
   {
@@ -79,7 +79,7 @@ public class CSSMin
     formatFile(args[0], out);
   }
 
-  public static void formatFile(String f, PrintStream out)
+  private static void formatFile(String f, PrintStream out)
   {
     try
     {
@@ -96,14 +96,14 @@ public class CSSMin
     formatFile(input, new PrintStream(out));
   }
 
-  public static void formatFile(Reader input, PrintStream out)
+  private static void formatFile(Reader input, PrintStream out)
   {
     try
     {
       int k, n;
 
       BufferedReader br = new BufferedReader(input);
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
 
       if (bDebug)
       {
@@ -223,7 +223,7 @@ class Selector
    */
   public String toString()
   {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     sb.append(this.selector).append("{");
     for (Property p : this.properties)
     {
@@ -261,14 +261,10 @@ class Selector
     parts.add(contents.substring(j, contents.length()));
 
     ArrayList<Property> resultsList = new ArrayList<Property>();
-    for (int i = 0; i < parts.size(); i++)
-    {
-      try
-      {
-        resultsList.add(new Property(parts.get(i)));
-      }
-      catch (Exception e)
-      {
+    for (String part : parts) {
+      try {
+        resultsList.add(new Property(part));
+      } catch (Exception e) {
         System.out.println(e.getMessage());
       }
     }
@@ -285,8 +281,8 @@ class Selector
 class Property implements Comparable<Property>
 {
 
-  protected String property;
-  protected Part[] parts;
+  private String property;
+  private Part[] parts;
 
   /**
    * Creates a new Property using the supplied strings. Parses out the values of the property selector.
@@ -341,7 +337,7 @@ class Property implements Comparable<Property>
    */
   public String toString()
   {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     sb.append(this.property).append(":");
     for (Part p : this.parts)
     {
@@ -382,10 +378,9 @@ class Property implements Comparable<Property>
 class Part
 {
 
-  String contents;
+  private String contents;
 
-  public Part(String contents) throws Exception
-  {
+  public Part(String contents) {
     // Many of these regular expressions are adapted from those used in the YUI CSS Compressor.
 
     // For simpler regexes.
@@ -432,7 +427,7 @@ class Part
         int g = Integer.parseInt(parts[1], 10);
         int b = Integer.parseInt(parts[2], 10);
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("#");
         if (r < 16)
         {
@@ -462,9 +457,7 @@ class Part
           && (this.contents.charAt(3) == this.contents.charAt(4))
           && (this.contents.charAt(5) == this.contents.charAt(6)))
       {
-        StringBuffer sb = new StringBuffer();
-        sb.append("#").append(this.contents.charAt(1)).append(this.contents.charAt(3)).append(this.contents.charAt(5));
-        this.contents = sb.toString();
+        this.contents = "#" + this.contents.charAt(1) + this.contents.charAt(3) + this.contents.charAt(5);
       }
     }
   }

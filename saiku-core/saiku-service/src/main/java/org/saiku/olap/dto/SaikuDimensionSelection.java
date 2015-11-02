@@ -24,7 +24,7 @@ public class SaikuDimensionSelection extends AbstractSaikuObject {
 
   private List<SaikuSelection> selections;
 
-  public SaikuDimensionSelection() {};
+  public SaikuDimensionSelection() {}
 
   public SaikuDimensionSelection(String name, String uniqueName, String caption, String description, List<SaikuSelection> selections) {
     super(uniqueName,name);

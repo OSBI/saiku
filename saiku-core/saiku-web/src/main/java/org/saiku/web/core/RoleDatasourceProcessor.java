@@ -14,15 +14,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class RoleDatasourceProcessor implements IDatasourceProcessor {
 
 	private static final Logger log = LoggerFactory.getLogger(RoleDatasourceProcessor.class);
-	private static String ROLEFILTER = "role.filter";
-	
-	public SaikuDatasource process(SaikuDatasource ds) {
+
+  public SaikuDatasource process(SaikuDatasource ds) {
 		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {			
 			String roles = null;
-			String filter = 
+		  String ROLEFILTER = "role.filter";
+		  String filter =
 					ds.getProperties().containsKey(ROLEFILTER) ? 
 							ds.getProperties().getProperty(ROLEFILTER) : null;
-			List<String> allowedRoles = new ArrayList<String>();
+			List<String> allowedRoles = new ArrayList<>();
 			if (filter != null) {
 				String[] filterRoles = filter.split(",");
 				allowedRoles.addAll(Arrays.asList(filterRoles));

@@ -49,7 +49,7 @@ class Acl2 {
   private AclMethod rootMethod = AclMethod.WRITE;
 
   @NotNull
-  private final Map<String, AclEntry> acl = new TreeMap<String, AclEntry>();
+  private final Map<String, AclEntry> acl = new TreeMap<>();
 
   public Acl2(@NotNull Node root) {
     readAclTree(root);
@@ -70,7 +70,7 @@ class Acl2 {
       //LOG.debug("Set ACL to " + object + " : " + acl);
       //String acl = null;
       AclEntry entry = null;
-      Map<String, AclEntry> acl = new TreeMap<String, AclEntry>();
+      Map<String, AclEntry> acl = new TreeMap<>();
 
       try {
         TypeReference ref = new TypeReference<Map<String, AclEntry>>() { };
@@ -90,7 +90,7 @@ class Acl2 {
 
 
 
-        HashMap<String, List<AclMethod>> m = new HashMap<String, List<AclMethod>>();
+        HashMap<String, List<AclMethod>> m = new HashMap<>();
         AclEntry e2 = new AclEntry("admin", AclType.PUBLIC, m, null);
         Acl2 acl2 = new Acl2(node);
         acl2.addEntry(node.getPath(), e2);
@@ -121,7 +121,7 @@ class Acl2 {
           break;
         case SECURED:
           // check user permission
-          List<AclMethod> allMethods = new ArrayList<AclMethod>();
+          List<AclMethod> allMethods = new ArrayList<>();
 
           if (StringUtils.isNotBlank(entry.getOwner()) && entry.getOwner().equals(username)) {
             allMethods.add(AclMethod.GRANT);
@@ -131,7 +131,7 @@ class Acl2 {
               entry.getUsers() != null && entry.getUsers().containsKey(username)
               ? entry.getUsers().get(username) : new ArrayList<AclMethod>();
 
-          List<AclMethod> roleMethods = new ArrayList<AclMethod>();
+          List<AclMethod> roleMethods = new ArrayList<>();
           for (String role : roles) {
             List<AclMethod> r =
                 entry.getRoles() != null && entry.getRoles().containsKey(role)
@@ -175,7 +175,7 @@ class Acl2 {
     } catch (Exception e) {
       LOG.debug("Error", e.getCause());
     }
-    List<AclMethod> noMethod = new ArrayList<AclMethod>();
+    List<AclMethod> noMethod = new ArrayList<>();
     noMethod.add(AclMethod.NONE);
     return noMethod;
   }
@@ -194,7 +194,7 @@ class Acl2 {
 
   @NotNull
   private List<AclMethod> getAllAcls(@Nullable AclMethod maxMethod) {
-    List<AclMethod> methods = new ArrayList<AclMethod>();
+    List<AclMethod> methods = new ArrayList<>();
     if (maxMethod != null) {
       for (AclMethod m : AclMethod.values()) {
         if (m.ordinal() > 0 && m.ordinal() <= maxMethod.ordinal()) {
@@ -239,7 +239,7 @@ class Acl2 {
 
   private Map<String, AclEntry> deserialize(@Nullable Node node) {
     ObjectMapper mapper = new ObjectMapper();
-    Map<String, AclEntry> acl = new TreeMap<String, AclEntry>();
+    Map<String, AclEntry> acl = new TreeMap<>();
     try {
       if (node != null && node.getProperty("owner") != null) {
         TypeReference ref = new TypeReference<Map<String, AclEntry>>() { };
@@ -273,10 +273,10 @@ class Acl2 {
 
   public boolean canWrite(@Nullable Node path, String username, @NotNull List<String> roles) {
     if (path == null) {
-      return true;
+      return false;
     }
     List<AclMethod> acls = getMethods(path, username, roles);
-    return acls.contains(AclMethod.WRITE);
+    return !acls.contains(AclMethod.WRITE);
   }
 
 
@@ -284,29 +284,28 @@ class Acl2 {
     try {
 
       String s = resource.getPrimaryNodeType().getName();
-      Node folder = resource;
       //resource.getPrimaryNodeType().getName().equals( "nt:folder" )
       //        ? resource : resource.getParent();
 
-      String jsonFile = folder.getProperty("owner").getString();
+      String jsonFile = resource.getProperty("owner").getString();
 
       if (jsonFile != null && !jsonFile.equals("")) {
-        Map<String, AclEntry> folderAclMap = deserialize(folder);
-        Map<String, AclEntry> aclMap = new TreeMap<String, AclEntry>();
+        Map<String, AclEntry> folderAclMap = deserialize(resource);
+        Map<String, AclEntry> aclMap = new TreeMap<>();
 
         for (String key : folderAclMap.keySet()) {
-          if (key.equals(folder.getPath())) {
+          if (key.equals(resource.getPath())) {
             AclEntry entry = folderAclMap.get(key);
             //FileName fn = folder.resolveFile( key ).getName();
             //String childPath = repoRoot.getName().getRelativeName( fn );
-            aclMap.put(folder.getPath(), entry);
+            aclMap.put(resource.getPath(), entry);
           }
         }
 
         acl.putAll(aclMap);
       }
 
-      for (Node file : JcrUtils.getChildNodes(folder)) {
+      for (Node file : JcrUtils.getChildNodes(resource)) {
         //if ( file.getPrimaryNodeType().equals( "nt:folder" ) ) {
         if (!file.getName().equals("/") && !file.getName().startsWith("jcr:") && !file.getName().startsWith("rep:")) {
 

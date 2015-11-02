@@ -404,7 +404,7 @@ public class Query2Resource {
             if (log.isDebugEnabled()) {
                 log.debug("TRACK\t"  + "\t/query/" + queryName + "/zoomIn\tPUT");
             }
-            List<List<Integer>> realPositions = new ArrayList<List<Integer>>();
+            List<List<Integer>> realPositions = new ArrayList<>();
             if (StringUtils.isNotBlank(positionListString)) {
                 ObjectMapper mapper = new ObjectMapper();
                 String[] positions = mapper.readValue(positionListString,
@@ -412,7 +412,7 @@ public class Query2Resource {
                 if (positions != null && positions.length > 0) {
                     for (String position : positions) {
                         String[] rPos = position.split(":");
-                        List<Integer> cellPosition = new ArrayList<Integer>();
+                        List<Integer> cellPosition = new ArrayList<>();
 
                         for (String p : rPos) {
                             Integer pInt = Integer.parseInt(p);
@@ -459,7 +459,7 @@ public class Query2Resource {
                 rs = thinQueryService.drillthrough(queryName, maxrows, returns);
             } else {
                 String[] positions = position.split(":");
-                List<Integer> cellPosition = new ArrayList<Integer>();
+                List<Integer> cellPosition = new ArrayList<>();
 
                 for (String p : positions) {
                     Integer pInt = Integer.parseInt(p);
@@ -492,7 +492,7 @@ public class Query2Resource {
                         if (statement != null) {
                             statement.close();
                         }
-                    } catch (Exception ee) {};
+                    } catch (Exception ee) {}
 
                 }
             }
@@ -530,7 +530,7 @@ public class Query2Resource {
                 rs = thinQueryService.drillthrough(queryName, maxrows, returns);
             } else {
                 String[] positions = position.split(":");
-                List<Integer> cellPosition = new ArrayList<Integer>();
+                List<Integer> cellPosition = new ArrayList<>();
 
                 for (String p : positions) {
                     Integer pInt = Integer.parseInt(p);
@@ -753,7 +753,7 @@ public class Query2Resource {
 
         try {
             String[] positions = position.split(":");
-            List<Integer> cellPosition = new ArrayList<Integer>();
+            List<Integer> cellPosition = new ArrayList<>();
             for (String p : positions) {
                 Integer pInt = Integer.parseInt(p);
                 cellPosition.add(pInt);
@@ -767,8 +767,7 @@ public class Query2Resource {
 
 
             Map<String, List<String>> levels = mapper.readValue(returns, mapper.getTypeFactory().constructMapType(Map.class, st, ct));
-            ThinQuery q = thinQueryService.drillacross(queryName, cellPosition, levels);
-            return q;
+          return thinQueryService.drillacross(queryName, cellPosition, levels);
 
         }
         catch (Exception e) {

@@ -37,16 +37,14 @@ import org.saiku.service.datasource.DatasourceService;
 
 public class ThinQueryServiceTest {
 
-	private TestSaikuContext context;
-	private OlapDiscoverService ods;
-	private DatasourceService ds;
-	private ThinQueryService tqs;
+  private OlapDiscoverService ods;
+  private ThinQueryService tqs;
 
 	@Before
 	public void setUp() throws Exception {
-		context = TestSaikuContext.instance();
+	  TestSaikuContext context = TestSaikuContext.instance();
 		ods = context.olapDiscoverService;
-		ds = context.datasourceService;
+	  DatasourceService ds = context.datasourceService;
 		tqs = context.thinQueryService;
 	}
 
@@ -258,7 +256,7 @@ public class ThinQueryServiceTest {
 		return ret;
 	}
 
-	private void compareQuery(String name, String actual) throws FileNotFoundException, IOException {
+	private void compareQuery(String name, String actual) throws IOException {
 		StringWriter stringWriter = new StringWriter();
 		FileSystemManager fileSystemManager = VFS.getManager();
 		FileObject fileObject = fileSystemManager.resolveFile("res:queries/" + name + ".json");

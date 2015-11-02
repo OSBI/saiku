@@ -8,7 +8,7 @@ public interface ThinSortableQuerySet extends ThinQuerySet {
      * order supplied as a parameter.
      * @param order The {@link SortOrder} to use.
      */
-    public void sort(SortOrder order);
+    void sort(SortOrder order);
     
     /**
      * Sorts the Hierarchy members by name in the
@@ -16,25 +16,25 @@ public interface ThinSortableQuerySet extends ThinQuerySet {
      * sort evaluation literal
      * @param order The {@link SortOrder} to use.
      */
-    public void sort(SortOrder order, String sortEvaluationLiteral);
+    void sort(SortOrder order, String sortEvaluationLiteral);
 
     /**
      * Returns the current order in which the
      * Hierarchy members are sorted.
      * @return A value of {@link SortOrder}
      */
-    public SortOrder getSortOrder();
+    SortOrder getSortOrder();
     
     /**
      * Returns the current literal used for sorting
      * @return A sort evaluation literal
      */
-    public String getSortEvaluationLiteral();
+    String getSortEvaluationLiteral();
 
     /**
      * Clears the current sorting settings.
      */
-    public void clearSort();
+    void clearSort();
 
     
     /**
@@ -47,7 +47,7 @@ public interface ThinSortableQuerySet extends ThinQuerySet {
      * @return Either a hierarchization mode value or null
      *     if no hierarchization is currently performed.
      */
-    public HierarchizeMode getHierarchizeMode();
+    HierarchizeMode getHierarchizeMode();
 
     /**
      * Triggers the hierarchization of the included members within this
@@ -64,7 +64,7 @@ public interface ThinSortableQuerySet extends ThinQuerySet {
      * Hierarchize() function)
      * inside the Hierarchize() MDX function call.
      */
-    public void setHierarchizeMode(HierarchizeMode hierarchizeMode);
+    void setHierarchizeMode(HierarchizeMode hierarchizeMode);
 
     /**
      * Tells the QueryHierarchy not to hierarchize its included
@@ -73,13 +73,13 @@ public interface ThinSortableQuerySet extends ThinQuerySet {
      * <p>This capability is only available when a single Hierarchy is
      * selected on an axis.
      */
-    public void clearHierarchizeMode();
+    void clearHierarchizeMode();
     
     /**
      * Defines in which way the hierarchize operation
      * should be performed.
      */
-    public static enum HierarchizeMode {
+    enum HierarchizeMode {
         /**
          * Parents are placed before children.
          */
@@ -90,7 +90,7 @@ public interface ThinSortableQuerySet extends ThinQuerySet {
         POST
     }
     
-    public enum SortOrder {
+    enum SortOrder {
         /**
          * Ascending sort order. Members of
          * the same hierarchy are still kept together.

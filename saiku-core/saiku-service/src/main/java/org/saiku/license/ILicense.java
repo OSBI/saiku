@@ -17,6 +17,6 @@ import java.io.Serializable;
  *
  * @author ikus060
  */
-public interface ILicense extends Serializable {
+interface ILicense extends Serializable {
 
 }

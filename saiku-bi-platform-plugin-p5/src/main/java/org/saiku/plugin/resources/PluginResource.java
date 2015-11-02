@@ -70,12 +70,11 @@ public class PluginResource {
             SaikuQuery sq = queryService.getQuery(query);
             SaikuDatasource ds = datasourceService.getDatasource(sq.getCube().getConnection());
             Properties props = ds.getProperties();
-            String cdaFile = getCdaAsString(
+            return getCdaAsString(
                     props.getProperty(ISaikuConnection.DRIVER_KEY),
                     props.getProperty(ISaikuConnection.URL_KEY),
                     sq.getName(),
                     sq.getMdx());
-            return cdaFile;
         } catch (Exception e) {
 // TODO Auto-generated catch block
             e.printStackTrace();
@@ -207,7 +206,7 @@ public class PluginResource {
         String cda = getCdaAsString(driver, url, name, query);
         return DocumentHelper.parseText(cda);
     }
-    private String getCdaAsString(String driver, String url, String name, String query) throws Exception {
+    private String getCdaAsString(String driver, String url, String name, String query) {
         String cda = getCdaTemplate();
         cda = cda.replaceAll("@@DRIVER@@", driver);
         cda = cda.replaceAll("@@NAME@@", name);
@@ -216,22 +215,20 @@ public class PluginResource {
         return cda;
     }
     private String getCdaTemplate() {
-        String cda =
-                "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
-                        "<CDADescriptor>\n" +
-                        " <DataSources>\n" +
-                        " <Connection id=\"1\" type=\"olap4j.jdbc\">\n" +
-                        " <Driver>@@DRIVER@@</Driver>\n" +
-                        " <Url>@@URL@@</Url>\n" +
-                        " </Connection>\n" +
-                        " </DataSources>\n" +
-                        " <DataAccess id=\"1\" connection=\"1\" type=\"olap4j\" access=\"public\">\n" +
-                        " <Name>@@NAME@@</Name>\n" +
-                        " <Query><![CDATA[" +
-                        " @@QUERY@@" +
-                        " ]]></Query>\n" +
-                        " </DataAccess>\n" +
-                        "</CDADescriptor>\n";
-        return cda;
+        return "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
+                "<CDADescriptor>\n" +
+                " <DataSources>\n" +
+                " <Connection id=\"1\" type=\"olap4j.jdbc\">\n" +
+                " <Driver>@@DRIVER@@</Driver>\n" +
+                " <Url>@@URL@@</Url>\n" +
+                " </Connection>\n" +
+                " </DataSources>\n" +
+                " <DataAccess id=\"1\" connection=\"1\" type=\"olap4j\" access=\"public\">\n" +
+                " <Name>@@NAME@@</Name>\n" +
+                " <Query><![CDATA[" +
+                " @@QUERY@@" +
+                " ]]></Query>\n" +
+                " </DataAccess>\n" +
+                "</CDADescriptor>\n";
     }
 }

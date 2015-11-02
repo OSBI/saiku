@@ -3,16 +3,14 @@ package org.saiku.service.importer;
 
 import org.saiku.repository.IRepositoryManager;
 
-import java.io.FileInputStream;
-
 public interface LegacyImporter {
 
-    public void importUsers();
+    void importUsers();
 
-    public void importSchema();
+    void importSchema();
 
-    public void importDatasources();
+    void importDatasources();
 
-    public void importLegacyReports(IRepositoryManager repositoryManager, byte[] bytes);
+    void importLegacyReports(IRepositoryManager repositoryManager, byte[] bytes);
 
 }

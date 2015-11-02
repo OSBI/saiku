@@ -28,8 +28,6 @@ public class SaikuTag extends AbstractSaikuObject {
   public SaikuTag() {
   }
 
-  ;
-
   public SaikuTag( String name, List<SimpleCubeElement> saikuTupleDimensions, List<SaikuTuple> saikuTuples,
                    List<SaikuDimensionSelection> filterSelections ) {
     super( name, name );
@@ -40,7 +38,7 @@ public class SaikuTag extends AbstractSaikuObject {
   }
 
   public List<SaikuMember> getSaikuMembers( String dimensionUniqueName ) {
-    List<SaikuMember> members = new ArrayList<SaikuMember>();
+    List<SaikuMember> members = new ArrayList<>();
     for ( SaikuTuple t : saikuTuples ) {
       for ( SaikuMember m : t.getSaikuMembers() ) {
         if ( m.getDimensionUniqueName().equals( dimensionUniqueName ) ) {

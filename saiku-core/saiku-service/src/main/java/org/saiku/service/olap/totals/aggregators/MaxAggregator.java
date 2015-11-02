@@ -5,11 +5,11 @@ import org.olap4j.metadata.Measure;
 
 public class MaxAggregator extends TotalAggregator {
 
-  protected MaxAggregator( Format format ) {
+  MaxAggregator(Format format) {
     super( format );
   }
 
-  Double max = null;
+  private Double max = null;
 
   @Override
   public void addData( double data ) {

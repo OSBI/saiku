@@ -45,9 +45,9 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 	 */
 	private static final long serialVersionUID = -5912836681963684201L;
 
-	private transient Map<String, ISaikuConnection> connections = new HashMap<String, ISaikuConnection>();
+	private transient Map<String, ISaikuConnection> connections = new HashMap<>();
 
-	private List<String> errorConnections = new ArrayList<String>();
+	private final List<String> errorConnections = new ArrayList<>();
 
 	private ISessionService sessionService;
 
@@ -242,7 +242,7 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 
 
 	private List<String> getSpringRoles() {
-		List<String> roles = new ArrayList<String>();
+		List<String> roles = new ArrayList<>();
 		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
 			Collection<? extends GrantedAuthority>
                 auths = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
@@ -264,11 +264,11 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 				log.error("Error getting connection roles", e);
 			}
 		}
-		return new ArrayList<String>();
+		return new ArrayList<>();
 	}
 
 	private Map<String,List<String>> getRoleMapping(SaikuDatasource datasource) {
-		Map<String,List<String>> result = new HashMap<String,List<String>>();
+		Map<String,List<String>> result = new HashMap<>();
 		if (datasource.getProperties().containsKey(ISaikuConnection.SECURITY_LOOKUP_KEY)) {
 			String mappings = datasource.getProperties().getProperty(ISaikuConnection.SECURITY_LOOKUP_KEY);
 			if (mappings != null) {
@@ -306,6 +306,6 @@ public class SecurityAwareConnectionManager extends AbstractConnectionManager im
 	  throws IOException, ClassNotFoundException {
 
 	stream.defaultReadObject();
-	connections = new HashMap<String, ISaikuConnection>();
+	connections = new HashMap<>();
   }
 }

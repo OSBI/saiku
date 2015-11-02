@@ -5,11 +5,11 @@ import org.olap4j.metadata.Measure;
 
 public class SumAggregator extends TotalAggregator {
 
-  protected SumAggregator( Format format ) {
+  SumAggregator(Format format) {
     super( format );
   }
 
-  double sum = 0.0;
+  private double sum = 0.0;
 
   @Override
   public void addData( double data ) {

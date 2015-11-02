@@ -72,13 +72,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @Component
 @Path("/saiku/{username}/query")
 @XmlAccessorType(XmlAccessType.NONE)
+@Deprecated
 public class QueryResource {
 
 	private static final Logger log = LoggerFactory.getLogger(QueryResource.class);
 
 	private OlapQueryService olapQueryService;
-	private OlapDiscoverService olapDiscoverService;
-	private ISaikuRepository repository;
+  private ISaikuRepository repository;
 	
 	//@Autowired
 	public void setOlapQueryService(OlapQueryService olapqs) {
@@ -94,7 +94,7 @@ public class QueryResource {
 
 	//@Autowired
 	public void setOlapDiscoverService(OlapDiscoverService olapds) {
-		olapDiscoverService = olapds;
+	  OlapDiscoverService olapDiscoverService = olapds;
 	}
 
 	/*
@@ -190,6 +190,11 @@ public class QueryResource {
 		}
 	}
 
+  /**
+   * Get the query properties.
+   * @param queryName
+   * @return
+   */
 	@GET
 	@Produces({"application/json" })
 	@Path("/{queryname}/properties")
@@ -201,6 +206,12 @@ public class QueryResource {
 	}
 
 
+  /**
+   * Set the query properties
+   * @param queryName
+   * @param properties
+   * @return
+   */
 	@POST
 	@Produces({"application/json" })
 	@Path("/{queryname}/properties")
@@ -511,18 +522,21 @@ public class QueryResource {
 		}
 		try {
 			ICellSetFormatter icf;
-			formatter = formatter == null ? "" : formatter.toLowerCase(); 
-			if(formatter.equals("flat")) {
-				icf = new CellSetFormatter();
-			}
-			else if (formatter.equals("hierarchical")) {
-				icf = new HierarchicalCellSetFormatter();
-			}
-			else if (formatter.equals("flattened")) {
-				icf = new FlattenedCellSetFormatter();
-			} else {
-				icf = new FlattenedCellSetFormatter();
-			}
+			formatter = formatter == null ? "" : formatter.toLowerCase();
+		  switch (formatter) {
+		  case "flat":
+			icf = new CellSetFormatter();
+			break;
+		  case "hierarchical":
+			icf = new HierarchicalCellSetFormatter();
+			break;
+		  case "flattened":
+			icf = new FlattenedCellSetFormatter();
+			break;
+		  default:
+			icf = new FlattenedCellSetFormatter();
+			break;
+		  }
 
 			olapQueryService.qm2mdx(queryName);
 			
@@ -584,8 +598,7 @@ public class QueryResource {
 					+ "/hierarchies/" + hierarchyName + "/levels/" + levelName + "\tGET");
 		}
 		try {
-			List<SimpleCubeElement> ms = olapQueryService.getResultMetadataMembers(queryName, result, dimensionName, hierarchyName, levelName, searchString, searchLimit);
-			return ms;
+		  return olapQueryService.getResultMetadataMembers(queryName, result, dimensionName, hierarchyName, levelName, searchString, searchLimit);
 		}
 		catch (Exception e) {
 			log.error("Cannot execute query (" + queryName + ")",e);
@@ -661,7 +674,7 @@ public class QueryResource {
 				rs = olapQueryService.drillthrough(queryName, maxrows, returns);
 			} else {
 				String[] positions = position.split(":");
-				List<Integer> cellPosition = new ArrayList<Integer>();
+				List<Integer> cellPosition = new ArrayList<>();
 
 				for (String p : positions) {
 					Integer pInt = Integer.parseInt(p);
@@ -696,9 +709,9 @@ public class QueryResource {
 						if (statement != null) {
 							statement.close();
 						}
-					} catch (Exception ee) {};
+					} catch (Exception ee) {}
 
-					rs = null;
+				  rs = null;
 				}
 			}
 		}
@@ -719,7 +732,7 @@ public class QueryResource {
 	}
 	try {
 	  String[] positions = position.split(":");
-	  List<Integer> cellPosition = new ArrayList<Integer>();
+	  List<Integer> cellPosition = new ArrayList<>();
 	  for (String p : positions) {
 		Integer pInt = Integer.parseInt(p);
 		cellPosition.add(pInt);
@@ -732,8 +745,7 @@ public class QueryResource {
 	  Map<String, List<String>> levels = mapper.readValue(returns,
           mapper.getTypeFactory().constructMapType(Map.class, st, ct));
 
-	  SaikuQuery q = olapQueryService.drillacross(queryName, cellPosition, levels);
-	  return q;
+	  return olapQueryService.drillacross(queryName, cellPosition, levels);
 	}
 	catch (Exception e) {
 	  log.error("Cannot execute query (" + queryName + ")",e);
@@ -761,7 +773,7 @@ public class QueryResource {
 				rs = olapQueryService.drillthrough(queryName, maxrows, returns);
 			} else {
 				String[] positions = position.split(":");
-				List<Integer> cellPosition = new ArrayList<Integer>();
+				List<Integer> cellPosition = new ArrayList<>();
 
 				for (String p : positions) {
 					Integer pInt = Integer.parseInt(p);
@@ -908,14 +920,14 @@ public class QueryResource {
 			log.debug("TRACK\t"  + "\t/query/" + queryName + "/cell/" + position+ "/" + value + "\tGET");
 		}
 		String[] positions = position.split(":");
-		List<Integer> cellPosition = new ArrayList<Integer>();
+		List<Integer> cellPosition = new ArrayList<>();
 
 		for (String p : positions) {
 			Integer pInt = Integer.parseInt(p);
 			cellPosition.add(pInt);
 		}
 
-		olapQueryService.setCellValue(queryName, cellPosition, value, null);
+		olapQueryService.setCellValue(queryName, cellPosition, value);
 		return Status.OK;
 
 	}
@@ -1017,7 +1029,7 @@ public class QueryResource {
 			if (log.isDebugEnabled()) {
 				log.debug("TRACK\t"  + "\t/query/" + queryName + "/zoomIn\tPUT");
 			}
-			List<List<Integer>> realPositions = new ArrayList<List<Integer>>();
+			List<List<Integer>> realPositions = new ArrayList<>();
 			if (StringUtils.isNotBlank(positionListString)) {
 				ObjectMapper mapper = new ObjectMapper();
               String[] positions = mapper.readValue(positionListString, mapper.getTypeFactory().constructArrayType(String
@@ -1025,7 +1037,7 @@ public class QueryResource {
 				if (positions != null && positions.length > 0) {
 					for (String position : positions) {
 						String[] rPos = position.split(":");
-						List<Integer> cellPosition = new ArrayList<Integer>();
+						List<Integer> cellPosition = new ArrayList<>();
 	
 						for (String p : rPos) {
 							Integer pInt = Integer.parseInt(p);
@@ -1154,7 +1166,7 @@ public class QueryResource {
 			olapQueryService.moveDimension(queryName, axisName, dimensionName, position);
 
 			boolean ret = olapQueryService.includeMember(queryName, dimensionName, uniqueMemberName, selectionType, memberposition);
-			if(ret == true){
+			if(ret){
 				return Response.ok().status(Status.CREATED).build();
 			}
 			else{
@@ -1182,7 +1194,7 @@ public class QueryResource {
 			  log.debug("TRACK\t"  + "\t/query/" + queryName + "/axis/"+axisName+"/dimension/"+ dimensionName +"/member/"+ uniqueMemberName +"\tDELETE");
 		  }
 			boolean ret = olapQueryService.removeMember(queryName, dimensionName , uniqueMemberName , selectionType);
-			if(ret == true){
+			if(ret){
 				SaikuDimensionSelection dimsels = olapQueryService.getAxisDimensionSelections(queryName, axisName, dimensionName);
 				if (dimsels != null && dimsels.getSelections().size() == 0) {
 					olapQueryService.moveDimension(queryName, "UNUSED", dimensionName, -1);
@@ -1213,7 +1225,7 @@ public class QueryResource {
 			}
 
 			boolean ret = olapQueryService.includeChildren(queryName, dimensionName, uniqueMemberName);
-			if(ret == true){
+			if(ret){
 				return Response.ok().status(Status.CREATED).build();
 			}
 			else{
@@ -1239,7 +1251,7 @@ public class QueryResource {
 		}
 		try{
 			boolean ret = olapQueryService.removeChildren(queryName, dimensionName, uniqueMemberName);
-			if(ret == true){
+			if(ret){
 				return Response.ok().status(Status.GONE).build();
 			}
 			else{
@@ -1270,7 +1282,7 @@ public class QueryResource {
 		  }
 			olapQueryService.moveDimension(queryName, axisName, dimensionName, position);
 			boolean ret = olapQueryService.includeLevel(queryName, dimensionName, uniqueHierarchyName, uniqueLevelName);
-			if(ret == true){
+			if(ret){
 				return Response.ok().status(Status.CREATED).build();
 			}
 			else{
@@ -1297,7 +1309,7 @@ public class QueryResource {
 		  }
 			boolean ret = olapQueryService.removeLevel(queryName, dimensionName, uniqueHierarchyName, uniqueLevelName);
 			
-			if(ret == true){
+			if(ret){
 				SaikuDimensionSelection dimsels = olapQueryService.getAxisDimensionSelections(queryName, axisName, dimensionName);
 				if (dimsels != null && dimsels.getSelections().size() == 0) {
 					olapQueryService.moveDimension(queryName, "UNUSED", dimensionName, -1);

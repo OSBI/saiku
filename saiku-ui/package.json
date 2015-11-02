@@ -2,7 +2,7 @@
   "name": "saiku-ui",
   "description": "A user interface for the Saiku analytical tool",
   "homepage": "http://www.meteorite.bi/saiku",
-  "version": "3.3.0",
+  "version": "3.6.0",
   "author": "Meteorite BI",
   "licenses": {
     "type": "Apache License Version 2",

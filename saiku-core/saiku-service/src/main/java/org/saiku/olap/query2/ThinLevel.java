@@ -10,10 +10,11 @@ public class ThinLevel extends AbstractThinQuerySet {
 	private String name;
 	private String caption;
 	private ThinSelection selection;
-	private List<String> aggregators = new ArrayList<String>();
+	private final List<String> aggregators = new ArrayList<>();
 
-	public ThinLevel() {};
-	public ThinLevel(String name, String caption, ThinSelection selections, List<String> aggregators) {
+	public ThinLevel() {}
+
+  public ThinLevel(String name, String caption, ThinSelection selections, List<String> aggregators) {
 		this.name = name;
 		this.caption = caption;
 		this.selection = selections;

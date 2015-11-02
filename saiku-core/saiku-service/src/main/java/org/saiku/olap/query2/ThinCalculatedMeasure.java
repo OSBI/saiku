@@ -9,13 +9,13 @@ public class ThinCalculatedMeasure {
 	private String name;
 	private String uniqueName;
 	private String caption;
-	private Map<String, String> properties = new HashMap<String, String>();
+	private Map<String, String> properties = new HashMap<>();
 	private String formula;
 	private String hierarchyName;
 	
-	public ThinCalculatedMeasure() {};
-	
-	public ThinCalculatedMeasure(String hierarchyName, String name, String uniqueName, String caption, String formula, Map<String, String> properties) {
+	public ThinCalculatedMeasure() {}
+
+  public ThinCalculatedMeasure(String hierarchyName, String name, String uniqueName, String caption, String formula, Map<String, String> properties) {
 		this.hierarchyName = hierarchyName;
 		this.uniqueName = uniqueName;
 		this.formula = formula;

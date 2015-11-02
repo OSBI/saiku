@@ -21,7 +21,7 @@ import org.saiku.olap.dto.SaikuMember;
 import java.util.Comparator;
 
 
-public class SaikuMemberCaptionComparator implements Comparator<SaikuMember> {
+class SaikuMemberCaptionComparator implements Comparator<SaikuMember> {
 
   public int compare( SaikuMember o1, SaikuMember o2 ) {
     if ( o1.getCaption() == null || o2.getCaption() == null ) {

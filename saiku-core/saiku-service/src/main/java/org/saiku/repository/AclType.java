@@ -4,6 +4,5 @@ public enum AclType {
 	PRIVATE,
 	SECURED,
 	PUBLIC
-	;
-	
+
 }

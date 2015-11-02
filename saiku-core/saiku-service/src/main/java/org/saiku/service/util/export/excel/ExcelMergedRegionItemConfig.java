@@ -19,7 +19,7 @@ package org.saiku.service.util.export.excel;
  * Created with IntelliJ IDEA. User: sramazzina Date: 22/06/12 Time: 9.52 To change this template use File | Settings |
  * File Templates.
  */
-public class ExcelMergedRegionItemConfig {
+class ExcelMergedRegionItemConfig {
 
   private int startX;
   private int startY;
@@ -88,11 +88,8 @@ public class ExcelMergedRegionItemConfig {
     if ( startY != that.startY ) {
       return false;
     }
-    if ( width != that.width ) {
-      return false;
-    }
+    return width == that.width;
 
-    return true;
   }
 
   @Override

@@ -33,7 +33,7 @@ public class LicenseUtils {
 
   }
 
-  public void setLicense(SaikuLicense lic) throws IOException {
+  public void setLicense(SaikuLicense lic) {
 
     //Stub for EE
 
@@ -112,7 +112,7 @@ public class LicenseUtils {
   }
 
   public List<UserQuota> getQuota() {
-    List<UserQuota> list = new ArrayList<>();;
+    List<UserQuota> list = new ArrayList<>();
     return list;
   }
 }

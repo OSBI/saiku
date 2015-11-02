@@ -1,4 +1,4 @@
-package org.saiku.service.util.security;
+package org.saiku.service.util.security.authentication;
 
 import java.io.File;
 import java.io.FileInputStream;

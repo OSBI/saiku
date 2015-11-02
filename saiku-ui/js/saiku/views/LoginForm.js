@@ -113,7 +113,12 @@ var LoginForm = Modal.extend({
 
     upload_license: function(event) {
         event.preventDefault();
-        var url = window.location.href;
-        window.open(url + 'upload.html', '_self');
+        var url = window.location;
+        if (url.search === '') {
+            window.open(url.href + 'upload.html', '_self');
+        }
+        else {
+            window.open(url.origin + '/upload.html', '_self');
+        }
     }
 });

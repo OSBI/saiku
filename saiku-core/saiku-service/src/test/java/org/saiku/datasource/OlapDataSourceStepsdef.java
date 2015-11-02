@@ -31,9 +31,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 /**
  * Story for lookup_datasources.story
  */
-public class OlapDataSourceStepsdef {
+class OlapDataSourceStepsdef {
 
   @Steps
+  private
   DataSteps data;
 
   private List<SaikuConnection> connections;
@@ -41,14 +42,14 @@ public class OlapDataSourceStepsdef {
 
   @Given("a server has no available data sources")
   public void givenAServerHasNoAvailableDataSources() throws Exception {
-    List<String> l = new ArrayList<String>();
+    List<String> l = new ArrayList<>();
     data.createDataSources(l);
     data.load();
   }
 
   @Given("There are $datasources data sources registered on the server")
   public void there_are_data_sources_registered_on_the_server( int datasources ) throws Exception {
-    List<String> l = new ArrayList<String>();
+    List<String> l = new ArrayList<>();
     l.add( "test" );
     l.add( "foodmart" );
     data.createDataSources(l);
@@ -75,7 +76,7 @@ public class OlapDataSourceStepsdef {
 
   @When("I load one data source")
   public void i_load_one_data_source() throws Exception {
-    List<String> l = new ArrayList<String>();
+    List<String> l = new ArrayList<>();
     l.add( "foodmart" );
     data.createDataSources( l );
     data.loadsingle();
@@ -108,7 +109,7 @@ public class OlapDataSourceStepsdef {
 
   @When("2 new data sources are passed into the server as a list")
   public void when2NewDataSourcesArePassedIntoTheServerAsAList() throws Exception {
-    List<String> l = new ArrayList<String>();
+    List<String> l = new ArrayList<>();
     l.add("test");
     l.add("foodmart");
 
@@ -121,7 +122,7 @@ public class OlapDataSourceStepsdef {
     assertThat(data.removeDatasource("foodmart"), is(true));
   }
 
-  Boolean state = null;
+  private Boolean state = null;
   @When("a user removes a non existing data source")
   public void whenAUserRemovesNonExistingDataSource() {
     state = data.removeDatasource("non-existing");
@@ -138,12 +139,12 @@ public class OlapDataSourceStepsdef {
   }
 
   @Then("I will get the details for only the $name data source")
-  public void i_will_get_the_details_for_only_the_requested_data_source( String name ) throws Throwable {
+  public void i_will_get_the_details_for_only_the_requested_data_source( String name ) {
     assertThat( ds.getName(), equalTo( name ) );
   }
 
   @Then("The server should fail gracefully")
-  public void the_server_should_fail_gracefully() throws SaikuOlapException {
+  public void the_server_should_fail_gracefully() {
     data.getInvalidDatasource( "nonexistant" );
   }
 
@@ -153,7 +154,7 @@ public class OlapDataSourceStepsdef {
   }
 
   @Then("the server should return unsuccessful state")
-  public void thenTheServerShouldUnSuccessfulState() throws Exception {
+  public void thenTheServerShouldUnSuccessfulState() {
     assertThat(state, is(false));
   }
 

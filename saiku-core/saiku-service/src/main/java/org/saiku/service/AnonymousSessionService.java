@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 public class AnonymousSessionService implements ISessionService {
 
 
-  HashMap<String, Object> session = new HashMap<String, Object>();
+  private HashMap<String, Object> session = new HashMap<>();
 
   public AnonymousSessionService() {
     session.put( "username", "anonymous" );
@@ -61,7 +61,7 @@ public class AnonymousSessionService implements ISessionService {
     return session;
   }
 
-  public void clearSessions(HttpServletRequest req, String username, String password) throws Exception {
+  public void clearSessions(HttpServletRequest req, String username, String password) {
     session = null;
   }
 

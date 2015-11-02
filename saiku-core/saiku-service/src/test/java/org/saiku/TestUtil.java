@@ -14,7 +14,7 @@ import org.olap4j.mdx.ParseTreeWriter;
 
 public class TestUtil {
 
-	public static final String NL = System.getProperty("line.separator");
+	private static final String NL = System.getProperty("line.separator");
 	private static final String indent = "                ";
     private static final String lineBreak2 = "\\\\n\"" + NL + indent + "+ \"";
     private static final String lineBreak3 = "\\n\"" + NL + indent + "+ \"";
@@ -29,7 +29,7 @@ public class TestUtil {
      * @return String where all linefeeds have been converted to
      * platform-specific (CR+LF on Windows, LF on Unix/Linux)
      */
-    public static SafeString fold(String string) {
+    private static SafeString fold(String string) {
         if (!NL.equals("\n")) {
             string = Olap4jUtil.replace(string, "\n", NL);
         }
@@ -116,7 +116,7 @@ public class TestUtil {
      * if the values are not equal
      * @param message Message to display, optional
      */
-    public static void assertEqualsVerbose(
+    private static void assertEqualsVerbose(
         String expected,
         String actual,
         boolean java,
@@ -139,7 +139,7 @@ public class TestUtil {
      * if the strings differ
      * @param message Message to print if the strings differ
      */
-    public static void assertEqualsVerbose(
+    private static void assertEqualsVerbose(
         SafeString safeExpected,
         String actual,
         boolean java,
@@ -178,7 +178,7 @@ public class TestUtil {
      *  "across lines"</pre>
      * </code>
      */
-    public static String toJavaString(String s) {
+    private static String toJavaString(String s) {
         // Convert [string with "quotes" split
         // across lines]
         // into ["string with \"quotes\" split\n"
@@ -193,7 +193,7 @@ public class TestUtil {
         if (s.endsWith(spurious)) {
             s = s.substring(0, s.length() - spurious.length());
         }
-        if (s.indexOf(lineBreak3) >= 0) {
+        if (s.contains(lineBreak3)) {
             s = "fold(" + NL + indent + s + ")";
         }
         return s;
@@ -224,7 +224,6 @@ public class TestUtil {
      * Wrapper around a string that indicates that all line endings have been
      * converted to platform-specific line endings.
      *
-     * @see TestContext#fold
      */
     public static class SafeString {
 

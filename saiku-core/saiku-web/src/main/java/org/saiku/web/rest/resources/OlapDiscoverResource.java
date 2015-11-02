@@ -60,7 +60,7 @@ public class OlapDiscoverResource implements Serializable {
 			return olapDiscoverService.getAllConnections();
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuConnection>();
+			return new ArrayList<>();
 		}
     }
     
@@ -78,7 +78,7 @@ public class OlapDiscoverResource implements Serializable {
 			return olapDiscoverService.getConnection(connectionName);
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuConnection>();
+			return new ArrayList<>();
 		}
     }
 
@@ -97,7 +97,7 @@ public class OlapDiscoverResource implements Serializable {
 			return olapDiscoverService.getAllConnections();
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuConnection>();
+			return new ArrayList<>();
 		}
     }
 
@@ -116,7 +116,7 @@ public class OlapDiscoverResource implements Serializable {
 			return olapDiscoverService.getConnection(connectionName);
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
-			return new ArrayList<SaikuConnection>();
+			return new ArrayList<>();
 		}
     }
 
@@ -179,7 +179,7 @@ public class OlapDiscoverResource implements Serializable {
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 		}
-		return new ArrayList<SaikuDimension>();
+		return new ArrayList<>();
 	}
 
   /**
@@ -241,7 +241,7 @@ public class OlapDiscoverResource implements Serializable {
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 		}
-		return new ArrayList<SaikuHierarchy>();
+		return new ArrayList<>();
 	}
 
   /**
@@ -274,7 +274,7 @@ public class OlapDiscoverResource implements Serializable {
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 		}
-		return new ArrayList<SaikuLevel>();
+		return new ArrayList<>();
 	}
 
 	/**
@@ -313,7 +313,7 @@ public class OlapDiscoverResource implements Serializable {
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 		}
-		return new ArrayList<SimpleCubeElement>();
+		return new ArrayList<>();
 	}
 
   /**
@@ -373,7 +373,7 @@ public class OlapDiscoverResource implements Serializable {
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 		}
-		return new ArrayList<SaikuHierarchy>();
+		return new ArrayList<>();
 	}
 
   /**
@@ -401,7 +401,7 @@ public class OlapDiscoverResource implements Serializable {
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 		}
-		return new ArrayList<SaikuMember>();
+		return new ArrayList<>();
 	}
 	
 	/**
@@ -465,7 +465,7 @@ public class OlapDiscoverResource implements Serializable {
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 		}
-		return new ArrayList<SaikuMember>();
+		return new ArrayList<>();
 	}
 
 }

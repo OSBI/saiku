@@ -89,19 +89,27 @@ var QueryToolbar = Backbone.View.extend({
         
         if ($target.hasClass('render_chart')) {
             if (isMap === 'map') {
-                this.switch_render(isMap);
+                var mapProperties = this.workspace.query.getProperty('saiku.ui.map.options');
+                var mapType = mapProperties ? mapProperties.mapDefinition.type : '';
+                this.switch_render('map');
                 this.workspace.query.setProperty('saiku.ui.render.mode', 'map');
-                this.workspace.query.setProperty('saiku.ui.render.type', 'map_marker');
+                this.workspace.query.setProperty('saiku.ui.render.type', mapType);
             }
             else {
-	            this.switch_render('chart');
-	            this.workspace.query.setProperty('saiku.ui.render.mode', 'chart');
-	            var c = $(this.el).find('ul.chart li a.on:first').size() > 0 ?
-	                        $(this.el).find('ul.chart li a.on:first').attr('href').replace('#', '')
-	                        : null;
-	            if (c !== null) {
-	                this.workspace.query.setProperty('saiku.ui.render.type', c);
-	            }
+                this.switch_render('chart');
+                this.workspace.query.setProperty('saiku.ui.render.mode', 'chart');
+                var c = $(this.el).find('ul.chart li a.on:first').size() > 0 ?
+                            $(this.el).find('ul.chart li a.on:first').attr('href').replace('#', '')
+                            : null;
+                if (c !== null) {
+                    if (c !== 'charteditor') {
+                        this.workspace.query.setProperty('saiku.ui.render.type', c);
+                    }
+                    else {
+                        c = $(this.el).find('ul.chart li').not('.chart_editor').find('a.on').attr('href').replace('#', '');
+                        this.workspace.query.setProperty('saiku.ui.render.type', c);
+                    }
+                }
             }
         } else {
             this.switch_render('table');
@@ -120,6 +128,7 @@ var QueryToolbar = Backbone.View.extend({
             $(this.workspace.el).find('.workspace_results').children().hide();
             $(this.workspace.chart.el).find('.canvas_wrapper').hide();
             this.workspace.chart.show();
+            this.workspace.set_class_charteditor();
         } 
         else if (render_type === 'map') {
             this.$el.find('ul.renderer a.render_chart').addClass('on');
@@ -158,18 +167,18 @@ var QueryToolbar = Backbone.View.extend({
                 this[callback](event);
             } 
             else if (this.render_mode == "chart") {
-                this.workspace.chart.$el.find('.canvas_wrapper').find('#map').data('action', 'querytoolbar');
+                this.workspace.chart.$el.find('.canvas_wrapper').find('.map-render').data('action', 'querytoolbar');
                 if ($target.hasClass('chartoption')) {
                     var mapProperties = {};
                     mapProperties.mapDefinition = {};
                     this.workspace.query.setProperty('saiku.ui.map.options', mapProperties);
                     this.workspace.query.setProperty('saiku.ui.render.mode', 'chart');
-                    this.workspace.querytoolbar.$el.find('ul.chart [href="#export_button"]').parent().show();
-                    this.workspace.querytoolbar.$el.find('ul.chart > li#charteditor').show();
-                    this.workspace.querytoolbar.$el.find('ul.chart [href="#map"]').parent().removeClass('seperator_vertical');
+                    this.workspace.querytoolbar.$el.find('ul.chart [href="#export_button"]').parent().removeAttr('disabled');
+                    this.workspace.querytoolbar.$el.find('ul.chart > li#charteditor').removeAttr('disabled');
                     this.workspace.querytoolbar.$el.find('ul.chart [href="#map"]').removeClass('on');
                     $target.parent().siblings().find('.chartoption.on').removeClass('on');
                     $target.addClass('on');
+                    this.workspace.set_class_charteditor();
                 }
                 if (callback == "export_button") {
                     this.workspace.chart[callback](event);
@@ -179,15 +188,14 @@ var QueryToolbar = Backbone.View.extend({
                 }
             }
             else if (this.render_mode === 'map' && callback !== 'map') {
-                this.workspace.chart.$el.find('.canvas_wrapper').find('#map').data('action', 'querytoolbar');
+                this.workspace.chart.$el.find('.canvas_wrapper').find('.map-render').data('action', 'querytoolbar');
                 if ($target.hasClass('chartoption')) {
                     var mapProperties = {};
                     mapProperties.mapDefinition = {};
                     this.workspace.query.setProperty('saiku.ui.map.options', mapProperties);
                     this.workspace.query.setProperty('saiku.ui.render.mode', 'chart');
-                    this.workspace.querytoolbar.$el.find('ul.chart [href="#export_button"]').parent().show();
-                    this.workspace.querytoolbar.$el.find('ul.chart > li#charteditor').show();
-                    this.workspace.querytoolbar.$el.find('ul.chart [href="#map"]').parent().removeClass('seperator_vertical');
+                    this.workspace.querytoolbar.$el.find('ul.chart [href="#export_button"]').parent().removeAttr('disabled');
+                    this.workspace.querytoolbar.$el.find('ul.chart > li#charteditor').removeAttr('disabled');
                     this.workspace.querytoolbar.$el.find('ul.chart [href="#map"]').removeClass('on');
                     $target.parent().siblings().find('.chartoption.on').removeClass('on');
                     $target.addClass('on');

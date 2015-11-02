@@ -32,13 +32,10 @@ public class SaikuOlapConnection implements ISaikuConnection {
 
 
 
-  private String name;
+  private final String name;
   private boolean initialized = false;
   private Properties properties;
   private OlapConnection olapConnection;
-  private String username;
-  private String password;
-  private String passwordenc;
 
   private static final Logger log = LoggerFactory.getLogger(SaikuOlapConnection.class);
 
@@ -48,7 +45,7 @@ public class SaikuOlapConnection implements ISaikuConnection {
     this.properties = props;
   }
 
-  public SaikuOlapConnection( Properties props ) {
+  private SaikuOlapConnection(Properties props) {
     this.properties = props;
     this.name = props.getProperty( ISaikuConnection.NAME_KEY );
   }
@@ -80,16 +77,16 @@ public class SaikuOlapConnection implements ISaikuConnection {
           return false;
         }
     else {
-          this.username = props.getProperty(ISaikuConnection.USERNAME_KEY);
-          this.password = props.getProperty(ISaikuConnection.PASSWORD_KEY);
+          String username = props.getProperty(ISaikuConnection.USERNAME_KEY);
+          String password = props.getProperty(ISaikuConnection.PASSWORD_KEY);
           String driver = props.getProperty(ISaikuConnection.DRIVER_KEY);
-          this.passwordenc = props.getProperty(ISaikuConnection.PASSWORD_ENCRYPT_KEY);
+          String passwordenc = props.getProperty(ISaikuConnection.PASSWORD_ENCRYPT_KEY);
           this.properties = props;
           String url = props.getProperty(ISaikuConnection.URL_KEY);
 
 
-          if (this.passwordenc != null && this.passwordenc.equals("true")) {
-            this.password = decryptPassword(password);
+          if (passwordenc != null && passwordenc.equals("true")) {
+            password = decryptPassword(password);
           }
           if (url.contains("Mondrian=4")) {
             url = url.replace("Mondrian=4; ", "");

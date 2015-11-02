@@ -1,6 +1,6 @@
---- index.html	2015-10-05 15:10:29.264964752 +0100
-+++ index2.html	2015-10-05 15:18:48.336972521 +0100
-@@ -114,69 +114,9 @@
+--- index.html	2015-10-26 12:22:43.562047949 +0000
++++ index2.html	2015-10-26 13:48:05.430273330 +0000
+@@ -114,69 +114,8 @@
  <!-- Saiku Project -->
  <script type="text/javascript" src="js/saiku/Settings.js"></script>
  
@@ -26,7 +26,6 @@
 -<script type="text/javascript" src="js/saiku/views/AddFolderModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/FilterModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/CustomFilterModal.js"></script>
--<script type="text/javascript" src="js/saiku/views/MeasuresModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/CalculatedMemberModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/DataSourcesModal.js"></script>
 -<script type="text/javascript" src="js/saiku/views/QueryToolbar.js"></script>
@@ -58,6 +57,7 @@
 -<script type="text/javascript" src="js/saiku/models/Plugin.js"></script>
 -<script type="text/javascript" src="js/saiku/models/Settings.js"></script>
 -<script type="text/javascript" src="js/saiku/models/License.js"></script>
+-<script type="text/javascript" src="js/saiku/models/DataSources.js"></script>
 -<script type="text/javascript" src="js/saiku/Saiku.js"></script>
 -<script type="text/javascript" src="js/saiku/views/DateFilterModal.js"></script>
 -<script type="text/javascript" src="js/saiku/adapters/SaikuServer.js"></script>
@@ -67,7 +67,6 @@
 -<!--
  <script type="text/javascript" src="saiku.min.js"></script>
 --->
-+
  
  <!--
  <script src="js/leaflet/leaflet-heat.js"></script>

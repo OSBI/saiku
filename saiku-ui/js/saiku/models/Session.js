@@ -118,6 +118,7 @@ var Session = Backbone.Model.extend({
 
                 });
 
+
             this.load_session();
         }
 

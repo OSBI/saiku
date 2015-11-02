@@ -14,7 +14,7 @@ import org.saiku.service.datasource.IDatasourceManager;
 public class MondrianVFS
         implements FileProvider
 {
-    IDatasourceManager datasourceManager;
+    private IDatasourceManager datasourceManager;
 
     public void setDatasourceManager(IDatasourceManager dms)
     {

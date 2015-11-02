@@ -52,11 +52,11 @@ public class MdxQuery implements IQuery {
 
   private static final Logger log = LoggerFactory.getLogger(MdxQuery.class);
 
-  private Properties properties = new Properties();
+  private final Properties properties = new Properties();
   private String mdx;
   private SaikuCube cube;
-  private OlapConnection connection;
-  private String name;
+  private final OlapConnection connection;
+  private final String name;
   private Scenario scenario;
   private CellSet cellset;
   private OlapStatement statement;

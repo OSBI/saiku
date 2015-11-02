@@ -48,7 +48,7 @@ public class CellDataSet implements Serializable {
 
   private int leftOffset;
 
-  public int runtime;
+  private int runtime;
 
   public CellDataSet() {
     super();

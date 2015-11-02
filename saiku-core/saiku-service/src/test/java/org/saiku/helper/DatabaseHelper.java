@@ -35,9 +35,9 @@ import java.util.Properties;
  */
 public class DatabaseHelper {
 
-  private static Properties testProps = new Properties();
+  private static final Properties testProps = new Properties();
 
-  public static void dump( ResultSet rs ) throws SQLException {
+  private static void dump(ResultSet rs) throws SQLException {
 
     // the order of the rows in a cursor
     // are implementation dependent unless you use the SQL ORDER statement
@@ -63,7 +63,7 @@ public class DatabaseHelper {
     }
   }
 
-  protected String getTestProperty( String key ) {
+  private String getTestProperty(String key) {
     return testProps.getProperty( key );
   }
 

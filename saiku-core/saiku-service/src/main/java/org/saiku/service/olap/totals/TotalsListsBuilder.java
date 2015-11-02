@@ -38,7 +38,7 @@ public class TotalsListsBuilder implements FormatList {
     } catch ( OlapException e ) {
       throw new RuntimeException( e );
     }
-    uniqueToSelected = new HashMap<String, Integer>();
+    uniqueToSelected = new HashMap<>();
     if ( selectedMeasures.length > 0 ) {
       valueFormats = new Format[ selectedMeasures.length ];
       measures = selectedMeasures;
@@ -96,7 +96,7 @@ public class TotalsListsBuilder implements FormatList {
     totalBranch[ 0 ] = rootNode;
     totalsLists = new List[ maxDepth ];
     for ( int i = 0; i < totalsLists.length; i++ ) {
-      totalsLists[ i ] = new ArrayList<TotalNode>();
+      totalsLists[ i ] = new ArrayList<>();
     }
     totalsLists[ 0 ].add( rootNode );
     memberBranch = new Member[ dataAxisInfo.maxDepth + 1 ];
@@ -212,8 +212,7 @@ public class TotalsListsBuilder implements FormatList {
   private Cell getCellAt( int axisCoord, int perpAxisCoord ) {
     final Position[] positions =
       new Position[] { dataAxisInfo.fullPositions.get( axisCoord ), totalsAxisInfo.fullPositions.get( perpAxisCoord ) };
-    Cell cell = cellSet.getCell( positions[ col ], positions[ row ] );
-    return cell;
+    return cellSet.getCell( positions[ col ], positions[ row ] );
   }
 
   private int getMemberIndex( int depth, int index ) {

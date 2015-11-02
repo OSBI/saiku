@@ -16,14 +16,14 @@ import java.util.List;
 public class ThinAxis extends AbstractThinSortableQuerySet {
 
 	private AxisLocation location;
-	private List<ThinHierarchy> hierarchies = new NamedListImpl<ThinHierarchy>();
+	private List<ThinHierarchy> hierarchies = new NamedListImpl<>();
 	private boolean nonEmpty;
-	private List<String> aggs = new ArrayList<String>();
+	private List<String> aggs = new ArrayList<>();
 	
 	
-	public ThinAxis() {};
-	
-	public ThinAxis(AxisLocation location, NamedList<ThinHierarchy> hierarchies, boolean nonEmpty, List<String> aggs) {
+	public ThinAxis() {}
+
+  public ThinAxis(AxisLocation location, NamedList<ThinHierarchy> hierarchies, boolean nonEmpty, List<String> aggs) {
 		this.location = location;
 		if (hierarchies != null) {
 			this.hierarchies = hierarchies;

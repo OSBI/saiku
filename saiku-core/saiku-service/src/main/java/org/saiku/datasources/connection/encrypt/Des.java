@@ -20,9 +20,9 @@ public final class Des
      * Bits used in the m_Flags field.
      */
 
-    public final static int DF_KEYSET = 0x01;// Key(s) set.
+    private final static int DF_KEYSET = 0x01;// Key(s) set.
 
-    public final static int DF_3DES = 0x02;// Triple DES in operation.
+    private final static int DF_3DES = 0x02;// Triple DES in operation.
 
     private final static int s_IP[] = { 0x00000000, 0x00000001, 0x00000000, 0x00000001, /* 00 - 03 */
             0x00000100, 0x00000101, 0x00000100, 0x00000101, /* 04 - 07 */
@@ -677,9 +677,9 @@ public final class Des
             0x01010101, };
 
     // Variables
-    private int [][] m_keyRoundCrypt0 = new int [ DES_ROUNDS ] [ 2 ];
+    private final int [][] m_keyRoundCrypt0 = new int [ DES_ROUNDS ] [ 2 ];
 
-    private int [][] m_keyRoundCrypt1 = new int [ DES_ROUNDS ] [ 2 ];
+    private final int [][] m_keyRoundCrypt1 = new int [ DES_ROUNDS ] [ 2 ];
 
     private int m_Flags = 0; // Sundry flags.
 
@@ -759,8 +759,8 @@ public final class Des
      * Parameters: pvTo - destination pvFrom - source, may be the same as pvTo. cb - number of bytes to transform, multiple of 8.
      * Returns: 0 if size is inappropriate, else all is well, conversion done. ---
      */
-    int Crypt( byte [] pvTo,
-               byte [] pvFrom )
+    private int Crypt(byte[] pvTo,
+                      byte[] pvFrom)
     {
 
         if ( ( pvFrom.length % DES_BLOCK_BYTES ) != 0 )
@@ -775,14 +775,12 @@ public final class Des
         int index = 0;
         while ( index < pvFrom.length )
         {
-            for ( int i = 0; i < DES_BLOCK_BYTES; i++ )
-                From[ i ] = pvFrom[ i + index ];
+                System.arraycopy(pvFrom, 0 + index, From, 0, DES_BLOCK_BYTES);
 
             Munge64( To,
                     From );
 
-            for ( int i = 0; i < DES_BLOCK_BYTES; i++ )
-                pvTo[ i + index ] = To[ i ];
+                System.arraycopy(To, 0, pvTo, 0 + index, DES_BLOCK_BYTES);
 
             index += DES_BLOCK_BYTES;
         }
@@ -807,8 +805,8 @@ public final class Des
      * Parameters: pOut - place where data is stored, byte aligned. pIn - source of data, byte aligned, maybe the same as pOut. Returns:
      * Nothing, as failure is not possible. ---
      */
-    protected void Munge64( byte [] pOut,
-                            byte [] pIn )
+    private void Munge64(byte[] pOut,
+                         byte[] pIn)
     {
         int [] Halves = new int [ 2 ];
 
@@ -1053,9 +1051,7 @@ public final class Des
         int iRound; // Which round number.
         int ii; // Loop index for rounds.
 
-        int [] key = pKey;
-
-        for ( ii = 0; ii < DES_ROUNDS; ++ii )
+            for ( ii = 0; ii < DES_ROUNDS; ++ii )
         {
             // Which entry gets the value we compute?
             iRound = ( encrypt ) ? ii : ( DES_ROUNDS - 1 - ii );
@@ -1064,14 +1060,14 @@ public final class Des
             if ( ( s_KRot & ( 1 << ii ) ) != 0 )
             {
                 // Two bit shift if the shift bit array is 1.
-                key[ 1 ] = ( key[ 1 ] << 2 ) | ( ( key[ 1 ] >> 26 ) & 0x3 );
-                key[ 0 ] = ( key[ 0 ] << 2 ) | ( ( key[ 0 ] >> 26 ) & 0x3 );
+                pKey[ 1 ] = ( pKey[ 1 ] << 2 ) | ( ( pKey[ 1 ] >> 26 ) & 0x3 );
+                pKey[ 0 ] = ( pKey[ 0 ] << 2 ) | ( ( pKey[ 0 ] >> 26 ) & 0x3 );
             }
             else
             {
                 // A zero bit means a one bit shift in the key.
-                key[ 1 ] = ( key[ 1 ] << 1 ) | ( ( key[ 1 ] >> 27 ) & 0x1 );
-                key[ 0 ] = ( key[ 0 ] << 1 ) | ( ( key[ 0 ] >> 27 ) & 0x1 );
+                pKey[ 1 ] = ( pKey[ 1 ] << 1 ) | ( ( pKey[ 1 ] >> 27 ) & 0x1 );
+                pKey[ 0 ] = ( pKey[ 0 ] << 1 ) | ( ( pKey[ 0 ] >> 27 ) & 0x1 );
             }
 
             /*
@@ -1091,14 +1087,14 @@ public final class Des
              */
             for ( jj = 0; jj < ( DES_BITS_IN_KEY / 2 ); ++jj )
             {
-                if ( ( key[ 1 ] & ( 1 << jj ) ) != 0 )
+                if ( ( pKey[ 1 ] & ( 1 << jj ) ) != 0 )
                 {
                     pRound[ iRound ][ s_KPerm[ jj ] / 32 ] |= ( 1 << ( s_KPerm[ jj ] % 32 ) );
                 }
             }
             for ( ; jj < DES_BITS_IN_KEY; ++jj )
             {
-                if ( ( key[ 0 ] & ( 1 << ( jj - DES_BITS_IN_KEY / 2 ) ) ) != 0 )
+                if ( ( pKey[ 0 ] & ( 1 << ( jj - DES_BITS_IN_KEY / 2 ) ) ) != 0 )
                 {
                     pRound[ iRound ][ s_KPerm[ jj ] / 32 ] |= ( 1 << ( s_KPerm[ jj ] % 32 ) );
                 }

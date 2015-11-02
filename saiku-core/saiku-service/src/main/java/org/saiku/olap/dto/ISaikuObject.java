@@ -17,14 +17,14 @@ package org.saiku.olap.dto;
 
 public interface ISaikuObject {
 
-  public String getUniqueName();
+  String getUniqueName();
 
-  public String getName();
+  String getName();
 
-  public int hashCode();
+  int hashCode();
 
-  public boolean equals( Object obj );
+  boolean equals(Object obj);
 
-  public String toString();
+  String toString();
 
 }

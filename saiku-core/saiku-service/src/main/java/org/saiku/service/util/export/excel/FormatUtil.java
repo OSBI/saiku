@@ -24,7 +24,7 @@ import java.util.Map;
 public class FormatUtil {
 
   private static final Map<String, MacroToken> MAP =
-    new HashMap<String, MacroToken>();
+      new HashMap<>();
 
   static {
     for ( MacroToken macroToken : MacroToken.values() ) {

@@ -46,14 +46,14 @@ public class JackrabbitSteps {
 
     private static final String DEFAULT_ROLE = "ROLE_USER";
 
-    private String repoBasePath = System.getProperty("user.dir") + "/target";
-    private String repoLocation = repoBasePath + "/repo-data" + System.currentTimeMillis();
-    private URL repoConf = this.getClass().getClassLoader().getResource("repo-conf.xml");
-    private String repoConfPath = repoConf.getPath();
-    private IRepositoryManager iRepositoryManager = JackRabbitRepositoryManager.getJackRabbitRepositoryManager
+    private final String repoBasePath = System.getProperty("user.dir") + "/target";
+    private final String repoLocation = repoBasePath + "/repo-data" + System.currentTimeMillis();
+    private final URL repoConf = this.getClass().getClassLoader().getResource("repo-conf.xml");
+    private final String repoConfPath = repoConf.getPath();
+    private final IRepositoryManager iRepositoryManager = JackRabbitRepositoryManager.getJackRabbitRepositoryManager
         (repoConfPath, repoLocation, "admin", "admin", DEFAULT_ROLE);
-    private UserService userService = mock(UserService.class);
-    private List<String> defaultRole = Collections.singletonList(DEFAULT_ROLE);
+    private final UserService userService = mock(UserService.class);
+    private final List<String> defaultRole = Collections.singletonList(DEFAULT_ROLE);
 
     @Rule
     public ExpectedException throwable = ExpectedException.none();
@@ -88,7 +88,7 @@ public class JackrabbitSteps {
     }
 
     public List<String> getHomeDirectoryList() {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         NodeIterator nodes;
         try {
             nodes = iRepositoryManager.getHomeFolders();

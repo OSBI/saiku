@@ -23,8 +23,6 @@ public class SimpleCubeElement extends AbstractSaikuObject {
   public SimpleCubeElement() {
   }
 
-  ;
-
   public SimpleCubeElement( String name, String uniqueName, String caption ) {
     super( uniqueName, name );
     this.caption = caption;

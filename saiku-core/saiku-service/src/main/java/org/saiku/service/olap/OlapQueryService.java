@@ -75,7 +75,7 @@ public class OlapQueryService implements Serializable {
 
 	private OlapDiscoverService olapDiscoverService;
 
-	private transient Map<String, IQuery> queries = new HashMap<String, IQuery>();
+	private transient Map<String, IQuery> queries = new HashMap<>();
   	private Map<String, String> serializableQueries = null;
 
 	private static final AtomicLong ID_GENERATOR = new AtomicLong();
@@ -84,7 +84,7 @@ public class OlapQueryService implements Serializable {
 		olapDiscoverService = os;
 	}
 
-	public OlapQueryService() {	}
+	private OlapQueryService() {	}
 
 	public void destroy() {
 		for (Object  q : queries.keySet().toArray()) {
@@ -130,7 +130,7 @@ public class OlapQueryService implements Serializable {
 	}
 
 
-	public void closeQuery(String queryName) {
+	private void closeQuery(String queryName) {
 		try {
 			IQuery q = getIQuery(queryName);
 			q.cancel();
@@ -141,7 +141,7 @@ public class OlapQueryService implements Serializable {
 	}
 
 	public List<String> getQueries() {
-		List<String> queryList = new ArrayList<String>();
+		List<String> queryList = new ArrayList<>();
 		queryList.addAll(getIQueryMap().keySet());
 		return queryList;
 	}
@@ -170,20 +170,19 @@ public class OlapQueryService implements Serializable {
 	}
 
 	public CellDataSet execute(String queryName, String formatter) {
-		formatter = formatter == null ? "" : formatter.toLowerCase(); 
-		if(formatter.equals("flat")) {
-			return execute(queryName, new CellSetFormatter());
-		}
-		else if (formatter.equals("hierarchical")) {
-			return execute(queryName, new HierarchicalCellSetFormatter());
-		}
-		else if (formatter.equals("flattened")) {
-			return execute(queryName, new FlattenedCellSetFormatter());
-		}
+		formatter = formatter == null ? "" : formatter.toLowerCase();
+	  switch (formatter) {
+	  case "flat":
+		return execute(queryName, new CellSetFormatter());
+	  case "hierarchical":
+		return execute(queryName, new HierarchicalCellSetFormatter());
+	  case "flattened":
+		return execute(queryName, new FlattenedCellSetFormatter());
+	  }
 		return execute(queryName, new FlattenedCellSetFormatter());
 	}
 	
-	public CellDataSet execute(String queryName, ICellSetFormatter formatter) {
+	private CellDataSet execute(String queryName, ICellSetFormatter formatter) {
 		String runId = "runId:" + ID_GENERATOR.getAndIncrement();
 		try {
 			IQuery query = getIQuery(queryName);
@@ -284,8 +283,8 @@ public class OlapQueryService implements Serializable {
 		QueryDeserializer qd = new QueryDeserializer();
 		query = qd.unparse(xml, con);
 
-		List<SimpleCubeElement> doneDimension = new ArrayList<SimpleCubeElement>();
-		Map<String,QueryDimension> dimensionMap = new HashMap<String,QueryDimension>();
+		List<SimpleCubeElement> doneDimension = new ArrayList<>();
+		Map<String,QueryDimension> dimensionMap = new HashMap<>();
 		if (t.getSaikuTupleDimensions() != null) {
 			for (SimpleCubeElement st : t.getSaikuTupleDimensions()) {
 				if (!doneDimension.contains(st)) {
@@ -360,8 +359,8 @@ public class OlapQueryService implements Serializable {
 	public List<SimpleCubeElement> getResultMetadataMembers(String queryName, boolean preferResult, String dimensionName, String hierarchyName, String levelName, String searchString, int searchLimit) {
 		IQuery query = getIQuery(queryName);
 		CellSet cs = query.getCellset();
-		List<SimpleCubeElement> members = new ArrayList<SimpleCubeElement>();
-		Set<Level> levels = new HashSet<Level>();
+		List<SimpleCubeElement> members = new ArrayList<>();
+		Set<Level> levels = new HashSet<>();
 		boolean search = StringUtils.isNotBlank(searchString);
 		preferResult = (preferResult && !search);
 		searchString = search ? searchString.toLowerCase() : null;
@@ -375,7 +374,7 @@ public class OlapQueryService implements Serializable {
 						if (h.getLevels().size() == 1) {
 							break;
 						}
-						Set<Member> mset = new HashSet<Member>();
+						Set<Member> mset = new HashSet<>();
 						for (Position pos : axis.getPositions()) {
 							Member m = pos.getMembers().get(posIndex);
 							if (!m.getLevel().getLevelType().equals(Type.ALL)) {
@@ -414,8 +413,7 @@ public class OlapQueryService implements Serializable {
 			stmt = con.createStatement();
 			String mdx = getMDXQuery(queryName);
 			mdx = "EXPLAIN PLAN FOR \n" + mdx;
-			ResultSet rs = stmt.executeQuery(mdx);
-			return rs;
+		  return stmt.executeQuery(mdx);
 
 		} catch (Exception e) {
 			throw new SaikuServiceException("Error EXPLAIN: " + queryName,e);
@@ -431,15 +429,14 @@ public class OlapQueryService implements Serializable {
 	  IQuery query = getIQuery(queryName);
 	  query.clearAxis("ROWS");
 	  query.clearAxis("COLUMNS");
-	  Set<Level> levelSet = new HashSet<Level>();
+	  Set<Level> levelSet = new HashSet<>();
 	  CellSet cs = query.getCellset();
 	  if (cs == null) {
 		throw new SaikuServiceException("Cannot drill across. Last CellSet empty");
 	  }
 	  for (int i = 0; i < cellPosition.size(); i++) {
 		List<Member> members = cs.getAxes().get(i).getPositions().get(cellPosition.get(i)).getMembers();
-		for (int k = 0; k < members.size(); k++) {
-		  Member m = members.get(k);
+		for (Member m : members) {
 		  QueryDimension qd = query.getDimension(m.getDimension().getName());
 		  if (qd.getName().equals("Measures")) {
 			query.moveDimension(qd, Axis.COLUMNS);
@@ -520,10 +517,8 @@ public class OlapQueryService implements Serializable {
 		try {
 			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnection());
 			return SaikuMondrianHelper.isMondrianDrillthrough(con, drillthroughMdx);
-		} catch (Exception e) {
+		} catch (Exception | Error e) {
 		  log.warn("Error checking for DRILLTHROUGH: " + queryName + " DRILLTHROUGH MDX:" + drillthroughMdx, e);
-		} catch (Error e) {
-		  log.warn("Error checking for DRILLTHROUGH: " + queryName + " DRILLTHROUGH MDX:" + drillthroughMdx,e);
 		}
 	  return false;
 	}
@@ -533,8 +528,7 @@ public class OlapQueryService implements Serializable {
 		try {
 			final OlapConnection con = olapDiscoverService.getNativeConnection(getQuery(queryName).getCube().getConnection()); 
 			stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(drillthroughMdx);
-			return rs;
+		  return stmt.executeQuery(drillthroughMdx);
 		} catch (SQLException e) {
 			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName + " DRILLTHROUGH MDX:" + drillthroughMdx,e);
 		} finally {
@@ -560,8 +554,7 @@ public class OlapQueryService implements Serializable {
 			if (StringUtils.isNotBlank(returns)) {
 				mdx += "\r\n RETURN " + returns;
 			}
-			ResultSet rs = stmt.executeQuery(mdx);
-			return rs;
+		  return stmt.executeQuery(mdx);
 		} catch (SQLException e) {
 			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
 		} finally {
@@ -582,7 +575,7 @@ public class OlapQueryService implements Serializable {
 
 			SelectNode sn = (new DefaultMdxParserImpl().parseSelect(getMDXQuery(queryName)));
 			String select = null;
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			if (sn.getWithList() != null && sn.getWithList().size() > 0) {
 	            buf.append("WITH \n");
 	            StringWriter sw = new StringWriter();
@@ -607,13 +600,13 @@ public class OlapQueryService implements Serializable {
 				}
 			}
 			buf.append(") ON COLUMNS \r\n");
-			buf.append("FROM [" + cube.getName() + "]\r\n");
+			buf.append("FROM [").append(cube.getName()).append("]\r\n");
 
 			 
 			final Writer writer = new StringWriter();
 			sn.getFilterAxis().unparse(new ParseTreeWriter(new PrintWriter(writer)));
 			if (StringUtils.isNotBlank(writer.toString())) {
-				buf.append("WHERE " + writer.toString());
+				buf.append("WHERE ").append(writer.toString());
 			}
 			select = buf.toString(); 
 			if (maxrows > 0) {
@@ -627,8 +620,7 @@ public class OlapQueryService implements Serializable {
 			}
 
 			log.debug("Drill Through for query (" + queryName + ") : \r\n" + select);
-			ResultSet rs = stmt.executeQuery(select);
-			return rs;
+		  return stmt.executeQuery(select);
 		} catch (Exception e) {
 			throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
 		} finally {
@@ -673,7 +665,7 @@ public class OlapQueryService implements Serializable {
 	}
 
 
-	public void setCellValue(String queryName, List<Integer> position, String value, String allocationPolicy) {
+	public void setCellValue(String queryName, List<Integer> position, String value) {
 		try {
 
 			IQuery query = getIQuery(queryName);
@@ -706,7 +698,7 @@ public class OlapQueryService implements Serializable {
 				throw new SaikuServiceException("Error setting value of query " + queryName + " to:" + v);
 			}
 
-			allocationPolicy = AllocationPolicy.EQUAL_ALLOCATION.toString();
+		  String allocationPolicy = AllocationPolicy.EQUAL_ALLOCATION.toString();
 
 			AllocationPolicy ap = AllocationPolicy.valueOf(allocationPolicy);
 			CellSet cs = query.getCellset();
@@ -766,10 +758,10 @@ public class OlapQueryService implements Serializable {
 		}
 	}
 
-	public boolean removeAllChildren(String queryName, String dimensionName) {
+	private boolean removeAllChildren(String queryName, String dimensionName) {
 		IQuery query = getIQuery(queryName);
 		QueryDimension dimension = query.getDimension(dimensionName);
-		List<Selection> children = new ArrayList<Selection>();
+		List<Selection> children = new ArrayList<>();
 		try {
 			for (Selection sel : dimension.getInclusions()) {
 				if (sel.getOperator().equals(Operator.CHILDREN)) {
@@ -869,7 +861,7 @@ public class OlapQueryService implements Serializable {
 						if (level.getUniqueName().equals(uniqueLevelName)) {
 							Selection inclusion = dimension.createSelection(level);
 							dimension.getInclusions().remove(inclusion);
-							ArrayList<Selection> removals = new ArrayList<Selection>();
+							ArrayList<Selection> removals = new ArrayList<>();
 							for (Selection sel :dimension.getInclusions()) {
 								if ((sel.getRootElement() instanceof Member)) {
 									if (((Member) sel.getRootElement()).getLevel().equals(level)) {
@@ -921,7 +913,7 @@ public class OlapQueryService implements Serializable {
 	public List<SaikuDimensionSelection> getAxisSelection(String queryName, String axis) {
 		IQuery query = getIQuery(queryName);
 
-		List<SaikuDimensionSelection> dimsel = new ArrayList<SaikuDimensionSelection>();
+		List<SaikuDimensionSelection> dimsel = new ArrayList<>();
 		try {
 			QueryAxis qaxis = query.getAxis(axis);
 			if (qaxis != null) {
@@ -1052,8 +1044,7 @@ public class OlapQueryService implements Serializable {
 
 	public Properties getProperties(String queryName) {
 		IQuery query = getIQuery(queryName);
-		Properties props = query.getProperties();
-		return props;
+	  return query.getProperties();
 	}
 
 	public String getMDXQuery(String queryName) {
@@ -1071,22 +1062,23 @@ public class OlapQueryService implements Serializable {
 
 	public byte[] getExport(String queryName, String type, String formatter) {
 		formatter = formatter == null ? "" : formatter.toLowerCase();
-		if (formatter.equals("flat")) {
-			return getExport(queryName, type, new CellSetFormatter());			
-		}else if (formatter.equals("flattened")) {
-			return getExport(queryName, type, new FlattenedCellSetFormatter());
-		} else if (formatter.equals("hierarchical")) {
-			return getExport(queryName, type, new HierarchicalCellSetFormatter());
-		}
+	  switch (formatter) {
+	  case "flat":
+		return getExport(queryName, type, new CellSetFormatter());
+	  case "flattened":
+		return getExport(queryName, type, new FlattenedCellSetFormatter());
+	  case "hierarchical":
+		return getExport(queryName, type, new HierarchicalCellSetFormatter());
+	  }
 
 		return getExport(queryName, type, new FlattenedCellSetFormatter());
 	}
 
-	public byte[] getExport(String queryName, String type, ICellSetFormatter formatter) {
+	private byte[] getExport(String queryName, String type, ICellSetFormatter formatter) {
 		if (type != null) {
 			IQuery query = getIQuery(queryName);
 			CellSet rs = query.getCellset();
-			List<SaikuDimensionSelection> filters = new ArrayList<SaikuDimensionSelection>();
+			List<SaikuDimensionSelection> filters = new ArrayList<>();
 
 			if (query.getType().equals(QueryType.QM)) {
 				filters = getAxisSelection(queryName, "FILTER");
@@ -1114,10 +1106,10 @@ public class OlapQueryService implements Serializable {
 		try {
 			IQuery query = getIQuery(queryName);
 			CellSet cs = query.getCellset();
-			List<SaikuTuple> tuples = new ArrayList<SaikuTuple>();
-			List<SimpleCubeElement> dimensions = new ArrayList<SimpleCubeElement>();
+			List<SaikuTuple> tuples = new ArrayList<>();
+			List<SimpleCubeElement> dimensions = new ArrayList<>();
 			for(List<Integer> cellPosition : cellPositions) {
-				List<Member> members = new ArrayList<Member>();
+				List<Member> members = new ArrayList<>();
 				for (int i = 0; i < cellPosition.size(); i++) {
 					members.addAll(cs.getAxes().get(i).getPositions().get(cellPosition.get(i)).getMembers());
 				}
@@ -1139,8 +1131,7 @@ public class OlapQueryService implements Serializable {
 				}
 			}
 			List<SaikuDimensionSelection> filterSelections = getAxisSelection(queryName, "FILTER");
-			SaikuTag t = new SaikuTag(tagName, dimensions, tuples, filterSelections);
-			return t;
+		  return new SaikuTag(tagName, dimensions, tuples, filterSelections);
 
 		} catch (Exception e) {
 			throw new SaikuServiceException("Error addTag:" + tagName + " for query: " + queryName,e);
@@ -1159,7 +1150,7 @@ public class OlapQueryService implements Serializable {
 				throw new SaikuServiceException("Cannot zoom in if zoom in position is empty");
 			}
 			
-			Map<Dimension, Set<Member>> memberSelection = new HashMap<Dimension, Set<Member>>();
+			Map<Dimension, Set<Member>> memberSelection = new HashMap<>();
 			for (List<Integer> position : realPositions) {
 				for (int k = 0; k < position.size(); k++) {
 					Position p = cs.getAxes().get(k).getPositions().get(position.get(k));
@@ -1167,7 +1158,7 @@ public class OlapQueryService implements Serializable {
 					for (Member m : members) {
 						Dimension d = m.getDimension();
 						if (!memberSelection.containsKey(d)) {
-							Set<Member> mset = new HashSet<Member>();
+							Set<Member> mset = new HashSet<>();
 							memberSelection.put(d, mset);
 						}
 						memberSelection.get(d).add(m);
@@ -1202,8 +1193,8 @@ public class OlapQueryService implements Serializable {
 
 			CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cs, query.getFormatter());
 
-			List<SimpleCubeElement> members = new ArrayList<SimpleCubeElement>();
-			Set<MetadataElement> mset = new HashSet<MetadataElement>();
+			List<SimpleCubeElement> members = new ArrayList<>();
+			Set<MetadataElement> mset = new HashSet<>();
 
 			Cube cube = query.getCube();
 			Hierarchy h = cube.getHierarchies().get(hierarchyName);
@@ -1223,22 +1214,23 @@ public class OlapQueryService implements Serializable {
 			// try headers first
 			AbstractBaseCell[][] headers = result.getCellSetHeaders();
 			if (headers != null && headers.length > 0 && headers[0].length > 0) {
-				for (int i=0; i < headers.length; i++) {
-					for (int k = 0; k < headers[0].length; k++) {
-						if (headers[i][k] == null) {
-							continue;
-						}
-						MemberCell mc = (MemberCell) headers[i][k];
-						if (mc.getUniqueName() != null) {
-							if (mc.getHierarchy().equals(hierarchy.getUniqueName()) && mc.getLevel().equals(l.getUniqueName())) {
-								String mu = mc.getUniqueName();
-								List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(mu).getSegmentList();
-								Member m = cube.lookupMember(memberList);
-								mset.add(m);
-							}
-						}
+			  for (AbstractBaseCell[] header : headers) {
+				for (int k = 0; k < headers[0].length; k++) {
+				  if (header[k] == null) {
+					continue;
+				  }
+				  MemberCell mc = (MemberCell) header[k];
+				  if (mc.getUniqueName() != null) {
+					if (mc.getHierarchy().equals(hierarchy.getUniqueName()) && mc.getLevel()
+																				 .equals(l.getUniqueName())) {
+					  String mu = mc.getUniqueName();
+					  List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(mu).getSegmentList();
+					  Member m = cube.lookupMember(memberList);
+					  mset.add(m);
 					}
+				  }
 				}
+			  }
 			}
 			Long header = (new Date()).getTime();
 			
@@ -1246,28 +1238,29 @@ public class OlapQueryService implements Serializable {
 				// try body next
 				AbstractBaseCell[][] body = result.getCellSetBody();
 				if (body != null && body.length > 0 && body[0].length > 0) {
-					for (int i=0; i < body.length; i++) {
-						for (int k = 0; k < body[0].length; k++) {
-							if (body[i][k] == null) {
-								continue;
-							}
-							AbstractBaseCell ac = body[i][k];
-							if (ac instanceof DataCell) {
-								break;
-							}
-							if (ac instanceof MemberCell) {
-								MemberCell mc = (MemberCell) body[i][k];
-								if (mc.getUniqueName() != null) {
-									if (mc.getHierarchy().equals(hierarchy.getUniqueName()) && mc.getLevel().equals(l.getUniqueName())) {
-										String mu = mc.getUniqueName();
-										List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(mu).getSegmentList();
-										Member m = cube.lookupMember(memberList);
-										mset.add(m);
-									}
-								}
-							}
+				  for (AbstractBaseCell[] aBody : body) {
+					for (int k = 0; k < body[0].length; k++) {
+					  if (aBody[k] == null) {
+						continue;
+					  }
+					  AbstractBaseCell ac = aBody[k];
+					  if (ac instanceof DataCell) {
+						break;
+					  }
+					  if (ac instanceof MemberCell) {
+						MemberCell mc = (MemberCell) aBody[k];
+						if (mc.getUniqueName() != null) {
+						  if (mc.getHierarchy().equals(hierarchy.getUniqueName()) && mc.getLevel()
+																					   .equals(l.getUniqueName())) {
+							String mu = mc.getUniqueName();
+							List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(mu).getSegmentList();
+							Member m = cube.lookupMember(memberList);
+							mset.add(m);
+						  }
 						}
+					  }
 					}
+				  }
 				}
 			}
 			Long body = (new Date()).getTime();
@@ -1330,7 +1323,7 @@ public class OlapQueryService implements Serializable {
 	public Map<String, SaikuFilter> getValidFilters(String queryName, Map<String, SaikuFilter> allFilters) {
 		IQuery query = getIQuery(queryName);
 		Cube c = query.getCube();
-		Map<String, SaikuFilter> filteredMap = new HashMap<String, SaikuFilter>(); 
+		Map<String, SaikuFilter> filteredMap = new HashMap<>();
 		for (SaikuFilter sf : allFilters.values()) {
 			if (StringUtils.isBlank(sf.getName()) || sf.getDimension() == null)
 				continue;
@@ -1417,7 +1410,7 @@ public class OlapQueryService implements Serializable {
   private void writeObject(ObjectOutputStream stream)
 	  throws IOException {
 
-	serializableQueries = new HashMap<String, String>();
+	serializableQueries = new HashMap<>();
 	for (Map.Entry<String, IQuery> entry  : queries.entrySet() )
 	{
 	  serializableQueries.put(entry.getKey(), new QuerySerializer(entry.getValue()).createXML());
@@ -1428,7 +1421,7 @@ public class OlapQueryService implements Serializable {
 	  throws IOException, ClassNotFoundException {
 
 	stream.defaultReadObject();
-	queries = new HashMap<String, IQuery>();
+	queries = new HashMap<>();
 	for (Map.Entry<String, String> entry  : serializableQueries.entrySet() )
 	{
 	  createNewOlapQuery (entry.getKey(), entry.getValue());

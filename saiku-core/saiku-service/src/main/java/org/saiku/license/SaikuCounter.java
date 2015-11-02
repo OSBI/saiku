@@ -7,9 +7,9 @@ import java.util.Map;
 /**
  * Unnamed user counter.
  */
-public class SaikuCounter implements Serializable{
+class SaikuCounter implements Serializable{
 
-  Map<String,Integer> counter = new HashMap<String,Integer>();
+  private final Map<String,Integer> counter = new HashMap<>();
 
   public SaikuCounter() {
   }

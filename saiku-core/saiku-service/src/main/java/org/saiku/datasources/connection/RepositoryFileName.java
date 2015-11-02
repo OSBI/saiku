@@ -14,8 +14,7 @@ public class RepositoryFileName
 
     public FileName createName(String s, FileType fileType)
     {
-        FileName name = new RepositoryFileName(s, fileType);
-        return name;
+        return new RepositoryFileName(s, fileType);
     }
 
     protected void appendRootUri(StringBuffer stringBuffer, boolean b) {}

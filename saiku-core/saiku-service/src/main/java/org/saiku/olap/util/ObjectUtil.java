@@ -56,7 +56,7 @@ public class ObjectUtil {
 
   @NotNull
   public static SaikuCube convert(String connection, @NotNull Cube c) {
-    SaikuCube sc = new SaikuCube(
+    return new SaikuCube(
         connection,
         c.getUniqueName(),
         c.getName(),
@@ -64,19 +64,17 @@ public class ObjectUtil {
         c.getSchema().getCatalog().getName(),
         c.getSchema().getName(),
         c.isVisible());
-    return sc;
   }
 
   @NotNull
   public static SaikuDimension convert(@NotNull Dimension dim) {
-    SaikuDimension sDim = new SaikuDimension(
+    return new SaikuDimension(
         dim.getName(),
         dim.getUniqueName(),
         dim.getCaption(),
         dim.getDescription(),
         dim.isVisible(),
         convertHierarchies(dim.getHierarchies()));
-    return sDim;
   }
 
   @NotNull
@@ -86,7 +84,7 @@ public class ObjectUtil {
 
   @NotNull
   public static List<SaikuDimension> convertQueryDimensions(@NotNull List<QueryDimension> dims) {
-    List<SaikuDimension> dimList = new ArrayList<SaikuDimension>();
+    List<SaikuDimension> dimList = new ArrayList<>();
     for (QueryDimension d : dims) {
       dimList.add(convert(d));
     }
@@ -95,7 +93,7 @@ public class ObjectUtil {
 
   @NotNull
   public static List<SaikuDimension> convertDimensions(@NotNull List<Dimension> dims) {
-    List<SaikuDimension> dimList = new ArrayList<SaikuDimension>();
+    List<SaikuDimension> dimList = new ArrayList<>();
     for (Dimension d : dims) {
       dimList.add(convert(d));
     }
@@ -104,7 +102,7 @@ public class ObjectUtil {
 
   @NotNull
   public static List<SaikuHierarchy> convertHierarchies(@NotNull List<Hierarchy> hierarchies) {
-    List<SaikuHierarchy> hierarchyList = new ArrayList<SaikuHierarchy>();
+    List<SaikuHierarchy> hierarchyList = new ArrayList<>();
     for (Hierarchy h : hierarchies) {
       hierarchyList.add(convert(h));
     }
@@ -131,7 +129,7 @@ public class ObjectUtil {
 
   @NotNull
   public static List<SaikuLevel> convertLevels(@NotNull List<Level> levels) {
-    List<SaikuLevel> levelList = new ArrayList<SaikuLevel>();
+    List<SaikuLevel> levelList = new ArrayList<>();
     for (Level l : levels) {
       levelList.add(convert(l));
     }
@@ -153,7 +151,7 @@ public class ObjectUtil {
           LevelInterface test = ctor.newInstance(level);
           HashMap<String, String> m = null;
           if (test.getAnnotations() != null) {
-            m = new HashMap<String, String>();
+            m = new HashMap<>();
             for (Map.Entry<String, Annotation> entry : test.getAnnotations().entrySet()) {
               m.put(entry.getKey(), (String) entry.getValue().getValue());
             }
@@ -200,7 +198,7 @@ public class ObjectUtil {
 
   @NotNull
   public static List<SaikuMember> convertMembers(@NotNull Collection<Member> members) {
-    List<SaikuMember> memberList = new ArrayList<SaikuMember>();
+    List<SaikuMember> memberList = new ArrayList<>();
     for (Member m : members) {
       memberList.add(convert(m));
     }
@@ -210,7 +208,7 @@ public class ObjectUtil {
   @NotNull
   private static List<SaikuSelection> convertSelections(@NotNull List<Selection> selections,
                                                         @NotNull QueryDimension dim, @NotNull IQuery query) {
-    List<SaikuSelection> selectionList = new ArrayList<SaikuSelection>();
+    List<SaikuSelection> selectionList = new ArrayList<>();
     for (Selection sel : selections) {
       selectionList.add(convert(sel, dim, query));
     }
@@ -320,7 +318,7 @@ public class ObjectUtil {
   @NotNull
   private static List<SaikuDimensionSelection> convertDimensionSelections(@NotNull List<QueryDimension> dimensions,
                                                                           @NotNull IQuery query) {
-    List<SaikuDimensionSelection> dims = new ArrayList<SaikuDimensionSelection>();
+    List<SaikuDimensionSelection> dims = new ArrayList<>();
     for (QueryDimension dim : dimensions) {
       dims.add(convertDimensionSelection(dim, query));
     }
@@ -360,7 +358,7 @@ public class ObjectUtil {
 
   @NotNull
   public static SaikuQuery convert(@NotNull IQuery q) {
-    List<SaikuAxis> axes = new ArrayList<SaikuAxis>();
+    List<SaikuAxis> axes = new ArrayList<>();
     if (q.getType().equals(IQuery.QueryType.QM)) {
       for (Axis axis : q.getAxes().keySet()) {
         if (axis != null) {
@@ -374,7 +372,7 @@ public class ObjectUtil {
 
   @NotNull
   public static List<SimpleCubeElement> convert2Simple(@Nullable Collection<? extends MetadataElement> mset) {
-    List<SimpleCubeElement> elements = new ArrayList<SimpleCubeElement>();
+    List<SimpleCubeElement> elements = new ArrayList<>();
     if (mset != null) {
       for (MetadataElement e : mset) {
         elements.add(new SimpleCubeElement(e.getName(), e.getUniqueName(), e.getCaption()));
@@ -388,7 +386,7 @@ public class ObjectUtil {
     try {
       int width = 0;
       boolean first = true;
-      List<SimpleCubeElement> elements = new ArrayList<SimpleCubeElement>();
+      List<SimpleCubeElement> elements = new ArrayList<>();
       if (rs != null) {
         while (rs.next()) {
           if (first) {

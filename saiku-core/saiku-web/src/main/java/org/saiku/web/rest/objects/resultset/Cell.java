@@ -22,7 +22,7 @@ public class Cell  {
 
 	private String value;
 	private String type;
-	private Properties properties = new Properties();
+	private final Properties properties = new Properties();
 //	private Properties metaproperties;
 
 	

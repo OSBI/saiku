@@ -15,7 +15,7 @@ public class CellSetFormatterFactory {
 
 	private static final Logger log = LoggerFactory.getLogger(ThinQueryService.class);
 
-	private Map<String, String> formatters = new HashMap<String, String>();
+	private Map<String, String> formatters = new HashMap<>();
 
 	private String defaultFormatter = FlattenedCellSetFormatter.class.getName();
 
@@ -34,8 +34,7 @@ public class CellSetFormatterFactory {
 	}
 
   public ICellSetFormatter forName(String name) {
-	ICellSetFormatter cf = create(name, defaultFormatter);
-	return cf;
+	return create(name, defaultFormatter);
   }
 
   private ICellSetFormatter create(String name, String defaultFormatter) {
@@ -45,8 +44,7 @@ public class CellSetFormatterFactory {
 	  final Class<ICellSetFormatter> clazz = (Class<ICellSetFormatter>)
 		  Class.forName(clazzName);
 	  final Constructor<ICellSetFormatter> ctor = clazz.getConstructor();
-	  final ICellSetFormatter cellSetFormatter = ctor.newInstance();
-	  return cellSetFormatter;
+	  return ctor.newInstance();
 	}
 	catch (Exception e) {
 	  log.error("Error creating CellSetFormatter \"" + clazzName + "\"", e);

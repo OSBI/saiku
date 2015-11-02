@@ -24,7 +24,7 @@ public class SaikuSelection extends AbstractSaikuObject {
   private String hierarchyUniqueName;
   private String levelUniqueName;
 
-  public static enum Type {
+  public enum Type {
     MEMBER,
     LEVEL
   }

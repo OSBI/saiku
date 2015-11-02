@@ -6,7 +6,6 @@ import org.apache.commons.vfs.VFS;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.repository.IRepositoryManager;
 import org.saiku.service.datasource.IDatasourceManager;
-import org.saiku.service.datasource.RepositoryDatasourceManager;
 import org.saiku.service.importer.LegacyImporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +104,7 @@ public class LegacyImporterImpl implements LegacyImporter {
                                         split[i] = fixedString;
                                         StringBuilder builder = new StringBuilder();
                                         for(String str : split){
-                                            builder.append(str+";");
+                                            builder.append(str).append(";");
                                         }
                                         props.setProperty("location", builder.toString());
 

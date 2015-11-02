@@ -14,14 +14,15 @@ public class ThinSelection {
 	}
 	
 	private Type type = Type.INCLUSION;
-	private List<ThinMember> members = new ArrayList<ThinMember>();
+	private List<ThinMember> members = new ArrayList<>();
 	private String parameter = null;
 	
-	public ThinSelection() {};
-	public ThinSelection(Type type, List<ThinMember> members) {
+	public ThinSelection() {}
+
+  public ThinSelection(Type type, List<ThinMember> members) {
 		this(type, members, null);
 	}
-	public ThinSelection(Type type, List<ThinMember> members, String parameter) {
+	private ThinSelection(Type type, List<ThinMember> members, String parameter) {
 		this.type = type;
 		if (members != null) {
 			this.members.addAll(members);

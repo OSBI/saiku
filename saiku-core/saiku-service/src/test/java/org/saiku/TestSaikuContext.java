@@ -21,14 +21,14 @@ public class TestSaikuContext {
     
 	private static TestSaikuContext instance;
 	public static boolean DEBUG = false;
-	public IDatasourceManager datasourceManager;
-	public IConnectionManager connectionManager;
-	public OlapMetaExplorer olapMetaExplorer;
+	private IDatasourceManager datasourceManager;
+	private IConnectionManager connectionManager;
+	private OlapMetaExplorer olapMetaExplorer;
 	public OlapDiscoverService olapDiscoverService;
 	public DatasourceService datasourceService;
 	public ThinQueryService thinQueryService;
 
-	public TestSaikuContext() throws Exception {
+	private TestSaikuContext() throws Exception {
 		setup();
 	}
 
@@ -68,8 +68,7 @@ public class TestSaikuContext {
 	}
 	
 	public static SaikuCube getSalesCube() {
-		SaikuCube cube = new SaikuCube("test", "Sales", "Sales", "Sales", "FoodMart", "FoodMart");
-		return cube;
+	  return new SaikuCube("test", "Sales", "Sales", "Sales", "FoodMart", "FoodMart");
 	}
 
 }

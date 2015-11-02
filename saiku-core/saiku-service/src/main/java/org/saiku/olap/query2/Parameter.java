@@ -14,8 +14,9 @@ public class Parameter {
 		MDX
 	}
 	
-	public Parameter() {};
-	public Parameter(ParameterType type, String name, String value, boolean mandatory) {
+	public Parameter() {}
+
+  public Parameter(ParameterType type, String name, String value, boolean mandatory) {
 		this.type = type;
 		this.value = value;
 		this.name = name;

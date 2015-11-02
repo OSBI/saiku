@@ -21,7 +21,7 @@ public enum AclMethod {
 	 * @param method2
 	 * @return
 	 */
-	public static AclMethod max(AclMethod method1, AclMethod method2 ) {
+	private static AclMethod max(AclMethod method1, AclMethod method2) {
 		if ( method1 == null ) {
 			if ( method2 == null ) {
 				throw new RuntimeException("cannot compare two null objects");
@@ -37,7 +37,7 @@ public enum AclMethod {
 	 * @param method2
 	 * @return
 	 */
-	public static AclMethod min(AclMethod method1, AclMethod method2 ) {
+	private static AclMethod min(AclMethod method1, AclMethod method2) {
 		if ( method1 == null ) {
 			if ( method2 == null ) {
 				throw new RuntimeException("cannot compare two null objects");
@@ -92,7 +92,7 @@ public enum AclMethod {
 	 * @param method
 	 * @return
 	 */
-	public static int toInt(AclMethod method ){
+	private static int toInt(AclMethod method){
 		switch (method) {
 			case NONE: return 0;
 			case READ: return 1;

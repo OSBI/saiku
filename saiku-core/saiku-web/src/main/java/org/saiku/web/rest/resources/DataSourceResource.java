@@ -43,7 +43,7 @@ import javax.ws.rs.core.Response.Status;
 public class DataSourceResource {
 
     private static final Logger log = LoggerFactory.getLogger(DataSourceResource.class);
-    DatasourceService datasourceService;
+    private DatasourceService datasourceService;
 
     public void setDatasourceService(DatasourceService ds) {
         datasourceService = ds;
@@ -63,7 +63,7 @@ public class DataSourceResource {
             return datasourceService.getDatasources().values();
         } catch (SaikuServiceException e) {
             log.error(this.getClass().getName(), e);
-            return new ArrayList<SaikuDatasource>();
+            return new ArrayList<>();
         }
     }
 
@@ -96,9 +96,7 @@ public class DataSourceResource {
         try {
             SaikuDatasource saikuDatasource = null;
             Map<String, SaikuDatasource> datasources = datasourceService.getDatasources();
-            Iterator<SaikuDatasource> iterator = datasources.values().iterator();
-            while (iterator.hasNext()) {
-                SaikuDatasource currentDatasource = iterator.next();
+            for (SaikuDatasource currentDatasource : datasources.values()) {
                 if (currentDatasource.getProperties().getProperty("id").equals(id)) {
                     saikuDatasource = currentDatasource;
                     break;
@@ -121,9 +119,7 @@ public class DataSourceResource {
         try {
             SaikuDatasource saikuDatasource = null;
             Map<String, SaikuDatasource> datasources = datasourceService.getDatasources();
-            Iterator<SaikuDatasource> iterator = datasources.values().iterator();
-            while (iterator.hasNext()) {
-                SaikuDatasource currentDatasource = iterator.next();
+            for (SaikuDatasource currentDatasource : datasources.values()) {
                 if (currentDatasource.getProperties().getProperty("id").equals(id)) {
                     saikuDatasource = currentDatasource;
                     changeLocale(saikuDatasource, locale);

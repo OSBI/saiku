@@ -16,7 +16,6 @@
 package org.saiku.service.util.export;
 
 import org.apache.commons.lang.StringUtils;
-import org.h2.tools.Csv;
 import org.olap4j.CellSet;
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
@@ -43,7 +42,7 @@ public class CsvExporter {
     return exportCsv( cellSet, SaikuProperties.webExportCsvDelimiter, SaikuProperties.webExportCsvTextEscape );
   }
 
-  public static byte[] exportCsv( CellSet cellSet, String delimiter, String enclosing ) {
+  private static byte[] exportCsv(CellSet cellSet, String delimiter, String enclosing) {
     return exportCsv( cellSet, delimiter, enclosing, new CellSetFormatter() );
   }
 
@@ -117,7 +116,7 @@ public class CsvExporter {
             sb.append( delimiter );
           }
           content = content.replace( "\"", "\"\"" );
-          sb.append( enclosing + content + enclosing );
+          sb.append(enclosing).append(content).append(enclosing);
         }
         sb.append( "\r\n" );
         height++;
@@ -138,7 +137,7 @@ public class CsvExporter {
       boolean offset = rowHeader.length > 0;
       String[][] result = new String[ ( offset ? 1 : 0 ) + rowData.length ][];
       if ( offset ) {
-        List<String> cols = new ArrayList<String>();
+        List<String> cols = new ArrayList<>();
         for ( int x = 0; x < rowHeader[ 0 ].length; x++ ) {
           String col = null;
           for ( int y = rowHeader.length - 1; y >= 0; y-- ) {
@@ -163,7 +162,7 @@ public class CsvExporter {
         if ( lastKnownHeader == null ) {
           lastKnownHeader = new String[ rowData[ x ].length ];
         }
-        List<String> cols = new ArrayList<String>();
+        List<String> cols = new ArrayList<>();
         for ( int y = 0; y < rowData[ x ].length; y++ ) {
           String value = rowData[ x ][ y ].getFormattedValue();
           if ( !SaikuProperties.webExportCsvUseFormattedValue ) {
@@ -196,23 +195,21 @@ public class CsvExporter {
   private static byte[] export( String[][] resultSet, String delimiter ) {
     try {
       String output = "";
-      StringBuffer buf = new StringBuffer();
+      StringBuilder buf = new StringBuilder();
       if ( resultSet.length > 0 ) {
-        for ( int i = 0; i < resultSet.length; i++ ) {
-          String[] vs = resultSet[ i ];
+        for (String[] vs : resultSet) {
+          for (int j = 0; j < vs.length; j++) {
+            String value = vs[j];
 
-          for ( int j = 0; j < vs.length; j++ ) {
-            String value = vs[ j ];
-
-            if ( j > 0 ) {
-              buf.append( delimiter + value );
+            if (j > 0) {
+              buf.append(delimiter).append(value);
               //output += delimiter + value;
             } else {
-              buf.append( value );
+              buf.append(value);
               //output += value;
             }
           }
-          buf.append( "\r\n" );
+          buf.append("\r\n");
           //output += "\r\n"; //$NON-NLS-1$
         }
         output = buf.toString();
