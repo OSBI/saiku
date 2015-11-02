@@ -1,9 +1,10 @@
 package org.saiku.database;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import org.saiku.UserDAO;
 import org.saiku.database.dto.SaikuUser;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
@@ -13,7 +14,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
@@ -75,7 +80,7 @@ public class JdbcUserDAO
 
         if(user.getRoles()!=null) {
             for (String r : user.getRoles()) {
-                if (r != null) {
+                if (r != null && !r.equals("")) {
                     getJdbcTemplate()
                         .update(sql, Integer.valueOf(user.getId()), user.getUsername(), r);
                 }
