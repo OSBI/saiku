@@ -16,13 +16,6 @@
 package org.saiku.repository;
 
 
-import org.saiku.database.dto.MondrianSchema;
-import org.saiku.datasources.connection.RepositoryFile;
-import org.saiku.service.user.UserService;
-import org.saiku.service.util.exception.SaikuServiceException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.api.JackrabbitSession;
@@ -32,15 +25,41 @@ import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
+
+import org.saiku.database.dto.MondrianSchema;
+import org.saiku.datasources.connection.RepositoryFile;
+import org.saiku.service.user.UserService;
+import org.saiku.service.util.exception.SaikuServiceException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.jcr.*;
+import javax.jcr.Binary;
+import javax.jcr.ImportUUIDBehavior;
+import javax.jcr.NamespaceRegistry;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.PropertyType;
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.nodetype.NodeTypeExistsException;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
@@ -152,7 +171,9 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
       log.info("repo started");
       log.info("logging in");
-      login();
+      if(session==null){
+        login();
+      }
       log.info("logged in");
 
       JackrabbitSession js = (JackrabbitSession) session;
@@ -226,7 +247,9 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
   }
 
   public void createUser(String u) throws RepositoryException {
-    login();
+    if(session == null) {
+      login();
+    }
     Node parent = JcrUtils.getNodeIfExists(root, "homes");
     if(parent != null) {
       Node node = parent.addNode("home:" + u, "nt:folder");
@@ -337,7 +360,13 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
   public Node saveFile(Object file, String path, String user, String type, List<String> roles) throws RepositoryException {
     if(file==null){
       //Create new folder
-      String parent = path.substring(0, path.lastIndexOf("/"));
+      String parent;
+      if(path.contains("/")) {
+        parent = path.substring(0, path.lastIndexOf("/"));
+      }
+      else{
+        parent = "/";
+      }
       Node node = getFolder(parent);
       Acl2 acl2 = new Acl2(node);
       acl2.setAdminRoles(userService.getAdminRoles());

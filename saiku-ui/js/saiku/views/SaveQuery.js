@@ -119,6 +119,8 @@ var SaveQuery = Modal.extend({
         );
 
         this.context_menu_disabled();
+        this.select_last_location();
+
     },
 
     context_menu_disabled: function() {
@@ -157,6 +159,8 @@ var SaveQuery = Modal.extend({
                 $target.find('.folder_content').remove();
             }
         }
+        this.set_last_location(path);
+
         return false;
     },
 
@@ -235,9 +239,13 @@ var SaveQuery = Modal.extend({
     select_name: function( event ) {
         var $currentTarget = $( event.currentTarget );
         this.unselect_current_selected_folder( );
-        $currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').addClass( 'selected' );
+        //$currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').addClass( 'selected' );
+        $currentTarget.addClass('selected');
         var name = $currentTarget.find( 'a' ).attr('href').replace('#','');
         this.set_name(null, name);
+        var path = $currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').find( 'a' ).attr('href');
+        path = path.replace('#' , '');
+        this.set_last_location(path);
         return false;
     },
 
@@ -339,5 +347,40 @@ return false;
             file: file,
             content: JSON.stringify(this.query.model)
         })).save({},{ success:  this.close, error: error, dataType: 'text'  });
+    },
+
+    set_last_location: function(path){
+        if (typeof localStorage !== "undefined" && localStorage && !Settings.REPOSITORY_LAZY) {
+            if (!Settings.LOCALSTORAGE_EXPIRATION || Settings.LOCALSTORAGE_EXPIRATION === 0) {
+                localStorage.clear();
+            }
+            else {
+                localStorage.setItem('last-folder', path);
+            }
+
+        }
+    },
+
+    select_last_location: function(){
+        if(localStorage.getItem('last-folder') && !Settings.REPOSITORY_LAZY){
+            var p = $(this.el).find('a[href="\\#'+localStorage.getItem('last-folder')+'"]')
+
+            var path = p.parent().parent().has('.folder').children('.folder_row').find('.sprite').removeClass('collapsed');
+
+            var parents = path.parentsUntil($("div.RepositoryObjects"));
+
+            parents.each(function () {
+                if ($(this).hasClass('folder')) {
+                    $(this).children('.folder_row').find('.sprite').removeClass('collapsed');
+                    $(this).children('.folder_content').removeClass('hide');
+
+                }
+
+            });
+
+        }
+
+
+
     }
 });

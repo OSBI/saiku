@@ -30,7 +30,7 @@
         </property>
         <property name="authoritiesByUsernameQuery">
             <value>
-                <![CDATA[select username, role from user_roles where username =?]]>
+                <![CDATA[select username, role from user_roles where username =? UNION select '?', 'ROLE_USER']]>
             </value>
         </property>
         <property name="usersByUsernameQuery">
