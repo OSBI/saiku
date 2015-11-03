@@ -286,7 +286,18 @@
 										<include name="*.properties" />
 									</fileset>
 								</copy>
-                                <patch patchfile="addplugins.patch" originalfile="target/dist/saiku/ui/index.html" failonerror="true" />
+								<replaceregexp match="(&lt;!-- Saiku plugins --&gt;)"
+											   replace="
+
+				&lt;script type='text/javascript' src='js/saiku/plugins/Statistics/plugin.js' defer&gt;&lt;/script&gt;&#10;
+				&lt;script type='text/javascript' src='js/saiku/plugins/BIServer/plugin.js' defer&gt;&lt;/script&gt;&#10;
+				&lt;script type='text/javascript' src='js/saiku/plugins/CCC_Chart/plugin.js'&gt;&lt;/script&gt;&#10;
+				&lt;script type='text/javascript' src='js/saiku/plugins/Fullscreen/plugin.js' defer&gt;&lt;/script&gt;
+							"
+											   flags="gs" byline="false">
+									<fileset dir="target/dist/saiku/ui/" includes="index.html"/>
+								</replaceregexp>
+
 								<zip destfile="target/saiku-plugin-p5-${project.version}.zip">
 									<zipfileset dir="target/dist/" />
 								</zip>
