@@ -119,6 +119,8 @@ var SaveQuery = Modal.extend({
         );
 
         this.context_menu_disabled();
+        this.select_last_location();
+
     },
 
     context_menu_disabled: function() {
