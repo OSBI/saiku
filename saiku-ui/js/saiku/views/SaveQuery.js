@@ -235,7 +235,8 @@ var SaveQuery = Modal.extend({
     select_name: function( event ) {
         var $currentTarget = $( event.currentTarget );
         this.unselect_current_selected_folder( );
-        $currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').addClass( 'selected' );
+        //$currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').addClass( 'selected' );
+        $currentTarget.addClass('selected');
         var name = $currentTarget.find( 'a' ).attr('href').replace('#','');
         this.set_name(null, name);
         return false;

@@ -201,6 +201,7 @@
 											<exclude name="pom.xml" />
 											<exclude name=".git/" />
 											<exclude name=".gitignore" />
+											<exclude name="utils/"/>
 
 										</fileset>
 										<fileset dir="${basedir}/">
@@ -224,6 +225,7 @@
 											<exclude name="pom.xml" />
 											<exclude name=".git/" />
 											<exclude name=".gitignore" />
+											<exclude name="utils/"/>
 
 										</fileset>
 										<fileset dir="${basedir}/">

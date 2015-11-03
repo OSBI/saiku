@@ -177,7 +177,8 @@ var OpenDialog = Modal.extend({
     select_name: function( event ) {
         var $currentTarget = $( event.currentTarget );
         this.unselect_current_selected_folder( );
-        $currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').addClass( 'selected' );
+        //$currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').addClass( 'selected' );
+        $currentTarget.addClass('selected');
         var name = $currentTarget.find( 'a' ).attr('href');
         name = name.replace('#','');
         $(this.el).find('.query_name').html( name );
