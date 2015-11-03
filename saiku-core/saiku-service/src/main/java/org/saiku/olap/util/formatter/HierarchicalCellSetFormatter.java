@@ -54,7 +54,7 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
      *            Number of hierarchies on this axis
      */
     AxisInfo(final int ordinalCount) {
-      ordinalInfos = new ArrayList<AxisOrdinalInfo>(ordinalCount);
+      ordinalInfos = new ArrayList<>(ordinalCount);
       for (int i = 0; i < ordinalCount; i++) {
         ordinalInfos.add(new AxisOrdinalInfo());
       }
@@ -79,8 +79,8 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
    * Description of a particular hierarchy mapped to an axis.
    */
   private static class AxisOrdinalInfo {
-    private List<Integer> depths = new ArrayList<Integer>();
-    private Map<Integer,Level> depthLevel = new HashMap<Integer,Level>();
+    private final List<Integer> depths = new ArrayList<>();
+    private final Map<Integer,Level> depthLevel = new HashMap<>();
 
     public int getWidth() {
       return depths.size();
@@ -214,8 +214,6 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
    *
    * @param cellSet
    *            Cell set
-   * @param pw
-   *            Print writer
    * @param pageCoords
    *            Coordinates of page [page, chapter, section, ...]
    * @param columnsAxis
@@ -240,7 +238,7 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
       yOffset + (rowsAxis == null ? 1 : rowsAxis.getPositions().size()));
 
     // Populate corner
-    List<Level> levels = new ArrayList<Level>();
+    List<Level> levels = new ArrayList<>();
     if (rowsAxis != null && rowsAxis.getPositions().size() > 0) {
       Position p = rowsAxis.getPositions().get(0);
       for (int m = 0; m < p.getMembers().size(); m++) {
@@ -307,8 +305,7 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
             DecimalFormat myFormatter = new DecimalFormat(SaikuProperties.formatDefautNumberFormat); //$NON-NLS-1$
             DecimalFormatSymbols dfs = new DecimalFormatSymbols(SaikuProperties.locale);
             myFormatter.setDecimalFormatSymbols(dfs);
-            String output = myFormatter.format(cell.getValue());
-            cellValue = output;
+            cellValue = myFormatter.format(cell.getValue());
           }
           catch (Exception e) {
             // TODO: handle exception
@@ -332,7 +329,7 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
         // we tried
       }
 
-      Map<String, String> cellProperties = new HashMap<String, String>();
+      Map<String, String> cellProperties = new HashMap<>();
       String val = Olap4jUtil.parseFormattedCellValue(cellValue, cellProperties);
       if (!cellProperties.isEmpty()) {
         cellInfo.setProperties(cellProperties);
@@ -371,7 +368,7 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
       final Position position = axis.getPositions().get(i);
       int yOffset = 0;
       final List<Member> memberList = position.getMembers();
-      final Map<Hierarchy,List<Integer>> lvls = new HashMap<Hierarchy, List<Integer>>();
+      final Map<Hierarchy,List<Integer>> lvls = new HashMap<>();
       for (int j = 0; j < memberList.size(); j++) {
         Member member = memberList.get(j);
         final AxisOrdinalInfo ordinalInfo = axisInfo.ordinalInfos.get(j);

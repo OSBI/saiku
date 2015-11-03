@@ -29,12 +29,12 @@ import java.util.List;
 /**
  * Created by bugg on 12/03/15.
  */
-public final class GrantedAuth extends AbstractCasAssertionUserDetailsService {
+final class GrantedAuth extends AbstractCasAssertionUserDetailsService {
   private static final SimpleGrantedAuthority ROLE_USER = new SimpleGrantedAuthority(
       "ROLE_USER");
   @Override
   protected UserDetails loadUserDetails(Assertion assertion) {
-    final List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+    final List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
     grantedAuthorities.add(ROLE_USER);
     return new User(assertion.getPrincipal().getName(), "NO_PASSWORD",
         true, true, true, true, grantedAuthorities);

@@ -46,12 +46,12 @@ public class AvgAggregator extends TotalAggregator {
 
   };
 
-  protected AvgAggregator( Format format ) {
+  AvgAggregator(Format format) {
     super( format );
   }
 
-  double accumulator = 0.0;
-  long count = 0;
+  private double accumulator = 0.0;
+  private long count = 0;
 
   public void addData( Cell cell ) {
     Object value = cell.getValue();

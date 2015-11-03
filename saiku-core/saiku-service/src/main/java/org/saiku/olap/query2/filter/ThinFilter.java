@@ -8,23 +8,23 @@ public class ThinFilter {
 	private FilterFlavour flavour;
 	private FilterOperator operator;
 	private FilterFunction function;
-	private List<String> expressions = new ArrayList<String>();
+	private List<String> expressions = new ArrayList<>();
 
 	public enum FilterFlavour {
-		Generic, Measure, Name, NameLike, N;
+		Generic, Measure, Name, NameLike, N
 	}
 	
 	public enum FilterOperator {
-		EQUALS, GREATER, GREATER_EQUALS, SMALLER, SMALLER_EQUALS, LIKE;
+		EQUALS, GREATER, GREATER_EQUALS, SMALLER, SMALLER_EQUALS, LIKE
 	}
 
 	public enum FilterFunction {
-		Filter, TopCount, TopPercent, TopSum, BottomCount, BottomPercent, BottomSum;
+		Filter, TopCount, TopPercent, TopSum, BottomCount, BottomPercent, BottomSum
 	}
 
-	public ThinFilter() {};
-	
-	public ThinFilter(
+	public ThinFilter() {}
+
+  public ThinFilter(
 			FilterFlavour flavour, 
 			FilterOperator operator,
 			FilterFunction function, 

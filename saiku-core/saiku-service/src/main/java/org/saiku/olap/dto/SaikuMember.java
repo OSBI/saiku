@@ -25,7 +25,7 @@ public class SaikuMember extends AbstractSaikuObject {
   private String hierarchyUniqueName;
   private Boolean calculated;
 
-  public SaikuMember() {
+  SaikuMember() {
   }
 
   public SaikuMember(

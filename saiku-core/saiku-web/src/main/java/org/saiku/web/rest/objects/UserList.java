@@ -4,8 +4,8 @@ package org.saiku.web.rest.objects;
  * Created by bugg on 03/12/14.
  */
 public class UserList {
-  public String name;
-  public int id;
+  private String name;
+  private int id;
 
   public UserList() {
   }

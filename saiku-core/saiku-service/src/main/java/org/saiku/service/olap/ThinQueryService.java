@@ -85,7 +85,7 @@ public class ThinQueryService implements Serializable {
 
     private CellSetFormatterFactory cff = new CellSetFormatterFactory();
 
-    private Map<String, QueryContext> context = new HashMap<String, QueryContext>();
+    private final Map<String, QueryContext> context = new HashMap<>();
 
     public void setOlapDiscoverService(OlapDiscoverService os) {
         this.olapDiscoverService = os;
@@ -97,7 +97,7 @@ public class ThinQueryService implements Serializable {
 
 
 
-    public ThinQuery createQuery(ThinQuery tq) throws Exception {
+    public ThinQuery createQuery(ThinQuery tq) {
         if (StringUtils.isBlank(tq.getName())) {
             tq.setName(UUID.randomUUID().toString());
         }
@@ -123,8 +123,7 @@ public class ThinQueryService implements Serializable {
         try {
             Cube cub = olapDiscoverService.getNativeCube(cube);
             Query query = new Query(name, cub);
-            ThinQuery tq = Thin.convert(query, cube);
-            return tq;
+            return Thin.convert(query, cube);
 
         } catch (Exception e) {
             log.error("Cannot create new query for cube :" + cube, e);
@@ -135,7 +134,7 @@ public class ThinQueryService implements Serializable {
 
 
 
-    protected CellSet executeInternalQuery(ThinQuery query) throws Exception {
+    CellSet executeInternalQuery(ThinQuery query) throws Exception {
         String runId = "RUN#:" + ID_GENERATOR.getAndIncrement();
         QueryContext queryContext = context.get(query.getName());
 
@@ -205,7 +204,7 @@ public class ThinQueryService implements Serializable {
         return result;
     }
 
-    public CellDataSet execute(ThinQuery tq, ICellSetFormatter formatter) {
+    private CellDataSet execute(ThinQuery tq, ICellSetFormatter formatter) {
         try {
 
             Long start = (new Date()).getTime();
@@ -227,9 +226,7 @@ public class ThinQueryService implements Serializable {
 
             result.setRuntime(new Double(format - start).intValue());
             return result;
-        } catch (Exception e) {
-            throw new SaikuServiceException("Can't execute query: " + tq.getName(),e);
-        } catch (Error e) {
+        } catch (Exception | Error e) {
             throw new SaikuServiceException("Can't execute query: " + tq.getName(),e);
         }
     }
@@ -292,7 +289,7 @@ public class ThinQueryService implements Serializable {
         return getExport(queryName, type, cf);
     }
 
-    public byte[] getExport(String queryName, String type, ICellSetFormatter formatter) {
+    private byte[] getExport(String queryName, String type, ICellSetFormatter formatter) {
         if (StringUtils.isNotBlank(type) && context.containsKey(queryName)) {
             CellSet rs = context.get(queryName).getOlapResult();
             ThinQuery tq = context.get(queryName).getOlapQuery();
@@ -327,8 +324,7 @@ public class ThinQueryService implements Serializable {
             if (StringUtils.isNotBlank(returns)) {
                 mdx += "\r\n RETURN " + returns;
             }
-            ResultSet rs = stmt.executeQuery(mdx);
-            return rs;
+            return stmt.executeQuery(mdx);
         } catch (SQLException e) {
             throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
         } finally {
@@ -345,9 +341,7 @@ public class ThinQueryService implements Serializable {
                 final OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnection());
                 return SaikuMondrianHelper.isMondrianDrillthrough(con, query.getMdx());
             }
-        } catch (Exception e) {
-            log.warn("Error checking for DRILLTHROUGH: " + query.getName() + " DRILLTHROUGH MDX:" + query.getMdx(),e);
-        } catch (Error e) {
+        } catch (Exception | Error e) {
             log.warn("Error checking for DRILLTHROUGH: " + query.getName() + " DRILLTHROUGH MDX:" + query.getMdx(),e);
         }
         return false;
@@ -360,8 +354,7 @@ public class ThinQueryService implements Serializable {
             SaikuCube cube = query.getCube();
             final OlapConnection con = olapDiscoverService.getNativeConnection(cube.getConnection());
             stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(query.getMdx());
-            return rs;
+            return stmt.executeQuery(query.getMdx());
         } catch (SQLException e) {
             throw new SaikuServiceException("Error DRILLTHROUGH: " + query.getMdx() + " DRILLTHROUGH MDX:" + query.getMdx(),e);
         } finally {
@@ -383,7 +376,7 @@ public class ThinQueryService implements Serializable {
             stmt = con.createStatement();
             SelectNode sn = (new DefaultMdxParserImpl().parseSelect(query.getMdx()));
             String select = null;
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             if (sn.getWithList() != null && sn.getWithList().size() > 0) {
                 buf.append("WITH \n");
                 StringWriter sw = new StringWriter();
@@ -407,11 +400,11 @@ public class ThinQueryService implements Serializable {
                 }
             }
             buf.append(") ON COLUMNS \r\n");
-            buf.append("FROM [" + cube.getName() + "]\r\n");
+            buf.append("FROM [").append(cube.getName()).append("]\r\n");
             final Writer writer = new StringWriter();
             sn.getFilterAxis().unparse(new ParseTreeWriter(new PrintWriter(writer)));
             if (StringUtils.isNotBlank(writer.toString())) {
-                buf.append("WHERE " + writer.toString());
+                buf.append("WHERE ").append(writer.toString());
             }
             select = buf.toString();
             if (maxrows > 0) {
@@ -424,8 +417,7 @@ public class ThinQueryService implements Serializable {
                 select += "\r\n RETURN " + returns;
             }
             log.debug("Drill Through for query (" + queryName + ") : \r\n" + select);
-            ResultSet rs = stmt.executeQuery(select);
-            return rs;
+            return stmt.executeQuery(select);
         } catch (Exception e) {
             throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
         } finally {
@@ -484,8 +476,8 @@ public class ThinQueryService implements Serializable {
 
         if (context.containsKey(queryName)) {
             CellSet cs = context.get(queryName).getOlapResult();
-            List<SimpleCubeElement> members = new ArrayList<SimpleCubeElement>();
-            Set<Level> levels = new HashSet<Level>();
+            List<SimpleCubeElement> members = new ArrayList<>();
+            Set<Level> levels = new HashSet<>();
             boolean search = StringUtils.isNotBlank(searchString);
             preferResult = (preferResult && !search);
             searchString = search ? searchString.toLowerCase() : null;
@@ -499,7 +491,7 @@ public class ThinQueryService implements Serializable {
                             if (h.getLevels().size() == 1) {
                                 break;
                             }
-                            Set<Member> mset = new HashSet<Member>();
+                            Set<Member> mset = new HashSet<>();
                             for (Position pos : axis.getPositions()) {
                                 Member m = pos.getMembers().get(posIndex);
                                 if (!m.getLevel().getLevelType().equals(org.olap4j.metadata.Level.Type.ALL)) {
@@ -552,7 +544,7 @@ public class ThinQueryService implements Serializable {
                 final int second = (index + 1) & 1;
                 TotalAggregator[] aggregators = new TotalAggregator[axisInfos[second].maxDepth + 1];
                 for (int i = 1; i < aggregators.length - 1; i++) {
-                    List<String> aggs = query.getAggregators(axisInfos[second].uniqueLevelNames.get(i - 1));;
+                    List<String> aggs = query.getAggregators(axisInfos[second].uniqueLevelNames.get(i - 1));
                     String totalFunctionName = aggs != null && aggs.size() > 0 ? aggs.get(0) : null;
                     aggregators[i] = StringUtils.isNotBlank(totalFunctionName) ? TotalAggregator.newInstanceByFunctionName(totalFunctionName) : null;
                 }
@@ -584,7 +576,7 @@ public class ThinQueryService implements Serializable {
                     throw new SaikuServiceException("Cannot zoom in if zoom in position is empty");
                 }
 
-                Map<Hierarchy, Set<Member>> memberSelection = new HashMap<Hierarchy, Set<Member>>();
+                Map<Hierarchy, Set<Member>> memberSelection = new HashMap<>();
                 for (List<Integer> position : realPositions) {
                     for (int k = 0; k < position.size(); k++) {
                         Position p = cs.getAxes().get(k).getPositions().get(position.get(k));
@@ -592,7 +584,7 @@ public class ThinQueryService implements Serializable {
                         for (Member m : members) {
                             Hierarchy h = m.getHierarchy();
                             if (!memberSelection.containsKey(h)) {
-                                Set<Member> mset = new HashSet<Member>();
+                                Set<Member> mset = new HashSet<>();
                                 memberSelection.put(h, mset);
                             }
                             memberSelection.get(h).add(m);
@@ -634,14 +626,13 @@ public class ThinQueryService implements Serializable {
             CellSet cs = context.get(queryName).getOlapResult();
 
 
-            Set<Level> levelSet = new HashSet<Level>();
+            Set<Level> levelSet = new HashSet<>();
             if (cs == null) {
                 throw new SaikuServiceException("Cannot drill across. Last CellSet empty");
             }
             for (int i = 0; i < cellPosition.size(); i++) {
                 List<Member> members = cs.getAxes().get(i).getPositions().get(cellPosition.get(i)).getMembers();
-                for (int k = 0; k < members.size(); k++) {
-                    Member m = members.get(k);
+                for (Member m : members) {
                     QueryHierarchy qh = query.getHierarchy(m.getHierarchy());
                     if (qh.getHierarchy().getDimension().getName().equals("Measures")) {
                         Measure measure = query.getMeasure(m.getName());

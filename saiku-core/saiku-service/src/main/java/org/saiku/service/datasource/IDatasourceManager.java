@@ -30,92 +30,94 @@ import javax.jcr.RepositoryException;
 
 public interface IDatasourceManager {
 
-  public void load();
+  void load();
 
-  public void unload();
+  void unload();
 
 
-  public SaikuDatasource addDatasource( SaikuDatasource datasource ) throws Exception;
+  SaikuDatasource addDatasource(SaikuDatasource datasource) throws Exception;
 
-  public SaikuDatasource setDatasource( SaikuDatasource datasource ) throws Exception;
+  SaikuDatasource setDatasource(SaikuDatasource datasource) throws Exception;
 
-  public List<SaikuDatasource> addDatasources( List<SaikuDatasource> datasources );
+  List<SaikuDatasource> addDatasources(List<SaikuDatasource> datasources);
 
-  public boolean removeDatasource( String datasourceName );
+  boolean removeDatasource(String datasourceName);
 
-  public boolean removeSchema( String schemaName );
+  boolean removeSchema(String schemaName);
 
-  public Map<String, SaikuDatasource> getDatasources();
+  Map<String, SaikuDatasource> getDatasources();
 
-  public SaikuDatasource getDatasource( String datasourceName );
+  SaikuDatasource getDatasource(String datasourceName);
 
-  public void addSchema(String file, String path, String name) throws Exception;
+  SaikuDatasource getDatasource(String datasourceName, boolean refresh);
 
-  public List<MondrianSchema> getMondrianSchema();
+  void addSchema(String file, String path, String name) throws Exception;
 
-  public MondrianSchema getMondrianSchema(String catalog);
+  List<MondrianSchema> getMondrianSchema();
 
-  public RepositoryFile getFile(String file);
+  MondrianSchema getMondrianSchema(String catalog);
 
-  public String getFileData(String file, String username, List<String> roles);
+  RepositoryFile getFile(String file);
 
-  public String getInternalFileData(String file) throws RepositoryException;
+  String getFileData(String file, String username, List<String> roles);
 
-  public InputStream getBinaryInternalFileData(String file) throws RepositoryException;
+  String getInternalFileData(String file) throws RepositoryException;
 
-  public String saveFile(String path, Object content, String user, List<String> roles);
+  InputStream getBinaryInternalFileData(String file) throws RepositoryException;
 
-  public String removeFile(String path, String user, List<String> roles);
+  String saveFile(String path, Object content, String user, List<String> roles);
 
-  public String moveFile(String source, String target, String user, List<String> roles);
+  String removeFile(String path, String user, List<String> roles);
 
-  public String saveInternalFile(String path, Object content, String type);
+  String moveFile(String source, String target, String user, List<String> roles);
 
-  public String saveBinaryInternalFile(String path, InputStream content, String type);
+  String saveInternalFile(String path, Object content, String type);
 
-  public void removeInternalFile(String filePath);
+  String saveBinaryInternalFile(String path, InputStream content, String type);
 
-  public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles);
+  void removeInternalFile(String filePath);
 
-  public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles, String path);
+  List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles);
 
-  public void createUser(String user);
+  List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles, String path);
 
-  public void deleteFolder(String folder);
+  void createUser(String user);
 
-  public AclEntry getACL(String object, String username, List<String> roles);
+  void deleteFolder(String folder);
 
-  public void setACL(String object, String acl, String username, List<String> roles);
+  AclEntry getACL(String object, String username, List<String> roles);
 
-  public void setUserService(UserService userService);
+  void setACL(String object, String acl, String username, List<String> roles);
 
-  public List<org.saiku.database.dto.MondrianSchema> getInternalFilesOfFileType(String type) throws RepositoryException;
+  void setUserService(UserService userService);
 
-  public void createFileMixin(String type) throws RepositoryException;
+  List<org.saiku.database.dto.MondrianSchema> getInternalFilesOfFileType(String type);
 
-  public byte[] exportRepository();
+  void createFileMixin(String type) throws RepositoryException;
 
-  public void restoreRepository(byte[] data);
+  byte[] exportRepository();
 
-    public boolean hasHomeDirectory(String name);
+  void restoreRepository(byte[] data);
 
-    public void restoreLegacyFiles(byte[] data);
+    boolean hasHomeDirectory(String name);
 
-  public String getFoodmartschema();
+    void restoreLegacyFiles(byte[] data);
 
-  public void setFoodmartschema(String schema);
+  String getFoodmartschema();
 
-  public void setFoodmartdir(String dir);
+  void setFoodmartschema(String schema);
 
-  public String getFoodmartdir();
+  void setFoodmartdir(String dir);
 
-  public String getDatadir();
+  String getFoodmartdir();
 
-  public void setDatadir(String dir);
+  String getDatadir();
 
-  public void setFoodmarturl(String foodmarturl);
+  void setDatadir(String dir);
 
-  public String getFoodmarturl();
+  void setFoodmarturl(String foodmarturl);
+
+  String getFoodmarturl();
 
 
   String getEarthquakeUrl();

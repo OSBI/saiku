@@ -6,12 +6,12 @@ import org.saiku.service.olap.totals.aggregators.TotalAggregator;
 
 
 public class TotalNode {
-  final String captions[];
-  final TotalAggregator totals[][];
-  final boolean showsTotals;
-  final int cellsAdded;
-  int span;
-  int width;
+  private final String[] captions;
+  private final TotalAggregator[][] totals;
+  private final boolean showsTotals;
+  private final int cellsAdded;
+  private int span;
+  private int width;
 
   public TotalNode( String[] captions, Measure[] measures, TotalAggregator aggregatorTemplate, FormatList formatList,
                     int count ) {
@@ -51,7 +51,7 @@ public class TotalNode {
     this.span = span;
   }
 
-  public void appendSpan( int append ) {
+  private void appendSpan(int append) {
     this.span += append;
   }
 
@@ -63,7 +63,7 @@ public class TotalNode {
     this.width = width;
   }
 
-  public void appendWidth( int append ) {
+  private void appendWidth(int append) {
     this.width += append;
   }
 
@@ -80,7 +80,7 @@ public class TotalNode {
     return totals;
   }
 
-  public int getRenderedCount() {
+  private int getRenderedCount() {
     return span + cellsAdded;
   }
 }

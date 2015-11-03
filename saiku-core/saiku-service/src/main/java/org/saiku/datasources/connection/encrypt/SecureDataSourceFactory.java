@@ -18,7 +18,7 @@ import javax.naming.Reference;
 
 import org.apache.commons.dbcp.BasicDataSourceFactory;
 
-public class SecureDataSourceFactory extends BasicDataSourceFactory
+class SecureDataSourceFactory extends BasicDataSourceFactory
 {
 
     private final static String PROP_DEFAULTAUTOCOMMIT = "defaultAutoCommit";
@@ -86,8 +86,6 @@ public class SecureDataSourceFactory extends BasicDataSourceFactory
      * 
      * @param obj The possibly null object containing location or reference information that can be used in creating an object
      * @param name The name of this object relative to <code>nameCtx</code>
-     * @param nameCts The context relative to which the <code>name</code> parameter is specified, or <code>null</code> if
-     *            <code>name</code> is relative to the default initial context
      * @param environment The possibly null environment that is used in creating this object
      * @exception Exception if an exception occurs creating the instance
      */
@@ -108,16 +106,13 @@ public class SecureDataSourceFactory extends BasicDataSourceFactory
         }
 
         Properties properties = new Properties();
-        for ( int i = 0; i < ALL_PROPERTIES.length; i++ )
-        {
-            String propertyName = ALL_PROPERTIES[ i ];
-            RefAddr ra = ref.get( propertyName );
-            if ( ra != null )
-            {
-                String propertyValue = ra.getContent().toString();
-                properties.setProperty( propertyName, propertyValue );
-            }
+      for (String propertyName : ALL_PROPERTIES) {
+        RefAddr ra = ref.get(propertyName);
+        if (ra != null) {
+          String propertyValue = ra.getContent().toString();
+          properties.setProperty(propertyName, propertyValue);
         }
+      }
 
         decryptPassword( properties );
 

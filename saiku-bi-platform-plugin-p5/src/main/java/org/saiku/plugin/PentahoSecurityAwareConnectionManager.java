@@ -39,7 +39,7 @@ public class PentahoSecurityAwareConnectionManager extends AbstractConnectionMan
 
 	private Map<String, ISaikuConnection> connections = new HashMap<String, ISaikuConnection>();
 
-	private List<String> errorConnections = new ArrayList<String>();
+	private final List<String> errorConnections = new ArrayList<String>();
 
 	private boolean userAware = true;
 

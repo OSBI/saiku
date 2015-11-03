@@ -13,7 +13,7 @@ public abstract class TotalAggregator {
   private static final Map<String, TotalAggregator> all;
 
   static {
-    Map<String, TotalAggregator> tmp = new HashMap<String, TotalAggregator>();
+    Map<String, TotalAggregator> tmp = new HashMap<>();
     tmp.put( "sum", new SumAggregator( null ) );
     tmp.put( "max", new MaxAggregator( null ) );
     tmp.put( "min", new MinAggregator( null ) );
@@ -22,9 +22,9 @@ public abstract class TotalAggregator {
   }
 
   private String formattedValue;
-  protected Format format;
+  final Format format;
 
-  protected TotalAggregator( Format format ) {
+  TotalAggregator(Format format) {
     this.format = format;
   }
 
@@ -52,7 +52,7 @@ public abstract class TotalAggregator {
 
   protected abstract void addData( double data );
 
-  public abstract Double getValue();
+  protected abstract Double getValue();
 
   public abstract TotalAggregator newInstance( Format format, Measure measure );
 
@@ -76,7 +76,7 @@ public abstract class TotalAggregator {
     return newInstance( "" );
   }
 
-  public TotalAggregator newInstance( String formatString ) {
+  private TotalAggregator newInstance(String formatString) {
     return newInstance( new Format( formatString, SaikuProperties.locale ), null );
   }
 

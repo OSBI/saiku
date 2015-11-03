@@ -9,7 +9,7 @@ public class ThinDetails {
 	
 	private ThinQueryModel.AxisLocation axis;
 	private Location location = Location.BOTTOM;
-	private List<ThinMeasure> measures = new ArrayList<ThinMeasure>();
+	private List<ThinMeasure> measures = new ArrayList<>();
 	
 	public enum Location {
 		TOP,
@@ -22,9 +22,9 @@ public class ThinDetails {
 		this.axis = axis;
 		this.measures = measures;
 		this.location = location;
-	};
-	
-	/**
+	}
+
+  /**
 	 * @return the axis
 	 */
 	public ThinQueryModel.AxisLocation getAxis() {

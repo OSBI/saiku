@@ -10,12 +10,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     "file") })
 public interface IRepositoryObject {
 	
-	public enum Type {
+	enum Type {
 		FOLDER, FILE
 	}
 	
-	public Type getType();
-	public String getName();
-	public String getId();
+	Type getType();
+	String getName();
+	String getId();
 
 }

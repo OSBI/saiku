@@ -82,8 +82,7 @@ public interface IRepositoryManager {
 
     RepositoryFile getFile(String fileUrl);
 
-    List<IRepositoryObject> getAllFiles(List<String> type, String username, List<String> roles) throws
-        RepositoryException;
+    List<IRepositoryObject> getAllFiles(List<String> type, String username, List<String> roles);
 
     List<IRepositoryObject> getAllFiles(List<String> type, String username, List<String> roles, String path) throws
         RepositoryException;

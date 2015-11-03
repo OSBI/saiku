@@ -17,17 +17,17 @@ import java.util.HashSet;
 public class ResourceManager {
 
 
-  public static ResourceManager instance;
+  private static ResourceManager instance;
 
-  public static final String PLUGIN_DIR = PentahoSystem.getApplicationContext().getSolutionPath("system/saiku/");
-  public static final String SOLUTION_DIR = PentahoSystem.getApplicationContext().getSolutionPath("saiku/");
+  private static final String PLUGIN_DIR = PentahoSystem.getApplicationContext().getSolutionPath("system/saiku/");
+  private static final String SOLUTION_DIR = PentahoSystem.getApplicationContext().getSolutionPath("saiku/");
   
   private static final HashSet<String> CACHEABLE_EXTENSIONS = new HashSet<String>();
   private static final HashMap<String, String> cacheContainer = new HashMap<String, String>();
 
   private boolean isCacheEnabled = true;
 
-  public ResourceManager() {
+  private ResourceManager() {
 
     CACHEABLE_EXTENSIONS.add("html");
 
@@ -46,7 +46,7 @@ public class ResourceManager {
     return instance;
   }
 
-  public String getResourceAsString(final String path, final HashMap<String, String> tokens) throws IOException {
+  private String getResourceAsString(final String path, final HashMap<String, String> tokens) throws IOException {
 
     final String extension = getResourceExtension(path);
     final String cacheKey = buildCacheKey(path, tokens);

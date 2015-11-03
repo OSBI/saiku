@@ -57,11 +57,11 @@ public class OlapQuery implements IQuery {
 
     private static final String SCENARIO = "Scenario";
 
-    private Query query;
-    private Properties properties = new Properties();
-    private Map<String, String> totalsFunctions = new HashMap<String, String>();
+    private final Query query;
+    private final Properties properties = new Properties();
+    private final Map<String, String> totalsFunctions = new HashMap<>();
 
-    private SaikuCube cube;
+    private final SaikuCube cube;
 
     private Scenario scenario;
 
@@ -73,7 +73,7 @@ public class OlapQuery implements IQuery {
 
     private OlapStatement statement = null;
 
-    private OlapConnection connection;
+    private final OlapConnection connection;
 
     private ICellSetFormatter formatter;
 
@@ -470,8 +470,7 @@ public class OlapQuery implements IQuery {
     }
 
     public String getTotalFunction(String uniqueLevelName) {
-        String retVal = totalsFunctions.get(uniqueLevelName);
-        return retVal;
+        return totalsFunctions.get(uniqueLevelName);
     }
 
     public Map<String, String> getTotalFunctions() {

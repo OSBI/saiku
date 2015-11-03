@@ -10,7 +10,7 @@ package org.saiku.license;
 /**
  * Created by bugg on 30/06/14.
  */
-public class LicenseUtils {
+class LicenseUtils {
 
   private LicenseUtils(){
   }

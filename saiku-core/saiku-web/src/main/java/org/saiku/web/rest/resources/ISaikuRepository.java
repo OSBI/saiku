@@ -23,8 +23,8 @@ public interface ISaikuRepository {
 	 */
 	@GET
 	@Produces({ "application/json" })
-	public List<IRepositoryObject> getRepository(
-			@QueryParam("path") String path, @QueryParam("type") String type);
+	List<IRepositoryObject> getRepository(
+		@QueryParam("path") String path, @QueryParam("type") String type);
 
 	/**
 	 * Load a resource.
@@ -34,7 +34,7 @@ public interface ISaikuRepository {
 	@GET
 	@Produces({ "text/plain" })
 	@Path("/resource")
-	public Response getResource(@QueryParam("file") String file);
+	Response getResource(@QueryParam("file") String file);
 
 	/**
 	 * Save a resource.
@@ -44,8 +44,8 @@ public interface ISaikuRepository {
 	 */
 	@POST
 	@Path("/resource")
-	public Response saveResource(@FormParam("file") String file,
-			@FormParam("content") String content);
+	Response saveResource(@FormParam("file") String file,
+						  @FormParam("content") String content);
 
 	/**
 	 * Delete a resource.
@@ -54,6 +54,6 @@ public interface ISaikuRepository {
 	 */
 	@DELETE
 	@Path("/resource")
-	public Response deleteResource(@QueryParam("file") String file);
+	Response deleteResource(@QueryParam("file") String file);
 
 }

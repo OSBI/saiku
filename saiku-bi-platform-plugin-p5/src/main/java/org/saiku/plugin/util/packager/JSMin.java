@@ -50,11 +50,11 @@ import java.io.OutputStream;
 import java.io.PushbackInputStream;
 
 
-public class JSMin {
+class JSMin {
 	private static final int EOF = -1;
 
-	private PushbackInputStream in;
-	private OutputStream out;
+	private final PushbackInputStream in;
+	private final OutputStream out;
 
 	private int theA;
 	private int theB;
@@ -68,7 +68,7 @@ public class JSMin {
 	 * isAlphanum -- return true if the character is a letter, digit,
 	 * underscore, dollar sign, or non-ASCII character.
 	 */
-	static boolean isAlphanum(int c) {
+	private static boolean isAlphanum(int c) {
 		return ( (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') ||
 				 (c >= 'A' && c <= 'Z') || c == '_' || c == '$' || c == '\\' ||
 				 c > 126);
@@ -79,7 +79,7 @@ public class JSMin {
 	 * the character is a control character, translate it to a space or
 	 * linefeed.
 	 */
-	int get() throws IOException {
+	private int get() throws IOException {
 		int c = in.read();
 
 		if (c >= ' ' || c == '\n' || c == EOF) {
@@ -98,7 +98,7 @@ public class JSMin {
 	/**
 	 * Get the next character without getting it.
 	 */
-	int peek() throws IOException {
+	private int peek() throws IOException {
 		int lookaheadChar = in.read();
 		in.unread(lookaheadChar);
 		return lookaheadChar;
@@ -108,7 +108,7 @@ public class JSMin {
 	 * next -- get the next character, excluding comments. peek() is used to see
 	 * if a '/' is followed by a '/' or '*'.
 	 */
-	int next() throws IOException, UnterminatedCommentException {
+	private int next() throws IOException, UnterminatedCommentException {
 		int c = get();
 		if (c == '/') {
 			switch (peek()) {
@@ -151,7 +151,7 @@ public class JSMin {
 	 * preceded by ( or , or =.
 	 */
 
-	void action(int d) throws IOException, UnterminatedRegExpLiteralException,
+	private void action(int d) throws IOException, UnterminatedRegExpLiteralException,
 			UnterminatedCommentException, UnterminatedStringLiteralException {
 		switch (d) {
 		case 1:
@@ -277,13 +277,13 @@ public class JSMin {
 		out.flush();
 	}
 
-	class UnterminatedCommentException extends Exception {
+	private class UnterminatedCommentException extends Exception {
 	}
 
-	class UnterminatedStringLiteralException extends Exception {
+	private class UnterminatedStringLiteralException extends Exception {
 	}
 
-	class UnterminatedRegExpLiteralException extends Exception {
+	private class UnterminatedRegExpLiteralException extends Exception {
 	}
 
 	public static void main(String arg[]) {

@@ -46,7 +46,7 @@ public class OlapMetaExplorer {
 
 	private static final Logger log = LoggerFactory.getLogger(OlapMetaExplorer.class);
 
-	private IConnectionManager connections;
+	private final IConnectionManager connections;
 
 	public OlapMetaExplorer(IConnectionManager ic) {
 		connections = ic;
@@ -56,12 +56,12 @@ public class OlapMetaExplorer {
 		OlapConnection olapcon = connections.getOlapConnection(connectionName);
 		SaikuConnection connection;
 		if (olapcon != null) {
-			List<SaikuCatalog> catalogs = new ArrayList<SaikuCatalog>();
+			List<SaikuCatalog> catalogs = new ArrayList<>();
 			try {
 					for (Catalog cat : olapcon.getOlapCatalogs()) {
-						List<SaikuSchema> schemas = new ArrayList<SaikuSchema>();
+						List<SaikuSchema> schemas = new ArrayList<>();
 						for (Schema schem : cat.getSchemas()) {
-							List<SaikuCube> cubes = new ArrayList<SaikuCube>();
+							List<SaikuCube> cubes = new ArrayList<>();
 							for (Cube cub : schem.getCubes()) {
 								cubes.add(new SaikuCube(connectionName, cub.getUniqueName(), cub.getName(), cub.getCaption(), cat.getName(), schem.getName(), cub.isVisible()));
 							}
@@ -73,7 +73,7 @@ public class OlapMetaExplorer {
                             ResultSet cubesResult = olapDbMeta.getCubes(cat.getName(), null, null);
 
 							try {
-								List<SaikuCube> cubes = new ArrayList<SaikuCube>();
+								List<SaikuCube> cubes = new ArrayList<>();
 								while(cubesResult.next()) {
 
 									cubes.add(new SaikuCube(connectionName, cubesResult.getString("CUBE_NAME"),cubesResult.getString("CUBE_NAME"),
@@ -107,7 +107,7 @@ public class OlapMetaExplorer {
 	}
 
 	public List<SaikuConnection> getConnections(List<String> connectionNames) throws SaikuOlapException {
-		List<SaikuConnection> connectionList = new ArrayList<SaikuConnection>();
+		List<SaikuConnection> connectionList = new ArrayList<>();
 		for (String connectionName : connectionNames) {
 			connectionList.add(getConnection(connectionName));
 		}
@@ -115,7 +115,7 @@ public class OlapMetaExplorer {
 	}
 
 	public List<SaikuConnection> getAllConnections() throws SaikuOlapException {
-		List<SaikuConnection> cubesList = new ArrayList<SaikuConnection>();
+		List<SaikuConnection> cubesList = new ArrayList<>();
 		for (String connectionName : connections.getAllOlapConnections().keySet()) {
 			cubesList.add(getConnection(connectionName));
 		}
@@ -126,7 +126,7 @@ public class OlapMetaExplorer {
 
 	public List<SaikuCube> getCubes(String connectionName) throws SaikuOlapException {
 		OlapConnection olapcon = connections.getOlapConnection(connectionName);
-		List<SaikuCube> cubes = new ArrayList<SaikuCube>();
+		List<SaikuCube> cubes = new ArrayList<>();
 		if (olapcon != null) {
 			try {
 				for (Catalog cat : olapcon.getOlapCatalogs()) {
@@ -146,7 +146,7 @@ public class OlapMetaExplorer {
 	}
 
 	public List<SaikuCube> getCubes(List<String> connectionNames) throws SaikuOlapException {
-		List<SaikuCube> cubesList = new ArrayList<SaikuCube>();
+		List<SaikuCube> cubesList = new ArrayList<>();
 		for (String connectionName : connectionNames) {
 			cubesList.addAll(getCubes(connectionName));
 		}
@@ -155,7 +155,7 @@ public class OlapMetaExplorer {
 	}
 
 	public List<SaikuCube> getAllCubes() throws SaikuOlapException {
-		List<SaikuCube> cubes = new ArrayList<SaikuCube>();
+		List<SaikuCube> cubes = new ArrayList<>();
 		for (String connectionName : connections.getAllOlapConnections().keySet()) {
 			cubes.addAll(getCubes(connectionName));
 		}
@@ -240,7 +240,7 @@ public class OlapMetaExplorer {
 
 	public List<SaikuMember> getHierarchyRootMembers(SaikuCube cube, String hierarchyName) throws SaikuOlapException {
 		Cube nativeCube = getNativeCube(cube);
-		List<SaikuMember> members = new ArrayList<SaikuMember>();
+		List<SaikuMember> members = new ArrayList<>();
 		Hierarchy h = findHierarchy(hierarchyName, nativeCube);
 
 		if (h == null) {
@@ -279,7 +279,7 @@ public class OlapMetaExplorer {
                 return (ObjectUtil.convertLevels(h.getLevels()));
 			}
 		}
-		return new ArrayList<SaikuLevel>();
+		return new ArrayList<>();
 
 	}
 
@@ -317,13 +317,13 @@ public class OlapMetaExplorer {
 							log.debug("Found " + simpleMembers.size() + " members using SQL lookup for level " + level);
 							return simpleMembers;
 						} else {
-							return new ArrayList<SimpleCubeElement>();
+							return new ArrayList<>();
 						}
 					}
 					
 				}
 				if (search || searchLimit > 0) {
-					List<Member> foundMembers = new ArrayList<Member>();
+					List<Member> foundMembers = new ArrayList<>();
 				  List<Member> lokuplist;
 				  if(SaikuMondrianHelper.isMondrianConnection(con) &&
 					 SaikuMondrianHelper.getMondrianServer(con).getVersion().getMajorVersion()>=4) {
@@ -364,12 +364,12 @@ public class OlapMetaExplorer {
 			throw new SaikuOlapException("Cannot get all members",e);
 		}
 
-		return new ArrayList<SimpleCubeElement>();
+		return new ArrayList<>();
 
 	}
 
 	public List<SaikuMember> getMemberChildren(SaikuCube cube, String uniqueMemberName) throws SaikuOlapException {
-		List<SaikuMember> members = new ArrayList<SaikuMember>();
+		List<SaikuMember> members = new ArrayList<>();
 		try {
 			Cube nativeCube = getNativeCube(cube);
 			List<IdentifierSegment> memberList = IdentifierNode.parseIdentifier(uniqueMemberName).getSegmentList();
@@ -388,7 +388,7 @@ public class OlapMetaExplorer {
 	}
 
 	public List<SaikuMember> getAllMeasures(SaikuCube cube) throws SaikuOlapException {
-		List<SaikuMember> measures = new ArrayList<SaikuMember>();
+		List<SaikuMember> measures = new ArrayList<>();
 		try {
 			Cube nativeCube = getNativeCube(cube);
 			for (Measure measure : nativeCube.getMeasures()) {

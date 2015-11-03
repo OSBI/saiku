@@ -57,15 +57,25 @@ var SaveQuery = Modal.extend({
             }
         }
         this.query = args.query;
+        // this.message = _.template(
+        //     "<form id='save_query_form'>" +
+        //     "<label for='name' class='i18n'>File:</label>&nbsp;" +
+        //     "<input type='text' name='name' value='<%= name %>' />" +
+        //     "<div class='RepositoryObjects'><span class='i18n'>Loading...</span></div>" +
+        //     "<br />"+
+        //     "</form>"+
+        //     '<div class="box-search-file" style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
+        //     ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>')({ name: full_path });
+
         this.message = _.template(
             "<form id='save_query_form'>" +
+            '<div class="box-search-file" style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
+            ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>' +
+            "<div class='RepositoryObjects'><span class='i18n'>Loading...</span></div>" +
             "<label for='name' class='i18n'>File:</label>&nbsp;" +
             "<input type='text' name='name' value='<%= name %>' />" +
-            "<div class='RepositoryObjects'><span class='i18n'>Loading...</span></div>" +
             "<br />"+
-            "</form>"+
-            '<div style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
-            ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>')({ name: full_path });
+            "</form>")({ name: full_path });
 
         _.extend(this.options, {
             title: "Save query"
@@ -84,6 +94,10 @@ var SaveQuery = Modal.extend({
             $(this.el).dialog( 'option', 'position', 'center' );
             $(this.el).parents('.ui-dialog').css({ width: "550px", top: perc+'%' });
             self.repository.fetch( );
+
+            if (Settings.REPOSITORY_LAZY) {
+                this.$el.find('.box-search-file').hide();
+            }
         } );
 
         // Maintain `this`
@@ -105,6 +119,8 @@ var SaveQuery = Modal.extend({
         );
 
         this.context_menu_disabled();
+        this.select_last_location();
+
     },
 
     context_menu_disabled: function() {
@@ -120,6 +136,8 @@ var SaveQuery = Modal.extend({
 
     toggle_folder: function( event ) {
         var $target = $( event.currentTarget );
+        var path = $target.children('.folder_row').find('a').attr('href');
+        path = path.replace('#', '');
         this.unselect_current_selected_folder( );
         $target.children('.folder_row').addClass( 'selected' );
         var f_name = $target.find( 'a' ).attr('href').replace('#', '');
@@ -131,11 +149,39 @@ var SaveQuery = Modal.extend({
         if( isClosed ) {
             $target.children( '.folder_row' ).find('.sprite').removeClass( 'collapsed' );
             $queries.removeClass( 'hide' );
+            if (Settings.REPOSITORY_LAZY) {
+                this.fetch_lazyload($target, path);
+            }
         } else {
             $target.children( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
             $queries.addClass( 'hide' );
+            if (Settings.REPOSITORY_LAZY) {
+                $target.find('.folder_content').remove();
+            }
         }
+        this.set_last_location(path);
+
         return false;
+    },
+
+    fetch_lazyload: function(target, path) {
+        var repositoryLazyLoad = new RepositoryLazyLoad({}, { dialog: this, folder: target, path: path });
+        repositoryLazyLoad.fetch();
+        Saiku.ui.block('Loading...');
+    },
+    
+    template_repository_folder_lazyload: function(folder, repository) {
+        folder.find('.folder_content').remove();
+        folder.append(
+            _.template($('#template-repository-folder-lazyload').html())({
+                repoObjects: repository
+            })
+        );
+    },
+
+    populate_lazyload: function(folder, repository) {
+        Saiku.ui.unblock();
+        this.template_repository_folder_lazyload(folder, repository);
     },
 
     set_name: function(folder, file) {
@@ -193,9 +239,13 @@ var SaveQuery = Modal.extend({
     select_name: function( event ) {
         var $currentTarget = $( event.currentTarget );
         this.unselect_current_selected_folder( );
-        $currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').addClass( 'selected' );
+        //$currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').addClass( 'selected' );
+        $currentTarget.addClass('selected');
         var name = $currentTarget.find( 'a' ).attr('href').replace('#','');
         this.set_name(null, name);
+        var path = $currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').find( 'a' ).attr('href');
+        path = path.replace('#' , '');
+        this.set_last_location(path);
         return false;
     },
 
@@ -217,31 +267,36 @@ var SaveQuery = Modal.extend({
 		var self = this;
 
         var name = $(this.el).find('input[name="name"]').val();
-        if (name !== null && name.length > 0) {
-			this.repository.fetch({success: function(collection, response){
+        if (this.folder_name !== null && this.folder_name !== undefined && this.folder_name.length > 0) {
+            if (name !== null && name.length > 0) {
+    			this.repository.fetch({success: function(collection, response){
 
 
-				var paths=[];
-				paths.push.apply(paths, self.get_files(response));
-				if(paths.indexOf(name)> -1 && self.query.get("name")!=name){
-					new OverwriteModal({name: name, foldername: foldername, parent: self}).render().open();
-				}
-				else{
-					 self.query.set({ name: name, folder: foldername });
-					 self.query.trigger('query:save');
-					 self.copy_to_repository();
-					 event.stopPropagation();
-					 event.preventDefault();
-					 return false;
-				}
+    				var paths=[];
+    				paths.push.apply(paths, self.get_files(response));
+    				if(paths.indexOf(name)> -1 && self.query.get("name")!=name){
+    					new OverwriteModal({name: name, foldername: foldername, parent: self}).render().open();
+    				}
+    				else{
+    					 self.query.set({ name: name, folder: foldername });
+    					 self.query.trigger('query:save');
+    					 self.copy_to_repository();
+    					 event.stopPropagation();
+    					 event.preventDefault();
+    					 return false;
+    				}
 
-				}});
-
-
+    				}});
 
 
-        } else {
-            alert("You need to enter a name!");
+
+
+            } else {
+                alert("You need to enter a name!");
+            }
+        }
+        else {
+            alert("You need select a folder!");
         }
 
 return false;
@@ -292,5 +347,40 @@ return false;
             file: file,
             content: JSON.stringify(this.query.model)
         })).save({},{ success:  this.close, error: error, dataType: 'text'  });
+    },
+
+    set_last_location: function(path){
+        if (typeof localStorage !== "undefined" && localStorage && !Settings.REPOSITORY_LAZY) {
+            if (!Settings.LOCALSTORAGE_EXPIRATION || Settings.LOCALSTORAGE_EXPIRATION === 0) {
+                localStorage.clear();
+            }
+            else {
+                localStorage.setItem('last-folder', path);
+            }
+
+        }
+    },
+
+    select_last_location: function(){
+        if(localStorage.getItem('last-folder') && !Settings.REPOSITORY_LAZY){
+            var p = $(this.el).find('a[href="\\#'+localStorage.getItem('last-folder')+'"]')
+
+            var path = p.parent().parent().has('.folder').children('.folder_row').find('.sprite').removeClass('collapsed');
+
+            var parents = path.parentsUntil($("div.RepositoryObjects"));
+
+            parents.each(function () {
+                if ($(this).hasClass('folder')) {
+                    $(this).children('.folder_row').find('.sprite').removeClass('collapsed');
+                    $(this).children('.folder_content').removeClass('hide');
+
+                }
+
+            });
+
+        }
+
+
+
     }
 });

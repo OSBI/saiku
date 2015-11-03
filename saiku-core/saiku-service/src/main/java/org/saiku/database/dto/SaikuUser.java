@@ -4,10 +4,10 @@ import java.lang.String; /**
  * Created by bugg on 01/05/14.
  */
 public class SaikuUser {
-  String username;
-  String email;
-  String password;
-  String[] roles;
+  private String username;
+  private String email;
+  private String password;
+  private String[] roles;
     private int id;
 
     public String getUsername() {

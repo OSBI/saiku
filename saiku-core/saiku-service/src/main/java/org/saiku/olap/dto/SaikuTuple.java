@@ -47,7 +47,7 @@ public class SaikuTuple {
   }
 
   public List<SaikuMember> getOtherSaikuMembers( String dimensionUniqueName ) {
-    List<SaikuMember> others = new ArrayList<SaikuMember>();
+    List<SaikuMember> others = new ArrayList<>();
     for ( SaikuMember m : saikuMembers ) {
       if ( !m.getDimensionUniqueName().equals( dimensionUniqueName ) ) {
         others.add( m );

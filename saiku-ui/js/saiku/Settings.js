@@ -41,6 +41,7 @@ var Settings = {
         'saiku.olap.query.filter' : true,
         'saiku.olap.result.formatter' : "flattened"
     },
+    REPOSITORY_LAZY: false,
     TABLE_LAZY: true,          // Turn lazy loading off / on
     TABLE_LAZY_SIZE: 1000,     // Initial number of items to be rendered
     TABLE_LAZY_LOAD_ITEMS: 20,       // Additional item per scroll
@@ -179,6 +180,15 @@ if (!Array.prototype.indexOf)
     }
     return -1;
   };
+}
+
+/**
+ * IE9, 10 and 11 doesn't have window.location.origin
+ */
+if (!window.location.origin) {
+    window.location.origin = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+    // force update
+    Settings.BASE_URL = window.location.origin;
 }
 
 var tagsToReplace = {

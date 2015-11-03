@@ -58,7 +58,7 @@ public class LicenseException extends Exception {
    *                Throwable.getCause() method). (A null value is permitted,
    *                and indicates that the cause is nonexistent or unknown.)
    */
-  public LicenseException(String message, Throwable cause) {
+  private LicenseException(String message, Throwable cause) {
     super(message, cause);
   }
 

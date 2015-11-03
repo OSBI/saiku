@@ -18,10 +18,10 @@ public class ThinQuery implements ISaikuQuery {
 	private SaikuCube cube;
 	private String mdx;
 	private String name;
-	private Map<String, String> parameters = new HashMap<String, String>();
-	private Map<String, String> plugins = new HashMap<String, String>();
-	private Map<String, Object> properties = new HashMap<String, Object>();
-	private Map<String, String> metadata = new HashMap<String, String>();
+	private Map<String, String> parameters = new HashMap<>();
+	private Map<String, String> plugins = new HashMap<>();
+	private Map<String, Object> properties = new HashMap<>();
+	private Map<String, String> metadata = new HashMap<>();
 	
 	private String queryType = "OLAP";
 	
@@ -32,9 +32,9 @@ public class ThinQuery implements ISaikuQuery {
 	
 	private Type type;
 	
-	public ThinQuery() {};
-	
-	public ThinQuery(String name, SaikuCube cube) {
+	public ThinQuery() {}
+
+  public ThinQuery(String name, SaikuCube cube) {
 		this(name, cube, new ThinQueryModel());
 	}
 	public ThinQuery(String name, SaikuCube cube, ThinQueryModel queryModel) {
@@ -179,10 +179,8 @@ public class ThinQuery implements ISaikuQuery {
 	}
 	
 	public boolean hasAggregators() {
-		if (Type.QUERYMODEL.equals(type) && queryModel != null && queryModel.hasAggregators())
-			return true;
-		
-		return false;
+	  return Type.QUERYMODEL.equals(type) && queryModel != null && queryModel.hasAggregators();
+
 	}
 
 	/**

@@ -25,9 +25,9 @@ import javax.ws.rs.Path;
 @Path("/saiku/api/{username}/query")
 public class PentahoQueryResource extends Query2Resource {
   private static final Logger log = LoggerFactory.getLogger(PentahoQueryResource.class);
-  PentahoAuditHelper pah = new PentahoAuditHelper();
-  UserService userService;
-  ObjectMapper mapper = new ObjectMapper();
+  private final PentahoAuditHelper pah = new PentahoAuditHelper();
+  private UserService userService;
+  private final ObjectMapper mapper = new ObjectMapper();
 
   /**
    *
@@ -44,7 +44,8 @@ public class PentahoQueryResource extends Query2Resource {
     Map<String,String> logelements = new HashMap<String, String>();
     logelements.put("username", userService.getActiveUsername());
 
-    UUID uuid = pah.startAudit("Saiku", "Execute Query", this.getClass().getName(), this.toString(), this.toString(),
+    UUID uuid = pah.startAudit("Saiku", "Execute Query", this.getClass().getName(), userService.getActiveUsername(),
+        userService.getSessionId(),
         createLogEntry(logelements),
         getLogger());
     QueryResult result = super.execute(tq);
@@ -53,7 +54,7 @@ public class PentahoQueryResource extends Query2Resource {
     logelements.put("Username", userService.getActiveUsername());
     logelements.put("Executed MDX", ((ThinQuery)result.getQuery()).getMdx());
     //logelements.put("Result Set", resultToJson(result));
-    pah.endAudit("Saiku", "Execute Query", this.getClass().getName(), this.toString(), this.toString(),
+    pah.endAudit("Saiku", "Execute Query", this.getClass().getName(), userService.getActiveUsername(), userService.getSessionId(),
         createLogEntry(logelements), getLogger(), start,
             uuid,
             end);

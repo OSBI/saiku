@@ -1,6 +1,6 @@
 # [Saiku UI](http://www.meteorite.bi) [![Saiku Analytics on Slack](http://chat.meteorite.bi/badge.svg)](http://chat.meteorite.bi/)
 
-[![saiku-view](http://www.meteorite.bi/images/chart1.jpg)](http://demo.saikuanalytics.com)
+[![saiku-view](http://www.meteorite.bi/images/chart1.jpg)](http://www2.meteorite.bi/saiku-demo/)
 
 A user interface for the analytical tool Saiku. <br />
 For more information, see [Saiku](http://www.meteorite.bi).
@@ -89,7 +89,7 @@ grunt watch
 * [Saiku User Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/user)
 * [<strike>Saiku Forums</strike>](http://forums.meteorite.bi/)
 * [Stack Overflow](http://stackoverflow.com/questions/tagged/saiku)
-* [Freenode IRC - Channel: #saiku](http://irc.lc/freenode/%23saiku/t4nk@)
+* [Freenode IRC - Channel: #saiku](http://webchat.freenode.net/?channels=##saiku)
 
 ## Browser Support
 

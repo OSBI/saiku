@@ -86,7 +86,7 @@ public class SaikuLevel extends AbstractSaikuObject {
   public Map<String, String> getAnnotations() {
     Map<String, String> m = null;
     if (annotations != null) {
-      m = new HashMap<String, String>();
+      m = new HashMap<>();
       for (Map.Entry<String, String> entry : annotations.entrySet()) {
         m.put(entry.getKey(), entry.getValue());
       }

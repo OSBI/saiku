@@ -9,14 +9,14 @@ import java.util.Collection;
  */
 public interface UserDAO {
 
-    public SaikuUser insert(SaikuUser user);
-    public void insertRole(SaikuUser user);
-    public void deleteUser(SaikuUser user);
-    public void deleteRole(SaikuUser user);
-    public String[] getRoles(SaikuUser user);
-    public SaikuUser findByUserId(int userId);
-    public Collection findAllUsers();
-    public void deleteUser(String username);
-    public SaikuUser updateUser(SaikuUser user, boolean updatepassword);
-    public void updateRoles(SaikuUser user);
+    SaikuUser insert(SaikuUser user);
+    void insertRole(SaikuUser user);
+    void deleteUser(SaikuUser user);
+    void deleteRole(SaikuUser user);
+    String[] getRoles(SaikuUser user);
+    SaikuUser findByUserId(int userId);
+    Collection findAllUsers();
+    void deleteUser(String username);
+    SaikuUser updateUser(SaikuUser user, boolean updatepassword);
+    void updateRoles(SaikuUser user);
 }

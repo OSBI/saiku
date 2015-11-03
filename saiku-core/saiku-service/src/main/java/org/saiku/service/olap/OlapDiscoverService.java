@@ -63,7 +63,7 @@ public class OlapDiscoverService implements Serializable {
 
 
   public List<SaikuConnection> getConnection(String connectionName) {
-    List<SaikuConnection> connections = new ArrayList<SaikuConnection>();
+    List<SaikuConnection> connections = new ArrayList<>();
     try {
       SaikuConnection c = metaExplorer.getConnection(connectionName);
       connections.add(c);
@@ -207,7 +207,7 @@ public class OlapDiscoverService implements Serializable {
   }
 
   public Map<String, Object> getProperties(SaikuCube cube) {
-    Map<String, Object> properties = new HashMap<String, Object>();
+    Map<String, Object> properties = new HashMap<>();
     try {
       Cube c = getNativeCube(cube);
       OlapConnection con = c.getSchema().getCatalog().getDatabase().getOlapConnection();

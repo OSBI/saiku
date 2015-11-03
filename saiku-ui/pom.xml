@@ -3,11 +3,11 @@
 <parent>
 		<artifactId>saiku</artifactId>
 		<groupId>org.saikuanalytics</groupId>
-		<version>3.6.7</version>
+		<version>3.7</version>
 	</parent>
 	<artifactId>saiku-ui</artifactId>
 	<packaging>pom</packaging>
-	<version>3.6.7</version>
+	<version>3.7</version>
         <properties>
 	<checkstyle.skip>true</checkstyle.skip>
 	 <build.prod>false</build.prod>
@@ -66,7 +66,6 @@
 						<jsSourceInclude>views/AddFolderModal.js</jsSourceInclude>
 						<jsSourceInclude>views/FilterModal.js</jsSourceInclude>
 						<jsSourceInclude>views/CustomFilterModal.js</jsSourceInclude>
-						<jsSourceInclude>views/MeasuresModal.js</jsSourceInclude>
 						<jsSourceInclude>views/CalculatedMemberModal.js</jsSourceInclude>
 						<jsSourceInclude>views/DataSourcesModal.js</jsSourceInclude>
 						<jsSourceInclude>views/QueryToolbar.js</jsSourceInclude>
@@ -202,6 +201,7 @@
 											<exclude name="pom.xml" />
 											<exclude name=".git/" />
 											<exclude name=".gitignore" />
+											<exclude name="utils/" />
 
 										</fileset>
 										<fileset dir="${basedir}/">
@@ -212,7 +212,10 @@
 											<include name="js/saiku/render/" />
 										</fileset>
 									</copy>
-									<patch patchfile="minify.patch" failonerror="true" originalfile="target/saiku-ui/index.html" />
+
+									<replaceregexp match="&lt;!-- CUT HERE --&gt;(.*)&lt;!-- END CUT HERE --&gt;" replace="&lt;script type='text/javascript' src='saiku.min.js'&gt;&lt;\/script&gt;" flags="gs" byline="false">
+										<fileset dir="target/saiku-ui/" includes="index.html" />
+									</replaceregexp>
 
 									<copy todir="target/saiku-ui2">
 										<fileset dir="${basedir}/">
@@ -220,6 +223,7 @@
 											<exclude name="pom.xml" />
 											<exclude name=".git/" />
 											<exclude name=".gitignore" />
+											<exclude name="utils/" />
 
 										</fileset>
 										<fileset dir="${basedir}/">

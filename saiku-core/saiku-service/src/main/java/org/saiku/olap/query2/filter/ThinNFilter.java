@@ -1,7 +1,7 @@
 package org.saiku.olap.query2.filter;
 
 
-public class ThinNFilter  {
+class ThinNFilter  {
 //
 //	private String filterExpression;
 //	private int n;

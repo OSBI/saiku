@@ -20,10 +20,10 @@ public class AbstractSaikuObject implements ISaikuObject, Comparable<ISaikuObjec
   private String uniqueName;
   private String name;
 
-  public AbstractSaikuObject() {
+  AbstractSaikuObject() {
   }
 
-  public AbstractSaikuObject( String uniqueName, String name ) {
+  AbstractSaikuObject(String uniqueName, String name) {
     this.uniqueName = uniqueName;
     this.name = name;
   }

@@ -8,7 +8,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 
-public class FoConverter {
+class FoConverter {
 
     public static Document getFo(Document xmlDoc) {
         try {

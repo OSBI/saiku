@@ -33,18 +33,18 @@ public abstract class AbstractBaseCell implements Serializable {
    */
   private String rawValue;
 
-  public boolean right = false;
+  boolean right = false;
 
-  public boolean sameAsPrev = false;
+  boolean sameAsPrev = false;
 
   private String parentDimension = null;
 
-  private HashMap<String, String> properties = new HashMap<String, String>();
+  private final HashMap<String, String> properties = new HashMap<>();
 
   /**
    * Blank Constructor for serialization dont use.
    */
-  public AbstractBaseCell() {
+  AbstractBaseCell() {
     super();
   }
 

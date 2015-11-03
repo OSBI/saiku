@@ -49,15 +49,15 @@ import static org.mockito.Mockito.when;
  */
 public class DataSteps {
 
-  private static Properties testProps = new Properties();
-  public RepositoryDatasourceManager datasourceManager;
-  public IConnectionManager connectionManager;
-  public OlapMetaExplorer olapMetaExplorer;
-  public OlapDiscoverService olapDiscoverService;
-  public DatasourceService datasourceService;
-  public ThinQueryService thinQueryService;
+  private static final Properties testProps = new Properties();
+  private RepositoryDatasourceManager datasourceManager;
+  private IConnectionManager connectionManager;
+  private OlapMetaExplorer olapMetaExplorer;
+  private OlapDiscoverService olapDiscoverService;
+  private DatasourceService datasourceService;
+  private ThinQueryService thinQueryService;
   private List<String> data;
-  private UserService userService = mock(UserService.class);
+  private final UserService userService = mock(UserService.class);
 
   private void setup() throws Exception {
     when(userService.getAdminRoles()).thenReturn(Collections.singletonList("ROLE_ADMIN"));
@@ -98,7 +98,7 @@ public class DataSteps {
   public void load() throws Exception {
     setup();
 
-    List<SaikuDatasource> l = new ArrayList<SaikuDatasource>();
+    List<SaikuDatasource> l = new ArrayList<>();
     if (data != null) {
       for (String s : data) {
         l.add(new SaikuDatasource(s, SaikuDatasource.Type.OLAP, testProps));
@@ -116,7 +116,7 @@ public class DataSteps {
   @Step
   public void loadNewDataSources() throws Exception {
     setup();
-    List<SaikuDatasource> l = new ArrayList<SaikuDatasource>();
+    List<SaikuDatasource> l = new ArrayList<>();
 
     if ( data != null ) {
       for ( String s : data ) {

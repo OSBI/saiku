@@ -4,19 +4,17 @@ import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.DomSerializer;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
-import org.w3c.dom.Document;
 
 import java.io.ByteArrayInputStream;
 
-public class DomConverter {
+class DomConverter {
     public static org.w3c.dom.Document getDom(String html) {
         ByteArrayInputStream input = new ByteArrayInputStream(html.getBytes());
         final HtmlCleaner cleaner = createHtmlCleanerWithProperties();
         DomSerializer doms = new DomSerializer(cleaner.getProperties(), false);
         try {
             TagNode node = cleaner.clean(input);
-            org.w3c.dom.Document xmlDoc = doms.createDOM(node);
-            return xmlDoc;
+            return doms.createDOM(node);
         } catch (Exception e) {
             e.printStackTrace();
         }

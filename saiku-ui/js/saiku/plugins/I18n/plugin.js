@@ -116,8 +116,8 @@ function recursive_menu_translate(object, po_file) {
                 debugger;
             }
 			if (element.html()) {
+                // console.log("html:" + element.attr('html'));
 
-                //console.log("html:" + element.attr('html'));
 				translated_text = translate( element.html(), po_file );
                 if (Saiku.i18n.elements.indexOf &&
                     Saiku.i18n.elements.indexOf(element.html()) === -1) {
@@ -149,7 +149,7 @@ function recursive_menu_translate(object, po_file) {
 
             // Translate title
             if (element.attr('original-title')) {
-                console.log("original-title:" + element.attr('original-title'));
+                // console.log("original-title:" + element.attr('original-title'));
                 translated_title = translate( element.attr('original-title'), po_file );
                 if (Saiku.i18n.elements.indexOf &&
                     Saiku.i18n.elements.indexOf(element.attr('original-title')) === -1) {
@@ -163,7 +163,7 @@ function recursive_menu_translate(object, po_file) {
             }
 			
 			if (element.attr('value')) {
-                console.log("value:" + element.attr('value'));
+                // console.log("value:" + element.attr('value'));
                 translated_value = translate( element.attr('value'), po_file );
                 if (Saiku.i18n.elements.indexOf && 
                     Saiku.i18n.elements.indexOf(element.attr('value')) === -1) {

@@ -296,7 +296,7 @@ var WorkspaceDropZone = Backbone.View.extend({
 			hierarchy = $target.attr('hierarchy').replace(/[\[\]]/gi, '').split('.')[1]
 				? $target.attr('hierarchy').replace(/[\[\]]/gi, '').split('.')[1]
 				: $target.attr('hierarchy').replace(/[\[\]]/gi, '').split('.')[0],
-            level = $target.text(),
+            level = $target.attr('level'),
             objData = this.find_type_time(dimension, hierarchy, level),
             dimHier = $target.attr('hierarchy'),
             key = $target.attr('href').replace('#', '');
@@ -326,7 +326,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                 dimension: dimension,
                 hierarchy: hierarchy,
                 target: $target,
-                name: $target.text(),
+                name: $target.attr('level'),
                 data: objData,
                 analyzerDateFormat: objData.level.annotations.AnalyzerDateFormat,
                 dimHier: dimHier,

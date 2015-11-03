@@ -104,8 +104,7 @@ public class StatisticsResource {
 			MondrianVersion mv = mondrianServer.getVersion();
 			
 			final Monitor monitor = mondrianServer.getMonitor();
-	        final ServerInfo server = monitor.getServer();
-	        return server;
+		  return monitor.getServer();
 		}
 		return null;
 	}
@@ -121,9 +120,8 @@ public class StatisticsResource {
   public MondrianVersion getMondrianServerVersion() {
 	MondrianServer mondrianServer = MondrianServer.forId(null);
 	if (mondrianServer != null) {
-	  MondrianVersion mv = mondrianServer.getVersion();
 
-	  return mv;
+	  return mondrianServer.getVersion();
 	}
 	return null;
   }

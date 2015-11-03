@@ -5,9 +5,9 @@ package org.saiku.database.dto;
  */
 public class MondrianSchema {
 
-    String name;
-    String path;
-    String type;
+    private String name;
+    private String path;
+    private String type;
 
     public MondrianSchema() {
     }

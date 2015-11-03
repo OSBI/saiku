@@ -50,7 +50,7 @@ public class PdfReport {
     private static final float marginTop = 10;
     private static final float marginBottom = 10;
 
-    PdfPerformanceLogger pdfPerformanceLogger;
+    private final PdfPerformanceLogger pdfPerformanceLogger;
 
     public PdfReport() {
         pdfPerformanceLogger = new PdfPerformanceLogger();
@@ -77,8 +77,7 @@ public class PdfReport {
     private Document createDocumentWithSizeToContainQueryResult(QueryResult queryResult) {
         int resultWidth = calculateResultWidth(queryResult);
         Rectangle size = calculateDocumentSize(resultWidth);
-        Document document = createDocumentWithMargins(size);
-        return document;
+        return createDocumentWithMargins(size);
     }
 
     private Document createDocumentWithMargins(Rectangle size) {
@@ -99,7 +98,7 @@ public class PdfReport {
 
     private void addSvgImage(String svg, Document document, PdfWriter pdfWriter) {
         document.newPage();
-        StringBuffer stringBuffer = new StringBuffer(svg);
+        StringBuilder stringBuffer = new StringBuilder(svg);
         if (!svg.startsWith("<svg xmlns=\"http://www.w3.org/2000/svg\" ")) {
             stringBuffer.insert(stringBuffer.indexOf("<svg") + 4, " xmlns='http://www.w3.org/2000/svg'");
         }
@@ -150,7 +149,7 @@ public class PdfReport {
      * @param pdf
      * @throws Exception
      */
-    public void populatePdf(QueryResult queryResult, OutputStream pdf) throws Exception {
+    private void populatePdf(QueryResult queryResult, OutputStream pdf) throws Exception {
         String htmlContent = generateContentAsHtmlString(queryResult);
         org.w3c.dom.Document htmlDom = DomConverter.getDom(htmlContent);
         org.w3c.dom.Document foDoc = FoConverter.getFo(htmlDom);

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.olap4j.OlapConnection;
 import org.saiku.datasources.connection.IConnectionManager;
@@ -81,7 +80,7 @@ public class OlapMetaExplorerTest {
 
     @Test
     public final void testGetConnections() throws SaikuOlapException {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("test");
         List<SaikuConnection> connections = olapMetaExplorer.getConnections(list);
 
@@ -114,7 +113,7 @@ public class OlapMetaExplorerTest {
      */
     @Test
     public final void testGetCubesMultipleConnections() throws SaikuOlapException {
-        List<String> cubes = new ArrayList<String>();
+        List<String> cubes = new ArrayList<>();
         cubes.add("test");
         List<SaikuCube> output = olapMetaExplorer.getCubes(cubes);
 
@@ -158,7 +157,7 @@ public class OlapMetaExplorerTest {
 
         List<String> names = Arrays.asList("HR", "Sales", "Sales 2", "Store", "Warehouse", "Warehouse and Sales");
 
-        List<String> actual = new ArrayList<String>();
+        List<String> actual = new ArrayList<>();
         for (SaikuCube cube:output) {
             actual.add(cube.getName());
         }

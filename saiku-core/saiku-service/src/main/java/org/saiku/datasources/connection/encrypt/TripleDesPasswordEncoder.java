@@ -6,9 +6,9 @@ import org.springframework.dao.DataAccessException;
  * Hello world!
  *
  */
-public class TripleDesPasswordEncoder {
+class TripleDesPasswordEncoder {
 
-    protected final static byte defaultKey1[] = { ( byte ) 0xa9,
+    private final static byte[] defaultKey1 = { ( byte ) 0xa9,
             ( byte ) 0xa9,
             ( byte ) 0x0f,
             ( byte ) 0xb4,
@@ -17,7 +17,7 @@ public class TripleDesPasswordEncoder {
             ( byte ) 0x8d,
             ( byte ) 0x2c };
 
-    protected final static byte defaultKey2[] = { ( byte ) 0x2c,
+    private final static byte[] defaultKey2 = { ( byte ) 0x2c,
             ( byte ) 0x2c,
             ( byte ) 0xf4,
             ( byte ) 0x5c,
@@ -52,10 +52,7 @@ public class TripleDesPasswordEncoder {
         byte [] source = rawPass.getBytes();
         byte [] digest = new byte [ length ];
 
-        for ( int i = 0; i < source.length; i++ )
-        {
-            digest[ i ] = source[ i ];
-        }
+      System.arraycopy(source, 0, digest, 0, source.length);
 
         // Initialize the encryption keys
         setKeys( true,
@@ -65,7 +62,7 @@ public class TripleDesPasswordEncoder {
         getEncoder().Crypt( digest );
 
         // Convert the encrypted data to ASCII HEX
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for ( int i = 0; i < length; i++ )
         {
             int temp = ( int ) digest[ i ] & 0x000000ff;
@@ -77,15 +74,15 @@ public class TripleDesPasswordEncoder {
         return sb.toString();
     }
 
-    protected void setKeys( boolean encrypt,
-                            Object timestamp )
+    private void setKeys(boolean encrypt,
+                         Object timestamp)
     {
         getEncoder().SetKey( encrypt,
                 defaultKey1,
                 defaultKey2 );
     }
 
-    protected Des getEncoder()
+    private Des getEncoder()
     {
         if ( des == null )
         {

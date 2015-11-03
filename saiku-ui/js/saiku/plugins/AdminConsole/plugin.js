@@ -37,6 +37,7 @@ var AdminConsole = Backbone.View.extend({
         'click .remove_user' : 'remove_user',
         'click .refresh_button':'refresh_datasource',
         'click .advancedurl' :'advanced_url',
+        'click .getdatasources' :'get_data_sources',
         'change .drivertype' : 'change_driver',
         'click .create_schema': 'create_schema',
         'click .backup_restore' : 'backup_restore',
@@ -448,7 +449,7 @@ var AdminConsole = Backbone.View.extend({
         "<label for='connusername'>Username: </label><input name='connusername' type='text' value='<%= conn.username %>'/><br/>" +
         "<label for='connpassword'>Password:</label><input name='connpassword' type='password' value='<%= conn.password %>'/><br/></div>" +
         "<div class='advconnection' style='display:none;'><textarea name='adv_text' rows='10' cols='75'><%= conn.advanced %></textarea></div>" +
-        "<br/><br/><a href='' name='advancedurl' class='advancedurl'>Advanced</a>" +
+        "<br/><br/><a href='' name='advancedurl' class='advancedurl'>Advanced</a><% if (Settings.DATA_SOURCES_LOOKUP) { %> | <a href='' name='getdatasources' class='getdatasources'>Data Sources</a> <% } %>" +
         "<a href='<%= conn.id%>' class='user_button form_button remove_datasource hide'>Remove</a>" +
         "<a href='<%= conn.id%>' class='user_button form_button save_datasource'>Save</a>" +
         "<a href='<%= conn.id%>' class='refresh_button form_button user_button hide'>Refresh Cache</a><div class='clear'></div></form>" +
@@ -915,6 +916,16 @@ var AdminConsole = Backbone.View.extend({
         event.preventDefault();
         $(this.el).find(".simpleConnection").hide();
         $(this.el).find(".advconnection").show();
+    },
+    get_data_sources: function(event) {
+        event.preventDefault();
+        var formElements = {
+            'url': 'input[name="jdbcurl"]',
+            'driver': 'input[name="driver"]',
+            'username': 'input[name="connusername"]',
+            'password': 'input[name="connpassword"]'
+        };
+        (new DataSourcesModal({ dialog: this, formElements: formElements })).render().open();
     },
     simple_url : function(event){
         event.preventDefault();

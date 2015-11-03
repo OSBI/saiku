@@ -26,16 +26,16 @@ import java.util.UUID;
  */
 public class DataSourceMapper {
 
-    String connectionname;
-    String jdbcurl;
-    String schema;
-    String driver;
-    String username;
-    String password;
-    String connectiontype;
-    String id;
-    String path;
-    String advanced;
+    private String connectionname;
+    private String jdbcurl;
+    private String schema;
+    private String driver;
+    private String username;
+    private String password;
+    private String connectiontype;
+    private String id;
+    private String path;
+    private String advanced;
 
     public DataSourceMapper() {
 
@@ -177,7 +177,7 @@ public class DataSourceMapper {
 
     }
 
-    public String getConnectionname() {
+    private String getConnectionname() {
         return connectionname;
     }
 

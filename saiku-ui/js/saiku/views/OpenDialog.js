@@ -42,10 +42,16 @@ var OpenDialog = Modal.extend({
         // Append events
         var self = this;
         var name = "";
-        this.message =  "<br/><b><div class='query_name'><span class='i18n'>Please select a file.....</span></div></b><br/><div class='RepositoryObjects'>Loading....</div>" +
+        // this.message =  "<br/><b><div class='query_name'><span class='i18n'>Please select a file.....</span></div></b><br/><div class='RepositoryObjects'>Loading....</div>" +
+        //                 "<br>" +
+        //                 '<div class="box-search-file" style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
+        //                 ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>';
+
+        this.message =  '<div class="box-search-file" style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
+                        ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>' +
+                        "<div class='RepositoryObjects'>Loading....</div>" +
                         "<br>" +
-                        '<div style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
-                        ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>';
+                        "<b><div class='query_name'><span class='i18n'>Please select a file.....</span></div></b><br/>";
 
         if (Settings.ALLOW_IMPORT_EXPORT) {
             this.message += "<span class='export_zip'> </span> <b><span class='i18n'>Import or Export Files for Folder</span>: </b> <span class='i18n zip_folder'>< Select Folder... ></span>" +
@@ -77,11 +83,15 @@ var OpenDialog = Modal.extend({
             $(this.el).find('.dialog_footer').find('a[href="#open_query"]').hide();
 
             self.repository.fetch( );
+
+            if (Settings.REPOSITORY_LAZY) {
+                this.$el.find('.box-search-file').hide();
+            }
         } );
 
 
         // Maintain `this`
-        _.bindAll( this, "close", "toggle_folder", "select_name", "populate" , "cancel_search", "export_zip", "select_folder", "select_file");
+        _.bindAll( this, "close", "toggle_folder", "select_name", "populate" , "cancel_search", "export_zip", "select_folder", "select_file", "select_last_location");
 
     
     },
@@ -105,6 +115,7 @@ var OpenDialog = Modal.extend({
         }
         getQueries( repository );
         this.context_menu_disabled();
+        this.select_last_location();
     },
 
     context_menu_disabled: function() {
@@ -120,6 +131,8 @@ var OpenDialog = Modal.extend({
 
     toggle_folder: function( event ) {
         var $target = $( event.currentTarget );
+        var path = $target.children('.folder_row').find('a').attr('href');
+        path = path.replace('#', '');
         this.unselect_current_selected_folder( );
         $target.children('.folder_row').addClass( 'selected' );
         var $queries = $target.children( '.folder_content' );
@@ -127,19 +140,50 @@ var OpenDialog = Modal.extend({
         if( isClosed ) {
             $target.children( '.folder_row' ).find('.sprite').removeClass( 'collapsed' );
             $queries.removeClass( 'hide' );
+            if (Settings.REPOSITORY_LAZY) {
+                this.fetch_lazyload($target, path);
+            }
         } else {
             $target.children( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
             $queries.addClass( 'hide' );
+            if (Settings.REPOSITORY_LAZY) {
+                $target.find('.folder_content').remove();
+            }
         }
 
         this.select_folder();
+        this.set_last_location(path);
         return false;
+    },
+
+    fetch_lazyload: function(target, path) {
+        var repositoryLazyLoad = new RepositoryLazyLoad({}, { dialog: this, folder: target, path: path });
+        repositoryLazyLoad.fetch();
+        Saiku.ui.block('Loading...');
+    },
+    
+    template_repository_folder_lazyload: function(folder, repository) {
+        folder.find('.folder_content').remove();
+        folder.append(
+            _.template($('#template-repository-folder-lazyload').html())({
+                repoObjects: repository
+            })
+        );
+    },
+
+    populate_lazyload: function(folder, repository) {
+        Saiku.ui.unblock();
+        this.template_repository_folder_lazyload(folder, repository);
     },
 
     select_name: function( event ) {
         var $currentTarget = $( event.currentTarget );
         this.unselect_current_selected_folder( );
-        $currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').addClass( 'selected' );
+        //$currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').addClass( 'selected' );
+        var path = $currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').find( 'a' ).attr('href');
+        path = path.replace('#' , '');
+        this.set_last_location(path);
+        $currentTarget.addClass('selected');
         var name = $currentTarget.find( 'a' ).attr('href');
         name = name.replace('#','');
         $(this.el).find('.query_name').html( name );
@@ -247,5 +291,40 @@ var OpenDialog = Modal.extend({
 
         event.preventDefault();
         return false;
+    },
+
+    set_last_location: function(path){
+        if (typeof localStorage !== "undefined" && localStorage && !Settings.REPOSITORY_LAZY) {
+            if (!Settings.LOCALSTORAGE_EXPIRATION || Settings.LOCALSTORAGE_EXPIRATION === 0) {
+                localStorage.clear();
+            }
+            else {
+                localStorage.setItem('last-folder', path);
+            }
+
+        }
+    },
+
+    select_last_location: function(){
+        if(localStorage.getItem('last-folder') && !Settings.REPOSITORY_LAZY){
+            var p = $(this.el).find('a[href="\\#'+localStorage.getItem('last-folder')+'"]')
+
+                var path = p.parent().parent().has('.folder').children('.folder_row').find('.sprite').removeClass('collapsed');
+
+                var parents = path.parentsUntil($("div.RepositoryObjects"));
+
+                parents.each(function () {
+                    if ($(this).hasClass('folder')) {
+                        $(this).children('.folder_row').find('.sprite').removeClass('collapsed');
+                        $(this).children('.folder_content').removeClass('hide');
+
+                    }
+
+                });
+
+            }
+
+
+
     }
 });

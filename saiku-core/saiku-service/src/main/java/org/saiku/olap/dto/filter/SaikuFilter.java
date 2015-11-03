@@ -13,13 +13,11 @@ public class SaikuFilter {
 
 
   private SimpleCubeElement hierarchy;
-  private List<SimpleCubeElement> members = new ArrayList<SimpleCubeElement>();
+  private List<SimpleCubeElement> members = new ArrayList<>();
   private String owner;
 
   public SaikuFilter() {
   }
-
-  ;
 
   public SaikuFilter( String name, String description, SimpleCubeElement dimension, SimpleCubeElement hierarchy,
                       List<SimpleCubeElement> members ) {

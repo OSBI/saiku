@@ -5,7 +5,7 @@
     <groupId>org.saikuanalytics</groupId>
     <artifactId>saiku</artifactId>
     <packaging>pom</packaging>
-    <version>3.6.7</version>
+    <version>3.7</version>
     <name>Saiku Module Project</name>
     <scm>
         <developerConnection>
@@ -19,7 +19,9 @@
         <module>saiku-webapp</module>
         <module>saiku-server</module>
         <module>saiku-bi-platform-plugin-p5</module>
-<!--        <module>saiku-web-tests</module>-->
+        <module>saiku-bi-platform-plugin-p6</module>
+
+        <!--        <module>saiku-web-tests</module>-->
     </modules>
 
     <distributionManagement>
@@ -35,8 +37,8 @@
         </snapshotRepository>
     </distributionManagement>
     <properties>
-        <maven.compiler.source>1.5</maven.compiler.source>
-        <maven.compiler.target>1.5</maven.compiler.target>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
         <top.dir>${project.basedir}</top.dir>
         <spring.version>4.1.6.RELEASE</spring.version>
         <spring.security.version>4.0.1.RELEASE</spring.security.version>
@@ -209,7 +211,7 @@
                         <featureBranchPrefix>feature-</featureBranchPrefix>
                         <releaseBranchPrefix>release-</releaseBranchPrefix>
                         <hotfixBranchPrefix>hotfix-</hotfixBranchPrefix>
-                        <versionTagPrefix>saiku-</versionTagPrefix>
+                        <versionTagPrefix>t the-</versionTagPrefix>
                     </flowInitContext>
                     <allowSnapshots>true</allowSnapshots>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
@@ -468,8 +470,8 @@
             </dependency>
             <dependency>
                 <groupId>org.olap4j</groupId>
-                <artifactId>olap4j-xmlaserver-noclose</artifactId>
-                <version>TRUNK-SNAPSHOT</version>
+                <artifactId>olap4j-xmlaserver</artifactId>
+                <version>1.2.0</version>
             </dependency>
             <dependency>
                 <groupId>org.jdom</groupId>
@@ -841,7 +843,7 @@
             <dependency>
                 <groupId>pentaho</groupId>
                 <artifactId>cpf-core</artifactId>
-                <version>REFACTOR-SNAPSHOT</version>
+                <version>5.2.0.2-84</version>
                 <exclusions>
                     <exclusion>
                         <groupId>janino</groupId>
@@ -852,7 +854,7 @@
             <dependency>
                 <groupId>pentaho</groupId>
                 <artifactId>cpf-pentaho5</artifactId>
-                <version>REFACTOR-SNAPSHOT</version>
+                <version>5.2.0.2-84</version>
                 <exclusions>
                     <exclusion>
                         <groupId>pentaho</groupId>

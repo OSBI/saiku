@@ -1,11 +1,12 @@
 package org.saiku.database;
 
+import org.apache.commons.io.FileUtils;
+
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.importer.LegacyImporter;
 import org.saiku.service.importer.LegacyImporterImpl;
 
-import org.apache.commons.io.FileUtils;
 import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -36,8 +41,8 @@ public class Database {
 
     private JdbcDataSource ds;
     private static final Logger log = LoggerFactory.getLogger(Database.class);
-    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    IDatasourceManager dsm;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private IDatasourceManager dsm;
     public Database() {
 
     }
@@ -261,7 +266,7 @@ public class Database {
 
     }
 
-    public boolean checkUpdatedEncyption() throws SQLException{
+    private boolean checkUpdatedEncyption() throws SQLException{
         Connection c = ds.getConnection();
 
         Statement statement = c.createStatement();
@@ -269,7 +274,7 @@ public class Database {
         result.next();
         return result.getInt("c") != 0;
     }
-    public void updateForEncyption() throws SQLException {
+    private void updateForEncyption() throws SQLException {
         Connection c = ds.getConnection();
 
         Statement statement = c.createStatement();
@@ -292,7 +297,7 @@ public class Database {
 
     }
 
-    public void loadLegacyDatasources() throws SQLException {
+    private void loadLegacyDatasources() throws SQLException {
         Connection c = ds.getConnection();
 
         Statement statement = c.createStatement();
@@ -309,12 +314,14 @@ public class Database {
     }
 
 
-    public List<String> getUsers()  throws SQLException  {
+    public List<String> getUsers() throws java.sql.SQLException
+    {
         //Stub for EE.
         return null;
     }
 
-    public void addUsers(List<String> l)  throws SQLException  {
+    public void addUsers(List<String> l) throws java.sql.SQLException
+    {
         //Stub for EE.
     }
 }

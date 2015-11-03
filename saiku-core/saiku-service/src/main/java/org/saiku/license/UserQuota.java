@@ -5,8 +5,8 @@ package org.saiku.license;
  */
 public class UserQuota {
 
-  public String user;
-  public int remainingLogins;
+  private String user;
+  private int remainingLogins;
 
   public UserQuota() {
   }

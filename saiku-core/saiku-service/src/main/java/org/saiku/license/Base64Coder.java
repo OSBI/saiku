@@ -18,7 +18,7 @@ package org.saiku.license;
  * Author: Christian d'Heureuse, Inventec Informatik AG, Zurich, Switzerland<br>
  * Multi-licensed: EPL / LGPL / GPL / AL / BSD / MIT.
  */
-public class Base64Coder {
+class Base64Coder {
 
   // The line separator string of the operating system.
   private static final String SYSTEMLINESEPERATOR =
@@ -91,8 +91,8 @@ public class Base64Coder {
    *                      lines.
    * @return A String containing the Base64 encoded data, broken into lines.
    */
-  public static String encodeLines(byte[] in, int iOff, int iLen, int lineLen,
-                                   String lineSeparator) {
+  private static String encodeLines(byte[] in, int iOff, int iLen, int lineLen,
+                                    String lineSeparator) {
     int blockLen = (lineLen * 3) / 4;
     if (blockLen <= 0) {
       throw new IllegalArgumentException();
@@ -117,7 +117,7 @@ public class Base64Coder {
    * @param in An array containing the data bytes to be encoded.
    * @return A character array containing the Base64 encoded data.
    */
-  public static char[] encode(byte[] in) {
+  private static char[] encode(byte[] in) {
     return encode(in, 0, in.length);
   }
 
@@ -143,7 +143,7 @@ public class Base64Coder {
    *             <code>iOff</code>.
    * @return A character array containing the Base64 encoded data.
    */
-  public static char[] encode(byte[] in, int iOff, int iLen) {
+  private static char[] encode(byte[] in, int iOff, int iLen) {
     int oDataLen = (iLen * 4 + 2) / 3;       // output length without padding
     int oLen = ((iLen + 2) / 3) * 4;         // output length including padding
     char[] out = new char[oLen];
@@ -213,7 +213,7 @@ public class Base64Coder {
    * @throws IllegalArgumentException If the input is not valid Base64 encoded
    *                                  data.
    */
-  public static byte[] decode(String s) {
+  private static byte[] decode(String s) {
     return decode(s.toCharArray());
   }
 
@@ -226,7 +226,7 @@ public class Base64Coder {
    * @throws IllegalArgumentException If the input is not valid Base64 encoded
    *                                  data.
    */
-  public static byte[] decode(char[] in) {
+  private static byte[] decode(char[] in) {
     return decode(in, 0, in.length);
   }
 
@@ -243,7 +243,7 @@ public class Base64Coder {
    * @throws IllegalArgumentException If the input is not valid Base64 encoded
    *                                  data.
    */
-  public static byte[] decode(char[] in, int iOff, int iLen) {
+  private static byte[] decode(char[] in, int iOff, int iLen) {
     if (iLen % 4 != 0) {
       throw new IllegalArgumentException(
           "Length of Base64 encoded input string is not a multiple of 4.");

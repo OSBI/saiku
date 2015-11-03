@@ -30,8 +30,6 @@ public class SaikuDimension extends AbstractSaikuObject {
     throw new RuntimeException( "Unsupported Constructor. Serialization only" );
   }
 
-  ;
-
   public SaikuDimension( String name, String uniqueName, String caption, String description, boolean visible,
                          List<SaikuHierarchy> hierarchies ) {
     super( uniqueName, name );

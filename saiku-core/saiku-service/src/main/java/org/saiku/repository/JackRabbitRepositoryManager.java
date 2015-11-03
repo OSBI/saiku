@@ -16,13 +16,6 @@
 package org.saiku.repository;
 
 
-import org.saiku.database.dto.MondrianSchema;
-import org.saiku.datasources.connection.RepositoryFile;
-import org.saiku.service.user.UserService;
-import org.saiku.service.util.exception.SaikuServiceException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.api.JackrabbitSession;
@@ -32,15 +25,41 @@ import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
+
+import org.saiku.database.dto.MondrianSchema;
+import org.saiku.datasources.connection.RepositoryFile;
+import org.saiku.service.user.UserService;
+import org.saiku.service.util.exception.SaikuServiceException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.jcr.*;
+import javax.jcr.Binary;
+import javax.jcr.ImportUUIDBehavior;
+import javax.jcr.NamespaceRegistry;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.PropertyType;
+import javax.jcr.Repository;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.nodetype.NodeTypeExistsException;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
@@ -100,7 +119,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
   }
 
-  public void login() throws RepositoryException {
+  private void login() throws RepositoryException {
     try {
 
       //Try default login
@@ -152,7 +171,9 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
       log.info("repo started");
       log.info("logging in");
-      login();
+      if(session==null){
+        login();
+      }
       log.info("logged in");
 
       JackrabbitSession js = (JackrabbitSession) session;
@@ -174,8 +195,8 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
       Node n = JcrUtils.getOrAddFolder(root, "homes");
       n.addMixin("nt:saikufolders");
 
-      HashMap<String, List<AclMethod>> m = new HashMap<String, List<AclMethod>>();
-      ArrayList<AclMethod> l = new ArrayList<AclMethod>();
+      HashMap<String, List<AclMethod>> m = new HashMap<>();
+      ArrayList<AclMethod> l = new ArrayList<>();
       l.add(AclMethod.READ);
       m.put(defaultRole, l);
       AclEntry e = new AclEntry("admin", AclType.SECURED, m, null);
@@ -187,8 +208,8 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
       n = JcrUtils.getOrAddFolder(root, "datasources");
       n.addMixin("nt:saikufolders");
 
-      m = new HashMap<String, List<AclMethod>>();
-      l = new ArrayList<AclMethod>();
+      m = new HashMap<>();
+      l = new ArrayList<>();
       l.add(AclMethod.WRITE);
       l.add(AclMethod.READ);
       l.add(AclMethod.GRANT);
@@ -226,7 +247,9 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
   }
 
   public void createUser(String u) throws RepositoryException {
-    login();
+    if(session == null) {
+      login();
+    }
     Node parent = JcrUtils.getNodeIfExists(root, "homes");
     if(parent != null) {
       Node node = parent.addNode("home:" + u, "nt:folder");
@@ -260,7 +283,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
   public Node getFolder(String user, String directory) throws RepositoryException {
     return getHomeFolder(user).getNode(directory);
   }
-  public Node getFolderNode(String directory) throws RepositoryException {
+  private Node getFolderNode(String directory) throws RepositoryException {
     if(directory.startsWith("/")){
       directory = directory.substring(1, directory.length());
     }
@@ -337,11 +360,17 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
   public Node saveFile(Object file, String path, String user, String type, List<String> roles) throws RepositoryException {
     if(file==null){
       //Create new folder
-      String parent = path.substring(0, path.lastIndexOf("/"));
+      String parent;
+      if(path.contains("/")) {
+        parent = path.substring(0, path.lastIndexOf("/"));
+      }
+      else{
+        parent = "/";
+      }
       Node node = getFolder(parent);
       Acl2 acl2 = new Acl2(node);
       acl2.setAdminRoles(userService.getAdminRoles());
-      if (!acl2.canWrite(node, user, roles)) {
+      if (acl2.canWrite(node, user, roles)) {
         throw new SaikuServiceException("Can't write to file or folder");
       }
 
@@ -358,7 +387,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
       Node n = getFolder(path.substring(0, pos));
       Acl2 acl2 = new Acl2(n);
       acl2.setAdminRoles(userService.getAdminRoles());
-      if (!acl2.canWrite(n, user, roles)) {
+      if (acl2.canWrite(n, user, roles)) {
         throw new SaikuServiceException("Can't write to file or folder");
       }
 
@@ -367,12 +396,16 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         check.remove();
       }
       Node resNode = n.addNode(filename, "nt:file");
-      if (type.equals("nt:saikufiles")) {
+      switch (type) {
+      case "nt:saikufiles":
         resNode.addMixin("nt:saikufiles");
-      } else if (type.equals("nt:mondrianschema")) {
+        break;
+      case "nt:mondrianschema":
         resNode.addMixin("nt:mondrianschema");
-      } else if (type.equals("nt:olapdatasource")) {
+        break;
+      case "nt:olapdatasource":
         resNode.addMixin("nt:olapdatasource");
+        break;
       }
       Node contentNode = resNode.addNode("jcr:content", "nt:resource");
 
@@ -409,7 +442,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     Node t = getFolder(target);
     Acl2 acl2 = new Acl2(node);
     acl2.setAdminRoles(userService.getAdminRoles());
-    if ( !acl2.canRead(node, user, roles) || !acl2.canWrite(t, user, roles)) {
+    if ( !acl2.canRead(node, user, roles) || acl2.canWrite(t, user, roles)) {
       //TODO Throw exception
       throw new RepositoryException();
 
@@ -567,7 +600,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
     NodeIterator node = res.getNodes();
 
-    List<MondrianSchema> l = new ArrayList<MondrianSchema>();
+    List<MondrianSchema> l = new ArrayList<>();
     while (node.hasNext()) {
       Node n = node.nextNode();
       String p = n.getPath();
@@ -582,8 +615,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     return l;
   }
 
-  public List<IRepositoryObject> getAllFiles(List<String> type, String username, List<String> roles) throws
-      RepositoryException {
+  public List<IRepositoryObject> getAllFiles(List<String> type, String username, List<String> roles) {
     return getRepoObjects(root, type, username, roles, false);
   }
 
@@ -683,7 +715,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
     NodeIterator node = res.getNodes();
 
-    List<MondrianSchema> l = new ArrayList<MondrianSchema>();
+    List<MondrianSchema> l = new ArrayList<>();
     while (node.hasNext()) {
       Node n = node.nextNode();
       String p = n.getPath();
@@ -708,7 +740,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
     NodeIterator node = res.getNodes();
 
-    List<DataSource> ds = new ArrayList<DataSource>();
+    List<DataSource> ds = new ArrayList<>();
     while (node.hasNext()) {
       Node n = node.nextNode();
       JAXBContext jaxbContext = null;
@@ -811,7 +843,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     return null;
   }
 
-  public Node getFolder(String path) throws RepositoryException {
+  private Node getFolder(String path) throws RepositoryException {
     return session.getNode(path);
   }
 
@@ -823,7 +855,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     this.repository = repository;
   }
 
-  public void createNamespace() throws RepositoryException {
+  private void createNamespace() throws RepositoryException {
     NamespaceRegistry ns = session.getWorkspace().getNamespaceRegistry();
 
     if (!Arrays.asList(ns.getPrefixes()).contains("home")) {
@@ -831,7 +863,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     }
   }
 
-  public void createDataSources() throws RepositoryException {
+  private void createDataSources() throws RepositoryException {
 
     NodeTypeManager manager = session.getWorkspace().getNodeTypeManager();
     NodeTypeTemplate ntt = manager.createNodeTypeTemplate();
@@ -868,7 +900,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     }
   }
 
-  public void createSchemas() throws RepositoryException {
+  private void createSchemas() throws RepositoryException {
 
     NodeTypeManager manager =
         session.getWorkspace().getNodeTypeManager();
@@ -912,7 +944,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     }
   }
 
-  public void createFiles() throws RepositoryException {
+  private void createFiles() throws RepositoryException {
 
     NodeTypeManager manager =
         session.getWorkspace().getNodeTypeManager();
@@ -1006,7 +1038,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     return repository;
   }
 
-  public void createFolders() throws RepositoryException {
+  private void createFolders() throws RepositoryException {
 
     NodeTypeManager manager =
         session.getWorkspace().getNodeTypeManager();
@@ -1052,7 +1084,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     Acl2 acl2 = new Acl2(files);
     acl2.setAdminRoles(userService.getAdminRoles());
 
-    List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
+    List<IRepositoryObject> repoObjects = new ArrayList<>();
     Iterable<Node> objects = null;
     NodeIterator n = null;
     try {

@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Abstract implementation of the license interface use by the license manager.
@@ -41,7 +39,7 @@ public abstract class AbstractLicense implements Serializable, ILicense {
    * License type for trial version. This type is valid until the expiration
    * date.
    */
-  public static final String TYPE_TRIAL = "trial";
+  private static final String TYPE_TRIAL = "trial";
 
   public static final String TYPE_FULL = "full";
   public static final String TYPE_FULL_MAX_MEM = "full-maxmem";
@@ -58,7 +56,7 @@ public abstract class AbstractLicense implements Serializable, ILicense {
   /**
    * Create a new license with default property value.
    */
-  public AbstractLicense() {
+  AbstractLicense() {
     name = "";
     email = "";
     licenseNumber = "";
@@ -95,7 +93,7 @@ public abstract class AbstractLicense implements Serializable, ILicense {
    *
    * @return the licenseType
    */
-  public String getLicenseType() {
+  String getLicenseType() {
     return licenseType;
   }
 
@@ -178,7 +176,6 @@ public abstract class AbstractLicense implements Serializable, ILicense {
   /**
    * Check if the given license object is valid.
    *
-   * @param license the license object
    */
   public void validate(Date currentDate, String currentVersion) throws LicenseException {
 
@@ -189,7 +186,7 @@ public abstract class AbstractLicense implements Serializable, ILicense {
    *
    * @param currentDate the current date.
    */
-  protected void validateExpiration(Date currentDate) {
+  void validateExpiration(Date currentDate) {
 
   }
 
@@ -198,7 +195,7 @@ public abstract class AbstractLicense implements Serializable, ILicense {
    *
    * @param currentVersion
    */
-  protected void validateVersion(String currentVersion) {
+  void validateVersion(String currentVersion) {
 
 
   }

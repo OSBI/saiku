@@ -31,9 +31,9 @@ import java.text.SimpleDateFormat;
 
 public class ResultSetHelper {
 
-  private NumberFormat numberFormat;
-  private SimpleDateFormat dateFormat;
-  private SimpleDateFormat timestampFormat;
+  private final NumberFormat numberFormat;
+  private final SimpleDateFormat dateFormat;
+  private final SimpleDateFormat timestampFormat;
 
   public ResultSetHelper() {
     this.numberFormat = NumberFormat.getInstance( SaikuProperties.locale );
@@ -47,12 +47,11 @@ public class ResultSetHelper {
   }
 
   private String formatNumber( Object number ) {
-    String result = numberFormat.format( number );
-    return result;
+    return numberFormat.format( number );
   }
 
   private String read( Clob c ) throws SQLException, IOException {
-    StringBuffer sb = new StringBuffer( (int) c.length() );
+    StringBuilder sb = new StringBuilder( (int) c.length() );
     Reader r = c.getCharacterStream();
     char[] cbuf = new char[ 2048 ];
     int n = 0;

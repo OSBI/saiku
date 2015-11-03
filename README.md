@@ -31,6 +31,7 @@ mvn clean clover2:setup test clover2:aggregate clover2:clover
 * [Stack Overflow](http://stackoverflow.com/questions/tagged/saiku)
 * [<strike>Freenode IRC - Channel: #saiku</strike>](http://irc.lc/freenode/%23saiku/t4nk@)
 
+
 ## Contributing
 
 Check [CONTRIBUTING.md](https://github.com/OSBI/saiku/blob/master/CONTRIBUTING.md) for more details. Some important information:

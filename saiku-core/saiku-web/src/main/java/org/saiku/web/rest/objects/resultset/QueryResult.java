@@ -39,7 +39,8 @@ public class QueryResult {
 		this(cellset, cellDataSet.getRuntime(), cellDataSet.getWidth(), cellDataSet.getHeight(), cellDataSet.getLeftOffset(), cellDataSet.getTopOffset(), RestUtil.convertTotals(cellDataSet.getRowTotalsLists()), RestUtil.convertTotals(cellDataSet.getColTotalsLists()));
 	}
 	
-	public QueryResult(List<Cell[]> cellset, int runtime, int width, int height, int leftOffset, int topOffset, Total[][] rowTotalsLists, Total[][] colTotalsLists) {
+	private QueryResult(List<Cell[]> cellset, int runtime, int width, int height, int leftOffset, int topOffset,
+						Total[][] rowTotalsLists, Total[][] colTotalsLists) {
 		this(cellset, runtime, width, height);
 		this.rowTotalsLists = rowTotalsLists;
 		this.colTotalsLists = colTotalsLists;

@@ -16,6 +16,13 @@
 package org.saiku.web.rest.resources;
 
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystemManager;
+import org.apache.commons.vfs.VFS;
+
 import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.ISessionService;
@@ -26,27 +33,31 @@ import com.qmino.miredot.annotations.ReturnType;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.commons.vfs.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
 
 /**
  * QueryServlet contains all the methods required when manipulating an OLAP Query.
@@ -59,11 +70,11 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 
   private static final Logger log = LoggerFactory.getLogger(BasicRepositoryResource2.class);
 
-  private FileObject repo;
   private ISessionService sessionService;
 
   //private Acl acl;
   private DatasourceService datasourceService;
+  private FileObject repo;
 
   public void setDatasourceService(DatasourceService ds) {
 	datasourceService = ds;
@@ -115,7 +126,7 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	String username = sessionService.getAllSessionObjects().get("username").toString();
 	List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
 	String[] t = type.split(",");
-	List<IRepositoryObject> l = new ArrayList<IRepositoryObject>();
+	List<IRepositoryObject> l = new ArrayList<>();
 	  List<IRepositoryObject> l2;
 	  if(path==null){
 		l = (datasourceService.getFiles(Arrays.asList(t), username, roles));
@@ -328,70 +339,6 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 		*/
   }
 
-  /**
-   * Export the repository to a zip file.
-   * @summary Export repository
-   * @param directory
-   * @param files
-   * @return A response conataining a zip file.
-   */
-  @GET
-  @Path("/zip")
-  public Response getResourcesAsZip (
-	  @QueryParam("directory") String directory,
-	  @QueryParam("files") String files)
-  {
-	try {
-	  if (StringUtils.isBlank(directory))
-		return Response.ok().build();
-
-	  ByteArrayOutputStream bos = new ByteArrayOutputStream();
-	  ZipOutputStream zos = new ZipOutputStream(bos);
-
-	  String[] fileArray = null;
-	  if (StringUtils.isBlank(files)) {
-		FileObject dir = repo.resolveFile(directory);
-		for (FileObject fo : dir.getChildren()) {
-		  if (fo.getType().equals(FileType.FILE)) {
-			String entry = fo.getName().getBaseName();
-			if ("saiku".equals(fo.getName().getExtension())) {
-			  byte[] doc = FileUtil.getContent(fo);
-			  ZipEntry ze = new ZipEntry(entry);
-			  zos.putNextEntry(ze);
-			  zos.write(doc);
-			}
-		  }
-		}
-	  } else {
-		fileArray = files.split(",");
-		for (String f : fileArray) {
-		  String resource = directory + "/" + f;
-		  Response r = getResource(resource);
-		  if (Status.OK.equals(Status.fromStatusCode(r.getStatus()))) {
-			byte[] doc = (byte[]) r.getEntity();
-			ZipEntry ze = new ZipEntry(f);
-			zos.putNextEntry(ze);
-			zos.write(doc);
-		  }
-		}
-	  }
-	  zos.closeEntry();
-	  zos.close();
-	  byte[] zipDoc = bos.toByteArray();
-
-	  return Response.ok(zipDoc, MediaType.APPLICATION_OCTET_STREAM).header(
-		  "content-disposition",
-		  "attachment; filename = " + directory + ".zip").header(
-		  "content-length",zipDoc.length).build();
-
-
-	} catch(Exception e){
-	  log.error("Cannot zip resources " + files ,e);
-	  String error = ExceptionUtils.getRootCauseMessage(e);
-	  return Response.serverError().entity(error).build();
-	}
-
-  }
 
   /**
    * Upload a zip archive to the server.

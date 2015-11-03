@@ -3,6 +3,7 @@
         "css": [
             "css/saiku/src/*.css",
             "embed/*.css",
+            "embed/**/*.css",
             "js/saiku/plugins/CCC_Chart/*.css",
             "js/saiku/plugins/Dashboards/css/*.css",
             "js/saiku/plugins/SchemaDesigner/css/*.css"

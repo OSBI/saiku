@@ -24,7 +24,7 @@ public class SaikuLicense2 extends AbstractLicense {
 
   private int userLimit;
 
-  public int getMemoryLimit() {
+  private int getMemoryLimit() {
     return memoryLimit;
   }
 
@@ -33,7 +33,7 @@ public class SaikuLicense2 extends AbstractLicense {
   }
 
 
-  public void validateMemory(int mem) throws LicenseException {
+  private void validateMemory(int mem) throws LicenseException {
     if(!this.getLicenseType().equals("trial")) {
       MemoryMXBean memoryBean = ManagementFactory.getMemoryMXBean();
       long max = memoryBean.getHeapMemoryUsage().getMax();
@@ -47,7 +47,7 @@ public class SaikuLicense2 extends AbstractLicense {
     }
   }
 
-  public void validateHostname(String hostname) throws LicenseException {
+  private void validateHostname(String hostname) throws LicenseException {
     try {
       String inetAddr = InetAddress.getLocalHost().getHostName();
       if(!hostname.equals(inetAddr)){
@@ -67,7 +67,7 @@ public class SaikuLicense2 extends AbstractLicense {
     this.hostname = hostname;
   }
 
-  public String getHostname() {
+  private String getHostname() {
     return hostname;
   }
 

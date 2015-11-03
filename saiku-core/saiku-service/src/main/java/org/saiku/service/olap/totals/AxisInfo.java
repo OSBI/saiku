@@ -11,11 +11,11 @@ import java.util.List;
 
 public class AxisInfo {
   public List<Integer>[] levels;
-  public final List<String> uniqueLevelNames = new ArrayList<String>();
+  public final List<String> uniqueLevelNames = new ArrayList<>();
   public int maxDepth;
   public int measuresMember;
   public List<Position> fullPositions;
-  public CellSetAxis axis;
+  public final CellSetAxis axis;
 
   public AxisInfo( CellSetAxis axis ) {
     this.axis = axis;
@@ -35,10 +35,10 @@ public class AxisInfo {
 
     for ( int i = 0; i < hCount; i++ ) {
       maxDepth[ i ] = -1;
-      levels[ i ] = new ArrayList<Integer>();
+      levels[ i ] = new ArrayList<>();
       usedLevels[ i ] = new HashSet[ hierarchies.get( i ).getLevels().size() ];
       for ( int j = 0; j < usedLevels[ i ].length; j++ ) {
-        usedLevels[ i ][ j ] = new HashSet<Integer>();
+        usedLevels[ i ][ j ] = new HashSet<>();
       }
     }
     axisInfo.measuresMember = Integer.MIN_VALUE;
@@ -73,7 +73,7 @@ public class AxisInfo {
   }
 
   private static void findFullPositions( AxisInfo axisInfo, CellSetAxis axis ) {
-    axisInfo.fullPositions = new ArrayList<Position>( axis.getPositionCount() );
+    axisInfo.fullPositions = new ArrayList<>(axis.getPositionCount());
     List<Integer>[] levels = axisInfo.levels;
     nextpos:
     for ( final Position p : axis.getPositions() ) {

@@ -23,7 +23,7 @@ public class ArrayMapDeserializer extends JsonDeserializer<Map<String, String>> 
         } else {
             //consume this stream
             mapper.readTree(jp);
-            return new HashMap<String, String>();
+            return new HashMap<>();
         }
     }
 }

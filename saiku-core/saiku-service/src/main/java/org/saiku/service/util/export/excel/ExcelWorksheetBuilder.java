@@ -56,7 +56,6 @@ public class ExcelWorksheetBuilder {
   private CellStyle basicCS;
   private CellStyle numberCS;
   private CellStyle lighterHeaderCellCS;
-  private CellStyle darkerHeaderCellCS;
   private List<ThinHierarchy> queryFilters;
   private Map<String, Integer> colorCodesMap;
 
@@ -66,7 +65,7 @@ public class ExcelWorksheetBuilder {
   private HSSFPalette customColorsPalette;
   private ExcelBuilderOptions options;
 
-  private Map<String, CellStyle> cellStyles = new HashMap<String, CellStyle>();
+  private final Map<String, CellStyle> cellStyles = new HashMap<>();
 
   private static final Logger log = LoggerFactory.getLogger(ExcelWorksheetBuilder.class);
 
@@ -74,7 +73,7 @@ public class ExcelWorksheetBuilder {
     init(table, filters, options);
   }
 
-  protected void init(CellDataSet table, List<ThinHierarchy> filters, ExcelBuilderOptions options) {
+  private void init(CellDataSet table, List<ThinHierarchy> filters, ExcelBuilderOptions options) {
 
     this.options = options;
     queryFilters = filters;
@@ -97,7 +96,7 @@ public class ExcelWorksheetBuilder {
 
     CreationHelper createHelper = excelWorkbook.getCreationHelper();
 
-    colorCodesMap = new HashMap<String, Integer>();
+    colorCodesMap = new HashMap<>();
     this.sheetName = options.sheetName;
     rowsetHeader = table.getCellSetHeaders();
     rowsetBody = table.getCellSetBody();
@@ -108,7 +107,7 @@ public class ExcelWorksheetBuilder {
     initCellStyles();
   }
 
-  protected void initCellStyles() {
+  private void initCellStyles() {
 
     Font font = excelWorkbook.createFont();
     font.setFontHeightInPoints((short) BASIC_SHEET_FONT_SIZE);
@@ -147,7 +146,7 @@ public class ExcelWorksheetBuilder {
     lighterHeaderCellCS.setFillPattern(CellStyle.SOLID_FOREGROUND);
     setCellBordersColor(lighterHeaderCellCS);
 
-    darkerHeaderCellCS = excelWorkbook.createCellStyle();
+    CellStyle darkerHeaderCellCS = excelWorkbook.createCellStyle();
     darkerHeaderCellCS.setFont(headerFont);
     darkerHeaderCellCS.setAlignment(CellStyle.ALIGN_CENTER);
     darkerHeaderCellCS.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
@@ -156,7 +155,7 @@ public class ExcelWorksheetBuilder {
 
   }
 
-  protected void setCellBordersColor(CellStyle style) {
+  private void setCellBordersColor(CellStyle style) {
 
     style.setBorderBottom(CellStyle.BORDER_THIN);
     style.setBottomBorderColor(IndexedColors.GREY_80_PERCENT.getIndex());
@@ -340,7 +339,7 @@ public class ExcelWorksheetBuilder {
     }
   }
 
-  protected void applyCellFormatting(Cell cell, int x, int y) {
+  private void applyCellFormatting(Cell cell, int x, int y) {
     String formatString;
     formatString = ((DataCell) rowsetBody[x][y]).getFormatString();
     if ((formatString != null) && (formatString.trim().length() > 0)) {
@@ -432,9 +431,11 @@ public class ExcelWorksheetBuilder {
             int greenCode = Integer.parseInt(colorCode.substring(3, 5), 16);
             int blueCode = Integer.parseInt(colorCode.substring(5, 7), 16);
             if (customColorsPalette != null) {
-              customColorsPalette.setColorAtIndex(new Byte((byte) nextAvailableColorCode), new Byte((byte) redCode), new Byte((byte) greenCode), new Byte((byte) blueCode));
+              customColorsPalette.setColorAtIndex((byte) nextAvailableColorCode, (byte) redCode,
+                  (byte) greenCode,
+                  (byte) blueCode);
               returnedColorIndex = customColorsPalette.getColor(nextAvailableColorCode).getIndex();
-              colorCodesMap.put(style, new Integer(returnedColorIndex));
+              colorCodesMap.put(style, (int) returnedColorIndex);
             } else {
               return -1;
             }
@@ -460,7 +461,7 @@ public class ExcelWorksheetBuilder {
     return returnedColorIndex;  //To change body of created methods use File | Settings | File Templates.
   }
 
-  protected int buildExcelTableHeader(int startRow) {
+  private int buildExcelTableHeader(int startRow) {
 
     Row sheetRow = null;
     int x = 0;
@@ -471,7 +472,7 @@ public class ExcelWorksheetBuilder {
     boolean isLastColumn = false;
     String nextHeader = EMPTY_STRING;
     String currentHeader = EMPTY_STRING;
-    ArrayList<ExcelMergedRegionItemConfig> mergedItemsConfig = new ArrayList<ExcelMergedRegionItemConfig>();
+    ArrayList<ExcelMergedRegionItemConfig> mergedItemsConfig = new ArrayList<>();
 
     for (x = 0; x < rowsetHeader.length; x++) {
 
@@ -609,8 +610,7 @@ public class ExcelWorksheetBuilder {
    */
   private int findTopLeftCornerHeight() {
 
-    int height = rowsetHeader.length > 0 ? rowsetHeader.length - 1 : 0;
-    return height;
+    return rowsetHeader.length > 0 ? rowsetHeader.length - 1 : 0;
   }
 
 }

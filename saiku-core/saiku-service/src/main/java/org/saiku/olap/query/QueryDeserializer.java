@@ -177,7 +177,7 @@ public class QueryDeserializer {
     }
   }
 
-  private IQuery createMdxQuery() throws QueryParseException, SQLException {
+  private IQuery createMdxQuery() throws QueryParseException {
 
     Element queryElement = dom.getRootElement();
     if ( queryElement != null && queryElement.getName().equals( QUERY ) ) {
@@ -449,7 +449,7 @@ public class QueryDeserializer {
 
   }
 
-  public Axis.Standard getAxisName( String location ) {
+  private Axis.Standard getAxisName(String location) {
     if ( location != null ) {
       return org.olap4j.Axis.Standard.valueOf( location );
     }

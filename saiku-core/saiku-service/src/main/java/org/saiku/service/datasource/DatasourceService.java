@@ -26,7 +26,6 @@ import org.saiku.service.util.exception.SaikuDataSourceNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -67,14 +66,12 @@ public class DatasourceService implements Serializable {
   public SaikuDatasource fetchDataSourceById(String id) throws SaikuDataSourceNotFoundException {
       SaikuDatasource saikuDatasource = null;
       Map<String, SaikuDatasource> datasources = this.getDatasources();
-      Iterator<SaikuDatasource> iterator = datasources.values().iterator();
-      while (iterator.hasNext()) {
-          SaikuDatasource currentDatasource = iterator.next();
-          if (currentDatasource.getProperties().getProperty("id").equals(id)) {
-              saikuDatasource = currentDatasource;
-              break;
-          }
+    for (SaikuDatasource currentDatasource : datasources.values()) {
+      if (currentDatasource.getProperties().getProperty("id").equals(id)) {
+        saikuDatasource = currentDatasource;
+        break;
       }
+    }
       if(saikuDatasource == null){
           throw new SaikuDataSourceException("Could not find data source with id: " + id);
       }

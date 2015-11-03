@@ -6,9 +6,9 @@ import java.util.Map;
 
 public class SaikuCubeMetadata {
 
-	private List<SaikuDimension> dimensions;
-	private List<SaikuMember> measures;
-	private Map<String, Object> properties;
+	private final List<SaikuDimension> dimensions;
+	private final List<SaikuMember> measures;
+	private final Map<String, Object> properties;
 
 
 	public SaikuCubeMetadata(List<SaikuDimension> dimensions, List<SaikuMember> measures, Map<String, Object> properties) {

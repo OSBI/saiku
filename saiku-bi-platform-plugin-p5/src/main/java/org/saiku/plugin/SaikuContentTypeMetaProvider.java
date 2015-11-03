@@ -30,12 +30,12 @@ import org.saiku.plugin.util.PluginConfig;
  * 
  * @author Paul Stoellberger
  */
-public class SaikuContentTypeMetaProvider extends SolutionFileMetaAdapter {
+class SaikuContentTypeMetaProvider extends SolutionFileMetaAdapter {
 
     private static final Log LOG = LogFactory.getLog(SaikuContentTypeMetaProvider.class);
 
-    public SaikuContentTypeMetaProvider() {};
-    
+    private SaikuContentTypeMetaProvider() {}
+
     public IFileInfo getFileInfo(ISolutionFile solutionFile, InputStream in) {
         try {
             String title = solutionFile.getFileName();
