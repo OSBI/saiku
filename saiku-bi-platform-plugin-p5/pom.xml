@@ -286,6 +286,12 @@
 										<include name="*.properties" />
 									</fileset>
 								</copy>
+								<replaceregexp match="(REPOSITORY_LAZY: false,)"
+											   replace="REPOSITORY_LAZY: true,"
+											   flags="gs" byline="false">
+									<fileset dir="target/dist/saiku/ui/js/saiku/" includes="Settings.js"/>
+								</replaceregexp>
+
 								<replaceregexp match="(&lt;!-- Saiku plugins --&gt;)"
 											   replace="
 
