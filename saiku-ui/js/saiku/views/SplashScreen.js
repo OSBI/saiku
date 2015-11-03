@@ -153,7 +153,7 @@ var SplashScreen = Backbone.View.extend({
                 $(that.el).find("#dyn_content").html(json.item[0].content);
                 $(that.el).find(".responsive-container").fitVids();
                     //$(self.el).html(self.template()).appendTo($('body'));
-                    $(self.el).html(self.template());
+                    $(self.el).html(that.template());
 
                     if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenseType != "Open Source" +
                         " License") {
