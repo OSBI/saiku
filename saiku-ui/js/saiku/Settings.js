@@ -182,6 +182,15 @@ if (!Array.prototype.indexOf)
   };
 }
 
+/**
+ * IE9, 10 and 11 doesn't have window.location.origin
+ */
+if (!window.location.origin) {
+    window.location.origin = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+    // force update
+    Settings.BASE_URL = window.location.origin;
+}
+
 var tagsToReplace = {
     '&': '&amp;',
     '<': '&lt;',
