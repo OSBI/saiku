@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by bugg on 01/05/14.
  */
-interface IUserManager {
+public interface IUserManager {
 
   SaikuUser addUser(SaikuUser u);
 

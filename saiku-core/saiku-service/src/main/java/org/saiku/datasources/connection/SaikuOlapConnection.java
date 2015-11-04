@@ -32,10 +32,13 @@ public class SaikuOlapConnection implements ISaikuConnection {
 
 
 
-  private final String name;
+  private String name;
   private boolean initialized = false;
   private Properties properties;
   private OlapConnection olapConnection;
+  private String username;
+  private String password;
+  private String passwordenc;
 
   private static final Logger log = LoggerFactory.getLogger(SaikuOlapConnection.class);
 
@@ -45,7 +48,7 @@ public class SaikuOlapConnection implements ISaikuConnection {
     this.properties = props;
   }
 
-  private SaikuOlapConnection(Properties props) {
+  public SaikuOlapConnection( Properties props ) {
     this.properties = props;
     this.name = props.getProperty( ISaikuConnection.NAME_KEY );
   }
@@ -77,16 +80,16 @@ public class SaikuOlapConnection implements ISaikuConnection {
           return false;
         }
     else {
-          String username = props.getProperty(ISaikuConnection.USERNAME_KEY);
-          String password = props.getProperty(ISaikuConnection.PASSWORD_KEY);
+          this.username = props.getProperty(ISaikuConnection.USERNAME_KEY);
+          this.password = props.getProperty(ISaikuConnection.PASSWORD_KEY);
           String driver = props.getProperty(ISaikuConnection.DRIVER_KEY);
-          String passwordenc = props.getProperty(ISaikuConnection.PASSWORD_ENCRYPT_KEY);
+          this.passwordenc = props.getProperty(ISaikuConnection.PASSWORD_ENCRYPT_KEY);
           this.properties = props;
           String url = props.getProperty(ISaikuConnection.URL_KEY);
 
 
-          if (passwordenc != null && passwordenc.equals("true")) {
-            password = decryptPassword(password);
+          if (this.passwordenc != null && this.passwordenc.equals("true")) {
+            this.password = decryptPassword(password);
           }
           if (url.contains("Mondrian=4")) {
             url = url.replace("Mondrian=4; ", "");
@@ -145,6 +148,13 @@ public class SaikuOlapConnection implements ISaikuConnection {
   }
 
   public Connection getConnection() {
+    try
+    {
+      if (olapConnection.isClosed())
+      {
+        connect();
+      }
+    } catch (Exception e) {}
     return olapConnection;
   }
 

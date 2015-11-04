@@ -116,8 +116,6 @@ function recursive_menu_translate(object, po_file) {
                 debugger;
             }
 			if (element.html()) {
-
-                //console.log("html:" + element.attr('html'));
 				translated_text = translate( element.html(), po_file );
                 if (Saiku.i18n.elements.indexOf &&
                     Saiku.i18n.elements.indexOf(element.html()) === -1) {

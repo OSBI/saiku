@@ -29,7 +29,7 @@ public interface ISessionService {
   void authenticate(HttpServletRequest req, String username,
                     String password);
 
-  Map<String, Object> getSession();
+  Map<String, Object> getSession() throws Exception;
 
   Map<String, Object> getAllSessionObjects();
 
