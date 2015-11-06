@@ -49,6 +49,7 @@
 						<jsSourceInclude>render/SaikuRenderer.js</jsSourceInclude>
 						<jsSourceInclude>render/SaikuTableRenderer.js</jsSourceInclude>
 						<jsSourceInclude>render/SaikuChartRenderer.js</jsSourceInclude>
+						<jsSourceInclude>models/DataSources.js</jsSourceInclude>
 						<jsSourceInclude>models/Dimension.js</jsSourceInclude>
 						<jsSourceInclude>views/DimensionList.js</jsSourceInclude>
 						<jsSourceInclude>views/Toolbar.js</jsSourceInclude>
