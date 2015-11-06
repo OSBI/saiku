@@ -143,7 +143,7 @@ var Repository = Backbone.Collection.extend({
 
 var RepositoryLazyLoad = Backbone.Model.extend({    
     url: function() {
-        var segment = repoPathUrl() + '?type=' + (this.type ? this.type : 'saiku') + '&path=' + this.path;
+        var segment = repoPathUrl() + '?type=' + (this.type ? this.type : 'saiku,sdb') + '&path=' + this.path;
         return segment;
     },
 
