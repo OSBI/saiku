@@ -177,7 +177,7 @@ public class DataSourceMapper {
 
     }
 
-    private String getConnectionname() {
+    public String getConnectionname() {
         return connectionname;
     }
 
