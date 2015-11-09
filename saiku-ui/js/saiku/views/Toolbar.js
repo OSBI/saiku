@@ -21,7 +21,8 @@ var Toolbar = Backbone.View.extend({
     tagName: "div",
 
     events: {
-        'click a' : 'call'
+        'click a' : 'call',
+        'click #logo': 'site'
     },
 
     template: function() {
@@ -119,5 +120,13 @@ var Toolbar = Backbone.View.extend({
 	help: function() {
 		window.open('http://wiki.meteorite.bi/display/SAIK/Saiku+Documentation');
 		return false;
-	}
+	},
+
+    /**
+     * Force go to the Meteorite BI site
+     */
+    site: function() {
+        window.open('http://www.meteorite.bi/');
+        return false;
+    }
 });

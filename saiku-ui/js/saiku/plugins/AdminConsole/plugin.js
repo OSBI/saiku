@@ -266,8 +266,8 @@ var AdminConsole = Backbone.View.extend({
         var html = this.backup_restore_template();
         $(this.el).find('.user_info').html(html);
     },
-    caption: function () {
-        return "Admin Console";
+    caption: function() {
+        return '<span class="i18n">Admin Console</span>';
     },
 
     render: function () {

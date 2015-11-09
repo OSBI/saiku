@@ -112,7 +112,7 @@ function recursive_menu_translate(object, po_file) {
 		return $.each(this, function() {
 			element = $(this);
 			// Translate text
-            if(element.html === undefined && element.attr('title')===undefined && element.attr('value')===undefined){
+            if(element.html === undefined && element.attr('title') === undefined && element.attr('value') === undefined) {
                 debugger;
             }
 			if (element.html()) {
@@ -148,7 +148,7 @@ function recursive_menu_translate(object, po_file) {
 
             // Translate title
             if (element.attr('original-title')) {
-                console.log("original-title:" + element.attr('original-title'));
+                // console.log("original-title:" + element.attr('original-title'));
                 translated_title = translate( element.attr('original-title'), po_file );
                 if (Saiku.i18n.elements.indexOf &&
                     Saiku.i18n.elements.indexOf(element.attr('original-title')) === -1) {
@@ -162,7 +162,7 @@ function recursive_menu_translate(object, po_file) {
             }
 			
 			if (element.attr('value')) {
-                console.log("value:" + element.attr('value'));
+                // console.log("value:" + element.attr('value'));
                 translated_value = translate( element.attr('value'), po_file );
                 if (Saiku.i18n.elements.indexOf && 
                     Saiku.i18n.elements.indexOf(element.attr('value')) === -1) {
@@ -303,7 +303,7 @@ Saiku.events.bind('session:new', function() {
             .click(Saiku.i18n.improve_translation)
             .addClass('sprite translate i18n');
         var $li = $("<li />").append($link);
-        $(Saiku.toolbar.el).find('ul').append($li);
+        $(Saiku.toolbar.el).find('ul').append($li).append('<li class="separator">&nbsp;</li>');
     }
 
 });

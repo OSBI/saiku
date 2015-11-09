@@ -51,7 +51,7 @@ var OpenQuery = Backbone.View.extend({
     },
 
     caption: function() {
-        return "Repository";
+        return '<span class="i18n">Repository</span>';
     },
 
     /*jshint -W069 */

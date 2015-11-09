@@ -939,6 +939,7 @@ var Workspace = Backbone.View.extend({
             $(this.el).find(".workspace_results_titles").html(header);
         }
         this.adjust();
+        Saiku.i18n.translate();
         return;
     },
 
