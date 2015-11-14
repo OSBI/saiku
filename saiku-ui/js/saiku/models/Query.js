@@ -82,7 +82,7 @@ var Query = Backbone.Model.extend({
         this.workspace.trigger('query:run');
         this.result.result = null;
         var validated = false;
-        var errorMessage = "Query Validation failed!";
+        var errorMessage = '<span class="i18n">Query Validation failed!</span>';
 
         var exModel = this.helper.model();
 		for(var k in this.attributes) {

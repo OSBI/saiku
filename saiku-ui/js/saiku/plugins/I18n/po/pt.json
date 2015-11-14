@@ -151,6 +151,7 @@
 	"After&amp;Equals": "Depois&amp;Iqual",
 	"Before&amp;Equals": "Antes&amp;Iqual",
 	"Not Between": "Não Entre",
+	"add": "add",
 	"Select a date:": "Selecione uma data:",
 	"Selected date:": "Data(s) selecionada(s):",
 	"Select a start date:": "Selecione uma data de início:",
@@ -169,5 +170,6 @@
 	"Week(s)": "Semana(s)",
 	"Month(s)": "Mês/Meses",
 	"Year(s)": "Ano(s)",
-	"&nbsp;Open Standard Filter&nbsp;": "&nbsp;Abrir Filtro Padrão&nbsp;"
+	"&nbsp;Open Standard Filter&nbsp;": "&nbsp;Abrir Filtro Padrão&nbsp;",
+	"&nbsp;Open Date Filter&nbsp;":"&nbsp;Abrir Filtro de Data&nbsp;"
 }

@@ -116,7 +116,7 @@ var SplashScreen = Backbone.View.extend({
         $(this.el).remove();
     },
     caption: function(increment) {
-        return "Home";
+        return '<span class="i18n">Home</span>';
     },
 	getNews: function(){
 		var that = this;

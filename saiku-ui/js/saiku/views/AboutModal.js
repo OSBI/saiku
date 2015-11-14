@@ -50,10 +50,10 @@ var AboutModal = Modal.extend({
         '</div>'+
         '<strong><a href="www.meteorite.bi/saiku-pricing" target="_blank">Order more licenses' +
         ' here</a></strong><br/>'+
-        'Powered by <img src="images/src/meteorite_free.png" width="20px"> <a href="http://www.meteorite.bi/consulting/" target="_blank">www.meteorite.bi</a><br/>',
+        'Powered by <img src="images/src/meteorite_free.png" width="20px"> <a href="http://www.meteorite.bi/services/consulting" target="_blank">www.meteorite.bi</a><br/>',
 
     initialize: function() {
-        this.options.title = 'About ' + Settings.VERSION;
+        this.options.title = '<span class="i18n">About</span> ' + Settings.VERSION;
     },
 
     ObjectLength_Modern: function( object ) {

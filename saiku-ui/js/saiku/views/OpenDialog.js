@@ -49,7 +49,7 @@ var OpenDialog = Modal.extend({
 
         this.message =  '<div class="box-search-file" style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
                         ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>' +
-                        "<div class='RepositoryObjects'>Loading....</div>" +
+                        "<div class='RepositoryObjects i18n'>Loading...</div>" +
                         "<br>" +
                         "<b><div class='query_name'><span class='i18n'>Please select a file.....</span></div></b><br/>";
 
