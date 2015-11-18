@@ -52,7 +52,7 @@ var CalculatedMemberModal = Modal.extend({
     template_modal: _.template(
         '<div class="cms-container-group">' +
             '<div class="calculated-measure-group">' +
-                '<h4>Calculated Measures:</h4>' +
+                '<h4 class="i18n">Calculated Measures:</h4>' +
                 '<div class="cms-box">' +
                     '<table class="cms-list measures-list">' +
                         '<%= tplCalculatedMeasures %>' +
@@ -60,7 +60,7 @@ var CalculatedMemberModal = Modal.extend({
                 '</div>' +
             '</div>' +
             '<div class="calculated-member-group">' +
-                '<h4>Calculated Members:</h4>' +
+                '<h4 class="i18n">Calculated Members:</h4>' +
                 '<div class="cms-box">' +
                     '<table class="cms-list members-list">' +
                         '<%= tplCalculatedMembers %>' +
@@ -70,16 +70,16 @@ var CalculatedMemberModal = Modal.extend({
         '</div>' +
         '<div class="cms-container-form">' +
             '<form class="form-group-inline" data-action="cad">' +
-                '<label for="cms-name">Name:</label>' +
+                '<label for="cms-name" class="i18n">Name:</label>' +
                 '<input type="text" id="cms-name" autofocus>' +
-                '<label for="cms-measure">Measure:</label>' +
+                '<label for="cms-measure" class="i18n">Measure:</label>' +
                 '<select id="cms-measure">' +
-                    '<option value="" selected>-- Add a measure in formula --</option>' +
+                    '<option class="i18n" value="" selected>-- Add a measure in formula --</option>' +
                     '<% _(measures).each(function(measure) { %>' +
                         '<option value="<%= measure.uniqueName %>"><%= measure.name %></option>' +
                     '<% }); %>' +
                 '</select>' +
-                '<label for="<%= idEditor %>">Formula:</label>' +
+                '<label for="<%= idEditor %>" class="i18n">Formula:</label>' +
                 '<div class="formula-editor" id="<%= idEditor %>"></div>' +
                 '<div class="btn-group-math">' +
                     '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="+">&nbsp;+&nbsp;</a>' +
@@ -88,21 +88,20 @@ var CalculatedMemberModal = Modal.extend({
                     '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="/">&nbsp;/&nbsp;</a>' +
                     '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="(">&nbsp;(&nbsp;</a>' +
                     '<a class="form_button btn-math" href="#add_math_operator_formula" data-math=")">&nbsp;)&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="and">&nbsp;and&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="or">&nbsp;or&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="not">&nbsp;not&nbsp;</a>' +
+                    '<a class="form_button btn-math i18n" href="#add_math_operator_formula" data-math="and">&nbsp;and&nbsp;</a>' +
+                    '<a class="form_button btn-math i18n" href="#add_math_operator_formula" data-math="or">&nbsp;or&nbsp;</a>' +
+                    '<a class="form_button btn-math i18n" href="#add_math_operator_formula" data-math="not">&nbsp;not&nbsp;</a>' +
                 '</div>' +
 				'<div class="cms-function">' +
-					'<label for="cms-function">Functions:</label>' +
+					'<label for="cms-function" class="i18n">Functions:</label>' +
 					' <input type="button" class="form_button growthBtn" style="padding-bottom: 18px;" value="Growth"  ' +
 					'         title="Calculate difference. Good to calculate previous period growth "   id="growthBtn" >  </input> ' +
 					' <input type="button" class="form_button formatBtn" style="padding-bottom: 18px;" value="Format %" id="formatBtn"  ' +
 					'title="Post-process step: format this view as percentage of rows, columns or grand total. " />' +
 				'</div>' +
-
-                '<label for="cms-dimension">Dimension:</label>' +
+                '<label for="cms-dimension" class="i18n">Dimension:</label>' +
                 '<select id="cms-dimension">' +
-                    '<option value="" selected>-- Select an existing dimension --</option>' +
+                    '<option class="i18n" value="" selected>-- Select an existing dimension --</option>' +
                     '<% if (measures.length > 0) { %>' +
                         '<optgroup label="<%= dataMeasures.name %>">' +
                             '<option value="<%= dataMeasures.uniqueName %>" data-type="calcmeasure"><%= dataMeasures.name %></option>' +
@@ -116,22 +115,22 @@ var CalculatedMemberModal = Modal.extend({
                         '</optgroup>' +
                     '<% }); %>' +
                 '</select>' +
-                '<label for="cms-format">Format:</label>' +
+                '<label for="cms-format" class="i18n">Format:</label>' +
                 '<select id="cms-format">' +
-                    '<option value="" selected>-- Select a format --</option>' +
-                    '<option value="custom">Custom</option>' +
-                    '<option value="#,##0.00">#,##0.00 Decimal</option>' +
-                    '<option value="#,###">#,### Integer</option>' +
-                    '<option value="##.##%">##.##% Decimal percentage</option>' +
-                    '<option value="##%">##% Interger percentage</option>' +
-                    '<option value="mmmm dd yyyy">mmmm dd yyyy Month Day Year</option>' +
-                    '<option value="mmmm yyyy">mmmm yyyy Month Year</option>' +
-                    '<option value="yyyy-mm-dd">yyyy-mm-dd ISO format date</option>' +
-                    '<option value="yyyy-mm-dd hh:mi:ss">yyyy-mm-dd hh:mi:ss Date and time</option>' +
-                    '<option value="##h ##m">##h ##m Minutes</option>' +
+                    '<option class="i18n" value="" selected>-- Select a format --</option>' +
+                    '<option class="i18n" value="custom">Custom</option>' +
+                    '<option class="i18n" value="#,##0.00">#,##0.00 Decimal</option>' +
+                    '<option class="i18n" value="#,###">#,### Integer</option>' +
+                    '<option class="i18n" value="##.##%">##.##% Decimal percentage</option>' +
+                    '<option class="i18n" value="##%">##% Integer percentage</option>' +
+                    '<option class="i18n" value="mmmm dd yyyy">mmmm dd yyyy Month Day Year</option>' +
+                    '<option class="i18n" value="mmmm yyyy">mmmm yyyy Month Year</option>' +
+                    '<option class="i18n" value="yyyy-mm-dd">yyyy-mm-dd ISO format date</option>' +
+                    '<option class="i18n" value="yyyy-mm-dd hh:mi:ss">yyyy-mm-dd hh:mi:ss Date and time</option>' +
+                    '<option class="i18n" value="##h ##m">##h ##m Minutes</option>' +
                 '</select>' +
                 '<div class="div-format-custom">' +
-                    '<label for="cms-format-custom">Format Custom:</label>' +
+                    '<label for="cms-format-custom" class="i18n">Format Custom:</label>' +
                     '<input type="text" id="cms-format-custom" value="" placeholder="Add a format custom">' +
                 '</div>' +
             '</form>' +
@@ -161,15 +160,15 @@ var CalculatedMemberModal = Modal.extend({
      * @private
      */
     events: {
-        'click  .dialog_footer a' : 'call',
-        'blur   #cms-name'        : 'trigger_input_name',
-        'change #cms-measure'     : 'add_measure_formula',
-        'click  .btn-math'        : 'add_math_operator_formula',
-        'change #cms-format'      : 'type_format',
-        'click  .btn-action-edit' : 'edit_cms',
-        'click  .btn-action-del'  : 'show_del_cms',
-		'click .form_button.growthBtn': 'openGrowthModal',
-		'click .form_button.formatBtn': 'openFormatModal'
+        'click  .dialog_footer a'      : 'call',
+        'blur   #cms-name'             : 'trigger_input_name',
+        'change #cms-measure'          : 'add_measure_formula',
+        'click  .btn-math'             : 'add_math_operator_formula',
+        'change #cms-format'           : 'type_format',
+        'click  .btn-action-edit'      : 'edit_cms',
+        'click  .btn-action-del'       : 'show_del_cms',
+		'click .form_button.growthBtn' : 'openGrowthModal',
+		'click .form_button.formatBtn' : 'openFormatModal'
     },
 
     /**
@@ -183,7 +182,7 @@ var CalculatedMemberModal = Modal.extend({
         // Initialize properties
         _.extend(this, args);
         this.workspace = args.workspace;
-        this.options.title = 'Calculated Member';
+        this.options.title = '<span class="i18n">Calculated Member</span>';
         this.id = _.uniqueId('cms-formula-');
 
         var self = this;
@@ -202,7 +201,7 @@ var CalculatedMemberModal = Modal.extend({
         // console.log(JSON.stringify(this.workspace.query.helper.query.model));
         // console.log(calculatedMembers);
 
-        Saiku.ui.block('Loading...');
+        Saiku.ui.block('<span class="i18n">Loading...</span>');
 
         // Load template
         this.message = this.template_modal({
@@ -300,10 +299,10 @@ var CalculatedMemberModal = Modal.extend({
         }
         else {
             if (type === 'calcmeasure') {
-                $tpl = '<p class="msg-no-cms">No calculated measures created</p>';
+                $tpl = '<p class="msg-no-cms i18n">No calculated measures created</p>';
             }
             else {
-                $tpl = '<p class="msg-no-cms">No calculated members created</p>';    
+                $tpl = '<p class="msg-no-cms i18n">No calculated members created</p>';    
             }
         }
 
@@ -378,16 +377,16 @@ var CalculatedMemberModal = Modal.extend({
     show_del_cms: function(event) {
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
-        var cmsType = $currentTarget.data('type') === 'calcmeasure' ? 'measure' : 'member';
+        var cmsType = $currentTarget.data('type') === 'calcmeasure' ? '<span class="i18n">measure</span>' : '<span class="i18n">member</span>';
         this.$delcms = $currentTarget;
         this.new();
         (new WarningModal({
-            title: 'Delete Member',
-            message: 'You want to delete this calculated ' + cmsType + ' <b>' + $currentTarget.data('name') + '</b>?',
+            title: '<span class="i18n">Delete Member</span>',
+            message: '<span class="i18n">You want to delete this</span> ' + cmsType + ' <b>' + $currentTarget.data('name') + '</b>?',
             okay: this.del_cms,
             okayobj: this
         })).render().open();
-        this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Calculated Member');
+        this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('<span class="i18n">Calculated Member</span>');
     },
 
     /**
@@ -412,12 +411,14 @@ var CalculatedMemberModal = Modal.extend({
         args.new();
         if (!args.check_len_cms(args.$delcms.data('type'))) {
             if (args.$delcms.data('type') === 'calcmeasure') {
-                args.$el.find('.measures-list').append('<p class="msg-no-cms">No calculated measures created</p>');
+                args.$el.find('.measures-list').append('<p class="msg-no-cms i18n">No calculated measures created</p>');
             }
             else {
-                args.$el.find('.members-list').append('<p class="msg-no-cms">No calculated members created</p>');
+                args.$el.find('.members-list').append('<p class="msg-no-cms i18n">No calculated members created</p>');
             }
         }
+
+        Saiku.i18n.translate();
     },
 
     /**
@@ -601,37 +602,37 @@ var CalculatedMemberModal = Modal.extend({
         this.reset_form();
     },
 
-openGrowthModal: function (event) {
-	var selectedHierarchies = this.workspace.query.helper.model().queryModel.axes.ROWS.hierarchies.concat(this.workspace.query.helper.model().queryModel.axes.COLUMNS.hierarchies);
+    openGrowthModal: function (event) {
+    	var selectedHierarchies = this.workspace.query.helper.model().queryModel.axes.ROWS.hierarchies.concat(this.workspace.query.helper.model().queryModel.axes.COLUMNS.hierarchies);
 
-	function extractDimensionChoices(hierarchies) {
-		var dimensionNames = [];
-		_.each(hierarchies, function (hierarchy) {
-			dimensionNames.push(hierarchy.name)
-		}, this);
-		return dimensionNames;
-	}
+    	function extractDimensionChoices(hierarchies) {
+    		var dimensionNames = [];
+    		_.each(hierarchies, function (hierarchy) {
+    			dimensionNames.push(hierarchy.name)
+    		}, this);
+    		return dimensionNames;
+    	}
 
-	var selectedDimensions = extractDimensionChoices(selectedHierarchies);
-	var cube = this.workspace.selected_cube;
-	var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
+    	var selectedDimensions = extractDimensionChoices(selectedHierarchies);
+    	var cube = this.workspace.selected_cube;
+    	var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
 
-	this.close();
-	(new GrowthModal({
-		workspace: this.workspace,
-		measures: measures,
-		dimensions: selectedDimensions
-	})).render().open();
-},
+    	this.close();
+    	(new GrowthModal({
+    		workspace: this.workspace,
+    		measures: measures,
+    		dimensions: selectedDimensions
+    	})).render().open();
+    },
 
-openFormatModal: function (event) {
-	var selectedMeasures = this.workspace.query.helper.model().queryModel.details.measures;
-	this.close();
-	(new FormatAsPercentageModal({
-		workspace: this.workspace,
-		measures: selectedMeasures
-	})).render().open();
-},
+    openFormatModal: function (event) {
+    	var selectedMeasures = this.workspace.query.helper.model().queryModel.details.measures;
+    	this.close();
+    	(new FormatAsPercentageModal({
+    		workspace: this.workspace,
+    		measures: selectedMeasures
+    	})).render().open();
+    },
 
     /**
      * Save calculated member
