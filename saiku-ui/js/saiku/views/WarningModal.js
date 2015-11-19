@@ -29,8 +29,8 @@ var WarningModal = Modal.extend({
         'Powered by <img src="images/src/meteorite_free.png" width="20px"> <a href="http://www.meteorite.bi/consulting/" target="_blank">www.meteorite.bi</a>',*/
 
     initialize: function(args) {
-        this.options.title = '<span class="i18n">' + args.title + '</span>';
-        this.message = '<span class="i18n">' + args.message + '</span>';
+        this.options.title = args.title;
+        this.message = args.message;
         this.cancelfunction = args.cancel;
         this.okayfunction = args.okay;
         this.okaycallbackobject = args.okayobj;
