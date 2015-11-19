@@ -164,7 +164,7 @@ var DateFilterModal = Modal.extend({
 	initialize: function(args) {
 		// Initialize properties
 		_.extend(this, args);
-		this.options.title = '<span class="i18n">Date Filter</span>';
+		this.options.title = 'Date Filter';
 		this.message = 'Loading...';
 		this.query = args.workspace.query;
 		this.selectedDates = [];
