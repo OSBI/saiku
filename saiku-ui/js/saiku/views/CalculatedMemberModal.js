@@ -182,7 +182,7 @@ var CalculatedMemberModal = Modal.extend({
         // Initialize properties
         _.extend(this, args);
         this.workspace = args.workspace;
-        this.options.title = '<span class="i18n">Calculated Member</span>';
+        this.options.title = 'Calculated Member';
         this.id = _.uniqueId('cms-formula-');
 
         var self = this;
@@ -386,7 +386,8 @@ var CalculatedMemberModal = Modal.extend({
             okay: this.del_cms,
             okayobj: this
         })).render().open();
-        this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('<span class="i18n">Calculated Member</span>');
+        this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Calculated Member');
+        Saiku.i18n.translate();
     },
 
     /**
