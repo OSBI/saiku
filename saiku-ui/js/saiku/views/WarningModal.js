@@ -30,7 +30,7 @@ var WarningModal = Modal.extend({
 
     initialize: function(args) {
         this.options.title = args.title;
-        this.message = args.message;
+        this.message = '<span class="i18n">' + args.message + '</span>';
         this.cancelfunction = args.cancel;
         this.okayfunction = args.okay;
         this.okaycallbackobject = args.okayobj;
