@@ -425,7 +425,7 @@ var OpenQuery = Backbone.View.extend({
         var obj = {files: files, viewstate: viewstate};
 
         (new WarningModal({
-            title: "Open Multiple Queries", message: "You are about to open "+files.length+" queries",
+            title: 'Open Multiple Queries', message: '<span class="i18n">You are about to open</span> ' + files.length + ' <span class="i18n">queries</span>',
             okay: this.run_open_contents, okayobj: obj
         })).render().open();
 
