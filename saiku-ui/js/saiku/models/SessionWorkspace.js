@@ -83,7 +83,6 @@ var SessionWorkspace = Backbone.Model.extend({
             connections: response
         });
         
-        
         // Create cube objects
         this.cube = {};
         this.connections = response;
@@ -112,21 +111,100 @@ var SessionWorkspace = Backbone.Model.extend({
                 paramsURI.splash = true;
             }
 
-            // Saiku.splash.render();
-            if (!Settings.INITIAL_QUERY && paramsURI.splash) {
-                Saiku.tabs.add(new SplashScreen())
+            if (Settings.DEFAULT_REPORT_SHOW) {
+                var reports = Settings.DEFAULT_REPORTS[Saiku.session.username];
+                var everythingLoaded = 0;
+
+                function addDefaultReport() {
+                    var filePath;
+                    var fileName;
+
+                    if (_.size(Settings.DEFAULT_REPORTS) > 0 && reports.length > 0) {
+                        for (var i = 0; i < reports.length; i++) {
+                            // if ((reports[i].visible && reports[i].visible !== 'false') || reports[i].visible === 'true') {
+                            if (reports[i].visible) {
+                                filePath = reports[i].path;
+                                if (filePath.indexOf('.saiku') === filePath.length - 6) {
+                                    
+                                    Saiku.ui.block('Loading default report...');
+
+                                    fileName = filePath.split(Saiku.session.username + '/')[1];
+
+                                    var selectedQuery = new SavedQuery({ file: filePath, name: fileName });
+                                    var item = {
+                                        fileType: 'saiku',
+                                        name: fileName.split('.saiku')[0]
+                                    };
+                                    var params = _.extend({
+                                                    file: selectedQuery.get('file'),
+                                                    formatter: Settings.CELLSET_FORMATTER
+                                                }, Settings.PARAMS);
+                                    var query = new Query(params, { name: selectedQuery.get('name') });
+
+                                    Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: null }));
+                                }
+                                else if (filePath.indexOf('.sdb') === filePath.length - 4) {
+                                    if (Saiku.Dashboards) {
+                                        Saiku.ui.block('Loading default report...');
+                                        Saiku.tabs.add(new DashboardViewTab({ file: reports[i].path }));
+                                    }
+                                    else {
+                                        if (!Settings.INITIAL_QUERY && paramsURI.splash) {
+                                            Saiku.tabs.add(new SplashScreen());
+                                        }
+                                        else if(!Settings.INITIAL_QUERY) {
+                                           Saiku.tabs.add(new Workspace());
+                                        }
+                                    }
+                                }
+                                break;
+                            }
+                            else {
+                                if (i === (reports.length - 1)) {
+                                    if (!Settings.INITIAL_QUERY && paramsURI.splash) {
+                                        Saiku.tabs.add(new SplashScreen());
+                                    }
+                                    else if(!Settings.INITIAL_QUERY) {
+                                       Saiku.tabs.add(new Workspace());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        if (!Settings.INITIAL_QUERY && paramsURI.splash) {
+                            Saiku.tabs.add(new SplashScreen());
+                        }
+                        else if(!Settings.INITIAL_QUERY) {
+                           Saiku.tabs.add(new Workspace());
+                        }
+                    }
+                }
+
+                everythingLoaded = setInterval(function() {
+                    if (typeof window.DashboardViewTab !== 'undefined') {
+                        clearInterval(everythingLoaded);
+                        addDefaultReport();
+                    }
+                }, 100);
             }
-            else if(!Settings.INITIAL_QUERY){
-               Saiku.tabs.add(new Workspace());
+            else {
+                // Saiku.splash.render();
+                if (!Settings.INITIAL_QUERY && paramsURI.splash) {
+                    Saiku.tabs.add(new SplashScreen());
+                }
+                else if(!Settings.INITIAL_QUERY) {
+                   Saiku.tabs.add(new Workspace());
+                }
+                //if (!Settings.INITIAL_QUERY) {
+                //    Saiku.tabs.add(new Workspace());
+                //} 
             }
-            //if (!Settings.INITIAL_QUERY) {
-            //    Saiku.tabs.add(new Workspace());
-            //}            
-        } else {
+        } 
+        else {
             if (!Settings.INITIAL_QUERY) {
                 Saiku.tabs.add(new Workspace());
             }
-
         }
     },
     
