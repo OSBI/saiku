@@ -81,7 +81,7 @@ var CalculatedMemberModal = Modal.extend({
                 '</select>' +
                 '<label for="<%= idEditor %>" class="i18n">Formula:</label>' +
                 '<div class="formula-editor" id="<%= idEditor %>"></div>' +
-                '<div class="btn-group-math">' +
+                '<div class="btn-groups">' +
                     '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="+">&nbsp;+&nbsp;</a>' +
                     '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="-">&nbsp;-&nbsp;</a>' +
                     '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="*">&nbsp;*&nbsp;</a>' +
@@ -92,13 +92,13 @@ var CalculatedMemberModal = Modal.extend({
                     '<a class="form_button btn-math i18n" href="#add_math_operator_formula" data-math="or">&nbsp;or&nbsp;</a>' +
                     '<a class="form_button btn-math i18n" href="#add_math_operator_formula" data-math="not">&nbsp;not&nbsp;</a>' +
                 '</div>' +
-				'<div class="cms-function">' +
-					'<label for="cms-function" class="i18n">Functions:</label>' +
-					' <input type="button" class="form_button growthBtn" style="padding-bottom: 18px;" value="Growth"  ' +
-					'         title="Calculate difference. Good to calculate previous period growth "   id="growthBtn" >  </input> ' +
-					' <input type="button" class="form_button formatBtn" style="padding-bottom: 18px;" value="Format %" id="formatBtn"  ' +
-					'title="Post-process step: format this view as percentage of rows, columns or grand total. " />' +
-				'</div>' +
+                '<div class="cms-function">' +
+                    '<label for="cms-function" class="i18n">Functions:</label>' +
+                    ' <input type="button" class="form_button growthBtn" style="padding-bottom: 18px;" value="Growth"  ' +
+                    '         title="Calculate difference. Good to calculate previous period growth "   id="growthBtn" >  </input> ' +
+                    ' <input type="button" class="form_button formatBtn" style="padding-bottom: 18px;" value="Format %" id="formatBtn"  ' +
+                    'title="Post-process step: format this view as percentage of rows, columns or grand total. " />' +
+                '</div>' +
                 '<label for="cms-dimension" class="i18n">Dimension:</label>' +
                 '<select id="cms-dimension">' +
                     '<option class="i18n" value="" selected>-- Select an existing dimension --</option>' +
@@ -115,6 +115,9 @@ var CalculatedMemberModal = Modal.extend({
                         '</optgroup>' +
                     '<% }); %>' +
                 '</select>' +
+                '<div class="btn-groups">' +
+                    '<a class="form_button btn-parent-member" href="#add_math_operator_formula">&nbsp;Parent Member Selector&nbsp;</a>' +
+                '</div>' +
                 '<label for="cms-format" class="i18n">Format:</label>' +
                 '<select id="cms-format">' +
                     '<option class="i18n" value="" selected>-- Select a format --</option>' +
@@ -167,8 +170,9 @@ var CalculatedMemberModal = Modal.extend({
         'change #cms-format'           : 'type_format',
         'click  .btn-action-edit'      : 'edit_cms',
         'click  .btn-action-del'       : 'show_del_cms',
-		'click .form_button.growthBtn' : 'openGrowthModal',
-		'click .form_button.formatBtn' : 'openFormatModal'
+        'click .form_button.growthBtn' : 'openGrowthModal',
+        'click .form_button.formatBtn' : 'openFormatModal',
+        'click .btn-parent-member'     : 'open_parent_member_selector'
     },
 
     /**
@@ -234,7 +238,7 @@ var CalculatedMemberModal = Modal.extend({
      * @public
      */
     post_render: function() {
-        var tPerc = (((($('body').height() - 500) / 2) * 100) / $('body').height());
+        var tPerc = (((($('body').height() - 570) / 2) * 100) / $('body').height());
         var lPerc = (((($('body').width() - 800) / 2) * 100) / $('body').width());
 
         this.$el.dialog('option', 'position', 'center');
@@ -604,35 +608,43 @@ var CalculatedMemberModal = Modal.extend({
     },
 
     openGrowthModal: function (event) {
-    	var selectedHierarchies = this.workspace.query.helper.model().queryModel.axes.ROWS.hierarchies.concat(this.workspace.query.helper.model().queryModel.axes.COLUMNS.hierarchies);
+        var selectedHierarchies = this.workspace.query.helper.model().queryModel.axes.ROWS.hierarchies.concat(this.workspace.query.helper.model().queryModel.axes.COLUMNS.hierarchies);
 
-    	function extractDimensionChoices(hierarchies) {
-    		var dimensionNames = [];
-    		_.each(hierarchies, function (hierarchy) {
-    			dimensionNames.push(hierarchy.name)
-    		}, this);
-    		return dimensionNames;
-    	}
+        function extractDimensionChoices(hierarchies) {
+            var dimensionNames = [];
+            _.each(hierarchies, function (hierarchy) {
+                dimensionNames.push(hierarchy.name)
+            }, this);
+            return dimensionNames;
+        }
 
-    	var selectedDimensions = extractDimensionChoices(selectedHierarchies);
-    	var cube = this.workspace.selected_cube;
-    	var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
+        var selectedDimensions = extractDimensionChoices(selectedHierarchies);
+        var cube = this.workspace.selected_cube;
+        var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
 
-    	this.close();
-    	(new GrowthModal({
-    		workspace: this.workspace,
-    		measures: measures,
-    		dimensions: selectedDimensions
-    	})).render().open();
+        this.close();
+        (new GrowthModal({
+            workspace: this.workspace,
+            measures: measures,
+            dimensions: selectedDimensions
+        })).render().open();
     },
 
     openFormatModal: function (event) {
-    	var selectedMeasures = this.workspace.query.helper.model().queryModel.details.measures;
-    	this.close();
-    	(new FormatAsPercentageModal({
-    		workspace: this.workspace,
-    		measures: selectedMeasures
-    	})).render().open();
+        var selectedMeasures = this.workspace.query.helper.model().queryModel.details.measures;
+        this.close();
+        (new FormatAsPercentageModal({
+            workspace: this.workspace,
+            measures: selectedMeasures
+        })).render().open();
+    },
+
+    open_parent_member_selector: function(event) {
+        event.preventDefault();
+        this.close();
+        (new ParentMemberSelectorModal({
+            workspace: this.workspace
+        })).render().open();
     },
 
     /**
