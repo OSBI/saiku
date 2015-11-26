@@ -82,7 +82,8 @@ var ParentMemberSelectorModal = Modal.extend({
      * @private
      */
     events: {
-        'click .dialog_footer a' : 'call'
+        'click .dialog_footer a' : 'call',
+        'dblclick .member'       : 'drill_member'
     },
 
     /**
@@ -98,58 +99,81 @@ var ParentMemberSelectorModal = Modal.extend({
         this.workspace = args.workspace;
         this.options.title = 'Parent Member Selector';
 
-        this.crumbsData = [this.dimension, this.hierarchy];
-        this.levels = this.get_levels();
+        // _.bindAll(this, 'populate_breadcrumbs');
 
         console.log(this);
+
+        this.levels;
+        this.members;
+        this.childMembers;
+        this.breadcrumbs;
+
+        var level = new Level({}, { ui: this, cube: this.cube, dimension: this.dimension, hierarchy: this.hierarchy });
+        level.fetch({
+            success: this.get_levels
+        });
 
         // Load template
         this.message = this.template_modal({
         });
 
         this.bind('open', function() {
-        	this.get_levels();
-        	this.populate_breadcrumb(this.crumbsData);
-        	this.populate_members_list(this.levels);
         });
     },
 
-    get_levels: function() {
-    	var levels;
+    get_levels: function(model, response) {
+        var levelMember;
 
-    	for (var i = 0; i < this.dimensions.length; i++) {
-    		if (this.dimensions[i].name === this.dimension) {
-    			for (var j = 0; j < this.dimensions[i].hierarchies.length; j++) {
-    				if (this.dimensions[i].hierarchies[j].name === this.hierarchy) {
-						levels = this.dimensions[i].hierarchies[j].levels;
-    				}
-    			}
-    		}
-    	}
+        if (response) {
+            console.log(response);
+            model.ui.levels = response;
+            model.ui.breadcrumbs = [model.ui.dimension, model.ui.hierarchy, response[0].name];
+            model.ui.populate_breadcrumbs(model.ui.breadcrumbs);
 
-    	return levels;
+            levelMember = new LevelMember({}, { ui: model.ui, cube: model.ui.cube, dimension: model.ui.dimension, hierarchy: model.ui.hierarchy, level: response[0].name });
+            levelMember.fetch({
+                success: model.ui.get_members
+            });
+        }
+
+        return false;
     },
 
-    // ['Store', 'Stores']
-    // 
-	// '<nav class="breadcrumbs">' +
-	// 	'<a href="#">Breadcrumb</a> &gt;' +
-	// 	'<a href="#">Breadcrumb</a> &gt;' +
-	// 	'<a href="#">Breadcrumb</a> &gt;' +
-	// 	'<span class="last-crumb">Breadcrumb</span>' +
-	// '</nav>' +
+    get_members: function(model, response) {
+        if (response) {
+            console.log(response);
+            model.ui.members = response;
+            model.ui.populate_members_list(model.ui.members);
+        }
 
-    // var $link = $("<a />")
-    //     .attr({
-    //         href: "#adminconsole",
-    //         title: "Admin Console",
-    //         class: "i18n"
-    //     })
-    //     .click(Saiku.AdminConsole.show_admin)
-    //     .addClass('admin');
-    // var $li = $("<li />").append($link);
+        return false;
+    },
 
-    populate_breadcrumb: function(data) {
+    get_child_members: function(model, response) {
+        if (response) {
+            console.log(response);
+            model.ui.childMembers = response;
+            model.ui.populate_members_list(model.ui.childMembers);
+        }
+
+        return false;
+    },
+
+    drill_member: function(event) {
+        event.preventDefault();
+        console.log(event);
+
+        var $currentTarget = $(event.currentTarget);
+
+        var uniqueName = $currentTarget.data('uniqueName');
+
+        var levelChildMember = new LevelChildMember({}, { ui: this, cube: this.cube, uniqueName: uniqueName });
+        levelChildMember.fetch({
+            success: this.get_child_members
+        });        
+    },
+
+    populate_breadcrumbs: function(data) {
     	var $crumbs = [];
 
 		for (var i = 0; i < data.length; i++) {
@@ -167,40 +191,16 @@ var ParentMemberSelectorModal = Modal.extend({
     populate_members_list: function(data) {
     	var $members = [];
 
+        this.$el.find('.members-list').empty();
+
 		for (var i = 0; i < data.length; i++) {
 			$members = $('<li />')
-				.addClass('xxx')
+				.addClass('member')
+                .data('caption', data[i].caption)
+                .data('uniqueName', data[i].uniqueName)
 				.text(data[i].name);
 			
-			this.$el.find('.members-list').append($members);
+            this.$el.find('.members-list').append($members);
 		}
     }
-
-    // executar na primeira vez que abrir o modal
-    // get_dimension: function(hierarchy) {
-    // },
-
-    // get_hierarchy: function(hierarchy) {
-    // },
-
-    // get_level: function() {
-    // },
-
-   //  get_members: function() {
-   //          var self = this;
-   //          // var path = "/result/metadata/hierarchies/" + encodeURIComponent('Stores') + "/levels/" + encodeURIComponent('Store Country');
-   //          var path = "/result/metadata/hierarchies/" + encodeURIComponent('Stores') + "/levels/";
-
-		 // // gett isn't a typo, although someone should probably rename that method to avoid confusion.
-
-   //          this.workspace.query.action.gett(path, {
-   //              success: function(model, response) {
-   //              	console.log(model);
-   //              	console.log(response);
-   //              },
-   //              error: function() {
-   //                  self.workspace.unblock();
-   //              },
-   //              data: {result: true, searchlimit: 3000 }});
-   //  }
 });
