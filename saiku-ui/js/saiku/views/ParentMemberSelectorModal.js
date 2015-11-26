@@ -41,10 +41,10 @@ var ParentMemberSelectorModal = Modal.extend({
         '<form class="form-group">' +
         	'<div class="group-elements" style="padding-top: 0;">' +
 				'<nav class="breadcrumbs">' +
-					'<a href="#">Breadcrumb</a> &gt;' +
-					'<a href="#">Breadcrumb</a> &gt;' +
-					'<a href="#">Breadcrumb</a> &gt;' +
-					'<span class="last-crumb">Breadcrumb</span>' +
+					// '<a href="#">Breadcrumb</a> &gt;' +
+					// '<a href="#">Breadcrumb</a> &gt;' +
+					// '<a href="#">Breadcrumb</a> &gt;' +
+					// '<span class="last-crumb">Breadcrumb</span>' +
 				'</nav>' +
 			'</div>' +
 			'<div class="group-elements">' +
@@ -98,11 +98,109 @@ var ParentMemberSelectorModal = Modal.extend({
         this.workspace = args.workspace;
         this.options.title = 'Parent Member Selector';
 
+        this.crumbsData = [this.dimension, this.hierarchy];
+        this.levels = this.get_levels();
+
+        console.log(this);
+
         // Load template
         this.message = this.template_modal({
         });
 
         this.bind('open', function() {
+        	this.get_levels();
+        	this.populate_breadcrumb(this.crumbsData);
+        	this.populate_members_list(this.levels);
         });
+    },
+
+    get_levels: function() {
+    	var levels;
+
+    	for (var i = 0; i < this.dimensions.length; i++) {
+    		if (this.dimensions[i].name === this.dimension) {
+    			for (var j = 0; j < this.dimensions[i].hierarchies.length; j++) {
+    				if (this.dimensions[i].hierarchies[j].name === this.hierarchy) {
+						levels = this.dimensions[i].hierarchies[j].levels;
+    				}
+    			}
+    		}
+    	}
+
+    	return levels;
+    },
+
+    // ['Store', 'Stores']
+    // 
+	// '<nav class="breadcrumbs">' +
+	// 	'<a href="#">Breadcrumb</a> &gt;' +
+	// 	'<a href="#">Breadcrumb</a> &gt;' +
+	// 	'<a href="#">Breadcrumb</a> &gt;' +
+	// 	'<span class="last-crumb">Breadcrumb</span>' +
+	// '</nav>' +
+
+    // var $link = $("<a />")
+    //     .attr({
+    //         href: "#adminconsole",
+    //         title: "Admin Console",
+    //         class: "i18n"
+    //     })
+    //     .click(Saiku.AdminConsole.show_admin)
+    //     .addClass('admin');
+    // var $li = $("<li />").append($link);
+
+    populate_breadcrumb: function(data) {
+    	var $crumbs = [];
+
+		for (var i = 0; i < data.length; i++) {
+			if (i !== (data.length - 1)) {
+				$crumbs.push('<a href="#">' + data[i] + '</a> &gt;');
+			}
+			else {
+				$crumbs.push('<span class="last-crumb">' + data[i] + '</span>');
+			}
+		}
+
+		this.$el.find('.breadcrumbs').append($crumbs);
+    },
+
+    populate_members_list: function(data) {
+    	var $members = [];
+
+		for (var i = 0; i < data.length; i++) {
+			$members = $('<li />')
+				.addClass('xxx')
+				.text(data[i].name);
+			
+			this.$el.find('.members-list').append($members);
+		}
     }
+
+    // executar na primeira vez que abrir o modal
+    // get_dimension: function(hierarchy) {
+    // },
+
+    // get_hierarchy: function(hierarchy) {
+    // },
+
+    // get_level: function() {
+    // },
+
+   //  get_members: function() {
+   //          var self = this;
+   //          // var path = "/result/metadata/hierarchies/" + encodeURIComponent('Stores') + "/levels/" + encodeURIComponent('Store Country');
+   //          var path = "/result/metadata/hierarchies/" + encodeURIComponent('Stores') + "/levels/";
+
+		 // // gett isn't a typo, although someone should probably rename that method to avoid confusion.
+
+   //          this.workspace.query.action.gett(path, {
+   //              success: function(model, response) {
+   //              	console.log(model);
+   //              	console.log(response);
+   //              },
+   //              error: function() {
+   //                  self.workspace.unblock();
+   //              },
+   //              data: {result: true, searchlimit: 3000 }});
+   //  }
 });
