@@ -46,16 +46,18 @@ var ParentMemberSelectorModal = Modal.extend({
 					// '<a href="#">Breadcrumb</a> &gt;' +
 					// '<span class="last-crumb">Breadcrumb</span>' +
 				'</nav>' +
+                '<span class="loading i18n">Loading...</span>' +
 			'</div>' +
 			'<div class="group-elements">' +
 				'<label>Selected Level: <span class="selected-level"></span></label>' +
 			'</div>' +
 			'<div class="group-elements">' +
 				'<ul class="members-list">' +
+                    '<li class="i18n">Loading...</li>' +
 				'<ul>' +
 			'</div>' +
 			'<div class="group-elements">' +
-				'<input type="search" id="auto-filter" placeholder="Autocomplete Filter">' +
+				'<input type="search" id="auto-filter" results="5" placeholder="Autocomplete Filter">' +
 			'</div>' +
         '</form>'
 	),
@@ -105,6 +107,8 @@ var ParentMemberSelectorModal = Modal.extend({
 
         console.log(this);
 
+        Saiku.ui.block('<span class="i18n">Loading...</span>');
+
         this.levels;
         this.members;
         this.childMembers;
@@ -132,6 +136,8 @@ var ParentMemberSelectorModal = Modal.extend({
             model.ui.breadcrumbs = [model.ui.dimension, model.ui.hierarchy, response[0].name];
             model.ui.populate_breadcrumbs(model.ui.breadcrumbs);
 
+            model.ui.$el.find('.dialog_footer').find('a[href="#clear"]').data('name', response[0].name);
+
             levelMember = new LevelMember({}, { ui: model.ui, cube: model.ui.cube, dimension: model.ui.dimension, hierarchy: model.ui.hierarchy, level: response[0].name });
             levelMember.fetch({
                 success: model.ui.get_members
@@ -151,36 +157,43 @@ var ParentMemberSelectorModal = Modal.extend({
         return false;
     },
 
-    // get_child_members: function(model, response) {
-    //     // x.split('].[')[3-1].replace(/[\[\]]/gi, '');
-    //     // _.last(n);
-    //     // _.initial(n, 2-1);
+    get_child_members: function(model, response) {
+        // x.split('].[')[3-1].replace(/[\[\]]/gi, '');
+        // _.last(n);
+        // _.initial(n, 2-1);
 
-    //     var levelUniqueName;
+        var levelUniqueName;
 
-    //     if (response) {
-    //         console.log(response);
+        if (response && response.length > 0) {
+            console.log(response);
 
-    //         if (response && response.length > 0) {
+            Saiku.ui.block('<span class="i18n">Loading...</span>');
 
-    //             model.ui.childMembers = response;
-    //             model.ui.populate_members_list(model.ui.childMembers);
+            model.ui.childMembers = response;
+            model.ui.populate_members_list(model.ui.childMembers);
 
+            // Refatorar
+            levelUniqueName = response[0].levelUniqueName.split('].[');
+            levelUniqueName = _.last(levelUniqueName).replace(/[\[\]]/gi, '');
+            console.log(levelUniqueName);
 
-    //             // Refatorar
-    //             levelUniqueName = response[0].levelUniqueName.split('].[');
-    //             levelUniqueName = _.last(levelUniqueName).replace(/[\[\]]/gi, '');
-    //             console.log(levelUniqueName);
+            model.ui.breadcrumbs.push(levelUniqueName);
+            model.ui.breadcrumbs = _.uniq(model.ui.breadcrumbs);
 
-    //             model.ui.breadcrumbs.push(levelUniqueName);
-    //             model.ui.breadcrumbs = _.uniq(model.ui.breadcrumbs);
-    //             model.ui.populate_breadcrumbs(model.ui.breadcrumbs);
+            var position = _.indexOf(model.ui.breadcrumbs, levelUniqueName);
+            var len = model.ui.breadcrumbs.length;
 
-    //         }
-    //     }
+            model.ui.breadcrumbs = _.initial(model.ui.breadcrumbs, (len - (position + 1)));
 
-    //     return false;
-    // },
+            model.ui.populate_breadcrumbs(model.ui.breadcrumbs);
+
+        }
+        else {
+            Saiku.ui.unblock();
+        }
+
+        return false;
+    },
 
     drill_member: function(event) {
         event.preventDefault();
@@ -216,43 +229,6 @@ var ParentMemberSelectorModal = Modal.extend({
         }); 
     },
 
-    get_child_members: function(model, response) {
-        // x.split('].[')[3-1].replace(/[\[\]]/gi, '');
-        // _.last(n);
-        // _.initial(n, 2-1);
-
-        var levelUniqueName;
-
-        if (response) {
-            console.log(response);
-
-            if (response && response.length > 0) {
-
-                model.ui.childMembers = response;
-                model.ui.populate_members_list(model.ui.childMembers);
-
-
-                // Refatorar
-                levelUniqueName = response[0].levelUniqueName.split('].[');
-                levelUniqueName = _.last(levelUniqueName).replace(/[\[\]]/gi, '');
-                console.log(levelUniqueName);
-
-                model.ui.breadcrumbs.push(levelUniqueName);
-                model.ui.breadcrumbs = _.uniq(model.ui.breadcrumbs);
-
-                var position = _.indexOf(model.ui.breadcrumbs, levelUniqueName);
-                var len = model.ui.breadcrumbs.length;
-
-                model.ui.breadcrumbs = _.initial(model.ui.breadcrumbs, (len - (position + 1)));
-
-                model.ui.populate_breadcrumbs(model.ui.breadcrumbs);
-
-            }
-        }
-
-        return false;
-    },
-
     fetch_crumb: function(event) {
         event.preventDefault();
 
@@ -275,6 +251,28 @@ var ParentMemberSelectorModal = Modal.extend({
         console.log(this.breadcrumbs);
     },
 
+    clear: function(event) {
+        event.preventDefault();
+
+        var name = $(this.el).find('.dialog_footer').find('a[href="#clear"]').data('name');
+
+        console.log(name);
+
+        var levelMember = new LevelMember({}, { ui: this, cube: this.cube, dimension: this.dimension, hierarchy: this.hierarchy, level: name });
+        levelMember.fetch({
+            success: this.get_members
+        });
+
+        this.$el.find('#auto-filter').val('');
+
+        var position = _.indexOf(this.breadcrumbs, name);
+        var len = this.breadcrumbs.length;
+
+        this.breadcrumbs = _.initial(this.breadcrumbs, (len - (position + 1)));
+
+        this.populate_breadcrumbs(this.breadcrumbs);
+    },
+
     populate_breadcrumbs: function(data) {
     	var $crumbs = [];
 
@@ -286,6 +284,10 @@ var ParentMemberSelectorModal = Modal.extend({
 				$crumbs.push('<span class="last-crumb">' + data[i] + '</span>');
 			}
 		}
+
+        Saiku.ui.unblock();
+
+        this.$el.find('.loading').remove();
 
 		this.$el.find('.breadcrumbs').empty();
         this.$el.find('.breadcrumbs').append($crumbs);
@@ -306,5 +308,7 @@ var ParentMemberSelectorModal = Modal.extend({
 			
             this.$el.find('.members-list').append($members);
 		}
+
+        Saiku.ui.unblock();
     }
 });
