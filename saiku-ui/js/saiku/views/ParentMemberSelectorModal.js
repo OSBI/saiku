@@ -83,7 +83,9 @@ var ParentMemberSelectorModal = Modal.extend({
      */
     events: {
         'click .dialog_footer a' : 'call',
-        'dblclick .member'       : 'drill_member'
+        'click .crumb'           : 'fetch_crumb',
+        'dblclick .member'       : 'drill_member',
+        'keyup #auto-filter'     : 'auto_filter'
     },
 
     /**
@@ -150,10 +152,25 @@ var ParentMemberSelectorModal = Modal.extend({
     },
 
     get_child_members: function(model, response) {
+        // x.split('].[')[3-1].replace(/[\[\]]/gi, '');
+        // _.last(n);
+        // _.initial(n, 2-1);
+
+        var levelUniqueName;
+
         if (response) {
             console.log(response);
             model.ui.childMembers = response;
             model.ui.populate_members_list(model.ui.childMembers);
+
+
+            // Refatorar
+            levelUniqueName = response[0].levelUniqueName.split('].[');
+            levelUniqueName = _.last(levelUniqueName).replace(/[\[\]]/gi, '');
+            console.log(levelUniqueName);
+
+            model.ui.breadcrumbs.push(levelUniqueName);
+            model.ui.populate_breadcrumbs(model.ui.breadcrumbs);
         }
 
         return false;
@@ -164,8 +181,14 @@ var ParentMemberSelectorModal = Modal.extend({
         console.log(event);
 
         var $currentTarget = $(event.currentTarget);
+        
+        console.log($currentTarget.data());
 
         var uniqueName = $currentTarget.data('uniqueName');
+        var levelUniqueName = $currentTarget.data('levelUniqueName');
+
+        console.log(uniqueName);
+        console.log(levelUniqueName);
 
         var levelChildMember = new LevelChildMember({}, { ui: this, cube: this.cube, uniqueName: uniqueName });
         levelChildMember.fetch({
@@ -173,19 +196,52 @@ var ParentMemberSelectorModal = Modal.extend({
         });        
     },
 
+    auto_filter: function(event) {
+        console.log(event);
+
+        var $currentTarget = $(event.currentTarget);
+        var uniqueName = $currentTarget.val();
+
+        var levelChildMember = new LevelChildMember({}, { ui: this, cube: this.cube, uniqueName: uniqueName });
+        levelChildMember.fetch({
+            success: this.get_child_members
+        }); 
+    },
+
+    fetch_crumb: function(event) {
+        event.preventDefault();
+
+        var $currentTarget = $(event.currentTarget);
+
+        console.log($currentTarget.data('position'));
+
+        var levelMember = new LevelMember({}, { ui: this, cube: this.cube, dimension: this.dimension, hierarchy: this.hierarchy, level: $currentTarget.text() });
+        levelMember.fetch({
+            success: this.get_members
+        });
+
+        var len = this.breadcrumbs.length;
+
+        this.breadcrumbs = _.initial(this.breadcrumbs, (len - (Number($currentTarget.data('position')) + 1)));
+        this.populate_breadcrumbs(this.breadcrumbs);
+
+        console.log(this.breadcrumbs);
+    },
+
     populate_breadcrumbs: function(data) {
     	var $crumbs = [];
 
 		for (var i = 0; i < data.length; i++) {
 			if (i !== (data.length - 1)) {
-				$crumbs.push('<a href="#">' + data[i] + '</a> &gt;');
+				$crumbs.push('<a href="#" class="crumb" data-position="' + i + '">' + data[i] + '</a> &gt;');
 			}
 			else {
 				$crumbs.push('<span class="last-crumb">' + data[i] + '</span>');
 			}
 		}
 
-		this.$el.find('.breadcrumbs').append($crumbs);
+		this.$el.find('.breadcrumbs').empty();
+        this.$el.find('.breadcrumbs').append($crumbs);
     },
 
     populate_members_list: function(data) {
@@ -198,6 +254,7 @@ var ParentMemberSelectorModal = Modal.extend({
 				.addClass('member')
                 .data('caption', data[i].caption)
                 .data('uniqueName', data[i].uniqueName)
+                .data('levelUniqueName', data[i].levelUniqueName ? data[i].levelUniqueName : false)
 				.text(data[i].name);
 			
             this.$el.find('.members-list').append($members);
