@@ -15,6 +15,10 @@
  */
 package org.saiku.plugin;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.ISaikuConnection;
 import org.saiku.datasources.connection.RepositoryFile;
@@ -24,9 +28,6 @@ import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.user.UserService;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.RepositoryException;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
@@ -36,7 +37,12 @@ import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import mondrian.olap.MondrianProperties;
 import mondrian.olap.Util;
@@ -257,6 +263,11 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         return loadDatasources().get(datasourceName);
     }
 
+    @Override
+    public SaikuDatasource getDatasource(String datasourceName, boolean refresh) {
+        return null;
+    }
+
     public void addSchema(String file, String path, String name) {
         throw new UnsupportedOperationException();
     }
@@ -337,6 +348,36 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         return null;
     }
 
+    @Override
+    public String getEarthquakeUrl() {
+        return null;
+    }
+
+    @Override
+    public String getEarthquakeDir() {
+        return null;
+    }
+
+    @Override
+    public String getEarthquakeSchema() {
+        return null;
+    }
+
+    @Override
+    public void setEarthquakeUrl(String earthquakeUrl) {
+
+    }
+
+    @Override
+    public void setEarthquakeDir(String earthquakeDir) {
+
+    }
+
+    @Override
+    public void setEarthquakeSchema(String earthquakeSchema) {
+
+    }
+
     public void setACL(String a, String b, String c, List<String> d) {
 
     }
@@ -390,8 +431,23 @@ public class PentahoDatasourceManager implements IDatasourceManager {
     
     }
 
+    @Override
+    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles) {
+        return null;
+    }
+
+    @Override
+    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles, String path) {
+        return null;
+    }
+
     public String getInternalFileData(String file) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public InputStream getBinaryInternalFileData(String file) throws javax.jcr.RepositoryException {
+        return null;
     }
 
     public String saveFile(String path, Object content, String user, List<String> roles) {
