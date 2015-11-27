@@ -24,17 +24,32 @@ module.exports = function(grunt) {
                     config: '.csscomb.json'
                 },
                 files: {
+                    // 'css/saiku/src/styles.css': ['css/saiku/src/styles.css'],
                     'js/saiku/plugins/Dashboards/css/plugin.css': ['js/saiku/plugins/Dashboards/css/plugin.css']
                 }
             }
-        }
+        },
+
+        // PostCSS definitions
+        postcss: {
+            options: {
+                processors: [
+                    require('autoprefixer')({ browsers: 'last 2 versions' })
+                ]
+            },
+            dist: {
+                src: 'css/saiku/src/styles.css'
+            }
+        }        
     });
 
     // These plugins provide necessary tasks
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-csscomb');
+    grunt.loadNpmTasks('grunt-postcss');
 
     // By default, lint and run all tests
     grunt.registerTask('default', ['watch']);
     grunt.registerTask('comb', ['csscomb']);
+    // grunt.registerTask('post', ['postcss']);
 };
