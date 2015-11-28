@@ -1237,6 +1237,14 @@ textarea, select {
     background-color: #f0f0f0;
 }
 
+.dialog_parent-member-selector .form-group .members-list::selection {
+    background-color: #fff;
+}
+
+.dialog_parent-member-selector .form-group .members-list li::selection {
+    background-color: #fff;
+}
+
 .dialog_permissions .dialog_body {
     width: 370px;
     height: 380px;
