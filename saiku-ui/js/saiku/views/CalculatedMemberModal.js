@@ -641,10 +641,23 @@ var CalculatedMemberModal = Modal.extend({
 
     open_parent_member_selector: function(event) {
         event.preventDefault();
-        this.close();
+        // this.close();
+
+        // var cube = this.workspace.selected_cube;
+        // var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
+        // var dimensions = Saiku.session.sessionworkspace.cube[cube].get('data').dimensions;
+
         (new ParentMemberSelectorModal({
-            workspace: this.workspace
+            workspace: this.workspace,
+            cube: this.workspace.selected_cube,
+            dimensions: Saiku.session.sessionworkspace.cube[this.workspace.selected_cube].get('data').dimensions,
+            dimension: 'Store',
+            hierarchy: 'Stores'
+            // dimension: this.$el.find('#cms-dimension option:selected').data('dimension'),
+            // hierarchy: this.$el.find('#cms-dimension option:selected').text()
         })).render().open();
+
+        this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Connection Details');
     },
 
     /**
