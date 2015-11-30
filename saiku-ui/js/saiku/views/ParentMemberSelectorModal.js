@@ -80,10 +80,10 @@ var ParentMemberSelectorModal = Modal.extend({
      * @private
      */
     events: {
-        'click .dialog_footer a' : 'call',
-        'click .crumb'           : 'fetch_crumb',
-        'dblclick .member'       : 'drill_member',
-        'keyup #auto-filter'     : 'auto_filter'
+        'click    .dialog_footer a' : 'call',
+        'click    .crumb'           : 'fetch_crumb',
+        'dblclick .member'          : 'drill_member',
+        'keyup    #auto-filter'     : 'auto_filter'
     },
 
     /**
@@ -105,6 +105,7 @@ var ParentMemberSelectorModal = Modal.extend({
         this.members;
         this.childMembers;
         this.breadcrumbs;
+        this.uniqueName;
 
         var level = new Level({}, { 
             ui: this, 
@@ -125,7 +126,7 @@ var ParentMemberSelectorModal = Modal.extend({
 
     get_levels: function(model, response) {
         var levelMember;
-        
+
         if (response) {
             model.ui.levels = response;
             model.ui.breadcrumbs = [model.ui.dimension, model.ui.hierarchy, response[0].name];
@@ -165,6 +166,7 @@ var ParentMemberSelectorModal = Modal.extend({
 
             model.ui.breadcrumbs.push(levelUniqueName);
             model.ui.breadcrumbs = _.uniq(model.ui.breadcrumbs);
+            model.ui.uniqueName = model.uniqueName;
 
             var position = _.indexOf(model.ui.breadcrumbs, levelUniqueName);
             var len = model.ui.breadcrumbs.length;
@@ -196,6 +198,7 @@ var ParentMemberSelectorModal = Modal.extend({
     auto_filter: function(event) {
         var $currentTarget = $(event.currentTarget);
         var uniqueName = $currentTarget.val();
+        
         var levelChildMember = new LevelChildMember({}, { ui: this, cube: this.cube, uniqueName: uniqueName });
         levelChildMember.fetch({
             success: this.get_child_members
