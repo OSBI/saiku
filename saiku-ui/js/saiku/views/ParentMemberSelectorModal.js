@@ -41,10 +41,6 @@ var ParentMemberSelectorModal = Modal.extend({
         '<form class="form-group">' +
         	'<div class="group-elements" style="padding-top: 0;">' +
 				'<nav class="breadcrumbs">' +
-					// '<a href="#">Breadcrumb</a> &gt;' +
-					// '<a href="#">Breadcrumb</a> &gt;' +
-					// '<a href="#">Breadcrumb</a> &gt;' +
-					// '<span class="last-crumb">Breadcrumb</span>' +
 				'</nav>' +
                 '<span class="loading i18n">Loading...</span>' +
 			'</div>' +
@@ -103,10 +99,6 @@ var ParentMemberSelectorModal = Modal.extend({
         this.workspace = args.workspace;
         this.options.title = 'Parent Member Selector';
 
-        // _.bindAll(this, 'populate_breadcrumbs');
-
-        console.log(this);
-
         Saiku.ui.block('<span class="i18n">Loading...</span>');
 
         this.levels;
@@ -114,68 +106,62 @@ var ParentMemberSelectorModal = Modal.extend({
         this.childMembers;
         this.breadcrumbs;
 
-        var level = new Level({}, { ui: this, cube: this.cube, dimension: this.dimension, hierarchy: this.hierarchy });
+        var level = new Level({}, { 
+            ui: this, 
+            cube: this.cube, 
+            dimension: this.dimension, 
+            hierarchy: this.hierarchy 
+        });
+
         level.fetch({
             success: this.get_levels
         });
 
         // Load template
-        this.message = this.template_modal({
-        });
+        this.message = this.template_modal({});
 
-        this.bind('open', function() {
-        });
+        this.bind('open', function() {});
     },
 
     get_levels: function(model, response) {
         var levelMember;
-
+        
         if (response) {
-            console.log(response);
             model.ui.levels = response;
             model.ui.breadcrumbs = [model.ui.dimension, model.ui.hierarchy, response[0].name];
             model.ui.populate_breadcrumbs(model.ui.breadcrumbs);
-
             model.ui.$el.find('.dialog_footer').find('a[href="#clear"]').data('name', response[0].name);
-
-            levelMember = new LevelMember({}, { ui: model.ui, cube: model.ui.cube, dimension: model.ui.dimension, hierarchy: model.ui.hierarchy, level: response[0].name });
+            levelMember = new LevelMember({}, { 
+                ui: model.ui, 
+                cube: model.ui.cube, 
+                dimension: model.ui.dimension, 
+                hierarchy: model.ui.hierarchy, 
+                level: response[0].name 
+            });
             levelMember.fetch({
                 success: model.ui.get_members
             });
         }
-
-        return false;
     },
 
     get_members: function(model, response) {
         if (response) {
-            console.log(response);
             model.ui.members = response;
             model.ui.populate_members_list(model.ui.members);
         }
-
-        return false;
     },
 
     get_child_members: function(model, response) {
-        // x.split('].[')[3-1].replace(/[\[\]]/gi, '');
-        // _.last(n);
-        // _.initial(n, 2-1);
-
         var levelUniqueName;
 
         if (response && response.length > 0) {
-            console.log(response);
-
             Saiku.ui.block('<span class="i18n">Loading...</span>');
 
             model.ui.childMembers = response;
             model.ui.populate_members_list(model.ui.childMembers);
 
-            // Refatorar
             levelUniqueName = response[0].levelUniqueName.split('].[');
             levelUniqueName = _.last(levelUniqueName).replace(/[\[\]]/gi, '');
-            console.log(levelUniqueName);
 
             model.ui.breadcrumbs.push(levelUniqueName);
             model.ui.breadcrumbs = _.uniq(model.ui.breadcrumbs);
@@ -186,28 +172,18 @@ var ParentMemberSelectorModal = Modal.extend({
             model.ui.breadcrumbs = _.initial(model.ui.breadcrumbs, (len - (position + 1)));
 
             model.ui.populate_breadcrumbs(model.ui.breadcrumbs);
-
         }
         else {
             Saiku.ui.unblock();
         }
-
-        return false;
     },
 
     drill_member: function(event) {
         event.preventDefault();
-        console.log(event);
 
         var $currentTarget = $(event.currentTarget);
-        
-        console.log($currentTarget.data());
-
         var uniqueName = $currentTarget.data('uniqueName');
         var levelUniqueName = $currentTarget.data('levelUniqueName');
-
-        console.log(uniqueName);
-        console.log(levelUniqueName);
 
         this.$el.find('#auto-filter').val('');
 
@@ -218,11 +194,8 @@ var ParentMemberSelectorModal = Modal.extend({
     },
 
     auto_filter: function(event) {
-        console.log(event);
-
         var $currentTarget = $(event.currentTarget);
         var uniqueName = $currentTarget.val();
-
         var levelChildMember = new LevelChildMember({}, { ui: this, cube: this.cube, uniqueName: uniqueName });
         levelChildMember.fetch({
             success: this.get_child_members
@@ -233,10 +206,14 @@ var ParentMemberSelectorModal = Modal.extend({
         event.preventDefault();
 
         var $currentTarget = $(event.currentTarget);
+        var levelMember = new LevelMember({}, { 
+            ui: this, 
+            cube: this.cube, 
+            dimension: this.dimension, 
+            hierarchy: this.hierarchy, 
+            level: $currentTarget.text() 
+        });
 
-        console.log($currentTarget.data('position'));
-
-        var levelMember = new LevelMember({}, { ui: this, cube: this.cube, dimension: this.dimension, hierarchy: this.hierarchy, level: $currentTarget.text() });
         levelMember.fetch({
             success: this.get_members
         });
@@ -247,8 +224,6 @@ var ParentMemberSelectorModal = Modal.extend({
 
         this.breadcrumbs = _.initial(this.breadcrumbs, (len - (Number($currentTarget.data('position')) + 1)));
         this.populate_breadcrumbs(this.breadcrumbs);
-
-        console.log(this.breadcrumbs);
     },
 
     clear: function(event) {
@@ -256,9 +231,14 @@ var ParentMemberSelectorModal = Modal.extend({
 
         var name = $(this.el).find('.dialog_footer').find('a[href="#clear"]').data('name');
 
-        console.log(name);
+        var levelMember = new LevelMember({}, { 
+            ui: this, 
+            cube: this.cube, 
+            dimension: this.dimension, 
+            hierarchy: this.hierarchy, 
+            level: name 
+        });
 
-        var levelMember = new LevelMember({}, { ui: this, cube: this.cube, dimension: this.dimension, hierarchy: this.hierarchy, level: name });
         levelMember.fetch({
             success: this.get_members
         });
@@ -288,7 +268,6 @@ var ParentMemberSelectorModal = Modal.extend({
         Saiku.ui.unblock();
 
         this.$el.find('.loading').remove();
-
 		this.$el.find('.breadcrumbs').empty();
         this.$el.find('.breadcrumbs').append($crumbs);
     },
