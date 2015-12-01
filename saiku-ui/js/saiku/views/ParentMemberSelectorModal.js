@@ -105,7 +105,8 @@ var ParentMemberSelectorModal = Modal.extend({
         this.members;
         this.childMembers;
         this.breadcrumbs;
-        this.uniqueName;
+        // this.selectedLevel;
+        // this.uniqueName;
 
         var level = new Level({}, { 
             ui: this, 
@@ -121,7 +122,68 @@ var ParentMemberSelectorModal = Modal.extend({
         // Load template
         this.message = this.template_modal({});
 
-        this.bind('open', function() {});
+        this.bind('open', function() {
+            // if (this.uniqueName) {
+            //     var self = this;
+
+            //     setTimeout(function() {
+            //         var uniqueName = self.uniqueName;
+                    
+            //         self.breadcrumbs = ['Store', 'Stores', '(All)', 'Store Country', 'Store State', 'Store City'];
+
+            //         var levelChildMember = new LevelChildMember({}, { ui: self, cube: self.cube, uniqueName: uniqueName });
+            //         levelChildMember.fetch({
+            //             success: self.get_child_members
+            //         });
+            //     }, 5000);
+
+            //     this.breadcrumbs = ['Store', 'Stores', '(All)', 'Store Country', 'Store State', 'Store City'];
+
+            //     var uniqueName = this.uniqueName;
+            //     var levelChildMember = new LevelChildMember({}, { ui: this, cube: this.cube, uniqueName: uniqueName });
+            //     levelChildMember.fetch({
+            //         success: this.get_child_members
+            //     });
+            // }
+        });
+    },
+
+    populate_breadcrumbs: function(data) {
+        var $crumbs = [];
+
+        for (var i = 0; i < data.length; i++) {
+            if (i !== (data.length - 1)) {
+                $crumbs.push('<a href="#" class="crumb" data-position="' + i + '">' + data[i] + '</a> &gt;');
+            }
+            else {
+                $crumbs.push('<span class="last-crumb">' + data[i] + '</span>');
+            }
+        }
+
+        Saiku.ui.unblock();
+
+        this.$el.find('.loading').remove();
+        this.$el.find('.breadcrumbs').empty();
+        this.$el.find('.breadcrumbs').append($crumbs);
+    },
+
+    populate_members_list: function(data) {
+        var $members = [];
+
+        this.$el.find('.members-list').empty();
+
+        for (var i = 0; i < data.length; i++) {
+            $members = $('<li />')
+                .addClass('member')
+                .data('caption', data[i].caption)
+                .data('uniqueName', data[i].uniqueName)
+                .data('levelUniqueName', data[i].levelUniqueName ? data[i].levelUniqueName : false)
+                .text(data[i].name);
+            
+            this.$el.find('.members-list').append($members);
+        }
+
+        Saiku.ui.unblock();
     },
 
     get_levels: function(model, response) {
@@ -172,6 +234,8 @@ var ParentMemberSelectorModal = Modal.extend({
             var len = model.ui.breadcrumbs.length;
 
             model.ui.breadcrumbs = _.initial(model.ui.breadcrumbs, (len - (position + 1)));
+
+            model.ui.selected_level();
 
             model.ui.populate_breadcrumbs(model.ui.breadcrumbs);
         }
@@ -226,7 +290,23 @@ var ParentMemberSelectorModal = Modal.extend({
         var len = this.breadcrumbs.length;
 
         this.breadcrumbs = _.initial(this.breadcrumbs, (len - (Number($currentTarget.data('position')) + 1)));
+
+        this.selected_level();
+
         this.populate_breadcrumbs(this.breadcrumbs);
+    },
+
+    selected_level: function() {
+        var selectedLevel;
+
+        if ((this.breadcrumbs.length - 2) < 2) {
+            selectedLevel = this.breadcrumbs[this.breadcrumbs.length - 1];
+            this.$el.find('.selected-level').text(selectedLevel);
+        }
+        else {
+            selectedLevel = this.breadcrumbs[this.breadcrumbs.length - 2];
+            this.$el.find('.selected-level').text(selectedLevel);
+        }
     },
 
     clear: function(event) {
@@ -246,6 +326,7 @@ var ParentMemberSelectorModal = Modal.extend({
             success: this.get_members
         });
 
+        this.$el.find('.selected-level').text('');
         this.$el.find('#auto-filter').val('');
 
         var position = _.indexOf(this.breadcrumbs, name);
@@ -256,41 +337,13 @@ var ParentMemberSelectorModal = Modal.extend({
         this.populate_breadcrumbs(this.breadcrumbs);
     },
 
-    populate_breadcrumbs: function(data) {
-    	var $crumbs = [];
-
-		for (var i = 0; i < data.length; i++) {
-			if (i !== (data.length - 1)) {
-				$crumbs.push('<a href="#" class="crumb" data-position="' + i + '">' + data[i] + '</a> &gt;');
-			}
-			else {
-				$crumbs.push('<span class="last-crumb">' + data[i] + '</span>');
-			}
-		}
-
-        Saiku.ui.unblock();
-
-        this.$el.find('.loading').remove();
-		this.$el.find('.breadcrumbs').empty();
-        this.$el.find('.breadcrumbs').append($crumbs);
-    },
-
-    populate_members_list: function(data) {
-    	var $members = [];
-
-        this.$el.find('.members-list').empty();
-
-		for (var i = 0; i < data.length; i++) {
-			$members = $('<li />')
-				.addClass('member')
-                .data('caption', data[i].caption)
-                .data('uniqueName', data[i].uniqueName)
-                .data('levelUniqueName', data[i].levelUniqueName ? data[i].levelUniqueName : false)
-				.text(data[i].name);
-			
-            this.$el.find('.members-list').append($members);
-		}
-
-        Saiku.ui.unblock();
+    save: function(event) {
+        event.preventDefault();
+        var dimHier = '[' + this.dimension + '].[' + this.hierarchy + '].';
+        var uniqueName = this.uniqueName.split(dimHier)[1] !== undefined ?
+                         this.uniqueName.split(dimHier)[1] :
+                         this.uniqueName.split(dimHier)[0];
+        this.dialog.pmsUniqueName = uniqueName;
+        this.$el.dialog('close');
     }
 });
