@@ -45,7 +45,7 @@ var ParentMemberSelectorModal = Modal.extend({
                 '<span class="loading i18n">Loading...</span>' +
 			'</div>' +
 			'<div class="group-elements">' +
-				'<label>Selected Level: <span class="selected-level"></span></label>' +
+				'<label>Selected Level: <span class="selected-level">None</span></label>' +
 			'</div>' +
 			'<div class="group-elements">' +
 				'<ul class="members-list">' +
@@ -104,47 +104,59 @@ var ParentMemberSelectorModal = Modal.extend({
         this.levels;
         this.members;
         this.childMembers;
-        this.breadcrumbs;
+        // this.breadcrumbs;
         // this.selectedLevel;
         // this.uniqueName;
 
-        var level = new Level({}, { 
-            ui: this, 
-            cube: this.cube, 
-            dimension: this.dimension, 
-            hierarchy: this.hierarchy 
-        });
+        // var level = new Level({}, { 
+        //     ui: this, 
+        //     cube: this.cube, 
+        //     dimension: this.dimension, 
+        //     hierarchy: this.hierarchy 
+        // });
 
-        level.fetch({
-            success: this.get_levels
-        });
+        // level.fetch({
+        //     success: this.get_levels
+        // });
 
         // Load template
         this.message = this.template_modal({});
 
         this.bind('open', function() {
-            // if (this.uniqueName) {
-            //     var self = this;
+            if (this.uniqueName && !(_.isEmpty(this.breadcrumbs))) {
+                var self = this;
 
-            //     setTimeout(function() {
-            //         var uniqueName = self.uniqueName;
+                // setTimeout(function() {
+                //     var uniqueName = self.uniqueName;
                     
-            //         self.breadcrumbs = ['Store', 'Stores', '(All)', 'Store Country', 'Store State', 'Store City'];
+                //     self.breadcrumbs = ['Store', 'Stores', '(All)', 'Store Country', 'Store State', 'Store City'];
 
-            //         var levelChildMember = new LevelChildMember({}, { ui: self, cube: self.cube, uniqueName: uniqueName });
-            //         levelChildMember.fetch({
-            //             success: self.get_child_members
-            //         });
-            //     }, 5000);
+                //     var levelChildMember = new LevelChildMember({}, { ui: self, cube: self.cube, uniqueName: uniqueName });
+                //     levelChildMember.fetch({
+                //         success: self.get_child_members
+                //     });
+                // }, 5000);
 
-            //     this.breadcrumbs = ['Store', 'Stores', '(All)', 'Store Country', 'Store State', 'Store City'];
+                // this.breadcrumbs = ['Store', 'Stores', '(All)', 'Store Country', 'Store State', 'Store City'];
 
-            //     var uniqueName = this.uniqueName;
-            //     var levelChildMember = new LevelChildMember({}, { ui: this, cube: this.cube, uniqueName: uniqueName });
-            //     levelChildMember.fetch({
-            //         success: this.get_child_members
-            //     });
-            // }
+                var uniqueName = this.uniqueName;
+                var levelChildMember = new LevelChildMember({}, { ui: this, cube: this.cube, uniqueName: uniqueName });
+                levelChildMember.fetch({
+                    success: this.get_child_members
+                });
+            }
+            else {
+                var level = new Level({}, { 
+                    ui: this, 
+                    cube: this.cube, 
+                    dimension: this.dimension, 
+                    hierarchy: this.hierarchy 
+                });
+
+                level.fetch({
+                    success: this.get_levels
+                });
+            }
         });
     },
 
@@ -326,7 +338,7 @@ var ParentMemberSelectorModal = Modal.extend({
             success: this.get_members
         });
 
-        this.$el.find('.selected-level').text('');
+        this.$el.find('.selected-level').text('None');
         this.$el.find('#auto-filter').val('');
 
         var position = _.indexOf(this.breadcrumbs, name);
@@ -339,11 +351,23 @@ var ParentMemberSelectorModal = Modal.extend({
 
     save: function(event) {
         event.preventDefault();
-        var dimHier = '[' + this.dimension + '].[' + this.hierarchy + '].';
-        var uniqueName = this.uniqueName.split(dimHier)[1] !== undefined ?
-                         this.uniqueName.split(dimHier)[1] :
-                         this.uniqueName.split(dimHier)[0];
-        this.dialog.pmsUniqueName = uniqueName;
-        this.$el.dialog('close');
+
+        var alertMsg = '';
+
+        if (typeof this.uniqueName === 'undefined') {
+            alertMsg += 'You have to choose a member for the calculated member!';
+        }
+        if (alertMsg !== '') {
+            alert(alertMsg);
+        }
+        else {
+            var dimHier = '[' + this.dimension + '].[' + this.hierarchy + '].';
+            var uniqueName = this.uniqueName.split(dimHier)[1] !== undefined ?
+                             this.uniqueName.split(dimHier)[1] :
+                             this.uniqueName.split(dimHier)[0];
+            this.dialog.pmsUniqueName = uniqueName;
+            this.dialog.pmsBreadcrumbs = this.breadcrumbs;
+            this.$el.dialog('close');
+        }
     }
 });
