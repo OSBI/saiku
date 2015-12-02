@@ -92,13 +92,13 @@ var CalculatedMemberModal = Modal.extend({
                     '<a class="form_button btn-math i18n" href="#add_math_operator_formula" data-math="or">&nbsp;or&nbsp;</a>' +
                     '<a class="form_button btn-math i18n" href="#add_math_operator_formula" data-math="not">&nbsp;not&nbsp;</a>' +
                 '</div>' +
-                '<div class="cms-function">' +
-                    '<label for="cms-function" class="i18n">Functions:</label>' +
-                    ' <input type="button" class="form_button growthBtn" style="padding-bottom: 18px;" value="Growth"  ' +
-                    '         title="Calculate difference. Good to calculate previous period growth "   id="growthBtn" >  </input> ' +
-                    ' <input type="button" class="form_button formatBtn" style="padding-bottom: 18px;" value="Format %" id="formatBtn"  ' +
-                    'title="Post-process step: format this view as percentage of rows, columns or grand total. " />' +
-                '</div>' +
+				'<div class="cms-function">' +
+					'<label for="cms-function" class="i18n">Functions:</label>' +
+					' <input type="button" class="form_button growthBtn" style="padding-bottom: 18px;" value="Growth"  ' +
+					'         title="Calculate difference. Good to calculate previous period growth "   id="growthBtn" >  </input> ' +
+					' <input type="button" class="form_button formatBtn" style="padding-bottom: 18px;" value="Format %" id="formatBtn"  ' +
+					'title="Post-process step: format this view as percentage of rows, columns or grand total. " />' +
+				'</div>' +
                 '<label for="cms-dimension" class="i18n">Dimension:</label>' +
                 '<select id="cms-dimension">' +
                     '<option class="i18n" value="" selected>-- Select an existing dimension --</option>' +
@@ -116,7 +116,7 @@ var CalculatedMemberModal = Modal.extend({
                     '<% }); %>' +
                 '</select>' +
                 '<div class="btn-groups">' +
-                    '<a class="form_button btn-parent-member" href="#add_math_operator_formula">&nbsp;Parent Member Selector&nbsp;</a>' +
+                    '<a class="form_button btn-parent-member" href="#add_math_operator_formula" disabled>&nbsp;Parent Member Selector&nbsp;</a>' +
                 '</div>' +
                 '<label for="cms-format" class="i18n">Format:</label>' +
                 '<select id="cms-format">' +
@@ -163,16 +163,17 @@ var CalculatedMemberModal = Modal.extend({
      * @private
      */
     events: {
-        'click  .dialog_footer a'      : 'call',
-        'blur   #cms-name'             : 'trigger_input_name',
-        'change #cms-measure'          : 'add_measure_formula',
-        'click  .btn-math'             : 'add_math_operator_formula',
-        'change #cms-format'           : 'type_format',
-        'click  .btn-action-edit'      : 'edit_cms',
-        'click  .btn-action-del'       : 'show_del_cms',
-        'click .form_button.growthBtn' : 'openGrowthModal',
-        'click .form_button.formatBtn' : 'openFormatModal',
-        'click .btn-parent-member'     : 'open_parent_member_selector'
+        'click  .dialog_footer a'       : 'call',
+        'blur   #cms-name'              : 'trigger_input_name',
+        'change #cms-measure'           : 'add_measure_formula',
+        'click  .btn-math'              : 'add_math_operator_formula',
+        'change #cms-dimension'         : 'type_dimension',
+        'change #cms-format'            : 'type_format',
+        'click  .btn-action-edit'       : 'edit_cms',
+        'click  .btn-action-del'        : 'show_del_cms',
+		'click  .form_button.growthBtn' : 'openGrowthModal',
+        'click  .form_button.formatBtn' : 'openFormatModal',
+		'click  .btn-parent-member'     : 'open_parent_member_selector'
     },
 
     /**
@@ -201,9 +202,6 @@ var CalculatedMemberModal = Modal.extend({
             name: measures ? measures[0].dimensionUniqueName.replace(/[\[\]]/gi, '') : null,
             uniqueName: measures ? measures[0].hierarchyUniqueName : null
         };
-
-        // console.log(JSON.stringify(this.workspace.query.helper.query.model));
-        // console.log(calculatedMembers);
 
         Saiku.ui.block('<span class="i18n">Loading...</span>');
 
@@ -362,6 +360,12 @@ var CalculatedMemberModal = Modal.extend({
                     self.$el.find('.div-format-custom').show();
                     self.$el.find('#cms-format-custom').val(value.properties.FORMAT_STRING);
                 }
+
+                self.pmsUniqueName = value.properties.PMS_UNIQUENAME || '';
+                self.pmsBreadcrumbs = value.properties.PMS_BREADCRUMBS || [];
+
+                self.type_dimension();
+
                 self.$el.find('.form-group-inline').data('action', 'edit');
                 self.$el.find('.form-group-inline').data('oldcms', value.name);
             }
@@ -528,6 +532,8 @@ var CalculatedMemberModal = Modal.extend({
         this.$el.find('#cms-format').prop('selectedIndex', 0);
         this.$el.find('.div-format-custom').hide();
         this.$el.find('#cms-format-custom').val('');
+        this.pmsUniqueName = '';
+        this.pmsBreadcrumbs = [];
     },
 
     /**
@@ -572,6 +578,24 @@ var CalculatedMemberModal = Modal.extend({
     },
 
     /**
+     * Type dimension - Measure/Member
+     *
+     * @method type_dimension
+     * @private
+     * @param {Object} event The Event interface represents any event of the DOM
+     */
+    type_dimension: function(event) {
+        if (event) { event.preventDefault(); }
+        var dimensionDataType = this.$el.find('#cms-dimension option:selected').data('type');
+        if (dimensionDataType === 'calcmember') {
+            this.$el.find('.btn-parent-member').removeAttr('disabled');
+        }
+        else {
+            this.$el.find('.btn-parent-member').attr('disabled', 'disabled');
+        }
+    },
+
+    /**
      * Type format - Decimal, Integer, Custom etc
      *
      * @method type_format
@@ -608,56 +632,68 @@ var CalculatedMemberModal = Modal.extend({
     },
 
     openGrowthModal: function (event) {
-        var selectedHierarchies = this.workspace.query.helper.model().queryModel.axes.ROWS.hierarchies.concat(this.workspace.query.helper.model().queryModel.axes.COLUMNS.hierarchies);
+    	var selectedHierarchies = this.workspace.query.helper.model().queryModel.axes.ROWS.hierarchies.concat(this.workspace.query.helper.model().queryModel.axes.COLUMNS.hierarchies);
 
-        function extractDimensionChoices(hierarchies) {
-            var dimensionNames = [];
-            _.each(hierarchies, function (hierarchy) {
-                dimensionNames.push(hierarchy.name)
-            }, this);
-            return dimensionNames;
-        }
+    	function extractDimensionChoices(hierarchies) {
+    		var dimensionNames = [];
+    		_.each(hierarchies, function (hierarchy) {
+    			dimensionNames.push(hierarchy.name)
+    		}, this);
+    		return dimensionNames;
+    	}
 
-        var selectedDimensions = extractDimensionChoices(selectedHierarchies);
-        var cube = this.workspace.selected_cube;
-        var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
+    	var selectedDimensions = extractDimensionChoices(selectedHierarchies);
+    	var cube = this.workspace.selected_cube;
+    	var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
 
-        this.close();
-        (new GrowthModal({
-            workspace: this.workspace,
-            measures: measures,
-            dimensions: selectedDimensions
-        })).render().open();
+    	this.close();
+    	(new GrowthModal({
+    		workspace: this.workspace,
+    		measures: measures,
+    		dimensions: selectedDimensions
+    	})).render().open();
     },
 
     openFormatModal: function (event) {
-        var selectedMeasures = this.workspace.query.helper.model().queryModel.details.measures;
-        this.close();
-        (new FormatAsPercentageModal({
-            workspace: this.workspace,
-            measures: selectedMeasures
-        })).render().open();
+    	var selectedMeasures = this.workspace.query.helper.model().queryModel.details.measures;
+    	this.close();
+    	(new FormatAsPercentageModal({
+    		workspace: this.workspace,
+    		measures: selectedMeasures
+    	})).render().open();
     },
 
+    /**
+     * Show dialog for get a parent member
+     *
+     * @method open_parent_member_selector
+     * @private
+     * @param {Object} event The Event interface represents any event of the DOM
+     */
     open_parent_member_selector: function(event) {
         event.preventDefault();
-        // this.close();
 
-        // var cube = this.workspace.selected_cube;
-        // var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
-        // var dimensions = Saiku.session.sessionworkspace.cube[cube].get('data').dimensions;
+        // var formAction = this.$el.find('.form-group-inline').data('action');
+        var dimension = {
+            txt: this.$el.find('#cms-dimension option:selected').text(),
+            dataDimension: this.$el.find('#cms-dimension option:selected').data('dimension'),
+            dataType: this.$el.find('#cms-dimension option:selected').data('type')
+        };
 
-        (new ParentMemberSelectorModal({
-            workspace: this.workspace,
-            cube: this.workspace.selected_cube,
-            dimensions: Saiku.session.sessionworkspace.cube[this.workspace.selected_cube].get('data').dimensions,
-            dimension: 'Store',
-            hierarchy: 'Stores'
-            // dimension: this.$el.find('#cms-dimension option:selected').data('dimension'),
-            // hierarchy: this.$el.find('#cms-dimension option:selected').text()
-        })).render().open();
+        if (dimension.dataType === 'calcmember') {
+            (new ParentMemberSelectorModal({
+                dialog: this,
+                workspace: this.workspace,
+                cube: this.workspace.selected_cube,
+                dimensions: Saiku.session.sessionworkspace.cube[this.workspace.selected_cube].get('data').dimensions,
+                dimension: dimension.dataDimension,
+                hierarchy: dimension.txt,
+                uniqueName: this.pmsUniqueName,
+                breadcrumbs: this.pmsBreadcrumbs
+            })).render().open();
 
-        this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Connection Details');
+            this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Connection Details');
+        }
     },
 
     /**
@@ -740,6 +776,11 @@ var CalculatedMemberModal = Modal.extend({
                 
                 if (format) {
                     objMember.properties.FORMAT_STRING = format;
+                }
+                
+                if (this.pmsUniqueName && !(_.isEmpty(this.pmsUniqueName))) {
+                    objMember.properties.PMS_UNIQUENAME = this.pmsUniqueName;
+                    objMember.properties.PMS_BREADCRUMBS = this.pmsBreadcrumbs;
                 }
 
                 if (formAction === 'cad') {

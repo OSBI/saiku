@@ -231,6 +231,9 @@ var ParentMemberSelectorModal = Modal.extend({
                 success: model.ui.get_members
             });
         }
+        else {
+            Saiku.ui.unblock();
+        }
     },
 
     /**
@@ -244,6 +247,9 @@ var ParentMemberSelectorModal = Modal.extend({
     get_members: function(model, response) {
         if (response) {
             model.ui.populate_members_list(response);
+        }
+        else {
+            Saiku.ui.unblock();
         }
     },
 
@@ -260,8 +266,6 @@ var ParentMemberSelectorModal = Modal.extend({
         var position;
 
         if (response && response.length > 0) {
-            Saiku.ui.block('<span class="i18n">Loading...</span>');
-
             model.ui.populate_members_list(response);
 
             levelUniqueName = response[0].levelUniqueName.split('].[');
@@ -294,6 +298,8 @@ var ParentMemberSelectorModal = Modal.extend({
     drill_member: function(event) {
         event.preventDefault();
 
+        Saiku.ui.block('<span class="i18n">Loading...</span>');
+
         var $currentTarget = $(event.currentTarget);
         var uniqueName = $currentTarget.data('uniqueName');
 
@@ -318,9 +324,11 @@ var ParentMemberSelectorModal = Modal.extend({
         var $currentTarget = $(event.currentTarget);
         var uniqueName = $currentTarget.val();
         var levelChildMember = new LevelChildMember({}, { ui: this, cube: this.cube, uniqueName: uniqueName });
-        levelChildMember.fetch({
-            success: this.get_child_members
-        }); 
+        if (uniqueName && !(_.isEmpty(uniqueName))) {
+            levelChildMember.fetch({
+                success: this.get_child_members
+            });
+        }
     },
 
     /**
@@ -336,6 +344,7 @@ var ParentMemberSelectorModal = Modal.extend({
         var $currentTarget = $(event.currentTarget);
 
         if ($currentTarget.data('action')) {
+
             var levelMember = new LevelMember({}, { 
                 ui: this, 
                 cube: this.cube, 
@@ -347,9 +356,13 @@ var ParentMemberSelectorModal = Modal.extend({
                 success: this.get_members
             });
 
+            this.uniqueName = '';
+            this.$el.find('.selected-level').text('');
+            this.$el.find('.members-list').empty();
+            this.$el.find('.members-list').append('<li class="i18n">Loading...</li>');
             this.$el.find('#auto-filter').val('');
             this.breadcrumbs = _.initial(this.breadcrumbs, (this.breadcrumbs.length - (Number($currentTarget.data('position')) + 1)));
-            this.selected_level();
+            // this.selected_level();
             this.populate_breadcrumbs(this.breadcrumbs);
         }
     },
@@ -397,12 +410,13 @@ var ParentMemberSelectorModal = Modal.extend({
 
         this.uniqueName = '';
         this.$el.find('.selected-level').text('');
+        this.$el.find('.members-list').empty();
+        this.$el.find('.members-list').append('<li class="i18n">Loading...</li>');
         this.$el.find('#auto-filter').val('');
 
         var position = _.indexOf(this.breadcrumbs, name);
 
         this.breadcrumbs = _.initial(this.breadcrumbs, (this.breadcrumbs.length - (position + 1)));
-
         this.populate_breadcrumbs(this.breadcrumbs);
     },
 
@@ -429,8 +443,12 @@ var ParentMemberSelectorModal = Modal.extend({
             var uniqueName = this.uniqueName.split(dimHier)[1] !== undefined ?
                              this.uniqueName.split(dimHier)[1] :
                              this.uniqueName.split(dimHier)[0];
+            
+            // console.log(uniqueName);
+            // console.log(this.breadcrumbs);
+            
             this.dialog.pmsUniqueName = uniqueName;
-            this.dialog.pmsBreadcrumbs = this.breadcrumbs;
+            this.dialog.pmsBreadcrumbs = _.uniq(this.breadcrumbs);
             this.$el.dialog('close');
         }
     }
