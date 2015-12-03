@@ -46,6 +46,7 @@
 					<jsSourceIncludes>
 						<jsSourceInclude>models/SaikuOlapQuery.js</jsSourceInclude>
 						<jsSourceInclude>models/DateFilter.js</jsSourceInclude>
+						<jsSourceInclude>models/Level.js</jsSourceInclude>
 						<jsSourceInclude>render/SaikuRenderer.js</jsSourceInclude>
 						<jsSourceInclude>render/SaikuTableRenderer.js</jsSourceInclude>
 						<jsSourceInclude>render/SaikuChartRenderer.js</jsSourceInclude>
@@ -68,6 +69,7 @@
 						<jsSourceInclude>views/FilterModal.js</jsSourceInclude>
 						<jsSourceInclude>views/CustomFilterModal.js</jsSourceInclude>
 						<jsSourceInclude>views/CalculatedMemberModal.js</jsSourceInclude>
+						<jsSourceInclude>views/ParentMemberSelectorModal.js</jsSourceInclude>
 						<jsSourceInclude>views/DataSourcesModal.js</jsSourceInclude>
 						<jsSourceInclude>views/QueryToolbar.js</jsSourceInclude>
 						<jsSourceInclude>views/WorkspaceToolbar.js</jsSourceInclude>
