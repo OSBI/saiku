@@ -45,7 +45,7 @@ var ParentMemberSelectorModal = Modal.extend({
                 '<span class="loading i18n">Loading...</span>' +
 			'</div>' +
 			'<div class="group-elements">' +
-				'<label>Selected Level: <span class="selected-level"></span></label>' +
+				'<label><span class="i18n">Selected Level:</span> <span class="selected-level"></span></label>' +
 			'</div>' +
 			'<div class="group-elements">' +
 				'<ul class="members-list">' +
