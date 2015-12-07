@@ -1,25 +1,52 @@
 package org.saiku.olap.query2.util;
 
-import org.saiku.olap.query2.*;
+import org.apache.commons.lang.StringUtils;
+
+import org.saiku.olap.query2.ThinAxis;
+import org.saiku.olap.query2.ThinCalculatedMeasure;
+import org.saiku.olap.query2.ThinCalculatedMember;
+import org.saiku.olap.query2.ThinDetails;
+import org.saiku.olap.query2.ThinHierarchy;
+import org.saiku.olap.query2.ThinLevel;
+import org.saiku.olap.query2.ThinMeasure;
 import org.saiku.olap.query2.ThinMeasure.Type;
+import org.saiku.olap.query2.ThinMember;
+import org.saiku.olap.query2.ThinQuery;
+import org.saiku.olap.query2.ThinQueryModel;
 import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
 import org.saiku.olap.query2.common.ThinQuerySet;
 import org.saiku.olap.query2.common.ThinSortableQuerySet;
 import org.saiku.olap.query2.filter.ThinFilter;
-import org.saiku.query.*;
+import org.saiku.query.IQuerySet;
+import org.saiku.query.ISortableQuerySet;
+import org.saiku.query.Query;
+import org.saiku.query.QueryAxis;
 import org.saiku.query.QueryDetails.Location;
-import org.saiku.query.mdx.*;
+import org.saiku.query.QueryHierarchy;
+import org.saiku.query.QueryLevel;
+import org.saiku.query.mdx.GenericFilter;
+import org.saiku.query.mdx.IFilterFunction;
 import org.saiku.query.mdx.IFilterFunction.MdxFunctionType;
+import org.saiku.query.mdx.NFilter;
+import org.saiku.query.mdx.NameFilter;
+import org.saiku.query.mdx.NameLikeFilter;
 import org.saiku.query.metadata.CalculatedMeasure;
 import org.saiku.query.metadata.CalculatedMember;
 
-import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
-import org.olap4j.metadata.*;
+import org.olap4j.impl.IdentifierParser;
+import org.olap4j.mdx.IdentifierSegment;
+import org.olap4j.metadata.Cube;
+import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Measure;
+import org.olap4j.metadata.Member;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class Fat {
 	
@@ -182,12 +209,20 @@ public class Fat {
 		  }
 		}
 		CalculatedMember cm;
+		Member member = null;
+		if(cres.getParentMember()!=null) {
+		  List<IdentifierSegment> nameParts = IdentifierParser.parseIdentifier(cres.getParentMember());
+
+		  member = q.getCube().lookupMember(nameParts);
+		}
+
+
 		cm = new CalculatedMember(
 			q.getCube().getDimensions().get(cres.getDimension()),
 			h2,
 			cres.getName(),
 			cres.getName(),
-			null,
+			member,
 			Member.Type.FORMULA,
 			cres.getFormula(),
 			null);

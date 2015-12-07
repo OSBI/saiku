@@ -8,6 +8,7 @@ import java.util.Map;
  */
 public class ThinCalculatedMember {
 
+  private String parentMember;
   private String dimension;
   private String name;
   private String uniqueName;
@@ -17,6 +18,12 @@ public class ThinCalculatedMember {
   private String hierarchyName;
 
   public ThinCalculatedMember() {}
+
+  public ThinCalculatedMember(String dimension, String hierarchyName, String name, String uniqueName, String caption,
+                              String formula, Map<String, String> properties, String parentMember) {
+    this(dimension, hierarchyName, name, uniqueName, caption, formula, properties);
+    this.parentMember = parentMember;
+  }
 
   public ThinCalculatedMember(String dimension, String hierarchyName, String name, String uniqueName, String caption,
                               String formula, Map<String, String> properties) {
@@ -76,7 +83,11 @@ public class ThinCalculatedMember {
     return hierarchyName;
   }
 
-
-
-
+  /**
+   *
+   * @return the parent member.
+   */
+  public String getParentMember() {
+    return parentMember;
+  }
 }
