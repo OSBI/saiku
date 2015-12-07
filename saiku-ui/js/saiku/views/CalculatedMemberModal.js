@@ -361,8 +361,8 @@ var CalculatedMemberModal = Modal.extend({
                     self.$el.find('#cms-format-custom').val(value.properties.FORMAT_STRING);
                 }
 
-                self.pmsUniqueName = value.properties.PMS_UNIQUENAME || '';
-                self.pmsBreadcrumbs = value.properties.PMS_BREADCRUMBS || [];
+                self.pmUniqueName = value.parentMember || '';
+                // self.pmBreadcrumbs = value.properties.PMS_BREADCRUMBS || [];
 
                 self.type_dimension();
 
@@ -532,8 +532,8 @@ var CalculatedMemberModal = Modal.extend({
         this.$el.find('#cms-format').prop('selectedIndex', 0);
         this.$el.find('.div-format-custom').hide();
         this.$el.find('#cms-format-custom').val('');
-        this.pmsUniqueName = '';
-        this.pmsBreadcrumbs = [];
+        this.pmUniqueName = '';
+        // this.pmBreadcrumbs = [];
     },
 
     /**
@@ -688,8 +688,8 @@ var CalculatedMemberModal = Modal.extend({
                 dimensions: Saiku.session.sessionworkspace.cube[this.workspace.selected_cube].get('data').dimensions,
                 dimension: dimension.dataDimension,
                 hierarchy: dimension.txt,
-                uniqueName: this.pmsUniqueName,
-                breadcrumbs: this.pmsBreadcrumbs
+                uniqueName: this.pmUniqueName
+                // breadcrumbs: this.pmBreadcrumbs
             })).render().open();
 
             this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Connection Details');
@@ -778,9 +778,9 @@ var CalculatedMemberModal = Modal.extend({
                     objMember.properties.FORMAT_STRING = format;
                 }
                 
-                if (this.pmsUniqueName && !(_.isEmpty(this.pmsUniqueName))) {
-                    objMember.properties.PMS_UNIQUENAME = this.pmsUniqueName;
-                    objMember.properties.PMS_BREADCRUMBS = this.pmsBreadcrumbs;
+                if (this.pmUniqueName && !(_.isEmpty(this.pmUniqueName))) {
+                    objMember.parentMember = this.pmUniqueName;
+                    // objMember.properties.PMS_BREADCRUMBS = this.pmBreadcrumbs;
                 }
 
                 if (formAction === 'cad') {

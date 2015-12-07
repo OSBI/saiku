@@ -447,8 +447,8 @@ var ParentMemberSelectorModal = Modal.extend({
             // console.log(uniqueName);
             // console.log(this.breadcrumbs);
             
-            this.dialog.pmsUniqueName = uniqueName;
-            this.dialog.pmsBreadcrumbs = _.uniq(this.breadcrumbs);
+            this.dialog.pmUniqueName = uniqueName;
+            // this.dialog.pmBreadcrumbs = _.uniq(this.breadcrumbs);
             this.$el.dialog('close');
         }
     }
