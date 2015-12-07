@@ -38,7 +38,7 @@ var ParentMemberSelectorModal = Modal.extend({
      * @private
      */
 	template_modal: _.template(
-        '<form class="form-group">' +
+        '<form class="form-group" onsubmit="return false;">' +
         	'<div class="group-elements" style="padding-top: 0;">' +
 				'<nav class="breadcrumbs">' +
 				'</nav>' +
@@ -48,7 +48,6 @@ var ParentMemberSelectorModal = Modal.extend({
                 '<div class="group-elements">' +
                     '<label for="dimension" class="i18n">Dimension:</label>' +
                     '<select id="dimension">' +
-                        '<option class="i18n" value="" selected>-- Select an existing dimension --</option>' +
                         '<% _(dimensions).each(function(dimension) { %>' +
                             '<optgroup label="<%= dimension.name %>">' +
                                 '<% _(dimension.hierarchies).each(function(hierarchy) { %>' +
@@ -97,6 +96,7 @@ var ParentMemberSelectorModal = Modal.extend({
     events: {
         'click    .dialog_footer a' : 'call',
         'click    .crumb'           : 'fetch_crumb',
+        'change   #dimension'       : 'fetch_dimension',
         'dblclick .member'          : 'drill_member',
         'keyup    #auto-filter'     : 'auto_filter'
     },
@@ -113,8 +113,6 @@ var ParentMemberSelectorModal = Modal.extend({
         _.extend(this, args);
         this.workspace = args.workspace;
         this.options.title = 'Parent Member Selector';
-
-        console.log(this);
 
         var dimensions = Saiku.session.sessionworkspace.cube[this.cube].get('data').dimensions;
 
@@ -344,13 +342,18 @@ var ParentMemberSelectorModal = Modal.extend({
      *     [USA].[CA].[Los Angeles]
      */
     auto_filter: function(event) {
-        var $currentTarget = $(event.currentTarget);
-        var uniqueName = $currentTarget.val();
-        var levelChildMember = new LevelChildMember({}, { ui: this, cube: this.cube, uniqueName: uniqueName });
-        if (uniqueName && !(_.isEmpty(uniqueName))) {
-            levelChildMember.fetch({
-                success: this.get_child_members
-            });
+        if (event.keyCode === 13) {
+            return false;
+        }
+        else {
+            var $currentTarget = $(event.currentTarget);
+            var uniqueName = $currentTarget.val();
+            var levelChildMember = new LevelChildMember({}, { ui: this, cube: this.cube, uniqueName: uniqueName });
+            if (uniqueName && !(_.isEmpty(uniqueName))) {
+                levelChildMember.fetch({
+                    success: this.get_child_members
+                });
+            }
         }
     },
 
@@ -379,15 +382,34 @@ var ParentMemberSelectorModal = Modal.extend({
                 success: this.get_members
             });
 
-            this.uniqueName = '';
-            this.$el.find('.selected-level').text('');
-            this.$el.find('.members-list').empty();
-            this.$el.find('.members-list').append('<li class="i18n">Loading...</li>');
-            this.$el.find('#auto-filter').val('');
+            this.reset_form();
             this.breadcrumbs = _.initial(this.breadcrumbs, (this.breadcrumbs.length - (Number($currentTarget.data('position')) + 1)));
             // this.selected_level();
             this.populate_breadcrumbs(this.breadcrumbs);
         }
+    },
+
+    /**
+     * Fetch dimension
+     *
+     * @method fetch_dimension
+     * @private
+     * @param {Object} event The Event interface represents any event of the DOM
+     */
+    fetch_dimension: function(event) {
+        event.preventDefault();
+
+        Saiku.ui.block('<span class="i18n">Loading...</span>');
+
+        var dimension = {
+            txt: this.$el.find('#dimension option:selected').text(),
+            dataDimension: this.$el.find('#dimension option:selected').data('dimension')
+        };
+
+        this.reset_form();
+        this.dimension = dimension.dataDimension;
+        this.hierarchy = dimension.txt;
+        this.new_parent_member();
     },
 
     /**
@@ -407,6 +429,20 @@ var ParentMemberSelectorModal = Modal.extend({
             selectedLevel = this.breadcrumbs[this.breadcrumbs.length - 2];
             this.$el.find('.selected-level').text(selectedLevel);
         }
+    },
+
+    /**
+     * Reset form
+     *
+     * @method reset_form
+     * @private
+     */
+    reset_form: function() {
+        this.uniqueName = '';
+        this.$el.find('.selected-level').text('');
+        this.$el.find('.members-list').empty();
+        this.$el.find('.members-list').append('<li class="i18n">Loading...</li>');
+        this.$el.find('#auto-filter').val('');
     },
 
     /**
@@ -431,11 +467,7 @@ var ParentMemberSelectorModal = Modal.extend({
             success: this.get_members
         });
 
-        this.uniqueName = '';
-        this.$el.find('.selected-level').text('');
-        this.$el.find('.members-list').empty();
-        this.$el.find('.members-list').append('<li class="i18n">Loading...</li>');
-        this.$el.find('#auto-filter').val('');
+        this.reset_form();
 
         var position = _.indexOf(this.breadcrumbs, name);
 
