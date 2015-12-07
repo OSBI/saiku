@@ -97,7 +97,8 @@ var Settings = {
                 visible: false    // true/false
             }
         ]
-    }
+    },
+    PARENT_MEMBER_DIMENSION: false
 };
 
 /**

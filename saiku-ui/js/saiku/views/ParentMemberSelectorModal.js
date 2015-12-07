@@ -44,6 +44,21 @@ var ParentMemberSelectorModal = Modal.extend({
 				'</nav>' +
                 '<span class="loading i18n">Loading...</span>' +
 			'</div>' +
+            '<% if (Settings.PARENT_MEMBER_DIMENSION) { %>' + 
+                '<div class="group-elements">' +
+                    '<label for="dimension" class="i18n">Dimension:</label>' +
+                    '<select id="dimension">' +
+                        '<option class="i18n" value="" selected>-- Select an existing dimension --</option>' +
+                        '<% _(dimensions).each(function(dimension) { %>' +
+                            '<optgroup label="<%= dimension.name %>">' +
+                                '<% _(dimension.hierarchies).each(function(hierarchy) { %>' +
+                                    '<option value="<%= hierarchy.uniqueName %>" data-dimension="<%= dimension.name %>" data-type="calcmember"><%= hierarchy.name %></option>' +
+                                '<% }); %>' +
+                            '</optgroup>' +
+                        '<% }); %>' +
+                    '</select>' +
+                '</div>' +
+            '<% } %>' +
 			'<div class="group-elements">' +
 				'<label><span class="i18n">Selected Level:</span> <span class="selected-level"></span></label>' +
 			'</div>' +
@@ -99,12 +114,20 @@ var ParentMemberSelectorModal = Modal.extend({
         this.workspace = args.workspace;
         this.options.title = 'Parent Member Selector';
 
+        console.log(this);
+
+        var dimensions = Saiku.session.sessionworkspace.cube[this.cube].get('data').dimensions;
+
         Saiku.ui.block('<span class="i18n">Loading...</span>');
 
         // Load template
-        this.message = this.template_modal();
+        this.message = this.template_modal({
+            dimensions: dimensions
+        });
 
         this.bind('open', function() {
+            this.$el.find('#dimension').val(this.selectDimension);
+
             if (_.isEmpty(this.uniqueName) && _.isEmpty(this.breadcrumbs)) {
                 this.new_parent_member();
             }

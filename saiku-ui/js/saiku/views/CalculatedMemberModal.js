@@ -497,7 +497,6 @@ var CalculatedMemberModal = Modal.extend({
         }
     },
 
-
     /**
      * Check if calculated measure/member length is > 0
      *
@@ -675,6 +674,7 @@ var CalculatedMemberModal = Modal.extend({
 
         // var formAction = this.$el.find('.form-group-inline').data('action');
         var dimension = {
+            val: this.$el.find('#cms-dimension option:selected').val(),
             txt: this.$el.find('#cms-dimension option:selected').text(),
             dataDimension: this.$el.find('#cms-dimension option:selected').data('dimension'),
             dataType: this.$el.find('#cms-dimension option:selected').data('type')
@@ -686,6 +686,7 @@ var CalculatedMemberModal = Modal.extend({
                 workspace: this.workspace,
                 cube: this.workspace.selected_cube,
                 dimensions: Saiku.session.sessionworkspace.cube[this.workspace.selected_cube].get('data').dimensions,
+                selectDimension: dimension.val,
                 dimension: dimension.dataDimension,
                 hierarchy: dimension.txt,
                 uniqueName: this.pmUniqueName

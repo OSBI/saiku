@@ -1187,6 +1187,12 @@ textarea, select {
     padding: 10px;
 }
 
+.dialog_parent-member-selector .form-group select {
+    width: 100%;
+    padding: 4px;
+    border-color: #ccc;
+}
+
 .dialog_parent-member-selector .form-group input[type="search"] {
     width: 100%;
     padding: 4px;
