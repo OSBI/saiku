@@ -532,6 +532,7 @@ var CalculatedMemberModal = Modal.extend({
         this.$el.find('.div-format-custom').hide();
         this.$el.find('#cms-format-custom').val('');
         this.pmUniqueName = '';
+        this.type_dimension();
         // this.pmBreadcrumbs = [];
     },
 

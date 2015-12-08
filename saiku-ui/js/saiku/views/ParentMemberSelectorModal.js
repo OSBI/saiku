@@ -113,6 +113,7 @@ var ParentMemberSelectorModal = Modal.extend({
         _.extend(this, args);
         this.workspace = args.workspace;
         this.options.title = 'Parent Member Selector';
+        this.breadcrumbs = [];
 
         var dimensions = Saiku.session.sessionworkspace.cube[this.cube].get('data').dimensions;
 
