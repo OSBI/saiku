@@ -227,6 +227,14 @@ var CalculatedMemberModal = Modal.extend({
                 self.start_editor();
             });
         });
+
+        // Listen to result event
+        Saiku.session.bind('ParentMemberSelectorModal:save', this.add_selected_dimension);
+    },
+
+    add_selected_dimension: function(args) {
+        console.log(args);
+        args.dialog.$el.find('#cms-dimension').val(args.selectedDimension);
     },
 
     /**
@@ -362,7 +370,8 @@ var CalculatedMemberModal = Modal.extend({
                 }
 
                 self.pmUniqueName = value.parentMember || '';
-                // self.pmBreadcrumbs = value.properties.PMS_BREADCRUMBS || [];
+                self.pmLevel = value.parentMemberLevel || '';
+                self.pmBreadcrumbs = value.parentMemberBreadcrumbs || [];
 
                 self.type_dimension();
 
@@ -531,9 +540,8 @@ var CalculatedMemberModal = Modal.extend({
         this.$el.find('#cms-format').prop('selectedIndex', 0);
         this.$el.find('.div-format-custom').hide();
         this.$el.find('#cms-format-custom').val('');
-        this.pmUniqueName = '';
+        this.reset_parent_member();
         this.type_dimension();
-        // this.pmBreadcrumbs = [];
     },
 
     /**
@@ -544,6 +552,18 @@ var CalculatedMemberModal = Modal.extend({
      */
     reset_dropdown: function() {
         this.$el.find('#cms-measure').prop('selectedIndex', 0);
+    },
+
+    /**
+     * Reset variables of parent member
+     *
+     * @method reset_parent_member
+     * @private
+     */
+    reset_parent_member: function() {
+        this.pmUniqueName = '';
+        this.pmLevel = '';
+        this.pmBreadcrumbs = [];
     },
 
     /**
@@ -593,6 +613,7 @@ var CalculatedMemberModal = Modal.extend({
         else {
             this.$el.find('.btn-parent-member').attr('disabled', 'disabled');
         }
+        this.reset_parent_member();
     },
 
     /**
@@ -690,8 +711,9 @@ var CalculatedMemberModal = Modal.extend({
                 selectDimension: dimension.val,
                 dimension: dimension.dataDimension,
                 hierarchy: dimension.txt,
-                uniqueName: this.pmUniqueName
-                // breadcrumbs: this.pmBreadcrumbs
+                uniqueName: this.pmUniqueName,
+                lastLevel: this.pmLevel,
+                breadcrumbs: this.pmBreadcrumbs
             })).render().open();
 
             this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Connection Details');
@@ -773,7 +795,10 @@ var CalculatedMemberModal = Modal.extend({
                     caption: name,
                     properties: {},
                     formula: formula,
-                    hierarchyName: dimension.val
+                    hierarchyName: dimension.val,
+                    parentMember: '',
+                    parentMemberLevel: '',
+                    parentMemberBreadcrumbs: []
                 };
                 
                 if (format) {
@@ -782,7 +807,8 @@ var CalculatedMemberModal = Modal.extend({
                 
                 if (this.pmUniqueName && !(_.isEmpty(this.pmUniqueName))) {
                     objMember.parentMember = this.pmUniqueName;
-                    // objMember.properties.PMS_BREADCRUMBS = this.pmBreadcrumbs;
+                    objMember.parentMemberLevel = this.pmLevel;
+                    objMember.parentMemberBreadcrumbs = this.pmBreadcrumbs;
                 }
 
                 if (formAction === 'cad') {

@@ -791,14 +791,23 @@ title="Drill across on cell"></a></li>
             <%  var counter = 0;
                 _.each(options, function(option) {
                     counter++; %>
-
-                <li class="option_value">
-                    <input type="checkbox" class="check_option"
-                        value="<%= encodeURIComponent(option.uniqueName) %>" name="selections_checker" id="selections_checker<%= counter %>"
-                        label="<%= encodeURIComponent(option.caption) %>" />
-                        <label for="selections_checker<%= counter %>" class="caption"><%= option.caption %></label>
-                        <label for="selections_checker<%= counter %>" class="unique"><%= option.uniqueName %></label>
-                </li>
+                <% if (!option.properties) { %>
+                    <li class="option_value">
+                        <input type="checkbox" class="check_option"
+                            value="<%= encodeURIComponent(option.uniqueName) %>" name="selections_checker" id="selections_checker<%= counter %>"
+                            label="<%= encodeURIComponent(option.caption) %>" />
+                            <label for="selections_checker<%= counter %>" class="caption"><%= option.caption %></label>
+                            <label for="selections_checker<%= counter %>" class="unique"><%= option.uniqueName %></label>
+                    </li>
+                <% } else { %>
+                    <li class="option_value">
+                        <input type="checkbox" class="check_option"
+                            value="<%= encodeURIComponent(option.uniqueName) %>" name="selections_checker" id="selections_checker<%= counter %>"
+                            label="<%= encodeURIComponent(option.caption) %>" />
+                            <label for="selections_checker<%= counter %>" class="caption" style="color: blue;"><%= option.caption %></label>
+                            <label for="selections_checker<%= counter %>" class="unique" style="color: blue;"><%= option.uniqueName %></label>
+                    </li>
+                <% } %>
             <% }); %>
             </ul>
         </script>

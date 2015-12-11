@@ -56,6 +56,7 @@ var SelectionsModal = Modal.extend({
         this.query = args.workspace.query;
         this.selected_members = [];
         this.available_members = [];
+        this.topLevel;
 
         _.bindAll(this, "fetch_members", "populate", "finished", "get_members", "use_result_action", "show_totals_action");
 
@@ -142,8 +143,14 @@ var SelectionsModal = Modal.extend({
         $(this.el).find('.search_limit').text(this.members_search_limit);
         $(this.el).find('.members_limit').text(this.members_limit);
 
+        var calcMembers = this.workspace.query.helper.getCalculatedMembers();
 
-        this.get_members();
+        if (calcMembers.length > 0) {
+            this.fetch_calcmembers_levels();
+        }
+        else {
+            this.get_members();
+        }
     },
 
     open_date_filter: function(event) {
@@ -177,9 +184,9 @@ var SelectionsModal = Modal.extend({
             var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">' + self.message + '</span> ';
             self.workspace.block(message);
 
-		/**
-		 * gett isn't a typo, although someone should probably rename that method to avoid confusion.
-		 */
+        /**
+         * gett isn't a typo, although someone should probably rename that method to avoid confusion.
+         */
             this.workspace.query.action.gett(path, {
                 success: this.fetch_members,
                 error: function() {
@@ -201,7 +208,7 @@ var SelectionsModal = Modal.extend({
 
         var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Searching for members matching:</span> ' + search_term;
         self.workspace.block(message);
-		self.workspace.query.action.gett(self.search_path, {
+        self.workspace.query.action.gett(self.search_path, {
                 async: false,
 
                 success: function(response, model) {
@@ -215,8 +222,59 @@ var SelectionsModal = Modal.extend({
                 },
                 data: { search: search_term, searchlimit: self.members_search_limit }
         });
+    },
 
+    fetch_calcmembers_levels: function() {
+        var dimHier = this.member.hierarchy.split('].[');
+        var dName = dimHier[0].replace(/[\[\]]/gi, '');
+        var hName = dimHier[1].replace(/[\[\]]/gi, '');
 
+        var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">' + this.message + '</span> ';
+        this.workspace.block(message);
+
+        var level = new Level({}, { 
+            ui: this, 
+            cube: this.workspace.selected_cube, 
+            dimension: dName, 
+            hierarchy: hName
+        });
+
+        level.fetch({
+            success: this.get_levels
+        });
+    },
+
+    get_levels: function(model, response) {
+        if (response && response.length > 0) {
+            model.ui.topLevel = response[0];
+            model.ui.get_members();
+        }
+    },
+
+    get_calcmembers: function() {
+        var self = this;
+        var hName = this.member.hierarchy;
+        var calcMembers = this.workspace.query.helper.getCalculatedMembers();
+        var arrCalcMembers = [];
+
+        if (this.topLevel.name === this.member.level) {
+            _.filter(calcMembers, function(value) {
+                if (value.hierarchyName === hName && _.isEmpty(value.parentMember)) {
+                    value.uniqueName = value.hierarchyName + '.[' + value.name + ']';
+                    arrCalcMembers.push(value);
+                }
+            });
+        }
+        else {
+            _.filter(calcMembers, function(value) {
+                if (value.hierarchyName === hName && value.parentMemberLevel === self.member.level) {
+                    value.uniqueName = value.hierarchyName + '.' + value.parentMember + '.[' + value.name + ']';
+                    arrCalcMembers.push(value);
+                }
+            });
+        }
+
+        return arrCalcMembers;
     },
 
     fetch_members: function(model, response) {
@@ -235,6 +293,16 @@ var SelectionsModal = Modal.extend({
             self.show_unique_option = false;
             $(this.el).find('.options #show_unique').attr('checked',false);
 
+            var calcMembers = this.workspace.query.helper.getCalculatedMembers();
+
+            if (calcMembers.length > 0) {
+                var newCalcMembers = this.get_calcmembers();
+                var len = newCalcMembers.length;
+
+                for (var i = 0; i < len; i++) {
+                    this.available_members.push(newCalcMembers[i]);
+                }
+            }
 
             $(this.el).find('.items_size').text(this.available_members.length);
             if (this.members_search_server) {
@@ -370,8 +438,8 @@ var SelectionsModal = Modal.extend({
             $(this.el).find('.selection_type_exclusion').prop('checked', false);
         }
 
-		// Translate
-		Saiku.i18n.translate();
+        // Translate
+        Saiku.i18n.translate();
         // Show dialog
         Saiku.ui.unblock();
     },
@@ -509,7 +577,6 @@ var SelectionsModal = Modal.extend({
                 }
 
         }
-
 
         this.finished();
     },

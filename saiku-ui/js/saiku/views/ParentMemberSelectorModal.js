@@ -113,7 +113,7 @@ var ParentMemberSelectorModal = Modal.extend({
         _.extend(this, args);
         this.workspace = args.workspace;
         this.options.title = 'Parent Member Selector';
-        this.breadcrumbs = [];
+        // this.breadcrumbs = [];
 
         var dimensions = Saiku.session.sessionworkspace.cube[this.cube].get('data').dimensions;
 
@@ -240,6 +240,7 @@ var ParentMemberSelectorModal = Modal.extend({
 
         if (response) {
             model.ui.breadcrumbs = [model.ui.dimension, model.ui.hierarchy, response[0].name];
+            model.ui.get_last_level();
             model.ui.populate_breadcrumbs(model.ui.breadcrumbs);
             model.ui.$el.find('.dialog_footer').find('a[href="#clear"]').data('name', response[0].name);
             levelMember = new LevelMember({}, { 
@@ -302,6 +303,7 @@ var ParentMemberSelectorModal = Modal.extend({
             model.ui.breadcrumbs = _.initial(model.ui.breadcrumbs, (model.ui.breadcrumbs.length - (position + 1)));
 
             model.ui.selected_level();
+            model.ui.get_last_level();
 
             model.ui.populate_breadcrumbs(model.ui.breadcrumbs);
         }
@@ -403,6 +405,7 @@ var ParentMemberSelectorModal = Modal.extend({
         Saiku.ui.block('<span class="i18n">Loading...</span>');
 
         var dimension = {
+            val: this.$el.find('#dimension option:selected').val(),
             txt: this.$el.find('#dimension option:selected').text(),
             dataDimension: this.$el.find('#dimension option:selected').data('dimension')
         };
@@ -411,6 +414,11 @@ var ParentMemberSelectorModal = Modal.extend({
         this.dimension = dimension.dataDimension;
         this.hierarchy = dimension.txt;
         this.new_parent_member();
+
+        // // Trigger event when assign key
+        // Saiku.session.trigger('ParentMemberSelectorModal:fetch_dimension', {
+        //     selectedDimension: dimension
+        // });
     },
 
     /**
@@ -430,6 +438,16 @@ var ParentMemberSelectorModal = Modal.extend({
             selectedLevel = this.breadcrumbs[this.breadcrumbs.length - 2];
             this.$el.find('.selected-level').text(selectedLevel);
         }
+    },
+
+    /**
+     * Get the last level
+     *
+     * @method get_last_level
+     * @private
+     */
+    get_last_level: function() {
+        this.lastLevel = _.last(this.breadcrumbs);
     },
 
     /**
@@ -503,8 +521,15 @@ var ParentMemberSelectorModal = Modal.extend({
             // console.log(uniqueName);
             // console.log(this.breadcrumbs);
             
+            // Trigger event when assign key
+            Saiku.session.trigger('ParentMemberSelectorModal:save', {
+                dialog: this.dialog,
+                selectedDimension: this.$el.find('#dimension option:selected').val()
+            });
+
             this.dialog.pmUniqueName = uniqueName;
-            // this.dialog.pmBreadcrumbs = _.uniq(this.breadcrumbs);
+            this.dialog.pmLevel = this.lastLevel;
+            this.dialog.pmBreadcrumbs = _.uniq(this.breadcrumbs);
             this.$el.dialog('close');
         }
     }
