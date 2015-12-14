@@ -1,15 +1,40 @@
+<a href="#readme"></a>
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/OSBI/saiku/assets/L.png" align="left">
   <img src="https://raw.githubusercontent.com/OSBI/saiku/assets/R.png" align="right">
   <b>
-    When something doesn't work as expected, then please subscribe to the <a href="https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/user">Saiku User Group list</a> and send your doubt. If that doesn't solve your problem, then please ask for help on <a href="https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/dev">Saiku Dev Group</a>.
+    When something doesn't work as expected, then please subscribe to the 
+    <a href="https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/user">Saiku User Group list</a> 
+    and send your doubt. If that doesn't solve your problem, then please ask for help on 
+    <a href="https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/dev">Saiku Dev Group</a>.
   </b>
 </p>
 ***
 
-# [Saiku](http://www.meteorite.bi) [![Saiku Analytics on Slack](http://chat.meteorite.bi/badge.svg)](http://chat.meteorite.bi/)
+<p align="center"><a href="http://www2.meteorite.bi/saiku-demo/"><img src="https://raw.githubusercontent.com/OSBI/saiku/assets/saiku-demo-1.jpg"/></a></p>
+<h1 align="center">Saiku</h1>
+<h2 align="center">Next Generation Open Source Analytics</h2>
+***
 
-[![saiku-view](https://raw.githubusercontent.com/OSBI/saiku/assets/saiku-demo-1.jpg)](http://www2.meteorite.bi/saiku-demo/)
+<p align="justify">
+  Saiku allows business users to explore complex data sources, 
+  using a familiar drag and drop interface and easy to understand 
+  business terminology, all within a browser. Select the data you 
+  are interested in, look at it from different perspectives, 
+  drill into the detail. Once you have your answer, save your results, 
+  share them, export them to Excel or PDF, all straight from the browser.
+  <a href="http://www.meteorite.bi/">(more)</a>
+</p>
+***
+
+<p align="center">
+  <b>
+    Please consider supporting development by making a
+    <a href="http://www.meteorite.bi/products/saiku/sponsorship">donation</a>.
+  </b>
+</p>
+***
 
 ## Setup
 
