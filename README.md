@@ -12,9 +12,17 @@
 </p>
 ***
 
+<h1 align="center">Saiku Analytics</h1>
+<h2 align="center">The world's greatest open source OLAP browser</h2>
 <p align="center"><a href="http://www2.meteorite.bi/saiku-demo/"><img src="https://raw.githubusercontent.com/OSBI/saiku/assets/saiku-demo-1.jpg"/></a></p>
-<h1 align="center">Saiku</h1>
-<h2 align="center">Next Generation Open Source Analytics</h2>
+<p align="center">
+  <a href="http://www.meteorite.bi/"><b>homepage</b></a> |
+  <a href="http://community.meteorite.bi/"><b>community</b></a> |
+  <a href="http://wiki.meteorite.bi/display/SAIK/Saiku"><b>wiki</b></a> |
+  <a href="https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/user"><b>mailing list</b></a> |
+  <a href="http://webchat.freenode.net/?channels=##saiku"><b>chat</b></a> |
+  <a href="https://twitter.com/SaikuAnalytics"><b>news</b></a>
+</p>
 ***
 
 <p align="justify">
