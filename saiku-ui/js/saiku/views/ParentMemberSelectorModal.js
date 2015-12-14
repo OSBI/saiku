@@ -414,11 +414,6 @@ var ParentMemberSelectorModal = Modal.extend({
         this.dimension = dimension.dataDimension;
         this.hierarchy = dimension.txt;
         this.new_parent_member();
-
-        // // Trigger event when assign key
-        // Saiku.session.trigger('ParentMemberSelectorModal:fetch_dimension', {
-        //     selectedDimension: dimension
-        // });
     },
 
     /**
@@ -521,11 +516,13 @@ var ParentMemberSelectorModal = Modal.extend({
             // console.log(uniqueName);
             // console.log(this.breadcrumbs);
             
-            // Trigger event when assign key
-            Saiku.session.trigger('ParentMemberSelectorModal:save', {
-                dialog: this.dialog,
-                selectedDimension: this.$el.find('#dimension option:selected').val()
-            });
+            if (Settings.PARENT_MEMBER_DIMENSION) {
+                // Trigger event when assign key
+                Saiku.session.trigger('ParentMemberSelectorModal:save', {
+                    dialog: this.dialog,
+                    selectedDimension: this.$el.find('#dimension option:selected').val()
+                });
+            }
 
             this.dialog.pmUniqueName = uniqueName;
             this.dialog.pmLevel = this.lastLevel;
