@@ -605,15 +605,19 @@ var CalculatedMemberModal = Modal.extend({
      * @param {Object} event The Event interface represents any event of the DOM
      */
     type_dimension: function(event) {
-        if (event) { event.preventDefault(); }
         var dimensionDataType = this.$el.find('#cms-dimension option:selected').data('type');
+
+        if (event) { 
+            event.preventDefault();
+            this.reset_parent_member();
+        }
+
         if (dimensionDataType === 'calcmember') {
             this.$el.find('.btn-parent-member').removeAttr('disabled');
         }
         else {
             this.$el.find('.btn-parent-member').attr('disabled', 'disabled');
         }
-        this.reset_parent_member();
     },
 
     /**
