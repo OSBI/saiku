@@ -1,6 +1,15 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/OSBI/saiku/assets/L.png" align="left">
+  <img src="https://raw.githubusercontent.com/OSBI/saiku/assets/R.png" align="right">
+  <b>
+    When something doesn't work as expected, then please subscribe to the <a href="https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/user">Saiku User Group list</a> and send your doubt. If that doesn't solve your problem, then please ask for help on <a href="https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/dev">Saiku Dev Group</a>.
+  </b>
+</p>
+***
+
 # [Saiku](http://www.meteorite.bi) [![Saiku Analytics on Slack](http://chat.meteorite.bi/badge.svg)](http://chat.meteorite.bi/)
 
-[![saiku-view](http://www.meteorite.bi/images/chart1.jpg)](http://www2.meteorite.bi/saiku-demo/)
+[![saiku-view](https://raw.githubusercontent.com/OSBI/saiku/assets/saiku-demo-1.jpg)](http://www2.meteorite.bi/saiku-demo/)
 
 ## Setup
 
