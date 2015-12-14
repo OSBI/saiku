@@ -15,6 +15,7 @@
 <h1 align="center">Saiku Analytics</h1>
 <h2 align="center">The world's greatest open source OLAP browser</h2>
 <p align="center"><a href="http://www2.meteorite.bi/saiku-demo/"><img src="https://raw.githubusercontent.com/OSBI/saiku/assets/saiku-demo-1.jpg"/></a></p>
+<hr />
 <p align="center">
   <a href="http://www.meteorite.bi/"><b>homepage</b></a> |
   <a href="http://community.meteorite.bi/"><b>community</b></a> |
