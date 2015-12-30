@@ -524,7 +524,7 @@ var ParentMemberSelectorModal = Modal.extend({
                 });
             }
 
-            this.dialog.pmUniqueName = uniqueName;
+            this.dialog.pmUniqueName = dimHier + uniqueName;
             this.dialog.pmLevel = this.lastLevel;
             this.dialog.pmBreadcrumbs = _.uniq(this.breadcrumbs);
             this.$el.dialog('close');

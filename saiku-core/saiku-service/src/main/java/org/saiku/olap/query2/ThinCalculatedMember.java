@@ -1,11 +1,14 @@
 package org.saiku.olap.query2;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by bugg on 15/09/15.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ThinCalculatedMember {
 
   private String parentMember;
