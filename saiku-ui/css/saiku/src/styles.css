@@ -2634,3 +2634,8 @@ margin-bottom: 20px;
     display: inline;
     margin-left: 10px;
 }
+
+.filter-editor{
+    width:300px;
+    height:200px;
+}

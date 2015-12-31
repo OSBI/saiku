@@ -116,7 +116,7 @@ var ParentMemberSelectorModal = Modal.extend({
         // Initialize properties
         _.extend(this, args);
         this.workspace = args.workspace;
-        this.options.title = 'Parent Member Selector';
+        this.options.title = 'Member Selector';
         if(args.select_type!==undefined) {
             this.select_type = args.select_type;
         }
@@ -126,7 +126,6 @@ var ParentMemberSelectorModal = Modal.extend({
 
         var dimensions = Saiku.session.sessionworkspace.cube[this.cube].get('data').dimensions;
 
-        Saiku.ui.block('<span class="i18n">Loading...</span>');
 
         // Load template
         this.message = this.template_modal({
@@ -136,10 +135,14 @@ var ParentMemberSelectorModal = Modal.extend({
         this.bind('open', function() {
             this.$el.find('#dimension').val(this.selectDimension);
 
-            if (_.isEmpty(this.uniqueName) && _.isEmpty(this.breadcrumbs)) {
+            if (_.isEmpty(this.uniqueName) && _.isEmpty(this.breadcrumbs) && !_.isEmpty(this.dimension)) {
+                Saiku.ui.block('<span class="i18n">Loading...</span>');
+
                 this.new_parent_member();
             }
-            else {
+            else if(!_.isEmpty(this.dimension)){
+                Saiku.ui.block('<span class="i18n">Loading...</span>');
+
                 this.edit_parent_member();
             }
         });

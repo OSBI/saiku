@@ -610,7 +610,8 @@ var WorkspaceDropZone = Backbone.View.extend({
                                     success: save_custom,
                                     query: self.workspace.query,
                                     expression: filterCondition,
-                                    expressionType: "Filter"
+                                    expressionType: "Filter",
+                                     workspace: self.workspace
                                 })).render().open();
 
                             } else if (key == "clearlimit") {
