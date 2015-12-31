@@ -97,8 +97,9 @@ var ParentMemberSelectorModal = Modal.extend({
         'click    .dialog_footer a' : 'call',
         'click    .crumb'           : 'fetch_crumb',
         'change   #dimension'       : 'fetch_dimension',
-        'dblclick .member'          : 'drill_member',
-        'keyup    #auto-filter'     : 'auto_filter'
+        'click    .drill_member'    : 'drill_member',
+        'keyup    #auto-filter'     : 'auto_filter',
+        'click    .member'          : 'select_member'
     },
 
     /**
@@ -162,9 +163,13 @@ var ParentMemberSelectorModal = Modal.extend({
      * @private
      */
     edit_parent_member: function() {
-        var levelChildMember = new LevelChildMember({}, { ui: this, cube: this.cube, uniqueName: this.uniqueName });
-        levelChildMember.fetch({
-            success: this.get_child_members
+        var level = new LevelMember({}, {ui: this, cube: this.cube, dimension: this.dimension, hierarchy: this.hierarchy, level: this.lastLevel});
+        var that = this;
+        level.fetch({
+            success: function(data, otherdata){
+                that.get_members(data, otherdata);
+                that.populate_breadcrumbs(that.breadcrumbs);
+            }
         });
     },
 
@@ -219,7 +224,7 @@ var ParentMemberSelectorModal = Modal.extend({
                 .data('caption', data[i].caption)
                 .data('uniqueName', data[i].uniqueName)
                 .data('levelUniqueName', data[i].levelUniqueName ? data[i].levelUniqueName : false)
-                .text(data[i].name);
+                .html(data[i].name+"<span class='drill_member' style='float:right;'>Next Level</span>");
             
             this.$el.find('.members-list').append($members);
         }
@@ -296,13 +301,14 @@ var ParentMemberSelectorModal = Modal.extend({
 
             model.ui.breadcrumbs.push(levelUniqueName);
             model.ui.breadcrumbs = _.uniq(model.ui.breadcrumbs);
-            model.ui.uniqueName = model.uniqueName;
+            //model.ui.uniqueName = model.uniqueName;
 
             position = _.indexOf(model.ui.breadcrumbs, levelUniqueName);
 
             model.ui.breadcrumbs = _.initial(model.ui.breadcrumbs, (model.ui.breadcrumbs.length - (position + 1)));
 
-            model.ui.selected_level();
+            //model.ui.uniqueName = model.uniqueName;
+            //model.ui.selected_level();
             model.ui.get_last_level();
 
             model.ui.populate_breadcrumbs(model.ui.breadcrumbs);
@@ -325,7 +331,7 @@ var ParentMemberSelectorModal = Modal.extend({
         Saiku.ui.block('<span class="i18n">Loading...</span>');
 
         var $currentTarget = $(event.currentTarget);
-        var uniqueName = $currentTarget.data('uniqueName');
+        var uniqueName = $currentTarget.closest('.member').data('uniqueName');
 
         this.$el.find('#auto-filter').val('');
 
@@ -426,11 +432,11 @@ var ParentMemberSelectorModal = Modal.extend({
         var selectedLevel;
 
         if ((this.breadcrumbs.length - 2) < 2) {
-            selectedLevel = this.breadcrumbs[this.breadcrumbs.length - 1];
+            selectedLevel = this.breadcrumbs[this.breadcrumbs.length - 0];
             this.$el.find('.selected-level').text(selectedLevel);
         }
         else {
-            selectedLevel = this.breadcrumbs[this.breadcrumbs.length - 2];
+            selectedLevel = this.breadcrumbs[this.breadcrumbs.length - 1];
             this.$el.find('.selected-level').text(selectedLevel);
         }
     },
@@ -530,5 +536,20 @@ var ParentMemberSelectorModal = Modal.extend({
             this.dialog.$el.find('#cms-pmember').val(dimHier+uniqueName);
             this.$el.dialog('close');
         }
+    },
+
+    select_member: function(event){
+        event.preventDefault();
+
+        var $currentTarget = $(event.currentTarget);
+        $currentTarget.closest('ul').children('li').removeClass('highlight_li');
+        $currentTarget.addClass('highlight_li');
+        this.uniqueName = $currentTarget.data('uniqueName');
+
+        //model.ui.uniqueName = model.uniqueName;
+        this.selected_level();
+        this.$el.find('#auto-filter').val('');
+
+
     }
 });

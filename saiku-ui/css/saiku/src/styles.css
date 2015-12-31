@@ -2234,6 +2234,10 @@ span.cancel_search:hover {
 	background-image: url(../../../images/src/folder_add.png);
 }
 
+.highlight_li {
+    background-color: #f0f0f0;
+}
+
 /* Print styles */
 
 @media print {
