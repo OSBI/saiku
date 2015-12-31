@@ -82,6 +82,7 @@ var CalculatedMemberModal = Modal.extend({
                 '<label for="<%= idEditor %>" class="i18n">Formula:</label>' +
                 '<div class="formula-editor" id="<%= idEditor %>"></div>' +
                 '<div class="btn-groups">' +
+
                     '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="+">&nbsp;+&nbsp;</a>' +
                     '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="-">&nbsp;-&nbsp;</a>' +
                     '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="*">&nbsp;*&nbsp;</a>' +
@@ -91,6 +92,8 @@ var CalculatedMemberModal = Modal.extend({
                     '<a class="form_button btn-math i18n" href="#add_math_operator_formula" data-math="and">&nbsp;and&nbsp;</a>' +
                     '<a class="form_button btn-math i18n" href="#add_math_operator_formula" data-math="or">&nbsp;or&nbsp;</a>' +
                     '<a class="form_button btn-math i18n" href="#add_math_operator_formula" data-math="not">&nbsp;not&nbsp;</a>' +
+                    '<select class="cms-functionlist"><option value="">---select function---' +
+                    '</select>&nbsp; <a href="" class="cms-doclink" target="_blank" style="display: none;">Documentation</a><br/>'+
                 '</div>' +
 				'<div class="cms-function">' +
 					'<label for="cms-function" class="i18n">Functions:</label>' +
@@ -178,7 +181,8 @@ var CalculatedMemberModal = Modal.extend({
 		'click  .form_button.growthBtn' : 'openGrowthModal',
         'click  .form_button.formatBtn' : 'openFormatModal',
 		'click  .btn-parent-member'     : 'open_parent_member_selector',
-        'click  .btn-clear-parent'      : 'clear_parent_member_selector'
+        'click  .btn-clear-parent'      : 'reset_parent_member',
+        'click .cms-functionlist'      : 'change_function_list'
     },
 
     /**
@@ -221,6 +225,7 @@ var CalculatedMemberModal = Modal.extend({
         });
 
         this.bind('open', function() {
+            this.populate_function_list();
             var calcHeight = this.$el.find('.cms-container-form').height();
             this.post_render();
             this.$el.find('.dialog_footer a:nth-child(2)').hide();
@@ -569,6 +574,8 @@ var CalculatedMemberModal = Modal.extend({
         this.pmUniqueName = '';
         this.pmLevel = '';
         this.pmBreadcrumbs = [];
+        this.$el.find('#cms-pmember').val("");
+
     },
 
     /**
@@ -597,9 +604,10 @@ var CalculatedMemberModal = Modal.extend({
     add_math_operator_formula: function(event) {
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
-        var formula = this.formulaEditor.getValue();
-        formula = formula + ' ' + $currentTarget.data('math') + ' ';
-        this.formulaEditor.setValue(formula);
+        var formula = ' ' + $currentTarget.data('math') + ' ';
+        var i = this.$el.find(".formula-editor").attr('id');
+        var editor = ace.edit(i);
+        editor.insert(formula);
     },
 
     /**
@@ -732,23 +740,6 @@ var CalculatedMemberModal = Modal.extend({
     },
 
     /**
-     * Clear the selected parent member
-     *
-     * @method clear_parent_member_selector
-     * @private
-     * @param {Object} event The Event interface represents any event of the DOM
-     */
-    clear_parent_member_selector: function(event) {
-        event.preventDefault();
-
-        this.pmUniqueName = null;
-        this.pmLevel = null;
-        this.pmBreadcrumbs = null;
-        this.$el.find('#cms-pmember').val("");
-
-    },
-
-    /**
      * Save calculated member
      *
      * @method save
@@ -852,6 +843,58 @@ var CalculatedMemberModal = Modal.extend({
             }
 
             this.$el.dialog('close');
+        }
+    },
+
+    populate_function_list: function(event){
+
+        var functions = [
+            {name: 'Aggregate', example:'Aggregate(Set_Expression [ ,Numeric_Expression ])',
+                description:'Returns a number that is calculated by aggregating over the cells returned by the set expression.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145524.aspx'},
+            {name: 'Avg', example:'Avg( Set_Expression [ , Numeric_Expression ] )',
+                description:'Evaluates a set and returns the average of the non empty values of the cells in the set, averaged over the measures in the set or over a specified measure.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms146067.aspx'},
+            {name: 'Ancestor', example:'Ancestor(Member_Expression, Distance)',
+                description:'A function that returns the ancestor of a specified member at a specified level or at a specified distance from the member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145616.aspx'},
+            {name: 'ClosingPeriod', example:'ClosingPeriod( [ Level_Expression [ ,Member_Expression ] ] )',
+                description:'Returns the member that is the last sibling among the descendants of a specified member at a specified level.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145584.aspx'},
+            {name: 'Cousin', example:'Cousin( Member_Expression , Ancestor_Member_Expression )',
+                description:'Returns the child member with the same relative position under a parent member as the specified child member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145481.aspx'}
+
+        ]
+
+        var option = '';
+        for (var i=0;i<functions.length;i++){
+            option += '<option title="'+functions[i].description+'" data-desc="'+functions[i].description+'" data-doc-link="'+functions[i].doc_link+'" ' +
+                'value="'+ functions[i].example + '">' + functions[i].name + '</option>';
+        }
+        $('.cms-functionlist').append(option);
+    },
+
+    change_function_list: function(event){
+        event.preventDefault();
+
+        var selectedFunction = this.$el.find('.cms-functionlist option:selected');
+
+        $('.cms-functionlist').prop('title',($(selectedFunction).prop('title')));
+
+
+        if($(selectedFunction).data("doc-link")){
+            $('.cms-doclink').prop('href', $(selectedFunction).data("doc-link"));
+            $('.cms-doclink').show();
+        }
+        else{
+            $('.cms-doclink').hide();
+        }
+
+        if($(selectedFunction).val()){
+            var i = this.$el.find(".formula-editor").attr('id');
+            var editor = ace.edit(i);
+            editor.insert($(selectedFunction).val())
         }
     }
 });

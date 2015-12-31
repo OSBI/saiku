@@ -2624,3 +2624,9 @@ margin-bottom: 20px;
 .drop-over {
     background-color: #f0f8ff;
 }
+
+.cms-functionlist{
+    width:155px !important;
+    display: inline;
+    margin-left: 10px;
+}

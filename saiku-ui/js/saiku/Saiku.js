@@ -386,3 +386,4 @@ SaikuTimeLogger.prototype.log = function(eventname) {
     this._timestamps.push(time);
     this._events.push(eventname);
 };
+
