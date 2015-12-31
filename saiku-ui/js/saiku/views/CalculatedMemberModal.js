@@ -845,6 +845,10 @@ var CalculatedMemberModal = Modal.extend({
         }
     },
 
+    /**
+     * Populate the MDX function select box with useful MDX constructs.
+     * @param event
+     */
     populate_function_list: function(event){
 
         var functions = [
@@ -951,6 +955,10 @@ var CalculatedMemberModal = Modal.extend({
         }
     },
 
+    /**
+     * Open the select member dialog
+     * @param event
+     */
     open_select_member_selector: function(event){
         event.preventDefault();
         var dimension = {
@@ -1006,6 +1014,11 @@ var CalculatedMemberModal = Modal.extend({
 
     },
 
+    /**
+     * Callback to update the editor with the selected member.
+     * @param editor
+     * @param n
+     */
     close_select_modal: function(editor, n){
         editor.insert(n);
     }
