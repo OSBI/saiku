@@ -863,7 +863,61 @@ var CalculatedMemberModal = Modal.extend({
                 doc_link:'https://msdn.microsoft.com/en-us/library/ms145584.aspx'},
             {name: 'Cousin', example:'Cousin( Member_Expression , Ancestor_Member_Expression )',
                 description:'Returns the child member with the same relative position under a parent member as the specified child member.',
-                doc_link:'https://msdn.microsoft.com/en-us/library/ms145481.aspx'}
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145481.aspx'},
+            {name: 'CurrentMember', example:'Hierarchy_Expression.CurrentMember',
+                description:'Returns the current member along a specified hierarchy during iteration.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms144948.aspx'},
+            {name: 'FirstChild', example:'Member_Expression.FirstChild',
+                description:'Returns the first child of a specified member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms144947.aspx'},
+            {name: 'FirstSibling', example:'Member_Expression.FirstSibling',
+                description:'Returns the first child of the parent of a member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145956.aspx'},
+            {name: 'IIf', example:'IIf(Logical_Expression, Expression1, Expression2)',
+                description:'Evaluates different branch expressions depending on whether a Boolean condition is true or false.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145994.aspx'},
+            {name: 'LastChild', example:'Member_Expression.LastChild',
+                description:'Returns the last child of a specified member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145576.aspx'},
+            {name: 'LastSibling', example:'Member_Expression.LastSibling',
+                description:'Returns the last child of the parent of a specified member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms144863.aspx'},
+            {name: 'Max', example:'Max( Set_Expression [ , Numeric_Expression ] )',
+                description:'Returns the maximum value of a numeric expression that is evaluated over a set.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145601.aspx'},
+            {name: 'Median', example:'Median(Set_Expression [ ,Numeric_Expression ] )',
+                description:'Returns the median value of a numeric expression that is evaluated over a set.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145570.aspx'},
+            {name: 'Min', example:'Min( Set_Expression [ , Numeric_Expression ] )',
+                description:'Returns the minimum value of a numeric expression that is evaluated over a set.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145600.aspx'},
+            {name: 'MTD', example:'Mtd( [ Member_Expression ] )',
+                description:'Returns a set of sibling members from the same level as a given member, starting with the first sibling and ending with the given member, as constrained by the Year level in the Time dimension.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms144753.aspx'},
+            {name: 'OpeningPeriod', example:'OpeningPeriod( [ Level_Expression [ , Member_Expression ] ] )',
+                description:'Returns the first sibling among the descendants of a specified level, optionally at a specified member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145992.aspx'},
+            {name: 'ParallelPeriod', example:'ParallelPeriod( [ Level_Expression [ ,Index [ , Member_Expression ] ] ] )',
+                description:'Returns a member from a prior period in the same relative position as a specified member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145500.aspx'},
+            {name: 'Parent', example:'Member_Expression.Parent',
+                description:'Returns the parent of a member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145513.aspx'},
+            {name: 'PrevMember', example:'Member_Expression.PrevMember',
+                description:'Returns the previous member in the level that contains a specified member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms144719.aspx'},
+            {name: 'QTD', example:'Qtd( [ Member_Expression ] )',
+                description:'Returns a set of sibling members from the same level as a given member, starting with the first sibling and ending with the given member, as constrained by the Quarter level in the Time dimension.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145978.aspx'},
+            {name: 'Sum', example:'Sum( Set_Expression [ , Numeric_Expression ] )',
+                description:'Returns the sum of a numeric expression evaluated over a specified set.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145484.aspx'},
+            {name: 'WTD', example:'Wtd( [ Member_Expression ] )',
+                description:'Returns a set of sibling members from the same level as a given member, starting with the first sibling and ending with the given member, as constrained by the Week level in the Time dimension.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms144930.aspx'},
+            {name: 'YTD', example:'Ytd( [ Member_Expression ] )',
+                description:'Returns a set of sibling members from the same level as a given member, starting with the first sibling and ending with the given member, as constrained by the Year level in the Time dimension.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms146039.aspx'}
 
         ]
 
@@ -894,7 +948,7 @@ var CalculatedMemberModal = Modal.extend({
         if($(selectedFunction).val()){
             var i = this.$el.find(".formula-editor").attr('id');
             var editor = ace.edit(i);
-            editor.insert($(selectedFunction).val())
+            editor.insert($(selectedFunction).val());
         }
     }
 });
