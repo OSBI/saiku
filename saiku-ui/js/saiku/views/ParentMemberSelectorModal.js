@@ -538,6 +538,13 @@ var ParentMemberSelectorModal = Modal.extend({
         }
     },
 
+    /**
+     * Triggered when a user selects a member from the list.
+     *
+     * @method select_member
+     * @private
+     * @param {Object} event The Event interface represents any event of the DOM
+     */
     select_member: function(event){
         event.preventDefault();
 
