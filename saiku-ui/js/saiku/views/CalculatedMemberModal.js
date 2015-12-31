@@ -72,13 +72,11 @@ var CalculatedMemberModal = Modal.extend({
             '<form class="form-group-inline" data-action="cad">' +
                 '<label for="cms-name" class="i18n">Name:</label>' +
                 '<input type="text" id="cms-name" autofocus>' +
-                '<label for="cms-measure" class="i18n">Measure:</label>' +
-                '<select id="cms-measure">' +
-                    '<option class="i18n" value="" selected>-- Add a measure in formula --</option>' +
-                    '<% _(measures).each(function(measure) { %>' +
-                        '<option value="<%= measure.uniqueName %>"><%= measure.name %></option>' +
-                    '<% }); %>' +
-                '</select>' +
+                '<div class="cms-measure">' +
+                '<label for="cms-measure" class="i18n">Insert Member:</label>' +
+                ' <input type="button" class="form_button btn-select-member" style="padding-bottom: 18px;"' +
+                ' value="Select Member" title="Insert a member into the formula editor "   ' +
+                'id="insertmember"> </input> </div>' +
                 '<label for="<%= idEditor %>" class="i18n">Formula:</label>' +
                 '<div class="formula-editor" id="<%= idEditor %>"></div>' +
                 '<div class="btn-groups">' +
@@ -182,7 +180,8 @@ var CalculatedMemberModal = Modal.extend({
         'click  .form_button.formatBtn' : 'openFormatModal',
 		'click  .btn-parent-member'     : 'open_parent_member_selector',
         'click  .btn-clear-parent'      : 'reset_parent_member',
-        'click .cms-functionlist'      : 'change_function_list'
+        'click .cms-functionlist'       : 'change_function_list',
+        'click .btn-select-member'      : 'open_select_member_selector'
     },
 
     /**
@@ -950,5 +949,64 @@ var CalculatedMemberModal = Modal.extend({
             var editor = ace.edit(i);
             editor.insert($(selectedFunction).val());
         }
+    },
+
+    open_select_member_selector: function(event){
+        event.preventDefault();
+        var dimension = {
+            val: this.$el.find('#cms-dimension option:selected').val(),
+            txt: this.$el.find('#cms-dimension option:selected').text(),
+            dataDimension: this.$el.find('#cms-dimension option:selected').data('dimension'),
+            dataType: this.$el.find('#cms-dimension option:selected').data('type')
+        };
+        var i = this.$el.find(".formula-editor").attr('id');
+        var editor = ace.edit(i);
+        var that = this;
+        var $currentTarget = $(event.currentTarget);
+
+
+        if($currentTarget.hasClass("btn-select-member")){
+            (new ParentMemberSelectorModal({
+                dialog: this,
+                workspace: this.workspace,
+                cube: this.workspace.selected_cube,
+                dimensions: Saiku.session.sessionworkspace.cube[this.workspace.selected_cube].get('data').dimensions,
+                selectDimension: dimension.val,
+                dimension: dimension.dataDimension,
+                hierarchy: dimension.txt,
+                uniqueName: this.pmUniqueName,
+                lastLevel: this.pmLevel,
+                breadcrumbs: this.pmBreadcrumbs,
+                select_type: "select_member",
+                selected_member: this.selected_member,
+                close_callback: function(args){
+                    var e = editor;
+                    that.close_select_modal(e, args);
+                }
+            })).render().open();
+
+            this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Connection Details');
+        }
+        else if (dimension.dataType === 'calcmember') {
+            (new ParentMemberSelectorModal({
+                dialog: this,
+                workspace: this.workspace,
+                cube: this.workspace.selected_cube,
+                dimensions: Saiku.session.sessionworkspace.cube[this.workspace.selected_cube].get('data').dimensions,
+                selectDimension: dimension.val,
+                dimension: dimension.dataDimension,
+                hierarchy: dimension.txt,
+                uniqueName: this.pmUniqueName,
+                lastLevel: this.pmLevel,
+                breadcrumbs: this.pmBreadcrumbs
+            })).render().open();
+
+            this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Connection Details');
+        }
+
+    },
+
+    close_select_modal: function(editor, n){
+        editor.insert(n);
     }
 });

@@ -21,6 +21,9 @@
  */
 var ParentMemberSelectorModal = Modal.extend({
 
+    selected_member:null,
+    close_callback: null,
+    select_type: 'parent-member-selector',
     /**
      * Type name
      *
@@ -37,40 +40,40 @@ var ParentMemberSelectorModal = Modal.extend({
      * @type {String}
      * @private
      */
-	template_modal: _.template(
-        '<form class="form-group" onsubmit="return false;">' +
-        	'<div class="group-elements" style="padding-top: 0;">' +
-				'<nav class="breadcrumbs">' +
-				'</nav>' +
-                '<span class="loading i18n">Loading...</span>' +
-			'</div>' +
-            '<% if (Settings.PARENT_MEMBER_DIMENSION) { %>' + 
-                '<div class="group-elements">' +
-                    '<label for="dimension" class="i18n">Dimension:</label>' +
-                    '<select id="dimension">' +
-                        '<% _(dimensions).each(function(dimension) { %>' +
-                            '<optgroup label="<%= dimension.name %>">' +
-                                '<% _(dimension.hierarchies).each(function(hierarchy) { %>' +
-                                    '<option value="<%= hierarchy.uniqueName %>" data-dimension="<%= dimension.name %>" data-type="calcmember"><%= hierarchy.name %></option>' +
-                                '<% }); %>' +
-                            '</optgroup>' +
-                        '<% }); %>' +
-                    '</select>' +
-                '</div>' +
+	template_modal:  _.template(
+            '<form class="form-group" onsubmit="return false;">' +
+            '<div class="group-elements" style="padding-top: 0;">' +
+            '<nav class="breadcrumbs">' +
+            '</nav>' +
+            '<span class="loading i18n">Loading...</span>' +
+            '</div>' +
+            '<% if (Settings.PARENT_MEMBER_DIMENSION||this.select_type!=="parent-member-selector") { %>' +
+            '<div class="group-elements">' +
+            '<label for="dimension" class="i18n">Dimension:</label>' +
+            '<select id="dimension">' +
+            '<% _(dimensions).each(function(dimension) { %>' +
+            '<optgroup label="<%= dimension.name %>">' +
+            '<% _(dimension.hierarchies).each(function(hierarchy) { %>' +
+            '<option value="<%= hierarchy.uniqueName %>" data-dimension="<%= dimension.name %>" data-type="calcmember"><%= hierarchy.name %></option>' +
+            '<% }); %>' +
+            '</optgroup>' +
+            '<% }); %>' +
+            '</select>' +
+            '</div>' +
             '<% } %>' +
-			'<div class="group-elements">' +
-				'<label><span class="i18n">Selected Level:</span> <span class="selected-level"></span></label>' +
-			'</div>' +
-			'<div class="group-elements">' +
-				'<ul class="members-list">' +
-                    '<li class="i18n">Loading...</li>' +
-				'<ul>' +
-			'</div>' +
-			'<div class="group-elements">' +
-				'<input type="search" id="auto-filter" results="5" placeholder="Autocomplete Filter">' +
-			'</div>' +
-        '</form>'
-	),
+            '<div class="group-elements">' +
+            '<label><span class="i18n">Selected Level:</span> <span class="selected-level"></span></label>' +
+            '</div>' +
+            '<div class="group-elements">' +
+            '<ul class="members-list">' +
+            '<li class="i18n">Loading...</li>' +
+            '<ul>' +
+            '</div>' +
+            '<div class="group-elements">' +
+            '<input type="search" id="auto-filter" results="5" placeholder="Autocomplete Filter">' +
+            '</div>' +
+            '</form>'
+        ),
 
     /**
      * Events of buttons
@@ -114,6 +117,11 @@ var ParentMemberSelectorModal = Modal.extend({
         _.extend(this, args);
         this.workspace = args.workspace;
         this.options.title = 'Parent Member Selector';
+        if(args.select_type!==undefined) {
+            this.select_type = args.select_type;
+        }
+        this.selected_member = args.selected_member;
+        this.close_callback = args.close_callback;
         // this.breadcrumbs = [];
 
         var dimensions = Saiku.session.sessionworkspace.cube[this.cube].get('data').dimensions;
@@ -514,27 +522,39 @@ var ParentMemberSelectorModal = Modal.extend({
             alert(alertMsg);
         }
         else {
-            var dimHier = '[' + this.dimension + '].[' + this.hierarchy + '].';
-            var uniqueName = this.uniqueName.split(dimHier)[1] !== undefined ?
-                             this.uniqueName.split(dimHier)[1] :
-                             this.uniqueName.split(dimHier)[0];
-            
-            // console.log(uniqueName);
-            // console.log(this.breadcrumbs);
-            
-            if (Settings.PARENT_MEMBER_DIMENSION) {
-                // Trigger event when assign key
-                Saiku.session.trigger('ParentMemberSelectorModal:save', {
-                    dialog: this.dialog,
-                    selectedDimension: this.$el.find('#dimension option:selected').val()
-                });
-            }
+            if(this.select_type === "parent-member-selector") {
+                var dimHier = '[' + this.dimension + '].[' + this.hierarchy + '].';
+                var uniqueName = this.uniqueName.split(dimHier)[1] !== undefined ?
+                    this.uniqueName.split(dimHier)[1] :
+                    this.uniqueName.split(dimHier)[0];
 
-            this.dialog.pmUniqueName = dimHier + uniqueName;
-            this.dialog.pmLevel = this.lastLevel;
-            this.dialog.pmBreadcrumbs = _.uniq(this.breadcrumbs);
-            this.dialog.$el.find('#cms-pmember').val(dimHier+uniqueName);
-            this.$el.dialog('close');
+                // console.log(uniqueName);
+                // console.log(this.breadcrumbs);
+
+                if (Settings.PARENT_MEMBER_DIMENSION) {
+                    // Trigger event when assign key
+                    Saiku.session.trigger('ParentMemberSelectorModal:save', {
+                        dialog: this.dialog,
+                        selectedDimension: this.$el.find('#dimension option:selected').val()
+                    });
+                }
+
+                this.dialog.pmUniqueName = dimHier + uniqueName;
+                this.dialog.pmLevel = this.lastLevel;
+                this.dialog.pmBreadcrumbs = _.uniq(this.breadcrumbs);
+                this.dialog.$el.find('#cms-pmember').val(dimHier + uniqueName);
+                this.$el.dialog('close');
+            }
+            else{
+                var dimHier = '[' + this.dimension + '].[' + this.hierarchy + '].';
+                var uniqueName = this.uniqueName.split(dimHier)[1] !== undefined ?
+                    this.uniqueName.split(dimHier)[1] :
+                    this.uniqueName.split(dimHier)[0];
+                if(this.close_callback!=null){
+                    this.close_callback(dimHier+uniqueName)
+                }
+                this.$el.dialog('close');
+            }
         }
     },
 
