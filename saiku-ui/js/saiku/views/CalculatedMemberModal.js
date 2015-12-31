@@ -92,7 +92,7 @@ var CalculatedMemberModal = Modal.extend({
                     '<a class="form_button btn-math i18n" href="#add_math_operator_formula" data-math="and">&nbsp;and&nbsp;</a>' +
                     '<a class="form_button btn-math i18n" href="#add_math_operator_formula" data-math="or">&nbsp;or&nbsp;</a>' +
                     '<a class="form_button btn-math i18n" href="#add_math_operator_formula" data-math="not">&nbsp;not&nbsp;</a>' +
-                    '<select class="cms-functionlist"><option value="">---select function---' +
+                    '<select class="cms-functionlist"><option value="">---Insert MDX Function---' +
                     '</select>&nbsp; <a href="" class="cms-doclink" target="_blank" style="display: none;">Documentation</a><br/>'+
                 '</div>' +
 				'<div class="cms-function">' +
