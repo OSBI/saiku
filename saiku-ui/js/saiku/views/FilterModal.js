@@ -69,8 +69,8 @@ var FilterModal = Modal.extend({
         this.message = this.expression_text(this.expressionType);
 
         this.bind( 'open', function( ) {
-                    //$(this.el).find('textarea').val('').val(self.expression);
             this.editor = ace.edit(this.id);
+            this.editor.setValue(self.expression);
             this.editor.setShowPrintMargin(false);
             this.editor.setFontSize(11);
         });
