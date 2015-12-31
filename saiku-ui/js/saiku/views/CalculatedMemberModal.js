@@ -117,7 +117,11 @@ var CalculatedMemberModal = Modal.extend({
                 '</select>' +
                 '<div class="btn-groups">' +
                     '<a class="form_button btn-parent-member" href="#add_math_operator_formula" disabled>&nbsp;Parent Member Selector&nbsp;</a>' +
+                    '<a class="form_button btn-clear-parent" href="#add_math_operator_formula"' +
+                    ' disabled>&nbsp;Clear Parent Member&nbsp;</a>' +
                 '</div>' +
+                '<label class="i18n" for="cms-pmember">Parent Member:</label><input readonly="true" type="text"' +
+                ' id="cms-pmember">'+
                 '<label for="cms-format" class="i18n">Format:</label>' +
                 '<select id="cms-format">' +
                     '<option class="i18n" value="" selected>-- Select a format --</option>' +
@@ -173,7 +177,8 @@ var CalculatedMemberModal = Modal.extend({
         'click  .btn-action-del'        : 'show_del_cms',
 		'click  .form_button.growthBtn' : 'openGrowthModal',
         'click  .form_button.formatBtn' : 'openFormatModal',
-		'click  .btn-parent-member'     : 'open_parent_member_selector'
+		'click  .btn-parent-member'     : 'open_parent_member_selector',
+        'click  .btn-clear-parent'      : 'clear_parent_member_selector'
     },
 
     /**
@@ -614,9 +619,11 @@ var CalculatedMemberModal = Modal.extend({
 
         if (dimensionDataType === 'calcmember') {
             this.$el.find('.btn-parent-member').removeAttr('disabled');
+            this.$el.find('.btn-clear-parent-member').removeAttr('disabled');
         }
         else {
             this.$el.find('.btn-parent-member').attr('disabled', 'disabled');
+            this.$el.find('.btn-clear-parent-member').attr('disabled', 'disabled');
         }
     },
 
@@ -722,6 +729,23 @@ var CalculatedMemberModal = Modal.extend({
 
             this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Connection Details');
         }
+    },
+
+    /**
+     * Clear the selected parent member
+     *
+     * @method clear_parent_member_selector
+     * @private
+     * @param {Object} event The Event interface represents any event of the DOM
+     */
+    clear_parent_member_selector: function(event) {
+        event.preventDefault();
+
+        this.pmUniqueName = null;
+        this.pmLevel = null;
+        this.pmBreadcrumbs = null;
+        this.$el.find('#cms-pmember').val("");
+
     },
 
     /**

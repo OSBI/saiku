@@ -527,6 +527,7 @@ var ParentMemberSelectorModal = Modal.extend({
             this.dialog.pmUniqueName = dimHier + uniqueName;
             this.dialog.pmLevel = this.lastLevel;
             this.dialog.pmBreadcrumbs = _.uniq(this.breadcrumbs);
+            this.dialog.$el.find('#cms-pmember').val(dimHier+uniqueName);
             this.$el.dialog('close');
         }
     }
