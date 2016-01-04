@@ -30,6 +30,8 @@ var Toolbar = Backbone.View.extend({
     },
 
     initialize: function() {
+        _.extend(this, Backbone.Events);
+        _.bindAll(this, "call");
         var self = this;
         if(Settings.LOGO){
             self.logo = "<h1 id='logo_override'>"+
@@ -70,7 +72,9 @@ var Toolbar = Backbone.View.extend({
         if(typeof ga!= 'undefined'){
 		ga('send', 'event', 'MainToolbar', 'New Query');
         }
-        Saiku.tabs.add(new Workspace());
+        var wspace = new Workspace();
+        Saiku.tabs.add(wspace);
+        Saiku.events.trigger('toolbar:new_query', this, wspace);
         return false;
     },
 

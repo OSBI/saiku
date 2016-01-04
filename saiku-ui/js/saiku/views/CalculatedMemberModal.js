@@ -156,7 +156,8 @@ var CalculatedMemberModal = Modal.extend({
         { text: 'Add', method: 'save' },
         { text: 'Edit', method: 'save' },
         { text: 'New', method: 'new' },
-        { text: 'Cancel', method: 'close' }
+        { text: 'Cancel', method: 'close' },
+        { text: 'Help', method: 'help'}
     ],
 
     /**
@@ -1021,5 +1022,10 @@ var CalculatedMemberModal = Modal.extend({
      */
     close_select_modal: function(editor, n){
         editor.insert(n);
+    },
+
+    help: function(){
+        //TODO link to real page
+        window.open("http://wiki.meteorite.bi");
     }
 });

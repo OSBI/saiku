@@ -67,6 +67,7 @@
 						<jsSourceInclude>views/OverwriteModal.js</jsSourceInclude>
 						<jsSourceInclude>views/AddFolderModal.js</jsSourceInclude>
 						<jsSourceInclude>views/FilterModal.js</jsSourceInclude>
+						<jsSourceInclude>views/StringFilterModal.js</jsSourceInclude>
 						<jsSourceInclude>views/CustomFilterModal.js</jsSourceInclude>
 						<jsSourceInclude>views/CalculatedMemberModal.js</jsSourceInclude>
 						<jsSourceInclude>views/ParentMemberSelectorModal.js</jsSourceInclude>
@@ -102,6 +103,7 @@
 						<jsSourceInclude>views/TitlesModal.js</jsSourceInclude>
 						<jsSourceInclude>adapters/SaikuServer.js</jsSourceInclude>
 						<jsSourceInclude>routers/QueryRouter.js</jsSourceInclude>
+						<jsSourceInclude>views/Tour.js</jsSourceInclude>
 					</jsSourceIncludes>
 					<jsSourceExcludes>
 						<jsSourceExclude>Settings.js</jsSourceExclude>

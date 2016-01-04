@@ -393,6 +393,8 @@ var Workspace = Backbone.View.extend({
         for (var i = 4, len = parsed_cube.length; i < len; i++) {
             cube += "/" + parsed_cube[i];
         }
+        Saiku.events.trigger("workspace:new_query", this, {view: this, cube: cube});
+
         this.query = new Query({
             cube: {
                 connection: parsed_cube[0],

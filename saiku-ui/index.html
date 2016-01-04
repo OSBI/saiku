@@ -15,6 +15,8 @@
     <meta name="svg.render.forceflash" content="true">
 
     <!-- Blueprint CSS -->
+    <link rel="stylesheet" href="js/tourist/tourist.css" type="text/css">
+    <link rel="stylesheet" href="js/qtip/jquery.qtip.min.css" type="text/css"/>
 
     <!--  jQuery CSS -->
     <link rel="stylesheet" href="css/jquery/spectrum.css" type="text/css" media="all"/>
@@ -65,6 +67,7 @@
 
 <script type="text/javascript" src="js/fancybox/jquery.fancybox.pack.js"></script>
 
+
 <!-- CHOSEN PLACEHOLDER -->
 <script type="text/javascript">
 
@@ -111,6 +114,9 @@
 <script src="js/notify/notify.min.js"></script>
 <script src="js/fitvids/jquery.fitvids.js"></script>
 <script src="js/notify/styles/bootstrap/notify-bootstrap.js"></script>
+<script src="js/qtip/imagesloaded.pkg.min.js"></script>
+<script src="js/qtip/jquery.qtip.min.js"></script>
+<script type="text/javascript" src="js/tourist/tourist.js"></script>
 <!-- Loggly error logging service -->
 <script type="text/javascript" src="js/logger/janky.post.min.js"></script>
 <script type="text/javascript" src="js/logger/Logger.js" defer></script>
@@ -141,6 +147,7 @@
 <script type="text/javascript" src="js/saiku/views/OverwriteModal.js"></script>
 <script type="text/javascript" src="js/saiku/views/AddFolderModal.js"></script>
 <script type="text/javascript" src="js/saiku/views/FilterModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/StringFilterModal.js"></script>
 <script type="text/javascript" src="js/saiku/views/CustomFilterModal.js"></script>
 <script type="text/javascript" src="js/saiku/views/CalculatedMemberModal.js"></script>
 <script type="text/javascript" src="js/saiku/views/ParentMemberSelectorModal.js"></script>
@@ -179,6 +186,7 @@
 <script type="text/javascript" src="js/saiku/views/DateFilterModal.js"></script>
 <script type="text/javascript" src="js/saiku/adapters/SaikuServer.js"></script>
 <script type="text/javascript" src="js/saiku/routers/QueryRouter.js"></script>
+<script type="text/javascript" src="js/saiku/views/Tour.js"></script>
 
 <!-- END CUT HERE -->
 
@@ -432,7 +440,7 @@
                 <div class="calculated_measures" style="display:none;"></div>
                 <div class="calculated_members" style="display:none;"></div>
             </div>
-            <h3 class="i18n">Dimensions</h3>
+            <h3 class="i18n dimension_header">Dimensions</h3>
             <div class="sidebar_inner dimension_tree">
                 <% if (typeof cube != "undefined" && cube && cube.dimensions) { %>
                     <%=  _.template($("#template-dimensions").html(), { dimensions: cube.dimensions }) %>

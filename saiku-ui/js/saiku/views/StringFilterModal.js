@@ -17,7 +17,7 @@
 /**
  * The "add a folder" dialog
  */
-var FilterModal = Modal.extend({
+var StringFilterModal = Modal.extend({
 
     type: "filter",
     closeText: "Save",
@@ -31,20 +31,24 @@ var FilterModal = Modal.extend({
     buttons: [
         { text: "OK", method: "save" },
         { text: "Cancel", method: "close" },
-        { text: "Help", method: "help"}
+        { text: "Help", method: "help" }
     ],
 
     message: "",
 
     expression_text: function() {
         var c = "<form class='form-group-inline' data-action='cad' id='custom_filter'><table border='0px'>";
-        if (this.expressionType == "Order") {
-            c += "<tr><td class='col1'>Sort Type: <select id='fun'><option>ASC</option><option>BASC</option><option>DESC</option><option>BDESC</option> </select></td></tr>";
-        }
-        c += "<tr><td class='col1'>" + this.expressionType + " MDX Expression:</td></tr>" +
-             "<tr><td class='col1'><div class='filter-editor' id='"+this.id+"'></div></td></tr>" +
+
+        c += "<tr><td class='col1'><label>Select Level:<select class='levellist'></select></label></td></tr>" +
+             "<tr><td class='col1'><label>Match Type:<select class='match_type'>" +
+             "<option value='contains'>Contains</option>" +
+             "<option value='notcontains'>Does Not Contain</option>" +
+             "<option value='begins'>Begins</option>" +
+             "<option value='ends'>Ends</option>" +
+             "</select></label></td></tr>" +
+             "<tr><td class='col1'><label>Match Text:<input class='text_input'/></label></td></tr>" +
              "</table>" +
-            "<a href='#' class='form_button insert-member'>Insert Member</a></form>";
+             "</form>";
         return c;
     },
 
@@ -54,7 +58,7 @@ var FilterModal = Modal.extend({
 
     initialize: function(args) {
         var self = this;
-        this.id = _.uniqueId('filter-modal-');
+        this.id = _.uniqueId('match-modal-');
         this.workspace = args.workspace;
         this.axis = args.axis;
         this.query = args.query;
@@ -70,10 +74,7 @@ var FilterModal = Modal.extend({
         this.message = this.expression_text(this.expressionType);
 
         this.bind( 'open', function( ) {
-            this.editor = ace.edit(this.id);
-            this.editor.setValue(self.expression);
-            this.editor.setShowPrintMargin(false);
-            this.editor.setFontSize(11);
+            this.populate_select();
         });
         
 
@@ -85,12 +86,27 @@ var FilterModal = Modal.extend({
 
     },
 
+    populate_select: function(){
+        var axis = this.workspace.query.helper.getAxis(this.axis);
+
+        $(axis.hierarchies).each(function(i, el) {
+
+            $(el.levels).each(function(j, el2){
+                var option = '';
+                for(var key in el2) {
+                    console.log(el.name + ".[" + key + "]");
+                 option += '<option>'+el.name + ".[" + key + "]"+'</option>';
+                }
+                $(".levellist").append(option);
+            });
+        });
+    },
 
     save: function( event ) {
         event.preventDefault( );
         var self = this;
-        this.expression = $(this.el).find('textarea').val();
-
+        this.expression = $(this.el).find('.text_input').val();
+        this.member = $(this.el).find('.levellist').find(":selected").text();;
         var alert_msg = "";
         if (typeof this.expression == "undefined" || !this.expression || this.expression === "") {
             alert_msg += "You have to enter a MDX expression for the " + this.expressionType + " function! ";
@@ -100,7 +116,7 @@ var FilterModal = Modal.extend({
                 var sortOrder = $('#fun').val();
                 self.success(sortOrder, this.expression);
             } else {
-                self.success(this.expression);
+                self.success(this.member, null, this.expression);
             }
             this.close();    
         }
@@ -113,58 +129,10 @@ var FilterModal = Modal.extend({
             .html("Could not add new folder");
     },
 
-    /**
-     * Open the select member dialog
-     * @param event
-     */
-    open_select_member_selector: function(event){
-        event.preventDefault();
-        var dimension = {
-            val: this.$el.find('#cms-dimension option:selected').val(),
-            txt: this.$el.find('#cms-dimension option:selected').text(),
-            dataDimension: this.$el.find('#cms-dimension option:selected').data('dimension'),
-            dataType: this.$el.find('#cms-dimension option:selected').data('type')
-        };
-        var editor = ace.edit(this.id);
-        var that = this;
-
-
-         (new ParentMemberSelectorModal({
-                dialog: this,
-                workspace: this.workspace,
-                cube: this.workspace.selected_cube,
-                dimensions: Saiku.session.sessionworkspace.cube[this.workspace.selected_cube].get('data').dimensions,
-                selectDimension: dimension.val,
-                dimension: dimension.dataDimension,
-                hierarchy: dimension.txt,
-                uniqueName: this.pmUniqueName,
-                lastLevel: this.pmLevel,
-                breadcrumbs: this.pmBreadcrumbs,
-                select_type: "select_member",
-                selected_member: this.selected_member,
-                close_callback: function(args){
-                    var e = editor;
-                    that.close_select_modal(e, args);
-                }
-            })).render().open();
-
-            this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Custom Filter');
-
-
-    },
-
-    /**
-     * Callback to update the editor with the selected member.
-     * @param editor
-     * @param n
-     */
-    close_select_modal: function(editor, n){
-        editor.insert(n);
-    },
-
     help: function(){
         //TODO LINK TO PAGE
         window.open("http://wiki.meteorite.bi");
     }
+
 
 });
