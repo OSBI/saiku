@@ -70,6 +70,8 @@
 						<jsSourceInclude>views/StringFilterModal.js</jsSourceInclude>
 						<jsSourceInclude>views/CustomFilterModal.js</jsSourceInclude>
 						<jsSourceInclude>views/CalculatedMemberModal.js</jsSourceInclude>
+						<jsSourceInclude>views/GrowthModal.js</jsSourceInclude>
+						<jsSourceInclude>views/FormatAsPercentageModal.js</jsSourceInclude>
 						<jsSourceInclude>views/ParentMemberSelectorModal.js</jsSourceInclude>
 						<jsSourceInclude>views/DataSourcesModal.js</jsSourceInclude>
 						<jsSourceInclude>views/QueryToolbar.js</jsSourceInclude>
