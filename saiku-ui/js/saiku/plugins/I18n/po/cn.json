@@ -79,5 +79,23 @@
 	"Clear Limit": "清除限制",
 	"Clear Sort": "清除排序",
 	"MDX": "多维表达式",
-	"Info:": "信息："
+	"Info:": "信息：",
+	"avg":"平均",
+	"All Members":"所有成员",
+	"Evaluation Login":"试用",
+	"Administrator":"管理员",
+	"Username: admin":"管理员登录",
+	"Password: admin":"管理员密码",
+	" Login ":"登录",
+	"Duplicate":"复制",
+	"Open":"打开",
+	"Edit":"编辑",
+	"Delete":"删除",
+	"New Folder":"新文件夹",
+	"About Saiku-3.1.8":"关于saiku3.1.8",
+	" OK ":"确定",
+	"Re-render chart":"重新生成图表",
+	"Zoom back out":"缩放",
+	"Add":"添加"
+
 }
