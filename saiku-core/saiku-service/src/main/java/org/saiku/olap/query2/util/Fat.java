@@ -36,9 +36,11 @@ import org.saiku.query.metadata.CalculatedMember;
 import org.olap4j.Axis;
 import org.olap4j.OlapException;
 import org.olap4j.impl.IdentifierParser;
+import org.olap4j.mdx.IdentifierNode;
 import org.olap4j.mdx.IdentifierSegment;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Measure;
 import org.olap4j.metadata.Member;
 
@@ -334,7 +336,12 @@ public class Fat {
 					if (exp != null && exp.size() > 1) {
 						String hierarchyName = exp.remove(0);
 						QueryHierarchy qh = q.getHierarchy(hierarchyName);
-						NameFilter nf = new NameFilter(qh.getHierarchy(), exp);
+						String op = null;
+						if(f.getOperator()!=null){
+							op = f.getOperator().toString();
+						}
+
+						NameFilter nf = new NameFilter(qh.getHierarchy(), exp, op);
 						qfs.add(nf);
 					}
 					break;
@@ -343,7 +350,12 @@ public class Fat {
 					if (exp2 != null && exp2.size() > 1) {
 						String hierarchyName = exp2.remove(0);
 						QueryHierarchy qh = q.getHierarchy(hierarchyName);
-						NameLikeFilter nf = new NameLikeFilter(qh.getHierarchy(), exp2);
+						String op = null;
+						if(f.getOperator()!=null){
+							op = f.getOperator().toString();
+						}
+
+						NameLikeFilter nf = new NameLikeFilter(qh.getHierarchy(), exp2, op);
 						qfs.add(nf);
 					}
 					break;

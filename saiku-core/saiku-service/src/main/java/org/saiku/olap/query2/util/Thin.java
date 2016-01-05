@@ -280,14 +280,22 @@ public class Thin {
 				NameFilter nf = (NameFilter) f;
 				List<String> expressions = nf.getFilterExpression();
 				expressions.add(0, nf.getHierarchy().getUniqueName());
-				ThinFilter tf = new ThinFilter(FilterFlavour.Name, FilterOperator.EQUALS, FilterFunction.Filter, expressions);
+				FilterOperator type = FilterOperator.LIKE;
+				if(nf.getOp() != null && nf.getOp().equals("NOTEQUAL")){
+					type = FilterOperator.NOTEQUAL;
+				}
+				ThinFilter tf = new ThinFilter(FilterFlavour.Name, type, FilterFunction.Filter, expressions);
 				tfs.add(tf);
 			}
 			if (f instanceof NameLikeFilter) {
 				NameLikeFilter nf = (NameLikeFilter) f;
 				List<String> expressions = nf.getFilterExpression();
 				expressions.add(0, nf.getHierarchy().getUniqueName());
-				ThinFilter tf = new ThinFilter(FilterFlavour.NameLike, FilterOperator.LIKE, FilterFunction.Filter, expressions);
+				FilterOperator type = FilterOperator.LIKE;
+				if(nf.getOp()!=null && nf.getOp().equals("NOTEQUAL")){
+					type = FilterOperator.NOTEQUAL;
+				}
+				ThinFilter tf = new ThinFilter(FilterFlavour.NameLike, type, FilterFunction.Filter, expressions);
 				tfs.add(tf);
 			}
 			if (f instanceof GenericFilter) {
