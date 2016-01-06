@@ -332,11 +332,11 @@ var Workspace = Backbone.View.extend({
 
     prepare: function() {
         // Draw user's attention to cube navigation
-        $(this.el).find('.cubes')
+        /*$(this.el).find('.cubes')
             .parent()
             .css({ backgroundColor: '#AC1614' })
             .delay(300)
-            .animate({ backgroundColor: '#fff' }, 'slow');
+            .animate({ backgroundColor: '#fff' }, 'slow');*/
     },
 
     data_connections: function(paramsURI) {

@@ -1135,7 +1135,7 @@ textarea, select {
 
 .dialog_calculated-member .cms-container-form {
     float: right;
-    width: 420px;
+    width: 450px;
 }
 
 .dialog_calculated-member .form-group-inline label {
@@ -1145,7 +1145,7 @@ textarea, select {
 }
 
 .dialog_calculated-member .form-group-inline input[type="text"] {
-    width: 300px;
+    width: 365px;
     padding: 4px;
 }
 
@@ -1156,13 +1156,16 @@ textarea, select {
 }
 
 .dialog_calculated-member .form-group-inline .formula-editor {
-    width: 308px;
+    width: 365px;
     height: 200px;
     border: 1px solid #ccc;
 }
 
 .dialog_calculated-member .form-group-inline .btn-groups {
-    padding: 13px 70px;
+    padding-top: 13px;
+    padding-bottom: 13px;
+    padding-left: 70px;
+    padding-right:0px;
 }
 
 .dialog_calculated-member .form-group-inline .btn-groups .form_button {
@@ -2243,7 +2246,7 @@ span.cancel_search:hover {
 }
 .dialog_body .RepositoryObjects {
     padding: 10px;
-    margin-top: 5px;
+    margin-top: 15px;
     border: 1px solid #cccccc;
     width: 415px;
     height: 200px;
@@ -2686,4 +2689,11 @@ margin-bottom: 20px;
 
 .dialog_filter td {
     padding-bottom:10px;
+}
+
+.minimal_padding {
+    padding-top:3px;
+    padding-bottom:3px;
+    padding-left:6px;
+    padding-right:6px;
 }

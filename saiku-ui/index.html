@@ -264,7 +264,7 @@
         </script>
 <script type="text/x-jquery-tmpl" id="template-cubes">
             <div >
-            <select  class="form-control cubes">
+            <select  class="form-control cubes ui-widget">
                 <option value="" class="i18n">Select a cube</option>
                 <% _.each(connections, function(connection) { %>
                     <% _.each(connection.catalogs, function(catalog) { %>
@@ -839,7 +839,7 @@ title="Drill across on cell"></a></li>
                         <br />
                         <form class="form-inline">
                             <input name="filter_roles" id="filter_roles" type="text" class="filterbox form-control" />
-                            <input type="submit" value="Add" class="i18n add_role btn btn-default" />
+                            <input type="submit" value="Add" class="i18n add_role btn btn-primary" />
                         </form>
                         <input type="checkbox" class="acl" value="READ" /><span class="i18n">READ</span>
                         <input type="checkbox" class="acl" value="WRITE" /><span class="i18n">WRITE</span>
@@ -849,7 +849,7 @@ title="Drill across on cell"></a></li>
                 <span class="i18n">Roles:</span>
                 <div class="rolelist"></div>
                 <br />
-                <input type="submit" value="Remove permission" class="i18n btn btn-default remove_acl" />
+                <input type="submit" value="Remove permission" class="i18n btn btn-danger remove_acl" />
             </div>
             <br />
             <div class="private">

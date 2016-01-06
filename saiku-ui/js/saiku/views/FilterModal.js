@@ -40,12 +40,12 @@ var FilterModal = Modal.extend({
         var c = "<div class='sidebar'><table" +
         " border='0px'>";
         if (this.expressionType == "Order") {
-            c += "<tr><td class='col1'>Sort Type: <select id='fun'><option>ASC</option><option>BASC</option><option>DESC</option><option>BDESC</option> </select></td></tr>";
+            c += "<tr><td class='col1'><label>Sort Type</label> <select class='form-control' id='fun'><option>ASC</option><option>BASC</option><option>DESC</option><option>BDESC</option> </select></td></tr>";
         }
         c += "<tr><td class='col1'>" + this.expressionType + " MDX Expression:</td></tr>" +
              "<tr><td class='col1' style='width:380px'><div class='filter-editor' style='width:380px' id='"+this.id+"'></div></td></tr>" +
              "</table>" +
-            "<a href='#' class='form_button insert-member'>Insert Member</a></div>";
+            "<a href='#' class='form_button btn btn-default insert-member'>Insert Member</a></div>";
         return c;
     },
 

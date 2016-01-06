@@ -47,14 +47,14 @@ var GrowthModal = Modal.extend({
 		"<form id='measureGrowthForm'>" +
 		"<table border='0px'>" +
 		"<tr><td class='col0 i18n'>Name:</td>" +
-		"<td class='col1'><input type='text' class='measure_name' value='Measure Name'></input></td></tr>" +
+		"<td class='col1'><input type='text' class='form-control measure_name' value='Measure Name'></input></td></tr>" +
 
 		'<input type="checkbox" name="asPercent" value="asPercent" id="asPercentCheckbox"> Relative %? <br>' +
 		'<input type="checkbox" name="asPercentAround100" value="asPercentAround100" id="asPercentAround100Checkbox"> Relative around 100%? <br>' +
 
 		"<tr><td class='col0 i18n'>Measure:</td>" +
 		"<td class='col1'>" +
-		"<select id='Measures' name='MeasuresId' title='Select the measure from which the difference should be calculated'> " +
+		"<select id='Measures' class='form-control' name='MeasuresId' title='Select the measure from which the difference should be calculated'> " +
 		"    <option value='' selected='selected'>--select an existing measure--</option> " +
 		"    <% _(measures).each(function(m) { %> " +
 		"      <option value='<%= m.uniqueName %>'><%= m.name %></option> " +
@@ -64,7 +64,7 @@ var GrowthModal = Modal.extend({
 
 		"<tr><td class='col0 i18n'>Dimension:</td>" +
 		"<td class='col1'>" +
-		"<select id='Dimensions' name='DimensionsId' title='This dimension attribute is used to calculate the difference of the selected measure. E.g. Calculate the growth over the years.'> " +
+		"<select id='Dimensions' name='DimensionsId' class='form-control' title='This dimension attribute is used to calculate the difference of the selected measure. E.g. Calculate the growth over the years.'> " +
 		"    <option value='' selected='selected'>--select a dimension from your query--</option> " +
 		"    <% _(dimensions).each(function(dim) { %> " +
 		"      <option value='<%= dim %>'><%= dim %></option> " +
@@ -73,10 +73,10 @@ var GrowthModal = Modal.extend({
 		"</td></tr>" +
 
 		"<tr><td class='col0 i18n'>Format:</td>" +
-		"<td class='col1'><input class='measure_format' type='text' value='#,##0.00'></input></td></tr>" +
+		"<td class='col1'><input class='measure_format' type='text' class='form-control' value='#,##0.00'></input></td></tr>" +
 
 		"<tr><td class='col0 i18n'>Formula:</td>" +
-		"<td class='col1'><textarea class='measureFormula auto-hint' placeholder='This field will automatically be constructed by selecting a measure and growth dimension from the dropdown lists above...'>" +
+		"<td class='col1'><textarea class='measureFormula auto-hint' class='form-control' placeholder='This field will automatically be constructed by selecting a measure and growth dimension from the dropdown lists above...'>" +
 		"</textarea></td></tr>" +
 
 		"</table></form>"

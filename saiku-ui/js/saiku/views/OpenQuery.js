@@ -495,10 +495,10 @@ var OpenQuery = Backbone.View.extend({
         // Adjust the height of the separator
         $separator = $(this.el).find('.sidebar_separator');
         $separator.height($("body").height() - 87);
-        $(this.el).find('.sidebar').css( { 'width' : 300,
+        $(this.el).find('.sidebar').css( { 'width' : 350,
                                             'height' : $("body").height() - 87 });
-        $(this.el).find('.workspace_inner').css({ 'margin-left' : 305});
-        $(this.el).find('.workspace').css({ 'margin-left' : -305});
+        $(this.el).find('.workspace_inner').css({ 'margin-left' : 355});
+        $(this.el).find('.workspace').css({ 'margin-left' : -355});
         // Adjust the dimensions of the results window
         $(this.el).find('.workspace_results').css({
             width: $(document).width() - $(this.el).find('.sidebar').width() - 30,

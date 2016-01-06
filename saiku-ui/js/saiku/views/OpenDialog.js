@@ -47,7 +47,7 @@ var OpenDialog = Modal.extend({
         //                 '<div class="box-search-file" style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
         //                 ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>';
 
-        this.message =  '<div class="box-search-file form-inline" style="height:35px; line-height:25px;"><label class="i18n">Search:</label> &nbsp;' +
+        this.message =  '<div class="box-search-file form-inline" style="padding-top:10px; height:35px; line-height:25px;"><label class="i18n">Search:</label> &nbsp;' +
                         ' <input type="text" class="form-control search_file"></input><span class="cancel_search"></span></div>' +
                         "<div class='RepositoryObjects i18n'>Loading...</div>" +
                         "<br>" +

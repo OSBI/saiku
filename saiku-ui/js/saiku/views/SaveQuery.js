@@ -69,7 +69,7 @@ var SaveQuery = Modal.extend({
 
         this.message = _.template(
             "<form id='save_query_form'>" +
-            '<div class="box-search-file form-inline" style="height:35px; line-height:25px;"><label class="i18n">Search:</label> &nbsp;' +
+            '<div class="box-search-file form-inline" style="height:35px; padding-top:10px; line-height:25px;"><label class="i18n">Search:</label> &nbsp;' +
             ' <input type="text" class="form-control search_file"></input><span class="cancel_search"></span></div>' +
             "<div class='RepositoryObjects'><span class='i18n'>Loading...</span></div>" +
             "<div class='form-inline' style='padding-top:4px'>"    +
