@@ -94,15 +94,15 @@ select[disabled] {
     background-color: #f0f0f0;
     cursor: not-allowed;
 }
-select { background-color:#fff; border-width:1px; border-style:solid; }
+/*select { background-color:#fff; border-width:1px; border-style:solid; }*/
 
-input[type=text], input[type=password],
+/*input[type=text], input[type=password],
 input.text, input.title,
 textarea, select {
   margin:0.5em 0;
 }
 :focus { outline: 0; }
-
+*/
 
 .clear {
     clear: both;
@@ -157,9 +157,9 @@ textarea, select {
 }
 .refresh_cubes_nav a.button {
     display: block;
-    height: 12px;
+    height: 20px;
     padding: 3px;
-    width: 12px;
+    width: 20px;
     border-radius: 3px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -223,9 +223,9 @@ textarea, select {
 #toolbar ul li a {
     border: 1px solid transparent;
     display: block;
-    height: 26px;
+    height: 36px;
     padding: 4px;
-    width: 26px;
+    width: 36px;
 }
 #toolbar ul li a:hover {
     background-color: #F0F0F0;
@@ -427,14 +427,14 @@ textarea, select {
 .sidebar .sidebar_inner {
     padding: 10px;
 }
-.sidebar .sidebar_inner select {
+/*.sidebar .sidebar_inner select {
     border: 1px solid #CCC;
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
     font-size: 100.01%;
     margin: 0;
     padding: 2px;
     width: 100%;
-}
+}*/
 .sidebar .sidebar_inner ul {
     margin: 0;
 }
@@ -723,7 +723,7 @@ textarea, select {
     background: #F0F0F0;
     background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#F0F0F0));
     border-bottom: 1px solid #CCC;
-    height: 18px;
+    height: 29px;
     padding: 5px 5px 6px 10px !important;
     border-radius: 0 !important;
     box-shadow: 0 1px 3px #DDDDDD;
@@ -1274,7 +1274,7 @@ textarea, select {
     display: none;
 }
 .dialog_filter .dialog_body {
-    margin: 15px;
+    /*margin: 15px;*/
     line-height: 30px;
 }
 .dialog_filter .dialog_body .n {
@@ -1479,7 +1479,7 @@ textarea, select {
     background: #F9F9F9;
     border-bottom: 1px solid #CCC;
     font-weight: bold;
-    height: 32px;
+    height: 38px;
     margin: 0 0 3px 0;
     padding: 3px 10px 3px 5px;
     text-shadow: 1px 1px 0 #FFFFFF;
@@ -1526,9 +1526,9 @@ a.disabled_toolbar:hover {
 }
 .workspace_toolbar a.button {
     display: block;
-    height: 16px;
+    height: 32px;
     padding: 8px;
-    width: 16px;
+    width: 32px;
     border-radius: 3px;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -1646,7 +1646,7 @@ a.disabled_toolbar:hover {
     border-left: 1px solid #CCC;
     font-weight: bold;
     height: 732px;
-    width: 70px;
+    width: 100px;
     float: right;
     margin: 0 0 3px 0;
     padding: 3px 10px 3px 1px;
@@ -1732,155 +1732,187 @@ a.disabled_toolbar:hover {
     background-image:   url('../../../js/saiku/plugins/CCC_Chart/chart.png');
     background-repeat:  no-repeat;
     background-position: 7px 7px;
-    width: 16px;
+    width: 32px;
+    height: 32px;
 }
 .query_toolbar a.render_table {
     background-image: url('../../../images/src/table2.png');
     background-repeat:  no-repeat;
     background-position: 7px 7px;
-    width: 16px;
+    width: 32px;
+    height: 32px;
 }
 
 .query_toolbar a.spark_line {
     background: url('../../../images/chart/gray/trendline.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 
 .query_toolbar a.spark_line:hover,
 .query_toolbar a.spark_line.on {
     background: url('../../../images/chart/trendline.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.spark_bar {
     background: url('../../../images/chart/gray/trendbars.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 
 .query_toolbar a.spark_bar:hover,
 .query_toolbar a.spark_bar.on {
     background: url('../../../images/chart/trendbars.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 
 
 .query_toolbar a.bar {
     background: url('../../../images/chart/gray/bar.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.stackedBar100 {
     background: url('../../../images/chart/gray/100bar.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.stackedBar {
     background: url('../../../images/chart/gray/stackedbar.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.multiple {
     background: url('../../../images/chart/gray/multiple.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.pie {
     background: url('../../../images/chart/gray/pie.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.line {
     background: url('../../../images/chart/gray/line.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.waterfall {
     background: url('../../../images/chart/gray/waterfall.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.dot {
     background: url('../../../images/chart/gray/dot.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.heatgrid {
     background: url('../../../images/chart/gray/area2.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.area {
     background: url('../../../images/chart/gray/area.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.bar:hover,
 .query_toolbar a.bar.on {
     background: url('../../../images/chart/bar.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.stackedBar100:hover,
 .query_toolbar a.stackedBar100.on {
     background: url('../../../images/chart/100bar.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.stackedBar:hover,
 .query_toolbar a.stackedBar.on {
     background: url('../../../images/chart/stackedbar.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.multiple:hover,
 .query_toolbar a.multiple.on {
     background: url('../../../images/chart/multiple.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.pie:hover,
 .query_toolbar a.pie.on {
     background: url('../../../images/chart/pie.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.line:hover,
 .query_toolbar a.line.on {
     background: url('../../../images/chart/line.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.waterfall:hover,
 .query_toolbar a.waterfall.on {
     background: url('../../../images/chart/waterfall.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.dot:hover,
 .query_toolbar a.dot.on {
     background: url('../../../images/chart/dot.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.heatgrid:hover,
 .query_toolbar a.heatgrid.on {
     background: url('../../../images/chart/area2.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.area:hover,
 .query_toolbar a.area.on {
     background: url('../../../images/chart/area.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.sunburst {
   background: url('../../../images/chart/gray/sunburst.png') no-repeat 21px -1px;;
-  height: 16px;
- }
+  height: 32px;
+    background-position: center;
+}
 .query_toolbar a.multiplesunburst {
     background: url('../../../images/chart/gray/multiplesunburst.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.treemap {
   background: url('../../../images/chart/gray/treemap.png') no-repeat 21px -1px;;
-  height: 16px;
- }
+  height: 32px;
+    background-position: center;
+}
 
 .query_toolbar a.sunburst:hover,
 .query_toolbar a.sunburst.on {
  background: url('../../../images/chart/sunburst.png') no-repeat 21px -1px;;
- height: 16px;
+ height: 32px;
+    background-position: center;
 }
 .query_toolbar a.sunburst:hover,
 .query_toolbar a.sunburst.on {
     background: url('../../../images/chart/multiplesunburst.png') no-repeat 21px -1px;;
-    height: 16px;
+    height: 32px;
+    background-position: center;
 }
 .query_toolbar a.treemap:hover,
 .query_toolbar a.treemap.on {
   background: url('../../../images/chart/treemap.png') no-repeat 21px -1px;;
- height: 16px;
- }
+ height: 32px;
+    background-position: center;
+}
 .form_button {
     background: #F0F0F0;
     background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#F0F0F0));
@@ -2468,7 +2500,7 @@ width:70px !important;
 .tablerow {
 margin-bottom: 20px;
 }
-.user_info label {
+/*.user_info label {
     display: inline-block; width: 140px; text-align: right;
 }
 .user_info select {
@@ -2478,16 +2510,16 @@ margin-bottom: 20px;
     margin: 0;
     padding: 2px;
     width: 302px;
-}
+}*/
 
-.user_info input{
+/*.user_info input{
     display:inline;
     width: 300px;
-}
+}*/
 
-.user_info input:focus {
+/*.user_info input:focus {
     border: 2px solid #900;
-}
+}*/
 .user_info .user_button{
     float:right;
     margin-right:50px;
@@ -2638,4 +2670,10 @@ margin-bottom: 20px;
 .filter-editor{
     width:300px;
     height:200px;
+}
+
+.reset-content-box {
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
 }

@@ -37,14 +37,15 @@ var FilterModal = Modal.extend({
     message: "",
 
     expression_text: function() {
-        var c = "<form class='form-group-inline' data-action='cad' id='custom_filter'><table border='0px'>";
+        var c = "<div class='sidebar'><table" +
+        " border='0px'>";
         if (this.expressionType == "Order") {
             c += "<tr><td class='col1'>Sort Type: <select id='fun'><option>ASC</option><option>BASC</option><option>DESC</option><option>BDESC</option> </select></td></tr>";
         }
         c += "<tr><td class='col1'>" + this.expressionType + " MDX Expression:</td></tr>" +
-             "<tr><td class='col1'><div class='filter-editor' id='"+this.id+"'></div></td></tr>" +
+             "<tr><td class='col1' style='width:380px'><div class='filter-editor' style='width:380px' id='"+this.id+"'></div></td></tr>" +
              "</table>" +
-            "<a href='#' class='form_button insert-member'>Insert Member</a></form>";
+            "<a href='#' class='form_button insert-member'>Insert Member</a></div>";
         return c;
     },
 
@@ -70,11 +71,15 @@ var FilterModal = Modal.extend({
         this.message = this.expression_text(this.expressionType);
 
         this.bind( 'open', function( ) {
+            $(this.el).find('.sidebar').width(380);
+
             this.editor = ace.edit(this.id);
             this.editor.setValue(self.expression);
             this.editor.setShowPrintMargin(false);
             this.editor.setFontSize(11);
         });
+
+
         
 
         

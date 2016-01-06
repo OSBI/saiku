@@ -510,7 +510,6 @@ var WorkspaceDropZone = Backbone.View.extend({
                         "filter" : {name: "Filter", i18n: true, items:
                          {
                                 "customfilter": {name: "Custom...", i18n: true },
-                                "stringfilter": {name: "String Filter", i18n: true },
                                 "clearfilter": {name: "Clear Filter", i18n: true }
                          }},
                         "limit" : {name: "Limit", i18n: true, items:

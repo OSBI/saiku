@@ -50,7 +50,7 @@ var ParentMemberSelectorModal = Modal.extend({
             '<% if (Settings.PARENT_MEMBER_DIMENSION||this.select_type!=="parent-member-selector") { %>' +
             '<div class="group-elements">' +
             '<label for="dimension" class="i18n">Dimension:</label>' +
-            '<select id="dimension">' +
+            '<select id="dimension" class="form-control">' +
             '<% _(dimensions).each(function(dimension) { %>' +
             '<optgroup label="<%= dimension.name %>">' +
             '<% _(dimension.hierarchies).each(function(hierarchy) { %>' +
@@ -70,7 +70,7 @@ var ParentMemberSelectorModal = Modal.extend({
             '<ul>' +
             '</div>' +
             '<div class="group-elements">' +
-            '<input type="search" id="auto-filter" results="5" placeholder="Autocomplete Filter">' +
+            '<input type="search" class="form-control" id="auto-filter" results="5" placeholder="Autocomplete Filter">' +
             '</div>' +
             '</form>'
         ),
