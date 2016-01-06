@@ -448,7 +448,7 @@ var SelectionsModal = Modal.extend({
         var left = ($(window).width() - 1000)/2;
         var width = $(window).width() < 1040 ? $(window).width() : 1040;
         $(args.modal.el).parents('.ui-dialog')
-            .css({ width: width, left: "inherit", margin:"0", height: 530 })
+            .css({ width: width, left: "inherit", margin:"0", height: 575 })
             .offset({ left: left});
 
         $('#filter_selections').attr("disabled", false);

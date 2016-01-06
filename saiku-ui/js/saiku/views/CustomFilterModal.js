@@ -36,15 +36,18 @@ var CustomFilterModal = Modal.extend({
 
     message: "<form id='custom_filter'>" + 
                      "<table border='0px'>" + 
-                     "<tr><td class='col0'>Define Filter:</td>" + 
-                     "<td class='col1'><select class='function'><option>Select a Function...</option><option value='TopCount'>TopCount</option>" + 
+                     "<tr><td class='col0'>Define Filter" +
+                     "<select class='form-control function'><option>Select a Function...</option>" +
+                     "<option value='TopCount'>TopCount</option>" +
                         "<option value='TopPercent'>TopPercent</option><option value='TopSum'>TopSum</option>" + 
                         "<option value='BottomCount'>BottomCount</option><option value='BottomPercent'>BottomPercent</option>" + 
                         "<option value='BottomSum'>BottomSum</option></select></td></tr>" + 
-                     "<tr class='filter_details hide'><td><span class='ntype'></span></td><td><input class='n' /></td></tr>" + 
-                     "<tr class='filter_details hide'><td>Sort by:</td>" + 
-                     "<td><select class='type'><option value='measure'>Measure</option><option value='custom'>MDX Expression</option></select></td></tr>" + 
-                     "<tr class='filter_details hide'><td>&nbsp;</td><td class='sortingoption'>&nbsp;</td>" + 
+                     "<tr class='filter_details hide'><td><span class='ntype'></span>" +
+                     "<input class='n form-control' /></td></tr>" +
+                     "<tr class='filter_details hide'><td>Sort by" +
+                     "<select class='type form-control'><option value='measure'>Measure</option>" +
+                     "<option value='custom'>MDX Expression</option></select></td></tr>" +
+                     "<tr class='filter_details hide sortingoption'><td>&nbsp; &nbsp;</td>" +
                      "</table></form>",
 
 
@@ -79,7 +82,7 @@ var CustomFilterModal = Modal.extend({
                 $(self.el).find('.n').val(self.n);
                 if (self.isMdx === true && self.sortliteral !== null) {
                     $(this.el).find('.type').val('custom');
-                    $(this.el).find('.sortingoption').html('').html("<textarea class='sortliteral'>" + self.sortliteral + "</textarea>");    
+                    $(this.el).find('.sortingoption').html('').html("<textarea class='form-control sortliteral'>" + self.sortliteral + "</textarea>");
                 }
             }
 
@@ -98,7 +101,7 @@ var CustomFilterModal = Modal.extend({
         var self = this;
         if (this.measure_list !== null)
             return "";
-        var tmpl = "<select class='sortliteral'>";
+        var tmpl = "<select class='form-control sortliteral'>";
         _.each(this.measures, function(measure) {
             var selected = "";
             if (measure.uniqueName == self.sortliteral) {
@@ -130,7 +133,7 @@ var CustomFilterModal = Modal.extend({
         if (sortingoption == "measure") {
             $(this.el).find('.sortingoption').html('').html(this.measure_list);    
         } else {
-            $(this.el).find('.sortingoption').html('').html("<textarea class='sortliteral' />");    
+            $(this.el).find('.sortingoption').html('').html("<textarea class='form-control sortliteral' />");
         }
         
         return false;

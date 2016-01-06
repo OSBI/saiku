@@ -815,7 +815,7 @@ textarea, select {
 	display: none;
 }
 .dialog_selections .dialog_body {
-    height: 440px;
+    height: 485px;
     position: relative;
 }
 .dialog_date-filter .dialog_body {
@@ -876,6 +876,7 @@ textarea, select {
 .dialog_selections .dialog_body .selection_options ul li label,
 .dialog_selections .dialog_body .selection_options ul li input {
     cursor: pointer;
+    font-weight: normal !important;
 }
 
 .dialog_selections .available_selections.unique label.unique,
@@ -897,8 +898,9 @@ textarea, select {
 
 
 .totals_container {
-	margin:4px;
-	margin-bottom:0px;
+/*	margin:4px;
+	margin-bottom:0px;*/
+    padding-bottom: 4px;
 }
 
 .totals_container label{
@@ -906,8 +908,8 @@ textarea, select {
 }
 
 #show_totals {
-	width: 140px;
-	height: 20px
+/*	width: 140px;
+	height: 20px*/
 }
 
 .dialog_selections .filterbox {
@@ -1099,8 +1101,8 @@ textarea, select {
 
 .dialog_calculated-member .cms-container-group .cms-list .cms-actions a.button {
     display: inline-block;
-    width: 16px;
-    height: 16px;
+    width: 32px;
+    height: 32px;
     padding: 8px;
     -webkit-border-radius: 3px;
        -moz-border-radius: 3px;
@@ -1139,7 +1141,7 @@ textarea, select {
 .dialog_calculated-member .form-group-inline label {
     float: left;
     width: 80px;
-    padding-top: 10px;
+    /*padding-top: 10px;*/
 }
 
 .dialog_calculated-member .form-group-inline input[type="text"] {
@@ -1148,9 +1150,9 @@ textarea, select {
 }
 
 .dialog_calculated-member .form-group-inline select {
-    width: 310px;
+    /*width: 310px;
     padding: 4px;
-    border-color: #ccc;
+    border-color: #ccc;*/
 }
 
 .dialog_calculated-member .form-group-inline .formula-editor {
@@ -1914,7 +1916,7 @@ a.disabled_toolbar:hover {
     background-position: center;
 }
 .form_button {
-    background: #F0F0F0;
+/*    background: #F0F0F0;
     background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#F0F0F0));
     border: 1px solid #CCCCCC;
     box-shadow: none;
@@ -1925,12 +1927,12 @@ a.disabled_toolbar:hover {
     padding: 5px 5px;
     text-decoration: none;
     -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
+    -webkit-border-radius: 3px;*/
 }
-.form_button:hover {
+/*.form_button:hover {
     border: 1px solid #999;
     color: #222222;
-}
+}*/
 
 #simplemodal-overlay {
     background: #FFFFFF;
@@ -2115,7 +2117,7 @@ span.search {
     position: relative;
     top: -16px;
 }
-input.search_file {
+/*input.search_file {
     width:175px;
     margin-left:10px;
     height: 18px;
@@ -2127,6 +2129,9 @@ input.search_file {
     left: 0px;
     z-index: 0;
     top: 8px;
+}*/
+input.search_file {
+    width:365px !important;
 }
 span.cancel_search {
   background: url("../../../images/src/cancel3.png") no-repeat scroll 0 0 transparent;
@@ -2135,12 +2140,12 @@ span.cancel_search {
   -webkit-box-shadow: 0 0 10px #EEE;
   cursor: pointer;
   float: right;
-  height: 26px;
-  left: 175px;
+  height: 18px;
+  left: 300px;
   margin-top: 5px;
   position: absolute;
-  top: 14px;
-  width: 25px;
+  top: 40px;
+  width: 18px;
   z-index: 1;
   opacity: 0.7;
   display: none;
@@ -2240,7 +2245,7 @@ span.cancel_search:hover {
     padding: 10px;
     margin-top: 5px;
     border: 1px solid #cccccc;
-    width: 411px;
+    width: 415px;
     height: 200px;
     overflow: auto;
 }
@@ -2252,7 +2257,7 @@ span.cancel_search:hover {
 
 .queries h3 {
   position: relative;
-  height: 33px;
+  height: 40px;
   line-height: 33px;
 }
 
@@ -2662,9 +2667,10 @@ margin-bottom: 20px;
 }
 
 .cms-functionlist{
-    width:155px !important;
-    display: inline;
+    /*width:155px !important;
+    display: inline;*/
     margin-left: 10px;
+    margin-top: 10px;
 }
 
 .filter-editor{
@@ -2676,4 +2682,8 @@ margin-bottom: 20px;
     -webkit-box-sizing: content-box;
     -moz-box-sizing: content-box;
     box-sizing: content-box;
+}
+
+.dialog_filter td {
+    padding-bottom:10px;
 }

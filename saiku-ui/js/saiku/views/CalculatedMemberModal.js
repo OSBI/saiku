@@ -70,38 +70,47 @@ var CalculatedMemberModal = Modal.extend({
         '</div>' +
         '<div class="cms-container-form">' +
             '<form class="form-group-inline" data-action="cad">' +
-                '<label for="cms-name" class="i18n">Name:</label>' +
-                '<input type="text" id="cms-name" autofocus>' +
-                '<div class="cms-measure">' +
+                '<div style="padding-bottom:10px;"><label for="cms-name" class="i18n">Name:</label>' +
+                '<input type="text" class="form-control" id="cms-name" autofocus></div>' +
+                '<div class="cms-measure form-inline" style="padding-bottom:10px;">' +
                 '<label for="cms-measure" class="i18n">Insert Member:</label>' +
-                ' <input type="button" class="form_button btn-select-member" style="padding-bottom: 18px;"' +
+                ' <input type="button" class="form-control btn-select-member" style="padding-bottom:' +
+                ' 18px;"' +
                 ' value="Select Member" title="Insert a member into the formula editor "   ' +
                 'id="insertmember"> </input> </div>' +
                 '<label for="<%= idEditor %>" class="i18n">Formula:</label>' +
-                '<div class="formula-editor" id="<%= idEditor %>"></div>' +
+                '<div class="formula-editor" style="padding-bottom:10px" id="<%= idEditor %>"></div>' +
                 '<div class="btn-groups">' +
 
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="+">&nbsp;+&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="-">&nbsp;-&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="*">&nbsp;*&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="/">&nbsp;/&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="(">&nbsp;(&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math=")">&nbsp;)&nbsp;</a>' +
-                    '<a class="form_button btn-math i18n" href="#add_math_operator_formula" data-math="and">&nbsp;and&nbsp;</a>' +
-                    '<a class="form_button btn-math i18n" href="#add_math_operator_formula" data-math="or">&nbsp;or&nbsp;</a>' +
-                    '<a class="form_button btn-math i18n" href="#add_math_operator_formula" data-math="not">&nbsp;not&nbsp;</a>' +
-                    '<select class="cms-functionlist"><option value="">---Insert MDX Function---' +
-                    '</select>&nbsp; <a href="" class="cms-doclink" target="_blank" style="display: none;">Documentation</a><br/>'+
-                '</div>' +
-				'<div class="cms-function">' +
+                    '<a class="form_button btn btn-default btn-math" href="#add_math_operator_formula"' +
+        ' data-math="+">&nbsp;+&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-math" href="#add_math_operator_formula" data-math="-">&nbsp;-&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-math" href="#add_math_operator_formula" data-math="*">&nbsp;*&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-math" href="#add_math_operator_formula" data-math="/">&nbsp;/&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-math" href="#add_math_operator_formula" data-math="(">&nbsp;(&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-math" href="#add_math_operator_formula" data-math=")">&nbsp;)&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-math i18n" href="#add_math_operator_formula" data-math="and">&nbsp;and&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-math i18n" href="#add_math_operator_formula" data-math="or">&nbsp;or&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-math i18n" href="#add_math_operator_formula"' +
+                    ' data-math="not">&nbsp;not&nbsp;</a><br/>' +
+                    '<div class="form-inline"><select class="cms-functionlist form-control"><option' +
+                    ' value="">---Insert MDX Function---' +
+                    '</select>&nbsp; <a href="" class="cms-doclink" target="_blank" style="display:' +
+                    ' none;">Documentation</a><br/></div>'+
+                    '</div>' +
+				    '<div class="cms-function">' +
 					'<label for="cms-function" class="i18n">Functions:</label>' +
-					' <input type="button" class="form_button growthBtn" style="padding-bottom: 18px;" value="Growth"  ' +
+					' <input type="button" class="form_button btn btn-default growthBtn" style="padding-bottom:' +
+                    ' 10px;"' +
+                    ' value="Growth"  ' +
 					'         title="Calculate difference. Good to calculate previous period growth "   id="growthBtn" >  </input> ' +
-					' <input type="button" class="form_button formatBtn" style="padding-bottom: 18px;" value="Format %" id="formatBtn"  ' +
+					' <input type="button" class="form_button btn btn-default formatBtn" style="padding-bottom:' +
+                    ' 10px;"' +
+                    ' value="Format %" id="formatBtn"  ' +
 					'title="Post-process step: format this view as percentage of rows, columns or grand total. " />' +
-				'</div>' +
-                '<label for="cms-dimension" class="i18n">Dimension:</label>' +
-                '<select id="cms-dimension">' +
+				'</div><br/>' +
+                '<div style="padding-bottom:10px;"><label for="cms-dimension" class="i18n">Dimension:</label>' +
+                '<select id="cms-dimension" class="form-control" style="width:300px">' +
                     '<option class="i18n" value="" selected>-- Select an existing dimension --</option>' +
                     '<% if (measures.length > 0) { %>' +
                         '<optgroup label="<%= dataMeasures.name %>">' +
@@ -115,16 +124,18 @@ var CalculatedMemberModal = Modal.extend({
                             '<% }); %>' +
                         '</optgroup>' +
                     '<% }); %>' +
-                '</select>' +
-                '<div class="btn-groups">' +
-                    '<a class="form_button btn-parent-member" href="#add_math_operator_formula" disabled>&nbsp;Parent Member Selector&nbsp;</a>' +
-                    '<a class="form_button btn-clear-parent" href="#add_math_operator_formula"' +
+                '</select></div>' +
+                '<div class="btn-groups" style="padding-bottom:10px">' +
+                    '<a class="form_button btn btn-default btn-parent-member" href="#add_math_operator_formula"' +
+                    ' disabled>&nbsp;Parent Member Selector&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-clear-parent" href="#add_math_operator_formula"' +
                     ' disabled>&nbsp;Clear Parent Member&nbsp;</a>' +
                 '</div>' +
-                '<label class="i18n" for="cms-pmember">Parent Member:</label><input readonly="true" type="text"' +
-                ' id="cms-pmember">'+
-                '<label for="cms-format" class="i18n">Format:</label>' +
-                '<select id="cms-format">' +
+                '<label class="i18n" for="cms-pmember">Parent Member:</label><input' +
+                ' class="form-control" readonly="true" type="text"' +
+                ' id="cms-pmember"><br/>'+
+                '<div style="padding-bottom:10px;"><label for="cms-format" class="i18n">Format:</label>' +
+                '<select id="cms-format" class="form-control" style="width:300px">' +
                     '<option class="i18n" value="" selected>-- Select a format --</option>' +
                     '<option class="i18n" value="custom">Custom</option>' +
                     '<option class="i18n" value="#,##0.00">#,##0.00 Decimal</option>' +
@@ -136,10 +147,11 @@ var CalculatedMemberModal = Modal.extend({
                     '<option class="i18n" value="yyyy-mm-dd">yyyy-mm-dd ISO format date</option>' +
                     '<option class="i18n" value="yyyy-mm-dd hh:mi:ss">yyyy-mm-dd hh:mi:ss Date and time</option>' +
                     '<option class="i18n" value="##h ##m">##h ##m Minutes</option>' +
-                '</select>' +
-                '<div class="div-format-custom">' +
+                '</select></div>' +
+                '<div class="div-format-custom" style="padding-bottom:10px">' +
                     '<label for="cms-format-custom" class="i18n">Format Custom:</label>' +
-                    '<input type="text" id="cms-format-custom" value="" placeholder="Add a format custom">' +
+                    '<input type="text" class="form-control" id="cms-format-custom" value="" placeholder="Add a' +
+                    ' custom format">' +
                 '</div>' +
             '</form>' +
         '</div>'

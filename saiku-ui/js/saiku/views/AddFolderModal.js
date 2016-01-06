@@ -38,7 +38,7 @@ var AddFolderModal = Modal.extend({
         this.message = "<form id='add_folder'>" +
             "<label class='i18n' for='name'>To add a new folder, " + 
             "please type a name in the text box below:</label>" +
-            "<input type='text' class='newfolder' name='name' />" +
+            "<input type='text' class='form-control newfolder' name='name' />" +
             "</form>";
 
         _.extend(this.options, {
