@@ -432,7 +432,7 @@ var AdminConsole = Backbone.View.extend({
         "<label for='role'>Add new role: </label><input class='form-control' type='text' name='role'><br/>" +
         "<a href='<%= user.id%>' class=' form_button btn btn-default  user_button add_role'>Add role</a>" +
         "<a href='#' class='new_add_role form_button btn btn-default  user_button hide'>Add role</a><br/></div>" +
-        "<br/><br/><a href='<%= user.id%>' class='remove_user btn btn-default  form_button user_button hide'>Remove User</a> " +
+        "<br/><br/><a href='<%= user.id%>' class='remove_user btn btn-danger form_button user_button hide'>Remove User</a> " +
         "<a href='<%= user.id%>' class='save_user btn btn-default  user_button form_button'>Save Changes</a>" +
         "<a href='#' class='save_new_user form_button btn btn-default  user_button hide'>Save User</a><div class='clear'>" +
         "</div></div></form>"),

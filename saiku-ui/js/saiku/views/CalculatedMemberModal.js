@@ -74,7 +74,7 @@ var CalculatedMemberModal = Modal.extend({
                 '<input type="text" class="form-control" id="cms-name" autofocus></div>' +
                 '<div class="cms-measure form-inline" style="padding-bottom:10px;">' +
                 '<label for="cms-measure" class="i18n">Insert Member:</label>' +
-                ' <input type="button" class="form-control btn-select-member"' +
+                ' <input type="button" class="form-control btn-primary btn btn-select-member"' +
                 ' value="Select Member" title="Insert a member into the formula editor "   ' +
                 'id="insertmember"> </input> </div>' +
                 '<label for="<%= idEditor %>" class="i18n">Formula:</label>' +
@@ -106,10 +106,10 @@ var CalculatedMemberModal = Modal.extend({
                     '</div>' +
 				    '<div class="cms-function">' +
 					'<label for="cms-function" class="i18n">Functions:</label>' +
-					' <input type="button" class="form_button btn btn-default growthBtn"#'+
+					' <input type="button" class="form_button btn btn-primary growthBtn"#'+
                     ' value="Growth"  ' +
 					'         title="Calculate difference. Good to calculate previous period growth "   id="growthBtn" >  </input> ' +
-					' <input type="button" class="form_button btn btn-default formatBtn"' +
+					' <input type="button" class="form_button btn btn-primary formatBtn"' +
                     ' value="Format %" id="formatBtn"  ' +
 					'title="Post-process step: format this view as percentage of rows, columns or grand total. " />' +
 				'</div><br/>' +
@@ -130,7 +130,7 @@ var CalculatedMemberModal = Modal.extend({
                     '<% }); %>' +
                 '</select></div>' +
                 '<div class="btn-groups" style="padding-bottom:10px">' +
-                    '<a class="form_button btn btn-default btn-parent-member" href="#add_math_operator_formula"' +
+                    '<a class="form_button btn btn-primary btn-parent-member" href="#add_math_operator_formula"' +
                     ' disabled>&nbsp;Parent Member Selector&nbsp;</a>' +
                     '<a class="form_button btn btn-default btn-clear-parent" href="#add_math_operator_formula"' +
                     ' disabled>&nbsp;Clear Parent Member&nbsp;</a>' +

@@ -34,19 +34,20 @@ var FormatAsPercentageModal = Modal.extend({
 	},
 
 	buttons: [
-		{text: "Cancel", method: "close"}
+		{text: "Cancel", method: "close"},
+		{text: "Help", method: "help"}
 	],
 
 	addMeasureTemplate: _.template(
-		"<div class='text'>Name: <input type='text' class='measure_name'></input> </div> " +
+		"<div class='text'>Name: <input type='text' class='measure_name form-control'></input> </div> " +
 		"<div> <span> Select how to express the measures: </span> </div>" +
 		"<ol style='list-style-type: none;'> " +
 		"<li style='padding-bottom: 10px; padding-right: 10px; float: inherit;'>     " +
-		"    <button class='form_button formatButton' style='padding-bottom: 18px;' id='formatOverRows'> Format as % of rows </button></li>" +
+		"    <button class='form_button btn btn-primary formatButton' id='formatOverRows'> Format as % of rows </button></li>" +
 		"<li style='padding-bottom: 10px; padding-right: 10px; float: inherit;'>     " +
-		"    <button class='form_button formatButton' style='padding-bottom: 18px;' id='formatOverColumns'> Format as % of columns </button></li>" +
+		"    <button class='form_button btn btn-primary formatButton' id='formatOverColumns'> Format as % of columns </button></li>" +
 		"<li style='padding-bottom: 10px; padding-right: 10px; float: inherit;'>     " +
-		"    <button class='form_button formatButton' style='padding-bottom: 18px;' id='formatOverTotal'> Format as % of total </button></li>" +
+		"    <button class='form_button formatButton btn btn-primary' id='formatOverTotal'> Format as % of total </button></li>" +
 		"</ol>" +
 		"<span id='userFeedback'> <p> <%= userFeedback %> </p> </span>"
 	),
@@ -257,6 +258,9 @@ var FormatAsPercentageModal = Modal.extend({
 		if ((rows == null || rows == undefined || rows.length == 0) && (cols == null || cols == undefined || cols.length == 0)) {
 			return "You selected no columns or rows, you should probably return.";
 		} else return "";
+	}
+	help: function(){
+		window.location("http://wiki.meteorite.bi");
 	}
 
 
