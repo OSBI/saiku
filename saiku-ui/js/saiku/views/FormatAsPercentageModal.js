@@ -258,7 +258,7 @@ var FormatAsPercentageModal = Modal.extend({
 		if ((rows == null || rows == undefined || rows.length == 0) && (cols == null || cols == undefined || cols.length == 0)) {
 			return "You selected no columns or rows, you should probably return.";
 		} else return "";
-	}
+	},
 	help: function(){
 		window.location("http://wiki.meteorite.bi");
 	}
