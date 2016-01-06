@@ -93,8 +93,20 @@ var Settings = {
     DEFAULT_REPORTS: {
         'admin': [
             {
-                path: 'ADD_PATH', // example: /homes/home:admin/chart.saiku
+                path: 'ADD_PATH1', // example: /homes/home:admin/chart.saiku
                 visible: false    // true/false
+            }
+        ],
+        '_': [
+            {
+                path: 'ADD_PATH2',
+                visible: false
+            }
+        ],
+        'ROLE_ADMIN': [
+            {
+                path: 'ADD_PATH3',
+                visible: false
             }
         ]
     },

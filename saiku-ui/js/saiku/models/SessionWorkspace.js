@@ -112,9 +112,18 @@ var SessionWorkspace = Backbone.Model.extend({
             }
 
             if (Settings.DEFAULT_REPORT_SHOW) {
-                var reports = Settings.DEFAULT_REPORTS[Saiku.session.username];
+                var globalreports = Settings.DEFAULT_REPORTS['_'];
+                var rolereports = [];
+                _.each(Saiku.session.roles, function(role){
+                    var r = Settings.DEFAULT_REPORTS[role];
+                    if(r!=undefined && r.length>0) {
+                        rolereports = rolereports.concat(r);
+                    }
+                });
+                var userreports = Settings.DEFAULT_REPORTS[Saiku.session.username];
                 var everythingLoaded = 0;
 
+                var reports = globalreports.concat(userreports).concat(rolereports);
                 function addDefaultReport() {
                     var filePath;
                     var fileName;
