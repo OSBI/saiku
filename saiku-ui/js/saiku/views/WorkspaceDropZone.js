@@ -78,6 +78,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             }
         });
 
+
         return this;
     },
 

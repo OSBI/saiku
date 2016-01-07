@@ -3,12 +3,13 @@
 .workspace_fields {
      overflow: auto;
      padding: 10px;
-     width: 220px;
+     width: 240px;
      float:left;
 
 }
 .fields_list {
     border: 1px solid #CCCCCC;
+    width:202px;
     float: left;
     margin-bottom: 10px;
     border-radius: 5px;
