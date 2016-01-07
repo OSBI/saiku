@@ -51,6 +51,9 @@ var ParentMemberSelectorModal = Modal.extend({
             '<div class="group-elements">' +
             '<label for="dimension" class="i18n">Dimension:</label>' +
             '<select id="dimension" class="form-control">' +
+            '<optgroup label="Measures">' +
+            '<option value="[Measures].[Measures]" data-dimension="Measures" data-type="calcmember">Measures</option>' +
+            '</optgroup>'+
             '<% _(dimensions).each(function(dimension) { %>' +
             '<optgroup label="<%= dimension.name %>">' +
             '<% _(dimension.hierarchies).each(function(hierarchy) { %>' +
@@ -155,16 +158,23 @@ var ParentMemberSelectorModal = Modal.extend({
      * @private
      */
     new_parent_member: function() {
-        var level = new Level({}, { 
-            ui: this, 
-            cube: this.cube, 
-            dimension: this.dimension, 
-            hierarchy: this.hierarchy 
-        });
+        if(this.dimension != "Measures") {
+            var level = new Level({}, {
+                ui: this,
+                cube: this.cube,
+                dimension: this.dimension,
+                hierarchy: this.hierarchy
+            });
 
-        level.fetch({
-            success: this.get_levels
-        });
+            level.fetch({
+                success: this.get_levels
+            });
+        }
+        else{
+           var m = Saiku.session.sessionworkspace.cube[this.cube].get('data').measures;
+
+            this.populate_members_list(m);
+        }
     },
 
     /**
@@ -549,12 +559,19 @@ var ParentMemberSelectorModal = Modal.extend({
                 this.$el.dialog('close');
             }
             else{
-                var dimHier = '[' + this.dimension + '].[' + this.hierarchy + '].';
-                var uniqueName = this.uniqueName.split(dimHier)[1] !== undefined ?
-                    this.uniqueName.split(dimHier)[1] :
-                    this.uniqueName.split(dimHier)[0];
-                if(this.close_callback!=null){
-                    this.close_callback(dimHier+uniqueName)
+                if(this.dimension !== "Measures") {
+
+                    var dimHier = '[' + this.dimension + '].[' + this.hierarchy + '].';
+                    var uniqueName = this.uniqueName.split(dimHier)[1] !== undefined ?
+                        this.uniqueName.split(dimHier)[1] :
+                        this.uniqueName.split(dimHier)[0];
+                    if (this.close_callback != null) {
+                        this.close_callback(dimHier + uniqueName)
+                    }
+                }
+                else{
+                    this.close_callback(this.uniqueName);
+
                 }
                 this.$el.dialog('close');
             }
