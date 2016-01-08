@@ -112,6 +112,12 @@ var SessionWorkspace = Backbone.Model.extend({
             }
 
             if (Settings.DEFAULT_REPORT_SHOW) {
+                if (!Settings.INITIAL_QUERY && paramsURI.splash) {
+                    Saiku.tabs.add(new SplashScreen());
+                }
+                else if(!Settings.INITIAL_QUERY) {
+                    Saiku.tabs.add(new Workspace());
+                }
                 var globalreports = Settings.DEFAULT_REPORTS['_'];
                 var rolereports = [];
                 _.each(Saiku.session.roles, function(role){
