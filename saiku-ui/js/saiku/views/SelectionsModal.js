@@ -268,7 +268,7 @@ var SelectionsModal = Modal.extend({
         else {
             _.filter(calcMembers, function(value) {
                 if (value.hierarchyName === hName && value.parentMemberLevel === self.member.level) {
-                    value.uniqueName = value.hierarchyName + '.' + value.parentMember + '.[' + value.name + ']';
+                    value.uniqueName = value.parentMember + '.[' + value.name + ']';
                     arrCalcMembers.push(value);
                 }
             });
@@ -448,7 +448,7 @@ var SelectionsModal = Modal.extend({
         var left = ($(window).width() - 1000)/2;
         var width = $(window).width() < 1040 ? $(window).width() : 1040;
         $(args.modal.el).parents('.ui-dialog')
-            .css({ width: width, left: "inherit", margin:"0", height: 575 })
+            .css({ width: width, left: "inherit", margin:"0", height: 585 })
             .offset({ left: left});
 
         $('#filter_selections').attr("disabled", false);
@@ -545,16 +545,31 @@ var SelectionsModal = Modal.extend({
         if ($(this.el).find('.used_selections input').length === 0) {
             // nothing to do - include all members of this level
         } else {
+            self.workspace.query.helper.removeAllLevelCalculatedMember(hName);
 
             // Loop through selections
             $(this.el).find('.used_selections .option_value input')
                 .each(function(i, selection) {
-                var value = $(selection).val();
-                var caption = $(selection).attr('label');
-                updates.push({
-                    uniqueName: decodeURIComponent(value),
-                    caption: decodeURIComponent(caption)
-                });
+                    var value = $(selection).val();
+                    if($(selection).hasClass("cmember")){
+                        var caption = $(selection).attr('label');
+
+                        self.workspace.toolbar.group_parents();
+
+                        self.workspace.query.helper.includeLevelCalculatedMember(self.axis, hName, lName, decodeURIComponent(value), 0);
+                        updates.push({
+                            uniqueName: decodeURIComponent(value),
+                            caption: decodeURIComponent(caption),
+                            type: "calculatedmember"
+                        });
+                    }
+                    else {
+                        var caption = $(selection).attr('label');
+                        updates.push({
+                            uniqueName: decodeURIComponent(value),
+                            caption: decodeURIComponent(caption)
+                        });
+                    }
             });
         }
 

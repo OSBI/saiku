@@ -204,6 +204,13 @@ SaikuOlapQueryHelper.prototype.removeLevelCalculatedMember = function(hierarchy,
   }
 };
 
+SaikuOlapQueryHelper.prototype.removeAllLevelCalculatedMember = function(hierarchy) {
+  hierarchy = this.getHierarchy(hierarchy);
+  hierarchy.cmembers = {};
+
+};
+
+
 SaikuOlapQueryHelper.prototype.includeMeasure = function(measure) {
   var measures = this.model().queryModel.details.measures,
       len = measures.length,

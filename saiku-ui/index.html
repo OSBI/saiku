@@ -751,10 +751,11 @@ title="Drill across on cell"></a></li>
                     <div class="selection_options" ><ul></ul></div>
             </div>
             <div class="selection_buttons">
-                <a class="form_button" href="#move_selection" id="add_members">&nbsp;&gt;&nbsp;</a><br><br>
-                <a class="form_button" href="#move_selection" id="add_all_members">&gt;&gt;</a><br><br>
-                <a class="form_button" href="#move_selection" id="remove_all_members">&lt;&lt;</a><br><br>
-                <a class="form_button" href="#move_selection" id="remove_members">&nbsp;&lt;&nbsp;</a>
+                <a class="form_button btn btn-default" href="#move_selection" id="add_members">&nbsp;&gt;&nbsp;
+                </a><br><br>
+                <a class="form_button btn btn-default" href="#move_selection" id="add_all_members">&gt;&gt;</a><br><br>
+                <a class="form_button btn btn-default" href="#move_selection" id="remove_all_members">&lt;&lt;</a><br><br>
+                <a class="form_button btn btn-default" href="#move_selection" id="remove_members">&nbsp;&lt;&nbsp;</a>
             </div>
             <div class="used_selections form-inline caption">
                 <span class="i18n">Used members:</span>
@@ -820,7 +821,7 @@ title="Drill across on cell"></a></li>
                     </li>
                 <% } else { %>
                     <li class="option_value">
-                        <input type="checkbox" class="check_option"
+                        <input type="checkbox" class="check_option cmember"
                             value="<%= encodeURIComponent(option.uniqueName) %>" name="selections_checker" id="selections_checker<%= counter %>"
                             label="<%= encodeURIComponent(option.caption) %>" />
                             <label for="selections_checker<%= counter %>" class="caption" style="color: blue;"><%= option.caption %></label>

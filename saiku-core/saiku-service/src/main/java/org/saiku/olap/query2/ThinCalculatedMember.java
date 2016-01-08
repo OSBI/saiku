@@ -12,6 +12,8 @@ import java.util.Map;
 public class ThinCalculatedMember {
 
   private String parentMember;
+  private String parentMemberLevel;
+  private String previousLevel;
   private String dimension;
   private String name;
   private String uniqueName;
@@ -26,6 +28,21 @@ public class ThinCalculatedMember {
                               String formula, Map<String, String> properties, String parentMember) {
     this(dimension, hierarchyName, name, uniqueName, caption, formula, properties);
     this.parentMember = parentMember;
+  }
+  public ThinCalculatedMember(String dimension, String hierarchyName, String name, String uniqueName, String caption,
+                              String formula, Map<String, String> properties, String parentMember, String parentMemberLevel) {
+    this(dimension, hierarchyName, name, uniqueName, caption, formula, properties);
+    this.parentMember = parentMember;
+    this.parentMemberLevel = parentMemberLevel;
+  }
+
+  public ThinCalculatedMember(String dimension, String hierarchyName, String name, String uniqueName, String caption,
+                              String formula, Map<String, String> properties, String parentMember, String
+                                  parentMemberLevel, String lastLevel) {
+    this(dimension, hierarchyName, name, uniqueName, caption, formula, properties);
+    this.parentMember = parentMember;
+    this.parentMemberLevel = parentMemberLevel;
+    this.previousLevel = lastLevel;
   }
 
   public ThinCalculatedMember(String dimension, String hierarchyName, String name, String uniqueName, String caption,
@@ -92,5 +109,13 @@ public class ThinCalculatedMember {
    */
   public String getParentMember() {
     return parentMember;
+  }
+
+  public String getParentMemberLevel() {
+    return parentMemberLevel;
+  }
+
+  public String getPreviousLevel() {
+    return previousLevel;
   }
 }

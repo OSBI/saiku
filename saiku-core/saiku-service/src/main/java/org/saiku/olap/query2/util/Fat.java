@@ -259,7 +259,9 @@ public class Fat {
 //
 //					} else {
 				for (ThinMember tm : tl.getSelection().getMembers()) {
-				  qh.includeMember(tm.getUniqueName());
+					if(tm.getType() == null || !tm.getType().equals("calculatedmember")) {
+						qh.includeMember(tm.getUniqueName());
+					}
 				}
 				ql.setParameterSelectionType(org.saiku.query.Parameter.SelectionType.INCLUSION);
 //					}
@@ -273,7 +275,9 @@ public class Fat {
 //
 //					} else {
 				for (ThinMember tm : tl.getSelection().getMembers()) {
-				  qh.excludeMember(tm.getUniqueName());
+					if(tm.getType() == null || !tm.getType().equals("calculatedmember")) {
+						qh.excludeMember(tm.getUniqueName());
+					}
 				}
 				ql.setParameterSelectionType(org.saiku.query.Parameter.SelectionType.EXCLUSION);
 //					}

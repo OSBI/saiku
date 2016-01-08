@@ -145,7 +145,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                             .find('.folder_collapsed')
                             .addClass('selected');
                     }
-                    for (var member in hierarchy.cmembers) {
+                    /*for (var member in hierarchy.cmembers) {
                         if (hierarchy.cmembers.hasOwnProperty(member)) {
                             var level = member.split('.')[member.split('.').length-1].replace(/[\[\]]/gi, '');
 
@@ -158,7 +158,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                                 .find('.folder_collapsed')
                                 .addClass('selected');
                         }
-                    }
+                    }*/
                     var selection = $('<li class="selection"></li>');
                     selection.append(h);
                     selection.appendTo($axis.find('ul.connectable'));
@@ -244,10 +244,11 @@ var WorkspaceDropZone = Backbone.View.extend({
             var level;
             var uniqueName;
             if (isCalcMember) {
-                uniqueName = ui.item.find('a.level').attr('uniquename');
+                /*uniqueName = ui.item.find('a.level').attr('uniquename');
                 this.workspace.toolbar.$el.find('.group_parents').removeClass('on');
                 this.workspace.toolbar.group_parents();
-                this.workspace.query.helper.includeLevelCalculatedMember(toAxis, hierarchy, level, uniqueName, indexHierarchy);
+                this.workspace.query.helper.includeLevelCalculatedMember(toAxis, hierarchy, level, uniqueName,
+                 indexHierarchy);*/
             }
             else {
                 if (isNew) {

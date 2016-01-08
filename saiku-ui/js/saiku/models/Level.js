@@ -100,6 +100,9 @@ var LevelChildMember = Backbone.Model.extend({
             this.ui = options.ui;
             this.cube = options.cube;
             this.uniqueName = options.uniqueName;
+            this.levelUniqueName = options.levelUniqueName;
+            this.mname = options.mname;
+            this.mcaption = options.mcaption;
         }
     },
 

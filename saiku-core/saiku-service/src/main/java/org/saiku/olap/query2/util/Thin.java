@@ -104,6 +104,14 @@ public class Thin {
 	List<ThinCalculatedMember> tcms = new ArrayList<>();
 	if (qcms != null && qcms.size() > 0) {
 	  for (CalculatedMember qcm : qcms) {
+		  String pplevel = null;
+		  if(qcm.getParentMember()!= null && qcm.getParentMember().getParentMember()!=null){
+			  pplevel= qcm.getParentMember().getParentMember().getLevel().getName();
+		  }
+		  String plevel = null;
+		  if(qcm.getParentMember()!=null){
+			  plevel = qcm.getParentMember().getLevel().getName();
+		  }
 		ThinCalculatedMember tcm = new ThinCalculatedMember(
 			qcm.getHierarchy().getDimension().getName(),
 			qcm.getHierarchy().getUniqueName(),
@@ -112,7 +120,10 @@ public class Thin {
 			qcm.getCaption(),
 			qcm.getFormula(),
 			qcm.getFormatProperties(),
-			qcm.getParentMember().toString());
+			qcm.getParentMember()!=null ? qcm.getParentMember().toString(): null,
+			plevel,
+			pplevel
+			);
 
 		tcms.add(tcm);
 	  }

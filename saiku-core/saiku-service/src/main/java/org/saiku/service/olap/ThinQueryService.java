@@ -15,6 +15,8 @@
  */
 package org.saiku.service.olap;
 
+import org.apache.commons.lang.StringUtils;
+
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.dto.resultset.CellDataSet;
@@ -22,12 +24,21 @@ import org.saiku.olap.query.IQuery;
 import org.saiku.olap.query.IQuery.QueryType;
 import org.saiku.olap.query.OlapQuery;
 import org.saiku.olap.query.QueryDeserializer;
+import org.saiku.olap.query2.ThinAxis;
+import org.saiku.olap.query2.ThinCalculatedMember;
 import org.saiku.olap.query2.ThinHierarchy;
+import org.saiku.olap.query2.ThinLevel;
+import org.saiku.olap.query2.ThinMember;
 import org.saiku.olap.query2.ThinQuery;
+import org.saiku.olap.query2.ThinQueryModel;
 import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
 import org.saiku.olap.query2.util.Fat;
 import org.saiku.olap.query2.util.Thin;
-import org.saiku.olap.util.*;
+import org.saiku.olap.util.ObjectUtil;
+import org.saiku.olap.util.OlapResultSetUtil;
+import org.saiku.olap.util.QueryConverter;
+import org.saiku.olap.util.SaikuProperties;
+import org.saiku.olap.util.SaikuUniqueNameComparator;
 import org.saiku.olap.util.formatter.CellSetFormatterFactory;
 import org.saiku.olap.util.formatter.FlattenedCellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
@@ -48,13 +59,22 @@ import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.service.util.export.CsvExporter;
 import org.saiku.service.util.export.ExcelExporter;
 
-import org.apache.commons.lang.StringUtils;
-import org.olap4j.*;
+import org.olap4j.Axis;
+import org.olap4j.CellSet;
+import org.olap4j.CellSetAxis;
+import org.olap4j.OlapConnection;
+import org.olap4j.OlapStatement;
+import org.olap4j.Position;
 import org.olap4j.mdx.ParseTreeNode;
 import org.olap4j.mdx.ParseTreeWriter;
 import org.olap4j.mdx.SelectNode;
 import org.olap4j.mdx.parser.impl.DefaultMdxParserImpl;
-import org.olap4j.metadata.*;
+import org.olap4j.metadata.Cube;
+import org.olap4j.metadata.Dimension;
+import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Level;
+import org.olap4j.metadata.Measure;
+import org.olap4j.metadata.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +85,15 @@ import java.io.Writer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import mondrian.olap4j.SaikuMondrianHelper;
@@ -246,11 +274,34 @@ public class ThinQueryService implements Serializable {
         }
     }
 
+    private void getEnabledCMembers(ThinQueryModel qm, ThinQueryModel queryModel){
+        int i = 0;
+        for (Map.Entry<AxisLocation, ThinAxis> entry : qm.getAxes().entrySet()){
+            ThinAxis v = entry.getValue();
+            for(ThinHierarchy h :v.getHierarchies()){
+                for(Map.Entry<String, ThinLevel> entry1 :h.getLevels().entrySet()){
+                    ThinLevel v2 = entry1.getValue();
+                    if(v2.getSelection()!= null) {
+                        for (ThinMember m : v2.getSelection().getMembers()) {
+                            if (m.getType()!=null && m.getType().equals("calculatedmember")) {
+                                queryModel.getAxes().get(entry.getKey()).getHierarchies().get(i).getLevels().get(entry1
+                                    .getKey()).getSelection().getMembers().add(m);
+                            }
+                        }
+                    }
+                }
+                i++;
+            }
+        }
+    }
     public ThinQuery updateQuery(ThinQuery old) throws Exception {
         if (ThinQuery.Type.QUERYMODEL.equals(old.getType())) {
             Cube cub = olapDiscoverService.getNativeCube(old.getCube());
             Query q = Fat.convert(old, cub);
+            List<ThinCalculatedMember> cms = old.getQueryModel().getCalculatedMembers();
             ThinQuery tqAfter = Thin.convert(q, old.getCube());
+            tqAfter.getQueryModel().setCalculatedMembers(cms);
+            getEnabledCMembers(old.getQueryModel(), tqAfter.getQueryModel());
             old.setQueryModel(tqAfter.getQueryModel());
             old.setMdx(tqAfter.getMdx());
         }

@@ -123,6 +123,8 @@ var ParentMemberSelectorModal = Modal.extend({
         if(args.select_type!==undefined) {
             this.select_type = args.select_type;
         }
+        this.current_level = args.current_level;
+        this.lastLevel = args.lastLevel;
         this.selected_member = args.selected_member;
         this.close_callback = args.close_callback;
         // this.breadcrumbs = [];
@@ -184,14 +186,25 @@ var ParentMemberSelectorModal = Modal.extend({
      * @private
      */
     edit_parent_member: function() {
-        var level = new LevelMember({}, {ui: this, cube: this.cube, dimension: this.dimension, hierarchy: this.hierarchy, level: this.lastLevel});
-        var that = this;
-        level.fetch({
-            success: function(data, otherdata){
-                that.get_members(data, otherdata);
-                that.populate_breadcrumbs(that.breadcrumbs);
-            }
-        });
+        if(this.lastLevel!=undefined && this.lastLevel!="") {
+            var level = new LevelMember({}, {
+                ui: this,
+                cube: this.cube,
+                dimension: this.dimension,
+                hierarchy: this.hierarchy,
+                level: this.lastLevel
+            });
+            var that = this;
+            level.fetch({
+                success: function (data, otherdata) {
+                    that.get_members(data, otherdata);
+                    that.populate_breadcrumbs(that.breadcrumbs);
+                }
+            });
+        }
+        else{
+            this.new_parent_member();
+        }
     },
 
     /**
@@ -236,18 +249,35 @@ var ParentMemberSelectorModal = Modal.extend({
     populate_members_list: function(data) {
         var $members = [];
         var len = data.length;
-
+        var self = this;
         this.$el.find('.members-list').empty();
 
         for (var i = 0; i < len; i++) {
-            $members = $('<li />')
-                .addClass('member')
-                .data('caption', data[i].caption)
-                .data('uniqueName', data[i].uniqueName)
-                .data('levelUniqueName', data[i].levelUniqueName ? data[i].levelUniqueName : false)
-                .html(data[i].name+"<span class='drill_member' style='float:right;'>Next Level</span>");
-            
-            this.$el.find('.members-list').append($members);
+            var levelunique ="";
+            var levelChildMember = new LevelChildMember({}, { ui: this, cube: this.cube, uniqueName: data[i].uniqueName,
+                levelUniqueName : data[i].levelunique, mname: data[i].name, mcaption: data[i].caption});
+
+            levelChildMember.fetch({
+                success: function(event){
+                    var e =event.get("0");
+                    levelunique = e.levelUniqueName;
+
+                    var arr = levelunique.split("].[");
+                    var lname = arr[arr.length -1];
+                    lname = lname.substring(0,lname.length-1);
+                    $members = $('<li />')
+                        .addClass('member')
+                        .data('caption', event.mcaption)
+                        .data('uniqueName', event.uniqueName)
+                        .data('levelUniqueName', event.levelUniqueName ? event.levelUniqueName : false)
+                        .data('currentLevelUnique', lname)
+                        .html(event.mname+"<span class='drill_member' style='float:right;'>Next Level</span>");
+
+                    self.$el.find('.members-list').append($members);
+                }
+            });
+
+
         }
 
         Saiku.ui.unblock();
@@ -453,7 +483,7 @@ var ParentMemberSelectorModal = Modal.extend({
         var selectedLevel;
 
         if ((this.breadcrumbs.length - 2) < 2) {
-            selectedLevel = this.breadcrumbs[this.breadcrumbs.length - 0];
+            selectedLevel = this.breadcrumbs[this.breadcrumbs.length - 1];
             this.$el.find('.selected-level').text(selectedLevel);
         }
         else {
@@ -553,7 +583,8 @@ var ParentMemberSelectorModal = Modal.extend({
                 }
 
                 this.dialog.pmUniqueName = dimHier + uniqueName;
-                this.dialog.pmLevel = this.lastLevel;
+                this.dialog.pmLevel = this.current_level;
+                this.dialog.lastLevel = this.lastLevel;
                 this.dialog.pmBreadcrumbs = _.uniq(this.breadcrumbs);
                 this.dialog.$el.find('#cms-pmember').val(dimHier + uniqueName);
                 this.$el.dialog('close');
@@ -594,6 +625,7 @@ var ParentMemberSelectorModal = Modal.extend({
         this.uniqueName = $currentTarget.data('uniqueName');
 
         //model.ui.uniqueName = model.uniqueName;
+        this.current_level = $currentTarget.data('currentLevelUnique');
         this.selected_level();
         this.$el.find('#auto-filter').val('');
 

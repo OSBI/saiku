@@ -161,7 +161,7 @@ var SaveQuery = Modal.extend({
             }
         }
         this.set_last_location(path);
-
+        $(this.el).find('input[name="name"]').focus();
         return false;
     },
 
@@ -247,6 +247,8 @@ var SaveQuery = Modal.extend({
         var path = $currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').find( 'a' ).attr('href');
         path = path.replace('#' , '');
         this.set_last_location(path);
+        $(this.el).find('input[name="name"]').focus();
+
         return false;
     },
 

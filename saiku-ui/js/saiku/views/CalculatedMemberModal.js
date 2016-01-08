@@ -170,7 +170,7 @@ var CalculatedMemberModal = Modal.extend({
      */
     buttons: [
         { text: 'Add', method: 'save' },
-        { text: 'Edit', method: 'save' },
+        { text: 'Update', method: 'save' },
         { text: 'New', method: 'new' },
         { text: 'Cancel', method: 'close' },
         { text: 'Help', method: 'help'}
@@ -384,6 +384,7 @@ var CalculatedMemberModal = Modal.extend({
                 self.$el.find('#cms-name').val(value.name);
                 self.formulaEditor.setValue(value.formula);
                 self.$el.find('#cms-dimension').val(value.hierarchyName);
+                self.$el.find('#cms-pmember').val(value.parentMember)
                 if ((0 !== $('#cms-format option[value="' + value.properties.FORMAT_STRING + '"]').length) ||
                     (value.properties.FORMAT_STRING === undefined && !(0 !== $('#cms-format option[value="' + value.properties.FORMAT_STRING + '"]').length))) {
                     self.$el.find('#cms-format').val(value.properties.FORMAT_STRING);
@@ -397,6 +398,7 @@ var CalculatedMemberModal = Modal.extend({
 
                 self.pmUniqueName = value.parentMember || '';
                 self.pmLevel = value.parentMemberLevel || '';
+                self.lastLevel = value.previousLevel || '';
                 self.pmBreadcrumbs = value.parentMemberBreadcrumbs || [];
 
                 self.type_dimension();
@@ -747,7 +749,8 @@ var CalculatedMemberModal = Modal.extend({
                 dimension: dimension.dataDimension,
                 hierarchy: dimension.txt,
                 uniqueName: this.pmUniqueName,
-                lastLevel: this.pmLevel,
+                lastLevel: this.lastLevel,
+                current_level: this.pmLevel,
                 breadcrumbs: this.pmBreadcrumbs
             })).render().open();
 
@@ -833,6 +836,7 @@ var CalculatedMemberModal = Modal.extend({
                     hierarchyName: dimension.val,
                     parentMember: '',
                     parentMemberLevel: '',
+                    previousLevel: '',
                     parentMemberBreadcrumbs: []
                 };
                 
@@ -843,6 +847,7 @@ var CalculatedMemberModal = Modal.extend({
                 if (this.pmUniqueName && !(_.isEmpty(this.pmUniqueName))) {
                     objMember.parentMember = this.pmUniqueName;
                     objMember.parentMemberLevel = this.pmLevel;
+                    objMember.previousLevel = this.lastLevel;
                     objMember.parentMemberBreadcrumbs = this.pmBreadcrumbs;
                 }
 
@@ -1022,7 +1027,8 @@ var CalculatedMemberModal = Modal.extend({
                 dimension: dimension.dataDimension,
                 hierarchy: dimension.txt,
                 uniqueName: this.pmUniqueName,
-                lastLevel: this.pmLevel,
+                lastLevel: this.lastLevel,
+                current_level: this.pmLevel,
                 breadcrumbs: this.pmBreadcrumbs
             })).render().open();
 
