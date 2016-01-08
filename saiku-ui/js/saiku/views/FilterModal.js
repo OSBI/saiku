@@ -168,8 +168,7 @@ var FilterModal = Modal.extend({
     },
 
     help: function(){
-        //TODO LINK TO PAGE
-        window.open("http://wiki.meteorite.bi");
+        window.open("http://wiki.meteorite.bi/display/SAIK/Filtering");
     }
 
 });

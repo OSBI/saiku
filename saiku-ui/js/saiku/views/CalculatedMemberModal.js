@@ -1047,7 +1047,6 @@ var CalculatedMemberModal = Modal.extend({
     },
 
     help: function(){
-        //TODO link to real page
-        window.open("http://wiki.meteorite.bi");
+        window.open("http://wiki.meteorite.bi/display/SAIK/Calculated+Members");
     }
 });
