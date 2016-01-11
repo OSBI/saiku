@@ -125,8 +125,13 @@ SaikuChartRenderer.prototype.render = function () {
 };
 
 SaikuChartRenderer.prototype.switch_chart = function (key, override) {
-    if ((override != null || override != undefined) && (override.chartDefinition != null || override.chartDefinition != undefined)) {
-        this.chartDefinition = override.chartDefinition;
+    if(override != null || override != undefined){
+        if(override.chartDefinition != null || override.chartDefinition != undefined) {
+            this.chartDefinition = override.chartDefinition;
+        }
+        if(override.workspace !=null || override.workspace != undefined){
+            this.workspace = override.workspace;
+        }
     }
     var keyOptions =
     {
@@ -626,6 +631,8 @@ SaikuChartRenderer.prototype.render_chart_element = function (context) {
     } else {
         $(self.el).find('.canvas_wrapper').fadeIn(400);
     }
+
+
     return false;
 };
 
