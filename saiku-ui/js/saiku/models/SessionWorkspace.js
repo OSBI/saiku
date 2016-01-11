@@ -65,7 +65,10 @@ var SessionWorkspace = Backbone.Model.extend({
         }
         return false;
     },
-    render_default_tab: function(reports){
+    render_default_tab: function(reports, oldworkspace){
+        if(oldworkspace!=null){
+            oldworkspace.unbind("report:rendered");
+        }
         var that=this;
         for (var i = 0; i < reports.length; i++) {
             // if ((reports[i].visible && reports[i].visible !== 'false') || reports[i].visible === 'true') {
@@ -212,7 +215,7 @@ var SessionWorkspace = Backbone.Model.extend({
                                     Saiku.tabs.add(workspace);
                                     reports.shift();
                                     workspace.bind('report:rendered', function(){
-                                        that.render_default_tab(reports);
+                                        that.render_default_tab(reports, workspace);
                                     });
 
                                 }
@@ -221,7 +224,7 @@ var SessionWorkspace = Backbone.Model.extend({
                                         Saiku.ui.block('Loading default report...');
                                         Saiku.tabs.add(new DashboardViewTab({ file: reports[i].path }));
                                         reports.shift();
-                                        that.render_default_tab(reports);
+                                        that.render_default_tab(reports, null);
 
                                     }
                                     else {
