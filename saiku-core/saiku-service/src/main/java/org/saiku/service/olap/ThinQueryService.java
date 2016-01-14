@@ -275,8 +275,9 @@ public class ThinQueryService implements Serializable {
     }
 
     private void getEnabledCMembers(ThinQueryModel qm, ThinQueryModel queryModel){
-        int i = 0;
         for (Map.Entry<AxisLocation, ThinAxis> entry : qm.getAxes().entrySet()){
+            int i = 0;
+
             ThinAxis v = entry.getValue();
             for(ThinHierarchy h :v.getHierarchies()){
                 for(Map.Entry<String, ThinLevel> entry1 :h.getLevels().entrySet()){
@@ -284,8 +285,12 @@ public class ThinQueryService implements Serializable {
                     if(v2.getSelection()!= null) {
                         for (ThinMember m : v2.getSelection().getMembers()) {
                             if (m.getType()!=null && m.getType().equals("calculatedmember")) {
-                                queryModel.getAxes().get(entry.getKey()).getHierarchies().get(i).getLevels().get(entry1
-                                    .getKey()).getSelection().getMembers().add(m);
+                                Map<AxisLocation, ThinAxis> ax = queryModel.getAxes();
+                                ThinAxis sax = ax.get(entry.getKey());
+                                List<ThinHierarchy> h2 = sax.getHierarchies();
+                                Map<String, ThinLevel> l = h2.get(i).getLevels();
+                                ThinLevel l2 = l.get(entry1.getKey());
+                                l2.getSelection().getMembers().add(m);
                             }
                         }
                     }
