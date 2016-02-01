@@ -265,7 +265,7 @@ var ParentMemberSelectorModal = Modal.extend({
                 .html(data[i].name+"<span class='drill_member' style='float:right;'>Next Level</span>");
 
             self.$el.find('.members-list').append($members);
-           
+
 
         }
 
