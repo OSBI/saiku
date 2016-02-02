@@ -606,7 +606,7 @@ var Workspace = Backbone.View.extend({
                 dimlist.find('.selected').removeClass('selected');
 
                 var calcMeasures = self.query.helper.getCalculatedMeasures();
-                var calcMembers = self.query.helper.getCalculatedMembers();
+                //var calcMembers = self.query.helper.getCalculatedMembers();
 
                 if (calcMeasures && calcMeasures.length > 0) {
                     var template = _.template($("#template-calculated-measures").html(),{ measures: calcMeasures });
@@ -626,7 +626,7 @@ var Workspace = Backbone.View.extend({
                     dimlist.find('.calculated_measures').empty();
                 }
 
-                if (calcMembers && calcMembers.length > 0) {
+                /*if (calcMembers && calcMembers.length > 0) {
                     var self = this;
                     var $dimensionTree = dimlist.find('.dimension_tree').find('.parent_dimension').find('.d_hierarchy');
                     var len = calcMembers.length;
@@ -679,7 +679,7 @@ var Workspace = Backbone.View.extend({
                 }
                 else {
                     dimlist.find('.dimension_tree').find('.parent_dimension').find('.d_hierarchy').find('.dimension-level-calcmember').remove();
-                }
+                }*/
 
                 self.drop_zones.synchronize_query();
 
