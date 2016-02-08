@@ -32,7 +32,7 @@ var saikuWidgetComponent = BaseComponent.extend({
 			htmlId = t;
 		}
 		var myClient = new SaikuClient({
-		    server: "../../../plugin/saiku/api",
+		    server: "/pentaho/plugin/saiku/api",
 		    path: "/cde-component"
 		});
 
