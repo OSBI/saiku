@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+       xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder
+            location="/WEB-INF/saiku-beans.properties"
+            ignore-resource-not-found="true"
+            ignore-unresolvable="true"
+            order ="0" />
+
+    <context:property-placeholder
+            location="file:///${ext.prop.dir}saiku-beans.properties"
+            ignore-resource-not-found="true"
+            ignore-unresolvable="true"
+            order ="-1" />
 
     <!--	<bean id="classpathDsManager"
             class="org.saiku.service.datasource.ClassPathResourceDatasourceManager">
@@ -172,8 +184,8 @@
         <property name="userService" ref="userServiceBean"/>
     </bean>
 
-    <bean id="statsBean" scope="singleton" class="org.saiku.web.rest.resources.StatisticsResource"/>
+    <bean id="statsBean" class="org.saiku.web.rest.resources.StatisticsResource"/>
 
-    <bean id="startupBean" scope="singleton" class="org.saiku.web.rest.util.StartupResource" init-method="init"/>
+    <bean id="startupBean" class="org.saiku.web.rest.util.StartupResource" init-method="init"/>
 
 </beans>

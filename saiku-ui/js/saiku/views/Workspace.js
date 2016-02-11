@@ -913,13 +913,13 @@ var Workspace = Backbone.View.extend({
                 comparison = parameters[key].split(",");
             }
 
-            if(val!=undefined && val!="") {
+            if (val != undefined && val != "") {
                 val = val + ",";
             }
             var selections = this.query.helper.getSelectionsForParameter(key);
-            _.each(selections, function(s){
+            _.each(selections, function (s) {
                 var found = $.inArray(s.name, comparison) > -1;
-                if(!found) {
+                if (!found) {
                     val = val + s.name + ",";
                 }
             });
@@ -929,8 +929,16 @@ var Workspace = Backbone.View.extend({
             paramDiv += "<b>" + key + "</b> <input type='text' placeholder='" + key + "' value='" + val + "' />";
             hasParams = true;
 
+            var values = val.split(",")
+
+            var level = self.query.helper.getLevelForParameter(key);
+            _.each(values, function (v) {
+                if(v!=undefined && v!="") {
+                    self.query.helper.addtoSelection(v, level)
+                }
+            })
         }
-        paramDiv +="";
+        paramDiv += "";
 
         if (hasParams) {
             $(this.el).find('.parameter_input').html(paramDiv);
@@ -939,13 +947,15 @@ var Workspace = Backbone.View.extend({
         }
 
         $(this.el).find('.parameter_input input').off('change');
-        $(this.el).find('.parameter_input input').on('change', function(event) {
+        $(this.el).find('.parameter_input input').on('change', function (event) {
             var paramName = $(event.target).attr('placeholder');
             var paramVal = $(event.target).val();
             self.query.helper.model().parameters[paramName] = paramVal;
         });
 
-    },
+
+    }
+    ,
 
     render_result: function(args) {
         var self = this;

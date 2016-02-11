@@ -9,7 +9,7 @@ var SaikuOlapQueryTemplate = {
         "hierarchizeMode": null,
         "location": "FILTER",
         "hierarchies": [],
-        "nonEmpty": false,
+        "nonEmpty": false
       },
       "COLUMNS": {
         "mdx": null,
@@ -19,7 +19,7 @@ var SaikuOlapQueryTemplate = {
         "hierarchizeMode": null,
         "location": "COLUMNS",
         "hierarchies": [],
-        "nonEmpty": true,
+        "nonEmpty": true
       },
       "ROWS": {
         "mdx": null,
@@ -29,7 +29,7 @@ var SaikuOlapQueryTemplate = {
         "hierarchizeMode": null,
         "location": "ROWS",
         "hierarchies": [],
-        "nonEmpty": true,
+        "nonEmpty": true
       }
     },
     "visualTotals": false,
@@ -150,6 +150,23 @@ SaikuOlapQueryHelper.prototype.setDefaultFilter = function(hierarchy, level, val
   this.model().parameters[k] = value;
 };
 
+SaikuOlapQueryHelper.prototype.getLevelForParameter = function(parameter){
+  var m;
+  var axes = this.model().queryModel.axes;
+  _.each(axes, function(a){
+    var hier = a.hierarchies;
+    _.each(hier, function(h){
+      _.each(h.levels, function(l){
+        if(l.selection && l.selection["parameterName"] && l.selection["parameterName"] === parameter){
+          m = {hierarchy:h, level:l};
+          return false;
+        }
+      });
+    });
+  });
+  return m;
+};
+
 SaikuOlapQueryHelper.prototype.getSelectionsForParameter = function(parameter){
   var m;
   var axes = this.model().queryModel.axes;
@@ -167,9 +184,22 @@ SaikuOlapQueryHelper.prototype.getSelectionsForParameter = function(parameter){
   return m;
 };
 
-SaikuOlapQueryHelper.prototype.addtoSelection = function(membername, hierarchy, level){
-  var h = this.getHierarchy(hierarchy);
-  h.levels[level].selection = { "type": selectionType, "members": updates };
+SaikuOlapQueryHelper.prototype.addtoSelection = function(membername, level){
+  if(level.level.selection.members===undefined){
+    level.selection.members = [];
+  }
+  var found = false;
+  _.each(level.level.selection.members, function(m){
+    if(m.uniqueName==level.hierarchy.name+".["+level.level.name+"].["+membername+"]"){
+      found = true;
+    }
+  });
+  if(!found) {
+    level.level.selection.members.push({
+      uniqueName: level.hierarchy.name + ".[" + level.level.name + "].[" + membername + "]",
+      caption: membername
+    })
+  }
 };
 
 SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, position) {

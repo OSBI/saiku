@@ -36,6 +36,7 @@ public class DataSourceMapper {
     private String id;
     private String path;
     private String advanced;
+    private String security_type;
 
     public DataSourceMapper() {
 
@@ -63,6 +64,13 @@ public class DataSourceMapper {
             this.password = ds.getProperties().getProperty("password");
             this.path = ds.getProperties().getProperty("path");
             this.id = ds.getProperties().getProperty("id");
+            if(ds.getProperties().contains("schema")){
+                this.schema = ds.getProperties().getProperty("schema");
+            }
+
+            if(ds.getProperties().contains("security")){
+                this.security_type = ds.getProperties().getProperty("security");
+            }
 
 
         } else {
@@ -109,6 +117,12 @@ public class DataSourceMapper {
             props.setProperty("location", location);
             props.setProperty("username", this.username);
             props.setProperty("password", this.password);
+            if(this.security_type!=null){
+                props.setProperty("security.type", this.security_type);
+            }
+            if(this.schema!=null){
+                props.setProperty("schema", this.schema);
+            }
             if (this.path != null) {
                 props.setProperty("path", this.path);
             }
@@ -255,5 +269,9 @@ public class DataSourceMapper {
 
     public void setAdvanced(String advanced) {
         this.advanced = advanced;
+    }
+
+    public void setSecurity_type(String security_type) {
+        this.security_type = security_type;
     }
 }

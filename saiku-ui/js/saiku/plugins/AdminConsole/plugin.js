@@ -50,12 +50,12 @@ var AdminConsole = Backbone.View.extend({
         'click .remove_license_user' : 'remove_license_user'
     },
     initialize: function (args) {
-        _.bindAll(this, "fetch_users", "fetch_schemas", "fetch_datasources", "clear_users", "clear_datasources", "new_add_role", "new_remove_role", "save_new_user", "advanced_url", "view_datasource");
+        _.bindAll(this, "fetch_users", "fetch_schemas", "fetch_propkeys", "fetch_datasources", "clear_users", "clear_datasources", "new_add_role", "new_remove_role", "save_new_user", "advanced_url", "view_datasource");
         // Initialize repository
         this.users = new Users({}, { dialog: this });
         this.schemas = new Schemas({}, { dialog: this });
         this.datasources = new Connections({}, { dialog: this });
-
+        this.propertieskeys = new PropertiesKeys({}, {dialog:this});
         var that = this,
             license = new License();
 
@@ -211,6 +211,13 @@ var AdminConsole = Backbone.View.extend({
             }
         });
     },
+    fetch_propkeys: function(){
+        this.propertieskeys.fetch({
+            success: function(){
+
+            }
+        });
+    },
 
     template: function () {
         return _.template(" <div class='workspace' style='margin-left: -305px'>" +
@@ -274,6 +281,7 @@ var AdminConsole = Backbone.View.extend({
         // Adjust tab when selected
         this.tab.bind('tab:select', this.fetch_users);
         this.tab.bind('tab:select', this.fetch_datasources);
+        this.tab.bind('tab:select', this.fetch_propkeys);
         this.tab.bind('tab:select', this.fetch_schemas);
         this.tab.bind('tab:select', this.adjust);
         $(window).resize(this.adjust);
@@ -446,7 +454,15 @@ var AdminConsole = Backbone.View.extend({
         "<%});%></select><br/>" +
         "<label for='driver'>Jdbc Driver: </label><input name='driver' class='form-control' value='<%= conn.driver %>' type='text'/><br class='horridbr'/>" +
         "<label for='connusername'>Username: </label><input name='connusername' class='form-control' type='text' value='<%= conn.username %>'/><br/>" +
-        "<label for='connpassword'>Password:</label><input name='connpassword' class='form-control' type='password' value='<%= conn.password %>'/><br/></div>" +
+        "<label for='connpassword'>Password:</label><input name='connpassword' class='form-control' type='password' value='<%= conn.password %>'/><br/>" +
+        "<label for='securityselect'>Security:</label><select class='form-control securityselect' name='securityselect'>" +
+        "<option value='NONE'>None</option><option value='ONE2ONE'>One To One Mapping</option><option value='PASSTHROUGH'>Passthrough (for XMLA)</option></select><br/>" +
+        "<label for='extpropselect'>External Properties Key:</label>" +
+        "<select name='extpropselect' class='form-control'><option></option>" +
+        "<% _.each(properties, function(path){%>" +
+        "<option><%= path %></option>"+
+        "<%});%>"+
+        "</select><br/></div>" +
         "<div class='advconnection' style='display:none;'><textarea name='adv_text' class='form-control' rows='10' cols='75'><%= conn.advanced %></textarea></div>" +
         "<br/><br/><a href='' name='advancedurl' class='advancedurl btn btn-default'>Advanced</a><% if(Settings.DATA_SOURCES_LOOKUP) { %> " +
         "<a href='' name='getdatasources' class='btn btn-default getdatasources'>Data Sources</a> <% } %>" +
@@ -757,7 +773,7 @@ var AdminConsole = Backbone.View.extend({
         event.preventDefault();
         var conn = new Connection();
         var s = this.schemas;
-        var html = this.datasourcetemplate({conn: conn, schemas: s.models});
+        var html = this.datasourcetemplate({conn: conn, schemas: s.models, properties: this.properties.models});
 
         $(this.el).find('.user_info').html(html);
         Saiku.events.trigger('admin:viewdatasource', {
@@ -839,6 +855,21 @@ var AdminConsole = Backbone.View.extend({
             conn.set({"driver": $(this.el).find("input[name='driver']").val()});
             conn.set({"username": $(this.el).find("input[name='connusername']").val()});
             conn.set({"password": $(this.el).find("input[name='connpassword']").val()});
+            var v = $(this.el).find(".securityselect").val();
+            if(v==="ONE2ONE"){
+                conn.set({"security_type": "one2one"});
+            }
+            else if(v==="ONE2ONE"){
+                conn.set({"security_type": "passthrough"});
+            }
+            else{
+                conn.set({"security_type":null})
+            }
+
+            if($(this.el).find("input[name='extpropselect']").val()){
+                conn.set({"propertykey": $(this.el).find("input[name='extpropselect']").val()})
+            }
+
         }
 
         conn.save({}, {

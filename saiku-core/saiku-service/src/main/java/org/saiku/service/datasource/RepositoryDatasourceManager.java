@@ -87,35 +87,46 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                         if(file.getDriver()!= null) {
                             props.put("driver", file.getDriver());
                         }
-                        else if(ext.contains("datasource."+file.getName()+".driver")){
+                        else if(ext.containsKey("datasource."+file.getName()+".driver")){
                             String p = ext.getProperty("datasource." + file.getName() + ".driver");
                             props.put("driver", p);
                         }
-                        if(file.getLocation()!=null) {
-                            props.put("location", file.getLocation());
-                        }
-                        else if(ext.contains("datasource."+file.getName()+".location")){
+                        if(ext.containsKey("datasource."+file.getName()+".location")){
                             String p = ext.getProperty("datasource." + file.getName() + ".location");
-                            props.put("location", p);
+                            if(ext.containsKey("datasource."+file.getName()+".schemaoverride")){
+                                String[] spl = p.split(";");
+                                spl[2]="Catalog=mondrian://"+file.getSchema();
+                                StringBuilder sb = new StringBuilder();
+                                for(String str: spl){
+                                    sb.append(str);
+                                }
+                                props.put("location",sb.toString());
+                            }
+                            else {
+                                props.put("location", p);
+                            }
+                        }
+                        else if(file.getLocation()!=null) {
+                            props.put("location", file.getLocation());
                         }
                         if(file.getUsername()!=null) {
                             props.put("username", file.getUsername());
                         }
-                        else if(ext.contains("datasource."+file.getName()+".username")){
+                        else if(ext.containsKey("datasource."+file.getName()+".username")){
                             String p = ext.getProperty("datasource." + file.getName() + ".username");
                             props.put("username", p);
                         }
                         if(file.getPassword()!=null) {
                             props.put("password", file.getPassword());
                         }
-                        else if(ext.contains("datasource."+file.getName()+".password")){
+                        else if(ext.containsKey("datasource."+file.getName()+".password")){
                             String p = ext.getProperty("datasource." + file.getName() + ".password");
                             props.put("password", p);
                         }
                         if(file.getPath()!=null) {
                             props.put("path", file.getPath());
                         }
-                        else if(ext.contains("datasource."+file.getName()+".path")){
+                        else if(ext.containsKey("datasource."+file.getName()+".path")){
                             String p = ext.getProperty("datasource." + file.getName() + ".path");
                             props.put("path", p);
                         }
@@ -125,21 +136,21 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                         if(file.getSecurityenabled()!=null) {
                           props.put("security.enabled", file.getSecurityenabled());
                         }
-                        else if(ext.contains("datasource."+file.getName()+".security.enabled")){
+                        else if(ext.containsKey("datasource."+file.getName()+".security.enabled")){
                             String p = ext.getProperty("datasource." + file.getName() + ".security.enabled");
                             props.put("security.enabled", p);
                         }
                         if(file.getSecuritytype()!=null) {
                           props.put("security.type", file.getSecuritytype());
                         }
-                        else if(ext.contains("datasource."+file.getName()+".security.type")){
+                        else if(ext.containsKey("datasource."+file.getName()+".security.type")){
                             String p = ext.getProperty("datasource." + file.getName() + ".security.type");
                             props.put("security.type", p);
                         }
                         if(file.getSecuritymapping()!=null) {
                           props.put("security.mapping", file.getSecuritymapping());
                         }
-                        else if(ext.contains("datasource."+file.getName()+".security.mapping")){
+                        else if(ext.containsKey("datasource."+file.getName()+".security.mapping")){
                             String p = ext.getProperty("datasource." + file.getName() + ".security.mapping");
                             props.put("security.mapping", p);
                         }
@@ -172,6 +183,27 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
         return p;
 
+    }
+
+    public String[] getAvailablePropertiesKeys(){
+        Properties p = new Properties();
+        InputStream input;
+
+        try {
+            input = new FileInputStream(externalparameters);
+            p.load(input);
+        } catch (IOException e) {
+            log.debug("file did not exist");
+        }
+
+        String[] arr = p.keySet().toArray(new String[p.keySet().size()]);
+
+        ArrayList<String> newlist = new ArrayList<>();
+        for(String str: arr){
+            String[] s = str.split("\\.");
+            newlist.add(s[1]);
+        }
+        return  newlist.toArray(new String[newlist.size()]);
     }
 
     public void unload() {

@@ -25,6 +25,7 @@ public class DataSource {
     private String username;
     private String password;
     private String path;
+    private String schema;
 
     public DataSource(SaikuDatasource datasource) {
         this.type = datasource.getType().toString();
@@ -35,10 +36,21 @@ public class DataSource {
         this.password = datasource.getProperties().getProperty("password");
         this.id = datasource.getProperties().getProperty("id");
         this.encryptpassword = datasource.getProperties().getProperty("encrypt.password");
-        this.securityenabled = datasource.getProperties().getProperty("security.enabled");
+        if(datasource.getProperties().containsKey("security.enabled")){
+          this.securityenabled = datasource.getProperties().getProperty("security.enabled");
+        } else if(datasource.getProperties().containsKey("security.type") &&
+                  datasource.getProperties().getProperty("security.type")!=null){
+          this.securityenabled = "true";
+        }
+        else {
+          this.securityenabled = "false";
+        }
         this.securitytype = datasource.getProperties().getProperty("security.type");
         this.securitymapping = datasource.getProperties().getProperty("security.mapping");
         this.advanced = datasource.getProperties().getProperty("advanced");
+        if(datasource.getProperties().containsKey("schema")) {
+          this.schema = datasource.getProperties().getProperty("schema");
+        }
     }
 
     public DataSource(){
@@ -159,5 +171,13 @@ public class DataSource {
 
   public void setAdvanced(String advanced) {
     this.advanced = advanced;
+  }
+
+  public String getSchema() {
+    return schema;
+  }
+
+  public void setSchema(String schema) {
+    this.schema = schema;
   }
 }
