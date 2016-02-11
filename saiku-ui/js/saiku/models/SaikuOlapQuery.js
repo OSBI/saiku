@@ -138,6 +138,31 @@ SaikuOlapQueryHelper.prototype.removeFilter = function(filterable, flavour) {
     }
 };
 
+SaikuOlapQueryHelper.prototype.setDefaultFilter = function(hierarchy, level, value){
+  var strip = level.replace("[", "");
+  strip = strip.replace("]","");
+  this.includeLevel("FILTER", hierarchy, strip);
+  var h = this.getHierarchy(hierarchy).levels[strip];
+  h.selection = { "type": "INCLUSION", "members": [] };
+  h.selection["parameterName"] = "default_filter_"+strip;
+  this.model().parameters = {};
+  var k = "default_filter_"+strip;
+  this.model().parameters[k] = value;
+};
+
+SaikuOlapQueryHelper.prototype.getSelectionsForParameter = function(parameter){
+  var axes = this.model().queryModel.axes;
+  _.each(axes, function(a){
+    var hier = a.hierarchies;
+    _.each(hier, function(h){
+      _.each(h.levels, function(l){
+        if(l.selection && l.selection["parameterName"] && l.selection["parameterName"] === parameter){
+          return l.selection.members;
+        }
+      });
+    });
+  })
+};
 SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, position) {
     var mHierarchy = this.getHierarchy(hierarchy);
     if (mHierarchy) {

@@ -570,6 +570,7 @@ var SelectionsModal = Modal.extend({
                             caption: decodeURIComponent(caption)
                         });
                     }
+
             });
         }
 
@@ -589,6 +590,8 @@ var SelectionsModal = Modal.extend({
                     if (!parameters[parameterName]) {
                     //    self.workspace.query.helper.model().parameters[parameterName] = "";
                     }
+
+
                 }
 
         }

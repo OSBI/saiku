@@ -342,6 +342,36 @@ var Workspace = Backbone.View.extend({
             .animate({ backgroundColor: '#fff' }, 'slow');*/
     },
 
+    extractDefaultFilters: function(paramsURI){
+        var defaultfilters=[];
+        var filtername;
+        var filtervalue;
+        for(var i in paramsURI){
+            if(i.indexOf("default_filter_")>-1){
+                var j = i.replace("default_filter_", "");
+                filtername = j;
+                filtervalue = paramsURI[i];
+                defaultfilters.push({"filtername":j, "filtervalue":filtervalue});
+            }
+
+        }
+        return defaultfilters;
+
+    },
+    setDefaultFilters: function(filters, query){
+
+        _.each(filters, function(f){
+
+            var n = f.filtername;
+
+            var hierarchy = n.substring(0, n.lastIndexOf("[")-1);
+            var level = n.substring(n.lastIndexOf("["));
+
+            query.helper.setDefaultFilter(hierarchy, level, f.filtervalue)
+        });
+
+
+    },
     data_connections: function(paramsURI) {
         var connections = Saiku.session.sessionworkspace.connections,
             self = this;
@@ -356,6 +386,7 @@ var Workspace = Backbone.View.extend({
                                 if (paramsURI.schema === schemaName && paramsURI.cube === cubeName) {
                                     self.selected_cube = connection.name + '/' + catalog.name + '/' + schemaName + '/' + cubeName;
                                     self.isUrlCubeNavigation = true;
+                                    self.paramsURI = paramsURI;
                                     _.delay(self.new_query, 1000);
                                 }
                             }
@@ -410,6 +441,9 @@ var Workspace = Backbone.View.extend({
         });
 
         obj.query = this.query;
+
+        var deffilters = this.extractDefaultFilters(this.paramsURI);
+        this.setDefaultFilters(deffilters, obj.query);
 
         // Save the query to the server and init the UI
         obj.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });
@@ -876,8 +910,17 @@ var Workspace = Backbone.View.extend({
             if (parameters[key] && parameters[key] !== null) {
                 val = parameters[key];
             }
+            val = val+",";
+            var selections = this.query.helper.getSelectionsForParameter(key);
+            _.each(selections, function(s){
+                val = val + s.name+",";
+            });
+
+            val.substr(val.lastIndexOf(","));
+
             paramDiv += "<b>" + key + "</b> <input type='text' placeholder='" + key + "' value='" + val + "' />";
             hasParams = true;
+
         }
         paramDiv +="";
 

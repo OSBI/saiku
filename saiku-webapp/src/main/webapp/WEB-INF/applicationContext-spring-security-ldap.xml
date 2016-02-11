@@ -10,6 +10,19 @@
        xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd
        		   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
+	<context:property-placeholder
+			location="/WEB-INF/applicationContext-security-ldap.properties"
+			ignore-resource-not-found="true"
+			ignore-unresolvable="true"
+			order ="0" />
+
+	<context:property-placeholder
+			location="file:///${ext.prop.dir}applicationContext-security-ldap.properties"
+			ignore-resource-not-found="true"
+			ignore-unresolvable="true"
+			order ="-1" />
+
+
 	<security:authentication-manager alias="authenticationManager">
 		<security:authentication-provider ref="authenticationProvider" />
  	</security:authentication-manager>
@@ -86,9 +99,6 @@
     class="org.springframework.security.authentication.encoding.PlaintextPasswordEncoder" >
   </bean>
 
-  <bean id="propertyPlaceholderConfigurerSecurityLdap" 
-    class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-    <property name="location" value="/WEB-INF/applicationContext-security-ldap.properties" />
-  </bean>
+
 
 </beans>
