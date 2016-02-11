@@ -167,7 +167,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             input = new FileInputStream(externalparameters);
             p.load(input);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.debug("file did not exist");
         }
 
         return p;
