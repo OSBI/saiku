@@ -374,6 +374,11 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
 
   }
 
+  @Override
+  public void setExternalPropertiesFile(String file) {
+
+  }
+
   public String saveFile(String path, String content, String user) {
         return null;
     }

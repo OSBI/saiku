@@ -163,9 +163,15 @@ SaikuOlapQueryHelper.prototype.getSelectionsForParameter = function(parameter){
         }
       });
     });
-  })
+  });
   return m;
 };
+
+SaikuOlapQueryHelper.prototype.addtoSelection = function(membername, hierarchy, level){
+  var h = this.getHierarchy(hierarchy);
+  h.levels[level].selection = { "type": selectionType, "members": updates };
+};
+
 SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, position) {
     var mHierarchy = this.getHierarchy(hierarchy);
     if (mHierarchy) {

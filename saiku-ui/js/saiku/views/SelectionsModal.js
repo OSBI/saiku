@@ -120,7 +120,9 @@ var SelectionsModal = Modal.extend({
                 if (pName) {
                     $(this.el).find('#parameter').val(pName);
 
-                    this.paramvalue = this.query.helper.model().parameters[pName].split(",");
+                    if(this.query.helper.model().parameters[pName]!=undefined) {
+                        this.paramvalue = this.query.helper.model().parameters[pName].split(",");
+                    }
 
                 }
             }
@@ -327,16 +329,16 @@ var SelectionsModal = Modal.extend({
 
             // Populate both boxes
 
+            /*var arr = this.paramvalue;
             _.each(this.paramvalue, function(param){
-                for(var m in self.selected_members){
-                    if(m.name !== param){
-                        console.log(param);
+                _.each(self.selected_members, function(m){
+                    if(m.name == param){
+                        var idx = self.paramvalue.indexOf(param);
+                        arr.splice(idx, 1);
                     }
-                }
-
-
+                });
             });
-
+*/
 
             for (var j = 0, len = this.selected_members.length; j < len; j++) {
                     var member = this.selected_members[j];
