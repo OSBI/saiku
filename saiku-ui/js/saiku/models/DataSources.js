@@ -55,18 +55,3 @@ var DataSources = Backbone.Model.extend({
 	}
 });
 
-var PropertiesKeys = Backbone.Model.extend({
-	url: 'admin/datakeys',
-
-	initialize: function(args, options) {
-		if (options && options.dialog) {
-			this.dialog = options.dialog;
-		}
-	},
-
-	parse: function(response) {
-		if (this.dialog) {
-			this.dialog.callback(response);
-		}
-	}
-});

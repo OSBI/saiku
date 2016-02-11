@@ -405,7 +405,8 @@ var AdminConsole = Backbone.View.extend({
         "<form><input name='restore' type='file' class='restore_button'/><div class='clear'></div><br/>" +
         "<input type='submit' class='form_button upload_button submitrestore' value='Restore Repository'><input type='submit' class='form_button upload_button submitrestorelegacy' value='Restore Legacy Reports'></form>" +
 "<br/><div id='uploadstatus'>"),
-    //itemTemplate : _.template( "<% console.log('Hello2 from template' +Object.keys(entry)); %>" +"Helo<!--<li class='query'><span class='icon'></span><a href=''>hello</a></li>-->"),
+    //itemTemplate : _.template( "<% console.log('Hello2 from template' +Object.keys(entry)); %>" +"Helo<!--<li
+    // class='query'><span class='icon'></span><a href=''>hello</a></li>-->"),
     maintemplate: _.template("<% _.each( repoObjects, function( entry ) { %>" +
         "<li class='user'><span class='icon'></span><a href='<%= entry.id%>'><%= entry.username %></a></li>" +
         "<% } ); %>"),
@@ -415,6 +416,7 @@ var AdminConsole = Backbone.View.extend({
     schematemplate: _.template("<% _.each( repoObjects, function( entry ) { %>" +
         "<li class='schema'><span class='icon'></span><a href='<%= entry.name%>'><%= entry.name %></a></li>" +
         "<% } ); %>"),
+
     usertemplate: _.template(" <form><div id='accordion'><h3 class='accordion-toggle' >User Details</h3>" +
         "<div class='accordion-content default'>"+
         "<label for='username'>Username:</label> <input class='form-control'  onfocus=\"this.value=''; this.onfocus=null;\" type='text' name='username' value='<% if(user.username) { %><%= user.username %><%} else{ %>Enter Username<%}%>'><br/>" +
@@ -551,7 +553,7 @@ var AdminConsole = Backbone.View.extend({
 
         var user = this.datasources.get(path);
         var s = this.schemas;
-        var html = this.datasourcetemplate({conn: user.attributes,schemas: s.models});
+        var html = this.datasourcetemplate({conn: user.attributes,schemas: s.models, properties: this.pkeys});
 
         $(this.el).find('.user_info').html(html);
         Saiku.events.trigger('admin:viewdatasource', {
@@ -611,7 +613,6 @@ var AdminConsole = Backbone.View.extend({
 
         var user = this.users.get(path);
 
-        var that = this;
         if ($newtarget.val() == $newtarget2.val()) {
             user.set({password: $newtarget.val()});
             user.save({}, {data: JSON.stringify(user.attributes), contentType: "application/json", success: function(e){
@@ -773,7 +774,7 @@ var AdminConsole = Backbone.View.extend({
         event.preventDefault();
         var conn = new Connection();
         var s = this.schemas;
-        var html = this.datasourcetemplate({conn: conn, schemas: s.models, properties: this.properties.models});
+        var html = this.datasourcetemplate({conn: conn, schemas: s.models, properties: this.pkeys});
 
         $(this.el).find('.user_info').html(html);
         Saiku.events.trigger('admin:viewdatasource', {
@@ -1104,6 +1105,11 @@ var Users = Backbone.Collection.extend({
     }
 });
 
+
+var PropertyKey = Backbone.Model.extend({
+
+});
+
 var Schema = Backbone.Model.extend({
 
     fileAttribute: 'file',
@@ -1123,6 +1129,28 @@ var RestoreFiles = Backbone.Model.extend({
     fileAttribute: 'file'
 });
 
+
+var PropertiesKeys = Backbone.Collection.extend({
+   model: PropertyKey,
+    url: function () {
+        return AdminUrl + "/datakeys"
+    },
+    initialize: function(args,options){
+        if(options && options.dialog){
+            this.dialog = options.dialog;
+
+
+        }
+    },
+    parse: function(response) {
+        this.dialog.pkeys=[];
+        var that=this;
+        _.each(response, function(f){
+            that.dialog.pkeys.push(f);
+        });
+        return response;
+    }
+});
 
 var Schemas = Backbone.Collection.extend({
     model: Schema,
