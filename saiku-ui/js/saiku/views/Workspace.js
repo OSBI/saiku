@@ -907,16 +907,24 @@ var Workspace = Backbone.View.extend({
         var hasParams = false;
         for (var key in parameters) {
             var val = "";
+            var comparison;
             if (parameters[key] && parameters[key] !== null) {
                 val = parameters[key];
+                comparison = parameters[key].split(",");
             }
-            val = val+",";
+
+            if(val!=undefined && val!="") {
+                val = val + ",";
+            }
             var selections = this.query.helper.getSelectionsForParameter(key);
             _.each(selections, function(s){
-                val = val + s.name+",";
+                var found = $.inArray(s.name, comparison) > -1;
+                if(!found) {
+                    val = val + s.name + ",";
+                }
             });
 
-            val.substr(val.lastIndexOf(","));
+            val = val.substr(0, val.lastIndexOf(","));
 
             paramDiv += "<b>" + key + "</b> <input type='text' placeholder='" + key + "' value='" + val + "' />";
             hasParams = true;

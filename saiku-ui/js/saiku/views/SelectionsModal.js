@@ -20,6 +20,8 @@
 var SelectionsModal = Modal.extend({
     type: "selections",
 
+    paramvalue: null,
+
     buttons: [
         { text: "OK", method: "save" },
         { text: "Open Date Filter", method: "open_date_filter" },
@@ -116,7 +118,10 @@ var SelectionsModal = Modal.extend({
             if (level) {
                 var pName = level.selection ? level.selection.parameterName : null;
                 if (pName) {
-                    $(this.el).find('input.parameter').val(pName);
+                    $(this.el).find('#parameter').val(pName);
+
+                    this.paramvalue = this.query.helper.model().parameters[pName].split(",");
+
                 }
             }
             $(this.el).find('.parameter').removeClass('hide');
@@ -321,6 +326,16 @@ var SelectionsModal = Modal.extend({
             var used_members = [];
 
             // Populate both boxes
+
+            _.each(this.paramvalue, function(param){
+                for(var m in self.selected_members){
+                    if(m.name !== param){
+                        console.log(param);
+                    }
+                }
+
+
+            });
 
 
             for (var j = 0, len = this.selected_members.length; j < len; j++) {

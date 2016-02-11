@@ -20,6 +20,7 @@
         <property name="earthquakeUrl" value="${earthquakeurl}"/>
         <property name="repoPasswordProvider" ref ="repoPasswordProviderBean"/>
         <property name="defaultRole" value="ROLE_USER"/>
+        <property name="externalPropertiesFile" value="${catalina.base}/conf/Catalina/localhost/datasources.properties"/>
         <!-- If you change the repoPassword set this property for at least 1 restart to update the old repo password-->
         <!--<property name="oldRepoPassword" value="sa!kuanalyt!cs"/>-->
 

@@ -29,6 +29,7 @@ import org.saiku.service.util.security.authentication.PasswordProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -57,8 +58,10 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String earthquakedir;
     private String earthquakeschema;
     private String defaultRole;
+    private String externalparameters;
 
     public void load() {
+        Properties ext = checkForExternalDataSourceProperties();
         irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopasswordprovider.getPassword(),
             oldpassword, defaultRole);
         try {
@@ -84,17 +87,37 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                         if(file.getDriver()!= null) {
                             props.put("driver", file.getDriver());
                         }
+                        else if(ext.contains("datasource."+file.getName()+".driver")){
+                            String p = ext.getProperty("datasource." + file.getName() + ".driver");
+                            props.put("driver", p);
+                        }
                         if(file.getLocation()!=null) {
                             props.put("location", file.getLocation());
+                        }
+                        else if(ext.contains("datasource."+file.getName()+".location")){
+                            String p = ext.getProperty("datasource." + file.getName() + ".location");
+                            props.put("location", p);
                         }
                         if(file.getUsername()!=null) {
                             props.put("username", file.getUsername());
                         }
+                        else if(ext.contains("datasource."+file.getName()+".username")){
+                            String p = ext.getProperty("datasource." + file.getName() + ".username");
+                            props.put("username", p);
+                        }
                         if(file.getPassword()!=null) {
                             props.put("password", file.getPassword());
                         }
+                        else if(ext.contains("datasource."+file.getName()+".password")){
+                            String p = ext.getProperty("datasource." + file.getName() + ".password");
+                            props.put("password", p);
+                        }
                         if(file.getPath()!=null) {
                             props.put("path", file.getPath());
+                        }
+                        else if(ext.contains("datasource."+file.getName()+".path")){
+                            String p = ext.getProperty("datasource." + file.getName() + ".path");
+                            props.put("path", p);
                         }
                         if(file.getId()!=null) {
                             props.put("id", file.getId());
@@ -102,11 +125,23 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                         if(file.getSecurityenabled()!=null) {
                           props.put("security.enabled", file.getSecurityenabled());
                         }
+                        else if(ext.contains("datasource."+file.getName()+".security.enabled")){
+                            String p = ext.getProperty("datasource." + file.getName() + ".security.enabled");
+                            props.put("security.enabled", p);
+                        }
                         if(file.getSecuritytype()!=null) {
                           props.put("security.type", file.getSecuritytype());
                         }
+                        else if(ext.contains("datasource."+file.getName()+".security.type")){
+                            String p = ext.getProperty("datasource." + file.getName() + ".security.type");
+                            props.put("security.type", p);
+                        }
                         if(file.getSecuritymapping()!=null) {
                           props.put("security.mapping", file.getSecuritymapping());
+                        }
+                        else if(ext.contains("datasource."+file.getName()+".security.mapping")){
+                            String p = ext.getProperty("datasource." + file.getName() + ".security.mapping");
+                            props.put("security.mapping", p);
                         }
                         if(file.getAdvanced()!=null){
                           props.put("advanced", file.getAdvanced());
@@ -122,6 +157,21 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         } catch (Exception e) {
             throw new SaikuServiceException(e.getMessage(), e);
         }
+    }
+
+    public Properties checkForExternalDataSourceProperties(){
+        Properties p = new Properties();
+        InputStream input;
+
+        try {
+            input = new FileInputStream(externalparameters);
+            p.load(input);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return p;
+
     }
 
     public void unload() {
@@ -493,6 +543,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public void setEarthquakeSchema(String earthquakeschema) {
         this.earthquakeschema = earthquakeschema;
+    }
+
+    @Override
+    public void setExternalPropertiesFile(String file) {
+        this.externalparameters = file;
     }
 
     public void setRepoPasswordProvider(PasswordProvider passwordProvider){

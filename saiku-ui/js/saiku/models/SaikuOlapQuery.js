@@ -151,17 +151,20 @@ SaikuOlapQueryHelper.prototype.setDefaultFilter = function(hierarchy, level, val
 };
 
 SaikuOlapQueryHelper.prototype.getSelectionsForParameter = function(parameter){
+  var m;
   var axes = this.model().queryModel.axes;
   _.each(axes, function(a){
     var hier = a.hierarchies;
     _.each(hier, function(h){
       _.each(h.levels, function(l){
         if(l.selection && l.selection["parameterName"] && l.selection["parameterName"] === parameter){
-          return l.selection.members;
+          m = l.selection.members;
+          return false;
         }
       });
     });
   })
+  return m;
 };
 SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, position) {
     var mHierarchy = this.getHierarchy(hierarchy);
