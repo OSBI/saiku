@@ -233,8 +233,10 @@ var AdminConsole = Backbone.View.extend({
             "<div class='sidebar_inner'>" +
             "<a class='back_query' href='#back_query' style='display:none'></a>" +
             "    <ul id='queries' class='RepositoryObjects'>" +
+            "<% if(Settings.SHOW_USER_MANAGEMENT) { %>"+
             "<li><strong>User Management</strong>" +
             "<ul class='inner_users'><li class='create_user'>Add User</li></ul></li>" +
+            "<% } %>"+
             "<li><strong>Data Source Management</strong></li>" +
             "<ul class='dslist'><strong>Data Sources</strong>"+
             "<ul class='inner_datasource'><li class='create_datasource'>Add Data Source</li></ul></ul>" +
@@ -459,12 +461,13 @@ var AdminConsole = Backbone.View.extend({
         "<label for='connpassword'>Password:</label><input name='connpassword' class='form-control' type='password' value='<%= conn.password %>'/><br/>" +
         "<label for='securityselect'>Security:</label><select class='form-control securityselect' name='securityselect'>" +
         "<option value='NONE'>None</option><option value='ONE2ONE'>One To One Mapping</option><option value='PASSTHROUGH'>Passthrough (for XMLA)</option></select><br/>" +
+        "<% if(Settings.EXT_DATASOURCE_PROPERTIES) { %>"+
         "<label for='extpropselect'>External Properties Key:</label>" +
         "<select name='extpropselect' class='form-control'><option></option>" +
         "<% _.each(properties, function(path){%>" +
         "<option><%= path %></option>"+
         "<%});%>"+
-        "</select><br/></div>" +
+        "</select><% } %><br/></div>" +
         "<div class='advconnection' style='display:none;'><textarea name='adv_text' class='form-control' rows='10' cols='75'><%= conn.advanced %></textarea></div>" +
         "<br/><br/><a href='' name='advancedurl' class='advancedurl btn btn-default'>Advanced</a><% if(Settings.DATA_SOURCES_LOOKUP) { %> " +
         "<a href='' name='getdatasources' class='btn btn-default getdatasources'>Data Sources</a> <% } %>" +

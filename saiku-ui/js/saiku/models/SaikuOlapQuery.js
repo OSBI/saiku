@@ -145,7 +145,9 @@ SaikuOlapQueryHelper.prototype.setDefaultFilter = function(hierarchy, level, val
   var h = this.getHierarchy(hierarchy).levels[strip];
   h.selection = { "type": "INCLUSION", "members": [] };
   h.selection["parameterName"] = "default_filter_"+strip;
-  this.model().parameters = {};
+  if(!this.model().parameters){
+    this.model().parameters = {};
+  }
   var k = "default_filter_"+strip;
   this.model().parameters[k] = value;
 };
