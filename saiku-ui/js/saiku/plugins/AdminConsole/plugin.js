@@ -463,7 +463,7 @@ var AdminConsole = Backbone.View.extend({
         "<option value='NONE'>None</option><option value='ONE2ONE'>One To One Mapping</option><option value='PASSTHROUGH'>Passthrough (for XMLA)</option></select><br/>" +
         "<% if(Settings.EXT_DATASOURCE_PROPERTIES) { %>"+
         "<label for='extpropselect'>External Properties Key:</label>" +
-        "<select name='extpropselect' class='form-control'><option></option>" +
+        "<select name='extpropselect' class='form-control extpropselect'><option></option>" +
         "<% _.each(properties, function(path){%>" +
         "<option><%= path %></option>"+
         "<%});%>"+
@@ -870,8 +870,8 @@ var AdminConsole = Backbone.View.extend({
                 conn.set({"security_type":null})
             }
 
-            if($(this.el).find("input[name='extpropselect']").val()){
-                conn.set({"propertykey": $(this.el).find("input[name='extpropselect']").val()})
+            if($(this.el).find(".extpropselect").val()){
+                conn.set({"propertyKey": $(this.el).find(".extpropselect").val()})
             }
 
         }

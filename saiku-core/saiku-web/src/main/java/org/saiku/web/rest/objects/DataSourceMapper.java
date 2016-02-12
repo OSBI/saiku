@@ -37,6 +37,7 @@ public class DataSourceMapper {
     private String path;
     private String advanced;
     private String security_type;
+    private String propertyKey;
 
     public DataSourceMapper() {
 
@@ -133,6 +134,10 @@ public class DataSourceMapper {
             }
             props.setProperty("advanced", "false");
 
+            if(this.propertyKey != null){
+                props.setProperty("propertyKey", this.propertyKey);
+            }
+
             return new SaikuDatasource(this.getConnectionname(), SaikuDatasource.Type.OLAP, props);
         } else {
             String name = null;
@@ -180,6 +185,9 @@ public class DataSourceMapper {
                     props.setProperty("id", this.id);
                 } else {
                     props.setProperty("id", UUID.randomUUID().toString());
+                }
+                if(row.startsWith("propertyKey=")){
+                    props.setProperty("propertyKey", row.substring(12, row.length()));
                 }
             }
 
@@ -273,5 +281,17 @@ public class DataSourceMapper {
 
     public void setSecurity_type(String security_type) {
         this.security_type = security_type;
+    }
+
+    public void setPropertyKey(String propertyKey) {
+        this.propertyKey = propertyKey;
+    }
+
+    public String getPropertyKey() {
+        return propertyKey;
+    }
+
+    public String getSecurity_type() {
+        return security_type;
     }
 }

@@ -26,8 +26,9 @@ public class DataSource {
     private String password;
     private String path;
     private String schema;
+  private String propertyKey;
 
-    public DataSource(SaikuDatasource datasource) {
+  public DataSource(SaikuDatasource datasource) {
         this.type = datasource.getType().toString();
         this.name = datasource.getName();
         this.driver = datasource.getProperties().getProperty("driver");
@@ -51,6 +52,11 @@ public class DataSource {
         if(datasource.getProperties().containsKey("schema")) {
           this.schema = datasource.getProperties().getProperty("schema");
         }
+
+        if(datasource.getProperties().containsKey("propertyKey")){
+          this.propertyKey = datasource.getProperties().getProperty("propertyKey");
+        }
+
     }
 
     public DataSource(){
@@ -179,5 +185,14 @@ public class DataSource {
 
   public void setSchema(String schema) {
     this.schema = schema;
+  }
+
+
+  public void setPropertyKey(String propertyKey) {
+    this.propertyKey = propertyKey;
+  }
+
+  public String getPropertyKey() {
+    return propertyKey;
   }
 }
