@@ -405,7 +405,7 @@ var OpenQuery = Backbone.View.extend({
         }
         
         if (item.fileType === 'saiku') {
-            var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state }));
+            var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state, processURI: false }));
         }
         else {
             Saiku.session.trigger('openQuery:open_query', { query: query, item: item, viewState: state });
@@ -446,7 +446,7 @@ var OpenQuery = Backbone.View.extend({
             if(fileargs.viewstate && !fileargs.viewstate.hasOwnProperty('currentTarget')) {
                 state = viewstate;
             }
-            var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state }));
+            var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state, processURI: false }));
 
         });
     },
