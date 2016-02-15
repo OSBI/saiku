@@ -31,18 +31,17 @@
         <property name="earthquakeSchema" value="${earthquakeschema}"/>
         <property name="earthquakeUrl" value="${earthquakeurl}"/>
         <property name="repoPasswordProvider" ref ="repoPasswordProviderBean"/>
-        <property name="defaultRole" value="ROLE_USER"/>
-        <property name="externalPropertiesFile" value="${catalina.base}/conf/Catalina/localhost/datasources.properties"/>
+        <property name="defaultRole" value="${default.role}"/>
+        <property name="externalPropertiesFile" value="${external.properties.file}"/>
         <!-- If you change the repoPassword set this property for at least 1 restart to update the old repo password-->
         <!--<property name="oldRepoPassword" value="sa!kuanalyt!cs"/>-->
 
     </bean>
 
     <bean id="repoPasswordProviderBean" class="org.saiku.service.util.security.authentication.SimplePasswordProvider">
-        <constructor-arg index="0" value="sa!kuanalyt!cs"/>
+        <constructor-arg index="0" value="${webdav.password}"/>
     </bean>
 
-    <!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
     <bean id="h2database" class="org.saiku.database.Database" init-method="init">
         <property name="datasourceManager" ref="repositoryDsManager"/>
     </bean>
@@ -71,11 +70,11 @@
 
     <bean id="userDaoDataSource"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="driverClassName" value="${userdao.driverclass}" />
         <property name="url"
-                  value="jdbc:h2:../../data/saiku;MODE=MySQL"/>
-        <property name="username" value="sa" />
-        <property name="password" value="" />
+                  value="${userdao.url}"/>
+        <property name="username" value="${userdao.username}" />
+        <property name="password" value="${userdao.password}" />
     </bean>
 
     <bean id="userDAO" class="org.saiku.database.JdbcUserDAO">
@@ -94,7 +93,7 @@
         <property name="sessionService" ref="sessionService"/>
     </bean>
     <bean id="logwriterbean" class="org.saiku.log.LogExtractor">
-        <property name="logdirectory" value="../logs"/>
+        <property name="logdirectory" value="${logdir}"/>
     </bean>
     <bean id="adminBean" class="org.saiku.web.rest.resources.AdminResource">
         <property name="userService" ref="userServiceBean"/>
@@ -160,8 +159,6 @@
         <property name="sessionService" ref="sessionService"/>
         <property name="datasourceService" ref="datasourceServiceBean"/>
     </bean>
-    <!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
-
 
 
     <bean id="filterRepositoryBean" scope="session"

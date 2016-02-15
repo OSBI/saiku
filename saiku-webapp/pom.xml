@@ -9,19 +9,6 @@
     <version>3.8-RC2</version>
     <name>saiku - webapp</name>
     <packaging>war</packaging>
-
-    <properties>
-        <repoconfig>../../repository/configuration.xml</repoconfig>
-        <repodata>../../repository/data</repodata>
-        <foodmartrepo>../../data</foodmartrepo>
-        <foodmartschema>../../data/FoodMart4.xml</foodmartschema>
-        <foodmarturl>jdbc:h2:../../data/foodmart;MODE=MySQL</foodmarturl>
-        <earthquakerepo>../../data</earthquakerepo>
-        <earthquakeschema>../../data/Earthquakes.xml</earthquakeschema>
-        <earthquakeurl>jdbc:h2:../../data/earthquakes;MODE=MySQL</earthquakeurl>
-        <defaultRole>ROLE_USER</defaultRole>
-        <pluginpath>../webapps/ROOT/js/saiku/plugins/</pluginpath>
-    </properties>
     <build>
         <plugins>
             <plugin>

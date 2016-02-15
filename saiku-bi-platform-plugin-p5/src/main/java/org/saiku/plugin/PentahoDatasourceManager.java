@@ -383,6 +383,11 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
     }
 
+    @Override
+    public String[] getAvailablePropertiesKeys() {
+        return new String[0];
+    }
+
     public void setACL(String a, String b, String c, List<String> d) {
 
     }
