@@ -863,7 +863,7 @@ var AdminConsole = Backbone.View.extend({
             if(v==="ONE2ONE"){
                 conn.set({"security_type": "one2one"});
             }
-            else if(v==="ONE2ONE"){
+            else if(v==="PASSTHROUGH"){
                 conn.set({"security_type": "passthrough"});
             }
             else{
