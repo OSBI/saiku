@@ -94,12 +94,12 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                         if(file.getPropertyKey()!=null &&
                            ext.containsKey("datasource."+file.getPropertyKey()+".location")){
                             String p = ext.getProperty("datasource." + file.getPropertyKey() + ".location");
-                            if(ext.containsKey("datasource."+file.getName()+".schemaoverride")){
+                            if(ext.containsKey("datasource."+file.getPropertyKey()+".schemaoverride")){
                                 String[] spl = p.split(";");
-                                spl[2]="Catalog=mondrian://"+file.getSchema();
+                                spl[1]="Catalog=mondrian://"+file.getSchema();
                                 StringBuilder sb = new StringBuilder();
                                 for(String str: spl){
-                                    sb.append(str);
+                                    sb.append(str+";");
                                 }
                                 props.put("location",sb.toString());
                             }
@@ -110,7 +110,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                         else if(file.getLocation()!=null) {
                             props.put("location", file.getLocation());
                         }
-                        if(file.getUsername()!=null) {
+                        if(file.getUsername()!=null && file.getPropertyKey()==null) {
                             props.put("username", file.getUsername());
                         }
                         else if(file.getPropertyKey()!=null &&
@@ -118,7 +118,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                             String p = ext.getProperty("datasource." + file.getPropertyKey() + ".username");
                             props.put("username", p);
                         }
-                        if(file.getPassword()!=null) {
+                        if(file.getPassword()!=null && file.getPropertyKey()==null) {
                             props.put("password", file.getPassword());
                         }
                         else if(file.getPropertyKey()!=null &&
@@ -213,7 +213,9 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             String[] s = str.split("\\.");
             newlist.add(s[1]);
         }
-        return  newlist.toArray(new String[newlist.size()]);
+        Set<String> unique = new HashSet<>(newlist);
+
+        return  unique.toArray(new String[unique.size()]);
     }
 
     public void unload() {

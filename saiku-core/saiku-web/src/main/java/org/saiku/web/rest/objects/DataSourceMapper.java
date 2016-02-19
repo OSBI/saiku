@@ -53,14 +53,20 @@ public class DataSourceMapper {
             if (ds.getProperties().getProperty("driver").equals("mondrian.olap4j.MondrianOlap4jDriver")) {
                 String[] cat = loc[1].split("=");
                 String[] drv = loc[2].split("=");
-                this.schema = cat[1];
-                this.driver = drv[1];
+                if(cat.length>1) {
+                    this.schema = cat[1];
+                }
+                if(drv.length>1) {
+                    this.driver = drv[1];
+                }
                 this.connectiontype = "MONDRIAN";
             } else {
                 this.connectiontype = "XMLA";
             }
             this.connectionname = ds.getName();
-            this.jdbcurl = url[1];
+            if(url.length>1) {
+                this.jdbcurl = url[1];
+            }
             this.username = ds.getProperties().getProperty("username");
             this.password = ds.getProperties().getProperty("password");
             this.path = ds.getProperties().getProperty("path");

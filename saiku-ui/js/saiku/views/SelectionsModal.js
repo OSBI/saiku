@@ -233,12 +233,20 @@ var SelectionsModal = Modal.extend({
 
     fetch_calcmembers_levels: function() {
         var dimHier = this.member.hierarchy.split('].[');
+        var m4=true;
+        if(dimHier.length===1){
+            m4=false;
+            dimHier = this.member.hierarchy.split('.');
+        }
         var dName = dimHier[0].replace(/[\[\]]/gi, '');
         var hName = dimHier[1].replace(/[\[\]]/gi, '');
 
         var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">' + this.message + '</span> ';
         this.workspace.block(message);
 
+        if(!m4){
+            hName = dName+"."+hName;
+        }
         var level = new Level({}, { 
             ui: this, 
             cube: this.workspace.selected_cube, 

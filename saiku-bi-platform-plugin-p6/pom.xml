@@ -382,7 +382,7 @@
         <dependency>
             <groupId>org.saikuanalytics</groupId>
             <artifactId>saiku-bi-platform-plugin-p5</artifactId>
-            <version>3.8-SNAPSHOT</version>
+            <version>${pom.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>pentaho</groupId>

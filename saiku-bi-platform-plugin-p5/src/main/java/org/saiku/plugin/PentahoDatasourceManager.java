@@ -265,7 +265,7 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
     @Override
     public SaikuDatasource getDatasource(String datasourceName, boolean refresh) {
-        return null;
+        return loadDatasources().get(datasourceName);
     }
 
     public void addSchema(String file, String path, String name) {

@@ -27,6 +27,7 @@ var GrowthModal = Modal.extend({
 	selectedDimension: "",
 	asPercent: false,
 	asPercentAround100: false,
+	asPercentAlternative: false,
 
 	events: {
 		'click .dialog_footer a': 'call',
@@ -50,6 +51,7 @@ var GrowthModal = Modal.extend({
 		"<td class='col1'><input type='text' class='form-control measure_name' value='Measure Name'></input></td></tr>" +
 
 		'<input type="checkbox" name="asPercent" value="asPercent" id="asPercentCheckbox"> Relative %? <br>' +
+		'<input type="checkbox" name="asPercentAlt" value="asPercentAlt" id="asPercentAltCheckbox"> Relative %? (Mimic Analyzer)<br>' +
 		'<input type="checkbox" name="asPercentAround100" value="asPercentAround100" id="asPercentAround100Checkbox"> Relative around 100%? <br>' +
 
 		"<tr><td class='col0 i18n'>Measure:</td>" +
@@ -124,11 +126,54 @@ var GrowthModal = Modal.extend({
 		if (alert_msg !== "") {
 			alert(alert_msg);
 		} else {
-			var m = {name: measure_name, formula: measure_formula, properties: {}, uniqueName: "[Measures]." + measure_name};
-			if (measure_format) {
-				m.properties.FORMAT_STRING = measure_format;
+			if(!this.asPercentAlternative) {
+				var m = {
+					name: measure_name,
+					formula: measure_formula,
+					properties: {},
+					uniqueName: "[Measures]." + measure_name
+				};
+				if (measure_format) {
+					m.properties.FORMAT_STRING = measure_format;
+				}
+				self.workspace.query.helper.addCalculatedMeasure(m);
 			}
-			self.workspace.query.helper.addCalculatedMeasure(m);
+			else{
+				var axis = this.workspace.query.helper.getAxis("ROWS");
+				var hierarchies = axis.hierarchies;
+
+				var lowest = hierarchies[hierarchies.length-1];
+
+				var dim = lowest.name.split(".");
+				var dimname = dim[0].replace(/\[/g, "");
+				var m = {
+					name: "*TOTAL_MEMBER_SEL~SUM",
+					dimension: dimname,
+					uniqueName: lowest.name+'.[*TOTAL_MEMBER_SEL~SUM]',
+					caption: "*TOTAL_MEMBER_SEL~SUM",
+					properties: {},
+					formula: this.memberExpression,
+					hierarchyName: "["+dimname +"."+dim[1],
+					parentMember: '',
+					parentMemberLevel: '',
+					previousLevel: '',
+					parentMemberBreadcrumbs: []
+				};
+				self.workspace.query.helper.addCalculatedMember(m);
+
+				self.workspace.query.helper.includeLevelCalculatedMember()
+				var m2 = {
+					name: measure_name,
+					formula: measure_formula,
+					properties: {},
+					uniqueName: "[Measures]." + measure_name
+				};
+				if (measure_format) {
+					m.properties.FORMAT_STRING = measure_format;
+				}
+				self.workspace.query.helper.addCalculatedMeasure(m2);
+
+			}
 			self.workspace.sync_query();
 			this.close();
 		}
@@ -145,6 +190,23 @@ var GrowthModal = Modal.extend({
 		else if (this.asPercentAround100) {
 			this.measureExpression = "( IIF( IsEmpty(" + dimIteration + "),NULL, " + "1 + ( " + measure + " - (" + measure + ", " + dimIteration + ")" + ") /" +
 				" " + "( " + measure + ", " + dimIteration + ")))";
+		}
+		else if(this.asPercentAlternative){
+
+			var axis = this.workspace.query.helper.getAxis("ROWS");
+			var hierarchies = axis.hierarchies;
+
+			var lowest = hierarchies[hierarchies.length-1];
+
+
+			this.memberExpression = "SUM(GENERATE(EXISTS({"+lowest.name+"}," +
+				" {("+hierarchies[0].name+".CURRENTMEMBER," +
+				hierarchies[1].name+".CURRENTMEMBER)})," +
+				"{("+hierarchies[0].name+".CURRENTMEMBER,"+hierarchies[1].name+".CURRENTMEMBER," +
+				lowest.name+".CURRENTMEMBER)}))";
+			this.measureExpression = measure+"/("+measure+","+lowest.name+".[*TOTAL_MEMBER_SEL~SUM])," +
+				" FORMAT_STRING =" +
+				" '###0.00%', SOLVE_ORDER=200";
 		}
 		else {
 			this.measureExpression = "( IIF( IsEmpty(" + dimIteration + "),NULL, " + "( " + measure + " - " + "( " + measure + ", " + dimIteration + "))))";
@@ -170,13 +232,20 @@ var GrowthModal = Modal.extend({
 		if (checkBox == "asPercentCheckbox") {
 			this.asPercent = !this.asPercent;
 			this.asPercentAround100 = false;
+			this.asPercentAlternative = false;
 		} else if (checkBox == "asPercentAround100Checkbox") {
 			this.asPercentAround100 = !this.asPercentAround100;
 			this.asPercent = false;
+			this.asPercentAlternative = false;
+		} else if (checkBox == "asPercentAltCheckbox") {
+			this.asPercentAlternative = !this.asPercentAlternative;
+			this.asPercent = false;
+			this.asPercentAround100 = false;
 		}
 		// keep DOM up-to-date
 		$('#asPercentCheckbox').prop('checked', this.asPercent);
 		$('#asPercentAround100Checkbox').prop('checked', this.asPercentAround100);
+		$('#asPercentAltCheckbox').prop('checked', this.asPercentAlternative);
 		this.updateCalculatedMemberField();
 		this.updateFormatField();
 	},
