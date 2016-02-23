@@ -123,7 +123,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                         }
                         else if(file.getPropertyKey()!=null &&
                                 ext.containsKey("datasource."+file.getPropertyKey()+".password")){
-                            String p = ext.getProperty("datasource." + file.getName() + ".password");
+                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".password");
                             props.put("password", p);
                         }
                         if(file.getPath()!=null) {
