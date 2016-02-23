@@ -32,7 +32,7 @@ var Workspace = Backbone.View.extend({
 
     initialize: function(args) {
         // Maintain `this` in jQuery event handlers
-        _.bindAll(this, "caption", "adjust", "toggle_sidebar", "prepare", "new_query", "set_class_charteditor",
+        _.bindAll(this, "extractDefaultFilters", "caption", "adjust", "toggle_sidebar", "prepare", "new_query", "set_class_charteditor",
                 "init_query", "update_caption", "populate_selections","refresh", "sync_query", "cancel", "cancelled", "no_results", "error", "switch_view_state");
 
         // Attach an event bus to the workspace
@@ -342,24 +342,7 @@ var Workspace = Backbone.View.extend({
             .delay(300)
             .animate({ backgroundColor: '#fff' }, 'slow');*/
     },
-
-    extractDefaultFilters: function(paramsURI){
-        var defaultfilters=[];
-        var filtername;
-        var filtervalue;
-        for(var i in paramsURI){
-            if(i.indexOf("default_filter_")>-1){
-                var j = i.replace("default_filter_", "");
-                filtername = j;
-                filtervalue = paramsURI[i];
-                defaultfilters.push({"filtername":j, "filtervalue":filtervalue});
-            }
-
-        }
-        return defaultfilters;
-
-    },
-    setDefaultFilters: function(filters, query){
+   setDefaultFilters: function(filters, query){
 
         _.each(filters, function(f){
 
@@ -443,12 +426,30 @@ var Workspace = Backbone.View.extend({
 
         obj.query = this.query;
 
-        var deffilters = this.extractDefaultFilters(this.paramsURI);
-        this.setDefaultFilters(deffilters, obj.query);
+        var p = this.paramsURI;
+     //   var deffilters = this.extractDefaultFilters(p);
+     //   this.setDefaultFilters(deffilters, obj.query);
 
         // Save the query to the server and init the UI
         obj.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });
         obj.init_query();
+
+    },
+
+    extractDefaultFilters: function(p){
+        var defaultfilters=[];
+        var filtername;
+        var filtervalue;
+        for(var i in p){
+            if(i.indexOf("default_filter_")>-1){
+                var j = i.replace("default_filter_", "");
+                filtername = j;
+                filtervalue = p[i];
+                defaultfilters.push({"filtername":j, "filtervalue":filtervalue});
+            }
+
+        }
+        return defaultfilters;
 
     },
 

@@ -73,6 +73,26 @@ public class Fat {
 	}
 
   private static void convertCalculatedMembers(Query q, List<ThinCalculatedMember> thinCms) {
+	  if (thinCms != null && thinCms.size() > 0) {
+		  for (ThinCalculatedMember qcm : thinCms) {
+			  // TODO improve this
+			  String name = qcm.getHierarchyName().replaceAll("\\[", "");
+			  name = name.replaceAll("]", "");
+			  Hierarchy h = q.getCube().getHierarchies().get(name);
+			  CalculatedMember cm =
+					  new CalculatedMember(
+                                                    h.getDimension(),
+                                                    h,
+							  qcm.getName(),
+							  null,
+							  null,
+							  Member.Type.FORMULA,
+							  qcm.getFormula(),
+							  qcm.getProperties());
+
+			  q.addCalculatedMember(q.getHierarchy(h),cm);
+		  }
+	  }
 	/*Hierarchy h = q.getCube().getHierarchies().get("Products");
 	CalculatedMember cm =
 		new CalculatedMember(

@@ -459,7 +459,7 @@ var AdminConsole = Backbone.View.extend({
         "<label for='driver'>Jdbc Driver: </label><input name='driver' class='form-control' value='<%= conn.driver %>' type='text'/><br class='horridbr'/>" +
         "<label for='connusername'>Username: </label><input name='connusername' class='form-control' type='text' value='<%= conn.username %>'/><br/>" +
         "<label for='connpassword'>Password:</label><input name='connpassword' class='form-control' type='password' value='<%= conn.password %>'/><br/>" +
-        "<label for='securityselect'>Security:</label><select class='form-control securityselect' name='securityselect'>" +
+        "<label for='securityselect'>Security:</label><select class='form-control securityselect' id='secselect' name='securityselect'>" +
         "<option value='NONE'>None</option><option value='ONE2ONE'>One To One Mapping</option><option value='PASSTHROUGH'>Passthrough (for XMLA)</option></select><br/>" +
         "<% if(Settings.EXT_DATASOURCE_PROPERTIES) { %>"+
         "<label for='extpropselect'>External Properties Key:</label>" +
@@ -553,7 +553,6 @@ var AdminConsole = Backbone.View.extend({
         var $target = $currentTarget.find('a');
         $currentTarget.addClass('selected');
         var path = $target.attr('href').replace('#', '');
-
         var user = this.datasources.get(path);
         var s = this.schemas;
         var html = this.datasourcetemplate({conn: user.attributes,schemas: s.models, properties: this.pkeys});
@@ -571,6 +570,12 @@ var AdminConsole = Backbone.View.extend({
 		this.hide_driver_els(user.get("connectiontype"));
 
 		$(this.el).find('.drivertype').val(user.get("connectiontype"));
+        if(user.get("security_type")) {
+            $(this.el).find('#secselect').val(user.get("security_type").toUpperCase());
+        }
+        if(user.get("propertyKey")){
+            $(this.el).find(".extpropselect").val(user.get("propertyKey"));
+        }
         $(this.el).find('.remove_datasource').removeClass("hide");
         $(this.el).find('.refresh_button').removeClass("hide");
     },

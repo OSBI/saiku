@@ -51,7 +51,11 @@ var GrowthModal = Modal.extend({
 		"<td class='col1'><input type='text' class='form-control measure_name' value='Measure Name'></input></td></tr>" +
 
 		'<input type="checkbox" name="asPercent" value="asPercent" id="asPercentCheckbox"> Relative %? <br>' +
+		'<% if(dimensions.length<2){ %>'+
+		'<input type="checkbox" name="asPercentAlt" disabled value="asPercentAlt" id="asPercentAltCheckbox"> Relative %? (Mimic Analyzer)<br>' +
+		'<% }  else {%>'+
 		'<input type="checkbox" name="asPercentAlt" value="asPercentAlt" id="asPercentAltCheckbox"> Relative %? (Mimic Analyzer)<br>' +
+		'<% }%>'+
 		'<input type="checkbox" name="asPercentAround100" value="asPercentAround100" id="asPercentAround100Checkbox"> Relative around 100%? <br>' +
 
 		"<tr><td class='col0 i18n'>Measure:</td>" +
@@ -104,6 +108,7 @@ var GrowthModal = Modal.extend({
 			measureExpression: this.measureExpression
 		});
 
+
 		this.$el.find('.dialog_icon')
 
 	},
@@ -149,11 +154,11 @@ var GrowthModal = Modal.extend({
 				var m = {
 					name: "*TOTAL_MEMBER_SEL~SUM",
 					dimension: dimname,
-					uniqueName: lowest.name+'.[*TOTAL_MEMBER_SEL~SUM]',
+					uniqueName: dim[0]+'.'+lowest.name+'.[*TOTAL_MEMBER_SEL~SUM]',
 					caption: "*TOTAL_MEMBER_SEL~SUM",
 					properties: {},
 					formula: this.memberExpression,
-					hierarchyName: "["+dimname +"."+dim[1],
+					hierarchyName: "["+dimname +"]."+dim[1],
 					parentMember: '',
 					parentMemberLevel: '',
 					previousLevel: '',
@@ -169,7 +174,7 @@ var GrowthModal = Modal.extend({
 					uniqueName: "[Measures]." + measure_name
 				};
 				if (measure_format) {
-					m.properties.FORMAT_STRING = measure_format;
+					m2.properties.FORMAT_STRING = '###0.00%';
 				}
 				self.workspace.query.helper.addCalculatedMeasure(m2);
 
@@ -198,15 +203,18 @@ var GrowthModal = Modal.extend({
 
 			var lowest = hierarchies[hierarchies.length-1];
 
+			if($(this.el).find("#Dimensions").prop('selectedIndex') == 1){
+				this.memberExpression = 'sum('+hierarchies[0].name+'.members)';
+			}
+			else {
 
-			this.memberExpression = "SUM(GENERATE(EXISTS({"+lowest.name+"}," +
-				" {("+hierarchies[0].name+".CURRENTMEMBER," +
-				hierarchies[1].name+".CURRENTMEMBER)})," +
-				"{("+hierarchies[0].name+".CURRENTMEMBER,"+hierarchies[1].name+".CURRENTMEMBER," +
-				lowest.name+".CURRENTMEMBER)}))";
-			this.measureExpression = measure+"/("+measure+","+lowest.name+".[*TOTAL_MEMBER_SEL~SUM])," +
-				" FORMAT_STRING =" +
-				" '###0.00%', SOLVE_ORDER=200";
+				this.memberExpression = "SUM(GENERATE(EXISTS({" + lowest.name + "}," +
+					" {(" + hierarchies[0].name + ".CURRENTMEMBER," +
+					hierarchies[1].name + ".CURRENTMEMBER)})," +
+					"{(" + hierarchies[0].name + ".CURRENTMEMBER," + hierarchies[1].name + ".CURRENTMEMBER," +
+					lowest.name + ".CURRENTMEMBER)}))";
+			}
+			this.measureExpression = measure+"/("+measure+","+lowest.name+".[*TOTAL_MEMBER_SEL~SUM])";
 		}
 		else {
 			this.measureExpression = "( IIF( IsEmpty(" + dimIteration + "),NULL, " + "( " + measure + " - " + "( " + measure + ", " + dimIteration + "))))";
@@ -233,14 +241,18 @@ var GrowthModal = Modal.extend({
 			this.asPercent = !this.asPercent;
 			this.asPercentAround100 = false;
 			this.asPercentAlternative = false;
+			$(this.el).find("#Dimensions").find("option:last").prop('disabled', false);
 		} else if (checkBox == "asPercentAround100Checkbox") {
 			this.asPercentAround100 = !this.asPercentAround100;
 			this.asPercent = false;
 			this.asPercentAlternative = false;
+			$(this.el).find("#Dimensions").find("option:last").prop('disabled', false);
 		} else if (checkBox == "asPercentAltCheckbox") {
 			this.asPercentAlternative = !this.asPercentAlternative;
 			this.asPercent = false;
 			this.asPercentAround100 = false;
+			$(this.el).find("#Dimensions").find("option:last").prop('disabled', true);
+
 		}
 		// keep DOM up-to-date
 		$('#asPercentCheckbox').prop('checked', this.asPercent);

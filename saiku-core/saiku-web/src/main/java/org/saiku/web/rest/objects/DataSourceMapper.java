@@ -71,12 +71,16 @@ public class DataSourceMapper {
             this.password = ds.getProperties().getProperty("password");
             this.path = ds.getProperties().getProperty("path");
             this.id = ds.getProperties().getProperty("id");
-            if(ds.getProperties().contains("schema")){
+            if(ds.getProperties().containsKey("schema")){
                 this.schema = ds.getProperties().getProperty("schema");
             }
 
-            if(ds.getProperties().contains("security")){
-                this.security_type = ds.getProperties().getProperty("security");
+            if(ds.getProperties().containsKey("security.type")){
+                this.security_type = ds.getProperties().getProperty("security.type");
+            }
+
+            if(ds.getProperties().containsKey("propertykey")){
+                this.propertyKey = ds.getProperties().getProperty("propertykey");
             }
 
 
