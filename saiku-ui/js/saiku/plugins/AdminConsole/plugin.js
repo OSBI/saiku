@@ -451,14 +451,24 @@ var AdminConsole = Backbone.View.extend({
     datasourcetemplate: _.template("<form><h3>Create Data Source</h3>"+
         "<div class='simpleConnection'><label for='connname'>Name:</label><input type='text' class='form-control' name='connname' value='<%= conn.connectionname %>'/><br />" +
         "<label for='drivertype'>Connection Type:</label><select name='drivertype' class='form-control drivertype'><option value='MONDRIAN'>Mondrian</option><option value='XMLA'>XMLA</option></select><br/>" +
-        "<label for='jdbcurl'>URL:</label><input name='jdbcurl' class='form-control' value='<%= conn.jdbcurl %>' type='text'/><br class='horridbr'/>" +
+        "<% if(!Settings.EXT_DATASOURCE_PROPERTIES) { %>"+       
+	    "<label for='jdbcurl'>URL:</label><input name='jdbcurl' class='form-control' value='<%= conn.jdbcurl %>' type='text'/><br class='horridbr'/>" +
+	    "<% } else {	%>"+
+	    "<input name='jdbcurl' type='hidden'/>" +
+		"<% } %>"+
         "<label for='schemapath'>Schema:</label><select class='form-control schemaselect' name='schemapath'>" +
         "<% _.each(schemas, function(path){%>" +
         "<option  <% if(conn.schema != null && conn.schema === 'mondrian://'+path.attributes.path){ print('selected'); } %> ><%= path.attributes.path %></option>" +
         "<%});%></select><br/>" +
-        "<label for='driver'>Jdbc Driver: </label><input name='driver' class='form-control' value='<%= conn.driver %>' type='text'/><br class='horridbr'/>" +
+        "<% if(!Settings.EXT_DATASOURCE_PROPERTIES) { %>"+     
+		"<label for='driver'>Jdbc Driver: </label><input name='driver' class='form-control' value='<%= conn.driver %>' type='text'/><br class='horridbr'/>" +
         "<label for='connusername'>Username: </label><input name='connusername' class='form-control' type='text' value='<%= conn.username %>'/><br/>" +
         "<label for='connpassword'>Password:</label><input name='connpassword' class='form-control' type='password' value='<%= conn.password %>'/><br/>" +
+		"<% } else {	%>"+
+		"<input name='driver' type='hidden'/>" +
+	    "<input name='connusername' type='hidden'/>" +
+	    "<input name='connpassword' type='hidden'/>" +
+		"<% } %>"+
         "<label for='securityselect'>Security:</label><select class='form-control securityselect' id='secselect' name='securityselect'>" +
         "<option value='NONE'>None</option><option value='ONE2ONE'>One To One Mapping</option><option value='PASSTHROUGH'>Passthrough (for XMLA)</option></select><br/>" +
         "<% if(Settings.EXT_DATASOURCE_PROPERTIES) { %>"+
