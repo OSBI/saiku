@@ -17,18 +17,6 @@ import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.Graphics2D;
-import java.awt.print.PageFormat;
-import java.awt.print.Paper;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.StringReader;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Result;
@@ -37,6 +25,13 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
+import java.awt.*;
+import java.awt.print.PageFormat;
+import java.awt.print.Paper;
+import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * This PdfReport reads in a QueryResult and converts it to HTML, DOM, FO and eventually to a byte array containing the PDF data
@@ -57,11 +52,13 @@ public class PdfReport {
     }
 
     public byte[] createPdf(QueryResult queryResult, String svg) throws Exception {
-        Document document = createDocumentWithSizeToContainQueryResult(queryResult);
+        Rectangle queryResultSize = getQueryResultSize(queryResult);
+
+        Document document = createDocumentWithSizeToContainQueryResult(queryResultSize);
         document.open();
 
         ByteArrayOutputStream pdf = new ByteArrayOutputStream();
-        populatePdf(queryResult, pdf);
+        populatePdf(queryResult, pdf, queryResultSize);
 
         // do we want to add a svg image?
         if (StringUtils.isNotBlank(svg)) {
@@ -74,9 +71,7 @@ public class PdfReport {
         return pdf.toByteArray();
     }
 
-    private Document createDocumentWithSizeToContainQueryResult(QueryResult queryResult) {
-        int resultWidth = calculateResultWidth(queryResult);
-        Rectangle size = calculateDocumentSize(resultWidth);
+    private Document createDocumentWithSizeToContainQueryResult(Rectangle size) {
         return createDocumentWithMargins(size);
     }
 
@@ -92,6 +87,7 @@ public class PdfReport {
         if (length == 0) {
             throw new SaikuServiceException("Cannot convert empty result to PDF");
         }
+
         return length;
 
     }
@@ -104,7 +100,7 @@ public class PdfReport {
         }
 
         String t = "<?xml version='1.0' encoding='ISO-8859-1'"
-            + " standalone='no'?>" + stringBuffer.toString();
+                + " standalone='no'?>" + stringBuffer.toString();
         PdfContentByte cb = pdfWriter.getDirectContent();
         cb.saveState();
         cb.concatCTM(1.0f, 0, 0, 1.0f, 36, 0);
@@ -126,19 +122,20 @@ public class PdfReport {
     }
 
     private Rectangle calculateDocumentSize(int resultWidth) {
-        Rectangle size = PageSize.A4.rotate();
+        Rectangle size = PageSize.A3.rotate();
         if (resultWidth > 8) {
-            size = PageSize.A3.rotate();
-        }
-        if (resultWidth > 16) {
             size = PageSize.A2.rotate();
         }
-        if (resultWidth > 32) {
+        if (resultWidth > 16) {
             size = PageSize.A1.rotate();
         }
-        if (resultWidth > 64) {
+        if (resultWidth > 24) {
             size = PageSize.A0.rotate();
         }
+        if (resultWidth > 32) {
+            size = PageSize.B0.rotate();
+        }
+
         return size;
     }
 
@@ -147,13 +144,14 @@ public class PdfReport {
      *
      * @param queryResult
      * @param pdf
+     * @param queryResultSize
      * @throws Exception
      */
-    private void populatePdf(QueryResult queryResult, OutputStream pdf) throws Exception {
+    private void populatePdf(QueryResult queryResult, OutputStream pdf, Rectangle queryResultSize) throws Exception {
         String htmlContent = generateContentAsHtmlString(queryResult);
         org.w3c.dom.Document htmlDom = DomConverter.getDom(htmlContent);
         org.w3c.dom.Document foDoc = FoConverter.getFo(htmlDom);
-        byte[] formattedPdfContent = fo2Pdf(foDoc, null);
+        byte[] formattedPdfContent = fo2Pdf(foDoc, null, queryResultSize);
         tryWritingContentToPdfStream(pdf, formattedPdfContent);
 
         pdfPerformanceLogger.renderStop();
@@ -187,7 +185,7 @@ public class PdfReport {
         return "<p>" + "Saiku Export - " + dateFormat.format(date) + "</p>";
     }
 
-    private byte[] fo2Pdf(org.w3c.dom.Document foDocument, String styleSheet) {
+    private byte[] fo2Pdf(org.w3c.dom.Document foDocument, String styleSheet, Rectangle size) {
         FopFactory fopFactory = FopFactory.newInstance();
 
         try {
@@ -198,7 +196,11 @@ public class PdfReport {
             Source src = new DOMSource(foDocument);
             Result res = new SAXResult(fop.getDefaultHandler());
 
-            transformer.transform(src, res);
+            if (transformer != null) {
+                transformer.setParameter("page_height", (size.getHeight() / 72) + "in");
+                transformer.setParameter("page_width", (size.getWidth() / 72) + "in");
+                transformer.transform(src, res);
+            }
 
             return out.toByteArray();
 
@@ -233,5 +235,10 @@ public class PdfReport {
             e.printStackTrace();
             return null;
         }
+    }
+	
+	 private Rectangle getQueryResultSize(QueryResult queryResult) {
+        int resultWidth = calculateResultWidth(queryResult);
+        return calculateDocumentSize(resultWidth);
     }
 }
