@@ -241,7 +241,7 @@ SaikuOlapQueryHelper.prototype.includeLevelCalculatedMember = function(axis, hie
     
     var existingAxis = this.findAxisForHierarchy(hierarchy);
     if (existingAxis) {
-      this.moveHierarchy(existingAxis.location, axis, hierarchy, position);
+      this.moveHierarchy(existingAxis.location, axis, hierarchy, -1);
     } else {
       var _axis = this.model().queryModel.axes[axis];
       if (_axis) {

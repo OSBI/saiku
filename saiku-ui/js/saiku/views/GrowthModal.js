@@ -151,6 +151,10 @@ var GrowthModal = Modal.extend({
 
 				var dim = lowest.name.split(".");
 				var dimname = dim[0].replace(/\[/g, "");
+				if(this.endswith(dimname, "]")){
+					dimname = dimname.substring(0, dimname.length-1);
+				}
+
 				var m = {
 					name: "*TOTAL_MEMBER_SEL~SUM",
 					dimension: dimname,
@@ -165,8 +169,8 @@ var GrowthModal = Modal.extend({
 					parentMemberBreadcrumbs: []
 				};
 				self.workspace.query.helper.addCalculatedMember(m);
+				self.workspace.query.helper.includeLevelCalculatedMember("ROWS", "["+dimname +"]."+dim[1], null, dim[0]+'.'+lowest.name+'.[*TOTAL_MEMBER_SEL~SUM]',-1);
 
-				self.workspace.query.helper.includeLevelCalculatedMember()
 				var m2 = {
 					name: measure_name,
 					formula: measure_formula,
@@ -184,6 +188,9 @@ var GrowthModal = Modal.extend({
 		}
 
 		return false;
+	},
+	endswith: function endsWith(str, suffix) {
+	return str.indexOf(suffix, str.length - suffix.length) !== -1;
 	},
 
 	updateCalculatedMemberField: function () {
@@ -203,8 +210,31 @@ var GrowthModal = Modal.extend({
 
 			var lowest = hierarchies[hierarchies.length-1];
 
+
 			if($(this.el).find("#Dimensions").prop('selectedIndex') == 1){
-				this.memberExpression = 'sum('+hierarchies[0].name+'.members)';
+				var selected = false;
+				if(hierarchies[1].levels){
+					var list = "sum({";
+					_.each(hierarchies[1].levels, function(level) {
+						if (level.selection != undefined && level.selection.members != undefined) {
+							_.each(level.selection.members, function (m) {
+								list = list + m.uniqueName +","
+								selected = true;
+							})
+						}
+					});
+					list = list.substring(0, list.length-1);
+					list = list+"})";
+					this.memberExpression = list;
+
+					if(selected == false){
+						this.memberExpression = 'sum(' + hierarchies[1].name + '.members)';
+					}
+				}
+				else {
+					//TODO NEEDS TO PICK LEVEL!
+					this.memberExpression = 'sum(' + hierarchies[1].name + '.members)';
+				}
 			}
 			else {
 

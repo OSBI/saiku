@@ -43,12 +43,15 @@ import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Level;
 import org.olap4j.metadata.Measure;
 import org.olap4j.metadata.Member;
+import org.olap4j.metadata.NamedList;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import mondrian.olap4j.SaikuMondrianHelper;
 
 public class Fat {
 	
@@ -76,9 +79,20 @@ public class Fat {
 	  if (thinCms != null && thinCms.size() > 0) {
 		  for (ThinCalculatedMember qcm : thinCms) {
 			  // TODO improve this
-			  String name = qcm.getHierarchyName().replaceAll("\\[", "");
-			  name = name.replaceAll("]", "");
-			  Hierarchy h = q.getCube().getHierarchies().get(name);
+			  String name = qcm.getHierarchyName();
+			  if(SaikuMondrianHelper.getMondrianServer(q.getConnection()).getVersion().getMajorVersion()==3) {
+				  name = qcm.getHierarchyName().replaceAll("\\[", "");
+				  name = name.replaceAll("]", "");
+			  }
+			  //Hierarchy h = q.getCube().getHierarchies().get(name);
+			  NamedList<Hierarchy> hs = q.getCube().getHierarchies();
+			  Hierarchy h = null;
+			  for(Hierarchy h2 : hs){
+				  if(h2.getUniqueName().equals(name)){
+					  h = h2;
+					  break;
+				  }
+			  }
 			  CalculatedMember cm =
 					  new CalculatedMember(
                                                     h.getDimension(),
@@ -212,47 +226,6 @@ public class Fat {
 	
 	private static void convertHierarchy(Query q, QueryHierarchy qh, ThinHierarchy th, ThinQuery tq) throws
 		OlapException {
-	  for (Object o : th.getCmembers().entrySet()) {
-		Map.Entry pair = (Map.Entry) o;
-
-		ThinCalculatedMember cres = null;
-		for (ThinCalculatedMember c : tq.getQueryModel().getCalculatedMembers()) {
-		  if (c.getUniqueName().equals(pair.getValue())) {
-			cres = c;
-			break;
-		  }
-		  //it.remove(); // avoids a ConcurrentModificationException
-		}
-		Hierarchy h2 = null;
-		for (Hierarchy h : q.getCube().getHierarchies()) {
-		  if (h.getUniqueName().equals(cres.getHierarchyName())) {
-			h2 = h;
-			break;
-		  }
-		}
-		CalculatedMember cm;
-		Member member = null;
-		if(cres.getParentMember()!=null) {
-		  List<IdentifierSegment> nameParts = IdentifierParser.parseIdentifier(cres.getParentMember());
-
-		  member = q.getCube().lookupMember(nameParts);
-		}
-
-
-		cm = new CalculatedMember(
-			q.getCube().getDimensions().get(cres.getDimension()),
-			h2,
-			cres.getName(),
-			cres.getName(),
-			member,
-			Member.Type.FORMULA,
-			cres.getFormula(),
-			null);
-
-		qh.includeCalculatedMember(cm);
-		extendSortableQuerySet(qh.getQuery(), qh, th);
-
-	  }
 
 		for (ThinLevel tl : th.getLevels().values()) {
 		  QueryLevel ql = qh.includeLevel(tl.getName());
@@ -323,6 +296,63 @@ public class Fat {
 		  }
 		  extendSortableQuerySet(qh.getQuery(), qh, th);
 		}
+
+		for (Object o : th.getCmembers().entrySet()) {
+			Map.Entry pair = (Map.Entry) o;
+
+			ThinCalculatedMember cres = null;
+			for (ThinCalculatedMember c : tq.getQueryModel().getCalculatedMembers()) {
+				if (c.getUniqueName().equals(pair.getValue())) {
+					cres = c;
+					break;
+				}
+				//it.remove(); // avoids a ConcurrentModificationException
+			}
+
+			if(cres == null){
+				for (ThinCalculatedMember c : tq.getQueryModel().getCalculatedMembers()) {
+					String cname = c.getUniqueName();
+					int ord = StringUtils.ordinalIndexOf(cname, "[", 2);
+					cname = cname.substring(ord, cname.length());
+					if (cname.equals(pair.getValue())) {
+						cres = c;
+						break;
+					}
+					//it.remove(); // avoids a ConcurrentModificationException
+				}
+			}
+
+			Hierarchy h2 = null;
+			for (Hierarchy h : q.getCube().getHierarchies()) {
+				if (h.getUniqueName().equals(cres.getHierarchyName())) {
+					h2 = h;
+					break;
+				}
+			}
+			CalculatedMember cm;
+			Member member = null;
+			if(cres.getParentMember()!=null) {
+				List<IdentifierSegment> nameParts = IdentifierParser.parseIdentifier(cres.getParentMember());
+
+				member = q.getCube().lookupMember(nameParts);
+			}
+
+
+			cm = new CalculatedMember(
+					q.getCube().getDimensions().get(cres.getDimension()),
+					h2,
+					cres.getName(),
+					cres.getName(),
+					member,
+					Member.Type.FORMULA,
+					cres.getFormula(),
+					null);
+
+			qh.includeCalculatedMember(cm);
+			extendSortableQuerySet(qh.getQuery(), qh, th);
+
+		}
+		extendSortableQuerySet(qh.getQuery(), qh, th);
 
 	}
 
