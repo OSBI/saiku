@@ -325,6 +325,19 @@ public class Fat {
 				}
 			}
 
+			if(cres == null){
+				for (ThinCalculatedMember c : tq.getQueryModel().getCalculatedMembers()) {
+					String cname = c.getUniqueName();
+					int ord = StringUtils.ordinalIndexOf((String) pair.getValue(), "[", 2);
+					String v = ((String)pair.getValue()).substring(ord, ((String)pair.getValue()).length());
+					if (cname.equals(v)) {
+						cres = c;
+						break;
+					}
+					//it.remove(); // avoids a ConcurrentModificationException
+				}
+			}
+
 			Hierarchy h2 = null;
 			for (Hierarchy h : q.getCube().getHierarchies()) {
 				if (h.getUniqueName().equals(cres.getHierarchyName())) {

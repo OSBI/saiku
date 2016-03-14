@@ -237,15 +237,24 @@ var SelectionsModal = Modal.extend({
         if(dimHier.length===1){
             m4=false;
             dimHier = this.member.hierarchy.split('.');
+
+        }
+        if(dimHier.length>1){
+            var hName = dimHier[1].replace(/[\[\]]/gi, '');
         }
         var dName = dimHier[0].replace(/[\[\]]/gi, '');
-        var hName = dimHier[1].replace(/[\[\]]/gi, '');
+
 
         var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">' + this.message + '</span> ';
         this.workspace.block(message);
 
         if(!m4){
-            hName = dName+"."+hName;
+            if(hName!=undefined) {
+                hName = dName + "." + hName;
+            }
+            else{
+                hName = dName;
+            }
         }
         var level = new Level({}, { 
             ui: this, 
