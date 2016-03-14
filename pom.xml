@@ -5,7 +5,7 @@
     <groupId>org.saikuanalytics</groupId>
     <artifactId>saiku</artifactId>
     <packaging>pom</packaging>
-    <version>3.8-RC4</version>
+    <version>3.8-RC5</version>
     <name>Saiku Module Project</name>
     <scm>
         <developerConnection>
@@ -20,8 +20,6 @@
         <module>saiku-server</module>
         <module>saiku-bi-platform-plugin-p5</module>
         <module>saiku-bi-platform-plugin-p6</module>
-
-        <!--        <module>saiku-web-tests</module>-->
     </modules>
 
     <distributionManagement>

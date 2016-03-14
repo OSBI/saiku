@@ -52,9 +52,9 @@ var GrowthModal = Modal.extend({
 
 		'<input type="checkbox" name="asPercent" value="asPercent" id="asPercentCheckbox"> Relative %? <br>' +
 		'<% if(dimensions.length<2){ %>'+
-		'<input type="checkbox" name="asPercentAlt" disabled value="asPercentAlt" id="asPercentAltCheckbox"> Relative %? (Mimic Analyzer)<br>' +
+		'<input type="checkbox" name="asPercentAlt" disabled value="asPercentAlt" id="asPercentAltCheckbox"> % of Measure<br>' +
 		'<% }  else {%>'+
-		'<input type="checkbox" name="asPercentAlt" value="asPercentAlt" id="asPercentAltCheckbox"> Relative %? (Mimic Analyzer)<br>' +
+		'<input type="checkbox" name="asPercentAlt" value="asPercentAlt" id="asPercentAltCheckbox"> % of Measure<br>' +
 		'<% }%>'+
 		'<input type="checkbox" name="asPercentAround100" value="asPercentAround100" id="asPercentAround100Checkbox"> Relative around 100%? <br>' +
 
@@ -144,32 +144,24 @@ var GrowthModal = Modal.extend({
 				self.workspace.query.helper.addCalculatedMeasure(m);
 			}
 			else{
-				var axis = this.workspace.query.helper.getAxis("ROWS");
-				var hierarchies = axis.hierarchies;
+				_.each(this.memberExpression, function(m2){
+					var m = {
+						name: m2.name,
+						dimension: m2.dimension,
+						uniqueName: m2.uniqueName,
+						caption: "*TOTAL_MEMBER_SEL~SUM",
+						properties: {},
+						formula: m2.statement,
+						hierarchyName: m2.hierarchy,
+						parentMember: '',
+						parentMemberLevel: '',
+						previousLevel: '',
+						parentMemberBreadcrumbs: []
+					};
+					self.workspace.query.helper.addCalculatedMember(m);
+				});
 
-				var lowest = hierarchies[hierarchies.length-1];
 
-				var dim = lowest.name.split(".");
-				var dimname = dim[0].replace(/\[/g, "");
-				if(this.endswith(dimname, "]")){
-					dimname = dimname.substring(0, dimname.length-1);
-				}
-
-				var m = {
-					name: "*TOTAL_MEMBER_SEL~SUM",
-					dimension: dimname,
-					uniqueName: dim[0]+'.'+lowest.name+'.[*TOTAL_MEMBER_SEL~SUM]',
-					caption: "*TOTAL_MEMBER_SEL~SUM",
-					properties: {},
-					formula: this.memberExpression,
-					hierarchyName: "["+dimname +"]."+dim[1],
-					parentMember: '',
-					parentMemberLevel: '',
-					previousLevel: '',
-					parentMemberBreadcrumbs: []
-				};
-				self.workspace.query.helper.addCalculatedMember(m);
-				self.workspace.query.helper.includeLevelCalculatedMember("ROWS", "["+dimname +"]."+dim[1], null, dim[0]+'.'+lowest.name+'.[*TOTAL_MEMBER_SEL~SUM]',-1);
 
 				var m2 = {
 					name: measure_name,
@@ -207,44 +199,36 @@ var GrowthModal = Modal.extend({
 
 			var axis = this.workspace.query.helper.getAxis("ROWS");
 			var hierarchies = axis.hierarchies;
+			this.memberExpression = [];
 
-			var lowest = hierarchies[hierarchies.length-1];
-
-
-			if($(this.el).find("#Dimensions").prop('selectedIndex') == 1){
-				var selected = false;
-				if(hierarchies[1].levels){
-					var list = "sum({";
-					_.each(hierarchies[1].levels, function(level) {
-						if (level.selection != undefined && level.selection.members != undefined) {
-							_.each(level.selection.members, function (m) {
-								list = list + m.uniqueName +","
-								selected = true;
-							})
-						}
-					});
-					list = list.substring(0, list.length-1);
-					list = list+"})";
-					this.memberExpression = list;
-
-					if(selected == false){
-						this.memberExpression = 'sum(' + hierarchies[1].name + '.members)';
+			var selected = $(this.el).find("#Dimensions").val();
+			var hit = false;
+				var s = this.calculate_nonempty_crossjoin(hierarchies);
+				for(var i=0; i<hierarchies.length; i++){
+					var h = hierarchies[i];
+					if(selected === h.name){
+						hit =true
+					}
+					else if(hit==true) {
+						var generate = this.calculated_generate(s, h);
+						var name = h.name;
+						var dim = h.dimension;
+						var obj = {
+							dimension: dim,
+							hierarchy: name,
+							statement: "sum(" + generate + ")",
+							uniqueName: name + '.[' + dim + '*TOTAL_MEMBER_SEL~SUM]',
+							name: dim + "*TOTAL_MEMBER_SEL~SUM"
+						};
+						this.memberExpression.push(obj);
 					}
 				}
-				else {
-					//TODO NEEDS TO PICK LEVEL!
-					this.memberExpression = 'sum(' + hierarchies[1].name + '.members)';
-				}
-			}
-			else {
 
-				this.memberExpression = "SUM(GENERATE(EXISTS({" + lowest.name + "}," +
-					" {(" + hierarchies[0].name + ".CURRENTMEMBER," +
-					hierarchies[1].name + ".CURRENTMEMBER)})," +
-					"{(" + hierarchies[0].name + ".CURRENTMEMBER," + hierarchies[1].name + ".CURRENTMEMBER," +
-					lowest.name + ".CURRENTMEMBER)}))";
-			}
-			this.measureExpression = measure+"/("+measure+","+lowest.name+".[*TOTAL_MEMBER_SEL~SUM])";
+			var strdef="";
+			_.each(this.memberExpression, function(m){
+				strdef+=","+ m.uniqueName;
+			});
+			this.measureExpression = measure+"/("+measure+strdef+")";
 		}
 		else {
 			this.measureExpression = "( IIF( IsEmpty(" + dimIteration + "),NULL, " + "( " + measure + " - " + "( " + measure + ", " + dimIteration + "))))";
@@ -267,20 +251,42 @@ var GrowthModal = Modal.extend({
 
 	setAbsoluteOrRelative: function (event) {
 		var checkBox = event.target.id;
+		var that = this;
 		if (checkBox == "asPercentCheckbox") {
 			this.asPercent = !this.asPercent;
 			this.asPercentAround100 = false;
 			this.asPercentAlternative = false;
+			$(this.el).find("#Dimensions option").remove();
+			_.each(this.dimensions, function(f){
+				$(that.el).find("#Dimensions").append($("<option></option>")
+					.attr("value", f)
+					.text(f));
+			});
 			$(this.el).find("#Dimensions").find("option:last").prop('disabled', false);
 		} else if (checkBox == "asPercentAround100Checkbox") {
 			this.asPercentAround100 = !this.asPercentAround100;
 			this.asPercent = false;
 			this.asPercentAlternative = false;
+			$(this.el).find("#Dimensions option").remove();
+			_.each(this.dimensions, function(f){
+				$(that.el).find("#Dimensions").append($("<option></option>")
+					.attr("value", f)
+					.text(f));
+			});
 			$(this.el).find("#Dimensions").find("option:last").prop('disabled', false);
 		} else if (checkBox == "asPercentAltCheckbox") {
 			this.asPercentAlternative = !this.asPercentAlternative;
 			this.asPercent = false;
 			this.asPercentAround100 = false;
+			$(this.el).find("#Dimensions option").remove();
+			var axis = this.workspace.query.helper.getAxis("ROWS");
+			var hierarchies = axis.hierarchies;
+			_.each(hierarchies, function(f){
+				$(that.el).find("#Dimensions").append($("<option></option>")
+					.attr("value", f.name)
+					.text(f.name));
+			});
+
 			$(this.el).find("#Dimensions").find("option:last").prop('disabled', true);
 
 		}
@@ -300,6 +306,62 @@ var GrowthModal = Modal.extend({
 
 	surroundWithSquareBrackets: function (text) {
 		return '[' + text + ']';
+	},
+
+	calculate_nonempty_crossjoin: function(hierarchies) {
+
+
+		var str;
+
+		var memberstring1 = this.return_selected_members(hierarchies[hierarchies.length-1]);
+		var memberstring2 = this.return_selected_members(hierarchies[hierarchies.length-2]);
+
+
+
+		str="NONEMPTYCROSSJOIN("+memberstring2+","+memberstring1+")";
+		if(hierarchies.length>2){
+
+
+
+			for(var i= hierarchies.length-2; i > 0 ;--i){
+				var memberstring3 = this.return_selected_members(hierarchies[i-1]);
+
+				str="NONEMPTYCROSSJOIN("+memberstring3+","+str+")";
+			}
+
+		}
+
+		return str;
+
+	},
+
+	calculated_generate: function(nonemptystr, current){
+		var level1=current.name;
+		return "Generate("+nonemptystr+",{"+level1+".CURRENTMEMBER})"
+	},
+
+	return_selected_members: function(hierarchy){
+		var retstr="";
+		var l;
+		_.each(hierarchy.levels, function(level){
+			l=level
+		});
+
+		if(l.selection.members.length>0){
+			_.each(l.selection.members, function(member){
+				retstr+=member.uniqueName+","
+			});
+			return "{"+retstr.substring(0, retstr.length-1)+"}";
+		}
+		else{
+			var level1=hierarchy.levels;
+
+			var last = Object.keys(level1)[Object.keys(level1).length-1];
+
+			return hierarchy.name+".["+last+"].MEMBERS"
+		}
+
+
 	}
 
 });

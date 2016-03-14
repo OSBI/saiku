@@ -107,7 +107,7 @@ var CalculatedMemberModal = Modal.extend({
 				    '<div class="cms-function">' +
 					'<label for="cms-function" class="i18n">Functions:</label>' +
 					' <input type="button" class="form_button btn btn-primary growthBtn"#'+
-                    ' value="Growth"  ' +
+                    ' value="Predefined Calculations"  ' +
 					'         title="Calculate difference. Good to calculate previous period growth "   id="growthBtn" >  </input> ' +
 					' <input type="button" class="form_button btn btn-primary formatBtn"' +
                     ' value="Format %" id="formatBtn"  ' +
@@ -322,14 +322,16 @@ var CalculatedMemberModal = Modal.extend({
             }
             else {
                 _.each(data, function(value) {
-                    $tpl += 
-                        '<tr class="row-cms-' + self.replace_cms(value.name) + '">' +
+                    if(value.name.indexOf("*TOTAL_MEMBER_SEL~SUM")==-1) {
+                        $tpl +=
+                            '<tr class="row-cms-' + self.replace_cms(value.name) + '">' +
                             '<td class="cms-name">' + value.name + '</td>' +
                             '<td class="cms-actions">' +
-                                '<a class="edit button sprite btn-action-edit" href="#edit_cms" data-name="' + value.name + '" data-type="calcmember"></a>' +
-                                '<a class="delete button sprite btn-action-del" href="#show_del_cms" data-name="' + value.name + '" data-type="calcmember"></a>' +
+                            '<a class="edit button sprite btn-action-edit" href="#edit_cms" data-name="' + value.name + '" data-type="calcmember"></a>' +
+                            '<a class="delete button sprite btn-action-del" href="#show_del_cms" data-name="' + value.name + '" data-type="calcmember"></a>' +
                             '</td>' +
-                        '</tr>';
+                            '</tr>';
+                    }
                 });
             }
         }

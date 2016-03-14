@@ -32,7 +32,7 @@ var Workspace = Backbone.View.extend({
 
     initialize: function(args) {
         // Maintain `this` in jQuery event handlers
-        _.bindAll(this, "extractDefaultFilters", "caption", "adjust", "toggle_sidebar", "prepare", "new_query", "set_class_charteditor",
+        _.bindAll(this, "caption", "adjust", "toggle_sidebar", "prepare", "new_query", "set_class_charteditor",
                 "init_query", "update_caption", "populate_selections","refresh", "sync_query", "cancel", "cancelled", "no_results", "error", "switch_view_state");
 
         // Attach an event bus to the workspace
@@ -427,8 +427,8 @@ var Workspace = Backbone.View.extend({
         obj.query = this.query;
 
         var p = this.paramsURI;
-        var deffilters = this.extractDefaultFilters(p);
-        this.setDefaultFilters(deffilters, obj.query);
+        //var deffilters = this.extractDefaultFilters(p);
+        //this.setDefaultFilters(deffilters, obj.query);
 
         // Save the query to the server and init the UI
         obj.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });

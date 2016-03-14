@@ -88,7 +88,10 @@ public class Fat {
 			  NamedList<Hierarchy> hs = q.getCube().getHierarchies();
 			  Hierarchy h = null;
 			  for(Hierarchy h2 : hs){
-				  if(h2.getUniqueName().equals(name)){
+				  if(h2.getUniqueName().equals(qcm.getHierarchyName())){
+					  h = h2;
+				  }
+				  else if(h2.getUniqueName().equals(name)){
 					  h = h2;
 					  break;
 				  }
