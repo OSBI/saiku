@@ -92,3 +92,13 @@ For detailed changelog, check [Releases](https://github.com/OSBI/saiku/releases)
 
 Saiku and the Saiku UI are free software. The UI, contained in this repository,
 is available under the terms of the Apache License Version 2. A copy is attached for your convenience.
+
+## Update project version
+
+To update the pom versions run: 
+
+mvn versions:set -DnewVersion=3.x.x
+
+Then remove the backups with:
+
+ find . -name "*.versionsBackup" -type f -delete
