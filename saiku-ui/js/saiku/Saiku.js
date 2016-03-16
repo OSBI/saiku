@@ -28,7 +28,7 @@ var Saiku = {
      */
     tabs: new TabSet(),
 
-    splash: new SplashScreen(),
+    splash: new SplashScreen({toolbar: this.toolbar}),
     /**
      * Model which handles session and authentication
      */
@@ -386,3 +386,4 @@ SaikuTimeLogger.prototype.log = function(eventname) {
     this._timestamps.push(time);
     this._events.push(eventname);
 };
+

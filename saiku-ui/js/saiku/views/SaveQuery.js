@@ -69,11 +69,12 @@ var SaveQuery = Modal.extend({
 
         this.message = _.template(
             "<form id='save_query_form'>" +
-            '<div class="box-search-file" style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
-            ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>' +
+            '<div class="box-search-file form-inline" style="height:35px; padding-top:10px; line-height:25px;"><label class="i18n">Search:</label> &nbsp;' +
+            ' <input type="text" class="form-control search_file"></input><span class="cancel_search"></span></div>' +
             "<div class='RepositoryObjects'><span class='i18n'>Loading...</span></div>" +
+            "<div class='form-inline' style='padding-top:4px'>"    +
             "<label for='name' class='i18n'>File:</label>&nbsp;" +
-            "<input type='text' name='name' value='<%= name %>' />" +
+            "<input type='text' name='name' class='form-control' value='<%= name %>' /></div>" +
             "<br />"+
             "</form>")({ name: full_path });
 
@@ -160,7 +161,7 @@ var SaveQuery = Modal.extend({
             }
         }
         this.set_last_location(path);
-
+        $(this.el).find('input[name="name"]').focus();
         return false;
     },
 
@@ -246,6 +247,8 @@ var SaveQuery = Modal.extend({
         var path = $currentTarget.parent( ).parent( ).has( '.folder' ).children('.folder_row').find( 'a' ).attr('href');
         path = path.replace('#' , '');
         this.set_last_location(path);
+        $(this.el).find('input[name="name"]').focus();
+
         return false;
     },
 

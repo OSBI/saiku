@@ -9,7 +9,7 @@ var SaikuOlapQueryTemplate = {
         "hierarchizeMode": null,
         "location": "FILTER",
         "hierarchies": [],
-        "nonEmpty": false,
+        "nonEmpty": false
       },
       "COLUMNS": {
         "mdx": null,
@@ -19,7 +19,7 @@ var SaikuOlapQueryTemplate = {
         "hierarchizeMode": null,
         "location": "COLUMNS",
         "hierarchies": [],
-        "nonEmpty": true,
+        "nonEmpty": true
       },
       "ROWS": {
         "mdx": null,
@@ -29,7 +29,7 @@ var SaikuOlapQueryTemplate = {
         "hierarchizeMode": null,
         "location": "ROWS",
         "hierarchies": [],
-        "nonEmpty": true,
+        "nonEmpty": true
       }
     },
     "visualTotals": false,
@@ -138,6 +138,72 @@ SaikuOlapQueryHelper.prototype.removeFilter = function(filterable, flavour) {
     }
 };
 
+SaikuOlapQueryHelper.prototype.setDefaultFilter = function(hierarchy, level, value){
+  var strip = level.replace("[", "");
+  strip = strip.replace("]","");
+  this.includeLevel("FILTER", hierarchy, strip);
+  var h = this.getHierarchy(hierarchy).levels[strip];
+  h.selection = { "type": "INCLUSION", "members": [] };
+  h.selection["parameterName"] = "default_filter_"+strip;
+  if(!this.model().parameters){
+    this.model().parameters = {};
+  }
+  var k = "default_filter_"+strip;
+  this.model().parameters[k] = value;
+};
+
+SaikuOlapQueryHelper.prototype.getLevelForParameter = function(parameter){
+  var m;
+  var axes = this.model().queryModel.axes;
+  _.each(axes, function(a){
+    var hier = a.hierarchies;
+    _.each(hier, function(h){
+      _.each(h.levels, function(l){
+        if(l.selection && l.selection["parameterName"] && l.selection["parameterName"] === parameter){
+          m = {hierarchy:h, level:l};
+          return false;
+        }
+      });
+    });
+  });
+  return m;
+};
+
+SaikuOlapQueryHelper.prototype.getSelectionsForParameter = function(parameter){
+  var m;
+  var axes = this.model().queryModel.axes;
+  _.each(axes, function(a){
+    var hier = a.hierarchies;
+    _.each(hier, function(h){
+      _.each(h.levels, function(l){
+        if(l.selection && l.selection["parameterName"] && l.selection["parameterName"] === parameter){
+          m = l.selection.members;
+          return false;
+        }
+      });
+    });
+  });
+  return m;
+};
+
+SaikuOlapQueryHelper.prototype.addtoSelection = function(membername, level){
+  if(level.level.selection.members===undefined){
+    level.selection.members = [];
+  }
+  var found = false;
+  _.each(level.level.selection.members, function(m){
+    if(m.uniqueName==level.hierarchy.name+".["+level.level.name+"].["+membername+"]"){
+      found = true;
+    }
+  });
+  if(!found) {
+    level.level.selection.members.push({
+      uniqueName: level.hierarchy.name + ".[" + level.level.name + "].[" + membername + "]",
+      caption: membername
+    })
+  }
+};
+
 SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, position) {
     var mHierarchy = this.getHierarchy(hierarchy);
     if (mHierarchy) {
@@ -175,7 +241,7 @@ SaikuOlapQueryHelper.prototype.includeLevelCalculatedMember = function(axis, hie
     
     var existingAxis = this.findAxisForHierarchy(hierarchy);
     if (existingAxis) {
-      this.moveHierarchy(existingAxis.location, axis, hierarchy, position);
+      this.moveHierarchy(existingAxis.location, axis, hierarchy, -1);
     } else {
       var _axis = this.model().queryModel.axes[axis];
       if (_axis) {
@@ -203,6 +269,13 @@ SaikuOlapQueryHelper.prototype.removeLevelCalculatedMember = function(hierarchy,
     delete hierarchy.cmembers[level];
   }
 };
+
+SaikuOlapQueryHelper.prototype.removeAllLevelCalculatedMember = function(hierarchy) {
+  hierarchy = this.getHierarchy(hierarchy);
+  hierarchy.cmembers = {};
+
+};
+
 
 SaikuOlapQueryHelper.prototype.includeMeasure = function(measure) {
   var measures = this.model().queryModel.details.measures,

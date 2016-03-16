@@ -15,6 +15,8 @@
  */
 package org.saiku.service.olap;
 
+import org.apache.commons.lang.StringUtils;
+
 import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.SimpleCubeElement;
 import org.saiku.olap.dto.resultset.CellDataSet;
@@ -22,12 +24,21 @@ import org.saiku.olap.query.IQuery;
 import org.saiku.olap.query.IQuery.QueryType;
 import org.saiku.olap.query.OlapQuery;
 import org.saiku.olap.query.QueryDeserializer;
+import org.saiku.olap.query2.ThinAxis;
+import org.saiku.olap.query2.ThinCalculatedMember;
 import org.saiku.olap.query2.ThinHierarchy;
+import org.saiku.olap.query2.ThinLevel;
+import org.saiku.olap.query2.ThinMember;
 import org.saiku.olap.query2.ThinQuery;
+import org.saiku.olap.query2.ThinQueryModel;
 import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
 import org.saiku.olap.query2.util.Fat;
 import org.saiku.olap.query2.util.Thin;
-import org.saiku.olap.util.*;
+import org.saiku.olap.util.ObjectUtil;
+import org.saiku.olap.util.OlapResultSetUtil;
+import org.saiku.olap.util.QueryConverter;
+import org.saiku.olap.util.SaikuProperties;
+import org.saiku.olap.util.SaikuUniqueNameComparator;
 import org.saiku.olap.util.formatter.CellSetFormatterFactory;
 import org.saiku.olap.util.formatter.FlattenedCellSetFormatter;
 import org.saiku.olap.util.formatter.ICellSetFormatter;
@@ -48,13 +59,22 @@ import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.service.util.export.CsvExporter;
 import org.saiku.service.util.export.ExcelExporter;
 
-import org.apache.commons.lang.StringUtils;
-import org.olap4j.*;
+import org.olap4j.Axis;
+import org.olap4j.CellSet;
+import org.olap4j.CellSetAxis;
+import org.olap4j.OlapConnection;
+import org.olap4j.OlapStatement;
+import org.olap4j.Position;
 import org.olap4j.mdx.ParseTreeNode;
 import org.olap4j.mdx.ParseTreeWriter;
 import org.olap4j.mdx.SelectNode;
 import org.olap4j.mdx.parser.impl.DefaultMdxParserImpl;
-import org.olap4j.metadata.*;
+import org.olap4j.metadata.Cube;
+import org.olap4j.metadata.Dimension;
+import org.olap4j.metadata.Hierarchy;
+import org.olap4j.metadata.Level;
+import org.olap4j.metadata.Measure;
+import org.olap4j.metadata.Member;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +85,15 @@ import java.io.Writer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import mondrian.olap4j.SaikuMondrianHelper;
@@ -94,7 +122,6 @@ public class ThinQueryService implements Serializable {
     public void setCellSetFormatterFactory(CellSetFormatterFactory cff) {
         this.cff = cff;
     }
-
 
 
     public ThinQuery createQuery(ThinQuery tq) {
@@ -131,7 +158,6 @@ public class ThinQueryService implements Serializable {
         return null;
 
     }
-
 
 
     CellSet executeInternalQuery(ThinQuery query) throws Exception {
@@ -196,7 +222,7 @@ public class ThinQueryService implements Serializable {
         CellSet cs = qc.getOlapResult();
         String formatterName = (StringUtils.isBlank(format) ? "" : format.toLowerCase());
         ICellSetFormatter cf = cff.forName(formatterName);
-        CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cs,cf);
+        CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cs, cf);
 
         if (ThinQuery.Type.QUERYMODEL.equals(tq.getType()) && cf instanceof FlattenedCellSetFormatter && tq.hasAggregators()) {
             calculateTotals(tq, result, cs, cf);
@@ -209,12 +235,12 @@ public class ThinQueryService implements Serializable {
 
             Long start = (new Date()).getTime();
             log.debug("Query Start");
-            CellSet cellSet =  executeInternalQuery(tq);
+            CellSet cellSet = executeInternalQuery(tq);
             log.debug("Query End");
             String runId = "RUN#:" + ID_GENERATOR.get();
             Long exec = (new Date()).getTime();
 
-            CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cellSet,formatter);
+            CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cellSet, formatter);
             Long format = (new Date()).getTime();
 
             if (ThinQuery.Type.QUERYMODEL.equals(tq.getType()) && formatter instanceof FlattenedCellSetFormatter && tq.hasAggregators()) {
@@ -227,7 +253,7 @@ public class ThinQueryService implements Serializable {
             result.setRuntime(new Double(format - start).intValue());
             return result;
         } catch (Exception | Error e) {
-            throw new SaikuServiceException("Can't execute query: " + tq.getName(),e);
+            throw new SaikuServiceException("Can't execute query: " + tq.getName(), e);
         }
     }
 
@@ -246,11 +272,43 @@ public class ThinQueryService implements Serializable {
         }
     }
 
+    private void getEnabledCMembers(ThinQueryModel qm, ThinQueryModel queryModel) {
+        int i = 0;
+        for (Map.Entry<AxisLocation, ThinAxis> entry : qm.getAxes().entrySet()) {
+            ThinAxis v = entry.getValue();
+            for (ThinHierarchy h : v.getHierarchies()) {
+                for (Map.Entry<String, ThinLevel> entry1 : h.getLevels().entrySet()) {
+                    ThinLevel v2 = entry1.getValue();
+                    if (v2.getSelection() != null) {
+                        for (ThinMember m : v2.getSelection().getMembers()) {
+                            if (m.getType()!=null && m.getType().equals("calculatedmember")) {
+                                Map<AxisLocation, ThinAxis> ax = queryModel.getAxes();
+                                ThinAxis sax = ax.get(entry.getKey());
+                                List<ThinHierarchy> h2 = sax.getHierarchies();
+                                Map<String, ThinLevel> l = h2.get(i).getLevels();
+                                ThinLevel l2 = l.get(entry1.getKey());
+                                l2.getSelection().getMembers().add(m);
+
+                                queryModel.getAxes().get(entry.getKey()).getHierarchies().get(i).getLevels().get(entry1
+                                        .getKey()).getSelection().getMembers().add(m);
+
+                            }
+                        }
+                    }
+                }
+                i++;
+            }
+        }
+    }
+
     public ThinQuery updateQuery(ThinQuery old) throws Exception {
         if (ThinQuery.Type.QUERYMODEL.equals(old.getType())) {
             Cube cub = olapDiscoverService.getNativeCube(old.getCube());
             Query q = Fat.convert(old, cub);
+            List<ThinCalculatedMember> cms = old.getQueryModel().getCalculatedMembers();
             ThinQuery tqAfter = Thin.convert(q, old.getCube());
+            tqAfter.getQueryModel().setCalculatedMembers(cms);
+            getEnabledCMembers(old.getQueryModel(), tqAfter.getQueryModel());
             old.setQueryModel(tqAfter.getQueryModel());
             old.setMdx(tqAfter.getMdx());
         }
@@ -280,7 +338,7 @@ public class ThinQueryService implements Serializable {
     }
 
     public byte[] getExport(String queryName, String type) {
-        return getExport(queryName,type,new FlattenedCellSetFormatter());
+        return getExport(queryName, type, new FlattenedCellSetFormatter());
     }
 
     public byte[] getExport(String queryName, String type, String formatter) {
@@ -291,14 +349,34 @@ public class ThinQueryService implements Serializable {
 
     private byte[] getExport(String queryName, String type, ICellSetFormatter formatter) {
         if (StringUtils.isNotBlank(type) && context.containsKey(queryName)) {
-            CellSet rs = context.get(queryName).getOlapResult();
-            ThinQuery tq = context.get(queryName).getOlapQuery();
+            //Query Context
+            QueryContext qc = context.get(queryName);
+
+            //Query
+            ThinQuery tq = qc.getOlapQuery();
+
+            //Query exec result
+            CellSet rs = qc.getOlapResult();
+
+            //Query result as table
+            CellDataSet table = OlapResultSetUtil.cellSet2Matrix(rs, formatter);
+
+            //Calculate totals and sub totals
+            if (ThinQuery.Type.QUERYMODEL.equals(tq.getType()) && formatter instanceof FlattenedCellSetFormatter && tq.hasAggregators()) {
+                try {
+                    calculateTotals(tq, table, rs, formatter);
+                } catch (Exception e) {
+                    //Ignore totals calculation errors
+                    log.error(e.getMessage(), e);
+                }
+            }
+
             List<ThinHierarchy> filterHierarchies = null;
             if (ThinQuery.Type.QUERYMODEL.equals(tq.getType())) {
                 filterHierarchies = tq.getQueryModel().getAxes().get(AxisLocation.FILTER).getHierarchies();
             }
             if (type.toLowerCase().equals("xls")) {
-                return ExcelExporter.exportExcel(rs, formatter, filterHierarchies);
+                return ExcelExporter.exportExcel(table, formatter, filterHierarchies);
             }
             if (type.toLowerCase().equals("csv")) {
                 return CsvExporter.exportCsv(rs, SaikuProperties.webExportCsvDelimiter, SaikuProperties.webExportCsvTextEscape, formatter);
@@ -317,8 +395,7 @@ public class ThinQueryService implements Serializable {
             String mdx = query.getMdx();
             if (maxrows > 0) {
                 mdx = "DRILLTHROUGH MAXROWS " + maxrows + " " + mdx;
-            }
-            else {
+            } else {
                 mdx = "DRILLTHROUGH " + mdx;
             }
             if (StringUtils.isNotBlank(returns)) {
@@ -326,11 +403,12 @@ public class ThinQueryService implements Serializable {
             }
             return stmt.executeQuery(mdx);
         } catch (SQLException e) {
-            throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
+            throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName, e);
         } finally {
             try {
-                if (stmt != null)  stmt.close();
-            } catch (Exception e) {}
+                if (stmt != null) stmt.close();
+            } catch (Exception e) {
+            }
         }
     }
 
@@ -342,7 +420,7 @@ public class ThinQueryService implements Serializable {
                 return SaikuMondrianHelper.isMondrianDrillthrough(con, query.getMdx());
             }
         } catch (Exception | Error e) {
-            log.warn("Error checking for DRILLTHROUGH: " + query.getName() + " DRILLTHROUGH MDX:" + query.getMdx(),e);
+            log.warn("Error checking for DRILLTHROUGH: " + query.getName() + " DRILLTHROUGH MDX:" + query.getMdx(), e);
         }
         return false;
 
@@ -356,11 +434,12 @@ public class ThinQueryService implements Serializable {
             stmt = con.createStatement();
             return stmt.executeQuery(query.getMdx());
         } catch (SQLException e) {
-            throw new SaikuServiceException("Error DRILLTHROUGH: " + query.getMdx() + " DRILLTHROUGH MDX:" + query.getMdx(),e);
+            throw new SaikuServiceException("Error DRILLTHROUGH: " + query.getMdx() + " DRILLTHROUGH MDX:" + query.getMdx(), e);
         } finally {
             try {
-                if (stmt != null)  stmt.close();
-            } catch (Exception e) {}
+                if (stmt != null) stmt.close();
+            } catch (Exception e) {
+            }
         }
 
     }
@@ -409,8 +488,7 @@ public class ThinQueryService implements Serializable {
             select = buf.toString();
             if (maxrows > 0) {
                 select = "DRILLTHROUGH MAXROWS " + maxrows + " " + select + "\r\n";
-            }
-            else {
+            } else {
                 select = "DRILLTHROUGH " + select + "\r\n";
             }
             if (StringUtils.isNotBlank(returns)) {
@@ -419,14 +497,14 @@ public class ThinQueryService implements Serializable {
             log.debug("Drill Through for query (" + queryName + ") : \r\n" + select);
             return stmt.executeQuery(select);
         } catch (Exception e) {
-            throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
+            throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName, e);
         } finally {
             try {
                 if (stmt != null) stmt.close();
-            } catch (Exception e) {}
+            } catch (Exception e) {
+            }
         }
     }
-
 
 
     public byte[] exportDrillthroughCsv(String queryName, int maxrows) {
@@ -439,19 +517,19 @@ public class ThinQueryService implements Serializable {
             String mdx = query.getMdx();
             if (maxrows > 0) {
                 mdx = "DRILLTHROUGH MAXROWS " + maxrows + " " + mdx;
-            }
-            else {
+            } else {
                 mdx = "DRILLTHROUGH " + mdx;
             }
 
             ResultSet rs = stmt.executeQuery(mdx);
             return CsvExporter.exportCsv(rs);
         } catch (SQLException e) {
-            throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName,e);
+            throw new SaikuServiceException("Error DRILLTHROUGH: " + queryName, e);
         } finally {
             try {
-                if (stmt != null)  stmt.close();
-            } catch (Exception e) {}
+                if (stmt != null) stmt.close();
+            } catch (Exception e) {
+            }
         }
 
     }
@@ -460,10 +538,9 @@ public class ThinQueryService implements Serializable {
         return CsvExporter.exportCsv(rs);
     }
 
-    public byte[] exportResultSetCsv(ResultSet rs, String delimiter, String enclosing, boolean printHeader, List<KeyValue<String,String>> additionalColumns) {
+    public byte[] exportResultSetCsv(ResultSet rs, String delimiter, String enclosing, boolean printHeader, List<KeyValue<String, String>> additionalColumns) {
         return CsvExporter.exportCsv(rs, delimiter, enclosing, printHeader, additionalColumns);
     }
-
 
 
     public List<SimpleCubeElement> getResultMetadataMembers(
@@ -486,7 +563,7 @@ public class ThinQueryService implements Serializable {
                 for (CellSetAxis axis : cs.getAxes()) {
                     int posIndex = 0;
                     for (Hierarchy h : axis.getAxisMetaData().getHierarchies()) {
-                        if (h!=null && (h.getUniqueName().equals(hierarchyName) || h.getName().equals(hierarchyName))) {
+                        if (h != null && (h.getUniqueName().equals(hierarchyName) || h.getName().equals(hierarchyName))) {
                             log.debug("Found hierarchy in the result: " + hierarchyName);
                             if (h.getLevels().size() == 1) {
                                 break;
@@ -593,8 +670,7 @@ public class ThinQueryService implements Serializable {
                 }
 
 
-
-                for(Hierarchy h : memberSelection.keySet()) {
+                for (Hierarchy h : memberSelection.keySet()) {
                     QueryHierarchy qh = q.getHierarchy(h);
                     for (QueryLevel ql : qh.getActiveQueryLevels()) {
                         ql.getInclusions().clear();
@@ -613,12 +689,12 @@ public class ThinQueryService implements Serializable {
             }
 
         } catch (Exception e) {
-            throw new SaikuServiceException("Error zoom in on query: " + queryName,e);
+            throw new SaikuServiceException("Error zoom in on query: " + queryName, e);
         }
 
     }
 
-    public ThinQuery drillacross(String queryName, List<Integer> cellPosition,Map<String, List<String>> levels) {
+    public ThinQuery drillacross(String queryName, List<Integer> cellPosition, Map<String, List<String>> levels) {
         try {
             ThinQuery old = context.get(queryName).getOlapQuery();
             Cube cub = olapDiscoverService.getNativeCube(old.getCube());

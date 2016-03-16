@@ -14,7 +14,10 @@
     <!--[if lt IE 9]><script type="text/javascript" src="js/svgweb/svg.js" data-path="js/svgweb/"></script><![endif]-->
     <meta name="svg.render.forceflash" content="true">
 
+    <link rel="stylesheet" href="css/saiku/src/bootstrap.css"/>
     <!-- Blueprint CSS -->
+    <link rel="stylesheet" href="js/tourist/tourist.css" type="text/css">
+    <link rel="stylesheet" href="js/qtip/jquery.qtip.min.css" type="text/css"/>
 
     <!--  jQuery CSS -->
     <link rel="stylesheet" href="css/jquery/spectrum.css" type="text/css" media="all"/>
@@ -65,6 +68,7 @@
 
 <script type="text/javascript" src="js/fancybox/jquery.fancybox.pack.js"></script>
 
+
 <!-- CHOSEN PLACEHOLDER -->
 <script type="text/javascript">
 
@@ -111,6 +115,9 @@
 <script src="js/notify/notify.min.js"></script>
 <script src="js/fitvids/jquery.fitvids.js"></script>
 <script src="js/notify/styles/bootstrap/notify-bootstrap.js"></script>
+<script src="js/qtip/imagesloaded.pkg.min.js"></script>
+<script src="js/qtip/jquery.qtip.min.js"></script>
+<script type="text/javascript" src="js/tourist/tourist.js"></script>
 <!-- Loggly error logging service -->
 <script type="text/javascript" src="js/logger/janky.post.min.js"></script>
 <script type="text/javascript" src="js/logger/Logger.js" defer></script>
@@ -121,6 +128,7 @@
 <!-- CUT HERE -->
 <script type="text/javascript" src="js/saiku/models/SaikuOlapQuery.js"></script>
 <script type="text/javascript" src="js/saiku/models/DateFilter.js"></script>
+<script type="text/javascript" src="js/saiku/models/Level.js"></script>
 <script type="text/javascript" src="js/saiku/render/SaikuRenderer.js"></script>
 <script type="text/javascript" src="js/saiku/render/SaikuTableRenderer.js"></script>
 <script type="text/javascript" src="js/saiku/render/SaikuChartRenderer.js"></script>
@@ -142,6 +150,7 @@
 <script type="text/javascript" src="js/saiku/views/FilterModal.js"></script>
 <script type="text/javascript" src="js/saiku/views/CustomFilterModal.js"></script>
 <script type="text/javascript" src="js/saiku/views/CalculatedMemberModal.js"></script>
+<script type="text/javascript" src="js/saiku/views/ParentMemberSelectorModal.js"></script>
 <script type="text/javascript" src="js/saiku/views/DataSourcesModal.js"></script>
 <script type="text/javascript" src="js/saiku/views/QueryToolbar.js"></script>
 <script type="text/javascript" src="js/saiku/views/WorkspaceToolbar.js"></script>
@@ -177,6 +186,7 @@
 <script type="text/javascript" src="js/saiku/views/DateFilterModal.js"></script>
 <script type="text/javascript" src="js/saiku/adapters/SaikuServer.js"></script>
 <script type="text/javascript" src="js/saiku/routers/QueryRouter.js"></script>
+<script type="text/javascript" src="js/saiku/views/Tour.js"></script>
 
 <!-- END CUT HERE -->
 
@@ -252,7 +262,8 @@
             </div>
         </script>
 <script type="text/x-jquery-tmpl" id="template-cubes">
-            <select class="cubes">
+            <div >
+            <select  class="form-control cubes ui-widget">
                 <option value="" class="i18n">Select a cube</option>
                 <% _.each(connections, function(connection) { %>
                     <% _.each(connection.catalogs, function(catalog) { %>
@@ -270,6 +281,7 @@
                     <% }); %>
                 <% }); %>
             </select>
+            </div>
         </script>
 
 <script type="text/x-jquery-tmpl" id="template-dimensions">
@@ -430,7 +442,7 @@
                 <div class="calculated_measures" style="display:none;"></div>
                 <div class="calculated_members" style="display:none;"></div>
             </div>
-            <h3 class="i18n">Dimensions</h3>
+            <h3 class="i18n dimension_header">Dimensions</h3>
             <div class="sidebar_inner dimension_tree">
                 <% if (typeof cube != "undefined" && cube && cube.dimensions) { %>
                     <%=  _.template($("#template-dimensions").html(), { dimensions: cube.dimensions }) %>
@@ -661,12 +673,12 @@ title="Drill across on cell"></a></li>
 
             <div class="sidebar queries" style="width: 300px">
                 <h3 class="top" style="padding-top:3px;padding-bottom:2px;">
-                    <b><span class="i18n">Search:</span></b> &nbsp;
-                    <span class="search">
-                        <input type="text" class="search_file"></input>
+                <div class="form-inline">
+                    <label class="i18n">Search:</label> &nbsp;
+                        <input type="text" class="search_file2 form-control" style="padding-right:0px"></input>
                         <span class="cancel_search"></span>
-                    </span>
                     <span class="add_folder_button"><a href='#' class='add_folder'></a></span>
+                    </div>
                 </h3>
                 <div class="sidebar_inner">
                     <ul id="queries" class='RepositoryObjects'>
@@ -729,24 +741,27 @@ title="Drill across on cell"></a></li>
         </script>
 
 <script type="text/x-jquery-tmpl" id="template-selections">
-            <div class="header_selections">
-                <label for="filter_selections" class="i18n">Search:</label> &nbsp;<input name="filter_selections" id="filter_selections" disabled="true" type="text" class="filterbox" /> <input class="i18n search_term form_button" type="submit" value="Pre-Filter on Server" /><input class="i18n clear_search form_button" type="submit" value="Clear Filter" /><br />
+            <div class="form-inline header_selections">
+                <label for="filter_selections" class="i18n">Search:</label> &nbsp;<input name="filter_selections"
+                id="filter_selections" disabled="true" type="text" class="form-control filterbox" /> <input class="i18n form-control search_term form_button" type="submit" value="Pre-Filter on Server" /><input class="i18n form-control clear_search form_button" type="submit" value="Clear Filter" /><br />
             </div>
-            <div class="available_selections caption">
+            <div class="available_selections form-inline caption">
                 <span class="i18n">Available members:</span><br/>
                     <div class="selection_options" ><ul></ul></div>
             </div>
             <div class="selection_buttons">
-                <a class="form_button" href="#move_selection" id="add_members">&nbsp;&gt;&nbsp;</a><br><br>
-                <a class="form_button" href="#move_selection" id="add_all_members">&gt;&gt;</a><br><br>
-                <a class="form_button" href="#move_selection" id="remove_all_members">&lt;&lt;</a><br><br>
-                <a class="form_button" href="#move_selection" id="remove_members">&nbsp;&lt;&nbsp;</a>
+                <a class="form_button btn btn-default" href="#move_selection" id="add_members">&nbsp;&gt;&nbsp;
+                </a><br><br>
+                <a class="form_button btn btn-default" href="#move_selection" id="add_all_members">&gt;&gt;</a><br><br>
+                <a class="form_button btn btn-default" href="#move_selection" id="remove_all_members">&lt;&lt;</a><br><br>
+                <a class="form_button btn btn-default" href="#move_selection" id="remove_members">&nbsp;&lt;&nbsp;</a>
             </div>
-            <div class="used_selections caption">
+            <div class="used_selections form-inline caption">
                 <span class="i18n">Used members:</span>
 				<span>
 	 			<input class="selection_type selection_type_inclusion" type="radio" name="inclusion_type" value="INCLUSION" checked="true"><span class="i18n">Include</span>
-	 			<input class="selection_type selection_type_exclusion" type="radio" name="inclusion_type" value="EXCLUSION"><span class="i18n">Exclude</span>
+	 			<input class="selection_type selection_type_exclusion" type="radio" name="inclusion_type"
+	 			 value="EXCLUSION"><span class="i18n">Exclude</span>
 	 			</span>
 	 			<br/>
                     <div class="selection_options" ><ul></ul></div>
@@ -756,12 +771,15 @@ title="Drill across on cell"></a></li>
                 <a class="form_button" href="#down" id="down_members">&nbsp;&darr;&nbsp;</a><br><br>
             </div>
 
-            <div class="options">
-                <input name="show_unique" id="show_unique" type="checkbox" /><label for="show_unique" class="i18n">Show Unique Names</label><br />
-                <input name="use_result" id="use_result" type="checkbox" /><label for="use_result" class="i18n">Use Result</label><br />
+            <div class="options form-inline">
+                <input class="form-control" name="show_unique" id="show_unique" type="checkbox" />&nbsp;<label
+                for="show_unique"
+                class="i18n">Show Unique Names</label><br />
+                <input name="use_result" class="form-control" id="use_result" type="checkbox" />&nbsp;<label for="use_result"
+                class="i18n">Use Result</label><br />
 				<div class="totals_container">
 					<label for="show_totals" class="i18n">Sub totals</label>
-					<select name="show_totals" id="show_totals">
+					<select class="form-control" name="show_totals" id="show_totals">
     					<option class="i18n" value="" selected="selected">None</option>
     					<option class="i18n" value="sum">Sum</option>
 				    	<option class="i18n" value="min">Min</option>
@@ -769,7 +787,9 @@ title="Drill across on cell"></a></li>
 						<option class="i18n" value="avg">Avg</option>
 					</select>
 				</div>
-                <label for="parameter" class="i18n hide parameter">Parameter Name</label>&nbsp;<input name="parameter" id="parameter" type="text" class="parameter hide" />
+				<div class="form-inline">
+                <label for="parameter" class="i18n hide parameter">Parameter Name</label>&nbsp;<input
+                name="parameter" id="parameter" class="form-control" type="text" class="parameter hide" /></div>
             </div>
             <div class="info">
                 <div><label for="items_size" class="i18n">Items</label>: <span class="items_size"></span></div>
@@ -785,18 +805,28 @@ title="Drill across on cell"></a></li>
         </script>
 <script type="text/x-jquery-tmpl" id="template-selections-options">
             <ul>
-            <li class="i18n all_options"><input type="checkbox" class="check_all_option" id="check_all_option"><label for="check_all_option" class="i18n">All Members</label></li>
+            <li class="i18n all_options"><input type="checkbox" class="check_all_option"
+            id="check_all_option"><label for="check_all_option" class="i18n">All Members</label></li>
             <%  var counter = 0;
                 _.each(options, function(option) {
                     counter++; %>
-
-                <li class="option_value">
-                    <input type="checkbox" class="check_option"
-                        value="<%= encodeURIComponent(option.uniqueName) %>" name="selections_checker" id="selections_checker<%= counter %>"
-                        label="<%= encodeURIComponent(option.caption) %>" />
-                        <label for="selections_checker<%= counter %>" class="caption"><%= option.caption %></label>
-                        <label for="selections_checker<%= counter %>" class="unique"><%= option.uniqueName %></label>
-                </li>
+                <% if (!option.properties) { %>
+                    <li class="option_value">
+                        <input type="checkbox" class="check_option"
+                            value="<%= encodeURIComponent(option.uniqueName) %>" name="selections_checker" id="selections_checker<%= counter %>"
+                            label="<%= encodeURIComponent(option.caption) %>" />
+                            <label for="selections_checker<%= counter %>" class="caption"><%= option.caption %></label>
+                            <label for="selections_checker<%= counter %>" class="unique"><%= option.uniqueName %></label>
+                    </li>
+                <% } else { %>
+                    <li class="option_value">
+                        <input type="checkbox" class="check_option cmember"
+                            value="<%= encodeURIComponent(option.uniqueName) %>" name="selections_checker" id="selections_checker<%= counter %>"
+                            label="<%= encodeURIComponent(option.caption) %>" />
+                            <label for="selections_checker<%= counter %>" class="caption" style="color: blue;"><%= option.caption %></label>
+                            <label for="selections_checker<%= counter %>" class="unique" style="color: blue;"><%= option.uniqueName %></label>
+                    </li>
+                <% } %>
             <% }); %>
             </ul>
         </script>
@@ -807,9 +837,9 @@ title="Drill across on cell"></a></li>
 
                         <label for="filter_roles" class="i18n">Add role permission:</label>
                         <br />
-                        <form>
-                            <input name="filter_roles" id="filter_roles" type="text" class="filterbox" />
-                            <input type="submit" value="Add" class="i18n add_role" />
+                        <form class="form-inline">
+                            <input name="filter_roles" id="filter_roles" type="text" class="filterbox form-control" />
+                            <input type="submit" value="Add" class="i18n add_role btn btn-primary" />
                         </form>
                         <input type="checkbox" class="acl" value="READ" /><span class="i18n">READ</span>
                         <input type="checkbox" class="acl" value="WRITE" /><span class="i18n">WRITE</span>
@@ -819,7 +849,7 @@ title="Drill across on cell"></a></li>
                 <span class="i18n">Roles:</span>
                 <div class="rolelist"></div>
                 <br />
-                <input type="submit" value="Remove permission" class="i18n remove_acl" />
+                <input type="submit" value="Remove permission" class="i18n btn btn-danger remove_acl" />
             </div>
             <br />
             <div class="private">

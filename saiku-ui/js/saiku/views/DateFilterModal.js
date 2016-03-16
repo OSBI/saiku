@@ -82,23 +82,23 @@ var DateFilterModal = Modal.extend({
 					'</div>' +
 					'<div class="inline-form-group">' +
 						'<div class="form-group" id="div-selection-date" hidden>' +
-							'<label>Select a date:</label>' +
+							'<label class="i18n">Select a date:</label>' +
 							'<input type="text" class="selection-date" id="selection-date" placeholder="Choose a date">' +
-							'<a class="form_button" id="add-date">add</a>' +
+							'<a class="form_button i18n" id="add-date">add</a>' +
 						'</div>' +
 						'<div class="form-group" id="div-selected-date" hidden>' +
 							'<fieldset>' +
-								'<legend>Selected date:</legend>' +
+								'<legend class="i18n">Selected date:</legend>' +
 								'<ul id="selected-date"></ul>' +
 							'</fieldset>' +
 						'</div>' +
 					'</div>' +
 					'<div class="form-group" id="div-select-start-date" hidden>' +
-						'<label>Select a start date:</label>' +
+						'<label class="i18n">Select a start date:</label>' +
 						'<input type="text" class="selection-date" id="start-date" placeholder="Choose a date">' +
 					'</div>' +
 					'<div class="form-group" id="div-select-end-date" hidden>' +
-						'<label>Select an end date:</label>' +
+						'<label class="i18n">Select an end date:</label>' +
 						'<input type="text" class="selection-date" id="end-date" placeholder="Choose a date">' +
 					'</div>' +
 				'</div>' +
@@ -141,8 +141,8 @@ var DateFilterModal = Modal.extend({
 				'<div class="selection-options">' +
 					'<div class="form-group-rolling">' +
 						'<select>' +
-							'<option value="last">Last</option>' +
-							'<option value="next" disabled class="keep-disabled">Next</option>' +
+							'<option class="i18n" value="last">Last</option>' +
+							'<option class="keep-disabled i18n" value="next" disabled>Next</option>' +
 						'</select>' +
 					'</div>' +
 					'<div class="form-group-rolling">' +
@@ -150,10 +150,10 @@ var DateFilterModal = Modal.extend({
 					'</div>' +
 					'<div class="form-group-rolling">' +
 						'<select id="period-select">' +
-							'<option name="TIME_DAYS" id="rd-days">Day(s)</option>' +
-							'<option name="TIME_WEEKS" id="rd-weeks">Week(s)</option>' +
-							'<option name="TIME_MONTHS" id="rd-months">Month(s)</option>' +
-							'<option name="TIME_YEARS" id="rd-years">Year(s)</option>' +
+							'<option name="TIME_DAYS" class="i18n" id="rd-days">Day(s)</option>' +
+							'<option name="TIME_WEEKS" class="i18n" id="rd-weeks">Week(s)</option>' +
+							'<option name="TIME_MONTHS" class="i18n" id="rd-months">Month(s)</option>' +
+							'<option name="TIME_YEARS" class="i18n" id="rd-years">Year(s)</option>' +
 						'</select>' +
 					'</div>' +
 				'</div>' +
@@ -164,7 +164,7 @@ var DateFilterModal = Modal.extend({
 	initialize: function(args) {
 		// Initialize properties
 		_.extend(this, args);
-		this.options.title = '<span class="i18n">Date Filter</span>';
+		this.options.title = 'Date Filter';
 		this.message = 'Loading...';
 		this.query = args.workspace.query;
 		this.selectedDates = [];

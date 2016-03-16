@@ -46,7 +46,7 @@ var MoveRepositoryObject = Modal.extend({
         this.movefolder = args.query;
         this.success = args.success;
 
-        this.message =  "<br/><b><div class='query_name'><span class='i18n'>Please select a folder.....</span></div></b><br/><div class='RepositoryObjects'>Loading....</div>" +
+        this.message =  "<br/><b><div class='query_name'><span class='i18n'>Please select a folder.....</span></div></b><br/><div class='RepositoryObjects i18n'>Loading...</div>" +
             "<br>" +
             '<div style="height:25px; line-height:25px;"><b><span class="i18n">Search:</span></b> &nbsp;' +
             ' <span class="search"><input type="text" class="search_file"></input><span class="cancel_search"></span></span></div>';

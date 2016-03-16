@@ -112,12 +112,10 @@ function recursive_menu_translate(object, po_file) {
 		return $.each(this, function() {
 			element = $(this);
 			// Translate text
-            if(element.html === undefined && element.attr('title')===undefined && element.attr('value')===undefined){
+            if(element.html === undefined && element.attr('title') === undefined && element.attr('value') === undefined) {
                 debugger;
             }
 			if (element.html()) {
-                // console.log("html:" + element.attr('html'));
-
 				translated_text = translate( element.html(), po_file );
                 if (Saiku.i18n.elements.indexOf &&
                     Saiku.i18n.elements.indexOf(element.html()) === -1) {
@@ -145,6 +143,7 @@ function recursive_menu_translate(object, po_file) {
 					element.removeClass('i18n');
 				}
 			}
+
 
 
             // Translate title
@@ -304,7 +303,7 @@ Saiku.events.bind('session:new', function() {
             .click(Saiku.i18n.improve_translation)
             .addClass('sprite translate i18n');
         var $li = $("<li />").append($link);
-        $(Saiku.toolbar.el).find('ul').append($li);
+        $(Saiku.toolbar.el).find('ul').append($li).append('<li class="separator">&nbsp;</li>');
     }
 
 });

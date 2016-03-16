@@ -88,7 +88,31 @@ var Settings = {
         }
     },
     MAPS_OSM_NOMINATIM: 'https://nominatim.openstreetmap.org/', // http://wiki.openstreetmap.org/wiki/Nominatim
-    DATA_SOURCES_LOOKUP: true
+    DATA_SOURCES_LOOKUP: false,
+    DEFAULT_REPORT_SHOW: false, // true/false
+    DEFAULT_REPORTS: {
+        'admin': [
+            {
+                path: 'ADD_PATH1', // example: /homes/home:admin/chart.saiku
+                visible: false    // true/false
+            }
+        ],
+        '_': [
+            {
+                path: 'ADD_PATH2',
+                visible: false
+            }
+        ],
+        'ROLE_ADMIN': [
+            {
+                path: 'ADD_PATH3',
+                visible: false
+            }
+        ]
+    },
+    PARENT_MEMBER_DIMENSION: false,
+    EXT_DATASOURCE_PROPERTIES: false,
+    SHOW_USER_MANAGEMENT: true
 };
 
 /**

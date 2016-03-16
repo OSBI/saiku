@@ -41,6 +41,7 @@ var DimensionList = Backbone.View.extend({
         this.template = this.cube.get('template_attributes');
         this.render_attributes();
         this.workspace.sync_query();
+
     },
     
     render: function() {
@@ -54,6 +55,7 @@ var DimensionList = Backbone.View.extend({
             $(this.el).html(template);
             $(this.el).find(".loading").removeClass("hide");
             this.workspace.bind('cube:loaded',  this.load_dimension);
+
         }
 
         return this;
@@ -116,6 +118,11 @@ var DimensionList = Backbone.View.extend({
             $target.find('a').toggleClass('folder_collapsed').toggleClass('folder_expand');
             $target.toggleClass('collapsed').toggleClass('expand');
             $target.parents('li').find('ul').children('li').toggle();
+
+            if($target.hasClass('expand')){
+                Saiku.events.trigger("workspace:expandDimension", this, null);
+
+            }
         }
         
         return false;

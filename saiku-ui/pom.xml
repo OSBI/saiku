@@ -3,11 +3,11 @@
 <parent>
 		<artifactId>saiku</artifactId>
 		<groupId>org.saikuanalytics</groupId>
-		<version>3.7.4</version>
+	<version>3.8-RC5</version>
 	</parent>
 	<artifactId>saiku-ui</artifactId>
 	<packaging>pom</packaging>
-	<version>3.7.4</version>
+	<version>3.8-RC5</version>
         <properties>
 	<checkstyle.skip>true</checkstyle.skip>
 	 <build.prod>false</build.prod>
@@ -46,6 +46,7 @@
 					<jsSourceIncludes>
 						<jsSourceInclude>models/SaikuOlapQuery.js</jsSourceInclude>
 						<jsSourceInclude>models/DateFilter.js</jsSourceInclude>
+						<jsSourceInclude>models/Level.js</jsSourceInclude>
 						<jsSourceInclude>render/SaikuRenderer.js</jsSourceInclude>
 						<jsSourceInclude>render/SaikuTableRenderer.js</jsSourceInclude>
 						<jsSourceInclude>render/SaikuChartRenderer.js</jsSourceInclude>
@@ -66,8 +67,12 @@
 						<jsSourceInclude>views/OverwriteModal.js</jsSourceInclude>
 						<jsSourceInclude>views/AddFolderModal.js</jsSourceInclude>
 						<jsSourceInclude>views/FilterModal.js</jsSourceInclude>
+						<jsSourceInclude>views/StringFilterModal.js</jsSourceInclude>
 						<jsSourceInclude>views/CustomFilterModal.js</jsSourceInclude>
 						<jsSourceInclude>views/CalculatedMemberModal.js</jsSourceInclude>
+						<jsSourceInclude>views/GrowthModal.js</jsSourceInclude>
+						<jsSourceInclude>views/FormatAsPercentageModal.js</jsSourceInclude>
+						<jsSourceInclude>views/ParentMemberSelectorModal.js</jsSourceInclude>
 						<jsSourceInclude>views/DataSourcesModal.js</jsSourceInclude>
 						<jsSourceInclude>views/QueryToolbar.js</jsSourceInclude>
 						<jsSourceInclude>views/WorkspaceToolbar.js</jsSourceInclude>
@@ -100,6 +105,7 @@
 						<jsSourceInclude>views/TitlesModal.js</jsSourceInclude>
 						<jsSourceInclude>adapters/SaikuServer.js</jsSourceInclude>
 						<jsSourceInclude>routers/QueryRouter.js</jsSourceInclude>
+						<jsSourceInclude>views/Tour.js</jsSourceInclude>
 					</jsSourceIncludes>
 					<jsSourceExcludes>
 						<jsSourceExclude>Settings.js</jsSourceExclude>

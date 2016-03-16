@@ -15,7 +15,7 @@ public class ThinFilter {
 	}
 	
 	public enum FilterOperator {
-		EQUALS, GREATER, GREATER_EQUALS, SMALLER, SMALLER_EQUALS, LIKE
+		EQUALS, NOTEQUAL, GREATER, GREATER_EQUALS, SMALLER, SMALLER_EQUALS, LIKE
 	}
 
 	public enum FilterFunction {

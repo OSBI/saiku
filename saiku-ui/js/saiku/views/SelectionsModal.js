@@ -20,6 +20,8 @@
 var SelectionsModal = Modal.extend({
     type: "selections",
 
+    paramvalue: null,
+
     buttons: [
         { text: "OK", method: "save" },
         { text: "Open Date Filter", method: "open_date_filter" },
@@ -56,6 +58,7 @@ var SelectionsModal = Modal.extend({
         this.query = args.workspace.query;
         this.selected_members = [];
         this.available_members = [];
+        this.topLevel;
 
         _.bindAll(this, "fetch_members", "populate", "finished", "get_members", "use_result_action", "show_totals_action");
 
@@ -115,7 +118,12 @@ var SelectionsModal = Modal.extend({
             if (level) {
                 var pName = level.selection ? level.selection.parameterName : null;
                 if (pName) {
-                    $(this.el).find('input.parameter').val(pName);
+                    $(this.el).find('#parameter').val(pName);
+
+                    if(this.query.helper.model().parameters[pName]!=undefined) {
+                        this.paramvalue = this.query.helper.model().parameters[pName].split(",");
+                    }
+
                 }
             }
             $(this.el).find('.parameter').removeClass('hide');
@@ -142,8 +150,14 @@ var SelectionsModal = Modal.extend({
         $(this.el).find('.search_limit').text(this.members_search_limit);
         $(this.el).find('.members_limit').text(this.members_limit);
 
+        var calcMembers = this.workspace.query.helper.getCalculatedMembers();
 
-        this.get_members();
+        if (calcMembers.length > 0) {
+            this.fetch_calcmembers_levels();
+        }
+        else {
+            this.get_members();
+        }
     },
 
     open_date_filter: function(event) {
@@ -177,9 +191,9 @@ var SelectionsModal = Modal.extend({
             var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">' + self.message + '</span> ';
             self.workspace.block(message);
 
-		/**
-		 * gett isn't a typo, although someone should probably rename that method to avoid confusion.
-		 */
+        /**
+         * gett isn't a typo, although someone should probably rename that method to avoid confusion.
+         */
             this.workspace.query.action.gett(path, {
                 success: this.fetch_members,
                 error: function() {
@@ -201,7 +215,7 @@ var SelectionsModal = Modal.extend({
 
         var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">Searching for members matching:</span> ' + search_term;
         self.workspace.block(message);
-		self.workspace.query.action.gett(self.search_path, {
+        self.workspace.query.action.gett(self.search_path, {
                 async: false,
 
                 success: function(response, model) {
@@ -215,8 +229,76 @@ var SelectionsModal = Modal.extend({
                 },
                 data: { search: search_term, searchlimit: self.members_search_limit }
         });
+    },
+
+    fetch_calcmembers_levels: function() {
+        var dimHier = this.member.hierarchy.split('].[');
+        var m4=true;
+        if(dimHier.length===1){
+            m4=false;
+            dimHier = this.member.hierarchy.split('.');
+
+        }
+        if(dimHier.length>1){
+            var hName = dimHier[1].replace(/[\[\]]/gi, '');
+        }
+        var dName = dimHier[0].replace(/[\[\]]/gi, '');
 
 
+        var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">' + this.message + '</span> ';
+        this.workspace.block(message);
+
+        if(!m4){
+            if(hName!=undefined) {
+                hName = dName + "." + hName;
+            }
+            else{
+                hName = dName;
+            }
+        }
+        var level = new Level({}, { 
+            ui: this, 
+            cube: this.workspace.selected_cube, 
+            dimension: dName, 
+            hierarchy: hName
+        });
+
+        level.fetch({
+            success: this.get_levels
+        });
+    },
+
+    get_levels: function(model, response) {
+        if (response && response.length > 0) {
+            model.ui.topLevel = response[0];
+            model.ui.get_members();
+        }
+    },
+
+    get_calcmembers: function() {
+        var self = this;
+        var hName = this.member.hierarchy;
+        var calcMembers = this.workspace.query.helper.getCalculatedMembers();
+        var arrCalcMembers = [];
+
+        if (this.topLevel.name === this.member.level) {
+            _.filter(calcMembers, function(value) {
+                if (value.hierarchyName === hName && _.isEmpty(value.parentMember)) {
+                    value.uniqueName = value.hierarchyName + '.[' + value.name + ']';
+                    arrCalcMembers.push(value);
+                }
+            });
+        }
+        else {
+            _.filter(calcMembers, function(value) {
+                if (value.hierarchyName === hName && value.parentMemberLevel === self.member.level) {
+                    value.uniqueName = value.parentMember + '.[' + value.name + ']';
+                    arrCalcMembers.push(value);
+                }
+            });
+        }
+
+        return arrCalcMembers;
     },
 
     fetch_members: function(model, response) {
@@ -235,6 +317,16 @@ var SelectionsModal = Modal.extend({
             self.show_unique_option = false;
             $(this.el).find('.options #show_unique').attr('checked',false);
 
+            var calcMembers = this.workspace.query.helper.getCalculatedMembers();
+
+            if (calcMembers.length > 0) {
+                var newCalcMembers = this.get_calcmembers();
+                var len = newCalcMembers.length;
+
+                for (var i = 0; i < len; i++) {
+                    this.available_members.push(newCalcMembers[i]);
+                }
+            }
 
             $(this.el).find('.items_size').text(this.available_members.length);
             if (this.members_search_server) {
@@ -254,6 +346,16 @@ var SelectionsModal = Modal.extend({
 
             // Populate both boxes
 
+            /*var arr = this.paramvalue;
+            _.each(this.paramvalue, function(param){
+                _.each(self.selected_members, function(m){
+                    if(m.name == param){
+                        var idx = self.paramvalue.indexOf(param);
+                        arr.splice(idx, 1);
+                    }
+                });
+            });
+*/
 
             for (var j = 0, len = this.selected_members.length; j < len; j++) {
                     var member = this.selected_members[j];
@@ -370,8 +472,8 @@ var SelectionsModal = Modal.extend({
             $(this.el).find('.selection_type_exclusion').prop('checked', false);
         }
 
-		// Translate
-		Saiku.i18n.translate();
+        // Translate
+        Saiku.i18n.translate();
         // Show dialog
         Saiku.ui.unblock();
     },
@@ -380,7 +482,7 @@ var SelectionsModal = Modal.extend({
         var left = ($(window).width() - 1000)/2;
         var width = $(window).width() < 1040 ? $(window).width() : 1040;
         $(args.modal.el).parents('.ui-dialog')
-            .css({ width: width, left: "inherit", margin:"0", height: 530 })
+            .css({ width: width, left: "inherit", margin:"0", height: 585 })
             .offset({ left: left});
 
         $('#filter_selections').attr("disabled", false);
@@ -477,16 +579,32 @@ var SelectionsModal = Modal.extend({
         if ($(this.el).find('.used_selections input').length === 0) {
             // nothing to do - include all members of this level
         } else {
+            self.workspace.query.helper.removeAllLevelCalculatedMember(hName);
 
             // Loop through selections
             $(this.el).find('.used_selections .option_value input')
                 .each(function(i, selection) {
-                var value = $(selection).val();
-                var caption = $(selection).attr('label');
-                updates.push({
-                    uniqueName: decodeURIComponent(value),
-                    caption: decodeURIComponent(caption)
-                });
+                    var value = $(selection).val();
+                    if($(selection).hasClass("cmember")){
+                        var caption = $(selection).attr('label');
+
+                        self.workspace.toolbar.group_parents();
+
+                        self.workspace.query.helper.includeLevelCalculatedMember(self.axis, hName, lName, decodeURIComponent(value), 0);
+                        updates.push({
+                            uniqueName: decodeURIComponent(value),
+                            caption: decodeURIComponent(caption),
+                            type: "calculatedmember"
+                        });
+                    }
+                    else {
+                        var caption = $(selection).attr('label');
+                        updates.push({
+                            uniqueName: decodeURIComponent(value),
+                            caption: decodeURIComponent(caption)
+                        });
+                    }
+
             });
         }
 
@@ -506,10 +624,11 @@ var SelectionsModal = Modal.extend({
                     if (!parameters[parameterName]) {
                     //    self.workspace.query.helper.model().parameters[parameterName] = "";
                     }
+
+
                 }
 
         }
-
 
         this.finished();
     },

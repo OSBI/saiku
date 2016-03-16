@@ -76,5 +76,25 @@
    "Spark Line":"Mini Ligne",
    "Export":"Export",
    "Stacked Bar":"Barre empilées",
-   "Bar 100%":"Barre 100%"
+   "Bar 100%":"Barre 100%",
+   "Search:":"Rechercher",
+   "Permissions":"Permissions",
+   "locale":"fr",
+   "Duplicate":"Copier",
+   "fr":"fr",
+   "Thank you for improving our translation!":"Merci d'améliorer cette traduction",
+   "Re-render chart":"Regénérer les résultats",
+   "Zoom back out":"Dézoomer",
+   "Zoom into table":"Zoomer sur la table",
+   "Add":"Ajouter",
+   "You need to include at least one level on rows for a valid query." :
+   "Vous devez inclure au moins une mesure ou un niveau de colonne pour valider la requète",
+   "New Folder":"Nouveau dossier",
+   "Move":"Déplacer",
+   "Repository":"Référentiel",
+   "Fullscreen":"Plein écran",
+   "Chart Mode":"Mode Graphiques",
+   "Table Mode":"Mode Tableau",
+   "Reset query":"Recommencer la requête"
+
 }

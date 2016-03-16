@@ -23,25 +23,29 @@ var FilterModal = Modal.extend({
     closeText: "Save",
 
     events: {
-        'submit form': 'save',
-        'click .dialog_footer a' : 'call'
+        //'submit form': 'save',
+        'click .dialog_footer a' : 'call',
+        'click .insert-member' : 'open_select_member_selector'
     },
 
     buttons: [
         { text: "OK", method: "save" },
-        { text: "Cancel", method: "close" }
+        { text: "Cancel", method: "close" },
+        { text: "Help", method: "help"}
     ],
 
     message: "",
 
     expression_text: function() {
-        var c = "<form id='custom_filter'><table border='0px'>";
+        var c = "<div class='sidebar'><table" +
+        " border='0px'>";
         if (this.expressionType == "Order") {
-            c += "<tr><td class='col1'>Sort Type: <select id='fun'><option>ASC</option><option>BASC</option><option>DESC</option><option>BDESC</option> </select></td></tr>";
+            c += "<tr><td class='col1'><label>Sort Type</label> <select class='form-control' id='fun'><option>ASC</option><option>BASC</option><option>DESC</option><option>BDESC</option> </select></td></tr>";
         }
         c += "<tr><td class='col1'>" + this.expressionType + " MDX Expression:</td></tr>" +
-             "<tr><td class='col1'><textarea class='filter_expression'></textarea></td></tr>" +
-             "</table></form>";
+             "<tr><td class='col1' style='width:380px'><div class='filter-editor' style='width:380px' id='"+this.id+"'></div></td></tr>" +
+             "</table>" +
+            "<a href='#' class='form_button btn btn-default insert-member'>Insert Member</a></div>";
         return c;
     },
 
@@ -51,6 +55,8 @@ var FilterModal = Modal.extend({
 
     initialize: function(args) {
         var self = this;
+        this.id = _.uniqueId('filter-modal-');
+        this.workspace = args.workspace;
         this.axis = args.axis;
         this.query = args.query;
         this.success = args.success;
@@ -65,8 +71,15 @@ var FilterModal = Modal.extend({
         this.message = this.expression_text(this.expressionType);
 
         this.bind( 'open', function( ) {
-                    $(this.el).find('textarea').val('').val(self.expression);    
+            $(this.el).find('.sidebar').width(380);
+
+            this.editor = ace.edit(this.id);
+            this.editor.setValue(self.expression);
+            this.editor.setShowPrintMargin(false);
+            this.editor.setFontSize(11);
         });
+
+
         
 
         
@@ -103,7 +116,59 @@ var FilterModal = Modal.extend({
     error: function() {
         $(this.el).find('dialog_body')
             .html("Could not add new folder");
-    }
+    },
 
+    /**
+     * Open the select member dialog
+     * @param event
+     */
+    open_select_member_selector: function(event){
+        event.preventDefault();
+        var dimension = {
+            val: this.$el.find('#cms-dimension option:selected').val(),
+            txt: this.$el.find('#cms-dimension option:selected').text(),
+            dataDimension: this.$el.find('#cms-dimension option:selected').data('dimension'),
+            dataType: this.$el.find('#cms-dimension option:selected').data('type')
+        };
+        var editor = ace.edit(this.id);
+        var that = this;
+
+
+         (new ParentMemberSelectorModal({
+                dialog: this,
+                workspace: this.workspace,
+                cube: this.workspace.selected_cube,
+                dimensions: Saiku.session.sessionworkspace.cube[this.workspace.selected_cube].get('data').dimensions,
+                selectDimension: dimension.val,
+                dimension: dimension.dataDimension,
+                hierarchy: dimension.txt,
+                uniqueName: this.pmUniqueName,
+                lastLevel: this.pmLevel,
+                breadcrumbs: this.pmBreadcrumbs,
+                select_type: "select_member",
+                selected_member: this.selected_member,
+                close_callback: function(args){
+                    var e = editor;
+                    that.close_select_modal(e, args);
+                }
+            })).render().open();
+
+            this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Custom Filter');
+
+
+    },
+
+    /**
+     * Callback to update the editor with the selected member.
+     * @param editor
+     * @param n
+     */
+    close_select_modal: function(editor, n){
+        editor.insert(n);
+    },
+
+    help: function(){
+        window.open("http://wiki.meteorite.bi/display/SAIK/Filtering");
+    }
 
 });

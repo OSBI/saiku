@@ -51,7 +51,7 @@ var OpenQuery = Backbone.View.extend({
     },
 
     caption: function() {
-        return "Repository";
+        return '<span class="i18n">Repository</span>';
     },
 
     /*jshint -W069 */
@@ -405,7 +405,7 @@ var OpenQuery = Backbone.View.extend({
         }
         
         if (item.fileType === 'saiku') {
-            var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state }));
+            var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state, processURI: false }));
         }
         else {
             Saiku.session.trigger('openQuery:open_query', { query: query, item: item, viewState: state });
@@ -425,7 +425,7 @@ var OpenQuery = Backbone.View.extend({
         var obj = {files: files, viewstate: viewstate};
 
         (new WarningModal({
-            title: "Open Multiple Queries", message: "You are about to open "+files.length+" queries",
+            title: 'Open Multiple Queries', message: '<span class="i18n">You are about to open</span> ' + files.length + ' <span class="i18n">queries</span>',
             okay: this.run_open_contents, okayobj: obj
         })).render().open();
 
@@ -446,7 +446,7 @@ var OpenQuery = Backbone.View.extend({
             if(fileargs.viewstate && !fileargs.viewstate.hasOwnProperty('currentTarget')) {
                 state = viewstate;
             }
-            var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state }));
+            var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state, processURI: false }));
 
         });
     },
@@ -495,10 +495,10 @@ var OpenQuery = Backbone.View.extend({
         // Adjust the height of the separator
         $separator = $(this.el).find('.sidebar_separator');
         $separator.height($("body").height() - 87);
-        $(this.el).find('.sidebar').css( { 'width' : 300,
+        $(this.el).find('.sidebar').css( { 'width' : 350,
                                             'height' : $("body").height() - 87 });
-        $(this.el).find('.workspace_inner').css({ 'margin-left' : 305});
-        $(this.el).find('.workspace').css({ 'margin-left' : -305});
+        $(this.el).find('.workspace_inner').css({ 'margin-left' : 355});
+        $(this.el).find('.workspace').css({ 'margin-left' : -355});
         // Adjust the dimensions of the results window
         $(this.el).find('.workspace_results').css({
             width: $(document).width() - $(this.el).find('.sidebar').width() - 30,

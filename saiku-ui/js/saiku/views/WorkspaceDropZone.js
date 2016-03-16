@@ -78,6 +78,7 @@ var WorkspaceDropZone = Backbone.View.extend({
             }
         });
 
+
         return this;
     },
 
@@ -90,10 +91,13 @@ var WorkspaceDropZone = Backbone.View.extend({
                 "type": $(element).find('a').attr('type')
             };
             details.push(measure);
+            Saiku.events.trigger("workspaceDropZone:select_measure", this,
+                {measure:measure});
         });
         this.workspace.query.helper.setMeasures(details);
         this.workspace.sync_query();
         this.workspace.query.run();
+
     },
 
     remove_measure_click: function(event) {
@@ -125,9 +129,6 @@ var WorkspaceDropZone = Backbone.View.extend({
 
         if (model.hasOwnProperty('queryModel') && model.queryModel.hasOwnProperty('axes')) {
             var axes = model.queryModel.axes;
-            console.dir(axes);
-
-            var o = this.workspace.query.helper.getHierarchy("[Store].[Stores]");
 
             for (var axis in axes) {
                 var $axis = $(self.el).find('.fields_list[title="' + axis + '"]');
@@ -144,7 +145,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                             .find('.folder_collapsed')
                             .addClass('selected');
                     }
-                    for (var member in hierarchy.cmembers) {
+                    /*for (var member in hierarchy.cmembers) {
                         if (hierarchy.cmembers.hasOwnProperty(member)) {
                             var level = member.split('.')[member.split('.').length-1].replace(/[\[\]]/gi, '');
 
@@ -157,7 +158,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                                 .find('.folder_collapsed')
                                 .addClass('selected');
                         }
-                    }
+                    }*/
                     var selection = $('<li class="selection"></li>');
                     selection.append(h);
                     selection.appendTo($axis.find('ul.connectable'));
@@ -194,6 +195,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                 $axis.siblings('.clear_axis').removeClass('hide');
             }
         });
+
     },
 
     clear_axis: function(event) {
@@ -221,7 +223,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         // Trigger event when select dimension
         Saiku.session.trigger('workspaceDropZone:select_dimension', { workspace: this.workspace });
 
-        if (false || $(ui.item).is(':visible')) {
+        if ($(ui.item).is(':visible')) {
             $(self.el).find('.axis_fields ul.hierarchy').each( function(index, element) {
                 $(element).find('li.temphide').show().removeClass('temphide');
             });
@@ -239,15 +241,18 @@ var WorkspaceDropZone = Backbone.View.extend({
             var isNew = ui.item.hasClass('d_level');
             var isCalcMember = ui.item.hasClass('dimension-level-calcmember');
 
+            var level;
+            var uniqueName;
             if (isCalcMember) {
-                var uniqueName = ui.item.find('a.level').attr('uniquename');
+                /*uniqueName = ui.item.find('a.level').attr('uniquename');
                 this.workspace.toolbar.$el.find('.group_parents').removeClass('on');
                 this.workspace.toolbar.group_parents();
-                this.workspace.query.helper.includeLevelCalculatedMember(toAxis, hierarchy, level, uniqueName, indexHierarchy);
+                this.workspace.query.helper.includeLevelCalculatedMember(toAxis, hierarchy, level, uniqueName,
+                 indexHierarchy);*/
             }
             else {
                 if (isNew) {
-                    var level = ui.item.find('a.level').attr('level');
+                    level = ui.item.find('a.level').attr('level');
                     this.workspace.query.helper.includeLevel(toAxis, hierarchy, level, indexHierarchy);
                 } else {
                     self.workspace.query.helper.moveHierarchy(fromAxis, toAxis, hierarchy, indexHierarchy);
@@ -257,6 +262,8 @@ var WorkspaceDropZone = Backbone.View.extend({
             $(ui.item).detach();
             this.workspace.sync_query();
             self.workspace.query.run();
+            Saiku.events.trigger("workspaceDropZone:select_dimension", this,
+                {level: level, uniquename: uniqueName, toAxis: toAxis, isNew: isNew, isCalc: isCalcMember, hierarchy:hierarchy});
             return;
         }
         return;
@@ -610,7 +617,34 @@ var WorkspaceDropZone = Backbone.View.extend({
                                     success: save_custom,
                                     query: self.workspace.query,
                                     expression: filterCondition,
-                                    expressionType: "Filter"
+                                    expressionType: "Filter",
+                                     workspace: self.workspace
+                                })).render().open();
+
+                            } else if (key == "stringfilter") {
+                                save_custom = function(filterCondition, matchtype, filtervalue) {
+                                    filterCondition+='.CurrentMember.Name MATCHES ("(?i).*'+filtervalue+'.*")'
+                                    var expressions = [];
+                                    expressions.push(filterCondition);
+
+                                    self.workspace.query.helper.removeFilter(a, 'Generic');
+                                    a.filters.push(
+                                        {   "flavour" : "Generic",
+                                            "operator": null,
+                                            "function" : "Filter",
+                                            "expressions": expressions
+                                        });
+                                    self.synchronize_query();
+                                    self.workspace.query.run();
+                                };
+
+                                (new StringFilterModal({
+                                    axis: target,
+                                    success: save_custom,
+                                    query: self.workspace.query,
+                                    expression: filterCondition,
+                                    expressionType: "Filter",
+                                    workspace: self.workspace
                                 })).render().open();
 
                             } else if (key == "clearlimit") {

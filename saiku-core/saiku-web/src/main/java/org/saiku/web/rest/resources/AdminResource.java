@@ -663,4 +663,11 @@ public class AdminResource {
             return Response.serverError().entity("Could not read log file").build();
         }
     }
+
+    @GET
+    @Produces("application/json")
+    @Path("/datakeys")
+    public Response getPropertiesKeys(){
+        return Response.ok(repositoryDatasourceManager.getAvailablePropertiesKeys()).build();
+    }
 }

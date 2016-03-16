@@ -15,6 +15,10 @@
  */
 package org.saiku.plugin;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.ISaikuConnection;
 import org.saiku.datasources.connection.RepositoryFile;
@@ -24,9 +28,6 @@ import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.user.UserService;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.RepositoryException;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
@@ -36,29 +37,59 @@ import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
 import org.pentaho.platform.util.messages.LocaleHelper;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import mondrian.olap.MondrianProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.RolapConnectionProperties;
 import mondrian.util.Pair;
 
+
+
+
 public class PentahoDatasourceManager implements IDatasourceManager {
 
     private static final Log LOG = LogFactory.getLog(PentahoDatasourceManager.class);
 
-    private final Map<String, SaikuDatasource> datasources =
-        Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
-
-    private String saikuDatasourceProcessor;
+    private Map<String, SaikuDatasource> datasources =      Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
+    
+	private String saikuDatasourceProcessor;
 
     private String saikuConnectionProcessor;
 
     private String dynamicSchemaProcessor;
 
+    private IPentahoSession session;
+
+    private IMondrianCatalogService catalogService;
+
     private String datasourceResolver;
 
-    public void setDatasourceResolverClass(String datasourceResolverClass) {
+    /*START CODE Xpand-IT*/
+    private String xmlaUrl;
+    private String xmlaDriver;
+    private String xmlaSecurityEnabled;
+
+    public void setXmlaUrl(String url){
+        this.xmlaUrl = url;
+    }
+      
+    public void setXmlaDriver(String driv){
+        this.xmlaDriver = driv;
+    }
+    
+    public void setXmlaSecurityEnabled(String secEnabled){
+        this.xmlaSecurityEnabled = secEnabled;
+    }      
+
+    /*END CODE Xpand-IT*/
+	
+	public void setDatasourceResolverClass(String datasourceResolverClass) {
         this.datasourceResolver = datasourceResolverClass;
     }
 
@@ -74,7 +105,7 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         this.dynamicSchemaProcessor = dynamicSchemaProcessor;
     }
 
-    private PentahoDatasourceManager() {
+    public PentahoDatasourceManager() {
     }
 
     public void init() {
@@ -90,22 +121,15 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
     }
 
-
-
-
-
-
     private Map<String, SaikuDatasource> loadDatasources() {
         try {
-
-
-            IPentahoSession session = PentahoSessionHolder.getSession();
+            this.session = PentahoSessionHolder.getSession();
 
             ClassLoader cl = this.getClass().getClassLoader();
             ClassLoader cl2 = this.getClass().getClassLoader().getParent();
 
             Thread.currentThread().setContextClassLoader(cl2);
-            IMondrianCatalogService catalogService = PentahoSystem.get(IMondrianCatalogService.class,
+            this.catalogService = PentahoSystem.get(IMondrianCatalogService.class,
                 session);
 
             List<MondrianCatalog> catalogs = catalogService.listCatalogs(session, true);
@@ -132,7 +156,10 @@ public class PentahoDatasourceManager implements IDatasourceManager {
                 builder.append(catalog.getDefinition());
                 builder.append("; ");
 
-                for (Pair<String, String> pair : parsedProperties) {
+                Iterator<Pair<String, String>> it = parsedProperties.iterator();
+
+                while (it.hasNext()) {
+                    Pair<String, String> pair = it.next();
                     builder.append(pair.getKey());
                     builder.append("=");
                     builder.append(pair.getValue());
@@ -163,15 +190,44 @@ public class PentahoDatasourceManager implements IDatasourceManager {
                 if (saikuConnectionProcessor != null) {
                     props.put(ISaikuConnection.CONNECTION_PROCESSORS, saikuConnectionProcessor);
                 }
-                //props.list(System.out);
+                props.list(System.out);
 
                 SaikuDatasource sd = new SaikuDatasource(name, SaikuDatasource.Type.OLAP, props);
                 datasources.put(name, sd);
-
-
             }
-            return datasources;
-        } catch (Exception e) {
+			
+			/*START CODE Xpand-IT*/
+
+            if (this.xmlaUrl != null){
+
+                String urlRoles = this.xmlaUrl;
+                Properties props2 = new Properties();
+                props2.put("driver", this.xmlaDriver);
+                props2.put("location", urlRoles);
+                
+                /* Use security? */                
+                props2.put(ISaikuConnection.SECURITY_ENABLED_KEY, this.xmlaSecurityEnabled);
+                //props2.put(ISaikuConnection.SECURITY_TYPE_KEY, this.xmlaSecurityType); 
+                
+                if (this.saikuDatasourceProcessor != null) {
+                  props2.put("datasource.processors", this.saikuDatasourceProcessor);
+                }
+                if (this.saikuConnectionProcessor != null) {
+                  props2.put("connection.processors", this.saikuConnectionProcessor);
+                }
+                props2.list(System.out);
+                
+                String name2 = "xmla";
+                SaikuDatasource sd2 = new SaikuDatasource(name2, SaikuDatasource.Type.OLAP, props2);
+                this.datasources.put(name2, sd2);
+                LOG.debug("NAME: " + name2 + " DSINFO: " + urlRoles + "  ###CATALOG: " + this.xmlaDriver);
+            }  
+
+            /*END CODE Xpand-IT*/
+            
+			return datasources;
+        
+		} catch (Exception e) {
             e.printStackTrace();
             LOG.error(e);
         }
@@ -207,16 +263,9 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         return loadDatasources().get(datasourceName);
     }
 
+    @Override
     public SaikuDatasource getDatasource(String datasourceName, boolean refresh) {
-        if(!refresh) {
-            if(datasources.size()>0) {
-                return datasources.get(datasourceName);
-            }
-        }
-        else{
-            return getDatasource(datasourceName);
-        }
-        return null;
+        return loadDatasources().get(datasourceName);
     }
 
     public void addSchema(String file, String path, String name) {
@@ -299,28 +348,44 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         return null;
     }
 
+    @Override
     public String getEarthquakeUrl() {
         return null;
     }
 
+    @Override
     public String getEarthquakeDir() {
         return null;
     }
 
+    @Override
     public String getEarthquakeSchema() {
         return null;
     }
 
+    @Override
     public void setEarthquakeUrl(String earthquakeUrl) {
 
     }
 
+    @Override
     public void setEarthquakeDir(String earthquakeDir) {
 
     }
 
+    @Override
     public void setEarthquakeSchema(String earthquakeSchema) {
 
+    }
+
+    @Override
+    public void setExternalPropertiesFile(String file) {
+
+    }
+
+    @Override
+    public String[] getAvailablePropertiesKeys() {
+        return new String[0];
     }
 
     public void setACL(String a, String b, String c, List<String> d) {
@@ -339,11 +404,11 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         throw new UnsupportedOperationException();
     }
 
-    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles) {
+    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles) {
         throw new UnsupportedOperationException();
     }
 
-    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles, String path) {
+    public List<IRepositoryObject> getFiles(String type, String username, List<String> roles, String path) {
         throw new UnsupportedOperationException();
     }
 
@@ -376,10 +441,21 @@ public class PentahoDatasourceManager implements IDatasourceManager {
     
     }
 
+    @Override
+    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles) {
+        return null;
+    }
+
+    @Override
+    public List<IRepositoryObject> getFiles(List<String> type, String username, List<String> roles, String path) {
+        return null;
+    }
+
     public String getInternalFileData(String file) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public InputStream getBinaryInternalFileData(String file) throws javax.jcr.RepositoryException {
         return null;
     }

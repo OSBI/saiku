@@ -52,7 +52,7 @@ var CalculatedMemberModal = Modal.extend({
     template_modal: _.template(
         '<div class="cms-container-group">' +
             '<div class="calculated-measure-group">' +
-                '<h4>Calculated Measures:</h4>' +
+                '<h4 class="i18n">Calculated Measures:</h4>' +
                 '<div class="cms-box">' +
                     '<table class="cms-list measures-list">' +
                         '<%= tplCalculatedMeasures %>' +
@@ -60,7 +60,7 @@ var CalculatedMemberModal = Modal.extend({
                 '</div>' +
             '</div>' +
             '<div class="calculated-member-group">' +
-                '<h4>Calculated Members:</h4>' +
+                '<h4 class="i18n">Calculated Members:</h4>' +
                 '<div class="cms-box">' +
                     '<table class="cms-list members-list">' +
                         '<%= tplCalculatedMembers %>' +
@@ -70,39 +70,52 @@ var CalculatedMemberModal = Modal.extend({
         '</div>' +
         '<div class="cms-container-form">' +
             '<form class="form-group-inline" data-action="cad">' +
-                '<label for="cms-name">Name:</label>' +
-                '<input type="text" id="cms-name" autofocus>' +
-                '<label for="cms-measure">Measure:</label>' +
-                '<select id="cms-measure">' +
-                    '<option value="" selected>-- Add a measure in formula --</option>' +
-                    '<% _(measures).each(function(measure) { %>' +
-                        '<option value="<%= measure.uniqueName %>"><%= measure.name %></option>' +
-                    '<% }); %>' +
-                '</select>' +
-                '<label for="<%= idEditor %>">Formula:</label>' +
-                '<div class="formula-editor" id="<%= idEditor %>"></div>' +
-                '<div class="btn-group-math">' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="+">&nbsp;+&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="-">&nbsp;-&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="*">&nbsp;*&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="/">&nbsp;/&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="(">&nbsp;(&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math=")">&nbsp;)&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="and">&nbsp;and&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="or">&nbsp;or&nbsp;</a>' +
-                    '<a class="form_button btn-math" href="#add_math_operator_formula" data-math="not">&nbsp;not&nbsp;</a>' +
-                '</div>' +
-				'<div class="cms-function">' +
-					'<label for="cms-function">Functions:</label>' +
-					' <input type="button" class="form_button growthBtn" style="padding-bottom: 18px;" value="Growth"  ' +
-					'         title="Calculate difference. Good to calculate previous period growth "   id="growthBtn" >  </input> ' +
-					' <input type="button" class="form_button formatBtn" style="padding-bottom: 18px;" value="Format %" id="formatBtn"  ' +
-					'title="Post-process step: format this view as percentage of rows, columns or grand total. " />' +
-				'</div>' +
+                '<div class="form-group"><label for="cms-name" class="i18n">Name:</label>' +
+                '<input type="text" class="form-control" id="cms-name" autofocus></div>' +
+                '<div class="cms-measure form-inline" style="padding-bottom:10px;">' +
+                '<label for="cms-measure" class="i18n">Insert Member:</label>' +
+                ' <input type="button" class="form-control btn-primary btn btn-select-member"' +
+                ' value="Select Member" title="Insert a member into the formula editor "   ' +
+                'id="insertmember"> </input> </div>' +
+                '<label for="<%= idEditor %>" class="i18n">Formula:</label>' +
+                '<div class="formula-editor" style="padding-bottom:10px" id="<%= idEditor %>"></div>' +
+                '<div class="btn-groups">' +
 
-                '<label for="cms-dimension">Dimension:</label>' +
-                '<select id="cms-dimension">' +
-                    '<option value="" selected>-- Select an existing dimension --</option>' +
+                    '<a class="form_button btn btn-default minimal_padding btn-math" href="#add_math_operator_formula"' +
+                            ' data-math="+">&nbsp;+&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-math minimal_padding" href="#add_math_operator_formula"' +
+        ' data-math="-">&nbsp;-&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-math minimal_padding" href="#add_math_operator_formula"' +
+        ' data-math="*">&nbsp;*&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-math minimal_padding" href="#add_math_operator_formula"' +
+        ' data-math="/">&nbsp;/&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-math minimal_padding" href="#add_math_operator_formula"' +
+        ' data-math="(">&nbsp;(&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-math minimal_padding" href="#add_math_operator_formula"' +
+        ' data-math=")">&nbsp;)&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-math minimal_padding i18n" href="#add_math_operator_formula"' +
+        ' data-math="and">&nbsp;and&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-math minimal_padding i18n"' +
+        ' href="#add_math_operator_formula" data-math="or">&nbsp;or&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-math minimal_padding i18n" href="#add_math_operator_formula"' +
+                    ' data-math="not">&nbsp;not&nbsp;</a><br/>' +
+                    '<div class="form-inline"><select class="cms-functionlist form-control"><option' +
+                    ' value="">---Insert MDX Function---' +
+                    '</select>&nbsp; <a href="" class="cms-doclink" target="_blank" style="display:' +
+                    ' none;">Documentation</a><br/></div>'+
+                    '</div>' +
+				    '<div class="cms-function">' +
+					'<label for="cms-function" class="i18n">Functions:</label>' +
+					' <input type="button" class="form_button btn btn-primary growthBtn"#'+
+                    ' value="Predefined Calculations"  ' +
+					'         title="Calculate difference. Good to calculate previous period growth "   id="growthBtn" >  </input> ' +
+					' <input type="button" class="form_button btn btn-primary formatBtn"' +
+                    ' value="Format %" id="formatBtn"  ' +
+					'title="Post-process step: format this view as percentage of rows, columns or grand total. " />' +
+				'</div><br/>' +
+                '<div style="padding-bottom:10px;"><label for="cms-dimension" class="i18n">Dimension:</label>' +
+                '<select id="cms-dimension" class="form-control" style="width:365px">' +
+                    '<option class="i18n" value="" selected>-- Select an existing dimension --</option>' +
                     '<% if (measures.length > 0) { %>' +
                         '<optgroup label="<%= dataMeasures.name %>">' +
                             '<option value="<%= dataMeasures.uniqueName %>" data-type="calcmeasure"><%= dataMeasures.name %></option>' +
@@ -115,24 +128,34 @@ var CalculatedMemberModal = Modal.extend({
                             '<% }); %>' +
                         '</optgroup>' +
                     '<% }); %>' +
-                '</select>' +
-                '<label for="cms-format">Format:</label>' +
-                '<select id="cms-format">' +
-                    '<option value="" selected>-- Select a format --</option>' +
-                    '<option value="custom">Custom</option>' +
-                    '<option value="#,##0.00">#,##0.00 Decimal</option>' +
-                    '<option value="#,###">#,### Integer</option>' +
-                    '<option value="##.##%">##.##% Decimal percentage</option>' +
-                    '<option value="##%">##% Interger percentage</option>' +
-                    '<option value="mmmm dd yyyy">mmmm dd yyyy Month Day Year</option>' +
-                    '<option value="mmmm yyyy">mmmm yyyy Month Year</option>' +
-                    '<option value="yyyy-mm-dd">yyyy-mm-dd ISO format date</option>' +
-                    '<option value="yyyy-mm-dd hh:mi:ss">yyyy-mm-dd hh:mi:ss Date and time</option>' +
-                    '<option value="##h ##m">##h ##m Minutes</option>' +
-                '</select>' +
-                '<div class="div-format-custom">' +
-                    '<label for="cms-format-custom">Format Custom:</label>' +
-                    '<input type="text" id="cms-format-custom" value="" placeholder="Add a format custom">' +
+                '</select></div>' +
+                '<div class="btn-groups" style="padding-bottom:10px">' +
+                    '<a class="form_button btn btn-primary btn-parent-member" href="#add_math_operator_formula"' +
+                    ' disabled>&nbsp;Parent Member Selector&nbsp;</a>' +
+                    '<a class="form_button btn btn-default btn-clear-parent" href="#add_math_operator_formula"' +
+                    ' disabled>&nbsp;Clear Parent Member&nbsp;</a>' +
+                '</div>' +
+                '<label class="i18n" for="cms-pmember">Parent Member:</label><input' +
+                ' class="form-control" readonly="true" type="text"' +
+                ' id="cms-pmember"><br/>'+
+                '<div style="padding-bottom:10px;"><label for="cms-format" class="i18n">Format:</label>' +
+                '<select id="cms-format" class="form-control" style="width:365px">' +
+                    '<option class="i18n" value="" selected>-- Select a format --</option>' +
+                    '<option class="i18n" value="custom">Custom</option>' +
+                    '<option class="i18n" value="#,##0.00">#,##0.00 Decimal</option>' +
+                    '<option class="i18n" value="#,###">#,### Integer</option>' +
+                    '<option class="i18n" value="##.##%">##.##% Decimal percentage</option>' +
+                    '<option class="i18n" value="##%">##% Integer percentage</option>' +
+                    '<option class="i18n" value="mmmm dd yyyy">mmmm dd yyyy Month Day Year</option>' +
+                    '<option class="i18n" value="mmmm yyyy">mmmm yyyy Month Year</option>' +
+                    '<option class="i18n" value="yyyy-mm-dd">yyyy-mm-dd ISO format date</option>' +
+                    '<option class="i18n" value="yyyy-mm-dd hh:mi:ss">yyyy-mm-dd hh:mi:ss Date and time</option>' +
+                    '<option class="i18n" value="##h ##m">##h ##m Minutes</option>' +
+                '</select></div>' +
+                '<div class="div-format-custom" style="padding-bottom:10px">' +
+                    '<label for="cms-format-custom" class="i18n">Format Custom:</label>' +
+                    '<input type="text" class="form-control" id="cms-format-custom" value="" placeholder="Add a' +
+                    ' custom format">' +
                 '</div>' +
             '</form>' +
         '</div>'
@@ -147,9 +170,10 @@ var CalculatedMemberModal = Modal.extend({
      */
     buttons: [
         { text: 'Add', method: 'save' },
-        { text: 'Edit', method: 'save' },
+        { text: 'Update', method: 'save' },
         { text: 'New', method: 'new' },
-        { text: 'Cancel', method: 'close' }
+        { text: 'Cancel', method: 'close' },
+        { text: 'Help', method: 'help'}
     ],
 
     /**
@@ -161,15 +185,20 @@ var CalculatedMemberModal = Modal.extend({
      * @private
      */
     events: {
-        'click  .dialog_footer a' : 'call',
-        'blur   #cms-name'        : 'trigger_input_name',
-        'change #cms-measure'     : 'add_measure_formula',
-        'click  .btn-math'        : 'add_math_operator_formula',
-        'change #cms-format'      : 'type_format',
-        'click  .btn-action-edit' : 'edit_cms',
-        'click  .btn-action-del'  : 'show_del_cms',
-		'click .form_button.growthBtn': 'openGrowthModal',
-		'click .form_button.formatBtn': 'openFormatModal'
+        'click  .dialog_footer a'       : 'call',
+        'blur   #cms-name'              : 'trigger_input_name',
+        'change #cms-measure'           : 'add_measure_formula',
+        'click  .btn-math'              : 'add_math_operator_formula',
+        'change #cms-dimension'         : 'type_dimension',
+        'change #cms-format'            : 'type_format',
+        'click  .btn-action-edit'       : 'edit_cms',
+        'click  .btn-action-del'        : 'show_del_cms',
+		'click  .form_button.growthBtn' : 'openGrowthModal',
+        'click  .form_button.formatBtn' : 'openFormatModal',
+		'click  .btn-parent-member'     : 'open_parent_member_selector',
+        'click  .btn-clear-parent'      : 'reset_parent_member',
+        'click .cms-functionlist'       : 'change_function_list',
+        'click .btn-select-member'      : 'open_select_member_selector'
     },
 
     /**
@@ -199,10 +228,7 @@ var CalculatedMemberModal = Modal.extend({
             uniqueName: measures ? measures[0].hierarchyUniqueName : null
         };
 
-        // console.log(JSON.stringify(this.workspace.query.helper.query.model));
-        // console.log(calculatedMembers);
-
-        Saiku.ui.block('Loading...');
+        Saiku.ui.block('<span class="i18n">Loading...</span>');
 
         // Load template
         this.message = this.template_modal({
@@ -215,6 +241,7 @@ var CalculatedMemberModal = Modal.extend({
         });
 
         this.bind('open', function() {
+            this.populate_function_list();
             var calcHeight = this.$el.find('.cms-container-form').height();
             this.post_render();
             this.$el.find('.dialog_footer a:nth-child(2)').hide();
@@ -226,6 +253,14 @@ var CalculatedMemberModal = Modal.extend({
                 self.start_editor();
             });
         });
+
+        // Listen to result event
+        Saiku.session.bind('ParentMemberSelectorModal:save', this.add_selected_dimension);
+    },
+
+    add_selected_dimension: function(args) {
+        console.log(args);
+        args.dialog.$el.find('#cms-dimension').val(args.selectedDimension);
     },
 
     /**
@@ -235,7 +270,7 @@ var CalculatedMemberModal = Modal.extend({
      * @public
      */
     post_render: function() {
-        var tPerc = (((($('body').height() - 500) / 2) * 100) / $('body').height());
+        var tPerc = (((($('body').height() - 570) / 2) * 100) / $('body').height());
         var lPerc = (((($('body').width() - 800) / 2) * 100) / $('body').width());
 
         this.$el.dialog('option', 'position', 'center');
@@ -287,23 +322,25 @@ var CalculatedMemberModal = Modal.extend({
             }
             else {
                 _.each(data, function(value) {
-                    $tpl += 
-                        '<tr class="row-cms-' + self.replace_cms(value.name) + '">' +
+                    if(value.name.indexOf("*TOTAL_MEMBER_SEL~SUM")==-1) {
+                        $tpl +=
+                            '<tr class="row-cms-' + self.replace_cms(value.name) + '">' +
                             '<td class="cms-name">' + value.name + '</td>' +
                             '<td class="cms-actions">' +
-                                '<a class="edit button sprite btn-action-edit" href="#edit_cms" data-name="' + value.name + '" data-type="calcmember"></a>' +
-                                '<a class="delete button sprite btn-action-del" href="#show_del_cms" data-name="' + value.name + '" data-type="calcmember"></a>' +
+                            '<a class="edit button sprite btn-action-edit" href="#edit_cms" data-name="' + value.name + '" data-type="calcmember"></a>' +
+                            '<a class="delete button sprite btn-action-del" href="#show_del_cms" data-name="' + value.name + '" data-type="calcmember"></a>' +
                             '</td>' +
-                        '</tr>';
+                            '</tr>';
+                    }
                 });
             }
         }
         else {
             if (type === 'calcmeasure') {
-                $tpl = '<p class="msg-no-cms">No calculated measures created</p>';
+                $tpl = '<p class="msg-no-cms i18n">No calculated measures created</p>';
             }
             else {
-                $tpl = '<p class="msg-no-cms">No calculated members created</p>';    
+                $tpl = '<p class="msg-no-cms i18n">No calculated members created</p>';    
             }
         }
 
@@ -349,6 +386,7 @@ var CalculatedMemberModal = Modal.extend({
                 self.$el.find('#cms-name').val(value.name);
                 self.formulaEditor.setValue(value.formula);
                 self.$el.find('#cms-dimension').val(value.hierarchyName);
+                self.$el.find('#cms-pmember').val(value.parentMember)
                 if ((0 !== $('#cms-format option[value="' + value.properties.FORMAT_STRING + '"]').length) ||
                     (value.properties.FORMAT_STRING === undefined && !(0 !== $('#cms-format option[value="' + value.properties.FORMAT_STRING + '"]').length))) {
                     self.$el.find('#cms-format').val(value.properties.FORMAT_STRING);
@@ -359,6 +397,14 @@ var CalculatedMemberModal = Modal.extend({
                     self.$el.find('.div-format-custom').show();
                     self.$el.find('#cms-format-custom').val(value.properties.FORMAT_STRING);
                 }
+
+                self.pmUniqueName = value.parentMember || '';
+                self.pmLevel = value.parentMemberLevel || '';
+                self.lastLevel = value.previousLevel || '';
+                self.pmBreadcrumbs = value.parentMemberBreadcrumbs || [];
+
+                self.type_dimension();
+
                 self.$el.find('.form-group-inline').data('action', 'edit');
                 self.$el.find('.form-group-inline').data('oldcms', value.name);
             }
@@ -378,16 +424,17 @@ var CalculatedMemberModal = Modal.extend({
     show_del_cms: function(event) {
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
-        var cmsType = $currentTarget.data('type') === 'calcmeasure' ? 'measure' : 'member';
+        var cmsType = $currentTarget.data('type') === 'calcmeasure' ? '<span class="i18n">measure</span>' : '<span class="i18n">member</span>';
         this.$delcms = $currentTarget;
         this.new();
         (new WarningModal({
-            title: 'Delete Member',
-            message: 'You want to delete this calculated ' + cmsType + ' <b>' + $currentTarget.data('name') + '</b>?',
+            title: '<span class="i18n">Delete Member</span>',
+            message: '<span class="i18n">You want to delete this</span> ' + cmsType + ' <b>' + $currentTarget.data('name') + '</b>?',
             okay: this.del_cms,
             okayobj: this
         })).render().open();
         this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Calculated Member');
+        Saiku.i18n.translate();
     },
 
     /**
@@ -412,12 +459,14 @@ var CalculatedMemberModal = Modal.extend({
         args.new();
         if (!args.check_len_cms(args.$delcms.data('type'))) {
             if (args.$delcms.data('type') === 'calcmeasure') {
-                args.$el.find('.measures-list').append('<p class="msg-no-cms">No calculated measures created</p>');
+                args.$el.find('.measures-list').append('<p class="msg-no-cms i18n">No calculated measures created</p>');
             }
             else {
-                args.$el.find('.members-list').append('<p class="msg-no-cms">No calculated members created</p>');
+                args.$el.find('.members-list').append('<p class="msg-no-cms i18n">No calculated members created</p>');
             }
         }
+
+        Saiku.i18n.translate();
     },
 
     /**
@@ -487,7 +536,6 @@ var CalculatedMemberModal = Modal.extend({
         }
     },
 
-
     /**
      * Check if calculated measure/member length is > 0
      *
@@ -522,6 +570,8 @@ var CalculatedMemberModal = Modal.extend({
         this.$el.find('#cms-format').prop('selectedIndex', 0);
         this.$el.find('.div-format-custom').hide();
         this.$el.find('#cms-format-custom').val('');
+        this.reset_parent_member();
+        this.type_dimension();
     },
 
     /**
@@ -532,6 +582,20 @@ var CalculatedMemberModal = Modal.extend({
      */
     reset_dropdown: function() {
         this.$el.find('#cms-measure').prop('selectedIndex', 0);
+    },
+
+    /**
+     * Reset variables of parent member
+     *
+     * @method reset_parent_member
+     * @private
+     */
+    reset_parent_member: function() {
+        this.pmUniqueName = '';
+        this.pmLevel = '';
+        this.pmBreadcrumbs = [];
+        this.$el.find('#cms-pmember').val("");
+
     },
 
     /**
@@ -560,9 +624,35 @@ var CalculatedMemberModal = Modal.extend({
     add_math_operator_formula: function(event) {
         event.preventDefault();
         var $currentTarget = $(event.currentTarget);
-        var formula = this.formulaEditor.getValue();
-        formula = formula + ' ' + $currentTarget.data('math') + ' ';
-        this.formulaEditor.setValue(formula);
+        var formula = ' ' + $currentTarget.data('math') + ' ';
+        var i = this.$el.find(".formula-editor").attr('id');
+        var editor = ace.edit(i);
+        editor.insert(formula);
+    },
+
+    /**
+     * Type dimension - Measure/Member
+     *
+     * @method type_dimension
+     * @private
+     * @param {Object} event The Event interface represents any event of the DOM
+     */
+    type_dimension: function(event) {
+        var dimensionDataType = this.$el.find('#cms-dimension option:selected').data('type');
+
+        if (event) { 
+            event.preventDefault();
+            this.reset_parent_member();
+        }
+
+        if (dimensionDataType === 'calcmember') {
+            this.$el.find('.btn-parent-member').removeAttr('disabled');
+            this.$el.find('.btn-clear-parent-member').removeAttr('disabled');
+        }
+        else {
+            this.$el.find('.btn-parent-member').attr('disabled', 'disabled');
+            this.$el.find('.btn-clear-parent-member').attr('disabled', 'disabled');
+        }
     },
 
     /**
@@ -601,37 +691,74 @@ var CalculatedMemberModal = Modal.extend({
         this.reset_form();
     },
 
-openGrowthModal: function (event) {
-	var selectedHierarchies = this.workspace.query.helper.model().queryModel.axes.ROWS.hierarchies.concat(this.workspace.query.helper.model().queryModel.axes.COLUMNS.hierarchies);
+    openGrowthModal: function (event) {
+    	var selectedHierarchies = this.workspace.query.helper.model().queryModel.axes.ROWS.hierarchies.concat(this.workspace.query.helper.model().queryModel.axes.COLUMNS.hierarchies);
 
-	function extractDimensionChoices(hierarchies) {
-		var dimensionNames = [];
-		_.each(hierarchies, function (hierarchy) {
-			dimensionNames.push(hierarchy.name)
-		}, this);
-		return dimensionNames;
-	}
+    	function extractDimensionChoices(hierarchies) {
+    		var dimensionNames = [];
+    		_.each(hierarchies, function (hierarchy) {
+    			dimensionNames.push(hierarchy.name)
+    		}, this);
+    		return dimensionNames;
+    	}
 
-	var selectedDimensions = extractDimensionChoices(selectedHierarchies);
-	var cube = this.workspace.selected_cube;
-	var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
+    	var selectedDimensions = extractDimensionChoices(selectedHierarchies);
+    	var cube = this.workspace.selected_cube;
+    	var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
 
-	this.close();
-	(new GrowthModal({
-		workspace: this.workspace,
-		measures: measures,
-		dimensions: selectedDimensions
-	})).render().open();
-},
+    	this.close();
+    	(new GrowthModal({
+    		workspace: this.workspace,
+    		measures: measures,
+    		dimensions: selectedDimensions
+    	})).render().open();
+    },
 
-openFormatModal: function (event) {
-	var selectedMeasures = this.workspace.query.helper.model().queryModel.details.measures;
-	this.close();
-	(new FormatAsPercentageModal({
-		workspace: this.workspace,
-		measures: selectedMeasures
-	})).render().open();
-},
+    openFormatModal: function (event) {
+    	var selectedMeasures = this.workspace.query.helper.model().queryModel.details.measures;
+    	this.close();
+    	(new FormatAsPercentageModal({
+    		workspace: this.workspace,
+    		measures: selectedMeasures
+    	})).render().open();
+    },
+
+    /**
+     * Show dialog for get a parent member
+     *
+     * @method open_parent_member_selector
+     * @private
+     * @param {Object} event The Event interface represents any event of the DOM
+     */
+    open_parent_member_selector: function(event) {
+        event.preventDefault();
+
+        // var formAction = this.$el.find('.form-group-inline').data('action');
+        var dimension = {
+            val: this.$el.find('#cms-dimension option:selected').val(),
+            txt: this.$el.find('#cms-dimension option:selected').text(),
+            dataDimension: this.$el.find('#cms-dimension option:selected').data('dimension'),
+            dataType: this.$el.find('#cms-dimension option:selected').data('type')
+        };
+
+        if (dimension.dataType === 'calcmember') {
+            (new ParentMemberSelectorModal({
+                dialog: this,
+                workspace: this.workspace,
+                cube: this.workspace.selected_cube,
+                dimensions: Saiku.session.sessionworkspace.cube[this.workspace.selected_cube].get('data').dimensions,
+                selectDimension: dimension.val,
+                dimension: dimension.dataDimension,
+                hierarchy: dimension.txt,
+                uniqueName: this.pmUniqueName,
+                lastLevel: this.lastLevel,
+                current_level: this.pmLevel,
+                breadcrumbs: this.pmBreadcrumbs
+            })).render().open();
+
+            this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Connection Details');
+        }
+    },
 
     /**
      * Save calculated member
@@ -708,11 +835,22 @@ openFormatModal: function (event) {
                     caption: name,
                     properties: {},
                     formula: formula,
-                    hierarchyName: dimension.val
+                    hierarchyName: dimension.val,
+                    parentMember: '',
+                    parentMemberLevel: '',
+                    previousLevel: '',
+                    parentMemberBreadcrumbs: []
                 };
                 
                 if (format) {
                     objMember.properties.FORMAT_STRING = format;
+                }
+                
+                if (this.pmUniqueName && !(_.isEmpty(this.pmUniqueName))) {
+                    objMember.parentMember = this.pmUniqueName;
+                    objMember.parentMemberLevel = this.pmLevel;
+                    objMember.previousLevel = this.lastLevel;
+                    objMember.parentMemberBreadcrumbs = this.pmBreadcrumbs;
                 }
 
                 if (formAction === 'cad') {
@@ -729,5 +867,193 @@ openFormatModal: function (event) {
 
             this.$el.dialog('close');
         }
+    },
+
+    /**
+     * Populate the MDX function select box with useful MDX constructs.
+     * @param event
+     */
+    populate_function_list: function(event){
+
+        var functions = [
+            {name: 'Formula Not Empty Check', example:'Iif(NOT' +
+            ' ISEMPTY([Measures].[My Measure]),([Measures].[My Measure] + [Numeric Expression]),null))',
+                description: 'Insert a formula with an ISEMPTY check to ensure that only non null cells are' +
+                ' calculated',
+                doc_link:'http://wiki.meteorite.bi/display/SAIK/Non+Empty+Calculated+Members'},
+            {name: 'Aggregate', example:'Aggregate(Set_Expression [ ,Numeric_Expression ])',
+                description:'Returns a number that is calculated by aggregating over the cells returned by the set expression.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145524.aspx'},
+            {name: 'Avg', example:'Avg( Set_Expression [ , Numeric_Expression ] )',
+                description:'Evaluates a set and returns the average of the non empty values of the cells in the set, averaged over the measures in the set or over a specified measure.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms146067.aspx'},
+            {name: 'Ancestor', example:'Ancestor(Member_Expression, Distance)',
+                description:'A function that returns the ancestor of a specified member at a specified level or at a specified distance from the member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145616.aspx'},
+            {name: 'ClosingPeriod', example:'ClosingPeriod( [ Level_Expression [ ,Member_Expression ] ] )',
+                description:'Returns the member that is the last sibling among the descendants of a specified member at a specified level.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145584.aspx'},
+            {name: 'Cousin', example:'Cousin( Member_Expression , Ancestor_Member_Expression )',
+                description:'Returns the child member with the same relative position under a parent member as the specified child member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145481.aspx'},
+            {name: 'CurrentMember', example:'Hierarchy_Expression.CurrentMember',
+                description:'Returns the current member along a specified hierarchy during iteration.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms144948.aspx'},
+            {name: 'FirstChild', example:'Member_Expression.FirstChild',
+                description:'Returns the first child of a specified member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms144947.aspx'},
+            {name: 'FirstSibling', example:'Member_Expression.FirstSibling',
+                description:'Returns the first child of the parent of a member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145956.aspx'},
+            {name: 'IIf', example:'IIf(Logical_Expression, Expression1, Expression2)',
+                description:'Evaluates different branch expressions depending on whether a Boolean condition is true or false.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145994.aspx'},
+            {name: 'LastChild', example:'Member_Expression.LastChild',
+                description:'Returns the last child of a specified member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145576.aspx'},
+            {name: 'LastSibling', example:'Member_Expression.LastSibling',
+                description:'Returns the last child of the parent of a specified member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms144863.aspx'},
+            {name: 'Max', example:'Max( Set_Expression [ , Numeric_Expression ] )',
+                description:'Returns the maximum value of a numeric expression that is evaluated over a set.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145601.aspx'},
+            {name: 'Median', example:'Median(Set_Expression [ ,Numeric_Expression ] )',
+                description:'Returns the median value of a numeric expression that is evaluated over a set.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145570.aspx'},
+            {name: 'Min', example:'Min( Set_Expression [ , Numeric_Expression ] )',
+                description:'Returns the minimum value of a numeric expression that is evaluated over a set.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145600.aspx'},
+            {name: 'MTD', example:'Mtd( [ Member_Expression ] )',
+                description:'Returns a set of sibling members from the same level as a given member, starting with the first sibling and ending with the given member, as constrained by the Year level in the Time dimension.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms144753.aspx'},
+            {name: 'OpeningPeriod', example:'OpeningPeriod( [ Level_Expression [ , Member_Expression ] ] )',
+                description:'Returns the first sibling among the descendants of a specified level, optionally at a specified member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145992.aspx'},
+            {name: 'ParallelPeriod', example:'ParallelPeriod( [ Level_Expression [ ,Index [ , Member_Expression ] ] ] )',
+                description:'Returns a member from a prior period in the same relative position as a specified member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145500.aspx'},
+            {name: 'Parent', example:'Member_Expression.Parent',
+                description:'Returns the parent of a member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145513.aspx'},
+            {name: 'PrevMember', example:'Member_Expression.PrevMember',
+                description:'Returns the previous member in the level that contains a specified member.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms144719.aspx'},
+            {name: 'QTD', example:'Qtd( [ Member_Expression ] )',
+                description:'Returns a set of sibling members from the same level as a given member, starting with the first sibling and ending with the given member, as constrained by the Quarter level in the Time dimension.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145978.aspx'},
+            {name: 'Sum', example:'Sum( Set_Expression [ , Numeric_Expression ] )',
+                description:'Returns the sum of a numeric expression evaluated over a specified set.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms145484.aspx'},
+            {name: 'WTD', example:'Wtd( [ Member_Expression ] )',
+                description:'Returns a set of sibling members from the same level as a given member, starting with the first sibling and ending with the given member, as constrained by the Week level in the Time dimension.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms144930.aspx'},
+            {name: 'YTD', example:'Ytd( [ Member_Expression ] )',
+                description:'Returns a set of sibling members from the same level as a given member, starting with the first sibling and ending with the given member, as constrained by the Year level in the Time dimension.',
+                doc_link:'https://msdn.microsoft.com/en-us/library/ms146039.aspx'}
+
+        ]
+
+        var option = '';
+        for (var i=0;i<functions.length;i++){
+            option += '<option title="'+functions[i].description+'" data-desc="'+functions[i].description+'" data-doc-link="'+functions[i].doc_link+'" ' +
+                'value="'+ functions[i].example + '">' + functions[i].name + '</option>';
+        }
+        $('.cms-functionlist').append(option);
+    },
+
+    change_function_list: function(event){
+        event.preventDefault();
+
+        var selectedFunction = this.$el.find('.cms-functionlist option:selected');
+
+        $('.cms-functionlist').prop('title',($(selectedFunction).prop('title')));
+
+
+        if($(selectedFunction).data("doc-link")){
+            $('.cms-doclink').prop('href', $(selectedFunction).data("doc-link"));
+            $('.cms-doclink').show();
+        }
+        else{
+            $('.cms-doclink').hide();
+        }
+
+        if($(selectedFunction).val()){
+            var i = this.$el.find(".formula-editor").attr('id');
+            var editor = ace.edit(i);
+            editor.insert($(selectedFunction).val());
+        }
+    },
+
+    /**
+     * Open the select member dialog
+     * @param event
+     */
+    open_select_member_selector: function(event){
+        event.preventDefault();
+        var dimension = {
+            val: this.$el.find('#cms-dimension option:selected').val(),
+            txt: this.$el.find('#cms-dimension option:selected').text(),
+            dataDimension: this.$el.find('#cms-dimension option:selected').data('dimension'),
+            dataType: this.$el.find('#cms-dimension option:selected').data('type')
+        };
+        var i = this.$el.find(".formula-editor").attr('id');
+        var editor = ace.edit(i);
+        var that = this;
+        var $currentTarget = $(event.currentTarget);
+
+
+        if($currentTarget.hasClass("btn-select-member")){
+            (new ParentMemberSelectorModal({
+                dialog: this,
+                workspace: this.workspace,
+                cube: this.workspace.selected_cube,
+                dimensions: Saiku.session.sessionworkspace.cube[this.workspace.selected_cube].get('data').dimensions,
+                selectDimension: dimension.val,
+                dimension: dimension.dataDimension,
+                hierarchy: dimension.txt,
+                uniqueName: this.pmUniqueName,
+                lastLevel: this.pmLevel,
+                breadcrumbs: this.pmBreadcrumbs,
+                select_type: "select_member",
+                selected_member: this.selected_member,
+                close_callback: function(args){
+                    var e = editor;
+                    that.close_select_modal(e, args);
+                }
+            })).render().open();
+
+            this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Connection Details');
+        }
+        else if (dimension.dataType === 'calcmember') {
+            (new ParentMemberSelectorModal({
+                dialog: this,
+                workspace: this.workspace,
+                cube: this.workspace.selected_cube,
+                dimensions: Saiku.session.sessionworkspace.cube[this.workspace.selected_cube].get('data').dimensions,
+                selectDimension: dimension.val,
+                dimension: dimension.dataDimension,
+                hierarchy: dimension.txt,
+                uniqueName: this.pmUniqueName,
+                lastLevel: this.lastLevel,
+                current_level: this.pmLevel,
+                breadcrumbs: this.pmBreadcrumbs
+            })).render().open();
+
+            this.$el.parents('.ui-dialog').find('.ui-dialog-title').text('Connection Details');
+        }
+
+    },
+
+    /**
+     * Callback to update the editor with the selected member.
+     * @param editor
+     * @param n
+     */
+    close_select_modal: function(editor, n){
+        editor.insert(n);
+    },
+
+    help: function(){
+        window.open("http://wiki.meteorite.bi/display/SAIK/Calculated+Members");
     }
 });

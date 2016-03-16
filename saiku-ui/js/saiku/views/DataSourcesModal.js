@@ -46,7 +46,7 @@ var DataSourcesModal = Modal.extend({
      */
     message: '<form class="form-group-inline">' +
                 '<label for="data-sources">Select a data source:</label>' +
-                '<select id="data-sources"></select>' +
+                '<select class="form-control" id="data-sources"></select>' +
              '</form>',
 
     /**

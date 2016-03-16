@@ -21,7 +21,8 @@ var Toolbar = Backbone.View.extend({
     tagName: "div",
 
     events: {
-        'click a' : 'call'
+        'click a' : 'call',
+        'click #logo': 'site'
     },
 
     template: function() {
@@ -29,6 +30,8 @@ var Toolbar = Backbone.View.extend({
     },
 
     initialize: function() {
+        _.extend(this, Backbone.Events);
+        _.bindAll(this, "call");
         var self = this;
         if(Settings.LOGO){
             self.logo = "<h1 id='logo_override'>"+
@@ -69,7 +72,9 @@ var Toolbar = Backbone.View.extend({
         if(typeof ga!= 'undefined'){
 		ga('send', 'event', 'MainToolbar', 'New Query');
         }
-        Saiku.tabs.add(new Workspace());
+        var wspace = new Workspace();
+        Saiku.tabs.add(wspace);
+        Saiku.events.trigger('toolbar:new_query', this, wspace);
         return false;
     },
 
@@ -119,5 +124,13 @@ var Toolbar = Backbone.View.extend({
 	help: function() {
 		window.open('http://wiki.meteorite.bi/display/SAIK/Saiku+Documentation');
 		return false;
-	}
+	},
+
+    /**
+     * Force go to the Meteorite BI site
+     */
+    site: function() {
+        window.open('http://www.meteorite.bi/');
+        return false;
+    }
 });

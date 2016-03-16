@@ -1,9 +1,21 @@
 package org.saiku.olap.query2.util;
 
+import org.apache.commons.lang.StringUtils;
+
 import org.saiku.olap.dto.SaikuCube;
-import org.saiku.olap.query2.*;
+import org.saiku.olap.query2.ThinAxis;
+import org.saiku.olap.query2.ThinCalculatedMeasure;
+import org.saiku.olap.query2.ThinCalculatedMember;
+import org.saiku.olap.query2.ThinDetails;
+import org.saiku.olap.query2.ThinHierarchy;
+import org.saiku.olap.query2.ThinLevel;
+import org.saiku.olap.query2.ThinMeasure;
 import org.saiku.olap.query2.ThinMeasure.Type;
+import org.saiku.olap.query2.ThinMember;
+import org.saiku.olap.query2.ThinQuery;
+import org.saiku.olap.query2.ThinQueryModel;
 import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
+import org.saiku.olap.query2.ThinSelection;
 import org.saiku.olap.query2.common.ThinQuerySet;
 import org.saiku.olap.query2.common.ThinSortableQuerySet;
 import org.saiku.olap.query2.common.ThinSortableQuerySet.HierarchizeMode;
@@ -12,19 +24,33 @@ import org.saiku.olap.query2.filter.ThinFilter;
 import org.saiku.olap.query2.filter.ThinFilter.FilterFlavour;
 import org.saiku.olap.query2.filter.ThinFilter.FilterFunction;
 import org.saiku.olap.query2.filter.ThinFilter.FilterOperator;
-import org.saiku.query.*;
-import org.saiku.query.mdx.*;
+import org.saiku.query.IQuerySet;
+import org.saiku.query.ISortableQuerySet;
+import org.saiku.query.Query;
+import org.saiku.query.QueryAxis;
+import org.saiku.query.QueryDetails;
+import org.saiku.query.QueryHierarchy;
+import org.saiku.query.QueryLevel;
+import org.saiku.query.mdx.GenericFilter;
+import org.saiku.query.mdx.IFilterFunction;
+import org.saiku.query.mdx.NFilter;
+import org.saiku.query.mdx.NameFilter;
+import org.saiku.query.mdx.NameLikeFilter;
 import org.saiku.query.metadata.CalculatedMeasure;
 import org.saiku.query.metadata.CalculatedMember;
 
-import org.apache.commons.lang.StringUtils;
 import org.olap4j.Axis;
 import org.olap4j.impl.NamedListImpl;
 import org.olap4j.metadata.Measure;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 public class Thin {
 	
@@ -78,6 +104,14 @@ public class Thin {
 	List<ThinCalculatedMember> tcms = new ArrayList<>();
 	if (qcms != null && qcms.size() > 0) {
 	  for (CalculatedMember qcm : qcms) {
+		  String pplevel = null;
+		  if(qcm.getParentMember()!= null && qcm.getParentMember().getParentMember()!=null){
+			  pplevel= qcm.getParentMember().getParentMember().getLevel().getName();
+		  }
+		  String plevel = null;
+		  if(qcm.getParentMember()!=null){
+			  plevel = qcm.getParentMember().getLevel().getName();
+		  }
 		ThinCalculatedMember tcm = new ThinCalculatedMember(
 			qcm.getHierarchy().getDimension().getName(),
 			qcm.getHierarchy().getUniqueName(),
@@ -85,7 +119,12 @@ public class Thin {
 			qcm.getUniqueName(),
 			qcm.getCaption(),
 			qcm.getFormula(),
-			qcm.getFormatProperties());
+			qcm.getFormatProperties(),
+			qcm.getParentMember()!=null ? qcm.getParentMember().toString(): null,
+			plevel,
+			pplevel
+			);
+
 		tcms.add(tcm);
 	  }
 	}
@@ -252,14 +291,22 @@ public class Thin {
 				NameFilter nf = (NameFilter) f;
 				List<String> expressions = nf.getFilterExpression();
 				expressions.add(0, nf.getHierarchy().getUniqueName());
-				ThinFilter tf = new ThinFilter(FilterFlavour.Name, FilterOperator.EQUALS, FilterFunction.Filter, expressions);
+				FilterOperator type = FilterOperator.LIKE;
+				if(nf.getOp() != null && nf.getOp().equals("NOTEQUAL")){
+					type = FilterOperator.NOTEQUAL;
+				}
+				ThinFilter tf = new ThinFilter(FilterFlavour.Name, type, FilterFunction.Filter, expressions);
 				tfs.add(tf);
 			}
 			if (f instanceof NameLikeFilter) {
 				NameLikeFilter nf = (NameLikeFilter) f;
 				List<String> expressions = nf.getFilterExpression();
 				expressions.add(0, nf.getHierarchy().getUniqueName());
-				ThinFilter tf = new ThinFilter(FilterFlavour.NameLike, FilterOperator.LIKE, FilterFunction.Filter, expressions);
+				FilterOperator type = FilterOperator.LIKE;
+				if(nf.getOp()!=null && nf.getOp().equals("NOTEQUAL")){
+					type = FilterOperator.NOTEQUAL;
+				}
+				ThinFilter tf = new ThinFilter(FilterFlavour.NameLike, type, FilterFunction.Filter, expressions);
 				tfs.add(tf);
 			}
 			if (f instanceof GenericFilter) {

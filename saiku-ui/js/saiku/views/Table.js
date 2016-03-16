@@ -356,5 +356,6 @@ var Table = Backbone.View.extend({
         */
         $(this.el).find(".i18n").i18n(Saiku.i18n.po_file);
         this.workspace.trigger('table:rendered', this);
+
     }
 });
