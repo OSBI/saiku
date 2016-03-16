@@ -20,6 +20,8 @@
 var SelectionsModal = Modal.extend({
     type: "selections",
 
+    paramvalue: null,
+
     buttons: [
         { text: "OK", method: "save" },
         { text: "Open Date Filter", method: "open_date_filter" },
@@ -116,7 +118,12 @@ var SelectionsModal = Modal.extend({
             if (level) {
                 var pName = level.selection ? level.selection.parameterName : null;
                 if (pName) {
-                    $(this.el).find('input.parameter').val(pName);
+                    $(this.el).find('#parameter').val(pName);
+
+                    if(this.query.helper.model().parameters[pName]!=undefined) {
+                        this.paramvalue = this.query.helper.model().parameters[pName].split(",");
+                    }
+
                 }
             }
             $(this.el).find('.parameter').removeClass('hide');
@@ -226,12 +233,29 @@ var SelectionsModal = Modal.extend({
 
     fetch_calcmembers_levels: function() {
         var dimHier = this.member.hierarchy.split('].[');
+        var m4=true;
+        if(dimHier.length===1){
+            m4=false;
+            dimHier = this.member.hierarchy.split('.');
+
+        }
+        if(dimHier.length>1){
+            var hName = dimHier[1].replace(/[\[\]]/gi, '');
+        }
         var dName = dimHier[0].replace(/[\[\]]/gi, '');
-        var hName = dimHier[1].replace(/[\[\]]/gi, '');
+
 
         var message = '<span class="processing_image">&nbsp;&nbsp;</span> <span class="i18n">' + this.message + '</span> ';
         this.workspace.block(message);
 
+        if(!m4){
+            if(hName!=undefined) {
+                hName = dName + "." + hName;
+            }
+            else{
+                hName = dName;
+            }
+        }
         var level = new Level({}, { 
             ui: this, 
             cube: this.workspace.selected_cube, 
@@ -322,6 +346,16 @@ var SelectionsModal = Modal.extend({
 
             // Populate both boxes
 
+            /*var arr = this.paramvalue;
+            _.each(this.paramvalue, function(param){
+                _.each(self.selected_members, function(m){
+                    if(m.name == param){
+                        var idx = self.paramvalue.indexOf(param);
+                        arr.splice(idx, 1);
+                    }
+                });
+            });
+*/
 
             for (var j = 0, len = this.selected_members.length; j < len; j++) {
                     var member = this.selected_members[j];
@@ -570,6 +604,7 @@ var SelectionsModal = Modal.extend({
                             caption: decodeURIComponent(caption)
                         });
                     }
+
             });
         }
 
@@ -589,6 +624,8 @@ var SelectionsModal = Modal.extend({
                     if (!parameters[parameterName]) {
                     //    self.workspace.query.helper.model().parameters[parameterName] = "";
                     }
+
+
                 }
 
         }

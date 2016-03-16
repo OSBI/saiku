@@ -7,8 +7,23 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:security="http://www.springframework.org/schema/security"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd
-			   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+			   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder
+            location="/WEB-INF/applicationContext-spring-security-jdbc.properties"
+            ignore-resource-not-found="true"
+            ignore-unresolvable="true"
+            order ="0" />
+
+    <context:property-placeholder
+            location="file:///${ext.prop.dir}applicationContext-spring-security-jdbc.properties"
+            ignore-resource-not-found="true"
+            ignore-unresolvable="true"
+            order ="-1" />
+
+
     <security:authentication-manager alias="authenticationManager">
         <security:authentication-provider ref="daoAuthenticationProvider" />
     </security:authentication-manager>
@@ -30,24 +45,22 @@
         </property>
         <property name="authoritiesByUsernameQuery">
             <value>
-                <![CDATA[select username, role from user_roles where username =? UNION select '?', 'ROLE_USER']]>
+                ${jdbcauth.authoritiesquery}
             </value>
         </property>
         <property name="usersByUsernameQuery">
             <value>
-                <![CDATA[select u.username,u.password, u.enabled from users u inner join (
-select MAX(USERS.USER_ID) ID, USERS.USERNAME from USERS group by USERS.USERNAME) tm on u.USER_ID = tm.ID where u.username = ?
-GROUP BY u.USER_ID]]>
+                ${jdbcauth.usernamequery}
             </value>
         </property>
     </bean>
     <bean id="dataSource"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="driverClassName" value="${jdbcauth.driver}" />
         <property name="url"
-                  value="jdbc:h2:../../data/saiku;MODE=MySQL"/>
-        <property name="username" value="sa" />
-        <property name="password" value="" />
+                  value="${jdbcauth.url}"/>
+        <property name="username" value="${jdbcauth.username}" />
+        <property name="password" value="${jdbcauth.password}" />
     </bean>
 
     <bean id="passwordEncoder"

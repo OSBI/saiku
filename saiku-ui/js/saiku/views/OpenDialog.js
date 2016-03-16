@@ -287,7 +287,7 @@ var OpenDialog = Modal.extend({
                     }, Settings.PARAMS);
 
         var query = new Query(params,{ name: file  });
-        var tab = Saiku.tabs.add(new Workspace({ query: query, item: item }));
+        var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, processURI: false }));
 
         event.preventDefault();
         return false;

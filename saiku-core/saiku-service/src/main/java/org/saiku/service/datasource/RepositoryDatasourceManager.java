@@ -29,6 +29,7 @@ import org.saiku.service.util.security.authentication.PasswordProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -57,8 +58,10 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String earthquakedir;
     private String earthquakeschema;
     private String defaultRole;
+    private String externalparameters;
 
     public void load() {
+        Properties ext = checkForExternalDataSourceProperties();
         irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopasswordprovider.getPassword(),
             oldpassword, defaultRole);
         try {
@@ -84,17 +87,52 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                         if(file.getDriver()!= null) {
                             props.put("driver", file.getDriver());
                         }
-                        if(file.getLocation()!=null) {
+                        else if(file.getPropertyKey()!=null && ext.containsKey("datasource."+file.getPropertyKey()+".driver")){
+                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".driver");
+                            props.put("driver", p);
+                        }
+                        if(file.getPropertyKey()!=null &&
+                           ext.containsKey("datasource."+file.getPropertyKey()+".location")){
+                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".location");
+                            if(ext.containsKey("datasource."+file.getPropertyKey()+".schemaoverride")){
+                                String[] spl = p.split(";");
+                                spl[1]="Catalog=mondrian://"+file.getSchema();
+                                StringBuilder sb = new StringBuilder();
+                                for(String str: spl){
+                                    sb.append(str+";");
+                                }
+                                props.put("location",sb.toString());
+                            }
+                            else {
+                                props.put("location", p);
+                            }
+                        }
+                        else if(file.getLocation()!=null) {
                             props.put("location", file.getLocation());
                         }
-                        if(file.getUsername()!=null) {
+                        if(file.getUsername()!=null && file.getPropertyKey()==null) {
                             props.put("username", file.getUsername());
                         }
-                        if(file.getPassword()!=null) {
+                        else if(file.getPropertyKey()!=null &&
+                                ext.containsKey("datasource."+file.getPropertyKey()+".username")){
+                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".username");
+                            props.put("username", p);
+                        }
+                        if(file.getPassword()!=null && file.getPropertyKey()==null) {
                             props.put("password", file.getPassword());
+                        }
+                        else if(file.getPropertyKey()!=null &&
+                                ext.containsKey("datasource."+file.getPropertyKey()+".password")){
+                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".password");
+                            props.put("password", p);
                         }
                         if(file.getPath()!=null) {
                             props.put("path", file.getPath());
+                        }
+                        else if(file.getPropertyKey()!=null &&
+                                ext.containsKey("datasource."+file.getPropertyKey()+".path")){
+                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".path");
+                            props.put("path", p);
                         }
                         if(file.getId()!=null) {
                             props.put("id", file.getId());
@@ -102,14 +140,32 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                         if(file.getSecurityenabled()!=null) {
                           props.put("security.enabled", file.getSecurityenabled());
                         }
+                        else if(file.getPropertyKey()!=null &&
+                                ext.containsKey("datasource."+file.getPropertyKey()+".security.enabled")){
+                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".security.enabled");
+                            props.put("security.enabled", p);
+                        }
                         if(file.getSecuritytype()!=null) {
                           props.put("security.type", file.getSecuritytype());
+                        }
+                        else if(file.getPropertyKey()!=null &&
+                                ext.containsKey("datasource."+file.getPropertyKey()+".security.type")){
+                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".security.type");
+                            props.put("security.type", p);
                         }
                         if(file.getSecuritymapping()!=null) {
                           props.put("security.mapping", file.getSecuritymapping());
                         }
+                        else if(file.getPropertyKey()!=null &&
+                                ext.containsKey("datasource."+file.getPropertyKey()+".security.mapping")){
+                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".security.mapping");
+                            props.put("security.mapping", p);
+                        }
                         if(file.getAdvanced()!=null){
                           props.put("advanced", file.getAdvanced());
+                        }
+                        if(file.getPropertyKey()!=null){
+                            props.put("propertykey", file.getPropertyKey());
                         }
                         SaikuDatasource.Type t = SaikuDatasource.Type.valueOf(file.getType().toUpperCase());
                         SaikuDatasource ds = new SaikuDatasource(file.getName(), t, props);
@@ -122,6 +178,44 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         } catch (Exception e) {
             throw new SaikuServiceException(e.getMessage(), e);
         }
+    }
+
+    public Properties checkForExternalDataSourceProperties(){
+        Properties p = new Properties();
+        InputStream input;
+
+        try {
+            input = new FileInputStream(externalparameters);
+            p.load(input);
+        } catch (IOException e) {
+            log.debug("file did not exist");
+        }
+
+        return p;
+
+    }
+
+    public String[] getAvailablePropertiesKeys(){
+        Properties p = new Properties();
+        InputStream input;
+
+        try {
+            input = new FileInputStream(externalparameters);
+            p.load(input);
+        } catch (IOException e) {
+            log.debug("file did not exist");
+        }
+
+        String[] arr = p.keySet().toArray(new String[p.keySet().size()]);
+
+        ArrayList<String> newlist = new ArrayList<>();
+        for(String str: arr){
+            String[] s = str.split("\\.");
+            newlist.add(s[1]);
+        }
+        Set<String> unique = new HashSet<>(newlist);
+
+        return  unique.toArray(new String[unique.size()]);
     }
 
     public void unload() {
@@ -493,6 +587,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public void setEarthquakeSchema(String earthquakeschema) {
         this.earthquakeschema = earthquakeschema;
+    }
+
+    @Override
+    public void setExternalPropertiesFile(String file) {
+        this.externalparameters = file;
     }
 
     public void setRepoPasswordProvider(PasswordProvider passwordProvider){

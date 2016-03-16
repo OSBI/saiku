@@ -256,26 +256,15 @@ var ParentMemberSelectorModal = Modal.extend({
             var levelunique ="";
             var levelChildMember = new LevelChildMember({}, { ui: this, cube: this.cube, uniqueName: data[i].uniqueName,
                 levelUniqueName : data[i].levelunique, mname: data[i].name, mcaption: data[i].caption});
+            $members = $('<li />')
+                .addClass('member')
+                .data('caption', data[i].caption)
+                .data('uniqueName', data[i].uniqueName)
+                .data('levelUniqueName', data[i].levelUniqueName ? data[i].levelUniqueName : false)
+                .data('currentLevelUnique', data[i].levelUniqueName)
+                .html(data[i].name+"<span class='drill_member' style='float:right;'>Next Level</span>");
 
-            levelChildMember.fetch({
-                success: function(event){
-                    var e =event.get("0");
-                    levelunique = e.levelUniqueName;
-
-                    var arr = levelunique.split("].[");
-                    var lname = arr[arr.length -1];
-                    lname = lname.substring(0,lname.length-1);
-                    $members = $('<li />')
-                        .addClass('member')
-                        .data('caption', event.mcaption)
-                        .data('uniqueName', event.uniqueName)
-                        .data('levelUniqueName', event.levelUniqueName ? event.levelUniqueName : false)
-                        .data('currentLevelUnique', lname)
-                        .html(event.mname+"<span class='drill_member' style='float:right;'>Next Level</span>");
-
-                    self.$el.find('.members-list').append($members);
-                }
-            });
+            self.$el.find('.members-list').append($members);
 
 
         }

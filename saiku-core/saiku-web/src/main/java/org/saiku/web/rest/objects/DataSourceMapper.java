@@ -36,6 +36,8 @@ public class DataSourceMapper {
     private String id;
     private String path;
     private String advanced;
+    private String security_type;
+    private String propertyKey;
 
     public DataSourceMapper() {
 
@@ -51,18 +53,35 @@ public class DataSourceMapper {
             if (ds.getProperties().getProperty("driver").equals("mondrian.olap4j.MondrianOlap4jDriver")) {
                 String[] cat = loc[1].split("=");
                 String[] drv = loc[2].split("=");
-                this.schema = cat[1];
-                this.driver = drv[1];
+                if(cat.length>1) {
+                    this.schema = cat[1];
+                }
+                if(drv.length>1) {
+                    this.driver = drv[1];
+                }
                 this.connectiontype = "MONDRIAN";
             } else {
                 this.connectiontype = "XMLA";
             }
             this.connectionname = ds.getName();
-            this.jdbcurl = url[1];
+            if(url.length>1) {
+                this.jdbcurl = url[1];
+            }
             this.username = ds.getProperties().getProperty("username");
             this.password = ds.getProperties().getProperty("password");
             this.path = ds.getProperties().getProperty("path");
             this.id = ds.getProperties().getProperty("id");
+            if(ds.getProperties().containsKey("schema")){
+                this.schema = ds.getProperties().getProperty("schema");
+            }
+
+            if(ds.getProperties().containsKey("security.type")){
+                this.security_type = ds.getProperties().getProperty("security.type");
+            }
+
+            if(ds.getProperties().containsKey("propertykey")){
+                this.propertyKey = ds.getProperties().getProperty("propertykey");
+            }
 
 
         } else {
@@ -109,6 +128,12 @@ public class DataSourceMapper {
             props.setProperty("location", location);
             props.setProperty("username", this.username);
             props.setProperty("password", this.password);
+            if(this.security_type!=null){
+                props.setProperty("security.type", this.security_type);
+            }
+            if(this.schema!=null){
+                props.setProperty("schema", this.schema);
+            }
             if (this.path != null) {
                 props.setProperty("path", this.path);
             }
@@ -118,6 +143,10 @@ public class DataSourceMapper {
                 props.setProperty("id", UUID.randomUUID().toString());
             }
             props.setProperty("advanced", "false");
+
+            if(this.propertyKey != null){
+                props.setProperty("propertyKey", this.propertyKey);
+            }
 
             return new SaikuDatasource(this.getConnectionname(), SaikuDatasource.Type.OLAP, props);
         } else {
@@ -166,6 +195,9 @@ public class DataSourceMapper {
                     props.setProperty("id", this.id);
                 } else {
                     props.setProperty("id", UUID.randomUUID().toString());
+                }
+                if(row.startsWith("propertyKey=")){
+                    props.setProperty("propertyKey", row.substring(12, row.length()));
                 }
             }
 
@@ -255,5 +287,21 @@ public class DataSourceMapper {
 
     public void setAdvanced(String advanced) {
         this.advanced = advanced;
+    }
+
+    public void setSecurity_type(String security_type) {
+        this.security_type = security_type;
+    }
+
+    public void setPropertyKey(String propertyKey) {
+        this.propertyKey = propertyKey;
+    }
+
+    public String getPropertyKey() {
+        return propertyKey;
+    }
+
+    public String getSecurity_type() {
+        return security_type;
     }
 }

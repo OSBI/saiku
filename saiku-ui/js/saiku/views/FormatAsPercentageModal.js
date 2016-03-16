@@ -260,7 +260,7 @@ var FormatAsPercentageModal = Modal.extend({
 		} else return "";
 	},
 	help: function(){
-		window.location("http://wiki.meteorite.bi");
+		window.location("http://wiki.meteorite.bi/display/SAIK/Totals+and+Subtotals");
 	}
 
 

@@ -35,8 +35,6 @@ var Workspace = Backbone.View.extend({
         _.bindAll(this, "caption", "adjust", "toggle_sidebar", "prepare", "new_query", "set_class_charteditor",
                 "init_query", "update_caption", "populate_selections","refresh", "sync_query", "cancel", "cancelled", "no_results", "error", "switch_view_state");
 
-        var that = this;
-
         // Attach an event bus to the workspace
         _.extend(this, Backbone.Events);
         this.loaded = false;
@@ -105,6 +103,9 @@ var Workspace = Backbone.View.extend({
 
         // Selected schema and cube via url
         var paramsURI = Saiku.URLParams.paramsURI();
+        if(args!=undefined && args.processURI != undefined && args.processURI==false){
+            paramsURI = {};
+        }
         if (Saiku.URLParams.equals({ schema: paramsURI.schema, cube: paramsURI.cube })) {
             this.data_connections(paramsURI);
         }
@@ -341,7 +342,20 @@ var Workspace = Backbone.View.extend({
             .delay(300)
             .animate({ backgroundColor: '#fff' }, 'slow');*/
     },
+   setDefaultFilters: function(filters, query){
 
+        _.each(filters, function(f){
+
+            var n = f.filtername;
+
+            var hierarchy = n.substring(0, n.lastIndexOf("[")-1);
+            var level = n.substring(n.lastIndexOf("["));
+
+            query.helper.setDefaultFilter(hierarchy, level, f.filtervalue)
+        });
+
+
+    },
     data_connections: function(paramsURI) {
         var connections = Saiku.session.sessionworkspace.connections,
             self = this;
@@ -356,6 +370,7 @@ var Workspace = Backbone.View.extend({
                                 if (paramsURI.schema === schemaName && paramsURI.cube === cubeName) {
                                     self.selected_cube = connection.name + '/' + catalog.name + '/' + schemaName + '/' + cubeName;
                                     self.isUrlCubeNavigation = true;
+                                    self.paramsURI = paramsURI;
                                     _.delay(self.new_query, 1000);
                                 }
                             }
@@ -411,9 +426,30 @@ var Workspace = Backbone.View.extend({
 
         obj.query = this.query;
 
+        var p = this.paramsURI;
+        //var deffilters = this.extractDefaultFilters(p);
+        //this.setDefaultFilters(deffilters, obj.query);
+
         // Save the query to the server and init the UI
         obj.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });
         obj.init_query();
+
+    },
+
+    extractDefaultFilters: function(p){
+        var defaultfilters=[];
+        var filtername;
+        var filtervalue;
+        for(var i in p){
+            if(i.indexOf("default_filter_")>-1){
+                var j = i.replace("default_filter_", "");
+                filtername = j;
+                filtervalue = p[i];
+                defaultfilters.push({"filtername":j, "filtervalue":filtervalue});
+            }
+
+        }
+        return defaultfilters;
 
     },
 
@@ -606,7 +642,7 @@ var Workspace = Backbone.View.extend({
                 dimlist.find('.selected').removeClass('selected');
 
                 var calcMeasures = self.query.helper.getCalculatedMeasures();
-                var calcMembers = self.query.helper.getCalculatedMembers();
+                //var calcMembers = self.query.helper.getCalculatedMembers();
 
                 if (calcMeasures && calcMeasures.length > 0) {
                     var template = _.template($("#template-calculated-measures").html(),{ measures: calcMeasures });
@@ -626,7 +662,7 @@ var Workspace = Backbone.View.extend({
                     dimlist.find('.calculated_measures').empty();
                 }
 
-                if (calcMembers && calcMembers.length > 0) {
+                /*if (calcMembers && calcMembers.length > 0) {
                     var self = this;
                     var $dimensionTree = dimlist.find('.dimension_tree').find('.parent_dimension').find('.d_hierarchy');
                     var len = calcMembers.length;
@@ -679,7 +715,7 @@ var Workspace = Backbone.View.extend({
                 }
                 else {
                     dimlist.find('.dimension_tree').find('.parent_dimension').find('.d_hierarchy').find('.dimension-level-calcmember').remove();
-                }
+                }*/
 
                 self.drop_zones.synchronize_query();
 
@@ -873,13 +909,38 @@ var Workspace = Backbone.View.extend({
         var hasParams = false;
         for (var key in parameters) {
             var val = "";
+            var comparison;
             if (parameters[key] && parameters[key] !== null) {
                 val = parameters[key];
+                comparison = parameters[key].split(",");
             }
+
+            if (val != undefined && val != "") {
+                val = val + ",";
+            }
+            var selections = this.query.helper.getSelectionsForParameter(key);
+            _.each(selections, function (s) {
+                var found = $.inArray(s.name, comparison) > -1;
+                if (!found) {
+                    val = val + s.name + ",";
+                }
+            });
+
+            val = val.substr(0, val.lastIndexOf(","));
+
             paramDiv += "<b>" + key + "</b> <input type='text' placeholder='" + key + "' value='" + val + "' />";
             hasParams = true;
+
+            var values = val.split(",")
+
+            var level = self.query.helper.getLevelForParameter(key);
+            _.each(values, function (v) {
+                if(v!=undefined && v!="") {
+                    self.query.helper.addtoSelection(v, level)
+                }
+            })
         }
-        paramDiv +="";
+        paramDiv += "";
 
         if (hasParams) {
             $(this.el).find('.parameter_input').html(paramDiv);
@@ -888,13 +949,15 @@ var Workspace = Backbone.View.extend({
         }
 
         $(this.el).find('.parameter_input input').off('change');
-        $(this.el).find('.parameter_input input').on('change', function(event) {
+        $(this.el).find('.parameter_input input').on('change', function (event) {
             var paramName = $(event.target).attr('placeholder');
             var paramVal = $(event.target).val();
             self.query.helper.model().parameters[paramName] = paramVal;
         });
 
-    },
+
+    }
+    ,
 
     render_result: function(args) {
         var self = this;

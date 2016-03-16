@@ -265,7 +265,7 @@ public class PentahoDatasourceManager implements IDatasourceManager {
 
     @Override
     public SaikuDatasource getDatasource(String datasourceName, boolean refresh) {
-        return null;
+        return loadDatasources().get(datasourceName);
     }
 
     public void addSchema(String file, String path, String name) {
@@ -376,6 +376,16 @@ public class PentahoDatasourceManager implements IDatasourceManager {
     @Override
     public void setEarthquakeSchema(String earthquakeSchema) {
 
+    }
+
+    @Override
+    public void setExternalPropertiesFile(String file) {
+
+    }
+
+    @Override
+    public String[] getAvailablePropertiesKeys() {
+        return new String[0];
     }
 
     public void setACL(String a, String b, String c, List<String> d) {

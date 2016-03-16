@@ -131,4 +131,8 @@ public interface IDatasourceManager {
   void setEarthquakeDir(String earthquakeDir);
 
   void setEarthquakeSchema(String earthquakeSchema);
+
+  void setExternalPropertiesFile(String file);
+
+  String[] getAvailablePropertiesKeys();
 }

@@ -99,7 +99,7 @@ var Chart = Backbone.View.extend({
         if (hasRun) {
             _.defer( function() {
                 self.renderer.process_data_tree({ data: self.workspace.query.result.lastresult() }, true, true);
-                self.renderer.switch_chart(self.renderer.type);
+                self.renderer.switch_chart(self.renderer.type, {workspace: self.workspace});
             });
         }
 
@@ -139,9 +139,8 @@ var Chart = Backbone.View.extend({
         }
         this.workspace.adjust();
         this.renderer.process_data_tree(args, true, true);
-        this.renderer.switch_chart(this.renderer.type);
+        this.renderer.switch_chart(this.renderer.type, {workspace: this.workspace});
         //_.delay(this.renderer.process_data_tree, 0, args, true, true);
-
 
     }
 });

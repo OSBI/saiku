@@ -15,8 +15,6 @@
  */
 package org.saiku.service.util.export;
 
-import java.util.List;
-
 import org.olap4j.CellSet;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query2.ThinHierarchy;
@@ -27,25 +25,33 @@ import org.saiku.olap.util.formatter.ICellSetFormatter;
 import org.saiku.service.util.export.excel.ExcelBuilderOptions;
 import org.saiku.service.util.export.excel.ExcelWorksheetBuilder;
 
+import java.util.List;
+
 public class ExcelExporter {
 
-	public static byte[] exportExcel(CellSet cellSet, List<ThinHierarchy> filters) {
-		return exportExcel(cellSet, new HierarchicalCellSetFormatter(), filters);
-	}
+    public static byte[] exportExcel(CellSet cellSet, List<ThinHierarchy> filters) {
+        return exportExcel(cellSet, new HierarchicalCellSetFormatter(), filters);
+    }
 
-	public static byte[] exportExcel(CellSet cellSet,
+    public static byte[] exportExcel(CellSet cellSet,
                                      ICellSetFormatter formatter,
                                      List<ThinHierarchy> filters) {
-		CellDataSet table = OlapResultSetUtil.cellSet2Matrix(cellSet, formatter);
-		ExcelBuilderOptions exb = new ExcelBuilderOptions();
-		exb.repeatValues = (formatter instanceof FlattenedCellSetFormatter);
-		return getExcel(table, filters, exb);
-	}
+        CellDataSet table = OlapResultSetUtil.cellSet2Matrix(cellSet, formatter);
+        return exportExcel(table, formatter, filters);
+    }
 
-	private static byte[] getExcel(CellDataSet table, List<ThinHierarchy> filters, ExcelBuilderOptions options) {
+    public static byte[] exportExcel(CellDataSet table,
+                                     ICellSetFormatter formatter,
+                                     List<ThinHierarchy> filters) {
+        ExcelBuilderOptions exb = new ExcelBuilderOptions();
+        exb.repeatValues = (formatter instanceof FlattenedCellSetFormatter);
+        return getExcel(table, filters, exb);
+    }
+
+    private static byte[] getExcel(CellDataSet table, List<ThinHierarchy> filters, ExcelBuilderOptions options) {
         // TBD Sheet name is parametric. Useful for future ideas or improvements
         ExcelWorksheetBuilder worksheetBuilder = new ExcelWorksheetBuilder(table, filters, options);
         return worksheetBuilder.build();
-	}
+    }
 
 }

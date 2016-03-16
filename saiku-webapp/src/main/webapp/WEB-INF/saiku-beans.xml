@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+       xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder
+            location="/WEB-INF/saiku-beans.properties"
+            ignore-resource-not-found="true"
+            ignore-unresolvable="true"
+            order ="0" />
+
+    <context:property-placeholder
+            location="file:///${ext.prop.dir}saiku-beans.properties"
+            ignore-resource-not-found="true"
+            ignore-unresolvable="true"
+            order ="-1" />
 
     <!--	<bean id="classpathDsManager"
             class="org.saiku.service.datasource.ClassPathResourceDatasourceManager">
@@ -19,17 +31,17 @@
         <property name="earthquakeSchema" value="${earthquakeschema}"/>
         <property name="earthquakeUrl" value="${earthquakeurl}"/>
         <property name="repoPasswordProvider" ref ="repoPasswordProviderBean"/>
-        <property name="defaultRole" value="ROLE_USER"/>
+        <property name="defaultRole" value="${default.role}"/>
+        <property name="externalPropertiesFile" value="${external.properties.file}"/>
         <!-- If you change the repoPassword set this property for at least 1 restart to update the old repo password-->
         <!--<property name="oldRepoPassword" value="sa!kuanalyt!cs"/>-->
 
     </bean>
 
     <bean id="repoPasswordProviderBean" class="org.saiku.service.util.security.authentication.SimplePasswordProvider">
-        <constructor-arg index="0" value="sa!kuanalyt!cs"/>
+        <constructor-arg index="0" value="${webdav.password}"/>
     </bean>
 
-    <!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
     <bean id="h2database" class="org.saiku.database.Database" init-method="init">
         <property name="datasourceManager" ref="repositoryDsManager"/>
     </bean>
@@ -58,11 +70,11 @@
 
     <bean id="userDaoDataSource"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="driverClassName" value="${userdao.driverclass}" />
         <property name="url"
-                  value="jdbc:h2:../../data/saiku;MODE=MySQL"/>
-        <property name="username" value="sa" />
-        <property name="password" value="" />
+                  value="${userdao.url}"/>
+        <property name="username" value="${userdao.username}" />
+        <property name="password" value="${userdao.password}" />
     </bean>
 
     <bean id="userDAO" class="org.saiku.database.JdbcUserDAO">
@@ -81,7 +93,7 @@
         <property name="sessionService" ref="sessionService"/>
     </bean>
     <bean id="logwriterbean" class="org.saiku.log.LogExtractor">
-        <property name="logdirectory" value="../logs"/>
+        <property name="logdirectory" value="${logdir}"/>
     </bean>
     <bean id="adminBean" class="org.saiku.web.rest.resources.AdminResource">
         <property name="userService" ref="userServiceBean"/>
@@ -147,8 +159,6 @@
         <property name="sessionService" ref="sessionService"/>
         <property name="datasourceService" ref="datasourceServiceBean"/>
     </bean>
-    <!-- <property name="path" value="file:///var/saiku/saiku-datasources/"/> -->
-
 
 
     <bean id="filterRepositoryBean" scope="session"
@@ -171,8 +181,8 @@
         <property name="userService" ref="userServiceBean"/>
     </bean>
 
-    <bean id="statsBean" scope="singleton" class="org.saiku.web.rest.resources.StatisticsResource"/>
+    <bean id="statsBean" class="org.saiku.web.rest.resources.StatisticsResource"/>
 
-    <bean id="startupBean" scope="singleton" class="org.saiku.web.rest.util.StartupResource" init-method="init"/>
+    <bean id="startupBean" class="org.saiku.web.rest.util.StartupResource" init-method="init"/>
 
 </beans>

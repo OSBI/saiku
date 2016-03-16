@@ -107,7 +107,7 @@ var CalculatedMemberModal = Modal.extend({
 				    '<div class="cms-function">' +
 					'<label for="cms-function" class="i18n">Functions:</label>' +
 					' <input type="button" class="form_button btn btn-primary growthBtn"#'+
-                    ' value="Growth"  ' +
+                    ' value="Predefined Calculations"  ' +
 					'         title="Calculate difference. Good to calculate previous period growth "   id="growthBtn" >  </input> ' +
 					' <input type="button" class="form_button btn btn-primary formatBtn"' +
                     ' value="Format %" id="formatBtn"  ' +
@@ -322,14 +322,16 @@ var CalculatedMemberModal = Modal.extend({
             }
             else {
                 _.each(data, function(value) {
-                    $tpl += 
-                        '<tr class="row-cms-' + self.replace_cms(value.name) + '">' +
+                    if(value.name.indexOf("*TOTAL_MEMBER_SEL~SUM")==-1) {
+                        $tpl +=
+                            '<tr class="row-cms-' + self.replace_cms(value.name) + '">' +
                             '<td class="cms-name">' + value.name + '</td>' +
                             '<td class="cms-actions">' +
-                                '<a class="edit button sprite btn-action-edit" href="#edit_cms" data-name="' + value.name + '" data-type="calcmember"></a>' +
-                                '<a class="delete button sprite btn-action-del" href="#show_del_cms" data-name="' + value.name + '" data-type="calcmember"></a>' +
+                            '<a class="edit button sprite btn-action-edit" href="#edit_cms" data-name="' + value.name + '" data-type="calcmember"></a>' +
+                            '<a class="delete button sprite btn-action-del" href="#show_del_cms" data-name="' + value.name + '" data-type="calcmember"></a>' +
                             '</td>' +
-                        '</tr>';
+                            '</tr>';
+                    }
                 });
             }
         }
@@ -874,6 +876,11 @@ var CalculatedMemberModal = Modal.extend({
     populate_function_list: function(event){
 
         var functions = [
+            {name: 'Formula Not Empty Check', example:'Iif(NOT' +
+            ' ISEMPTY([Measures].[My Measure]),([Measures].[My Measure] + [Numeric Expression]),null))',
+                description: 'Insert a formula with an ISEMPTY check to ensure that only non null cells are' +
+                ' calculated',
+                doc_link:'http://wiki.meteorite.bi/display/SAIK/Non+Empty+Calculated+Members'},
             {name: 'Aggregate', example:'Aggregate(Set_Expression [ ,Numeric_Expression ])',
                 description:'Returns a number that is calculated by aggregating over the cells returned by the set expression.',
                 doc_link:'https://msdn.microsoft.com/en-us/library/ms145524.aspx'},
@@ -1047,7 +1054,6 @@ var CalculatedMemberModal = Modal.extend({
     },
 
     help: function(){
-        //TODO link to real page
-        window.open("http://wiki.meteorite.bi");
+        window.open("http://wiki.meteorite.bi/display/SAIK/Calculated+Members");
     }
 });
