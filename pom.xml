@@ -5,7 +5,7 @@
     <groupId>org.saikuanalytics</groupId>
     <artifactId>saiku</artifactId>
     <packaging>pom</packaging>
-    <version>3.8.1</version>
+    <version>3.8.2</version>
     <name>Saiku Module Project</name>
     <scm>
         <developerConnection>
@@ -679,12 +679,12 @@
             <dependency>
                 <groupId>org.saiku</groupId>
                 <artifactId>saiku-query</artifactId>
-                <version>0.1-SNAPSHOT</version>
+                <version>0.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>pentaho</groupId>
                 <artifactId>mondrian</artifactId>
-                <version>4.3.0.1-SPARK</version>
+                <version>4.3.0.1.1-SPARK</version>
             </dependency>
             <!-- Spring modules -->
             <dependency>
