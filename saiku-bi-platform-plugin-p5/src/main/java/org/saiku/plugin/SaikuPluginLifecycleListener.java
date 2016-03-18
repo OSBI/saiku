@@ -7,6 +7,8 @@ import org.pentaho.platform.api.engine.PluginLifecycleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Properties;
+
 import pt.webdetails.cpf.PentahoPluginEnvironment;
 import pt.webdetails.cpf.repository.api.IBasicFile;
 import pt.webdetails.cpf.repository.api.IContentAccessFactory;
@@ -17,6 +19,8 @@ public class SaikuPluginLifecycleListener implements IPluginLifecycleListener {
 	private static final Logger log = LoggerFactory.getLogger(SaikuPluginLifecycleListener.class);
 
 	public void init() throws PluginLifecycleException {
+		Properties props = System.getProperties();
+		props.setProperty("saiku.plugin", "true");
 		IContentAccessFactory contentAccessFactory = PentahoPluginEnvironment.getInstance().getContentAccessFactory();
 		String mondrianPropsFilename = "mondrian.properties"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		final ClassLoader origLoader = Thread.currentThread().getContextClassLoader();

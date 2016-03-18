@@ -79,7 +79,7 @@ var LevelMember = Backbone.Model.extend({
      */
     url: function() {
         return Saiku.session.username + '/discover/' + this.cube + '/dimensions/' + this.dimension + '/hierarchies/' + 
-            this.hierarchy + '/levels/' + this.level;
+            this.hierarchy + '/levels/' + encodeURIComponent(this.level);
     }
 });
 
