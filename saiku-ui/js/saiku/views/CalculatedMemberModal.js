@@ -129,6 +129,7 @@ var CalculatedMemberModal = Modal.extend({
                         '</optgroup>' +
                     '<% }); %>' +
                 '</select></div>' +
+                '<% if (Settings.BIPLUGIN5 == false) { %>'+
                 '<div class="btn-groups" style="padding-bottom:10px">' +
                     '<a class="form_button btn btn-primary btn-parent-member" href="#add_math_operator_formula"' +
                     ' disabled>&nbsp;Parent Member Selector&nbsp;</a>' +
@@ -138,6 +139,7 @@ var CalculatedMemberModal = Modal.extend({
                 '<label class="i18n" for="cms-pmember">Parent Member:</label><input' +
                 ' class="form-control" readonly="true" type="text"' +
                 ' id="cms-pmember"><br/>'+
+                '<% } %>'+
                 '<div style="padding-bottom:10px;"><label for="cms-format" class="i18n">Format:</label>' +
                 '<select id="cms-format" class="form-control" style="width:365px">' +
                     '<option class="i18n" value="" selected>-- Select a format --</option>' +
@@ -402,7 +404,7 @@ var CalculatedMemberModal = Modal.extend({
                 self.pmLevel = value.parentMemberLevel || '';
                 self.lastLevel = value.previousLevel || '';
                 self.pmBreadcrumbs = value.parentMemberBreadcrumbs || [];
-
+                self.actualLevel = value.assignedLevel || '';
                 self.type_dimension();
 
                 self.$el.find('.form-group-inline').data('action', 'edit');
@@ -839,9 +841,10 @@ var CalculatedMemberModal = Modal.extend({
                     parentMember: '',
                     parentMemberLevel: '',
                     previousLevel: '',
-                    parentMemberBreadcrumbs: []
+                    parentMemberBreadcrumbs: [],
+                    assignedLevel: ''
                 };
-                
+
                 if (format) {
                     objMember.properties.FORMAT_STRING = format;
                 }
@@ -851,8 +854,10 @@ var CalculatedMemberModal = Modal.extend({
                     objMember.parentMemberLevel = this.pmLevel;
                     objMember.previousLevel = this.lastLevel;
                     objMember.parentMemberBreadcrumbs = this.pmBreadcrumbs;
+                    objMember.uniqueName = this.pmUniqueName+".["+name+"]";
+                    objMember.assignedLevel = this.actualLevel
                 }
-
+                this.workspace.query.helper.includeCmember(dimension.val, objMember.uniqueName);
                 if (formAction === 'cad') {
                     this.workspace.query.helper.addCalculatedMember(objMember);
                     this.workspace.sync_query();

@@ -358,6 +358,16 @@ var ParentMemberSelectorModal = Modal.extend({
         }
     },
 
+    return_actual_level: function(model, response) {
+
+        if (response && response.length > 0) {
+            model.ui.actualLevel = response[0].levelUniqueName;
+        }
+        else {
+            Saiku.ui.unblock();
+        }
+    },
+
     /**
      * Drill in member
      *
@@ -380,6 +390,25 @@ var ParentMemberSelectorModal = Modal.extend({
             success: this.get_child_members
         });        
     },
+
+    /**
+     * Drill in member
+     *
+     * @method drill_member
+     * @private
+     * @param {Object} event The Event interface represents any event of the DOM
+     */
+    get_actual_level: function(event) {
+
+        Saiku.ui.block('<span class="i18n">Loading...</span>');
+
+
+        var levelChildMember = new LevelChildMember({}, { ui: this, cube: this.cube, uniqueName: event });
+        levelChildMember.fetch({
+            success: this.return_actual_level
+        });
+    },
+
 
     /**
      * Auto filter in member
@@ -555,6 +584,7 @@ var ParentMemberSelectorModal = Modal.extend({
         }
         else {
             if(this.select_type === "parent-member-selector") {
+
                 var dimHier = '[' + this.dimension + '].[' + this.hierarchy + '].';
                 var uniqueName = this.uniqueName.split(dimHier)[1] !== undefined ?
                     this.uniqueName.split(dimHier)[1] :
@@ -562,7 +592,7 @@ var ParentMemberSelectorModal = Modal.extend({
 
                 // console.log(uniqueName);
                 // console.log(this.breadcrumbs);
-
+                this.dialog.actualLevel = this.actualLevel;
                 if (Settings.PARENT_MEMBER_DIMENSION) {
                     // Trigger event when assign key
                     Saiku.session.trigger('ParentMemberSelectorModal:save', {
@@ -612,7 +642,7 @@ var ParentMemberSelectorModal = Modal.extend({
         $currentTarget.closest('ul').children('li').removeClass('highlight_li');
         $currentTarget.addClass('highlight_li');
         this.uniqueName = $currentTarget.data('uniqueName');
-
+        this.get_actual_level(this.uniqueName);
         //model.ui.uniqueName = model.uniqueName;
         this.current_level = $currentTarget.data('currentLevelUnique');
         this.selected_level();

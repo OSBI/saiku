@@ -135,7 +135,7 @@ public class Thin {
 		ThinDetails.Location location = ThinDetails.Location.valueOf(details.getLocation().toString());
 		AxisLocation axis = AxisLocation.valueOf(details.getAxis().toString());
 		List<ThinMeasure> measures = new ArrayList<>();
-		if (details != null && details.getMeasures().size() > 0) {
+		if (details.getMeasures().size() > 0) {
 			for (Measure m : details.getMeasures()) {
 				ThinMeasure.Type type = Type.EXACT;
 				if (m instanceof CalculatedMeasure) {
@@ -214,10 +214,10 @@ public class Thin {
 	}
 
 	private static ThinLevel convertLevel(QueryLevel ql, ThinQuery tq) {
-		List<ThinMember> inclusions = convertMembers(ql.getInclusions());
-		List<ThinMember> exclusions = convertMembers(ql.getExclusions());
-		ThinMember rangeStart = convertMember(ql.getRangeStart());
-		ThinMember rangeEnd = convertMember(ql.getRangeEnd());
+		List<ThinMember> inclusions = convertMembers(ql.getInclusions(), tq);
+		List<ThinMember> exclusions = convertMembers(ql.getExclusions(), tq);
+		ThinMember rangeStart = convertMember(ql.getRangeStart(), tq);
+		ThinMember rangeEnd = convertMember(ql.getRangeEnd(), tq);
 		ThinSelection ts = new ThinSelection(ThinSelection.Type.INCLUSION, null);
 		
 		if (inclusions.size() > 0) {
@@ -231,7 +231,7 @@ public class Thin {
 			ts = new ThinSelection(ThinSelection.Type.RANGE, range);
 		}
 		
-		if (ql.hasParameter() && ts != null) {
+		if (ql.hasParameter()) {
 			ts.setParameterName(ql.getParameterName());
 			tq.addParameter(ql.getParameterName());
 		}
@@ -241,19 +241,25 @@ public class Thin {
 		return l;
 	}
 
-	private static List<ThinMember> convertMembers(List<Member> members) {
+	private static List<ThinMember> convertMembers(List<Member> members, ThinQuery tq) {
 		List<ThinMember> ms = new ArrayList<>();
 		if (members != null) {
 			for (Member m : members) {
-				ms.add(convertMember(m));
+				ms.add(convertMember(m, tq));
 			}
 		}
 		return ms;
 	}
 	
-	private static ThinMember convertMember(Member m) {
+	private static ThinMember convertMember(Member m, ThinQuery tq) {
 		if (m != null) {
-			return new ThinMember(m.getName(), m.getUniqueName(), m.getCaption());
+			String type = null;
+			if(m instanceof CalculatedMember){
+				type = "calculatedmember";
+			}
+			ThinMember tm = new ThinMember(m.getName(), m.getUniqueName(), m.getCaption());
+			tm.setType(type);
+			return tm;
 		}
 		return null;
 	}

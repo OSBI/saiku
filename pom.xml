@@ -5,7 +5,7 @@
     <groupId>org.saikuanalytics</groupId>
     <artifactId>saiku</artifactId>
     <packaging>pom</packaging>
-    <version>3.8.2</version>
+    <version>3.8.3</version>
     <name>Saiku Module Project</name>
     <scm>
         <developerConnection>
@@ -679,7 +679,7 @@
             <dependency>
                 <groupId>org.saiku</groupId>
                 <artifactId>saiku-query</artifactId>
-                <version>0.2-SNAPSHOT</version>
+                <version>0.4-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>pentaho</groupId>
