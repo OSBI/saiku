@@ -225,5 +225,13 @@ return null;
 //		}
 //	}
 
+	public static OlapElement getChildLevel(Level l){
+		if(l instanceof MondrianOlap4jLevel){
+			return ((RolapCubeLevel)((MondrianOlap4jLevel) l).getOlapElement()).getChildLevel();
+
+		}
+		return null;
+	}
+
 
 }

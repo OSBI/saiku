@@ -21,16 +21,19 @@ public class ThinCalculatedMember {
   private Map<String, String> properties = new HashMap<>();
   private String formula;
   private String hierarchyName;
+  private String assignedLevel;
+
 
   public ThinCalculatedMember() {}
 
   public ThinCalculatedMember(String dimension, String hierarchyName, String name, String uniqueName, String caption,
-                              String formula, Map<String, String> properties, String parentMember) {
+                              String formula, Map<String, String> properties, String parentMember, String assignedLevel) {
     this(dimension, hierarchyName, name, uniqueName, caption, formula, properties);
     this.parentMember = parentMember;
   }
   public ThinCalculatedMember(String dimension, String hierarchyName, String name, String uniqueName, String caption,
-                              String formula, Map<String, String> properties, String parentMember, String parentMemberLevel) {
+                              String formula, Map<String, String> properties, String parentMember, String
+                                  parentMemberLevel, String assignedLevel) {
     this(dimension, hierarchyName, name, uniqueName, caption, formula, properties);
     this.parentMember = parentMember;
     this.parentMemberLevel = parentMemberLevel;
@@ -38,7 +41,7 @@ public class ThinCalculatedMember {
 
   public ThinCalculatedMember(String dimension, String hierarchyName, String name, String uniqueName, String caption,
                               String formula, Map<String, String> properties, String parentMember, String
-                                  parentMemberLevel, String lastLevel) {
+                                  parentMemberLevel, String lastLevel,String assignedLevel) {
     this(dimension, hierarchyName, name, uniqueName, caption, formula, properties);
     this.parentMember = parentMember;
     this.parentMemberLevel = parentMemberLevel;
@@ -117,5 +120,13 @@ public class ThinCalculatedMember {
 
   public String getPreviousLevel() {
     return previousLevel;
+  }
+
+  public String getAssignedLevel() {
+    return assignedLevel;
+  }
+
+  public void setAssignedLevel(String assignedLevel) {
+    this.assignedLevel = assignedLevel;
   }
 }

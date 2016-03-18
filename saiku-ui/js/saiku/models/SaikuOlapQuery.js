@@ -51,7 +51,6 @@ var SaikuOlapQueryHelper = function(query) {
 	this.query = query;
 };
 
-
 SaikuOlapQueryHelper.prototype.model = function() {
 	return this.query.model;
 };
@@ -204,6 +203,12 @@ SaikuOlapQueryHelper.prototype.addtoSelection = function(membername, level){
   }
 };
 
+SaikuOlapQueryHelper.prototype.includeCmember = function(hierarchy, level){
+  var mHierarchy = this.getHierarchy(hierarchy);
+  if (mHierarchy) {
+    mHierarchy.cmembers[level]= level;
+  }
+}
 SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, position) {
     var mHierarchy = this.getHierarchy(hierarchy);
     if (mHierarchy) {

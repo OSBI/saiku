@@ -87,12 +87,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -324,6 +327,41 @@ public class ThinQueryService implements Serializable {
         Map<String, Object> cubeProperties = olapDiscoverService.getProperties(old.getCube());
         old.getProperties().putAll(cubeProperties);
 
+      /**
+       * TODO NASTY HACK REMOVE IN NEXT RELEASE
+       */
+        old = removeDupSelections(old);
+        return old;
+    }
+
+    private ThinQuery removeDupSelections(ThinQuery old) {
+
+        Map<AxisLocation, ThinAxis> map = old.getQueryModel().getAxes();
+        for (Map.Entry<AxisLocation, ThinAxis> entry : map.entrySet())
+        {
+            for(ThinHierarchy h : entry.getValue().getHierarchies()){
+                Map<String, ThinLevel> map2= h.getLevels();
+                for(Map.Entry<String, ThinLevel> levelentry : map2.entrySet())
+                {
+                    List<ThinMember> members = levelentry.getValue().getSelection().getMembers();
+                    SortedSet<ThinMember> deduped = new TreeSet<>(new Comparator<ThinMember>() {
+                        @Override
+                        public int compare(ThinMember arg0, ThinMember arg1) {
+                            return arg0.getUniqueName().compareTo(arg1.getUniqueName());
+                        }
+                    });
+
+                    for(ThinMember tm: members){
+                        deduped.add(tm);
+                    }
+
+                    members.clear();
+                    members.addAll(deduped);
+
+                    levelentry.getValue().getSelection().setMembers(members);
+                }
+            }
+        }
         return old;
     }
 
@@ -576,6 +614,7 @@ public class ThinQueryService implements Serializable {
                                     levels.add(m.getLevel());
                                 }
                                 if (m.getLevel().getUniqueName().equals(levelName) || m.getLevel().getName().equals(levelName)) {
+                                    Member.Type t = m.getMemberType();
                                     mset.add(m);
                                 }
                             }

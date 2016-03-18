@@ -51,7 +51,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import mondrian.olap4j.MondrianOlap4jLevel;
 import mondrian.olap4j.SaikuMondrianHelper;
+import mondrian.rolap.RolapCubeLevel;
 
 public class Fat {
 	
@@ -66,9 +68,9 @@ public class Fat {
 			return q;
 
 		ThinQueryModel model = tq.getQueryModel();
+		convertCalculatedMembers(q, model.getCalculatedMembers());
 		convertAxes(q, tq.getQueryModel().getAxes(), tq);
 		convertCalculatedMeasures(q, model.getCalculatedMeasures());
-	  	convertCalculatedMembers(q, model.getCalculatedMembers());
 		convertDetails(q, model.getDetails());
 		q.setVisualTotals(model.isVisualTotals());
 		q.setVisualTotalsPattern(model.getVisualTotalsPattern());
@@ -80,9 +82,11 @@ public class Fat {
 		  for (ThinCalculatedMember qcm : thinCms) {
 			  // TODO improve this
 			  String name = qcm.getHierarchyName();
+			  boolean mondrian3=false;
 			  if(SaikuMondrianHelper.getMondrianServer(q.getConnection()).getVersion().getMajorVersion()==3) {
 				  name = qcm.getHierarchyName().replaceAll("\\[", "");
 				  name = name.replaceAll("]", "");
+				  mondrian3 = true;
 			  }
 			  //Hierarchy h = q.getCube().getHierarchies().get(name);
 			  NamedList<Hierarchy> hs = q.getCube().getHierarchies();
@@ -96,16 +100,27 @@ public class Fat {
 					  break;
 				  }
 			  }
+			  Member parent = null;
+			  if(qcm.getParentMember()!=null){
+				  try {
+					  parent =
+                              q.getCube().lookupMember(IdentifierParser.parseIdentifier(qcm.getParentMember()));
+				  } catch (OlapException e) {
+					  e.printStackTrace();
+				  }
+
+			  }
+
 			  CalculatedMember cm =
 					  new CalculatedMember(
                                                     h.getDimension(),
                                                     h,
 							  qcm.getName(),
 							  null,
-							  null,
+							  parent,
 							  Member.Type.FORMULA,
 							  qcm.getFormula(),
-							  qcm.getProperties());
+							  qcm.getProperties(), mondrian3);
 
 			  q.addCalculatedMember(q.getHierarchy(h),cm);
 		  }
@@ -176,7 +191,7 @@ public class Fat {
 		Axis ax = getLocation(details.getAxis());
 		query.getDetails().setAxis(ax);
 		
-		if (details != null && details.getMeasures().size() > 0) {
+		if (details.getMeasures().size() > 0) {
 			for (ThinMeasure m : details.getMeasures()) {
 				if (Type.CALCULATED.equals(m.getType())) {
 					Measure measure = query.getCalculatedMeasure(m.getName());
@@ -352,7 +367,11 @@ public class Fat {
 
 				member = q.getCube().lookupMember(nameParts);
 			}
+			boolean mondrian3 = false;
+			if(SaikuMondrianHelper.getMondrianServer(q.getConnection()).getVersion().getMajorVersion()==3) {
 
+				mondrian3 = true;
+			}
 
 			cm = new CalculatedMember(
 					q.getCube().getDimensions().get(cres.getDimension()),
@@ -362,9 +381,33 @@ public class Fat {
 					member,
 					Member.Type.FORMULA,
 					cres.getFormula(),
-					null);
+					null,cres.getAssignedLevel(), mondrian3);
+			String level = null;
+			if(cres.getAssignedLevel()!=null && !cres.getAssignedLevel().equals("")) {
+				String[] split = cres.getAssignedLevel().split("\\.\\[");
+				level = split[split.length - 1];
+				level = level.substring(0, level.length() - 1);
+			}
+			else{
+				level = h2.getLevels().get(0).getName();
+			}
 
-			qh.includeCalculatedMember(cm);
+			for (ThinLevel tl : th.getLevels().values()) {
+				if(tl.getName().equals(level) && (tl.getSelection()== null
+												  || tl.getSelection().getMembers().size()==0)){
+					qh.includeCalculatedMember(cm, false);
+				}
+				else{
+					for (ThinMember tm : tl.getSelection().getMembers()) {
+						if(tm.getType()!=null && tm.getType().equals("calculatedmember")&& tm.getUniqueName().equals(cm
+								.getUniqueName())) {
+							qh.includeCalculatedMember(cm, true);
+						}
+					}
+				}
+
+
+			}
 			extendSortableQuerySet(qh.getQuery(), qh, th);
 
 		}

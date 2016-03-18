@@ -304,7 +304,19 @@ var SelectionsModal = Modal.extend({
     fetch_members: function(model, response) {
         var self = this;
         if (response && response.length > 0) {
-            this.available_members = response;
+            _.each(response, function(f){
+                var cmem = self.workspace.query.helper.getCalculatedMembers();
+                var calc = false;
+                if(cmem && cmem.length>0){
+                    _.each(cmem, function(c){
+                        if(c.uniqueName === f.uniqueName){
+                            calc = true;
+                        }
+                    })
+                }
+                self.available_members.push({obj:f, calc:calc});
+
+            });
         }
         this.populate();
     },
@@ -324,7 +336,16 @@ var SelectionsModal = Modal.extend({
                 var len = newCalcMembers.length;
 
                 for (var i = 0; i < len; i++) {
-                    this.available_members.push(newCalcMembers[i]);
+                    var cmem = self.workspace.query.helper.getCalculatedMembers();
+                    var calc = false;
+                    if(cmem && cmem.length>0){
+                        _.each(cmem, function(c){
+                            if(c.uniqueName === newCalcMembers[i].uniqueName){
+                                calc = true;
+                            }
+                        })
+                    }
+                    this.available_members.push({obj:newCalcMembers[i], calc:calc});
                 }
             }
 
@@ -339,7 +360,21 @@ var SelectionsModal = Modal.extend({
             var lName = self.member.level;
             var hierarchy = self.workspace.query.helper.getHierarchy(hName);
             if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
-                this.selected_members = hierarchy.levels[lName].selection ? hierarchy.levels[lName].selection.members : [];
+                this.selected_members=[];
+                if(hierarchy.levels[lName].selection){
+                    _.each(hierarchy.levels[lName].selection.members, function(f){
+                        var cmem = self.workspace.query.helper.getCalculatedMembers();
+                        var calc = false;
+                        if(cmem && cmem.length>0){
+                            _.each(cmem, function(c){
+                                if(c.uniqueName === f.uniqueName){
+                                    calc = true;
+                                }
+                            })
+                        }
+                        self.selected_members.push({obj: f, calc:calc});
+                    });
+                }
                 this.selection_type = hierarchy.levels[lName].selection ? hierarchy.levels[lName].selection.type : "INCLUSION";
             }
             var used_members = [];
@@ -359,7 +394,7 @@ var SelectionsModal = Modal.extend({
 
             for (var j = 0, len = this.selected_members.length; j < len; j++) {
                     var member = this.selected_members[j];
-                    used_members.push(member.caption);
+                    used_members.push(member.obj.caption);
             }
             if ($(this.el).find('.used_selections .selection_options li.option_value' ).length == 0) {
                 var selectedMembers = $(this.el).find('.used_selections .selection_options');
@@ -369,8 +404,8 @@ var SelectionsModal = Modal.extend({
             }
 
             // Filter out used members
-            this.available_members = _.select(this.available_members, function(obj) {
-                return used_members.indexOf(obj.caption) === -1;
+            this.available_members = _.select(this.available_members, function(o) {
+                return used_members.indexOf(o.obj.caption) === -1;
             });
 
             if (this.available_members.length > 0) {

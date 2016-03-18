@@ -679,7 +679,7 @@
             <dependency>
                 <groupId>org.saiku</groupId>
                 <artifactId>saiku-query</artifactId>
-                <version>0.2-SNAPSHOT</version>
+                <version>0.4-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>pentaho</groupId>
