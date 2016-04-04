@@ -336,10 +336,9 @@ var SelectionsModal = Modal.extend({
                 var len = newCalcMembers.length;
 
                 for (var i = 0; i < len; i++) {
-                    var cmem = self.workspace.query.helper.getCalculatedMembers();
                     var calc = false;
-                    if(cmem && cmem.length>0){
-                        _.each(cmem, function(c){
+                    if(calcMembers && calcMembers.length>0){
+                        _.each(calcMembers, function(c){
                             if(c.uniqueName === newCalcMembers[i].uniqueName){
                                 calc = true;
                             }
