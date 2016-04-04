@@ -362,6 +362,8 @@ var ParentMemberSelectorModal = Modal.extend({
 
         if (response && response.length > 0) {
             model.ui.actualLevel = response[0].levelUniqueName;
+            model.ui.current_level = _.last(model.ui.actualLevel.split('].[')).replace(/[\[\]]/gi, '');
+            console.log(this.current_level);
         }
         else {
             Saiku.ui.unblock();
