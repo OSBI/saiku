@@ -11,7 +11,6 @@
     <name>saiku - core libraries</name>
     <version>3.9-SNAPSHOT</version>
 
-
     <modules>
         <module>saiku-olap-util</module>
         <module>saiku-service</module>

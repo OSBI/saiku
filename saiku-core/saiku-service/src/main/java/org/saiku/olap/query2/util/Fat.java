@@ -397,6 +397,9 @@ public class Fat {
 												  || tl.getSelection().getMembers().size()==0)){
 					qh.includeCalculatedMember(cm, false);
 				}
+				else if(!tl.getName().equals(level)){
+					//Fudge
+				}
 				else{
 					for (ThinMember tm : tl.getSelection().getMembers()) {
 						if(tm.getType()!=null && tm.getType().equals("calculatedmember")&& tm.getUniqueName().equals(cm
