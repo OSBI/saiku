@@ -868,6 +868,9 @@ var CalculatedMemberModal = Modal.extend({
                     this.workspace.sync_query();
                     this.workspace.drop_zones.set_measures();
                 }
+
+                this.workspace.toolbar.$el.find('.group_parents').removeClass('on');
+                this.workspace.toolbar.group_parents();
             }
 
             this.$el.dialog('close');

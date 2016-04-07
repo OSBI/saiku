@@ -2,12 +2,12 @@
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saikuanalytics</groupId>
-        <version>3.8.4</version>
+        <version>3.8.5</version>
     </parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>saiku-bi-platform-plugin-p5</artifactId>
 	<packaging>jar</packaging>
-	<version>3.8.4</version>
+	<version>3.8.5</version>
 	<name>saiku biserver plugin</name>
 
 	<build>
@@ -89,16 +89,6 @@
 									<artifactId>mondrian</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
-								<!--<artifactItem>
-									<groupId>org.olap4j</groupId>
-									<artifactId>olap4j-xmla</artifactId>
-									<outputDirectory>target/dist/saiku/lib</outputDirectory>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.olap4j</groupId>
-									<artifactId>olap4j</artifactId>
-									<outputDirectory>target/dist/saiku/lib</outputDirectory>
-								</artifactItem>-->
 								<artifactItem>
 									<groupId>eigenbase</groupId>
 									<artifactId>eigenbase-properties</artifactId>
@@ -151,11 +141,6 @@
 									<artifactId>batik-codec</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
-                                <!--<artifactItem>
-                                    <groupId>batik</groupId>
-                                    <artifactId>batik-ext</artifactId>
-                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
-                                </artifactItem>-->
                                 <artifactItem>
                                     <groupId>org.apache.xmlgraphics</groupId>
                                     <artifactId>batik-svg-dom</artifactId>
@@ -196,11 +181,6 @@
                                     <artifactId>batik-script</artifactId>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
                                 </artifactItem>
-								<!--<artifactItem>
-									<groupId>avalon-framework</groupId>
-									<artifactId>avalon-framework</artifactId>
-									<outputDirectory>target/dist/saiku/lib</outputDirectory>
-								</artifactItem>-->
 								<artifactItem>
 									<groupId>org.apache.xmlgraphics</groupId>
 									<artifactId>xmlgraphics-commons</artifactId>
@@ -290,7 +270,7 @@
 									<fileset dir="target/dist/saiku/ui/js/saiku/" includes="Settings.js" />
 								</replaceregexp>
 
-								<replaceregexp match="(&lt;!-- Saiku plugins --&gt;)" replace=" &lt;script type='text/javascript' src='js/saiku/plugins/Statistics/plugin.js' defer&gt;&lt;/script&gt;&#xA; &lt;script type='text/javascript' src='js/saiku/plugins/BIServer/plugin.js' defer&gt;&lt;/script&gt;&#xA;     &lt;script type='text/javascript' src='js/saiku/plugins/CCC_Chart/plugin.js'&gt;&lt;/script&gt;&#xA;     &lt;script type='text/javascript' src='js/saiku/plugins/Fullscreen/plugin.js' defer&gt;&lt;/script&gt;        " flags="gs" byline="false">
+								<replaceregexp match="(&lt;!-- Saiku plugins --&gt;)" replace=" &lt;script type='text/javascript' src='js/saiku/plugins/Statistics/plugin.js' defer&gt;&lt;/script&gt;&#xA; &lt;script type='text/javascript' src='js/saiku/plugins/BIServer/plugin.js' defer&gt;&lt;/script&gt;&#xA;     &lt;script type='text/javascript' src='js/saiku/plugins/CCC_Chart/plugin.js'&gt;&lt;/script&gt;&#xA;       " flags="gs" byline="false">
 									<fileset dir="target/dist/saiku/ui/" includes="index.html" />
 								</replaceregexp>
 
@@ -439,18 +419,6 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
         </dependency>
-<!-- 
-		<dependency>
-			<groupId>pentaho</groupId>
-			<artifactId>cda</artifactId>
-			<version>TRUNK-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-		 	<groupId>pentaho-library</groupId>
-  			<artifactId>libloader</artifactId>
-  			<version>${pentaho.platform.version}</version>
-		</dependency>
--->
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>mondrian</artifactId>
@@ -674,16 +642,6 @@
                 </exclusion>
             </exclusions>
 		</dependency>
-       <!-- <dependency>
-            <groupId>batik</groupId>
-            <artifactId>batik-ext</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.xmlgraphics</groupId>
-                    <artifactId>batik-js</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>-->
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-svg-dom</artifactId>

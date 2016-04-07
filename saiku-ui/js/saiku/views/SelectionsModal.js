@@ -455,9 +455,19 @@ var SelectionsModal = Modal.extend({
                             var search_target = self.show_unique_option == false ? "caption" : "name";
                             var result =  $.map( searchlist, function( item ) {
 
-                                            if (item[search_target].toLowerCase().indexOf(request.term.toLowerCase()) > -1) {
-                                                var label = self.show_unique_option == false? item.caption : item.uniqueName;
-                                                var value = self.show_unique_option == false? item.uniqueName : item.caption;
+                                var st = item.obj;
+
+                                var obj;
+                                if(st === undefined){
+                                    st = item;
+                                    obj = st[search_target];
+                                }
+                                else{
+                                    obj = st.caption;
+                                }
+                                            if (obj.toLowerCase().indexOf(request.term.toLowerCase()) > -1) {
+                                                var label = self.show_unique_option == false? st.caption : st.uniqueName;
+                                                var value = self.show_unique_option == false? st.uniqueName : st.caption;
 
 
                                                 return {

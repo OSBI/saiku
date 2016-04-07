@@ -258,7 +258,7 @@ var Workspace = Backbone.View.extend({
             $(this.el).find('.admin_console_nav').append($link);
         }
         
-        if (!Saiku.session.isAdmin) {
+        if (!Saiku.session.isAdmin && Settings.SHOW_REFRESH_NONADMIN === false) {
             $(this.el).find('.refresh_cubes_nav').hide();
         }
 
