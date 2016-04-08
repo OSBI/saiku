@@ -94,7 +94,7 @@ var FilterModal = Modal.extend({
     save: function( event ) {
         event.preventDefault( );
         var self = this;
-        this.expression = $(this.el).find('textarea').val();
+        this.expression = this.editor.getValue();
 
         var alert_msg = "";
         if (typeof this.expression == "undefined" || !this.expression || this.expression === "") {
