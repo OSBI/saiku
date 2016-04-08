@@ -216,7 +216,7 @@ public class PentahoSessionService implements ISessionService {
 				else {
 					log.error("No license found, please fetch a free license from http://licensing.meteorite.bi");
 					throw new Exception("No license found, please fetch a free license from http://licensing.meteorite"
-										+ ".bi");
+										+ ".bi and move it to: pentaho-solutions/system/saiku/license.lic");
 				}
 
 			}

@@ -96,7 +96,7 @@ public class SessionService implements ISessionService {
 			sl = l.getLicense();
 		} catch (Exception e) {
 			throw new LicenseException("Could not find license, please get a free license from http://licensing"
-									   + ".meteorite.bi");
+									   + ".meteorite.bi. You can upload it at http://server:8080/upload.html");
 		}
 
 		if (sl != null) {
