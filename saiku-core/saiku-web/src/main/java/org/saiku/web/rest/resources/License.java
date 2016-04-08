@@ -6,9 +6,10 @@
 
 package org.saiku.web.rest.resources;
 
-import org.saiku.LicenseUtils;
+import org.saiku.service.license.LicenseUtils;
 import org.saiku.database.Database;
 import org.saiku.license.LicenseException;
+import org.saiku.service.license.Base64Coder;
 import org.saiku.service.user.UserService;
 import org.saiku.web.rest.objects.UserList;
 
@@ -16,7 +17,10 @@ import com.qmino.miredot.annotations.ReturnType;
 
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +71,6 @@ public class License {
    */
   @GET
   @Produces({ "application/json" })
-  @ReturnType("bi.meteorite.license.SaikuLicense")
   public Response getLicense() {
     try {
       return Response.ok().entity(licenseUtils.getLicense()).build();
@@ -80,6 +83,55 @@ public class License {
   private static final int SIZE = 2048;
 
 
+  /**
+   * Upload a new license to the Saiku server.
+   * @summary Upload a new license
+   * @param is A license encapsulated in an input stream
+   * @return An acknowledgement as to whether the server installation was successful.
+   */
+  @POST
+  @Consumes("application/x-java-serialized-object")
+  @Produces("text/plain")
+  @ReturnType("java.lang.String")
+  public Response saveLicense(InputStream is) {
+    ObjectInputStream si = null;
+    byte[] sig;
+    byte[] data = null;
+    try {
+      si = new ObjectInputStream(is);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    try {
+      int sigLength = si.readInt();
+      sig = new byte[sigLength];
+      si.read(sig);
+
+      ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+      byte[] buf = new byte[SIZE];
+      int len;
+      while ((len = si.read(buf)) != -1) {
+        dataStream.write(buf, 0, len);
+      }
+      dataStream.flush();
+      data = dataStream.toByteArray();
+      dataStream.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      try {
+        si.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+
+
+    getLicenseUtils().setLicense(new String(Base64Coder.encode(data)));
+
+    return Response.ok("License Upload Successful").build();
+  }
 
   /**
    * Validate the license installed on the server.
@@ -173,6 +225,6 @@ public class License {
     if(!userService.isAdmin()){
       return Response.status(Response.Status.FORBIDDEN).build();
     }
-    return Response.ok().entity(licenseUtils.getQuota()).build();
+    return Response.ok().entity(100000000).build();
   }
 }

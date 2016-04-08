@@ -53,6 +53,10 @@ mvn clean install -DskipTests
 
 mvn clean clover2:setup test clover2:aggregate clover2:clover
 
+## License
+
+Saiku is open source and free to use. Our default server does ship with a license server installed. To get a license you can visit http://licensing.meteorite.bi and get a FREE license which is pinned to the major release of the server, but does not expire at any time. This helps us with a more accurate picture of installation numbers and deployments.
+
 ## Wiki
 
 * [Saiku Wiki](http://wiki.meteorite.bi/display/SAIK/Saiku)

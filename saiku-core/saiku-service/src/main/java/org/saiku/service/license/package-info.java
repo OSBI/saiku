@@ -4,20 +4,12 @@
  * Written by OSBI LTD, 2014
  */
 
-package org.saiku;
-
-
 /**
- * Created by bugg on 01/07/14.
+ * License Management Utilities
+ * <p>
+ *   Provides license encryption and decryption to the Saiku server pacakage.
+ * </p>
+ *
+ * @since 3.0
  */
-public class LicenseUtils {
-  public void init() {
-
-  }
-
-  public LicenseUtils() {
-
-  }
-
-
-}
+package org.saiku.service.license;

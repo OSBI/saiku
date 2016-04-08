@@ -1,11 +1,16 @@
 package org.saiku.database;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.vfs.FileObject;
+import org.apache.commons.vfs.FileSystemManager;
+import org.apache.commons.vfs.VFS;
 
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.importer.LegacyImporter;
 import org.saiku.service.importer.LegacyImporterImpl;
+import org.saiku.service.license.Base64Coder;
+import org.saiku.service.license.LicenseUtils;
 
 import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
@@ -13,8 +18,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -38,6 +47,21 @@ public class Database {
 
     @Autowired
     ServletContext servletContext;
+
+    private  LicenseUtils licenseUtils;
+
+    private URL repoURL;
+
+    public LicenseUtils getLicenseUtils() {
+        return licenseUtils;
+    }
+
+    public void setLicenseUtils(LicenseUtils licenseUtils) {
+        this.licenseUtils = licenseUtils;
+    }
+
+    private static final int SIZE = 2048;
+
 
     private JdbcDataSource ds;
     private static final Logger log = LoggerFactory.getLogger(Database.class);
@@ -65,6 +89,7 @@ public class Database {
         loadFoodmart();
         loadEarthquakes();
         loadLegacyDatasources();
+        importLicense();
     }
 
     private void initDB() {
@@ -323,5 +348,82 @@ public class Database {
     public void addUsers(List<String> l) throws java.sql.SQLException
     {
         //Stub for EE.
+    }
+
+    private void setPath(String path) {
+        FileSystemManager fileSystemManager;
+        try {
+            fileSystemManager = VFS.getManager();
+            FileObject fileObject;
+            fileObject = fileSystemManager.resolveFile(path);
+            if (fileObject == null) {
+                throw new IOException("File cannot be resolved: " + path);
+            }
+            if (!fileObject.exists()) {
+                throw new IOException("File does not exist: " + path);
+            }
+            repoURL = fileObject.getURL();
+            if (repoURL == null) {
+                throw new Exception(
+                    "Cannot load connection repository from path: " + path);
+            } else {
+//load();
+            }
+        } catch (Exception e) {
+            //LOG_EELOADER.error("Exception", e);
+        }
+    }
+    public void importLicense() {
+        setPath("res:saiku-license");
+        try {
+            if (repoURL != null) {
+                File[] files = new File(repoURL.getFile()).listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        if (!file.isHidden() && file.getName().equals("license.lic")) {
+
+                            ObjectInputStream si = null;
+                            byte[] sig;
+                            byte[] data = null;
+                            try {
+                                si = new ObjectInputStream(new FileInputStream(file));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+
+                            try {
+                                int sigLength = si.readInt();
+                                sig = new byte[sigLength];
+                                si.read(sig);
+
+                                ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
+                                byte[] buf = new byte[SIZE];
+                                int len;
+                                while ((len = si.read(buf)) != -1) {
+                                    dataStream.write(buf, 0, len);
+                                }
+                                dataStream.flush();
+                                data = dataStream.toByteArray();
+                                dataStream.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            } finally {
+                                try {
+                                    si.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+
+                            licenseUtils.setLicense(new String(Base64Coder.encode(data)));
+
+                        }
+                    }
+                }
+            }
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
     }
 }
