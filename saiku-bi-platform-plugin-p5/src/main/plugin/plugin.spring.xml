@@ -61,10 +61,6 @@
 	</bean>
 
 
-	<!--<bean id="datasourceResourceBean" class="org.saiku.plugin.resources.PentahoDatasourceResource">
-		<property name="datasourceService" ref="datasourceServiceBean" />
-	</bean>-->
-
 	<bean id="olapDiscoverBean" class="org.saiku.plugin.resources.PentahoDiscoverResource">
 		<property name="olapDiscoverService" ref="olapDiscoverServiceBean" />
 	</bean>
@@ -78,6 +74,7 @@
 	
 	<bean id="sessionService" class="org.saiku.plugin.PentahoSessionService">
 		<property name="userService" ref="userServiceBean"/>
+		<property name="l" ref="licenseUtilsBeanPlugin"/>
 	</bean>
 	
 	
@@ -133,9 +130,14 @@
   </bean>
 
 
-	<bean id="licenseUtilsBean" class="org.saiku.LicenseUtils" init-method="init">
+	<bean id="licenseUtilsBean" class="org.saiku.service.license.LicenseUtils" init-method="init">
 	</bean>
 
+	<bean id="repositoryDsManager" class="org.saiku.plugin.PentahoRepositoryResource"/>
+
+	<bean id="licenseUtilsBeanPlugin" class="org.saiku.plugin.LicenseUtils" init-method="init">
+		<property name="repositoryDatasourceManager" ref="repositoryDsManager"/>
+	</bean>
 
 	<bean id="licenseBean" class="org.saiku.plugin.resources.PentahoLicenseResource">
 		<property name="licenseUtils" ref="licenseUtilsBean"/>

@@ -19,6 +19,10 @@ package org.saiku.web.service;
 import org.apache.commons.lang.StringUtils;
 
 import org.saiku.service.ISessionService;
+import org.saiku.service.license.LicenseUtils;
+
+import bi.meteorite.license.LicenseException;
+import bi.meteorite.license.SaikuLicense2;
 import org.saiku.service.util.security.authorisation.AuthorisationPredicate;
 
 import org.slf4j.Logger;
@@ -59,10 +63,19 @@ public class SessionService implements ISessionService {
 		this.anonymous  = allow;
 	}
 
+	private LicenseUtils l;
+
+	public LicenseUtils getL() {
+		return l;
+	}
+
+	public void setL(LicenseUtils l) {
+		this.l = l;
+	}
 
 	/* (non-Javadoc)
-	 * @see org.saiku.web.service.ISessionService#setAuthenticationManager(org.springframework.security.authentication.AuthenticationManager)
-	 */
+         * @see org.saiku.web.service.ISessionService#setAuthenticationManager(org.springframework.security.authentication.AuthenticationManager)
+         */
 	public void setAuthenticationManager(AuthenticationManager auth) {
 		this.authenticationManager = auth;
 	}
@@ -76,25 +89,42 @@ public class SessionService implements ISessionService {
 	 * @see org.saiku.web.service.ISessionService#login(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String)
 	 */
 	public Map<String, Object> login(HttpServletRequest req, String username, String password ) throws Exception {
-		if (authenticationManager != null) {
-			authenticate(req, username, password);
-		}
-		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
-			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		Object sl = null;
+		String notice = null;
 
-			if(authorisationPredicate.isAuthorised(auth))
-			{
-				Object p = auth.getPrincipal();
-				createSession(auth, username, password);
-				return sessionHolder.get(p);
-			}
-			else
-			{
-				log.info(username + " failed authorisation. Rejecting login");
-				throw new RuntimeException("Authorisation failed for: " + username);
+		try {
+			sl = l.getLicense();
+		} catch (Exception e) {
+			throw new LicenseException("Could not find license, please get a free license from http://licensing"
+									   + ".meteorite.bi");
+		}
+
+		if (sl != null) {
+
+			l.validateLicense();
+
+			if (l.getLicense() instanceof SaikuLicense2) {
+
+				if (authenticationManager != null) {
+					authenticate(req, username, password);
+				}
+				if (SecurityContextHolder.getContext() != null
+					&& SecurityContextHolder.getContext().getAuthentication() != null) {
+					Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+					if (authorisationPredicate.isAuthorised(auth)) {
+						Object p = auth.getPrincipal();
+						createSession(auth, username, password);
+						return sessionHolder.get(p);
+					} else {
+						log.info(username + " failed authorisation. Rejecting login");
+						throw new RuntimeException("Authorisation failed for: " + username);
+					}
+				}
+				return new HashMap<>();
 			}
 		}
-		return new HashMap<>();
+			return null;
 	}
 
 	private void createSession(Authentication auth, String username, String password) {

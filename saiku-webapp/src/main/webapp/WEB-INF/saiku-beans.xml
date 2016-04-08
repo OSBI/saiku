@@ -42,8 +42,15 @@
         <constructor-arg index="0" value="${webdav.password}"/>
     </bean>
 
+
+    <bean id="licenseUtilsBean" class="org.saiku.service.license.LicenseUtils" init-method="init">
+        <property name="repositoryDatasourceManager" ref="repositoryDsManager" />
+    </bean>
+
+
     <bean id="h2database" class="org.saiku.database.Database" init-method="init">
         <property name="datasourceManager" ref="repositoryDsManager"/>
+
     </bean>
 
     <bean id="authorisationPredicate" class="org.saiku.service.util.security.authorisation.MustBeAuthenticatedAuthorisation"/>
@@ -51,6 +58,8 @@
     <bean id="sessionService" class="org.saiku.web.service.SessionService">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="authorisationPredicate" ref="authorisationPredicate"/>
+        <property name="l" ref="licenseUtilsBean"/>
+
     </bean>
 
     <bean id="securityContextPersistenceFilter" class="org.springframework.security.web.context.SecurityContextPersistenceFilter"/>
@@ -174,7 +183,10 @@
         <property name="query2Resource" ref="queryResource2"/>
     </bean>
 
-    <bean id="licenseUtils" class="org.saiku.LicenseUtils"/>
+
+    <bean id="licenseUtils" class="org.saiku.service.license.LicenseUtils">
+        <property name="repositoryDatasourceManager" ref="repositoryDsManager"/>
+    </bean>
     <bean id="licenseBean" class="org.saiku.web.rest.resources.License">
         <property name="databaseManager" ref="h2database"/>
         <property name="licenseUtils" ref="licenseUtils"/>
