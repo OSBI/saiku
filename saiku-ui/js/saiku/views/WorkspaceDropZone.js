@@ -428,6 +428,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                 var items = {};
                 var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
                 var a = self.workspace.query.helper.getAxis(target);
+                 var hierarchies = a.hierarchies;
 
                 var func, n, sortliteral, filterCondition, sortOrder, sortOrderLiteral, sortHl, topHl, filterHl, totalFunction;
                 var isFilter = false, isSort = false, isTop = false;
@@ -473,6 +474,20 @@ var WorkspaceDropZone = Backbone.View.extend({
                         }
                     };
                 });
+
+                 _.each(hierarchies, function(h){
+                     _.each(h.levels, function(l){
+                         items[h.name] = {
+                             name: h.caption,
+                             payload: {
+                                 "n":10,
+                                 "sortliteral" : h.name+".["+l.name+"].CURRENTMEMBER.ORDERKEY"
+                             }
+                         }
+                     });
+
+                 })
+
                 var levels=[];
 				 _.each(a.hierarchies, function(hierarchy){
 					 for(var property in hierarchy.levels){
