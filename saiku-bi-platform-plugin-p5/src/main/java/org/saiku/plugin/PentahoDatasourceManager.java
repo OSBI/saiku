@@ -15,6 +15,7 @@
  */
 package org.saiku.plugin;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,6 +28,7 @@ import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.user.UserService;
+import org.saiku.service.util.exception.SaikuServiceException;
 
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository.RepositoryException;
@@ -35,8 +37,14 @@ import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.plugin.action.mondrian.catalog.IMondrianCatalogService;
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
 import org.pentaho.platform.util.messages.LocaleHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -44,17 +52,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.xml.bind.DatatypeConverter;
+
 import mondrian.olap.MondrianProperties;
 import mondrian.olap.Util;
 import mondrian.rolap.RolapConnectionProperties;
 import mondrian.util.Pair;
-
-
+import pt.webdetails.cpf.repository.api.FileAccess;
+import pt.webdetails.cpf.repository.api.IBasicFile;
+import pt.webdetails.cpf.repository.api.IContentAccessFactory;
+import pt.webdetails.cpf.repository.api.IUserContentAccess;
 
 
 public class PentahoDatasourceManager implements IDatasourceManager {
 
     private static final Log LOG = LogFactory.getLog(PentahoDatasourceManager.class);
+
+    @Autowired
+    private IContentAccessFactory contentAccessFactory;
 
     private Map<String, SaikuDatasource> datasources =      Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
     
@@ -452,12 +467,70 @@ public class PentahoDatasourceManager implements IDatasourceManager {
     }
 
     public String getInternalFileData(String file) {
-        throw new UnsupportedOperationException();
+        IUserContentAccess access = contentAccessFactory.getUserContentAccess(null);
+
+        if( !access.fileExists(file) && access.hasAccess(file, FileAccess.READ)) {
+            //log.error("Access to Repository has failed File does not exist: " + file);
+            throw new NullPointerException("Access to Repository has failed");
+        }
+        IBasicFile bf = access.fetchFile(file);
+
+        String doc = null;
+        try {
+            doc = IOUtils.toString(bf.getContents());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (doc == null) {
+            throw new SaikuServiceException("Error retrieving saiku document from solution repository: " + file);
+        }
+        return doc;
     }
 
-    @Override
+    private static Object objFromString( String s ) throws IOException ,
+        ClassNotFoundException {
+        byte [] data = DatatypeConverter.parseBase64Binary(s);
+        ObjectInputStream ois = new ObjectInputStream(
+            new ByteArrayInputStream(  data ) );
+        Object o  = ois.readObject();
+        ois.close();
+        return o;
+    }
+
     public InputStream getBinaryInternalFileData(String file) throws javax.jcr.RepositoryException {
-        return null;
+        IUserContentAccess access = contentAccessFactory.getUserContentAccess(null);
+
+        if( !access.fileExists(file) && access.hasAccess(file, FileAccess.READ)) {
+            //log.error("Access to Repository has failed File does not exist: " + file);
+            throw new NullPointerException("Access to Repository has failed");
+        }
+        IBasicFile bf = access.fetchFile(file);
+
+
+        try {
+            String s = IOUtils.toString(bf.getContents());
+
+            try {
+                Object o = objFromString(s);
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(baos);
+
+
+                oos.writeObject(o);
+
+                oos.flush();
+                oos.close();
+
+                return new ByteArrayInputStream(baos.toByteArray());
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            return bf.getContents();
+        } catch (IOException e) {
+            throw new NullPointerException("No data: "+e.getLocalizedMessage());
+        }
+
     }
 
     public String saveFile(String path, Object content, String user, List<String> roles) {

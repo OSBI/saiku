@@ -7,6 +7,8 @@
 
 package org.saiku.license;
 
+import bi.meteorite.license.SaikuLicense;
+
 /**
  * Created by bugg on 30/06/14.
  */
