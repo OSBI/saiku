@@ -160,7 +160,7 @@ public class LicenseUtils extends org.saiku.LicenseUtils {
         }
       }
     }
-    return version;
+    return "3.8.8";
   }
 
 
