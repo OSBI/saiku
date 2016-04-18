@@ -505,7 +505,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public boolean hasHomeDirectory(String name) {
         try{
-            Node eturn = irm.getHomeFolder(name);
+            Object eturn = irm.getHomeFolder(name);
             return eturn != null;
         } catch(PathNotFoundException e) {
             return false;

@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.*;
 
 import javax.jcr.Node;
@@ -41,6 +42,10 @@ class Acl2 {
   private static final Logger LOG = LoggerFactory.getLogger(Acl2.class);
 
   private List<String> adminRoles;
+
+
+  public Acl2(File n) {
+  }
 
   public void setAdminRoles(List<String> adminRoles) {
     this.adminRoles = adminRoles;
@@ -358,4 +363,20 @@ class Acl2 {
     return false;
   }
 
+
+
+  public void serialize(File n) {
+  }
+
+  public boolean canWrite(File node, String user, List<String> roles) {
+    return true;
+  }
+
+  public boolean canRead(File node, String user, List<String> roles) {
+    return true;
+  }
+
+  public boolean canGrant(File node, String username, List<String> roles) {
+    return true;
+  }
 }
