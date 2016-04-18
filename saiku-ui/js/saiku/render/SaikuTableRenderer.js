@@ -300,18 +300,23 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
         isColHeader = false;
         var headerSame = false;
 
-        if (totalsLists[ROWS])
+        if (totalsLists[ROWS]) {
             for (var i = 0; i < totalsLists[ROWS].length; i++) {
                 scanIndexes[ROWS][i] = 0;
                 scanSums[ROWS][i] = totalsLists[ROWS][i][scanIndexes[ROWS][i]].width;
             }
+        }
+
         rowContent = "<tr>";
+
         if ( row === 0) {
             rowContent = "<thead>" + rowContent;
         }
+
         for (var col = 0, colLen = table[row].length; col < colLen; col++) {
             var colShifted = col - allData.leftOffset;
             var header = data[row][col];
+
             if (header.type === "COLUMN_HEADER") {
                 isColHeader = true;
             }
@@ -426,8 +431,10 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
             else if (header.type === "DATA_CELL") {
                 batchStarted = true;
                 var color = "";
-                var val = header.value;
+                var val = _.isEmpty(header.value) ? '-' : header.value;
                 var arrow = "";
+
+
                 if (header.properties.hasOwnProperty('image')) {
                     var img_height = header.properties.hasOwnProperty('image_height') ? " height='" + header.properties.image_height + "'" : "";
                     var img_width = header.properties.hasOwnProperty('image_width') ? " width='" + header.properties.image_width + "'" : "";
