@@ -431,9 +431,8 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
             else if (header.type === "DATA_CELL") {
                 batchStarted = true;
                 var color = "";
-                var val = _.isEmpty(header.value) ? '-' : header.value;
+                var val = _.isEmpty(header.value) ? Settings.EMPTY_VALUE_CHARACTER : header.value;
                 var arrow = "";
-
 
                 if (header.properties.hasOwnProperty('image')) {
                     var img_height = header.properties.hasOwnProperty('image_height') ? " height='" + header.properties.image_height + "'" : "";
