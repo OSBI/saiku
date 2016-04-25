@@ -35,7 +35,7 @@
         <property name="externalPropertiesFile" value="${external.properties.file}"/>
         <!-- If you change the repoPassword set this property for at least 1 restart to update the old repo password-->
         <!--<property name="oldRepoPassword" value="sa!kuanalyt!cs"/>-->
-
+        <property name="type" value="jackrabbit"/>
     </bean>
 
     <bean id="repoPasswordProviderBean" class="org.saiku.service.util.security.authentication.SimplePasswordProvider">

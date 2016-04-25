@@ -16,6 +16,9 @@
 package org.saiku.repository;
 
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.service.user.UserService;
@@ -39,6 +42,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,9 +50,10 @@ import javax.jcr.RepositoryException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 /**
- * JackRabbit JCR Repository Manager for Saiku.
+ * Classpath Repository Manager for Saiku.
  */
 public class ClassPathRepositoryManager implements IRepositoryManager {
 
@@ -56,7 +61,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   private static ClassPathRepositoryManager ref;
   private final String defaultRole;
   private UserService userService;
-
+  private String append = "/tmp/test/";
   private String session = null;
 
   private ClassPathRepositoryManager(String config, String data, String password, String oldpassword, String defaultRole) {
@@ -323,8 +328,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
     else {
       int pos = path.lastIndexOf("/");
-      String filename = "./" + path.substring(pos + 1, path.length());
-      File n = getFolder(path.substring(0, pos));
+      String filename = path;
 
       File check = this.getNode(filename);
       if(check.exists()){
@@ -438,7 +442,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
     byte[] encoded = new byte[0];
     try {
-      encoded = Files.readAllBytes(Paths.get(s));
+      encoded = Files.readAllBytes(Paths.get(append+s));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -576,43 +580,45 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   }
 
   public List<MondrianSchema> getInternalFilesOfFileType(String type) throws RepositoryException {
-/*    QueryManager qm = session.getWorkspace().getQueryManager();
-    String sql = "SELECT * FROM [nt:mongoschema]";
-    Query query = qm.createQuery(sql, Query.JCR_SQL2);
+    List<MondrianSchema> ds = new ArrayList<>();
 
-    QueryResult res = query.execute();
+    String[] extensions = new String[1];
+    extensions[0] = "xml";
+    Collection<File> files = FileUtils.listFiles(
+            new File(append),
+            extensions,
+            true
+    );
 
-    NodeIterator node = res.getNodes();
+    for(File file: files){
 
-    List<MondrianSchema> l = new ArrayList<>();
-    while (node.hasNext()) {
-      Node n = node.nextNode();
-      String p = n.getPath();
+      String p = file.getPath();
 
       MondrianSchema m = new MondrianSchema();
-      m.setName(n.getName());
+      m.setName(file.getName());
       m.setPath(p);
       m.setType(type);
-      l.add(m);
 
+      ds.add(m);
     }
-    return l;*/
-    return null;
+
+    return ds;
   }
 
 
   public List<DataSource> getAllDataSources() throws RepositoryException {
-    /*QueryManager qm = session.getWorkspace().getQueryManager();
-    String sql = "SELECT * FROM [nt:olapdatasource]";
-    Query query = qm.createQuery(sql, Query.JCR_SQL2);
-
-    QueryResult res = query.execute();
-
-    NodeIterator node = res.getNodes();
 
     List<DataSource> ds = new ArrayList<>();
-    while (node.hasNext()) {
-      Node n = node.nextNode();
+
+    String[] extensions = new String[1];
+    extensions[0] = "sds";
+    Collection<File> files = FileUtils.listFiles(
+            new File(append),
+            extensions,
+            true
+    );
+
+    for(File file: files){
       JAXBContext jaxbContext = null;
       Unmarshaller jaxbMarshaller = null;
       try {
@@ -625,7 +631,12 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       } catch (JAXBException e) {
         log.error("Could not read XML", e);
       }
-      InputStream stream = new ByteArrayInputStream(n.getNodes("jcr:content").nextNode().getProperty("jcr:data").getString().getBytes());
+      InputStream stream = null;
+      try {
+        stream = (FileUtils.openInputStream(file));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
       DataSource d = null;
       try {
         d = (DataSource) (jaxbMarshaller != null ? jaxbMarshaller.unmarshal(stream) : null);
@@ -634,14 +645,11 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       }
 
       if (d != null) {
-        d.setPath(n.getPath());
+        d.setPath(file.getPath());
       }
       ds.add(d);
-
     }
-
-    return ds;*/
-    return null;
+    return ds;
   }
 
   public void saveDataSource(DataSource ds, String path, String user) throws RepositoryException {
@@ -663,7 +671,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     int pos = path.lastIndexOf("/");
     String filename = "./" + path.substring(pos + 1, path.length());
     //File n = getFolder(path.substring(0, pos));
-    File f = new File(path);
+    File f = this.createNode(path);
     try {
       FileWriter fileWriter = new FileWriter(f);
 
@@ -936,7 +944,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
 
   private File createFolder(String path){
-    boolean success = (new File(path)).mkdirs();
+    String appended = append+path;
+    boolean success = (new File(appended)).mkdirs();
     if (!success) {
       // Directory creation failed
     }
@@ -958,11 +967,11 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   }
 
   private File getNode(String path) {
-    return new File(path);
+    return new File(append+path);
   }
 
   private File createNode(String filename){
-    return null;
+    return new File(append+filename);
   }
 
 }

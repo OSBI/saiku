@@ -59,11 +59,17 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String earthquakeschema;
     private String defaultRole;
     private String externalparameters;
+    private String type;
 
     public void load() {
         Properties ext = checkForExternalDataSourceProperties();
-        irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopasswordprovider.getPassword(),
-            oldpassword, defaultRole);
+        if(type.equals("jackrabbit")) {
+            irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopasswordprovider.getPassword(),
+                    oldpassword, defaultRole);
+        }
+        else{
+            irm = ClassPathRepositoryManager.getClassPathRepositoryManager(configurationpath,datadir,repopasswordprovider.getPassword(), oldpassword, defaultRole);
+        }
         try {
             irm.start(userService);
             this.saveInternalFile("/etc/.repo_version", "d20f0bea-681a-11e5-9d70-feff819cdc9f", null);
@@ -613,6 +619,10 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     public void setDefaultRole(String defaultRole)
     {
         this.defaultRole = defaultRole;
+    }
+
+    public void setType(String type) {
+        this.type=type;
     }
 }
 
