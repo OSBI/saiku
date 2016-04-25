@@ -57,15 +57,17 @@ import javax.xml.bind.Unmarshaller;
  */
 public class ClassPathRepositoryManager implements IRepositoryManager {
 
-  private static final Logger log = LoggerFactory.getLogger(JackRabbitRepositoryManager.class);
+  private static final Logger log = LoggerFactory.getLogger(ClassPathRepositoryManager.class);
   private static ClassPathRepositoryManager ref;
   private final String defaultRole;
   private UserService userService;
-  private String append = "/tmp/test/";
+  private String append;
   private String session = null;
 
+  private String sep = File.pathSeparator;
   private ClassPathRepositoryManager(String config, String data, String password, String oldpassword, String defaultRole) {
 
+    this.append=data;
     this.defaultRole = defaultRole;
   }
 
@@ -105,7 +107,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       createSchemas();
       createDataSources();
 
-      File n = this.createFolder("/homes");
+      File n = this.createFolder(sep+"homes");
 
       HashMap<String, List<AclMethod>> m = new HashMap<>();
       ArrayList<AclMethod> l = new ArrayList<>();
@@ -117,7 +119,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       acl2.addEntry(n.getPath(), e);
       acl2.serialize(n);
 
-      this.createFolder("/datasources");
+      this.createFolder(sep+"datasources");
 
       m = new HashMap<>();
       l = new ArrayList<>();
@@ -131,10 +133,10 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       acl2.addEntry(n.getPath(), e);
       acl2.serialize(n);
 
-      this.createFolder("/etc");
+      this.createFolder(sep+"etc");
 
 
-      this.createFolder("/legacyreports");
+      this.createFolder(sep+"legacyreports");
 
 
       acl2 = new Acl2(n);
@@ -142,7 +144,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       acl2.serialize(n);
 
 
-      this.createFolder("/etc/theme");
+      this.createFolder(sep+"etc"+sep+"theme");
 
 
       acl2 = new Acl2(n);
@@ -160,7 +162,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
   public void createUser(String u) throws RepositoryException {
 
-      File node = this.createFolder("/homes/"+u);
+      File node = this.createFolder(sep+"homes"+sep+u);
       //node.setProperty("type", "homedirectory");
       //node.setProperty("user", u);
       AclEntry e = new AclEntry(u, AclType.PRIVATE, null, null);
@@ -176,7 +178,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     //login();
 
 
-    return this.getAllFoldersInCurrentDirectory("/homes");
+    return this.getAllFoldersInCurrentDirectory(sep+"homes");
   }
 
   public Object getHomeFolder(String path) throws RepositoryException {
@@ -184,10 +186,10 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   }
 
   public Object getFolder(String user, String directory) throws RepositoryException {
-    return this.getAllFoldersInCurrentDirectory("/homes/home:"+user+"/"+directory);
+    return this.getAllFoldersInCurrentDirectory(sep+"homes"+sep+"home:"+user+sep+directory);
   }
   private Object getFolderNode(String directory) throws RepositoryException {
-    if(directory.startsWith("/")){
+    if(directory.startsWith(sep)){
       directory = directory.substring(1, directory.length());
     }
     return this.getAllFoldersInCurrentDirectory(directory);
@@ -203,7 +205,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   }
 
   public boolean deleteFolder(String folder) throws RepositoryException {
-    if(folder.startsWith("/")){
+    if(folder.startsWith(sep)){
       folder = folder.substring(1, folder.length());
     }
         /*Node n;
@@ -233,11 +235,11 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     if(file==null){
       //Create new folder
       String parent;
-      if(path.contains("/")) {
-        parent = path.substring(0, path.lastIndexOf("/"));
+      if(path.contains(sep)) {
+        parent = path.substring(0, path.lastIndexOf(sep));
       }
       else{
-        parent = "/";
+        parent = sep;
       }
       File node = getFolder(parent);
       Acl2 acl2 = new Acl2(node);
@@ -246,15 +248,15 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         throw new SaikuServiceException("Can't write to file or folder");
       }
 
-      int pos = path.lastIndexOf("/");
-      String filename = "./" + path.substring(pos + 1, path.length());
+      int pos = path.lastIndexOf(sep);
+      String filename = "."+sep+ path.substring(pos + 1, path.length());
       this.createFolder(filename);
       return null;
 
     }
     else {
-      int pos = path.lastIndexOf("/");
-      String filename = "./" + path.substring(pos + 1, path.length());
+      int pos = path.lastIndexOf(sep);
+      String filename = "."+sep+ path.substring(pos + 1, path.length());
       File n = getFolder(path.substring(0, pos));
       Acl2 acl2 = new Acl2(n);
       acl2.setAdminRoles(userService.getAdminRoles());
@@ -316,18 +318,18 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   public Object saveInternalFile(Object file, String path, String type) throws RepositoryException {
     if(file==null){
       //Create new folder
-      String parent = path.substring(0, path.lastIndexOf("/"));
+      String parent = path.substring(0, path.lastIndexOf(sep));
       File node = getFolder(parent);
 
-      int pos = path.lastIndexOf("/");
-      String filename = "./" + path.substring(pos + 1, path.length());
+      int pos = path.lastIndexOf(sep);
+      String filename = "."+sep+ path.substring(pos + 1, path.length());
       this.createFolder(filename);
 
       return null;
 
     }
     else {
-      int pos = path.lastIndexOf("/");
+      int pos = path.lastIndexOf(sep);
       String filename = path;
 
       File check = this.getNode(filename);
@@ -359,18 +361,18 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   public Object saveBinaryInternalFile(InputStream file, String path, String type) throws RepositoryException {
     if(file==null){
       //Create new folder
-      String parent = path.substring(0, path.lastIndexOf("/"));
+      String parent = path.substring(0, path.lastIndexOf(sep));
       File node = getFolder(parent);
 
-      int pos = path.lastIndexOf("/");
-      String filename = "./" + path.substring(pos + 1, path.length());
+      int pos = path.lastIndexOf(sep);
+      String filename = "."+sep + path.substring(pos + 1, path.length());
       File resNode = this.createNode(filename);
       return resNode;
 
     }
     else {
-      int pos = path.lastIndexOf("/");
-      String filename = "./" + path.substring(pos + 1, path.length());
+      int pos = path.lastIndexOf(sep);
+      String filename = "."+sep + path.substring(pos + 1, path.length());
       File n = getFolder(path.substring(0, pos));
 
 
@@ -668,8 +670,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       log.error("Could not read XML", e);
     }
 
-    int pos = path.lastIndexOf("/");
-    String filename = "./" + path.substring(pos + 1, path.length());
+    int pos = path.lastIndexOf(sep);
+    String filename = "."+sep + path.substring(pos + 1, path.length());
     //File n = getFolder(path.substring(0, pos));
     File f = this.createNode(path);
     try {
@@ -956,7 +958,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     return null;
   }
   private void delete(String folder) {
-    File file = new File(folder);
+    File file = new File(append+folder);
 
     file.delete();
   }
