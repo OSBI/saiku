@@ -273,6 +273,33 @@ var AdminConsole = Backbone.View.extend({
 
     csv_create_schema: function(event) {
         event.preventDefault();
+
+        var name = this.$el.find('input[name="connname"]').val();
+        var path = this.$el.find('input[name="csvpath"]').val();
+        var mondrianSchema = this.$el.find('.schemaselect').val();
+        var conn = this.datasources.get(path);
+        var enabled = false;
+        var c;
+
+        if (mondrianSchema) {
+            enabled = true;
+        }
+
+        // console.log(name);
+        // console.log(path);
+        // console.log(mondrianSchema);
+        // console.log(enabled);
+
+        c = 'type=OLAP\n' +
+            'name=' + name + '\n' +
+            'driver=mondrian.olap4j.MondrianOlap4jDriver\n' +
+            'location=jdbc:mondrian:Jdbc=jdbc:calcite:model=csv:///etc/csvschema/' + schema + ';Catalog=mondrian://' + mondrianSchema + ';JdbcDrivers=org.apache.calcite.jdbc.Driver;\n' +
+            'enabled=' + enabled + '\n' +
+            'username=admin\n' +
+            'password=admin';
+
+        conn.set({ 'csv': c });
+
         (new DataSourceModelEditor()).render().open();
     },
 
@@ -465,7 +492,8 @@ var AdminConsole = Backbone.View.extend({
         "<% } else {    %>"+
         "<input name='jdbcurl' type='hidden'/>" +
         "<% } %>"+
-        "<label for='csvpath' style='display:none;'>File / Path:</label><input name='csvpath' type='file' class='form-control' style='display:none;' /><br/>" +
+        // "<label for='csvpath' style='display:none;'>File / Path:</label><input name='csvpath' type='file' class='form-control' style='display:none;' /><br/>" +
+        "<label for='csvpath' style='display:none;'>Path CSV files:</label><input name='csvpath' type='text' class='form-control' style='display:none;' /><br/>" +
         "<label for='schemapath'>Schema:</label><select class='form-control schemaselect' name='schemapath'>" +
         "<% _.each(schemas, function(path){%>" +
         "<option  <% if(conn.schema != null && conn.schema === 'mondrian://'+path.attributes.path){ print('selected'); } %> ><%= path.attributes.path %></option>" +
