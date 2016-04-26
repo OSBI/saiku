@@ -279,6 +279,7 @@ var AdminConsole = Backbone.View.extend({
         var mondrianSchema = this.$el.find('.schemaselect').val();
         var conn = this.datasources.get(path);
         var enabled = false;
+        var alertMsg = '';
         var c;
 
         if (mondrianSchema) {
@@ -290,17 +291,28 @@ var AdminConsole = Backbone.View.extend({
         // console.log(mondrianSchema);
         // console.log(enabled);
 
-        c = 'type=OLAP\n' +
-            'name=' + name + '\n' +
-            'driver=mondrian.olap4j.MondrianOlap4jDriver\n' +
-            'location=jdbc:mondrian:Jdbc=jdbc:calcite:model=csv:///etc/csvschema/' + schema + ';Catalog=mondrian://' + mondrianSchema + ';JdbcDrivers=org.apache.calcite.jdbc.Driver;\n' +
-            'enabled=' + enabled + '\n' +
-            'username=admin\n' +
-            'password=admin';
+        if (typeof name === 'undefined' || name === '' || !name) {
+            alertMsg += 'The Name field can not be empty! ';      
+        }
+        if (typeof path === 'undefined' || path === '' || !path) {
+            alertMsg += 'The Path CSV files field can not be empty! ';      
+        }
+        if (alertMsg !== '') {
+            alert(alertMsg);
+        }
+        else {
+            c = 'type=OLAP\n' +
+                'name=' + name + '\n' +
+                'driver=mondrian.olap4j.MondrianOlap4jDriver\n' +
+                'location=jdbc:mondrian:Jdbc=jdbc:calcite:model=csv:///etc/csvschema/' + schema + ';Catalog=mondrian://' + mondrianSchema + ';JdbcDrivers=org.apache.calcite.jdbc.Driver;\n' +
+                'enabled=' + enabled + '\n' +
+                'username=admin\n' +
+                'password=admin';
 
-        conn.set({ 'csv': c });
-
-        (new DataSourceModelEditor()).render().open();
+            conn.set({ 'csv': c });
+            
+            (new DataSourceModelEditor()).render().open();
+        }
     },
 
     backup_restore: function(event){
