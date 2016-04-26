@@ -17,8 +17,15 @@ package org.saiku.repository;
 
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileType;
+import org.apache.jackrabbit.commons.JcrUtils;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.service.user.UserService;
@@ -41,11 +48,10 @@ import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -64,7 +70,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   private String append;
   private String session = null;
 
-  private String sep = File.pathSeparator;
+  private String sep = File.separator;
   private ClassPathRepositoryManager(String config, String data, String password, String oldpassword, String defaultRole) {
 
     this.append=data;
@@ -260,15 +266,15 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       File n = getFolder(path.substring(0, pos));
       Acl2 acl2 = new Acl2(n);
       acl2.setAdminRoles(userService.getAdminRoles());
-      if (acl2.canWrite(n, user, roles)) {
+      /*if (acl2.canWrite(n, user, roles)) {
         throw new SaikuServiceException("Can't write to file or folder");
-      }
+      }*/
 
       File check = this.getNode(filename);
       if(check.exists()){
         check.delete();
       }
-      File resNode = this.createNode(filename);
+      File resNode = this.createNode(path);
       switch (type) {
       case "nt:saikufiles":
         //resNode.addMixin("nt:saikufiles");
@@ -426,7 +432,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
     byte[] encoded = new byte[0];
     try {
-      encoded = Files.readAllBytes(Paths.get(s));
+      encoded = Files.readAllBytes(Paths.get(append+sep+s));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -497,7 +503,11 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   }
 
   public List<IRepositoryObject> getAllFiles(List<String> type, String username, List<String> roles) {
-    //return getRepoObjects(root, type, username, roles, false);
+    try {
+      return getRepoObjects(this.getFolder("/"), type, username, roles, false);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     return null;
   }
 
@@ -505,7 +515,17 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       RepositoryException {
     /*Node node = this.getNodeIfExists(path, session);
     return getRepoObjects(node, type, username, roles, true);*/
-    return null;
+    File file = this.getNode(path);
+    if(file.exists()) {
+      try {
+        return getRepoObjects(this.getFolder(path), type, username, roles, true);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
+      return null;
+
   }
 
 
@@ -939,12 +959,101 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }*/
   }
 
-  private List<IRepositoryObject> getRepoObjects(File files, List<String> fileType, String username, List<String> roles,
+/*  private List<IRepositoryObject> getRepoObjects(File f, List<String> fileType, String username, List<String> roles,
                                                  boolean includeparent) {
-   return null;
+
+    String[] extensions = new String[1];
+    Collection<File> files = FileUtils.listFiles(
+            new File(append+f),
+            null,
+            true
+    );
+
+  }*/
+
+  private List<IRepositoryObject> getRepoObjects(File root, List<String> fileType, String username, List<String> roles,
+                                                       boolean includeparent) throws Exception {
+    List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
+    ArrayList<File> objects = new ArrayList<>();
+    if (root.isDirectory()) {
+     /* objects = FileUtils.listFilesAndDirs(
+              root,
+              TrueFileFilter.TRUE,
+              FalseFileFilter.FALSE
+      );*/
+      this.listf(root.getAbsolutePath(), objects);
+
+    } else {
+      objects = new ArrayList<>();
+      objects.add(root);
+    }
+
+    Acl2 acl = new Acl2(root);
+    acl.setAdminRoles(userService.getAdminRoles());
+
+    boolean first = false;
+    for (File file : objects) {
+      /*if (!first) {
+        first = true;
+      }
+      else{*/
+
+        if (!file.isHidden()) {
+          String filename = file.getName();
+          String relativePath = file.getPath().substring(append.length(), file.getPath().length());
+
+
+          if (acl.canRead(relativePath, username, roles)) {
+            List<AclMethod> acls = acl.getMethods(relativePath, username, roles);
+            if (file.isFile()) {
+              if (!fileType.isEmpty()) {
+                for (String ft : fileType) {
+                  if (!filename.endsWith(ft)) {
+                    continue;
+                  }
+                  String extension = FilenameUtils.getExtension(file.getPath());
+
+                  repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath, acls));
+                }
+
+              }
+
+            }
+            if (file.isDirectory()) {
+              repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepoObjects(file, fileType, username, roles, false)));
+            }
+            Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
+
+              public int compare(IRepositoryObject o1, IRepositoryObject o2) {
+                if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(IRepositoryObject.Type.FILE))
+                  return -1;
+                if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
+                  return 1;
+                return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+
+              }
+
+            });
+          }
+        }
+      }
+    //}
+    return repoObjects;
   }
 
+  public void listf(String directoryName, ArrayList<File> files) {
+    File directory = new File(directoryName);
 
+    // get all the files from a directory
+    File[] fList = directory.listFiles();
+    for (File file : fList) {
+      //if (file.isFile()) {
+        files.add(file);
+      //} else if (file.isDirectory()) {
+//        listf(file.getAbsolutePath(), files);
+  //    }
+    }
+  }
   private File createFolder(String path){
     String appended = append+path;
     boolean success = (new File(appended)).mkdirs();

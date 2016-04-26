@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.vfs2.FileObject;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -369,7 +370,7 @@ class Acl2 {
   }
 
   public boolean canWrite(File node, String user, List<String> roles) {
-    return true;
+    return false;
   }
 
   public boolean canRead(File node, String user, List<String> roles) {
@@ -379,4 +380,16 @@ class Acl2 {
   public boolean canGrant(File node, String username, List<String> roles) {
     return true;
   }
+
+  public boolean canRead(String relativePath, String username, List<String> roles) {
+    return true;
+  }
+
+
+  @NotNull
+  public List<AclMethod> getMethods(@NotNull String node, String username, @NotNull List<String> roles) {
+
+    return null;
+  }
+
 }
