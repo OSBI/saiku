@@ -2697,3 +2697,97 @@ margin-bottom: 20px;
     padding-left:6px;
     padding-right:6px;
 }
+
+.dialog_dsmodel-editor .dialog_icon {
+    display: none;
+}
+
+.dialog_dsmodel-editor .sidebar {
+    border: 1px solid #ccc;
+    height: 475px;
+    /*width: 300px;*/
+    margin: 10px;
+}
+
+.dialog_dsmodel-editor .sidebar a.button {
+    display: block;
+    height: 25px;
+    padding: 8px;
+    width: 30px;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    background-repeat: no-repeat;
+    outline: none;
+}
+
+.dialog_dsmodel-editor .sidebar a.button:hover {
+    border: 1px solid #ccc;
+    padding: 7px;
+}
+
+.dialog_dsmodel-editor .sidebar .table-auto-populate {
+    position: relative;
+    bottom: 3px;
+    background: url("../../../js/saiku/plugins/DataSourceModelEditor/images/dialog_table_auto_populate.png") no-repeat;
+    background-position: 50% 50%;
+    background-size: 16px;
+}
+
+.dialog_dsmodel-editor .sidebar .btn-mearsure {
+    position: relative;
+    bottom: 3px;
+    background: url("../../../js/saiku/plugins/DataSourceModelEditor/images/dialog_mearsure.png") no-repeat;
+    background-position: 50% 50%;
+    background-size: 16px;
+}
+
+.dialog_dsmodel-editor .sidebar .btn-dimension {
+    position: relative;
+    bottom: 3px;
+    background: url("../../../js/saiku/plugins/DataSourceModelEditor/images/dialog_dimension.png") no-repeat;
+    background-position: 50% 50%;
+    background-size: 16px;
+}
+
+.dialog_dsmodel-editor .sidebar .btn-hierarchy {
+    position: relative;
+    bottom: 3px;
+    background: url("../../../js/saiku/plugins/DataSourceModelEditor/images/dialog_hierarchy.png") no-repeat;
+    background-position: 50% 50%;
+    background-size: 16px;
+}
+
+.dialog_dsmodel-editor .sidebar .btn-level {
+    position: relative;
+    bottom: 3px;
+    background: url("../../../js/saiku/plugins/DataSourceModelEditor/images/dialog_level.png") no-repeat;
+    background-position: 50% 50%;
+    background-size: 16px;
+}
+
+.dialog_dsmodel-editor .sidebar .btn-member {
+    position: relative;
+    bottom: 3px;
+    background: url("../../../js/saiku/plugins/DataSourceModelEditor/images/dialog_member.png") no-repeat;
+    background-position: 50% 50%;
+    background-size: 16px;
+}
+
+.dialog_dsmodel-editor .sidebar .btn-clear-model {
+    position: relative;
+    bottom: 3px;
+    background: url("../../../js/saiku/plugins/DataSourceModelEditor/images/dialog_clear_model.png") no-repeat;
+    background-position: 50% 50%;
+    background-size: 16px;
+}
+
+.dialog_dsmodel-editor .parent_dimensions .parent_dimension,
+.dialog_dsmodel-editor .parent_dimensions .parent_hierarchy,
+.dialog_dsmodel-editor .parent_dimensions .parent_level {
+    padding: 3px 0;
+}
+
+.dialog_dsmodel-editor .form-properties .btn-group .btn {
+    margin-right: 5px;
+}
