@@ -48,6 +48,7 @@ var AdminConsole = Backbone.View.extend({
         'click .license_users_list' : 'show_license_user_list',
         'click .add_license_user' : 'add_license_user',
         'click .remove_license_user' : 'remove_license_user',
+        'click .csvsearchpath': 'csv_search_path',
         'click .csvcreateschema': 'csv_create_schema'
     },
     initialize: function (args) {
@@ -271,6 +272,12 @@ var AdminConsole = Backbone.View.extend({
         });
     },
 
+    csv_search_path: function(event) {
+        event.preventDefault();
+
+        (new OpenCSVSearchModal({ dialog: this })).render().open();
+    },
+
     csv_create_schema: function(event) {
         event.preventDefault();
 
@@ -310,7 +317,7 @@ var AdminConsole = Backbone.View.extend({
                 'password=admin';
 
             conn.set({ 'csv': c });
-            
+
             (new DataSourceModelEditor()).render().open();
         }
     },
@@ -505,7 +512,8 @@ var AdminConsole = Backbone.View.extend({
         "<input name='jdbcurl' type='hidden'/>" +
         "<% } %>"+
         // "<label for='csvpath' style='display:none;'>File / Path:</label><input name='csvpath' type='file' class='form-control' style='display:none;' /><br/>" +
-        "<label for='csvpath' style='display:none;'>Path CSV files:</label><input name='csvpath' type='text' class='form-control' style='display:none;' /><br/>" +
+        "<label for='csvpath' style='display:none;'>Path CSV files:</label><a href='' name='csvsearchpath' class='csvsearchpath pull-right hide'>Search</a>" +
+        "<input name='csvpath' type='text' class='form-control' style='display:none;' disabled /><br/>" +
         "<label for='schemapath'>Schema:</label><select class='form-control schemaselect' name='schemapath'>" +
         "<% _.each(schemas, function(path){%>" +
         "<option  <% if(conn.schema != null && conn.schema === 'mondrian://'+path.attributes.path){ print('selected'); } %> ><%= path.attributes.path %></option>" +
@@ -1061,6 +1069,7 @@ var AdminConsole = Backbone.View.extend({
                 $(this.el).find('select[name="securityselect"]').show();
 
                 $(this.el).parent().find('.advancedurl').show();
+                $(this.el).parent().find('.csvsearchpath').hide();
                 $(this.el).parent().find('.csvcreateschema').hide();
                 $(this.el).parent().find('.save_datasource').show();
                 
@@ -1089,6 +1098,7 @@ var AdminConsole = Backbone.View.extend({
                 $(this.el).find('select[name="securityselect"]').show();
 
                 $(this.el).parent().find('.advancedurl').show();
+                $(this.el).parent().find('.csvsearchpath').hide();
                 $(this.el).parent().find('.csvcreateschema').hide();
                 $(this.el).parent().find('.save_datasource').show();
                 
@@ -1117,6 +1127,7 @@ var AdminConsole = Backbone.View.extend({
                 $(this.el).find('select[name="securityselect"]').hide();
 
                 $(this.el).parent().find('.advancedurl').hide();
+                $(this.el).parent().find('.csvsearchpath').show();
                 $(this.el).parent().find('.csvcreateschema').show();
                 $(this.el).parent().find('.save_datasource').show();
                 
@@ -1177,6 +1188,7 @@ Saiku.events.bind('admin:changedriver', function(options){
             $(div).find('select[name="securityselect"]').show();
 
             $(div).parent().find('.advancedurl').show();
+            $(div).parent().find('.csvsearchpath').hide();
             $(div).parent().find('.csvcreateschema').hide();
             $(div).parent().find('.save_datasource').show();
             
@@ -1205,6 +1217,7 @@ Saiku.events.bind('admin:changedriver', function(options){
             $(div).find('select[name="securityselect"]').show();
 
             $(div).parent().find('.advancedurl').show();
+            $(div).parent().find('.csvsearchpath').hide();
             $(div).parent().find('.csvcreateschema').hide();
             $(div).parent().find('.save_datasource').show();
             
@@ -1233,6 +1246,7 @@ Saiku.events.bind('admin:changedriver', function(options){
             $(div).find('select[name="securityselect"]').hide();
 
             $(div).parent().find('.advancedurl').hide();
+            $(div).parent().find('.csvsearchpath').show();
             $(div).parent().find('.csvcreateschema').show();
             $(div).parent().find('.save_datasource').show();
             
