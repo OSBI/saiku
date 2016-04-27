@@ -6,6 +6,7 @@
 
 package org.saiku.web.rest.resources;
 
+import bi.meteorite.license.SaikuLicense2;
 import org.saiku.service.license.LicenseUtils;
 import org.saiku.database.Database;
 import org.saiku.license.LicenseException;
@@ -72,12 +73,7 @@ public class License {
   @GET
   @Produces({ "application/json" })
   public Response getLicense() {
-    try {
-      return Response.ok().entity(licenseUtils.getLicense()).build();
-    } catch (IOException | RepositoryException | ClassNotFoundException e) {
-      e.printStackTrace();
-    }
-    return Response.serverError().build();
+    return Response.ok().entity(new SaikuLicense2()).build();
   }
 
   private static final int SIZE = 2048;
@@ -143,29 +139,28 @@ public class License {
   @Produces({ "text/plain" })
   @ReturnType("java.lang.String")
   public Response validateLicense() {
-    if(!userService.isAdmin()){
-      return Response.status(Response.Status.FORBIDDEN).build();
-    }
-    try {
-      licenseUtils.validateLicense();
-    } catch (IOException e) {
-      e.printStackTrace();
-      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                     .entity(e.getLocalizedMessage()).build();
-    } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                     .entity(e.getLocalizedMessage()).build();
-    } catch (LicenseException e) {
-      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                     .entity(e.getLocalizedMessage()).build();
-    } catch (RepositoryException e) {
-      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                     .entity("Could not find license file").build();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
+//    if(!userService.isAdmin()){
+//      return Response.status(Response.Status.FORBIDDEN).build();
+//    }
+//    try {
+//      licenseUtils.validateLicense();
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+//                     .entity(e.getLocalizedMessage()).build();
+//    } catch (ClassNotFoundException e) {
+//      e.printStackTrace();
+//      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+//                     .entity(e.getLocalizedMessage()).build();
+//    } catch (LicenseException e) {
+//      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+//                     .entity(e.getLocalizedMessage()).build();
+//    } catch (RepositoryException e) {
+//      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+//                     .entity("Could not find license file").build();
+//    } catch (Exception e) {
+//      e.printStackTrace();
+//    }
     return Response.ok().entity("Valid License").build();
 
 

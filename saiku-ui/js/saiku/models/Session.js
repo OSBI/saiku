@@ -27,6 +27,7 @@ var Session = Backbone.Model.extend({
     upgradeTimeout: null,
     isAdmin: false,
     id: null,
+	atemptedToLogByCookie: false,
     initialize: function(args, options) {
         // Attach a custom event bus to this model
         _.extend(this, Backbone.Events);
@@ -47,15 +48,33 @@ var Session = Backbone.Model.extend({
     },
 
     check_session: function() {
-        if (this.sessionid === null || this.username === null || this.password === null) {
-			var that = this;
-            this.clear();
-            this.fetch({ success: this.process_session, error: this.brute_force });
-        } else {
-            this.username = encodeURIComponent(options.username);
-            this.load_session();
-        }
+		/*
+		 * Below there's a workaround for Orbis cookie based authentication. If there's a SAIKU_AUTH_PRINCIPAL cookie
+		 * defined, it will skip the login view and perform the authentication directly, otherwise, it will display the
+		 * login form and behave normally.
+		 */
+		var authCookie = this.getCookie('SAIKU_AUTH_PRINCIPAL');
+
+		if (authCookie && !this.atemptedToLogByCookie) {
+			this.atemptedToLogByCookie = true;
+			this.login(authCookie, authCookie);
+		} else {
+			if (this.sessionid === null || this.username === null || this.password === null) {
+				var that = this;
+				this.clear();
+				this.fetch({ success: this.process_session, error: this.brute_force });
+			} else {
+				this.username = encodeURIComponent(options.username);
+				this.load_session();
+			}
+		}
     },
+
+	getCookie: function(name) {
+		var value = "; " + document.cookie;
+		var parts = value.split("; " + name + "=");
+		if (parts.length == 2) return parts.pop().split(";").shift();
+	},
 
 	/**
 	 * This is a complete hack to get the BI platform plugin working.

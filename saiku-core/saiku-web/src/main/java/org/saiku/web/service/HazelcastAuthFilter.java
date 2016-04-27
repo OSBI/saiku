@@ -19,7 +19,6 @@ package org.saiku.web.service;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import org.springframework.security.core.context.SecurityContextImpl;
 
 import java.io.IOException;
 import java.util.concurrent.ConcurrentMap;
@@ -32,10 +31,13 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletResponse;
 
 public class HazelcastAuthFilter implements Filter {
-  private static final String SAIKU_USER = "SAIKU_USER";
+  private static final String SAIKU_USER = "SAIKU_AUTH_PRINCIPAL";
+  private static final String HAZELCAST_MAP_NAME = "my-sessions";
+
+  private static HazelcastInstance hazelcast;
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
@@ -52,40 +54,44 @@ public class HazelcastAuthFilter implements Filter {
     FilterChain chain) throws IOException, ServletException {
 
     HttpServletRequest request = (HttpServletRequest) req;
-    HttpSession session = request.getSession(false);
 
-    SecurityContextImpl sci = (SecurityContextImpl)session.getAttribute("SPRING_SECURITY_CONTEXT");
+    String authUser = null;
+    Cookie[] cookies = request.getCookies();
 
-    if (sci != null) {
-      String authUser = null;
-      Cookie[] cookies = request.getCookies();
-
-      if (cookies != null) {
-        for (Cookie cookie : cookies) {
-          if (cookie.getName().equals(SAIKU_USER)) {
-            authUser = cookie.getValue();
-            break;
-          }
-        }
-      }
-
-      Config config = new Config();
-      HazelcastInstance h = Hazelcast.newHazelcastInstance(config);
-      ConcurrentMap<String, String> distributedSession = h.getMap("saiku-sessions");
-
-      if (authUser != null) { // If is the main machine, which receives the auth cookie
-        // Broadcast the cookie to the distributed session
-        distributedSession.put(SAIKU_USER, authUser);
-        sci.getAuthentication().setAuthenticated(true);
-      } else { // If does not receives the auth cookie
-        if (distributedSession.containsKey(SAIKU_USER)) { // Check if it is at the distributed session
-          // If so, authenticate
-          sci.getAuthentication().setAuthenticated(true);
+    if (cookies != null) {
+      for (Cookie cookie : cookies) {
+        if (cookie.getName().equals(SAIKU_USER)) {
+          authUser = cookie.getValue();
+          break;
         }
       }
     }
 
+    ConcurrentMap<String, String> distributedSession = getHazelcastMap();
+
+    if (authUser != null) { // If is the main machine, which receives the auth cookie
+      // Broadcast the cookie to the distributed session
+      distributedSession.put(SAIKU_USER, authUser);
+    } else { // If does not receives the auth cookie
+      if (distributedSession.containsKey(SAIKU_USER)) { // Check if it is at the distributed session
+        HttpServletResponse response = (HttpServletResponse)res;
+        Cookie orbisCookie = new Cookie(SAIKU_USER, distributedSession.get(SAIKU_USER));
+        orbisCookie.setMaxAge(60 * 5); // 5 minutes
+        orbisCookie.setPath("/");
+        response.addCookie(orbisCookie);
+      }
+    }
+
     chain.doFilter(req, res);
+  }
+
+  private ConcurrentMap<String, String> getHazelcastMap() {
+    if (hazelcast == null) {
+      Config config = new Config();
+      hazelcast = Hazelcast.newHazelcastInstance(config);
+    }
+
+    return hazelcast.getMap(HAZELCAST_MAP_NAME);
   }
 
 }
