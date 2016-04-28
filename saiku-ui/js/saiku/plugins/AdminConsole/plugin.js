@@ -1150,8 +1150,8 @@ Saiku.events.bind('admin:loadschema', function(admin){
 Saiku.events.bind('session:new', function (session) {
 if(Saiku.session.isAdmin) {
 
-    Saiku.loadJS('js/saiku/plugins/DataSourceModelEditor/models/CSVSchemaModel.js');
-    Saiku.loadJS('js/saiku/plugins/DataSourceModelEditor/models/CSVActionsModel.js');
+    Saiku.loadJS('js/saiku/plugins/DataSourceModelEditor/js/models/CSVSchemaModel.js');
+    Saiku.loadJS('js/saiku/plugins/DataSourceModelEditor/js/models/CSVActionsModel.js');
     Saiku.loadJS('js/saiku/plugins/DataSourceModelEditor/js/dialogs/OpenCSVSearchModal.js');
 
     var $link = $("<a />")
