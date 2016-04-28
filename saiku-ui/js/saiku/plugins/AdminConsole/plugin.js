@@ -284,7 +284,7 @@ var AdminConsole = Backbone.View.extend({
         var name = this.$el.find('input[name="connname"]').val();
         var path = this.$el.find('input[name="csvpath"]').val();
         var mondrianSchema = this.$el.find('.schemaselect').val();
-        var conn = this.datasources.get(path);
+        var conn = new Connection();
         var enabled = false;
         var alertMsg = '';
         var c;
@@ -308,10 +308,12 @@ var AdminConsole = Backbone.View.extend({
             alert(alertMsg);
         }
         else {
+            this.datasources.add(conn);
+            
             c = 'type=OLAP\n' +
                 'name=' + name + '\n' +
                 'driver=mondrian.olap4j.MondrianOlap4jDriver\n' +
-                'location=jdbc:mondrian:Jdbc=jdbc:calcite:model=csv:///etc/csvschema/' + schema + ';Catalog=mondrian://' + mondrianSchema + ';JdbcDrivers=org.apache.calcite.jdbc.Driver;\n' +
+                'location=jdbc:mondrian:Jdbc=jdbc:calcite:model=csv:///etc/csvschema/' + path + ';Catalog=mondrian://' + mondrianSchema + ';JdbcDrivers=org.apache.calcite.jdbc.Driver;\n' +
                 'enabled=' + enabled + '\n' +
                 'username=admin\n' +
                 'password=admin';
@@ -1147,6 +1149,11 @@ Saiku.events.bind('admin:loadschema', function(admin){
 });
 Saiku.events.bind('session:new', function (session) {
 if(Saiku.session.isAdmin) {
+
+    Saiku.loadJS('js/saiku/plugins/DataSourceModelEditor/models/CSVSchemaModel.js');
+    Saiku.loadJS('js/saiku/plugins/DataSourceModelEditor/models/CSVActionsModel.js');
+    Saiku.loadJS('js/saiku/plugins/DataSourceModelEditor/js/dialogs/OpenCSVSearchModal.js');
+
     var $link = $("<a />")
         .attr({
             href: "#adminconsole",
