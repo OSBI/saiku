@@ -360,4 +360,12 @@ public class DataSourceMapper {
     public void setEnabled(String enabled) {
         this.enabled = enabled;
     }
+
+    public String getCsv() {
+        return csv;
+    }
+
+    public void setCsv(String csv) {
+        this.csv = csv;
+    }
 }

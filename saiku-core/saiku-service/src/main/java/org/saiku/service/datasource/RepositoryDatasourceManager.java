@@ -240,7 +240,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
                 String path = loc.substring(0, loc.lastIndexOf(";"));
 
-                irm.saveInternalFile(this.getCSVJson(true, ds.getName(), path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
+                irm.saveInternalFile(this.getCSVJson(true, ds.getName(), datadir+File.separator+path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
 
             }
             datasources.put(datasource.getName(), datasource);
