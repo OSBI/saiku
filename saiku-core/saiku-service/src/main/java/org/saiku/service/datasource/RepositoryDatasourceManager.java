@@ -636,49 +636,49 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         this.type=type;
     }
 
-    private String getCSVJson(boolean file, String name, String path){
+    private String getCSVJson(boolean file, String name, String path) {
 
         String p;
-        if(!file){
-            p = "directory: '"+path+"'\n";
+        if (!file) {
+            p = "directory: '" + path + "'\n";
 
 
-            return "{\n"+
-                    "version: '1.0',\n"+
-                    "defaultSchema: '"+name+"',\n"+
-                    "schemas: [\n"+
-                    "{\n"+
-                    "name: '"+name+"',\n"+
-                    "type: 'custom',\n"+
-                    "factory: 'org.apache.calcite.adapter.csv.CsvSchemaFactory',\n"+
-                    "operand: {\n"+
-                    p+
-                    "}\n"+
-                    "}\n"+
-                    "]\n"+
+            return "{\n" +
+                    "version: '1.0',\n" +
+                    "defaultSchema: '" + name + "',\n" +
+                    "schemas: [\n" +
+                    "{\n" +
+                    "name: '" + name + "',\n" +
+                    "type: 'custom',\n" +
+                    "factory: 'org.apache.calcite.adapter.csv.CsvSchemaFactory',\n" +
+                    "operand: {\n" +
+                    p +
+                    "}\n" +
+                    "}\n" +
+                    "]\n" +
+                    "}";
+
+        } else {
+            p = "file: '" + path + "'";
+            return "{\n" +
+                    "version: '1.0',\n" +
+                    "defaultSchema: '" + name + "',\n" +
+                    "schemas: [\n" +
+                    "{\n" +
+                    "name: '" + name + "',\n" +
+                    "tables:[{\n" +
+                    "name: '" + name + "1,\n" +
+                    "type: 'custom',\n" +
+                    "factory: 'org.apache.calcite.adapter.csv.CsvTableFactory',\n" +
+                    "operand: {\n" +
+                    p +
+                    "flavor: 'scannable'\n" +
+                    "}\n" +
+                    "}]}\n" +
+                    "]\n" +
                     "}";
 
         }
-        else{
-            p = "file: '"+path+"'";
-        return "{\n"+
-                        "version: '1.0',\n"+
-                        "defaultSchema: '"+name+"',\n"+
-                        "schemas: [\n"+
-                        "{\n"+
-                        "name: '"+name+"',\n"+
-                        "tables:[{\n"+
-                        "name: '"+name+"1,\n"+
-                        "type: 'custom',\n"+
-                        "factory: 'org.apache.calcite.adapter.csv.CsvTableFactory',\n"+
-                        "operand: {\n"+
-                        p+
-                        "flavor: 'scannable'\n"+
-                        "}\n"+
-                        "}]}\n"+
-                        "]\n"+
-                        "}";
-
     }
 }
 
