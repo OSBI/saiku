@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.vfs2.FileObject;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
