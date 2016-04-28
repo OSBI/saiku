@@ -27,8 +27,9 @@ public class DataSource {
     private String path;
     private String schema;
   private String propertyKey;
+    private String csv;
 
-  public DataSource(SaikuDatasource datasource) {
+    public DataSource(SaikuDatasource datasource) {
         this.type = datasource.getType().toString();
         this.name = datasource.getName();
         this.driver = datasource.getProperties().getProperty("driver");
@@ -49,6 +50,7 @@ public class DataSource {
         this.securitytype = datasource.getProperties().getProperty("security.type");
         this.securitymapping = datasource.getProperties().getProperty("security.mapping");
         this.advanced = datasource.getProperties().getProperty("advanced");
+        this.csv = datasource.getProperties().getProperty("csv");
         if(datasource.getProperties().containsKey("schema")) {
           this.schema = datasource.getProperties().getProperty("schema");
         }
@@ -195,4 +197,9 @@ public class DataSource {
   public String getPropertyKey() {
     return propertyKey;
   }
+
+    @XmlElement
+    public String getCsv() {
+        return csv;
+    }
 }

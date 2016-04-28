@@ -29,6 +29,7 @@ import org.saiku.service.util.security.authentication.PasswordProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,7 +61,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String defaultRole;
     private String externalparameters;
     private String type;
-
+    private String separator="/";
     public void load() {
         Properties ext = checkForExternalDataSourceProperties();
         if(type.equals("jackrabbit")) {
@@ -68,11 +69,12 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                     oldpassword, defaultRole);
         }
         else{
+            separator=File.separator;
             irm = ClassPathRepositoryManager.getClassPathRepositoryManager(configurationpath,datadir,repopasswordprovider.getPassword(), oldpassword, defaultRole);
         }
         try {
             irm.start(userService);
-            this.saveInternalFile("/etc/.repo_version", "d20f0bea-681a-11e5-9d70-feff819cdc9f", null);
+            this.saveInternalFile("etc"+separator+".repo_version", "d20f0bea-681a-11e5-9d70-feff819cdc9f", null);
         } catch (RepositoryException e) {
             log.error("Could not start repo", e);
         }
@@ -231,7 +233,16 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     public SaikuDatasource addDatasource(SaikuDatasource datasource) throws Exception {
         DataSource ds = new DataSource(datasource);
 
-            irm.saveDataSource(ds, "/datasources/" + ds.getName() + ".sds", "fixme");
+            irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
+            if(ds.getCsv()!=null && ds.getCsv().equals("true")){
+                String split[] = ds.getLocation().split("=");
+                String loc = split[2];
+
+                String path = loc.substring(0, loc.lastIndexOf(";"));
+
+                irm.saveInternalFile(this.getCSVJson(true, ds.getName(), path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
+
+            }
             datasources.put(datasource.getName(), datasource);
 
         return datasource;
@@ -246,7 +257,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             DataSource ds = new DataSource(datasource);
 
             try {
-                irm.saveDataSource(ds, "/datasources/" + ds.getName() + ".sds", "fixme");
+                irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
                 datasources.put(datasource.getName(), datasource);
 
             } catch (RepositoryException e) {
@@ -623,6 +634,32 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public void setType(String type) {
         this.type=type;
+    }
+
+    private String getCSVJson(boolean file, String name, String path){
+
+        String p;
+        if(file){
+            p = "file: '"+path+"'";
+        }
+        else{
+            p = "directory: '"+path+"'\n";
+        }
+        return "{\n"+
+                        "version: '1.0',\n"+
+                        "defaultSchema: '"+name+"',\n"+
+                        "schemas: [\n"+
+                        "{\n"+
+                        "name: '"+name+"',\n"+
+                        "type: 'custom',\n"+
+                        "factory: 'org.apache.calcite.adapter.csv.CsvSchemaFactory',\n"+
+                        "operand: {\n"+
+                        p+
+                        "}\n"+
+                        "}\n"+
+                        "]\n"+
+                        "}";
+
     }
 }
 

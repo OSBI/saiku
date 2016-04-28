@@ -499,7 +499,36 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
     }
     return l;*/
-    return null;
+    String[] extensions = new String[1];
+    extensions[0] = "xml";
+
+    Collection<File> files = FileUtils.listFiles(
+            new File(append+"datasources"),
+            extensions,
+            true
+    );
+    List<MondrianSchema> schema = new ArrayList<>();
+
+    for(File file: files){
+      try {
+        Scanner scanner = new Scanner(file);
+
+        while (scanner.hasNextLine()) {
+          String line = scanner.nextLine();
+          if(line.contains("<Schema")) {
+            MondrianSchema ms = new MondrianSchema();
+            ms.setName(file.getName());
+            ms.setPath(file.getPath());
+            schema.add(ms);
+            break;
+          }
+        }
+      } catch(FileNotFoundException e) {
+        //handle this
+      }
+    }
+
+    return schema;
   }
 
   public List<IRepositoryObject> getAllFiles(List<String> type, String username, List<String> roles) {
