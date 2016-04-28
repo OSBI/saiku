@@ -119,7 +119,8 @@ var Settings = {
     PARENT_MEMBER_DIMENSION: false,
     EXT_DATASOURCE_PROPERTIES: false,
     SHOW_USER_MANAGEMENT: true,
-    SHOW_REFRESH_NONADMIN: false
+    SHOW_REFRESH_NONADMIN: false,
+    EMPTY_VALUE_CHARACTER: '-'
 };
 
 /**
