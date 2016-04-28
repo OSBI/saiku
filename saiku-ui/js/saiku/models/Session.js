@@ -27,7 +27,7 @@ var Session = Backbone.Model.extend({
     upgradeTimeout: null,
     isAdmin: false,
     id: null,
-	atemptedToLogByCookie: false,
+	atemptedToLoginByCookie: false,
     initialize: function(args, options) {
         // Attach a custom event bus to this model
         _.extend(this, Backbone.Events);
@@ -48,15 +48,11 @@ var Session = Backbone.Model.extend({
     },
 
     check_session: function() {
-		/*
-		 * Below there's a workaround for Orbis cookie based authentication. If there's a SAIKU_AUTH_PRINCIPAL cookie
-		 * defined, it will skip the login view and perform the authentication directly, otherwise, it will display the
-		 * login form and behave normally.
-		 */
-		var authCookie = this.getCookie('SAIKU_AUTH_PRINCIPAL');
+		// This authentication cookie is used only by Orbis authentication strategy
+		var authCookie = this.getCookie(Settings.ORBIS_AUTH.cookieName);
 
-		if (authCookie && !this.atemptedToLogByCookie) {
-			this.atemptedToLogByCookie = true;
+		if (Settings.ORBIS_AUTH.enabled && authCookie && !this.atemptedToLoginByCookie) {
+			this.atemptedToLoginByCookie = true;
 			this.login(authCookie, authCookie);
 		} else {
 			if (this.sessionid === null || this.username === null || this.password === null) {

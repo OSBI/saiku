@@ -6,7 +6,6 @@
 
 package org.saiku.web.rest.resources;
 
-import bi.meteorite.license.SaikuLicense2;
 import org.saiku.service.license.LicenseUtils;
 import org.saiku.database.Database;
 import org.saiku.license.LicenseException;
@@ -73,7 +72,12 @@ public class License {
   @GET
   @Produces({ "application/json" })
   public Response getLicense() {
-    return Response.ok().entity(new SaikuLicense2()).build();
+    try {
+      return Response.ok().entity(licenseUtils.getLicense()).build();
+    } catch (IOException | RepositoryException | ClassNotFoundException e) {
+      e.printStackTrace();
+    }
+    return Response.serverError().build();
   }
 
   private static final int SIZE = 2048;

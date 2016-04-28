@@ -34,13 +34,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class HazelcastAuthFilter implements Filter {
-  private static final String SAIKU_USER = "SAIKU_AUTH_PRINCIPAL";
-  private static final String HAZELCAST_MAP_NAME = "my-sessions";
+  private static final int FIVE_MINUTES = 300; // in miliseconds
+
+  private boolean enabled;
+  private String orbisAuthCookie;
+  private String hazelcastMapName;
 
   private static HazelcastInstance hazelcast;
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
+    enabled          = Boolean.parseBoolean(initParameter(filterConfig, "enabled", "true"));
+    orbisAuthCookie  = initParameter(filterConfig, "orbisAuthCookie", "SAIKU_AUTH_PRINCIPAL");
+    hazelcastMapName = initParameter(filterConfig, "hazelcastMapName", "my-sessions");
+  }
+
+  private String initParameter(FilterConfig filterConfig, String paramName, String defaultValue) {
+    if (filterConfig.getInitParameter(paramName) != null) {
+      return filterConfig.getInitParameter(paramName);
+    }
+    return defaultValue;
   }
 
   @Override
@@ -53,36 +66,44 @@ public class HazelcastAuthFilter implements Filter {
     ServletResponse res,
     FilterChain chain) throws IOException, ServletException {
 
-    HttpServletRequest request = (HttpServletRequest) req;
+    if (enabled) {
+      String authUser = getCookieValue(req, orbisAuthCookie);
+      ConcurrentMap<String, String> distributedSession = getHazelcastMap();
 
-    String authUser = null;
-    Cookie[] cookies = request.getCookies();
-
-    if (cookies != null) {
-      for (Cookie cookie : cookies) {
-        if (cookie.getName().equals(SAIKU_USER)) {
-          authUser = cookie.getValue();
-          break;
+      if (authUser != null) { // If is the main machine, which receives the auth cookie
+        // Broadcast the cookie to the distributed session
+        distributedSession.putIfAbsent(orbisAuthCookie, authUser);
+      } else { // If does not receives the auth cookie
+        if (distributedSession.containsKey(orbisAuthCookie)) { // Check if it is at the distributed session
+          setCookieValue(res, orbisAuthCookie, distributedSession.get(orbisAuthCookie));
         }
       }
     }
 
-    ConcurrentMap<String, String> distributedSession = getHazelcastMap();
+    chain.doFilter(req, res);
+  }
 
-    if (authUser != null) { // If is the main machine, which receives the auth cookie
-      // Broadcast the cookie to the distributed session
-      distributedSession.put(SAIKU_USER, authUser);
-    } else { // If does not receives the auth cookie
-      if (distributedSession.containsKey(SAIKU_USER)) { // Check if it is at the distributed session
-        HttpServletResponse response = (HttpServletResponse)res;
-        Cookie orbisCookie = new Cookie(SAIKU_USER, distributedSession.get(SAIKU_USER));
-        orbisCookie.setMaxAge(60 * 5); // 5 minutes
-        orbisCookie.setPath("/");
-        response.addCookie(orbisCookie);
+  private String getCookieValue(ServletRequest req, String cookieName) {
+    HttpServletRequest request = (HttpServletRequest) req;
+    Cookie[] cookies = request.getCookies();
+
+    if (cookies != null) {
+      for (Cookie cookie : cookies) {
+        if (cookie.getName().equals(cookieName)) {
+          return cookie.getValue();
+        }
       }
     }
 
-    chain.doFilter(req, res);
+    return null;
+  }
+
+  private void setCookieValue(ServletResponse res, String cookieName, String cookieVal) {
+    HttpServletResponse response = (HttpServletResponse) res;
+    Cookie orbisCookie = new Cookie(cookieName, cookieVal);
+    orbisCookie.setMaxAge(FIVE_MINUTES);
+    orbisCookie.setPath("/");
+    response.addCookie(orbisCookie);
   }
 
   private ConcurrentMap<String, String> getHazelcastMap() {
@@ -91,7 +112,7 @@ public class HazelcastAuthFilter implements Filter {
       hazelcast = Hazelcast.newHazelcastInstance(config);
     }
 
-    return hazelcast.getMap(HAZELCAST_MAP_NAME);
+    return hazelcast.getMap(hazelcastMapName);
   }
 
 }

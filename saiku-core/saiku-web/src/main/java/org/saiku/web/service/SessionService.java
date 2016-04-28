@@ -92,18 +92,18 @@ public class SessionService implements ISessionService {
 		Object sl = null;
 		String notice = null;
 
-//		try {
-//			sl = l.getLicense();
-//		} catch (Exception e) {
-//			throw new LicenseException("Could not find license, please get a free license from http://licensing"
-//									   + ".meteorite.bi. You can upload it at http://server:8080/upload.html");
-//		}
+		try {
+			sl = l.getLicense();
+		} catch (Exception e) {
+			throw new LicenseException("Could not find license, please get a free license from http://licensing"
+									   + ".meteorite.bi. You can upload it at http://server:8080/upload.html");
+		}
 
-//		if (sl != null) {
+		if (sl != null) {
 
-//			l.validateLicense();
+			l.validateLicense();
 
-//			if (l.getLicense() instanceof SaikuLicense2) {
+			if (l.getLicense() instanceof SaikuLicense2) {
 
 				if (authenticationManager != null) {
 					authenticate(req, username, password);
@@ -122,9 +122,9 @@ public class SessionService implements ISessionService {
 					}
 				}
 				return new HashMap<>();
-//			}
-//		}
-//			return null;
+			}
+		}
+		return null;
 	}
 
 	private void createSession(Authentication auth, String username, String password) {
