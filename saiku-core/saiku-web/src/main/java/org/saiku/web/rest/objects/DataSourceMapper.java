@@ -189,7 +189,7 @@ public class DataSourceMapper {
             String name = null;
             String[] lines;
             String type;
-            if(advanced!=null || !advanced.equals("false")|| !advanced.equals("")) {
+            if(advanced!=null && !advanced.equals("false")&& !advanced.equals("")) {
                 lines = advanced.split("\\r?\\n");
                 type = "advanced";
             }
