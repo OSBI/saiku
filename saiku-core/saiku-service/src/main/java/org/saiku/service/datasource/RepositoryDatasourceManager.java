@@ -639,24 +639,43 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String getCSVJson(boolean file, String name, String path){
 
         String p;
-        if(file){
-            p = "file: '"+path+"'";
+        if(!file){
+            p = "directory: '"+path+"'\n";
+
+
+            return "{\n"+
+                    "version: '1.0',\n"+
+                    "defaultSchema: '"+name+"',\n"+
+                    "schemas: [\n"+
+                    "{\n"+
+                    "name: '"+name+"',\n"+
+                    "type: 'custom',\n"+
+                    "factory: 'org.apache.calcite.adapter.csv.CsvSchemaFactory',\n"+
+                    "operand: {\n"+
+                    p+
+                    "}\n"+
+                    "}\n"+
+                    "]\n"+
+                    "}";
+
         }
         else{
-            p = "directory: '"+path+"'\n";
-        }
+            p = "file: '"+path+"'";
         return "{\n"+
                         "version: '1.0',\n"+
                         "defaultSchema: '"+name+"',\n"+
                         "schemas: [\n"+
                         "{\n"+
                         "name: '"+name+"',\n"+
+                        "tables:[{\n"+
+                        "name: '"+name+"1,\n"+
                         "type: 'custom',\n"+
-                        "factory: 'org.apache.calcite.adapter.csv.CsvSchemaFactory',\n"+
+                        "factory: 'org.apache.calcite.adapter.csv.CsvTableFactory',\n"+
                         "operand: {\n"+
                         p+
+                        "flavor: 'scannable'\n"+
                         "}\n"+
-                        "}\n"+
+                        "}]}\n"+
                         "]\n"+
                         "}";
 
