@@ -299,21 +299,21 @@ var AdminConsole = Backbone.View.extend({
         // console.log(enabled);
 
         if (typeof name === 'undefined' || name === '' || !name) {
-            alertMsg += 'The Name field can not be empty! ';      
+            alertMsg += 'The Name field can not be empty! ';
         }
         if (typeof path === 'undefined' || path === '' || !path) {
-            alertMsg += 'The Path CSV files field can not be empty! ';      
+            alertMsg += 'The Path CSV files field can not be empty! ';
         }
         if (alertMsg !== '') {
             alert(alertMsg);
         }
         else {
             this.datasources.add(conn);
-            
+
             c = 'type=OLAP\n' +
                 'name=' + name + '\n' +
                 'driver=mondrian.olap4j.MondrianOlap4jDriver\n' +
-                'location=jdbc:mondrian:Jdbc=jdbc:calcite:model=csv:///etc/csvschema/' + path + ';Catalog=mondrian://' + mondrianSchema + ';JdbcDrivers=org.apache.calcite.jdbc.Driver;\n' +
+                'location=jdbc:mondrian:Jdbc=jdbc:calcite:model='+ path + ';Catalog=mondrian://' + mondrianSchema + ';JdbcDrivers=org.apache.calcite.jdbc.Driver;\n' +
                 'enabled=' + enabled + '\n' +
                 'username=admin\n' +
                 'password=admin';
@@ -508,7 +508,7 @@ var AdminConsole = Backbone.View.extend({
     datasourcetemplate: _.template("<form><h3>Create Data Source</h3>"+
         "<div class='simpleConnection'><label for='connname'>Name:</label><input type='text' class='form-control' name='connname' value='<%= conn.connectionname %>'/><br />" +
         "<label for='drivertype'>Connection Type:</label><select name='drivertype' class='form-control drivertype'><option value='MONDRIAN'>Mondrian</option><option value='XMLA'>XMLA</option><option value='CSV'>CSV</option></select><br/>" +
-        "<% if(!Settings.EXT_DATASOURCE_PROPERTIES) { %>"+       
+        "<% if(!Settings.EXT_DATASOURCE_PROPERTIES) { %>"+
         "<label for='jdbcurl'>URL:</label><input name='jdbcurl' class='form-control' value='<%= conn.jdbcurl %>' type='text'/><br class='horridbr'/>" +
         "<% } else {    %>"+
         "<input name='jdbcurl' type='hidden'/>" +
@@ -520,7 +520,7 @@ var AdminConsole = Backbone.View.extend({
         "<% _.each(schemas, function(path){%>" +
         "<option  <% if(conn.schema != null && conn.schema === 'mondrian://'+path.attributes.path){ print('selected'); } %> ><%= path.attributes.path %></option>" +
         "<%});%></select><br/>" +
-        "<% if(!Settings.EXT_DATASOURCE_PROPERTIES) { %>"+     
+        "<% if(!Settings.EXT_DATASOURCE_PROPERTIES) { %>"+
         "<label for='driver'>Jdbc Driver: </label><input name='driver' class='form-control' value='<%= conn.driver %>' type='text'/><br class='horridbr'/>" +
         "<label for='connusername'>Username: </label><input name='connusername' class='form-control' type='text' value='<%= conn.username %>'/><br/>" +
         "<label for='connpassword'>Password:</label><input name='connpassword' class='form-control' type='password' value='<%= conn.password %>'/><br/>" +
@@ -1074,7 +1074,7 @@ var AdminConsole = Backbone.View.extend({
                 $(this.el).parent().find('.csvsearchpath').hide();
                 $(this.el).parent().find('.csvcreateschema').hide();
                 $(this.el).parent().find('.save_datasource').show();
-                
+
                 $(this.el).find('.horridbr').hide();
                 break;
             case "MONDRIAN":
@@ -1103,7 +1103,7 @@ var AdminConsole = Backbone.View.extend({
                 $(this.el).parent().find('.csvsearchpath').hide();
                 $(this.el).parent().find('.csvcreateschema').hide();
                 $(this.el).parent().find('.save_datasource').show();
-                
+
                 $(this.el).find('.horridbr').show();
                 break;
             case "CSV":
@@ -1132,7 +1132,7 @@ var AdminConsole = Backbone.View.extend({
                 $(this.el).parent().find('.csvsearchpath').show();
                 $(this.el).parent().find('.csvcreateschema').show();
                 $(this.el).parent().find('.save_datasource').show();
-                
+
                 $(this.el).find('.horridbr').hide();
                 break;
         }
@@ -1198,7 +1198,7 @@ Saiku.events.bind('admin:changedriver', function(options){
             $(div).parent().find('.csvsearchpath').hide();
             $(div).parent().find('.csvcreateschema').hide();
             $(div).parent().find('.save_datasource').show();
-            
+
             $(div).find('.horridbr').hide();
             break;
         case "MONDRIAN":
@@ -1227,7 +1227,7 @@ Saiku.events.bind('admin:changedriver', function(options){
             $(div).parent().find('.csvsearchpath').hide();
             $(div).parent().find('.csvcreateschema').hide();
             $(div).parent().find('.save_datasource').show();
-            
+
             $(div).find('.horridbr').show();
             break;
         case "CSV":
@@ -1256,7 +1256,7 @@ Saiku.events.bind('admin:changedriver', function(options){
             $(div).parent().find('.csvsearchpath').show();
             $(div).parent().find('.csvcreateschema').show();
             $(div).parent().find('.save_datasource').show();
-            
+
             $(div).find('.horridbr').hide();
             break;
     }
