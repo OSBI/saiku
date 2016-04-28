@@ -281,6 +281,7 @@ var AdminConsole = Backbone.View.extend({
     csv_create_schema: function(event) {
         event.preventDefault();
 
+        var self = this;
         var name = this.$el.find('input[name="connname"]').val();
         var path = this.$el.find('input[name="csvpath"]').val();
         var mondrianSchema = this.$el.find('.schemaselect').val();
@@ -313,15 +314,29 @@ var AdminConsole = Backbone.View.extend({
             c = 'type=OLAP\n' +
                 'name=' + name + '\n' +
                 'driver=mondrian.olap4j.MondrianOlap4jDriver\n' +
-                'location=jdbc:mondrian:Jdbc=jdbc:calcite:model='+ path + ';Catalog=mondrian://' + mondrianSchema + ';JdbcDrivers=org.apache.calcite.jdbc.Driver;\n' +
+                'location=jdbc:mondrian:Jdbc=jdbc:calcite:model=' + path + ';Catalog=mondrian://' + mondrianSchema + ';JdbcDrivers=org.apache.calcite.jdbc.Driver;\n' +
                 'enabled=' + enabled + '\n' +
                 'username=admin\n' +
                 'password=admin';
 
             conn.set({ 'csv': c });
 
-            (new DataSourceModelEditor()).render().open();
+            conn.save({}, {
+                data: JSON.stringify(conn.attributes),
+                contentType: 'application/json',
+                success: function() {
+                    self.fetch_datasources();
+                    (new DataSourceModelEditor({ dataSourceName: name })).render().open();
+                    // self.$el.find('.user_info').html('');
+                },
+                error: function(data, xhr) {
+                    self.$el.find('#savestatus').html('Save failed!<br/>(' + xhr.responseText + ')');
+                    self.schemas.fetch();
+                }
+            });
         }
+
+        // (new DataSourceModelEditor({ dataSourceName: name })).render().open();
     },
 
     backup_restore: function(event){
@@ -1150,8 +1165,8 @@ Saiku.events.bind('admin:loadschema', function(admin){
 Saiku.events.bind('session:new', function (session) {
 if(Saiku.session.isAdmin) {
 
-    Saiku.loadJS('js/saiku/plugins/DataSourceModelEditor/models/CSVSchemaModel.js');
-    Saiku.loadJS('js/saiku/plugins/DataSourceModelEditor/models/CSVActionsModel.js');
+    Saiku.loadJS('js/saiku/plugins/DataSourceModelEditor/js/models/CSVSchemaModel.js');
+    Saiku.loadJS('js/saiku/plugins/DataSourceModelEditor/js/models/CSVActionsModel.js');
     Saiku.loadJS('js/saiku/plugins/DataSourceModelEditor/js/dialogs/OpenCSVSearchModal.js');
 
     var $link = $("<a />")
