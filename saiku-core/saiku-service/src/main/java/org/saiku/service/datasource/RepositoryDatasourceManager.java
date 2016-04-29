@@ -63,6 +63,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String type;
     private String separator="/";
     public void load() {
+        System.err.println("\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        System.err.println("!! LOAD - datadir = " + datadir + "  !!");
+        System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n");
+        System.err.flush();
+
         Properties ext = checkForExternalDataSourceProperties();
         if(type.equals("jackrabbit")) {
             irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopasswordprovider.getPassword(),
