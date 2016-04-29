@@ -124,7 +124,7 @@ public class SessionService implements ISessionService {
 				return new HashMap<>();
 			}
 		}
-			return null;
+		return null;
 	}
 
 	private void createSession(Authentication auth, String username, String password) {

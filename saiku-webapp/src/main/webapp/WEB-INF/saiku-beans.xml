@@ -196,5 +196,4 @@
     <bean id="statsBean" class="org.saiku.web.rest.resources.StatisticsResource"/>
 
     <bean id="startupBean" class="org.saiku.web.rest.util.StartupResource" init-method="init"/>
-
 </beans>

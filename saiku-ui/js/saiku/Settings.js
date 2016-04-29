@@ -120,7 +120,11 @@ var Settings = {
     EXT_DATASOURCE_PROPERTIES: false,
     SHOW_USER_MANAGEMENT: true,
     SHOW_REFRESH_NONADMIN: false,
-    EMPTY_VALUE_CHARACTER: '-'
+    EMPTY_VALUE_CHARACTER: '-',
+	ORBIS_AUTH: {
+		enabled: true,
+		cookieName: 'SAIKU_AUTH_PRINCIPAL'
+	}
 };
 
 /**

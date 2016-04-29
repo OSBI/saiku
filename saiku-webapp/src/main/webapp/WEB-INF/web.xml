@@ -63,16 +63,41 @@
 		<session-timeout>60</session-timeout>
 	</session-config>
 	
+    <!-- BEGIN - Filter Definition --> 
 	<filter>
 		<filter-name>org.springframework.security.filterChainProxy</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
+    <!-- The above filter is for Orbis / Hazelcast token based authentication -->
+    <filter>
+        <filter-name>hazelcastAuthFilter</filter-name>
+        <filter-class>org.saiku.web.service.HazelcastAuthFilter</filter-class>
+        <init-param>
+            <param-name>orbisAuthCookie</param-name>
+            <param-value>SAIKU_AUTH_PRINCIPAL</param-value>
+        </init-param>
+        <init-param>
+            <param-name>hazelcastMapName</param-name>
+            <param-value>my-sessions</param-value>
+        </init-param>
+        <init-param>
+            <param-name>baseWorkspaceDir</param-name>
+            <param-value>../../repository/data</param-value>
+        </init-param>
+    </filter>
+    <!-- END - Filter Definition -->
 
-	
+    <!-- BEGIN - Filter Mapping -->
+    <!-- The above filter mapping is for Orbis / Hazelcast token based authentication -->
+    <filter-mapping>
+        <filter-name>hazelcastAuthFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 	<filter-mapping>
 		<filter-name>org.springframework.security.filterChainProxy</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+    <!-- END - Filter Mapping -->
 
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
