@@ -61,7 +61,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   private String append;
   private String session = null;
 
-  private String sep = File.separator;
+  private String sep = "/";
   private ClassPathRepositoryManager(String config, String data, String password, String oldpassword, String defaultRole) {
 
     this.append=data;
