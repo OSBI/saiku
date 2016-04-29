@@ -659,7 +659,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                     "}";
 
         } else {
-            p = "file: '" + path + "'";
+            p = "file: '" + path + "',";
             return "{\n" +
                     "version: '1.0',\n" +
                     "defaultSchema: '" + name + "',\n" +
@@ -667,7 +667,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                     "{\n" +
                     "name: '" + name + "',\n" +
                     "tables:[{\n" +
-                    "name: '" + name + "1,\n" +
+                    "name: '" + name + "1',\n" +
                     "type: 'custom',\n" +
                     "factory: 'org.apache.calcite.adapter.csv.CsvTableFactory',\n" +
                     "operand: {\n" +
