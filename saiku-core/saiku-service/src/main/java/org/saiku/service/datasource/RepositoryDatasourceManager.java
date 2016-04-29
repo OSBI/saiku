@@ -75,7 +75,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         }
         else{
             separator=File.separator;
-            irm = ClassPathRepositoryManager.getClassPathRepositoryManager(configurationpath,datadir,repopasswordprovider.getPassword(), oldpassword, defaultRole);
+            irm = ClassPathRepositoryManager.getClassPathRepositoryManager(datadir, defaultRole);
         }
         try {
             irm.start(userService);

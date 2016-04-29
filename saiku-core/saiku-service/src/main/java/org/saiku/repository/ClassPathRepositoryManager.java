@@ -41,7 +41,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.regex.Matcher;
 
 import javax.jcr.RepositoryException;
 import javax.xml.bind.JAXBContext;
@@ -62,7 +61,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   private String session = null;
 
   private String sep = "/";
-  private ClassPathRepositoryManager(String config, String data, String password, String oldpassword, String defaultRole) {
+  private ClassPathRepositoryManager(String data, String defaultRole) {
 
     this.append=data;
     this.defaultRole = defaultRole;
@@ -71,10 +70,10 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   /*
    * TODO this is currently threadsafe but to improve performance we should split it up to allow multiple sessions to hit the repo at the same time.
    */
-  public static synchronized ClassPathRepositoryManager getClassPathRepositoryManager(String config, String data, String password, String oldpassword, String defaultRole) {
+  public static synchronized ClassPathRepositoryManager getClassPathRepositoryManager(String data, String defaultRole) {
     if (ref == null)
       // it's ok, we can call this constructor
-      ref = new ClassPathRepositoryManager(config, data, password, oldpassword, defaultRole);
+      ref = new ClassPathRepositoryManager(data, defaultRole);
     return ref;
   }
 
