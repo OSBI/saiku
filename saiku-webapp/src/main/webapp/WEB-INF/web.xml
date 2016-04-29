@@ -80,6 +80,10 @@
             <param-name>hazelcastMapName</param-name>
             <param-value>my-sessions</param-value>
         </init-param>
+        <init-param>
+            <param-name>baseWorkspaceDir</param-name>
+            <param-value>../../repository/data</param-value>
+        </init-param>
     </filter>
     <!-- END - Filter Definition -->
 

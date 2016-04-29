@@ -19,7 +19,11 @@ package org.saiku.web.service;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import org.saiku.service.datasource.RepositoryDatasourceManager;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentMap;
 
@@ -39,14 +43,19 @@ public class HazelcastAuthFilter implements Filter {
   private boolean enabled;
   private String orbisAuthCookie;
   private String hazelcastMapName;
+  private String baseWorkspaceDir;
 
   private static HazelcastInstance hazelcast;
+  private FilterConfig filterConfig;
 
   @Override
   public void init(FilterConfig filterConfig) throws ServletException {
+    setFilterConfig(filterConfig);
+
     enabled          = Boolean.parseBoolean(initParameter(filterConfig, "enabled", "true"));
     orbisAuthCookie  = initParameter(filterConfig, "orbisAuthCookie", "SAIKU_AUTH_PRINCIPAL");
     hazelcastMapName = initParameter(filterConfig, "hazelcastMapName", "my-sessions");
+    baseWorkspaceDir = initParameter(filterConfig, "baseWorkspaceDir", "../../repository/data");
   }
 
   private String initParameter(FilterConfig filterConfig, String paramName, String defaultValue) {
@@ -65,13 +74,13 @@ public class HazelcastAuthFilter implements Filter {
     ServletRequest req,
     ServletResponse res,
     FilterChain chain) throws IOException, ServletException {
-
     if (enabled) {
       String authUser = getCookieValue(req, orbisAuthCookie);
       ConcurrentMap<String, String> distributedSession = getHazelcastMap();
 
       if (authUser != null) { // If is the main machine, which receives the auth cookie
         // Broadcast the cookie to the distributed session
+        reloadWorkspace(req, authUser); // Setup the workspace dir and reload the spring application context
         distributedSession.putIfAbsent(orbisAuthCookie, authUser);
       } else { // If does not receives the auth cookie
         if (distributedSession.containsKey(orbisAuthCookie)) { // Check if it is at the distributed session
@@ -81,6 +90,32 @@ public class HazelcastAuthFilter implements Filter {
     }
 
     chain.doFilter(req, res);
+  }
+
+  private void reloadWorkspace(ServletRequest req, String user) {
+    HttpServletRequest request = (HttpServletRequest) req;
+    if (request.getSession(false) == null) {
+      try {
+        reloadWorkspace(baseWorkspaceDir + File.separator + user);
+      } catch (Exception ex) {
+        System.err.println(ex.getMessage());
+        ex.printStackTrace();
+      }
+      request.getSession(true);
+    }
+  }
+
+  private void reloadWorkspace(String dataDir) throws Exception {
+    WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(getFilterConfig().getServletContext());
+
+    RepositoryDatasourceManager dsManager = (RepositoryDatasourceManager)applicationContext.getBean("repositoryDsManager");
+    dsManager.setDatadir(dataDir);
+    dsManager.load();
+
+    ((org.saiku.service.license.LicenseUtils)applicationContext.getBean("licenseUtilsBean")).init();
+    ((org.saiku.database.Database)applicationContext.getBean("h2database")).init();
+    ((org.saiku.datasources.connection.MondrianVFS)applicationContext.getBean("mondrianVFS")).init();
+    ((org.saiku.web.core.SecurityAwareConnectionManager)applicationContext.getBean("connectionManager")).init();
   }
 
   private String getCookieValue(ServletRequest req, String cookieName) {
@@ -115,4 +150,11 @@ public class HazelcastAuthFilter implements Filter {
     return hazelcast.getMap(hazelcastMapName);
   }
 
+  public FilterConfig getFilterConfig() {
+    return filterConfig;
+  }
+
+  public void setFilterConfig(FilterConfig filterConfig) {
+    this.filterConfig = filterConfig;
+  }
 }
