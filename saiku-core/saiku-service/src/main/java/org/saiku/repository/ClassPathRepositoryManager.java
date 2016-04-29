@@ -369,7 +369,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     else {
       int pos = path.lastIndexOf(sep);
       String filename = "."+sep + path.substring(pos + 1, path.length());
-      File n = getFolder(path.substring(0, pos));
+//      File n = getFolder(path.substring(0, pos));
 
 
 
