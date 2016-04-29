@@ -46,8 +46,8 @@ public class DataSourceMapper {
     }
 
     public DataSourceMapper(SaikuDatasource ds) {
-        if ((!ds.getProperties().containsKey("advanced") && !ds.getProperties().containsKey("csv")) || ds.getProperties
-            ().getProperty("advanced").equals("false")) {
+        if ((!ds.getProperties().containsKey("advanced") && !ds.getProperties().containsKey("csv")) ||
+                (ds.getProperties().containsKey("advanced") && ds.getProperties().getProperty("advanced").equals("false"))) {
             String location = ds.getProperties().getProperty("location");
 
             String[] loc = location.split(";");
