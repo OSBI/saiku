@@ -294,11 +294,6 @@ var AdminConsole = Backbone.View.extend({
             enabled = true;
         }
 
-        // console.log(name);
-        // console.log(path);
-        // console.log(mondrianSchema);
-        // console.log(enabled);
-
         if (typeof name === 'undefined' || name === '' || !name) {
             alertMsg += 'The Name field can not be empty! ';
         }
