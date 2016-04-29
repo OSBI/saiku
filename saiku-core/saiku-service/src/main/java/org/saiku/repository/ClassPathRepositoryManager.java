@@ -41,6 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Matcher;
 
 import javax.jcr.RepositoryException;
 import javax.xml.bind.JAXBContext;
@@ -378,7 +379,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         type ="";
       }
 
-      filename.replaceAll("/", File.separator);
+      filename.replaceAll("/", Matcher.quoteReplacement(File.separator));
       log.debug("Saving:"+filename);
       File check = this.getNode(filename);
       if(check.exists()){
