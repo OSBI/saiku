@@ -28,6 +28,9 @@ import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.service.util.security.authentication.PasswordProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,6 +40,8 @@ import java.util.*;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * A Datasource Manager for the Saiku Repository API layer.
@@ -61,13 +66,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String externalparameters;
 
     public void load() {
-        System.err.println("\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        System.err.println("!! LOAD - datadir = " + datadir + "  !!");
-        System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n");
-        System.err.flush();
-
         Properties ext = checkForExternalDataSourceProperties();
-        irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopasswordprovider.getPassword(),
+        irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, getDatadir(), repopasswordprovider.getPassword(),
             oldpassword, defaultRole);
         try {
             irm.start(userService);
@@ -542,6 +542,12 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
     public String getDatadir() {
+        try {
+            return (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
+        } catch (Exception ex) {
+            // This exception is expected at Saiku boot
+        }
+
         return datadir;
     }
 
@@ -618,6 +624,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     public void setDefaultRole(String defaultRole)
     {
         this.defaultRole = defaultRole;
+    }
+
+    public static HttpSession getSession() {
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        return attr.getRequest().getSession(true); // true == allow create
     }
 }
 

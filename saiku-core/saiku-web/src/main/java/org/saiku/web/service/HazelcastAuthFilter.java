@@ -19,9 +19,6 @@ package org.saiku.web.service;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import org.saiku.service.datasource.RepositoryDatasourceManager;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,7 +77,7 @@ public class HazelcastAuthFilter implements Filter {
 
       if (authUser != null) { // If is the main machine, which receives the auth cookie
         // Broadcast the cookie to the distributed session
-        reloadWorkspace(req, authUser); // Setup the workspace dir and reload the spring application context
+        ((HttpServletRequest)req).getSession(true).setAttribute("ORBIS_WORKSPACE_DIR", baseWorkspaceDir + File.separator + authUser);
         distributedSession.putIfAbsent(orbisAuthCookie, authUser);
       } else { // If does not receives the auth cookie
         if (distributedSession.containsKey(orbisAuthCookie)) { // Check if it is at the distributed session
@@ -90,32 +87,6 @@ public class HazelcastAuthFilter implements Filter {
     }
 
     chain.doFilter(req, res);
-  }
-
-  private void reloadWorkspace(ServletRequest req, String user) {
-    HttpServletRequest request = (HttpServletRequest) req;
-    if (request.getSession(false) == null) {
-      try {
-        reloadWorkspace(baseWorkspaceDir + File.separator + user);
-      } catch (Exception ex) {
-        System.err.println(ex.getMessage());
-        ex.printStackTrace();
-      }
-      request.getSession(true);
-    }
-  }
-
-  private void reloadWorkspace(String dataDir) throws Exception {
-    WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(getFilterConfig().getServletContext());
-
-    RepositoryDatasourceManager dsManager = (RepositoryDatasourceManager)applicationContext.getBean("repositoryDsManager");
-    dsManager.setDatadir(dataDir);
-    dsManager.load();
-
-    ((org.saiku.service.license.LicenseUtils)applicationContext.getBean("licenseUtilsBean")).init();
-    ((org.saiku.database.Database)applicationContext.getBean("h2database")).init();
-    ((org.saiku.datasources.connection.MondrianVFS)applicationContext.getBean("mondrianVFS")).init();
-    ((org.saiku.web.core.SecurityAwareConnectionManager)applicationContext.getBean("connectionManager")).init();
   }
 
   private String getCookieValue(ServletRequest req, String cookieName) {
