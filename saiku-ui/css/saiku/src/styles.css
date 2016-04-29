@@ -2796,8 +2796,10 @@ margin-bottom: 20px;
     background: #f0f0f0;
 }
 
-.dialog_dsmodel-editor .parent_measures li.measure-item.selected {
+.dialog_dsmodel-editor .parent_measures li.measure-item.selected,
+.dialog_dsmodel-editor .parent_dimension a.dimension-item.selected {
     background: #ccc;
+    font-weight: bold;
 }
 
 .dialog_dsmodel-editor .parent_dimensions .parent_dimension,
@@ -2812,4 +2814,5 @@ margin-bottom: 20px;
 
 .dialog_dsmodel-editor .folder_collapsed.sprite.selected {
     background: #ccc;
+    font-weight: bold;
 }
