@@ -379,7 +379,6 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         type ="";
       }
 
-      filename.replaceAll("/", Matcher.quoteReplacement(File.separator));
       log.debug("Saving:"+filename);
       File check = this.getNode(filename);
       if(check.exists()){
@@ -1104,6 +1103,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   }
 
   private File createNode(String filename){
+    log.debug("Creating file:"+append+filename);
     return new File(append+filename);
   }
 
