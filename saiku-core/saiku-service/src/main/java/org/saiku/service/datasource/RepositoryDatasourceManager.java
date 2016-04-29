@@ -16,6 +16,7 @@
 
 package org.saiku.service.datasource;
 
+import org.apache.commons.lang.StringUtils;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
@@ -238,14 +239,24 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     public SaikuDatasource addDatasource(SaikuDatasource datasource) throws Exception {
         DataSource ds = new DataSource(datasource);
 
-            irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
             if(ds.getCsv()!=null && ds.getCsv().equals("true")){
                 String split[] = ds.getLocation().split("=");
                 String loc = split[2];
+                split[2]=datadir+"/datasources/"+ds.getName()+"-csv.json;Catalog";
+
+                for(int i = 0; i<split.length-1; i++){
+                    split[i] = split[i]+"=";
+                }
+                ds.setLocation(StringUtils.join(split));
 
                 String path = loc.substring(0, loc.lastIndexOf(";"));
 
                 irm.saveInternalFile(this.getCSVJson(true, ds.getName(), datadir+File.separator+path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
+                irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
+
+            }
+            else{
+                irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
 
             }
             datasources.put(datasource.getName(), datasource);
