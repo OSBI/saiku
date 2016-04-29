@@ -373,11 +373,13 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
 
 
+
       if(type == null){
         type ="";
       }
 
-
+      filename.replaceAll("/", File.separator);
+      log.debug("Saving:"+filename);
       File check = this.getNode(filename);
       if(check.exists()){
         check.delete();
