@@ -251,6 +251,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
                 String path = loc.substring(0, loc.lastIndexOf(";"));
 
+                path.replace("\\", "/");
+
                 irm.saveInternalFile(this.getCSVJson(true, ds.getName(), datadir+separator+path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
                 irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
 
