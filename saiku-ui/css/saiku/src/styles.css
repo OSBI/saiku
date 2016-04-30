@@ -2792,12 +2792,17 @@ margin-bottom: 20px;
     cursor: pointer;
 }
 
-.dialog_dsmodel-editor .parent_measures li.measure-item:hover {
+.dialog_dsmodel-editor .parent_measures li.measure-item:hover,
+.dialog_dsmodel-editor .parent_dimension a.dimension-item:hover,
+.dialog_dsmodel-editor .parent_dimension a.hierarchy-item:hover,
+.dialog_dsmodel-editor .parent_dimension a.level-item:hover {
     background: #f0f0f0;
 }
 
 .dialog_dsmodel-editor .parent_measures li.measure-item.selected,
-.dialog_dsmodel-editor .parent_dimension a.dimension-item.selected {
+.dialog_dsmodel-editor .parent_dimension a.dimension-item.selected,
+.dialog_dsmodel-editor .parent_dimension a.hierarchy-item.selected,
+.dialog_dsmodel-editor .parent_dimension a.level-item.selected {
     background: #ccc;
     font-weight: bold;
 }
