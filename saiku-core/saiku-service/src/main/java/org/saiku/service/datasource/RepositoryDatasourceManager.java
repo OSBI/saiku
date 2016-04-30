@@ -75,7 +75,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                     oldpassword, defaultRole);
         }
         else{
-            separator=File.separator;
+            separator="/";
             irm = ClassPathRepositoryManager.getClassPathRepositoryManager(datadir, defaultRole);
         }
         try {
@@ -251,7 +251,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
                 String path = loc.substring(0, loc.lastIndexOf(";"));
 
-                irm.saveInternalFile(this.getCSVJson(true, ds.getName(), datadir+File.separator+path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
+                irm.saveInternalFile(this.getCSVJson(true, ds.getName(), datadir+separator+path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
                 irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
 
             }
