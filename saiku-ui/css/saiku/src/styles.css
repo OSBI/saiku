@@ -2788,6 +2788,20 @@ margin-bottom: 20px;
     background-size: 16px;
 }
 
+.dialog_dsmodel-editor .parent_measures li.measure-item {
+    cursor: pointer;
+}
+
+.dialog_dsmodel-editor .parent_measures li.measure-item:hover {
+    background: #f0f0f0;
+}
+
+.dialog_dsmodel-editor .parent_measures li.measure-item.selected,
+.dialog_dsmodel-editor .parent_dimension a.dimension-item.selected {
+    background: #ccc;
+    font-weight: bold;
+}
+
 .dialog_dsmodel-editor .parent_dimensions .parent_dimension,
 .dialog_dsmodel-editor .parent_dimensions .parent_hierarchy,
 .dialog_dsmodel-editor .parent_dimensions .parent_level {
@@ -2800,4 +2814,5 @@ margin-bottom: 20px;
 
 .dialog_dsmodel-editor .folder_collapsed.sprite.selected {
     background: #ccc;
+    font-weight: bold;
 }
