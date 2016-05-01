@@ -2788,10 +2788,17 @@ margin-bottom: 20px;
     background-size: 16px;
 }
 
+.dialog_dsmodel-editor .parent_tables li.table-column,
 .dialog_dsmodel-editor .parent_measures li.measure-item {
     cursor: pointer;
 }
 
+.dialog_dsmodel-editor .over {
+    background: #f0f0f0;
+    border: 1px dashed #333;
+}
+
+.dialog_dsmodel-editor .parent_tables li.table-column:hover,
 .dialog_dsmodel-editor .parent_measures li.measure-item:hover,
 .dialog_dsmodel-editor .parent_dimension a.dimension-item:hover,
 .dialog_dsmodel-editor .parent_dimension a.hierarchy-item:hover,
