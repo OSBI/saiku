@@ -2788,16 +2788,33 @@ margin-bottom: 20px;
     background-size: 16px;
 }
 
+.dialog_dsmodel-editor .dimension_tree ul li a.folder_collapsed,
+.dialog_dsmodel-editor .measure_tree ul li a.folder_collapsed {
+    background: transparent;
+}
+
+.dialog_dsmodel-editor .parent_tables li.table-column,
 .dialog_dsmodel-editor .parent_measures li.measure-item {
     cursor: pointer;
 }
 
-.dialog_dsmodel-editor .parent_measures li.measure-item:hover {
+.dialog_dsmodel-editor .over {
+    background: #f0f0f0;
+    border: 1px dashed #333;
+}
+
+.dialog_dsmodel-editor .parent_tables li.table-column:hover,
+.dialog_dsmodel-editor .parent_measures li.measure-item:hover,
+.dialog_dsmodel-editor .parent_dimension a.dimension-item:hover,
+.dialog_dsmodel-editor .parent_dimension a.hierarchy-item:hover,
+.dialog_dsmodel-editor .parent_dimension a.level-item:hover {
     background: #f0f0f0;
 }
 
 .dialog_dsmodel-editor .parent_measures li.measure-item.selected,
-.dialog_dsmodel-editor .parent_dimension a.dimension-item.selected {
+.dialog_dsmodel-editor .parent_dimension a.dimension-item.selected,
+.dialog_dsmodel-editor .parent_dimension a.hierarchy-item.selected,
+.dialog_dsmodel-editor .parent_dimension a.level-item.selected {
     background: #ccc;
     font-weight: bold;
 }
