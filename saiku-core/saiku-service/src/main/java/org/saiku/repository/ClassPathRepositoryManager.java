@@ -27,6 +27,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,16 +41,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
 import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * Classpath Repository Manager for Saiku.
@@ -61,6 +69,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   private String session = null;
 
   private String sep = "/";
+  private String workspaceid;
+
   private ClassPathRepositoryManager(String data, String defaultRole) {
 
     this.append=data;
@@ -130,6 +140,13 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       acl2.serialize(n);
 
       this.createFolder(sep+"etc");
+      if(new File(append+"/etc/license.lic").exists()) {
+        try {
+          FileUtils.copyFile(new File(append+"/etc/license.lic"), this.createNode("/etc/license.lic"));
+        } catch (IOException e1) {
+          e1.printStackTrace();
+        }
+      }
 
 
       this.createFolder(sep+"legacyreports");
@@ -150,10 +167,53 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       log.info("node added");
       this.session = "init";
     }
+    else{
+      File n = this.createFolder(sep+"homes");
+
+      HashMap<String, List<AclMethod>> m = new HashMap<>();
+      ArrayList<AclMethod> l = new ArrayList<>();
+      l.add(AclMethod.READ);
+      m.put(defaultRole, l);
+      AclEntry e = new AclEntry("admin", AclType.SECURED, m, null);
+
+      Acl2 acl2 = new Acl2(n);
+      acl2.addEntry(n.getPath(), e);
+      acl2.serialize(n);
+
+      this.createFolder(sep+"datasources");
+
+      m = new HashMap<>();
+      l = new ArrayList<>();
+      l.add(AclMethod.WRITE);
+      l.add(AclMethod.READ);
+      l.add(AclMethod.GRANT);
+      m.put("ROLE_ADMIN", l);
+      e = new AclEntry("admin", AclType.PUBLIC, m, null);
+
+      acl2 = new Acl2(n);
+      acl2.addEntry(n.getPath(), e);
+      acl2.serialize(n);
+
+      this.createFolder(sep+"etc");
+      if(new File(append+"/etc/license.lic").exists()) {
+        try {
+          FileUtils.copyFile(new File(append+"/etc/license.lic"), this.createNode("/etc/license.lic"));
+        } catch (IOException e1) {
+          e1.printStackTrace();
+        }
+      }
+
+      this.createFolder(sep+"etc"+sep+"theme");
+
+
+      acl2 = new Acl2(n);
+      acl2.addEntry(n.getPath(), e);
+      acl2.serialize(n);
+
+    }
     return true;
 
   }
-
 
 
   public void createUser(String u) throws RepositoryException {
@@ -423,7 +483,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
     byte[] encoded = new byte[0];
     try {
-      encoded = Files.readAllBytes(Paths.get(append+sep+s));
+      encoded = Files.readAllBytes(Paths.get(getDatadir()+sep+s));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -441,7 +501,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
     byte[] encoded = new byte[0];
     try {
-      encoded = Files.readAllBytes(Paths.get(append+s));
+      encoded = Files.readAllBytes(Paths.get(getDatadir()+s));
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -454,7 +514,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   }
 
   public InputStream getBinaryInternalFile(String s) throws RepositoryException {
-    Path path = Paths.get(s);
+    Path path = Paths.get(getDatadir()+s);
     try {
       byte[]  f =Files.readAllBytes(path);
       return new ByteArrayInputStream(f);
@@ -510,7 +570,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
             MondrianSchema ms = new MondrianSchema();
             ms.setName(file.getName());
 
-            ms.setPath(file.getPath().substring(this.append.length()-1, file.getPath().length()));
+            ms.setPath(file.getPath().substring(this.getDatadir().length()-1, file.getPath().length()));
             schema.add(ms);
             break;
           }
@@ -628,7 +688,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     String[] extensions = new String[1];
     extensions[0] = "xml";
     Collection<File> files = FileUtils.listFiles(
-            new File(append),
+            new File(getDatadir()),
             extensions,
             true
     );
@@ -690,6 +750,15 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       if (d != null) {
         d.setPath(file.getPath());
       }
+      if(file.getParentFile().isDirectory()){
+        String[] s = file.getParent().split(File.separator);
+
+        String[] t = append.split("/");
+        if(!s[s.length-2].equals(t[t.length-1])){
+          d.setName(s[s.length-2]+"/"+d.getName());
+        }
+      }
+
       ds.add(d);
     }
     return ds;
@@ -985,7 +1054,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
     String[] extensions = new String[1];
     Collection<File> files = FileUtils.listFiles(
-            new File(append+f),
+            new File(getDatadir()+f),
             null,
             true
     );
@@ -1021,7 +1090,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
         if (!file.isHidden()) {
           String filename = file.getName();
-          String relativePath = file.getPath().substring(append.length(), file.getPath().length());
+          String relativePath = file.getPath().substring(getDatadir().length(), file.getPath().length());
 
 
           if (acl.canRead(relativePath, username, roles)) {
@@ -1076,7 +1145,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
   }
   private File createFolder(String path){
-    String appended = append+path;
+    String appended = getDatadir()+path;
     boolean success = (new File(appended)).mkdirs();
     if (!success) {
       // Directory creation failed
@@ -1084,11 +1153,16 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     return new File(path);
   }
 
+  private void bootstrap(String ap){
+
+    new File(this.append+"/"+ap).mkdirs();
+  }
+
   private File[] getAllFoldersInCurrentDirectory(String path){
     return null;
   }
   private void delete(String folder) {
-    File file = new File(append+folder);
+    File file = new File(getDatadir()+folder);
 
     file.delete();
   }
@@ -1099,12 +1173,71 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   }
 
   private File getNode(String path) {
-    return new File(append+path);
+    return new File(getDatadir()+path);
   }
 
   private File createNode(String filename){
-    log.debug("Creating file:"+append+filename);
-    return new File(append+filename);
+    log.debug("Creating file:"+getDatadir()+filename);
+    return new File(getDatadir()+filename);
   }
 
+  private static HttpSession getSession() {
+    ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+    return attr.getRequest().getSession(true); // true == allow create
+  }
+
+
+  public String getDatadir() {
+    try {
+      Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+      String name = auth.getName(); //get logged in username
+      if(name.equals("admin")){
+        if(!new File(append+"/adminws/").exists()){
+          this.workspaceid="adminws";
+          this.bootstrap("adminws");
+          this.start(userService);
+        }
+        return append+"adminws/";
+      }
+      else if(name.equals("smith")){
+        if(!new File(append+"/userws/").exists()){
+          this.workspaceid="userws";
+          this.bootstrap("userws");
+          this.start(userService);
+        }
+        return append+"userws/";
+      }
+      else{
+        return append;
+      }
+            /*if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
+                return (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
+            }*/
+    } catch (Exception ex) {
+      // This exception is expected at Saiku boot
+    }
+
+    return append;
+  }
+
+  private String getworkspacedir() {
+
+    try {
+      Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+      String name = auth.getName(); //get logged in username
+      if (name.equals("admin")) {
+        return "adminws";
+
+      } else if (name.equals("smith")) {
+        return "userws";
+
+      } else {
+        return "unknown";
+      }
+
+    }
+    catch(Exception e){
+      return "unknown";
+    }
+  }
 }

@@ -29,20 +29,18 @@ import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.service.util.security.authentication.PasswordProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -253,7 +251,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
                 path = path.replace("\\", "/");
 
-                irm.saveInternalFile(this.getCSVJson(true, ds.getName(), datadir+separator+path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
+                irm.saveInternalFile(this.getCSVJson(true, ds.getName(), datadir+getworkspacedir()+separator+path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
                 irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
 
             }
@@ -332,9 +330,35 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
     public Map<String, SaikuDatasource> getDatasources() {
-        return datasources;
-    }
+        Map<String,SaikuDatasource> newdslist = new HashMap<>();
+        for (Map.Entry<String, SaikuDatasource> entry : datasources.entrySet()){
 
+            if(entry.getKey().startsWith(getworkspacedir())){
+                newdslist.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return newdslist;
+    }
+    private String getworkspacedir() {
+
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String name = auth.getName(); //get logged in username
+            if (name.equals("admin")) {
+                return "adminws/";
+
+            } else if (name.equals("smith")) {
+                return "userws/";
+
+            } else {
+                return "unknown";
+            }
+
+        }
+        catch(Exception e){
+            return "unknown";
+        }
+    }
     public SaikuDatasource getDatasource(String datasourceName) {
         return datasources.get(datasourceName);
     }
@@ -573,14 +597,27 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public String getDatadir() {
         try {
-            if((String)getSession().getAttribute("ORBIS_WORKSPACE_DIR")!=null){
-                return (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
-            };
-        } catch (Exception ex) {
-            // This exception is expected at Saiku boot
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String name = auth.getName(); //get logged in username
+            if (name.equals("admin")) {
+                return datadir+"adminws/";
+
+            } else if (name.equals("smith")) {
+                return datadir+"userws/";
+
+            } else {
+                return "unknown";
+            }
+
+        }
+        catch(Exception e){
+            return "unknown";
         }
 
-        return datadir;
+            /*if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
+                return (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
+            }*/
+
     }
 
     public void setFoodmartdir(String foodmartdir) {
