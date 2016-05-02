@@ -75,7 +75,7 @@ public class SaikuOlapConnection implements ISaikuConnection {
             log.debug("Not starting connection " + name + ", Saiku in safe mode");
             return false;
         } else {
-            if((props.containsKey("enabled") && props.getProperty("enabled").equals("false"))||!props.containsKey("enabled")) {
+            if((props.containsKey("enabled") && props.getProperty("enabled").equals("true"))||!props.containsKey("enabled")) {
                 this.username = props.getProperty(ISaikuConnection.USERNAME_KEY);
                 this.password = props.getProperty(ISaikuConnection.PASSWORD_KEY);
                 String driver = props.getProperty(ISaikuConnection.DRIVER_KEY);

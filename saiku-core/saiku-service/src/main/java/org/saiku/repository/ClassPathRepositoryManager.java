@@ -69,7 +69,6 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   private String session = null;
 
   private String sep = "/";
-  private String workspaceid;
 
   private ClassPathRepositoryManager(String data, String defaultRole) {
 
@@ -100,18 +99,6 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   public boolean start(UserService userService) throws RepositoryException {
     this.userService = userService;
     if (session == null) {
-      log.info("starting repo");
-
-      log.info("repo started");
-      log.info("logging in");
-
-      log.info("logged in");
-
-      createFiles();
-      createFolders();
-      createNamespace();
-      createSchemas();
-      createDataSources();
 
       File n = this.createFolder(sep+"homes");
 
@@ -219,8 +206,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   public void createUser(String u) throws RepositoryException {
 
       File node = this.createFolder(sep+"homes"+sep+u);
-      //node.setProperty("type", "homedirectory");
-      //node.setProperty("user", u);
+
       AclEntry e = new AclEntry(u, AclType.PRIVATE, null, null);
 
       Acl2 acl2 = new Acl2(node);
@@ -231,8 +217,6 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
 
   public Object getHomeFolders() throws RepositoryException {
-    //login();
-
 
     return this.getAllFoldersInCurrentDirectory(sep+"homes");
   }
@@ -264,14 +248,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     if(folder.startsWith(sep)){
       folder = folder.substring(1, folder.length());
     }
-        /*Node n;
-        try {
 
-            n = getFolder(folder);
-            n.remove();
-        } catch (RepositoryException e) {
-            log.error("Could not remove folder: "+folder, e);
-        }*/
     this.delete(folder);
     return true;
   }
@@ -316,26 +293,14 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       File n = getFolder(path.substring(0, pos));
       Acl2 acl2 = new Acl2(n);
       acl2.setAdminRoles(userService.getAdminRoles());
-      /*if (acl2.canWrite(n, user, roles)) {
-        throw new SaikuServiceException("Can't write to file or folder");
-      }*/
+
 
       File check = this.getNode(filename);
       if(check.exists()){
         check.delete();
       }
       File resNode = this.createNode(path);
-      switch (type) {
-      case "nt:saikufiles":
-        //resNode.addMixin("nt:saikufiles");
-        break;
-      case "nt:mondrianschema":
-        //resNode.addMixin("nt:mondrianschema");
-        break;
-      case "nt:olapdatasource":
-        //resNode.addMixin("nt:olapdatasource");
-        break;
-      }
+
       FileWriter fileWriter;
       try {
         fileWriter = new FileWriter(resNode);
@@ -375,7 +340,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     if(file==null){
       //Create new folder
       String parent = path.substring(0, path.lastIndexOf(sep));
-      File node = getFolder(parent);
+
 
       int pos = path.lastIndexOf(sep);
       String filename = "."+sep+ path.substring(pos + 1, path.length());
@@ -385,7 +350,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
     }
     else {
-      int pos = path.lastIndexOf(sep);
+
       String filename = path;
 
       File check = this.getNode(filename);
@@ -393,12 +358,10 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         check.delete();
       }
 
-      if(type == null){
-        type ="";
-      }
+
 
       File f = this.createNode(filename);
-      FileWriter fileWriter = null;
+      FileWriter fileWriter;
       try {
         fileWriter = new FileWriter(f);
 
@@ -418,7 +381,6 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     if(file==null){
       //Create new folder
       String parent = path.substring(0, path.lastIndexOf(sep));
-      File node = getFolder(parent);
 
       int pos = path.lastIndexOf(sep);
       String filename = "."+sep + path.substring(pos + 1, path.length());
@@ -429,14 +391,6 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     else {
       int pos = path.lastIndexOf(sep);
       String filename = "."+sep + path.substring(pos + 1, path.length());
-//      File n = getFolder(path.substring(0, pos));
-
-
-
-
-      if(type == null){
-        type ="";
-      }
 
       log.debug("Saving:"+filename);
       File check = this.getNode(filename);
@@ -454,7 +408,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         e.printStackTrace();
       }
 
-      int read = 0;
+      int read;
       byte[] bytes = new byte[1024];
 
       try {
@@ -529,32 +483,12 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   }
 
   public List<MondrianSchema> getAllSchema() throws RepositoryException {
-    /*QueryManager qm = session.getWorkspace().getQueryManager();
-    String sql = "SELECT * FROM [nt:mondrianschema]";
-    Query query = qm.createQuery(sql, Query.JCR_SQL2);
 
-    QueryResult res = query.execute();
-
-    NodeIterator node = res.getNodes();
-
-    List<MondrianSchema> l = new ArrayList<>();
-    while (node.hasNext()) {
-      Node n = node.nextNode();
-      String p = n.getPath();
-
-      MondrianSchema m = new MondrianSchema();
-      m.setName(n.getName());
-      m.setPath(p);
-
-      l.add(m);
-
-    }
-    return l;*/
     String[] extensions = new String[1];
     extensions[0] = "xml";
 
     Collection<File> files = FileUtils.listFiles(
-            new File(append+"datasources"),
+            new File(getDatadir()+"datasources"),
             extensions,
             true
     );
@@ -594,8 +528,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
   public List<IRepositoryObject> getAllFiles(List<String> type, String username, List<String> roles, String path) throws
       RepositoryException {
-    /*Node node = this.getNodeIfExists(path, session);
-    return getRepoObjects(node, type, username, roles, true);*/
+
     File file = this.getNode(path);
     if(file.exists()) {
       try {
@@ -708,6 +641,11 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     return ds;
   }
 
+  @Override
+  public void createFileMixin(String type) throws RepositoryException {
+
+  }
+
 
   public List<DataSource> getAllDataSources() throws RepositoryException {
 
@@ -755,7 +693,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
         String[] t = append.split("/");
         if(!s[s.length-2].equals(t[t.length-1])){
-          d.setName(s[s.length-2]+"/"+d.getName());
+          d.setName(s[s.length-2]+"_"+d.getName());
         }
       }
 
@@ -825,252 +763,18 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     //this.repository = repository;
   }
 
-  private void createNamespace() throws RepositoryException {
-    /*NamespaceRegistry ns = session.getWorkspace().getNamespaceRegistry();
-
-    if (!Arrays.asList(ns.getPrefixes()).contains("home")) {
-      ns.registerNamespace("home", "http://www.meteorite.bi/namespaces/home");
-    }*/
-  }
-
-  private void createDataSources() throws RepositoryException {
-/*
-    NodeTypeManager manager = session.getWorkspace().getNodeTypeManager();
-    NodeTypeTemplate ntt = manager.createNodeTypeTemplate();
-    ntt.setName("nt:olapdatasource");
-
-    String[] str = new String[]{"nt:file"};
-    ntt.setDeclaredSuperTypeNames(str);
-    ntt.setMixin(true);
-
-    PropertyDefinitionTemplate pdt3 = manager.createPropertyDefinitionTemplate();
-
-    pdt3.setName("jcr:data");
-    pdt3.setRequiredType(PropertyType.STRING);
-
-    PropertyDefinitionTemplate pdt4 = manager.createPropertyDefinitionTemplate();
-
-    pdt4.setName("enabled");
-    pdt4.setRequiredType(PropertyType.STRING);
-
-    PropertyDefinitionTemplate pdt5 = manager.createPropertyDefinitionTemplate();
-
-    pdt5.setName("owner");
-    pdt5.setRequiredType(PropertyType.STRING);
-
-
-    ntt.getPropertyDefinitionTemplates().add(pdt3);
-    ntt.getPropertyDefinitionTemplates().add(pdt4);
-    ntt.getPropertyDefinitionTemplates().add(pdt5);
-    try {
-      manager.registerNodeType(ntt, false);
-    }
-    catch(NodeTypeExistsException ignored){
-
-    }*/
-  }
-
-  private void createSchemas() throws RepositoryException {
-/*
-    NodeTypeManager manager =
-        session.getWorkspace().getNodeTypeManager();
-    NodeTypeTemplate ntt = manager.createNodeTypeTemplate();
-    ntt.setName("nt:mondrianschema");
-    //ntt.setPrimaryItemName("nt:file");
-    String[] str = new String[]{"nt:file"};
-    ntt.setDeclaredSuperTypeNames(str);
-    ntt.setMixin(true);
-    PropertyDefinitionTemplate pdt = manager.createPropertyDefinitionTemplate();
-
-    pdt.setName("schemaname");
-    pdt.setRequiredType(PropertyType.STRING);
-    pdt.isMultiple();
-    PropertyDefinitionTemplate pdt2 = manager.createPropertyDefinitionTemplate();
-
-    pdt2.setName("cubenames");
-    pdt2.setRequiredType(PropertyType.STRING);
-    pdt2.isMultiple();
-
-    PropertyDefinitionTemplate pdt3 = manager.createPropertyDefinitionTemplate();
-
-    pdt3.setName("jcr:data");
-    pdt3.setRequiredType(PropertyType.STRING);
-
-    PropertyDefinitionTemplate pdt4 = manager.createPropertyDefinitionTemplate();
-    pdt4.setName("owner");
-    pdt4.setRequiredType(PropertyType.STRING);
-
-    ntt.getPropertyDefinitionTemplates().add(pdt);
-    ntt.getPropertyDefinitionTemplates().add(pdt2);
-    ntt.getPropertyDefinitionTemplates().add(pdt3);
-    ntt.getPropertyDefinitionTemplates().add(pdt4);
-
-
-    try {
-      manager.registerNodeType(ntt, false);
-    }
-    catch(NodeTypeExistsException ignored){
-
-    }*/
-  }
-
-  private void createFiles() throws RepositoryException {
-/*
-    NodeTypeManager manager =
-        session.getWorkspace().getNodeTypeManager();
-    NodeTypeTemplate ntt = manager.createNodeTypeTemplate();
-    ntt.setName("nt:saikufiles");
-    String[] str = new String[]{"nt:file"};
-    ntt.setDeclaredSuperTypeNames(str);
-    ntt.setMixin(true);
-    PropertyDefinitionTemplate pdt = manager.createPropertyDefinitionTemplate();
-    pdt.setName("owner");
-    pdt.setRequiredType(PropertyType.STRING);
-
-
-    PropertyDefinitionTemplate pdt2 = manager.createPropertyDefinitionTemplate();
-    pdt2.setName("type");
-    pdt2.setRequiredType(PropertyType.STRING);
-
-    PropertyDefinitionTemplate pdt4 = manager.createPropertyDefinitionTemplate();
-    pdt4.setName("roles");
-    pdt4.setRequiredType(PropertyType.STRING);
-
-    PropertyDefinitionTemplate pdt5 = manager.createPropertyDefinitionTemplate();
-    pdt5.setName("users");
-    pdt5.setRequiredType(PropertyType.STRING);
-
-
-    PropertyDefinitionTemplate pdt3 = manager.createPropertyDefinitionTemplate();
-    pdt3.setName("jcr:data");
-    pdt3.setRequiredType(PropertyType.STRING);
-
-    ntt.getPropertyDefinitionTemplates().add(pdt);
-    ntt.getPropertyDefinitionTemplates().add(pdt2);
-    ntt.getPropertyDefinitionTemplates().add(pdt3);
-    ntt.getPropertyDefinitionTemplates().add(pdt4);
-    ntt.getPropertyDefinitionTemplates().add(pdt5);
-
-    try {
-      manager.registerNodeType(ntt, false);
-    }
-    catch(NodeTypeExistsException ignored){
-
-    }*/
-  }
-
-  public void createFileMixin(String type) throws RepositoryException {
-/*
-    NodeTypeManager manager =
-        session.getWorkspace().getNodeTypeManager();
-    NodeTypeTemplate ntt = manager.createNodeTypeTemplate();
-    ntt.setName(type);
-    String[] str = new String[]{"nt:file"};
-    ntt.setDeclaredSuperTypeNames(str);
-    ntt.setMixin(true);
-    PropertyDefinitionTemplate pdt = manager.createPropertyDefinitionTemplate();
-    pdt.setName("owner");
-    pdt.setRequiredType(PropertyType.STRING);
-
-
-    PropertyDefinitionTemplate pdt2 = manager.createPropertyDefinitionTemplate();
-    pdt2.setName("type");
-    pdt2.setRequiredType(PropertyType.STRING);
-
-    PropertyDefinitionTemplate pdt4 = manager.createPropertyDefinitionTemplate();
-    pdt4.setName("roles");
-    pdt4.setRequiredType(PropertyType.STRING);
-
-    PropertyDefinitionTemplate pdt5 = manager.createPropertyDefinitionTemplate();
-    pdt5.setName("users");
-    pdt5.setRequiredType(PropertyType.STRING);
-
-
-    PropertyDefinitionTemplate pdt3 = manager.createPropertyDefinitionTemplate();
-    pdt3.setName("jcr:data");
-    pdt3.setRequiredType(PropertyType.STRING);
-
-    ntt.getPropertyDefinitionTemplates().add(pdt);
-    ntt.getPropertyDefinitionTemplates().add(pdt2);
-    ntt.getPropertyDefinitionTemplates().add(pdt3);
-    ntt.getPropertyDefinitionTemplates().add(pdt4);
-    ntt.getPropertyDefinitionTemplates().add(pdt5);
-
-    try {
-      manager.registerNodeType(ntt, false);
-    }
-    catch(NodeTypeExistsException ignored){
-
-    }*/
-  }
 
   public Object getRepositoryObject() {
     return null;
   }
 
-  private void createFolders() throws RepositoryException {
-
-   /* NodeTypeManager manager =
-        session.getWorkspace().getNodeTypeManager();
-    NodeTypeTemplate ntt = manager.createNodeTypeTemplate();
-    ntt.setName("nt:saikufolders");
-    String[] str = new String[]{"nt:folder"};
-    ntt.setDeclaredSuperTypeNames(str);
-    ntt.setMixin(true);
-    PropertyDefinitionTemplate pdt = manager.createPropertyDefinitionTemplate();
-    pdt.setName("owner");
-    pdt.setRequiredType(PropertyType.STRING);
-
-
-    PropertyDefinitionTemplate pdt2 = manager.createPropertyDefinitionTemplate();
-    pdt2.setName("type");
-    pdt2.setRequiredType(PropertyType.STRING);
-
-    PropertyDefinitionTemplate pdt4 = manager.createPropertyDefinitionTemplate();
-    pdt4.setName("roles");
-    pdt4.setRequiredType(PropertyType.STRING);
-
-    PropertyDefinitionTemplate pdt5 = manager.createPropertyDefinitionTemplate();
-    pdt5.setName("users");
-    pdt5.setRequiredType(PropertyType.STRING);
-
-
-
-    ntt.getPropertyDefinitionTemplates().add(pdt);
-    ntt.getPropertyDefinitionTemplates().add(pdt2);
-    ntt.getPropertyDefinitionTemplates().add(pdt4);
-    ntt.getPropertyDefinitionTemplates().add(pdt5);
-
-    try {
-      manager.registerNodeType(ntt, false);
-    }
-    catch(NodeTypeExistsException ignored){
-
-    }*/
-  }
-
-/*  private List<IRepositoryObject> getRepoObjects(File f, List<String> fileType, String username, List<String> roles,
-                                                 boolean includeparent) {
-
-    String[] extensions = new String[1];
-    Collection<File> files = FileUtils.listFiles(
-            new File(getDatadir()+f),
-            null,
-            true
-    );
-
-  }*/
 
   private List<IRepositoryObject> getRepoObjects(File root, List<String> fileType, String username, List<String> roles,
                                                        boolean includeparent) throws Exception {
     List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
     ArrayList<File> objects = new ArrayList<>();
     if (root.isDirectory()) {
-     /* objects = FileUtils.listFilesAndDirs(
-              root,
-              TrueFileFilter.TRUE,
-              FalseFileFilter.FALSE
-      );*/
+
       this.listf(root.getAbsolutePath(), objects);
 
     } else {
@@ -1081,12 +785,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     Acl2 acl = new Acl2(root);
     acl.setAdminRoles(userService.getAdminRoles());
 
-    boolean first = false;
     for (File file : objects) {
-      /*if (!first) {
-        first = true;
-      }
-      else{*/
 
         if (!file.isHidden()) {
           String filename = file.getName();
@@ -1137,11 +836,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     // get all the files from a directory
     File[] fList = directory.listFiles();
     for (File file : fList) {
-      //if (file.isFile()) {
         files.add(file);
-      //} else if (file.isDirectory()) {
-//        listf(file.getAbsolutePath(), files);
-  //    }
     }
   }
   private File createFolder(String path){
@@ -1191,9 +886,9 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     try {
       Authentication auth = SecurityContextHolder.getContext().getAuthentication();
       String name = auth.getName(); //get logged in username
+
       if(name.equals("admin")){
         if(!new File(append+"/adminws/").exists()){
-          this.workspaceid="adminws";
           this.bootstrap("adminws");
           this.start(userService);
         }
@@ -1201,7 +896,6 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       }
       else if(name.equals("smith")){
         if(!new File(append+"/userws/").exists()){
-          this.workspaceid="userws";
           this.bootstrap("userws");
           this.start(userService);
         }
@@ -1220,24 +914,6 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     return append;
   }
 
-  private String getworkspacedir() {
 
-    try {
-      Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-      String name = auth.getName(); //get logged in username
-      if (name.equals("admin")) {
-        return "adminws";
 
-      } else if (name.equals("smith")) {
-        return "userws";
-
-      } else {
-        return "unknown";
-      }
-
-    }
-    catch(Exception e){
-      return "unknown";
-    }
-  }
 }

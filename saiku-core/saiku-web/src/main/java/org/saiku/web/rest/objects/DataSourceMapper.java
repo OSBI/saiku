@@ -245,7 +245,7 @@ public class DataSourceMapper {
                 }
 
                 if(row.startsWith("enabled=")){
-                    props.setProperty("enabled", row.substring(7, row.length()));
+                    props.setProperty("enabled", row.substring(8, row.length()));
                 }
             }
 

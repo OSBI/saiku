@@ -18,6 +18,7 @@ package org.saiku.service.datasource;
 
 import org.apache.commons.lang.StringUtils;
 import org.saiku.database.dto.MondrianSchema;
+import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.repository.*;
@@ -49,6 +50,13 @@ import javax.servlet.http.HttpSession;
 public class RepositoryDatasourceManager implements IDatasourceManager {
     private final Map<String, SaikuDatasource> datasources =
             Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
+
+
+    public IConnectionManager connectionManager;
+
+    public void setConnectionManager(IConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
     private UserService userService;
     private static final Logger log = LoggerFactory.getLogger(RepositoryDatasourceManager.class);
     private String configurationpath;
@@ -176,6 +184,12 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                         if(file.getAdvanced()!=null){
                           props.put("advanced", file.getAdvanced());
                         }
+                        if(file.getCsv()!=null){
+                            props.put("csv", file.getCsv());
+                        }
+                        if(file.getEnabled()!=null){
+                            props.put("enabled", file.getEnabled());
+                        }
                         if(file.getPropertyKey()!=null){
                             props.put("propertykey", file.getPropertyKey());
                         }
@@ -240,7 +254,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             if(ds.getCsv()!=null && ds.getCsv().equals("true")){
                 String split[] = ds.getLocation().split("=");
                 String loc = split[2];
-                split[2]=datadir+"/datasources/"+ds.getName()+"-csv.json;Catalog";
+                split[2]=getDatadir()+"/datasources/"+ds.getName()+"-csv.json;Catalog";
 
                 for(int i = 0; i<split.length-1; i++){
                     split[i] = split[i]+"=";
@@ -252,8 +266,16 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 path = path.replace("\\", "/");
 
                 irm.saveInternalFile(this.getCSVJson(true, ds.getName(), datadir+getworkspacedir()+separator+path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
+                String s = this.getworkspacedir();
+                if(s.endsWith("/")){
+                    s = s.substring(0,s.length()-1);
+                }
+                if(ds.getName().startsWith(s)){
+                    ds.setName(ds.getName().replace(s+"_", ""));
+                }
                 irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
 
+                connectionManager.refreshConnection(ds.getName());
             }
             else{
                 irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
@@ -333,7 +355,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         Map<String,SaikuDatasource> newdslist = new HashMap<>();
         for (Map.Entry<String, SaikuDatasource> entry : datasources.entrySet()){
 
-            if(entry.getKey().startsWith(getworkspacedir())){
+            String s= getworkspacedir();
+            if(s.endsWith("/")){
+                s = s.substring(0,s.length()-1);
+            }
+            if(entry.getKey().startsWith(s)){
                 newdslist.put(entry.getKey(), entry.getValue());
             }
         }
