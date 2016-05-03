@@ -35,6 +35,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -272,7 +273,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
                 path = path.replace("\\", "/");
 
-                irm.saveInternalFile(this.getCSVJson(true, ds.getName(), getDatadir()+separator+path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
+                boolean f = true;
+                if(new File(getDatadir()+separator+path).exists() && new File(getDatadir()+separator+path).isDirectory()){
+                    f=false;
+                }
+                irm.saveInternalFile(this.getCSVJson(f, ds.getName(), getDatadir()+separator+path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
 
                 irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
 
@@ -634,7 +639,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
         }
         catch(Exception e){
-            return "unknown/";
+            return datadir+"unknown/";
         }
     }
 

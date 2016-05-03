@@ -100,6 +100,12 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     this.userService = userService;
     if (session == null) {
 
+      File f = new File(this.append + "/unknown");
+
+      if(!f.exists()){
+        f.mkdir();
+      }
+
       File n = this.createFolder(sep+"homes");
 
       HashMap<String, List<AclMethod>> m = new HashMap<>();
@@ -850,7 +856,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
   private void bootstrap(String ap){
 
-    new File(this.append+"/"+ap).mkdirs();
+    new File(this.append+"/"+ap+"/etc").mkdirs();
   }
 
   private File[] getAllFoldersInCurrentDirectory(String path){
@@ -899,6 +905,10 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       }
       else{
         log.debug("Workspace directory set to: unknown/");
+        if(!new File(append+"/unknown/etc").exists()){
+          this.bootstrap("unknown");
+          this.start(userService);
+        }
         return append+"unknown/";
       }
 
@@ -924,8 +934,15 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     } catch (Exception ex) {
       // This exception is expected at Saiku boot
     }
-
-    return append;
+    if(!new File(append+"/unknown/etc").exists()){
+      this.bootstrap("unknown");
+      try {
+        this.start(userService);
+      } catch (RepositoryException e) {
+        e.printStackTrace();
+      }
+    }
+    return append+"unknown/";
   }
 
   private String cleanse(String workspace){
