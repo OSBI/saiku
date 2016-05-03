@@ -884,10 +884,26 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
   public String getDatadir() {
     try {
-      Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-      String name = auth.getName(); //get logged in username
+      //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+      //String name = auth.getName(); //get logged in username
+      if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
+        String workspace = (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
+        workspace = cleanse(workspace);
+          if(!new File(append+"/"+workspace+"/").exists()){
+            this.bootstrap(workspace);
+            this.start(userService);
+          }
 
-      if(name.equals("admin")){
+        log.debug("Workspace directory set to:"+workspace);
+        return append+workspace+"/";
+      }
+      else{
+        log.debug("Workspace directory set to: unknown/");
+        return append+"unknown/";
+      }
+
+
+      /*if(name.equals("admin")){
         if(!new File(append+"/adminws/").exists()){
           this.bootstrap("adminws");
           this.start(userService);
@@ -903,10 +919,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       }
       else{
         return append;
-      }
-            /*if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
-                return (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
-            }*/
+      }*/
+
     } catch (Exception ex) {
       // This exception is expected at Saiku boot
     }
@@ -914,6 +928,12 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     return append;
   }
 
-
+  private String cleanse(String workspace){
+    workspace.replace("\\", "/");
+    if(!workspace.endsWith("/")){
+      return workspace+"/";
+    }
+    return workspace;
+  }
 
 }

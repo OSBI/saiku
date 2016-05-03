@@ -252,6 +252,13 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         DataSource ds = new DataSource(datasource);
 
             if(ds.getCsv()!=null && ds.getCsv().equals("true")){
+                String s = this.getworkspacedir();
+                if(s.endsWith("/")){
+                    s = s.substring(0,s.length()-1);
+                }
+                if(ds.getName().startsWith(s)){
+                    ds.setName(ds.getName().replace(s+"_", ""));
+                }
                 String split[] = ds.getLocation().split("=");
                 String loc = split[2];
                 split[2]=getDatadir()+"/datasources/"+ds.getName()+"-csv.json;Catalog";
@@ -265,14 +272,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
                 path = path.replace("\\", "/");
 
-                irm.saveInternalFile(this.getCSVJson(true, ds.getName(), datadir+getworkspacedir()+separator+path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
-                String s = this.getworkspacedir();
-                if(s.endsWith("/")){
-                    s = s.substring(0,s.length()-1);
-                }
-                if(ds.getName().startsWith(s)){
-                    ds.setName(ds.getName().replace(s+"_", ""));
-                }
+                irm.saveInternalFile(this.getCSVJson(true, ds.getName(), getDatadir()+separator+path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
+
                 irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
 
                 connectionManager.refreshConnection(ds.getName());
@@ -281,7 +282,10 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
 
             }
-            datasources.put(datasource.getName(), datasource);
+
+        String name = getworkspacedir().substring(0, getworkspacedir().length()-1)+"_"+ds.getName();
+                SaikuDatasource sds = new SaikuDatasource(name, SaikuDatasource.Type.OLAP, datasource.getProperties());
+            datasources.put(name, sds);
 
         return datasource;
     }
@@ -365,26 +369,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         }
         return newdslist;
     }
-    private String getworkspacedir() {
 
-        try {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String name = auth.getName(); //get logged in username
-            if (name.equals("admin")) {
-                return "adminws/";
-
-            } else if (name.equals("smith")) {
-                return "userws/";
-
-            } else {
-                return "unknown";
-            }
-
-        }
-        catch(Exception e){
-            return "unknown";
-        }
-    }
     public SaikuDatasource getDatasource(String datasourceName) {
         return datasources.get(datasourceName);
     }
@@ -623,7 +608,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public String getDatadir() {
         try {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+          /*  Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String name = auth.getName(); //get logged in username
             if (name.equals("admin")) {
                 return datadir+"adminws/";
@@ -633,19 +618,67 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
             } else {
                 return "unknown";
+            }*/
+            if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
+                String workspace = (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
+                if(!workspace.equals("")){
+                    workspace = cleanse(workspace);
+                }
+                log.debug("Workspace directory set to:"+datadir+workspace);
+                return datadir+workspace;
+            }
+            else{
+                log.debug("Workspace directory set to:"+datadir+"unknown/");
+                return datadir+"unknown/";
             }
 
         }
         catch(Exception e){
-            return "unknown";
+            return "unknown/";
         }
-
-            /*if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
-                return (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
-            }*/
-
     }
 
+    private String getworkspacedir() {
+
+        try {
+           /* Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String name = auth.getName(); //get logged in username
+            if (name.equals("admin")) {
+                return "adminws/";
+
+            } else if (name.equals("smith")) {
+                return "userws/";
+
+            } else {
+                return "unknown";
+            }*/
+
+            if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
+                String workspace = (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
+                if(!workspace.equals("")){
+                    workspace = cleanse(workspace);
+                }
+                log.debug("Workspace directory set to:"+workspace);
+                return workspace;
+            }
+            else{
+                log.debug("Workspace directory set to: unknown/");
+                return "unknown/";
+            }
+
+        }
+        catch(Exception e){
+            return "unknown/";
+        }
+    }
+
+    private String cleanse(String workspace){
+        workspace.replace("\\", "/");
+        if(!workspace.endsWith("/")){
+          return workspace+"/";
+        }
+        return workspace;
+    }
     public void setFoodmartdir(String foodmartdir) {
         this.foodmartdir = foodmartdir;
     }
