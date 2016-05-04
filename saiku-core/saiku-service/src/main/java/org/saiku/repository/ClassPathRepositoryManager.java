@@ -860,7 +860,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   private void bootstrap(String ap){
 
     log.debug("creating: "+this.append+"/"+ap+"/etc");
-    new File(this.append+"/"+ap+"/etc").mkdirs();
+    new File(ap+"/etc").mkdirs();
   }
 
   private File[] getAllFoldersInCurrentDirectory(String path){
@@ -901,18 +901,18 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         workspace = cleanse(workspace);
         log.debug("Workspace directory set to:"+workspace);
 
-        if(!new File(append+"/"+workspace+"/").exists()){
+        if(!new File(workspace+"/").exists()){
             this.bootstrap(workspace);
             this.start(userService);
           }
 
         log.debug("Workspace directory set to:"+workspace);
-        return "/"+workspace+"/";
+        return workspace+"/";
       }
       else{
         log.debug("Workspace directory set to: unknown/");
         if(!new File(append+"/unknown/etc").exists()){
-          this.bootstrap("unknown");
+          this.bootstrap(append+"/unknown");
           this.start(userService);
         }
         return append+"/unknown/";
