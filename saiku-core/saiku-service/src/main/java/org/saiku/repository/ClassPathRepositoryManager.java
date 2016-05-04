@@ -795,7 +795,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
         if (!file.isHidden()) {
           String filename = file.getName();
-          String relativePath = file.getPath().substring(getDatadir().length(), file.getPath().length());
+          String relativePath = file.getPath().substring(getDatadir().length()-1, file.getPath().length());
 
 
           if (acl.canRead(relativePath, username, roles)) {
