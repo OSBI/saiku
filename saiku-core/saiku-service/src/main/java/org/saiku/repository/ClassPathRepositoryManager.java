@@ -194,13 +194,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       acl2.serialize(n);
 
       this.createFolder(sep+"etc");
-      if(new File(append+"/etc/license.lic").exists()) {
-        try {
-          FileUtils.copyFile(new File(append+"/etc/license.lic"), this.createNode("/etc/license.lic"));
-        } catch (IOException e1) {
-          e1.printStackTrace();
-        }
-      }
+
 
       this.createFolder(sep+"etc"+sep+"theme");
 
@@ -867,6 +861,25 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
     log.debug("creating: "+this.append+"/"+ap+"/etc");
     new File(ap+"/etc").mkdirs();
+    boolean found = false;
+    if(new File(append+"/etc/license.lic").exists()) {
+      try {
+        FileUtils.copyFile(new File(append+"/etc/license.lic"), this.createNode("/etc/license.lic"));
+        found = true;
+      } catch (IOException e1) {
+        log.debug("Failed to find license 1");
+
+
+      }
+    }
+
+    if(!found) {
+      try {
+        FileUtils.copyFile(new File(append + "/unknown/etc/license.lic"), this.createNode("/etc/license.lic"));
+      } catch (IOException e2) {
+        log.debug("failed to find any licenses. Giving up");
+      }
+    }
   }
 
   private File[] getAllFoldersInCurrentDirectory(String path){
