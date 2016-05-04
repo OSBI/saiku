@@ -898,15 +898,16 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       //String name = auth.getName(); //get logged in username
       if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
         String workspace = (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
-        log.debug("Workspace directory set to:"+workspace);
         workspace = cleanse(workspace);
-          if(!new File(append+"/"+workspace+"/").exists()){
+        log.debug("Workspace directory set to:"+workspace);
+
+        if(!new File(append+"/"+workspace+"/").exists()){
             this.bootstrap(workspace);
             this.start(userService);
           }
 
         log.debug("Workspace directory set to:"+workspace);
-        return append+"/"+workspace+"/";
+        return "/"+workspace+"/";
       }
       else{
         log.debug("Workspace directory set to: unknown/");
