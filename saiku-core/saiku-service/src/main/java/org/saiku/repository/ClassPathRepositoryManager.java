@@ -695,7 +695,9 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         d.setPath(file.getPath());
       }
       if(file.getParentFile().isDirectory()){
-        String[] s = file.getParent().split(File.separator);
+        String p = file.getParent();
+        p.replace("\\", "/");
+        String[] s = file.getParent().split("/");
 
         String[] t = append.split("/");
         if(!s[s.length-2].equals(t[t.length-1])){
