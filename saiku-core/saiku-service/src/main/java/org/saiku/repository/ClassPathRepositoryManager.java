@@ -901,7 +901,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
           }
 
         log.debug("Workspace directory set to:"+workspace);
-        return append+workspace+"/";
+        return append+"/"+workspace+"/";
       }
       else{
         log.debug("Workspace directory set to: unknown/");
@@ -909,7 +909,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
           this.bootstrap("unknown");
           this.start(userService);
         }
-        return append+"unknown/";
+        return append+"/unknown/";
       }
 
 
