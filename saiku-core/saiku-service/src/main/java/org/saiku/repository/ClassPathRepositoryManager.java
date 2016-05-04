@@ -921,12 +921,12 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         log.debug("Workspace directory set to:"+workspace);
 
         if(!new File(workspace+"/").exists()){
-            this.bootstrap(workspace);
+            this.bootstrap(append+"/"+workspace);
             this.start(userService);
           }
 
         log.debug("Workspace directory set to:"+workspace);
-        return workspace+"/";
+        return append+"/"+workspace+"/";
       }
       else{
         log.debug("Workspace directory set to: unknown/");
