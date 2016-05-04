@@ -633,7 +633,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                     workspace = cleanse(workspace);
                 }
                 log.debug("Workspace directory set to:"+datadir+workspace);
-                return datadir+workspace;
+                return workspace;
             }
             else{
                 log.debug("Workspace directory set to:"+datadir+"unknown/");
