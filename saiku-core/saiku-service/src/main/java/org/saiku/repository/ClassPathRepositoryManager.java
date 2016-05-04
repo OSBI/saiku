@@ -510,7 +510,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
             MondrianSchema ms = new MondrianSchema();
             ms.setName(file.getName());
 
-            ms.setPath(file.getPath().substring(this.getDatadir().length()-1, file.getPath().length()));
+            ms.setPath(file.getPath().substring(this.getDatadir().length()-2, file.getPath().length()));
             schema.add(ms);
             break;
           }
