@@ -699,6 +699,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         p = p.replace("\\", "/");
         String[] s = p.split("/");
 
+        log.debug("p split: "+p);
         String[] t = append.split("/");
         if(!s[s.length-2].equals(t[t.length-1])){
           d.setName(s[s.length-2]+"_"+d.getName());
