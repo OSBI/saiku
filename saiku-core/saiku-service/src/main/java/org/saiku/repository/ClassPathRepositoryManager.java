@@ -859,6 +859,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
   private void bootstrap(String ap){
 
+    log.debug("creating: "+this.append+"/"+ap+"/etc");
     new File(this.append+"/"+ap+"/etc").mkdirs();
   }
 
@@ -897,6 +898,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       //String name = auth.getName(); //get logged in username
       if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
         String workspace = (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
+        log.debug("Workspace directory set to:"+workspace);
         workspace = cleanse(workspace);
           if(!new File(append+"/"+workspace+"/").exists()){
             this.bootstrap(workspace);
