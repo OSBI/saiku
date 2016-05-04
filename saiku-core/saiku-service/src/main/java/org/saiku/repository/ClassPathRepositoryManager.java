@@ -950,7 +950,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     if(!workspace.endsWith("/")){
       return workspace+"/";
     }
-    return workspace;
+    return workspace+"/";
   }
 
 }

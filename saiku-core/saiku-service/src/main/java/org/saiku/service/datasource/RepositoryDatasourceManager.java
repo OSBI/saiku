@@ -269,10 +269,13 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 }
                 ds.setLocation(StringUtils.join(split));
 
+                log.debug("LOC IS: "+loc);
                 String path = loc.substring(0, loc.lastIndexOf(";"));
 
+                log.debug("PATH IS: "+path);
                 path = path.replace("\\", "/");
 
+                log.debug("Trimmed path is: "+path);
                 boolean f = true;
                 if(new File(getDatadir()+separator+path).exists() && new File(getDatadir()+separator+path).isDirectory()){
                     f=false;
