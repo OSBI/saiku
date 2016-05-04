@@ -137,7 +137,13 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         try {
           FileUtils.copyFile(new File(append+"/etc/license.lic"), this.createNode("/etc/license.lic"));
         } catch (IOException e1) {
-          e1.printStackTrace();
+          log.debug("Failed to find license 1");
+          try {
+            FileUtils.copyFile(new File(append+"/unknown/etc/license.lic"), this.createNode("/etc/license.lic"));
+          } catch (IOException e2) {
+            log.debug("failed to find any licenses. Giving up");
+          }
+
         }
       }
 
