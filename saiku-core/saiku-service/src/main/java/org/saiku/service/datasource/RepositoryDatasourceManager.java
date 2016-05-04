@@ -280,7 +280,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 if(new File(getDatadir()+separator+path).exists() && new File(getDatadir()+separator+path).isDirectory()){
                     f=false;
                 }
-                irm.saveInternalFile(this.getCSVJson(f, ds.getName(), getDatadir()+separator+path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
+                irm.saveInternalFile(this.getCSVJson(f, ds.getName(), path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
 
                 irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
 
