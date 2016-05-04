@@ -681,7 +681,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
     private String cleanse(String workspace){
-        workspace.replace("\\", "/");
+        workspace = workspace.replace("\\", "/");
         if(!workspace.endsWith("/")){
           return workspace+"/";
         }

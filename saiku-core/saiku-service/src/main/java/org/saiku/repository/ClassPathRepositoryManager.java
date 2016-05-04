@@ -951,7 +951,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   }
 
   private String cleanse(String workspace){
-    workspace.replace("\\", "/");
+    workspace = workspace.replace("\\", "/");
     if(!workspace.endsWith("/")){
       return workspace+"/";
     }
