@@ -859,7 +859,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
   private void bootstrap(String ap){
 
-    log.debug("creating: "+this.append+"/"+ap+"/etc");
+    log.debug("creating: "+ap+"/etc");
     new File(ap+"/etc").mkdirs();
     boolean found = false;
     if(new File(append+"/etc/license.lic").exists()) {
