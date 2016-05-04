@@ -959,7 +959,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       // This exception is expected at Saiku boot
     }
     if(!new File(append+"/unknown/etc").exists()){
-      this.bootstrap("unknown");
+      this.bootstrap(append+"/unknown");
       try {
         this.start(userService);
       } catch (RepositoryException e) {
