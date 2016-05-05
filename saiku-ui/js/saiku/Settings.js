@@ -123,7 +123,7 @@ var Settings = {
     EMPTY_VALUE_CHARACTER: '-',
 	ORBIS_AUTH: {
 		enabled: true,
-		cookieName: 'SAIKU_AUTH_PRINCIPAL'
+		cookieName: 'aardvark'
 	}
 };
 
