@@ -915,7 +915,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     try {
       //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
       //String name = auth.getName(); //get logged in username
-      if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
+       if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
         String workspace = (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
         workspace = cleanse(workspace);
         log.debug("Check "+append+"/"+workspace+"/ exists");

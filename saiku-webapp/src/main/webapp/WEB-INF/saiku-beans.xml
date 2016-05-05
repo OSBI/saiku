@@ -22,6 +22,8 @@
             ignore-resource-not-found="true"
             ignore-unresolvable="true"
             order ="-1" />
+<bean id="sessionRegistry"
+  class="org.springframework.security.core.session.SessionRegistryImpl" />
 
     <!--	<bean id="classpathDsManager"
             class="org.saiku.service.datasource.ClassPathResourceDatasourceManager">
