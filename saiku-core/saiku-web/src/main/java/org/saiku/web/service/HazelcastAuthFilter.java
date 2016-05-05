@@ -94,7 +94,7 @@ public class HazelcastAuthFilter implements Filter {
       }
 
       if(user == null || user.equals("")){
-        user = "unkown";
+        user = "unknown";
       }
 
       log.debug("Authenticating Hazelcast User: "+user+" with workspace dir "+ workspace);
