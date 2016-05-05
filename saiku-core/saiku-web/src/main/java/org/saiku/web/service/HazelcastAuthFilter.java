@@ -74,10 +74,19 @@ public class HazelcastAuthFilter implements Filter {
     if (enabled) {
       String authUser = getCookieValue(req, orbisAuthCookie);
       ConcurrentMap<String, String> distributedSession = getHazelcastMap();
+      String workspace;
+      if(distributedSession.containsKey("workspace")) {
+        workspace = distributedSession.get("workspace");
+      }
+      else{
+        workspace = "unknown";
+      }
 
       if (authUser != null) { // If is the main machine, which receives the auth cookie
         // Broadcast the cookie to the distributed session
         ((HttpServletRequest)req).getSession(true).setAttribute("ORBIS_WORKSPACE_DIR", authUser);
+        ((HttpServletRequest)req).getSession(true).setAttribute("ORBIS_WORKSPACE_DIR", workspace);
+
         distributedSession.putIfAbsent(orbisAuthCookie, authUser);
       } else { // If does not receives the auth cookie
         if (distributedSession.containsKey(orbisAuthCookie)) { // Check if it is at the distributed session
