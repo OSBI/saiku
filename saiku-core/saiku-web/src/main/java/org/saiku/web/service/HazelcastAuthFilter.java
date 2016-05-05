@@ -19,6 +19,9 @@ package org.saiku.web.service;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import org.saiku.service.datasource.RepositoryDatasourceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +36,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 public class HazelcastAuthFilter implements Filter {
   private static final int FIVE_MINUTES = 300; // in miliseconds
@@ -41,6 +45,7 @@ public class HazelcastAuthFilter implements Filter {
   private String orbisAuthCookie;
   private String hazelcastMapName;
   private String baseWorkspaceDir;
+  private static final Logger log = LoggerFactory.getLogger(HazelcastAuthFilter.class);
 
   private static HazelcastInstance hazelcast;
   private FilterConfig filterConfig;
@@ -71,28 +76,34 @@ public class HazelcastAuthFilter implements Filter {
     ServletRequest req,
     ServletResponse res,
     FilterChain chain) throws IOException, ServletException {
+    //HttpSession session = ((HttpServletRequest) req).getSession();//.getAttribute("workspace");
     if (enabled) {
-      String authUser = getCookieValue(req, orbisAuthCookie);
-      ConcurrentMap<String, String> distributedSession = getHazelcastMap();
-      String workspace;
-      if(distributedSession.containsKey("workspace")) {
-        workspace = distributedSession.get("workspace");
+      String workspace = null;
+
+      String user = null;
+
+      HttpSession session = ((HttpServletRequest) req).getSession();
+
+      if(session!=null){
+        workspace = (String) session.getAttribute("workspace");
+        user = (String) session.getAttribute("user");
       }
-      else{
+
+      if(workspace == null || workspace.equals("")){
         workspace = "unknown";
       }
 
-      if (authUser != null) { // If is the main machine, which receives the auth cookie
-        // Broadcast the cookie to the distributed session
-        ((HttpServletRequest)req).getSession(true).setAttribute("ORBIS_WORKSPACE_DIR", authUser);
+      if(user == null || user.equals("")){
+        user = "unkown";
+      }
+
+      log.debug("Authenticating Hazelcast User: "+user+" with workspace dir "+ workspace);
+
+
+        ((HttpServletRequest)req).getSession(true).setAttribute("ORBIS_WORKSPACE_USER", user);
         ((HttpServletRequest)req).getSession(true).setAttribute("ORBIS_WORKSPACE_DIR", workspace);
 
-        distributedSession.putIfAbsent(orbisAuthCookie, authUser);
-      } else { // If does not receives the auth cookie
-        if (distributedSession.containsKey(orbisAuthCookie)) { // Check if it is at the distributed session
-          setCookieValue(res, orbisAuthCookie, distributedSession.get(orbisAuthCookie));
-        }
-      }
+
     }
 
     chain.doFilter(req, res);
