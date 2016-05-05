@@ -2,11 +2,11 @@
     <parent>
         <artifactId>saiku-core</artifactId>
         <groupId>org.saikuanalytics</groupId>
-        <version>3.8.8</version>
+        <version>3.9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>saiku-web</artifactId>
-    <version>3.8.8</version>
+    <version>3.9-SNAPSHOT</version>
     <name>saiku - web</name>
     <packaging>jar</packaging>
 
@@ -168,7 +168,7 @@
         </dependency>
         <!-- Batik/SVG -->
         <dependency>
-            <groupId>batik</groupId>
+            <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-transcoder</artifactId>
             <exclusions>
                 <exclusion>
@@ -178,7 +178,17 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>batik</groupId>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-codec</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>batik-js</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-ext</artifactId>
             <exclusions>
                 <exclusion>

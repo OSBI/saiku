@@ -22,6 +22,8 @@
             ignore-resource-not-found="true"
             ignore-unresolvable="true"
             order ="-1" />
+    <bean id="sessionRegistry"
+          class="org.springframework.security.core.session.SessionRegistryImpl" />
 
     <!--	<bean id="classpathDsManager"
             class="org.saiku.service.datasource.ClassPathResourceDatasourceManager">
@@ -44,7 +46,7 @@
         <property name="externalPropertiesFile" value="${external.properties.file}"/>
         <!-- If you change the repoPassword set this property for at least 1 restart to update the old repo password-->
         <!--<property name="oldRepoPassword" value="sa!kuanalyt!cs"/>-->
-
+        <property name="type" value="jackrabbit"/>
     </bean>
 
     <bean id="repoPasswordProviderBean" class="org.saiku.service.util.security.authentication.SimplePasswordProvider">
@@ -100,7 +102,7 @@
     </bean>
 
     <bean id="userServiceBean" class="org.saiku.service.user.UserService">
-	<property name="jdbcUserDAO" ref="userDAO"/>
+        <property name="jdbcUserDAO" ref="userDAO"/>
         <property name="datasourceService" ref="datasourceServiceBean"/>
         <property name="iDatasourceManager" ref="repositoryDsManager"/>
         <property name="adminRoles">

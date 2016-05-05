@@ -16,7 +16,9 @@
 
 package org.saiku.service.datasource;
 
+import org.apache.commons.lang.StringUtils;
 import org.saiku.database.dto.MondrianSchema;
+import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.repository.*;
@@ -28,19 +30,19 @@ import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.service.util.security.authentication.PasswordProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -49,6 +51,13 @@ import javax.servlet.http.HttpSession;
 public class RepositoryDatasourceManager implements IDatasourceManager {
     private final Map<String, SaikuDatasource> datasources =
             Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
+
+
+    public IConnectionManager connectionManager;
+
+    public void setConnectionManager(IConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
     private UserService userService;
     private static final Logger log = LoggerFactory.getLogger(RepositoryDatasourceManager.class);
     private String configurationpath;
@@ -64,14 +73,21 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String earthquakeschema;
     private String defaultRole;
     private String externalparameters;
-
+    private String type;
+    private String separator="/";
     public void load() {
         Properties ext = checkForExternalDataSourceProperties();
-        irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, getDatadir(), repopasswordprovider.getPassword(),
-            oldpassword, defaultRole);
+        if(type.equals("jackrabbit")) {
+            irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopasswordprovider.getPassword(),
+                    oldpassword, defaultRole);
+        }
+        else{
+            separator="/";
+            irm = ClassPathRepositoryManager.getClassPathRepositoryManager(datadir, defaultRole);
+        }
         try {
             irm.start(userService);
-            this.saveInternalFile("/etc/.repo_version", "d20f0bea-681a-11e5-9d70-feff819cdc9f", null);
+            this.saveInternalFile("etc"+separator+".repo_version", "d20f0bea-681a-11e5-9d70-feff819cdc9f", null);
         } catch (RepositoryException e) {
             log.error("Could not start repo", e);
         }
@@ -169,6 +185,12 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                         if(file.getAdvanced()!=null){
                           props.put("advanced", file.getAdvanced());
                         }
+                        if(file.getCsv()!=null){
+                            props.put("csv", file.getCsv());
+                        }
+                        if(file.getEnabled()!=null){
+                            props.put("enabled", file.getEnabled());
+                        }
                         if(file.getPropertyKey()!=null){
                             props.put("propertykey", file.getPropertyKey());
                         }
@@ -230,8 +252,48 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     public SaikuDatasource addDatasource(SaikuDatasource datasource) throws Exception {
         DataSource ds = new DataSource(datasource);
 
-            irm.saveDataSource(ds, "/datasources/" + ds.getName() + ".sds", "fixme");
-            datasources.put(datasource.getName(), datasource);
+            if(ds.getCsv()!=null && ds.getCsv().equals("true")){
+                String s = this.getworkspacedir();
+                if(s.endsWith("/")){
+                    s = s.substring(0,s.length()-1);
+                }
+                if(ds.getName().startsWith(s)){
+                    ds.setName(ds.getName().replace(s+"_", ""));
+                }
+                String split[] = ds.getLocation().split("=");
+                String loc = split[2];
+                split[2]=getDatadir()+"/datasources/"+ds.getName()+"-csv.json;Catalog";
+
+                for(int i = 0; i<split.length-1; i++){
+                    split[i] = split[i]+"=";
+                }
+                ds.setLocation(StringUtils.join(split));
+
+                log.debug("LOC IS: "+loc);
+                String path = loc.substring(0, loc.lastIndexOf(";"));
+
+                log.debug("PATH IS: "+path);
+                path = path.replace("\\", "/");
+
+                log.debug("Trimmed path is: "+path);
+                boolean f = true;
+                if(new File(getDatadir()+separator+path).exists() && new File(getDatadir()+separator+path).isDirectory()){
+                    f=false;
+                }
+                irm.saveInternalFile(this.getCSVJson(f, ds.getName(), getDatadir()+path),separator+"datasources"+separator+ds.getName()+"-csv.json", "fixme");
+
+                irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
+
+                connectionManager.refreshConnection(ds.getName());
+            }
+            else{
+                irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
+
+            }
+
+        String name = getworkspacedir().substring(0, getworkspacedir().length()-1)+"_"+ds.getName();
+                SaikuDatasource sds = new SaikuDatasource(name, SaikuDatasource.Type.OLAP, datasource.getProperties());
+            datasources.put(name, sds);
 
         return datasource;
     }
@@ -245,7 +307,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             DataSource ds = new DataSource(datasource);
 
             try {
-                irm.saveDataSource(ds, "/datasources/" + ds.getName() + ".sds", "fixme");
+                irm.saveDataSource(ds, separator+"datasources"+separator + ds.getName() + ".sds", "fixme");
                 datasources.put(datasource.getName(), datasource);
 
             } catch (RepositoryException e) {
@@ -302,7 +364,18 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
     public Map<String, SaikuDatasource> getDatasources() {
-        return datasources;
+        Map<String,SaikuDatasource> newdslist = new HashMap<>();
+        for (Map.Entry<String, SaikuDatasource> entry : datasources.entrySet()){
+
+            String s= getworkspacedir();
+            if(s.endsWith("/")){
+                s = s.substring(0,s.length()-1);
+            }
+            if(entry.getKey().startsWith(s)){
+                newdslist.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return newdslist;
     }
 
     public SaikuDatasource getDatasource(String datasourceName) {
@@ -510,7 +583,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public boolean hasHomeDirectory(String name) {
         try{
-            Node eturn = irm.getHomeFolder(name);
+            Object eturn = irm.getHomeFolder(name);
             return eturn != null;
         } catch(PathNotFoundException e) {
             return false;
@@ -543,14 +616,77 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public String getDatadir() {
         try {
-            return (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
-        } catch (Exception ex) {
-            // This exception is expected at Saiku boot
-        }
+          /*  Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String name = auth.getName(); //get logged in username
+            if (name.equals("admin")) {
+                return datadir+"adminws/";
 
-        return datadir;
+            } else if (name.equals("smith")) {
+                return datadir+"userws/";
+
+            } else {
+                return "unknown";
+            }*/
+            if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
+                String workspace = (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
+                if(!workspace.equals("")){
+                    workspace = cleanse(workspace);
+                }
+                log.debug("Workspace directory set to:"+datadir+workspace);
+                return datadir+"/"+workspace;
+            }
+            else{
+                log.debug("Workspace directory set to:"+datadir+"unknown/");
+                return datadir+"/"+"unknown/";
+            }
+
+        }
+        catch(Exception e){
+            return datadir+"/unknown/";
+        }
     }
 
+    private String getworkspacedir() {
+
+        try {
+           /* Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String name = auth.getName(); //get logged in username
+            if (name.equals("admin")) {
+                return "adminws/";
+
+            } else if (name.equals("smith")) {
+                return "userws/";
+
+            } else {
+                return "unknown";
+            }*/
+
+            if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
+                String workspace = (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
+                if(!workspace.equals("")){
+                    workspace = cleanse(workspace);
+                }
+                log.debug("Workspace directory set to:"+workspace);
+                return workspace;
+            }
+            else{
+                log.debug("Workspace directory set to: unknown/");
+                return "unknown/";
+            }
+
+        }
+        catch(Exception e){
+            return "unknown/";
+        }
+    }
+
+    private String cleanse(String workspace){
+        workspace = workspace.replace("\\", "/");
+        if(!workspace.endsWith("/")){
+          return workspace+"/";
+        }
+        return workspace;
+    }
     public void setFoodmartdir(String foodmartdir) {
         this.foodmartdir = foodmartdir;
     }
@@ -626,6 +762,54 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         this.defaultRole = defaultRole;
     }
 
+    public void setType(String type) {
+        this.type=type;
+    }
+
+    private String getCSVJson(boolean file, String name, String path) {
+
+        String p;
+        if (!file) {
+            p = "directory: '" + path + "'\n";
+
+
+            return "{\n" +
+                    "version: '1.0',\n" +
+                    "defaultSchema: '" + name + "',\n" +
+                    "schemas: [\n" +
+                    "{\n" +
+                    "name: '" + name + "',\n" +
+                    "type: 'custom',\n" +
+                    "factory: 'org.apache.calcite.adapter.csv.CsvSchemaFactory',\n" +
+                    "operand: {\n" +
+                    p +
+                    "}\n" +
+                    "}\n" +
+                    "]\n" +
+                    "}";
+
+        } else {
+            p = "file: '" + path + "',";
+            return "{\n" +
+                    "version: '1.0',\n" +
+                    "defaultSchema: '" + name + "',\n" +
+                    "schemas: [\n" +
+                    "{\n" +
+                    "name: '" + name + "',\n" +
+                    "tables:[{\n" +
+                    "name: '" + name + "1',\n" +
+                    "type: 'custom',\n" +
+                    "factory: 'org.apache.calcite.adapter.csv.CsvTableFactory',\n" +
+                    "operand: {\n" +
+                    p +
+                    "flavor: 'scannable'\n" +
+                    "}\n" +
+                    "}]}\n" +
+                    "]\n" +
+                    "}";
+
+        }
+    }
     public static HttpSession getSession() {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         return attr.getRequest().getSession(true); // true == allow create
