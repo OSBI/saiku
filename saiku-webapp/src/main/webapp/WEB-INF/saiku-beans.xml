@@ -47,6 +47,7 @@
         <!-- If you change the repoPassword set this property for at least 1 restart to update the old repo password-->
         <!--<property name="oldRepoPassword" value="sa!kuanalyt!cs"/>-->
         <property name="type" value="jackrabbit"/>
+        <property name="sessionRegistry" ref="sessionRepo"/>
     </bean>
 
     <bean id="repoPasswordProviderBean" class="org.saiku.service.util.security.authentication.SimplePasswordProvider">
@@ -66,7 +67,12 @@
 
     <bean id="authorisationPredicate" class="org.saiku.service.util.security.authorisation.MustBeAuthenticatedAuthorisation"/>
 
+    <bean id="sessionRepo" class="org.saiku.repository.ScopedRepo" scope="session">
+        <aop:scoped-proxy/>
+    </bean>
+
     <bean id="sessionService" class="org.saiku.web.service.SessionService">
+        <property name="sessionRepo" ref="sessionRepo"/>
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="authorisationPredicate" ref="authorisationPredicate"/>
         <property name="l" ref="licenseUtilsBean"/>
@@ -207,4 +213,6 @@
     <bean id="statsBean" class="org.saiku.web.rest.resources.StatisticsResource"/>
 
     <bean id="startupBean" class="org.saiku.web.rest.util.StartupResource" init-method="init"/>
+
+
 </beans>

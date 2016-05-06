@@ -121,31 +121,12 @@
         </init-param>
 
         <!--
-            Do you want to use an existing HazelcastInstance?
-            Default is null.
-        -->
-        <init-param>
-            <param-name>instance-name</param-name>
-            <param-value>default</param-value>
-        </init-param>
-        <!--
             Do you want to connect as a client to an existing cluster?
             Default is false.
         -->
         <init-param>
             <param-name>use-client</param-name>
             <param-value>true</param-value>
-        </init-param>
-        <!--
-            Client configuration location;
-                * as servlet resource OR
-                * as classpath resource OR
-                * as URL
-            Default is null.
-        -->
-        <init-param>
-            <param-name>client-config-location</param-name>
-            <param-value>/WEB-INF/hazelcast-client.properties</param-value>
         </init-param>
         <!--
             Do you want to shutdown HazelcastInstance during

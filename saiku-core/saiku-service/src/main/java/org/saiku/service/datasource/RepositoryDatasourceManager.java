@@ -30,8 +30,10 @@ import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.service.util.security.authentication.PasswordProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -43,6 +45,7 @@ import java.util.*;
 
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -54,6 +57,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
 
     public IConnectionManager connectionManager;
+    private ScopedRepo sessionRegistry;
 
     public void setConnectionManager(IConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
@@ -83,7 +87,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         }
         else{
             separator="/";
-            irm = ClassPathRepositoryManager.getClassPathRepositoryManager(datadir, defaultRole);
+
+            irm = ClassPathRepositoryManager.getClassPathRepositoryManager(datadir, defaultRole, sessionRegistry);
         }
         try {
             irm.start(userService);
@@ -814,5 +819,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         return attr.getRequest().getSession(true); // true == allow create
     }
+
+    public void setSessionRegistry(ScopedRepo sessionRegistry){
+        this.sessionRegistry = sessionRegistry;
+    }
+
+
 }
 

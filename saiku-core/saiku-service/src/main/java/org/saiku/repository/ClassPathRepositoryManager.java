@@ -27,8 +27,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -48,6 +50,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -69,20 +72,22 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   private String session = null;
 
   private String sep = "/";
+  private ScopedRepo sessionRegistry;
 
-  private ClassPathRepositoryManager(String data, String defaultRole) {
+  private ClassPathRepositoryManager(String data, String defaultRole, ScopedRepo sessionRegistry) {
 
     this.append=data;
     this.defaultRole = defaultRole;
+    this.sessionRegistry = sessionRegistry;
   }
 
   /*
    * TODO this is currently threadsafe but to improve performance we should split it up to allow multiple sessions to hit the repo at the same time.
    */
-  public static synchronized ClassPathRepositoryManager getClassPathRepositoryManager(String data, String defaultRole) {
+  public static synchronized ClassPathRepositoryManager getClassPathRepositoryManager(String data, String defaultRole, ScopedRepo sessionRegistry) {
     if (ref == null)
       // it's ok, we can call this constructor
-      ref = new ClassPathRepositoryManager(data, defaultRole);
+      ref = new ClassPathRepositoryManager(data, defaultRole, sessionRegistry);
     return ref;
   }
 
@@ -905,11 +910,22 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     return new File(getDatadir()+filename);
   }
 
-  private static HttpSession getSession() {
-    ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-    return attr.getRequest().getSession(true); // true == allow create
-  }
 
+  private HttpSession getSession() {
+
+    try{
+      HttpSession s = sessionRegistry.getSession();
+      String id = s.getId();
+      System.out.println(id);
+    }
+    catch (Exception e){
+
+    }
+
+    ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+    HttpServletRequest req = attr.getRequest();
+    return req.getSession(false); // true == allow create
+  }
 
   public String getDatadir() {
     try {
