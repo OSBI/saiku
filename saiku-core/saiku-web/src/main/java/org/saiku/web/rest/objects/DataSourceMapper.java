@@ -46,8 +46,8 @@ public class DataSourceMapper {
     }
 
     public DataSourceMapper(SaikuDatasource ds) {
-        if ((!ds.getProperties().containsKey("advanced") && !ds.getProperties().containsKey("csv")) || ds.getProperties
-            ().getProperty("advanced").equals("false")) {
+        if ((!ds.getProperties().containsKey("advanced") && !ds.getProperties().containsKey("csv")) ||
+                (ds.getProperties().containsKey("advanced") && ds.getProperties().getProperty("advanced").equals("false"))) {
             String location = ds.getProperties().getProperty("location");
 
             String[] loc = location.split(";");
@@ -189,7 +189,7 @@ public class DataSourceMapper {
             String name = null;
             String[] lines;
             String type;
-            if(advanced!=null || !advanced.equals("false")|| !advanced.equals("")) {
+            if(advanced!=null && !advanced.equals("false")&& !advanced.equals("")) {
                 lines = advanced.split("\\r?\\n");
                 type = "advanced";
             }
@@ -245,7 +245,7 @@ public class DataSourceMapper {
                 }
 
                 if(row.startsWith("enabled=")){
-                    props.setProperty("enabled", row.substring(7, row.length()));
+                    props.setProperty("enabled", row.substring(8, row.length()));
                 }
             }
 
@@ -359,5 +359,13 @@ public class DataSourceMapper {
 
     public void setEnabled(String enabled) {
         this.enabled = enabled;
+    }
+
+    public String getCsv() {
+        return csv;
+    }
+
+    public void setCsv(String csv) {
+        this.csv = csv;
     }
 }
