@@ -52,6 +52,7 @@ import javax.servlet.http.HttpSession;
  * A Datasource Manager for the Saiku Repository API layer.
  */
 public class RepositoryDatasourceManager implements IDatasourceManager {
+    private static final String ORBIS_WORKSPACE_DIR = "ORBIS_WORKSPACE_DIR";
     private final Map<String, SaikuDatasource> datasources =
             Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
 
@@ -621,19 +622,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public String getDatadir() {
         try {
-          /*  Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String name = auth.getName(); //get logged in username
-            if (name.equals("admin")) {
-                return datadir+"adminws/";
-
-            } else if (name.equals("smith")) {
-                return datadir+"userws/";
-
-            } else {
-                return "unknown";
-            }*/
-            if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
-                String workspace = (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
+            if(getSession().getAttribute(ORBIS_WORKSPACE_DIR) !=null){
+                String workspace = (String)getSession().getAttribute(ORBIS_WORKSPACE_DIR);
                 if(!workspace.equals("")){
                     workspace = cleanse(workspace);
                 }
@@ -666,8 +656,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 return "unknown";
             }*/
 
-            if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
-                String workspace = (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
+            if(getSession().getAttribute(ORBIS_WORKSPACE_DIR) !=null){
+                String workspace = (String)getSession().getAttribute(ORBIS_WORKSPACE_DIR);
                 if(!workspace.equals("")){
                     workspace = cleanse(workspace);
                 }

@@ -45,7 +45,7 @@ public class HazelcastAuthFilter implements Filter {
     setFilterConfig(filterConfig);
 
     enabled          = Boolean.parseBoolean(initParameter(filterConfig, "enabled", "true"));
-    orbisAuthCookie  = initParameter(filterConfig, "orbisAuthCookie", "SAIKU_AUTH_PRINCIPAL");
+    orbisAuthCookie  = initParameter(filterConfig, "orbisAuthCookie", "ORBIS_WORKSPACE_USER");
     hazelcastMapName = initParameter(filterConfig, "hazelcastMapName", "my-sessions");
     baseWorkspaceDir = initParameter(filterConfig, "baseWorkspaceDir", "../../repository/data");
   }
@@ -67,8 +67,6 @@ public class HazelcastAuthFilter implements Filter {
     ServletResponse res,
     FilterChain chain) throws IOException, ServletException {
     if (enabled) {
-      String authUser = getCookieValue(req, orbisAuthCookie);
-
       HttpSession session = ((HttpServletRequest)req).getSession(true);
 
       System.out.println("\n***********************************");
@@ -84,34 +82,10 @@ public class HazelcastAuthFilter implements Filter {
       System.out.println("***********************************");
       System.out.println("***********************************\n");
 
-/*      if (authUser != null) { // If is the main machine, which receives the auth cookie
-        // Broadcast the cookie to the distributed session
-        ((HttpServletRequest)req).getSession(true).setAttribute("ORBIS_WORKSPACE_DIR", authUser);
-        session.setAttribute(orbisAuthCookie, authUser);
-      } else { // If does not receives the auth cookie
-        String cookieVal = (String)session.getAttribute(orbisAuthCookie);
-        if (cookieVal != null) { // Check if it is at the distributed session
-          setCookieValue(res, orbisAuthCookie, cookieVal);
-        }
-      }*/
+      setCookieValue(res, "SAIKU_AUTH_PRINCIPAL", (String)session.getAttribute(orbisAuthCookie));
     }
 
     chain.doFilter(req, res);
-  }
-
-  private String getCookieValue(ServletRequest req, String cookieName) {
-    HttpServletRequest request = (HttpServletRequest) req;
-    Cookie[] cookies = request.getCookies();
-
-    if (cookies != null) {
-      for (Cookie cookie : cookies) {
-        if (cookie.getName().equals(cookieName)) {
-          return cookie.getValue();
-        }
-      }
-    }
-
-    return null;
   }
 
   private void setCookieValue(ServletResponse res, String cookieName, String cookieVal) {

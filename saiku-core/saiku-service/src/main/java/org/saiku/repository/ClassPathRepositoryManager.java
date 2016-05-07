@@ -63,8 +63,9 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  * Classpath Repository Manager for Saiku.
  */
 public class ClassPathRepositoryManager implements IRepositoryManager {
-
+  private static final String ORBIS_WORKSPACE_DIR = "ORBIS_WORKSPACE_DIR";
   private static final Logger log = LoggerFactory.getLogger(ClassPathRepositoryManager.class);
+
   private static ClassPathRepositoryManager ref;
   private final String defaultRole;
   private UserService userService;
@@ -916,7 +917,9 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     try{
       HttpSession s = sessionRegistry.getSession();
       String id = s.getId();
-      System.out.println(id);
+      System.out.println("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      System.out.println("!!!!! SESSION ID: " + id);
+      System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     }
     catch (Exception e){
 
@@ -929,10 +932,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
   public String getDatadir() {
     try {
-      //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-      //String name = auth.getName(); //get logged in username
-      if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
-        String workspace = (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
+      if(getSession().getAttribute(ORBIS_WORKSPACE_DIR) !=null){
+        String workspace = (String)getSession().getAttribute(ORBIS_WORKSPACE_DIR);
         workspace = cleanse(workspace);
         log.debug("Check "+append+"/"+workspace+"/ exists");
         if(!new File(append+"/"+workspace+"/").exists()){

@@ -151,7 +151,7 @@
         <filter-class>org.saiku.web.service.HazelcastAuthFilter</filter-class>
         <init-param>
             <param-name>orbisAuthCookie</param-name>
-            <param-value>aardvark</param-value>
+            <param-value>ORBIS_WORKSPACE_USER</param-value>
         </init-param>
         <init-param>
             <param-name>hazelcastMapName</param-name>
