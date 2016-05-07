@@ -920,9 +920,14 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
       System.out.println("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       System.out.println("!!!!! SESSION ID: " + id);
       System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+
+      return s;
     }
     catch (Exception e){
-
+      System.out.println("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      System.out.println("!!!!! ERRO: " + e);
+      e.printStackTrace();
+      System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     }
 
     ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
@@ -931,6 +936,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   }
 
   public String getDatadir() {
+    System.out.println("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     try {
       if(getSession().getAttribute(ORBIS_WORKSPACE_DIR) !=null){
         String workspace = (String)getSession().getAttribute(ORBIS_WORKSPACE_DIR);
@@ -942,6 +948,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
           }
 
         log.debug("Workspace directory set to:"+workspace);
+        System.out.println("I: " + append+"/"+workspace+"/");
+        System.out.println("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         return append+"/"+workspace+"/";
       }
       else{
@@ -950,6 +958,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
           this.bootstrap(append+"/unknown");
           this.start(userService);
         }
+        System.out.println("II: " + append+"/unknown/");
+        System.out.println("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         return append+"/unknown/";
       }
 
@@ -983,6 +993,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         e.printStackTrace();
       }
     }
+    System.out.println("III: " + append+"unknown/");
+    System.out.println("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     return append+"unknown/";
   }
 

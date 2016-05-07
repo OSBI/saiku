@@ -46,7 +46,7 @@
         <property name="externalPropertiesFile" value="${external.properties.file}"/>
         <!-- If you change the repoPassword set this property for at least 1 restart to update the old repo password-->
         <!--<property name="oldRepoPassword" value="sa!kuanalyt!cs"/>-->
-        <property name="type" value="jackrabbit"/>
+        <property name="type" value="classpath"/>
         <property name="sessionRegistry" ref="sessionRepo"/>
     </bean>
 

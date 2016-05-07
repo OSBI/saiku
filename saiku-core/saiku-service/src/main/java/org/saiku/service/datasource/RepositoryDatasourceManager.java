@@ -621,6 +621,9 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
     public String getDatadir() {
+        System.out.println("\n********************************************");
+        System.out.println("getDatadir");
+
         try {
             if(getSession().getAttribute(ORBIS_WORKSPACE_DIR) !=null){
                 String workspace = (String)getSession().getAttribute(ORBIS_WORKSPACE_DIR);
@@ -628,16 +631,22 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                     workspace = cleanse(workspace);
                 }
                 log.debug("Workspace directory set to:"+datadir+workspace);
+                System.out.println("I: " + datadir+"/"+workspace);
                 return datadir+"/"+workspace;
             }
             else{
                 log.debug("Workspace directory set to:"+datadir+"unknown/");
+                System.out.println("II: " + datadir+"/unknown");
                 return datadir+"/"+"unknown/";
             }
 
         }
         catch(Exception e){
+            System.out.println("III: /unknown/");
             return datadir+"/unknown/";
+        }
+        finally {
+            System.out.println("********************************************\n");
         }
     }
 
