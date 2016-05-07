@@ -917,17 +917,10 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     try{
       HttpSession s = sessionRegistry.getSession();
       String id = s.getId();
-      System.out.println("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      System.out.println("!!!!! SESSION ID: " + id);
-      System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
-
       return s;
     }
     catch (Exception e){
-      System.out.println("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      System.out.println("!!!!! ERRO: " + e);
       e.printStackTrace();
-      System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     }
 
     ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();

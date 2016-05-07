@@ -17,7 +17,6 @@
 package org.saiku.web.service;
 
 import java.io.IOException;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -31,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 public class HazelcastAuthFilter implements Filter {
+  private static final String SAIKU_AUTH_PRINCIPAL = "SAIKU_AUTH_PRINCIPAL";
   private static final int FIVE_MINUTES = 300; // in miliseconds
 
   private boolean enabled;
@@ -68,21 +68,7 @@ public class HazelcastAuthFilter implements Filter {
     FilterChain chain) throws IOException, ServletException {
     if (enabled) {
       HttpSession session = ((HttpServletRequest)req).getSession(true);
-
-      System.out.println("\n***********************************");
-      System.out.println("***********************************");
-      System.out.println("SESSION: " + session.getClass());
-      System.out.println("Session ID: " + session.getId());
-
-      for (java.util.Enumeration<String> e = session.getAttributeNames(); e.hasMoreElements(); ) {
-        String sessionKey = e.nextElement();
-        System.out.println(sessionKey + " = " + session.getAttribute(sessionKey));
-      }
-
-      System.out.println("***********************************");
-      System.out.println("***********************************\n");
-
-      setCookieValue(res, "SAIKU_AUTH_PRINCIPAL", (String)session.getAttribute(orbisAuthCookie));
+      setCookieValue(res, SAIKU_AUTH_PRINCIPAL, (String)session.getAttribute(orbisAuthCookie));
     }
 
     chain.doFilter(req, res);
