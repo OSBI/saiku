@@ -814,9 +814,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
         }
     }
-    public static HttpSession getSession() {
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        return attr.getRequest().getSession(true); // true == allow create
+    public HttpSession getSession() {
+        return sessionRegistry.getSession();
     }
 
     public void setSessionRegistry(ScopedRepo sessionRegistry){

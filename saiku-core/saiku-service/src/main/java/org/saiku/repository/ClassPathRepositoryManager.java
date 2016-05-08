@@ -916,16 +916,13 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
     try{
       HttpSession s = sessionRegistry.getSession();
-      String id = s.getId();
       return s;
     }
     catch (Exception e){
       e.printStackTrace();
     }
 
-    ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-    HttpServletRequest req = attr.getRequest();
-    return req.getSession(false); // true == allow create
+    return null;
   }
 
   public String getDatadir() {
