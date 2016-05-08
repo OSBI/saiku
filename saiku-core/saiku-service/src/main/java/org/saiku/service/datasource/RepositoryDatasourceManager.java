@@ -30,8 +30,10 @@ import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.service.util.security.authentication.PasswordProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -43,17 +45,20 @@ import java.util.*;
 
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
  * A Datasource Manager for the Saiku Repository API layer.
  */
 public class RepositoryDatasourceManager implements IDatasourceManager {
+    private static final String ORBIS_WORKSPACE_DIR = "ORBIS_WORKSPACE_DIR";
     private final Map<String, SaikuDatasource> datasources =
             Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
 
 
     public IConnectionManager connectionManager;
+    private ScopedRepo sessionRegistry;
 
     public void setConnectionManager(IConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
@@ -83,7 +88,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         }
         else{
             separator="/";
-            irm = ClassPathRepositoryManager.getClassPathRepositoryManager(datadir, defaultRole);
+
+            irm = ClassPathRepositoryManager.getClassPathRepositoryManager(datadir, defaultRole, sessionRegistry);
         }
         try {
             irm.start(userService);
@@ -615,34 +621,32 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
     public String getDatadir() {
+        System.out.println("\n********************************************");
+        System.out.println("getDatadir");
+
         try {
-          /*  Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String name = auth.getName(); //get logged in username
-            if (name.equals("admin")) {
-                return datadir+"adminws/";
-
-            } else if (name.equals("smith")) {
-                return datadir+"userws/";
-
-            } else {
-                return "unknown";
-            }*/
-            if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
-                String workspace = (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
+            if(getSession().getAttribute(ORBIS_WORKSPACE_DIR) !=null){
+                String workspace = (String)getSession().getAttribute(ORBIS_WORKSPACE_DIR);
                 if(!workspace.equals("")){
                     workspace = cleanse(workspace);
                 }
                 log.debug("Workspace directory set to:"+datadir+workspace);
+                System.out.println("I: " + datadir+"/"+workspace);
                 return datadir+"/"+workspace;
             }
             else{
                 log.debug("Workspace directory set to:"+datadir+"unknown/");
+                System.out.println("II: " + datadir+"/unknown");
                 return datadir+"/"+"unknown/";
             }
 
         }
         catch(Exception e){
+            System.out.println("III: /unknown/");
             return datadir+"/unknown/";
+        }
+        finally {
+            System.out.println("********************************************\n");
         }
     }
 
@@ -661,8 +665,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 return "unknown";
             }*/
 
-            if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
-                String workspace = (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
+            if(getSession().getAttribute(ORBIS_WORKSPACE_DIR) !=null){
+                String workspace = (String)getSession().getAttribute(ORBIS_WORKSPACE_DIR);
                 if(!workspace.equals("")){
                     workspace = cleanse(workspace);
                 }
@@ -814,5 +818,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         return attr.getRequest().getSession(true); // true == allow create
     }
+
+    public void setSessionRegistry(ScopedRepo sessionRegistry){
+        this.sessionRegistry = sessionRegistry;
+    }
+
+
 }
 

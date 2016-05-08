@@ -172,6 +172,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast-wm</artifactId>
+            <version>3.6.2</version>
+        </dependency>
+        <dependency>
             <groupId>org.olap4j</groupId>
             <artifactId>olap4j-xmlaserver</artifactId>
             <version>1.2.0</version>

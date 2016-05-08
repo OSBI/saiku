@@ -63,11 +63,7 @@
 		<session-timeout>60</session-timeout>
 	</session-config>
 
-
-
-
-
-
+    <!-- BEGIN - Hazelcast Filter -->
     <filter>
         <filter-name>hazelcast-filter</filter-name>
         <!--        <filter-class>com.hazelcast.web.WebFilter</filter-class>-->
@@ -124,38 +120,12 @@
             <param-value>true</param-value>
         </init-param>
 
-        <!--
-            Do you want to use an existing HazelcastInstance?
-            Default is null.
-        -->
-        <init-param>
-            <param-name>instance-name</param-name>
-            <param-value>default</param-value>
-        </init-param>
-        <!--
-            Do you want to connect as a client to an existing cluster?
-            Default is false.
-        -->
+
         <init-param>
             <param-name>use-client</param-name>
             <param-value>true</param-value>
         </init-param>
-        <!--
-            Client configuration location;
-                * as servlet resource OR
-                * as classpath resource OR
-                * as URL
-            Default is null.
-        -->
-        <init-param>
-            <param-name>client-config-location</param-name>
-            <param-value>/WEB-INF/hazelcast-client.properties</param-value>
-        </init-param>
-        <!--
-            Do you want to shutdown HazelcastInstance during
-            web application undeploy process?
-            Default is true.
-        -->
+
         <init-param>
             <param-name>shutdown-on-destroy</param-name>
             <param-value>true</param-value>
@@ -172,22 +142,6 @@
     </filter-mapping>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <!-- BEGIN - Filter Definition --> 
 	<filter>
 		<filter-name>org.springframework.security.filterChainProxy</filter-name>
@@ -199,7 +153,7 @@
         <filter-class>org.saiku.web.service.HazelcastAuthFilter</filter-class>
         <init-param>
             <param-name>orbisAuthCookie</param-name>
-            <param-value>SAIKU_AUTH_PRINCIPAL</param-value>
+            <param-value>ORBIS_WORKSPACE_USER</param-value>
         </init-param>
         <init-param>
             <param-name>hazelcastMapName</param-name>
@@ -215,6 +169,13 @@
 
     <!-- BEGIN - Filter Mapping -->
     <!-- The above filter mapping is for Orbis / Hazelcast token based authentication -->
+    <filter-mapping>
+        <filter-name>hazelcast-filter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>hazelcastAuthFilter</filter-name>
         <url-pattern>/*</url-pattern>

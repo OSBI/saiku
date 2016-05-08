@@ -18,6 +18,7 @@ package org.saiku.web.service;
 
 import org.apache.commons.lang.StringUtils;
 
+import org.saiku.repository.ScopedRepo;
 import org.saiku.service.ISessionService;
 import org.saiku.service.license.LicenseUtils;
 
@@ -58,7 +59,8 @@ public class SessionService implements ISessionService {
 	private final Map<Object,Map<String,Object>> sessionHolder = new HashMap<>();
 
 	private Boolean anonymous = false;
-	
+	private ScopedRepo sessionRepo;
+
 	public void setAllowAnonymous(Boolean allow) {
 		this.anonymous  = allow;
 	}
@@ -91,7 +93,9 @@ public class SessionService implements ISessionService {
 	public Map<String, Object> login(HttpServletRequest req, String username, String password ) throws Exception {
 		Object sl = null;
 		String notice = null;
-
+		HttpSession session = ((HttpServletRequest)req).getSession(true);
+		session.getId();
+		sessionRepo.setSession(session);
 		try {
 			sl = l.getLicense();
 		} catch (Exception e) {
@@ -259,4 +263,7 @@ public class SessionService implements ISessionService {
   }
 
 
+	public void setSessionRepo(org.saiku.repository.ScopedRepo sessionRepo) {
+		this.sessionRepo = sessionRepo;
+	}
 }

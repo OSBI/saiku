@@ -16,16 +16,7 @@
 
 package org.saiku.web.service;
 
-import com.hazelcast.config.Config;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import org.saiku.service.datasource.RepositoryDatasourceManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -39,113 +30,63 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 public class HazelcastAuthFilter implements Filter {
-  private static final int FIVE_MINUTES = 300; // in miliseconds
+    private static final String SAIKU_AUTH_PRINCIPAL = "SAIKU_AUTH_PRINCIPAL";
+    private static final int FIVE_MINUTES = 300; // in miliseconds
 
-  private boolean enabled;
-  private String orbisAuthCookie;
-  private String hazelcastMapName;
-  private String baseWorkspaceDir;
-  private static final Logger log = LoggerFactory.getLogger(HazelcastAuthFilter.class);
+    private boolean enabled;
+    private String orbisAuthCookie;
+    private String hazelcastMapName;
+    private String baseWorkspaceDir;
 
-  private static HazelcastInstance hazelcast;
-  private FilterConfig filterConfig;
+    private FilterConfig filterConfig;
 
-  @Override
-  public void init(FilterConfig filterConfig) throws ServletException {
-    setFilterConfig(filterConfig);
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        setFilterConfig(filterConfig);
 
-    enabled          = Boolean.parseBoolean(initParameter(filterConfig, "enabled", "true"));
-    orbisAuthCookie  = initParameter(filterConfig, "orbisAuthCookie", "SAIKU_AUTH_PRINCIPAL");
-    hazelcastMapName = initParameter(filterConfig, "hazelcastMapName", "my-sessions");
-    baseWorkspaceDir = initParameter(filterConfig, "baseWorkspaceDir", "../../repository/data");
-  }
-
-  private String initParameter(FilterConfig filterConfig, String paramName, String defaultValue) {
-    if (filterConfig.getInitParameter(paramName) != null) {
-      return filterConfig.getInitParameter(paramName);
-    }
-    return defaultValue;
-  }
-
-  @Override
-  public void destroy() {
-  }
-
-  @Override
-  public void doFilter(
-    ServletRequest req,
-    ServletResponse res,
-    FilterChain chain) throws IOException, ServletException {
-    //HttpSession session = ((HttpServletRequest) req).getSession();//.getAttribute("workspace");
-    if (enabled) {
-      String workspace = null;
-
-      String user = null;
-
-      HttpSession session = ((HttpServletRequest) req).getSession();
-
-      if(session!=null){
-        workspace = (String) session.getAttribute("workspace");
-        user = (String) session.getAttribute("user");
-      }
-
-      if(workspace == null || workspace.equals("")){
-        workspace = "unknown";
-      }
-
-      if(user == null || user.equals("")){
-        user = "unknown";
-      }
-
-      log.debug("Authenticating Hazelcast User: "+user+" with workspace dir "+ workspace);
-
-
-        ((HttpServletRequest)req).getSession(true).setAttribute("ORBIS_WORKSPACE_USER", user);
-        ((HttpServletRequest)req).getSession(true).setAttribute("ORBIS_WORKSPACE_DIR", workspace);
-
-
+        enabled          = Boolean.parseBoolean(initParameter(filterConfig, "enabled", "true"));
+        orbisAuthCookie  = initParameter(filterConfig, "orbisAuthCookie", "ORBIS_WORKSPACE_USER");
+        hazelcastMapName = initParameter(filterConfig, "hazelcastMapName", "my-sessions");
+        baseWorkspaceDir = initParameter(filterConfig, "baseWorkspaceDir", "../../repository/data");
     }
 
-    chain.doFilter(req, res);
-  }
-
-  private String getCookieValue(ServletRequest req, String cookieName) {
-    HttpServletRequest request = (HttpServletRequest) req;
-    Cookie[] cookies = request.getCookies();
-
-    if (cookies != null) {
-      for (Cookie cookie : cookies) {
-        if (cookie.getName().equals(cookieName)) {
-          return cookie.getValue();
+    private String initParameter(FilterConfig filterConfig, String paramName, String defaultValue) {
+        if (filterConfig.getInitParameter(paramName) != null) {
+            return filterConfig.getInitParameter(paramName);
         }
-      }
+        return defaultValue;
     }
 
-    return null;
-  }
-
-  private void setCookieValue(ServletResponse res, String cookieName, String cookieVal) {
-    HttpServletResponse response = (HttpServletResponse) res;
-    Cookie orbisCookie = new Cookie(cookieName, cookieVal);
-    orbisCookie.setMaxAge(FIVE_MINUTES);
-    orbisCookie.setPath("/");
-    response.addCookie(orbisCookie);
-  }
-
-  private ConcurrentMap<String, String> getHazelcastMap() {
-    if (hazelcast == null) {
-      Config config = new Config();
-      hazelcast = Hazelcast.newHazelcastInstance(config);
+    @Override
+    public void destroy() {
     }
 
-    return hazelcast.getMap(hazelcastMapName);
-  }
+    @Override
+    public void doFilter(
+            ServletRequest req,
+            ServletResponse res,
+            FilterChain chain) throws IOException, ServletException {
+        if (enabled) {
+            HttpSession session = ((HttpServletRequest)req).getSession(true);
+            setCookieValue(res, SAIKU_AUTH_PRINCIPAL, (String)session.getAttribute(orbisAuthCookie));
+        }
 
-  public FilterConfig getFilterConfig() {
-    return filterConfig;
-  }
+        chain.doFilter(req, res);
+    }
 
-  public void setFilterConfig(FilterConfig filterConfig) {
-    this.filterConfig = filterConfig;
-  }
+    private void setCookieValue(ServletResponse res, String cookieName, String cookieVal) {
+        HttpServletResponse response = (HttpServletResponse) res;
+        Cookie orbisCookie = new Cookie(cookieName, cookieVal);
+        orbisCookie.setMaxAge(FIVE_MINUTES);
+        orbisCookie.setPath("/");
+        response.addCookie(orbisCookie);
+    }
+
+    public FilterConfig getFilterConfig() {
+        return filterConfig;
+    }
+
+    public void setFilterConfig(FilterConfig filterConfig) {
+        this.filterConfig = filterConfig;
+    }
 }

@@ -27,8 +27,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -48,6 +50,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -60,8 +63,9 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  * Classpath Repository Manager for Saiku.
  */
 public class ClassPathRepositoryManager implements IRepositoryManager {
-
+  private static final String ORBIS_WORKSPACE_DIR = "ORBIS_WORKSPACE_DIR";
   private static final Logger log = LoggerFactory.getLogger(ClassPathRepositoryManager.class);
+
   private static ClassPathRepositoryManager ref;
   private final String defaultRole;
   private UserService userService;
@@ -69,20 +73,22 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
   private String session = null;
 
   private String sep = "/";
+  private ScopedRepo sessionRegistry;
 
-  private ClassPathRepositoryManager(String data, String defaultRole) {
+  private ClassPathRepositoryManager(String data, String defaultRole, ScopedRepo sessionRegistry) {
 
     this.append=data;
     this.defaultRole = defaultRole;
+    this.sessionRegistry = sessionRegistry;
   }
 
   /*
    * TODO this is currently threadsafe but to improve performance we should split it up to allow multiple sessions to hit the repo at the same time.
    */
-  public static synchronized ClassPathRepositoryManager getClassPathRepositoryManager(String data, String defaultRole) {
+  public static synchronized ClassPathRepositoryManager getClassPathRepositoryManager(String data, String defaultRole, ScopedRepo sessionRegistry) {
     if (ref == null)
       // it's ok, we can call this constructor
-      ref = new ClassPathRepositoryManager(data, defaultRole);
+      ref = new ClassPathRepositoryManager(data, defaultRole, sessionRegistry);
     return ref;
   }
 
@@ -905,18 +911,28 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     return new File(getDatadir()+filename);
   }
 
-  private static HttpSession getSession() {
+
+  private HttpSession getSession() {
+
+    try{
+      HttpSession s = sessionRegistry.getSession();
+      String id = s.getId();
+      return s;
+    }
+    catch (Exception e){
+      e.printStackTrace();
+    }
+
     ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-    return attr.getRequest().getSession(true); // true == allow create
+    HttpServletRequest req = attr.getRequest();
+    return req.getSession(false); // true == allow create
   }
 
-
   public String getDatadir() {
+    System.out.println("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     try {
-      //Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-      //String name = auth.getName(); //get logged in username
-       if(getSession().getAttribute("ORBIS_WORKSPACE_DIR") !=null){
-        String workspace = (String)getSession().getAttribute("ORBIS_WORKSPACE_DIR");
+      if(getSession().getAttribute(ORBIS_WORKSPACE_DIR) !=null){
+        String workspace = (String)getSession().getAttribute(ORBIS_WORKSPACE_DIR);
         workspace = cleanse(workspace);
         log.debug("Check "+append+"/"+workspace+"/ exists");
         if(!new File(append+"/"+workspace+"/").exists()){
@@ -925,6 +941,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
           }
 
         log.debug("Workspace directory set to:"+workspace);
+        System.out.println("I: " + append+"/"+workspace+"/");
+        System.out.println("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         return append+"/"+workspace+"/";
       }
       else{
@@ -933,6 +951,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
           this.bootstrap(append+"/unknown");
           this.start(userService);
         }
+        System.out.println("II: " + append+"/unknown/");
+        System.out.println("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         return append+"/unknown/";
       }
 
@@ -966,6 +986,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         e.printStackTrace();
       }
     }
+    System.out.println("III: " + append+"unknown/");
+    System.out.println("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     return append+"unknown/";
   }
 
