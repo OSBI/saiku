@@ -52,7 +52,7 @@ import javax.servlet.http.HttpSession;
  * A Datasource Manager for the Saiku Repository API layer.
  */
 public class RepositoryDatasourceManager implements IDatasourceManager {
-    private static final String ORBIS_WORKSPACE_DIR = "ORBIS_WORKSPACE_DIR";
+    private static final String ORBIS_WORKSPACE_DIR = "workspace";
     private final Map<String, SaikuDatasource> datasources =
             Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
 

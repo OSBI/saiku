@@ -63,7 +63,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  * Classpath Repository Manager for Saiku.
  */
 public class ClassPathRepositoryManager implements IRepositoryManager {
-  private static final String ORBIS_WORKSPACE_DIR = "ORBIS_WORKSPACE_DIR";
+  private static final String ORBIS_WORKSPACE_DIR = "workspace";
   private static final Logger log = LoggerFactory.getLogger(ClassPathRepositoryManager.class);
 
   private static ClassPathRepositoryManager ref;
