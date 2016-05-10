@@ -76,7 +76,7 @@
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="authorisationPredicate" ref="authorisationPredicate"/>
         <property name="l" ref="licenseUtilsBean"/>
-
+        <property name="orbisAuthEnabled" value="${orbis.auth.enabled}"/>
     </bean>
 
     <bean id="securityContextPersistenceFilter" class="org.springframework.security.web.context.SecurityContextPersistenceFilter"/>

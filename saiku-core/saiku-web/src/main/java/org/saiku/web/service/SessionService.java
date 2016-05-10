@@ -60,6 +60,7 @@ public class SessionService implements ISessionService {
 
 	private Boolean anonymous = false;
 	private ScopedRepo sessionRepo;
+	private Boolean orbisAuthEnabled = false;
 
 	public void setAllowAnonymous(Boolean allow) {
 		this.anonymous  = allow;
@@ -189,10 +190,13 @@ public class SessionService implements ISessionService {
 				sessionHolder.remove(p);
 			}
 		}
+
 		SecurityContextHolder.getContext().setAuthentication(null);
-		SecurityContextHolder.clearContext(); 
+		SecurityContextHolder.clearContext();
+
 		HttpSession session = req.getSession(false);
-		if (session != null) {
+
+		if (session != null && !orbisAuthEnabled) { // Just invalidate if not under orbis authentication workflow
 			session.invalidate();
 		}
 	}
@@ -265,5 +269,13 @@ public class SessionService implements ISessionService {
 
 	public void setSessionRepo(org.saiku.repository.ScopedRepo sessionRepo) {
 		this.sessionRepo = sessionRepo;
+	}
+
+	public Boolean isOrbisAuthEnabled() {
+		return orbisAuthEnabled;
+	}
+
+	public void setOrbisAuthEnabled(Boolean orbisAuthEnabled) {
+		this.orbisAuthEnabled = orbisAuthEnabled;
 	}
 }
