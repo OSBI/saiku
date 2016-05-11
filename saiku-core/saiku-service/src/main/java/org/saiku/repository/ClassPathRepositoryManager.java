@@ -927,6 +927,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
   public String getDatadir() {
     System.out.println("\n!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    System.out.println("\nClassPathRepositoryManager.getDatadir ");
     try {
       if(getSession().getAttribute(ORBIS_WORKSPACE_DIR) !=null){
         String workspace = (String)getSession().getAttribute(ORBIS_WORKSPACE_DIR);
