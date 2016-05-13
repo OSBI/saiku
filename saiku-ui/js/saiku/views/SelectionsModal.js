@@ -204,6 +204,7 @@ var SelectionsModal = Modal.extend({
 
     clear_search: function() {
         $(this.el).find('.filterbox').val('');
+        this.available_members = [];
         this.get_members();
     },
 

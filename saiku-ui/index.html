@@ -814,24 +814,24 @@ title="Drill across on cell"></a></li>
                 <% if (!option.calc) { %>
                     <li class="option_value">
                         <input type="checkbox" class="check_option"
-                            value="<%= encodeURIComponent(option.obj.uniqueName) %>" name="selections_checker"
+                            value="<%= encodeURIComponent(option.obj ? option.obj.uniqueName : option.uniqueName) %>" name="selections_checker"
                             id="selections_checker<%= counter %>"
-                            label="<%= encodeURIComponent(option.obj.caption) %>" />
-                            <label for="selections_checker<%= counter %>" class="caption"><%= option.obj.caption
+                            label="<%= encodeURIComponent(option.obj ? option.obj.caption : option.caption) %>" />
+                            <label for="selections_checker<%= counter %>" class="caption"><%= option.obj ? option.obj.caption : option.caption
                             %></label>
-                            <label for="selections_checker<%= counter %>" class="unique"><%= option.obj.uniqueName
+                            <label for="selections_checker<%= counter %>" class="unique"><%= option.obj ? option.obj.uniqueName : option.uniqueName
                             %></label>
                     </li>
                 <% } else { %>
                     <li class="option_value">
                         <input type="checkbox" class="check_option cmember"
-                            value="<%= encodeURIComponent(option.obj.uniqueName) %>" name="selections_checker"
+                            value="<%= encodeURIComponent(option.obj ? option.obj.uniqueName : option.uniqueName) %>" name="selections_checker"
                             id="selections_checker<%= counter %>"
-                            label="<%= encodeURIComponent(option.obj.caption) %>" />
+                            label="<%= encodeURIComponent(option.obj ? option.obj.caption : option.caption) %>" />
                             <label for="selections_checker<%= counter %>" class="caption" style="color: blue;"><%=
-                            option.obj.caption %></label>
+                            option.obj ? option.obj.caption : option.caption %></label>
                             <label for="selections_checker<%= counter %>" class="unique" style="color: blue;"><%=
-                            option.obj.uniqueName %></label>
+                            option.obj ? option.obj.uniqueName : option.uniqueName %></label>
                     </li>
                 <% } %>
             <% }); %>
