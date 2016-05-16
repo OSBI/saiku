@@ -37,6 +37,12 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
+                                    <groupId>bi.meteorite</groupId>
+                                    <artifactId>licenseserver-core</artifactId>
+                                    <version>1.0-SNAPSHOT</version>
+                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
+                                </artifactItem>
+                                <artifactItem>
                                     <groupId>org.mozilla</groupId>
                                     <artifactId>rhino</artifactId>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
