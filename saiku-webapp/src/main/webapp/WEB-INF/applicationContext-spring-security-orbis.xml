@@ -16,6 +16,19 @@
         <security:authentication-provider ref="daoAuthenticationProvider" />
     </security:authentication-manager>
 
+    <!-- Custom login configuration -->
     <bean id="daoAuthenticationProvider" class="org.saiku.web.service.OrbisAuthenticationProvider"/>
+
+    <!-- Custom logout configuration -->
+    <bean id="orbisLogoutHandler" class="org.saiku.web.service.OrbisLogoutHandler"/>
+    <bean id="logoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+        <constructor-arg index="0" value="/saiku/session/login" />
+        <constructor-arg index="1">
+            <list>
+                <ref bean="orbisLogoutHandler" />
+            </list>
+        </constructor-arg>
+        <property name="filterProcessesUrl" value="/saiku/session/logout" />
+    </bean>
 
 </beans>
