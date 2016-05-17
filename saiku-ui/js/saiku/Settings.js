@@ -122,8 +122,8 @@ var Settings = {
     SHOW_REFRESH_NONADMIN: false,
     EMPTY_VALUE_CHARACTER: '-',
 	ORBIS_AUTH: {
-		enabled: true,
-		cookieName: 'aardvark'
+		enabled: false,
+		cookieName: 'SAIKU_AUTH_PRINCIPAL'
 	}
 };
 

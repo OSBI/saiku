@@ -251,6 +251,10 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
     var rowContent = "";
     var data = allData.cellset;
 
+    var newRowContent = '';
+    var arrRowData = [];
+    var objRowData = [];
+
     var table = data ? data : [];
     var colSpan;
     var colValue;
@@ -416,7 +420,34 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
                 rowContent += '<th class="' + cssclass + '" ' + (colspan > 0 ? ' colspan="' + colspan + '"' : "") + tipsy + '>' + value + '</th>';
             }
             else if (header.type === "ROW_HEADER_HEADER") {
+                var hierName = function(data) {
+                    var hier = data.properties.hierarchy;
+                    var name = hier.replace(/[\[\]]/gi, '').split('.')[1]
+                        ? hier.replace(/[\[\]]/gi, '').split('.')[1]
+                        : hier.replace(/[\[\]]/gi, '').split('.')[0];
+
+                    return name;
+                };
+                var arrPosRowData = [];
+
+                if (_.contains(arrRowData, header.value)) {
+                    for (var i = 0; i < arrRowData.length; i++) {
+                        if (arrRowData[i] === header.value) {
+                            arrPosRowData.push(i);
+                        }
+                    }
+
+                    arrPosRowData.push(col);
+                }
+
                 rowContent += '<th class="row_header">' + (wrapContent ? '<div>' + header.value + '</div>' : header.value) + '</th>';
+                
+                arrRowData.push(header.value);
+                objRowData.push({
+                    name: header.value,
+                    hierName: hierName(header) + '/' + header.value
+                });
+                
                 isHeaderLowestLvl = true;
                 processedRowHeader = true;
                 lowestRowLvl = col;
@@ -426,6 +457,28 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
                         rowGroups[group] = [];
                     }
                     rowGroups[group].push(header.properties.level);
+                }
+
+                if (arrPosRowData.length > 0) {
+                    var aux = 0;
+
+                    rowContent = '<tr>';
+
+                    if (row === 0) {
+                        rowContent = '<thead>' + rowContent;
+                    }
+
+                    for (var i = 0; i < objRowData.length; i++) {
+                        if (arrPosRowData[aux] === i) {
+                            newRowContent += '<th class="row_header">' + (wrapContent ? '<div>' + objRowData[i].hierName + '</div>' : objRowData[i].hierName) + '</th>';
+                            aux += 1;
+                        }
+                        else {
+                            newRowContent += '<th class="row_header">' + (wrapContent ? '<div>' + objRowData[i].name + '</div>' : objRowData[i].name) + '</th>';
+                        }
+                    }
+
+                    rowContent += newRowContent;
                 }
             } // If the cell is a normal data cell
             else if (header.type === "DATA_CELL") {
