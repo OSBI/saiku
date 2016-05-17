@@ -64,57 +64,36 @@
 	</session-config>
 
     <!-- BEGIN - Hazelcast Filter -->
-    <filter>
+<!--    <filter>
         <filter-name>hazelcast-filter</filter-name>
-        <!--        <filter-class>com.hazelcast.web.WebFilter</filter-class>-->
+        &lt;!&ndash;        <filter-class>com.hazelcast.web.WebFilter</filter-class>&ndash;&gt;
         <filter-class>com.hazelcast.web.spring.SpringAwareWebFilter</filter-class>
 
-        <!--
-            Name of the distributed map storing
-            your web session objects
-        -->
         <init-param>
             <param-name>map-name</param-name>
             <param-value>my-sessions</param-value>
         </init-param>
-        <!--
-            How is your load-balancer configured?
-            stick-session means all requests of a session
-            is routed to the node where the session is first created.
-            This is excellent for performance.
-            If sticky-session is set to false, when a session is updated
-            on a node, entry for this session on all other nodes is invalidated.
-            You have to know how your load-balancer is configured before
-            setting this parameter. Default is true.
-        -->
+
         <init-param>
             <param-name>sticky-session</param-name>
             <param-value>false</param-value>
         </init-param>
-        <!--
-            Name of session id cookie
-        -->
+
         <init-param>
             <param-name>cookie-name</param-name>
             <param-value>SAIKU_AUTH_PRINCIPAL</param-value>
         </init-param>
-        <!--
-            Should cookie only be sent using a secure protocol? Default is false.
-        -->
+
         <init-param>
             <param-name>cookie-secure</param-name>
             <param-value>false</param-value>
         </init-param>
-        <!--
-            Should HttpOnly attribute be set on cookie ? Default is false.
-        -->
+
         <init-param>
             <param-name>cookie-http-only</param-name>
             <param-value>false</param-value>
         </init-param>
-        <!--
-            Are you debugging? Default is false.
-        -->
+
         <init-param>
             <param-name>debug</param-name>
             <param-value>true</param-value>
@@ -130,17 +109,17 @@
             <param-name>shutdown-on-destroy</param-name>
             <param-value>true</param-value>
         </init-param>
-    </filter>
+    </filter>-->
 
 
-    <filter-mapping>
+    <!--<filter-mapping>
         <filter-name>hazelcast-filter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
-
+-->
 
     <!-- BEGIN - Filter Definition --> 
 	<filter>
@@ -148,7 +127,7 @@
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
     <!-- The above filter is for Orbis / Hazelcast token based authentication -->
-    <filter>
+   <!-- <filter>
         <filter-name>hazelcastAuthFilter</filter-name>
         <filter-class>org.saiku.web.service.HazelcastAuthFilter</filter-class>
         <init-param>
@@ -163,13 +142,13 @@
             <param-name>baseWorkspaceDir</param-name>
             <param-value>../../repository/data</param-value>
         </init-param>
-    </filter>
+    </filter>-->
 
     <!-- END - Filter Definition -->
 
     <!-- BEGIN - Filter Mapping -->
     <!-- The above filter mapping is for Orbis / Hazelcast token based authentication -->
-    <filter-mapping>
+    <!--<filter-mapping>
         <filter-name>hazelcast-filter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>FORWARD</dispatcher>
@@ -179,7 +158,7 @@
     <filter-mapping>
         <filter-name>hazelcastAuthFilter</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    </filter-mapping>-->
 	<filter-mapping>
 		<filter-name>org.springframework.security.filterChainProxy</filter-name>
 		<url-pattern>/*</url-pattern>
