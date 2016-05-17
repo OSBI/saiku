@@ -50,10 +50,10 @@
 </div>
 
 <!--
-<script type="text/javascript" src="https://www.google.com/jsapi" defer></script>
-<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization&sensor=false&callback=initialize" defer></script>
-<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css">
-<script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+<script type="text/javascript" src="//www.google.com/jsapi" defer></script>
+<script src="//maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization&sensor=false&callback=initialize" defer></script>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
 -->
 
 <!--MAP PLACEHOLDER-->
@@ -953,6 +953,9 @@ title="Drill across on cell"></a></li>
 </ul>
 </script>
 <script type="text/javascript" src="js/ga.js"></script>
-<script src="http://localhost:35729/livereload.js"></script>
+<script>document.write('<script src="//'
+    + (location.host || 'localhost').split(':')[0]
+    + ':35729/livereload.js"></'
+    + 'script>')</script>
 </body>
 </html>
