@@ -366,8 +366,9 @@ class Acl2 {
   // File based methods
   public void serialize(File n) {
     try {
+      File f = new File(n, "acl.json");
       ObjectMapper mapper = new ObjectMapper();
-      mapper.writeValue(n, acl);
+      mapper.writeValue(f, acl);
     } catch (Exception e) {
       LOG.info("Error while writing ACL files at path: " + n.getPath(), e.getCause());
     }
@@ -404,7 +405,7 @@ class Acl2 {
     List<AclMethod> acls = getMethods(new File(relativePath), user, roles);
     return acls.contains(AclMethod.READ);
   }
-  
+
   @NotNull
   public List<AclMethod> getMethods(@NotNull File file, String username, @NotNull List<String> roles) {
     try {
@@ -414,7 +415,7 @@ class Acl2 {
 
       try {
         TypeReference ref = new TypeReference<Map<String, AclEntry>>() { };
-        aclData = mapper.readValue(file, ref);
+        aclData = mapper.readValue(new File(file, "acl.json"), ref);
         entry = aclData.get(file.getPath());
       } catch (Exception e) {
         LOG.debug("Exception: " + file.getPath(), e.getCause());
