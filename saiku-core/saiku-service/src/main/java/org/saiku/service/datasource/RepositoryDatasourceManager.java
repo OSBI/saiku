@@ -59,6 +59,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public IConnectionManager connectionManager;
     private ScopedRepo sessionRegistry;
+    private boolean workspaces;
 
     public void setConnectionManager(IConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
@@ -82,15 +83,16 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String separator="/";
     public void load() {
         Properties ext = checkForExternalDataSourceProperties();
-        if(type.equals("jackrabbit")) {
+        if(type.equals("classpath")){
+            separator="/";
+
+            irm = ClassPathRepositoryManager.getClassPathRepositoryManager(datadir, defaultRole, sessionRegistry, workspaces);
+        }
+        else {
             irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopasswordprovider.getPassword(),
                     oldpassword, defaultRole);
         }
-        else{
-            separator="/";
 
-            irm = ClassPathRepositoryManager.getClassPathRepositoryManager(datadir, defaultRole, sessionRegistry);
-        }
         try {
             irm.start(userService);
             this.saveInternalFile("etc"+separator+".repo_version", "d20f0bea-681a-11e5-9d70-feff819cdc9f", null);
@@ -653,19 +655,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String getworkspacedir() {
 
         try {
-           /* Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String name = auth.getName(); //get logged in username
-            if (name.equals("admin")) {
-                return "adminws/";
-
-            } else if (name.equals("smith")) {
-                return "userws/";
-
-            } else {
-                return "unknown";
-            }*/
-
-            if(getSession().getAttribute(ORBIS_WORKSPACE_DIR) !=null){
+            if(this.workspaces && getSession().getAttribute(ORBIS_WORKSPACE_DIR) !=null){
                 String workspace = (String)getSession().getAttribute(ORBIS_WORKSPACE_DIR);
                 if(!workspace.equals("")){
                     workspace = cleanse(workspace);
@@ -673,9 +663,12 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 log.debug("Workspace directory set to:"+workspace);
                 return workspace;
             }
-            else{
+            else if(this.workspaces){
                 log.debug("Workspace directory set to: unknown/");
                 return "unknown/";
+            }
+            else{
+                return "";
             }
 
         }
@@ -823,5 +816,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
 
+    public void setWorkspaces(String workspaces) {
+        this.workspaces = Boolean.parseBoolean(workspaces);
+    }
 }
 

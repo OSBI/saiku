@@ -49,6 +49,7 @@
         <!--<property name="oldRepoPassword" value="sa!kuanalyt!cs"/>-->
         <property name="type" value="classpath"/>
         <property name="sessionRegistry" ref="sessionRepo"/>
+        <property name="workspaces" value="false"/>
     </bean>
 
     <bean id="repoPasswordProviderBean" class="org.saiku.service.util.security.authentication.SimplePasswordProvider">
