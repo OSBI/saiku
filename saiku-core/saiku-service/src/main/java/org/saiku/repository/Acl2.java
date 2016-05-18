@@ -363,32 +363,139 @@ class Acl2 {
     return false;
   }
 
-
-
+  // File based methods
   public void serialize(File n) {
+    try {
+      File f = new File(n, "acl.json");
+      ObjectMapper mapper = new ObjectMapper();
+      mapper.writeValue(f, acl);
+    } catch (Exception e) {
+      LOG.info("Error while writing ACL files at path: " + n.getPath(), e.getCause());
+    }
   }
 
   public boolean canWrite(File node, String user, List<String> roles) {
-    return false;
+    if (node == null) {
+      return false;
+    }
+    List<AclMethod> acls = getMethods(node, user, roles);
+    return acls.contains(AclMethod.WRITE);
   }
 
   public boolean canRead(File node, String user, List<String> roles) {
-    return true;
+    if (node == null) {
+      return false;
+    }
+    List<AclMethod> acls = getMethods(node, user, roles);
+    return acls.contains(AclMethod.READ);
   }
 
-  public boolean canGrant(File node, String username, List<String> roles) {
-    return true;
+  public boolean canGrant(File node, String user, List<String> roles) {
+    if (node == null) {
+      return false;
+    }
+    List<AclMethod> acls = getMethods(node, user, roles);
+    return acls.contains(AclMethod.GRANT);
   }
 
-  public boolean canRead(String relativePath, String username, List<String> roles) {
-    return true;
+  public boolean canRead(String relativePath, String user, List<String> roles) {
+    if (relativePath == null) {
+      return false;
+    }
+    List<AclMethod> acls = getMethods(new File(relativePath), user, roles);
+    return acls.contains(AclMethod.READ);
   }
-
 
   @NotNull
-  public List<AclMethod> getMethods(@NotNull String node, String username, @NotNull List<String> roles) {
+  public List<AclMethod> getMethods(@NotNull File file, String username, @NotNull List<String> roles) {
+    try {
+      ObjectMapper mapper = new ObjectMapper();
+      AclEntry entry = null;
+      Map<String, AclEntry> aclData = new TreeMap<>();
 
-    return null;
+      try {
+        TypeReference ref = new TypeReference<Map<String, AclEntry>>() { };
+        aclData = mapper.readValue(new File(file, "acl.json"), ref);
+        entry = aclData.get(file.getPath());
+      } catch (Exception e) {
+        LOG.debug("Exception: " + file.getPath(), e.getCause());
+      }
+
+      AclMethod method;
+
+      if (file.getPath().startsWith("..")) {
+        return getAllAcls(AclMethod.NONE);
+      }
+      if (isAdminRole(roles)) {
+        return getAllAcls(AclMethod.GRANT);
+      }
+
+      if (entry != null) {
+        switch (entry.getType()) {
+          case PRIVATE:
+            if (!entry.getOwner().equals(username)) {
+              method = AclMethod.NONE;
+            } else {
+              method = AclMethod.GRANT;
+            }
+            break;
+          case SECURED:
+            // check user permission
+            List<AclMethod> allMethods = new ArrayList<>();
+
+            if (StringUtils.isNotBlank(entry.getOwner()) && entry.getOwner().equals(username)) {
+              allMethods.add(AclMethod.GRANT);
+            }
+
+            List<AclMethod> userMethods =
+                entry.getUsers() != null && entry.getUsers().containsKey(username)
+                    ? entry.getUsers().get(username) : new ArrayList<AclMethod>();
+
+            List<AclMethod> roleMethods = new ArrayList<>();
+            for (String role : roles) {
+              List<AclMethod> r =
+                  entry.getRoles() != null && entry.getRoles().containsKey(role)
+                      ? entry.getRoles().get(role) : new ArrayList<AclMethod>();
+              roleMethods.addAll(r);
+            }
+
+            allMethods.addAll(userMethods);
+            allMethods.addAll(roleMethods);
+
+            if (allMethods.size() == 0) {
+              // no role nor user acl
+              method = AclMethod.NONE;
+            } else {
+              // return the strongest role
+              method = AclMethod.max(allMethods);
+            }
+
+            break;
+          default:
+            // PUBLIC ACCESS
+            method = AclMethod.WRITE;
+            break;
+        }
+      } else {
+        if (file.getParentFile() == null) {
+          method = AclMethod.NONE;
+        } else if (file.getParentFile().getName().equals("/")) {
+          return getAllAcls(rootMethod);
+        } else {
+          List<AclMethod> parentMethods = getMethods(file.getParentFile(), username, roles);
+          method = AclMethod.max(parentMethods);
+        }
+      }
+
+      //  String parentPath = repoRoot
+      return getAllAcls(method);
+    } catch (Exception e) {
+      LOG.debug("Error", e.getCause());
+    }
+
+    List<AclMethod> noMethod = new ArrayList<>();
+    noMethod.add(AclMethod.NONE);
+    return noMethod;
   }
 
 }
