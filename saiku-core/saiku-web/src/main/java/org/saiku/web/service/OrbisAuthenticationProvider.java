@@ -24,6 +24,11 @@ public class OrbisAuthenticationProvider implements AuthenticationProvider {
   }
 
   private static UserDetails createUserByUsername(String username) {
-    return new User(username, username, true, true, true, true, AuthorityUtils.createAuthorityList("ROLE_USER", "ROLE_ADMIN"));
+    if(username != "admin") {
+      return new User(username, username, true, true, true, true, AuthorityUtils.createAuthorityList("ROLE_USER", "ROLE_ADMIN", "ROLE_ORBIS"));
+    }
+    else{
+      return new User(username, username, true, true, true, true, AuthorityUtils.createAuthorityList("ROLE_USER", "ROLE_ADMIN"));
+    }
   }
 }

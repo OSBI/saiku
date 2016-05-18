@@ -6,6 +6,7 @@ import java.util.Date;
  * Created by bugg on 18/03/14.
  */
 public class SaikuLicense2 extends AbstractLicense {
+  private static final long serialVersionUID = -2256679434791039655L;
 
   private int memoryLimit;
   private String hostname;

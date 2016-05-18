@@ -11,6 +11,8 @@ import bi.meteorite.license.SaikuLicense;
 import bi.meteorite.license.SaikuLicense2;
 
 import org.saiku.service.datasource.IDatasourceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,6 +29,7 @@ import javax.jcr.RepositoryException;
  * Created by bugg on 01/07/14.
  */
 public class LicenseUtils extends org.saiku.LicenseUtils {
+  private static final Logger log = LoggerFactory.getLogger(LicenseUtils.class);
 
   private IDatasourceManager repositoryDatasourceManager;
   private String adminuser;
@@ -85,7 +88,7 @@ public class LicenseUtils extends org.saiku.LicenseUtils {
       try {
         license = in.readObject();
       } catch (ClassNotFoundException e) {
-        e.printStackTrace();
+        log.debug("license not read from stream");
       }
       return license;
     }

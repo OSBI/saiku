@@ -194,7 +194,7 @@ public class PentahoSessionService implements ISessionService {
 				if (sl != null) try {
 					l.validateLicense();
 				} catch (RepositoryException | IOException | ClassNotFoundException e) {
-					e.printStackTrace();
+					log.error("Exception thrown when validating license", e);
 				}
 				Object p = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 				if (!sessionHolder.containsKey(p)) {
@@ -209,12 +209,12 @@ public class PentahoSessionService implements ISessionService {
 
 			} catch (Exception e) {
 				if(e instanceof LicenseVersionExpiredException){
-					log.error("License is for wrong version. Please update your license http://licensing.meteorite.bi");
+					log.error("License is for wrong version. Please update your license http://licensing.meteorite.bi", e);
 					throw new Exception("License for wrong version please update your free license(http://licensing"
 										+ ".meteorite.bi)");
 				}
 				else {
-					log.error("No license found, please fetch a free license from http://licensing.meteorite.bi");
+					log.error("No license found, please fetch a free license from http://licensing.meteorite.bi", e);
 					throw new Exception("No license found, please fetch a free license from http://licensing.meteorite"
 										+ ".bi and move it to: pentaho-solutions/system/saiku/license.lic");
 				}
