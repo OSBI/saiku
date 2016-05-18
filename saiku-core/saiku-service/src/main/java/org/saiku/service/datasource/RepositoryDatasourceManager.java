@@ -88,7 +88,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         if (type.equals("classpath")) {
             separator = "/";
 
-            irm = ClassPathRepositoryManager.getClassPathRepositoryManager(datadir, defaultRole, sessionRegistry, workspaces);
+            irm = ClassPathRepositoryManager.getClassPathRepositoryManager(cleanse(datadir), defaultRole, sessionRegistry, workspaces);
         } else {
             irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopasswordprovider.getPassword(),
                     oldpassword, defaultRole);
@@ -618,8 +618,6 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
     public String getDatadir() {
-        System.out.println("\n********************************************");
-        System.out.println("getDatadir");
 
         try {
             if (getSession().getAttribute(ORBIS_WORKSPACE_DIR) != null) {
@@ -629,18 +627,15 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 }
                 log.debug("Workspace directory set to:" + datadir + workspace);
                 System.out.println("I: " + datadir + "/" + workspace);
-                return datadir + "/" + workspace;
+                return cleanse(datadir) + workspace;
             } else {
                 log.debug("Workspace directory set to:" + datadir + "unknown/");
                 System.out.println("II: " + datadir + "/unknown");
-                return datadir + "/" + "unknown/";
+                return cleanse(datadir) + "unknown/";
             }
 
         } catch (Exception e) {
-            System.out.println("III: /unknown/");
-            return datadir + "/unknown/";
-        } finally {
-            System.out.println("********************************************\n");
+            return cleanse(datadir) + "/unknown/";
         }
     }
 
