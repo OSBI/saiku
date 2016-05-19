@@ -126,7 +126,7 @@ var SelectionsModal = Modal.extend({
 
                 }
             }
-            $(this.el).find('.parameter').removeClass('hide');
+            $(this.el).find('.parameter').removeClass('hidden');
         }
 
 
