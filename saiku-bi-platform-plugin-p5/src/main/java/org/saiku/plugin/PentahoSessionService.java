@@ -15,6 +15,9 @@
  */
 package org.saiku.plugin;
 
+import org.pentaho.platform.api.engine.ILogoutListener;
+import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.saiku.plugin.util.PentahoAuditHelper;
 import org.saiku.service.ISessionService;
 
@@ -78,9 +81,33 @@ public class PentahoSessionService implements ISessionService {
 		this.authenticationManager = auth;
 	}
 
+	public PentahoSessionService() {
+		PentahoSystem.addLogoutListener(new ILogoutListener() {
+
+			@Override
+			public void onLogout( IPentahoSession pentahoSession ) {
+				System.out.println("processing pentaho logout");
+				UUID uuid = pah.startAudit("Saiku", "Logout", this.getClass().getName(), null, null, "Attempted Logout", getLogger
+						());
+				if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
+					Object p = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+					if (sessionHolder.containsKey(p)) {
+						sessionHolder.remove(p);
+					}
+				}
+				try {
+					pah.endAudit("Saiku", "Logout Successful", this.getClass().getName(), null, null,
+							getLogger(), (long) 1, uuid, (long) 1);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} );
+	}
+
 	/* (non-Javadoc)
-	 * @see org.saiku.web.service.ISessionService#login(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String)
-	 */
+         * @see org.saiku.web.service.ISessionService#login(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String)
+         */
 	public Map<String, Object> login(HttpServletRequest req, String username, String password ) {
 	  pah.startAudit("Saiku", "Login", this.getClass().getName(), this.toString(), this.toString(), null, new
 		  SimpleLogger(
