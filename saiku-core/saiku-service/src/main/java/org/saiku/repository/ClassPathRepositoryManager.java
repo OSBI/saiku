@@ -792,7 +792,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
 
                 if (acl.canRead(relativePath, username, roles)) {
-                    List<AclMethod> acls = acl.getMethods(relativePath, username, roles);
+                    List<AclMethod> acls = acl.getMethods(new File(relativePath), username, roles);
                     if (file.isFile()) {
                         if (!fileType.isEmpty()) {
                             for (String ft : fileType) {
