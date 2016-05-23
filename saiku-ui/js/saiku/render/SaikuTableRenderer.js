@@ -24,6 +24,9 @@ SaikuTableRenderer.prototype.render = function(data, options) {
         if (this._data == null || (this._data.cellset && this._data.cellset.length === 0)) {
             return;
         }
+
+        this.hideEmpty = this._options.hideEmpty;
+
         if (this._options.htmlObject) {
 //            $(this._options.htmlObject).stickyTableHeaders("destroy");
 
@@ -311,7 +314,9 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
             }
         }
 
+        rowWithOnlyEmptyCells = true;
         rowContent = "<tr>";
+        var header = null;
 
         if ( row === 0) {
             rowContent = "<thead>" + rowContent;
@@ -319,7 +324,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 
         for (var col = 0, colLen = table[row].length; col < colLen; col++) {
             var colShifted = col - allData.leftOffset;
-            var header = data[row][col];
+            header = data[row][col];
 
             if (header.type === "COLUMN_HEADER") {
                 isColHeader = true;
@@ -503,6 +508,10 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
                     arrow = "<img height='10' width='10' style='padding-left: 5px' src='./images/arrow-" + header.properties.arrow + ".gif' border='0'>";
                 }
 
+                if (val !== '-' && val !== '') {
+                    rowWithOnlyEmptyCells = false;
+                }
+
                 rowContent += '<td class="data" ' + color + '>'
                         + (wrapContent ? '<div class="datadiv" alt="' + header.properties.raw + '" rel="' + header.properties.position + '">' : "")
                         + val + arrow 
@@ -512,6 +521,11 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
             }
         }
         rowContent += "</tr>";
+
+        if (options.hideEmpty && header.type === "DATA_CELL" && rowWithOnlyEmptyCells) {
+            rowContent = '';
+        }
+
         var totals = "";
         if (totalsLists[COLUMNS] && rowShifted >= 0) {
             totals += genTotalHeaderRowCells(rowShifted + 1, scanSums, scanIndexes, totalsLists, wrapContent);
