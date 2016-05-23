@@ -101,7 +101,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             log.error("Could not start repo", e);
         }
         datasources.clear();
-        try {
+
 
             List<DataSource> exporteddatasources = null;
             try {
@@ -111,100 +111,109 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             }
 
             if (exporteddatasources != null) {
-                for (DataSource file : exporteddatasources) {
-                    if (file.getName() != null && file.getType() != null) {
-                        Properties props = new Properties();
-                        if (file.getDriver() != null) {
-                            props.put("driver", file.getDriver());
-                        } else if (file.getPropertyKey() != null && ext.containsKey("datasource." + file.getPropertyKey() + ".driver")) {
-                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".driver");
-                            props.put("driver", p);
-                        }
-                        if (file.getPropertyKey() != null &&
-                                ext.containsKey("datasource." + file.getPropertyKey() + ".location")) {
-                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".location");
-                            if (ext.containsKey("datasource." + file.getPropertyKey() + ".schemaoverride")) {
-                                String[] spl = p.split(";");
-                                spl[1] = "Catalog=mondrian://" + file.getSchema();
-                                StringBuilder sb = new StringBuilder();
-                                for (String str : spl) {
-                                    sb.append(str + ";");
-                                }
-                                props.put("location", sb.toString());
-                            } else {
-                                props.put("location", p);
+                int i = 0;
+                while(i < exporteddatasources.size()){
+                    DataSource file = exporteddatasources.get(i);
+                    try {
+                        if (file.getName() != null && file.getType() != null) {
+                            Properties props = new Properties();
+                            if (file.getDriver() != null) {
+                                props.put("driver", file.getDriver());
+                            } else if (file.getPropertyKey() != null && ext.containsKey("datasource." + file.getPropertyKey() + ".driver")) {
+                                String p = ext.getProperty("datasource." + file.getPropertyKey() + ".driver");
+                                props.put("driver", p);
                             }
-                        } else if (file.getLocation() != null) {
-                            props.put("location", file.getLocation());
+                            if (file.getPropertyKey() != null &&
+                                    ext.containsKey("datasource." + file.getPropertyKey() + ".location")) {
+                                String p = ext.getProperty("datasource." + file.getPropertyKey() + ".location");
+                                if (ext.containsKey("datasource." + file.getPropertyKey() + ".schemaoverride")) {
+                                    String[] spl = p.split(";");
+                                    spl[1] = "Catalog=mondrian://" + file.getSchema();
+                                    StringBuilder sb = new StringBuilder();
+                                    for (String str : spl) {
+                                        sb.append(str + ";");
+                                    }
+                                    props.put("location", sb.toString());
+                                } else {
+                                    props.put("location", p);
+                                }
+                            } else if (file.getLocation() != null) {
+                                props.put("location", file.getLocation());
+                            }
+                            if (file.getUsername() != null && file.getPropertyKey() == null) {
+                                props.put("username", file.getUsername());
+                            } else if (file.getPropertyKey() != null &&
+                                    ext.containsKey("datasource." + file.getPropertyKey() + ".username")) {
+                                String p = ext.getProperty("datasource." + file.getPropertyKey() + ".username");
+                                props.put("username", p);
+                            }
+                            if (file.getPassword() != null && file.getPropertyKey() == null) {
+                                props.put("password", file.getPassword());
+                            } else if (file.getPropertyKey() != null &&
+                                    ext.containsKey("datasource." + file.getPropertyKey() + ".password")) {
+                                String p = ext.getProperty("datasource." + file.getPropertyKey() + ".password");
+                                props.put("password", p);
+                            }
+                            if (file.getPath() != null) {
+                                props.put("path", file.getPath());
+                            } else if (file.getPropertyKey() != null &&
+                                    ext.containsKey("datasource." + file.getPropertyKey() + ".path")) {
+                                String p = ext.getProperty("datasource." + file.getPropertyKey() + ".path");
+                                props.put("path", p);
+                            }
+                            if (file.getId() != null) {
+                                props.put("id", file.getId());
+                            }
+                            if (file.getSecurityenabled() != null) {
+                                props.put("security.enabled", file.getSecurityenabled());
+                            } else if (file.getPropertyKey() != null &&
+                                    ext.containsKey("datasource." + file.getPropertyKey() + ".security.enabled")) {
+                                String p = ext.getProperty("datasource." + file.getPropertyKey() + ".security.enabled");
+                                props.put("security.enabled", p);
+                            }
+                            if (file.getSecuritytype() != null) {
+                                props.put("security.type", file.getSecuritytype());
+                            } else if (file.getPropertyKey() != null &&
+                                    ext.containsKey("datasource." + file.getPropertyKey() + ".security.type")) {
+                                String p = ext.getProperty("datasource." + file.getPropertyKey() + ".security.type");
+                                props.put("security.type", p);
+                            }
+                            if (file.getSecuritymapping() != null) {
+                                props.put("security.mapping", file.getSecuritymapping());
+                            } else if (file.getPropertyKey() != null &&
+                                    ext.containsKey("datasource." + file.getPropertyKey() + ".security.mapping")) {
+                                String p = ext.getProperty("datasource." + file.getPropertyKey() + ".security.mapping");
+                                props.put("security.mapping", p);
+                            }
+                            if (file.getAdvanced() != null) {
+                                props.put("advanced", file.getAdvanced());
+                            }
+                            if (file.getCsv() != null) {
+                                props.put("csv", file.getCsv());
+                            }
+                            if (file.getEnabled() != null) {
+                                props.put("enabled", file.getEnabled());
+                            }
+                            if (file.getPropertyKey() != null) {
+                                props.put("propertykey", file.getPropertyKey());
+                            }
+                            SaikuDatasource.Type t = SaikuDatasource.Type.valueOf(file.getType().toUpperCase());
+                            SaikuDatasource ds = new SaikuDatasource(file.getName(), t, props);
+                            datasources.put(file.getName(), ds);
                         }
-                        if (file.getUsername() != null && file.getPropertyKey() == null) {
-                            props.put("username", file.getUsername());
-                        } else if (file.getPropertyKey() != null &&
-                                ext.containsKey("datasource." + file.getPropertyKey() + ".username")) {
-                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".username");
-                            props.put("username", p);
-                        }
-                        if (file.getPassword() != null && file.getPropertyKey() == null) {
-                            props.put("password", file.getPassword());
-                        } else if (file.getPropertyKey() != null &&
-                                ext.containsKey("datasource." + file.getPropertyKey() + ".password")) {
-                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".password");
-                            props.put("password", p);
-                        }
-                        if (file.getPath() != null) {
-                            props.put("path", file.getPath());
-                        } else if (file.getPropertyKey() != null &&
-                                ext.containsKey("datasource." + file.getPropertyKey() + ".path")) {
-                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".path");
-                            props.put("path", p);
-                        }
-                        if (file.getId() != null) {
-                            props.put("id", file.getId());
-                        }
-                        if (file.getSecurityenabled() != null) {
-                            props.put("security.enabled", file.getSecurityenabled());
-                        } else if (file.getPropertyKey() != null &&
-                                ext.containsKey("datasource." + file.getPropertyKey() + ".security.enabled")) {
-                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".security.enabled");
-                            props.put("security.enabled", p);
-                        }
-                        if (file.getSecuritytype() != null) {
-                            props.put("security.type", file.getSecuritytype());
-                        } else if (file.getPropertyKey() != null &&
-                                ext.containsKey("datasource." + file.getPropertyKey() + ".security.type")) {
-                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".security.type");
-                            props.put("security.type", p);
-                        }
-                        if (file.getSecuritymapping() != null) {
-                            props.put("security.mapping", file.getSecuritymapping());
-                        } else if (file.getPropertyKey() != null &&
-                                ext.containsKey("datasource." + file.getPropertyKey() + ".security.mapping")) {
-                            String p = ext.getProperty("datasource." + file.getPropertyKey() + ".security.mapping");
-                            props.put("security.mapping", p);
-                        }
-                        if (file.getAdvanced() != null) {
-                            props.put("advanced", file.getAdvanced());
-                        }
-                        if (file.getCsv() != null) {
-                            props.put("csv", file.getCsv());
-                        }
-                        if (file.getEnabled() != null) {
-                            props.put("enabled", file.getEnabled());
-                        }
-                        if (file.getPropertyKey() != null) {
-                            props.put("propertykey", file.getPropertyKey());
-                        }
-                        SaikuDatasource.Type t = SaikuDatasource.Type.valueOf(file.getType().toUpperCase());
-                        SaikuDatasource ds = new SaikuDatasource(file.getName(), t, props);
-                        datasources.put(file.getName(), ds);
                     }
+                        catch(Exception e){
+                            //throw new SaikuServiceException("Failed to add datasource", e);
+                            log.error("Failed to add datasource", e);
+                        }
+                    i++;
+
+
                 }
             }
 
 
-        } catch (Exception e) {
-            throw new SaikuServiceException(e.getMessage(), e);
-        }
+
     }
 
     public Properties checkForExternalDataSourceProperties() {
