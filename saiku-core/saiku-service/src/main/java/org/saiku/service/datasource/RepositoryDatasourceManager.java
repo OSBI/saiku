@@ -253,12 +253,14 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         DataSource ds = new DataSource(datasource);
 
         if (ds.getCsv() != null && ds.getCsv().equals("true")) {
-            String s = this.getworkspacedir();
-            if (s.endsWith("/")) {
-                s = s.substring(0, s.length() - 1);
-            }
-            if (ds.getName().startsWith(s)) {
-                ds.setName(ds.getName().replace(s + "_", ""));
+            if(this.workspaces) {
+                String s = this.getworkspacedir();
+                if (s.endsWith("/")) {
+                    s = s.substring(0, s.length() - 1);
+                }
+                if (ds.getName().startsWith(s)) {
+                    ds.setName(ds.getName().replace(s + "_", ""));
+                }
             }
             String split[] = ds.getLocation().split("=");
             String loc = split[2];
@@ -619,23 +621,28 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public String getDatadir() {
 
-        try {
-            if (getSession().getAttribute(ORBIS_WORKSPACE_DIR) != null) {
-                String workspace = (String) getSession().getAttribute(ORBIS_WORKSPACE_DIR);
-                if (!workspace.equals("")) {
-                    workspace = cleanse(workspace);
+        if(this.type.equals("classpath")) {
+            try {
+                if (getSession().getAttribute(ORBIS_WORKSPACE_DIR) != null) {
+                    String workspace = (String) getSession().getAttribute(ORBIS_WORKSPACE_DIR);
+                    if (!workspace.equals("")) {
+                        workspace = cleanse(workspace);
+                    }
+                    log.debug("Workspace directory set to:" + datadir + workspace);
+                    System.out.println("I: " + datadir + "/" + workspace);
+                    return cleanse(datadir) + workspace;
+                } else {
+                    log.debug("Workspace directory set to:" + datadir + "unknown/");
+                    System.out.println("II: " + datadir + "/unknown");
+                    return cleanse(datadir) + "unknown/";
                 }
-                log.debug("Workspace directory set to:" + datadir + workspace);
-                System.out.println("I: " + datadir + "/" + workspace);
-                return cleanse(datadir) + workspace;
-            } else {
-                log.debug("Workspace directory set to:" + datadir + "unknown/");
-                System.out.println("II: " + datadir + "/unknown");
-                return cleanse(datadir) + "unknown/";
-            }
 
-        } catch (Exception e) {
-            return cleanse(datadir) + "/unknown/";
+            } catch (Exception e) {
+                return cleanse(datadir) + "/unknown/";
+            }
+        }
+        else{
+            return "/";
         }
     }
 
