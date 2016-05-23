@@ -40,7 +40,7 @@ For more information, see [Saiku](http://www.meteorite.bi).
 
 In order to run it locally you'll need a basic server setup.
 
-1. Install [NodeJS](http://nodejs.org/download/), if you don't have it yet.
+1. Install [NodeJS](https://nodejs.org/en/download/), if you don't have it yet.
 2. Install local dependencies:
 
   ```sh
