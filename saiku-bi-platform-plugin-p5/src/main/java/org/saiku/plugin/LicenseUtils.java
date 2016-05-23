@@ -25,7 +25,7 @@ import javax.jcr.RepositoryException;
 /**
  * Created by bugg on 01/07/14.
  */
-public class LicenseUtils extends org.saiku.LicenseUtils {
+public class LicenseUtils implements org.saiku.service.license.ILicenseUtils {
   private static final Logger log = LoggerFactory.getLogger(LicenseUtils.class);
 
   private IDatasourceManager repositoryDatasourceManager;
@@ -126,9 +126,9 @@ public class LicenseUtils extends org.saiku.LicenseUtils {
     Object l = getLicense();
 
     if (l instanceof SaikuLicense) {
-      ((SaikuLicense) l).validate(new Date(), getVersion());
+      ((SaikuLicense) l).validate(new Date(), getVersion(), false, false, true, false);
     } else if (l instanceof SaikuLicense2) {
-      ((SaikuLicense2) l).validate(new Date(), getVersion());
+      ((SaikuLicense2) l).validate(new Date(), getVersion(), false, false, true, false);
     } else {
       throw new LicenseException("Can't validate license unknown license type");
     }

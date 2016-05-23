@@ -6,9 +6,8 @@
 
 package org.saiku.web.rest.resources;
 
-import org.saiku.service.license.LicenseUtils;
+import org.saiku.service.license.ILicenseUtils;
 import org.saiku.database.Database;
-import org.saiku.license.LicenseException;
 import org.saiku.service.license.Base64Coder;
 import org.saiku.service.user.UserService;
 import org.saiku.web.rest.objects.UserList;
@@ -39,14 +38,14 @@ import javax.ws.rs.core.Response;
 @Path("/saiku/api/license")
 public class License {
 
-  private LicenseUtils licenseUtils;
+  private ILicenseUtils licenseUtils;
   private UserService userService;
 
-  public LicenseUtils getLicenseUtils() {
+  public ILicenseUtils getLicenseUtils() {
     return licenseUtils;
   }
 
-  public void setLicenseUtils(LicenseUtils licenseUtils) {
+  public void setLicenseUtils(ILicenseUtils licenseUtils) {
     this.licenseUtils = licenseUtils;
   }
 

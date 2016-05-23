@@ -20,7 +20,7 @@ import org.apache.commons.lang.StringUtils;
 
 import org.saiku.repository.ScopedRepo;
 import org.saiku.service.ISessionService;
-import org.saiku.service.license.LicenseUtils;
+import org.saiku.service.license.ILicenseUtils;
 
 import bi.meteorite.license.LicenseException;
 import bi.meteorite.license.SaikuLicense2;
@@ -39,12 +39,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.context.request.RequestContextHolder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -66,13 +68,13 @@ public class SessionService implements ISessionService {
 		this.anonymous  = allow;
 	}
 
-	private LicenseUtils l;
+	private ILicenseUtils l;
 
-	public LicenseUtils getL() {
+	public ILicenseUtils getL() {
 		return l;
 	}
 
-	public void setL(LicenseUtils l) {
+	public void setL(ILicenseUtils l) {
 		this.l = l;
 	}
 
@@ -91,7 +93,7 @@ public class SessionService implements ISessionService {
 	/* (non-Javadoc)
 	 * @see org.saiku.web.service.ISessionService#login(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String)
 	 */
-	public Map<String, Object> login(HttpServletRequest req, String username, String password ) throws Exception {
+	public Map<String, Object> login(HttpServletRequest req, String username, String password ) throws LicenseException {
 		Object sl = null;
 		String notice = null;
 		HttpSession session = ((HttpServletRequest)req).getSession(true);
@@ -100,33 +102,43 @@ public class SessionService implements ISessionService {
 		try {
 			sl = l.getLicense();
 		} catch (Exception e) {
-			throw new LicenseException("Could not find license, please get a free license from http://licensing"
-									   + ".meteorite.bi. You can upload it at http://server:8080/upload.html");
+			log.debug("Could not process license", e);
+			throw new LicenseException("Error fetching license. Get a free license from http://licensing.meteorite.bi. You can upload it at /upload.html");
 		}
 
 		if (sl != null) {
 
-			l.validateLicense();
+			try {
+				l.validateLicense();
+			} catch (RepositoryException | IOException | ClassNotFoundException e) {
+				log.debug("Repository Exception, couldn't get license", e);
+				throw new LicenseException("Error fetching license. Please check your logs.");
+			}
 
-			if (l.getLicense() instanceof SaikuLicense2) {
+			try {
+				if (l.getLicense() instanceof SaikuLicense2) {
 
-				if (authenticationManager != null) {
-					authenticate(req, username, password);
-				}
-				if (SecurityContextHolder.getContext() != null
-					&& SecurityContextHolder.getContext().getAuthentication() != null) {
-					Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                    if (authenticationManager != null) {
+                        authenticate(req, username, password);
+                    }
+                    if (SecurityContextHolder.getContext() != null
+                        && SecurityContextHolder.getContext().getAuthentication() != null) {
+                        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-					if (authorisationPredicate.isAuthorised(auth)) {
-						Object p = auth.getPrincipal();
-						createSession(auth, username, password);
-						return sessionHolder.get(p);
-					} else {
-						log.info(username + " failed authorisation. Rejecting login");
-						throw new RuntimeException("Authorisation failed for: " + username);
-					}
-				}
-				return new HashMap<>();
+                        if (authorisationPredicate.isAuthorised(auth)) {
+                            Object p = auth.getPrincipal();
+                            createSession(auth, username, password);
+                            return sessionHolder.get(p);
+                        } else {
+                            log.info(username + " failed authorisation. Rejecting login");
+                            throw new RuntimeException("Authorisation failed for: " + username);
+                        }
+                    }
+                    return new HashMap<>();
+                }
+			} catch (IOException | ClassNotFoundException | RepositoryException e) {
+				log.debug("Repository Exception, couldn't get license", e);
+				throw new LicenseException("Error fetching license. Please check your logs.");
 			}
 		}
 		return null;
