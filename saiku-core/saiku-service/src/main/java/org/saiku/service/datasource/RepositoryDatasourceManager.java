@@ -631,23 +631,28 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     public String getDatadir() {
 
         if(this.type.equals("classpath")) {
-            try {
-                if (getSession().getAttribute(ORBIS_WORKSPACE_DIR) != null) {
-                    String workspace = (String) getSession().getAttribute(ORBIS_WORKSPACE_DIR);
-                    if (!workspace.equals("")) {
-                        workspace = cleanse(workspace);
+            if(this.workspaces) {
+                try {
+                    if (getSession().getAttribute(ORBIS_WORKSPACE_DIR) != null) {
+                        String workspace = (String) getSession().getAttribute(ORBIS_WORKSPACE_DIR);
+                        if (!workspace.equals("")) {
+                            workspace = cleanse(workspace);
+                        }
+                        log.debug("Workspace directory set to:" + datadir + workspace);
+                        System.out.println("I: " + datadir + "/" + workspace);
+                        return cleanse(datadir) + workspace;
+                    } else {
+                        log.debug("Workspace directory set to:" + datadir + "unknown/");
+                        System.out.println("II: " + datadir + "/unknown");
+                        return cleanse(datadir) + "unknown/";
                     }
-                    log.debug("Workspace directory set to:" + datadir + workspace);
-                    System.out.println("I: " + datadir + "/" + workspace);
-                    return cleanse(datadir) + workspace;
-                } else {
-                    log.debug("Workspace directory set to:" + datadir + "unknown/");
-                    System.out.println("II: " + datadir + "/unknown");
-                    return cleanse(datadir) + "unknown/";
-                }
 
-            } catch (Exception e) {
-                return cleanse(datadir) + "/unknown/";
+                } catch (Exception e) {
+                    return cleanse(datadir) + "/unknown/";
+                }
+            }
+            else{
+                return cleanse(datadir);
             }
         }
         else{

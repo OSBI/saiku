@@ -450,12 +450,12 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         try {
             encoded = Files.readAllBytes(Paths.get(getDatadir() + s));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.debug("Missing file", e);
         }
         try {
             return new String(encoded, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.debug("Couldn't conert file", e);
         }
         return null;
     }
@@ -788,7 +788,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
             if (!file.isHidden()) {
                 String filename = file.getName();
-                String relativePath = file.getPath().substring(getDatadir().length() - 2, file.getPath().length());
+                String relativePath = file.getPath().substring(getDatadir().length() - 3, file.getPath().length());
 
 
                 if (acl.canRead(relativePath, username, roles)) {
