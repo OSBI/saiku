@@ -101,7 +101,7 @@ grunt watch
 * [Saiku Dev Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/dev)
 * [Saiku User Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/user)
 * [Stack Overflow](http://stackoverflow.com/questions/tagged/saiku)
-* [Freenode IRC - Channel: ##saiku](http://webchat.freenode.net/?randomnick=1&channels=%23%23saiku)
+* [Freenode IRC - Channel: ##saiku](http://webchat.freenode.net/?channels=##saiku)
 
 ## Browser Support
 
