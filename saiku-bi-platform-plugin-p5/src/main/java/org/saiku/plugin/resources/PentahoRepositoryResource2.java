@@ -112,10 +112,8 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 
 			String[] typeArray = type == null ? new String[]{""} : type.split(","); // The types may be comma separated
 			List<IRepositoryObject> result = new ArrayList<>();
+			result.addAll(getRepositoryObjects(access, root, typeArray, hidden));
 
-			for (String t : typeArray) {
-				result.addAll(getRepositoryObjects(access, root, t, hidden));
-			}
 
 			return result;
 		} catch (Exception e) {
@@ -378,11 +376,19 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 		}	
 	}
 
-	private List<IRepositoryObject> getRepositoryObjects(final IUserContentAccess root, String path, final String type, final Boolean hidden) {
+	private List<IRepositoryObject> getRepositoryObjects(final IUserContentAccess root, String path, final String[] type, final Boolean hidden) {
 		List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
-		IBasicFileFilter txtFilter = StringUtils.isBlank(type) ? null : new IBasicFileFilter() {
+		IBasicFileFilter txtFilter = type.length==0 ? null : new IBasicFileFilter() {
 			public boolean accept(IBasicFile file) {
-				return file.isDirectory() || file.getExtension().equals(type);
+				if(file.isDirectory()){
+					return true;
+				}
+				for(String t : type){
+					if(file.getExtension().equals(t)){
+						return true;
+					}
+				}
+				return false;
 			}
 		};
 		List<IBasicFile> files = new ArrayList<IBasicFile>();
