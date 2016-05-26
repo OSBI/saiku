@@ -215,7 +215,7 @@ var WorkspaceDropZone = Backbone.View.extend({
 
         var axisName = $(event.target).siblings('.fields_list_body').parent().attr('title');
         var axisData = this.workspace.query.helper.getAxis(axisName);
-        var len = axisData.hierarchies.length;
+        var len = axisData ? axisData.hierarchies.length : 0;
         var isRemovedParameter = false;
         var hierarchy;
         var level;
@@ -241,8 +241,8 @@ var WorkspaceDropZone = Backbone.View.extend({
             }
         }
 
-        if (isRemovedParameter || !Settings.ALLOW_PARAMETERS) {
-            if (axisName == "DETAILS") {
+        if (isRemovedParameter || !Settings.ALLOW_PARAMETERS || axisName === 'DETAILS') {
+            if (axisName === 'DETAILS') {
                 this.workspace.query.helper.clearMeasures();
             } else {
                 this.workspace.query.helper.clearAxis(axisName);
