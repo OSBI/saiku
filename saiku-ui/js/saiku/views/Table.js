@@ -333,6 +333,7 @@ var Table = Backbone.View.extend({
         this.clearOut();
         $(this.el).html('<table></table>');
         var contents = this.renderer.render(data, {
+            hideEmpty:          this.workspace.query.getProperty('saiku.olap.query.nonempty'),
             htmlObject:         $(this.el).find('table'),
             batch:              Settings.TABLE_LAZY,
             batchSize:          Settings.TABLE_LAZY_SIZE,
