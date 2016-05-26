@@ -106,6 +106,11 @@ public abstract class TotalAggregator {
   }
 
   public static TotalAggregator newInstanceByFunctionName( final String functionName ) {
-    return all.get( functionName ).create( );
+    if(functionName.equals("not")){
+     return null;
+    }
+    else {
+      return all.get(functionName).create();
+    }
   }
 }
