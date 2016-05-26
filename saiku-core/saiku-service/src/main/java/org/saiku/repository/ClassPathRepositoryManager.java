@@ -96,10 +96,16 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         if (session == null) {
 
             File f = new File(this.append + "/unknown");
+            File f2 = new File(this.append + "/etc");
 
             if (!f.exists()) {
                 f.mkdir();
             }
+
+            if (!f2.exists()) {
+                f2.mkdir();
+            }
+
 
             File n = this.createFolder(sep + "homes");
 
@@ -336,6 +342,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
 
     public Object saveInternalFile(Object file, String path, String type) throws RepositoryException {
+        File f = null;
         if (file == null) {
             int pos = path.lastIndexOf(sep);
             String filename = "." + sep + path.substring(pos + 1, path.length());
@@ -347,13 +354,22 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
             String filename = path;
 
-            File check = this.getNode(filename);
-            if (check.exists()) {
-                check.delete();
+            if(filename.equals("/etc/license.lic")){
+                File check = new File(append+filename);
+                if (check.exists()) {
+                    check.delete();
+                }
+                f = new File(append+filename);
             }
+            else {
+                File check = this.getNode(filename);
+                if (check.exists()) {
+                    check.delete();
+                }
 
 
-            File f = this.createNode(filename);
+                f = this.createNode(filename);
+            }
             FileWriter fileWriter;
             try {
                 fileWriter = new FileWriter(f);
@@ -445,12 +461,20 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
 
     public String getInternalFile(String s) throws RepositoryException {
-
         byte[] encoded = new byte[0];
-        try {
-            encoded = Files.readAllBytes(Paths.get(getDatadir() + s));
-        } catch (IOException e) {
-            log.debug("Missing file", e);
+        if(!s.equals("/etc/license.lic")) {
+            try {
+                encoded = Files.readAllBytes(Paths.get(getDatadir() + s));
+            } catch (IOException e) {
+                log.debug("Missing file", e);
+            }
+        }
+        else{
+            try {
+                encoded = Files.readAllBytes(Paths.get(append + s));
+            } catch (IOException e) {
+                log.debug("Missing file", e);
+            }
         }
         try {
             return new String(encoded, "UTF-8");
