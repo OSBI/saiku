@@ -107,7 +107,16 @@ var QueryToolbar = Backbone.View.extend({
                         this.workspace.query.setProperty('saiku.ui.render.type', c);
                     }
                     else {
-                        c = $(this.el).find('ul.chart li').not('.chart_editor').find('a.on').attr('href').replace('#', '');
+                        var type = $(this.el).find('ul.chart li').not('.chart_editor').find('a.on').attr('href');
+
+                        if (type) {
+                            c = type.replace('#', '');
+                        }
+                        else {
+                            // default
+                            c = 'stackedBar';
+                        }
+
                         this.workspace.query.setProperty('saiku.ui.render.type', c);
                     }
                 }
