@@ -121,6 +121,7 @@ var Settings = {
     SHOW_USER_MANAGEMENT: true,
     SHOW_REFRESH_NONADMIN: false,
     EMPTY_VALUE_CHARACTER: '-',
+    HIDE_EMPTY_ROWS: true,
 	ORBIS_AUTH: {
 		enabled: false,
 		cookieName: 'SAIKU_AUTH_PRINCIPAL'

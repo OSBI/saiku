@@ -326,6 +326,7 @@ var Table = Backbone.View.extend({
     },
 
     process_data: function(data) {
+        var hideEmptyRows = (Settings.HIDE_EMPTY_ROWS && this.workspace.query.getProperty('saiku.olap.query.nonempty'));
 
         this.workspace.processing.hide();
         this.workspace.adjust();
@@ -333,7 +334,7 @@ var Table = Backbone.View.extend({
         this.clearOut();
         $(this.el).html('<table></table>');
         var contents = this.renderer.render(data, {
-            hideEmpty:          this.workspace.query.getProperty('saiku.olap.query.nonempty'),
+            hideEmpty:          hideEmptyRows,
             htmlObject:         $(this.el).find('table'),
             batch:              Settings.TABLE_LAZY,
             batchSize:          Settings.TABLE_LAZY_SIZE,
