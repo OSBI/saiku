@@ -193,19 +193,26 @@ SaikuOlapQueryHelper.prototype.removeParameter = function(hierarchy, level) {
   }
 };
 
+var buildUniqueName = function(level, name) {
+  return level.hierarchy.name + ".[" + level.level.name + "].[" + name + "]";
+};
+
 SaikuOlapQueryHelper.prototype.addtoSelection = function(membername, level){
-  if(level.level.selection.members===undefined){
+  if(level.level.selection.members === undefined){
     level.selection.members = [];
   }
+
   var found = false;
   _.each(level.level.selection.members, function(m){
-    if(m.uniqueName==level.hierarchy.name+".["+level.level.name+"].["+membername+"]"){
+    var mUniqueName = buildUniqueName(level, m.name);
+    if (buildUniqueName(level, m.name) === buildUniqueName(level, membername)) {
       found = true;
     }
   });
+
   if(!found) {
     level.level.selection.members.push({
-      uniqueName: level.hierarchy.name + ".[" + level.level.name + "].[" + membername + "]",
+      uniqueName: buildUniqueName(level, membername),
       caption: membername
     })
   }
