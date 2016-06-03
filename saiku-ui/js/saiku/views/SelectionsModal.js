@@ -573,11 +573,11 @@ var SelectionsModal = Modal.extend({
 
     use_result_action: function() {
         this.use_result_option = !this.use_result_option;
-        //console.log(this.use_result_option);
         this.get_members();
     },
 
     save: function() {
+        this.query.updatedSelectionFromModal = true;
         var self = this;
         // Notify user that updates are in progress
         var $loading = $("<div>Saving...</div>");

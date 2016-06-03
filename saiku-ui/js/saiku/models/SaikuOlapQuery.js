@@ -185,6 +185,22 @@ SaikuOlapQueryHelper.prototype.getSelectionsForParameter = function(parameter){
   return m;
 };
 
+SaikuOlapQueryHelper.prototype.setSelectionsForParameter = function(parameter, selections){
+  var m;
+  var axes = this.model().queryModel.axes;
+  _.each(axes, function(a){
+    var hier = a.hierarchies;
+    _.each(hier, function(h){
+      _.each(h.levels, function(l){
+        if(l.selection && l.selection["parameterName"] && l.selection["parameterName"] === parameter){
+          l.selection.members = selections;
+          return false;
+        }
+      });
+    });
+  });
+};
+
 SaikuOlapQueryHelper.prototype.removeParameter = function(hierarchy, level) {
   hierarchy = this.getHierarchy(hierarchy);
   if (hierarchy && hierarchy.levels.hasOwnProperty(level)) {
@@ -327,7 +343,6 @@ SaikuOlapQueryHelper.prototype.removeMeasure = function(name) {
   var removeMeasure = _.findWhere(measures , { name: name });
   if (removeMeasure && _.indexOf(measures, removeMeasure) > -1) {
     measures = _.without(measures, removeMeasure);
-    //console.log(measures);
   }
 };
 
@@ -360,7 +375,6 @@ SaikuOlapQueryHelper.prototype.removeCalculatedMeasure = function(name) {
   if (removeMeasure && _.indexOf(measures, removeMeasure) > -1) {
     measures = _.without(measures, removeMeasure);
     this.model().queryModel.calculatedMeasures = measures;
-    //console.log(measures);
   }
 };
 
@@ -393,7 +407,6 @@ SaikuOlapQueryHelper.prototype.removeCalculatedMember = function(name) {
   if (removeMeasure && _.indexOf(measures, removeMeasure) > -1) {
     measures = _.without(measures, removeMeasure);
     this.model().queryModel.calculatedMembers = measures;
-    //console.log(measures);
   }
 };
 

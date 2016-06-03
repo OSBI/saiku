@@ -114,7 +114,6 @@ var Workspace = Backbone.View.extend({
         }
     },
     afterRender: function () {
-        console.log("After render");
     },
     caption: function(increment) {
         if (this.query && this.query.model) {
@@ -729,7 +728,6 @@ var Workspace = Backbone.View.extend({
     populate_selections: function(dimlist) {
         var self = this;
 
-        console.log('populate_selections');
         dimlist.workspace.sync_query();
         return false;
 
@@ -932,13 +930,13 @@ var Workspace = Backbone.View.extend({
             hasParams = true;
 
             var values = val.split(",")
-
             var level = self.query.helper.getLevelForParameter(key);
+
             _.each(values, function (v) {
                 if(v!=undefined && v!="") {
                     self.query.helper.addtoSelection(v, level)
                 }
-            })
+            });
         }
         paramDiv += "";
 
