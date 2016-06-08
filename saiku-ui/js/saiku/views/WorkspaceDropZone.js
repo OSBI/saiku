@@ -529,21 +529,37 @@ var WorkspaceDropZone = Backbone.View.extend({
 
                  })
 
-                var levels=[];
-				 _.each(a.hierarchies, function(hierarchy){
-					 for(var property in hierarchy.levels){
-						 console.log(property);
-						 var n ="";
-						 if(hierarchy.levels[property].caption!=null){
-							 n = hierarchy.levels[property].caption;
-						 }
-						 else{
-							 n = hierarchy.levels[property].name;
-						 }
-						 levels[hierarchy.levels[property].name] = {
-							 name: n
-						 }
-					 }
+                var levels = [];
+                var axisMetrics = {}; // Per-axis totals object
+
+				_.each(a.hierarchies, function(hierarchy){
+                    for(var property in hierarchy.levels){
+                        console.log(property);
+                        var n = "";
+
+                        if(hierarchy.levels[property].caption!=null){
+                            n = hierarchy.levels[property].caption;
+                        } else{
+                            n = hierarchy.levels[property].name;
+                        }
+
+                        levels[hierarchy.levels[property].name] = {
+                            name: n
+                        }
+
+                        // Creating a per-exis totals object to context menu
+                        var foldName = 'fold_' + property.replace(/\s/g, '_').toLowerCase();
+                        axisMetrics[foldName] = {
+                            name: property,
+                            items: {
+                                "show_totals_not": {name: "None", i18n: true},
+                                "show_totals_sum": {name: "Sum", i18n: true},
+                                "show_totals_min": {name: "Min", i18n: true},
+                                "show_totals_max": {name: "Max", i18n: true},
+                                "show_totals_avg": {name: "Avg", i18n: true}
+                            }
+                        };
+                    }
                 });
                 var addFun = function(items, fun) {
                     var ret = {};
@@ -599,21 +615,15 @@ var WorkspaceDropZone = Backbone.View.extend({
                                     "show_totals_max": {name: "Max", i18n: true},
                                     "show_totals_avg": {name: "Avg", i18n: true}
                                 }
-                            },
-                            fold_metric: {
-                                name: "Metric A",
-                                items: {
-                                    "metrica_show_totals_not": {name: "None", i18n: true},
-                                    "metrica_show_totals_sum": {name: "Sum", i18n: true},
-                                    "metrica_show_totals_min": {name: "Min", i18n: true},
-                                    "metrica_show_totals_max": {name: "Max", i18n: true},
-                                    "metrica_show_totals_avg": {name: "Avg", i18n: true}
-                                }
                             }
                         }},
                         "cancel" : { name: "Cancel", i18n: true }
 
                 };
+
+                // Extending the grand totals map to add per-axis totals
+                $.extend(citems.grand_totals.items, axisMetrics);
+
                 $.each(citems, function(key, item){
                     recursive_menu_translate(item, Saiku.i18n.po_file);
                 });
