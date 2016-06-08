@@ -590,11 +590,26 @@ var WorkspaceDropZone = Backbone.View.extend({
                         }},
                         "grand_totals" : {name: "Grand totals", i18n: true, items:
                         {
-                            "show_totals_not": {name: "None", i18n: true},
-                            "show_totals_sum": {name: "Sum", i18n: true},
-                            "show_totals_min": {name: "Min", i18n: true},
-                            "show_totals_max": {name: "Max", i18n: true},
-                            "show_totals_avg": {name: "Avg", i18n: true}
+                            fold_all: {
+                                name: "All",
+                                items: {
+                                    "show_totals_not": {name: "None", i18n: true},
+                                    "show_totals_sum": {name: "Sum", i18n: true},
+                                    "show_totals_min": {name: "Min", i18n: true},
+                                    "show_totals_max": {name: "Max", i18n: true},
+                                    "show_totals_avg": {name: "Avg", i18n: true}
+                                }
+                            },
+                            fold_metric: {
+                                name: "Metric A",
+                                items: {
+                                    "metrica_show_totals_not": {name: "None", i18n: true},
+                                    "metrica_show_totals_sum": {name: "Sum", i18n: true},
+                                    "metrica_show_totals_min": {name: "Min", i18n: true},
+                                    "metrica_show_totals_max": {name: "Max", i18n: true},
+                                    "metrica_show_totals_avg": {name: "Avg", i18n: true}
+                                }
+                            }
                         }},
                         "cancel" : { name: "Cancel", i18n: true }
 
@@ -603,7 +618,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                     recursive_menu_translate(item, Saiku.i18n.po_file);
                 });
 
-                var totalItems = citems.grand_totals.items;
+                var totalItems = citems.grand_totals.items.fold_all.items;
                 if (totalFunction) {
                     for (var key in totalItems) {
                         if (key.substring("show_totals_".length) == totalFunction) {
