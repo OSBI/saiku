@@ -401,6 +401,12 @@ var WorkspaceDropZone = Backbone.View.extend({
 			return false;
 		}
 		var $target = $(event.target).hasClass('limit') ? $(event.target) : $(event.target).parent();
+
+        var query    = self.workspace.query;
+        var cube     = self.workspace.selected_cube;
+        var details  = query.helper.model().queryModel.details;
+        var measures = details.measures;
+
 		var menuitems = {
 			"HEADER": {name: "Position", disabled:true, i18n: true },
 			"sep1": "---------",
@@ -410,28 +416,67 @@ var WorkspaceDropZone = Backbone.View.extend({
 			"TOP_ROWS": {name: "Measures | Rows", i18n: true },
 			"sep2": "---------",
 			"reset": {name: "Reset Default", i18n: true },
-			"cancel": {name: "Cancel", i18n: true }
+			"cancel": {name: "Cancel", i18n: true },
+            "fold_totals": {name: "Totals", items: {
+                "fold_all": {name: "All", items: {
+                    "show_totals_not": {name: "None", i18n: true},
+                    "show_totals_sum": {name: "Sum",  i18n: true},
+                    "show_totals_min": {name: "Min",  i18n: true},
+                    "show_totals_max": {name: "Max",  i18n: true},
+                    "show_totals_avg": {name: "Avg",  i18n: true}
+                }}
+            }}
 		};
+
+        _.each(measures, function(measure) {
+            var foldName = 'fold_' + measure.name.replace(/\s/g, '_').toLowerCase();
+            var fold = {name: measure.name, items: {}};
+
+            fold.items["show_totals_not_" + measure.name] = {name: "None", i18n: true};
+            fold.items["show_totals_sum_" + measure.name] = {name: "Sum",  i18n: true};
+            fold.items["show_totals_min_" + measure.name] = {name: "Min",  i18n: true};
+            fold.items["show_totals_max_" + measure.name] = {name: "Max",  i18n: true};
+            fold.items["show_totals_avg_" + measure.name] = {name: "Avg",  i18n: true};
+
+            menuitems["fold_totals"].items[foldName] = fold;
+        });
+
 		$.each(menuitems, function(key, item){
 			recursive_menu_translate(item, Saiku.i18n.po_file);
 		});
+
 		$.contextMenu('destroy', '.limit');
+
 		$.contextMenu({
 			appendTo: $target,
 			selector: '.limit',
 			ignoreRightClick: true,
 			build: function($trigger, e) {
-				var query = self.workspace.query;
-				var cube = self.workspace.selected_cube;
 				return {
 					callback: function(key, options) {
-						var details = query.helper.model().queryModel.details;
 						if (key === "cancel") {
 							return;
-						}
-						if ( key === "reset") {
+						} else if ( key === "reset") {
 							details.location = SaikuOlapQueryTemplate.queryModel.details.location;
 							details.axis = SaikuOlapQueryTemplate.queryModel.details.axis;
+                        } else if (key.indexOf("show_totals_") === 0){
+                            var total  = key.substring("show_totals_".length);
+                            var tokens = total.split('_');
+
+                            if (tokens.length > 1) { // Metrics-specific totals
+                                total = tokens[0];
+                                var metric = tokens[1];
+
+                                _.each(measures, function(m){
+                                    if (metric === m.name) {
+                                        m.aggregators = [total];
+                                    }
+                                });
+                            } else { // General totals
+                                var aggs = [];
+                                aggs.push(total);
+                                a.aggregators = aggs;
+                            }
 						} else {
 							var location = key.split('_')[0];
 							var axis = key.split('_')[1];
@@ -532,7 +577,6 @@ var WorkspaceDropZone = Backbone.View.extend({
                 });
 
                 var levels = [];
-                var axisMetrics = {}; // Per-axis totals object
 
 				_.each(a.hierarchies, function(hierarchy){
                     for(var property in hierarchy.levels){
@@ -548,19 +592,6 @@ var WorkspaceDropZone = Backbone.View.extend({
                         levels[hierarchy.levels[property].name] = {
                             name: n
                         }
-
-                        // Creating a per-exis totals object to context menu
-                        var foldName = 'fold_' + property.replace(/\s/g, '_').toLowerCase();
-                        axisMetrics[foldName] = {
-                            name: property,
-                            items: {}
-                        };
-
-                        axisMetrics[foldName].items["show_totals_not_" + property] = {name: "None", i18n: true};
-                        axisMetrics[foldName].items["show_totals_sum_" + property] = {name: "Sum",  i18n: true};
-                        axisMetrics[foldName].items["show_totals_min_" + property] = {name: "Min",  i18n: true};
-                        axisMetrics[foldName].items["show_totals_max_" + property] = {name: "Max",  i18n: true};
-                        axisMetrics[foldName].items["show_totals_avg_" + property] = {name: "Avg",  i18n: true};
                     }
                 });
 
@@ -609,29 +640,21 @@ var WorkspaceDropZone = Backbone.View.extend({
                         }},
                         "grand_totals" : {name: "Grand totals", i18n: true, items:
                         {
-                            fold_all: {
-                                name: "All",
-                                items: {
-                                    "show_totals_not": {name: "None", i18n: true},
-                                    "show_totals_sum": {name: "Sum", i18n: true},
-                                    "show_totals_min": {name: "Min", i18n: true},
-                                    "show_totals_max": {name: "Max", i18n: true},
-                                    "show_totals_avg": {name: "Avg", i18n: true}
-                                }
-                            }
+                            "show_totals_not": {name: "None", i18n: true},
+                            "show_totals_sum": {name: "Sum", i18n: true},
+                            "show_totals_min": {name: "Min", i18n: true},
+                            "show_totals_max": {name: "Max", i18n: true},
+                            "show_totals_avg": {name: "Avg", i18n: true}
                         }},
                         "cancel" : { name: "Cancel", i18n: true }
 
                 };
 
-                // Extending the grand totals map to add per-axis totals
-                $.extend(citems.grand_totals.items, axisMetrics);
-
                 $.each(citems, function(key, item){
                     recursive_menu_translate(item, Saiku.i18n.po_file);
                 });
 
-                var totalItems = citems.grand_totals.items.fold_all.items;
+                var totalItems = citems.grand_totals.items;
                 if (totalFunction) {
                     for (var key in totalItems) {
                         if (key.substring("show_totals_".length) == totalFunction) {
@@ -791,23 +814,9 @@ var WorkspaceDropZone = Backbone.View.extend({
                             } else if (key.indexOf("show_totals_") === 0){
                                 var total = key.substring("show_totals_".length);
                                 var tokens = total.split('_');
-
-                                if (tokens.length > 1) { // Axis-specific totals
-                                    total = tokens[0];
-                                    var property = tokens[1];
-
-                                    _.each(a.hierarchies, function(hierarchy){
-                                        for(var p in hierarchy.levels){
-                                            if (property === p) {
-                                                hierarchy.levels[p].aggregators = [total];
-                                            }
-                                        }
-                                    });
-                                } else { // General totals
-                                    var aggs = [];
-                                    aggs.push(total);
-                                    a.aggregators = aggs;
-                                }
+                                var aggs = [];
+                                aggs.push(total);
+                                a.aggregators = aggs;
 
                                 self.workspace.query.run();
                             } else {
