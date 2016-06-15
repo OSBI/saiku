@@ -24,13 +24,7 @@ import org.saiku.olap.query.IQuery;
 import org.saiku.olap.query.IQuery.QueryType;
 import org.saiku.olap.query.OlapQuery;
 import org.saiku.olap.query.QueryDeserializer;
-import org.saiku.olap.query2.ThinAxis;
-import org.saiku.olap.query2.ThinCalculatedMember;
-import org.saiku.olap.query2.ThinHierarchy;
-import org.saiku.olap.query2.ThinLevel;
-import org.saiku.olap.query2.ThinMember;
-import org.saiku.olap.query2.ThinQuery;
-import org.saiku.olap.query2.ThinQueryModel;
+import org.saiku.olap.query2.*;
 import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
 import org.saiku.olap.query2.util.Fat;
 import org.saiku.olap.query2.util.Thin;
@@ -313,6 +307,17 @@ public class ThinQueryService implements Serializable {
             ThinQuery tqAfter = Thin.convert(q, old.getCube());
             tqAfter.getQueryModel().setCalculatedMembers(cms);
             getEnabledCMembers(old.getQueryModel(), tqAfter.getQueryModel());
+
+            // Set measures aggregators
+            for (ThinMeasure measure : tqAfter.getQueryModel().getDetails().getMeasures()) {
+                for (ThinMeasure oldMeasure : old.getQueryModel().getDetails().getMeasures()) {
+                    if (measure.getUniqueName().equals(oldMeasure.getUniqueName())) {
+                        measure.getAggregators().addAll(oldMeasure.getAggregators());
+                        break;
+                    }
+                }
+            }
+
             old.setQueryModel(tqAfter.getQueryModel());
             old.setMdx(tqAfter.getMdx());
         }
@@ -658,11 +663,16 @@ public class ThinQueryService implements Serializable {
             List<TotalNode>[][] totals = new List[2][];
             TotalsListsBuilder builder = null;
             for (int index = 0; index < 2; index++) {
+                System.out.println("I - index = " + index); // ***
                 final int second = (index + 1) & 1;
+                System.out.println("II - second = " + second); // ***
                 TotalAggregator[] aggregators = new TotalAggregator[axisInfos[second].maxDepth + 1];
+                System.out.println("III - aggregators.length = " + aggregators.length); // ***
                 for (int i = 1; i < aggregators.length - 1; i++) {
+                    System.out.println("IV - axisInfos[second].uniqueLevelNames.get(i - 1) =" + axisInfos[second].uniqueLevelNames.get(i - 1)); // ***
                     List<String> aggs = query.getAggregators(axisInfos[second].uniqueLevelNames.get(i - 1));
                     String totalFunctionName = aggs != null && aggs.size() > 0 ? aggs.get(0) : null;
+                    System.out.println("V - totalFunctionName = " + totalFunctionName); // ***
                     aggregators[i] = StringUtils.isNotBlank(totalFunctionName) ? TotalAggregator.newInstanceByFunctionName(totalFunctionName) : null;
                 }
                 List<String> aggs = query.getAggregators(axisInfos[second].axis.getAxisOrdinal().name());

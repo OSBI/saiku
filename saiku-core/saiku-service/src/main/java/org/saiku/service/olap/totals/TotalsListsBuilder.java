@@ -87,6 +87,16 @@ public class TotalsListsBuilder implements FormatList {
     }
 
     totalBranch = new TotalNode[ maxDepth ];
+
+    System.out.println("TotalsListBuilder.constructor"); // ***
+    System.out.println("measuresCaptions.length = " + (measuresCaptions == null ? "null" : measuresCaptions.length)); // ***
+    if (measuresCaptions != null) {
+      for (String m : measuresCaptions) { // ***
+        System.out.println("\t" + m); // ***
+      }
+    }
+    System.out.println(aggrTempl[0]); // ***
+
     TotalNode rootNode =
       new TotalNode( measuresCaptions, measures, aggrTempl[ 0 ], this, totalsAxisInfo.fullPositions.size() );
     col = Axis.ROWS.equals( dataAxisInfo.axis.getAxisOrdinal() ) ? 1 : 0;
