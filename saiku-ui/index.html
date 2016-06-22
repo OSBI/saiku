@@ -778,7 +778,24 @@ title="Drill across on cell"></a></li>
                 class="i18n">Show Unique Names</label><br />
                 <input name="use_result" class="form-control" id="use_result" type="checkbox" />&nbsp;<label for="use_result"
                 class="i18n">Use Result</label><br />
-				<div id="div-totals-container"></div>
+				<div id="div-totals-container">
+                    <div class="totals_container">
+                        <label class="i18n">Totals per metrics</label>
+                        <input type="checkbox" id="per_metrics_totals_checkbox"/>
+                        &nbsp;
+                    </div>
+                    <div class="totals_container all_metrics_container">
+                        <strong>All Measures - </strong>
+                        <label for="show_totals" class="i18n">Sub totals</label>
+                        <select class="form-control" id="all_measures_select">
+                            <option class="i18n" value="nil" selected="selected">None</option>
+                            <option class="i18n" value="sum">Sum</option>
+                            <option class="i18n" value="min">Min</option>
+                            <option class="i18n" value="max">Max</option>
+                            <option class="i18n" value="avg">Avg</option>
+                        </select>
+                    </div>
+                </div>
 				<div class="form-inline">
                 <label for="parameter" class="parameter hidden i18n">Parameter Name</label>&nbsp;<input
                 name="parameter" id="parameter" class="form-control parameter hidden" type="text" /></div>
@@ -796,10 +813,10 @@ title="Drill across on cell"></a></li>
             <div class="autocomplete"></div>
         </script>
 <script type="text/x-jquery-tmpl" id="template-selections-totals">
-    <div class="totals_container">
+    <div class="totals_container per_metrics_container">
         <strong><%= measure.caption %> - </strong>
         <label for="show_totals" class="i18n">Sub totals</label>
-        <select class="form-control show_totals_select" name="show_totals">
+        <select class="form-control show_totals_select">
             <option class="i18n" value="nil" selected="selected">None</option>
             <option class="i18n" value="sum">Sum</option>
             <option class="i18n" value="min">Min</option>

@@ -404,6 +404,16 @@ var SelectionsModal = Modal.extend({
             $(this.el).find('#div-totals-container').append(_.template($("#template-selections-totals").html())({measure: measuresArray[j]}));
         }
 
+        $('#per_metrics_totals_checkbox').change(function() {
+            if($(this).is(":checked")) {
+                $('.per_metrics_container').show();
+                $('.all_metrics_container').hide();
+            } else {
+                $('.per_metrics_container').hide();
+                $('.all_metrics_container').show();
+            }
+        });
+
         // Filter out used members
         this.available_members = _.select(this.available_members, function(o) {
 			return used_members.indexOf(o.obj ? o.obj.caption : o.caption) === -1;
@@ -638,9 +648,19 @@ var SelectionsModal = Modal.extend({
         var parameterName = $('#parameter').val();
         if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
                 var totalsArray = [];
-                $('.show_totals_select').each(function() {
-                    totalsArray.push($(this).val());
-                });
+
+                if($('#per_metrics_totals_checkbox').is(":checked")) {
+                    $('.show_totals_select').each(function() {
+                        totalsArray.push($(this).val());
+                    });
+                } else {
+                    var measuresArray = self.workspace.query.model.queryModel.details.measures;
+                    for (var j = 0; j < measuresArray.length; j++) {
+                        totalsArray.push($('#all_measures_select').val());
+                    }
+                }
+
+                console.log('totalsArray', totalsArray);
 
                 hierarchy.levels[lName]["aggregators"] = totalsArray;
 

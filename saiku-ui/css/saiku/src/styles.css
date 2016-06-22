@@ -896,6 +896,9 @@ textarea, select {
     display: normal;
 }
 
+.per_metrics_container {
+    display: none;
+}
 
 .totals_container {
 /*  margin:4px;
