@@ -44,6 +44,7 @@ var SelectionsModal = Modal.extend({
 
     use_result_option: Settings.MEMBERS_FROM_RESULT,
     show_totals_option: '',
+    per_measure_totals: [],
     members_limit: Settings.MEMBERS_LIMIT,
     members_search_limit: Settings.MEMBERS_SEARCH_LIMIT,
     members_search_server: false,
@@ -181,6 +182,7 @@ var SelectionsModal = Modal.extend({
 
     show_totals_action: function(event) {
         this.show_totals_option = $(event.target).val();
+        this.per_measure_totals = ['A', 'B', 'C'];
     },
 
     get_members: function() {
@@ -593,6 +595,7 @@ var SelectionsModal = Modal.extend({
         // Determine updates
         var updates = [];
         var totalsFunction = this.show_totals_option;
+        var perMeasureTotals = this.per_measure_totals;
 
         // If no selections are used, add level
         if ($(this.el).find('.used_selections input').length === 0) {
@@ -632,7 +635,8 @@ var SelectionsModal = Modal.extend({
         if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
                 hierarchy.levels[lName]["aggregators"] = [];
                 if (totalsFunction) {
-                    hierarchy.levels[lName]["aggregators"].push(totalsFunction);
+                    hierarchy.levels[lName]["aggregators"] = ['max', 'sum'];//.push(totalsFunction);
+                    hierarchy.levels[lName]["measureAggregators"] = perMeasureTotals;
                 }
                 var selectionType = $(self.el).find('input.selection_type:checked').val();
                 selectionType = selectionType ? selectionType : "INCLUSION";

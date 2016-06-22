@@ -238,4 +238,9 @@ public class ThinQuery implements ISaikuQuery {
 	public void setQueryType(String queryType) {
 		this.queryType = queryType;
 	}
+
+	@JsonIgnore
+	public ThinLevel getLevel(String name) {
+		return this.getQueryModel().getLevel(name);
+	}
 }

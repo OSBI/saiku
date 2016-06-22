@@ -20,19 +20,6 @@ public class TotalNode {
     this.captions = captions;
     showsTotals = aggregatorTemplate != null;
 
-    System.out.println("TotalNode - constructor"); // ***
-    System.out.println("measures.length = " + measures.length);
-    for (Measure m : measures) { // ***
-      System.out.println("\t" + m.getName());
-      if (m.getAggregator() != null) {
-        System.out.println("\t\t" + m.getAggregator().toString());
-      } else {
-        System.out.println("\t\tNo aggregators");
-      }
-    }
-    System.out.println("captions.length = " + (captions == null ? "null?" : captions.length)); // ***
-    System.out.println("count = " + count); //***
-
     if ( showsTotals ) {
       cellsAdded = captions != null ? captions.length : 1;
       totals = new TotalAggregator[ cellsAdded ][ count ];

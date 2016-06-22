@@ -187,15 +187,8 @@ public class Fat {
 		Axis ax = getLocation(details.getAxis());
 		query.getDetails().setAxis(ax);
 
-		System.out.println("**** Fat.convertDetails"); // ***
-
 		if (details.getMeasures().size() > 0) {
 			for (ThinMeasure m : details.getMeasures()) {
-				System.out.println("\t" + m.getName() + " - TYPE: " + m.getType()); // ***
-				if (m.getAggregators() != null && !m.getAggregators().isEmpty()) { // ***
-					System.out.println("\t\t" + m.getAggregators().get(0));
-				}
-
 				if (Type.CALCULATED.equals(m.getType())) {
 					Measure measure = query.getCalculatedMeasure(m.getName());
 					query.getDetails().add(measure);
