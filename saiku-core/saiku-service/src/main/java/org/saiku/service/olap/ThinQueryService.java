@@ -663,16 +663,11 @@ public class ThinQueryService implements Serializable {
             List<TotalNode>[][] totals = new List[2][];
             TotalsListsBuilder builder = null;
             for (int index = 0; index < 2; index++) {
-                System.out.println("I - index = " + index); // ***
                 final int second = (index + 1) & 1;
-                System.out.println("II - second = " + second); // ***
                 TotalAggregator[] aggregators = new TotalAggregator[axisInfos[second].maxDepth + 1];
-                System.out.println("III - aggregators.length = " + aggregators.length); // ***
                 for (int i = 1; i < aggregators.length - 1; i++) {
-                    System.out.println("IV - axisInfos[second].uniqueLevelNames.get(i - 1) =" + axisInfos[second].uniqueLevelNames.get(i - 1)); // ***
                     List<String> aggs = query.getAggregators(axisInfos[second].uniqueLevelNames.get(i - 1));
                     String totalFunctionName = aggs != null && aggs.size() > 0 ? aggs.get(0) : null;
-                    System.out.println("V - totalFunctionName = " + totalFunctionName); // ***
                     aggregators[i] = StringUtils.isNotBlank(totalFunctionName) ? TotalAggregator.newInstanceByFunctionName(totalFunctionName) : null;
                 }
                 List<String> aggs = query.getAggregators(axisInfos[second].axis.getAxisOrdinal().name());

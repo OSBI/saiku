@@ -778,22 +778,7 @@ title="Drill across on cell"></a></li>
                 class="i18n">Show Unique Names</label><br />
                 <input name="use_result" class="form-control" id="use_result" type="checkbox" />&nbsp;<label for="use_result"
                 class="i18n">Use Result</label><br />
-				<div class="totals_container" style="width:300px">
-					<label for="show_totals" class="i18n">Sub totals</label>
-					<select class="form-control" name="show_totals" id="show_totals">
-    					<option class="i18n" value="" selected="selected">None</option>
-    					<option class="i18n" value="sum">Sum</option>
-				    	<option class="i18n" value="min">Min</option>
-						<option class="i18n" value="max">Max</option>
-						<option class="i18n" value="avg">Avg</option>
-					</select>
-                    <label for="per_measure_totals" class="i18n">Measure</label>
-                    <select class="form-control" name="per_measure_totals" id="per_measure_totals">
-                        <option class="i18n" value="" selected="selected">All</option>
-                        <option class="i18n" value="sum">Unit Sales</option>
-                        <option class="i18n" value="min">Store Cost</option>
-                    </select>
-				</div>
+				<div id="div-totals-container"></div>
 				<div class="form-inline">
                 <label for="parameter" class="parameter hidden i18n">Parameter Name</label>&nbsp;<input
                 name="parameter" id="parameter" class="form-control parameter hidden" type="text" /></div>
@@ -810,6 +795,20 @@ title="Drill across on cell"></a></li>
 
             <div class="autocomplete"></div>
         </script>
+<script type="text/x-jquery-tmpl" id="template-selections-totals">
+    <div class="totals_container">
+        <strong><%= measure.caption %> - </strong>
+        <label for="show_totals" class="i18n">Sub totals</label>
+        <select class="form-control show_totals_select" name="show_totals">
+            <option class="i18n" value="nil" selected="selected">None</option>
+            <option class="i18n" value="sum">Sum</option>
+            <option class="i18n" value="min">Min</option>
+            <option class="i18n" value="max">Max</option>
+            <option class="i18n" value="avg">Avg</option>
+        </select>
+        &nbsp;
+    </div>    
+</script>
 <script type="text/x-jquery-tmpl" id="template-selections-options">
             <ul>
             <li class="i18n all_options"><input type="checkbox" class="check_all_option"

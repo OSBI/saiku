@@ -19,6 +19,12 @@ public abstract class TotalAggregator {
   static {
     Map<String, TotalAggregatorFactory> tmp = new HashMap<>();
 
+    tmp.put( "nil", new TotalAggregatorFactory() {
+      public TotalAggregator create() {
+        return new BlankAggregator( null );
+      }
+    });
+
     tmp.put( "sum", new TotalAggregatorFactory() {
       public TotalAggregator create() {
         return new SumAggregator( null );
