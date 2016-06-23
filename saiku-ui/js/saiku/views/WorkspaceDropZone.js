@@ -397,11 +397,12 @@ var WorkspaceDropZone = Backbone.View.extend({
 
 	measure_action: function(event) {
 		var self = this;
+
 		if (typeof this.workspace.query == "undefined" || this.workspace.query.model.type != "QUERYMODEL" || Settings.MODE == "view") {
 			return false;
 		}
-		var $target = $(event.target).hasClass('limit') ? $(event.target) : $(event.target).parent();
 
+		var $target  = $(event.target).hasClass('limit') ? $(event.target) : $(event.target).parent();
         var query    = self.workspace.query;
         var cube     = self.workspace.selected_cube;
         var details  = query.helper.model().queryModel.details;
@@ -638,23 +639,40 @@ var WorkspaceDropZone = Backbone.View.extend({
                             "customsort" : { name: "Custom...", i18n: true },
                             "clearsort" : {name: "Clear Sort", i18n: true }
                         }},
-                        "grand_totals" : {name: "Grand totals", i18n: true, items:
+                        "fold_totals": {name: "Totals", i18n: true, items:
                         {
-                            "show_totals_not": {name: "None", i18n: true},
-                            "show_totals_sum": {name: "Sum", i18n: true},
-                            "show_totals_min": {name: "Min", i18n: true},
-                            "show_totals_max": {name: "Max", i18n: true},
-                            "show_totals_avg": {name: "Avg", i18n: true}
+                            "grand_totals" : {name: "All", i18n: true, items:
+                            {
+                                "show_totals_not": {name: "None", i18n: true},
+                                "show_totals_sum": {name: "Sum", i18n: true},
+                                "show_totals_min": {name: "Min", i18n: true},
+                                "show_totals_max": {name: "Max", i18n: true},
+                                "show_totals_avg": {name: "Avg", i18n: true}
+                            }}
                         }},
                         "cancel" : { name: "Cancel", i18n: true }
 
                 };
 
+                var selectedMeasures = query.helper.model().queryModel.details.measures;
+                _.each(selectedMeasures, function(measure) {
+                    var foldName = 'fold_' + measure.name.replace(/\s/g, '_').toLowerCase();
+                    var fold = {name: measure.name, items: {}};
+
+                    fold.items["show_totals_not_" + measure.name] = {name: "None", i18n: true};
+                    fold.items["show_totals_sum_" + measure.name] = {name: "Sum",  i18n: true};
+                    fold.items["show_totals_min_" + measure.name] = {name: "Min",  i18n: true};
+                    fold.items["show_totals_max_" + measure.name] = {name: "Max",  i18n: true};
+                    fold.items["show_totals_avg_" + measure.name] = {name: "Avg",  i18n: true};
+
+                    citems.fold_totals.items[foldName] = fold;
+                });                
+
                 $.each(citems, function(key, item){
                     recursive_menu_translate(item, Saiku.i18n.po_file);
                 });
 
-                var totalItems = citems.grand_totals.items;
+                var totalItems = citems.fold_totals.items.grand_totals.items;
                 if (totalFunction) {
                     for (var key in totalItems) {
                         if (key.substring("show_totals_".length) == totalFunction) {
