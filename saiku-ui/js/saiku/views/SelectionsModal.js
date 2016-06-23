@@ -660,8 +660,6 @@ var SelectionsModal = Modal.extend({
                     }
                 }
 
-                console.log('totalsArray', totalsArray);
-
                 hierarchy.levels[lName]["aggregators"] = totalsArray;
 
                 var selectionType = $(self.el).find('input.selection_type:checked').val();
