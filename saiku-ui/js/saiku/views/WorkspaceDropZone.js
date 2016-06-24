@@ -417,30 +417,8 @@ var WorkspaceDropZone = Backbone.View.extend({
 			"TOP_ROWS": {name: "Measures | Rows", i18n: true },
 			"sep2": "---------",
 			"reset": {name: "Reset Default", i18n: true },
-			"cancel": {name: "Cancel", i18n: true },
-            "fold_totals": {name: "Totals", items: {
-                "fold_all": {name: "All", items: {
-                    "show_totals_not": {name: "None", i18n: true},
-                    "show_totals_sum": {name: "Sum",  i18n: true},
-                    "show_totals_min": {name: "Min",  i18n: true},
-                    "show_totals_max": {name: "Max",  i18n: true},
-                    "show_totals_avg": {name: "Avg",  i18n: true}
-                }}
-            }}
+			"cancel": {name: "Cancel", i18n: true }
 		};
-
-        _.each(measures, function(measure) {
-            var foldName = 'fold_' + measure.name.replace(/\s/g, '_').toLowerCase();
-            var fold = {name: measure.name, items: {}};
-
-            fold.items["show_totals_not_" + measure.name] = {name: "None", i18n: true};
-            fold.items["show_totals_sum_" + measure.name] = {name: "Sum",  i18n: true};
-            fold.items["show_totals_min_" + measure.name] = {name: "Min",  i18n: true};
-            fold.items["show_totals_max_" + measure.name] = {name: "Max",  i18n: true};
-            fold.items["show_totals_avg_" + measure.name] = {name: "Avg",  i18n: true};
-
-            menuitems["fold_totals"].items[foldName] = fold;
-        });
 
 		$.each(menuitems, function(key, item){
 			recursive_menu_translate(item, Saiku.i18n.po_file);
@@ -460,25 +438,7 @@ var WorkspaceDropZone = Backbone.View.extend({
 						} else if ( key === "reset") {
 							details.location = SaikuOlapQueryTemplate.queryModel.details.location;
 							details.axis = SaikuOlapQueryTemplate.queryModel.details.axis;
-                        } else if (key.indexOf("show_totals_") === 0){
-                            var total  = key.substring("show_totals_".length);
-                            var tokens = total.split('_');
-
-                            if (tokens.length > 1) { // Metrics-specific totals
-                                total = tokens[0];
-                                var metric = tokens[1];
-
-                                _.each(measures, function(m){
-                                    if (metric === m.name) {
-                                        m.aggregators = [total];
-                                    }
-                                });
-                            } else { // General totals
-                                var aggs = [];
-                                aggs.push(total);
-                                a.aggregators = aggs;
-                            }
-						} else {
+                        } else {
 							var location = key.split('_')[0];
 							var axis = key.split('_')[1];
 							details.location = location;
@@ -581,7 +541,6 @@ var WorkspaceDropZone = Backbone.View.extend({
 
 				_.each(a.hierarchies, function(hierarchy){
                     for(var property in hierarchy.levels){
-                        console.log(property);
                         var n = "";
 
                         if(hierarchy.levels[property].caption!=null){
@@ -659,7 +618,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                     var foldName = 'fold_' + measure.name.replace(/\s/g, '_').toLowerCase();
                     var fold = {name: measure.name, items: {}};
 
-                    fold.items["show_totals_not_" + measure.name] = {name: "None", i18n: true};
+                    fold.items["show_totals_nil_" + measure.name] = {name: "None", i18n: true};
                     fold.items["show_totals_sum_" + measure.name] = {name: "Sum",  i18n: true};
                     fold.items["show_totals_min_" + measure.name] = {name: "Min",  i18n: true};
                     fold.items["show_totals_max_" + measure.name] = {name: "Max",  i18n: true};
@@ -832,9 +791,45 @@ var WorkspaceDropZone = Backbone.View.extend({
                             } else if (key.indexOf("show_totals_") === 0){
                                 var total = key.substring("show_totals_".length);
                                 var tokens = total.split('_');
-                                var aggs = [];
-                                aggs.push(total);
-                                a.aggregators = aggs;
+
+                                if (tokens.length > 1) { // Axis-specific totals
+                                    total = tokens[0];
+                                    var metric = tokens[1];
+
+                                    _.each(selectedMeasures, function(m){
+                                        if (metric === m.name) {
+                                            if (!m.aggregators) {
+                                                m.aggregators = [];
+                                            } else if (m.aggregators.length > 0) {
+                                                var aggIdx = -1;
+                                                for (var i = 0; i < m.aggregators.length; i++) {
+                                                    var aggInfo = m.aggregators[i];
+                                                    if (aggInfo.indexOf('_') > 0) {
+                                                        var aggInfoArray = aggInfo.split('_');
+                                                        if (aggInfoArray[1] == a.location) {
+                                                            aggIdx = i;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                if (aggIdx >= 0) {
+                                                    m.aggregators.splice(aggIdx, 1);
+                                                }
+                                            }
+
+                                            m.aggregators.push(total + '_' + a.location);
+                                        }
+                                    });
+
+                                    if (!a.aggregators || a.aggregators.length == 0) {
+                                        a.aggregators = [total];
+                                    }
+                                } else { // General totals
+                                    var aggs = [];
+                                    aggs.push(total);
+                                    a.aggregators = aggs;
+                                }
+
 
                                 self.workspace.query.run();
                             } else {

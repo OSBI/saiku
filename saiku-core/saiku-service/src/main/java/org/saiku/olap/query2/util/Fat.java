@@ -530,6 +530,11 @@ public class Fat {
 		public Aggregator getAggregator() {
 			if (thinMeasure != null && thinMeasure.getAggregators() != null && !thinMeasure.getAggregators().isEmpty()) {
 				String aggregator = thinMeasure.getAggregators().get(0);
+
+				if (aggregator.indexOf("_") > 0) {
+					aggregator = aggregator.substring(0, aggregator.indexOf("_"));
+				}
+
 				for (Aggregator agg : Aggregator.values()) {
 					if (aggregator.equalsIgnoreCase(agg.name())) {
 						return agg;

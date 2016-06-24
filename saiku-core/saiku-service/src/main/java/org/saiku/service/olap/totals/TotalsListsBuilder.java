@@ -101,7 +101,7 @@ public class TotalsListsBuilder implements FormatList {
     totalBranch = new TotalNode[ maxDepth ];
 
     TotalNode rootNode =
-      new TotalNode( measuresCaptions, measures, aggrTempl[ 0 ], this, totalsAxisInfo.fullPositions.size() );
+      new TotalNode( measuresCaptions, measures, aggrTempl[ 0 ], this, totalsAxisInfo.fullPositions.size(), dataAxisInfo);
     col = Axis.ROWS.equals( dataAxisInfo.axis.getAxisOrdinal() ) ? 1 : 0;
     row = ( col + 1 ) & 1;
     this.aggrTempl = aggrTempl;
@@ -207,9 +207,9 @@ public class TotalsListsBuilder implements FormatList {
             }
           }
 
-          totalBranch[ i ] = new TotalNode( captions, newMeasures, aggrTempl[ i ], this, totalsAxisInfo.fullPositions.size());
+          totalBranch[ i ] = new TotalNode(captions, newMeasures, aggrTempl[ i ], this, totalsAxisInfo.fullPositions.size(), dataAxisInfo);
         } else {
-          totalBranch[ i ] = new TotalNode( captions, measures, aggrTempl[ i ], this, totalsAxisInfo.fullPositions.size());
+          totalBranch[ i ] = new TotalNode(captions, measures, aggrTempl[ i ], this, totalsAxisInfo.fullPositions.size(), dataAxisInfo);
         }
 
         totalLists[ i ].add( totalBranch[ i ] );
