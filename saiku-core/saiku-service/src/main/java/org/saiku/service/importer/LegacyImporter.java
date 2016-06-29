@@ -3,6 +3,8 @@ package org.saiku.service.importer;
 
 import org.saiku.repository.IRepositoryManager;
 
+import java.util.List;
+
 public interface LegacyImporter {
 
     void importUsers();
@@ -13,4 +15,5 @@ public interface LegacyImporter {
 
     void importLegacyReports(IRepositoryManager repositoryManager, byte[] bytes);
 
+    List<JujuSource> importJujuDatasources();
 }

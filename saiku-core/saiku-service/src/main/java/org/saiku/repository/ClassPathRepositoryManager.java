@@ -813,6 +813,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
             if (!file.isHidden()) {
                 String filename = file.getName();
                 String relativePath = file.getPath().substring(getDatadir().length() - 3, file.getPath().length());
+                relativePath = relativePath.replace("\\", "/");
 
 
                 if (acl.canRead(relativePath, username, roles)) {

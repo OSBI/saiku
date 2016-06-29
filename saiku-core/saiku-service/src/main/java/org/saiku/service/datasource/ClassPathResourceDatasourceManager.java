@@ -20,6 +20,7 @@ import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.repository.*;
+import org.saiku.service.importer.JujuSource;
 import org.saiku.service.importer.LegacyImporter;
 import org.saiku.service.importer.LegacyImporterImpl;
 import org.saiku.service.user.UserService;
@@ -208,6 +209,11 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
     Set<String> unique = new HashSet<>(newlist);
 
     return  unique.toArray(new String[unique.size()]);
+  }
+
+  @Override
+  public List<JujuSource> getJujuDatasources() {
+    return null;
   }
 
   public void unload() {
