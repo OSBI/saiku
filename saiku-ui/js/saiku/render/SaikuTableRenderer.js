@@ -4,7 +4,6 @@ function SaikuTableRenderer(data, options) {
     this._options = _.extend({}, SaikuRendererOptions, options);
 }
 
-
 SaikuTableRenderer.prototype.render = function(data, options) {
         var self = this;
         if (data) {
@@ -42,6 +41,10 @@ SaikuTableRenderer.prototype.render = function(data, options) {
 
                 var html =  self.internalRender(self._data, self._options);
                 $(self._options.htmlObject).html(html);
+                // Render the totals summary
+                $('#totals_summary').remove(); // Remove one previous totals div, if present
+                $(self._options.htmlObject).after(self.renderSummary(data)); // Render the new summary
+
 //                $(self._options.htmlObject).stickyTableHeaders( { container: self._options.htmlObject.parent().parent(), fixedOffset: self._options.htmlObject.parent().parent().offset().top });
 
                 _.defer(function(that) {
@@ -565,3 +568,52 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
     }
     return "<table>" + tableContent + "</tbody></table>";
 };
+
+SaikuTableRenderer.prototype.renderSummary = function(data) {
+    if (data && data.query) {
+        var hasSomethingToRender = false;
+        var measures = data.query.queryModel.details.measures;
+        var summaryData = {};
+
+        for (var i = 0; i < measures.length; i++) {
+            var m = measures[i];
+            if (m.aggregators) {
+                for (var j = 0; j < m.aggregators.length; j++) {
+                    var a = m.aggregators[j];
+                    if (a.indexOf('_') > 0) {
+                        var tokens = a.split('_');
+                        var aggregator = tokens[0];
+                        var axis = tokens[1];
+
+                        if (aggregator !== 'nil' && aggregator !== 'not') {
+                            hasSomethingToRender = true;
+                            aggregator = aggregator.capitalizeFirstLetter();
+                            if (!(axis in summaryData)) summaryData[axis] = [];
+                            summaryData[axis].push(m.name + ": " + aggregator);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (hasSomethingToRender) {
+            var summary = "<div id='totals_summary'><br/>";
+
+            $.each(summaryData, function(key, aggregators) {
+                summary += "<h3>" + key.capitalizeFirstLetter();
+                for (var i = 0; i < aggregators.length; i++) {
+                    summary += "<br/>&nbsp;" + aggregators[i];
+                }
+                summary += "</h3>";
+            });
+
+            return summary + "</div>";
+        }
+    }
+
+    return "";
+};
+
+String.prototype.capitalizeFirstLetter = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
+}
