@@ -87,7 +87,7 @@ var AboutModal = Modal.extend({
             var yourDate = new Date(yourEpoch);
             $(this.el).find(".licenseexpr").text(yourDate.toLocaleDateString());
         }
-        if(Settings.LICENSE.licenseType != undefined) {
+        if(Settings.LICENSE.licenseType != undefined && Settings.LICENSE.licenseType !="community_edition") {
             $(this.el).find(".licensetype").text(Settings.LICENSE.licenseType);
             $(this.el).find(".licensename").text(Settings.LICENSE.name);
             $(this.el).find(".licenseuserlimit").text(Settings.LICENSE.userLimit);
@@ -99,7 +99,7 @@ var AboutModal = Modal.extend({
         ObjectLength =
             Object.keys ? this.ObjectLength_Modern : this.ObjectLength_Legacy;
 
-        if(Settings.LICENSEQUOTA != undefined && ObjectLength(Settings.LICENSEQUOTA) > 0 ) {
+        if(Settings.LICENSEQUOTA != undefined && ObjectLength(Settings.LICENSEQUOTA) > 0 && Settings.LICENSE.licenseType != undefined && Settings.LICENSE.licenseType !="community_edition") {
             var tbl_body = "";
             var odd_even = false;
             $.each(Settings.LICENSEQUOTA, function () {
