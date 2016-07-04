@@ -73,6 +73,7 @@ var Table = Backbone.View.extend({
             var h = cell.properties.hierarchy;
             var l = cell.properties.level;
             var l_caption = "";
+			 var l_name = "";
 
             var keep_payload = JSON.stringify(
                 {
@@ -216,12 +217,12 @@ var Table = Backbone.View.extend({
 
                         //self.workspace.query.helper.removeLevel(h, k);
                         var hierarchy = self.workspace.query.helper.getHierarchy(h);
-                        if (hierarchy && hierarchy.levels.hasOwnProperty(l_caption)) {
+                        if (hierarchy && hierarchy.levels.hasOwnProperty(l_name)) {
                             updates.push({
                                 uniqueName: cell.properties.uniquename,
                                 caption: cell.properties.uniquename
                             });
-                            hierarchy.levels[l_caption].selection = {"type": "INCLUSION", "members": updates};
+                            hierarchy.levels[l_name].selection = {"type": "INCLUSION", "members": updates};
                             self.workspace.drop_zones.synchronize_query();
                             self.workspace.query.run(true);
                         }
