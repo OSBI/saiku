@@ -287,7 +287,7 @@
                                         <include name="*.properties" />
                                     </fileset>
                                 </copy>
-                                <replaceregexp match="(&lt;!-- Saiku plugins --&gt;)" replace=" &lt;script type='text/javascript' src='js/saiku/plugins/Statistics/plugin.js' defer&gt;&lt;/script&gt;&#xA; &lt;script type='text/javascript' src='js/saiku/plugins/BIServer/plugin.js' defer&gt;&lt;/script&gt;&#xA;     &lt;script type='text/javascript' src='js/saiku/plugins/CCC_Chart/plugin.js'&gt;&lt;/script&gt;&#xA;     &lt;script type='text/javascript' src='js/saiku/plugins/Fullscreen/plugin.js' defer&gt;&lt;/script&gt;        " flags="gs" byline="false">
+                                <replaceregexp match="(&lt;!-- Saiku plugins --&gt;)" replace=" &lt;script type='text/javascript' src='js/saiku/plugins/Statistics/plugin.js' defer&gt;&lt;/script&gt;&#xA; &lt;script type='text/javascript' src='js/saiku/plugins/BIServer/plugin.js' defer&gt;&lt;/script&gt;&#xA;     &lt;script type='text/javascript' src='js/saiku/plugins/CCC_Chart/plugin.js'&gt;&lt;/script&gt;&#xA;       " flags="gs" byline="false">
                                     <fileset dir="target/dist/saiku/ui/" includes="index.html" />
                                 </replaceregexp>
                                 <replaceregexp match="(REPOSITORY_LAZY: false,)" replace="REPOSITORY_LAZY: true," flags="gs" byline="false">
