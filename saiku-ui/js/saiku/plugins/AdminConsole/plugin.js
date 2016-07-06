@@ -47,7 +47,8 @@ var AdminConsole = Backbone.View.extend({
         'click .license_info' : 'show_license_info',
         'click .license_users_list' : 'show_license_user_list',
         'click .add_license_user' : 'add_license_user',
-        'click .remove_license_user' : 'remove_license_user'
+        'click .remove_license_user' : 'remove_license_user',
+        'blur input[name="jdbcurl"]' : 'trigger_set_jdbcdriver'
     },
     initialize: function (args) {
         _.bindAll(this, "fetch_users", "fetch_schemas", "fetch_propkeys", "fetch_datasources", "clear_users", "clear_datasources", "new_add_role", "new_remove_role", "save_new_user", "advanced_url", "view_datasource");
@@ -165,9 +166,29 @@ var AdminConsole = Backbone.View.extend({
                 }
             });
         }
+    },
 
+    trigger_set_jdbcdriver: function(event) {
+        event.preventDefault();
 
+        var $currentTarget = $(event.currentTarget);
+        var regexp = /jdbc:mysql:|jdbc:postgresql:|jdbc:oracle:|jdbc:drill:/i;
+        var dbUrl = this.$el.find('input[name="jdbcurl"]').val();
+        var dbDriver = this.$el.find('input[name="driver"]').val();
+        var jdbcDriver = {
+            'mysql'      : 'com.mysql.jdbc.Driver',
+            'postgresql' : 'org.postgresql.Driver',
+            'oracle'     : 'oracle.jdbc.OracleDriver',
+            'drill'      : 'org.apache.drill.jdbc.Driver',
+        };
+        var db;
 
+        if (_.isEmpty(dbDriver)) {
+            if (!!dbUrl.match(regexp)) {
+                db = dbUrl.match(regexp)[0].split(':')[1];
+                this.$el.find('input[name="driver"]').val(jdbcDriver[db]);
+            }
+        }
     },
 
     list_users_license_template: function(obj) {
