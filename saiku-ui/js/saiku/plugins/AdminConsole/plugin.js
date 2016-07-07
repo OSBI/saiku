@@ -48,7 +48,7 @@ var AdminConsole = Backbone.View.extend({
         'click .license_users_list' : 'show_license_user_list',
         'click .add_license_user' : 'add_license_user',
         'click .remove_license_user' : 'remove_license_user',
-        'blur input[name="jdbcurl"]' : 'trigger_set_jdbcdriver'
+        'keyup input[name="jdbcurl"]' : 'trigger_set_jdbcdriver'
     },
     initialize: function (args) {
         _.bindAll(this, "fetch_users", "fetch_schemas", "fetch_propkeys", "fetch_datasources", "clear_users", "clear_datasources", "new_add_role", "new_remove_role", "save_new_user", "advanced_url", "view_datasource");
