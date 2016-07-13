@@ -15,7 +15,7 @@
  */
 
 /**
- * The "about us" dialog
+ * The "warning message" dialog
  */
 var WarningModal = Modal.extend({
     type: 'info',
@@ -24,9 +24,6 @@ var WarningModal = Modal.extend({
         { text: 'Okay', method: 'okay' },
         { text: 'Cancel', method: 'close' }
     ],
-    /*message: Settings.VERSION + '<br>' +
-        '<a href="http://saiku.meteorite.bi" target="_blank">http://saiku.meteorite.bi</a><br><br>' +
-        'Powered by <img src="images/src/meteorite_free.png" width="20px"> <a href="http://www.meteorite.bi/consulting/" target="_blank">www.meteorite.bi</a>',*/
 
     initialize: function(args) {
         this.options.title = args.title;
@@ -41,19 +38,21 @@ var WarningModal = Modal.extend({
         if (event.target.hash === '#close') {
             event.preventDefault();
         }
-        if(this.cancelfunction != null) {
+
+        if (_.isFunction(this.cancelfunction) && this.cancelfunction != null) {
             this.cancelfunction(this.cancelcallbackobject);
         }
-        this.$el.dialog('destroy').remove();
+
+        this.$el.dialog('close');
     },
 
     okay: function(event) {
         event.preventDefault();
-        if(this.okayfunction!=null) {
+
+        if (_.isFunction(this.okayfunction) && this.okayfunction != null) {
             this.okayfunction(this.okaycallbackobject);
         }
 
-        this.$el.dialog('destroy').remove();
+        this.$el.dialog('close');
     }
-
 });
