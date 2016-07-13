@@ -794,7 +794,7 @@ var WorkspaceDropZone = Backbone.View.extend({
 
                                 if (tokens.length > 1) { // Axis-specific totals
                                     total = tokens[0];
-                                    var metric = tokens[1];
+                                    var metric = key.substring(("show_totals_" + total).length + 1);
 
                                     _.each(selectedMeasures, function(m){
                                         if (metric === m.name) {
@@ -844,7 +844,6 @@ var WorkspaceDropZone = Backbone.View.extend({
 
                                 }
 								else if(_.indexOf(["Param"], fun) > -1) {
-									console.log("here");
 									a.sortEvaluationLiteral = items[ikey].payload.sortliteral;
 								}else {
                                     var expressions = [];
