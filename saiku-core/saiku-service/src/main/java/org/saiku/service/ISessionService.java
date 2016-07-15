@@ -34,4 +34,6 @@ public interface ISessionService {
   Map<String, Object> getAllSessionObjects();
 
   void clearSessions(HttpServletRequest req, String username, String password) throws Exception;
+
+  Map<Object, Map<String, Object>> getSessionHolder();
 }

@@ -2,12 +2,12 @@
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saikuanalytics</groupId>
-        <version>3.9-RC3</version>
+        <version>3.9-RC4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>saiku-bi-platform-plugin-p6</artifactId>
     <packaging>jar</packaging>
-    <version>3.9-RC3</version>
+    <version>3.9-RC4</version>
     <name>saiku biserver plugin</name>
 
     <build>
@@ -515,6 +515,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>3.2.5.RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>pentaho</groupId>
             <artifactId>pentaho-platform-core</artifactId>
             <scope>provided</scope>
@@ -670,12 +676,6 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-            <version>2.0.5.RELEASE</version>
         </dependency>
 
         <!-- Batik/SVG -->

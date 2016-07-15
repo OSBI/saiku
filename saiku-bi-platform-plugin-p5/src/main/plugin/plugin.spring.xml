@@ -76,8 +76,7 @@
 		<property name="userService" ref="userServiceBean"/>
 		<property name="l" ref="licenseUtilsBeanPlugin"/>
 	</bean>
-	
-	
+
     <bean id="sessionResource" class="org.saiku.plugin.resources.PentahoSessionResource">
     		<property name="sessionService" ref="sessionService" />
 	</bean>
