@@ -618,11 +618,13 @@ var WorkspaceDropZone = Backbone.View.extend({
                     var foldName = 'fold_' + measure.name.replace(/\s/g, '_').toLowerCase();
                     var fold = {name: measure.name, items: {}};
 
-                    fold.items["show_totals_nil_" + measure.name] = {name: "None", i18n: true};
-                    fold.items["show_totals_sum_" + measure.name] = {name: "Sum",  i18n: true};
-                    fold.items["show_totals_min_" + measure.name] = {name: "Min",  i18n: true};
-                    fold.items["show_totals_max_" + measure.name] = {name: "Max",  i18n: true};
-                    fold.items["show_totals_avg_" + measure.name] = {name: "Avg",  i18n: true};
+                    // Also applying a bold style to per measure's selected aggregation total
+
+                    fold.items["show_totals_nil_" + measure.name] = {name: self.formatAggregatorName("None", "nil", a, measure), i18n: true};
+                    fold.items["show_totals_sum_" + measure.name] = {name: self.formatAggregatorName("Sum",  "sum", a, measure), i18n: true};
+                    fold.items["show_totals_min_" + measure.name] = {name: self.formatAggregatorName("Min",  "min", a, measure), i18n: true};
+                    fold.items["show_totals_max_" + measure.name] = {name: self.formatAggregatorName("Max",  "max", a, measure), i18n: true};
+                    fold.items["show_totals_avg_" + measure.name] = {name: self.formatAggregatorName("Avg",  "avg", a, measure), i18n: true};
 
                     citems.fold_totals.items[foldName] = fold;
                 });                
@@ -631,6 +633,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                     recursive_menu_translate(item, Saiku.i18n.po_file);
                 });
 
+                // Applying a bold style to the selected aggregation total
                 var totalItems = citems.fold_totals.items.grand_totals.items;
                 if (totalFunction) {
                     for (var key in totalItems) {
@@ -870,5 +873,19 @@ var WorkspaceDropZone = Backbone.View.extend({
             }
         });
     $target.contextMenu();
+    },
+    formatAggregatorName: function(name, agg, a, measure) {
+        if (measure.aggregators) {
+            for (var i = 0; i < measure.aggregators.length; i++) {
+                var tokens     = measure.aggregators[i].split('_');
+                var aggregator = tokens[0];
+                var axis       = tokens[1];
+
+                if (agg == aggregator && axis == a.location) {
+                    return '<b>' + name + '</b>';
+                }
+            }
+        }
+        return name;
     }
 });
