@@ -18,113 +18,58 @@
  * The "about us" dialog
  */
 var AboutModal = Modal.extend({
-    type: 'info',
+  type: 'login',
 
-    events: {
-        'click a' : 'close'
-    },
+  message: '<div class="about-us">' +
+            '<div class="header">' +
+              '<span>' + Settings.VERSION + '<span>' +
+              '<a href="http://saiku.meteorite.bi" target="_blank">http://saiku.meteorite.bi</a>' +
+            '</div>' +
+            '<div class="license-info">' +
+              '<h3>License Info</h3>' +
+              '<ul>' +
+                '<li class="label">Type: <span class="item license-type"></span></li>' +
+                '<li class="label item-license-expiration" hidden>Expires: <span class="item license-expiration"></span></li>' +
+                '<li class="label">Number of users: <span class="item license-user-limit"></span></li>' +
+                '<li class="label">Lincesed to: <span class="item license-name"></span> - <span class="item license-email"></span></li>' +
+                '<li><a href="http://www.meteorite.bi/saiku-pricing" target="_blank">Order more licenses here</a></li>' +
+              '</ul>' +
+            '</div>' +
+            '<div class="footer">' +
+              '<span>Want to help? <a href="https://www.paypal.com/uk/cgi-bin/webscr?cmd=_flow&SESSION=TBTmDYM2KWxSfysss5sYdEhDRAShtBw05-N3gybwwK6dqENEmcYKDo3PjZ8&dispatch=5885d80a13c0db1f8e263663d3faee8d64813b57e559a2578463e58274899069" target="_blank">Make a donation</a> or <a href="https://github.com/OSBI/saiku" target="_blank">contribute to the code!</a></span>' +
+              '<span>Powered by <img src="images/src/meteorite_free.png" width="20px"> <a href="http://www.meteorite.bi/services/consulting" target="_blank">www.meteorite.bi</a></span>' +
+            '</div>' +
+           '</div>',
 
-    message: Settings.VERSION + '<br>' +
-        '<a href="http://saiku.meteorite.bi" target="_blank">http://saiku.meteorite.bi</a><br><br>' +
-        '<h2 class="i18n">License Type</h2>'+
-        '<span class="licensetype"/> - <span class="i18n">Expires:</span> <span class="licenseexpr"/><br/>'+
-        '<span class="i18n">Number of users:</span> <span class="licenseuserlimit"/><br/>'+
-        '<span class="i18n">Licensed to:</span> <span class="licensename"/> - <span class="licenseemail"/><br/>'+
-        '<div id="licensetable">'+
-        '<h2>Unlicenced User Quota</h2><br/>'+
-        '<div class="table-wrapper">'+
-        '<div class="table-scroll">'+
-        '<table>'+
-        '<thead>'+
-        '<tr>'+
-        '<th><span class="text">Username</span></th>'+
-        '<th><span class="text">Logins Remaining</span></th>'+
-        '</tr>'+
-        '</thead>'+
-        '<tbody>'+
-        '<tr id="quotareplace"/>'+
-        '</tbody>'+
-        '</table>'+
-        '</div>'+
-        '</div>'+
-        '</div>'+
-        '<strong><a href="http://www.meteorite.bi/saiku-pricing" class="i18n" target="_blank">Order more licenses' +
-        ' here</a></strong><br/>'+
-        'Powered by <img src="images/src/meteorite_free.png" width="20px"> <a href="http://www.meteorite.bi/services/consulting" target="_blank">www.meteorite.bi</a><br/>',
+  events: {
+    'click .dialog_footer a' : 'call'
+  },
 
-    initialize: function() {
-        this.options.title = '<span class="i18n">About</span> ' + Settings.VERSION;
-    },
+  initialize: function(args) {
+    _.extend(this, args);
 
-    ObjectLength_Modern: function( object ) {
-    return Object.keys(object).length;
-    },
+    this.options.title = '<span class="i18n">About</span> ' + Settings.VERSION;
 
-    ObjectLength_Legacy: function( object ) {
-    var length = 0;
-    for( var key in object ) {
-        if( object.hasOwnProperty(key) ) {
-            ++length;
-        }
+    this.bind('open', function() {
+      this.render_license_info();
+    });
+  },
+
+  render_license_info: function() {
+    var licenseType = Settings.LICENSE.licenseType === 'community_edition'
+      ? 'Open Source License'
+      : Settings.LICENSE.licenseType;
+      var expiration;
+
+    if (Settings.LICENSE.expiration) {
+      expiration = new Date(parseFloat(Settings.LICENSE.expiration));
+      this.$el.find('.item-license-expiration').show();
+      this.$el.find('.license-expiration').text(expiration.toLocaleDateString());
     }
-    return length;
-    },
 
-
-    render: function() {
-        $(this.el).html(this.template())
-            .addClass("dialog_" + this.type)
-            .dialog(this.options);
-
-        var uiDialogTitle = $('.ui-dialog-title');
-        uiDialogTitle.html(this.options.title);
-        uiDialogTitle.addClass('i18n');
-        Saiku.i18n.translate();
-        license = new License();
-
-        if(Settings.LICENSE.expiration != undefined) {
-            yourEpoch = parseFloat(Settings.LICENSE.expiration);
-            var yourDate = new Date(yourEpoch);
-            $(this.el).find(".licenseexpr").text(yourDate.toLocaleDateString());
-        }
-        if(Settings.LICENSE.licenseType != undefined && Settings.LICENSE.licenseType !="community_edition") {
-            $(this.el).find(".licensetype").text(Settings.LICENSE.licenseType);
-            $(this.el).find(".licensename").text(Settings.LICENSE.name);
-            $(this.el).find(".licenseuserlimit").text(Settings.LICENSE.userLimit);
-            $(this.el).find(".licenseemail").text(Settings.LICENSE.email);
-        }
-        else{
-            $(this.el).find(".licensetype").text("Open Source License");
-        }
-        ObjectLength =
-            Object.keys ? this.ObjectLength_Modern : this.ObjectLength_Legacy;
-
-        if(Settings.LICENSEQUOTA != undefined && ObjectLength(Settings.LICENSEQUOTA) > 0 && Settings.LICENSE.licenseType != undefined && Settings.LICENSE.licenseType !="community_edition") {
-            var tbl_body = "";
-            var odd_even = false;
-            $.each(Settings.LICENSEQUOTA, function () {
-                var tbl_row = "";
-                $.each(this, function (k, v) {
-                    tbl_row += "<td>" + v + "</td>";
-                });
-                tbl_body += "<tr class=\"" + ( odd_even ? "odd" : "even") + "\">" + tbl_row + "</tr>";
-                odd_even = !odd_even;
-            });
-
-            $(this.el).find("#quotareplace").replaceWith(tbl_body);
-
-        }
-        else{
-            $(this.el).find("#licensetable").hide();
-        }
-
-        return this;
-    },
-
-    close: function(event) {
-        if (event.target.hash === '#close') {
-            event.preventDefault();
-        }
-        this.$el.dialog('destroy').remove();
-    }
+    this.$el.find('.license-type').text(licenseType);
+    this.$el.find('.license-user-limit').text(Settings.LICENSE.userLimit);
+    this.$el.find('.license-name').text(Settings.LICENSE.name);
+    this.$el.find('.license-email').text(Settings.LICENSE.email);
+  }
 });
