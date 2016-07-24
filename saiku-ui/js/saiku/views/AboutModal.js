@@ -18,58 +18,58 @@
  * The "about us" dialog
  */
 var AboutModal = Modal.extend({
-  type: 'login',
+    type: 'login',
 
-  message: '<div class="about-us">' +
-            '<div class="header">' +
-              '<span>' + Settings.VERSION + '<span>' +
-              '<a href="http://saiku.meteorite.bi" target="_blank">http://saiku.meteorite.bi</a>' +
-            '</div>' +
-            '<div class="license-info">' +
-              '<h3>License Info</h3>' +
-              '<ul>' +
-                '<li class="label">Type: <span class="item license-type"></span></li>' +
-                '<li class="label item-license-expiration" hidden>Expires: <span class="item license-expiration"></span></li>' +
-                '<li class="label">Number of users: <span class="item license-user-limit"></span></li>' +
-                '<li class="label">Lincesed to: <span class="item license-name"></span> - <span class="item license-email"></span></li>' +
-                '<li><a href="http://www.meteorite.bi/saiku-pricing" target="_blank">Order more licenses here</a></li>' +
-              '</ul>' +
-            '</div>' +
-            '<div class="footer">' +
-              '<span>Want to help? <a href="https://www.paypal.com/uk/cgi-bin/webscr?cmd=_flow&SESSION=TBTmDYM2KWxSfysss5sYdEhDRAShtBw05-N3gybwwK6dqENEmcYKDo3PjZ8&dispatch=5885d80a13c0db1f8e263663d3faee8d64813b57e559a2578463e58274899069" target="_blank">Make a donation</a> or <a href="https://github.com/OSBI/saiku" target="_blank">contribute to the code!</a></span>' +
-              '<span>Powered by <img src="images/src/meteorite_free.png" width="20px"> <a href="http://www.meteorite.bi/services/consulting" target="_blank">www.meteorite.bi</a></span>' +
-            '</div>' +
-           '</div>',
+    message: '<div class="about-us">' +
+                 '<div class="header">' +
+                     '<span>' + Settings.VERSION + '<span>' +
+                     '<a href="http://saiku.meteorite.bi" target="_blank">http://saiku.meteorite.bi</a>' +
+                 '</div>' +
+                 '<div class="license-info">' +
+                     '<h3>License Info</h3>' +
+                     '<ul>' +
+                         '<li class="label">Type: <span class="item license-type"></span></li>' +
+                         '<li class="label item-license-expiration" hidden>Expires: <span class="item license-expiration"></span></li>' +
+                         '<li class="label">Number of users: <span class="item license-user-limit"></span></li>' +
+                         '<li class="label">Lincesed to: <span class="item license-name"></span> - <span class="item license-email"></span></li>' +
+                         '<li><a href="http://www.meteorite.bi/saiku-pricing" target="_blank">Order more licenses here</a></li>' +
+                     '</ul>' +
+                 '</div>' +
+                 '<div class="footer">' +
+                     '<span>Want to help? <a href="https://www.paypal.com/uk/cgi-bin/webscr?cmd=_flow&SESSION=TBTmDYM2KWxSfysss5sYdEhDRAShtBw05-N3gybwwK6dqENEmcYKDo3PjZ8&dispatch=5885d80a13c0db1f8e263663d3faee8d64813b57e559a2578463e58274899069" target="_blank">Make a donation</a> or <a href="https://github.com/OSBI/saiku" target="_blank">contribute to the code!</a></span>' +
+                     '<span>Powered by <img src="images/src/meteorite_free.png" width="20px"> <a href="http://www.meteorite.bi/services/consulting" target="_blank">www.meteorite.bi</a></span>' +
+                 '</div>' +
+             '</div>',
 
-  events: {
-    'click .dialog_footer a' : 'call'
-  },
+    events: {
+        'click .dialog_footer a' : 'call'
+    },
 
-  initialize: function(args) {
-    _.extend(this, args);
+    initialize: function(args) {
+        _.extend(this, args);
 
-    this.options.title = '<span class="i18n">About</span> ' + Settings.VERSION;
+        this.options.title = '<span class="i18n">About</span> ' + Settings.VERSION;
 
-    this.bind('open', function() {
-      this.render_license_info();
-    });
-  },
+        this.bind('open', function() {
+            this.render_license_info();
+        });
+    },
 
-  render_license_info: function() {
-    var licenseType = Settings.LICENSE.licenseType === 'community_edition'
-      ? 'Open Source License'
-      : Settings.LICENSE.licenseType;
-      var expiration;
+    render_license_info: function() {
+        var licenseType = Settings.LICENSE.licenseType === 'community_edition'
+            ? 'Open Source License'
+            : Settings.LICENSE.licenseType;
+        var expiration;
 
-    if (Settings.LICENSE.expiration) {
-      expiration = new Date(parseFloat(Settings.LICENSE.expiration));
-      this.$el.find('.item-license-expiration').show();
-      this.$el.find('.license-expiration').text(expiration.toLocaleDateString());
+        if (Settings.LICENSE.expiration) {
+            expiration = new Date(parseFloat(Settings.LICENSE.expiration));
+            this.$el.find('.item-license-expiration').show();
+            this.$el.find('.license-expiration').text(expiration.toLocaleDateString());
+        }
+
+        this.$el.find('.license-type').text(licenseType);
+        this.$el.find('.license-user-limit').text(Settings.LICENSE.userLimit);
+        this.$el.find('.license-name').text(Settings.LICENSE.name);
+        this.$el.find('.license-email').text(Settings.LICENSE.email);
     }
-
-    this.$el.find('.license-type').text(licenseType);
-    this.$el.find('.license-user-limit').text(Settings.LICENSE.userLimit);
-    this.$el.find('.license-name').text(Settings.LICENSE.name);
-    this.$el.find('.license-email').text(Settings.LICENSE.email);
-  }
 });
