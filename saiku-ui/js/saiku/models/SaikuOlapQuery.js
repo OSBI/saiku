@@ -42,7 +42,7 @@ var SaikuOlapQueryTemplate = {
     },
     "calculatedMeasures": [],
     "calculatedMembers": []
-  }, 
+  },
   "queryType": "OLAP",
   "type": "QUERYMODEL"
 };
@@ -60,8 +60,8 @@ SaikuOlapQueryHelper.prototype.clearAxis = function(axisName) {
 };
 
 SaikuOlapQueryHelper.prototype.getHierarchy = function(name) {
-  var _searchFunction = function(he) { 
-    return (he && he.name == name); 
+  var _searchFunction = function(he) {
+    return (he && he.name == name);
   };
 
   for (var axisName in this.model().queryModel.axes) {
@@ -82,7 +82,7 @@ SaikuOlapQueryHelper.prototype.moveHierarchy = function(fromAxis, toAxis, hierar
   if (typeof position != "undefined" && position > -1 && target.length > position) {
       target.splice(position, 0, h);
       return;
-  } 
+  }
   target.push(h);
 
 };
@@ -95,7 +95,7 @@ SaikuOlapQueryHelper.prototype.removeHierarchy = function(hierarchy) {
   var axis = this.findAxisForHierarchy(hierarchy);
   if (axis) {
     var i = axis.hierarchies.indexOf(h);
-      axis.hierarchies.splice(i,1);  
+      axis.hierarchies.splice(i,1);
   }
   return h;
 };
@@ -248,7 +248,7 @@ SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, p
       mHierarchy = { "name": hierarchy, "levels": {}, "cmembers": {} };
       mHierarchy.levels[level] = { name: level };
     }
-    
+
     var existingAxis = this.findAxisForHierarchy(hierarchy);
     if (existingAxis) {
       this.moveHierarchy(existingAxis.location, axis, hierarchy, position);
@@ -258,7 +258,7 @@ SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, p
         if (typeof position != "undefined" && position > -1 && _axis.hierarchies.length > position) {
           _axis.hierarchies.splice(position, 0, mHierarchy);
           return;
-        } 
+        }
         _axis.hierarchies.push(mHierarchy);
       } else {
         Saiku.log("Cannot find axis: " + axis + " to include Level: " + level);
@@ -274,7 +274,7 @@ SaikuOlapQueryHelper.prototype.includeLevelCalculatedMember = function(axis, hie
       mHierarchy = { "name": hierarchy, "levels": {}, "cmembers": {} };
       mHierarchy.cmembers[uniqueName] = uniqueName;
     }
-    
+
     var existingAxis = this.findAxisForHierarchy(hierarchy);
     if (existingAxis) {
       this.moveHierarchy(existingAxis.location, axis, hierarchy, -1);
@@ -284,7 +284,7 @@ SaikuOlapQueryHelper.prototype.includeLevelCalculatedMember = function(axis, hie
         if (typeof position != "undefined" && position > -1 && _axis.hierarchies.length > position) {
           _axis.hierarchies.splice(position, 0, mHierarchy);
           return;
-        } 
+        }
         _axis.hierarchies.push(mHierarchy);
       } else {
         Saiku.log("Cannot find axis: " + axis + " to include Level: " + level);
@@ -293,9 +293,16 @@ SaikuOlapQueryHelper.prototype.includeLevelCalculatedMember = function(axis, hie
 };
 
 SaikuOlapQueryHelper.prototype.removeLevel = function(hierarchy, level) {
+  var hier = hierarchy;
+
   hierarchy = this.getHierarchy(hierarchy);
+
   if (hierarchy && hierarchy.levels.hasOwnProperty(level)) {
     delete hierarchy.levels[level];
+
+    if (hierarchy && _.isEmpty(hierarchy.levels)) {
+      this.removeHierarchy(hier);
+    }
   }
 };
 
