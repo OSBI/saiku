@@ -17,7 +17,6 @@ import org.olap4j.metadata.Property;
 import java.util.*;
 
 import mondrian.util.Format;
-import org.saiku.service.util.exception.SaikuServiceException;
 
 public class TotalsListsBuilder implements FormatList {
   private final Member[] memberBranch;
@@ -34,7 +33,6 @@ public class TotalsListsBuilder implements FormatList {
   private final CellSet cellSet;
   private final Format[] valueFormats;
   private final ThinQuery thinQuery;
-  private int dai;
 
   public TotalsListsBuilder(Measure[] selectedMeasures, TotalAggregator[] aggrTempl, CellSet cellSet,
                             AxisInfo totalsAxisInfo, AxisInfo dataAxisInfo) throws Exception {
@@ -79,8 +77,8 @@ public class TotalsListsBuilder implements FormatList {
     int measuresAt = 0;
     int measuresMember = 0;
     final List<Member> members =
-      dataAxisInfo.axis.getPositionCount() > 0 ? dataAxisInfo.axis.getPositions().get( 0 ).getMembers() :
-        Collections.<Member>emptyList();
+            dataAxisInfo.axis.getPositionCount() > 0 ? dataAxisInfo.axis.getPositions().get( 0 ).getMembers() :
+                    Collections.<Member>emptyList();
     for (; measuresMember < members.size(); measuresMember++ ) {
       Member m = members.get( measuresMember );
       if ( "Measures".equals( m.getDimension().getName() ) ) {
@@ -103,7 +101,7 @@ public class TotalsListsBuilder implements FormatList {
     totalBranch = new TotalNode[ maxDepth ];
 
     TotalNode rootNode =
-      new TotalNode( measuresCaptions, measures, aggrTempl[ 0 ], this, totalsAxisInfo.fullPositions.size(), dataAxisInfo);
+            new TotalNode( measuresCaptions, measures, aggrTempl[ 0 ], this, totalsAxisInfo.fullPositions.size(), dataAxisInfo);
     col = Axis.ROWS.equals( dataAxisInfo.axis.getAxisOrdinal() ) ? 1 : 0;
     row = ( col + 1 ) & 1;
     this.aggrTempl = aggrTempl;
@@ -147,21 +145,18 @@ public class TotalsListsBuilder implements FormatList {
     }
   }
 
-  private void positionMember( final int depth, Member m, final List<Integer> levels, final Member[] branch ) throws SaikuServiceException{
+  private void positionMember( final int depth, Member m, final List<Integer> levels, final Member[] branch ) {
     for ( int i = levels.size() - 1; i >= 0; ) {
-
-        branch[depth + i] = m;
-        i--;
-      if(m!=null) {
-        do {
-          m = m.getParentMember();
-        }
-        while (i >= 0 && m != null && m.getDepth() != levels.get(i));
+      branch[ depth + i ] = m;
+      i--;
+      do {
+        m = m.getParentMember();
       }
+      while ( i >= 0 && m != null && m.getDepth() != levels.get( i ) );
     }
   }
 
-  private void traverse( List<Integer>[] levels, List<TotalNode>[] totalLists, int override ) {
+  private void traverse( List<Integer>[] levels, List<TotalNode>[] totalLists ) {
     int fullPosition = 0;
     final Member[] prevMemberBranch = new Member[ memberBranch.length ];
 
@@ -172,31 +167,18 @@ public class TotalsListsBuilder implements FormatList {
 
       for ( final Member m : p.getMembers() ) {
         final int maxDepth = levels[ mI ].get( levels[ mI ].size() - 1 );
-        int ld = m.getLevel().getDepth();
-        int d = m.getDepth();
-        if(override==-1) {
-          dai = this.dataAxisInfo.maxDepth;
-        }
         if ( m.getDepth() < maxDepth ) {
           continue nextpos;
         }
-
-        try {
-          positionMember( depth, m, levels[mI], memberBranch );
-        }
-        catch(SaikuServiceException e){
-          continue nextpos;
-        }
+        positionMember( depth, m, levels[ mI ], memberBranch );
         depth += levels[ mI ].size();
         mI++;
       }
 
       int changedFrom = 1;
-      if(prevMemberBranch!=null && prevMemberBranch[0]!=null) {
-        while (changedFrom < memberBranch.length - 1 && memberBranch[changedFrom]
-                .equals(prevMemberBranch[changedFrom])) {
-          changedFrom++;
-        }
+      while ( changedFrom < memberBranch.length - 1 && memberBranch[ changedFrom ]
+              .equals( prevMemberBranch[ changedFrom ] ) ) {
+        changedFrom++;
       }
 
       for ( int i = totalBranch.length - 1; i >= changedFrom; i-- ) {
@@ -250,7 +232,7 @@ public class TotalsListsBuilder implements FormatList {
       fullPosition++;
     }
     for ( int i = totalBranch.length - 1; i > 0; i-- ) {
-        totalBranch[i - 1].appendChild(totalBranch[i]);
+      totalBranch[ i - 1 ].appendChild( totalBranch[ i ] );
     }
 
     for ( TotalNode n : totalLists[ totalLists.length - 1 ] ) {
@@ -259,13 +241,13 @@ public class TotalsListsBuilder implements FormatList {
   }
 
   public List<TotalNode>[] buildTotalsLists() {
-    traverse( dataAxisInfo.levels, totalsLists, -1 );
+    traverse( dataAxisInfo.levels, totalsLists );
     return totalsLists;
   }
 
   private Cell getCellAt( int axisCoord, int perpAxisCoord ) {
     final Position[] positions =
-      new Position[] { dataAxisInfo.fullPositions.get( axisCoord ), totalsAxisInfo.fullPositions.get( perpAxisCoord ) };
+            new Position[] { dataAxisInfo.fullPositions.get( axisCoord ), totalsAxisInfo.fullPositions.get( perpAxisCoord ) };
     return cellSet.getCell( positions[ col ], positions[ row ] );
   }
 
