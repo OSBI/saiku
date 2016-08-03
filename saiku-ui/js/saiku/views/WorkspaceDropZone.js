@@ -126,7 +126,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                 });
                 this.workspace.$el.find('.parameter_input').empty();
             }
-            
+
             this.workspace.query.helper.removeHierarchy(hierarchy);
             this.workspace.sync_query();
             this.workspace.query.run();
@@ -145,44 +145,48 @@ var WorkspaceDropZone = Backbone.View.extend({
             for (var axis in axes) {
                 var $axis = $(self.el).find('.fields_list[title="' + axis + '"]');
                 _.each(axes[axis].hierarchies, function(hierarchy) {
-                    var h = $(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"]').clone().removeClass('d_hierarchy').addClass('hierarchy');
-                    h.find('li.d_level').hide();
-                    for (var level in hierarchy.levels) {
-                        h.find('li a[level="' + level + '"]').parent().show();
+					if(self.workspace.dimension_list!=null) {
+						var h = $(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"]').clone().removeClass('d_hierarchy').addClass('hierarchy');
+						h.find('li.d_level').hide();
+						for (var level in hierarchy.levels) {
+							h.find('li a[level="' + level + '"]').parent().show();
 
-                        // sync attribute list
-                        $(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"] li a[level="' + level + '"]').parent()
-                            .draggable('disable')
-                            .parents('.parent_dimension')
-                            .find('.folder_collapsed')
-                            .addClass('selected');
-                    }
-                    /*for (var member in hierarchy.cmembers) {
-                        if (hierarchy.cmembers.hasOwnProperty(member)) {
-                            var level = member.split('.')[member.split('.').length-1].replace(/[\[\]]/gi, '');
+							// sync attribute list
+							$(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"] li a[level="' + level + '"]').parent()
+								.draggable('disable')
+								.parents('.parent_dimension')
+								.find('.folder_collapsed')
+								.addClass('selected');
+						}
+						/*for (var member in hierarchy.cmembers) {
+						 if (hierarchy.cmembers.hasOwnProperty(member)) {
+						 var level = member.split('.')[member.split('.').length-1].replace(/[\[\]]/gi, '');
 
-                            h.find('li a[level="' + level + '"]').parent().show();
+						 h.find('li a[level="' + level + '"]').parent().show();
 
-                            // sync attribute list
-                            $(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"] li a[level="' + level + '"]').parent()
-                                .draggable('disable')
-                                .parents('.parent_dimension')
-                                .find('.folder_collapsed')
-                                .addClass('selected');
-                        }
-                    }*/
-                    var selection = $('<li class="selection"></li>');
-                    selection.append(h);
-                    selection.appendTo($axis.find('ul.connectable'));
+						 // sync attribute list
+						 $(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"] li a[level="' + level + '"]').parent()
+						 .draggable('disable')
+						 .parents('.parent_dimension')
+						 .find('.folder_collapsed')
+						 .addClass('selected');
+						 }
+						 }*/
+						var selection = $('<li class="selection"></li>');
+						selection.append(h);
+						selection.appendTo($axis.find('ul.connectable'));
+					}
                 });
             }
             var measures = model.queryModel.details.measures || [];
             _.each(measures, function (measure) {
-                var m = $(self.workspace.dimension_list.el).find('.measure_tree a.measure[measure="' + measure.name + '"]').parent();
-                var m2 = m.clone().show();
-                m2.appendTo( $(self.el).find('.fields_list_body.details ul.connectable'));
+				if(self.workspace.dimension_list!=null) {
+					var m = $(self.workspace.dimension_list.el).find('.measure_tree a.measure[measure="' + measure.name + '"]').parent();
+					var m2 = m.clone().show();
+					m2.appendTo($(self.el).find('.fields_list_body.details ul.connectable'));
 
-                m.draggable('disable');
+					m.draggable('disable');
+				}
             });
 
             this.update_dropzones();
@@ -192,7 +196,10 @@ var WorkspaceDropZone = Backbone.View.extend({
     reset_dropzones: function() {
         var self = this;
         $(self.el).find('.fields_list_body ul.connectable').find('li.selection, li.d_measure').remove();
-        $(self.workspace.dimension_list.el).find('li.ui-draggable-disabled').draggable('enable');
+		if(self.workspace.dimension_list!=null) {
+			$(self.workspace.dimension_list.el).find('li.ui-draggable-disabled').draggable('enable');
+		}
+
         $(self.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
         $(self.el).find('.fields_list[title="COLUMNS"] .limit').removeClass('on');
         $(this.workspace.el).find('.fields_list_body .clear_axis').addClass('hide');
@@ -224,9 +231,9 @@ var WorkspaceDropZone = Backbone.View.extend({
             for (var i = 0; i < len; i++) {
                 for (var lName in axisData.hierarchies[i].levels) {
                     if (axisData.hierarchies[i].levels.hasOwnProperty(lName)) {
-                        if (axisData.hierarchies[i].levels[lName].selection && 
+                        if (axisData.hierarchies[i].levels[lName].selection &&
                             axisData.hierarchies[i].levels[lName].selection['parameterName']) {
-                            
+
                             level = lName;
                             hierarchy = axisData.hierarchies[i].name;
                             this.workspace.query.helper.removeParameter(hierarchy, level);
@@ -366,7 +373,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         if ((objData.level && objData.level.annotations !== undefined && objData.level.annotations !== null) &&
            (objData.level.annotations.AnalyzerDateFormat !== undefined || objData.level.annotations.SaikuDayFormatString !== undefined) &&
            ((_.has(memberLevel, 'selection') && memberLevel.selection.members.length === 0) ||
-           ((_.size(memberLevel) === 1 && _.has(memberLevel, 'name')) || (_.has(memberLevel, 'mdx') && memberLevel.mdx) || 
+           ((_.size(memberLevel) === 1 && _.has(memberLevel, 'name')) || (_.has(memberLevel, 'mdx') && memberLevel.mdx) ||
            (_.size(memberLevel) === 2 && _.has(memberLevel, 'name') && _.has(memberLevel, 'mdx'))))) {
 
             // Launch date filter dialog
@@ -627,7 +634,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                     fold.items["show_totals_avg_" + measure.name] = {name: self.formatAggregatorName("Avg",  "avg", a, measure), i18n: true};
 
                     citems.fold_totals.items[foldName] = fold;
-                });                
+                });
 
                 $.each(citems, function(key, item){
                     recursive_menu_translate(item, Saiku.i18n.po_file);

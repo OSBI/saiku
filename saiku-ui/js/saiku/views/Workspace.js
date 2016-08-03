@@ -256,7 +256,7 @@ var Workspace = Backbone.View.extend({
             $(this.el).find('.refresh_cubes_nav').css('margin-right', '40px');
             $(this.el).find('.admin_console_nav').append($link);
         }
-        
+
         if (!Saiku.session.isAdmin && Settings.SHOW_REFRESH_NONADMIN === false) {
             $(this.el).find('.refresh_cubes_nav').hide();
         }
@@ -610,7 +610,7 @@ var Workspace = Backbone.View.extend({
 
 
     },
-    
+
     set_class_charteditor: function() {
         var chartOptions = this.query.getProperty('saiku.ui.chart.options');
         if (chartOptions) {
@@ -635,7 +635,12 @@ var Workspace = Backbone.View.extend({
         if (model.type === "QUERYMODEL") {
 
             var self = this;
-            var dimlist = dimension_el ? dimension_el : $(self.dimension_list.el);
+			if(self.dimension_list!=null){
+            	var dimlist = dimension_el ? dimension_el : $(self.dimension_list.el);
+			}
+			else{
+                var dimlist = dimension_el ? dimension_el : null;
+            }
 
             if (!self.isReadOnly && (!Settings.hasOwnProperty('MODE') || (Settings.MODE != "table" && Settings.MODE != "view"))) {
                 dimlist.find('.selected').removeClass('selected');
