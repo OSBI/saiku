@@ -151,7 +151,7 @@ public class PentahoSessionService implements ISessionService {
 		username = "existinguser";
 	  }
 	  String sessionId =RequestContextHolder.currentRequestAttributes().getSessionId();
-		;
+
 
 	  UUID uuid = pah.startAudit("Saiku", "Login", this.getClass().getName(), username, sessionId, username +
 																								 " Attempted "
