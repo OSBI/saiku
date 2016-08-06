@@ -128,8 +128,8 @@ var Settings = {
 		cookieName: 'SAIKU_AUTH_PRINCIPAL'
 	},
     SCHEMA_EDITOR: {
-        STAR_SCHEMA_FACT_TABLE: /fact_|f_ /i,
-        STAR_SCHEMA_DIMENSION_TABLE: /dim_|d_ /i
+        STAR_SCHEMA_FACT_TABLE: /^fact_|f_/i,
+        STAR_SCHEMA_DIMENSION_TABLE: /^dim_|d_/i
     }
 };
 
