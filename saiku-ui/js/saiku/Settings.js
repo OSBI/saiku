@@ -129,9 +129,9 @@ var Settings = {
 	},
     SCHEMA_EDITOR: {
         // The `^` matches beginning of input.
-        STAR_SCHEMA_FACT_TABLE: /^fact_|f_/i,
-        STAR_SCHEMA_MEASURE_TABLE: /^measure_|m_/i,
-        STAR_SCHEMA_DIMENSION_TABLE: /^dimension_|dim_|d_/i
+        STAR_SCHEMA_FACT_TABLE: /^fact_|^f_/i,
+        STAR_SCHEMA_DIMENSION_TABLE: /^dimension_|^dim_|^d_/i,
+        STAR_SCHEMA_MEASURE_COLUMN: /^measure_|^m_/i
     }
 };
 
