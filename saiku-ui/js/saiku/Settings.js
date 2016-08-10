@@ -131,7 +131,9 @@ var Settings = {
         // The `^` matches beginning of input.
         STAR_SCHEMA_FACT_TABLE: /^fact_|^f_/i,
         STAR_SCHEMA_DIMENSION_TABLE: /^dimension_|^dim_|^d_/i,
-        STAR_SCHEMA_MEASURE_COLUMN: /^measure_|^m_/i
+        STAR_SCHEMA_MEASURE_COLUMN: /^measure_|^m_/i,
+        // The `$` matches end of input.
+        STAR_SCHEMA_MEASURE_AGGREGATION_COLUMN: /_sum$|_avg$|_count$|_min$|_max$/i
     }
 };
 

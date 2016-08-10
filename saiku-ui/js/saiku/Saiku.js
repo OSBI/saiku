@@ -43,7 +43,7 @@ var Saiku = {
      * Collection of routers for page fragments
      */
     routers: [],
-    
+
     /**
      * Create a new variable for Leaflet interactive maps
      */
@@ -101,8 +101,8 @@ var Saiku = {
             if (window.location.search.length > 1) {
                 for (keyId = 0; keyId < lenCouples; keyId++) {
                     keyValue = couples[keyId].split('=');
-                    paramsURI[decodeURIComponent(keyValue[0])] = keyValue.length > 1 
-                        ? this.buildValue(decodeURIComponent(keyValue[1])) 
+                    paramsURI[decodeURIComponent(keyValue[0])] = keyValue.length > 1
+                        ? this.buildValue(decodeURIComponent(keyValue[1]))
                         : null;
                 }
             }
@@ -188,6 +188,17 @@ var Saiku = {
         }
 
         return output.join('').substr(0, i);
+    },
+    replaceString: function(oldS, newS, fullS) {
+        var len = fullS.length;
+
+        for (var i = 0; i < len; i++) {
+            if (fullS.substring(i, i + oldS.length) === oldS) {
+                fullS = fullS.substring(0, i) + newS + fullS.substring(i + oldS.length, fullS.length);
+            }
+        }
+
+        return fullS;
     }
 };
 
