@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2015 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,11 +28,11 @@
 	var fromCharCode = String.fromCharCode;
 	var INVALID_CHARACTER_ERR = (function() {
 			// Fabricate a suitable error object
-			try { 
-				document.createElement('$'); 
+			try {
+				document.createElement('$');
 			}
-			catch(error) { 
-				return error; 
+			catch(error) {
+				return error;
 			}
 		}());
 
@@ -58,7 +58,7 @@
 
 				if (!b) {
 					b3 = b4 = 64;
-				} 
+				}
 				else if (!c) {
 					b4 = 64;
 				}
@@ -108,17 +108,17 @@ var SaikuClient = (function() {
 
 	/**
 	 * The configuration settings for the request
-	 * 
+	 *
 	 * @property _settings
 	 * @type {Object}
 	 * @private
-	 * @default 
-	 * 		{ 
-	 * 			server: '/saiku', 
-	 * 			path: '/rest/saiku/embed', 
-	 * 			user: 'admin', 
-	 * 			password: 'admin', 
-	 * 			blockUI: false 
+	 * @default
+	 * 		{
+	 * 			server: '/saiku',
+	 * 			path: '/rest/saiku/embed',
+	 * 			user: 'admin',
+	 * 			password: 'admin',
+	 * 			blockUI: false
 	 * 		}
 	 */
 	var _settings = {
@@ -131,19 +131,19 @@ var SaikuClient = (function() {
 
 	/**
 	 * The configuration options to render the file on page
-	 * 
+	 *
 	 * @property _options
 	 * @type {Object}
 	 * @private
-	 * @default 
-	 * 		{ 
-	 * 			file: null, 
-	 * 			render: 'table', 
-	 * 			mode: null, 
-	 * 			formatter: 'flattened', 
-	 * 			htmlObject: '#saiku', 
-	 * 			zoom: true, 
-	 * 			params: {} 
+	 * @default
+	 * 		{
+	 * 			file: null,
+	 * 			render: 'table',
+	 * 			mode: null,
+	 * 			formatter: 'flattened',
+	 * 			htmlObject: '#saiku',
+	 * 			zoom: true,
+	 * 			params: {}
 	 * 		}
 	 */
 	var _options = {
@@ -162,9 +162,9 @@ var SaikuClient = (function() {
 	 * @property _saikuRendererFactory
 	 * @type {Object}
 	 * @private
-	 * @default 
-	 * 		{ 
-	 *      	'table': SaikuTableRenderer, 
+	 * @default
+	 * 		{
+	 *      	'table': SaikuTableRenderer,
 	 *          'chart': SaikuChartRenderer
 	 *      }
 	 */
@@ -174,11 +174,11 @@ var SaikuClient = (function() {
 		'map': typeof SaikuMapRenderer !== 'undefined' ? SaikuMapRenderer : '',
 		'playground': typeof SaikuPlaygroundRenderer !== 'undefined' ? SaikuPlaygroundRenderer : ''
 	};
-	
+
 	/**
 	 * Add levels and parameter names
-	 * 
-	 * @private 
+	 *
+	 * @private
 	 * @param  {String} dataSchema [connection].[catalog].[schema].[cube]
 	 * @param  {Object} dataAxis Axis FILTER, COLUMNS and ROWS with values in hierarchies
 	 * @return {Object} Levels and parameter names
@@ -294,13 +294,17 @@ var SaikuClient = (function() {
 					var chartDefinition = data.query.properties['saiku.ui.chart.options'] ? data.query.properties['saiku.ui.chart.options'].chartDefinition : '';
 					var mapDefinition = data.query.properties['saiku.ui.map.options'] ? data.query.properties['saiku.ui.map.options'] : '';
 					var dataSchema = data.query.cube.uniqueName;
-					var dataAxis = {
-						dataFilter: data.query.queryModel.axes.FILTER['hierarchies'],
-						dataColumns: data.query.queryModel.axes.COLUMNS['hierarchies'],
-						dataRows: data.query.queryModel.axes.ROWS['hierarchies']
-					};
 					var parametersValues = data.query.parameters;
+					var dataAxis = {};
 					var parametersLevels;
+
+					if (data.query.type === 'QUERYMODEL') {
+						dataAxis = {
+							dataFilter: data.query.queryModel.axes.FILTER['hierarchies'],
+							dataColumns: data.query.queryModel.axes.COLUMNS['hierarchies'],
+							dataRows: data.query.queryModel.axes.ROWS['hierarchies']
+						};
+					}
 
 					if (self.settings.dashboards) {
 						if (options.dropDashboards === undefined) {
