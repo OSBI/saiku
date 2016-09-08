@@ -62,9 +62,9 @@ var DataSourcesModal = Modal.extend({
     ],
 
     /**
-     * The events hash (or method) can be used to specify a set of DOM events 
+     * The events hash (or method) can be used to specify a set of DOM events
      * that will be bound to methods on your View through delegateEvents
-     * 
+     *
      * @property events
      * @type {Object}
      * @private
@@ -137,6 +137,8 @@ var DataSourcesModal = Modal.extend({
                 this.dialog.$el.find(this.formElements.username).val(dataSources[i].username);
                 // Set Password
                 this.dialog.$el.find(this.formElements.password).val(dataSources[i].password);
+				// Set Connection Name
+				this.dialog.$el.find(this.formElements.name).val(dataSources[i].name);
             }
         }
     },

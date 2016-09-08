@@ -999,7 +999,8 @@ var AdminConsole = Backbone.View.extend({
             'url': 'input[name="jdbcurl"]',
             'driver': 'input[name="driver"]',
             'username': 'input[name="connusername"]',
-            'password': 'input[name="connpassword"]'
+            'password': 'input[name="connpassword"]',
+			'name': 'input[name="connname"]'
         };
         (new DataSourcesModal({ dialog: this, formElements: formElements })).render().open();
     },
