@@ -217,14 +217,23 @@ var Table = Backbone.View.extend({
 
                         //self.workspace.query.helper.removeLevel(h, k);
                         var hierarchy = self.workspace.query.helper.getHierarchy(h);
-                        if (hierarchy && hierarchy.levels.hasOwnProperty(l_name)) {
-                            updates.push({
-                                uniqueName: cell.properties.uniquename,
-                                caption: cell.properties.uniquename
-                            });
-                            hierarchy.levels[l_name].selection = {"type": "INCLUSION", "members": updates};
-                            self.workspace.drop_zones.synchronize_query();
-                            self.workspace.query.run(true);
+						if (hierarchy && hierarchy.levels.hasOwnProperty(l_name)|| h == "[Measures]") {
+							if(h=="[Measures]"){
+								measure = {name:cell.properties.uniquename, type:'EXACT'}
+
+								self.workspace.query.helper.clearMeasures();
+								self.workspace.query.helper.includeMeasure(measure)
+							}
+							else {
+
+								updates.push({
+									uniqueName: cell.properties.uniquename,
+									caption: cell.properties.uniquename
+								});
+								hierarchy.levels[l_name].selection = {"type": "INCLUSION", "members": updates};
+								self.workspace.drop_zones.synchronize_query();
+								self.workspace.query.run(true);
+							}
                         }
                     }
                     else if(key === "filterlevel"){

@@ -349,7 +349,7 @@ SaikuOlapQueryHelper.prototype.removeMeasure = function(name) {
   var measures = this.query.model.queryModel.details.measures;
   var removeMeasure = _.findWhere(measures , { name: name });
   if (removeMeasure && _.indexOf(measures, removeMeasure) > -1) {
-    measures = _.without(measures, removeMeasure);
+	  measures = _.without(measures, removeMeasure);
   }
 };
 
