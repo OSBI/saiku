@@ -192,6 +192,7 @@ public class ExcelWorksheetBuilder {
         int lastHeaderRow = buildExcelTableHeader(startRow);
         Long header = (new Date()).getTime();
         addExcelTableRows(lastHeaderRow);
+        addTotalsSummary(lastHeaderRow);
         Long content = (new Date()).getTime();
         finalizeExcelSheet(startRow);
         Long finalizing = (new Date()).getTime();
@@ -206,6 +207,69 @@ public class ExcelWorksheetBuilder {
             throw new SaikuServiceException("Error creating excel export for query", e);
         }
         return bout.toByteArray();
+    }
+
+    private void addTotalsSummary(int startingRow) {
+        int rowIndex = startingRow + rowsetBody.length + 2; // Lines offset after data, in order to add summary
+
+        // Columns summary
+        Row row = workbookSheet.createRow(rowIndex);
+        Cell cell = row.createCell(0);
+        cell.setCellStyle(basicCS);
+        cell.setCellValue("Columns");
+
+        //For each dimension
+        rowIndex++;
+        row = workbookSheet.createRow(rowIndex);
+        cell = row.createCell(0);
+        cell.setCellStyle(basicCS);
+        cell.setCellValue("Unit Sales:");
+        cell = row.createCell(1);
+        cell.setCellStyle(basicCS);
+        cell.setCellValue("Sum");
+        rowIndex++;
+        row = workbookSheet.createRow(rowIndex);
+        cell = row.createCell(0);
+        cell.setCellStyle(basicCS);
+        cell.setCellValue("Store Cost:");
+        cell = row.createCell(1);
+        cell.setCellStyle(basicCS);
+        cell.setCellValue("Min");
+
+        // Rows summary
+        rowIndex++;
+        row = workbookSheet.createRow(rowIndex);
+        cell = row.createCell(0);
+        cell.setCellStyle(basicCS);
+        cell.setCellValue("Rows");
+
+        // For each dimension
+        rowIndex++;
+        row = workbookSheet.createRow(rowIndex);
+        cell = row.createCell(0);
+        cell.setCellStyle(basicCS);
+        cell.setCellValue("Unit Sales:");
+        cell = row.createCell(1);
+        cell.setCellStyle(basicCS);
+        cell.setCellValue("Max");
+        rowIndex++;
+        row = workbookSheet.createRow(rowIndex);
+        cell = row.createCell(0);
+        cell.setCellStyle(basicCS);
+        cell.setCellValue("Store Cost:");
+        cell = row.createCell(1);
+        cell.setCellStyle(basicCS);
+        cell.setCellValue("Sum");
+
+//        if (rowsetBody[x][y] instanceof DataCell && ((DataCell) rowsetBody[x][y]).getRawNumber() != null) {
+//            Number numberValue = ((DataCell) rowsetBody[x][y]).getRawNumber();
+//            cell.setCellValue(numberValue.doubleValue());
+//            applyCellFormatting(cell, x, y);
+//        } else {
+//            cell.setCellStyle(basicCS);
+//            cell.setCellValue(value);
+//        }
+
     }
 
     private void finalizeExcelSheet(int startRow) {
