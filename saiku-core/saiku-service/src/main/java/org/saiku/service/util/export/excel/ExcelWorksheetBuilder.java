@@ -211,8 +211,15 @@ public class ExcelWorksheetBuilder {
         return bout.toByteArray();
     }
 
+    private void checkRowLimit(int rowIndex) {
+        if ((rowIndex + 1) > maxRows) {
+            log.warn("Excel sheet is truncated, only outputting " + maxRows + " rows of " + (rowIndex + 1));
+        }
+    }
+
     private void addTotalsSummary(int startingRow) {
         int rowIndex = startingRow + rowsetBody.length + 2; // Lines offset after data, in order to add summary
+        checkRowLimit(rowIndex);
 
         // Columns summary
         if (colScanTotals.keySet().size() > 0) {
@@ -228,6 +235,7 @@ public class ExcelWorksheetBuilder {
 
                 for (int x = 0; x < colAggregator.length; x++) {
                     rowIndex++;
+                    checkRowLimit(rowIndex);
 
                     Measure measure = this.table.getSelectedMeasures()[x];
 
@@ -237,7 +245,7 @@ public class ExcelWorksheetBuilder {
                     // Measure name
                     cell = row.createCell(0);
                     cell.setCellStyle(lighterHeaderCellCS);
-                    cell.setCellValue(" " + measure.getCaption() +  ":");
+                    cell.setCellValue(measure.getCaption() +  ":");
 
                     // Measure aggregator
                     cell = row.createCell(1);
@@ -250,6 +258,8 @@ public class ExcelWorksheetBuilder {
         // Rows summary
         if (rowScanTotals.keySet().size() > 0) {
             rowIndex++;
+            checkRowLimit(rowIndex);
+
             Row row = workbookSheet.createRow(rowIndex);
             Cell cell = row.createCell(0);
             cell.setCellStyle(lighterHeaderCellCS);
@@ -263,6 +273,7 @@ public class ExcelWorksheetBuilder {
                 for (int x = 0; x < rowAggregator.length; x++) {
                     for (int y = 0; y < this.table.getSelectedMeasures().length; y++) {
                         rowIndex++;
+                        checkRowLimit(rowIndex);
 
                         Measure measure = this.table.getSelectedMeasures()[y];
                         TotalAggregator agg = rowAggregator[x][y];
@@ -272,7 +283,7 @@ public class ExcelWorksheetBuilder {
                         // Measure name
                         cell = row.createCell(0);
                         cell.setCellStyle(lighterHeaderCellCS);
-                        cell.setCellValue(" " + measure.getCaption() +  ":");
+                        cell.setCellValue(measure.getCaption() +  ":");
 
                         // Measure aggregator
                         cell = row.createCell(1);
