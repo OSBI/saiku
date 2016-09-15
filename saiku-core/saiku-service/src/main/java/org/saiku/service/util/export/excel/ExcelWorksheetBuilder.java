@@ -9,6 +9,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.olap4j.metadata.Measure;
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.dto.resultset.DataCell;
@@ -50,6 +51,7 @@ public class ExcelWorksheetBuilder {
     private Map<Integer, TotalAggregator[][]> rowScanTotals;
     private Map<Integer, TotalAggregator[][]> colScanTotals;
 
+    private CellDataSet table;
     private Workbook excelWorkbook;
     private Sheet workbookSheet;
     private String sheetName;
@@ -77,7 +79,7 @@ public class ExcelWorksheetBuilder {
     }
 
     private void init(CellDataSet table, List<ThinHierarchy> filters, ExcelBuilderOptions options) {
-
+        this.table = table;
         this.options = options;
         queryFilters = filters;
         maxRows = SpreadsheetVersion.EXCEL2007.getMaxRows();
@@ -213,62 +215,73 @@ public class ExcelWorksheetBuilder {
         int rowIndex = startingRow + rowsetBody.length + 2; // Lines offset after data, in order to add summary
 
         // Columns summary
-        Row row = workbookSheet.createRow(rowIndex);
-        Cell cell = row.createCell(0);
-        cell.setCellStyle(basicCS);
-        cell.setCellValue("Columns");
+        if (colScanTotals.keySet().size() > 0) {
+            Row row = workbookSheet.createRow(rowIndex);
+            Cell cell = row.createCell(0);
+            cell.setCellStyle(lighterHeaderCellCS);
+            cell.setCellValue("Columns");
 
-        //For each dimension
-        rowIndex++;
-        row = workbookSheet.createRow(rowIndex);
-        cell = row.createCell(0);
-        cell.setCellStyle(basicCS);
-        cell.setCellValue("Unit Sales:");
-        cell = row.createCell(1);
-        cell.setCellStyle(basicCS);
-        cell.setCellValue("Sum");
-        rowIndex++;
-        row = workbookSheet.createRow(rowIndex);
-        cell = row.createCell(0);
-        cell.setCellStyle(basicCS);
-        cell.setCellValue("Store Cost:");
-        cell = row.createCell(1);
-        cell.setCellStyle(basicCS);
-        cell.setCellValue("Min");
+            for (Integer colKey : colScanTotals.keySet()) {
+                TotalAggregator[][] colAggregator = colScanTotals.get(colKey);
+
+                if (colAggregator == null) continue;
+
+                for (int x = 0; x < colAggregator.length; x++) {
+                    rowIndex++;
+
+                    Measure measure = this.table.getSelectedMeasures()[x];
+
+                    TotalAggregator agg = colAggregator[x][0];
+                    row = workbookSheet.createRow(rowIndex);
+
+                    // Measure name
+                    cell = row.createCell(0);
+                    cell.setCellStyle(lighterHeaderCellCS);
+                    cell.setCellValue(" " + measure.getCaption() +  ":");
+
+                    // Measure aggregator
+                    cell = row.createCell(1);
+                    cell.setCellStyle(basicCS);
+                    cell.setCellValue(agg.getClass().getSimpleName().substring(0, 3));
+                }
+            }
+        }
 
         // Rows summary
-        rowIndex++;
-        row = workbookSheet.createRow(rowIndex);
-        cell = row.createCell(0);
-        cell.setCellStyle(basicCS);
-        cell.setCellValue("Rows");
+        if (rowScanTotals.keySet().size() > 0) {
+            rowIndex++;
+            Row row = workbookSheet.createRow(rowIndex);
+            Cell cell = row.createCell(0);
+            cell.setCellStyle(lighterHeaderCellCS);
+            cell.setCellValue("Rows");
 
-        // For each dimension
-        rowIndex++;
-        row = workbookSheet.createRow(rowIndex);
-        cell = row.createCell(0);
-        cell.setCellStyle(basicCS);
-        cell.setCellValue("Unit Sales:");
-        cell = row.createCell(1);
-        cell.setCellStyle(basicCS);
-        cell.setCellValue("Max");
-        rowIndex++;
-        row = workbookSheet.createRow(rowIndex);
-        cell = row.createCell(0);
-        cell.setCellStyle(basicCS);
-        cell.setCellValue("Store Cost:");
-        cell = row.createCell(1);
-        cell.setCellStyle(basicCS);
-        cell.setCellValue("Sum");
+            for (Integer rowKey : rowScanTotals.keySet()) {
+                TotalAggregator[][] rowAggregator = rowScanTotals.get(rowKey);
 
-//        if (rowsetBody[x][y] instanceof DataCell && ((DataCell) rowsetBody[x][y]).getRawNumber() != null) {
-//            Number numberValue = ((DataCell) rowsetBody[x][y]).getRawNumber();
-//            cell.setCellValue(numberValue.doubleValue());
-//            applyCellFormatting(cell, x, y);
-//        } else {
-//            cell.setCellStyle(basicCS);
-//            cell.setCellValue(value);
-//        }
+                if (rowAggregator == null) continue;
+
+                for (int x = 0; x < rowAggregator.length; x++) {
+                    for (int y = 0; y < this.table.getSelectedMeasures().length; y++) {
+                        rowIndex++;
+
+                        Measure measure = this.table.getSelectedMeasures()[y];
+                        TotalAggregator agg = rowAggregator[x][y];
+
+                        row = workbookSheet.createRow(rowIndex);
+
+                        // Measure name
+                        cell = row.createCell(0);
+                        cell.setCellStyle(lighterHeaderCellCS);
+                        cell.setCellValue(" " + measure.getCaption() +  ":");
+
+                        // Measure aggregator
+                        cell = row.createCell(1);
+                        cell.setCellStyle(basicCS);
+                        cell.setCellValue(agg.getClass().getSimpleName().substring(0, 3));
+                    }
+                }
+            }
+        }
 
     }
 
@@ -560,11 +573,15 @@ public class ExcelWorksheetBuilder {
                     if (grandTotal) {
                         setGrandTotalLabel(sheetRow.getRowNum() - 1, column, true);
                     }
+                    // When there are more than one aggregation total per column, those should be
+                    // added after (+ offset) to avoid overriding cell values.
+                    int columnOffset = 0;
                     for (TotalAggregator[] aggregators : aggregatorsTable) {
-                        Cell cell = sheetRow.createCell(column);
+                        Cell cell = sheetRow.createCell(column + columnOffset);
                         String value = aggregators[x].getFormattedValue();
                         cell.setCellValue(value);
                         cell.setCellStyle(totalsCS);
+                        columnOffset++;
                     }
                 }
                 column++;
