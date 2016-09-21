@@ -31,7 +31,7 @@ var AboutModal = Modal.extend({
                          '<li class="label">Type: <span class="item license-type"></span></li>' +
                          '<li class="label item-license-expiration" hidden>Expires: <span class="item license-expiration"></span></li>' +
                          '<li class="label">Number of users: <span class="item license-user-limit"></span></li>' +
-                         '<li class="label">Lincesed to: <span class="item license-name"></span> - <span class="item license-email"></span></li>' +
+                         '<li class="label">Licensed to: <span class="item license-name"></span> - <span class="item license-email"></span></li>' +
                          '<li><a href="http://www.meteorite.bi/saiku-pricing" target="_blank">Order more licenses here</a></li>' +
                      '</ul>' +
                  '</div>' +
