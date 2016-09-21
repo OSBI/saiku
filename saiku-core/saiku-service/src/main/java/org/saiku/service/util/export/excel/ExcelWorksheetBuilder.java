@@ -9,6 +9,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.olap4j.metadata.Measure;
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.dto.resultset.DataCell;
@@ -50,6 +51,7 @@ public class ExcelWorksheetBuilder {
     private Map<Integer, TotalAggregator[][]> rowScanTotals;
     private Map<Integer, TotalAggregator[][]> colScanTotals;
 
+    private CellDataSet table;
     private Workbook excelWorkbook;
     private Sheet workbookSheet;
     private String sheetName;
@@ -77,7 +79,7 @@ public class ExcelWorksheetBuilder {
     }
 
     private void init(CellDataSet table, List<ThinHierarchy> filters, ExcelBuilderOptions options) {
-
+        this.table = table;
         this.options = options;
         queryFilters = filters;
         maxRows = SpreadsheetVersion.EXCEL2007.getMaxRows();
@@ -190,6 +192,7 @@ public class ExcelWorksheetBuilder {
         int lastHeaderRow = buildExcelTableHeader(startRow);
         Long header = (new Date()).getTime();
         addExcelTableRows(lastHeaderRow);
+        addTotalsSummary(lastHeaderRow);
         Long content = (new Date()).getTime();
         finalizeExcelSheet(startRow);
         Long finalizing = (new Date()).getTime();
@@ -204,6 +207,91 @@ public class ExcelWorksheetBuilder {
             throw new SaikuServiceException("Error creating excel export for query", e);
         }
         return bout.toByteArray();
+    }
+
+    private void checkRowLimit(int rowIndex) {
+        if ((rowIndex + 1) > maxRows) {
+            log.warn("Excel sheet is truncated, only outputting " + maxRows + " rows of " + (rowIndex + 1));
+        }
+    }
+
+    private void addTotalsSummary(int startingRow) {
+        int rowIndex = startingRow + rowsetBody.length + 2; // Lines offset after data, in order to add summary
+        checkRowLimit(rowIndex);
+
+        // Columns summary
+        if (colScanTotals.keySet().size() > 0) {
+            Row row = workbookSheet.createRow(rowIndex);
+            Cell cell = row.createCell(0);
+            cell.setCellStyle(lighterHeaderCellCS);
+            cell.setCellValue("Columns");
+
+            for (Integer colKey : colScanTotals.keySet()) {
+                TotalAggregator[][] colAggregator = colScanTotals.get(colKey);
+
+                if (colAggregator == null) continue;
+
+                for (int x = 0; x < colAggregator.length; x++) {
+                    rowIndex++;
+                    checkRowLimit(rowIndex);
+
+                    Measure measure = this.table.getSelectedMeasures()[x];
+
+                    TotalAggregator agg = colAggregator[x][0];
+                    row = workbookSheet.createRow(rowIndex);
+
+                    // Measure name
+                    cell = row.createCell(0);
+                    cell.setCellStyle(lighterHeaderCellCS);
+                    cell.setCellValue(measure.getCaption() +  ":");
+
+                    // Measure aggregator
+                    cell = row.createCell(1);
+                    cell.setCellStyle(basicCS);
+                    cell.setCellValue(agg.getClass().getSimpleName().substring(0, 3));
+                }
+            }
+        }
+
+        // Rows summary
+        if (rowScanTotals.keySet().size() > 0) {
+            rowIndex++;
+            checkRowLimit(rowIndex);
+
+            Row row = workbookSheet.createRow(rowIndex);
+            Cell cell = row.createCell(0);
+            cell.setCellStyle(lighterHeaderCellCS);
+            cell.setCellValue("Rows");
+
+            for (Integer rowKey : rowScanTotals.keySet()) {
+                TotalAggregator[][] rowAggregator = rowScanTotals.get(rowKey);
+
+                if (rowAggregator == null) continue;
+
+                for (int x = 0; x < rowAggregator.length; x++) {
+                    for (int y = 0; y < this.table.getSelectedMeasures().length; y++) {
+                        rowIndex++;
+                        checkRowLimit(rowIndex);
+
+                        Measure measure = this.table.getSelectedMeasures()[y];
+                        TotalAggregator agg = rowAggregator[x][y];
+
+                        row = workbookSheet.createRow(rowIndex);
+
+                        // Measure name
+                        cell = row.createCell(0);
+                        cell.setCellStyle(lighterHeaderCellCS);
+                        cell.setCellValue(measure.getCaption() +  ":");
+
+                        // Measure aggregator
+                        cell = row.createCell(1);
+                        cell.setCellStyle(basicCS);
+                        cell.setCellValue(agg.getClass().getSimpleName().substring(0, 3));
+                    }
+                }
+            }
+        }
+
     }
 
     private void finalizeExcelSheet(int startRow) {
@@ -498,11 +586,15 @@ public class ExcelWorksheetBuilder {
                     if (grandTotal) {
                         setGrandTotalLabel(sheetRow.getRowNum() - 1, column, true);
                     }
+                    // When there are more than one aggregation total per column, those should be
+                    // added after (+ offset) to avoid overriding cell values.
+                    int columnOffset = 0;
                     for (TotalAggregator[] aggregators : aggregatorsTable) {
-                        Cell cell = sheetRow.createCell(column);
+                        Cell cell = sheetRow.createCell(column + columnOffset);
                         String value = aggregators[x].getFormattedValue();
                         cell.setCellValue(value);
                         cell.setCellStyle(totalsCS);
+                        columnOffset++;
                     }
                 }
                 column++;

@@ -34,15 +34,12 @@ import org.springframework.security.BadCredentialsException;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.ui.WebAuthenticationDetails;
 import org.springframework.security.userdetails.User;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
@@ -95,6 +92,23 @@ public class PentahoSessionService implements ISessionService {
 						sessionHolder.remove(p);
 					}
 				}
+				else if(pentahoSession !=null && pentahoSession.getId()!=null){
+					Iterator it = sessionHolder.entrySet().iterator();
+					while (it.hasNext()) {
+						Map.Entry pair = (Map.Entry)it.next();
+						if(pair.getValue() instanceof HashMap){
+							HashMap<String,String> hm = (HashMap<String, String>) pair.getValue();
+							Iterator it2 = hm.entrySet().iterator();
+							while(it2.hasNext()){
+								Map.Entry pair2 = (Map.Entry)it2.next();
+								if(pair2.getKey().equals("sessionid")&& pair2.getValue().equals(pentahoSession.getId())){
+									sessionHolder.remove(pair.getKey());
+								}
+							}
+						}
+
+					}
+				}
 				try {
 					pah.endAudit("Saiku", "Logout Successful", this.getClass().getName(), null, null,
 							getLogger(), (long) 1, uuid, (long) 1);
@@ -136,7 +150,8 @@ public class PentahoSessionService implements ISessionService {
 	  else {
 		username = "existinguser";
 	  }
-	  String sessionId =UUID.randomUUID().toString();
+	  String sessionId =RequestContextHolder.currentRequestAttributes().getSessionId();
+
 
 	  UUID uuid = pah.startAudit("Saiku", "Login", this.getClass().getName(), username, sessionId, username +
 																								 " Attempted "
@@ -288,4 +303,7 @@ public class PentahoSessionService implements ISessionService {
   }
 
 
+	public Map<Object, Map<String, Object>> getSessionHolder() {
+		return sessionHolder;
+	}
 }

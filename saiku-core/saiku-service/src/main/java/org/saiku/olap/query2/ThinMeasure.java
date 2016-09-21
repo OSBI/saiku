@@ -1,5 +1,7 @@
 package org.saiku.olap.query2;
 
+import java.util.ArrayList;
+import java.util.List;
 
 public class ThinMeasure {
 	
@@ -8,7 +10,7 @@ public class ThinMeasure {
 	private String uniqueName;
 	private String caption;
 	private Type type;
-	
+	private final List<String> aggregators = new ArrayList<>();
 	
 	public enum Type {
 		CALCULATED,
@@ -17,12 +19,20 @@ public class ThinMeasure {
 	
 	public ThinMeasure(){}
 
-  public ThinMeasure(String name, String uniqueName, String caption, Type type) {
+	public ThinMeasure(String name, String uniqueName, String caption, Type type) {
+    this(name, uniqueName, caption, type, null);
+  }
+
+  public ThinMeasure(String name, String uniqueName, String caption, Type type, List<String> aggregators) {
 		this.name = name;
 		this.uniqueName = uniqueName;
 		this.caption = caption;
 		this.type = type;
-	}
+
+    if (aggregators != null) {
+      this.aggregators.addAll(aggregators);
+    }
+  }
 
 	/**
 	 * @return the type
@@ -52,5 +62,7 @@ public class ThinMeasure {
 		return caption;
 	}
 
-
+  public List<String> getAggregators() {
+    return aggregators;
+  }
 }

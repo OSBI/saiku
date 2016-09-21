@@ -9,6 +9,7 @@ import org.saiku.plugin.util.ResourceManager;
 import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.datasource.IDatasourceManager;
+import org.saiku.service.importer.JujuSource;
 import org.saiku.service.user.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -339,6 +340,11 @@ public class PentahoRepositoryResource implements IDatasourceManager {
   @Override
   public String[] getAvailablePropertiesKeys() {
     return new String[0];
+  }
+
+  @Override
+  public List<JujuSource> getJujuDatasources() {
+    return null;
   }
 
   /*public List<JujuSource> getJujuDatasources() {

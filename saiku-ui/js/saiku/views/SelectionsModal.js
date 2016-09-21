@@ -43,7 +43,7 @@ var SelectionsModal = Modal.extend({
     show_unique_option: false,
 
     use_result_option: Settings.MEMBERS_FROM_RESULT,
-    show_totals_option: '',
+    show_totals_option: [],
     members_limit: Settings.MEMBERS_LIMIT,
     members_search_limit: Settings.MEMBERS_SEARCH_LIMIT,
     members_search_server: false,
@@ -136,15 +136,16 @@ var SelectionsModal = Modal.extend({
         // fixme: we should check for deepest level here
         if (_.size(hierarchy.levels) > 1 && level && level.hasOwnProperty('aggregators') && level.aggregators) {
             if (level.aggregators.length > 0) {
-                this.show_totals_option = level.aggregators[0];
+                this.show_totals_option = level.aggregators;
             }
             showTotalsEl.removeAttr("disabled");
         } else {
             showTotalsEl.attr("disabled", true);
-            this.show_totals_option = '';
+            this.show_totals_option = [];
         }
-        showTotalsEl.val(this.show_totals_option);
-        showTotalsEl.removeAttr("disabled");
+
+//        showTotalsEl.val(this.show_totals_option);
+//        showTotalsEl.removeAttr("disabled");
 
         $(this.el).find('#use_result').attr('checked', this.use_result_option);
         $(this.el).find('.search_limit').text(this.members_search_limit);
@@ -257,10 +258,10 @@ var SelectionsModal = Modal.extend({
                 hName = dName;
             }
         }
-        var level = new Level({}, { 
-            ui: this, 
-            cube: this.workspace.selected_cube, 
-            dimension: dName, 
+        var level = new Level({}, {
+            ui: this,
+            cube: this.workspace.selected_cube,
+            dimension: dName,
             hierarchy: hName
         });
 
@@ -323,190 +324,180 @@ var SelectionsModal = Modal.extend({
     },
 
     populate: function(model, response) {
-            var self = this;
-            self.workspace.unblock();
-            this.members_search_server = (this.available_members.length >= this.members_limit || this.available_members.length == 0);
+        var self = this;
+        self.workspace.unblock();
+        this.members_search_server = (this.available_members.length >= this.members_limit || this.available_members.length == 0);
 
-            self.show_unique_option = false;
-            $(this.el).find('.options #show_unique').attr('checked',false);
+        self.show_unique_option = false;
+        $(this.el).find('.options #show_unique').attr('checked',false);
 
-            var calcMembers = this.workspace.query.helper.getCalculatedMembers();
+        var calcMembers = this.workspace.query.helper.getCalculatedMembers();
 
-            if (calcMembers.length > 0) {
-                var newCalcMembers = this.get_calcmembers();
-                var len = newCalcMembers.length;
+        if (calcMembers.length > 0) {
+            var newCalcMembers = this.get_calcmembers();
+            var len = newCalcMembers.length;
 
-                for (var i = 0; i < len; i++) {
+            for (var i = 0; i < len; i++) {
+                var calc = false;
+                if(calcMembers && calcMembers.length>0){
+                    _.each(calcMembers, function(c){
+                        if(c.uniqueName === newCalcMembers[i].uniqueName){
+                            calc = true;
+                        }
+                    })
+                }
+                this.available_members.push({obj:newCalcMembers[i], calc:calc});
+            }
+        }
+
+        $(this.el).find('.items_size').text(this.available_members.length);
+
+        if (this.members_search_server) {
+            $(this.el).find('.warning').text("More items available than listed. Pre-Filter on server.");
+        } else {
+            $(this.el).find('.warning').text("");
+        }
+
+        var hName = self.member.hierarchy;
+        var lName = self.member.level;
+        var hierarchy = self.workspace.query.helper.getHierarchy(hName);
+
+        if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
+            this.selected_members = [];
+            if(hierarchy.levels[lName].selection){
+                _.each(hierarchy.levels[lName].selection.members, function(f){
+                    var cmem = self.workspace.query.helper.getCalculatedMembers();
                     var calc = false;
-                    if(calcMembers && calcMembers.length>0){
-                        _.each(calcMembers, function(c){
-                            if(c.uniqueName === newCalcMembers[i].uniqueName){
+
+                    if(cmem && cmem.length > 0){
+                        _.each(cmem, function(c){
+                            if(c.uniqueName === f.uniqueName){
                                 calc = true;
                             }
-                        })
+                        });
                     }
-                    this.available_members.push({obj:newCalcMembers[i], calc:calc});
-                }
-            }
 
-            $(this.el).find('.items_size').text(this.available_members.length);
-            if (this.members_search_server) {
-                $(this.el).find('.warning').text("More items available than listed. Pre-Filter on server.");
+                    self.selected_members.push({obj: f, calc: calc});
+                });
+            }
+            this.selection_type = hierarchy.levels[lName].selection ? hierarchy.levels[lName].selection.type : "INCLUSION";
+        }
+
+        var used_members = [];
+
+        // Populate both boxes
+        for (var j = 0, len = this.selected_members.length; j < len; j++) {
+                var member = this.selected_members[j];
+                used_members.push(member.obj.caption);
+        }
+
+        if ($(this.el).find('.used_selections .selection_options li.option_value' ).length == 0) {
+            var selectedMembers = $(this.el).find('.used_selections .selection_options');
+            selectedMembers.empty();
+            var selectedHtml = _.template($("#template-selections-options").html())({ options: this.selected_members });
+            $(selectedMembers).html(selectedHtml);
+        }
+
+        // Add the selections totals
+        var measuresArray = self.workspace.query.model.queryModel.details.measures;
+        for (var j = 0; j < measuresArray.length; j++) {
+            $(this.el).find('#div-totals-container').append(_.template($("#template-selections-totals").html())({measure: measuresArray[j]}));
+        }
+
+        $('#per_metrics_totals_checkbox').change(function() {
+            if($(this).is(":checked")) {
+                $('.per_metrics_container').show();
+                $('.all_metrics_container').hide();
             } else {
-                $(this.el).find('.warning').text("");
+                $('.per_metrics_container').hide();
+                $('.all_metrics_container').show();
             }
+        });
 
-            var hName = self.member.hierarchy;
-            var lName = self.member.level;
-            var hierarchy = self.workspace.query.helper.getHierarchy(hName);
-            if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
-                this.selected_members=[];
-                if(hierarchy.levels[lName].selection){
-                    _.each(hierarchy.levels[lName].selection.members, function(f){
-                        var cmem = self.workspace.query.helper.getCalculatedMembers();
-                        var calc = false;
-                        if(cmem && cmem.length>0){
-                            _.each(cmem, function(c){
-                                if(c.uniqueName === f.uniqueName){
-                                    calc = true;
-                                }
-                            })
-                        }
-                        self.selected_members.push({obj: f, calc:calc});
-                    });
+        // Filter out used members
+        this.available_members = _.select(this.available_members, function(o) {
+			return used_members.indexOf(o.obj ? o.obj.caption : o.caption) === -1;
+        });
+
+        if (this.available_members.length > 0) {
+            var availableMembersSelect = $(this.el).find('.available_selections .selection_options');
+            availableMembersSelect.empty();
+            var selectedHtml = _.template($("#template-selections-options").html())({ options: this.available_members });
+            $(availableMembersSelect).html(selectedHtml);
+        }
+
+        if ($(self.el).find( ".selection_options.ui-selectable" ).length > 0) {
+            $(self.el).find( ".selection_options" ).selectable( "destroy" );
+        }
+
+        $(self.el).find( ".selection_options" ).selectable({ distance: 20, filter: "li", stop: function( event, ui ) {
+            $(self.el).find( ".selection_options li.ui-selected input").each(function(index, element) {
+                if (element && element.hasAttribute('checked')) {
+                    element.checked = true;
+                } else {
+                    $(element).attr('checked', true);
                 }
-                this.selection_type = hierarchy.levels[lName].selection ? hierarchy.levels[lName].selection.type : "INCLUSION";
-            }
-            var used_members = [];
-
-            // Populate both boxes
-
-            /*var arr = this.paramvalue;
-            _.each(this.paramvalue, function(param){
-                _.each(self.selected_members, function(m){
-                    if(m.name == param){
-                        var idx = self.paramvalue.indexOf(param);
-                        arr.splice(idx, 1);
-                    }
-                });
+                $(element).parents('.selection_options').find('li.all_options input').prop('checked', true);
             });
-*/
+            $(self.el).find( ".selection_options li.ui-selected").removeClass('ui-selected');
+        }});
 
-            for (var j = 0, len = this.selected_members.length; j < len; j++) {
-                    var member = this.selected_members[j];
-                    used_members.push(member.obj.caption);
-            }
-            if ($(this.el).find('.used_selections .selection_options li.option_value' ).length == 0) {
-                var selectedMembers = $(this.el).find('.used_selections .selection_options');
-                selectedMembers.empty();
-                var selectedHtml = _.template($("#template-selections-options").html())({ options: this.selected_members });
-                $(selectedMembers).html(selectedHtml);
-            }
+        $(this.el).find('.filterbox').autocomplete({
+            minLength: 1, //(self.members_search_server ? 2 : 1),
+            delay: 200, //(self.members_search_server ? 400 : 300),
+            appendTo: ".autocomplete",
+            source: function(request, response ) {
+                var searchlist = self.available_members;
+                var search_target = self.show_unique_option == false ? "caption" : "name";
+                var result =  $.map( searchlist, function( item ) {
+                    var st = item.obj;
+                    var obj;
 
-            // Filter out used members
-            this.available_members = _.select(this.available_members, function(o) {
-                return used_members.indexOf(o.obj.caption) === -1;
-            });
-
-            if (this.available_members.length > 0) {
-                var availableMembersSelect = $(this.el).find('.available_selections .selection_options');
-                availableMembersSelect.empty();
-                var selectedHtml = _.template($("#template-selections-options").html())({ options: this.available_members });
-                $(availableMembersSelect).html(selectedHtml);
-            }
-            if ($(self.el).find( ".selection_options.ui-selectable" ).length > 0) {
-                $(self.el).find( ".selection_options" ).selectable( "destroy" );
-            }
-
-            $(self.el).find( ".selection_options" ).selectable({ distance: 20, filter: "li", stop: function( event, ui ) {
-
-                $(self.el).find( ".selection_options li.ui-selected input").each(function(index, element) {
-                    if (element && element.hasAttribute('checked')) {
-                        element.checked = true;
-                    } else {
-                        $(element).attr('checked', true);
+                    if(st === undefined){
+                        st = item;
+                        obj = st[search_target];
+                    } else{
+                        obj = st.caption;
                     }
-                    $(element).parents('.selection_options').find('li.all_options input').prop('checked', true);
-                });
-                $(self.el).find( ".selection_options li.ui-selected").removeClass('ui-selected');
 
-            } });
+                    if (obj.toLowerCase().indexOf(request.term.toLowerCase()) > -1) {
+                        var label = self.show_unique_option == false? st.caption : st.uniqueName;
+                        var value = self.show_unique_option == false? st.uniqueName : st.caption;
 
-            $(this.el).find('.filterbox').autocomplete({
-                    minLength: 1, //(self.members_search_server ? 2 : 1),
-                    delay: 200, //(self.members_search_server ? 400 : 300),
-                    appendTo: ".autocomplete",
-                    source: function(request, response ) {
-                        var searchlist = self.available_members;
-                        /*
-                            if (false && self.members_search_server) {
-                                self.workspace.query.action.get(self.search_path, { async: false, success: function(response, model) {
-                                    searchlist = model;
-                                }, data: { search: request.term, searchlimit: self.members_search_limit }});
-
-                                response( $.map( searchlist, function( item ) {
-                                    return {
-                                                        label: item.caption ,
-                                                        value: item.uniqueName
-                                    };
-                                }));
-
-                            } else {
-                            */
-                            var search_target = self.show_unique_option == false ? "caption" : "name";
-                            var result =  $.map( searchlist, function( item ) {
-
-                                var st = item.obj;
-
-                                var obj;
-                                if(st === undefined){
-                                    st = item;
-                                    obj = st[search_target];
-                                }
-                                else{
-                                    obj = st.caption;
-                                }
-                                            if (obj.toLowerCase().indexOf(request.term.toLowerCase()) > -1) {
-                                                var label = self.show_unique_option == false? st.caption : st.uniqueName;
-                                                var value = self.show_unique_option == false? st.uniqueName : st.caption;
-
-
-                                                return {
-                                                    label: label,
-                                                    value: value
-                                                };
-                                            }
-                                    });
-                            response( result);
-                    },
-                    select:  function(event, ui) {
-                        var value = encodeURIComponent(ui.item.value);
-                        var label = ui.item.label;
-                        var searchVal = self.show_unique_option == false? ui.item.value : ui.item.label;
-                        var cap = self.show_unique_option == false? ui.item.label : ui.item.value;
-
-                        $(self.el).find('.available_selections .selection_options input[value="' + encodeURIComponent(searchVal) + '"]').parent().remove();
-                        $(self.el).find('.used_selections .selection_options input[value="' + encodeURIComponent(searchVal) + '"]').parent().remove();
-
-                        var option = '<li class="option_value"><input type="checkbox" class="check_option" value="'
-                                            +  encodeURIComponent(searchVal) + '" label="' + encodeURIComponent(cap)  + '">' + label + '</input></li>';
-
-
-
-
-
-                        $(option).appendTo($(self.el).find('.used_selections .selection_options ul'));
-                        $(self.el).find('.filterbox').val('');
-                        ui.item.value = "";
-
-                    }, close: function(event, ui) {
-                        //$('#filter_selections').val('');
-                        //$(self.el).find('.filterbox').css({ "text-align" : " left"});
-                    }, open: function( event, ui ) {
-                        //$(self.el).find('.filterbox').css({ "text-align" : " right"});
-
+                        return {
+                            label: label,
+                            value: value
+                        };
                     }
                 });
+
+                response(result);
+            },
+            select:  function(event, ui) {
+                var value = encodeURIComponent(ui.item.value);
+                var label = ui.item.label;
+                var searchVal = self.show_unique_option == false? ui.item.value : ui.item.label;
+                var cap = self.show_unique_option == false? ui.item.label : ui.item.value;
+
+                $(self.el).find('.available_selections .selection_options input[value="' + encodeURIComponent(searchVal) + '"]').parent().remove();
+                $(self.el).find('.used_selections .selection_options input[value="' + encodeURIComponent(searchVal) + '"]').parent().remove();
+
+                var option = '<li class="option_value"><input type="checkbox" class="check_option" value="'
+                    +  encodeURIComponent(searchVal) + '" label="' + encodeURIComponent(cap)  + '">' + label + '</input></li>';
+
+                $(option).appendTo($(self.el).find('.used_selections .selection_options ul'));
+                $(self.el).find('.filterbox').val('');
+                ui.item.value = "";
+
+            }, 
+            close: function(event, ui) {
+                //$('#filter_selections').val('');
+                //$(self.el).find('.filterbox').css({ "text-align" : " left"});
+            }, 
+            open: function( event, ui ) {
+                //$(self.el).find('.filterbox').css({ "text-align" : " right"});
+            }
+        });
 
         $(this.el).find('.filterbox').autocomplete("enable");
         if (this.selection_type === "EXCLUSION") {
@@ -599,11 +590,11 @@ var SelectionsModal = Modal.extend({
 
     use_result_action: function() {
         this.use_result_option = !this.use_result_option;
-        //console.log(this.use_result_option);
         this.get_members();
     },
 
     save: function() {
+        this.query.updatedSelectionFromModal = true;
         var self = this;
         // Notify user that updates are in progress
         var $loading = $("<div>Saving...</div>");
@@ -656,10 +647,21 @@ var SelectionsModal = Modal.extend({
 
         var parameterName = $('#parameter').val();
         if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
-                hierarchy.levels[lName]["aggregators"] = [];
-                if (totalsFunction) {
-                    hierarchy.levels[lName]["aggregators"].push(totalsFunction);
+                var totalsArray = [];
+
+                if($('#per_metrics_totals_checkbox').is(":checked")) {
+                    $('.show_totals_select').each(function() {
+                        totalsArray.push($(this).val());
+                    });
+                } else {
+                    var measuresArray = self.workspace.query.model.queryModel.details.measures;
+                    for (var j = 0; j < measuresArray.length; j++) {
+                        totalsArray.push($('#all_measures_select').val());
+                    }
                 }
+
+                hierarchy.levels[lName]["aggregators"] = totalsArray;
+
                 var selectionType = $(self.el).find('input.selection_type:checked').val();
                 selectionType = selectionType ? selectionType : "INCLUSION";
                 hierarchy.levels[lName].selection = { "type": selectionType, "members": updates };

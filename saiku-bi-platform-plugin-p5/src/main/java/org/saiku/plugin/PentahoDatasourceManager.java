@@ -27,6 +27,7 @@ import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
 import org.saiku.service.datasource.IDatasourceManager;
+import org.saiku.service.importer.JujuSource;
 import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
 
@@ -401,6 +402,11 @@ public class PentahoDatasourceManager implements IDatasourceManager {
     @Override
     public String[] getAvailablePropertiesKeys() {
         return new String[0];
+    }
+
+    @Override
+    public List<JujuSource> getJujuDatasources() {
+        return null;
     }
 
     public void setACL(String a, String b, String c, List<String> d) {

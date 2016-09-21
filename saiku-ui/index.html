@@ -325,12 +325,12 @@
                 <% _.each(g, function(group, key) { %>
                     <% if(key != "null") { %>
                     <li class='parent_dimension'>
-                    <span class="root expand sprite"></span>
+                    <span class="root <%= Settings.MEASURE_GROUPS_COLLAPSED ? 'collapsed' : 'expand' %> sprite"></span>
                       <a class="folder_expand sprite" href="#" title="<%= key %>"><%= key %></a>
                         <ul>
                         <% _.each(group, function(measure) { %>
                         <% if (typeof measure["visible"] == "undefined" || measure["visible"]) { %>
-                        <li class="d_measure"><a title="<%= measure.description ? measure.description : measure.uniqueName %>"
+                        <li class="d_measure <%= Settings.MEASURE_GROUPS_COLLAPSED ? 'hide' : '' %>"><a title="<%= measure.description ? measure.description : measure.uniqueName %>"
                                 measure="<%= measure.name %>" type="EXACT"
                             class="measure" href="#Measures/member/<%= encodeURIComponent(measure.uniqueName) %>"><%= measure.caption %></a>
                         </li>
@@ -341,12 +341,12 @@
                         </li>
                     <% } else {%>
                     <li class='parent_dimension'>
-                    <span class="root expand sprite"></span>
+                    <span class="root <%= Settings.MEASURE_GROUPS_COLLAPSED ? 'collapsed' : 'expand' %> sprite"></span>
                       <a class="folder_expand sprite" href="#" title=" "> </a>
                         <ul>
                     <% _.each(group, function(measure) { %>
 
-                        <li class="d_measure"><a title="<%= measure.description ? measure.description : measure.uniqueName %>"
+                        <li class="d_measure <%= Settings.MEASURE_GROUPS_COLLAPSED ? 'hide' : '' %>"><a title="<%= measure.description ? measure.description : measure.uniqueName %>"
                                 measure="<%= measure.name %>" type="EXACT"
                             class="measure" href="#Measures/member/<%= encodeURIComponent(measure.uniqueName) %>"><%= measure.caption %></a>
                         </li>
@@ -778,16 +778,24 @@ title="Drill across on cell"></a></li>
                 class="i18n">Show Unique Names</label><br />
                 <input name="use_result" class="form-control" id="use_result" type="checkbox" />&nbsp;<label for="use_result"
                 class="i18n">Use Result</label><br />
-				<div class="totals_container">
-					<label for="show_totals" class="i18n">Sub totals</label>
-					<select class="form-control" name="show_totals" id="show_totals">
-    					<option class="i18n" value="" selected="selected">None</option>
-    					<option class="i18n" value="sum">Sum</option>
-				    	<option class="i18n" value="min">Min</option>
-						<option class="i18n" value="max">Max</option>
-						<option class="i18n" value="avg">Avg</option>
-					</select>
-				</div>
+				<div id="div-totals-container">
+                    <div class="totals_container">
+                        <label class="i18n">Totals per metrics</label>
+                        <input type="checkbox" id="per_metrics_totals_checkbox"/>
+                        &nbsp;
+                    </div>
+                    <div class="totals_container all_metrics_container">
+                        <strong>All Measures - </strong>
+                        <label for="show_totals" class="i18n">Sub totals</label>
+                        <select class="form-control" id="all_measures_select">
+                            <option class="i18n" value="nil" selected="selected">None</option>
+                            <option class="i18n" value="sum">Sum</option>
+                            <option class="i18n" value="min">Min</option>
+                            <option class="i18n" value="max">Max</option>
+                            <option class="i18n" value="avg">Avg</option>
+                        </select>
+                    </div>
+                </div>
 				<div class="form-inline">
                 <label for="parameter" class="parameter hidden i18n">Parameter Name</label>&nbsp;<input
                 name="parameter" id="parameter" class="form-control parameter hidden" type="text" /></div>
@@ -804,6 +812,20 @@ title="Drill across on cell"></a></li>
 
             <div class="autocomplete"></div>
         </script>
+<script type="text/x-jquery-tmpl" id="template-selections-totals">
+    <div class="totals_container per_metrics_container">
+        <strong><%= measure.caption %> - </strong>
+        <label for="show_totals" class="i18n">Sub totals</label>
+        <select class="form-control show_totals_select">
+            <option class="i18n" value="nil" selected="selected">None</option>
+            <option class="i18n" value="sum">Sum</option>
+            <option class="i18n" value="min">Min</option>
+            <option class="i18n" value="max">Max</option>
+            <option class="i18n" value="avg">Avg</option>
+        </select>
+        &nbsp;
+    </div>    
+</script>
 <script type="text/x-jquery-tmpl" id="template-selections-options">
             <ul>
             <li class="i18n all_options"><input type="checkbox" class="check_all_option"

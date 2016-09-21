@@ -16,6 +16,8 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -223,5 +225,38 @@ public class LegacyImporterImpl implements LegacyImporter {
             e.printStackTrace();
         }
     }
+    public List<JujuSource> importJujuDatasources(){
+        setPath("res:juju-datasources");
 
+        List<JujuSource> sources = new ArrayList<JujuSource>();
+        try {
+            if (repoURL != null) {
+                File[] files = new File(repoURL.getFile()).listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        if (!file.isHidden() && !file.getName().equals("README")) {
+                            Properties props = new Properties();
+                            try {
+                                props.load(new FileInputStream(file));
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            String name = props.getProperty("name");
+                            String jdbcurl = props.getProperty("jdbcurl");
+                            String username = props.getProperty("username");
+                            String password = props.getProperty("password");
+                            String driver = props.getProperty("driver");
+
+                            JujuSource s = new JujuSource(name, jdbcurl, username,password, driver);
+                            sources.add(s);
+                        }
+                    }
+                }
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sources;
+    }
 }

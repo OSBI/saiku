@@ -122,10 +122,19 @@ var Settings = {
     SHOW_REFRESH_NONADMIN: false,
     EMPTY_VALUE_CHARACTER: '-',
     HIDE_EMPTY_ROWS: true,
+    MEASURE_GROUPS_COLLAPSED: false,
 	ORBIS_AUTH: {
 		enabled: false,
 		cookieName: 'SAIKU_AUTH_PRINCIPAL'
-	}
+	},
+    SCHEMA_EDITOR: {
+        // The `^` matches beginning of input.
+        STAR_SCHEMA_FACT_TABLE: /^fact_|^f_/i,
+        STAR_SCHEMA_DIMENSION_TABLE: /^dimension_|^dim_|^d_/i,
+        STAR_SCHEMA_MEASURE_COLUMN: /^measure_|^m_/i,
+        // The `$` matches end of input.
+        STAR_SCHEMA_MEASURE_AGGREGATION_COLUMN: /_sum$|_avg$|_count$|_min$|_max$/i
+    }
 };
 
 /**

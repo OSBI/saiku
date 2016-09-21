@@ -32,6 +32,7 @@ import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
 import org.apache.commons.io.IOUtils;
+import org.saiku.service.importer.JujuSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -669,5 +670,20 @@ public class AdminResource {
     @Path("/datakeys")
     public Response getPropertiesKeys(){
         return Response.ok(repositoryDatasourceManager.getAvailablePropertiesKeys()).build();
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path("/attacheddatasources")
+    public Response getDataSources(){
+        if(!userService.isAdmin()){
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
+        List<JujuSource> list = repositoryDatasourceManager.getJujuDatasources();
+
+
+        return Response.ok(list).build();
+
     }
 }

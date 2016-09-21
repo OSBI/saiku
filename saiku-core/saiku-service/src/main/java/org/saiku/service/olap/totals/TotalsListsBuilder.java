@@ -1,5 +1,9 @@
 package org.saiku.service.olap.totals;
 
+import org.saiku.olap.query2.ThinLevel;
+import org.saiku.olap.query2.ThinMeasure;
+import org.saiku.olap.query2.ThinQuery;
+import org.saiku.olap.query2.util.Fat;
 import org.saiku.olap.util.SaikuProperties;
 import org.saiku.service.olap.totals.aggregators.TotalAggregator;
 
@@ -28,16 +32,24 @@ public class TotalsListsBuilder implements FormatList {
   private final AxisInfo totalsAxisInfo;
   private final CellSet cellSet;
   private final Format[] valueFormats;
+  private final ThinQuery thinQuery;
 
+  public TotalsListsBuilder(Measure[] selectedMeasures, TotalAggregator[] aggrTempl, CellSet cellSet,
+                            AxisInfo totalsAxisInfo, AxisInfo dataAxisInfo) throws Exception {
+    this(selectedMeasures, aggrTempl, cellSet, totalsAxisInfo, dataAxisInfo, null);
+  }
 
-  public TotalsListsBuilder( Measure[] selectedMeasures, TotalAggregator[] aggrTempl, CellSet cellSet,
-                             AxisInfo totalsAxisInfo, AxisInfo dataAxisInfo ) throws Exception {
+  public TotalsListsBuilder(Measure[] selectedMeasures, TotalAggregator[] aggrTempl, CellSet cellSet,
+                            AxisInfo totalsAxisInfo, AxisInfo dataAxisInfo, ThinQuery thinQuery) throws Exception {
+    this.thinQuery = thinQuery;
+
     Cube cube;
     try {
       cube = cellSet.getMetaData().getCube();
     } catch ( OlapException e ) {
       throw new RuntimeException( e );
     }
+
     uniqueToSelected = new HashMap<>();
     if ( selectedMeasures.length > 0 ) {
       valueFormats = new Format[ selectedMeasures.length ];
@@ -65,8 +77,8 @@ public class TotalsListsBuilder implements FormatList {
     int measuresAt = 0;
     int measuresMember = 0;
     final List<Member> members =
-      dataAxisInfo.axis.getPositionCount() > 0 ? dataAxisInfo.axis.getPositions().get( 0 ).getMembers() :
-        Collections.<Member>emptyList();
+            dataAxisInfo.axis.getPositionCount() > 0 ? dataAxisInfo.axis.getPositions().get( 0 ).getMembers() :
+                    Collections.<Member>emptyList();
     for (; measuresMember < members.size(); measuresMember++ ) {
       Member m = members.get( measuresMember );
       if ( "Measures".equals( m.getDimension().getName() ) ) {
@@ -87,8 +99,9 @@ public class TotalsListsBuilder implements FormatList {
     }
 
     totalBranch = new TotalNode[ maxDepth ];
+
     TotalNode rootNode =
-      new TotalNode( measuresCaptions, measures, aggrTempl[ 0 ], this, totalsAxisInfo.fullPositions.size() );
+            new TotalNode( measuresCaptions, measures, aggrTempl[ 0 ], this, totalsAxisInfo.fullPositions.size(), dataAxisInfo);
     col = Axis.ROWS.equals( dataAxisInfo.axis.getAxisOrdinal() ) ? 1 : 0;
     row = ( col + 1 ) & 1;
     this.aggrTempl = aggrTempl;
@@ -151,6 +164,7 @@ public class TotalsListsBuilder implements FormatList {
     for ( final Position p : dataAxisInfo.axis.getPositions() ) {
       int depth = 1;
       int mI = 0;
+
       for ( final Member m : p.getMembers() ) {
         final int maxDepth = levels[ mI ].get( levels[ mI ].size() - 1 );
         if ( m.getDepth() < maxDepth ) {
@@ -163,7 +177,7 @@ public class TotalsListsBuilder implements FormatList {
 
       int changedFrom = 1;
       while ( changedFrom < memberBranch.length - 1 && memberBranch[ changedFrom ]
-        .equals( prevMemberBranch[ changedFrom ] ) ) {
+              .equals( prevMemberBranch[ changedFrom ] ) ) {
         changedFrom++;
       }
 
@@ -175,10 +189,32 @@ public class TotalsListsBuilder implements FormatList {
 
       for ( int i = changedFrom; i < totalBranch.length; i++ ) {
         String[] captions = measuresAt > i - 1 ? measuresCaptions : null;
-        totalBranch[ i ] =
-          new TotalNode( captions, measures, aggrTempl[ i ], this, totalsAxisInfo.fullPositions.size() );
+
+        String uniqueLevelName = dataAxisInfo.uniqueLevelNames.get(i - 1);
+        ThinLevel level = thinQuery.getLevel(uniqueLevelName);
+
+        if (level != null && level.getAggregators() != null && !level.getAggregators().isEmpty()) {
+          List<String> lvlAggr = level.getAggregators();
+          Measure[] newMeasures = new Measure[measures.length];
+
+          for (int j = 0; j < newMeasures.length; j++) {
+            if (j < lvlAggr.size()) {
+              ThinMeasure mockMeasure = new ThinMeasure(measures[j].getName(), measures[j].getUniqueName(), measures[j].getCaption(), ThinMeasure.Type.EXACT);
+              mockMeasure.getAggregators().add(lvlAggr.get(j));
+              newMeasures[j] = new Fat.MeasureAdapter(measures[j], mockMeasure);
+            } else {
+              newMeasures[j] = measures[j];
+            }
+          }
+
+          totalBranch[ i ] = new TotalNode(captions, newMeasures, aggrTempl[ i ], this, totalsAxisInfo.fullPositions.size(), dataAxisInfo);
+        } else {
+          totalBranch[ i ] = new TotalNode(captions, measures, aggrTempl[ i ], this, totalsAxisInfo.fullPositions.size(), dataAxisInfo);
+        }
+
         totalLists[ i ].add( totalBranch[ i ] );
       }
+
       System.arraycopy( memberBranch, 0, prevMemberBranch, 0, prevMemberBranch.length );
 
       totalBranch[ totalBranch.length - 1 ].setSpan( 1 );
@@ -211,7 +247,7 @@ public class TotalsListsBuilder implements FormatList {
 
   private Cell getCellAt( int axisCoord, int perpAxisCoord ) {
     final Position[] positions =
-      new Position[] { dataAxisInfo.fullPositions.get( axisCoord ), totalsAxisInfo.fullPositions.get( perpAxisCoord ) };
+            new Position[] { dataAxisInfo.fullPositions.get( axisCoord ), totalsAxisInfo.fullPositions.get( perpAxisCoord ) };
     return cellSet.getCell( positions[ col ], positions[ row ] );
   }
 

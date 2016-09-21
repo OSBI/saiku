@@ -4,9 +4,12 @@ import org.olap4j.CellSetAxis;
 import org.olap4j.Position;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
+import org.olap4j.metadata.NamedList;
+import org.olap4j.metadata.Property;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 public class AxisInfo {
@@ -36,7 +39,10 @@ public class AxisInfo {
     for ( int i = 0; i < hCount; i++ ) {
       maxDepth[ i ] = -1;
       levels[ i ] = new ArrayList<>();
-      usedLevels[ i ] = new HashSet[ hierarchies.get( i ).getLevels().size() ];
+
+
+        usedLevels[i] = new HashSet[hierarchies.get(i).getLevels().size()];
+
       for ( int j = 0; j < usedLevels[ i ].length; j++ ) {
         usedLevels[ i ][ j ] = new HashSet<>();
       }
@@ -57,7 +63,13 @@ public class AxisInfo {
     for ( int i = 0; i < usedLevels.length; i++ ) {
       for ( int j = 0; j < usedLevels[ i ].length; j++ ) {
         if ( usedLevels[ i ][ j ].size() > 0 ) {
-          levels[ i ].add( j );
+          HashSet<Integer> obj = usedLevels[i][j];
+          Iterator<Integer> it = obj.iterator();
+          while(it.hasNext()){
+            levels[ i ].add( it.next() );
+          }
+
+
           axisInfo.uniqueLevelNames.add( hierarchies.get( i ).getLevels().get( j ).getUniqueName() );
         }
       }
@@ -71,6 +83,9 @@ public class AxisInfo {
     axisInfo.maxDepth = maxAxisDepth;
     findFullPositions( axisInfo, axis );
   }
+
+
+
 
   private static void findFullPositions( AxisInfo axisInfo, CellSetAxis axis ) {
     axisInfo.fullPositions = new ArrayList<>(axis.getPositionCount());

@@ -126,7 +126,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                 });
                 this.workspace.$el.find('.parameter_input').empty();
             }
-            
+
             this.workspace.query.helper.removeHierarchy(hierarchy);
             this.workspace.sync_query();
             this.workspace.query.run();
@@ -145,44 +145,48 @@ var WorkspaceDropZone = Backbone.View.extend({
             for (var axis in axes) {
                 var $axis = $(self.el).find('.fields_list[title="' + axis + '"]');
                 _.each(axes[axis].hierarchies, function(hierarchy) {
-                    var h = $(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"]').clone().removeClass('d_hierarchy').addClass('hierarchy');
-                    h.find('li.d_level').hide();
-                    for (var level in hierarchy.levels) {
-                        h.find('li a[level="' + level + '"]').parent().show();
+					if(self.workspace.dimension_list!=null) {
+						var h = $(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"]').clone().removeClass('d_hierarchy').addClass('hierarchy');
+						h.find('li.d_level').hide();
+						for (var level in hierarchy.levels) {
+							h.find('li a[level="' + level + '"]').parent().show();
 
-                        // sync attribute list
-                        $(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"] li a[level="' + level + '"]').parent()
-                            .draggable('disable')
-                            .parents('.parent_dimension')
-                            .find('.folder_collapsed')
-                            .addClass('selected');
-                    }
-                    /*for (var member in hierarchy.cmembers) {
-                        if (hierarchy.cmembers.hasOwnProperty(member)) {
-                            var level = member.split('.')[member.split('.').length-1].replace(/[\[\]]/gi, '');
+							// sync attribute list
+							$(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"] li a[level="' + level + '"]').parent()
+								.draggable('disable')
+								.parents('.parent_dimension')
+								.find('.folder_collapsed')
+								.addClass('selected');
+						}
+						/*for (var member in hierarchy.cmembers) {
+						 if (hierarchy.cmembers.hasOwnProperty(member)) {
+						 var level = member.split('.')[member.split('.').length-1].replace(/[\[\]]/gi, '');
 
-                            h.find('li a[level="' + level + '"]').parent().show();
+						 h.find('li a[level="' + level + '"]').parent().show();
 
-                            // sync attribute list
-                            $(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"] li a[level="' + level + '"]').parent()
-                                .draggable('disable')
-                                .parents('.parent_dimension')
-                                .find('.folder_collapsed')
-                                .addClass('selected');
-                        }
-                    }*/
-                    var selection = $('<li class="selection"></li>');
-                    selection.append(h);
-                    selection.appendTo($axis.find('ul.connectable'));
+						 // sync attribute list
+						 $(self.workspace.dimension_list.el).find('ul.d_hierarchy[hierarchy="' + hierarchy.name + '"] li a[level="' + level + '"]').parent()
+						 .draggable('disable')
+						 .parents('.parent_dimension')
+						 .find('.folder_collapsed')
+						 .addClass('selected');
+						 }
+						 }*/
+						var selection = $('<li class="selection"></li>');
+						selection.append(h);
+						selection.appendTo($axis.find('ul.connectable'));
+					}
                 });
             }
             var measures = model.queryModel.details.measures || [];
             _.each(measures, function (measure) {
-                var m = $(self.workspace.dimension_list.el).find('.measure_tree a.measure[measure="' + measure.name + '"]').parent();
-                var m2 = m.clone().show();
-                m2.appendTo( $(self.el).find('.fields_list_body.details ul.connectable'));
+				if(self.workspace.dimension_list!=null) {
+					var m = $(self.workspace.dimension_list.el).find('.measure_tree a.measure[measure="' + measure.name + '"]').parent();
+					var m2 = m.clone().show();
+					m2.appendTo($(self.el).find('.fields_list_body.details ul.connectable'));
 
-                m.draggable('disable');
+					m.draggable('disable');
+				}
             });
 
             this.update_dropzones();
@@ -192,7 +196,10 @@ var WorkspaceDropZone = Backbone.View.extend({
     reset_dropzones: function() {
         var self = this;
         $(self.el).find('.fields_list_body ul.connectable').find('li.selection, li.d_measure').remove();
-        $(self.workspace.dimension_list.el).find('li.ui-draggable-disabled').draggable('enable');
+		if(self.workspace.dimension_list!=null) {
+			$(self.workspace.dimension_list.el).find('li.ui-draggable-disabled').draggable('enable');
+		}
+
         $(self.el).find('.fields_list[title="ROWS"] .limit').removeClass('on');
         $(self.el).find('.fields_list[title="COLUMNS"] .limit').removeClass('on');
         $(this.workspace.el).find('.fields_list_body .clear_axis').addClass('hide');
@@ -215,7 +222,7 @@ var WorkspaceDropZone = Backbone.View.extend({
 
         var axisName = $(event.target).siblings('.fields_list_body').parent().attr('title');
         var axisData = this.workspace.query.helper.getAxis(axisName);
-        var len = axisData.hierarchies.length;
+        var len = axisData ? axisData.hierarchies.length : 0;
         var isRemovedParameter = false;
         var hierarchy;
         var level;
@@ -224,9 +231,9 @@ var WorkspaceDropZone = Backbone.View.extend({
             for (var i = 0; i < len; i++) {
                 for (var lName in axisData.hierarchies[i].levels) {
                     if (axisData.hierarchies[i].levels.hasOwnProperty(lName)) {
-                        if (axisData.hierarchies[i].levels[lName].selection && 
+                        if (axisData.hierarchies[i].levels[lName].selection &&
                             axisData.hierarchies[i].levels[lName].selection['parameterName']) {
-                            
+
                             level = lName;
                             hierarchy = axisData.hierarchies[i].name;
                             this.workspace.query.helper.removeParameter(hierarchy, level);
@@ -241,8 +248,8 @@ var WorkspaceDropZone = Backbone.View.extend({
             }
         }
 
-        if (isRemovedParameter || !Settings.ALLOW_PARAMETERS) {
-            if (axisName == "DETAILS") {
+        if (isRemovedParameter || !Settings.ALLOW_PARAMETERS || axisName === 'DETAILS') {
+            if (axisName === 'DETAILS') {
                 this.workspace.query.helper.clearMeasures();
             } else {
                 this.workspace.query.helper.clearAxis(axisName);
@@ -366,7 +373,7 @@ var WorkspaceDropZone = Backbone.View.extend({
         if ((objData.level && objData.level.annotations !== undefined && objData.level.annotations !== null) &&
            (objData.level.annotations.AnalyzerDateFormat !== undefined || objData.level.annotations.SaikuDayFormatString !== undefined) &&
            ((_.has(memberLevel, 'selection') && memberLevel.selection.members.length === 0) ||
-           ((_.size(memberLevel) === 1 && _.has(memberLevel, 'name')) || (_.has(memberLevel, 'mdx') && memberLevel.mdx) || 
+           ((_.size(memberLevel) === 1 && _.has(memberLevel, 'name')) || (_.has(memberLevel, 'mdx') && memberLevel.mdx) ||
            (_.size(memberLevel) === 2 && _.has(memberLevel, 'name') && _.has(memberLevel, 'mdx'))))) {
 
             // Launch date filter dialog
@@ -397,10 +404,17 @@ var WorkspaceDropZone = Backbone.View.extend({
 
 	measure_action: function(event) {
 		var self = this;
+
 		if (typeof this.workspace.query == "undefined" || this.workspace.query.model.type != "QUERYMODEL" || Settings.MODE == "view") {
 			return false;
 		}
-		var $target = $(event.target).hasClass('limit') ? $(event.target) : $(event.target).parent();
+
+		var $target  = $(event.target).hasClass('limit') ? $(event.target) : $(event.target).parent();
+        var query    = self.workspace.query;
+        var cube     = self.workspace.selected_cube;
+        var details  = query.helper.model().queryModel.details;
+        var measures = details.measures;
+
 		var menuitems = {
 			"HEADER": {name: "Position", disabled:true, i18n: true },
 			"sep1": "---------",
@@ -412,27 +426,26 @@ var WorkspaceDropZone = Backbone.View.extend({
 			"reset": {name: "Reset Default", i18n: true },
 			"cancel": {name: "Cancel", i18n: true }
 		};
+
 		$.each(menuitems, function(key, item){
 			recursive_menu_translate(item, Saiku.i18n.po_file);
 		});
+
 		$.contextMenu('destroy', '.limit');
+
 		$.contextMenu({
 			appendTo: $target,
 			selector: '.limit',
 			ignoreRightClick: true,
 			build: function($trigger, e) {
-				var query = self.workspace.query;
-				var cube = self.workspace.selected_cube;
 				return {
 					callback: function(key, options) {
-						var details = query.helper.model().queryModel.details;
 						if (key === "cancel") {
 							return;
-						}
-						if ( key === "reset") {
+						} else if ( key === "reset") {
 							details.location = SaikuOlapQueryTemplate.queryModel.details.location;
 							details.axis = SaikuOlapQueryTemplate.queryModel.details.axis;
-						} else {
+                        } else {
 							var location = key.split('_')[0];
 							var axis = key.split('_')[1];
 							details.location = location;
@@ -463,16 +476,17 @@ var WorkspaceDropZone = Backbone.View.extend({
             appendTo: $target,
             selector: '.limit',
             ignoreRightClick: true,
-             build: function($trigger, e) {
+            build: function($trigger, e) {
                 var query = self.workspace.query;
                 var cube = self.workspace.selected_cube;
                 var items = {};
                 var measures = Saiku.session.sessionworkspace.cube[cube].get('data').measures;
                 var a = self.workspace.query.helper.getAxis(target);
-                 var hierarchies = a.hierarchies;
+                var hierarchies = a.hierarchies;
 
                 var func, n, sortliteral, filterCondition, sortOrder, sortOrderLiteral, sortHl, topHl, filterHl, totalFunction;
                 var isFilter = false, isSort = false, isTop = false;
+
                 if (a && a.filters) {
                     _.each(a.filters, function(filter) {
                         if (filter.flavour == "N") {
@@ -487,11 +501,13 @@ var WorkspaceDropZone = Backbone.View.extend({
                         }
                     });
                 }
+
                 if (a && a.sortOrder) {
                     sortOrder = a.sortOrder;
                     sortOrderLiteral = a.sortEvaluationLiteral;
                     isSort = true;
                 }
+
                 if (a && a.aggregators && a.aggregators.length > 0) {
                     totalFunction = a.aggregators[0];
                 }
@@ -516,35 +532,36 @@ var WorkspaceDropZone = Backbone.View.extend({
                     };
                 });
 
-                 _.each(hierarchies, function(h){
-                     _.each(h.levels, function(l){
-                         items[h.name] = {
-                             name: h.caption,
-                             payload: {
-                                 "n":10,
-                                 "sortliteral" : h.name+".["+l.name+"].CURRENTMEMBER.ORDERKEY"
-                             }
-                         }
-                     });
-
-                 })
-
-                var levels=[];
-				 _.each(a.hierarchies, function(hierarchy){
-					 for(var property in hierarchy.levels){
-						 console.log(property);
-						 var n ="";
-						 if(hierarchy.levels[property].caption!=null){
-							 n = hierarchy.levels[property].caption;
-						 }
-						 else{
-							 n = hierarchy.levels[property].name;
-						 }
-						 levels[hierarchy.levels[property].name] = {
-							 name: n
-						 }
-					 }
+                _.each(hierarchies, function(h){
+                    _.each(h.levels, function(l){
+                        items[h.name] = {
+                            name: h.caption,
+                            payload: {
+                                "n": 10,
+                                "sortliteral": h.name+".["+l.name+"].CURRENTMEMBER.ORDERKEY"
+                            }
+                        }
+                    });
                 });
+
+                var levels = [];
+
+				_.each(a.hierarchies, function(hierarchy){
+                    for(var property in hierarchy.levels){
+                        var n = "";
+
+                        if(hierarchy.levels[property].caption!=null){
+                            n = hierarchy.levels[property].caption;
+                        } else{
+                            n = hierarchy.levels[property].name;
+                        }
+
+                        levels[hierarchy.levels[property].name] = {
+                            name: n
+                        }
+                    }
+                });
+
                 var addFun = function(items, fun) {
                     var ret = {};
                     for (var key in items) {
@@ -588,22 +605,43 @@ var WorkspaceDropZone = Backbone.View.extend({
                             "customsort" : { name: "Custom...", i18n: true },
                             "clearsort" : {name: "Clear Sort", i18n: true }
                         }},
-                        "grand_totals" : {name: "Grand totals", i18n: true, items:
+                        "fold_totals": {name: "Totals", i18n: true, items:
                         {
-                            "show_totals_not": {name: "None", i18n: true},
-                            "show_totals_sum": {name: "Sum", i18n: true},
-                            "show_totals_min": {name: "Min", i18n: true},
-                            "show_totals_max": {name: "Max", i18n: true},
-                            "show_totals_avg": {name: "Avg", i18n: true}
+                            "grand_totals" : {name: "All", i18n: true, items:
+                            {
+                                "show_totals_not": {name: "None", i18n: true},
+                                "show_totals_sum": {name: "Sum", i18n: true},
+                                "show_totals_min": {name: "Min", i18n: true},
+                                "show_totals_max": {name: "Max", i18n: true},
+                                "show_totals_avg": {name: "Avg", i18n: true}
+                            }}
                         }},
                         "cancel" : { name: "Cancel", i18n: true }
 
                 };
+
+                var selectedMeasures = query.helper.model().queryModel.details.measures;
+                _.each(selectedMeasures, function(measure) {
+                    var foldName = 'fold_' + measure.name.replace(/\s/g, '_').toLowerCase();
+                    var fold = {name: measure.name, items: {}};
+
+                    // Also applying a bold style to per measure's selected aggregation total
+
+                    fold.items["show_totals_nil_" + measure.name] = {name: self.formatAggregatorName("None", "nil", a, measure), i18n: true};
+                    fold.items["show_totals_sum_" + measure.name] = {name: self.formatAggregatorName("Sum",  "sum", a, measure), i18n: true};
+                    fold.items["show_totals_min_" + measure.name] = {name: self.formatAggregatorName("Min",  "min", a, measure), i18n: true};
+                    fold.items["show_totals_max_" + measure.name] = {name: self.formatAggregatorName("Max",  "max", a, measure), i18n: true};
+                    fold.items["show_totals_avg_" + measure.name] = {name: self.formatAggregatorName("Avg",  "avg", a, measure), i18n: true};
+
+                    citems.fold_totals.items[foldName] = fold;
+                });
+
                 $.each(citems, function(key, item){
                     recursive_menu_translate(item, Saiku.i18n.po_file);
                 });
 
-                var totalItems = citems.grand_totals.items;
+                // Applying a bold style to the selected aggregation total
+                var totalItems = citems.fold_totals.items.grand_totals.items;
                 if (totalFunction) {
                     for (var key in totalItems) {
                         if (key.substring("show_totals_".length) == totalFunction) {
@@ -623,6 +661,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                     f.name = "<b>" + f.name + "</b>";
                     f.items.customfilter.name = "<b>" + f.items.customfilter.name + "</b>";
                 }
+
                 if (isSort) {
                     var s = citems.sort.items;
                     citems.sort.name = "<b>" + citems.sort.name + "</b>";
@@ -630,6 +669,7 @@ var WorkspaceDropZone = Backbone.View.extend({
                         s[sortHl].name = "<b>" + s[sortHl].name + "</b>";
                     }
                 }
+
                 if (isTop) {
                     var t = citems.limit.items;
                     citems.limit.name = "<b>" + citems.limit.name + "</b>";
@@ -760,9 +800,47 @@ var WorkspaceDropZone = Backbone.View.extend({
                                 self.workspace.query.run();
                             } else if (key.indexOf("show_totals_") === 0){
                                 var total = key.substring("show_totals_".length);
-                                var aggs = [];
-                                aggs.push(total);
-                                a.aggregators = aggs;
+                                var tokens = total.split('_');
+
+                                if (tokens.length > 1) { // Axis-specific totals
+                                    total = tokens[0];
+                                    var metric = key.substring(("show_totals_" + total).length + 1);
+
+                                    _.each(selectedMeasures, function(m){
+                                        if (metric === m.name) {
+                                            if (!m.aggregators) {
+                                                m.aggregators = [];
+                                            } else if (m.aggregators.length > 0) {
+                                                var aggIdx = -1;
+                                                for (var i = 0; i < m.aggregators.length; i++) {
+                                                    var aggInfo = m.aggregators[i];
+                                                    if (aggInfo.indexOf('_') > 0) {
+                                                        var aggInfoArray = aggInfo.split('_');
+                                                        if (aggInfoArray[1] == a.location) {
+                                                            aggIdx = i;
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                if (aggIdx >= 0) {
+                                                    m.aggregators.splice(aggIdx, 1);
+                                                }
+                                            }
+
+                                            m.aggregators.push(total + '_' + a.location);
+                                        }
+                                    });
+
+                                    if (!a.aggregators || a.aggregators.length == 0) {
+                                        a.aggregators = [total];
+                                    }
+                                } else { // General totals
+                                    var aggs = [];
+                                    aggs.push(total);
+                                    a.aggregators = aggs;
+                                }
+
+
                                 self.workspace.query.run();
                             } else {
 
@@ -776,7 +854,6 @@ var WorkspaceDropZone = Backbone.View.extend({
 
                                 }
 								else if(_.indexOf(["Param"], fun) > -1) {
-									console.log("here");
 									a.sortEvaluationLiteral = items[ikey].payload.sortliteral;
 								}else {
                                     var expressions = [];
@@ -803,5 +880,19 @@ var WorkspaceDropZone = Backbone.View.extend({
             }
         });
     $target.contextMenu();
+    },
+    formatAggregatorName: function(name, agg, a, measure) {
+        if (measure.aggregators) {
+            for (var i = 0; i < measure.aggregators.length; i++) {
+                var tokens     = measure.aggregators[i].split('_');
+                var aggregator = tokens[0];
+                var axis       = tokens[1];
+
+                if (agg == aggregator && axis == a.location) {
+                    return '<b>' + name + '</b>';
+                }
+            }
+        }
+        return name;
     }
 });

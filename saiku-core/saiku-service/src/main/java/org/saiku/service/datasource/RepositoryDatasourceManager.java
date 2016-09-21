@@ -17,11 +17,13 @@
 package org.saiku.service.datasource;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.IConnectionManager;
 import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.repository.*;
+import org.saiku.service.importer.JujuSource;
 import org.saiku.service.importer.LegacyImporter;
 import org.saiku.service.importer.LegacyImporterImpl;
 import org.saiku.service.user.UserService;
@@ -625,6 +627,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
     public void setDatadir(String datadir) {
+            datadir=datadir.replaceFirst(":", ":/");
+
         this.datadir = datadir;
     }
 
@@ -825,5 +829,10 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     public void setWorkspaces(String workspaces) {
         this.workspaces = Boolean.parseBoolean(workspaces);
     }
+
+    public List<JujuSource> getJujuDatasources() {
+                LegacyImporter l = new LegacyImporterImpl(null);
+                return l.importJujuDatasources();
+        }
 }
 

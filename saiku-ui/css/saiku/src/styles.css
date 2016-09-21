@@ -896,6 +896,9 @@ textarea, select {
     display: normal;
 }
 
+.per_metrics_container {
+    display: none;
+}
 
 .totals_container {
 /*  margin:4px;
@@ -2690,4 +2693,35 @@ margin-bottom: 20px;
     padding-bottom:3px;
     padding-left:6px;
     padding-right:6px;
+}
+
+.about-us a {
+    outline: none;
+    color: #0000ff;
+}
+
+.about-us ul {
+    list-style: none;
+    padding: 0;
+}
+
+.about-us .header span,
+.about-us .footer span {
+    display: block;
+}
+
+.about-us .header {
+    margin-bottom: 30px;
+}
+
+.about-us .footer {
+    margin-top: 30px;
+}
+
+.about-us .label {
+    font-weight: bold;
+}
+
+.about-us .item {
+    font-weight: normal;
 }

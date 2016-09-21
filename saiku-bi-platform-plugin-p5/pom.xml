@@ -2,12 +2,12 @@
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saikuanalytics</groupId>
-        <version>3.9-SNAPSHOT</version>
+        <version>3.9-RC4</version>
     </parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>saiku-bi-platform-plugin-p5</artifactId>
 	<packaging>jar</packaging>
-	<version>3.9-SNAPSHOT</version>
+	<version>3.9-RC4</version>
 	<name>saiku biserver plugin</name>
 
 	<build>
@@ -36,6 +36,12 @@
 						</goals>
 						<configuration>
 							<artifactItems>
+								<artifactItem>
+									<groupId>bi.meteorite</groupId>
+									<artifactId>licenseserver-core</artifactId>
+									<version>1.0-SNAPSHOT</version>
+									<outputDirectory>target/dist/saiku/lib</outputDirectory>
+								</artifactItem>
                                 <artifactItem>
                                     <groupId>org.mozilla</groupId>
                                     <artifactId>rhino</artifactId>
@@ -618,7 +624,7 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
-            <version>2.0.5.RELEASE</version>
+            <version>2.0.8.RELEASE</version>
 		</dependency>
 
 		<!-- Batik/SVG -->

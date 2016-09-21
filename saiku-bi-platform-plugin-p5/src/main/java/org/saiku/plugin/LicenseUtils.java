@@ -25,7 +25,7 @@ import javax.jcr.RepositoryException;
 /**
  * Created by bugg on 01/07/14.
  */
-public class LicenseUtils implements org.saiku.service.license.ILicenseUtils {
+public class LicenseUtils extends org.saiku.service.license.LicenseUtils{
   private static final Logger log = LoggerFactory.getLogger(LicenseUtils.class);
 
   private IDatasourceManager repositoryDatasourceManager;
