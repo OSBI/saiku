@@ -20,6 +20,7 @@ import org.saiku.datasources.connection.RepositoryFile;
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.repository.AclEntry;
 import org.saiku.repository.IRepositoryObject;
+import org.saiku.service.importer.JujuSource;
 import org.saiku.service.user.UserService;
 
 import java.io.InputStream;
@@ -135,4 +136,6 @@ public interface IDatasourceManager {
   void setExternalPropertiesFile(String file);
 
   String[] getAvailablePropertiesKeys();
+
+  List<JujuSource> getJujuDatasources();
 }

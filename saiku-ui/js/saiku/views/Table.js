@@ -73,6 +73,7 @@ var Table = Backbone.View.extend({
             var h = cell.properties.hierarchy;
             var l = cell.properties.level;
             var l_caption = "";
+			 var l_name = "";
 
             var keep_payload = JSON.stringify(
                 {
@@ -110,11 +111,16 @@ var Table = Backbone.View.extend({
             var used_levels = [];
 
              var v1 = self.workspace.query.helper.getHierarchy(h);
-             var v2 =
-             _.each(v1.levels, function(level){
-                 var lev = h+".["+level.name+"]";
-                used_levels.push(lev);
-             });
+             var v2;
+
+             if (v1) {
+                 v2 =
+                 _.each(v1.levels, function(level){
+                     var lev = h+".["+level.name+"]";
+                    used_levels.push(lev);
+                 });
+             }
+
             _.each(dimensions, function(dimension) {
                 if (dimension.name == d) {
                     _.each(dimension.hierarchies, function(hierarchy) {
@@ -211,14 +217,23 @@ var Table = Backbone.View.extend({
 
                         //self.workspace.query.helper.removeLevel(h, k);
                         var hierarchy = self.workspace.query.helper.getHierarchy(h);
-                        if (hierarchy && hierarchy.levels.hasOwnProperty(l_caption)) {
-                            updates.push({
-                                uniqueName: cell.properties.uniquename,
-                                caption: cell.properties.uniquename
-                            });
-                            hierarchy.levels[l_caption].selection = {"type": "INCLUSION", "members": updates};
-                            self.workspace.drop_zones.synchronize_query();
-                            self.workspace.query.run(true);
+						if (hierarchy && hierarchy.levels.hasOwnProperty(l_name)|| h == "[Measures]") {
+							if(h=="[Measures]"){
+								measure = {name:cell.properties.uniquename, type:'EXACT'}
+
+								self.workspace.query.helper.clearMeasures();
+								self.workspace.query.helper.includeMeasure(measure)
+							}
+							else {
+
+								updates.push({
+									uniqueName: cell.properties.uniquename,
+									caption: cell.properties.uniquename
+								});
+								hierarchy.levels[l_name].selection = {"type": "INCLUSION", "members": updates};
+								self.workspace.drop_zones.synchronize_query();
+								self.workspace.query.run(true);
+							}
                         }
                     }
                     else if(key === "filterlevel"){
@@ -234,6 +249,11 @@ var Table = Backbone.View.extend({
                     }
                     else if(key.substring(0,key.indexOf("-")) === "remove"){
                         var k = key.substring(key.indexOf("-") + 1);
+
+                        if (Settings.ALLOW_PARAMETERS) {
+                            self.workspace.query.helper.removeParameter(h, k);
+                            self.workspace.$el.find('.parameter_input').empty();
+                        }
 
                         self.workspace.query.helper.removeLevel(h, k);
                         self.workspace.drop_zones.synchronize_query();
@@ -316,6 +336,7 @@ var Table = Backbone.View.extend({
     },
 
     process_data: function(data) {
+        var hideEmptyRows = (Settings.HIDE_EMPTY_ROWS && this.workspace.query.getProperty('saiku.olap.query.nonempty'));
 
         this.workspace.processing.hide();
         this.workspace.adjust();
@@ -323,6 +344,7 @@ var Table = Backbone.View.extend({
         this.clearOut();
         $(this.el).html('<table></table>');
         var contents = this.renderer.render(data, {
+            hideEmpty:          hideEmptyRows,
             htmlObject:         $(this.el).find('table'),
             batch:              Settings.TABLE_LAZY,
             batchSize:          Settings.TABLE_LAZY_SIZE,

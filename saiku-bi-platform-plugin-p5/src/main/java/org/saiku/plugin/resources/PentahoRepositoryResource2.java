@@ -107,21 +107,21 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 	{
 		List<IRepositoryObject> objects = new ArrayList<IRepositoryObject>();
 		try {
-//			if (path != null && (path.startsWith("/") || path.startsWith("."))) {
-//				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + path);
-//			}
-			
 			IUserContentAccess access = contentAccessFactory.getUserContentAccess("/");
 			String root = (StringUtils.isBlank(path)) ? "/" : path;
-			return getRepositoryObjects(access, root, type, hidden);
+
+			String[] typeArray = type == null ? new String[]{""} : type.split(","); // The types may be comma separated
+			List<IRepositoryObject> result = new ArrayList<>();
+			result.addAll(getRepositoryObjects(access, root, typeArray, hidden));
+
+
+			return result;
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 			e.printStackTrace();
 		}
 		return objects;
 	}
-
-
 
 	/**
 	 * Load a resource.
@@ -376,11 +376,19 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 		}	
 	}
 
-	private List<IRepositoryObject> getRepositoryObjects(final IUserContentAccess root, String path, final String type, final Boolean hidden) {
+	private List<IRepositoryObject> getRepositoryObjects(final IUserContentAccess root, String path, final String[] type, final Boolean hidden) {
 		List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
-		IBasicFileFilter txtFilter = StringUtils.isBlank(type) ? null : new IBasicFileFilter() {
+		IBasicFileFilter txtFilter = type.length==0 ? null : new IBasicFileFilter() {
 			public boolean accept(IBasicFile file) {
-				return file.isDirectory() || file.getExtension().equals(type);
+				if(file.isDirectory()){
+					return true;
+				}
+				for(String t : type){
+					if(file.getExtension().equals(t)){
+						return true;
+					}
+				}
+				return false;
 			}
 		};
 		List<IBasicFile> files = new ArrayList<IBasicFile>();

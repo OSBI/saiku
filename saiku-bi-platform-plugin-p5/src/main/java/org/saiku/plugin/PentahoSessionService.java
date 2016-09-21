@@ -15,6 +15,9 @@
  */
 package org.saiku.plugin;
 
+import org.pentaho.platform.api.engine.ILogoutListener;
+import org.pentaho.platform.api.engine.IPentahoSession;
+import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.saiku.plugin.util.PentahoAuditHelper;
 import org.saiku.service.ISessionService;
 
@@ -31,15 +34,12 @@ import org.springframework.security.BadCredentialsException;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.ui.WebAuthenticationDetails;
 import org.springframework.security.userdetails.User;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
@@ -78,9 +78,50 @@ public class PentahoSessionService implements ISessionService {
 		this.authenticationManager = auth;
 	}
 
+	public PentahoSessionService() {
+		PentahoSystem.addLogoutListener(new ILogoutListener() {
+
+			@Override
+			public void onLogout( IPentahoSession pentahoSession ) {
+				System.out.println("processing pentaho logout");
+				UUID uuid = pah.startAudit("Saiku", "Logout", this.getClass().getName(), null, null, "Attempted Logout", getLogger
+						());
+				if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
+					Object p = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+					if (sessionHolder.containsKey(p)) {
+						sessionHolder.remove(p);
+					}
+				}
+				else if(pentahoSession !=null && pentahoSession.getId()!=null){
+					Iterator it = sessionHolder.entrySet().iterator();
+					while (it.hasNext()) {
+						Map.Entry pair = (Map.Entry)it.next();
+						if(pair.getValue() instanceof HashMap){
+							HashMap<String,String> hm = (HashMap<String, String>) pair.getValue();
+							Iterator it2 = hm.entrySet().iterator();
+							while(it2.hasNext()){
+								Map.Entry pair2 = (Map.Entry)it2.next();
+								if(pair2.getKey().equals("sessionid")&& pair2.getValue().equals(pentahoSession.getId())){
+									sessionHolder.remove(pair.getKey());
+								}
+							}
+						}
+
+					}
+				}
+				try {
+					pah.endAudit("Saiku", "Logout Successful", this.getClass().getName(), null, null,
+							getLogger(), (long) 1, uuid, (long) 1);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} );
+	}
+
 	/* (non-Javadoc)
-	 * @see org.saiku.web.service.ISessionService#login(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String)
-	 */
+         * @see org.saiku.web.service.ISessionService#login(javax.servlet.http.HttpServletRequest, java.lang.String, java.lang.String)
+         */
 	public Map<String, Object> login(HttpServletRequest req, String username, String password ) {
 	  pah.startAudit("Saiku", "Login", this.getClass().getName(), this.toString(), this.toString(), null, new
 		  SimpleLogger(
@@ -109,7 +150,8 @@ public class PentahoSessionService implements ISessionService {
 	  else {
 		username = "existinguser";
 	  }
-	  String sessionId =UUID.randomUUID().toString();
+	  String sessionId =RequestContextHolder.currentRequestAttributes().getSessionId();
+
 
 	  UUID uuid = pah.startAudit("Saiku", "Login", this.getClass().getName(), username, sessionId, username +
 																								 " Attempted "
@@ -194,7 +236,7 @@ public class PentahoSessionService implements ISessionService {
 				if (sl != null) try {
 					l.validateLicense();
 				} catch (RepositoryException | IOException | ClassNotFoundException e) {
-					e.printStackTrace();
+					log.error("Exception thrown when validating license", e);
 				}
 				Object p = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 				if (!sessionHolder.containsKey(p)) {
@@ -209,12 +251,12 @@ public class PentahoSessionService implements ISessionService {
 
 			} catch (Exception e) {
 				if(e instanceof LicenseVersionExpiredException){
-					log.error("License is for wrong version. Please update your license http://licensing.meteorite.bi");
+					log.error("License is for wrong version. Please update your license http://licensing.meteorite.bi", e);
 					throw new Exception("License for wrong version please update your free license(http://licensing"
 										+ ".meteorite.bi)");
 				}
 				else {
-					log.error("No license found, please fetch a free license from http://licensing.meteorite.bi");
+					log.error("No license found, please fetch a free license from http://licensing.meteorite.bi", e);
 					throw new Exception("No license found, please fetch a free license from http://licensing.meteorite"
 										+ ".bi and move it to: pentaho-solutions/system/saiku/license.lic");
 				}
@@ -261,4 +303,7 @@ public class PentahoSessionService implements ISessionService {
   }
 
 
+	public Map<Object, Map<String, Object>> getSessionHolder() {
+		return sessionHolder;
+	}
 }

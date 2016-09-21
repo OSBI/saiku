@@ -42,7 +42,7 @@ var SaikuOlapQueryTemplate = {
     },
     "calculatedMeasures": [],
     "calculatedMembers": []
-  }, 
+  },
   "queryType": "OLAP",
   "type": "QUERYMODEL"
 };
@@ -60,8 +60,8 @@ SaikuOlapQueryHelper.prototype.clearAxis = function(axisName) {
 };
 
 SaikuOlapQueryHelper.prototype.getHierarchy = function(name) {
-  var _searchFunction = function(he) { 
-    return (he && he.name == name); 
+  var _searchFunction = function(he) {
+    return (he && he.name == name);
   };
 
   for (var axisName in this.model().queryModel.axes) {
@@ -82,7 +82,7 @@ SaikuOlapQueryHelper.prototype.moveHierarchy = function(fromAxis, toAxis, hierar
   if (typeof position != "undefined" && position > -1 && target.length > position) {
       target.splice(position, 0, h);
       return;
-  } 
+  }
   target.push(h);
 
 };
@@ -95,7 +95,7 @@ SaikuOlapQueryHelper.prototype.removeHierarchy = function(hierarchy) {
   var axis = this.findAxisForHierarchy(hierarchy);
   if (axis) {
     var i = axis.hierarchies.indexOf(h);
-      axis.hierarchies.splice(i,1);  
+      axis.hierarchies.splice(i,1);
   }
   return h;
 };
@@ -185,19 +185,50 @@ SaikuOlapQueryHelper.prototype.getSelectionsForParameter = function(parameter){
   return m;
 };
 
+SaikuOlapQueryHelper.prototype.setSelectionsForParameter = function(parameter, selections){
+  var m;
+  var axes = this.model().queryModel.axes;
+  _.each(axes, function(a){
+    var hier = a.hierarchies;
+    _.each(hier, function(h){
+      _.each(h.levels, function(l){
+        if(l.selection && l.selection["parameterName"] && l.selection["parameterName"] === parameter){
+          l.selection.members = selections;
+          return false;
+        }
+      });
+    });
+  });
+};
+
+SaikuOlapQueryHelper.prototype.removeParameter = function(hierarchy, level) {
+  hierarchy = this.getHierarchy(hierarchy);
+  if (hierarchy && hierarchy.levels.hasOwnProperty(level)) {
+    var parameterName = hierarchy.levels[level].selection['parameterName'];
+    delete this.model().parameters[parameterName];
+  }
+};
+
+var buildUniqueName = function(level, name) {
+  return level.hierarchy.name + ".[" + level.level.name + "].[" + name + "]";
+};
+
 SaikuOlapQueryHelper.prototype.addtoSelection = function(membername, level){
-  if(level.level.selection.members===undefined){
+  if(level.level.selection.members === undefined){
     level.selection.members = [];
   }
+
   var found = false;
   _.each(level.level.selection.members, function(m){
-    if(m.uniqueName==level.hierarchy.name+".["+level.level.name+"].["+membername+"]"){
+    var mUniqueName = buildUniqueName(level, m.name);
+    if (buildUniqueName(level, m.name) === buildUniqueName(level, membername)) {
       found = true;
     }
   });
+
   if(!found) {
     level.level.selection.members.push({
-      uniqueName: level.hierarchy.name + ".[" + level.level.name + "].[" + membername + "]",
+      uniqueName: buildUniqueName(level, membername),
       caption: membername
     })
   }
@@ -217,7 +248,7 @@ SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, p
       mHierarchy = { "name": hierarchy, "levels": {}, "cmembers": {} };
       mHierarchy.levels[level] = { name: level };
     }
-    
+
     var existingAxis = this.findAxisForHierarchy(hierarchy);
     if (existingAxis) {
       this.moveHierarchy(existingAxis.location, axis, hierarchy, position);
@@ -227,7 +258,7 @@ SaikuOlapQueryHelper.prototype.includeLevel = function(axis, hierarchy, level, p
         if (typeof position != "undefined" && position > -1 && _axis.hierarchies.length > position) {
           _axis.hierarchies.splice(position, 0, mHierarchy);
           return;
-        } 
+        }
         _axis.hierarchies.push(mHierarchy);
       } else {
         Saiku.log("Cannot find axis: " + axis + " to include Level: " + level);
@@ -243,7 +274,7 @@ SaikuOlapQueryHelper.prototype.includeLevelCalculatedMember = function(axis, hie
       mHierarchy = { "name": hierarchy, "levels": {}, "cmembers": {} };
       mHierarchy.cmembers[uniqueName] = uniqueName;
     }
-    
+
     var existingAxis = this.findAxisForHierarchy(hierarchy);
     if (existingAxis) {
       this.moveHierarchy(existingAxis.location, axis, hierarchy, -1);
@@ -253,7 +284,7 @@ SaikuOlapQueryHelper.prototype.includeLevelCalculatedMember = function(axis, hie
         if (typeof position != "undefined" && position > -1 && _axis.hierarchies.length > position) {
           _axis.hierarchies.splice(position, 0, mHierarchy);
           return;
-        } 
+        }
         _axis.hierarchies.push(mHierarchy);
       } else {
         Saiku.log("Cannot find axis: " + axis + " to include Level: " + level);
@@ -262,9 +293,16 @@ SaikuOlapQueryHelper.prototype.includeLevelCalculatedMember = function(axis, hie
 };
 
 SaikuOlapQueryHelper.prototype.removeLevel = function(hierarchy, level) {
+  var hier = hierarchy;
+
   hierarchy = this.getHierarchy(hierarchy);
+
   if (hierarchy && hierarchy.levels.hasOwnProperty(level)) {
     delete hierarchy.levels[level];
+
+    if (hierarchy && _.isEmpty(hierarchy.levels)) {
+      this.removeHierarchy(hier);
+    }
   }
 };
 
@@ -311,8 +349,7 @@ SaikuOlapQueryHelper.prototype.removeMeasure = function(name) {
   var measures = this.query.model.queryModel.details.measures;
   var removeMeasure = _.findWhere(measures , { name: name });
   if (removeMeasure && _.indexOf(measures, removeMeasure) > -1) {
-    measures = _.without(measures, removeMeasure);
-    //console.log(measures);
+	  measures = _.without(measures, removeMeasure);
   }
 };
 
@@ -345,7 +382,6 @@ SaikuOlapQueryHelper.prototype.removeCalculatedMeasure = function(name) {
   if (removeMeasure && _.indexOf(measures, removeMeasure) > -1) {
     measures = _.without(measures, removeMeasure);
     this.model().queryModel.calculatedMeasures = measures;
-    //console.log(measures);
   }
 };
 
@@ -378,7 +414,6 @@ SaikuOlapQueryHelper.prototype.removeCalculatedMember = function(name) {
   if (removeMeasure && _.indexOf(measures, removeMeasure) > -1) {
     measures = _.without(measures, removeMeasure);
     this.model().queryModel.calculatedMembers = measures;
-    //console.log(measures);
   }
 };
 

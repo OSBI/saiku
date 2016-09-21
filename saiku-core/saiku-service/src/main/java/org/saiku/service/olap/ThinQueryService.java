@@ -18,19 +18,17 @@ package org.saiku.service.olap;
 import org.apache.commons.lang.StringUtils;
 
 import org.saiku.olap.dto.SaikuCube;
+import org.saiku.olap.dto.SaikuHierarchy;
+import org.saiku.olap.dto.SaikuLevel;
+import org.saiku.olap.dto.SaikuMember;
 import org.saiku.olap.dto.SimpleCubeElement;
+import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.query.IQuery;
 import org.saiku.olap.query.IQuery.QueryType;
 import org.saiku.olap.query.OlapQuery;
 import org.saiku.olap.query.QueryDeserializer;
-import org.saiku.olap.query2.ThinAxis;
-import org.saiku.olap.query2.ThinCalculatedMember;
-import org.saiku.olap.query2.ThinHierarchy;
-import org.saiku.olap.query2.ThinLevel;
-import org.saiku.olap.query2.ThinMember;
-import org.saiku.olap.query2.ThinQuery;
-import org.saiku.olap.query2.ThinQueryModel;
+import org.saiku.olap.query2.*;
 import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
 import org.saiku.olap.query2.util.Fat;
 import org.saiku.olap.query2.util.Thin;
@@ -47,6 +45,11 @@ import org.saiku.query.QueryDetails;
 import org.saiku.query.QueryHierarchy;
 import org.saiku.query.QueryLevel;
 import org.saiku.query.util.QueryUtil;
+import org.saiku.service.olap.drillthrough.DimensionResultInfo;
+import org.saiku.service.olap.drillthrough.DrillThroughResult;
+import org.saiku.service.olap.drillthrough.DrillthroughUtils;
+import org.saiku.service.olap.drillthrough.MeasureResultInfo;
+import org.saiku.service.olap.drillthrough.ResultInfo;
 import org.saiku.service.olap.totals.AxisInfo;
 import org.saiku.service.olap.totals.TotalNode;
 import org.saiku.service.olap.totals.TotalsListsBuilder;
@@ -284,6 +287,7 @@ public class ThinQueryService implements Serializable {
                     ThinLevel v2 = entry1.getValue();
                     if (v2.getSelection() != null) {
                         for (ThinMember m : v2.getSelection().getMembers()) {
+
                             if (m.getType()!=null && m.getType().equals("calculatedmember")) {
                                 Map<AxisLocation, ThinAxis> ax = queryModel.getAxes();
                                 ThinAxis sax = ax.get(entry.getKey());
@@ -312,6 +316,17 @@ public class ThinQueryService implements Serializable {
             ThinQuery tqAfter = Thin.convert(q, old.getCube());
             tqAfter.getQueryModel().setCalculatedMembers(cms);
             getEnabledCMembers(old.getQueryModel(), tqAfter.getQueryModel());
+
+            // Set measures aggregators
+            for (ThinMeasure measure : tqAfter.getQueryModel().getDetails().getMeasures()) {
+                for (ThinMeasure oldMeasure : old.getQueryModel().getDetails().getMeasures()) {
+                    if (measure.getUniqueName().equals(oldMeasure.getUniqueName())) {
+                        measure.getAggregators().addAll(oldMeasure.getAggregators());
+                        break;
+                    }
+                }
+            }
+
             old.setQueryModel(tqAfter.getQueryModel());
             old.setMdx(tqAfter.getMdx());
         }
@@ -480,6 +495,43 @@ public class ThinQueryService implements Serializable {
             }
         }
 
+    }
+
+    public DrillThroughResult drillthroughWithCaptions(String queryName, List<Integer> cellPosition, Integer maxrows, String returns) {
+    	QueryContext queryContext = context.get(queryName);
+    	SaikuCube saikuCube = queryContext.getOlapQuery().getCube();
+    	List<SaikuMember> measures = olapDiscoverService.getMeasures(saikuCube);
+    	CellSet cs = queryContext.getOlapResult();
+    	ResultSet drillthrough = drillthrough(queryName, cellPosition, maxrows, returns);
+    	
+    	int width;
+		try {
+			width = drillthrough.getMetaData().getColumnCount();
+		} catch (SQLException e) {
+			throw new IllegalStateException(e);
+		}
+    	String[] simpleHeader = new String[width];
+    	AbstractBaseCell[][] cellHeaders = null;
+    	if (StringUtils.isBlank(returns)) {    		
+    		CellDataSet result = OlapResultSetUtil.cellSet2Matrix(cs, cff.forName(StringUtils.EMPTY));
+    		cellHeaders = result.getCellSetHeaders();
+    	} else {
+    		List<ResultInfo> results = DrillthroughUtils.extractResultInfo(returns);
+    		for (int i = 0; i < results.size(); i++) {
+				final ResultInfo ri = results.get(i);
+				if (ri instanceof MeasureResultInfo) {
+					simpleHeader[i] = DrillthroughUtils.findMeasure(measures, ((MeasureResultInfo) ri).getName()).getCaption();
+    			} else if (ri instanceof DimensionResultInfo) {
+    				final DimensionResultInfo dri = (DimensionResultInfo) ri;
+    				List<SaikuHierarchy> hierarchies = olapDiscoverService
+    						.getDimension(saikuCube, dri.getDimension()).getHierarchies();
+    				SaikuHierarchy hierarchy = DrillthroughUtils.findHierarchy(hierarchies, dri.getHierarchy());
+    				SaikuLevel level = DrillthroughUtils.findLevel(hierarchy.getLevels(), dri.getLevel());
+    				simpleHeader[i] = level.getCaption();
+    			}
+			}
+    	}
+    	return new DrillThroughResult(drillthrough, simpleHeader, cellHeaders);
     }
 
     public ResultSet drillthrough(String queryName, List<Integer> cellPosition, Integer maxrows, String returns) {
@@ -667,7 +719,7 @@ public class ThinQueryService implements Serializable {
                 List<String> aggs = query.getAggregators(axisInfos[second].axis.getAxisOrdinal().name());
                 String totalFunctionName = aggs != null && aggs.size() > 0 ? aggs.get(0) : null;
                 aggregators[0] = StringUtils.isNotBlank(totalFunctionName) ? TotalAggregator.newInstanceByFunctionName(totalFunctionName) : null;
-                builder = new TotalsListsBuilder(selectedMeasures, aggregators, cellSet, axisInfos[index], axisInfos[second]);
+                builder = new TotalsListsBuilder(selectedMeasures, aggregators, cellSet, axisInfos[index], axisInfos[second], tq);
                 totals[index] = builder.buildTotalsLists();
             }
             result.setLeftOffset(axisInfos[0].maxDepth);

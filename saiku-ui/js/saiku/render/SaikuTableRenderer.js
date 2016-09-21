@@ -4,7 +4,6 @@ function SaikuTableRenderer(data, options) {
     this._options = _.extend({}, SaikuRendererOptions, options);
 }
 
-
 SaikuTableRenderer.prototype.render = function(data, options) {
         var self = this;
         if (data) {
@@ -24,6 +23,9 @@ SaikuTableRenderer.prototype.render = function(data, options) {
         if (this._data == null || (this._data.cellset && this._data.cellset.length === 0)) {
             return;
         }
+
+        this.hideEmpty = this._options.hideEmpty;
+
         if (this._options.htmlObject) {
 //            $(this._options.htmlObject).stickyTableHeaders("destroy");
 
@@ -39,6 +41,10 @@ SaikuTableRenderer.prototype.render = function(data, options) {
 
                 var html =  self.internalRender(self._data, self._options);
                 $(self._options.htmlObject).html(html);
+                // Render the totals summary
+                $('#totals_summary').remove(); // Remove one previous totals div, if present
+                $(self._options.htmlObject).after(self.renderSummary(data)); // Render the new summary
+
 //                $(self._options.htmlObject).stickyTableHeaders( { container: self._options.htmlObject.parent().parent(), fixedOffset: self._options.htmlObject.parent().parent().offset().top });
 
                 _.defer(function(that) {
@@ -251,6 +257,10 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
     var rowContent = "";
     var data = allData.cellset;
 
+    var newRowContent = '';
+    var arrRowData = [];
+    var objRowData = [];
+
     var table = data ? data : [];
     var colSpan;
     var colValue;
@@ -300,18 +310,25 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
         isColHeader = false;
         var headerSame = false;
 
-        if (totalsLists[ROWS])
+        if (totalsLists[ROWS]) {
             for (var i = 0; i < totalsLists[ROWS].length; i++) {
                 scanIndexes[ROWS][i] = 0;
                 scanSums[ROWS][i] = totalsLists[ROWS][i][scanIndexes[ROWS][i]].width;
             }
+        }
+
+        rowWithOnlyEmptyCells = true;
         rowContent = "<tr>";
+        var header = null;
+
         if ( row === 0) {
             rowContent = "<thead>" + rowContent;
         }
+
         for (var col = 0, colLen = table[row].length; col < colLen; col++) {
             var colShifted = col - allData.leftOffset;
-            var header = data[row][col];
+            header = data[row][col];
+
             if (header.type === "COLUMN_HEADER") {
                 isColHeader = true;
             }
@@ -411,7 +428,34 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
                 rowContent += '<th class="' + cssclass + '" ' + (colspan > 0 ? ' colspan="' + colspan + '"' : "") + tipsy + '>' + value + '</th>';
             }
             else if (header.type === "ROW_HEADER_HEADER") {
+                var hierName = function(data) {
+                    var hier = data.properties.hierarchy;
+                    var name = hier.replace(/[\[\]]/gi, '').split('.')[1]
+                        ? hier.replace(/[\[\]]/gi, '').split('.')[1]
+                        : hier.replace(/[\[\]]/gi, '').split('.')[0];
+
+                    return name;
+                };
+                var arrPosRowData = [];
+
+                if (_.contains(arrRowData, header.value)) {
+                    for (var i = 0; i < arrRowData.length; i++) {
+                        if (arrRowData[i] === header.value) {
+                            arrPosRowData.push(i);
+                        }
+                    }
+
+                    arrPosRowData.push(col);
+                }
+
                 rowContent += '<th class="row_header">' + (wrapContent ? '<div>' + header.value + '</div>' : header.value) + '</th>';
+                
+                arrRowData.push(header.value);
+                objRowData.push({
+                    name: header.value,
+                    hierName: hierName(header) + '/' + header.value
+                });
+                
                 isHeaderLowestLvl = true;
                 processedRowHeader = true;
                 lowestRowLvl = col;
@@ -422,12 +466,35 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
                     }
                     rowGroups[group].push(header.properties.level);
                 }
+
+                if (arrPosRowData.length > 0) {
+                    var aux = 0;
+
+                    rowContent = '<tr>';
+
+                    if (row === 0) {
+                        rowContent = '<thead>' + rowContent;
+                    }
+
+                    for (var i = 0; i < objRowData.length; i++) {
+                        if (arrPosRowData[aux] === i) {
+                            newRowContent += '<th class="row_header">' + (wrapContent ? '<div>' + objRowData[i].hierName + '</div>' : objRowData[i].hierName) + '</th>';
+                            aux += 1;
+                        }
+                        else {
+                            newRowContent += '<th class="row_header">' + (wrapContent ? '<div>' + objRowData[i].name + '</div>' : objRowData[i].name) + '</th>';
+                        }
+                    }
+
+                    rowContent += newRowContent;
+                }
             } // If the cell is a normal data cell
             else if (header.type === "DATA_CELL") {
                 batchStarted = true;
                 var color = "";
-                var val = header.value;
+                var val = _.isEmpty(header.value) ? Settings.EMPTY_VALUE_CHARACTER : header.value;
                 var arrow = "";
+
                 if (header.properties.hasOwnProperty('image')) {
                     var img_height = header.properties.hasOwnProperty('image_height') ? " height='" + header.properties.image_height + "'" : "";
                     var img_width = header.properties.hasOwnProperty('image_width') ? " width='" + header.properties.image_width + "'" : "";
@@ -444,6 +511,10 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
                     arrow = "<img height='10' width='10' style='padding-left: 5px' src='./images/arrow-" + header.properties.arrow + ".gif' border='0'>";
                 }
 
+                if (val !== '-' && val !== '') {
+                    rowWithOnlyEmptyCells = false;
+                }
+
                 rowContent += '<td class="data" ' + color + '>'
                         + (wrapContent ? '<div class="datadiv" alt="' + header.properties.raw + '" rel="' + header.properties.position + '">' : "")
                         + val + arrow 
@@ -453,6 +524,11 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
             }
         }
         rowContent += "</tr>";
+
+        if (options.hideEmpty && header.type === "DATA_CELL" && rowWithOnlyEmptyCells) {
+            rowContent = '';
+        }
+
         var totals = "";
         if (totalsLists[COLUMNS] && rowShifted >= 0) {
             totals += genTotalHeaderRowCells(rowShifted + 1, scanSums, scanIndexes, totalsLists, wrapContent);
@@ -492,3 +568,52 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
     }
     return "<table>" + tableContent + "</tbody></table>";
 };
+
+SaikuTableRenderer.prototype.renderSummary = function(data) {
+    if (data && data.query) {
+        var hasSomethingToRender = false;
+        var measures = data.query.queryModel.details.measures;
+        var summaryData = {};
+
+        for (var i = 0; i < measures.length; i++) {
+            var m = measures[i];
+            if (m.aggregators) {
+                for (var j = 0; j < m.aggregators.length; j++) {
+                    var a = m.aggregators[j];
+                    if (a.indexOf('_') > 0) {
+                        var tokens = a.split('_');
+                        var aggregator = tokens[0];
+                        var axis = tokens[1];
+
+                        if (aggregator !== 'nil' && aggregator !== 'not') {
+                            hasSomethingToRender = true;
+                            aggregator = aggregator.capitalizeFirstLetter();
+                            if (!(axis in summaryData)) summaryData[axis] = [];
+                            summaryData[axis].push(m.name + ": " + aggregator);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (hasSomethingToRender) {
+            var summary = "<div id='totals_summary'><br/>";
+
+            $.each(summaryData, function(key, aggregators) {
+                summary += "<h3>" + key.capitalizeFirstLetter();
+                for (var i = 0; i < aggregators.length; i++) {
+                    summary += "<br/>&nbsp;" + aggregators[i];
+                }
+                summary += "</h3>";
+            });
+
+            return summary + "</div>";
+        }
+    }
+
+    return "";
+};
+
+String.prototype.capitalizeFirstLetter = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
+}

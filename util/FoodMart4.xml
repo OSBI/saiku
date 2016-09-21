@@ -430,6 +430,16 @@
 
         <Dimensions>
 
+<Dimension name="Performance Season Day" table="sales_fact_1997" visible="true">
+   <Hierarchies>
+      <Hierarchy name="Performance">
+         <Level name="Performance Season Day" attribute="Day Of Season"/>
+      </Hierarchy>
+   </Hierarchies>
+   <Attributes>
+      <Attribute name="Day Of Season" keyColumn="promotion_id" datatype="Integer" hasHierarchy="false" orderByColumn="promotion_id"/>
+   </Attributes>
+</Dimension>
             <Dimension source='Store'/>
 
             <Dimension source='Time'/>
@@ -506,6 +516,7 @@
                     <Measure name='Promotion Sales' column='promotion_sales' aggregator='sum' formatString='#,###.00' datatype='Numeric'/>
                 </Measures>
                 <DimensionLinks>
+		    <FactLink dimension="Performance Season Day"/>
                     <ForeignKeyLink dimension='Store' foreignKeyColumn='store_id'/>
                     <ForeignKeyLink dimension='Time' foreignKeyColumn='time_id'/>
                     <ForeignKeyLink dimension='Product' foreignKeyColumn='product_id'/>
@@ -513,86 +524,7 @@
                     <ForeignKeyLink dimension='Customer' foreignKeyColumn='customer_id'/>
                 </DimensionLinks>
             </MeasureGroup>
-            <MeasureGroup table='agg_c_special_sales_fact_1997' type='aggregate'>
-                <Measures>
-                    <MeasureRef name='Fact Count' aggColumn='fact_count'/>
-                    <MeasureRef name='Unit Sales' aggColumn='unit_sales_sum'/>
-                    <MeasureRef name='Store Cost' aggColumn='store_cost_sum'/>
-                    <MeasureRef name='Store Sales' aggColumn='store_sales_sum'/>
-                </Measures>
-                <DimensionLinks>
-                    <ForeignKeyLink dimension='Store' foreignKeyColumn='store_id'/>
-                    <ForeignKeyLink dimension='Product' foreignKeyColumn='product_id'/>
-                    <ForeignKeyLink dimension='Promotion' foreignKeyColumn='promotion_id'/>
-                    <ForeignKeyLink dimension='Customer' foreignKeyColumn='customer_id'/>
-                    <CopyLink dimension='Time' attribute='Month'>
-                        <Column aggColumn='time_year' table='time_by_day' name='the_year'/>
-                        <Column aggColumn='time_quarter' table='time_by_day' name='quarter'/>
-                        <Column aggColumn='time_month' table='time_by_day' name='month_of_year'/>
-                    </CopyLink>
-                </DimensionLinks>
-            </MeasureGroup>
-            <MeasureGroup table='agg_l_05_sales_fact_1997' type='aggregate'>
-                <Measures>
-                    <MeasureRef name='Fact Count' aggColumn='fact_count'/>
-                    <MeasureRef name='Unit Sales' aggColumn='unit_sales'/>
-                    <MeasureRef name='Store Cost' aggColumn='store_cost'/>
-                    <MeasureRef name='Store Sales' aggColumn='store_sales'/>
-                </Measures>
-                <DimensionLinks>
-                    <ForeignKeyLink dimension='Store' foreignKeyColumn='store_id'/>
-                    <ForeignKeyLink dimension='Product' foreignKeyColumn='product_id'/>
-                    <ForeignKeyLink dimension='Promotion' foreignKeyColumn='promotion_id'/>
-                    <ForeignKeyLink dimension='Customer' foreignKeyColumn='customer_id'/>
-                    <NoLink dimension='Time'/>
-                </DimensionLinks>
-            </MeasureGroup>
-            <MeasureGroup table='agg_c_14_sales_fact_1997' type='aggregate'>
-                <Measures>
-                    <MeasureRef name='Fact Count' aggColumn='fact_count'/>
-                    <MeasureRef name='Unit Sales' aggColumn='unit_sales'/>
-                    <MeasureRef name='Store Cost' aggColumn='store_cost'/>
-                    <MeasureRef name='Store Sales' aggColumn='store_sales'/>
-                </Measures>
-                <DimensionLinks>
-                    <ForeignKeyLink dimension='Store' foreignKeyColumn='store_id'/>
-                    <ForeignKeyLink dimension='Product' foreignKeyColumn='product_id'/>
-                    <ForeignKeyLink dimension='Promotion' foreignKeyColumn='promotion_id'/>
-                    <ForeignKeyLink dimension='Customer' foreignKeyColumn='customer_id'/>
-                    <CopyLink dimension='Time' attribute='Month'>
-                        <Column aggColumn='the_year' table='time_by_day' name='the_year'/>
-                        <Column aggColumn='quarter' table='time_by_day' name='quarter'/>
-                        <Column aggColumn='month_of_year' table='time_by_day' name='month_of_year'/>
-                    </CopyLink>
-                </DimensionLinks>
-            </MeasureGroup>
-            <MeasureGroup table='agg_g_ms_pcat_sales_fact_1997' type='aggregate'>
-                <Measures>
-                    <MeasureRef name='Fact Count' aggColumn='fact_count'/>
-                    <MeasureRef name='Unit Sales' aggColumn='unit_sales'/>
-                    <MeasureRef name='Store Cost' aggColumn='store_cost'/>
-                    <MeasureRef name='Store Sales' aggColumn='store_sales'/>
-                    <MeasureRef name='Customer Count' aggColumn='customer_count'/>
-                </Measures>
-                <DimensionLinks>
-                    <NoLink dimension='Store'/>
-                    <CopyLink dimension='Product'>
-                        <Column aggColumn='product_family' table='product_class' name='product_family'/>
-                        <Column aggColumn='product_department' table='product_class' name='product_department'/>
-                        <Column aggColumn='product_category' table='product_class' name='product_category'/>
-                    </CopyLink>
-                    <NoLink dimension='Promotion'/>
-                    <CopyLink dimension='Customer'>
-                        <Column aggColumn='gender' table='customer' name='gender'/>
-                        <Column aggColumn='marital_status' table='customer' name='marital_status'/>
-                    </CopyLink>
-                    <CopyLink dimension='Time' attribute='Month'>
-                        <Column aggColumn='the_year' table='time_by_day' name='the_year'/>
-                        <Column aggColumn='quarter' table='time_by_day' name='quarter'/>
-                        <Column aggColumn='month_of_year' table='time_by_day' name='month_of_year'/>
-                    </CopyLink>
-                </DimensionLinks>
-            </MeasureGroup>
+       
         </MeasureGroups>
 
         <CalculatedMembers>

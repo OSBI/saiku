@@ -125,4 +125,21 @@ public class ThinQueryModel {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	public ThinLevel getLevel(String name) {
+		for (ThinAxis ta : axes.values()) {
+			if (ta.getHierarchies() != null) {
+				for (ThinHierarchy th : ta.getHierarchies()) {
+          for (ThinLevel level : th.getLevels().values()) {
+            String uniqueName = th.getName() + ".[" + level.getName() + "]";
+            if (name != null && name.equals(uniqueName)) {
+              return level;
+            }
+          }
+				}
+			}
+		}
+
+		return null;
+	}
 }
