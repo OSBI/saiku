@@ -125,7 +125,8 @@ var Settings = {
 	ORBIS_AUTH: {
 		enabled: false,
 		cookieName: 'SAIKU_AUTH_PRINCIPAL'
-	}
+	},
+    ALLOW_TABLE_DATA_COLLAPSE: false
 };
 
 /**

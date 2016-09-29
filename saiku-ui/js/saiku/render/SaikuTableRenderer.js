@@ -439,34 +439,37 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
                 var same = !headerSame && !isHeaderLowestLvl && (col == 0 || !topParentsDiffer(data, row, col)) && header.value === previousRow[col].value;
                 headerSame = !same;
                 var sameAsPrevValue = false;
-                if (row > 0 && row < rowLen - 1) {
-                    if (totalsLists[ROWS] == null || (col <= colLen - totalsLists[ROWS].length - 1)) {
-                        var checkOther = true;
-                        if (totalsLists[COLUMNS] && rowShifted >= 0 && col <= isNextTotalsRow(rowShifted + 1, scanSums, scanIndexes, totalsLists, wrapContent)) {
-                            sameAsPrevValue = true;
-                            checkOther = false;
-                        }
-                        if (checkOther && nextRow[col].value == header.value) {
-                            if (col > 0) {
-                                for (var j = 0; j < col; j++) {
-                                    if (nextRow[j].value == data[row][j].value) {
-                                        sameAsPrevValue = true;
-                                    } else {
-                                        sameAsPrevValue = false;
-                                        break;
-                                    }
-                                }
-                            } else {
+                if(Settings.ALLOW_TABLE_DATA_COLLAPSE){
+                    if (row > 0 && row < rowLen - 1) {
+                        if (totalsLists[ROWS] == null || (col <= colLen - totalsLists[ROWS].length - 1)) {
+                            var checkOther = true;
+                            if (totalsLists[COLUMNS] && rowShifted >= 0 && col <= isNextTotalsRow(rowShifted + 1, scanSums, scanIndexes, totalsLists, wrapContent)) {
                                 sameAsPrevValue = true;
+                                checkOther = false;
+                            }
+                            if (checkOther && nextRow[col].value == header.value) {
+                                if (col > 0) {
+                                    for (var j = 0; j < col; j++) {
+                                        if (nextRow[j].value == data[row][j].value) {
+                                            sameAsPrevValue = true;
+                                        } else {
+                                            sameAsPrevValue = false;
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    sameAsPrevValue = true;
+                                }
                             }
                         }
-                    }
-                } else if(row > 0 && row == rowLen - 1) {
-                    if (totalsLists[COLUMNS] && rowShifted >= 0 && col <= isNextTotalsRow(rowShifted + 1, scanSums, scanIndexes, totalsLists, wrapContent)) {
-                        sameAsPrevValue = true;
+                    } else if(row > 0 && row == rowLen - 1) {
+                        if (totalsLists[COLUMNS] && rowShifted >= 0 && col <= isNextTotalsRow(rowShifted + 1, scanSums, scanIndexes, totalsLists, wrapContent)) {
+                            sameAsPrevValue = true;
+                        }
                     }
                 }
-                var value = (same ? "<div>&nbsp;</div>" : '<div rel="' + row + ":" + col +'">' + (sameAsPrevValue ? '<span class="expander expanded">&#9660;</span>' : '' ) + header.value + '</div>');
+                var value = (same ? "<div>&nbsp;</div>" : '<div rel="' + row + ":" + col + '">'
+							+ (sameAsPrevValue && Settings.ALLOW_TABLE_DATA_COLLAPSE ? '<span class="expander expanded">&#9660;</span>' : '' ) + header.value + '</div>');
                 if (!wrapContent) {
                     value = (same ? "&nbsp;" : header.value );
                 }
