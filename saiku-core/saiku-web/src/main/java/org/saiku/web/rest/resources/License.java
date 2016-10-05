@@ -201,6 +201,81 @@ public class License {
     return null;
   }
 
+  /**
+   * Upload a user list to the server.
+   * @summary Upload user list
+   * @param l A List of UserList objects
+   * @return A response indicating whether the operation was successful.
+   */
+  @POST
+  @Path("/users")
+  @Produces({"text/plain"})
+  @Consumes({"application/json"})
+  @ReturnType("java.lang.String")
+  public Response createUserList(List<UserList> l){
+    try {
+      List<String> l3 = new ArrayList<>();
+      for(UserList l2 : l){
+        l3.add(l2.getName());
+      }
+      addUsers(l3);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return Response.ok().entity("List created").build();
+
+  }
+
+  /**
+   * Update the list of users with new users.
+   * @summary Update user list
+   * @param l A list of UserList objects
+   * @return A response indicating whether the operation was successful.
+   */
+  @PUT
+  @Path("/users")
+  @Produces({"text/plain"})
+  @Consumes({"application/json"})
+  @ReturnType("java.lang.String")
+  public Response updateUserList(List<UserList> l){
+    try {
+      List<String> l3 = new ArrayList<>();
+      for(UserList l2 : l){
+        l3.add(l2.getName());
+      }
+      updateUsers(l3);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return Response.ok().entity("List updated").build();
+
+  }
+
+  /**
+   * Delete the user list from the server.
+   * @summary Delete user list.
+   * @return A response indicating whether the operation was successful.
+   */
+  @DELETE
+  @Path("/users")
+  @Produces({"application/json"})
+  @ReturnType("java.lang.String")
+  public Response deleteUserlist(){
+
+    try {
+      List<String> l = getAuthUsers();
+      List<UserList> ul = new ArrayList<>();
+      int i = 0;
+      for(String l2 : l) {
+        ul.add(new UserList(l2, i));
+        i++;
+      }
+      return Response.ok().entity(ul).build();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
 
   /**
    * Get the valid users from the database.
@@ -225,4 +300,24 @@ public class License {
     }
     return Response.ok().entity(100000000).build();
   }
+
+
+  /**
+   * Add users to the database.
+   * @param l List of usernames
+   * @throws SQLException
+   */
+  public void addUsers(List<String> l) throws SQLException {
+    databaseManager.addUsers(l);
+  }
+
+  /**
+   * Add users to the database.
+   * @param l List of usernames
+   * @throws SQLException
+   */
+  public void updateUsers(List<String> l) throws SQLException {
+    databaseManager.addUsers(l);
+  }
+
 }
