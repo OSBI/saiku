@@ -206,7 +206,7 @@ public class RestUtil {
         
         try {
         	width = rs.getMetaData().getColumnCount();
-			if (Objects.nonNull(cellHeaders)) {
+			if (cellHeaders != null) {
         		for (AbstractBaseCell headerRow[] : cellHeaders) {
         			rows.add(convert(headerRow, Cell.Type.COLUMN_HEADER));
         		}
