@@ -83,7 +83,7 @@ var SaveQuery = Modal.extend({
         });
 
         // Initialize repository
-        this.repository = new Repository({}, { dialog: this });
+        this.repository = new Repository({}, { dialog: this, type: 'saiku' });
 
         this.bind( 'open', function( ) {
             var height = ( $( "body" ).height() / 2 ) + ( $( "body" ).height() / 6 );
