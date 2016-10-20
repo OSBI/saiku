@@ -134,7 +134,8 @@ var Settings = {
         STAR_SCHEMA_MEASURE_COLUMN: /^measure_|^m_/i,
         // The `$` matches end of input.
         STAR_SCHEMA_MEASURE_AGGREGATION_COLUMN: /_sum$|_avg$|_count$|_min$|_max$/i
-    }
+    },
+    ALLOW_TABLE_DATA_COLLAPSE: false
 };
 
 /**
