@@ -122,11 +122,19 @@ var Settings = {
     SHOW_REFRESH_NONADMIN: false,
     EMPTY_VALUE_CHARACTER: '-',
     HIDE_EMPTY_ROWS: true,
-  ORBIS_AUTH: {
-    enabled: false,
-    cookieName: 'SAIKU_AUTH_PRINCIPAL'
-  },
-    ALLOW_TABLE_DATA_COLLAPSE: false
+    MEASURE_GROUPS_COLLAPSED: false,
+    ORBIS_AUTH: {
+        enabled: false,
+        cookieName: 'SAIKU_AUTH_PRINCIPAL'
+    },
+    SCHEMA_EDITOR: {
+        // The `^` matches beginning of input.
+        STAR_SCHEMA_FACT_TABLE: /^fact_|^f_/i,
+        STAR_SCHEMA_DIMENSION_TABLE: /^dimension_|^dim_|^d_/i,
+        STAR_SCHEMA_MEASURE_COLUMN: /^measure_|^m_/i,
+        // The `$` matches end of input.
+        STAR_SCHEMA_MEASURE_AGGREGATION_COLUMN: /_sum$|_avg$|_count$|_min$|_max$/i
+    }
 };
 
 /**
@@ -145,12 +153,12 @@ Settings.GET = function () {
         if (! isNaN(value)) value = parseInt(value);
         if (value === "true") value = true;
         if (value === "false") value = false;
-    if(decodeURIComponent(tokens[1].toUpperCase()).substring(0,5)==="PARAM"){
-      params["PARAM"+decodeURIComponent(tokens[1]).substring(5,decodeURIComponent(tokens[1]).length)] = value;
-    }
-    else{
-      params[decodeURIComponent(tokens[1]).toUpperCase()] = value;
-    }
+        if(decodeURIComponent(tokens[1].toUpperCase()).substring(0,5)==="PARAM"){
+          params["PARAM"+decodeURIComponent(tokens[1]).substring(5,decodeURIComponent(tokens[1]).length)] = value;
+        }
+        else{
+          params[decodeURIComponent(tokens[1]).toUpperCase()] = value;
+        }
 
         tokens = re.exec(qs);
     }
