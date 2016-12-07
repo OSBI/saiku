@@ -7,7 +7,7 @@
     <xsl:strip-space elements="*"/>
     <xsl:preserve-space elements="xhtml:listing listing xhtml:plaintext plaintext xhtml:pre pre xhtml:samp samp"/>
     <xsl:param name="font-size" select="''"/>
-    <xsl:param name="font.symbol" select="'Arial Unicode MS'"/>
+    <xsl:param name="font.symbol" select="'Times'"/>
     <xsl:param name="page_width"/>
     <xsl:param name="page_height"/>
 
@@ -180,24 +180,26 @@
 
     <xsl:template match="xhtml:table">
         <xsl:apply-templates select="caption"/>
-        <fo:table xsl:use-attribute-sets="tableborder" width="100%">
-            <xsl:call-template name="common-atts"/>
-            <xsl:apply-templates select="colgroup|col"/>
-            <xsl:variable name="tr1"
-                          select="(xhtml:tr|xhtml:thead/xhtml:tr|xhtml:tbody/xhtml:tr|xhtml:tfoot/xhtml:tr)[1]"/>
-            <xsl:variable name="cols" select="xhtml:colgroup/xhtml:col|xhtml:col"/>
-            <xsl:call-template name="mock-col">
-                <xsl:with-param name="cols" select="(count($tr1/xhtml:*[not(@colspan)])+sum($tr1/xhtml:*/@colspan))
-        -(count($cols[not(@colspan)])+sum($cols/@colspan))"/>
-            </xsl:call-template>
-            <xsl:apply-templates select="xhtml:thead|xhtml:tfoot|xhtml:tbody"/>
-            <xsl:if test="xhtml:tr">
-                <fo:table-body>
-                    <xsl:call-template name="common-atts"/>
-                    <xsl:apply-templates select="xhtml:tr"/>
-                </fo:table-body>
-            </xsl:if>
-        </fo:table>
+        <fo:inline font-family="{$font.symbol}">
+            <fo:table xsl:use-attribute-sets="tableborder" width="100%">
+                <xsl:call-template name="common-atts"/>
+                <xsl:apply-templates select="colgroup|col"/>
+                <xsl:variable name="tr1"
+                              select="(xhtml:tr|xhtml:thead/xhtml:tr|xhtml:tbody/xhtml:tr|xhtml:tfoot/xhtml:tr)[1]"/>
+                <xsl:variable name="cols" select="xhtml:colgroup/xhtml:col|xhtml:col"/>
+                <xsl:call-template name="mock-col">
+                    <xsl:with-param name="cols" select="(count($tr1/xhtml:*[not(@colspan)])+sum($tr1/xhtml:*/@colspan))
+            -(count($cols[not(@colspan)])+sum($cols/@colspan))"/>
+                </xsl:call-template>
+                <xsl:apply-templates select="xhtml:thead|xhtml:tfoot|xhtml:tbody"/>
+                <xsl:if test="xhtml:tr">
+                    <fo:table-body>
+                        <xsl:call-template name="common-atts"/>
+                        <xsl:apply-templates select="xhtml:tr"/>
+                    </fo:table-body>
+                </xsl:if>
+            </fo:table>
+        </fo:inline>
     </xsl:template>
 
     <xsl:template match="table">
