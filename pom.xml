@@ -26,12 +26,12 @@
         <repository>
             <id>utility</id>
             <name>utility-releases</name>
-            <url>http://repo.meteorite.bi/content/repositories/alabs-release-local/</url>
+            <url>http://repo.meteorite.bi/repository/alabs-release-local/</url>
         </repository>
         <snapshotRepository>
             <id>utility</id>
             <name>utility-snapshots</name>
-            <url>http://repo.meteorite.bi/content/repositories/alabs-snapshot-local/</url>
+            <url>http://repo.meteorite.bi/repository/alabs-snapshot-local/</url>
         </snapshotRepository>
     </distributionManagement>
     <properties>
