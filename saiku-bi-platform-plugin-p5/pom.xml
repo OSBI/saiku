@@ -465,6 +465,11 @@
 		</dependency>
 		<dependency>
 			<groupId>pentaho</groupId>
+			<artifactId>pentaho-platform-repository</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>pentaho</groupId>
 			<artifactId>pentaho-platform-core</artifactId>
 			<scope>provided</scope>
 			<exclusions>
