@@ -876,6 +876,11 @@
             </dependency>
             <dependency>
                 <groupId>pentaho</groupId>
+                <artifactId>pentaho-platform-repository</artifactId>
+                <version>5.2.0.2-84</version>
+            </dependency>
+            <dependency>
+                <groupId>pentaho</groupId>
                 <artifactId>pentaho-platform-core</artifactId>
                 <version>${pentaho.platform.version}</version>
                 <scope>provided</scope>
