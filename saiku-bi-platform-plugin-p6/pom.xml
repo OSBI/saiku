@@ -347,12 +347,12 @@
         <repository>
             <id>Analytical Labs Repo</id>
             <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.meteorite.bi/content/repositories/alabs-release-local/</url>
+            <url>http://repo.meteorite.bi/repository/alabs-release-local/</url>
         </repository>
         <repository>
             <id>Analytical Labs snapshots</id>
             <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.meteorite.bi/content/repositories/alabs-snapshot-local/</url>
+            <url>http://repo.meteorite.bi/repository/alabs-snapshot-local/</url>
         </repository>
         <repository>
             <id>pentaho-third-party</id>
