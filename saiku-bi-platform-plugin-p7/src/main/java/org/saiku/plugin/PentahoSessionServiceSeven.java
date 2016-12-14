@@ -28,12 +28,12 @@ import org.saiku.service.user.UserService;
 import org.pentaho.platform.util.logging.SimpleLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.Authentication;
-import org.springframework.security.AuthenticationManager;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.userdetails.User;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.context.request.RequestContextHolder;
 
@@ -45,7 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 
-public class PentahoSessionService implements ISessionService {
+public class PentahoSessionServiceSeven implements ISessionService {
 
 	private LicenseUtils l;
 
@@ -77,7 +77,7 @@ public class PentahoSessionService implements ISessionService {
 		this.authenticationManager = auth;
 	}
 
-	public PentahoSessionService() {
+	public PentahoSessionServiceSeven() {
 		PentahoSystem.addLogoutListener(new ILogoutListener() {
 
 			@Override
