@@ -2,12 +2,12 @@
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saikuanalytics</groupId>
-        <version>3.10</version>
+        <version>3.11-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>saiku-bi-platform-plugin-p7</artifactId>
     <packaging>jar</packaging>
-    <version>3.10</version>
+    <version>3.11-SNAPSHOT</version>
     <name>saiku biserver plugin</name>
 
     <build>
