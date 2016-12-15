@@ -808,14 +808,14 @@ textarea, select {
 }
 .dialog_selections {
     min-width: 800px !important;
-    height: 550px !important;
+    height: 600px !important;
 }
 .dialog_selections .dialog_icon,
 .dialog_date-filter .dialog_icon {
     display: none;
 }
 .dialog_selections .dialog_body {
-    height: 490px;
+    height: 540px;
     position: relative;
 }
 .dialog_date-filter .dialog_body {

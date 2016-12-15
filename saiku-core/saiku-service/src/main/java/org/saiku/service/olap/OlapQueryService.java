@@ -240,7 +240,7 @@ public class OlapQueryService implements Serializable {
 						aggregators[i] = TotalAggregator.newInstanceByFunctionName(totalFunctionName);
 					}
 					String totalFunctionName = query.getTotalFunction(axisInfos[second].axis.getAxisOrdinal().name()); 
-					aggregators[0] = totalFunctionName != null ? TotalAggregator.newInstanceByFunctionName(totalFunctionName) : null;
+					aggregators[0] = TotalAggregator.newInstanceByFunctionName(totalFunctionName);
 					builder = new TotalsListsBuilder(selectedMeasures, aggregators, cellSet, axisInfos[index], axisInfos[second]);
 					totals[index] = builder.buildTotalsLists();
 				}
