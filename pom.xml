@@ -5,7 +5,7 @@
     <groupId>org.saikuanalytics</groupId>
     <artifactId>saiku</artifactId>
     <packaging>pom</packaging>
-    <version>3.9</version>
+    <version>3.10</version>
     <name>Saiku Module Project</name>
     <scm>
         <developerConnection>
@@ -20,18 +20,19 @@
         <module>saiku-server</module>
         <module>saiku-bi-platform-plugin-p5</module>
         <module>saiku-bi-platform-plugin-p6</module>
+        <module>saiku-bi-platform-plugin-p7</module>
     </modules>
 
     <distributionManagement>
         <repository>
             <id>utility</id>
             <name>utility-releases</name>
-            <url>http://repo.meteorite.bi/content/repositories/alabs-release-local/</url>
+            <url>http://repo.meteorite.bi/repository/alabs-release-local/</url>
         </repository>
         <snapshotRepository>
             <id>utility</id>
             <name>utility-snapshots</name>
-            <url>http://repo.meteorite.bi/content/repositories/alabs-snapshot-local/</url>
+            <url>http://repo.meteorite.bi/repository/alabs-snapshot-local/</url>
         </snapshotRepository>
     </distributionManagement>
     <properties>
@@ -55,7 +56,7 @@
         <pluginRepository>
             <id>Analytical Labs Plugin Repo</id>
             <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.meteorite.bi/content/repositories/alabs-release-local/</url>
+            <url>http://repo.meteorite.bi/repository/alabs-release-local/</url>
         </pluginRepository>
     </pluginRepositories>
 
@@ -63,12 +64,12 @@
         <repository>
             <id>Analytical Labs Repo</id>
             <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.meteorite.bi/content/repositories/alabs-release-local/</url>
+            <url>http://repo.meteorite.bi/repository/alabs-release-local/</url>
         </repository>
         <repository>
             <id>Analytical Labs snapshots</id>
             <name>Analytical Labs Repo-releases</name>
-            <url>http://repo.meteorite.bi/content/repositories/alabs-snapshot-local/</url>
+            <url>http://repo.meteorite.bi/repository/alabs-snapshot-local/</url>
         </repository>
         <repository>
             <id>pentaho-third-party</id>
@@ -878,6 +879,11 @@
                 <artifactId>pentaho-platform-api</artifactId>
                 <version>${pentaho.platform.version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>pentaho</groupId>
+                <artifactId>pentaho-platform-repository</artifactId>
+                <version>5.2.0.2-84</version>
             </dependency>
             <dependency>
                 <groupId>pentaho</groupId>
