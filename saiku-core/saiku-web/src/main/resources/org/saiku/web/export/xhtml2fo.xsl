@@ -7,7 +7,6 @@
     <xsl:strip-space elements="*"/>
     <xsl:preserve-space elements="xhtml:listing listing xhtml:plaintext plaintext xhtml:pre pre xhtml:samp samp"/>
     <xsl:param name="font-size" select="''"/>
-    <xsl:param name="font.family">SimSun</xsl:param>
     <xsl:param name="font.symbol" select="'Arial Unicode MS'"/>
     <xsl:param name="page_width"/>
     <xsl:param name="page_height"/>
