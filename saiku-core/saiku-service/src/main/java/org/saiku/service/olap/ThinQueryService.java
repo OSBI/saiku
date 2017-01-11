@@ -385,12 +385,39 @@ public class ThinQueryService implements Serializable {
         return getExport(queryName, type, new FlattenedCellSetFormatter());
     }
 
+    /**
+     * This method is called by the Query2Resource class (REST resource) of
+     * saiku-web project. It responds to requests to URLs with the following
+     * format: /saiku/api/query/{queryname}/export/{xls|csv|pdf|html}/{flat|flattened|hierarchical}
+     * This is the starting point of the whole export process.
+     *
+     * @param queryName Each query is assigned an unique identifier, those
+     *                  queries are stored in a session hashmap with this query
+     *                  name as its key.
+     * @param type The file type of the exported query. Right now, there are
+     *             four applicable file formats: xls, csv, pdf and html.
+     * @param formatter The name of the cell formatter used to produce the
+     *                  final representation of the exported query. Currently,
+     *                  there are three cell formatters types available: flat,
+     *                  flattened and hierarchical.
+     * @return A byte array of the exported query in the selected file format,
+     * using the appropriate cell formatter.
+     */
     public byte[] getExport(String queryName, String type, String formatter) {
         String formatterName = formatter == null ? "" : formatter.toLowerCase();
         ICellSetFormatter cf = cff.forName(formatterName);
         return getExport(queryName, type, cf);
     }
 
+  /**
+   * This method is called internally, with a cell formatter instance instead
+   * of its name. Here, the input is sanitized, the query is retrieved via its
+   * name, the query is executed again, its results is than used to build a
+   * cell dataset (using the respective cell formatter), the totals and
+   * subtotals are than calculated and placed in this cell dataset, finally,
+   * the result is exported to the desired format (this is done by the
+   * ExcelExporter or CsvExporter classes).
+   */
     private byte[] getExport(String queryName, String type, ICellSetFormatter formatter) {
         if (StringUtils.isNotBlank(type) && context.containsKey(queryName)) {
             //Query Context

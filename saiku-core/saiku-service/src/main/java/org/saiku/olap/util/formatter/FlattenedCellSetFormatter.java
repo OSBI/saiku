@@ -52,19 +52,21 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
     /**
      * Creates an AxisInfo.
      *
-     * @param ordinalCount
-     *            Number of hierarchies on this axis
+     * @param ordinalCount Number of hierarchies on this axis
      */
     AxisInfo(final int ordinalCount) {
       ordinalInfos = new ArrayList<>(ordinalCount);
+
+      // For each index from 0 to the number of hierarchies  ...
       for (int i = 0; i < ordinalCount; i++) {
+        // Associate an AxisOrdinalInfo instance
         ordinalInfos.add(new AxisOrdinalInfo());
       }
     }
 
     /**
-     * Returns the number of matrix columns required by this axis. The sum of the width of the hierarchies on this
-     * axis.
+     * Returns the number of matrix columns required by this axis. The sum of
+     * the width of the hierarchies on this axis.
      *
      * @return Width of axis
      */
@@ -148,23 +150,38 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
   private final List<Integer> ignorex = new ArrayList<>();
   private final List<Integer> ignorey = new ArrayList<>();
 
+  /**
+   * This is the main method of a cellset formatter, it receives a cellset as
+   * input and converts it on a matrix, a bidimensional representation of query
+   * values, arranged in a xy cartesian coordinate system.
+   * @param cellSet
+   * @return
+   */
   public Matrix format(final CellSet cellSet) {
     // Compute how many rows are required to display the columns axis.
     final CellSetAxis columnsAxis;
+
+    // If the axes are not empty, the first one is the column axis
     if (cellSet.getAxes().size() > 0) {
+      // As a convention, the columns axis is associated with the index 0
       columnsAxis = cellSet.getAxes().get(0);
     } else {
       columnsAxis = null;
     }
+
     final AxisInfo columnsAxisInfo = computeAxisInfo(columnsAxis);
 
     // Compute how many columns are required to display the rows axis.
     final CellSetAxis rowsAxis;
+
+    // If there are more than one axis, the second one is the rows axis
     if (cellSet.getAxes().size() > 1) {
+      // As a convention, the rows axis is associated with the index 1
       rowsAxis = cellSet.getAxes().get(1);
     } else {
       rowsAxis = null;
     }
+
     final AxisInfo rowsAxisInfo = computeAxisInfo(rowsAxis);
 
     if (cellSet.getAxes().size() > 2) {
@@ -184,31 +201,47 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
   }
 
   /**
-   * Computes a description of an axis.
+   * Computes a description of an axis. Each axis is composed by many positions,
+   * each position is then composed by many members. A member is a 'point' on a
+   * dimension of a cube. Every member belongs to a Level of a Hierarchy. The
+   * member's depth is its distance to the root member.
    *
-   * @param axis
-   *            Axis
+   * @param axis Axis
    * @return Description of axis
    */
   private AxisInfo computeAxisInfo(final CellSetAxis axis) {
     if (axis == null) {
       return new AxisInfo(0);
     }
+
+    // An axis info is created by informing the number of hierarchies of axis
     final AxisInfo axisInfo = new AxisInfo(axis.getAxisMetaData().getHierarchies().size());
     int p = -1;
+
+    // For each axis position
     for (final Position position : axis.getPositions()) {
       ++p;
       int k = -1;
+
+      // For each member of the axis
       for (final Member member : position.getMembers()) {
         ++k;
+
+        // Fetch the AxisOrdinalInfo instance of the position index k
         final AxisOrdinalInfo axisOrdinalInfo = axisInfo.ordinalInfos.get(k);
+
+        // We avoid duplicating information for members with the same depth
         if (!axisOrdinalInfo.getDepths().contains(member.getDepth())) {
           axisOrdinalInfo.getDepths().add(member.getDepth());
+          // For each depth of the hiearchy, add its level
           axisOrdinalInfo.addLevel(member.getDepth(), member.getLevel());
           Collections.sort(axisOrdinalInfo.depths);
         }
       }
     }
+
+    // The axisInfo object, contains a collection of the hiearchy's levels
+    // sorted by their depths.
     return axisInfo;
   }
 
