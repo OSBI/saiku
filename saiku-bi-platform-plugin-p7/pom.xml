@@ -281,6 +281,11 @@
                                         <exclude name="**/version.xml" />
                                     </fileset>
                                 </copy>
+                                <copy todir="target/dist/saiku/" overwrite="true">
+                                    <fileset dir="${basedir}/src/main/plugin/">
+                                        <include name="plugin.spring.xml" />
+                                    </fileset>
+                                </copy>
                                 <mkdir dir="target/dist/saiku/saiku-repository" />
                                 <copy todir="target/dist/saiku/ui/" overwrite="true">
                                     <fileset dir="${basedir}/../saiku-bi-platform-plugin-p5/src/main/plugin/">
