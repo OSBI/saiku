@@ -443,13 +443,14 @@ public class ThinQueryService implements Serializable {
             }
 
             List<ThinHierarchy> filterHierarchies = null;
+
             if (ThinQuery.Type.QUERYMODEL.equals(tq.getType())) {
                 filterHierarchies = tq.getQueryModel().getAxes().get(AxisLocation.FILTER).getHierarchies();
             }
+
             if (type.toLowerCase().equals("xls")) {
                 return ExcelExporter.exportExcel(table, formatter, filterHierarchies);
-            }
-            if (type.toLowerCase().equals("csv")) {
+            } else if (type.toLowerCase().equals("csv")) {
                 return CsvExporter.exportCsv(rs, SaikuProperties.webExportCsvDelimiter, SaikuProperties.webExportCsvTextEscape, formatter);
             }
         }
@@ -677,32 +678,40 @@ public class ThinQueryService implements Serializable {
 
             QueryDetails details = query.getDetails();
             Measure[] selectedMeasures = new Measure[details.getMeasures().size()];
-            for (int i = 0; i < selectedMeasures.length; i++)
+
+            for (int i = 0; i < selectedMeasures.length; i++) {
                 selectedMeasures[i] = details.getMeasures().get(i);
+            }
+
             result.setSelectedMeasures(selectedMeasures);
 
             int rowsIndex = 0;
             if (!cellSet.getAxes().get(0).getAxisOrdinal().equals(Axis.ROWS)) {
                 rowsIndex = (rowsIndex + 1) & 1;
             }
+
             // TODO - refactor this using axis ordinals etc.
             final AxisInfo[] axisInfos = new AxisInfo[]{new AxisInfo(cellSet.getAxes().get(rowsIndex)), new AxisInfo(cellSet.getAxes().get((rowsIndex + 1) & 1))};
             List<TotalNode>[][] totals = new List[2][];
             TotalsListsBuilder builder = null;
+
             for (int index = 0; index < 2; index++) {
                 final int second = (index + 1) & 1;
                 TotalAggregator[] aggregators = new TotalAggregator[axisInfos[second].maxDepth + 1];
+
                 for (int i = 1; i < aggregators.length - 1; i++) {
                     List<String> aggs = query.getAggregators(axisInfos[second].uniqueLevelNames.get(i - 1));
                     String totalFunctionName = aggs != null && aggs.size() > 0 ? aggs.get(0) : null;
                     aggregators[i] = StringUtils.isNotBlank(totalFunctionName) ? TotalAggregator.newInstanceByFunctionName(totalFunctionName) : null;
                 }
+
                 List<String> aggs = query.getAggregators(axisInfos[second].axis.getAxisOrdinal().name());
                 String totalFunctionName = aggs != null && aggs.size() > 0 ? aggs.get(0) : null;
                 aggregators[0] = TotalAggregator.newInstanceByFunctionName(totalFunctionName);
                 builder = new TotalsListsBuilder(selectedMeasures, aggregators, cellSet, axisInfos[index], axisInfos[second], tq);
                 totals[index] = builder.buildTotalsLists();
             }
+
             result.setLeftOffset(axisInfos[0].maxDepth);
             result.setRowTotalsLists(totals[1]);
             result.setColTotalsLists(totals[0]);

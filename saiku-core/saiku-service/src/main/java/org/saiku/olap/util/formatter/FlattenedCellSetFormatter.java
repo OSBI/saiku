@@ -278,13 +278,19 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
     // Populate corner
     List<Level> levels = new ArrayList<>();
     if (rowsAxis != null && rowsAxis.getPositions().size() > 0) {
+      // We assume that every position contains members with same levels,
+      // so, we just need the first position to retrieve this information.
       Position p = rowsAxis.getPositions().get(0);
+
       for (int m = 0; m < p.getMembers().size(); m++) {
         AxisOrdinalInfo a = rowsAxisInfo.ordinalInfos.get(m);
+
+        // For each member's depth of the first position, add its level
         for (Integer depth : a.getDepths()) {
           levels.add(a.getLevel(depth));
         }
       }
+
       for (int x = 0; x < xOffsset; x++) {
         Level xLevel = levels.get(x);
         String s = xLevel.getCaption();
@@ -443,50 +449,69 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
    */
   private void populateAxis(final Matrix matrix, final CellSetAxis axis, final AxisInfo axisInfo,
                             final boolean isColumns, final int oldoffset) {
-    int offset = oldoffset;
-    if (axis == null)
+    if (axis == null) {
       return;
+    }
+
+    int offset = oldoffset;
+
     final Member[] prevMembers = new Member[axisInfo.getWidth()];
     final MemberCell[] prevMemberInfo = new MemberCell[axisInfo.getWidth()];
     final Member[] members = new Member[axisInfo.getWidth()];
 
+    // For each axis' position
     for (int i = 0; i < axis.getPositions().size(); i++) {
       final int x = offset + i;
       final Position position = axis.getPositions().get(i);
       int yOffset = 0;
       final List<Member> memberList = position.getMembers();
       boolean stop = false;
+
+      // For each position's member
       for (int j = 0; j < memberList.size(); j++) {
         Member member = memberList.get(j);
         final AxisOrdinalInfo ordinalInfo = axisInfo.ordinalInfos.get(j);
         List<Integer> depths = ordinalInfo.depths;
         Collections.sort(depths);
+
+        // If it is not the last member (the one with the highest depth)
         if (member.getDepth() < Collections.max(depths)) {
           stop = true;
+
           if (isColumns) {
             ignorex.add(i);
           } else {
             ignorey.add(i);
           }
+
           break;
         }
-        if (ordinalInfo.getDepths().size() > 0 && member.getDepth() < ordinalInfo.getDepths().get(0))
+
+        if (ordinalInfo.getDepths().size() > 0 && member.getDepth() < ordinalInfo.getDepths().get(0)) {
           break;
+        }
+
+        // It stores each position's member in members array sorted by its depth
         final int y = yOffset + ordinalInfo.depths.indexOf(member.getDepth());
         members[y] = member;
         yOffset += ordinalInfo.getWidth();
       }
+
       if (stop) {
         offset--;
         continue;
       }
+
       boolean expanded = false;
       boolean same = true;
+
       for (int y = 0; y < members.length; y++) {
         final MemberCell memberInfo = new MemberCell();
         final Member member = members[y];
 
+        // The index of the member on its position
         int index = memberList.indexOf(member);
+
         if (index >= 0) {
           final AxisOrdinalInfo ordinalInfo = axisInfo.ordinalInfos.get(index);
           int depth_i = ordinalInfo.getDepths().indexOf(member.getDepth());
@@ -494,9 +519,9 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
             expanded = true;
           }
         }
+
         memberInfo.setExpanded(expanded);
         same = same && i > 0 && Olap4jUtil.equal(prevMembers[y], member);
-
 
         if (member != null) {
           if (x - 1 == offset)
@@ -558,6 +583,7 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
           memberInfo.setSameAsPrev(false);
           matrix.set(y, x, memberInfo);
         }
+
         int x_parent = isColumns ? x : y-1;
         int y_parent = isColumns ? y-1 : x;
 
@@ -593,14 +619,13 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
             } else {
               x_parent--;
             }
-
           }
         }
+
         prevMembers[y] = member;
         prevMemberInfo[y] = memberInfo;
         members[y] = null;
       }
-
     }
   }
 }
