@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
- 
+
 /**
  * The save query dialog
  */
@@ -29,10 +29,10 @@ var OpenDialog = Modal.extend({
         'click li.folder': 'toggle_folder',
         'keyup .search_file' : 'search_file',
         'click .cancel_search' : 'cancel_search',
-        'click .export_btn' : 'export_zip', 
+        'click .export_btn' : 'export_zip',
         'change .file' : 'select_file'
     },
-    
+
     buttons: [
         { id: "test", text: "Open", method: "open_query" },
         { text: "Cancel", method: "close" }
@@ -69,7 +69,7 @@ var OpenDialog = Modal.extend({
         this.selected_folder = null;
 
         // Initialize repository
-        this.repository = new Repository({}, { dialog: this });
+        this.repository = new Repository({}, { dialog: this, type: 'saiku' });
 
         this.bind( 'open', function( ) {
             var height = ( $( "body" ).height() / 2 ) + ( $( "body" ).height() / 6 );
@@ -93,7 +93,7 @@ var OpenDialog = Modal.extend({
         // Maintain `this`
         _.bindAll( this, "close", "toggle_folder", "select_name", "populate" , "cancel_search", "export_zip", "select_folder", "select_file", "select_last_location");
 
-    
+
     },
 
     populate: function( repository ) {
@@ -101,7 +101,7 @@ var OpenDialog = Modal.extend({
         $( this.el ).find( '.RepositoryObjects' ).html(
             _.template( $( '#template-repository-objects' ).html( ) )( {
                 repoObjects: repository
-            } ) 
+            } )
         );
 
         self.queries = {};
@@ -161,7 +161,7 @@ var OpenDialog = Modal.extend({
         repositoryLazyLoad.fetch();
         Saiku.ui.block('Loading...');
     },
-    
+
     template_repository_folder_lazyload: function(folder, repository) {
         folder.find('.folder_content').remove();
         folder.append(
@@ -209,8 +209,8 @@ var OpenDialog = Modal.extend({
                 $(this.el).find('.cancel_search').hide();
             }
             $(this.el).find('li.query').removeClass('hide');
-            $(this.el).find('li.query a').filter(function (index) { 
-                return $(this).text().toLowerCase().indexOf(filter) == -1; 
+            $(this.el).find('li.query a').filter(function (index) {
+                return $(this).text().toLowerCase().indexOf(filter) == -1;
             }).parent().addClass('hide');
             $(this.el).find('li.folder').addClass('hide');
             $(this.el).find('li.query').not('.hide').parents('li.folder').removeClass('hide');
@@ -255,7 +255,7 @@ var OpenDialog = Modal.extend({
             this.select_file();
         } else {
             $(this.el).find('.import_btn, .export_btn').attr('disabled', 'true');
-        }        
+        }
 
     },
 
@@ -281,7 +281,7 @@ var OpenDialog = Modal.extend({
         this.close();
         Saiku.ui.block("Opening query...");
         var item = this.queries[file];
-                var params = _.extend({ 
+                var params = _.extend({
                         file: file,
                         formatter: Settings.CELLSET_FORMATTER
                     }, Settings.PARAMS);

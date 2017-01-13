@@ -97,8 +97,6 @@ public class ExcelWorksheetBuilder {
             excelWorkbook = new XSSFWorkbook();
         }
 
-        CreationHelper createHelper = excelWorkbook.getCreationHelper();
-
         colorCodesMap = new HashMap<>();
         this.sheetName = options.sheetName;
         rowsetHeader = table.getCellSetHeaders();
@@ -454,13 +452,17 @@ public class ExcelWorksheetBuilder {
                     value = workbookSheet.getRow(sheetRow.getRowNum() - 1).getCell(column).getStringCellValue();
                 }
 
-                if (rowsetBody[x][y] instanceof DataCell && ((DataCell) rowsetBody[x][y]).getRawNumber() != null) {
-                    Number numberValue = ((DataCell) rowsetBody[x][y]).getRawNumber();
-                    cell.setCellValue(numberValue.doubleValue());
-                    applyCellFormatting(cell, x, y);
-                } else {
-                    cell.setCellStyle(basicCS);
-                    cell.setCellValue(value);
+                cell.setCellStyle(basicCS);
+                cell.setCellValue(value);
+                // Use rawNumber only is there is a formatString
+                if (rowsetBody[x][y] instanceof DataCell) {
+                    DataCell dataCell = (DataCell) rowsetBody[x][y];
+                    String formatString = dataCell.getFormatString();
+                    if ((dataCell.getRawNumber() != null) && (formatString != null) && !formatString.trim().isEmpty()) {
+                        Number numberValue = dataCell.getRawNumber();
+                        cell.setCellValue(numberValue.doubleValue());
+                        applyCellFormatting(cell, dataCell);
+                    }
                 }
 
                 //Set column sub totalstotals
@@ -620,76 +622,76 @@ public class ExcelWorksheetBuilder {
         }
     }
 
-    private void applyCellFormatting(Cell cell, int x, int y) {
-        String formatString;
-        formatString = ((DataCell) rowsetBody[x][y]).getFormatString();
-        if ((formatString != null) && (formatString.trim().length() > 0)) {
+	/**
+	 * Apply exact number format to excel Cell from its DataCell. Caller checks
+	 * the DataCell rawNumber and formatString are correct.
+	 * 
+	 * @param cell The excel cell to apply formatting
+	 * @param dataCell The source
+	 */
+    private void applyCellFormatting(Cell cell, DataCell dataCell) {
+        String formatString = dataCell.getFormatString();
+        String formatKey = formatString;
+        if (!cellStyles.containsKey(formatKey)) {
+            // Inherit formatting from cube schema FORMAT_STRING
+            CellStyle numberCSClone = excelWorkbook.createCellStyle();
+            numberCSClone.cloneStyleFrom(numberCS);
+            DataFormat fmt = excelWorkbook.createDataFormat();
 
-            String formatKey = "" + formatString;
-            if (!cellStyles.containsKey(formatKey)) {
-                // Inherit formatting from cube schema FORMAT_STRING
-                CellStyle numberCSClone = excelWorkbook.createCellStyle();
-                numberCSClone.cloneStyleFrom(numberCS);
-                DataFormat fmt = excelWorkbook.createDataFormat();
-
-                // the format string can contain macro values such as "Standard"
-                // from mondrian.util.Format
-                // try and look it up, otherwise use the given one
-                formatString = FormatUtil.getFormatString(formatString);
-                try {
-                    short dataFormat = fmt.getFormat(formatString);
-                    numberCSClone.setDataFormat(dataFormat);
-                } catch (Exception e) {
-                    // we tried to apply the mondrian format, but probably
-                    // failed, so lets use the standard one
-                    // short dataFormat =
-                    // fmt.getFormat(SaikuProperties.webExportExcelDefaultNumberFormat);
-                    // numberCSClone.setDataFormat(dataFormat);
-                }
-                cellStyles.put(formatKey, numberCSClone);
+            // the format string can contain macro values such as "Standard"
+            // from mondrian.util.Format
+            // try and look it up, otherwise use the given one
+            formatString = FormatUtil.getFormatString(formatString);
+            try {
+                short dataFormat = fmt.getFormat(formatString);
+                numberCSClone.setDataFormat(dataFormat);
+            } catch (Exception e) {
+                // we tried to apply the mondrian format, but probably
+                // failed, so lets use the standard one
+                // short dataFormat =
+                // fmt.getFormat(SaikuProperties.webExportExcelDefaultNumberFormat);
+                // numberCSClone.setDataFormat(dataFormat);
             }
-
-            CellStyle numberCSClone = cellStyles.get(formatKey);
-
-            // Check for cell background
-            Map<String, String> properties = ((DataCell) rowsetBody[x][y]).getProperties();
-            if (properties.containsKey("style")) {
-                String colorCode = properties.get("style");
-                short colorCodeIndex = getColorFromCustomPalette(colorCode);
-                if (colorCodeIndex != -1) {
-                    numberCSClone.setFillForegroundColor(colorCodeIndex);
-                    numberCSClone.setFillPattern(CellStyle.SOLID_FOREGROUND);
-                } else if (customColorsPalette == null) {
-                    try {
-
-                        if (cssColorCodesProperties != null && cssColorCodesProperties.containsKey(colorCode)) {
-                            colorCode = cssColorCodesProperties.getProperty(colorCode);
-                        }
-
-                        int redCode = Integer.parseInt(colorCode.substring(1, 3), 16);
-                        int greenCode = Integer.parseInt(colorCode.substring(3, 5), 16);
-                        int blueCode = Integer.parseInt(colorCode.substring(5, 7), 16);
-                        numberCSClone.setFillPattern(CellStyle.SOLID_FOREGROUND);
-                        ((XSSFCellStyle) numberCSClone).setFillForegroundColor(
-                                new XSSFColor(new java.awt.Color(redCode, greenCode, blueCode)));
-                        ((XSSFCellStyle) numberCSClone).setFillBackgroundColor(
-                                new XSSFColor(new java.awt.Color(redCode, greenCode, blueCode)));
-                    } catch (Exception e) {
-                        // we tried to set the color, no luck, lets continue
-                        // without
-                    }
-
-                }
-            } else {
-
-                numberCSClone.setFillForegroundColor(numberCS.getFillForegroundColor());
-                numberCSClone.setFillBackgroundColor(numberCS.getFillBackgroundColor());
-            }
-            cell.setCellStyle(numberCSClone);
-        } else {
-            cell.setCellStyle(numberCS);
+            cellStyles.put(formatKey, numberCSClone);
         }
 
+        CellStyle numberCSClone = cellStyles.get(formatKey);
+
+        // Check for cell background
+        Map<String, String> properties = dataCell.getProperties();
+        if (properties.containsKey("style")) {
+            String colorCode = properties.get("style");
+            short colorCodeIndex = getColorFromCustomPalette(colorCode);
+            if (colorCodeIndex != -1) {
+                numberCSClone.setFillForegroundColor(colorCodeIndex);
+                numberCSClone.setFillPattern(CellStyle.SOLID_FOREGROUND);
+            } else if (customColorsPalette == null) {
+                try {
+
+                    if (cssColorCodesProperties != null && cssColorCodesProperties.containsKey(colorCode)) {
+                        colorCode = cssColorCodesProperties.getProperty(colorCode);
+                    }
+
+                    int redCode = Integer.parseInt(colorCode.substring(1, 3), 16);
+                    int greenCode = Integer.parseInt(colorCode.substring(3, 5), 16);
+                    int blueCode = Integer.parseInt(colorCode.substring(5, 7), 16);
+                    numberCSClone.setFillPattern(CellStyle.SOLID_FOREGROUND);
+                    ((XSSFCellStyle) numberCSClone).setFillForegroundColor(
+                            new XSSFColor(new java.awt.Color(redCode, greenCode, blueCode)));
+                    ((XSSFCellStyle) numberCSClone).setFillBackgroundColor(
+                            new XSSFColor(new java.awt.Color(redCode, greenCode, blueCode)));
+                } catch (Exception e) {
+                    // we tried to set the color, no luck, lets continue
+                    // without
+                }
+
+            }
+        } else {
+
+            numberCSClone.setFillForegroundColor(numberCS.getFillForegroundColor());
+            numberCSClone.setFillBackgroundColor(numberCS.getFillBackgroundColor());
+        }
+        cell.setCellStyle(numberCSClone);
     }
 
     private short getColorFromCustomPalette(String style) {
