@@ -245,6 +245,7 @@
         <dependency>
             <groupId>iText</groupId>
             <artifactId>iText</artifactId>
+            <version>4.2.0</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.htmlcleaner</groupId>

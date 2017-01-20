@@ -392,12 +392,39 @@ public class ThinQueryService implements Serializable {
         return getExport(queryName, type, new FlattenedCellSetFormatter());
     }
 
+    /**
+     * This method is called by the Query2Resource class (REST resource) of
+     * saiku-web project. It responds to requests to URLs with the following
+     * format: /saiku/api/query/{queryname}/export/{xls|csv|pdf|html}/{flat|flattened|hierarchical}
+     * This is the starting point of the whole export process.
+     *
+     * @param queryName Each query is assigned an unique identifier, those
+     *                  queries are stored in a session hashmap with this query
+     *                  name as its key.
+     * @param type The file type of the exported query. Right now, there are
+     *             four applicable file formats: xls, csv, pdf and html.
+     * @param formatter The name of the cell formatter used to produce the
+     *                  final representation of the exported query. Currently,
+     *                  there are three cell formatters types available: flat,
+     *                  flattened and hierarchical.
+     * @return A byte array of the exported query in the selected file format,
+     * using the appropriate cell formatter.
+     */
     public byte[] getExport(String queryName, String type, String formatter) {
         String formatterName = formatter == null ? "" : formatter.toLowerCase();
         ICellSetFormatter cf = cff.forName(formatterName);
         return getExport(queryName, type, cf);
     }
 
+  /**
+   * This method is called internally, with a cell formatter instance instead
+   * of its name. Here, the input is sanitized, the query is retrieved via its
+   * name, the query is executed again, its results is than used to build a
+   * cell dataset (using the respective cell formatter), the totals and
+   * subtotals are than calculated and placed in this cell dataset, finally,
+   * the result is exported to the desired format (this is done by the
+   * ExcelExporter or CsvExporter classes).
+   */
     private byte[] getExport(String queryName, String type, ICellSetFormatter formatter) {
         if (StringUtils.isNotBlank(type) && context.containsKey(queryName)) {
             //Query Context
@@ -423,13 +450,14 @@ public class ThinQueryService implements Serializable {
             }
 
             List<ThinHierarchy> filterHierarchies = null;
+
             if (ThinQuery.Type.QUERYMODEL.equals(tq.getType())) {
                 filterHierarchies = tq.getQueryModel().getAxes().get(AxisLocation.FILTER).getHierarchies();
             }
+
             if (type.toLowerCase().equals("xls")) {
                 return ExcelExporter.exportExcel(table, formatter, filterHierarchies);
-            }
-            if (type.toLowerCase().equals("csv")) {
+            } else if (type.toLowerCase().equals("csv")) {
                 return CsvExporter.exportCsv(rs, SaikuProperties.webExportCsvDelimiter, SaikuProperties.webExportCsvTextEscape, formatter);
             }
         }
@@ -694,32 +722,40 @@ public class ThinQueryService implements Serializable {
 
             QueryDetails details = query.getDetails();
             Measure[] selectedMeasures = new Measure[details.getMeasures().size()];
-            for (int i = 0; i < selectedMeasures.length; i++)
+
+            for (int i = 0; i < selectedMeasures.length; i++) {
                 selectedMeasures[i] = details.getMeasures().get(i);
+            }
+
             result.setSelectedMeasures(selectedMeasures);
 
             int rowsIndex = 0;
             if (!cellSet.getAxes().get(0).getAxisOrdinal().equals(Axis.ROWS)) {
                 rowsIndex = (rowsIndex + 1) & 1;
             }
+
             // TODO - refactor this using axis ordinals etc.
             final AxisInfo[] axisInfos = new AxisInfo[]{new AxisInfo(cellSet.getAxes().get(rowsIndex)), new AxisInfo(cellSet.getAxes().get((rowsIndex + 1) & 1))};
             List<TotalNode>[][] totals = new List[2][];
             TotalsListsBuilder builder = null;
+
             for (int index = 0; index < 2; index++) {
                 final int second = (index + 1) & 1;
                 TotalAggregator[] aggregators = new TotalAggregator[axisInfos[second].maxDepth + 1];
+
                 for (int i = 1; i < aggregators.length - 1; i++) {
                     List<String> aggs = query.getAggregators(axisInfos[second].uniqueLevelNames.get(i - 1));
                     String totalFunctionName = aggs != null && aggs.size() > 0 ? aggs.get(0) : null;
                     aggregators[i] = StringUtils.isNotBlank(totalFunctionName) ? TotalAggregator.newInstanceByFunctionName(totalFunctionName) : null;
                 }
+
                 List<String> aggs = query.getAggregators(axisInfos[second].axis.getAxisOrdinal().name());
                 String totalFunctionName = aggs != null && aggs.size() > 0 ? aggs.get(0) : null;
                 aggregators[0] = TotalAggregator.newInstanceByFunctionName(totalFunctionName);
                 builder = new TotalsListsBuilder(selectedMeasures, aggregators, cellSet, axisInfos[index], axisInfos[second], tq);
                 totals[index] = builder.buildTotalsLists();
             }
+
             result.setLeftOffset(axisInfos[0].maxDepth);
             result.setRowTotalsLists(totals[1]);
             result.setColTotalsLists(totals[0]);

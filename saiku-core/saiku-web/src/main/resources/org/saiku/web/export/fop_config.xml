@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<fop version="1.0">
+    <renderers>
+        <renderer mime="application/pdf">
+            <fonts>
+                <!-- your specific font mapping -->
+                <!-- font kerning="yes" embed-url="YOUR_FONT_FILE_FULL_PATH.ttf" embedding-mode="subset">
+                    <font-triplet name="YOUR_FONT_NAME" style="normal" weight="normal"/>
+                </font -->
+
+                <!-- "bulk" font mapping -->
+                <!-- directory recursive="true">YOUR_FONTS_DIRECTORY</directory -->
+
+                <!-- automatically detect operating system installed fonts -->
+                <!--auto-detect/-->
+            </fonts>
+        </renderer>
+    </renderers>
+</fop>

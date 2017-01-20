@@ -116,11 +116,19 @@
             </snapshots>
         </repository>
 
-	<repository>
+    	<repository>
     		<id>pentaho-releases</id>
     		<url>http://repository.pentaho.org/artifactory/repo/</url>
-	</repository>
+    	</repository>
 
+        <repository>
+            <id>miredot</id>
+            <url>http://nexus.qmino.com/content/repositories/miredot/</url>
+        </repository>
+        <repository>
+            <id>clojars</id>
+            <url>http://clojars.org/repo/</url>
+        </repository>
     </repositories>
     <build>
         <plugins>

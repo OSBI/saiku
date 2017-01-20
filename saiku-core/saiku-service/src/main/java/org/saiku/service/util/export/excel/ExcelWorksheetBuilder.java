@@ -141,12 +141,12 @@ public class ExcelWorksheetBuilder {
         setCellBordersColor(numberCS);
         /*
          * justasg: Let's set default format, used if measure has no format at
-		 * all. More info:
-		 * http://poi.apache.org/apidocs/org/apache/poi/ss/usermodel/
-		 * BuiltinFormats.html#getBuiltinFormat(int) If we don't have default
-		 * format, it will output values up to maximum detail, i.e.
-		 * 121212.3456789 and we like them as 121,212.346
-		 */
+         * all. More info:
+         * http://poi.apache.org/apidocs/org/apache/poi/ss/usermodel/
+         * BuiltinFormats.html#getBuiltinFormat(int) If we don't have default
+         * format, it will output values up to maximum detail, i.e.
+         * 121212.3456789 and we like them as 121,212.346
+         */
         DataFormat fmt = excelWorkbook.createDataFormat();
         short dataFormat = fmt.getFormat(SaikuProperties.webExportExcelDefaultNumberFormat);
         numberCS.setDataFormat(dataFormat);
@@ -465,7 +465,7 @@ public class ExcelWorksheetBuilder {
                     }
                 }
 
-                //Set column sub totals
+                //Set column sub totalstotals
                 column = setColTotalAggregationCell(colScanTotals, sheetRow, x, column, true, false);
 
                 //Set column grand totals
@@ -579,27 +579,27 @@ public class ExcelWorksheetBuilder {
 
     private int setColTotalAggregationCell(Map<Integer, TotalAggregator[][]> scanTotals, Row sheetRow, int x, int column, boolean setValue, boolean grandTotal) {
         column++;
+
         if (!scanTotals.isEmpty()) {
             TotalAggregator[][] aggregatorsTable = scanTotals.get(column);
+
             if (aggregatorsTable != null) {
                 if (setValue) {
                     if (grandTotal) {
                         setGrandTotalLabel(sheetRow.getRowNum() - 1, column, true);
                     }
-                    // When there are more than one aggregation total per column, those should be
-                    // added after (+ offset) to avoid overriding cell values.
-                    int columnOffset = 0;
+
                     for (TotalAggregator[] aggregators : aggregatorsTable) {
-                        Cell cell = sheetRow.createCell(column + columnOffset);
+                        Cell cell = sheetRow.createCell(column);
                         String value = aggregators[x].getFormattedValue();
                         cell.setCellValue(value);
                         cell.setCellStyle(totalsCS);
-                        columnOffset++;
+                        column++;
                     }
                 }
-                column++;
             }
         }
+
         return column;
     }
 

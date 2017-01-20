@@ -16,6 +16,8 @@ import org.saiku.service.util.export.PdfPerformanceLogger;
 import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.avalon.framework.configuration.Configuration;
+import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,6 +27,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamResult;
 import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
@@ -151,6 +154,7 @@ public class PdfReport {
         String htmlContent = generateContentAsHtmlString(queryResult);
         org.w3c.dom.Document htmlDom = DomConverter.getDom(htmlContent);
         org.w3c.dom.Document foDoc = FoConverter.getFo(htmlDom);
+
         byte[] formattedPdfContent = fo2Pdf(foDoc, null, queryResultSize);
         tryWritingContentToPdfStream(pdf, formattedPdfContent);
 
@@ -186,9 +190,15 @@ public class PdfReport {
     }
 
     private byte[] fo2Pdf(org.w3c.dom.Document foDocument, String styleSheet, Rectangle size) {
+        DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
         FopFactory fopFactory = FopFactory.newInstance();
 
         try {
+            // Specify an external configuration file, to ease user changes, like adding custom fonts
+            Configuration cfg = cfgBuilder.build(this.getClass().getResourceAsStream("fop_config.xml"));
+
+            fopFactory.setUserConfig(cfg);
+
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
             Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, out);
