@@ -382,14 +382,20 @@ var Table = Backbone.View.extend({
                         //self.workspace.query.helper.removeLevel(h, k);
                         var hierarchy = self.workspace.query.helper.getHierarchy(h);
 						if (hierarchy && hierarchy.levels.hasOwnProperty(l_name)|| h == "[Measures]") {
-							if(h=="[Measures]"){
-								measure = {name:cell.properties.uniquename, type:'EXACT'}
+                            if(h=="[Measures]"){
+                                var measure = {
+                                    caption: cell.value,
+                                    name: cell.value,
+                                    type: 'EXACT',
+                                    uniqueName: cell.properties.uniquename
+                                };
 
-								self.workspace.query.helper.clearMeasures();
-								self.workspace.query.helper.includeMeasure(measure)
-							}
+                                self.workspace.query.helper.clearMeasures();
+                                self.workspace.query.helper.includeMeasure(measure);
+                                self.workspace.sync_query();
+                                self.workspace.query.run();
+                            }
 							else {
-
 								updates.push({
 									uniqueName: cell.properties.uniquename,
 									caption: cell.properties.uniquename

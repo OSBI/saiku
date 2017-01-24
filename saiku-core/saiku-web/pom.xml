@@ -2,11 +2,11 @@
     <parent>
         <artifactId>saiku-core</artifactId>
         <groupId>org.saikuanalytics</groupId>
-        <version>3.10</version>
+        <version>3.11</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>saiku-web</artifactId>
-    <version>3.10</version>
+    <version>3.11</version>
     <name>saiku - web</name>
     <packaging>jar</packaging>
 
@@ -245,6 +245,7 @@
         <dependency>
             <groupId>iText</groupId>
             <artifactId>iText</artifactId>
+            <version>4.2.0</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.htmlcleaner</groupId>

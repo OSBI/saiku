@@ -44,15 +44,20 @@ public class DrillthroughUtils {
 		List<ResultInfo> results = new ArrayList<>(); 
 		for (String column: split) {
 			String[] split2 = column.trim().split("\\.");
-			String[] els = new String[split2.length];
+			ArrayList<String> els = new ArrayList<>();
 			for (int i = 0; i < split2.length; i++) {
 				String token = split2[i];
-				els[i] = token.trim().replaceAll("[\\[\\]]", "");
+				els.add(token.trim().replaceAll("[\\[\\]]", ""));
 			}
-			if (els[0].equalsIgnoreCase("Measures")) {
-				results.add(new MeasureResultInfo(els[1]));
+			if (els.get(0).equalsIgnoreCase("Measures")) {
+				results.add(new MeasureResultInfo(els.get(1)));
 			} else {
-				results.add(new DimensionResultInfo(els[0], els[1], els[2]));
+				if(els.size()>=3) {
+					results.add(new DimensionResultInfo(els.get(0), els.get(1), els.get(2)));
+				}
+				else{
+					results.add(new DimensionResultInfo(els.get(0), els.get(0), els.get(1)));
+				}
 			}
 		}
 		return results;
