@@ -551,7 +551,15 @@ public class ThinQueryService implements Serializable {
                     final DimensionResultInfo dri = (DimensionResultInfo) ri;
                     List<SaikuHierarchy> hierarchies = olapDiscoverService
                             .getDimension(saikuCube, dri.getDimension()).getHierarchies();
-                    SaikuHierarchy hierarchy = DrillthroughUtils.findHierarchy(hierarchies, dri.getHierarchy());
+                    SaikuHierarchy hierarchy = null;
+                    try {
+                        hierarchy = DrillthroughUtils
+                            .findHierarchy(hierarchies, dri.getHierarchy());
+                    }
+                    catch(Exception e){
+                        hierarchy = DrillthroughUtils
+                            .findHierarchy(hierarchies, dri.getDimension()+"."+dri.getHierarchy());
+                    }
                     SaikuLevel level = DrillthroughUtils.findLevel(hierarchy.getLevels(), dri.getLevel());
                     simpleHeader[i] = level.getCaption();
                 }
