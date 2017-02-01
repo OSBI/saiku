@@ -4,6 +4,51 @@ function SaikuTableRenderer(data, options) {
     this._options = _.extend({}, SaikuRendererOptions, options);
 }
 
+function getAxisLevelsName(data, axisName) {
+    var queryData = data.query.queryModel.axes[axisName].hierarchies;
+    var len = queryData.length;
+    var arrLevels = [];
+
+    for (var i = 0; i < len; i++) {
+        for (var level in queryData[i].levels) {
+            if (queryData[i].levels.hasOwnProperty(level)) {
+                arrLevels.push(level);
+            }
+        }
+    }
+
+    return arrLevels;
+}
+
+function getAxisSize(data, axisName) {
+    var queryData = data.query.queryModel.axes[axisName].hierarchies;
+    var len = queryData.length;
+    var axisSize = 0;
+
+    for (var i = 0; i < len; i++) {
+        axisSize += _.size(queryData[i].levels);
+    }
+
+    return axisSize;
+}
+
+function getDomColumnsLevelsName(htmlObject) {
+    var $htmlObject = $(htmlObject.closest('.workspace')
+                           .find('.workspace_fields')
+                           .find('.columns.axis_fields')
+                           .find('.hierarchy')
+                           .find('.d_level'));
+    var arrLevels = [];
+
+    $.each($htmlObject, function(index, value) {
+        if ($(value).attr('style') === 'display: list-item;') {
+            arrLevels.push($(value).find('.level').attr('level'));
+        }
+    });
+
+    return arrLevels;
+}
+
 SaikuTableRenderer.prototype.render = function(data, options) {
         var self = this;
         if (data) {
@@ -334,6 +379,20 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 
     var dirs = [ROWS, COLUMNS];
 
+    if (Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE) {
+        var arrColumnTitleTable = getAxisLevelsName(allData, COLUMNS);
+        var arrDomColumnTitleTable = getDomColumnsLevelsName(this._options.htmlObject);
+        var colspanColumnTitleTable = getAxisSize(allData, ROWS);
+        var auxColumnTitleTable = 0;
+
+        if (arrColumnTitleTable.length === arrDomColumnTitleTable.length) {
+            arrColumnTitleTable = arrDomColumnTitleTable;
+        }
+        else {
+            arrColumnTitleTable = _.intersection(arrDomColumnTitleTable, arrColumnTitleTable);
+        }
+    }
+
     for (var i = 0; i < dirs.length; i++) {
         scanSums[dirs[i]] = new Array();
         scanIndexes[dirs[i]] = new Array();
@@ -369,6 +428,16 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
             rowContent = "<thead>" + rowContent;
         }
 
+        if (Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE &&
+            auxColumnTitleTable < arrColumnTitleTable.length) {
+
+            rowContent += '<th class="row_header" style="text-align: left;" colspan="' + colspanColumnTitleTable + '" title="' + arrColumnTitleTable[auxColumnTitleTable] + '">'
+                + (wrapContent ? '<div>' + arrColumnTitleTable[auxColumnTitleTable] + '</div>' : arrColumnTitleTable[auxColumnTitleTable])
+                + '</th>';
+
+            auxColumnTitleTable += 1;
+        }
+
         for (var col = 0, colLen = table[row].length; col < colLen; col++) {
             var colShifted = col - allData.leftOffset;
             header = data[row][col];
@@ -379,7 +448,9 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 
             // If the cell is a column header and is null (top left of table)
             if (header.type === "COLUMN_HEADER" && header.value === "null" && (firstColumn == null || col < firstColumn)) {
-                rowContent += '<th class="all_null">&nbsp;</th>';
+                if (!Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE) {
+                    rowContent += '<th class="all_null">&nbsp;</th>';
+                }
             } // If the cell is a column header and isn't null (column header of table)
             else if (header.type === "COLUMN_HEADER") {
                 if (firstColumn == null) {
@@ -472,7 +543,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
                     }
                 }
                 var value = (same ? "<div>&nbsp;</div>" : '<div rel="' + row + ":" + col + '">'
-							+ (sameAsPrevValue && Settings.ALLOW_TABLE_DATA_COLLAPSE ? '<span class="expander expanded">&#9660;</span>' : '' ) + header.value + '</div>');
+                            + (sameAsPrevValue && Settings.ALLOW_TABLE_DATA_COLLAPSE ? '<span class="expander expanded">&#9660;</span>' : '' ) + header.value + '</div>');
                 if (!wrapContent) {
                     value = (same ? "&nbsp;" : header.value );
                 }

@@ -135,7 +135,8 @@ var Settings = {
         // The `$` matches end of input.
         STAR_SCHEMA_MEASURE_AGGREGATION_COLUMN: /_sum$|_avg$|_count$|_min$|_max$/i
     },
-    ALLOW_TABLE_DATA_COLLAPSE: false
+    ALLOW_TABLE_DATA_COLLAPSE: false,
+    ALLOW_AXIS_COLUMN_TITLE_TABLE: true
 };
 
 /**
