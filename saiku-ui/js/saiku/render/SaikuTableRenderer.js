@@ -40,9 +40,9 @@ function getDomColumnsLevelsName(htmlObject) {
                            .find('.d_level'));
     var arrLevels = [];
 
-    $.each($htmlObject, function(index, value) {
-        if ($(value).attr('style') === 'display: list-item;') {
-            arrLevels.push($(value).find('.level').attr('level'));
+    $.each($htmlObject, function(key, level) {
+        if ($(level).attr('style') === 'display: list-item;') {
+            arrLevels.push($(level).find('.level').attr('level'));
         }
     });
 
@@ -379,7 +379,9 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 
     var dirs = [ROWS, COLUMNS];
 
-    if (Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE) {
+    if (Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE &&
+        allData.query.type === 'QUERYMODEL') {
+
         var arrColumnTitleTable = getAxisLevelsName(allData, COLUMNS);
         var arrDomColumnTitleTable = getDomColumnsLevelsName(this._options.htmlObject);
         var colspanColumnTitleTable = getAxisSize(allData, ROWS);
@@ -429,6 +431,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
         }
 
         if (Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE &&
+            allData.query.type === 'QUERYMODEL' &&
             auxColumnTitleTable < arrColumnTitleTable.length) {
 
             rowContent += '<th class="row_header" style="text-align: left;" colspan="' + colspanColumnTitleTable + '" title="' + arrColumnTitleTable[auxColumnTitleTable] + '">'
@@ -448,7 +451,8 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 
             // If the cell is a column header and is null (top left of table)
             if (header.type === "COLUMN_HEADER" && header.value === "null" && (firstColumn == null || col < firstColumn)) {
-                if (!Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE) {
+                if (!Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE ||
+                    allData.query.type === 'MDX') {
                     rowContent += '<th class="all_null">&nbsp;</th>';
                 }
             } // If the cell is a column header and isn't null (column header of table)
