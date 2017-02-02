@@ -722,7 +722,9 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 SaikuTableRenderer.prototype.renderSummary = function(data) {
     if (data && data.query) {
         var hasSomethingToRender = false;
-        var measures = data.query.queryModel.details.measures;
+        var measures = data.query.queryModel.details
+                       ? data.query.queryModel.details.measures
+                       : [];
         var summaryData = {};
 
         for (var i = 0; i < measures.length; i++) {
