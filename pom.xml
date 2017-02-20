@@ -5,7 +5,7 @@
     <groupId>org.saikuanalytics</groupId>
     <artifactId>saiku</artifactId>
     <packaging>pom</packaging>
-    <version>3.8.8</version>
+    <version>3.9-SNAPSHOT</version>
     <name>Saiku Module Project</name>
     <scm>
         <developerConnection>
@@ -524,16 +524,6 @@
                 <version>1.7</version>
             </dependency>
             <dependency>
-                <groupId>batik</groupId>
-                <artifactId>batik-transcoder</artifactId>
-                <version>1.7</version>
-            </dependency>
-            <dependency>
-                <groupId>batik</groupId>
-                <artifactId>batik-ext</artifactId>
-                <version>1.7</version>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.jackrabbit</groupId>
                 <artifactId>jackrabbit-core</artifactId>
                 <version>2.8.0</version>
@@ -661,6 +651,11 @@
                 <version>1.7</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-ext</artifactId>
+                <version>1.7</version>
+            </dependency>
+            <dependency>
                 <groupId>iText</groupId>
                 <artifactId>iText</artifactId>
                 <version>4.2.0</version>
@@ -684,7 +679,7 @@
             <dependency>
                 <groupId>pentaho</groupId>
                 <artifactId>mondrian</artifactId>
-                <version>4.3.0.1.2-SPARK</version>
+                <version>4.3.0.1.1-SPARK</version>
             </dependency>
             <!-- Spring modules -->
             <dependency>
@@ -983,7 +978,7 @@
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox-app</artifactId>
-                <version>2.0.0-SNAPSHOT</version>
+                <version>2.0.0</version>
             </dependency>
             <dependency>
                 <groupId>pentaho</groupId>
