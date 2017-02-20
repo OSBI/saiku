@@ -2,8 +2,20 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:security="http://www.springframework.org/schema/security"
 	   xmlns:context="http://www.springframework.org/schema/context"
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<import resource="applicationContext-spring-security-jdbc.xml"/>
+
+	<!-- BEGIN - Hazelcast Orbis Authentication Configuration -->
+    <bean id="http403EntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"></bean>
+	<bean id="hazelcastAuthFilterBean" class="org.saiku.web.service.HazelcastAuthFilter"/>
+
+    <security:http use-expressions="true" auto-config="false" entry-point-ref="http403EntryPoint">
+        <!-- Additional http configuration omitted -->
+        <security:intercept-url pattern="/**" access="permitAll" />
+        <security:custom-filter position="PRE_AUTH_FILTER" ref="hazelcastAuthFilterBean" />
+    </security:http>
+	<!-- END - Hazelcast Orbis Authentication Configuration -->
 </beans>

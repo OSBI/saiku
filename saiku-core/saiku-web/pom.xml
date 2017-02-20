@@ -261,7 +261,12 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
         </dependency>
-
+        <!-- ORBIS Authentication: Hazelcast Client -->
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast-client</artifactId>
+            <version>3.8</version>
+        </dependency>
     </dependencies>
     <reporting>
         <plugins>
