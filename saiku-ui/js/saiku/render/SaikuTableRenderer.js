@@ -1,4 +1,3 @@
-
 function SaikuTableRenderer(data, options) {
     this._data = data;
     this._options = _.extend({}, SaikuRendererOptions, options);
@@ -379,7 +378,8 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 
     var dirs = [ROWS, COLUMNS];
 
-    if (Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE &&
+    if (typeof this._options.htmlObject === 'object' &&
+        Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE &&
         allData.query.type === 'QUERYMODEL') {
 
         var arrColumnTitleTable = getAxisLevelsName(allData, COLUMNS);
@@ -426,11 +426,12 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
         rowContent = "<tr>";
         var header = null;
 
-        if ( row === 0) {
+        if (row === 0) {
             rowContent = "<thead>" + rowContent;
         }
 
-        if (Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE &&
+        if (typeof this._options.htmlObject === 'object' &&
+            Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE &&
             allData.query.type === 'QUERYMODEL' &&
             auxColumnTitleTable < arrColumnTitleTable.length) {
 
