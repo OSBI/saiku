@@ -378,8 +378,13 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 
     var dirs = [ROWS, COLUMNS];
 
+    var hasMeasures = allData.query.queryModel.details
+                   ? allData.query.queryModel.details.measures.length
+                   : 0;
+
     if (typeof this._options.htmlObject === 'object' &&
         Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE &&
+        hasMeasures > 0 &&
         allData.query.type === 'QUERYMODEL') {
 
         var arrColumnTitleTable = getAxisLevelsName(allData, COLUMNS);
@@ -432,6 +437,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 
         if (typeof this._options.htmlObject === 'object' &&
             Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE &&
+            hasMeasures > 0 &&
             allData.query.type === 'QUERYMODEL' &&
             auxColumnTitleTable < arrColumnTitleTable.length) {
 
@@ -452,7 +458,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 
             // If the cell is a column header and is null (top left of table)
             if (header.type === "COLUMN_HEADER" && header.value === "null" && (firstColumn == null || col < firstColumn)) {
-                if (!Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE ||
+                if ((!Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE || hasMeasures === 0) ||
                     allData.query.type === 'MDX') {
                     rowContent += '<th class="all_null">&nbsp;</th>';
                 }
