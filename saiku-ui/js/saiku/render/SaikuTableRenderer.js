@@ -11,7 +11,12 @@ function getAxisLevelsName(data, axisName) {
     for (var i = 0; i < len; i++) {
         for (var level in queryData[i].levels) {
             if (queryData[i].levels.hasOwnProperty(level)) {
-                arrLevels.push(level);
+                if (Settings.COLUMN_TITLE_TABLE_USE_LEVEL_CAPTION_NAME) {
+                    arrLevels.push(queryData[i].levels[level].caption);
+                }
+                else {
+                    arrLevels.push(level);
+                }
             }
         }
     }
@@ -41,7 +46,12 @@ function getDomColumnsLevelsName(htmlObject) {
 
     $.each($htmlObject, function(key, level) {
         if ($(level).attr('style') === 'display: list-item;') {
-            arrLevels.push($(level).find('.level').attr('level'));
+            if (Settings.COLUMN_TITLE_TABLE_USE_LEVEL_CAPTION_NAME) {
+                arrLevels.push($(level).find('.level').attr('title'));
+            }
+            else {
+                arrLevels.push($(level).find('.level').attr('level'));
+            }
         }
     });
 
