@@ -159,16 +159,20 @@ SaikuTableRenderer.prototype.processData = function(data, options) {
 function genTotalDataCells(currentIndex, cellIndex, scanSums, scanIndexes, lists) {
     var contents = '';
     var lists = lists[ROWS];
+
     for (var i = scanSums.length - 1; i >= 0; i--) {
         if (currentIndex == scanSums[i]) {
             var currentListNode = lists[i][scanIndexes[i]];
-            for (var m = 0; m < currentListNode.cells.length; m++)
+            for (var m = 0; m < currentListNode.cells.length; m++) {
                 contents += '<td class="data total">' + currentListNode.cells[m][cellIndex].value + '</td>';
+            }
+
             scanIndexes[i]++;
             if (scanIndexes[i] < lists[i].length)
                 scanSums[i] += lists[i][scanIndexes[i]].width;
         }
     }
+
     return contents;
 }
 
@@ -313,19 +317,30 @@ function genTotalHeaderRowCells(currentIndex, scanSums, scanIndexes, totalsLists
 
                 var scanIndexes = {};
                 var scanSums = {};
-                for (var z = 0; z < totalsLists[ROWS].length; z++) {
-                    scanIndexes[z] = 0;
-                    scanSums[z] = totalsLists[ROWS][z][scanIndexes[z]].width;
+
+                if (totalsLists[ROWS]) {
+                    for (var z = 0; z < totalsLists[ROWS].length; z++) {
+                        scanIndexes[z] = 0;
+                        scanSums[z] = totalsLists[ROWS][z][scanIndexes[z]].width;
+                    }
                 }
+
                 for (var k = 0; k < colLists[i][colScanIndexes[i]].cells[m].length; k++) {
                     contents += '<td class="data total">' + colLists[i][colScanIndexes[i]].cells[m][k].value + '</td>';
-                    contents += totalIntersectionCells(k + 1, totalsLists[ROWS].length - 1, scanSums, scanIndexes, totalsLists[ROWS]);
+
+                    if (totalsLists[ROWS]) {
+                        contents += totalIntersectionCells(k + 1, totalsLists[ROWS].length - 1, scanSums, scanIndexes, totalsLists[ROWS]);
+                    }
                 }
+
                 contents += '</tr>';
             }
+
             colScanIndexes[i]++;
-            if (colScanIndexes[i] < colLists[i].length)
+
+            if (colScanIndexes[i] < colLists[i].length) {
                 colScanSums[i] += colLists[i][colScanIndexes[i]].width;
+            }
         }
     }
     return contents;
@@ -348,6 +363,46 @@ function topParentsDiffer(data, row, col) {
         if (data[row][col].properties.uniquename != data[row - 1][col].properties.uniquename)
             return true;
     return false;
+}
+
+/**
+ * This function is intended to traverse the totals arrays and cleanup empty
+ * totals. This will optimize the query result on screen, displaying just the
+ * needed cells.
+ * @param dirs The direction array ['ROWS', 'COLUMNS'] 
+ * @param totalsLists The totals from allData.rowTotalsLists and allData.colTotalsLists.
+ */
+function cleanupTotals(dirs, totalsLists) {
+    // For each direction (ROWS/COLUMNS)
+    for (var dirIndex = 0; dirIndex < dirs.length; dirIndex++) {
+        var dir = dirs[dirIndex];
+
+        // If there are defined totals
+        if (totalsLists[dir]) {
+            var isEmpty = true; // A flag to indicate if this total is empty
+            for (var row = 0; row < totalsLists[dir].length; row++) {
+                var totalsInfoArray = totalsLists[dir][row];
+                for (var totalIndex = 0; totalIndex < totalsInfoArray.length; totalIndex++) {
+                    var cells = totalsLists[dir][row][totalIndex].cells;
+                    for (var cellIndex = 0; cellIndex < cells.length; cellIndex++) {
+                        var cellArray = cells[cellIndex];
+                        // For each total cell
+                        for (var i = 0; i < cellArray.length; i++) {
+                            var cell = cellArray[i];
+                            // If it contains a value different from empty
+                            if (cell.value !== '-') {
+                                isEmpty = false; // So, this total is not empty
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (isEmpty) { // If this total is empty
+                totalsLists[dir] = null; // Remove it
+            }
+        }
+    }
 }
 
 SaikuTableRenderer.prototype.internalRender = function(allData, options) {
@@ -414,11 +469,16 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
         scanSums[dirs[i]] = new Array();
         scanIndexes[dirs[i]] = new Array();
     }
-    if (totalsLists[COLUMNS])
+
+    // Here we cleaup the empty totals 
+    cleanupTotals(dirs, totalsLists);
+
+    if (totalsLists[COLUMNS]) {
         for (var i = 0; i < totalsLists[COLUMNS].length; i++) {
             scanIndexes[COLUMNS][i] = 0;
             scanSums[COLUMNS][i] = totalsLists[COLUMNS][i][scanIndexes[COLUMNS][i]].width;
         }
+    }
 
     for (var row = 0, rowLen = table.length; row < rowLen; row++) {
         var rowShifted = row - allData.topOffset;
@@ -692,6 +752,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
         }
         rowContent += "</tr>";
 
+        // Change it to let hideEmpty true by default
         if (options.hideEmpty && header.type === "DATA_CELL" && rowWithOnlyEmptyCells) {
             rowContent = '';
         }
