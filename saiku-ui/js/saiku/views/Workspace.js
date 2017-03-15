@@ -106,10 +106,10 @@ var Workspace = Backbone.View.extend({
         if(args!=undefined && args.processURI != undefined && args.processURI==false){
             paramsURI = {};
         }
-        if (Saiku.URLParams.equals({ schema: paramsURI.schema, cube: paramsURI.cube })) {
+
+        if (Saiku.URLParams.contains({ schema: paramsURI.schema, cube: paramsURI.cube })) {
             this.data_connections(paramsURI);
-        }
-        else {
+        } else {
             this.data_connections(paramsURI);
         }
     },

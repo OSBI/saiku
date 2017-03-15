@@ -116,11 +116,28 @@ var Saiku = {
 
             if (_.isEqual(paramsURI, params[0])) {
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
-        }
+        },
+
+        contains: function() {
+            var params = Array.prototype.slice.call(arguments),
+                paramsURI = this.paramsURI();
+
+            var common = {};
+            for (var key in paramsURI) {
+                if (params[0][key] && paramsURI[key] === params[0][key]) {
+                    common[key] = params[0][key];
+                }
+            }
+
+            if (_.isEqual(common, params[0])) {
+                return true;
+            } else {
+                return false;
+            }
+        }        
     },
     loadCSS: function(href, media) {
         var cssNode = window.document.createElement('link'),
