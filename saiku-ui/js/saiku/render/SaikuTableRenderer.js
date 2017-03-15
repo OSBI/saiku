@@ -728,7 +728,8 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
                     val = "<img " + img_height + " " + img_width + " style='padding-left: 5px' src='" + header.properties.image + "' border='0'>";
                 }
 
-                if (header.properties.hasOwnProperty('style')) {
+                // Just apply formatting to non-empty cells
+                if (val !== '-' && val !== '' && header.properties.hasOwnProperty('style')) {
                     color = " style='background-color: " + header.properties.style + "' ";
                 }
                 if (header.properties.hasOwnProperty('link')) {

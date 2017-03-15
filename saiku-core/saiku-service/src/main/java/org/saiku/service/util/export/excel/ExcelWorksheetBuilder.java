@@ -659,7 +659,9 @@ public class ExcelWorksheetBuilder {
 
         // Check for cell background
         Map<String, String> properties = dataCell.getProperties();
-        if (properties.containsKey("style")) {
+
+        // Just style the cell if it contains a value
+        if (dataCell.getRawNumber() != null && properties.containsKey("style")) {
             String colorCode = properties.get("style");
             short colorCodeIndex = getColorFromCustomPalette(colorCode);
             if (colorCodeIndex != -1) {
@@ -687,10 +689,10 @@ public class ExcelWorksheetBuilder {
 
             }
         } else {
-
             numberCSClone.setFillForegroundColor(numberCS.getFillForegroundColor());
             numberCSClone.setFillBackgroundColor(numberCS.getFillBackgroundColor());
         }
+
         cell.setCellStyle(numberCSClone);
     }
 
