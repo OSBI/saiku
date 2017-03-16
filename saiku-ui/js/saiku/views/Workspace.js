@@ -423,6 +423,34 @@ var Workspace = Backbone.View.extend({
             workspace: obj
         });
 
+        if (!this.processedParamsURI) {
+            var paramsURI = Saiku.URLParams.paramsURI();
+
+            var addCustomFilter = function(axis, filterExpression) {
+                var a = this.query.helper.getAxis(axis);
+                var expressions = [];
+                expressions.push(filterExpression);
+
+                this.query.helper.removeFilter(a, 'Generic');
+                a.filters.push({
+                    "flavour" : "Generic",
+                    "operator": null,
+                    "function" : "Filter",
+                    "expressions": expressions
+                });
+            }.bind(this);
+
+            if (Saiku.URLParams.contains({ default_mdx_filter_rows: paramsURI.default_mdx_filter_rows })) {
+                addCustomFilter('ROWS', paramsURI.default_mdx_filter_rows);
+            }
+
+            if (Saiku.URLParams.contains({ default_mdx_filter_columns: paramsURI.default_mdx_filter_columns })) {
+                addCustomFilter('COLUMNS', paramsURI.default_mdx_filter_columns);
+            }
+
+            this.processedParamsURI = true;
+        }
+
         obj.query = this.query;
 
         // Save the query to the server and init the UI
