@@ -423,18 +423,6 @@ var Workspace = Backbone.View.extend({
             workspace: obj
         });
 
-        if (!this.processedParamsURI) {
-            var paramsURI = Saiku.URLParams.paramsURI();
-
-            if (Saiku.URLParams.contains({ default_mdx_filter: paramsURI.default_mdx_filter })) {
-                this.query.model.type = 'MDX';
-                this.query.model.mdx = paramsURI.default_mdx_filter;
-                this.query.run(true);
-            }
-
-            this.processedParamsURI = true;
-        }
-
         obj.query = this.query;
 
         // Save the query to the server and init the UI
