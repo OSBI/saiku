@@ -423,11 +423,19 @@ var Workspace = Backbone.View.extend({
             workspace: obj
         });
 
-        obj.query = this.query;
+        if (!this.processedParamsURI) {
+            var paramsURI = Saiku.URLParams.paramsURI();
 
-        var p = this.paramsURI;
-        //var deffilters = this.extractDefaultFilters(p);
-        //this.setDefaultFilters(deffilters, obj.query);
+            if (Saiku.URLParams.contains({ default_mdx_filter: paramsURI.default_mdx_filter })) {
+                this.query.model.type = 'MDX';
+                this.query.model.mdx = paramsURI.default_mdx_filter;
+                this.query.run(true);
+            }
+
+            this.processedParamsURI = true;
+        }
+
+        obj.query = this.query;
 
         // Save the query to the server and init the UI
         obj.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });
