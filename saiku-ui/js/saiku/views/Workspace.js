@@ -448,6 +448,10 @@ var Workspace = Backbone.View.extend({
                 addCustomFilter('COLUMNS', paramsURI.default_mdx_filter_columns);
             }
 
+            if (Saiku.URLParams.contains({ default_mdx_filter: paramsURI.default_mdx_filter })) {
+                addCustomFilter('FILTER', paramsURI.default_mdx_filter);
+            }
+
             this.processedParamsURI = true;
         }
 
