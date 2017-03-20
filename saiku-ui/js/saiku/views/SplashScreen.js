@@ -209,7 +209,7 @@ var SplashScreen = Backbone.View.extend({
     },
 	getNews: function(){
 		var that = this;
-		$.ajax({
+		/*$.ajax({
 			type: 'GET',
 			url: "http://meteorite.bi/news.json",
 			async: false,
@@ -226,7 +226,7 @@ var SplashScreen = Backbone.View.extend({
 			error: function(e) {
 				console.log(e.message);
 			}
-		});
+		});*/
 	},
     getContent: function(){
         var that =this;
