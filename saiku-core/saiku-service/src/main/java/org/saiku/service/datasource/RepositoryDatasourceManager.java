@@ -345,7 +345,9 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             for (DataSource data : ds) {
                 if (data.getId().equals(datasourceId)) {
                     datasources.remove(data.getName());
-                    irm.deleteFile(data.getPath());
+                    String path = data.getPath();
+                    path = path.replaceFirst(datadir, "");
+                    irm.deleteFile(path);
                     return true;
                 }
             }
