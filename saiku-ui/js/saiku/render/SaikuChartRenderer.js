@@ -192,22 +192,28 @@ SaikuChartRenderer.prototype.switch_chart = function (key, override) {
             smallWidth: 200,
             smallHeight: 150,
             seriesInRows: false
+        },
+        "radar": {
+            type: "RadarChart"
         }
     };
 
     if (key === null || key === '') {
 
-    }
-    else if (key == "sunburst") {
-     $(this.el).find('.zoombuttons a').hide();
-     this.type = key;
-     var o = keyOptions[key];
-     this.sunburst(o);
-     if (this.hasProcessed) {
-     this.render();
-     }
-
-     } else if (keyOptions.hasOwnProperty(key)) {
+    } else if (key == "sunburst") {
+        $(this.el).find('.zoombuttons a').hide();
+        this.type = key;
+        var o = keyOptions[key];
+        this.sunburst(o);
+        if (this.hasProcessed) {
+            this.render();
+        }
+    } else if (key == "radar") {
+        // TODO
+        console.log('this.cccOptions.canvas', this.cccOptions.canvas);
+        $('#' + this.cccOptions.canvas).html('');
+        d3.select('#' + this.cccOptions.canvas).append("span").text("Hello, world!");
+    } else if (keyOptions.hasOwnProperty(key)) {
         $(this.el).find('.zoombuttons a').hide();
         this.type = key;
         var o = keyOptions[key];
@@ -216,7 +222,6 @@ SaikuChartRenderer.prototype.switch_chart = function (key, override) {
         if (this.hasProcessed) {
             this.render();
         }
-
     } else {
         alert("Do not support chart type: '" + key + "'");
     }
