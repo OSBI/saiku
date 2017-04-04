@@ -289,6 +289,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             path = path.replace("\\", "/");
 
             log.debug("Trimmed path is: " + path);
+            path = path.replaceFirst(datadir, "");
             boolean f = true;
             if (new File(getDatadir() + separator + path).exists() && new File(getDatadir() + separator + path).isDirectory()) {
                 f = false;
