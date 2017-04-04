@@ -242,6 +242,7 @@ var Workspace = Backbone.View.extend({
         $(window).resize(this.adjust);
 
 
+
         // Fire off new workspace event
         Saiku.session.trigger('workspace:new', { workspace: this });
 
@@ -260,6 +261,12 @@ var Workspace = Backbone.View.extend({
         if (!Saiku.session.isAdmin && Settings.SHOW_REFRESH_NONADMIN === false) {
             $(this.el).find('.refresh_cubes_nav').hide();
         }
+		var paramsURI = Saiku.URLParams.paramsURI();
+
+		if(!Saiku.introdone && Saiku.URLParams.contains({show_help: paramsURI.show_help})){
+			startIntro();
+			Saiku.introdone = true;
+		}
 
         return this;
     },

@@ -28,6 +28,8 @@ var Saiku = {
      */
     tabs: new TabSet(),
 
+	introdone: false,
+
     splash: new SplashScreen({toolbar: this.toolbar}),
     /**
      * Model which handles session and authentication
@@ -137,7 +139,7 @@ var Saiku = {
             } else {
                 return false;
             }
-        }        
+        }
     },
     loadCSS: function(href, media) {
         var cssNode = window.document.createElement('link'),

@@ -122,7 +122,7 @@ var Toolbar = Backbone.View.extend({
 	 * Go to the help
 	 */
 	help: function() {
-		window.open('http://wiki.meteorite.bi/display/SAIK/Saiku+Documentation');
+		window.open('http://saiku-documentation.readthedocs.io/en/latest');
 		return false;
 	},
 
