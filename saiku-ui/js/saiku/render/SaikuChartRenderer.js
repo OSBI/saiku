@@ -832,7 +832,6 @@ SaikuChartRenderer.prototype.drawRadarChart = function () {
             var allAxis = (d[0].map(function(i, j){return i.axis}));
             var total = allAxis.length;
             var radius = cfg.factor*Math.min(cfg.w/2, cfg.h/2);
-            var Format = d3.format('%');
 
             d3.select(id).select("svg").remove();
 
@@ -877,7 +876,7 @@ SaikuChartRenderer.prototype.drawRadarChart = function () {
                     .style("font-size", "10px")
                     .attr("transform", "translate(" + (cfg.w/2-levelFactor + cfg.ToRight) + ", " + (cfg.h/2-levelFactor) + ")")
                     .attr("fill", "#737373")
-                    .text(Format((j+1)*cfg.maxValue/cfg.levels));
+                    .text((j+1)*cfg.maxValue/cfg.levels);
             }
 
             series = 0;
@@ -980,7 +979,7 @@ SaikuChartRenderer.prototype.drawRadarChart = function () {
                         tooltip
                             .attr('x', newX)
                             .attr('y', newY)
-                            .text(Format(d.value))
+                            .text(d.value)
                             .transition(200)
                             .style('opacity', 1);
 
@@ -1020,82 +1019,36 @@ SaikuChartRenderer.prototype.drawRadarChart = function () {
     var colorscale = d3.scale.category10();
 
     //Legend titles
-    var LegendOptions = ['Smartphone','Tablet'];
+    var LegendOptions = [];
 
     //Dataset
-    var d = [
-        [
-        {axis:"Email",value:0.59},
-        {axis:"Social Networks",value:0.56},
-        {axis:"Internet Banking",value:0.42},
-        {axis:"News Sportsites",value:0.34},
-        {axis:"Search Engine",value:0.48},
-        {axis:"View Shopping sites",value:0.14},
-        {axis:"Paying Online",value:0.11},
-        {axis:"Buy Online",value:0.05},
-        {axis:"Stream Music",value:0.07},
-        {axis:"Online Gaming",value:0.12},
-        {axis:"Navigation",value:0.27},
-        {axis:"App connected to TV program",value:0.03},
-        {axis:"Offline Gaming",value:0.12},
-        {axis:"Photo Video",value:0.4},
-        {axis:"Reading",value:0.03},
-        {axis:"Listen Music",value:0.22},
-        {axis:"Watch TV",value:0.03},
-        {axis:"TV Movies Streaming",value:0.03},
-        {axis:"Listen Radio",value:0.07},
-        {axis:"Sending Money",value:0.18},
-        {axis:"Other",value:0.07},
-        {axis:"Use less Once week",value:0.08}
-        ],[
-        {axis:"Email",value:0.48},
-        {axis:"Social Networks",value:0.41},
-        {axis:"Internet Banking",value:0.27},
-        {axis:"News Sportsites",value:0.28},
-        {axis:"Search Engine",value:0.46},
-        {axis:"View Shopping sites",value:0.29},
-        {axis:"Paying Online",value:0.11},
-        {axis:"Buy Online",value:0.14},
-        {axis:"Stream Music",value:0.05},
-        {axis:"Online Gaming",value:0.19},
-        {axis:"Navigation",value:0.14},
-        {axis:"App connected to TV program",value:0.06},
-        {axis:"Offline Gaming",value:0.24},
-        {axis:"Photo Video",value:0.17},
-        {axis:"Reading",value:0.15},
-        {axis:"Listen Music",value:0.12},
-        {axis:"Watch TV",value:0.1},
-        {axis:"TV Movies Streaming",value:0.14},
-        {axis:"Listen Radio",value:0.06},
-        {axis:"Sending Money",value:0.16},
-        {axis:"Other",value:0.07},
-        {axis:"Use less Once week",value:0.17}
-        ]
-    ];
+    var d = [];
 
-    // Feeding with real data
-    LegendOptions = [];
-    d = [];
-
-    var prefix   = [];
+    var prefixCols = [];
     var dataCols = [];
 
+    //Determining, from data, what is legend and what is values
     for (var i = 0; i < this.data.metadata.length; i++) {
         if (this.data.metadata[i].colType === 'String') {
-            prefix.push(this.data.metadata[i].colName);
+            prefixCols.push(i);
         } else {
-            if (prefix.length > 0) {
-                LegendOptions.push(prefix.join(' '));
-                prefix = [];
-            }
-
-            dataCols.push(this.data.metadata[i].colIndex);
+            dataCols.push(i);
         }
     }
 
+    //Filling the dataset values for each row
     for (var i = 0; i < this.data.resultset.length; i++) {
         d[i] = [];
+        var legend = [];
 
+        // Build its respective legend
+        for (var j = 0; j < prefixCols.length; j++) {
+            legend.push(this.data.resultset[i][j]);
+        }
+
+        LegendOptions.push(legend.join(' '));
+
+        // Build its respective data object
         for (var j = 0; j < dataCols.length; j++) {
             var col = dataCols[j];
 
@@ -1105,9 +1058,6 @@ SaikuChartRenderer.prototype.drawRadarChart = function () {
             });
         }
     }
-
-    console.log('LegendOptions', LegendOptions);
-    console.log('d', d);
 
     //Options for the Radar chart, other than default
     var mycfg = {
@@ -1138,16 +1088,6 @@ SaikuChartRenderer.prototype.drawRadarChart = function () {
         .attr("width", w+300)
         .attr("height", h)
 
-    //Create the title for the legend
-    var text = svg.append("text")
-        .attr("class", "title")
-        .attr('transform', 'translate(90,0)') 
-        .attr("x", w - 70)
-        .attr("y", 10)
-        .attr("font-size", "12px")
-        .attr("fill", "#404040")
-        .text("What % of owners use a specific service in a week");
-          
     //Initiate Legend 
     var legend = svg.append("g")
         .attr("class", "legend")
@@ -1160,7 +1100,7 @@ SaikuChartRenderer.prototype.drawRadarChart = function () {
         .data(LegendOptions)
         .enter()
         .append("rect")
-        .attr("x", w - 65)
+        .attr("x", w - 75)
         .attr("y", function(d, i){ return i * 20;})
         .attr("width", 10)
         .attr("height", 10)
