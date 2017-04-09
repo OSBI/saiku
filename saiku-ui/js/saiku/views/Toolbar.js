@@ -20,12 +20,20 @@
 var Toolbar = Backbone.View.extend({
     tagName: "div",
 
+    buttons: true,
+
     events: {
         'click a' : 'call',
         'click #logo': 'site'
     },
 
     template: function() {
+		var paramsURI = Saiku.URLParams.paramsURI();
+
+		if (Saiku.URLParams.contains({ workspace_icons: paramsURI.workspace_icons })) {
+			this.buttons =  false;
+
+		}
         return _.template( $("#template-toolbar").html() )({data: this});
     },
 
@@ -53,6 +61,7 @@ var Toolbar = Backbone.View.extend({
 
         // Trigger render event on toolbar so plugins can register buttons
         Saiku.events.trigger('toolbar:render', { toolbar: this });
+
 
         return this;
     },
@@ -99,15 +108,18 @@ var Toolbar = Backbone.View.extend({
      * Clear the current session and show the login window
      */
     logout: function() {
-        Saiku.session.logout();
+					Saiku.session.logout();
+
     },
 
     /**
      * Show the credits dialog
      */
     about: function() {
-        (new AboutModal()).render().open();
-        return false;
+
+			(new AboutModal()).render().open();
+			return false;
+
     },
 
     /**
@@ -122,8 +134,10 @@ var Toolbar = Backbone.View.extend({
 	 * Go to the help
 	 */
 	help: function() {
-		window.open('http://saiku-documentation.readthedocs.io/en/latest');
-		return false;
+
+			window.open('http://saiku-documentation.readthedocs.io/en/latest');
+			return false;
+
 	},
 
     /**
