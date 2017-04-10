@@ -209,6 +209,7 @@ SaikuChartRenderer.prototype.switch_chart = function (key, override) {
             this.render();
         }
     } else if (key == "radar") {
+        this.type = key;
         this.drawRadarChart(o);
     } else if (keyOptions.hasOwnProperty(key)) {
         $(this.el).find('.zoombuttons a').hide();
@@ -803,8 +804,8 @@ SaikuChartRenderer.prototype.drawRadarChart = function (o) {
         draw: function(id, d, options) {
             var cfg = {
                 radius: 5,
-                w: 600,
-                h: 600,
+                w: options.w || 600,
+                h: options.h || 600,
                 factor: 1,
                 factorLegend: .85,
                 levels: 3,
@@ -1014,7 +1015,6 @@ SaikuChartRenderer.prototype.drawRadarChart = function (o) {
     };
 
     var options = this.getQuickOptions(o);
-
     var w = options.width || this.cccOptions.with;
     var h = options.height || this.cccOptions.height;
 
@@ -1079,6 +1079,12 @@ SaikuChartRenderer.prototype.drawRadarChart = function (o) {
     //Call function to draw the Radar chart
     //Will expect that data is in %'s
     RadarChart.draw(canvasIdSelector, d, mycfg);
+    
+    this.chart = {
+        render: function() {
+            RadarChart.draw(canvasIdSelector, d, mycfg);
+        }
+    };
 
     ////////////////////////////////////////////
     /////////// Initiate legend ////////////////
@@ -1118,4 +1124,6 @@ SaikuChartRenderer.prototype.drawRadarChart = function (o) {
         .attr("font-size", "11px")
         .attr("fill", "#737373")
         .text(function(d) { return d; });
+
+    this.render();
 };
