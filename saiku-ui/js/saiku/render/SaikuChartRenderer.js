@@ -209,7 +209,7 @@ SaikuChartRenderer.prototype.switch_chart = function (key, override) {
             this.render();
         }
     } else if (key == "radar") {
-        this.drawRadarChart();
+        this.drawRadarChart(o);
     } else if (keyOptions.hasOwnProperty(key)) {
         $(this.el).find('.zoombuttons a').hide();
         this.type = key;
@@ -798,7 +798,7 @@ SaikuChartRenderer.prototype.process_data_tree = function (args, flat, setdata) 
     }
 };
 
-SaikuChartRenderer.prototype.drawRadarChart = function () {
+SaikuChartRenderer.prototype.drawRadarChart = function (o) {
     var RadarChart = {
         draw: function(id, d, options) {
             var cfg = {
@@ -1013,8 +1013,10 @@ SaikuChartRenderer.prototype.drawRadarChart = function () {
         }
     };
 
-    var w = this.cccOptions.with;
-    var h = this.cccOptions.height;
+    var options = this.getQuickOptions(o);
+
+    var w = options.width || this.cccOptions.with;
+    var h = options.height || this.cccOptions.height;
 
     var colorscale = d3.scale.category10();
 
