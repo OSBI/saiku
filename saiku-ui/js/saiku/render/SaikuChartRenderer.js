@@ -801,11 +801,11 @@ SaikuChartRenderer.prototype.process_data_tree = function (args, flat, setdata) 
 
 SaikuChartRenderer.prototype.drawRadarChart = function (o) {
     var RadarChart = {
-        draw: function(id, d, options) {
+        draw: function(id, d, options, LegendOptions) {
             var cfg = {
                 radius: 5,
-                w: options.w || 600,
-                h: options.h || 600,
+                w: options.w || 320,
+                h: options.h || 240,
                 factor: 1,
                 factorLegend: .85,
                 levels: 3,
@@ -813,10 +813,10 @@ SaikuChartRenderer.prototype.drawRadarChart = function (o) {
                 radians: 2 * Math.PI,
                 opacityArea: 0.5,
                 ToRight: 5,
-                TranslateX: 80,
+                TranslateX: 0,
                 TranslateY: 30,
-                ExtraWidthX: 100,
-                ExtraWidthY: 100,
+                ExtraWidthX: 0,
+                ExtraWidthY: 65,
                 color: d3.scale.category10()
             };
 
@@ -831,15 +831,15 @@ SaikuChartRenderer.prototype.drawRadarChart = function (o) {
             cfg.maxValue = Math.max(cfg.maxValue, d3.max(d, function(i){return d3.max(i.map(function(o){return o.value;}))}));
 
             var allAxis = (d[0].map(function(i, j){return i.axis}));
-            var total = allAxis.length;
-            var radius = cfg.factor*Math.min(cfg.w/2, cfg.h/2);
+            var total   = allAxis.length;
+            var radius  = cfg.factor * Math.min(cfg.w / 2, cfg.h / 2);
 
             d3.select(id).select("svg").remove();
 
             var g = d3.select(id)
                 .append("svg")
-                .attr("width", cfg.w+cfg.ExtraWidthX)
-                .attr("height", cfg.h+cfg.ExtraWidthY)
+                .attr("width",  cfg.w + cfg.ExtraWidthX)
+                .attr("height", cfg.h + cfg.ExtraWidthY)
                 .append("g")
                 .attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")");
 
@@ -897,17 +897,43 @@ SaikuChartRenderer.prototype.drawRadarChart = function (o) {
                 .style("stroke", "grey")
                 .style("stroke-width", "1px");
 
+            function getTextMetrics(text, font) {
+                // re-use canvas object for better performance
+                var canvas = getTextMetrics.canvas || (getTextMetrics.canvas = document.createElement("canvas"));
+                var context = canvas.getContext("2d");
+                context.font = font;
+                var metrics = context.measureText(text);
+                return metrics;
+            }
+
             axis.append("text")
                 .attr("class", "legend")
                 .text(function(d){return d})
                 .style("font-family", "sans-serif")
-                .style("font-size", "11px")
-                .attr("text-anchor", "middle")
+                .style("font-size", "10px")
+                .attr("text-anchor", "start")
                 .attr("dy", "1.5em")
                 .attr("transform", function(d, i){return "translate(0, -10)"})
-                .attr("x", function(d, i){return cfg.w/2*(1-cfg.factorLegend*Math.sin(i*cfg.radians/total))-60*Math.sin(i*cfg.radians/total);})
-                .attr("y", function(d, i){return cfg.h/2*(1-Math.cos(i*cfg.radians/total))-20*Math.cos(i*cfg.radians/total);});
+                .attr("x", function(d, i) {
+                    var x = cfg.w / 2 * (1 - cfg.factorLegend * Math.sin(i * cfg.radians / total)) - 60 * Math.sin(i * cfg.radians / total);
+                    var textWidth = getTextMetrics(d, "10px sans-serif").width;
 
+                    x = x - textWidth / 2;
+
+                    if (x < 0) {
+                        x = 0;
+                    }
+
+                    if ((x + textWidth) > cfg.w) {
+                        x = cfg.w - textWidth;
+                    }
+
+                    return x;
+                })
+                .attr("y", function(d, i){
+                    var y = cfg.h / 2 * (1 - Math.cos(i * cfg.radians / total)) - 20 * Math.cos(i * cfg.radians / total);
+                    return y;
+                });
 
             d.forEach(function(y, x) {
                 dataValues = [];
@@ -1011,12 +1037,55 @@ SaikuChartRenderer.prototype.drawRadarChart = function (o) {
                 .style('opacity', 0)
                 .style('font-family', 'sans-serif')
                 .style('font-size', '13px');
+
+
+
+            ////////////////////////////////////////////
+            /////////// Initiate legend ////////////////
+            ////////////////////////////////////////////
+
+            var svg = d3.select(canvasIdSelector)
+                .selectAll('svg')
+                .append('svg')
+                .attr("width", w)
+                .attr("height", h);
+
+            //Initiate Legend 
+            var legend = svg.append("g")
+                .attr("class", "legend")
+                .attr("height", w)
+                .attr("width", h);
+
+            //Create colour squares
+            legend.selectAll('rect')
+                .data(LegendOptions)
+                .enter()
+                .append("rect")
+                .attr("x", 5)
+                .attr("y", function(d, i){ return i * 20;})
+                .attr("width", 10)
+                .attr("height", 10)
+                .style("fill", function(d, i){ return colorscale(i);});
+
+
+            //Create text next to squares
+            legend.selectAll('text')
+                .data(LegendOptions)
+                .enter()
+                .append("text")
+                .attr("x", 20)
+                .attr("y", function(d, i){ return i * 20 + 9;})
+                .attr("font-size", "10px")
+                .attr("fill", "#737373")
+                .text(function(d) { return d; });
+
+
         }
     };
 
     var options = this.getQuickOptions(o);
-    var w = options.width || this.cccOptions.with;
-    var h = options.height || this.cccOptions.height;
+    var w = options.width;
+    var h = options.height;
 
     var colorscale = d3.scale.category10();
 
@@ -1067,7 +1136,7 @@ SaikuChartRenderer.prototype.drawRadarChart = function (o) {
         h: h,
         maxValue: 0.6,
         levels: 6,
-        ExtraWidthX: 300
+        ExtraWidthX: 0
     }
 
     // Drawing the chart
@@ -1078,52 +1147,13 @@ SaikuChartRenderer.prototype.drawRadarChart = function (o) {
 
     //Call function to draw the Radar chart
     //Will expect that data is in %'s
-    RadarChart.draw(canvasIdSelector, d, mycfg);
+    RadarChart.draw(canvasIdSelector, d, mycfg, LegendOptions);
     
     this.chart = {
         render: function() {
-            RadarChart.draw(canvasIdSelector, d, mycfg);
+            RadarChart.draw(canvasIdSelector, d, mycfg, LegendOptions);
         }
     };
-
-    ////////////////////////////////////////////
-    /////////// Initiate legend ////////////////
-    ////////////////////////////////////////////
-
-    var svg = d3.select(canvasIdSelector)
-        .selectAll('svg')
-        .append('svg')
-        .attr("width", w+300)
-        .attr("height", h)
-
-    //Initiate Legend 
-    var legend = svg.append("g")
-        .attr("class", "legend")
-        .attr("height", 100)
-        .attr("width", 200)
-        .attr('transform', 'translate(90,20)');
-
-    //Create colour squares
-    legend.selectAll('rect')
-        .data(LegendOptions)
-        .enter()
-        .append("rect")
-        .attr("x", w - 75)
-        .attr("y", function(d, i){ return i * 20;})
-        .attr("width", 10)
-        .attr("height", 10)
-        .style("fill", function(d, i){ return colorscale(i);});
-
-    //Create text next to squares
-    legend.selectAll('text')
-        .data(LegendOptions)
-        .enter()
-        .append("text")
-        .attr("x", w - 52)
-        .attr("y", function(d, i){ return i * 20 + 9;})
-        .attr("font-size", "11px")
-        .attr("fill", "#737373")
-        .text(function(d) { return d; });
 
     this.render();
 };
