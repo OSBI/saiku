@@ -28,9 +28,10 @@ var Saiku = {
      */
     tabs: new TabSet(),
 
-	introdone: false,
+    introdone: false,
 
-    splash: new SplashScreen({toolbar: this.toolbar}),
+    splash: new SplashScreen({ toolbar: this.toolbar }),
+
     /**
      * Model which handles session and authentication
      */
@@ -93,18 +94,28 @@ var Saiku = {
             return value;
         },
 
+        joinArrayValues: function(values) {
+            if (values.length === 2) {
+                return values[1];
+            }
+            else {
+                return values[1] + '=' + values[2];
+            }
+        },
+
         paramsURI: function() {
-            var paramsURI = {},
-                couples = window.location.search.substr(1).split('&'),
-                lenCouples = couples.length,
-                keyId,
-                keyValue;
+            var paramsURI = {};
+            var couples = window.location.search.substr(1).split('&');
+            var lenCouples = couples.length;
+            var keyId;
+            var keyValue;
 
             if (window.location.search.length > 1) {
                 for (keyId = 0; keyId < lenCouples; keyId++) {
                     keyValue = couples[keyId].split('=');
                     paramsURI[decodeURIComponent(keyValue[0])] = keyValue.length > 1
-                        ? this.buildValue(decodeURIComponent(keyValue[1]))
+                        // ? this.buildValue(decodeURIComponent(keyValue[1]))
+                        ? this.buildValue(decodeURIComponent(this.joinArrayValues(keyValue)))
                         : null;
                 }
             }
@@ -113,30 +124,34 @@ var Saiku = {
         },
 
         equals: function() {
-            var params = Array.prototype.slice.call(arguments),
-                paramsURI = this.paramsURI();
+            var params = Array.prototype.slice.call(arguments);
+            var paramsURI = this.paramsURI();
 
             if (_.isEqual(paramsURI, params[0])) {
                 return true;
-            } else {
+            }
+            else {
                 return false;
             }
         },
 
         contains: function() {
-            var params = Array.prototype.slice.call(arguments),
-                paramsURI = this.paramsURI();
-
+            var params = Array.prototype.slice.call(arguments);
+            var paramsURI = this.paramsURI();
             var common = {};
+
             for (var key in paramsURI) {
-                if (params[0][key] && paramsURI[key] === params[0][key]) {
-                    common[key] = params[0][key];
+                if (paramsURI.hasOwnProperty(key)) {
+                    if (params[0][key] && paramsURI[key] === params[0][key]) {
+                        common[key] = params[0][key];
+                    }
                 }
             }
 
             if (_.isEqual(common, params[0])) {
                 return true;
-            } else {
+            }
+            else {
                 return false;
             }
         }
@@ -218,6 +233,25 @@ var Saiku = {
         }
 
         return fullS;
+    },
+    removeBrackets: function(value) {
+        var str = value.toString();
+
+        return str.replace(/[\[\]]/gi, '');
+    },
+    trimFirstLastChar: function(value, trimPosChar) {
+        var str = value.toString();
+
+        if (trimPosChar === 'first') {
+            return str.substring(1, (str.length));
+        }
+        else if (trimPosChar === 'last') {
+            return str.substring(0, (str.length - 1));
+        }
+        else {
+            // Trim first and last char
+            return str.substring(1, (str.length - 1));
+        }
     }
 };
 
@@ -416,4 +450,3 @@ SaikuTimeLogger.prototype.log = function(eventname) {
     this._timestamps.push(time);
     this._events.push(eventname);
 };
-
