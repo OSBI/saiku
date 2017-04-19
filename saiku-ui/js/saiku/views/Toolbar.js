@@ -20,7 +20,7 @@
 var Toolbar = Backbone.View.extend({
     tagName: "div",
 
-    buttons: true,
+    buttons: false,
 
     events: {
         'click a' : 'call',
@@ -30,8 +30,8 @@ var Toolbar = Backbone.View.extend({
     template: function() {
 		var paramsURI = Saiku.URLParams.paramsURI();
 
-		if (Saiku.URLParams.contains({ workspace_icons: paramsURI.workspace_icons })) {
-			this.buttons =  false;
+		if (Saiku.URLParams.contains({ hide_workspace_icons: paramsURI.hide_workspace_icons })) {
+			this.buttons =  paramsURI.hide_workspace_icons;
 
 		}
         return _.template( $("#template-toolbar").html() )({data: this});
