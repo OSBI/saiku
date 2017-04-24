@@ -5,7 +5,6 @@ import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -25,14 +24,11 @@ import org.saiku.service.util.exception.SaikuServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA. User: sramazzina Date: 21/06/12 Time: 7.35 To
@@ -139,11 +135,10 @@ public class ExcelWorksheetBuilder {
         totalsCS.setAlignment(CellStyle.ALIGN_RIGHT);
         setCellBordersColor(totalsCS);
 
-        // Setting the default styling for number cells
         numberCS = excelWorkbook.createCellStyle();
         numberCS.setFont(font);
         numberCS.setAlignment(CellStyle.ALIGN_RIGHT);
-
+        setCellBordersColor(numberCS);
         /*
          * justasg: Let's set default format, used if measure has no format at
          * all. More info:
@@ -635,25 +630,32 @@ public class ExcelWorksheetBuilder {
 	 * @param dataCell The source
 	 */
     private void applyCellFormatting(Cell cell, DataCell dataCell) {
-        /*
-        * Previously, the CellStyles were being kept on a hash map for reuse,
-        * but the key used was just the formatString (not considering the
-        * colours), so, if many cells shared the same formatString but using
-        * different colours, all those cells would have the last cell colour.
-        */
         String formatString = dataCell.getFormatString();
-        CellStyle numberCSClone = excelWorkbook.createCellStyle();
-
-        numberCSClone.cloneStyleFrom(numberCS);
-
-        try {
-            formatString = FormatUtil.getFormatString(formatString);
+        String formatKey = formatString;
+        if (!cellStyles.containsKey(formatKey)) {
+            // Inherit formatting from cube schema FORMAT_STRING
+            CellStyle numberCSClone = excelWorkbook.createCellStyle();
+            numberCSClone.cloneStyleFrom(numberCS);
             DataFormat fmt = excelWorkbook.createDataFormat();
-            short dataFormat = fmt.getFormat(formatString);
-            numberCSClone.setDataFormat(dataFormat);
-        } catch (Exception ex) {
 
+            // the format string can contain macro values such as "Standard"
+            // from mondrian.util.Format
+            // try and look it up, otherwise use the given one
+            formatString = FormatUtil.getFormatString(formatString);
+            try {
+                short dataFormat = fmt.getFormat(formatString);
+                numberCSClone.setDataFormat(dataFormat);
+            } catch (Exception e) {
+                // we tried to apply the mondrian format, but probably
+                // failed, so lets use the standard one
+                // short dataFormat =
+                // fmt.getFormat(SaikuProperties.webExportExcelDefaultNumberFormat);
+                // numberCSClone.setDataFormat(dataFormat);
+            }
+            cellStyles.put(formatKey, numberCSClone);
         }
+
+        CellStyle numberCSClone = cellStyles.get(formatKey);
 
         // Check for cell background
         Map<String, String> properties = dataCell.getProperties();
@@ -662,7 +664,6 @@ public class ExcelWorksheetBuilder {
         if (dataCell.getRawNumber() != null && properties.containsKey("style")) {
             String colorCode = properties.get("style");
             short colorCodeIndex = getColorFromCustomPalette(colorCode);
-
             if (colorCodeIndex != -1) {
                 numberCSClone.setFillForegroundColor(colorCodeIndex);
                 numberCSClone.setFillPattern(CellStyle.SOLID_FOREGROUND);
@@ -673,12 +674,10 @@ public class ExcelWorksheetBuilder {
                         colorCode = cssColorCodesProperties.getProperty(colorCode);
                     }
 
-                    int redCode   = Integer.parseInt(colorCode.substring(1, 3), 16);
+                    int redCode = Integer.parseInt(colorCode.substring(1, 3), 16);
                     int greenCode = Integer.parseInt(colorCode.substring(3, 5), 16);
-                    int blueCode  = Integer.parseInt(colorCode.substring(5, 7), 16);
-
+                    int blueCode = Integer.parseInt(colorCode.substring(5, 7), 16);
                     numberCSClone.setFillPattern(CellStyle.SOLID_FOREGROUND);
-
                     ((XSSFCellStyle) numberCSClone).setFillForegroundColor(
                             new XSSFColor(new java.awt.Color(redCode, greenCode, blueCode)));
                     ((XSSFCellStyle) numberCSClone).setFillBackgroundColor(

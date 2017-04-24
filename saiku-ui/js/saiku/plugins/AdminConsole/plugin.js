@@ -1080,8 +1080,7 @@ if(Saiku.session.isAdmin) {
         .attr({
             href: "#adminconsole",
             title: "Admin Console",
-            class: "i18n",
-			id: "admin_icon"
+            class: "i18n"
         })
         .click(Saiku.AdminConsole.show_admin)
         .addClass('admin');

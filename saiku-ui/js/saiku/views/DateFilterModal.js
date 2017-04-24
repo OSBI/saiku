@@ -227,7 +227,7 @@ var DateFilterModal = Modal.extend({
 
     help: function(event) {
         event.preventDefault();
-        window.open('http://saiku-documentation.readthedocs.io/en/latest/advanced_date_filtering.html');
+        window.open('http://wiki.meteorite.bi/display/SAIK/Advanced+Date+Filtering');
     },
 
 	open_standard_filter: function(event) {

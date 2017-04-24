@@ -89,9 +89,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         Properties ext = checkForExternalDataSourceProperties();
         if (type.equals("classpath")) {
             separator = "/";
-log.debug("init datadir= "+datadir);
+
             irm = ClassPathRepositoryManager.getClassPathRepositoryManager(cleanse(datadir), defaultRole, sessionRegistry, workspaces);
-            log.debug("2nd init datadir= "+datadir);
         } else {
             irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopasswordprovider.getPassword(),
                     oldpassword, defaultRole);
@@ -290,7 +289,6 @@ log.debug("init datadir= "+datadir);
             path = path.replace("\\", "/");
 
             log.debug("Trimmed path is: " + path);
-            path = path.replaceFirst(datadir, "");
             boolean f = true;
             if (new File(getDatadir() + separator + path).exists() && new File(getDatadir() + separator + path).isDirectory()) {
                 f = false;
@@ -347,9 +345,7 @@ log.debug("init datadir= "+datadir);
             for (DataSource data : ds) {
                 if (data.getId().equals(datasourceId)) {
                     datasources.remove(data.getName());
-                    String path = data.getPath();
-                    path = path.replaceFirst(datadir, "");
-                    irm.deleteFile(path);
+                    irm.deleteFile(data.getPath());
                     return true;
                 }
             }

@@ -117,13 +117,13 @@ var SplashScreen = Backbone.View.extend({
                 "<h2>Help</h2> <p>We provide Training, Consulting and Support to ensure " +
                 "you get the most from Saiku and your data. Our services cover all aspects of data analysis including data strategy, " +
                 "design, architecture, deployment and application/software support.</p> <table style='margin-bottom:100px;'> <tr> " +
-                "<th>Tutorials</th><th>Docs</th> <th>Support</th> </tr> <tr><td>We have a number of click through" +
+                "<th>Tutorials</th><th>Wiki</th> <th>Support</th> </tr> <tr><td>We have a number of click through" +
                 " tutorials to help get your started: <ul><li><a href='#'  class='beg_tut'>Beginners(Query building" +
                 " and" +
                 " charts)</a></li></ul>" +
                 " <td>Why" +
                 " not try  our new <a" +
-                " href='http://saiku-documentation.readthedocs.io/en/latest/' target='_blank'>Documentation site</a>" +
+                " href='http://wiki.meteorite.bi' target='_blank'>Wiki site</a>" +
                 "<br/>for community documentation.</td> <td>If you require more, <br/><a href='mailto:info@meteorite.bi'>contact us</a> for support!.</td> </tr> </table> </section>" +
                 " <section style='display:none !important;margin-top:50px' id='enterprise'> <h1 class='saikulogo'>Saiku</h1> <h2>Enterprise</h2> <p>Saiku Enterprise is our fully supported and tested server and Pentaho plugin system. Buy Saiku Enterprise from as little as $15 per user per month and enjoy the addtional features Saiku Enterprise has to offer</p> <p>To find out more visit our <a href='http://meteorite.bi' target='_blank'>site</a> or <a href='mailto:info@meteorite.bi'>schedule a call</a> with one of us and we can show you why you should choose Saiku Enterprise!</p> </section> </section> </div> </div>").html() || "";
         return _.template(template)({

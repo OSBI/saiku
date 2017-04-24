@@ -888,7 +888,7 @@ var CalculatedMemberModal = Modal.extend({
             ' ISEMPTY([Measures].[My Measure]),([Measures].[My Measure] + [Numeric Expression]),null))',
                 description: 'Insert a formula with an ISEMPTY check to ensure that only non null cells are' +
                 ' calculated',
-                doc_link:'http://saiku-documentation.readthedocs.io/en/latest/calculated_members.html?highlight=calculated%20members'},
+                doc_link:'http://wiki.meteorite.bi/display/SAIK/Non+Empty+Calculated+Members'},
             {name: 'Aggregate', example:'Aggregate(Set_Expression [ ,Numeric_Expression ])',
                 description:'Returns a number that is calculated by aggregating over the cells returned by the set expression.',
                 doc_link:'https://msdn.microsoft.com/en-us/library/ms145524.aspx'},
@@ -1062,6 +1062,6 @@ var CalculatedMemberModal = Modal.extend({
     },
 
     help: function(){
-        window.open("http://saiku-documentation.readthedocs.io/en/latest/calculated_members.html?highlight=calculated%20members");
+        window.open("http://wiki.meteorite.bi/display/SAIK/Calculated+Members");
     }
 });

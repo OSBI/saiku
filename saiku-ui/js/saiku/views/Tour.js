@@ -313,7 +313,7 @@ var that = this;
             {
                 content: '<p>We\'ve now run through the basics that Saiku Analytics has to offer. There is far more' +
                 ' that we haven\'t explored so you might want to try one of the more advanced tutorials or just get started and explore yourself.</p>' +
-                '<p>For more help, visit <a href="http://saiku-documentation.readthedocs.io/en/latest" target="_blank">http://saiku-documentation.readthedocs.io/en/latest</a>.</p>',
+                '<p>For more help, visit <a href="http://wiki.meteorite.bi" target="_blank">http://wiki.meteorite.bi</a>.</p>',
                 highlightTarget: true,
                 nextButton: true,
                 closeButton: true,
