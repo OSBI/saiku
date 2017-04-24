@@ -112,8 +112,10 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 
 			String[] typeArray = type == null ? new String[]{""} : type.split(","); // The types may be comma separated
 			List<IRepositoryObject> result = new ArrayList<>();
-			result.addAll(getRepositoryObjects(access, root, typeArray, hidden));
 
+			for (String t : typeArray) {
+				result.addAll(getRepositoryObjects(access, root, t, hidden));
+			}
 
 			return result;
 		} catch (Exception e) {
