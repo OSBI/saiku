@@ -242,6 +242,7 @@ var Workspace = Backbone.View.extend({
         $(window).resize(this.adjust);
 
 
+
         // Fire off new workspace event
         Saiku.session.trigger('workspace:new', { workspace: this });
 
@@ -259,6 +260,12 @@ var Workspace = Backbone.View.extend({
 
         if (!Saiku.session.isAdmin && Settings.SHOW_REFRESH_NONADMIN === false) {
             $(this.el).find('.refresh_cubes_nav').hide();
+        }
+        var paramsURI = Saiku.URLParams.paramsURI();
+
+        if(!Saiku.introdone && Saiku.URLParams.contains({show_help: paramsURI.show_help})){
+            startIntro();
+            Saiku.introdone = true;
         }
 
         return this;
@@ -428,15 +435,51 @@ var Workspace = Backbone.View.extend({
 
             var addCustomFilter = function(axis, filterExpression) {
                 var a = this.query.helper.getAxis(axis);
+                var checkChar = {
+                    first: filterExpression.charAt(0),
+                    last: filterExpression.charAt(filterExpression.length - 1)
+                };
+                var indexHierarchy = '-1';
                 var expressions = [];
-                expressions.push(filterExpression);
+                var arrHierarchy = [];
+                var hierarchy = '';
+                var level;
+                var filter;
+                var hierarchyLevel;
+
+                if (checkChar.first === '(' && checkChar.last === ')') {
+                    filterExpression = Saiku.trimFirstLastChar(filterExpression);
+
+                    if (filterExpression.indexOf('],') !== -1) {
+                        hierarchyLevel = filterExpression.split('],')[0].split('].[');
+                        level = _.last(hierarchyLevel);
+                        arrHierarchy = _.first(hierarchyLevel, hierarchyLevel.length > 2 ? 2 : 1);
+                        filter = filterExpression.split('],')[1].trim();
+
+                        for (var i = 0, iLen = arrHierarchy.length; i < iLen; i++) {
+                            hierarchy += '[' + Saiku.removeBrackets(arrHierarchy[i]) + '].';
+                        }
+
+                        hierarchy = Saiku.trimFirstLastChar(hierarchy, 'last');
+
+                        this.query.helper.includeLevel(axis, hierarchy, level, indexHierarchy);
+                    }
+                    else {
+                        filter = filterExpression;
+                    }
+                }
+                else {
+                    filter = filterExpression;
+                }
+
+                expressions.push(filter);
 
                 this.query.helper.removeFilter(a, 'Generic');
                 a.filters.push({
-                    "flavour" : "Generic",
-                    "operator": null,
-                    "function" : "Filter",
-                    "expressions": expressions
+                    'flavour': 'Generic',
+                    'operator': null,
+                    'function': 'Filter',
+                    'expressions': expressions
                 });
             }.bind(this);
 
@@ -663,10 +706,10 @@ var Workspace = Backbone.View.extend({
         if (model.type === "QUERYMODEL") {
 
             var self = this;
-			if(self.dimension_list!=null){
-            	var dimlist = dimension_el ? dimension_el : $(self.dimension_list.el);
-			}
-			else{
+            if(self.dimension_list!=null){
+                var dimlist = dimension_el ? dimension_el : $(self.dimension_list.el);
+            }
+            else{
                 var dimlist = dimension_el ? dimension_el : null;
             }
 

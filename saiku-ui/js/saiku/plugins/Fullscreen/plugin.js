@@ -5,7 +5,7 @@ var Fullscreen = Backbone.Model.extend({
         // Add buckets button
         _.bindAll(this, "change_handler", "adjust");
         if (document && document["addEventListener"]) {
-            document.addEventListener("fullscreenchange", this.change_handler, false);      
+            document.addEventListener("fullscreenchange", this.change_handler, false);
             document.addEventListener("webkitfullscreenchange", this.change_handler, false);
             document.addEventListener("mozfullscreenchange", this.change_handler, false);
             this.add_button();
@@ -17,8 +17,8 @@ var Fullscreen = Backbone.Model.extend({
         var supportsFullScreen = (elem && (elem.requestFullscreen || elem.msRequestFullscreen || elem.mozRequestFullScreen || elem.webkitRequestFullscreen));
         if (!supportsFullScreen)
             return;
-        var button = 
-            $('<a href="#fullscreen" class="fullscreen button disabled_toolbar i18n" title="Fullscreen"></a>')
+        var button =
+            $('<a href="#fullscreen" id="fullscreen_icon" class="fullscreen button disabled_toolbar i18n" title="Fullscreen"></a>')
             .css({  'background-image': "url('js/saiku/plugins/Fullscreen/fullscreen.png')",
                     'background-repeat':'no-repeat',
                     'background-position':'50% 50%',
@@ -41,7 +41,7 @@ var Fullscreen = Backbone.Model.extend({
                 //$(fullscreenElement).css({height: '100%'});
                 //this.workspace.trigger('fullscreen:enabled');
             } else {
-                this.workspace.trigger('fullscreen:disabled');        
+                this.workspace.trigger('fullscreen:disabled');
             }
         }.bind(this), 50);
     },

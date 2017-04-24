@@ -162,6 +162,6 @@ var FilterModal = Modal.extend({
     },
 
     help: function(){
-        window.open("http://wiki.meteorite.bi/display/SAIK/Filtering");
+        window.open("http://saiku-documentation.readthedocs.io/en/latest/filtering.html");
     }
 });
