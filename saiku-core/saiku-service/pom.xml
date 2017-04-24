@@ -176,6 +176,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- Hazelcast dependency for distributed sessions -->
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast-wm</artifactId>
@@ -388,6 +389,12 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
+        </dependency>
+        <!-- Marklogic client api for NoSQL repository manager impl -->
+        <dependency>
+            <groupId>com.marklogic</groupId>
+            <artifactId>java-client-api</artifactId>
+            <version>3.0.7</version>
         </dependency>
     </dependencies>
 </project>
