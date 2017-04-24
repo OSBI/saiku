@@ -63,376 +63,383 @@ import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * QueryServlet contains all the methods required when manipulating an OLAP Query.
- *
  * @author Paul Stoellberger
+ *
  */
 @Component
 @Path("/saiku/{username}/repository")
 @XmlAccessorType(XmlAccessType.NONE)
 public class PentahoRepositoryResource2 implements ISaikuRepository {
 
-  private static final Logger log = LoggerFactory.getLogger(PentahoRepositoryResource2.class);
+	private static final Logger log = LoggerFactory.getLogger(PentahoRepositoryResource2.class);
 
-  private static final String CACHE_REPOSITORY_DOCUMENT = "CDF_REPOSITORY_DOCUMENT";
-  IPentahoSession userSession;
-  ICacheManager cacheManager;
+	private static final String CACHE_REPOSITORY_DOCUMENT = "CDF_REPOSITORY_DOCUMENT";
+	IPentahoSession userSession;
+	ICacheManager cacheManager;
 
-  boolean cachingAvailable;
+	boolean cachingAvailable;
 
-  private ISolutionRepository repository;
+	private ISolutionRepository repository;
 
-  public PentahoRepositoryResource2() {
+	public PentahoRepositoryResource2() {
 
-    cacheManager = PentahoSystem.getCacheManager(userSession);
-    cachingAvailable = cacheManager != null && cacheManager.cacheEnabled();
-    userSession = PentahoSessionHolder.getSession();
-    repository = PentahoSystem.get(ISolutionRepository.class, userSession);
+		cacheManager = PentahoSystem.getCacheManager(userSession);
+		cachingAvailable = cacheManager != null && cacheManager.cacheEnabled();
+		userSession = PentahoSessionHolder.getSession();
+		repository = PentahoSystem.get(ISolutionRepository.class, userSession);
 
-  }
+	}
 
-  private Document getRepositoryDocument(final IPentahoSession userSession) throws ParserConfigurationException {      //
-    Document repositoryDocument;
-    if (cachingAvailable && (repositoryDocument = (Document) cacheManager.getFromSessionCache(userSession, CACHE_REPOSITORY_DOCUMENT)) != null) {
-      log.debug("Repository Document found in cache");
-      return repositoryDocument;
-    } else {
-      //System.out.println(Calendar.getInstance().getTime() + ": Getting repository Document");
-      final DOMReader reader = new DOMReader();
-      repositoryDocument = reader.read(PentahoSystem.get(ISolutionRepositoryService.class, userSession).getSolutionRepositoryDoc(userSession, new String[0]));
-      //repositoryDocument = reader.read(new SolutionRepositoryService().getSolutionRepositoryDoc(userSession, new String[0]));
-      cacheManager.putInSessionCache(userSession, CACHE_REPOSITORY_DOCUMENT, repositoryDocument);
-      //System.out.println(Calendar.getInstance().getTime() + ": Repository Document Returned");
-    }
-    return repositoryDocument;
-  }
+	private Document getRepositoryDocument(final IPentahoSession userSession) throws ParserConfigurationException
+	{      //
+		Document repositoryDocument;
+		if (cachingAvailable && (repositoryDocument = (Document) cacheManager.getFromSessionCache(userSession, CACHE_REPOSITORY_DOCUMENT)) != null)
+		{
+			log.debug("Repository Document found in cache");
+			return repositoryDocument;
+		}
+		else
+		{
+			//System.out.println(Calendar.getInstance().getTime() + ": Getting repository Document");
+			final DOMReader reader = new DOMReader();
+			repositoryDocument = reader.read(PentahoSystem.get(ISolutionRepositoryService.class, userSession).getSolutionRepositoryDoc(userSession, new String[0]));
+			//repositoryDocument = reader.read(new SolutionRepositoryService().getSolutionRepositoryDoc(userSession, new String[0]));
+			cacheManager.putInSessionCache(userSession, CACHE_REPOSITORY_DOCUMENT, repositoryDocument);
+			//System.out.println(Calendar.getInstance().getTime() + ": Repository Document Returned");
+		}
+		return repositoryDocument;
+	}
 
 
-  /**
-   * Get Saved Queries.
-   *
-   * @return A list of SavedQuery Objects.
-   */
-  @GET
-  @Produces({"application/json"})
-  public List<IRepositoryObject> getRepository(
-      @QueryParam("path") String path,
-      @QueryParam("type") String type) {
-    List<IRepositoryObject> objects = new ArrayList<IRepositoryObject>();
-    try {
-      if (path != null && (path.startsWith("/") || path.startsWith("."))) {
-        throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + path);
-      }
-      userSession = PentahoSessionHolder.getSession();
-      repository = PentahoSystem.get(ISolutionRepository.class, userSession);
-      if (StringUtils.isNotBlank(path)) {
-        ISolutionFile sf = repository.getSolutionFile(path, ISolutionRepository.ACTION_EXECUTE);
-        if (sf != null && !sf.isDirectory() && (StringUtils.isBlank(type) || sf.getExtension().endsWith(type.toLowerCase()))) {
-          List<AclMethod> acls = getAcl(path, false);
-          String localizedName = repository.getLocalizedFileProperty(sf, "title", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
-          objects.add(new RepositoryFileObject(localizedName, "#" + path, type, path, acls));
-          return objects;
-        }
-      }
-      Document navDoc = getRepositoryDocument(PentahoSessionHolder.getSession());
-      Node tree = navDoc.getRootElement();
+	/**
+	 * Get Saved Queries.
+	 * @return A list of SavedQuery Objects.
+	 */
+	@GET
+	@Produces({"application/json" })
+	public List<IRepositoryObject> getRepository (
+		@QueryParam("path") String path,
+		@QueryParam("type") String type)
+	{
+	  List<IRepositoryObject> objects = new ArrayList<IRepositoryObject>();
+	  try {
+		if (path != null && (path.startsWith("/") || path.startsWith("."))) {
+		  throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + path);
+		}
+		userSession = PentahoSessionHolder.getSession();
+		repository = PentahoSystem.get(ISolutionRepository.class, userSession);
+		if (StringUtils.isNotBlank(path)) {
+		  ISolutionFile sf = repository.getSolutionFile(path, ISolutionRepository.ACTION_EXECUTE);
+		  if (sf != null && !sf.isDirectory() && (StringUtils.isBlank(type) || sf.getExtension().endsWith(type.toLowerCase()))) {
+			List<AclMethod> acls = getAcl(path, false);
+			String localizedName = repository.getLocalizedFileProperty(sf, "title", ISolutionRepository.ACTION_EXECUTE); //$NON-NLS-1$
+			objects.add(new RepositoryFileObject(localizedName, "#" + path, type, path, acls));
+			return objects;
+		  }
+		}
+		Document navDoc = getRepositoryDocument(PentahoSessionHolder.getSession());
+		Node tree = navDoc.getRootElement();
 // List nodes = tree.selectNodes("./file[@name='project']/file[@name='common']");
-      String context = null;
-      if (StringUtils.isNotBlank(path)) {
-        String rootNodePath = ".";
-        String[] parts = path.split("/");
-        for (String part : parts) {
-          rootNodePath += "/file[@name='" + part + "']";
-        }
-        tree = tree.selectSingleNode(rootNodePath);
-        if (tree == null) {
-          throw new Exception("Cannot find root folder with path: " + rootNodePath);
-        }
-        path = StringUtils.join(parts, "/");
-        context = path;
-      } else {
-        context = "";
-      }
+		String context = null;
+		if (StringUtils.isNotBlank(path)) {
+		  String rootNodePath = ".";
+		  String[] parts = path.split("/");
+		  for (String part : parts) {
+			rootNodePath += "/file[@name='" + part + "']";
+		  }
+		  tree = tree.selectSingleNode(rootNodePath);
+		  if (tree == null) {
+			throw new Exception("Cannot find root folder with path: " + rootNodePath);
+		  }
+		  path = StringUtils.join(parts, "/");
+		  context = path;
+		} else {
+		  context = "";
+		}
+		return processTree(tree, context, type);
+	  } catch (Exception e) {
+		log.error(this.getClass().getName(),e);
+		e.printStackTrace();
+	  }
+	  return objects;
+	}
 
-      List<IRepositoryObject> resultList = new ArrayList<>();
-      String[] typeArray = type == null ? new String[]{""} : type.split(","); // The types may be comma separated
-      for (String t : typeArray) {
-        resultList.addAll(processTree(tree, context, t));
-      }
-
-      return resultList;
-    } catch (Exception e) {
-      log.error(this.getClass().getName(), e);
-      e.printStackTrace();
-    }
-    return objects;
-  }
 
 
   /**
-   * Load a resource.
-   *
-   * @param file - The name of the repository file to load.
-   * @param path - The path of the given file to load.
-   * @return A Repository File Object.
-   */
-  @GET
-  @Produces({"text/plain"})
-  @Path("/resource")
-  public Response getResource(@QueryParam("file") String file) {
-    try {
-      if (file == null || file.startsWith("/") || file.startsWith(".")) {
-        throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
-      }
+	 * Load a resource.
+	 * @param file - The name of the repository file to load.
+	 * @param path - The path of the given file to load.
+	 * @return A Repository File Object.
+	 */
+	@GET
+	@Produces({"text/plain" })
+	@Path("/resource")
+	public Response getResource (@QueryParam("file") String file)
+	{
+		try {
+			if (file == null || file.startsWith("/") || file.startsWith(".")) {
+				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
+			}
 
-      String[] pathParts = file.split("/");
-      String solution = pathParts.length > 1 ? pathParts[0] : "";
-      String path = "";
-      if (pathParts.length > 2) {
-        for (int i = 1; i < pathParts.length - 1; i++) {
-          path += "/" + pathParts[i];
-        }
-      }
-      String action = pathParts[pathParts.length - 1];
+			String[] pathParts = file.split("/");
+			String solution = pathParts.length > 1 ? pathParts[0] : "";
+			String path = "";
+			if (pathParts.length > 2) {
+				for (int i = 1; i < pathParts.length - 1; i++) {
+					path += "/" + pathParts[i];
+				}
+			}
+			String action = pathParts[pathParts.length - 1];
 
-      System.out.println("file: " + file + " solution:" + solution + " path:" + path + " action:" + action);
+			System.out.println("file: " + file + " solution:"+solution+" path:"+path + " action:" + action);
 
-      String fullPath = ActionInfo.buildSolutionPath(solution, path, action);
-      ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession());
+			String fullPath = ActionInfo.buildSolutionPath(solution, path, action);
+			ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, PentahoSessionHolder.getSession());
 
-      if (repository == null) {
-        log.error("Access to Repository has failed");
-        throw new NullPointerException("Access to Repository has failed");
-      }
+			if( repository == null ) {
+				log.error("Access to Repository has failed");
+				throw new NullPointerException("Access to Repository has failed");
+			}
 
-      if (repository.resourceExists(fullPath)) {
-        String doc = repository.getResourceAsString(fullPath, ISolutionRepository.ACTION_EXECUTE);
-        if (doc == null) {
-          log.error("Error retrieving document from solution repository");
-          throw new NullPointerException("Error retrieving saiku document from solution repository");
-        }
-        return Response.ok(doc.getBytes("UTF-8"), MediaType.TEXT_PLAIN).header(
-            "content-length", doc.getBytes("UTF-8").length).build();
-      }
+			if (repository.resourceExists(fullPath)) {
+				String doc = repository.getResourceAsString(fullPath, ISolutionRepository.ACTION_EXECUTE);
+				if (doc == null) {
+					log.error("Error retrieving document from solution repository");
+					throw new NullPointerException("Error retrieving saiku document from solution repository");
+				}
+				return Response.ok(doc.getBytes("UTF-8"), MediaType.TEXT_PLAIN).header(
+						"content-length",doc.getBytes("UTF-8").length).build();
+			}
 
-    } catch (Exception e) {
-      log.error("Cannot load file (" + file + ")", e);
-    }
-    return Response.serverError().build();
-  }
+		}
+		catch(Exception e){
+			log.error("Cannot load file (" + file + ")",e);
+		}
+		return Response.serverError().build();
+	}
 
-  /**
-   * Save a resource.
-   *
-   * @param file    - The name of the repository file to load.
-   * @param path    - The path of the given file to load.
-   * @param content - The content to save.
-   * @return Status
-   */
-  @POST
-  @Path("/resource")
-  public Response saveResource(
-      @FormParam("file") String file,
-      @FormParam("content") String content) {
-    try {
-      if (file == null || file.startsWith("/") || file.startsWith(".")) {
-        throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
-      }
+	/**
+	 * Save a resource.
+	 * @param file - The name of the repository file to load.
+	 * @param path - The path of the given file to load.
+	 * @param content - The content to save.
+	 * @return Status
+	 */
+	@POST
+	@Path("/resource")
+	public Response saveResource (
+			@FormParam("file") String file,
+			@FormParam("content") String content)
+	{
+		try {
+			if (file == null || file.startsWith("/") || file.startsWith(".")) {
+				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + file);
+			}
 
-      String[] pathParts = file.split("/");
-      String solution = pathParts.length > 1 ? pathParts[0] : "";
-      String path = "";
-      if (pathParts.length > 2) {
-        for (int i = 1; i < pathParts.length - 1; i++) {
-          path += "/" + pathParts[i];
-        }
-      }
-      String action = pathParts[pathParts.length - 1];
+			String[] pathParts = file.split("/");
+			String solution = pathParts.length > 1 ? pathParts[0] : "";
+			String path = "";
+			if (pathParts.length > 2) {
+				for (int i = 1; i < pathParts.length - 1; i++) {
+					path += "/" + pathParts[i];
+				}
+			}
+			String action = pathParts[pathParts.length - 1];
 
-      System.out.println("file: " + file + " solution:" + solution + " path:" + path + " action:" + action);
+			System.out.println("file: " + file + " solution:"+solution+" path:"+path + " action:" + action);
 
-      String fullPath = ActionInfo.buildSolutionPath(solution, path, action);
-      IPentahoSession userSession = PentahoSessionHolder.getSession();
-      ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
+			String fullPath = ActionInfo.buildSolutionPath(solution, path, action);
+			IPentahoSession userSession = PentahoSessionHolder.getSession();
+			ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
 
-      if (repository == null) {
-        log.error("Access to Repository has failed");
-        throw new NullPointerException("Access to Repository has failed");
-      }
-      String base = PentahoSystem.getApplicationContext().getSolutionRootPath();
-      String parentPath = ActionInfo.buildSolutionPath(solution, path, "");
-      ISolutionFile parentFile = repository.getSolutionFile(parentPath, ISolutionRepository.ACTION_CREATE);
-      String filePath = parentPath + ISolutionRepository.SEPARATOR + action;
-      ISolutionFile fileToSave = repository.getSolutionFile(fullPath, ISolutionRepository.ACTION_UPDATE);
-
-
-      if (fileToSave != null || (!repository.resourceExists(filePath) && parentFile != null)) {
-        repository.publish(base, '/' + parentPath, action, content.getBytes(), true);
-        log.debug(PluginConfig.PLUGIN_NAME + " : Published " + solution + " / " + path + " / " + action);
-      } else {
-        throw new Exception("Error ocurred while saving query to solution repository");
-      }
-      return Response.ok().build();
-    } catch (Exception e) {
-      log.error("Cannot save file (" + file + ")", e);
-    }
-    return Response.serverError().build();
-  }
-
-  /**
-   * Delete a resource.
-   *
-   * @param file - The name of the repository file to load.
-   * @param path - The path of the given file to load.
-   * @return Status
-   */
-  @DELETE
-  @Path("/resource")
-  public Response deleteResource(
-      @QueryParam("file") String file) {
-    return Response.serverError().build();
-  }
+			if( repository == null ) {
+				log.error("Access to Repository has failed");
+				throw new NullPointerException("Access to Repository has failed");
+			}
+			String base = PentahoSystem.getApplicationContext().getSolutionRootPath();
+			String parentPath = ActionInfo.buildSolutionPath(solution, path, "");
+			ISolutionFile parentFile = repository.getSolutionFile(parentPath, ISolutionRepository.ACTION_CREATE);
+			String filePath = parentPath + ISolutionRepository.SEPARATOR + action;
+			ISolutionFile fileToSave = repository.getSolutionFile(fullPath, ISolutionRepository.ACTION_UPDATE);
 
 
-  @GET
-  @Path("/zip")
-  public Response getResourcesAsZip(
-      @QueryParam("directory") String directory,
-      @QueryParam("files") String files) {
-    try {
-      if (StringUtils.isBlank(directory))
-        return Response.ok().build();
 
-      IPentahoSession userSession = PentahoSessionHolder.getSession();
-      ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
-      ByteArrayOutputStream bos = new ByteArrayOutputStream();
-      ZipOutputStream zos = new ZipOutputStream(bos);
+			if (fileToSave != null || (!repository.resourceExists(filePath) && parentFile != null)) {
+				repository.publish(base, '/' + parentPath, action, content.getBytes() , true);
+				log.debug(PluginConfig.PLUGIN_NAME + " : Published " + solution + " / " + path + " / " + action );
+			} else {
+				throw new Exception("Error ocurred while saving query to solution repository");
+			}
+			return Response.ok().build();
+		}
+		catch(Exception e){
+			log.error("Cannot save file (" + file + ")",e);
+		}
+		return Response.serverError().build();
+	}
 
-      String[] fileArray = null;
-      if (StringUtils.isBlank(files)) {
-        ISolutionFile dir = repository.getSolutionFile(directory);
-        for (ISolutionFile fo : dir.listFiles()) {
-          if (!fo.isDirectory()) {
-            String entry = fo.getFileName();
-            if (".saiku".equals(fo.getExtension())) {
-              byte[] doc = fo.getData();
-              ZipEntry ze = new ZipEntry(entry);
-              zos.putNextEntry(ze);
-              zos.write(doc);
-            }
-          }
-        }
-      } else {
-        fileArray = files.split(",");
-        for (String f : fileArray) {
-          String resource = directory + "/" + f;
-          Response r = getResource(resource);
-          if (Status.OK.equals(Status.fromStatusCode(r.getStatus()))) {
-            byte[] doc = (byte[]) r.getEntity();
-            ZipEntry ze = new ZipEntry(f);
-            zos.putNextEntry(ze);
-            zos.write(doc);
-          }
-        }
-      }
-      zos.closeEntry();
-      zos.close();
-      byte[] zipDoc = bos.toByteArray();
-
-      return Response.ok(zipDoc, MediaType.APPLICATION_OCTET_STREAM).header(
-          "content-disposition",
-          "attachment; filename = " + directory + ".zip").header(
-          "content-length", zipDoc.length).build();
+	/**
+	 * Delete a resource.
+	 * @param file - The name of the repository file to load.
+	 * @param path - The path of the given file to load.
+	 * @return Status
+	 */
+	@DELETE
+	@Path("/resource")
+	public Response deleteResource (
+			@QueryParam("file") String file)
+	{
+		return Response.serverError().build();
+	}
 
 
-    } catch (Exception e) {
-      log.error("Cannot zip resources " + files, e);
-      String error = ExceptionUtils.getRootCauseMessage(e);
-      return Response.serverError().entity(error).build();
-    }
+	@GET
+	@Path("/zip")
+	public Response getResourcesAsZip (
+			@QueryParam("directory") String directory,
+			@QueryParam("files") String files)
+	{
+		try {
+			if (StringUtils.isBlank(directory))
+				return Response.ok().build();
 
-  }
+			IPentahoSession userSession = PentahoSessionHolder.getSession();
+			ISolutionRepository repository = PentahoSystem.get(ISolutionRepository.class, userSession);
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			ZipOutputStream zos = new ZipOutputStream(bos);
 
-  @POST
-  @Path("/zipupload")
-  @Consumes(MediaType.MULTIPART_FORM_DATA)
-  public Response uploadArchiveZip(
-      @QueryParam("test") String test,
-      @FormDataParam("file") InputStream uploadedInputStream,
-      @FormDataParam("file") FormDataContentDisposition fileDetail,
-      @FormDataParam("directory") String directory) {
-    String zipFile = fileDetail.getFileName();
-    String output = "";
-    try {
-      if (StringUtils.isBlank(zipFile))
-        throw new Exception("You must specify a zip file to upload");
+			String[] fileArray = null;
+			if (StringUtils.isBlank(files)) {
+				ISolutionFile dir = repository.getSolutionFile(directory);
+				for (ISolutionFile fo : dir.listFiles()) {
+					if (!fo.isDirectory()) {
+						String entry = fo.getFileName();
+						if (".saiku".equals(fo.getExtension())) {
+							byte[] doc = fo.getData();
+							ZipEntry ze = new ZipEntry(entry);
+							zos.putNextEntry(ze);
+							zos.write(doc);
+						}
+					}
+				}
+			} else {
+				fileArray = files.split(",");
+				for (String f : fileArray) {
+					String resource = directory + "/" + f;
+					Response r = getResource(resource);
+					if (Status.OK.equals(Status.fromStatusCode(r.getStatus()))) {
+						byte[] doc = (byte[]) r.getEntity();
+						ZipEntry ze = new ZipEntry(f);
+						zos.putNextEntry(ze);
+						zos.write(doc);
+					}
+				}
+			}
+			zos.closeEntry();
+			zos.close();
+			byte[] zipDoc = bos.toByteArray();
 
-      output = "Uploding file: " + zipFile + " ...\r\n";
-      ZipInputStream zis = new ZipInputStream(uploadedInputStream);
-      ZipEntry ze = zis.getNextEntry();
-      byte[] doc = null;
-      boolean isFile = false;
-      if (ze == null) {
-        doc = IOUtils.toByteArray(uploadedInputStream);
-        isFile = true;
-      }
-      while (ze != null || doc != null) {
-        String fileName = null;
-        if (!isFile) {
-          fileName = ze.getName();
-          doc = IOUtils.toByteArray(zis);
-        } else {
-          fileName = zipFile;
-        }
+			return Response.ok(zipDoc, MediaType.APPLICATION_OCTET_STREAM).header(
+					"content-disposition",
+					"attachment; filename = " + directory + ".zip").header(
+							"content-length",zipDoc.length).build();
 
-        output += "Saving " + fileName + "... ";
-        String fullPath = (StringUtils.isNotBlank(directory)) ? directory + "/" + fileName : fileName;
 
-        String content = new String(doc);
-        Response r = saveResource(fullPath, content);
-        doc = null;
+		} catch(Exception e){
+			log.error("Cannot zip resources " + files ,e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return Response.serverError().entity(error).build();
+		}
 
-        if (Status.OK.getStatusCode() != r.getStatus()) {
-          output += " ERROR: " + r.getEntity().toString() + "\r\n";
-        } else {
-          output += " OK\r\n";
-        }
-        if (!isFile)
-          ze = zis.getNextEntry();
-      }
+	}
 
-      if (!isFile) {
-        zis.closeEntry();
-        zis.close();
-      }
-      uploadedInputStream.close();
+	@POST
+	@Path("/zipupload")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response uploadArchiveZip(
+			@QueryParam("test") String test,
+			@FormDataParam("file") InputStream uploadedInputStream,
+			@FormDataParam("file") FormDataContentDisposition fileDetail,
+			@FormDataParam("directory") String directory)
+	{
+		String zipFile = fileDetail.getFileName();
+		String output = "";
+		try {
+			if (StringUtils.isBlank(zipFile))
+				throw new Exception("You must specify a zip file to upload");
 
-      output += " SUCCESSFUL!\r\n";
-      return Response.ok(output).build();
+			output = "Uploding file: " + zipFile + " ...\r\n";
+			ZipInputStream zis = new ZipInputStream(uploadedInputStream);
+		    ZipEntry ze = zis.getNextEntry();
+		    byte[] doc = null;
+		    boolean isFile = false;
+		    if (ze == null) {
+		    	doc = IOUtils.toByteArray(uploadedInputStream);
+		    	isFile = true;
+		    }
+			while (ze != null || doc != null) {
+					String fileName = null;
+				   if (!isFile) {
+					   fileName = ze.getName();
+					   doc = IOUtils.toByteArray(zis);
+				   } else {
+					   fileName = zipFile;
+				   }
 
-    } catch (Exception e) {
-      log.error("Cannot unzip resources " + zipFile, e);
-      String error = ExceptionUtils.getRootCauseMessage(e);
-      return Response.serverError().entity(output + "\r\n" + error).build();
-    }
-  }
+		    	   output += "Saving " + fileName + "... ";
+		    	   String fullPath = (StringUtils.isNotBlank(directory)) ? directory + "/" + fileName : fileName;
 
-  private List<IRepositoryObject> processTree(final Node tree, final String parentPath, String fileType) {
-    final String xPathDir = "./file"; //$NON-NLS-1$
-    List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
-    List<AclMethod> defaultAcls = new ArrayList<AclMethod>();
-    defaultAcls.add(AclMethod.READ);
-    List<IPentahoAclEntry> adminAcl = new ArrayList<IPentahoAclEntry>();
-    try {
-      List nodes = tree.selectNodes(xPathDir);
-      for (final Object node1 : nodes) {
-        final Node node = (Node) node1;
-        String name = node.valueOf("@name");
-        final String localizedName = node.valueOf("@localized-name");
-        final boolean visible = node.valueOf("@visible").equals("true");
-        final boolean isDirectory = node.valueOf("@isDirectory").equals("true");
-        final String path = StringUtils.isNotBlank(parentPath) ? parentPath + "/" + name : name;
-        if (visible && isDirectory) {
-          List<IRepositoryObject> children = new ArrayList<IRepositoryObject>();
+		    	   String content = new String(doc);
+		    	   Response r = saveResource(fullPath, content);
+		    	   doc = null;
+
+		    	   if (Status.OK.getStatusCode() != r.getStatus()) {
+		    		   output += " ERROR: " + r.getEntity().toString() + "\r\n";
+		    	   } else {
+		    		   output += " OK\r\n";
+		    	   }
+		    	   if (!isFile)
+		    		   ze = zis.getNextEntry();
+		    	}
+
+				if (!isFile) {
+					zis.closeEntry();
+					zis.close();
+				}
+				uploadedInputStream.close();
+
+		    	output += " SUCCESSFUL!\r\n";
+		    	return Response.ok(output).build();
+
+		} catch(Exception e){
+			log.error("Cannot unzip resources " + zipFile ,e);
+			String error = ExceptionUtils.getRootCauseMessage(e);
+			return Response.serverError().entity(output + "\r\n" + error).build();
+		}
+	}
+
+  private List<IRepositoryObject> processTree(final Node tree, final String parentPath, String fileType)
+  {
+	final String xPathDir = "./file"; //$NON-NLS-1$
+	List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
+	List<AclMethod> defaultAcls = new ArrayList<AclMethod>();
+	defaultAcls.add(AclMethod.READ);
+	List<IPentahoAclEntry> adminAcl = new ArrayList<IPentahoAclEntry>();
+	try
+	{
+	  List nodes = tree.selectNodes(xPathDir);
+	  for (final Object node1 : nodes)
+	  {
+		final Node node = (Node) node1;
+		String name = node.valueOf("@name");
+		final String localizedName = node.valueOf("@localized-name");
+		final boolean visible = node.valueOf("@visible").equals("true");
+		final boolean isDirectory = node.valueOf("@isDirectory").equals("true");
+		final String path = StringUtils.isNotBlank(parentPath) ? parentPath + "/" + name : name;
+		if (visible && isDirectory)
+		{
+		  List<IRepositoryObject> children = new ArrayList<IRepositoryObject>();
 //		  List<Node> fileNodes;
 //		  if (StringUtils.isBlank(fileType)) {
 //			fileNodes = node.selectNodes("./file[@isDirectory='false']");
@@ -450,40 +457,43 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 //			  children.add(new RepositoryFileObject(t, "#" + path + "/" + n, fileType, path + "/" + n, acls));
 //			}
 //		  }
-          children.addAll(processTree(node, path, fileType));
-          List<AclMethod> acls = getAcl(path, true);
-          repoObjects.add(new RepositoryFolderObject(localizedName, "#" + path, path, acls, children));
-        } else if (visible && !isDirectory) {
-          if (StringUtils.isBlank(fileType) || name.endsWith(fileType)) {
-            List<AclMethod> acls = getAcl(path, false);
-            repoObjects.add(new RepositoryFileObject(localizedName, "#" + path, fileType, path, acls));
-          }
-        }
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-    return repoObjects;
+		  children.addAll(processTree(node, path, fileType));
+		  List<AclMethod> acls = getAcl(path, true);
+		  repoObjects.add(new RepositoryFolderObject(localizedName, "#" + path, path, acls, children));
+		} else if (visible && !isDirectory) {
+		  if (StringUtils.isBlank(fileType) || name.endsWith(fileType)) {
+			List<AclMethod> acls = getAcl(path, false);
+			repoObjects.add(new RepositoryFileObject(localizedName, "#" + path, fileType, path, acls));
+		  }
+		}
+	  }
+	}
+	catch (Exception e)
+	{
+	  e.printStackTrace();
+	}
+	return repoObjects;
   }
 
 
   private List<AclMethod> getAcl(String file, boolean folder) {
-    boolean isAdministrator = SecurityHelper.isPentahoAdministrator(PentahoSessionHolder.getSession());
-    ISolutionFile solutionFile = repository.getSolutionFile(file, ISolutionRepository.ACTION_EXECUTE);
-    List<AclMethod> acls = new ArrayList<AclMethod>();
-    acls.add(AclMethod.READ);
+		boolean isAdministrator = SecurityHelper.isPentahoAdministrator(PentahoSessionHolder.getSession());
+		ISolutionFile solutionFile = repository.getSolutionFile(file, ISolutionRepository.ACTION_EXECUTE);
+		List<AclMethod> acls = new ArrayList<AclMethod>();
+		acls.add(AclMethod.READ);
 
-    if (isAdministrator
-        || repository.hasAccess(solutionFile, IPentahoAclEntry.PERM_UPDATE)
-        || (folder && repository.hasAccess(solutionFile, IPentahoAclEntry.PERM_CREATE))) {
-      acls.add(AclMethod.WRITE);
-    }
-    if (isAdministrator || repository.hasAccess(solutionFile, IPentahoAclEntry.PERM_ADMINISTRATION)) {
-      acls.add(AclMethod.GRANT);
-    }
-    return acls;
+		if (isAdministrator
+	    		|| repository.hasAccess(solutionFile, IPentahoAclEntry.PERM_UPDATE)
+	    		|| (folder && repository.hasAccess(solutionFile, IPentahoAclEntry.PERM_CREATE))) {
+			acls.add(AclMethod.WRITE);
+		}
+		if (isAdministrator || repository.hasAccess(solutionFile, IPentahoAclEntry.PERM_ADMINISTRATION)) {
+			acls.add(AclMethod.GRANT);
+		}
+		return acls;
 
-  }
+	}
+
 
 
 }

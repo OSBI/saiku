@@ -142,28 +142,29 @@ public class License {
   @Produces({ "text/plain" })
   @ReturnType("java.lang.String")
   public Response validateLicense() {
-//    if(!userService.isAdmin()){
-//      return Response.status(Response.Status.FORBIDDEN).build();
-//    }
-//    try {
-//      licenseUtils.validateLicense();
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-//                     .entity(e.getLocalizedMessage()).build();
-//    } catch (ClassNotFoundException e) {
-//      e.printStackTrace();
-//      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-//                     .entity(e.getLocalizedMessage()).build();
-//    } catch (LicenseException e) {
-//      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-//                     .entity(e.getLocalizedMessage()).build();
-//    } catch (RepositoryException e) {
-//      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-//                     .entity("Could not find license file").build();
-//    } catch (Exception e) {
-//      e.printStackTrace();
-//    }
+    if(!userService.isAdmin()){
+      return Response.status(Response.Status.FORBIDDEN).build();
+    }
+    try {
+      licenseUtils.validateLicense();
+    } catch (IOException e) {
+      e.printStackTrace();
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                     .entity(e.getLocalizedMessage()).build();
+    } catch (ClassNotFoundException e) {
+      e.printStackTrace();
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                     .entity(e.getLocalizedMessage()).build();
+    } catch (LicenseException e) {
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                     .entity(e.getLocalizedMessage()).build();
+    } catch (RepositoryException e) {
+      return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                     .entity("Could not find license file").build();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
     return Response.ok().entity("Valid License").build();
 
 

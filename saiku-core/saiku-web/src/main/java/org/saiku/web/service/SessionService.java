@@ -18,7 +18,6 @@ package org.saiku.web.service;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.saiku.repository.ScopedRepo;
 import org.saiku.service.ISessionService;
 import org.saiku.service.license.ILicenseUtils;
 
@@ -61,9 +60,7 @@ public class SessionService implements ISessionService {
 	private final Map<Object,Map<String,Object>> sessionHolder = new HashMap<>();
 
 	private Boolean anonymous = false;
-	private ScopedRepo sessionRepo;
-	private Boolean orbisAuthEnabled = false;
-
+	
 	public void setAllowAnonymous(Boolean allow) {
 		this.anonymous  = allow;
 	}
@@ -96,9 +93,7 @@ public class SessionService implements ISessionService {
 	public Map<String, Object> login(HttpServletRequest req, String username, String password ) throws LicenseException {
 		Object sl = null;
 		String notice = null;
-		HttpSession session = ((HttpServletRequest)req).getSession(true);
-		session.getId();
-		sessionRepo.setSession(session);
+
 		try {
 			sl = l.getLicense();
 		} catch (Exception e) {
@@ -141,7 +136,7 @@ public class SessionService implements ISessionService {
 				throw new LicenseException("Error fetching license. Please check your logs.");
 			}
 		}
-		return null;
+			return null;
 	}
 
 	private void createSession(Authentication auth, String username, String password) {
@@ -202,13 +197,10 @@ public class SessionService implements ISessionService {
 				sessionHolder.remove(p);
 			}
 		}
-
 		SecurityContextHolder.getContext().setAuthentication(null);
-		SecurityContextHolder.clearContext();
-
+		SecurityContextHolder.clearContext(); 
 		HttpSession session = req.getSession(false);
-
-		if (session != null && !orbisAuthEnabled) { // Just invalidate if not under orbis authentication workflow
+		if (session != null) {
 			session.invalidate();
 		}
 	}
@@ -279,15 +271,4 @@ public class SessionService implements ISessionService {
   }
 
 
-	public void setSessionRepo(org.saiku.repository.ScopedRepo sessionRepo) {
-		this.sessionRepo = sessionRepo;
-	}
-
-	public Boolean isOrbisAuthEnabled() {
-		return orbisAuthEnabled;
-	}
-
-	public void setOrbisAuthEnabled(Boolean orbisAuthEnabled) {
-		this.orbisAuthEnabled = orbisAuthEnabled;
-	}
 }

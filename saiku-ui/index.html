@@ -303,8 +303,7 @@
                 <ul>
                 <% _.each(dimension.hierarchies, function(hierarchy) { %>
                     <% if (typeof hierarchy["visible"] == "undefined" || hierarchy["visible"]) { %>
-                        <% if ((Settings.DIMENSION_HIDE_HIERARCHY === 'NONE' && dimension.hierarchies.length > 1)
-                        		|| (Settings.DIMENSION_HIDE_HIERARCHY === 'SINGLE_LEVEL' && ((Settings.DIMENSION_SHOW_ALL && hierarchy["levels"].length > 3) || (!Settings.DIMENSION_SHOW_ALL && hierarchy["levels"].length > 2)))) { %>
+                        <% if (!Settings.DIMENSION_SHOW_REDUCED && dimension.hierarchies.length > 1) { %>
                             <li class="hierarchy hide">
                                 <a class="dimension" title="<%= hierarchy.description ? hierarchy.description : hierarchy.caption %>" href="#"  hierarchy="<%= hierarchy.name %>"><%= hierarchy.caption %></a>
                             </li>
@@ -314,7 +313,7 @@
                         <% _.each(hierarchy.levels, function(level) { %>
                             <% if ((Settings.DIMENSION_SHOW_ALL || level.name != "(All)") && (typeof level["visible"] == "undefined" || level["visible"])) { %>
                                 <li class="hide d_level">
-                                <a title="<%= (Settings.DIMENSION_HIDE_HIERARCHY === 'SINGLE_LEVEL' || Settings.DIMENSION_HIDE_HIERARCHY === 'ALL') && dimension.hierarchies.length > 1? hierarchy.caption + ' - ' : '' %><%= level.description ? level.description : level.caption %>" level="<%= level.name %>" hierarchy="<%= hierarchy.uniqueName %>"
+                                <a title="<%= Settings.DIMENSION_SHOW_REDUCED && dimension.hierarchies.length > 1? hierarchy.caption + ' - ' : '' %><%= level.description ? level.description : level.caption %>" level="<%= level.name %>" hierarchy="<%= hierarchy.uniqueName %>"
                                     class="level" href="#<%= encodeURIComponent(hierarchy.uniqueName) %>/<%= encodeURIComponent(level.name) %>"><%= level.caption %></a>
                                 </li>
                             <% } %>
@@ -745,7 +744,7 @@ title="Drill across on cell"></a></li>
 <script type="text/x-jquery-tmpl" id="template-repository-file">
             <li class='query'>
             <% if (Settings.ICON_16) { %>
-                <span class='icon_override' style='background-image: url(<%= Settings.ICON_16 %>);'></span>
+                <span class='icon_override' style='background-image: url('<%= Settings.ICON_16 %>');'></span>
             <% } else { %>
                 <span class='icon'></span>
             <% } %>

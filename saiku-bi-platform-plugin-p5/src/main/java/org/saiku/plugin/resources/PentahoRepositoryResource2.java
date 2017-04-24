@@ -107,23 +107,21 @@ public class PentahoRepositoryResource2 implements ISaikuRepository {
 	{
 		List<IRepositoryObject> objects = new ArrayList<IRepositoryObject>();
 		try {
+//			if (path != null && (path.startsWith("/") || path.startsWith("."))) {
+//				throw new IllegalArgumentException("Path cannot be null or start with \"/\" or \".\" - Illegal Path: " + path);
+//			}
+			
 			IUserContentAccess access = contentAccessFactory.getUserContentAccess("/");
 			String root = (StringUtils.isBlank(path)) ? "/" : path;
-
-			String[] typeArray = type == null ? new String[]{""} : type.split(","); // The types may be comma separated
-			List<IRepositoryObject> result = new ArrayList<>();
-
-			for (String t : typeArray) {
-				result.addAll(getRepositoryObjects(access, root, t, hidden));
-			}
-
-			return result;
+			return getRepositoryObjects(access, root, type, hidden);
 		} catch (Exception e) {
 			log.error(this.getClass().getName(),e);
 			e.printStackTrace();
 		}
 		return objects;
 	}
+
+
 
 	/**
 	 * Load a resource.

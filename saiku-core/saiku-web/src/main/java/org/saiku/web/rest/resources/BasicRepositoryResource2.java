@@ -123,23 +123,21 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 	  @QueryParam("path") String path,
 	  @QueryParam("type") String type)
   {
-		if (sessionService == null || sessionService.getAllSessionObjects() == null || sessionService.getAllSessionObjects().get("username") == null) {
-			return new ArrayList<IRepositoryObject>();
-		}
-
-		String username = sessionService.getAllSessionObjects().get("username").toString();
-		List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
-		String[] t = type.split(",");
-		List<IRepositoryObject> l = new ArrayList<>();
+	String username = sessionService.getAllSessionObjects().get("username").toString();
+	List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
+	String[] t = type.split(",");
+	List<IRepositoryObject> l = new ArrayList<>();
 	  List<IRepositoryObject> l2;
-
-	  if(path == null) {
-			l = (datasourceService.getFiles(Arrays.asList(t), username, roles));
-	  } else{
-			l = (datasourceService.getFiles(Arrays.asList(t), username, roles, path));
+	  if(path==null){
+		l = (datasourceService.getFiles(Arrays.asList(t), username, roles));
+	  }
+	  else{
+		l = (datasourceService.getFiles(Arrays.asList(t), username, roles, path));
 	  }
 
-		return l;
+
+	return l;
+
   }
 
 
