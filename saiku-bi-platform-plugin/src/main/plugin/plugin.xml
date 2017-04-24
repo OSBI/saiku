@@ -3,7 +3,7 @@
 <plugin title="saiku" loader="OVERRIDING">
 
 	<overlays>
-		<overlay id="startup.saikuAnalysis" resourcebundle="../content/saiku-ui/saikuplugin">
+		<overlay id="startup.saikuAnalysis" resourcebundle="../content/saiku-ui/saikuplugin.properties">
 			<overlay id="startup.saikuAnalysis">
 				<toolbar id="mainToolbar">
 					<toolbarbutton id="newAnalysisButton" removeelement="true" image="../content/saiku-ui/images/src/saiku_32.png"
@@ -13,7 +13,7 @@
 			</overlay>
 		</overlay>
 		
-		<overlay id="launch" resourcebundle="content/saiku/saikuplugin">
+		<overlay id="launch" resourcebundle="content/saiku/saikuplugin.properties">
 		<button id="saikuButton" image="content/saiku-ui/images/src/saiku_120.png" 
 						command="openURL('Saiku Analytics','Saiku Analytics','content/saiku-ui/index.html?biplugin=true')"
 						label="${saiku-plugin.button}" />

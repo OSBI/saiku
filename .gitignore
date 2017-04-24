@@ -25,3 +25,4 @@ saiku-ui/target/
 atlassian-ide-plugin.xml
 osgitests/
 *.log
+*.orig
