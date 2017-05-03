@@ -188,20 +188,20 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   @Override
   public Object saveBinaryInternalFile(InputStream file, String path, String type) throws RepositoryException {
-    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    Session session = createUpdateSession();
 
-    int length;
-    byte[] buffer = new byte[1024];
+    ContentCreateOptions options = new ContentCreateOptions();
+    options.setFormat(DocumentFormat.BINARY);
 
     try {
-      while ((length = file.read(buffer)) != -1) {
-        output.write(buffer, 0, length);
-      }
+      Content content = ContentFactory.newContent(path, file, options);
+      session.insertContent(content);
 
-      String data = new String(output.toByteArray(), "UTF-8");
-
-      return saveInternalFile(data, path, type);
+      return new File(path);
     } catch (IOException ex) {
+      log.error("Error while trying to save the file", ex);
+      throw new RepositoryException(ex);
+    } catch (RequestException ex) {
       log.error("Error while trying to save the file", ex);
       throw new RepositoryException(ex);
     }
@@ -244,7 +244,26 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   @Override
   public InputStream getBinaryInternalFile(String s) throws RepositoryException {
-    return new ByteArrayInputStream(getInternalFile(s).getBytes());
+    Session session = contentSource.newSession();
+
+    RequestOptions options = new RequestOptions();
+    options.setCacheResult(false); // stream by default
+
+    AdhocQuery request = session.newAdhocQuery("doc('" + s + "')", options);
+
+    try {
+      ResultSequence rs = session.submitRequest(request);
+      ResultItem item = rs.next();
+
+      if (item == null) {
+        throw new RepositoryException("No document found with URI '" + s + "'");
+      }
+
+      return item.asInputStream();
+    } catch (RequestException e) {
+      log.error("Error whilte trying to fetch the binary file " + s, e);
+      throw new RepositoryException(e);
+    }
   }
 
   @Override
