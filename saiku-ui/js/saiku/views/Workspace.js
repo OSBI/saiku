@@ -103,13 +103,15 @@ var Workspace = Backbone.View.extend({
 
         // Selected schema and cube via url
         var paramsURI = Saiku.URLParams.paramsURI();
-        if(args!=undefined && args.processURI != undefined && args.processURI==false){
+
+        if (args !== undefined && args.processURI !== undefined && args.processURI === false) {
             paramsURI = {};
         }
 
         if (Saiku.URLParams.contains({ schema: paramsURI.schema, cube: paramsURI.cube })) {
             this.data_connections(paramsURI);
-        } else {
+        }
+        else {
             this.data_connections(paramsURI);
         }
     },
@@ -261,11 +263,12 @@ var Workspace = Backbone.View.extend({
         if (!Saiku.session.isAdmin && Settings.SHOW_REFRESH_NONADMIN === false) {
             $(this.el).find('.refresh_cubes_nav').hide();
         }
+
         var paramsURI = Saiku.URLParams.paramsURI();
 
-        if(!Saiku.introdone && Saiku.URLParams.contains({show_help: paramsURI.show_help})){
-            startIntro();
-            Saiku.introdone = true;
+        if (!Saiku.introDone && Saiku.URLParams.contains({ show_help: paramsURI.show_help })) {
+            Saiku.intro.start('Workspace');
+            Saiku.introDone = true;
         }
 
         return this;
@@ -362,17 +365,20 @@ var Workspace = Backbone.View.extend({
 
 
     },
+
     data_connections: function(paramsURI) {
-        var connections = Saiku.session.sessionworkspace.connections,
-            self = this;
+        var connections = Saiku.session.sessionworkspace.connections;
+        var self = this;
+
         _.each(connections, function(connection) {
             _.each(connection.catalogs, function(catalog) {
                 _.each(catalog.schemas, function(schema) {
                     if (schema.cubes.length > 0) {
                         _.each(schema.cubes, function(cube) {
                             if (typeof cube['visible'] === 'undefined' || cube['visible']) {
-                                var schemaName = ((schema.name === '' || schema.name === null) ? 'null' : schema.name),
-                                    cubeName = ((cube.caption === '' || cube.caption === null) ? cube.name : cube.caption);
+                                var schemaName = ((schema.name === '' || schema.name === null) ? 'null' : schema.name);
+                                var cubeName = ((cube.caption === '' || cube.caption === null) ? cube.name : cube.caption);
+
                                 if (paramsURI.schema === schemaName && paramsURI.cube === cubeName) {
                                     self.selected_cube = connection.name + '/' + catalog.name + '/' + schemaName + '/' + cubeName;
                                     self.isUrlCubeNavigation = true;
@@ -386,6 +392,7 @@ var Workspace = Backbone.View.extend({
             });
         });
     },
+
     create_new_query: function(obj){
         if (obj.query) {
             obj.query.destroy();

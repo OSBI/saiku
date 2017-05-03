@@ -24,6 +24,10 @@
  *    @param {Object}       options          - Intro.js plugin options
  *
  *    Saiku.intro.start('Workspace', ['#new_query', '#admin_icon'], { showProgress: false });
+ *
+ *    or
+ *
+ *    Saiku.intro.start('Workspace');
  */
 Saiku.intro = {
   intro: introJs(),
