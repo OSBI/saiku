@@ -11,9 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.RepositoryException;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,13 +30,8 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   private static final String[] PARAMETER_DELIMITER = new String[]{"%(", ")"};
   private static final String HOMES_DIRECTORY = "/homes/";
+  private static final String DATASOURCES_DIRECTORY = "/datasources/";
 
-  // Which parameters do I need:
-  // 1. Host
-  // 2. Port
-  // 3. Username
-  // 4. Password
-  // 5. Database
   private String host = "localhost";
   private int port = 8070;
   private String username = "admin";
@@ -43,6 +42,23 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   private ContentSource contentSource;
 
   private UserService userService;
+  private static MarkLogicRepositoryManager instance;
+
+  private MarkLogicRepositoryManager(String host, int port, String username, String password, String database) {
+    this.host = host;
+    this.port = port;
+    this.username = username;
+    this.password = password;
+    this.database = database;
+  }
+
+  public static synchronized MarkLogicRepositoryManager getMarkLogicRepositoryManager(String host, int port, String username, String password, String database) {
+    if (instance == null) {
+      instance = new MarkLogicRepositoryManager(host, port, username, password, database);
+    }
+
+    return instance;
+  }
 
   @Override
   public void init() {
@@ -63,6 +79,15 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   @Override
   public boolean start(UserService userService) throws RepositoryException {
     this.userService = userService;
+
+    if (!folderExists(HOMES_DIRECTORY)) {
+      createFolder(HOMES_DIRECTORY);
+    }
+
+    if (!folderExists(DATASOURCES_DIRECTORY)) {
+      createFolder(DATASOURCES_DIRECTORY);
+    }
+
     return true;
   }
 
@@ -73,17 +98,17 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   @Override
   public Object getHomeFolders() throws RepositoryException {
-    return getFilesFromFolder(HOMES_DIRECTORY);
+    return getFilesFromFolder(HOMES_DIRECTORY, true);
   }
 
   @Override
   public Object getHomeFolder(String directory) throws RepositoryException {
-    return getFilesFromFolder(HOMES_DIRECTORY + directory);
+    return getFilesFromFolder(HOMES_DIRECTORY + directory, false);
   }
 
   @Override
   public Object getFolder(String user, String directory) throws RepositoryException {
-    return getFilesFromFolder(HOMES_DIRECTORY + user + "/" + directory + "/");
+    return getFilesFromFolder(HOMES_DIRECTORY + user + "/" + directory + "/", false);
   }
 
   @Override
@@ -234,7 +259,41 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   @Override
   public List<DataSource> getAllDataSources() throws RepositoryException {
-    return null;
+    List<DataSource> dataSources = new ArrayList<>();
+
+    for (File file : getFilesFromFolder(DATASOURCES_DIRECTORY, false)) {
+      InputStream fileContent = getBinaryInternalFile(file.getPath());
+
+      JAXBContext jaxbContext = null;
+      Unmarshaller jaxbMarshaller = null;
+
+      try {
+        jaxbContext = JAXBContext.newInstance(DataSource.class);
+      } catch (JAXBException e) {
+        log.error("Could instantiate the JAXBContent", e);
+      }
+
+      try {
+        jaxbMarshaller = jaxbContext != null ? jaxbContext.createUnmarshaller() : null;
+      } catch (JAXBException e) {
+        log.error("Could not create the XML unmarshaller", e);
+      }
+
+      DataSource d = null;
+
+      try {
+        d = (DataSource) (jaxbMarshaller != null ? jaxbMarshaller.unmarshal(fileContent) : null);
+      } catch (JAXBException e) {
+        log.error("Could not unmarshall the XML file", e);
+      }
+
+      if (d != null) {
+        d.setPath(file.getPath());
+        dataSources.add(d);
+      }
+    }
+
+    return dataSources;
   }
 
   @Override
@@ -310,9 +369,15 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     }
   }
 
-  private File[] getFilesFromFolder(String path) throws RepositoryException {
+  private File[] getFilesFromFolder(String path, boolean directories) throws RepositoryException {
+    if (!path.endsWith("/")) {
+      path = path + "/";
+    }
+
+    String regexEnd = directories ? ".+/$" : ".+[^/]$";
+
     Session session = contentSource.newSession();
-    AdhocQuery request = session.newAdhocQuery("cts:uris()[matches(., '^" + path + ".+/$')]");
+    AdhocQuery request = session.newAdhocQuery("cts:uris()[matches(., '^" + path + regexEnd + "')]");
 
     try {
       ResultSequence rs = session.submitRequest(request);
@@ -334,6 +399,19 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   private void createFolder(String path) throws RepositoryException {
     executeUpdate("xdmp:directory-create('%(path)')", ParamsMap.init().put("path", path).build());
+  }
+
+  private boolean folderExists(String directory) throws RepositoryException {
+    Session session = contentSource.newSession();
+    AdhocQuery request = session.newAdhocQuery("xdmp:exists(xdmp:directory-properties('" + directory + "','1'))");
+
+    try {
+      ResultSequence rs = session.submitRequest(request);
+      return Boolean.parseBoolean(rs.next().asString());
+    } catch (RequestException ex) {
+      log.error("Error while trying to check the folder existence", ex);
+      throw new RepositoryException(ex);
+    }
   }
 
   private Session createUpdateSession() {
@@ -400,10 +478,18 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     return builder.toString();
   }
 
+  /**
+   * Factory Method
+   * @param values
+   * @return
+   */
   private static StrSubstitutor createStrSubstitutor(Map<String, String> values) {
     return new StrSubstitutor(values, PARAMETER_DELIMITER[0], PARAMETER_DELIMITER[1]);
   }
 
+  /**
+   *
+   */
   private static class ParamsMap {
     private Map<String, String> params;
 

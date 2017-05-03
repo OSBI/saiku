@@ -89,7 +89,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         Properties ext = checkForExternalDataSourceProperties();
 
         if (type.equals("marklogic")) {
-            irm = new MarkLogicRepositoryManager();
+            irm = MarkLogicRepositoryManager.getMarkLogicRepositoryManager("localhost", 8070, "admin", "bruunoo", "saiku");
         } else if (type.equals("classpath")) {
             separator = "/";
             log.debug("init datadir= "+datadir);
@@ -106,6 +106,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         } catch (RepositoryException e) {
             log.error("Could not start repo", e);
         }
+
         datasources.clear();
 
 
