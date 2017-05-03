@@ -137,7 +137,14 @@ var Settings = {
     },
     ALLOW_TABLE_DATA_COLLAPSE: false,
     ALLOW_AXIS_COLUMN_TITLE_TABLE: true,
-    COLUMN_TITLE_TABLE_USE_LEVEL_CAPTION_NAME: true
+    COLUMN_TITLE_TABLE_USE_LEVEL_CAPTION_NAME: true,
+    INTRO_FILE_NAME: 'Workspace',
+    // For more options, see: http://introjs.com/docs/intro/options/
+    INTRO_DEFAULT_OPTIONS: {
+        showStepNumbers: true,
+        showBullets: false,
+        showProgress: true
+    }
 };
 
 /**
