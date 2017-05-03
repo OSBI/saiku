@@ -87,9 +87,12 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public void load() {
         Properties ext = checkForExternalDataSourceProperties();
-        if (type.equals("classpath")) {
+
+        if (type.equals("marklogic")) {
+            irm = new MarkLogicRepositoryManager();
+        } else if (type.equals("classpath")) {
             separator = "/";
-log.debug("init datadir= "+datadir);
+            log.debug("init datadir= "+datadir);
             irm = ClassPathRepositoryManager.getClassPathRepositoryManager(cleanse(datadir), defaultRole, sessionRegistry, workspaces);
             log.debug("2nd init datadir= "+datadir);
         } else {
