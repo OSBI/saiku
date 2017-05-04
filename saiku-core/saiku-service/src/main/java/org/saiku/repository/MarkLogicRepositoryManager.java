@@ -13,14 +13,12 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.RepositoryException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * MarkLogic Repository Manager
@@ -31,6 +29,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   private static final String[] PARAMETER_DELIMITER = new String[]{"%(", ")"};
   private static final String HOMES_DIRECTORY = "/homes/";
   private static final String DATASOURCES_DIRECTORY = "/datasources/";
+  private static final String SCHEMAS_DIRECTORY = "/schemas/";
 
   private String host = "localhost";
   private int port = 8070;
@@ -136,7 +135,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   public boolean moveFolder(String user, String folder, String source, String target) throws RepositoryException {
     /* TODO - MarkLogic doest not support moving directories or documents, instead you should create another directory
        and document with the same content, with another name, and delete the old directory/document. */
-    return true;
+    return false;
   }
 
   @Override
@@ -144,14 +143,24 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     if (file == null) { // Create a folder
       createFolder(user, path);
     } else { // Write a file to an existing folder
-      Map<String, String> params = ParamsMap.init()
-          .put("user", user)
-          .put("path", path)
-          .put("text", escapeForJava((String)file, true)).build();
+      path = HOMES_DIRECTORY + user + "/" + path;
 
-      executeUpdate("xdmp:document-insert('" + HOMES_DIRECTORY + "%(user)/%(path)', text {%(text)})", params);
+      Session session = createUpdateSession();
 
-      return new File(HOMES_DIRECTORY + user + "/" + path);
+      ContentCreateOptions options = new ContentCreateOptions();
+      options.setFormat(DocumentFormat.TEXT);
+
+      Content content = ContentFactory.newContent(path, (String)file, options);
+
+      try {
+        session.insertContent(content);
+        session.commit();
+      } catch (RequestException e) {
+        log.error("Error while trying to save the file: " + path, e);
+        throw new RepositoryException(e);
+      }
+
+      return new File(path);
     }
 
     return null;
@@ -268,12 +277,24 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   @Override
   public void removeInternalFile(String s) throws RepositoryException {
-
+    Map<String, String> params = ParamsMap.init().put("doc_uri", s).build();
+    executeUpdate("xdmp:document-delete('%(doc_uri)')", params);
   }
 
   @Override
   public List<MondrianSchema> getAllSchema() throws RepositoryException {
-    return null;
+    List<MondrianSchema> schemas = new ArrayList<>();
+
+    for (File file : getFilesFromFolder(SCHEMAS_DIRECTORY, false)) {
+      MondrianSchema ms = new MondrianSchema();
+
+      ms.setName(file.getName());
+      ms.setPath(file.getPath());
+
+      schemas.add(ms);
+    }
+
+    return schemas;
   }
 
   @Override
@@ -317,12 +338,45 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   @Override
   public void saveDataSource(DataSource ds, String path, String user) throws RepositoryException {
+    Session session = createUpdateSession();
 
+    ContentCreateOptions options = new ContentCreateOptions();
+    options.setFormat(DocumentFormat.BINARY);
+
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+    try {
+      JAXBContext jaxbContext = JAXBContext.newInstance(DataSource.class);
+      Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+      // output pretty printed
+      jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+      // marshall the datasource to a byte array
+      jaxbMarshaller.marshal(ds, baos);
+
+      // create an input stream from the byte array
+      ByteArrayInputStream bis = new ByteArrayInputStream(baos.toByteArray());
+
+      // create a document from the input stream
+      Content content = ContentFactory.newContent(path, bis, options);
+      session.insertContent(content);
+      session.commit();
+    } catch (JAXBException e) {
+      log.error("Could not marshall the datasource", e);
+      throw new RepositoryException(e);
+    } catch (RequestException e) {
+      log.error("Could not marshall the datasource", e);
+      throw new RepositoryException(e);
+    } catch (IOException e) {
+      log.error("Could not marshall the datasource", e);
+      throw new RepositoryException(e);
+    }
   }
 
   @Override
   public byte[] exportRepository() throws RepositoryException, IOException {
-    return new byte[0];
+    return null;
   }
 
   @Override
@@ -332,7 +386,8 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   @Override
   public RepositoryFile getFile(String fileUrl) {
-    return null;
+    File f = new File(fileUrl);
+    return new RepositoryFile(f.getName(), null, null, f.getPath());
   }
 
   @Override
@@ -342,12 +397,77 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   @Override
   public List<IRepositoryObject> getAllFiles(List<String> type, String username, List<String> roles, String path) throws RepositoryException {
-    return null;
+    List<IRepositoryObject> files = new ArrayList<>();
+
+    Acl2 acl = new Acl2(new File(path));
+
+    // First, fetch all the directories, recursively
+    List<String> dirUris = new ArrayList<>();
+    getRecursiveDirectories(path, dirUris);
+
+    for (String dirUri : dirUris) {
+      List<IRepositoryObject> dirFiles = new ArrayList<>();
+
+      if (dirUri.equals(path)) {
+        dirFiles = files;
+      }
+
+      // Then, fetch all the files from the directory
+      for (File f : getFilesFromFolder(path, false)) {
+        for (String fileType : type) {
+          if (f.getName().toLowerCase().endsWith(fileType.toLowerCase())) {
+            List<AclMethod> acls = acl.getMethods(f, username, roles);
+            dirFiles.add(new RepositoryFileObject(f.getName(), "#" + f.getPath(), fileType, f.getPath(), acls));
+          }
+        }
+      }
+
+      // Add subdirs and its files
+      if (!dirUri.equals(path)) {
+        sortFiles(dirFiles);
+        List<AclMethod> acls = acl.getMethods(new File(dirUri), username, roles);
+        files.add(new RepositoryFolderObject(dirUri, "#" + dirUri, dirUri, acls, dirFiles));
+      }
+    }
+
+    sortFiles(files);
+    return files;
+  }
+
+  private void getRecursiveDirectories(String root, List<String> foundSoFar) throws RepositoryException {
+    if (foundSoFar.contains(root)) {
+      return;
+    }
+
+    foundSoFar.add(root);
+
+    for (File f : getFilesFromFolder(root, true)) {
+      getRecursiveDirectories(f.getPath(), foundSoFar);
+    }
+  }
+
+  private void sortFiles(List<IRepositoryObject> files) {
+    // Sort the files so directories come first
+    Collections.sort(files, new Comparator<IRepositoryObject>() {
+
+      public int compare(IRepositoryObject o1, IRepositoryObject o2) {
+        if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(IRepositoryObject.Type.FILE))
+          return -1;
+        if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
+          return 1;
+        return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+      }
+
+    });
   }
 
   @Override
   public void deleteFile(String datasourcePath) {
-
+    try {
+      removeInternalFile(datasourcePath);
+    } catch (RepositoryException e) {
+      log.error("Error while trying to delete the file: " + datasourcePath, e);
+    }
   }
 
   @Override
@@ -362,7 +482,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   @Override
   public List<MondrianSchema> getInternalFilesOfFileType(String type) throws RepositoryException {
-    return null;
+    return this.getAllSchema();
   }
 
   @Override
