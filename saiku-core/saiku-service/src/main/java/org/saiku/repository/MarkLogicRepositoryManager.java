@@ -49,6 +49,8 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     this.username = username;
     this.password = password;
     this.database = database;
+
+    init();
   }
 
   public static synchronized MarkLogicRepositoryManager getMarkLogicRepositoryManager(String host, int port, String username, String password, String database) {
@@ -87,6 +89,10 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
       createFolder(DATASOURCES_DIRECTORY);
     }
 
+    if (!folderExists(SCHEMAS_DIRECTORY)) {
+      createFolder(SCHEMAS_DIRECTORY);
+    }
+
     return true;
   }
 
@@ -122,7 +128,12 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   @Override
   public boolean deleteFolder(String folder) throws RepositoryException {
-    executeUpdate("xdmp:directory-delete('%(folder)')", ParamsMap.init().put("folder", folder).build());
+    if (!folder.endsWith("/")) {
+      deleteFile(folder);
+    } else {
+      executeUpdate("xdmp:directory-delete('%(folder)')", ParamsMap.init().put("folder", folder).build());
+    }
+
     return true;
   }
 
@@ -183,13 +194,22 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     if (file == null) { // Create a folder
       createFolder(path);
     } else { // Write a file to an existing folder
-      Map<String, String> params = ParamsMap.init()
-          .put("path", path)
-          .put("text", escapeForJava((String)file, true)).build();
+      Session session = createUpdateSession();
 
-      executeUpdate("xdmp:document-insert('%(path)', text {%(text)})", params);
+      ContentCreateOptions options = new ContentCreateOptions();
+      options.setFormat(DocumentFormat.TEXT);
 
-      return new File(path);
+      Content content = ContentFactory.newContent(path, (String)file, options);
+
+      try {
+        session.insertContent(content);
+        session.commit();
+
+        return new File(path);
+      } catch (RequestException e) {
+        log.error("Could not save the internal file: " + file, e);
+        throw new RepositoryException(e);
+      }
     }
 
     return null;
@@ -205,6 +225,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     try {
       Content content = ContentFactory.newContent(path, file, options);
       session.insertContent(content);
+      session.commit();
 
       return new File(path);
     } catch (IOException ex) {
@@ -524,7 +545,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
       int i = 0;
       while(rs.hasNext()) {
-        folders[i++] = new File(rs.next().getDocumentURI());
+        folders[i++] = new File(rs.next().asString());
       }
 
       return folders;
@@ -537,7 +558,13 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   }
 
   private void createFolder(String path) throws RepositoryException {
-    executeUpdate("xdmp:directory-create('%(path)')", ParamsMap.init().put("path", path).build());
+    if (!folderExists(path)) {
+      try {
+        executeUpdate("xdmp:directory-create('%(path)')", ParamsMap.init().put("path", path).build());
+      } catch (Exception ex) {
+        // Ignore XQueryException
+      }
+    }
   }
 
   private boolean folderExists(String directory) throws RepositoryException {
@@ -584,37 +611,6 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     } finally {
       session.close();
     }
-  }
-
-  private String escapeForJava( String value, boolean quote) {
-    StringBuilder builder = new StringBuilder();
-
-    if (quote) {
-      builder.append("\"");
-    }
-
-    for (char c : value.toCharArray()) {
-      if(c == '\'')
-        builder.append( "\\'" );
-      else if (c == '\"')
-        builder.append( "\\\"" );
-      else if(c == '\r')
-        builder.append( "\\r" );
-      else if(c == '\n')
-        builder.append( "\\n" );
-      else if(c == '\t')
-        builder.append( "\\t" );
-      else if(c < 32 || c >= 127)
-        builder.append(String.format( "\\u%04x", (int)c));
-      else
-        builder.append(c);
-    }
-
-    if (quote) {
-      builder.append("\"");
-    }
-
-    return builder.toString();
   }
 
   /**
