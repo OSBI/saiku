@@ -267,7 +267,7 @@ var Workspace = Backbone.View.extend({
         var paramsURI = Saiku.URLParams.paramsURI();
 
         if (!Saiku.introDone && Saiku.URLParams.contains({ show_help: paramsURI.show_help })) {
-            Saiku.intro.start('Workspace');
+            Saiku.intro.start({ fileName: 'Workspace' });
             Saiku.introDone = true;
         }
 
