@@ -165,9 +165,6 @@ var ShowHelpIntro = Backbone.View.extend({
 
     // The callback registered with the register action.
     var onInvoke = function(data, reply) {
-      console.log(data);
-      console.log(reply);
-
       if (reply.entity.status === 'ok') {
         if (_.isString(data)) {
           Saiku.intro.start({ fileName: data });
