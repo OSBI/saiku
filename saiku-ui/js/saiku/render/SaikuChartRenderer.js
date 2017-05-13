@@ -195,6 +195,9 @@ SaikuChartRenderer.prototype.switch_chart = function (key, override) {
         },
         "radar": {
             type: "RadarChart"
+        },
+        "timewheel": {
+            type: "TimeWheel"
         }
     };
 
@@ -352,6 +355,43 @@ SaikuChartRenderer.prototype.cccOptionsDefault = {
         clickable: true
         //valuesLabelStyle: 'inside'
     },
+    TimeWheel: {
+        smallTitleFont: "bold 14px sans-serif",
+        valuesVisible: true,
+        valuesMask: "{category}",
+        explodedSliceRadius: "10%",
+        extensionPoints: {
+            slice_offsetRadius: function (scene) {
+                return scene.isSelected() ? '10%' : 0;
+            }
+        },
+        clickable: false,
+        plots: [
+            {
+                // Main plot (outer)
+                name: 'main',
+                dataPart: 'Country',
+                valuesLabelStyle: 'inside',
+                valuesOptimizeLegibility: true,
+                valuesFont: 'normal 11px "Open Sans"',
+                slice_innerRadiusEx: '60%',
+                slice_strokeStyle:   'white'
+            },
+            {
+                // Second plot (inner)
+                name: 'inner',
+                type: 'pie',
+                dataPart: 'State Province',
+                valuesLabelStyle: 'inside',
+                valuesOptimizeLegibility: true,
+                valuesFont: 'normal 11px "Open Sans"',
+                slice_strokeStyle: 'white',
+                slice_outerRadius: function() {
+                    return 0.5 * this.delegate(); // 50%
+                }
+            }
+        ]        
+    },
 
     LineChart: {
         extensionPoints: {
@@ -397,9 +437,7 @@ SaikuChartRenderer.prototype.getQuickOptions = function (baseOptions) {
 
     if (this.adjustSizeTo) {
         var al = $(this.adjustSizeTo);
-//al.appendTo(document.body);
-//var width = al.width();
-//al.remove();
+
         if (al && al.length > 0) {
             var runtimeWidth = al.width() - 40;
             var runtimeHeight = al.height() - 40;
@@ -434,6 +472,7 @@ SaikuChartRenderer.prototype.define_chart = function (displayOptions) {
     if (!this.hasProcessed) {
         this.process_data_tree({data: this.rawdata}, true, true);
     }
+
     var self = this;
     var workspaceResults = (this.adjustSizeTo ? $(this.adjustSizeTo) : $(this.el));
     var isSmall = (this.data !== null && this.data.height < 80 && this.data.width < 80);
@@ -595,7 +634,16 @@ SaikuChartRenderer.prototype.define_chart = function (displayOptions) {
             return indent + this.base();
         };
     }
-    this.chart = new pvc[runtimeChartDefinition.type](runtimeChartDefinition);
+
+    if (runtimeChartDefinition.type === 'TimeWheel') {
+        this.chart = new pvc['PieChart'](runtimeChartDefinition);
+
+        console.log('this.data', this.data);
+        console.log('runtimeChartDefinition', runtimeChartDefinition);
+    } else {
+        this.chart = new pvc[runtimeChartDefinition.type](runtimeChartDefinition);
+    }
+
     this.chart.setData(this.data, {
         crosstabMode: true,
         seriesInRows: false
