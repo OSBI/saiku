@@ -358,7 +358,7 @@ SaikuChartRenderer.prototype.cccOptionsDefault = {
     TimeWheel: {
         smallTitleFont: "bold 14px sans-serif",
         valuesVisible: true,
-        valuesMask: "{category}",
+        valuesMask: "{category} / {value.percent}",
         explodedSliceRadius: "10%",
         extensionPoints: {
             slice_offsetRadius: function (scene) {
@@ -367,6 +367,7 @@ SaikuChartRenderer.prototype.cccOptionsDefault = {
         },
         clickable: false,
         plots: [
+
             {
                 // Main plot (outer)
                 name: 'main',
@@ -390,6 +391,7 @@ SaikuChartRenderer.prototype.cccOptionsDefault = {
                     return 0.5 * this.delegate(); // 50%
                 }
             }
+
         ]        
     },
 
@@ -636,10 +638,45 @@ SaikuChartRenderer.prototype.define_chart = function (displayOptions) {
     }
 
     if (runtimeChartDefinition.type === 'TimeWheel') {
-        this.chart = new pvc['PieChart'](runtimeChartDefinition);
+        var nPlots = 0;
 
-        console.log('this.data', this.data);
-        console.log('runtimeChartDefinition', runtimeChartDefinition);
+        for (var i = 0; i < this.data.resultset[0].length; i++) {
+            if (typeof this.data.resultset[0][i] === 'object') {
+                break;
+            }
+
+            nPlots++;
+        }
+
+        var donutHeight = 1.0 / nPlots;
+        var innerRadius = 1.0 - donutHeight;
+        var outerRadius = 1.0;
+
+        runtimeChartDefinition.plots = [];
+
+        for (var i = 0; i < nPlots; i++) {
+            var colName = this.data.metadata[i].colName;
+            var _outerRadius = outerRadius;
+
+            runtimeChartDefinition.plots.push({
+                name: 'plot_' + i,
+                type: 'pie',
+                dataPart: colName,
+                valuesLabelStyle: 'inside',
+                valuesOptimizeLegibility: true,
+                valuesFont: 'normal 10px "Open Sans"',
+                slice_strokeStyle: 'white',
+                slice_innerRadiusEx: (innerRadius * 100) + '%',
+                slice_outerRadius: function() {
+                    return _outerRadius * this.delegate();
+                }
+            });
+
+            innerRadius -= donutHeight;
+            outerRadius -= donutHeight;
+        }
+
+        this.chart = new pvc['PieChart'](runtimeChartDefinition);
     } else {
         this.chart = new pvc[runtimeChartDefinition.type](runtimeChartDefinition);
     }
