@@ -360,39 +360,14 @@ SaikuChartRenderer.prototype.cccOptionsDefault = {
         valuesVisible: true,
         valuesMask: "{category} / {value.percent}",
         explodedSliceRadius: "10%",
+        colors: ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"],
         extensionPoints: {
             slice_offsetRadius: function (scene) {
-                return scene.isSelected() ? '10%' : 0;
+                return scene.isSelected() ? '2%' : 0;
             }
         },
         clickable: false,
-        plots: [
-
-            {
-                // Main plot (outer)
-                name: 'main',
-                dataPart: 'Country',
-                valuesLabelStyle: 'inside',
-                valuesOptimizeLegibility: true,
-                valuesFont: 'normal 11px "Open Sans"',
-                slice_innerRadiusEx: '60%',
-                slice_strokeStyle:   'white'
-            },
-            {
-                // Second plot (inner)
-                name: 'inner',
-                type: 'pie',
-                dataPart: 'State Province',
-                valuesLabelStyle: 'inside',
-                valuesOptimizeLegibility: true,
-                valuesFont: 'normal 11px "Open Sans"',
-                slice_strokeStyle: 'white',
-                slice_outerRadius: function() {
-                    return 0.5 * this.delegate(); // 50%
-                }
-            }
-
-        ]        
+        plots: []        
     },
 
     LineChart: {
@@ -653,6 +628,15 @@ SaikuChartRenderer.prototype.define_chart = function (displayOptions) {
         var outerRadius = 1.0;
 
         runtimeChartDefinition.plots = [];
+        runtimeChartDefinition.dimensions = {};
+
+        for (var i = 0; i < this.data.metadata.length; i++) {
+            var colName = this.data.metadata[i].colName;
+
+            runtimeChartDefinition.dimensions[colName] = {
+                isHidden: false
+            };
+        }
 
         for (var i = 0; i < nPlots; i++) {
             var colName = this.data.metadata[i].colName;
