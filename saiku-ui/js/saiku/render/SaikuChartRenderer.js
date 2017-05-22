@@ -613,15 +613,17 @@ SaikuChartRenderer.prototype.define_chart = function (displayOptions) {
     }
 
     if (runtimeChartDefinition.type === 'TimeWheel') {
+        console.log(this.data);
+
         var nPlots = 0;
+        var plotNames = {};
 
-        for (var i = 0; i < this.data.resultset[0].length; i++) {
-            if (typeof this.data.resultset[0][i] === 'object') {
-                break;
-            }
-
-            nPlots++;
+        for (var i = 0; i < this.data.resultset.length; i++) {
+            plotNames[this.data.resultset[i][0]] = true;
         }
+
+        plotNames = Object.keys(plotNames);
+        nPlots = plotNames.length;
 
         var donutHeight = 1.0 / nPlots;
         var innerRadius = 1.0 - donutHeight;
@@ -639,18 +641,19 @@ SaikuChartRenderer.prototype.define_chart = function (displayOptions) {
         }
 
         for (var i = 0; i < nPlots; i++) {
-            var colName = this.data.metadata[i].colName;
+            var groupValue = plotNames[i];
+            var _innerRadius = innerRadius;
             var _outerRadius = outerRadius;
 
             runtimeChartDefinition.plots.push({
-                name: 'plot_' + i,
+                name: (i === 0 ? 'main' : 'plot_' + i),
                 type: 'pie',
-                dataPart: colName,
+                dataPart: groupValue,
                 valuesLabelStyle: 'inside',
                 valuesOptimizeLegibility: true,
                 valuesFont: 'normal 10px "Open Sans"',
                 slice_strokeStyle: 'white',
-                slice_innerRadiusEx: (innerRadius * 100) + '%',
+                slice_innerRadiusEx: (_innerRadius * 100).toFixed(0) + '%',
                 slice_outerRadius: function() {
                     return _outerRadius * this.delegate();
                 }
@@ -660,15 +663,30 @@ SaikuChartRenderer.prototype.define_chart = function (displayOptions) {
             outerRadius -= donutHeight;
         }
 
+        if (this.data.metadata.length > 2) {
+            runtimeChartDefinition.readers = this.data.metadata[0].colName + ', ' + 
+                                             this.data.metadata[1].colName + ', ' +
+                                             this.data.metadata[2].colName;
+
+            runtimeChartDefinition.visualRoles = {
+                dataPart: this.data.metadata[0].colName,
+                category: this.data.metadata[1].colName,
+                value:    this.data.metadata[2].colName
+            };
+        }
+
         this.chart = new pvc['PieChart'](runtimeChartDefinition);
+        this.chart.setData(this.data, {
+            crosstabMode: false
+        });
+
     } else {
         this.chart = new pvc[runtimeChartDefinition.type](runtimeChartDefinition);
+        this.chart.setData(this.data, {
+            crosstabMode: true,
+            seriesInRows: false
+        });
     }
-
-    this.chart.setData(this.data, {
-        crosstabMode: true,
-        seriesInRows: false
-    });
 };
 
 SaikuChartRenderer.prototype.render_chart_element = function (context) {
