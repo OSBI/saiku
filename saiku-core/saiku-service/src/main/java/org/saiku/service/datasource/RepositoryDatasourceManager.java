@@ -84,12 +84,17 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String externalparameters;
     private String type;
     private String separator = "/";
+    private String host;
+    private String port;
+    private String username;
+    private String password;
+    private String database;
 
     public void load() {
         Properties ext = checkForExternalDataSourceProperties();
 
         if (type.equals("marklogic")) {
-            irm = MarkLogicRepositoryManager.getMarkLogicRepositoryManager("localhost", 8070, "admin", "bruunoo", "saiku");
+            irm = MarkLogicRepositoryManager.getMarkLogicRepositoryManager(host, Integer.parseInt(port), username, password, database);
         } else if (type.equals("classpath")) {
             separator = "/";
             log.debug("init datadir= "+datadir);
@@ -842,5 +847,45 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 LegacyImporter l = new LegacyImporterImpl(null);
                 return l.importJujuDatasources();
         }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public String getPort() {
+        return port;
+    }
+
+    public void setPort(String port) {
+        this.port = port;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
+    }
 }
 
