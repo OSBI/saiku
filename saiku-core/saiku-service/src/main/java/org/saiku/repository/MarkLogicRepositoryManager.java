@@ -3,6 +3,7 @@ package org.saiku.repository;
 import com.marklogic.xcc.*;
 import com.marklogic.xcc.exceptions.RequestException;
 import com.marklogic.xcc.exceptions.XccConfigException;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
@@ -43,19 +44,23 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   private UserService userService;
   private static MarkLogicRepositoryManager instance;
 
-  private MarkLogicRepositoryManager(String host, int port, String username, String password, String database) {
+  private String sep = "/";
+  private String append;
+
+  private MarkLogicRepositoryManager(String host, int port, String username, String password, String database, String data) {
     this.host = host;
     this.port = port;
     this.username = username;
     this.password = password;
     this.database = database;
+    this.append   = cleanse(data);
 
     init();
   }
 
-  public static synchronized MarkLogicRepositoryManager getMarkLogicRepositoryManager(String host, int port, String username, String password, String database) {
+  public static synchronized MarkLogicRepositoryManager getMarkLogicRepositoryManager(String host, int port, String username, String password, String database, String data) {
     if (instance == null) {
-      instance = new MarkLogicRepositoryManager(host, port, username, password, database);
+      instance = new MarkLogicRepositoryManager(host, port, username, password, database, data);
     }
 
     return instance;
@@ -92,6 +97,26 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     if (!folderExists(SCHEMAS_DIRECTORY)) {
       createFolder(SCHEMAS_DIRECTORY);
     }
+
+
+    // Creating the default license file
+    this.createFolder(sep + "etc");
+
+    if (new File(append + "/etc/license.lic").exists()) {
+      try {
+        this.saveBinaryInternalFile(new FileInputStream(append + "/etc/license.lic"), "/etc/license.lic", "");
+      } catch (IOException e1) {
+        log.debug("Failed to find license 1");
+        try {
+          this.saveBinaryInternalFile(new FileInputStream(append + "/unknown/etc/license.lic"), "/etc/license.lic", "");
+        } catch (IOException e2) {
+          log.debug("failed to find any licenses. Giving up");
+        }
+
+      }
+    }
+
+
 
     return true;
   }
@@ -687,4 +712,15 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   public void setDatabase(String database) {
     this.database = database;
   }
+
+  private String cleanse(String workspace) {
+    workspace = workspace.replace("\\", "/");
+
+    if (!workspace.endsWith("/")) {
+      return workspace + "/";
+    }
+
+    return workspace + "/";
+  }
+
 }
