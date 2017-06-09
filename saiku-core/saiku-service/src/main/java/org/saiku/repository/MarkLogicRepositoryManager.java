@@ -30,7 +30,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   private static final String[] PARAMETER_DELIMITER = new String[]{"%(", ")"};
   private static final String HOMES_DIRECTORY = "/homes/";
   private static final String DATASOURCES_DIRECTORY = "/datasources/";
-  private static final String SCHEMAS_DIRECTORY = "/schemas/";
+  private static final String SCHEMAS_DIRECTORY = "/datasources/";
 
   private String host = "localhost";
   private int port = 8070;
@@ -332,12 +332,14 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     List<MondrianSchema> schemas = new ArrayList<>();
 
     for (File file : getFilesFromFolder(SCHEMAS_DIRECTORY, false)) {
-      MondrianSchema ms = new MondrianSchema();
+      if (file != null && file.getName() != null && file.getName().toLowerCase().endsWith("xml")) {
+        MondrianSchema ms = new MondrianSchema();
 
-      ms.setName(file.getName());
-      ms.setPath(file.getPath());
+        ms.setName(file.getName());
+        ms.setPath(file.getPath());
 
-      schemas.add(ms);
+        schemas.add(ms);
+      }
     }
 
     return schemas;
@@ -348,34 +350,36 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     List<DataSource> dataSources = new ArrayList<>();
 
     for (File file : getFilesFromFolder(DATASOURCES_DIRECTORY, false)) {
-      InputStream fileContent = getBinaryInternalFile(file.getPath());
+      if (file != null && file.getName() != null && file.getName().toLowerCase().endsWith("sds")) {
+        InputStream fileContent = getBinaryInternalFile(file.getPath());
 
-      JAXBContext jaxbContext = null;
-      Unmarshaller jaxbMarshaller = null;
+        JAXBContext jaxbContext = null;
+        Unmarshaller jaxbMarshaller = null;
 
-      try {
-        jaxbContext = JAXBContext.newInstance(DataSource.class);
-      } catch (JAXBException e) {
-        log.error("Could instantiate the JAXBContent", e);
-      }
+        try {
+          jaxbContext = JAXBContext.newInstance(DataSource.class);
+        } catch (JAXBException e) {
+          log.error("Could instantiate the JAXBContent", e);
+        }
 
-      try {
-        jaxbMarshaller = jaxbContext != null ? jaxbContext.createUnmarshaller() : null;
-      } catch (JAXBException e) {
-        log.error("Could not create the XML unmarshaller", e);
-      }
+        try {
+          jaxbMarshaller = jaxbContext != null ? jaxbContext.createUnmarshaller() : null;
+        } catch (JAXBException e) {
+          log.error("Could not create the XML unmarshaller", e);
+        }
 
-      DataSource d = null;
+        DataSource d = null;
 
-      try {
-        d = (DataSource) (jaxbMarshaller != null ? jaxbMarshaller.unmarshal(fileContent) : null);
-      } catch (JAXBException e) {
-        log.error("Could not unmarshall the XML file", e);
-      }
+        try {
+          d = (DataSource) (jaxbMarshaller != null ? jaxbMarshaller.unmarshal(fileContent) : null);
+        } catch (JAXBException e) {
+          log.error("Could not unmarshall the XML file", e);
+        }
 
-      if (d != null) {
-        d.setPath(file.getPath());
-        dataSources.add(d);
+        if (d != null) {
+          d.setPath(file.getPath());
+          dataSources.add(d);
+        }
       }
     }
 
@@ -583,12 +587,26 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   }
 
   private void createFolder(String path) throws RepositoryException {
-    if (!folderExists(path)) {
-      try {
-        executeUpdate("xdmp:directory-create('%(path)')", ParamsMap.init().put("path", path).build());
-      } catch (Exception ex) {
-        // Ignore XQueryException
-      }
+    if (path == null) return;
+
+    if (!path.endsWith("/")) {
+      path = path + "/";
+    }
+
+    Session session = createUpdateSession();
+
+    Map<String, String> parameters = ParamsMap.init().put("path", path).build();
+    String update = "xdmp:directory-create('%(path)')";
+    StrSubstitutor sub = createStrSubstitutor(parameters);
+    AdhocQuery request = session.newAdhocQuery(sub.replace(update));
+
+    try {
+      session.submitRequest(request);
+      session.commit();
+    } catch (RequestException e) {
+      // Ingore the exception
+    } finally {
+      session.close();
     }
   }
 
