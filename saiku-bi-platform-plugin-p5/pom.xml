@@ -133,7 +133,7 @@
 								</artifactItem>
 								<artifactItem>
 									<groupId>pentaho</groupId>
-									<artifactId>cpf-pentaho5</artifactId>
+									<artifactId>cpf-pentaho</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<!-- Batik/SVG -->
@@ -388,6 +388,7 @@
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>cpf-core</artifactId>
+			<version>7.1.0.0-12</version>
 			<exclusions>
 			<exclusion>
 					<groupId>janino</groupId>
@@ -397,7 +398,8 @@
 		</dependency>
 		<dependency>
 			<groupId>pentaho</groupId>
-			<artifactId>cpf-pentaho5</artifactId>
+			<artifactId>cpf-pentaho</artifactId>
+			<version>7.1.0.0-12</version>
 			<exclusions>
 				<exclusion>
 					<groupId>pentaho</groupId>
