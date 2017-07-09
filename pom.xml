@@ -536,7 +536,7 @@
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-js</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.jackrabbit</groupId>
@@ -648,27 +648,27 @@
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-transcoder</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-codec</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-bridge</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-svg-dom</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-ext</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
             </dependency>
             <dependency>
                 <groupId>iText</groupId>
@@ -851,7 +851,7 @@
             <dependency>
                 <groupId>pentaho</groupId>
                 <artifactId>cpf-core</artifactId>
-                <version>5.2.0.2-84</version>
+                <version>7.1.0.0-12</version>
                 <exclusions>
                     <exclusion>
                         <groupId>janino</groupId>
@@ -861,8 +861,8 @@
             </dependency>
             <dependency>
                 <groupId>pentaho</groupId>
-                <artifactId>cpf-pentaho5</artifactId>
-                <version>5.2.0.2-84</version>
+                <artifactId>cpf-pentaho</artifactId>
+                <version>7.1.0.0-12</version>
                 <exclusions>
                     <exclusion>
                         <groupId>pentaho</groupId>

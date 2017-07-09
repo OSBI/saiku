@@ -138,7 +138,7 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>pentaho</groupId>
-                                    <artifactId>cpf-pentaho5</artifactId>
+                                    <artifactId>cpf-pentaho</artifactId>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
                                 </artifactItem>
                                 <!-- Batik/SVG -->
@@ -434,11 +434,11 @@
                     <artifactId>janino</artifactId>
                 </exclusion>
             </exclusions>
-            <version>6.0.0.0-353</version>
+            <version>7.1.0.0-12</version>
         </dependency>
         <dependency>
             <groupId>pentaho</groupId>
-            <artifactId>cpf-pentaho5</artifactId>
+            <artifactId>cpf-pentaho</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>pentaho</groupId>
@@ -458,7 +458,7 @@
                 </exclusion>
 
             </exclusions>
-            <version>6.0.0.0-353</version>
+            <version>7.1.0.0-12</version>
 
         </dependency>
         <dependency>
@@ -693,6 +693,7 @@
                     <artifactId>batik-js</artifactId>
                 </exclusion>
             </exclusions>
+            <version>1.8</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
@@ -703,6 +704,7 @@
                     <artifactId>batik-js</artifactId>
                 </exclusion>
             </exclusions>
+            <version>1.8</version>
         </dependency>
         <!-- <dependency>
              <groupId>batik</groupId>
@@ -723,6 +725,7 @@
                     <artifactId>batik-js</artifactId>
                 </exclusion>
             </exclusions>
+            <version>1.8</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
@@ -733,11 +736,12 @@
                     <artifactId>batik-js</artifactId>
                 </exclusion>
             </exclusions>
+            <version>1.8</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-script</artifactId>
-            <version>1.7</version>
+            <version>1.8</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.xmlgraphics</groupId>
