@@ -97,6 +97,14 @@ Saiku is open source and free to use. Our default server does ship with a licens
 * [Stack Overflow](http://stackoverflow.com/questions/tagged/saiku)
 * [Freenode IRC - Channel: ##saiku](http://webchat.freenode.net/?randomnick=1&channels=%23%23saiku)
 
+## Browser Support
+
+We do care about it.
+
+![Edge](https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png) | ![Chrome](https://raw.github.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png) | ![Firefox](https://raw.github.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png) | ![Opera](https://raw.github.com/alrra/browser-logos/master/src/opera/opera_48x48.png) | ![Safari](https://raw.github.com/alrra/browser-logos/master/src/safari/safari_48x48.png)
+--- | --- | --- | --- | --- |
+Latest ✔ | Latest ✔ | Latest ✔ | Latest ✔ | Latest ✔ |
+
 ## Team
 
 [Saiku](http://www.meteorite.bi) is maintained by these people and a bunch of awesome [contributors](https://github.com/OSBI/saiku/graphs/contributors).
