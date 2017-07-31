@@ -3,7 +3,6 @@ package org.saiku.repository;
 import com.marklogic.xcc.*;
 import com.marklogic.xcc.exceptions.RequestException;
 import com.marklogic.xcc.exceptions.XccConfigException;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
@@ -23,6 +22,7 @@ import java.util.*;
 
 /**
  * MarkLogic Repository Manager
+ * To use this repository, it should be enabled at saiku-beans.xml file
  */
 public class MarkLogicRepositoryManager implements IRepositoryManager {
   private static final Logger log = LoggerFactory.getLogger(MarkLogicRepositoryManager.class);
@@ -32,11 +32,12 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   private static final String DATASOURCES_DIRECTORY = "/datasources/";
   private static final String SCHEMAS_DIRECTORY = "/datasources/";
 
+  // The values below are replaced by the values at saiku-beans.properties
   private String host = "localhost";
   private int port = 8070;
-  private String username = "admin";
-  private String password = "bruunoo";
-  private String database = "saiku";
+  private String username = "DEFAULT_USERNAME";
+  private String password = "DEFAULT_PASSWORD";
+  private String database = "DEFAULT_DATABASE";
 
   private String connectionUrl;
   private ContentSource contentSource;
@@ -103,6 +104,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     this.createFolder(sep + "etc");
 
     if (new File(append + "/etc/license.lic").exists()) {
+      // Filling the default license file
       try {
         this.saveBinaryInternalFile(new FileInputStream(append + "/etc/license.lic"), "/etc/license.lic", "");
       } catch (IOException e1) {
@@ -115,8 +117,6 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
       }
     }
-
-
 
     return true;
   }
@@ -522,6 +522,17 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   @Override
   public AclEntry getACL(String object, String username, List<String> roles) {
+    try {
+      if (this.folderExists(HOMES_DIRECTORY + username + "/" + object + "/")) {
+        Map<String,List<AclMethod>> generalRolesMap = new HashMap<>();
+        Map<String,List<AclMethod>> userRolesMap = new HashMap<>();
+
+        return new AclEntry(username, AclType.PUBLIC, generalRolesMap, userRolesMap);
+      }
+    } catch (RepositoryException e) {
+      return null;
+    }
+
     return null;
   }
 
@@ -604,7 +615,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
       session.submitRequest(request);
       session.commit();
     } catch (RequestException e) {
-      // Ingore the exception
+      // It means that the folder alreay exists, so ingore the exception.
     } finally {
       session.close();
     }
@@ -689,7 +700,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     }
   }
 
-  // Getters and setters
+  // Getters and setters, used mostly by Spring property injection
 
   public String getHost() {
     return host;
@@ -740,5 +751,4 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
     return workspace + "/";
   }
-
 }

@@ -86,6 +86,8 @@ cmake-build-debug/
 
 # IntelliJ
 /out/
+saiku-bi-platform-plugin-p5/saiku-bi-platform-plugin-p5.iml
+saiku-bi-platform-plugin/saiku-bi-platform-plugin.iml
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
