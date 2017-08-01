@@ -425,7 +425,7 @@ var AdminConsole = Backbone.View.extend({
         var html = this.schematemplate({repoObjects: repository});
         $(this.el).find('.inner_schema').append(html);
     },
-    backup_restore_template: _.template("<div><h1>Backup</h1><p><a href='/saiku/rest/saiku/admin/backup' class='form_button'>Backup Now!</a></p>" +
+    backup_restore_template: _.template("<div><h1>Backup</h1><p><a href='<%= Settings.REST_URL + AdminUrl %>/backup' class='form_button'>Backup Now!</a></p>" +
         "<hr>" +
         "<h1>Restore</h1>" +
         "<form><input name='restore' type='file' class='restore_button'/><div class='clear'></div><br/>" +
@@ -516,7 +516,7 @@ var AdminConsole = Backbone.View.extend({
         "<label for='schemaname'>Schema Name:</label><input name='schemaname' type='text' class='form-control' value='<%=" +
         " schema.id %>'/><br/>" +
         "<a href='<%= schema.id%>' class='user_button form_button btn btn-default remove_schema hide'>Remove</a>" +
-        "<a href='/saiku/rest/saiku/admin/schema/<%= schema.id%>' class='user_button btn btn-default form_button download_schema hide'>Download</a><input type='submit' class='user_button form-control form_button upload_button submitdatasource' value='Upload'>" +
+        "<a href='<%= Settings.REST_URL + AdminUrl %>/schema/<%= schema.id%>' class='user_button btn btn-default form_button download_schema hide'>Download</a><input type='submit' class='user_button form-control form_button upload_button submitdatasource' value='Upload'>" +
         "<br/><div id='uploadstatus'></div>"),
     licenseInfoTemplate: _.template("<h3>License Information</h3>" +
         "<ul class='license_type'><li><strong>License Type: </strong></li>" +
