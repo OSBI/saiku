@@ -103,10 +103,12 @@ public class TotalsListsBuilder implements FormatList {
     if (aggrTempl[0] == null) {
       // use BlankAggregator if one off measure has aggregator but total aggregator not selected
       for (Measure m : measures) {
-        ThinMeasure tm = ((Fat.MeasureAdapter) m).getThinMeasure();
-        if (tm != null && tm.getAggregators() != null && !tm.getAggregators().isEmpty()) {
-          aggrTempl[0] = TotalAggregator.newInstanceByFunctionName("nil");
-          break;
+        if (m instanceof Fat.MeasureAdapter) {
+          ThinMeasure tm = ((Fat.MeasureAdapter) m).getThinMeasure();
+          if (tm != null && tm.getAggregators() != null && !tm.getAggregators().isEmpty()) {
+            aggrTempl[0] = TotalAggregator.newInstanceByFunctionName("nil");
+            break;
+          }
         }
       }
     }
