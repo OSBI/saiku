@@ -3,6 +3,7 @@ package org.saiku.repository;
 import com.marklogic.xcc.*;
 import com.marklogic.xcc.exceptions.RequestException;
 import com.marklogic.xcc.exceptions.XccConfigException;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
@@ -29,7 +30,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   private static final String[] PARAMETER_DELIMITER = new String[]{"%(", ")"};
   private static final String HOMES_DIRECTORY = "/homes/";
   private static final String DATASOURCES_DIRECTORY = "/datasources/";
-  private static final String SCHEMAS_DIRECTORY = "/schemas/";
+  private static final String SCHEMAS_DIRECTORY = "/datasources/";
 
   private String host = "localhost";
   private int port = 8070;
@@ -43,19 +44,23 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   private UserService userService;
   private static MarkLogicRepositoryManager instance;
 
-  private MarkLogicRepositoryManager(String host, int port, String username, String password, String database) {
+  private String sep = "/";
+  private String append;
+
+  private MarkLogicRepositoryManager(String host, int port, String username, String password, String database, String data) {
     this.host = host;
     this.port = port;
     this.username = username;
     this.password = password;
     this.database = database;
+    this.append   = cleanse(data);
 
     init();
   }
 
-  public static synchronized MarkLogicRepositoryManager getMarkLogicRepositoryManager(String host, int port, String username, String password, String database) {
+  public static synchronized MarkLogicRepositoryManager getMarkLogicRepositoryManager(String host, int port, String username, String password, String database, String data) {
     if (instance == null) {
-      instance = new MarkLogicRepositoryManager(host, port, username, password, database);
+      instance = new MarkLogicRepositoryManager(host, port, username, password, database, data);
     }
 
     return instance;
@@ -92,6 +97,26 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     if (!folderExists(SCHEMAS_DIRECTORY)) {
       createFolder(SCHEMAS_DIRECTORY);
     }
+
+
+    // Creating the default license file
+    this.createFolder(sep + "etc");
+
+    if (new File(append + "/etc/license.lic").exists()) {
+      try {
+        this.saveBinaryInternalFile(new FileInputStream(append + "/etc/license.lic"), "/etc/license.lic", "");
+      } catch (IOException e1) {
+        log.debug("Failed to find license 1");
+        try {
+          this.saveBinaryInternalFile(new FileInputStream(append + "/unknown/etc/license.lic"), "/etc/license.lic", "");
+        } catch (IOException e2) {
+          log.debug("failed to find any licenses. Giving up");
+        }
+
+      }
+    }
+
+
 
     return true;
   }
@@ -307,12 +332,14 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     List<MondrianSchema> schemas = new ArrayList<>();
 
     for (File file : getFilesFromFolder(SCHEMAS_DIRECTORY, false)) {
-      MondrianSchema ms = new MondrianSchema();
+      if (file != null && file.getName() != null && file.getName().toLowerCase().endsWith("xml")) {
+        MondrianSchema ms = new MondrianSchema();
 
-      ms.setName(file.getName());
-      ms.setPath(file.getPath());
+        ms.setName(file.getName());
+        ms.setPath(file.getPath());
 
-      schemas.add(ms);
+        schemas.add(ms);
+      }
     }
 
     return schemas;
@@ -323,34 +350,36 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     List<DataSource> dataSources = new ArrayList<>();
 
     for (File file : getFilesFromFolder(DATASOURCES_DIRECTORY, false)) {
-      InputStream fileContent = getBinaryInternalFile(file.getPath());
+      if (file != null && file.getName() != null && file.getName().toLowerCase().endsWith("sds")) {
+        InputStream fileContent = getBinaryInternalFile(file.getPath());
 
-      JAXBContext jaxbContext = null;
-      Unmarshaller jaxbMarshaller = null;
+        JAXBContext jaxbContext = null;
+        Unmarshaller jaxbMarshaller = null;
 
-      try {
-        jaxbContext = JAXBContext.newInstance(DataSource.class);
-      } catch (JAXBException e) {
-        log.error("Could instantiate the JAXBContent", e);
-      }
+        try {
+          jaxbContext = JAXBContext.newInstance(DataSource.class);
+        } catch (JAXBException e) {
+          log.error("Could instantiate the JAXBContent", e);
+        }
 
-      try {
-        jaxbMarshaller = jaxbContext != null ? jaxbContext.createUnmarshaller() : null;
-      } catch (JAXBException e) {
-        log.error("Could not create the XML unmarshaller", e);
-      }
+        try {
+          jaxbMarshaller = jaxbContext != null ? jaxbContext.createUnmarshaller() : null;
+        } catch (JAXBException e) {
+          log.error("Could not create the XML unmarshaller", e);
+        }
 
-      DataSource d = null;
+        DataSource d = null;
 
-      try {
-        d = (DataSource) (jaxbMarshaller != null ? jaxbMarshaller.unmarshal(fileContent) : null);
-      } catch (JAXBException e) {
-        log.error("Could not unmarshall the XML file", e);
-      }
+        try {
+          d = (DataSource) (jaxbMarshaller != null ? jaxbMarshaller.unmarshal(fileContent) : null);
+        } catch (JAXBException e) {
+          log.error("Could not unmarshall the XML file", e);
+        }
 
-      if (d != null) {
-        d.setPath(file.getPath());
-        dataSources.add(d);
+        if (d != null) {
+          d.setPath(file.getPath());
+          dataSources.add(d);
+        }
       }
     }
 
@@ -558,12 +587,26 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   }
 
   private void createFolder(String path) throws RepositoryException {
-    if (!folderExists(path)) {
-      try {
-        executeUpdate("xdmp:directory-create('%(path)')", ParamsMap.init().put("path", path).build());
-      } catch (Exception ex) {
-        // Ignore XQueryException
-      }
+    if (path == null) return;
+
+    if (!path.endsWith("/")) {
+      path = path + "/";
+    }
+
+    Session session = createUpdateSession();
+
+    Map<String, String> parameters = ParamsMap.init().put("path", path).build();
+    String update = "xdmp:directory-create('%(path)')";
+    StrSubstitutor sub = createStrSubstitutor(parameters);
+    AdhocQuery request = session.newAdhocQuery(sub.replace(update));
+
+    try {
+      session.submitRequest(request);
+      session.commit();
+    } catch (RequestException e) {
+      // Ingore the exception
+    } finally {
+      session.close();
     }
   }
 
@@ -687,4 +730,15 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   public void setDatabase(String database) {
     this.database = database;
   }
+
+  private String cleanse(String workspace) {
+    workspace = workspace.replace("\\", "/");
+
+    if (!workspace.endsWith("/")) {
+      return workspace + "/";
+    }
+
+    return workspace + "/";
+  }
+
 }
