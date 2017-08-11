@@ -40,9 +40,9 @@ jobs:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-  test:
-    post:
-      - mkdir $CIRCLE_ARTIFACTS/files/
-      - mv saiku-bi-platform-plugin-p6/target/*.zip $CIRCLE_ARTIFACTS/files/
-      - mv saiku-bi-platform-plugin-p7/target/*.zip $CIRCLE_ARTIFACTS/files/
-      - mv saiku-server/target/*.zip $CIRCLE_ARTIFACTS/files/
+      - store_artifacts:
+          path: saiku-bi-platform-plugin-p6/target/
+      - store_artifacts:
+          path: saiku-bi-platform-plugin-p7/target/
+      - store_artifacts:
+          path: saiku-server/target/
