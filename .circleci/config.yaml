@@ -30,12 +30,20 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
-      - run: mvn dependency:go-offline
+      #- run: mvn dependency:go-offline
+
+        
+      # run tests!
+      - run: mvn install -DskipTests
 
       - save_cache:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-        
-      # run tests!
-      - run: mvn install
+      - store_artifacts:
+          path: saiku-bi-platform-plugin-p6/target/
+      - store_artifacts:
+          path: saiku-bi-platform-plugin-p7/target/
+      - store_artifacts:
+          path: saiku-server/target/
+
