@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2012 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,31 +26,31 @@ var Statistics = Backbone.View.extend({
 
     initialize: function(args) {
         this.workspace = args.workspace;
-        
+
         // Create a unique ID for use as the CSS selector
         this.id = _.uniqueId("stats_");
         $(this.el).attr({ id: this.id });
-        
+
         // Bind table rendering to query result event
-        _.bindAll(this, "render", "receive_data", "process_data", "show", 
+        _.bindAll(this, "render", "receive_data", "process_data", "show",
             "setOptions");
         this.workspace.bind('query:result', this.receive_data);
-        
+
         // Add stats button
         this.add_button();
         this.workspace.querytoolbar.stats = this.show;
-        
+
         // Listen to adjust event and rerender stats
         //this.workspace.bind('workspace:adjust', this.render);
-        
+
         // Append stats to workspace
         $(this.workspace.el).find('.workspace_results')
             .prepend($(this.el).hide())
     },
-    
+
     add_button: function() {
-        var $stats_button = 
-            $('<a href="#stats" class="stats button disabled_toolbar i18n" title="Basic Statistics"></a>')
+        var $stats_button =
+            $('<a href="#stats" class="stats button disabled_toolbar i18n" id="stats_icon" title="Basic Statistics"></a>')
             .css({  'background-image': "url('js/saiku/plugins/Statistics/sigma.png')",
                     'background-repeat':'no-repeat',
                     'background-position':'50% 50%',
@@ -61,31 +61,31 @@ var Statistics = Backbone.View.extend({
         var $stats_li = $('<li class="seperator_vertical"></li>').append($stats_button);
         $(this.workspace.querytoolbar.el).find("ul.table").append($stats_li);
     },
-    
+
     show: function(event, ui) {
         $(this.workspace.table.el).toggle();
         $(this.el).toggle();
         $(event.target).toggleClass('on');
-        
+
         if ($(event.target).hasClass('on')) {
             this.process_data({ data: this.workspace.query.result.lastresult() });
         } else {
             this.workspace.table.render({ data: this.workspace.query.result.lastresult() });
         }
     },
-    
+
     setOptions: function(event) {
         var type = $(event.target).attr('href').replace('#', '');
         try {
             this[type]();
         } catch (e) { }
-        
+
         return false;
     },
-    
+
     render: function() {
         if (! $(this.workspace.querytoolbar.el).find('.stats').hasClass('on') ||
-                ($(this.workspace.el).is(':visible') && !$(this.el).is(':visible'))) 
+                ($(this.workspace.el).is(':visible') && !$(this.el).is(':visible')))
         {
             return;
         }
@@ -95,9 +95,9 @@ var Statistics = Backbone.View.extend({
             var ohcell = header?"<th class='row_header'>":"<th class='row'>";
             var odcell = header?"<th class='col'>":"<td class='data'>";
             var ccell = header?"</th>":"</td>";
-            _.each(cells, function(it, idx){row += ((idx==0)?ohcell:odcell) 
+            _.each(cells, function(it, idx){row += ((idx==0)?ohcell:odcell)
 					+ "<div " + ((idx==0)?'class="i18n"':'') + ">"
-					+ it 
+					+ it
 					+ "</div>" + ccell})
             row += "</tr>"
             return row
@@ -107,7 +107,7 @@ var Statistics = Backbone.View.extend({
             //var elements = _.filter(_.map(grid, function(it){return it[el]}), function(it){return it});
 
             var elements = _.map(grid, function(it){ return it[el]});
-            elements = _.filter(elements, function(it) { 
+            elements = _.filter(elements, function(it) {
                 return (typeof it !== "undefined" && it != null && (it !== "" || it === 0));
             });
             var retVal = cback(elements);
@@ -126,14 +126,14 @@ var Statistics = Backbone.View.extend({
         }
         var min = function(elems){return _.min(elems)};
         var max = function(elems){return _.max(elems)};
-        
+
         $(this.el).empty();
         var grid = this.data.metadata;
         var rs = this.data.resultset;
         var aux = _.filter(grid, function(it){return !it.isHeader && it.colType == 'Numeric'});
         var columns = _.map(aux, function(it){return it.colName});
         var idxs =_.map(columns, function(el){return _.indexOf(_.map(grid, function(it){return it.colName}), el)});
-        
+
         var $table = $("<table style='display: table; '>");
         var $tbody = $("<tbody>").appendTo($table);
         $tbody.append(createRow(['Statistics'].concat(columns), true));
@@ -144,14 +144,14 @@ var Statistics = Backbone.View.extend({
         $tbody.append(createRow(['Std. Deviation'].concat(_.map(idxs, function(it){return group(rs, it, stdx)})), false));
 
         $(this.el).append($table);
-        
+
 		Saiku.i18n.translate();
     },
-    
+
     receive_data: function(args) {
         return _.delay(this.process_data, 0, args);
     },
-    
+
     process_data: function(args) {
         this.data = {};
         this.data.resultset = [];
@@ -166,19 +166,19 @@ var Statistics = Backbone.View.extend({
             $(this.el).empty();
         }
 
-        
+
         // Check to see if there is data
         if (args.data == null || (args.data.cellset && args.data.cellset.length === 0)) {
             $(this.el).empty();
         }
 
         if (args.data && args.data.cellset && args.data.cellset.length > 0) {
-            
+
             var lowest_level = 0;
             var isHead = true
             var columnNames = new Array()
             for (var row = 0, rowLen = args.data.cellset.length; row < rowLen; row++) {
-                if (isHead && (args.data.cellset[row][0].type == "ROW_HEADER_HEADER" || 
+                if (isHead && (args.data.cellset[row][0].type == "ROW_HEADER_HEADER" ||
                     args.data.cellset[row][0].value == "null")) {
                     this.data.metadata = [];
                     for (var field = 0, fieldLen = args.data.cellset[row].length; field < fieldLen; field++) {
@@ -199,7 +199,7 @@ var Statistics = Backbone.View.extend({
                                     .replace(/[^a-zA-Z 0-9.]+/g,'')) ? "String" : "Numeric",
                                 colName: columnNames[field].join(' / '),
                                 isHeader: (args.data.cellset[row][field].type == "ROW_HEADER_HEADER")
-                            });    
+                            });
                         }
                     }
                 } else if (args.data.cellset[row][lowest_level].value !== "null" && args.data.cellset[row][lowest_level].value !== "") {
@@ -213,7 +213,7 @@ var Statistics = Backbone.View.extend({
                         {
                             value = parseFloat(args.data.cellset[row][col].properties.raw);
                         } else if (typeof(args.data.cellset[row][col].value) !== "number" &&
-                            parseFloat(args.data.cellset[row][col].value.replace(/[^a-zA-Z 0-9.]+/g,''))) 
+                            parseFloat(args.data.cellset[row][col].value.replace(/[^a-zA-Z 0-9.]+/g,'')))
                         {
                             value = parseFloat(args.data.cellset[row][col].value.replace(/[^a-zA-Z 0-9.]+/g,''));
                         }
@@ -237,7 +237,7 @@ var Statistics = Backbone.View.extend({
     no_results: function(args) {
         $(this.el).text("No results");
     },
-    
+
     error: function(args) {
         $(this.el).text(safe_tags_replace(args.data.error));
     }
@@ -245,7 +245,7 @@ var Statistics = Backbone.View.extend({
 
 /**
  * Start Plugin
- */ 
+ */
  Saiku.events.bind('session:new', function(session) {
 
         function new_workspace(args) {
@@ -259,7 +259,7 @@ var Statistics = Backbone.View.extend({
             if (typeof args.workspace.stats != "undefined" && $(args.workspace.stats.el).is(':visible')) {
                 $(args.workspace.stats.el).parents().find('.workspace_results table').show();
                 $(args.workspace.stats.el).hide();
-                
+
                 args.workspace.stats.data = {};
                 args.workspace.stats.data.resultset = [];
                 args.workspace.stats.data.metadata = [];
@@ -269,7 +269,7 @@ var Statistics = Backbone.View.extend({
             }
         }
 
-        
+
         // Attach stats to existing tabs
         for(var i = 0, len = Saiku.tabs._tabs.length; i < len; i++) {
             var tab = Saiku.tabs._tabs[i];

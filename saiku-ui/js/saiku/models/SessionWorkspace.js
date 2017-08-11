@@ -264,9 +264,19 @@ var SessionWorkspace = Backbone.Model.extend({
                 }
 
                 everythingLoaded = setInterval(function() {
-                    if (typeof window.DashboardViewTab !== 'undefined') {
+                    console.log('window.DashboardViewTab', window.DashboardViewTab);
+                    console.log('typeof window.DashboardViewTab', typeof window.DashboardViewTab);
+
+                    if (Saiku.Dashboards === undefined) {
+                        // Running on Saiku CE
                         clearInterval(everythingLoaded);
                         addDefaultReport();
+                    } else {
+                        // Running on Saiku EE
+                        if (typeof window.DashboardViewTab !== 'undefined') {
+                            clearInterval(everythingLoaded);
+                            addDefaultReport();
+                        }
                     }
                 }, 100);
             }

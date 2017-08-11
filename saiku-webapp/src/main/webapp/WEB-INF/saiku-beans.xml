@@ -50,6 +50,12 @@
         <property name="type" value="${repo.type}"/>
         <property name="sessionRegistry" ref="sessionRepo"/>
         <property name="workspaces" value="${workspaces}"/>
+        <!-- MarkLogic specific properties -->
+        <property name="host" value="${repo.host}"/>
+        <property name="port" value="${repo.port}"/>
+        <property name="username" value="${repo.username}"/>
+        <property name="password" value="${repo.password}"/>
+        <property name="database" value="${repo.database}"/>
     </bean>
 
     <bean id="repoPasswordProviderBean" class="org.saiku.service.util.security.authentication.SimplePasswordProvider">

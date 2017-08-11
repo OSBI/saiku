@@ -118,9 +118,14 @@
 <script src="js/qtip/imagesloaded.pkg.min.js"></script>
 <script src="js/qtip/jquery.qtip.min.js"></script>
 <script type="text/javascript" src="js/tourist/tourist.js"></script>
+<script type="text/javascript" src="js/ozpIwc/ozpIwc-client.min.js"></script>
+<script type="text/javascript" src="js/intro/intro.min.js"></script>
 <!-- Loggly error logging service -->
 <script type="text/javascript" src="js/logger/janky.post.min.js"></script>
 <script type="text/javascript" src="js/logger/Logger.js" defer></script>
+
+<!-- D3 Library -->
+<script src="js/d3/d3.v3.min.js"></script>
 
 <!-- Saiku Project -->
 <script type="text/javascript" src="js/saiku/Settings.js"></script>
@@ -200,6 +205,7 @@
 -->
 
 <script type="text/javascript" src="js/saiku/plugins/I18n/plugin.js"></script>
+<script type="text/javascript" src="js/saiku/plugins/Intro/plugin.js"></script>
 <!-- Saiku plugins -->
 
 
@@ -208,9 +214,18 @@
 <script type="text/javascript" src="js/saiku/plugins/filters/plugin_disabled.js" defer></script>
 -->
 
+<!-- CCC dependencies -->
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart2/jquery.tipsy.js"></script>
+<link type="text/css" href="js/saiku/plugins/CCC_Chart2/tipsy.css" rel="stylesheet" media="screen" />
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart2/protovis.js"></script>
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart2/protovis-msie.js"></script>
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart2/tipsy.js"></script>
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart2/def.js"></script>
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart2/cdo.js"></script>
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart2/pvc.js"></script>
 
 <!-- CCC dependencies -->
-<script type="text/javascript" src="js/saiku/plugins/CCC_Chart/def.js"></script>
+<!--script type="text/javascript" src="js/saiku/plugins/CCC_Chart/def.js"></script>
 <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/protovis.js"></script>
 <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/protovis-msie.js"></script>
 <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/cdo.js"></script>
@@ -218,7 +233,7 @@
 
 <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/jquery.tipsy.js"></script>
 <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/tipsy.js"></script>
-<link type="text/css" href="js/saiku/plugins/CCC_Chart/tipsy.css" rel="stylesheet"/>
+<link type="text/css" href="js/saiku/plugins/CCC_Chart/tipsy.css" rel="stylesheet"/-->
 
 <!--<script type="text/javascript" src="../js/saiku/render/SaikuRenderer.js"></script>
 <script type="text/javascript" src="../js/saiku/render/SaikuTableRenderer.js"></script>
@@ -237,14 +252,17 @@
                     <li><a id='new_query' href='#new_query' title='New query' class='new_tab i18n sprite'></a></li>
                     <li class='separator'>&nbsp;</li>
                     <li><a id='open_query' href='#open_query' title='Open query' class='open_query i18n sprite'></a></li>
+                    <% if (!data.buttons) { %>
                     <li class='separator'>&nbsp;</li>
                     <li><a id='logout' href='#logout' title='Logout' class='logout i18n sprite'></a></li>
+
                     <li class='separator'>&nbsp;</li>
                     <li><a id='about' href='#about' title='About' class='about i18n sprite'></a></li>
                     <li class='separator'>&nbsp;</li>
                     <li><a id='help_icon' href='#help' target='_blank' title='Help' class='help i18n sprite'></a></li>
 
                     <li class='separator'>&nbsp;</li>
+                    <% } %>
 <!--                    <li><a id='issue_tracker' href='#issue_tracker' title='Issue Tracker' class='bug i18n sprite'></a></li>-->
             </ul>
 
@@ -263,7 +281,7 @@
         </script>
 <script type="text/x-jquery-tmpl" id="template-cubes">
             <div >
-            <select  class="form-control cubes ui-widget">
+            <select  id="cubesselect" class="form-control cubes ui-widget">
                 <option value="" class="i18n">Select a cube</option>
                 <% _.each(connections, function(connection) { %>
                     <% _.each(connection.catalogs, function(catalog) { %>
@@ -411,7 +429,7 @@
             <div>
                 <h3 class="top i18n">Cubes</h3>
                 <div class="refresh_cubes_nav">
-                    <a href="#refresh_cubes"
+                    <a id="refresh_icon" href="#refresh_cubes"
                         class="i18n button refresh_cubes"
                         title="Refresh Cubes (Clear Cache)"></a>
                 </div>
@@ -498,8 +516,8 @@
         <ul>
             <li><a href="#open_query"
                 class="i18n open button sprite"
-                title="Open query"></a></li>
-            <li><a href="#save_query"
+                title="Open query" id="new_icon"></a></li>
+            <li><a href="#save_query" id="save_icon"
                 class="i18n save button disabled_toolbar sprite"
                 title="Save query"></a></li>
             <li class="seperator"><a href="#new_query"
@@ -507,11 +525,11 @@
                 title="Reset query"></a></li>
             <li><a href="#edit_query"
                 class="i18n edit button on disabled_toolbar sprite"
-                title="Edit query"></a></li>
-            <li class="seperator"><a href="#run_query"
+                title="Edit query" id="edit_icon"></a></li>
+            <li class="seperator"><a href="#run_query" id="run_icon"
                 class="i18n run button disabled_toolbar sprite"
                 title="Run query"></a></li>
-            <li><a href="#automatic_execution"
+            <li><a href="#automatic_execution" id="automatic_icon"
                 class="i18n auto button disabled_toolbar sprite"
                 title="Automatic execution"></a></li>
 <!--
@@ -522,22 +540,22 @@
                 class="i18n toggle_sidebar button sprite"
                 title="Toggle sidebar"></a></li>
 -->
-            <li class="seperator"><a href="#group_parents"
+            <li class="seperator"><a href="#group_parents" id="group_icon"
                 class="i18n group_parents button disabled_toolbar sprite"
                 title="Hide Parents"></a></li>
-            <li><a href="#non_empty"
+            <li><a href="#non_empty" id="non_empty_icon"
                 class="i18n non_empty button disabled_toolbar sprite"
                 title="Non-empty"></a></li>
-            <li><a href="#swap_axis"
+            <li><a href="#swap_axis" id="swap_axis_icon"
                 class="i18n swap_axis button disabled_toolbar sprite"
                 title="Swap axis"></a></li>
-            <li><a href="#show_mdx"
+            <li><a href="#show_mdx" id="show_mdx_icon"
                 class="i18n mdx button disabled_toolbar sprite"
                 title="Show MDX"></a></li>
             <!-- <li><a href="#explain_query"
                 class="i18n explain_query button disabled_toolbar sprite"
                 title="Show Explain Plan"></a></li> -->
-            <li class="seperator"><a href="#zoom_mode"
+            <li class="seperator"><a href="#zoom_mode" id="zoom_mode_icon"
                 class="i18n table_mode zoom_mode button disabled_toolbar"
                 title="Zoom into table"></a></li>
             <li class="seperator"><a href="#query_scenario"
@@ -548,25 +566,25 @@
                 class="i18n workspace_titles button disabled_toolbar sprite"
                 title="Titles"></a></li>
                 <% } %>
-	<li class="seperator"><a href="#drillacross"
+	<li class="seperator"><a href="#drillacross" id="drillacross_icon"
 class="i18n table_mode drillacross button disabled_toolbar sprite"
 title="Drill across on cell"></a></li>
-            <li class="seperator"><a href="#drillthrough"
+            <li class="seperator"><a href="#drillthrough" id="drillthrough_icon"
                 class="i18n table_mode drillthrough button disabled_toolbar sprite"
                 title="Drill through on cell"></a></li>
-            <li><a href="#export_drillthrough"
+            <li><a href="#export_drillthrough" id="export_drillthrough_icon"
                 class="i18n table_mode drillthrough_export button disabled_toolbar sprite"
                 title="Export Drill-Through on cell to CSV"></a></li>
-            <li class="seperator"><a href="#export_xls"
+            <li class="seperator"><a href="#export_xls" id="export_xls_icon"
                 class="i18n export_xls button disabled_toolbar sprite"
                 title="Export XLS"></a></li>
-            <li><a href="#export_csv"
+            <li><a href="#export_csv" id="export_csv_icon"
                 class="i18n export_csv button disabled_toolbar sprite"
                 title="Export CSV"></a></li>
-            <li><a href="#export_pdf"
+            <li><a href="#export_pdf" id="export_pdf_icon"
                 class="i18n export_pdf button disabled_toolbar sprite"
                 title="EXPERIMENTAL: Export PDF"></a></li>
-            <li><a href="#switch_to_mdx"
+            <li><a href="#switch_to_mdx" id="switch_to_mdx_icon"
                 class="i18n switch_to_mdx button disabled_toolbar"
                 title="Switch to MDX Mode"></a></li>
             <% if (Settings.BIPLUGIN5 == true) { %>
@@ -581,20 +599,20 @@ title="Drill across on cell"></a></li>
 <script type="text/x-jquery-tmpl" id="template-query-toolbar">
         <div class="query_toolbar_vertical">
         <ul class="renderer">
-            <li><a href="#switch_render_button"
+            <li><a href="#switch_render_button" id="table_icon"
                 class="i18n render_table button disabled_toolbar on"
                 title="Table Mode"></a></li>
-            <li><a href="#switch_render_button"
+            <li><a href="#switch_render_button" id="chart_icon"
                 class="i18n render_chart button disabled_toolbar"
                 title="Chart Mode"></a></li>
         </ul>
         <ul class='options table hide'>
                         <!--<li class="seperator_vertical label"><a class="i18n label disabled_toolbar">Options:</a></li> -->
 
-            <li class="seperator_vertical"><a href="#spark_bar"
+            <li class="seperator_vertical"><a href="#spark_bar" id="spark_bar_icon"
                 class="i18n spark_bar tablebutton button disabled_toolbar"
                 title="Spark Bar"></a></li>
-            <li><a href="#spark_line"
+            <li><a href="#spark_line" id="spark_line_icon"
                 class="i18n spark_line button disabled_toolbar"
                 title="Spark Line"></a></li>
            <!-- <li><a href="#asdf"
@@ -644,6 +662,12 @@ title="Drill across on cell"></a></li>
             <li><a href="#pie"
                 class="i18n pie chartoption button disabled_toolbar"
                 title="Pie"></a></li>
+            <li><a href="#radar"
+                class="i18n radar chartoption button disabled_toolbar"
+                title="Radar"></a></li>
+            <li><a href="#timewheel"
+                class="i18n timewheel chartoption button disabled_toolbar"
+                title="Time Wheel"></a></li>
            <!-- <li><a href="#chart_editor"
                 class="i18n custom_chart button disabled_toolbar"
                 title="Custom">Custom</a></li> -->
@@ -824,7 +848,7 @@ title="Drill across on cell"></a></li>
             <option class="i18n" value="avg">Avg</option>
         </select>
         &nbsp;
-    </div>    
+    </div>
 </script>
 <script type="text/x-jquery-tmpl" id="template-selections-options">
             <ul>
@@ -975,9 +999,5 @@ title="Drill across on cell"></a></li>
 </ul>
 </script>
 <script type="text/javascript" src="js/ga.js"></script>
-<script>document.write('<script src="//'
-    + (location.host || 'localhost').split(':')[0]
-    + ':35729/livereload.js"></'
-    + 'script>')</script>
 </body>
 </html>

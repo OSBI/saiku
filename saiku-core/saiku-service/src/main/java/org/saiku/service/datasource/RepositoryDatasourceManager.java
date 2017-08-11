@@ -84,13 +84,22 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String externalparameters;
     private String type;
     private String separator = "/";
+    private String host;
+    private String port;
+    private String username;
+    private String password;
+    private String database;
 
     public void load() {
         Properties ext = checkForExternalDataSourceProperties();
-        if (type.equals("classpath")) {
-            separator = "/";
 
+        if (type.equals("marklogic")) {
+            irm = MarkLogicRepositoryManager.getMarkLogicRepositoryManager(host, Integer.parseInt(port), username, password, database, cleanse(datadir));
+        } else if (type.equals("classpath")) {
+            separator = "/";
+            log.debug("init datadir= "+datadir);
             irm = ClassPathRepositoryManager.getClassPathRepositoryManager(cleanse(datadir), defaultRole, sessionRegistry, workspaces);
+            log.debug("2nd init datadir= "+datadir);
         } else {
             irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopasswordprovider.getPassword(),
                     oldpassword, defaultRole);
@@ -102,6 +111,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         } catch (RepositoryException e) {
             log.error("Could not start repo", e);
         }
+
         datasources.clear();
 
 
@@ -289,6 +299,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             path = path.replace("\\", "/");
 
             log.debug("Trimmed path is: " + path);
+            path = path.replaceFirst(datadir, "");
             boolean f = true;
             if (new File(getDatadir() + separator + path).exists() && new File(getDatadir() + separator + path).isDirectory()) {
                 f = false;
@@ -345,7 +356,9 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             for (DataSource data : ds) {
                 if (data.getId().equals(datasourceId)) {
                     datasources.remove(data.getName());
-                    irm.deleteFile(data.getPath());
+                    String path = data.getPath();
+                    path = path.replaceFirst(datadir, "");
+                    irm.deleteFile(path);
                     return true;
                 }
             }
@@ -834,5 +847,45 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 LegacyImporter l = new LegacyImporterImpl(null);
                 return l.importJujuDatasources();
         }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public String getPort() {
+        return port;
+    }
+
+    public void setPort(String port) {
+        this.port = port;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
+    }
 }
 

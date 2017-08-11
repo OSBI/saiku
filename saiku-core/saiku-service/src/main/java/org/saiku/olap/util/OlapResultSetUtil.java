@@ -33,33 +33,37 @@ public class OlapResultSetUtil {
     if ( cellSet == null ) {
       return new CellDataSet( 0, 0 );
     }
+
     final Matrix matrix = formatter.format( cellSet );
     final CellDataSet cds = new CellDataSet( matrix.getMatrixWidth(), matrix.getMatrixHeight() );
 
     int z = 0;
     final AbstractBaseCell[][] bodyvalues =
-      new AbstractBaseCell[ matrix.getMatrixHeight() - matrix.getOffset() ][ matrix
-        .getMatrixWidth() ];
-    for ( int y = matrix.getOffset(); y < matrix.getMatrixHeight(); y++ ) {
+      new AbstractBaseCell[ matrix.getMatrixHeight() - matrix.getOffset() ]
+                          [ matrix.getMatrixWidth() ];
 
+    for ( int y = matrix.getOffset(); y < matrix.getMatrixHeight(); y++ ) {
       for ( int x = 0; x < matrix.getMatrixWidth(); x++ ) {
         bodyvalues[ z ][ x ] = matrix.get( x, y );
       }
+
       z++;
     }
 
     cds.setCellSetBody( bodyvalues );
 
-    final AbstractBaseCell[][] headervalues = new AbstractBaseCell[ matrix.getOffset() ][ matrix.getMatrixWidth() ];
+    final AbstractBaseCell[][] headervalues =
+        new AbstractBaseCell[ matrix.getOffset() ][ matrix.getMatrixWidth() ];
+
     for ( int y = 0; y < matrix.getOffset(); y++ ) {
       for ( int x = 0; x < matrix.getMatrixWidth(); x++ ) {
         headervalues[ y ][ x ] = matrix.get( x, y );
       }
     }
+
     cds.setCellSetHeaders( headervalues );
     cds.setOffset( matrix.getOffset() );
+
     return cds;
-
   }
-
 }

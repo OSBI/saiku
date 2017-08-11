@@ -103,10 +103,12 @@ var Workspace = Backbone.View.extend({
 
         // Selected schema and cube via url
         var paramsURI = Saiku.URLParams.paramsURI();
-        if(args!=undefined && args.processURI != undefined && args.processURI==false){
+
+        if (args !== undefined && args.processURI !== undefined && args.processURI === false) {
             paramsURI = {};
         }
-        if (Saiku.URLParams.equals({ schema: paramsURI.schema, cube: paramsURI.cube })) {
+
+        if (Saiku.URLParams.contains({ schema: paramsURI.schema, cube: paramsURI.cube })) {
             this.data_connections(paramsURI);
         }
         else {
@@ -242,6 +244,7 @@ var Workspace = Backbone.View.extend({
         $(window).resize(this.adjust);
 
 
+
         // Fire off new workspace event
         Saiku.session.trigger('workspace:new', { workspace: this });
 
@@ -259,6 +262,13 @@ var Workspace = Backbone.View.extend({
 
         if (!Saiku.session.isAdmin && Settings.SHOW_REFRESH_NONADMIN === false) {
             $(this.el).find('.refresh_cubes_nav').hide();
+        }
+
+        var paramsURI = Saiku.URLParams.paramsURI();
+
+        if (!Saiku.introDone && Saiku.URLParams.contains({ show_help: paramsURI.show_help })) {
+            Saiku.intro.start({ fileName: 'Workspace' });
+            Saiku.introDone = true;
         }
 
         return this;
@@ -355,17 +365,20 @@ var Workspace = Backbone.View.extend({
 
 
     },
+
     data_connections: function(paramsURI) {
-        var connections = Saiku.session.sessionworkspace.connections,
-            self = this;
+        var connections = Saiku.session.sessionworkspace.connections;
+        var self = this;
+
         _.each(connections, function(connection) {
             _.each(connection.catalogs, function(catalog) {
                 _.each(catalog.schemas, function(schema) {
                     if (schema.cubes.length > 0) {
                         _.each(schema.cubes, function(cube) {
                             if (typeof cube['visible'] === 'undefined' || cube['visible']) {
-                                var schemaName = ((schema.name === '' || schema.name === null) ? 'null' : schema.name),
-                                    cubeName = ((cube.caption === '' || cube.caption === null) ? cube.name : cube.caption);
+                                var schemaName = ((schema.name === '' || schema.name === null) ? 'null' : schema.name);
+                                var cubeName = ((cube.caption === '' || cube.caption === null) ? cube.name : cube.caption);
+
                                 if (paramsURI.schema === schemaName && paramsURI.cube === cubeName) {
                                     self.selected_cube = connection.name + '/' + catalog.name + '/' + schemaName + '/' + cubeName;
                                     self.isUrlCubeNavigation = true;
@@ -379,6 +392,7 @@ var Workspace = Backbone.View.extend({
             });
         });
     },
+
     create_new_query: function(obj){
         if (obj.query) {
             obj.query.destroy();
@@ -423,11 +437,75 @@ var Workspace = Backbone.View.extend({
             workspace: obj
         });
 
-        obj.query = this.query;
+        if (!this.processedParamsURI) {
+            var paramsURI = Saiku.URLParams.paramsURI();
 
-        var p = this.paramsURI;
-        //var deffilters = this.extractDefaultFilters(p);
-        //this.setDefaultFilters(deffilters, obj.query);
+            var addCustomFilter = function(axis, filterExpression) {
+                var a = this.query.helper.getAxis(axis);
+                var checkChar = {
+                    first: filterExpression.charAt(0),
+                    last: filterExpression.charAt(filterExpression.length - 1)
+                };
+                var indexHierarchy = '-1';
+                var expressions = [];
+                var arrHierarchy = [];
+                var hierarchy = '';
+                var level;
+                var filter;
+                var hierarchyLevel;
+
+                if (checkChar.first === '(' && checkChar.last === ')') {
+                    filterExpression = Saiku.trimFirstLastChar(filterExpression);
+
+                    if (filterExpression.indexOf('],') !== -1) {
+                        hierarchyLevel = filterExpression.split('],')[0].split('].[');
+                        level = _.last(hierarchyLevel);
+                        arrHierarchy = _.first(hierarchyLevel, hierarchyLevel.length > 2 ? 2 : 1);
+                        filter = filterExpression.split('],')[1].trim();
+
+                        for (var i = 0, iLen = arrHierarchy.length; i < iLen; i++) {
+                            hierarchy += '[' + Saiku.removeBrackets(arrHierarchy[i]) + '].';
+                        }
+
+                        hierarchy = Saiku.trimFirstLastChar(hierarchy, 'last');
+
+                        this.query.helper.includeLevel(axis, hierarchy, level, indexHierarchy);
+                    }
+                    else {
+                        filter = filterExpression;
+                    }
+                }
+                else {
+                    filter = filterExpression;
+                }
+
+                expressions.push(filter);
+
+                this.query.helper.removeFilter(a, 'Generic');
+                a.filters.push({
+                    'flavour': 'Generic',
+                    'operator': null,
+                    'function': 'Filter',
+                    'expressions': expressions
+                });
+            }.bind(this);
+
+            if (Saiku.URLParams.contains({ default_mdx_filter_rows: paramsURI.default_mdx_filter_rows })) {
+                addCustomFilter('ROWS', paramsURI.default_mdx_filter_rows);
+            }
+
+            if (Saiku.URLParams.contains({ default_mdx_filter_columns: paramsURI.default_mdx_filter_columns })) {
+                addCustomFilter('COLUMNS', paramsURI.default_mdx_filter_columns);
+            }
+
+            if (Saiku.URLParams.contains({ default_mdx_filter: paramsURI.default_mdx_filter })) {
+                addCustomFilter('FILTER', paramsURI.default_mdx_filter);
+            }
+
+            this.processedParamsURI = true;
+        }
+
+        obj.query = this.query;
 
         // Save the query to the server and init the UI
         obj.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });
@@ -635,10 +713,10 @@ var Workspace = Backbone.View.extend({
         if (model.type === "QUERYMODEL") {
 
             var self = this;
-			if(self.dimension_list!=null){
-            	var dimlist = dimension_el ? dimension_el : $(self.dimension_list.el);
-			}
-			else{
+            if(self.dimension_list!=null){
+                var dimlist = dimension_el ? dimension_el : $(self.dimension_list.el);
+            }
+            else{
                 var dimlist = dimension_el ? dimension_el : null;
             }
 

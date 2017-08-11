@@ -133,7 +133,7 @@
 								</artifactItem>
 								<artifactItem>
 									<groupId>pentaho</groupId>
-									<artifactId>cpf-pentaho5</artifactId>
+									<artifactId>cpf-pentaho</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<!-- Batik/SVG -->

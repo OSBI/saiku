@@ -21,7 +21,8 @@ var Table = Backbone.View.extend({
     className: 'table_wrapper',
     events: {
         'click th.row' : 'clicked_cell',
-        'click th.col' : 'clicked_cell'
+        'click th.col' : 'clicked_cell',
+        'click span.expander' : 'expand_row'
     },
 
     initialize: function(args) {
@@ -29,11 +30,174 @@ var Table = Backbone.View.extend({
         this.renderer = new SaikuTableRenderer();
 
         // Bind table rendering to query result event
-        _.bindAll(this, "render", "process_data");
+        _.bindAll(this, "render", "process_data", "collapse" ,"expand");
         this.workspace.bind('query:result', this.render);
         this.id = _.uniqueId("table_");
         $(this.el).attr('id', this.id);
-    },
+  },
+
+
+  expand_row: function (event) {
+    var self = this;
+    var $targetSpan = $(event.currentTarget);
+    if ($targetSpan.hasClass('expanded')) {
+      self.collapse(event, $targetSpan);
+    } else {
+      self.expand(event, $targetSpan);
+    }
+    event.stopPropagation();
+    event.preventDefault();
+  },
+
+  collapse: function (event, $targetSpan) {
+    var self = this;
+    var $targetDiv = $(event.currentTarget).parent();
+    var $targetRow = $targetDiv.parent().parent();
+    $targetSpan.html('&#9658;');
+    $targetSpan.removeClass('expanded');
+    $targetSpan.addClass('collapsed');
+    var pos = $targetDiv.attr('rel').split(':');
+    var row = parseInt(pos[0]);
+    var col = parseInt(pos[1]);
+
+    var cell = self.workspace.query.result.lastresult().cellset[row][col];
+    var $rowIterator = $targetRow.next();
+    row++;
+    var hasColspan = $targetRow.find('td[colspan],th[colspan]').length > 0;
+    if (self.workspace.toolbar.$el.find('.group_parents').hasClass('on')) {
+      if(!hasColspan){
+        self.collapseAndHide($targetRow, $rowIterator, row, col);
+      } else {
+        self.justCollapse($rowIterator, $targetDiv);
+      }
+    } else {
+      if(!hasColspan){
+        self.collapseAndHide($targetRow, $rowIterator, row, col);
+      } else {
+        self.justCollapse($rowIterator, $targetDiv);
+      }
+    }
+  },
+
+  justCollapse : function($rowIterator, $targetDiv){
+    var nextRowSame = true;
+    var tdIndex = $targetDiv.parent().children().index($targetDiv);
+    while (nextRowSame) {
+      if($($rowIterator.find('th,td')[tdIndex]).hasClass('row_null')){
+        $rowIterator.hide();
+        $rowIterator = $rowIterator.next();
+      } else {
+        nextRowSame = false;
+      }
+    }
+  },
+
+  collapseAndHide : function($targetRow, $rowIterator, row, col){
+    var self = this;
+    var nextRowSame = true;
+    var cells = $targetRow.find('th, td');
+    for (var i = col + 1; i < cells.length; i++) {
+      $(cells[i]).find('div').hide();
+    }
+    // group_parents = true
+    while (nextRowSame) {
+      if ($rowIterator.length > 0) {
+        var isLast = $rowIterator.find('th,td');
+        if (isLast.length > 0 && $(isLast[col]).hasClass('row_total_corner')) {
+          nextRowSame = false;
+          var targetRowDataValues = $targetRow.find('div.datadiv');
+          var summaryDataValues = $rowIterator.find('td.data');
+          for (var i = 0; i < targetRowDataValues.length; i++) {
+            var div = '<span class="totalSpan">' + $(summaryDataValues[i]).html() + '</span>';
+            $(targetRowDataValues[i]).parent().addClass('total');
+            $(targetRowDataValues[i]).parent().html($(targetRowDataValues[i]).wrap('<p/>').parent().html() + div);
+          }
+          $rowIterator.hide();
+          break;
+        } else {
+          for (var i = 0; i <= col; i++) {
+            var isLast = $rowIterator.find('th,td');
+            var thisIsTotal = false;
+            for(var j = 0 ; j < col && j < isLast.length; j ++){
+              if($(isLast[j]).hasClass('row_total_corner')){
+                thisIsTotal = true;
+                nextRowSame = false;
+              }
+            }
+            if (row < self.workspace.query.result.lastresult().cellset.length && self.workspace.query.result.lastresult().cellset[row][i].value != self.workspace.query.result.lastresult().cellset[row - 1][i].value && !thisIsTotal) {
+              var $lastTotalRow = null;
+              while ($rowIterator.find('.row_total_corner').length != 0) {
+                $rowIterator.hide();
+                $lastTotalRow = $rowIterator;
+                $rowIterator = $rowIterator.next();
+              }
+              if ($lastTotalRow != null) {
+                var targetRowDataValues = $targetRow.find('div.datadiv');
+                var summaryDataValues = $lastTotalRow.find('td.data');
+                for (var i = 0; i < targetRowDataValues.length; i++) {
+                  var div = '<span class="totalSpan">' + $(summaryDataValues[i]).html() + '</span>';
+                  $(targetRowDataValues[i]).parent().addClass('total');
+                  $(targetRowDataValues[i]).parent().html($(targetRowDataValues[i]).wrap('<p/>').parent().html() + div);
+                }
+              }
+              nextRowSame = false;
+              break;
+            }
+          }
+          if (!nextRowSame) {
+            break;
+          }
+        }
+        if ($rowIterator.find('.row_total_corner').length == 0) {
+          row++;
+        }
+        $rowIterator.hide();
+        $rowIterator = $rowIterator.next();
+      } else {
+        break;
+      }
+    }
+  },
+
+  expand: function (event, $targetSpan, row, col) {
+    var self = this;
+
+    var $targetDiv = $(event.currentTarget).parent();
+    var pos = $targetDiv.attr('rel').split(':');
+    var row = parseInt(pos[0]);
+    var col = parseInt(pos[1]);
+
+    $targetSpan.html('&#9660;');
+    $targetSpan.removeClass('collapsed');
+    $targetSpan.addClass('expanded');
+    var $targetDiv = $(event.currentTarget).parent();
+    var $targetRow = $targetDiv.parent().parent();
+
+    var targetRowDataValues = $targetRow.find('th, td');
+    for (var i = 0; i < targetRowDataValues.length; i++) {
+      var dataCell = $(targetRowDataValues[i]).find('div');
+      if (dataCell.length > 0) {
+        $(dataCell).show();
+      }
+      $targetRow.find('.total').removeClass('total');
+      $targetRow.find('.totalSpan').remove();
+    }
+    $targetRow.find('span.collapsed').removeClass('collapsed').addClass('expanded').html('&#9660;');
+
+    var $rowIterator = $targetRow.next();
+    while ($rowIterator.length > 0 && ($($rowIterator.find('th,td')[col]).hasClass("row_null") || $($rowIterator.find('th,td')[col]).hasClass("row_total_corner"))) {
+      $rowIterator.find('span.collapsed').removeClass('collapsed').addClass('expanded').html('&#9660;');
+      $rowIterator.find('.totalSpan').remove();
+      $rowIterator.find('div:hidden').show();
+
+      if ($rowIterator.css('display') == 'none') {
+        $rowIterator.show();
+      } else {
+        break;
+      }
+      $rowIterator = $rowIterator.next();
+    }
+  },
 
     clicked_cell: function(event) {
         var self = this;
@@ -218,14 +382,20 @@ var Table = Backbone.View.extend({
                         //self.workspace.query.helper.removeLevel(h, k);
                         var hierarchy = self.workspace.query.helper.getHierarchy(h);
 						if (hierarchy && hierarchy.levels.hasOwnProperty(l_name)|| h == "[Measures]") {
-							if(h=="[Measures]"){
-								measure = {name:cell.properties.uniquename, type:'EXACT'}
+                            if(h=="[Measures]"){
+                                var measure = {
+                                    caption: cell.value,
+                                    name: cell.value,
+                                    type: 'EXACT',
+                                    uniqueName: cell.properties.uniquename
+                                };
 
-								self.workspace.query.helper.clearMeasures();
-								self.workspace.query.helper.includeMeasure(measure)
-							}
+                                self.workspace.query.helper.clearMeasures();
+                                self.workspace.query.helper.includeMeasure(measure);
+                                self.workspace.sync_query();
+                                self.workspace.query.run();
+                            }
 							else {
-
 								updates.push({
 									uniqueName: cell.properties.uniquename,
 									caption: cell.properties.uniquename

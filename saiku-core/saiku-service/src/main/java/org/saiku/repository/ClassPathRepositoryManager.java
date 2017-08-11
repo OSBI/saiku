@@ -68,7 +68,9 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
     private ClassPathRepositoryManager(String data, String defaultRole, ScopedRepo sessionRegistry, boolean workspaces) {
 
+        log.info("Path is "+ data);
         this.append = cleanse(data);
+        log.info("Path is now"+ data);
         this.defaultRole = defaultRole;
         this.sessionRegistry = sessionRegistry;
         this.workspaces = workspaces;

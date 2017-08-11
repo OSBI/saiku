@@ -74,7 +74,7 @@ var SaveQuery = Modal.extend({
             "<div class='RepositoryObjects'><span class='i18n'>Loading...</span></div>" +
             "<div class='form-inline' style='padding-top:4px'>"    +
             "<label for='name' class='i18n'>File:</label>&nbsp;" +
-            "<input type='text' name='name' class='form-control' value='<%= name %>' /></div>" +
+            "<input type='text' name='name' id='relative-file-path' class='form-control' value='<%= name %>' /></div>" +
             "<br />"+
             "</form>")({ name: full_path });
 
@@ -170,7 +170,7 @@ var SaveQuery = Modal.extend({
         repositoryLazyLoad.fetch();
         Saiku.ui.block('Loading...');
     },
-    
+
     template_repository_folder_lazyload: function(folder, repository) {
         folder.find('.folder_content').remove();
         folder.append(

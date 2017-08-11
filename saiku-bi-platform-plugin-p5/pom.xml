@@ -2,12 +2,12 @@
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saikuanalytics</groupId>
-        <version>3.9</version>
+        <version>3.15-SNAPSHOT</version>
     </parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>saiku-bi-platform-plugin-p5</artifactId>
 	<packaging>jar</packaging>
-	<version>3.9</version>
+	<version>3.15-SNAPSHOT</version>
 	<name>saiku biserver plugin</name>
 
 	<build>
@@ -133,7 +133,7 @@
 								</artifactItem>
 								<artifactItem>
 									<groupId>pentaho</groupId>
-									<artifactId>cpf-pentaho5</artifactId>
+									<artifactId>cpf-pentaho</artifactId>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<!-- Batik/SVG -->
@@ -195,6 +195,7 @@
 								<artifactItem>
 									<groupId>iText</groupId>
 									<artifactId>iText</artifactId>
+                  <version>4.2.0</version>
 									<outputDirectory>target/dist/saiku/lib</outputDirectory>
 								</artifactItem>
 								<artifactItem>
@@ -334,12 +335,12 @@
 		<repository>
 			<id>Analytical Labs Repo</id>
 			<name>Analytical Labs Repo-releases</name>
-			<url>http://repo.meteorite.bi/content/repositories/alabs-release-local/</url>
+			<url>http://repo.meteorite.bi/repository/alabs-release-local/</url>
 		</repository>
 		<repository>
 			<id>Analytical Labs snapshots</id>
 			<name>Analytical Labs Repo-releases</name>
-			<url>http://repo.meteorite.bi/content/repositories/alabs-snapshot-local/</url>
+			<url>http://repo.meteorite.bi/repository/alabs-snapshot-local/</url>
 		</repository>
 		<repository>
 			<id>pentaho-third-party</id>
@@ -387,6 +388,7 @@
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>cpf-core</artifactId>
+			<version>7.1.0.0-12</version>
 			<exclusions>
 			<exclusion>
 					<groupId>janino</groupId>
@@ -396,7 +398,8 @@
 		</dependency>
 		<dependency>
 			<groupId>pentaho</groupId>
-			<artifactId>cpf-pentaho5</artifactId>
+			<artifactId>cpf-pentaho</artifactId>
+			<version>7.1.0.0-12</version>
 			<exclusions>
 				<exclusion>
 					<groupId>pentaho</groupId>
@@ -461,6 +464,11 @@
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>pentaho-platform-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>pentaho</groupId>
+			<artifactId>pentaho-platform-repository</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -631,6 +639,7 @@
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-transcoder</artifactId>
+			<version>1.8</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.xmlgraphics</groupId>
@@ -641,6 +650,7 @@
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-codec</artifactId>
+			<version>1.8</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.xmlgraphics</groupId>
@@ -651,6 +661,7 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-svg-dom</artifactId>
+			<version>1.8</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.xmlgraphics</groupId>
@@ -661,6 +672,7 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-bridge</artifactId>
+			<version>1.8</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.xmlgraphics</groupId>
@@ -671,7 +683,7 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-script</artifactId>
-            <version>1.7</version>
+            <version>1.8</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.xmlgraphics</groupId>

@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationManager;
-import org.springframework.security.BadCredentialsException;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
@@ -214,7 +213,7 @@ public class PentahoSessionService implements ISessionService {
 			log.debug("Logging in with [{}]", authentication.getPrincipal());
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
-		catch (BadCredentialsException bd) {
+		catch (Exception bd) {
 			throw new RuntimeException("Authentication failed for: " + username, bd);
 		}
 

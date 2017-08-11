@@ -123,10 +123,10 @@ var Settings = {
     EMPTY_VALUE_CHARACTER: '-',
     HIDE_EMPTY_ROWS: true,
     MEASURE_GROUPS_COLLAPSED: false,
-	ORBIS_AUTH: {
-		enabled: false,
-		cookieName: 'SAIKU_AUTH_PRINCIPAL'
-	},
+    ORBIS_AUTH: {
+        enabled: false,
+        cookieName: 'SAIKU_AUTH_PRINCIPAL'
+    },
     SCHEMA_EDITOR: {
         // The `^` matches beginning of input.
         STAR_SCHEMA_FACT_TABLE: /^fact_|^f_/i,
@@ -134,6 +134,26 @@ var Settings = {
         STAR_SCHEMA_MEASURE_COLUMN: /^measure_|^m_/i,
         // The `$` matches end of input.
         STAR_SCHEMA_MEASURE_AGGREGATION_COLUMN: /_sum$|_avg$|_count$|_min$|_max$/i
+    },
+    ALLOW_TABLE_DATA_COLLAPSE: false,
+    ALLOW_AXIS_COLUMN_TITLE_TABLE: true,
+    COLUMN_TITLE_TABLE_USE_LEVEL_CAPTION_NAME: true,
+    INTRO_FILE_NAME: 'Workspace',
+    // For more options, see: http://introjs.com/docs/intro/options/
+    INTRO_DEFAULT_OPTIONS: {
+        showStepNumbers: true,
+        showBullets: false,
+        showProgress: true
+    },
+    OZP_IWC_ENABLE: false,
+    OZP_IWC_CLIENT_URI: 'http://aml-development.github.io/ozp-iwc',
+    // /{minor}/{major}/{action} ("/application/json/view")
+    // or
+    // /{minor}/{major}/{action}/{handlerId} ("/application/json/view/123")
+    OZP_IWC_REFERENCE_PATH: '/application/display/help',
+    OZP_IWC_CONFIG: {
+        label: 'Saiku Analytics',
+        icon: 'https://avatars0.githubusercontent.com/u/1043666?v=3&s=32'
     }
 };
 
@@ -153,12 +173,12 @@ Settings.GET = function () {
         if (! isNaN(value)) value = parseInt(value);
         if (value === "true") value = true;
         if (value === "false") value = false;
-		if(decodeURIComponent(tokens[1].toUpperCase()).substring(0,5)==="PARAM"){
-			params["PARAM"+decodeURIComponent(tokens[1]).substring(5,decodeURIComponent(tokens[1]).length)] = value;
-		}
-		else{
-			params[decodeURIComponent(tokens[1]).toUpperCase()] = value;
-		}
+        if(decodeURIComponent(tokens[1].toUpperCase()).substring(0,5)==="PARAM"){
+          params["PARAM"+decodeURIComponent(tokens[1]).substring(5,decodeURIComponent(tokens[1]).length)] = value;
+        }
+        else{
+          params[decodeURIComponent(tokens[1]).toUpperCase()] = value;
+        }
 
         tokens = re.exec(qs);
     }
