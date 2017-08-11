@@ -40,3 +40,10 @@ jobs:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
+
+general:
+  artifacts:
+     - "saiku-server/target/"
+     - "saiku-bi-platform-plugin-p6/target/"
+     - "saiku-bi-platform-plugin-p7/target/"
+
