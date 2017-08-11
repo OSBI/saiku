@@ -43,6 +43,6 @@ jobs:
 
 general:
   artifacts:
-     - "saiku-server/target/*.zip"
+     - "~/repo/saiku-server/target"
      - "saiku-bi-platform-plugin-p6/target"
      - "saiku-bi-platform-plugin-p7/target"
