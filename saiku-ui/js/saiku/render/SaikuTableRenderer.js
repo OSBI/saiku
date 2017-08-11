@@ -369,7 +369,7 @@ function topParentsDiffer(data, row, col) {
  * This function is intended to traverse the totals arrays and cleanup empty
  * totals. This will optimize the query result on screen, displaying just the
  * needed cells.
- * @param dirs The direction array ['ROWS', 'COLUMNS'] 
+ * @param dirs The direction array ['ROWS', 'COLUMNS']
  * @param totalsLists The totals from allData.rowTotalsLists and allData.colTotalsLists.
  */
 function cleanupTotals(dirs, totalsLists) {
@@ -443,7 +443,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 
     var dirs = [ROWS, COLUMNS];
 
-    var hasMeasures = allData.query.queryModel.details
+    var hasMeasures = allData.query && allData.query.queryModel && allData.query.queryModel.details
                    ? allData.query.queryModel.details.measures.length
                    : 0;
 
@@ -470,7 +470,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
         scanIndexes[dirs[i]] = new Array();
     }
 
-    // Here we cleaup the empty totals 
+    // Here we cleaup the empty totals
     cleanupTotals(dirs, totalsLists);
 
     if (totalsLists[COLUMNS]) {
