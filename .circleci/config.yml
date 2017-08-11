@@ -41,8 +41,9 @@ jobs:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
 
-general:
-  artifacts:
-     - "~/repo/saiku-server/target"
-     - "saiku-bi-platform-plugin-p6/target"
-     - "saiku-bi-platform-plugin-p7/target"
+test:
+  post:
+    - mkdir $CIRCLE_ARTIFACTS/files/
+    - mv saiku-bi-platform-plugin-p6/target/*.zip $CIRCLE_ARTIFACTS/files/
+    - mv saiku-bi-platform-plugin-p7/target/*.zip $CIRCLE_ARTIFACTS/files/
+    - mv saiku-server/target/*.zip $CIRCLE_ARTIFACTS/files/
