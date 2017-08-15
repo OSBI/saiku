@@ -1,8 +1,10 @@
-FROM dockerfile/java:oracle-java8
+FROM openjdk:8
 MAINTAINER Meteorite BI <info@meteorite.bi>
 
 
-ADD target/saiku-server-foodmart-*.zip /
+ADD target/saiku-server-foodmart-* /
 
-CMD ['/saiku-server/start-saiku.sh']
+
+RUN unzip /saiku-server-foodmart-*
+CMD /saiku-server/start-saiku.sh && tail -f /saiku-server/tomcat/logs/catalina.out
 
