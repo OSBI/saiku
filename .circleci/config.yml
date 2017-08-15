@@ -34,7 +34,8 @@ jobs:
 
         
       # run tests!
-      - run: mvn -s .circleci/settings.xml install -DskipTests deploy
+      - run: docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - run: mvn -Pdocker-build -s .circleci/settings.xml install -DskipTests deploy
 
       - save_cache:
           paths:
