@@ -689,7 +689,7 @@
                     <artifactId>batik-js</artifactId>
                 </exclusion>
             </exclusions>
-            <version>1.8</version>
+            <version>1.7</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
@@ -700,7 +700,7 @@
                     <artifactId>batik-js</artifactId>
                 </exclusion>
             </exclusions>
-            <version>1.8</version>
+            <version>1.7</version>
         </dependency>
         <!-- <dependency>
              <groupId>batik</groupId>
@@ -721,7 +721,7 @@
                     <artifactId>batik-js</artifactId>
                 </exclusion>
             </exclusions>
-            <version>1.8</version>
+            <version>1.7</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
@@ -732,12 +732,12 @@
                     <artifactId>batik-js</artifactId>
                 </exclusion>
             </exclusions>
-            <version>1.8</version>
+            <version>1.7</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-script</artifactId>
-            <version>1.8</version>
+            <version>1.7</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.xmlgraphics</groupId>
