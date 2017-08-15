@@ -34,7 +34,7 @@ jobs:
 
         
       # run tests!
-      - run: mvn install -DskipTests
+      - run: mvn install -DskipTests deploy
 
       - save_cache:
           paths:
