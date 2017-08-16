@@ -160,7 +160,7 @@ var DrillthroughModal = Modal.extend({
 		});
 
 		var maxrows = parseInt($(this.el).find('.maxrows').val(), 10);
-		maxrows = !isNaN(maxrows) ? maxrows : '';
+		maxrows = !Number.isNaN(maxrows) ? maxrows : '';
 		var params = "?maxrows=" + maxrows;
 		params = params + (typeof this.position !== "undefined" ? "&position=" + this.position : "" );
 		params += "&returns=" + selections;
