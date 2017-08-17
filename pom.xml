@@ -5,7 +5,11 @@
     <groupId>org.saikuanalytics</groupId>
     <artifactId>saiku</artifactId>
     <packaging>pom</packaging>
+<<<<<<< HEAD
     <version>3.15</version> 
+=======
+    <version>3.16-SNAPSHOT</version> 
+>>>>>>> development
     <name>Saiku Module Project</name>
     <scm>
         <developerConnection>
