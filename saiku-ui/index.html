@@ -118,13 +118,14 @@
 <script src="js/qtip/imagesloaded.pkg.min.js"></script>
 <script src="js/qtip/jquery.qtip.min.js"></script>
 <script type="text/javascript" src="js/tourist/tourist.js"></script>
+<script type="text/javascript" src="js/ozpIwc/ozpIwc-client.min.js"></script>
 <script type="text/javascript" src="js/intro/intro.min.js"></script>
 <!-- Loggly error logging service -->
 <script type="text/javascript" src="js/logger/janky.post.min.js"></script>
 <script type="text/javascript" src="js/logger/Logger.js" defer></script>
 
 <!-- D3 Library -->
-<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="js/d3/d3.v3.min.js"></script>
 
 <!-- Saiku Project -->
 <script type="text/javascript" src="js/saiku/Settings.js"></script>
@@ -214,7 +215,17 @@
 -->
 
 <!-- CCC dependencies -->
-<script type="text/javascript" src="js/saiku/plugins/CCC_Chart/def.js"></script>
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart2/jquery.tipsy.js"></script>
+<link type="text/css" href="js/saiku/plugins/CCC_Chart2/tipsy.css" rel="stylesheet" media="screen" />
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart2/protovis.js"></script>
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart2/protovis-msie.js"></script>
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart2/tipsy.js"></script>
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart2/def.js"></script>
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart2/cdo.js"></script>
+<script type="text/javascript" src="js/saiku/plugins/CCC_Chart2/pvc.js"></script>
+
+<!-- CCC dependencies -->
+<!--script type="text/javascript" src="js/saiku/plugins/CCC_Chart/def.js"></script>
 <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/protovis.js"></script>
 <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/protovis-msie.js"></script>
 <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/cdo.js"></script>
@@ -222,7 +233,7 @@
 
 <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/jquery.tipsy.js"></script>
 <script type="text/javascript" src="js/saiku/plugins/CCC_Chart/tipsy.js"></script>
-<link type="text/css" href="js/saiku/plugins/CCC_Chart/tipsy.css" rel="stylesheet"/>
+<link type="text/css" href="js/saiku/plugins/CCC_Chart/tipsy.css" rel="stylesheet"/-->
 
 <!--<script type="text/javascript" src="../js/saiku/render/SaikuRenderer.js"></script>
 <script type="text/javascript" src="../js/saiku/render/SaikuTableRenderer.js"></script>
@@ -654,6 +665,9 @@ title="Drill across on cell"></a></li>
             <li><a href="#radar"
                 class="i18n radar chartoption button disabled_toolbar"
                 title="Radar"></a></li>
+            <li><a href="#timewheel"
+                class="i18n timewheel chartoption button disabled_toolbar"
+                title="Time Wheel"></a></li>
            <!-- <li><a href="#chart_editor"
                 class="i18n custom_chart button disabled_toolbar"
                 title="Custom">Custom</a></li> -->
@@ -951,7 +965,7 @@ title="Drill across on cell"></a></li>
 <% } %>
 <% _.each(hierarchy.levels, function(level) { %>
 <% if (typeof level["visible"] == "undefined" || level["visible"]) { %>
-<% if (level.caption != "(All)") { %>
+<% if (level.caption !== "(All)" || level.levelType !== "All" || level.levelType !== "ALL") { %>
 <li class="hide"> &nbsp;&nbsp;&nbsp;&nbsp;
 <input type="checkbox" class="check_level" value="<%= level.uniqueName %>" key="<%= dimension.name %>###<%= hierarchy.name %>"> <%= level.caption %></input>
 </li>
@@ -985,9 +999,5 @@ title="Drill across on cell"></a></li>
 </ul>
 </script>
 <script type="text/javascript" src="js/ga.js"></script>
-<script>document.write('<script src="//'
-    + (location.host || 'localhost').split(':')[0]
-    + ':35729/livereload.js"></'
-    + 'script>')</script>
 </body>
 </html>

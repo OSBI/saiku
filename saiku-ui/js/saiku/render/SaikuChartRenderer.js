@@ -195,6 +195,9 @@ SaikuChartRenderer.prototype.switch_chart = function (key, override) {
         },
         "radar": {
             type: "RadarChart"
+        },
+        "timewheel": {
+            type: "TimeWheel"
         }
     };
 
@@ -352,6 +355,20 @@ SaikuChartRenderer.prototype.cccOptionsDefault = {
         clickable: true
         //valuesLabelStyle: 'inside'
     },
+    TimeWheel: {
+        smallTitleFont: "bold 14px sans-serif",
+        valuesVisible: true,
+        valuesMask: "{category} / {value.percent}",
+        explodedSliceRadius: "10%",
+        colors: ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ff9896", "#9467bd", "#c5b0d5", "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f", "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"],
+        extensionPoints: {
+            slice_offsetRadius: function (scene) {
+                return scene.isSelected() ? '2%' : 0;
+            }
+        },
+        clickable: false,
+        plots: []        
+    },
 
     LineChart: {
         extensionPoints: {
@@ -397,9 +414,7 @@ SaikuChartRenderer.prototype.getQuickOptions = function (baseOptions) {
 
     if (this.adjustSizeTo) {
         var al = $(this.adjustSizeTo);
-//al.appendTo(document.body);
-//var width = al.width();
-//al.remove();
+
         if (al && al.length > 0) {
             var runtimeWidth = al.width() - 40;
             var runtimeHeight = al.height() - 40;
@@ -434,6 +449,7 @@ SaikuChartRenderer.prototype.define_chart = function (displayOptions) {
     if (!this.hasProcessed) {
         this.process_data_tree({data: this.rawdata}, true, true);
     }
+
     var self = this;
     var workspaceResults = (this.adjustSizeTo ? $(this.adjustSizeTo) : $(this.el));
     var isSmall = (this.data !== null && this.data.height < 80 && this.data.width < 80);
@@ -595,11 +611,82 @@ SaikuChartRenderer.prototype.define_chart = function (displayOptions) {
             return indent + this.base();
         };
     }
-    this.chart = new pvc[runtimeChartDefinition.type](runtimeChartDefinition);
-    this.chart.setData(this.data, {
-        crosstabMode: true,
-        seriesInRows: false
-    });
+
+    if (runtimeChartDefinition.type === 'TimeWheel') {
+        console.log(this.data);
+
+        var nPlots = 0;
+        var plotNames = {};
+
+        for (var i = 0; i < this.data.resultset.length; i++) {
+            plotNames[this.data.resultset[i][0]] = true;
+        }
+
+        plotNames = Object.keys(plotNames);
+        nPlots = plotNames.length;
+
+        var donutHeight = 1.0 / nPlots;
+        var innerRadius = 1.0 - donutHeight;
+        var outerRadius = 1.0;
+
+        runtimeChartDefinition.plots = [];
+        runtimeChartDefinition.dimensions = {};
+
+        for (var i = 0; i < this.data.metadata.length; i++) {
+            var colName = this.data.metadata[i].colName;
+
+            runtimeChartDefinition.dimensions[colName] = {
+                isHidden: false
+            };
+        }
+
+        for (var i = 0; i < nPlots; i++) {
+            var groupValue = plotNames[i];
+            var _innerRadius = innerRadius;
+            var _outerRadius = outerRadius;
+
+            runtimeChartDefinition.plots.push({
+                name: (i === 0 ? 'main' : 'plot_' + i),
+                type: 'pie',
+                dataPart: groupValue,
+                valuesLabelStyle: 'inside',
+                valuesOptimizeLegibility: true,
+                valuesFont: 'normal 10px "Open Sans"',
+                slice_strokeStyle: 'white',
+                slice_innerRadiusEx: (_innerRadius * 100).toFixed(0) + '%',
+                slice_outerRadius: function() {
+                    return _outerRadius * this.delegate();
+                }
+            });
+
+            innerRadius -= donutHeight;
+            outerRadius -= donutHeight;
+        }
+
+        if (this.data.metadata.length > 2) {
+            runtimeChartDefinition.readers = this.data.metadata[0].colName + ', ' + 
+                                             this.data.metadata[1].colName + ', ' +
+                                             this.data.metadata[2].colName;
+
+            runtimeChartDefinition.visualRoles = {
+                dataPart: this.data.metadata[0].colName,
+                category: this.data.metadata[1].colName,
+                value:    this.data.metadata[2].colName
+            };
+        }
+
+        this.chart = new pvc['PieChart'](runtimeChartDefinition);
+        this.chart.setData(this.data, {
+            crosstabMode: false
+        });
+
+    } else {
+        this.chart = new pvc[runtimeChartDefinition.type](runtimeChartDefinition);
+        this.chart.setData(this.data, {
+            crosstabMode: true,
+            seriesInRows: false
+        });
+    }
 };
 
 SaikuChartRenderer.prototype.render_chart_element = function (context) {

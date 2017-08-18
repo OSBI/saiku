@@ -144,6 +144,16 @@ var Settings = {
         showStepNumbers: true,
         showBullets: false,
         showProgress: true
+    },
+    OZP_IWC_ENABLE: false,
+    OZP_IWC_CLIENT_URI: 'http://aml-development.github.io/ozp-iwc',
+    // /{minor}/{major}/{action} ("/application/json/view")
+    // or
+    // /{minor}/{major}/{action}/{handlerId} ("/application/json/view/123")
+    OZP_IWC_REFERENCE_PATH: '/application/display/help',
+    OZP_IWC_CONFIG: {
+        label: 'Saiku Analytics',
+        icon: 'https://avatars0.githubusercontent.com/u/1043666?v=3&s=32'
     }
 };
 

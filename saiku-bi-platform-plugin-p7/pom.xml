@@ -2,12 +2,12 @@
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saikuanalytics</groupId>
-        <version>3.14</version> 
+        <version>3.15</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>saiku-bi-platform-plugin-p7</artifactId>
     <packaging>jar</packaging>
-    <version>3.14</version> 
+    <version>3.15</version>
     <name>saiku biserver plugin</name>
 
     <build>
@@ -693,6 +693,7 @@
                     <artifactId>batik-js</artifactId>
                 </exclusion>
             </exclusions>
+            <version>1.7</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
@@ -703,6 +704,7 @@
                     <artifactId>batik-js</artifactId>
                 </exclusion>
             </exclusions>
+            <version>1.7</version>
         </dependency>
         <!-- <dependency>
              <groupId>batik</groupId>
@@ -723,6 +725,7 @@
                     <artifactId>batik-js</artifactId>
                 </exclusion>
             </exclusions>
+            <version>1.7</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
@@ -733,6 +736,7 @@
                     <artifactId>batik-js</artifactId>
                 </exclusion>
             </exclusions>
+            <version>1.7</version>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>

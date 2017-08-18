@@ -2,13 +2,13 @@
         <parent>
                 <artifactId>saiku</artifactId>
                 <groupId>org.saikuanalytics</groupId>
-                <version>3.14</version>
+                <version>3.15</version>
         </parent>
-	
+
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>saiku-server</artifactId>
 	<packaging>pom</packaging>
-    <version>3.14</version>
+    <version>3.15</version>
 	<properties>
 		<min>nomin</min>
 	</properties>
@@ -50,7 +50,7 @@
 									<outputDirectory>target/stage/</outputDirectory>
 								</artifactItem>
 							</artifactItems>
-							
+
 						</configuration>
 					</execution>
 				</executions>
@@ -73,12 +73,12 @@
 										<include name="saiku-webapp-${project.version}.war" />
 									</fileset>
 								</unzip>
-								
+
 								<unzip dest="target/stage/tomcat/">
 									<fileset dir="${basedir}/tomcat/">
 										<include name="${tomcat.version}.zip" />
 									</fileset>
-								</unzip>								
+								</unzip>
 								<copy todir="target/dist/saiku-server/">
 									<fileset dir="${basedir}/scripts/" />
 								</copy>
@@ -134,7 +134,7 @@
 								<copy todir="target/dist/saiku-server/tomcat/webapps/saiku">
 									<fileset dir="target/stage/webapp" />
 								</copy>
-								
+
 								<chmod perm="a+x" dir="target/dist/saiku-server/" includes="**/*.sh" />
 								<!--<zip destfile="target/saiku-server-${project.version}.zip">
 									<zipfileset dir="target/dist/" />
@@ -160,7 +160,7 @@
         									<exclude name="**/*.sh" />
       									</tarfileset>
            						</tar>-->
-           						
+
 							</tasks>
 						</configuration>
 					</execution>

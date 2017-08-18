@@ -5,11 +5,15 @@ import com.lowagie.text.PageSize;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfWriter;
+import java.net.URISyntaxException;
+import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.print.PrintTranscoder;
 import org.apache.commons.lang.StringUtils;
 import org.apache.fop.apps.Fop;
+import org.apache.fop.apps.FopConfParser;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.MimeConstants;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.service.util.export.PdfPerformanceLogger;
@@ -35,6 +39,7 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.xml.sax.SAXException;
 
 /**
  * This PdfReport reads in a QueryResult and converts it to HTML, DOM, FO and eventually to a byte array containing the PDF data
@@ -190,14 +195,18 @@ public class PdfReport {
     }
 
     private byte[] fo2Pdf(org.w3c.dom.Document foDocument, String styleSheet, Rectangle size) {
-        DefaultConfigurationBuilder cfgBuilder = new DefaultConfigurationBuilder();
-        FopFactory fopFactory = FopFactory.newInstance();
+        FopFactoryBuilder builder = null;
+        try {
+            builder = new FopFactoryBuilder(this.getClass().getResource("fop_config.xml").toURI());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        builder.setStrictFOValidation(false);
+
 
         try {
             // Specify an external configuration file, to ease user changes, like adding custom fonts
-            Configuration cfg = cfgBuilder.build(this.getClass().getResourceAsStream("fop_config.xml"));
-
-            fopFactory.setUserConfig(cfg);
+            FopFactory fopFactory = builder.build();
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 

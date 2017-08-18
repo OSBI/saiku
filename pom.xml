@@ -5,7 +5,7 @@
     <groupId>org.saikuanalytics</groupId>
     <artifactId>saiku</artifactId>
     <packaging>pom</packaging>
-    <version>3.14</version> 
+    <version>3.15</version>
     <name>Saiku Module Project</name>
     <scm>
         <developerConnection>
@@ -21,6 +21,7 @@
         <module>saiku-bi-platform-plugin-p5</module>
         <module>saiku-bi-platform-plugin-p6</module>
         <module>saiku-bi-platform-plugin-p7</module>
+        <module>saiku-bi-platform-plugin-p7.1</module>
     </modules>
 
     <distributionManagement>
@@ -504,7 +505,7 @@
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>fop</artifactId>
-                <version>1.1</version>
+                <version>2.2</version>
                 <exclusions>
                     <exclusion>
                         <artifactId>avalon-framework-api</artifactId>
@@ -519,7 +520,7 @@
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>xmlgraphics-commons</artifactId>
-                <version>1.5</version>
+                <version>2.2</version>
             </dependency>
 
             <!-- these two are to correct issues in fop dependency -->
@@ -536,7 +537,7 @@
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-js</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.jackrabbit</groupId>
@@ -648,27 +649,27 @@
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-transcoder</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-codec</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-bridge</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-svg-dom</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-ext</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
             </dependency>
             <dependency>
                 <groupId>iText</groupId>
@@ -851,7 +852,7 @@
             <dependency>
                 <groupId>pentaho</groupId>
                 <artifactId>cpf-core</artifactId>
-                <version>5.2.0.2-84</version>
+                <version>7.1.0.0-12</version>
                 <exclusions>
                     <exclusion>
                         <groupId>janino</groupId>
@@ -861,8 +862,8 @@
             </dependency>
             <dependency>
                 <groupId>pentaho</groupId>
-                <artifactId>cpf-pentaho5</artifactId>
-                <version>5.2.0.2-84</version>
+                <artifactId>cpf-pentaho</artifactId>
+                <version>7.1.0.0-12</version>
                 <exclusions>
                     <exclusion>
                         <groupId>pentaho</groupId>
