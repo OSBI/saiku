@@ -141,37 +141,6 @@
                                     <artifactId>cpf-pentaho</artifactId>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
                                 </artifactItem>
-                                <!-- Batik/SVG -->
-                                <artifactItem>
-                                    <groupId>org.apache.xmlgraphics</groupId>
-                                    <artifactId>batik-transcoder</artifactId>
-                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.xmlgraphics</groupId>
-                                    <artifactId>batik-codec</artifactId>
-                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
-                                </artifactItem>
-                                <!--<artifactItem>
-                                    <groupId>batik</groupId>
-                                    <artifactId>batik-ext</artifactId>
-                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
-                                </artifactItem>-->
-                                <artifactItem>
-                                    <groupId>org.apache.xmlgraphics</groupId>
-                                    <artifactId>batik-svg-dom</artifactId>
-                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.xmlgraphics</groupId>
-                                    <artifactId>batik-bridge</artifactId>
-                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.apache.xmlgraphics</groupId>
-                                    <artifactId>batik-script</artifactId>
-                                    <outputDirectory>target/dist/saiku/lib</outputDirectory>
-                                </artifactItem>
                                 <artifactItem>
                                     <groupId>com.fasterxml.jackson.core</groupId>
                                     <artifactId>jackson-databind</artifactId>
