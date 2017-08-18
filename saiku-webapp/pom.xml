@@ -2,19 +2,11 @@
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saikuanalytics</groupId>
-<<<<<<< HEAD
         <version>3.15</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>saiku-webapp</artifactId>
     <version>3.15</version>
-=======
-        <version>3.16-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>saiku-webapp</artifactId>
-    <version>3.16-SNAPSHOT</version>
->>>>>>> development
     <name>saiku - webapp</name>
     <packaging>war</packaging>
     <build>

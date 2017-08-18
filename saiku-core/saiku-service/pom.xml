@@ -2,20 +2,11 @@
     <parent>
         <artifactId>saiku-core</artifactId>
         <groupId>org.saikuanalytics</groupId>
-<<<<<<< HEAD
         <version>3.15</version>
-=======
-        <version>3.16-SNAPSHOT</version>
->>>>>>> development
-    </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <artifactId>saiku-service</artifactId>
-<<<<<<< HEAD
     <version>3.15</version>
-=======
-    <version>3.16-SNAPSHOT</version>
->>>>>>> development
     <name>saiku - services</name>
     <build>
         <plugins>
