@@ -181,7 +181,7 @@
     <xsl:template match="xhtml:table">
         <xsl:apply-templates select="caption"/>
         <fo:inline font-family="{$font.symbol}">
-            <fo:table xsl:use-attribute-sets="tableborder" width="100%">
+            <fo:table xsl:use-attribute-sets="tableborder" table-layout="fixed" width="100%">
                 <xsl:call-template name="common-atts"/>
                 <xsl:apply-templates select="colgroup|col"/>
                 <xsl:variable name="tr1"
@@ -204,7 +204,7 @@
 
     <xsl:template match="table">
         <xsl:apply-templates select="caption"/>
-        <fo:table xsl:use-attribute-sets="tableborder" width="100%">
+        <fo:table xsl:use-attribute-sets="tableborder" table-layout="fixed" width="100%">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates select="colgroup|col"/>
             <xsl:variable name="tr1" select="(tr|thead/tr|tbody/tr|tfoot/tr)[1]"/>
