@@ -965,7 +965,7 @@ title="Drill across on cell"></a></li>
 <% } %>
 <% _.each(hierarchy.levels, function(level) { %>
 <% if (typeof level["visible"] == "undefined" || level["visible"]) { %>
-<% if (level.caption != "(All)") { %>
+<% if (level.caption !== "(All)" || level.levelType !== "All" || level.levelType !== "ALL") { %>
 <li class="hide"> &nbsp;&nbsp;&nbsp;&nbsp;
 <input type="checkbox" class="check_level" value="<%= level.uniqueName %>" key="<%= dimension.name %>###<%= hierarchy.name %>"> <%= level.caption %></input>
 </li>

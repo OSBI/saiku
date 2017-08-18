@@ -417,7 +417,7 @@
                 	<groupId>pentaho</groupId>
                 	<artifactId>pentaho-platform-extensions</artifactId>
                 </exclusion>
-				
+
 			</exclusions>
 		</dependency>
         <dependency>
