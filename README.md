@@ -20,7 +20,7 @@
 <p align="center">
   <a href="http://www.meteorite.bi/"><b>homepage</b></a> |
   <a href="http://licensing.meteorite.bi/"><b>Saiku License</b></a> |
-  <a href="http://wiki.meteorite.bi/display/SAIK/Saiku"><b>wiki</b></a> |
+  <a href="http://saiku-documentation.readthedocs.io/en/latest/"><b>wiki</b></a> |
   <a href="http://community.meteorite.bi/"><b>community</b></a> |
   <a href="https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/dev"><b>mailing list</b></a> |
   <a href="http://webchat.freenode.net/?randomnick=1&channels=%23%23saiku"><b>chat</b></a> |
@@ -80,7 +80,7 @@ Saiku is open source and free to use. Our default server does ship with a licens
 
 ## Wiki
 
-* [Saiku Wiki](http://wiki.meteorite.bi/display/SAIK/Saiku)
+* [Saiku Wiki](http://saiku-documentation.readthedocs.io/en/latest/)
 
 ## Community
 

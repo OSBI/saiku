@@ -86,7 +86,7 @@ npm run dev
 ```
 ## Wiki
 
-* [Saiku Wiki](http://wiki.meteorite.bi/display/SAIK/Saiku)
+* [Saiku Wiki](http://saiku-documentation.readthedocs.io/en/latest/)
 
 ## Community
 
