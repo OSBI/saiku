@@ -48,4 +48,5 @@ jobs:
           path: saiku-bi-platform-plugin-p7/target/
       - store_artifacts:
           path: saiku-server/target/
-
+      - store_artifacts:
+          path: saiku-bi-platform-plugin-p7.1/target/
