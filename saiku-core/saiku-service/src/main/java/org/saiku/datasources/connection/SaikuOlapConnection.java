@@ -90,7 +90,7 @@ public class SaikuOlapConnection implements ISaikuConnection {
                 if (url.contains("Mondrian=4")) {
                     url = url.replace("Mondrian=4; ", "");
                     url = url.replace("jdbc:mondrian", "jdbc:mondrian4");
-                    url = url.replace("DataSource=", "DataSource=osgi:service/jdbc/")
+                    url = url.replace("DataSource=", "DataSource=osgi:service/jdbc/");
                 }
                 if (url.length() > 0 && url.charAt(url.length() - 1) != ';') {
                     url += ";";
