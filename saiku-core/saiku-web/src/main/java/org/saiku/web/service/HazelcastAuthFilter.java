@@ -57,6 +57,18 @@ public class HazelcastAuthFilter implements Filter {
         return defaultValue;
     }
 
+    public String getBaseWorkspaceDir() {
+        return baseWorkspaceDir;
+    }
+
+    public String getHazelcastMapName() {
+        return hazelcastMapName;
+    }
+
+    public String getOrbisAuthCookie() {
+        return orbisAuthCookie;
+    }
+
     @Override
     public void destroy() {
     }

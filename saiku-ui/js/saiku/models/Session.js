@@ -53,7 +53,8 @@ var Session = Backbone.Model.extend({
 
 		if (Settings.ORBIS_AUTH.enabled && authCookie && !this.atemptedToLoginByCookie) {
 			this.atemptedToLoginByCookie = true;
-			this.login('orbis', 'orbis');
+			//this.login('orbis', 'orbis');
+            this.login(authCookie, authCookie)
 		} else {
 			if (this.sessionid === null || this.username === null || this.password === null) {
 				var that = this;
