@@ -299,12 +299,14 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             path = path.replace("\\", "/");
 
             log.debug("Trimmed path is: " + path);
-            path = path.replaceFirst(datadir, "");
+            if(!datadir.equals("${CLASSPATH_REPO_PATH_UNPARSED}")) {
+                path = path.replaceFirst(datadir, "");
+            }
             boolean f = true;
             if (new File(getDatadir() + separator + path).exists() && new File(getDatadir() + separator + path).isDirectory()) {
                 f = false;
             }
-            irm.saveInternalFile(this.getCSVJson(f, ds.getName(), getDatadir() + path), separator + "datasources" + separator + ds.getName() + "-csv.json", "fixme");
+            irm.saveInternalFile(this.getCSVJson(f, ds.getName(), getDatadir() + path), separator + "datasources" + separator + ds.getName() + "-csv.json", null);
 
             irm.saveDataSource(ds, separator + "datasources" + separator + ds.getName() + ".sds", "fixme");
 
