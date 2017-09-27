@@ -73,7 +73,8 @@
     </filter-mapping>
 
     <!-- BEGIN - Hazelcast Filter -->
-<!--    <filter>
+    <!--
+    <filter>
         <filter-name>hazelcast-filter</filter-name>
         <filter-class>com.hazelcast.web.WebFilter</filter-class>
         <filter-class>com.hazelcast.web.spring.SpringAwareWebFilter</filter-class>
@@ -126,10 +127,12 @@
         <dispatcher>INCLUDE</dispatcher>
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
--->
+    -->
+    <!-- END - Hazelcast Filter -->
 
     <!-- BEGIN - Saiku Orbis SSO Filter Definition --> 
-   <!-- <filter>
+    <!--
+    <filter>
         <filter-name>hazelcastAuthFilter</filter-name>
         <filter-class>org.saiku.web.service.HazelcastAuthFilter</filter-class>
         <init-param>
@@ -156,7 +159,8 @@
     <filter-mapping>
         <filter-name>hazelcastAuthFilter</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>-->
+    </filter-mapping> 
+    -->
     <!-- END - Filter Mapping -->
 
     <listener>

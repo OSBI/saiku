@@ -88,11 +88,13 @@ public class HazelcastAuthFilter implements Filter {
             for (Cookie cookie : ((HttpServletRequest) req).getCookies()) {
                 // Found Orbis Cookie (Aardvark)
                 if (cookie.getName().equals(orbisAuthCookie)) {
+                    String cookieVal = cookie.getValue();
+
                     // Setting up the user id as a local cookie (so JavaScript/Client layer may access)
-                    setCookieValue(res, SAIKU_AUTH_PRINCIPAL, cookie.getValue());
+                    setCookieValue(res, SAIKU_AUTH_PRINCIPAL, cookieVal);
                     // Setting up the workspace directory (so repository manager can create the workspace)
-                    session.setAttribute(ORBIS_WORKSPACE_DIR, "workspace_" + cookie.getValue());
-                    
+                    session.setAttribute(ORBIS_WORKSPACE_DIR, "workspace_" + cookieVal);
+
                     break;
                 }
             }
