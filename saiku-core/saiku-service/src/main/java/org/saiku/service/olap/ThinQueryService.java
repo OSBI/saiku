@@ -845,10 +845,16 @@ public class ThinQueryService implements Serializable {
                     QueryHierarchy qh = query.getHierarchy(m.getHierarchy());
                     if (qh.getHierarchy().getDimension().getName().equals("Measures")) {
                         Measure measure = query.getMeasure(m.getName());
-                        if (!query.getDetails().getMeasures().contains(measure)) {
+                        boolean contains = false;
+                        for (Measure existMeasure : query.getDetails().getMeasures()) {
+                            if (existMeasure.getUniqueName().equals(measure.getUniqueName())) {
+                                contains = true;
+                                break;
+                            }
+                        }
+                        if (!contains) {
                             query.getDetails().add(measure);
                         }
-
                     } else {
                         qh.clearSelection();
                         qh.clearFilters();
