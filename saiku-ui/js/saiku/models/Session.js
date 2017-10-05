@@ -53,7 +53,7 @@ var Session = Backbone.Model.extend({
 
 		if (Settings.ORBIS_AUTH.enabled && authCookie && !this.atemptedToLoginByCookie) {
 			this.atemptedToLoginByCookie = true;
-			this.login('orbis', 'orbis');
+            this.login(authCookie, authCookie)
 		} else {
 			if (this.sessionid === null || this.username === null || this.password === null) {
 				var that = this;
@@ -69,7 +69,11 @@ var Session = Backbone.Model.extend({
 	getCookie: function(name) {
 		var value = "; " + document.cookie;
 		var parts = value.split("; " + name + "=");
-		if (parts.length == 2) return parts.pop().split(";").shift();
+        
+		if (parts.length == 2) {
+            var cookieVal = parts.pop().split(";").shift();
+            return cookieVal;
+        }
 	},
 
 	/**

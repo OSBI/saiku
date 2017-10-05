@@ -33,7 +33,7 @@ var OpenQuery = Backbone.View.extend({
         'click .workspace_toolbar [href=#delete_query]': 'delete_repoObject',
         'click .workspace_toolbar [href=#edit_permissions]': 'edit_permissions',
         'click .queries' : 'click_canvas',
-        'keyup .search_file' : 'search_file',
+        'keyup .repository_search_file' : 'search_file',
         'click .cancel_search' : 'cancel_search'
     },
 
@@ -138,12 +138,12 @@ var OpenQuery = Backbone.View.extend({
                 },
                 items: menuitems
             });
-            
-		// Fire off new openQuery event
-		Saiku.session.trigger('openQuery:new', { openQuery: this });
+
+        // Fire off new openQuery event
+        Saiku.session.trigger('openQuery:new', { openQuery: this });
 
         if (Settings.REPOSITORY_LAZY) {
-            this.$el.find('.search_file').prop('disabled', true);
+            this.$el.find('.repository_search_file').prop('disabled', true);
         }
 
         return this;
@@ -178,12 +178,12 @@ var OpenQuery = Backbone.View.extend({
     },
 
     search_file: function(event) {
-        var filter = $(this.el).find('.search_file').val().toLowerCase();
+        var filter = $(this.el).find('.repository_search_file').val().toLowerCase();
         var isEmpty = (typeof filter == "undefined" || filter === "" || filter === null);
         if (isEmpty || event.which == 27 || event.which == 9) {
             this.cancel_search();
         } else {
-            if ($(this.el).find('.search_file').val()) {
+            if ($(this.el).find('.repository_search_file').val()) {
                 $(this.el).find('.cancel_search').show();
             } else {
                 $(this.el).find('.cancel_search').hide();
@@ -205,12 +205,12 @@ var OpenQuery = Backbone.View.extend({
         return false;
     },
     cancel_search: function(event) {
-        $(this.el).find('input.search_file').val('');
+        $(this.el).find('input.repository_search_file').val('');
         $(this.el).find('.cancel_search').hide();
         $(this.el).find('li.query, li.folder').removeClass('hide');
         $(this.el).find( '.folder_row' ).find('.sprite').addClass( 'collapsed' );
         $(this.el).find( 'li.folder .folder_content' ).addClass('hide');
-        $(this.el).find('.search_file').val('').focus();
+        $(this.el).find('.repository_search_file').val('').focus();
         $(this.el).find('.cancel_search').hide();
 
     },
@@ -367,7 +367,7 @@ var OpenQuery = Backbone.View.extend({
         repositoryLazyLoad.fetch();
         Saiku.ui.block('Loading...');
     },
-    
+
     template_repository_folder_lazyload: function(folder, repository) {
         folder.find('.folder_content').remove();
         folder.append(
@@ -403,14 +403,14 @@ var OpenQuery = Backbone.View.extend({
         if(viewstate && !viewstate.hasOwnProperty('currentTarget')) {
             state = viewstate;
         }
-        
+
         if (item.fileType === 'saiku') {
             var tab = Saiku.tabs.add(new Workspace({ query: query, item: item, viewState: state, processURI: false }));
         }
         else {
             Saiku.session.trigger('openQuery:open_query', { query: query, item: item, viewState: state });
         }
-        
+
         return false;
     },
     open_contents: function(viewstate) {

@@ -32,6 +32,7 @@ import javax.servlet.http.HttpSession;
 public class HazelcastAuthFilter implements Filter {
     private static final String SAIKU_AUTH_PRINCIPAL = "SAIKU_AUTH_PRINCIPAL";
     private static final int FIVE_MINUTES = 300; // in miliseconds
+    private static final String ORBIS_WORKSPACE_DIR = "workspace";
 
     private boolean enabled;
     private String orbisAuthCookie;
@@ -57,6 +58,18 @@ public class HazelcastAuthFilter implements Filter {
         return defaultValue;
     }
 
+    public String getBaseWorkspaceDir() {
+        return baseWorkspaceDir;
+    }
+
+    public String getHazelcastMapName() {
+        return hazelcastMapName;
+    }
+
+    public String getOrbisAuthCookie() {
+        return orbisAuthCookie;
+    }
+
     @Override
     public void destroy() {
     }
@@ -66,9 +79,25 @@ public class HazelcastAuthFilter implements Filter {
             ServletRequest req,
             ServletResponse res,
             FilterChain chain) throws IOException, ServletException {
+        // If the filter is enabled
         if (enabled) {
+            // We fetch a session (or create one)
             HttpSession session = ((HttpServletRequest)req).getSession(true);
-            setCookieValue(res, SAIKU_AUTH_PRINCIPAL, (String)session.getAttribute(orbisAuthCookie));
+
+            // Retrieve the Aardvark cookie value
+            for (Cookie cookie : ((HttpServletRequest) req).getCookies()) {
+                // Found Orbis Cookie (Aardvark)
+                if (cookie.getName().equals(orbisAuthCookie)) {
+                    String cookieVal = cookie.getValue();
+
+                    // Setting up the user id as a local cookie (so JavaScript/Client layer may access)
+                    setCookieValue(res, SAIKU_AUTH_PRINCIPAL, cookieVal);
+                    // Setting up the workspace directory (so repository manager can create the workspace)
+                    session.setAttribute(ORBIS_WORKSPACE_DIR, "workspace_" + cookieVal);
+
+                    break;
+                }
+            }
         }
 
         chain.doFilter(req, res);
