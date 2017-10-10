@@ -119,7 +119,7 @@ Check [CONTRIBUTING.md](https://github.com/OSBI/saiku/blob/master/CONTRIBUTING.m
 
 * To get started, [sign the Contributor License Agreement](https://www.clahub.com/agreements/OSBI/saiku).
 
-* If you find a bug then please report it on [Jira](http://jira.meteorite.bi/secure/Dashboard.jspa).
+* If you find a bug then please create an issue [here](https://github.com/OSBI/saiku/issues/new).
 
 * If you have a feature request, then please get in touch. We'd love to hear from you! Send a email for: [info@meteorite.bi](mailto:info@meteorite.bi)
 
