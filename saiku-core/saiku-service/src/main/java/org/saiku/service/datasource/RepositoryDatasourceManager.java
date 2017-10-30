@@ -285,8 +285,12 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             }
             String split[] = ds.getLocation().split("=");
             String loc = split[2];
-            split[2] = getDatadir() + "/datasources/" + ds.getName() + "-csv.json;Catalog";
-
+            if(split[2].startsWith("mondrian:")){
+                split[2] = "mondrian:/"+getDatadir() + "/datasources/" + ds.getName() + "-csv.json;Catalog";
+            }
+            else {
+                split[2] = getDatadir() + "/datasources/" + ds.getName() + "-csv.json;Catalog";
+            }
             for (int i = 0; i < split.length - 1; i++) {
                 split[i] = split[i] + "=";
             }
@@ -306,8 +310,16 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             if (new File(getDatadir() + separator + path).exists() && new File(getDatadir() + separator + path).isDirectory()) {
                 f = false;
             }
-            irm.saveInternalFile(this.getCSVJson(f, ds.getName(), getDatadir() + path), separator + "datasources" + separator + ds.getName() + "-csv.json", null);
+            if(!path.startsWith("mondrian:")) {
+                irm.saveInternalFile(this.getCSVJson(f, ds.getName(), getDatadir() + path),
+                    separator + "datasources" + separator + ds.getName() + "-csv.json", null);
 
+            }
+            else{
+                irm.saveInternalFile(this.getCSVJson(f, ds.getName(), path),
+                    separator + "datasources" + separator + ds.getName() + "-csv.json", null);
+
+            }
             irm.saveDataSource(ds, separator + "datasources" + separator + ds.getName() + ".sds", "fixme");
 
             connectionManager.refreshConnection(ds.getName());

@@ -844,6 +844,9 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
   }
 
   private Node getFolder(String path) throws RepositoryException {
+    if(!path.startsWith("/")){
+      path = "/"+path;
+    }
     return session.getNode(path);
   }
 
