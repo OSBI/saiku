@@ -124,8 +124,8 @@ var Settings = {
     HIDE_EMPTY_ROWS: true,
     MEASURE_GROUPS_COLLAPSED: false,
     ORBIS_AUTH: {
-        enabled: true,
-        cookieName: 'aardvark'
+        enabled: false,
+        cookieName: 'COOKIE_NAME'
     },
     SCHEMA_EDITOR: {
         // The `^` matches beginning of input.
