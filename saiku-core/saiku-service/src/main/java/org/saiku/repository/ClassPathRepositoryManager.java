@@ -95,8 +95,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
     public boolean start(UserService userService) throws RepositoryException {
         this.userService = userService;
+        
         if (session == null) {
-
             File f = new File(this.append, "unknown");
             File f2 = new File(this.append, "etc");
 
@@ -107,7 +107,6 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
             if (!f2.exists()) {
                 f2.mkdir();
             }
-
 
             File n = this.createFolder(sep + "homes");
 
@@ -146,21 +145,16 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
                     } catch (IOException e2) {
                         log.debug("failed to find any licenses. Giving up");
                     }
-
                 }
             }
 
-
             this.createFolder(sep + "legacyreports");
-
 
             acl2 = new Acl2(n);
             acl2.addEntry(n.getPath(), e);
             acl2.serialize(n);
 
-
             this.createFolder(sep + "etc" + sep + "theme");
-
 
             acl2 = new Acl2(n);
             acl2.addEntry(n.getPath(), e);
@@ -197,17 +191,14 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
             this.createFolder(sep + "etc");
 
-
             this.createFolder(sep + "etc" + sep + "theme");
-
 
             acl2 = new Acl2(n);
             acl2.addEntry(n.getPath(), e);
             acl2.serialize(n);
-
         }
+        
         return true;
-
     }
 
 
@@ -924,17 +915,17 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
 
     private HttpSession getSession() {
-
         try {
-            return sessionRegistry.getSession();
+          return sessionRegistry.getSession();
         } catch (Exception e) {
-            e.printStackTrace();
+          log.debug("Error while fetching the HTTPSession", e);
         }
-
+        
         return null;
     }
 
     private String getDatadir() {
+      if (getSession() != null) {
         try {
             if (workspaces && getSession().getAttribute(ORBIS_WORKSPACE_DIR) != null) {
                 String workspace = (String) getSession().getAttribute(ORBIS_WORKSPACE_DIR);
@@ -957,19 +948,22 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
             } else {
                 return append + "/";
             }
-
         } catch (Exception ex) {
             // This exception is expected at Saiku boot
         }
-        if (!new File(append + "/unknown/etc").exists()) {
-            this.bootstrap(append + "/unknown");
-            try {
-                this.start(userService);
-            } catch (RepositoryException e) {
-                e.printStackTrace();
-            }
+      }
+        
+      if (!new File(append + "/unknown/etc").exists()) {
+        this.bootstrap(append + "/unknown");
+        
+        try {
+          this.start(userService);
+        } catch (RepositoryException e) {
+          log.error("Error while starting the repository manager", e);
         }
-        return append + "unknown/";
+      }
+      
+      return append + "unknown/";
     }
 
     private String cleanse(String workspace) {
