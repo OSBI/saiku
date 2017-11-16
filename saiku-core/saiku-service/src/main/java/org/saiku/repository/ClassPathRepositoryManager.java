@@ -97,8 +97,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         this.userService = userService;
         if (session == null) {
 
-            File f = new File(this.append + "/unknown");
-            File f2 = new File(this.append + "/etc");
+            File f = new File(this.append, "unknown");
+            File f2 = new File(this.append, "etc");
 
             if (!f.exists()) {
                 f.mkdir();
@@ -136,13 +136,13 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
             acl2.serialize(n);
 
             this.createFolder(sep + "etc");
-            if (new File(append + "/etc/license.lic").exists()) {
+            if (new File(append, "etc/license.lic").exists()) {
                 try {
-                    FileUtils.copyFile(new File(append + "/etc/license.lic"), this.createNode("/etc/license.lic"));
+                    FileUtils.copyFile(new File(append, "etc/license.lic"), this.createNode("/etc/license.lic"));
                 } catch (IOException e1) {
                     log.debug("Failed to find license 1");
                     try {
-                        FileUtils.copyFile(new File(append + "/unknown/etc/license.lic"), this.createNode("/etc/license.lic"));
+                        FileUtils.copyFile(new File(append, "unknown/etc/license.lic"), this.createNode("/etc/license.lic"));
                     } catch (IOException e2) {
                         log.debug("failed to find any licenses. Giving up");
                     }

@@ -124,8 +124,8 @@ var Settings = {
     HIDE_EMPTY_ROWS: true,
     MEASURE_GROUPS_COLLAPSED: false,
     ORBIS_AUTH: {
-        enabled: false,
-        cookieName: 'SAIKU_AUTH_PRINCIPAL'
+        enabled: true,
+        cookieName: 'aardvark'
     },
     SCHEMA_EDITOR: {
         // The `^` matches beginning of input.
