@@ -25,7 +25,7 @@ var Session = Backbone.Model.extend({
     password: null,
     sessionid: null,
     upgradeTimeout: null,
-    isAdmin: false,
+    isAdmin: Settings.ORBIS_AUTH.enabled,
     id: null,
 	atemptedToLoginByCookie: false,
     initialize: function(args, options) {
@@ -118,7 +118,7 @@ var Session = Backbone.Model.extend({
         } else {
             this.sessionid = response.sessionid;
             this.roles = response.roles;
-            this.isAdmin = response.isadmin;
+            this.isAdmin = Settings.ORBIS_AUTH.enabled || response.isadmin;
             this.username = encodeURIComponent(response.username);
             this.language = response.language;
             if (typeof this.language != "undefined" && this.language != Saiku.i18n.locale) {
