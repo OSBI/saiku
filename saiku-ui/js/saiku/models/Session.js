@@ -56,8 +56,16 @@ var Session = Backbone.Model.extend({
             this.username                = authCookie;
             this.password                = authCookie;
             this.atemptedToLoginByCookie = true;
+
+            // In this case we inject the proper license attributes
+            var ONE_YEAR = 31556952000;
+
+            Settings.LICENSE = {
+              licenseType: 'Orbis',
+              expiration: Date.now() + ONE_YEAR
+            }
             
-            this.login(authCookie, authCookie)
+            this.login(authCookie, authCookie);
 		} else {
 			if (this.sessionid === null || this.username === null || this.password === null) {
 				var that = this;
