@@ -303,8 +303,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
             FileWriter fileWriter;
             
             try {
-                if (!resNode.exists()) {
-                  resNode.mkdirs();
+                if (resNode.getParentFile() != null && !resNode.getParentFile().exists()) {
+                  resNode.getParentFile().mkdirs();
                 }
               
                 fileWriter = new FileWriter(resNode);
