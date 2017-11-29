@@ -297,10 +297,16 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
             if (check.exists()) {
                 check.delete();
             }
+            
             File resNode = this.createNode(path);
-
+            
             FileWriter fileWriter;
+            
             try {
+                if (!resNode.exists()) {
+                  resNode.mkdirs();
+                }
+              
                 fileWriter = new FileWriter(resNode);
 
                 fileWriter.write((String) file);
