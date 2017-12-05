@@ -321,18 +321,29 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
             }
             irm.saveDataSource(ds, separator + "datasources" + separator + ds.getName() + ".sds", "fixme");
+            
+            String name = ds.getName();
+            
+            if (workspaces) {
+                name = getworkspacedir().substring(0, getworkspacedir().length() - 1) + "_" + ds.getName();
+            }
 
-            connectionManager.refreshConnection(ds.getName());
+            // In a workspace environment it is necessary to prefix the datasource name with the workspace name
+            connectionManager.refreshConnection(name);
         } else {
             irm.saveDataSource(ds, separator + "datasources" + separator + ds.getName() + ".sds", "fixme");
 
         }
 
         String name = ds.getName();
+        
         if (workspaces) {
             name = getworkspacedir().substring(0, getworkspacedir().length() - 1) + "_" + ds.getName();
         }
+        
         SaikuDatasource sds = new SaikuDatasource(name, SaikuDatasource.Type.OLAP, datasource.getProperties());
+        
+        // It stores the datasource name prefixed with the workspace name
         datasources.put(name, sds);
 
         return datasource;
