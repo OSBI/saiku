@@ -851,7 +851,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
       path = "/"+path;
     }
     
-    // Create the user in Jackrabbit if was not already created
+    // Create the user in Jackrabbit if it was not already created
     if (!session.nodeExists(path)) {
       String homeSuffix = "home:";
       if (path.contains(homeSuffix)) {
