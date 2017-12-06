@@ -384,7 +384,9 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     else {
       int pos = path.lastIndexOf("/");
       String filename = "./" + path.substring(pos + 1, path.length());
+      
       Node n = getFolder(path.substring(0, pos));
+      
       Acl2 acl2 = new Acl2(n);
       acl2.setAdminRoles(userService.getAdminRoles());
       if (acl2.canWrite(n, user, roles)) {
@@ -792,20 +794,21 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     int pos = path.lastIndexOf("/");
     String filename = "./" + path.substring(pos + 1, path.length());
     Node n = getFolder(path.substring(0, pos));
-    Node resNode = n.addNode(filename, "nt:file");
+    
+    if (!n.hasNode(filename)) {
+      Node resNode = n.addNode(filename, "nt:file");
+      resNode.addMixin("nt:olapdatasource");
 
-    resNode.addMixin("nt:olapdatasource");
-
-    Node contentNode = resNode.addNode("jcr:content", "nt:resource");
-
-    //resNode.setProperty ("jcr:mimeType", "text/plain");
-    //resNode.setProperty ("jcr:encoding", "utf8");
-    contentNode.setProperty("jcr:data", baos.toString());
-        /*Calendar lastModified = Calendar.getInstance ();
-        lastModified.setTimeInMillis (new Date().getTime());
-        resNode.setProperty ("jcr:lastModified", lastModified);*/
-    resNode.getSession().save();
-
+      Node contentNode = resNode.addNode("jcr:content", "nt:resource");
+  
+      //resNode.setProperty ("jcr:mimeType", "text/plain");
+      //resNode.setProperty ("jcr:encoding", "utf8");
+      contentNode.setProperty("jcr:data", baos.toString());
+          /*Calendar lastModified = Calendar.getInstance ();
+          lastModified.setTimeInMillis (new Date().getTime());
+          resNode.setProperty ("jcr:lastModified", lastModified);*/
+      resNode.getSession().save();
+    }
   }
 
   public byte[] exportRepository() throws RepositoryException, IOException {
@@ -847,6 +850,19 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     if(!path.startsWith("/")){
       path = "/"+path;
     }
+    
+    // Create the user in Jackrabbit if was not already created
+    if (!session.nodeExists(path)) {
+      String homeSuffix = "home:";
+      if (path.contains(homeSuffix)) {
+        String user = path.substring(path.indexOf(homeSuffix) + homeSuffix.length());
+        if (user.endsWith("/")) {
+          user = user.substring(0, user.length() - 1);
+        }
+        this.createUser(user);
+      }
+    }
+    
     return session.getNode(path);
   }
 
