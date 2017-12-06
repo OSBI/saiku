@@ -327,6 +327,10 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             if (workspaces) {
                 name = getworkspacedir().substring(0, getworkspacedir().length() - 1) + "_" + ds.getName();
             }
+            
+            // Adding the connection before refreshing it
+            SaikuDatasource sds = new SaikuDatasource(name, SaikuDatasource.Type.OLAP, datasource.getProperties());
+            datasources.put(name, sds);
 
             // In a workspace environment it is necessary to prefix the datasource name with the workspace name
             connectionManager.refreshConnection(name);
