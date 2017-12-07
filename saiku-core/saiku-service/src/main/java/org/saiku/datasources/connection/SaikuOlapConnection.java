@@ -105,6 +105,29 @@ public class SaikuOlapConnection implements ISaikuConnection {
                         url += "JdbcPassword=" + password + ";";
                     }
                 }
+                
+                // Tweak database URL to follow JCR standards when using Jackrabbit
+                if (url.contains("mondrian://") && url.contains("model")) {
+                  String[] urlTokens = url.split(";");
+                  
+                  if (!urlTokens[0].contains("mondrian://")) {
+                    String[] jdbcTokens = urlTokens[0].split(":");
+                    
+                    if (jdbcTokens.length == 5) {
+                      String[] modelTokens = jdbcTokens[4].split("/");
+                      String modelName = modelTokens[modelTokens.length - 1];
+                      
+                      if (!modelName.endsWith("-csv.json")) {
+                        modelName = modelName.substring(0, modelName.length() - 4) + "-csv.json";
+                      }
+                      
+                      jdbcTokens[4] = "model=mondrian://datasources/" + modelName;
+                      
+                      urlTokens[0] = String.join(":", jdbcTokens);
+                      url = String.join(";", urlTokens);
+                    }
+                  }
+                }
 
                 Class.forName(driver);
                 Connection connection = DriverManager.getConnection(url, username, password);

@@ -306,7 +306,19 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             if(!datadir.equals("${CLASSPATH_REPO_PATH_UNPARSED}")) {
                 path = path.replaceFirst(datadir, "");
             }
+            
+            // When using Jackrabbit, paths should follow JCR standards
+            if (this.type.equals("jackrabbit")) {
+              if (!path.startsWith("mondrian://")) {
+                String oldHomePrefix = "/homes/";
+                String newHomePrefix = "mondrian://homes/home:";
+                
+                path = newHomePrefix + path.substring(oldHomePrefix.length());
+              }
+            }
+            
             boolean f = true;
+            
             if (new File(getDatadir() + separator + path).exists() && new File(getDatadir() + separator + path).isDirectory()) {
                 f = false;
             }
@@ -421,7 +433,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
     public Map<String, SaikuDatasource> getDatasources() {
-        if (workspaces) {
+/*        if (workspaces) {
             Map<String, SaikuDatasource> newdslist = new HashMap<>();
             for (Map.Entry<String, SaikuDatasource> entry : datasources.entrySet()) {
 
@@ -436,7 +448,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             return newdslist;
         } else {
             return datasources;
-        }
+        }*/
+      return datasources;
     }
 
     public SaikuDatasource getDatasource(String datasourceName) {

@@ -735,41 +735,48 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
   public List<DataSource> getAllDataSources() throws RepositoryException {
     QueryManager qm = session.getWorkspace().getQueryManager();
+    
     String sql = "SELECT * FROM [nt:olapdatasource]";
+    
     Query query = qm.createQuery(sql, Query.JCR_SQL2);
-
     QueryResult res = query.execute();
-
     NodeIterator node = res.getNodes();
-
     List<DataSource> ds = new ArrayList<>();
+    
     while (node.hasNext()) {
       Node n = node.nextNode();
       JAXBContext jaxbContext = null;
       Unmarshaller jaxbMarshaller = null;
+      
       try {
         jaxbContext = JAXBContext.newInstance(DataSource.class);
       } catch (JAXBException e) {
         log.error("Could not read XML", e);
+        continue;
       }
+      
       try {
         jaxbMarshaller = jaxbContext != null ? jaxbContext.createUnmarshaller() : null;
       } catch (JAXBException e) {
         log.error("Could not read XML", e);
+        continue;
       }
+      
       InputStream stream = new ByteArrayInputStream(n.getNodes("jcr:content").nextNode().getProperty("jcr:data").getString().getBytes());
       DataSource d = null;
+      
       try {
         d = (DataSource) (jaxbMarshaller != null ? jaxbMarshaller.unmarshal(stream) : null);
       } catch (JAXBException e) {
         log.error("Could not read XML", e);
+        continue;
       }
 
       if (d != null) {
         d.setPath(n.getPath());
       }
+      
       ds.add(d);
-
     }
 
     return ds;
@@ -777,6 +784,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
   public void saveDataSource(DataSource ds, String path, String user) throws RepositoryException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    
     try {
       JAXBContext jaxbContext = JAXBContext.newInstance(DataSource.class);
       Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
