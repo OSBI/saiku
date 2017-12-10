@@ -348,6 +348,7 @@ var Workspace = Backbone.View.extend({
                 1;
         var new_margin = calculatedMargin;
         $(this.el).find('.workspace_inner').css({ 'margin-left': new_margin });
+        this.adjust_trigger();
     },
 
     prepare: function() {
