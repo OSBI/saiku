@@ -154,6 +154,20 @@ var Settings = {
     OZP_IWC_CONFIG: {
         label: 'Saiku Analytics',
         icon: 'https://avatars0.githubusercontent.com/u/1043666?v=3&s=32'
+    },
+    TIME_SERIES_FILTER: {
+        enabled: false,
+        /**
+         * Here are some valid date formats:
+         * more info here: http://dygraphs.com/data.html
+         *
+         * 2009-07-12
+         * 2009/07/12
+         * 2009/07/12 12
+         * 2009/07/12 12:34
+         * 2009/07/12 12:34:56
+         */
+        date_format: 'YYYY/MM/DD'
     }
 };
 
