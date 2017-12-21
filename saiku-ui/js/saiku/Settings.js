@@ -151,7 +151,6 @@ var Settings = {
     // /{minor}/{major}/{action} ("/application/json/view")
     // or
     // /{minor}/{major}/{action}/{handlerId} ("/application/json/view/123")
-    // OZP_IWC_REFERENCE_PATH: '/application/display/help',
     OZP_IWC_REFERENCE_PATH: {
         intro: '/application/display/help',
         time_series_filter: '/application/commonComponent/timeline/setTimes'
