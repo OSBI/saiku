@@ -125,7 +125,7 @@ var Settings = {
     MEASURE_GROUPS_COLLAPSED: false,
     ORBIS_AUTH: {
         enabled: false,
-        cookieName: 'SAIKU_AUTH_PRINCIPAL'
+        cookieName: 'COOKIE_NAME'
     },
     SCHEMA_EDITOR: {
         // The `^` matches beginning of input.
