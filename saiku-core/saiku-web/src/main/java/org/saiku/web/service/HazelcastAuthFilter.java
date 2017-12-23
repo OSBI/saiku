@@ -95,6 +95,7 @@ public class HazelcastAuthFilter implements Filter {
                         setCookieValue(res, SAIKU_AUTH_PRINCIPAL, cookieVal);
                         // Setting up the workspace directory (so repository manager can create the workspace)
                         session.setAttribute(ORBIS_WORKSPACE_DIR, "workspace_" + cookieVal);
+                        session.setAttribute(SAIKU_AUTH_PRINCIPAL, cookieVal);
     
                         break;
                     }

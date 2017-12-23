@@ -102,7 +102,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             log.debug("2nd init datadir= "+datadir);
         } else {
             irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopasswordprovider.getPassword(),
-                    oldpassword, defaultRole);
+                    oldpassword, defaultRole, sessionRegistry, workspaces);
         }
 
         try {
@@ -276,13 +276,16 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         if (ds.getCsv() != null && ds.getCsv().equals("true")) {
             if(this.workspaces) {
                 String s = this.getworkspacedir();
+                
                 if (s.endsWith("/")) {
                     s = s.substring(0, s.length() - 1);
                 }
+                
                 if (ds.getName().startsWith(s)) {
                     ds.setName(ds.getName().replace(s + "_", ""));
                 }
             }
+
             String split[] = ds.getLocation().split("=");
             String loc = split[2];
             if(split[2].startsWith("mondrian:")){

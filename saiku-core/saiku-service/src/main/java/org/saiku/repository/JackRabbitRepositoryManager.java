@@ -72,11 +72,14 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import javax.servlet.http.HttpSession;
+
 /**
  * JackRabbit JCR Repository Manager for Saiku.
  */
 public class JackRabbitRepositoryManager implements IRepositoryManager {
-
+  private static final String SAIKU_AUTH_PRINCIPAL = "SAIKU_AUTH_PRINCIPAL";
+  
   private static final Logger log = LoggerFactory.getLogger(JackRabbitRepositoryManager.class);
   private static JackRabbitRepositoryManager ref;
   private final String data;
@@ -88,25 +91,48 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
   private Session session;
   private Node root;
   private UserService userService;
+  private ScopedRepo sessionRegistry;
+  private boolean workspaces;
 
-
-  private JackRabbitRepositoryManager(String config, String data, String password, String oldpassword, String defaultRole) {
-
+  private JackRabbitRepositoryManager(String config, String data, String password, String oldpassword, String defaultRole, ScopedRepo sessionRegistry, boolean workspaces) {
     this.config = config;
     this.data = data;
     this.password = password;
     this.oldpassword = oldpassword;
     this.defaultRole = defaultRole;
+    this.sessionRegistry = sessionRegistry;
+    this.workspaces = workspaces;
   }
 
   /*
    * TODO this is currently threadsafe but to improve performance we should split it up to allow multiple sessions to hit the repo at the same time.
    */
-  public static synchronized JackRabbitRepositoryManager getJackRabbitRepositoryManager(String config, String data, String password, String oldpassword, String defaultRole) {
+  public static synchronized JackRabbitRepositoryManager getJackRabbitRepositoryManager(String config, String data, String password, String oldpassword, String defaultRole, ScopedRepo sessionRegistry, boolean workspaces) {
     if (ref == null)
       // it's ok, we can call this constructor
-      ref = new JackRabbitRepositoryManager(config, data, password, oldpassword, defaultRole);
+      ref = new JackRabbitRepositoryManager(config, data, password, oldpassword, defaultRole, sessionRegistry, workspaces);
     return ref;
+  }
+  
+  private String getCookieUsername() {
+    String cookieUsername = "";
+    HttpSession session = getSession(); // Use a variable instead of a method call for debugging purposes
+    
+    if (session != null && workspaces && session.getAttribute(SAIKU_AUTH_PRINCIPAL) != null) {
+      cookieUsername = (String) session.getAttribute(SAIKU_AUTH_PRINCIPAL);
+    }
+    
+    return cookieUsername;
+  }
+  
+  private HttpSession getSession() {
+    try {
+      return sessionRegistry.getSession();
+    } catch (Exception e) {
+      log.debug("Error while fetching the HTTPSession", e);
+    }
+    
+    return null;
   }
 
   public Object clone()
@@ -776,7 +802,13 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
         d.setPath(n.getPath());
       }
       
-      ds.add(d);
+      if (getCookieUsername() != null) {
+        if (getCookieUsername().equals(d.getUsername())) {
+          ds.add(d);
+        }
+      } else {
+        ds.add(d);
+      }
     }
 
     return ds;
