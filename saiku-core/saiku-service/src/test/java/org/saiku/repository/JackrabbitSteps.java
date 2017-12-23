@@ -51,7 +51,7 @@ public class JackrabbitSteps {
     private final URL repoConf = this.getClass().getClassLoader().getResource("repo-conf.xml");
     private final String repoConfPath = repoConf.getPath();
     private final IRepositoryManager iRepositoryManager = JackRabbitRepositoryManager.getJackRabbitRepositoryManager
-        (repoConfPath, repoLocation, "admin", "admin", DEFAULT_ROLE);
+        (repoConfPath, repoLocation, "admin", "admin", DEFAULT_ROLE, null, false);
     private final UserService userService = mock(UserService.class);
     private final List<String> defaultRole = Collections.singletonList(DEFAULT_ROLE);
 
