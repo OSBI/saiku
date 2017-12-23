@@ -81,21 +81,23 @@ public class HazelcastAuthFilter implements Filter {
             FilterChain chain) throws IOException, ServletException {
         // If the filter is enabled
         if (enabled) {
-            // We fetch a session (or create one)
-            HttpSession session = ((HttpServletRequest)req).getSession(true);
+            // We fetch a session
+            HttpSession session = ((HttpServletRequest)req).getSession();
 
-            // Retrieve the Aardvark cookie value
-            for (Cookie cookie : ((HttpServletRequest) req).getCookies()) {
-                // Found Orbis Cookie (Aardvark)
-                if (cookie.getName().equals(orbisAuthCookie)) {
-                    String cookieVal = cookie.getValue();
-
-                    // Setting up the user id as a local cookie (so JavaScript/Client layer may access)
-                    setCookieValue(res, SAIKU_AUTH_PRINCIPAL, cookieVal);
-                    // Setting up the workspace directory (so repository manager can create the workspace)
-                    session.setAttribute(ORBIS_WORKSPACE_DIR, "workspace_" + cookieVal);
-
-                    break;
+            if (session != null) { // If there's already a session
+                // Retrieve the Aardvark cookie value
+                for (Cookie cookie : ((HttpServletRequest) req).getCookies()) {
+                    // Found Orbis Cookie (Aardvark)
+                    if (cookie.getName().equals(orbisAuthCookie)) {
+                        String cookieVal = cookie.getValue();
+    
+                        // Setting up the user id as a local cookie (so JavaScript/Client layer may access)
+                        setCookieValue(res, SAIKU_AUTH_PRINCIPAL, cookieVal);
+                        // Setting up the workspace directory (so repository manager can create the workspace)
+                        session.setAttribute(ORBIS_WORKSPACE_DIR, "workspace_" + cookieVal);
+    
+                        break;
+                    }
                 }
             }
         }

@@ -931,10 +931,12 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
 
     private String getDatadir() {
-      if (getSession() != null) {
+      HttpSession session = getSession(); // Use a variable instead of a method call for debugging purposes
+      
+      if (session != null) {
         try {
-            if (workspaces && getSession().getAttribute(ORBIS_WORKSPACE_DIR) != null) {
-                String workspace = (String) getSession().getAttribute(ORBIS_WORKSPACE_DIR);
+            if (workspaces && session.getAttribute(ORBIS_WORKSPACE_DIR) != null) {
+                String workspace = (String) session.getAttribute(ORBIS_WORKSPACE_DIR);
                 workspace = cleanse(workspace);
                 log.debug("Check " + append + "/" + workspace + "/ exists");
                 if (!new File(append + "/" + workspace + "/").exists()) {
