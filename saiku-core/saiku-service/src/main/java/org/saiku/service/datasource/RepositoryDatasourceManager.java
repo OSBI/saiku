@@ -311,7 +311,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             }
             
             // When using Jackrabbit, paths should follow JCR standards
-            if (this.type.equals("jackrabbit")) {
+            if (this.type.equals("jackrabbit") || this.type.equals("marklogic")) {
               if (!path.startsWith("mondrian://")) {
                 String oldHomePrefix = "/homes/";
                 String newHomePrefix = "mondrian://homes/home:";
@@ -340,12 +340,12 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             String name = ds.getName();
             
             if (workspaces) {
-                name = getworkspacedir().substring(0, getworkspacedir().length() - 1) + "_" + ds.getName();
+                //name = getworkspacedir().substring(0, getworkspacedir().length() - 1) + "_" + ds.getName();
             }
             
             // Adding the connection before refreshing it
             SaikuDatasource sds = new SaikuDatasource(name, SaikuDatasource.Type.OLAP, datasource.getProperties());
-            datasources.put(name, sds);
+            datasources.put(ds.getName(), sds);
 
             // In a workspace environment it is necessary to prefix the datasource name with the workspace name
             connectionManager.refreshConnection(name);
@@ -357,7 +357,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         String name = ds.getName();
         
         if (workspaces) {
-            name = getworkspacedir().substring(0, getworkspacedir().length() - 1) + "_" + ds.getName();
+            //name = getworkspacedir().substring(0, getworkspacedir().length() - 1) + "_" + ds.getName();
         }
         
         SaikuDatasource sds = new SaikuDatasource(name, SaikuDatasource.Type.OLAP, datasource.getProperties());
