@@ -160,7 +160,7 @@ var Settings = {
         icon: 'https://avatars0.githubusercontent.com/u/1043666?v=3&s=32'
     },
     TIME_SERIES_FILTER: {
-        enabled: false,
+        enabled: true,
         /**
          * Here are some valid date formats:
          * more info here: http://dygraphs.com/data.html
