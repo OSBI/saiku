@@ -115,11 +115,15 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
   }
   
   private String getCookieUsername() {
-    String cookieUsername = "";
+    String cookieUsername = null;
     HttpSession session = getSession(); // Use a variable instead of a method call for debugging purposes
     
     if (session != null && workspaces && session.getAttribute(SAIKU_AUTH_PRINCIPAL) != null) {
       cookieUsername = (String) session.getAttribute(SAIKU_AUTH_PRINCIPAL);
+    }
+    
+    if (cookieUsername != null && cookieUsername.trim().length() == 0) {
+      cookieUsername = null;
     }
     
     return cookieUsername;
