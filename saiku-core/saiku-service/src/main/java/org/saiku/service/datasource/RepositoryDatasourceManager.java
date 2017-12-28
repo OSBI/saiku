@@ -212,10 +212,14 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
             // When using Jackrabbit, paths should follow JCR standards
             if (this.type.equals("jackrabbit") || this.type.equals("marklogic")) {
               if (!path.startsWith("mondrian://")) {
-                String oldHomePrefix = "/homes/";
-                String newHomePrefix = "mondrian://homes/home:";
-                
-                path = newHomePrefix + path.substring(oldHomePrefix.length());
+                if (this.type.equals("marklogic")) {
+                  path = "mondrian:/" + path;
+                } else {
+                  String oldHomePrefix = "/homes/";
+                  String newHomePrefix = "mondrian://homes/home:";
+                  
+                  path = newHomePrefix + path.substring(oldHomePrefix.length());
+                }
               }
             }
             
@@ -238,10 +242,6 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
             
             String name = ds.getName();
             
-            if (workspaces) {
-                //name = getworkspacedir().substring(0, getworkspacedir().length() - 1) + "_" + ds.getName();
-            }
-            
             // Adding the connection before refreshing it
             SaikuDatasource sds = new SaikuDatasource(name, SaikuDatasource.Type.OLAP, datasource.getProperties());
             datasources.put(ds.getName(), sds);
@@ -254,11 +254,6 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
         }
 
         String name = ds.getName();
-        
-        if (workspaces) {
-            //name = getworkspacedir().substring(0, getworkspacedir().length() - 1) + "_" + ds.getName();
-        }
-        
         SaikuDatasource sds = new SaikuDatasource(name, SaikuDatasource.Type.OLAP, datasource.getProperties());
         
         // It stores the datasource name prefixed with the workspace name
@@ -592,9 +587,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
     }
 
     public String getDatadir() {
-
-        if(this.type.equals("classpath")) {
-            if(this.workspaces) {
+        if (this.type.equals("classpath")) {
+            if (this.workspaces) {
                 try {
                     if (getSession().getAttribute(ORBIS_WORKSPACE_DIR) != null) {
                         String workspace = (String) getSession().getAttribute(ORBIS_WORKSPACE_DIR);
@@ -602,11 +596,9 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
                             workspace = cleanse(workspace);
                         }
                         log.debug("Workspace directory set to:" + datadir + workspace);
-                        System.out.println("I: " + datadir + "/" + workspace);
                         return cleanse(datadir) + workspace;
                     } else {
                         log.debug("Workspace directory set to:" + datadir + "unknown/");
-                        System.out.println("II: " + datadir + "/unknown");
                         return cleanse(datadir) + "unknown/";
                     }
 
@@ -624,7 +616,6 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
     }
 
     private String getworkspacedir() {
-
         try {
             if (this.workspaces && getSession().getAttribute(ORBIS_WORKSPACE_DIR) != null) {
                 String workspace = (String) getSession().getAttribute(ORBIS_WORKSPACE_DIR);

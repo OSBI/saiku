@@ -179,8 +179,6 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     if (file == null) { // Create a folder
       createFolder(user, path);
     } else { // Write a file to an existing folder
-      path = HOMES_DIRECTORY + user + "/" + path;
-
       Session session = createUpdateSession();
 
       ContentCreateOptions options = new ContentCreateOptions();
