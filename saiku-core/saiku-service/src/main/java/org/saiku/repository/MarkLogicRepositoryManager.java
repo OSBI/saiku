@@ -266,6 +266,14 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
     RequestOptions options = new RequestOptions();
     options.setCacheResult(false); // stream by default
+    
+    if (s != null) { // Fixing path problems
+      s = s.replace('\\', '/');
+      
+      if (!s.startsWith("/")) {
+        s = "/" + s;
+      }
+    }
 
     AdhocQuery request = session.newAdhocQuery("doc('" + s + "')", options);
 
@@ -297,6 +305,10 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   @Override
   public InputStream getBinaryInternalFile(String s) throws RepositoryException {
+    if (s != null) {
+      s = s.replace('\\', '/'); // Use the right path separator for Marklogic documents
+    }
+    
     Session session = contentSource.newSession();
 
     RequestOptions options = new RequestOptions();
@@ -346,37 +358,39 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   @Override
   public List<DataSource> getAllDataSources() throws RepositoryException {
     List<DataSource> dataSources = new ArrayList<>();
+    JAXBContext jaxbContext = null;
+    Unmarshaller jaxbMarshaller = null;
 
-    for (File file : getFilesFromFolder(DATASOURCES_DIRECTORY, false)) {
-      if (file != null && file.getName() != null && file.getName().toLowerCase().endsWith("sds")) {
-        InputStream fileContent = getBinaryInternalFile(file.getPath());
+    try {
+      jaxbContext = JAXBContext.newInstance(DataSource.class);
+    } catch (JAXBException e) {
+      log.error("Could instantiate the JAXBContent", e);
+    }
 
-        JAXBContext jaxbContext = null;
-        Unmarshaller jaxbMarshaller = null;
+    try {
+      jaxbMarshaller = jaxbContext != null ? jaxbContext.createUnmarshaller() : null;
+    } catch (JAXBException e) {
+      log.error("Could not create the XML unmarshaller", e);
+    }
 
-        try {
-          jaxbContext = JAXBContext.newInstance(DataSource.class);
-        } catch (JAXBException e) {
-          log.error("Could instantiate the JAXBContent", e);
-        }
-
-        try {
-          jaxbMarshaller = jaxbContext != null ? jaxbContext.createUnmarshaller() : null;
-        } catch (JAXBException e) {
-          log.error("Could not create the XML unmarshaller", e);
-        }
-
-        DataSource d = null;
-
-        try {
-          d = (DataSource) (jaxbMarshaller != null ? jaxbMarshaller.unmarshal(fileContent) : null);
-        } catch (JAXBException e) {
-          log.error("Could not unmarshall the XML file", e);
-        }
-
-        if (d != null) {
-          d.setPath(file.getPath());
-          dataSources.add(d);
+    if (jaxbMarshaller != null) {
+      for (File file : getFilesFromFolder(DATASOURCES_DIRECTORY, false)) {
+        if (file != null && file.getName() != null && file.getName().toLowerCase().endsWith("sds")) {
+          DataSource d = null;
+  
+          try {
+            InputStream stream = getBinaryInternalFile(file.getPath());
+            d = (DataSource) jaxbMarshaller.unmarshal(stream);
+          } catch (JAXBException e) {
+            log.error("Could not unmarshall the XML file", e);
+          } catch (Exception e) {
+            log.error("Unexpected error while trying to unmarshall the XML file", e);
+          }
+  
+          if (d != null) {
+            d.setPath(file.getPath());
+            dataSources.add(d);
+          }
         }
       }
     }
