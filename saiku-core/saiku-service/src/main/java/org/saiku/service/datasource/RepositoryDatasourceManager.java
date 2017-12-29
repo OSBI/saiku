@@ -59,10 +59,9 @@ import org.springframework.security.web.session.HttpSessionCreatedEvent;
  */
 public class RepositoryDatasourceManager implements IDatasourceManager, ApplicationListener<HttpSessionCreatedEvent> {
     private static final String ORBIS_WORKSPACE_DIR = "workspace";
-    private final Map<String, SaikuDatasource> datasources =
-            Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
-
-
+    private static final String SAIKU_AUTH_PRINCIPAL = "SAIKU_AUTH_PRINCIPAL";
+    
+    private final Map<String, SaikuDatasource> datasources = Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
     public IConnectionManager connectionManager;
     private ScopedRepo sessionRegistry;
     private boolean workspaces;
@@ -104,7 +103,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
 
         // Instantiate the appropriate repository manager 
         if (type.equals("marklogic")) {
-            irm = MarkLogicRepositoryManager.getMarkLogicRepositoryManager(host, Integer.parseInt(port), username, password, database, cleanse(datadir));
+            irm = MarkLogicRepositoryManager.getMarkLogicRepositoryManager(host, Integer.parseInt(port), username, password, database, cleanse(datadir), sessionRegistry, workspaces);
         } else if (type.equals("classpath")) {
             separator = "/";
             log.debug("init datadir= "+datadir);
@@ -605,14 +604,27 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
                 } catch (Exception e) {
                     return cleanse(datadir) + "/unknown/";
                 }
-            }
-            else{
+            } else {
                 return cleanse(datadir);
             }
-        }
-        else{
+        } else {
             return "/";
         }
+    }
+    
+    private String getCookieUsername() {
+      String cookieUsername = null;
+      javax.servlet.http.HttpSession session = getSession(); // Use a variable instead of a method call for debugging purposes
+      
+      if (session != null && workspaces && session.getAttribute(SAIKU_AUTH_PRINCIPAL) != null) {
+        cookieUsername = (String) session.getAttribute(SAIKU_AUTH_PRINCIPAL);
+      }
+      
+      if (cookieUsername != null && cookieUsername.trim().length() == 0) {
+        cookieUsername = null;
+      }
+      
+      return cookieUsername;
     }
 
     private String getworkspacedir() {
@@ -720,6 +732,10 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
 
     public void setType(String type) {
         this.type = type;
+    }
+    
+    public String getType() {
+      return this.type;
     }
 
     private String getCSVJson(boolean file, String name, String path) {

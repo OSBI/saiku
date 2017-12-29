@@ -612,5 +612,9 @@ public class ClassPathResourceDatasourceManager implements IDatasourceManager {
   {
     this.defaultRole = defaultRole;
   }
+  
+  public String getType() {
+    return "classpath";
+  }
 }
 
