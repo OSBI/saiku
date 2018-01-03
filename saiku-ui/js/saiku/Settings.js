@@ -172,7 +172,8 @@ var Settings = {
          * 2009/07/12 12:34:56
          */
         date_format: 'YYYY/MM/DD'
-    }
+    },
+	EXTENDED_REPOSITORY_RESOURCE: false
 };
 
 /**
