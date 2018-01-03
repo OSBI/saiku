@@ -258,7 +258,7 @@ var Saiku = {
         var ALPHA = 'A';
         var ALPHANUM = 'S';
         var output = (typeof opts === 'object' ? opts.pattern : opts).split('');
-        var values = value.toString().replace(/[^0-9a-zA-Z]/g, '');
+        var values = value ? value.toString().replace(/[^0-9a-zA-Z]/g, '') : '';
         var index = 0;
         var len = output.length;
 
