@@ -74,7 +74,7 @@ var SaveQuery = Modal.extend({
 
         this.message = _.template(
             '<form id="save_query_form">' +
-                '<div class="box-search-file form-inline" style="height: 35px; padding-top: 10px; line-height: 25px;">' +
+                '<div class="form-inline box-search-file" style="height: 35px; padding-top: 10px; line-height: 25px;">' +
                     '<label class="i18n">Search:</label> &nbsp; ' +
                     '<input type="text" class="form-control search_file"></input><span class="cancel_search"></span>' +
                 '</div>' +
@@ -148,14 +148,14 @@ var SaveQuery = Modal.extend({
     },
 
     toggle_folder: function(event) {
-        var $target = $( event.currentTarget );
+        var $target = $(event.currentTarget);
         var path = $target.children('.folder_row').find('a').attr('href');
         var folderName;
 
         path = path.replace('#', '');
         this.unselect_current_selected_folder();
         $target.children('.folder_row').addClass('selected');
-        folderName = $target.find( 'a' ).attr('href').replace('#', '');
+        folderName = $target.find('a').attr('href').replace('#', '');
 
         this.set_name(folderName, null);
 
@@ -255,8 +255,8 @@ var SaveQuery = Modal.extend({
         this.$el.find('input.search_file').val('');
         this.$el.find('.cancel_search').hide();
         this.$el.find('li.query, li.folder').removeClass('hide');
-        this.$el.find( '.folder_row' ).find('.sprite').addClass('collapsed');
-        this.$el.find( 'li.folder .folder_content' ).addClass('hide');
+        this.$el.find('.folder_row').find('.sprite').addClass('collapsed');
+        this.$el.find('li.folder .folder_content').addClass('hide');
         this.$el.find('.search_file').val('').focus();
         this.$el.find('.cancel_search').hide();
     },
