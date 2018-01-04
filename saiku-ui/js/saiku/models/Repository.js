@@ -84,14 +84,26 @@ var RepositoryZipExport = Backbone.Model.extend({
 });
 
 var SavedQuery = Backbone.Model.extend({
+    initialize: function(args) {
+        if (args && args.svg) {
+            this.svg = args.svg;
+        }
+    },
 
     parse: function(response) {
-        //console.log('response: ' + response);
-        //this.xml = response;
+        // console.log('response: ' + response);
+        // this.xml = response;
     },
 
     url: function() {
-        var url = repoPathUrl() + '/resource';
+        var url;
+
+        if (Settings.EXTENDED_REPOSITORY_RESOURCE && this.svg) {
+            url = repoPathUrl() + '/resourcemeta';
+        }
+        else {
+            url = repoPathUrl() + '/resource';
+        }
 
         return url;
     },
@@ -106,8 +118,8 @@ var SavedQuery = Backbone.Model.extend({
                 var Re = new RegExp('\\$\\{' + variable + '\\}', 'g');
                 var Re2 = new RegExp('\\$\\{' + variable.toLowerCase() + '\\}', 'g');
 
-                file = file.replace(Re,Settings[key]);
-                file = file.replace(Re2,Settings[key]);
+                file = file.replace(Re, Settings[key]);
+                file = file.replace(Re2, Settings[key]);
             }
         }
 
