@@ -125,7 +125,7 @@
 <script type="text/javascript" src="js/logger/Logger.js" defer></script>
 
 <!-- D3 Library -->
-<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="js/d3/d3.v3.min.js"></script>
 
 <!-- Saiku Project -->
 <script type="text/javascript" src="js/saiku/Settings.js"></script>
@@ -696,17 +696,17 @@ title="Drill across on cell"></a></li>
                 </div>
             </div>
 
-            <div class="sidebar queries" style="width: 300px">
-                <h3 class="top" style="padding-top:3px;padding-bottom:2px;">
-                <div class="form-inline">
-                    <label class="i18n">Search:</label> &nbsp;
-                        <input type="text" class="search_file2 form-control" style="padding-right:0px"></input>
-                        <span class="cancel_search"></span>
-                    <span class="add_folder_button"><a href='#' class='add_folder'></a></span>
+            <div class="sidebar queries" style="width: 300px;">
+                <h3 class="top" style="padding-top: 3px; padding-bottom: 2px;">
+                    <div class="form-inline">
+                        <label class="i18n">Search:</label> &nbsp;
+                        <input type="text" class="repository_search_file form-control" style="padding-right: 0; width: 230px;"></input>
+                        <span class="cancel_search" style="position: absolute; top: 8px; left: 270px;"></span>
+                        <span class="add_folder_button"><a href="#" class="add_folder"></a></span>
                     </div>
                 </h3>
                 <div class="sidebar_inner">
-                    <ul id="queries" class='RepositoryObjects'>
+                    <ul id="queries" class="RepositoryObjects">
                         <li class="i18n">Loading...</li>
                     </ul>
                 </div>
@@ -965,7 +965,7 @@ title="Drill across on cell"></a></li>
 <% } %>
 <% _.each(hierarchy.levels, function(level) { %>
 <% if (typeof level["visible"] == "undefined" || level["visible"]) { %>
-<% if (level.caption != "(All)") { %>
+<% if (level.caption !== "(All)" || level.levelType !== "All" || level.levelType !== "ALL") { %>
 <li class="hide"> &nbsp;&nbsp;&nbsp;&nbsp;
 <input type="checkbox" class="check_level" value="<%= level.uniqueName %>" key="<%= dimension.name %>###<%= hierarchy.name %>"> <%= level.caption %></input>
 </li>

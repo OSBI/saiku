@@ -104,7 +104,7 @@ var Chart = Backbone.View.extend({
         }
 
 
-
+        this.workspace.trigger('chart:rendered', this);
     },
 
 
@@ -126,7 +126,7 @@ var Chart = Backbone.View.extend({
                 },
                 items: {
                     "png": {name: "PNG"},
-                    "jpg": {name: "JPEG"},
+                    // "jpg": {name: "JPEG"},
                     "pdf": {name: "PDF"}
                 }
         });

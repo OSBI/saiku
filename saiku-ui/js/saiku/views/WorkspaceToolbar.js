@@ -542,7 +542,6 @@ var WorkspaceToolbar = Backbone.View.extend({
             $(this.workspace.el).find( ".workspace_results tbody" ).selectable( "destroy" );
         }
 
-
         $(this.el).find('.run').attr('href','#run_mdx');
         $(this.el).find('.run, .save, .open, .new, .edit').removeClass('disabled_toolbar');
 
@@ -628,8 +627,6 @@ var WorkspaceToolbar = Backbone.View.extend({
 
         }
 
-
-
         if (this.workspace.dimension_list) {
             $(this.workspace.el).find('.sidebar_inner ul li a')
                 .css({fontWeight: "normal"}).parent('li').removeClass('ui-draggable ui-draggable-disabled ui-state-disabled');
@@ -640,12 +637,10 @@ var WorkspaceToolbar = Backbone.View.extend({
                 .removeClass('disabled_toolbar');
 
         $(this.workspace.table.el).empty();
+        $(this.workspace.timeSeriesFilter.el).empty();
         this.workspace.adjust();
         this.post_mdx_transform();
-
     },
-
-
 
     post_mdx_transform: function() {
         var self = this;

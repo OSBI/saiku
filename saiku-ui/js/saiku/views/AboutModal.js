@@ -36,7 +36,7 @@ var AboutModal = Modal.extend({
                      '</ul>' +
                  '</div>' +
                  '<div class="footer">' +
-                     '<span>Want to help? <a href="https://www.paypal.com/uk/cgi-bin/webscr?cmd=_flow&SESSION=TBTmDYM2KWxSfysss5sYdEhDRAShtBw05-N3gybwwK6dqENEmcYKDo3PjZ8&dispatch=5885d80a13c0db1f8e263663d3faee8d64813b57e559a2578463e58274899069" target="_blank">Make a donation</a> or <a href="https://github.com/OSBI/saiku" target="_blank">contribute to the code!</a></span>' +
+                     '<span>Want to help? <a href="https://www.paypal.com/uk/cgi-bin/webscr?cmd=_flow&SESSION=YV5t-PRrJWXJ1nMw9KlOlfrivAY32xkbYXJ1sGaCkmEIEZgLPBXuP_FKQL0&dispatch=5885d80a13c0db1f8e263663d3faee8dc3f308debf7330dd8d0b0a9f21afd7d3&rapidsState=Donation__DonationFlow___StateDonationLogin&rapidsStateSignature=16fabaac8c6b9c132f78003cf605e5237537aa2b" target="_blank">Make a donation</a> or <a href="https://github.com/OSBI/saiku" target="_blank">contribute to the code!</a></span>' +
                      '<span>Powered by <img src="images/src/meteorite_free.png" width="20px"> <a href="http://www.meteorite.bi/services/consulting" target="_blank">www.meteorite.bi</a></span>' +
                  '</div>' +
              '</div>',

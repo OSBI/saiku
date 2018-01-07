@@ -95,10 +95,10 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
     public boolean start(UserService userService) throws RepositoryException {
         this.userService = userService;
+        
         if (session == null) {
-
-            File f = new File(this.append + "/unknown");
-            File f2 = new File(this.append + "/etc");
+            File f = new File(this.append, "unknown");
+            File f2 = new File(this.append, "etc");
 
             if (!f.exists()) {
                 f.mkdir();
@@ -107,7 +107,6 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
             if (!f2.exists()) {
                 f2.mkdir();
             }
-
 
             File n = this.createFolder(sep + "homes");
 
@@ -136,31 +135,26 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
             acl2.serialize(n);
 
             this.createFolder(sep + "etc");
-            if (new File(append + "/etc/license.lic").exists()) {
+            if (new File(append, "etc/license.lic").exists()) {
                 try {
-                    FileUtils.copyFile(new File(append + "/etc/license.lic"), this.createNode("/etc/license.lic"));
+                    FileUtils.copyFile(new File(append, "etc/license.lic"), this.createNode("/etc/license.lic"));
                 } catch (IOException e1) {
                     log.debug("Failed to find license 1");
                     try {
-                        FileUtils.copyFile(new File(append + "/unknown/etc/license.lic"), this.createNode("/etc/license.lic"));
+                        FileUtils.copyFile(new File(append, "unknown/etc/license.lic"), this.createNode("/etc/license.lic"));
                     } catch (IOException e2) {
                         log.debug("failed to find any licenses. Giving up");
                     }
-
                 }
             }
 
-
             this.createFolder(sep + "legacyreports");
-
 
             acl2 = new Acl2(n);
             acl2.addEntry(n.getPath(), e);
             acl2.serialize(n);
 
-
             this.createFolder(sep + "etc" + sep + "theme");
-
 
             acl2 = new Acl2(n);
             acl2.addEntry(n.getPath(), e);
@@ -197,17 +191,14 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
             this.createFolder(sep + "etc");
 
-
             this.createFolder(sep + "etc" + sep + "theme");
-
 
             acl2 = new Acl2(n);
             acl2.addEntry(n.getPath(), e);
             acl2.serialize(n);
-
         }
+        
         return true;
-
     }
 
 
@@ -306,10 +297,16 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
             if (check.exists()) {
                 check.delete();
             }
+            
             File resNode = this.createNode(path);
-
+            
             FileWriter fileWriter;
+            
             try {
+                if (resNode.getParentFile() != null && !resNode.getParentFile().exists()) {
+                  resNode.getParentFile().mkdirs();
+                }
+              
                 fileWriter = new FileWriter(resNode);
 
                 fileWriter.write((String) file);
@@ -924,20 +921,22 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
 
     private HttpSession getSession() {
-
         try {
-            return sessionRegistry.getSession();
+          return sessionRegistry.getSession();
         } catch (Exception e) {
-            e.printStackTrace();
+          log.debug("Error while fetching the HTTPSession", e);
         }
-
+        
         return null;
     }
 
     private String getDatadir() {
+      HttpSession session = getSession(); // Use a variable instead of a method call for debugging purposes
+      
+      if (session != null) {
         try {
-            if (workspaces && getSession().getAttribute(ORBIS_WORKSPACE_DIR) != null) {
-                String workspace = (String) getSession().getAttribute(ORBIS_WORKSPACE_DIR);
+            if (workspaces && session.getAttribute(ORBIS_WORKSPACE_DIR) != null) {
+                String workspace = (String) session.getAttribute(ORBIS_WORKSPACE_DIR);
                 workspace = cleanse(workspace);
                 log.debug("Check " + append + "/" + workspace + "/ exists");
                 if (!new File(append + "/" + workspace + "/").exists()) {
@@ -957,19 +956,22 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
             } else {
                 return append + "/";
             }
-
         } catch (Exception ex) {
             // This exception is expected at Saiku boot
         }
-        if (!new File(append + "/unknown/etc").exists()) {
-            this.bootstrap(append + "/unknown");
-            try {
-                this.start(userService);
-            } catch (RepositoryException e) {
-                e.printStackTrace();
-            }
+      }
+        
+      if (!new File(append + "/unknown/etc").exists()) {
+        this.bootstrap(append + "/unknown");
+        
+        try {
+          this.start(userService);
+        } catch (RepositoryException e) {
+          log.error("Error while starting the repository manager", e);
         }
-        return append + "unknown/";
+      }
+      
+      return append + "unknown/";
     }
 
     private String cleanse(String workspace) {

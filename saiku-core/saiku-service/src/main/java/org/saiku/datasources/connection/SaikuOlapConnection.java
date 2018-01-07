@@ -75,7 +75,9 @@ public class SaikuOlapConnection implements ISaikuConnection {
             log.debug("Not starting connection " + name + ", Saiku in safe mode");
             return false;
         } else {
-            if((props.containsKey("enabled") && props.getProperty("enabled").equals("true"))||!props.containsKey("enabled")) {
+            if((props.containsKey("csv") && props.getProperty("csv").equals("true")) || 
+               (props.containsKey("enabled") && props.getProperty("enabled").equals("true")) ||
+               (!props.containsKey("enabled"))) {
                 this.username = props.getProperty(ISaikuConnection.USERNAME_KEY);
                 this.password = props.getProperty(ISaikuConnection.PASSWORD_KEY);
                 String driver = props.getProperty(ISaikuConnection.DRIVER_KEY);
@@ -90,6 +92,7 @@ public class SaikuOlapConnection implements ISaikuConnection {
                 if (url.contains("Mondrian=4")) {
                     url = url.replace("Mondrian=4; ", "");
                     url = url.replace("jdbc:mondrian", "jdbc:mondrian4");
+                    url = url.replace("DataSource=", "DataSource=osgi:service/jdbc/");
                 }
                 if (url.length() > 0 && url.charAt(url.length() - 1) != ';') {
                     url += ";";
@@ -101,6 +104,29 @@ public class SaikuOlapConnection implements ISaikuConnection {
                     if (password != null && password.length() > 0) {
                         url += "JdbcPassword=" + password + ";";
                     }
+                }
+                
+                // Tweak database URL to follow JCR standards when using Jackrabbit
+                if (url.contains("mondrian://") && url.contains("model")) {
+                  String[] urlTokens = url.split(";");
+                  
+                  if (!urlTokens[0].contains("mondrian://")) {
+                    String[] jdbcTokens = urlTokens[0].split(":");
+                    
+                    if (jdbcTokens.length == 5) {
+                      String[] modelTokens = jdbcTokens[4].split("/");
+                      String modelName = modelTokens[modelTokens.length - 1];
+                      
+                      if (!modelName.endsWith("-csv.json")) {
+                        modelName = modelName.substring(0, modelName.length() - 4) + "-csv.json";
+                      }
+                      
+                      jdbcTokens[4] = "model=mondrian://datasources/" + modelName;
+                      
+                      urlTokens[0] = String.join(":", jdbcTokens);
+                      url = String.join(";", urlTokens);
+                    }
+                  }
                 }
 
                 Class.forName(driver);

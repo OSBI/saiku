@@ -50,23 +50,21 @@ import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.context.ApplicationListener;
+import org.springframework.security.web.session.HttpSessionCreatedEvent;
+
+
 /**
  * A Datasource Manager for the Saiku Repository API layer.
  */
-public class RepositoryDatasourceManager implements IDatasourceManager {
+public class RepositoryDatasourceManager implements IDatasourceManager, ApplicationListener<HttpSessionCreatedEvent> {
     private static final String ORBIS_WORKSPACE_DIR = "workspace";
-    private final Map<String, SaikuDatasource> datasources =
-            Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
-
-
+    private static final String SAIKU_AUTH_PRINCIPAL = "SAIKU_AUTH_PRINCIPAL";
+    
+    private final Map<String, SaikuDatasource> datasources = Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
     public IConnectionManager connectionManager;
     private ScopedRepo sessionRegistry;
     private boolean workspaces;
-
-    public void setConnectionManager(IConnectionManager connectionManager) {
-        this.connectionManager = connectionManager;
-    }
-
     private UserService userService;
     private static final Logger log = LoggerFactory.getLogger(RepositoryDatasourceManager.class);
     private String configurationpath;
@@ -89,12 +87,23 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     private String username;
     private String password;
     private String database;
+    
+    public void setConnectionManager(IConnectionManager connectionManager) {
+      this.connectionManager = connectionManager;
+    }
+  
+    // Whenever a new Spring Security Session
+    public void onApplicationEvent(HttpSessionCreatedEvent sessionEvent) {
+      // Reload the datasources
+      loadDatasources(checkForExternalDataSourceProperties());
+    }
 
     public void load() {
         Properties ext = checkForExternalDataSourceProperties();
 
+        // Instantiate the appropriate repository manager 
         if (type.equals("marklogic")) {
-            irm = MarkLogicRepositoryManager.getMarkLogicRepositoryManager(host, Integer.parseInt(port), username, password, database, cleanse(datadir));
+            irm = MarkLogicRepositoryManager.getMarkLogicRepositoryManager(host, Integer.parseInt(port), username, password, database, cleanse(datadir), sessionRegistry, workspaces);
         } else if (type.equals("classpath")) {
             separator = "/";
             log.debug("init datadir= "+datadir);
@@ -102,9 +111,10 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             log.debug("2nd init datadir= "+datadir);
         } else {
             irm = JackRabbitRepositoryManager.getJackRabbitRepositoryManager(configurationpath, datadir, repopasswordprovider.getPassword(),
-                    oldpassword, defaultRole);
+                    oldpassword, defaultRole, sessionRegistry, workspaces);
         }
 
+        // Perform the repository manager startup routines
         try {
             irm.start(userService);
             this.saveInternalFile("/etc" + separator + ".repo_version", "d20f0bea-681a-11e5-9d70-feff819cdc9f", null);
@@ -112,120 +122,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             log.error("Could not start repo", e);
         }
 
-        datasources.clear();
-
-
-            List<DataSource> exporteddatasources = null;
-            try {
-                exporteddatasources = irm.getAllDataSources();
-            } catch (RepositoryException e1) {
-                log.error("Could not export data sources", e1);
-            }
-
-            if (exporteddatasources != null) {
-                int i = 0;
-                while(i < exporteddatasources.size()){
-                    DataSource file = exporteddatasources.get(i);
-                    try {
-                        if (file.getName() != null && file.getType() != null) {
-                            Properties props = new Properties();
-                            if (file.getDriver() != null) {
-                                props.put("driver", file.getDriver());
-                            } else if (file.getPropertyKey() != null && ext.containsKey("datasource." + file.getPropertyKey() + ".driver")) {
-                                String p = ext.getProperty("datasource." + file.getPropertyKey() + ".driver");
-                                props.put("driver", p);
-                            }
-                            if (file.getPropertyKey() != null &&
-                                    ext.containsKey("datasource." + file.getPropertyKey() + ".location")) {
-                                String p = ext.getProperty("datasource." + file.getPropertyKey() + ".location");
-                                if (ext.containsKey("datasource." + file.getPropertyKey() + ".schemaoverride")) {
-                                    String[] spl = p.split(";");
-                                    spl[1] = "Catalog=mondrian://" + file.getSchema();
-                                    StringBuilder sb = new StringBuilder();
-                                    for (String str : spl) {
-                                        sb.append(str + ";");
-                                    }
-                                    props.put("location", sb.toString());
-                                } else {
-                                    props.put("location", p);
-                                }
-                            } else if (file.getLocation() != null) {
-                                props.put("location", file.getLocation());
-                            }
-                            if (file.getUsername() != null && file.getPropertyKey() == null) {
-                                props.put("username", file.getUsername());
-                            } else if (file.getPropertyKey() != null &&
-                                    ext.containsKey("datasource." + file.getPropertyKey() + ".username")) {
-                                String p = ext.getProperty("datasource." + file.getPropertyKey() + ".username");
-                                props.put("username", p);
-                            }
-                            if (file.getPassword() != null && file.getPropertyKey() == null) {
-                                props.put("password", file.getPassword());
-                            } else if (file.getPropertyKey() != null &&
-                                    ext.containsKey("datasource." + file.getPropertyKey() + ".password")) {
-                                String p = ext.getProperty("datasource." + file.getPropertyKey() + ".password");
-                                props.put("password", p);
-                            }
-                            if (file.getPath() != null) {
-                                props.put("path", file.getPath());
-                            } else if (file.getPropertyKey() != null &&
-                                    ext.containsKey("datasource." + file.getPropertyKey() + ".path")) {
-                                String p = ext.getProperty("datasource." + file.getPropertyKey() + ".path");
-                                props.put("path", p);
-                            }
-                            if (file.getId() != null) {
-                                props.put("id", file.getId());
-                            }
-                            if (file.getSecurityenabled() != null) {
-                                props.put("security.enabled", file.getSecurityenabled());
-                            } else if (file.getPropertyKey() != null &&
-                                    ext.containsKey("datasource." + file.getPropertyKey() + ".security.enabled")) {
-                                String p = ext.getProperty("datasource." + file.getPropertyKey() + ".security.enabled");
-                                props.put("security.enabled", p);
-                            }
-                            if (file.getSecuritytype() != null) {
-                                props.put("security.type", file.getSecuritytype());
-                            } else if (file.getPropertyKey() != null &&
-                                    ext.containsKey("datasource." + file.getPropertyKey() + ".security.type")) {
-                                String p = ext.getProperty("datasource." + file.getPropertyKey() + ".security.type");
-                                props.put("security.type", p);
-                            }
-                            if (file.getSecuritymapping() != null) {
-                                props.put("security.mapping", file.getSecuritymapping());
-                            } else if (file.getPropertyKey() != null &&
-                                    ext.containsKey("datasource." + file.getPropertyKey() + ".security.mapping")) {
-                                String p = ext.getProperty("datasource." + file.getPropertyKey() + ".security.mapping");
-                                props.put("security.mapping", p);
-                            }
-                            if (file.getAdvanced() != null) {
-                                props.put("advanced", file.getAdvanced());
-                            }
-                            if (file.getCsv() != null) {
-                                props.put("csv", file.getCsv());
-                            }
-                            if (file.getEnabled() != null) {
-                                props.put("enabled", file.getEnabled());
-                            }
-                            if (file.getPropertyKey() != null) {
-                                props.put("propertykey", file.getPropertyKey());
-                            }
-                            SaikuDatasource.Type t = SaikuDatasource.Type.valueOf(file.getType().toUpperCase());
-                            SaikuDatasource ds = new SaikuDatasource(file.getName(), t, props);
-                            datasources.put(file.getName(), ds);
-                        }
-                    }
-                        catch(Exception e){
-                            //throw new SaikuServiceException("Failed to add datasource", e);
-                            log.error("Failed to add datasource", e);
-                        }
-                    i++;
-
-
-                }
-            }
-
-
-
+        // Load the datasources
+        loadDatasources(ext);
     }
 
     public Properties checkForExternalDataSourceProperties() {
@@ -276,17 +174,24 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
         if (ds.getCsv() != null && ds.getCsv().equals("true")) {
             if(this.workspaces) {
                 String s = this.getworkspacedir();
+                
                 if (s.endsWith("/")) {
                     s = s.substring(0, s.length() - 1);
                 }
+                
                 if (ds.getName().startsWith(s)) {
                     ds.setName(ds.getName().replace(s + "_", ""));
                 }
             }
+
             String split[] = ds.getLocation().split("=");
             String loc = split[2];
-            split[2] = getDatadir() + "/datasources/" + ds.getName() + "-csv.json;Catalog";
-
+            if(split[2].startsWith("mondrian:")){
+                split[2] = "mondrian:/"+getDatadir() + "/datasources/" + ds.getName() + "-csv.json;Catalog";
+            }
+            else {
+                split[2] = getDatadir() + "/datasources/" + ds.getName() + "-csv.json;Catalog";
+            }
             for (int i = 0; i < split.length - 1; i++) {
                 split[i] = split[i] + "=";
             }
@@ -299,26 +204,58 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             path = path.replace("\\", "/");
 
             log.debug("Trimmed path is: " + path);
-            path = path.replaceFirst(datadir, "");
+            if(!datadir.equals("${CLASSPATH_REPO_PATH_UNPARSED}")) {
+                path = path.replaceFirst(datadir, "");
+            }
+            
+            // When using Jackrabbit, paths should follow JCR standards
+            if (this.type.equals("jackrabbit") || this.type.equals("marklogic")) {
+              if (!path.startsWith("mondrian://")) {
+                if (this.type.equals("marklogic")) {
+                  path = "mondrian:/" + path;
+                } else {
+                  String oldHomePrefix = "/homes/";
+                  String newHomePrefix = "mondrian://homes/home:";
+                  
+                  path = newHomePrefix + path.substring(oldHomePrefix.length());
+                }
+              }
+            }
+            
             boolean f = true;
+            
             if (new File(getDatadir() + separator + path).exists() && new File(getDatadir() + separator + path).isDirectory()) {
                 f = false;
             }
-            irm.saveInternalFile(this.getCSVJson(f, ds.getName(), getDatadir() + path), separator + "datasources" + separator + ds.getName() + "-csv.json", "fixme");
+            if(!path.startsWith("mondrian:")) {
+                irm.saveInternalFile(this.getCSVJson(f, ds.getName(), getDatadir() + path),
+                    separator + "datasources" + separator + ds.getName() + "-csv.json", null);
 
+            }
+            else{
+                irm.saveInternalFile(this.getCSVJson(f, ds.getName(), path),
+                    separator + "datasources" + separator + ds.getName() + "-csv.json", null);
+
+            }
             irm.saveDataSource(ds, separator + "datasources" + separator + ds.getName() + ".sds", "fixme");
+            
+            String name = ds.getName();
+            
+            // Adding the connection before refreshing it
+            SaikuDatasource sds = new SaikuDatasource(name, SaikuDatasource.Type.OLAP, datasource.getProperties());
+            datasources.put(ds.getName(), sds);
 
-            connectionManager.refreshConnection(ds.getName());
+            // In a workspace environment it is necessary to prefix the datasource name with the workspace name
+            connectionManager.refreshConnection(name);
         } else {
             irm.saveDataSource(ds, separator + "datasources" + separator + ds.getName() + ".sds", "fixme");
 
         }
 
         String name = ds.getName();
-        if (workspaces) {
-            name = getworkspacedir().substring(0, getworkspacedir().length() - 1) + "_" + ds.getName();
-        }
         SaikuDatasource sds = new SaikuDatasource(name, SaikuDatasource.Type.OLAP, datasource.getProperties());
+        
+        // It stores the datasource name prefixed with the workspace name
         datasources.put(name, sds);
 
         return datasource;
@@ -357,7 +294,9 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                 if (data.getId().equals(datasourceId)) {
                     datasources.remove(data.getName());
                     String path = data.getPath();
-                    path = path.replaceFirst(datadir, "");
+                    if(!datadir.equals("${CLASSPATH_REPO_PATH_UNPARSED}")) {
+                        path = path.replaceFirst(datadir, "");
+                    }
                     irm.deleteFile(path);
                     return true;
                 }
@@ -390,7 +329,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
     public Map<String, SaikuDatasource> getDatasources() {
-        if (workspaces) {
+/*        if (workspaces) {
             Map<String, SaikuDatasource> newdslist = new HashMap<>();
             for (Map.Entry<String, SaikuDatasource> entry : datasources.entrySet()) {
 
@@ -405,7 +344,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
             return newdslist;
         } else {
             return datasources;
-        }
+        }*/
+      return datasources;
     }
 
     public SaikuDatasource getDatasource(String datasourceName) {
@@ -646,9 +586,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     }
 
     public String getDatadir() {
-
-        if(this.type.equals("classpath")) {
-            if(this.workspaces) {
+        if (this.type.equals("classpath")) {
+            if (this.workspaces) {
                 try {
                     if (getSession().getAttribute(ORBIS_WORKSPACE_DIR) != null) {
                         String workspace = (String) getSession().getAttribute(ORBIS_WORKSPACE_DIR);
@@ -656,29 +595,39 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
                             workspace = cleanse(workspace);
                         }
                         log.debug("Workspace directory set to:" + datadir + workspace);
-                        System.out.println("I: " + datadir + "/" + workspace);
                         return cleanse(datadir) + workspace;
                     } else {
                         log.debug("Workspace directory set to:" + datadir + "unknown/");
-                        System.out.println("II: " + datadir + "/unknown");
                         return cleanse(datadir) + "unknown/";
                     }
 
                 } catch (Exception e) {
                     return cleanse(datadir) + "/unknown/";
                 }
-            }
-            else{
+            } else {
                 return cleanse(datadir);
             }
-        }
-        else{
+        } else {
             return "/";
         }
     }
+    
+    private String getCookieUsername() {
+      String cookieUsername = null;
+      javax.servlet.http.HttpSession session = getSession(); // Use a variable instead of a method call for debugging purposes
+      
+      if (session != null && workspaces && session.getAttribute(SAIKU_AUTH_PRINCIPAL) != null) {
+        cookieUsername = (String) session.getAttribute(SAIKU_AUTH_PRINCIPAL);
+      }
+      
+      if (cookieUsername != null && cookieUsername.trim().length() == 0) {
+        cookieUsername = null;
+      }
+      
+      return cookieUsername;
+    }
 
     private String getworkspacedir() {
-
         try {
             if (this.workspaces && getSession().getAttribute(ORBIS_WORKSPACE_DIR) != null) {
                 String workspace = (String) getSession().getAttribute(ORBIS_WORKSPACE_DIR);
@@ -784,6 +733,10 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
     public void setType(String type) {
         this.type = type;
     }
+    
+    public String getType() {
+      return this.type;
+    }
 
     private String getCSVJson(boolean file, String name, String path) {
 
@@ -886,6 +839,145 @@ public class RepositoryDatasourceManager implements IDatasourceManager {
 
     public void setDatabase(String database) {
         this.database = database;
+    }
+    
+    private void loadDatasources(Properties ext) {
+      datasources.clear();
+      
+      List<DataSource> exporteddatasources = null;
+  
+      try {
+        exporteddatasources = irm.getAllDataSources();
+      } catch (RepositoryException e1) {
+        log.error("Could not export data sources", e1);
+      }
+  
+      if (exporteddatasources != null) {
+        int i = 0;
+        while (i < exporteddatasources.size()) {
+          DataSource file = exporteddatasources.get(i);
+  
+          try {
+            if (file.getName() != null && file.getType() != null) {
+  
+              SaikuDatasource.Type t = SaikuDatasource.Type.valueOf(file.getType().toUpperCase());
+              SaikuDatasource ds = new SaikuDatasource(file.getName(), t, setupDataSourceProperties(file, ext));
+              datasources.put(file.getName(), ds);
+            }
+          } catch (Exception e) {
+            // throw new SaikuServiceException("Failed to add datasource", e);
+            log.error("Failed to add datasource", e);
+          }
+          i++;
+        }
+      }
+    }
+    
+    private Properties setupDataSourceProperties(DataSource file, Properties ext) {
+      Properties props = new Properties();
+      
+      // DataSource driver
+      if (file.getDriver() != null) {
+        props.put("driver", file.getDriver());
+      } else if (file.getPropertyKey() != null
+          && ext.containsKey("datasource." + file.getPropertyKey() + ".driver")) {
+        String p = ext.getProperty("datasource." + file.getPropertyKey() + ".driver");
+        props.put("driver", p);
+      }
+
+      // DataSource location
+      if (file.getPropertyKey() != null && ext.containsKey("datasource." + file.getPropertyKey() + ".location")) {
+        String p = ext.getProperty("datasource." + file.getPropertyKey() + ".location");
+        if (ext.containsKey("datasource." + file.getPropertyKey() + ".schemaoverride")) {
+          String[] spl = p.split(";");
+          spl[1] = "Catalog=mondrian://" + file.getSchema();
+          StringBuilder sb = new StringBuilder();
+          for (String str : spl) {
+            sb.append(str + ";");
+          }
+          props.put("location", sb.toString());
+        } else {
+          props.put("location", p);
+        }
+      } else if (file.getLocation() != null) {
+        props.put("location", file.getLocation());
+      }
+      
+      // DataSource username
+      if (file.getUsername() != null && file.getPropertyKey() == null) {
+        props.put("username", file.getUsername());
+      } else if (file.getPropertyKey() != null
+          && ext.containsKey("datasource." + file.getPropertyKey() + ".username")) {
+        String p = ext.getProperty("datasource." + file.getPropertyKey() + ".username");
+        props.put("username", p);
+      }
+      
+      // DataSource password
+      if (file.getPassword() != null && file.getPropertyKey() == null) {
+        props.put("password", file.getPassword());
+      } else if (file.getPropertyKey() != null
+          && ext.containsKey("datasource." + file.getPropertyKey() + ".password")) {
+        String p = ext.getProperty("datasource." + file.getPropertyKey() + ".password");
+        props.put("password", p);
+      }
+      
+      // DataSource path
+      if (file.getPath() != null) {
+        props.put("path", file.getPath());
+      } else if (file.getPropertyKey() != null
+          && ext.containsKey("datasource." + file.getPropertyKey() + ".path")) {
+        String p = ext.getProperty("datasource." + file.getPropertyKey() + ".path");
+        props.put("path", p);
+      }
+      
+      // DataSource id
+      if (file.getId() != null) {
+        props.put("id", file.getId());
+      }
+      
+      // Some security properties
+      if (file.getSecurityenabled() != null) {
+        props.put("security.enabled", file.getSecurityenabled());
+      } else if (file.getPropertyKey() != null
+          && ext.containsKey("datasource." + file.getPropertyKey() + ".security.enabled")) {
+        String p = ext.getProperty("datasource." + file.getPropertyKey() + ".security.enabled");
+        props.put("security.enabled", p);
+      }
+      
+      if (file.getSecuritytype() != null) {
+        props.put("security.type", file.getSecuritytype());
+      } else if (file.getPropertyKey() != null
+          && ext.containsKey("datasource." + file.getPropertyKey() + ".security.type")) {
+        String p = ext.getProperty("datasource." + file.getPropertyKey() + ".security.type");
+        props.put("security.type", p);
+      }
+      
+      if (file.getSecuritymapping() != null) {
+        props.put("security.mapping", file.getSecuritymapping());
+      } else if (file.getPropertyKey() != null
+          && ext.containsKey("datasource." + file.getPropertyKey() + ".security.mapping")) {
+        String p = ext.getProperty("datasource." + file.getPropertyKey() + ".security.mapping");
+        props.put("security.mapping", p);
+      }
+      
+      if (file.getAdvanced() != null) {
+        props.put("advanced", file.getAdvanced());
+      }
+      
+      // CSV flag
+      if (file.getCsv() != null) {
+        props.put("csv", file.getCsv());
+      }
+      
+      if (file.getEnabled() != null) {
+        props.put("enabled", file.getEnabled());
+      }
+      
+      if (file.getPropertyKey() != null) {
+        props.put("propertykey", file.getPropertyKey());
+      }
+      
+      return props;
     }
 }
 

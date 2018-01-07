@@ -1,5 +1,6 @@
 ### saiku ###
 
+*.iml
 saiku-bi-platform-plugin-p6/target/
 saiku-bi-platform-plugin-p7/target/
 util/__MACOSX/
@@ -86,6 +87,8 @@ cmake-build-debug/
 
 # IntelliJ
 /out/
+saiku-bi-platform-plugin-p5/saiku-bi-platform-plugin-p5.iml
+saiku-bi-platform-plugin/saiku-bi-platform-plugin.iml
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/

@@ -13,14 +13,14 @@
 
 ***
 
-<h1 align="center">Saiku Analytics</h1>
+<h1 align="center"><a href="https://www.meteorite.bi/products/saiku">Saiku Analytics</a></h1>
 <h2 align="center">The world's greatest open source OLAP browser</h2>
-<p align="center"><a href="http://www2.meteorite.bi/saiku-demo/"><img src="https://raw.githubusercontent.com/OSBI/saiku/assets/saiku-demo-1.jpg"/></a></p>
+<p align="center"><a href="https://try.meteorite.bi/"><img src="https://raw.githubusercontent.com/OSBI/saiku/assets/saiku-demo-1.jpg"/></a></p>
 <hr />
 <p align="center">
   <a href="http://www.meteorite.bi/"><b>homepage</b></a> |
   <a href="http://licensing.meteorite.bi/"><b>Saiku License</b></a> |
-  <a href="http://wiki.meteorite.bi/display/SAIK/Saiku"><b>wiki</b></a> |
+  <a href="http://saiku-documentation.readthedocs.io/en/latest/"><b>wiki</b></a> |
   <a href="http://community.meteorite.bi/"><b>community</b></a> |
   <a href="https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/dev"><b>mailing list</b></a> |
   <a href="http://webchat.freenode.net/?randomnick=1&channels=%23%23saiku"><b>chat</b></a> |
@@ -80,7 +80,7 @@ Saiku is open source and free to use. Our default server does ship with a licens
 
 ## Wiki
 
-* [Saiku Wiki](http://wiki.meteorite.bi/display/SAIK/Saiku)
+* [Saiku Wiki](http://saiku-documentation.readthedocs.io/en/latest/)
 
 ## Community
 
@@ -88,7 +88,7 @@ Saiku is open source and free to use. Our default server does ship with a licens
 
 ## Bugs and Feature Requests
 
-* [Saiku Jira](http://jira.meteorite.bi/)
+* [GitHub Issues](https://github.com/OSBI/saiku/issues/new)
 
 ## Discussion List
 
@@ -119,7 +119,7 @@ Check [CONTRIBUTING.md](https://github.com/OSBI/saiku/blob/master/CONTRIBUTING.m
 
 * To get started, [sign the Contributor License Agreement](https://www.clahub.com/agreements/OSBI/saiku).
 
-* If you find a bug then please report it on [Jira](http://jira.meteorite.bi/secure/Dashboard.jspa).
+* If you find a bug then please create an issue [here](https://github.com/OSBI/saiku/issues/new).
 
 * If you have a feature request, then please get in touch. We'd love to hear from you! Send a email for: [info@meteorite.bi](mailto:info@meteorite.bi)
 

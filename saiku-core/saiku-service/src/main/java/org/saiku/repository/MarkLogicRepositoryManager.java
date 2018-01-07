@@ -3,7 +3,6 @@ package org.saiku.repository;
 import com.marklogic.xcc.*;
 import com.marklogic.xcc.exceptions.RequestException;
 import com.marklogic.xcc.exceptions.XccConfigException;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.saiku.database.dto.MondrianSchema;
 import org.saiku.datasources.connection.RepositoryFile;
@@ -21,10 +20,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 
+import javax.servlet.http.HttpSession;
+
 /**
  * MarkLogic Repository Manager
+ * To use this repository, it should be enabled at saiku-beans.xml file
  */
 public class MarkLogicRepositoryManager implements IRepositoryManager {
+  private static final String SAIKU_AUTH_PRINCIPAL = "SAIKU_AUTH_PRINCIPAL";
+  
   private static final Logger log = LoggerFactory.getLogger(MarkLogicRepositoryManager.class);
 
   private static final String[] PARAMETER_DELIMITER = new String[]{"%(", ")"};
@@ -32,11 +36,12 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   private static final String DATASOURCES_DIRECTORY = "/datasources/";
   private static final String SCHEMAS_DIRECTORY = "/datasources/";
 
+  // The values below are replaced by the values at saiku-beans.properties
   private String host = "localhost";
   private int port = 8070;
-  private String username = "admin";
-  private String password = "bruunoo";
-  private String database = "saiku";
+  private String username = "DEFAULT_USERNAME";
+  private String password = "DEFAULT_PASSWORD";
+  private String database = "DEFAULT_DATABASE";
 
   private String connectionUrl;
   private ContentSource contentSource;
@@ -46,21 +51,26 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   private String sep = "/";
   private String append;
+  
+  private ScopedRepo sessionRegistry;
+  private boolean workspaces;
 
-  private MarkLogicRepositoryManager(String host, int port, String username, String password, String database, String data) {
+  private MarkLogicRepositoryManager(String host, int port, String username, String password, String database, String data, ScopedRepo sessionRegistry, boolean workspaces) {
     this.host = host;
     this.port = port;
     this.username = username;
     this.password = password;
     this.database = database;
     this.append   = cleanse(data);
+    this.sessionRegistry = sessionRegistry;
+    this.workspaces = workspaces;
 
     init();
   }
 
-  public static synchronized MarkLogicRepositoryManager getMarkLogicRepositoryManager(String host, int port, String username, String password, String database, String data) {
+  public static synchronized MarkLogicRepositoryManager getMarkLogicRepositoryManager(String host, int port, String username, String password, String database, String data, ScopedRepo sessionRegistry, boolean workspaces) {
     if (instance == null) {
-      instance = new MarkLogicRepositoryManager(host, port, username, password, database, data);
+      instance = new MarkLogicRepositoryManager(host, port, username, password, database, data, sessionRegistry, workspaces);
     }
 
     return instance;
@@ -103,6 +113,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     this.createFolder(sep + "etc");
 
     if (new File(append + "/etc/license.lic").exists()) {
+      // Filling the default license file
       try {
         this.saveBinaryInternalFile(new FileInputStream(append + "/etc/license.lic"), "/etc/license.lic", "");
       } catch (IOException e1) {
@@ -115,8 +126,6 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
       }
     }
-
-
 
     return true;
   }
@@ -179,8 +188,6 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     if (file == null) { // Create a folder
       createFolder(user, path);
     } else { // Write a file to an existing folder
-      path = HOMES_DIRECTORY + user + "/" + path;
-
       Session session = createUpdateSession();
 
       ContentCreateOptions options = new ContentCreateOptions();
@@ -268,6 +275,14 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
     RequestOptions options = new RequestOptions();
     options.setCacheResult(false); // stream by default
+    
+    if (s != null) { // Fixing path problems
+      s = s.replace('\\', '/');
+      
+      if (!s.startsWith("/")) {
+        s = "/" + s;
+      }
+    }
 
     AdhocQuery request = session.newAdhocQuery("doc('" + s + "')", options);
 
@@ -299,6 +314,10 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   @Override
   public InputStream getBinaryInternalFile(String s) throws RepositoryException {
+    if (s != null) {
+      s = s.replace('\\', '/'); // Use the right path separator for Marklogic documents
+    }
+    
     Session session = contentSource.newSession();
 
     RequestOptions options = new RequestOptions();
@@ -348,37 +367,46 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   @Override
   public List<DataSource> getAllDataSources() throws RepositoryException {
     List<DataSource> dataSources = new ArrayList<>();
+    JAXBContext jaxbContext = null;
+    Unmarshaller jaxbMarshaller = null;
 
-    for (File file : getFilesFromFolder(DATASOURCES_DIRECTORY, false)) {
-      if (file != null && file.getName() != null && file.getName().toLowerCase().endsWith("sds")) {
-        InputStream fileContent = getBinaryInternalFile(file.getPath());
+    try {
+      jaxbContext = JAXBContext.newInstance(DataSource.class);
+    } catch (JAXBException e) {
+      log.error("Could instantiate the JAXBContent", e);
+    }
 
-        JAXBContext jaxbContext = null;
-        Unmarshaller jaxbMarshaller = null;
+    try {
+      jaxbMarshaller = jaxbContext != null ? jaxbContext.createUnmarshaller() : null;
+    } catch (JAXBException e) {
+      log.error("Could not create the XML unmarshaller", e);
+    }
 
-        try {
-          jaxbContext = JAXBContext.newInstance(DataSource.class);
-        } catch (JAXBException e) {
-          log.error("Could instantiate the JAXBContent", e);
-        }
-
-        try {
-          jaxbMarshaller = jaxbContext != null ? jaxbContext.createUnmarshaller() : null;
-        } catch (JAXBException e) {
-          log.error("Could not create the XML unmarshaller", e);
-        }
-
-        DataSource d = null;
-
-        try {
-          d = (DataSource) (jaxbMarshaller != null ? jaxbMarshaller.unmarshal(fileContent) : null);
-        } catch (JAXBException e) {
-          log.error("Could not unmarshall the XML file", e);
-        }
-
-        if (d != null) {
-          d.setPath(file.getPath());
-          dataSources.add(d);
+    if (jaxbMarshaller != null) {
+      for (File file : getFilesFromFolder(DATASOURCES_DIRECTORY, false)) {
+        if (file != null && file.getName() != null && file.getName().toLowerCase().endsWith("sds")) {
+          DataSource d = null;
+  
+          try {
+            InputStream stream = getBinaryInternalFile(file.getPath());
+            d = (DataSource) jaxbMarshaller.unmarshal(stream);
+          } catch (JAXBException e) {
+            log.error("Could not unmarshall the XML file", e);
+          } catch (Exception e) {
+            log.error("Unexpected error while trying to unmarshall the XML file", e);
+          }
+  
+          if (d != null) {
+            d.setPath(file.getPath());
+            
+            if (getCookieUsername() != null) {
+              if (getCookieUsername().equals(d.getUsername())) {
+                dataSources.add(d);
+              }
+            } else {
+              dataSources.add(d);
+            }
+          }
         }
       }
     }
@@ -386,6 +414,31 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     return dataSources;
   }
 
+  private String getCookieUsername() {
+    String cookieUsername = null;
+    HttpSession session = getSession(); // Use a variable instead of a method call for debugging purposes
+    
+    if (session != null && workspaces && session.getAttribute(SAIKU_AUTH_PRINCIPAL) != null) {
+      cookieUsername = (String) session.getAttribute(SAIKU_AUTH_PRINCIPAL);
+    }
+    
+    if (cookieUsername != null && cookieUsername.trim().length() == 0) {
+      cookieUsername = null;
+    }
+    
+    return cookieUsername;
+  }
+  
+  private HttpSession getSession() {
+    try {
+      return sessionRegistry.getSession();
+    } catch (Exception e) {
+      log.debug("Error while fetching the HTTPSession", e);
+    }
+    
+    return null;
+  }
+  
   @Override
   public void saveDataSource(DataSource ds, String path, String user) throws RepositoryException {
     Session session = createUpdateSession();
@@ -522,6 +575,17 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   @Override
   public AclEntry getACL(String object, String username, List<String> roles) {
+    try {
+      if (this.folderExists(HOMES_DIRECTORY + username + "/" + object + "/")) {
+        Map<String,List<AclMethod>> generalRolesMap = new HashMap<>();
+        Map<String,List<AclMethod>> userRolesMap = new HashMap<>();
+
+        return new AclEntry(username, AclType.PUBLIC, generalRolesMap, userRolesMap);
+      }
+    } catch (RepositoryException e) {
+      return null;
+    }
+
     return null;
   }
 
@@ -604,7 +668,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
       session.submitRequest(request);
       session.commit();
     } catch (RequestException e) {
-      // Ingore the exception
+      // It means that the folder alreay exists, so ingore the exception.
     } finally {
       session.close();
     }
@@ -689,7 +753,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     }
   }
 
-  // Getters and setters
+  // Getters and setters, used mostly by Spring property injection
 
   public String getHost() {
     return host;
@@ -740,5 +804,4 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
     return workspace + "/";
   }
-
 }

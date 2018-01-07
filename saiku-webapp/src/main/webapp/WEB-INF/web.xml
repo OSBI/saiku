@@ -63,10 +63,20 @@
 		<session-timeout>60</session-timeout>
 	</session-config>
 
+    <filter>
+        <filter-name>org.springframework.security.filterChainProxy</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>org.springframework.security.filterChainProxy</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <!-- BEGIN - Hazelcast Filter -->
-<!--    <filter>
+    <!--
+    <filter>
         <filter-name>hazelcast-filter</filter-name>
-        &lt;!&ndash;        <filter-class>com.hazelcast.web.WebFilter</filter-class>&ndash;&gt;
+        <filter-class>com.hazelcast.web.WebFilter</filter-class>
         <filter-class>com.hazelcast.web.spring.SpringAwareWebFilter</filter-class>
 
         <init-param>
@@ -99,7 +109,6 @@
             <param-value>true</param-value>
         </init-param>
 
-
         <init-param>
             <param-name>use-client</param-name>
             <param-value>true</param-value>
@@ -109,25 +118,21 @@
             <param-name>shutdown-on-destroy</param-name>
             <param-value>true</param-value>
         </init-param>
-    </filter>-->
+    </filter>
 
-
-    <!--<filter-mapping>
+    <filter-mapping>
         <filter-name>hazelcast-filter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
--->
+    -->
+    <!-- END - Hazelcast Filter -->
 
-    <!-- BEGIN - Filter Definition --> 
-	<filter>
-		<filter-name>org.springframework.security.filterChainProxy</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
-    <!-- The above filter is for Orbis / Hazelcast token based authentication -->
-   <!-- <filter>
+    <!-- BEGIN - Saiku Orbis SSO Filter Definition --> 
+    <!--
+    <filter>
         <filter-name>hazelcastAuthFilter</filter-name>
         <filter-class>org.saiku.web.service.HazelcastAuthFilter</filter-class>
         <init-param>
@@ -142,13 +147,9 @@
             <param-name>baseWorkspaceDir</param-name>
             <param-value>../../repository/data</param-value>
         </init-param>
-    </filter>-->
+    </filter>
 
-    <!-- END - Filter Definition -->
-
-    <!-- BEGIN - Filter Mapping -->
-    <!-- The above filter mapping is for Orbis / Hazelcast token based authentication -->
-    <!--<filter-mapping>
+    <filter-mapping>
         <filter-name>hazelcast-filter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>FORWARD</dispatcher>
@@ -158,11 +159,8 @@
     <filter-mapping>
         <filter-name>hazelcastAuthFilter</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>-->
-	<filter-mapping>
-		<filter-name>org.springframework.security.filterChainProxy</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+    </filter-mapping> 
+    -->
     <!-- END - Filter Mapping -->
 
     <listener>
