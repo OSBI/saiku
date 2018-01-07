@@ -804,7 +804,7 @@ title="Drill across on cell"></a></li>
                 class="i18n">Use Result</label><br />
 				<div id="div-totals-container">
                     <div class="totals_container">
-                        <label class="i18n">Totals per metrics</label>
+                        <label for="per_metrics_totals_checkbox" class="i18n">Totals per metrics</label>
                         <input type="checkbox" id="per_metrics_totals_checkbox"/>
                         &nbsp;
                     </div>
@@ -812,7 +812,7 @@ title="Drill across on cell"></a></li>
                         <strong>All Measures - </strong>
                         <label for="show_totals" class="i18n">Sub totals</label>
                         <select class="form-control" id="all_measures_select">
-                            <option class="i18n" value="nil" selected="selected">None</option>
+                            <option class="i18n" value="not" selected="selected">None</option>
                             <option class="i18n" value="sum">Sum</option>
                             <option class="i18n" value="min">Min</option>
                             <option class="i18n" value="max">Max</option>
@@ -838,7 +838,7 @@ title="Drill across on cell"></a></li>
         </script>
 <script type="text/x-jquery-tmpl" id="template-selections-totals">
     <div class="totals_container per_metrics_container">
-        <strong><%= measure.caption %> - </strong>
+        <strong><%= measure.name %> - </strong>
         <label for="show_totals" class="i18n">Sub totals</label>
         <select class="form-control show_totals_select">
             <option class="i18n" value="nil" selected="selected">None</option>

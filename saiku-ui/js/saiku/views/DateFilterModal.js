@@ -42,9 +42,9 @@ var DateFilterModal = Modal.extend({
 	template_many_years_mdx: ' {logicalOperator} {parent}.CurrentMember.NAME {comparisonOperator} \'{dates}\'',
 
 	template_mdx: 'IIF(ISEMPTY(CurrentDateMember([{dimension}.{hierarchy}],' +
-	' \'["{dimension}.{hierarchy}"]\\\.{analyzerDateFormat}\', EXACT)), {}, { {parent}' +
+	' \'["{dimension}.{hierarchy}"]\\\.{analyzerDateFormat}\', EXACT){lag}), {}, { {parent}' +
 	' CurrentDateMember([{dimension}.{hierarchy}],' +
-	' \'["{dimension}.{hierarchy}"]\\\.{analyzerDateFormat}\', EXACT)})',
+	' \'["{dimension}.{hierarchy}"]\\\.{analyzerDateFormat}\', EXACT){lag}})',
 
 	template_last_mdx: '{parent} LastPeriods({periodAmount}, CurrentDateMember([{dimension}.{hierarchy}], \'["{dimension}.{hierarchy}"]\\\.{analyzerDateFormat}\', EXACT))',
 
@@ -564,10 +564,6 @@ var DateFilterModal = Modal.extend({
 			logExp.parent = '';
 		}
 
-		this.template_mdx = this.template_mdx.replace(/{(\w+)}/g, function(m, p) {
-			return logExp[p];
-		});
-
 		if (fixedDateName === 'dayperiods') {
 			logExp.parent = '[{dimension}.{hierarchy}].[{level}]';
 			logExp.parent = logExp.parent.replace(/{(\w+)}/g, function(m, p) {
@@ -655,11 +651,19 @@ var DateFilterModal = Modal.extend({
 
 			return this.template_last_mdx;
 		}
-		else if (fixedDateName !== 'yesterday') {
-			return this.template_mdx;
-		}
 		else {
-			return this.template_mdx + '.lag(1)';
+
+			if (fixedDateName === 'yesterday') {
+				logExp.lag = '.lag(1)';
+			}
+			else {
+				logExp.lag = '';
+			}
+
+			this.template_mdx = this.template_mdx.replace(/{(\w+)}/g, function(m, p) {
+				return logExp[p];
+			});
+			return this.template_mdx;
 		}
 	},
 

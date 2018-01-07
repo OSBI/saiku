@@ -100,6 +100,19 @@ public class TotalsListsBuilder implements FormatList {
 
     totalBranch = new TotalNode[ maxDepth ];
 
+    if (aggrTempl[0] == null) {
+      // use BlankAggregator if one off measure has aggregator but total aggregator not selected
+      for (Measure m : measures) {
+        if (m instanceof Fat.MeasureAdapter) {
+          ThinMeasure tm = ((Fat.MeasureAdapter) m).getThinMeasure();
+          if (tm != null && tm.getAggregators() != null && !tm.getAggregators().isEmpty()) {
+            aggrTempl[0] = TotalAggregator.newInstanceByFunctionName("nil");
+            break;
+          }
+        }
+      }
+    }
+
     TotalNode rootNode =
             new TotalNode( measuresCaptions, measures, aggrTempl[ 0 ], this, totalsAxisInfo.fullPositions.size(), dataAxisInfo);
     col = Axis.ROWS.equals( dataAxisInfo.axis.getAxisOrdinal() ) ? 1 : 0;
