@@ -1321,9 +1321,8 @@ textarea, select {
 	background-position: 7px 7px;
 }
 .workspace_toolbar ul li a.about {
-	background-position: -1702px 5px;
-	opacity: 0.6;
-
+	background-image: url('../../../images/src/information.png');
+	background-position: 7px 7px;
 }
 .ui-menu {
 	list-style:none;
