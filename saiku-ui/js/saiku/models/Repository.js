@@ -99,7 +99,7 @@ var SavedQuery = Backbone.Model.extend({
         var url;
 
         if (Settings.EXTENDED_REPOSITORY_RESOURCE && this.svg) {
-            url = '/api/extendedrepository' + '/resourcemeta';
+            url = 'api/extendedrepository' + '/resourcemeta';
         }
         else {
             url = repoPathUrl() + '/resource';
