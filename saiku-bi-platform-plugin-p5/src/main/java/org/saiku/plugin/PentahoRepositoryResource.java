@@ -347,6 +347,11 @@ public class PentahoRepositoryResource implements IDatasourceManager {
     return null;
   }
 
+  @Override
+  public String getType() {
+    return "pentaho";
+  }
+
   /*public List<JujuSource> getJujuDatasources() {
     return null;
   }*/
