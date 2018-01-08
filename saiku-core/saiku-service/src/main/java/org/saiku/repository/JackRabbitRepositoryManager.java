@@ -72,11 +72,14 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import javax.servlet.http.HttpSession;
+
 /**
  * JackRabbit JCR Repository Manager for Saiku.
  */
 public class JackRabbitRepositoryManager implements IRepositoryManager {
-
+  private static final String SAIKU_AUTH_PRINCIPAL = "SAIKU_AUTH_PRINCIPAL";
+  
   private static final Logger log = LoggerFactory.getLogger(JackRabbitRepositoryManager.class);
   private static JackRabbitRepositoryManager ref;
   private final String data;
@@ -88,25 +91,52 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
   private Session session;
   private Node root;
   private UserService userService;
+  private ScopedRepo sessionRegistry;
+  private boolean workspaces;
 
-
-  private JackRabbitRepositoryManager(String config, String data, String password, String oldpassword, String defaultRole) {
-
+  private JackRabbitRepositoryManager(String config, String data, String password, String oldpassword, String defaultRole, ScopedRepo sessionRegistry, boolean workspaces) {
     this.config = config;
     this.data = data;
     this.password = password;
     this.oldpassword = oldpassword;
     this.defaultRole = defaultRole;
+    this.sessionRegistry = sessionRegistry;
+    this.workspaces = workspaces;
   }
 
   /*
    * TODO this is currently threadsafe but to improve performance we should split it up to allow multiple sessions to hit the repo at the same time.
    */
-  public static synchronized JackRabbitRepositoryManager getJackRabbitRepositoryManager(String config, String data, String password, String oldpassword, String defaultRole) {
+  public static synchronized JackRabbitRepositoryManager getJackRabbitRepositoryManager(String config, String data, String password, String oldpassword, String defaultRole, ScopedRepo sessionRegistry, boolean workspaces) {
     if (ref == null)
       // it's ok, we can call this constructor
-      ref = new JackRabbitRepositoryManager(config, data, password, oldpassword, defaultRole);
+      ref = new JackRabbitRepositoryManager(config, data, password, oldpassword, defaultRole, sessionRegistry, workspaces);
     return ref;
+  }
+  
+  private String getCookieUsername() {
+    String cookieUsername = null;
+    HttpSession session = getSession(); // Use a variable instead of a method call for debugging purposes
+    
+    if (session != null && workspaces && session.getAttribute(SAIKU_AUTH_PRINCIPAL) != null) {
+      cookieUsername = (String) session.getAttribute(SAIKU_AUTH_PRINCIPAL);
+    }
+    
+    if (cookieUsername != null && cookieUsername.trim().length() == 0) {
+      cookieUsername = null;
+    }
+    
+    return cookieUsername;
+  }
+  
+  private HttpSession getSession() {
+    try {
+      return sessionRegistry.getSession();
+    } catch (Exception e) {
+      log.debug("Error while fetching the HTTPSession", e);
+    }
+    
+    return null;
   }
 
   public Object clone()
@@ -384,7 +414,9 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     else {
       int pos = path.lastIndexOf("/");
       String filename = "./" + path.substring(pos + 1, path.length());
+      
       Node n = getFolder(path.substring(0, pos));
+      
       Acl2 acl2 = new Acl2(n);
       acl2.setAdminRoles(userService.getAdminRoles());
       if (acl2.canWrite(n, user, roles)) {
@@ -733,41 +765,54 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
   public List<DataSource> getAllDataSources() throws RepositoryException {
     QueryManager qm = session.getWorkspace().getQueryManager();
+    
     String sql = "SELECT * FROM [nt:olapdatasource]";
+    
     Query query = qm.createQuery(sql, Query.JCR_SQL2);
-
     QueryResult res = query.execute();
-
     NodeIterator node = res.getNodes();
-
     List<DataSource> ds = new ArrayList<>();
+    
     while (node.hasNext()) {
       Node n = node.nextNode();
       JAXBContext jaxbContext = null;
       Unmarshaller jaxbMarshaller = null;
+      
       try {
         jaxbContext = JAXBContext.newInstance(DataSource.class);
       } catch (JAXBException e) {
         log.error("Could not read XML", e);
+        continue;
       }
+      
       try {
         jaxbMarshaller = jaxbContext != null ? jaxbContext.createUnmarshaller() : null;
       } catch (JAXBException e) {
         log.error("Could not read XML", e);
+        continue;
       }
+      
       InputStream stream = new ByteArrayInputStream(n.getNodes("jcr:content").nextNode().getProperty("jcr:data").getString().getBytes());
       DataSource d = null;
+      
       try {
         d = (DataSource) (jaxbMarshaller != null ? jaxbMarshaller.unmarshal(stream) : null);
       } catch (JAXBException e) {
         log.error("Could not read XML", e);
+        continue;
       }
 
       if (d != null) {
         d.setPath(n.getPath());
       }
-      ds.add(d);
-
+      
+      if (getCookieUsername() != null) {
+        if (getCookieUsername().equals(d.getUsername())) {
+          ds.add(d);
+        }
+      } else {
+        ds.add(d);
+      }
     }
 
     return ds;
@@ -775,6 +820,7 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
 
   public void saveDataSource(DataSource ds, String path, String user) throws RepositoryException {
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    
     try {
       JAXBContext jaxbContext = JAXBContext.newInstance(DataSource.class);
       Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -792,20 +838,21 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
     int pos = path.lastIndexOf("/");
     String filename = "./" + path.substring(pos + 1, path.length());
     Node n = getFolder(path.substring(0, pos));
-    Node resNode = n.addNode(filename, "nt:file");
+    
+    if (!n.hasNode(filename)) {
+      Node resNode = n.addNode(filename, "nt:file");
+      resNode.addMixin("nt:olapdatasource");
 
-    resNode.addMixin("nt:olapdatasource");
-
-    Node contentNode = resNode.addNode("jcr:content", "nt:resource");
-
-    //resNode.setProperty ("jcr:mimeType", "text/plain");
-    //resNode.setProperty ("jcr:encoding", "utf8");
-    contentNode.setProperty("jcr:data", baos.toString());
-        /*Calendar lastModified = Calendar.getInstance ();
-        lastModified.setTimeInMillis (new Date().getTime());
-        resNode.setProperty ("jcr:lastModified", lastModified);*/
-    resNode.getSession().save();
-
+      Node contentNode = resNode.addNode("jcr:content", "nt:resource");
+  
+      //resNode.setProperty ("jcr:mimeType", "text/plain");
+      //resNode.setProperty ("jcr:encoding", "utf8");
+      contentNode.setProperty("jcr:data", baos.toString());
+          /*Calendar lastModified = Calendar.getInstance ();
+          lastModified.setTimeInMillis (new Date().getTime());
+          resNode.setProperty ("jcr:lastModified", lastModified);*/
+      resNode.getSession().save();
+    }
   }
 
   public byte[] exportRepository() throws RepositoryException, IOException {
@@ -844,6 +891,22 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
   }
 
   private Node getFolder(String path) throws RepositoryException {
+    if(!path.startsWith("/")){
+      path = "/"+path;
+    }
+    
+    // Create the user in Jackrabbit if it was not already created
+    if (!session.nodeExists(path)) {
+      String homeSuffix = "home:";
+      if (path.contains(homeSuffix)) {
+        String user = path.substring(path.indexOf(homeSuffix) + homeSuffix.length());
+        if (user.endsWith("/")) {
+          user = user.substring(0, user.length() - 1);
+        }
+        this.createUser(user);
+      }
+    }
+    
     return session.getNode(path);
   }
 

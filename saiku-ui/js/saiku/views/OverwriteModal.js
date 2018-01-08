@@ -18,31 +18,33 @@
  * The "over write" dialog
  */
 var OverwriteModal = Modal.extend({
-    type: 'info',
+  type: 'info',
 
-    message: 'Are you sure you want to overwrite the existing query?',
+  message: 'Are you sure you want to overwrite the existing query?',
 
-	buttons: [
-		{ text: 'Yes', method: 'save' },
-		{ text: 'No', method: 'close' }
-	],
+  buttons: [
+    { text: 'Yes', method: 'save' },
+    { text: 'No', method: 'close' }
+  ],
 
-    initialize: function(args) {
-        // Initialize properties
-        _.extend(this, args);
+  initialize: function(args) {
+    // Initialize properties
+    _.extend(this, args);
 
-        this.options.title = 'Warning';
+    this.options.title = 'Warning';
 
-		this.queryname   = this.name;
-		this.queryfolder = this.foldername;
-		this.parentobj   = this.parent;
-    },
+    this.queryname   = this.name;
+    this.queryfolder = this.foldername;
+    this.parentobj   = this.parent;
+  },
 
-    dummy: function() { return true; },
+  dummy: function() {
+    return true;
+  },
 
-	save: function(event) {
-		event.preventDefault();
-		this.parentobj.save_remote(this.queryname, this.queryfolder, this.parentobj);
-		$(this.el).dialog('destroy').remove();
-	}
+  save: function(event) {
+    event.preventDefault();
+    this.parentobj.save_remote(this.queryname, this.queryfolder, this.parentobj);
+    this.$el.dialog('destroy').remove();
+  }
 });

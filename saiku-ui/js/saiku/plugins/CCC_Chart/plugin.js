@@ -104,7 +104,7 @@ var Chart = Backbone.View.extend({
         }
 
 
-
+        this.workspace.trigger('chart:rendered', this);
     },
 
 

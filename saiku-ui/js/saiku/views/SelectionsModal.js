@@ -36,11 +36,12 @@ var SelectionsModal = Modal.extend({
         'change #use_result': 'use_result_action',
         'dblclick .selection_options li.option_value label' : 'click_move_selection',
         'click li.all_options' : 'click_all_member_selection',
-        'change #show_totals': 'show_totals_action'
+        'change #per_metrics_totals_checkbox': 'per_metrics_totals_action'
         //,'click div.updown_buttons a.form_button': 'updown_selection'
     },
 
     show_unique_option: false,
+    per_metrics_totals: false,
 
     use_result_option: Settings.MEMBERS_FROM_RESULT,
     show_totals_option: [],
@@ -60,7 +61,7 @@ var SelectionsModal = Modal.extend({
         this.available_members = [];
         this.topLevel;
 
-        _.bindAll(this, "fetch_members", "populate", "finished", "get_members", "use_result_action", "show_totals_action");
+        _.bindAll(this, "fetch_members", "populate", "finished", "get_members", "use_result_action", "per_metrics_totals_action");
 
         // Determine axis
         this.axis = "undefined";
@@ -129,23 +130,7 @@ var SelectionsModal = Modal.extend({
             $(this.el).find('.parameter').removeClass('hidden');
         }
 
-
-        var showTotalsEl = $(this.el).find('#show_totals');
-        showTotalsEl.val('');
-
-        // fixme: we should check for deepest level here
-        if (_.size(hierarchy.levels) > 1 && level && level.hasOwnProperty('aggregators') && level.aggregators) {
-            if (level.aggregators.length > 0) {
-                this.show_totals_option = level.aggregators;
-            }
-            showTotalsEl.removeAttr("disabled");
-        } else {
-            showTotalsEl.attr("disabled", true);
-            this.show_totals_option = [];
-        }
-
-//        showTotalsEl.val(this.show_totals_option);
-//        showTotalsEl.removeAttr("disabled");
+		this.init_totals(hierarchy, level);
 
         $(this.el).find('#use_result').attr('checked', this.use_result_option);
         $(this.el).find('.search_limit').text(this.members_search_limit);
@@ -160,6 +145,38 @@ var SelectionsModal = Modal.extend({
             this.get_members();
         }
     },
+
+	init_totals: function (hierarchy, level) {
+		var self = this;
+		// Add the selections totals
+		var measuresArray = self.workspace.query.model.queryModel.details.measures;
+		for (var j = 0; j < measuresArray.length; j++) {
+			$(this.el).find('#div-totals-container').append(_.template($("#template-selections-totals").html())({measure: measuresArray[j]}));
+		}
+
+		if (_.size(hierarchy.levels) > 1 && level && level.hasOwnProperty('aggregators') && level.aggregators && level.aggregators.length > 0) {
+			this.show_totals_option = level.aggregators;
+			if (_.uniq(this.show_totals_option).length > 1) {
+				this.per_metrics_totals_action();
+			}
+		} else {
+			this.show_totals_option = [];
+		}
+
+		if (this.show_totals_option.length > 0) {
+			if (this.per_metrics_totals) {
+				$(this.el).find('.show_totals_select').each(function (index) {
+					if (typeof self.show_totals_option[index] !== 'undefined') {
+						$(this).val(self.show_totals_option[index]);
+					}
+				});
+			} else {
+				$(this.el).find('#all_measures_select').val(self.show_totals_option[0])
+			}
+		}
+		$(this.el).find('#per_metrics_totals_checkbox').attr('checked', this.per_metrics_totals);
+
+	},
 
     open_date_filter: function(event) {
         event.preventDefault();
@@ -180,8 +197,16 @@ var SelectionsModal = Modal.extend({
         this.$el.dialog('destroy').remove();
     },
 
-    show_totals_action: function(event) {
-        this.show_totals_option = $(event.target).val();
+    per_metrics_totals_action: function(event) {
+        this.per_metrics_totals = ! this.per_metrics_totals;
+
+        if(this.per_metrics_totals === true) {
+			$(this.el).find('.per_metrics_container').show();
+			$(this.el).find('.all_metrics_container').hide();
+		} else {
+			$(this.el).find('.per_metrics_container').hide();
+			$(this.el).find('.all_metrics_container').show();
+		}
     },
 
     get_members: function() {
@@ -398,22 +423,6 @@ var SelectionsModal = Modal.extend({
             $(selectedMembers).html(selectedHtml);
         }
 
-        // Add the selections totals
-        var measuresArray = self.workspace.query.model.queryModel.details.measures;
-        for (var j = 0; j < measuresArray.length; j++) {
-            $(this.el).find('#div-totals-container').append(_.template($("#template-selections-totals").html())({measure: measuresArray[j]}));
-        }
-
-        $('#per_metrics_totals_checkbox').change(function() {
-            if($(this).is(":checked")) {
-                $('.per_metrics_container').show();
-                $('.all_metrics_container').hide();
-            } else {
-                $('.per_metrics_container').hide();
-                $('.all_metrics_container').show();
-            }
-        });
-
         // Filter out used members
         this.available_members = _.select(this.available_members, function(o) {
 			return used_members.indexOf(o.obj ? o.obj.caption : o.caption) === -1;
@@ -489,11 +498,11 @@ var SelectionsModal = Modal.extend({
                 $(self.el).find('.filterbox').val('');
                 ui.item.value = "";
 
-            }, 
+            },
             close: function(event, ui) {
                 //$('#filter_selections').val('');
                 //$(self.el).find('.filterbox').css({ "text-align" : " left"});
-            }, 
+            },
             open: function( event, ui ) {
                 //$(self.el).find('.filterbox').css({ "text-align" : " right"});
             }
@@ -609,7 +618,6 @@ var SelectionsModal = Modal.extend({
 
         // Determine updates
         var updates = [];
-        var totalsFunction = this.show_totals_option;
 
         // If no selections are used, add level
         if ($(this.el).find('.used_selections input').length === 0) {
@@ -649,7 +657,7 @@ var SelectionsModal = Modal.extend({
         if (hierarchy && hierarchy.levels.hasOwnProperty(lName)) {
                 var totalsArray = [];
 
-                if($('#per_metrics_totals_checkbox').is(":checked")) {
+                if(this.per_metrics_totals === true) {
                     $('.show_totals_select').each(function() {
                         totalsArray.push($(this).val());
                     });

@@ -25,7 +25,7 @@ var Session = Backbone.Model.extend({
     password: null,
     sessionid: null,
     upgradeTimeout: null,
-    isAdmin: false,
+    isAdmin: Settings.ORBIS_AUTH.enabled,
     id: null,
 	atemptedToLoginByCookie: false,
     initialize: function(args, options) {
@@ -52,15 +52,30 @@ var Session = Backbone.Model.extend({
 		var authCookie = this.getCookie(Settings.ORBIS_AUTH.cookieName);
 
 		if (Settings.ORBIS_AUTH.enabled && authCookie && !this.atemptedToLoginByCookie) {
-			this.atemptedToLoginByCookie = true;
-			this.login('orbis', 'orbis');
+            this.sessionid               = 1;
+            this.username                = authCookie;
+            this.password                = authCookie;
+            this.atemptedToLoginByCookie = true;
+
+            // In this case we inject the proper license attributes
+            var ONE_YEAR = 31556952000;
+
+            Settings.LICENSE = {
+              licenseType: 'Orbis',
+              expiration: Date.now() + ONE_YEAR
+            }
+            
+            this.login(authCookie, authCookie);
 		} else {
 			if (this.sessionid === null || this.username === null || this.password === null) {
 				var that = this;
 				this.clear();
 				this.fetch({ success: this.process_session, error: this.brute_force });
 			} else {
-				this.username = encodeURIComponent(options.username);
+                if (!this.atemptedToLoginByCookie) {
+                    this.username = encodeURIComponent(options.username);
+                }
+
 				this.load_session();
 			}
 		}
@@ -69,7 +84,11 @@ var Session = Backbone.Model.extend({
 	getCookie: function(name) {
 		var value = "; " + document.cookie;
 		var parts = value.split("; " + name + "=");
-		if (parts.length == 2) return parts.pop().split(";").shift();
+        
+		if (parts.length == 2) {
+            var cookieVal = parts.pop().split(";").shift();
+            return cookieVal;
+        }
 	},
 
 	/**
@@ -107,7 +126,7 @@ var Session = Backbone.Model.extend({
         } else {
             this.sessionid = response.sessionid;
             this.roles = response.roles;
-            this.isAdmin = response.isadmin;
+            this.isAdmin = Settings.ORBIS_AUTH.enabled || response.isadmin;
             this.username = encodeURIComponent(response.username);
             this.language = response.language;
             if (typeof this.language != "undefined" && this.language != Saiku.i18n.locale) {

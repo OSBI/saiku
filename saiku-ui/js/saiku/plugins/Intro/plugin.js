@@ -151,7 +151,7 @@ var ShowHelpIntro = Backbone.View.extend({
     // If the registration node path matches
     // /{minor}/{major}/{action}/{handlerId} ("/application/json/view/123")
     // the handler Id given will be used.
-    var funcRef = new intents.Reference(Settings.OZP_IWC_REFERENCE_PATH);
+    var funcRef = new intents.Reference(Settings.OZP_IWC_REFERENCE_PATH.intro);
 
     // When registering an intent handler, two entity properties
     // are used to make choosing a handler easier for the end user:
@@ -180,8 +180,8 @@ var ShowHelpIntro = Backbone.View.extend({
   }
 });
 
-if (Settings.OZP_IWC_ENABLE) {
-  // Start ShowHelpIntro.
+if (Settings.OZP_IWC_ENABLED) {
+  // Start ShowHelpIntro
   Saiku.events.bind('session:new', function() {
     function new_workspace(args) {
       if (typeof args.workspace.showHelpIntro === 'undefined') {
@@ -189,16 +189,25 @@ if (Settings.OZP_IWC_ENABLE) {
       }
     }
 
-    // Add new tab content.
+    function clear_workspace(args) {
+      if (typeof args.workspace.showHelpIntro !== 'undefined') {
+        args.workspace.showHelpIntro.$el.hide();
+      }
+    }
+
+    // Add new tab content
     for (var i = 0, len = Saiku.tabs._tabs.length; i < len; i++) {
       var tab = Saiku.tabs._tabs[i];
 
-      new_workspace({
-        workspace: tab.content
-      });
+      if ($(tab.caption).text() !== 'Home') {
+        new_workspace({
+          workspace: tab.content
+        });
+      }
     }
 
-    // New workspace.
+    // Attach ShowHelpIntro to future tabs
     Saiku.session.bind('workspace:new', new_workspace);
+    Saiku.session.bind('workspace:clear', clear_workspace);
   });
 }

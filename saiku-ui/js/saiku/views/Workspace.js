@@ -32,7 +32,7 @@ var Workspace = Backbone.View.extend({
 
     initialize: function(args) {
         // Maintain `this` in jQuery event handlers
-        _.bindAll(this, "caption", "adjust", "toggle_sidebar", "prepare", "new_query", "set_class_charteditor",
+        _.bindAll(this, "caption", "adjust", "adjust_trigger", "toggle_sidebar", "prepare", "new_query", "set_class_charteditor",
                 "init_query", "update_caption", "populate_selections","refresh", "sync_query", "cancel", "cancelled", "no_results", "error", "switch_view_state");
 
         // Attach an event bus to the workspace
@@ -241,6 +241,7 @@ var Workspace = Backbone.View.extend({
         this.chart.render_view();
         // Adjust tab when selected
         this.tab.bind('tab:select', this.adjust);
+        this.tab.bind('tab:select', this.adjust_trigger);
         $(window).resize(this.adjust);
 
 
@@ -331,6 +332,12 @@ var Workspace = Backbone.View.extend({
         this.trigger('workspace:adjust', { workspace: this });
     },
 
+    adjust_trigger: function() {
+        _.defer(function() {
+            $(window).trigger('resize');
+        });
+    },
+
     toggle_sidebar: function() {
         // Toggle sidebar
         $(this.el).find('.sidebar').toggleClass('hide');
@@ -341,6 +348,7 @@ var Workspace = Backbone.View.extend({
                 1;
         var new_margin = calculatedMargin;
         $(this.el).find('.workspace_inner').css({ 'margin-left': new_margin });
+        this.adjust_trigger();
     },
 
     prepare: function() {
