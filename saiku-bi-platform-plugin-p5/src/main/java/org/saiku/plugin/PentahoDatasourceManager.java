@@ -409,6 +409,11 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         return null;
     }
 
+    @Override
+    public String getType() {
+        return "pentaho";
+    }
+
     public void setACL(String a, String b, String c, List<String> d) {
 
     }

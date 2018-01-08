@@ -87,7 +87,8 @@
    "Re-render chart":"Regénérer les résultats",
    "Zoom back out":"Dézoomer",
    "Zoom into table":"Zoomer sur la table",
-   "You need to include at least one level on rows for a valid query.":"Vous devez inclure au moins un niveau en ligne pour avoir une requête valide",
+   "Add":"Ajouter",
+   "You need to include at least one level on rows for a valid query." :"Vous devez inclure au moins un niveau en ligne pour avoir une requête valide",
    "You need to put at least one level or measure on Columns and Rows for a valid query.":"Vous devez inclure au moins un niveau ou une mesure en colonnes et en ligne pour avoir une requête valide",
    "New Folder":"Nouveau dossier",
    "Move":"Déplacer",
@@ -125,7 +126,13 @@
    "None":"Aucun",
    "Parameter Name":"Nom du paramètre",
    "OK":"OK",
+<<<<<<< HEAD
+   "Cancel":"Abandonner",
    "Custom...":"Personnalisé",
+   "Clear Filter":"Supprimer les filtres",
+=======
+   "Custom...":"Personnalisé",
+>>>>>>> release-3.15
    "Custom Filter ":"Filtre personnalisé",
    "Filter MDX Expression:":"Expression MDX de filtre :",
    "Insert Member":"Insérer un membre",
@@ -172,9 +179,13 @@
    "Between":"Entre",
    "Different":"Différent de ",
    "After&amp;Equals":"Après ou égal à",
+<<<<<<< HEAD
+   "Before&amp;Equals":"Après ou égal à",
+=======
    "After&Equals":"Après ou égal à",
    "Before&amp;Equals":"Après ou égal à",
    "Before&Equals":"Après ou égal à",
+>>>>>>> release-3.15
    "Not Between":"En dehors de",
    "add":"ajouter",
    "Select a date:":"Choisir une date :",
@@ -196,6 +207,8 @@
    "Year(s)":"Année(s)",
    "&nbsp;Open Standard Filter&nbsp;":"Ouvrir filtre standard",
    "&nbsp;Open Date Filter&nbsp;":"Ouvrir filtre de date",
+<<<<<<< HEAD
+=======
    "&nbsp;Cancel&nbsp;":"&nbsp;Annuler&nbsp;",
    "&nbsp;Clear&nbsp;":"&nbsp;Réinitialiser&nbsp;",
    "&nbsp;Help&nbsp;":"&nbsp;Aide&nbsp;",
@@ -204,6 +217,7 @@
    "&nbsp;OK&nbsp;":"&nbsp;OK&nbsp;",
    "&nbsp;Open&nbsp;":"&nbsp;Ouvrir&nbsp;",
    "&nbsp;Save&nbsp;":"&nbsp;Sauvegarder&nbsp;",
+>>>>>>> release-3.15
    "Columns | Measures":"Colonnes | Mesures",
    "Measures | Columns":"Mesures | Colonnes",
    "Rows | Measures":"Lignes | Mesures",
@@ -217,6 +231,10 @@
    "Okay":"OK",
    "Drill Across":"Exploration en profondeur",
    "Row Limit: (0 = none)":"Limite de lignes (0 = aucune) :",
+<<<<<<< HEAD
+   "<b>CAUTION:</b> The number of rows can have a significant impact on the performance of the following action.":"<b>ATTENTION :</b> le nombre de lignes peut avoir un impact significatif sur les performances du Drill-Through"
+
+=======
    "<b>CAUTION:</b> The number of rows can have a significant impact on the performance of the following action.":"<b>ATTENTION :</b> le nombre de lignes peut avoir un impact significatif sur les performances du Drill-Through",
    " Add ":" Ajouter ",
    " Cancel ":" Annuler ",
@@ -341,4 +359,5 @@
    "radioButton":"Bouton radio",
    "sum":"somme",
    "textBox":"Zone de texte"
+>>>>>>> release-3.15
 }
