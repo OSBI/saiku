@@ -911,6 +911,13 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
 
     private File getNode(String path) {
+        File f = new File(path);
+        
+        if (f.exists()) { // Check if the provided path is a full path already
+          return f; // If so, return the respective file
+        }
+        
+        // Otherwise, compose the path with the datadir basepath
         return new File(getDatadir() + path);
     }
 
