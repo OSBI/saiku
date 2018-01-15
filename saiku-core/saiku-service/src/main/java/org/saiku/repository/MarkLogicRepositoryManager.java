@@ -342,6 +342,10 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   @Override
   public void removeInternalFile(String s) throws RepositoryException {
+    if (s.contains("\\")) {
+      s = s.replace('\\', '/');
+    }
+    
     Map<String, String> params = ParamsMap.init().put("doc_uri", s).build();
     executeUpdate("xdmp:document-delete('%(doc_uri)')", params);
   }
