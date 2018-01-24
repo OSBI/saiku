@@ -499,7 +499,11 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
 
   @Override
   public List<IRepositoryObject> getAllFiles(List<String> type, String username, List<String> roles) {
-    return null;
+    try {
+      return getAllFiles(type, username, roles, "/");
+    } catch (Exception ex) {
+      return new java.util.ArrayList<IRepositoryObject>();
+    }
   }
 
   @Override
