@@ -503,9 +503,11 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
         String[] extensions = new String[1];
         extensions[0] = "xml";
+        
+        String datadir = getDatadir();
 
         Collection<File> files = FileUtils.listFiles(
-                new File(getDatadir() + "datasources"),
+                new File(datadir + "datasources"),
                 extensions,
                 true
         );
@@ -961,15 +963,26 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
                 }
                 return append + "/unknown/";
             } else {
+                if (!new File(append + "/etc").exists()) {
+                  this.bootstrap(append);
+                  this.start(userService);
+                }
+              
                 return append + "/";
             }
         } catch (Exception ex) {
             // This exception is expected at Saiku boot
         }
       }
+      
+      String basePath = append;
+      
+      if (this.workspaces) {
+        basePath = append + "/unknown";
+      }
         
-      if (!new File(append + "/unknown/etc").exists()) {
-        this.bootstrap(append + "/unknown");
+      if (!new File(basePath + "/etc").exists()) {
+        this.bootstrap(basePath);
         
         try {
           this.start(userService);
