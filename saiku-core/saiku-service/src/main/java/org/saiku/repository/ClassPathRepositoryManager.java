@@ -955,21 +955,34 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
                 log.debug("Workspace directory set to:" + workspace);
                 return append + "/" + workspace + "/";
-            } else  {
+            } else if (this.workspaces) {
                 log.debug("Workspace directory set to: unknown/");
                 if (!new File(append + "/unknown/etc").exists()) {
                     this.bootstrap(append + "/unknown");
                     this.start(userService);
                 }
                 return append + "/unknown/";
-            } 
+            } else {
+                if (!new File(append + "/etc").exists()) {
+                  this.bootstrap(append);
+                  this.start(userService);
+                }
+              
+                return append + "/";
+            }
         } catch (Exception ex) {
             // This exception is expected at Saiku boot
         }
       }
+      
+      String basePath = append;
+      
+      if (this.workspaces) {
+        basePath = append + "/unknown";
+      }
         
-      if (!new File(append + "/unknown/etc").exists()) {
-        this.bootstrap(append + "/unknown");
+      if (!new File(basePath + "/etc").exists()) {
+        this.bootstrap(basePath);
         
         try {
           this.start(userService);
