@@ -652,7 +652,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
       return folders;
     } catch (RequestException e) {
       log.error("Error while trying to fetch the home folders", e);
-      throw new RepositoryException(e);
+      return new File[] {}; // when a directory is empty, Marklogic throws an exception instead
     } finally {
       session.close();
     }
