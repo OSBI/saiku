@@ -55,7 +55,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
   private ScopedRepo sessionRegistry;
   private boolean workspaces;
 
-  private MarkLogicRepositoryManager(String host, int port, String username, String password, String database, String data, ScopedRepo sessionRegistry, boolean workspaces) {
+  public MarkLogicRepositoryManager(String host, int port, String username, String password, String database, String data, ScopedRepo sessionRegistry, boolean workspaces) {
     this.host = host;
     this.port = port;
     this.username = username;
