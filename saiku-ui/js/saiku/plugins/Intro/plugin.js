@@ -111,7 +111,7 @@ Saiku.intro = {
 
         self.intro.setOptions(dataJson);
         self.intro.exit();
-        self.intro.start().onafterchange(function(targetElement) {
+        self.intro.onbeforechange(function(targetElement) {
           if (this._direction === 'forward') {
             self.forwardStep = this._currentStep;
           }
@@ -122,7 +122,7 @@ Saiku.intro = {
           else if ($(targetElement).attr('href') === '#export_button' && $(targetElement).hasClass('disabled_toolbar')) {
             this.exit();
           }
-        });
+        }).start();
       },
       error: function(jqXHR, textStatus, errorThrown) {
         console.error('PLUGIN INTRO -> ' + jqXHR);
@@ -215,11 +215,11 @@ var ShowHelpIntro = Backbone.View.extend({
         }
         else {
           Saiku.intro.start(data);
-
-          _.delay(function() {
-            $('.introjs-prevbutton').on('click', self.attach_event_previous_step);
-          }, 3000);
         }
+
+        _.delay(function() {
+          $('.introjs-prevbutton').on('click', self.attach_event_previous_step);
+        }, 3000);
       }
     };
 
