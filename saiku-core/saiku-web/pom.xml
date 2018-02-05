@@ -279,6 +279,13 @@
             <artifactId>hazelcast</artifactId>
             <version>3.6.2</version>
         </dependency>
+        
+        <!-- Google Simple JSON for easy plain parsing -->
+				<dependency>
+				    <groupId>com.googlecode.json-simple</groupId>
+				    <artifactId>json-simple</artifactId>
+				    <version>1.1.1</version>
+				</dependency>        
     </dependencies>
     <reporting>
         <plugins>
