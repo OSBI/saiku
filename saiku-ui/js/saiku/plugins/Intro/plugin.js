@@ -111,7 +111,7 @@ Saiku.intro = {
 
         self.intro.setOptions(dataJson);
         self.intro.exit();
-        self.intro.onbeforechange(function(targetElement) {
+        self.intro.onafterchange(function(targetElement) {
           if (this._direction === 'forward') {
             self.forwardStep = this._currentStep;
           }
