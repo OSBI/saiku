@@ -804,8 +804,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
                                                    boolean includeparent) throws Exception {
         List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
         ArrayList<File> objects = new ArrayList<>();
+        
         if (root.isDirectory()) {
-
             this.listf(root.getAbsolutePath(), objects);
 
         } else {
@@ -817,53 +817,56 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         acl.setAdminRoles(userService.getAdminRoles());
 
         for (File file : objects) {
-
+          try {
             if (!file.isHidden()) {
                 String filename = file.getName();
                 String relativePath = file.getPath();
+                String datadir = getDatadir();
 
-                if (file.getPath().indexOf(getDatadir()) >= 0) {
-                    relativePath = file.getPath().substring(getDatadir().length() - 3, file.getPath().length());
+                if (relativePath.indexOf(getDatadir()) >= 0 && datadir.length() >= 3) { // If we have an absolute path
+                    relativePath = relativePath.substring(datadir.length() - 3, relativePath.length());
                 }
 
                 relativePath = relativePath.replace("\\", "/");
 
-
                 if (acl.canRead(relativePath, username, roles)) {
                     List<AclMethod> acls = acl.getMethods(new File(relativePath), username, roles);
+                    
                     if (file.isFile()) {
                         if (!fileType.isEmpty()) {
                             for (String ft : fileType) {
                                 if (!filename.endsWith(ft)) {
                                     continue;
                                 }
+                                
                                 String extension = FilenameUtils.getExtension(file.getPath());
-
                                 repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath, acls));
                             }
-
                         }
-
                     }
+                    
                     if (file.isDirectory()) {
                         repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepoObjects(file, fileType, username, roles, false)));
                     }
-                    Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
-
-                        public int compare(IRepositoryObject o1, IRepositoryObject o2) {
-                            if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(IRepositoryObject.Type.FILE))
-                                return -1;
-                            if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
-                                return 1;
-                            return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-
-                        }
-
-                    });
                 }
             }
+          } catch (Exception ex) {
+            // If a problem happens when handling one file, it will still return the repoObjects list
+            ex.printStackTrace();  
+          }
         }
-        //}
+        
+        // Just after it has filled the repoObjects, sort it alphabetically, putting the directories first 
+        Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
+          public int compare(IRepositoryObject o1, IRepositoryObject o2) {
+              if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(IRepositoryObject.Type.FILE))
+                  return -1;
+              if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
+                  return 1;
+              return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+          }
+        });
+        
         return repoObjects;
     }
 
