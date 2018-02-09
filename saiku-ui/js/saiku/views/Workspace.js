@@ -541,20 +541,29 @@ var Workspace = Backbone.View.extend({
     new_query: function() {
         // Delete the existing query
         if (this.query) {
-            if(Settings.QUERY_OVERWRITE_WARNING) {
+            if (Settings.QUERY_OVERWRITE_WARNING) {
                 (new WarningModal({
-                    title: "New Query", message: "You are about to clear your existing query",
-                    okay: this.create_new_query, okayobj: this
+                    title: 'New Query',
+                    message: 'You are about to clear your existing query',
+                    okay: this.create_new_query,
+                    okayobj: this,
+                    cancel: this.cancel_new_query,
+                    cancelobj: this
                 })).render().open();
             }
-            else{
+            else {
                 this.create_new_query(this);
             }
         }
-        else{
+        else {
             this.create_new_query(this);
         }
+    },
 
+    cancel_new_query: function(args) {
+        var selectedCube = args.selected_cube;
+
+        args.$el.find('#cubesselect option[value="' + selectedCube + '"]').prop('selected', true);
     },
 
     init_query: function(isNew) {

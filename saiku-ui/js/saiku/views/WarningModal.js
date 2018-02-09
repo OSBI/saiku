@@ -26,12 +26,36 @@ var WarningModal = Modal.extend({
     ],
 
     initialize: function(args) {
+        var self = this;
+
         this.options.title = args.title;
         this.message = '<span class="i18n">' + args.message + '</span>';
-        this.cancelfunction = args.cancel;
         this.okayfunction = args.okay;
         this.okaycallbackobject = args.okayobj;
+        this.cancelfunction = args.cancel;
         this.cancelcallbackobject = args.cancelobj;
+
+        this.bind('open', function() {
+          self.$el.closest('.ui-dialog').on('keydown', function(event) {
+            if (event.keyCode === $.ui.keyCode.ESCAPE) {
+              self.close(event);
+            }
+          });
+
+          self.$el.closest('.ui-dialog').find('.ui-dialog-titlebar-close').on('click', function(event) {
+            self.close(event);
+          });
+        });
+    },
+
+    okay: function(event) {
+        event.preventDefault();
+
+        if (_.isFunction(this.okayfunction)) {
+            this.okayfunction(this.okaycallbackobject);
+        }
+
+        this.$el.dialog('close');
     },
 
     close: function(event) {
@@ -39,18 +63,8 @@ var WarningModal = Modal.extend({
             event.preventDefault();
         }
 
-        if (_.isFunction(this.cancelfunction) && this.cancelfunction != null) {
+        if (_.isFunction(this.cancelfunction)) {
             this.cancelfunction(this.cancelcallbackobject);
-        }
-
-        this.$el.dialog('close');
-    },
-
-    okay: function(event) {
-        event.preventDefault();
-
-        if (_.isFunction(this.okayfunction) && this.okayfunction != null) {
-            this.okayfunction(this.okaycallbackobject);
         }
 
         this.$el.dialog('close');
