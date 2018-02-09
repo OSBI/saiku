@@ -820,7 +820,12 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
             if (!file.isHidden()) {
                 String filename = file.getName();
-                String relativePath = file.getPath().substring(getDatadir().length() - 3, file.getPath().length());
+                String relativePath = file.getPath();
+
+                if (file.getPath().indexOf(getDatadir()) >= 0) {
+                    relativePath = file.getPath().substring(getDatadir().length() - 3, file.getPath().length());
+                }
+
                 relativePath = relativePath.replace("\\", "/");
 
 
