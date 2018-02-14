@@ -443,12 +443,19 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
             //TODO Throw exception
             throw new RepositoryException();
         }
+
         byte[] encoded = new byte[0];
+
         try {
-            encoded = Files.readAllBytes(Paths.get(getDatadir() + sep + s));
+            if (Paths.get(s).isAbsolute()) {
+                encoded = Files.readAllBytes(Paths.get(s));
+            } else {
+                encoded = Files.readAllBytes(Paths.get(getDatadir() + sep + s));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         try {
             return new String(encoded, "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -463,7 +470,11 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         byte[] encoded = new byte[0];
         if(!s.equals("/etc/license.lic")) {
             try {
-                encoded = Files.readAllBytes(Paths.get(getDatadir() + s));
+                if (Paths.get(s).isAbsolute()) {
+                    encoded = Files.readAllBytes(Paths.get(s));
+                } else {
+                    encoded = Files.readAllBytes(Paths.get(getDatadir() + s));
+                }
             } catch (IOException e) {
                 log.debug("Missing file", e);
             }
@@ -484,7 +495,14 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
 
     public InputStream getBinaryInternalFile(String s) throws RepositoryException {
-        Path path = Paths.get(getDatadir() + s);
+        Path path = null;
+
+        if (Paths.get(s).isAbsolute()) {
+            path = Paths.get(s);
+        } else {
+            path = Paths.get(getDatadir() + s);
+        }
+
         try {
             byte[] f = Files.readAllBytes(path);
             return new ByteArrayInputStream(f);
@@ -505,7 +523,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         extensions[0] = "xml";
         
         String datadir = getDatadir();
-        
+
         File testFile = new File(datadir);
         
         if (!testFile.exists()) {
@@ -823,7 +841,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
                 String relativePath = file.getPath();
                 String datadir = getDatadir();
 
-                if (relativePath.indexOf(getDatadir()) >= 0 && datadir.length() >= 3) { // If we have an absolute path
+                if (Paths.get(relativePath).isAbsolute() && datadir.length() >= 3) { // If we have an absolute path
                     relativePath = relativePath.substring(datadir.length() - 3, relativePath.length());
                 }
 
@@ -871,11 +889,16 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
 
     private void listf(String directoryName, ArrayList<File> files) {
+        if (directoryName == null || files == null) return;
+        
         File directory = new File(directoryName);
 
         // get all the files from a directory
         File[] fList = directory.listFiles();
-        Collections.addAll(files, fList);
+        
+        if (fList != null && fList.length > 0) {
+          Collections.addAll(files, fList);
+        }
     }
 
     private File createFolder(String path) {
@@ -917,7 +940,13 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
 
     private void delete(String folder) {
-        File file = new File(getDatadir() + folder);
+        File file = null;
+
+        if (Paths.get(folder).isAbsolute()) {
+            file = new File(folder);
+        } else {
+            file = new File(getDatadir() + folder);
+        }
 
         file.delete();
     }
@@ -929,20 +958,27 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
     private File getNode(String path) {
         File f = new File(path);
-        
-        if (f.exists()) { // Check if the provided path is a full path already
-          return f; // If so, return the respective file
+
+        if (f.isAbsolute()) { // Check if the provided path is a full path already
+            return f; // If so, return the respective file
         }
-        
+
         // Otherwise, compose the path with the datadir basepath
         return new File(getDatadir() + path);
     }
 
     private File createNode(String filename) {
-        log.debug("Creating file:" + getDatadir() + filename);
-        return new File(getDatadir() + filename);
-    }
+        File nodeFile = new File(filename);
 
+        if (nodeFile.isAbsolute()) { // Check if it's a full path already
+            log.debug("Creating file:" + filename);
+        } else { // If not, prefix it with the datadir
+            log.debug("Creating file:" + this.getDatadir() + filename);
+            nodeFile = new File(this.getDatadir(), filename);
+        }
+
+        return nodeFile;
+    }
 
     private HttpSession getSession() {
         try {
