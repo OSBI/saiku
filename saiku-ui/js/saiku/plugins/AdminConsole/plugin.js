@@ -931,7 +931,6 @@ var AdminConsole = Backbone.View.extend({
             alertMsg += '<li>The URL field can not be empty!</li>';
         }
         if (_.isEmpty(driver) && connType === 'MONDRIAN' && connType !== 'MONGO') {
-            console.log(connType);
             alertMsg += '<li>The JDBC Driver field can not be empty!</li>';
         }
         if (alertMsg !== '') {
