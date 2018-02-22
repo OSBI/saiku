@@ -859,74 +859,101 @@ var AdminConsole = Backbone.View.extend({
 
     save_datasource: function (event) {
         event.preventDefault();
+
+        var self = this;
         var $currentTarget = $(event.currentTarget);
-        $currentTarget.addClass('selected');
-        var path = $currentTarget.attr('href').replace('#', '');
+        var name = this.$el.find('input[name="connname"]').val();
+        var connType = this.$el.find('.drivertype').val();
+        var jdbcUrl = this.$el.find('input[name="jdbcurl"]').val();
+        var mondrianSchema = this.$el.find('.schemaselect').val();
+        var driver = this.$el.find('input[name="driver"]').val();
+        var connUserName = this.$el.find('input[name="connusername"]').val();
+        var connPassword = this.$el.find('input[name="connpassword"]').val();
+        var uid = $currentTarget.attr('href').replace('#', '');
+        var advanced = this.$el.find('textarea[name="adv_text"]').val();
+        var alertMsg = '';
+        var conn;
 
-        // Keep a reference to the main plugin object.
-        var this_p = this;
-
-        if(path == undefined || path == "") {
-            var conn = new Connection();
+        if (uid === undefined || uid === '') {
+            conn = new Connection();
             this.datasources.add(conn);
-        } else {
-            var conn = this.datasources.get(path);
-        }
-
-        var v = $(this.el).find("textarea[name='adv_text']").val();
-
-        if(v!=null && v!=undefined && v!=""){
-            conn.set({"advanced": v});
-        }
-        else if($(this.el).find(".drivertype").val() === 'MONGO'){
-            var name = $(this.el).find("input[name='connname']").val();
-            var schema = $(this.el).find("select[name='mongoschema']").val();
-            var mondrianschema = $(this.el).find(".schemaselect").val();
-            var c = "type=OLAP\n"+
-            "name="+name+"\n"+
-            "driver=mondrian.olap4j.MondrianOlap4jDriver\n"+
-            "location=jdbc:mondrian:Jdbc=jdbc:calcite:model=mongo:///etc/mongoschema/"+schema+";Catalog=mondrian://"+mondrianschema+";JdbcDrivers=org.apache.calcite.jdbc.Driver;\n"+
-            "username=admin\n"+
-            "password=admin";
-            conn.set({"advanced": c});
         }
         else {
-            conn.set({"connectionname": $(this.el).find("input[name='connname']").val()});
-            conn.set({"connectiontype": $(this.el).find(".drivertype").val()});
-            conn.set({"jdbcurl": $(this.el).find("input[name='jdbcurl']").val()});
-            conn.set({"schema": $(this.el).find(".schemaselect").val()});
-            conn.set({"driver": $(this.el).find("input[name='driver']").val()});
-            conn.set({"username": $(this.el).find("input[name='connusername']").val()});
-            conn.set({"password": $(this.el).find("input[name='connpassword']").val()});
-            var v = $(this.el).find(".securityselect").val();
-            if(v==="ONE2ONE"){
-                conn.set({"security_type": "one2one"});
-            }
-            else if(v==="PASSTHROUGH"){
-                conn.set({"security_type": "passthrough"});
-            }
-            else{
-                conn.set({"security_type":null})
-            }
-
-            if($(this.el).find(".extpropselect").val()){
-                conn.set({"propertyKey": $(this.el).find(".extpropselect").val()})
-            }
-
+            conn = this.datasources.get(uid);
         }
 
-        conn.save({}, {
-            data: JSON.stringify(conn.attributes),
-            contentType: "application/json",
-            success : function() {
-                this_p.fetch_datasources();
-                $(this_p.el).find('.user_info').html("");
-            },
-            error : function(data, xhr) {
-                $(this_p.el).find('#savestatus').html("Save failed!<br/>(" + xhr.responseText + ")");
-                this_p.schemas.fetch();
+        if (advanced !== null && advanced !== undefined && advanced !== '') {
+            conn.set({ 'advanced':  advanced });
+        }
+        else if (connType === 'MONGO') {
+            var mongoSchema = this.$el.find('select[name="mongoschema"]').val();
+            var dataSource = 'type=OLAP\n' +
+                'name=' + name + '\n' +
+                'driver=mondrian.olap4j.MondrianOlap4jDriver\n' +
+                'location=jdbc:mondrian:Jdbc=jdbc:calcite:model=mongo:///etc/mongoschema/' + mongoSchema + ';Catalog=mondrian://' + mondrianSchema + ';JdbcDrivers=org.apache.calcite.jdbc.Driver;\n' +
+                'username=admin\n' +
+                'password=admin';
+
+            conn.set({ 'advanced': dataSource });
+        }
+        else {
+            var securityType = this.$el.find('.securityselect').val();
+
+            conn.set({
+               'connectionname': name,
+                'connectiontype': connType,
+                'jdbcurl': jdbcUrl,
+                'schema': mondrianSchema,
+                'driver': driver,
+                'username': connUserName,
+                'password': connPassword
+            });
+
+            if (securityType === 'ONE2ONE') {
+                conn.set({ 'security_type': 'one2one' });
             }
-        });
+            else if (securityType === 'PASSTHROUGH') {
+                conn.set({ 'security_type': 'passthrough' });
+            }
+            else {
+                conn.set({ 'security_type': null });
+            }
+
+            if (this.$el.find('.extpropselect').val()) {
+                conn.set({ 'propertyKey': this.$el.find('.extpropselect').val() });
+            }
+        }
+
+        if (_.isEmpty(name)) {
+            alertMsg += '<li>The Name field can not be empty!</li>';
+        }
+        if (_.isEmpty(jdbcUrl) && connType !== 'MONGO') {
+            alertMsg += '<li>The URL field can not be empty!</li>';
+        }
+        if (_.isEmpty(driver) && connType === 'MONDRIAN' && connType !== 'MONGO') {
+            console.log(connType);
+            alertMsg += '<li>The JDBC Driver field can not be empty!</li>';
+        }
+        if (alertMsg !== '') {
+            (new WarningModal({
+                title: '<span class="i18n">Required Fields</span>',
+                message: '<ul>' + alertMsg + '</ul>'
+            })).render().open();
+        }
+        else {
+            conn.save({}, {
+                data: JSON.stringify(conn.attributes),
+                contentType: 'application/json',
+                success: function() {
+                    self.fetch_datasources();
+                    self.$el.find('.user_info').html('');
+                },
+                error: function(data, xhr) {
+                    self.$el.find('#savestatus').html('Save failed!<br/>(' + xhr.responseText + ')');
+                    self.schemas.fetch();
+                }
+            });
+        }
     },
 
     remove_datasource : function(event) {
