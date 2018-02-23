@@ -1,0 +1,105 @@
+VERSION: Saiku-
+LICENSE: null
+BIPLUGIN: false
+BIPLUGIN5: false
+BASE_URL: 'https://interactive-examples.mdn.mozilla.net'
+TOMCAT_WEBAPP: /saiku
+REST_MOUNT_POINT: /rest/saiku/
+DIMENSION_PREFETCH: true
+DIMENSION_SHOW_ALL: true
+DIMENSION_HIDE_HIERARCHY: SINGLE_LEVEL
+ERROR_LOGGING: false
+I18N_LOCALE: en
+ERROR_TOLERANCE: 3
+QUERY_PROPERTIES:
+  saiku.olap.query.automatic_execution: true
+  saiku.olap.query.nonempty: true
+  saiku.olap.query.nonempty.rows: true
+  saiku.olap.query.nonempty.columns: true
+  saiku.ui.render.mode: table
+  saiku.olap.query.filter: true
+  saiku.olap.result.formatter: flattened
+REPOSITORY_LAZY: false
+TABLE_LAZY: true
+TABLE_LAZY_SIZE: 1000
+TABLE_LAZY_LOAD_ITEMS: 20
+TABLE_LAZY_LOAD_TIME: 20
+CELLSET_FORMATTER: flattened
+RESULT_LIMIT: 0
+MEMBERS_FROM_RESULT: true
+MEMBERS_LIMIT: 3000
+MEMBERS_SEARCH_LIMIT: 75
+ALLOW_IMPORT_EXPORT: false
+ALLOW_PARAMETERS: true
+PLUGINS:
+  - Chart
+DEFAULT_VIEW_STATE: view
+DEMO: false
+TELEMETRY_SERVER: 'http://telemetry.analytical-labs.com:7000'
+LOCALSTORAGE_EXPIRATION: 36000000
+UPGRADE: true
+EVALUATION_PANEL_LOGIN: true
+QUERY_OVERWRITE_WARNING: true
+MAPS: true
+MAPS_TYPE: OSM
+MAPS_TILE_LAYER:
+  OSM:
+    map_marker: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+    map_heat: 'https://otile{s}-s.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png'
+  GMAPS: null
+MAPS_OPTIONS:
+  OSM:
+    maxZoom: 18
+    attribution: '© <a href="http://osm.org/copyright" target="_blank">OpenStreetMap</a>'
+  GMAPS: null
+MAPS_OSM_NOMINATIM: 'https://nominatim.openstreetmap.org/'
+DATA_SOURCES_LOOKUP: false
+DEFAULT_REPORT_SHOW: false
+DEFAULT_REPORTS:
+  admin:
+    -
+      path: ADD_PATH1
+      visible: false
+  _:
+    -
+      path: ADD_PATH2
+      visible: false
+  ROLE_ADMIN:
+    -
+      path: ADD_PATH3
+      visible: false
+PARENT_MEMBER_DIMENSION: false
+EXT_DATASOURCE_PROPERTIES: false
+SHOW_USER_MANAGEMENT: true
+SHOW_REFRESH_NONADMIN: false
+EMPTY_VALUE_CHARACTER: '-'
+HIDE_EMPTY_ROWS: true
+MEASURE_GROUPS_COLLAPSED: false
+ORBIS_AUTH:
+  enabled: false
+  cookieName: COOKIE_NAME
+SCHEMA_EDITOR:
+  STAR_SCHEMA_FACT_TABLE: null
+  STAR_SCHEMA_DIMENSION_TABLE: null
+  STAR_SCHEMA_MEASURE_COLUMN: null
+  STAR_SCHEMA_MEASURE_AGGREGATION_COLUMN: null
+ALLOW_TABLE_DATA_COLLAPSE: false
+ALLOW_AXIS_COLUMN_TITLE_TABLE: true
+COLUMN_TITLE_TABLE_USE_LEVEL_CAPTION_NAME: true
+INTRO_FILE_NAME: Workspace
+INTRO_DEFAULT_OPTIONS:
+  showStepNumbers: true
+  showBullets: false
+  showProgress: true
+OZP_IWC_ENABLED: false
+OZP_IWC_CLIENT_URI: 'http://aml-development.github.io/ozp-iwc'
+OZP_IWC_REFERENCE_PATH:
+  intro: /application/display/help
+  time_series_filter: /application/commonComponent/timeline/setTimes
+OZP_IWC_CONFIG:
+  label: 'Saiku Analytics'
+  icon: 'https://avatars0.githubusercontent.com/u/1043666?v=3&s=32'
+TIME_SERIES_FILTER:
+  enabled: true
+  date_format: YYYY/MM/DD
+EXTENDED_REPOSITORY_RESOURCE: false
