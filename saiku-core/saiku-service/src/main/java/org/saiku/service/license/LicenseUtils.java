@@ -62,6 +62,8 @@ public class LicenseUtils implements ILicenseUtils {
     ObjectOutputStream so = new ObjectOutputStream(bo);
     so.writeObject(lic);
     so.flush();
+    this.repositoryDatasourceManager.deleteFolder("/etc/license.lic");
+
     this.repositoryDatasourceManager
         .saveInternalFile("/etc/license.lic", bo.toString(), null);
 
