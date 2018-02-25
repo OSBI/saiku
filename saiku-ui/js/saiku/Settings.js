@@ -14,16 +14,21 @@
  *   limitations under the License.
  */
 
-var Settings = {}
+// If you would like to add more properties to Settings, Add in "Settings.yaml"
+var Settings = {};
 
 $.ajax({
-	async: false,
-	type: "GET",
-	url: "js/saiku/Settings.yaml",
-	success: function (text) {
-		this.Settings = jsyaml.load( text )
-	}
+    async: false, // do not change to true
+    type: 'GET',
+    url: 'js/saiku/Settings.yaml',
+    success: function(data) {
+        // JavaScript YAML parser
+        // link: https://github.com/nodeca/js-yaml
+        Settings = jsyaml.load(data);
+    }
 });
+
+Settings.BASE_URL = window.location.origin;
 
 /**
  * Extend settings with query parameters
