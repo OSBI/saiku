@@ -589,7 +589,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     public void deleteFile(String datasourcePath) {
         File n;
         try {
-            n = getFolder(datasourcePath);
+            n = getFolder(fixPath(datasourcePath));
             n.delete();
 
         } catch (RepositoryException e) {
@@ -792,6 +792,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
 
     public RepositoryFile getFile(String fileUrl) {
+        fileUrl = fixPath(fileUrl);
+
         File n = null;
         try {
             n = getFolder(fileUrl);
@@ -891,7 +893,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     private void listf(String directoryName, ArrayList<File> files) {
         if (directoryName == null || files == null) return;
         
-        File directory = new File(directoryName);
+        File directory = new File(fixPath(directoryName));
 
         // get all the files from a directory
         File[] fList = directory.listFiles();
@@ -902,12 +904,12 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
 
     private File createFolder(String path) {
-        String appended = getDatadir() + path;
+        String appended = fixPath(getDatadir() + path);
         boolean success = (new File(appended)).mkdirs();
         if (!success) {
             // Directory creation failed
         }
-        return new File(path);
+        return new File(fixPath(path));
     }
 
     private void bootstrap(String ap) {
@@ -940,6 +942,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
 
     private void delete(String folder) {
+        folder = fixPath(folder);
         File file = null;
 
         if (Paths.get(folder).isAbsolute()) {
@@ -957,6 +960,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
 
     private File getNode(String path) {
+        path = fixPath(path);
         File f = new File(path);
 
         if (f.isAbsolute()) { // Check if the provided path is a full path already
@@ -968,6 +972,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
 
     private File createNode(String filename) {
+        filename = fixPath(filename);
         File nodeFile = new File(filename);
 
         if (nodeFile.isAbsolute()) { // Check if it's a full path already
@@ -1005,23 +1010,23 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
                 }
 
                 log.debug("Workspace directory set to:" + workspace);
-                return append + "/" + workspace + "/";
+                return fixPath(append + "/" + workspace + "/");
             } else {
                 log.debug("Workspace directory set to: unknown/");
                 if (!new File(append + "/unknown/etc").exists()) {
                     this.bootstrap(append + "/unknown");
                     this.start(userService);
                 }
-                return append + "/unknown/";
+                return fixPath(append + "/unknown/");
             }
         } catch (Exception ex) {
             // This exception is expected at Saiku boot
         }
       }
       
-      String basePath = append + "/unknown";
+      String basePath = fixPath(append + "/unknown");
         
-      if (!new File(basePath + "/etc").exists()) {
+      if (!new File(fixPath(basePath + "/etc")).exists()) {
         this.bootstrap(basePath);
         
         try {
@@ -1031,7 +1036,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         }
       }
       
-      return append + "unknown/";
+      return fixPath(append + "unknown/");
     }
 
     private String cleanse(String workspace) {
@@ -1042,4 +1047,12 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         return workspace + "/";
     }
 
+    private String fixPath(String path) {
+        if (path != null) {
+            while (path.contains("//")) {
+                path = path.replace("//", "/");
+            }
+        }
+        return path;
+    }
 }

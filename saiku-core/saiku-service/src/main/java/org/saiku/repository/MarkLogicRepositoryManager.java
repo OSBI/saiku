@@ -690,8 +690,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
       ResultSequence rs = session.submitRequest(request);
       return Boolean.parseBoolean(rs.next().asString());
     } catch (RequestException ex) {
-      log.error("Error while trying to check the folder existence", ex);
-      throw new RepositoryException(ex);
+      return false;
     }
   }
 
