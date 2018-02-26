@@ -447,7 +447,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         byte[] encoded = new byte[0];
 
         try {
-            if (Paths.get(s).isAbsolute()) {
+            if (Paths.get(s).isAbsolute() && s.startsWith(this.getDatadir())) {
                 encoded = Files.readAllBytes(Paths.get(s));
             } else {
                 encoded = Files.readAllBytes(Paths.get(getDatadir() + sep + s));
@@ -470,7 +470,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         byte[] encoded = new byte[0];
         if(!s.equals("/etc/license.lic")) {
             try {
-                if (Paths.get(s).isAbsolute()) {
+                if (Paths.get(s).isAbsolute() && s.startsWith(this.getDatadir())) {
                     encoded = Files.readAllBytes(Paths.get(s));
                 } else {
                     encoded = Files.readAllBytes(Paths.get(getDatadir() + s));
@@ -497,7 +497,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     public InputStream getBinaryInternalFile(String s) throws RepositoryException {
         Path path = null;
 
-        if (Paths.get(s).isAbsolute()) {
+        if (Paths.get(s).isAbsolute() && s.startsWith(this.getDatadir())) {
             path = Paths.get(s);
         } else {
             path = Paths.get(getDatadir() + s);
@@ -945,7 +945,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         folder = fixPath(folder);
         File file = null;
 
-        if (Paths.get(folder).isAbsolute()) {
+        if (Paths.get(folder).isAbsolute() && folder.startsWith(this.getDatadir())) {
             file = new File(folder);
         } else {
             file = new File(getDatadir() + folder);
@@ -963,7 +963,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         path = fixPath(path);
         File f = new File(path);
 
-        if (f.isAbsolute()) { // Check if the provided path is a full path already
+        if (f.isAbsolute() && path.startsWith(this.getDatadir())) { // Check if the provided path is a full path already
             return f; // If so, return the respective file
         }
 
@@ -975,7 +975,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         filename = fixPath(filename);
         File nodeFile = new File(filename);
 
-        if (nodeFile.isAbsolute()) { // Check if it's a full path already
+        if (nodeFile.isAbsolute() && filename.startsWith(this.getDatadir())) { // Check if it's a full path already
             log.debug("Creating file:" + filename);
         } else { // If not, prefix it with the datadir
             log.debug("Creating file:" + this.getDatadir() + filename);
