@@ -689,7 +689,7 @@ public class MarkLogicRepositoryManager implements IRepositoryManager {
     try {
       ResultSequence rs = session.submitRequest(request);
       return Boolean.parseBoolean(rs.next().asString());
-    } catch (RequestException ex) {
+    } catch (Exception ex) {
       return false;
     }
   }
