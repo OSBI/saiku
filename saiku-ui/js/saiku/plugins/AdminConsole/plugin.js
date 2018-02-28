@@ -179,7 +179,7 @@ var AdminConsole = Backbone.View.extend({
             'mysql'      : 'com.mysql.jdbc.Driver',
             'postgresql' : 'org.postgresql.Driver',
             'oracle'     : 'oracle.jdbc.OracleDriver',
-            'drill'      : 'org.apache.drill.jdbc.Driver',
+            'drill'      : 'org.apache.drill.jdbc.Driver'
         };
         var driver;
 
@@ -871,6 +871,7 @@ var AdminConsole = Backbone.View.extend({
         var connPassword = this.$el.find('input[name="connpassword"]').val();
         var uid = $currentTarget.attr('href').replace('#', '');
         var advanced = this.$el.find('textarea[name="adv_text"]').val();
+        var isVisibleAdvancedConn = this.$el.find('.advconnection').is(':visible');
         var alertMsg = '';
         var conn;
 
@@ -924,14 +925,17 @@ var AdminConsole = Backbone.View.extend({
             }
         }
 
-        if (_.isEmpty(name)) {
+        if (_.isEmpty(name) && !isVisibleAdvancedConn) {
             alertMsg += '<li>The Name field can not be empty!</li>';
         }
-        if (_.isEmpty(jdbcUrl) && connType !== 'MONGO') {
+        if (_.isEmpty(jdbcUrl) && connType !== 'MONGO' && !isVisibleAdvancedConn) {
             alertMsg += '<li>The URL field can not be empty!</li>';
         }
-        if (_.isEmpty(driver) && connType === 'MONDRIAN' && connType !== 'MONGO') {
+        if (_.isEmpty(driver) && connType === 'MONDRIAN' && connType !== 'MONGO' && !isVisibleAdvancedConn) {
             alertMsg += '<li>The JDBC Driver field can not be empty!</li>';
+        }
+        if (_.isEmpty(advanced) && isVisibleAdvancedConn) {
+            alertMsg += '<li>The Advanced field can not be empty!</li>';
         }
         if (alertMsg !== '') {
             (new WarningModal({
