@@ -869,18 +869,18 @@ var AdminConsole = Backbone.View.extend({
         var driver = this.$el.find('input[name="driver"]').val();
         var connUserName = this.$el.find('input[name="connusername"]').val();
         var connPassword = this.$el.find('input[name="connpassword"]').val();
-        var uid = $currentTarget.attr('href').replace('#', '');
+        var uuid = $currentTarget.attr('href').replace('#', '');
         var advanced = this.$el.find('textarea[name="adv_text"]').val();
         var isVisibleAdvancedConn = this.$el.find('.advconnection').is(':visible');
         var alertMsg = '';
         var conn;
 
-        if (uid === undefined || uid === '') {
+        if (uuid === undefined || uuid === '') {
             conn = new Connection();
             this.datasources.add(conn);
         }
         else {
-            conn = this.datasources.get(uid);
+            conn = this.datasources.get(uuid);
         }
 
         if (advanced !== null && advanced !== undefined && advanced !== '') {
