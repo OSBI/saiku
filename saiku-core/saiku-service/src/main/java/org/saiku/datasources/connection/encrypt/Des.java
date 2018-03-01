@@ -974,7 +974,6 @@ public final class Des
         Halves[ 1 ] = Right;
         Halves[ 0 ] = Left;
 
-        return;
     }
 
     /*
@@ -1100,6 +1099,5 @@ public final class Des
             }
         }
 
-        return;
     }
 }
