@@ -275,7 +275,7 @@
                                 </replaceregexp>
                                 <replaceregexp match="(REPOSITORY_LAZY: false,)" replace="REPOSITORY_LAZY: true," flags="gs" byline="false">
                                     <fileset dir="target/dist/saiku/ui/js/saiku/" includes="Settings.js" />
-                                    <fileset dir="target/dist/saiku/ui/js/saiku/" includes="Settings.yaml4" />
+                                    <fileset dir="target/dist/saiku/ui/js/saiku/" includes="Settings.yaml" />
                                 </replaceregexp>
                                 <zip destfile="target/saiku-plugin-p7.1-${project.version}.zip">
                                     <zipfileset dir="target/dist/" />
