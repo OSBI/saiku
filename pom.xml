@@ -18,8 +18,6 @@
         <module>saiku-ui</module>
         <module>saiku-webapp</module>
         <module>saiku-server</module>
-        <module>saiku-bi-platform-plugin-p5</module>
-        <module>saiku-bi-platform-plugin-p6</module>
         <module>saiku-bi-platform-plugin-p7</module>
         <module>saiku-bi-platform-plugin-p7.1</module>
     </modules>

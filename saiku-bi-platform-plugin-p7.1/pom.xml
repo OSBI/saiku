@@ -246,7 +246,7 @@
                                 </unzip>
                                 <copy file="${basedir}/target/${project.artifactId}-${project.version}.jar" todir="target/dist/saiku/lib" />
                                 <copy todir="target/dist/saiku/" overwrite="true">
-                                    <fileset dir="${basedir}/../saiku-bi-platform-plugin-p5/src/main/plugin/">
+                                    <fileset dir="${basedir}/src/main/plugin/">
                                         <include name="**/*.xml" />
                                         <exclude name="**/version.xml" />
                                     </fileset>
@@ -258,7 +258,7 @@
                                 </copy>
                                 <mkdir dir="target/dist/saiku/saiku-repository" />
                                 <copy todir="target/dist/saiku/ui/" overwrite="true">
-                                    <fileset dir="${basedir}/../saiku-bi-platform-plugin-p5/src/main/plugin/">
+                                    <fileset dir="${basedir}/src/main/plugin/">
                                         <include name="*.properties" />
                                     </fileset>
                                 </copy>
