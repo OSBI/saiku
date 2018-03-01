@@ -1,3 +1,0 @@
-<PersistenceManager class="org.apache.jackrabbit.core.persistence.mem.InMemPersistenceManager">
-  <param name="persistent" value="false"/>
-</PersistenceManager>
