@@ -130,8 +130,7 @@ public class BasicRepositoryResource2 implements ISaikuRepository {
 		String username = sessionService.getAllSessionObjects().get("username").toString();
 		List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
 		String[] t = type.split(",");
-		List<IRepositoryObject> l = new ArrayList<>();
-	  List<IRepositoryObject> l2;
+		List<IRepositoryObject> l;
 
 	  if(path == null) {
 			l = (datasourceService.getFiles(Arrays.asList(t), username, roles));

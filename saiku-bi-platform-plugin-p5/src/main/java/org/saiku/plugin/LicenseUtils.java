@@ -137,7 +137,6 @@ public class LicenseUtils extends org.saiku.service.license.LicenseUtils{
   private String getVersion() {
     Properties prop = new Properties();
     InputStream input = null;
-    String version = "";
     ClassLoader classloader = Thread.currentThread().getContextClassLoader();
     InputStream is = classloader.getResourceAsStream(
         "org/saiku/web/rest/resources/version.properties");
@@ -148,8 +147,6 @@ public class LicenseUtils extends org.saiku.service.license.LicenseUtils{
       // load a properties file
       prop.load(is);
 
-      // get the property value and print it out
-      version = prop.getProperty("VERSION");
     } catch (IOException ex) {
       ex.printStackTrace();
     } finally {

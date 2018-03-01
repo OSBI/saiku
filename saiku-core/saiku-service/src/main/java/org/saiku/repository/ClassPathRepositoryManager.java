@@ -768,7 +768,6 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         }
 
         int pos = path.lastIndexOf(sep);
-        String filename = "." + sep + path.substring(pos + 1, path.length());
         //File n = getFolder(path.substring(0, pos));
         File f = this.createNode(path);
         try {

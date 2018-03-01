@@ -111,8 +111,6 @@ public class LicenseUtils implements ILicenseUtils {
     String file = this.repositoryDatasourceManager
         .getInternalFileData("/etc/license.lic");
 
-    SaikuLicense obj = null;
-
     try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(
         file.getBytes()))) {
       SaikuLicense license = null;
