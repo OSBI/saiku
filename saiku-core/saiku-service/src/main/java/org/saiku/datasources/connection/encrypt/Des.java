@@ -892,7 +892,6 @@ public final class Des
         pOut[ i++ ] = ( byte ) ( ulR >> 8 );
         pOut[ i ] = ( byte ) ulR;
 
-        return;
     }
 
     protected int IsKeySet()
