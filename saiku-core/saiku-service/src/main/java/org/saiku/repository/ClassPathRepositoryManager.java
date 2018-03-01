@@ -523,11 +523,6 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         extensions[0] = "xml";
         
         String datadir = getDatadir();
-<<<<<<< HEAD
-        
-=======
-
->>>>>>> tag-3.16.1
         File testFile = new File(datadir);
         
         if (!testFile.exists()) {
@@ -963,14 +958,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
 
     private File getNode(String path) {
-<<<<<<< HEAD
-        File f = new File(path);
-        
-        if (f.exists()) { // Check if the provided path is a full path already
-          return f; // If so, return the respective file
-        }
-        
-=======
+
         path = fixPath(path);
         File f = new File(path);
 
@@ -978,7 +966,6 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
             return f; // If so, return the respective file
         }
 
->>>>>>> tag-3.16.1
         // Otherwise, compose the path with the datadir basepath
         return new File(getDatadir() + path);
     }
@@ -1022,37 +1009,25 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
                 }
 
                 log.debug("Workspace directory set to:" + workspace);
-<<<<<<< HEAD
-                return append + "/" + workspace + "/";
-=======
                 return fixPath(append + "/" + workspace + "/");
->>>>>>> tag-3.16.1
             } else {
                 log.debug("Workspace directory set to: unknown/");
                 if (!new File(append + "/unknown/etc").exists()) {
                     this.bootstrap(append + "/unknown");
                     this.start(userService);
                 }
-<<<<<<< HEAD
-                return append + "/unknown/";
-=======
+
                 return fixPath(append + "/unknown/");
->>>>>>> tag-3.16.1
             }
         } catch (Exception ex) {
             // This exception is expected at Saiku boot
         }
       }
       
-<<<<<<< HEAD
-      String basePath = append + "/unknown";
-        
-      if (!new File(basePath + "/etc").exists()) {
-=======
+
       String basePath = fixPath(append + "/unknown");
         
       if (!new File(fixPath(basePath + "/etc")).exists()) {
->>>>>>> tag-3.16.1
         this.bootstrap(basePath);
         
         try {
