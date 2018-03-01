@@ -69,7 +69,7 @@ MAPS_TILE_LAYER:
 MAPS_OPTIONS:
   OSM:
     maxZoom: 18
-    attribution: '© <a href="http://osm.org/copyright" target="_blank">OpenStreetMap</a>'
+    attribution: '<a href="http://osm.org/copyright" target="_blank">OpenStreetMap</a>'
   GMAPS: null
 MAPS_OSM_NOMINATIM: 'https://nominatim.openstreetmap.org/' # http://wiki.openstreetmap.org/wiki/Nominatim
 DATA_SOURCES_LOOKUP: false
