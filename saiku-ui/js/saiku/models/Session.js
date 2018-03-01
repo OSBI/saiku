@@ -25,7 +25,7 @@ var Session = Backbone.Model.extend({
     password: null,
     sessionid: null,
     upgradeTimeout: null,
-    isAdmin: Settings.ORBIS_AUTH.enabled,
+    isAdmin: Settings.ORBIS_AUTH.hazelcast_enabled,
     id: null,
 	atemptedToLoginByCookie: false,
     initialize: function(args, options) {
@@ -51,7 +51,7 @@ var Session = Backbone.Model.extend({
 		// This authentication cookie is used only by Orbis authentication strategy
 		var authCookie = this.getCookie(Settings.ORBIS_AUTH.cookieName);
 
-		if (Settings.ORBIS_AUTH.enabled && authCookie && !this.atemptedToLoginByCookie) {
+		if (Settings.ORBIS_AUTH.hazelcast_enabled && authCookie && !this.atemptedToLoginByCookie) {
             this.sessionid               = 1;
             this.username                = authCookie;
             this.password                = authCookie;
@@ -126,7 +126,7 @@ var Session = Backbone.Model.extend({
         } else {
             this.sessionid = response.sessionid;
             this.roles = response.roles;
-            this.isAdmin = Settings.ORBIS_AUTH.enabled || response.isadmin;
+            this.isAdmin = Settings.ORBIS_AUTH.hazelcast_enabled || response.isadmin;
             this.username = encodeURIComponent(response.username);
             this.language = response.language;
             if (typeof this.language != "undefined" && this.language != Saiku.i18n.locale) {

@@ -5,13 +5,10 @@ import com.lowagie.text.PageSize;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfWriter;
-import java.net.URISyntaxException;
-import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.print.PrintTranscoder;
 import org.apache.commons.lang.StringUtils;
 import org.apache.fop.apps.Fop;
-import org.apache.fop.apps.FopConfParser;
 import org.apache.fop.apps.FopFactory;
 import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.MimeConstants;
@@ -20,33 +17,30 @@ import org.saiku.service.util.export.PdfPerformanceLogger;
 import org.saiku.web.rest.objects.resultset.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.stream.StreamResult;
 import java.awt.*;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.xml.sax.SAXException;
 
 /**
  * This PdfReport reads in a QueryResult and converts it to HTML, DOM, FO and eventually to a byte array containing the PDF data
  */
 public class PdfReport {
-
-    private static final Logger log = LoggerFactory.getLogger(PdfReport.class);
 
     private static final float marginLeft = 15;
     private static final float marginRight = 15;
@@ -170,7 +164,7 @@ public class PdfReport {
     private void tryWritingContentToPdfStream(OutputStream pdf, byte[] formattedPdfContent) {
         try {
             pdf.write(formattedPdfContent);
-        } catch (java.io.FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.out.println("Error creating PDF: ");
         } catch (IOException e) {
@@ -241,16 +235,7 @@ public class PdfReport {
             DOMSource xslDomSource = new DOMSource(xslDoc);
 
             return tFactory.newTransformer(xslDomSource);
-        } catch (javax.xml.transform.TransformerException e) {
-            e.printStackTrace();
-            return null;
-        } catch (java.io.IOException e) {
-            e.printStackTrace();
-            return null;
-        } catch (javax.xml.parsers.ParserConfigurationException e) {
-            e.printStackTrace();
-            return null;
-        } catch (org.xml.sax.SAXException e) {
+        } catch (javax.xml.transform.TransformerException | ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
             return null;
         }

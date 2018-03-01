@@ -2,14 +2,22 @@
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saikuanalytics</groupId>
+<<<<<<< HEAD
         <version>3.17-SNAPSHOT</version>
+=======
+        <version>3.16.1-SNAPSHOT</version>
+>>>>>>> tag-3.16.1
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>saiku-core</artifactId>
     <packaging>pom</packaging>
     <name>saiku - core libraries</name>
+<<<<<<< HEAD
     <version>3.17-SNAPSHOT</version>
+=======
+    <version>3.16.1-SNAPSHOT</version>
+>>>>>>> tag-3.16.1
 
     <modules>
         <module>saiku-olap-util</module>

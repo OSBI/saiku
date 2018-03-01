@@ -25,8 +25,6 @@ import org.saiku.service.util.exception.SaikuServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,8 +71,6 @@ public class ExcelWorksheetBuilder {
 
     private HSSFPalette customColorsPalette;
     private ExcelBuilderOptions options;
-
-    private final Map<String, CellStyle> cellStyles = new HashMap<>();
 
     private static final Logger log = LoggerFactory.getLogger(ExcelWorksheetBuilder.class);
 

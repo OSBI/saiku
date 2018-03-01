@@ -443,12 +443,19 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
             //TODO Throw exception
             throw new RepositoryException();
         }
+
         byte[] encoded = new byte[0];
+
         try {
-            encoded = Files.readAllBytes(Paths.get(getDatadir() + sep + s));
+            if (Paths.get(s).isAbsolute() && s.startsWith(this.getDatadir())) {
+                encoded = Files.readAllBytes(Paths.get(s));
+            } else {
+                encoded = Files.readAllBytes(Paths.get(getDatadir() + sep + s));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         try {
             return new String(encoded, "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -463,7 +470,11 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         byte[] encoded = new byte[0];
         if(!s.equals("/etc/license.lic")) {
             try {
-                encoded = Files.readAllBytes(Paths.get(getDatadir() + s));
+                if (Paths.get(s).isAbsolute() && s.startsWith(this.getDatadir())) {
+                    encoded = Files.readAllBytes(Paths.get(s));
+                } else {
+                    encoded = Files.readAllBytes(Paths.get(getDatadir() + s));
+                }
             } catch (IOException e) {
                 log.debug("Missing file", e);
             }
@@ -484,7 +495,14 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
 
     public InputStream getBinaryInternalFile(String s) throws RepositoryException {
-        Path path = Paths.get(getDatadir() + s);
+        Path path = null;
+
+        if (Paths.get(s).isAbsolute() && s.startsWith(this.getDatadir())) {
+            path = Paths.get(s);
+        } else {
+            path = Paths.get(getDatadir() + s);
+        }
+
         try {
             byte[] f = Files.readAllBytes(path);
             return new ByteArrayInputStream(f);
@@ -505,7 +523,11 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         extensions[0] = "xml";
         
         String datadir = getDatadir();
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> tag-3.16.1
         File testFile = new File(datadir);
         
         if (!testFile.exists()) {
@@ -571,7 +593,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     public void deleteFile(String datasourcePath) {
         File n;
         try {
-            n = getFolder(datasourcePath);
+            n = getFolder(fixPath(datasourcePath));
             n.delete();
 
         } catch (RepositoryException e) {
@@ -714,21 +736,22 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
             if (d != null) {
                 d.setPath(file.getPath());
-            }
-            if (file.getParentFile().isDirectory()) {
-                String p = file.getParent();
-                p = p.replace("\\", "/");
-                String[] s = p.split("/");
+                if (file.getParentFile().isDirectory()) {
+                    String p = file.getParent();
+                    p = p.replace("\\", "/");
+                    String[] s = p.split("/");
 
-                log.debug("p split: " + p);
-                String[] t = append.split("/");
-                if (!s[s.length - 2].equals(t[t.length - 1])) {
-                    d.setName(s[s.length - 2] + "_" + (d != null ? d.getName() : ""));
+                    log.debug("p split: " + p);
+                    String[] t = append.split("/");
+                    if (!s[s.length - 2].equals(t[t.length - 1])) {
+                        d.setName(s[s.length - 2] + "_" + (d != null ? d.getName() : ""));
+                    }
                 }
-            }
 
-            ds.add(d);
+                ds.add(d);
+            }
         }
+
         return ds;
     }
 
@@ -749,7 +772,6 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         }
 
         int pos = path.lastIndexOf(sep);
-        String filename = "." + sep + path.substring(pos + 1, path.length());
         //File n = getFolder(path.substring(0, pos));
         File f = this.createNode(path);
         try {
@@ -773,6 +795,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
 
     public RepositoryFile getFile(String fileUrl) {
+        fileUrl = fixPath(fileUrl);
+
         File n = null;
         try {
             n = getFolder(fileUrl);
@@ -803,8 +827,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
                                                    boolean includeparent) throws Exception {
         List<IRepositoryObject> repoObjects = new ArrayList<IRepositoryObject>();
         ArrayList<File> objects = new ArrayList<>();
+        
         if (root.isDirectory()) {
-
             this.listf(root.getAbsolutePath(), objects);
 
         } else {
@@ -816,66 +840,79 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         acl.setAdminRoles(userService.getAdminRoles());
 
         for (File file : objects) {
-
+          try {
             if (!file.isHidden()) {
                 String filename = file.getName();
-                String relativePath = file.getPath().substring(getDatadir().length() - 3, file.getPath().length());
-                relativePath = relativePath.replace("\\", "/");
+                String relativePath = file.getPath();
+                String datadir = getDatadir();
 
+                if (relativePath.startsWith(datadir) && datadir.length() >= 3) { // If we have an absolute path
+                    relativePath = relativePath.substring(datadir.length() - 3, relativePath.length());
+                }
+
+                relativePath = relativePath.replace("\\", "/");
 
                 if (acl.canRead(relativePath, username, roles)) {
                     List<AclMethod> acls = acl.getMethods(new File(relativePath), username, roles);
+                    
                     if (file.isFile()) {
                         if (!fileType.isEmpty()) {
                             for (String ft : fileType) {
                                 if (!filename.endsWith(ft)) {
                                     continue;
                                 }
+                                
                                 String extension = FilenameUtils.getExtension(file.getPath());
-
                                 repoObjects.add(new RepositoryFileObject(filename, "#" + relativePath, extension, relativePath, acls));
                             }
-
                         }
-
                     }
+                    
                     if (file.isDirectory()) {
                         repoObjects.add(new RepositoryFolderObject(filename, "#" + relativePath, relativePath, acls, getRepoObjects(file, fileType, username, roles, false)));
                     }
-                    Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
-
-                        public int compare(IRepositoryObject o1, IRepositoryObject o2) {
-                            if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(IRepositoryObject.Type.FILE))
-                                return -1;
-                            if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
-                                return 1;
-                            return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
-
-                        }
-
-                    });
                 }
             }
+          } catch (Exception ex) {
+            // If a problem happens when handling one file, it will still return the repoObjects list
+            ex.printStackTrace();  
+          }
         }
-        //}
+        
+        // Just after it has filled the repoObjects, sort it alphabetically, putting the directories first 
+        Collections.sort(repoObjects, new Comparator<IRepositoryObject>() {
+          public int compare(IRepositoryObject o1, IRepositoryObject o2) {
+              if (o1.getType().equals(IRepositoryObject.Type.FOLDER) && o2.getType().equals(IRepositoryObject.Type.FILE))
+                  return -1;
+              if (o1.getType().equals(IRepositoryObject.Type.FILE) && o2.getType().equals(IRepositoryObject.Type.FOLDER))
+                  return 1;
+              return o1.getName().toLowerCase().compareTo(o2.getName().toLowerCase());
+          }
+        });
+        
         return repoObjects;
     }
 
     private void listf(String directoryName, ArrayList<File> files) {
-        File directory = new File(directoryName);
+        if (directoryName == null || files == null) return;
+        
+        File directory = new File(fixPath(directoryName));
 
         // get all the files from a directory
         File[] fList = directory.listFiles();
-        Collections.addAll(files, fList);
+        
+        if (fList != null && fList.length > 0) {
+          Collections.addAll(files, fList);
+        }
     }
 
     private File createFolder(String path) {
-        String appended = getDatadir() + path;
+        String appended = fixPath(getDatadir() + path);
         boolean success = (new File(appended)).mkdirs();
         if (!success) {
             // Directory creation failed
         }
-        return new File(path);
+        return new File(fixPath(path));
     }
 
     private void bootstrap(String ap) {
@@ -908,7 +945,14 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
 
     private void delete(String folder) {
-        File file = new File(getDatadir() + folder);
+        folder = fixPath(folder);
+        File file = null;
+
+        if (Paths.get(folder).isAbsolute() && folder.startsWith(this.getDatadir())) {
+            file = new File(folder);
+        } else {
+            file = new File(getDatadir() + folder);
+        }
 
         file.delete();
     }
@@ -919,21 +963,39 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
 
     private File getNode(String path) {
+<<<<<<< HEAD
         File f = new File(path);
         
         if (f.exists()) { // Check if the provided path is a full path already
           return f; // If so, return the respective file
         }
         
+=======
+        path = fixPath(path);
+        File f = new File(path);
+
+        if (f.isAbsolute() && path.startsWith(this.getDatadir())) { // Check if the provided path is a full path already
+            return f; // If so, return the respective file
+        }
+
+>>>>>>> tag-3.16.1
         // Otherwise, compose the path with the datadir basepath
         return new File(getDatadir() + path);
     }
 
     private File createNode(String filename) {
-        log.debug("Creating file:" + getDatadir() + filename);
-        return new File(getDatadir() + filename);
-    }
+        filename = fixPath(filename);
+        File nodeFile = new File(filename);
 
+        if (nodeFile.isAbsolute() && filename.startsWith(this.getDatadir())) { // Check if it's a full path already
+            log.debug("Creating file:" + filename);
+        } else { // If not, prefix it with the datadir
+            log.debug("Creating file:" + this.getDatadir() + filename);
+            nodeFile = new File(this.getDatadir(), filename);
+        }
+
+        return nodeFile;
+    }
 
     private HttpSession getSession() {
         try {
@@ -960,23 +1022,37 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
                 }
 
                 log.debug("Workspace directory set to:" + workspace);
+<<<<<<< HEAD
                 return append + "/" + workspace + "/";
+=======
+                return fixPath(append + "/" + workspace + "/");
+>>>>>>> tag-3.16.1
             } else {
                 log.debug("Workspace directory set to: unknown/");
                 if (!new File(append + "/unknown/etc").exists()) {
                     this.bootstrap(append + "/unknown");
                     this.start(userService);
                 }
+<<<<<<< HEAD
                 return append + "/unknown/";
+=======
+                return fixPath(append + "/unknown/");
+>>>>>>> tag-3.16.1
             }
         } catch (Exception ex) {
             // This exception is expected at Saiku boot
         }
       }
       
+<<<<<<< HEAD
       String basePath = append + "/unknown";
         
       if (!new File(basePath + "/etc").exists()) {
+=======
+      String basePath = fixPath(append + "/unknown");
+        
+      if (!new File(fixPath(basePath + "/etc")).exists()) {
+>>>>>>> tag-3.16.1
         this.bootstrap(basePath);
         
         try {
@@ -986,7 +1062,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         }
       }
       
-      return append + "unknown/";
+      return fixPath(append + "unknown/");
     }
 
     private String cleanse(String workspace) {
@@ -997,4 +1073,12 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         return workspace + "/";
     }
 
+    private String fixPath(String path) {
+        if (path != null) {
+            while (path.contains("//")) {
+                path = path.replace("//", "/");
+            }
+        }
+        return path;
+    }
 }
