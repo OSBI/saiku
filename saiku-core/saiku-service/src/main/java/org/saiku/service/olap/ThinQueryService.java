@@ -455,9 +455,9 @@ public class ThinQueryService implements Serializable {
                 filterHierarchies = tq.getQueryModel().getAxes().get(AxisLocation.FILTER).getHierarchies();
             }
 
-            if (type.toLowerCase().equals("xls")) {
+            if (type.equalsIgnoreCase("xls")) {
                 return ExcelExporter.exportExcel(table, formatter, filterHierarchies);
-            } else if (type.toLowerCase().equals("csv")) {
+            } else if (type.equalsIgnoreCase("csv")) {
                 return CsvExporter.exportCsv(rs, SaikuProperties.webExportCsvDelimiter, SaikuProperties.webExportCsvTextEscape, formatter);
             }
         }

@@ -1,5 +1,7 @@
 package org.saiku.repository;
 
+import java.io.Serializable;
+
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -12,8 +14,10 @@ import javax.servlet.http.HttpSession;
 /**
  * Created by bugg on 06/05/16.
  */
-public class ScopedRepo implements ApplicationListener<HttpSessionCreatedEvent> {
-    private HttpSession httpSession;
+public class ScopedRepo implements ApplicationListener<HttpSessionCreatedEvent>, Serializable {
+    static final long serialVersionUID = 1L;
+
+    private transient HttpSession httpSession;
 
     public ScopedRepo() {
 

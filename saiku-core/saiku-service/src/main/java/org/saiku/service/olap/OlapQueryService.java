@@ -1083,11 +1083,11 @@ public class OlapQueryService implements Serializable {
 			if (query.getType().equals(QueryType.QM)) {
 				filters = getAxisSelection(queryName, "FILTER");
 			}
-			if (type.toLowerCase().equals("xls")) {
+			if (type.equalsIgnoreCase("xls")) {
 				// TODO - added null parameter for filters - not used anymore
 				return ExcelExporter.exportExcel(rs, formatter, null);
 			}
-			if (type.toLowerCase().equals("csv")) {
+			if (type.equalsIgnoreCase("csv")) {
 				return CsvExporter.exportCsv(rs, SaikuProperties.webExportCsvDelimiter, SaikuProperties.webExportCsvTextEscape, formatter);
 			}
 		}

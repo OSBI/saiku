@@ -62,6 +62,8 @@ public class LicenseUtils implements ILicenseUtils {
     ObjectOutputStream so = new ObjectOutputStream(bo);
     so.writeObject(lic);
     so.flush();
+    this.repositoryDatasourceManager.deleteFolder("/etc/license.lic");
+
     this.repositoryDatasourceManager
         .saveInternalFile("/etc/license.lic", bo.toString(), null);
 
@@ -108,8 +110,6 @@ public class LicenseUtils implements ILicenseUtils {
 
     String file = this.repositoryDatasourceManager
         .getInternalFileData("/etc/license.lic");
-
-    SaikuLicense obj = null;
 
     try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(
         file.getBytes()))) {

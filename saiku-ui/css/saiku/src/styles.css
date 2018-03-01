@@ -1165,10 +1165,7 @@ textarea, select {
 }
 
 .dialog_calculated-member .form-group-inline .btn-groups {
-	padding-top: 13px;
-	padding-bottom: 13px;
-	padding-left: 70px;
-	padding-right:0px;
+	padding: 13px 0px 13px 70px;
 }
 
 .dialog_calculated-member .form-group-inline .btn-groups .form_button {
@@ -2710,10 +2707,7 @@ form {
 }
 
 .minimal_padding {
-	padding-top:3px;
-	padding-bottom:3px;
-	padding-left:6px;
-	padding-right:6px;
+	padding: 3px 6px;
 }
 
 .about-us a {

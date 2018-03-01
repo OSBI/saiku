@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "browser-sync": "^2.18.12",
+    "eslint": "^4.18.1",
     "gulp": "^3.9.1",
     "proxy-middleware": "^0.15.0",
     "url": "^0.11.0"

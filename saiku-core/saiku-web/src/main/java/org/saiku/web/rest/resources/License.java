@@ -170,6 +170,36 @@ public class License {
   }
 
 
+  /**
+   * Get the current user list from the server.
+   * @summary Get the user list
+   * @return A list of users.
+   */
+  @GET
+  @Path("/usercount")
+  @Produces({"application/json"})
+  @ReturnType("java.util.ArrayList<UserList>")
+  public Response getUserCount(){
+    if(!userService.isAdmin()){
+      return Response.status(Response.Status.FORBIDDEN).build();
+    }
+    try {
+      List<String> l = getAuthUsers();
+      if(l!=null) {
+        List<UserList> ul = new ArrayList();
+        int i = 0;
+        for (String l2 : l) {
+          ul.add(new UserList(l2, i));
+          i++;
+        }
+        return Response.ok().entity(ul.size()).build();
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return Response.ok().entity(0).build();
+    }
+    return Response.ok().entity(0).build();
+  }
 
   /**
    * Get the current user list from the server.

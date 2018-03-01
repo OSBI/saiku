@@ -43,8 +43,6 @@ jobs:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
       - store_artifacts:
-          path: saiku-bi-platform-plugin-p6/target/
-      - store_artifacts:
           path: saiku-bi-platform-plugin-p7/target/
       - store_artifacts:
           path: saiku-server/target/

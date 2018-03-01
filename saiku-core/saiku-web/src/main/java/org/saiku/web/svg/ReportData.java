@@ -167,7 +167,7 @@ public class ReportData {
 		else {
 			for (int i = 1; i < headMatrix[0].length; i++) {
 				if(headMatrix[rowIndex][i]!=null)
-					if (headMatrix[rowIndex][i].getFormattedValue() != "MeasuresLevel"
+					if (!headMatrix[rowIndex][i].getFormattedValue().equals("MeasuresLevel")
 					&& headMatrix[rowIndex][i].getFormattedValue() != null ) {
 						section = new Section();
 						section.setDes(headMatrix[rowIndex][i].getFormattedValue());

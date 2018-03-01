@@ -38,6 +38,8 @@ Saiku.intro = {
 
   fileName: Settings.INTRO_FILE_NAME || 'Workspace',
 
+  forwardStep: null,
+
   get_specific_elements: function(data, specificElements) {
     var steps = data.steps;
     var newSteps = {};
@@ -108,14 +110,54 @@ Saiku.intro = {
         }
 
         self.intro.setOptions(dataJson);
-        self.intro.start();
+        self.intro.exit();
+        self.intro.onafterchange(function(targetElement) {
+          if (this._direction === 'forward') {
+            self.forwardStep = this._currentStep;
+          }
+
+          if ($(targetElement).hasClass('introjsFloatingElement')) {
+            this.nextStep();
+          }
+          else if ($(targetElement).attr('href') === '#export_button' && $(targetElement).hasClass('disabled_toolbar')) {
+            this.exit();
+          }
+        }).start();
       },
       error: function(jqXHR, textStatus, errorThrown) {
-        console.error(jqXHR);
-        console.error(textStatus);
-        console.error(errorThrown);
+        console.error('PLUGIN INTRO -> ' + jqXHR);
+        console.error('PLUGIN INTRO -> ' + textStatus);
+        console.error('PLUGIN INTRO -> ' + errorThrown);
       }
     });
+  },
+
+  previousStep: function() {
+    var currentStep = this.intro._currentStep;
+    var introItems = this.intro._introItems;
+    var previousStep;
+
+    if (this.forwardStep === currentStep &&
+        introItems[currentStep - 1].position === 'floating') {
+
+      while (currentStep > 0) {
+        if (introItems[currentStep - 1].position === 'floating') {
+          currentStep -= 1;
+        }
+        else {
+          previousStep = currentStep;
+          currentStep = 0;
+        }
+      }
+    }
+
+    if (previousStep) {
+      this.intro.goToStep(previousStep);
+    }
+  },
+
+  nextStep: function() {
+    this.intro.nextStep();
   }
 };
 
@@ -125,6 +167,8 @@ Saiku.intro = {
  */
 var ShowHelpIntro = Backbone.View.extend({
   initialize: function(args) {
+    var self = this;
+
     // Creating a client IWC.
     var iwc = new ozpIwc.Client(Settings.OZP_IWC_CLIENT_URI);
 
@@ -134,9 +178,9 @@ var ShowHelpIntro = Backbone.View.extend({
 
     // Testing if the client can connect.
     iwc.connect().then(function() {
-      console.log('IWC client connected with address: ', iwc.address);
+      console.log('PLUGIN INTRO -> IWC client connected with address: ', iwc.address);
     }).catch(function(error) {
-      console.error('IWC client failed to connect: ', error);
+      console.error('PLUGIN INTRO -> IWC client failed to connect: ', error);
     });
 
     // The IWC uses the concept of references when accessing resources.
@@ -172,11 +216,19 @@ var ShowHelpIntro = Backbone.View.extend({
         else {
           Saiku.intro.start(data);
         }
+
+        _.delay(function() {
+          $('.introjs-prevbutton').on('click', self.attach_event_previous_step);
+        }, 3000);
       }
     };
 
     // Registers a handler function to a node to be called when invoked by others.
     funcRef.register(config, onInvoke);
+  },
+
+  attach_event_previous_step: function(event) {
+    Saiku.intro.previousStep();
   }
 });
 

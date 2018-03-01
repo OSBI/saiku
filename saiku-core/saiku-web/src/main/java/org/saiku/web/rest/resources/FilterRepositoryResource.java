@@ -66,9 +66,6 @@ public class FilterRepositoryResource {
 	private OlapQueryService olapQueryService;
 	private ISessionService sessionService;
 
-
-	private Properties settings = new Properties();
-
 	//@Autowired
 	public void setOlapQueryService(OlapQueryService olapqs) {
 		olapQueryService = olapqs;
@@ -189,38 +186,6 @@ public class FilterRepositoryResource {
 			return Response.serverError().entity(error).build();
 		}
 	}
-
-
-	
-	private byte[] getCsv(Map<String, SaikuFilter> filters, String delimiter, String memberdelimiter) {
-		try {
-
-			StringBuilder sb = new StringBuilder();
-			sb.append("User").append(delimiter).append("FilterName").append(delimiter).append("Dimension")
-			  .append(delimiter).append("Hierarchy").append(delimiter).append("Members");
-			sb.append("\r\n");
-			for (SaikuFilter sf : filters.values()) {
-				String row = sf.getOwner() + delimiter + sf.getName() + delimiter + sf.getDimension().getName() + delimiter + sf.getHierarchy().getName() + delimiter;
-				String members = "";
-				boolean first = true;
-				for (SimpleCubeElement e : sf.getMembers()) {
-					if (!first)
-						members += memberdelimiter;
-					else
-						first = false;
-					members += e.getName();
-				}
-				sb.append(row).append(members).append("\r\n");
-			}
-			return sb.toString().getBytes("UTF-8");
-		} catch (Throwable e) {
-			throw new SaikuServiceException("Error creating csv export for filters"); //$NON-NLS-1$
-		}
-	}
-
-	
-	
-
 
 
 }
