@@ -28,8 +28,6 @@ function negativeRed(value){
     var res = '';
     if(  parseFloat(value) <= 0  ){ 
 		res = ' style_negative_number ';
-	}else{ 
-		res = ' style_positive_number ' ;
 	}
     return res;
 }
