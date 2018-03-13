@@ -187,14 +187,15 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
             String split[] = ds.getLocation().split("=");
             String loc = split[2];
             if(split[2].startsWith("mondrian:")){
-                split[2] = "mondrian:/"+getDatadir() + "/datasources/" + ds.getName() + "-csv.json;Catalog";
+                split[2] = "mondrian:/" + getDatadir() + "datasources/" + ds.getName() + "-csv.json;Catalog";
+            } else {
+                split[2] = getDatadir() + "datasources/" + ds.getName() + "-csv.json;Catalog";
             }
-            else {
-                split[2] = getDatadir() + "/datasources/" + ds.getName() + "-csv.json;Catalog";
-            }
+
             for (int i = 0; i < split.length - 1; i++) {
                 split[i] = split[i] + "=";
             }
+
             ds.setLocation(StringUtils.join(split));
 
             log.debug("LOC IS: " + loc);
@@ -224,7 +225,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
             
             boolean f = true;
             
-            if (new File(getDatadir() + separator + path).exists() && new File(getDatadir() + separator + path).isDirectory()) {
+            if (new File(getDatadir() + path).exists() && new File(getDatadir() + path).isDirectory()) {
                 f = false;
             }
             if(!path.startsWith("mondrian:")) {
@@ -602,7 +603,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
                     }
 
                 } catch (Exception e) {
-                    return cleanse(datadir) + "/unknown/";
+                    return cleanse(datadir) + "unknown/";
                 }
             } else {
                 return cleanse(datadir);
@@ -650,6 +651,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
 
     private String cleanse(String workspace) {
         workspace = workspace.replace("\\", "/");
+        workspace = workspace.replaceAll("[/]+", "/");
         if (!workspace.endsWith("/")) {
             return workspace + "/";
         }
