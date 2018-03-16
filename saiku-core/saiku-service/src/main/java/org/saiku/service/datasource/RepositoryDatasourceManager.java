@@ -229,15 +229,18 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
                 f = false;
             }
             if(!path.startsWith("mondrian:")) {
-                irm.saveInternalFile(this.getCSVJson(f, ds.getName(), getDatadir() + path),
-                    separator + "datasources" + separator + ds.getName() + "-csv.json", null);
+                String pathToSave = getDatadir() + path;
 
-            }
-            else{
+                pathToSave.replace("\\", "/");
+                pathToSave.replaceAll("[/]+", "/");
+
+                irm.saveInternalFile(this.getCSVJson(f, ds.getName(), pathToSave),
+                    separator + "datasources" + separator + ds.getName() + "-csv.json", null);
+            } else{
                 irm.saveInternalFile(this.getCSVJson(f, ds.getName(), path),
                     separator + "datasources" + separator + ds.getName() + "-csv.json", null);
-
             }
+
             irm.saveDataSource(ds, separator + "datasources" + separator + ds.getName() + ".sds", "fixme");
             
             String name = ds.getName();
@@ -250,7 +253,6 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
             connectionManager.refreshConnection(name);
         } else {
             irm.saveDataSource(ds, separator + "datasources" + separator + ds.getName() + ".sds", "fixme");
-
         }
 
         String name = ds.getName();
