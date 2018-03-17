@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.*;
 
 import javax.jcr.PathNotFoundException;
@@ -58,8 +59,8 @@ import org.springframework.security.web.session.HttpSessionCreatedEvent;
  * A Datasource Manager for the Saiku Repository API layer.
  */
 public class RepositoryDatasourceManager implements IDatasourceManager, ApplicationListener<HttpSessionCreatedEvent> {
-    private static final String ORBIS_WORKSPACE_DIR = "workspace";
-    private static final String SAIKU_AUTH_PRINCIPAL = "SAIKU_AUTH_PRINCIPAL";
+    public static final String ORBIS_WORKSPACE_DIR = "workspace";
+    public static final String SAIKU_AUTH_PRINCIPAL = "SAIKU_AUTH_PRINCIPAL";
     
     private final Map<String, SaikuDatasource> datasources = Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
     public IConnectionManager connectionManager;
@@ -126,6 +127,10 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
         loadDatasources(ext);
     }
 
+    public void setRepositoryManager(IRepositoryManager irm) {
+        this.irm = irm;
+    }
+
     public Properties checkForExternalDataSourceProperties() {
         Properties p = new Properties();
         InputStream input;
@@ -190,6 +195,8 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
                 split[2] = "mondrian:/" + getDatadir() + "datasources/" + ds.getName() + "-csv.json;Catalog";
             } else {
                 split[2] = getDatadir() + "datasources/" + ds.getName() + "-csv.json;Catalog";
+                split[2] = split[2].replace('\\', '/');
+                split[2] = split[2].replaceAll("[/]+", "/");
             }
 
             for (int i = 0; i < split.length - 1; i++) {
@@ -203,10 +210,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
 
             log.debug("PATH IS: " + path);
             path = path.replace("\\", "/");
+            path = path.replaceAll("[/]+", "/");
 
             log.debug("Trimmed path is: " + path);
             if(!datadir.equals("${CLASSPATH_REPO_PATH_UNPARSED}")) {
-                path = path.replaceFirst(datadir, "");
+                path = path.replaceFirst(getDatadir(), "");
             }
             
             // When using Jackrabbit, paths should follow JCR standards
@@ -224,12 +232,16 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
             }
             
             boolean f = true;
-            
+
             if (new File(getDatadir() + path).exists() && new File(getDatadir() + path).isDirectory()) {
                 f = false;
             }
             if(!path.startsWith("mondrian:")) {
                 String pathToSave = getDatadir() + path;
+
+                if (Paths.get(path).isAbsolute()) {
+                    pathToSave = path;
+                }
 
                 pathToSave.replace("\\", "/");
                 pathToSave.replaceAll("[/]+", "/");
@@ -651,12 +663,14 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
         }
     }
 
-    private String cleanse(String workspace) {
+    public String cleanse(String workspace) {
         workspace = workspace.replace("\\", "/");
         workspace = workspace.replaceAll("[/]+", "/");
+
         if (!workspace.endsWith("/")) {
             return workspace + "/";
         }
+
         return workspace;
     }
 
