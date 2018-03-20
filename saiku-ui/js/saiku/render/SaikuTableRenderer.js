@@ -450,7 +450,9 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
     if (typeof this._options.htmlObject === 'object' &&
         Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE &&
         hasMeasures > 0 &&
-        allData.query.type === 'QUERYMODEL') {
+        allData.query.type === 'QUERYMODEL' &&
+        allData.query.queryModel.details.axis === 'COLUMNS' &&
+        allData.query.queryModel.details.location === 'BOTTOM') {
 
         var arrColumnTitleTable = getAxisLevelsName(allData, COLUMNS);
         var arrDomColumnTitleTable = getDomColumnsLevelsName(this._options.htmlObject);
@@ -509,6 +511,8 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
             Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE &&
             hasMeasures > 0 &&
             allData.query.type === 'QUERYMODEL' &&
+            allData.query.queryModel.details.axis === 'COLUMNS' &&
+            allData.query.queryModel.details.location === 'BOTTOM' &&
             auxColumnTitleTable < arrColumnTitleTable.length) {
 
             rowContent += '<th class="row_header" style="text-align: right;" colspan="' + colspanColumnTitleTable + '" title="' + arrColumnTitleTable[auxColumnTitleTable] + '">'
@@ -528,7 +532,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 
             // If the cell is a column header and is null (top left of table)
             if (header.type === "COLUMN_HEADER" && header.value === "null" && (firstColumn == null || col < firstColumn)) {
-                if ((!Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE || hasMeasures === 0) ||
+                if (((!Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE || (Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE && allData.query.queryModel.details.location !== 'BOTTOM')) || hasMeasures === 0) ||
                     allData.query.type === 'MDX') {
                     rowContent += '<th class="all_null">&nbsp;</th>';
                 }
