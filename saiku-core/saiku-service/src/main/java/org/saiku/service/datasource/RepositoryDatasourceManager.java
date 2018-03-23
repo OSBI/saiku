@@ -236,12 +236,9 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
             if (new File(getDatadir() + path).exists() && new File(getDatadir() + path).isDirectory()) {
                 f = false;
             }
+
             if(!path.startsWith("mondrian:")) {
                 String pathToSave = getDatadir() + path;
-
-                if (Paths.get(path).isAbsolute()) {
-                    pathToSave = path;
-                }
 
                 pathToSave.replace("\\", "/");
                 pathToSave.replaceAll("[/]+", "/");
