@@ -26,7 +26,7 @@ import javax.servlet.http.HttpSession;
  * MarkLogic Repository Manager
  * To use this repository, it should be enabled at saiku-beans.xml file
  */
-public class MarkLogicReposit oryManager implements IRepositoryManager {
+public class MarkLogicRepositoryManager implements IRepositoryManager {
   private static final String SAIKU_AUTH_PRINCIPAL = "SAIKU_AUTH_PRINCIPAL";
   
   private static final Logger log = LoggerFactory.getLogger(MarkLogicRepositoryManager.class);
