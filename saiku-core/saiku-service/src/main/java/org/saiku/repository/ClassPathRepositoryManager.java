@@ -841,8 +841,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
                 String relativePath = file.getPath();
                 String datadir = getDatadir();
 
-                if (relativePath.startsWith(datadir) && datadir.length() >= 3) { // If we have an absolute path
-                    relativePath = relativePath.substring(datadir.length() - 3, relativePath.length());
+                if (relativePath.startsWith(datadir) && datadir.length() >= 0) { // If we have an absolute path
+                    relativePath = relativePath.substring(datadir.length(), relativePath.length()); //Make it relative to the datadir
                 }
 
                 relativePath = relativePath.replace("\\", "/");

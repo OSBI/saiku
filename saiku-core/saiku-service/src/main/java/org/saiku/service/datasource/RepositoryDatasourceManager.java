@@ -237,11 +237,14 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
                 f = false;
             }
 
+            path = path.replace("\\", "/");
+            path = path.replaceAll("[/]+", "/");
+
             if(!path.startsWith("mondrian:")) {
                 String pathToSave = getDatadir() + path;
 
-                pathToSave.replace("\\", "/");
-                pathToSave.replaceAll("[/]+", "/");
+                pathToSave = pathToSave.replace("\\", "/");
+                pathToSave = pathToSave.replaceAll("[/]+", "/");
 
                 irm.saveInternalFile(this.getCSVJson(f, ds.getName(), pathToSave),
                     separator + "datasources" + separator + ds.getName() + "-csv.json", null);
