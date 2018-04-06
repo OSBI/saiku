@@ -105,6 +105,7 @@
 						<jsSourceInclude>views/TitlesModal.js</jsSourceInclude>
 						<jsSourceInclude>adapters/SaikuServer.js</jsSourceInclude>
 						<jsSourceInclude>routers/QueryRouter.js</jsSourceInclude>
+						<jsSourceInclude>views/ChartEditor.js</jsSourceInclude>
 						<jsSourceInclude>views/Tour.js</jsSourceInclude>
 					</jsSourceIncludes>
 					<jsSourceExcludes>
