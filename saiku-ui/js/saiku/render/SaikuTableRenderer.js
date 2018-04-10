@@ -628,7 +628,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
                     }
                 }
                 var value = (same ? "<div>&nbsp;</div>" : '<div rel="' + row + ":" + col + '">'
-                            + (sameAsPrevValue && Settings.ALLOW_TABLE_DATA_COLLAPSE ? '<span class="expander expanded">&#9660;</span>' : '' ) + header.value + '</div>');
+                            + (sameAsPrevValue && Settings.ALLOW_TABLE_DATA_COLLAPSE ? '<span class="expander expanded" style="cursor: pointer;">&#9660;</span>' : '' ) + header.value + '</div>');
                 if (!wrapContent) {
                     value = (same ? "&nbsp;" : header.value );
                 }
