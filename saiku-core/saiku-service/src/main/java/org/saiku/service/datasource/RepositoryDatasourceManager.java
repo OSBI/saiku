@@ -177,18 +177,6 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
         DataSource ds = new DataSource(datasource);
 
         if (ds.getCsv() != null && ds.getCsv().equals("true")) {
-            if(this.workspaces) {
-                String s = this.getworkspacedir();
-                
-                if (s.endsWith("/")) {
-                    s = s.substring(0, s.length() - 1);
-                }
-                
-                if (ds.getName().startsWith(s)) {
-                    ds.setName(ds.getName().replace(s + "_", ""));
-                }
-            }
-
             String split[] = ds.getLocation().split("=");
             String loc = split[2];
             if(split[2].startsWith("mondrian:")){
@@ -757,11 +745,12 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
     }
 
     private String getCSVJson(boolean file, String name, String path) {
+        path = path.replace("\\", "/");
+        path = path.replaceAll("[/]+", "/");
 
         String p;
         if (!file) {
             p = "directory: '" + path + "'\n";
-
 
             return "{\n" +
                     "version: '1.0',\n" +
@@ -777,9 +766,9 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
                     "}\n" +
                     "]\n" +
                     "}";
-
         } else {
             p = "file: '" + path + "',";
+
             return "{\n" +
                     "version: '1.0',\n" +
                     "defaultSchema: '" + name + "',\n" +
@@ -797,7 +786,6 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
                     "}]}\n" +
                     "]\n" +
                     "}";
-
         }
     }
 

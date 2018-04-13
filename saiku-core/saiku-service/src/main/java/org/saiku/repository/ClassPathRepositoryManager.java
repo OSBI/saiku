@@ -738,7 +738,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
                     log.debug("p split: " + p);
                     String[] t = append.split("/");
-                    if (!s[s.length - 2].equals(t[t.length - 1])) {
+
+                    if (!workspaces && !s[s.length - 2].equals(t[t.length - 1])) {
                         d.setName(s[s.length - 2] + "_" + (d != null ? d.getName() : ""));
                     }
                 }
