@@ -482,7 +482,7 @@ var AdminConsole = Backbone.View.extend({
         "<% } %>"+
         "<label for='schemapath'>Schema:</label><select class='form-control schemaselect' name='schemapath'>" +
         "<% _.each(schemas, function(path){%>" +
-        "<option  <% if(conn.schema != null && conn.schema === 'mondrian://'+path.attributes.path){ print('selected'); } %> ><%= path.attributes.path %></option>" +
+        "<option <% if (conn.schema !== null && (conn.schema === 'mondrian://' + path.attributes.path || conn.schema === path.attributes.path)) { print('selected'); } %> ><%= path.attributes.path %></option>" +
         "<%});%></select><br/>" +
         "<% if(!Settings.EXT_DATASOURCE_PROPERTIES) { %>"+
         "<label for='driver'>JDBC Driver: </label><input name='driver' class='form-control' value='<%= conn.driver %>' type='text'/><br class='horridbr'/>" +
