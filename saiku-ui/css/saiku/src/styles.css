@@ -2744,3 +2744,7 @@ form {
 .about-us .item {
 	font-weight: normal;
 }
+
+.style_negative_number {
+	color: red !important;
+}

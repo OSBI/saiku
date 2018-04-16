@@ -24,6 +24,16 @@ function getAxisLevelsName(data, axisName) {
     return arrLevels;
 }
 
+function setStyleNegativeNumber(value) {
+    var className = '';
+
+    if (Settings.STYLE_NEGATIVE_NUMBER && parseFloat(value) < 0) {
+        className = ' style_negative_number ';
+    }
+
+    return className;
+}
+
 function getAxisSize(data, axisName) {
     var queryData = data.query.queryModel.axes[axisName].hierarchies;
     var len = queryData.length;
@@ -748,7 +758,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
                 }
 
                 rowContent += '<td class="data" ' + color + '>'
-                        + (wrapContent ? '<div class="datadiv" alt="' + header.properties.raw + '" rel="' + header.properties.position + '">' : "")
+                        + (wrapContent ? '<div class="datadiv '+ setStyleNegativeNumber(header.properties.raw) + '" alt="' + header.properties.raw + '" rel="' + header.properties.position + '">' : "")
                         + val + arrow
                         + (wrapContent ? '</div>' : '') + '</td>';
                 if (totalsLists[ROWS])
