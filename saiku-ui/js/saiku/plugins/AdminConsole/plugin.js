@@ -172,14 +172,15 @@ var AdminConsole = Backbone.View.extend({
         event.preventDefault();
 
         var $currentTarget = $(event.currentTarget);
-        var regexp = /jdbc:mysql:|jdbc:postgresql:|jdbc:oracle:|jdbc:drill:/i;
+        var regexp = /jdbc:mysql:|jdbc:postgresql:|jdbc:oracle:|jdbc:drill:|jdbc:jtds:sqlserver:/i;
         var dbUrl = this.$el.find('input[name="jdbcurl"]').val();
         var dbDriver = this.$el.find('input[name="driver"]').val();
         var jdbcDrivers = {
             'mysql'      : 'com.mysql.jdbc.Driver',
             'postgresql' : 'org.postgresql.Driver',
             'oracle'     : 'oracle.jdbc.OracleDriver',
-            'drill'      : 'org.apache.drill.jdbc.Driver'
+            'drill'      : 'org.apache.drill.jdbc.Driver',
+            'mssql'      : 'net.sourceforge.jtds.jdbc.Driver'
         };
         var driver;
 
