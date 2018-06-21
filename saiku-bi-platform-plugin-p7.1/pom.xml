@@ -331,15 +331,7 @@
         </repository>
         <repository>
             <id>pentaho-third-party</id>
-            <url>http://nexus.pentaho.org/content/repositories/proxied-3rd-party-releases/</url>
-        </repository>
-        <repository>
-            <id>pentaho-public-release</id>
-            <url>http://nexus.pentaho.org/content/repositories/pentaho-public-release-repos/</url>
-        </repository>
-        <repository>
-            <id>pentaho-snapshot</id>
-            <url>http://nexus.pentaho.org/content/repositories/public-snapshots/</url>
+            <url>http://nexus.pentaho.org/content/groups/omni</url>
         </repository>
 
         <repository>
@@ -438,6 +430,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>pentaho</groupId>
+            <artifactId>pentaho-platform-repository</artifactId>
+            <version>7.1.0.0-12</version>
         </dependency>
         <!--
                 <dependency>
