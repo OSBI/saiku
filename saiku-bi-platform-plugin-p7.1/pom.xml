@@ -11,7 +11,7 @@
 
     <build>
         <resources>
-            <resource>
+            <!--<resource>
                 <directory>src/main/plugin</directory>
                 <targetPath>${basedir}/../saiku-bi-platform-plugin-p5/target/dist/saiku</targetPath>
                 <filtering>true</filtering>
@@ -20,7 +20,7 @@
                     <include>**/*.js</include>
 
                 </includes>
-            </resource>
+            </resource>-->
         </resources>
         <plugins>
             <plugin>
@@ -65,12 +65,12 @@
                                     <type>jar</type>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
                                 </artifactItem>
-                                <artifactItem>
+                                <!--<artifactItem>
                                     <groupId>org.saikuanalytics</groupId>
                                     <artifactId>saiku-bi-platform-plugin-p5</artifactId>
                                     <type>jar</type>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
-                                </artifactItem>
+                                </artifactItem>-->
                                 <artifactItem>
                                     <groupId>org.saikuanalytics</groupId>
                                     <artifactId>saiku-web</artifactId>
@@ -360,7 +360,7 @@
         </repository>
     </repositories>
     <dependencies>
-        <dependency>
+        <!--<dependency>
             <groupId>org.saikuanalytics</groupId>
             <artifactId>saiku-bi-platform-plugin-p5</artifactId>
             <version>${pom.version}</version>
@@ -382,7 +382,7 @@
                     <artifactId>eigenbase-xom</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.saikuanalytics</groupId>
             <artifactId>saiku-service</artifactId>

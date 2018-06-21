@@ -18,8 +18,8 @@
         <module>saiku-ui</module>
         <module>saiku-webapp</module>
         <module>saiku-server</module>
-<!--        <module>saiku-bi-platform-plugin-p7</module>
-        <module>saiku-bi-platform-plugin-p7.1</module>-->
+        <!--<module>saiku-bi-platform-plugin-p7</module>-->
+        <module>saiku-bi-platform-plugin-p7.1</module>
     </modules>
 
     <distributionManagement>
@@ -320,8 +320,6 @@
                 <module>saiku-ui</module>
                 <module>saiku-webapp</module>
                 <module>saiku-server</module>
-                <module>saiku-bi-platform-plugin-p5</module>
-                <module>saiku-web-tests</module>
             </modules>
         </profile>
     </profiles>
