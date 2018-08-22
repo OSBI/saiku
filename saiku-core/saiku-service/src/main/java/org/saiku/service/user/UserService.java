@@ -112,17 +112,32 @@ public class UserService implements IUserManager, Serializable {
         return user;
 
     }
+    
+    @SuppressWarnings("unchecked")
+    private List<String> getCurrentUserRolesList() {
+      if (sessionService != null && 
+          sessionService.getAllSessionObjects() != null &&
+          sessionService.getAllSessionObjects().get("roles") != null) {
+        return (List<String>)sessionService.getAllSessionObjects().get("roles");
+      }
+      
+      return new ArrayList<String>();
+    }
+    
+    public String[] getCurrentUserRoles() {
+        List<String> roles = getCurrentUserRolesList();
+        String[] rolesArray = new String[roles.size()];
+        return roles.toArray(rolesArray);
+    }
 
     public boolean isAdmin() {
-        List<String> roles = (List<String> ) sessionService.getAllSessionObjects().get("roles");
+        List<String> roles = getCurrentUserRolesList();
 
-        if(roles!=null) {
+        if (roles!=null) {
             return !Collections.disjoint(roles, adminRoles);
-        }
-        else{
+        } else {
             return true;
         }
-
     }
 
     public void checkFolders(){

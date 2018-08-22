@@ -17,6 +17,7 @@ package org.saiku.web.rest.resources;
 
 import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.service.datasource.DatasourceService;
+import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
 import org.saiku.web.rest.objects.DataSourceMapper;
 
@@ -44,6 +45,7 @@ public class DataSourceResource {
 
     private static final Logger log = LoggerFactory.getLogger(DataSourceResource.class);
     private DatasourceService datasourceService;
+    private UserService userService;
 
     public void setDatasourceService(DatasourceService ds) {
         datasourceService = ds;
@@ -60,7 +62,7 @@ public class DataSourceResource {
     public Collection<SaikuDatasource> getDatasources() {
         //TODO: admin security?
         try {
-            return datasourceService.getDatasources().values();
+            return datasourceService.getDatasources(userService.getCurrentUserRoles()).values();
         } catch (SaikuServiceException e) {
             log.error(this.getClass().getName(), e);
             return new ArrayList<>();
@@ -95,7 +97,7 @@ public class DataSourceResource {
     public Response getDatasourceById(@PathParam("id") String id) {
         try {
             SaikuDatasource saikuDatasource = null;
-            Map<String, SaikuDatasource> datasources = datasourceService.getDatasources();
+            Map<String, SaikuDatasource> datasources = datasourceService.getDatasources(userService.getCurrentUserRoles());
             for (SaikuDatasource currentDatasource : datasources.values()) {
                 if (currentDatasource.getProperties().getProperty("id").equals(id)) {
                     saikuDatasource = currentDatasource;
@@ -118,12 +120,12 @@ public class DataSourceResource {
         boolean overwrite = true;
         try {
             SaikuDatasource saikuDatasource = null;
-            Map<String, SaikuDatasource> datasources = datasourceService.getDatasources();
+            Map<String, SaikuDatasource> datasources = datasourceService.getDatasources(userService.getCurrentUserRoles());
             for (SaikuDatasource currentDatasource : datasources.values()) {
                 if (currentDatasource.getProperties().getProperty("id").equals(id)) {
                     saikuDatasource = currentDatasource;
                     changeLocale(saikuDatasource, locale);
-                    datasourceService.addDatasource(saikuDatasource, overwrite);
+                    datasourceService.addDatasource(saikuDatasource, overwrite, userService.getCurrentUserRoles());
                     break;
                 }
             }
@@ -152,6 +154,14 @@ public class DataSourceResource {
             int end = location.indexOf(";", start);
             return location.substring(start, end);
         }
+    }
+
+    public UserService getUserService() {
+      return userService;
+    }
+
+    public void setUserService(UserService userService) {
+      this.userService = userService;
     }
 
 }

@@ -46,26 +46,25 @@ public class DatasourceService implements Serializable {
     return connectionManager;
   }
 
-  public void addDatasource(SaikuDatasource datasource, boolean overwrite) throws Exception {
-      SaikuDatasource ds = getDatasources().get(datasource.getName());
-      if(ds == null){
+  public void addDatasource(SaikuDatasource datasource, boolean overwrite, String[] roles) throws Exception {
+      SaikuDatasource ds = getDatasources(roles).get(datasource.getName());
+      
+      if (ds == null){
           datasources.addDatasource(datasource);
-      }
-      else{
-          if(overwrite){
+      } else {
+          if (overwrite) {
               datasources.removeDatasource(ds.getProperties().getProperty("id"));
               datasources.addDatasource(datasource);
-          }
-          else {
+          } else {
               throw new Exception("Datasource Name Already Exists!");
           }
       }
 
   }
 
-  public SaikuDatasource fetchDataSourceById(String id) throws SaikuDataSourceNotFoundException {
+  public SaikuDatasource fetchDataSourceById(String id, String[] roles) throws SaikuDataSourceNotFoundException {
       SaikuDatasource saikuDatasource = null;
-      Map<String, SaikuDatasource> datasources = this.getDatasources();
+      Map<String, SaikuDatasource> datasources = this.getDatasources(roles);
     for (SaikuDatasource currentDatasource : datasources.values()) {
       if (currentDatasource.getProperties().getProperty("id").equals(id)) {
         saikuDatasource = currentDatasource;
@@ -113,8 +112,8 @@ public class DatasourceService implements Serializable {
     return datasources.getDatasource(datasourceName);
   }
 
-  public Map<String,SaikuDatasource> getDatasources() {
-    return datasources.getDatasources();
+  public Map<String,SaikuDatasource> getDatasources(String[] roles) {
+    return datasources.getDatasources(roles);
   }
 
   public List<MondrianSchema> getAvailableSchema(){

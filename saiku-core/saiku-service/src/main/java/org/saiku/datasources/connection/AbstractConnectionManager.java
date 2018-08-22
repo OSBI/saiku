@@ -19,6 +19,7 @@ import org.saiku.datasources.datasource.SaikuDatasource;
 import org.saiku.olap.util.exception.SaikuOlapException;
 import org.saiku.service.datasource.IDatasourceManager;
 import org.saiku.service.datasource.IDatasourceProcessor;
+import org.saiku.service.user.UserService;
 import org.saiku.service.util.exception.SaikuServiceException;
 
 import org.olap4j.OlapConnection;
@@ -39,6 +40,7 @@ public abstract class AbstractConnectionManager implements IConnectionManager, S
   private static final long serialVersionUID = 4735617922513789022L;
   private static final Logger log = LoggerFactory.getLogger(AbstractConnectionManager.class);
   private transient IDatasourceManager ds;
+  private UserService userService;
 
   public void setDataSourceManager( IDatasourceManager ds ) {
     this.ds = ds;
@@ -140,7 +142,7 @@ public abstract class AbstractConnectionManager implements IConnectionManager, S
 
   public void refreshAllConnections() {
     ds.load();
-    for ( String name : ds.getDatasources().keySet() ) {
+    for ( String name : ds.getDatasources(userService.getCurrentUserRoles()).keySet() ) {
       try {
         refreshConnection( name );
       } catch (Exception ex) {
@@ -159,7 +161,7 @@ public abstract class AbstractConnectionManager implements IConnectionManager, S
 
   public Map<String, ISaikuConnection> getAllConnections() throws SaikuOlapException {
     Map<String, ISaikuConnection> resultDs = new HashMap<>();
-    for ( String name : ds.getDatasources().keySet() ) {
+    for ( String name : ds.getDatasources(userService.getCurrentUserRoles()).keySet() ) {
       ISaikuConnection con = getConnection( name );
       if ( con != null ) {
         resultDs.put( name, con );
@@ -223,5 +225,13 @@ public abstract class AbstractConnectionManager implements IConnectionManager, S
 
     stream.defaultReadObject();
    // ds = (IDatasourceManager)ApplicationContextProvider.getApplicationContext().getBean("classpathDsManager");
+  }
+
+  public UserService getUserService() {
+    return userService;
+  }
+
+  public void setUserService(UserService userService) {
+    this.userService = userService;
   }
 }

@@ -46,7 +46,7 @@ public interface IDatasourceManager {
 
   boolean removeSchema(String schemaName);
 
-  Map<String, SaikuDatasource> getDatasources();
+  Map<String, SaikuDatasource> getDatasources(String[] roles);
 
   SaikuDatasource getDatasource(String datasourceName);
 
