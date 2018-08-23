@@ -17,68 +17,68 @@
 /* Dialog */
 
 .dialog_chart-editor .dialog_icon {
-    width: 50px;
-    margin: 10px;
-    background: url("dialog_chart_editor.png") no-repeat;
+  width: 50px;
+  margin: 10px;
+  background: url('dialog_chart_editor.png') no-repeat;
 }
 
 /* Form Group */
 
 .dialog_chart-editor .form-group-inline label {
-    float: left;
-    width: 100px;
-    padding-top: 10px;
+  float: left;
+  width: 100px;
+  padding-top: 10px;
 }
 
-.dialog_chart-editor .form-group-inline input[type="text"] {
-    width: 160px;
-    padding: 4px;
+.dialog_chart-editor .form-group-inline input[type='text'] {
+  width: 160px;
+  padding: 4px;
 }
 
 .dialog_chart-editor .form-group-inline label.lbl-legend-yes {
-    width: 50px;
+  width: 50px;
 }
 
 .dialog_chart-editor .form-group-inline label.lbl-legend-no {
-    width: 100px;
+  width: 100px;
 }
 
 .dialog_chart-editor .form-group-inline select {
-    width: 172px;
-    padding: 4px;
-    border-color: #ccc;
+  width: 172px;
+  padding: 4px;
+  border-color: #ccc;
 }
 
 .dialog_chart-editor .form-group-inline .container-colors {
-    float: left;
-    width: 200px;
+  float: left;
+  width: 200px;
 }
 
 .dialog_chart-editor .form-group-inline .sp-replacer {
-    position: relative;
-    overflow: visible;
-    margin-bottom: 5px;
-    margin-left: 5px;
-    border-color: #ccc;
+  position: relative;
+  overflow: visible;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  border-color: #ccc;
 }
 
 .dialog_chart-editor .form-group-inline .sp-replacer:hover {
-    border-color: #666;
+  border-color: #666;
 }
 
 .dialog_chart-editor .form-group-inline .sp-replacer .delete-color {
-    position: absolute;
-    z-index: 9999 !important;
-    top: -8px;
-    right: -8px;
-    padding-right: 5px;
-    padding-left: 5px;
-    font-weight: bold;
-    color: #fff;
-    border-radius: 50%;
-    background-color: #ff0000;
+  position: absolute;
+  z-index: 9999 !important;
+  top: -8px;
+  right: -8px;
+  padding-right: 5px;
+  padding-left: 5px;
+  font-weight: bold;
+  color: #fff;
+  border-radius: 50%;
+  background-color: #f00;
 }
 
 .dialog_chart-editor .form-group-inline .sp-replacer .delete-color:hover {
-    text-decoration: none;
+  text-decoration: none;
 }
