@@ -8,7 +8,7 @@ Please try and make sure there is a relevant [issue ticket](https://github.com/O
 
 When committing please format your commit message with an issue reference and comment for example:
 
-```
+```sh
 git commit -a -m "#1234 - Fix bug x by doing y"
 ```
 
@@ -24,7 +24,7 @@ For people developing directly in our repository please create feature branches,
 
 ##### Create a feature branch:
 
-```
+```sh
 mvn jgitflow:feature-start
 ```
 
@@ -34,13 +34,13 @@ Hot fixes are releases forked from the latest release branch and merged back int
 
 ##### Create a hot fix:
 
-```
+```sh
 mvn jgitflow:hotfix-start
 ```
 
 ##### Finish a hot fix:
 
-```
+```sh
 mvn jgitflow:hotfix-finish -DkeepBranch -DnoHotfixBuild
 ```
 
@@ -50,12 +50,12 @@ Release branches are created when the development branch is feature complete, if
 
 ##### Create Release Branch:
 
-```
+```sh
 mvn jgitflow:release-start
 ```
 
 ##### Finish Release:
 
-```
+```sh
 mvn jgitflow:release-finish -DnoReleaseBuild
 ```
