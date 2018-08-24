@@ -22,7 +22,7 @@ For people developing directly in our repository please create feature branches,
 
 #### Feature Branches
 
-##### Create a feature branch
+##### Create a feature branch:
 
 ```
 mvn jgitflow:feature-start
@@ -32,13 +32,13 @@ mvn jgitflow:feature-start
 
 Hot fixes are releases forked from the latest release branch and merged back into master and development. After you have completed a hotfix a new release should be issued.
 
-##### Create a hot fix
+##### Create a hot fix:
 
 ```
 mvn jgitflow:hotfix-start
 ```
 
-##### Finish a hot fix
+##### Finish a hot fix:
 
 ```
 mvn jgitflow:hotfix-finish -DkeepBranch -DnoHotfixBuild
@@ -48,13 +48,13 @@ mvn jgitflow:hotfix-finish -DkeepBranch -DnoHotfixBuild
 
 Release branches are created when the development branch is feature complete, if not bug free. Once a release branch has been created you are still free to fix bugs within the release branch.
 
-##### Create Release Branch
+##### Create Release Branch:
 
 ```
 mvn jgitflow:release-start
 ```
 
-##### Finish Release
+##### Finish Release:
 
 ```
 mvn jgitflow:release-finish -DnoReleaseBuild
