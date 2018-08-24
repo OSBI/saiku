@@ -22,6 +22,10 @@
 
 /* Globals */
 
+* {
+  outline: none !important;
+}
+
 html,
 body {
   overflow: auto;
@@ -96,7 +100,7 @@ input.text:focus,
 input.title:focus,
 textarea:focus {
   border-color: #666;
-  outline: 1;
+  outline: none;
 }
 
 input[disabled],
@@ -121,7 +125,7 @@ select {
 }
 
 :focus {
-  outline: 0;
+  outline: none;
 }*/
 
 .clear {

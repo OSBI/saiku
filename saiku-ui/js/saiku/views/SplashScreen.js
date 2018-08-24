@@ -152,7 +152,7 @@ var SplashScreen = Backbone.View.extend({
 		if(Settings.BIPLUGIN5){
                 $(self.el).html(self.template());
 
-                if (Settings.LICENSE.licenseType != undefined &&
+                if (Settings.LICENSE && Settings.LICENSE.licenseType != undefined &&
                     Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenseType != "Open Source License") {
 
                     $(self.el).find(".enterprisetoggle").css("visibility", "hidden");
@@ -176,7 +176,7 @@ var SplashScreen = Backbone.View.extend({
                 //$(self.el).html(self.template()).appendTo($('body'));
                 $(self.el).html(self.template());
 
-                if (Settings.LICENSE.licenseType != undefined &&
+                if (Settings.LICENSE && Settings.LICENSE.licenseType != undefined &&
                     Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenseType != "Open" +
                     " Source License") {
 
@@ -247,7 +247,7 @@ var SplashScreen = Backbone.View.extend({
                     //$(self.el).html(self.template()).appendTo($('body'));
                     $(self.el).html(that.template());
 
-                    if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenseType != "Open Source" +
+                    if (Settings.LICENSE && Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenseType != "Open Source" +
                         " License") {
 
                         $(self.el).find(".enterprisetoggle").css("visibility", "hidden");
@@ -261,7 +261,7 @@ var SplashScreen = Backbone.View.extend({
                     //$(self.el).html(self.template()).appendTo($('body'));
                     $(self.el).html(self.template());
 
-                    if (Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenseType != "Open Source" +
+                    if (Settings.LICENSE && Settings.LICENSE.licenseType != "trial" && Settings.LICENSE.licenseType != "Open Source" +
                         " License") {
 
                         $(self.el).find(".enterprisetoggle").css("visibility", "hidden");
