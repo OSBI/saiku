@@ -121,7 +121,7 @@ Latest ✔ | Latest ✔ | Latest ✔ | Latest ✔ | Latest ✔ |
 
 ## Contributing
 
-If you want to help, please read the [Contributing](./CONTRIBUTING.md) guide.
+If you want to help, please read the [Contributing](../CONTRIBUTING.md) guide.
 
 ## History
 
