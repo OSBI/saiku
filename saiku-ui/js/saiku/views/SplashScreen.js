@@ -242,8 +242,8 @@ var SplashScreen = Backbone.View.extend({
                     Settings.LICENSE.licenseType !== 'trial' &&
                     Settings.LICENSE.licenseType !== 'Open Source License'
                 ) {
-                }
                     self.hide_content_enterprise();
+                }
             },
             error: function() {
                 self.$el.html(self.template());
