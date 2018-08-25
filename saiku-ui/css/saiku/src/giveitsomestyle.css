@@ -174,7 +174,8 @@ nav li.active a {
 }
 
 #splash #welcome {
-  background: url('../../../images/src/mac.png') bottom right no-repeat;
+  /*background: url('../../../images/src/mac.png') bottom right no-repeat;*/
+  background: url('../../../images/src/mac.png') right 150px no-repeat;
 }
 
 #splash table {
