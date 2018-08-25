@@ -60,7 +60,7 @@ var SplashScreen = Backbone.View.extend({
                     '<h1 class="saikulogo">Saiku</h1>' +
                     '<h2>Features</h2>' +
                     '<h3>Web Based Analysis</h3>' +
-                    '<p>Saiku provides the user with an entirely browser based experience. We support all modern browsers, and our user interface is 100% HTML and Javascript.<br/>Saiku uses REST based communications, this allows the development of custom user interfaces and facilitates the easy integration of the Saiku Server into other applications and services.</p>' +
+                    '<p>Saiku provides the user with an entirely browser based experience. We support all modern browsers, and our user interface is 100% HTML and Javascript.<br/><br/>Saiku uses REST based communications, this allows the development of custom user interfaces and facilitates the easy integration of the Saiku Server into other applications and services.</p>' +
                     '<h3>Standards Compliant</h3>' +
                     '<p>Saiku is based upon the Microsoft MDX query language and will work on most JDBC compliant data sources. We also provide a number of connectors to NOSQL data sources.</p>' +
                     '<h3>Dynamic charting</h3>' +
@@ -138,23 +138,23 @@ var SplashScreen = Backbone.View.extend({
         event.preventDefault();
 
         var target = event.target;
-        var a = $(target).attr('class').split(' ');
+        var nav = $(target).attr('class').split(' ');
+        var active = '';
 
         $('nav li').removeClass('active');
         $(target).parent().addClass('active');
         $('.stabs section').hide();
 
-        var active = '';
-        if (a.indexOf('welcome') > -1) {
+        if (nav.indexOf('welcome') > -1) {
             active = 'welcome';
         }
-        else if (a.indexOf('features') > -1) {
+        else if (nav.indexOf('features') > -1) {
             active = 'features';
         }
-        else if (a.indexOf('help') > -1) {
+        else if (nav.indexOf('help') > -1) {
             active = 'help';
         }
-        else if (a.indexOf('enterprise') > -1) {
+        else if (nav.indexOf('enterprise') > -1) {
             active = 'enterprise';
         }
 
