@@ -104,7 +104,7 @@ var SplashScreen = Backbone.View.extend({
         _.extend(this, Backbone.Events);
     },
 
-    caption: function(increment) {
+    caption: function() {
         return '<span class="i18n">Home</span>';
     },
 
@@ -117,11 +117,11 @@ var SplashScreen = Backbone.View.extend({
             Settings.LICENSE.licenseType !== 'trial' &&
             Settings.LICENSE.licenseType !== 'Open Source License'
         ) {
-            this.$el.find('.enterprisetoggle').css('visibility', 'hidden');
+            this.hide_content_enterprise();
         }
 
-        this.getContent();
-        this.setupPage();
+        this.get_content();
+        this.setup_page();
 
         $('#splash > nav > ul > li.active > a').click(function() {
             var active = $(this).attr('class');
@@ -197,7 +197,7 @@ var SplashScreen = Backbone.View.extend({
         return false;
     },
 
-    setupPage: function() {
+    setup_page: function() {
         var height = $(window).height();
         var active = $('nav li.active a').attr('class');
 
@@ -214,7 +214,14 @@ var SplashScreen = Backbone.View.extend({
         $('#' + active).fadeIn();
     },
 
-    getContent: function() {
+    hide_content_enterprise: function() {
+        this.$el.find('.enterprisetoggle').css('visibility', 'hidden');
+        this.$el.find('#splash #welcome').css({
+            background: 'url("../../../images/src/mac.png") top right no-repeat'
+        });
+    },
+
+    get_content: function() {
         var self = this;
 
         $.ajax({
@@ -235,10 +242,10 @@ var SplashScreen = Backbone.View.extend({
                     Settings.LICENSE.licenseType !== 'trial' &&
                     Settings.LICENSE.licenseType !== 'Open Source License'
                 ) {
-                    self.$el.find('.enterprisetoggle').css('visibility', 'hidden');
                 }
+                    self.hide_content_enterprise();
             },
-            error: function(e) {
+            error: function() {
                 self.$el.html(self.template());
 
                 if (
@@ -246,7 +253,7 @@ var SplashScreen = Backbone.View.extend({
                     Settings.LICENSE.licenseType !== 'trial' &&
                     Settings.LICENSE.licenseType !== 'Open Source License'
                 ) {
-                    self.$el.find('.enterprisetoggle').css('visibility', 'hidden');
+                    self.hide_content_enterprise();
                 }
             }
         });
