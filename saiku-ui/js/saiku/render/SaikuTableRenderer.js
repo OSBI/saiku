@@ -24,6 +24,16 @@ function getAxisLevelsName(data, axisName) {
     return arrLevels;
 }
 
+function setStyleNegativeNumber(value) {
+    var className = '';
+
+    if (Settings.STYLE_NEGATIVE_NUMBER && parseFloat(value) < 0) {
+        className = ' style_negative_number ';
+    }
+
+    return className;
+}
+
 function getAxisSize(data, axisName) {
     var queryData = data.query.queryModel.axes[axisName].hierarchies;
     var len = queryData.length;
@@ -450,7 +460,9 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
     if (typeof this._options.htmlObject === 'object' &&
         Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE &&
         hasMeasures > 0 &&
-        allData.query.type === 'QUERYMODEL') {
+        allData.query.type === 'QUERYMODEL' &&
+        allData.query.queryModel.details.axis === 'COLUMNS' &&
+        allData.query.queryModel.details.location === 'BOTTOM') {
 
         var arrColumnTitleTable = getAxisLevelsName(allData, COLUMNS);
         var arrDomColumnTitleTable = getDomColumnsLevelsName(this._options.htmlObject);
@@ -509,6 +521,8 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
             Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE &&
             hasMeasures > 0 &&
             allData.query.type === 'QUERYMODEL' &&
+            allData.query.queryModel.details.axis === 'COLUMNS' &&
+            allData.query.queryModel.details.location === 'BOTTOM' &&
             auxColumnTitleTable < arrColumnTitleTable.length) {
 
             rowContent += '<th class="row_header" style="text-align: right;" colspan="' + colspanColumnTitleTable + '" title="' + arrColumnTitleTable[auxColumnTitleTable] + '">'
@@ -528,7 +542,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 
             // If the cell is a column header and is null (top left of table)
             if (header.type === "COLUMN_HEADER" && header.value === "null" && (firstColumn == null || col < firstColumn)) {
-                if ((!Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE || hasMeasures === 0) ||
+                if (((!Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE || (Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE && allData.query.queryModel.details.location !== 'BOTTOM')) || hasMeasures === 0) ||
                     allData.query.type === 'MDX') {
                     rowContent += '<th class="all_null">&nbsp;</th>';
                 }
@@ -624,7 +638,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
                     }
                 }
                 var value = (same ? "<div>&nbsp;</div>" : '<div rel="' + row + ":" + col + '">'
-                            + (sameAsPrevValue && Settings.ALLOW_TABLE_DATA_COLLAPSE ? '<span class="expander expanded">&#9660;</span>' : '' ) + header.value + '</div>');
+                            + (sameAsPrevValue && Settings.ALLOW_TABLE_DATA_COLLAPSE ? '<span class="expander expanded" style="cursor: pointer;">&#9660;</span>' : '' ) + header.value + '</div>');
                 if (!wrapContent) {
                     value = (same ? "&nbsp;" : header.value );
                 }
@@ -744,7 +758,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
                 }
 
                 rowContent += '<td class="data" ' + color + '>'
-                        + (wrapContent ? '<div class="datadiv" alt="' + header.properties.raw + '" rel="' + header.properties.position + '">' : "")
+                        + (wrapContent ? '<div class="datadiv '+ setStyleNegativeNumber(header.properties.raw) + '" alt="' + header.properties.raw + '" rel="' + header.properties.position + '">' : "")
                         + val + arrow
                         + (wrapContent ? '</div>' : '') + '</td>';
                 if (totalsLists[ROWS])

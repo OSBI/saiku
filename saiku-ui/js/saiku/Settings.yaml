@@ -99,11 +99,11 @@ ORBIS_AUTH:
   cookieName: COOKIE_NAME
 SCHEMA_EDITOR:
   # The `^` matches beginning of input
-  STAR_SCHEMA_FACT_TABLE: null
-  STAR_SCHEMA_DIMENSION_TABLE: null
-  STAR_SCHEMA_MEASURE_COLUMN: null
+  STAR_SCHEMA_FACT_TABLE: !!js/regexp /^fact_|^f_/i
+  STAR_SCHEMA_DIMENSION_TABLE: !!js/regexp /^dimension_|^dim_|^d_/i
+  STAR_SCHEMA_MEASURE_COLUMN: !!js/regexp /^measure_|^m_/i
   # The `$` matches end of input
-  STAR_SCHEMA_MEASURE_AGGREGATION_COLUMN: null
+  STAR_SCHEMA_MEASURE_AGGREGATION_COLUMN: !!js/regexp /_sum$|_avg$|_count$|_min$|_max$/i
 ALLOW_TABLE_DATA_COLLAPSE: false
 ALLOW_AXIS_COLUMN_TITLE_TABLE: true
 COLUMN_TITLE_TABLE_USE_LEVEL_CAPTION_NAME: true
@@ -137,3 +137,4 @@ TIME_SERIES_FILTER:
   # 2009/07/12 12:34:56
   date_format: YYYY/MM/DD
 EXTENDED_REPOSITORY_RESOURCE: false
+STYLE_NEGATIVE_NUMBER: false

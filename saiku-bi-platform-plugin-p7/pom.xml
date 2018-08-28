@@ -2,16 +2,16 @@
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saikuanalytics</groupId>
-        <version>3.16.1-SNAPSHOT</version>
+        <version>3.17</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>saiku-bi-platform-plugin-p7</artifactId>
     <packaging>jar</packaging>
-    <version>3.16.1-SNAPSHOT</version>
+    <version>3.17</version>
     <name>saiku biserver plugin</name>
 
     <build>
-        <resources>
+        <!--<resources>
             <resource>
                 <directory>src/main/plugin</directory>
                 <targetPath>${basedir}/../saiku-bi-platform-plugin-p5/target/dist/saiku</targetPath>
@@ -22,7 +22,7 @@
 
                 </includes>
             </resource>
-        </resources>
+        </resources>-->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -66,12 +66,12 @@
                                     <type>jar</type>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
                                 </artifactItem>
-                                <artifactItem>
+                                <!--<artifactItem>
                                     <groupId>org.saikuanalytics</groupId>
                                     <artifactId>saiku-bi-platform-plugin-p5</artifactId>
                                     <type>jar</type>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
-                                </artifactItem>
+                                </artifactItem>-->
                                 <artifactItem>
                                     <groupId>org.saikuanalytics</groupId>
                                     <artifactId>saiku-web</artifactId>
@@ -392,7 +392,7 @@
         </repository>
     </repositories>
     <dependencies>
-        <dependency>
+        <!--<dependency>
             <groupId>org.saikuanalytics</groupId>
             <artifactId>saiku-bi-platform-plugin-p5</artifactId>
             <version>${pom.version}</version>
@@ -414,7 +414,7 @@
                     <artifactId>eigenbase-xom</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.saikuanalytics</groupId>
             <artifactId>saiku-service</artifactId>

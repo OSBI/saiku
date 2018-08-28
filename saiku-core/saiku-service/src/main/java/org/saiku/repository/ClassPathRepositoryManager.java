@@ -523,7 +523,6 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         extensions[0] = "xml";
         
         String datadir = getDatadir();
-
         File testFile = new File(datadir);
         
         if (!testFile.exists()) {
@@ -739,7 +738,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
 
                     log.debug("p split: " + p);
                     String[] t = append.split("/");
-                    if (!s[s.length - 2].equals(t[t.length - 1])) {
+
+                    if (!workspaces && !s[s.length - 2].equals(t[t.length - 1])) {
                         d.setName(s[s.length - 2] + "_" + (d != null ? d.getName() : ""));
                     }
                 }
@@ -842,8 +842,8 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
                 String relativePath = file.getPath();
                 String datadir = getDatadir();
 
-                if (relativePath.startsWith(datadir) && datadir.length() >= 3) { // If we have an absolute path
-                    relativePath = relativePath.substring(datadir.length() - 3, relativePath.length());
+                if (relativePath.startsWith(datadir) && datadir.length() >= 0) { // If we have an absolute path
+                    relativePath = relativePath.substring(datadir.length(), relativePath.length()); //Make it relative to the datadir
                 }
 
                 relativePath = relativePath.replace("\\", "/");
@@ -959,6 +959,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
     }
 
     private File getNode(String path) {
+
         path = fixPath(path);
         File f = new File(path);
 
@@ -1016,6 +1017,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
                     this.bootstrap(append + "/unknown");
                     this.start(userService);
                 }
+
                 return fixPath(append + "/unknown/");
             }
         } catch (Exception ex) {
@@ -1023,6 +1025,7 @@ public class ClassPathRepositoryManager implements IRepositoryManager {
         }
       }
       
+
       String basePath = fixPath(append + "/unknown");
         
       if (!new File(fixPath(basePath + "/etc")).exists()) {

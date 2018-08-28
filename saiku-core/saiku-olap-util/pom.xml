@@ -3,15 +3,15 @@
     <parent>
         <artifactId>saiku-core</artifactId>
         <groupId>org.saikuanalytics</groupId>
-        <version>3.16.1-SNAPSHOT</version>
+        <version>3.17</version>
     </parent>
 	<artifactId>saiku-olap-util</artifactId>
 	<packaging>jar</packaging>
-	<version>3.16.1-SNAPSHOT</version>
+	<version>3.17</version>
 	<name>saiku olap util</name>
 	<properties>
-		<maven.compiler.source>1.5</maven.compiler.source>
-		<maven.compiler.target>1.5</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 		<pentaho.libs.version>3.10.0-stable</pentaho.libs.version>
 		<slf4j.version>1.6.1</slf4j.version>
 	</properties>

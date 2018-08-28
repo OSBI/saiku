@@ -18,16 +18,18 @@
  * Renders a chart for each workspace
  */
 var Chart = Backbone.View.extend({
+    events: {
+        'click #charteditor' : 'show_editor'
+    },
 
     initialize: function(args) {
-
         this.workspace = args.workspace;
 
         // Create a unique ID for use as the CSS selector
         this.id = _.uniqueId("chart_");
         $(this.el).attr({ id: this.id });
 
-        this.renderer = new SaikuChartRenderer(null, { htmlObject: $(this.el), zoom: true, adjustSizeTo: ".workspace_results" });
+        this.renderer = new SaikuChartRenderer(null, { htmlObject: $(this.el), zoom: true, adjustSizeTo: ".workspace_results", workspace: this.workspace });
 
         // Bind table rendering to query result event
         _.bindAll(this, "receive_data", "show", "render_view", "exportChart");
@@ -48,7 +50,7 @@ var Chart = Backbone.View.extend({
          var pseudoForm = "<div id='nav" + this.id + "' style='display:none' class='nav'><form id='svgChartPseudoForm' target='_blank' method='POST'>" +
                 "<input type='hidden' name='type' class='type'/>" +
                 "<input type='hidden' name='svg' class='svg'/>" +
-			 	"<input type='hidden' name='name' class='name'/>" +
+                "<input type='hidden' name='name' class='name'/>" +
                 "</form></div>";
         if (isIE) {
             pseudoForm = "<div></div>";
@@ -56,8 +58,6 @@ var Chart = Backbone.View.extend({
         this.nav =$(pseudoForm);
 
         $(this.el).append(this.nav);
-
-
     },
 
     exportChart: function(type) {
@@ -71,17 +71,24 @@ var Chart = Backbone.View.extend({
         var form = $('#svgChartPseudoForm');
         form.find('.type').val(type);
         form.find('.svg').val(svgContent);
-		if(this.workspace.query.name!=undefined) {
-			var f = this.workspace.query.name.substring(this.workspace.query.name.lastIndexOf('/') + 1).slice(0, -6);
-			form.find('.name').val(f);
-		}
+        if(this.workspace.query.name!=undefined) {
+            var f = this.workspace.query.name.substring(this.workspace.query.name.lastIndexOf('/') + 1).slice(0, -6);
+            form.find('.name').val(f);
+        }
         form.attr('action', Settings.REST_URL + this.workspace.query.url() + escape("/../../export/saiku/chart"));
         form.submit();
         return false;
     },
 
+    show_editor:function(event) {
+        var $currentTarget = $(event.currentTarget);
+        if ($currentTarget.attr('disabled') !== 'disabled') {
+            (new ChartEditor({ data: this.renderer, workspace: this.workspace })).render().open();
+        }
+    },
+
     render_view: function() {
-    	// Append chart to workspace, called by workspace
+        // Append chart to workspace, called by workspace
         $(this.workspace.el).find('.workspace_results')
             .prepend($(this.el).hide());
     },
@@ -96,17 +103,25 @@ var Chart = Backbone.View.extend({
 
         var hasRun = this.workspace.query.result.hasRun();
 
+        if ($(this.workspace.el).find('#charteditor').length === 0) {
+            $(this.workspace.el).find('.query_toolbar_vertical').find('.options.chart.hide li:eq(0)').after('<li id="charteditor" class="seperator_vertical chart_editor"><a href="#charteditor" ' +
+                'style="height:30px;" class="button">Properties</a></li>');
+
+            $(this.workspace.el).find('.query_toolbar_vertical').find('#charteditor').on('click', function (event) {
+                self.show_editor(event);
+            });
+        }
         if (hasRun) {
-            _.defer( function() {
+            _.defer(function() {
+                var p = self.workspace.query.getProperty('saiku.ui.chart.options');
+
                 self.renderer.process_data_tree({ data: self.workspace.query.result.lastresult() }, true, true);
-                self.renderer.switch_chart(self.renderer.type, {workspace: self.workspace});
+                self.renderer.switch_chart(self.renderer.type, {workspace: this.workspace, chartDefinition: p ? p.chartDefinition : null});
             });
         }
 
-
         this.workspace.trigger('chart:rendered', this);
     },
-
 
     export_button: function(event) {
         var self = this;
@@ -139,10 +154,10 @@ var Chart = Backbone.View.extend({
         }
         this.workspace.adjust();
         this.renderer.process_data_tree(args, true, true);
-        this.renderer.switch_chart(this.renderer.type, {workspace: this.workspace});
+        var p = this.workspace.query.getProperty('saiku.ui.chart.options');
+        this.renderer.switch_chart(this.renderer.type, {workspace: this.workspace, chartDefinition: p ? p.chartDefinition : null});
         //_.delay(this.renderer.process_data_tree, 0, args, true, true);
-
     }
 });
 
-
+Saiku.loadCSS('js/saiku/plugins/CCC_Chart/chart_editor.css');

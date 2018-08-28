@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.*;
 
 import javax.jcr.PathNotFoundException;
@@ -58,8 +59,8 @@ import org.springframework.security.web.session.HttpSessionCreatedEvent;
  * A Datasource Manager for the Saiku Repository API layer.
  */
 public class RepositoryDatasourceManager implements IDatasourceManager, ApplicationListener<HttpSessionCreatedEvent> {
-    private static final String ORBIS_WORKSPACE_DIR = "workspace";
-    private static final String SAIKU_AUTH_PRINCIPAL = "SAIKU_AUTH_PRINCIPAL";
+    public static final String ORBIS_WORKSPACE_DIR = "workspace";
+    public static final String SAIKU_AUTH_PRINCIPAL = "SAIKU_AUTH_PRINCIPAL";
     
     private final Map<String, SaikuDatasource> datasources = Collections.synchronizedMap(new HashMap<String, SaikuDatasource>());
     public IConnectionManager connectionManager;
@@ -126,6 +127,10 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
         loadDatasources(ext);
     }
 
+    public void setRepositoryManager(IRepositoryManager irm) {
+        this.irm = irm;
+    }
+
     public Properties checkForExternalDataSourceProperties() {
         Properties p = new Properties();
         InputStream input;
@@ -172,29 +177,20 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
         DataSource ds = new DataSource(datasource);
 
         if (ds.getCsv() != null && ds.getCsv().equals("true")) {
-            if(this.workspaces) {
-                String s = this.getworkspacedir();
-                
-                if (s.endsWith("/")) {
-                    s = s.substring(0, s.length() - 1);
-                }
-                
-                if (ds.getName().startsWith(s)) {
-                    ds.setName(ds.getName().replace(s + "_", ""));
-                }
-            }
-
             String split[] = ds.getLocation().split("=");
             String loc = split[2];
             if(split[2].startsWith("mondrian:")){
-                split[2] = "mondrian:/"+getDatadir() + "/datasources/" + ds.getName() + "-csv.json;Catalog";
+                split[2] = "mondrian:/" + getDatadir() + "datasources/" + ds.getName() + "-csv.json;Catalog";
+            } else {
+                split[2] = getDatadir() + "datasources/" + ds.getName() + "-csv.json;Catalog";
+                split[2] = split[2].replace('\\', '/');
+                split[2] = split[2].replaceAll("[/]+", "/");
             }
-            else {
-                split[2] = getDatadir() + "/datasources/" + ds.getName() + "-csv.json;Catalog";
-            }
+
             for (int i = 0; i < split.length - 1; i++) {
                 split[i] = split[i] + "=";
             }
+
             ds.setLocation(StringUtils.join(split));
 
             log.debug("LOC IS: " + loc);
@@ -202,10 +198,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
 
             log.debug("PATH IS: " + path);
             path = path.replace("\\", "/");
+            path = path.replaceAll("[/]+", "/");
 
             log.debug("Trimmed path is: " + path);
             if(!datadir.equals("${CLASSPATH_REPO_PATH_UNPARSED}")) {
-                path = path.replaceFirst(datadir, "");
+                path = path.replaceFirst(getDatadir(), "");
             }
             
             // When using Jackrabbit, paths should follow JCR standards
@@ -223,20 +220,27 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
             }
             
             boolean f = true;
-            
-            if (new File(getDatadir() + separator + path).exists() && new File(getDatadir() + separator + path).isDirectory()) {
+
+            if (new File(getDatadir() + path).exists() && new File(getDatadir() + path).isDirectory()) {
                 f = false;
             }
-            if(!path.startsWith("mondrian:")) {
-                irm.saveInternalFile(this.getCSVJson(f, ds.getName(), getDatadir() + path),
-                    separator + "datasources" + separator + ds.getName() + "-csv.json", null);
 
-            }
-            else{
+            path = path.replace("\\", "/");
+            path = path.replaceAll("[/]+", "/");
+
+            if(!path.startsWith("mondrian:")) {
+                String pathToSave = getDatadir() + path;
+
+                pathToSave = pathToSave.replace("\\", "/");
+                pathToSave = pathToSave.replaceAll("[/]+", "/");
+
+                irm.saveInternalFile(this.getCSVJson(f, ds.getName(), pathToSave),
+                    separator + "datasources" + separator + ds.getName() + "-csv.json", null);
+            } else{
                 irm.saveInternalFile(this.getCSVJson(f, ds.getName(), path),
                     separator + "datasources" + separator + ds.getName() + "-csv.json", null);
-
             }
+
             irm.saveDataSource(ds, separator + "datasources" + separator + ds.getName() + ".sds", "fixme");
             
             String name = ds.getName();
@@ -249,7 +253,6 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
             connectionManager.refreshConnection(name);
         } else {
             irm.saveDataSource(ds, separator + "datasources" + separator + ds.getName() + ".sds", "fixme");
-
         }
 
         String name = ds.getName();
@@ -602,7 +605,7 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
                     }
 
                 } catch (Exception e) {
-                    return cleanse(datadir) + "/unknown/";
+                    return cleanse(datadir) + "unknown/";
                 }
             } else {
                 return cleanse(datadir);
@@ -648,11 +651,14 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
         }
     }
 
-    private String cleanse(String workspace) {
+    public String cleanse(String workspace) {
         workspace = workspace.replace("\\", "/");
+        workspace = workspace.replaceAll("[/]+", "/");
+
         if (!workspace.endsWith("/")) {
             return workspace + "/";
         }
+
         return workspace;
     }
 
@@ -739,11 +745,12 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
     }
 
     private String getCSVJson(boolean file, String name, String path) {
+        path = path.replace("\\", "/");
+        path = path.replaceAll("[/]+", "/");
 
         String p;
         if (!file) {
             p = "directory: '" + path + "'\n";
-
 
             return "{\n" +
                     "version: '1.0',\n" +
@@ -759,9 +766,9 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
                     "}\n" +
                     "]\n" +
                     "}";
-
         } else {
             p = "file: '" + path + "',";
+
             return "{\n" +
                     "version: '1.0',\n" +
                     "defaultSchema: '" + name + "',\n" +
@@ -779,7 +786,6 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
                     "}]}\n" +
                     "]\n" +
                     "}";
-
         }
     }
 

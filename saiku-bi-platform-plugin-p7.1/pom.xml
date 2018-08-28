@@ -2,17 +2,16 @@
     <parent>
         <artifactId>saiku</artifactId>
         <groupId>org.saikuanalytics</groupId>
-        <version>3.16.1-SNAPSHOT</version> 
+        <version>3.17</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>saiku-bi-platform-plugin-p7.1</artifactId>
     <packaging>jar</packaging>
-    <version>3.16.1-SNAPSHOT</version> 
     <name>saiku biserver plugin</name>
 
     <build>
         <resources>
-            <resource>
+            <!--<resource>
                 <directory>src/main/plugin</directory>
                 <targetPath>${basedir}/../saiku-bi-platform-plugin-p5/target/dist/saiku</targetPath>
                 <filtering>true</filtering>
@@ -21,7 +20,7 @@
                     <include>**/*.js</include>
 
                 </includes>
-            </resource>
+            </resource>-->
         </resources>
         <plugins>
             <plugin>
@@ -66,12 +65,12 @@
                                     <type>jar</type>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
                                 </artifactItem>
-                                <artifactItem>
+                                <!--<artifactItem>
                                     <groupId>org.saikuanalytics</groupId>
                                     <artifactId>saiku-bi-platform-plugin-p5</artifactId>
                                     <type>jar</type>
                                     <outputDirectory>target/dist/saiku/lib</outputDirectory>
-                                </artifactItem>
+                                </artifactItem>-->
                                 <artifactItem>
                                     <groupId>org.saikuanalytics</groupId>
                                     <artifactId>saiku-web</artifactId>
@@ -332,15 +331,7 @@
         </repository>
         <repository>
             <id>pentaho-third-party</id>
-            <url>http://nexus.pentaho.org/content/repositories/proxied-3rd-party-releases/</url>
-        </repository>
-        <repository>
-            <id>pentaho-public-release</id>
-            <url>http://nexus.pentaho.org/content/repositories/pentaho-public-release-repos/</url>
-        </repository>
-        <repository>
-            <id>pentaho-snapshot</id>
-            <url>http://nexus.pentaho.org/content/repositories/public-snapshots/</url>
+            <url>http://nexus.pentaho.org/content/groups/omni</url>
         </repository>
 
         <repository>
@@ -361,7 +352,7 @@
         </repository>
     </repositories>
     <dependencies>
-        <dependency>
+        <!--<dependency>
             <groupId>org.saikuanalytics</groupId>
             <artifactId>saiku-bi-platform-plugin-p5</artifactId>
             <version>${pom.version}</version>
@@ -383,7 +374,7 @@
                     <artifactId>eigenbase-xom</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.saikuanalytics</groupId>
             <artifactId>saiku-service</artifactId>
@@ -439,6 +430,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>pentaho</groupId>
+            <artifactId>pentaho-platform-repository</artifactId>
+            <version>7.1.0.0-12</version>
         </dependency>
         <!--
                 <dependency>

@@ -3,11 +3,11 @@
 <parent>
 		<artifactId>saiku</artifactId>
 		<groupId>org.saikuanalytics</groupId>
-	<version>3.16.1-SNAPSHOT</version>
+	<version>3.17</version>
 	</parent>
 	<artifactId>saiku-ui</artifactId>
 	<packaging>pom</packaging>
-	<version>3.16.1-SNAPSHOT</version>
+	<version>3.17</version>
         <properties>
 	<checkstyle.skip>true</checkstyle.skip>
 	 <build.prod>false</build.prod>
@@ -105,6 +105,7 @@
 						<jsSourceInclude>views/TitlesModal.js</jsSourceInclude>
 						<jsSourceInclude>adapters/SaikuServer.js</jsSourceInclude>
 						<jsSourceInclude>routers/QueryRouter.js</jsSourceInclude>
+						<jsSourceInclude>views/ChartEditor.js</jsSourceInclude>
 						<jsSourceInclude>views/Tour.js</jsSourceInclude>
 					</jsSourceIncludes>
 					<jsSourceExcludes>
@@ -136,6 +137,7 @@
 								<filtering>true</filtering>
 								<includes>
 									<include>Settings.js</include>
+									<include>Settings.yaml</include>
 								</includes>
 							</resource>
 						</resources>
@@ -155,6 +157,7 @@
 									<filtering>true</filtering>
 									<includes>
 										<include>Settings.js</include>
+										<include>Settings.yaml</include>
 									</includes>
 								</resource>
 							</resources>
@@ -214,6 +217,7 @@
 										<fileset dir="${basedir}/">
 											<include name="js/saiku/plugins/" />
 											<include name="js/saiku/Settings.js" />
+											<include name="js/saiku/Settings.yaml" />
 											<include name="js/saiku/Saiku.js" />
 											<include name="js/saiku/embed/" />
 											<include name="js/saiku/render/" />
@@ -236,6 +240,7 @@
 										<fileset dir="${basedir}/">
 											<include name="js/saiku/plugins/" />
 											<include name="js/saiku/Settings.js" />
+											<include name="js/saiku/Settings.yaml" />
 											<include name="js/saiku/Saiku.js" />
 										</fileset>
 									</copy>
