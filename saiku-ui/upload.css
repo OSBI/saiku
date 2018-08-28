@@ -1,4 +1,4 @@
-/*  
+/*
  *   Copyright 2015 OSBI Ltd
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,22 +29,24 @@
    0. GLOBAL
    ========================================================================== */
 
-*, *:before, *:after {
-	-webkit-box-sizing: border-box;
-	   -moz-box-sizing: border-box;
-	        box-sizing: border-box;
+*,
+*:before,
+*:after {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 body,
 html {
-	padding: 0;
-	margin: 0;
-	height: 100%;
-	font-size: 100%;
-	background-color: #f5f5f5;
-    overflow: hidden;
-    overflow-x: hidden;
-	box-shadow: inset 0 -20px 120px 10px rgba(0,0,0,.2);
+  overflow: hidden;
+  overflow-x: hidden;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+  background-color: #f5f5f5;
+  box-shadow: inset 0 -20px 120px 10px rgba(0,0,0,0.2);
 }
 
 /*
@@ -52,23 +54,23 @@ html {
  * Link: http://nicolasgallagher.com/micro-clearfix-hack/
  */
 
-.clearfix:before, 
-.clearfix:after { 
-	content: " "; 
-	display: table; 
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: ' ';
 }
 
-.clearfix:after { 
-	clear: both; 
+.clearfix:after {
+  clear: both;
 }
 
 body {
-	font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
-	color: #333;
+  font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+  color: #333;
 }
 
 /*.debug {
-	border: 1px solid #000;
+  border: 1px solid #000;
 }*/
 
 /* ==========================================================================
@@ -79,25 +81,25 @@ body {
    ========================================================================== */
 
 .container > header {
-	width: 90%;
-	max-width: 69em;
-	margin: 0 auto;
-	padding: 2.875em 1.875em 1.875em;
+  width: 90%;
+  max-width: 69em;
+  margin: 0 auto;
+  padding: 2.875em 1.875em 1.875em;
 }
 
-.container > header .saiku-logo { 
-	display: block; 
-	margin-right: auto;
-	margin-left: auto;
+.container > header .saiku-logo {
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .container > header .description {
-	margin-top: 2em;
-	font-size: 1.250em;
-	line-height: 2;
-	text-align: center;
-	font-weight: 400;
-	text-transform: uppercase;
+  margin-top: 2em;
+  font-size: 1.250em;
+  font-weight: 400;
+  line-height: 2;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 /* ==========================================================================
@@ -108,101 +110,101 @@ body {
    ========================================================================== */
 
 .form-upload {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	margin-top: -6.250em;
-	margin-left: -15.625em;
-	width: 500px;
-	height: 200px;
-	border: 4px dashed #333;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 500px;
+  height: 200px;
+  margin-top: -6.250em;
+  margin-left: -15.625em;
+  border: 4px dashed #333;
 }
 
 .form-upload p {
-	width: 100%;
-	height: 100%;
-	text-align: center;
-	line-height: 150px;
+  width: 100%;
+  height: 100%;
+  line-height: 150px;
+  text-align: center;
 }
 
 .form-upload .file-upload {
-	position: absolute;
-	margin: 0;
-	padding: 0;
-	width: 100%;
-	height: 100%;
-	outline: none;
-	opacity: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  outline: none;
 }
 
 .form-upload .btn-upload {
-	margin: 0 auto;
-	margin-top: -1.250em;
-  	margin-left: -0.250em;
-	width: 500px;
-	height: 35px;
-	font-size: .750em;
-	text-transform: uppercase;
-	color: #fff;
-	background-color: #999;
-	border: none;
-	border-bottom: 4px solid #666;
-	border-radius: 4px;
-	outline: none;
-	transition: all .2s ease;
+  width: 500px;
+  height: 35px;
+  margin: 0 auto;
+  margin-top: -1.250em;
+  margin-left: -0.250em;
+  font-size: 0.750em;
+  color: #fff;
+  border: none;
+  border-bottom: 4px solid #666;
+  border-radius: 4px;
+  outline: none;
+  background-color: #999;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
 }
 
 .form-upload .btn-upload:hover {
-	background-color: #888;
-	cursor: pointer;
+  background-color: #888;
+  cursor: pointer;
 }
 
 .form-upload .btn-upload:active {
-	border: 0;
+  border: 0;
 }
 
 .form-upload .back-login {
-	margin-top: 30px;
-	display: none;
+  display: none;
+  margin-top: 30px;
 }
 
 .form-upload .back-login a {
-	text-decoration: none;
+  text-decoration: none;
 }
 
 .form-upload .back-login a:hover {
-	text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* 2.2. NOTIFICATION
    ========================================================================== */
 
 #notification {
-	position: absolute;
-	bottom: 0;
-	display: none;
-	width: 100%;
-	padding: 5px;
-	color: #fff;
-	font-weight: bold;
+  position: absolute;
+  bottom: 0;
+  display: none;
+  width: 100%;
+  padding: 5px;
+  font-weight: bold;
+  color: #fff;
 }
 
 .alert-success {
-	padding: 10px;
-	background-color: green;
+  padding: 10px;
+  background-color: green;
 }
 
 .alert-info {
-	padding: 10px;
-	background-color: blue;
+  padding: 10px;
+  background-color: blue;
 }
 
 .alert-danger {
-	padding: 10px;
-	background-color: red;  
+  padding: 10px;
+  background-color: red;
 }
 
 #notification > p {
-	margin: 10px;
-	text-align: center;
+  margin: 10px;
+  text-align: center;
 }

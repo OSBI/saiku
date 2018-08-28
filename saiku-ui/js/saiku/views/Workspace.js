@@ -823,8 +823,6 @@ var Workspace = Backbone.View.extend({
         Saiku.i18n.translate();
     },
 
-    /*jshint -W027*/
-    /*jshint -W083*/
     populate_selections: function(dimlist) {
         var self = this;
 

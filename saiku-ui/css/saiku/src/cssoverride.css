@@ -15,21 +15,25 @@
  */
 
 /*#toolbar {
-    background: #FFD183;
-    background: -webkit-gradient(linear, left top, left bottom, from(#FFD183), to(#FFC159));
-}*/
-/*.tabs {
-    background: #FCB134;
-}*/
-/*.tabs ul {
-    background: #E39109;
-}*/
-/*.tabs ul li {
-    background: #E39109;
-    color: #888;
-}*/
-/*.tabs ul li.selected {
-    background: #FCB134;
-    background: -webkit-gradient(linear, left top, left bottom, from(#FFD183), to(#FCB134));
-    border-bottom: 1px solid #FCB134 !important;
+  background: #ffd183;
+  background: -webkit-gradient(linear, left top, left bottom, from(#ffd183), to(#ffc159));
+}
+
+.tabs {
+  background: #fcb134;
+}
+
+.tabs ul {
+  background: #e39109;
+}
+
+.tabs ul li {
+  color: #888;
+  background: #e39109;
+}
+
+.tabs ul li.selected {
+  border-bottom: 1px solid #fcb134 !important;
+  background: #fcb134;
+  background: -webkit-gradient(linear, left top, left bottom, from(#ffd183), to(#fcb134));
 }*/

@@ -20,13 +20,13 @@
 <p align="center"><a href="https://try.meteorite.bi/"><img src="https://raw.githubusercontent.com/OSBI/saiku/assets/saiku-demo-1.jpg"/></a></p>
 <hr />
 <p align="center">
-  <a href="http://www.meteorite.bi/"><b>homepage</b></a> |
+  <a href="http://www.meteorite.bi/"><b>Homepage</b></a> |
   <a href="http://licensing.meteorite.bi/"><b>Saiku License</b></a> |
-  <a href="http://saiku-documentation.readthedocs.io/en/latest/"><b>wiki</b></a> |
-  <a href="http://community.meteorite.bi/"><b>community</b></a> |
-  <a href="https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/dev"><b>mailing list</b></a> |
-  <a href="http://webchat.freenode.net/?randomnick=1&channels=%23%23saiku"><b>chat</b></a> |
-  <a href="https://twitter.com/SaikuAnalytics"><b>news</b></a>
+  <a href="http://saiku-documentation.readthedocs.io/en/latest/"><b>Wiki</b></a> |
+  <a href="http://community.meteorite.bi/"><b>Community</b></a> |
+  <a href="https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/dev"><b>Mailing List</b></a> |
+  <a href="http://webchat.freenode.net/?randomnick=1&channels=%23%23saiku"><b>Chat</b></a> |
+  <a href="https://twitter.com/SaikuAnalytics"><b>News</b></a>
 </p>
 
 ***
@@ -117,7 +117,7 @@ Latest ✔ | Latest ✔ | Latest ✔ | Latest ✔ | Latest ✔ |
 
 ## Contributing
 
-Check [CONTRIBUTING.md](https://github.com/OSBI/saiku/blob/master/CONTRIBUTING.md) for more details. Some important information:
+Check [CONTRIBUTING.md](./CONTRIBUTING.md) for more details. Some important information:
 
 * To get started, [sign the Contributor License Agreement](https://www.clahub.com/agreements/OSBI/saiku).
 

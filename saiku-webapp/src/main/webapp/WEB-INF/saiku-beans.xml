@@ -93,6 +93,7 @@
     </bean>
     <bean id="connectionManager" class="org.saiku.web.core.SecurityAwareConnectionManager" init-method="init"
           destroy-method="destroy" depends-on="mondrianVFS">
+        <property name="userService" ref="userServiceBean"/>
         <property name="dataSourceManager" ref="repositoryDsManager"/>
         <property name="sessionService" ref="sessionService"/>
 
@@ -148,6 +149,7 @@
 
     <!--<bean id="datasourceResourceBean" class="org.saiku.web.rest.resources.DataSourceResource">
         <property name="datasourceService" ref="datasourceServiceBean"/>
+        <property name="userService" ref="userServiceBean"/>
     </bean>-->
 
     <bean id="olapDiscoverBean" scope="session"

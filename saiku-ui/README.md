@@ -1,6 +1,6 @@
 # [Saiku UI](http://www.meteorite.bi)
 
-[![saiku-view](http://www.meteorite.bi/images/chart1.jpg)](http://www2.meteorite.bi/saiku-demo/)
+[![saiku-view](https://raw.githubusercontent.com/OSBI/saiku/assets/saiku-demo-1.jpg)](https://try.meteorite.bi/)
 
 A user interface for the analytical tool Saiku. <br />
 For more information, see [Saiku](http://www.meteorite.bi).
@@ -46,10 +46,10 @@ In order to run it locally you'll need a basic server setup.
   ```sh
   npm install
   ```
-3. You can simply test and run the UI on a NodeJS proxy server called [server.js](https://github.com/OSBI/saiku/blob/master/saiku-ui/server.js), that will utilize a remote backend as source.
+3. You can simply test and run the UI on a NodeJS proxy server called [server.js](./server.js), that will utilize a remote backend as source.
 
   Just run the following command in your command line and then access the UI in
-  the browser (by default, it will run at [http://localhost:8080](http://localhost:8080) and proxy requests to try.meteorite.bi:80):
+  the browser (by default, it will run at [http://localhost:8080](http://localhost:8080)):
 
   ```sh
   node server.js [port] [backend_host] [backend_port]
@@ -94,7 +94,7 @@ npm run dev
 
 ## Bugs and Feature Requests
 
-* [Saiku Jira](http://jira.meteorite.bi/)
+* [GitHub Issues](https://github.com/OSBI/saiku/issues/new)
 
 ## Discussion List
 
@@ -121,13 +121,7 @@ Latest ✔ | Latest ✔ | Latest ✔ | Latest ✔ | Latest ✔ |
 
 ## Contributing
 
-Check [CONTRIBUTING.md](https://github.com/OSBI/saiku/blob/master/CONTRIBUTING.md) for more details. Some important information:
-
-* To get started, [sign the Contributor License Agreement](https://www.clahub.com/agreements/OSBI/saiku).
-
-* If you find a bug then please report it on [Jira](http://jira.meteorite.bi/secure/Dashboard.jspa).
-
-* If you have a feature request, then please get in touch. We'd love to hear from you! Send a email for: [info@meteorite.bi](mailto:info@meteorite.bi)
+If you want to help, please read the [Contributing](../CONTRIBUTING.md) guide.
 
 ## History
 
