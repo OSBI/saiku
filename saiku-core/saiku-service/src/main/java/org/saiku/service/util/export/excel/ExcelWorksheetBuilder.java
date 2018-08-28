@@ -121,24 +121,24 @@ public class ExcelWorksheetBuilder {
 
         basicCS = excelWorkbook.createCellStyle();
         basicCS.setFont(font);
-        basicCS.setAlignment(CellStyle.ALIGN_LEFT);
-        basicCS.setVerticalAlignment(CellStyle.VERTICAL_TOP);
+        basicCS.setAlignment(HorizontalAlignment.LEFT);
+        basicCS.setVerticalAlignment(VerticalAlignment.TOP);
         setCellBordersColor(basicCS);
 
         Font totalsFont = excelWorkbook.createFont();
         totalsFont.setFontHeightInPoints((short) BASIC_SHEET_FONT_SIZE);
-        totalsFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        totalsFont.setBold(true);
         totalsFont.setFontName(BASIC_SHEET_FONT_FAMILY);
 
         totalsCS = excelWorkbook.createCellStyle();
         totalsCS.setFont(totalsFont);
-        totalsCS.setAlignment(CellStyle.ALIGN_RIGHT);
+        totalsCS.setAlignment(HorizontalAlignment.RIGHT);
         setCellBordersColor(totalsCS);
 
         // Setting the default styling for number cells
         numberCS = excelWorkbook.createCellStyle();
         numberCS.setFont(font);
-        numberCS.setAlignment(CellStyle.ALIGN_RIGHT);
+        numberCS.setAlignment(HorizontalAlignment.RIGHT);
 
         /*
          * justasg: Let's set default format, used if measure has no format at
@@ -155,33 +155,33 @@ public class ExcelWorksheetBuilder {
         Font headerFont = excelWorkbook.createFont();
         headerFont.setFontHeightInPoints((short) BASIC_SHEET_FONT_SIZE);
         headerFont.setFontName(BASIC_SHEET_FONT_FAMILY);
-        headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        headerFont.setBold(true);
 
         lighterHeaderCellCS = excelWorkbook.createCellStyle();
         lighterHeaderCellCS.setFont(headerFont);
-        lighterHeaderCellCS.setAlignment(CellStyle.ALIGN_CENTER);
+        lighterHeaderCellCS.setAlignment(HorizontalAlignment.CENTER);
         lighterHeaderCellCS.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-        lighterHeaderCellCS.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        lighterHeaderCellCS.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         setCellBordersColor(lighterHeaderCellCS);
 
         CellStyle darkerHeaderCellCS = excelWorkbook.createCellStyle();
         darkerHeaderCellCS.setFont(headerFont);
-        darkerHeaderCellCS.setAlignment(CellStyle.ALIGN_CENTER);
+        darkerHeaderCellCS.setAlignment(HorizontalAlignment.CENTER);
         darkerHeaderCellCS.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
-        darkerHeaderCellCS.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        darkerHeaderCellCS.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         setCellBordersColor(darkerHeaderCellCS);
 
     }
 
     private void setCellBordersColor(CellStyle style) {
 
-        style.setBorderBottom(CellStyle.BORDER_THIN);
+        style.setBorderBottom(BorderStyle.THIN);
         style.setBottomBorderColor(IndexedColors.GREY_80_PERCENT.getIndex());
-        style.setBorderTop(CellStyle.BORDER_THIN);
+        style.setBorderTop(BorderStyle.THIN);
         style.setTopBorderColor(IndexedColors.GREY_80_PERCENT.getIndex());
-        style.setBorderLeft(CellStyle.BORDER_THIN);
+        style.setBorderLeft(BorderStyle.THIN);
         style.setLeftBorderColor(IndexedColors.GREY_80_PERCENT.getIndex());
-        style.setBorderRight(CellStyle.BORDER_THIN);
+        style.setBorderRight(BorderStyle.THIN);
         style.setRightBorderColor(IndexedColors.GREY_80_PERCENT.getIndex());
     }
 
@@ -661,7 +661,7 @@ public class ExcelWorksheetBuilder {
 
             if (colorCodeIndex != -1) {
                 numberCSClone.setFillForegroundColor(colorCodeIndex);
-                numberCSClone.setFillPattern(CellStyle.SOLID_FOREGROUND);
+                numberCSClone.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             } else if (customColorsPalette == null) {
                 try {
 
@@ -673,7 +673,7 @@ public class ExcelWorksheetBuilder {
                     int greenCode = Integer.parseInt(colorCode.substring(3, 5), 16);
                     int blueCode  = Integer.parseInt(colorCode.substring(5, 7), 16);
 
-                    numberCSClone.setFillPattern(CellStyle.SOLID_FOREGROUND);
+                    numberCSClone.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
                     ((XSSFCellStyle) numberCSClone).setFillForegroundColor(
                             new XSSFColor(new java.awt.Color(redCode, greenCode, blueCode)));

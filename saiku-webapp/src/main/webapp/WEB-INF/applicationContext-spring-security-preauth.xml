@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--+
+    | Application context containing JDBC AuthenticationProvider
+    | implementation.
+    +-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd
+               http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder
+            location="/WEB-INF/applicationContext-spring-security-jdbc.properties"
+            ignore-resource-not-found="true"
+            ignore-unresolvable="true"
+            order ="0" />
+
+    <context:property-placeholder
+            location="file:///${ext.prop.dir}applicationContext-spring-security-jdbc.properties"
+            ignore-resource-not-found="true"
+            ignore-unresolvable="true"
+            order ="-1" />
+
+
+    <bean id="http403EntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint">
+    </bean>
+
+
+
+    <bean id="preAuthFilter" class="org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter">
+        <property name="principalRequestHeader" value="SM_USER"/>
+        <property name="authenticationManager" ref="authenticationManager" />
+    </bean>
+
+    <bean id="preauthAuthProvider" class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider">
+        <property name="preAuthenticatedUserDetailsService">
+            <ref bean="userDetailsWrapper" />
+        </property>
+    </bean>
+
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="preauthAuthProvider" />
+    </security:authentication-manager>
+
+    <bean id="userDetailsWrapper" class="org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper">
+        <property name="userDetailsService">
+            <ref bean="userDetailsService" />
+        </property>
+    </bean>
+
+    <bean id="userDetailsService"
+          class="org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl">
+        <property name="dataSource">
+            <ref bean="dataSource" />
+        </property>
+        <property name="authoritiesByUsernameQuery">
+            <value>
+                ${jdbcauth.authoritiesquery}
+            </value>
+        </property>
+        <property name="usersByUsernameQuery">
+            <value>
+                ${jdbcauth.usernamequery}
+            </value>
+        </property>
+    </bean>
+
+    <bean id="dataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbcauth.driver}" />
+        <property name="url"
+                  value="${jdbcauth.url}"/>
+        <property name="username" value="${jdbcauth.username}" />
+        <property name="password" value="${jdbcauth.password}" />
+    </bean>
+
+</beans>
