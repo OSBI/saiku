@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>Saiku Embedded - Next Generation Open Source Analytics in your App</title>
 
   <!-- Favicon -->
@@ -14,6 +15,14 @@
   <link rel="stylesheet" href="../js/saiku/plugins/CCC_Chart/tipsy.css">
   <link rel="stylesheet" href="./saiku.css">
   <link rel="stylesheet" href="../css/saiku/src/saiku.table.css">
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Arial, Helvetica, sans-serif;
+      font-size: 68.75%;
+      color: #222;
+      background: none repeat scroll 0 0 #fff;
+    }
+  </style>
 </head>
 <body>
   <!-- Widgets -->
@@ -69,15 +78,15 @@
       htmlObject: '#widget_2',
       render: 'chart',
       mode: 'heatgrid', // chart: line, bar, treemap, ...
-        chartDefinition: {
+      zoom: true,
+      chartDefinition: {
           width: 900,
           colors: ['grey','red','blue'],
           extensionPoints: {
           xAxisLabel_textAngle: - Math.PI/3,
           panel_fillStyle: '#eaeaea'
         }
-      },
-      zoom: true
+      }
     });
   </script>
 </body>
