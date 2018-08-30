@@ -271,6 +271,11 @@ public class PentahoDatasourceManager implements IDatasourceManager {
         return false;
     }
 
+    @Override
+    public Map<String, SaikuDatasource> getDatasources(String[] roles) {
+        return loadDatasources();
+    }
+
     public Map<String, SaikuDatasource> getDatasources() {
         return loadDatasources();
     }
