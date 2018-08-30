@@ -41,6 +41,7 @@
 	<bean id="connectionManager" class="org.saiku.plugin.PentahoSecurityAwareConnectionManager">
 		<property name="dataSourceManager" ref="pentahoDsManager" />
 		<property name="userAware" value="false" />
+		<property name="userService" ref="userServiceBean" />
 		<property name="connectionPooling" value="true" />
 	</bean>
 
