@@ -38,6 +38,7 @@ public class HazelcastAuthFilter implements Filter {
     private String orbisAuthCookie;
     private String hazelcastMapName;
     private String baseWorkspaceDir;
+    private String casAuthHeader;
 
     private FilterConfig filterConfig;
 
@@ -49,6 +50,7 @@ public class HazelcastAuthFilter implements Filter {
         orbisAuthCookie  = initParameter(filterConfig, "orbisAuthCookie", "ORBIS_WORKSPACE_USER");
         hazelcastMapName = initParameter(filterConfig, "hazelcastMapName", "my-sessions");
         baseWorkspaceDir = initParameter(filterConfig, "baseWorkspaceDir", "../../repository/data");
+        casAuthHeader    = initParameter(filterConfig, "casAuthHeader", "MOD_AUTH_CAS_USER");
     }
 
     private String initParameter(FilterConfig filterConfig, String paramName, String defaultValue) {
@@ -79,14 +81,26 @@ public class HazelcastAuthFilter implements Filter {
             ServletRequest req,
             ServletResponse res,
             FilterChain chain) throws IOException, ServletException {
+        System.err.println("doFilter");
         // If the filter is enabled
         if (enabled) {
             // We fetch a session
             HttpSession session = ((HttpServletRequest)req).getSession();
 
             if (session != null) { // If there's already a session
+                HttpServletRequest httpReq = (HttpServletRequest) req;
+                
+                String casHeader = httpReq.getHeader(casAuthHeader);
+                if (casHeader != null) {
+                    // Setting up the user id as a local cookie (so JavaScript/Client layer may access)
+                    setCookieValue(res, SAIKU_AUTH_PRINCIPAL, casHeader);
+                    // Setting up the workspace directory (so repository manager can create the workspace)
+                    session.setAttribute(ORBIS_WORKSPACE_DIR, "workspace_" + casHeader);
+                    session.setAttribute(SAIKU_AUTH_PRINCIPAL, casHeader);
+                }
+              
                 // Retrieve the Aardvark cookie value
-                for (Cookie cookie : ((HttpServletRequest) req).getCookies()) {
+                for (Cookie cookie : httpReq.getCookies()) {
                     // Found Orbis Cookie (Aardvark)
                     if (cookie.getName().equals(orbisAuthCookie)) {
                         String cookieVal = cookie.getValue();
