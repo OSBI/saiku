@@ -40,6 +40,7 @@ public class DataSourceMapper {
     private String security_type;
     private String propertyKey;
     private String csv;
+    private String owners;
 
     public DataSourceMapper() {
 
@@ -67,13 +68,17 @@ public class DataSourceMapper {
                 this.connectiontype = "XMLA";
             }
             this.connectionname = ds.getName();
+
             if(url.length>1) {
                 this.jdbcurl = url[1];
             }
+
             this.username = ds.getProperties().getProperty("username");
             this.password = ds.getProperties().getProperty("password");
-            this.path = ds.getProperties().getProperty("path");
-            this.id = ds.getProperties().getProperty("id");
+            this.path     = ds.getProperties().getProperty("path");
+            this.id       = ds.getProperties().getProperty("id");
+            this.owners   = ds.getProperties().getProperty("owners");
+
             if(ds.getProperties().containsKey("schema")){
                 this.schema = ds.getProperties().getProperty("schema");
             }
@@ -111,6 +116,9 @@ public class DataSourceMapper {
             if (ds.getProperties().contains("encrypt.password")) {
                 this.csv += "encrypt.password=" + ds.getProperties().get("encrypt.password") + "\n";
             }
+            if (ds.getProperties().contains("owners")) {
+                this.csv += "owners=" + ds.getProperties().get("owners") + "\n";
+            }
             this.connectionname = ds.getName();
             this.id = ds.getProperties().getProperty("id");
 
@@ -142,6 +150,9 @@ public class DataSourceMapper {
             }
             if (ds.getProperties().contains("encrypt.password")) {
                 this.advanced += "encrypt.password=" + ds.getProperties().get("encrypt.password") + "\n";
+            }
+            if (ds.getProperties().contains("owners")) {
+                this.advanced += "owners=" + ds.getProperties().get("owners") + "\n";
             }
             this.connectionname = ds.getName();
             this.id = ds.getProperties().getProperty("id");
@@ -177,6 +188,9 @@ public class DataSourceMapper {
                 props.setProperty("id", this.id);
             } else {
                 props.setProperty("id", UUID.randomUUID().toString());
+            }
+            if (this.owners != null) {
+                props.setProperty("owners", this.owners);
             }
             props.setProperty("advanced", "false");
 
@@ -243,9 +257,11 @@ public class DataSourceMapper {
                 if(row.startsWith("propertyKey=")){
                     props.setProperty("propertyKey", row.substring(12, row.length()));
                 }
-
                 if(row.startsWith("enabled=")){
                     props.setProperty("enabled", row.substring(8, row.length()));
+                }
+                if(row.startsWith("owners=")){
+                    props.setProperty("owners", row.substring(7, row.length()));
                 }
             }
 
@@ -367,5 +383,13 @@ public class DataSourceMapper {
 
     public void setCsv(String csv) {
         this.csv = csv;
+    }
+
+    public String getOwners() {
+        return owners;
+    }
+
+    public void setOwners(String owners) {
+        this.owners = owners;
     }
 }

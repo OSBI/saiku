@@ -52,13 +52,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.context.ApplicationListener;
-import org.springframework.security.web.session.HttpSessionCreatedEvent;
-
+import org.springframework.context.ApplicationEvent;
+import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * A Datasource Manager for the Saiku Repository API layer.
  */
-public class RepositoryDatasourceManager implements IDatasourceManager, ApplicationListener<HttpSessionCreatedEvent> {
+public class RepositoryDatasourceManager implements IDatasourceManager, ApplicationListener<ApplicationEvent> {
     public static final String ORBIS_WORKSPACE_DIR = "workspace";
     public static final String SAIKU_AUTH_PRINCIPAL = "SAIKU_AUTH_PRINCIPAL";
     
@@ -88,17 +89,23 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
     private String username;
     private String password;
     private String database;
+    private String sessionUsername;
     
     public void setConnectionManager(IConnectionManager connectionManager) {
       this.connectionManager = connectionManager;
     }
-  
-    // Whenever a new Spring Security Session
-    public void onApplicationEvent(HttpSessionCreatedEvent sessionEvent) {
-      // Reload the datasources
-      loadDatasources(checkForExternalDataSourceProperties());
-    }
 
+    public void onApplicationEvent(ApplicationEvent appEvent) {
+      if (appEvent instanceof AuthenticationSuccessEvent) {
+        AuthenticationSuccessEvent authEvent = (AuthenticationSuccessEvent) appEvent;
+        UserDetails userDetails = (UserDetails) authEvent.getAuthentication().getPrincipal();
+        this.sessionUsername = userDetails.getUsername();
+
+        // Reload the datasources
+        loadDatasources(checkForExternalDataSourceProperties());
+      }
+    }
+  
     public void load() {
         Properties ext = checkForExternalDataSourceProperties();
 
@@ -852,7 +859,22 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
   
               SaikuDatasource.Type t = SaikuDatasource.Type.valueOf(file.getType().toUpperCase());
               SaikuDatasource ds = new SaikuDatasource(file.getName(), t, setupDataSourceProperties(file, ext));
-              datasources.put(file.getName(), ds);
+
+              if (this.sessionUsername != null && file.getOwners() != null) {
+                if (file.getOwners().trim().length() > 0 && this.sessionUsername.trim().length() > 0) {
+                    String[] owners = file.getOwners().split(",");
+                    for (String owner : owners) {
+                        if (owner.trim().equalsIgnoreCase(this.sessionUsername.trim())) {
+                            datasources.put(file.getName(), ds);
+                            break;
+                        }
+                    }
+                } else {
+                    datasources.put(file.getName(), ds);
+                }
+              } else {
+                datasources.put(file.getName(), ds);
+              }
             }
           } catch (Exception e) {
             // throw new SaikuServiceException("Failed to add datasource", e);
@@ -923,6 +945,11 @@ public class RepositoryDatasourceManager implements IDatasourceManager, Applicat
       // DataSource id
       if (file.getId() != null) {
         props.put("id", file.getId());
+      }
+
+      // DataSource owners
+      if (file.getOwners() != null) {
+          props.put("owners", file.getOwners());
       }
       
       // Some security properties

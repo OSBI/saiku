@@ -11,12 +11,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class DataSource {
-
-  private String advanced;
-  private String securitymapping;
-  private String securitytype;
-  private String securityenabled;
-  private String encryptpassword;
+    private String advanced;
+    private String securitymapping;
+    private String securitytype;
+    private String securityenabled;
+    private String encryptpassword;
     private String id;
     private String type;
     private String name;
@@ -26,9 +25,10 @@ public class DataSource {
     private String password;
     private String path;
     private String schema;
-  private String propertyKey;
+    private String propertyKey;
     private String csv;
     private String enabled;
+    private String owners;
 
     public DataSource(SaikuDatasource datasource) {
         this.type = datasource.getType().toString();
@@ -38,6 +38,11 @@ public class DataSource {
         this.username = datasource.getProperties().getProperty("username");
         this.password = datasource.getProperties().getProperty("password");
         this.id = datasource.getProperties().getProperty("id");
+
+        if(datasource.getProperties().containsKey("owners")) {
+          this.owners = datasource.getProperties().getProperty("owners");
+        }
+
         this.encryptpassword = datasource.getProperties().getProperty("encrypt.password");
         if(datasource.getProperties().containsKey("security.enabled")){
           this.securityenabled = datasource.getProperties().getProperty("security.enabled");
@@ -215,5 +220,14 @@ public class DataSource {
 
     public void setEnabled(String enabled) {
         this.enabled = enabled;
+    }
+
+    @XmlElement
+    public String getOwners() {
+        return owners;
+    }
+
+    public void setOwners(String owners) {
+        this.owners = owners;
     }
 }
