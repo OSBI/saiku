@@ -6,6 +6,7 @@
 
 package org.saiku.web.rest.resources;
 
+import org.saiku.license.License4JUtils;
 import org.saiku.service.license.ILicenseUtils;
 import org.saiku.database.Database;
 import org.saiku.service.license.Base64Coder;
@@ -26,6 +27,7 @@ import java.util.List;
 
 import javax.jcr.RepositoryException;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -81,6 +83,28 @@ public class License {
 
   private static final int SIZE = 2048;
 
+
+  /**
+   * Upload a license key (License4j) to the Saiku server.
+   * @summary Upload a new license key
+   * @param key A valid License4J license key
+   * @return An acknowledgement as to whether the server installation was successful.
+   */
+  @POST
+  @Path("/key")
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Produces("text/plain")
+  @ReturnType("java.lang.String")
+  public Response saveLicenseKey(@FormParam("name") String key) {
+    try {
+      getLicenseUtils().setLicense(License4JUtils.fetchLicenseBase64FromServer(key));
+    } catch (IOException e) {
+      e.printStackTrace();
+      return Response.ok("It was not possible to fetch the license from server: " + e.getMessage()).build();
+    }
+
+    return Response.ok("License Upload Successful").build();
+  }
 
   /**
    * Upload a new license to the Saiku server.

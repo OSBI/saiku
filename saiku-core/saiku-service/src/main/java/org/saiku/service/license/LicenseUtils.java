@@ -46,9 +46,7 @@ public class LicenseUtils implements ILicenseUtils {
     this.repositoryDatasourceManager = repositoryDatasourceManager;
   }
 
-
   public void init() {
-
   }
 
   public LicenseUtils() {
@@ -57,7 +55,6 @@ public class LicenseUtils implements ILicenseUtils {
 
   @Override
   public void setLicense(SaikuLicense lic) throws IOException {
-
     ByteArrayOutputStream bo = new ByteArrayOutputStream();
     ObjectOutputStream so = new ObjectOutputStream(bo);
     so.writeObject(lic);
@@ -66,33 +63,24 @@ public class LicenseUtils implements ILicenseUtils {
 
     this.repositoryDatasourceManager
         .saveInternalFile("/etc/license.lic", bo.toString(), null);
-
-
   }
 
   @Override
   public void setLicense(String lic) {
-
     this.repositoryDatasourceManager.deleteFolder("/etc/license.lic");
     this.repositoryDatasourceManager
         .saveInternalFile("/etc/license.lic", lic, null);
-
-
   }
 
   @Override
-  public Object getLicense()
-      throws IOException, ClassNotFoundException, RepositoryException {
+  public Object getLicense() throws IOException, ClassNotFoundException, RepositoryException {
+    String file = this.repositoryDatasourceManager.getInternalFileData("/etc/license.lic");
 
-    String file = this.repositoryDatasourceManager
-        .getInternalFileData("/etc/license.lic");
-
-    Object obj = null;
     byte[] b = Base64Coder.decode(file);
 
-    try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(
-        b))) {
+    try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(b))) {
       Object license = null;
+
       try {
         license = in.readObject();
       } catch (ClassNotFoundException e) {
@@ -100,8 +88,6 @@ public class LicenseUtils implements ILicenseUtils {
       }
       return license;
     }
-
-
   }
 
   @Override
@@ -111,18 +97,16 @@ public class LicenseUtils implements ILicenseUtils {
     String file = this.repositoryDatasourceManager
         .getInternalFileData("/etc/license.lic");
 
-    try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(
-        file.getBytes()))) {
+    try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(file.getBytes()))) {
       SaikuLicense license = null;
       try {
         license = (SaikuLicense) in.readObject();
       } catch (ClassNotFoundException e) {
         e.printStackTrace();
       }
+
       return license;
     }
-
-
   }
 
   @Override

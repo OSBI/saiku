@@ -385,6 +385,12 @@
 			<artifactId>marklogic-xcc</artifactId>
 			<version>8.0.6</version>
 		</dependency>
+		<!-- License4J deps -->
+		<dependency>
+			<groupId>com.license4j</groupId>
+			<artifactId>license4j-runtime-library</artifactId>
+			<version>RELEASE</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<!-- MarkLogic repository -->
@@ -392,6 +398,18 @@
 			<id>MarkLogic-releases</id>
 			<name>MarkLogic Releases</name>
 			<url>http://developer.marklogic.com/maven2</url>
+		</repository>
+		<!-- License4J repo -->
+		<repository>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</releases>
+			<id>license4j-runtime-library</id>
+			<name>License4J Runtime Library Maven Repository</name>
+			<url>http://www.license4j.com/maven/</url>
+			<layout>default</layout>
 		</repository>
 	</repositories>
 </project>
