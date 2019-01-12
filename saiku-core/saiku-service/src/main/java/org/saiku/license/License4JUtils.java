@@ -21,7 +21,7 @@ public class License4JUtils {
       "13aa508c0f92cd546ea82bf0203010001";
   private static final String internalString = "1546609850462";
   private static final String activationServer = "https://licensing-test.meteorite.bi/algas/";
-  private static final String productID = "1546609850462";
+  private static final String productID = "saiku";
   private static final String nameforValidation = null;
   private static final String companyforValidation = null;
   private static final int hardwareIDMethod = 0;
