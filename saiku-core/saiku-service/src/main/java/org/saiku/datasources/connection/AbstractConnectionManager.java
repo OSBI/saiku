@@ -141,10 +141,21 @@ public abstract class AbstractConnectionManager implements IConnectionManager, S
   protected abstract ISaikuConnection refreshInternalConnection( String name, SaikuDatasource datasource );
 
   public void refreshAllConnections() {
+    if (ds == null) {
+      return;
+    }
+
     ds.load();
-    for ( String name : ds.getDatasources(userService.getCurrentUserRoles()).keySet() ) {
+
+    String[] userRoles = new String[]{};
+
+    if (userService != null && userService.getCurrentUserRoles() != null) {
+      userRoles = userService.getCurrentUserRoles();
+    }
+
+    for (String name : ds.getDatasources(userRoles).keySet()) {
       try {
-        refreshConnection( name );
+        refreshConnection(name);
       } catch (Exception ex) {
         // Display the exception but continue to load the connections
         ex.printStackTrace();
