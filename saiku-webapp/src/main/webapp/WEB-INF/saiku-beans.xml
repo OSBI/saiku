@@ -96,7 +96,6 @@
         <property name="userService" ref="userServiceBean"/>
         <property name="dataSourceManager" ref="repositoryDsManager"/>
         <property name="sessionService" ref="sessionService"/>
-        <property name="userService" ref="userServiceBean"/>
     </bean>
 
     <bean id="datasourceServiceBean" class="org.saiku.service.datasource.DatasourceService">
