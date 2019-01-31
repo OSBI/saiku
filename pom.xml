@@ -376,6 +376,17 @@
                 <version>3.3.2</version>
             </dependency>
             <dependency>
+                <groupId>org.opensaml</groupId>
+                <artifactId>xmltooling</artifactId>
+                <version>1.3.2-1</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.bouncycastle</groupId>
+                        <artifactId>bcprov-jdk15</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
                 <groupId>org.jasig.cas.client</groupId>
                 <artifactId>cas-client-integration-tomcat-common</artifactId>
                 <version>3.3.2</version>
