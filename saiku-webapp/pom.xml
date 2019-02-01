@@ -86,7 +86,7 @@
                             <goal>war</goal>
                         </goals>
                         <configuration>
-                            <packagingExcludes>WEB-INF/lib/saiku-query-0.4-SNAPSHOT.jar</packagingExcludes>
+                            <packagingExcludes>WEB-INF/lib/saiku-query-${saiku-query.version}.jar</packagingExcludes>
                         </configuration>
                     </execution>
                 </executions>
@@ -140,8 +140,8 @@
                                 <!-- Remove mondrian from saiku-query jar
                                      See https://groups.google.com/a/saiku.meteorite.bi/forum/#!topic/user/oER6gEqc46w
                                 -->
-                                <jar destfile="${basedir}/target/saiku-webapp-${project.version}/WEB-INF/lib/saiku-query-0.4-SNAPSHOT-stripped.jar">
-                                    <zipfileset src="${basedir}/target/saiku-webapp-${project.version}/WEB-INF/lib/saiku-query-0.4-SNAPSHOT.jar"
+                                <jar destfile="${basedir}/target/saiku-webapp-${project.version}/WEB-INF/lib/saiku-query-${saiku-query.version}-nomondrian.jar">
+                                    <zipfileset src="${basedir}/target/saiku-webapp-${project.version}/WEB-INF/lib/saiku-query-${saiku-query.version}.jar"
                                                 excludes="mondrian/"/>
                                 </jar>
                             </target>
