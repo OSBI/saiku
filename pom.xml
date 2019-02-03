@@ -50,6 +50,7 @@
         <pentaho.platform.version>5.0.0</pentaho.platform.version>
         <serenity.version>1.0.58</serenity.version>
         <jbehave.version>3.9.3</jbehave.version>
+        <saiku-query.version>0.4-SNAPSHOT</saiku-query.version>
     </properties>
     <pluginRepositories>
         <pluginRepository>
@@ -722,7 +723,7 @@
             <dependency>
                 <groupId>org.saiku</groupId>
                 <artifactId>saiku-query</artifactId>
-                <version>0.4-SNAPSHOT</version>
+                <version>${saiku-query.version}</version>
             </dependency>
             <dependency>
                 <groupId>pentaho</groupId>
