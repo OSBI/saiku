@@ -66,9 +66,7 @@ Settings.PARAMS = (function() {
     var p = {};
 
     for (var key in Settings) {
-        if (key.match('^PARAM') === 'PARAM') {
-            p[key] = Settings[key];
-        }
+        p[key] = Settings[key];
     }
 
     return p;

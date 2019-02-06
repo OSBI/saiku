@@ -216,8 +216,15 @@ var buildUniqueName = function(level, name) {
 };
 
 SaikuOlapQueryHelper.prototype.addtoSelection = function(membername, level){
+  if (!level) {
+    return;
+  }
+
+  if (!level.level) level.level = {};
+  if (!level.level.selection) level.level.selection = {};
+
   if(level.level.selection.members === undefined){
-    level.selection.members = [];
+    level.level.selection.members = [];
   }
 
   var found = false;
