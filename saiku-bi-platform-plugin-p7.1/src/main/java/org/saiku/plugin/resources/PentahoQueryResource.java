@@ -42,22 +42,49 @@ public class PentahoQueryResource extends Query2Resource {
   public QueryResult execute(ThinQuery tq) {
     long start = System.currentTimeMillis();
     Map<String,String> logelements = new HashMap<String, String>();
-    logelements.put("username", userService.getActiveUsername());
+    UUID uuid = null;
 
-    UUID uuid = pah.startAudit("Saiku", "Execute Query", this.getClass().getName(), userService.getActiveUsername(),
-        userService.getSessionId(),
-        createLogEntry(logelements),
-        getLogger());
+    try {
+      if (userService != null) {
+        logelements.put("username", userService.getActiveUsername());
+      }
+
+      uuid = pah.startAudit("Saiku", "Execute Query", this.getClass().getName(), userService.getActiveUsername(),
+          userService.getSessionId(),
+          createLogEntry(logelements),
+          getLogger());
+    } catch (Exception ex) {
+      log.error("Error to audit query", ex);
+    }
+
     QueryResult result = super.execute(tq);
     long end = System.currentTimeMillis();
 
-    logelements.put("Username", userService.getActiveUsername());
-    logelements.put("Executed MDX", ((ThinQuery)result.getQuery()).getMdx());
-    //logelements.put("Result Set", resultToJson(result));
-    pah.endAudit("Saiku", "Execute Query", this.getClass().getName(), userService.getActiveUsername(), userService.getSessionId(),
-        createLogEntry(logelements), getLogger(), start,
+    try {
+      if (userService != null) {
+        logelements.put("Username", userService.getActiveUsername());
+      }
+
+      if (result != null && result.getQuery() != null && result.getQuery() instanceof ThinQuery) {
+        logelements.put("Executed MDX", ((ThinQuery) result.getQuery()).getMdx());
+      }
+
+      if (uuid != null) {
+        pah.endAudit(
+            "Saiku",
+            "Execute Query",
+            this.getClass().getName(),
+            userService.getActiveUsername(),
+            userService.getSessionId(),
+            createLogEntry(logelements),
+            getLogger(),
+            start,
             uuid,
             end);
+      }
+    } catch (Exception ex) {
+      log.error("Error to audit query", ex);
+    }
 
     return result;
   }
