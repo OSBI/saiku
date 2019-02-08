@@ -233,12 +233,17 @@ public class ExcelWorksheetBuilder {
                 if (colAggregator == null) continue;
 
                 for (int x = 0; x < colAggregator.length; x++) {
+                    TotalAggregator agg = colAggregator[x][0];
+
+                    if (agg instanceof org.saiku.service.olap.totals.aggregators.BlankAggregator) {
+                        continue;
+                    }
+
                     rowIndex++;
                     checkRowLimit(rowIndex);
 
                     Measure measure = this.table.getSelectedMeasures()[x];
 
-                    TotalAggregator agg = colAggregator[x][0];
                     row = workbookSheet.createRow(rowIndex);
 
                     // Measure name
@@ -256,6 +261,20 @@ public class ExcelWorksheetBuilder {
 
         // Rows summary
         if (rowScanTotals.keySet().size() > 0) {
+            int qtdNonBlank = 0;
+            for (Integer rowKey : rowScanTotals.keySet()) {
+                TotalAggregator[][] rowAggregator = rowScanTotals.get(rowKey);
+                for (int x = 0; x < rowAggregator.length; x++) {
+                    for (int y = 0; y < this.table.getSelectedMeasures().length; y++) {
+                        TotalAggregator agg = rowAggregator[x][y];
+                        if (!(agg instanceof org.saiku.service.olap.totals.aggregators.BlankAggregator)) {
+                            qtdNonBlank++;
+                        }
+                    }
+                }
+            }
+            if (qtdNonBlank == 0) return;
+
             rowIndex++;
             checkRowLimit(rowIndex);
 
@@ -271,11 +290,16 @@ public class ExcelWorksheetBuilder {
 
                 for (int x = 0; x < rowAggregator.length; x++) {
                     for (int y = 0; y < this.table.getSelectedMeasures().length; y++) {
+                        TotalAggregator agg = rowAggregator[x][y];
+
+                        if (agg instanceof org.saiku.service.olap.totals.aggregators.BlankAggregator) {
+                            continue;
+                        }
+
                         rowIndex++;
                         checkRowLimit(rowIndex);
 
                         Measure measure = this.table.getSelectedMeasures()[y];
-                        TotalAggregator agg = rowAggregator[x][y];
 
                         row = workbookSheet.createRow(rowIndex);
 
@@ -291,8 +315,7 @@ public class ExcelWorksheetBuilder {
                     }
                 }
             }
-        }
-
+        }  // END - Rows summary
     }
 
     private void finalizeExcelSheet(int startRow) {
@@ -345,7 +368,13 @@ public class ExcelWorksheetBuilder {
         Cell cell = sheetRow.createCell(0);
         String todayDate = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date());
         cell.setCellValue("Export date and time: " + todayDate);
-        summarySheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 2));
+
+        try {
+            summarySheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 2));
+        } catch (Exception ex) {
+            // Trying to avoid merge errors
+        }
+
         row = row + 2;
 
         sheetRow = summarySheet.createRow((int) row);
@@ -384,7 +413,13 @@ public class ExcelWorksheetBuilder {
             sheetRow = summarySheet.createRow((int) row);
             cell = sheetRow.createCell(0);
             cell.setCellValue("Excel sheet is truncated, only contains " + maxColumns + " columns of " + (columnCount));
-            summarySheet.addMergedRegion(new CellRangeAddress(row, row, 0, 10));
+
+            try {
+                summarySheet.addMergedRegion(new CellRangeAddress(row, row, 0, 10));
+            } catch (Exception ex) {
+                // trying to avoid merge errors
+            }
+
             row++;
         }
 
@@ -393,7 +428,13 @@ public class ExcelWorksheetBuilder {
             cell = sheetRow.createCell(0);
             cell.setCellValue(
                     "Excel sheet is truncated, only contains " + maxRows + " rows of " + (headerLength + rowLength));
-            summarySheet.addMergedRegion(new CellRangeAddress(row, row, 0, 10));
+
+            try {
+                summarySheet.addMergedRegion(new CellRangeAddress(row, row, 0, 10));
+            } catch (Exception ex) {
+                // trying to avoid merge errors
+            }
+
             row++;
         }
 
@@ -402,7 +443,12 @@ public class ExcelWorksheetBuilder {
         sheetRow = summarySheet.createRow((int) row);
         cell = sheetRow.createCell(0);
         cell.setCellValue(SaikuProperties.webExportExcelPoweredBy);
-        summarySheet.addMergedRegion(new CellRangeAddress(row, row, 0, 10));
+
+        try {
+            summarySheet.addMergedRegion(new CellRangeAddress(row, row, 0, 10));
+        } catch (Exception ex) {
+            // trying to avoid merge errors
+        }
 
         // Autosize columns for summary sheet
         for (int i = 0; i < 5; i++) {
@@ -829,8 +875,13 @@ public class ExcelWorksheetBuilder {
             for (ExcelMergedRegionItemConfig item : mergedItemsConfig) {
                 int lastCol = item.getStartX() + item.getWidth() - 1;
                 lastCol = lastCol >= maxColumns ? maxColumns - 1 : lastCol;
-                workbookSheet.addMergedRegion(new CellRangeAddress(item.getStartY(),
+
+                try {
+                    workbookSheet.addMergedRegion(new CellRangeAddress(item.getStartY(),
                         item.getStartY() + item.getHeight(), item.getStartX(), lastCol));
+                } catch(Exception ex) {
+                    // trying to avoid merge errors
+                }
             }
         }
 
@@ -937,9 +988,14 @@ public class ExcelWorksheetBuilder {
                         Boolean next = rows.get(rowEntry.getKey() + 1);
 
                         if (current) {
-                            if (next == null || !next) {
-                                workbookSheet.addMergedRegion(new CellRangeAddress(row - mergeCount, row, col, col));
+                            try {
+                                if (next == null || !next) {
+                                    workbookSheet.addMergedRegion(new CellRangeAddress(row - mergeCount, row, col, col));
+                                }
+                            } catch (Exception ex) {
+                                // Trying to avoid merge errors
                             }
+
                             mergeCount++;
                         } else {
                             mergeCount = 1;
