@@ -809,14 +809,20 @@ public class ExcelWorksheetBuilder {
                 }
                 column = nextColumn;
             }
+
             // Manage the merge condition on exit from columns scan
             if (!isLastHeaderRow)
                 manageCellsMerge(y - 1, x, mergedCellsWidth + 1, startSameFromPos, mergedItemsConfig);
         }
 
-        if (topLeftCornerHeight > 0 && topLeftCornerWidth > 0) {
-            workbookSheet.addMergedRegion(
+        if ((topLeftCornerHeight > 0 && topLeftCornerWidth > 0) && 
+            (topLeftCornerHeight > 1 || topLeftCornerWidth > 1)) { // Avoid merging single cells
+            try {
+                workbookSheet.addMergedRegion(
                     new CellRangeAddress(startRow, startRow + topLeftCornerHeight - 1, 0, topLeftCornerWidth - 1));
+            } catch (Exception ex) {
+                // Sometimes it may try to merge just one cell
+            }
         }
 
         if (mergedItemsConfig.size() > 0) {
