@@ -1165,13 +1165,13 @@ public class JackRabbitRepositoryManager implements IRepositoryManager {
                 .add(new RepositoryFileObject(filename, "#" + files.getPath(), extension, files.getPath(),
                     acls));
           }
-          if (files.getPrimaryNodeType().getName().equals("nt:folder")) {
-            List<AclMethod> acls = acl2.getMethods(files, username, roles);
+        }
+        if (files.getPrimaryNodeType().getName().equals("nt:folder")) {
+          List<AclMethod> acls = acl2.getMethods(files, username, roles);
 
-            repoObjects.add(
-                new RepositoryFolderObject(files.getName(), "#" + files.getPath(), files.getPath(), acls,
-                    getRepoObjects(files, fileType, username, roles, false)));
-          }
+          repoObjects.add(
+              new RepositoryFolderObject(files.getName(), "#" + files.getPath(), files.getPath(), acls,
+                  getRepoObjects(files, fileType, username, roles, false)));
         }
       }
       else {
