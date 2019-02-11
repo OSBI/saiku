@@ -140,7 +140,7 @@ public class SaikuMondrianHelper {
 	  MondrianOlap4jMeasure	m = (MondrianOlap4jMeasure) measure;
 
 	  try {
-		return ((RolapBaseCubeMeasure) m.member).getMeasureGroup().getName();
+		return ((RolapBaseCubeMeasure) m.getOlapElement()).getMeasureGroup().getName();
 	  }
 	  catch(Exception e){
 		return "";

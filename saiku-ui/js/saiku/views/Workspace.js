@@ -511,6 +511,7 @@ var Workspace = Backbone.View.extend({
             }
 
             this.processedParamsURI = true;
+            this.paramsURI = paramsURI;
         }
 
         obj.query = this.query;
