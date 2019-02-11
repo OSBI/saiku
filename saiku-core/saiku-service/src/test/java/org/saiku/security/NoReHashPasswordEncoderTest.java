@@ -8,9 +8,9 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.*;
 
 public class NoReHashPasswordEncoderTest {
-    NoReHashPasswordEncoder encoder = new NoReHashPasswordEncoder();
-    String hash = "$2a$10$X7TU2pKkR6sOCeotubuxjOsmYMCuPbLGfN1/yk2yRoUObAykZ.//K";
-    Pattern pattern;
+    private NoReHashPasswordEncoder encoder = new NoReHashPasswordEncoder();
+    private String hash = "$2a$10$X7TU2pKkR6sOCeotubuxjOsmYMCuPbLGfN1/yk2yRoUObAykZ.//K";
+    private Pattern pattern;
 
     public NoReHashPasswordEncoderTest() {
         String regex = "\\A\\$2a?\\$\\d\\d\\$[./0-9A-Za-z]{53}";
