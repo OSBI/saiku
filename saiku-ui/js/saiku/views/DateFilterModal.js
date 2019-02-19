@@ -555,7 +555,7 @@ var DateFilterModal = Modal.extend({
 		logExp.taghier = logExp.hierarchy.replace(/m/g, '\\m').replace(/y/g, '\\y').replace(/q/g, '\\q').replace(/d/g, '\\d');
 
 		if ((logExp.workinglevel !== logExp.level) && logExp.workinglevel !== undefined) {
-			logExp.parent = '[{dimension}.{hierarchy}].[{level}].members,';
+			logExp.parent = '[{dimension}].[{level}].members,';
 			logExp.parent = logExp.parent.replace(/{(\w+)}/g, function(m, p) {
 				return logExp[p];
 			});
@@ -565,7 +565,7 @@ var DateFilterModal = Modal.extend({
 		}
 
 		if (fixedDateName === 'dayperiods') {
-			logExp.parent = '[{dimension}.{hierarchy}].[{level}]';
+			logExp.parent = '[{dimension}].[{level}]';
 			logExp.parent = logExp.parent.replace(/{(\w+)}/g, function(m, p) {
 				return logExp[p];
 			});
