@@ -584,6 +584,8 @@ public class ExcelWorksheetBuilder {
 
                 if (grandTotal) {
                     setGrandTotalLabel(sheetRow, startColumnIndex, false);
+                } else {
+                    return startIndex; // AQUI
                 }
 
                 for (TotalAggregator[] aggregators : aggregatorsTable) {
@@ -634,6 +636,8 @@ public class ExcelWorksheetBuilder {
                 if (setValue) {
                     if (grandTotal) {
                         setGrandTotalLabel(sheetRow.getRowNum() - 1, column, true);
+                    } else {
+                        return column - 1; // AQUI
                     }
 
                     for (TotalAggregator[] aggregators : aggregatorsTable) {

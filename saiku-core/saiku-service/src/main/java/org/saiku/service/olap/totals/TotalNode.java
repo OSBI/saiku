@@ -9,7 +9,7 @@ import org.saiku.service.olap.totals.aggregators.TotalAggregator;
 
 public class TotalNode {
   private final String[] captions;
-  private final TotalAggregator[][] totals;
+  private TotalAggregator[][] totals;
   private final boolean showsTotals;
   private final int cellsAdded;
   private int span;
@@ -77,10 +77,12 @@ public class TotalNode {
   }
 
   public void addData( int member, int index, Cell cell ) {
+    if (member >= totals.length || index >= totals[member].length) return;
     totals[ member ][ index ].addData( cell );
   }
 
   public void setFormattedValue( int member, int index, String value ) {
+    if (member >= totals.length || index >= totals[member].length) return;
     totals[ member ][ index ].setFormattedValue( value );
   }
 
