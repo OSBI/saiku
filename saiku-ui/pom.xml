@@ -224,10 +224,6 @@
 										</fileset>
 									</copy>
 
-									<replaceregexp match="&lt;!-- CUT HERE --&gt;(.*)&lt;!-- END CUT HERE --&gt;" replace="&lt;script type='text/javascript' src='saiku.min.js'&gt;&lt;\/script&gt;" flags="gs" byline="false">
-										<fileset dir="target/saiku-ui/" includes="index.html" />
-									</replaceregexp>
-
 									<copy todir="target/saiku-ui2">
 										<fileset dir="${basedir}/">
 											<exclude name="target/" />
