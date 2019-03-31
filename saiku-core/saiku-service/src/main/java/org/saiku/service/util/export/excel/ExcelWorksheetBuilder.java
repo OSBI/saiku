@@ -193,7 +193,7 @@ public class ExcelWorksheetBuilder {
         int lastHeaderRow = buildExcelTableHeader(startRow);
         Long header = (new Date()).getTime();
         addExcelTableRows(lastHeaderRow);
-        addTotalsSummary(lastHeaderRow);
+        //addTotalsSummary(lastHeaderRow);
         Long content = (new Date()).getTime();
         finalizeExcelSheet(startRow);
         Long finalizing = (new Date()).getTime();
@@ -522,12 +522,15 @@ public class ExcelWorksheetBuilder {
             }
 
             // Set row sub totals
-            startingRow = setRowTotalAggregationCell(rowScanTotals, startingRow, x, false);
+            // Disable, for a while, subtotals
+            // startingRow = setRowTotalAggregationCell(rowScanTotals, startingRow, x, false);
             rowCount = startingRow + x;
         }
 
         //Set row grand totals
+        //As we're not adding subtotals, we should add an offset to the grand totals row
         setRowTotalAggregationCell(rowScanTotals, rowCount, 0, true);
+        System.out.println("rowCount = " + (rowCount));
 
         //Add merge cells
         addMergedRegions(mergeRowsByColumn);
@@ -572,9 +575,19 @@ public class ExcelWorksheetBuilder {
     }
 
     private int setRowTotalAggregationCell(Map<Integer, TotalAggregator[][]> scanTotals, int startIndex, int subIndex, boolean grandTotal) {
+        System.out.println("setRowTotalAggregationCell - startIndex = " + startIndex + ", grandTotal = " + grandTotal);
+
         if (!scanTotals.isEmpty()) {
             int row = subIndex + startIndex;
-            TotalAggregator[][] aggregatorsTable = scanTotals.get(row);
+            TotalAggregator[][] aggregatorsTable = null;
+
+            if (grandTotal && !scanTotals.isEmpty()) { // it should be the totals with the highest index
+                Integer lastTotalIndex = java.util.Collections.max(scanTotals.keySet());
+                aggregatorsTable = scanTotals.get(lastTotalIndex);
+            } else {
+                aggregatorsTable = scanTotals.get(row);
+            }
+
             if (aggregatorsTable != null) {
                 //Create totals row
                 Row sheetRow = workbookSheet.createRow(row + 1);
@@ -582,10 +595,8 @@ public class ExcelWorksheetBuilder {
                 //Detect column start index
                 int startColumnIndex = detectColumnStartIndex();
 
-                if (grandTotal) {
+                if (grandTotal) { // AQUI
                     setGrandTotalLabel(sheetRow, startColumnIndex, false);
-                } else {
-                    return startIndex; // AQUI
                 }
 
                 for (TotalAggregator[] aggregators : aggregatorsTable) {
@@ -607,6 +618,9 @@ public class ExcelWorksheetBuilder {
                 startIndex++;
             }
         }
+
+        System.out.println("\tstartIndex = " + startIndex);
+
         return startIndex;
     }
 
@@ -627,6 +641,8 @@ public class ExcelWorksheetBuilder {
     }
 
     private int setColTotalAggregationCell(Map<Integer, TotalAggregator[][]> scanTotals, Row sheetRow, int x, int column, boolean setValue, boolean grandTotal) {
+        System.out.println("setColTotalAggregationCell - column = " + column + ", grandTotal = " + grandTotal);
+
         column++;
 
         if (!scanTotals.isEmpty()) {
@@ -636,20 +652,24 @@ public class ExcelWorksheetBuilder {
                 if (setValue) {
                     if (grandTotal) {
                         setGrandTotalLabel(sheetRow.getRowNum() - 1, column, true);
-                    } else {
-                        return column - 1; // AQUI
                     }
 
                     for (TotalAggregator[] aggregators : aggregatorsTable) {
-                        Cell cell = sheetRow.createCell(column);
                         String value = aggregators[x].getFormattedValue();
-                        cell.setCellValue(value);
-                        cell.setCellStyle(totalsCS);
+
+                        if (value != null && !value.equals("-")) {
+                            Cell cell = sheetRow.createCell(column);
+                            cell.setCellValue(value);
+                            cell.setCellStyle(totalsCS);
+                        }
+
                         column++;
                     }
                 }
             }
         }
+
+        System.out.println("\tcolumn = " + column);
 
         return column;
     }
