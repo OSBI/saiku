@@ -161,12 +161,23 @@ public abstract class AbstractConnectionManager implements IConnectionManager, S
 
   public Map<String, ISaikuConnection> getAllConnections() throws SaikuOlapException {
     Map<String, ISaikuConnection> resultDs = new HashMap<>();
-    for ( String name : ds.getDatasources(userService.getCurrentUserRoles()).keySet() ) {
-      ISaikuConnection con = getConnection( name );
-      if ( con != null ) {
-        resultDs.put( name, con );
+
+    String[] userRoles = new String[]{};
+
+    if (userService != null) {
+      userRoles = userService.getCurrentUserRoles();
+    }
+
+    if (ds != null) {
+      for ( String name : ds.getDatasources(userRoles).keySet() ) {
+        ISaikuConnection con = getConnection( name );
+        
+        if ( con != null ) {
+          resultDs.put( name, con );
+        }
       }
     }
+
     return resultDs;
   }
 

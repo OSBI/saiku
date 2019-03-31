@@ -215,12 +215,21 @@
 
 										</fileset>
 										<fileset dir="${basedir}/">
+											<include name="js/saiku/embed/" />
 											<include name="js/saiku/plugins/" />
+											<include name="js/saiku/render/" />
+
 											<include name="js/saiku/Settings.js" />
 											<include name="js/saiku/Settings.yaml" />
 											<include name="js/saiku/Saiku.js" />
-											<include name="js/saiku/embed/" />
+
+											<include name="js/saiku/adapters/" />
+											<include name="js/saiku/models/" />
 											<include name="js/saiku/render/" />
+											<include name="js/saiku/routers/" />
+											<include name="js/saiku/tests/" />
+											<include name="js/saiku/views/" />
+
 										</fileset>
 									</copy>
 
