@@ -60,7 +60,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -86,6 +85,9 @@
                         <goals>
                             <goal>war</goal>
                         </goals>
+                        <configuration>
+                            <packagingExcludes>WEB-INF/lib/saiku-query-${saiku-query.version}.jar</packagingExcludes>
+                        </configuration>
                     </execution>
                 </executions>
                 <configuration>
@@ -119,6 +121,30 @@
                                     </includes>
                                 </resource>
                             </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>remove.saiku-query.mondrian</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- Remove mondrian from saiku-query jar
+                                     See https://groups.google.com/a/saiku.meteorite.bi/forum/#!topic/user/oER6gEqc46w
+                                -->
+                                <jar destfile="${basedir}/target/saiku-webapp-${project.version}/WEB-INF/lib/saiku-query-${saiku-query.version}-nomondrian.jar">
+                                    <zipfileset src="${basedir}/target/saiku-webapp-${project.version}/WEB-INF/lib/saiku-query-${saiku-query.version}.jar"
+                                                excludes="mondrian/"/>
+                                </jar>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>

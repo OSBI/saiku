@@ -542,7 +542,7 @@ SaikuTableRenderer.prototype.internalRender = function(allData, options) {
 
             // If the cell is a column header and is null (top left of table)
             if (header.type === "COLUMN_HEADER" && header.value === "null" && (firstColumn == null || col < firstColumn)) {
-                if (((!Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE || (Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE && allData.query.queryModel.details.location !== 'BOTTOM')) || hasMeasures === 0) ||
+                if (((!Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE || (Settings.ALLOW_AXIS_COLUMN_TITLE_TABLE && (allData.query.queryModel.details && allData.query.queryModel.details.location !== 'BOTTOM'))) || hasMeasures === 0) ||
                     allData.query.type === 'MDX') {
                     rowContent += '<th class="all_null">&nbsp;</th>';
                 }
