@@ -295,11 +295,13 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
       if (cellValue == null || cellValue.equals("null")) { //$NON-NLS-1$
         cellValue =""; //$NON-NLS-1$
       }
-      if ( cellValue.length() < 1) {
+
+      if (cellValue.length() < 1) {
         final Object value =  cell.getValue();
-        if (value == null  || value.equals("null")) //$NON-NLS-1$
+
+        if (value == null  || value.equals("null")) { //$NON-NLS-1$
           cellValue = ""; //$NON-NLS-1$
-        else {
+        } else {
           try {
             // TODO this needs to become query / execution specific
             DecimalFormat myFormatter = new DecimalFormat(SaikuProperties.formatDefautNumberFormat); //$NON-NLS-1$
@@ -319,6 +321,8 @@ public class HierarchicalCellSetFormatter implements ICellSetFormatter {
       try {
 
         String formatString = (String) cell.getPropertyValue(Property.StandardCellProperty.FORMAT_STRING);
+        System.out.println("**** " + cellValue + " **** " + formatString);
+
         if (formatString != null && !formatString.startsWith("|")) {
           cellInfo.setFormatString(formatString);
         } else {

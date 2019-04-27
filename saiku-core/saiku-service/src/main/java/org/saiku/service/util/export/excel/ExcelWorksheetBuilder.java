@@ -139,6 +139,7 @@ public class ExcelWorksheetBuilder {
         numberCS = excelWorkbook.createCellStyle();
         numberCS.setFont(font);
         numberCS.setAlignment(HorizontalAlignment.RIGHT);
+        setCellBordersColor(numberCS);
 
         /*
          * justasg: Let's set default format, used if measure has no format at
@@ -151,6 +152,7 @@ public class ExcelWorksheetBuilder {
         DataFormat fmt = excelWorkbook.createDataFormat();
         short dataFormat = fmt.getFormat(SaikuProperties.webExportExcelDefaultNumberFormat);
         numberCS.setDataFormat(dataFormat);
+        totalsCS.setDataFormat(dataFormat);
 
         Font headerFont = excelWorkbook.createFont();
         headerFont.setFontHeightInPoints((short) BASIC_SHEET_FONT_SIZE);
@@ -372,7 +374,7 @@ public class ExcelWorksheetBuilder {
         try {
             summarySheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 2));
         } catch (Exception ex) {
-            // Trying to avoid merge errors
+            log.error("Could not merge", ex);
         }
 
         row = row + 2;
@@ -417,7 +419,7 @@ public class ExcelWorksheetBuilder {
             try {
                 summarySheet.addMergedRegion(new CellRangeAddress(row, row, 0, 10));
             } catch (Exception ex) {
-                // trying to avoid merge errors
+                log.error("Could not merge", ex);
             }
 
             row++;
@@ -432,7 +434,7 @@ public class ExcelWorksheetBuilder {
             try {
                 summarySheet.addMergedRegion(new CellRangeAddress(row, row, 0, 10));
             } catch (Exception ex) {
-                // trying to avoid merge errors
+                log.error("Could not merge", ex);
             }
 
             row++;
@@ -447,13 +449,69 @@ public class ExcelWorksheetBuilder {
         try {
             summarySheet.addMergedRegion(new CellRangeAddress(row, row, 0, 10));
         } catch (Exception ex) {
-            // trying to avoid merge errors
+            log.error("Could not merge", ex);
         }
 
         // Autosize columns for summary sheet
         for (int i = 0; i < 5; i++) {
             summarySheet.autoSizeColumn(i);
         }
+    }
+
+    private void setValue(Cell cell, String value) {
+        if (value == null) {
+            return;
+        }
+
+        // Trying to determine the decimal symbol used
+        String thousandsDelimiter = ".";
+        String decimalDelimiter   = ",";
+
+        if (value.indexOf(',') >= 0 && (value.length() - value.indexOf(',')) > 3) {
+            thousandsDelimiter = ",";
+            decimalDelimiter   = ".";
+        }
+
+        if (value.length() >= 4) {
+            if (value.charAt(value.length() - 3) == '.') {
+                thousandsDelimiter = ",";
+                decimalDelimiter   = ".";
+            }
+        }
+
+        try {
+            double val = Double.parseDouble(value.replace(thousandsDelimiter, "").replace(decimalDelimiter, "."));
+            cell.setCellValue(val);
+
+            if (isInteger(value)) {
+                DataFormat fmt = excelWorkbook.createDataFormat();
+                DataFormat integerFmt = excelWorkbook.createDataFormat();
+                short integerDataFormat = fmt.getFormat(SaikuProperties.webExportExcelDefaultIntegerFormat);
+
+                CellStyle cellStyleClone = excelWorkbook.createCellStyle();
+                cellStyleClone.cloneStyleFrom(cell.getCellStyle());
+                cellStyleClone.setDataFormat(integerDataFormat);
+                cell.setCellStyle(cellStyleClone);
+
+                System.out.println("INTEGER " + value + " => " + val);
+            } else {
+                System.out.println("DOUBLE " + value + " => " + val);
+            }
+        } catch (Exception ex) {
+            cell.setCellValue(value);
+            System.out.println("(exception) " + value + " - " + ex.getMessage());
+        }
+    }
+
+    private boolean isInteger(String value) {
+        if (value != null && value.length() >= 3) {
+            char decimal = value.charAt(value.length() - 3);
+            if (decimal == '.' || decimal == ',') {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void addExcelTableRows(int startingRow) {
@@ -500,14 +558,11 @@ public class ExcelWorksheetBuilder {
                 }
 
                 cell.setCellStyle(basicCS);
-                cell.setCellValue(value);
-                // Use rawNumber only is there is a formatString
+                setValue(cell, value);
+                // Use rawNumber only is there is a rawNumber
                 if (rowsetBody[x][y] instanceof DataCell) {
                     DataCell dataCell = (DataCell) rowsetBody[x][y];
-                    String formatString = dataCell.getFormatString();
-                    if ((dataCell.getRawNumber() != null) && (formatString != null) && !formatString.trim().isEmpty()) {
-                        Number numberValue = dataCell.getRawNumber();
-                        cell.setCellValue(numberValue.doubleValue());
+                    if (dataCell.getRawNumber() != null) {
                         applyCellFormatting(cell, dataCell);
                     }
                 }
@@ -530,7 +585,6 @@ public class ExcelWorksheetBuilder {
         //Set row grand totals
         //As we're not adding subtotals, we should add an offset to the grand totals row
         setRowTotalAggregationCell(rowScanTotals, rowCount, 0, true);
-        System.out.println("rowCount = " + (rowCount));
 
         //Add merge cells
         addMergedRegions(mergeRowsByColumn);
@@ -575,8 +629,7 @@ public class ExcelWorksheetBuilder {
     }
 
     private int setRowTotalAggregationCell(Map<Integer, TotalAggregator[][]> scanTotals, int startIndex, int subIndex, boolean grandTotal) {
-        System.out.println("setRowTotalAggregationCell - startIndex = " + startIndex + ", grandTotal = " + grandTotal);
-
+        System.out.println("setRowTotalAggregationCell");
         if (!scanTotals.isEmpty()) {
             int row = subIndex + startIndex;
             TotalAggregator[][] aggregatorsTable = null;
@@ -588,14 +641,14 @@ public class ExcelWorksheetBuilder {
                 aggregatorsTable = scanTotals.get(row);
             }
 
-            if (aggregatorsTable != null) {
+            if (aggregatorsTable != null && aggregatorsTable.length > 0) {
                 //Create totals row
                 Row sheetRow = workbookSheet.createRow(row + 1);
 
                 //Detect column start index
                 int startColumnIndex = detectColumnStartIndex();
 
-                if (grandTotal) { // AQUI
+                if (grandTotal) { 
                     setGrandTotalLabel(sheetRow, startColumnIndex, false);
                 }
 
@@ -610,16 +663,13 @@ public class ExcelWorksheetBuilder {
 
                         //Create row totals cell
                         Cell cell = sheetRow.createCell(column);
-                        String value = aggregator.getFormattedValue();
-                        cell.setCellValue(value);
                         cell.setCellStyle(totalsCS);
+                        setValue(cell, aggregator.getFormattedValue());
                     }
                 }
                 startIndex++;
             }
         }
-
-        System.out.println("\tstartIndex = " + startIndex);
 
         return startIndex;
     }
@@ -641,14 +691,13 @@ public class ExcelWorksheetBuilder {
     }
 
     private int setColTotalAggregationCell(Map<Integer, TotalAggregator[][]> scanTotals, Row sheetRow, int x, int column, boolean setValue, boolean grandTotal) {
-        System.out.println("setColTotalAggregationCell - column = " + column + ", grandTotal = " + grandTotal);
-
+        System.out.println("setColTotalAggregationCell");
         column++;
 
         if (!scanTotals.isEmpty()) {
             TotalAggregator[][] aggregatorsTable = scanTotals.get(column);
 
-            if (aggregatorsTable != null) {
+            if (aggregatorsTable != null && aggregatorsTable.length > 0) {
                 if (setValue) {
                     if (grandTotal) {
                         setGrandTotalLabel(sheetRow.getRowNum() - 1, column, true);
@@ -659,17 +708,14 @@ public class ExcelWorksheetBuilder {
 
                         if (value != null && !value.equals("-")) {
                             Cell cell = sheetRow.createCell(column);
-                            cell.setCellValue(value);
                             cell.setCellStyle(totalsCS);
+                            setValue(cell, value);
+                            column++;
                         }
-
-                        column++;
                     }
                 }
             }
         }
-
-        System.out.println("\tcolumn = " + column);
 
         return column;
     }
@@ -682,6 +728,8 @@ public class ExcelWorksheetBuilder {
     }
 
     private void setGrandTotalLabel(Row sheetRow, int y, boolean header) {
+        System.out.println("\tsetGrandTotalLabel");
+
         Cell cell = sheetRow.createCell(y);
         //TODO i18n
         String value = "Grand Total";
@@ -701,6 +749,7 @@ public class ExcelWorksheetBuilder {
 	 * @param dataCell The source
 	 */
     private void applyCellFormatting(Cell cell, DataCell dataCell) {
+        System.out.println("\t\tapplyCellFormatting");
         /*
         * Previously, the CellStyles were being kept on a hash map for reuse,
         * but the key used was just the formatString (not considering the
@@ -712,13 +761,29 @@ public class ExcelWorksheetBuilder {
 
         numberCSClone.cloneStyleFrom(numberCS);
 
-        try {
-            formatString = FormatUtil.getFormatString(formatString);
-            DataFormat fmt = excelWorkbook.createDataFormat();
-            short dataFormat = fmt.getFormat(formatString);
-            numberCSClone.setDataFormat(dataFormat);
-        } catch (Exception ex) {
+        // Apply a default number format
+        DataFormat fmt = excelWorkbook.createDataFormat();
+        short dataFormat = fmt.getFormat(SaikuProperties.webExportExcelDefaultNumberFormat);
+        numberCSClone.setDataFormat(dataFormat);
 
+        DataFormat integerFmt = excelWorkbook.createDataFormat();
+        short integerDataFormat = fmt.getFormat(SaikuProperties.webExportExcelDefaultIntegerFormat);
+
+        // If the cell has an specific formatString, use it instead
+        if (formatString != null && formatString.trim().length() > 0) {
+            try {
+                formatString = FormatUtil.getFormatString(formatString);
+                fmt = excelWorkbook.createDataFormat();
+                dataFormat = fmt.getFormat(formatString);
+                numberCSClone.setDataFormat(dataFormat);
+                System.out.println("\t\t\tIt's " + formatString);
+            } catch (Exception ex) {
+                System.out.println("\t\t\tIt's an integer");
+                numberCSClone.setDataFormat(integerDataFormat);
+            }
+        } else {
+            System.out.println("\t\t\tIt's an integer");
+            numberCSClone.setDataFormat(integerDataFormat);
         }
 
         // Check for cell background
@@ -891,7 +956,7 @@ public class ExcelWorksheetBuilder {
                 workbookSheet.addMergedRegion(
                     new CellRangeAddress(startRow, startRow + topLeftCornerHeight - 1, 0, topLeftCornerWidth - 1));
             } catch (Exception ex) {
-                // Sometimes it may try to merge just one cell
+                log.error("Could not merge", ex);
             }
         }
 
@@ -904,7 +969,7 @@ public class ExcelWorksheetBuilder {
                     workbookSheet.addMergedRegion(new CellRangeAddress(item.getStartY(),
                         item.getStartY() + item.getHeight(), item.getStartX(), lastCol));
                 } catch(Exception ex) {
-                    // trying to avoid merge errors
+                    log.error("Could not merge", ex);
                 }
             }
         }
@@ -950,6 +1015,8 @@ public class ExcelWorksheetBuilder {
     }
 
     private void fillHeaderCell(Row sheetRow, String formattedValue, int y) {
+        System.out.println("\tfillHeaderCell " + formattedValue);
+
         Cell cell = sheetRow.createCell(y);
         cell.setCellValue(formattedValue);
         cell.setCellStyle(lighterHeaderCellCS);
@@ -1015,12 +1082,11 @@ public class ExcelWorksheetBuilder {
                             try {
                                 if (next == null || !next) {
                                     workbookSheet.addMergedRegion(new CellRangeAddress(row - mergeCount, row, col, col));
+                                    mergeCount++;
                                 }
                             } catch (Exception ex) {
-                                // Trying to avoid merge errors
+                                log.error("Could not merge", ex);
                             }
-
-                            mergeCount++;
                         } else {
                             mergeCount = 1;
                         }

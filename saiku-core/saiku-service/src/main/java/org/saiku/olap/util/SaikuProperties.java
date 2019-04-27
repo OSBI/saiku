@@ -243,8 +243,12 @@ public class SaikuProperties extends Properties {
     getPropString( "saiku.web.export.csv.timestampformat", "dd-MMM-yyyy HH:mm:ss" );
   public static final String webExportExcelName = getPropString( "saiku.web.export.excel.name", "saiku-export" );
   public static final String webExportExcelFormat = getPropString( "saiku.web.export.excel.format", "xlsx" );
+
   public static final String webExportExcelDefaultNumberFormat =
     getPropString( "saiku.web.export.excel.numberformat", "#,##0.00" );
+  public static final String webExportExcelDefaultIntegerFormat =
+    getPropString( "saiku.web.export.excel.numberformat", "#,##0" );
+
   public static final String webExportExcelPoweredBy = getPropString("saiku.web.export.excel.poweredby", "Export made using Saiku OLAP client.");
   public static final String formatDefautNumberFormat = getPropString( "saiku.format.numberformat", "#,##0.00" );
   public static final Locale locale = getLocale();

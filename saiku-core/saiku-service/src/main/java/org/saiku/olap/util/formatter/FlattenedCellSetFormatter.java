@@ -381,35 +381,15 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
         } catch (Exception e1) {
         }
       }
-      String cellValue = cell.getFormattedValue(); // First try to get a
-      // formatted value
 
-      if (cellValue == null || cellValue.equals("null")) { //$NON-NLS-1$
-        cellValue =""; //$NON-NLS-1$
-      }
-      if ( cellValue.length() < 1) {
-        final Object value =  cell.getValue();
-        if (value == null  || value.equals("null")) //$NON-NLS-1$
-          cellValue = ""; //$NON-NLS-1$
-        else {
-          try {
-            // TODO this needs to become query / execution specific
-            DecimalFormat myFormatter = new DecimalFormat(SaikuProperties.formatDefautNumberFormat); //$NON-NLS-1$
-            DecimalFormatSymbols dfs = new DecimalFormatSymbols(SaikuProperties.locale);
-            myFormatter.setDecimalFormatSymbols(dfs);
-            cellValue = myFormatter.format(cell.getValue());
-          }
-          catch (Exception e) {
-            // TODO: handle exception
-          }
-        }
-        // the raw value
-      }
+      String formatString = "";
 
       // Format string is relevant for Excel export
       // xmla cells can throw an error on this
       try {
-        String formatString = (String) cell.getPropertyValue(Property.StandardCellProperty.FORMAT_STRING);
+        formatString = (String) cell.getPropertyValue(Property.StandardCellProperty.FORMAT_STRING);
+        formatString = formatString.trim();
+
         if (formatString != null && !formatString.startsWith("|")) {
           cellInfo.setFormatString(formatString);
         } else {
@@ -418,6 +398,47 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
         }
       } catch (Exception e) {
         // we tried
+      }
+
+      String cellValue = cell.getFormattedValue(); // First try to get a
+      // formatted value
+
+      if (cellValue == null || cellValue.equals("null")) { //$NON-NLS-1$
+        cellValue =""; //$NON-NLS-1$
+      }
+
+      if (true /*cellValue.length() < 1*/) {
+        final Object value =  cell.getValue();
+
+        if (value == null  || value.equals("null")) { //$NON-NLS-1$
+          cellValue = ""; //$NON-NLS-1$
+        } else {
+          try {
+            // TODO this needs to become query / execution specific
+            DecimalFormat myFormatter = new DecimalFormat("#,###"); //$NON-NLS-1$
+            DecimalFormatSymbols dfs = new DecimalFormatSymbols(SaikuProperties.locale);
+
+            if (!"Standard".equalsIgnoreCase(formatString)) {
+              try {
+                myFormatter = new DecimalFormat(formatString);
+              } catch (Exception ex) {
+              }
+            }
+
+            /*
+            String dataType = "I";
+
+            if (formatString.endsWith(".00")) {
+              dataType = "D";
+            }*/
+
+            myFormatter.setDecimalFormatSymbols(dfs);
+            cellValue = myFormatter.format(cell.getValue());
+          }
+          catch (Exception e) {
+          }
+        }
+        // the raw value
       }
 
       Map<String, String> cellProperties = new HashMap<>();

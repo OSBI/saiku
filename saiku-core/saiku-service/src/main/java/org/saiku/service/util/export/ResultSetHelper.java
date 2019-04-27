@@ -27,27 +27,38 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.NumberFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
 public class ResultSetHelper {
 
   private final NumberFormat numberFormat;
+  private final NumberFormat numberFormatInteger;
   private final SimpleDateFormat dateFormat;
   private final SimpleDateFormat timestampFormat;
 
   public ResultSetHelper() {
-    this.numberFormat = NumberFormat.getInstance( SaikuProperties.locale );
+    this.numberFormat = new DecimalFormat("#0.00");
+    this.numberFormatInteger = NumberFormat.getIntegerInstance( SaikuProperties.locale );
+
     if ( SaikuProperties.webExportCsvUseFormattedValue ) {
       numberFormat.setGroupingUsed( true );
+      numberFormatInteger.setGroupingUsed( true );
     } else {
       numberFormat.setGroupingUsed( false );
+      numberFormatInteger.setGroupingUsed( false );
     }
+
     this.dateFormat = new SimpleDateFormat( SaikuProperties.webExportCsvDateFormat );
     this.timestampFormat = new SimpleDateFormat( SaikuProperties.webExportCsvTimestampFormat );
   }
 
   private String formatNumber( Object number ) {
     return numberFormat.format( number );
+  }
+
+  private String formatNumberInteger( Object number ) {
+    return numberFormatInteger.format( number );
   }
 
   private String read( Clob c ) throws SQLException, IOException {
@@ -86,6 +97,14 @@ public class ResultSetHelper {
         }
         break;
       case Types.BIGINT:
+      case Types.INTEGER:
+      case Types.TINYINT:
+      case Types.SMALLINT:
+        int intValue = rs.getInt( colIndex );
+        if ( !rs.wasNull() ) {
+          value = this.formatNumberInteger( intValue ); // value = "" + intValue;
+        }
+        break;
       case Types.DECIMAL:
       case Types.DOUBLE:
       case Types.FLOAT:
@@ -94,14 +113,6 @@ public class ResultSetHelper {
         BigDecimal bd = rs.getBigDecimal( colIndex );
         if ( bd != null ) {
           value = this.formatNumber( bd ); // value = "" + bd.doubleValue();
-        }
-        break;
-      case Types.INTEGER:
-      case Types.TINYINT:
-      case Types.SMALLINT:
-        int intValue = rs.getInt( colIndex );
-        if ( !rs.wasNull() ) {
-          value = this.formatNumber( intValue ); // value = "" + intValue;
         }
         break;
       case Types.JAVA_OBJECT:

@@ -30,6 +30,8 @@ public class OlapResultSetUtil {
   }
 
   public static CellDataSet cellSet2Matrix( final CellSet cellSet, ICellSetFormatter formatter ) {
+    System.out.println("cellSet2Matrix(cellSet, " + formatter.getClass().getName() + ")");
+
     if ( cellSet == null ) {
       return new CellDataSet( 0, 0 );
     }
