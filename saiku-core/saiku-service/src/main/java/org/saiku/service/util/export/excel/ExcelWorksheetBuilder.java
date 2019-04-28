@@ -38,6 +38,8 @@ import java.util.List;
  */
 
 public class ExcelWorksheetBuilder {
+    private static final short INTEGER_NUMBER_FORMAT = 164;
+    private static final short DOUBLE_NUMBER_FORMAT  = 165;
 
     private static final String BASIC_SHEET_FONT_FAMILY = "Arial";
     private static final short BASIC_SHEET_FONT_SIZE = 11;
@@ -91,8 +93,6 @@ public class ExcelWorksheetBuilder {
             excelWorkbook = wb;
             maxRows = SpreadsheetVersion.EXCEL97.getMaxRows();
             maxColumns = SpreadsheetVersion.EXCEL97.getMaxColumns();
-        } else if ("xlsx".equals(SaikuProperties.webExportExcelFormat)) {
-            excelWorkbook = new XSSFWorkbook();
         } else {
             excelWorkbook = new XSSFWorkbook();
         }
@@ -114,9 +114,8 @@ public class ExcelWorksheetBuilder {
     }
 
     private void initCellStyles() {
-
         Font font = excelWorkbook.createFont();
-        font.setFontHeightInPoints((short) BASIC_SHEET_FONT_SIZE);
+        font.setFontHeightInPoints(BASIC_SHEET_FONT_SIZE);
         font.setFontName(BASIC_SHEET_FONT_FAMILY);
 
         basicCS = excelWorkbook.createCellStyle();
@@ -126,7 +125,7 @@ public class ExcelWorksheetBuilder {
         setCellBordersColor(basicCS);
 
         Font totalsFont = excelWorkbook.createFont();
-        totalsFont.setFontHeightInPoints((short) BASIC_SHEET_FONT_SIZE);
+        totalsFont.setFontHeightInPoints(BASIC_SHEET_FONT_SIZE);
         totalsFont.setBold(true);
         totalsFont.setFontName(BASIC_SHEET_FONT_FAMILY);
 
@@ -149,10 +148,8 @@ public class ExcelWorksheetBuilder {
          * format, it will output values up to maximum detail, i.e.
          * 121212.3456789 and we like them as 121,212.346
          */
-        DataFormat fmt = excelWorkbook.createDataFormat();
-        short dataFormat = fmt.getFormat(SaikuProperties.webExportExcelDefaultNumberFormat);
-        numberCS.setDataFormat(dataFormat);
-        totalsCS.setDataFormat(dataFormat);
+        numberCS.setDataFormat(DOUBLE_NUMBER_FORMAT);
+        totalsCS.setDataFormat(DOUBLE_NUMBER_FORMAT);
 
         Font headerFont = excelWorkbook.createFont();
         headerFont.setFontHeightInPoints((short) BASIC_SHEET_FONT_SIZE);
@@ -172,11 +169,9 @@ public class ExcelWorksheetBuilder {
         darkerHeaderCellCS.setFillForegroundColor(IndexedColors.GREY_40_PERCENT.getIndex());
         darkerHeaderCellCS.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         setCellBordersColor(darkerHeaderCellCS);
-
     }
 
     private void setCellBordersColor(CellStyle style) {
-
         style.setBorderBottom(BorderStyle.THIN);
         style.setBottomBorderColor(IndexedColors.GREY_80_PERCENT.getIndex());
         style.setBorderTop(BorderStyle.THIN);
@@ -463,6 +458,32 @@ public class ExcelWorksheetBuilder {
             return;
         }
 
+        try {
+            double val = Double.parseDouble(convertToParseableNumberString(value));
+            cell.setCellValue(val);
+
+            CellStyle cellStyleClone = excelWorkbook.createCellStyle();
+            cellStyleClone.cloneStyleFrom(cell.getCellStyle());
+            cellStyleClone.setDataFormat(createNumberDataFormat(value));
+
+            cell.setCellStyle(cellStyleClone);
+        } catch (Exception ex) {
+            cell.setCellValue(value);
+        }
+    }
+
+    private boolean isInteger(String value) {
+        if (value != null && value.length() >= 3) {
+            char decimal = value.charAt(value.length() - 3);
+            if (decimal == '.' || decimal == ',') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private String convertToParseableNumberString(String value) {
         // Trying to determine the decimal symbol used
         String thousandsDelimiter = ".";
         String decimalDelimiter   = ",";
@@ -479,39 +500,19 @@ public class ExcelWorksheetBuilder {
             }
         }
 
-        try {
-            double val = Double.parseDouble(value.replace(thousandsDelimiter, "").replace(decimalDelimiter, "."));
-            cell.setCellValue(val);
-
-            if (isInteger(value)) {
-                DataFormat fmt = excelWorkbook.createDataFormat();
-                DataFormat integerFmt = excelWorkbook.createDataFormat();
-                short integerDataFormat = fmt.getFormat(SaikuProperties.webExportExcelDefaultIntegerFormat);
-
-                CellStyle cellStyleClone = excelWorkbook.createCellStyle();
-                cellStyleClone.cloneStyleFrom(cell.getCellStyle());
-                cellStyleClone.setDataFormat(integerDataFormat);
-                cell.setCellStyle(cellStyleClone);
-
-                System.out.println("INTEGER " + value + " => " + val);
-            } else {
-                System.out.println("DOUBLE " + value + " => " + val);
-            }
-        } catch (Exception ex) {
-            cell.setCellValue(value);
-            System.out.println("(exception) " + value + " - " + ex.getMessage());
-        }
+        return value.replace(thousandsDelimiter, "").replace(decimalDelimiter, ".");
     }
 
-    private boolean isInteger(String value) {
-        if (value != null && value.length() >= 3) {
-            char decimal = value.charAt(value.length() - 3);
-            if (decimal == '.' || decimal == ',') {
-                return false;
-            }
-        }
+    private short createNumberDataFormat(String value) {
+        DataFormat fmt = excelWorkbook.createDataFormat();
 
-        return true;
+        if (isInteger(value)) {
+            System.out.println("INTEGER " + value);
+            return INTEGER_NUMBER_FORMAT;
+        } else {
+            System.out.println("DOUBLE " + value);
+            return DOUBLE_NUMBER_FORMAT;
+        }
     }
 
     private void addExcelTableRows(int startingRow) {
@@ -691,7 +692,6 @@ public class ExcelWorksheetBuilder {
     }
 
     private int setColTotalAggregationCell(Map<Integer, TotalAggregator[][]> scanTotals, Row sheetRow, int x, int column, boolean setValue, boolean grandTotal) {
-        System.out.println("setColTotalAggregationCell");
         column++;
 
         if (!scanTotals.isEmpty()) {
@@ -728,11 +728,11 @@ public class ExcelWorksheetBuilder {
     }
 
     private void setGrandTotalLabel(Row sheetRow, int y, boolean header) {
-        System.out.println("\tsetGrandTotalLabel");
-
         Cell cell = sheetRow.createCell(y);
+
         //TODO i18n
         String value = "Grand Total";
+
         if (header) {
             fillHeaderCell(sheetRow, value, y);
         } else {
@@ -749,7 +749,6 @@ public class ExcelWorksheetBuilder {
 	 * @param dataCell The source
 	 */
     private void applyCellFormatting(Cell cell, DataCell dataCell) {
-        System.out.println("\t\tapplyCellFormatting");
         /*
         * Previously, the CellStyles were being kept on a hash map for reuse,
         * but the key used was just the formatString (not considering the
@@ -763,11 +762,8 @@ public class ExcelWorksheetBuilder {
 
         // Apply a default number format
         DataFormat fmt = excelWorkbook.createDataFormat();
-        short dataFormat = fmt.getFormat(SaikuProperties.webExportExcelDefaultNumberFormat);
+        short dataFormat = DOUBLE_NUMBER_FORMAT;
         numberCSClone.setDataFormat(dataFormat);
-
-        DataFormat integerFmt = excelWorkbook.createDataFormat();
-        short integerDataFormat = fmt.getFormat(SaikuProperties.webExportExcelDefaultIntegerFormat);
 
         // If the cell has an specific formatString, use it instead
         if (formatString != null && formatString.trim().length() > 0) {
@@ -776,14 +772,11 @@ public class ExcelWorksheetBuilder {
                 fmt = excelWorkbook.createDataFormat();
                 dataFormat = fmt.getFormat(formatString);
                 numberCSClone.setDataFormat(dataFormat);
-                System.out.println("\t\t\tIt's " + formatString);
             } catch (Exception ex) {
-                System.out.println("\t\t\tIt's an integer");
-                numberCSClone.setDataFormat(integerDataFormat);
+                numberCSClone.setDataFormat(INTEGER_NUMBER_FORMAT);
             }
         } else {
-            System.out.println("\t\t\tIt's an integer");
-            numberCSClone.setDataFormat(integerDataFormat);
+            numberCSClone.setDataFormat(INTEGER_NUMBER_FORMAT);
         }
 
         // Check for cell background
@@ -818,7 +811,6 @@ public class ExcelWorksheetBuilder {
                     // we tried to set the color, no luck, lets continue
                     // without
                 }
-
             }
         } else {
             numberCSClone.setFillForegroundColor(numberCS.getFillForegroundColor());

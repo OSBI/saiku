@@ -43,7 +43,6 @@ public class RestUtil {
     private static final Logger log = LoggerFactory.getLogger(RestUtil.class);
 
 	public static QueryResult convert(ResultSet rs) throws Exception {
-		System.out.println("RestUtil.convert I");
 		return convert(rs, 0);
 	}
 
@@ -70,9 +69,7 @@ public class RestUtil {
 			    Cell[] row = new Cell[width];
 			    for (int i = 0; i < width; i++) {
 			    	int colType = rs.getMetaData().getColumnType(i + 1);
-			    	System.out.println("will call rsch.getValue with colType = " + colType);
 			    	String content = rsch.getValue(rs, colType, i + 1);
-			    	System.out.println("content = " + content);
 			        if (content == null)
 			            content = "";
 			        row[i] = new Cell(content, Cell.Type.DATA_CELL);
@@ -88,12 +85,10 @@ public class RestUtil {
 	}
 	
 	public static QueryResult convert(CellDataSet cellSet) {
-		System.out.println("RestUtil.convert II");
 		return convert(cellSet, 0);
 	}
 	
 	public static Total[][] convertTotals(List<TotalNode>[] totalLists) {
-		System.out.println("RestUtil.convertTotals");
 		if (null == totalLists)
 			return null;
 		Total[][] retVal = new Total[totalLists.length][];
@@ -107,7 +102,6 @@ public class RestUtil {
 	}
 	
 	public static QueryResult convert(CellDataSet cellSet, int limit) {
-		System.out.println("RestUtil.convert III");
 		ArrayList<Cell[]> rows = new ArrayList<>();
 
 		if (cellSet == null || cellSet.getCellSetBody() == null || cellSet.getCellSetHeaders() == null) {
@@ -138,13 +132,9 @@ public class RestUtil {
 	}
 	
 	private static Cell convert(AbstractBaseCell acell, Cell.Type headertype) {
-		System.out.println("\tconvert(acell, headertype)");
-
 		if (acell != null) {
 			if (acell instanceof DataCell) {
 				DataCell dcell = (DataCell) acell;
-
-				System.out.println("\t\tIt's a DataCell - " + dcell);
 
 				Properties metaprops = new Properties();
 				// metaprops.put("color", "" + dcell.getColorValue());
@@ -176,8 +166,6 @@ public class RestUtil {
 
 			if (acell instanceof MemberCell) {
 				MemberCell mcell = (MemberCell) acell;
-
-				System.out.println("\t\tIt's a MemberCell " + mcell);
 
 //				Properties metaprops = new Properties();
 //				metaprops.put("children", "" + mcell.getChildMemberCount());
@@ -214,7 +202,6 @@ public class RestUtil {
 	}
 
 	public static QueryResult convert(DrillThroughResult drillthrough) throws IOException {
-		System.out.println("RestUtil.convert IV");
         Integer height = 0;
         ResultSetHelper rsch = new ResultSetHelper();
         ArrayList<Cell[]> rows = new ArrayList<>();
