@@ -1203,6 +1203,9 @@ var Workspace = Backbone.View.extend({
     },
 
     error: function(args) {
-        this.processing.html(safe_tags_replace(args.data.error)).show();
+        if ((args && args.data && args.data.error) && (args.data.error.toLowerCase().includes("olap") || args.data.error.toLowerCase().includes("oledb")))
+            this.processing.html(safe_tags_replace("Record Not Found")).show();
+        else        
+            this.processing.html(safe_tags_replace(args.data.error)).show();
     }
 });

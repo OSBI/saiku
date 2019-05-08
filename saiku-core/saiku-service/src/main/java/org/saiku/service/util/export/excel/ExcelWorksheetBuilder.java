@@ -566,6 +566,8 @@ public class ExcelWorksheetBuilder {
                     if (dataCell.getRawNumber() != null) {
                         applyCellFormatting(cell, dataCell);
                     }
+                } else {
+                    cell.setCellValue(value);
                 }
 
                 //Set column sub totalstotals
@@ -650,7 +652,17 @@ public class ExcelWorksheetBuilder {
                 int startColumnIndex = detectColumnStartIndex();
 
                 if (grandTotal) { 
-                    setGrandTotalLabel(sheetRow, startColumnIndex, false);
+                    int totalsCount = 0;
+
+                    for (TotalAggregator[] aggregators : aggregatorsTable) {
+                        for (TotalAggregator aggregator : aggregators) {
+                            totalsCount++;
+                        }
+                    }
+
+                    if (totalsCount > 0) {
+                        setGrandTotalLabel(sheetRow, startColumnIndex, false);
+                    }
                 }
 
                 for (TotalAggregator[] aggregators : aggregatorsTable) {
@@ -700,7 +712,18 @@ public class ExcelWorksheetBuilder {
             if (aggregatorsTable != null && aggregatorsTable.length > 0) {
                 if (setValue) {
                     if (grandTotal) {
-                        setGrandTotalLabel(sheetRow.getRowNum() - 1, column, true);
+                        int totalsCount = 0;
+
+                        for (TotalAggregator[] aggregators : aggregatorsTable) {
+                            String value = aggregators[x].getFormattedValue();
+                            if (value != null && !value.equals("-")) {
+                                totalsCount++;
+                            }
+                        }
+
+                        if (totalsCount > 0) {
+                            setGrandTotalLabel(sheetRow.getRowNum() - 1, column, true);
+                        }
                     }
 
                     for (TotalAggregator[] aggregators : aggregatorsTable) {

@@ -410,6 +410,8 @@ public class FlattenedCellSetFormatter implements ICellSetFormatter {
       if (true /*cellValue.length() < 1*/) {
         final Object value =  cell.getValue();
 
+        System.out.println(value + " - " + cellValue + " - " + formatString);
+
         if (value == null  || value.equals("null")) { //$NON-NLS-1$
           cellValue = ""; //$NON-NLS-1$
         } else {
