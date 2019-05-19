@@ -26,12 +26,9 @@ public class ScopedRepo implements ApplicationListener<HttpSessionCreatedEvent>,
     }
     
     public void onApplicationEvent(HttpSessionCreatedEvent sessionEvent) {
-      /*
-       * In our previous implementation we just fetched a session from the RequestContextHolder, but in a 
-       * SpringSecurity + Hazelcast scenario we need a Hazelcast enabled session which is injected just after the
-       * spring security session is created.
-       */
-      this.setSession(sessionEvent.getSession());
+      if (httpSession == null) {
+        this.setSession(sessionEvent.getSession());
+      }
     }
     
     public void setSession(HttpSession httpSession){
