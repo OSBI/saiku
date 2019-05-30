@@ -32,6 +32,7 @@ import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 
@@ -142,7 +143,18 @@ public abstract class AbstractConnectionManager implements IConnectionManager, S
 
   public void refreshAllConnections() {
     ds.load();
-    for ( String name : ds.getDatasources(userService.getCurrentUserRoles()).keySet() ) {
+
+    String[] roles = new String[]{};
+
+    if (userService != null) {
+      try {
+        roles = userService.getCurrentUserRoles();
+      } catch (Exception ex) {
+        // It is expected in scenarios where the user roles are not available
+      }
+    }
+
+    for (String name : ds.getDatasources(roles).keySet()) {
       try {
         refreshConnection( name );
       } catch (Exception ex) {
