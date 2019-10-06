@@ -3,11 +3,11 @@
     <parent>
         <artifactId>saiku-core</artifactId>
         <groupId>org.saikuanalytics</groupId>
-        <version>3.90-BEP</version>
+        <version>3.90-DEV</version>
     </parent>
 	<artifactId>saiku-olap-util</artifactId>
 	<packaging>jar</packaging>
-	<version>3.90-BEP</version>
+	<version>3.90-DEV</version>
 	<name>saiku olap util</name>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
