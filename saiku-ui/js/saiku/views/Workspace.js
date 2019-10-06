@@ -517,8 +517,10 @@ var Workspace = Backbone.View.extend({
         obj.query = this.query;
 
         // Process default parameters
-        var deffilters = this.extractDefaultFilters(this.paramsURI);
-        this.setDefaultFilters(deffilters, obj.query);        
+        if (this.extractDefaultFilters && this.paramsURI) {
+            var deffilters = this.extractDefaultFilters(this.paramsURI);
+            this.setDefaultFilters(deffilters, obj.query);        
+        }
 
         // Save the query to the server and init the UI
         obj.query.save({},{ data: { json: JSON.stringify(this.query.model) }, async: false });
