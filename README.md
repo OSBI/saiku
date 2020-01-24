@@ -17,15 +17,15 @@
 
 <h1 align="center"><a href="https://www.meteorite.bi/products/saiku">Saiku Analytics</a></h1>
 <h2 align="center">The world's greatest open source OLAP browser</h2>
-<p align="center"><a href="https://try.meteorite.bi/"><img src="https://raw.githubusercontent.com/OSBI/saiku/assets/saiku-demo-1.jpg"/></a></p>
+<p align="center"><a href="https://www.meteorite.bi/products/saiku"><img src="https://raw.githubusercontent.com/OSBI/saiku/assets/saiku-demo-1.jpg"/></a></p>
 <hr />
 <p align="center">
-  <a href="http://www.meteorite.bi/"><b>Homepage</b></a> |
-  <a href="http://licensing.meteorite.bi/"><b>Saiku License</b></a> |
-  <a href="http://saiku-documentation.readthedocs.io/en/latest/"><b>Wiki</b></a> |
-  <a href="http://community.meteorite.bi/"><b>Community</b></a> |
+  <a href="https://www.meteorite.bi"><b>Homepage</b></a> |
+  <a href="https://licensing.meteorite.bi"><b>Saiku License</b></a> |
+  <a href="https://saiku-documentation.readthedocs.io/en/latest/"><b>Wiki</b></a> |
+  <a href="https://community.meteorite.bi/"><b>Community</b></a> |
   <a href="https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/dev"><b>Mailing List</b></a> |
-  <a href="http://webchat.freenode.net/?randomnick=1&channels=%23%23saiku"><b>Chat</b></a> |
+  <a href="https://webchat.freenode.net/?randomnick=1&channels=%23%23saiku"><b>Chat</b></a> |
   <a href="https://twitter.com/SaikuAnalytics"><b>News</b></a>
 </p>
 
@@ -38,7 +38,7 @@
   are interested in, look at it from different perspectives,
   drill into the detail. Once you have your answer, save your results,
   share them, export them to Excel or PDF, all straight from the browser.
-  <a href="http://www.meteorite.bi/">(more)</a>
+  <a href="https://www.meteorite.bi">(more)</a>
 </p>
 
 ***
@@ -46,7 +46,7 @@
 <p align="center">
   <b>
     Please consider supporting development by making a
-    <a href="http://www.meteorite.bi/products/saiku/sponsorship">donation</a>.
+    <a href="https://www.meteorite.bi/products/saiku/sponsorship">donation</a>.
   </b>
 </p>
 
@@ -78,15 +78,15 @@ find . -name "*.versionsBackup" -type f -delete
 
 ## Get Saiku License
 
-Saiku is open source and free to use. Our default server does ship with a license server installed. To get a license you can visit [http://licensing.meteorite.bi](http://licensing.meteorite.bi) and get a FREE license which is pinned to the major release of the server, but does not expire at any time. This helps us with a more accurate picture of installation numbers and deployments.
+Saiku is open source and free to use. Our default server does ship with a license server installed. To get a license you can visit [https://licensing.meteorite.bi](https://licensing.meteorite.bi) and get a FREE license which is pinned to the major release of the server, but does not expire at any time. This helps us with a more accurate picture of installation numbers and deployments.
 
 ## Wiki
 
-* [Saiku Wiki](http://saiku-documentation.readthedocs.io/en/latest/)
+* [Saiku Wiki](https://saiku-documentation.readthedocs.io/en/latest/)
 
 ## Community
 
-* [Saiku Community](http://community.meteorite.bi/)
+* [Saiku Community](https://community.meteorite.bi/)
 
 ## Bugs and Feature Requests
 
@@ -97,7 +97,7 @@ Saiku is open source and free to use. Our default server does ship with a licens
 * [Saiku Dev Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/dev)
 * [Saiku User Group](https://groups.google.com/a/saiku.meteorite.bi/forum/#!forum/user)
 * [Stack Overflow](http://stackoverflow.com/questions/tagged/saiku)
-* [Freenode IRC - Channel: ##saiku](http://webchat.freenode.net/?randomnick=1&channels=%23%23saiku)
+* [Freenode IRC - Channel: ##saiku](https://webchat.freenode.net/?randomnick=1&channels=%23%23saiku)
 
 ## Browser Support
 
