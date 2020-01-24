@@ -69,7 +69,7 @@ find . -name "*.versionsBackup" -type f -delete
 
 ## Get Saiku License
 
-Saiku is open source and free to use. Our default server does ship with a license server installed. To get a license you can visit [https://licensing.meteorite.bi](https://licensing.meteorite.bi) and get a FREE license which is pinned to the major release of the server, but does not expire at any time. This helps us with a more accurate picture of installation numbers and deployments.
+Saiku is open source and free to use. Our default server does ship with a license server installed. To get a license you can visit https://licensing.meteorite.bi and get a FREE license which is pinned to the major release of the server. This helps us with a more accurate picture of installation numbers and deployments.
 
 ## Wiki
 
