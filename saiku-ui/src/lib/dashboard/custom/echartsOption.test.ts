@@ -135,6 +135,99 @@ describe('validateEchartsOption — reject (fail closed)', () => {
 });
 
 /* ------------------------------------------------------------------ *
+ * saiku#1940 — control-char-split URL scheme bypass.                   *
+ *                                                                      *
+ * `resourceRefAllowed` used to detect a scheme with                    *
+ * `String.prototype.trim()` + an anchored `^[a-z][a-z0-9+.-]*:` regex. *
+ * `trim()` only strips whitespace at the ends and never touches an     *
+ * EMBEDDED control character, so a scheme split by an inner tab or     *
+ * newline — or preceded by a leading byte in the 0x00-0x1F range —     *
+ * doesn't match that regex and was waved through as "no scheme, must   *
+ * be relative". A browser's WHATWG URL parser strips embedded          *
+ * tab/newline and leading/trailing C0-control/space bytes BEFORE it    *
+ * looks for a scheme, so it resolves the very same string to a plain   *
+ * `javascript:` URL — the classic CWE-79/CWE-601 gap this closes.      *
+ * Reversion-sensitive: stashing the fix (the `normalizeUrlLike` step   *
+ * and/or the blanket C0-control reject in `stringIsHostile`) turns     *
+ * every bypass case below green when it must be red.                   *
+ * ------------------------------------------------------------------ */
+describe('validateEchartsOption — saiku#1940 control-char-split scheme bypass', () => {
+	it('rejects a plain javascript: title.link (baseline)', () => {
+		const r = validateEchartsOption({
+			title: { text: 'Sales', link: 'javascript:alert(document.cookie)' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(false);
+	});
+
+	it('rejects a javascript: scheme split by an embedded TAB in title.link', () => {
+		const r = validateEchartsOption({
+			title: { text: 'Sales', link: 'java\tscript:alert(document.cookie)' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(false);
+	});
+
+	it('rejects a javascript: scheme split by an embedded NEWLINE in title.link', () => {
+		const r = validateEchartsOption({
+			title: { text: 'Sales', link: 'java\nscript:alert(document.cookie)' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(false);
+	});
+
+	it('rejects a javascript: URL preceded by a leading 0x01 control byte in title.link', () => {
+		const r = validateEchartsOption({
+			title: { text: 'Sales', link: '\x01javascript:alert(document.cookie)' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(false);
+	});
+
+	it('rejects the same TAB-split bypass in title.sublink', () => {
+		const r = validateEchartsOption({
+			title: { text: 'Sales', sublink: 'java\tscript:alert(document.cookie)' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(false);
+	});
+
+	it('rejects the same TAB-split bypass in a sunburst data[i].link', () => {
+		const r = validateEchartsOption({
+			series: [
+				{
+					type: 'sunburst',
+					nodeClick: 'link',
+					data: [{ name: 'root', value: 1, link: 'java\tscript:alert(document.cookie)' }]
+				} as unknown as Record<string, unknown>
+			]
+		});
+		expect(r.ok).toBe(false);
+	});
+
+	it('still rejects an absolute https:// title.link exactly as before the fix (unchanged intent)', () => {
+		// `resourceRefAllowed` rejects EVERY explicit scheme outright, https:
+		// included — only same-origin/relative refs and data:image URIs pass.
+		// This is pre-existing behaviour this fix must not change; asserted here
+		// so a future edit that starts allowlisting absolute http(s) links (a
+		// much bigger, deliberate policy change) doesn't slip in unnoticed.
+		const r = validateEchartsOption({
+			title: { text: 'Sales', link: 'https://example.com/report' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(false);
+	});
+
+	it('still accepts a legitimate same-origin/relative title.link (no over-rejection)', () => {
+		const r = validateEchartsOption({
+			title: { text: 'Sales', link: '/reports/monthly', target: 'self' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(true);
+	});
+});
+
+/* ------------------------------------------------------------------ *
  * Property tests — for arbitrary objects that embed a function OR a   *
  * remote-url string at a random depth, the validator NEVER accepts.   *
  * ------------------------------------------------------------------ */

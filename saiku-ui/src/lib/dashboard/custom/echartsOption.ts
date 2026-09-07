@@ -149,19 +149,40 @@ function extractUrlTargets(value: string): string[] {
 }
 
 /**
+ * Normalise a string the way the WHATWG URL parser normalises its input
+ * BEFORE scheme detection (steps 1-2 of
+ * https://url.spec.whatwg.org/#url-parsing): strip any leading/trailing C0
+ * control (0x00-0x1F) or space (0x20), then remove every ASCII tab/CR/LF
+ * wherever it occurs in what remains.
+ *
+ * saiku#1940: `trim()` only strips whitespace at the ends and never touches an
+ * EMBEDDED control character, so a scheme split by an inner tab/newline (e.g.
+ * `"java\tscript:alert(1)"`) doesn't match the anchored scheme regex below and
+ * was treated as scheme-less / relative. A real browser's URL parser removes
+ * that embedded tab/newline (and strips a leading control byte such as 0x01)
+ * BEFORE it looks for a scheme, so it sees plain `"javascript:alert(1)"` — the
+ * validator must normalise identically before it decides.
+ */
+function normalizeUrlLike(s: string): string {
+	// Deliberate: strip leading/trailing C0 control (0x00-0x1F) or space (0x20),
+	// mirroring the WHATWG URL parser.
+	// eslint-disable-next-line no-control-regex
+	const stripped = s.replace(/^[\x00-\x20]+/, '').replace(/[\x00-\x20]+$/, '');
+	return stripped.replace(/[\t\r\n]/g, '');
+}
+
+/**
  * True when a resource reference (a full string value, or a `url()` target) is
  * safe: empty, a same-origin/relative path, or a `data:image/<raster>` URI.
  * Absolute schemes, protocol-relative `//host`, `image://<remote>`, and any
  * other `data:` payload are unsafe. Fails closed.
  */
 function resourceRefAllowed(raw: string): boolean {
-	let s = raw
-		.trim()
-		.replace(/^['"]|['"]$/g, '')
-		.trim();
+	let s = normalizeUrlLike(raw).replace(/^['"]|['"]$/g, '');
+	s = normalizeUrlLike(s);
 	// ECharts image-symbol prefix — validate whatever it points at.
 	if (/^image:\/\//i.test(s)) {
-		s = s.slice('image://'.length).trim();
+		s = normalizeUrlLike(s.slice('image://'.length));
 	}
 	if (s === '') return true;
 	if (ALLOWED_DATA_IMAGE.test(s)) return true;
@@ -180,6 +201,15 @@ function resourceRefAllowed(raw: string): boolean {
  * or by embedding an absolute `http(s)` / `image://` URL anywhere inside it.
  */
 function stringIsHostile(value: string): boolean {
+	// saiku#1940: reject outright any C0 control character (0x00-0x1F, which
+	// includes tab/CR/LF) anywhere in the string. No legitimate chart title,
+	// label, or URL needs one, and a browser's URL parser strips these from
+	// inside a value before detecting its scheme (see `normalizeUrlLike`) — so
+	// a string carrying one is either a scheme-splitting bypass attempt or has
+	// no business being here. This closes the whole bypass class defensively,
+	// independent of the normalisation below.
+	// eslint-disable-next-line no-control-regex
+	if (/[\x00-\x1F]/.test(value)) return true;
 	const v = value.trim();
 	// 1. Bare resource reference as the whole value.
 	if (!resourceRefAllowed(v)) return true;
