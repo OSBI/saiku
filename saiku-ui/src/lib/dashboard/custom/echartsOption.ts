@@ -149,19 +149,40 @@ function extractUrlTargets(value: string): string[] {
 }
 
 /**
+ * Normalise a string the way the WHATWG URL parser normalises its input
+ * BEFORE scheme detection (steps 1-2 of
+ * https://url.spec.whatwg.org/#url-parsing): strip any leading/trailing C0
+ * control (0x00-0x1F) or space (0x20), then remove every ASCII tab/CR/LF
+ * wherever it occurs in what remains.
+ *
+ * saiku#1940: `trim()` only strips whitespace at the ends and never touches an
+ * EMBEDDED control character, so a scheme split by an inner tab/newline (e.g.
+ * `"java\tscript:alert(1)"`) doesn't match the anchored scheme regex below and
+ * was treated as scheme-less / relative. A real browser's URL parser removes
+ * that embedded tab/newline (and strips a leading control byte such as 0x01)
+ * BEFORE it looks for a scheme, so it sees plain `"javascript:alert(1)"` — the
+ * validator must normalise identically before it decides.
+ */
+function normalizeUrlLike(s: string): string {
+	// Deliberate: strip leading/trailing C0 control (0x00-0x1F) or space (0x20),
+	// mirroring the WHATWG URL parser.
+	// eslint-disable-next-line no-control-regex
+	const stripped = s.replace(/^[\x00-\x20]+/, '').replace(/[\x00-\x20]+$/, '');
+	return stripped.replace(/[\t\r\n]/g, '');
+}
+
+/**
  * True when a resource reference (a full string value, or a `url()` target) is
  * safe: empty, a same-origin/relative path, or a `data:image/<raster>` URI.
  * Absolute schemes, protocol-relative `//host`, `image://<remote>`, and any
  * other `data:` payload are unsafe. Fails closed.
  */
 function resourceRefAllowed(raw: string): boolean {
-	let s = raw
-		.trim()
-		.replace(/^['"]|['"]$/g, '')
-		.trim();
+	let s = normalizeUrlLike(raw).replace(/^['"]|['"]$/g, '');
+	s = normalizeUrlLike(s);
 	// ECharts image-symbol prefix — validate whatever it points at.
 	if (/^image:\/\//i.test(s)) {
-		s = s.slice('image://'.length).trim();
+		s = normalizeUrlLike(s.slice('image://'.length));
 	}
 	if (s === '') return true;
 	if (ALLOWED_DATA_IMAGE.test(s)) return true;
@@ -172,6 +193,22 @@ function resourceRefAllowed(raw: string): boolean {
 	if (/^[a-z][a-z0-9+.-]*:/i.test(s)) return false;
 	// No scheme and not protocol-relative → same-origin / relative → allowed.
 	return true;
+}
+
+/**
+ * True when a string carries a C0 control character that has NO legitimate use
+ * in a chart title, label, or URL. Deliberately EXCLUDES tab (0x09), LF
+ * (0x0A), and CR (0x0D): zrender/ECharts splits label/title/formatter text on
+ * `\n` as a documented line-break feature, so a blanket 0x00-0x1F reject would
+ * break real saved tiles on upgrade (e.g. a multi-line `title.text`). Those
+ * three are already handled for the URL/scheme path by `normalizeUrlLike`
+ * (which strips them before the scheme check), so excluding them here is
+ * SAFE, not a bypass — this check is defence-in-depth for the remaining C0
+ * bytes, none of which any legitimate string needs.
+ */
+function hasIllegalControlChar(value: string): boolean {
+	// eslint-disable-next-line no-control-regex
+	return /[\x00-\x08\x0B\x0C\x0E-\x1F]/.test(value);
 }
 
 /**
@@ -190,7 +227,12 @@ function stringIsHostile(value: string): boolean {
 	// 3. An absolute remote URL embedded ANYWHERE in the string (rich text /
 	//    concatenated values). Protocol-relative refs are only treated as hostile
 	//    at the start of the value (rule 1) to avoid false positives on prose.
-	const lower = v.toLowerCase();
+	// Normalised the same way as the scheme check (saiku#1940) so a
+	// control-char-split "http(s)://" / "image://" can't dodge this heuristic
+	// either, for consistency with rule 1 — not itself a security boundary,
+	// since `hasIllegalControlChar` already rejects everything but tab/LF/CR
+	// before a string reaches here, and those three don't affect this match.
+	const lower = normalizeUrlLike(v).toLowerCase();
 	if (/https?:\/\//.test(lower)) return true;
 	if (/image:\/\//.test(lower)) return true;
 	return false;
@@ -219,6 +261,9 @@ function scanValue(
 	}
 	if (value === null) return null;
 	if (t === 'string') {
+		if (hasIllegalControlChar(value as string)) {
+			return `Control characters are not allowed (at ${path || 'root'}).`;
+		}
 		return stringIsHostile(value as string)
 			? `Remote or unsafe URL is not allowed (at ${path || 'root'}).`
 			: null;

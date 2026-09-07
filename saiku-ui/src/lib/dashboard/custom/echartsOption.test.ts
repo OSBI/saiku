@@ -135,6 +135,155 @@ describe('validateEchartsOption — reject (fail closed)', () => {
 });
 
 /* ------------------------------------------------------------------ *
+ * saiku#1940 — control-char-split URL scheme bypass.                   *
+ *                                                                      *
+ * `resourceRefAllowed` used to detect a scheme with                    *
+ * `String.prototype.trim()` + an anchored `^[a-z][a-z0-9+.-]*:` regex. *
+ * `trim()` only strips whitespace at the ends and never touches an     *
+ * EMBEDDED control character, so a scheme split by an inner tab or     *
+ * newline — or preceded by a leading byte in the 0x00-0x1F range —     *
+ * doesn't match that regex and was waved through as "no scheme, must   *
+ * be relative". A browser's WHATWG URL parser strips embedded          *
+ * tab/newline and leading/trailing C0-control/space bytes BEFORE it    *
+ * looks for a scheme, so it resolves the very same string to a plain   *
+ * `javascript:` URL — the classic CWE-79/CWE-601 gap this closes.      *
+ * Reversion-sensitive: stashing the `normalizeUrlLike` step in          *
+ * `resourceRefAllowed` turns the tab/newline-split and sunburst bypass  *
+ * cases below green when they must be red (the leading-0x01 case stays *
+ * caught independently by `hasIllegalControlChar`'s narrowed — NOT      *
+ * blanket — C0-control reject in `scanValue`, which excludes tab/LF/CR  *
+ * so legitimate multi-line chart text keeps working; see the accept-    *
+ * side tests below).                                                    *
+ * ------------------------------------------------------------------ */
+describe('validateEchartsOption — saiku#1940 control-char-split scheme bypass', () => {
+	it('rejects a plain javascript: title.link (baseline)', () => {
+		const r = validateEchartsOption({
+			title: { text: 'Sales', link: 'javascript:alert(document.cookie)' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(false);
+		// Asserted so a future allowlist/scan-path change can't silently start
+		// missing this field the way the original bypass did.
+		if (!r.ok) expect(r.error).toMatch(/title\.link/);
+	});
+
+	it('rejects a javascript: scheme split by an embedded TAB in title.link', () => {
+		const r = validateEchartsOption({
+			title: { text: 'Sales', link: 'java\tscript:alert(document.cookie)' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(false);
+		if (!r.ok) expect(r.error).toMatch(/title\.link/);
+	});
+
+	it('rejects a javascript: scheme split by an embedded NEWLINE in title.link', () => {
+		const r = validateEchartsOption({
+			title: { text: 'Sales', link: 'java\nscript:alert(document.cookie)' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(false);
+		if (!r.ok) expect(r.error).toMatch(/title\.link/);
+	});
+
+	it('rejects a javascript: URL preceded by a leading 0x01 control byte in title.link', () => {
+		const r = validateEchartsOption({
+			title: { text: 'Sales', link: '\x01javascript:alert(document.cookie)' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(false);
+		if (!r.ok) expect(r.error).toMatch(/title\.link/);
+	});
+
+	it('rejects the same TAB-split bypass in title.sublink', () => {
+		const r = validateEchartsOption({
+			title: { text: 'Sales', sublink: 'java\tscript:alert(document.cookie)' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(false);
+		if (!r.ok) expect(r.error).toMatch(/title\.sublink/);
+	});
+
+	// NOTE: `nodeClick` is NOT in SERIES_FIELD_ALLOWLIST, so a sunburst/treemap
+	// series declaring it is rejected as "Unknown series field" before the scan
+	// ever reaches `data[i].link` — meaning that sink is unreachable through
+	// today's allowlist regardless of this fix. This test omits `nodeClick`
+	// (so the option actually reaches the deep scan) to prove the SCAN PATH
+	// itself is fixed: pre-fix this case would have been ok:true (leaking the
+	// bypass payload straight through), post-fix it's rejected.
+	it('rejects the same TAB-split bypass in a sunburst data[i].link (allowlist gap aside)', () => {
+		const r = validateEchartsOption({
+			series: [
+				{
+					type: 'sunburst',
+					data: [{ name: 'root', value: 1, link: 'java\tscript:alert(document.cookie)' }]
+				}
+			]
+		});
+		expect(r.ok).toBe(false);
+		if (!r.ok) expect(r.error).toMatch(/series\[0\]\.data\[0\]\.link/);
+	});
+
+	it('still rejects an absolute https:// title.link exactly as before the fix (unchanged intent)', () => {
+		// `resourceRefAllowed` rejects EVERY explicit scheme outright, https:
+		// included — only same-origin/relative refs and data:image URIs pass.
+		// This is pre-existing behaviour this fix must not change; asserted here
+		// so a future edit that starts allowlisting absolute http(s) links (a
+		// much bigger, deliberate policy change) doesn't slip in unnoticed.
+		const r = validateEchartsOption({
+			title: { text: 'Sales', link: 'https://example.com/report' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(false);
+		if (!r.ok) expect(r.error).toMatch(/title\.link/);
+	});
+
+	it('still accepts a legitimate same-origin/relative title.link (no over-rejection)', () => {
+		const r = validateEchartsOption({
+			title: { text: 'Sales', link: '/reports/monthly', target: 'self' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(true);
+	});
+
+	/* -------------------------------------------------------------- *
+	 * SEC follow-up: the blanket C0-control reject must NOT catch tab *
+	 * (0x09), LF (0x0A) or CR (0x0D) — zrender/ECharts splits label,   *
+	 * title, and formatter text on `\n` as a documented line-break     *
+	 * feature, so those three stay legal in ordinary chart strings.    *
+	 * The scheme-detection bypass above is still closed because        *
+	 * `normalizeUrlLike` strips exactly those three characters before  *
+	 * the scheme regex runs, independent of this accept-side allowance.*
+	 * -------------------------------------------------------------- */
+	it('accepts a title.text containing a newline (ECharts line-break)', () => {
+		const r = validateEchartsOption({
+			title: { text: 'Sales\nby Region' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(true);
+	});
+
+	it('accepts an axisLabel.formatter template containing a newline', () => {
+		const r = validateEchartsOption({
+			xAxis: { type: 'category', axisLabel: { formatter: '{value}\nunits' } },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(true);
+	});
+
+	it('accepts a title.text containing an embedded tab character', () => {
+		// Same accept-side guard as the newline case above, but for tab (0x09) —
+		// `hasIllegalControlChar` excludes it for the same reason (legitimate use
+		// in chart text), and it's a distinct code point from LF, so it needs its
+		// own reversion-sensitive case rather than relying on the \n tests alone.
+		const r = validateEchartsOption({
+			title: { text: 'Sales\tBreakdown' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(true);
+	});
+});
+
+/* ------------------------------------------------------------------ *
  * Property tests — for arbitrary objects that embed a function OR a   *
  * remote-url string at a random depth, the validator NEVER accepts.   *
  * ------------------------------------------------------------------ */
