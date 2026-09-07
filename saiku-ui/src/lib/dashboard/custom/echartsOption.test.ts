@@ -384,12 +384,36 @@ describe('applyDataToEchartsOption — saiku#1937 tooltip XSS neutralisation', (
 		expect(series[0].markPoint.tooltip.extraCssText).toBeUndefined();
 	});
 
-	it('still synthesises richText tooltips when the author declared no tooltip at all', () => {
+	it('does not introduce a tooltip when the author declared none at all', () => {
 		// Baseline: an option with no tooltip shouldn't gain one just because of
 		// this pass — richText forcing only touches tooltips the author (or the
 		// synthesised series) actually has.
 		const merged = applyDataToEchartsOption({ series: [{ type: 'bar' }] }, projection);
 		expect(merged.tooltip).toBeUndefined();
+	});
+
+	it('coerces a truthy non-object top-level tooltip (e.g. `tooltip: true`) into a richText object', () => {
+		const validated = validateEchartsOption({ tooltip: true, series: [{ type: 'bar' }] });
+		expect(validated.ok).toBe(true);
+		if (!validated.ok) return;
+		const merged = applyDataToEchartsOption(validated.value, projection);
+		expect(merged.tooltip).toEqual({ renderMode: 'richText' });
+	});
+
+	it('coerces a truthy string top-level tooltip into a richText object', () => {
+		const validated = validateEchartsOption({ tooltip: 'x', series: [{ type: 'bar' }] });
+		expect(validated.ok).toBe(true);
+		if (!validated.ok) return;
+		const merged = applyDataToEchartsOption(validated.value, projection);
+		expect(merged.tooltip).toEqual({ renderMode: 'richText' });
+	});
+
+	it('leaves a falsy top-level tooltip (disabled) alone rather than fabricating one', () => {
+		const validated = validateEchartsOption({ tooltip: false, series: [{ type: 'bar' }] });
+		expect(validated.ok).toBe(true);
+		if (!validated.ok) return;
+		const merged = applyDataToEchartsOption(validated.value, projection);
+		expect(merged.tooltip).toBe(false);
 	});
 });
 

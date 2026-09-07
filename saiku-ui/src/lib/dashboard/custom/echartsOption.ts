@@ -352,8 +352,29 @@ function asObject(v: unknown): Record<string, unknown> {
  * Fix: force `renderMode: 'richText'` on every tooltip object the      *
  * custom-option path can reach — top-level `tooltip`, each             *
  * `series[i].tooltip`, and each `series[i].mark{Point,Line,Area}`'s    *
- * own `tooltip` — right where the option is handed to ECharts. In      *
- * richText mode ECharts lays the (still placeholder-substituted)       *
+ * own `tooltip` — right where the option is handed to ECharts.         *
+ *                                                                      *
+ * IMPORTANT — these are NOT independently load-bearing. ECharts        *
+ * resolves `renderMode` exactly ONCE per chart instance, from the      *
+ * global top-level `tooltip` component: `TooltipView.init` reads       *
+ * `ecModel.getComponent('tooltip').get('renderMode')` and that is the  *
+ * render mode used for every tooltip the chart ever shows. A           *
+ * `series[i].tooltip.renderMode`, a `mark*.tooltip.renderMode`, a      *
+ * per-datum tooltip, or `legend.tooltip.renderMode` is NEVER consulted *
+ * for this — ECharts only reads other fields (formatter, trigger, …)   *
+ * off those nested tooltip objects. So the TOP-LEVEL neutralisation    *
+ * below is what actually closes the hole; the series/mark* passes are  *
+ * defence-in-depth (future-proofing against an ECharts version that    *
+ * starts honouring them, and keeping the option internally consistent)*
+ * — NOT a second, independently sufficient fix. Do not reason "series  *
+ * is covered, the top-level pass can be relaxed": relaxing it reopens  *
+ * the vulnerability regardless of what the series/mark* objects say.   *
+ * `TooltipView.init` runs once per chart instance (on the FIRST        *
+ * `setOption`), so the neutralised option must be part of that first   *
+ * call — it always is today, since applyDataToEchartsOption runs       *
+ * before every `chart.setOption(...)` call on the custom-option path.  *
+ *                                                                      *
+ * In richText mode ECharts lays the (still placeholder-substituted)    *
  * string out with its own text renderer onto the canvas; it is never   *
  * parsed as HTML/DOM, so embedded markup renders as inert literal text *
  * instead of executing. `extraCssText` (a raw `cssText` string applied *
@@ -380,6 +401,19 @@ function neutraliseTooltip(t: unknown): unknown {
 	out.renderMode = 'richText';
 	delete out.extraCssText;
 	return out;
+}
+
+/** Neutralise the TOP-LEVEL `tooltip` specifically — the one
+ *  `TooltipView.init` actually reads `renderMode` from (see the block
+ *  comment above). Not a vector today (`tooltip: "x"` / `tooltip: true`
+ *  carry no formatter), but a truthy non-object value is coerced into an
+ *  equivalent richText object rather than passed through unchanged, so a
+ *  future author-reachable shape here can't quietly resolve to ECharts'
+ *  own default renderMode instead of ours. A falsy tooltip (disabling it)
+ *  is left alone. */
+function neutraliseTopLevelTooltip(t: unknown): unknown {
+	if (t && typeof t !== 'object') return { renderMode: 'richText' };
+	return neutraliseTooltip(t);
 }
 
 /** Neutralise a single series entry's own `tooltip` plus the `tooltip` nested
@@ -497,7 +531,7 @@ export function applyDataToEchartsOption(
 	// saiku#1937 — neutralise every tooltip this option can reach (top-level,
 	// per-series, per-mark*) right before it's handed back to the tile
 	// renderer. See the block comment above neutraliseTooltip for why.
-	if ('tooltip' in opt) opt.tooltip = neutraliseTooltip(opt.tooltip);
+	if ('tooltip' in opt) opt.tooltip = neutraliseTopLevelTooltip(opt.tooltip);
 	opt.series = (opt.series as unknown[]).map((s) => neutraliseSeriesTooltips(asObject(s)));
 
 	return opt;
