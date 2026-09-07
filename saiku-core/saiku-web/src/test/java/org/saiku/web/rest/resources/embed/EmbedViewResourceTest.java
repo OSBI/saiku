@@ -850,6 +850,92 @@ public class EmbedViewResourceTest {
                 prod.getMembers());
     }
 
+    /* ---- saiku#1911: remaining declared-target sources (SEC finding) + cubeCompatible ---- */
+
+    @Test
+    public void dashboard_inline_declared_via_top_level_filters_list_is_authorised() {
+        // Declared via the LEGACY top-level Dashboard.filters list (pre-filterPanel dashboards),
+        // not the unified filterPanel and not a filter tile. declaredTargetsForDashboard must still
+        // pick this source up.
+        ds.fileContent = "{\"filters\":[{\"dimension\":\"Product\",\"hierarchy\":\"Product\",\"level\":\"Product\"}],"
+                + "\"layout\":{\"tiles\":[{\"id\":\"t1\",\"query\":{\"kind\":\"inline\",\"body\":{}}}]}}";
+        pinGuest("dashboard", "/homes/admin/exec.saikudash", "admin", List.of());
+
+        Response r =
+                resource.tileQuery("homes/admin/exec.saikudash", "t1", overrides(in("Product", "[Product].[widgets]")));
+
+        assertEquals(200, r.getStatus());
+        assertEquals(
+                "a target declared via the legacy dash.filters list must authorise the override",
+                List.of("[Product].[widgets]"),
+                onlyFilterFor(ai.lastAiRequest.getFilters(), "Product").getMembers());
+    }
+
+    @Test
+    public void dashboard_inline_declared_via_layout_filter_tile_is_authorised() {
+        // Declared via a type:"filter" TILE sitting in dash.layout.tiles (the pre-filterPanel widget
+        // model) rather than the unified filterPanel.
+        ds.fileContent = "{\"layout\":{\"tiles\":["
+                + "{\"id\":\"t1\",\"query\":{\"kind\":\"inline\",\"body\":{}}},"
+                + "{\"id\":\"f1\",\"type\":\"filter\",\"target\":{\"dimension\":\"Product\","
+                + "\"hierarchy\":\"Product\",\"level\":\"Product\"}}]}}";
+        pinGuest("dashboard", "/homes/admin/exec.saikudash", "admin", List.of());
+
+        Response r =
+                resource.tileQuery("homes/admin/exec.saikudash", "t1", overrides(in("Product", "[Product].[widgets]")));
+
+        assertEquals(200, r.getStatus());
+        assertEquals(
+                "a target declared via a dashboard filter TILE must authorise the override",
+                List.of("[Product].[widgets]"),
+                onlyFilterFor(ai.lastAiRequest.getFilters(), "Product").getMembers());
+    }
+
+    @Test
+    public void dashboard_inline_declared_target_on_a_different_cube_is_rejected() {
+        // The filter panel declares a Product target scoped to a DIFFERENT cube than the queried
+        // tile's own cube — cubeCompatible must reject the match so a filter authored for cube A
+        // can't authorise an override on a cube-B tile.
+        ds.fileContent = "{\"filterPanel\":{\"filters\":[{\"dimension\":\"Product\",\"hierarchy\":\"Product\","
+                + "\"level\":\"Product\",\"cube\":{\"connectionName\":\"foodmart\",\"catalog\":\"FoodMart\","
+                + "\"schema\":\"FoodMart\",\"cubeName\":\"OtherCube\"}}]},"
+                + "\"layout\":{\"tiles\":[{\"id\":\"t1\",\"cube\":{\"connectionName\":\"foodmart\","
+                + "\"catalog\":\"FoodMart\",\"schema\":\"FoodMart\",\"cubeName\":\"Sales\"},"
+                + "\"query\":{\"kind\":\"inline\",\"body\":{}}}]}}";
+        pinGuest("dashboard", "/homes/admin/exec.saikudash", "admin", List.of());
+
+        Response r =
+                resource.tileQuery("homes/admin/exec.saikudash", "t1", overrides(in("Product", "[Product].[widgets]")));
+
+        assertEquals(200, r.getStatus());
+        assertNotNull(ai.lastAiRequest);
+        assertFalse(
+                "a declared target scoped to a DIFFERENT cube must not authorise the override",
+                ai.lastAiRequest.getFilters().stream().anyMatch(f -> "Product".equals(f.getDimension())));
+    }
+
+    @Test
+    public void dashboard_inline_declared_target_on_the_same_cube_is_authorised() {
+        // Same shape as above but the filter panel's cube MATCHES the queried tile's cube exactly —
+        // proves cubeCompatible's equality branch (not just its null/null fallback) authorises.
+        ds.fileContent = "{\"filterPanel\":{\"filters\":[{\"dimension\":\"Product\",\"hierarchy\":\"Product\","
+                + "\"level\":\"Product\",\"cube\":{\"connectionName\":\"foodmart\",\"catalog\":\"FoodMart\","
+                + "\"schema\":\"FoodMart\",\"cubeName\":\"Sales\"}}]},"
+                + "\"layout\":{\"tiles\":[{\"id\":\"t1\",\"cube\":{\"connectionName\":\"foodmart\","
+                + "\"catalog\":\"FoodMart\",\"schema\":\"FoodMart\",\"cubeName\":\"Sales\"},"
+                + "\"query\":{\"kind\":\"inline\",\"body\":{}}}]}}";
+        pinGuest("dashboard", "/homes/admin/exec.saikudash", "admin", List.of());
+
+        Response r =
+                resource.tileQuery("homes/admin/exec.saikudash", "t1", overrides(in("Product", "[Product].[widgets]")));
+
+        assertEquals(200, r.getStatus());
+        assertEquals(
+                "a declared target scoped to the SAME cube must authorise the override",
+                List.of("[Product].[widgets]"),
+                onlyFilterFor(ai.lastAiRequest.getFilters(), "Product").getMembers());
+    }
+
     /* --------------------------- helpers ---------------------------- */
 
     /** Build a TileQueryOverrides from client filter selections. */

@@ -7,26 +7,37 @@ package org.saiku.web.rest.resources;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
+import org.saiku.olap.dto.SaikuCube;
 import org.saiku.olap.dto.resultset.AbstractBaseCell;
 import org.saiku.olap.dto.resultset.CellDataSet;
 import org.saiku.olap.dto.resultset.DataCell;
 import org.saiku.olap.dto.resultset.MemberCell;
+import org.saiku.olap.query2.ThinAxis;
 import org.saiku.olap.query2.ThinQuery;
+import org.saiku.olap.query2.ThinQueryModel;
+import org.saiku.olap.query2.ThinQueryModel.AxisLocation;
+import org.saiku.service.datasource.DatasourceService;
 import org.saiku.service.olap.ThinQueryService;
 import org.saiku.service.olap.ai.AiAxisSelection;
 import org.saiku.service.olap.ai.AiCell;
 import org.saiku.service.olap.ai.AiCubeRef;
+import org.saiku.service.olap.ai.AiFilterSelection;
 import org.saiku.service.olap.ai.AiMeasureSelection;
 import org.saiku.service.olap.ai.AiQueryRequest;
 import org.saiku.service.olap.ai.AiQueryResponse;
+import org.saiku.service.olap.ai.AiSavedQueryRequest;
 import org.saiku.service.olap.ai.AiSchema;
 import org.saiku.service.olap.ai.AiValidationException;
 
@@ -51,6 +62,18 @@ public class AiQueryResourceTest {
         timeBy.levels.put(AiSchema.key("Year"), new AiSchema.Level("Year", "[Time].[Time By].[Year]"));
         time.hierarchies.put(AiSchema.key("Time By"), timeBy);
         schema.dimensions.put(AiSchema.key("Time"), time);
+
+        // saiku#1911: Customer dimension with two levels of the SAME hierarchy — used by the
+        // executeSaved de-collide wiring tests below.
+        AiSchema.Dimension customer = new AiSchema.Dimension("Customer", "[Customer]");
+        AiSchema.Hierarchy customerH = new AiSchema.Hierarchy("Customer", "[Customer].[Customer]");
+        customerH.levels.put(
+                AiSchema.key("Customer"), new AiSchema.Level("Customer", "[Customer].[Customer].[Customer]"));
+        customerH.levels.put(
+                AiSchema.key("Customer Country"),
+                new AiSchema.Level("Customer Country", "[Customer].[Customer].[Customer Country]"));
+        customer.hierarchies.put(AiSchema.key("Customer"), customerH);
+        schema.dimensions.put(AiSchema.key("Customer"), customer);
 
         resource = new AiQueryResource();
         resource.setCubeMetadataService(ref -> schema);
@@ -728,6 +751,159 @@ public class AiQueryResourceTest {
         @SuppressWarnings("unchecked")
         List<String> columns = (List<String>) body.get("columns");
         assertEquals(java.util.Arrays.asList("year", "sales"), columns);
+    }
+
+    /* ---- saiku#1911: executeSaved de-collide + forced-replace wiring (SEC finding 2) ---- */
+    // ThinQueryFilterMergeTest covers dropClientFiltersCollidingWithForced and the forced-replace
+    // merge at the HELPER level. These tests drive them through the real executeSaved call site —
+    // datasourceService -> raw ThinQuery JSON -> the de-collide block -> the client-merge block ->
+    // the forced-filter block -> thinQueryService.execute — with no Mockito, matching the
+    // AiQueryResourceTest stub-injection style already used above.
+    //
+    // QA reversion note: I stashed executeSaved's whole de-collide block (making it a no-op) and
+    // re-ran executeSaved_deCollidesClientFilterOnForcedHierarchyThenForcedReplaces — it still
+    // PASSED. Tracing why: ThinQueryFilterMerge's forced-replace step (rewriteExistingAxisSelection,
+    // replaceHierarchyLevels=true) runs unconditionally AFTER the client merge, finds the FIRST axis
+    // entry for the forced hierarchy (wherever the client merge put it), and unconditionally clears
+    // ALL of that entry's levels before writing the forced one — so in THIS call path the de-collide
+    // block is redundant defense-in-depth with the (separately reversion-tested, see
+    // ThinQueryFilterMergeTest.strict_forcedFilterReplacesClientFilterOnDifferentLevelOfSameHierarchy)
+    // forced-replace mechanism, not an independently load-bearing guard. This test is kept as
+    // end-to-end coverage of the call site (nothing previously called executeSaved directly with a
+    // colliding client+forced filter pair) and as a regression guard on the combined pipeline's
+    // output, but it does NOT specifically pin the de-collide branch — flagged to SEC/DEV as a
+    // finding, not silently glossed over.
+
+    /** Serialises a hand-built {@link ThinQuery} the same way a saved {@code .saiku} file is
+     *  persisted, so {@code executeSaved}'s {@code MAPPER.readValue(raw, ThinQuery.class)} exercises
+     *  real (de)serialisation rather than a mocked ThinQuery. */
+    private static String savedQueryJson(ThinQuery tq) {
+        try {
+            return new ObjectMapper().writeValueAsString(tq);
+        } catch (Exception e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    private static ThinQuery blankQuerymodelSavedQuery() {
+        SaikuCube cube = new SaikuCube("foodmart", "Sales", "Sales", "Sales", "FoodMart", "FoodMart");
+        return new ThinQuery("saved-test", cube, new ThinQueryModel());
+    }
+
+    /** Stub that hands back a fixed raw JSON string regardless of the requested path. */
+    private static class StubDatasourceService extends DatasourceService {
+        final String raw;
+
+        StubDatasourceService(String raw) {
+            this.raw = raw;
+        }
+
+        @Override
+        public String getFileData(String path, String username, List<String> roles) {
+            return raw;
+        }
+    }
+
+    /** Captures the ThinQuery handed to {@code execute} so the test can assert on the merged axes. */
+    private static class CapturingThinQueryService extends ThinQueryService {
+        ThinQuery lastExecuted;
+
+        @Override
+        public CellDataSet execute(ThinQuery tq) {
+            lastExecuted = tq;
+            return buildStubCellDataSet();
+        }
+    }
+
+    private AiSavedQueryRequest savedRequest(
+            List<AiFilterSelection> clientFilters, List<AiFilterSelection> forcedFilters) {
+        AiSavedQueryRequest body = new AiSavedQueryRequest();
+        body.setPath("/homes/admin/exec.saiku");
+        body.setFilters(clientFilters);
+        body.setForcedFilters(forcedFilters);
+        return body;
+    }
+
+    private AiFilterSelection customerFilter(String level, String... members) {
+        AiFilterSelection f =
+                new AiFilterSelection("Customer", "Customer", level, new ArrayList<>(Arrays.asList(members)));
+        f.setOp("in");
+        return f;
+    }
+
+    @Test
+    public void executeSaved_deCollidesClientFilterOnForcedHierarchyThenForcedReplaces() {
+        // A client/dashboard filter narrows Customer at "Customer Country"; a forced RLS filter
+        // targets the SAME hierarchy at a DIFFERENT level ("Customer" = acme). The de-collide block
+        // must strip the client filter (same hierarchy) BEFORE the merge, and only the forced level
+        // must survive on the executed query — never both, never the client's level.
+        CapturingThinQueryService capture = new CapturingThinQueryService();
+        resource.setThinQueryService(capture);
+        resource.setDatasourceService(new StubDatasourceService(savedQueryJson(blankQuerymodelSavedQuery())));
+        resource.setSessionService(new org.saiku.web.service.SessionService());
+
+        AiSavedQueryRequest body = savedRequest(
+                Collections.singletonList(customerFilter("Customer Country", "[Customer].[Country].[USA]")),
+                Collections.singletonList(customerFilter("Customer", "[Customer].[acme]")));
+
+        Response r = resource.executeSaved(body, "records");
+
+        assertEquals(200, r.getStatus());
+        assertNotNull("the forced-filtered query must reach execute()", capture.lastExecuted);
+        ThinAxis fa = capture.lastExecuted.getQueryModel().getAxis(AxisLocation.FILTER);
+        assertNotNull("forced filter must land on the FILTER axis", fa);
+        assertEquals(
+                "exactly one Customer hierarchy entry — no duplicate from the client filter",
+                1,
+                fa.getHierarchies().size());
+        Map<String, org.saiku.olap.query2.ThinLevel> levels =
+                fa.getHierarchies().get(0).getLevels();
+        assertEquals("only the forced level survives (de-collide dropped the client's)", 1, levels.size());
+        assertNull("the client's Customer Country level must never reach the engine", levels.get("Customer Country"));
+        org.saiku.olap.query2.ThinLevel forcedLevel = levels.get("Customer");
+        assertNotNull(forcedLevel);
+        assertEquals(1, forcedLevel.getSelection().getMembers().size());
+        assertEquals(
+                "[Customer].[acme]",
+                forcedLevel.getSelection().getMembers().get(0).getUniqueName());
+    }
+
+    @Test
+    public void executeSaved_clientFilterOnDistinctHierarchySurvivesAlongsideForced() {
+        // No-regression positive: a client filter on Time (unrelated to the forced Customer
+        // hierarchy) is NOT dropped by de-collide and rides alongside the forced RLS filter.
+        CapturingThinQueryService capture = new CapturingThinQueryService();
+        resource.setThinQueryService(capture);
+        resource.setDatasourceService(new StubDatasourceService(savedQueryJson(blankQuerymodelSavedQuery())));
+        resource.setSessionService(new org.saiku.web.service.SessionService());
+
+        AiFilterSelection timeFilter = new AiFilterSelection(
+                "Time",
+                "Time By",
+                "Year",
+                new ArrayList<>(Collections.singletonList("[Time].[Time By].[Year].&[1997]")));
+        AiSavedQueryRequest body = savedRequest(
+                Collections.singletonList(timeFilter),
+                Collections.singletonList(customerFilter("Customer", "[Customer].[acme]")));
+
+        Response r = resource.executeSaved(body, "records");
+
+        assertEquals(200, r.getStatus());
+        assertNotNull(capture.lastExecuted);
+        ThinAxis fa = capture.lastExecuted.getQueryModel().getAxis(AxisLocation.FILTER);
+        assertNotNull(fa);
+        assertEquals(
+                "both the Time client filter and the forced Customer filter must be present",
+                2,
+                fa.getHierarchies().size());
+        boolean sawTime = false;
+        boolean sawCustomer = false;
+        for (org.saiku.olap.query2.ThinHierarchy h : fa.getHierarchies()) {
+            if ("[Time].[Time By]".equals(h.getName())) sawTime = true;
+            if ("[Customer].[Customer]".equals(h.getName())) sawCustomer = true;
+        }
+        assertTrue("client's Time filter must survive de-collide (distinct hierarchy)", sawTime);
+        assertTrue("forced Customer filter must apply", sawCustomer);
     }
 
     /* ------------------------ stub impls --------------------------------- */
