@@ -167,6 +167,27 @@ describe('sanitiseAndScopeCss — saiku#1942 control-char-split url() scheme byp
 		expect(out).not.toContain('evil.example');
 	});
 
+	test('drops a remote url() whose scheme is split by a 6-digit hex \\000009 escape (decodes to TAB)', () => {
+		const out = sanitiseAndScopeCss(
+			'.a{background:url("ht\\000009tps://evil.example/x.png")}',
+			ROOT
+		);
+		expect(out).not.toContain('evil.example');
+	});
+
+	test('drops an UNQUOTED url() whose scheme is split by a \\9 CSS escape', () => {
+		const out = sanitiseAndScopeCss('.a{background:url(ht\\9 tps://evil.example/x.png)}', ROOT);
+		expect(out).not.toContain('evil.example');
+	});
+
+	test('drops a control-char-split scheme hidden in a var() fallback', () => {
+		const out = sanitiseAndScopeCss(
+			'.a{background:var(--x,url("ht\\9 tps://evil.example/x.png"))}',
+			ROOT
+		);
+		expect(out).not.toContain('evil.example');
+	});
+
 	test('anti-regression: a legitimate relative url() is still allowed', () => {
 		const out = sanitiseAndScopeCss('.a{background:url(images/logo.png)}', ROOT);
 		expect(out).toContain('images/logo.png');
