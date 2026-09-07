@@ -158,6 +158,9 @@ describe('validateEchartsOption — saiku#1940 control-char-split scheme bypass'
 			series: [{ type: 'bar' }]
 		});
 		expect(r.ok).toBe(false);
+		// Asserted so a future allowlist/scan-path change can't silently start
+		// missing this field the way the original bypass did.
+		if (!r.ok) expect(r.error).toMatch(/title\.link/);
 	});
 
 	it('rejects a javascript: scheme split by an embedded TAB in title.link', () => {
@@ -166,6 +169,7 @@ describe('validateEchartsOption — saiku#1940 control-char-split scheme bypass'
 			series: [{ type: 'bar' }]
 		});
 		expect(r.ok).toBe(false);
+		if (!r.ok) expect(r.error).toMatch(/title\.link/);
 	});
 
 	it('rejects a javascript: scheme split by an embedded NEWLINE in title.link', () => {
@@ -174,6 +178,7 @@ describe('validateEchartsOption — saiku#1940 control-char-split scheme bypass'
 			series: [{ type: 'bar' }]
 		});
 		expect(r.ok).toBe(false);
+		if (!r.ok) expect(r.error).toMatch(/title\.link/);
 	});
 
 	it('rejects a javascript: URL preceded by a leading 0x01 control byte in title.link', () => {
@@ -182,6 +187,7 @@ describe('validateEchartsOption — saiku#1940 control-char-split scheme bypass'
 			series: [{ type: 'bar' }]
 		});
 		expect(r.ok).toBe(false);
+		if (!r.ok) expect(r.error).toMatch(/title\.link/);
 	});
 
 	it('rejects the same TAB-split bypass in title.sublink', () => {
@@ -190,19 +196,27 @@ describe('validateEchartsOption — saiku#1940 control-char-split scheme bypass'
 			series: [{ type: 'bar' }]
 		});
 		expect(r.ok).toBe(false);
+		if (!r.ok) expect(r.error).toMatch(/title\.sublink/);
 	});
 
-	it('rejects the same TAB-split bypass in a sunburst data[i].link', () => {
+	// NOTE: `nodeClick` is NOT in SERIES_FIELD_ALLOWLIST, so a sunburst/treemap
+	// series declaring it is rejected as "Unknown series field" before the scan
+	// ever reaches `data[i].link` — meaning that sink is unreachable through
+	// today's allowlist regardless of this fix. This test omits `nodeClick`
+	// (so the option actually reaches the deep scan) to prove the SCAN PATH
+	// itself is fixed: pre-fix this case would have been ok:true (leaking the
+	// bypass payload straight through), post-fix it's rejected.
+	it('rejects the same TAB-split bypass in a sunburst data[i].link (allowlist gap aside)', () => {
 		const r = validateEchartsOption({
 			series: [
 				{
 					type: 'sunburst',
-					nodeClick: 'link',
 					data: [{ name: 'root', value: 1, link: 'java\tscript:alert(document.cookie)' }]
-				} as unknown as Record<string, unknown>
+				}
 			]
 		});
 		expect(r.ok).toBe(false);
+		if (!r.ok) expect(r.error).toMatch(/series\[0\]\.data\[0\]\.link/);
 	});
 
 	it('still rejects an absolute https:// title.link exactly as before the fix (unchanged intent)', () => {
@@ -216,11 +230,37 @@ describe('validateEchartsOption — saiku#1940 control-char-split scheme bypass'
 			series: [{ type: 'bar' }]
 		});
 		expect(r.ok).toBe(false);
+		if (!r.ok) expect(r.error).toMatch(/title\.link/);
 	});
 
 	it('still accepts a legitimate same-origin/relative title.link (no over-rejection)', () => {
 		const r = validateEchartsOption({
 			title: { text: 'Sales', link: '/reports/monthly', target: 'self' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(true);
+	});
+
+	/* -------------------------------------------------------------- *
+	 * SEC follow-up: the blanket C0-control reject must NOT catch tab *
+	 * (0x09), LF (0x0A) or CR (0x0D) — zrender/ECharts splits label,   *
+	 * title, and formatter text on `\n` as a documented line-break     *
+	 * feature, so those three stay legal in ordinary chart strings.    *
+	 * The scheme-detection bypass above is still closed because        *
+	 * `normalizeUrlLike` strips exactly those three characters before  *
+	 * the scheme regex runs, independent of this accept-side allowance.*
+	 * -------------------------------------------------------------- */
+	it('accepts a title.text containing a newline (ECharts line-break)', () => {
+		const r = validateEchartsOption({
+			title: { text: 'Sales\nby Region' },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(true);
+	});
+
+	it('accepts an axisLabel.formatter template containing a newline', () => {
+		const r = validateEchartsOption({
+			xAxis: { type: 'category', axisLabel: { formatter: '{value}\nunits' } },
 			series: [{ type: 'bar' }]
 		});
 		expect(r.ok).toBe(true);

@@ -196,20 +196,27 @@ function resourceRefAllowed(raw: string): boolean {
 }
 
 /**
+ * True when a string carries a C0 control character that has NO legitimate use
+ * in a chart title, label, or URL. Deliberately EXCLUDES tab (0x09), LF
+ * (0x0A), and CR (0x0D): zrender/ECharts splits label/title/formatter text on
+ * `\n` as a documented line-break feature, so a blanket 0x00-0x1F reject would
+ * break real saved tiles on upgrade (e.g. a multi-line `title.text`). Those
+ * three are already handled for the URL/scheme path by `normalizeUrlLike`
+ * (which strips them before the scheme check), so excluding them here is
+ * SAFE, not a bypass — this check is defence-in-depth for the remaining C0
+ * bytes, none of which any legitimate string needs.
+ */
+function hasIllegalControlChar(value: string): boolean {
+	// eslint-disable-next-line no-control-regex
+	return /[\x00-\x08\x0B\x0C\x0E-\x1F]/.test(value);
+}
+
+/**
  * True when a string value is hostile: it references a remote resource, either
  * as a bare scheme'd/protocol-relative value, via a disallowed `url()` target,
  * or by embedding an absolute `http(s)` / `image://` URL anywhere inside it.
  */
 function stringIsHostile(value: string): boolean {
-	// saiku#1940: reject outright any C0 control character (0x00-0x1F, which
-	// includes tab/CR/LF) anywhere in the string. No legitimate chart title,
-	// label, or URL needs one, and a browser's URL parser strips these from
-	// inside a value before detecting its scheme (see `normalizeUrlLike`) — so
-	// a string carrying one is either a scheme-splitting bypass attempt or has
-	// no business being here. This closes the whole bypass class defensively,
-	// independent of the normalisation below.
-	// eslint-disable-next-line no-control-regex
-	if (/[\x00-\x1F]/.test(value)) return true;
 	const v = value.trim();
 	// 1. Bare resource reference as the whole value.
 	if (!resourceRefAllowed(v)) return true;
@@ -220,7 +227,12 @@ function stringIsHostile(value: string): boolean {
 	// 3. An absolute remote URL embedded ANYWHERE in the string (rich text /
 	//    concatenated values). Protocol-relative refs are only treated as hostile
 	//    at the start of the value (rule 1) to avoid false positives on prose.
-	const lower = v.toLowerCase();
+	// Normalised the same way as the scheme check (saiku#1940) so a
+	// control-char-split "http(s)://" / "image://" can't dodge this heuristic
+	// either, for consistency with rule 1 — not itself a security boundary,
+	// since `hasIllegalControlChar` already rejects everything but tab/LF/CR
+	// before a string reaches here, and those three don't affect this match.
+	const lower = normalizeUrlLike(v).toLowerCase();
 	if (/https?:\/\//.test(lower)) return true;
 	if (/image:\/\//.test(lower)) return true;
 	return false;
@@ -249,6 +261,9 @@ function scanValue(
 	}
 	if (value === null) return null;
 	if (t === 'string') {
+		if (hasIllegalControlChar(value as string)) {
+			return `Control characters are not allowed (at ${path || 'root'}).`;
+		}
 		return stringIsHostile(value as string)
 			? `Remote or unsafe URL is not allowed (at ${path || 'root'}).`
 			: null;
