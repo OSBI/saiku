@@ -83,4 +83,36 @@ describe('buildEmbedChartOption', () => {
 		expect(opt.title.text).toBe('No data');
 		expect(opt.color).toBeUndefined();
 	});
+
+	test('SECURITY (#1909): tooltip formatter HTML-escapes the category, series name, and cell value (innerHTML, un-escaped by ECharts)', () => {
+		const hostileCat = '<img src=x onerror=alert(1)>&"cat';
+		const hostileName = '<img src=x onerror=alert(2)>&"name';
+		const hostileDisp = '<img src=x onerror=alert(3)>&"disp';
+		const hostileRows: EmbedRow[] = [
+			{
+				Country: cat(hostileCat),
+				[hostileName]: { value: 100, formatted: hostileDisp }
+			}
+		];
+		const opt = buildEmbedChartOption(hostileRows, 'bar', UNSTYLED) as any;
+		const fmt = opt.tooltip.formatter as (p: unknown) => string;
+		// Shaped like the real ECharts axis-trigger callback: axisValue is the
+		// hovered category; seriesName + dataIndex identify which row/column
+		// cell backs this series' value (the formatter looks up `formatted`
+		// from the original rows via those two, not from `value`).
+		const out = fmt([{ axisValue: hostileCat, seriesName: hostileName, dataIndex: 0, value: 100 }]);
+
+		// Raw, executable markup must never reach the innerHTML sink — the
+		// tag itself is neutralised (the literal text "onerror=alert" that
+		// remains is inert once it's no longer inside a real `<img>` tag).
+		expect(out).not.toContain('<img');
+		// Every data-derived value comes back HTML-entity-escaped instead.
+		expect(out).toContain('&lt;img');
+		expect(out).toContain('&amp;');
+		expect(out).toContain('&quot;');
+		// The static <b>/<br/> structure is untouched — only the dynamic
+		// values were escaped.
+		expect(out.startsWith('<b>')).toBe(true);
+		expect(out).toContain('</b><br/>');
+	});
 });

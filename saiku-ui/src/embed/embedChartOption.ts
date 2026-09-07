@@ -8,6 +8,14 @@
 import type { ECBasicOption } from 'echarts/types/dist/shared';
 import type { EmbedChartTheme } from './embedChartTheme';
 import type { EmbedRow } from './types';
+// #1909: the tooltip formatter below returns an HTML string that ECharts
+// inserts via innerHTML (renderMode "html") — reuse the SAME escaper the
+// main-app chart tooltips already use (#1071/#1087) rather than hand-rolling
+// a new one. Imported by relative path, not the `$lib` alias: this file is
+// also compiled by the standalone embed bundle (vite.config.embed.ts), which
+// has no SvelteKit `$lib` alias configured — see EmbedGrid.svelte /
+// registerEmbedRenderers.ts for the same `../lib/...` pattern.
+import { escapeHtml } from '../lib/charts/sparkline';
 
 function isNumericColumn(rs: EmbedRow[], col: string): boolean {
 	for (const r of rs) {
@@ -78,6 +86,16 @@ export function buildEmbedChartOption(
 			// pre-formatted cells from the server so the host page sees
 			// the same caption the workbench would. The trigger fires
 			// once per category with all series, so we walk the params.
+			//
+			// SECURITY (#1909): the return value is inserted as innerHTML by
+			// ECharts (renderMode "html") — same hazard as the #1071/#1087
+			// main-app tooltips. `<saiku-embed>` runs in the HOST page's DOM
+			// (shadow DOM is not a security boundary), so an unescaped
+			// warehouse-derived string here — a member caption, a series
+			// name, or a cell value — would execute as stored XSS in the
+			// embedder's origin. Every data-derived value below (cat, name,
+			// disp) is run through escapeHtml; only the static <b>/<br/>
+			// markup is left unescaped.
 			formatter: (params: unknown) => {
 				const arr = Array.isArray(params) ? params : [params];
 				// arr[0].axisValue is the category caption; per-series .seriesName + .dataIndex
@@ -88,10 +106,10 @@ export function buildEmbedChartOption(
 						const name = (p as { seriesName: string }).seriesName;
 						const cell = rs[idx]?.[name];
 						const disp = cell?.formatted ?? String((p as { value: unknown }).value ?? '');
-						return `${name}: ${disp}`;
+						return `${escapeHtml(name)}: ${escapeHtml(disp)}`;
 					})
 					.join('<br/>');
-				return `<b>${cat}</b><br/>${lines}`;
+				return `<b>${escapeHtml(cat)}</b><br/>${lines}`;
 			}
 		},
 		legend: legendOpt,
