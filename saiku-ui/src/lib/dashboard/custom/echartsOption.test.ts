@@ -147,9 +147,13 @@ describe('validateEchartsOption — reject (fail closed)', () => {
  * tab/newline and leading/trailing C0-control/space bytes BEFORE it    *
  * looks for a scheme, so it resolves the very same string to a plain   *
  * `javascript:` URL — the classic CWE-79/CWE-601 gap this closes.      *
- * Reversion-sensitive: stashing the fix (the `normalizeUrlLike` step   *
- * and/or the blanket C0-control reject in `stringIsHostile`) turns     *
- * every bypass case below green when it must be red.                   *
+ * Reversion-sensitive: stashing the `normalizeUrlLike` step in          *
+ * `resourceRefAllowed` turns the tab/newline-split and sunburst bypass  *
+ * cases below green when they must be red (the leading-0x01 case stays *
+ * caught independently by `hasIllegalControlChar`'s narrowed — NOT      *
+ * blanket — C0-control reject in `scanValue`, which excludes tab/LF/CR  *
+ * so legitimate multi-line chart text keeps working; see the accept-    *
+ * side tests below).                                                    *
  * ------------------------------------------------------------------ */
 describe('validateEchartsOption — saiku#1940 control-char-split scheme bypass', () => {
 	it('rejects a plain javascript: title.link (baseline)', () => {
@@ -261,6 +265,18 @@ describe('validateEchartsOption — saiku#1940 control-char-split scheme bypass'
 	it('accepts an axisLabel.formatter template containing a newline', () => {
 		const r = validateEchartsOption({
 			xAxis: { type: 'category', axisLabel: { formatter: '{value}\nunits' } },
+			series: [{ type: 'bar' }]
+		});
+		expect(r.ok).toBe(true);
+	});
+
+	it('accepts a title.text containing an embedded tab character', () => {
+		// Same accept-side guard as the newline case above, but for tab (0x09) —
+		// `hasIllegalControlChar` excludes it for the same reason (legitimate use
+		// in chart text), and it's a distinct code point from LF, so it needs its
+		// own reversion-sensitive case rather than relying on the \n tests alone.
+		const r = validateEchartsOption({
+			title: { text: 'Sales\tBreakdown' },
 			series: [{ type: 'bar' }]
 		});
 		expect(r.ok).toBe(true);
