@@ -197,6 +197,100 @@ public class ThinQueryFilterMergeTest {
     }
 
     @Test
+    public void strict_forcedFilterReplacesClientFilterOnDifferentLevelOfSameHierarchy() {
+        // saiku#1911 exploit (a): a client filter puts Product on the slicer at level "Product Family";
+        // the forced RLS filter then targets the SAME hierarchy at a DIFFERENT level ("Product
+        // Department"). PRE-FIX the forced level was ADDED BESIDE the client level, so the hierarchy
+        // carried two levels and saiku-query UNIONed the member sets — widening the RLS slice. The fix
+        // makes the forced filter REPLACE the hierarchy's levels: exactly one level survives, the
+        // forced one, with only the forced members.
+        ThinQuery tq = querymodel();
+        // Client filter first (best-effort apply) — lands on the FILTER axis at Product Family.
+        ThinQueryFilterMerge.apply(
+                tq,
+                Collections.singletonList(filter(
+                        "Product",
+                        "Product",
+                        "Product Family",
+                        "[Product].[Product].[Product Family].&[Drink]",
+                        "[Product].[Product].[Product Family].&[Food]")),
+                schema);
+        // Forced RLS filter on the SAME hierarchy, DIFFERENT level.
+        List<AiFilterSelection> unapplied = ThinQueryFilterMerge.applyReportingUnapplied(
+                tq,
+                Collections.singletonList(filter(
+                        "Product",
+                        "Product",
+                        "Product Department",
+                        "[Product].[Product].[Product Department].&[Alcoholic Beverages]")),
+                schema);
+
+        assertTrue("the forced filter must apply", unapplied.isEmpty());
+        ThinAxis fa = tq.getQueryModel().getAxis(AxisLocation.FILTER);
+        assertNotNull(fa);
+        assertEquals("one Product hierarchy entry", 1, fa.getHierarchies().size());
+        Map<String, ThinLevel> levels = fa.getHierarchies().get(0).getLevels();
+        assertEquals("forced filter must REPLACE, not union with, the client level", 1, levels.size());
+        assertNull(
+                "the client's Product Family level must be cleared (no union widening)", levels.get("Product Family"));
+        ThinLevel dept = levels.get("Product Department");
+        assertNotNull("only the forced Product Department level survives", dept);
+        assertEquals(1, dept.getSelection().getMembers().size());
+        assertEquals(
+                "[Product].[Product].[Product Department].&[Alcoholic Beverages]",
+                dept.getSelection().getMembers().get(0).getUniqueName());
+    }
+
+    /* ---- saiku#1911: drop client filters colliding with a forced hierarchy (sub-fix #1) ---- */
+
+    @Test
+    public void deCollide_dropsClientFilterOnSameHierarchyEvenAtDifferentLevel() {
+        // A client filter on Product Family and a forced filter on Product Department resolve to the
+        // SAME hierarchy ([Product].[Product]); the client one must be dropped so it can never ride
+        // alongside the forced filter and get UNIONed.
+        List<AiFilterSelection> client = Arrays.asList(
+                filter("Product", "Product", "Product Family", "[Product].[Product].[Product Family].&[Drink]"),
+                filter("Time", "Time", "Year", "[Time].[Time].[Year].&[1997]")); // different hierarchy — kept
+        List<AiFilterSelection> forced = Collections.singletonList(filter(
+                "Product",
+                "Product",
+                "Product Department",
+                "[Product].[Product].[Product Department].&[Alcoholic Beverages]"));
+
+        List<AiFilterSelection> kept =
+                ThinQueryFilterMerge.dropClientFiltersCollidingWithForced(client, forced, schema);
+
+        assertEquals("the colliding Product client filter is dropped; the Time filter is kept", 1, kept.size());
+        assertEquals("Time", kept.get(0).getDimension());
+    }
+
+    @Test
+    public void deCollide_keepsClientFiltersOnDistinctHierarchies() {
+        List<AiFilterSelection> client =
+                Collections.singletonList(filter("Time", "Time", "Year", "[Time].[Time].[Year].&[1997]"));
+        List<AiFilterSelection> forced = Collections.singletonList(
+                filter("Product", "Product", "Product Family", "[Product].[Product].[Product Family].&[Drink]"));
+
+        List<AiFilterSelection> kept =
+                ThinQueryFilterMerge.dropClientFiltersCollidingWithForced(client, forced, schema);
+
+        assertEquals("a client filter on a different hierarchy is retained", 1, kept.size());
+        assertEquals("Time", kept.get(0).getDimension());
+    }
+
+    @Test
+    public void deCollide_nullSchemaKeepsClientFiltersUnchanged() {
+        // The de-collision needs a schema to resolve hierarchies; with none, this helper is a no-op
+        // (the executeSaved caller separately fails closed when it can't resolve the schema).
+        List<AiFilterSelection> client =
+                Collections.singletonList(filter("Time", "Time", "Year", "[Time].[Time].[Year].&[1997]"));
+        List<AiFilterSelection> forced =
+                Collections.singletonList(filter("Time", "Time", "Year", "[Time].[Time].[Year].&[1998]"));
+        List<AiFilterSelection> kept = ThinQueryFilterMerge.dropClientFiltersCollidingWithForced(client, forced, null);
+        assertEquals(1, kept.size());
+    }
+
+    @Test
     public void newHierarchyLandsOnFilterAxis() {
         ThinQuery tq = querymodel();
         ThinQueryFilterMerge.apply(

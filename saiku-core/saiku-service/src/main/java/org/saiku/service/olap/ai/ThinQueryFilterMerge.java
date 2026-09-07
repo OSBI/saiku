@@ -60,8 +60,9 @@ public final class ThinQueryFilterMerge {
      * for optional dashboard chips. Safe to call with null/empty {@code filters} (no-op).
      */
     public static void apply(ThinQuery tq, List<AiFilterSelection> filters, AiSchema schema) {
-        // Best-effort callers don't care which filters were dropped.
-        applyReportingUnapplied(tq, filters, schema);
+        // Best-effort dashboard/client filters: additive, in-place — a client filter co-exists with
+        // the authored levels of a hierarchy (the historical narrow-in-place behaviour).
+        applyInternal(tq, filters, schema, false);
     }
 
     /**
@@ -70,27 +71,91 @@ public final class ThinQueryFilterMerge {
      * MDX), a dim/hier/level that doesn't resolve in the cube, or empty members. The caller MUST
      * <strong>fail closed</strong> when the returned list is non-empty: a forced RLS filter that
      * didn't apply means the query would run <em>unfiltered</em>, which is exactly the leak RLS
-     * exists to prevent. Behaviour-identical to {@link #apply} for the filters that DO apply.
+     * exists to prevent. Behaviour-identical to {@link #apply} for the filters that DO apply, EXCEPT
+     * a forced filter <strong>replaces</strong> (never unions with) any client/authored selection on
+     * the same hierarchy — see {@code replaceHierarchyLevels} in {@link #rewriteExistingAxisSelection}
+     * (saiku#1911).
      *
      * @return the filters that were not applied (empty when all applied); never null
      */
     public static List<AiFilterSelection> applyReportingUnapplied(
             ThinQuery tq, List<AiFilterSelection> filters, AiSchema schema) {
+        // Forced RLS filters must win authoritatively — replace the hierarchy's existing levels.
+        return applyInternal(tq, filters, schema, true);
+    }
+
+    /**
+     * Shared merge core. {@code replaceHierarchyLevels} distinguishes the two callers:
+     * <ul>
+     *   <li>{@code false} ({@link #apply}, client/dashboard) — a filter narrows the matched level in
+     *       place and leaves the hierarchy's other levels alone (drill-downs keep working).</li>
+     *   <li>{@code true} ({@link #applyReportingUnapplied}, forced RLS) — a filter CLEARS the
+     *       hierarchy's existing levels first, so a forced level cannot sit BESIDE a client level of
+     *       the same hierarchy and get UNIONed by saiku-query (saiku#1911 exploit (a)).</li>
+     * </ul>
+     */
+    private static List<AiFilterSelection> applyInternal(
+            ThinQuery tq, List<AiFilterSelection> filters, AiSchema schema, boolean replaceHierarchyLevels) {
         List<AiFilterSelection> unapplied = new ArrayList<>();
         if (filters == null || filters.isEmpty()) return unapplied;
         // MDX-mode or model-less queries can't take a spliced slicer at all — every filter is unapplied.
         ThinQueryModel model = (tq == null || tq.getType() == ThinQuery.Type.MDX) ? null : tq.getQueryModel();
         for (AiFilterSelection f : filters) {
             if (f == null) continue;
-            if (schema == null || model == null || !applyOne(model, f, schema)) {
+            if (schema == null || model == null || !applyOne(model, f, schema, replaceHierarchyLevels)) {
                 unapplied.add(f);
             }
         }
         return unapplied;
     }
 
+    /**
+     * Drop every client/dashboard filter whose resolved hierarchy collides with a forced RLS
+     * filter's hierarchy (saiku#1911, exploit (a) defence-in-depth). A client filter on the SAME
+     * hierarchy as a forced filter — even at a DIFFERENT level — would, once merged, sit beside the
+     * forced selection and let saiku-query UNION the member sets, widening the RLS slice. Rather than
+     * rely solely on the forced-replace merge, we strip such client filters BEFORE the merge so the
+     * forced filter is the ONLY selection on that hierarchy.
+     *
+     * <p>Mirrors {@code AiSchemaConverter.validateNoDuplicateFilterHierarchy}: resolve each filter to
+     * its hierarchy and dedupe by {@code hierarchy.uniqueName}. Fail-closed — a client filter whose
+     * hierarchy resolves into the forced set is discarded, never widened.
+     *
+     * @return a new list of the client filters that do NOT collide (order preserved); never null
+     */
+    public static List<AiFilterSelection> dropClientFiltersCollidingWithForced(
+            List<AiFilterSelection> client, List<AiFilterSelection> forced, AiSchema schema) {
+        List<AiFilterSelection> kept = new ArrayList<>();
+        if (client == null || client.isEmpty()) return kept;
+        if (forced == null || forced.isEmpty() || schema == null) {
+            kept.addAll(client);
+            return kept;
+        }
+        // Resolve the forced filters to their hierarchy unique names.
+        java.util.Set<String> forcedHierarchies = new java.util.LinkedHashSet<>();
+        for (AiFilterSelection f : forced) {
+            if (f == null) continue;
+            AiSchema.Hierarchy h = resolveHierarchy(schema, f.getDimension(), f.getHierarchy());
+            if (h != null) forcedHierarchies.add(h.uniqueName);
+        }
+        if (forcedHierarchies.isEmpty()) {
+            kept.addAll(client);
+            return kept;
+        }
+        for (AiFilterSelection c : client) {
+            if (c == null) continue;
+            AiSchema.Hierarchy h = resolveHierarchy(schema, c.getDimension(), c.getHierarchy());
+            // A client filter that resolves onto a forced hierarchy is dropped (fail-closed). One that
+            // doesn't resolve is left for the best-effort merge, which drops it silently anyway.
+            if (h != null && forcedHierarchies.contains(h.uniqueName)) continue;
+            kept.add(c);
+        }
+        return kept;
+    }
+
     /** Apply one filter to the model. Returns true iff it resolved and was spliced onto an axis / the slicer. */
-    private static boolean applyOne(ThinQueryModel model, AiFilterSelection f, AiSchema schema) {
+    private static boolean applyOne(
+            ThinQueryModel model, AiFilterSelection f, AiSchema schema, boolean replaceHierarchyLevels) {
         if (f.getMembers() == null || f.getMembers().isEmpty()) return false;
         AiSchema.Hierarchy resolvedHier = resolveHierarchy(schema, f.getDimension(), f.getHierarchy());
         if (resolvedHier == null) return false;
@@ -99,7 +164,7 @@ public final class ThinQueryFilterMerge {
 
         // Try to find the hierarchy on any existing axis and rewrite its selection in place; else
         // add to the FILTER (slicer) axis.
-        if (rewriteExistingAxisSelection(model, resolvedHier, resolvedLevel, f.getMembers())) {
+        if (rewriteExistingAxisSelection(model, resolvedHier, resolvedLevel, f.getMembers(), replaceHierarchyLevels)) {
             return true;
         }
         ThinAxis filterAxis = ensureFilterAxis(model);
@@ -151,14 +216,23 @@ public final class ThinQueryFilterMerge {
      * return true. The axis's other levels / sorts / aggregators are left
      * untouched.
      *
-     * <p>If the hierarchy is on the axis but a different level is the
-     * active one, we still update — the axis will gain a level entry for
-     * the dashboard filter's level (the saved query's original axis level
-     * stays where it was; Mondrian handles co-existing levels of the same
-     * hierarchy fine, since they cascade as parent/child sets).
+     * <p>For a best-effort client filter ({@code replaceHierarchyLevels == false}): if the hierarchy
+     * is on the axis but a different level is the active one, we still update — the axis gains a level
+     * entry for the dashboard filter's level (the saved query's original axis level stays where it
+     * was; Mondrian handles co-existing levels of the same hierarchy fine, since they cascade as
+     * parent/child sets).
+     *
+     * <p>For a forced RLS filter ({@code replaceHierarchyLevels == true}, saiku#1911): we CLEAR the
+     * hierarchy's existing levels first, so the forced level REPLACES — never sits beside and gets
+     * UNIONed with — any client/authored level of the same hierarchy. Without this, a guest could
+     * widen an RLS slice by targeting a different level of the forced hierarchy (exploit (a)).
      */
     private static boolean rewriteExistingAxisSelection(
-            ThinQueryModel model, AiSchema.Hierarchy hier, AiSchema.Level level, List<String> members) {
+            ThinQueryModel model,
+            AiSchema.Hierarchy hier,
+            AiSchema.Level level,
+            List<String> members,
+            boolean replaceHierarchyLevels) {
         if (model.getAxes() == null) return false;
         for (ThinAxis axis : model.getAxes().values()) {
             if (axis == null || axis.getHierarchies() == null) continue;
@@ -170,6 +244,10 @@ public final class ThinQueryFilterMerge {
                 if (levels == null) {
                     levels = new LinkedHashMap<>();
                     th.setLevels(levels);
+                } else if (replaceHierarchyLevels) {
+                    // Forced RLS: the forced level is the ONLY selection on this hierarchy. Drop any
+                    // other level (a client filter's different-level entry) so nothing gets UNIONed.
+                    levels.clear();
                 }
                 levels.put(level.name, new ThinLevel(level.name, level.name, selection, new ArrayList<>()));
                 return true;
