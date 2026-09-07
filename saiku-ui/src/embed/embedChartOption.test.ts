@@ -83,4 +83,73 @@ describe('buildEmbedChartOption', () => {
 		expect(opt.title.text).toBe('No data');
 		expect(opt.color).toBeUndefined();
 	});
+
+	test('SECURITY (#1909): tooltip formatter HTML-escapes the category AND every series name AND every cell value (innerHTML, un-escaped by ECharts)', () => {
+		// TWO series (not one) so the per-series `.map` path is actually
+		// exercised — a formatter that only escaped arr[0] (or only the
+		// category) would still pass a single-series assertion. Every
+		// fixture below carries all FIVE HTML-significant characters
+		// (< > & " '), including `>` and `'`, neither of which the original
+		// #1909 test asserted — a formatter that escapes `<`/`&`/`"` but
+		// forgets `>` or `'` must fail this test.
+		const hostileCat = `<img src=x onerror=alert(1)>&"'cat`;
+		const hostileName1 = `<img src=x onerror=alert(2)>&"'name1`;
+		const hostileDisp1 = `<img src=x onerror=alert(3)>&"'disp1`;
+		const hostileName2 = `<img src=x onerror=alert(4)>&"'name2`;
+		const hostileDisp2 = `<img src=x onerror=alert(5)>&"'disp2`;
+		const hostileRows: EmbedRow[] = [
+			{
+				Country: cat(hostileCat),
+				[hostileName1]: { value: 100, formatted: hostileDisp1 },
+				[hostileName2]: { value: 200, formatted: hostileDisp2 }
+			}
+		];
+		const opt = buildEmbedChartOption(hostileRows, 'bar', UNSTYLED) as any;
+		const fmt = opt.tooltip.formatter as (p: unknown) => string;
+		// Shaped like the real ECharts axis-trigger callback: axisValue is the
+		// hovered category, shared by every entry; seriesName + dataIndex
+		// identify which row/column cell backs EACH series' value (the
+		// formatter looks up `formatted` from the original rows via those
+		// two, not from `value`). Both entries share dataIndex 0 — one row,
+		// two series — matching how the axis trigger fires once per category
+		// with every series' params in the array.
+		const out = fmt([
+			{ axisValue: hostileCat, seriesName: hostileName1, dataIndex: 0, value: 100 },
+			{ axisValue: hostileCat, seriesName: hostileName2, dataIndex: 0, value: 200 }
+		]);
+
+		// Exact match on the whole formatter output: the strongest possible
+		// guarantee that ALL THREE sinks are escaped for BOTH series (cat
+		// once, name/disp twice each), that the static <b>/<br/> structure
+		// is untouched, and that no raw markup survives anywhere at all —
+		// not just "some escaped substring appears somewhere in the output"
+		// the way a bare toContain would allow.
+		expect(out).toBe(
+			`<b>&lt;img src=x onerror=alert(1)&gt;&amp;&quot;&#39;cat</b><br/>` +
+				`&lt;img src=x onerror=alert(2)&gt;&amp;&quot;&#39;name1: ` +
+				`&lt;img src=x onerror=alert(3)&gt;&amp;&quot;&#39;disp1<br/>` +
+				`&lt;img src=x onerror=alert(4)&gt;&amp;&quot;&#39;name2: ` +
+				`&lt;img src=x onerror=alert(5)&gt;&amp;&quot;&#39;disp2`
+		);
+
+		// Belt-and-braces per-value checks so a future failure here points
+		// straight at which sink regressed, without having to diff the full
+		// string above by eye.
+		// Raw, executable markup must never reach the innerHTML sink — the
+		// tag itself is neutralised (the literal text "onerror=alert" that
+		// remains is inert once it's no longer inside a real `<img>` tag).
+		expect(out).not.toContain('<img');
+		expect(out).toContain('&lt;img src=x onerror=alert(1)&gt;'); // cat
+		expect(out).toContain('&lt;img src=x onerror=alert(2)&gt;'); // series 1 name
+		expect(out).toContain('&lt;img src=x onerror=alert(3)&gt;'); // series 1 disp
+		expect(out).toContain('&lt;img src=x onerror=alert(4)&gt;'); // series 2 name
+		expect(out).toContain('&lt;img src=x onerror=alert(5)&gt;'); // series 2 disp
+		expect(out).toContain('&amp;');
+		expect(out).toContain('&quot;');
+		expect(out).toContain('&#39;'); // ' — not asserted by the original #1909 test
+		// The static <b>/<br/> structure is untouched — only the dynamic
+		// values were escaped.
+		expect(out.startsWith('<b>')).toBe(true);
+		expect(out).toContain('</b><br/>');
+	});
 });
