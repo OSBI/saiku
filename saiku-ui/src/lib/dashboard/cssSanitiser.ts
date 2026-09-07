@@ -1,4 +1,5 @@
 import * as csstree from 'css-tree';
+import { normalizeUrlLike } from './urlNormalise';
 
 /**
  * Scoped + fail-closed custom-CSS sanitiser for the App Builder.
@@ -68,9 +69,27 @@ function valueIsHostile(prop: string, value: string): boolean {
  * relative/same-origin references pass; absolute schemes (`https://`,
  * `http://`, `javascript:`, etc.) and protocol-relative (`//host`) references
  * are rejected. An empty target (already-blanked url()) is allowed.
+ *
+ * saiku#1942: the scheme/protocol-relative checks below run on the value
+ * AFTER {@link normalizeUrlLike} (mirroring the fix already applied to the
+ * `echarts-option` validator for saiku#1940) so a scheme split by an embedded
+ * control character can't dodge the anchored regex or the `//` prefix check.
+ * `raw` here is always the CSS-escape-DECODED target — the caller
+ * (`sanitiseAndScopeCss`) already runs `decodeCssEscapes` on the whole
+ * declaration value before extracting url() targets from it, so a CSS numeric
+ * escape like `\9` / `\a` / `\d` has already become a literal tab/LF/CR by the
+ * time it reaches this function, same as a literal control character typed
+ * directly into the source. `normalizeUrlLike` handles both forms identically
+ * because both arrive here as the same literal control byte — there is
+ * nothing CSS-escape-specific left to decode at this layer.
  */
 function urlIsAllowed(raw: string): boolean {
-	const u = raw.trim().replace(/^['"]|['"]$/g, '');
+	// Normalise BEFORE stripping quotes too (mirrors echartsOption's
+	// `resourceRefAllowed`): a quoted target like `"\x01https://evil"` has its
+	// control byte adjacent to the quote character, not the scheme, so the
+	// second normalise (after the quote is gone) is what actually exposes it.
+	let u = normalizeUrlLike(raw.trim()).replace(/^['"]|['"]$/g, '');
+	u = normalizeUrlLike(u);
 	if (u === '') return true;
 	if (u.startsWith('data:')) return true;
 	if (u.startsWith('//')) return false;

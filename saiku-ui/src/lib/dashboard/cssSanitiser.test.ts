@@ -101,3 +101,79 @@ describe('sanitiseAndScopeCss', () => {
 		expect(out).not.toContain(`:is(${ROOT}`);
 	});
 });
+
+/* ---------------------------------------------------------------------- *
+ * saiku#1942 — control-char-split url() scheme bypass.                    *
+ *                                                                          *
+ * `urlIsAllowed` used to detect a scheme with `raw.trim()` + an anchored  *
+ * `^[a-z][a-z0-9+.-]*:` regex — the same shape saiku#1940 fixed in the    *
+ * echarts-option validator. `trim()` only strips whitespace at the ends   *
+ * and never touches an EMBEDDED control character, so a scheme split by   *
+ * an inner tab (or a CSS numeric escape that decodes to one) doesn't      *
+ * match that regex and was waved through as "no scheme, must be a         *
+ * relative/same-origin reference".                                        *
+ *                                                                          *
+ * Both bypass SPELLINGS — a literal control byte typed into the source,   *
+ * and a CSS numeric escape (`\9`, `\a`, `\d`, ...) — collapse to the SAME  *
+ * decoded string before `urlIsAllowed` ever sees it: `sanitiseAndScopeCss` *
+ * already runs `decodeCssEscapes` on the whole declaration value before   *
+ * extracting url() targets, and (confirmed against the actual css-tree    *
+ * behaviour) css-tree re-serialises a literal control char right back     *
+ * into its numeric-escape form when generating the value, so a literal    *
+ * tab in the source round-trips through `\9` and comes out the other side *
+ * as the identical decoded tab. So a single `normalizeUrlLike` pass in    *
+ * `urlIsAllowed` — the same WHATWG-URL-parser-shaped normalisation        *
+ * saiku#1940 added to the echarts-option validator, now shared via        *
+ * `./urlNormalise` — closes every spelling of this bypass; there is       *
+ * nothing CSS-escape-specific left to decode at that layer.               *
+ *                                                                          *
+ * Reversion-sensitive: stashing the `normalizeUrlLike` step in            *
+ * `urlIsAllowed` turns every "DROPPED" case below into a case where the   *
+ * remote host survives sanitisation.                                      *
+ * ---------------------------------------------------------------------- */
+describe('sanitiseAndScopeCss — saiku#1942 control-char-split url() scheme bypass', () => {
+	test('baseline: a normal remote url(https://...) is dropped', () => {
+		const out = sanitiseAndScopeCss('.a{background:url(https://evil.example/x.png)}', ROOT);
+		expect(out).not.toContain('evil.example');
+	});
+
+	test('drops a remote url() whose scheme is split by a LITERAL TAB', () => {
+		const out = sanitiseAndScopeCss('.a{background:url("ht\ttps://evil.example/x.png")}', ROOT);
+		expect(out).not.toContain('evil.example');
+	});
+
+	test('drops a remote url() whose scheme is split by a \\9 CSS escape (decodes to TAB)', () => {
+		const out = sanitiseAndScopeCss('.a{background:url("ht\\9 tps://evil.example/x.png")}', ROOT);
+		expect(out).not.toContain('evil.example');
+	});
+
+	test('drops a remote url() whose scheme is split by an \\a CSS escape (decodes to LF)', () => {
+		const out = sanitiseAndScopeCss('.a{background:url("ht\\a tps://evil.example/x.png")}', ROOT);
+		expect(out).not.toContain('evil.example');
+	});
+
+	test('drops a protocol-relative //host url() split by a literal tab', () => {
+		const out = sanitiseAndScopeCss('.a{background:url("/\t/evil.example/x.png")}', ROOT);
+		expect(out).not.toContain('evil.example');
+	});
+
+	test('drops a protocol-relative //host url() split by a \\9 CSS escape', () => {
+		const out = sanitiseAndScopeCss('.a{background:url("/\\9 /evil.example/x.png")}', ROOT);
+		expect(out).not.toContain('evil.example');
+	});
+
+	test('drops a remote url() preceded by a leading control byte', () => {
+		const out = sanitiseAndScopeCss('.a{background:url("\x01https://evil.example/x.png")}', ROOT);
+		expect(out).not.toContain('evil.example');
+	});
+
+	test('anti-regression: a legitimate relative url() is still allowed', () => {
+		const out = sanitiseAndScopeCss('.a{background:url(images/logo.png)}', ROOT);
+		expect(out).toContain('images/logo.png');
+	});
+
+	test('anti-regression: a data:image/png url() is still allowed', () => {
+		const out = sanitiseAndScopeCss('.a{background:url(data:image/png;base64,AA)}', ROOT);
+		expect(out).toContain('data:image/png');
+	});
+});

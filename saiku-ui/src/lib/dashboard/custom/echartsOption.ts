@@ -36,6 +36,8 @@
  * returns a discriminated result.
  */
 
+import { normalizeUrlLike } from '../urlNormalise';
+
 /** A validated, safe ECharts option. Structurally a plain object; the brand is
  *  documentation only (the validator guarantees the safe-subset invariants). */
 export type SafeEChartsOption = Record<string, unknown>;
@@ -146,29 +148,6 @@ function extractUrlTargets(value: string): string[] {
 		targets.push(match[1]);
 	}
 	return targets;
-}
-
-/**
- * Normalise a string the way the WHATWG URL parser normalises its input
- * BEFORE scheme detection (steps 1-2 of
- * https://url.spec.whatwg.org/#url-parsing): strip any leading/trailing C0
- * control (0x00-0x1F) or space (0x20), then remove every ASCII tab/CR/LF
- * wherever it occurs in what remains.
- *
- * saiku#1940: `trim()` only strips whitespace at the ends and never touches an
- * EMBEDDED control character, so a scheme split by an inner tab/newline (e.g.
- * `"java\tscript:alert(1)"`) doesn't match the anchored scheme regex below and
- * was treated as scheme-less / relative. A real browser's URL parser removes
- * that embedded tab/newline (and strips a leading control byte such as 0x01)
- * BEFORE it looks for a scheme, so it sees plain `"javascript:alert(1)"` — the
- * validator must normalise identically before it decides.
- */
-function normalizeUrlLike(s: string): string {
-	// Deliberate: strip leading/trailing C0 control (0x00-0x1F) or space (0x20),
-	// mirroring the WHATWG URL parser.
-	// eslint-disable-next-line no-control-regex
-	const stripped = s.replace(/^[\x00-\x20]+/, '').replace(/[\x00-\x20]+$/, '');
-	return stripped.replace(/[\t\r\n]/g, '');
 }
 
 /**
