@@ -5,6 +5,9 @@ import {
 	validateEchartsOption,
 	type EChartsDataProjection
 } from './echartsOption';
+import { applyValueAxisFormat } from './valueAxisFormat';
+import { appEchartsBase, withAppEchartsDefaults } from '../appChartTheme';
+import { resolveThemeTokens } from '$lib/views/chartTheme';
 
 describe('validateEchartsOption — accept', () => {
 	it('accepts a plain bar option', () => {
@@ -23,8 +26,15 @@ describe('validateEchartsOption — accept', () => {
 	});
 
 	it('accepts a plain line option with a string formatter template', () => {
-		// A STRING formatter (ECharts template syntax) is safe — only FUNCTION
-		// formatters are the exec vector.
+		// saiku#1937: a STRING formatter (ECharts template syntax) passes the
+		// VALIDATOR — it can't execute the way a function can. It is NOT
+		// "safe" outright though: in ECharts' default HTML render mode a string
+		// formatter's surrounding markup is inserted into innerHTML unescaped
+		// (only the {a}/{b}/{c} substitutions are escaped), so a markup-bearing
+		// template is a stored-XSS vector. That gap is closed downstream, in
+		// applyDataToEchartsOption, which forces every tooltip into
+		// `renderMode: 'richText'` so a formatter string can never be parsed as
+		// HTML/DOM — see the reversion-sensitive tests below.
 		const opt = {
 			xAxis: { type: 'category' },
 			yAxis: { type: 'value' },
@@ -280,5 +290,201 @@ describe('applyDataToEchartsOption', () => {
 			projection
 		);
 		expect((merged.yAxis as { data: string[] }).data).toEqual(['A', 'B']);
+	});
+});
+
+/* ------------------------------------------------------------------ *
+ * saiku#1937 — a markup-bearing string tooltip.formatter must never    *
+ * reach an HTML-rendered tooltip once applyDataToEchartsOption has run. *
+ * Reversion-sensitive: stashing the neutraliseTooltip wiring in         *
+ * applyDataToEchartsOption turns every one of these red.                *
+ * ------------------------------------------------------------------ */
+describe('applyDataToEchartsOption — saiku#1937 tooltip XSS neutralisation', () => {
+	const hostileFormatter = '<img src=x onerror=alert(document.cookie)>{b}: {c}';
+
+	it('forces renderMode:"richText" on a top-level tooltip carrying a markup formatter', () => {
+		const validated = validateEchartsOption({
+			tooltip: { trigger: 'axis', formatter: hostileFormatter },
+			series: [{ type: 'bar' }]
+		});
+		expect(validated.ok).toBe(true);
+		if (!validated.ok) return;
+		const merged = applyDataToEchartsOption(validated.value, projection);
+		const tooltip = merged.tooltip as { formatter: string; renderMode: string };
+		// The formatter string itself is untouched (richText mode still does the
+		// {a}/{b}/{c} substitution) — what changes is HOW it gets rendered.
+		expect(tooltip.formatter).toBe(hostileFormatter);
+		expect(tooltip.renderMode).toBe('richText');
+	});
+
+	it('forces renderMode:"richText" on a per-series tooltip carrying a markup formatter', () => {
+		const validated = validateEchartsOption({
+			series: [{ type: 'line', tooltip: { formatter: hostileFormatter } }]
+		});
+		expect(validated.ok).toBe(true);
+		if (!validated.ok) return;
+		const merged = applyDataToEchartsOption(validated.value, projection);
+		const series = merged.series as Array<{ tooltip: { formatter: string; renderMode: string } }>;
+		expect(series[0].tooltip.formatter).toBe(hostileFormatter);
+		expect(series[0].tooltip.renderMode).toBe('richText');
+	});
+
+	it('forces renderMode:"richText" on a markPoint/markLine/markArea tooltip', () => {
+		const validated = validateEchartsOption({
+			series: [
+				{
+					type: 'line',
+					markPoint: { tooltip: { formatter: hostileFormatter } },
+					markLine: { tooltip: { formatter: hostileFormatter } },
+					markArea: { tooltip: { formatter: hostileFormatter } }
+				}
+			]
+		});
+		expect(validated.ok).toBe(true);
+		if (!validated.ok) return;
+		const merged = applyDataToEchartsOption(validated.value, projection);
+		const series = merged.series as Array<{
+			markPoint: { tooltip: { renderMode: string } };
+			markLine: { tooltip: { renderMode: string } };
+			markArea: { tooltip: { renderMode: string } };
+		}>;
+		expect(series[0].markPoint.tooltip.renderMode).toBe('richText');
+		expect(series[0].markLine.tooltip.renderMode).toBe('richText');
+		expect(series[0].markArea.tooltip.renderMode).toBe('richText');
+	});
+
+	it('drops tooltip.extraCssText everywhere it can appear', () => {
+		// This value survives validateEchartsOption on purpose (a leading digit
+		// dodges the "bare scheme" whole-string check in stringIsHostile, so the
+		// embedded legacy IE `behavior:url(...)` CSS binding — a historical
+		// script-execution vector — is never even flagged there): the point of
+		// this test is that applyDataToEchartsOption still drops extraCssText
+		// unconditionally, as defence-in-depth independent of the validator.
+		const hostileCss = '1px solid red;behavior:url(evil.htc)';
+		const validated = validateEchartsOption({
+			tooltip: { extraCssText: hostileCss },
+			series: [
+				{
+					type: 'bar',
+					tooltip: { extraCssText: hostileCss },
+					markPoint: { tooltip: { extraCssText: hostileCss } }
+				}
+			]
+		});
+		expect(validated.ok).toBe(true);
+		if (!validated.ok) return;
+		const merged = applyDataToEchartsOption(validated.value, projection);
+		const tooltip = merged.tooltip as Record<string, unknown>;
+		const series = merged.series as Array<{
+			tooltip: Record<string, unknown>;
+			markPoint: { tooltip: Record<string, unknown> };
+		}>;
+		expect(tooltip.extraCssText).toBeUndefined();
+		expect(series[0].tooltip.extraCssText).toBeUndefined();
+		expect(series[0].markPoint.tooltip.extraCssText).toBeUndefined();
+	});
+
+	it('still synthesises richText tooltips when the author declared no tooltip at all', () => {
+		// Baseline: an option with no tooltip shouldn't gain one just because of
+		// this pass — richText forcing only touches tooltips the author (or the
+		// synthesised series) actually has.
+		const merged = applyDataToEchartsOption({ series: [{ type: 'bar' }] }, projection);
+		expect(merged.tooltip).toBeUndefined();
+	});
+});
+
+/* ------------------------------------------------------------------ *
+ * saiku#1937 — CALL-SITE wiring tests.                                 *
+ *                                                                      *
+ * The helper-level tests above prove applyDataToEchartsOption itself   *
+ * neutralises tooltips. These tests instead replicate the exact        *
+ * production call sequence each tile renderer runs in its `$effect`    *
+ * right before `chart.setOption(...)`, importing the REAL production   *
+ * functions (never reimplementing them), so a regression that          *
+ * reintroduces `renderMode:'html'` downstream of                       *
+ * applyDataToEchartsOption — e.g. a theme-layering step that lets the   *
+ * base option's tooltip win instead of the author's — fails here even  *
+ * though the helper itself is untouched.                               *
+ * ------------------------------------------------------------------ */
+describe('saiku#1937 — in-app tile wiring (EChartsOptionTile.svelte composition)', () => {
+	it('the themed-baseline layering step preserves richText on the top-level tooltip', () => {
+		const hostileFormatter = '<img src=x onerror=alert(1)>{b}: {c}';
+		const validated = validateEchartsOption({
+			tooltip: { trigger: 'axis', formatter: hostileFormatter },
+			series: [{ type: 'bar' }]
+		});
+		expect(validated.ok).toBe(true);
+		if (!validated.ok) return;
+
+		// Mirrors EChartsOptionTile.svelte's render $effect: applyDataToEchartsOption,
+		// then withAppEchartsDefaults(filled, appEchartsBase(tokens, fonts)) — the
+		// step that layers the app's theme over the author's option before it
+		// reaches chart.setOption(option, true).
+		const filled = applyDataToEchartsOption(validated.value, projection);
+		const tokens = resolveThemeTokens();
+		const themed = withAppEchartsDefaults(
+			filled,
+			appEchartsBase(tokens, { body: 'inherit', display: 'inherit' })
+		);
+		applyValueAxisFormat(themed, undefined);
+
+		const tooltip = themed.tooltip as { formatter: string; renderMode: string };
+		expect(tooltip.formatter).toBe(hostileFormatter);
+		expect(tooltip.renderMode).toBe('richText');
+	});
+
+	it('the themed-baseline layering step preserves richText on a per-series tooltip', () => {
+		const hostileFormatter = '<img src=x onerror=alert(1)>{b}: {c}';
+		const validated = validateEchartsOption({
+			series: [{ type: 'line', tooltip: { formatter: hostileFormatter } }]
+		});
+		expect(validated.ok).toBe(true);
+		if (!validated.ok) return;
+
+		const filled = applyDataToEchartsOption(validated.value, projection);
+		const tokens = resolveThemeTokens();
+		const themed = withAppEchartsDefaults(
+			filled,
+			appEchartsBase(tokens, { body: 'inherit', display: 'inherit' })
+		);
+
+		const series = themed.series as Array<{ tooltip: { renderMode: string } }>;
+		expect(series[0].tooltip.renderMode).toBe('richText');
+	});
+});
+
+describe('saiku#1937 — embed tile wiring (EmbedEChartsOptionTile.svelte composition)', () => {
+	it('the embed render sequence (validate -> project -> merge -> axis-format) yields a richText tooltip', () => {
+		const hostileFormatter = '<img src=x onerror=alert(document.cookie)>{b}: {c}';
+		// Mirrors EmbedEChartsOptionTile.svelte's `project()` — first non-numeric
+		// column is categories, numeric columns become series — feeding data shaped
+		// like the token-scoped `rows` prop it receives from <EmbedGrid>.
+		const embedProjection: EChartsDataProjection = {
+			categories: ['Jan', 'Feb'],
+			series: [{ name: 'Units', data: [10, 20] }]
+		};
+
+		const validated = validateEchartsOption({
+			tooltip: { formatter: hostileFormatter },
+			series: [
+				{
+					type: 'bar',
+					markPoint: { tooltip: { formatter: hostileFormatter } }
+				}
+			]
+		});
+		expect(validated.ok).toBe(true);
+		if (!validated.ok) return;
+
+		// Mirrors EmbedEChartsOptionTile.svelte's render $effect exactly: no theme
+		// layering step exists on the embed path — applyDataToEchartsOption's
+		// output goes straight to applyValueAxisFormat, then chart.setOption().
+		const option = applyDataToEchartsOption(validated.value, embedProjection);
+		applyValueAxisFormat(option, undefined);
+
+		const tooltip = option.tooltip as { renderMode: string };
+		const series = option.series as Array<{ markPoint: { tooltip: { renderMode: string } } }>;
+		expect(tooltip.renderMode).toBe('richText');
+		expect(series[0].markPoint.tooltip.renderMode).toBe('richText');
 	});
 });

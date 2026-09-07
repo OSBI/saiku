@@ -333,6 +333,71 @@ function asObject(v: unknown): Record<string, unknown> {
 		: {};
 }
 
+/* ------------------------------------------------------------------ *
+ * saiku#1937 — tooltip render-mode neutralisation.                    *
+ *                                                                      *
+ * The validator above allows a STRING `tooltip.formatter` (ECharts     *
+ * template syntax, e.g. "{b}: {c}") because a string can't execute the *
+ * way a function can — that's true for the three reject rules above,   *
+ * but it misses how ECharts actually RENDERS that string. In its       *
+ * default `renderMode: 'html'`, ECharts substitutes the {a}/{b}/{c}    *
+ * placeholders (escaped) into the author's template and then inserts   *
+ * the WHOLE result into the tooltip DOM node via `innerHTML` — the     *
+ * surrounding template markup itself is never escaped. An author       *
+ * formatter like `'<img src=x onerror=alert(document.cookie)>'` is a   *
+ * stored HTML fragment that executes on hover, in Saiku's own origin   *
+ * for every viewer (including admins), and in a third-party embedder's *
+ * origin via <saiku-embed kind="app">.                                 *
+ *                                                                      *
+ * Fix: force `renderMode: 'richText'` on every tooltip object the      *
+ * custom-option path can reach — top-level `tooltip`, each             *
+ * `series[i].tooltip`, and each `series[i].mark{Point,Line,Area}`'s    *
+ * own `tooltip` — right where the option is handed to ECharts. In      *
+ * richText mode ECharts lays the (still placeholder-substituted)       *
+ * string out with its own text renderer onto the canvas; it is never   *
+ * parsed as HTML/DOM, so embedded markup renders as inert literal text *
+ * instead of executing. `extraCssText` (a raw `cssText` string applied *
+ * to the tooltip DOM node) is dropped outright for the same reason —   *
+ * it's only ever meaningful in HTML render mode, and a value like      *
+ * `width:0;height:0` plus a `behavior:url(...)` legacy expression      *
+ * isn't worth trying to sub-validate.                                  *
+ *                                                                      *
+ * Trade-off (flagged for SEC/LEAD): an author who genuinely wants rich *
+ * HTML in a custom-tile tooltip (bold text, line breaks via <br>, an   *
+ * inline swatch) loses that — richText mode renders such markup as     *
+ * literal text, not formatting. The built-in Chart tile's tooltips are *
+ * unaffected — they build their own formatter functions server-side    *
+ * (already escaped, #1071/#1087/#1909) and never take author-supplied  *
+ * HTML.                                                                *
+ * ------------------------------------------------------------------ */
+
+/** Force one tooltip-shaped value (or array of them) into `richText` render
+ *  mode and drop `extraCssText`. Never mutates its input. */
+function neutraliseTooltip(t: unknown): unknown {
+	if (Array.isArray(t)) return t.map(neutraliseTooltip);
+	if (!t || typeof t !== 'object') return t;
+	const out = { ...(t as Record<string, unknown>) };
+	out.renderMode = 'richText';
+	delete out.extraCssText;
+	return out;
+}
+
+/** Neutralise a single series entry's own `tooltip` plus the `tooltip` nested
+ *  under each mark* component. Never mutates its input. */
+function neutraliseSeriesTooltips(s: Record<string, unknown>): Record<string, unknown> {
+	const out = { ...s };
+	if ('tooltip' in out) out.tooltip = neutraliseTooltip(out.tooltip);
+	for (const markKey of ['markPoint', 'markLine', 'markArea'] as const) {
+		const mark = out[markKey];
+		if (mark && typeof mark === 'object' && !Array.isArray(mark)) {
+			const m = { ...(mark as Record<string, unknown>) };
+			if ('tooltip' in m) m.tooltip = neutraliseTooltip(m.tooltip);
+			out[markKey] = m;
+		}
+	}
+	return out;
+}
+
 /** Set category `data` on a single axis object (only when it is a category axis
  *  and the author didn't already supply data). Returns a fresh object. */
 function withCategoryData(axis: unknown, categories: string[]): Record<string, unknown> {
@@ -428,6 +493,12 @@ export function applyDataToEchartsOption(
 			return s;
 		});
 	}
+
+	// saiku#1937 — neutralise every tooltip this option can reach (top-level,
+	// per-series, per-mark*) right before it's handed back to the tile
+	// renderer. See the block comment above neutraliseTooltip for why.
+	if ('tooltip' in opt) opt.tooltip = neutraliseTooltip(opt.tooltip);
+	opt.series = (opt.series as unknown[]).map((s) => neutraliseSeriesTooltips(asObject(s)));
 
 	return opt;
 }
