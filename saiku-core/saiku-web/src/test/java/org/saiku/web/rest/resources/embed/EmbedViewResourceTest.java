@@ -686,6 +686,51 @@ public class EmbedViewResourceTest {
     }
 
     @Test
+    public void dashboard_inline_client_cannot_widen_forced_rls_via_different_level() {
+        // saiku#1911 sub-fix #1 (inline half): the client override targets a DIFFERENT level
+        // ("Customer Country") of the FORCED hierarchy (Customer). It passes mergeFilterOverrides via
+        // the forced-hierarchy gate, but applyForcedFilters must clear it by HIERARCHY (not just the
+        // exact dim/hier/level axis) so the ONLY Customer filter reaching the engine is the forced
+        // level "Customer" = {acme}. Reverting the sameHierarchy removal to sameAxis leaves the
+        // client's Country/USA filter in place → two Customer filters → onlyFilterFor fails.
+        ds.fileContent = DASH_INLINE_TILE;
+        pinGuestJwt("dashboard", "/homes/admin/exec.saikudash", "admin", List.of(), "u_1", FORCE_CUSTOMER_ACME);
+
+        Response r = resource.tileQuery(
+                "homes/admin/exec.saikudash",
+                "t1",
+                overrides(inLevel("Customer", "Customer", "Customer Country", "[Customer].[Country].[USA]")));
+
+        assertEquals(200, r.getStatus());
+        AiFilterSelection cust = onlyFilterFor(ai.lastAiRequest.getFilters(), "Customer");
+        assertEquals("forced level must win over a different-level client override", "Customer", cust.getLevel());
+        assertEquals(List.of("[Customer].[acme]"), cust.getMembers());
+        assertFalse(
+                "the different-level client override must never reach the engine",
+                cust.getMembers().contains("[Customer].[Country].[USA]"));
+    }
+
+    @Test
+    public void dashboard_inline_forced_filter_with_null_dimension_fails_closed() {
+        // saiku#1911 SEC nit: a forced RLS filter whose dimension is null used to be SILENTLY skipped
+        // (fail-open — the query ran unfiltered). It must now throw so the tile fails closed and no
+        // query executes.
+        ds.fileContent = DASH_INLINE_TILE;
+        pinGuestJwt(
+                "dashboard",
+                "/homes/admin/exec.saikudash",
+                "admin",
+                List.of(),
+                "u_1",
+                "[{\"level\":\"Customer\",\"members\":[\"[Customer].[acme]\"]}]"); // no "dimension"
+
+        Response r = resource.tileQuery("homes/admin/exec.saikudash", "t1", null);
+
+        assertTrue("a dimensionless forced RLS filter must fail closed (non-2xx)", r.getStatus() >= 400);
+        assertNull("no query may execute when a forced RLS filter can't be applied", ai.lastAiRequest);
+    }
+
+    @Test
     public void app_inline_client_cannot_widen_forced_rls() {
         // Same widen exploit, via the app-page inline tile — the shared runTileQuery must block it.
         ds.fileContent = APP_INLINE_TILE;
@@ -817,6 +862,14 @@ public class EmbedViewResourceTest {
     /** op:"in" client filter on dim (dim=hierarchy=level for the test cube). */
     private static AiFilterSelection in(String dim, String... members) {
         AiFilterSelection f = new AiFilterSelection(dim, dim, dim, new ArrayList<>(Arrays.asList(members)));
+        f.setOp("in");
+        return f;
+    }
+
+    /** op:"in" client filter with an explicit (dim, hier, level) — used to prove a client override on
+     *  a DIFFERENT level of a forced hierarchy is still clamped. */
+    private static AiFilterSelection inLevel(String dim, String hier, String level, String... members) {
+        AiFilterSelection f = new AiFilterSelection(dim, hier, level, new ArrayList<>(Arrays.asList(members)));
         f.setOp("in");
         return f;
     }

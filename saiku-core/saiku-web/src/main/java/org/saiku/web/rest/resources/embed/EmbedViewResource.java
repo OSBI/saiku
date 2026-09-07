@@ -920,7 +920,12 @@ public class EmbedViewResource {
         java.util.List<AiFilterSelection> current = req.getFilters();
         if (current == null) current = new java.util.ArrayList<>();
         for (AiFilterSelection f : forced) {
-            if (f == null || f.getDimension() == null) continue;
+            if (f == null || f.getDimension() == null) {
+                // A forced RLS filter with no dimension can't be applied — silently skipping it would
+                // run the query UNFILTERED (fail-OPEN). Throw so the tile fails closed, matching
+                // parseForcedFilters' treatment of a malformed claim (saiku#1911 SEC nit).
+                throw new IllegalStateException("forced RLS filter is missing its dimension");
+            }
             // Remove every filter on the same HIERARCHY (authored or client) — NOT just the same
             // (dim,hier,level) axis. saiku#1911 exploit (a): a client filter on a DIFFERENT level of
             // the forced hierarchy must not survive (executeAi would UNION it, widening the RLS
@@ -977,16 +982,20 @@ public class EmbedViewResource {
         return out;
     }
 
+    /** Compare through the SAME normalised (trim + lowercase) keys the declared-target /
+     *  forced-hierarchy gate uses ({@link #targetKey}), so a filter that passes the gate (e.g. a
+     *  leading-space " Customer") is also caught by the clamp here — not left to the converter's
+     *  dedupe backstop 400 (saiku#1911 SEC nit). */
     private static boolean sameAxis(AiFilterSelection a, AiFilterSelection b) {
-        return eqIgnoreCase(a.getDimension(), b.getDimension())
-                && eqIgnoreCase(a.getHierarchy(), b.getHierarchy())
-                && eqIgnoreCase(a.getLevel(), b.getLevel());
+        return targetKey(a.getDimension(), a.getHierarchy(), a.getLevel())
+                .equals(targetKey(b.getDimension(), b.getHierarchy(), b.getLevel()));
     }
 
     /** Same dimension + hierarchy, ANY level. A forced RLS filter owns the whole hierarchy, so a
-     *  client filter on any level of it is cleared before the forced filter is applied (saiku#1911). */
+     *  client filter on any level of it is cleared before the forced filter is applied (saiku#1911).
+     *  Uses the same normalised key as the forced-hierarchy gate ({@link #hierKey}). */
     private static boolean sameHierarchy(AiFilterSelection a, AiFilterSelection b) {
-        return eqIgnoreCase(a.getDimension(), b.getDimension()) && eqIgnoreCase(a.getHierarchy(), b.getHierarchy());
+        return hierKey(a.getDimension(), a.getHierarchy()).equals(hierKey(b.getDimension(), b.getHierarchy()));
     }
 
     private static boolean eqIgnoreCase(String x, String y) {
