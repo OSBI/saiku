@@ -232,7 +232,9 @@ public class EmbedViewResource {
         // shared runner splices the overrides into the request Filters via the validated path.
         final java.util.List<AiFilterSelection> filterOverrides =
                 overrides == null || overrides.filters == null ? java.util.Collections.emptyList() : overrides.filters;
-        return runTileQuery(g, findTile(dash.layout.tiles, tileId), filterOverrides, "/saiku/api/embed/dashboard/tile");
+        DashboardTile tile = findTile(dash.layout.tiles, tileId);
+        return runTileQuery(
+                g, tile, filterOverrides, declaredTargetsForDashboard(dash, tile), "/saiku/api/embed/dashboard/tile");
     }
 
     /* ----------------------------- app ----------------------------- */
@@ -305,7 +307,8 @@ public class EmbedViewResource {
         }
         final java.util.List<AiFilterSelection> filterOverrides =
                 overrides == null || overrides.filters == null ? java.util.Collections.emptyList() : overrides.filters;
-        return runTileQuery(g, findAppTile(g, pageId, tileId), filterOverrides, "/saiku/api/embed/app/tile");
+        DashboardTile tile = findAppTile(g, pageId, tileId);
+        return runTileQuery(g, tile, filterOverrides, declaredTargetsForApp(g, tile), "/saiku/api/embed/app/tile");
     }
 
     /**
@@ -451,7 +454,11 @@ public class EmbedViewResource {
      * new query path and NO RLS/PII bypass.
      */
     private Response runTileQuery(
-            EmbedGuestDetails g, DashboardTile tile, java.util.List<AiFilterSelection> overrides, String endpoint) {
+            EmbedGuestDetails g,
+            DashboardTile tile,
+            java.util.List<AiFilterSelection> overrides,
+            java.util.Set<String> declaredTargets,
+            String endpoint) {
         if (tile == null || tile.query == null) {
             return harden(Response.status(Response.Status.NOT_FOUND)
                     .entity(Map.of("status", "NOT_FOUND", "error", "No such queryable tile"))
@@ -461,13 +468,18 @@ public class EmbedViewResource {
         final TileQuery q = tile.query;
         final java.util.List<AiFilterSelection> filterOverrides =
                 overrides == null ? java.util.Collections.emptyList() : overrides;
+        final java.util.Set<String> declared =
+                declaredTargets == null ? java.util.Collections.emptySet() : declaredTargets;
         try {
             Response result = sessionService.runAs(g.ownerUser, g.ownerRoles, () -> {
                 if ("inline".equals(q.kind) && q.body != null) {
                     // Order is LOAD-BEARING for RLS (saiku#1104 + security review): apply the
-                    // client filter-tile overrides FIRST (they may narrow/add on any axis), then
-                    // apply the token's forced RLS filters LAST and authoritatively.
-                    mergeFilterOverrides(q.body, filterOverrides);
+                    // client filter-tile overrides FIRST (only on author-declared or forced axes —
+                    // saiku#1911), then apply the token's forced RLS filters LAST and authoritatively.
+                    // Parse forced up front (fail-closed on a malformed claim) so the merge knows
+                    // which axes the forced filters own.
+                    java.util.List<AiFilterSelection> forced = parseForcedFilters(g);
+                    mergeFilterOverrides(q.body, filterOverrides, declared, forcedHierarchiesOf(forced));
                     // executeAi (AiSchemaConverter) has NO forced-filter channel and REJECTS two
                     // filters on one hierarchy, and members inside one filter UNION (Mondrian
                     // aggregates the set). So we can't append a second same-axis filter and can't
@@ -475,16 +487,21 @@ public class EmbedViewResource {
                     // SINGLE server-computed filter whose members are the forced set intersected with
                     // whatever the client/author put on that axis — a client can only narrow WITHIN
                     // the forced set, never widen, strip, or change the operator. A malformed forced
-                    // claim throws here (fail-closed) BEFORE executeAi ever runs.
-                    applyForcedFilters(q.body, parseForcedFilters(g));
+                    // claim throws above (fail-closed) BEFORE executeAi ever runs.
+                    applyForcedFilters(q.body, forced);
                     return aiQueryResource.executeAi(q.body, "records");
                 } else if ("reference".equals(q.kind) && q.path != null) {
                     AiSavedQueryRequest sreq = new AiSavedQueryRequest();
                     sreq.setPath(q.path);
                     // Filter-tile overrides ride the AiSavedQueryRequest.filters channel — the
                     // AI query resource merges these via ThinQueryFilterMerge before execute.
-                    if (!filterOverrides.isEmpty()) {
-                        sreq.setFilters(filterOverrides);
+                    // saiku#1911: only overrides on an author-declared target are forwarded; an
+                    // override on an undeclared axis is dropped fail-closed (a guest can't re-point the
+                    // saved query's axes). A client override colliding with a forced-RLS hierarchy is
+                    // additionally stripped server-side by executeSaved (dropClientFiltersCollidingWithForced).
+                    java.util.List<AiFilterSelection> authorised = authorisedOverrides(filterOverrides, declared);
+                    if (!authorised.isEmpty()) {
+                        sreq.setFilters(authorised);
                     }
                     // saiku#1104: forced RLS filters ride the forcedFilters channel — executeSaved
                     // applies them or fails closed (RLS_UNAPPLIED 403), so a QUERYMODEL reference
@@ -692,22 +709,43 @@ public class EmbedViewResource {
     }
 
     /**
-     * Splice runtime filter-tile overrides onto an AiQueryRequest. For each override, replace an
-     * existing filter that targets the same dimension/hierarchy/level (case-insensitive); append if
-     * no match. Empty-members overrides are pruned so a "clear filter" from a filter tile removes
-     * the corresponding slicer entirely.
+     * Splice runtime filter-tile overrides onto an AiQueryRequest, subject to two authorisation
+     * gates (saiku#1911):
+     * <ol>
+     *   <li><b>Declared-target gate (exploit (b)).</b> A client override is honoured ONLY when its
+     *       {@code (dimension, hierarchy, level)} matches a filter target the author declared on the
+     *       pinned dashboard / app ({@code declaredTargets}) OR it targets a forced-RLS hierarchy
+     *       ({@code forcedHierarchies}), which {@link #applyForcedFilters} then clamps. An override on
+     *       any other axis is dropped — a guest can't re-point the author's tile onto an axis the
+     *       author never exposed.</li>
+     *   <li><b>Empty-members is a NO-OP (exploit (b)).</b> An override with no members means "no
+     *       selection"; it is skipped WITHOUT removing the author's same-axis filter. It must NEVER
+     *       delete an authored filter (the old code removed-then-skipped-append, silently stripping
+     *       the author's slice).</li>
+     * </ol>
+     * A non-empty, authorised override REPLACES the author's same-axis filter with the client's
+     * (narrowing) selection.
      *
      * <p>SECURITY: this runs BEFORE {@link #applyForcedFilters}, so it never sees a forced RLS
      * filter (they aren't in the list yet) and is therefore structurally incapable of removing or
      * widening one. Any client selection it leaves on a forced axis is subsequently clamped by
      * {@link #applyForcedFilters}. It must never be called after the forced filters are applied.
      */
-    private static void mergeFilterOverrides(AiQueryRequest req, java.util.List<AiFilterSelection> overrides) {
+    private static void mergeFilterOverrides(
+            AiQueryRequest req,
+            java.util.List<AiFilterSelection> overrides,
+            java.util.Set<String> declaredTargets,
+            java.util.Set<String> forcedHierarchies) {
         if (req == null || overrides == null || overrides.isEmpty()) return;
         java.util.List<AiFilterSelection> current = req.getFilters();
         if (current == null) current = new java.util.ArrayList<>();
         for (AiFilterSelection o : overrides) {
             if (o == null || o.getDimension() == null) continue;
+            // Gate 1: reject overrides on an undeclared, non-forced axis (fail-closed).
+            if (!isAuthorisedOverride(o, declaredTargets, forcedHierarchies)) continue;
+            // Gate 2: empty members = no selection = NO-OP. Never delete the author's filter.
+            if (o.getMembers() == null || o.getMembers().isEmpty()) continue;
+            // Authorised, non-empty: replace the author's same-axis filter with the client's.
             java.util.Iterator<AiFilterSelection> it = current.iterator();
             while (it.hasNext()) {
                 AiFilterSelection existing = it.next();
@@ -719,11 +757,142 @@ public class EmbedViewResource {
                     it.remove();
                 }
             }
-            // A filter with no members = "no restriction"; skip appending.
-            if (o.getMembers() == null || o.getMembers().isEmpty()) continue;
             current.add(o);
         }
         req.setFilters(current);
+    }
+
+    /** True when a client override may affect the query: its (dim,hier,level) is an author-declared
+     *  filter target, OR it targets a forced-RLS hierarchy (so {@link #applyForcedFilters} clamps a
+     *  legitimate narrowing within the forced set). Everything else is dropped (saiku#1911). */
+    private static boolean isAuthorisedOverride(
+            AiFilterSelection o, java.util.Set<String> declaredTargets, java.util.Set<String> forcedHierarchies) {
+        if (declaredTargets != null
+                && declaredTargets.contains(targetKey(o.getDimension(), o.getHierarchy(), o.getLevel()))) {
+            return true;
+        }
+        return forcedHierarchies != null && forcedHierarchies.contains(hierKey(o.getDimension(), o.getHierarchy()));
+    }
+
+    /** Normalised, case-insensitive (dim|hier|level) key for declared-target matching. */
+    private static String targetKey(String dim, String hier, String level) {
+        return norm(dim) + "|" + norm(hier) + "|" + norm(level);
+    }
+
+    /** Normalised, case-insensitive (dim|hier) key for forced-hierarchy matching. */
+    private static String hierKey(String dim, String hier) {
+        return norm(dim) + "|" + norm(hier);
+    }
+
+    private static String norm(String s) {
+        return s == null ? "" : s.trim().toLowerCase(java.util.Locale.ROOT);
+    }
+
+    /** The (dim|hier) keys of the forced RLS filters — the axes {@link #applyForcedFilters} owns. */
+    private static java.util.Set<String> forcedHierarchiesOf(java.util.List<AiFilterSelection> forced) {
+        java.util.Set<String> out = new java.util.HashSet<>();
+        if (forced == null) return out;
+        for (AiFilterSelection f : forced) {
+            if (f != null && f.getDimension() != null) out.add(hierKey(f.getDimension(), f.getHierarchy()));
+        }
+        return out;
+    }
+
+    /** Keep only the client overrides whose (dim,hier,level) matches an author-declared target — the
+     *  saved-query (reference-tile) equivalent of {@link #mergeFilterOverrides}'s declared gate. */
+    private static java.util.List<AiFilterSelection> authorisedOverrides(
+            java.util.List<AiFilterSelection> overrides, java.util.Set<String> declaredTargets) {
+        java.util.List<AiFilterSelection> out = new java.util.ArrayList<>();
+        if (overrides == null) return out;
+        for (AiFilterSelection o : overrides) {
+            if (o == null || o.getDimension() == null) continue;
+            if (declaredTargets != null
+                    && declaredTargets.contains(targetKey(o.getDimension(), o.getHierarchy(), o.getLevel()))) {
+                out.add(o);
+            }
+        }
+        return out;
+    }
+
+    /**
+     * The set of author-declared filter targets on a dashboard, as normalised (dim|hier|level) keys.
+     * Sources (saiku#1911): the unified filter panel ({@link DashboardFilterPanel#filters}), any
+     * {@code type:"filter"} tile's {@link DashboardTile#target}, and the dashboard-level default
+     * {@link Dashboard#filters}. A target is included only when its cube is compatible with the
+     * queried tile's cube (null on either side = compatible) so a filter declared for cube A can't
+     * authorise an override on a cube-B tile.
+     */
+    private static java.util.Set<String> declaredTargetsForDashboard(Dashboard dash, DashboardTile queried) {
+        java.util.Set<String> out = new java.util.HashSet<>();
+        if (dash == null) return out;
+        org.saiku.service.olap.ai.AiCubeRef tileCube = queried == null ? null : queried.cube;
+        if (dash.filterPanel != null && dash.filterPanel.filters != null) {
+            for (org.saiku.web.rest.resources.dashboards.DashboardFilterPanel.PanelFilter pf :
+                    dash.filterPanel.filters) {
+                if (pf != null && cubeCompatible(pf.cube, tileCube)) {
+                    out.add(targetKey(pf.dimension, pf.hierarchy, pf.level));
+                }
+            }
+        }
+        if (dash.layout != null && dash.layout.tiles != null) {
+            for (DashboardTile t : dash.layout.tiles) {
+                if (t != null && "filter".equals(t.type) && t.target != null && cubeCompatible(t.cube, tileCube)) {
+                    out.add(targetKey(t.target.dimension, t.target.hierarchy, t.target.level));
+                }
+            }
+        }
+        if (dash.filters != null) {
+            for (org.saiku.web.rest.resources.dashboards.DashboardFilter df : dash.filters) {
+                if (df != null) out.add(targetKey(df.dimension, df.hierarchy, df.level));
+            }
+        }
+        return out;
+    }
+
+    /**
+     * The set of author-declared filter targets on a pinned {@code .saikuapp} document, as normalised
+     * (dim|hier|level) keys. The app JSON is opaque, so we walk {@code pages[].grid.tiles[]} for
+     * {@code type:"filter"} tiles' {@code target} — mirroring {@link #findAppTile}. A target is
+     * included only when its cube is compatible with the queried tile's cube. Returns an empty set on
+     * any parse failure (fail-closed — no undeclared override is authorised).
+     */
+    private java.util.Set<String> declaredTargetsForApp(EmbedGuestDetails g, DashboardTile queried) {
+        java.util.Set<String> out = new java.util.HashSet<>();
+        String raw = loadAppRaw(g);
+        if (raw == null) return out;
+        org.saiku.service.olap.ai.AiCubeRef tileCube = queried == null ? null : queried.cube;
+        try {
+            JsonNode pages = MAPPER.readTree(raw).get("pages");
+            if (pages == null || !pages.isArray()) return out;
+            for (JsonNode page : pages) {
+                JsonNode grid = page.get("grid");
+                JsonNode tiles = grid == null ? null : grid.get("tiles");
+                if (tiles == null || !tiles.isArray()) continue;
+                for (JsonNode tileNode : tiles) {
+                    JsonNode type = tileNode.get("type");
+                    if (type == null || !"filter".equals(type.asText())) continue;
+                    DashboardTile t = MAPPER.treeToValue(tileNode, DashboardTile.class);
+                    if (t.target != null && cubeCompatible(t.cube, tileCube)) {
+                        out.add(targetKey(t.target.dimension, t.target.hierarchy, t.target.level));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("embedded app {} declared-target scan failed", g.resourcePath, e);
+            return new java.util.HashSet<>();
+        }
+        return out;
+    }
+
+    /** Two cubes are compatible for target scoping when either is null (unspecified) or they name the
+     *  same connection/catalog/schema/cube. */
+    private static boolean cubeCompatible(
+            org.saiku.service.olap.ai.AiCubeRef a, org.saiku.service.olap.ai.AiCubeRef b) {
+        if (a == null || b == null) return true;
+        return eqIgnoreCase(a.getConnectionName(), b.getConnectionName())
+                && eqIgnoreCase(a.getCatalog(), b.getCatalog())
+                && eqIgnoreCase(a.getSchema(), b.getSchema())
+                && eqIgnoreCase(a.getCubeName(), b.getCubeName());
     }
 
     /**
@@ -751,8 +920,16 @@ public class EmbedViewResource {
         java.util.List<AiFilterSelection> current = req.getFilters();
         if (current == null) current = new java.util.ArrayList<>();
         for (AiFilterSelection f : forced) {
-            if (f == null || f.getDimension() == null) continue;
-            // Remove every same-axis filter (authored or client); remember the first for narrowing.
+            if (f == null || f.getDimension() == null) {
+                // A forced RLS filter with no dimension can't be applied — silently skipping it would
+                // run the query UNFILTERED (fail-OPEN). Throw so the tile fails closed, matching
+                // parseForcedFilters' treatment of a malformed claim (saiku#1911 SEC nit).
+                throw new IllegalStateException("forced RLS filter is missing its dimension");
+            }
+            // Remove every filter on the same HIERARCHY (authored or client) — NOT just the same
+            // (dim,hier,level) axis. saiku#1911 exploit (a): a client filter on a DIFFERENT level of
+            // the forced hierarchy must not survive (executeAi would UNION it, widening the RLS
+            // slice). Remember only a same-LEVEL, op:"in" client filter as an eligible narrowing.
             AiFilterSelection existing = null;
             java.util.Iterator<AiFilterSelection> it = current.iterator();
             while (it.hasNext()) {
@@ -761,8 +938,10 @@ public class EmbedViewResource {
                     it.remove();
                     continue;
                 }
-                if (sameAxis(e, f)) {
-                    if (existing == null) existing = e;
+                if (sameHierarchy(e, f)) {
+                    // Only a client filter at the SAME level can narrow within the forced set;
+                    // a different-level client filter is dropped entirely (forced applies verbatim).
+                    if (existing == null && sameAxis(e, f)) existing = e;
                     it.remove();
                 }
             }
@@ -803,10 +982,20 @@ public class EmbedViewResource {
         return out;
     }
 
+    /** Compare through the SAME normalised (trim + lowercase) keys the declared-target /
+     *  forced-hierarchy gate uses ({@link #targetKey}), so a filter that passes the gate (e.g. a
+     *  leading-space " Customer") is also caught by the clamp here — not left to the converter's
+     *  dedupe backstop 400 (saiku#1911 SEC nit). */
     private static boolean sameAxis(AiFilterSelection a, AiFilterSelection b) {
-        return eqIgnoreCase(a.getDimension(), b.getDimension())
-                && eqIgnoreCase(a.getHierarchy(), b.getHierarchy())
-                && eqIgnoreCase(a.getLevel(), b.getLevel());
+        return targetKey(a.getDimension(), a.getHierarchy(), a.getLevel())
+                .equals(targetKey(b.getDimension(), b.getHierarchy(), b.getLevel()));
+    }
+
+    /** Same dimension + hierarchy, ANY level. A forced RLS filter owns the whole hierarchy, so a
+     *  client filter on any level of it is cleared before the forced filter is applied (saiku#1911).
+     *  Uses the same normalised key as the forced-hierarchy gate ({@link #hierKey}). */
+    private static boolean sameHierarchy(AiFilterSelection a, AiFilterSelection b) {
+        return hierKey(a.getDimension(), a.getHierarchy()).equals(hierKey(b.getDimension(), b.getHierarchy()));
     }
 
     private static boolean eqIgnoreCase(String x, String y) {

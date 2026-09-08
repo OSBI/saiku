@@ -572,6 +572,25 @@ public class EmbedViewResourceTest {
 
     private static final String DASH_INLINE_TILE =
             "{\"layout\":{\"tiles\":[{\"id\":\"t1\",\"query\":{\"kind\":\"inline\",\"body\":{}}}]}}";
+    // saiku#1911: a dashboard that DECLARES a Product filter target in its filter panel, so a client
+    // override on (Product,Product,Product) is authorised. The queried tile "t1" is an empty inline.
+    private static final String DASH_INLINE_TILE_PRODUCT_DECLARED =
+            "{\"filterPanel\":{\"filters\":[{\"dimension\":\"Product\",\"hierarchy\":\"Product\",\"level\":\"Product\"}]},"
+                    + "\"layout\":{\"tiles\":[{\"id\":\"t1\",\"query\":{\"kind\":\"inline\",\"body\":{}}}]}}";
+    // saiku#1911: declares a Product filter target AND the authored inline query already filters
+    // Product ∈ {widgets}. Used to prove an empty-members override is a NO-OP, not a delete.
+    private static final String DASH_INLINE_TILE_AUTHORED_PRODUCT =
+            "{\"filterPanel\":{\"filters\":[{\"dimension\":\"Product\",\"hierarchy\":\"Product\",\"level\":\"Product\"}]},"
+                    + "\"layout\":{\"tiles\":[{\"id\":\"t1\",\"query\":{\"kind\":\"inline\",\"body\":{\"filters\":"
+                    + "[{\"dimension\":\"Product\",\"hierarchy\":\"Product\",\"level\":\"Product\",\"op\":\"in\","
+                    + "\"members\":[\"[Product].[widgets]\"]}]}}}]}}";
+    // saiku#1911: an app whose page declares a Product filter tile (id f1) alongside the queried
+    // inline tile t1, so a client override on Product is authorised on the app surface too.
+    private static final String APP_INLINE_TILE_PRODUCT_DECLARED =
+            "{\"id\":\"a-1\",\"name\":\"Portal\",\"pages\":[{\"id\":\"page-1\",\"grid\":{\"tiles\":["
+                    + "{\"id\":\"t1\",\"query\":{\"kind\":\"inline\",\"body\":{}}},"
+                    + "{\"id\":\"f1\",\"type\":\"filter\",\"target\":{\"dimension\":\"Product\","
+                    + "\"hierarchy\":\"Product\",\"level\":\"Product\"}}]}}]}";
     // Forced: Customer ∈ {acme}
     private static final String FORCE_CUSTOMER_ACME =
             "[{\"dimension\":\"Customer\",\"hierarchy\":\"Customer\",\"level\":\"Customer\",\"op\":\"in\","
@@ -649,9 +668,11 @@ public class EmbedViewResourceTest {
 
     @Test
     public void dashboard_inline_client_narrows_different_axis_keeps_both() {
-        // Exploit (c) / legitimate: client narrows a DIFFERENT axis (Product). Both the forced
-        // Customer RLS and the client's Product narrowing apply.
-        ds.fileContent = DASH_INLINE_TILE;
+        // Legitimate: client narrows a DIFFERENT axis (Product) that the dashboard DECLARES as a
+        // filter target. Both the forced Customer RLS and the client's Product narrowing apply.
+        // (saiku#1911: the Product target must be declared — an undeclared override is now rejected;
+        // see dashboard_inline_override_on_undeclared_axis_is_rejected.)
+        ds.fileContent = DASH_INLINE_TILE_PRODUCT_DECLARED;
         pinGuestJwt("dashboard", "/homes/admin/exec.saikudash", "admin", List.of(), "u_1", FORCE_CUSTOMER_ACME);
 
         Response r =
@@ -662,6 +683,51 @@ public class EmbedViewResourceTest {
         assertEquals(List.of("[Customer].[acme]"), onlyFilterFor(fs, "Customer").getMembers());
         assertEquals(
                 List.of("[Product].[widgets]"), onlyFilterFor(fs, "Product").getMembers());
+    }
+
+    @Test
+    public void dashboard_inline_client_cannot_widen_forced_rls_via_different_level() {
+        // saiku#1911 sub-fix #1 (inline half): the client override targets a DIFFERENT level
+        // ("Customer Country") of the FORCED hierarchy (Customer). It passes mergeFilterOverrides via
+        // the forced-hierarchy gate, but applyForcedFilters must clear it by HIERARCHY (not just the
+        // exact dim/hier/level axis) so the ONLY Customer filter reaching the engine is the forced
+        // level "Customer" = {acme}. Reverting the sameHierarchy removal to sameAxis leaves the
+        // client's Country/USA filter in place → two Customer filters → onlyFilterFor fails.
+        ds.fileContent = DASH_INLINE_TILE;
+        pinGuestJwt("dashboard", "/homes/admin/exec.saikudash", "admin", List.of(), "u_1", FORCE_CUSTOMER_ACME);
+
+        Response r = resource.tileQuery(
+                "homes/admin/exec.saikudash",
+                "t1",
+                overrides(inLevel("Customer", "Customer", "Customer Country", "[Customer].[Country].[USA]")));
+
+        assertEquals(200, r.getStatus());
+        AiFilterSelection cust = onlyFilterFor(ai.lastAiRequest.getFilters(), "Customer");
+        assertEquals("forced level must win over a different-level client override", "Customer", cust.getLevel());
+        assertEquals(List.of("[Customer].[acme]"), cust.getMembers());
+        assertFalse(
+                "the different-level client override must never reach the engine",
+                cust.getMembers().contains("[Customer].[Country].[USA]"));
+    }
+
+    @Test
+    public void dashboard_inline_forced_filter_with_null_dimension_fails_closed() {
+        // saiku#1911 SEC nit: a forced RLS filter whose dimension is null used to be SILENTLY skipped
+        // (fail-open — the query ran unfiltered). It must now throw so the tile fails closed and no
+        // query executes.
+        ds.fileContent = DASH_INLINE_TILE;
+        pinGuestJwt(
+                "dashboard",
+                "/homes/admin/exec.saikudash",
+                "admin",
+                List.of(),
+                "u_1",
+                "[{\"level\":\"Customer\",\"members\":[\"[Customer].[acme]\"]}]"); // no "dimension"
+
+        Response r = resource.tileQuery("homes/admin/exec.saikudash", "t1", null);
+
+        assertTrue("a dimensionless forced RLS filter must fail closed (non-2xx)", r.getStatus() >= 400);
+        assertNull("no query may execute when a forced RLS filter can't be applied", ai.lastAiRequest);
     }
 
     @Test
@@ -696,7 +762,8 @@ public class EmbedViewResourceTest {
 
     @Test
     public void app_inline_client_narrows_different_axis_keeps_both() {
-        ds.fileContent = APP_INLINE_TILE;
+        // Legitimate: Product is declared by a filter tile on the app page (saiku#1911).
+        ds.fileContent = APP_INLINE_TILE_PRODUCT_DECLARED;
         pinGuestJwt("app", "/homes/admin/portal.saikuapp", "admin", List.of(), "u_1", FORCE_CUSTOMER_ACME);
 
         Response r = resource.appTileQuery(
@@ -707,6 +774,166 @@ public class EmbedViewResourceTest {
         assertEquals(List.of("[Customer].[acme]"), onlyFilterFor(fs, "Customer").getMembers());
         assertEquals(
                 List.of("[Product].[widgets]"), onlyFilterFor(fs, "Product").getMembers());
+    }
+
+    /* ---- saiku#1911: declared-target gate + empty-members-is-a-no-op (exploit (b)) ---- */
+
+    @Test
+    public void dashboard_inline_override_on_undeclared_axis_is_rejected() {
+        // Exploit (b): the dashboard declares NO filter targets, yet the guest overrides Product.
+        // PRE-FIX mergeFilterOverrides accepted an override on ANY axis, so Product reached the
+        // engine. The fix drops any override that isn't an author-declared target (and isn't a
+        // forced-RLS axis) — Product must never reach the executed query.
+        ds.fileContent = DASH_INLINE_TILE; // no filterPanel / filter tiles → nothing declared
+        pinGuest("dashboard", "/homes/admin/exec.saikudash", "admin", List.of());
+
+        Response r =
+                resource.tileQuery("homes/admin/exec.saikudash", "t1", overrides(in("Product", "[Product].[widgets]")));
+
+        assertEquals(200, r.getStatus());
+        assertNotNull(ai.lastAiRequest);
+        assertFalse(
+                "an override on an UNDECLARED axis must be rejected (not reach the engine)",
+                ai.lastAiRequest.getFilters().stream().anyMatch(f -> "Product".equals(f.getDimension())));
+    }
+
+    @Test
+    public void app_inline_override_on_undeclared_axis_is_rejected() {
+        // Same declared-target gate on the app-page inline tile (shared runTileQuery).
+        ds.fileContent = APP_INLINE_TILE; // no filter tile → nothing declared
+        pinGuest("app", "/homes/admin/portal.saikuapp", "admin", List.of());
+
+        Response r = resource.appTileQuery(
+                "homes/admin/portal.saikuapp", "page-1", "t1", overrides(in("Product", "[Product].[widgets]")));
+
+        assertEquals(200, r.getStatus());
+        assertNotNull(ai.lastAiRequest);
+        assertFalse(
+                "an undeclared override must be rejected on the app surface too",
+                ai.lastAiRequest.getFilters().stream().anyMatch(f -> "Product".equals(f.getDimension())));
+    }
+
+    @Test
+    public void dashboard_inline_empty_members_override_does_not_delete_authored_filter() {
+        // Exploit (b): the author's tile filters Product ∈ {widgets}. The guest sends an override on
+        // Product with NO members ("clear filter"). PRE-FIX mergeFilterOverrides removed the authored
+        // filter then skipped re-adding it — silently STRIPPING the author's slice. The fix treats an
+        // empty-members override as a NO-OP: the authored Product ∈ {widgets} must survive intact.
+        ds.fileContent = DASH_INLINE_TILE_AUTHORED_PRODUCT;
+        pinGuest("dashboard", "/homes/admin/exec.saikudash", "admin", List.of());
+
+        Response r = resource.tileQuery("homes/admin/exec.saikudash", "t1", overrides(in("Product")));
+
+        assertEquals(200, r.getStatus());
+        AiFilterSelection prod = onlyFilterFor(ai.lastAiRequest.getFilters(), "Product");
+        assertEquals(
+                "an empty-members override must NOT delete the author's filter",
+                List.of("[Product].[widgets]"),
+                prod.getMembers());
+    }
+
+    @Test
+    public void dashboard_inline_declared_override_replaces_authored_filter() {
+        // Positive / no-regression: a NON-empty override on a DECLARED target legitimately replaces
+        // the author's selection (narrowing within the author's exposed filter) — the intended flow.
+        ds.fileContent = DASH_INLINE_TILE_AUTHORED_PRODUCT;
+        pinGuest("dashboard", "/homes/admin/exec.saikudash", "admin", List.of());
+
+        Response r =
+                resource.tileQuery("homes/admin/exec.saikudash", "t1", overrides(in("Product", "[Product].[gadgets]")));
+
+        assertEquals(200, r.getStatus());
+        AiFilterSelection prod = onlyFilterFor(ai.lastAiRequest.getFilters(), "Product");
+        assertEquals(
+                "a declared, non-empty override replaces the authored selection",
+                List.of("[Product].[gadgets]"),
+                prod.getMembers());
+    }
+
+    /* ---- saiku#1911: remaining declared-target sources (SEC finding) + cubeCompatible ---- */
+
+    @Test
+    public void dashboard_inline_declared_via_top_level_filters_list_is_authorised() {
+        // Declared via the LEGACY top-level Dashboard.filters list (pre-filterPanel dashboards),
+        // not the unified filterPanel and not a filter tile. declaredTargetsForDashboard must still
+        // pick this source up.
+        ds.fileContent = "{\"filters\":[{\"dimension\":\"Product\",\"hierarchy\":\"Product\",\"level\":\"Product\"}],"
+                + "\"layout\":{\"tiles\":[{\"id\":\"t1\",\"query\":{\"kind\":\"inline\",\"body\":{}}}]}}";
+        pinGuest("dashboard", "/homes/admin/exec.saikudash", "admin", List.of());
+
+        Response r =
+                resource.tileQuery("homes/admin/exec.saikudash", "t1", overrides(in("Product", "[Product].[widgets]")));
+
+        assertEquals(200, r.getStatus());
+        assertEquals(
+                "a target declared via the legacy dash.filters list must authorise the override",
+                List.of("[Product].[widgets]"),
+                onlyFilterFor(ai.lastAiRequest.getFilters(), "Product").getMembers());
+    }
+
+    @Test
+    public void dashboard_inline_declared_via_layout_filter_tile_is_authorised() {
+        // Declared via a type:"filter" TILE sitting in dash.layout.tiles (the pre-filterPanel widget
+        // model) rather than the unified filterPanel.
+        ds.fileContent = "{\"layout\":{\"tiles\":["
+                + "{\"id\":\"t1\",\"query\":{\"kind\":\"inline\",\"body\":{}}},"
+                + "{\"id\":\"f1\",\"type\":\"filter\",\"target\":{\"dimension\":\"Product\","
+                + "\"hierarchy\":\"Product\",\"level\":\"Product\"}}]}}";
+        pinGuest("dashboard", "/homes/admin/exec.saikudash", "admin", List.of());
+
+        Response r =
+                resource.tileQuery("homes/admin/exec.saikudash", "t1", overrides(in("Product", "[Product].[widgets]")));
+
+        assertEquals(200, r.getStatus());
+        assertEquals(
+                "a target declared via a dashboard filter TILE must authorise the override",
+                List.of("[Product].[widgets]"),
+                onlyFilterFor(ai.lastAiRequest.getFilters(), "Product").getMembers());
+    }
+
+    @Test
+    public void dashboard_inline_declared_target_on_a_different_cube_is_rejected() {
+        // The filter panel declares a Product target scoped to a DIFFERENT cube than the queried
+        // tile's own cube — cubeCompatible must reject the match so a filter authored for cube A
+        // can't authorise an override on a cube-B tile.
+        ds.fileContent = "{\"filterPanel\":{\"filters\":[{\"dimension\":\"Product\",\"hierarchy\":\"Product\","
+                + "\"level\":\"Product\",\"cube\":{\"connectionName\":\"foodmart\",\"catalog\":\"FoodMart\","
+                + "\"schema\":\"FoodMart\",\"cubeName\":\"OtherCube\"}}]},"
+                + "\"layout\":{\"tiles\":[{\"id\":\"t1\",\"cube\":{\"connectionName\":\"foodmart\","
+                + "\"catalog\":\"FoodMart\",\"schema\":\"FoodMart\",\"cubeName\":\"Sales\"},"
+                + "\"query\":{\"kind\":\"inline\",\"body\":{}}}]}}";
+        pinGuest("dashboard", "/homes/admin/exec.saikudash", "admin", List.of());
+
+        Response r =
+                resource.tileQuery("homes/admin/exec.saikudash", "t1", overrides(in("Product", "[Product].[widgets]")));
+
+        assertEquals(200, r.getStatus());
+        assertNotNull(ai.lastAiRequest);
+        assertFalse(
+                "a declared target scoped to a DIFFERENT cube must not authorise the override",
+                ai.lastAiRequest.getFilters().stream().anyMatch(f -> "Product".equals(f.getDimension())));
+    }
+
+    @Test
+    public void dashboard_inline_declared_target_on_the_same_cube_is_authorised() {
+        // Same shape as above but the filter panel's cube MATCHES the queried tile's cube exactly —
+        // proves cubeCompatible's equality branch (not just its null/null fallback) authorises.
+        ds.fileContent = "{\"filterPanel\":{\"filters\":[{\"dimension\":\"Product\",\"hierarchy\":\"Product\","
+                + "\"level\":\"Product\",\"cube\":{\"connectionName\":\"foodmart\",\"catalog\":\"FoodMart\","
+                + "\"schema\":\"FoodMart\",\"cubeName\":\"Sales\"}}]},"
+                + "\"layout\":{\"tiles\":[{\"id\":\"t1\",\"cube\":{\"connectionName\":\"foodmart\","
+                + "\"catalog\":\"FoodMart\",\"schema\":\"FoodMart\",\"cubeName\":\"Sales\"},"
+                + "\"query\":{\"kind\":\"inline\",\"body\":{}}}]}}";
+        pinGuest("dashboard", "/homes/admin/exec.saikudash", "admin", List.of());
+
+        Response r =
+                resource.tileQuery("homes/admin/exec.saikudash", "t1", overrides(in("Product", "[Product].[widgets]")));
+
+        assertEquals(200, r.getStatus());
+        assertEquals(
+                "a declared target scoped to the SAME cube must authorise the override",
+                List.of("[Product].[widgets]"),
+                onlyFilterFor(ai.lastAiRequest.getFilters(), "Product").getMembers());
     }
 
     /* --------------------------- helpers ---------------------------- */
@@ -721,6 +948,14 @@ public class EmbedViewResourceTest {
     /** op:"in" client filter on dim (dim=hierarchy=level for the test cube). */
     private static AiFilterSelection in(String dim, String... members) {
         AiFilterSelection f = new AiFilterSelection(dim, dim, dim, new ArrayList<>(Arrays.asList(members)));
+        f.setOp("in");
+        return f;
+    }
+
+    /** op:"in" client filter with an explicit (dim, hier, level) — used to prove a client override on
+     *  a DIFFERENT level of a forced hierarchy is still clamped. */
+    private static AiFilterSelection inLevel(String dim, String hier, String level, String... members) {
+        AiFilterSelection f = new AiFilterSelection(dim, hier, level, new ArrayList<>(Arrays.asList(members)));
         f.setOp("in");
         return f;
     }

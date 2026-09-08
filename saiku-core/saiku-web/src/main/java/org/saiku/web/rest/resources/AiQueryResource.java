@@ -340,6 +340,34 @@ public class AiQueryResource {
             tq.setName(java.util.UUID.randomUUID().toString());
         }
 
+        // saiku#1911: a client/dashboard filter on the SAME hierarchy as a forced RLS filter must
+        // never ride alongside it — merged together, saiku-query UNIONs the member sets and widens
+        // the RLS slice (exploit (a), even via a different level of the hierarchy). Strip such client
+        // filters BEFORE the merge so the forced filter is the only selection on that hierarchy.
+        // Fail-closed: if the schema can't be resolved to compare hierarchies, drop ALL client
+        // filters (the forced-filter block below then fails closed too when its own lookup fails).
+        if (body.getFilters() != null
+                && !body.getFilters().isEmpty()
+                && body.getForcedFilters() != null
+                && !body.getForcedFilters().isEmpty()) {
+            AiSchema decollideSchema = null;
+            if (tq.getCube() != null && cubeMetadataService != null) {
+                try {
+                    org.saiku.olap.dto.SaikuCube cube = tq.getCube();
+                    decollideSchema = cubeMetadataService.getSchema(
+                            new AiCubeRef(cube.getConnection(), cube.getCatalog(), cube.getSchema(), cube.getName()));
+                } catch (RuntimeException e) {
+                    log.warn("saved-query {} client/forced de-collision schema lookup failed", path, e);
+                }
+            }
+            if (decollideSchema == null) {
+                body.setFilters(new java.util.ArrayList<>());
+            } else {
+                body.setFilters(org.saiku.service.olap.ai.ThinQueryFilterMerge.dropClientFiltersCollidingWithForced(
+                        body.getFilters(), body.getForcedFilters(), decollideSchema));
+            }
+        }
+
         // Merge best-effort dashboard runtime filters FIRST. Skipped silently when the request
         // carries no filters (the historical path), when the query is MDX-mode (can't splice
         // safely), or when the cube schema can't be loaded. See ThinQueryFilterMerge for the
