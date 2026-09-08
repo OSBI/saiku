@@ -25,16 +25,25 @@ import org.junit.Test;
  * saiku#1905 (CWE-611 XXE + missing auth gate on {@code /xmla}) reversion guard, driven through the
  * REAL Jetty + Spring Security filter chain via {@link SaikuItHarness} — not just the pure-unit test
  * in {@code saiku-core/saiku-service}'s {@code SaikuXmlaServletXxeTest}, which calls {@code
- * SaikuXmlaServlet#unmarshallSoapMessage} directly and so cannot see whether {@code
- * applicationContext-saiku.xml}'s {@code intercept-url} is actually wired into the chain.
+ * SaikuXmlaServlet#unmarshallSoapMessage} directly and so cannot see whether the auth gate in {@code
+ * applicationContext-saiku.xml} is actually wired into the chain.
  *
- * <p>Locks three facts that only a real HTTP round-trip can prove:
+ * <p>The auth gate is a DEDICATED ant-matched {@code <security:http pattern="/xmla/**">} secured
+ * chain declared FIRST in {@code applicationContext-saiku.xml}. That shape is load-bearing: the XMLA
+ * servlet is prefix-mapped {@code /xmla/*}, and the {@code security="none"} chains match MVC-style
+ * (servlet-path-relative), so {@code /xmla/} (pathInfo {@code "/"}) and {@code /xmla/<seg>} would
+ * otherwise be claimed by a no-filter none chain (e.g. {@code pattern="/"} or {@code "/ui/**"}) and
+ * served anonymously — never reaching any {@code intercept-url} in the main chain. The dedicated
+ * chain claims every {@code /xmla} shape before any none chain can.
+ *
+ * <p>Locks four facts that only a real HTTP round-trip can prove:
  *
  * <ol>
- *   <li>Anonymous {@code POST /xmla} and {@code POST /xmla/} are rejected with 401 — the {@code
- *       isFullyAuthenticated()} intercept-url added by this fix must survive future edits to {@code
- *       applicationContext-saiku.xml}. Without it (the pre-fix state), an unmatched path falls
- *       through with no rule in this {@code <http>} chain and is served anonymously.
+ *   <li>Anonymous {@code POST /xmla}, {@code /xmla/} and {@code /xmla/<seg>} are all rejected with
+ *       401 — the dedicated {@code /xmla/**} chain's {@code isFullyAuthenticated()} rule must survive
+ *       future edits to {@code applicationContext-saiku.xml}. Without the dedicated chain (the
+ *       pre-fix state), the trailing-slash / sub-path shapes were served anonymously by a
+ *       {@code security="none"} chain.
  *   <li>HTTP Basic {@code admin/admin} with a well-formed Discover envelope is NOT blocked by the
  *       auth gate — it authenticates and reaches the servlet (proven by getting a SOAP envelope
  *       back, not a bare auth rejection). This is the "don't lock out legitimate XMLA clients" half
@@ -45,6 +54,16 @@ import org.junit.Test;
  *       reversion guard: it goes through Jetty, Spring Security, and mondrian's real SOAP fault
  *       marshalling, none of which the pure-unit test exercises.
  * </ol>
+ *
+ * <p>NOT covered by a live IT here: the dedicated chain's {@code loginRateLimitFilter} 429
+ * brute-force short-circuit. {@code LoginRateLimiter} is per-client-IP with a 15-minute window and
+ * no HTTP-reachable reset, and failsafe runs the whole IT suite in ONE fork ({@code forkCount=1},
+ * {@code reuseForks=true}) sharing a single booted webapp — so tripping the budget for
+ * {@code 127.0.0.1} here would lock out every other IT that authenticates from localhost for 15
+ * minutes. A live 429 IT is therefore deliberately omitted as inherently suite-poisoning / flaky.
+ * The 429 behaviour is unit-covered against an injected strict limiter in {@code SessionResourceTest}
+ * ({@code login_blockedByRateLimiter_returns429WithRetryAfter}); the {@code custom-filter} wiring
+ * into the {@code /xmla/**} chain is verified by review. See {@code applicationContext-saiku.xml}.
  *
  * <p>Deliberately does NOT assert an exact status code for the XXE case: mondrian's {@code
  * XmlaServlet#doPost} maps a fault raised during the {@code INITIAL_PARSE} phase (which is exactly
@@ -115,7 +134,7 @@ public class XmlaAuthIT {
         HttpResponse<String> resp = postXmla("/xmla", wellFormedDiscoverBody(), null);
         assertEquals(
                 "Unauthenticated POST /xmla must be rejected by Spring Security BEFORE reaching the "
-                        + "servlet (saiku#1905's intercept-url pattern=\"/xmla\") — status="
+                        + "servlet (saiku#1905's dedicated /xmla/** secured chain) — status="
                         + resp.statusCode() + ", body: " + resp.body(),
                 401,
                 resp.statusCode());
@@ -125,8 +144,9 @@ public class XmlaAuthIT {
     public void anonymousPostToXmlaTrailingSlashIs401() throws Exception {
         HttpResponse<String> resp = postXmla("/xmla/", wellFormedDiscoverBody(), null);
         assertEquals(
-                "Unauthenticated POST /xmla/ must also be gated (saiku#1905's intercept-url "
-                        + "pattern=\"/xmla/**\") — status=" + resp.statusCode() + ", body: " + resp.body(),
+                "Unauthenticated POST /xmla/ must also be gated (saiku#1905's dedicated /xmla/** "
+                        + "secured chain — the trailing-slash shape the pre-fix gate missed) — status="
+                        + resp.statusCode() + ", body: " + resp.body(),
                 401,
                 resp.statusCode());
     }
