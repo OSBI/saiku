@@ -27,6 +27,37 @@
    -->
   
   <!-- BASIC AUTHENTICATION -->
+    <!-- saiku#1905 (CWE-611 + broken access control): dedicated auth gate for the
+         XMLA SOAP endpoint. It is prefix-mapped /xmla/* (web.xml -> SaikuXmlaServlet),
+         and the security="none" chains below match MVC-style (servlet-path-RELATIVE):
+         a bare POST /xmla/ has pathInfo "/", which the pattern="/" none chain matches,
+         and POST /xmla/<seg> (pathInfo "/<seg>") could be matched by e.g. the
+         pattern="/ui/**" none chain — either way the request was claimed by a
+         no-filter (security="none") chain and the XMLA servlet was served
+         ANONYMOUSLY (leaking DISCOVER_DATASOURCES / datasource names; and, before the
+         parser hardening, an unauthenticated XXE). QA IT XmlaAuthIT proved the
+         /xmla/ shape slipped every intercept-url in the main chain because the
+         request never reached that chain.
+
+         Declaring this ant-matched secured chain FIRST claims EVERY /xmla shape
+         (bare /xmla, /xmla/, /xmla/<seg>, /xmla/<seg>/<seg>) via request-matcher="ant"
+         on the absolute request path, before any none chain can. Full authentication
+         is required (XMLA is a legitimate authenticated OLAP protocol — Excel and
+         olap4j speak it over HTTP Basic — so isFullyAuthenticated(), NOT admin-only).
+         CSRF is disabled on this chain: XMLA is a stateless machine protocol
+         authenticated per-request via HTTP Basic, with no ambient browser cookie for a
+         forged request to ride (the main chain likewise never CSRF-checks /xmla —
+         SaikuCsrfRequestMatcher only guards /rest/**). basicAuth401NoChallenge returns
+         a bare 401 (no WWW-Authenticate) so anonymous clients get 401, not a browser
+         auth-dialog challenge. -->
+    <security:http pattern="/xmla/**" request-matcher="ant" use-expressions="true"
+                   entry-point-ref="basicAuth401NoChallenge">
+      <security:csrf disabled="true"/>
+      <security:intercept-url pattern="/**" access="isFullyAuthenticated()" />
+      <security:http-basic entry-point-ref="basicAuth401NoChallenge"/>
+      <security:anonymous/>
+    </security:http>
+
     <security:http pattern="/rest/saiku/info" security="none">
     </security:http>
     <security:http pattern="/rest/saiku/info/ui-settings" security="none">
@@ -178,21 +209,13 @@
            (more specific first); ant matcher — `*` matches the single {username} segment. -->
       <security:intercept-url pattern="/rest/saiku/statistics/**" access="hasRole('ADMIN')" />
       <security:intercept-url pattern="/rest/saiku/*/org.saiku.datasources/**" access="hasRole('ADMIN')" />
-      <!-- saiku#1905 (CWE-611): the XMLA SOAP endpoint (web.xml maps /xmla/* to
-           SaikuXmlaServlet) had NO intercept-url rule and there is no catch-all
-           anyRequest in this XML <http> chain, so an unmatched /xmla request was
-           granted anonymously — turning the (now-hardened) SOAP-body XXE into an
-           UNAUTHENTICATED file-read/SSRF/DoS. XMLA is a legitimate authenticated
-           OLAP-client query protocol (Excel / olap4j speak it over HTTP Basic),
-           so the right baseline is full authentication, NOT admin-only. Both the
-           bare "/xmla" (servlet-path request) and "/xmla/**" are covered so the
-           endpoint can never be reached unauthenticated. CSRF is a non-issue here:
-           SaikuCsrfRequestMatcher only enforces on /rest/** paths, and XMLA clients
-           authenticate with an Authorization header (Basic), which is CSRF-exempt
-           anyway — so this rule does not break Basic-auth XMLA clients. Must precede
-           the broad /rest/** rule. -->
-      <security:intercept-url pattern="/xmla" access="isFullyAuthenticated()" />
-      <security:intercept-url pattern="/xmla/**" access="isFullyAuthenticated()" />
+      <!-- NOTE (saiku#1905): the /xmla SOAP endpoint is NOT gated by an
+           intercept-url in this chain. It is prefix-mapped /xmla/* (web.xml), and
+           the security="none" chains above match MVC-style (servlet-path-relative),
+           so a bare "/xmla/" (pathInfo "/") or "/xmla/<seg>" would be claimed by
+           the pattern="/" or pattern="/…/**" none chains and served anonymously
+           BEFORE reaching this chain. It is therefore gated by its own dedicated
+           ant-matched secured chain declared at the TOP of this file. See there. -->
       <security:intercept-url pattern="/rest/**" access="isFullyAuthenticated()" />
       <security:intercept-url pattern="/json/**" access="isFullyAuthenticated()" />
       <security:intercept-url pattern="/WEB-INF/classes/legacy-schema" access="isAnonymous()" />
