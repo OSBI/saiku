@@ -16,6 +16,7 @@ import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Proxy;
 import java.nio.charset.StandardCharsets;
@@ -23,10 +24,12 @@ import java.nio.file.Files;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import mondrian.xmla.XmlaException;
+import org.junit.Assume;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * saiku#1905 (CWE-611) reversion guard for {@link SaikuXmlaServlet#unmarshallSoapMessage}. The fork's
@@ -188,9 +191,18 @@ public class SaikuXmlaServletXxeTest {
     }
 
     /**
-     * Reversion sanity: proves the payload is a genuine XXE. A plain (un-hardened) parser — the fork's
-     * behaviour before this fix — DOES resolve the external entity and leak the file, so the guard
-     * above is meaningful and will fail if the override regresses to such a parser.
+     * Reversion sanity (environmental positive control): proves the payload is a genuine XXE. A
+     * plain (un-hardened) parser — the fork's behaviour before this fix — DOES resolve the external
+     * entity and leak the file, so the guard above is meaningful and will fail if the override
+     * regresses to such a parser.
+     *
+     * <p>SEC nit F3: on a JAXP-hardened JVM (JDK 23+, or any environment whose {@code
+     * jaxp.properties} / system properties disallow DOCTYPE by default) a bare {@link
+     * DocumentBuilderFactory} may already refuse the DOCTYPE itself — the same outcome {@code
+     * SecureXml.secureDocumentBuilder()} produces deliberately. That's not a regression of anything
+     * we own; it just means this particular positive control has no XXE to demonstrate on this JVM,
+     * so we skip via {@link Assume} rather than fail. {@link #doctypePayloadIsRejectedNotResolved()}
+     * is the real guard and is unaffected either way.
      */
     @Test
     public void unhardenedParserWouldLeakTheFile() throws Exception {
@@ -199,9 +211,20 @@ public class SaikuXmlaServletXxeTest {
         dbf.setNamespaceAware(true);
         DocumentBuilder db = dbf.newDocumentBuilder();
 
-        InputStream in = new ByteArrayInputStream(xxeSoapBody(secret).getBytes(StandardCharsets.UTF_8));
-        Document doc = db.parse(new InputSource(in));
-        String bodyText = doc.getDocumentElement().getTextContent();
+        String bodyText;
+        try {
+            InputStream in = new ByteArrayInputStream(xxeSoapBody(secret).getBytes(StandardCharsets.UTF_8));
+            Document doc = db.parse(new InputSource(in));
+            bodyText = doc.getDocumentElement().getTextContent();
+        } catch (SAXException | IOException ex) {
+            Assume.assumeNoException(
+                    "environmental positive control: this JVM's default DocumentBuilderFactory "
+                            + "already refuses the DOCTYPE, so there is nothing for this test to "
+                            + "demonstrate here — see doctypePayloadIsRejectedNotResolved for the "
+                            + "real guard",
+                    ex);
+            return; // unreachable — assumeNoException always throws — but keeps bodyText definite.
+        }
 
         assertTrue(
                 "sanity: the un-hardened parser is expected to resolve the entity and leak the secret",
