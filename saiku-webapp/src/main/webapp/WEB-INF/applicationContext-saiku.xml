@@ -178,6 +178,21 @@
            (more specific first); ant matcher — `*` matches the single {username} segment. -->
       <security:intercept-url pattern="/rest/saiku/statistics/**" access="hasRole('ADMIN')" />
       <security:intercept-url pattern="/rest/saiku/*/org.saiku.datasources/**" access="hasRole('ADMIN')" />
+      <!-- saiku#1905 (CWE-611): the XMLA SOAP endpoint (web.xml maps /xmla/* to
+           SaikuXmlaServlet) had NO intercept-url rule and there is no catch-all
+           anyRequest in this XML <http> chain, so an unmatched /xmla request was
+           granted anonymously — turning the (now-hardened) SOAP-body XXE into an
+           UNAUTHENTICATED file-read/SSRF/DoS. XMLA is a legitimate authenticated
+           OLAP-client query protocol (Excel / olap4j speak it over HTTP Basic),
+           so the right baseline is full authentication, NOT admin-only. Both the
+           bare "/xmla" (servlet-path request) and "/xmla/**" are covered so the
+           endpoint can never be reached unauthenticated. CSRF is a non-issue here:
+           SaikuCsrfRequestMatcher only enforces on /rest/** paths, and XMLA clients
+           authenticate with an Authorization header (Basic), which is CSRF-exempt
+           anyway — so this rule does not break Basic-auth XMLA clients. Must precede
+           the broad /rest/** rule. -->
+      <security:intercept-url pattern="/xmla" access="isFullyAuthenticated()" />
+      <security:intercept-url pattern="/xmla/**" access="isFullyAuthenticated()" />
       <security:intercept-url pattern="/rest/**" access="isFullyAuthenticated()" />
       <security:intercept-url pattern="/json/**" access="isFullyAuthenticated()" />
       <security:intercept-url pattern="/WEB-INF/classes/legacy-schema" access="isAnonymous()" />
