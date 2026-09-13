@@ -111,7 +111,7 @@
             <dependency>
                 <groupId>com.gizmodata</groupId>
                 <artifactId>quack-jdbc</artifactId>
-                <version>0.1.0-alpha.1</version>
+                <version>0.2.0-alpha.6</version>
             </dependency>
             <!-- hive-jdbc 0.13 (2014) had ~3 CVEs. 2.3.x is the last
                  widely-deployed line with a stable JDBC surface. -->
