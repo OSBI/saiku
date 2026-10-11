@@ -75,6 +75,11 @@ pushed down; normal sessions append and the history stays useful.
 
 ## Log
 
+## 2026-10-11 — UI coverage reports for #2196
+**Was doing:** added opt-in Vitest LCOV, source-map-remapped mocked-browser LCOV, provenance, and a per-line comparison command.
+**Now:** run the mocked Chromium coverage command in CI; local Chromium cannot launch because libglib-2.0.so.0 is missing.
+**Refs:** #2196
+
 ## 2026-10-07 — feature/ai-surface-hardening-1918 — merged development for PR #2070
 **Was doing:** merged development at 4fb7b66c1, preserving the earlier CI fix and the base's describe-query/member-property changes; then fixed two PII-test fixtures flagged by CI to use the three-argument SimpleCubeElement constructor.
 **Now:** check PR #2070 CI after the test-fixture push; the local Maven reactor cannot resolve GitHub Packages artifacts (401), while the isolated SMTP and cost-budget tests passed.
