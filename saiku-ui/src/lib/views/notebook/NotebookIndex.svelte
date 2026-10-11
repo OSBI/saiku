@@ -7,7 +7,7 @@
 	 */
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { base } from '$app/paths';
+	import { basePath } from '$lib/paths';
 	import { listRepository, flatten, type RepositoryNode } from '$lib/api/repository';
 	import {
 		saveNotebook,
@@ -22,6 +22,7 @@
 	import { Button, Input } from '$lib/components/ui';
 	import Modal from '$lib/components/Modal.svelte';
 	import { FileText, Plus, Trash2 } from '@lucide/svelte';
+	const base = basePath();
 
 	let notebooks = $state<RepositoryNode[]>([]);
 	let loading = $state(true);

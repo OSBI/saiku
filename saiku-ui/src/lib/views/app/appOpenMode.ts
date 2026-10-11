@@ -18,7 +18,7 @@ export function newAppHref(base: string, path: string): string {
 }
 
 /** The mode an app should open in, given the route's query string. */
-export function initialAppMode(params: URLSearchParams): AppMode {
+export function initialAppMode(params: Pick<URLSearchParams, 'get'>): AppMode {
 	if (params.get('chrome') === 'none') return 'view';
 	return params.get(EDIT_ON_OPEN_PARAM) === EDIT_ON_OPEN_VALUE ? 'edit' : 'view';
 }

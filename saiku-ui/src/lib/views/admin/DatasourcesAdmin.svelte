@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { base } from '$app/paths';
+	import { basePath } from '$lib/paths';
 	import { Button, Input, Select, buttonVariants } from '$lib/components/ui';
 	import { adminDatasources, type AdminDatasource } from '$lib/api/admin';
 	import { toasts } from '$lib/stores/toasts.svelte';
@@ -15,6 +15,7 @@
 		generateSchemaLabel,
 		supportsCubeDesigner
 	} from './dataSourceActions';
+	const base = basePath();
 
 	let list = $state<AdminDatasource[]>([]);
 	let loading = $state(true);

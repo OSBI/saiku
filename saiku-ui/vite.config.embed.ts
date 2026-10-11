@@ -27,7 +27,7 @@
  * `build:embed` runs AFTER `build` so the SvelteKit dist/ output is
  * already in place; this build's emptyOutDir: false keeps that intact.
  */
-import { svelte } from '@sveltejs/vite-plugin-svelte';
+import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vite';
 
 /** One entry per embed custom element. Keep in sync with
@@ -58,6 +58,9 @@ export default defineConfig({
 	},
 	plugins: [
 		svelte({
+			// svelte.config.js is gone in SvelteKit 3; keep the preprocessor it
+			// used to supply.
+			preprocess: vitePreprocess(),
 			// Compile every .svelte under src/embed/ as a Web Component. The
 			// tag name is declared inside each Saiku*.svelte entry via
 			// <svelte:options customElement={…}>. Child components

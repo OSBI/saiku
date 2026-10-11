@@ -14,8 +14,8 @@
 		"build:embed": "node scripts/build-embed.mjs",
 		"build:embed-npm": "node scripts/stage-embed-npm.mjs",
 		"build:embed-react-npm": "node scripts/stage-embed-react-npm.mjs",
-		"//sbom": "saiku#2000: CycloneDX SBOM for the npm/UI half of what we ship. The Maven SBOM (saiku#1990) only sees the Java tree; this covers everything bundled into the war overlay (monaco, echarts, apache-arrow, …) plus the design-system workspace. `--omit dev` mirrors the Maven SBOM's test-scope exclusion — the SBOM describes what ships, not the build/test harness. Output is CycloneDX 1.6 JSON, written OUTSIDE dist/ so vite's emptyOutDir can't wipe it and it never ends up as a served /ui/ asset.",
-		"sbom": "cyclonedx-npm --output-file sbom/saiku-ui-sbom.cdx.json --output-format JSON --spec-version 1.6 --omit dev --mc-type application",
+		"//sbom": "saiku#2000: CycloneDX SBOM for the npm/UI half of what we ship. The Maven SBOM (saiku#1990) only sees the Java tree; this covers everything bundled into the war overlay (monaco, echarts, apache-arrow, …) plus the design-system workspace. scripts/sbom.mjs wraps cyclonedx-npm (`--omit dev` mirrors the Maven SBOM's test-scope exclusion — the SBOM describes what ships, not the build/test harness) and sidesteps SvelteKit 3's generated node_modules/$app. Output is CycloneDX 1.6 JSON, written OUTSIDE dist/ so vite's emptyOutDir can't wipe it and it never ends up as a served /ui/ asset.",
+		"sbom": "node scripts/sbom.mjs",
 		"build": "npm run build:app && npm run build:embed && npm run build:embed-npm && npm run build:embed-react-npm && npm run sbom",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && npm run check:embed-react",
@@ -46,8 +46,8 @@
 		"@storybook/addon-docs": "^10.6.1",
 		"@storybook/addon-svelte-csf": "^5.1.5",
 		"@storybook/sveltekit": "^10.6.1",
-		"@sveltejs/adapter-static": "^3.0.6",
-		"@sveltejs/kit": "^2.70.3",
+		"@sveltejs/adapter-static": "^4.0.0",
+		"@sveltejs/kit": "^3.0.1",
 		"@sveltejs/vite-plugin-svelte": "^7.3.1",
 		"@tailwindcss/vite": "^4.3.3",
 		"@types/css-tree": "^3.2.0",
@@ -66,7 +66,7 @@
 		"svelte": "^5.57.1",
 		"svelte-check": "^4.7.6",
 		"tailwindcss": "^4.3.1",
-		"typescript": "^5.7.2",
+		"typescript": "^6.0.3",
 		"typescript-eslint": "^8.71.1",
 		"vite": "^8.3.2",
 		"vitest": "^5.0.3"
@@ -91,7 +91,9 @@
 	},
 	"overrides": {
 		"dompurify": "$dompurify",
-		"cookie": "^0.7.2",
+		"runed": {
+			"@sveltejs/kit": "$@sveltejs/kit"
+		},
 		"ws": "^8.21.0"
 	}
 }

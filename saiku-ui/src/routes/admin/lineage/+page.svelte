@@ -32,8 +32,7 @@
 			searched = true;
 			void goto(`/admin/lineage?measure=${encodeURIComponent(trimmed)}`, {
 				replaceState: true,
-				keepFocus: true,
-				noScroll: true
+				reset: false
 			});
 		} catch (e) {
 			toasts.danger('Could not load lineage', e instanceof Error ? e.message : String(e));
